@@ -26,6 +26,7 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "Tile.h"
+#include "TiledBackingStoreBackend.h"
 #include "Timer.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
@@ -34,16 +35,18 @@
 namespace WebCore {
 
 class GraphicsContext;
+class TiledBackingStore;
 class TiledBackingStoreClient;
 
 class TiledBackingStore {
     WTF_MAKE_NONCOPYABLE(TiledBackingStore); WTF_MAKE_FAST_ALLOCATED;
 public:
-    TiledBackingStore(TiledBackingStoreClient*);
+    TiledBackingStore(TiledBackingStoreClient*, PassOwnPtr<TiledBackingStoreBackend> = TiledBackingStoreBackend::create());
     ~TiledBackingStore();
 
     void adjustVisibleRect();
     
+    TiledBackingStoreClient* client() { return m_client; }
     float contentsScale() { return m_contentsScale; }
     void setContentsScale(float);
     
@@ -67,6 +70,13 @@ public:
     }
     void setKeepAndCoverAreaMultipliers(const FloatSize& keepMultiplier, const FloatSize& coverMultiplier);    
 
+    IntRect mapToContents(const IntRect&) const;
+    IntRect mapFromContents(const IntRect&) const;
+
+    IntRect tileRectForCoordinate(const Tile::Coordinate&) const;
+    Tile::Coordinate tileCoordinateForPoint(const IntPoint&) const;
+    double tileDistance(const IntRect& viewport, const Tile::Coordinate&) const;
+
 private:
     void startTileBufferUpdateTimer();
     void startTileCreationTimer();
@@ -88,19 +98,13 @@ private:
     void setTile(const Tile::Coordinate& coordinate, PassRefPtr<Tile> tile);
     void removeTile(const Tile::Coordinate& coordinate);
 
-    IntRect mapToContents(const IntRect&) const;
-    IntRect mapFromContents(const IntRect&) const;
-    
     IntRect contentsRect() const;
-    
-    IntRect tileRectForCoordinate(const Tile::Coordinate&) const;
-    Tile::Coordinate tileCoordinateForPoint(const IntPoint&) const;
-    double tileDistance(const IntRect& viewport, const Tile::Coordinate&);
     
     void paintCheckerPattern(GraphicsContext*, const IntRect&, const Tile::Coordinate&);
 
 private:
     TiledBackingStoreClient* m_client;
+    OwnPtr<TiledBackingStoreBackend> m_backend;
 
     typedef HashMap<Tile::Coordinate, RefPtr<Tile> > TileMap;
     TileMap m_tiles;

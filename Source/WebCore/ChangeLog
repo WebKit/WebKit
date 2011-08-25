@@ -1,3 +1,40 @@
+2011-08-23  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        TiledBackingStore: Untie the tile implementation from the platform.
+        https://bugs.webkit.org/show_bug.cgi?id=66760
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make the Tile class polymorphic and introduce TiledBackingStoreBackend as a Tile factory.
+
+        * platform/graphics/Tile.h:
+        (WebCore::Tile::~Tile):
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::TiledBackingStore):
+        (WebCore::TiledBackingStore::paint):
+        (WebCore::TiledBackingStore::createTiles):
+        * platform/graphics/TiledBackingStore.h:
+        (WebCore::TiledBackingStore::client):
+        * platform/graphics/TiledBackingStoreBackend.h: Added.
+        (WebCore::TiledBackingStoreBackend::create):
+        (WebCore::TiledBackingStoreBackend::~TiledBackingStoreBackend):
+        (WebCore::TiledBackingStoreBackend::TiledBackingStoreBackend):
+        * platform/graphics/qt/TileQt.cpp:
+        (WebCore::TileQt::TileQt):
+        (WebCore::TileQt::~TileQt):
+        (WebCore::TileQt::isDirty):
+        (WebCore::TileQt::isReadyToPaint):
+        (WebCore::TileQt::invalidate):
+        (WebCore::TileQt::updateBackBuffer):
+        (WebCore::TileQt::swapBackBufferToFront):
+        (WebCore::TileQt::paint):
+        (WebCore::TiledBackingStoreBackend::paintCheckerPattern):
+        (WebCore::TiledBackingStoreBackend::createTile):
+        * platform/graphics/qt/TileQt.h: Copied from Source/WebCore/platform/graphics/Tile.h.
+        (WebCore::TileQt::create):
+        (WebCore::TileQt::coordinate):
+        (WebCore::TileQt::rect):
+
 2011-08-25  Andreas Kling  <kling@webkit.org>
 
         [Qt] Path::boundingRect() is unnecessarily slow.

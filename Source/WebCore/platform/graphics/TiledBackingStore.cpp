@@ -36,9 +36,9 @@ static IntPoint innerBottomRight(const IntRect& rect)
     return IntPoint(rect.maxX() - 1, rect.maxY() - 1);
 }
 
-
-TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client)
+TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, PassOwnPtr<TiledBackingStoreBackend> backend)
     : m_client(client)
+    , m_backend(backend)
     , m_tileBufferUpdateTimer(new TileTimer(this, &TiledBackingStore::tileBufferUpdateTimerFired))
     , m_tileCreationTimer(new TileTimer(this, &TiledBackingStore::tileCreationTimerFired))
     , m_tileSize(defaultTileWidth, defaultTileHeight)
@@ -153,7 +153,7 @@ void TiledBackingStore::paint(GraphicsContext* context, const IntRect& rect)
                 IntRect target = intersection(tileRect, dirtyRect);
                 if (target.isEmpty())
                     continue;
-                Tile::paintCheckerPattern(context, FloatRect(target));
+                m_backend->paintCheckerPattern(context, FloatRect(target));
             }
         }
     }
@@ -190,7 +190,7 @@ void TiledBackingStore::commitScaleChange()
     createTiles();
 }
 
-double TiledBackingStore::tileDistance(const IntRect& viewport, const Tile::Coordinate& tileCoordinate)
+double TiledBackingStore::tileDistance(const IntRect& viewport, const Tile::Coordinate& tileCoordinate) const
 {
     if (viewport.intersects(tileRectForCoordinate(tileCoordinate)))
         return 0;
@@ -260,7 +260,7 @@ void TiledBackingStore::createTiles()
     unsigned tilesToCreateCount = tilesToCreate.size();
     for (unsigned n = 0; n < tilesToCreateCount; ++n) {
         Tile::Coordinate coordinate = tilesToCreate[n];
-        setTile(coordinate, Tile::create(this, coordinate));
+        setTile(coordinate, m_backend->createTile(this, coordinate));
     }
     requiredTileCount -= tilesToCreateCount;
     

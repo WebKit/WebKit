@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "Tile.h"
+#include "TileQt.h"
 
 #if ENABLE(TILED_BACKING_STORE)
 
@@ -55,7 +55,7 @@ static QPixmap& checkeredPixmap()
     return *pixmap;
 }
     
-Tile::Tile(TiledBackingStore* backingStore, const Coordinate& tileCoordinate)
+TileQt::TileQt(TiledBackingStore* backingStore, const Coordinate& tileCoordinate)
     : m_backingStore(backingStore)
     , m_coordinate(tileCoordinate)
     , m_rect(m_backingStore->tileRectForCoordinate(tileCoordinate))
@@ -65,24 +65,24 @@ Tile::Tile(TiledBackingStore* backingStore, const Coordinate& tileCoordinate)
 {
 }
 
-Tile::~Tile()
+TileQt::~TileQt()
 {
     delete m_buffer;
     delete m_backBuffer;
     delete m_dirtyRegion;
 }
 
-bool Tile::isDirty() const 
+bool TileQt::isDirty() const
 { 
     return !m_dirtyRegion->isEmpty(); 
 }
 
-bool Tile::isReadyToPaint() const
+bool TileQt::isReadyToPaint() const
 { 
     return m_buffer; 
 }
 
-void Tile::invalidate(const IntRect& dirtyRect)
+void TileQt::invalidate(const IntRect& dirtyRect)
 {
     IntRect tileDirtyRect = intersection(dirtyRect, m_rect);
     if (tileDirtyRect.isEmpty())
@@ -91,15 +91,15 @@ void Tile::invalidate(const IntRect& dirtyRect)
     *m_dirtyRegion += tileDirtyRect;
 }
     
-Vector<IntRect> Tile::updateBackBuffer()
+Vector<IntRect> TileQt::updateBackBuffer()
 {
     if (m_buffer && !isDirty())
         return Vector<IntRect>();
 
     if (!m_backBuffer) {
         if (!m_buffer) {
-            m_backBuffer = new QPixmap(m_backingStore->m_tileSize.width(), m_backingStore->m_tileSize.height());
-            m_backBuffer->fill(m_backingStore->m_client->tiledBackingStoreBackgroundColor());
+            m_backBuffer = new QPixmap(m_backingStore->tileSize().width(), m_backingStore->tileSize().height());
+            m_backBuffer->fill(m_backingStore->client()->tiledBackingStoreBackgroundColor());
         } else {
             // Currently all buffers are updated synchronously at the same time so there is no real need
             // to have separate back and front buffers. Just use the existing buffer.
@@ -122,15 +122,15 @@ Vector<IntRect> Tile::updateBackBuffer()
         IntRect rect = dirtyRects[n];
         updatedRects.append(rect);
         context.clip(FloatRect(rect));
-        context.scale(FloatSize(m_backingStore->m_contentsScale, m_backingStore->m_contentsScale));
-        m_backingStore->m_client->tiledBackingStorePaint(&context, m_backingStore->mapToContents(rect));
+        context.scale(FloatSize(m_backingStore->contentsScale(), m_backingStore->contentsScale()));
+        m_backingStore->client()->tiledBackingStorePaint(&context, m_backingStore->mapToContents(rect));
         context.restore();
     }
 
     return updatedRects;
 }
 
-void Tile::swapBackBufferToFront()
+void TileQt::swapBackBufferToFront()
 {
     if (!m_backBuffer)
         return;
@@ -139,7 +139,7 @@ void Tile::swapBackBufferToFront()
     m_backBuffer = 0;
 }
 
-void Tile::paint(GraphicsContext* context, const IntRect& rect)
+void TileQt::paint(GraphicsContext* context, const IntRect& rect)
 {
     if (!m_buffer)
         return;
@@ -153,7 +153,7 @@ void Tile::paint(GraphicsContext* context, const IntRect& rect)
     context->platformContext()->drawPixmap(target, *m_buffer, source);
 }
     
-void Tile::paintCheckerPattern(GraphicsContext* context, const FloatRect& target)
+void TiledBackingStoreBackend::paintCheckerPattern(GraphicsContext* context, const FloatRect& target)
 {
     QPainter* painter = context->platformContext();
     QTransform worldTransform = painter->worldTransform();
@@ -176,6 +176,11 @@ void Tile::paintCheckerPattern(GraphicsContext* context, const FloatRect& target
                                     targetViewRect.top() % checkerSize));
     
     painter->setWorldTransform(worldTransform);
+}
+
+PassRefPtr<Tile> TiledBackingStoreBackend::createTile(TiledBackingStore* backingStore, const Tile::Coordinate& tileCoordinate)
+{
+    return TileQt::create(backingStore, tileCoordinate);
 }
 
 }

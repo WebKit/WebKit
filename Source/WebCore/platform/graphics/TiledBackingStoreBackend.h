@@ -1,53 +1,48 @@
 /*
- Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- 
+ Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
  License as published by the Free Software Foundation; either
  version 2 of the License, or (at your option) any later version.
- 
+
  This library is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Library General Public License for more details.
- 
+
  You should have received a copy of the GNU Library General Public License
  along with this library; see the file COPYING.LIB.  If not, write to
  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef Tile_h
-#define Tile_h
+#ifndef TiledBackingStoreBackend_h
+#define TiledBackingStoreBackend_h
 
 #if ENABLE(TILED_BACKING_STORE)
 
-#include "IntPoint.h"
-#include "IntPointHash.h"
-#include "IntRect.h"
-#include <wtf/RefCounted.h>
+#include "PassOwnPtr.h"
+#include "Tile.h"
 
 namespace WebCore {
 
-class GraphicsContext;
+class TiledBackingStore;
+class TiledBackingStoreBackend;
 
-class Tile : public RefCounted<Tile> {
+class TiledBackingStoreBackend {
 public:
-    typedef IntPoint Coordinate;
+    static PassOwnPtr<TiledBackingStoreBackend> create() { return adoptPtr(new TiledBackingStoreBackend); }
+    virtual ~TiledBackingStoreBackend() { }
+    virtual PassRefPtr<Tile> createTile(TiledBackingStore*, const Tile::Coordinate&);
+    virtual void paintCheckerPattern(GraphicsContext*, const FloatRect&);
 
-    virtual ~Tile() { }
-
-    virtual bool isDirty() const = 0;
-    virtual void invalidate(const IntRect&) = 0;
-    virtual Vector<IntRect> updateBackBuffer() = 0;
-    virtual void swapBackBufferToFront() = 0;
-    virtual bool isReadyToPaint() const = 0;
-    virtual void paint(GraphicsContext*, const IntRect&) = 0;
-
-    virtual const Tile::Coordinate& coordinate() const = 0;
-    virtual const IntRect& rect() const = 0;
+protected:
+    TiledBackingStoreBackend() { }
 };
 
 }
+
 #endif
+
 #endif
