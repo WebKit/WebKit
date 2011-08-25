@@ -47,15 +47,21 @@ namespace WebCore {
         {
             return adoptRef(new MessageEvent(data, origin, lastEventId, source, ports));
         }
+        static PassRefPtr<MessageEvent> create(const String& data)
+        {
+            return adoptRef(new MessageEvent(data));
+        }
         virtual ~MessageEvent();
 
         void initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, DOMWindow* source, PassOwnPtr<MessagePortArray>);
 
-        SerializedScriptValue* data() const { return m_data.get(); }
         const String& origin() const { return m_origin; }
         const String& lastEventId() const { return m_lastEventId; }
         DOMWindow* source() const { return m_source.get(); }
         MessagePortArray* ports() const { return m_ports.get(); }
+
+        // FIXME: Remove this when we have custom ObjC binding support.
+        SerializedScriptValue* data() const;
 
         // FIXME: remove this when we update the ObjC bindings (bug #28774).
         MessagePort* messagePort();
@@ -64,11 +70,22 @@ namespace WebCore {
 
         virtual bool isMessageEvent() const;
 
+        enum DataType {
+            DataTypeSerializedScriptValue,
+            DataTypeString
+        };
+        DataType dataType() const { return m_dataType; }
+        SerializedScriptValue* dataAsSerializedScriptValue() const { return m_dataAsSerializedScriptValue.get(); }
+        String dataAsString() const { return m_dataAsString; }
+
     private:
         MessageEvent();
         MessageEvent(PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortArray>);
+        explicit MessageEvent(const String& data);
 
-        RefPtr<SerializedScriptValue> m_data;
+        DataType m_dataType;
+        RefPtr<SerializedScriptValue> m_dataAsSerializedScriptValue;
+        String m_dataAsString;
         String m_origin;
         String m_lastEventId;
         RefPtr<DOMWindow> m_source;

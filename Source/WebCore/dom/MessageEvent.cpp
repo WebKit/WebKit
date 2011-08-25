@@ -34,17 +34,28 @@
 namespace WebCore {
 
 MessageEvent::MessageEvent()
-    : m_data(SerializedScriptValue::create())
+    : m_dataType(DataTypeSerializedScriptValue)
+    , m_dataAsSerializedScriptValue(SerializedScriptValue::create())
 {
 }
 
 MessageEvent::MessageEvent(PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortArray> ports)
     : Event(eventNames().messageEvent, false, false)
-    , m_data(data)
+    , m_dataType(DataTypeSerializedScriptValue)
+    , m_dataAsSerializedScriptValue(data)
     , m_origin(origin)
     , m_lastEventId(lastEventId)
     , m_source(source)
     , m_ports(ports)
+{
+}
+
+MessageEvent::MessageEvent(const String& data)
+    : Event(eventNames().messageEvent, false, false)
+    , m_dataType(DataTypeString)
+    , m_dataAsString(data)
+    , m_origin("")
+    , m_lastEventId("")
 {
 }
 
@@ -58,12 +69,21 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
         return;
         
     initEvent(type, canBubble, cancelable);
-    
-    m_data = data;
+
+    m_dataType = DataTypeSerializedScriptValue;
+    m_dataAsSerializedScriptValue = data;
     m_origin = origin;
     m_lastEventId = lastEventId;
     m_source = source;
     m_ports = ports;
+}
+
+// FIXME: Remove this when we have custom ObjC binding support.
+SerializedScriptValue* MessageEvent::data() const
+{
+    // WebSocket is not exposed in ObjC bindings, thus the data type should always be SerializedScriptValue.
+    ASSERT(m_dataType == DataTypeSerializedScriptValue);
+    return m_dataAsSerializedScriptValue.get();
 }
 
 // FIXME: remove this when we update the ObjC bindings (bug #28774).

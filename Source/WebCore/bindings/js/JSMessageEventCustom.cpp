@@ -42,6 +42,31 @@ using namespace JSC;
 
 namespace WebCore {
 
+JSValue JSMessageEvent::data(ExecState* exec) const
+{
+    if (JSValue cachedValue = getAnonymousValue(JSMessageEvent::dataSlot))
+        return cachedValue;
+
+    MessageEvent* event = static_cast<MessageEvent*>(impl());
+    JSValue result;
+    switch (event->dataType()) {
+    case MessageEvent::DataTypeSerializedScriptValue:
+        if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue())
+            result = serializedValue->deserialize(exec, globalObject(), NonThrowing);
+        else
+            result = jsNull();
+        break;
+
+    case MessageEvent::DataTypeString:
+        result = jsString(exec, event->dataAsString());
+        break;
+    }
+
+    // Save the result so we don't have to deserialize the value again.
+    const_cast<JSMessageEvent*>(this)->putAnonymousValue(exec->globalData(), JSMessageEvent::dataSlot, result);
+    return result;
+}
+
 JSValue JSMessageEvent::ports(ExecState* exec) const
 {
     MessagePortArray* ports = static_cast<MessageEvent*>(impl())->ports();
@@ -75,6 +100,12 @@ JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec)
 
     MessageEvent* event = static_cast<MessageEvent*>(this->impl());
     event->initMessageEvent(ustringToAtomicString(typeArg), canBubbleArg, cancelableArg, dataArg.release(), ustringToString(originArg), ustringToString(lastEventIdArg), sourceArg, messagePorts.release());
+    JSValue result;
+    if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue())
+        result = serializedValue->deserialize(exec, globalObject(), NonThrowing);
+    else
+        result = jsNull();
+    putAnonymousValue(exec->globalData(), JSMessageEvent::dataSlot, result);
     return jsUndefined();
 }
 

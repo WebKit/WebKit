@@ -393,9 +393,7 @@ void WebSocket::didReceiveMessage(const String& msg)
     if (m_state != OPEN && m_state != CLOSING)
         return;
     ASSERT(scriptExecutionContext());
-    RefPtr<MessageEvent> evt = MessageEvent::create();
-    evt->initMessageEvent(eventNames().messageEvent, false, false, SerializedScriptValue::create(msg), "", "", 0, 0);
-    dispatchEvent(evt);
+    dispatchEvent(MessageEvent::create(msg));
 }
 
 void WebSocket::didReceiveMessageError()

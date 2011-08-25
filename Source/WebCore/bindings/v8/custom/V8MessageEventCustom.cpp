@@ -42,6 +42,34 @@
 
 namespace WebCore {
 
+v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.MessageEvent.data");
+    MessageEvent* event = V8MessageEvent::toNative(info.Holder());
+
+    v8::Handle<v8::Value> result;
+    switch (event->dataType()) {
+    case MessageEvent::DataTypeSerializedScriptValue:
+        if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue())
+            result = serializedValue->deserialize();
+        else
+            result = v8::Null();
+        break;
+
+    case MessageEvent::DataTypeString: {
+        String stringValue = event->dataAsString();
+        result = v8::String::New(fromWebCoreString(stringValue), stringValue.length());
+        break;
+    }
+    }
+
+    // Overwrite the data attribute so it returns the cached result in future invocations.
+    // This custom handler (dataAccessGetter) will not be called again.
+    v8::PropertyAttribute dataAttr = static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly);
+    info.Holder()->ForceSet(name, result, dataAttr);
+    return result;
+}
+
 v8::Handle<v8::Value> V8MessageEvent::portsAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.MessageEvent.ports");
@@ -85,7 +113,7 @@ v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallback(const v8::Argumen
     }
     event->initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg.release(), originArg, lastEventIdArg, sourceArg, portArray.release());
     v8::PropertyAttribute dataAttr = static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly);
-    SerializedScriptValue::deserializeAndSetProperty(args.Holder(), "data", dataAttr, event->data());
+    SerializedScriptValue::deserializeAndSetProperty(args.Holder(), "data", dataAttr, event->dataAsSerializedScriptValue());
     return v8::Undefined();
   }
 

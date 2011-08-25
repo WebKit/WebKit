@@ -111,7 +111,7 @@ window.doPassFail = function(result, msg) {
 function onmessage(evt) {
     eventData = evt.data;
     if (evt.data !== evt.data)
-        console.innerHTML += "MessageEvent.data does not produce the same value on multiple queries.<br>";
+        console.innerHTML += "MessageEvent.data does not produce the same value on multiple queries. " + evt.data + ", " + evt.data + "<br>";
     var message = messages.shift();
     switch (message) {
     case "cyclicObject":
