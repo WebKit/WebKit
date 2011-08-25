@@ -37,6 +37,10 @@
 
 #define USE_WGC3D_TYPES
 
+#if WEBKIT_USING_SKIA
+struct GrGLInterface;
+#endif
+
 namespace WebKit {
 
 // WGC3D types match the corresponding GL types as defined in OpenGL ES 2.0
@@ -59,10 +63,6 @@ typedef signed long int WGC3Dsizeiptr;
 
 // Typedef for server-side objects like OpenGL textures and program objects.
 typedef WGC3Duint WebGLId;
-
-#if WEBKIT_USING_SKIA
-struct GrGLInterface;
-#endif
 
 class WebView;
 

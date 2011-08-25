@@ -1,3 +1,12 @@
+2011-08-25  Brian Salomon  <bsalomon@google.com>
+
+        [SKIA] Move forward decl of skia type outside namespace Webkit
+        https://bugs.webkit.org/show_bug.cgi?id=66942
+
+        Reviewed by Stephen White.
+
+        * public/WebGraphicsContext3D.h:
+
 2011-08-25  Mikhail Naganov  <mnaganov@chromium.org>
 
         Chromium: expose MemoryCache::prune and FontCache::purgeInactiveFontData.
