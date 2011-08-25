@@ -58,6 +58,12 @@ namespace JSC {
             , m_numParametersForCall(numParameters)
             , m_numParametersForConstruct(numParameters)
         {
+            finishCreation(globalData);
+        }
+
+        void finishCreation(JSGlobalData& globalData)
+        {
+            Base::finishCreation(globalData);
 #if ENABLE(JIT)
             Weak<ExecutableBase> finalizer(globalData, this, executableFinalizer());
             finalizer.leakHandle();
@@ -505,7 +511,7 @@ namespace JSC {
         static const ClassInfo s_info;
 
     protected:
-        void constructorBody(JSGlobalData& globalData, const Identifier& name, int firstLine, int lastLine)
+        void finishCreation(JSGlobalData& globalData, const Identifier& name, int firstLine, int lastLine)
         {
             m_firstLine = firstLine;
             m_lastLine = lastLine;

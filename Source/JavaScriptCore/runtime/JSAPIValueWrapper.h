@@ -24,6 +24,7 @@
 #define JSAPIValueWrapper_h
 
 #include "JSCell.h"
+#include "JSValue.h"
 #include "CallFrame.h"
 #include "Structure.h"
 
@@ -50,12 +51,19 @@ namespace JSC {
             return new (allocateCell<JSAPIValueWrapper>(*exec->heap())) JSAPIValueWrapper(exec, value);
         }
 
+    protected:
+        void finishCreation(ExecState* exec, JSValue value)
+        {
+            Base::finishCreation(exec->globalData());
+            m_value.set(exec->globalData(), this, value);
+            ASSERT(!value.isCell());
+        }
+
     private:
         JSAPIValueWrapper(ExecState* exec, JSValue value)
             : JSCell(exec->globalData(), exec->globalData().apiWrapperStructure.get())
         {
-            m_value.set(exec->globalData(), this, value);
-            ASSERT(!value.isCell());
+            finishCreation(exec, value);
         }
 
         WriteBarrier<Unknown> m_value;

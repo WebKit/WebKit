@@ -41,6 +41,7 @@ namespace JSC {
         GetterSetter(ExecState* exec)
             : JSCell(exec->globalData(), exec->globalData().getterSetterStructure.get())
         {
+            finishCreation(exec->globalData());
         }
 
     public:

@@ -80,7 +80,7 @@ namespace JSC {
     private:
         explicit JSCell(VPtrStealingHackType) { }
         JSCell(JSGlobalData&, Structure*);
-        JSCell(JSGlobalData&, Structure*, CreatingEarlyCellTag);
+        JSCell(CreatingEarlyCellTag);
         virtual ~JSCell();
 
     public:
@@ -151,8 +151,8 @@ namespace JSC {
     protected:
         static const unsigned AnonymousSlotCount = 0;
 
-        void constructorBody(JSGlobalData&);
-        void constructorBody(JSGlobalData&, Structure*, CreatingEarlyCellTag);
+        void finishCreation(JSGlobalData&);
+        void finishCreation(JSGlobalData&, Structure*, CreatingEarlyCellTag);
 
     private:
         // Base implementation; for non-object classes implements getPropertySlot.
@@ -170,15 +170,13 @@ namespace JSC {
     inline JSCell::JSCell(JSGlobalData& globalData, Structure* structure)
         : m_structure(globalData, this, structure)
     {
-        constructorBody(globalData);
     }
 
-    inline JSCell::JSCell(JSGlobalData& globalData, Structure* structure, CreatingEarlyCellTag)
+    inline JSCell::JSCell(CreatingEarlyCellTag)
     {
-        constructorBody(globalData, structure, CreatingEarlyCell); 
     }
 
-    inline void JSCell::constructorBody(JSGlobalData& globalData)
+    inline void JSCell::finishCreation(JSGlobalData& globalData)
     {
 #if ENABLE(GC_VALIDATION)
         ASSERT(globalData.isInitializingObject());
@@ -189,9 +187,10 @@ namespace JSC {
         ASSERT(m_structure);
     }
 
-    inline void JSCell::constructorBody(JSGlobalData& globalData, Structure* structure, CreatingEarlyCellTag)
+    inline void JSCell::finishCreation(JSGlobalData& globalData, Structure* structure, CreatingEarlyCellTag)
     {
 #if ENABLE(GC_VALIDATION)
+        ASSERT(globalData.isInitializingObject());
         globalData.setInitializingObject(false);
         if (structure)
 #endif

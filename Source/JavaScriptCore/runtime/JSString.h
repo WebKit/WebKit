@@ -190,8 +190,6 @@ namespace JSC {
             , m_value(value)
             , m_fiberCount(0)
         {
-            ASSERT(!m_value.isNull());
-            Heap::heap(this)->reportExtraMemoryCost(value.impl()->cost());
         }
 
         enum HasOtherOwnerType { HasOtherOwner };
@@ -201,8 +199,6 @@ namespace JSC {
             , m_value(value)
             , m_fiberCount(0)
         {
-            ASSERT(!m_value.isNull());
-            Heap::heap(this)->reportExtraMemoryCost(value.impl()->cost());
         }
         JSString(JSGlobalData& globalData, PassRefPtr<StringImpl> value, HasOtherOwnerType)
             : JSCell(globalData, globalData.stringStructure.get())
@@ -210,14 +206,12 @@ namespace JSC {
             , m_value(value)
             , m_fiberCount(0)
         {
-            ASSERT(!m_value.isNull());
         }
         JSString(JSGlobalData& globalData, PassRefPtr<RopeImpl> rope)
             : JSCell(globalData, globalData.stringStructure.get())
             , m_length(rope->length())
             , m_fiberCount(1)
         {
-            m_fibers[0] = rope.leakRef();
         }
         // This constructor constructs a new string by concatenating s1 & s2.
         // This should only be called with fiberCount <= 3.
@@ -226,11 +220,6 @@ namespace JSC {
             , m_length(s1->length() + s2->length())
             , m_fiberCount(fiberCount)
         {
-            ASSERT(fiberCount <= s_maxInternalRopeLength);
-            unsigned index = 0;
-            appendStringInConstruct(index, s1);
-            appendStringInConstruct(index, s2);
-            ASSERT(fiberCount == index);
         }
         // This constructor constructs a new string by concatenating s1 & s2.
         // This should only be called with fiberCount <= 3.
@@ -239,11 +228,6 @@ namespace JSC {
             , m_length(s1->length() + u2.length())
             , m_fiberCount(fiberCount)
         {
-            ASSERT(fiberCount <= s_maxInternalRopeLength);
-            unsigned index = 0;
-            appendStringInConstruct(index, s1);
-            appendStringInConstruct(index, u2);
-            ASSERT(fiberCount == index);
         }
         // This constructor constructs a new string by concatenating s1 & s2.
         // This should only be called with fiberCount <= 3.
@@ -252,22 +236,12 @@ namespace JSC {
             , m_length(u1.length() + s2->length())
             , m_fiberCount(fiberCount)
         {
-            ASSERT(fiberCount <= s_maxInternalRopeLength);
-            unsigned index = 0;
-            appendStringInConstruct(index, u1);
-            appendStringInConstruct(index, s2);
-            ASSERT(fiberCount == index);
         }
-        // This constructor constructs a new string by concatenating v1, v2 & v3.
-        // This should only be called with fiberCount <= 3 ... which since every
-        // value must require a fiberCount of at least one implies that the length
-        // for each value must be exactly 1!
-        JSString(ExecState* exec, JSValue v1, JSValue v2, JSValue v3)
+        JSString(ExecState* exec)
             : JSCell(exec->globalData(), exec->globalData().stringStructure.get())
             , m_length(0)
             , m_fiberCount(s_maxInternalRopeLength)
         {
-            constructorBody(exec, v1, v2, v3);
         }
 
         // This constructor constructs a new string by concatenating u1 & u2.
@@ -276,10 +250,6 @@ namespace JSC {
             , m_length(u1.length() + u2.length())
             , m_fiberCount(2)
         {
-            unsigned index = 0;
-            appendStringInConstruct(index, u1);
-            appendStringInConstruct(index, u2);
-            ASSERT(index <= s_maxInternalRopeLength);
         }
 
         // This constructor constructs a new string by concatenating u1, u2 & u3.
@@ -288,63 +258,151 @@ namespace JSC {
             , m_length(u1.length() + u2.length() + u3.length())
             , m_fiberCount(s_maxInternalRopeLength)
         {
+        }
+
+        void finishCreation(JSGlobalData& globalData, const UString& value)
+        {
+            Base::finishCreation(globalData);
+            ASSERT(!m_value.isNull());
+            Heap::heap(this)->reportExtraMemoryCost(value.impl()->cost());
+        }
+
+        void finishCreation(JSGlobalData& globalData)
+        {
+            Base::finishCreation(globalData);
+            ASSERT(!m_value.isNull());
+        }
+
+        void finishCreation(JSGlobalData& globalData, PassRefPtr<RopeImpl> rope)
+        {
+            Base::finishCreation(globalData);
+            m_fibers[0] = rope.leakRef();
+        }
+
+        void finishCreation(JSGlobalData& globalData, unsigned fiberCount, JSString* s1, JSString* s2)
+        {
+            Base::finishCreation(globalData);
+            ASSERT(fiberCount <= s_maxInternalRopeLength);
             unsigned index = 0;
-            appendStringInConstruct(index, u1);
-            appendStringInConstruct(index, u2);
-            appendStringInConstruct(index, u3);
+            appendStringInCreate(index, s1);
+            appendStringInCreate(index, s2);
+            ASSERT(fiberCount == index);
+        }
+
+        void finishCreation(JSGlobalData& globalData, unsigned fiberCount, JSString* s1, const UString& u2)
+        {
+            Base::finishCreation(globalData);
+            ASSERT(fiberCount <= s_maxInternalRopeLength);
+            unsigned index = 0;
+            appendStringInCreate(index, s1);
+            appendStringInCreate(index, u2);
+            ASSERT(fiberCount == index);
+        }
+
+        void finishCreation(JSGlobalData& globalData, unsigned fiberCount, const UString& u1, JSString* s2)
+        {
+            Base::finishCreation(globalData);
+            ASSERT(fiberCount <= s_maxInternalRopeLength);
+            unsigned index = 0;
+            appendStringInCreate(index, u1);
+            appendStringInCreate(index, s2);
+            ASSERT(fiberCount == index);
+        }
+
+        // Fills in the new string by concatenating v1, v2 & v3.
+        // This should only be called with fiberCount <= 3 ... which since every
+        // value must require a fiberCount of at least one implies that the length
+        // for each value must be exactly 1!
+        void finishCreation(ExecState* exec, JSValue v1, JSValue v2, JSValue v3)
+        {
+            Base::finishCreation(exec->globalData());
+            unsigned index = 0;
+            appendValueInCreateAndIncrementLength(exec, index, v1);
+            appendValueInCreateAndIncrementLength(exec, index, v2);
+            appendValueInCreateAndIncrementLength(exec, index, v3);
+            ASSERT(index == s_maxInternalRopeLength);
+        }
+
+        void finishCreation(JSGlobalData& globalData, const UString& u1, const UString& u2)
+        {
+            Base::finishCreation(globalData);
+            unsigned index = 0;
+            appendStringInCreate(index, u1);
+            appendStringInCreate(index, u2);
             ASSERT(index <= s_maxInternalRopeLength);
         }
 
-    protected:
-        void constructorBody(ExecState* exec, JSValue v1, JSValue v2, JSValue v3)
+        void finishCreation(JSGlobalData& globalData, const UString& u1, const UString& u2, const UString& u3)
         {
+            Base::finishCreation(globalData);
             unsigned index = 0;
-            appendValueInConstructAndIncrementLength(exec, index, v1);
-            appendValueInConstructAndIncrementLength(exec, index, v2);
-            appendValueInConstructAndIncrementLength(exec, index, v3);
-            ASSERT(index == s_maxInternalRopeLength);
+            appendStringInCreate(index, u1);
+            appendStringInCreate(index, u2);
+            appendStringInCreate(index, u3);
+            ASSERT(index <= s_maxInternalRopeLength);
         }
 
     public:
         static JSString* create(JSGlobalData& globalData, const UString& value)
         {
-            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, value);
+            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData, value);
+            newString->finishCreation(globalData, value);
+            return newString;
         }
         static JSString* createHasOtherOwner(JSGlobalData& globalData, const UString& value)
         {
-            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, value, HasOtherOwner);
+            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData, value, HasOtherOwner);
+            newString->finishCreation(globalData, value);
+            return newString;
         }
         static JSString* createHasOtherOwner(JSGlobalData& globalData, PassRefPtr<StringImpl> value)
         {
-            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, value, HasOtherOwner);
+            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData, value, HasOtherOwner);
+            newString->finishCreation(globalData);
+            return newString;
         }
         static JSString* create(JSGlobalData& globalData, PassRefPtr<RopeImpl> rope)
         {
-            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, rope);
+            RefPtr<RopeImpl> tempRope = rope;
+            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData, tempRope);
+            newString->finishCreation(globalData, tempRope);
+            return newString;
         }
         static JSString* create(JSGlobalData& globalData, unsigned fiberCount, JSString* s1, JSString* s2)
         {
-            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, fiberCount, s1, s2);
+            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData, fiberCount, s1, s2);
+            newString->finishCreation(globalData, fiberCount, s1, s2);
+            return newString;
         }
         static JSString* create(JSGlobalData& globalData, unsigned fiberCount, JSString* s1, const UString& u2)
         {
-            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, fiberCount, s1, u2);
+            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData, fiberCount, s1, u2);
+            newString->finishCreation(globalData, fiberCount, s1, u2);
+            return newString;
         }
         static JSString* create(JSGlobalData& globalData, unsigned fiberCount, const UString& u1, JSString* s2)
         {
-            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, fiberCount, u1, s2);
+            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData, fiberCount, u1, s2);
+            newString->finishCreation(globalData, fiberCount, u1, s2);
+            return newString;
         }
         static JSString* create(ExecState* exec, JSValue v1, JSValue v2, JSValue v3)
         {
-            return new (allocateCell<JSString>(*exec->heap())) JSString(exec, v1, v2, v3);
+            JSString* newString = new (allocateCell<JSString>(*exec->heap())) JSString(exec);
+            newString->finishCreation(exec, v1, v2, v3);
+            return newString;
         }
         static JSString* create(JSGlobalData& globalData, const UString& u1, const UString& u2)
         {
-            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, u1, u2);
+            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData, u1, u2);
+            newString->finishCreation(globalData, u1, u2);
+            return newString;
         }
         static JSString* create(JSGlobalData& globalData, const UString& u1, const UString& u2, const UString& u3)
         {
-            return new (allocateCell<JSString>(globalData.heap)) JSString(globalData, u1, u2, u3);
+            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData, u1, u2, u3);
+            newString->finishCreation(globalData, u1, u2, u3);
+            return newString;
         }
 
         ~JSString()
@@ -397,7 +455,7 @@ namespace JSC {
         void outOfMemory(ExecState*) const;
         JSString* substringFromRope(ExecState*, unsigned offset, unsigned length);
 
-        void appendStringInConstruct(unsigned& index, const UString& string)
+        void appendStringInCreate(unsigned& index, const UString& string)
         {
             StringImpl* impl = string.impl();
             impl->ref();
@@ -405,7 +463,7 @@ namespace JSC {
             Heap::heap(this)->reportExtraMemoryCost(string.impl()->cost());
         }
 
-        void appendStringInConstruct(unsigned& index, JSString* jsString)
+        void appendStringInCreate(unsigned& index, JSString* jsString)
         {
             if (jsString->isRope()) {
                 for (unsigned i = 0; i < jsString->m_fiberCount; ++i) {
@@ -414,16 +472,16 @@ namespace JSC {
                     m_fibers[index++] = fiber;
                 }
             } else
-                appendStringInConstruct(index, jsString->string());
+                appendStringInCreate(index, jsString->string());
         }
 
-        void appendValueInConstructAndIncrementLength(ExecState* exec, unsigned& index, JSValue v)
+        void appendValueInCreateAndIncrementLength(ExecState* exec, unsigned& index, JSValue v)
         {
             if (v.isString()) {
                 ASSERT(v.asCell()->isString());
                 JSString* s = static_cast<JSString*>(v.asCell());
                 ASSERT(s->fiberCount() == 1);
-                appendStringInConstruct(index, s);
+                appendStringInCreate(index, s);
                 m_length += s->length();
             } else {
                 UString u(v.toString(exec));

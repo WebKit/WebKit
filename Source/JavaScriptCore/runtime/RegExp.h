@@ -75,6 +75,9 @@ namespace JSC {
 
         RegExpKey key() { return RegExpKey(m_flags, m_patternString); }
 
+    protected:
+        void finishCreation(JSGlobalData&);
+
     private:
         friend class RegExpCache;
         RegExp(JSGlobalData&, const UString&, RegExpFlags);

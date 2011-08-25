@@ -85,8 +85,9 @@ namespace JSC {
         static const ClassInfo s_info;
 
     protected:
-        void constructorBody(ExecState* exec, PropertyNameArrayData* propertyNameArrayData)
+        void finishCreation(ExecState* exec, PropertyNameArrayData* propertyNameArrayData)
         {
+            Base::finishCreation(exec->globalData());
             PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArrayData->propertyNameVector();
             for (size_t i = 0; i < m_jsStringsSize; ++i)
                 m_jsStrings[i].set(exec->globalData(), this, jsOwnedString(exec, propertyNameVector[i].ustring()));

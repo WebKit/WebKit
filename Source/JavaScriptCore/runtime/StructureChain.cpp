@@ -37,16 +37,7 @@ ClassInfo StructureChain::s_info = { "StructureChain", 0, 0, 0 };
 StructureChain::StructureChain(JSGlobalData& globalData, Structure* structure, Structure* head)
     : JSCell(globalData, structure)
 {
-    size_t size = 0;
-    for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
-        ++size;
-    
-    m_vector = adoptArrayPtr(new WriteBarrier<Structure>[size + 1]);
-
-    size_t i = 0;
-    for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
-        m_vector[i++].set(globalData, this, current);
-    m_vector[i].clear();
+    finishCreation(globalData, head);
 }
 
 StructureChain::~StructureChain()

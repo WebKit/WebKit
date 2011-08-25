@@ -88,6 +88,12 @@ RegExp::RegExp(JSGlobalData& globalData, const UString& patternString, RegExpFla
     , m_rtMatchFoundCount(0)
 #endif
 {
+    finishCreation(globalData);
+}
+
+void RegExp::finishCreation(JSGlobalData& globalData)
+{
+    Base::finishCreation(globalData);
     Yarr::YarrPattern pattern(m_patternString, ignoreCase(), multiline(), &m_constructionError);
     if (m_constructionError)
         m_state = ParseError;

@@ -176,6 +176,7 @@ Structure::Structure(JSGlobalData& globalData, JSValue prototype, const TypeInfo
     , m_preventExtensions(false)
     , m_didTransition(false)
 {
+    finishCreation(globalData);
     ASSERT(m_prototype);
     ASSERT(m_prototype.isObject() || m_prototype.isNull());
 }
@@ -183,7 +184,7 @@ Structure::Structure(JSGlobalData& globalData, JSValue prototype, const TypeInfo
 const ClassInfo Structure::s_info = { "Structure", 0, 0, 0 };
 
 Structure::Structure(JSGlobalData& globalData)
-    : JSCell(globalData, this, CreatingEarlyCell)
+    : JSCell(CreatingEarlyCell)
     , m_typeInfo(CompoundType, OverridesVisitChildren)
     , m_prototype(globalData, this, jsNull())
     , m_classInfo(&s_info)
@@ -199,6 +200,7 @@ Structure::Structure(JSGlobalData& globalData)
     , m_preventExtensions(false)
     , m_didTransition(false)
 {
+    finishCreation(globalData, this, CreatingEarlyCell);
     ASSERT(m_prototype);
     ASSERT(m_prototype.isNull());
     ASSERT(!globalData.structureStructure);
@@ -221,6 +223,7 @@ Structure::Structure(JSGlobalData& globalData, const Structure* previous)
     , m_preventExtensions(previous->m_preventExtensions)
     , m_didTransition(true)
 {
+    finishCreation(globalData);
     ASSERT(m_prototype);
     ASSERT(m_prototype.isObject() || m_prototype.isNull());
 }

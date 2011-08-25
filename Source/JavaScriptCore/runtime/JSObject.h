@@ -259,6 +259,17 @@ namespace JSC {
         static JS_EXPORTDATA const ClassInfo s_info;
 
     protected:
+        void finishCreation(JSGlobalData& globalData, PropertyStorage inlineStorage)
+        {
+            Base::finishCreation(globalData);
+            ASSERT(inherits(&s_info));
+            ASSERT(m_structure->propertyStorageCapacity() < baseExternalStorageCapacity);
+            ASSERT(m_structure->isEmpty());
+            ASSERT(prototype().isNull() || Heap::heap(this) == Heap::heap(prototype()));
+            ASSERT(static_cast<void*>(inlineStorage) == static_cast<void*>(this + 1));
+            ASSERT(m_structure->typeInfo().type() == ObjectType);
+        }
+
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
@@ -435,12 +446,7 @@ inline JSObject::JSObject(JSGlobalData& globalData, Structure* structure, Proper
     : JSCell(globalData, structure)
     , m_propertyStorage(inlineStorage)
 {
-    ASSERT(inherits(&s_info));
-    ASSERT(m_structure->propertyStorageCapacity() < baseExternalStorageCapacity);
-    ASSERT(m_structure->isEmpty());
-    ASSERT(prototype().isNull() || Heap::heap(this) == Heap::heap(prototype()));
-    ASSERT(static_cast<void*>(inlineStorage) == static_cast<void*>(this + 1));
-    ASSERT(m_structure->typeInfo().type() == ObjectType);
+    finishCreation(globalData, inlineStorage);
 }
 
 inline JSObject::~JSObject()

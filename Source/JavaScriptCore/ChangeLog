@@ -1,3 +1,49 @@
+2011-08-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Unzip initialization lists and constructors in JSCell hierarchy (1/7)
+        https://bugs.webkit.org/show_bug.cgi?id=66827
+
+        Reviewed by Geoffrey Garen.
+
+        Added finishCreation() methods to all immediately subclasses of JSCell with
+        non-empty constructors.  Part of a larger refactoring to "unzip" initialization
+        lists and constructor bodies.  Also renamed JSCell's constructorBody() method
+        to finishCreation().
+
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::ExecutableBase):
+        (JSC::ExecutableBase::constructorBody):
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::GetterSetter):
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::constructorBody):
+        (JSC::JSAPIValueWrapper::JSAPIValueWrapper):
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSCell::JSCell):
+        (JSC::JSCell::JSCell::constructorBody):
+        * runtime/JSObject.h:
+        (JSC::JSObject::constructorBody):
+        (JSC::JSObject::JSObject):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::constructorBody):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::JSString):
+        (JSC::RopeBuilder::constructorBody):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::constructorBody):
+        * runtime/RegExp.h:
+        * runtime/ScopeChain.h:
+        (JSC::ScopeChainNode::ScopeChainNode):
+        (JSC::ScopeChainNode::constructorBody):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::StructureChain):
+        * runtime/StructureChain.h:
+        (JSC::StructureChain::create):
+        (JSC::StructureChain::constructorBody):
+
 2011-08-25  Gabor Loki  <loki@webkit.org>
 
         REGRESSION(r93755): It made 14 jsc test and ~500 layout test fail on Qt-ARM bot

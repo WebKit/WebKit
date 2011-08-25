@@ -43,6 +43,13 @@ namespace JSC {
             , globalObject(*globalData, this, globalObject)
             , globalThis(*globalData, this, globalThis)
         {
+            finishCreation(globalData, globalObject);
+        }
+
+    protected:
+        void finishCreation(JSGlobalData* globalData, JSGlobalObject* globalObject)
+        {
+            Base::finishCreation(*globalData);
             ASSERT(globalData);
             ASSERT(globalObject);
         }
