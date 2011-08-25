@@ -1,5 +1,12 @@
 2011-08-25  Nate Chapin  <japhet@chromium.org>
 
+        Windows build fix after r93811.
+
+        * loader/cf/ResourceLoaderCFNet.cpp:
+        (WebCore::ResourceLoader::shouldCacheResponse):
+
+2011-08-25  Nate Chapin  <japhet@chromium.org>
+
         Split some of the variables out of ThreadableLoaderOptions
         into a superclass, ResourceLoaderOptions. Use ResourceLoaderOptions
         all the way down to ResourceLoader.
