@@ -315,10 +315,10 @@ public:
     SVGLength strokeDashOffset() const { return stroke->dashOffset; }
     SVGLength kerning() const { return text->kerning; }
     float stopOpacity() const { return stops->opacity; }
-    Color stopColor() const { return stops->color; }
+    const Color& stopColor() const { return stops->color; }
     float floodOpacity() const { return misc->floodOpacity; }
-    Color floodColor() const { return misc->floodColor; }
-    Color lightingColor() const { return misc->lightingColor; }
+    const Color& floodColor() const { return misc->floodColor; }
+    const Color& lightingColor() const { return misc->lightingColor; }
     SVGLength baselineShiftValue() const { return misc->baselineShiftValue; }
     ShadowData* shadow() const { return shadowSVG->shadow.get(); }
     String clipperResource() const { return resources->clipper; }

@@ -194,34 +194,7 @@ float SVGLength::value(const SVGElement* context) const
 
 float SVGLength::value(const SVGElement* context, ExceptionCode& ec) const
 {
-    switch (extractType(m_unit)) {
-    case LengthTypeUnknown:
-        ec = NOT_SUPPORTED_ERR;
-        return 0;
-    case LengthTypeNumber:
-        return m_valueInSpecifiedUnits;
-    case LengthTypePercentage:
-        return convertValueFromPercentageToUserUnits(m_valueInSpecifiedUnits / 100, context, ec);
-    case LengthTypeEMS:
-        return convertValueFromEMSToUserUnits(m_valueInSpecifiedUnits, context, ec);
-    case LengthTypeEXS:
-        return convertValueFromEXSToUserUnits(m_valueInSpecifiedUnits, context, ec);
-    case LengthTypePX:
-        return m_valueInSpecifiedUnits;
-    case LengthTypeCM:
-        return m_valueInSpecifiedUnits / 2.54f * cssPixelsPerInch;
-    case LengthTypeMM:
-        return m_valueInSpecifiedUnits / 25.4f * cssPixelsPerInch;
-    case LengthTypeIN:
-        return m_valueInSpecifiedUnits * cssPixelsPerInch;
-    case LengthTypePT:
-        return m_valueInSpecifiedUnits / 72 * cssPixelsPerInch;
-    case LengthTypePC:
-        return m_valueInSpecifiedUnits / 6 * cssPixelsPerInch;
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    return convertValueToUserUnits(m_valueInSpecifiedUnits, extractType(m_unit), context, ec);
 }
 
 void SVGLength::setValue(const SVGElement* context, float value, SVGLengthMode mode, SVGLengthType unitType, ExceptionCode& ec)
@@ -232,50 +205,75 @@ void SVGLength::setValue(const SVGElement* context, float value, SVGLengthMode m
 
 void SVGLength::setValue(float value, const SVGElement* context, ExceptionCode& ec)
 {
-    switch (extractType(m_unit)) {
+    // 100% = 100.0 instead of 1.0 for historical reasons, this could eventually be changed
+    if (extractType(m_unit) == LengthTypePercentage)
+        value = value / 100;
+
+    float convertedValue = convertValueFromUserUnits(value, extractType(m_unit), context, ec);
+    if (!ec)
+        m_valueInSpecifiedUnits = convertedValue;
+}
+
+float SVGLength::convertValueToUserUnits(float value, SVGLengthType fromUnit, const SVGElement* context, ExceptionCode& ec) const
+{
+    switch (fromUnit) {
     case LengthTypeUnknown:
         ec = NOT_SUPPORTED_ERR;
-        break;
+        return 0;
     case LengthTypeNumber:
-        m_valueInSpecifiedUnits = value;
-        break;
-    case LengthTypePercentage: {
-        float result = convertValueFromUserUnitsToPercentage(value, context, ec);
-        if (!ec)
-            m_valueInSpecifiedUnits = result; 
-        break;
-    }
-    case LengthTypeEMS: {
-        float result = convertValueFromUserUnitsToEMS(value, context, ec);
-        if (!ec)
-            m_valueInSpecifiedUnits = result;
-        break;
-    }
-    case LengthTypeEXS: {
-        float result = convertValueFromUserUnitsToEXS(value, context, ec);
-        if (!ec)
-            m_valueInSpecifiedUnits = result; 
-        break;
-    }
+        return value;
     case LengthTypePX:
-        m_valueInSpecifiedUnits = value;
-        break;
+        return value;
+    case LengthTypePercentage:
+        return convertValueFromPercentageToUserUnits(value / 100, context, ec);
+    case LengthTypeEMS:
+        return convertValueFromEMSToUserUnits(value, context, ec);
+    case LengthTypeEXS:
+        return convertValueFromEXSToUserUnits(value, context, ec);
     case LengthTypeCM:
-        m_valueInSpecifiedUnits = value * 2.54f / cssPixelsPerInch;
-        break;
+        return value * cssPixelsPerInch / 2.54f;
     case LengthTypeMM:
-        m_valueInSpecifiedUnits = value * 25.4f / cssPixelsPerInch;
-        break;
+        return value * cssPixelsPerInch / 25.4f;
     case LengthTypeIN:
-        m_valueInSpecifiedUnits = value / cssPixelsPerInch;
-        break;
+        return value * cssPixelsPerInch;
     case LengthTypePT:
-        m_valueInSpecifiedUnits = value * 72 / cssPixelsPerInch;
-        break;
+        return value * cssPixelsPerInch / 72;
     case LengthTypePC:
-        m_valueInSpecifiedUnits = value * 6 / cssPixelsPerInch;
-        break;
+        return value * cssPixelsPerInch / 6;
     }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+float SVGLength::convertValueFromUserUnits(float value, SVGLengthType toUnit, const SVGElement* context, ExceptionCode& ec) const
+{
+    switch (toUnit) {
+    case LengthTypeUnknown:
+        ec = NOT_SUPPORTED_ERR;
+        return 0;
+    case LengthTypeNumber:
+        return value;
+    case LengthTypePercentage:
+        return convertValueFromUserUnitsToPercentage(value * 100, context, ec);
+    case LengthTypeEMS:
+        return convertValueFromUserUnitsToEMS(value, context, ec);
+    case LengthTypeEXS:
+        return convertValueFromUserUnitsToEXS(value, context, ec);
+    case LengthTypePX:
+        return value;
+    case LengthTypeCM:
+        return value * 2.54f / cssPixelsPerInch;
+    case LengthTypeMM:
+        return value * 25.4f / cssPixelsPerInch;
+    case LengthTypeIN:
+        return value / cssPixelsPerInch;
+    case LengthTypePT:
+        return value * 72 / cssPixelsPerInch;
+    case LengthTypePC:
+        return value * 6 / cssPixelsPerInch;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 float SVGLength::valueAsPercentage() const

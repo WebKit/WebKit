@@ -110,12 +110,75 @@ public:
         return type == LengthTypePercentage || type == LengthTypeEMS || type == LengthTypeEXS;
     }
 
+    bool isZero() const 
+    { 
+        return !m_valueInSpecifiedUnits;
+    }
+
     static SVGLength fromCSSPrimitiveValue(CSSPrimitiveValue*);
     static PassRefPtr<CSSPrimitiveValue> toCSSPrimitiveValue(const SVGLength&);
     static SVGLengthMode lengthModeForAnimatedLengthAttribute(const QualifiedName&);
 
+    SVGLength blend(const SVGLength& from, float progress) const
+    {
+        SVGLengthType toType = unitType();
+        SVGLengthType fromType = from.unitType();
+
+        if ((from.isZero() && isZero())
+            || fromType == LengthTypeUnknown
+            || toType == LengthTypeUnknown
+            || (!from.isZero() && fromType != LengthTypePercentage && toType == LengthTypePercentage)
+            || (!isZero() && fromType == LengthTypePercentage && toType != LengthTypePercentage)
+            || (!from.isZero() && !isZero() && (fromType == LengthTypeEMS || fromType == LengthTypeEXS) && fromType != toType))
+            return *this;
+
+        SVGLength length;
+        ExceptionCode ec = 0;
+
+        if (fromType == LengthTypePercentage || toType == LengthTypePercentage) {
+            float fromPercent = from.valueAsPercentage() * 100;
+            float toPercent = valueAsPercentage() * 100;
+            length.newValueSpecifiedUnits(LengthTypePercentage, fromPercent + (toPercent - fromPercent) * progress, ec);
+            if (ec)
+                return SVGLength();
+            return length;
+        }
+
+        if (fromType == toType || from.isZero() || isZero() || fromType == LengthTypeEMS || fromType == LengthTypeEXS) {
+            float fromValue = from.valueInSpecifiedUnits();
+            float toValue = valueInSpecifiedUnits();
+            if (isZero())
+                length.newValueSpecifiedUnits(fromType, fromValue + (toValue - fromValue) * progress, ec);
+            else
+                length.newValueSpecifiedUnits(toType, fromValue + (toValue - fromValue) * progress, ec);
+            if (ec)
+                return SVGLength();
+            return length;
+        }
+
+        ASSERT(!isRelative());
+        ASSERT(!from.isRelative());
+        float fromValueInUserUnits = convertValueToUserUnits(from.valueInSpecifiedUnits(), fromType, 0, ec);
+        if (ec)
+            return SVGLength();
+
+        float fromValue = convertValueFromUserUnits(fromValueInUserUnits, toType, 0, ec);
+        if (ec)
+            return SVGLength();
+
+        float toValue = valueInSpecifiedUnits();
+        length.newValueSpecifiedUnits(toType, fromValue + (toValue - fromValue) * progress, ec);
+
+        if (ec)
+            return SVGLength();
+        return length;
+    }
+
 private:
     bool determineViewport(const SVGElement* context, float& width, float& height) const;
+
+    float convertValueToUserUnits(float value, SVGLengthType fromUnit, const SVGElement* context, ExceptionCode&) const;
+    float convertValueFromUserUnits(float value, SVGLengthType toUnit, const SVGElement* context, ExceptionCode&) const;
 
     float convertValueFromPercentageToUserUnits(float value, const SVGElement* context, ExceptionCode&) const;
     float convertValueFromUserUnitsToPercentage(float value, const SVGElement* context, ExceptionCode&) const;

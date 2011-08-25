@@ -1,3 +1,71 @@
+2011-08-25  Dean Jackson  <dino@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21586
+        Apply CSS animations and transitions to SVG properties
+
+        Reviewed by Simon Fraser.
+
+        Expose the applicable SVG properties from SVGRenderStyle to
+        RenderStyle and add them to the list of animatable
+        properties. There aren't many SVG properties that are
+        animatable directly. SVGPaint (used in "fill" and "stroke")
+        is supported only when both ends of the animation are
+        a Color. Also updated SVGLength to have some methods
+        for converting to and from user space units.
+
+        Test: transitions/svg-transitions.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+            Calls the blend method on SVGLength
+        (WebCore::PropertyWrapperSVGPaint::PropertyWrapperSVGPaint):
+            New property wrapper type for SVGPaint
+        (WebCore::PropertyWrapperSVGPaint::equals):
+        (WebCore::PropertyWrapperSVGPaint::blend):
+        (WebCore::AnimationBase::ensurePropertyMap):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::fillPaintType):
+        (WebCore::InheritedFlags::fillPaintColor):
+        (WebCore::InheritedFlags::setFillPaintColor):
+        (WebCore::InheritedFlags::strokePaintType):
+        (WebCore::InheritedFlags::strokePaintColor):
+        (WebCore::InheritedFlags::setStrokePaintColor):
+        (WebCore::InheritedFlags::strokeWidth):
+        (WebCore::InheritedFlags::setStrokeWidth):
+        (WebCore::InheritedFlags::strokeDashOffset):
+        (WebCore::InheritedFlags::setStrokeDashOffset):
+        (WebCore::InheritedFlags::strokeMiterLimit):
+        (WebCore::InheritedFlags::setStrokeMiterLimit):
+        (WebCore::InheritedFlags::stopOpacity):
+        (WebCore::InheritedFlags::setStopOpacity):
+        (WebCore::InheritedFlags::setStopColor):
+        (WebCore::InheritedFlags::setFloodColor):
+        (WebCore::InheritedFlags::setLightingColor):
+        (WebCore::InheritedFlags::baselineShiftValue):
+        (WebCore::InheritedFlags::setBaselineShiftValue):
+        (WebCore::InheritedFlags::kerning):
+        (WebCore::InheritedFlags::setKerning):
+        (WebCore::InheritedFlags::stopColor):
+        (WebCore::InheritedFlags::floodColor):
+        (WebCore::InheritedFlags::lightingColor):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::stopColor):
+        (WebCore::SVGRenderStyle::floodColor):
+        (WebCore::SVGRenderStyle::lightingColor):
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::value):
+        (WebCore::SVGLength::setValue):
+        (WebCore::SVGLength::convertValueFromUserUnits):
+        (WebCore::SVGLength::convertValueToUserUnits):
+            New conversion functions used when setting and getting values
+        * svg/SVGLength.h:
+        (WebCore::SVGLength::isZero):
+        (WebCore::SVGLength::blend):
+            Custom blend function that takes into account
+            whether the units of a length can be converted
+            in an animation, where you don't necessarily have
+            an SVGElement for context.
+
 2011-08-25  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r90971): Fix an assertion failure with textarea placeholder.

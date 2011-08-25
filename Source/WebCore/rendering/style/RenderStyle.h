@@ -75,6 +75,7 @@
 #endif
 
 #if ENABLE(SVG)
+#include "SVGPaint.h"
 #include "SVGRenderStyle.h"
 #endif
 
@@ -1165,15 +1166,39 @@ public:
 #if ENABLE(SVG)
     const SVGRenderStyle* svgStyle() const { return m_svgStyle.get(); }
     SVGRenderStyle* accessSVGStyle() { return m_svgStyle.access(); }
-    
+
+    const SVGPaint::SVGPaintType& fillPaintType() const { return svgStyle()->fillPaintType(); }
+    const Color& fillPaintColor() const { return svgStyle()->fillPaintColor(); }
+    void setFillPaintColor(const Color& c) { accessSVGStyle()->setFillPaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, c, ""); }
     float fillOpacity() const { return svgStyle()->fillOpacity(); }
     void setFillOpacity(float f) { accessSVGStyle()->setFillOpacity(f); }
-    
+
+    const SVGPaint::SVGPaintType& strokePaintType() const { return svgStyle()->strokePaintType(); }
+    const Color& strokePaintColor() const { return svgStyle()->strokePaintColor(); }
+    void setStrokePaintColor(const Color& c) { accessSVGStyle()->setStrokePaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, c, ""); }
     float strokeOpacity() const { return svgStyle()->strokeOpacity(); }
     void setStrokeOpacity(float f) { accessSVGStyle()->setStrokeOpacity(f); }
-    
+    SVGLength strokeWidth() const { return svgStyle()->strokeWidth(); }
+    void setStrokeWidth(SVGLength w) { accessSVGStyle()->setStrokeWidth(w); }
+    SVGLength strokeDashOffset() const { return svgStyle()->strokeDashOffset(); }
+    void setStrokeDashOffset(SVGLength d) { accessSVGStyle()->setStrokeDashOffset(d); }
+    float strokeMiterLimit() const { return svgStyle()->strokeMiterLimit(); }
+    void setStrokeMiterLimit(float f) { accessSVGStyle()->setStrokeMiterLimit(f); }
+
     float floodOpacity() const { return svgStyle()->floodOpacity(); }
     void setFloodOpacity(float f) { accessSVGStyle()->setFloodOpacity(f); }
+
+    float stopOpacity() const { return svgStyle()->stopOpacity(); }
+    void setStopOpacity(float f) { accessSVGStyle()->setStopOpacity(f); }
+
+    void setStopColor(const Color& c) { accessSVGStyle()->setStopColor(c); }
+    void setFloodColor(const Color& c) { accessSVGStyle()->setFloodColor(c); }
+    void setLightingColor(const Color& c) { accessSVGStyle()->setLightingColor(c); }
+
+    SVGLength baselineShiftValue() const { return svgStyle()->baselineShiftValue(); }
+    void setBaselineShiftValue(SVGLength s) { accessSVGStyle()->setBaselineShiftValue(s); }
+    SVGLength kerning() const { return svgStyle()->kerning(); }
+    void setKerning(SVGLength k) { accessSVGStyle()->setKerning(k); }
 #endif
 
     void setWrapShape(PassRefPtr<CSSWrapShape> shape)
@@ -1411,6 +1436,12 @@ private:
     const Color& textStrokeColor() const { return rareInheritedData->textStrokeColor; }
     
     const Color colorIncludingFallback(int colorProperty) const;
+
+#if ENABLE(SVG)
+    const Color& stopColor() const { return svgStyle()->stopColor(); }
+    const Color& floodColor() const { return svgStyle()->floodColor(); }
+    const Color& lightingColor() const { return svgStyle()->lightingColor(); }
+#endif
 
     void appendContent(PassOwnPtr<ContentData>);
 };

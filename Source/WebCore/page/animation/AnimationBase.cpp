@@ -217,6 +217,13 @@ static inline LengthBox blendFunc(const AnimationBase* anim, const LengthBox& fr
     return result;
 }
 
+#if ENABLE(SVG)
+static inline SVGLength blendFunc(const AnimationBase*, const SVGLength& from, const SVGLength& to, double progress)
+{  
+    return to.blend(from, narrowPrecisionToFloat(progress));
+}
+#endif
+
 class PropertyWrapperBase;
 
 static void addShorthandProperties();
@@ -663,6 +670,67 @@ private:
     Vector<PropertyWrapperBase*> m_propertyWrappers;
 };
 
+#if ENABLE(SVG)
+class PropertyWrapperSVGPaint : public PropertyWrapperBase {
+public:
+    PropertyWrapperSVGPaint(int prop, const SVGPaint::SVGPaintType& (RenderStyle::*paintTypeGetter)() const, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
+        : PropertyWrapperBase(prop)
+        , m_paintTypeGetter(paintTypeGetter)
+        , m_getter(getter)
+        , m_setter(setter)
+    {
+    }
+
+    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    {
+        if ((a->*m_paintTypeGetter)() != (b->*m_paintTypeGetter)())
+            return false;
+        
+        // We only support animations between SVGPaints that are pure Color values.
+        // For everything else we must return true for this method, otherwise
+        // we will try to animate between values forever.
+        if ((a->*m_paintTypeGetter)() == SVGPaint::SVG_PAINTTYPE_RGBCOLOR) {
+            Color fromColor = (a->*m_getter)();
+            Color toColor = (b->*m_getter)();
+
+            if (!fromColor.isValid() && !toColor.isValid())
+                return true;
+
+            if (!fromColor.isValid())
+                fromColor = Color();
+            if (!toColor.isValid())
+                toColor = Color();
+
+            return fromColor == toColor;
+        }
+        return true;
+    }
+
+    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    {
+        if ((a->*m_paintTypeGetter)() != SVGPaint::SVG_PAINTTYPE_RGBCOLOR
+            || (b->*m_paintTypeGetter)() != SVGPaint::SVG_PAINTTYPE_RGBCOLOR)
+            return;
+
+        Color fromColor = (a->*m_getter)();
+        Color toColor = (b->*m_getter)();
+
+        if (!fromColor.isValid() && !toColor.isValid())
+            return;
+
+        if (!fromColor.isValid())
+            fromColor = Color();
+        if (!toColor.isValid())
+            toColor = Color();
+        (dst->*m_setter)(blendFunc(anim, fromColor, toColor, progress));
+    }
+
+private:
+    const SVGPaint::SVGPaintType& (RenderStyle::*m_paintTypeGetter)() const;
+    const Color& (RenderStyle::*m_getter)() const;
+    void (RenderStyle::*m_setter)(const Color&);
+};
+#endif
 
 static Vector<PropertyWrapperBase*>* gPropertyWrappers = 0;
 static int gPropertyWrapperMap[numCSSProperties];
@@ -767,9 +835,25 @@ void AnimationBase::ensurePropertyMap()
         gPropertyWrappers->append(new PropertyWrapperShadow(CSSPropertyTextShadow, &RenderStyle::textShadow, &RenderStyle::setTextShadow));
 
 #if ENABLE(SVG)
+        gPropertyWrappers->append(new PropertyWrapperSVGPaint(CSSPropertyFill, &RenderStyle::fillPaintType, &RenderStyle::fillPaintColor, &RenderStyle::setFillPaintColor));
         gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyFillOpacity, &RenderStyle::fillOpacity, &RenderStyle::setFillOpacity));
-        gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyFloodOpacity, &RenderStyle::floodOpacity, &RenderStyle::setFloodOpacity));
+
+        gPropertyWrappers->append(new PropertyWrapperSVGPaint(CSSPropertyStroke, &RenderStyle::strokePaintType, &RenderStyle::strokePaintColor, &RenderStyle::setStrokePaintColor));
         gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyStrokeOpacity, &RenderStyle::strokeOpacity, &RenderStyle::setStrokeOpacity));
+        gPropertyWrappers->append(new PropertyWrapper<SVGLength>(CSSPropertyStrokeWidth, &RenderStyle::strokeWidth, &RenderStyle::setStrokeWidth));
+        gPropertyWrappers->append(new PropertyWrapper<SVGLength>(CSSPropertyStrokeDashoffset, &RenderStyle::strokeDashOffset, &RenderStyle::setStrokeDashOffset));
+        gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyStrokeMiterlimit, &RenderStyle::strokeMiterLimit, &RenderStyle::setStrokeMiterLimit));
+
+        gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyFloodOpacity, &RenderStyle::floodOpacity, &RenderStyle::setFloodOpacity));
+        gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyFloodColor, &RenderStyle::floodColor, &RenderStyle::setFloodColor));
+
+        gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyStopOpacity, &RenderStyle::stopOpacity, &RenderStyle::setStopOpacity));
+        gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyStopColor, &RenderStyle::stopColor, &RenderStyle::setStopColor));
+
+        gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyLightingColor, &RenderStyle::lightingColor, &RenderStyle::setLightingColor));
+
+        gPropertyWrappers->append(new PropertyWrapper<SVGLength>(CSSPropertyBaselineShift, &RenderStyle::baselineShiftValue, &RenderStyle::setBaselineShiftValue));
+        gPropertyWrappers->append(new PropertyWrapper<SVGLength>(CSSPropertyKerning, &RenderStyle::kerning, &RenderStyle::setKerning));
 #endif
 
         // TODO:

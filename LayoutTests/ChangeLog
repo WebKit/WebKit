@@ -1,3 +1,23 @@
+2011-08-25  Dean Jackson  <dino@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=21586
+        Apply CSS animations and transitions to SVG properties
+
+        Reviewed by Simon Fraser.
+
+        New test for the SVG properties that can now animate. Also
+        updated the test helper script to handle colors and
+        percentages.
+
+        This test has one entry that intentionally fails for a type
+        of animation that we don't yet support: with a paint
+        server of the form "url(#invalidref) green".
+
+        * transitions/resources/transition-test-helpers.js:
+        (expected):
+        * transitions/svg-transitions-expected.txt: Added.
+        * transitions/svg-transitions.html: Added.
+
 2011-08-25  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [Qt] Unreviewed, rebaseline for bug 53438
