@@ -1,3 +1,16 @@
+2011-08-25  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] Assert in computeViewportAttributes when MiniBrowser started with -touch
+        https://bugs.webkit.org/show_bug.cgi?id=66951
+
+        Reviewed by Andreas Kling.
+
+        Function computeViewportAttributes() gets called when height is still 0 because MiniBrowser sets
+        width and height one by one and setWidth cause geometryChange event in QTouchWebView. 
+
+        * MiniBrowser/qt/BrowserView.cpp:
+        (BrowserView::resizeEvent):
+
 2011-08-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         garden-o-matic summary view should provide information on builders still in flight.
