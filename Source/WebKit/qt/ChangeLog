@@ -1,3 +1,15 @@
+2011-08-25  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Unreviewed QtWebKit.pro fix for when building inside Qt
+
+        Patch by Simo Fält <simo.falt@nokia.com>
+
+        The QtWebKit version was being overwritten by a global Qt version when
+        QtWebKit was built inside Qt. Fixed by moving the version
+        definition after the inclusion of qbase.pri.
+
+        * QtWebKit.pro:
+
 2011-08-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix build on Lion
