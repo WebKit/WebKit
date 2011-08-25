@@ -29,14 +29,14 @@
 #include "config.h"
 #include "NetscapePlugInStreamLoader.h"
 
+#include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "DocumentLoader.h"
 
 namespace WebCore {
 
 NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame* frame, NetscapePlugInStreamLoaderClient* client)
-    : ResourceLoader(frame, true, true)
+    : ResourceLoader(frame, ResourceLoaderOptions(true, true, true))
     , m_client(client)
 {
 }

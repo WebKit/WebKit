@@ -125,7 +125,7 @@ PassOwnPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
     resourceRequest.setPriority(priority);
 
     RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->document()->frame(),
-        request.get(), resourceRequest, priority, securityCheck, sendResourceLoadCallbacks);
+        request.get(), resourceRequest, priority, securityCheck, ResourceLoaderOptions(sendResourceLoadCallbacks, true, true));
     if (!loader || loader->reachedTerminalState()) {
         // FIXME: What if resources in other frames were waiting for this revalidation?
         LOG(ResourceLoading, "Cannot start loading '%s'", resource->url().string().latin1().data());

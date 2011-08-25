@@ -30,6 +30,7 @@
 #define ResourceLoader_h
 
 #include "ResourceHandleClient.h"
+#include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 
@@ -134,14 +135,14 @@ namespace WebCore {
 
         const KURL& url() const { return m_request.url(); } 
         ResourceHandle* handle() const { return m_handle.get(); }
-        bool sendResourceLoadCallbacks() const { return m_sendResourceLoadCallbacks; }
+        bool sendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks; }
 
         bool reachedTerminalState() const { return m_reachedTerminalState; }
 
         void setShouldBufferData(bool shouldBufferData);
 
     protected:
-        ResourceLoader(Frame*, bool sendResourceLoadCallbacks, bool shouldContentSniff);
+        ResourceLoader(Frame*, ResourceLoaderOptions);
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         friend class ApplicationCacheHost;  // for access to request()
@@ -177,11 +178,9 @@ namespace WebCore {
         bool m_cancelled;
         bool m_calledDidFinishLoad;
 
-        bool m_sendResourceLoadCallbacks;
-        bool m_shouldContentSniff;
-        bool m_shouldBufferData;
         bool m_defersLoading;
         ResourceRequest m_deferredRequest;
+        ResourceLoaderOptions m_options;
     };
 
 inline const ResourceResponse& ResourceLoader::response() const

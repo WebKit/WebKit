@@ -1,3 +1,32 @@
+2011-08-25  Nate Chapin  <japhet@chromium.org>
+
+        Split some of the variables out of ThreadableLoaderOptions
+        into a superclass, ResourceLoaderOptions. Use ResourceLoaderOptions
+        all the way down to ResourceLoader.
+        https://bugs.webkit.org/show_bug.cgi?id=63301
+
+        Reviewed by David Levin.
+
+        No new tests, refractor only.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/DocumentThreadableLoader.cpp:
+        * loader/MainResourceLoader.cpp:
+        * loader/NetscapePlugInStreamLoader.cpp:
+        * loader/ResourceLoadScheduler.cpp:
+        * loader/ResourceLoadScheduler.h:
+        * loader/ResourceLoader.cpp:
+        * loader/ResourceLoader.h:
+        * loader/ResourceLoaderOptions.h: Added.
+        * loader/SubresourceLoader.cpp:
+        * loader/SubresourceLoader.h:
+        * loader/ThreadableLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        * loader/mac/ResourceLoaderMac.mm:
+
 2011-08-25  Adam Klein  <adamk@chromium.org>
 
         use strict in CodeGeneratorJS and CodeGeneratorV8

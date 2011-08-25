@@ -2165,6 +2165,7 @@ webcore_sources += \
 	Source/WebCore/loader/NavigationScheduler.h \
 	Source/WebCore/loader/ResourceLoader.cpp \
 	Source/WebCore/loader/ResourceLoader.h \
+	Source/WebCore/loader/ResourceLoaderOptions.h \
 	Source/WebCore/loader/ResourceLoadNotifier.cpp \
 	Source/WebCore/loader/ResourceLoadNotifier.h \
 	Source/WebCore/loader/ResourceLoadScheduler.cpp \

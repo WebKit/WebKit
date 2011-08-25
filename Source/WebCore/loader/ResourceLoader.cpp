@@ -58,7 +58,7 @@ PassRefPtr<SharedBuffer> ResourceLoader::resourceData()
     return 0;
 }
 
-ResourceLoader::ResourceLoader(Frame* frame, bool sendResourceLoadCallbacks, bool shouldContentSniff)
+ResourceLoader::ResourceLoader(Frame* frame, ResourceLoaderOptions options)
     : m_frame(frame)
     , m_documentLoader(frame->loader()->activeDocumentLoader())
     , m_identifier(0)
@@ -66,10 +66,8 @@ ResourceLoader::ResourceLoader(Frame* frame, bool sendResourceLoadCallbacks, boo
     , m_calledWillCancel(false)
     , m_cancelled(false)
     , m_calledDidFinishLoad(false)
-    , m_sendResourceLoadCallbacks(sendResourceLoadCallbacks)
-    , m_shouldContentSniff(shouldContentSniff)
-    , m_shouldBufferData(true)
     , m_defersLoading(frame->page()->defersLoading())
+    , m_options(options)
 {
 }
 
@@ -162,7 +160,7 @@ void ResourceLoader::start()
     }
 
     if (!m_reachedTerminalState)
-        m_handle = ResourceHandle::create(m_frame->loader()->networkingContext(), m_request, this, m_defersLoading, m_shouldContentSniff);
+        m_handle = ResourceHandle::create(m_frame->loader()->networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent);
 }
 
 void ResourceLoader::setDefersLoading(bool defers)
@@ -186,17 +184,17 @@ FrameLoader* ResourceLoader::frameLoader() const
 
 void ResourceLoader::setShouldBufferData(bool shouldBufferData)
 { 
-    m_shouldBufferData = shouldBufferData; 
+    m_options.shouldBufferData = shouldBufferData; 
 
     // Reset any already buffered data
-    if (!m_shouldBufferData)
+    if (!shouldBufferData)
         m_resourceData = 0;
 }
     
 
 void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
 {
-    if (!m_shouldBufferData)
+    if (!m_options.shouldBufferData)
         return;
 
     if (allAtOnce) {
@@ -236,7 +234,7 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
 
     ASSERT(!m_reachedTerminalState);
 
-    if (m_sendResourceLoadCallbacks) {
+    if (m_options.sendLoadCallbacks) {
         if (!m_identifier) {
             m_identifier = m_frame->page()->progress()->createUniqueIdentifier();
             frameLoader()->notifier()->assignIdentifierToInitialRequest(m_identifier, documentLoader(), request);
@@ -279,7 +277,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
     if (FormData* data = m_request.httpBody())
         data->removeGeneratedFilesIfNeeded();
         
-    if (m_sendResourceLoadCallbacks)
+    if (m_options.sendLoadCallbacks)
         frameLoader()->notifier()->didReceiveResponse(this, m_response);
 }
 
@@ -305,13 +303,13 @@ void ResourceLoader::didReceiveData(const char* data, int length, long long enco
     // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
-    if (m_sendResourceLoadCallbacks && m_frame)
+    if (m_options.sendLoadCallbacks && m_frame)
         frameLoader()->notifier()->didReceiveData(this, data, length, static_cast<int>(encodedDataLength));
 }
 
 void ResourceLoader::willStopBufferingData(const char* data, int length)
 {
-    if (!m_shouldBufferData)
+    if (!m_options.shouldBufferData)
         return;
 
     ASSERT(!m_resourceData);
@@ -339,7 +337,7 @@ void ResourceLoader::didFinishLoadingOnePart(double finishTime)
     if (m_calledDidFinishLoad)
         return;
     m_calledDidFinishLoad = true;
-    if (m_sendResourceLoadCallbacks)
+    if (m_options.sendLoadCallbacks)
         frameLoader()->notifier()->didFinishLoad(this, finishTime);
 }
 
@@ -356,7 +354,7 @@ void ResourceLoader::didFail(const ResourceError& error)
     if (FormData* data = m_request.httpBody())
         data->removeGeneratedFilesIfNeeded();
 
-    if (m_sendResourceLoadCallbacks && !m_calledDidFinishLoad)
+    if (m_options.sendLoadCallbacks && !m_calledDidFinishLoad)
         frameLoader()->notifier()->didFailToLoad(this, error);
 
     releaseResources();
@@ -404,7 +402,7 @@ void ResourceLoader::cancel(const ResourceError& error)
             m_handle = 0;
         }
 
-        if (m_sendResourceLoadCallbacks && m_identifier && !m_calledDidFinishLoad)
+        if (m_options.sendLoadCallbacks && m_identifier && !m_calledDidFinishLoad)
             frameLoader()->notifier()->didFailToLoad(this, nonNullError);
     }
 

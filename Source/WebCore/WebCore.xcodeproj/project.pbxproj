@@ -5450,6 +5450,7 @@
 		D07DEABA0A36554A00CA30F8 /* InsertListCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D07DEAB80A36554A00CA30F8 /* InsertListCommand.h */; };
 		D086FE9809D53AAB005BC74D /* UnlinkCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D086FE9609D53AAB005BC74D /* UnlinkCommand.h */; };
 		D086FE9909D53AAB005BC74D /* UnlinkCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D086FE9709D53AAB005BC74D /* UnlinkCommand.cpp */; };
+		D0A3A7311405A39800FB8ED3 /* ResourceLoaderOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D0A3A7301405A39800FB8ED3 /* ResourceLoaderOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D0B0556809C6700100307E43 /* CreateLinkCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B0556609C6700100307E43 /* CreateLinkCommand.h */; };
 		D0B0556909C6700100307E43 /* CreateLinkCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */; };
 		D0CE58F8125E4CC200F3F199 /* ResourceLoadScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0CE58F6125E4CC200F3F199 /* ResourceLoadScheduler.cpp */; };
@@ -12189,6 +12190,7 @@
 		D07DEAB80A36554A00CA30F8 /* InsertListCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InsertListCommand.h; sourceTree = "<group>"; };
 		D086FE9609D53AAB005BC74D /* UnlinkCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkCommand.h; sourceTree = "<group>"; };
 		D086FE9709D53AAB005BC74D /* UnlinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkCommand.cpp; sourceTree = "<group>"; };
+		D0A3A7301405A39800FB8ED3 /* ResourceLoaderOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderOptions.h; sourceTree = "<group>"; };
 		D0B0556609C6700100307E43 /* CreateLinkCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateLinkCommand.h; sourceTree = "<group>"; };
 		D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateLinkCommand.cpp; sourceTree = "<group>"; };
 		D0CE58F6125E4CC200F3F199 /* ResourceLoadScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadScheduler.cpp; sourceTree = "<group>"; };
@@ -18966,6 +18968,7 @@
 				1A2A68220B5BEDE70002A480 /* ProgressTracker.h */,
 				93E227DE0AF589AD00D48324 /* ResourceLoader.cpp */,
 				656D37270ADBA5DE00A4554D /* ResourceLoader.h */,
+				D0A3A7301405A39800FB8ED3 /* ResourceLoaderOptions.h */,
 				973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */,
 				973E325510883B7C005BC493 /* ResourceLoadNotifier.h */,
 				D0CE58F6125E4CC200F3F199 /* ResourceLoadScheduler.cpp */,
@@ -23405,6 +23408,7 @@
 				FD23A12613F5FA5900F67001 /* JSMediaElementAudioSourceNode.h in Headers */,
 				DF9AFD7213FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h in Headers */,
 				93500F3213FDE3BE0099EC24 /* NSScrollerImpDetails.h in Headers */,
+				D0A3A7311405A39800FB8ED3 /* ResourceLoaderOptions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

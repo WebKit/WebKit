@@ -44,8 +44,8 @@ namespace WebCore {
 static WTF::RefCountedLeakCounter subresourceLoaderCounter("SubresourceLoader");
 #endif
 
-SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* client, bool sendResourceLoadCallbacks, bool shouldContentSniff)
-    : ResourceLoader(frame, sendResourceLoadCallbacks, shouldContentSniff)
+SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* client, const ResourceLoaderOptions& options)
+    : ResourceLoader(frame, options)
     , m_client(client)
     , m_loadingMultipartContent(false)
 {
@@ -61,7 +61,7 @@ SubresourceLoader::~SubresourceLoader()
 #endif
 }
 
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks, bool shouldContentSniff, bool shouldBufferData)
+PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, SecurityCheckPolicy securityCheck, const ResourceLoaderOptions& options)
 {
     if (!frame)
         return 0;
@@ -99,8 +99,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
 
     fl->addExtraFieldsToSubresourceRequest(newRequest);
 
-    RefPtr<SubresourceLoader> subloader(adoptRef(new SubresourceLoader(frame, client, sendResourceLoadCallbacks, shouldContentSniff)));
-    subloader->setShouldBufferData(shouldBufferData);
+    RefPtr<SubresourceLoader> subloader(adoptRef(new SubresourceLoader(frame, client, options)));
     subloader->documentLoader()->addSubresourceLoader(subloader.get());
     if (!subloader->init(newRequest))
         return 0;

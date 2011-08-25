@@ -61,7 +61,7 @@ CFCachedURLResponseRef ResourceLoader::willCacheResponse(ResourceHandle*, CFCach
 
 NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCachedURLResponse* response)
 {
-    if (!m_sendResourceLoadCallbacks)
+    if (!m_options.sendLoadCallbacks)
         return 0;
     return frameLoader()->client()->willCacheResponse(documentLoader(), identifier(), response);
 }

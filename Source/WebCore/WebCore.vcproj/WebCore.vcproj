@@ -26246,6 +26246,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\loader\ResourceLoaderOptions.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\ResourceLoadNotifier.cpp"
 				>
 			</File>

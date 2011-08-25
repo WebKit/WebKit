@@ -25,6 +25,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "PlatformString.h"
+#include "ResourceLoaderOptions.h"
 #include "ResourceLoadPriority.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
@@ -50,7 +51,7 @@ class ResourceLoadScheduler {
 public:
     friend ResourceLoadScheduler* resourceLoadScheduler();
 
-    PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, SubresourceLoaderClient*, const ResourceRequest&, ResourceLoadPriority = ResourceLoadPriorityLow, SecurityCheckPolicy = DoSecurityCheck, bool sendResourceLoadCallbacks = true, bool shouldContentSniff = true, bool shouldBufferData = true);
+    PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, SubresourceLoaderClient*, const ResourceRequest&, ResourceLoadPriority = ResourceLoadPriorityLow, SecurityCheckPolicy = DoSecurityCheck, const ResourceLoaderOptions& = ResourceLoaderOptions(true, true, true));
     PassRefPtr<NetscapePlugInStreamLoader> schedulePluginStreamLoad(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
     void addMainResourceLoad(ResourceLoader*);
     void remove(ResourceLoader*);

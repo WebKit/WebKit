@@ -41,12 +41,12 @@ namespace WebCore {
     
     class SubresourceLoader : public ResourceLoader {
     public:
-        static PassRefPtr<SubresourceLoader> create(Frame*, SubresourceLoaderClient*, const ResourceRequest&, SecurityCheckPolicy = DoSecurityCheck, bool sendResourceLoadCallbacks = true, bool shouldContentSniff = true, bool shouldBufferData = true);
+        static PassRefPtr<SubresourceLoader> create(Frame*, SubresourceLoaderClient*, const ResourceRequest&, SecurityCheckPolicy, const ResourceLoaderOptions&);
 
         void clearClient() { m_client = 0; }
 
     private:
-        SubresourceLoader(Frame*, SubresourceLoaderClient*, bool sendResourceLoadCallbacks, bool shouldContentSniff);
+        SubresourceLoader(Frame*, SubresourceLoaderClient*, const ResourceLoaderOptions&);
         virtual ~SubresourceLoader();
         
         virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
