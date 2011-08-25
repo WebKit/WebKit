@@ -2398,3 +2398,15 @@ fast/loader/frame-creation-removal.html
 
 # Web Inspector: LayoutTests/inspector/extensions/extensions-resources.html fails on Qt
 inspector/extensions/extensions-resources.html
+
+# new tests introduced in r93794 without Qt specific expected results
+fast/table/table-after-child-in-table.html
+fast/table/table-cell-after-child-in-block.html
+fast/table/table-before-child-in-table.html
+fast/table/table-row-before-child-in-table.html
+fast/table/table-cell-after-child-in-table.html
+fast/table/table-cell-before-child-in-block.html
+fast/table/table-row-after-child-in-table.html
+fast/table/table-row-after-child-in-block.html
+fast/table/table-row-before-child-in-block.html
+fast/table/table-cell-before-child-in-table.html
