@@ -1,5 +1,16 @@
 2011-08-25  Anders Carlsson  <andersca@apple.com>
 
+        Move file internal methods to a class continuation in WKView
+        https://bugs.webkit.org/show_bug.cgi?id=66983
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _deviceScaleFactor]):
+        (-[WKView _setDrawingAreaSize:]):
+
+2011-08-25  Anders Carlsson  <andersca@apple.com>
+
         More work on the updated Cocoa text input specification
         https://bugs.webkit.org/show_bug.cgi?id=66977
 

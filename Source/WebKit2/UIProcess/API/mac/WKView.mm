@@ -109,7 +109,7 @@ struct WKViewInterpretKeyEventsParameters {
     Vector<KeypressCommand>* commands;
 };
 
-@interface WKView (WKFileInternal)
+@interface WKView ()
 - (float)_deviceScaleFactor;
 - (void)_setDrawingAreaSize:(NSSize)size;
 @end
@@ -2012,6 +2012,29 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     }
 }
 
+- (float)_deviceScaleFactor
+{
+    NSWindow *window = [self window];
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (window)
+        return [window backingScaleFactor];
+    return [[NSScreen mainScreen] backingScaleFactor];
+#else
+    if (window)
+        return [window userSpaceScaleFactor];
+    return [[NSScreen mainScreen] userSpaceScaleFactor];
+#endif
+}
+
+- (void)_setDrawingAreaSize:(NSSize)size
+{
+    if (!_data->_page->drawingArea())
+        return;
+    
+    _data->_page->drawingArea()->setSize(IntSize(size), IntSize(_data->_resizeScrollOffset));
+    _data->_resizeScrollOffset = NSZeroSize;
+}
+
 @end
 
 @implementation WKView (Internal)
@@ -2619,33 +2642,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 {
     _didReceiveUnhandledCommand = true;
     return YES;
-}
-
-@end
-
-@implementation WKView (WKFileInternal)
-
-- (float)_deviceScaleFactor
-{
-    NSWindow *window = [self window];
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-    if (window)
-        return [window backingScaleFactor];
-    return [[NSScreen mainScreen] backingScaleFactor];
-#else
-    if (window)
-        return [window userSpaceScaleFactor];
-    return [[NSScreen mainScreen] userSpaceScaleFactor];
-#endif
-}
-
-- (void)_setDrawingAreaSize:(NSSize)size
-{
-    if (!_data->_page->drawingArea())
-        return;
-    
-    _data->_page->drawingArea()->setSize(IntSize(size), IntSize(_data->_resizeScrollOffset));
-    _data->_resizeScrollOffset = NSZeroSize;
 }
 
 @end
