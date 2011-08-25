@@ -670,7 +670,16 @@
                                         '<(chromium_src_dir)/third_party/nss/nss.gyp:*',
                                     ],
                                 }],
-                            ]
+                            ],
+                            'msvs_settings': {
+                              'VCLinkerTool': {
+                                'conditions': [
+                                  ['incremental_chrome_dll==1', {
+                                    'UseLibraryDependencyInputs': "true",
+                                  }],
+                                ],
+                              },
+                            },
                         }],
                     ],
                 }],

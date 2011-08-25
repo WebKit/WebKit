@@ -1,3 +1,16 @@
+2011-08-25  Scott Graham  <scottmg@chromium.org>
+
+        Enable incremental linking for component build on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=66950
+
+        Reviewed by Darin Fisher.
+
+        Turns on Use Library Dependency Inputs for webkit.vcproj on Windows
+        build, when incremental_chrome_dll gyp flag is set. This is to get
+        faster incremental links on Windows builds.
+
+        * WebKit.gyp:
+
 2011-08-25  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, fix chromium devtools tests.
