@@ -1,3 +1,13 @@
+2011-08-25  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r90971): Fix an assertion failure with textarea placeholder.
+        https://bugs.webkit.org/show_bug.cgi?id=66164
+
+        Reviewed by Dave Hyatt.
+
+        * fast/forms/textarea-placeholder-relayout-assertion-expected.txt: Added.
+        * fast/forms/textarea-placeholder-relayout-assertion.html: Added.
+
 2011-08-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.

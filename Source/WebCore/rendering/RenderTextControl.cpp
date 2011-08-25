@@ -431,8 +431,12 @@ RenderObject* RenderTextControl::layoutSpecialExcludedChild(bool relayoutChildre
     RenderObject* placeholderRenderer = placeholder ? placeholder->renderer() : 0;
     if (!placeholderRenderer)
         return 0;
-    if (relayoutChildren)
-        placeholderRenderer->setNeedsLayout(true);
+    if (relayoutChildren) {
+        // The markParents arguments should be false because this function is
+        // called from layout() of the parent and the placeholder layout doesn't
+        // affect the parent layout.
+        placeholderRenderer->setChildNeedsLayout(true, false);
+    }
     return placeholderRenderer;
 }
 
