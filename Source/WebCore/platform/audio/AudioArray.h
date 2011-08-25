@@ -53,6 +53,13 @@ public:
     // if re-allocated. Allocations are zero-initialized.
     void allocate(size_t n)
     {
+        // Although n is a size_t, its true limit is max unsigned because we use unsigned in zeroRange()
+        // and copyToRange(). Also check for integer overflow.
+        if (n > std::numeric_limits<unsigned>::max() / sizeof(T))
+            CRASH();
+      
+        unsigned initialSize = sizeof(T) * n;
+
         // 16-byte alignment for 128bit SIMD.
         const size_t alignment = 16;
 
@@ -66,7 +73,13 @@ public:
             // then we'll have to reallocate and from then on allocate extra.
             static size_t extraAllocationBytes = 0;
 
-            T* allocation = static_cast<T*>(fastMalloc(sizeof(T) * n + extraAllocationBytes));
+            // Again, check for integer overflow.
+            if (initialSize + extraAllocationBytes < initialSize)
+                CRASH();
+
+            T* allocation = static_cast<T*>(fastMalloc(initialSize + extraAllocationBytes));
+            if (!allocation)
+                CRASH();
             T* alignedData = alignedAddress(allocation, alignment);
 
             if (alignedData == allocation || extraAllocationBytes == alignment) {
@@ -88,13 +101,19 @@ public:
 
     T& at(size_t i)
     {
+        // Note that although it is a size_t, m_size is now guaranteed to be
+        // no greater than max unsigned. This guarantee is enforced in allocate().
         ASSERT(i < size());
         return data()[i];
     }
 
     T& operator[](size_t i) { return at(i); }
 
-    void zero() { memset(this->data(), 0, sizeof(T) * this->size()); }
+    void zero()
+    {
+        // This multiplication is made safe by the check in allocate().
+        memset(this->data(), 0, sizeof(T) * this->size());
+    }
 
     void zeroRange(unsigned start, unsigned end)
     {
@@ -103,6 +122,8 @@ public:
         if (!isSafe)
             return;
 
+        // This expression cannot overflow because end - start cannot be
+        // greater than m_size, which is safe due to the check in allocate().
         memset(this->data() + start, 0, sizeof(T) * (end - start));
     }
 
@@ -113,6 +134,8 @@ public:
         if (!isSafe)
             return;
 
+        // This expression cannot overflow because end - start cannot be
+        // greater than m_size, which is safe due to the check in allocate().
         memcpy(this->data() + start, sourceData, sizeof(T) * (end - start));
     }
 

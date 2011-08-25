@@ -1,3 +1,17 @@
+2011-08-24  Chris Palmer  <palmer@google.com>
+
+        Resolve potential integer overflow in memory allocation, and ensure
+        that allocation succeeds.
+
+        Reviewed by Kenneth Russell.
+
+        * platform/audio/AudioArray.h:
+        (WebCore::AudioArray::allocate): Check for integer overflow.
+        (WebCore::AudioArray::at): Document the safety assertion.
+        (WebCore::AudioArray::zero): Document the safety assertion.
+        (WebCore::AudioArray::zeroRange): Document the safety assertion.
+        (WebCore::AudioArray::copyToRange): Document the safety assertion.
+
 2011-08-24  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Fix build with ENABLE_GEOLOCATION.
