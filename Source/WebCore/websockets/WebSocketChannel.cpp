@@ -99,6 +99,7 @@ WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketCha
     , m_useHixie76Protocol(true)
     , m_hasContinuousFrame(false)
     , m_closeEventCode(CloseEventCodeAbnormalClosure)
+    , m_outgoingFrameQueueStatus(OutgoingFrameQueueOpen)
 {
     ASSERT(m_context->isDocument());
     Document* document = static_cast<Document*>(m_context);
@@ -146,10 +147,18 @@ String WebSocketChannel::subprotocol()
 bool WebSocketChannel::send(const String& message)
 {
     LOG(Network, "WebSocketChannel %p send %s", this, message.utf8().data());
-    CString utf8 = message.utf8();
-    if (m_useHixie76Protocol)
+    if (m_useHixie76Protocol) {
+        CString utf8 = message.utf8();
         return sendFrameHixie76(utf8.data(), utf8.length());
-    return sendFrame(OpCodeText, utf8.data(), utf8.length());
+    }
+    enqueueTextFrame(message);
+    // According to WebSocket API specification, WebSocket.send() should return void instead
+    // of boolean. However, our implementation still returns boolean due to compatibility
+    // concern (see bug 65850).
+    // m_channel->send() may happen later, thus it's not always possible to know whether
+    // the message has been sent to the socket successfully. In this case, we have no choice
+    // but to return true.
+    return true;
 }
 
 unsigned long WebSocketChannel::bufferedAmount() const
@@ -238,6 +247,8 @@ void WebSocketChannel::didCloseSocketStream(SocketStreamHandle* handle)
     m_closed = true;
     if (m_closingTimer.isActive())
         m_closingTimer.stop();
+    if (!m_useHixie76Protocol && m_outgoingFrameQueueStatus != OutgoingFrameQueueClosed)
+        abortOutgoingFrameQueue();
     if (m_handle) {
         m_unhandledBufferedAmount = m_handle->bufferedAmount();
         if (m_suspended)
@@ -417,19 +428,17 @@ void WebSocketChannel::startClosingHandshake()
     if (m_closing)
         return;
     ASSERT(m_handle);
-    bool sentSuccessfully;
     if (m_useHixie76Protocol) {
         Vector<char> buf;
         buf.append('\xff');
         buf.append('\0');
-        sentSuccessfully = m_handle->send(buf.data(), buf.size());
+        if (!m_handle->send(buf.data(), buf.size())) {
+            m_handle->disconnect();
+            return;
+        }
     } else
-        sentSuccessfully = sendFrame(OpCodeClose, "", 0); // FIXME: Send status code and reason message.
+        enqueueRawFrame(OpCodeClose, "", 0); // FIXME: Send status code and reason message.
 
-    if (!sentSuccessfully) {
-        m_handle->disconnect();
-        return;
-    }
     m_closing = true;
     if (m_client)
         m_client->didStartClosingHandshake();
@@ -637,17 +646,16 @@ bool WebSocketChannel::processFrame()
         skipBuffer(frame.frameEnd - m_buffer);
         m_receivedClosingHandshake = true;
         startClosingHandshake();
-        if (m_closing)
-            m_handle->close(); // Close after sending a close frame.
+        if (m_closing) {
+            m_outgoingFrameQueueStatus = OutgoingFrameQueueClosing;
+            processOutgoingFrameQueue();
+        }
         break;
 
-    case OpCodePing: {
-        bool result = sendFrame(OpCodePong, frame.payload, frame.payloadLength);
+    case OpCodePing:
+        enqueueRawFrame(OpCodePong, frame.payload, frame.payloadLength);
         skipBuffer(frame.frameEnd - m_buffer);
-        if (!result)
-            fail("Failed to send a pong frame.");
         break;
-    }
 
     case OpCodePong:
         // A server may send a pong in response to our ping, or an unsolicited pong which is not associated with
@@ -746,6 +754,73 @@ bool WebSocketChannel::processFrameHixie76()
         return m_buffer;
     }
     return false;
+}
+
+void WebSocketChannel::enqueueTextFrame(const String& string)
+{
+    ASSERT(!m_useHixie76Protocol);
+    ASSERT(m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen);
+    OwnPtr<QueuedFrame> frame = adoptPtr(new QueuedFrame);
+    frame->opCode = OpCodeText;
+    frame->frameType = QueuedFrameTypeString;
+    frame->stringData = string;
+    m_outgoingFrameQueue.append(frame.release());
+    processOutgoingFrameQueue();
+}
+
+void WebSocketChannel::enqueueRawFrame(OpCode opCode, const char* data, size_t dataLength)
+{
+    ASSERT(!m_useHixie76Protocol);
+    ASSERT(m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen);
+    OwnPtr<QueuedFrame> frame = adoptPtr(new QueuedFrame);
+    frame->opCode = opCode;
+    frame->frameType = QueuedFrameTypeVector;
+    frame->vectorData.resize(dataLength);
+    if (dataLength)
+        memcpy(frame->vectorData.data(), data, dataLength);
+    m_outgoingFrameQueue.append(frame.release());
+    processOutgoingFrameQueue();
+}
+
+void WebSocketChannel::processOutgoingFrameQueue()
+{
+    ASSERT(!m_useHixie76Protocol);
+    if (m_outgoingFrameQueueStatus == OutgoingFrameQueueClosed)
+        return;
+
+    while (!m_outgoingFrameQueue.isEmpty()) {
+        OwnPtr<QueuedFrame> frame = m_outgoingFrameQueue.takeFirst();
+        switch (frame->frameType) {
+        case QueuedFrameTypeString: {
+            CString utf8 = frame->stringData.utf8();
+            if (!sendFrame(frame->opCode, utf8.data(), utf8.length()))
+                fail("Failed to send WebSocket frame.");
+            break;
+        }
+
+        case QueuedFrameTypeVector:
+            if (!sendFrame(frame->opCode, frame->vectorData.data(), frame->vectorData.size()))
+                fail("Failed to send WebSocket frame.");
+            break;
+
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    ASSERT(m_outgoingFrameQueue.isEmpty());
+    if (m_outgoingFrameQueueStatus == OutgoingFrameQueueClosing) {
+        m_outgoingFrameQueueStatus = OutgoingFrameQueueClosed;
+        m_handle->close();
+    }
+}
+
+void WebSocketChannel::abortOutgoingFrameQueue()
+{
+    ASSERT(!m_useHixie76Protocol);
+    m_outgoingFrameQueue.clear();
+    m_outgoingFrameQueueStatus = OutgoingFrameQueueClosed;
 }
 
 bool WebSocketChannel::sendFrame(OpCode opCode, const char* data, size_t dataLength)

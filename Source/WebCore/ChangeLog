@@ -1,3 +1,33 @@
+2011-08-25  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Queue messages to be sent
+        https://bugs.webkit.org/show_bug.cgi?id=66298
+
+        Reviewed by Kent Tamura.
+
+        Blobs must be read asynchronously and thus cannot be sent immediately. Therefore, we need to
+        create a queue of messages to be sent in order to handle pending requests.
+
+        No new tests. Strictly speaking, there is a small change in behavior but it is hard to
+        reproduce in tests. See description of WebSocketChannel::send below.
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::send):
+        Now, this function always returns true if hybi-10 protocol is selected. The impact of this change
+        should be minimum, because the current WebSocket API defines the return type of WebSocket.send()
+        is void (see also bug 65850).
+        It's hard to make SocketStreamHandle::send() fail deliberately, therefore it's difficult to write
+        a test to detect this behavior change.
+        (WebCore::WebSocketChannel::didCloseSocketStream):
+        (WebCore::WebSocketChannel::startClosingHandshake):
+        (WebCore::WebSocketChannel::processFrame):
+        (WebCore::WebSocketChannel::enqueueTextFrame):
+        (WebCore::WebSocketChannel::enqueueRawFrame):
+        (WebCore::WebSocketChannel::processOutgoingFrameQueue):
+        (WebCore::WebSocketChannel::abortOutgoingFrameQueue):
+        * websockets/WebSocketChannel.h:
+
 2011-08-24  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Directional arrow on element info box looks terrible

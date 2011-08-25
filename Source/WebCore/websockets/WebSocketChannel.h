@@ -37,6 +37,7 @@
 #include "ThreadableWebSocketChannel.h"
 #include "Timer.h"
 #include "WebSocketHandshake.h"
+#include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -138,6 +139,50 @@ namespace WebCore {
         bool processFrame();
         bool processFrameHixie76();
 
+        // It is allowed to send a Blob as a binary frame if hybi-10 protocol is in use. Sending a Blob
+        // can be delayed because it must be read asynchronously. Other types of data (String or
+        // ArrayBuffer) may also be blocked by preceding sending request of a Blob.
+        //
+        // To address this situation, messages to be sent need to be stored in a queue. Whenever a new
+        // data frame is going to be sent, it first must go to the queue. Items in the queue are processed
+        // in the order they were put into the queue. Sending request of a Blob blocks further processing
+        // until the Blob is completely read and sent to the socket stream.
+        //
+        // When hixie-76 protocol is chosen, the queue is not used and messages are sent directly.
+        enum QueuedFrameType {
+            QueuedFrameTypeString,
+            QueuedFrameTypeVector
+            // FIXME: Add QueuedFrameTypeBlob.
+        };
+        struct QueuedFrame {
+            OpCode opCode;
+            QueuedFrameType frameType;
+            // Only one of the following items is used, according to the value of frameType.
+            String stringData;
+            Vector<char> vectorData;
+            // FIXME: Add blobData.
+        };
+        void enqueueTextFrame(const String&);
+        void enqueueRawFrame(OpCode, const char* data, size_t dataLength);
+        // FIXME: Add enqueueBlobFrame().
+
+        void processOutgoingFrameQueue();
+        void abortOutgoingFrameQueue();
+
+        enum OutgoingFrameQueueStatus {
+            // It is allowed to put a new item into the queue.
+            OutgoingFrameQueueOpen,
+            // Close frame has already been put into the queue but may not have been sent yet;
+            // m_handle->close() will be called as soon as the queue is cleared. It is not
+            // allowed to put a new item into the queue.
+            OutgoingFrameQueueClosing,
+            // Close frame has been sent or the queue was aborted. It is not allowed to put
+            // a new item to the queue.
+            OutgoingFrameQueueClosed
+        };
+
+        // If you are going to send a hybi-10 frame, you need to use the outgoing frame queue
+        // instead of call sendFrame() directly.
         bool sendFrame(OpCode, const char* data, size_t dataLength);
         bool sendFrameHixie76(const char* data, size_t dataLength);
 
@@ -167,6 +212,9 @@ namespace WebCore {
         Vector<char> m_continuousFrameData;
         unsigned short m_closeEventCode;
         String m_closeEventReason;
+
+        Deque<OwnPtr<QueuedFrame> > m_outgoingFrameQueue;
+        OutgoingFrameQueueStatus m_outgoingFrameQueueStatus;
     };
 
 } // namespace WebCore
