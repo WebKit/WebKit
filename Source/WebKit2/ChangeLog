@@ -1,5 +1,36 @@
 2011-08-25  Anders Carlsson  <andersca@apple.com>
 
+        More work on the updated Cocoa text input specification
+        https://bugs.webkit.org/show_bug.cgi?id=66977
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize m_pluginWantsLegacyCocoaTextInput and m_hasHandledAKeyDownEvent.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add m_pluginWantsLegacyCocoaTextInput and m_hasHandledAKeyDownEvent.
+        
+        (WebKit::NetscapePlugin::setPluginWantsLegacyCocoaTextInput):
+        Add setter. Not called yet.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformHandleKeyboardEvent):
+        Set m_hasHandledAKeyDownEvent to true if we get a KeyDown event.
+
+        (WebKit::NetscapePlugin::sendComplexTextInput):
+        If the plug-in is using the updated Cocoa text input spec, we can disable text input here.
+
+        (WebKit::NetscapePlugin::pluginFocusOrWindowFocusChanged):
+        If the plug-in is using the updated Cocoa text input spec, text input is not enabled when
+        the plug-in is focused.
+
+        (WebKit::NetscapePlugin::setComplexTextInputEnabled):
+        Set the right text input state based on whether the plug-in is using the updated spec or not.
+
+2011-08-25  Anders Carlsson  <andersca@apple.com>
+
         Return the correct value for NPNVsupportsCarbonBool
         https://bugs.webkit.org/show_bug.cgi?id=66964
 

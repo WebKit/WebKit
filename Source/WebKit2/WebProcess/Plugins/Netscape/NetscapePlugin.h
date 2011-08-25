@@ -58,6 +58,7 @@ public:
     NPError popUpContextMenu(NPMenu*);
 
     void setPluginReturnsNonretainedLayer(bool pluginReturnsNonretainedLayer) { m_pluginReturnsNonretainedLayer = pluginReturnsNonretainedLayer; }
+    void setPluginWantsLegacyCocoaTextInput(bool pluginWantsLegacyCocoaTextInput) { m_pluginWantsLegacyCocoaTextInput = pluginWantsLegacyCocoaTextInput; }
 
     mach_port_t compositingRenderServerPort();
 
@@ -242,8 +243,17 @@ private:
     bool m_pluginHasFocus;
     bool m_windowHasFocus;
 
+    // Whether the plug-in wants to use the legacy Cocoa text input handling that
+    // existed in WebKit1, or the updated Cocoa text input handling specified on
+    // https://wiki.mozilla.org/NPAPI:CocoaEventModel#Text_Input
+    bool m_pluginWantsLegacyCocoaTextInput;
+
     // Whether complex text input is enabled.
     bool m_isComplexTextInputEnabled;
+
+    // Whether the plug-in has handled a keydown event. This is used to determine
+    // if we can tell the plug-in that we support the updated Cocoa text input specification.
+    bool m_hasHandledAKeyDownEvent;
 
     WebCore::IntRect m_windowFrameInScreenCoordinates;
     WebCore::IntRect m_viewFrameInWindowCoordinates;
