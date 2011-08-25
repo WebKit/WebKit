@@ -62,7 +62,7 @@ function allURLsLoaded()
 
 function test()
 {
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step1);
+    InspectorTest.addConsoleSniffer(step1);
     InspectorTest.evaluateInPage("onSnifferInstalled()");
 
     function dumpResource(resource, callback)

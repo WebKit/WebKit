@@ -235,6 +235,9 @@ WebInspector.BreakpointManager.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.Breakpoint = function(uiSourceCodeId, lineNumber, condition, enabled, persistent)
 {
     this.uiSourceCodeId = uiSourceCodeId;

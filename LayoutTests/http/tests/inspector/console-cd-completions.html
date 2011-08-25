@@ -7,7 +7,7 @@
 function test()
 {
     InspectorTest.showConsolePanel();
-    var selector = WebInspector.console._contextSelectElement;
+    var selector = WebInspector.consoleView._contextSelectElement;
     var option = selector.firstChild;
     while (option) {
         if (option.textContent && option.textContent.indexOf("myIFrame") === 0)
@@ -22,7 +22,7 @@ function test()
     option.selected = true;
 
 
-    WebInspector.console._completions("", "myGlob", false, checkCompletions.bind(this));
+    WebInspector.consoleView._completions("", "myGlob", false, checkCompletions.bind(this));
     function checkCompletions(completions)
     {
         var expected = ["myGlobalVar", "myGlobalFunction"];

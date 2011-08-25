@@ -23,32 +23,32 @@ var test = function()
 
     function step2()
     {
-        WebInspector.console._completions("", "var", false, checkAgainstGolden.bind(this, [ "var1", "var2" ], [], step3));
+        WebInspector.consoleView._completions("", "var", false, checkAgainstGolden.bind(this, [ "var1", "var2" ], [], step3));
     }
 
     function step3()
     {
-        WebInspector.console._completions("", "di", false, checkAgainstGolden.bind(this, [ "dir", "dirxml" ], [], step4));
+        WebInspector.consoleView._completions("", "di", false, checkAgainstGolden.bind(this, [ "dir", "dirxml" ], [], step4));
     }
 
     function step4()
     {
-        WebInspector.console._completions("", "win", false, checkAgainstGolden.bind(this, [ "window" ], [], step5));
+        WebInspector.consoleView._completions("", "win", false, checkAgainstGolden.bind(this, [ "window" ], [], step5));
     }
 
     function step5()
     {
-        WebInspector.console._completions("", "t", false, checkAgainstGolden.bind(this, [ "this" ], [], step6));
+        WebInspector.consoleView._completions("", "t", false, checkAgainstGolden.bind(this, [ "this" ], [], step6));
     }
 
     function step6()
     {
-        WebInspector.console._completions("var1", "toExp", false, checkAgainstGolden.bind(this, [ "toExponential" ], [], step7));
+        WebInspector.consoleView._completions("var1", "toExp", false, checkAgainstGolden.bind(this, [ "toExponential" ], [], step7));
     }
 
     function step7()
     {
-        WebInspector.console._completions("123", "toExp", false, checkAgainstGolden.bind(this, [], [ "toExponential" ], step8));
+        WebInspector.consoleView._completions("123", "toExp", false, checkAgainstGolden.bind(this, [], [ "toExponential" ], step8));
     }
 
     function step8()

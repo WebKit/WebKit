@@ -9,7 +9,7 @@ InspectorTest.showConsolePanel = function()
 InspectorTest.dumpConsoleMessages = function()
 {
     var result = [];
-    var messages = WebInspector.console.messages;
+    var messages = WebInspector.consoleView.messages;
     for (var i = 0; i < messages.length; ++i) {
         var element = messages[i].toMessageElement();
         InspectorTest.addResult(element.textContent.replace(/\u200b/g, ""));
@@ -19,7 +19,7 @@ InspectorTest.dumpConsoleMessages = function()
 
 InspectorTest.dumpConsoleMessagesWithClasses = function(sortMessages) {
     var result = [];
-    var messages = WebInspector.console.messages;
+    var messages = WebInspector.consoleView.messages;
     for (var i = 0; i < messages.length; ++i) {
         var element = messages[i].toMessageElement();
         result.push(element.textContent.replace(/\u200b/g, "") + " " + element.getAttribute("class"));
@@ -32,7 +32,7 @@ InspectorTest.dumpConsoleMessagesWithClasses = function(sortMessages) {
 
 InspectorTest.expandConsoleMessages = function()
 {
-    var messages = WebInspector.console.messages;
+    var messages = WebInspector.consoleView.messages;
     for (var i = 0; i < messages.length; ++i) {
         var element = messages[i].toMessageElement();
         var node = element;

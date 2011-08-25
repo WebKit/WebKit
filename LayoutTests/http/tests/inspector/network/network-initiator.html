@@ -65,7 +65,7 @@ var test = function()
         if (!findResourceByURL(/size=300/))
             return;
 
-        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step3);
+        InspectorTest.addConsoleSniffer(step3);
         InspectorTest.evaluateInPage("loadData()");
     }
 

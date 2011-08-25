@@ -16,6 +16,7 @@
     <file>Checkbox.js</file>
     <file>Color.js</file>
     <file>ConsoleMessage.js</file>
+    <file>ConsoleModel.js</file>
     <file>ConsolePanel.js</file>
     <file>ConsoleView.js</file>
     <file>ContextMenu.js</file>
@@ -68,6 +69,7 @@
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
     <file>NetworkItemView.js</file>
+    <file>NetworkLog.js</file>
     <file>NetworkManager.js</file>
     <file>NetworkPanel.js</file>
     <file>Object.js</file>

@@ -11,7 +11,7 @@ function loadScript()
 
 function test()
 {
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2, true);
+    InspectorTest.addConsoleSniffer(step2, true);
     InspectorTest.evaluateInPage("loadScript()");
 
     function step2(msg)

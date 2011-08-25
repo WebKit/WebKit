@@ -29,12 +29,12 @@ InspectorTest.evaluateInConsole = function(code, callback)
 {
     callback = InspectorTest.safeWrap(callback);
 
-    WebInspector.console.visible = true;
-    WebInspector.console.prompt.text = code;
+    WebInspector.consoleView.visible = true;
+    WebInspector.consoleView.prompt.text = code;
     var event = document.createEvent("KeyboardEvent");
     event.initKeyboardEvent("keydown", true, true, null, "Enter", "");
-    WebInspector.console.promptElement.dispatchEvent(event);
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage",
+    WebInspector.consoleView.promptElement.dispatchEvent(event);
+    InspectorTest.addConsoleSniffer(
         function(commandResult) {
             callback(commandResult.toMessageElement().textContent);
         });
@@ -313,6 +313,11 @@ InspectorTest.addSniffer = function(receiver, methodName, override, opt_sticky)
         }
         return result;
     };
+}
+
+InspectorTest.addConsoleSniffer = function(override, opt_sticky)
+{
+    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "_appendConsoleMessage", override, opt_sticky);
 }
 
 InspectorTest.override = function(receiver, methodName, override, opt_sticky)

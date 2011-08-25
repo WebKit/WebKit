@@ -30,7 +30,7 @@ function test()
         InspectorTest.addResult("Before addition");
         InspectorTest.addResult("====================================");
         InspectorTest.dumpResourceTreeEverything();
-        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        InspectorTest.addConsoleSniffer(step2);
         InspectorTest.evaluateInPage("createIframe()");
     }
 

@@ -423,7 +423,6 @@ WebInspector.Resource.prototype = {
         this._finished = x;
 
         if (x) {
-            this._checkWarnings();
             this.dispatchEventToListeners("finished");
             if (this._pendingContentCallbacks.length)
                 this._innerRequestContent();
@@ -780,48 +779,6 @@ WebInspector.Resource.prototype = {
         this._warnings = 0;
         this._errors = 0;
         this.dispatchEventToListeners("errors-warnings-cleared");
-    },
-
-    _mimeTypeIsConsistentWithType: function()
-    {
-        // If status is an error, content is likely to be of an inconsistent type,
-        // as it's going to be an error message. We do not want to emit a warning
-        // for this, though, as this will already be reported as resource loading failure.
-        // Also, if a URL like http://localhost/wiki/load.php?debug=true&lang=en produces text/css and gets reloaded,
-        // it is 304 Not Modified and its guessed mime-type is text/php, which is wrong.
-        // Don't check for mime-types in 304-resources.
-        if (this.hasErrorStatusCode() || this.statusCode === 304)
-            return true;
-
-        if (typeof this.type === "undefined"
-            || this.type === WebInspector.Resource.Type.Other
-            || this.type === WebInspector.Resource.Type.XHR
-            || this.type === WebInspector.Resource.Type.WebSocket)
-            return true;
-
-        if (!this.mimeType)
-            return true; // Might be not known for cached resources with null responses.
-
-        if (this.mimeType in WebInspector.MIMETypes)
-            return this.type in WebInspector.MIMETypes[this.mimeType];
-
-        return false;
-    },
-
-    _checkWarnings: function()
-    {
-        if (this._mimeTypeIsConsistentWithType())
-            return;
-
-        WebInspector.console.addMessage(new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
-            WebInspector.ConsoleMessage.MessageType.Log,
-            WebInspector.ConsoleMessage.MessageLevel.Warning,
-            -1,
-            this.url,
-            1,
-            WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s.", WebInspector.Resource.Type.toUIString(this.type), this.mimeType),
-            null,
-            null));
     },
 
     get content()

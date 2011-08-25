@@ -37,13 +37,13 @@ function test()
 
     function step1(msg)
     {
-        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        InspectorTest.addConsoleSniffer(step2);
         InspectorTest.evaluateInPage("openWindow1()");
     }
 
     function step2(msg)
     {
-        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step3);
+        InspectorTest.addConsoleSniffer(step3);
         InspectorTest.evaluateInPage("openWindow2()");
     }
 

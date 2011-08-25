@@ -30,6 +30,7 @@
 
 /**
  * @constructor
+ * @extends {WebInspector.Object}
  */
 WebInspector.NetworkManager = function()
 {
@@ -124,6 +125,42 @@ WebInspector.NetworkDispatcher.prototype = {
             resource.cached = true;
         else
             resource.timing = response.timing;
+
+        if (!this._mimeTypeIsConsistentWithType(resource)) {
+            WebInspector.console.addMessage(new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
+                WebInspector.ConsoleMessage.MessageType.Log,
+                WebInspector.ConsoleMessage.MessageLevel.Warning,
+                -1,
+                this.url,
+                1,
+                WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s.", WebInspector.Resource.Type.toUIString(this.type), this.mimeType)));
+        }
+    },
+
+    _mimeTypeIsConsistentWithType: function(resource)
+    {
+        // If status is an error, content is likely to be of an inconsistent type,
+        // as it's going to be an error message. We do not want to emit a warning
+        // for this, though, as this will already be reported as resource loading failure.
+        // Also, if a URL like http://localhost/wiki/load.php?debug=true&lang=en produces text/css and gets reloaded,
+        // it is 304 Not Modified and its guessed mime-type is text/php, which is wrong.
+        // Don't check for mime-types in 304-resources.
+        if (resource.hasErrorStatusCode() || resource.statusCode === 304)
+            return true;
+
+        if (typeof resource.type === "undefined"
+            || resource.type === WebInspector.Resource.Type.Other
+            || resource.type === WebInspector.Resource.Type.XHR
+            || resource.type === WebInspector.Resource.Type.WebSocket)
+            return true;
+
+        if (!resource.mimeType)
+            return true; // Might be not known for cached resources with null responses.
+
+        if (resource.mimeType in WebInspector.MIMETypes)
+            return resource.type in WebInspector.MIMETypes[resource.mimeType];
+
+        return false;
     },
 
     _updateResourceWithCachedResource: function(resource, cachedResource)
@@ -325,35 +362,6 @@ WebInspector.NetworkDispatcher.prototype = {
 }
 
 /**
- * @constructor
+ * @type {?WebInspector.NetworkManager}
  */
-WebInspector.NetworkLog = function()
-{
-    this._resources = [];
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
-}
-
-WebInspector.NetworkLog.prototype = {
-    get resources()
-    {
-        return this._resources;
-    },
-
-    _frameNavigated: function(event)
-    {
-        if (!event.data.isMainFrame)
-            return;
-        // Preserve resources from the new session.
-        var oldResources = this._resources.splice(0, this._resources.length);
-        for (var i = 0; i < oldResources.length; ++i) {
-            if (oldResources[i].loaderId === event.data.loaderId)
-                this._resources.push(oldResources[i]);
-        }
-    },
-
-    _onResourceStarted: function(event)
-    {
-        this._resources.push(event.data);
-    }
-}
+WebInspector.networkManager = null;

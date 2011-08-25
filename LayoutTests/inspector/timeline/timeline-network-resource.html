@@ -23,7 +23,7 @@ function test()
     function step1()
     {
         InspectorTest.evaluateInPage("performActions()");
-        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        InspectorTest.addConsoleSniffer(step2);
     }
 
     function step2()

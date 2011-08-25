@@ -215,7 +215,7 @@ WebInspector.ConsoleMessage.prototype = {
             if (shouldFormatMessage && parameters[i].type === "string")
                 formattedResult.appendChild(document.createTextNode(parameters[i].description));
             else
-                formattedResult.appendChild(WebInspector.console._format(parameters[i]));
+                formattedResult.appendChild(WebInspector.consoleView._format(parameters[i]));
             if (i < parameters.length - 1)
                 formattedResult.appendChild(document.createTextNode(" "));
         }
@@ -229,7 +229,7 @@ WebInspector.ConsoleMessage.prototype = {
         function consoleFormatWrapper(force)
         {
             return function(obj) {
-                return WebInspector.console._format(obj, force);
+                return WebInspector.consoleView._format(obj, force);
             };
         }
 

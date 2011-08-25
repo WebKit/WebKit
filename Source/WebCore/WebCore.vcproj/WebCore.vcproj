@@ -68773,6 +68773,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ConsoleModel.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ConsoleView.js"
 					>
 				</File>
@@ -69014,6 +69018,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\NetworkManager.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\NetworkLog.js"
 					>
 				</File>
 				<File

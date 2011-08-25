@@ -183,7 +183,7 @@ var WebInspector = {
 
         var anchoredStatusBar = document.getElementById("anchored-status-bar-items");
         anchoredStatusBar.appendChild(this._dockToggleButton.element);
-        anchoredStatusBar.appendChild(this.console.toggleConsoleButton.element);
+        anchoredStatusBar.appendChild(this.consoleView.toggleConsoleButton.element);
         if (this.panels.elements)
             anchoredStatusBar.appendChild(this.panels.elements.nodeSearchButton.element);
 
@@ -289,43 +289,15 @@ var WebInspector = {
             WebInspector.drawer.updateHeight();
     },
 
-    get errors()
-    {
-        return this._errors || 0;
-    },
-
-    set errors(x)
-    {
-        x = Math.max(x, 0);
-
-        if (this._errors === x)
-            return;
-        this._errors = x;
-        this._updateErrorAndWarningCounts();
-    },
-
-    get warnings()
-    {
-        return this._warnings || 0;
-    },
-
-    set warnings(x)
-    {
-        x = Math.max(x, 0);
-
-        if (this._warnings === x)
-            return;
-        this._warnings = x;
-        this._updateErrorAndWarningCounts();
-    },
-
     _updateErrorAndWarningCounts: function()
     {
         var errorWarningElement = document.getElementById("error-warning-count");
         if (!errorWarningElement)
             return;
 
-        if (!this.errors && !this.warnings) {
+        var errors = WebInspector.console.errors;
+        var warnings = WebInspector.console.warnings;
+        if (!errors && !warnings) {
             errorWarningElement.addStyleClass("hidden");
             return;
         }
@@ -334,39 +306,39 @@ var WebInspector = {
 
         errorWarningElement.removeChildren();
 
-        if (this.errors) {
+        if (errors) {
             var errorElement = document.createElement("span");
             errorElement.id = "error-count";
-            errorElement.textContent = this.errors;
+            errorElement.textContent = errors;
             errorWarningElement.appendChild(errorElement);
         }
 
-        if (this.warnings) {
+        if (warnings) {
             var warningsElement = document.createElement("span");
             warningsElement.id = "warning-count";
-            warningsElement.textContent = this.warnings;
+            warningsElement.textContent = warnings;
             errorWarningElement.appendChild(warningsElement);
         }
 
-        if (this.errors) {
-            if (this.warnings) {
-                if (this.errors == 1) {
-                    if (this.warnings == 1)
-                        errorWarningElement.title = WebInspector.UIString("%d error, %d warning", this.errors, this.warnings);
+        if (errors) {
+            if (warnings) {
+                if (errors == 1) {
+                    if (warnings == 1)
+                        errorWarningElement.title = WebInspector.UIString("%d error, %d warning", errors, warnings);
                     else
-                        errorWarningElement.title = WebInspector.UIString("%d error, %d warnings", this.errors, this.warnings);
-                } else if (this.warnings == 1)
-                    errorWarningElement.title = WebInspector.UIString("%d errors, %d warning", this.errors, this.warnings);
+                        errorWarningElement.title = WebInspector.UIString("%d error, %d warnings", errors, warnings);
+                } else if (warnings == 1)
+                    errorWarningElement.title = WebInspector.UIString("%d errors, %d warning", errors, warnings);
                 else
-                    errorWarningElement.title = WebInspector.UIString("%d errors, %d warnings", this.errors, this.warnings);
-            } else if (this.errors == 1)
-                errorWarningElement.title = WebInspector.UIString("%d error", this.errors);
+                    errorWarningElement.title = WebInspector.UIString("%d errors, %d warnings", errors, warnings);
+            } else if (errors == 1)
+                errorWarningElement.title = WebInspector.UIString("%d error", errors);
             else
-                errorWarningElement.title = WebInspector.UIString("%d errors", this.errors);
-        } else if (this.warnings == 1)
-            errorWarningElement.title = WebInspector.UIString("%d warning", this.warnings);
-        else if (this.warnings)
-            errorWarningElement.title = WebInspector.UIString("%d warnings", this.warnings);
+                errorWarningElement.title = WebInspector.UIString("%d errors", errors);
+        } else if (warnings == 1)
+            errorWarningElement.title = WebInspector.UIString("%d warning", warnings);
+        else if (warnings)
+            errorWarningElement.title = WebInspector.UIString("%d warnings", warnings);
         else
             errorWarningElement.title = null;
     },
@@ -511,14 +483,19 @@ WebInspector.doLoadedDone = function()
     WebInspector.shortcutsScreen.section(WebInspector.UIString("Console"));
     WebInspector.shortcutsScreen.section(WebInspector.UIString("Elements Panel"));
 
+    this.console = new WebInspector.ConsoleModel();
+    this.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._updateErrorAndWarningCounts, this);
+    this.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._updateErrorAndWarningCounts, this);
+
     this.drawer = new WebInspector.Drawer();
-    this.console = new WebInspector.ConsoleView(this.drawer);
-    this.drawer.visibleView = this.console;
+    this.consoleView = new WebInspector.ConsoleView(this.drawer);
+    this.drawer.visibleView = this.consoleView;
+
     this.networkManager = new WebInspector.NetworkManager();
     this.resourceTreeModel = new WebInspector.ResourceTreeModel();
     this.networkLog = new WebInspector.NetworkLog();
     this.domAgent = new WebInspector.DOMAgent();
-    new WebInspector.JavaScriptContextManager(this.resourceTreeModel, this.console);
+    new WebInspector.JavaScriptContextManager(this.resourceTreeModel, this.consoleView);
 
     InspectorBackend.registerInspectorDispatcher(this);
 
@@ -553,12 +530,7 @@ WebInspector.doLoadedDone = function()
 
     this.extensionServer.initExtensions();
 
-    if (WebInspector.settings.monitoringXHREnabled.get())
-        ConsoleAgent.setMonitoringXHREnabled(true);
-
-    // There is no console agent for workers yet.
-    if (!WebInspector.WorkerManager.isWorkerFrontend())
-        ConsoleAgent.enable(this.console.setConsoleMessageExpiredCount.bind(this.console));
+    this.console.enableAgent();
 
     DatabaseAgent.enable();
     DOMStorageAgent.enable();
@@ -1026,7 +998,7 @@ WebInspector.toggleSearchingForNode = function()
 
 WebInspector.showConsole = function()
 {
-    this.drawer.showView(this.console);
+    this.drawer.showView(this.consoleView);
 }
 
 WebInspector.showPanel = function(panel)

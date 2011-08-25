@@ -16,7 +16,7 @@ function test()
     InspectorTest.startTimeline(step1);
     function step1()
     {
-        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        InspectorTest.addConsoleSniffer(step2);
         InspectorTest.evaluateInPage("performActions()");
     }
 

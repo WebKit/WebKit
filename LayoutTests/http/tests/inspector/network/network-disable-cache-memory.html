@@ -22,7 +22,7 @@ function test()
 
     function loadScriptAndGetContent(callback)
     {
-        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", scriptLoaded);
+        InspectorTest.addConsoleSniffer(scriptLoaded);
         InspectorTest.evaluateInPage("scheduleScriptLoad()");
 
         function scriptLoaded()

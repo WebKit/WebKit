@@ -22,7 +22,7 @@ function test()
         InspectorTest.completeTest();
     }
     InspectorTest.evaluateInPage("setTimeout(a, 0)");
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", callback);
+    InspectorTest.addConsoleSniffer(callback);
 }
 
 </script>

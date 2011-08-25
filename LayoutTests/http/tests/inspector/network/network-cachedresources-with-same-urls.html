@@ -25,7 +25,7 @@ function imageLoaded()
 
 function test()
 {
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2, true);
+    InspectorTest.addConsoleSniffer(step2, true);
     InspectorTest.evaluateInPage("loadImages()");
 
     function step2(msg)

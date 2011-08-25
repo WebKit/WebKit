@@ -8,7 +8,7 @@
 function test()
 {
     InspectorTest.showConsolePanel();
-    var selector = WebInspector.console._contextSelectElement;
+    var selector = WebInspector.consoleView._contextSelectElement;
     var option = selector.firstChild;
     while (option) {
         if (option.textContent && option.textContent.indexOf("myIFrame") === 0)

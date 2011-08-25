@@ -34,10 +34,24 @@ console.warn = function(message) {}
 console.assert = function(expr, message) {}
 
 var WebInspector = {}
-/** @param {string} url */
-WebInspector.linkifyURLAsNode = function(url) {}
+
+/**
+ * @param {string} url
+ * @param {string=} linkText
+ * @param {string=} classes
+ * @param {boolean=} isExternal
+ * @param {string=} tooltipText
+ */
+WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, tooltipText) {}
+
 /** @param {string} url */
 WebInspector.linkifyStringAsFragment = function(url) {}
+
+/**
+ * @param {string} url
+ * @param {number} lineNumber
+ */
+WebInspector.formatLinkText = function(url, lineNumber) {}
 
 /**
  * @param {string} str

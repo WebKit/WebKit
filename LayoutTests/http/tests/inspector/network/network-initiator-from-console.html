@@ -18,13 +18,13 @@ var test = function()
 
     function step1()
     {
-        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        InspectorTest.addConsoleSniffer(step2);
         WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, onResource);
         var str = "";
         str += "var s = document.createElement(\"script\");";
         str += "s.src = \"resources/script.js\";";
         str += "document.head.appendChild(s);";
-        WebInspector.console.evalInInspectedWindow(str, "console", true, undefined, undefined, function(){})
+        WebInspector.consoleView.evalInInspectedWindow(str, "console", true, undefined, undefined, function(){})
     }
 
     function onResource(event)

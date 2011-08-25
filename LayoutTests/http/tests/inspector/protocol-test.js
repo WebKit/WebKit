@@ -101,6 +101,8 @@ InspectorTest.runProtocolTestSuite = function(agentName, testSuite, nondetermini
     var domain = agentName.replace(/Agent$/,"");
     var domainMessagesHandler = InspectorBackend._domainDispatchers[domain];
     for (var eventName in domainMessagesHandler) {
+        if (typeof domainMessagesHandler[eventName] !== "function")
+            continue;
         this._agentCoverage[eventName] = "not checked";
         domainMessagesHandler[eventName] = InspectorTest._dumpEvent.bind(domainMessagesHandler, eventName, domainMessagesHandler[eventName]);
     }

@@ -21,7 +21,7 @@ function test()
     function step1(node)
     {
         node.setAttribute("src", "src=\"http://localhost:8000/inspector/resources/iframe-from-different-domain-data.html\"");
-        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        InspectorTest.addConsoleSniffer(step2);
     }
 
     function step2()

@@ -38,7 +38,7 @@ WebInspector.ConsoleView = function(drawer)
 
     this.clearButton = document.getElementById("clear-console-status-bar-item");
     this.clearButton.title = WebInspector.UIString("Clear console log.");
-    this.clearButton.addEventListener("click", this._clearButtonClicked.bind(this), false);
+    this.clearButton.addEventListener("click", this._requestClearMessages.bind(this), false);
 
     this._contextSelectElement = document.getElementById("console-context");
     if (WebInspector.WorkerManager.isWorkerFrontend())
@@ -100,74 +100,18 @@ WebInspector.ConsoleView = function(drawer)
         "string": this._formatstring
     };
 
-    this._registerConsoleDomainDispatcher();
-
     WebInspector.settings.monitoringXHREnabled.addChangeListener(this._monitoringXHREnabledSettingChanged.bind(this));
+
+    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
+    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._consoleCleared, this);
 }
 
 WebInspector.ConsoleView.Events = {
   ConsoleCleared: "console-cleared",
   EntryAdded: "console-entry-added",
-  MessageAdded: "console-message-added"
 }
 
 WebInspector.ConsoleView.prototype = {
-    _registerConsoleDomainDispatcher: function() {
-        var console = this;
-        var dispatcher = {
-            messageAdded: function(payload)
-            {
-                var consoleMessage = new WebInspector.ConsoleMessage(
-                    payload.source,
-                    payload.type,
-                    payload.level,
-                    payload.line,
-                    payload.url,
-                    payload.repeatCount,
-                    payload.text,
-                    payload.parameters,
-                    payload.stackTrace,
-                    payload.networkRequestId ? WebInspector.networkResourceById(payload.networkRequestId) : undefined);
-                console.addMessage(consoleMessage);
-            },
-
-            messageRepeatCountUpdated: function(count)
-            {
-                var msg = console.previousMessage;
-                var prevRepeatCount = msg.totalRepeatCount;
-
-                if (!console.commandSincePreviousMessage) {
-                    msg.repeatDelta = count - prevRepeatCount;
-                    msg.repeatCount = msg.repeatCount + msg.repeatDelta;
-                    msg.totalRepeatCount = count;
-                    msg._updateRepeatCount();
-                    console._incrementErrorWarningCount(msg);
-                    console.dispatchEventToListeners(WebInspector.ConsoleView.Events.MessageAdded, msg);
-                } else {
-                    var msgCopy = new WebInspector.ConsoleMessage(msg.source, msg.type, msg.level, msg.line, msg.url, count - prevRepeatCount, msg._messageText, msg._parameters, msg._stackTrace, msg._request);
-                    msgCopy.totalRepeatCount = count;
-                    msgCopy._formatMessage();
-                    console.addMessage(msgCopy);
-                }
-            },
-
-            messagesCleared: function()
-            {
-                if (!WebInspector.settings.preserveConsoleLog.get())
-                    console.clearMessages();
-            },
-        }
-        InspectorBackend.registerConsoleDispatcher(dispatcher);
-    },
-
-    setConsoleMessageExpiredCount: function(count)
-    {
-        if (count) {
-            var message = String.sprintf(WebInspector.UIString("%d console messages are not shown."), count);
-            this.addMessage(WebInspector.ConsoleMessage.createTextMessage(message, WebInspector.ConsoleMessage.MessageLevel.Warning));
-        }
-    },
-
     addContext: function(context)
     {
         var option = document.createElement("option");
@@ -310,20 +254,28 @@ WebInspector.ConsoleView.prototype = {
         this._scrollIntoViewTimer = setTimeout(scrollIntoView.bind(this), 20);
     },
 
-    addMessage: function(msg)
+    _consoleMessageAdded: function(event)
+    {
+        this.commandSincePreviousMessage = false;
+        this.previousMessage = event.data;
+        this._appendConsoleMessage(event.data);
+    },
+
+    _appendConsoleCommand: function(msg)
+    {
+        if (this.previousMessage)
+            this.commandSincePreviousMessage = true;
+        this._appendConsoleMessage(msg);
+    },
+
+    _appendConsoleCommandResult: function(msg)
+    {
+        this._appendConsoleMessage(msg);
+    },
+
+    _appendConsoleMessage: function(msg)
     {
         var shouldScrollToLastMessage = this.messagesElement.isScrolledToBottom();
-
-        if (msg instanceof WebInspector.ConsoleMessage && !(msg instanceof WebInspector.ConsoleCommandResult)) {
-            this._incrementErrorWarningCount(msg);
-            this.dispatchEventToListeners(WebInspector.ConsoleView.Events.MessageAdded, msg);
-            this.commandSincePreviousMessage = false;
-            this.previousMessage = msg;
-        } else if (msg instanceof WebInspector.ConsoleCommand) {
-            if (this.previousMessage) {
-                this.commandSincePreviousMessage = true;
-            }
-        }
 
         this.messages.push(msg);
 
@@ -348,38 +300,17 @@ WebInspector.ConsoleView.prototype = {
         this.dispatchEventToListeners(WebInspector.ConsoleView.Events.EntryAdded, msg);
     },
 
-    _incrementErrorWarningCount: function(msg)
+    _consoleCleared: function()
     {
-        switch (msg.level) {
-            case WebInspector.ConsoleMessage.MessageLevel.Warning:
-                WebInspector.warnings += msg.repeatDelta;
-                break;
-            case WebInspector.ConsoleMessage.MessageLevel.Error:
-                WebInspector.errors += msg.repeatDelta;
-                break;
-        }
-    },
-
-    requestClearMessages: function()
-    {
-        ConsoleAgent.clearConsoleMessages();
-        this.clearMessages();
-    },
-
-    clearMessages: function()
-    {
-        this.dispatchEventToListeners(WebInspector.ConsoleView.Events.ConsoleCleared);
-
         this.messages = [];
 
         this.currentGroup = this.topGroup;
         this.topGroup.messagesElement.removeChildren();
 
-        WebInspector.errors = 0;
-        WebInspector.warnings = 0;
-
         delete this.commandSincePreviousMessage;
         delete this.previousMessage;
+        
+        this.dispatchEventToListeners(WebInspector.ConsoleView.Events.ConsoleCleared);
     },
 
     completions: function(wordRange, bestMatchOnly, completionsReadyCallback)
@@ -514,11 +445,6 @@ WebInspector.ConsoleView.prototype = {
         completionsReadyCallback(results);
     },
 
-    _clearButtonClicked: function()
-    {
-        this.requestClearMessages();
-    },
-
     _handleContextMenuEvent: function(event)
     {
         if (!window.getSelection().isCollapsed) {
@@ -545,7 +471,7 @@ WebInspector.ConsoleView.prototype = {
         contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Preserve log upon navigation" : "Preserve Log upon Navigation"), preserveLogItemAction.bind(this), WebInspector.settings.preserveConsoleLog.get());
 
         contextMenu.appendSeparator();
-        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear console" : "Clear Console"), this.requestClearMessages.bind(this));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear console" : "Clear Console"), this._requestClearMessages.bind(this));
         contextMenu.show(event);
     },
 
@@ -575,10 +501,10 @@ WebInspector.ConsoleView.prototype = {
         var shortcut = WebInspector.KeyboardShortcut;
         var shortcutK = shortcut.makeDescriptor("k", WebInspector.KeyboardShortcut.Modifiers.Meta);
         // This case requires a separate bound function as its isMacOnly property should not be shared among different shortcut handlers.
-        this._shortcuts[shortcutK.key] = this.requestClearMessages.bind(this);
+        var clearConsoleHandler = this._requestClearMessages.bind(this);
+        this._shortcuts[shortcutK.key] = clearConsoleHandler;
         this._shortcuts[shortcutK.key].isMacOnly = true;
 
-        var clearConsoleHandler = this.requestClearMessages.bind(this);
         var shortcutL = shortcut.makeDescriptor("l", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
         this._shortcuts[shortcutL.key] = clearConsoleHandler;
 
@@ -604,6 +530,11 @@ WebInspector.ConsoleView.prototype = {
         if (WebInspector.isMac())
             section.addRelatedKeys(keys, WebInspector.UIString("Next/previous command"));
         section.addKey(shortcut.shortcutToString(shortcut.Keys.Enter), WebInspector.UIString("Execute command"));
+    },
+
+    _requestClearMessages: function()
+    {
+        WebInspector.console.requestClearMessages();
     },
 
     _promptKeyDown: function(event)
@@ -667,23 +598,22 @@ WebInspector.ConsoleView.prototype = {
             return;
 
         var commandMessage = new WebInspector.ConsoleCommand(str);
-        this.addMessage(commandMessage);
+        this._appendConsoleCommand(commandMessage);
 
-        var self = this;
         function printResult(result, wasThrown)
         {
             if (!result)
                 return;
 
-            self.prompt.history.push(str);
-            self.prompt.historyOffset = 0;
-            self.prompt.text = "";
+            this.prompt.history.push(str);
+            this.prompt.historyOffset = 0;
+            this.prompt.text = "";
 
-            WebInspector.settings.consoleHistory.set(self.prompt.history.slice(-30));
+            WebInspector.settings.consoleHistory.set(this.prompt.history.slice(-30));
 
-            self.addMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage));
+            this._appendConsoleCommandResult(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage));
         }
-        this.evalInInspectedWindow(str, "console", true, undefined, undefined, printResult);
+        this.evalInInspectedWindow(str, "console", true, undefined, undefined, printResult.bind(this));
 
         WebInspector.userMetrics.ConsoleEvaluated.record();
     },

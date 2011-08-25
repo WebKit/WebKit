@@ -31,58 +31,33 @@
 /**
  * @constructor
  */
-WebInspector.UISourceCode = function(id, url, isContentScript, contentProvider)
+WebInspector.NetworkLog = function()
 {
-    this._id = id;
-    this._url = url;
-    this._isContentScript = isContentScript;
-    this._contentProvider = contentProvider;
-    this._requestContentCallbacks = [];
+    this._resources = [];
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
 }
 
-WebInspector.UISourceCode.prototype = {
-    get id()
+WebInspector.NetworkLog.prototype = {
+    get resources()
     {
-        return this._id;
+        return this._resources;
     },
 
-    get url()
+    _frameNavigated: function(event)
     {
-        return this._url;
-    },
-
-    get isContentScript()
-    {
-        return this._isContentScript;
-    },
-
-    requestContent: function(callback)
-    {
-        if (this._contentLoaded) {
-            callback(this._mimeType, this._content);
+        if (!event.data.isMainFrame)
             return;
+        // Preserve resources from the new session.
+        var oldResources = this._resources.splice(0, this._resources.length);
+        for (var i = 0; i < oldResources.length; ++i) {
+            if (oldResources[i].loaderId === event.data.loaderId)
+                this._resources.push(oldResources[i]);
         }
-
-        this._requestContentCallbacks.push(callback);
-        if (this._requestContentCallbacks.length === 1)
-            this._contentProvider.requestContent(this._didRequestContent.bind(this));
     },
 
-    _didRequestContent: function(mimeType, content)
+    _onResourceStarted: function(event)
     {
-        this._contentLoaded = true;
-        this._mimeType = mimeType;
-        this._content = content;
-
-        for (var i = 0; i < this._requestContentCallbacks.length; ++i)
-            this._requestContentCallbacks[i](mimeType, content);
+        this._resources.push(event.data);
     }
-}
-
-/**
- * @interface
- */
-WebInspector.ContentProvider = function() { }
-WebInspector.ContentProvider.prototype = {
-    requestContent: function(callback) { }
 }

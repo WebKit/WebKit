@@ -38,8 +38,8 @@ WebInspector.ResourceTreeModel = function(networkManager)
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
 
-    WebInspector.console.addEventListener(WebInspector.ConsoleView.Events.MessageAdded, this._consoleMessageAdded, this);
-    WebInspector.console.addEventListener(WebInspector.ConsoleView.Events.ConsoleCleared, this._consoleCleared, this);
+    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
+    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._consoleCleared, this);
 
     this.frontendReused();
     InspectorBackend.registerPageDispatcher(new WebInspector.PageDispatcher(this));

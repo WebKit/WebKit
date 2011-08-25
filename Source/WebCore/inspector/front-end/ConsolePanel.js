@@ -29,8 +29,8 @@
 WebInspector.ConsolePanel = function()
 {
     WebInspector.Panel.call(this, "console");
-    WebInspector.console.addEventListener(WebInspector.ConsoleView.Events.EntryAdded, this._consoleMessageAdded, this);
-    WebInspector.console.addEventListener(WebInspector.ConsoleView.Events.ConsoleCleared, this._consoleCleared, this);
+    WebInspector.consoleView.addEventListener(WebInspector.ConsoleView.Events.EntryAdded, this._consoleMessageAdded, this);
+    WebInspector.consoleView.addEventListener(WebInspector.ConsoleView.Events.ConsoleCleared, this._consoleCleared, this);
 }
 
 WebInspector.ConsolePanel.prototype = {
@@ -98,7 +98,7 @@ WebInspector.ConsolePanel.prototype = {
         this._searchRegex = createSearchRegex(query, "g");
 
         this._searchResults = [];
-        var messages = WebInspector.console.messages;
+        var messages = WebInspector.consoleView.messages;
         for (var i = 0; i < messages.length; i++) {
             if (messages[i].matchesRegex(this._searchRegex)) {
                 this._searchResults.push(messages[i]);

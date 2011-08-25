@@ -51,8 +51,8 @@ WebInspector.DebuggerPresentationModel = function()
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.Reset, this._debuggerReset, this);
 
-    WebInspector.console.addEventListener(WebInspector.ConsoleView.Events.MessageAdded, this._consoleMessageAdded, this);
-    WebInspector.console.addEventListener(WebInspector.ConsoleView.Events.ConsoleCleared, this._consoleCleared, this);
+    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
+    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._consoleCleared, this);
 
     new WebInspector.DebuggerPresentationModelResourceBinding(this);
 }
@@ -113,12 +113,12 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._sourceFiles[sourceFileId].requestContent(callback);
     },
 
-    addSourceMappingListener: function(sourceURL, sourceId, listener)
+    addSourceMappingListener: function(sourceURL, scriptId, listener)
     {
         this._sourceMappingListeners.push(listener);
     },
 
-    removeSourceMappingListener: function(sourceURL, sourceId, listener)
+    removeSourceMappingListener: function(sourceURL, scriptId, listener)
     {
         // FIXME: implement this.
     },

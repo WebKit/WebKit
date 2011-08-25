@@ -41,7 +41,7 @@ function allXHRsLoaded()
 
 function test()
 {
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step1);
+    InspectorTest.addConsoleSniffer(step1);
     InspectorTest.evaluateInPage("loadData()");
 
     function dumpResource(resource, callback)

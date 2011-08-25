@@ -1,3 +1,75 @@
+2011-08-24  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: split ConsoleView into the View and the Model.
+        https://bugs.webkit.org/show_bug.cgi?id=66861
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/BreakpointManager.js:
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessage.prototype._format):
+        * inspector/front-end/ConsoleModel.js: Added.
+        (WebInspector.ConsoleModel):
+        (WebInspector.ConsoleModel.prototype._setConsoleMessageExpiredCount):
+        (WebInspector.ConsoleModel.prototype.addMessage):
+        (WebInspector.ConsoleModel.prototype._incrementErrorWarningCount):
+        (WebInspector.ConsoleModel.prototype.requestClearMessages):
+        (WebInspector.ConsoleModel.prototype.clearMessages):
+        (WebInspector.ConsoleDispatcher):
+        (WebInspector.ConsoleDispatcher.prototype.messageAdded):
+        (WebInspector.ConsoleDispatcher.prototype.messageRepeatCountUpdated):
+        * inspector/front-end/ConsolePanel.js:
+        (WebInspector.ConsolePanel):
+        (WebInspector.ConsolePanel.prototype.performSearch):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView):
+        (WebInspector.ConsoleView.prototype._consoleMessageAdded):
+        (WebInspector.ConsoleView.prototype._appendConsoleCommand):
+        (WebInspector.ConsoleView.prototype._appendConsoleCommandResult):
+        (WebInspector.ConsoleView.prototype._appendConsoleMessage):
+        (WebInspector.ConsoleView.prototype._consoleCleared):
+        (WebInspector.ConsoleView.prototype._registerShortcuts):
+        (WebInspector.ConsoleView.prototype._requestClearMessages):
+        * inspector/front-end/DebuggerModel.js:
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype.addSourceMappingListener):
+        (WebInspector.DebuggerPresentationModel.prototype.removeSourceMappingListener):
+        * inspector/front-end/NetworkLog.js: Copied from Source/WebCore/inspector/front-end/externs.js.
+        (WebInspector.NetworkLog):
+        (WebInspector.NetworkLog.prototype.get resources):
+        (WebInspector.NetworkLog.prototype._frameNavigated):
+        (WebInspector.NetworkLog.prototype._onResourceStarted):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype._updateResourceWithResponse):
+        (WebInspector.NetworkDispatcher.prototype._mimeTypeIsConsistentWithType):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.set finished):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.RawSourceCode.prototype._scriptForRawLocation):
+        (WebInspector.ScriptContentProvider.prototype.requestContent):
+        (WebInspector.ConcatenatedScriptsContentProvider.prototype._concatenateScriptsContent.appendChunk):
+        (WebInspector.ConcatenatedScriptsContentProvider.prototype._concatenateScriptsContent):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.ContentProvider):
+        (WebInspector.ContentProvider.prototype.requestContent):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/externs.js:
+        (WebInspector.linkifyURLAsNode):
+        (WebInspector.formatLinkText):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createGlobalStatusBarItems):
+        (WebInspector._updateErrorAndWarningCounts):
+        (WebInspector.showConsole):
+
 2011-08-24  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Directional arrow on element info box looks terrible

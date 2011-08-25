@@ -30,6 +30,11 @@
 
 // RawSourceCode represents JavaScript resource or HTML resource with inlined scripts
 // as it came from network.
+
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.RawSourceCode = function(id, script, formatter)
 {
     this._scripts = [script];
@@ -91,7 +96,7 @@ WebInspector.RawSourceCode.prototype = {
     {
         var closestScript = this._scripts[0];
         for (var i = 1; i < this._scripts.length; ++i) {
-            script = this._scripts[i];
+            var script = this._scripts[i];
             if (script.lineOffset > lineNumber || (script.lineOffset === lineNumber && script.columnOffset > columnNumber))
                 continue;
             if (script.lineOffset > closestScript.lineOffset ||
@@ -253,6 +258,10 @@ WebInspector.RawSourceCode.prototype = {
 WebInspector.RawSourceCode.prototype.__proto__ = WebInspector.Object.prototype;
 
 
+/**
+ * @constructor
+ * @implements {WebInspector.ContentProvider}
+ */
 WebInspector.ScriptContentProvider = function(script)
 {
     this._mimeType = "text/javascript";
@@ -260,19 +269,22 @@ WebInspector.ScriptContentProvider = function(script)
 };
 
 WebInspector.ScriptContentProvider.prototype = {
-requestContent: function(callback)
-{
-    function didRequestSource(source)
+    requestContent: function(callback)
     {
-        callback(this._mimeType, source);
+        function didRequestSource(source)
+        {
+            callback(this._mimeType, source);
+        }
+        this._script.requestSource(didRequestSource.bind(this));
     }
-    this._script.requestSource(didRequestSource.bind(this));
-}
 }
 
 WebInspector.ScriptContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
 
-
+/**
+ * @constructor
+ * @implements {WebInspector.ContentProvider}
+ */
 WebInspector.ConcatenatedScriptsContentProvider = function(scripts)
 {
     this._mimeType = "text/html";
@@ -300,8 +312,8 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
        var content = "";
        var lineNumber = 0;
        var columnNumber = 0;
-       var scriptRanges = [];
-       function appendChunk(chunk, script)
+
+       function appendChunk(chunk)
        {
            var start = { lineNumber: lineNumber, columnNumber: columnNumber };
            content += chunk;
@@ -314,8 +326,6 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
                columnNumber = lineEndings[lineCount - 1] - lineEndings[lineCount - 2] - 1;
            }
            var end = { lineNumber: lineNumber, columnNumber: columnNumber };
-           if (script)
-               scriptRanges.push({ start: start, end: end, sourceId: script.sourceId });
        }
 
        var scriptOpenTag = "<script>";
@@ -329,7 +339,7 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
 
            // Add script tag.
            appendChunk(scriptOpenTag);
-           appendChunk(sources[i], scripts[i]);
+           appendChunk(sources[i]);
            appendChunk(scriptCloseTag);
        }
 
@@ -339,7 +349,10 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
 
 WebInspector.ConcatenatedScriptsContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
 
-
+/**
+ * @constructor
+ * @implements {WebInspector.ContentProvider}
+ */
 WebInspector.ResourceContentProvider = function(resource)
 {
     this._mimeType = resource.type === WebInspector.Resource.Type.Script ? "text/javascript" : "text/html";

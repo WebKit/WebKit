@@ -38,7 +38,7 @@ function iframeLoadedChangeSrc()
 
 function test()
 {
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+    InspectorTest.addConsoleSniffer(step2);
     InspectorTest.evaluateInPage("loadIframe()");
 
     function step2()

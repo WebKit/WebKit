@@ -35,7 +35,7 @@ function test()
         InspectorTest.completeTest();
     }
     InspectorTest.evaluateInPage("doEvalSource()");
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", callback);
+    InspectorTest.addConsoleSniffer(callback);
 }
 
 </script>

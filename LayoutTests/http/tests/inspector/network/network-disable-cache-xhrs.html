@@ -41,7 +41,7 @@ function test()
 
     function step1()
     {
-        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        InspectorTest.addConsoleSniffer(step2);
         InspectorTest.evaluateInPage("loadData()");
     }
 
@@ -52,7 +52,7 @@ function test()
 
     function step3(msg)
     {
-        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step4);
+        InspectorTest.addConsoleSniffer(step4);
         InspectorTest.evaluateInPage("cacheDisabled()");
     }
 
