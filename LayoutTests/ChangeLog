@@ -1,3 +1,9 @@
+2011-08-25  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [Qt] Unreviewed, rebaseline for bug 53438
+
+        * platform/qt/fast/css/button-overflow-ellipsis-expected.txt:
+
 2011-08-25  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Chromium rebaselines for r93794.
