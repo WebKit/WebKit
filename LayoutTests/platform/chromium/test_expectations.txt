@@ -3598,7 +3598,7 @@ BUGWK66730 WIN : http/tests/websocket/tests/hybi/masked-frames.html = PASS TEXT
 
 BUGWK66217 WIN RELEASE : http/tests/inspector/resource-tree/resource-tree-errors-reload.html = PASS TEXT
 
-BUGWK66738 SLOW WIN RELEASE : http/tests/inspector/network/download.html = PASS
+BUGWK66738 WIN : http/tests/inspector/network/download.html = PASS TIMEOUT
 
 BUGWK66795 LINUX MAC SLOW : fast/js/reentrant-caching.html = PASS
 
@@ -3613,7 +3613,8 @@ BUGWK66900 LINUX SNOWLEOPARD DEBUG : fast/writing-mode/japanese-rl-text-with-bro
 
 BUGWK66908 WIN LINUX GPU DEBUG : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
 BUGWK66908 : fast/css/font-face-woff.html = PASS IMAGE+TEXT
+BUGWK66908 : svg/custom/svg-fonts-fallback.xhtml = PASS IMAGE+TEXT
 
 BUGWK66953 SNOWLEOPARD DEBUG : animations/negative-delay.html = PASS TEXT
 
-DEBUG : fast/events/keydown-1.html = PASS TIMEOUT
+BUGWK66974 DEBUG : fast/events/keydown-1.html = PASS TIMEOUT

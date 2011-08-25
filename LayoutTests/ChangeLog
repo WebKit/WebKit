@@ -1,3 +1,11 @@
+2011-08-25  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Test expectation updates.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-25  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Rollout r93799: Caused bad clipping on the bottom of tall glyphs inside a button label
@@ -17,7 +25,7 @@
         * platform/mac/plugins/supports-carbon-event-model-expected.txt: Added.
         * platform/mac/plugins/supports-carbon-event-model.html: Added.
 
-2011-08-24  Peter Kasting  <pkasting@google.com>
+2011-08-25  Peter Kasting  <pkasting@google.com>
 
         [chromium] Further attempts to clean up the test expectations by being
         more consistent about handling SKIPped and WONTFIXed tests.
@@ -126,7 +134,7 @@
         * fast/css/button-overflow-ellipsis.html: Added.
         * platform/qt/fast/css/button-overflow-ellipsis-expected.txt: Added.
 
-2011-08-24  Peter Kasting  <pkasting@google.com>
+2011-08-25  Peter Kasting  <pkasting@google.com>
 
         [chromium] Several test expectation updates.
 
