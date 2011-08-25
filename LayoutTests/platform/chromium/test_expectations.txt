@@ -2652,7 +2652,7 @@ BUGCR74979 SKIP MAC GPU : media/video-canvas-alpha.html = IMAGE
 // This test needs completely new baselines.
 BUGCR75354 BUGWK55718 : media/media-document-audio-repaint.html = IMAGE+TEXT
 
-BUGWK55968 BUGWK58306 MAC GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = CRASH IMAGE+TEXT
+BUGWK55968 MAC GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT
 BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
 // 2 pixel stretching when rendering some videos with the GPU (Now it's flaky)
@@ -2926,10 +2926,6 @@ BUGJIANLI : fast/multicol/huge-column-count.html = MISSING
 // Regression caused by r83514.
 BUGCR79110 LINUX WIN : fast/block/float/021.html = TEXT
 BUGCR79110 LINUX WIN : fast/overflow/infiniteRecursionGuard.html = IMAGE+TEXT
-
-BUGWK58308 LINUX WIN DEBUG GPU : compositing/z-order/negative-z-index.html = PASS CRASH
-
-BUGCR79173 LINUX DEBUG GPU : fast/canvas/access-zero-sized-canvas.html = PASS CRASH
 
 // Regression caused by r83628.
 BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT

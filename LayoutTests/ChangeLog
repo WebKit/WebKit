@@ -1,5 +1,11 @@
 2011-08-24  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Remove expected CRASH lines for tests that don't crash
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-24  James Robinson  <jamesr@chromium.org>
+
         [chromium] Remove expected failure lines from tests that work now.
 
         * platform/chromium/test_expectations.txt:
