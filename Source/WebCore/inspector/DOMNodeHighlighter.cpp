@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "GraphicsTypes.h"
 #include "Node.h"
 #include "Page.h"
 #include "Range.h"
@@ -49,14 +50,19 @@ namespace WebCore {
 
 namespace {
 
+#if OS(WINDOWS)
+static const unsigned fontHeightPx = 12;
+#elif OS(MAC_OS_X) || OS(UNIX)
+static const unsigned fontHeightPx = 11;
+#endif
+
 const static int rectInflatePx = 4;
-const static int fontHeightPx = 12;
 const static int borderWidthPx = 1;
 const static int tooltipPadding = 4;
 
 const static int arrowTipOffset = 20;
-const static int arrowHeight = 7;
-const static int arrowHalfWidth = 7;
+const static float arrowHeight = 7;
+const static float arrowHalfWidth = 7;
 
 Path quadToPath(const FloatQuad& quad)
 {
@@ -153,42 +159,48 @@ int drawSubstring(const TextRun& globalTextRun, int offset, int length, const Co
     return offset + length;
 }
 
-int calculateArrowTipX(const LayoutRect& anchorBox, const LayoutRect& titleRect)
+float calculateArrowTipX(const LayoutRect& anchorBox, const LayoutRect& titleRect)
 {
+    const static int anchorTipOffsetPx = 2;
+
+    int minX = titleRect.x() + arrowHalfWidth;
+    int maxX = titleRect.maxX() - arrowHalfWidth;
     int anchorX = anchorBox.x();
+    int anchorMaxX = anchorBox.maxX();
 
-    // Check for heavily misaligned tooltip first.
-    if (titleRect.x() > anchorBox.maxX())
-        return titleRect.x() + arrowHalfWidth;
-
-    if (titleRect.maxX() < anchorX)
-        return titleRect.maxX() - arrowHalfWidth;
-
-    int x = titleRect.x() + arrowTipOffset;
+    int x = titleRect.x() + arrowTipOffset; // Default tooltip position.
     if (x < anchorX)
-        x = anchorX + arrowTipOffset;
-    if (x > titleRect.maxX() - arrowHalfWidth)
-        x = titleRect.maxX() - arrowHalfWidth;
+        x = anchorX + anchorTipOffsetPx;
+    else if (x > anchorMaxX)
+        x = anchorMaxX - anchorTipOffsetPx;
+
+    if (x < minX)
+        x = minX;
+    else if (x > maxX)
+        x = maxX;
 
     return x;
 }
 
-void setUpFontFamilies(FontDescription& fontDescription, WebCore::Settings* settings)
+void setUpFontDescription(FontDescription& fontDescription, WebCore::Settings* settings)
 {
 #define TOOLTIP_FONT_FAMILIES(size, ...) \
-static unsigned tooltipFontFaceSize = size;\
+static const unsigned tooltipFontFaceSize = size;\
 static const AtomicString* tooltipFontFace[size] = { __VA_ARGS__ };
 
 #if OS(WINDOWS)
 TOOLTIP_FONT_FAMILIES(2, new AtomicString("Consolas"), new AtomicString("Lucida Console"))
-#elif OS(UNIX)
-TOOLTIP_FONT_FAMILIES(1, new AtomicString("dejavu sans mono"))
 #elif OS(MAC_OS_X)
 TOOLTIP_FONT_FAMILIES(2, new AtomicString("Menlo"), new AtomicString("Monaco"))
+#elif OS(UNIX)
+TOOLTIP_FONT_FAMILIES(1, new AtomicString("dejavu sans mono"))
 #endif
 // In the default case, we get the settings-provided monospace font.
 
 #undef TOOLTIP_FONT_FAMILIES
+
+    fontDescription.setRenderingMode(settings->fontRenderingMode());
+    fontDescription.setComputedSize(fontHeightPx);
 
     const AtomicString& fixedFontFamily = settings->fixedFontFamily();
     if (!fixedFontFamily.isEmpty()) {
@@ -216,7 +228,7 @@ TOOLTIP_FONT_FAMILIES(2, new AtomicString("Menlo"), new AtomicString("Monaco"))
 void drawElementTitle(GraphicsContext& context, Node* node, const LayoutRect& boundingBox, const LayoutRect& anchorBox, const FloatRect& overlayRect, WebCore::Settings* settings)
 {
 
-    DEFINE_STATIC_LOCAL(Color, backgroundColor, (255, 255, 194, 255));
+    DEFINE_STATIC_LOCAL(Color, backgroundColor, (255, 255, 194));
     DEFINE_STATIC_LOCAL(Color, tagColor, (136, 18, 128)); // Same as .webkit-html-tag.
     DEFINE_STATIC_LOCAL(Color, attrColor, (26, 26, 166)); // Same as .webkit-html-attribute-value.
     DEFINE_STATIC_LOCAL(Color, normalColor, (Color::black));
@@ -265,9 +277,7 @@ void drawElementTitle(GraphicsContext& context, Node* node, const LayoutRect& bo
     nodeTitle += heightNumberPart + pxString;
 
     FontDescription desc;
-    desc.setRenderingMode(settings->fontRenderingMode());
-    desc.setComputedSize(fontHeightPx);
-    setUpFontFamilies(desc, settings);
+    setUpFontDescription(desc, settings);
     Font font = Font(desc, 0, 0);
     font.update(0);
 
@@ -282,7 +292,7 @@ void drawElementTitle(GraphicsContext& context, Node* node, const LayoutRect& bo
     LayoutUnit dy = borderWidthPx;
 
     // If the tip sticks beyond the right of overlayRect, right-align the tip with the said boundary.
-    if (titleRect.maxX() > overlayRect.maxX())
+    if (titleRect.maxX() + dx > overlayRect.maxX())
         dx = overlayRect.maxX() - titleRect.maxX();
 
     // If the tip sticks beyond the left of overlayRect, left-align the tip with the said boundary.
@@ -290,7 +300,7 @@ void drawElementTitle(GraphicsContext& context, Node* node, const LayoutRect& bo
         dx = overlayRect.x() - titleRect.x() - borderWidthPx;
 
     // If the tip sticks beyond the bottom of overlayRect, show the tip at top of bounding box.
-    if (titleRect.maxY() > overlayRect.maxY()) {
+    if (titleRect.maxY() + dy > overlayRect.maxY()) {
         dy = anchorBox.y() - titleRect.maxY() - borderWidthPx;
         // If the tip still sticks beyond the bottom of overlayRect, bottom-align the tip with the said boundary.
         if (titleRect.maxY() + dy > overlayRect.maxY())
@@ -306,26 +316,34 @@ void drawElementTitle(GraphicsContext& context, Node* node, const LayoutRect& bo
     bool isArrowAtTop = titleRect.y() > anchorBox.y();
     titleRect.move(0, tooltipPadding * (isArrowAtTop ? 1 : -1));
 
-    context.setStrokeColor(pxAndBorderColor, ColorSpaceDeviceRGB);
-    context.setStrokeThickness(borderWidthPx);
-    context.setFillColor(backgroundColor, ColorSpaceDeviceRGB);
-    context.drawRect(titleRect);
-
     {
-        int arrowTipX = calculateArrowTipX(anchorBox, titleRect);
-        FloatPoint arrowPoints[3];
-        float arrowBaseY = isArrowAtTop ? titleRect.y() : titleRect.maxY();
-        arrowPoints[0] = FloatPoint(arrowTipX - arrowHalfWidth, arrowBaseY);
-        arrowPoints[1] = FloatPoint(arrowTipX, arrowBaseY + arrowHeight * (isArrowAtTop ? -1 : 1));
-        arrowPoints[2] = FloatPoint(arrowTipX + arrowHalfWidth, arrowBaseY);
-        context.drawConvexPolygon(3, arrowPoints);
+        float arrowTipX = calculateArrowTipX(anchorBox, titleRect);
+        int arrowBaseY = isArrowAtTop ? titleRect.y() : titleRect.maxY();
+        int arrowOppositeY = isArrowAtTop ? titleRect.maxY() : titleRect.y();
 
-        context.setStrokeColor(backgroundColor, ColorSpaceDeviceRGB);
+        FloatPoint points[8];
+        points[0] = FloatPoint(arrowTipX - arrowHalfWidth, arrowBaseY);
+        points[1] = FloatPoint(arrowTipX, arrowBaseY + arrowHeight * (isArrowAtTop ? -1 : 1));
+        points[2] = FloatPoint(arrowTipX + arrowHalfWidth, arrowBaseY);
+        points[3] = FloatPoint(titleRect.maxX(), arrowBaseY);
+        points[4] = FloatPoint(titleRect.maxX(), arrowOppositeY);
+        points[5] = FloatPoint(titleRect.x(), arrowOppositeY);
+        points[6] = FloatPoint(titleRect.x(), arrowBaseY);
+        points[7] = points[0];
+
+        Path path;
+        path.moveTo(points[0]);
+        for (int i = 1; i < 8; ++i)
+            path.addLineTo(points[i]);
+
+        context.save();
+        context.translate(0.5f, 0.5f);
+        context.setStrokeColor(pxAndBorderColor, ColorSpaceDeviceRGB);
         context.setFillColor(backgroundColor, ColorSpaceDeviceRGB);
-        context.setStrokeThickness(borderWidthPx + 1);
-        LayoutPoint startPoint = LayoutPoint(arrowPoints[0].x() + 1, arrowPoints[0].y());
-        LayoutPoint endPoint = LayoutPoint(arrowPoints[2].x() - 1, arrowPoints[2].y());
-        context.drawLine(startPoint, endPoint);
+        context.setStrokeThickness(borderWidthPx);
+        context.fillPath(path);
+        context.strokePath(path);
+        context.restore();
     }
 
     int currentPos = 0;
