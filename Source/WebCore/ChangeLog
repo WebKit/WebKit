@@ -1,3 +1,15 @@
+2011-08-24  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Directional arrow on element info box looks terrible
+        https://bugs.webkit.org/show_bug.cgi?id=66819
+
+        Beautify the tooltip arrow, give it a better alignment in some edge cases,
+        and fix the tooltip font on Macs.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/DOMNodeHighlighter.cpp:
+
 2011-08-25  Yuta Kitamura  <yutak@chromium.org>
 
         Let MessageEvent.data hold SerializedScriptValue or String selectively
