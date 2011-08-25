@@ -80,7 +80,7 @@ WebInspector.NetworkLogView.prototype = {
             this._setLargerResources(this.useLargeRows);
 
         this._allowPopover = true;
-        this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
+        this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
         // Enable faster hint.
         this._popoverHelper.setTimeout(100);
 
@@ -643,7 +643,7 @@ WebInspector.NetworkLogView.prototype = {
     willHide: function()
     {
         WebInspector.IFrameView.prototype.willHide.call(this);
-        this._popoverHelper.hidePopup();
+        this._popoverHelper.hidePopover();
     },
 
     refresh: function()
@@ -705,7 +705,7 @@ WebInspector.NetworkLogView.prototype = {
 
         this._clearSearchMatchedList();
         if (this._popoverHelper)
-            this._popoverHelper.hidePopup();
+            this._popoverHelper.hidePopover();
 
         if (this._calculator)
             this._calculator.reset();
@@ -862,7 +862,7 @@ WebInspector.NetworkLogView.prototype = {
         widths.name = 100;
         this._dataGrid.applyColumnWidthsMap(widths);
 
-        this._popoverHelper.hidePopup();
+        this._popoverHelper.hidePopover();
     },
 
     _toggleLargerResources: function()
@@ -898,13 +898,11 @@ WebInspector.NetworkLogView.prototype = {
         return resource && resource.timing ? anchor : null;
     },
 
-    _showPopover: function(anchor)
+    _showPopover: function(anchor, popover)
     {
         var resource = anchor.parentElement.resource;
         var tableElement = WebInspector.ResourceTimingView.createTimingTable(resource);
-        var popover = new WebInspector.Popover(tableElement);
-        popover.show(anchor);
-        return popover;
+        popover.show(tableElement, anchor);
     },
 
     _toggleGridMode: function()

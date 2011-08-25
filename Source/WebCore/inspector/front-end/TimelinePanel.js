@@ -93,7 +93,7 @@ WebInspector.TimelinePanel = function()
     this._boundariesAreValid = true;
     this._scrollTop = 0;
 
-    this._popoverHelper = new WebInspector.PopoverHelper(this._containerElement, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
+    this._popoverHelper = new WebInspector.PopoverHelper(this._containerElement, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
     this._containerElement.addEventListener("mousemove", this._mouseMove.bind(this), false);
     this._containerElement.addEventListener("mouseout", this._mouseOut.bind(this), false);
 
@@ -748,17 +748,15 @@ WebInspector.TimelinePanel.prototype = {
         }
     },
 
-    _showPopover: function(anchor)
+    _showPopover: function(anchor, popover)
     {
         var record = anchor.row._record;
-        var popover = new WebInspector.Popover(record._generatePopupContent(this._calculator, this.categories));
-        popover.show(anchor);
-        return popover;
+        popover.show(record._generatePopupContent(this._calculator, this.categories), anchor);
     },
 
     _closeRecordDetails: function()
     {
-        this._popoverHelper.hidePopup();
+        this._popoverHelper.hidePopover();
     }
 }
 

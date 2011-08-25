@@ -91,7 +91,8 @@ WebInspector.SourceFrame.prototype = {
         if (this.loaded)
             this._textViewer.freeCachedElements();
 
-        this._hidePopup();
+        if (this._popoverHelper)
+            this._popoverHelper.hidePopover();
         this._clearLineHighlight();
     },
 
@@ -280,8 +281,9 @@ WebInspector.SourceFrame.prototype = {
 
         var element = this._textViewer.element;
         if (this._delegate.debuggingSupported()) {
+            this._popoverHelper = new WebInspector.PopoverHelper(element,
+                this._getPopoverAnchor.bind(this), this._onShowPopover.bind(this), this._onHidePopover.bind(this));
             element.addEventListener("mousedown", this._mouseDown.bind(this), true);
-            element.addEventListener("mousemove", this._mouseMove.bind(this), true);
             element.addEventListener("scroll", this._scroll.bind(this), true);
         }
 
@@ -631,12 +633,14 @@ WebInspector.SourceFrame.prototype = {
 
     _scroll: function(event)
     {
-        this._hidePopup();
+        if (this._popoverHelper)
+            this._popoverHelper.hidePopover();
     },
 
     _mouseDown: function(event)
     {
-        this._hidePopup();
+        if (this._popoverHelper)
+            this._popoverHelper.hidePopover();
         if (event.button != 0 || event.altKey || event.ctrlKey || event.metaKey)
             return;
         var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
@@ -655,79 +659,44 @@ WebInspector.SourceFrame.prototype = {
         event.preventDefault();
     },
 
-    _mouseMove: function(event)
+    _onHidePopover: function()
     {
-        // Pretend that nothing has happened.
-        if (this._hoverElement === event.target || event.target.hasStyleClass("source-frame-eval-expression"))
-            return;
-
-        this._resetHoverTimer();
-        // User has 500ms to reach the popup.
-        if (this._popup) {
-            var self = this;
-            function doHide()
-            {
-                self._hidePopup();
-                delete self._hidePopupTimer;
-            }
-            if (!("_hidePopupTimer" in this))
-                this._hidePopupTimer = setTimeout(doHide, 500);
-        }
-
-        this._hoverElement = event.target;
-
-        // Now that cleanup routines are set up above, leave this in case we are not on a break.
-        if (!this._delegate.debuggerPaused())
-            return;
-
-        // We are interested in identifiers and "this" keyword.
-        if (this._hoverElement.hasStyleClass("webkit-javascript-keyword")) {
-            if (this._hoverElement.textContent !== "this")
-                return;
-        } else if (!this._hoverElement.hasStyleClass("webkit-javascript-ident"))
-            return;
-
-        const toolTipDelay = this._popup ? 600 : 1000;
-        this._hoverTimer = setTimeout(this._mouseHover.bind(this, this._hoverElement), toolTipDelay);
-    },
-
-    _resetHoverTimer: function()
-    {
-        if (this._hoverTimer) {
-            clearTimeout(this._hoverTimer);
-            delete this._hoverTimer;
-        }
-    },
-
-    _hidePopup: function()
-    {
-        this._resetHoverTimer();
-        if (!this._popup)
-            return;
-
         // Replace higlight element with its contents inplace.
-        var parentElement = this._popup.highlightElement.parentElement;
-        var child = this._popup.highlightElement.firstChild;
+        var highlightElement = this._highlightElement;
+        var parentElement = highlightElement.parentElement;
+        var child = highlightElement.firstChild;
         while (child) {
             var nextSibling = child.nextSibling;
-            parentElement.insertBefore(child, this._popup.highlightElement);
+            parentElement.insertBefore(child, highlightElement);
             child = nextSibling;
         }
-        parentElement.removeChild(this._popup.highlightElement);
-
-        this._popup.hide();
-        delete this._popup;
+        parentElement.removeChild(highlightElement);
         this._delegate.releaseEvaluationResult();
     },
 
-    _mouseHover: function(element)
+    _shouldShowPopover: function(element)
     {
-        delete this._hoverTimer;
+        if (!this._delegate.debuggerPaused())
+            return false;
+        if (!element.enclosingNodeOrSelfWithClass("webkit-line-content"))
+            return false;
 
-        var lineRow = element.enclosingNodeOrSelfWithClass("webkit-line-content");
-        if (!lineRow)
+        // We are interested in identifiers and "this" keyword.
+        if (element.hasStyleClass("webkit-javascript-keyword"))
+            return element.textContent === "this";
+
+        return element.hasStyleClass("webkit-javascript-ident");
+    },
+
+    _getPopoverAnchor: function(element)
+    {
+        if (!this._shouldShowPopover(element))
             return;
+        return element;
+    },
 
+    _highlightExpression: function(element)
+    {
         // Collect tokens belonging to evaluated exression.
         var tokens = [ element ];
         var token = element.previousSibling;
@@ -744,66 +713,52 @@ WebInspector.SourceFrame.prototype = {
         for (var i = 0; i < tokens.length; ++i)
             container.appendChild(tokens[i]);
         parentElement.insertBefore(container, nextElement);
-        this._showPopup(container);
+        return container;
     },
 
-    _showPopup: function(element)
+    _onShowPopover: function(element, popover)
     {
-        if (!this._delegate.debuggerPaused())
-            return;
+        this._highlightElement = this._highlightExpression(element);
 
-        function killHidePopupTimer()
+        function showObjectPopover(result, wasThrown)
         {
-            if (this._hidePopupTimer) {
-                clearTimeout(this._hidePopupTimer);
-                delete this._hidePopupTimer;
-
-                // We know that we reached the popup, but we might have moved over other elements.
-                // Discard pending command.
-                this._resetHoverTimer();
-            }
-        }
-
-        function showObjectPopup(result, wasThrown)
-        {
-            if (wasThrown || !this._delegate.debuggerPaused())
+            if (popover.disposed)
                 return;
-
-            var popupContentElement = null;
+            if (wasThrown || !this._delegate.debuggerPaused()) {
+                this._popoverHelper.hidePopover();
+                return;
+            }
+            var popoverContentElement = null;
             if (result.type !== "object") {
-                popupContentElement = document.createElement("span");
-                popupContentElement.className = "monospace console-formatted-" + result.type;
-                popupContentElement.style.whiteSpace = "pre";
-                popupContentElement.textContent = result.description;
+                popoverContentElement = document.createElement("span");
+                popoverContentElement.className = "monospace console-formatted-" + result.type;
+                popoverContentElement.style.whiteSpace = "pre";
+                popoverContentElement.textContent = result.description;
                 if (result.type === "string")
-                    popupContentElement.textContent = "\"" + popupContentElement.textContent + "\"";
-                this._popup = new WebInspector.Popover(popupContentElement);
-                this._popup.show(element);
+                    popoverContentElement.textContent = "\"" + popoverContentElement.textContent + "\"";
+                popover.show(popoverContentElement, element);
             } else {
-                var popupContentElement = document.createElement("div");
+                var popoverContentElement = document.createElement("div");
 
                 var titleElement = document.createElement("div");
                 titleElement.className = "source-frame-popover-title monospace";
                 titleElement.textContent = result.description;
-                popupContentElement.appendChild(titleElement);
+                popoverContentElement.appendChild(titleElement);
 
                 var section = new WebInspector.ObjectPropertiesSection(result);
                 section.expanded = true;
                 section.element.addStyleClass("source-frame-popover-tree");
                 section.headerElement.addStyleClass("hidden");
-                popupContentElement.appendChild(section.element);
+                popoverContentElement.appendChild(section.element);
 
-                this._popup = new WebInspector.Popover(popupContentElement);
-                const popupWidth = 300;
-                const popupHeight = 250;
-                this._popup.show(element, popupWidth, popupHeight);
+                const popoverWidth = 300;
+                const popoverHeight = 250;
+                popover.show(popoverContentElement, element, popoverWidth, popoverHeight);
             }
-            this._popup.highlightElement = element;
-            this._popup.highlightElement.addStyleClass("source-frame-eval-expression");
-            popupContentElement.addEventListener("mousemove", killHidePopupTimer.bind(this), true);
+            this._highlightElement.addStyleClass("source-frame-eval-expression");
         }
 
-        this._delegate.evaluateInSelectedCallFrame(element.textContent, showObjectPopup.bind(this));
+        this._delegate.evaluateInSelectedCallFrame(this._highlightElement.textContent, showObjectPopover.bind(this));
     },
 
     _editBreakpointCondition: function(lineNumber, condition, callback)

@@ -1,3 +1,45 @@
+2011-08-25  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [refactoring] use PopoverHelper to implement popup in the SourceFrame
+        https://bugs.webkit.org/show_bug.cgi?id=66858
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype._showStringContentPopover):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype.initializeView):
+        (WebInspector.NetworkLogView.prototype.willHide):
+        (WebInspector.NetworkLogView.prototype._reset):
+        (WebInspector.NetworkLogView.prototype.switchToBriefView):
+        (WebInspector.NetworkLogView.prototype._showPopover):
+        * inspector/front-end/Popover.js:
+        (WebInspector.Popover):
+        (WebInspector.Popover.prototype.show):
+        (WebInspector.Popover.prototype.dispose):
+        (WebInspector.PopoverHelper):
+        (WebInspector.PopoverHelper.prototype._mouseMove.doHide):
+        (WebInspector.PopoverHelper.prototype._mouseMove):
+        (WebInspector.PopoverHelper.prototype.hidePopover):
+        (WebInspector.PopoverHelper.prototype._hidePopover):
+        (WebInspector.PopoverHelper.prototype._mouseHover):
+        (WebInspector.PopoverHelper.prototype._killHidePopupTimer):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.willHide):
+        (WebInspector.SourceFrame.prototype._initializeTextViewer):
+        (WebInspector.SourceFrame.prototype._scroll):
+        (WebInspector.SourceFrame.prototype._mouseDown):
+        (WebInspector.SourceFrame.prototype._onHidePopover):
+        (WebInspector.SourceFrame.prototype._shouldShowPopover):
+        (WebInspector.SourceFrame.prototype._getPopoverAnchor):
+        (WebInspector.SourceFrame.prototype._highlightExpression):
+        (WebInspector.SourceFrame.prototype._onShowPopover.showObjectPopover):
+        (WebInspector.SourceFrame.prototype._onShowPopover):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._showPopover):
+        (WebInspector.TimelinePanel.prototype._closeRecordDetails):
+
 2011-08-25  Pavel Feldman  <pfeldman@google.com>
 
         [Qt] REGRESSION(93769): inspector/console/console-tests.html fails
