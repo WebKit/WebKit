@@ -1,3 +1,23 @@
+2011-08-24  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [filesystem/Chromium] Filesystem paths need proper URL escaping
+        https://bugs.webkit.org/show_bug.cgi?id=62811
+
+        Fix http://code.google.com/p/chromium/issues/detail?id=78860 by making
+        KURLChromium.cpp's escaping code actually work.
+
+        Here I added the needed calls to encodeWithURLEscapeSequences.
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore::AsyncFileSystemChromium::virtualPathToFileSystemURL):
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        (WebCore::WorkerAsyncFileSystemChromium::virtualPathToFileSystemURL):
+
+        Here I updated the test to reflect the new functionality in
+        encodeWithURLEscapeSequences.
+        * tests/KURLTest.cpp:
+
 2011-08-24  Ilya Sherman  <isherman@chromium.org>
 
         Remove some dead Autofill code

@@ -227,7 +227,7 @@ KURL WorkerAsyncFileSystemChromium::virtualPathToFileSystemURL(const String& vir
     ASSERT(!m_filesystemRootURL.isEmpty());
     KURL url = m_filesystemRootURL;
     // Remove the extra leading slash.
-    url.setPath(url.path() + virtualPath.substring(1));
+    url.setPath(url.path() + encodeWithURLEscapeSequences(virtualPath.substring(1)));
     return url;
 }
 

@@ -1,3 +1,18 @@
+2011-08-24  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [filesystem/Chromium] Filesystem paths need proper URL escaping
+        https://bugs.webkit.org/show_bug.cgi?id=62811
+
+        Fix http://code.google.com/p/chromium/issues/detail?id=78860 by making
+        KURLChromium.cpp's escaping code actually work.
+
+        Make encodeWithURLEscapeSequences call into googleurl to do proper
+        escaping.  Tested in WebKit/chromium/tests/KURLTest.cpp.
+        * platform/KURLGoogle.cpp:
+        (WebCore::encodeWithURLEscapeSequences):
+
 2011-08-24  Chris Palmer  <palmer@google.com>
 
         Resolve potential integer overflow in memory allocation, and ensure

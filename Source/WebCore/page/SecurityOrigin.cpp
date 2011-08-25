@@ -65,7 +65,6 @@ static bool schemeRequiresAuthority(const String& scheme)
     return schemes.contains(scheme);
 }
 
-
 SecurityOrigin::SecurityOrigin(const KURL& url, SandboxFlags sandboxFlags)
     : m_sandboxFlags(sandboxFlags)
     , m_protocol(url.protocol().isNull() ? "" : url.protocol().lower())
@@ -91,7 +90,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url, SandboxFlags sandboxFlags)
         isBlobOrFileSystemProtocol = true;
 #endif
     if (isBlobOrFileSystemProtocol) {
-        KURL originURL(ParsedURLString, url.path());
+        KURL originURL(ParsedURLString, decodeURLEscapeSequences(url.path()));
         if (originURL.isValid()) {
             m_protocol = originURL.protocol().lower();
             m_host = originURL.host().lower();
