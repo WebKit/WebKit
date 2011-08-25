@@ -3638,4 +3638,4 @@ BUGWK66888 DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT
 
 BUGWK66900 LINUX SNOWLEOPARD DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
 
-BUGWK66908 WIN LINUX GPU DEBUG : Layout Test canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
+BUGWK66908 WIN LINUX GPU DEBUG : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
