@@ -112,6 +112,7 @@ struct WKViewInterpretKeyEventsParameters {
 @interface WKView ()
 - (float)_deviceScaleFactor;
 - (void)_setDrawingAreaSize:(NSSize)size;
+- (void)_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState;
 @end
 
 @interface WKViewData : NSObject {
@@ -144,6 +145,9 @@ struct WKViewInterpretKeyEventsParameters {
 
     // The identifier of the plug-in we want to send complex text input to, or 0 if there is none.
     uint64_t _pluginComplexTextInputIdentifier;
+
+    // The state of complex text input for the plug-in.
+    PluginComplexTextInputState _pluginComplexTextInputState;
 
     bool _inBecomeFirstResponder;
     bool _inResignFirstResponder;
@@ -384,6 +388,17 @@ struct WKViewInterpretKeyEventsParameters {
         [self _updateWindowAndViewFrames];
 
     [super renewGState];
+}
+
+- (void)_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState
+{
+    _data->_pluginComplexTextInputState = pluginComplexTextInputState;
+    
+    if (_data->_pluginComplexTextInputState != PluginComplexTextInputDisabled)
+        return;
+
+    // Send back an empty string to the plug-in. This will disable text input.
+    _data->_page->sendComplexTextInputToPlugin(_data->_pluginComplexTextInputIdentifier, String());
 }
 
 typedef HashMap<SEL, String> SelectorNameMap;
@@ -2369,7 +2384,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         return;
     }
 
-    // FIXME: Actually update the state here when using the new Cocoa text input model.
+    [self _setPluginComplexTextInputState:pluginComplexTextInputState];
 }
 
 - (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation
