@@ -1,5 +1,13 @@
 2011-08-24  Peter Kasting  <pkasting@google.com>
 
+        [chromium] Mark a test as flaky.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-24  Peter Kasting  <pkasting@google.com>
+
         [chromium] Update expectations after r93728 and r93737.
 
         Unreviewed, test expectations update.
