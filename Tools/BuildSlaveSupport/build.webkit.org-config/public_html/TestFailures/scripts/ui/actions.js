@@ -63,6 +63,13 @@ ui.actions.Rebaseline = base.extends(Action, {
     }
 });
 
+ui.actions.Close = base.extends(Action, {
+    init: function() {
+        this.textContent = 'Close';
+        this._eventName = 'close';
+    }
+});
+
 ui.actions.Next = base.extends(Action, {
     init: function() {
         this.innerHTML = '&#9654;';
@@ -82,11 +89,15 @@ ui.actions.Previous = base.extends(Action, {
 ui.actions.List = base.extends('ul', {
     init: function(actions) {
         this.className = 'actions';
-        $(this).append(actions.map(function(action) {
-            var item = document.createElement('li');
-            item.appendChild(action);
-            return item;
-        }));
+        if (!actions)
+            return;
+        actions.forEach(this.add.bind(this));
+    },
+    add: function(action)
+    {
+        var item = document.createElement('li');
+        item.appendChild(action);
+        $(this).append(item);
     }
 });
 

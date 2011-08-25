@@ -151,59 +151,75 @@ ui.results.ResultsDetails = base.extends('div', {
     },
 });
 
-ui.results.TestSelector = base.extends('input', {
+var Selector = base.extends('select', {
     init: function()
     {
-        this.className = 'test-selector';
-        this.type = 'text';
-        this.placeholder = 'Test name';
-    },
-    setTestList: function(testNameList)
-    {
-        $(this).autocomplete({
-            source: testNameList,
-            select: function(event, selected) {
-                $(this).trigger('testselected', [selected.item.value]);
-            }.bind(this)
-        });
-    }
-});
-
-ui.results.BuilderSelector = base.extends('select', {
-    init: function()
-    {
-        this.className = 'builder-selector';
-        $(this).hide();
+        this._eventName = null;
         $(this).change(function() {
-            $(this).trigger('builderselected');
+            if (this._eventName)
+                $(this).trigger(this._eventName);
         }.bind(this));
     },
-    show: function(builderNameList) {
+    setItemList: function(itemList)
+    {
         $(this).empty();
-        $(this).show();
-        builderNameList.forEach(function(builderName) {
-            var builderElement = document.createElement('option');
-            builderElement.textContent = ui.displayNameForBuilder(builderName);
-            builderElement.value = builderName;
-            this.appendChild(builderElement);
+        itemList.forEach(function(item) {
+            var element = document.createElement('option');
+            element.textContent = item.displayName;
+            element.value = item.name;
+            this.appendChild(element);
         }.bind(this));
+        $(this).show();
     },
-    select: function(builderName) {
-        var builderIndex = -1;
+    select: function(itemName) {
+        var index = -1;
         for (var i = 0; i < this.options.length; ++i) {
-            if (this.options[i].value == builderName) {
-                builderIndex = i;
+            if (this.options[i].value == itemName) {
+                index = i;
                 break;
             }
         }
-        if (builderIndex == -1)
+        if (index == -1)
             return;
-        this.selectedIndex = builderIndex;
+        this.selectedIndex = index;
     },
-    selectedBuilder: function() {
+    selectedItem: function() {
         if (this.selectedIndex == -1)
             return;
         return this.options[this.selectedIndex].value;
+    }
+});
+
+ui.results.TestSelector = base.extends(Selector, {
+    init: function()
+    {
+        this.className = 'test-selector';
+        this._eventName = 'testselected';
+    },
+    setTestList: function(testNameList)
+    {
+        this.setItemList(testNameList.map(function(testName) {
+            return {
+                'displayName': testName,
+                'name': testName
+            };
+        }));
+    }
+});
+
+ui.results.BuilderSelector = base.extends(Selector, {
+    init: function()
+    {
+        this.className = 'builder-selector';
+        this._eventName = 'builderselected';
+    },
+    setBuilderList: function(builderNameList) {
+        this.setItemList(builderNameList.map(function(builderName) {
+            return {
+                'displayName': ui.displayNameForBuilder(builderName),
+                'name': builderName
+            };
+        }));
     }
 });
 
@@ -216,34 +232,35 @@ ui.results.View = base.extends('div', {
         this._testSelector = new ui.results.TestSelector();
         this._builderSelector = new ui.results.BuilderSelector();
         this._resultsDetails = new ui.results.ResultsDetails(delegate);
+        this._actionList = new ui.actions.List();
 
-        $('.toolbar', this).prepend(new ui.actions.List([
-            new ui.actions.Rebaseline().makeDefault(),
-            new ui.actions.Previous(),
-            new ui.actions.Next(),
-        ]));
+        $('.toolbar', this).prepend(this._actionList);
         $('.selector', this).append(this._testSelector).append(this._builderSelector);
         $('.content', this).append(this._resultsDetails);
+    },
+    addAction: function(action)
+    {
+        this._actionList.add(action);
     },
     setTestList: function(testNameList)
     {
         this._testSelector.setTestList(testNameList);
     },
+    setBuilderList: function(buildNameList)
+    {
+        this._builderSelector.setBuilderList(buildNameList);
+    },
     currentTestName: function()
     {
-        return this._testSelector.value;
+        return this._testSelector.selectedItem();
     },
     currentBuilderName: function()
     {
-        return this._builderSelector.selectedBuilder();
-    },
-    setBuilderList: function(buildNameList)
-    {
-        this._builderSelector.show(buildNameList);
+        return this._builderSelector.selectedItem();
     },
     showResults: function(failureInfo)
     {
-        this._testSelector.value = failureInfo.testName;
+        this._testSelector.select(failureInfo.testName);
         this._builderSelector.select(failureInfo.builderName);
         this._resultsDetails.show(failureInfo);
     }

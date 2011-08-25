@@ -34,10 +34,16 @@ controllers.ResultsDetails = base.extends(Object, {
         this._resultsByTest = resultsByTest;
 
         this._view.setTestList(Object.keys(this._resultsByTest));
+
+        this._view.addAction(new ui.actions.Rebaseline().makeDefault());
+        this._view.addAction(new ui.actions.Previous());
+        this._view.addAction(new ui.actions.Next());
+        this._view.addAction(new ui.actions.Close());
+
         $(this._view).bind('testselected', this.onTestSelected.bind(this));
         $(this._view).bind('builderselected', this.onBuilderSelected.bind(this));
         $(this._view).bind('rebaseline', this.onRebaseline.bind(this));
-        // FIXME: Bind the next/previous events.
+        $(this._view).bind('close', this.onClose.bind(this));
     },
     _failureInfoForTestAndBuilder: function(testName, builderName)
     {
@@ -57,12 +63,13 @@ controllers.ResultsDetails = base.extends(Object, {
         this._view.setBuilderList(builderNameList)
         this._view.showResults(this._failureInfoForTestAndBuilder(testName, builderNameList[0]));
     },
-    onTestSelected: function(event, testName)
+    onTestSelected: function()
     {
-        this.showTest(testName)
+        this.showTest(this._view.currentTestName());
     },
     onBuilderSelected: function() {
-        this._view.showResults(this._failureInfoForTestAndBuilder(this._view.currentTestName(), this._view.currentBuilderName()));
+        this._view.showResults(this._failureInfoForTestAndBuilder(this._view.currentTestName(),
+                                                                  this._view.currentBuilderName()));
     },
     onRebaseline: function() {
         var testName = this._view.currentTestName();
@@ -71,6 +78,9 @@ controllers.ResultsDetails = base.extends(Object, {
             'testName': testName,
             'builderName': builderName
         });
+    },
+    onClose: function() {
+        this.dismiss();
     }
 });
 

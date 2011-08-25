@@ -69,8 +69,8 @@ test('List', 1, function() {
     ]);
     equal(list.innerHTML,
         '<li><button>Rebaseline</button></li>' +
-        '<li><button class="previous">◀</button></li>' +
-        '<li><button class="next">▶</button></li>');
+        '<li><button class="previous">\u25C0</button></li>' +
+        '<li><button class="next">\u25B6</button></li>');
 });
 
 }());

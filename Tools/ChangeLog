@@ -1,3 +1,19 @@
+2011-08-24  Adam Barth  <abarth@webkit.org>
+
+        The user can't close the details view in garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=66911
+
+        Reviewed by Dimitri Glazkov.
+
+        In addition to adding a close button, this patch changes the test
+        selector to use a <select> element and refactors the test selector to
+        share code with the builder selector.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/actions.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/actions_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+
 2011-08-24  James Robinson  <jamesr@chromium.org>
 
         [chromium] Stacktrace not in test output when a test crashes
