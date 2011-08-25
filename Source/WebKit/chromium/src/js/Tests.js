@@ -624,10 +624,10 @@ TestSuite.prototype.showMainPageScriptSource_ = function(scriptName, callback)
 TestSuite.prototype.evaluateInConsole_ = function(code, callback)
 {
     WebInspector.showConsole();
-    WebInspector.console.prompt.text = code;
-    WebInspector.console.promptElement.dispatchEvent(TestSuite.createKeyEvent("Enter"));
+    WebInspector.consoleView.prompt.text = code;
+    WebInspector.consoleView.promptElement.dispatchEvent(TestSuite.createKeyEvent("Enter"));
 
-    this.addSniffer(WebInspector.ConsoleView.prototype, "addMessage",
+    this.addSniffer(WebInspector.ConsoleModel.prototype, "addMessage",
         function(commandResult) {
             callback(commandResult.toMessageElement().textContent);
         });

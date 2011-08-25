@@ -1,3 +1,10 @@
+2011-08-25  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, fix chromium devtools tests.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.evaluateInConsole_):
+
 2011-08-25  John Bates  <jbates@google.com>
 
         [chromium] Leaking SkBitmaps for background images
