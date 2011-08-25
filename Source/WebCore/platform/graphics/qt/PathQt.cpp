@@ -1,8 +1,7 @@
 /*
- * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2009, 2010 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2010, 2011 Andreas Kling <kling@webkit.org>
+ * Copyright (C) 2006 Zack Rusin   <zack@kde.org>
+ *               2006 Rob Buis     <buis@kde.org>
+ *               2009, 2010 Dirk Schulze <krit@webkit.org>
  *
  * All rights reserved.
  *
@@ -150,7 +149,7 @@ void Path::translate(const FloatSize& size)
 
 FloatRect Path::boundingRect() const
 {
-    return m_path.controlPointRect();
+    return m_path.boundingRect();
 }
 
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
