@@ -1,3 +1,24 @@
+2011-08-25  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Implement FrameLoaderClient::didTransferChildFrameToNewDocument
+        https://bugs.webkit.org/show_bug.cgi?id=66690
+
+        Reviewed by Antonio Gomes.
+
+        The implementation is mostly based on the GTK+ port's, as we just need
+        to transfer the ownership of the frame to a new view and adjust the
+        smart object part accordingly.
+
+        This should help make fast/frames/iframe-reparenting-adopt-node.html
+        pass.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::didTransferChildFrameToNewDocument):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_view_set):
+        (ewk_frame_view_create_for_view):
+        * ewk/ewk_private.h:
+
 2011-08-24  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL] Add dummy IconDatabaseClientEfl.

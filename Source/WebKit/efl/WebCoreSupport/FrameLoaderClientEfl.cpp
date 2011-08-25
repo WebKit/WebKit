@@ -362,6 +362,22 @@ PassRefPtr<Frame> FrameLoaderClientEfl::createFrame(const KURL& url, const Strin
 
 void FrameLoaderClientEfl::didTransferChildFrameToNewDocument(Page*)
 {
+    ASSERT(m_frame);
+
+    Frame* currentFrame = ewk_frame_core_get(m_frame);
+    Evas_Object* currentView = ewk_frame_view_get(m_frame);
+    Frame* parentFrame = currentFrame->tree()->parent();
+
+    FrameLoaderClientEfl* client = static_cast<FrameLoaderClientEfl*>(parentFrame->loader()->client());
+    Evas_Object* clientFrame = client ? client->webFrame() : 0;
+    Evas_Object* clientView = ewk_frame_view_get(clientFrame);
+
+    if (currentView != clientView) {
+        ewk_frame_view_set(m_frame, clientView);
+        m_view = clientView;
+    }
+
+    ASSERT(ewk_view_core_page_get(ewk_frame_view_get(m_frame)) == currentFrame->page());
 }
 
 void FrameLoaderClientEfl::transferLoadingResourceFromPage(ResourceLoader*, const ResourceRequest&, Page*)

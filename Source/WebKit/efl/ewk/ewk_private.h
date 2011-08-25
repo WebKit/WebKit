@@ -179,6 +179,7 @@ Ewk_Window_Features *ewk_window_features_new_from_core(const WebCore::WindowFeat
 Evas_Object *ewk_frame_add(Evas *e);
 Eina_Bool ewk_frame_init(Evas_Object *o, Evas_Object *view, WebCore::Frame *frame);
 Eina_Bool ewk_frame_child_add(Evas_Object *o, WTF::PassRefPtr<WebCore::Frame> child, const WTF::String &name, const WebCore::KURL &url, const WTF::String &referrer);
+void ewk_frame_view_set(Evas_Object *o, Evas_Object *newParent);
 
 WebCore::Frame *ewk_frame_core_get(const Evas_Object *o);
 void ewk_frame_core_gone(Evas_Object *o);

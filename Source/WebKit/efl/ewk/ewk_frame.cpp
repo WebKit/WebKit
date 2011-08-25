@@ -1181,6 +1181,23 @@ Eina_Bool ewk_frame_child_add(Evas_Object *o, WTF::PassRefPtr<WebCore::Frame> ch
 
 /**
  * @internal
+ * Change the ewk view this frame is associated with.
+ *
+ * @param o The ewk frame to act upon.
+ * @param newParent The new view that will be set as the parent of the frame.
+ */
+void ewk_frame_view_set(Evas_Object* o, Evas_Object* newParent)
+{
+    EWK_FRAME_SD_GET_OR_RETURN(o, sd);
+
+    evas_object_smart_member_del(o);
+    evas_object_smart_member_add(o, newParent);
+
+    sd->view = newParent;
+}
+
+/**
+ * @internal
  * Frame was destroyed by loader, remove internal reference.
  */
 void ewk_frame_core_gone(Evas_Object *o)
@@ -1459,9 +1476,6 @@ void ewk_frame_view_create_for_view(Evas_Object *o, Evas_Object *view)
     EWK_FRAME_SD_GET_OR_RETURN(o, sd);
     EINA_SAFETY_ON_NULL_RETURN(sd->frame);
     Evas_Coord w, h;
-
-    if (sd->frame->view())
-        return;
 
     evas_object_geometry_get(view, 0, 0, &w, &h);
 
