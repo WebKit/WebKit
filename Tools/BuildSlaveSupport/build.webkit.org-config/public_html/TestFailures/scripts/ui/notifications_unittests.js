@@ -90,8 +90,16 @@ test('SuspiciousCommit', 2, function() {
     equal(suspiciousCommit.innerHTML, '<div class="description"><a href="">1</a>title author (reviewer)</div><ul class="actions"><li><button>Roll out</button></li></ul>');
 });
 
-test('TestFailures', 11, function() {
+test('TestFailures', 13, function() {
     var testFailures = new ui.notifications.TestFailures();
+    deepEqual(Object.getOwnPropertyNames(testFailures.__proto__), [
+        "init",
+        "testNameList",
+        "updateBuilderResults",
+        "addFailureAnalysis",
+        "containsFailureAnalysis",
+        "addCommitData"
+    ]);
     equal(testFailures.tagName, 'LI');
     equal(testFailures.innerHTML,
         '<time class="relative">Just now</time>' +
@@ -189,6 +197,46 @@ test('TestFailures', 11, function() {
                     '<td>TEXT</td>' +
                     '<td></td>' +
                     '<td><div><span class="build-type">64-bit</span><span class="version">lucid</span></div></td>' +
+                '</tr>' +
+            '</tbody>' +
+        '</table>' +
+        '<div class="what">' +
+            '<div class="problem">' +
+                '<ul class="effects">' +
+                    '<li>test</li>' +
+                    '<li>foo</li>' +
+                '</ul>' +
+                '<ul class="causes">' +
+                    '<li>' +
+                        '<div class="description">' +
+                            '<a href="">1</a>title author (reviewer)'+
+                        '</div>' +
+                        '<ul class="actions">' +
+                            '<li><button>Roll out</button></li>' +
+                        '</ul>' +
+                    '</li>' +
+                '</ul>' +
+            '</div>' +
+        '</div>' +
+        '<ul class="actions">' +
+            '<li><button>Examine</button></li>' +
+        '</ul>');
+
+    testFailures.updateBuilderResults({'Webkit Mac10.5 (CG)': { actual: 'BUILDING'}});
+    equal(testFailures.innerHTML,
+        '<time class="relative">10 minutes ago</time>' +
+        '<table class="failures">' +
+            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+            '<tbody>' +
+                '<tr>' +
+                    '<td>TEXT</td>' +
+                    '<td></td>' +
+                    '<td><div><span class="build-type">64-bit</span><span class="version">lucid</span></div></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td>BUILDING</td>' +
+                    '<td><div><span class="version">leopard</span></div></td>' +
+                    '<td></td>' +
                 '</tr>' +
             '</tbody>' +
         '</table>' +

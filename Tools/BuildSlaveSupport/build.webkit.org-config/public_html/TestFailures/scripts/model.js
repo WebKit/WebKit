@@ -129,6 +129,17 @@ model.commitDataListForRevisionRange = function(fromRevision, toRevision)
     return result;
 };
 
+model.buildersInFlightForRevision = function(revision)
+{
+    var builders = {};
+    Object.keys(model.state.resultsByBuilder).forEach(function(builderName) {
+        var results = model.state.resultsByBuilder[builderName];
+        if (parseInt(results.revision) < revision)
+            builders[builderName] = { actual: 'BUILDING' };
+    });
+    return builders;
+};
+
 model.updateResultsByBuilder = function(callback)
 {
     results.fetchResultsByBuilder(Object.keys(config.kBuilders), function(resultsByBuilder) {

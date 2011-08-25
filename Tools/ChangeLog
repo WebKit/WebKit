@@ -1,3 +1,16 @@
+2011-08-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        garden-o-matic summary view should provide information on builders still in flight.
+        https://bugs.webkit.org/show_bug.cgi?id=66992
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js: Added grabbing the list of in-flight builders.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/model.js: Added buildersInFlightForRevision.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/model_unittests.js: Added tests.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js: Split off updating builder results to own method.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js: Added tests.
+
 2011-08-25  Adam Barth  <abarth@webkit.org>
 
         webkit-patch rebaseline-expectations don't work when run outside the root

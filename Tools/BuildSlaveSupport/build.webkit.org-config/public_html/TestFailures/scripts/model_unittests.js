@@ -208,4 +208,35 @@ test("commitDataListForRevisionRange", 6, function() {
     });
 });
 
+test("buildersInFlightForRevision", 3, function() {
+    var unmock = model.state.resultsByBuilder;
+    model.state.resultsByBuilder = {
+        'Mr. Beasley': {revision: '5'},
+        'Mr Dixon': {revision: '1'},
+        'Mr. Sabatini': {revision: '4'},
+        'Bob': {revision: '6'}
+    };
+    deepEqual(model.buildersInFlightForRevision(1), {});
+    deepEqual(model.buildersInFlightForRevision(3), {
+      "Mr Dixon": {
+        "actual": "BUILDING"
+      }
+    });
+    deepEqual(model.buildersInFlightForRevision(10), {
+      "Mr. Beasley": {
+        "actual": "BUILDING"
+      },
+      "Mr Dixon": {
+        "actual": "BUILDING"
+      },
+      "Mr. Sabatini": {
+        "actual": "BUILDING"
+      },
+      "Bob": {
+        "actual": "BUILDING"
+      }
+    });
+    model.state.resultsByBuilder = unmock;
+});
+
 })();

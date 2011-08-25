@@ -151,12 +151,16 @@ ui.notifications.TestFailures = base.extends(ui.notifications.Failure, {
             return child.equals(failureAnalysis);
         });
     },
+    updateBuilderResults: function(resultNodesByBuilder)
+    {
+        this._where.add(resultNodesByBuilder);
+    },
     addFailureAnalysis: function(failureAnalysis)
     {
         if (this.containsFailureAnalysis(failureAnalysis))
             return;
         this._testNameList.push(failureAnalysis.testName);
-        this._where.add(failureAnalysis.resultNodesByBuilder);
+        this.updateBuilderResults(failureAnalysis.resultNodesByBuilder);
         return this._effects.appendChild(new ui.notifications.FailingTest(failureAnalysis));
     },
     addCommitData: function(commitData)

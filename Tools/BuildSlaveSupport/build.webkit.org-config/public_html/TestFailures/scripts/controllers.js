@@ -94,9 +94,10 @@ controllers.UnexpectedFailures = base.extends(Object, {
     {
         var key = failureAnalysis.newestPassingRevision + "+" + failureAnalysis.oldestFailingRevision;
         var failure = this._testFailures.get(key);
+        var impliedFirstFailingRevision = failureAnalysis.newestPassingRevision + 1;
         if (!failure) {
             failure = new ui.notifications.TestFailures();
-            model.commitDataListForRevisionRange(failureAnalysis.newestPassingRevision + 1, failureAnalysis.oldestFailingRevision).forEach(function(commitData) {
+            model.commitDataListForRevisionRange(impliedFirstFailingRevision, failureAnalysis.oldestFailingRevision).forEach(function(commitData) {
                 failure.addCommitData(commitData);
             });
             this._view.add(failure);
@@ -105,6 +106,7 @@ controllers.UnexpectedFailures = base.extends(Object, {
             }.bind(this));
         }
         failure.addFailureAnalysis(failureAnalysis);
+        failure.updateBuilderResults(model.buildersInFlightForRevision(impliedFirstFailingRevision));
         this._testFailures.update(key, failure);
     },
     purge: function() {
