@@ -1,14 +1,18 @@
 Tests that line terminators \r, \n, or \r\n are properly parsed, even when there is no newline at eof.
 
-EXPECTED (video.textTracks[0].cues.length == '1') OK
-EXPECTED (video.textTracks[0].cues[0].id == '1') OK
-EXPECTED (video.textTracks[0].cues[0].startTime == '0.0') OK
-EXPECTED (video.textTracks[0].cues[0].endTime == '30.5') OK
-EXPECTED (video.textTracks[0].cues[0].getCueAsSource() == 'Bear is Coming!!!!!') OK
-EXPECTED (video.textTracks[1].cues.length == '1') OK
-EXPECTED (video.textTracks[1].cues[0].id == '1') OK
-EXPECTED (video.textTracks[1].cues[0].startTime == '0.0') OK
-EXPECTED (video.textTracks[1].cues[0].endTime == '30.5') OK
-EXPECTED (video.textTracks[1].cues[0].getCueAsSource() == 'Bear is Coming!!!!!') OK
+
+*** Testing text track 0
+EXPECTED (cues.length == '1') OK
+EXPECTED (cues[i].id == '1') OK
+EXPECTED (cues[i].startTime == '0') OK
+EXPECTED (cues[i].endTime == '30.5') OK
+EXPECTED (cues[i].getCueAsSource() == 'Bear is Coming!!!!!') OK
+
+*** Testing text track 1
+EXPECTED (cues.length == '1') OK
+EXPECTED (cues[i].id == '1') OK
+EXPECTED (cues[i].startTime == '0') OK
+EXPECTED (cues[i].endTime == '30.5') OK
+EXPECTED (cues[i].getCueAsSource() == 'Bear is Coming!!!!!') OK
 END OF TEST
 

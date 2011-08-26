@@ -1,3 +1,127 @@
+2011-08-25  Anna Cavender  <annacc@chromium.org>
+
+        Tests for validating a new WebVTT parser and tokenizer for TextTrackCue content.
+        https://bugs.webkit.org/show_bug.cgi?id=65884
+
+        Reviewed by Eric Carlson.
+
+        * media/track/captions-webvtt/tc000-empty.vtt: Renamed from media/track/captions/tc000_empty.vtt.
+        * media/track/captions-webvtt/tc001-iso2022jp3.vtt: Renamed from media/track/captions/tc001_iso2022jp3.vtt.
+        * media/track/captions-webvtt/tc001-utf8.vtt: Renamed from media/track/captions/tc001_utf8.vtt.
+        * media/track/captions-webvtt/tc002-bom.vtt: Renamed from media/track/captions/tc002_bom.vtt.
+        * media/track/captions-webvtt/tc003-newlines.vtt: Renamed from media/track/captions/tc003_newlines.vtt
+        * media/track/captions-webvtt/tc003-no-newline-at-eof.vtt: Renamed from media/track/captions/tc003_nonewlineateof.vtt
+        * media/track/captions-webvtt/tc004-no-webvtt.vtt: Renamed from media/track/captions/tc004_nowebvtt.vtt.
+        * media/track/captions-webvtt/tc004-webvtt-file.vtt: Renamed from media/track/captions/tc004_webvttfile.vtt.
+        * media/track/captions-webvtt/tc004-webvtt-rubbish.vtt: Renamed from media/track/captions/tc004_webvttrubbish.vtt.
+        * media/track/captions-webvtt/tc005-default-styles.vtt: Renamed from media/track/captions/tc005_defaultstyles.vtt.
+        * media/track/captions-webvtt/tc005-metadata-area.vtt: Renamed from media/track/captions/tc005_metadataarea.vtt.
+        * media/track/captions-webvtt/tc006-cue-id-error.vtt: Renamed from media/track/captions/tc006_cueiderror.vtt.
+        * media/track/captions-webvtt/tc006-cue-id.vtt: Renamed from media/track/captions/tc006_cueid.vtt.
+        * media/track/captions-webvtt/tc007-cue-no-id-error.vtt: Renamed from media/track/captions/tc007_cuenoid.vtt.
+        * media/track/captions-webvtt/tc007-cue-no-id.vtt: Renamed from media/track/captions/tc007_cuenoiderror.vtt.
+        * media/track/captions-webvtt/tc008-timings-no-hour-errors.vtt: Renamed from media/track/captions/tc008_timingsnohourerrors.vtt.
+        * media/track/captions-webvtt/tc008-timings-no-hour.vtt: Renamed from media/track/captions/tc008_timingsnohour.vtt.
+        * media/track/captions-webvtt/tc009-timings-hour-error.vtt: Renamed from media/track/captions/tc009_timingshourerror.vtt.
+        * media/track/captions-webvtt/tc009-timings-hour.vtt: Renamed from media/track/captions/tc009_timingshour.vtt.
+        * media/track/captions-webvtt/tc010-no-timings.vtt: Renamed from media/track/captions/tc010_notimings.vtt.
+        * media/track/captions-webvtt/tc011-cues-no-separation.vtt: Copied from media/track/captions/tc011_cuesnosep.vtt.
+        * media/track/captions-webvtt/tc011-cues.vtt: Renamed from media/track/captions/tc011_cues.vtt.
+        * media/track/captions-webvtt/tc012-out-of-order.vtt: Renamed from media/track/captions/tc012_outoforder.vtt.
+        * media/track/captions-webvtt/tc013-settings-bad-separation.vtt: Renamed from media/track/captions/tc013_settingsbadsep.vtt.
+        * media/track/captions-webvtt/tc013-settings.vtt: Renamed from media/track/captions/tc013_settings.vtt.
+        * media/track/captions-webvtt/tc014-alignment-bad.vtt: Added.
+        * media/track/captions-webvtt/tc014-alignment-ltr.vtt: Added.
+        * media/track/captions-webvtt/tc014-alignment.vtt: Added.
+        * media/track/captions-webvtt/tc015-positioning-bad.vtt: Added.
+        * media/track/captions-webvtt/tc015-positioning-ltr.vtt: Added.
+        * media/track/captions-webvtt/tc015-positioning.vtt: Added.
+        * media/track/captions-webvtt/tc016-align-positioning-bad.vtt: Added.
+        * media/track/captions-webvtt/tc016-align-positioning.vtt: Added.
+        * media/track/captions-webvtt/tc017-line-position-bad.vtt: Added.
+        * media/track/captions-webvtt/tc017-line-position.vtt: Added.
+        * media/track/captions-webvtt/tc018-align-text-line-position-bad.vtt: Added.
+        * media/track/captions-webvtt/tc018-align-text-line-position.vtt: Added.
+        * media/track/captions-webvtt/tc019-cue-size-bad.vtt: Added.
+        * media/track/captions-webvtt/tc019-cue-size.vtt: Added.
+        * media/track/captions-webvtt/tc020-cue-size-align-bad.vtt: Added.
+        * media/track/captions-webvtt/tc020-cue-size-align.vtt: Added.
+        * media/track/captions-webvtt/tc021-valign-bad.vtt: Added.
+        * media/track/captions-webvtt/tc021-valign-ltr.vtt: Added.
+        * media/track/captions-webvtt/tc021-valign.vtt: Added.
+        * media/track/captions-webvtt/tc022-entities-wrong.vtt: Added.
+        * media/track/captions-webvtt/tc022-entities.vtt: Added.
+        * media/track/captions-webvtt/tc023-markup-bad.vtt: Added.
+        * media/track/captions-webvtt/tc023-markup.vtt: Added.
+        * media/track/captions-webvtt/tc024-timestamp-bad.vtt: Added.
+        * media/track/captions-webvtt/tc024-timestamp.vtt: Added.
+        * media/track/captions-webvtt/tc025-class-bad.vtt: Added.
+        * media/track/captions-webvtt/tc025-class.vtt: Added.
+        * media/track/captions-webvtt/tc026-voice-bad.vtt: Added.
+        * media/track/captions-webvtt/tc026-voice.vtt: Added.
+        * media/track/captions-webvtt/tc027-empty-cue.vtt: Added.
+        * media/track/captions-webvtt/tc028-unsupported-markup.vtt: Added.
+        * media/track/track-webvtt-tc000-empty.html:
+        * media/track/track-webvtt-tc001-utf8-expected.txt:
+        * media/track/track-webvtt-tc001-utf8.html:
+        * media/track/track-webvtt-tc002-bom-expected.txt:
+        * media/track/track-webvtt-tc002-bom.html:
+        * media/track/track-webvtt-tc003-newlines-expected.txt:
+        * media/track/track-webvtt-tc003-newlines.html:
+        * media/track/track-webvtt-tc004-magic-header-expected.txt: Renamed from media/track/track-webvtt-tc004-magicheader-expected.txt.
+        * media/track/track-webvtt-tc004-magic-header.html: Renamed from media/track/track-webvtt-tc004-magicheader.html.
+        * media/track/track-webvtt-tc005-header-comment-expected.txt: Renamed from media/track/track-webvtt-tc005-headercomment-expected.txt.
+        * media/track/track-webvtt-tc005-header-comment.html: Renamed from media/track/track-webvtt-tc005-headercomment.html.
+        * media/track/track-webvtt-tc006-cue-identifiers-expected.txt: Renamed from media/track/track-webvtt-tc006-cueidentifiers-expected.txt.
+        * media/track/track-webvtt-tc006-cue-identifiers.html: Renamed from media/track/track-webvtt-tc006-cueidentifiers.html.
+        * media/track/track-webvtt-tc007-cue-no-id-expected.txt: Renamed from media/track/track-webvtt-tc007-cuenoid-expected.txt.
+        * media/track/track-webvtt-tc007-cue-no-id.html: Renamed media/track/track-webvtt-tc007-cuenoid.html.
+        * media/track/track-webvtt-tc008-timings-no-hours-expected.txt: Renamed from media/track/track-webvtt-tc008-timingsnohours-expected.txt.
+        * media/track/track-webvtt-tc008-timings-no-hours.html: Renamed from media/track/track-webvtt-tc008-timingsnohours.html.
+        * media/track/track-webvtt-tc009-timings-hour-expected.txt: Renamed from media/track/track-webvtt-tc009-timingshour-expected.txt.
+        * media/track/track-webvtt-tc009-timings-hour.html: Renamed from media/track/track-webvtt-tc009-timingshour.html.
+        * media/track/track-webvtt-tc010-no-timings-expected.txt: Copied from media/track/track-webvtt-tc010-notimings-expected.txt.
+        * media/track/track-webvtt-tc010-no-timings.html: Renamed from media/track/track-webvtt-tc012-outoforder.html.
+        * media/track/track-webvtt-tc011-blank-lines-expected.txt: Renamed from media/track/track-webvtt-tc011-blanklines-expected.txt.
+        * media/track/track-webvtt-tc011-blank-lines.html: Renamed from media/track/track-webvtt-tc011-blanklines.html.
+        * media/track/track-webvtt-tc012-out-of-order-expected.txt: Renamed from media/track/track-webvtt-tc012-outoforder-expected.txt.
+        * media/track/track-webvtt-tc012-out-of-order.html: Copied from media/track/track-webvtt-tc000-empty.html.
+        * media/track/track-webvtt-tc013-settings-expected.txt:
+        * media/track/track-webvtt-tc013-settings.html:
+        * media/track/track-webvtt-tc014-alignment-expected.txt: Added.
+        * media/track/track-webvtt-tc014-alignment.html: Added.
+        * media/track/track-webvtt-tc015-positioning-expected.txt: Added.
+        * media/track/track-webvtt-tc015-positioning.html: Added.
+        * media/track/track-webvtt-tc016-align-positioning-expected.txt: Added.
+        * media/track/track-webvtt-tc016-align-positioning.html: Added.
+        * media/track/track-webvtt-tc017-line-position-expected.txt: Added.
+        * media/track/track-webvtt-tc017-line-position.html: Added.
+        * media/track/track-webvtt-tc018-align-text-line-position-expected.txt: Added.
+        * media/track/track-webvtt-tc018-align-text-line-position.html: Added.
+        * media/track/track-webvtt-tc019-cue-size-expected.txt: Added.
+        * media/track/track-webvtt-tc019-cue-size.html: Added.
+        * media/track/track-webvtt-tc020-cue-size-align-expected.txt: Added.
+        * media/track/track-webvtt-tc020-cue-size-align.html: Added.
+        * media/track/track-webvtt-tc021-valign-expected.txt: Added.
+        * media/track/track-webvtt-tc021-valign.html: Added.
+        * media/track/track-webvtt-tc022-entities-expected.txt: Added.
+        * media/track/track-webvtt-tc022-entities.html: Added.
+        * media/track/track-webvtt-tc023-markup-expected.txt: Added.
+        * media/track/track-webvtt-tc023-markup.html: Added.
+        * media/track/track-webvtt-tc024-timestamp-expected.txt: Added.
+        * media/track/track-webvtt-tc024-timestamp.html: Added.
+        * media/track/track-webvtt-tc025-class-markup-expected.txt: Added.
+        * media/track/track-webvtt-tc025-class-markup.html: Added.
+        * media/track/track-webvtt-tc026-voice-expected.txt: Added.
+        * media/track/track-webvtt-tc026-voice.html: Added.
+        * media/track/track-webvtt-tc027-empty-cue-expected.txt: Added.
+        * media/track/track-webvtt-tc027-empty-cue.html: Added.
+        * media/track/track-webvtt-tc028-unsupported-markup-expected.txt: Added.
+        * media/track/track-webvtt-tc028-unsupported-markup.html: Added.
+        * media/video-test.js:
+        (testCues):
+        (allTestsEnded):
+
 2011-08-26  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, rolling out r93870.

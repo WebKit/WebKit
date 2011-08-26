@@ -4,49 +4,71 @@
 
         <script src=../media-file.js></script>
         <script src=../video-test.js></script>
-        <script>            
-
-            var numberTests = 0;
+        <script>
+        
+            numberOfTrackTests = 2;
             
-            function track1Loaded()
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack0();
+                    testTrack1();
+                }
+            }
+            
+            function testTrack0()
             {
                 findMediaElement();
-                testExpected("video.textTracks[0].cues.length", "2");
-                
-                testExpected("video.textTracks[0].cues[0].id","1");
-                testExpected("video.textTracks[0].cues[0].startTime","0.0");
-                testExpected("video.textTracks[0].cues[0].endTime","30.5");
-                testExpected("video.textTracks[0].cues[0].getCueAsSource()", "景気判断");
-                
-                testExpected("video.textTracks[0].cues[1].id","2");
-                testExpected("video.textTracks[0].cues[1].startTime","31.0");
-                testExpected("video.textTracks[0].cues[1].endTime","1200.5");
-                testExpected("video.textTracks[0].cues[1].getCueAsSource()", "電力不足");
+                var expected = 
+                {
+                    length : 2,
+                    tests:
+                    [
+                        {
+                            property : "id",
+                            values : [1, 2],
+                        },
+                        {
+                            property : "startTime",
+                            values : [0.0, 31.0],
+                        },
+                        {
+                            property : "endTime",
+                            values : [30.5, 1200.5],
+                        },
+                        {
+                            property : "getCueAsSource()",
+                            values : ["景気判断", "電力不足"],
+                        },
+                    ],
+                };
+                testCues(0, expected);
 
                 allTestsEnded();
             }
             
-            function track2Loaded()
+            function testTrack1()
             {
                 findMediaElement();
-                testExpected("video.textTracks[1].cues.length", "2");
+                var expected = 
+                {
+                    length : 2,
+                    tests:
+                    [],
+                };
+                testCues(1, expected);
                 
                 allTestsEnded();
             }
-            
-            function allTestsEnded()
-            {
-                numberTests++;
-                if (numberTests >= 2)
-                    endTest();
-            }
+
         </script>
     </head>
     <body>
-        <p>Tests that UTF-8 encoded characters are recognized properly and that different encodings (iconv) are not recognized as WebVTT a file (we do allow it, it just looks ugly).</p>
+        <p>Tests that UTF-8 encoded characters are recognized properly and that different encodings (iconv) are not recognized as a WebVTT file (we do allow it, it just looks ugly).</p>
         <video>
-            <track src="captions/tc001_utf8.vtt" onload="track1Loaded()">
-            <track src="captions/tc001_iso2022jp3.vtt" onload="track2Loaded()">
+            <track src="captions-webvtt/tc001-utf8.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc001-iso2022jp3.vtt" onload="trackLoaded()">
         </video>
     </body>
 </html>

@@ -1,5 +1,0 @@
-Tests cues that are temporally out of order (we allow this).
-
-EXPECTED (video.textTracks[0].cues.length == '3') OK
-END OF TEST
-
