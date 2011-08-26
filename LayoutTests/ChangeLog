@@ -1,3 +1,13 @@
+2011-08-26  James Kozianski  <koz@chromium.org>
+
+        Unreviewed, rolling out r93853.
+        http://trac.webkit.org/changeset/93853
+        https://bugs.webkit.org/show_bug.cgi?id=67016
+
+        Turns bots red
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening. Add Qt specific expected results for new tests introduced in r93794.
