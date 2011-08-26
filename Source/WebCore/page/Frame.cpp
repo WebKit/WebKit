@@ -158,7 +158,6 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     , m_selection(this)
     , m_eventHandler(this)
     , m_animationController(this)
-    , m_lifeSupportTimer(this, &Frame::lifeSupportTimerFired)
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
     , m_pageScaleFactor(1)
@@ -218,8 +217,6 @@ Frame::~Frame()
 
     // FIXME: We should not be doing all this work inside the destructor
 
-    ASSERT(!m_lifeSupportTimer.isActive());
-
 #ifndef NDEBUG
     frameCounter.decrement();
 #endif
@@ -248,8 +245,6 @@ Frame::~Frame()
         m_view->hide();
         m_view->clearFrame();
     }
-
-    ASSERT(!m_lifeSupportTimer.isActive());
 }
 
 void Frame::addDestructionObserver(FrameDestructionObserver* observer)
@@ -590,46 +585,6 @@ void Frame::injectUserScriptsForWorld(DOMWrapperWorld* world, const UserScriptVe
     }
 }
 
-#ifndef NDEBUG
-static HashSet<Frame*>& keepAliveSet()
-{
-    DEFINE_STATIC_LOCAL(HashSet<Frame*>, staticKeepAliveSet, ());
-    return staticKeepAliveSet;
-}
-#endif
-
-void Frame::keepAlive()
-{
-    if (m_lifeSupportTimer.isActive())
-        return;
-#ifndef NDEBUG
-    keepAliveSet().add(this);
-#endif
-    ref();
-    m_lifeSupportTimer.startOneShot(0);
-}
-
-#ifndef NDEBUG
-void Frame::cancelAllKeepAlive()
-{
-    HashSet<Frame*>::iterator end = keepAliveSet().end();
-    for (HashSet<Frame*>::iterator it = keepAliveSet().begin(); it != end; ++it) {
-        Frame* frame = *it;
-        frame->m_lifeSupportTimer.stop();
-        frame->deref();
-    }
-    keepAliveSet().clear();
-}
-#endif
-
-void Frame::lifeSupportTimerFired(Timer<Frame>*)
-{
-#ifndef NDEBUG
-    keepAliveSet().remove(this);
-#endif
-    deref();
-}
-
 void Frame::clearDOMWindow()
 {
     if (m_domWindow) {
@@ -752,10 +707,6 @@ void Frame::pageDestroyed()
     // so page() could be NULL.
     if (page() && page()->focusController()->focusedFrame() == this)
         page()->focusController()->setFocusedFrame(0);
-
-    // FIXME: Removing keepalive will make behavior better match Firefox.
-    // Some code that used to be here indirectly triggered keepalive, and we don't want to change behavior at the moment.
-    keepAlive();
 
     script()->clearScriptObjects();
     script()->updatePlatformScriptObjects();

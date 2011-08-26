@@ -203,11 +203,6 @@ Page::~Page()
 
 #ifndef NDEBUG
     pageCounter.decrement();
-
-    // Cancel keepAlive timers, to ensure we release all Frames before exiting.
-    // It's safe to do this because we prohibit closing a Page while JavaScript
-    // is executing.
-    Frame::cancelAllKeepAlive();
 #endif
 }
 

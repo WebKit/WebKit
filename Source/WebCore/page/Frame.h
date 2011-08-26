@@ -153,9 +153,6 @@ namespace WebCore {
         bool inViewSourceMode() const;
         void setInViewSourceMode(bool = true);
 
-        void keepAlive(); // Used to keep the frame alive when running a script that might destroy it.
-        static void cancelAllKeepAlive();
-
         void setDocument(PassRefPtr<Document>);
 
         void setPageZoomFactor(float factor);
@@ -219,7 +216,6 @@ namespace WebCore {
         Frame(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
 
         void injectUserScriptsForWorld(DOMWrapperWorld*, const UserScriptVector&, UserScriptInjectionTime);
-        void lifeSupportTimerFired(Timer<Frame>*);
 
         HashSet<FrameDestructionObserver*> m_destructionObservers;
 
@@ -241,8 +237,6 @@ namespace WebCore {
         mutable FrameSelection m_selection;
         mutable EventHandler m_eventHandler;
         mutable AnimationController m_animationController;
-
-        Timer<Frame> m_lifeSupportTimer;
 
         float m_pageZoomFactor;
         float m_textZoomFactor;

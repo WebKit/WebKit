@@ -204,7 +204,7 @@ EXPORTS
     ?getString@JSCell@JSC@@QBE_NPAVExecState@2@AAVUString@2@@Z
     ?getUInt32@JSCell@JSC@@UBE_NAAI@Z
     ?getter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
-    ?globalExec@JSGlobalObject@JSC@@UAEPAVExecState@2@XZ
+    ?globalExec@JSGlobalObject@JSC@@QAEPAVExecState@2@XZ
     ?globalObject@JSObjectWithGlobalObject@JSC@@QBEPAVJSGlobalObject@2@XZ
     ?globalObjectCount@Heap@JSC@@QAEIXZ
     ?grow@HandleHeap@JSC@@AAEXXZ

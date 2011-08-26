@@ -262,7 +262,7 @@ namespace JSC {
 
         virtual bool isGlobalObject() const { return true; }
 
-        virtual ExecState* globalExec();
+        ExecState* globalExec();
 
         virtual bool shouldInterruptScript() const { return true; }
 

@@ -104,7 +104,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     }
 
     if (callType != CallTypeNone) {
-        ref();
+        RefPtr<JSEventListener> protect(this);
 
         MarkedArgumentBuffer args;
         args.append(toJS(exec, globalObject, event));
@@ -151,8 +151,6 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
                     event->preventDefault();
             }
         }
-
-        deref();
     }
 }
 

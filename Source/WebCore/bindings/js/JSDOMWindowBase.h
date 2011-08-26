@@ -55,7 +55,6 @@ namespace WebCore {
             return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
-        virtual JSC::ExecState* globalExec();
         virtual bool supportsProfiling() const;
         virtual bool supportsRichSourceInfo() const;
         virtual bool shouldInterruptScript() const;

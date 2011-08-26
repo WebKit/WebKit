@@ -190,10 +190,6 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
 
     v8::Local<v8::Value> object = m_proxy->evaluate(sourceCode, 0);
 
-    // Evaluating the JavaScript could cause the frame to be deallocated
-    // so we start the keep alive timer here.
-    m_frame->keepAlive();
-
     m_sourceURL = savedSourceURL;
 
     if (object.IsEmpty())

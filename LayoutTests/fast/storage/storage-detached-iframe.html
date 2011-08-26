@@ -26,9 +26,10 @@
           t1 = openIframe();
           var a = t1.contentWindow.frames;
           var b = t1.contentDocument.defaultView.localStorage;
+          var a_localStorage = a.localStorage; // The constructor won't be reachable as window object property after detaching the frame.
 
           t1.outerText = "";
-          a.localStorage.fuzz3_visited="test";
+          a_localStorage.fuzz3_visited="test";
       }
 
       function runTests() {

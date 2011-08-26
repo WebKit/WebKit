@@ -421,14 +421,14 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
     bool previousInlineCode = inlineCode();
     setInlineCode(isInlineCode);
 
+    // Keep Frame (and therefore ScriptController and V8Proxy) alive.
+    RefPtr<Frame> protect(frame());
+
     // Run the script and keep track of the current recursion depth.
     v8::Local<v8::Value> result;
     v8::TryCatch tryCatch;
     tryCatch.SetVerbose(true);
     {
-        // See comment in V8Proxy::callFunction.
-        m_frame->keepAlive();
-
         m_recursion++;
         result = script->Run();
         m_recursion--;
@@ -461,6 +461,10 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
 v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 {
     V8GCController::checkMemoryUsage();
+
+    // Keep Frame (and therefore ScriptController and V8Proxy) alive.
+    RefPtr<Frame> protect(frame());
+
     v8::Local<v8::Value> result;
     {
         if (m_recursion >= kMaxRecursionDepth) {
@@ -473,13 +477,6 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
             script->Run();
             return result;
         }
-
-        // Evaluating the JavaScript could cause the frame to be deallocated,
-        // so we start the keep alive timer here.
-        // Frame::keepAlive method adds the ref count of the frame and sets a
-        // timer to decrease the ref count. It assumes that the current JavaScript
-        // execution finishs before firing the timer.
-        m_frame->keepAlive();
 
         InspectorInstrumentationCookie cookie;
         if (InspectorInstrumentation::hasFrontends()) {
@@ -526,9 +523,6 @@ v8::Local<v8::Value> V8Proxy::newInstance(v8::Handle<v8::Function> constructor, 
     // V8Proxy::callFunction.
     v8::Local<v8::Value> result;
     {
-        // See comment in V8Proxy::callFunction.
-        m_frame->keepAlive();
-
         result = constructor->NewInstance(argc, args);
     }
 
