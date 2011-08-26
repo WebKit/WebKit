@@ -57,7 +57,7 @@ void CueParser::load(const String& url, ScriptExecutionContext* context, CuePars
     ResourceRequest request(url);
 
     ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = true;
+    options.sendLoadCallbacks = SendCallbacks;
     options.crossOriginRequestPolicy = AllowCrossOriginRequests;
 
     m_client = client;
