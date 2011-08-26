@@ -50,7 +50,7 @@ namespace WebCore {
 
 CFCachedURLResponseRef ResourceLoader::willCacheResponse(ResourceHandle*, CFCachedURLResponseRef cachedResponse)
 {
-    if (!m_sendResourceLoadCallbacks)
+    if (m_options.sendLoadCallbacks == DoNotSendCallbacks)
         return 0;
 
     RetainPtr<NSCachedURLResponse> nsCachedResponse(AdoptNS, [[NSCachedURLResponse alloc] _initWithCFCachedURLResponse:cachedResponse]);
@@ -61,7 +61,7 @@ CFCachedURLResponseRef ResourceLoader::willCacheResponse(ResourceHandle*, CFCach
 
 NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCachedURLResponse* response)
 {
-    if (!m_options.sendLoadCallbacks)
+    if (m_options.sendLoadCallbacks == DoNotSendCallbacks)
         return 0;
     return frameLoader()->client()->willCacheResponse(documentLoader(), identifier(), response);
 }

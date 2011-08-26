@@ -1,3 +1,13 @@
+2011-08-26  Nate Chapin  <japhet@chromium.org>
+
+        Fix http/tests/misc/willCacheResponse-delegate-callback.html
+        after r93886. We're implicitly converting an enum to a bool.
+
+        Rubber-stamped by David Levin.
+
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::willCacheResponse):
+
 2011-08-26  Chris Rogers  <crogers@google.com>
 
         Add MediaPlayer::audioSourceProvider() method for audio stream access by the Web Audio API.
