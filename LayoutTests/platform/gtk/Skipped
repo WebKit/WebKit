@@ -34,6 +34,13 @@
 # Needs generated results
 css3/selectors3
 
+# Needs new baseline http://webkit.org/b/66671
+fast/block/float/fit_line_below_floats.html
+
+# Need new baseline http://webkit.org/b/66662
+fast/block/float/floats-and-text-indent.html
+fast/block/float/floats-and-text-indent-rl.html
+
 ###############################################################################
 # FLAKY TESTS
 ###############################################################################
@@ -193,10 +200,6 @@ fast/dom/gc-10.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=54234 
 fast/files/apply-blob-url-to-xhr.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=51104
-http/tests/cache/subresource-fragment-identifier.html
-http/tests/misc/authentication-sent-to-redirect.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=50744
 inspector/debugger/open-close-open.html
@@ -421,6 +424,29 @@ editing/pasteboard/drag-drop-list.html
 # Tests for WebVTT parser for <track>.  Feature is not yet functional.
 # https://bugs.webkit.org/show_bug.cgi?id=43668
 media/track/
+
+# Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
+fast/dom/HTMLAnchorElement/anchor-nodownload.html
+fast/dom/HTMLAnchorElement/anchor-download.html
+fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
+fast/dom/HTMLAnchorElement/anchor-download-unset.html
+
+# Failing because WebGL is not enabled
+http/tests/security/webgl-remote-read-remote-image-allowed.html
+http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
+http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
+
+# New flexbox is not yet enabled. http://webkit.org/b/62048
+css3/flexbox
+
+# CSS Regions support not yet enabled. http://webkit.org/b/57312
+fast/regions
+
+# CSS Exclusions support not yet enabled. http://webkit.org/b/57311
+fast/exclusions
+
+# For now, Web Audio API is disabled
+webaudio
 
 ###############################################################################
 # TESTS FAILING
@@ -749,7 +775,13 @@ fast/loader/opaque-base-url.html
 svg/text/caret-in-svg-text.xhtml
 
 # No authentication challenge handling
+# https://bugs.webkit.org/show_bug.cgi?id=51104
 http/tests/loading/basic-credentials-sent-automatically.html
+http/tests/cache/subresource-fragment-identifier.html
+http/tests/misc/authentication-sent-to-redirect.html
+http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html
+http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html
+http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html    
 
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html
@@ -1570,33 +1602,9 @@ http/tests/eventsource/workers/eventsource-simple.html
 # failing dropzone test(http://bugs.webkit.org/show_bug.cgi?id=61630)
 fast/events/dropzone-002.html
 
-# Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
-fast/dom/HTMLAnchorElement/anchor-nodownload.html
-fast/dom/HTMLAnchorElement/anchor-download.html
-fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
-fast/dom/HTMLAnchorElement/anchor-download-unset.html
-
-# Failing because WebGL is not enabled
-http/tests/security/webgl-remote-read-remote-image-allowed.html
-http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
-http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
-
-# New flexbox is not yet enabled. http://webkit.org/b/62048
-css3/flexbox
-
-# CSS Regions support not yet enabled. http://webkit.org/b/57312
-fast/regions
-
-# CSS Exclusions support not yet enabled. http://webkit.org/b/57311
-fast/exclusions
-
-# Needs new baseline http://webkit.org/b/66671
-fast/block/float/fit_line_below_floats.html
-
 # [GTK] DumpRenderTree doesn't block external requests
 # https://bugs.webkit.org/show_bug.cgi?id=62585
 fast/workers/worker-crash-with-invalid-location.html
-
 
 # https://bugs.webkit.org/show_bug.cgi?id=64085
 http/tests/misc/iframe-reparenting-id-collision.html
@@ -1612,13 +1620,6 @@ inspector/
 # Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
 http/tests/websocket/tests/hybi/
 
-# For now, Web Audio API is disabled
-webaudio/
-
-# Need new baseline http://webkit.org/b/66662
-fast/block/float/floats-and-text-indent.html
-fast/block/float/floats-and-text-indent-rl.html
-
 # Text shadow extents are calculated incorrectly
 # https://bugs.webkit.org/show_bug.cgi?id=65035
 fast/canvas/fillText-shadow.html
@@ -1628,3 +1629,7 @@ css3/font-feature-settings-rendering.html
 
 # This test verifies that a mismatch reftest will fail as intended if both results are same.
 fast/harness/sample-fail-mismatch-reftest.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=67014
+# Need layoutTestController.setShouldStayOnPageAfterHandlingBeforeUnload
+fast/loader/form-submission-after-beforeunload-cancel.html

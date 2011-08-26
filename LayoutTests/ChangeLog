@@ -1,3 +1,10 @@
+2011-08-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Skip some tests on GTK+ that are missing DRT functionality. Also
+        reorganize some failures on the skipped list.
+
+        * platform/gtk/Skipped: Update the skipped list.
+
 2011-08-25  Peter Kasting  <pkasting@google.com>
 
         Temporarily mark some tests as crashing (assertion failure) after r93794.
