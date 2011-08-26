@@ -42,9 +42,6 @@ private:
     virtual void insertedIntoDocument();
 
     void process();
-
-    String m_equiv;
-    String m_content;
 };
 
 } //namespace

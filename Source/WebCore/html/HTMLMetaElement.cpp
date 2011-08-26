@@ -44,13 +44,11 @@ PassRefPtr<HTMLMetaElement> HTMLMetaElement::create(const QualifiedName& tagName
 
 void HTMLMetaElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == http_equivAttr) {
-        m_equiv = attr->value();
+    if (attr->name() == http_equivAttr)
         process();
-    } else if (attr->name() == contentAttr) {
-        m_content = attr->value();
+    else if (attr->name() == contentAttr)
         process();
-    } else if (attr->name() == nameAttr) {
+    else if (attr->name() == nameAttr) {
         // Do nothing.
     } else
         HTMLElement::parseMappedAttribute(attr);
@@ -64,16 +62,21 @@ void HTMLMetaElement::insertedIntoDocument()
 
 void HTMLMetaElement::process()
 {
-    if (!inDocument() || m_content.isNull())
+    if (!inDocument())
+        return;
+
+    const AtomicString& contentValue = fastGetAttribute(contentAttr);
+    if (contentValue.isNull())
         return;
 
     if (equalIgnoringCase(name(), "viewport"))
-        document()->processViewport(m_content);
+        document()->processViewport(contentValue);
 
     // Get the document to process the tag, but only if we're actually part of DOM tree (changing a meta tag while
     // it's not in the tree shouldn't have any effect on the document)
-    if (!m_equiv.isNull())
-        document()->processHttpEquiv(m_equiv, m_content);
+    const AtomicString& httpEquivValue = fastGetAttribute(http_equivAttr);
+    if (!httpEquivValue.isNull())
+        document()->processHttpEquiv(httpEquivValue, contentValue);
 }
 
 String HTMLMetaElement::content() const
