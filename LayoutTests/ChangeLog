@@ -1,3 +1,26 @@
+2011-08-26  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for new tests.
+
+        * platform/gtk/fast/frames/iframe-scaling-with-scroll-expected.txt: Added.
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Added.
+        * platform/gtk/fast/repaint/line-flow-with-floats-in-regions-expected.txt: Added.
+        * platform/gtk/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt: Added.
+        * platform/gtk/fast/table/table-before-child-in-table-expected.txt: Added.
+        * platform/gtk/fast/table/table-cell-after-child-in-block-expected.txt: Added.
+        * platform/gtk/fast/table/table-cell-after-child-in-table-expected.txt: Added.
+        * platform/gtk/fast/table/table-cell-before-child-in-block-expected.txt: Added.
+        * platform/gtk/fast/table/table-cell-before-child-in-table-expected.txt: Added.
+        * platform/gtk/fast/table/table-row-after-child-in-block-expected.txt: Added.
+        * platform/gtk/fast/table/table-row-after-child-in-table-expected.txt: Added.
+        * platform/gtk/fast/table/table-row-before-child-in-block-expected.txt: Added.
+        * platform/gtk/fast/table/table-row-before-child-in-table-expected.txt: Added.
+        * platform/gtk/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1-expected.txt: Added.
+        * platform/gtk/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2-expected.txt: Added.
+        * platform/gtk/svg/as-object/embedded-svg-size-changes-no-layout-triggers-expected.txt: Added.
+        * platform/gtk/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1-expected.txt: Added.
+        * platform/gtk/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2-expected.txt: Added.
+
 2011-08-26  Andreas Kling  <kling@webkit.org>
 
         [Qt] Path::boundingRect() is unnecessarily slow.
