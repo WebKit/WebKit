@@ -1,5 +1,11 @@
 2011-08-26  David Levin  <levin@chromium.org>
 
+        [chromium] Update tests expectations due to r93909.
+
+        * platform/mac/fast/text/complex-preferred-logical-widths-expected.txt:
+
+2011-08-26  David Levin  <levin@chromium.org>
+
         [chromium] Update tests expectations due to r93913.
 
         * platform/chromium-cg-mac/fast/dom/xmlhttprequest-constructor-in-detached-document-expected.txt: Removed.
