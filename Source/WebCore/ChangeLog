@@ -1,3 +1,18 @@
+2011-08-26  Alexei Svitkine  <asvitkine@chromium.org>
+
+        Chromium Mac: Use a custom pattern image for rubber banding overhang area
+        https://bugs.webkit.org/show_bug.cgi?id=66707
+
+        Also roll Chromium revision to 98101, to include dependency: http://codereview.chromium.org/7714036/
+
+        Reviewed by Dimitri Glazkov.
+
+        No new tests since its just changing the Chromium-specific overhang pattern.
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::ScrollbarThemeChromiumMac):
+        (WebCore::ScrollbarThemeChromiumMac::paintOverhangAreas):
+
 2011-08-26  Eric Carlson  <eric.carlson@apple.com>
 
         <video> playlist can not advance when playing in background tab
