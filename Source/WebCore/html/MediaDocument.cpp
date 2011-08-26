@@ -101,7 +101,7 @@ void MediaDocumentParser::createDocumentStructure()
     if (!frame)
         return;
 
-    frame->loader()->activeDocumentLoader()->mainResourceLoader()->setShouldBufferData(false);
+    frame->loader()->activeDocumentLoader()->mainResourceLoader()->setShouldBufferData(DoNotBufferData);
 }
 
 void MediaDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)

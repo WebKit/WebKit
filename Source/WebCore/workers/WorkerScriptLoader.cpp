@@ -72,9 +72,9 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     ASSERT(scriptExecutionContext->isWorkerContext());
 
     ThreadableLoaderOptions options;
-    options.allowCredentials = true;
+    options.allowCredentials = AllowStoredCredentials;
     options.crossOriginRequestPolicy = crossOriginRequestPolicy;
-    options.sendLoadCallbacks = true;
+    options.sendLoadCallbacks = SendCallbacks;
 
     WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(scriptExecutionContext), *request, *this, options);
 }
@@ -90,9 +90,9 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
         return;
 
     ThreadableLoaderOptions options;
-    options.allowCredentials = true;
+    options.allowCredentials = AllowStoredCredentials;
     options.crossOriginRequestPolicy = crossOriginRequestPolicy;
-    options.sendLoadCallbacks = true;
+    options.sendLoadCallbacks = SendCallbacks;
 
     // During create, callbacks may happen which remove the last reference to this object.
     RefPtr<WorkerScriptLoader> protect(this);

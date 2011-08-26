@@ -1,3 +1,14 @@
+2011-08-26  Nate Chapin  <japhet@chromium.org>
+
+        Use enums instead of bools for ThreadableLoaderOptions
+        variables.
+        https://bugs.webkit.org/show_bug.cgi?id=66984
+
+        Reviewed by David Levin.
+
+        * src/AssociatedURLLoader.cpp:
+        (WebKit::AssociatedURLLoader::loadAsynchronously):
+
 2011-08-25  Jeremy Apthorp  <jeremya@google.com>
 
         Enable fullscreen API in Chromium by default.

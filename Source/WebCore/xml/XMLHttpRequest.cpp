@@ -650,10 +650,10 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
         request.addHTTPHeaderFields(m_requestHeaders);
 
     ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = true;
-    options.sniffContent = false;
+    options.sendLoadCallbacks = SendCallbacks;
+    options.sniffContent = DoNotSniffContent;
     options.preflightPolicy = uploadEvents ? ForcePreflight : ConsiderPreflight;
-    options.allowCredentials = m_sameOriginRequest || m_includeCredentials;
+    options.allowCredentials = (m_sameOriginRequest || m_includeCredentials) ? AllowStoredCredentials : DoNotAllowStoredCredentials;
     options.crossOriginRequestPolicy = UseAccessControl;
     options.securityOrigin = securityOrigin();
 

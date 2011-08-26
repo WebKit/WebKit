@@ -86,10 +86,10 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
     request.setHTTPMethod("GET");
 
     ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = true;
-    options.sniffContent = false;
+    options.sendLoadCallbacks = SendCallbacks;
+    options.sniffContent = DoNotSniffContent;
     options.preflightPolicy = ConsiderPreflight;
-    options.allowCredentials = true;
+    options.allowCredentials = AllowStoredCredentials;
     options.crossOriginRequestPolicy = DenyCrossOriginRequests;
 
     if (m_client)

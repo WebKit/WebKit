@@ -36,7 +36,7 @@
 namespace WebCore {
 
 NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame* frame, NetscapePlugInStreamLoaderClient* client)
-    : ResourceLoader(frame, ResourceLoaderOptions(true, true, true))
+    : ResourceLoader(frame, ResourceLoaderOptions(SendCallbacks, SniffContent, DoNotBufferData))
     , m_client(client)
 {
 }
@@ -48,7 +48,6 @@ NetscapePlugInStreamLoader::~NetscapePlugInStreamLoader()
 PassRefPtr<NetscapePlugInStreamLoader> NetscapePlugInStreamLoader::create(Frame* frame, NetscapePlugInStreamLoaderClient* client, const ResourceRequest& request)
 {
     RefPtr<NetscapePlugInStreamLoader> loader(adoptRef(new NetscapePlugInStreamLoader(frame, client)));
-    loader->setShouldBufferData(false);
     loader->documentLoader()->addPlugInStreamLoader(loader.get());
     if (!loader->init(request))
         return 0;

@@ -113,10 +113,10 @@ void EventSource::connect()
         request.setHTTPHeaderField("Last-Event-ID", m_lastEventId);
 
     ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = true;
-    options.sniffContent = false;
-    options.allowCredentials = true;
-    options.shouldBufferData = false;
+    options.sendLoadCallbacks = SendCallbacks;
+    options.sniffContent = DoNotSniffContent;
+    options.allowCredentials = AllowStoredCredentials;
+    options.shouldBufferData = DoNotBufferData;
 
     m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, options);
 

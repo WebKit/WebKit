@@ -226,12 +226,12 @@ void AssociatedURLLoader::loadAsynchronously(const WebURLRequest& request, WebUR
     ASSERT(m_client);
 
     ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = true; // Always send callbacks.
-    options.sniffContent = m_options.sniffContent;
-    options.allowCredentials = m_options.allowCredentials;
+    options.sendLoadCallbacks = SendCallbacks; // Always send callbacks.
+    options.sniffContent = m_options.sniffContent ? SniffContent : DoNotSniffContent;
+    options.allowCredentials = m_options.allowCredentials ? AllowStoredCredentials : DoNotAllowStoredCredentials;
     options.preflightPolicy = m_options.forcePreflight ? ForcePreflight : ConsiderPreflight;
     options.crossOriginRequestPolicy = static_cast<WebCore::CrossOriginRequestPolicy>(m_options.crossOriginRequestPolicy);
-    options.shouldBufferData = false;
+    options.shouldBufferData = DoNotBufferData;
 
     const ResourceRequest& webcoreRequest = request.toResourceRequest();
     Document* webcoreDocument = m_frameImpl->frame()->document();

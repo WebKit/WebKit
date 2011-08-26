@@ -30,7 +30,6 @@
 #include "AuthenticationClient.h"
 #include "HTTPHeaderMap.h"
 #include "NetworkingContext.h"
-#include "ThreadableLoader.h"
 #include <wtf/OwnPtr.h>
 
 #if USE(SOUP)
@@ -90,6 +89,11 @@ class ResourceRequest;
 class ResourceResponse;
 class SchedulePair;
 class SharedBuffer;
+
+enum StoredCredentials {
+    AllowStoredCredentials,
+    DoNotAllowStoredCredentials
+};
 
 template <typename T> class Timer;
 

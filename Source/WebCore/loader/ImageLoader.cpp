@@ -168,7 +168,7 @@ void ImageLoader::updateFromElement()
 
         String crossOriginMode = m_element->fastGetAttribute(HTMLNames::crossoriginAttr);
         if (!crossOriginMode.isNull()) {
-            bool allowCredentials = equalIgnoringCase(crossOriginMode, "use-credentials");
+            StoredCredentials allowCredentials = equalIgnoringCase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
             updateRequestForAccessControl(request, document->securityOrigin(), allowCredentials);
         }
 

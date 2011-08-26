@@ -31,6 +31,7 @@
 #ifndef ThreadableLoader_h
 #define ThreadableLoader_h
 
+#include "ResourceHandle.h"
 #include "ResourceLoaderOptions.h"
 #include "SecurityOrigin.h"
 #include <wtf/Noncopyable.h>
@@ -45,11 +46,6 @@ namespace WebCore {
     class ResourceResponse;
     class ScriptExecutionContext;
     class ThreadableLoaderClient;
-
-    enum StoredCredentials {
-        AllowStoredCredentials,
-        DoNotAllowStoredCredentials
-    };
     
     enum CrossOriginRequestPolicy {
         DenyCrossOriginRequests,
@@ -64,8 +60,8 @@ namespace WebCore {
     };
 
     struct ThreadableLoaderOptions : public ResourceLoaderOptions {
-        ThreadableLoaderOptions() : allowCredentials(false), preflightPolicy(ConsiderPreflight), crossOriginRequestPolicy(DenyCrossOriginRequests) { }
-        bool allowCredentials;  // Whether HTTP credentials and cookies are sent with the request.
+        ThreadableLoaderOptions() : allowCredentials(DoNotAllowStoredCredentials), preflightPolicy(ConsiderPreflight), crossOriginRequestPolicy(DenyCrossOriginRequests) { }
+        StoredCredentials allowCredentials; // Whether HTTP credentials and cookies are sent with the request.
         PreflightPolicy preflightPolicy; // If AccessControl is used, how to determine if a preflight is needed.
         CrossOriginRequestPolicy crossOriginRequestPolicy;
         RefPtr<SecurityOrigin> securityOrigin;

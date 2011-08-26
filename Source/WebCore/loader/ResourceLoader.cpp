@@ -160,7 +160,7 @@ void ResourceLoader::start()
     }
 
     if (!m_reachedTerminalState)
-        m_handle = ResourceHandle::create(m_frame->loader()->networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent);
+        m_handle = ResourceHandle::create(m_frame->loader()->networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent == SniffContent);
 }
 
 void ResourceLoader::setDefersLoading(bool defers)
@@ -182,7 +182,7 @@ FrameLoader* ResourceLoader::frameLoader() const
     return m_frame->loader();
 }
 
-void ResourceLoader::setShouldBufferData(bool shouldBufferData)
+void ResourceLoader::setShouldBufferData(DataBufferingPolicy shouldBufferData)
 { 
     m_options.shouldBufferData = shouldBufferData; 
 
@@ -194,7 +194,7 @@ void ResourceLoader::setShouldBufferData(bool shouldBufferData)
 
 void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
 {
-    if (!m_options.shouldBufferData)
+    if (m_options.shouldBufferData == DoNotBufferData)
         return;
 
     if (allAtOnce) {
@@ -234,7 +234,7 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
 
     ASSERT(!m_reachedTerminalState);
 
-    if (m_options.sendLoadCallbacks) {
+    if (m_options.sendLoadCallbacks == SendCallbacks) {
         if (!m_identifier) {
             m_identifier = m_frame->page()->progress()->createUniqueIdentifier();
             frameLoader()->notifier()->assignIdentifierToInitialRequest(m_identifier, documentLoader(), request);
@@ -277,7 +277,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
     if (FormData* data = m_request.httpBody())
         data->removeGeneratedFilesIfNeeded();
         
-    if (m_options.sendLoadCallbacks)
+    if (m_options.sendLoadCallbacks == SendCallbacks)
         frameLoader()->notifier()->didReceiveResponse(this, m_response);
 }
 
@@ -303,13 +303,13 @@ void ResourceLoader::didReceiveData(const char* data, int length, long long enco
     // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
-    if (m_options.sendLoadCallbacks && m_frame)
+    if (m_options.sendLoadCallbacks == SendCallbacks && m_frame)
         frameLoader()->notifier()->didReceiveData(this, data, length, static_cast<int>(encodedDataLength));
 }
 
 void ResourceLoader::willStopBufferingData(const char* data, int length)
 {
-    if (!m_options.shouldBufferData)
+    if (m_options.shouldBufferData == DoNotBufferData)
         return;
 
     ASSERT(!m_resourceData);
@@ -337,7 +337,7 @@ void ResourceLoader::didFinishLoadingOnePart(double finishTime)
     if (m_calledDidFinishLoad)
         return;
     m_calledDidFinishLoad = true;
-    if (m_options.sendLoadCallbacks)
+    if (m_options.sendLoadCallbacks == SendCallbacks)
         frameLoader()->notifier()->didFinishLoad(this, finishTime);
 }
 
@@ -354,7 +354,7 @@ void ResourceLoader::didFail(const ResourceError& error)
     if (FormData* data = m_request.httpBody())
         data->removeGeneratedFilesIfNeeded();
 
-    if (m_options.sendLoadCallbacks && !m_calledDidFinishLoad)
+    if (m_options.sendLoadCallbacks == SendCallbacks && !m_calledDidFinishLoad)
         frameLoader()->notifier()->didFailToLoad(this, error);
 
     releaseResources();
@@ -402,7 +402,7 @@ void ResourceLoader::cancel(const ResourceError& error)
             m_handle = 0;
         }
 
-        if (m_options.sendLoadCallbacks && m_identifier && !m_calledDidFinishLoad)
+        if (m_options.sendLoadCallbacks == SendCallbacks && m_identifier && !m_calledDidFinishLoad)
             frameLoader()->notifier()->didFailToLoad(this, nonNullError);
     }
 

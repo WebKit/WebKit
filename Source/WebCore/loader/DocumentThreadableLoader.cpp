@@ -292,7 +292,7 @@ bool DocumentThreadableLoader::getShouldUseCredentialStorage(SubresourceLoader* 
 {
     ASSERT_UNUSED(loader, loader == m_loader || !m_loader);
 
-    if (!m_options.allowCredentials) {
+    if (m_options.allowCredentials == DoNotAllowStoredCredentials) {
         shouldUseCredentialStorage = false;
         return true;
     }
@@ -345,10 +345,10 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
         ThreadableLoaderOptions options = m_options;
         if (m_actualRequest) {
             // Don't sniff content or send load callbacks for the preflight request.
-            options.sendLoadCallbacks = false;
-            options.sniffContent = false;
+            options.sendLoadCallbacks = DoNotSendCallbacks;
+            options.sniffContent = DoNotSniffContent;
             // Keep buffering the data for the preflight request.
-            options.shouldBufferData = true;
+            options.shouldBufferData = BufferData;
         }
 
 #if ENABLE(INSPECTOR)
@@ -368,14 +368,12 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
     }
     
     // FIXME: ThreadableLoaderOptions.sniffContent is not supported for synchronous requests.
-    StoredCredentials storedCredentials = m_options.allowCredentials ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-
     Vector<char> data;
     ResourceError error;
     ResourceResponse response;
     unsigned long identifier = std::numeric_limits<unsigned long>::max();
     if (m_document->frame())
-        identifier = m_document->frame()->loader()->loadResourceSynchronously(request, storedCredentials, error, response, data);
+        identifier = m_document->frame()->loader()->loadResourceSynchronously(request, m_options.allowCredentials, error, response, data);
 
     // No exception for file:/// resources, see <rdar://problem/4962298>.
     // Also, if we have an HTTP response, then it wasn't a network error in fact.

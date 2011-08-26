@@ -139,7 +139,7 @@ namespace WebCore {
 
         bool reachedTerminalState() const { return m_reachedTerminalState; }
 
-        void setShouldBufferData(bool shouldBufferData);
+        void setShouldBufferData(DataBufferingPolicy);
 
     protected:
         ResourceLoader(Frame*, ResourceLoaderOptions);

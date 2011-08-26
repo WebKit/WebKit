@@ -179,7 +179,7 @@ void CachedResource::finish()
 bool CachedResource::passesAccessControlCheck(SecurityOrigin* securityOrigin)
 {
     String errorDescription;
-    return WebCore::passesAccessControlCheck(m_response, resourceRequest().allowCookies(), securityOrigin, errorDescription);
+    return WebCore::passesAccessControlCheck(m_response, resourceRequest().allowCookies() ? AllowStoredCredentials : DoNotAllowStoredCredentials, securityOrigin, errorDescription);
 }
 
 bool CachedResource::isExpired() const

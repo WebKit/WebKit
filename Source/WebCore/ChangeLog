@@ -1,3 +1,41 @@
+2011-08-26  Nate Chapin  <japhet@chromium.org>
+
+        Change a bunch of nondescript bools to
+        descriptive enums in ResourceLoaderOptions and
+        ThreadableLoaderOptions.
+        https://bugs.webkit.org/show_bug.cgi?id=66984
+
+        Reviewed by David Levin.
+
+        No new tests, no functionality change intended.
+
+        * WebCore.exp.in:
+        * fileapi/FileReaderLoader.cpp:
+        * html/MediaDocument.cpp:
+        * html/PluginDocument.cpp:
+        * loader/CrossOriginAccessControl.cpp:
+        * loader/CrossOriginAccessControl.h:
+        * loader/CrossOriginPreflightResultCache.cpp:
+        * loader/CrossOriginPreflightResultCache.h:
+        * loader/DocumentThreadableLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/ImageLoader.cpp:
+        * loader/MainResourceLoader.cpp:
+        * loader/NetscapePlugInStreamLoader.cpp:
+        * loader/ResourceLoadScheduler.h:
+        * loader/ResourceLoader.cpp:
+        * loader/ResourceLoader.h:
+        * loader/ResourceLoaderOptions.h:
+        * loader/ThreadableLoader.h:
+        * loader/cache/CachedResource.cpp:
+        * loader/cache/CachedResourceRequest.cpp:
+        * loader/cf/ResourceLoaderCFNet.cpp:
+        * loader/mac/ResourceLoaderMac.mm:
+        * page/EventSource.cpp:
+        * platform/network/ResourceHandle.h:
+        * workers/WorkerScriptLoader.cpp:
+        * xml/XMLHttpRequest.cpp:
+
 2011-08-26  Andreas Kling  <kling@webkit.org>
 
         HTMLMetaElement: Don't cache "http-equiv" and "content" attributes.

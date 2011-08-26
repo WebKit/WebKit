@@ -44,7 +44,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLHeadElement.h"
 #include "NodeList.h"
-
+#include "SecurityOrigin.h"
 #include "WebAccessibilityObject.h"
 #include "WebDocumentType.h"
 #include "WebElement.h"

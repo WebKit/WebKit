@@ -33,12 +33,27 @@
 
 namespace WebCore {
     
+enum SendCallbackPolicy {
+    SendCallbacks,
+    DoNotSendCallbacks
+};
+
+enum ContentSniffingPolicy {
+    SniffContent,
+    DoNotSniffContent
+};
+
+enum DataBufferingPolicy {
+    BufferData,
+    DoNotBufferData
+};
+
 struct ResourceLoaderOptions {
-    ResourceLoaderOptions() : sendLoadCallbacks(false), sniffContent(false), shouldBufferData(true) { }
-    ResourceLoaderOptions(bool sendLoadCallbacksArg, bool sniffContentArg, bool shouldBufferDataArg) : sendLoadCallbacks(sendLoadCallbacksArg), sniffContent(sniffContentArg), shouldBufferData(shouldBufferDataArg) { }
-    bool sendLoadCallbacks;
-    bool sniffContent;
-    bool shouldBufferData;
+    ResourceLoaderOptions() : sendLoadCallbacks(DoNotSendCallbacks), sniffContent(DoNotSniffContent), shouldBufferData(BufferData) { }
+    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacksArg, ContentSniffingPolicy sniffContentArg, DataBufferingPolicy shouldBufferDataArg) : sendLoadCallbacks(sendLoadCallbacksArg), sniffContent(sniffContentArg), shouldBufferData(shouldBufferDataArg) { }
+    SendCallbackPolicy sendLoadCallbacks;
+    ContentSniffingPolicy sniffContent;
+    DataBufferingPolicy shouldBufferData;
 };
 
 } // namespace WebCore    

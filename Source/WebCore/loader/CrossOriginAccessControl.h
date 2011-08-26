@@ -27,6 +27,7 @@
 #ifndef CrossOriginAccessControl_h
 #define CrossOriginAccessControl_h
 
+#include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include <wtf/Forward.h>
 
@@ -41,10 +42,10 @@ bool isOnAccessControlSimpleRequestMethodWhitelist(const String&);
 bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name, const String& value);
 bool isOnAccessControlResponseHeaderWhitelist(const String&);
 
-void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin*, bool allowCredentials);
-ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin*, bool allowCredentials);
+void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin*, StoredCredentials);
+ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin*, StoredCredentials);
 
-bool passesAccessControlCheck(const ResourceResponse&, bool includeCredentials, SecurityOrigin*, String& errorDescription);
+bool passesAccessControlCheck(const ResourceResponse&, StoredCredentials, SecurityOrigin*, String& errorDescription);
 
 } // namespace WebCore
 

@@ -97,14 +97,14 @@ bool isOnAccessControlResponseHeaderWhitelist(const String& name)
     return allowedCrossOriginResponseHeaders->contains(name);
 }
 
-void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin* securityOrigin, bool allowCredentials)
+void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin* securityOrigin, StoredCredentials allowCredentials)
 {
     request.removeCredentials();
-    request.setAllowCookies(allowCredentials);
+    request.setAllowCookies(allowCredentials == AllowStoredCredentials);
     request.setHTTPOrigin(securityOrigin->toString());
 }
 
-ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& request, SecurityOrigin* securityOrigin, bool allowCredentials)
+ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& request, SecurityOrigin* securityOrigin, StoredCredentials allowCredentials)
 {
     ResourceRequest preflightRequest(request.url());
     updateRequestForAccessControl(preflightRequest, securityOrigin, allowCredentials);
@@ -133,12 +133,12 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     return preflightRequest;
 }
 
-bool passesAccessControlCheck(const ResourceResponse& response, bool includeCredentials, SecurityOrigin* securityOrigin, String& errorDescription)
+bool passesAccessControlCheck(const ResourceResponse& response, StoredCredentials includeCredentials, SecurityOrigin* securityOrigin, String& errorDescription)
 {
     // A wildcard Access-Control-Allow-Origin can not be used if credentials are to be sent,
     // even with Access-Control-Allow-Credentials set to true.
     const String& accessControlOriginString = response.httpHeaderField("Access-Control-Allow-Origin");
-    if (accessControlOriginString == "*" && !includeCredentials)
+    if (accessControlOriginString == "*" && includeCredentials == DoNotAllowStoredCredentials)
         return true;
 
     if (securityOrigin->isUnique()) {
@@ -156,7 +156,7 @@ bool passesAccessControlCheck(const ResourceResponse& response, bool includeCred
         return false;
     }
 
-    if (includeCredentials) {
+    if (includeCredentials == AllowStoredCredentials) {
         const String& accessControlCredentialsString = response.httpHeaderField("Access-Control-Allow-Credentials");
         if (accessControlCredentialsString != "true") {
             errorDescription = "Credentials flag is true, but Access-Control-Allow-Credentials is not \"true\".";

@@ -49,6 +49,7 @@
 #include "npruntime_priv.h"
 #include "NPV8Object.h"
 #include "ScriptSourceCode.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
 #include "V8Binding.h"

@@ -38,9 +38,9 @@
 #include "IconController.h"
 #include "IconURL.h"
 #include "PolicyChecker.h"
+#include "ResourceHandle.h"
 #include "ResourceLoadNotifier.h"
 #include "SubframeLoader.h"
-#include "ThreadableLoader.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>

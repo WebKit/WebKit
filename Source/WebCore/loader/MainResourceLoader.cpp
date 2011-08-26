@@ -60,7 +60,7 @@
 namespace WebCore {
 
 MainResourceLoader::MainResourceLoader(Frame* frame)
-    : ResourceLoader(frame, ResourceLoaderOptions(true, true, true))
+    : ResourceLoader(frame, ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData))
     , m_dataLoadTimer(this, &MainResourceLoader::handleDataLoadNow)
     , m_loadingMultipartContent(false)
     , m_waitingForContentPolicy(false)
