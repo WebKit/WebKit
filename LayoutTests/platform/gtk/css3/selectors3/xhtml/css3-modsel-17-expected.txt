@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x70
+  RenderBlock {html} at (0,0) size 800x70
+    RenderBody {body} at (8,16) size 784x38
+      RenderBlock {p} at (0,0) size 784x38
+        RenderInline {a} at (0,0) size 379x19 [color=#0000EE] [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 379x19
+            text run at (0,0) width 379: "You should see a green background assigned by the anchor."
+        RenderText {#text} at (379,0) size 770x38
+          text run at (379,0) width 391: " (Note: You must have visited http://www.w3.org/ for this test"
+          text run at (0,19) width 75: "to be valid.)"
