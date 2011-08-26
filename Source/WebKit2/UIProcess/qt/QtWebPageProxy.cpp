@@ -210,7 +210,6 @@ void QtWebPageProxy::init()
 QtWebPageProxy::~QtWebPageProxy()
 {
     m_webPageProxy->close();
-    m_context->disconnectProcess(m_context->process());
     // The context is the default one and we're deleting the last QtWebPageProxy.
     if (m_context == s_defaultContext) {
         ASSERT(s_defaultPageProxyCount > 0);

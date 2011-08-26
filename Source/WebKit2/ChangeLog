@@ -1,3 +1,19 @@
+2011-08-26  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2]REGRESSION(r93784): It made many tests crash
+        https://bugs.webkit.org/show_bug.cgi?id=66958
+
+        Reviewed by Anders Carlsson.
+
+        Don't try to make sure the WebContext is deleted, for now the leak
+        is intended and when multiple processes per context will be supported
+        this leak should be fixed. This was the cause of DRT crashing on the bot,
+        the context was deleted after the first test, letting other tests with nothing
+        but a bad context.
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::~QtWebPageProxy):
+
 2011-08-26  Anders Carlsson  <andersca@apple.com>
 
         Fix handling of keyup events in the new Cocoa text input model
