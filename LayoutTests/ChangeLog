@@ -1,3 +1,21 @@
+2011-08-26  Andreas Kling  <kling@webkit.org>
+
+        Rebaseline Qt (4.7) after r93873.
+
+        * platform/qt/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/paths-data-02-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * platform/qt/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/qt/svg/batik/text/textOnPath-expected.txt:
+        * platform/qt/svg/batik/text/textOnPath2-expected.txt:
+        * platform/qt/svg/batik/text/textOnPath3-expected.txt:
+        * platform/qt/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/qt/svg/text/text-path-01-b-expected.txt:
+
 2011-08-26  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, fix error in chromium test_expectations.
