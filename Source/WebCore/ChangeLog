@@ -1,3 +1,35 @@
+2011-08-26  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, rolling out r93870.
+        http://trac.webkit.org/changeset/93870
+        https://bugs.webkit.org/show_bug.cgi?id=65203
+
+        Broke i18n chromium tests
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::TransparencyAwareFontPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::init):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::initializeForGDI):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::~TransparencyAwareFontPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::TransparencyAwareGlyphPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::~TransparencyAwareGlyphPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::drawGlyphs):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareUniscribePainter::hdc):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareUniscribePainter::TransparencyAwareUniscribePainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareUniscribePainter::~TransparencyAwareUniscribePainter):
+        (WebCore::drawGlyphsWin):
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::UniscribeHelper::draw):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::isNativeFontRenderingAllowed):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::windowsCanHandleDrawTextShadow):
+        (WebCore::windowsCanHandleTextDrawing):
+        (WebCore::windowsCanHandleTextDrawingWithoutShadow):
+        * platform/graphics/skia/SkiaFontWin.h:
+
 2011-08-26  Alexei Svitkine  <asvitkine@chromium.org>
 
         Chromium Mac: Use a custom pattern image for rubber banding overhang area

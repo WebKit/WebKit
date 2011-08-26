@@ -1,3 +1,13 @@
+2011-08-26  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, rolling out r93870.
+        http://trac.webkit.org/changeset/93870
+        https://bugs.webkit.org/show_bug.cgi?id=65203
+
+        Broke i18n chromium tests
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-26  Martin Robinson  <mrobinson@igalia.com>
 
         Removing some tests from the GTK+ skipped lists that have results now
