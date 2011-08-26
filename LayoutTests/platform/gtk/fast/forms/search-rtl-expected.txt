@@ -41,22 +41,22 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,138) size 784x19
         RenderText {#text} at (0,0) size 39x19
           text run at (0,0) width 39: "PASS"
-layer at (29,48) size 156x19 scrollX 21 scrollWidth 177
+layer at (29,48) size 156x19 scrollX 23 scrollWidth 179
   RenderBlock {DIV} at (0,0) size 156x19
-    RenderText {#text} at (-21,0) size 176x19
-      text run at (-21,0) width 28 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (7,0) width 26: "she"
-      text run at (33,0) width 56 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (89,0) width 18: "he"
-      text run at (107,0) width 48 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+    RenderText {#text} at (-23,0) size 178x19
+      text run at (-23,0) width 28 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (5,0) width 26: "she"
+      text run at (31,0) width 57 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (88,0) width 18: "he"
+      text run at (106,0) width 49 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
 layer at (29,77) size 246x19
   RenderBlock {DIV} at (0,0) size 246x19
-    RenderText {#text} at (69,0) size 176x19
-      text run at (69,0) width 28 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (97,0) width 26: "she"
-      text run at (123,0) width 56 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (179,0) width 18: "he"
-      text run at (197,0) width 48 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+    RenderText {#text} at (67,0) size 178x19
+      text run at (67,0) width 28 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (95,0) width 26: "she"
+      text run at (121,0) width 57 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (178,0) width 18: "he"
+      text run at (196,0) width 49 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
 layer at (29,106) size 156x19
   RenderBlock {DIV} at (0,0) size 156x19
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 9 {INPUT} of child 3 {P} of body

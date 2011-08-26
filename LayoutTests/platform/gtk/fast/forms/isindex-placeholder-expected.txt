@@ -37,3 +37,11 @@ layer at (335,85) size 188x19
   RenderBlock {DIV} at (3,3) size 188x19
 layer at (335,177) size 188x19
   RenderBlock {DIV} at (3,3) size 188x19
+layer at (335,85) size 188x19
+  RenderBlock (relative positioned) {DIV} at (3,3) size 188x19 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 84x19
+      text run at (1,0) width 84: "placeholder"
+layer at (335,177) size 188x19
+  RenderBlock (relative positioned) {DIV} at (3,3) size 188x19 [color=#008000]
+    RenderText {#text} at (1,0) size 84x19
+      text run at (1,0) width 84: "placeholder"

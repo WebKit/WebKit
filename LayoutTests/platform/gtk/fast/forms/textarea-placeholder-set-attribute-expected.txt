@@ -10,3 +10,7 @@ layer at (0,0) size 800x600
 layer at (10,45) size 202x44 clip at (11,46) size 200x42
   RenderTextControl {TEXTAREA} at (2,2) size 202x44 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 196x19
+layer at (13,48) size 196x19
+  RenderBlock (relative positioned) {DIV} at (3,3) size 196x19 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 86x19
+      text run at (0,0) width 86: "Placeholder"

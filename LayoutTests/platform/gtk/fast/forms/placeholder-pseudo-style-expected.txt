@@ -39,3 +39,27 @@ layer at (215,61) size 188x19
   RenderBlock {DIV} at (3,3) size 188x19
 layer at (417,61) size 188x19
   RenderBlock {DIV} at (3,3) size 188x19
+layer at (13,32) size 188x19
+  RenderBlock (relative positioned) {DIV} at (3,3) size 188x19 [color=#640000]
+    RenderText {#text} at (1,0) size 25x19
+      text run at (1,0) width 25: "text"
+layer at (215,32) size 172x19
+  RenderBlock (relative positioned) {DIV} at (3,3) size 172x19 [color=#640000]
+    RenderText {#text} at (1,0) size 48x19
+      text run at (1,0) width 48: "search"
+layer at (417,32) size 188x19
+  RenderBlock (relative positioned) {DIV} at (3,3) size 188x19 [color=#640000]
+    RenderText {#text} at (1,0) size 69x19
+      text run at (1,0) width 69: "password"
+layer at (13,61) size 188x19
+  RenderBlock (relative positioned) {DIV} at (3,3) size 188x19 [color=#640000]
+    RenderText {#text} at (1,0) size 90x19
+      text run at (1,0) width 90: "disabled text"
+layer at (215,61) size 188x19
+  RenderBlock (relative positioned) {DIV} at (3,3) size 188x19 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 48x19
+      text run at (1,0) width 48: "default"
+layer at (417,61) size 188x19
+  RenderBlock (relative positioned) {DIV} at (3,3) size 188x19 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 113x19
+      text run at (1,0) width 113: "default disabled"

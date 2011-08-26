@@ -21,24 +21,24 @@ layer at (0,0) size 800x600
           text run at (0,0) width 543: "All text should be aligned with the right edge of its container and should not overflow."
       RenderBlock {HR} at (0,89) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,99) size 191x56 [bgcolor=#FFFF00]
-        RenderText {#text} at (48,0) size 143x56
-          text run at (48,0) width 7 RTL: " "
-          text run at (55,0) width 136 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}?"
-          text run at (91,28) width 100 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}!"
+        RenderText {#text} at (47,0) size 144x56
+          text run at (47,0) width 7 RTL: " "
+          text run at (54,0) width 137 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}?"
+          text run at (94,28) width 97 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}!"
       RenderBlock (anonymous) at (0,155) size 784x89
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (199,70) size 4x19
           text run at (199,70) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
       RenderBlock {DIV} at (0,244) size 191x56 [bgcolor=#FFFF00]
-        RenderText {#text} at (48,0) size 143x56
-          text run at (48,0) width 7 RTL: " "
-          text run at (55,0) width 136 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}?"
-          text run at (91,28) width 100 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}!"
+        RenderText {#text} at (47,0) size 144x56
+          text run at (47,0) width 7 RTL: " "
+          text run at (54,0) width 137 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}?"
+          text run at (94,28) width 97 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}!"
 layer at (8,184) size 199x62 clip at (9,185) size 197x60
   RenderTextControl {TEXTAREA} at (0,21) size 199x62 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 193x56
       RenderText {#text} at (0,0) size 193x56
         text run at (0,0) width 0 RTL: " "
         text run at (0,0) width 193 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4}"
-        text run at (150,28) width 43 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
+        text run at (152,28) width 41 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
