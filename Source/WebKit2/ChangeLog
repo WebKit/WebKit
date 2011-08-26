@@ -1,3 +1,24 @@
+2011-08-25  Jeff Miller  <jeffm@apple.com>
+
+        Move Windows-specific WebPageProxy code to WebPageProxyWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=67002
+
+        Reviewed by Brian Weinstein.
+
+        * UIProcess/WebPageProxy.cpp: Moved Windows-only functions to WebPageProxyWin.cpp.
+        
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::firstRectForCharacterInSelectedRange): Moved from WebPageProxy.cpp.
+        (WebKit::WebPageProxy::getSelectedText): Moved from WebPageProxy.cpp.
+        (WebKit::WebPageProxy::gestureWillBegin): Moved from WebPageProxy.cpp.
+        (WebKit::WebPageProxy::gestureDidScroll): Moved from WebPageProxy.cpp.
+        (WebKit::WebPageProxy::gestureDidEnd): Moved from WebPageProxy.cpp.
+        (WebKit::WebPageProxy::setGestureReachedScrollingLimit): Moved from WebPageProxy.cpp.
+        (WebKit::WebPageProxy::startDragDrop): Moved from WebPageProxy.cpp.
+        (WebKit::WebPageProxy::didChangeCompositionSelection): Moved from WebPageProxy.cpp.
+        (WebKit::WebPageProxy::confirmComposition): Moved from WebPageProxy.cpp.
+        (WebKit::WebPageProxy::setComposition): Moved from WebPageProxy.cpp.
+
 2011-08-25  Anders Carlsson  <andersca@apple.com>
 
         Handle key-down events in the updated Cocoa text input model
