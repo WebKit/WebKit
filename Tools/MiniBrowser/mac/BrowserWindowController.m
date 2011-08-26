@@ -377,7 +377,7 @@ static void decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLRespo
 
 // MARK: UI Client Callbacks
 
-static WKPageRef createNewPage(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton button, const void* clientInfo)
+static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef request, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton button, const void* clientInfo)
 {
     LOG(@"createNewPage");
     BrowserWindowController *controller = [[BrowserWindowController alloc] initWithContext:WKPageGetContext(page)];
@@ -616,7 +616,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     WKPageUIClient uiClient = {
         kWKPageUIClientCurrentVersion,
         self,       /* clientInfo */
-        createNewPage,
+        0,          /* createNewPage_deprecatedForUseWithV0 */
         showPage,
         closePage,
         0,          /* takeFocus */
@@ -655,6 +655,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
+        createNewPage,
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }

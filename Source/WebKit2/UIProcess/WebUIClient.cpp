@@ -43,9 +43,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page, const WindowFeatures& windowFeatures, WebEvent::Modifiers modifiers, WebMouseEvent::Button button)
+PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page, const ResourceRequest& resourceRequest, const WindowFeatures& windowFeatures, WebEvent::Modifiers modifiers, WebMouseEvent::Button button)
 {
-    if (!m_client.createNewPage)
+    if (!m_client.version && !m_client.createNewPage_deprecatedForUseWithV0)
+        return 0;
+    
+    if (m_client.version == kWKPageUIClientCurrentVersion && !m_client.createNewPage)
         return 0;
 
     ImmutableDictionary::MapType map;
@@ -66,7 +69,11 @@ PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page, const Wi
     map.set("dialog", WebBoolean::create(windowFeatures.dialog));
     RefPtr<ImmutableDictionary> featuresMap = ImmutableDictionary::adopt(map);
 
-    return adoptRef(toImpl(m_client.createNewPage(toAPI(page), toAPI(featuresMap.get()), toAPI(modifiers), toAPI(button), m_client.clientInfo)));
+    if (!m_client.version)
+        return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.get()), toAPI(modifiers), toAPI(button), m_client.clientInfo)));
+
+    RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);    
+    return adoptRef(toImpl(m_client.createNewPage(toAPI(page), toAPI(request.get()), toAPI(featuresMap.get()), toAPI(modifiers), toAPI(button), m_client.clientInfo)));
 } 
 
 void WebUIClient::showPage(WebPageProxy* page)

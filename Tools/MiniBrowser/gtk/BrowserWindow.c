@@ -522,7 +522,7 @@ static void browserWindowLoaderClientInit(BrowserWindow* window)
 }
 
 // UI Client.
-static WKPageRef createNewPage(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton button, const void *clientInfo)
+static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef request, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton button, const void *clientInfo)
 {
     WKViewRef webView = WKViewCreate(WKPageGetContext(page), 0);
     BrowserWindow* window = BROWSER_WINDOW(browser_window_new(webView));
@@ -613,7 +613,7 @@ static void browserWindowUIClientInit(BrowserWindow *window)
     WKPageUIClient uiClient = {
         kWKPageUIClientCurrentVersion,
         window, /* clientInfo */
-        createNewPage,
+        0,      /* createNewPage_deprecatedForUseWithV0 */
         showPage,
         closePage,
         0,      /* takeFocus */
@@ -651,7 +651,8 @@ static void browserWindowUIClientInit(BrowserWindow *window)
         0,      /* runModal */
         0,      /* didCompleteRubberBandForMainFrame */
         0,      /* saveDataToFileInDownloadsFolder */
-        0       /* shouldInterruptJavaScript */
+        0,      /* shouldInterruptJavaScript */
+        createNewPage
     };
     WKPageSetPageUIClient(WKViewGetPage(window->webView), &uiClient);
 }

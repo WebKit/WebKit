@@ -39,7 +39,7 @@ BrowserView::BrowserView()
 
 // UI Client Callbacks
 
-static WKPageRef createNewPage(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void* clientInfo)
+static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef request, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void* clientInfo)
 {
     BrowserWindow* browserWindow = BrowserWindow::create();
     browserWindow->createWindow(0, 0, 800, 600);
@@ -95,7 +95,7 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
     WKPageUIClient uiClient = {
         kWKPageUIClientCurrentVersion,
         parentWindow,   /* clientInfo */
-        createNewPage,
+        0,          /* createNewPage_deprecatedForUseWithV0 */
         showPage,
         closePage,
         0,          /* takeFocus */
@@ -106,6 +106,7 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
         runJavaScriptPrompt,
         setStatusText,
         mouseDidMoveOverElement,
+        0,          /* missingPluginButtonClicked */
         0,          /* didNotHandleKeyEvent */
         0,          /* didNotHandleWheelEvent */
         0,          /* toolbarsAreVisible */
@@ -124,7 +125,16 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
         0,          /* exceededDatabaseQuota */
         0,          /* runOpenPanel */
         0,          /* decidePolicyForGeolocationPermissionRequest */
+        0,          /* headerHeight */
+        0,          /* footerHeight */
+        0,          /* drawHeader */
+        0,          /* drawFooter */
+        0,          /* printFrame */
+        0,          /* runModal */
+        0,          /* didCompleteRubberBandForMainFrame */
+        0,          /* saveDataToFileInDownloadsFolder */
         0,          /* shouldInterruptJavaScript */
+        createNewPage,
     };
 
     WKPageSetPageUIClient(WKViewGetPage(m_webView), &uiClient);

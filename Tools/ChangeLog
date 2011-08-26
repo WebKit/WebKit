@@ -1,3 +1,21 @@
+2011-08-26  Alice Liu  <alice.liu@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66823
+        Add the request info to the WebPageProxy::CreateNewPage message
+
+        Reviewed by Anders Carlsson.
+
+        Update function declarations with additional parameter:
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (createNewPage):
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (createNewPage):
+        * MiniBrowser/win/BrowserView.cpp:
+        (createNewPage):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        * WebKitTestRunner/TestController.h:
+
 2011-08-26  Noel Gordon  <noel.gordon@gmail.com>
 
         Make show-pretty-diff work on linux

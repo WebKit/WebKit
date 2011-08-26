@@ -130,7 +130,7 @@ static void closeOtherPage(WKPageRef page, const void* clientInfo)
     delete view;
 }
 
-WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*)
+WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*)
 {
     PlatformWebView* view = new PlatformWebView(WKPageGetContext(oldPage), WKPageGetPageGroup(oldPage));
     WKPageRef newPage = view->page();
@@ -140,7 +140,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKDictionaryRef, WK
     WKPageUIClient otherPageUIClient = {
         kWKPageUIClientCurrentVersion,
         view,
-        createOtherPage,
+        0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         closeOtherPage,
         0, // takeFocus
@@ -179,6 +179,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKDictionaryRef, WK
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
+        createOtherPage,
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -283,7 +284,7 @@ void TestController::initialize(int argc, const char* argv[])
     WKPageUIClient pageUIClient = {
         kWKPageUIClientCurrentVersion,
         this,
-        createOtherPage,
+        0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         0, // close
         0, // takeFocus
@@ -322,6 +323,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
+        createOtherPage,
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 

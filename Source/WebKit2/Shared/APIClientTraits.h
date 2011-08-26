@@ -27,6 +27,7 @@
 #define APIClientTraits_h
 
 #include "WKBundlePage.h"
+#include "WKPage.h"
 
 namespace WebKit {
 
@@ -37,6 +38,11 @@ template <typename ClientInterface> struct APIClientTraits
 template <typename ClientInterface> const size_t APIClientTraits<ClientInterface>::interfaceSizesByVersion[] = { sizeof(ClientInterface) };
 
 template<> struct APIClientTraits<WKBundlePageLoaderClient>
+{
+    static const size_t interfaceSizesByVersion[2];
+};
+
+template<> struct APIClientTraits<WKPageUIClient>
 {
     static const size_t interfaceSizesByVersion[2];
 };

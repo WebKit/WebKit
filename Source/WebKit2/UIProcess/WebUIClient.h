@@ -36,6 +36,7 @@
 namespace WebCore {
     class FloatRect;
     class IntSize;
+    class ResourceRequest;
     struct WindowFeatures;
 }
 
@@ -53,7 +54,7 @@ class WebOpenPanelResultListenerProxy;
 
 class WebUIClient : public APIClient<WKPageUIClient, kWKPageUIClientCurrentVersion> {
 public:
-    PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*, const WebCore::WindowFeatures&, WebEvent::Modifiers, WebMouseEvent::Button);
+    PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, WebEvent::Modifiers, WebMouseEvent::Button);
     void showPage(WebPageProxy*);
     void close(WebPageProxy*);
 
