@@ -1,3 +1,11 @@
+2011-08-26  David Levin  <levin@chromium.org>
+
+        [chromium] Update tests expectations due to r93913.
+
+        * platform/chromium-cg-mac/fast/dom/xmlhttprequest-constructor-in-detached-document-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/xmlhttprequest-constructor-in-detached-document-expected.txt: Removed.
+        * platform/chromium/fast/dom/xmlhttprequest-constructor-in-detached-document-expected.txt: Added.
+
 2011-08-26  Ojan Vafai  <ojan@chromium.org>
 
         change the default preferred width of the flex() function to 0px per the new spec
