@@ -1,3 +1,18 @@
+2011-08-26  Juan C. Montemayor  <jmont@apple.com>
+
+        Update topCallFrame when calling host functions in the JIT
+        https://bugs.webkit.org/show_bug.cgi?id=67010
+
+        Reviewed by Oliver Hunt.
+        
+        The topCallFrame is not being updated when a host function is
+        called by the JIT. This causes problems when trying to create a
+        stack trace (https://bugs.webkit.org/show_bug.cgi?id=66994).
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompileCTINativeCall):
+
 2011-08-26  Alexey Proskuryakov  <ap@apple.com>
 
         Get rid of frame life support timer
