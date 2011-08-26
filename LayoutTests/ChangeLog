@@ -1,3 +1,95 @@
+2011-08-26  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, rebaseline chromium fast/borders/* tests.
+
+        * fast/borders/borderRadiusArcs01-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusArcs01-expected.txt.
+        * fast/borders/borderRadiusDashed02-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusDashed02-expected.txt.
+        * fast/borders/borderRadiusDashed03-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusDashed03-expected.txt.
+        * fast/borders/borderRadiusDotted01-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusDotted01-expected.txt.
+        * fast/borders/borderRadiusDouble01-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusDouble01-expected.txt.
+        * fast/borders/borderRadiusDouble02-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusDouble02-expected.txt.
+        * fast/borders/borderRadiusDouble03-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusDouble03-expected.txt.
+        * fast/borders/borderRadiusGroove01-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusGroove01-expected.txt.
+        * fast/borders/borderRadiusGroove02-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusGroove02-expected.txt.
+        * fast/borders/borderRadiusInset01-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusInset01-expected.txt.
+        * fast/borders/borderRadiusOutset01-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusOutset01-expected.txt.
+        * fast/borders/borderRadiusRidge01-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusRidge01-expected.txt.
+        * fast/borders/borderRadiusSolid01-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusSolid01-expected.txt.
+        * fast/borders/borderRadiusSolid02-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusSolid02-expected.txt.
+        * fast/borders/borderRadiusSolid03-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusSolid03-expected.txt.
+        * fast/borders/borderRadiusSolid04-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/borderRadiusSolid04-expected.txt.
+        * fast/borders/fieldsetBorderRadius-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/fieldsetBorderRadius-expected.txt.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusGroove01-expected.png: Removed.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusGroove02-expected.png: Removed.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusRidge01-expected.png: Removed.
+        * platform/chromium-linux/fast/borders/border-antialiasing-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-inline-flow-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDashed02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDashed03-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDotted01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDouble01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDouble02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusInset01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusOutset01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusRidge01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid03-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid04-expected.png:
+        * platform/chromium-linux/fast/borders/different-color-borders-expected.png:
+        * platform/chromium-linux/fast/borders/fieldsetBorderRadius-expected.png:
+        * platform/chromium-linux/fast/borders/rtl-border-01-expected.png:
+        * platform/chromium-linux/fast/borders/rtl-border-02-expected.png:
+        * platform/chromium-linux/fast/borders/rtl-border-03-expected.png:
+        * platform/chromium-linux/fast/borders/rtl-border-04-expected.png:
+        * platform/chromium-linux/fast/borders/rtl-border-05-expected.png:
+        * platform/chromium-win/fast/borders/border-antialiasing-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-inline-flow-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDashed02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDashed03-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDotted01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDouble01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDouble02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusInset01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusOutset01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusRidge01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid03-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid04-expected.png:
+        * platform/chromium-win/fast/borders/different-color-borders-expected.png:
+        * platform/chromium-win/fast/borders/fieldsetBorderRadius-expected.png:
+        * platform/chromium-win/fast/borders/rtl-border-01-expected.png:
+        * platform/chromium-win/fast/borders/rtl-border-02-expected.png:
+        * platform/chromium-win/fast/borders/rtl-border-03-expected.png:
+        * platform/chromium-win/fast/borders/rtl-border-04-expected.png:
+        * platform/chromium-win/fast/borders/rtl-border-05-expected.png:
+        * platform/chromium-win/fast/borders/table-borders-expected.png:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/borders/fieldsetBorderRadius-expected.txt: Removed.
+        * platform/qt/fast/borders/borderRadiusDashed02-expected.txt: Removed.
+        * platform/qt/fast/borders/borderRadiusDashed03-expected.txt: Removed.
+        * platform/qt/fast/borders/borderRadiusDotted01-expected.txt: Removed.
+        * platform/qt/fast/borders/fieldsetBorderRadius-expected.txt: Removed.
+
 2011-08-26  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline of some svg tests after switch to
