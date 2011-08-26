@@ -60,7 +60,7 @@ String defaultDetailsSummaryText()
 
 String searchableIndexIntroduction()
 {
-    return String::fromUTF8("_Searchable Index");
+    return String::fromUTF8("This is a searchable index. Enter search keywords: ");
 }
 
 String fileButtonChooseFileLabel()

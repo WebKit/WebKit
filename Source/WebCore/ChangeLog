@@ -1,5 +1,21 @@
 2011-08-26  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Update searchableIndexIntroduction() to match GTK+'s.
+        https://bugs.webkit.org/show_bug.cgi?id=66885
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Using this new string allows us to share the test expectations with
+        other ports, and thus makes
+        fast/replaced/table-percent-height-text-controls.html pass.
+
+        No new tests, as this is covered by an existing one.
+
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::searchableIndexIntroduction):
+
+2011-08-26  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Do not log an error if a fallback cursor cannot be found.
         https://bugs.webkit.org/show_bug.cgi?id=67037
 
