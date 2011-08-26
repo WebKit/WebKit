@@ -1,3 +1,14 @@
+2011-08-26  Darin Adler  <darin@apple.com>
+
+        [Mac] Use the progress cursor instead of the wristwatch for CSS "wait" cursor
+        https://bugs.webkit.org/show_bug.cgi?id=67049
+
+        Reviewed by Beth Dakin.
+
+        * platform/mac/CursorMac.mm:
+        (WebCore::Cursor::ensurePlatformCursor): Use BusyButClickable cursor for wait
+        as well as for Progress.
+
 2011-08-26  Nate Chapin  <japhet@chromium.org>
 
         Fix gtk build after r93886.

@@ -95,7 +95,11 @@ void Cursor::ensurePlatformCursor() const
         m_platformCursor = [NSCursor IBeamCursor];
         break;
     case Cursor::Wait:
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        m_platformCursor = wkCursor("BusyButClickable");
+#else
         m_platformCursor = createNamedCursor("waitCursor", 7, 7);
+#endif
         break;
     case Cursor::Help:
         m_platformCursor = createNamedCursor("helpCursor", 8, 8);
