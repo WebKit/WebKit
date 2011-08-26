@@ -89,7 +89,7 @@
  * <informalexample><programlisting>
  * /<!-- -->* Get the frame from the #WebKitWebView *<!-- -->/
  * WebKitWebFrame *frame = webkit_web_view_get_main_frame (WEBKIT_WEB_VIEW(my_view));
- * g_print("The URI of this frame is '%s'", webkit_web_frame_get_uri (frame));
+ * g_print ("The URI of this frame is '%s'", webkit_web_frame_get_uri (frame));
  * </programlisting></informalexample>
  */
 

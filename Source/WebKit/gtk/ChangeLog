@@ -1,3 +1,9 @@
+2011-08-26  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Minor style fix in the sample code for WebKitWebFrame.
+
+        * webkit/webkitwebframe.cpp:
+
 2011-08-17  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] Fix compilation problems with deprecations in gtk+
