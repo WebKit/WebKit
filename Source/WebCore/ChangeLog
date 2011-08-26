@@ -1,3 +1,29 @@
+2011-08-26  Gavin Peters  <gavinp@chromium.org>
+
+        add a state enumeration to track down cause of null CachedScript execution
+        https://bugs.webkit.org/show_bug.cgi?id=66939
+
+        Reviewed by Alexey Proskuryakov.
+
+        Over in http://code.google.com/p/chromium/issues/detail?id=75604 I
+        have a bug I cannot reproduce.  I added an earlier crash in
+        https://bugs.webkit.org/show_bug.cgi?id=65563 , and we've since
+        gotten many good stacks, all coming in through a failed request that
+        eventually calls notifyFinished() on a ScriptElement with a NULL
+        m_cachedScript.
+
+        I'd like to know how this got NULL.  This enumeration should let
+        me find that in stack dumps from reproductions.
+
+        No new tests, as my goal here is to get telemetry on a bug that I cannot reproduce.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::ScriptElement):
+        (WebCore::ScriptElement::requestScript):
+        (WebCore::ScriptElement::stopLoadRequest):
+        (WebCore::ScriptElement::notifyFinished):
+        * dom/ScriptElement.h:
+
 2011-08-26  Mike Reed  <reed@google.com>
 
         [skia] never draw with GDI, so that all text can be gpu-accelerated
