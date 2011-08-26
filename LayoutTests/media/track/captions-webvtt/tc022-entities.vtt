@@ -1,0 +1,14 @@
+WEBVTT
+Cue content with escape characters for &, <, and >.
+
+1
+00:00:00.000 --> 00:00:30.500 A:start T:20%
+This cue has an amp &amp; character.
+
+2
+00:00:31.000 --> 00:01:00.500 A:start T:20%
+This cue has a less than &lt; character.
+
+3
+00:01:01.000 --> 00:02:00.500 A:start T:20%
+This cue has a greater than &gt; character.

@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            var numberOfTrackTests = 2;
+            
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack(0);
+                    testTrackError(1);
+                }
+            }
+
+            
+            function testTrack(i)
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 3,
+                    tests:
+                    [
+                        {
+                            property : "getCueAsHTML().textContent",
+                            values : ["This cue has an amp & character.",
+                                      "This cue has a less than < character.",
+                                      "This cue has a greater than > character."],
+                        },
+                    ],
+                };
+                testCues(i, expected);
+                
+                allTestsEnded();
+            }
+
+            function testTrackError(i)
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 3,
+                    tests:
+                    [
+                        {
+                            property : "getCueAsHTML().textContent",
+                            values : ["This cue has an amp character.\nAmpersand is ignored.",
+                                      "This cue has a less than ",
+                                      "This cue has a greater than > character.\nSince it's not related to a < character,\nit's just interpreted as text."],
+                        },
+                    ],
+                };
+                testCues(i, expected);
+                
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body>
+        <p>Tests special characters &amp;, &lt;, and &gt; in the cue text.</p>
+        <video> 
+            <track src="captions-webvtt/tc022-entities.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc022-entities-wrong.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

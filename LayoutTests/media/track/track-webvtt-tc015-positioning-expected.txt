@@ -1,0 +1,29 @@
+Tests cue text position from settings.
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '4') OK
+EXPECTED (cues[i].textPosition == '0') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].textPosition == '100') OK
+
+*** Testing text track 1
+EXPECTED (cues.length == '4') OK
+EXPECTED (cues[i].textPosition == '0') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].textPosition == '100') OK
+
+*** Testing text track 2
+EXPECTED (cues.length == '8') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].textPosition == '50') OK
+END OF TEST
+

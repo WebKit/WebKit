@@ -1,0 +1,22 @@
+Tests cue text position and alignment from settings.
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '3') OK
+EXPECTED (cues[i].textPosition == '10') OK
+EXPECTED (cues[i].alignment == 'start') OK
+EXPECTED (cues[i].textPosition == '20') OK
+EXPECTED (cues[i].alignment == 'middle') OK
+EXPECTED (cues[i].textPosition == '80') OK
+EXPECTED (cues[i].alignment == 'end') OK
+
+*** Testing text track 1
+EXPECTED (cues.length == '3') OK
+EXPECTED (cues[i].textPosition == '10') OK
+EXPECTED (cues[i].alignment == 'middle') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].alignment == 'middle') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].alignment == 'middle') OK
+END OF TEST
+

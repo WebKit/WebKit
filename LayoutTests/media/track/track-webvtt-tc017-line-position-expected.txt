@@ -1,0 +1,36 @@
+Tests cue line position from settings.
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '7') OK
+EXPECTED (cues[i].linePosition == '0') OK
+EXPECTED (cues[i].snapToLines == 'false') OK
+EXPECTED (cues[i].linePosition == '0') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+EXPECTED (cues[i].linePosition == '50') OK
+EXPECTED (cues[i].snapToLines == 'false') OK
+EXPECTED (cues[i].linePosition == '5') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+EXPECTED (cues[i].linePosition == '100') OK
+EXPECTED (cues[i].snapToLines == 'false') OK
+EXPECTED (cues[i].linePosition == '-1') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+EXPECTED (cues[i].linePosition == '500') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+
+*** Testing text track 1
+EXPECTED (cues.length == '6') OK
+EXPECTED (cues[i].linePosition == '-1') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+EXPECTED (cues[i].linePosition == '-1') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+EXPECTED (cues[i].linePosition == '-1') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+EXPECTED (cues[i].linePosition == '-1') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+EXPECTED (cues[i].linePosition == '-1') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+EXPECTED (cues[i].linePosition == '-1') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+END OF TEST
+

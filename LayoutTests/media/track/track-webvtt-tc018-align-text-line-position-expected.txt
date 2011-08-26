@@ -1,0 +1,42 @@
+Tests cue alignment, line and text position from settings.
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '5') OK
+EXPECTED (cues[i].alignment == 'start') OK
+EXPECTED (cues[i].textPosition == '10') OK
+EXPECTED (cues[i].linePosition == '0') OK
+EXPECTED (cues[i].snapToLines == 'false') OK
+EXPECTED (cues[i].alignment == 'start') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].linePosition == '0') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+EXPECTED (cues[i].alignment == 'middle') OK
+EXPECTED (cues[i].textPosition == '80') OK
+EXPECTED (cues[i].linePosition == '80') OK
+EXPECTED (cues[i].snapToLines == 'false') OK
+EXPECTED (cues[i].alignment == 'end') OK
+EXPECTED (cues[i].textPosition == '30') OK
+EXPECTED (cues[i].linePosition == '5') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+EXPECTED (cues[i].alignment == 'middle') OK
+EXPECTED (cues[i].textPosition == '60') OK
+EXPECTED (cues[i].linePosition == '-3') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+
+*** Testing text track 1
+EXPECTED (cues.length == '3') OK
+EXPECTED (cues[i].alignment == 'middle') OK
+EXPECTED (cues[i].textPosition == '50') OK
+EXPECTED (cues[i].linePosition == '-1') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+EXPECTED (cues[i].alignment == 'end') OK
+EXPECTED (cues[i].textPosition == '0') OK
+EXPECTED (cues[i].linePosition == '-1') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+EXPECTED (cues[i].alignment == 'middle') OK
+EXPECTED (cues[i].textPosition == '60') OK
+EXPECTED (cues[i].linePosition == '-3') OK
+EXPECTED (cues[i].snapToLines == 'true') OK
+END OF TEST
+

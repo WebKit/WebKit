@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            
+            function trackLoaded()
+            {
+                findMediaElement();
+                testExpected("video.textTracks[0].cues.length", "0");
+
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body>
+        <p>Tests that empty cues are discarded.</p>
+        <video> 
+            <track src="captions-webvtt/tc027-empty-cue.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

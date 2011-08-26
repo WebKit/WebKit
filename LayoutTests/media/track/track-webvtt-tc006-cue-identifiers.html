@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            numberOfTrackTests = 2;
+            
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack0();
+                    testTrack1();
+                }
+            }
+            
+            function testTrack0()
+            {
+                findMediaElement();
+                
+                var expected = 
+                {
+                    length : 4,
+                    tests:
+                    [
+                        {
+                            property : "id",
+                            values : ["random_id", "another random identifier", "identifier--too", "identifier--too"],
+                        },
+                        {
+                            property : "startTime",
+                            values : [0.0, 31.0, 61.0, 121.0],
+                        },
+                        {
+                            property : "endTime",
+                            values : [30.5, 60.5, 120.5, 180.5],
+                        },
+                        {
+                            property : "getCueAsSource()",
+                            values : ["Bear is Coming!!!!!", "I said Bear is coming!!!!", "I said Bear is coming now!!!!", "Duplicate identifier"],
+                        },
+                    ],
+                };
+                testCues(0, expected);
+
+                allTestsEnded();
+            }
+
+            function testTrack1()
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 0,
+                    tests:
+                    [],
+                };
+                testCues(1, expected);
+
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body>
+        <p>Tests that any text other than "-->" is recognized as optional cue identifier.</p>
+        <video>
+            <track src="captions-webvtt/tc006-cue-id.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc006-cue-id-error.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

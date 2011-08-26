@@ -1,0 +1,22 @@
+Tests cue timings that contain hours (they are optional), and tests various syntax errors in timings with hours.
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '3') OK
+EXPECTED (cues[i].id == '1') OK
+EXPECTED (cues[i].startTime == '0') OK
+EXPECTED (cues[i].endTime == '30.5') OK
+EXPECTED (cues[i].getCueAsSource() == 'Bear is Coming!!!!!') OK
+EXPECTED (cues[i].id == '2') OK
+EXPECTED (cues[i].startTime == '31') OK
+EXPECTED (cues[i].endTime == '60.5') OK
+EXPECTED (cues[i].getCueAsSource() == 'I said Bear is coming!!!!') OK
+EXPECTED (cues[i].id == '3') OK
+EXPECTED (cues[i].startTime == '61') OK
+EXPECTED (cues[i].endTime == '361200.5') OK
+EXPECTED (cues[i].getCueAsSource() == 'I said Bear is coming now!!!!') OK
+
+*** Testing text track 1
+EXPECTED (cues.length == '0') OK
+END OF TEST
+
