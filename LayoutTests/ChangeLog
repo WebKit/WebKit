@@ -1,3 +1,11 @@
+2011-08-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Removing some tests from the GTK+ skipped lists that have results now
+        or no longer exist.
+
+        * platform/gtk/Skipped: Clean up.
+        * platform/gtk/test_expectations.txt: Ditto.
+
 2011-08-26  Andreas Kling  <kling@webkit.org>
 
         Rebaseline Qt (4.7) after r93873.
