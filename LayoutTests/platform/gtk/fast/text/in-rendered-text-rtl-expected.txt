@@ -21,9 +21,9 @@ layer at (0,0) size 800x600
           text run at (0,19) width 47: "them."
       RenderBlock {HR} at (0,108) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,118) size 784x19
-        RenderInline {SPAN} at (0,0) size 148x19
-          RenderText {#text} at (0,0) size 148x19
-            text run at (0,0) width 61 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}"
-            text run at (61,0) width 87 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC} "
+        RenderInline {SPAN} at (0,0) size 152x19
+          RenderText {#text} at (0,0) size 152x19
+            text run at (0,0) width 62 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}"
+            text run at (62,0) width 90 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC} "
         RenderText {#text} at (0,0) size 0x0
 caret: position 3 of child 0 {#text} of child 7 {SPAN} of body

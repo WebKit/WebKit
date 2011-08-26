@@ -17,37 +17,37 @@ layer at (0,0) size 800x206
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,19) size 64x19
           text run at (0,19) width 64: "LTR Text"
-layer at (8,84) size 207x19 scrollX 154 scrollWidth 361
+layer at (8,84) size 207x19 scrollX 158 scrollWidth 365
   RenderBlock {DIV} at (0,76) size 207x19
-    RenderText {#text} at (-154,0) size 361x19
-      text run at (-154,0) width 0 RTL: "\x{202C}"
-      text run at (-154,0) width 276 RTL: " \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0} \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0} "
+    RenderText {#text} at (-158,0) size 365x19
+      text run at (-158,0) width 0 RTL: "\x{202C}"
+      text run at (-158,0) width 280 RTL: " \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0} \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0} "
       text run at (122,0) width 81: "English Text"
       text run at (203,0) width 4 RTL: "\x{202B} "
-layer at (8,103) size 207x19 scrollX 154 scrollWidth 361
+layer at (8,103) size 207x19 scrollX 158 scrollWidth 365
   RenderBlock {DIV} at (0,95) size 207x19
-    RenderText {#text} at (-154,0) size 361x19
-      text run at (-154,0) width 0 RTL: "\x{202C}"
-      text run at (-154,0) width 276 RTL: " \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0} \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0} "
+    RenderText {#text} at (-158,0) size 365x19
+      text run at (-158,0) width 0 RTL: "\x{202C}"
+      text run at (-158,0) width 280 RTL: " \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0} \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0} "
       text run at (122,0) width 81: "English Text"
       text run at (203,0) width 4 RTL: "\x{202B} "
-layer at (8,160) size 207x19 scrollWidth 257
+layer at (8,160) size 207x19 scrollWidth 256
   RenderBlock {DIV} at (0,152) size 207x19
-    RenderText {#text} at (0,0) size 257x19
-      text run at (0,0) width 34 RTL: "\x{5DE}\x{5D9}\x{5DC}\x{5D4}"
-      text run at (34,0) width 41: " word "
-      text run at (75,0) width 41 RTL: "\x{5D0}\x{5D7}\x{5E8}\x{5EA}"
+    RenderText {#text} at (0,0) size 256x19
+      text run at (0,0) width 35 RTL: "\x{5DE}\x{5D9}\x{5DC}\x{5D4}"
+      text run at (35,0) width 41: " word "
+      text run at (76,0) width 40 RTL: "\x{5D0}\x{5D7}\x{5E8}\x{5EA}"
       text run at (116,0) width 55: " another "
       text run at (171,0) width 27 RTL: "\x{5D5}\x{5E2}\x{5D5}\x{5D3}"
       text run at (198,0) width 27: " yet "
-      text run at (225,0) width 32 RTL: "\x{5D0}\x{5D7}\x{5EA}"
-layer at (8,179) size 207x19 scrollWidth 257
+      text run at (225,0) width 31 RTL: "\x{5D0}\x{5D7}\x{5EA}"
+layer at (8,179) size 207x19 scrollWidth 256
   RenderBlock {DIV} at (0,171) size 207x19
-    RenderText {#text} at (0,0) size 257x19
-      text run at (0,0) width 34 RTL: "\x{5DE}\x{5D9}\x{5DC}\x{5D4}"
-      text run at (34,0) width 41: " word "
-      text run at (75,0) width 41 RTL: "\x{5D0}\x{5D7}\x{5E8}\x{5EA}"
+    RenderText {#text} at (0,0) size 256x19
+      text run at (0,0) width 35 RTL: "\x{5DE}\x{5D9}\x{5DC}\x{5D4}"
+      text run at (35,0) width 41: " word "
+      text run at (76,0) width 40 RTL: "\x{5D0}\x{5D7}\x{5E8}\x{5EA}"
       text run at (116,0) width 55: " another "
       text run at (171,0) width 27 RTL: "\x{5D5}\x{5E2}\x{5D5}\x{5D3}"
       text run at (198,0) width 27: " yet "
-      text run at (225,0) width 32 RTL: "\x{5D0}\x{5D7}\x{5EA}"
+      text run at (225,0) width 31 RTL: "\x{5D0}\x{5D7}\x{5EA}"

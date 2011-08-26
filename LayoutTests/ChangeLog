@@ -1,3 +1,84 @@
+2011-08-26  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, another rebaseline after switch to GTK+3.x.
+
+        * platform/gtk/editing/selection/caret-rtl-2-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-right-expected.txt:
+        * platform/gtk/editing/selection/move-by-word-visually-multi-line-expected.txt:
+        * platform/gtk/editing/selection/move-past-trailing-space-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt:
+        * platform/gtk/fast/borders/bidi-012-expected.txt:
+        * platform/gtk/fast/borders/rtl-border-04-expected.txt:
+        * platform/gtk/fast/css/rtl-ordering-expected.txt:
+        * platform/gtk/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/gtk/fast/css/text-overflow-ellipsis-expected.txt:
+        * platform/gtk/fast/css/text-overflow-ellipsis-strict-expected.txt:
+        * platform/gtk/fast/forms/listbox-bidi-align-expected.txt:
+        * platform/gtk/fast/forms/search-rtl-expected.txt:
+        * platform/gtk/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/gtk/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/gtk/fast/forms/visual-hebrew-text-field-expected.txt:
+        * platform/gtk/fast/inline/inline-box-background-expected.txt:
+        * platform/gtk/fast/inline/inline-box-background-long-image-expected.txt:
+        * platform/gtk/fast/inline/inline-box-background-repeat-x-expected.txt:
+        * platform/gtk/fast/inline/inline-box-background-repeat-y-expected.txt:
+        * platform/gtk/fast/text/bidi-embedding-pop-and-push-same-expected.txt:
+        * platform/gtk/fast/text/cg-fallback-bolding-expected.txt:
+        * platform/gtk/fast/text/drawBidiText-expected.txt:
+        * platform/gtk/fast/text/in-rendered-text-rtl-expected.txt:
+        * platform/gtk/fast/text/international/bidi-L2-run-reordering-expected.txt:
+        * platform/gtk/fast/text/international/bidi-LDB-2-CSS-expected.txt:
+        * platform/gtk/fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * platform/gtk/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * platform/gtk/fast/text/international/bidi-european-terminators-expected.txt:
+        * platform/gtk/fast/text/international/bidi-explicit-embedding-expected.txt:
+        * platform/gtk/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt:
+        * platform/gtk/fast/text/international/bidi-innertext-expected.txt:
+        * platform/gtk/fast/text/international/bidi-layout-across-linebreak-expected.txt:
+        * platform/gtk/fast/text/international/bidi-linebreak-001-expected.txt:
+        * platform/gtk/fast/text/international/bidi-linebreak-002-expected.txt:
+        * platform/gtk/fast/text/international/bidi-linebreak-003-expected.txt:
+        * platform/gtk/fast/text/international/bidi-mirror-he-ar-expected.txt:
+        * platform/gtk/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/gtk/fast/text/international/bidi-override-expected.txt:
+        * platform/gtk/fast/text/international/hebrew-vowels-expected.txt:
+        * platform/gtk/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt:
+        * platform/gtk/fast/text/international/rtl-caret-expected.txt:
+        * platform/gtk/fast/text/international/rtl-white-space-pre-wrap-expected.txt:
+        * platform/gtk/fast/text/international/unicode-bidi-plaintext-expected.txt:
+        * platform/gtk/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+        * platform/gtk/fast/text/trailing-white-space-2-expected.txt:
+        * platform/gtk/fast/text/trailing-white-space-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-no-markup-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/text-tselect-02-f-expected.txt:
+        * platform/gtk/svg/text/bidi-embedded-direction-expected.txt:
+        * platform/gtk/svg/text/bidi-reorder-value-lists-expected.txt:
+        * platform/gtk/svg/text/bidi-text-anchor-direction-expected.txt:
+        * platform/gtk/svg/text/text-tselect-02-f-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt:
+
 2011-08-26  Mike Reed  <reed@google.com>
 
         [skia] never draw with GDI, so that all text can be gpu-accelerated

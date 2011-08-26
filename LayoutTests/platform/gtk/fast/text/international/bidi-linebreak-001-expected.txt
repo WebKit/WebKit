@@ -8,12 +8,12 @@ layer at (0,0) size 800x159
           text run at (0,0) width 762: "This HTML tests if the 'while-space' property controls the behavors of line-break characters (U+000A and U+000D) in a"
           text run at (0,19) width 85: "complex text."
       RenderBlock {P} at (0,54) size 784x19
-        RenderText {#text} at (0,0) size 503x19
+        RenderText {#text} at (0,0) size 505x19
           text run at (0,0) width 292: "If this test succeeds, you can see three words \""
-          text run at (292,0) width 34 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
-          text run at (326,0) width 177: "\", separated with line-break."
+          text run at (292,0) width 36 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
+          text run at (328,0) width 177: "\", separated with line-break."
       RenderBlock {P} at (0,89) size 784x38
-        RenderText {#text} at (0,0) size 73x38
-          text run at (0,0) width 34 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
-          text run at (34,0) width 0: " "
-          text run at (0,19) width 73 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}\x{D}\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
+        RenderText {#text} at (0,0) size 77x38
+          text run at (0,0) width 36 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
+          text run at (36,0) width 0: " "
+          text run at (0,19) width 77 RTL: "\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}\x{D}\x{5E9}\x{5D5}\x{5BC}\x{5E8}\x{5D4}"
