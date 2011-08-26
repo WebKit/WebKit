@@ -44,178 +44,178 @@
 
 namespace WebCore {
 
-    class ScriptExecutionContext;
-    class SocketStreamHandle;
-    class SocketStreamError;
-    class WebSocketChannelClient;
+class ScriptExecutionContext;
+class SocketStreamHandle;
+class SocketStreamError;
+class WebSocketChannelClient;
 
-    class WebSocketChannel : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient, public ThreadableWebSocketChannel {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        static PassRefPtr<WebSocketChannel> create(ScriptExecutionContext* context, WebSocketChannelClient* client) { return adoptRef(new WebSocketChannel(context, client)); }
-        virtual ~WebSocketChannel();
+class WebSocketChannel : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient, public ThreadableWebSocketChannel {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static PassRefPtr<WebSocketChannel> create(ScriptExecutionContext* context, WebSocketChannelClient* client) { return adoptRef(new WebSocketChannel(context, client)); }
+    virtual ~WebSocketChannel();
 
-        virtual bool useHixie76Protocol();
-        virtual void connect(const KURL&, const String& protocol);
-        virtual String subprotocol();
-        virtual bool send(const String& message);
-        virtual unsigned long bufferedAmount() const;
-        virtual void close(); // Start closing handshake.
-        virtual void fail(const String& reason);
-        virtual void disconnect();
+    virtual bool useHixie76Protocol();
+    virtual void connect(const KURL&, const String& protocol);
+    virtual String subprotocol();
+    virtual bool send(const String& message);
+    virtual unsigned long bufferedAmount() const;
+    virtual void close(); // Start closing handshake.
+    virtual void fail(const String& reason);
+    virtual void disconnect();
 
-        virtual void suspend();
-        virtual void resume();
+    virtual void suspend();
+    virtual void resume();
 
-        // SocketStreamHandleClient functions.
-        virtual void didOpenSocketStream(SocketStreamHandle*);
-        virtual void didCloseSocketStream(SocketStreamHandle*);
-        virtual void didReceiveSocketStreamData(SocketStreamHandle*, const char*, int);
-        virtual void didFailSocketStream(SocketStreamHandle*, const SocketStreamError&);
-        virtual void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
-        virtual void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
+    // SocketStreamHandleClient functions.
+    virtual void didOpenSocketStream(SocketStreamHandle*);
+    virtual void didCloseSocketStream(SocketStreamHandle*);
+    virtual void didReceiveSocketStreamData(SocketStreamHandle*, const char*, int);
+    virtual void didFailSocketStream(SocketStreamHandle*, const SocketStreamError&);
+    virtual void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
+    virtual void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
 
-        enum CloseEventCode {
-            CloseEventCodeNormalClosure = 1000,
-            CloseEventCodeGoingAway = 1001,
-            CloseEventCodeProtocolError = 1002,
-            CloseEventCodeUnsupportedData = 1003,
-            CloseEventCodeFrameTooLarge = 1004,
-            CloseEventCodeNoStatusRcvd = 1005,
-            CloseEventCodeAbnormalClosure = 1006,
-            CloseEventCodeInvalidUTF8 = 1007
-        };
-
-        using RefCounted<WebSocketChannel>::ref;
-        using RefCounted<WebSocketChannel>::deref;
-
-    protected:
-        virtual void refThreadableWebSocketChannel() { ref(); }
-        virtual void derefThreadableWebSocketChannel() { deref(); }
-
-    private:
-        WebSocketChannel(ScriptExecutionContext*, WebSocketChannelClient*);
-
-        bool appendToBuffer(const char* data, size_t len);
-        void skipBuffer(size_t len);
-        bool processBuffer();
-        void resumeTimerFired(Timer<WebSocketChannel>* timer);
-        void startClosingHandshake();
-        void closingTimerFired(Timer<WebSocketChannel>*);
-
-        // Hybi-10 opcodes.
-        typedef unsigned int OpCode;
-        static const OpCode OpCodeContinuation;
-        static const OpCode OpCodeText;
-        static const OpCode OpCodeBinary;
-        static const OpCode OpCodeClose;
-        static const OpCode OpCodePing;
-        static const OpCode OpCodePong;
-
-        static bool isNonControlOpCode(OpCode opCode) { return opCode == OpCodeContinuation || opCode == OpCodeText || opCode == OpCodeBinary; }
-        static bool isControlOpCode(OpCode opCode) { return opCode == OpCodeClose || opCode == OpCodePing || opCode == OpCodePong; }
-        static bool isReservedOpCode(OpCode opCode) { return !isNonControlOpCode(opCode) && !isControlOpCode(opCode); }
-
-        enum ParseFrameResult {
-            FrameOK,
-            FrameIncomplete,
-            FrameError
-        };
-
-        struct FrameData {
-            OpCode opCode;
-            bool final;
-            bool reserved1;
-            bool reserved2;
-            bool reserved3;
-            bool masked;
-            const char* payload;
-            size_t payloadLength;
-            const char* frameEnd;
-        };
-
-        ParseFrameResult parseFrame(FrameData&); // May modify part of m_buffer to unmask the frame.
-
-        bool processFrame();
-        bool processFrameHixie76();
-
-        // It is allowed to send a Blob as a binary frame if hybi-10 protocol is in use. Sending a Blob
-        // can be delayed because it must be read asynchronously. Other types of data (String or
-        // ArrayBuffer) may also be blocked by preceding sending request of a Blob.
-        //
-        // To address this situation, messages to be sent need to be stored in a queue. Whenever a new
-        // data frame is going to be sent, it first must go to the queue. Items in the queue are processed
-        // in the order they were put into the queue. Sending request of a Blob blocks further processing
-        // until the Blob is completely read and sent to the socket stream.
-        //
-        // When hixie-76 protocol is chosen, the queue is not used and messages are sent directly.
-        enum QueuedFrameType {
-            QueuedFrameTypeString,
-            QueuedFrameTypeVector
-            // FIXME: Add QueuedFrameTypeBlob.
-        };
-        struct QueuedFrame {
-            OpCode opCode;
-            QueuedFrameType frameType;
-            // Only one of the following items is used, according to the value of frameType.
-            String stringData;
-            Vector<char> vectorData;
-            // FIXME: Add blobData.
-        };
-        void enqueueTextFrame(const String&);
-        void enqueueRawFrame(OpCode, const char* data, size_t dataLength);
-        // FIXME: Add enqueueBlobFrame().
-
-        void processOutgoingFrameQueue();
-        void abortOutgoingFrameQueue();
-
-        enum OutgoingFrameQueueStatus {
-            // It is allowed to put a new item into the queue.
-            OutgoingFrameQueueOpen,
-            // Close frame has already been put into the queue but may not have been sent yet;
-            // m_handle->close() will be called as soon as the queue is cleared. It is not
-            // allowed to put a new item into the queue.
-            OutgoingFrameQueueClosing,
-            // Close frame has been sent or the queue was aborted. It is not allowed to put
-            // a new item to the queue.
-            OutgoingFrameQueueClosed
-        };
-
-        // If you are going to send a hybi-10 frame, you need to use the outgoing frame queue
-        // instead of call sendFrame() directly.
-        bool sendFrame(OpCode, const char* data, size_t dataLength);
-        bool sendFrameHixie76(const char* data, size_t dataLength);
-
-        ScriptExecutionContext* m_context;
-        WebSocketChannelClient* m_client;
-        OwnPtr<WebSocketHandshake> m_handshake;
-        RefPtr<SocketStreamHandle> m_handle;
-        char* m_buffer;
-        size_t m_bufferSize;
-
-        Timer<WebSocketChannel> m_resumeTimer;
-        bool m_suspended;
-        bool m_closing;
-        bool m_receivedClosingHandshake;
-        Timer<WebSocketChannel> m_closingTimer;
-        bool m_closed;
-        bool m_shouldDiscardReceivedData;
-        unsigned long m_unhandledBufferedAmount;
-
-        unsigned long m_identifier; // m_identifier == 0 means that we could not obtain a valid identifier.
-
-        bool m_useHixie76Protocol;
-
-        // Private members only for hybi-10 protocol.
-        bool m_hasContinuousFrame;
-        OpCode m_continuousFrameOpCode;
-        Vector<char> m_continuousFrameData;
-        unsigned short m_closeEventCode;
-        String m_closeEventReason;
-
-        Deque<OwnPtr<QueuedFrame> > m_outgoingFrameQueue;
-        OutgoingFrameQueueStatus m_outgoingFrameQueueStatus;
+    enum CloseEventCode {
+        CloseEventCodeNormalClosure = 1000,
+        CloseEventCodeGoingAway = 1001,
+        CloseEventCodeProtocolError = 1002,
+        CloseEventCodeUnsupportedData = 1003,
+        CloseEventCodeFrameTooLarge = 1004,
+        CloseEventCodeNoStatusRcvd = 1005,
+        CloseEventCodeAbnormalClosure = 1006,
+        CloseEventCodeInvalidUTF8 = 1007
     };
+
+    using RefCounted<WebSocketChannel>::ref;
+    using RefCounted<WebSocketChannel>::deref;
+
+protected:
+    virtual void refThreadableWebSocketChannel() { ref(); }
+    virtual void derefThreadableWebSocketChannel() { deref(); }
+
+private:
+    WebSocketChannel(ScriptExecutionContext*, WebSocketChannelClient*);
+
+    bool appendToBuffer(const char* data, size_t len);
+    void skipBuffer(size_t len);
+    bool processBuffer();
+    void resumeTimerFired(Timer<WebSocketChannel>*);
+    void startClosingHandshake();
+    void closingTimerFired(Timer<WebSocketChannel>*);
+
+    // Hybi-10 opcodes.
+    typedef unsigned int OpCode;
+    static const OpCode OpCodeContinuation;
+    static const OpCode OpCodeText;
+    static const OpCode OpCodeBinary;
+    static const OpCode OpCodeClose;
+    static const OpCode OpCodePing;
+    static const OpCode OpCodePong;
+
+    static bool isNonControlOpCode(OpCode opCode) { return opCode == OpCodeContinuation || opCode == OpCodeText || opCode == OpCodeBinary; }
+    static bool isControlOpCode(OpCode opCode) { return opCode == OpCodeClose || opCode == OpCodePing || opCode == OpCodePong; }
+    static bool isReservedOpCode(OpCode opCode) { return !isNonControlOpCode(opCode) && !isControlOpCode(opCode); }
+
+    enum ParseFrameResult {
+        FrameOK,
+        FrameIncomplete,
+        FrameError
+    };
+
+    struct FrameData {
+        OpCode opCode;
+        bool final;
+        bool reserved1;
+        bool reserved2;
+        bool reserved3;
+        bool masked;
+        const char* payload;
+        size_t payloadLength;
+        const char* frameEnd;
+    };
+
+    ParseFrameResult parseFrame(FrameData&); // May modify part of m_buffer to unmask the frame.
+
+    bool processFrame();
+    bool processFrameHixie76();
+
+    // It is allowed to send a Blob as a binary frame if hybi-10 protocol is in use. Sending a Blob
+    // can be delayed because it must be read asynchronously. Other types of data (String or
+    // ArrayBuffer) may also be blocked by preceding sending request of a Blob.
+    //
+    // To address this situation, messages to be sent need to be stored in a queue. Whenever a new
+    // data frame is going to be sent, it first must go to the queue. Items in the queue are processed
+    // in the order they were put into the queue. Sending request of a Blob blocks further processing
+    // until the Blob is completely read and sent to the socket stream.
+    //
+    // When hixie-76 protocol is chosen, the queue is not used and messages are sent directly.
+    enum QueuedFrameType {
+        QueuedFrameTypeString,
+        QueuedFrameTypeVector
+        // FIXME: Add QueuedFrameTypeBlob.
+    };
+    struct QueuedFrame {
+        OpCode opCode;
+        QueuedFrameType frameType;
+        // Only one of the following items is used, according to the value of frameType.
+        String stringData;
+        Vector<char> vectorData;
+        // FIXME: Add blobData.
+    };
+    void enqueueTextFrame(const String&);
+    void enqueueRawFrame(OpCode, const char* data, size_t dataLength);
+    // FIXME: Add enqueueBlobFrame().
+
+    void processOutgoingFrameQueue();
+    void abortOutgoingFrameQueue();
+
+    enum OutgoingFrameQueueStatus {
+        // It is allowed to put a new item into the queue.
+        OutgoingFrameQueueOpen,
+        // Close frame has already been put into the queue but may not have been sent yet;
+        // m_handle->close() will be called as soon as the queue is cleared. It is not
+        // allowed to put a new item into the queue.
+        OutgoingFrameQueueClosing,
+        // Close frame has been sent or the queue was aborted. It is not allowed to put
+        // a new item to the queue.
+        OutgoingFrameQueueClosed
+    };
+
+    // If you are going to send a hybi-10 frame, you need to use the outgoing frame queue
+    // instead of call sendFrame() directly.
+    bool sendFrame(OpCode, const char* data, size_t dataLength);
+    bool sendFrameHixie76(const char* data, size_t dataLength);
+
+    ScriptExecutionContext* m_context;
+    WebSocketChannelClient* m_client;
+    OwnPtr<WebSocketHandshake> m_handshake;
+    RefPtr<SocketStreamHandle> m_handle;
+    char* m_buffer;
+    size_t m_bufferSize;
+
+    Timer<WebSocketChannel> m_resumeTimer;
+    bool m_suspended;
+    bool m_closing;
+    bool m_receivedClosingHandshake;
+    Timer<WebSocketChannel> m_closingTimer;
+    bool m_closed;
+    bool m_shouldDiscardReceivedData;
+    unsigned long m_unhandledBufferedAmount;
+
+    unsigned long m_identifier; // m_identifier == 0 means that we could not obtain a valid identifier.
+
+    bool m_useHixie76Protocol;
+
+    // Private members only for hybi-10 protocol.
+    bool m_hasContinuousFrame;
+    OpCode m_continuousFrameOpCode;
+    Vector<char> m_continuousFrameData;
+    unsigned short m_closeEventCode;
+    String m_closeEventReason;
+
+    Deque<OwnPtr<QueuedFrame> > m_outgoingFrameQueue;
+    OutgoingFrameQueueStatus m_outgoingFrameQueueStatus;
+};
 
 } // namespace WebCore
 

@@ -1,3 +1,28 @@
+2011-08-25  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Fix indentation of WebSocket header files
+        https://bugs.webkit.org/show_bug.cgi?id=67018
+
+        Reviewed by Kent Tamura.
+
+        No new tests. Style fix only.
+
+        * websockets/WebSocket.h:
+        (WebCore::WebSocket::create):
+        (WebCore::WebSocket::toWebSocket):
+        (WebCore::WebSocket::refEventTarget):
+        (WebCore::WebSocket::derefEventTarget):
+        * websockets/WebSocketChannel.h:
+        Removed formal parameter name of resumeTimerFired().
+        (WebCore::WebSocketChannel::create):
+        (WebCore::WebSocketChannel::refThreadableWebSocketChannel):
+        (WebCore::WebSocketChannel::derefThreadableWebSocketChannel):
+        (WebCore::WebSocketChannel::isNonControlOpCode):
+        (WebCore::WebSocketChannel::isControlOpCode):
+        (WebCore::WebSocketChannel::isReservedOpCode):
+        * websockets/WebSocketHandshake.h:
+        Removed formal parameter name of setClientProtocol().
+
 2011-08-25  Martin Robinson  <mrobinson@igalia.com>
 
         Touch GtkVersioning.c so that the release bot rebuilds it. This

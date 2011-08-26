@@ -46,87 +46,87 @@
 
 namespace WebCore {
 
-    class ThreadableWebSocketChannel;
+class ThreadableWebSocketChannel;
 
-    class WebSocket : public RefCounted<WebSocket>, public EventTarget, public ActiveDOMObject, public WebSocketChannelClient {
-    public:
-        static void setIsAvailable(bool);
-        static bool isAvailable();
-        static PassRefPtr<WebSocket> create(ScriptExecutionContext* context) { return adoptRef(new WebSocket(context)); }
-        virtual ~WebSocket();
+class WebSocket : public RefCounted<WebSocket>, public EventTarget, public ActiveDOMObject, public WebSocketChannelClient {
+public:
+    static void setIsAvailable(bool);
+    static bool isAvailable();
+    static PassRefPtr<WebSocket> create(ScriptExecutionContext* context) { return adoptRef(new WebSocket(context)); }
+    virtual ~WebSocket();
 
-        enum State {
-            CONNECTING = 0,
-            OPEN = 1,
-            CLOSING = 2,
-            CLOSED = 3
-        };
-
-        void connect(const String& url, ExceptionCode&);
-        void connect(const String& url, const String& protocol, ExceptionCode&);
-        void connect(const String& url, const Vector<String>& protocols, ExceptionCode&);
-
-        bool send(const String& message, ExceptionCode&);
-
-        void close();
-
-        const KURL& url() const;
-        State readyState() const;
-        unsigned long bufferedAmount() const;
-
-        String protocol() const;
-
-        String binaryType() const;
-        void setBinaryType(const String& binaryType, ExceptionCode&);
-
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
-        DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
-
-        // EventTarget
-        virtual WebSocket* toWebSocket() { return this; }
-
-        virtual ScriptExecutionContext* scriptExecutionContext() const;
-        virtual void contextDestroyed();
-        virtual bool canSuspend() const;
-        virtual void suspend(ReasonForSuspension);
-        virtual void resume();
-        virtual void stop();
-
-        using RefCounted<WebSocket>::ref;
-        using RefCounted<WebSocket>::deref;
-
-        // WebSocketChannelClient
-        virtual void didConnect();
-        virtual void didReceiveMessage(const String& message);
-        virtual void didReceiveMessageError();
-        virtual void didStartClosingHandshake();
-        virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
-
-    private:
-        WebSocket(ScriptExecutionContext*);
-
-        virtual void refEventTarget() { ref(); }
-        virtual void derefEventTarget() { deref(); }
-        virtual EventTargetData* eventTargetData();
-        virtual EventTargetData* ensureEventTargetData();
-
-        enum BinaryType {
-            BinaryTypeBlob,
-            BinaryTypeArrayBuffer
-        };
-
-        RefPtr<ThreadableWebSocketChannel> m_channel;
-
-        State m_state;
-        KURL m_url;
-        EventTargetData m_eventTargetData;
-        unsigned long m_bufferedAmountAfterClose;
-        BinaryType m_binaryType;
-        bool m_useHixie76Protocol;
-        String m_subprotocol;
+    enum State {
+        CONNECTING = 0,
+        OPEN = 1,
+        CLOSING = 2,
+        CLOSED = 3
     };
+
+    void connect(const String& url, ExceptionCode&);
+    void connect(const String& url, const String& protocol, ExceptionCode&);
+    void connect(const String& url, const Vector<String>& protocols, ExceptionCode&);
+
+    bool send(const String& message, ExceptionCode&);
+
+    void close();
+
+    const KURL& url() const;
+    State readyState() const;
+    unsigned long bufferedAmount() const;
+
+    String protocol() const;
+
+    String binaryType() const;
+    void setBinaryType(const String& binaryType, ExceptionCode&);
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
+
+    // EventTarget
+    virtual WebSocket* toWebSocket() { return this; }
+
+    virtual ScriptExecutionContext* scriptExecutionContext() const;
+    virtual void contextDestroyed();
+    virtual bool canSuspend() const;
+    virtual void suspend(ReasonForSuspension);
+    virtual void resume();
+    virtual void stop();
+
+    using RefCounted<WebSocket>::ref;
+    using RefCounted<WebSocket>::deref;
+
+    // WebSocketChannelClient
+    virtual void didConnect();
+    virtual void didReceiveMessage(const String& message);
+    virtual void didReceiveMessageError();
+    virtual void didStartClosingHandshake();
+    virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
+
+private:
+    WebSocket(ScriptExecutionContext*);
+
+    virtual void refEventTarget() { ref(); }
+    virtual void derefEventTarget() { deref(); }
+    virtual EventTargetData* eventTargetData();
+    virtual EventTargetData* ensureEventTargetData();
+
+    enum BinaryType {
+        BinaryTypeBlob,
+        BinaryTypeArrayBuffer
+    };
+
+    RefPtr<ThreadableWebSocketChannel> m_channel;
+
+    State m_state;
+    KURL m_url;
+    EventTargetData m_eventTargetData;
+    unsigned long m_bufferedAmountAfterClose;
+    BinaryType m_binaryType;
+    bool m_useHixie76Protocol;
+    String m_subprotocol;
+};
 
 } // namespace WebCore
 
