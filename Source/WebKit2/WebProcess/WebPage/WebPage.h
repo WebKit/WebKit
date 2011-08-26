@@ -280,7 +280,6 @@ public:
     PassRefPtr<WebImage> snapshotInViewCoordinates(const WebCore::IntRect&, ImageOptions);
     PassRefPtr<WebImage> snapshotInDocumentCoordinates(const WebCore::IntRect&, ImageOptions);
     PassRefPtr<WebImage> scaledSnapshotInDocumentCoordinates(const WebCore::IntRect&, double scaleFactor, ImageOptions);
-    void createSnapshotOfVisibleContent(ShareableBitmap::Handle&);
 
     static const WebEvent* currentEvent();
 

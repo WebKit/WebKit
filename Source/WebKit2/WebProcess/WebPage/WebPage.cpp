@@ -920,20 +920,6 @@ PassRefPtr<WebImage> WebPage::snapshotInDocumentCoordinates(const IntRect& rect,
     return scaledSnapshotInDocumentCoordinates(rect, 1, options);
 }
 
-void WebPage::createSnapshotOfVisibleContent(ShareableBitmap::Handle& snapshotHandle)
-{
-    FrameView* frameView = m_mainFrame->coreFrame()->view();
-    if (!frameView)
-        return;
-    
-    IntRect contentRect = frameView->visibleContentRect(false);
-    RefPtr<WebImage> snapshotImage = scaledSnapshotInDocumentCoordinates(contentRect, 1, ImageOptionsShareable);
-    if (!snapshotImage->bitmap())
-        return;
-    
-    snapshotImage->bitmap()->createHandle(snapshotHandle);
-}
-
 void WebPage::pageDidScroll()
 {
     // Hide the find indicator.

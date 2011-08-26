@@ -223,6 +223,4 @@ messages -> WebPage {
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
     HandleCorrectionPanelResult(String result)
 #endif
-
-    CreateSnapshotOfVisibleContent() -> (WebKit::ShareableBitmap::Handle snapshotHandle)
 }

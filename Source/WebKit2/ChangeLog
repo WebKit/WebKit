@@ -1,3 +1,28 @@
+2011-08-26  Jessie Berlin  <jberlin@apple.com>
+
+        Gut WKPageCreateSnapshotOfVisibleContent so that it can be removed later.
+        https://bugs.webkit.org/show_bug.cgi?id=66979.
+
+        Removing the function altogether would break the nightlies.
+        This patch removes the code behind it so that it is clear that
+        WKPageCreateSnapshotOfVisibleContent should not be used, and so that the code isn't just
+        left rotting in the tree.
+
+        Reviewed by Brian Weinstein.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCreateSnapshotOfVisibleContent):
+        Return 0.
+        * UIProcess/API/C/WKPagePrivate.h:
+        Update the comment and add a link to the bug.
+
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2011-08-25  Anders Carlsson  <andersca@apple.com>
 
         kNPEventStartIME doesn't work correctly for NPAPI

@@ -558,10 +558,6 @@ public:
 
     WebCore::IntRect visibleScrollerThumbRect() const { return m_visibleScrollerThumbRect; }
 
-    // FIXME: This is in violation of the no synchronous messages to the Web Process policy and
-    // should be removed as soon as possible.
-    PassRefPtr<WebImage> createSnapshotOfVisibleContent();
-
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
  
 private:
