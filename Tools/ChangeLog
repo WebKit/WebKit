@@ -1,3 +1,16 @@
+2011-08-26  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [DRT] Include cairo.h in PixelDumpSupportCairo.h for EFL too.
+        https://bugs.webkit.org/show_bug.cgi?id=67041
+
+        Reviewed by Martin Robinson.
+
+        This is a follow-up to r89053: EFL's PixelDumpSupportEfl.cpp includes
+        PixelDumpSupportCairo.h, but the latter was #including cairo.h only
+        when the GTK+ port was being built.
+
+        * DumpRenderTree/cairo/PixelDumpSupportCairo.h:
+
 2011-08-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Clean up and line up layout in garden-o-matic summary view.
