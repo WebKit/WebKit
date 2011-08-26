@@ -3522,8 +3522,6 @@ BUGWK65583 WIN LINUX : fast/repaint/shadow-multiple-vertical.html = IMAGE
 BUGWK65583 WIN LINUX : fast/transforms/rotated-transform-affects-scrolling-1.html = IMAGE
 BUGWK65583 WIN LINUX : fast/transforms/rotated-transform-affects-scrolling-2.html = IMAGE
 BUGWK65583 WIN LINUX : fast/transforms/shadows.html = IMAGE
-BUGWK65583 WIN LINUX : media/video-layer-crash.html = IMAGE
-BUGWK65583 WIN LINUX : media/video-transformed.html = IMAGE
 
 BUGWK65583 LINUX WIN : fast/borders/border-radius-circle.html = IMAGE
 BUGWK65583 LINUX WIN : fast/borders/border-radius-groove-01.html = IMAGE
