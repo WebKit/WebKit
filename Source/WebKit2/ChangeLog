@@ -1,5 +1,16 @@
 2011-08-25  Anders Carlsson  <andersca@apple.com>
 
+        Factor code to send a key-down event to the plug-in out into a new function
+        https://bugs.webkit.org/show_bug.cgi?id=66999
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _handlePluginComplexTextInputKeyDown:]):
+        (-[WKView _tryHandlePluginComplexTextInputKeyDown:]):
+
+2011-08-25  Anders Carlsson  <andersca@apple.com>
+
         WKView should keep track of the plug-in complex text input state
         https://bugs.webkit.org/show_bug.cgi?id=66990
 

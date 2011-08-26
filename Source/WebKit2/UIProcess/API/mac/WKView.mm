@@ -1257,20 +1257,33 @@ static const short kIOHIDEventTypeScroll = 6;
     _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
 }
 
+- (BOOL)_handlePluginComplexTextInputKeyDown:(NSEvent *)event
+{
+    ASSERT(_data->_pluginComplexTextInputIdentifier);
+    ASSERT(_data->_pluginComplexTextInputState != PluginComplexTextInputDisabled);
+
+    BOOL usingLegacyCocoaTextInput = _data->_pluginComplexTextInputState == PluginComplexTextInputEnabledLegacy;
+
+    NSString *string = nil;
+    BOOL didHandleEvent = [[WKTextInputWindowController sharedTextInputWindowController] interpretKeyEvent:event usingLegacyCocoaTextInput:usingLegacyCocoaTextInput string:&string];
+
+    if (string) {
+        _data->_page->sendComplexTextInputToPlugin(_data->_pluginComplexTextInputIdentifier, string);
+
+        if (!usingLegacyCocoaTextInput)
+            _data->_pluginComplexTextInputState = PluginComplexTextInputDisabled;
+    }
+
+    return didHandleEvent;
+}
+
 - (BOOL)_tryHandlePluginComplexTextInputKeyDown:(NSEvent *)event
 {
-    if (!_data->_pluginComplexTextInputIdentifier)
+    if (!_data->_pluginComplexTextInputIdentifier || _data->_pluginComplexTextInputState == PluginComplexTextInputDisabled)
         return NO;
 
     // Try feeding the keyboard event directly to the plug-in.
-    NSString *string = nil;
-    if ([[WKTextInputWindowController sharedTextInputWindowController] interpretKeyEvent:event usingLegacyCocoaTextInput:YES string:&string]) {
-        if (string)
-            _data->_page->sendComplexTextInputToPlugin(_data->_pluginComplexTextInputIdentifier, string);
-        return YES;
-    }
-
-    return NO;
+    return [self _handlePluginComplexTextInputKeyDown:event];
 }
 
 - (void)keyDown:(NSEvent *)theEvent
