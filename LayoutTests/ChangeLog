@@ -1,3 +1,40 @@
+2011-08-26  Andreas Kling  <kling@webkit.org>
+
+        [Qt] Path::boundingRect() is unnecessarily slow.
+        https://bugs.webkit.org/show_bug.cgi?id=66854
+
+        Reviewed by Benjamin Poulain.
+
+        Rebaseline SVG tests after Path::boundingRect() change.
+        This brings Qt quite a bit closer to CG and Skia metrics.
+
+        * platform/qt-4.8/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/qt-4.8/svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt:
+        * platform/qt-4.8/svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * platform/qt-4.8/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * platform/qt-4.8/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * platform/qt-4.8/svg/W3C-SVG-1.1/paths-data-02-t-expected.txt:
+        * platform/qt-4.8/svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textOnPath-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textOnPath2-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textOnPath3-expected.txt:
+        * platform/qt-4.8/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/qt-4.8/svg/text/text-path-01-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-28-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/paths-data-12-t-expected.txt:
+        * platform/qt/svg/custom/animate-path-morphing-expected.txt:
+        * platform/qt/svg/custom/broken-internal-references-expected.txt:
+        * platform/qt/svg/custom/control-points-for-S-and-T-expected.txt:
+        * platform/qt/svg/custom/path-textPath-simulation-expected.txt:
+        * platform/qt/svg/custom/second-inline-text-expected.txt:
+        * platform/qt/svg/custom/use-nested-transform-expected.txt:
+        * platform/qt/svg/dom/SVGPathSegList-segment-modification-expected.txt:
+        * platform/qt/svg/hixie/perf/001-expected.txt:
+        * platform/qt/svg/hixie/perf/002-expected.txt:
+        * platform/qt/svg/hixie/shapes/path/001-expected.txt:
+
 2011-08-26  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, another rebaseline after switch to GTK+3.x.

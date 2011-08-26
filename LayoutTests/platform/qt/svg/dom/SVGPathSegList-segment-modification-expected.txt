@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 300x300
-  RenderSVGRoot {svg} at (10,4) size 261x56
-    RenderSVGPath {path} at (78,38) size 84x22 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 80 40 C 80 40 120 80 160 40"]
+  RenderSVGRoot {svg} at (10,4) size 261x76
+    RenderSVGPath {path} at (78,38) size 84x42 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 80 40 C 80 40 120 80 160 40"]
     RenderSVGText {text} at (10,4) size 261x22 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x22
         chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 36 width 261.00: "There should be a smooth curve below"

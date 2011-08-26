@@ -14,9 +14,9 @@ layer at (0,0) size 480x360
         RenderSVGPath {rect} at (80,110) size 300x180 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#888888]}] [x=1.00] [y=1.00] [width=198.00] [height=118.00]
         RenderSVGContainer {g} at (80,110) size 300x180
           [filter="MyFilter"] RenderSVGResourceFilter {filter} at (0,0) size 200x120
-          RenderSVGContainer {g} at (90,147) size 280x106
-            RenderSVGPath {path} at (90,147) size 280x106 [stroke={[type=SOLID] [color=#D90000] [stroke width=10.00]}] [data="M 50 90 C 0 90 0 30 50 30 L 150 30 C 200 30 200 90 150 90 Z"]
-            RenderSVGPath {path} at (135,170) size 190x60 [fill={[type=SOLID] [color=#D90000]}] [data="M 60 80 C 30 80 30 40 60 40 L 140 40 C 170 40 170 80 140 80 Z"]
+          RenderSVGContainer {g} at (80,147) size 300x106
+            RenderSVGPath {path} at (80,147) size 300x106 [stroke={[type=SOLID] [color=#D90000] [stroke width=10.00]}] [data="M 50 90 C 0 90 0 30 50 30 L 150 30 C 200 30 200 90 150 90 Z"]
+            RenderSVGPath {path} at (125,170) size 210x60 [fill={[type=SOLID] [color=#D90000]}] [data="M 60 80 C 30 80 30 40 60 40 L 140 40 C 170 40 170 80 140 80 Z"]
             RenderSVGContainer {g} at (156,156) size 151x89
               RenderSVGText {text} at (52,32) size 98x57 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 98x57

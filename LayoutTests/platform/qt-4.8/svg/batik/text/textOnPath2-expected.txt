@@ -22,10 +22,10 @@ layer at (0,0) size 450x500
         chunk 1 text run 1 at (40.00,354.00) startOffset 0 endOffset 41 width 253.00: "textPath with startOffset and text-anchor"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
-    RenderSVGContainer {g} at (50,65) size 400x126 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,185.00)}]
-      RenderSVGContainer {use} at (139,90) size 142x95
-        RenderSVGContainer {g} at (139,90) size 142x95
-          RenderSVGPath {path} at (139,90) size 142x95 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
+    RenderSVGContainer {g} at (50,60) size 400x131 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,185.00)}]
+      RenderSVGContainer {use} at (139,60) size 142x125
+        RenderSVGContainer {g} at (139,60) size 142x125
+          RenderSVGPath {path} at (139,60) size 142x125 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
       RenderSVGText {text} at (10,-120) size 423x126 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,104) size 91x22
           chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 14 width 91.00: "This is simple"
@@ -73,10 +73,10 @@ layer at (0,0) size 450x500
             chunk 1 text run 1 at (280.24,-52.90) startOffset 0 endOffset 9 width 54.00: "all with "
         RenderSVGInlineText {#text} at (324,51) size 99x23
           chunk 1 text run 1 at (334.24,-52.90) startOffset 0 endOffset 16 width 98.00: "different links."
-    RenderSVGContainer {g} at (50,210) size 400x126 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,330.00)}]
-      RenderSVGContainer {use} at (139,235) size 142x95
-        RenderSVGContainer {g} at (139,235) size 142x95
-          RenderSVGPath {path} at (139,235) size 142x95 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
+    RenderSVGContainer {g} at (50,205) size 400x131 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,330.00)}]
+      RenderSVGContainer {use} at (139,205) size 142x125
+        RenderSVGContainer {g} at (139,205) size 142x125
+          RenderSVGPath {path} at (139,205) size 142x125 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
       RenderSVGText {text} at (10,-120) size 431x126 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,104) size 91x22
           chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 14 width 91.00: "This is simple"
@@ -124,10 +124,10 @@ layer at (0,0) size 450x500
             chunk 1 text run 1 at (288.34,-28.19) startOffset 0 endOffset 9 width 54.00: "all with "
         RenderSVGInlineText {#text} at (332,75) size 99x23
           chunk 1 text run 1 at (342.34,-28.19) startOffset 0 endOffset 16 width 98.00: "different links."
-    RenderSVGContainer {g} at (50,355) size 400x126 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,475.00)}]
-      RenderSVGContainer {use} at (139,380) size 142x95
-        RenderSVGContainer {g} at (139,380) size 142x95
-          RenderSVGPath {path} at (139,380) size 142x95 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
+    RenderSVGContainer {g} at (50,350) size 400x131 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,475.00)}]
+      RenderSVGContainer {use} at (139,350) size 142x125
+        RenderSVGContainer {g} at (139,350) size 142x125
+          RenderSVGPath {path} at (139,350) size 142x125 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
       RenderSVGText {text} at (10,-120) size 431x126 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,104) size 91x22
           chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 14 width 91.00: "This is simple"
