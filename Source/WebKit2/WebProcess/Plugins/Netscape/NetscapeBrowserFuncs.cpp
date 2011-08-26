@@ -950,15 +950,18 @@ static NPError NPN_GetAuthenticationInfo(NPP npp, const char* protocol, const ch
     return NPERR_NO_ERROR;
 }
 
-static uint32_t NPN_ScheduleTimer(NPP instance, uint32_t interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32_t timerID))
+static uint32_t NPN_ScheduleTimer(NPP npp, uint32_t interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32_t timerID))
 {
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+
+    return plugin->scheduleTimer(interval, repeat, timerFunc);
 }
 
-static void NPN_UnscheduleTimer(NPP instance, uint32_t timerID)
+static void NPN_UnscheduleTimer(NPP npp, uint32_t timerID)
 {
-    notImplemented();
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+
+    plugin->unscheduleTimer(timerID);
 }
 
 #if PLATFORM(MAC)

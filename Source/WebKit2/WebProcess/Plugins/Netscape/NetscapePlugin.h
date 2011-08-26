@@ -109,6 +109,9 @@ public:
     // Called on the plug-in run loop (which is currently the main thread run loop).
     void handlePluginThreadAsyncCall(void (*function)(void*), void* userData);
 
+    unsigned scheduleTimer(unsigned interval, bool repeat, void (*timerFunc)(NPP, unsigned timerID));
+    void unscheduleTimer(unsigned timerID);
+
     String proxiesForURL(const String& urlString);
     String cookiesForURL(const String& urlString);
     void setCookiesForURL(const String& urlString, const String& cookieString);
@@ -232,6 +235,37 @@ private:
     bool m_loadManually;
     RefPtr<NetscapePluginStream> m_manualStream;
     Vector<bool, 8> m_popupEnabledStates;
+
+    class Timer {
+        WTF_MAKE_NONCOPYABLE(Timer);
+
+    public:
+        typedef void (*TimerFunc)(NPP, uint32 timerID);
+
+        static PassOwnPtr<Timer> create(NetscapePlugin*, unsigned timerID, unsigned interval, bool repeat, TimerFunc);
+        ~Timer();
+
+        void start();
+        void stop();
+
+    private:
+        Timer(NetscapePlugin*, unsigned timerID, unsigned interval, bool repeat, TimerFunc);
+
+        void timerFired();
+
+        // This is a weak pointer since Timer objects are destroyed before the NetscapePlugin object itself is destroyed.
+        NetscapePlugin* m_netscapePlugin;
+
+        unsigned m_timerID;
+        unsigned m_interval;
+        bool m_repeat;
+        TimerFunc m_timerFunc;
+
+        RunLoop::Timer<Timer> m_timer;
+    };
+    typedef HashMap<unsigned, Timer*> TimerMap;
+    TimerMap m_timers;
+    unsigned m_nextTimerID;
 
 #if PLUGIN_ARCHITECTURE(MAC)
     NPDrawingModel m_drawingModel;
