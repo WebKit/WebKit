@@ -1,3 +1,32 @@
+2011-08-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        [Qt] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm fails intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=65969
+
+        Reviewed by Zoltan Herczeg.
+
+        Fix intrinsic size negotiation flakiness, most visible on the Qt port.
+
+        The http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm testcase triggered
+        an assertion on a Qt debug build indicating that the HashSet updateLayoutAndStyleIfNeededRecursive()
+        operates on is mutated while its iterated, leading to an assertion/crash. Due the new forceLayoutParentViewIfNeeded()
+        logic it's no longer safe to directly use the children() HashSet in that method - we have to make a copy first.
+
+        The second part of the fix is to stop entering forceLayoutParentViewIfNeeded(), if the origin of that call
+        is forceLayoutParentViewIfNeeded() itself. Set m_inLayoutParentView to true before calling FrameView::layout()
+        on our parent frame view - this is only an optimization to avoid doing layout() twice.
+
+        The third part of the fix is to call updateWidgetPositions() on the parent FrameView, _before_ calling layout()
+        on the parent view itself, as the SVG document needs to report the correct intrinsic size (which can depend
+        on the host object/embed/iframe) when we're running RenderReplaced::layout() on the host renderer.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::collectFrameViewChildren):
+        (WebCore::FrameView::forceLayoutParentViewIfNeeded):
+        (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive):
+        * page/FrameView.h:
+
 2011-08-26  Mikhail Naganov  <mnaganov@chromium.org>
 
         Web Inspector: [Chromium] Double clicking on numbers in Count & size columns doesn't toggle between values and percents in the Heap Snapshot.

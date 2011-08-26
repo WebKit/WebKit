@@ -116,6 +116,9 @@ FrameView::FrameView(Frame* frame)
     , m_fixedObjectCount(0)
     , m_layoutTimer(this, &FrameView::layoutTimerFired)
     , m_layoutRoot(0)
+#if ENABLE(SVG)
+    , m_inLayoutParentView(false)
+#endif
     , m_hasPendingPostLayoutTasks(false)
     , m_inSynchronousPostLayout(false)
     , m_postLayoutTasksTimer(this, &FrameView::postLayoutTimerFired)
@@ -836,9 +839,25 @@ RenderObject* FrameView::layoutRoot(bool onlyDuringLayout) const
     return onlyDuringLayout && layoutPending() ? 0 : m_layoutRoot;
 }
 
+static inline void collectFrameViewChildren(FrameView* frameView, Vector<RefPtr<FrameView> >& frameViews)
+{
+    const HashSet<RefPtr<Widget> >* viewChildren = frameView->children();
+    ASSERT(viewChildren);
+
+    const HashSet<RefPtr<Widget> >::iterator end = viewChildren->end();
+    for (HashSet<RefPtr<Widget> >::iterator current = viewChildren->begin(); current != end; ++current) {
+        Widget* widget = (*current).get();
+        if (widget->isFrameView())
+            frameViews.append(static_cast<FrameView*>(widget));
+    }
+}
+
 inline void FrameView::forceLayoutParentViewIfNeeded()
 {
 #if ENABLE(SVG)
+    if (m_inLayoutParentView)
+        return;
+
     RenderPart* ownerRenderer = m_frame->ownerRenderer();
     if (!ownerRenderer || !ownerRenderer->frame())
         return;
@@ -851,6 +870,8 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
     if (!svgRoot->needsSizeNegotiationWithHostDocument())
         return;
 
+    m_inLayoutParentView = true;
+
     // Clear needs-size-negotiation flag in RenderSVGRoot, so the next call to our
     // layout() method won't fire the size negotiation logic again.
     svgRoot->scheduledSizeNegotiationWithHostDocument();
@@ -859,10 +880,18 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
     // Mark the owner renderer as needing layout.
     ownerRenderer->setNeedsLayoutAndPrefWidthsRecalc();
 
-    // Synchronously enter layout.
+    // Immediately relayout the child widgets, which can now calculate the SVG documents
+    // intrinsic size, negotiating with the parent object/embed/iframe.
+    RenderView* rootView = ownerRenderer->frame()->contentRenderer();
+    ASSERT(rootView);
+    rootView->updateWidgetPositions();
+
+    // Synchronously enter layout, to layout the view containing the host object/embed/iframe.
     FrameView* frameView = ownerRenderer->frame()->view();
     ASSERT(frameView);
     frameView->layout();
+
+    m_inLayoutParentView = false;
 #endif
 }
 
@@ -2720,13 +2749,15 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
     if (needsLayout())
         layout();
 
-    const HashSet<RefPtr<Widget> >* viewChildren = children();
-    HashSet<RefPtr<Widget> >::const_iterator end = viewChildren->end();
-    for (HashSet<RefPtr<Widget> >::const_iterator current = viewChildren->begin(); current != end; ++current) {
-        Widget* widget = (*current).get();
-        if (widget->isFrameView())
-            static_cast<FrameView*>(widget)->updateLayoutAndStyleIfNeededRecursive();
-    }
+    // Grab a copy of the children() set, as it may be mutated by the following updateLayoutAndStyleIfNeededRecursive
+    // calls, as they can potentially re-enter a layout of the parent frame view, which may add/remove scrollbars
+    // and thus mutates the children() set.
+    Vector<RefPtr<FrameView> > frameViews;
+    collectFrameViewChildren(this, frameViews);
+
+    const Vector<RefPtr<FrameView> >::iterator end = frameViews.end();
+    for (Vector<RefPtr<FrameView> >::iterator it = frameViews.begin(); it != end; ++it)
+        (*it)->updateLayoutAndStyleIfNeededRecursive();
 
     // updateLayoutAndStyleIfNeededRecursive is called when we need to make sure style and layout are up-to-date before
     // painting, so we need to flush out any deferred repaints too.
