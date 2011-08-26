@@ -739,7 +739,9 @@ BUGCR16735 SKIP : media/media-fullscreen-inline.html = TIMEOUT
 BUGCR16735 SKIP : media/media-fullscreen-not-in-document.html = TIMEOUT
 
 // We haven't implemented the WebKit fullscreen API yet
-BUGCR73923 SKIP : fullscreen = TIMEOUT FAIL
+BUGCR73923 : fullscreen/video-controls-override.html = TEXT
+BUGCR73923 : fullscreen/full-screen-remove-ancestor-after.html = IMAGE
+BUGCR73923 : fullscreen/full-screen-stacking-context.html = IMAGE
 
 // We haven't implemented the WebKit captioning extension.
 // UNIMPLEMENTED
