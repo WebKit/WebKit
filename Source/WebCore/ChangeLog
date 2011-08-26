@@ -1,3 +1,20 @@
+2011-08-26  Eric Carlson  <eric.carlson@apple.com>
+
+        <video> playlist can not advance when playing in background tab
+        https://bugs.webkit.org/show_bug.cgi?id=66978
+
+        Reviewed by Darin Adler.
+
+        No new tests added because it isn't possible to simulate a background tab in DRT.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Set RequirePageConsentToLoadMedia restriction.
+        (WebCore::HTMLMediaElement::loadInternal): Don't consider page->canStartMedia if it has ever
+            allowed a file to load.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::requirePageConsentToLoadMedia): New.
+        (WebCore::HTMLMediaElement::removeBehaviorRestriction): New.
+
 2011-08-26  Andreas Kling  <kling@webkit.org>
 
         [Qt] Path::boundingRect() is unnecessarily slow.

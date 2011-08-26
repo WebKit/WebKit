@@ -150,7 +150,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_proxyWidget(0)
 #endif
-    , m_restrictions(RequireUserGestureForFullScreenRestriction)
+    , m_restrictions(RequireUserGestureForFullScreenRestriction | RequirePageConsentToLoadMedia)
     , m_preload(MediaPlayer::Auto)
     , m_displayMode(Unknown)
     , m_processingMediaPlayerCallback(0)
@@ -584,13 +584,18 @@ void HTMLMediaElement::loadInternal()
 {
     // If we can't start a load right away, start it later.
     Page* page = document()->page();
-    if (page && !page->canStartMedia()) {
+    if (requirePageConsentToLoadMedia() && page && !page->canStartMedia()) {
         if (m_isWaitingUntilMediaCanStart)
             return;
         document()->addMediaCanStartListener(this);
         m_isWaitingUntilMediaCanStart = true;
         return;
     }
+    
+    // Once the page has allowed an element to load media, it is free to load at will. This allows a 
+    // playlist that starts in a foreground tab to continue automatically if the tab is subsequently 
+    // put in the the background.
+    removeBehaviorRestriction(RequirePageConsentToLoadMedia);
 
     selectMediaResource();
 #if ENABLE(VIDEO_TRACK)
