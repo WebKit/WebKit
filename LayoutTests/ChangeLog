@@ -1,3 +1,12 @@
+2011-08-25  Ben Wells  <benwells@chromium.org>
+
+        Update expectations to remove conflict
+        https://bugs.webkit.org/show_bug.cgi?id=67020
+
+        Unreviewed, expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-25  Jeremy Apthorp  <jeremya@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67016

@@ -3583,7 +3583,7 @@ BUGWK65583 LINUX WIN : fast/borders/mixed-border-styles-radius.html = IMAGE+TEXT
 BUGWK65583 LINUX WIN : fast/borders/mixed-border-styles-radius2.html = IMAGE+TEXT
 BUGWK65583 LINUX WIN : fast/borders/mixed-border-styles.html = IMAGE+TEXT
 
-BUGWK65583 LINUX WIN : fast/frames/iframe-scaling-with-scroll.html = IMAGE
+BUGWK65583 LINUX : fast/frames/iframe-scaling-with-scroll.html = IMAGE
 
 BUGWK65583 LINUX WIN : fast/css/border-radius-non-negative.html = IMAGE
 
