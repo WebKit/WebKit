@@ -361,6 +361,12 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         explicit JSNonFinalObject(JSGlobalData& globalData, Structure* structure)
             : JSObject(globalData, structure, m_inlineStorage)
         {
+            finishCreation(globalData);
+        }
+
+        void finishCreation(JSGlobalData& globalData)
+        {
+            Base::finishCreation(globalData, m_inlineStorage);
             ASSERT(!(OBJECT_OFFSETOF(JSNonFinalObject, m_inlineStorage) % sizeof(double)));
             ASSERT(this->structure()->propertyStorageCapacity() == JSNonFinalObject_inlineStorageCapacity);
         }
@@ -384,7 +390,9 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         
         static JSFinalObject* create(ExecState* exec, Structure* structure)
         {
-            return new (allocateCell<JSFinalObject>(*exec->heap())) JSFinalObject(exec->globalData(), structure);
+            JSFinalObject* finalObject = new (allocateCell<JSFinalObject>(*exec->heap())) JSFinalObject(exec->globalData(), structure);
+            finalObject->finishCreation(exec->globalData());
+            return finalObject;
         }
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
@@ -392,12 +400,18 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
+    protected:
+        void finishCreation(JSGlobalData& globalData)
+        {
+            Base::finishCreation(globalData, m_inlineStorage);
+            ASSERT(!(OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage) % sizeof(double)));
+            ASSERT(this->structure()->propertyStorageCapacity() == JSFinalObject_inlineStorageCapacity);
+        }
+
     private:
         explicit JSFinalObject(JSGlobalData& globalData, Structure* structure)
             : JSObject(globalData, structure, m_inlineStorage)
         {
-            ASSERT(OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage) % sizeof(double) == 0);
-            ASSERT(this->structure()->propertyStorageCapacity() == JSFinalObject_inlineStorageCapacity);
         }
 
         static const unsigned StructureFlags = JSObject::StructureFlags | IsJSFinalObject;
@@ -446,7 +460,6 @@ inline JSObject::JSObject(JSGlobalData& globalData, Structure* structure, Proper
     : JSCell(globalData, structure)
     , m_propertyStorage(inlineStorage)
 {
-    finishCreation(globalData, inlineStorage);
 }
 
 inline JSObject::~JSObject()

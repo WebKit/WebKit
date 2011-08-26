@@ -66,9 +66,28 @@ namespace JSC {
         {
             ASSERT(globalData.structureStructure);
             ASSERT(classInfo);
-            return new (allocateCell<Structure>(globalData.heap)) Structure(globalData, prototype, typeInfo, anonymousSlotCount, classInfo);
+            Structure* structure = new (allocateCell<Structure>(globalData.heap)) Structure(globalData, prototype, typeInfo, anonymousSlotCount, classInfo);
+            structure->finishCreation(globalData);
+            return structure;
         }
 
+    protected:
+        void finishCreation(JSGlobalData& globalData)
+        {
+            Base::finishCreation(globalData);
+            ASSERT(m_prototype);
+            ASSERT(m_prototype.isObject() || m_prototype.isNull());
+        }
+
+        void finishCreation(JSGlobalData& globalData, CreatingEarlyCellTag)
+        {
+            Base::finishCreation(globalData, this, CreatingEarlyCell);
+            ASSERT(m_prototype);
+            ASSERT(m_prototype.isNull());
+            ASSERT(!globalData.structureStructure);
+        }
+
+    public:
         static void dumpStatistics();
 
         static Structure* addPropertyTransition(JSGlobalData&, Structure*, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset);
@@ -161,7 +180,9 @@ namespace JSC {
         static Structure* createStructure(JSGlobalData& globalData)
         {
             ASSERT(!globalData.structureStructure);
-            return new (allocateCell<Structure>(globalData.heap)) Structure(globalData);
+            Structure* structure = new (allocateCell<Structure>(globalData.heap)) Structure(globalData);
+            structure->finishCreation(globalData, CreatingEarlyCell);
+            return structure;
         }
         
         static JS_EXPORTDATA const ClassInfo s_info;
@@ -174,7 +195,9 @@ namespace JSC {
         static Structure* create(JSGlobalData& globalData, const Structure* structure)
         {
             ASSERT(globalData.structureStructure);
-            return new (allocateCell<Structure>(globalData.heap)) Structure(globalData, structure);
+            Structure* newStructure = new (allocateCell<Structure>(globalData.heap)) Structure(globalData, structure);
+            newStructure->finishCreation(globalData);
+            return newStructure;
         }
         
         typedef enum { 

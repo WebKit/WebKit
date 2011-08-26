@@ -88,7 +88,6 @@ RegExp::RegExp(JSGlobalData& globalData, const UString& patternString, RegExpFla
     , m_rtMatchFoundCount(0)
 #endif
 {
-    finishCreation(globalData);
 }
 
 void RegExp::finishCreation(JSGlobalData& globalData)
@@ -107,7 +106,9 @@ RegExp::~RegExp()
 
 RegExp* RegExp::createWithoutCaching(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)
 {
-    return new (allocateCell<RegExp>(globalData.heap)) RegExp(globalData, patternString, flags);
+    RegExp* regExp = new (allocateCell<RegExp>(globalData.heap)) RegExp(globalData, patternString, flags);
+    regExp->finishCreation(globalData);
+    return regExp;
 }
 
 RegExp* RegExp::create(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)

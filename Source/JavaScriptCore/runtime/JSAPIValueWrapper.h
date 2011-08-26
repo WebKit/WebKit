@@ -48,7 +48,9 @@ namespace JSC {
         
         static JSAPIValueWrapper* create(ExecState* exec, JSValue value) 
         {
-            return new (allocateCell<JSAPIValueWrapper>(*exec->heap())) JSAPIValueWrapper(exec, value);
+            JSAPIValueWrapper* wrapper = new (allocateCell<JSAPIValueWrapper>(*exec->heap())) JSAPIValueWrapper(exec);
+            wrapper->finishCreation(exec, value);
+            return wrapper;
         }
 
     protected:
@@ -60,10 +62,9 @@ namespace JSC {
         }
 
     private:
-        JSAPIValueWrapper(ExecState* exec, JSValue value)
+        JSAPIValueWrapper(ExecState* exec)
             : JSCell(exec->globalData(), exec->globalData().apiWrapperStructure.get())
         {
-            finishCreation(exec, value);
         }
 
         WriteBarrier<Unknown> m_value;

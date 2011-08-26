@@ -43,7 +43,6 @@ namespace JSC {
             , globalObject(*globalData, this, globalObject)
             , globalThis(*globalData, this, globalThis)
         {
-            finishCreation(globalData, globalObject);
         }
 
     protected:
@@ -58,11 +57,15 @@ namespace JSC {
 
         static ScopeChainNode* create(ExecState* exec, ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
         {
-            return new (allocateCell<ScopeChainNode>(*exec->heap())) ScopeChainNode(next, object, globalData, globalObject, globalThis);
+            ScopeChainNode* node = new (allocateCell<ScopeChainNode>(*exec->heap())) ScopeChainNode(next, object, globalData, globalObject, globalThis);
+            node->finishCreation(globalData, globalObject);
+            return node;
         }
         static ScopeChainNode* create(ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
         {
-            return new (allocateCell<ScopeChainNode>(globalData->heap)) ScopeChainNode(next, object, globalData, globalObject, globalThis);
+            ScopeChainNode* node = new (allocateCell<ScopeChainNode>(globalData->heap)) ScopeChainNode(next, object, globalData, globalObject, globalThis);
+            node->finishCreation(globalData, globalObject);
+            return node;
         }
         
         JSGlobalData* globalData;

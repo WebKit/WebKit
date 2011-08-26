@@ -41,7 +41,6 @@ namespace JSC {
         GetterSetter(ExecState* exec)
             : JSCell(exec->globalData(), exec->globalData().getterSetterStructure.get())
         {
-            finishCreation(exec->globalData());
         }
 
     public:
@@ -49,7 +48,9 @@ namespace JSC {
 
         static GetterSetter* create(ExecState* exec)
         {
-            return new (allocateCell<GetterSetter>(*exec->heap())) GetterSetter(exec);
+            GetterSetter* getterSetter = new (allocateCell<GetterSetter>(*exec->heap())) GetterSetter(exec);
+            getterSetter->finishCreation(exec->globalData());
+            return getterSetter;
         }
 
         virtual void visitChildren(SlotVisitor&);

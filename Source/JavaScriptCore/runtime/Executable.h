@@ -58,7 +58,6 @@ namespace JSC {
             , m_numParametersForCall(numParameters)
             , m_numParametersForConstruct(numParameters)
         {
-            finishCreation(globalData);
         }
 
         void finishCreation(JSGlobalData& globalData)
@@ -75,7 +74,9 @@ namespace JSC {
 
         static ExecutableBase* create(JSGlobalData& globalData, Structure* structure, int numParameters)
         {
-            return new (allocateCell<ExecutableBase>(globalData.heap)) ExecutableBase(globalData, structure, numParameters);
+            ExecutableBase* executable = new (allocateCell<ExecutableBase>(globalData.heap)) ExecutableBase(globalData, structure, numParameters);
+            executable->finishCreation(globalData);
+            return executable;
         }
 
         bool isHostFunction() const
@@ -180,9 +181,12 @@ namespace JSC {
 #if ENABLE(JIT)
         static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodePtr callThunk, NativeFunction function, MacroAssemblerCodePtr constructThunk, NativeFunction constructor)
         {
+            NativeExecutable* executable;
             if (!callThunk)
-                return new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, JITCode(), function, JITCode(), constructor);
-            return new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, JITCode::HostFunction(callThunk), function, JITCode::HostFunction(constructThunk), constructor);
+                executable = new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, JITCode(), function, JITCode(), constructor);
+            else
+                executable = new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, JITCode::HostFunction(callThunk), function, JITCode::HostFunction(constructThunk), constructor);
+            return executable;
         }
 #else
         static NativeExecutable* create(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
@@ -198,7 +202,19 @@ namespace JSC {
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(LeafType, StructureFlags), AnonymousSlotCount, &s_info); }
         
         static const ClassInfo s_info;
-    
+
+    protected:
+#if ENABLE(JIT)
+        void finishCreation(JSGlobalData& globalData, JITCode callThunk, JITCode constructThunk)
+        {
+            Base::finishCreation(globalData);
+            m_jitCodeForCall = callThunk;
+            m_jitCodeForConstruct = constructThunk;
+            m_jitCodeForCallWithArityCheck = callThunk.addressForCall();
+            m_jitCodeForConstructWithArityCheck = constructThunk.addressForCall();
+        }
+#endif
+ 
     private:
 #if ENABLE(JIT)
         NativeExecutable(JSGlobalData& globalData, JITCode callThunk, NativeFunction function, JITCode constructThunk, NativeFunction constructor)
@@ -206,10 +222,7 @@ namespace JSC {
             , m_function(function)
             , m_constructor(constructor)
         {
-            m_jitCodeForCall = callThunk;
-            m_jitCodeForConstruct = constructThunk;
-            m_jitCodeForCallWithArityCheck = callThunk.addressForCall();
-            m_jitCodeForConstructWithArityCheck = constructThunk.addressForCall();
+            finishCreation(globalData, callThunk, constructThunk);
         }
 #else
         NativeExecutable(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
@@ -217,6 +230,7 @@ namespace JSC {
             , m_function(function)
             , m_constructor(constructor)
         {
+            finishCreation(globalData);
         }
 #endif
 
@@ -235,12 +249,7 @@ namespace JSC {
             , m_source(source)
             , m_features(isInStrictContext ? StrictModeFeature : 0)
         {
-#if ENABLE(CODEBLOCK_SAMPLING)
-            if (SamplingTool* sampler = globalData.interpreter->sampler())
-                sampler->notifyOfScope(globalData, this);
-#else
-            UNUSED_PARAM(globalData);
-#endif
+            finishCreation(globalData);
         }
 
         ScriptExecutable(Structure* structure, ExecState* exec, const SourceCode& source, bool isInStrictContext)
@@ -248,12 +257,7 @@ namespace JSC {
             , m_source(source)
             , m_features(isInStrictContext ? StrictModeFeature : 0)
         {
-#if ENABLE(CODEBLOCK_SAMPLING)
-            if (SamplingTool* sampler = exec->globalData().interpreter->sampler())
-                sampler->notifyOfScope(exec->globalData(), this);
-#else
-            UNUSED_PARAM(exec);
-#endif
+            finishCreation(exec->globalData());
         }
 
         const SourceCode& source() { return m_source; }
@@ -270,7 +274,17 @@ namespace JSC {
         virtual void unlinkCalls() = 0;
         
         static const ClassInfo s_info;
+
     protected:
+        void finishCreation(JSGlobalData& globalData)
+        {
+            Base::finishCreation(globalData);
+#if ENABLE(CODEBLOCK_SAMPLING)
+            if (SamplingTool* sampler = globalData.interpreter->sampler())
+                sampler->notifyOfScope(globalData, this);
+#endif
+        }
+
         void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine)
         {
             m_features = features;

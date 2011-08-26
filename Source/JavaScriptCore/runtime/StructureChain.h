@@ -47,7 +47,9 @@ namespace JSC {
 
         static StructureChain* create(JSGlobalData& globalData, Structure* head)
         { 
-            return new (allocateCell<StructureChain>(globalData.heap)) StructureChain(globalData, globalData.structureChainStructure.get(), head); 
+            StructureChain* chain = new (allocateCell<StructureChain>(globalData.heap)) StructureChain(globalData, globalData.structureChainStructure.get());
+            chain->finishCreation(globalData, head);
+            return chain;
         }
         WriteBarrier<Structure>* head() { return m_vector.get(); }
         void visitChildren(SlotVisitor&);
@@ -72,7 +74,7 @@ namespace JSC {
         }
 
     private:
-        StructureChain(JSGlobalData&, Structure*, Structure* head);
+        StructureChain(JSGlobalData&, Structure*);
         ~StructureChain();
         OwnArrayPtr<WriteBarrier<Structure> > m_vector;
     };

@@ -43,7 +43,6 @@ inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyN
     , m_jsStringsSize(propertyNameArrayData->propertyNameVector().size())
     , m_jsStrings(adoptArrayPtr(new WriteBarrier<Unknown>[m_jsStringsSize]))
 {
-    finishCreation(exec, propertyNameArrayData);
 }
 
 JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject* o)
@@ -61,6 +60,7 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
         numCacheableSlots = o->structure()->propertyStorageSize();
     
     JSPropertyNameIterator* jsPropertyNameIterator = new (allocateCell<JSPropertyNameIterator>(*exec->heap())) JSPropertyNameIterator(exec, propertyNames.data(), numCacheableSlots);
+    jsPropertyNameIterator->finishCreation(exec, propertyNames.data());
 
     if (o->structure()->isDictionary())
         return jsPropertyNameIterator;
