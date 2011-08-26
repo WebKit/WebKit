@@ -302,3 +302,4 @@ cairo_surface_t *gdk_window_create_similar_surface(GdkWindow *window, cairo_cont
     return newSurface;
 }
 #endif // GTK_CHECK_VERSION(2, 22, 0)
+

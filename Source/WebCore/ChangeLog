@@ -1,3 +1,10 @@
+2011-08-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Touch GtkVersioning.c so that the release bot rebuilds it. This
+        is necessary because of the switch to GTK+ 3.x.
+
+        * platform/gtk/GtkVersioning.c: Touch this file.
+
 2011-08-25  Ben Wells  <benwells@chromium.org>
 
         Use PATH_BASED_BORDER_RADIUS_DRAWING for skia
