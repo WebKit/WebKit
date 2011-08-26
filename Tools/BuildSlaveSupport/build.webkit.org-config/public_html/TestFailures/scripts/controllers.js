@@ -98,8 +98,11 @@ controllers.UnexpectedFailures = base.extends(Object, {
         if (!failure) {
             failure = new ui.notifications.TestFailures();
             model.commitDataListForRevisionRange(impliedFirstFailingRevision, failureAnalysis.oldestFailingRevision).forEach(function(commitData) {
-                failure.addCommitData(commitData);
-            });
+                var suspiciousCommit = failure.addCommitData(commitData);
+                $(suspiciousCommit).bind('rollout', function() {
+                    this.onRollout(commitData.revision, failure.testNameList());
+                }.bind(this));
+            }, this);
             this._view.add(failure);
             $(failure).bind('examine', function() {
                 this.onExamine(failure);
@@ -132,6 +135,10 @@ controllers.UnexpectedFailures = base.extends(Object, {
 
         // FIXME: This doesn't belong here. Also, we need some way to call controller.dismiss().
         document.body.appendChild(resultsView);
+    },
+    onRollout: function(revision, testNameList)
+    {
+        checkout.rollout(revision, ui.rolloutReasonForTestNameList(testNameList), $.noop);
     }
 });
 

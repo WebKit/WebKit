@@ -56,6 +56,11 @@ test("infobarMessageForCompileErrors", 1, function() {
         '</ul></div>');
 });
 
+test("rolloutReasonForTestNameList", 2, function() {
+    equal(ui.rolloutReasonForTestNameList(["path/to/test.html"]), "Broke:\n* path/to/test.html");
+    equal(ui.rolloutReasonForTestNameList(["path/to/test.html", "another/test.html"]), "Broke:\n* path/to/test.html\n* another/test.html");
+});
+
 test("failureDetailsStatus", 1, function() {
     var status = ui.failureDetailsStatus({
         'builderName': 'Mock Builder',

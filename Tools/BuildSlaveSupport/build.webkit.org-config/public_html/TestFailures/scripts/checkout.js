@@ -63,6 +63,16 @@ checkout.optimizeBaselines = function(testName, callback)
     });
 };
 
+checkout.rollout = function(revision, reason, callback)
+{
+    net.post(config.kLocalServerURL + '/rollout?' + $.param({
+        'revision': revision,
+        'reason': reason
+    }), function() {
+        callback();
+    });
+};
+
 checkout.rebaseline = function(failureInfoList, callback)
 {
     base.callInSequence(function(failureInfo, callback) {

@@ -82,6 +82,13 @@ ui.failureDetailsStatus = function(failureInfo, builderNameList)
     return block;
 };
 
+ui.rolloutReasonForTestNameList = function(testNameList)
+{
+    return 'Broke:\n' + testNameList.map(function(testName) {
+        return '* ' + testName;
+    }).join('\n');
+}
+
 function builderTableDataCells(resultNodesByBuilder)
 {
     if (!resultNodesByBuilder)
