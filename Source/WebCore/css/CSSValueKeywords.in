@@ -471,6 +471,13 @@ block-axis
 single
 multiple
 
+// CSS_PROP_FLEX_ALIGN
+before
+after
+// middle
+// stretch
+// baseline
+
 // CSS_PROP_MARQUEE_DIRECTION
 forwards
 backwards

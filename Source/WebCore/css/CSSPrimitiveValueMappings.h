@@ -1063,6 +1063,48 @@ template<> inline CSSPrimitiveValue::operator EEmptyCell() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexAlign e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case AlignBefore:
+        m_value.ident = CSSValueBefore;
+        break;
+    case AlignAfter:
+        m_value.ident = CSSValueAfter;
+        break;
+    case AlignMiddle:
+        m_value.ident = CSSValueMiddle;
+        break;
+    case AlignStretch:
+        m_value.ident = CSSValueStretch;
+        break;
+    case AlignBaseline:
+        m_value.ident = CSSValueBaseline;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EFlexAlign() const
+{
+    switch (m_value.ident) {
+    case CSSValueBefore:
+        return AlignBefore;
+    case CSSValueAfter:
+        return AlignAfter;
+    case CSSValueMiddle:
+        return AlignMiddle;
+    case CSSValueStretch:
+        return AlignStretch;
+    case CSSValueBaseline:
+        return AlignBaseline;
+    default:
+        ASSERT_NOT_REACHED();
+        return AlignBefore;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexPack e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)

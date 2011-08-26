@@ -68,4 +68,36 @@ flexbox.style.webkitFlexPack = '';
 shouldBeEqualToString('flexbox.style.webkitFlexPack', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexPack', 'start');
 
+
+shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
+// The initial value is 'stretch'.
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'stretch');
+
+flexbox.style.webkitFlexAlign = 'foo';
+shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
+
+flexbox.style.webkitFlexAlign = 'before';
+shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'before');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'before');
+
+flexbox.style.webkitFlexAlign = 'after';
+shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'after');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'after');
+
+flexbox.style.webkitFlexAlign = 'middle';
+shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'middle');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'middle');
+
+flexbox.style.webkitFlexAlign = 'stretch';
+shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'stretch');
+
+flexbox.style.webkitFlexAlign = 'baseline';
+shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'baseline');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'baseline');
+
+flexbox.style.webkitFlexAlign = '';
+shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'stretch');
+
 successfullyParsed = true;

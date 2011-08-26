@@ -169,6 +169,7 @@ enum EBoxDirection { BNORMAL, BREVERSE };
 // CSS3 Flexbox Properties
 
 enum EFlexPack { PackStart, PackEnd, PackCenter, PackJustify };
+enum EFlexAlign { AlignBefore, AlignAfter, AlignMiddle, AlignStretch, AlignBaseline };
 
 enum ETextSecurity {
     TSNONE, TSDISC, TSCIRCLE, TSSQUARE

@@ -1,3 +1,33 @@
+2011-08-26  Tony Chang  <tony@chromium.org>
+
+        Add CSS parsing for -webkit-flex-align
+        https://bugs.webkit.org/show_bug.cgi?id=66726
+
+        Reviewed by Ojan Vafai.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFlexAlign):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::flexAlign):
+        (WebCore::InheritedFlags::setFlexAlign):
+        (WebCore::InheritedFlags::initialFlexAlign):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleFlexibleBoxData.cpp:
+        (WebCore::StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (WebCore::StyleFlexibleBoxData::operator==):
+        * rendering/style/StyleFlexibleBoxData.h:
+
 2011-08-26  Nate Chapin  <japhet@chromium.org>
 
         Fix http/tests/misc/willCacheResponse-delegate-callback.html

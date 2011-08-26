@@ -4977,6 +4977,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 #if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitFlexOrder:
     case CSSPropertyWebkitFlexPack:
+    case CSSPropertyWebkitFlexAlign:
 #endif
     case CSSPropertyFontStyle:
     case CSSPropertyFontVariant:

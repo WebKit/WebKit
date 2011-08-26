@@ -52,6 +52,7 @@ public:
     int m_flexOrder;
 
     unsigned m_flexPack : 2; // EFlexPack
+    unsigned m_flexAlign : 3; // EFlexAlign
 
 private:
     StyleFlexibleBoxData();

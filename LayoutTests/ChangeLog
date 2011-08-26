@@ -1,3 +1,13 @@
+2011-08-26  Tony Chang  <tony@chromium.org>
+
+        Add CSS parsing for -webkit-flex-align
+        https://bugs.webkit.org/show_bug.cgi?id=66726
+
+        Reviewed by Ojan Vafai.
+
+        * css3/flexbox/css-properties-expected.txt:
+        * css3/flexbox/script-tests/css-properties.js:
+
 2011-08-26  Martin Robinson  <mrobinson@igalia.com>
 
         Skip two tests on GTK+ that are failing due to known issues.
