@@ -1,3 +1,21 @@
+2011-08-25  Ben Wells  <benwells@chromium.org>
+
+        Use PATH_BASED_BORDER_RADIUS_DRAWING for skia
+        https://bugs.webkit.org/show_bug.cgi?id=65583
+
+        This change brings in the new border rendering for Skia. To support this without aliasing the skia
+        graphics context has been updated to support anti-aliased clipping around convex polygons and also
+        anti-aliased clipping outside a path.
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::clipPathAntiAliased):
+        * rendering/RenderObject.h:
+
 2011-08-25  Luke Macpherson   <macpherson@chromium.org>
 
         Implement animation and transition properties in CSSStyleApplyProperty.

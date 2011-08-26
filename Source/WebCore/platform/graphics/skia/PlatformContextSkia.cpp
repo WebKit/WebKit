@@ -283,7 +283,12 @@ void PlatformContextSkia::clipPathAntiAliased(const SkPath& clipPath)
 
     if (!haveLayerOutstanding) {
         SkRect bounds = clipPath.getBounds();
-        canvas()->saveLayerAlpha(&bounds, 255, static_cast<SkCanvas::SaveFlags>(SkCanvas::kHasAlphaLayer_SaveFlag | SkCanvas::kFullColorLayer_SaveFlag | SkCanvas::kClipToLayer_SaveFlag));
+        // If we are doing a clip outside of clipPath our layer needs to be for the whole
+        // canvas, otherwise we can create a smaller layer.
+        SkRect* layerBounds = 0;
+        if (!clipPath.isInverseFillType())
+            layerBounds = &bounds;
+        canvas()->saveLayerAlpha(layerBounds, 255, static_cast<SkCanvas::SaveFlags>(SkCanvas::kHasAlphaLayer_SaveFlag | SkCanvas::kFullColorLayer_SaveFlag | SkCanvas::kClipToLayer_SaveFlag));
         // Guards state modification during clipped operations.
         // The state is popped in applyAntiAliasedClipPaths().
         canvas()->save();

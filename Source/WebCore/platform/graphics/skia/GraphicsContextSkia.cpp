@@ -392,11 +392,12 @@ void GraphicsContext::clipOut(const Path& p)
     if (paintingDisabled())
         return;
 
-    const SkPath& path = *p.platformPath();
+    SkPath path = *p.platformPath();
     if (!isPathSkiaSafe(getCTM(), path))
         return;
 
-    platformContext()->canvas()->clipPath(path, SkRegion::kDifference_Op);
+    path.toggleInverseFillType();
+    platformContext()->clipPathAntiAliased(path);
 }
 
 void GraphicsContext::clipPath(const Path& pathToClip, WindRule clipRule)
@@ -479,8 +480,14 @@ void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* poin
         return;
 
     SkPath path;
+    if (!isPathSkiaSafe(getCTM(), path))
+        return;
+
     setPathFromConvexPoints(&path, numPoints, points);
-    platformContext()->canvas()->clipPath(path);
+    if (antialiased)
+        platformContext()->clipPathAntiAliased(path);
+    else
+        platformContext()->canvas()->clipPath(path);
 }
 
 // This method is only used to draw the little circles used in lists.

@@ -1,3 +1,16 @@
+2011-08-25  Ben Wells  <benwells@chromium.org>
+
+        Use PATH_BASED_BORDER_RADIUS_DRAWING for skia
+        https://bugs.webkit.org/show_bug.cgi?id=65583
+
+        Reviewed by James Robinson.
+
+        Update expectations: added failures for baselines to come. removed some
+        failure expectations for tests that now pass and moved some expectations
+        into the group of tests to be rebaselined.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-25  Martin Robinson  <mrobinson@igalia.com>
 
         Skip some tests on GTK+ that are missing DRT functionality. Also
