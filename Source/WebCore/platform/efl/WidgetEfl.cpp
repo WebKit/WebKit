@@ -223,8 +223,6 @@ void Widget::applyFallbackCursor()
         return;
     }
 #endif
-    LOG_ERROR("Ooops, no fallback to set cursor %s!\n",
-              m_data->m_cursorGroup.utf8().data());
 }
 
 void Widget::applyCursor()

@@ -1,3 +1,19 @@
+2011-08-26  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Do not log an error if a fallback cursor cannot be found.
+        https://bugs.webkit.org/show_bug.cgi?id=67037
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Ecore_X does not necessarily have to be used (DumpRenderTree does not
+        use it, for example), so showing an error message here is bogus.
+
+        No new tests, as it just removes erroneous error messages from
+        when running DRT with existing tests.
+
+        * platform/efl/WidgetEfl.cpp:
+        (WebCore::Widget::applyFallbackCursor):
+
 2011-08-26  Nate Chapin  <japhet@chromium.org>
 
         Change a bunch of nondescript bools to
