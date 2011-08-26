@@ -1,5 +1,41 @@
 2011-08-25  Anders Carlsson  <andersca@apple.com>
 
+        kNPEventStartIME doesn't work correctly for NPAPI
+        https://bugs.webkit.org/show_bug.cgi?id=65264
+        <rdar://problem/9996476>
+
+        Reviewed by Sam Weinig.
+
+        In order to remain compatible with older plug-ins, the updated input model won't
+        be turned on unless a plug-in explicitly asks whether we support it. The plug-in must do
+        this before any keyboard events have been processed.
+
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::setComplexTextInputState):
+        Add the CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply flag to this message since we want
+        the web process to handle it while it's waiting for a reply to the PluginControllerProxy::HandleMouseEvent
+        synchronous message.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        Implement the logic for when to turn off the legacy Cocoa text input model support.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize m_ignoreNextKeyUpEvent to false.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add m_ignoreNextKeyUpEvent member variable.
+
+        (WebKit::NetscapePlugin::hasHandledAKeyDownEvent):
+        Add a getter.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformHandleKeyboardEvent):
+        Don't send keydown and keyup events when complex text input is enabled in the updated model.
+
+2011-08-25  Anders Carlsson  <andersca@apple.com>
+
         Correctly handle events in the updated Cocoa text input model
         https://bugs.webkit.org/show_bug.cgi?id=67005
 

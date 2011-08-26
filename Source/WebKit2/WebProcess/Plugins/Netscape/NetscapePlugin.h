@@ -60,6 +60,8 @@ public:
     void setPluginReturnsNonretainedLayer(bool pluginReturnsNonretainedLayer) { m_pluginReturnsNonretainedLayer = pluginReturnsNonretainedLayer; }
     void setPluginWantsLegacyCocoaTextInput(bool pluginWantsLegacyCocoaTextInput) { m_pluginWantsLegacyCocoaTextInput = pluginWantsLegacyCocoaTextInput; }
 
+    bool hasHandledAKeyDownEvent() const { return m_hasHandledAKeyDownEvent; }
+
     mach_port_t compositingRenderServerPort();
 
 #ifndef NP_NO_CARBON
@@ -254,6 +256,9 @@ private:
     // Whether the plug-in has handled a keydown event. This is used to determine
     // if we can tell the plug-in that we support the updated Cocoa text input specification.
     bool m_hasHandledAKeyDownEvent;
+
+    // Whether the next NPCocoaEventKeyUp event should be ignored.
+    bool m_ignoreNextKeyUpEvent;
 
     WebCore::IntRect m_windowFrameInScreenCoordinates;
     WebCore::IntRect m_viewFrameInWindowCoordinates;

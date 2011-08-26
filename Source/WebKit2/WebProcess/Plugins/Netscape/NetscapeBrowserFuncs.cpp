@@ -465,6 +465,20 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPBool*)value = true;
             break;
 
+        case NPNVsupportsUpdatedCocoaTextInputBool: {
+            // The plug-in is asking whether we support the updated Cocoa text input model.
+            // If we haven't yet delivered a key down event to the plug-in, we can opt into the updated
+            // model and say that we support it. Otherwise, we'll just fall back and say that we don't support it.
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+
+            bool supportsUpdatedTextInput = !plugin->hasHandledAKeyDownEvent();
+            if (supportsUpdatedTextInput)
+                plugin->setPluginWantsLegacyCocoaTextInput(false);
+
+            *reinterpret_cast<NPBool*>(value) = supportsUpdatedTextInput;
+            break;
+        }
+
         case WKNVCALayerRenderServerPort: {
             RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
 

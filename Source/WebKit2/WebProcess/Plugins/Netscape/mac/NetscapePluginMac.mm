@@ -737,11 +737,31 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboar
 
     switch (m_eventModel) {
     case NPEventModelCocoa: {
-        if (keyboardEvent.type() == WebEvent::KeyDown)
+        if (keyboardEvent.type() == WebEvent::KeyDown) {
             m_hasHandledAKeyDownEvent = true;
 
+            if (!m_pluginWantsLegacyCocoaTextInput && m_isComplexTextInputEnabled) {
+                // When complex text is enabled in the new model, the plug-in should never
+                // receive any key down or key up events until the composition is complete.
+                m_ignoreNextKeyUpEvent = true;
+                return true;
+            }
+        } else if (keyboardEvent.type() == WebEvent::KeyUp && m_ignoreNextKeyUpEvent) {
+            m_ignoreNextKeyUpEvent = false;
+            return true;
+        }
+
         NPCocoaEvent event = initializeKeyboardEvent(keyboardEvent);
-        handled = NPP_HandleEvent(&event);
+        int16_t returnValue = NPP_HandleEvent(&event);
+        handled = returnValue;
+
+        if (!m_pluginWantsLegacyCocoaTextInput) {
+            if (event.type == NPCocoaEventKeyDown && returnValue == kNPEventStartIME) {
+                m_ignoreNextKeyUpEvent = true;
+                setComplexTextInputEnabled(true);
+            }
+        }
+
         break;
     }
 

@@ -78,6 +78,7 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     , m_pluginWantsLegacyCocoaTextInput(true)
     , m_isComplexTextInputEnabled(false)
     , m_hasHandledAKeyDownEvent(false)
+    , m_ignoreNextKeyUpEvent(false)
 #ifndef NP_NO_CARBON
     , m_nullEventTimer(RunLoop::main(), this, &NetscapePlugin::nullEventTimerFired)
     , m_npCGContext()
