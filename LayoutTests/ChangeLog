@@ -1,3 +1,20 @@
+2011-08-26  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline of some editing tests after switch to
+        GTK+-3.x.
+
+        * platform/gtk/editing/pasteboard/4641033-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-2-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-right-expected.txt:
+        * platform/gtk/editing/selection/move-by-word-visually-multi-line-expected.txt: Added.
+        * platform/gtk/editing/selection/move-past-trailing-space-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt:
+
 2011-08-26  James Kozianski  <koz@chromium.org>
 
         Unreviewed, rolling out r93853.
