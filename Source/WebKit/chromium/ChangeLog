@@ -1,3 +1,12 @@
+2011-08-25  Jeremy Apthorp  <jeremya@google.com>
+
+        Enable fullscreen API in Chromium by default.
+        https://bugs.webkit.org/show_bug.cgi?id=66993
+
+        Reviewed by Adam Barth.
+
+        * features.gypi:
+
 2011-08-25  Scott Graham  <scottmg@chromium.org>
 
         Enable incremental linking for component build on Chromium
