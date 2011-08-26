@@ -1,3 +1,16 @@
+2011-08-26  Shinya Kawanaka  <shinyak@google.com>
+
+        REGRESSION(r93390): Empty or invalid maxlength of an input tag should be ignored.
+        https://bugs.webkit.org/show_bug.cgi?id=67015
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/input-text-paste-maxlength-expected.txt:
+           Added maxlength="" and maxlength="invalid" tests.
+        * fast/forms/input-text-paste-maxlength.html: ditto.
+        * fast/forms/script-tests/textarea-maxlength.js: ditto.
+        * fast/forms/textarea-maxlength-expected.txt: ditto.
+
 2011-08-25  Ben Wells  <benwells@chromium.org>
 
         Update expectations to remove conflict

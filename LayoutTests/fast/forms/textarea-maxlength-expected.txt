@@ -30,6 +30,8 @@ PASS textArea.value is "AB" + u10000
 PASS textArea.value.length is 4
 PASS textArea.value is "ABC"
 PASS textArea.value is ""
+PASS textArea.value is "ABC"
+PASS textArea.value is "ABC"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,14 @@
+2011-08-26  Shinya Kawanaka  <shinyak@google.com>
+
+        REGRESSION(r93390): Empty or invalid maxlength of an input tag should be ignored.
+        https://bugs.webkit.org/show_bug.cgi?id=67015
+
+        Reviewed by Kent Tamura.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMaxLengthAttribute):
+          Checks the validity of maxlength attribute when converting it to integer.
+
 2011-08-25  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Fix indentation of WebSocket header files

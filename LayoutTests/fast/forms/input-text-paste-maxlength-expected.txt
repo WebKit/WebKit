@@ -28,7 +28,13 @@ PASS visibleValueOf('k') is '12' + fancyX + '4'
 pasting too much text with maxlength=0
 PASS domValueOf('l') is ''
 PASS visibleValueOf('l') is ''
+empty maxlength should be ignored.
+PASS domValueOf('m') is '12' + fancyX + '45'
+PASS visibleValueOf('m') is '12' + fancyX + '45'
+invalid maxlength should be ignored.
+PASS domValueOf('n') is '12' + fancyX + '45'
+PASS visibleValueOf('n') is '12' + fancyX + '45'
 PASS successfullyParsed is true
 
 TEST COMPLETE
-         
+           

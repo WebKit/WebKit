@@ -140,4 +140,16 @@ textArea.value = '';
 document.execCommand('insertText', false, 'ABC');
 shouldBe('textArea.value', '""');
 
+// In the case maxlength=''
+createFocusedTextAreaWithMaxLength('');
+textArea.value = '';
+document.execCommand('insertText', false, 'ABC');
+shouldBe('textArea.value', '"ABC"');
+
+// In the case maxlength='invalid'
+createFocusedTextAreaWithMaxLength('invalid');
+textArea.value = '';
+document.execCommand('insertText', false, 'ABC');
+shouldBe('textArea.value', '"ABC"');
+
 var successfullyParsed = true;
