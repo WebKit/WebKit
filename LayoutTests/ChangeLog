@@ -1,5 +1,17 @@
 2011-08-26  Martin Robinson  <mrobinson@igalia.com>
 
+        Add some new baselines for GTK+ and unskip tests that now have them.
+
+        * platform/gtk/Skipped: Unskip tests.
+        * platform/gtk/fast/block/float/fit_line_below_floats-expected.png: Added.
+        * platform/gtk/fast/block/float/fit_line_below_floats-expected.txt: Added.
+        * platform/gtk/fast/block/float/floats-and-text-indent-expected.png: Added.
+        * platform/gtk/fast/block/float/floats-and-text-indent-expected.txt: Added.
+        * platform/gtk/fast/block/float/floats-and-text-indent-rl-expected.png: Added.
+        * platform/gtk/fast/block/float/floats-and-text-indent-rl-expected.txt: Added.
+
+2011-08-26  Martin Robinson  <mrobinson@igalia.com>
+
         Import the last set of GTK+ CSS3 selector results.
 
         * platform/gtk/css3/selectors3/xml: Import the last set of results.

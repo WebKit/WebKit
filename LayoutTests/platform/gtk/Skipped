@@ -31,16 +31,6 @@
 # TESTS THAT REQUIRE NEW RESULTS
 ###############################################################################
 
-# Needs generated results
-css3/selectors3
-
-# Needs new baseline http://webkit.org/b/66671
-fast/block/float/fit_line_below_floats.html
-
-# Need new baseline http://webkit.org/b/66662
-fast/block/float/floats-and-text-indent.html
-fast/block/float/floats-and-text-indent-rl.html
-
 ###############################################################################
 # FLAKY TESTS
 ###############################################################################
