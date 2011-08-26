@@ -914,6 +914,10 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
     int nextBreakable = -1;
     int lastWordBoundary = 0;
 
+    // Non-zero only when kerning is enabled, in which case we measure words with their trailing
+    // space, then subtract its width.
+    float wordTrailingSpaceWidth = f.typesettingFeatures() & Kerning ? f.width(RenderBlock::constructTextRun(this, f, &space, 1, style())) : 0;
+
     int firstGlyphLeftOverflow = -1;
 
     bool breakNBSP = style()->autoWrap() && style()->nbspMode() == SPACE;
@@ -983,7 +987,13 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
 
         int wordLen = j - i;
         if (wordLen) {
-            float w = widthFromCache(f, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow);
+            bool isSpace = (j < len) && isSpaceAccordingToStyle(c, style());
+            float w;
+            if (wordTrailingSpaceWidth && isSpace)
+                w = widthFromCache(f, i, wordLen + 1, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow) - wordTrailingSpaceWidth;
+            else
+                w = widthFromCache(f, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow);
+
             if (firstGlyphLeftOverflow < 0)
                 firstGlyphLeftOverflow = glyphOverflow.left;
             currMinWidth += w;
@@ -995,7 +1005,6 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                 lastWordBoundary = j;
             }
 
-            bool isSpace = (j < len) && isSpaceAccordingToStyle(c, style());
             bool isCollapsibleWhiteSpace = (j < len) && style()->isCollapsibleWhiteSpace(c);
             if (j < len && style()->autoWrap())
                 m_hasBreakableChar = true;
