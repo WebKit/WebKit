@@ -30,9 +30,9 @@
 
 /**
  * @constructor
- * @param {Element} contentElement
+ * @param {WebInspector.PopoverHelper=} popoverHelper
  */
-WebInspector.Popover = function()
+WebInspector.Popover = function(popoverHelper)
 {
     this.element = document.createElement("div");
     this.element.className = "popover";
@@ -44,6 +44,7 @@ WebInspector.Popover = function()
     this._contentDiv = document.createElement("div");
     this._contentDiv.className = "content";
     this._visible = false;
+    this._popoverHelper = popoverHelper;
 }
 
 WebInspector.Popover.prototype = {
@@ -69,6 +70,8 @@ WebInspector.Popover.prototype = {
         document.body.appendChild(this.element);
         this._positionElement(anchor, preferredWidth, preferredHeight);
         this._visible = true;
+        if (this._popoverHelper)
+            contentElement.addEventListener("mousemove", this._popoverHelper._killHidePopoverTimer.bind(this._popoverHelper), true);
     },
 
     hide: function()
@@ -197,7 +200,7 @@ WebInspector.PopoverHelper.prototype = {
 
     _mouseDown: function(event)
     {
-        this._killHidePopupTimer();
+        this._killHidePopoverTimer();
         this._handleMouseAction(event, true);
     },
 
@@ -249,7 +252,6 @@ WebInspector.PopoverHelper.prototype = {
 
     _hidePopover: function()
     {
-        delete this._popupInstanceMarker;
         if (!this._popover)
             return;
 
@@ -265,15 +267,15 @@ WebInspector.PopoverHelper.prototype = {
         delete this._hoverTimer;
 
         this._hidePopover();
-        this._popover = new WebInspector.Popover();
+        this._popover = new WebInspector.Popover(this);
         this._showPopover(element, this._popover);
     },
 
-    _killHidePopupTimer: function()
+    _killHidePopoverTimer: function()
     {
         if (this._hidePopoverTimer) {
             clearTimeout(this._hidePopoverTimer);
-            delete this._hidePopupTimer;
+            delete this._hidePopoverTimer;
 
             // We know that we reached the popup, but we might have moved over other elements.
             // Discard pending command.

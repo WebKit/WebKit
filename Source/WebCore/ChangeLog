@@ -1,3 +1,18 @@
+2011-08-26  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [REGRESSION] No way to expand hovered objects while debugging.
+        https://bugs.webkit.org/show_bug.cgi?id=67039
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/Popover.js:
+        (WebInspector.Popover):
+        (WebInspector.Popover.prototype.show):
+        (WebInspector.PopoverHelper.prototype._mouseDown):
+        (WebInspector.PopoverHelper.prototype._hidePopover):
+        (WebInspector.PopoverHelper.prototype._mouseHover):
+        (WebInspector.PopoverHelper.prototype._killHidePopoverTimer):
+
 2011-08-26  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, rolling out r93870.
