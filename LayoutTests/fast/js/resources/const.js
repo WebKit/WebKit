@@ -124,7 +124,6 @@ function tryCatch1() {
     eval("try {\
         stuff();\
     } catch (e) {\
-        print(\"here.\");\
         const bar = 5;\
     }");
     return bar;
@@ -135,7 +134,6 @@ function tryCatch2() {
     try {
         stuff();
     } catch (e) {
-        print("here.");
         const bar = 5;
     }
     return bar;

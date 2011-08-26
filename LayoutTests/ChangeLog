@@ -1,3 +1,16 @@
+2011-08-26  Martin Robinson  <mrobinson@igalia.com>
+
+        fast/js/const.html is opening a modal print dialog, leading to a timeout on the GTK+ bots
+        https://bugs.webkit.org/show_bug.cgi?id=67061
+
+        Reviewed by Oliver Hunt.
+
+        Update this test to remove inadvertant calls to window.print().
+
+        * fast/js/resources/const.js:
+        (tryCatch1): Remove call to window.print()
+        (tryCatch2): Ditto.
+
 2011-08-26  Dan Bernstein  <mitz@apple.com>
 
         RenderText::computePreferredLogicalWidths() should measure words with trailing spaces
