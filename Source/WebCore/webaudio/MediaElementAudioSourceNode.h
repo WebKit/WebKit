@@ -28,6 +28,7 @@
 #include "AudioSourceNode.h"
 #include "HTMLMediaElement.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -37,16 +38,22 @@ class MediaElementAudioSourceNode : public AudioSourceNode {
 public:
     static PassRefPtr<MediaElementAudioSourceNode> create(AudioContext*, HTMLMediaElement*);
 
+    virtual ~MediaElementAudioSourceNode();
+
     HTMLMediaElement* mediaElement() { return m_mediaElement.get(); }                                        
 
     // AudioNode
     virtual void process(size_t framesToProcess);
     virtual void reset();
+    
+    void lock();
+    void unlock();
 
 private:
     MediaElementAudioSourceNode(AudioContext*, HTMLMediaElement*);
 
     RefPtr<HTMLMediaElement> m_mediaElement;
+    Mutex m_processLock;
 };
 
 } // namespace WebCore

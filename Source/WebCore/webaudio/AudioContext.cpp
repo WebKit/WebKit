@@ -312,11 +312,26 @@ PassRefPtr<AudioBufferSourceNode> AudioContext::createBufferSource()
     return node;
 }
 
-PassRefPtr<MediaElementAudioSourceNode> AudioContext::createMediaElementSource(HTMLMediaElement* mediaElement)
+PassRefPtr<MediaElementAudioSourceNode> AudioContext::createMediaElementSource(HTMLMediaElement* mediaElement, ExceptionCode& ec)
 {
+    ASSERT(mediaElement);
+    if (!mediaElement) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
+        
     ASSERT(isMainThread());
     lazyInitialize();
+    
+    // First check if this media element already has a source node.
+    if (mediaElement->audioSourceNode()) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
+        
     RefPtr<MediaElementAudioSourceNode> node = MediaElementAudioSourceNode::create(this, mediaElement);
+
+    mediaElement->setAudioSourceNode(node.get());
 
     refNode(node.get()); // context keeps reference until node is disconnected
     return node;

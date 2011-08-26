@@ -1,3 +1,13 @@
+2011-08-26  Chris Rogers  <crogers@google.com>
+
+        Add MediaPlayer::audioSourceProvider() method for audio stream access by the Web Audio API.
+        https://bugs.webkit.org/show_bug.cgi?id=66398
+
+        Reviewed by Eric Carlson.
+
+        * webaudio/mediaelementaudiosourcenode-expected.txt:
+        * webaudio/mediaelementaudiosourcenode.html:
+
 2011-08-23  Stephen White  <senorblanco@chromium.org>
 
         Assertion fires if canvas is resized while save() active

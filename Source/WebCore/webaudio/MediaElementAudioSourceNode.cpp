@@ -30,6 +30,7 @@
 
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
+#include "MediaPlayer.h"
 
 namespace WebCore {
 
@@ -46,18 +47,52 @@ MediaElementAudioSourceNode::MediaElementAudioSourceNode(AudioContext* context, 
     addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
     
     setType(NodeTypeMediaElementAudioSource);
+
+    initialize();
 }
 
-void MediaElementAudioSourceNode::process(size_t)
+MediaElementAudioSourceNode::~MediaElementAudioSourceNode()
+{
+    m_mediaElement->setAudioSourceNode(0);
+    uninitialize();
+}
+
+void MediaElementAudioSourceNode::process(size_t numberOfFrames)
 {
     AudioBus* outputBus = output(0)->bus();
 
-    // FIXME: implement MediaPlayer abstraction to get audio stream from <audio> and <video>
-    outputBus->zero();
+    if (!mediaElement()) {
+        outputBus->zero();
+        return;
+    }
+    
+    // Use a tryLock() to avoid contention in the real-time audio thread.
+    // If we fail to acquire the lock then the HTMLMediaElement must be in the middle of
+    // reconfiguring its playback engine, so we output silence in this case.
+    if (m_processLock.tryLock()) {
+        if (AudioSourceProvider* provider = mediaElement()->audioSourceProvider())
+            provider->provideInput(outputBus, numberOfFrames);
+        else
+            outputBus->zero();
+        m_processLock.unlock();
+    } else
+        outputBus->zero();
 }
 
 void MediaElementAudioSourceNode::reset()
 {
+}
+
+void MediaElementAudioSourceNode::lock()
+{
+    ref();
+    m_processLock.lock();
+}
+
+void MediaElementAudioSourceNode::unlock()
+{
+    m_processLock.unlock();
+    deref();
 }
 
 } // namespace WebCore

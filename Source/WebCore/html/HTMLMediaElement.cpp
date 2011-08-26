@@ -88,6 +88,10 @@
 #include "HTMLTrackElement.h"
 #endif
 
+#if ENABLE(WEB_AUDIO)
+#include "MediaElementAudioSourceNode.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -179,6 +183,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_loadInitiatedByUserGesture(false)
     , m_completelyLoaded(false)
     , m_havePreparedToPlay(false)
+#if ENABLE(WEB_AUDIO)
+    , m_audioSourceNode(0)
+#endif
 {
     LOG(Media, "HTMLMediaElement::HTMLMediaElement");
     document->registerForDocumentActivationCallbacks(this);
@@ -531,7 +538,7 @@ void HTMLMediaElement::prepareForLoad()
         scheduleEvent(eventNames().abortEvent);
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    m_player = MediaPlayer::create(this);
+    createMediaPlayer();
 #else
     if (m_player)
         m_player->cancelLoad();
@@ -682,7 +689,7 @@ void HTMLMediaElement::loadNextSourceChild()
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     // Recreate the media player for the new url
-    m_player = MediaPlayer::create(this);
+    createMediaPlayer();
 #endif
 
     m_loadState = LoadingFromSourceElement;
@@ -2467,7 +2474,7 @@ void HTMLMediaElement::defaultEventHandler(Event* event)
 void HTMLMediaElement::ensureMediaPlayer()
 {
     if (!m_player)
-        m_player = MediaPlayer::create(this);
+        createMediaPlayer();
 }
 
 void HTMLMediaElement::deliverNotification(MediaPlayerProxyNotificationType notification)
@@ -2806,6 +2813,37 @@ void* HTMLMediaElement::preDispatchEventHandler(Event* event)
 
     return 0;
 }
+
+void HTMLMediaElement::createMediaPlayer()
+{
+#if ENABLE(WEB_AUDIO)
+    if (m_audioSourceNode)
+        m_audioSourceNode->lock();
+#endif
+        
+    m_player = MediaPlayer::create(this);
+
+#if ENABLE(WEB_AUDIO)
+    if (m_audioSourceNode)
+        m_audioSourceNode->unlock();
+#endif
+}
+
+#if ENABLE(WEB_AUDIO)
+void HTMLMediaElement::setAudioSourceNode(MediaElementAudioSourceNode* sourceNode)
+{
+    ASSERT(!m_audioSourceNode);
+    m_audioSourceNode = sourceNode;
+}
+
+AudioSourceProvider* HTMLMediaElement::audioSourceProvider()
+{
+    if (m_player)
+        return m_player->audioSourceProvider();
+
+    return 0;
+}
+#endif
 
 }
 

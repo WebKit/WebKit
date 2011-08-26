@@ -110,7 +110,7 @@ public:
 
     // The AudioNode create methods are called on the main thread (from JavaScript).
     PassRefPtr<AudioBufferSourceNode> createBufferSource();
-    PassRefPtr<MediaElementAudioSourceNode> createMediaElementSource(HTMLMediaElement*);
+    PassRefPtr<MediaElementAudioSourceNode> createMediaElementSource(HTMLMediaElement*, ExceptionCode&);
     PassRefPtr<AudioGainNode> createGainNode();
     PassRefPtr<BiquadFilterNode> createBiquadFilter();
     PassRefPtr<WaveShaperNode> createWaveShaper();

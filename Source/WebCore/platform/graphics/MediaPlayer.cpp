@@ -873,6 +873,13 @@ void MediaPlayer::characteristicChanged()
         m_mediaPlayerClient->mediaPlayerCharacteristicChanged(this);
 }
 
+#if ENABLE(WEB_AUDIO)
+AudioSourceProvider* MediaPlayer::audioSourceProvider()
+{
+    return m_private->audioSourceProvider();
+}
+#endif // WEB_AUDIO
+
 }
 
 #endif

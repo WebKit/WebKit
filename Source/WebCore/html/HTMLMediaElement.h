@@ -39,6 +39,10 @@
 
 namespace WebCore {
 
+#if ENABLE(WEB_AUDIO)
+class AudioSourceProvider;
+class MediaElementAudioSourceNode;
+#endif
 class Event;
 class HTMLSourceElement;
 class MediaControls;
@@ -203,6 +207,13 @@ public:
 
     bool isPlaying() const { return m_playing; }
 
+#if ENABLE(WEB_AUDIO)
+    MediaElementAudioSourceNode* audioSourceNode() { return m_audioSourceNode; }
+    void setAudioSourceNode(MediaElementAudioSourceNode*);
+
+    AudioSourceProvider* audioSourceProvider();
+#endif
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document*);
     virtual ~HTMLMediaElement();
@@ -221,6 +232,8 @@ protected:
     virtual bool isMediaElement() const { return true; }
 
 private:
+    void createMediaPlayer();
+
     virtual void attributeChanged(Attribute*, bool preserveDecls);
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
@@ -435,6 +448,13 @@ private:
     bool m_loadInitiatedByUserGesture : 1;
     bool m_completelyLoaded : 1;
     bool m_havePreparedToPlay : 1;
+
+#if ENABLE(WEB_AUDIO)
+    // This is a weak reference, since m_audioSourceNode holds a reference to us.
+    // The value is set just after the MediaElementAudioSourceNode is created.
+    // The value is cleared in MediaElementAudioSourceNode::~MediaElementAudioSourceNode().
+    MediaElementAudioSourceNode* m_audioSourceNode;
+#endif
 };
 
 } //namespace

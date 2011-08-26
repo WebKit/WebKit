@@ -59,7 +59,8 @@ module webaudio {
 
         // Sources
         AudioBufferSourceNode createBufferSource();
-        MediaElementAudioSourceNode createMediaElementSource(in HTMLMediaElement mediaElement);
+        MediaElementAudioSourceNode createMediaElementSource(in HTMLMediaElement mediaElement)
+            raises(DOMException);
 
         // Processing nodes
         AudioGainNode createGainNode();

@@ -70,6 +70,14 @@ function runTest() {
     } catch(e) {
         testFailed("audioNode.connect(context.destination) failed.");
     }
+    
+    // Try creating another MediaElementAudioSourceNode using the same audio element.
+    try {
+        mediaSource = context.createMediaElementSource(audioElement);
+        testFailed("createMediaElementSource() should throw if called twice on same HTMLMediaElement.");
+    } catch(e) {
+        testPassed("createMediaElementSource() threw error when called twice on same HTMLMediaElement.");
+    }
 
     finishJSTest();
 }

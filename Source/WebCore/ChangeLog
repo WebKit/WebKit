@@ -1,3 +1,51 @@
+2011-08-26  Chris Rogers  <crogers@google.com>
+
+        Add MediaPlayer::audioSourceProvider() method for audio stream access by the Web Audio API.
+        https://bugs.webkit.org/show_bug.cgi?id=66398
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::loadNextSourceChild):
+        (WebCore::HTMLMediaElement::ensureMediaPlayer):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+            MediaPlayer creation has now been put into createMediaPlayer() instead of it being created
+            separately in these various methods.  It has been made thread-safe for use with the Web Audio API
+            in conjunction with an MediaElementAudioSourceNode.
+        (WebCore::HTMLMediaElement::setAudioSourceNode):
+        (WebCore::HTMLMediaElement::audioSourceProvider):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::audioSourceNode):
+            The HTMLMediaElement now keeps track of an optional MediaElementAudioSourceNode if
+            the audio stream is being processed using the Web Audio API.
+        
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::audioSourceProvider):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::audioSourceProvider):
+            MediaPlayer now has an audioSourceProvider() method with a default "empty" implementation.
+            audioSourceProvider() returns an AudioSourceProvider object which the Web Audio API's
+            MediaElementAudioSourceNode uses (indirectly through an HTMLMediaElement method) to get the rendered audio stream.
+
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createMediaElementSource):
+        * webaudio/AudioContext.h:
+        * webaudio/AudioContext.idl:
+            AudioContext::createMediaElementSource() is now more careful to check that an HTMLMediaElement
+            doesn't already have a MediaElementAudioSourceNode attached to it.
+            
+        * webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::MediaElementAudioSourceNode):
+        (WebCore::MediaElementAudioSourceNode::~MediaElementAudioSourceNode):
+        (WebCore::MediaElementAudioSourceNode::process):
+        (WebCore::MediaElementAudioSourceNode::lock):
+        (WebCore::MediaElementAudioSourceNode::unlock):
+        * webaudio/MediaElementAudioSourceNode.h:
+            Implement thread-safe processing (replacing the old stub implementation).
+
 2011-08-23  Stephen White  <senorblanco@chromium.org>
 
         Assertion fires if canvas is resized while save() active
