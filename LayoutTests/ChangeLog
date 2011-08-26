@@ -1,5 +1,34 @@
 2011-08-26  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK rebaseline of some svg tests after switch to
+        GTK+-3.x.
+
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-anchor-no-markup-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/text-tselect-02-f-expected.txt:
+        * platform/gtk/svg/text/bidi-embedded-direction-expected.txt:
+        * platform/gtk/svg/text/bidi-reorder-value-lists-expected.txt:
+        * platform/gtk/svg/text/bidi-text-anchor-direction-expected.txt:
+        * platform/gtk/svg/text/text-tselect-02-f-expected.txt:
+
+2011-08-26  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK rebaseline of some fast/ tests after switch to
         GTK+-3.x.
 
