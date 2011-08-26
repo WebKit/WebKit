@@ -1,3 +1,9 @@
+2011-08-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Begin importing CSS3 selector test results for GTK+.
+
+        * platform/gtk/css3/selectors3/html: Import this directory.
+
 2011-08-25  Anna Cavender  <annacc@chromium.org>
 
         Tests for validating a new WebVTT parser and tokenizer for TextTrackCue content.
