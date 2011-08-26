@@ -963,6 +963,10 @@
 #define ENABLE_VERBOSE_VALUE_PROFILE 0
 #endif
 
+#if !defined(ENABLE_SIMPLE_HEAP_PROFILING)
+#define ENABLE_SIMPLE_HEAP_PROFILING 0
+#endif
+
 /* Counts uses of write barriers using sampling counters. Be sure to also
    set ENABLE_SAMPLING_COUNTERS to 1. */
 #if !defined(ENABLE_WRITE_BARRIER_PROFILING)

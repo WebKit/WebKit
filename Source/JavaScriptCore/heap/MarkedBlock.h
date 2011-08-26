@@ -172,7 +172,7 @@ namespace JSC {
         size_t ownerSetNumber(const JSCell*);
         
         template<DestructorState destructorState>
-        static void callDestructor(JSCell*, void* jsFinalObjectVPtr);
+        void callDestructor(JSCell*, void* jsFinalObjectVPtr);
         
         template<DestructorState destructorState>
         void specializedReset();

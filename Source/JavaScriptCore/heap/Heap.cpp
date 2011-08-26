@@ -312,6 +312,11 @@ void Heap::destroy()
     shrink();
     ASSERT(!size());
     
+#if ENABLE(SIMPLE_HEAP_PROFILING)
+    m_slotVisitor.m_visitedTypeCounts.dump(stderr, "Visited Type Counts");
+    m_destroyedTypeCounts.dump(stderr, "Destroyed Type Counts");
+#endif
+    
 #if ENABLE(LAZY_BLOCK_FREEING)
     releaseFreeBlocks();
 #endif

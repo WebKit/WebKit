@@ -1,3 +1,42 @@
+2011-08-26  Filip Pizlo  <fpizlo@apple.com>
+
+        The GC does not have a facility for profiling the kinds of objects
+        that occupy the heap
+        https://bugs.webkit.org/show_bug.cgi?id=66849
+
+        Reviewed by Geoffrey Garen.
+        
+        Destructor calls and object scans are now optionally counted, per
+        vtable. When the heap is destroyed and profiling is enabled, the
+        counts are dumped, with care taken to print the names of classes
+        (modulo C++ mangling) sorted in descending commonality.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::destroy):
+        * heap/Heap.h:
+        * heap/MarkStack.cpp:
+        (JSC::SlotVisitor::visitChildren):
+        (JSC::SlotVisitor::drain):
+        * heap/MarkStack.h:
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::callDestructor):
+        * heap/MarkedBlock.h:
+        * heap/VTableSpectrum.cpp: Added.
+        (JSC::VTableSpectrum::VTableSpectrum):
+        (JSC::VTableSpectrum::~VTableSpectrum):
+        (JSC::VTableSpectrum::countVPtr):
+        (JSC::VTableSpectrum::count):
+        (JSC::VTableAndCount::VTableAndCount):
+        (JSC::VTableAndCount::operator<):
+        (JSC::VTableSpectrum::dump):
+        * heap/VTableSpectrum.h: Added.
+        * wtf/Platform.h:
+
 2011-08-26  Juan C. Montemayor  <jmont@apple.com>
 
         Update topCallFrame when calling host functions in the JIT

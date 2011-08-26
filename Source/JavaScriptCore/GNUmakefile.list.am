@@ -149,6 +149,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/OldSpace.cpp \
 	Source/JavaScriptCore/heap/OldSpace.h \
 	Source/JavaScriptCore/heap/Strong.h \
+	Source/JavaScriptCore/heap/VTableSpectrum.cpp \
+	Source/JavaScriptCore/heap/VTableSpectrum.h \
 	Source/JavaScriptCore/heap/Weak.h \
 	Source/JavaScriptCore/heap/WriteBarrierSupport.cpp \
 	Source/JavaScriptCore/heap/WriteBarrierSupport.h \

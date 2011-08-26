@@ -1966,6 +1966,14 @@
                                     >
                             </File>
                             <File
+                                    RelativePath="..\..\heap\VTableSpectrum.h"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\VTableSpectrum.cpp"
+                                    >
+                            </File>
+                            <File
                                     RelativePath="..\..\heap\Weak.h"
                                     >
                             </File>

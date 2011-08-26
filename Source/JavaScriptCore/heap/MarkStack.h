@@ -29,6 +29,8 @@
 #include "HandleTypes.h"
 #include "JSValue.h"
 #include "Register.h"
+#include "VTableSpectrum.h"
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/Noncopyable.h>
@@ -97,6 +99,10 @@ namespace JSC {
 
         void reset();
 
+#if ENABLE(SIMPLE_HEAP_PROFILING)
+        VTableSpectrum m_visitedTypeCounts;
+#endif
+
     protected:
 #if ENABLE(GC_VALIDATION)
         static void validateSet(JSValue*, size_t);
@@ -114,7 +120,7 @@ namespace JSC {
         MarkStackArray<MarkSet> m_markSets;
         MarkStackArray<JSCell*> m_values;
         HashSet<void*> m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
-
+        
 #if !ASSERT_DISABLED
     public:
         bool m_isCheckingForDefaultMarkViolation;

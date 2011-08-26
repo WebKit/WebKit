@@ -53,6 +53,10 @@ void MarkStack::append(ConservativeRoots& conservativeRoots)
 
 inline void SlotVisitor::visitChildren(JSCell* cell)
 {
+#if ENABLE(SIMPLE_HEAP_PROFILING)
+    m_visitedTypeCounts.count(cell);
+#endif
+
     ASSERT(Heap::isMarked(cell));
     if (cell->structure()->typeInfo().type() < CompoundType) {
         cell->JSCell::visitChildren(*this);
@@ -108,6 +112,9 @@ void SlotVisitor::drain()
             }
 
             if (cell->structure()->typeInfo().type() < CompoundType) {
+#if ENABLE(SIMPLE_HEAP_PROFILING)
+                m_visitedTypeCounts.count(cell);
+#endif
                 cell->JSCell::visitChildren(*this);
                 if (current.m_values == end) {
                     m_markSets.removeLast();

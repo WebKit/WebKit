@@ -124,6 +124,8 @@ namespace JSC {
         void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
 
     private:
+        friend class MarkedBlock;
+        
         typedef HashSet<MarkedBlock*>::iterator BlockIterator;
 
         static const size_t minExtraCost = 256;
@@ -183,6 +185,10 @@ namespace JSC {
         Mutex m_freeBlockLock;
         ThreadCondition m_freeBlockCondition;
         bool m_blockFreeingThreadShouldQuit;
+#endif
+
+#if ENABLE(SIMPLE_HEAP_PROFILING)
+        VTableSpectrum m_destroyedTypeCounts;
 #endif
 
         size_t m_extraCost;
