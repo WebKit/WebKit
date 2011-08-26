@@ -1,3 +1,13 @@
+2011-08-26  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: in some cases Popover code is failing to calculate popover box position.
+        https://bugs.webkit.org/show_bug.cgi?id=67029
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/Popover.js:
+        (WebInspector.Popover.prototype._positionElement):
+
 2011-08-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         [Qt] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm fails intermittently

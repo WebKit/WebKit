@@ -113,7 +113,7 @@ WebInspector.Popover.prototype = {
         var anchorBox = anchorElement.offsetRelativeToWindow(window);
         anchorBox.width = anchorElement.offsetWidth;
         anchorBox.height = anchorElement.offsetHeight;
-        while (anchorElement !== anchorElement.ownerDocument.body) {
+        while (anchorElement && anchorElement !== anchorElement.ownerDocument.body) {
             if (anchorElement.scrollLeft)
                 anchorBox.x -= anchorElement.scrollLeft;
             if (anchorElement.scrollTop)
