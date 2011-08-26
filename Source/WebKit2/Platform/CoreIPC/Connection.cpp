@@ -475,7 +475,7 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
             // FIXME: Although we run forever, any events incoming will cause us to drop out and exit out. This however doesn't
             // account for a timeout value passed in. Timeout is always NoTimeout in these cases, but that could change.
             RunLoop::current()->runForDuration(1e10);
-            timeout = currentTime() >= absoluteTime;
+            timedOut = currentTime() >= absoluteTime;
 #endif
         } else
             timedOut = !m_syncMessageState->wait(absoluteTime);

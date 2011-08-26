@@ -1,3 +1,15 @@
+2011-08-26  Sam Weinig  <sam@webkit.org>
+
+        Fix typo in Connection.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=67060
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForSyncReply):
+        We want timedOut, not timeout.  There is not a current way to cause this
+        to be an issue. This issue was caught by the Clang Static Analyzer.
+
 2011-08-26  Alice Liu  <alice.liu@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66823
