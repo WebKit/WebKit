@@ -1562,6 +1562,8 @@ bool WebViewImpl::selectionRange(WebPoint& start, WebPoint& end) const
 
     start = frame->view()->contentsToWindow(start);
     end = frame->view()->contentsToWindow(end);
+    if (!frame->selection()->selection().isBaseFirst())
+        std::swap(start, end);
     return true;
 }
 

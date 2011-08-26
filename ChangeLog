@@ -1,3 +1,13 @@
+2011-08-26  Varun Jain  <varunjain@google.com>
+
+        WebViewImpl::selectionRange should return range in the right order.
+        https://bugs.webkit.org/show_bug.cgi?id=66973
+
+        Reviewed by Darin Fisher.
+
+        *  Source/WebKit/chromium/public/WebWidget.h:
+        *  Source/WebKit/chromium/src/WebViewImpl.cpp:
+
 2011-08-25  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

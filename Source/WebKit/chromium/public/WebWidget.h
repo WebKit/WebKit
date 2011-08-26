@@ -152,7 +152,8 @@ public:
     virtual WebRect caretOrSelectionBounds() { return WebRect(); }
 
     // Returns the start and end point for the current selection, aligned to the
-    // bottom of the selected line.
+    // bottom of the selected line. start and end are the logical beginning and
+    // ending positions of the selection. Visually, start may lie after end.
     virtual bool selectionRange(WebPoint& start, WebPoint& end) const { return false; }
 
     // Fetch the current selection range of this WebWidget. If there is no
