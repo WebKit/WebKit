@@ -1,3 +1,29 @@
+2011-08-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Add Qt specific expected results for new tests introduced in r93794.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/table/table-after-child-in-table-expected.png: Added.
+        * platform/qt/fast/table/table-after-child-in-table-expected.txt: Added.
+        * platform/qt/fast/table/table-before-child-in-table-expected.png: Added.
+        * platform/qt/fast/table/table-before-child-in-table-expected.txt: Added.
+        * platform/qt/fast/table/table-cell-after-child-in-block-expected.png: Added.
+        * platform/qt/fast/table/table-cell-after-child-in-block-expected.txt: Added.
+        * platform/qt/fast/table/table-cell-after-child-in-table-expected.png: Added.
+        * platform/qt/fast/table/table-cell-after-child-in-table-expected.txt: Added.
+        * platform/qt/fast/table/table-cell-before-child-in-block-expected.png: Added.
+        * platform/qt/fast/table/table-cell-before-child-in-block-expected.txt: Added.
+        * platform/qt/fast/table/table-cell-before-child-in-table-expected.png: Added.
+        * platform/qt/fast/table/table-cell-before-child-in-table-expected.txt: Added.
+        * platform/qt/fast/table/table-row-after-child-in-block-expected.png: Added.
+        * platform/qt/fast/table/table-row-after-child-in-block-expected.txt: Added.
+        * platform/qt/fast/table/table-row-after-child-in-table-expected.png: Added.
+        * platform/qt/fast/table/table-row-after-child-in-table-expected.txt: Added.
+        * platform/qt/fast/table/table-row-before-child-in-block-expected.png: Added.
+        * platform/qt/fast/table/table-row-before-child-in-block-expected.txt: Added.
+        * platform/qt/fast/table/table-row-before-child-in-table-expected.png: Added.
+        * platform/qt/fast/table/table-row-before-child-in-table-expected.txt: Added.
+
 2011-08-26  Shinya Kawanaka  <shinyak@google.com>
 
         REGRESSION(r93390): Empty or invalid maxlength of an input tag should be ignored.
