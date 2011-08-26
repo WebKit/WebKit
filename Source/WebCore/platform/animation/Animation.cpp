@@ -130,4 +130,10 @@ bool Animation::animationsMatch(const Animation* o, bool matchPlayStates) const
     return !matchPlayStates || (m_playState == o->m_playState && m_playStateSet == o->m_playStateSet);
 }
 
+const String& Animation::initialAnimationName()
+{
+    DEFINE_STATIC_LOCAL(String, initialValue, ("none"));
+    return initialValue;
+}
+
 } // namespace WebCore

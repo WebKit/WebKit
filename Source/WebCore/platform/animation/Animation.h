@@ -162,15 +162,15 @@ private:
     bool m_isNone            : 1;
 
 public:
-    static float initialAnimationDelay() { return 0; }
+    static double initialAnimationDelay() { return 0; }
     static AnimationDirection initialAnimationDirection() { return AnimationDirectionNormal; }
     static double initialAnimationDuration() { return 0; }
     static unsigned initialAnimationFillMode() { return AnimationFillModeNone; }
     static int initialAnimationIterationCount() { return 1; }
-    static String initialAnimationName() { return String("none"); }
+    static const String& initialAnimationName();
     static EAnimPlayState initialAnimationPlayState() { return AnimPlayStatePlaying; }
     static int initialAnimationProperty() { return cAnimateAll; }
-    static PassRefPtr<TimingFunction> initialAnimationTimingFunction() { return CubicBezierTimingFunction::create(); }
+    static const PassRefPtr<TimingFunction> initialAnimationTimingFunction() { return CubicBezierTimingFunction::create(); }
 };
 
 } // namespace WebCore

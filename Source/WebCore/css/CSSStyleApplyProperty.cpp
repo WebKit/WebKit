@@ -770,6 +770,101 @@ private:
     }
 };
 
+template <typename T>
+class ApplyPropertyAnimation : public ApplyPropertyBase {
+public:
+    typedef T (Animation::*GetterFunction)() const;
+    typedef void (Animation::*SetterFunction)(T);
+    typedef bool (Animation::*TestFunction)() const;
+    typedef void (Animation::*ClearFunction)();
+    typedef T (*InitialFunction)();
+    typedef void (CSSStyleSelector::*MapFunction)(Animation*, CSSValue*);
+    typedef AnimationList* (RenderStyle::*AnimationGetter)();
+    typedef const AnimationList* (RenderStyle::*ImmutableAnimationGetter)() const;
+
+    ApplyPropertyAnimation(GetterFunction getter, SetterFunction setter, TestFunction test, ClearFunction clear, InitialFunction initial, MapFunction map,
+                           AnimationGetter animationGetter, ImmutableAnimationGetter immutableAnimationGetter)
+        : m_getter(getter)
+        , m_setter(setter)
+        , m_test(test)
+        , m_clear(clear)
+        , m_initial(initial)
+        , m_map(map)
+        , m_animationGetter(animationGetter)
+        , m_immutableAnimationGetter(immutableAnimationGetter)
+    {
+    }
+
+private:
+    virtual void applyInheritValue(CSSStyleSelector* selector) const
+    {
+        AnimationList* list = accessAnimations(selector->style());
+        const AnimationList* parentList = animations(selector->parentStyle());
+        size_t i = 0, parentSize = parentList ? parentList->size() : 0;
+        for ( ; i < parentSize && test(parentList->animation(i)); ++i) {
+            if (list->size() <= i)
+                list->append(Animation::create());
+            setValue(list->animation(i), value(parentList->animation(i)));
+        }
+
+        /* Reset any remaining animations to not have the property set. */
+        for ( ; i < list->size(); ++i)
+            clear(list->animation(i));
+    }
+
+    virtual void applyInitialValue(CSSStyleSelector* selector) const
+    {
+        AnimationList* list = accessAnimations(selector->style());
+        if (list->isEmpty())
+            list->append(Animation::create());
+        setValue(list->animation(0), initial());
+        for (size_t i = 1; i < list->size(); ++i)
+            clear(list->animation(i));
+    }
+
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        AnimationList* list = accessAnimations(selector->style());
+        size_t childIndex = 0;
+        if (value->isValueList()) {
+            /* Walk each value and put it into an animation, creating new animations as needed. */
+            for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
+                if (childIndex <= list->size())
+                    list->append(Animation::create());
+                map(selector, list->animation(childIndex), i.value());
+                ++childIndex;
+            }
+        } else {
+            if (list->isEmpty())
+                list->append(Animation::create());
+            map(selector, list->animation(childIndex), value);
+            childIndex = 1;
+        }
+        for ( ; childIndex < list->size(); ++childIndex) {
+            /* Reset all remaining animations to not have the property set. */
+            clear(list->animation(childIndex));
+        }
+    }
+
+    void setValue(Animation* animation, T value) const { (animation->*m_setter)(value); }
+    T value(const Animation* animation) const { return (animation->*m_getter)(); }
+    bool test(const Animation* animation) const { return (animation->*m_test)(); }
+    void clear(Animation* animation) const { (animation->*m_clear)(); }
+    T initial() const { return (*m_initial)(); }
+    void map(CSSStyleSelector* selector, Animation* animation, CSSValue* value) const { (selector->*m_map)(animation, value); }
+    AnimationList* accessAnimations(RenderStyle* style) const { return (style->*m_animationGetter)(); }
+    const AnimationList* animations(RenderStyle* style) const { return (style->*m_immutableAnimationGetter)(); }
+
+    GetterFunction m_getter;
+    SetterFunction m_setter;
+    TestFunction m_test;
+    ClearFunction m_clear;
+    InitialFunction m_initial;
+    MapFunction m_map;
+    AnimationGetter m_animationGetter;
+    ImmutableAnimationGetter m_immutableAnimationGetter;
+};
+
 const CSSStyleApplyProperty& CSSStyleApplyProperty::sharedCSSStyleApplyProperty()
 {
     DEFINE_STATIC_LOCAL(CSSStyleApplyProperty, cssStyleApplyPropertyInstance, ());
@@ -954,6 +1049,21 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitTransformOriginY, new ApplyPropertyLength<>(&RenderStyle::transformOriginY, &RenderStyle::setTransformOriginY, &RenderStyle::initialTransformOriginY));
     setPropertyHandler(CSSPropertyWebkitTransformOriginZ, new ApplyPropertyComputeLength<float>(&RenderStyle::transformOriginZ, &RenderStyle::setTransformOriginZ, &RenderStyle::initialTransformOriginZ));
     setPropertyHandler(CSSPropertyWebkitTransformOrigin, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyWebkitTransformOriginX), propertyHandler(CSSPropertyWebkitTransformOriginY), propertyHandler(CSSPropertyWebkitTransformOriginZ)));
+
+    setPropertyHandler(CSSPropertyWebkitAnimationDelay, new ApplyPropertyAnimation<double>(&Animation::delay, &Animation::setDelay, &Animation::isDelaySet, &Animation::clearDelay, &Animation::initialAnimationDelay, &CSSStyleSelector::mapAnimationDelay, &RenderStyle::accessAnimations, &RenderStyle::animations));
+    setPropertyHandler(CSSPropertyWebkitAnimationDirection, new ApplyPropertyAnimation<Animation::AnimationDirection>(&Animation::direction, &Animation::setDirection, &Animation::isDirectionSet, &Animation::clearDirection, &Animation::initialAnimationDirection, &CSSStyleSelector::mapAnimationDirection, &RenderStyle::accessAnimations, &RenderStyle::animations));
+    setPropertyHandler(CSSPropertyWebkitAnimationDuration, new ApplyPropertyAnimation<double>(&Animation::duration, &Animation::setDuration, &Animation::isDurationSet, &Animation::clearDuration, &Animation::initialAnimationDuration, &CSSStyleSelector::mapAnimationDuration, &RenderStyle::accessAnimations, &RenderStyle::animations));
+    setPropertyHandler(CSSPropertyWebkitAnimationFillMode, new ApplyPropertyAnimation<unsigned>(&Animation::fillMode, &Animation::setFillMode, &Animation::isFillModeSet, &Animation::clearFillMode, &Animation::initialAnimationFillMode, &CSSStyleSelector::mapAnimationFillMode, &RenderStyle::accessAnimations, &RenderStyle::animations));
+    setPropertyHandler(CSSPropertyWebkitAnimationIterationCount, new ApplyPropertyAnimation<int>(&Animation::iterationCount, &Animation::setIterationCount, &Animation::isIterationCountSet, &Animation::clearIterationCount, &Animation::initialAnimationIterationCount, &CSSStyleSelector::mapAnimationIterationCount, &RenderStyle::accessAnimations, &RenderStyle::animations));
+    setPropertyHandler(CSSPropertyWebkitAnimationName, new ApplyPropertyAnimation<const String&>(&Animation::name, &Animation::setName, &Animation::isNameSet, &Animation::clearName, &Animation::initialAnimationName, &CSSStyleSelector::mapAnimationName, &RenderStyle::accessAnimations, &RenderStyle::animations));
+    setPropertyHandler(CSSPropertyWebkitAnimationPlayState, new ApplyPropertyAnimation<EAnimPlayState>(&Animation::playState, &Animation::setPlayState, &Animation::isPlayStateSet, &Animation::clearPlayState, &Animation::initialAnimationPlayState, &CSSStyleSelector::mapAnimationPlayState, &RenderStyle::accessAnimations, &RenderStyle::animations));
+    setPropertyHandler(CSSPropertyWebkitAnimationTimingFunction, new ApplyPropertyAnimation<const PassRefPtr<TimingFunction> >(&Animation::timingFunction, &Animation::setTimingFunction, &Animation::isTimingFunctionSet, &Animation::clearTimingFunction, &Animation::initialAnimationTimingFunction, &CSSStyleSelector::mapAnimationTimingFunction, &RenderStyle::accessAnimations, &RenderStyle::animations));
+
+    setPropertyHandler(CSSPropertyWebkitTransitionDelay, new ApplyPropertyAnimation<double>(&Animation::delay, &Animation::setDelay, &Animation::isDelaySet, &Animation::clearDelay, &Animation::initialAnimationDelay, &CSSStyleSelector::mapAnimationDelay, &RenderStyle::accessTransitions, &RenderStyle::transitions));
+    setPropertyHandler(CSSPropertyWebkitTransitionDuration, new ApplyPropertyAnimation<double>(&Animation::duration, &Animation::setDuration, &Animation::isDurationSet, &Animation::clearDuration, &Animation::initialAnimationDuration, &CSSStyleSelector::mapAnimationDuration, &RenderStyle::accessTransitions, &RenderStyle::transitions));
+    setPropertyHandler(CSSPropertyWebkitTransitionProperty, new ApplyPropertyAnimation<int>(&Animation::property, &Animation::setProperty, &Animation::isPropertySet, &Animation::clearProperty, &Animation::initialAnimationProperty, &CSSStyleSelector::mapAnimationProperty, &RenderStyle::accessTransitions, &RenderStyle::transitions));
+    setPropertyHandler(CSSPropertyWebkitTransitionTimingFunction, new ApplyPropertyAnimation<const PassRefPtr<TimingFunction> >(&Animation::timingFunction, &Animation::setTimingFunction, &Animation::isTimingFunctionSet, &Animation::clearTimingFunction, &Animation::initialAnimationTimingFunction, &CSSStyleSelector::mapAnimationTimingFunction, &RenderStyle::accessTransitions, &RenderStyle::transitions));
+
 
     setPropertyHandler(CSSPropertyWebkitColumnCount, new ApplyPropertyAuto<unsigned short>(&RenderStyle::columnCount, &RenderStyle::setColumnCount, &RenderStyle::hasAutoColumnCount, &RenderStyle::setHasAutoColumnCount));
     setPropertyHandler(CSSPropertyWebkitColumnGap, new ApplyPropertyAuto<float, ComputeLength, CSSValueNormal>(&RenderStyle::columnGap, &RenderStyle::setColumnGap, &RenderStyle::hasNormalColumnGap, &RenderStyle::setHasNormalColumnGap));

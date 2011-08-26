@@ -1,3 +1,38 @@
+2011-08-25  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement animation and transition properties in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=66126
+
+        Reviewed by Dean Jackson.
+
+        No new tests. This is essentially a refactoring of the HANDLE_ANIMATION* and HANDLE_TRANSITION* macros in CSSStyleSelector.cpp.
+        The only functional change is to iterate correctly over the lists instead of setting only the first element. See bug 66118 for details on that.
+
+        * css/CSSStyleApplyProperty.cpp:
+        Added new class ApplyPropertyAnimation to handle animation and transition properties.
+        (WebCore::ApplyPropertyAnimation::ApplyPropertyAnimation):
+        (WebCore::ApplyPropertyAnimation::applyInheritValue):
+        (WebCore::ApplyPropertyAnimation::applyInitialValue):
+        (WebCore::ApplyPropertyAnimation::applyValue):
+        (WebCore::ApplyPropertyAnimation::setValue):
+        (WebCore::ApplyPropertyAnimation::value):
+        (WebCore::ApplyPropertyAnimation::test):
+        (WebCore::ApplyPropertyAnimation::clear):
+        (WebCore::ApplyPropertyAnimation::initial):
+        (WebCore::ApplyPropertyAnimation::map):
+        (WebCore::ApplyPropertyAnimation::accessAnimations):
+        (WebCore::ApplyPropertyAnimation::animations):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        Removed animation and transition macros (celebrate!)
+        (WebCore::CSSStyleSelector::applyProperty):
+        Removed old implementations of animation and transition properties.
+        * platform/animation/Animation.h:
+        Changed return types of initial values to match the setters and getters.
+        (WebCore::Animation::initialAnimationDelay):
+        (WebCore::Animation::initialAnimationName):
+        (WebCore::Animation::initialAnimationTimingFunction):
+
 2011-08-25  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Concentrate RenderLayer repaint rects updates

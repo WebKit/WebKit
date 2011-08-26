@@ -164,104 +164,6 @@ HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(prop, Prop, Value) \
 if (primitiveValue) \
     m_style->set##Prop(*primitiveValue);
 
-#define HANDLE_ANIMATION_INHERIT_AND_INITIAL(prop, Prop) \
-if (isInherit) { \
-    AnimationList* list = m_style->accessAnimations(); \
-    const AnimationList* parentList = m_parentStyle->animations(); \
-    size_t i = 0, parentSize = parentList ? parentList->size() : 0; \
-    for ( ; i < parentSize && parentList->animation(i)->is##Prop##Set(); ++i) { \
-        if (list->size() <= i) \
-            list->append(Animation::create()); \
-        list->animation(i)->set##Prop(parentList->animation(i)->prop()); \
-    } \
-    \
-    /* Reset any remaining animations to not have the property set. */ \
-    for ( ; i < list->size(); ++i) \
-        list->animation(i)->clear##Prop(); \
-} else if (isInitial) { \
-    AnimationList* list = m_style->accessAnimations(); \
-    if (list->isEmpty()) \
-        list->append(Animation::create()); \
-    list->animation(0)->set##Prop(Animation::initialAnimation##Prop()); \
-    for (size_t i = 1; i < list->size(); ++i) \
-        list->animation(0)->clear##Prop(); \
-}
-
-#define HANDLE_ANIMATION_VALUE(prop, Prop, value) { \
-HANDLE_ANIMATION_INHERIT_AND_INITIAL(prop, Prop) \
-if (isInherit || isInitial) \
-    return; \
-AnimationList* list = m_style->accessAnimations(); \
-size_t childIndex = 0; \
-if (value->isValueList()) { \
-    /* Walk each value and put it into an animation, creating new animations as needed. */ \
-    for (CSSValueListIterator i = value; i.hasMore(); i.advance()) { \
-        if (childIndex <= list->size()) \
-            list->append(Animation::create()); \
-        mapAnimation##Prop(list->animation(childIndex), i.value()); \
-        ++childIndex; \
-    } \
-} else { \
-    if (list->isEmpty()) \
-        list->append(Animation::create()); \
-    mapAnimation##Prop(list->animation(childIndex), value); \
-    childIndex = 1; \
-} \
-for ( ; childIndex < list->size(); ++childIndex) { \
-    /* Reset all remaining animations to not have the property set. */ \
-    list->animation(childIndex)->clear##Prop(); \
-} \
-}
-
-#define HANDLE_TRANSITION_INHERIT_AND_INITIAL(prop, Prop) \
-if (isInherit) { \
-    AnimationList* list = m_style->accessTransitions(); \
-    const AnimationList* parentList = m_parentStyle->transitions(); \
-    size_t i = 0, parentSize = parentList ? parentList->size() : 0; \
-    for ( ; i < parentSize && parentList->animation(i)->is##Prop##Set(); ++i) { \
-        if (list->size() <= i) \
-            list->append(Animation::create()); \
-        list->animation(i)->set##Prop(parentList->animation(i)->prop()); \
-    } \
-    \
-    /* Reset any remaining transitions to not have the property set. */ \
-    for ( ; i < list->size(); ++i) \
-        list->animation(i)->clear##Prop(); \
-} else if (isInitial) { \
-    AnimationList* list = m_style->accessTransitions(); \
-    if (list->isEmpty()) \
-        list->append(Animation::create()); \
-    list->animation(0)->set##Prop(Animation::initialAnimation##Prop()); \
-    for (size_t i = 1; i < list->size(); ++i) \
-        list->animation(0)->clear##Prop(); \
-}
-
-#define HANDLE_TRANSITION_VALUE(prop, Prop, value) { \
-HANDLE_TRANSITION_INHERIT_AND_INITIAL(prop, Prop) \
-if (isInherit || isInitial) \
-    return; \
-AnimationList* list = m_style->accessTransitions(); \
-size_t childIndex = 0; \
-if (value->isValueList()) { \
-    /* Walk each value and put it into a transition, creating new animations as needed. */ \
-    for (CSSValueListIterator i = value; i.hasMore(); i.advance()) { \
-        if (childIndex <= list->size()) \
-            list->append(Animation::create()); \
-        mapAnimation##Prop(list->animation(childIndex), i.value()); \
-        ++childIndex; \
-    } \
-} else { \
-    if (list->isEmpty()) \
-        list->append(Animation::create()); \
-    mapAnimation##Prop(list->animation(childIndex), value); \
-    childIndex = 1; \
-} \
-for ( ; childIndex < list->size(); ++childIndex) { \
-    /* Reset all remaining transitions to not have the property set. */ \
-    list->animation(childIndex)->clear##Prop(); \
-} \
-}
-
 #define HANDLE_INHERIT_COND(propID, prop, Prop) \
 if (id == propID) { \
     m_style->set##Prop(m_parentStyle->prop()); \
@@ -4849,47 +4751,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInherit)
             m_style->inheritAnimations(m_parentStyle->animations());
         return;
-    case CSSPropertyWebkitAnimationDelay:
-        HANDLE_ANIMATION_VALUE(delay, Delay, value)
-        return;
-    case CSSPropertyWebkitAnimationDirection:
-        HANDLE_ANIMATION_VALUE(direction, Direction, value)
-        return;
-    case CSSPropertyWebkitAnimationDuration:
-        HANDLE_ANIMATION_VALUE(duration, Duration, value)
-        return;
-    case CSSPropertyWebkitAnimationFillMode:
-        HANDLE_ANIMATION_VALUE(fillMode, FillMode, value)
-        return;
-    case CSSPropertyWebkitAnimationIterationCount:
-        HANDLE_ANIMATION_VALUE(iterationCount, IterationCount, value)
-        return;
-    case CSSPropertyWebkitAnimationName:
-        HANDLE_ANIMATION_VALUE(name, Name, value)
-        return;
-    case CSSPropertyWebkitAnimationPlayState:
-        HANDLE_ANIMATION_VALUE(playState, PlayState, value)
-        return;
-    case CSSPropertyWebkitAnimationTimingFunction:
-        HANDLE_ANIMATION_VALUE(timingFunction, TimingFunction, value)
-        return;
     case CSSPropertyWebkitTransition:
         if (isInitial)
             m_style->clearTransitions();
         else if (isInherit)
             m_style->inheritTransitions(m_parentStyle->transitions());
-        return;
-    case CSSPropertyWebkitTransitionDelay:
-        HANDLE_TRANSITION_VALUE(delay, Delay, value)
-        return;
-    case CSSPropertyWebkitTransitionDuration:
-        HANDLE_TRANSITION_VALUE(duration, Duration, value)
-        return;
-    case CSSPropertyWebkitTransitionProperty:
-        HANDLE_TRANSITION_VALUE(property, Property, value)
-        return;
-    case CSSPropertyWebkitTransitionTimingFunction:
-        HANDLE_TRANSITION_VALUE(timingFunction, TimingFunction, value)
         return;
     case CSSPropertyPointerEvents:
     {
@@ -5170,6 +5036,18 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitPerspectiveOriginX:
     case CSSPropertyWebkitPerspectiveOriginY:
     case CSSPropertyWebkitPerspectiveOrigin:
+    case CSSPropertyWebkitAnimationDelay:
+    case CSSPropertyWebkitAnimationDirection:
+    case CSSPropertyWebkitAnimationDuration:
+    case CSSPropertyWebkitAnimationFillMode:
+    case CSSPropertyWebkitAnimationIterationCount:
+    case CSSPropertyWebkitAnimationName:
+    case CSSPropertyWebkitAnimationPlayState:
+    case CSSPropertyWebkitAnimationTimingFunction:
+    case CSSPropertyWebkitTransitionDelay:
+    case CSSPropertyWebkitTransitionDuration:
+    case CSSPropertyWebkitTransitionProperty:
+    case CSSPropertyWebkitTransitionTimingFunction:
     case CSSPropertyCursor:
     case CSSPropertyWebkitColumnCount:
     case CSSPropertyWebkitColumnGap:
