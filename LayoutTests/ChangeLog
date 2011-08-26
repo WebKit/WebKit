@@ -1,5 +1,11 @@
 2011-08-26  Martin Robinson  <mrobinson@igalia.com>
 
+        Continue importing GTK+ CSS3 selector test results.
+
+        * platform/gtk/css3/selectors3/xml: Import the next set of results.
+
+2011-08-26  Martin Robinson  <mrobinson@igalia.com>
+
         Begin importing the last directory of CSS3 selector results for GTK+.
 
         * platform/gtk/css3/selectors3/xml: Import the first set of files in this directory.
