@@ -1,3 +1,16 @@
+2011-08-26  Matthew Delaney  <mdelaney@apple.com>
+
+        Remove offset hack from GraphicsContextCG setShadow code
+        https://bugs.webkit.org/show_bug.cgi?id=67052
+
+        Reviewed by Simon Fraser.
+
+        No new tests - current tests cover it.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        Removing the offset hack introduced in http://trac.webkit.org/changeset/28714
+        for an issue with offsets in an old version of CoreGraphics that's long since been fixed.
+
 2011-08-26  Alexey Proskuryakov  <ap@apple.com>
 
         Get rid of frame life support timer
