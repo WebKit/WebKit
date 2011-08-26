@@ -282,7 +282,7 @@ namespace JSC {
         void finishCreation(JSGlobalData& globalData, unsigned fiberCount, JSString* s1, JSString* s2)
         {
             Base::finishCreation(globalData);
-            ASSERT(fiberCount <= s_maxInternalRopeLength);
+            ASSERT_UNUSED(fiberCount, fiberCount <= s_maxInternalRopeLength);
             unsigned index = 0;
             appendStringInCreate(index, s1);
             appendStringInCreate(index, s2);
@@ -292,7 +292,7 @@ namespace JSC {
         void finishCreation(JSGlobalData& globalData, unsigned fiberCount, JSString* s1, const UString& u2)
         {
             Base::finishCreation(globalData);
-            ASSERT(fiberCount <= s_maxInternalRopeLength);
+            ASSERT_UNUSED(fiberCount, fiberCount <= s_maxInternalRopeLength);
             unsigned index = 0;
             appendStringInCreate(index, s1);
             appendStringInCreate(index, u2);
@@ -302,7 +302,7 @@ namespace JSC {
         void finishCreation(JSGlobalData& globalData, unsigned fiberCount, const UString& u1, JSString* s2)
         {
             Base::finishCreation(globalData);
-            ASSERT(fiberCount <= s_maxInternalRopeLength);
+            ASSERT_UNUSED(fiberCount, fiberCount <= s_maxInternalRopeLength);
             unsigned index = 0;
             appendStringInCreate(index, u1);
             appendStringInCreate(index, s2);

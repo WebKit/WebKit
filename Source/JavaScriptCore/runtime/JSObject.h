@@ -266,7 +266,7 @@ namespace JSC {
             ASSERT(m_structure->propertyStorageCapacity() < baseExternalStorageCapacity);
             ASSERT(m_structure->isEmpty());
             ASSERT(prototype().isNull() || Heap::heap(this) == Heap::heap(prototype()));
-            ASSERT(static_cast<void*>(inlineStorage) == static_cast<void*>(this + 1));
+            ASSERT_UNUSED(inlineStorage, static_cast<void*>(inlineStorage) == static_cast<void*>(this + 1));
             ASSERT(m_structure->typeInfo().type() == ObjectType);
         }
 

@@ -1,5 +1,21 @@
 2011-08-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Fixing broken build due to unused variables in release mode
+        https://bugs.webkit.org/show_bug.cgi?id=67004
+
+        Unreviewed, release build fix.
+
+        Fixing broken build due to unused variables in ASSERTs in release build.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::finishCreation):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::finishCreation):
+        * runtime/ScopeChain.h:
+        (JSC::ScopeChainNode::finishCreation):
+
+2011-08-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Unzip initialization lists and constructors in JSCell hierarchy (1/7)
         https://bugs.webkit.org/show_bug.cgi?id=66827
 

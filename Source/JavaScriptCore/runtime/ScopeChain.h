@@ -50,8 +50,7 @@ namespace JSC {
         void finishCreation(JSGlobalData* globalData, JSGlobalObject* globalObject)
         {
             Base::finishCreation(*globalData);
-            ASSERT(globalData);
-            ASSERT(globalObject);
+            ASSERT_UNUSED(globalObject, globalObject);
         }
 
     public:
