@@ -1,3 +1,25 @@
+2011-08-23  Stephen White  <senorblanco@chromium.org>
+
+        Assertion fires if canvas is resized while save() active
+        https://bugs.webkit.org/show_bug.cgi?id=66710
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/canvas/resize-while-save-active.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+        Call CanvasRenderingContext2D::reset() before resizing the canvas,
+        so that the GraphicsContext state stack can be unwound.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::unwindStateStack):
+        (WebCore::CanvasRenderingContext2D::~CanvasRenderingContext2D):
+        Refactor the state stack unwinding code from the destructor to 
+        unwindStateStack() (new).
+        (WebCore::CanvasRenderingContext2D::reset):
+        Unwind the GraphicsContext state stack when the context is reset.
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2011-08-26  Darin Adler  <darin@apple.com>
 
         [Mac] Use the progress cursor instead of the wristwatch for CSS "wait" cursor

@@ -273,6 +273,8 @@ private:
 
     GraphicsContext* drawingContext() const;
 
+    void unwindStateStack();
+
     void applyStrokePattern();
     void applyFillPattern();
 

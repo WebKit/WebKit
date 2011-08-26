@@ -127,9 +127,8 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
     setLineWidth(lineWidth());
 }
 
-CanvasRenderingContext2D::~CanvasRenderingContext2D()
+void CanvasRenderingContext2D::unwindStateStack()
 {
-#if !ASSERT_DISABLED
     // Ensure that the state stack in the ImageBuffer's context
     // is cleared before destruction, to avoid assertions in the
     // GraphicsContext dtor.
@@ -139,6 +138,12 @@ CanvasRenderingContext2D::~CanvasRenderingContext2D()
                 context->restore();
         }
     }
+}
+
+CanvasRenderingContext2D::~CanvasRenderingContext2D()
+{
+#if !ASSERT_DISABLED
+    unwindStateStack();
 #endif
 }
 
@@ -170,6 +175,7 @@ bool CanvasRenderingContext2D::paintsIntoCanvasBuffer() const
 
 void CanvasRenderingContext2D::reset()
 {
+    unwindStateStack();
     m_stateStack.resize(1);
     m_stateStack.first() = State();
     m_path.clear();

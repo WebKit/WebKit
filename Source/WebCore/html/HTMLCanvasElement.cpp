@@ -237,6 +237,11 @@ void HTMLCanvasElement::reset()
     if (!ok || h < 0)
         h = DefaultHeight;
 
+    if (m_context && m_context->is2d()) {
+        CanvasRenderingContext2D* context2D = static_cast<CanvasRenderingContext2D*>(m_context.get());
+        context2D->reset();
+    }
+
     IntSize oldSize = size();
     setSurfaceSize(IntSize(w, h)); // The image buffer gets cleared here.
 
@@ -244,11 +249,6 @@ void HTMLCanvasElement::reset()
     if (m_context && m_context->is3d() && oldSize != size())
         static_cast<WebGLRenderingContext*>(m_context.get())->reshape(width(), height());
 #endif
-
-    if (m_context && m_context->is2d()) {
-        CanvasRenderingContext2D* context2D = static_cast<CanvasRenderingContext2D*>(m_context.get());
-        context2D->reset();
-    }
 
     if (RenderObject* renderer = this->renderer()) {
         if (m_rendererIsCanvas) {
