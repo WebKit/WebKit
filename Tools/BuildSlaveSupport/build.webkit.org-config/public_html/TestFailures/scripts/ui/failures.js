@@ -32,7 +32,7 @@ ui.failures.Configuration = base.extends('div', {
     init: function(configuration)
     {
         if (configuration.is64bit)
-            this._addSpan('build-type', '64-bit');
+            this._addSpan('architecture', '64-bit');
         if (configuration.version)
             this._addSpan('version', configuration.version);
         this._configuration = configuration;

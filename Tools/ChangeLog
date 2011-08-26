@@ -1,3 +1,25 @@
+2011-08-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Clean up and line up layout in garden-o-matic summary view.
+        https://bugs.webkit.org/show_bug.cgi?id=67057
+
+        1) Renamed ui.notifications.TestFailures to ui.notifications.TestsFailing to match BuildersFailing;
+        2) Rearranged DOM structure a bit to accommodate recent changes;
+        3) Added minimal CSS to line things up.
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js: Renamed TestFailures to TestsFailing.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/summary-mock.js: Added mocks for BuildersFailing.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures.js: Renamed TestFailures to TestsFailing.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures_unittests.js: Updated tests.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js: Changed DOM structure.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js: Updated tests.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/common.css: Tweaked common appearance.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/notifications.css: Added minimal layout/style.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/summary-mock.html: Added Google Web Fonts hook.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/summary.html: Ditto.
+
 2011-08-26  Alice Liu  <alice.liu@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66823

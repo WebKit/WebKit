@@ -96,7 +96,7 @@ controllers.UnexpectedFailures = base.extends(Object, {
         var failure = this._testFailures.get(key);
         var impliedFirstFailingRevision = failureAnalysis.newestPassingRevision + 1;
         if (!failure) {
-            failure = new ui.notifications.TestFailures();
+            failure = new ui.notifications.TestsFailing();
             model.commitDataListForRevisionRange(impliedFirstFailingRevision, failureAnalysis.oldestFailingRevision).forEach(function(commitData) {
                 var suspiciousCommit = failure.addCommitData(commitData);
                 $(suspiciousCommit).bind('rollout', function() {

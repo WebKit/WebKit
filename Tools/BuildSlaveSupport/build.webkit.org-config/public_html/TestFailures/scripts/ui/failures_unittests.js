@@ -37,7 +37,7 @@ test('Configuration', 8, function() {
     deepEqual(Object.getOwnPropertyNames(configuration.__proto__), ['init', 'equals', '_addSpan']);
     equal(configuration.outerHTML, '<div></div>');
     configuration = new ui.failures.Configuration({is64bit: true, version: 'lucid'});
-    equal(configuration.outerHTML, '<div><span class="build-type">64-bit</span><span class="version">lucid</span></div>');
+    equal(configuration.outerHTML, '<div><span class="architecture">64-bit</span><span class="version">lucid</span></div>');
     configuration = new ui.failures.Configuration({version: 'xp'});
     equal(configuration.outerHTML, '<div><span class="version">xp</span></div>');
     configuration._addSpan('foo', 'bar');
@@ -82,7 +82,7 @@ test('FailureGrid', 9, function() {
             '<tr>' +
                 '<td>TEXT</td>' +
                 '<td></td>' +
-                '<td><div><span class="build-type">64-bit</span><span class="version">lucid</span></div></td>' +
+                '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
             '</tr>' +
         '</tbody>' +
     '</table>');
@@ -93,7 +93,7 @@ test('FailureGrid', 9, function() {
             '<tr>' +
                 '<td>TEXT</td>' +
                 '<td></td>' +
-                '<td><div><span class="build-type">64-bit</span><span class="version">lucid</span></div></td>' +
+                '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
             '</tr>' +
             '<tr>' +
                 '<td>IMAGE+TEXT</td>' +
@@ -109,7 +109,7 @@ test('FailureGrid', 9, function() {
             '<tr>' +
                 '<td>TEXT</td>' +
                 '<td></td>' +
-                '<td><div><span class="build-type">64-bit</span><span class="version">lucid</span></div></td>' +
+                '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
             '</tr>' +
             '<tr>' +
                 '<td>IMAGE+TEXT</td>' +

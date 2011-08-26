@@ -36,33 +36,95 @@ ol.notifications ul {
 ol.notifications>li {
     display: -webkit-box;
     width: 100%;
-    padding: 10px 0;
-    border: 1px solid LightGray;
+    padding: 10px;
+    box-sizing: border-box;
+    border-top: 1px solid Gray;
 }
 
-ol.notifications>li>time {
-    padding: 0 0 0 10px;
-    text-align: right;
-    width: 100px;
+ol.notifications div.how {
+    width: 300px;
 }
 
-ol.notifications>li>div.what {
+ol.notifications time {
+    display: block;
+    color: #888;
+    padding: 0 0 20px 0;
+}
+
+ol.notifications div.what {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    padding: 0 10px;
+    padding: 0 0 0 10px;
     -webkit-box-flex: 1;
 }
 
-ol.notifications>li ul.causes>li {
+ol.notifications ul.causes>li, ol.notifications div.problem {
+    display: -webkit-box;
+}
+
+ol.notifications ul.causes div.description, ol.notifications div.problem ul.effects {
+    -webkit-box-flex: 1;
+}
+
+ol.notifications div.problem {
+    padding: 0 10px 10px 0;
+}
+
+ol.notifications ul.causes>li {
+    border-top: 1px solid LightGray;
     padding: 10px;
-    border: 1px solid Red;
 }
 
-ol.notifications>li ul.causes>li ul.actions {
-    text-align: right;
+    ol.notifications>li ul.causes>li>div.description {
+        padding: 0 10px 0 0;
+    }
+
+    ol.notifications>li ul.causes>li>ul.actions {
+    }
+
+    ol.notifications>li ul.causes>li li {
+        padding: 10px 0 0 0;
+        display: inline;
+    }
+
+ol.notifications table.failures {
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 11px;
+    width: 300px;
 }
 
-ol.notifications>li ul.causes>li li {
-    padding: 10px 0 0 0;
-    display: inline;
-}
+    ol.notifications table.failures thead tr td:first-child {
+        visibility: hidden;
+    }
+
+    ol.notifications table.failures tbody tr {
+        border-top: 1px solid #eee;
+    }
+
+    ol.notifications table.failures tbody td {
+        width: 33%;
+        padding: 2px;
+    }
+
+    ol.notifications table.failures tbody tr td:first-child {
+        vertical-align: top;
+    }
+
+    ol.notifications table.failures tbody td:nth-child(n+2)>div {
+        display: inline-block;
+        border: 1px solid Gray;
+        margin: 0 0 2px 0;
+        padding: 1px;
+    }
+
+        ol.notifications table.failures tbody td:nth-child(n+2)>div>span.version {
+            text-transform: uppercase;
+            background-color: #555;
+            color: White;
+            padding: 0 2px;
+        }
+
+        ol.notifications table.failures tbody td:nth-child(n+2)>div>span.architecture {
+            padding: 0 3px 0 0;
+        }

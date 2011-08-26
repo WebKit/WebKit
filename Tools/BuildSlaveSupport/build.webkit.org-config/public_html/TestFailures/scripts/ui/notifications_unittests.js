@@ -30,7 +30,7 @@ module('ui.notifications');
 test('Notification', 5, function() {
     var notification = new ui.notifications.Notification();
     equal(notification.tagName, 'LI');
-    equal(notification.innerHTML, '<div class="what"></div>');
+    equal(notification.innerHTML, '<div class="how"></div><div class="what"></div>');
     equal(notification.index(), 0);
     notification.setIndex(1);
     equal(notification.index(), 1);
@@ -73,7 +73,7 @@ test('Stream', 11, function() {
 test('Info', 2, function() {
     var info = new ui.notifications.Info('info');
     equal(info.tagName, 'LI');
-    equal(info.innerHTML, '<div class="what">info</div>');
+    equal(info.innerHTML, '<div class="how"></div><div class="what">info</div>');
 });
 
 test('FailingTest', 4, function() {
@@ -90,8 +90,8 @@ test('SuspiciousCommit', 2, function() {
     equal(suspiciousCommit.innerHTML, '<div class="description"><a href="">1</a>title author (reviewer)</div><ul class="actions"><li><button>Roll out</button></li></ul>');
 });
 
-test('TestFailures', 13, function() {
-    var testFailures = new ui.notifications.TestFailures();
+test('TestsFailing', 13, function() {
+    var testFailures = new ui.notifications.TestsFailing();
     deepEqual(Object.getOwnPropertyNames(testFailures.__proto__), [
         "init",
         "testNameList",
@@ -102,185 +102,198 @@ test('TestFailures', 13, function() {
     ]);
     equal(testFailures.tagName, 'LI');
     equal(testFailures.innerHTML,
-        '<time class="relative">Just now</time>' +
-        '<table class="failures">' +
-            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-            '<tbody></tbody>' +
-        '</table>' +
+        '<div class="how">' +
+            '<time class="relative">Just now</time>' +
+            '<table class="failures">' +
+                '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+                '<tbody></tbody>' +
+            '</table>' +
+        '</div>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects"></ul>' +
-                '<ul class="causes"></ul>' +
+                '<ul class="actions">' +
+                    '<li><button>Examine</button></li>' +
+                '</ul>' +
             '</div>' +
-        '</div>' +
-        '<ul class="actions">' +
-            '<li><button>Examine</button></li>' +
-        '</ul>');
+            '<ul class="causes"></ul>' +
+        '</div>');
     testFailures.addFailureAnalysis({testName: 'test', resultNodesByBuilder: {}});
     equal(testFailures.index(), 0);
     equal(testFailures.innerHTML,
-        '<time class="relative">Just now</time>' +
-        '<table class="failures">' +
-            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-            '<tbody></tbody>' +
-        '</table>' +
+        '<div class="how">' +
+            '<time class="relative">Just now</time>' +
+            '<table class="failures">' +
+                '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+                '<tbody></tbody>' +
+            '</table>' +
+        '</div>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
                     '<li>test</li>' +
                 '</ul>' +
-                '<ul class="causes"></ul>' +
+                '<ul class="actions">' +
+                    '<li><button>Examine</button></li>' +
+                '</ul>' +
             '</div>' +
-        '</div>' +
-        '<ul class="actions">' +
-            '<li><button>Examine</button></li>' +
-        '</ul>');
+            '<ul class="causes"></ul>' +
+        '</div>');
     ok(testFailures.containsFailureAnalysis({testName: 'test'}));
     ok(!testFailures.containsFailureAnalysis({testName: 'foo'}));
     testFailures.addFailureAnalysis({testName: 'test'});
     equal(testFailures.innerHTML,
-        '<time class="relative">Just now</time>' +
-        '<table class="failures">' +
-            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-            '<tbody></tbody>' +
-        '</table>' +
+        '<div class="how">' +
+            '<time class="relative">Just now</time>' +
+            '<table class="failures">' +
+                '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+                '<tbody></tbody>' +
+            '</table>' +
+        '</div>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
                     '<li>test</li>' +
                 '</ul>' +
-                '<ul class="causes"></ul>' +
+                '<ul class="actions">' +
+                    '<li><button>Examine</button></li>' +
+                '</ul>' +
             '</div>' +
-        '</div>' +
-        '<ul class="actions">' +
-            '<li><button>Examine</button></li>' +
-        '</ul>');
+            '<ul class="causes"></ul>' +
+        '</div>');
     deepEqual(testFailures.testNameList(), ['test']);
     var time = new Date();
     time.setMinutes(time.getMinutes() - 10);
     testFailures.addCommitData({revision: 1, time: time, title: "title", author: "author", reviewer: "reviewer"});
     equal(testFailures.index(), time.getTime());
     equal(testFailures.innerHTML,
-        '<time class="relative">10 minutes ago</time>' +
-        '<table class="failures">' +
-            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-            '<tbody></tbody>' +
-        '</table>' +
+        '<div class="how">' +
+            '<time class="relative">10 minutes ago</time>' +
+            '<table class="failures">' +
+                '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+                '<tbody></tbody>' +
+            '</table>' +
+        '</div>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
                     '<li>test</li>' +
                 '</ul>' +
-                '<ul class="causes">' +
-                    '<li>' +
-                        '<div class="description">' +
-                            '<a href="">1</a>title author (reviewer)'+
-                        '</div>' +
-                        '<ul class="actions">' +
-                            '<li><button>Roll out</button></li>' +
-                        '</ul>' +
-                    '</li>' +
+                '<ul class="actions">' +
+                    '<li><button>Examine</button></li>' +
                 '</ul>' +
             '</div>' +
-        '</div>' +
-        '<ul class="actions">' +
-            '<li><button>Examine</button></li>' +
-        '</ul>');
+            '<ul class="causes">' +
+                '<li>' +
+                    '<div class="description">' +
+                        '<a href="">1</a>title author (reviewer)'+
+                    '</div>' +
+                    '<ul class="actions">' +
+                        '<li><button>Roll out</button></li>' +
+                    '</ul>' +
+                '</li>' +
+            '</ul>' +
+        '</div>');
 
     testFailures.addFailureAnalysis({testName: 'foo', resultNodesByBuilder: {'Webkit Linux (dbg)(1)': { actual: 'TEXT'}}});
     equal(testFailures.innerHTML,
-        '<time class="relative">10 minutes ago</time>' +
-        '<table class="failures">' +
-            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-            '<tbody>' +
-                '<tr>' +
-                    '<td>TEXT</td>' +
-                    '<td></td>' +
-                    '<td><div><span class="build-type">64-bit</span><span class="version">lucid</span></div></td>' +
-                '</tr>' +
-            '</tbody>' +
-        '</table>' +
+        '<div class="how">' +
+            '<time class="relative">10 minutes ago</time>' +
+            '<table class="failures">' +
+                '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+                '<tbody>' +
+                    '<tr>' +
+                        '<td>TEXT</td>' +
+                        '<td></td>' +
+                        '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
+                    '</tr>' +
+                '</tbody>' +
+            '</table>' +
+        '</div>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
                     '<li>test</li>' +
                     '<li>foo</li>' +
                 '</ul>' +
-                '<ul class="causes">' +
-                    '<li>' +
-                        '<div class="description">' +
-                            '<a href="">1</a>title author (reviewer)'+
-                        '</div>' +
-                        '<ul class="actions">' +
-                            '<li><button>Roll out</button></li>' +
-                        '</ul>' +
-                    '</li>' +
+                '<ul class="actions">' +
+                    '<li><button>Examine</button></li>' +
                 '</ul>' +
             '</div>' +
-        '</div>' +
-        '<ul class="actions">' +
-            '<li><button>Examine</button></li>' +
-        '</ul>');
+            '<ul class="causes">' +
+                '<li>' +
+                    '<div class="description">' +
+                        '<a href="">1</a>title author (reviewer)'+
+                    '</div>' +
+                    '<ul class="actions">' +
+                        '<li><button>Roll out</button></li>' +
+                    '</ul>' +
+                '</li>' +
+            '</ul>' +
+        '</div>');
 
     testFailures.updateBuilderResults({'Webkit Mac10.5 (CG)': { actual: 'BUILDING'}});
     equal(testFailures.innerHTML,
-        '<time class="relative">10 minutes ago</time>' +
-        '<table class="failures">' +
-            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-            '<tbody>' +
-                '<tr>' +
-                    '<td>TEXT</td>' +
-                    '<td></td>' +
-                    '<td><div><span class="build-type">64-bit</span><span class="version">lucid</span></div></td>' +
-                '</tr>' +
-                '<tr>' +
-                    '<td>BUILDING</td>' +
-                    '<td><div><span class="version">leopard</span></div></td>' +
-                    '<td></td>' +
-                '</tr>' +
-            '</tbody>' +
-        '</table>' +
+        '<div class="how">' +
+            '<time class="relative">10 minutes ago</time>' +
+            '<table class="failures">' +
+                '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+                '<tbody>' +
+                    '<tr>' +
+                        '<td>TEXT</td>' +
+                        '<td></td>' +
+                        '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>BUILDING</td>' +
+                        '<td><div><span class="version">leopard</span></div></td>' +
+                        '<td></td>' +
+                    '</tr>' +
+                '</tbody>' +
+            '</table>' +
+        '</div>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
                     '<li>test</li>' +
                     '<li>foo</li>' +
                 '</ul>' +
-                '<ul class="causes">' +
-                    '<li>' +
-                        '<div class="description">' +
-                            '<a href="">1</a>title author (reviewer)'+
-                        '</div>' +
-                        '<ul class="actions">' +
-                            '<li><button>Roll out</button></li>' +
-                        '</ul>' +
-                    '</li>' +
+                '<ul class="actions">' +
+                    '<li><button>Examine</button></li>' +
                 '</ul>' +
             '</div>' +
-        '</div>' +
-        '<ul class="actions">' +
-            '<li><button>Examine</button></li>' +
-        '</ul>');
-
+            '<ul class="causes">' +
+                '<li>' +
+                    '<div class="description">' +
+                        '<a href="">1</a>title author (reviewer)'+
+                    '</div>' +
+                    '<ul class="actions">' +
+                        '<li><button>Roll out</button></li>' +
+                    '</ul>' +
+                '</li>' +
+            '</ul>' +
+        '</div>');
 });
 
 test('BuildersFailing', 1, function() {
     var builderFailing = new ui.notifications.BuildersFailing();
     builderFailing.setFailingBuilders(['WebKit Linux', 'Webkit Vista']);
     equal(builderFailing.innerHTML,
-        '<time class="relative">Just now</time>' +
-        '<table class="failures">' +
-            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-            '<tbody></tbody>' +
-        '</table>' +
+        '<div class="how">' +
+            '<time class="relative">Just now</time>' +
+            '<table class="failures">' +
+                '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+                '<tbody></tbody>' +
+            '</table>' +
+        '</div>' +
         '<div class="what">' +
             '<div class="problem">Build Failed:' +
                 '<ul class="effects">' +
                     '<li class="builder-name"><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=WebKit+Linux">WebKit Linux</a></li>' +
                     '<li class="builder-name"><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Vista">Vista</a></li>' +
                 '</ul>' +
-                '<ul class="causes"></ul>' +
             '</div>' +
+            '<ul class="causes"></ul>' +
         '</div>');
 });
 

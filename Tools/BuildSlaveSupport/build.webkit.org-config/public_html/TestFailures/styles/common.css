@@ -23,7 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+body {
+ font-family: 'Open Sans';
+ font-size: 14px;
+}
+
 button {
+    font-family: 'Open Sans';
     border-radius: 2px;
     background-image: -webkit-linear-gradient(top,#f5f5f5,#f1f1f1);
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -34,7 +40,6 @@ button {
     font-weight: bold;
     height: 29px;
     line-height: 27px;
-    margin: 11px 6px;
     min-width: 54px;
     padding: 0 8px;
     text-align: center

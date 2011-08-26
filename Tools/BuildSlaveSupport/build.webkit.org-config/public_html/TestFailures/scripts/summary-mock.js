@@ -116,23 +116,33 @@ function createResultNodesByBuilder(builderFailureCount)
 var currentRevision = 66666;
 var currentMinutesAgo = 0;
 
-function createTestFailures(commitDataCount, failureAnalysisCount, builderFailureCount)
+function createTestsFailing(commitDataCount, failureAnalysisCount, builderFailureCount)
 {
-    var failures = new ui.notifications.TestFailures();
-    for(var i = 0; i < commitDataCount; ++i)
-        failures.addCommitData({
+    var testsFailing = new ui.notifications.TestsFailing();
+    for (var i = 0; i < commitDataCount; ++i)
+        testsFailing.addCommitData({
             time: minutesAgo(currentMinutesAgo++),
             revision: currentRevision++,
             title: bugTitles.cycle(),
             author: people.cycle(),
             reviewer: people.cycle()
         });
-    for(var i = 0; i < failureAnalysisCount; ++i)
-        failures.addFailureAnalysis({
+    for (var i = 0; i < failureAnalysisCount; ++i)
+        testsFailing.addFailureAnalysis({
             testName: testNames.cycle(),
             resultNodesByBuilder: createResultNodesByBuilder(builderFailureCount)
         });
-    return failures;
+    return testsFailing;
+}
+
+function createBuildersFailing(failingBuilderCount)
+{
+    var buildersFailing = new ui.notifications.BuildersFailing();
+    builderNameList = [];
+    for (var i = 0; i < failingBuilderCount; ++i)
+        builderNameList.push(builders.cycle());
+    buildersFailing.setFailingBuilders(builderNameList);
+    return buildersFailing
 }
 
 $(document).ready(function() {
@@ -144,9 +154,11 @@ $(document).ready(function() {
     var button = document.body.insertBefore(document.createElement('button'), document.body.firstChild);
     button.textContent = 'update';
 
-    actions.add(createTestFailures(3, 4, 1));
-    actions.add(createTestFailures(3, 1, 3));
-    actions.add(createTestFailures(1, 20, 1));
+    actions.add(createTestsFailing(3, 4, 1));
+    actions.add(createTestsFailing(3, 1, 3));
+    actions.add(createTestsFailing(1, 20, 1));
+    actions.add(createBuildersFailing(1));
+    actions.add(createBuildersFailing(8));
 });
 
 })();

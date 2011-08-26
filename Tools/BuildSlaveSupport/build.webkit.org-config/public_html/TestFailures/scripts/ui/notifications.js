@@ -50,6 +50,8 @@ ui.notifications.Stream = base.extends('ol', {
 ui.notifications.Notification = base.extends('li', {
     init: function()
     {
+        this._how = this.appendChild(document.createElement('div'));
+        this._how.className = 'how';
         this._what = this.appendChild(document.createElement('div'));
         this._what.className = 'what';
         this._index = 0;
@@ -119,13 +121,13 @@ ui.notifications.SuspiciousCommit = base.extends(Cause, {
 ui.notifications.Failure = base.extends(ui.notifications.Notification, {
     init: function()
     {
-        this._where = this.insertBefore(new ui.failures.FailureGrid(), this.firstChild);
-        this._time = this.insertBefore(new ui.RelativeTime(), this.firstChild);
+        this._time = this._how.appendChild(new ui.RelativeTime());
+        this._where = this._how.appendChild(new ui.failures.FailureGrid());
         this._problem = this._what.appendChild(document.createElement('div'));
         this._problem.className = 'problem';
         this._effects = this._problem.appendChild(document.createElement('ul'));
         this._effects.className = 'effects';
-        this._causes = this._problem.appendChild(document.createElement('ul'));
+        this._causes = this._what.appendChild(document.createElement('ul'));
         this._causes.className = 'causes';
     },
     date: function()
@@ -134,9 +136,10 @@ ui.notifications.Failure = base.extends(ui.notifications.Notification, {
     }
 });
 
-ui.notifications.TestFailures = base.extends(ui.notifications.Failure, {
+ui.notifications.TestsFailing = base.extends(ui.notifications.Failure, {
     init: function() {
-        this.appendChild(new ui.actions.List([
+        // FIXME: Convert actions to a link from test!
+        this._problem.appendChild(new ui.actions.List([
             new ui.actions.Examine()
         ]));
         this._testNameList = [];
@@ -177,7 +180,7 @@ ui.notifications.TestFailures = base.extends(ui.notifications.Failure, {
 ui.notifications.BuildersFailing = base.extends(ui.notifications.Failure, {
     init: function()
     {
-        this._problem.insertBefore(document.createTextNode('Build Failed:'), this._effects);
+        this._problem.insertBefore(document.createTextNode('Build Failed:'), this._problem.firstChild);
     },
     setFailingBuilders: function(builderNameList)
     {
