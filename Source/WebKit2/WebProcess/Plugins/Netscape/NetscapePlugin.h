@@ -257,8 +257,8 @@ private:
     // if we can tell the plug-in that we support the updated Cocoa text input specification.
     bool m_hasHandledAKeyDownEvent;
 
-    // Whether the next NPCocoaEventKeyUp event should be ignored.
-    bool m_ignoreNextKeyUpEvent;
+    // The number of NPCocoaEventKeyUp events that  should be ignored.
+    unsigned m_ignoreNextKeyUpEventCounter;
 
     WebCore::IntRect m_windowFrameInScreenCoordinates;
     WebCore::IntRect m_viewFrameInWindowCoordinates;

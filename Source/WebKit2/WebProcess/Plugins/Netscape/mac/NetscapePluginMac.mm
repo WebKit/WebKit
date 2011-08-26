@@ -740,14 +740,14 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboar
         if (keyboardEvent.type() == WebEvent::KeyDown) {
             m_hasHandledAKeyDownEvent = true;
 
-            if (!m_pluginWantsLegacyCocoaTextInput && m_isComplexTextInputEnabled) {
+            if (!m_pluginWantsLegacyCocoaTextInput && m_isComplexTextInputEnabled && !keyboardEvent.isAutoRepeat()) {
                 // When complex text is enabled in the new model, the plug-in should never
                 // receive any key down or key up events until the composition is complete.
-                m_ignoreNextKeyUpEvent = true;
+                m_ignoreNextKeyUpEventCounter++;
                 return true;
             }
-        } else if (keyboardEvent.type() == WebEvent::KeyUp && m_ignoreNextKeyUpEvent) {
-            m_ignoreNextKeyUpEvent = false;
+        } else if (keyboardEvent.type() == WebEvent::KeyUp && m_ignoreNextKeyUpEventCounter) {
+            m_ignoreNextKeyUpEventCounter--;
             return true;
         }
 
@@ -757,7 +757,8 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboar
 
         if (!m_pluginWantsLegacyCocoaTextInput) {
             if (event.type == NPCocoaEventKeyDown && returnValue == kNPEventStartIME) {
-                m_ignoreNextKeyUpEvent = true;
+                if (!keyboardEvent.isAutoRepeat())
+                    m_ignoreNextKeyUpEventCounter++;
                 setComplexTextInputEnabled(true);
             }
         }

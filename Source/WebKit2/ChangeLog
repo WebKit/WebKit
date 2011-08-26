@@ -1,3 +1,22 @@
+2011-08-26  Anders Carlsson  <andersca@apple.com>
+
+        Fix handling of keyup events in the new Cocoa text input model
+        https://bugs.webkit.org/show_bug.cgi?id=67045
+
+        Reviewed by Sam Weinig.
+
+        Use a counter instead of a boolean for deciding when to ignore keyup events, because
+        if multiple keys are pressed simultaneously then we need to ignore more than one keyup event in a row.
+
+        Also if a keyboard event is an autorepeating event we won't get a keyup event so don't increment the counter
+        in that case.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformHandleKeyboardEvent):
+
 2011-08-26  Jessie Berlin  <jberlin@apple.com>
 
         Gut WKPageCreateSnapshotOfVisibleContent so that it can be removed later.
