@@ -531,28 +531,31 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.containmentView = new WebInspector.View();
     this.containmentView.element.addStyleClass("view");
     this.containmentDataGrid = new WebInspector.HeapSnapshotContainmentDataGrid();
-    this.containmentDataGrid.element.addEventListener("click", this._mouseClickInContainmentGrid.bind(this), true);
+    this.containmentDataGrid.element.addEventListener("click", this._mouseClickInContentsGrid.bind(this), true);
+    this.containmentDataGrid.element.addEventListener("mousedown", this._mouseDownInContentsGrid.bind(this), true);
     this.containmentView.element.appendChild(this.containmentDataGrid.element);
     this.viewsContainer.appendChild(this.containmentView.element);
 
     this.constructorsView = new WebInspector.View();
     this.constructorsView.element.addStyleClass("view");
     this.constructorsDataGrid = new WebInspector.HeapSnapshotConstructorsDataGrid();
-    this.constructorsDataGrid.element.addEventListener("click", this._mouseClickInContainmentGrid.bind(this), true);
+    this.constructorsDataGrid.element.addEventListener("click", this._mouseClickInContentsGrid.bind(this), true);
+    this.constructorsDataGrid.element.addEventListener("mousedown", this._mouseDownInContentsGrid.bind(this), true);
     this.constructorsView.element.appendChild(this.constructorsDataGrid.element);
     this.viewsContainer.appendChild(this.constructorsView.element);
 
     this.diffView = new WebInspector.View();
     this.diffView.element.addStyleClass("view");
     this.diffDataGrid = new WebInspector.HeapSnapshotDiffDataGrid();
-    this.diffDataGrid.element.addEventListener("click", this._mouseClickInContainmentGrid.bind(this), true);
+    this.diffDataGrid.element.addEventListener("click", this._mouseClickInContentsGrid.bind(this), true);
     this.diffView.element.appendChild(this.diffDataGrid.element);
     this.viewsContainer.appendChild(this.diffView.element);
 
     this.dominatorView = new WebInspector.View();
     this.dominatorView.element.addStyleClass("view");
     this.dominatorDataGrid = new WebInspector.HeapSnapshotDominatorsDataGrid();
-    this.dominatorDataGrid.element.addEventListener("click", this._mouseClickInContainmentGrid.bind(this), true);
+    this.dominatorDataGrid.element.addEventListener("click", this._mouseClickInContentsGrid.bind(this), true);
+    this.dominatorDataGrid.element.addEventListener("mousedown", this._mouseDownInContentsGrid.bind(this), true);
     this.dominatorView.element.appendChild(this.dominatorDataGrid.element);
     this.viewsContainer.appendChild(this.dominatorView.element);
 
@@ -908,10 +911,10 @@ WebInspector.DetailedHeapshotView.prototype = {
         profile.sidebarElement.subtitle = Number.bytesToString(s.totalSize);
     },
 
-    _mouseClickInContainmentGrid: function(event)
+    _mouseClickInContentsGrid: function(event)
     {
         var cell = event.target.enclosingNodeOrSelfWithNodeName("td");
-        if (!cell || (!cell.hasStyleClass("object-column") && !cell.hasStyleClass("shallowSize-column") && !cell.hasStyleClass("retainedSize-column")))
+        if (!cell || (!cell.hasStyleClass("object-column")))
             return;
         var row = event.target.enclosingNodeOrSelfWithNodeName("tr");
         if (!row)
@@ -923,6 +926,27 @@ WebInspector.DetailedHeapshotView.prototype = {
             this.retainmentDataGrid.setDataSource(this, nodeItem.isDeletedNode ? nodeItem.dataGrid.baseSnapshot : nodeItem.dataGrid.snapshot, nodeItem.snapshotNodeIndex, nodeItem.isDeletedNode ? this.baseSelectElement.childNodes[this.baseSelectElement.selectedIndex].label + " | " : "");
         else
             this.retainmentDataGrid.reset();
+    },
+
+    _mouseDownInContentsGrid: function(event)
+    {
+        if (event.detail < 2)
+            return;
+
+        var cell = event.target.enclosingNodeOrSelfWithNodeName("td");
+        if (!cell || (!cell.hasStyleClass("count-column") && !cell.hasStyleClass("shallowSize-column") && !cell.hasStyleClass("retainedSize-column")))
+            return;
+
+        if (cell.hasStyleClass("count-column"))
+            this.showCountAsPercent = !this.showCountAsPercent;
+        else if (cell.hasStyleClass("shallowSize-column"))
+            this.showShallowSizeAsPercent = !this.showShallowSizeAsPercent;
+        else if (cell.hasStyleClass("retainedSize-column"))
+            this.showRetainedSizeAsPercent = !this.showRetainedSizeAsPercent;
+        this.refreshShowAsPercents();
+
+        event.preventDefault();
+        event.stopPropagation();
     },
 
     _mouseClickInRetainmentGrid: function(event)

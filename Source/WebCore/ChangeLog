@@ -1,3 +1,14 @@
+2011-08-26  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Web Inspector: [Chromium] Double clicking on numbers in Count & size columns doesn't toggle between values and percents in the Heap Snapshot.
+        https://bugs.webkit.org/show_bug.cgi?id=66988
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype._mouseClickInContentsGrid):
+        (WebInspector.DetailedHeapshotView.prototype._mouseDownInContentsGrid):
+
 2011-08-26  Shinya Kawanaka  <shinyak@google.com>
 
         REGRESSION(r93390): Empty or invalid maxlength of an input tag should be ignored.
