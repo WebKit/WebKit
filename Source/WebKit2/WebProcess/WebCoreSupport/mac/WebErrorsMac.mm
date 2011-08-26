@@ -71,7 +71,7 @@ static NSMutableDictionary *descriptions = nil;
     pthread_once(&registerErrorsControl, registerErrors);
 }
 
--(id)_webkit_initWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
++(id)_webkit_errorWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
 {
     NSDictionary *descriptionsDict;
     NSString *localizedDesc;
@@ -84,12 +84,8 @@ static NSMutableDictionary *descriptions = nil;
         [URL absoluteString], @"NSErrorFailingURLStringKey",
         localizedDesc, NSLocalizedDescriptionKey,
         nil];
-    return [self initWithDomain:domain code:code userInfo:dict];
-}
 
-+(id)_webkit_errorWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
-{
-    return [[[self alloc] _webkit_initWithDomain:domain code:code URL:URL] autorelease];
+    return [[[self alloc] initWithDomain:domain code:code userInfo:dict] autorelease];
 }
 
 + (NSError *)_webKitErrorWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
