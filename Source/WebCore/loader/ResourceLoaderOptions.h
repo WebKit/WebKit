@@ -31,6 +31,8 @@
 #ifndef ResourceLoaderOptions_h
 #define ResourceLoaderOptions_h
 
+#include "ResourceHandle.h"
+
 namespace WebCore {
     
 enum SendCallbackPolicy {
@@ -49,11 +51,12 @@ enum DataBufferingPolicy {
 };
 
 struct ResourceLoaderOptions {
-    ResourceLoaderOptions() : sendLoadCallbacks(DoNotSendCallbacks), sniffContent(DoNotSniffContent), shouldBufferData(BufferData) { }
-    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacksArg, ContentSniffingPolicy sniffContentArg, DataBufferingPolicy shouldBufferDataArg) : sendLoadCallbacks(sendLoadCallbacksArg), sniffContent(sniffContentArg), shouldBufferData(shouldBufferDataArg) { }
+    ResourceLoaderOptions() : sendLoadCallbacks(DoNotSendCallbacks), sniffContent(DoNotSniffContent), shouldBufferData(BufferData), allowCredentials(DoNotAllowStoredCredentials) { }
+    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacksArg, ContentSniffingPolicy sniffContentArg, DataBufferingPolicy shouldBufferDataArg, StoredCredentials allowCredentialsArg) : sendLoadCallbacks(sendLoadCallbacksArg), sniffContent(sniffContentArg), shouldBufferData(shouldBufferDataArg), allowCredentials(allowCredentialsArg) { }
     SendCallbackPolicy sendLoadCallbacks;
     ContentSniffingPolicy sniffContent;
     DataBufferingPolicy shouldBufferData;
+    StoredCredentials allowCredentials; // Whether HTTP credentials and cookies are sent with the request.
 };
 
 } // namespace WebCore    

@@ -51,7 +51,6 @@ public:
     virtual void didFinishLoading(SubresourceLoader*, double /*finishTime*/) { }
     virtual void didFail(SubresourceLoader*, const ResourceError&) { }
     
-    virtual bool getShouldUseCredentialStorage(SubresourceLoader*, bool& /*shouldUseCredentialStorage*/) { return false; }
     virtual void didReceiveAuthenticationChallenge(SubresourceLoader*, const AuthenticationChallenge&) { }
 };
 

@@ -1,3 +1,30 @@
+2011-08-26  Nate Chapin  <japhet@chromium.org>
+
+        Move allowCredentials from ThreadableLoaderOptions down
+        to ResourceLoaderOptions. This allows us to remove
+        getShouldUseCredentialStorage() from SubresourceLoaderClient
+        and check allowCredentials in ResourceLoader.
+        https://bugs.webkit.org/show_bug.cgi?id=65330
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, refractor only.
+
+        * loader/DocumentThreadableLoader.cpp:
+        * loader/DocumentThreadableLoader.h:
+        * loader/MainResourceLoader.cpp:
+        * loader/NetscapePlugInStreamLoader.cpp:
+        * loader/ResourceLoadScheduler.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::shouldUseCredentialStorage): Check
+            m_options.allowCredentials instead of calling a client.
+        * loader/ResourceLoaderOptions.h:
+        * loader/SubresourceLoader.cpp:
+        * loader/SubresourceLoader.h:
+        * loader/SubresourceLoaderClient.h:
+        * loader/ThreadableLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+
 2011-08-26  Ojan Vafai  <ojan@chromium.org>
 
         change the default preferred width of the flex() function to 0px per the new spec

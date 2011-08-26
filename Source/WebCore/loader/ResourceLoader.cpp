@@ -517,6 +517,10 @@ bool ResourceLoader::shouldUseCredentialStorage()
 #endif
     if (!fastMallocSize(documentLoader()->frame()))
         CRASH();
+
+    if (m_options.allowCredentials == DoNotAllowStoredCredentials)
+        return false;
+    
     RefPtr<ResourceLoader> protector(this);
     return frameLoader()->client()->shouldUseCredentialStorage(documentLoader(), identifier());
 }

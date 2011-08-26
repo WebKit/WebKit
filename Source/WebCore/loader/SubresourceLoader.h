@@ -56,7 +56,6 @@ namespace WebCore {
         virtual void didReceiveCachedMetadata(const char*, int);
         virtual void didFinishLoading(double finishTime);
         virtual void didFail(const ResourceError&);
-        virtual bool shouldUseCredentialStorage();
         virtual void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
         virtual void willCancel(const ResourceError&);
         virtual void didCancel(const ResourceError&);

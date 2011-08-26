@@ -60,8 +60,7 @@ namespace WebCore {
     };
 
     struct ThreadableLoaderOptions : public ResourceLoaderOptions {
-        ThreadableLoaderOptions() : allowCredentials(DoNotAllowStoredCredentials), preflightPolicy(ConsiderPreflight), crossOriginRequestPolicy(DenyCrossOriginRequests) { }
-        StoredCredentials allowCredentials; // Whether HTTP credentials and cookies are sent with the request.
+        ThreadableLoaderOptions() : preflightPolicy(ConsiderPreflight), crossOriginRequestPolicy(DenyCrossOriginRequests) { }
         PreflightPolicy preflightPolicy; // If AccessControl is used, how to determine if a preflight is needed.
         CrossOriginRequestPolicy crossOriginRequestPolicy;
         RefPtr<SecurityOrigin> securityOrigin;

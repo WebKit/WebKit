@@ -82,7 +82,6 @@ namespace WebCore {
         virtual void didFinishLoading(SubresourceLoader*, double);
         virtual void didFail(SubresourceLoader*, const ResourceError&);
 
-        virtual bool getShouldUseCredentialStorage(SubresourceLoader*, bool& shouldUseCredentialStorage);
         virtual void didReceiveAuthenticationChallenge(SubresourceLoader*, const AuthenticationChallenge&);
 
         void didReceiveResponse(unsigned long identifier, const ResourceResponse&);

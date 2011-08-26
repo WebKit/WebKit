@@ -288,18 +288,6 @@ void DocumentThreadableLoader::didFail(SubresourceLoader* loader, const Resource
     m_client->didFail(error);
 }
 
-bool DocumentThreadableLoader::getShouldUseCredentialStorage(SubresourceLoader* loader, bool& shouldUseCredentialStorage)
-{
-    ASSERT_UNUSED(loader, loader == m_loader || !m_loader);
-
-    if (m_options.allowCredentials == DoNotAllowStoredCredentials) {
-        shouldUseCredentialStorage = false;
-        return true;
-    }
-
-    return false; // Only FrameLoaderClient can ultimately permit credential use.
-}
-
 void DocumentThreadableLoader::didReceiveAuthenticationChallenge(SubresourceLoader* loader, const AuthenticationChallenge& challenge)
 {
     ASSERT(loader == m_loader);
