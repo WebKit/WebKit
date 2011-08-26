@@ -1,5 +1,33 @@
 2011-08-25  Anders Carlsson  <andersca@apple.com>
 
+        Handle key-down events in the updated Cocoa text input model
+        https://bugs.webkit.org/show_bug.cgi?id=67001
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView performKeyEquivalent:]):
+        Call _disableComplexTextInputIfNecessary so that we'll inform the plug-in that complex text
+        input has been disabled.
+
+        (-[WKView _disableComplexTextInputIfNecessary]):
+        If the plug-in is using the updated Cocoa text input model specification, disable text input
+        if the text input window has been dismissed for whatever reason.
+
+        (-[WKView _tryHandlePluginComplexTextInputKeyDown:]):
+        Call _disableComplexTextInputIfNecessary so that we'll inform the plug-in that complex text
+        input has been disabled.
+        
+        (-[WKView _tryPostProcessPluginComplexTextInputKeyDown:]):
+        If the plug-in is using the updated Cocoa text input model specification, let the input methods
+        have a go at the keyboard event.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::setComplexTextInputEnabled):
+        Actually set m_isComplexTextInputEnabled to the right value.
+
+2011-08-25  Anders Carlsson  <andersca@apple.com>
+
         Factor code to send a key-down event to the plug-in out into a new function
         https://bugs.webkit.org/show_bug.cgi?id=66999
 

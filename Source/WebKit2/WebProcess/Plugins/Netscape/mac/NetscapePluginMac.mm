@@ -1010,6 +1010,8 @@ void NetscapePlugin::setComplexTextInputEnabled(bool complexTextInputEnabled)
     if (m_isComplexTextInputEnabled == complexTextInputEnabled)
         return;
 
+    m_isComplexTextInputEnabled = complexTextInputEnabled;
+
     PluginComplexTextInputState complexTextInputState = PluginComplexTextInputDisabled;
     if (m_isComplexTextInputEnabled)
         complexTextInputState = m_pluginWantsLegacyCocoaTextInput ? PluginComplexTextInputEnabledLegacy : PluginComplexTextInputEnabled;

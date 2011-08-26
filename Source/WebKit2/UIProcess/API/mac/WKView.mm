@@ -113,6 +113,7 @@ struct WKViewInterpretKeyEventsParameters {
 - (float)_deviceScaleFactor;
 - (void)_setDrawingAreaSize:(NSSize)size;
 - (void)_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState;
+- (void)_disableComplexTextInputIfNecessary;
 @end
 
 @interface WKViewData : NSObject {
@@ -1240,6 +1241,9 @@ static const short kIOHIDEventTypeScroll = 6;
     
     BOOL eventWasSentToWebCore = (_data->_keyDownEventBeingResent == event);
 
+    if (!eventWasSentToWebCore)
+        [self _disableComplexTextInputIfNecessary];
+
     // Pass key combos through WebCore if there is a key binding available for
     // this event. This lets web pages have a crack at intercepting key-modified keypresses.
     // But don't do it if we have already handled the event.
@@ -1255,6 +1259,19 @@ static const short kIOHIDEventTypeScroll = 6;
 - (void)keyUp:(NSEvent *)theEvent
 {
     _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
+}
+
+- (void)_disableComplexTextInputIfNecessary
+{
+    if (!_data->_pluginComplexTextInputIdentifier)
+        return;
+
+    if (_data->_pluginComplexTextInputState != PluginComplexTextInputEnabled)
+        return;
+
+    // Check if the text input window has been dismissed.
+    if (![[WKTextInputWindowController sharedTextInputWindowController] hasMarkedText])
+        [self _setPluginComplexTextInputState:PluginComplexTextInputDisabled];
 }
 
 - (BOOL)_handlePluginComplexTextInputKeyDown:(NSEvent *)event
@@ -1281,6 +1298,10 @@ static const short kIOHIDEventTypeScroll = 6;
 {
     if (!_data->_pluginComplexTextInputIdentifier || _data->_pluginComplexTextInputState == PluginComplexTextInputDisabled)
         return NO;
+
+    // Check if the text input window has been dismissed and let the plug-in process know.
+    // This is only valid with the updated Cocoa text input spec.
+    [self _disableComplexTextInputIfNecessary];
 
     // Try feeding the keyboard event directly to the plug-in.
     return [self _handlePluginComplexTextInputKeyDown:event];
@@ -2119,8 +2140,14 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (BOOL)_tryPostProcessPluginComplexTextInputKeyDown:(NSEvent *)event
 {
-    // FIXME: Implement.
-    return NO;
+    if (!_data->_pluginComplexTextInputIdentifier || _data->_pluginComplexTextInputState == PluginComplexTextInputDisabled)
+        return NO;
+
+    // In the legacy text input model, the event has already been sent to the input method.
+    if (_data->_pluginComplexTextInputState == PluginComplexTextInputEnabledLegacy)
+        return NO;
+
+    return [self _handlePluginComplexTextInputKeyDown:event];
 }
 
 - (void)_doneWithKeyEvent:(NSEvent *)event eventWasHandled:(BOOL)eventWasHandled
@@ -2390,7 +2417,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     [NSApp updateWindows];
 }
 
-- (void)_setPluginComplexTextInputState:(WebKit::PluginComplexTextInputState)pluginComplexTextInputState pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier
+- (void)_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier
 {
     if (pluginComplexTextInputIdentifier != _data->_pluginComplexTextInputIdentifier) {
         // We're asked to update the state for a plug-in that doesn't have focus.
