@@ -188,12 +188,12 @@ AC_SUBST([OLE32_LIBS])
 # determine the GTK+ version to use
 AC_MSG_CHECKING([the GTK+ version to use])
 AC_ARG_WITH([gtk],
-        [AS_HELP_STRING([--with-gtk=2.0|3.0], [the GTK+ version to use (default: 2.0)])],
+        [AS_HELP_STRING([--with-gtk=2.0|3.0], [the GTK+ version to use (default: 3.0)])],
         [case "$with_gtk" in
         2.0|3.0) ;;
         *) AC_MSG_ERROR([invalid GTK+ version specified]) ;;
         esac],
-        [with_gtk=2.0])
+        [with_gtk=3.0])
 AC_MSG_RESULT([$with_gtk])
 
 GTK2_REQUIRED_VERSION=2.10

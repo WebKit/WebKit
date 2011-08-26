@@ -20,12 +20,12 @@ layer at (0,0) size 800x600
                       RenderText at (0,0) size 110x19
                         text run at (0,0) width 110: "Search Froogle"
                   RenderText {#text} at (0,0) size 0x0
-                RenderTableCell {TD} at (638,6) size 146x19 [r=0 c=3 rs=2 cs=1]
-                  RenderInline {LABEL} at (0,0) size 120x12
+                RenderTableCell {TD} at (638,5) size 146x22 [r=0 c=3 rs=2 cs=1]
+                  RenderInline {LABEL} at (0,0) size 123x12
                     RenderText {#text} at (0,0) size 0x0
-                    RenderBlock {INPUT} at (14,3) size 13x13
-                    RenderText {#text} at (31,5) size 99x12
-                      text run at (31,5) width 99: " Remember this location"
+                    RenderBlock {INPUT} at (14,3) size 16x16
+                    RenderText {#text} at (34,8) size 99x12
+                      text run at (34,8) width 99: " Remember this location"
                   RenderText {#text} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,48) size 784x19
           RenderBR {BR} at (392,0) size 0x19

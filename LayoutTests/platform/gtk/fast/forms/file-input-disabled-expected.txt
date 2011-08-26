@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {FORM} at (0,0) size 784x71
-        RenderBlock (anonymous) at (0,0) size 784x71
-          RenderBlock {INPUT} at (4,4) size 13x13
+      RenderBlock {FORM} at (0,0) size 784x73
+        RenderBlock (anonymous) at (0,0) size 784x73
+          RenderBlock {INPUT} at (4,3) size 16x16
           RenderInline {B} at (0,0) size 75x19
-            RenderText {#text} at (21,0) size 75x19
-              text run at (21,0) width 75: "Attach File"
-          RenderBR {BR} at (96,15) size 0x0
-          RenderBR {BR} at (0,20) size 0x19
-          RenderText {#text} at (0,45) size 86x19
-            text run at (0,45) width 86: "  Select File:  "
-          RenderFileUploadControl {INPUT} at (88,41) size 306x28 "(None)"
+            RenderText {#text} at (24,2) size 75x19
+              text run at (24,2) width 75: "Attach File"
+          RenderBR {BR} at (99,17) size 0x0
+          RenderBR {BR} at (0,22) size 0x19
+          RenderText {#text} at (0,47) size 86x19
+            text run at (0,47) width 86: "  Select File:  "
+          RenderFileUploadControl {INPUT} at (88,43) size 306x28 "(None)"
             RenderButton {INPUT} at (0,0) size 103x28 [color=#808080] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
               RenderBlock (anonymous) at (8,4) size 87x19
                 RenderText at (0,0) size 87x19
                   text run at (0,0) width 87: "Choose File"
-          RenderBR {BR} at (396,60) size 0x0
-        RenderTable {TABLE} at (0,71) size 4x0
+          RenderBR {BR} at (396,62) size 0x0
+        RenderTable {TABLE} at (0,73) size 4x0

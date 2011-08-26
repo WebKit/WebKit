@@ -21,10 +21,10 @@ layer at (0,0) size 800x600
           text run at (0,0) width 402: "There should not be scroll bars below the popup and the button."
 layer at (8,97) size 100x50
   RenderBlock {DIV} at (0,89) size 100x50
-    RenderMenuList {SELECT} at (0,2) size 80x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-      RenderBlock (anonymous) at (1,1) size 78x25
-        RenderText at (3,3) size 191x19
-          text run at (3,3) width 191: "Lorem ipsum dolor sit amet"
+    RenderMenuList {SELECT} at (0,2) size 80x29 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+      RenderBlock (anonymous) at (1,1) size 78x27
+        RenderText at (4,4) size 191x19
+          text run at (4,4) width 191: "Lorem ipsum dolor sit amet"
     RenderText {#text} at (0,0) size 0x0
 layer at (8,167) size 100x50
   RenderBlock {DIV} at (0,159) size 100x50

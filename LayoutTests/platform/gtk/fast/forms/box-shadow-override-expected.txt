@@ -31,44 +31,44 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (172,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,157) size 784x37
-        RenderBlock {INPUT} at (4,14) size 13x13
-        RenderText {#text} at (21,10) size 4x19
-          text run at (21,10) width 4: " "
-        RenderBlock {INPUT} at (29,14) size 13x13
-        RenderText {#text} at (46,10) size 4x19
-          text run at (46,10) width 4: " "
-        RenderSlider {INPUT} at (52,11) size 129x14 [bgcolor=#FFFFFF]
+        RenderBlock {INPUT} at (4,11) size 16x16
+        RenderText {#text} at (24,10) size 4x19
+          text run at (24,10) width 4: " "
+        RenderBlock {INPUT} at (32,11) size 16x16
+        RenderText {#text} at (52,10) size 4x19
+          text run at (52,10) width 4: " "
+        RenderSlider {INPUT} at (58,11) size 129x14 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (0,0) size 129x14
             RenderBlock {DIV} at (0,0) size 98x14
             RenderBlock {DIV} at (98,0) size 31x14
-        RenderText {#text} at (183,10) size 4x19
-          text run at (183,10) width 4: " "
-        RenderFileUploadControl {INPUT} at (189,6) size 306x28 "(None)"
+        RenderText {#text} at (189,10) size 4x19
+          text run at (189,10) width 4: " "
+        RenderFileUploadControl {INPUT} at (195,6) size 306x28 "(None)"
           RenderButton {INPUT} at (0,0) size 103x28 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
             RenderBlock (anonymous) at (8,4) size 87x19
               RenderText at (0,0) size 87x19
                 text run at (0,0) width 87: "Choose File"
-        RenderText {#text} at (497,10) size 4x19
-          text run at (497,10) width 4: " "
-        RenderButton {INPUT} at (503,2) size 74x33 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderText {#text} at (503,10) size 4x19
+          text run at (503,10) width 4: " "
+        RenderButton {INPUT} at (509,2) size 74x33 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 58x24
             RenderText at (0,0) size 58x24
               text run at (0,0) width 58: "Button"
-        RenderText {#text} at (579,10) size 4x19
-          text run at (579,10) width 4: " "
-        RenderButton {INPUT} at (585,6) size 62x28 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderText {#text} at (585,10) size 4x19
+          text run at (585,10) width 4: " "
+        RenderButton {INPUT} at (591,6) size 62x28 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 46x19
             RenderText at (0,0) size 46x19
               text run at (0,0) width 46: "Button"
-        RenderText {#text} at (649,10) size 4x19
-          text run at (649,10) width 4: " "
-        RenderButton {INPUT} at (653,16) size 30x16 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderText {#text} at (655,10) size 4x19
+          text run at (655,10) width 4: " "
+        RenderButton {INPUT} at (659,16) size 30x16 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 14x7
             RenderText at (0,0) size 14x7
               text run at (0,0) width 14: "Button"
-        RenderText {#text} at (683,10) size 4x19
-          text run at (683,10) width 4: " "
-        RenderButton {BUTTON} at (689,2) size 74x33 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderText {#text} at (689,10) size 4x19
+          text run at (689,10) width 4: " "
+        RenderButton {BUTTON} at (695,2) size 74x33 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 58x24
             RenderText {#text} at (0,0) size 58x24
               text run at (0,0) width 58: "Button"
@@ -81,5 +81,5 @@ layer at (29,112) size 156x19
   RenderBlock {DIV} at (0,0) size 156x19
 layer at (29,141) size 156x19
   RenderBlock {DIV} at (0,0) size 156x19
-layer at (109,176) size 31x14
+layer at (115,176) size 31x14
   RenderBlock (relative positioned) {DIV} at (0,0) size 31x14
