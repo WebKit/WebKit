@@ -1,3 +1,18 @@
+2011-08-25  Anders Carlsson  <andersca@apple.com>
+
+        Correctly handle events in the updated Cocoa text input model
+        https://bugs.webkit.org/show_bug.cgi?id=67005
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKTextInputWindowController.mm:
+        (-[WKTextInputPanel _interpretKeyEvent:usingLegacyCocoaTextInput:string:]):
+        When using the updated model, always return a string even for 'simple' characters.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _tryHandlePluginComplexTextInputKeyDown:]):
+        Only let the input method have a crack at the event in the legacy model.
+
 2011-08-25  Jeff Miller  <jeffm@apple.com>
 
         Move Windows-specific WebPageProxy code to WebPageProxyWin.cpp

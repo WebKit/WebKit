@@ -107,8 +107,14 @@
 
         return YES;
     }
-    
-    if (hadMarkedText) {
+
+    bool shouldReturnTextString = hadMarkedText;
+
+    // In the updated Cocoa text input model spec, we always want to return the text even if the text view didn't have marked text.
+    if (!usingLegacyCocoaTextInput)
+        shouldReturnTextString = true;
+
+    if (shouldReturnTextString) {
         [self orderOut:nil];
 
         NSString *text = [[_inputTextView textStorage] string];

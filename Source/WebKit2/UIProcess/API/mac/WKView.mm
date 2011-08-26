@@ -1304,7 +1304,10 @@ static const short kIOHIDEventTypeScroll = 6;
     [self _disableComplexTextInputIfNecessary];
 
     // Try feeding the keyboard event directly to the plug-in.
-    return [self _handlePluginComplexTextInputKeyDown:event];
+    if (_data->_pluginComplexTextInputState == PluginComplexTextInputEnabledLegacy)
+        return [self _handlePluginComplexTextInputKeyDown:event];
+
+    return NO;
 }
 
 - (void)keyDown:(NSEvent *)theEvent
