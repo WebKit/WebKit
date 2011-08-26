@@ -1,3 +1,9 @@
+2011-08-26  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, fix error in chromium test_expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-26  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK baselines for new tests.
