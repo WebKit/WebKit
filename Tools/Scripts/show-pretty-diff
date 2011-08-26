@@ -72,6 +72,8 @@ if (isAppleMacWebKit()) {
     system "cygstart",$prettydiffPath;
 } elsif (isWindows()) {
     system "start", $prettydiffPath;
+} elsif (isLinux() && `which xdg-open`) {
+    system "xdg-open", $prettydiffPath;
 } else {
     print "Created prettified diff at " . $prettydiffPath . ".";
 }
