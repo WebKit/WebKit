@@ -5077,7 +5077,7 @@ bool CSSParser::parseFlex(int propId, bool important)
             else if (negativeFlex == unsetValue)
                 negativeFlex = arg->fValue;
             else if (!arg->fValue) {
-                // flex() only allows a size of 0 if the positive and negative flex values have already been set.
+                // flex() only allows a preferred size of 0 (sans units) if the positive and negative flex values have already been set.
                 preferredSize = primitiveValueCache()->createValue(0, CSSPrimitiveValue::CSS_PX);
             } else {
                 // We only allow 3 numbers without units if the last value is 0. E.g., flex(1 1 1) is invalid.
@@ -5097,7 +5097,7 @@ bool CSSParser::parseFlex(int propId, bool important)
     if (negativeFlex == unsetValue)
         negativeFlex = 0;
     if (!preferredSize)
-        preferredSize = primitiveValueCache()->createIdentifierValue(CSSValueAuto);
+        preferredSize = primitiveValueCache()->createValue(0, CSSPrimitiveValue::CSS_PX);
 
     RefPtr<CSSFlexValue> flex = CSSFlexValue::create(clampToFloat(positiveFlex), clampToFloat(negativeFlex), preferredSize);
     addProperty(propId, flex.release(), important);

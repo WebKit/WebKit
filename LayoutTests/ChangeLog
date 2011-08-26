@@ -1,3 +1,15 @@
+2011-08-26  Ojan Vafai  <ojan@chromium.org>
+
+        change the default preferred width of the flex() function to 0px per the new spec
+        https://bugs.webkit.org/show_bug.cgi?id=67067
+
+        Reviewed by Tony Chang.
+
+        * css3/flexbox/001.html:
+        * css3/flexbox/002.html:
+        * css3/flexbox/flex-parsing-expected.txt:
+        * css3/flexbox/script-tests/flex-parsing.js:
+
 2011-08-26  Aaron Colwell  <acolwell@chromium.org>
 
         Rebasing media/video-layer-crash & media/video-transformed images.

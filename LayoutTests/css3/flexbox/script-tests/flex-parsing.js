@@ -15,9 +15,9 @@ for (var i in attributesToTest) {
     shouldBeEqualToString('testFlex("100px", "' + attribute + '")', '100px');
     shouldBeEqualToString('testFlex("junk", "' + attribute + '")', '');
     shouldBeEqualToString('testFlex("-webkit-flex()", "' + attribute + '")', '');
-    shouldBeEqualToString('testFlex("-webkit-flex(1)", "' + attribute + '")', '-webkit-flex(1 0 auto)');
-    shouldBeEqualToString('testFlex("-webkit-flex(0)", "' + attribute + '")', '-webkit-flex(0 0 auto)');
-    shouldBeEqualToString('testFlex("-webkit-flex(2.4)", "' + attribute + '")', '-webkit-flex(2.4 0 auto)');
+    shouldBeEqualToString('testFlex("-webkit-flex(1)", "' + attribute + '")', '-webkit-flex(1 0 0px)');
+    shouldBeEqualToString('testFlex("-webkit-flex(0)", "' + attribute + '")', '-webkit-flex(0 0 0px)');
+    shouldBeEqualToString('testFlex("-webkit-flex(2.4)", "' + attribute + '")', '-webkit-flex(2.4 0 0px)');
     shouldBeEqualToString('testFlex("-webkit-flex(auto)", "' + attribute + '")', '-webkit-flex(1 0 auto)');
     shouldBeEqualToString('testFlex("-webkit-flex(1px)", "' + attribute + '")', '-webkit-flex(1 0 1px)');
     shouldBeEqualToString('testFlex("-webkit-flex(2em)", "' + attribute + '")', '-webkit-flex(1 0 2em)');
@@ -25,9 +25,9 @@ for (var i in attributesToTest) {
     shouldBeEqualToString('testFlex("-webkit-flex(-2)", "' + attribute + '")', '');
     shouldBeEqualToString('testFlex("-webkit-flex(foo)", "' + attribute + '")', '');
 
-    shouldBeEqualToString('testFlex("-webkit-flex(0 0)", "' + attribute + '")', '-webkit-flex(0 0 auto)');
-    shouldBeEqualToString('testFlex("-webkit-flex(0 1)", "' + attribute + '")', '-webkit-flex(0 1 auto)');
-    shouldBeEqualToString('testFlex("-webkit-flex(1 0)", "' + attribute + '")', '-webkit-flex(1 0 auto)');
+    shouldBeEqualToString('testFlex("-webkit-flex(0 0)", "' + attribute + '")', '-webkit-flex(0 0 0px)');
+    shouldBeEqualToString('testFlex("-webkit-flex(0 1)", "' + attribute + '")', '-webkit-flex(0 1 0px)');
+    shouldBeEqualToString('testFlex("-webkit-flex(1 0)", "' + attribute + '")', '-webkit-flex(1 0 0px)');
     shouldBeEqualToString('testFlex("-webkit-flex(2 auto)", "' + attribute + '")', '-webkit-flex(2 0 auto)');
     shouldBeEqualToString('testFlex("-webkit-flex(3 4px)", "' + attribute + '")', '-webkit-flex(3 0 4px)');
     shouldBeEqualToString('testFlex("-webkit-flex(auto 5.2)", "' + attribute + '")', '-webkit-flex(5.2 0 auto)');
