@@ -1,3 +1,12 @@
+2011-08-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        [Qt] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm fails intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=65969
+
+        Not reviewed. Unskip this test on Qt, it's fixed now.
+
+        * platform/qt/Skipped:
+
 2011-08-26  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline of some editing tests after switch to

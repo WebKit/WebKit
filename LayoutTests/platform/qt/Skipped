@@ -2124,7 +2124,6 @@ svg/custom/object-no-size-attributes.xhtml
 svg/custom/painting-marker-07-f-inherit.svg
 svg/custom/small-rect-scale.svg
 svg/filters/feConvolveFilter-y-bounds.svg
-http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml
 
 # failing new tests
 fast/forms/range/input-appearance-range.html
@@ -2348,10 +2347,6 @@ fast/writing-mode/border-styles-vertical-lr.html
 fast/writing-mode/border-styles-vertical-rl.html
 svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml
 svg/zoom/page/zoom-svg-through-object-with-override-size.html
-
-# [Qt] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm fails intermittently
-# https://bugs.webkit.org/show_bug.cgi?id=65969
-http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
 
 # [Qt] Enable WebGL by default for QtWebKit
 # https://bugs.webkit.org/show_bug.cgi?id=65998
