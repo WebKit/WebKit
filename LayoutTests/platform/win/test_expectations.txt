@@ -2,3 +2,7 @@
 //
 // See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
+BUGWK67007 DEBUG : fast/ruby/after-block-doesnt-crash.html = CRASH
+BUGWK67007 DEBUG : fast/ruby/after-table-doesnt-crash.html = CRASH
+BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
+BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.html = CRASH

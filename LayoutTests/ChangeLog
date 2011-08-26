@@ -1,5 +1,17 @@
 2011-08-25  Peter Kasting  <pkasting@google.com>
 
+        Temporarily mark some tests as crashing (assertion failure) after r93794.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+        * platform/win/test_expectations.txt:
+
+2011-08-25  Peter Kasting  <pkasting@google.com>
+
         [chromium] Some tests are apparently slow on Mac debug too.
 
         Unreviewed, test expectations update.

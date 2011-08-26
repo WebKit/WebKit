@@ -16,3 +16,8 @@ BUGWK64253 : fast/forms/search-placeholder-value-changed.html = FAIL
 BUGWK64253 : fast/forms/search-styled.html = FAIL
 BUGWK64253 : fast/forms/textarea-placeholder-pseudo-style.html = FAIL
 BUGWK64253 : fast/forms/textarea-placeholder-set-attribute.html = FAIL
+
+BUGWK67007 DEBUG : fast/ruby/after-block-doesnt-crash.html = CRASH
+BUGWK67007 DEBUG : fast/ruby/after-table-doesnt-crash.html = CRASH
+BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
+BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.html = CRASH
