@@ -191,7 +191,7 @@ void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* n
         if (newChild->isListItem())
             toRenderListItem(newChild)->updateListMarkerNumbers();
 
-        if (!newChild->isFloatingOrPositioned() && owner->childrenInline())
+        if (!newChild->isFloating() && owner->childrenInline())
             owner->dirtyLinesFromChangedChild(newChild);
 
         if (newChild->isRenderRegion())

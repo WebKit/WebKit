@@ -1,3 +1,13 @@
+2011-08-07  Robert Hogan  <robert@webkit.org>
+
+        The child div element with position:absolute will overlap with its parent div when a 'break' element is present in between
+        https://bugs.webkit.org/show_bug.cgi?id=21934
+
+        Reviewed by David Hyatt.
+
+        * fast/block/positioning/absolute-appended-to-inline-expected.txt: Added.
+        * fast/block/positioning/absolute-appended-to-inline.html: Added.
+
 2011-08-27  Anders Carlsson  <andersca@apple.com>
 
         iChat: Receiving a message containing only a single-quote (') causes bubble to fail

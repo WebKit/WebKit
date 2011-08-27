@@ -1,3 +1,34 @@
+2011-08-07  Robert Hogan  <robert@webkit.org>
+
+        The child div element with position:absolute will overlap with its parent div when a 'break' element is present in between
+        https://bugs.webkit.org/show_bug.cgi?id=21934
+
+        Reviewed by David Hyatt.
+
+        Test: fast/block/positioning/absolute-appended-to-inline.html
+
+        Appending a positioned child node to an inline flow should dirty the lines in the flow, just as
+        inserting a positioned child node does. Treating an appended and inserted node differently meant that updating the display type
+        from 'none' to 'block' for the following markup would result in the div getting positioned correctly under
+        the line block:
+
+            <div><a onMouseOver="mopen()">Hover</a><div style="display:none; position:absolute; background:#4682b4; height:10px; width:20px"><br></div></div>
+
+        but this would not happen with the following markup (the <br> is before the child div rather than after it):
+
+            <div><a onMouseOver="mopen()">Hover</a><br><div style="display:none; position:absolute; background:#4682b4; height:10px; width:20px"></div></div>
+
+        This problem is specific to cases where an object is appended to a line block whose last child is a <br>. When the line is relaid out after appending
+        the positioned object the last line in the line block is always considered dirty unless it broke cleanly (ie. with a <br>, see RenderBlock::determineStartPosition),
+        So in the second case above, the clean break and failing to dirty any lines in the block when appending the object means that the line block doesn't get relaid out
+        to position the new positioned object relative to its containing line block.
+
+        So the change could special-case appending a node when the previous sibling isBR(), but it seems just as well to behave the same way as insertChildNode().
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::appendChildNode):
+            Call dirtyLinesFromChangedChild() if the child is positioned, just like insertChildNode().
+
 2011-08-27  Anders Carlsson  <andersca@apple.com>
 
         iChat: Receiving a message containing only a single-quote (') causes bubble to fail
