@@ -1,3 +1,20 @@
+2011-08-27  Anders Carlsson  <andersca@apple.com>
+
+        iChat: Receiving a message containing only a single-quote (') causes bubble to fail
+        https://bugs.webkit.org/show_bug.cgi?id=67076
+        <rdar://problem/10026089>
+
+        Reviewed by Dan Bernstein.
+
+        Test: fast/borders/border-fit-2.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::borderFitAdjust):
+        Make sure that the resulting rect isn't smaller than the border + padding.
+
+        (WebCore::RenderBlock::clearTruncation):
+        Fix blatant coding style violations.
+
 2011-08-27  Andreas Kling  <kling@webkit.org>
 
         Shrink RenderLayer.
