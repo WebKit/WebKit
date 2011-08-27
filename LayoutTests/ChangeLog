@@ -1,5 +1,14 @@
 2011-08-26  David Levin  <levin@chromium.org>
 
+        [chromium] Update tests expectations due to r93909 and r93913.
+
+        * platform/chromium-cg-mac/fast/text/complex-preferred-logical-widths-expected.txt: Added.
+        * platform/chromium-linux/fast/text/complex-preferred-logical-widths-expected.png: Added.
+        * platform/chromium-win/fast/text/complex-preferred-logical-widths-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-08-26  David Levin  <levin@chromium.org>
+
         [chromium] Update tests expectations due to r93909.
 
         * platform/mac/fast/text/complex-preferred-logical-widths-expected.txt:
