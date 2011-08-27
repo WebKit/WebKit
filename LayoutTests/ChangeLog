@@ -1,3 +1,22 @@
+2011-08-26  Xiaomei Ji  <xji@chromium.org>
+
+        Regression(91788): Bad cast in WebCore::blockWithNextLineBox
+        https://bugs.webkit.org/show_bug.cgi?id=66090
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/move-by-word-visually-crash-test-1-expected.txt: Added.
+        * editing/selection/move-by-word-visually-crash-test-1.html: Added.
+        * editing/selection/move-by-word-visually-crash-test-2-expected.txt: Added.
+        * editing/selection/move-by-word-visually-crash-test-2.html: Added.
+        * editing/selection/move-by-word-visually-crash-test-3-expected.txt: Added.
+        * editing/selection/move-by-word-visually-crash-test-3.html: Added.
+        * editing/selection/move-by-word-visually-crash-test-4-expected.txt: Added.
+        * editing/selection/move-by-word-visually-crash-test-4.html: Added.
+        * editing/selection/move-by-word-visually-multi-line-expected.txt:
+        * editing/selection/resources/move-by-word-visually.js:
+        (runMoveLeftRight):
+
 2011-08-26  Gavin Barraclough  <barraclough@apple.com>
 
         DFG JIT - ArithMod may clobber operands.

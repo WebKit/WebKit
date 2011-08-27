@@ -266,8 +266,8 @@ function runMoveLeftRight(tests, unit)
             moveByWordForEveryPosition(sel, tests[i], "rtl");
         }
     }
-
-    document.getElementById("testMoveByWord").style.display = "none";
+    if (document.getElementById("testMoveByWord"))
+        document.getElementById("testMoveByWord").style.display = "none";
 }
 
 function runTest() {

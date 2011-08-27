@@ -1,3 +1,34 @@
+2011-08-26  Xiaomei Ji  <xji@chromium.org>
+
+        Regression(91788): Bad cast in WebCore::blockWithNextLineBox
+        https://bugs.webkit.org/show_bug.cgi?id=66090
+
+        Reviewed by Ryosuke Niwa.
+
+        This is more like (but not exactly) a revert of r91788.
+        It does not search for previous or next root inline box in different
+        render object, which completely eliminates the cause of this issue.
+        And it removes createPositionAvoidingIgnoredNode(), changed its caller
+        to use createLegacyEditingPosition(). createPositionAvoidingIgnoredNode
+        is not correct when node is a replaced element whose caretMaxOffset
+        could be greater than 1.
+
+        Tests: editing/selection/move-by-word-visually-crash-test-1.html
+               editing/selection/move-by-word-visually-crash-test-2.html
+               editing/selection/move-by-word-visually-crash-test-3.html
+               editing/selection/move-by-word-visually-crash-test-4.html
+
+        * editing/htmlediting.cpp:
+        * editing/htmlediting.h:
+        * editing/visible_units.cpp:
+        (WebCore::previousWordBreakInBoxInsideBlockWithSameDirectionality):
+        (WebCore::leftmostPositionInRTLBoxInLTRBlock):
+        (WebCore::rightmostPositionInLTRBoxInRTLBlock):
+        (WebCore::nextWordBreakInBoxInsideBlockWithDifferentDirectionality):
+        (WebCore::appendPositionAtLogicalEndOfLine):
+        (WebCore::leftInlineBox):
+        (WebCore::rightInlineBox):
+
 2011-08-26  James Robinson  <jamesr@chromium.org>
 
         [Chromium] Possible leak of LayerRendererChromium

@@ -1177,7 +1177,7 @@ static VisiblePosition previousWordBreakInBoxInsideBlockWithSameDirectionality(c
     if (hasSeenWordBreakInThisBox)
         wordBreak = previousWordBreak;
     else {
-        wordBreak = createPositionAvoidingIgnoredNode(box->renderer()->node(), box->caretMaxOffset());
+        wordBreak = createLegacyEditingPosition(box->renderer()->node(), box->caretMaxOffset());
 
         // Return the rightmost word boundary of LTR box or leftmost word boundary of RTL box if
         // it is not in the previously visited boxes. For example, given a logical text 
@@ -1216,21 +1216,21 @@ static VisiblePosition leftmostPositionInRTLBoxInLTRBlock(const InlineBox* box)
     InlineBox* nextLeaf = box->nextLeafChild();   
     
     if (previousLeaf && !previousLeaf->isLeftToRightDirection())
-        return createPositionAvoidingIgnoredNode(node, box->caretMaxOffset());
+        return createLegacyEditingPosition(node, box->caretMaxOffset());
 
     if (nextLeaf && !nextLeaf->isLeftToRightDirection()) {
         if (previousLeaf)
-            return createPositionAvoidingIgnoredNode(previousLeaf->renderer()->node(), previousLeaf->caretMaxOffset());
+            return createLegacyEditingPosition(previousLeaf->renderer()->node(), previousLeaf->caretMaxOffset());
 
         InlineBox* lastRTLLeaf;
         do {
             lastRTLLeaf = nextLeaf;
             nextLeaf = nextLeaf->nextLeafChild();
         } while (nextLeaf && !nextLeaf->isLeftToRightDirection());
-        return createPositionAvoidingIgnoredNode(lastRTLLeaf->renderer()->node(), lastRTLLeaf->caretMinOffset());
+        return createLegacyEditingPosition(lastRTLLeaf->renderer()->node(), lastRTLLeaf->caretMinOffset());
     }
 
-    return createPositionAvoidingIgnoredNode(node, box->caretMinOffset());
+    return createLegacyEditingPosition(node, box->caretMinOffset());
 }
 
 static VisiblePosition rightmostPositionInLTRBoxInRTLBlock(const InlineBox* box)
@@ -1241,21 +1241,21 @@ static VisiblePosition rightmostPositionInLTRBoxInRTLBlock(const InlineBox* box)
     InlineBox* nextLeaf = box->nextLeafChild();   
     
     if (nextLeaf && nextLeaf->isLeftToRightDirection())    
-        return createPositionAvoidingIgnoredNode(node, box->caretMaxOffset());
+        return createLegacyEditingPosition(node, box->caretMaxOffset());
 
     if (previousLeaf && previousLeaf->isLeftToRightDirection()) {
         if (nextLeaf)
-            return createPositionAvoidingIgnoredNode(nextLeaf->renderer()->node(), nextLeaf->caretMaxOffset());
+            return createLegacyEditingPosition(nextLeaf->renderer()->node(), nextLeaf->caretMaxOffset());
 
         InlineBox* firstLTRLeaf;
         do {
             firstLTRLeaf = previousLeaf;
             previousLeaf = previousLeaf->prevLeafChild();
         } while (previousLeaf && previousLeaf->isLeftToRightDirection());
-        return createPositionAvoidingIgnoredNode(firstLTRLeaf->renderer()->node(), firstLTRLeaf->caretMinOffset());
+        return createLegacyEditingPosition(firstLTRLeaf->renderer()->node(), firstLTRLeaf->caretMinOffset());
     }
 
-    return createPositionAvoidingIgnoredNode(node, box->caretMinOffset());
+    return createLegacyEditingPosition(node, box->caretMinOffset());
 }
     
 static VisiblePosition lastWordBreakInBox(const InlineBox* box, int& offsetOfWordBreak)
@@ -1301,7 +1301,7 @@ static VisiblePosition nextWordBreakInBoxInsideBlockWithDifferentDirectionality(
     
     bool hasSeenWordBreakInThisBox = previousWordBreak.isNotNull();
     VisiblePosition wordBreak = hasSeenWordBreakInThisBox ? previousWordBreak : 
-        createPositionAvoidingIgnoredNode(box->renderer()->node(), box->caretMinOffset());
+        createLegacyEditingPosition(box->renderer()->node(), box->caretMinOffset());
 
     wordBreak = nextBoundary(wordBreak, nextWordPositionBoundary);
   
@@ -1340,7 +1340,7 @@ typedef Vector<WordBoundaryEntry, 50> WordBoundaryVector;
     
 static void appendPositionAtLogicalEndOfLine(const InlineBox* box, WordBoundaryVector& orderedWordBoundaries)
 {
-    VisiblePosition endOfBlock = logicalEndOfLine(createPositionAvoidingIgnoredNode(box->renderer()->node(), box->caretMaxOffset()));
+    VisiblePosition endOfBlock = logicalEndOfLine(createLegacyEditingPosition(box->renderer()->node(), box->caretMaxOffset()));
 
     int offsetOfEndOfBlock;
     if (positionIsInBox(endOfBlock, box, offsetOfEndOfBlock))
@@ -1472,58 +1472,6 @@ static int smallestOffsetAbove(int offset, bool boxAndBlockAreInSameDirection, c
     return offsetNotFound;
 }
 
-static const RenderBlock* blockWithPreviousLineBox(const RenderBlock* startingBlock)
-{
-    for (const RenderBlock* block = startingBlock; block; block = toRenderBlock(block->previousSibling())) {
-        if (block->childrenInline()) {
-            if (block->firstRootBox())
-                return block;
-        } else if (const RenderBlock* renderBlock = blockWithPreviousLineBox(toRenderBlock(block->lastChild())))
-            return renderBlock;
-    }
-    return 0;
-}
-
-static const RootInlineBox* previousRootInlineBox(const InlineBox* box)
-{
-    Node* node = box->renderer()->node();
-
-    for (RenderObject* renderer = node->renderer(); renderer; renderer = renderer->parent()) {
-        if (renderer->isRenderBlock()) {
-            if (const RenderBlock* blockWithLineBoxes = blockWithPreviousLineBox(toRenderBlock(renderer->previousSibling())))
-                return blockWithLineBoxes->lastRootBox();
-        }
-    }
-
-    return 0;
-}
-
-static const RenderBlock* blockWithNextLineBox(const RenderBlock* startingBlock)
-{
-    for (const RenderBlock* block = startingBlock; block; block = toRenderBlock(block->nextSibling())) {
-        if (block->childrenInline()) {
-            if (block->firstRootBox())
-                return block;
-        } else if (const RenderBlock* renderBlock = blockWithNextLineBox(toRenderBlock(block->firstChild())))
-            return renderBlock;
-    }
-    return 0;
-}
-
-static const RootInlineBox* nextRootInlineBox(const InlineBox* box)
-{
-    Node* node = box->renderer()->node();
-
-    for (RenderObject* renderer = node->renderer(); renderer; renderer = renderer->parent()) {
-        if (renderer->isRenderBlock()) {
-            if (const RenderBlock* blockWithLineBoxes = blockWithNextLineBox(toRenderBlock(renderer->nextSibling())))
-                return blockWithLineBoxes->firstRootBox();
-        }
-    }
-
-    return 0;
-}
-
 static const InlineBox* leftInlineBox(const InlineBox* box, TextDirection blockDirection)
 {
     if (box->prevLeafChild())
@@ -1535,8 +1483,7 @@ static const InlineBox* leftInlineBox(const InlineBox* box, TextDirection blockD
     if (leftLineBox)
         return leftLineBox->lastLeafChild();
 
-    const RootInlineBox* leftRootInlineBox = isBlockLTR ? previousRootInlineBox(box) : nextRootInlineBox(box);
-    return leftRootInlineBox ? leftRootInlineBox->lastLeafChild() : 0;
+    return 0;
 }
 
 static const InlineBox* rightInlineBox(const InlineBox* box, TextDirection blockDirection)
@@ -1550,8 +1497,7 @@ static const InlineBox* rightInlineBox(const InlineBox* box, TextDirection block
     if (rightLineBox)
         return rightLineBox->firstLeafChild();
 
-    const RootInlineBox* rightRootInlineBox = isBlockLTR ? nextRootInlineBox(box) : previousRootInlineBox(box);
-    return rightRootInlineBox ? rightRootInlineBox->firstLeafChild() : 0;
+    return 0;
 }
 
 static VisiblePosition leftWordBoundary(const InlineBox* box, int offset, TextDirection blockDirection)

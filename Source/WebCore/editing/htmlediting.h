@@ -142,8 +142,6 @@ inline Position lastPositionInOrAfterNode(Node* node)
     return editingIgnoresContent(node) ? positionAfterNode(node) : lastPositionInNode(node);
 }
 
-Position createPositionAvoidingIgnoredNode(Node*, int offset);
-
 // comparision functions on Position
     
 int comparePositions(const Position&, const Position&);
