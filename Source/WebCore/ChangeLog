@@ -1,3 +1,15 @@
+2011-08-27  Andreas Kling  <kling@webkit.org>
+
+        Shrink RenderLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=67089
+
+        Reviewed by Antonio Gomes.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        * rendering/RenderLayer.h: Make m_inResizeMode a bitfield,
+        shrinking RenderLayer by 8 bytes (on 64-bit.)
+
 2011-08-27  Young Han Lee  <joybro@company100.net>
 
         Reviewed by Dirk Schulze.

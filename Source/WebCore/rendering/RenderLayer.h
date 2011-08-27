@@ -660,9 +660,6 @@ protected:
     RefPtr<Scrollbar> m_hBar;
     RefPtr<Scrollbar> m_vBar;
 
-    // Keeps track of whether the layer is currently resizing, so events can cause resizing to start and stop.
-    bool m_inResizeMode;
-
     // For layers that establish stacking contexts, m_posZOrderList holds a sorted list of all the
     // descendant layers within the stacking context that have z-indices of 0 or greater
     // (auto will count as 0).  m_negZOrderList holds descendants within our stacking context with negative
@@ -678,6 +675,9 @@ protected:
 #ifndef NDEBUG
     const RenderLayer* m_clipRectsRoot;   // Root layer used to compute clip rects.
 #endif
+
+    // Keeps track of whether the layer is currently resizing, so events can cause resizing to start and stop.
+    bool m_inResizeMode : 1;
 
     bool m_scrollDimensionsDirty : 1;
     bool m_zOrderListsDirty : 1;
