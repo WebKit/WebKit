@@ -60,6 +60,7 @@
                     { "name": "google-mac-4", "platform": "chromium-cg-mac" },
                     { "name": "google-linux-1", "platform": "chromium-linux" },
                     { "name": "google-linux-2", "platform": "chromium-linux" },
+                    { "name": "google-linux-android", "platform": "chromium-android" },
                     { "name": "google-linux-flexbox", "platform": "chromium-linux" },
 
                     { "name": "wincairo-1", "platform": "wincairo" },
@@ -248,6 +249,11 @@
                       "slavenames": ["google-linux-flexbox"]
                     },
                     {
+                      "name": "Chromium Android Release", "type": "Build", "builddir": "chromium-linux-android",
+                      "platform": "chromium-android", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-linux-android"]
+                    },
+                    {
                       "name": "WinCairo Debug (Build)", "type": "Build", "builddir": "win-cairo-debug",
                       "platform": "wincairo", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["wincairo-1"]
@@ -270,7 +276,7 @@
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt SnowLeopard Release", "Qt Linux MIPS Release",
                                        "Chromium Win Release", "Chromium Win Release (Tests)", "Chromium Mac Release", "Chromium Mac Release (Tests)",
                                        "Chromium Linux Release", "Chromium Linux Release (Tests)", "Chromium Linux Release (Flexbox)",
-                                       "WinCairo Debug (Build)", "WinCE Release (Build)", "EFL Linux Release (Build)"]
+                                       "Chromium Android Release", "WinCairo Debug (Build)", "WinCE Release (Build)", "EFL Linux Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-leopard", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Leopard Intel Debug (Build)"]
