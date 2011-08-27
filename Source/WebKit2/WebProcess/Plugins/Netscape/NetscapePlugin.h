@@ -240,7 +240,7 @@ private:
         WTF_MAKE_NONCOPYABLE(Timer);
 
     public:
-        typedef void (*TimerFunc)(NPP, uint32 timerID);
+        typedef void (*TimerFunc)(NPP, uint32_t timerID);
 
         static PassOwnPtr<Timer> create(NetscapePlugin*, unsigned timerID, unsigned interval, bool repeat, TimerFunc);
         ~Timer();
