@@ -1,3 +1,25 @@
+2011-08-27  Young Han Lee  <joybro@company100.net>
+
+        Reviewed by Dirk Schulze.
+
+        SVG animation fill="freeze" doesn't set baseVal to current animVal if animation stops before reaching the end
+        https://bugs.webkit.org/show_bug.cgi?id=63553
+
+        calculateAnimationPercentAndRepeat() is returning 1, which means 100%, whenever
+        elapsed >= m_intervalEnd, but this is wrong because m_intervalEnd can be in the middle
+        of the animation duration. (e.g. begin="0s" end="2s" dur="3s")
+
+        This change makes the function return the animations's true progress instead of 100%
+        when the animation ends.
+
+        * svg/animations/animate-end-attribute-expected.txt: Added.
+        * svg/animations/animate-end-attribute.html: Added.
+        * svg/animations/script-tests/animate-end-attribute.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+
 2011-08-27  Jarred Nicholls  <jarred@sencha.com>
 
         [Qt] Need spin-button implementation
