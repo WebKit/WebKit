@@ -90,7 +90,7 @@ if __name__ == '__main__':
     args.append('--no-circular-check')
 
   # On linux, we want gyp to output a makefile (default is scons).
-  if sys.platform.startswith('linux'):
+  if sys.platform.startswith('linux') or 'GYP_ANDROID_BUILD' in os.environ:
     args.extend(['-fmake',
                  '--suffix=.chromium',
                  '--toplevel-dir=../../..',

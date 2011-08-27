@@ -1,3 +1,21 @@
+2011-08-27  Peter Beverloo  <peter@chromium.org>
+
+        Teach the update and build scripts how to handle dependencies
+        and cross-compiling rules for the Chromium port on OS(ANDROID).
+        https://bugs.webkit.org/show_bug.cgi?id=66687
+
+        Reviewed by Adam Barth.
+
+        * Scripts/build-webkit:
+        * Scripts/update-webkit:
+        * Scripts/update-webkit-chromium:
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration):
+        (isChromium):
+        (isChromiumAndroid):
+        (determineIsChromiumAndroid):
+        (buildChromium):
+
 2011-08-26  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic should let me know that I need to run the local server

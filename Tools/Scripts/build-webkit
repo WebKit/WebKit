@@ -365,6 +365,7 @@ Usage: $programName [options] [options to pass to build system]
   --dsym                            Change debugging format to dwarf-with-dsym (Mac only)
 
   --chromium                        Build the Chromium port on Mac/Win/Linux
+  --chromium-android                Build the Chromium port on Android
   --efl                             Build the EFL port
   --gtk                             Build the GTK+ port
   --qt                              Build the Qt port

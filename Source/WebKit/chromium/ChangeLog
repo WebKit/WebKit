@@ -1,3 +1,13 @@
+2011-08-27  Peter Beverloo  <peter@chromium.org>
+
+        Teach the update and build scripts how to handle dependencies
+        and cross-compiling rules for the Chromium port on OS(ANDROID).
+        https://bugs.webkit.org/show_bug.cgi?id=66687
+
+        Reviewed by Adam Barth.
+
+        * gyp_webkit:
+
 2011-08-26  Iain Merrick  <husky@google.com>
 
         [chromium] Add MockWebGraphicsContext3D, for compositor unit testing

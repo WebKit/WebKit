@@ -49,6 +49,7 @@ my $showHelp;
 my $useGYP = 0;
 
 determineIsChromium();
+determineIsChromiumAndroid();
 
 determineIsWinCairo();
 
@@ -63,11 +64,12 @@ my $getOptionsResult = GetOptions(
 if (!$getOptionsResult || $showHelp) {
     print STDERR <<__END__;
 Usage: @{[ basename($0) ]} [options]
-  --chromium  also update dependencies of the chromium port
-  -h|--help   show the help message
-  -q|--quiet  pass -q to svn update for quiet updates
-  --gyp       generate project files from gyp after update
-  --wincairo  also update dependencies of the WinCairo port
+  --chromium          also update dependencies of the chromium port
+  --chromium-android  also update dependencies of the chromium port for Android
+  -h|--help           show the help message
+  -q|--quiet          pass -q to svn update for quiet updates
+  --gyp               generate project files from gyp after update
+  --wincairo          also update dependencies of the WinCairo port
 __END__
     exit 1;
 }
@@ -97,7 +99,9 @@ if (-d "../Internal") {
         rmtree(["WebKit/chromium/Debug", "WebKit/chromium/Release"]);
     }
 
-    system("perl", "Tools/Scripts/update-webkit-chromium") == 0 or die $!;
+    my @chromiumUpdateArgs = ("perl", "Tools/Scripts/update-webkit-chromium");
+    push @chromiumUpdateArgs, "--chromium-android" if isChromiumAndroid();
+    system(@chromiumUpdateArgs) == 0 or die $!;
 } elsif (isAppleWinWebKit()) {
     system("perl", "Tools/Scripts/update-webkit-auxiliary-libs") == 0 or die;
     if (isWinCairo()) {

@@ -72,6 +72,7 @@ my $isWx;
 my $isEfl;
 my @wxArgs;
 my $isChromium;
+my $isChromiumAndroid;
 my $isInspectorFrontend;
 my $isWK2;
 
@@ -284,7 +285,8 @@ sub argumentsForConfiguration()
     push(@args, '--efl') if isEfl();
     push(@args, '--wince') if isWinCE();
     push(@args, '--wx') if isWx();
-    push(@args, '--chromium') if isChromium();
+    push(@args, '--chromium') if isChromium() && !isChromiumAndroid();
+    push(@args, '--chromium-android') if isChromiumAndroid();
     push(@args, '--inspector-frontend') if isInspectorFrontend();
     return @args;
 }
@@ -871,13 +873,26 @@ sub isFedoraBased()
 sub isChromium()
 {
     determineIsChromium();
-    return $isChromium;
+    determineIsChromiumAndroid();
+    return $isChromium || $isChromiumAndroid;
 }
 
 sub determineIsChromium()
 {
     return if defined($isChromium);
     $isChromium = checkForArgumentAndRemoveFromARGV("--chromium");
+}
+
+sub isChromiumAndroid()
+{
+    determineIsChromiumAndroid();
+    return $isChromiumAndroid;
+}
+
+sub determineIsChromiumAndroid()
+{
+    return if defined($isChromiumAndroid);
+    $isChromiumAndroid = checkForArgumentAndRemoveFromARGV("--chromium-android");
 }
 
 sub isWinCairo()
@@ -1891,7 +1906,23 @@ sub buildChromium($@)
     }
 
     my $result = 1;
-    if (isDarwin()) {
+    if (isChromiumAndroid()) {
+        # Building Chromium for Android needs to cross-compile using the
+        # Toolchains supplied by the Android NDK.
+        my $ndkBaseDir = sourceDir() . "/Source/WebKit/chromium/third_party/android-ndk-r6";
+        my $platform = isDarwin() ? "darwin-x86" : "linux-x86";
+
+        my $toolchainBase = $ndkBaseDir . "/toolchains/arm-linux-androideabi-4.4.3/prebuilt/" . $platform . "/bin/arm-linux-androideabi-";
+
+        $ENV{AR} = $toolchainBase . "ar";
+        $ENV{CC} = $toolchainBase . "gcc";
+        $ENV{CXX} = $toolchainBase . "g++";
+        $ENV{LINK} = $toolchainBase . "gcc";
+        $ENV{RANLIB} = $toolchainBase . "ranlib";
+        $ENV{STRIP} = $toolchainBase . "strip";
+
+        $result = buildChromiumMakefile("all", $clean);
+    } elsif (isDarwin()) {
         # Mac build - builds the root xcode project.
         $result = buildXCodeProject("Source/WebKit/chromium/WebKit", $clean, "-configuration", configuration(), @options);
     } elsif (isCygwin() || isWindows()) {

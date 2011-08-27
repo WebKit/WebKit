@@ -34,6 +34,8 @@ use Getopt::Long;
 use lib $FindBin::Bin;
 use webkitdirs;
 
+determineIsChromiumAndroid();
+
 chdir("Source/WebKit/chromium") or die $!;
 
 # Find gclient or install it.
@@ -56,6 +58,14 @@ if (! -e ".gclient") {
            "--spec=solutions=[{'name':'./','url':None}]") == 0 or die $!;
 }
 
+# Set certain gyp settings for the Android build
+if (isChromiumAndroid()) {
+    # FIXME: Add code to automatically download the NDK
+    my $host_os = isLinux() ? "linux" : "mac";
+    $ENV{GYP_DEFINES} = "OS=android host_os=" . $host_os . " target_arch=arm arm_neon=1 armv7=1 arm_thumb=1 linux_fpic=1 use_openssl=1 use_system_libjpeg=0 linux_use_tcmalloc=0";
+    $ENV{GYP_ANDROID_BUILD} = 1;
+}
+
 my $force = 0;
 GetOptions(
   'force' => \$force,
@@ -66,4 +76,5 @@ print "Updating chromium port dependencies using gclient...\n";
 my @gclientArgs = ($gclientPath, "sync");
 push @gclientArgs, "--force" if $force;
 push @gclientArgs, "--delete_unversioned_trees" if $force;
+push @gclientArgs, "--deps=unix,android" if isChromiumAndroid();
 system(@gclientArgs) == 0 or die $!;
