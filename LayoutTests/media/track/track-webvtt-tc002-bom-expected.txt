@@ -3,13 +3,13 @@ Tests that the parser properly ignores a UTF-8 BOM character at the beginning of
 
 *** Testing text track 0
 EXPECTED (cues.length == '2') OK
-EXPECTED (cues[i].id == '1') OK
-EXPECTED (cues[i].startTime == '0') OK
-EXPECTED (cues[i].endTime == '30.5') OK
-EXPECTED (cues[i].getCueAsSource() == 'Bear is Coming!!!!!') OK
-EXPECTED (cues[i].id == '2') OK
-EXPECTED (cues[i].startTime == '31') OK
-EXPECTED (cues[i].endTime == '1200.5') OK
-EXPECTED (cues[i].getCueAsSource() == 'I said Bear is coming!!!!') OK
+EXPECTED (cues[0].id == '1') OK
+EXPECTED (cues[0].startTime == '0') OK
+EXPECTED (cues[0].endTime == '30.5') OK
+EXPECTED (cues[0].getCueAsSource() == 'Bear is Coming!!!!!') OK
+EXPECTED (cues[1].id == '2') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[1].endTime == '1200.5') OK
+EXPECTED (cues[1].getCueAsSource() == 'I said Bear is coming!!!!') OK
 END OF TEST
 

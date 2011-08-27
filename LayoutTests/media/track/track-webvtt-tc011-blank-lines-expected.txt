@@ -3,18 +3,18 @@ Tests that cues are not affected by multiple newlines \n, \r, and \r\n and that 
 
 *** Testing text track 0
 EXPECTED (cues.length == '3') OK
-EXPECTED (cues[i].id == '1') OK
-EXPECTED (cues[i].startTime == '0') OK
-EXPECTED (cues[i].endTime == '30.5') OK
-EXPECTED (cues[i].getCueAsSource() == 'Bear is Coming!!!!!') OK
-EXPECTED (cues[i].id == '2') OK
-EXPECTED (cues[i].startTime == '31') OK
-EXPECTED (cues[i].endTime == '60.5') OK
-EXPECTED (cues[i].getCueAsSource() == 'I said Bear is coming!!!!') OK
-EXPECTED (cues[i].id == '3') OK
-EXPECTED (cues[i].startTime == '61') OK
-EXPECTED (cues[i].endTime == '361200.5') OK
-EXPECTED (cues[i].getCueAsSource() == 'I said Bear is coming now!!!!') OK
+EXPECTED (cues[0].id == '1') OK
+EXPECTED (cues[0].startTime == '0') OK
+EXPECTED (cues[0].endTime == '30.5') OK
+EXPECTED (cues[0].getCueAsSource() == 'Bear is Coming!!!!!') OK
+EXPECTED (cues[1].id == '2') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[1].endTime == '60.5') OK
+EXPECTED (cues[1].getCueAsSource() == 'I said Bear is coming!!!!') OK
+EXPECTED (cues[2].id == '3') OK
+EXPECTED (cues[2].startTime == '61') OK
+EXPECTED (cues[2].endTime == '361200.5') OK
+EXPECTED (cues[2].getCueAsSource() == 'I said Bear is coming now!!!!') OK
 
 *** Testing text track 1
 EXPECTED (cues.length == '1') OK

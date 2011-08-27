@@ -249,7 +249,7 @@ function testCues(index, expected)
     for (i = 0; i < cues.length; i++) {
         for (j = 0; j < expected.tests.length; j++) {
             var test = expected.tests[j];
-            testExpected("cues[i]." + test.property, test.values[i]);
+            testExpected("cues[" + i + "]." + test.property, test.values[i]);
         }
     }
 }
