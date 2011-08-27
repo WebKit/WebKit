@@ -2372,11 +2372,6 @@ fast/harness/sample-fail-mismatch-reftest.html
 # https://bugs.webkit.org/show_bug.cgi?id=66619
 editing/spelling/spelling-insert-html.html
 
-# Introduced in r93452. Has no expectaion yet because our result is incorrect.
-# [Qt] fast/parser/innerhtml-with-prefixed-elements.xhtml has incorrect results
-# https://bugs.webkit.org/show_bug.cgi?id=66626
-fast/parser/innerhtml-with-prefixed-elements.xhtml
-
 # Need new baseline http://webkit.org/b/66662
 fast/block/float/floats-and-text-indent.html
 fast/block/float/floats-and-text-indent-rl.html

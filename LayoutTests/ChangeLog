@@ -1,3 +1,11 @@
+2011-08-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped: Remove a non-existent test.
+        * platform/qt/fast/text/complex-preferred-logical-widths-expected.png: Added.
+        * platform/qt/fast/text/complex-preferred-logical-widths-expected.txt: Added.
+
 2011-08-26  Xiaomei Ji  <xji@chromium.org>
 
         Regression(91788): Bad cast in WebCore::blockWithNextLineBox
