@@ -1,3 +1,27 @@
+2011-08-27  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC::Executable is inconsistent about using weak handle finalizers
+        and destructors for releasing memory
+        https://bugs.webkit.org/show_bug.cgi?id=67072
+
+        Reviewed by Darin Adler.
+        
+        Moved more of the destruction of Executable state into the finalizer,
+        which also resulted in an opportunity to mostly combine this with
+        discardCode().  This also means that the finalizer is now enabled even
+        when the JIT is turned off.  This is performance neutral on SunSpider,
+        V8, and Kraken.
+
+        * runtime/Executable.cpp:
+        (JSC::ExecutableBase::clearCode):
+        (JSC::ExecutableFinalizer::finalize):
+        (JSC::EvalExecutable::clearCode):
+        (JSC::ProgramExecutable::clearCode):
+        (JSC::FunctionExecutable::discardCode):
+        (JSC::FunctionExecutable::clearCode):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::finishCreation):
+
 2011-08-26  Gavin Barraclough  <barraclough@apple.com>
 
         DFG JIT - ArithMod may clobber operands.

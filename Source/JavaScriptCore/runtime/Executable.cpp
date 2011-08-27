@@ -50,7 +50,7 @@ static bool tryDFGCompile(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCod
     // FIXME: No flow control yet supported, don't bother scanning the bytecode if there are any jump targets.
     if (codeBlock->numberOfJumpTargets())
         return false;
-#endif
+#endif // ENABLE(DFG_JIT_RESTRICTIONS)
 
     JSGlobalData* globalData = &exec->globalData();
     DFG::Graph dfg(codeBlock->m_numParameters, codeBlock->m_numVars);
@@ -68,7 +68,7 @@ static bool tryDFGCompileFunction(ExecState* exec, ExecState* calleeArgsExec, Co
     // FIXME: No flow control yet supported, don't bother scanning the bytecode if there are any jump targets.
     if (codeBlock->numberOfJumpTargets())
         return false;
-#endif
+#endif // ENABLE(DFG_JIT_RESTRICTIONS)
 
     JSGlobalData* globalData = &exec->globalData();
     DFG::Graph dfg(codeBlock->m_numParameters, codeBlock->m_numVars);
@@ -82,16 +82,29 @@ static bool tryDFGCompileFunction(ExecState* exec, ExecState* calleeArgsExec, Co
     dataFlowJIT.compileFunction(jitCode, jitCodeWithArityCheck);
     return true;
 }
-#else
+#else // ENABLE(DFG_JIT)
 static bool tryDFGCompile(ExecState*, CodeBlock*, JITCode&) { return false; }
 static bool tryDFGCompileFunction(ExecState*, ExecState*, CodeBlock*, JITCode&, MacroAssemblerCodePtr&) { return false; }
+#endif // ENABLE(DFG_JIT)
+#endif // ENABLE(JIT)
+    
+void ExecutableBase::clearCode()
+{
+#if ENABLE(JIT)
+    m_jitCodeForCall.clear();
+    m_jitCodeForConstruct.clear();
+    m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
+    m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr();
 #endif
+    m_numParametersForCall = NUM_PARAMETERS_NOT_COMPILED;
+    m_numParametersForConstruct = NUM_PARAMETERS_NOT_COMPILED;
+}
 
 class ExecutableFinalizer : public WeakHandleOwner {
     virtual void finalize(Handle<Unknown> handle, void*)
     {
         Weak<ExecutableBase> executable(Weak<ExecutableBase>::Adopt, handle);
-        executable->clearExecutableCode();
+        executable->clearCode();
     }
 };
 
@@ -100,8 +113,7 @@ WeakHandleOwner* ExecutableBase::executableFinalizer()
     DEFINE_STATIC_LOCAL(ExecutableFinalizer, finalizer, ());
     return &finalizer;
 }
-#endif
-    
+
 const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, 0, 0 };
 
 NativeExecutable::~NativeExecutable()
@@ -232,6 +244,15 @@ void EvalExecutable::unlinkCalls()
 #endif
 }
 
+void EvalExecutable::clearCode()
+{
+    if (m_evalCodeBlock) {
+        m_evalCodeBlock->clearEvalCache();
+        m_evalCodeBlock.clear();
+    }
+    Base::clearCode();
+}
+
 JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
 {
     JSObject* exception = 0;
@@ -314,6 +335,15 @@ void ProgramExecutable::visitChildren(SlotVisitor& visitor)
     ScriptExecutable::visitChildren(visitor);
     if (m_programCodeBlock)
         m_programCodeBlock->visitAggregate(visitor);
+}
+
+void ProgramExecutable::clearCode()
+{
+    if (m_programCodeBlock) {
+        m_programCodeBlock->clearEvalCache();
+        m_programCodeBlock.clear();
+    }
+    Base::clearCode();
 }
 
 JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec)
@@ -457,20 +487,21 @@ void FunctionExecutable::discardCode()
         return;
     if (!m_jitCodeForConstruct && m_codeBlockForConstruct)
         return;
-    m_jitCodeForCall = JITCode();
-    m_jitCodeForConstruct = JITCode();
-    m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
-    m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr();
 #endif
-    if (m_codeBlockForCall)
-        m_codeBlockForCall->clearEvalCache();
-    m_codeBlockForCall.clear();
-    if (m_codeBlockForConstruct)
-        m_codeBlockForConstruct->clearEvalCache();
-    m_codeBlockForConstruct.clear();
-    m_numParametersForCall = NUM_PARAMETERS_NOT_COMPILED;
-    m_numParametersForConstruct = NUM_PARAMETERS_NOT_COMPILED;
+    clearCode();
+}
 
+void FunctionExecutable::clearCode()
+{
+    if (m_codeBlockForCall) {
+        m_codeBlockForCall->clearEvalCache();
+        m_codeBlockForCall.clear();
+    }
+    if (m_codeBlockForConstruct) {
+        m_codeBlockForConstruct->clearEvalCache();
+        m_codeBlockForConstruct.clear();
+    }
+    Base::clearCode();
 }
 
 void FunctionExecutable::unlinkCalls()

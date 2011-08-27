@@ -63,10 +63,8 @@ namespace JSC {
         void finishCreation(JSGlobalData& globalData)
         {
             Base::finishCreation(globalData);
-#if ENABLE(JIT)
             Weak<ExecutableBase> finalizer(globalData, this, executableFinalizer());
             finalizer.leakHandle();
-#endif
         }
         
     public:
@@ -88,6 +86,8 @@ namespace JSC {
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info); }
         
         static const ClassInfo s_info;
+
+        virtual void clearCode();
 
     protected:
         static const unsigned StructureFlags = 0;
@@ -156,21 +156,15 @@ namespace JSC {
             return hasJITCodeForConstruct();
         }
 
-        void clearExecutableCode()
-        {
-            m_jitCodeForCall.clear();
-            m_jitCodeForConstruct.clear();
-        }
-
     protected:
         JITCode m_jitCodeForCall;
         JITCode m_jitCodeForConstruct;
         MacroAssemblerCodePtr m_jitCodeForCallWithArityCheck;
         MacroAssemblerCodePtr m_jitCodeForConstructWithArityCheck;
+#endif
         
     private:
         static WeakHandleOwner* executableFinalizer();
-#endif
     };
 
     class NativeExecutable : public ExecutableBase {
@@ -339,6 +333,10 @@ namespace JSC {
         }
         
         static const ClassInfo s_info;
+
+    protected:
+        virtual void clearCode();
+
     private:
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         EvalExecutable(ExecState*, const SourceCode&, bool);
@@ -392,6 +390,9 @@ namespace JSC {
         }
         
         static const ClassInfo s_info;
+        
+    protected:
+        virtual void clearCode();
 
     private:
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
@@ -523,8 +524,10 @@ namespace JSC {
         }
         
         static const ClassInfo s_info;
-
+        
     protected:
+        virtual void clearCode();
+
         void finishCreation(JSGlobalData& globalData, const Identifier& name, int firstLine, int lastLine)
         {
             m_firstLine = firstLine;
