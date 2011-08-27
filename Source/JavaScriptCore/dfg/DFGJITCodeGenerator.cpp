@@ -198,7 +198,15 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
     // Unbox the double
     case DataFormatJSDouble: {
         GPRReg gpr = info.gpr();
-        FPRReg fpr = unboxDouble(gpr);
+        FPRReg fpr = fprAllocate();
+        if (m_gprs.isLocked(gpr)) {
+            // Make sure we don't trample gpr if it is in use.
+            GPRReg temp = allocate();
+            m_jit.move(gpr, temp);
+            unboxDouble(temp, fpr);
+            unlock(temp);
+        } else
+            unboxDouble(gpr, fpr);
 
         m_gprs.release(gpr);
         m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);

@@ -1,3 +1,17 @@
+2011-08-26  Gavin Barraclough  <barraclough@apple.com>
+
+        DFG JIT - ArithMod may clobber operands.
+        https://bugs.webkit.org/show_bug.cgi?id=67085
+
+        Reviewed by Sam Weinig.
+
+        Added test case.
+
+        * fast/js/mod-crash-expected.txt:
+        * fast/js/script-tests/mod-crash.js:
+        (nonSpeculativeModReuseInner):
+        (nonSpeculativeModReuse):
+
 2011-08-26  Anna Cavender  <annacc@chromium.org>
 
         Cleanup resulting text of media/track tests.

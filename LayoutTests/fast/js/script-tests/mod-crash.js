@@ -22,4 +22,20 @@ function g()
 
 shouldBe("g()", "NaN");
 
+// Test that reusing a floating point value after use in a modulus works correctly.
+function nonSpeculativeModReuseInner(argument, o1, o2)
+{
+ 	// The + operator on objects is a reliable way to avoid the speculative JIT path for now at least.
+    o1 + o2;
+
+    var knownDouble = argument - 0;
+    return knownDouble % 1 + knownDouble;
+}
+function nonSpeculativeModReuse(argument)
+{
+    return nonSpeculativeModReuseInner(argument, {}, {});
+}
+
+shouldBe("nonSpeculativeModReuse(0.5)", "1");
+
 var successfullyParsed = true;

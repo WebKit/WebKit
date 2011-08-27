@@ -674,12 +674,19 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         op2.use();
     
         GPRReg temp2 = InvalidGPRReg;
+        GPRReg unboxGPR;
         if (op2GPR == X86Registers::eax || op2GPR == X86Registers::edx) {
             temp2 = allocate();
             m_jit.move(op2GPR, temp2);
             op2GPR = temp2;
-        }
-    
+            unboxGPR = temp2;
+        } else if (op1GPR == X86Registers::eax)
+            unboxGPR = X86Registers::edx;
+        else
+            unboxGPR = X86Registers::eax;
+        ASSERT(unboxGPR != op1.gpr());
+        ASSERT(unboxGPR != op2.gpr());
+
         JITCompiler::Jump firstOpNotInt;
         JITCompiler::Jump secondOpNotInt;
         JITCompiler::JumpList done;
@@ -724,12 +731,14 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
                 secondOpNotInt2.link(&m_jit);
             
                 // first op is a double, second op is a double.
-                unboxDouble(op2GPR, op2FPR);
+                m_jit.move(op2GPR, unboxGPR);
+                unboxDouble(unboxGPR, op2FPR);
             
                 gotSecondOp.link(&m_jit);
             }
         
-            unboxDouble(op1GPR, op1FPR);
+            m_jit.move(op1GPR, unboxGPR);
+            unboxDouble(unboxGPR, op1FPR);
         
             gotDoubleArgs = m_jit.jump();
         }
@@ -739,7 +748,8 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         
             // we know that the first op is an int, and the second is a double
             m_jit.convertInt32ToDouble(op1GPR, op1FPR);
-            unboxDouble(op2GPR, op2FPR);
+            m_jit.move(op2GPR, unboxGPR);
+            unboxDouble(unboxGPR, op2FPR);
         }
     
         if (!isKnownInteger(node.child1()))
