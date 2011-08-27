@@ -87,7 +87,16 @@ test('FailingTest', 4, function() {
 test('SuspiciousCommit', 2, function() {
     var suspiciousCommit = new ui.notifications.SuspiciousCommit({revision: 1, title: "title", author: "author", reviewer: "reviewer"});
     equal(suspiciousCommit.tagName, 'LI');
-    equal(suspiciousCommit.innerHTML, '<div class="description"><a href="">1</a>title author (reviewer)</div><ul class="actions"><li><button>Roll out</button></li></ul>');
+    equal(suspiciousCommit.innerHTML,
+        '<div class="description">' +
+            '<a href="http://trac.webkit.org/changeset/1" target="_blank">1</a>' +
+            '<span class="title">title</span>' +
+            '<span class="author">author</span>' +
+            '<span class="reviewer">reviewer</span>' +
+        '</div>' +
+        '<ul class="actions">' +
+            '<li><button>Roll out</button></li>' +
+        '</ul>');
 });
 
 test('TestsFailing', 13, function() {
@@ -186,7 +195,10 @@ test('TestsFailing', 13, function() {
             '<ul class="causes">' +
                 '<li>' +
                     '<div class="description">' +
-                        '<a href="">1</a>title author (reviewer)'+
+                        '<a href="http://trac.webkit.org/changeset/1" target="_blank">1</a>' +
+                        '<span class="title">title</span>' +
+                        '<span class="author">author</span>' +
+                        '<span class="reviewer">reviewer</span>' +
                     '</div>' +
                     '<ul class="actions">' +
                         '<li><button>Roll out</button></li>' +
@@ -223,7 +235,10 @@ test('TestsFailing', 13, function() {
             '<ul class="causes">' +
                 '<li>' +
                     '<div class="description">' +
-                        '<a href="">1</a>title author (reviewer)'+
+                        '<a href="http://trac.webkit.org/changeset/1" target="_blank">1</a>' +
+                        '<span class="title">title</span>' +
+                        '<span class="author">author</span>' +
+                        '<span class="reviewer">reviewer</span>' +
                     '</div>' +
                     '<ul class="actions">' +
                         '<li><button>Roll out</button></li>' +
@@ -265,7 +280,10 @@ test('TestsFailing', 13, function() {
             '<ul class="causes">' +
                 '<li>' +
                     '<div class="description">' +
-                        '<a href="">1</a>title author (reviewer)'+
+                        '<a href="http://trac.webkit.org/changeset/1" target="_blank">1</a>' +
+                        '<span class="title">title</span>' +
+                        '<span class="author">author</span>' +
+                        '<span class="reviewer">reviewer</span>' +
                     '</div>' +
                     '<ul class="actions">' +
                         '<li><button>Roll out</button></li>' +

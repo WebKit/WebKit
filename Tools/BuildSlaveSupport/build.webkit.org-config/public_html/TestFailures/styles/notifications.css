@@ -72,12 +72,53 @@ ol.notifications div.problem {
 
 ol.notifications ul.causes>li {
     border-top: 1px solid LightGray;
-    padding: 10px;
+    padding: 10px 20px 10px 0;
 }
 
     ol.notifications>li ul.causes>li>div.description {
         padding: 0 10px 0 0;
     }
+
+        ol.notifications>li ul.causes>li>div.description>a {
+            padding: 0 20px 0 10px;
+            border-radius: 4px;
+        }
+
+        ol.notifications>li ul.causes>li:hover>div.description>a {
+            background-color: #555;
+            padding: 5px 10px 5px 10px;
+            margin: 0 10px 0 0;
+            color: White;
+        }
+
+        ol.notifications>li ul.causes>li:hover>div.description>a::after {
+            content: '';
+            width: 0;
+            height: 0;
+            margin-top: 5px;
+            position: absolute;
+            margin-left: 10px;
+            border-top: 5px solid White;
+            border-left: 5px solid #555;
+            border-bottom: 5px solid White;
+        }
+
+        ol.notifications>li ul.causes>li>div.description>span {
+            padding: 0 10px 0 0;
+            display: inline-block;
+        }
+
+        ol.notifications>li ul.causes>li>div.description>span.reviewer {
+            color: Gray;
+        }
+
+        ol.notifications>li ul.causes>li>div.description>span.reviewer::before {
+            content: '(';
+        }
+
+        ol.notifications>li ul.causes>li>div.description>span.reviewer::after {
+            content: ')';
+        }
 
     ol.notifications>li ul.causes>li>ul.actions {
     }

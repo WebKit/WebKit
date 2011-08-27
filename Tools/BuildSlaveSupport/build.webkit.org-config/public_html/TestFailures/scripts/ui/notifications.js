@@ -109,12 +109,22 @@ ui.notifications.SuspiciousCommit = base.extends(Cause, {
     init: function(commitData)
     {
         var linkToRevision = this._description.appendChild(document.createElement('a'));
-        // FIXME: Set href.
-        linkToRevision.href = '';
+        linkToRevision.href = trac.changesetURL(commitData.revision);
+        linkToRevision.target = '_blank';
         linkToRevision.textContent = commitData.revision;
-        // FIXME: Reviewer could be unknown.
-        // FIXME: Provide opportunities to style title/author/reviewer separately.
-        this._description.appendChild(document.createTextNode(commitData.title + ' ' + commitData.author + ' (' + commitData.reviewer + ')'));
+        this._addDescriptionPart('title', commitData);
+        this._addDescriptionPart('author', commitData);
+        this._addDescriptionPart('reviewer', commitData);
+    },
+    _addDescriptionPart: function(part, commitData)
+    {
+        var content = commitData[part];
+        if (!content)
+            return;
+
+        var span = this._description.appendChild(document.createElement('span'));
+        span.className = part;
+        span.textContent = content;
     }
 });
 

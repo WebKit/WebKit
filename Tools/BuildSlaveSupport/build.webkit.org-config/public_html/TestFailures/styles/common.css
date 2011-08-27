@@ -28,6 +28,10 @@ body {
  font-size: 14px;
 }
 
+a {
+    color: #333;
+}
+
 button {
     font-family: 'Open Sans';
     border-radius: 2px;
