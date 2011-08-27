@@ -1,3 +1,13 @@
+2011-08-27  Robert Hogan  <robert@webkit.org>
+
+        Don't rely on hardcoded position in absolute-appended-to-inline.html
+
+        Allow test added in r93944 to pass on platforms other than Chromium-Linux.
+
+        Unreviewed, fix on r93944.
+
+        * fast/block/positioning/absolute-appended-to-inline.html:
+
 2011-08-07  Robert Hogan  <robert@webkit.org>
 
         The child div element with position:absolute will overlap with its parent div when a 'break' element is present in between

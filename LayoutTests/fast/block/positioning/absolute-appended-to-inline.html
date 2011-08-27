@@ -7,7 +7,7 @@
         }
 
         function measureBlockPosition() {
-            if (document.getElementById("block").offsetTop == 28)
+            if (document.getElementById("block").offsetTop > document.getElementById("hover").offsetHeight)
               document.getElementById("console").innerHTML = "SUCCESS";
             layoutTestController.notifyDone();
         }
