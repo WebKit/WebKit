@@ -63,6 +63,8 @@
             'tests/InnerGestureRecognizerTest.cpp',
             'tests/KeyboardTest.cpp',
             'tests/KURLTest.cpp',
+            'tests/MockWebGraphicsContext3D.h',
+            'tests/MockWebGraphicsContext3DTest.cpp',
             'tests/PODArenaTest.cpp',
             'tests/PODIntervalTreeTest.cpp',
             'tests/PODRedBlackTreeTest.cpp',
