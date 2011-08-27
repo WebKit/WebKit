@@ -33,6 +33,10 @@ test("subversionURLForTest", 1, function() {
 
 test("updateExpectations", 4, function() {
     var simulator = new NetworkSimulator();
+
+    // FIXME: This leaks state into g_haveSeenCheckoutAvailable, which is global.
+    simulator.ajax = function(options) { options.success.call(); },
+
     simulator.post = function(url, data, callback)
     {
         equals(url, 'http://127.0.0.1:8127/updateexpectations');

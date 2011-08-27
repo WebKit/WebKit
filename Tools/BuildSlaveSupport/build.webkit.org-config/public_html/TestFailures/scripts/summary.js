@@ -53,6 +53,10 @@ function update()
 $(document).ready(function() {
     g_updateTimerId = window.setInterval(update, config.kUpdateFrequency);
 
+    checkout.registerUnavailableCheckoutCallback(function() {
+        alert('Please run "webkit-patch garden-o-matic" to enable this feature.');
+    });
+
     var actions = new ui.notifications.Stream();
     g_unexpectedFailures = new controllers.UnexpectedFailures(actions);
 

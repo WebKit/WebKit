@@ -29,6 +29,31 @@ var checkout = checkout || {};
 
 var kWebKitTrunk = 'http://svn.webkit.org/repository/webkit/trunk/';
 
+var g_unavailableCheckoutCallback = null;
+var g_haveSeenCheckoutAvailable = false;
+
+function callIfCheckoutAvailable(callback)
+{
+    if (g_haveSeenCheckoutAvailable) {
+        callback();
+        return;
+    }
+    checkout.isAvailable(function(isAvailable) {
+        if (isAvailable) {
+            g_haveSeenCheckoutAvailable = true;
+            callback();
+            return;
+        }
+        if (g_unavailableCheckoutCallback)
+            g_unavailableCheckoutCallback();
+    });
+}
+
+checkout.registerUnavailableCheckoutCallback = function(unavailableCheckoutCallback)
+{
+    g_unavailableCheckoutCallback = unavailableCheckoutCallback;
+};
+
 checkout.subversionURLForTest = function(testName)
 {
     return kWebKitTrunk + 'LayoutTests/' + testName;
@@ -49,46 +74,54 @@ checkout.isAvailable = function(callback)
 
 checkout.updateExpectations = function(failureInfoList, callback)
 {
-    net.post(config.kLocalServerURL + '/updateexpectations', JSON.stringify(failureInfoList), function() {
-        callback();
+    callIfCheckoutAvailable(function() {
+        net.post(config.kLocalServerURL + '/updateexpectations', JSON.stringify(failureInfoList), function() {
+            callback();
+        });
     });
 };
 
 checkout.optimizeBaselines = function(testName, callback)
 {
-    net.post(config.kLocalServerURL + '/optimizebaselines?' + $.param({
-        'test': testName,
-    }), function() {
-        callback();
+    callIfCheckoutAvailable(function() {
+        net.post(config.kLocalServerURL + '/optimizebaselines?' + $.param({
+            'test': testName,
+        }), function() {
+            callback();
+        });
     });
 };
 
 checkout.rollout = function(revision, reason, callback)
 {
-    net.post(config.kLocalServerURL + '/rollout?' + $.param({
-        'revision': revision,
-        'reason': reason
-    }), function() {
-        callback();
+    callIfCheckoutAvailable(function() {
+        net.post(config.kLocalServerURL + '/rollout?' + $.param({
+            'revision': revision,
+            'reason': reason
+        }), function() {
+            callback();
+        });
     });
 };
 
 checkout.rebaseline = function(failureInfoList, callback)
 {
-    base.callInSequence(function(failureInfo, callback) {
-        var extensionList = Array.prototype.concat.apply([], failureInfo.failureTypeList.map(results.failureTypeToExtensionList));
-        base.callInSequence(function(extension, callback) {
-            net.post(config.kLocalServerURL + '/rebaseline?' + $.param({
-                'builder': failureInfo.builderName,
-                'test': failureInfo.testName,
-                'extension': extension
-            }), function() {
-                callback();
-            });
-        }, extensionList, callback);
-    }, failureInfoList, function() {
-        var testNameList = base.uniquifyArray(failureInfoList.map(function(failureInfo) { return failureInfo.testName; }));
-        base.callInSequence(checkout.optimizeBaselines, testNameList, callback);
+    callIfCheckoutAvailable(function() {
+        base.callInSequence(function(failureInfo, callback) {
+            var extensionList = Array.prototype.concat.apply([], failureInfo.failureTypeList.map(results.failureTypeToExtensionList));
+            base.callInSequence(function(extension, callback) {
+                net.post(config.kLocalServerURL + '/rebaseline?' + $.param({
+                    'builder': failureInfo.builderName,
+                    'test': failureInfo.testName,
+                    'extension': extension
+                }), function() {
+                    callback();
+                });
+            }, extensionList, callback);
+        }, failureInfoList, function() {
+            var testNameList = base.uniquifyArray(failureInfoList.map(function(failureInfo) { return failureInfo.testName; }));
+            base.callInSequence(checkout.optimizeBaselines, testNameList, callback);
+        });
     });
 };
 
