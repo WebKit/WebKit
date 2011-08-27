@@ -1,3 +1,22 @@
+2011-08-26  Sam Weinig  <sam@webkit.org>
+
+        Stop using custom NSErrors for WebKit2 WebErrors
+        https://bugs.webkit.org/show_bug.cgi?id=67075
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebCoreSupport/WebErrors.h:
+        * WebProcess/WebCoreSupport/mac/WebErrorsMac.mm:
+        (WebKit::createNSError):
+        (WebKit::cancelledError):
+        (WebKit::fileDoesNotExistError):
+        (WebKit::blockedError):
+        (WebKit::cannotShowURLError):
+        (WebKit::interruptedForPolicyChangeError):
+        (WebKit::cannotShowMIMETypeError):
+        (WebKit::pluginWillHandleLoadError):
+        There is no reason to use custom registered NSErrors anymore, so don't.
+
 2011-08-26  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
