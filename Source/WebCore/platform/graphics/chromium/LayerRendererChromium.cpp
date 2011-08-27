@@ -507,6 +507,20 @@ LayerRendererChromium::~LayerRendererChromium()
     cleanupSharedObjects();
 }
 
+void LayerRendererChromium::clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl* layer)
+{
+    for (size_t i = 0; i < layer->children().size(); ++i)
+        clearRenderSurfacesOnCCLayerImplRecursive(layer->children()[i].get());
+    layer->clearRenderSurface();
+}
+
+void LayerRendererChromium::clearRootCCLayerImpl()
+{
+    if (m_rootCCLayerImpl)
+        clearRenderSurfacesOnCCLayerImplRecursive(m_rootCCLayerImpl.get());
+    m_rootCCLayerImpl.clear();
+}
+
 GraphicsContext3D* LayerRendererChromium::context()
 {
     return m_context.get();
@@ -1240,15 +1254,17 @@ void LayerRendererChromium::cleanupSharedObjects()
 
     m_sharedGeometry.clear();
     m_borderProgram.clear();
-    m_canvasLayerProgram.clear();
     m_headsUpDisplayProgram.clear();
-    m_videoLayerRGBAProgram.clear();
-    m_videoLayerYUVProgram.clear();
-    m_pluginLayerProgram.clear();
-    m_renderSurfaceProgram.clear();
-    m_renderSurfaceMaskProgram.clear();
     m_tilerProgram.clear();
     m_tilerProgramSwizzle.clear();
+    m_tilerProgramAA.clear();
+    m_tilerProgramSwizzleAA.clear();
+    m_canvasLayerProgram.clear();
+    m_pluginLayerProgram.clear();
+    m_renderSurfaceMaskProgram.clear();
+    m_renderSurfaceProgram.clear();
+    m_videoLayerRGBAProgram.clear();
+    m_videoLayerYUVProgram.clear();
     if (m_offscreenFramebufferId)
         GLC(m_context.get(), m_context->deleteFramebuffer(m_offscreenFramebufferId));
 

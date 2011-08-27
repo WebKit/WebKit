@@ -154,6 +154,7 @@ public:
     typedef Vector<RefPtr<LayerChromium> > LayerList;
     typedef Vector<RefPtr<CCLayerImpl> > CCLayerList;
 
+    void clearRootCCLayerImpl();
 private:
     // FIXME: This needs to be moved to the CCLayerTreeHostImpl when that class exists.
     RefPtr<CCLayerImpl> m_rootCCLayerImpl;
@@ -188,6 +189,8 @@ private:
 
     bool initializeSharedObjects();
     void cleanupSharedObjects();
+
+    void clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl*);
 
     // FIXME: Change this to CCLayerTreeHostImpl
     CCLayerTreeHost* m_owner;

@@ -180,7 +180,8 @@ void CCLayerTreeHost::setRootLayer(GraphicsLayer* layer)
     if (layer) {
         m_nonCompositedContentHost->graphicsLayer()->addChild(layer);
         layer->platformLayer()->setLayerRenderer(m_layerRenderer.get());
-    }
+    } else
+        layerRenderer()->clearRootCCLayerImpl();
 
 }
 
