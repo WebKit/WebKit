@@ -1,3 +1,15 @@
+2011-08-27  Jarred Nicholls  <jarred@sencha.com>
+
+        [Qt] Need spin-button implementation
+        https://bugs.webkit.org/show_bug.cgi?id=65896
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeQt::paintInnerSpinButton):
+        * platform/qt/RenderThemeQt.h:
+
 2011-08-26  Xiaomei Ji  <xji@chromium.org>
 
         Regression(91788): Bad cast in WebCore::blockWithNextLineBox

@@ -1,3 +1,15 @@
+2011-08-27  Jarred Nicholls  <jarred@sencha.com>
+
+        [Qt] Need spin-button implementation
+        https://bugs.webkit.org/show_bug.cgi?id=65896
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt: Added.
+        * platform/qt/fast/forms/input-appearance-spinbutton-layer-expected.txt: Added.
+        * platform/qt/fast/forms/input-appearance-spinbutton-visibility-expected.txt: Added.
+
 2011-08-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.

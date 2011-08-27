@@ -1068,6 +1068,58 @@ bool RenderThemeQt::paintSearchFieldResultsDecoration(RenderObject* o, const Pai
     return RenderTheme::paintSearchFieldResultsDecoration(o, pi, r);
 }
 
+void RenderThemeQt::adjustInnerSpinButtonStyle(CSSStyleSelector* selector, RenderStyle* style,
+                                               Element* e) const
+{
+    // Use the same width as our native scrollbar
+    int width = ScrollbarTheme::nativeTheme()->scrollbarThickness();
+    style->setWidth(Length(width, Fixed));
+    style->setMinWidth(Length(width, Fixed));
+}
+
+bool RenderThemeQt::paintInnerSpinButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    StylePainter p(this, paintInfo);
+    if (!p.isValid())
+       return true;
+
+    QStyleOptionSpinBox option;
+    initStyleOption(p.widget, option);
+    option.subControls = QStyle::SC_SpinBoxUp | QStyle::SC_SpinBoxDown;
+    if (!isReadOnlyControl(o)) {
+        if (isEnabled(o))
+            option.stepEnabled = QAbstractSpinBox::StepUpEnabled | QAbstractSpinBox::StepDownEnabled;
+        if (isPressed(o)) {
+            option.state |= QStyle::State_Sunken;
+            if (isSpinUpButtonPartPressed(o))
+                option.activeSubControls = QStyle::SC_SpinBoxUp;
+            else
+                option.activeSubControls = QStyle::SC_SpinBoxDown;
+        }
+    }
+
+    IntRect buttonRect = rect;
+    buttonRect.inflateY(-2);
+#if defined(Q_WS_MAC) && !defined(QT_NO_STYLE_MAC)
+    // QMacStyle will position the aqua buttons flush to the right.
+    // This will move them more left for better style, a la
+    // Chromium look & feel.
+    if (qobject_cast<QMacStyle*>(p.style)) {
+        buttonRect.inflateX(-4);
+        // Render mini aqua spin buttons for QMacStyle to fit nicely into
+        // the editor area, like Chromium.
+        option.state |= QStyle::State_Mini;
+#else
+    {
+        buttonRect.inflateX(-2);
+#endif
+    }
+    option.rect = buttonRect;
+
+    p.drawComplexControl(QStyle::CC_SpinBox, option);
+    return false;
+}
+
 bool RenderThemeQt::supportsFocus(ControlPart appearance) const
 {
     switch (appearance) {

@@ -1670,17 +1670,6 @@ platform/qt/http/tests/cookies/strict-third-party-cookie-blocking.html
 # https://bugs.webkit.org/show_bug.cgi?id=41241
 fast/text/bidi-explicit-embedding-past-end.html
 
-# Need to implement inner-spin-button
-# https://bugs.webkit.org/show_bug.cgi?id=65896
-fast/forms/input-appearance-spinbutton-disabled-readonly.html
-fast/forms/input-appearance-spinbutton-layer.html
-fast/forms/input-appearance-spinbutton-visibility.html
-fast/forms/input-number-events.html
-fast/forms/input-number-large-padding.html
-fast/forms/input-number-size.html
-fast/forms/input-spinbutton-capturing.html
-fast/forms/spin-button-gets-disabled-or-readonly.html
-
 # [Qt] fast/dom/beforeload/script-before-load-dynamic.html is crashy-flakey
 # https://bugs.webkit.org/show_bug.cgi?id=41452
 fast/dom/beforeload/remove-video-in-beforeload-listener.html
