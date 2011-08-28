@@ -1,3 +1,16 @@
+2011-08-28  Jonathan Liu  <net147@gmail.com>
+
+        Fix build error when compiling with MinGW-w64 by disabling JIT
+        on Windows 64-bit
+        https://bugs.webkit.org/show_bug.cgi?id=61235
+
+        Reviewed by Gavin Barraclough.
+
+        The fixed mmap executable allocator for JIT on x86_64 requires
+        sys/mman.h which is not available on Windows.
+
+        * wtf/Platform.h:
+
 2011-08-27  Filip Pizlo  <fpizlo@apple.com>
 
         JSC::Executable is inconsistent about using weak handle finalizers

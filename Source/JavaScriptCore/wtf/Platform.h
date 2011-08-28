@@ -935,8 +935,8 @@
 #define ENABLE_JIT 0
 #endif
 
-/* JIT is not implemented for 64 bit on MSVC */
-#if !defined(ENABLE_JIT) && COMPILER(MSVC) && CPU(X86_64)
+/* JIT is not implemented for Windows 64-bit */
+#if !defined(ENABLE_JIT) && OS(WINDOWS) && CPU(X86_64)
 #define ENABLE_JIT 0
 #endif
 
