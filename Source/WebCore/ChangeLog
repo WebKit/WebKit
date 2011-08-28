@@ -1,3 +1,45 @@
+2011-08-28  Sam Weinig  <sam@webkit.org>
+
+        Add support for constructor syntax for Events
+        https://bugs.webkit.org/show_bug.cgi?id=63878
+
+        Reviewed by Oliver Hunt.
+
+        Add basic support for Event constructors, starting with just supporting
+        the constructor for the base Event class and just JSC support.  This lays
+        the infrastructure for the other events as well.
+
+        Test: fast/events/event-constructors.html
+
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Add files.
+
+        * bindings/generic/EventConstructors.h: Added.
+        Add binding agnostic header that defines the Event initializers
+        using a macro based DSL.
+
+        * bindings/js/JSEventConstructors.cpp: Added.
+        (WebCore::convertValue):
+        (WebCore::tryGetProperty):
+        (WebCore::constructJSEventWithInitializer):
+        Add JSC implementation of Event initializer DSL.
+
+        * dom/Event.cpp:
+        (WebCore::EventInit::EventInit):
+        (WebCore::Event::Event):
+        * dom/Event.h:
+        (WebCore::Event::create):
+        Add Event initializer interface for base Event.
+
+        * dom/Event.idl:
+        Mark Event as having a custom constructor function.
+
 2011-08-27  Andreas Kling  <kling@webkit.org>
 
         SQLiteStatement::getColumnText() could construct WTF::String result more efficiently.

@@ -274,6 +274,7 @@ v8 {
         bindings/js/JSDocumentCustom.cpp \
         bindings/js/JSElementCustom.cpp \
         bindings/js/JSErrorHandler.cpp \
+        bindings/js/JSEventConstructors.cpp \
         bindings/js/JSEventCustom.cpp \
         bindings/js/JSEventListener.cpp \
         bindings/js/JSEventSourceCustom.cpp \
@@ -1235,6 +1236,7 @@ HEADERS += \
     accessibility/AXObjectCache.h \
     bindings/ScriptControllerBase.h \
     bindings/generic/ActiveDOMCallback.h \
+    bindings/generic/EventConstructors.h \
     bindings/generic/RuntimeEnabledFeatures.h
 
 v8 {

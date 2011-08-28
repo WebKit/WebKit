@@ -34,6 +34,13 @@ namespace WebCore {
     class EventTarget;
     class EventDispatcher;
 
+    struct EventInit {
+        EventInit();
+        
+        bool bubbles;
+        bool cancelable;
+    };
+
     class Event : public RefCounted<Event> {
     public:
         enum PhaseType { 
@@ -69,6 +76,12 @@ namespace WebCore {
         {
             return adoptRef(new Event(type, canBubble, cancelable));
         }
+
+        static PassRefPtr<Event> create(const AtomicString& type, const EventInit& initializer)
+        {
+            return adoptRef(new Event(type, initializer));
+        }
+
         virtual ~Event();
 
         void initEvent(const AtomicString& type, bool canBubble, bool cancelable);
@@ -176,6 +189,7 @@ namespace WebCore {
     protected:
         Event();
         Event(const AtomicString& type, bool canBubble, bool cancelable);
+        Event(const AtomicString& type, const EventInit&);
 
         virtual void receivedTarget();
         bool dispatched() const { return m_target; }

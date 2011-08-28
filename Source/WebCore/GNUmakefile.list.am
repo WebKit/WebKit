@@ -645,6 +645,7 @@ webcore_sources += \
 	Source/WebCore/bindings/generic/BindingSecurityBase.cpp \
 	Source/WebCore/bindings/generic/BindingSecurityBase.h \
 	Source/WebCore/bindings/generic/BindingSecurity.h \
+	Source/WebCore/bindings/generic/EventConstructors.h \
 	Source/WebCore/bindings/generic/GenericBinding.h \
 	Source/WebCore/bindings/generic/RuntimeEnabledFeatures.cpp \
 	Source/WebCore/bindings/generic/RuntimeEnabledFeatures.h \
@@ -718,6 +719,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSEntryCustom.cpp \
 	Source/WebCore/bindings/js/JSEntrySyncCustom.cpp \
 	Source/WebCore/bindings/js/JSEventCustom.cpp \
+	Source/WebCore/bindings/js/JSEventConstructors.cpp \
 	Source/WebCore/bindings/js/JSEventListener.cpp \
 	Source/WebCore/bindings/js/JSEventListener.h \
 	Source/WebCore/bindings/js/JSEventSourceCustom.cpp \
