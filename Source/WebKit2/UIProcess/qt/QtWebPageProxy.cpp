@@ -149,49 +149,11 @@ void QtWebPageProxy::init()
     };
     WKPageSetPageLoaderClient(pageRef(), &loadClient);
 
-    WKPageUIClient uiClient = {
-        0,      /* version */
-        m_viewInterface,   /* clientInfo */
-        0,  /* createNewPage */
-        0,  /* showPage */
-        0,  /* close */
-        0,  /* takeFocus */
-        0,  /* focus */
-        0,  /* unfocus */
-        0,  /* runJavaScriptAlert */
-        0,  /* runJavaScriptConfirm */
-        0,  /* runJavaScriptPrompt */
-        qt_wk_setStatusText,
-        0,  /* mouseDidMoveOverElement */
-        0,  /* missingPluginButtonClicked */
-        0,  /* didNotHandleKeyEvent */
-        0,  /* didNotHandleWheelEvent */
-        0,  /* toolbarsAreVisible */
-        0,  /* setToolbarsAreVisible */
-        0,  /* menuBarIsVisible */
-        0,  /* setMenuBarIsVisible */
-        0,  /* statusBarIsVisible */
-        0,  /* setStatusBarIsVisible */
-        0,  /* isResizable */
-        0,  /* setIsResizable */
-        0,  /* getWindowFrame */
-        0,  /* setWindowFrame */
-        0,  /* runBeforeUnloadConfirmPanel */
-        0,  /* didDraw */
-        0,  /* pageDidScroll */
-        0,  /* exceededDatabaseQuota */
-        0,  /* runOpenPanel */
-        0,  /* decidePolicyForGeolocationPermissionRequest */
-        0,  /* headerHeight */
-        0,  /* footerHeight */
-        0,  /* drawHeader */
-        0,  /* drawFooter */
-        0,  /* printFrame */
-        0,  /* runModal */
-        0,  /* didCompleteRubberBandForMainFrame */
-        0,  /* saveDataToFileInDownloadsFolder */
-        0,  /* shouldInterruptJavaScript */
-    };
+    WKPageUIClient uiClient;
+    memset(&uiClient, 0, sizeof(WKPageUIClient));
+    uiClient.version = 0;
+    uiClient.clientInfo = m_viewInterface;
+    uiClient.setStatusText = qt_wk_setStatusText;
     WKPageSetPageUIClient(toAPI(m_webPageProxy.get()), &uiClient);
 
     if (m_policyInterface) {
