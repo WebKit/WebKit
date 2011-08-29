@@ -1,3 +1,18 @@
+2011-08-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Consider Conditional attribute in CodeGeneratorJS' JSValueToNative and NativeToJSValue function
+        https://bugs.webkit.org/show_bug.cgi?id=65040
+
+        Reviewed by Brent Fulgham.
+
+        JSValueToNative and NativeToJSValue add additional include statements
+        to the implementation and need to handle the Conditional attribute from
+        the IDL file. The Conditional attribute adds appropriate #if ENABLE()
+        lines for the preprocessor around the include statements to remove
+        some unneeded build dependencies.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2011-08-29  Nate Chapin  <japhet@chromium.org>
 
         Plumb ResourceLoaderOptions out to CachedResourceLoader::requestResource().
