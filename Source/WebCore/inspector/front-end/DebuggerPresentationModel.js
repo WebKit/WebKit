@@ -170,8 +170,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
             return;
         }
 
-        sourceFile = new WebInspector.RawSourceCode(sourceFileId, script, this._formatter);
-        sourceFile.setFormatted(this._formatSourceFiles);
+        sourceFile = new WebInspector.RawSourceCode(sourceFileId, script, this._formatter, this._formatSourceFiles);
         this._sourceFiles[sourceFileId] = sourceFile;
         sourceFile.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
 

@@ -35,11 +35,11 @@
  * @constructor
  * @extends {WebInspector.Object}
  */
-WebInspector.RawSourceCode = function(id, script, formatter)
+WebInspector.RawSourceCode = function(id, script, formatter, formatted)
 {
     this._scripts = [script];
     this._formatter = formatter;
-    this._formatted = false;
+    this._formatted = formatted;
 
     if (script.sourceURL)
         this._resource = WebInspector.networkManager.inflightResourceForURL(script.sourceURL) || WebInspector.resourceForURL(script.sourceURL);
@@ -104,12 +104,6 @@ WebInspector.RawSourceCode.prototype = {
                 closestScript = script;
         }
         return closestScript;
-    },
-
-    setFormatted: function(formatted)
-    {
-        // FIXME: this should initiate formatting and trigger events to update ui.
-        this._formatted = formatted;
     },
 
     requestContent: function(callback)

@@ -1,3 +1,14 @@
+2011-08-25  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: remove RawSourceCode.setFormatted.
+        https://bugs.webkit.org/show_bug.cgi?id=66947
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.RawSourceCode):
+
 2011-08-26  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: Debugger.setBreakpointByUrl should return error when setting breakpoint on the same location twice.
