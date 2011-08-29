@@ -138,8 +138,10 @@ protected:
     virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsDecoration(RenderObject*, const PaintInfo&, const IntRect&);
 
+#ifndef QT_NO_SPINBOX
     virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
+#endif
 
 #if ENABLE(PROGRESS_TAG)
     // Returns the repeat interval of the animation for the progress bar.

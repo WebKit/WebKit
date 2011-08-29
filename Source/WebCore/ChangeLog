@@ -1,3 +1,11 @@
+2011-08-29  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        [Qt] Unreviewed minimal-build buildfix after r93937.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintInnerSpinButton):
+        * platform/qt/RenderThemeQt.h:
+
 2011-08-28  Keishi Hattori  <keishi@webkit.org>
 
         Chromium Win: Setting square-button appearance reaches NOTREACHED

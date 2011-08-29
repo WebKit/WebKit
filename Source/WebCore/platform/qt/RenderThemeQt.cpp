@@ -1068,6 +1068,7 @@ bool RenderThemeQt::paintSearchFieldResultsDecoration(RenderObject* o, const Pai
     return RenderTheme::paintSearchFieldResultsDecoration(o, pi, r);
 }
 
+#ifndef QT_NO_SPINBOX
 void RenderThemeQt::adjustInnerSpinButtonStyle(CSSStyleSelector* selector, RenderStyle* style,
                                                Element* e) const
 {
@@ -1119,6 +1120,7 @@ bool RenderThemeQt::paintInnerSpinButton(RenderObject* o, const PaintInfo& paint
     p.drawComplexControl(QStyle::CC_SpinBox, option);
     return false;
 }
+#endif
 
 bool RenderThemeQt::supportsFocus(ControlPart appearance) const
 {
