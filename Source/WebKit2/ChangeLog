@@ -1,3 +1,16 @@
+2011-08-29  Vamshikrishna Yellenki  <vamshi@motorola.com>
+
+        [GTK][WK2] Compilation error in WebKit2 GTK - Revision 93953
+        https://bugs.webkit.org/show_bug.cgi?id=67111
+
+        Reviewed by Martin Robinson.
+
+        WebKit2 GTK build error.
+
+        * WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp:
+        Include <WebCore/ResourceError.h> explicitly to remove WebCore::ResourceError
+        inclusion error.
+
 2011-08-28  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Unreviewed build fix.

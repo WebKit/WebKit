@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebErrors.h"
 
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <glib/gi18n-lib.h>
