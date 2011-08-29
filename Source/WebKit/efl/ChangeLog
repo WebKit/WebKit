@@ -1,3 +1,12 @@
+2011-08-29  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        REGRESSION(r93637) Build break because header file is missing.
+        https://bugs.webkit.org/show_bug.cgi?id=67113
+
+        Unreviewed build fix after r93637.
+
+        * CMakeListsEfl.txt: Add ewk_js.h in EWebKit_HEADERS.
+
 2011-08-25  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Add API to allow scripts to close windows automatically via JavaScript.
