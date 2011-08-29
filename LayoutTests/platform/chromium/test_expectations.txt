@@ -2593,6 +2593,8 @@ BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
 BUGCR74979 SKIP MAC GPU : media/video-canvas-alpha.html = IMAGE
 
+BUGWK67116 GPU DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
+
 // This test needs completely new baselines.
 BUGCR75354 BUGWK55718 : media/media-document-audio-repaint.html = IMAGE+TEXT
 
