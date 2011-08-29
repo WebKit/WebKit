@@ -1,3 +1,16 @@
+2011-08-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Build WebKit2 unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=62749
+
+        Build WebKit2 by default. This will make the bots build it and catch
+        build errors when they occur.
+
+        * GNUmakefile.am: Enable WebKit2 by default, but remove references to the WebKit2
+        PC file, which should not be shipped until WebKit2 is actually shipped officially.
+
 2011-08-29  Alexey Proskuryakov  <ap@apple.com>
 
         Windows build fix.

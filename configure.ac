@@ -1095,9 +1095,8 @@ fi
 # WebKit2
 AC_MSG_CHECKING([whether to build Webkit2])
 AC_ARG_ENABLE(webkit2,
-            AC_HELP_STRING([--enable-webkit2],
-                [build webkit2 [default=no]]),
-                [], [enable_webkit2="no"])
+    AC_HELP_STRING([--enable-webkit2], [build webkit2 [default=yes]]),
+    [], [enable_webkit2="yes"])
 AC_MSG_RESULT([$enable_webkit2])
 if test "$enable_webkit2" = "yes"; then
    if test "$GTK_API_VERSION" = "2.0"; then
@@ -1108,23 +1107,21 @@ fi
 # Plugin Process
 AC_MSG_CHECKING([whether to build plugin process for WebKit2])
 AC_ARG_ENABLE(plugin_process,
-            AC_HELP_STRING([--enable-plugin-process],
-                           [build plugin process for WebKit2 [default=yes]]),
+            AC_HELP_STRING([--enable-plugin-process], [build plugin process for WebKit2 [default=yes]]),
                            [], [enable_plugin_process="yes"])
-# Build the plugin process only when building webkit2.
+AC_MSG_RESULT([$enable_plugin_process])
+
+# Build the plugin process only when building Webkit2.
 if test "$enable_webkit2" = "no"; then
     enable_plugin_process=no
 fi
 
-# Make sure we have gtk+ 2.x to build the plugin process
+# Make sure we have GTK+ 2.x to build the plugin process.
 if test "$enable_plugin_process" = "yes"; then
    PKG_CHECK_MODULES(GTK2, gtk+-2.0 >= $GTK2_REQUIRED_VERSION gail >= $GAIL2_REQUIRED_VERSION)
 fi
-
 AC_SUBST(GTK2_CFLAGS)
 AC_SUBST(GTK2_LIBS)
-
-AC_MSG_RESULT([$enable_plugin_process])
 
 GTK_DOC_CHECK([1.10])
 
@@ -1242,14 +1239,6 @@ Source/JavaScriptCore/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc:Source/JavaS
 ,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
 )
 
-if test "$enable_webkit2" = "yes"; then
-    AC_CONFIG_FILES([
-    Source/WebKit2/webkit2gtk-${WEBKITGTK_API_VERSION}.pc:Source/WebKit2/webkit2gtk.pc.in
-    ]
-    ,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
-    )
-fi
-
 AC_OUTPUT
 
 echo "
@@ -1320,14 +1309,14 @@ Features:
  Animation API                                            : $enable_animation_api
  Touch Icon Loading support                               : $enable_touch_icon_loading
  Register Protocol Handler support                        : $enable_register_protocol_handler
+ WebKit2 support                                          : $enable_webkit2
+ WebKit2 plugin process                                   : $enable_plugin_process
 
 GTK+ configuration:
  GTK+ version                                             : $with_gtk
  GDK target                                               : $with_target
  Hildon UI extensions                                     : $with_hildon
  Introspection support                                    : $enable_introspection
- WebKit2 support                                          : $enable_webkit2
- WebKit2 plugin process                                   : $enable_plugin_process
 "
 if test "$with_unicode_backend" = "glib"; then
    echo "     >> WARNING: the glib-based unicode backend is slow and incomplete <<"

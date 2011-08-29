@@ -908,8 +908,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIB
 	$(UNICODE_LIBS) \
 	$(XT_LIBS)
 
-pkgconfig_DATA += Source/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc
-
 # WebKit2 specific variables
 forwarding_headers := $(GENSOURCES_WEBKIT2)/include
 generate-webkit2-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(libWebKit2_la_SOURCES)
@@ -956,9 +954,6 @@ DerivedSources/WebKit2/%Messages.h: %.messages.in $(message_gen_scripts)
 CLEANFILES += \
 	$(BUILT_SOURCES) \
 	$(top_builddir)/Programs/WebKitWebProcess
-
-DISTCLEANFILES += \
-	$(top_builddir)/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc
 
 # WebKitWebProcess
 libexec_PROGRAMS += \
