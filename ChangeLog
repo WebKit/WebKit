@@ -1,3 +1,11 @@
+2011-08-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Update NEWS and library versioning for the 1.4.3 release.
+
+        Reviewed by Gustavo Noronha.
+
+        * configure.ac: Update library version.
+
 2011-06-30  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -1,3 +1,11 @@
+2011-08-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Update NEWS and library versioning for the 1.4.3 release.
+
+        Reviewed by Gustavo Noronha.
+
+        * NEWS: Update the news.
+
 2011-08-29  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed build fix.

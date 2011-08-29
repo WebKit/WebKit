@@ -1,4 +1,20 @@
 =================
+WebKitGTK+ 1.4.3
+=================
+
+This is a maintenance release which includes several noteworthy fixes:
+
+    - Backport the main frame scrollbar fixes from trunk. This should remove most of the
+      scrollbar-related crashes.
+    - Fix an issue which caused Flash to crash when used via nspluginwrapper.
+    - Work-around an issue with user-agent sniffing in Google Calendar.
+
+Buf fixes since 1.4.2:
+ Bug 59821 - [GTK] Untangle GtkAdjustments from WebCore
+ Bug 63862 - r90148 did not apply to X11 platforms in WebKit1
+ Bug 63994 - [GTK] Google Calendar thinks we're mobile
+
+=================
 WebKitGTK+ 1.4.2
 =================
 
