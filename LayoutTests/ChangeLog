@@ -1,3 +1,9 @@
+2011-08-29  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, rebaseline inspector/styles/styles-computed-trace.html in chromium.
+
+        * platform/chromium-win/inspector/styles/styles-computed-trace-expected.txt: Added.
+
 2011-08-29  Tom Zakrajsek  <tomz@codeaurora.org>
 
         canvas arc() missing line to start of arc if swing is zero
