@@ -396,7 +396,7 @@ namespace WTF {
         const_iterator makeKnownGoodConstIterator(ValueType* pos) const { return const_iterator(this, pos, m_table + m_tableSize, HashItemKnownGood); }
 
 #if !ASSERT_DISABLED
-        void checkTableConsistenmcyExceptSize() const;
+        void checkTableConsistencyExceptSize() const;
 #else
         static void checkTableConsistencyExceptSize() { }
 #endif
