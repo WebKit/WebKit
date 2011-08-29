@@ -1,3 +1,11 @@
+2011-08-29  Chris Marrin  <cmarrin@apple.com>
+
+        Fixed a build problem caused by http://trac.webkit.org/changeset/93980
+
+        Unreviewed.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+
 2011-08-23  Chris Marrin  <cmarrin@apple.com>
 
         [mac] requestAnimationFrame support for mac port
