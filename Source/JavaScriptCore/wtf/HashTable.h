@@ -377,7 +377,7 @@ namespace WTF {
 
         bool shouldExpand() const { return (m_keyCount + m_deletedCount) * m_maxLoad >= m_tableSize; }
         bool mustRehashInPlace() const { return m_keyCount * m_minLoad < m_tableSize * 2; }
-        bool shouldShrink() const { return m_keyCount * m_minLoad < m_tableSize && m_tableSize > m_minTableSize; }
+        bool shouldShrink() const { return m_keyCount * m_minLoad < m_tableSize && m_tableSize > KeyTraits::minimumTableSize; }
         void expand();
         void shrink() { rehash(m_tableSize / 2); }
 
@@ -396,7 +396,7 @@ namespace WTF {
         const_iterator makeKnownGoodConstIterator(ValueType* pos) const { return const_iterator(this, pos, m_table + m_tableSize, HashItemKnownGood); }
 
 #if !ASSERT_DISABLED
-        void checkTableConsistencyExceptSize() const;
+        void checkTableConsistenmcyExceptSize() const;
 #else
         static void checkTableConsistencyExceptSize() { }
 #endif
@@ -407,7 +407,6 @@ namespace WTF {
         static void invalidateIterators() { }
 #endif
 
-        static const int m_minTableSize = 64;
         static const int m_maxLoad = 2;
         static const int m_minLoad = 6;
 
@@ -901,7 +900,7 @@ namespace WTF {
     {
         int newSize;
         if (m_tableSize == 0)
-            newSize = m_minTableSize;
+            newSize = KeyTraits::minimumTableSize;
         else if (mustRehashInPlace())
             newSize = m_tableSize;
         else
@@ -1039,7 +1038,7 @@ namespace WTF {
 
         ASSERT(count == m_keyCount);
         ASSERT(deletedCount == m_deletedCount);
-        ASSERT(m_tableSize >= m_minTableSize);
+        ASSERT(m_tableSize >= KeyTraits::minimumTableSize);
         ASSERT(m_tableSizeMask);
         ASSERT(m_tableSize == m_tableSizeMask + 1);
     }

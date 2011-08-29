@@ -1,3 +1,20 @@
+2011-08-29  Andreas Kling  <kling@webkit.org>
+
+        Viewing a post on reddit.com wastes a lot of memory on event listeners.
+        https://bugs.webkit.org/show_bug.cgi?id=67133
+
+        Reviewed by Darin Adler.
+
+        Add a minimum table size to the HashTraits, instead of having it hard coded.
+        The default value remains at 64, but can now be specialized.
+
+        * runtime/StructureTransitionTable.h:
+        * wtf/HashTable.h:
+        (WTF::HashTable::shouldShrink):
+        (WTF::::expand):
+        (WTF::::checkTableConsistencyExceptSize):
+        * wtf/HashTraits.h:
+
 2011-08-28  Jonathan Liu  <net147@gmail.com>
 
         Fix build error when compiling with MinGW-w64 by disabling JIT

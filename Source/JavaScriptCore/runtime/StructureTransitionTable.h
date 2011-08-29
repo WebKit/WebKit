@@ -65,6 +65,8 @@ class StructureTransitionTable {
 
         static const bool needsDestruction = FirstTraits::needsDestruction || SecondTraits::needsDestruction;
 
+        static const int minimumTableSize = FirstTraits::minimumTableSize;
+
         static void constructDeletedValue(TraitType& slot) { FirstTraits::constructDeletedValue(slot.first); }
         static bool isDeletedValue(const TraitType& value) { return FirstTraits::isDeletedValue(value.first); }
     };

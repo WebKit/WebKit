@@ -1,3 +1,20 @@
+2011-08-29  Andreas Kling  <kling@webkit.org>
+
+        Viewing a post on reddit.com wastes a lot of memory on event listeners.
+        https://bugs.webkit.org/show_bug.cgi?id=67133
+
+        Reviewed by Darin Adler.
+
+        Specialize the HashMap used to store registered listeners on an EventTarget
+        to have a minimum size of 32 (rather than the default 64.)
+        It's very rare for pages to register listeners for so many different events
+        and this cuts memory consumption in half for the common case.
+
+        As an example, for a typical post on the reddit.com front page,
+        this reduces memory used by ~700kB on 64-bit.
+
+        * dom/EventTarget.h:
+
 2011-08-29  Stephen White  <senorblanco@chromium.org>
 
         Skia's accelerated canvas 2D implementation should use GrTexture, not DrawingBuffer
