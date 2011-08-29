@@ -330,14 +330,16 @@ sub ParseInterface
                 push(@$arrayRef, $newDataNode);
             } elsif ($line =~ /^\s*const/) {
                 $line =~ /$IDLStructure::constantSelector/;
-                my $constType = (defined($1) ? $1 : die("Parsing error!\nSource:\n$line\n)"));
-                my $constName = (defined($2) ? $2 : die("Parsing error!\nSource:\n$line\n)"));
-                my $constValue = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
+                my $constExtendedAttributes = (defined($1) ? $1 : " "); chop($constExtendedAttributes);
+                my $constType = (defined($2) ? $2 : die("Parsing error!\nSource:\n$line\n)"));
+                my $constName = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
+                my $constValue = (defined($4) ? $4 : die("Parsing error!\nSource:\n$line\n)"));
 
                 my $newDataNode = new domConstant();
                 $newDataNode->name($constName);
                 $newDataNode->type($constType);
                 $newDataNode->value($constValue);
+                $newDataNode->extendedAttributes(parseExtendedAttributes($constExtendedAttributes));
 
                 my $arrayRef = $dataNode->constants;
                 push(@$arrayRef, $newDataNode);

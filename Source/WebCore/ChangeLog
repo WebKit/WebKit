@@ -1,3 +1,20 @@
+2011-08-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Add parsing support for extended attributes on IDL constants
+        https://bugs.webkit.org/show_bug.cgi?id=65046
+
+        Reviewed by Brent Fulgham.
+
+        With support for extended attributes on constants we can
+        replace some preprocessor lines from the IDL files with
+        the corresponding [Conditional=XXX] later.
+        Using the preprocessor causes much pain on native windows.
+
+        CodeGenerator support will be added in separate patches.
+
+        * bindings/scripts/IDLParser.pm:
+        * bindings/scripts/IDLStructure.pm:
+
 2011-08-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cleanup: notifyFormStateChanged, formControlValueMatchesRenderer, and setFormControlValueMatchesRenderer

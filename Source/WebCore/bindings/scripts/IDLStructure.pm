@@ -70,6 +70,7 @@ struct( domConstant => {
     name => '$',      # DOM Constant identifier
     type => '$',      # Type of data
     value => '$',      # Constant value
+    extendedAttributes => '$', # Extended attributes
 });
 
 # Helpers
@@ -93,7 +94,7 @@ our $extendedAttributeSyntax = '\[[^]]*\]'; # Used for extended attributes
 # Regular expression based IDL 'syntactical tokenizer' used in the IDLParser
 our $moduleSelector = 'module\s*(' . $idlId . '*)\s*{';
 our $moduleNSSelector = 'module\s*(' . $idlId . '*)\s*\[ns\s*(' . $idlIdNs . '*)\s*(' . $idlIdNs . '*)\]\s*;';
-our $constantSelector = 'const\s*' . $supportedTypes . '\s*(' . $idlType . '*)\s*=\s*(' . $constValue . ')';
+our $constantSelector = 'const\s*(' . $extendedAttributeSyntax . ' )?' . $supportedTypes . '\s*(' . $idlType . '*)\s*=\s*(' . $constValue . ')';
 our $raisesSelector = 'raises\s*\((' . $idlIdNsList . '*)\s*\)';
 our $getterRaisesSelector = '\bgetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)';
 our $setterRaisesSelector = '\bsetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)';
