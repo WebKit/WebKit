@@ -1,5 +1,13 @@
 2011-08-29  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, adding custom expectation for dom-constructors test in chromium
+        until bug 66756 is resolved.
+        https://bugs.webkit.org/show_bug.cgi?id=66756
+
+        * platform/chromium/fast/dom/dom-constructors-expected.txt: Added.
+
+2011-08-29  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, mark scrollbars/scrollbar-buttons.html as crashing in chromium.
 
         * platform/chromium/test_expectations.txt:
