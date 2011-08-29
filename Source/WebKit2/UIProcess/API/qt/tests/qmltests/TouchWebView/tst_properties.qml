@@ -20,5 +20,14 @@ TouchWebView {
             spy.wait()
             compare(webView.page.title, "Test page 1")
         }
+
+        function test_url() {
+            compare(spy.count, 1)
+            var testUrl = Qt.resolvedUrl("../common/test1.html")
+            webView.page.load(testUrl)
+            spy.wait()
+            compare(webView.page.url, testUrl)
+        }
+
     }
 }

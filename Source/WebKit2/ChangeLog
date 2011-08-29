@@ -1,5 +1,17 @@
 2011-08-29  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
 
+
+        [Qt] QTouchWebView url property test missing
+        https://bugs.webkit.org/show_bug.cgi?id=67159
+
+        Reviewed by Noam Rosenthal.
+
+        Added qml test case to check url property of QTouchWebView. Since url is a readonly property, we make sure that it's set after load() is called.
+
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_properties.qml:
+
+2011-08-29  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
+
         [Qt] QDesktopWebView url property test missing
         https://bugs.webkit.org/show_bug.cgi?id=67155
 
