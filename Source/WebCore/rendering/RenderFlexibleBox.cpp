@@ -138,7 +138,6 @@ void RenderFlexibleBox::layoutHorizontalBlock(bool relayoutChildren)
         ASSERT(inflexibleItems.size() > 0);
     }
 
-    // FIXME: Distribute leftover space to the packing space (second distribution round).
     // FIXME: Handle distribution of vertical space (third distribution round).
 }
 
@@ -179,6 +178,11 @@ void RenderFlexibleBox::computePreferredSizeHorizontal(bool relayoutChildren, Fl
         totalPositiveFlexibility += child->style()->flexboxWidthPositiveFlex();
         totalNegativeFlexibility += child->style()->flexboxWidthNegativeFlex();
     }
+}
+
+static bool hasPackingSpace(LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
+{
+    return availableFreeSpace > 0 && !totalPositiveFlexibility;
 }
 
 // Returns true if we successfully ran the algorithm and sized the flex items.
@@ -226,6 +230,14 @@ bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithmHorizontal(LayoutUnit& av
 
     // Now that we know the sizes, layout and position the flex items.
     LayoutUnit xOffset = borderLeft() + paddingLeft();
+
+    if (hasPackingSpace(availableFreeSpace, totalPositiveFlexibility)) {
+        if (style()->flexPack() == PackEnd)
+            xOffset += availableFreeSpace;
+        else if (style()->flexPack() == PackCenter)
+            xOffset += availableFreeSpace / 2;
+    }
+
     LayoutUnit yOffset = borderTop() + paddingTop();
     setHeight(0);
     size_t i = 0;
@@ -247,6 +259,9 @@ bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithmHorizontal(LayoutUnit& av
         xOffset += child->marginLeft();
         child->setLocation(IntPoint(xOffset, yOffset));
         xOffset += child->width() + child->marginRight();
+
+        if (hasPackingSpace(availableFreeSpace, totalPositiveFlexibility) && style()->flexPack() == PackJustify && childSizes.size() > 1)
+            xOffset += availableFreeSpace / (childSizes.size() - 1);
     }
     return true;
 }
