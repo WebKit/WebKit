@@ -1,5 +1,13 @@
 2011-08-29  Sam Weinig  <sam@webkit.org>
 
+        Fix path to style sheet in fast/events/constructors/event-constructors.html.
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/events/constructors/event-constructors.html:
+
+2011-08-29  Sam Weinig  <sam@webkit.org>
+
         Update results for fast/files/create-blob-url-crash.html to match
         exception text.
 
