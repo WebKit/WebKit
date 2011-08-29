@@ -41,8 +41,9 @@
 
 namespace WebCore {
 
-TextTrackCue::TextTrackCue(const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit)
-    : m_id(id)
+TextTrackCue::TextTrackCue(ScriptExecutionContext* context, const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit)
+    : ActiveDOMObject(context, this)
+    , m_id(id)
     , m_startTime(start)
     , m_endTime(end)
     , m_content(content)
@@ -127,8 +128,12 @@ String TextTrackCue::getCueAsSource()
 
 PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
 {
-    // FIXME(62883): Implement.
-    return DocumentFragment::create(0);
+    return m_documentFragment;
+}
+
+void TextTrackCue::setCueHTML(PassRefPtr<DocumentFragment> fragment)
+{
+    m_documentFragment = fragment;
 }
 
 bool TextTrackCue::isActive()
@@ -142,12 +147,21 @@ void TextTrackCue::setIsActive(bool active)
     m_isActive = active;
 }
 
+ScriptExecutionContext* TextTrackCue::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
 void TextTrackCue::parseSettings(const String& input)
 {
     // 4.8.10.13.3 Parse the WebVTT settings.
     // 1 - Initial setup.
     unsigned position = 0;
     while (position < input.length()) {
+        // Discard any space characters between or after settings (not in the spec, but we think it should be).
+        while (position < input.length() && WebVTTParser::isASpace(input[position]))
+            position++;
+
         // 2-4 Settings - get the next character representing a settings.
         char setting = input[position++];
         if (position >= input.length())
@@ -285,9 +299,6 @@ void TextTrackCue::parseSettings(const String& input)
             break;
         }
 
-        // Discard any remaining space characters between or after settings (not in the spec, but we think it should be).
-        while (position < input.length() && WebVTTParser::isASpace(input[position]))
-            position++;
         continue;
 
 Otherwise:

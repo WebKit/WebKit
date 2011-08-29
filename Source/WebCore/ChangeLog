@@ -1,3 +1,27 @@
+2011-08-29  Anna Cavender  <annacc@chromium.org>
+
+        Implement WebVTT Cue Text Parsing rules and DOM construction
+        https://bugs.webkit.org/show_bug.cgi?id=64132
+
+        Reviewed by Adam Barth.
+
+        Tests in media/track, particularly track-webvtt-tc[022 - 028]*.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/TextTrackCue.cpp:
+        * html/TextTrackCue.h:
+        * platform/track/CueParser.cpp:
+        * platform/track/CueParser.h:
+        * platform/track/WebVTTParser.cpp:
+        * platform/track/WebVTTParser.h:
+        * platform/track/WebVTTToken.h: Added.
+        * platform/track/WebVTTTokenizer.cpp: Added.
+        * platform/track/WebVTTTokenizer.h: Added.
+
 2011-08-29  Patrick Gansterer  <paroga@webkit.org>
 
         Add parsing support for extended attributes on IDL constants

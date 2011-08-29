@@ -33,6 +33,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "ActiveDOMObject.h"
 #include "TextTrack.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -40,13 +41,14 @@
 namespace WebCore {
 
 class DocumentFragment;
+class ScriptExecutionContext;
 class TextTrack;
 
-class TextTrackCue : public RefCounted<TextTrackCue> {
+class TextTrackCue : public RefCounted<TextTrackCue>, public ActiveDOMObject {
 public:
-    static PassRefPtr<TextTrackCue> create(const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit)
+    static PassRefPtr<TextTrackCue> create(ScriptExecutionContext* context, const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit)
     {
-        return adoptRef(new TextTrackCue(id, start, end, content, settings, pauseOnExit));
+        return adoptRef(new TextTrackCue(context, id, start, end, content, settings, pauseOnExit));
     }
     
     enum Direction { Horizontal, VerticalGrowingLeft, VerticalGrowingRight };
@@ -71,12 +73,15 @@ public:
 
     String getCueAsSource();
     PassRefPtr<DocumentFragment> getCueAsHTML();
+    void setCueHTML(PassRefPtr<DocumentFragment>);
 
     bool isActive();
     void setIsActive(bool);
+    
+    virtual ScriptExecutionContext* scriptExecutionContext() const;
 
 private:
-    TextTrackCue(const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit);
+    TextTrackCue(ScriptExecutionContext*, const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit);
 
     void parseSettings(const String&);
     
@@ -93,6 +98,7 @@ private:
     int m_textPosition;
     int m_cueSize;
     Alignment m_cueAlignment;
+    RefPtr<DocumentFragment> m_documentFragment;
 
     bool m_isActive;
 };

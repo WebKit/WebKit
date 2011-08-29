@@ -2039,6 +2039,7 @@ IF (ENABLE_VIDEO_TRACK)
         loader/CueLoader.cpp
         platform/track/CueParser.cpp
         platform/track/WebVTTParser.cpp
+        platform/track/WebVTTTokenizer.cpp
     )
 ENDIF()
 

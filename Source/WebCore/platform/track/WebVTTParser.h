@@ -34,10 +34,16 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "CueParserPrivate.h"
+#include "Document.h"
+#include "DocumentFragment.h"
+#include "HTMLNames.h"
+#include "WebVTTTokenizer.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 static const int secondsPerHour = 3600;
 static const int secondsPerMinute = 60;
@@ -49,12 +55,21 @@ public:
     
     enum ParseState { Initial, Header, Id, TimingsAndSettings, CueText, BadCue };
 
-    static PassOwnPtr<WebVTTParser> create(CueParserPrivateClient* client)
+    static PassOwnPtr<WebVTTParser> create(CueParserPrivateClient* client, ScriptExecutionContext* context)
     {
-        return adoptPtr(new WebVTTParser(client));
+        return adoptPtr(new WebVTTParser(client, context));
     }
     
     static bool hasRequiredFileIdentifier(const char* data, unsigned length);
+
+    static inline bool isRecognizedTag(const AtomicString& tagName)
+    {
+        return tagName == iTag
+            || tagName == bTag
+            || tagName == uTag
+            || tagName == rubyTag
+            || tagName == rtTag;
+    }
 
     static inline bool isASpace(char c)
     {
@@ -69,8 +84,9 @@ public:
     virtual void parseBytes(const char* data, unsigned length);
 
 protected:
-    WebVTTParser(CueParserPrivateClient*);
+    WebVTTParser(CueParserPrivateClient*, ScriptExecutionContext*);
     
+    ScriptExecutionContext* m_scriptExecutionContext;
     ParseState m_state;
 
 private:
@@ -85,12 +101,20 @@ private:
     void skipWhiteSpace(const String&, unsigned*);
     static void skipLineTerminator(const char* data, unsigned length, unsigned*);
     static String collectNextLine(const char* data, unsigned length, unsigned*);
+    
+    void constructTreeFromToken(Document*);
 
     String m_currentId;
     double m_currentStartTime;
     double m_currentEndTime;
     StringBuilder m_currentContent;
     String m_currentSettings;
+    
+    WebVTTToken m_token;
+    OwnPtr<WebVTTTokenizer> m_tokenizer;
+
+    RefPtr<DocumentFragment> m_attachmentRoot;
+    RefPtr<ContainerNode> m_currentNode;
 
     CueParserPrivateClient* m_client;
 

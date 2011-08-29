@@ -34,6 +34,10 @@
 
 #include "WebVTTParser.h"
 
+#include "HTMLElement.h"
+#include "ProcessingInstruction.h"
+#include "SegmentedString.h"
+#include "Text.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -78,8 +82,10 @@ String WebVTTParser::collectWord(const String& input, unsigned* position)
     return string.toString();
 }
 
-WebVTTParser::WebVTTParser(CueParserPrivateClient* client)
-    : m_state(Initial)
+WebVTTParser::WebVTTParser(CueParserPrivateClient* client, ScriptExecutionContext* context)
+    : m_scriptExecutionContext(context)
+    , m_state(Initial)
+    , m_tokenizer(WebVTTTokenizer::create())
 {
     m_client = client;
 }
@@ -204,10 +210,26 @@ WebVTTParser::ParseState WebVTTParser::ignoreBadCue(const String& line)
 
 void WebVTTParser::processCueText()
 {
-    // 51 - Cue text processing based on WebVTT cue text parsing rules and WebVTT cue text DOM construction rules.
-    // FIXME(64132): Process the cue text as per the cue text parsing rules. 
-    //     Source: http://www.whatwg.org/specs/web-apps/current-work/multipage/the-iframe-element.html#webvtt-cue-text-parsing-rules
-    RefPtr<TextTrackCue> cue = TextTrackCue::create(m_currentId, m_currentStartTime, m_currentEndTime, m_currentContent.toString(), m_currentSettings, false);
+    // 51 - Cue text processing based on
+    // 4.8.10.13.4 WebVTT cue text parsing rules and
+    // 4.8.10.13.5 WebVTT cue text DOM construction rules.
+    if (m_currentContent.length() <= 0)
+        return;
+
+    ASSERT(m_scriptExecutionContext->isDocument());
+    Document* document = static_cast<Document*>(m_scriptExecutionContext);
+
+    m_attachmentRoot = DocumentFragment::create(document);
+    m_currentNode = m_attachmentRoot;
+    m_tokenizer->reset();
+    m_token.clear();
+
+    SegmentedString content(m_currentContent.toString());
+    while (m_tokenizer->nextToken(content, m_token))
+        constructTreeFromToken(document);
+    
+    RefPtr<TextTrackCue> cue = TextTrackCue::create(m_scriptExecutionContext, m_currentId, m_currentStartTime, m_currentEndTime, m_currentContent.toString(), m_currentSettings, false);
+    cue->setCueHTML(m_attachmentRoot);
     m_cuelist.append(cue);
     m_client->newCuesParsed();
 }
@@ -279,6 +301,60 @@ double WebVTTParser::collectTimeStamp(const String& line, unsigned* position)
 
     // 20-21 - Calculate result.
     return (value1 * secondsPerHour) + (value2 * secondsPerMinute) + value3 + ((double)value4 / 1000);
+}
+
+void WebVTTParser::constructTreeFromToken(Document* document)
+{
+    AtomicString tokenTagName(m_token.name().data(), m_token.name().size());
+    QualifiedName tagName(nullAtom, tokenTagName, xhtmlNamespaceURI);
+
+    switch (m_token.type()) {
+    case WebVTTTokenTypes::Character: {
+        String content(m_token.characters().data(), m_token.characters().size());
+        RefPtr<Text> child = Text::create(document, content);
+        m_currentNode->parserAddChild(child);
+        break;
+    }
+    case WebVTTTokenTypes::StartTag: {
+        RefPtr<HTMLElement> child;
+        if (isRecognizedTag(tokenTagName))
+            child = HTMLElement::create(tagName, document);
+        else if (m_token.name().size() == 1 && m_token.name()[0] == 'c')
+            child = HTMLElement::create(spanTag, document);
+        else if (m_token.name().size() == 1 && m_token.name()[0] == 'v')
+            child = HTMLElement::create(qTag, document);
+
+        if (child) {
+            if (m_token.classes().size() > 0) {
+                RefPtr<NamedNodeMap> attributeMap = NamedNodeMap::create();
+                attributeMap->addAttribute(Attribute::createMapped(classAttr, AtomicString(m_token.classes().data(), m_token.classes().size())));
+                child->setAttributeMap(attributeMap.release());
+            }
+            if (child->hasTagName(qTag))
+                child->setAttribute(titleAttr, String(m_token.annotation().data(), m_token.annotation().size()));
+            m_currentNode->parserAddChild(child);
+            m_currentNode = child;
+        }
+        break;
+    }
+    case WebVTTTokenTypes::EndTag:
+        if (isRecognizedTag(tokenTagName)
+            || m_token.name().size() == 1 && m_token.name()[0] == 'c'
+            || m_token.name().size() == 1 && m_token.name()[0] == 'v')
+            if (m_currentNode->parentNode())
+                m_currentNode = m_currentNode->parentNode();
+        break;
+    case WebVTTTokenTypes::TimestampTag: {
+        unsigned position = 0;
+        double time = collectTimeStamp(m_token.characters().data(), &position);
+        if (time != malformedTime)
+            m_currentNode->parserAddChild(ProcessingInstruction::create(document, "timestamp", String(m_token.characters().data(), m_token.characters().size())));
+        break;
+    }
+    default:
+        break;
+    }
+    m_token.clear();
 }
 
 void WebVTTParser::skipWhiteSpace(const String& line, unsigned* position)

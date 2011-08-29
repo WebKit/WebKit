@@ -2875,6 +2875,9 @@ webcore_sources += \
 	Source/WebCore/platform/track/CueParserPrivate.h \
 	Source/WebCore/platform/track/WebVTTParser.cpp \
 	Source/WebCore/platform/track/WebVTTParser.h \
+	Source/WebCore/platform/track/WebVTTToken.h \
+	Source/WebCore/platform/track/WebVTTTokenizer.h \
+	Source/WebCore/platform/track/WebVTTTokenizer.cpp \
 	Source/WebCore/platform/TreeShared.h \
 	Source/WebCore/platform/URLString.h \
 	Source/WebCore/platform/UUID.cpp \

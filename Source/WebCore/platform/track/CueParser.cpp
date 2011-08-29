@@ -61,6 +61,7 @@ void CueParser::load(const String& url, ScriptExecutionContext* context, CuePars
     options.crossOriginRequestPolicy = AllowCrossOriginRequests;
 
     m_client = client;
+    m_scriptExecutionContext = context;
 
     m_loader = ThreadableLoader::create(context, this, request, options);
 }
@@ -110,7 +111,7 @@ void CueParser::newCuesParsed()
 void CueParser::createWebVTTParser()
 {
     if (!m_private) {
-        m_private = WebVTTParser::create(this);
+        m_private = WebVTTParser::create(this, m_scriptExecutionContext);
         m_client->trackLoadStarted();
     }
 }

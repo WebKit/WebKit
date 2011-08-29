@@ -28,59 +28,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CueParser_h
-#define CueParser_h
+#ifndef WebVTTTokenizer_h
+#define WebVTTTokenizer_h
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "ThreadableLoader.h"
-#include "ThreadableLoaderClient.h"
-#include "WebVTTParser.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include "MarkupTokenizerBase.h"
+#include "SegmentedString.h"
+#include "WebVTTToken.h"
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class TextTrackCue;
-
-class CueParserClient {
+class WebVTTTokenizerState {
 public:
-    virtual void newCuesParsed() = 0;
-    virtual void trackLoadStarted() = 0;
-    virtual void trackLoadError() = 0;
-    virtual void trackLoadCompleted() = 0;
+    enum State {
+        DataState,
+        EscapeState,
+        TagState,
+        StartTagState,
+        StartTagClassState,
+        StartTagAnnotationState,
+        EndTagState,
+        EndTagOpenState,
+        TimestampTagState,
+    };
 };
 
-class CueParser : public ThreadableLoaderClient, CueParserPrivateClient {
+class WebVTTTokenizer : MarkupTokenizerBase<WebVTTToken, WebVTTTokenizerState> {
+    WTF_MAKE_NONCOPYABLE(WebVTTTokenizer);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    CueParser();
-    virtual ~CueParser();
+    static PassOwnPtr<WebVTTTokenizer> create() { return adoptPtr(new WebVTTTokenizer); }
 
-    void didReceiveResponse(unsigned long, const ResourceResponse&);
-    void didReceiveData(const char*, int);
-    void didFinishLoading(unsigned long);
-    void didFail(const ResourceError&);
-
-    void load(const String&, ScriptExecutionContext*, CueParserClient*);
-    bool supportsType(const String&);
-
-    void fetchParsedCues(Vector<RefPtr<TextTrackCue> >&);
-    void newCuesParsed();
-
-protected:
-    ScriptExecutionContext* m_scriptExecutionContext;
+    void reset();
+    
+    bool nextToken(SegmentedString&, WebVTTToken&);
 
 private:
-    void createWebVTTParser();
- 
-    RefPtr<ThreadableLoader> m_loader;
-    OwnPtr<CueParserPrivateInterface> m_private;
-    CueParserClient* m_client;
+    WebVTTTokenizer();
+    
+    Vector<UChar, 32> m_buffer;
 };
 
-} // namespace WebCore
+}
 
 #endif
 #endif

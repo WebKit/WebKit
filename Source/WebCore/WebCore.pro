@@ -2121,6 +2121,8 @@ HEADERS += \
     platform/track/CueParser.h \
     platform/track/CueParserPrivate.h \
     platform/track/WebVTTParser.h \
+    platform/track/WebVTTToken.h \
+    platform/track/WebVTTTokenizer.h \
     platform/Widget.h \
     platform/PlatformStrategies.h \
     platform/LocalizedStrings.h \
