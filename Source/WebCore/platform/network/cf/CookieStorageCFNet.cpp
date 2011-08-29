@@ -30,14 +30,14 @@
 
 #if USE(CFNETWORK) || USE(CFURLSTORAGESESSIONS)
 
-#include "LoaderRunLoopCF.h"
 #include "ResourceHandle.h"
-#include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <wtf/MainThread.h>
 
 #if PLATFORM(MAC)
 #include "WebCoreSystemInterface.h"
 #elif PLATFORM(WIN)
+#include "LoaderRunLoopCF.h"
+#include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 

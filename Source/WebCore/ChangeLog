@@ -1,3 +1,9 @@
+2011-08-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Mac build fix.
+
+        * platform/network/cf/CookieStorageCFNet.cpp: Move Windows specific includes into PLATFORM(WIN).
+
 2011-08-29  Andreas Kling  <kling@webkit.org>
 
         Viewing a post on reddit.com wastes a lot of memory on event listeners.
