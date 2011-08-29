@@ -1,3 +1,9 @@
+2011-08-29  David Levin  <levin@chromium.org>
+
+        Temporary suppression for new test added in r93982.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-22  David Levin  <levin@chromium.org>
 
         postMessage raises INVALID_STATE_ERR instead of DATA_CLONE_ERR in many cases.

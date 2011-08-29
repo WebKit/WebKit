@@ -3674,3 +3674,6 @@ BUGWK66756 : fast/events/constructors/event-constructors.html = TEXT
 
 // Started to fail on all bots after r93951.
 BUGWK63878 : fast/dom/dom-constructors.html = TEXT
+
+// Failing after r93982.
+BUG_LEVIN MAC : canvas/philip/tests/2d.path.stroke.prune.arc.html = TEXT
