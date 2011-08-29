@@ -2377,3 +2377,15 @@ fast/loader/frame-creation-removal.html
 
 # Web Inspector: LayoutTests/inspector/extensions/extensions-resources.html fails on Qt
 inspector/extensions/extensions-resources.html
+
+# [Qt] REGRESSION(r93937): 4 failing and 3 flaky tests
+# https://bugs.webkit.org/show_bug.cgi?id=67118
+# Failed
+fast/forms/input-appearance-number-rtl.html
+fast/forms/input-appearance-spinbutton-disabled-readonly.html
+fast/forms/input-appearance-spinbutton-layer.html
+fast/forms/input-appearance-spinbutton-visibility.html
+# Flaky
+fast/forms/input-number-large-padding.html
+fast/forms/input-spinbutton-capturing.html
+fast/forms/input-number-events.html
