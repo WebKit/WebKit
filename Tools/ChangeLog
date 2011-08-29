@@ -1,3 +1,26 @@
+2011-08-29  Adam Barth  <abarth@webkit.org>
+
+        Add support for chomium-mac (non-CoreGraphics) baselines
+        https://bugs.webkit.org/show_bug.cgi?id=67163
+
+        Reviewed by Eric Seidel.
+
+        This patch teaches the non-CG chromium-mac bots to look at non-CG
+        baselines.  However, the patch still leaves CG as the default set of
+        baselines.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        * Scripts/webkitpy/common/config/build.py:
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests_unittest.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+
 2011-08-29  Shawn Singh  <shawnsingh@chromium.org>
 
         Small fix in chromium port of new-run-webkit-tests.

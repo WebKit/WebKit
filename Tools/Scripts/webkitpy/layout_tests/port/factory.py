@@ -86,6 +86,7 @@ def _get_kwargs(**kwargs):
         elif sys.platform == 'darwin':
             if options and hasattr(options, 'chromium') and options.chromium:
                 port_to_use = 'chromium-cg-mac'
+                # FIXME: Add a way to select the chromium-mac port.
             else:
                 port_to_use = 'mac'
 
@@ -116,7 +117,7 @@ def _get_kwargs(**kwargs):
     elif port_to_use.startswith('chromium-gpu'):
         import chromium_gpu
         maker = chromium_gpu.get
-    elif port_to_use.startswith('chromium-cg-mac'):
+    elif port_to_use.startswith('chromium-mac') or port_to_use.startswith('chromium-cg-mac'):
         import chromium_mac
         maker = chromium_mac.ChromiumMacPort
     elif port_to_use.startswith('chromium-linux'):

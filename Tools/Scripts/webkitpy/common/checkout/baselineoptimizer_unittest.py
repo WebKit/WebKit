@@ -123,6 +123,7 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/chromium-win': '23a30302a6910f8a48b1007fa36f3e3158341834',
             'LayoutTests': '9c876f8c3e4cc2aef9519a6c1174eb3432591127',
             'LayoutTests/platform/chromium-cg-mac': '23a30302a6910f8a48b1007fa36f3e3158341834',
+            'LayoutTests/platform/chromium-mac': '23a30302a6910f8a48b1007fa36f3e3158341834',
         }, {
             'LayoutTests/platform/chromium': '23a30302a6910f8a48b1007fa36f3e3158341834',
             'LayoutTests': '9c876f8c3e4cc2aef9519a6c1174eb3432591127',

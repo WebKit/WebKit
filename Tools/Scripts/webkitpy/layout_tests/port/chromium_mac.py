@@ -47,6 +47,28 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
     FALLBACK_PATHS = {
         'leopard': [
+            'chromium-mac-leopard',
+            'chromium-mac',
+            'chromium',
+            'mac-leopard',
+            'mac-snowleopard',
+            'mac',
+        ],
+        'snowleopard': [
+            'chromium-mac',
+            'chromium',
+            'mac-snowleopard',
+            'mac',
+        ],
+        'future': [
+            'chromium-mac',
+            'chromium',
+            'mac',
+        ],
+    }
+
+    FALLBACK_PATHS_CG = {
+        'leopard': [
             'chromium-cg-mac-leopard',
             'chromium-cg-mac',
             'chromium',
@@ -70,7 +92,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
     def __init__(self, port_name=None, os_version_string=None, **kwargs):
         # We're a little generic here because this code is reused by the
         # 'google-chrome' port as well as the 'mock-' and 'dryrun-' ports.
-        port_name = port_name or 'chromium-cg-mac'
+        port_name = port_name or 'chromium-cg-mac'  # FIXME: Change the default to chromium-mac once we're ready.
         chromium.ChromiumPort.__init__(self, port_name=port_name, **kwargs)
         if port_name.endswith('-mac'):
             self._version = mac.os_version(os_version_string, self.SUPPORTED_OS_VERSIONS)
@@ -78,10 +100,14 @@ class ChromiumMacPort(chromium.ChromiumPort):
         else:
             self._version = port_name[port_name.index('-mac-') + len('-mac-'):]
             assert self._version in self.SUPPORTED_OS_VERSIONS
+        self._using_core_graphics = port_name.find('-cg-') != -1
         self._operating_system = 'mac'
 
     def baseline_search_path(self):
-        return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
+        fallback_paths = self.FALLBACK_PATHS
+        if self._using_core_graphics:
+            fallback_paths = self.FALLBACK_PATHS_CG
+        return map(self._webkit_baseline_path, fallback_paths[self._version])
 
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)

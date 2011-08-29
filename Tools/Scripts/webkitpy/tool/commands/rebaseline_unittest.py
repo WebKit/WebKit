@@ -68,6 +68,12 @@ Retrieving results for chromium-linux-x86 from Webkit Linux 32.
 Retrieving results for chromium-linux-x86_64 from Webkit Linux.
     userscripts/another-test.html
     userscripts/images.svg
+Retrieving results for chromium-mac-leopard from Webkit Mac10.5.
+    userscripts/another-test.html
+    userscripts/images.svg
+Retrieving results for chromium-mac-snowleopard from Webkit Mac10.6.
+    userscripts/another-test.html
+    userscripts/images.svg
 Retrieving results for chromium-win-vista from Webkit Vista.
     userscripts/another-test.html
     userscripts/images.svg
@@ -88,6 +94,10 @@ MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux 32', 'userscripts/an
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux 32', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux', 'userscripts/another-test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.5', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.5', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.6', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.6', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Vista', 'userscripts/another-test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Vista', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win7', 'userscripts/another-test.html'], cwd=/mock-checkout
