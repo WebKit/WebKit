@@ -1,5 +1,22 @@
 2011-08-29  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 93793
+
+    2011-08-25  Sam Weinig  <sam@webkit.org>
+
+            JSHTMLImageElement (and associated Node) is abandoned when image load is canceled via beforeload
+            <rdar://problem/9925630>
+            https://bugs.webkit.org/show_bug.cgi?id=66906
+
+            Reviewed by Darin Adler.
+
+            * loader/ImageLoader.cpp:
+            (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent):
+            Very similar fix to the one in r93717 except this patches the case where the image load was
+            canceled via beforeload.
+
+2011-08-29  Lucas Forschler  <lforschler@apple.com>
+
     Merged 93717
 
     2011-08-24  Sam Weinig  <sam@webkit.org>
