@@ -202,10 +202,9 @@ public:
     static CFURLStorageSessionRef privateBrowsingStorageSession();
     static void setPrivateBrowsingStorageSessionIdentifierBase(const String&);
     static CFURLStorageSessionRef currentStorageSession();
-#if PLATFORM(WIN)
+    static RetainPtr<CFURLStorageSessionRef> createPrivateBrowsingStorageSession(CFStringRef identifier);
     static void setDefaultStorageSession(CFURLStorageSessionRef);
     static CFURLStorageSessionRef defaultStorageSession();
-#endif // PLATFORM(WIN)
 #endif // USE(CFURLSTORAGESESSIONS)
 
     using RefCounted<ResourceHandle>::ref;
@@ -245,7 +244,6 @@ private:
 #endif
 
 #if USE(CFURLSTORAGESESSIONS)
-    static RetainPtr<CFURLStorageSessionRef> createPrivateBrowsingStorageSession(CFStringRef identifier);
     static String privateBrowsingStorageSessionIdentifierDefaultBase();
 #endif
 

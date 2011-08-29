@@ -1,3 +1,68 @@
+2011-08-26  Alexey Proskuryakov  <ap@apple.com>
+
+        DumpRenderTree should begin each test with an empty cookie store
+        https://bugs.webkit.org/show_bug.cgi?id=63545
+        <rdar://problem/5666907>
+
+        Reviewed by Darin Adler.
+
+        Use a clean CFURLStorageSession when this functionality is available.
+
+        * WebCore.exp.in: Added exports
+
+        * platform/mac/CookieJar.mm:
+        (WebCore::cookies):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::setCookies):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        Updated for privateBrowsingCookieStorage->currentCFHTTPCookieStorage change.
+
+        * platform/network/CookieStorage.h: Moved CFNetwork specific declarations to CookieStorageCFNet.h.
+
+        * platform/network/ResourceHandle.cpp: Moved CFNetwork specific code to ResourceHandleCFNet.cpp.
+        This file contains cross platform functionality, and we no longer need to put code in it to
+        share it between Mac and Windows.
+
+        * platform/network/ResourceHandle.h: Expose methods to manipulate default session on Mac, too.
+
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        (WebCore::cookieStorageOverride): Make it clear that this override is only for a Windows API.
+        (WebCore::overrideCookieStorage): Ditto.
+        (WebCore::currentCFHTTPCookieStorage): We no longer store a cookie storage in a static variable,
+        unless it has been overridden on Windows. We can always get it from a session.
+        (WebCore::setCookieStoragePrivateBrowsingEnabled): There is nothing to do here - we'll just
+        use private session's storage. Note that Mac has a separate code path for OS versions that
+        don't support sessions.
+
+        * platform/network/cf/CookieStorageCFNet.h: Changed exposed methods for more clarity.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::makeFinalRequest): Updated for currentCookieStorage->currentCFHTTPCookieStorage change.
+        (WebCore::ResourceHandle::createPrivateBrowsingStorageSession): Moved out of USE(CFNETWORK),
+        as this function is also used with NSURLConnection when sessions are enabled.
+        (WebCore::ResourceHandle::currentStorageSession): Ditto. Removed an #if since default session
+        is now supported on Mac, too.
+        (WebCore::defaultCFURLStorageSession): Moved out of USE(CFNETWORK).
+        (WebCore::ResourceHandle::setDefaultStorageSession): Moved out of USE(CFNETWORK). No longer
+        adopt the session, because nothing in method name says that it will steal a reference from
+        the caller.
+        (WebCore::ResourceHandle::defaultStorageSession): Moved out of USE(CFNETWORK).
+        (WebCore::privateStorageSession): Moved from ResourceHandle.cpp.
+        (WebCore::privateBrowsingStorageSessionIdentifierBase): Moved from ResourceHandle.cpp.
+        (WebCore::ResourceHandle::setPrivateBrowsingEnabled): Moved from ResourceHandle.cpp.
+        (WebCore::ResourceHandle::privateBrowsingStorageSession): Moved from ResourceHandle.cpp.
+        (WebCore::ResourceHandle::setPrivateBrowsingStorageSessionIdentifierBase): Moved from ResourceHandle.cpp.
+        (WebCore::ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase): Moved from ResourceHandle.cpp.
+
+        * platform/network/mac/CookieStorageMac.mm: (WebCore::setCookieStoragePrivateBrowsingEnabled):
+        We no longer store a reference to cookie storage in a static variable, so nothing to do here.
+        On older OS versiosn, we still need to enable legacy private browsing mode.
+
+        * platform/network/mac/ResourceHandleMac.mm: (WebCore::shouldRelaxThirdPartyCookiePolicy):
+        Updated to use the new currentCFHTTPCookieStorage function.
+
 2011-08-22  David Levin  <levin@chromium.org>
 
         postMessage raises INVALID_STATE_ERR instead of DATA_CLONE_ERR in many cases.

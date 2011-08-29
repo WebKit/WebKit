@@ -1,3 +1,18 @@
+2011-08-26  Alexey Proskuryakov  <ap@apple.com>
+
+        DumpRenderTree should begin each test with an empty cookie store
+        https://bugs.webkit.org/show_bug.cgi?id=63545
+        <rdar://problem/5666907>
+
+        Reviewed by Darin Adler.
+
+        * WebCookieManagerCFNet.cpp:
+        (WebCookieManager::cookieStorage):
+        (WebCookieManager::setCookieStorage):
+        Changed the API to work with new functions in WebCore. It's a bit ugly, because cookieStorage()
+        returns an unretained reference, which we cannot provide any more, but it should not be a
+        practical issue.
+
 2011-08-17  Adam Roben  <aroben@apple.com>
 
         Make WebCore keep track of the current device scale factor
