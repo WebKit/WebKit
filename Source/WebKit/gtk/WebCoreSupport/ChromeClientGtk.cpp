@@ -71,6 +71,7 @@ namespace WebKit {
 
 ChromeClient::ChromeClient(WebKitWebView* webView)
     : m_webView(webView)
+    , m_adjustmentWatcher(webView)
     , m_closeSoonTimer(0)
     , m_pendingScrollInvalidations(false)
 {
@@ -448,6 +449,8 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
     gdk_window_invalidate_region(window, invalidRegion, FALSE);
     cairo_region_destroy(invalidRegion);
 #endif
+
+    m_adjustmentWatcher.updateAdjustmentsFromScrollbarsLater();
 }
 
 // FIXME: this does not take into account the WM decorations
@@ -504,11 +507,18 @@ void ChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
         && (requisition.height != size.height())
         || (requisition.width != size.width()))
         gtk_widget_queue_resize_no_redraw(widget);
+
+    // If this was a main frame size change, update the scrollbars.
+    if (frame != frame->page()->mainFrame())
+        return;
+    m_adjustmentWatcher.updateAdjustmentsFromScrollbarsLater();
 }
 
 void ChromeClient::scrollbarsModeDidChange() const
 {
     WebKitWebFrame* webFrame = webkit_web_view_get_main_frame(m_webView);
+    if (!webFrame)
+        return;
 
     g_object_notify(G_OBJECT(webFrame), "horizontal-scrollbar-policy");
     g_object_notify(G_OBJECT(webFrame), "vertical-scrollbar-policy");
@@ -740,6 +750,5 @@ void ChromeClient::exitFullScreenForElement(WebCore::Element* element)
     element->document()->webkitDidExitFullScreenForElement(element);
 }
 #endif
-
 
 }

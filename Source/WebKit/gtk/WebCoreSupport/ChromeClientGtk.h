@@ -22,6 +22,7 @@
 #define ChromeClientGtk_h
 
 #include "ChromeClient.h"
+#include "GtkAdjustmentWatcher.h"
 #include "KURL.h"
 #include "PopupMenu.h"
 #include "SearchPopupMenu.h"
@@ -38,6 +39,7 @@ namespace WebKit {
     public:
         ChromeClient(WebKitWebView*);
         WebKitWebView* webView() const { return m_webView; }
+        GtkAdjustmentWatcher* adjustmentWatcher() { return &m_adjustmentWatcher; }
 
         virtual void chromeDestroyed();
 
@@ -152,6 +154,7 @@ namespace WebKit {
 
     private:
         WebKitWebView* m_webView;
+        GtkAdjustmentWatcher m_adjustmentWatcher;
         WebCore::KURL m_hoveredLinkURL;
         unsigned int m_closeSoonTimer;
         bool m_pendingScrollInvalidations;

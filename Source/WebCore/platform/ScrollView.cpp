@@ -1171,7 +1171,7 @@ void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePositionAtAl
         updateScrollbars(scrollOffset());
 }
 
-#if !PLATFORM(WX) && !USE(NATIVE_GTK_MAIN_FRAME_SCROLLBAR) && !PLATFORM(EFL)
+#if !PLATFORM(WX) && !PLATFORM(EFL)
 
 void ScrollView::platformInit()
 {
