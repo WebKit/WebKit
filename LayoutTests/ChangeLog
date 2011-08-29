@@ -1,3 +1,15 @@
+2011-08-29  Chris Marrin  <cmarrin@apple.com>
+
+        Fixing LayoutTests broken by http://trac.webkit.org/changeset/93980
+
+        Unreviewed.
+        
+        Add Mac specific tests to take into account new requestAnimationFrame functionality
+
+        * platform/mac/fast/dom/Window/window-properties-expected.txt: Added.
+        * platform/mac/fast/dom/Window/window-property-descriptors-expected.txt: Added.
+        * platform/mac/fast/dom/prototype-inheritance-expected.txt: Added.
+
 2011-08-29  Tony Chang  <tony@chromium.org>
 
         Implement -webkit-flex-pack for horizontal flexboxen
