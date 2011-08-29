@@ -1,3 +1,15 @@
+2011-08-26  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: Debugger.setBreakpointByUrl should return error when setting breakpoint on the same location twice.
+        https://bugs.webkit.org/show_bug.cgi?id=67030
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/debugger/set-breakpoint.html
+
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+
 2011-08-29  Matthew Delaney  <mdelaney@apple.com>
 
         fast/canvas/shadow-offset-*.html fail on Leopard/Snow Leopard when removing the work around for <rdar://problem/5539388>.

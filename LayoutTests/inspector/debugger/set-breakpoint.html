@@ -25,7 +25,7 @@ var test = function()
     InspectorTest.runDebuggerTestSuite([
         function testSetBreakpoint(next)
         {
-            InspectorTest.showScriptSource("debugger-pause-on-breakpoint.html", didShowScriptSource);
+            InspectorTest.showScriptSource("set-breakpoint.html", didShowScriptSource);
 
             function didShowScriptSource(sourceFrame)
             {
@@ -52,7 +52,7 @@ var test = function()
 
         function testSetBreakpointOnTheLastLine(next)
         {
-            InspectorTest.showScriptSource("debugger-pause-on-breakpoint.html", didShowScriptSource);
+            InspectorTest.showScriptSource("set-breakpoint.html", didShowScriptSource);
 
             function didShowScriptSource(sourceFrame)
             {
@@ -72,7 +72,7 @@ var test = function()
 
         function testSetBreakpointOnTheLastLine2(next)
         {
-            InspectorTest.showScriptSource("debugger-pause-on-breakpoint.html", didShowScriptSource);
+            InspectorTest.showScriptSource("set-breakpoint.html", didShowScriptSource);
 
             function didShowScriptSource(sourceFrame)
             {
@@ -88,6 +88,25 @@ var test = function()
                 InspectorTest.removeBreakpoint(currentSourceFrame, 10);
                 InspectorTest.resumeExecution(next);
             }
+        },
+
+        function testSetBreakpointOnTheSameLine(next)
+        {
+            DebuggerAgent.setBreakpointByUrl(1, "foo.js", undefined, 2, "", didSetBreakpoint);
+
+            function didSetBreakpoint(error, breakpointId)
+            {
+                InspectorTest.assertTrue(!error);
+                InspectorTest.assertTrue(!!breakpointId);
+                DebuggerAgent.setBreakpointByUrl(1, "foo.js", undefined, 2, "", didSetBreakpointAgain);
+            }
+
+            function didSetBreakpointAgain(error, breakpointId)
+            {
+                InspectorTest.assertTrue(!!error);
+                InspectorTest.assertTrue(!breakpointId);
+                next();
+            }
         }
     ]);
 }
@@ -97,7 +116,7 @@ var test = function()
 
 <body onload="runTest()">
 <p>
-Tests that debugger will stop on breakpoint.
+Tests setting breakpoints.
 </p>
 
 </body>

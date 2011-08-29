@@ -195,8 +195,11 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString* errorString, int li
 
     String breakpointId = (isRegex ? "/" + url + "/" : url) + ':' + String::number(lineNumber) + ':' + String::number(columnNumber);
     RefPtr<InspectorObject> breakpointsCookie = m_inspectorState->getObject(DebuggerAgentState::javaScriptBreakpoints);
-    if (breakpointsCookie->find(breakpointId) != breakpointsCookie->end())
+    if (breakpointsCookie->find(breakpointId) != breakpointsCookie->end()) {
+        *errorString = "Breakpoint at specified location already exists.";
         return;
+    }
+
     breakpointsCookie->setObject(breakpointId, buildObjectForBreakpointCookie(url, lineNumber, columnNumber, condition, isRegex));
     m_inspectorState->setObject(DebuggerAgentState::javaScriptBreakpoints, breakpointsCookie);
 

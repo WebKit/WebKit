@@ -1,3 +1,13 @@
+2011-08-26  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: Debugger.setBreakpointByUrl should return error when setting breakpoint on the same location twice.
+        https://bugs.webkit.org/show_bug.cgi?id=67030
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/set-breakpoint-expected.txt: Renamed from LayoutTests/inspector/debugger/debugger-pause-on-breakpoint-expected.txt.
+        * inspector/debugger/set-breakpoint.html: Renamed from LayoutTests/inspector/debugger/debugger-pause-on-breakpoint.html.
+
 2011-08-29  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, fix event-constructors.html test.
