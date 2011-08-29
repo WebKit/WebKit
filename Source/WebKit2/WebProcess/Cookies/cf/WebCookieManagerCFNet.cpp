@@ -36,15 +36,16 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
 {
     CFHTTPCookieStorageSetCookieAcceptPolicy(WebCore::defaultCookieStorage(), policy);
 
-    CFHTTPCookieStorageRef privateBrowsingCookieStorage = WebCore::privateBrowsingCookieStorage().get();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = WebCore::currentCFHTTPCookieStorage();
     if (!privateBrowsingCookieStorage)
         return;
-    CFHTTPCookieStorageSetCookieAcceptPolicy(privateBrowsingCookieStorage, policy);
+    CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
 }
 
 HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
 {
-    return CFHTTPCookieStorageGetCookieAcceptPolicy(WebCore::currentCookieStorage());
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = WebCore::currentCFHTTPCookieStorage();
+    return CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage.get());
 }
 
 } // namespace WebKit
