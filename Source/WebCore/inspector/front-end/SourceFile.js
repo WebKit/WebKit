@@ -143,6 +143,14 @@ WebInspector.RawSourceCode.prototype = {
         this.requestContent(didRequestContent.bind(this));
     },
 
+    _setContentProvider: function(contentProvider)
+    {
+        if (this._formatted)
+            this._contentProvider = new WebInspector.FormattedContentProvider(contentProvider, this._formatter);
+        else
+            this._contentProvider = contentProvider;
+    },
+
     forceLoadContent: function(script)
     {
         if (!this._hasPendingResource())
@@ -193,47 +201,32 @@ WebInspector.RawSourceCode.prototype = {
 
     _loadResourceContent: function(resource)
     {
-        var contentProvider = new WebInspector.ResourceContentProvider(resource);
-        contentProvider.requestContent(this._didRequestContent.bind(this));
+        this._setContentProvider(new WebInspector.ResourceContentProvider(resource));
+        this._contentProvider.requestContent(this._didRequestContent.bind(this));
     },
 
     _loadScriptContent: function()
     {
-        var contentProvider = new WebInspector.ScriptContentProvider(this._scripts[0]);
-        contentProvider.requestContent(this._didRequestContent.bind(this));
+        this._setContentProvider(new WebInspector.ScriptContentProvider(this._scripts[0]));
+        this._contentProvider.requestContent(this._didRequestContent.bind(this));
     },
 
     _loadAndConcatenateScriptsContent: function()
     {
-        var contentProvider;
         if (this._scripts.length === 1 && !this._scripts[0].lineOffset && !this._scripts[0].columnOffset)
-            contentProvider = new WebInspector.ScriptContentProvider(this._scripts[0]);
+            this._setContentProvider(new WebInspector.ScriptContentProvider(this._scripts[0]));
         else
-            contentProvider = new WebInspector.ConcatenatedScriptsContentProvider(this._scripts);
-        contentProvider.requestContent(this._didRequestContent.bind(this));
+            this._setContentProvider(new WebInspector.ConcatenatedScriptsContentProvider(this._scripts));
+        this._contentProvider.requestContent(this._didRequestContent.bind(this));
     },
 
     _didRequestContent: function(mimeType, content)
-    {
-        if (!this._formatted) {
-            this._invokeRequestContentCallbacks(mimeType, content);
-            return;
-        }
-
-        function didFormatContent(formattedContent, mapping)
-        {
-            this._mapping = mapping;
-            this._invokeRequestContentCallbacks(mimeType, formattedContent);
-        }
-        this._formatter.formatContent(mimeType, content, didFormatContent.bind(this));
-    },
-
-    _invokeRequestContentCallbacks: function(mimeType, content)
     {
         this._contentLoaded = true;
         this._contentRequested = false;
         this._mimeType = mimeType;
         this._content = content;
+        this._mapping = this._contentProvider.mapping;
 
         for (var i = 0; i < this._requestContentCallbacks.length; ++i)
             this._requestContentCallbacks[i](mimeType, content);
@@ -365,3 +358,28 @@ WebInspector.ResourceContentProvider.prototype = {
 }
 
 WebInspector.ResourceContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
+
+
+WebInspector.FormattedContentProvider = function(contentProvider, formatter)
+{
+    this._contentProvider = contentProvider;
+    this._formatter = formatter;
+};
+
+WebInspector.FormattedContentProvider.prototype = {
+    requestContent: function(callback)
+    {
+        function didRequestContent(mimeType, content)
+        {
+            function didFormatContent(formattedContent, mapping)
+            {
+                this.mapping = mapping;
+                callback(mimeType, formattedContent);
+            }
+            this._formatter.formatContent(mimeType, content, didFormatContent.bind(this));
+        }
+        this._contentProvider.requestContent(didRequestContent.bind(this));
+    }
+}
+
+WebInspector.FormattedContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
