@@ -29,10 +29,7 @@
 #include "HTMLInputElement.h"
 
 #include "AXObjectCache.h"
-#include "Attribute.h"
 #include "BeforeTextInsertedEvent.h"
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "EventNames.h"
@@ -45,14 +42,11 @@
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
-#include "Icon.h"
 #include "InputType.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "NumberInputType.h"
-#include "Page.h"
-#include "PlatformMouseEvent.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
@@ -1907,16 +1901,6 @@ CheckedRadioButtons& HTMLInputElement::checkedRadioButtons() const
     if (HTMLFormElement* formElement = form())
         return formElement->checkedRadioButtons();
     return document()->checkedRadioButtons();
-}
-
-void HTMLInputElement::notifyFormStateChanged()
-{
-    Frame* frame = document()->frame();
-    if (!frame)
-        return;
-
-    if (Page* page = frame->page())
-        page->chrome()->client()->formStateDidChange(this);
 }
 
 void HTMLInputElement::parseMaxLengthAttribute(Attribute* attribute)

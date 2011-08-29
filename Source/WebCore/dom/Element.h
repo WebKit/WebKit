@@ -337,9 +337,6 @@ public:
 
     virtual bool canContainRangeEndPoint() const { return true; }
 
-    virtual bool formControlValueMatchesRenderer() const { return false; }
-    virtual void setFormControlValueMatchesRenderer(bool) { }
-
     virtual const AtomicString& formControlName() const { return nullAtom; }
     virtual const AtomicString& formControlType() const { return nullAtom; }
 

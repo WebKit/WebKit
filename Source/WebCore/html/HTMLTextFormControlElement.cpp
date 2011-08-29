@@ -26,6 +26,8 @@
 #include "HTMLTextFormControlElement.h"
 
 #include "Attribute.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -33,6 +35,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "Page.h"
 #include "RenderBox.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
@@ -431,6 +434,16 @@ void HTMLTextFormControlElement::parseMappedAttribute(Attribute* attr)
         setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, attr));
     else
         HTMLFormControlElementWithState::parseMappedAttribute(attr);
+}
+
+void HTMLTextFormControlElement::notifyFormStateChanged()
+{
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+    
+    if (Page* page = frame->page())
+        page->chrome()->client()->formStateDidChange(this);
 }
 
 HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)

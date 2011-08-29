@@ -171,7 +171,7 @@ void RenderTextControl::setInnerTextValue(const String& value)
         m_lastChangeWasUserEdit = false;
     }
 
-    static_cast<Element*>(node())->setFormControlValueMatchesRenderer(true);
+    textFormControlElement()->setFormControlValueMatchesRenderer(true);
 }
 
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const

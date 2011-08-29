@@ -29,25 +29,19 @@
 #include "Attribute.h"
 #include "BeforeTextInsertedEvent.h"
 #include "CSSValueKeywords.h"
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
-#include "FocusController.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "Page.h"
 #include "RenderStyle.h"
 #include "RenderTextControlMultiLine.h"
-#include "ScriptEventListener.h"
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
-#include "VisibleSelection.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -56,14 +50,6 @@ using namespace HTMLNames;
 
 static const int defaultRows = 2;
 static const int defaultCols = 20;
-
-static inline void notifyFormStateChanged(const HTMLTextAreaElement* element)
-{
-    Frame* frame = element->document()->frame();
-    if (!frame)
-        return;
-    frame->page()->chrome()->client()->formStateDidChange(element);
-}
 
 HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLTextFormControlElement(tagName, document, form)
@@ -306,9 +292,9 @@ void HTMLTextAreaElement::updateValue() const
     ASSERT(renderer());
     m_value = toRenderTextControl(renderer())->text();
     const_cast<HTMLTextAreaElement*>(this)->setFormControlValueMatchesRenderer(true);
-    notifyFormStateChanged(this);
+    const_cast<HTMLTextAreaElement*>(this)->notifyFormStateChanged();
     m_isDirty = true;
-    const_cast<HTMLTextAreaElement*>(this)->m_wasModifiedByUser = true;
+    m_wasModifiedByUser = true;
     const_cast<HTMLTextAreaElement*>(this)->updatePlaceholderVisibility(false);
 }
 
@@ -332,18 +318,18 @@ void HTMLTextAreaElement::setNonDirtyValue(const String& value)
     setNeedsValidityCheck();
 }
 
-void HTMLTextAreaElement::setValueCommon(const String& value)
+void HTMLTextAreaElement::setValueCommon(const String& newValue)
 {
     m_wasModifiedByUser = false;
     // Code elsewhere normalizes line endings added by the user via the keyboard or pasting.
     // We normalize line endings coming from JavaScript here.
-    String normalizedValue = value.isNull() ? "" : value;
+    String normalizedValue = newValue.isNull() ? "" : newValue;
     normalizedValue.replace("\r\n", "\n");
     normalizedValue.replace('\r', '\n');
 
     // Return early because we don't want to move the caret or trigger other side effects
     // when the value isn't changing. This matches Firefox behavior, at least.
-    if (normalizedValue == this->value())
+    if (normalizedValue == value())
         return;
 
     m_value = normalizedValue;
@@ -357,7 +343,7 @@ void HTMLTextAreaElement::setValueCommon(const String& value)
         setSelectionRange(endOfString, endOfString);
     }
 
-    notifyFormStateChanged(this);
+    notifyFormStateChanged();
     setTextAsOfLastFormControlChangeEvent(normalizedValue);
 }
 

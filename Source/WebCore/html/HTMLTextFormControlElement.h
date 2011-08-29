@@ -74,6 +74,7 @@ public:
     virtual HTMLElement* innerTextElement() const = 0;
 
     void selectionChanged(bool userTriggered);
+    void notifyFormStateChanged();
 
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);

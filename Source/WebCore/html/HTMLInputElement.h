@@ -229,7 +229,6 @@ public:
 #endif
 
     bool lastChangeWasUserEdit() const;
-    void notifyFormStateChanged();
 
     static const int maximumLength;
 
