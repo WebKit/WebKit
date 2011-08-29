@@ -1,3 +1,20 @@
+2011-08-29  Cary Clark  <caryclark@google.com>
+
+        Only enable font smoothing as requested (Skia on Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=67143
+
+        This adjusts LayoutTest pixel output to more closely
+        match other platforms.
+
+        Reviewed by Kenneth Russell.
+
+        No new tests. This platform is not yet enabled.
+
+        * platform/graphics/skia/FontSkia.cpp:
+        (WebCore::setupPaint):
+        LCD text was always enabled to test the code path. With this change,
+        it is only enabled when instructed by the font state.
+
 2011-08-29  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Assertion failure in RenderLayer::computeRepaintRects when scrolling

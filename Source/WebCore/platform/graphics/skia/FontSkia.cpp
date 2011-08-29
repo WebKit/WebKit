@@ -87,7 +87,7 @@ static void setupPaint(SkPaint* paint, const SimpleFontData* fontData, const Fon
     paint->setFakeBoldText(platformData.m_syntheticBold);
     paint->setTextSkewX(platformData.m_syntheticOblique ? -SK_Scalar1 / 4 : 0);
     paint->setAutohinted(false); // freetype specific
-    paint->setLCDRenderText(true); // font->fontDescription().fontSmoothing() == SubpixelAntialiased);
+    paint->setLCDRenderText(font->fontDescription().fontSmoothing() == SubpixelAntialiased);
 }
 
 // TODO: This needs to be split into helper functions to better scope the
