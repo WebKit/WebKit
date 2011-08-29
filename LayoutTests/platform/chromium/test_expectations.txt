@@ -3662,3 +3662,6 @@ BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.htm
 
 BUGWK67074 : fast/replaced/frame-removed-during-resize.html = CRASH
 BUGWK67074 : scrollbars/scrollbar-buttons.html = CRASH
+
+// Implement an Event constructor in V8.
+BUGWK66756 : fast/events/constructors/event-constructors.html = TEXT
