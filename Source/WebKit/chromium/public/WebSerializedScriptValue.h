@@ -36,8 +36,16 @@
 
 namespace WebCore { class SerializedScriptValue; }
 
+#if WEBKIT_USING_V8
+namespace v8 {
+class Value;
+template <class T> class Handle;
+}
+#endif
+
 namespace WebKit {
 class WebString;
+
 
 class WebSerializedScriptValue {
 public:
@@ -53,6 +61,10 @@ public:
 
     WEBKIT_EXPORT static WebSerializedScriptValue fromString(const WebString&);
 
+#if WEBKIT_USING_V8
+    WEBKIT_EXPORT static WebSerializedScriptValue serialize(v8::Handle<v8::Value>);
+#endif
+
     // Create a WebSerializedScriptValue that represents a serialization error.
     WEBKIT_EXPORT static WebSerializedScriptValue createInvalid();
 
@@ -63,6 +75,11 @@ public:
 
     // Returns a string representation of the WebSerializedScriptValue.
     WEBKIT_EXPORT WebString toString() const;
+
+#if WEBKIT_USING_V8
+    // Convert the serialized value to a parsed v8 value.
+    WEBKIT_EXPORT v8::Handle<v8::Value> deserialize();
+#endif
 
 #if WEBKIT_IMPLEMENTATION
     WebSerializedScriptValue(const WTF::PassRefPtr<WebCore::SerializedScriptValue>&);

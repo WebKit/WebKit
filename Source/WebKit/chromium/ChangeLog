@@ -1,3 +1,15 @@
+2011-08-29  Greg Billock  <gbillock@google.com>
+
+        [Chromium] Add ability to do static SerializedScriptValue deserialization
+        https://bugs.webkit.org/show_bug.cgi?id=66877
+
+        Reviewed by Darin Fisher.
+
+        * public/WebSerializedScriptValue.h:
+        * src/WebSerializedScriptValue.cpp:
+        (WebKit::WebSerializedScriptValue::deserialize):
+        (WebKit::WebSerializedScriptValue::serialize):
+
 2011-08-27  Peter Beverloo  <peter@chromium.org>
 
         Teach the update and build scripts how to handle dependencies
