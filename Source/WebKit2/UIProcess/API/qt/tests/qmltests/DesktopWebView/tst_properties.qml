@@ -20,5 +20,13 @@ DesktopWebView {
             spy.wait()
             compare(webView.title, "Test page 1")
         }
+
+        function test_url() {
+            compare(spy.count, 1)
+            var testUrl = Qt.resolvedUrl("../common/test1.html")
+            webView.load(testUrl)
+            spy.wait()
+            compare(webView.url, testUrl)
+        }
     }
 }
