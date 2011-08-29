@@ -1,3 +1,13 @@
+2011-08-25  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: rename sourceFile to (raw|ui)SourceCode in DebuggerPresentationModel.
+        https://bugs.webkit.org/show_bug.cgi?id=66769
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/scripts-panel.html:
+        * inspector/debugger/source-file.html:
+
 2011-08-29  Gabor Loki  <loki@webkit.org>
 
         [Qt] The square-button-appearance test is wrong

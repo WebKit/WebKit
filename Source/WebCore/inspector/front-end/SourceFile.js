@@ -78,9 +78,8 @@ WebInspector.RawSourceCode.prototype = {
 
     rawLocationToUILocation: function(rawLocation)
     {
-        var uiLocation = this._mapping ? this._mapping.originalToFormatted(rawLocation) : rawLocation;
-        uiLocation.sourceFile = this;
-        return uiLocation;
+        var location = this._mapping ? this._mapping.originalToFormatted(rawLocation) : rawLocation;
+        return new WebInspector.UILocation(this, location.lineNumber, location.columnNumber);
     },
 
     uiLocationToRawLocation: function(lineNumber, columnNumber)
@@ -243,6 +242,17 @@ WebInspector.RawSourceCode.prototype = {
 }
 
 WebInspector.RawSourceCode.prototype.__proto__ = WebInspector.Object.prototype;
+
+
+/**
+ * @constructor
+ */
+WebInspector.UILocation = function(uiSourceCode, lineNumber, columnNumber)
+{
+    this.uiSourceCode = uiSourceCode;
+    this.lineNumber = lineNumber;
+    this.columnNumber = columnNumber;
+}
 
 
 /**

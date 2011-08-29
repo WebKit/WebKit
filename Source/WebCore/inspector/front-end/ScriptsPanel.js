@@ -597,7 +597,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     canShowAnchorLocation: function(anchor)
     {
-        return this._debuggerEnabled && this._presentationModel.sourceFileForScriptURL(anchor.href);
+        return this._debuggerEnabled && WebInspector.debuggerModel.scriptsForURL(anchor.href).length;
     },
 
     showAnchorLocation: function(anchor)
@@ -644,7 +644,7 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceFrame = this._sourceFrameForSourceFileId(sourceFileId);
         this.visibleView = sourceFrame;
 
-        var sourceFile = this._presentationModel.sourceFile(sourceFileId);
+        var sourceFile = this._presentationModel.uiSourceCode(sourceFileId);
         if (sourceFile.url)
             WebInspector.settings.lastViewedScriptFile.set(sourceFile.url);
 
@@ -659,7 +659,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _createSourceFrame: function(sourceFileId)
     {
-        var sourceFile = this._presentationModel.sourceFile(sourceFileId);
+        var sourceFile = this._presentationModel.uiSourceCode(sourceFileId);
         var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this._presentationModel, sourceFileId);
         var sourceFrame = new WebInspector.SourceFrame(delegate, sourceFile.url);
         this.addChildView(sourceFrame);
@@ -700,7 +700,7 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var sourceFrame = event.target;
         var sourceFileId = sourceFrame._sourceFileId;
-        var sourceFile = this._presentationModel.sourceFile(sourceFileId);
+        var sourceFile = this._presentationModel.uiSourceCode(sourceFileId);
 
         var messages = sourceFile.messages;
         for (var i = 0; i < messages.length; ++i) {
@@ -742,7 +742,7 @@ WebInspector.ScriptsPanel.prototype = {
 
             if (!(sourceFileId in this._sourceFileIdToFilesSelectOption)) {
                 // Anonymous scripts are not added to files select by default.
-                var sourceFile = this._presentationModel.sourceFile(sourceFileId);
+                var sourceFile = this._presentationModel.uiSourceCode(sourceFileId);
                 this._addOptionToFilesSelect(sourceFile);
             }
             var sourceFrame = this._showSourceFrameAndAddToHistory(sourceFileId);
@@ -1188,7 +1188,7 @@ WebInspector.SourceFrameDelegateForScriptsPanel = function(model, sourceFileId)
 WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
     requestContent: function(callback)
     {
-        this._model.requestSourceFileContent(this._sourceFileId, callback);
+        this._model.uiSourceCode(this._sourceFileId).requestContent(callback);
     },
 
     debuggingSupported: function()
@@ -1256,7 +1256,7 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
 
     suggestedFileName: function()
     {
-        var sourceFile = this._model.sourceFile(this._sourceFileId);
+        var sourceFile = this._model.uiSourceCode(this._sourceFileId);
         var names = WebInspector.panels.scripts._folderAndDisplayNameForScriptURL(sourceFile.url);
         return names.displayName || "untitled.js";
     }

@@ -1,3 +1,63 @@
+2011-08-25  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: rename sourceFile to (raw|ui)SourceCode in DebuggerPresentationModel.
+        https://bugs.webkit.org/show_bug.cgi?id=66769
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype.uiSourceCode):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptLocationToUILocation.didCreateSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptLocationToUILocation):
+        (WebInspector.DebuggerPresentationModel.prototype._uiLocationToScriptLocation.didCreateSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype._uiLocationToScriptLocation):
+        (WebInspector.DebuggerPresentationModel.prototype.linkifyLocation.updateAnchor.didGetLocation):
+        (WebInspector.DebuggerPresentationModel.prototype.linkifyLocation.updateAnchor):
+        (WebInspector.DebuggerPresentationModel.prototype.linkifyLocation):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript.didCreateSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        (WebInspector.DebuggerPresentationModel.prototype._uiSourceCodeReplaced):
+        (WebInspector.DebuggerPresentationModel.prototype.canEditScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype.setScriptSource.didEditScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype.setScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._updateBreakpointsAfterLiveEdit):
+        (WebInspector.DebuggerPresentationModel.prototype.setFormatSourceFiles):
+        (WebInspector.DebuggerPresentationModel.prototype._addConsoleMessage.didGetUILocation):
+        (WebInspector.DebuggerPresentationModel.prototype._addConsoleMessage):
+        (WebInspector.DebuggerPresentationModel.prototype._consoleCleared):
+        (WebInspector.DebuggerPresentationModel.prototype.continueToLine):
+        (WebInspector.DebuggerPresentationModel.prototype.breakpointsForSourceFileId):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpointEnabled):
+        (WebInspector.DebuggerPresentationModel.prototype.updateBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype.removeBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype.findBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointRemoved):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerPaused):
+        (WebInspector.DebuggerPresentationModel.prototype._rawSourceCodeForScript):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptForRawSourceCode):
+        (WebInspector.DebuggerPresentationModel.prototype._createRawSourceCodeId):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerReset):
+        (WebInspector.PresentationBreakpoint):
+        (WebInspector.PresenationCallFrame.prototype.sourceLine.didGetUILocation):
+        (WebInspector.PresenationCallFrame.prototype.sourceLine):
+        (WebInspector.DebuggerPresentationModelResourceBinding.prototype.canSetContent):
+        (WebInspector.DebuggerPresentationModelResourceBinding.prototype.setContent):
+        (WebInspector.DebuggerPresentationModelResourceBinding.prototype._setContentWithInitialContent):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.canShowAnchorLocation):
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameLoaded):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected.didGetSourceLocation):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.requestContent):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.suggestedFileName):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.RawSourceCode.prototype.rawLocationToUILocation):
+        (WebInspector.UILocation):
+
 2011-08-29  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: cached permanent redirects don't show redirect code and text in Network panel.
