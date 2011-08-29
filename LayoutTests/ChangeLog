@@ -1,5 +1,11 @@
 2011-08-29  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, add new chromium mac cg baseline for square-button-appearance added in r93953.
+
+        * platform/chromium-cg-mac-leopard/fast/css/square-button-appearance-expected.png: Added.
+
+2011-08-29  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, update chromium expectations. Mark frame-removed-during-resize.html and scrollbar-buttons.html
         as crashing on win linux debug only.
 
