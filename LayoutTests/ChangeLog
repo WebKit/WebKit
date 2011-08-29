@@ -1,5 +1,12 @@
 2011-08-29  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, mark fast/dom/dom-constructors.html as TEXT in chromium.
+
+        * platform/chromium/fast/dom/dom-constructors-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-08-29  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, fix event-constructors.html test.
         https://bugs.webkit.org/show_bug.cgi?id=63878
 
