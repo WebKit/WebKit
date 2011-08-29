@@ -24,14 +24,17 @@ layer at (0,0) size 800x600
             RenderButton {INPUT} at (7,6) size 18x19
           layer at (70,133) size 236x32
             RenderDeprecatedFlexibleBox (positioned) {DIV} at (30,0) size 236x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-          layer at (77,140) size 164x18
-            RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
-              RenderBlock {DIV} at (77,-5) size 9x29
+              RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+                RenderDeprecatedFlexibleBox {DIV} at (1,1) size 162x16
+                  RenderBlock {DIV} at (0,0) size 153x29
+                  RenderBlock {DIV} at (153,0) size 9x29
           layer at (247,139) size 58x20 scrollHeight 21
-            RenderDeprecatedFlexibleBox (positioned) {DIV} at (177,6) size 58x20 [color=#FFFFFF]
+            RenderDeprecatedFlexibleBox {DIV} at (177,6) size 58x20 [color=#FFFFFF]
               RenderBlock (anonymous) at (8,0) size 41x21
                 RenderText {#text} at (0,2) size 41x17
                   text run at (0,2) width 41: "00:00"
+          layer at (154,135) size 9x29
+            RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
           layer at (306,133) size 34x32
             RenderButton {INPUT} at (266,0) size 34x32
         RenderText {#text} at (0,0) size 0x0
