@@ -482,7 +482,7 @@ static GtkAdjustment* getHorizontalAdjustment(WebKitWebView* webView)
 {
     Page* page = core(webView);
     if (page)
-        return static_cast<WebKit::ChromeClient*>(page->chrome()->client())->horizontalAdjustment();
+        return static_cast<WebKit::ChromeClientGtk*>(page->chrome()->client())->adjustmentWatcher()->horizontalAdjustment();
     return 0;
 }
 
@@ -490,7 +490,7 @@ static GtkAdjustment* getVerticalAdjustment(WebKitWebView* webView)
 {
     Page* page = core(webView);
     if (page)
-        return static_cast<WebKit::ChromeClient*>(page->chrome()->client())->verticalAdjustment();
+        return static_cast<WebKit::ChromeClient*>(page->chrome()->client())->adjustmentWatcher()->verticalAdjustment();
     return 0;
 }
 
