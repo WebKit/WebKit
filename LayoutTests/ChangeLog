@@ -1,3 +1,13 @@
+2011-08-29  Nayan Kumar K  <nayankk@motorola.com>
+
+        As per HTML specification, default font style of dfn tag should be italic.
+        https://bugs.webkit.org/show_bug.cgi?id=56670
+
+        Reviewed by Adam Barth.
+
+        * fast/css/dfn-default-font-style-expected.txt: Added.
+        * fast/css/dfn-default-font-style.html: Added.
+
 2011-08-29  Chris Palmer  <palmer@google.com>
 
         Fix failures when FFT array size is changed.

@@ -1,3 +1,15 @@
+2011-08-29  Nayan Kumar K  <nayankk@motorola.com>
+
+        As per HTML specification, default font style of dfn tag should be italic.
+        https://bugs.webkit.org/show_bug.cgi?id=56670
+
+        Reviewed by Adam Barth.
+
+        Test: fast/css/dfn-default-font-style.html
+
+        * css/html.css:
+        (i, cite, em, var, address, dfn):
+
 2011-08-29  Patrick Gansterer  <paroga@webkit.org>
 
         Consider Conditional attribute in CodeGeneratorJS' JSValueToNative and NativeToJSValue function

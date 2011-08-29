@@ -848,7 +848,7 @@ strong, b {
     font-weight: bolder
 }
 
-i, cite, em, var, address {
+i, cite, em, var, address, dfn {
     font-style: italic
 }
 
