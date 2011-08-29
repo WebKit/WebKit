@@ -87,7 +87,7 @@ CachedResourceRequest::~CachedResourceRequest()
 {
 }
 
-PassOwnPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
+PassOwnPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental, SecurityCheckPolicy securityCheck, const ResourceLoaderOptions& options)
 {
     OwnPtr<CachedResourceRequest> request = adoptPtr(new CachedResourceRequest(cachedResourceLoader, resource, incremental));
 
@@ -124,8 +124,7 @@ PassOwnPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
     ResourceLoadPriority priority = resource->loadPriority();
     resourceRequest.setPriority(priority);
 
-    RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->document()->frame(), request.get(), resourceRequest, priority, securityCheck,
-                                                                                        ResourceLoaderOptions(sendResourceLoadCallbacks ? SendCallbacks : DoNotSendCallbacks, SniffContent, BufferData, AllowStoredCredentials));
+    RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->document()->frame(), request.get(), resourceRequest, priority, securityCheck, options);
     if (!loader || loader->reachedTerminalState()) {
         // FIXME: What if resources in other frames were waiting for this revalidation?
         LOG(ResourceLoading, "Cannot start loading '%s'", resource->url().string().latin1().data());

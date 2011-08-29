@@ -27,6 +27,7 @@
 #include "FrameLoaderTypes.h"
 #include "PlatformString.h"
 #include "PurgePriority.h"
+#include "ResourceLoaderOptions.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -85,8 +86,8 @@ public:
     CachedResource(const ResourceRequest&, Type);
     virtual ~CachedResource();
     
-    virtual void load(CachedResourceLoader* cachedResourceLoader)  { load(cachedResourceLoader, false, DoSecurityCheck, true); }
-    void load(CachedResourceLoader*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);
+    virtual void load(CachedResourceLoader* cachedResourceLoader)  { load(cachedResourceLoader, false, DoSecurityCheck); }
+    void load(CachedResourceLoader*, bool incremental, SecurityCheckPolicy);
 
     virtual void setEncoding(const String&) { }
     virtual String encoding() const { return String(); }
@@ -193,8 +194,9 @@ public:
 
     bool wasCanceled() const { return m_status == Canceled; }
     bool errorOccurred() const { return (m_status == LoadError || m_status == DecodeError); }
-
-    bool sendResourceLoadCallbacks() const { return m_sendResourceLoadCallbacks; }
+    
+    void setResourceLoaderOptions(const ResourceLoaderOptions& options) { m_options = options; }
+    bool sendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbacks; }
     
     virtual void destroyDecodedData() { }
 
@@ -270,13 +272,14 @@ private:
 
     bool m_inLiveDecodedResourcesList : 1;
     bool m_requestedFromNetworkingLayer : 1;
-    bool m_sendResourceLoadCallbacks : 1;
 
     bool m_inCache : 1;
     bool m_loading : 1;
 
     unsigned m_type : 3; // Type
     unsigned m_status : 3; // Status
+
+    ResourceLoaderOptions m_options;
 
 #ifndef NDEBUG
     bool m_deleted;

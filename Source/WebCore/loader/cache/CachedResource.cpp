@@ -92,11 +92,11 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type)
     , m_preloadResult(PreloadNotReferenced)
     , m_inLiveDecodedResourcesList(false)
     , m_requestedFromNetworkingLayer(false)
-    , m_sendResourceLoadCallbacks(true)
     , m_inCache(false)
     , m_loading(false)
     , m_type(type)
     , m_status(Pending)
+    , m_options(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials)
 #ifndef NDEBUG
     , m_deleted(false)
     , m_lruIndex(0)
@@ -131,11 +131,10 @@ CachedResource::~CachedResource()
         m_owningCachedResourceLoader->removeCachedResource(this);
 }
 
-void CachedResource::load(CachedResourceLoader* cachedResourceLoader, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
+void CachedResource::load(CachedResourceLoader* cachedResourceLoader, bool incremental, SecurityCheckPolicy securityCheck)
 {
-    m_sendResourceLoadCallbacks = sendResourceLoadCallbacks;
     m_loading = true;
-    m_request = CachedResourceRequest::load(cachedResourceLoader, this, incremental, securityCheck, sendResourceLoadCallbacks);
+    m_request = CachedResourceRequest::load(cachedResourceLoader, this, incremental, securityCheck, m_options);
     if (m_request) {
         m_status = Pending;
         cachedResourceLoader->incrementRequestCount(this);

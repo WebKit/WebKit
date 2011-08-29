@@ -1,3 +1,31 @@
+2011-08-29  Nate Chapin  <japhet@chromium.org>
+
+        Plumb ResourceLoaderOptions out to CachedResourceLoader::requestResource().
+        This will be needed in order for DocumentThreadableLoader to become a CachedResourceClient.
+        https://bugs.webkit.org/show_bug.cgi?id=66018
+
+        Reviewed by Antti Koivisto.
+
+        No new tests, refactor only.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::load):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResource.h:
+       (WebCore::CachedResource::load):
+        (WebCore::CachedResource::setResourceLoaderOptions):
+        (WebCore::CachedResource::sendResourceLoadCallbacks):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::load):
+        * loader/cache/CachedResourceRequest.h:
+
 2011-08-29  Chris Palmer  <palmer@google.com>
 
         Fix failures when FFT size is changed.

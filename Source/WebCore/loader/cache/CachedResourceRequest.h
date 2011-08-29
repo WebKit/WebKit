@@ -23,6 +23,8 @@
 #define CachedResourceRequest_h
 
 #include "FrameLoaderTypes.h"
+#include "ResourceHandle.h"
+#include "ResourceLoaderOptions.h"
 #include "SubresourceLoaderClient.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -41,7 +43,7 @@ namespace WebCore {
 
     class CachedResourceRequest : private SubresourceLoaderClient {
     public:
-        static PassOwnPtr<CachedResourceRequest> load(CachedResourceLoader*, CachedResource*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);
+        static PassOwnPtr<CachedResourceRequest> load(CachedResourceLoader*, CachedResource*, bool incremental, SecurityCheckPolicy, const ResourceLoaderOptions&);
         ~CachedResourceRequest();
 
         CachedResourceLoader* cachedResourceLoader() const { return m_cachedResourceLoader; }

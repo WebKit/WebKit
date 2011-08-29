@@ -170,8 +170,9 @@ CachedCSSStyleSheet* CachedResourceLoader::requestUserCSSStyleSheet(ResourceRequ
     bool inCache = memoryCache()->add(userSheet);
     if (!inCache)
         userSheet->setInCache(true);
-    
-    userSheet->load(this, /*incremental*/ false, SkipSecurityCheck, /*sendResourceLoadCallbacks*/ false);
+
+    userSheet->setResourceLoaderOptions(ResourceLoaderOptions(DoNotSendCallbacks, SniffContent, BufferData, AllowStoredCredentials));
+    userSheet->load(this, /*incremental*/ false, SkipSecurityCheck);
 
     if (!inCache)
         userSheet->setInCache(false);
@@ -311,7 +312,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     return true;
 }
 
-CachedResource* CachedResourceLoader::requestResource(CachedResource::Type type, ResourceRequest& request, const String& charset, ResourceLoadPriority priority, bool forPreload)
+CachedResource* CachedResourceLoader::requestResource(CachedResource::Type type, ResourceRequest& request, const String& charset, ResourceLoadPriority priority, bool forPreload, const ResourceLoaderOptions& options)
 {
     KURL url = request.url();
     
@@ -342,11 +343,11 @@ CachedResource* CachedResourceLoader::requestResource(CachedResource::Type type,
 
     switch (determineRevalidationPolicy(type, request, forPreload, resource)) {
     case Load:
-        resource = loadResource(type, request, charset, priority);
+        resource = loadResource(type, request, charset, priority, options);
         break;
     case Reload:
         memoryCache()->remove(resource);
-        resource = loadResource(type, request, charset, priority);
+        resource = loadResource(type, request, charset, priority, options);
         break;
     case Revalidate:
         resource = revalidateResource(resource, priority);
@@ -393,7 +394,7 @@ CachedResource* CachedResourceLoader::revalidateResource(CachedResource* resourc
     return newResource;
 }
 
-CachedResource* CachedResourceLoader::loadResource(CachedResource::Type type, ResourceRequest& request, const String& charset, ResourceLoadPriority priority)
+CachedResource* CachedResourceLoader::loadResource(CachedResource::Type type, ResourceRequest& request, const String& charset, ResourceLoadPriority priority, const ResourceLoaderOptions& options)
 {
     ASSERT(!memoryCache()->resourceForURL(request.url()));
     
@@ -409,6 +410,7 @@ CachedResource* CachedResourceLoader::loadResource(CachedResource::Type type, Re
         resource->setInCache(true);
     
     resource->setLoadPriority(priority);
+    resource->setResourceLoaderOptions(options);
     resource->load(this);
     
     if (!inCache) {
