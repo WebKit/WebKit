@@ -1,3 +1,12 @@
+2011-08-29  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed gardening.
+
+        Mark test fast/canvas/setWidthResetAfterForcedRender.html as failing
+        after r93988.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-29  David Levin  <levin@chromium.org>
 
         Temporary suppression for new test added in r93982.

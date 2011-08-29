@@ -3677,3 +3677,6 @@ BUGWK63878 : fast/dom/dom-constructors.html = TEXT
 
 // Failing after r93982.
 BUG_LEVIN MAC : canvas/philip/tests/2d.path.stroke.prune.arc.html = TEXT
+
+// Failing after r93988.
+BUGWK67144 GPU WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
