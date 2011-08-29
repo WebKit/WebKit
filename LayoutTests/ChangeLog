@@ -1,3 +1,20 @@
+2011-08-29  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        canvas arc() missing line to start of arc if swing is zero
+        https://bugs.webkit.org/show_bug.cgi?id=55696
+
+        LayoutTests/canvas/philip/tests/2d.path.stroke.prune.arc.html misinterprets pruning requirement
+        https://bugs.webkit.org/show_bug.cgi?id=66832
+
+        Reviewed by Andreas Kling.
+
+        Update to 2d.path.stroke.prune.arc.html was reviewed by Philip Taylor and will be part of the
+        next update to http://philip.html5.org/tests/canvas/suite/tests/2d.path.stroke.prune.arc.html
+
+        * canvas/philip/tests/2d.path.stroke.prune.arc.html:
+        * fast/canvas/canvas-arc-zero-lineto-expected.txt: Added.
+        * fast/canvas/canvas-arc-zero-lineto.html: Added.
+
 2011-08-23  Chris Marrin  <cmarrin@apple.com>
 
         [mac] requestAnimationFrame support for mac port

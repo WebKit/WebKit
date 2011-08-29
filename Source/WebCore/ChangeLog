@@ -1,3 +1,15 @@
+2011-08-29  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        canvas arc() missing line to start of arc if swing is zero
+        https://bugs.webkit.org/show_bug.cgi?id=55696
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/canvas/canvas-arc-zero-lineto.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::arc):
+
 2011-08-23  Chris Marrin  <cmarrin@apple.com>
 
         [mac] requestAnimationFrame support for mac port
