@@ -1,3 +1,14 @@
+2011-08-29  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] NPAPI support doesn't honor the ENABLE_NETSCAPE_PLUGIN_API define in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=67123
+
+        We could simply use the defines already in place for this.
+
+        Reviewed by Andreas Kling.
+
+        * WebKit2.pro:
+
 2011-08-29  Vamshikrishna Yellenki  <vamshi@motorola.com>
 
         [GTK][WK2] Compilation error in WebKit2 GTK - Revision 93953
