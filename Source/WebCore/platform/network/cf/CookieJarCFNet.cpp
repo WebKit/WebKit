@@ -127,7 +127,7 @@ void setCookies(Document* document, const KURL& url, const String& value)
     if (value.isEmpty())
         return;
 
-    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
     if (!cookieStorage)
         return;
 
@@ -146,33 +146,33 @@ void setCookies(Document* document, const KURL& url, const String& value)
     RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieCreateWithResponseHeaderFields(kCFAllocatorDefault,
         headerFieldsCF.get(), urlCF.get()));
 
-    CFHTTPCookieStorageSetCookies(cookieStorage, filterCookies(cookiesCF.get()).get(), urlCF.get(), firstPartyForCookiesCF.get());
+    CFHTTPCookieStorageSetCookies(cookieStorage.get(), filterCookies(cookiesCF.get()).get(), urlCF.get(), firstPartyForCookiesCF.get());
 }
 
 String cookies(const Document* /*document*/, const KURL& url)
 {
-    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
     if (!cookieStorage)
         return String();
 
     RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
 
     bool secure = url.protocolIs("https");
-    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage, urlCF.get(), secure));
+    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage.get(), urlCF.get(), secure));
     RetainPtr<CFDictionaryRef> headerCF(AdoptCF, CFHTTPCookieCopyRequestHeaderFields(kCFAllocatorDefault, filterCookies(cookiesCF.get()).get()));
     return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
 }
 
 String cookieRequestHeaderFieldValue(const Document* /*document*/, const KURL& url)
 {
-    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
     if (!cookieStorage)
         return String();
 
     RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
 
     bool secure = url.protocolIs("https");
-    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage, urlCF.get(), secure));
+    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage.get(), urlCF.get(), secure));
     RetainPtr<CFDictionaryRef> headerCF(AdoptCF, CFHTTPCookieCopyRequestHeaderFields(kCFAllocatorDefault, cookiesCF.get()));
     return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
 }
@@ -180,22 +180,22 @@ String cookieRequestHeaderFieldValue(const Document* /*document*/, const KURL& u
 bool cookiesEnabled(const Document* /*document*/)
 {
     CFHTTPCookieStorageAcceptPolicy policy = CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain;
-    if (CFHTTPCookieStorageRef cookieStorage = currentCookieStorage())
-        policy = CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage);
+    if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage())
+        policy = CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage.get());
     return policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyAlways;
 }
 
 bool getRawCookies(const Document*, const KURL& url, Vector<Cookie>& rawCookies)
 {
     rawCookies.clear();
-    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
     if (!cookieStorage)
         return false;
 
     RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
 
     bool sendSecureCookies = url.protocolIs("https");
-    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage, urlCF.get(), sendSecureCookies));
+    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage.get(), urlCF.get(), sendSecureCookies));
 
     CFIndex count = CFArrayGetCount(cookiesCF.get());
     rawCookies.reserveCapacity(count);
@@ -221,20 +221,20 @@ bool getRawCookies(const Document*, const KURL& url, Vector<Cookie>& rawCookies)
 
 void deleteCookie(const Document*, const KURL& url, const String& name)
 {
-    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
     if (!cookieStorage)
         return;
 
     RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
 
     bool sendSecureCookies = url.protocolIs("https");
-    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage, urlCF.get(), sendSecureCookies));
+    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage.get(), urlCF.get(), sendSecureCookies));
 
     CFIndex count = CFArrayGetCount(cookiesCF.get());
     for (CFIndex i = 0; i < count; i++) {
         CFHTTPCookieRef cookie = (CFHTTPCookieRef)CFArrayGetValueAtIndex(cookiesCF.get(), i);
         if (String(cookieName(cookie).get()) == name) {
-            CFHTTPCookieStorageDeleteCookie(cookieStorage, cookie);
+            CFHTTPCookieStorageDeleteCookie(cookieStorage.get(), cookie);
             break;
         }
     }
@@ -242,11 +242,11 @@ void deleteCookie(const Document*, const KURL& url, const String& name)
 
 void getHostnamesWithCookies(HashSet<String>& hostnames)
 {
-    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
     if (!cookieStorage)
         return;
 
-    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookies(cookieStorage));
+    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookies(cookieStorage.get()));
     if (!cookiesCF)
         return;
 
@@ -260,11 +260,11 @@ void getHostnamesWithCookies(HashSet<String>& hostnames)
 
 void deleteCookiesForHostname(const String& hostname)
 {
-    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
     if (!cookieStorage)
         return;
 
-    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookies(cookieStorage));
+    RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookies(cookieStorage.get()));
     if (!cookiesCF)
         return;
 
@@ -273,17 +273,17 @@ void deleteCookiesForHostname(const String& hostname)
         CFHTTPCookieRef cookie = static_cast<CFHTTPCookieRef>(const_cast<void *>(CFArrayGetValueAtIndex(cookiesCF.get(), i)));
         RetainPtr<CFStringRef> domain = cookieDomain(cookie);
         if (String(domain.get()) == hostname)
-            CFHTTPCookieStorageDeleteCookie(cookieStorage, cookie);
+            CFHTTPCookieStorageDeleteCookie(cookieStorage.get(), cookie);
     }
 }
 
 void deleteAllCookies()
 {
-    CFHTTPCookieStorageRef cookieStorage = currentCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
     if (!cookieStorage)
         return;
 
-    CFHTTPCookieStorageDeleteAllCookies(cookieStorage);
+    CFHTTPCookieStorageDeleteAllCookies(cookieStorage.get());
 }
 
 } // namespace WebCore

@@ -1,5 +1,21 @@
 2011-08-29  Alexey Proskuryakov  <ap@apple.com>
 
+        Windows build fix.
+
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        (WebCore::getHostnamesWithCookies):
+        (WebCore::deleteCookiesForHostname):
+        (WebCore::deleteAllCookies):
+        Updated for new function name and signature: currentCFHTTPCookieStorage().
+
+2011-08-29  Alexey Proskuryakov  <ap@apple.com>
+
         Mac build fix.
 
         * platform/network/cf/CookieStorageCFNet.cpp: Move Windows specific includes into PLATFORM(WIN).
