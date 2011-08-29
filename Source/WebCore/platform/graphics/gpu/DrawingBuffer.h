@@ -42,11 +42,6 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-#if USE(SKIA)
-class GrContext;
-struct GrPlatformSurfaceDesc;
-#endif
-
 namespace WebCore {
 
 #if PLATFORM(CHROMIUM) && USE(ACCELERATED_COMPOSITING)
@@ -90,11 +85,6 @@ public:
     void publishToPlatformLayer();
 #endif
 
-#if USE(SKIA)
-    void setGrContext(GrContext* ctx);
-    void getGrPlatformSurfaceDesc(GrPlatformSurfaceDesc*);
-#endif
-
     PassRefPtr<GraphicsContext3D> graphicsContext3D() const { return m_context; }
 
 private:
@@ -120,18 +110,8 @@ private:
     Platform3DObject m_multisampleFBO;
     Platform3DObject m_multisampleColorBuffer;
 
-#if PLATFORM(CHROMIUM)
-#if USE(ACCELERATED_COMPOSITING)
-    RefPtr<Canvas2DLayerChromium> m_platformLayer;
-#endif
-#endif
-
 #if PLATFORM(MAC)
     RetainPtr<WebGLLayer> m_platformLayer;
-#endif
-
-#if USE(SKIA)
-    GrContext* m_grContext;
 #endif
 };
 

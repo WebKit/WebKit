@@ -45,7 +45,6 @@
 namespace WebCore {
 
 enum CompositeOperator;
-class DrawingBuffer;
 class GraphicsContext3D;
 class Texture;
 
@@ -179,7 +178,7 @@ public:
     bool hasImageResamplingHint() const;
 
     bool isAccelerated() const { return m_gpuContext; }
-    void setGraphicsContext3D(GraphicsContext3D*, DrawingBuffer*);
+    void setGraphicsContext3D(GraphicsContext3D*);
     void makeGrContextCurrent();
 
 private:

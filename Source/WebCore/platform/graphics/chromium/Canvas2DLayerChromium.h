@@ -38,23 +38,21 @@
 
 namespace WebCore {
 
-class DrawingBuffer;
+class GraphicsContext3D;
 
 // A layer containing an accelerated 2d canvas
 class Canvas2DLayerChromium : public CanvasLayerChromium {
 public:
-    static PassRefPtr<Canvas2DLayerChromium> create(DrawingBuffer*, GraphicsLayerChromium* owner);
+    static PassRefPtr<Canvas2DLayerChromium> create(GraphicsContext3D*);
     virtual ~Canvas2DLayerChromium();
     virtual bool drawsContent() const;
     virtual void updateCompositorResources(GraphicsContext3D*);
 
     void setTextureChanged();
-    virtual unsigned textureId() const;
-    void setDrawingBuffer(DrawingBuffer*);
 
 private:
-    explicit Canvas2DLayerChromium(DrawingBuffer*, GraphicsLayerChromium* owner);
-    DrawingBuffer* m_drawingBuffer;
+    explicit Canvas2DLayerChromium(GraphicsContext3D*);
+    GraphicsContext3D* m_context;
 };
 
 }

@@ -47,7 +47,6 @@
 
 #include "Canvas2DLayerChromium.h"
 #include "ContentLayerChromium.h"
-#include "DrawingBuffer.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "Image.h"

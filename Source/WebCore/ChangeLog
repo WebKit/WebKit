@@ -1,3 +1,62 @@
+2011-08-29  Stephen White  <senorblanco@chromium.org>
+
+        Skia's accelerated canvas 2D implementation should use GrTexture, not DrawingBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=67050
+
+        Reviewed by Kenneth Russell.
+
+        Covered by existing tests.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::create):
+        (WebCore::Canvas2DLayerChromium::Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::drawsContent):
+        Construct Canvas2DLayerChromium with a GraphicsContext3D, not a
+        DrawingBuffer.
+        (WebCore::Canvas2DLayerChromium::updateCompositorResources):
+        Flush the GrContext and GraphicsContext3D on compositor update.
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::CanvasLayerChromium):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        Put textureId() back on the base class (CanvasLayerChromium) and
+        de-virtualize it.
+        (WebCore::CanvasLayerChromium::textureId):
+        (WebCore::CanvasLayerChromium::setTextureId):
+        Move m_textureId from WebGLLayerChromium, since canvas2D now uses
+        it too.  Provide getters and setters.
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        (WebCore::DrawingBuffer::~DrawingBuffer):
+        Remove all Canvas2D-related calls from DrawingBuffer.
+        (WebCore::DrawingBuffer::publishToPlatformLayer):
+        Remove GrContext::flush call, since it's now handled by the platform layer.
+        (WebCore::DrawingBuffer::platformLayer):
+        Return NULL for now (WebGL may rescussitate this later).
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        Remove a useless #include.
+        * platform/graphics/chromium/ImageBufferDataSkia.h:
+        Add ownership of the Canvas2DLayerChromium.
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::WebGLLayerChromium):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+        Remove all texture ID stuff (now on base class).
+        * platform/graphics/gpu/DrawingBuffer.h:
+        Remove Canvas2DLayerChromium and all Ganesh datatypes from
+        DrawingBuffer, since it's no longer used by canvas2D.
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        On accelerated ImageBuffer creation, create a GrTexture instead of a
+        DrawingBuffer.  If all is cool, create and set the SkGpuDevice here,
+        and create a Canvas2DLayerChromium platform layer.
+        (WebCore::ImageBuffer::platformLayer):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::setGraphicsContext3D):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        Remove all GrContext creation and DrawingBuffer "scraping" from 
+        PlatformContextSkia::setGraphicsContext3D().  This is handled in
+        the ImageBuffer constructor instead.
+
 2011-08-26  Alexey Proskuryakov  <ap@apple.com>
 
         DumpRenderTree should begin each test with an empty cookie store

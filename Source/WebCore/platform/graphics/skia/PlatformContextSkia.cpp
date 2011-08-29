@@ -33,7 +33,6 @@
 #include "PlatformContextSkia.h"
 
 #include "AffineTransform.h"
-#include "DrawingBuffer.h"
 #include "Extensions3D.h"
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
@@ -660,28 +659,9 @@ void PlatformContextSkia::applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths)
     m_canvas->restore();
 }
 
-void PlatformContextSkia::setGraphicsContext3D(GraphicsContext3D* context, DrawingBuffer* drawingBuffer)
+void PlatformContextSkia::setGraphicsContext3D(GraphicsContext3D* context)
 {
     m_gpuContext = context;
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    if (context && drawingBuffer) {
-        // use skia gpu rendering if available
-        GrContext* gr = context->grContext();
-        if (gr) {
-            context->makeContextCurrent();
-            drawingBuffer->bind();
-
-            gr->resetContext();
-            drawingBuffer->setGrContext(gr);
-
-            GrPlatformSurfaceDesc drawBufDesc;
-            drawingBuffer->getGrPlatformSurfaceDesc(&drawBufDesc);
-            SkAutoTUnref<GrTexture> drawBufTex(static_cast<GrTexture*>(gr->createPlatformSurface(drawBufDesc)));
-            m_canvas->setDevice(new SkGpuDevice(gr, drawBufTex.get()))->unref();
-        } else
-            m_gpuContext = 0;
-    }
-#endif
 }
 
 void PlatformContextSkia::makeGrContextCurrent()

@@ -33,13 +33,6 @@
 #include "DrawingBuffer.h"
 
 #include "GraphicsContext3D.h"
-#if USE(SKIA)
-#include "GrContext.h"
-#endif
-
-#if USE(ACCELERATED_COMPOSITING)
-#include "Canvas2DLayerChromium.h"
-#endif
 
 namespace WebCore {
 
@@ -75,9 +68,6 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     , m_stencilBuffer(0)
     , m_multisampleFBO(0)
     , m_multisampleColorBuffer(0)
-#if USE(SKIA)
-    , m_grContext(0)
-#endif
 {
     m_fbo = context->createFramebuffer();
     context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
@@ -91,11 +81,6 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
 
 DrawingBuffer::~DrawingBuffer()
 {
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_platformLayer)
-        m_platformLayer->setDrawingBuffer(0);
-#endif
-
     if (!m_context)
         return;
 
@@ -111,10 +96,6 @@ void DrawingBuffer::publishToPlatformLayer()
     if (multisample())
         commit();
     m_context->makeContextCurrent();
-#if USE(SKIA)
-    if (m_grContext)
-        m_grContext->flush(0);
-#endif
     m_context->flush();
 }
 #endif
@@ -122,9 +103,7 @@ void DrawingBuffer::publishToPlatformLayer()
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* DrawingBuffer::platformLayer()
 {
-    if (!m_platformLayer)
-        m_platformLayer = Canvas2DLayerChromium::create(this, 0);
-    return m_platformLayer.get();
+    return 0;
 }
 #endif
 
@@ -132,37 +111,5 @@ Platform3DObject DrawingBuffer::platformColorBuffer() const
 {
     return m_colorBuffer;
 }
-
-#if USE(SKIA)
-void DrawingBuffer::setGrContext(GrContext* context)
-{
-    // We just take a ptr without referencing it, as we require that we never outlive
-    // the GraphicsContext3D object that is giving us the context.
-    m_grContext = context;
-}
-
-void DrawingBuffer::getGrPlatformSurfaceDesc(GrPlatformSurfaceDesc* desc)
-{
-    desc->fSurfaceType = kTextureRenderTarget_GrPlatformSurfaceType;
-
-    desc->fPlatformTexture = m_colorBuffer;
-    if (multisample()) {
-        desc->fRenderTargetFlags = kIsMultisampled_GrPlatformRenderTargetFlagBit | kGrCanResolve_GrPlatformRenderTargetFlagBit;
-        desc->fPlatformRenderTarget = m_multisampleFBO;
-        desc->fPlatformResolveDestination = m_fbo;
-    } else {
-        desc->fRenderTargetFlags = kNone_GrPlatformRenderTargetFlagBit;
-        desc->fPlatformRenderTarget = m_fbo;
-        desc->fPlatformResolveDestination = 0;
-    }
-
-    desc->fWidth = m_size.width();
-    desc->fHeight = m_size.height();
-    desc->fConfig = kRGBA_8888_GrPixelConfig;
-
-    desc->fStencilBits = (m_depthStencilBuffer || m_stencilBuffer) ? 8 : 0;
-}
-
-#endif
 
 }

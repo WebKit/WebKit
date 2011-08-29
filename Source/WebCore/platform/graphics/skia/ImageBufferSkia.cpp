@@ -36,7 +36,8 @@
 #include "Base64.h"
 #include "BitmapImage.h"
 #include "BitmapImageSingleFrameSkia.h"
-#include "DrawingBuffer.h"
+#include "Canvas2DLayerChromium.h"
+#include "GrContext.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
 #include "JPEGImageEncoder.h"
@@ -45,6 +46,7 @@
 #include "PlatformContextSkia.h"
 #include "SharedGraphicsContext3D.h"
 #include "SkColorPriv.h"
+#include "SkGpuDevice.h"
 #include "SkiaUtils.h"
 
 #include <wtf/text/WTFString.h>
@@ -83,12 +85,29 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderin
     // color. Can we have another way to manage this?
     m_data.m_canvas->drawARGB(0, 0, 0, 0, SkXfermode::kClear_Mode);
     if (renderingMode == Accelerated) {
-        m_accelerateRendering = true;
         GraphicsContext3D* context3D = SharedGraphicsContext3D::create(0);
         if (context3D) {
-            m_data.m_drawingBuffer = context3D->createDrawingBuffer(size);
-            if (m_data.m_drawingBuffer)
-                m_data.m_platformContext.setGraphicsContext3D(context3D, m_data.m_drawingBuffer.get());
+            context3D->makeContextCurrent();
+            GrContext* gr = context3D->grContext();
+            if (gr) {
+                gr->resetContext();
+                GrTextureDesc desc;
+                desc.fFlags = kRenderTarget_GrTextureFlagBit;
+                desc.fAALevel = kNone_GrAALevel;
+                desc.fWidth = size.width();
+                desc.fHeight = size.height();
+                desc.fFormat = kRGBA_8888_GrPixelConfig;
+                SkAutoTUnref<GrTexture> texture(gr->createUncachedTexture(desc, 0, 0));
+                if (texture.get()) {
+                    m_data.m_canvas->setDevice(new SkGpuDevice(gr, texture.get()))->unref();
+                    m_context->platformContext()->setGraphicsContext3D(context3D);
+                    m_accelerateRendering = true;
+#if USE(ACCELERATED_COMPOSITING)
+                    m_data.m_platformLayer = Canvas2DLayerChromium::create(context3D);
+                    m_data.m_platformLayer->setTextureId(texture.get()->getTextureHandle());
+#endif
+                }
+            }
         }
     }
 
@@ -380,7 +399,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
 
 PlatformLayer* ImageBuffer::platformLayer() const
 {
-    return m_data.m_drawingBuffer ? m_data.m_drawingBuffer->platformLayer() : 0;
+    return m_data.m_platformLayer.get();
 }
 
 String ImageDataToDataURL(const ImageData& source, const String& mimeType, const double* quality)

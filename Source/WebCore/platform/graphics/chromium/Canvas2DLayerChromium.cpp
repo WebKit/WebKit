@@ -34,21 +34,23 @@
 
 #include "Canvas2DLayerChromium.h"
 
-#include "DrawingBuffer.h"
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
+
+#if USE(SKIA)
+#include "GrContext.h"
+#endif
 
 namespace WebCore {
 
-PassRefPtr<Canvas2DLayerChromium> Canvas2DLayerChromium::create(DrawingBuffer* drawingBuffer, GraphicsLayerChromium* owner)
+PassRefPtr<Canvas2DLayerChromium> Canvas2DLayerChromium::create(GraphicsContext3D* context)
 {
-    return adoptRef(new Canvas2DLayerChromium(drawingBuffer, owner));
+    return adoptRef(new Canvas2DLayerChromium(context));
 }
 
-Canvas2DLayerChromium::Canvas2DLayerChromium(DrawingBuffer* drawingBuffer, GraphicsLayerChromium* owner)
-    : CanvasLayerChromium(owner)
-    , m_drawingBuffer(drawingBuffer)
+Canvas2DLayerChromium::Canvas2DLayerChromium(GraphicsContext3D* context)
+    : CanvasLayerChromium(0)
+    , m_context(context)
 {
 }
 
@@ -58,31 +60,28 @@ Canvas2DLayerChromium::~Canvas2DLayerChromium()
 
 bool Canvas2DLayerChromium::drawsContent() const
 {
-    GraphicsContext3D* context;
-    return (m_drawingBuffer
-            && (context = m_drawingBuffer->graphicsContext3D().get())
-            && (context->getExtensions()->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR));
+    return (m_context
+            && (m_context->getExtensions()->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR));
 }
 
 void Canvas2DLayerChromium::updateCompositorResources(GraphicsContext3D*)
 {
     if (!m_contentsDirty || !drawsContent())
         return;
-    // Update the contents of the texture used by the compositor.
+
     if (m_contentsDirty) {
-        m_drawingBuffer->publishToPlatformLayer();
+        if (m_context) {
+#if USE(SKIA)
+            GrContext* grContext = m_context->grContext();
+            if (grContext) {
+                m_context->makeContextCurrent();
+                grContext->flush();
+            }
+#endif
+            m_context->flush();
+        }
         m_contentsDirty = false;
     }
-}
-
-unsigned Canvas2DLayerChromium::textureId() const
-{
-    return m_drawingBuffer ? m_drawingBuffer->platformColorBuffer() : 0;
-}
-
-void Canvas2DLayerChromium::setDrawingBuffer(DrawingBuffer* drawingBuffer)
-{
-    m_drawingBuffer = drawingBuffer;
 }
 
 }

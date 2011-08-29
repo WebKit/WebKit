@@ -28,12 +28,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DrawingBuffer.h"
 #include "PlatformContextSkia.h"
 
 #include "skia/ext/platform_canvas.h"
 
 namespace WebCore {
+
+#if USE(ACCELERATED_COMPOSITING)
+class Canvas2DLayerChromium;
+#endif
 
 class ImageBufferData {
 public:
@@ -41,7 +44,9 @@ public:
 
     OwnPtr<SkCanvas> m_canvas;
     PlatformContextSkia m_platformContext;
-    RefPtr<DrawingBuffer> m_drawingBuffer;
+#if USE(ACCELERATED_COMPOSITING)
+    RefPtr<Canvas2DLayerChromium> m_platformLayer;
+#endif
 };
 
 } // namespace WebCore

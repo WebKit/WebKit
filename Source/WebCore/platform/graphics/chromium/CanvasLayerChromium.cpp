@@ -44,6 +44,7 @@ CanvasLayerChromium::CanvasLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
     , m_hasAlpha(true)
     , m_premultipliedAlpha(true)
+    , m_textureId(0)
 {
 }
 
