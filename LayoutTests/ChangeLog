@@ -1,3 +1,9 @@
+2011-08-29  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-25  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: extract FormattedContentProvider from RawSourceCode.

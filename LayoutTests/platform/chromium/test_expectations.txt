@@ -3590,6 +3590,8 @@ BUGWK65874 : fast/js/preventExtensions.html = TEXT
 // Caused by r92704
 BUGWK65951 WIN DEBUG : webaudio/audiobuffersource.html = CRASH
 BUGWK65951 WIN DEBUG : webaudio/mixing.html = CRASH
+BUGWK65951 LINUX MAC DEBUG : webaudio/mixing.html = CRASH PASS
+BUGWK65951 LINUX MAC DEBUG : webaudio/test-basic.html = CRASH PASS
 
 BUGWK63796 MAC WIN : css3/font-feature-settings-rendering.html = MISSING FAIL
 
@@ -3614,6 +3616,8 @@ BUGWK66419 : http/tests/misc/authentication-redirect-2/authentication-sent-to-re
 BUGWK66419 : http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html = TEXT
 
 BUGWK66510 LINUX DEBUG : editing/selection/regional-indicators.html = TIMEOUT
+
+BUGWK67121 DEBUG SLOW : editing/selection/move-by-word-visually-multi-space.html = PASS
 
 BUGWK66569 WIN LINUX : http/tests/inspector/network/network-iframe-load-and-delete.html = TEXT TIMEOUT PASS
 
