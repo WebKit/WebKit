@@ -229,7 +229,7 @@ namespace WebCore {
         const QualifiedName& attribute() const;
         const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
         CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : 0; }
-        
+
         void setTag(const QualifiedName& value) { m_tag = value; }
         void setValue(const AtomicString&);
         void setAttribute(const QualifiedName&);
@@ -328,13 +328,17 @@ inline bool CSSSelector::isSiblingSelector() const
 }
     
 inline void CSSSelector::setValue(const AtomicString& value)
-{ 
+{
     // Need to do ref counting manually for the union.
     if (m_hasRareData) {
+        if (m_data.m_rareData->m_value)
+            m_data.m_rareData->m_value->deref();
         m_data.m_rareData->m_value = value.impl();
         m_data.m_rareData->m_value->ref();
         return;
     }
+    if (m_data.m_value)
+        m_data.m_value->deref();
     m_data.m_value = value.impl();
     m_data.m_value->ref();
 }

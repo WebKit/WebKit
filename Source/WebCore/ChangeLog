@@ -1,3 +1,17 @@
+2011-08-28  Luke Macpherson   <macpherson@chromium.org>
+
+        Fix reference counting of values in CSSSelector.
+        https://bugs.webkit.org/show_bug.cgi?id=66452
+
+        Reviewed by Darin Adler.
+
+        No new tests / no functionality changed.
+
+        Call deref when reassigning the value.
+
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::setValue):
+
 2011-08-28  Sam Weinig  <sam@webkit.org>
 
         Add support for constructor syntax for Events
