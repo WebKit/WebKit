@@ -1,3 +1,13 @@
+2011-08-29  Sam Weinig  <sam@webkit.org>
+
+        Update tests after landing Event constructors.
+
+        Reviewed by Anders Carlsson.
+
+        * fast/dom/constructed-objects-prototypes-expected.txt:
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/dom/dom-constructors.html:
+
 2011-08-29  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed gardening.

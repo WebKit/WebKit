@@ -7,6 +7,8 @@ PASS (new inner.Audio()).isInner is true
 PASS (new inner.Audio()).constructor.isInner is true
 PASS (new inner.DOMParser()).isInner is true
 PASS (new inner.DOMParser()).constructor.isInner is true
+PASS (new inner.Event()).isInner is true
+PASS (new inner.Event()).constructor.isInner is true
 PASS (new inner.FormData()).isInner is true
 PASS (new inner.FormData()).constructor.isInner is true
 PASS (new inner.Image()).isInner is true
