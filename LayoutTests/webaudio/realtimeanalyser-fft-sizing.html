@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Test that re-sizing the FFT arrays does not fail.");
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var doTest = function(fftSize) {
+    var c = new webkitAudioContext(1, 1000, 44100);
+    var a = c.createAnalyser();
+    a.fftSize = fftSize;
+    // This arbitrary size does not affect the correctness of the test.
+    var arr = new Float32Array(100);
+    a.getFloatFrequencyData(arr);
+}
+
+doTest(-1);
+doTest(0);
+doTest(1);
+for (var i = 2; i <= 0x20000; i *= 2) {
+    doTest(i);
+    doTest(i + 1);
+}
+
+if (window.layoutTestController)
+    layoutTestController.notifyDone();
+testPassed("webkitAudioContext survived multiple invalid FFT array resizings.");
+successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

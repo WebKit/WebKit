@@ -49,6 +49,8 @@ const double RealtimeAnalyser::DefaultMinDecibels = -100.0;
 const double RealtimeAnalyser::DefaultMaxDecibels = -30.0;
 
 const unsigned RealtimeAnalyser::DefaultFFTSize = 2048;
+// All FFT implementations are expected to handle power-of-two sizes MinFFTSize <= size <= MaxFFTSize.
+const unsigned RealtimeAnalyser::MinFFTSize = 128;
 const unsigned RealtimeAnalyser::MaxFFTSize = 2048;
 const unsigned RealtimeAnalyser::InputBufferSize = RealtimeAnalyser::MaxFFTSize * 2;
 
@@ -82,15 +84,16 @@ void RealtimeAnalyser::setFftSize(size_t size)
     // Only allow powers of two.
     unsigned log2size = static_cast<unsigned>(log2(size));
     bool isPOT(1UL << log2size == size);
-    
-    if (!isPOT || size > MaxFFTSize) {
+
+    if (!isPOT || size > MaxFFTSize || size < MinFFTSize) {
         // FIXME: It would be good to also set an exception.
         return;
     }
 
     if (m_fftSize != size) {
-        m_analysisFrame = adoptPtr(new FFTFrame(m_fftSize));
-        m_magnitudeBuffer.allocate(size);
+        m_analysisFrame = adoptPtr(new FFTFrame(size));
+        // m_magnitudeBuffer has size = fftSize / 2 because it contains floats reduced from complex values in m_analysisFrame.
+        m_magnitudeBuffer.allocate(size / 2);
         m_fftSize = size;
     }
 }
@@ -165,8 +168,6 @@ void RealtimeAnalyser::doFFTAnalysis()
     // Do the analysis.
     m_analysisFrame->doFFT(tempP);
 
-    size_t n = DefaultFFTSize / 2;
-
     float* realP = m_analysisFrame->realData();
     float* imagP = m_analysisFrame->imagData();
 
@@ -183,7 +184,8 @@ void RealtimeAnalyser::doFFTAnalysis()
     
     // Convert the analysis data from complex to magnitude and average with the previous result.
     float* destination = magnitudeBuffer().data();
-    for (unsigned i = 0; i < n; ++i) {
+    size_t n = magnitudeBuffer().size();
+    for (size_t i = 0; i < n; ++i) {
         Complex c(realP[i], imagP[i]);
         double scalarMagnitude = abs(c) * MagnitudeScale;        
         destination[i] = float(k * destination[i] + (1.0 - k) * scalarMagnitude);

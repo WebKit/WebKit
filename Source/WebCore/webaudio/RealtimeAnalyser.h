@@ -70,6 +70,7 @@ public:
     static const double DefaultMaxDecibels;
 
     static const unsigned DefaultFFTSize;
+    static const unsigned MinFFTSize;
     static const unsigned MaxFFTSize;
     static const unsigned InputBufferSize;
 

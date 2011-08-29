@@ -1,0 +1,9 @@
+Test that re-sizing the FFT arrays does not fail.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS webkitAudioContext survived multiple invalid FFT array resizings.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

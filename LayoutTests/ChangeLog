@@ -1,3 +1,13 @@
+2011-08-29  Chris Palmer  <palmer@google.com>
+
+        Fix failures when FFT array size is changed.
+        https://bugs.webkit.org/show_bug.cgi?id=66916
+
+        Reviewed by Kenneth Russell.
+
+        * webaudio/realtimeanalyser-fft-sizing-expected.txt: Added.
+        * webaudio/realtimeanalyser-fft-sizing.html: Added.
+
 2011-08-29  Abhishek Arya  <inferno@chromium.org>
 
         Crash in InlineBox::deleteLine due to accessing removed
