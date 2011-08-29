@@ -229,7 +229,6 @@ extern NSString *WebPreferencesChangedInternalNotification;
 + (CFStringEncoding)_systemCFStringEncoding;
 + (void)_setInitialDefaultTextEncodingToSystemEncoding;
 + (void)_setIBCreatorID:(NSString *)string;
-+ (void)_switchNetworkLoaderToNewTestingSession;
 
 + (void)setWebKitLinkTimeVersion:(int)version;
 

@@ -49,7 +49,6 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PrintContext.h>
-#include <WebCore/ResourceHandle.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
@@ -150,15 +149,6 @@ void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, boo
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
         (*iter)->settings()->setPrivateBrowsingEnabled(enabled);
-}
-
-void InjectedBundle::switchNetworkLoaderToNewTestingSession()
-{
-#if USE(CFURLSTORAGESESSIONS)
-    // Set a private session for testing to avoid interfering with global cookies. This should be different from private browsing session.
-    RetainPtr<CFURLStorageSessionRef> session = ResourceHandle::createPrivateBrowsingStorageSession(CFSTR("Private WebKit Session"));
-    ResourceHandle::setDefaultStorageSession(session.get());
-#endif
 }
 
 void InjectedBundle::setAuthorAndUserStylesEnabled(WebPageGroupProxy* pageGroup, bool enabled)

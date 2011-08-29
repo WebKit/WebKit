@@ -83,8 +83,6 @@ WK_EXPORT void WKBundleResetOriginAccessWhitelists(WKBundleRef bundle);
 
 WK_EXPORT bool WKBundleIsProcessingUserGesture(WKBundleRef bundle);
 
-WK_EXPORT void WKBundleSwitchNetworkLoaderToNewTestingSession(WKBundleRef bundle);
-
 #ifdef __cplusplus
 }
 #endif

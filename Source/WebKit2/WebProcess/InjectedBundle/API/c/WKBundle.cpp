@@ -151,11 +151,6 @@ void WKBundleSetPrivateBrowsingEnabled(WKBundleRef bundleRef, WKBundlePageGroupR
     toImpl(bundleRef)->setPrivateBrowsingEnabled(toImpl(pageGroupRef), enabled);
 }
 
-void WKBundleSwitchNetworkLoaderToNewTestingSession(WKBundleRef bundleRef)
-{
-    toImpl(bundleRef)->switchNetworkLoaderToNewTestingSession();
-}
-
 void WKBundleSetAuthorAndUserStylesEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
 {
     toImpl(bundleRef)->setAuthorAndUserStylesEnabled(toImpl(pageGroupRef), enabled);

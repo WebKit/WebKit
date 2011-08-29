@@ -4910,8 +4910,8 @@ HRESULT updateSharedSettingsFromPreferencesIfNeeded(IWebPreferences* preferences
 
 #if USE(CFNETWORK)
     // Set cookie storage accept policy
-    if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage())
-        CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), acceptPolicy);
+    if (CFHTTPCookieStorageRef cookieStorage = currentCookieStorage())
+        CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage, acceptPolicy);
 #endif
 
     return S_OK;

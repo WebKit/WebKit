@@ -501,7 +501,6 @@ static void setDefaultsToConsistentValuesForTesting()
     [NSURLCache setSharedURLCache:sharedCache];
     [sharedCache release];
 
-    [WebPreferences _switchNetworkLoaderToNewTestingSession];
 }
 
 static void* runThread(void* arg)

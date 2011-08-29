@@ -1,3 +1,26 @@
+2011-08-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r93987, r93992, r93995, r93998, and
+        r93999.
+        http://trac.webkit.org/changeset/93987
+        http://trac.webkit.org/changeset/93992
+        http://trac.webkit.org/changeset/93995
+        http://trac.webkit.org/changeset/93998
+        http://trac.webkit.org/changeset/93999
+        https://bugs.webkit.org/show_bug.cgi?id=67147
+
+        Many failing tests (Requested by ap on #webkit).
+
+        * WebProcess/Cookies/cf/WebCookieManagerCFNet.cpp:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::platformGetHTTPCookieAcceptPolicy):
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2011-08-26  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

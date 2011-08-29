@@ -28,7 +28,14 @@
 
 #include <wtf/RetainPtr.h>
 
+typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
+
 namespace WebCore {
+
+
+#if USE(CFNETWORK) || (USE(CFURLSTORAGESESSIONS) && PLATFORM(MAC))
+RetainPtr<CFHTTPCookieStorageRef>& privateBrowsingCookieStorage();
+#endif
 
 void setCookieStoragePrivateBrowsingEnabled(bool);
 void startObservingCookieChanges();

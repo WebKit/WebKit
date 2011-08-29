@@ -39,9 +39,6 @@
 #import "WebNSDictionaryExtras.h"
 #import "WebNSURLExtras.h"
 #import <WebCore/ApplicationCacheStorage.h>
-#import <WebCore/ResourceHandle.h>
-
-using namespace WebCore;
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 NSString *WebPreferencesRemovedNotification = @"WebPreferencesRemovedNotification";
@@ -384,8 +381,8 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitMediaPlaybackRequiresUserGesturePreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsInlinePreferenceKey,
 
-        [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
-        [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
+        [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
+        [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -1224,15 +1221,6 @@ static NSString *classIBCreatorID = nil;
     NSString *old = classIBCreatorID;
     classIBCreatorID = [string copy];
     [old release];
-}
-
-+ (void)_switchNetworkLoaderToNewTestingSession
-{
-#if USE(CFURLSTORAGESESSIONS)
-    // Set a private session for testing to avoid interfering with global cookies. This should be different from private browsing session.
-    RetainPtr<CFURLStorageSessionRef> session = ResourceHandle::createPrivateBrowsingStorageSession(CFSTR("WebKit Testing Session"));
-    ResourceHandle::setDefaultStorageSession(session.get());
-#endif
 }
 
 - (BOOL)isDOMPasteAllowed

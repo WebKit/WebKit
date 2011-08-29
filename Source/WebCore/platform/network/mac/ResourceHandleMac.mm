@@ -34,7 +34,6 @@
 #import "BlobRegistry.h"
 #import "BlockExceptions.h"
 #import "CookieStorage.h"
-#import "CookieStorageCFNet.h"
 #import "CredentialStorage.h"
 #import "CachedResourceLoader.h"
 #import "EmptyProtocolDefinitions.h"
@@ -164,9 +163,9 @@ static bool shouldRelaxThirdPartyCookiePolicy(const KURL& url)
 
     NSHTTPCookieAcceptPolicy cookieAcceptPolicy;
 #if USE(CFURLSTORAGESESSIONS)
-    RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage();
-    if (cfCookieStorage)
-        cookieAcceptPolicy = wkGetHTTPCookieAcceptPolicy(cfCookieStorage.get());
+    CFHTTPCookieStorageRef cfPrivateBrowsingStorage = privateBrowsingCookieStorage().get();
+    if (cfPrivateBrowsingStorage)
+        cookieAcceptPolicy =  wkGetHTTPCookieAcceptPolicy(cfPrivateBrowsingStorage);
     else
 #endif
         cookieAcceptPolicy = [sharedStorage cookieAcceptPolicy];
@@ -176,8 +175,8 @@ static bool shouldRelaxThirdPartyCookiePolicy(const KURL& url)
 
     NSArray *cookies;
 #if USE(CFURLSTORAGESESSIONS)
-    if (cfCookieStorage)
-        cookies = wkHTTPCookiesForURL(cfCookieStorage.get(), url);
+    if (cfPrivateBrowsingStorage)
+        cookies = wkHTTPCookiesForURL(cfPrivateBrowsingStorage, url);
     else
 #endif
         cookies = [sharedStorage cookiesForURL:url];
@@ -654,6 +653,11 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 }
 
 #if USE(CFURLSTORAGESESSIONS)
+
+RetainPtr<CFURLStorageSessionRef> ResourceHandle::createPrivateBrowsingStorageSession(CFStringRef identifier)
+{
+    return RetainPtr<CFURLStorageSessionRef>(AdoptCF, wkCreatePrivateStorageSession(identifier));
+}
 
 String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 {
