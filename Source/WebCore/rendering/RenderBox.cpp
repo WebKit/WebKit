@@ -1377,6 +1377,8 @@ void RenderBox::positionLineBox(InlineBox* box)
         box->destroy(renderArena());
     } else if (isReplaced()) {
         setLocation(roundedLayoutPoint(FloatPoint(box->x(), box->y())));
+        if (m_inlineBoxWrapper)
+            deleteLineBoxWrapper();
         m_inlineBoxWrapper = box;
     }
 }
