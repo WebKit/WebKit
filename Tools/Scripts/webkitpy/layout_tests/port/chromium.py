@@ -210,7 +210,7 @@ class ChromiumPort(Port):
                 raise
         finally:
             if exit_code == 1:
-                result = self._filesystem.read_binary_file(diff_filename)
+                result = self._filesystem.read_binary_file(native_diff_filename)
             self._filesystem.rmtree(str(tempdir))
         return result
 
