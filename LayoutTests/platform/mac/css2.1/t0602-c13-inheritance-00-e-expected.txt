@@ -27,7 +27,7 @@ layer at (0,0) size 800x152
       RenderBlock {P} at (0,102) size 784x18
         RenderText {#text} at (0,0) size 43x18
           text run at (0,0) width 43: "PASS "
-        RenderInline {DFN} at (0,0) size 36x18 [color=#FFFFFF]
-          RenderText {#text} at (43,0) size 36x18
-            text run at (43,0) width 36: "FAIL"
+        RenderInline {DFN} at (0,0) size 34x18 [color=#FFFFFF]
+          RenderText {#text} at (43,0) size 34x18
+            text run at (43,0) width 34: "FAIL"
         RenderText {#text} at (0,0) size 0x0

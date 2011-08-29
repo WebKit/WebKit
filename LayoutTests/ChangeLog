@@ -88,6 +88,14 @@
 
 2011-08-29  David Levin  <levin@chromium.org>
 
+        Update test expections due to r94006 and r93978.
+
+        * platform/chromium/test_expectations.txt: Add failing test due to r93978.
+        * platform/mac/css2.1/t0602-c13-inheritance-00-e-expected.txt: Change to use of dfn tag and
+          behavior change in r94006.
+
+2011-08-29  David Levin  <levin@chromium.org>
+
         Temporary suppression for new test added in r93982.
 
         * platform/chromium/test_expectations.txt:
