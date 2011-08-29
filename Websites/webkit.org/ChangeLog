@@ -1,3 +1,9 @@
+2011-08-29  Jon Lee  <jonlee@apple.com>
+
+        Updating forms survey with non-standard wrap for textarea and more data-list driven text fields.
+
+        * projects/forms/survey.html:
+
 2011-08-17  Jon Lee  <jonlee@apple.com>
 
         Updating the forms survey to include various element sizes.

@@ -273,16 +273,33 @@ ILLEGAL: usemap
             </td>
         </tr>
         <tr>
-            <td><code>&lt;input type="text|search" list /&gt;</code>
+            <td><code>&lt;input type="text | search | tel | url | number" list /&gt;</code>
             </td>
             <td>
                 <input type="text" list="text-datalist" />
                 <input type="search" list="text-datalist" />
+                <input type="tel" list="text-number" />
+                <input type="url" list="text-url" />
+                <input type="number" list="text-number" />
                 <datalist id="text-datalist">
                     <option value="Data list text 1" />
                     <option value="Data list text 2" />
                     <option value="Data list text 3" />
                     <option value="Data list text 4" />
+                </datalist>
+                <datalist id="text-url">
+                    <option label="MIME: Format of Internet Message Bodies" value="http://tools.ietf.org/html/rfc2045">
+                    <option label="HTML 4.01 Specification" value="http://www.w3.org/TR/html4/">
+                    <option label="Form Controls" value="http://www.w3.org/TR/xforms/slice8.html#ui-commonelems-hint">
+                    <option label="Scalable Vector Graphics (SVG) 1.1 Specification" value="http://www.w3.org/TR/SVG/">
+                    <option label="Feature Sets - SVG 1.1 - 20030114" value="http://www.w3.org/TR/SVG/feature.html">
+                    <option label="The Single UNIX Specification, Version 3" value="http://www.unix-systems.org/version3/">
+                </datalist>
+                <datalist id="text-number">
+                    <option value="1" />
+                    <option value="2" />
+                    <option value="3" />
+                    <option value="4" />
                 </datalist>
             </td>
         </tr>
@@ -294,9 +311,11 @@ ILLEGAL: usemap
             </td>
         </tr>
         <tr>
-            <td><code>&lt;input type="email" multiple list /&gt;</code>
+            <td><code>&lt;input type="email" list /&gt;</code><br/>
+                + <code>multiple</code>
             </td>
             <td>
+                <input type="email" list="email-datalist" />
                 <input type="email" multiple list="email-datalist" />
                 <datalist id="email-datalist">
                     <option value="a@example.com" />
@@ -996,7 +1015,8 @@ pattern (- number)
         </tr>
         <tr>
             <td>+ <code>wrap="soft"</code><br/>
-                + <code>wrap="hard"</code> + <code>cols</code>
+                + <code>wrap="hard"</code> + <code>cols</code><br />
+                + <code>wrap="off"</code> [NOT STANDARD]
             </td>
             <td>
 <textarea wrap="soft">
@@ -1004,6 +1024,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 Nam porta, velit at consequat rutrum, lorem lacus fringilla nulla, a consequat purus dui ut ipsum.
 </textarea>
 <textarea wrap="hard" cols=20>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Nam porta, velit at consequat rutrum, lorem lacus fringilla nulla, a consequat purus dui ut ipsum.
+</textarea>
+<textarea wrap="off">
 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 Nam porta, velit at consequat rutrum, lorem lacus fringilla nulla, a consequat purus dui ut ipsum.
 </textarea>
