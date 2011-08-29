@@ -1,3 +1,9 @@
+2011-08-29  Zsolt Fehér  <feherzs@inf.u-szeged.hu>
+
+        Unreviewed Qt gardening.
+
+        * platform/qt/Skipped:
+
 2011-08-29  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, update chromium test expectations.
