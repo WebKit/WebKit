@@ -1,3 +1,15 @@
+2011-08-29  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Assertion failure in WebCore::RenderFlow::rightmostPosition
+        https://bugs.webkit.org/show_bug.cgi?id=12085
+
+        Reviewed by Alexey Proskuryakov.
+
+        The bug got solved. Landed the test to avoid regressing.
+
+        * fast/css/assert-marquee-not-last-element-expected.txt: Added.
+        * fast/css/assert-marquee-not-last-element.html: Added.
+
 2011-08-29  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, rebaseline inspector/styles/styles-computed-trace.html in chromium.
