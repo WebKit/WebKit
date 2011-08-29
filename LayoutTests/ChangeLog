@@ -1,3 +1,18 @@
+2011-08-22  David Levin  <levin@chromium.org>
+
+        postMessage raises INVALID_STATE_ERR instead of DATA_CLONE_ERR in many cases.
+        https://bugs.webkit.org/show_bug.cgi?id=66713
+
+        Reviewed by Dmitry Titov.
+
+        * fast/events/message-port-clone-expected.txt: Output changed from INVALID_STATE_ERR to DATA_CLONE_ERR.
+        * fast/events/message-port-multi-expected.txt: Ditto.
+        * fast/workers/worker-context-multi-port-expected.txt:  Ditto.
+        * fast/workers/worker-multi-port-expected.txt:  Ditto.
+        * platform/chromium-win/fast/events/message-port-multi-expected.txt: Ditto.
+        * platform/chromium-win/fast/workers/worker-context-multi-port-expected.txt: Ditto.
+        * platform/chromium-win/fast/workers/worker-multi-port-expected.txt: Ditto.
+
 2011-08-29  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Assertion failure in WebCore::RenderFlow::rightmostPosition

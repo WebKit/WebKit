@@ -79,9 +79,9 @@ void fillMessagePortArray(JSC::ExecState* exec, JSC::JSValue value, MessagePortA
         JSValue value = object->get(exec, i);
         if (exec->hadException())
             return;
-        // Validation of non-null objects, per HTML5 spec 8.3.3.
+        // Validation of non-null objects, per HTML5 spec 10.3.3.
         if (value.isUndefinedOrNull()) {
-            setDOMException(exec, INVALID_STATE_ERR);
+            setDOMException(exec, DATA_CLONE_ERR);
             return;
         }
 
