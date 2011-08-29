@@ -1,5 +1,16 @@
 2011-08-25  Pavel Podivilov  <podivilov@chromium.org>
 
+        Web Inspector: link UISourceCode to RawSourceCode.
+        https://bugs.webkit.org/show_bug.cgi?id=66944
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode):
+        (WebInspector.UISourceCode.prototype.get rawSourceCode):
+
+2011-08-25  Pavel Podivilov  <podivilov@chromium.org>
+
         Web Inspector: remove RawSourceCode.setFormatted.
         https://bugs.webkit.org/show_bug.cgi?id=66947
 

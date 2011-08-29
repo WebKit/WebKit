@@ -1,3 +1,12 @@
+2011-08-25  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: link UISourceCode to RawSourceCode.
+        https://bugs.webkit.org/show_bug.cgi?id=66944
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/ui-source-code.html:
+
 2011-08-29  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Skip failing and flaky results after r93937

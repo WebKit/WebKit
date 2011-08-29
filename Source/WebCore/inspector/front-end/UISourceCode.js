@@ -31,11 +31,12 @@
 /**
  * @constructor
  */
-WebInspector.UISourceCode = function(id, url, isContentScript, contentProvider)
+WebInspector.UISourceCode = function(id, url, isContentScript, rawSourceCode, contentProvider)
 {
     this._id = id;
     this._url = url;
     this._isContentScript = isContentScript;
+    this._rawSourceCode = rawSourceCode;
     this._contentProvider = contentProvider;
     this._requestContentCallbacks = [];
 }
@@ -54,6 +55,11 @@ WebInspector.UISourceCode.prototype = {
     get isContentScript()
     {
         return this._isContentScript;
+    },
+
+    get rawSourceCode()
+    {
+        return this._rawSourceCode;
     },
 
     requestContent: function(callback)
