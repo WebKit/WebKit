@@ -372,8 +372,8 @@ void RenderLayer::computeRepaintRects(IntPoint* cachedOffset)
     ASSERT(m_hasVisibleContent);
     ASSERT(!m_visibleContentStatusDirty);
 
-     RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
-     m_repaintRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
+    RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
+    m_repaintRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
     m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer, cachedOffset);
 }
 
@@ -388,6 +388,14 @@ void RenderLayer::clearRepaintRects()
 
 void RenderLayer::updateLayerPositionsAfterScroll(bool fixed)
 {
+    ASSERT(!m_visibleContentStatusDirty);
+
+    // If we have no visible content, there is no point recomputing our rectangles as
+    // they will be empty. If our visibility changes, we are expected to recompute all
+    // our positions anyway.
+    if (!m_hasVisibleContent)
+        return;
+
     updateLayerPosition();
 
     if (fixed || renderer()->style()->position() == FixedPosition) {

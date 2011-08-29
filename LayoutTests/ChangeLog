@@ -1,3 +1,19 @@
+2011-08-29  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Assertion failure in RenderLayer::computeRepaintRects when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=67140
+
+        Reviewed by David Hyatt.
+
+        This test checks that a fixed element with no visible content does not ASSERT and
+        renders properly.
+
+        * fast/repaint/scroll-fixed-layer-with-no-visible-content-expected.txt: Added.
+        * fast/repaint/scroll-fixed-layer-with-no-visible-content.html: Added.
+        * platform/chromium-cg-mac/fast/repaint/scroll-fixed-layer-with-no-visible-content-expected.png: Added.
+        * platform/chromium-win/fast/repaint/scroll-fixed-layer-with-no-visible-content-expected.png: Added.
+        * platform/mac/fast/repaint/scroll-fixed-layer-with-no-visible-content-expected.png: Added.
+
 2011-08-29  Nayan Kumar K  <nayankk@motorola.com>
 
         As per HTML specification, default font style of dfn tag should be italic.

@@ -1,3 +1,19 @@
+2011-08-29  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Assertion failure in RenderLayer::computeRepaintRects when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=67140
+
+        Reviewed by David Hyatt.
+
+        Test: fast/repaint/scroll-fixed-layer-with-no-visible-content.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::computeRepaintRects): Fixed style after r93837.
+
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll): Tweaked the code
+        to bail early if our layer has no visible content. This avoids the ASSERT
+        and also makes sense as we shouldn't repaint / update empty layers.
+
 2011-08-29  Anna Cavender  <annacc@chromium.org>
 
         Implement WebVTT Cue Text Parsing rules and DOM construction
