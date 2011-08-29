@@ -1,3 +1,45 @@
+2011-08-23  Chris Marrin  <cmarrin@apple.com>
+
+        [mac] requestAnimationFrame support for mac port
+        https://bugs.webkit.org/show_bug.cgi?id=59146
+
+        Reviewed by Simon Fraser.
+
+        Enable requestAnimationFrame tests for Mac. Tests were also
+        modified to work on Mac. Before the tests would assume the
+        requestAnimationFrame callbacks would be called by calling
+        LayoutTestController.display(). This is not a valid assumption
+        for Mac, since it skips display() if nothing was dirty.
+
+        Tests were changed to use timeouts to wait for callbacks and
+        ensure they get called. Also added more positive indications
+        that test failed or succeeded, rather than relying on the lack
+        of an error message to indicate success.
+
+        * fast/animation/request-animation-frame-cancel-expected.txt:
+        * fast/animation/request-animation-frame-cancel.html:
+        * fast/animation/request-animation-frame-cancel2-expected.txt:
+        * fast/animation/request-animation-frame-cancel2.html:
+        * fast/animation/request-animation-frame-display.html:
+        * fast/animation/request-animation-frame-during-modal-expected.txt:
+        * fast/animation/request-animation-frame-during-modal.html:
+        * fast/animation/request-animation-frame-timestamps.html:
+        * fast/animation/request-animation-frame-within-callback.html:
+        * fast/animation/request-animation-frame.html:
+        * fast/animation/script-tests/request-animation-frame-cancel.js:
+        (window):
+        (if):
+        * fast/animation/script-tests/request-animation-frame-cancel2.js:
+        (if):
+        * fast/animation/script-tests/request-animation-frame-display.js:
+        (if):
+        * fast/animation/script-tests/request-animation-frame-timestamps.js:
+        (var):
+        * fast/animation/script-tests/request-animation-frame-within-callback.js:
+        * fast/animation/script-tests/request-animation-frame.js:
+        (if):
+        * platform/mac/Skipped:
+
 2011-08-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: <button hidden>..</button> has a different computed "display" value than "none"

@@ -90,6 +90,10 @@ namespace WebCore {
 - (void)_scheduleCompositingLayerSync;
 #endif
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+- (void)_scheduleAnimation;
+#endif
+
 #if ENABLE(GLIB_SUPPORT)
 - (void)_scheduleGlibContextIterations;
 #endif

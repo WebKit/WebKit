@@ -283,7 +283,7 @@ sub AddIncludesForType
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
     if ($codeGenerator->IsPrimitiveType($type) or $codeGenerator->AvoidInclusionOfType($type)
-        or $type eq "DOMString" or $type eq "DOMObject" or $type eq "Array") {
+        or $type eq "DOMString" or $type eq "DOMObject" or $type eq "Array" or $type eq "DOMTimeStamp") {
     } elsif ($type =~ /SVGPathSeg/) {
         my $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
@@ -2563,7 +2563,8 @@ my %nativeType = (
     "unsigned short" => "unsigned short",
     "long long" => "long long",
     "unsigned long long" => "unsigned long long",
-    "MediaQueryListListener" => "RefPtr<MediaQueryListListener>"
+    "MediaQueryListListener" => "RefPtr<MediaQueryListListener>",
+    "DOMTimeStamp" => "DOMTimeStamp"
 );
 
 sub GetNativeType

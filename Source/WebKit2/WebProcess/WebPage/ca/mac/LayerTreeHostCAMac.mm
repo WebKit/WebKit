@@ -80,8 +80,8 @@ void LayerTreeHostCAMac::scheduleLayerFlush()
     if (m_flushPendingLayerChangesRunLoopObserver)
         return;
 
-    // Run before the Core Animation commit observer, which has order 2000000.
-    const CFIndex runLoopOrder = 2000000 - 1;
+    // Run before the Core Animation commit observer.
+    const CFIndex runLoopOrder = CoreAnimationRunLoopOrder - 1;
     CFRunLoopObserverContext context = { 0, this, 0, 0, 0 };
     m_flushPendingLayerChangesRunLoopObserver.adoptCF(CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, true, runLoopOrder, flushPendingLayerChangesRunLoopObserverCallback, &context));
 

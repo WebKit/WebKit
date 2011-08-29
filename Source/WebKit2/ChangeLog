@@ -1,3 +1,31 @@
+2011-08-23  Chris Marrin  <cmarrin@apple.com>
+
+        [mac] requestAnimationFrame support for mac port
+        https://bugs.webkit.org/show_bug.cgi?id=59146
+
+        Reviewed by Simon Fraser.
+
+        Implement requestAnimationFrame for WebKit2. Add a
+        CFRunLoopObserver to WebPage, which runs just before
+        the syncCompositingState RLO and calls into the 
+        ScriptedAnimationController if scheduleAnimation() has
+        been called.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::scheduleAnimation):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::~WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::requestAnimationFrameRunLoopObserverCallback):
+        (WebKit::WebPage::scheduleAnimation):
+        (WebKit::WebPage::unscheduleAnimation):
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.cpp:
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.h:
+
 2011-08-29  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] NPAPI support doesn't honor the ENABLE_NETSCAPE_PLUGIN_API define in WebKit2

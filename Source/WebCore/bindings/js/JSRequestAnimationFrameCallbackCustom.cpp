@@ -23,45 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerTreeHostCAMac_h
-#define LayerTreeHostCAMac_h
+#include "config.h"
 
-#include "LayerTreeHostCA.h"
-#include <wtf/RetainPtr.h>
+#if ENABLE(REQUEST_ANIMATION_FRAME)
 
-#define CoreAnimationRunLoopOrder 2000000
+#include "JSRequestAnimationFrameCallback.h"
 
-typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
+using namespace JSC;
 
-namespace WebKit {
+namespace WebCore {
 
-class LayerTreeHostCAMac : public LayerTreeHostCA {
-public:
-    static PassRefPtr<LayerTreeHostCAMac> create(WebPage*);
-    virtual ~LayerTreeHostCAMac();
+bool JSRequestAnimationFrameCallback::handleEvent(DOMTimeStamp time)
+{
+    if (!canInvokeCallback())
+        return true;
 
-private:
-    explicit LayerTreeHostCAMac(WebPage*);
+    RefPtr<JSRequestAnimationFrameCallback> protect(this);
 
-    // LayerTreeHost.
-    virtual void scheduleLayerFlush();
-    virtual void setLayerFlushSchedulingEnabled(bool);
-    virtual void invalidate();
-    virtual void sizeDidChange(const WebCore::IntSize& newSize);
-    virtual void forceRepaint();
-    virtual void pauseRendering();
-    virtual void resumeRendering();
+    JSLock lock(SilenceAssertionsOnly);
 
-    // LayerTreeHostCA
-    virtual void platformInitialize(LayerTreeContext&);
-    virtual void didPerformScheduledLayerFlush();
+    MarkedArgumentBuffer args;
+    args.append(jsNumber(time));
 
-    static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
+    bool raisedException = false;
+    m_data->invokeCallback(args, &raisedException);
+    return !raisedException;
+}
 
-    RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
-    RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;
-};
+}
 
-} // namespace WebKit
-
-#endif // LayerTreeHostCAMac_h
+#endif

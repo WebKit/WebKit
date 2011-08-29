@@ -654,6 +654,11 @@ void WebChromeClient::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     m_page->send(Messages::WebPageProxy::SetCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves));
 }
 
+void WebChromeClient::scheduleAnimation()
+{
+    m_page->scheduleAnimation();
+}
+
 void WebChromeClient::formStateDidChange(const Node*)
 {
     notImplemented();

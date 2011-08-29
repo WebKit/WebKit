@@ -27,9 +27,19 @@ onload = function()
     }
 }
 
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
 var successfullyParsed = true;
+
+setTimeout(function() {
+    isSuccessfullyParsed();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}, 200);
+
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../js/resources/js-test-post-function.js"></script>
 </body>
 </html>
 

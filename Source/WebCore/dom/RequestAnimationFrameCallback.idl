@@ -33,6 +33,11 @@ module core {
         Callback=FunctionOnly,
         Conditional=REQUEST_ANIMATION_FRAME,
     ] RequestAnimationFrameCallback{
+#if defined(V8_BINDING) && V8_BINDING
         boolean handleEvent(in DOMTimeStamp time);
+#else
+        [Custom] boolean handleEvent(in DOMTimeStamp time);
+#endif
+        
     };
 }

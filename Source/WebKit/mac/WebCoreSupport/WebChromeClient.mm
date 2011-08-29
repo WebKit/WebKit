@@ -942,6 +942,15 @@ void WebChromeClient::scheduleCompositingLayerSync()
 
 #endif
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+void WebChromeClient::scheduleAnimation()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [m_webView _scheduleAnimation];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+#endif
+
 #if ENABLE(VIDEO)
 
 bool WebChromeClient::supportsFullscreenForNode(const Node* node)

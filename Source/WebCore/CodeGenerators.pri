@@ -166,6 +166,7 @@ IDL_BINDINGS += \
     dom/ProgressEvent.idl \
     dom/RangeException.idl \
     dom/Range.idl \
+    dom/RequestAnimationFrameCallback.idl \
     dom/StringCallback.idl \
     dom/Text.idl \
     dom/TextEvent.idl \

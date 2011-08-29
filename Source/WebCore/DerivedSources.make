@@ -350,6 +350,7 @@ DOM_CLASSES = \
     Range \
     RangeException \
     Rect \
+    RequestAnimationFrameCallback \
     SharedWorker \
     SharedWorkerContext \
     ScriptProfile \

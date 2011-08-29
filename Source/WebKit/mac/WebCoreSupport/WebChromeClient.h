@@ -128,6 +128,10 @@ public:
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+        virtual void scheduleAnimation();
+#endif
+
     virtual WebCore::FloatRect customHighlightRect(WebCore::Node*, const WTF::AtomicString& type,
         const WebCore::FloatRect& lineRect);
     virtual void paintCustomHighlight(WebCore::Node*, const WTF::AtomicString& type,

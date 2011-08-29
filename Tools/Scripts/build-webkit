@@ -64,6 +64,7 @@ my $noWebKit2 = 0;
 my $startTime = time();
 
 my (
+    $requestAnimationFrameSupport,
     $threeDCanvasSupport,
     $threeDRenderingSupport,
     $accelerated2dCanvasSupport,
@@ -130,6 +131,9 @@ my (
 );
 
 my @features = (
+    { option => "request-animation-frame", desc => "Toggle requestAnimationFrame support",
+      define => "ENABLE_REQUEST_ANIMATION_FRAME", default => (isAppleMacWebKit()), value => \$requestAnimationFrameSupport },
+
     { option => "3d-canvas", desc => "Toggle 3D canvas (WebGL) support",
       define => "ENABLE_WEBGL", default => (isAppleMacWebKit() && !isLeopard()), value => \$threeDCanvasSupport },
 

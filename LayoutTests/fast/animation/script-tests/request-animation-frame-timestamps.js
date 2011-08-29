@@ -24,6 +24,17 @@ window.webkitRequestAnimationFrame(function(timestamp) {
 if (window.layoutTestController)
     layoutTestController.display();
 
-shouldBeDefined("firstTimestamp");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+setTimeout(function() {
+    shouldBeDefined("firstTimestamp");
+}, 100);
 
 var successfullyParsed = true;
+
+setTimeout(function() {
+    isSuccessfullyParsed();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}, 200);
