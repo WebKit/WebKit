@@ -1,3 +1,18 @@
+2011-08-28  Keishi Hattori  <keishi@webkit.org>
+
+        Chromium Win: Setting square-button appearance reaches NOTREACHED
+        https://bugs.webkit.org/show_bug.cgi?id=66918
+
+        Reviewed by Kent Tamura.
+
+        * fast/css/square-button-appearance-expected.txt: Added.
+        * fast/css/square-button-appearance.html: Added. Test rendering of square-button appearance.
+        * platform/chromium-linux/fast/css/square-button-appearance-expected.png: Added.
+        * platform/chromium-win/fast/css/square-button-appearance-expected.png: Added.
+        * platform/gtk/test_expectations.txt: Added this test as expected to fail.
+        * platform/mac/fast/css/square-button-appearance-expected.png: Added.
+        * platform/qt/test_expectations.txt: Added this test as expected to fail.
+
 2011-08-28  Sam Weinig  <sam@webkit.org>
 
         Add support for constructor syntax for Events

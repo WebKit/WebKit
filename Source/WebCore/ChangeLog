@@ -1,3 +1,17 @@
+2011-08-28  Keishi Hattori  <keishi@webkit.org>
+
+        Chromium Win: Setting square-button appearance reaches NOTREACHED
+        https://bugs.webkit.org/show_bug.cgi?id=66918
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/css/square-button-appearance.html
+
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::supportsFocus): Add case for SquareButtonPart.
+        (WebCore::RenderThemeChromiumWin::supportsFocusRing): Add case for SquareButtonPart.
+        (WebCore::RenderThemeChromiumWin::getThemeData): Add case for SquareButtonPart.
+
 2011-08-28  Luke Macpherson   <macpherson@chromium.org>
 
         Fix reference counting of values in CSSSelector.

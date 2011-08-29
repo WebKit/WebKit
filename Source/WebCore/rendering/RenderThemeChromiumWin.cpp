@@ -158,6 +158,7 @@ static FontDescription labelFont;
 static bool supportsFocus(ControlPart appearance)
 {
     switch (appearance) {
+    case SquareButtonPart:
     case PushButtonPart:
     case ButtonPart:
     case DefaultButtonPart:
@@ -248,7 +249,8 @@ bool RenderThemeChromiumWin::supportsFocusRing(const RenderStyle* style) const
     // except push buttons. For buttons we use the windows PBS_DEFAULTED
     // styling to give it a blue border.
     return style->appearance() == ButtonPart
-            || style->appearance() == PushButtonPart;
+            || style->appearance() == PushButtonPart
+            || style->appearance() == SquareButtonPart;
 }
 
 Color RenderThemeChromiumWin::platformActiveSelectionBackgroundColor() const
@@ -623,6 +625,7 @@ ThemeData RenderThemeChromiumWin::getThemeData(RenderObject* o, ControlSubPart s
         result.m_state = determineState(o);
         result.m_classicState = DFCS_BUTTONRADIO;
         break;
+    case SquareButtonPart:
     case PushButtonPart:
     case ButtonPart:
         result.m_part = BP_PUSHBUTTON;
