@@ -474,13 +474,19 @@ void unpackOneRowOfABGR8ToRGBA8(const uint8_t* source, uint8_t* destination, uns
 
 void unpackOneRowOfBGRA8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
+    const uint32_t* source32 = reinterpret_cast<const uint32_t*>(source);
+    uint32_t* destination32 = reinterpret_cast<uint32_t*>(destination);
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
-        destination[0] = source[2];
-        destination[1] = source[1];
-        destination[2] = source[0];
-        destination[3] = source[3];
-        source += 4;
-        destination += 4;
+        uint32_t bgra = source32[i];
+#if CPU(BIG_ENDIAN)
+        uint32_t brMask = 0xff00ff00;
+        uint32_t gaMask = 0x00ff00ff;
+#else
+        uint32_t brMask = 0x00ff00ff;
+        uint32_t gaMask = 0xff00ff00;
+#endif
+        uint32_t rgba = (((bgra >> 16) | (bgra << 16)) & brMask) | (bgra & gaMask);
+        destination32[i] = rgba;
     }
 }
 
@@ -871,19 +877,6 @@ void packOneRowOfRGBA8ToRGB8Unmultiply(const uint8_t* source, uint8_t* destinati
     }
 }
 
-// This is only used when the source format is different than SourceFormatRGBA8.
-void packOneRowOfRGBA8ToRGBA8(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
-{
-    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
-        destination[0] = source[0];
-        destination[1] = source[1];
-        destination[2] = source[2];
-        destination[3] = source[3];
-        source += 4;
-        destination += 4;
-    }
-}
-
 void packOneRowOfRGBA8ToRGBA8Premultiply(const uint8_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
@@ -1150,14 +1143,25 @@ static void doUnpackingAndPacking(const SourceType* sourceData,
                                   void (*rowPackingFunc)(const IntermediateType*, DestType*, unsigned int),
                                   unsigned int destinationElementsPerPixel)
 {
-    OwnArrayPtr<IntermediateType> temporaryRGBAData = adoptArrayPtr(new IntermediateType[width * 4]);
-    const SourceType* endPointer = sourceData + height * sourceElementsPerRow;
-    unsigned int destinationElementsPerRow = width * destinationElementsPerPixel;
-    while (sourceData < endPointer) {
-        rowUnpackingFunc(sourceData, temporaryRGBAData.get(), width);
-        rowPackingFunc(temporaryRGBAData.get(), destinationData, width);
-        sourceData += sourceElementsPerRow;
-        destinationData += destinationElementsPerRow;
+    if (!rowPackingFunc) {
+        // The row packing is trivial, so don't bother with a temporary buffer.
+        const SourceType* endPointer = sourceData + height * sourceElementsPerRow;
+        unsigned int destinationElementsPerRow = width * destinationElementsPerPixel;
+        while (sourceData < endPointer) {
+            rowUnpackingFunc(sourceData, reinterpret_cast<IntermediateType*>(destinationData), width);
+            sourceData += sourceElementsPerRow;
+            destinationData += destinationElementsPerRow;
+        }
+    } else {
+        OwnArrayPtr<IntermediateType> temporaryRGBAData = adoptArrayPtr(new IntermediateType[width * 4]);
+        const SourceType* endPointer = sourceData + height * sourceElementsPerRow;
+        unsigned int destinationElementsPerRow = width * destinationElementsPerPixel;
+        while (sourceData < endPointer) {
+            rowUnpackingFunc(sourceData, temporaryRGBAData.get(), width);
+            rowPackingFunc(temporaryRGBAData.get(), destinationData, width);
+            sourceData += sourceElementsPerRow;
+            destinationData += destinationElementsPerRow;
+        }
     }
 }
 
@@ -1197,7 +1201,10 @@ static void doPacking(const void* sourceData,
         const uint8_t* endPointer = source + height * sourceElementsPerRow;
         unsigned int destinationElementsPerRow = width * destinationElementsPerPixel;
         while (source < endPointer) {
-            rowPackingFunc(source, destinationData, width);
+            if (rowPackingFunc)
+                rowPackingFunc(source, destinationData, width);
+            else
+                memcpy(destinationData, source, width * 4);
             source += sourceElementsPerRow;
             destinationData += destinationElementsPerRow;
         }
@@ -1435,7 +1442,7 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
             switch (alphaOp) {
             case AlphaDoNothing:
                 ASSERT(sourceDataFormat != SourceFormatRGBA8 || sourceUnpackAlignment > 4); // Handled above with fast case.
-                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToRGBA8, 4);
+                doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, 0, 4);
                 break;
             case AlphaDoPremultiply:
                 doPacking<uint8_t>(sourceData, sourceDataFormat, width, height, sourceUnpackAlignment, destination, packOneRowOfRGBA8ToRGBA8Premultiply, 4);

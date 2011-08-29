@@ -1,3 +1,16 @@
+2011-08-29  John Bauman  <jbauman@chromium.org>
+
+        Speed up texImage from BGRA
+        https://bugs.webkit.org/show_bug.cgi?id=66884
+
+        Reviewed by Kenneth Russell.
+
+        BGRA input is common coming from skia, so optimize BGRA->RGBA
+        conversion and also avoid the pointless RGBA to RGBA conversion.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::doUnpackingAndPacking):
+
 2011-08-29  Matthew Delaney  <mdelaney@apple.com>
 
         [CG] ImageBufferCG should handle IOSurface allocation failure gracefully
