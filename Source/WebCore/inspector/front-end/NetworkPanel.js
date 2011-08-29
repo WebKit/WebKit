@@ -1911,14 +1911,6 @@ WebInspector.NetworkDataGridNode.prototype = {
             return;
         }
 
-        var fromCache = this._resource.cached;
-        if (fromCache) {
-            this._statusCell.setTextAndTitle(WebInspector.UIString("(from cache)"));
-            this._statusCell.addStyleClass("network-dim-cell");
-            this.element.removeStyleClass("network-error-row");
-            return;
-        }
-
         this._statusCell.removeStyleClass("network-dim-cell");
         this.element.removeStyleClass("network-error-row");
 

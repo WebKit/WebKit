@@ -1,3 +1,15 @@
+2011-08-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: cached permanent redirects don't show redirect code and text in Network panel.
+        https://bugs.webkit.org/show_bug.cgi?id=67126
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForResourceResponse):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype._refreshStatusCell):
+
 2011-08-25  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: extract FormattedContentProvider from RawSourceCode.

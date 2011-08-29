@@ -139,8 +139,13 @@ static PassRefPtr<InspectorObject> buildObjectForResourceResponse(const Resource
 
     RefPtr<InspectorObject> responseObject = InspectorObject::create();
     responseObject->setString("url", response.url().string());
-    responseObject->setNumber("status", response.resourceLoadInfo() ? response.resourceLoadInfo()->httpStatusCode : response.httpStatusCode());
-    responseObject->setString("statusText", response.resourceLoadInfo() ? response.resourceLoadInfo()->httpStatusText : response.httpStatusText());
+    if (response.resourceLoadInfo() && response.resourceLoadInfo()->httpStatusCode) {
+        responseObject->setNumber("status", response.resourceLoadInfo()->httpStatusCode);
+        responseObject->setString("statusText", response.resourceLoadInfo()->httpStatusText);
+    } else {
+        responseObject->setNumber("status", response.httpStatusCode());
+        responseObject->setString("statusText", response.httpStatusText());
+    }
 
     responseObject->setString("mimeType", response.mimeType());
     responseObject->setBoolean("connectionReused", response.connectionReused());
