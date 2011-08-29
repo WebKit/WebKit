@@ -1,3 +1,16 @@
+2011-08-29  Matthew Delaney  <mdelaney@apple.com>
+
+        fast/canvas/shadow-offset-*.html fail on Leopard/Snow Leopard when removing the work around for <rdar://problem/5539388>.
+        https://bugs.webkit.org/show_bug.cgi?id=67107
+
+        Reviewed by David Levin.
+
+        No new tests. Effectively reverting the change from https://bugs.webkit.org/show_bug.cgi?id=67052 for Leopard and SL
+        because it caused test regressions on Leopard and SL, but not Lion.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+
 2011-08-29  Zoltan Herczeg  <zherczeg@webkit.org>
 
         [Qt] Unreviewed minimal-build buildfix after r93937.
