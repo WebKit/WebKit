@@ -367,6 +367,18 @@ WebInspector.StylesSidebarPane.prototype = {
 
         var styleRules = [];
 
+        function addStyleAttributes()
+        {
+            for (var name in styles.styleAttributes) {
+                var attrStyle = { style: styles.styleAttributes[name], editable: false };
+                attrStyle.selectorText = WebInspector.panels.elements.treeOutline.nodeNameToCorrectCase(node.nodeName()) + "[" + name;
+                if (node.getAttribute(name))
+                    attrStyle.selectorText += "=" + node.getAttribute(name);
+                attrStyle.selectorText += "]";
+                styleRules.push(attrStyle);
+            }
+        }
+
         styleRules.push({ computedStyle: true, selectorText: "", style: nodeComputedStyle, editable: false });
 
         // Inline style has the greatest specificity.
@@ -378,23 +390,21 @@ WebInspector.StylesSidebarPane.prototype = {
         // Add rules in reverse order to match the cascade order.
         if (styles.matchedCSSRules.length)
             styleRules.push({ isStyleSeparator: true, text: WebInspector.UIString("Matched CSS Rules") });
+        var addedStyleAttributes;
         for (var i = styles.matchedCSSRules.length - 1; i >= 0; --i) {
             var rule = styles.matchedCSSRules[i];
             if (!WebInspector.settings.showUserAgentStyles.get() && (rule.isUser || rule.isUserAgent))
                 continue;
+            if ((rule.isUser || rule.isUserAgent) && !addedStyleAttributes) {
+                // Show element's Style Attributes after all author rules.
+                addedStyleAttributes = true;
+                addStyleAttributes();
+            }
             styleRules.push({ style: rule.style, selectorText: rule.selectorText, sourceURL: rule.sourceURL, rule: rule, editable: !!(rule.style && rule.style.id) });
         }
 
-        // Show element's Style Attributes after all rules.
-        var styleAttributes = {};
-        for (var name in styles.styleAttributes) {
-            var attrStyle = { style: styles.styleAttributes[name], editable: false };
-            attrStyle.selectorText = WebInspector.panels.elements.treeOutline.nodeNameToCorrectCase(node.nodeName()) + "[" + name;
-            if (node.getAttribute(name))
-                attrStyle.selectorText += "=" + node.getAttribute(name);
-            attrStyle.selectorText += "]";
-            styleRules.push(attrStyle);
-        }
+        if (!addedStyleAttributes)
+            addStyleAttributes();
 
         // Walk the node structure and identify styles with inherited properties.
         var parentNode = node.parentNode;

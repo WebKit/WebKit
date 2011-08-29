@@ -1,3 +1,16 @@
+2011-08-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: <button hidden>..</button> has a different computed "display" value than "none"
+        https://bugs.webkit.org/show_bug.cgi?id=67124
+
+        Attribute styles have a higher priority than user agent styles and thus should be rendered above them.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._rebuildStyleRules):
+        (WebInspector.StylesSidebarPane.prototype._rebuildStyleRules.get continue):
+
 2011-08-25  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: rename sourceFile to (raw|ui)SourceCode in DebuggerPresentationModel.

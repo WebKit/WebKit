@@ -61,11 +61,11 @@ border-radius: 5px;
     border-bottom-left-radius: 5px 5px;
 /-- overloaded --/ font-style: normal !important;
 
-[expanded] div { (user agent stylesheet)
-/-- overloaded --/ display: block;
-
 [expanded] div[align=left] { ()
 text-align: -webkit-left;
+
+[expanded] div { (user agent stylesheet)
+/-- overloaded --/ display: block;
 
 ======== Inherited from div#container ========
 [expanded] #container { (elements-panel-styles.css:5)

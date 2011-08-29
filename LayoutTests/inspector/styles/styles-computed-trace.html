@@ -50,8 +50,16 @@ function test()
     {
         InspectorTest.addResult("==== Computed style for ID2 ====");
         InspectorTest.dumpSelectedElementStyles(false, true);
+        InspectorTest.selectNodeAndWaitForStyles("id3", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.addResult("==== Computed style for ID3 ====");
+        InspectorTest.dumpSelectedElementStyles(false, true);
         InspectorTest.completeTest();
     }
+
 }
 </script>
 </head>
@@ -64,6 +72,7 @@ Tests that computed styles expand and allow tracing to style rules.
 <div id="id1">
 <div id="id2">
 </div>
+<button id="id3" hidden />
 </div>
 
 </body>
