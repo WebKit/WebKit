@@ -1,3 +1,9 @@
+2011-08-29  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, mark scrollbars/scrollbar-buttons.html as crashing in chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-28  Keishi Hattori  <keishi@webkit.org>
 
         Chromium Win: Setting square-button appearance reaches NOTREACHED

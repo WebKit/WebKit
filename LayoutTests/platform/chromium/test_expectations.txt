@@ -3661,4 +3661,4 @@ BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.html = CRASH
 
 BUGWK67074 : fast/replaced/frame-removed-during-resize.html = CRASH
-BUGWK67074 : scrollbars/scrollable-iframe-remove-crash.html = CRASH
+BUGWK67074 : scrollbars/scrollbar-buttons.html = CRASH
