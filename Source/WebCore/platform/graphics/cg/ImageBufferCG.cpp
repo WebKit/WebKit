@@ -137,6 +137,15 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
     }
 
     RetainPtr<CGContextRef> cgContext;
+    if (m_accelerateRendering) {
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+        m_data.m_surface = createIOSurface(size);
+        cgContext.adoptCF(wkIOSurfaceContextCreate(m_data.m_surface.get(), size.width(), size.height(), m_data.m_colorSpace));
+#endif
+        if (!cgContext)
+            m_accelerateRendering = false; // If allocation fails, fall back to non-accelerated path.
+    }
+
     if (!m_accelerateRendering) {
         if (!tryFastCalloc(size.height(), bytesPerRow).getValue(m_data.m_data))
             return;
@@ -146,13 +155,6 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
         cgContext.adoptCF(CGBitmapContextCreate(m_data.m_data, size.width(), size.height(), 8, bytesPerRow, m_data.m_colorSpace, m_data.m_bitmapInfo));
         // Create a live image that wraps the data.
         m_data.m_dataProvider.adoptCF(CGDataProviderCreateWithData(0, m_data.m_data, dataSize, releaseImageData));
-    } else {
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-        m_data.m_surface = createIOSurface(size);
-        cgContext.adoptCF(wkIOSurfaceContextCreate(m_data.m_surface.get(), size.width(), size.height(), m_data.m_colorSpace));
-#else
-        m_accelerateRendering = false; // Force to false on older platforms
-#endif
     }
 
     if (!cgContext)

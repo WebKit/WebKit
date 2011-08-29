@@ -1,3 +1,16 @@
+2011-08-29  Matthew Delaney  <mdelaney@apple.com>
+
+        [CG] ImageBufferCG should handle IOSurface allocation failure gracefully
+        https://bugs.webkit.org/show_bug.cgi?id=67099
+
+        Reviewed by Simon Fraser.
+
+        No new tests. Testing the "fallback to old path" behavior is not easily testable.
+
+        * platform/graphics/cg/ImageBufferCG.cpp: Rearranged backing store creation to fall back to
+          old path if IOSurface creation path fails.
+        (WebCore::ImageBuffer::ImageBuffer):
+
 2011-08-29  Cary Clark  <caryclark@google.com>
 
         Only enable font smoothing as requested (Skia on Mac)
