@@ -55,7 +55,8 @@ private:
     void layoutHorizontalBlock(bool relayoutChildren);
 
     void computePreferredSizeHorizontal(bool relayoutChildren, FlexibleBoxIterator&, LayoutUnit&, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
-    bool runFreeSpaceAllocationAlgorithmHorizontal(LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&);
+    bool runFreeSpaceAllocationAlgorithmHorizontal(LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
+    void layoutAndPlaceChildrenHorizontal(const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility);
 };
 
 } // namespace WebCore

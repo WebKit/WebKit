@@ -133,10 +133,13 @@ void RenderFlexibleBox::layoutHorizontalBlock(bool relayoutChildren)
     LayoutUnit availableFreeSpace = contentWidth() - preferredSize;
 
     InflexibleFlexItemSize inflexibleItems;
-    while (!runFreeSpaceAllocationAlgorithmHorizontal(availableFreeSpace, totalPositiveFlexibility, totalNegativeFlexibility, inflexibleItems)) {
+    WTF::Vector<LayoutUnit> childSizes;
+    while (!runFreeSpaceAllocationAlgorithmHorizontal(availableFreeSpace, totalPositiveFlexibility, totalNegativeFlexibility, inflexibleItems, childSizes)) {
         ASSERT(totalPositiveFlexibility >= 0 && totalNegativeFlexibility >= 0);
         ASSERT(inflexibleItems.size() > 0);
     }
+
+    layoutAndPlaceChildrenHorizontal(childSizes, availableFreeSpace, totalPositiveFlexibility);
 
     // FIXME: Handle distribution of vertical space (third distribution round).
 }
@@ -180,19 +183,14 @@ void RenderFlexibleBox::computePreferredSizeHorizontal(bool relayoutChildren, Fl
     }
 }
 
-static bool hasPackingSpace(LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
-{
-    return availableFreeSpace > 0 && !totalPositiveFlexibility;
-}
-
 // Returns true if we successfully ran the algorithm and sized the flex items.
-bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithmHorizontal(LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize& inflexibleItems)
+bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithmHorizontal(LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize& inflexibleItems, WTF::Vector<LayoutUnit>& childSizes)
 {
     FlexibleBoxIterator iterator(this);
+    childSizes.clear();
 
     // FIXME: Handle vertical writing modes with horizontal flexing.
     LayoutUnit flexboxAvailableLogicalWidth = availableLogicalWidth();
-    WTF::Vector<LayoutUnit> childSizes;
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
         LayoutUnit childPreferredSize;
         if (inflexibleItems.contains(child))
@@ -227,7 +225,17 @@ bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithmHorizontal(LayoutUnit& av
         }
         childSizes.append(childPreferredSize);
     }
+    return true;
+}
 
+static bool hasPackingSpace(LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
+{
+    return availableFreeSpace > 0 && !totalPositiveFlexibility;
+}
+
+void RenderFlexibleBox::layoutAndPlaceChildrenHorizontal(const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
+{
+    FlexibleBoxIterator iterator(this);
     // Now that we know the sizes, layout and position the flex items.
     LayoutUnit xOffset = borderLeft() + paddingLeft();
 
@@ -242,8 +250,7 @@ bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithmHorizontal(LayoutUnit& av
     setHeight(0);
     size_t i = 0;
     for (RenderBox* child = iterator.first(); child; child = iterator.next(), ++i) {
-        LayoutUnit childPreferredSize = childSizes[i];
-        childPreferredSize += child->borderLeft() + child->borderRight() + child->paddingLeft() + child->paddingRight();
+        LayoutUnit childPreferredSize = child->borderLeft() + child->paddingLeft() + childSizes[i] + child->paddingRight() + child->borderRight();
         // FIXME: Handle vertical writing modes with horizontal flexing.
         child->setOverrideSize(LayoutSize(childPreferredSize, 0));
         child->setChildNeedsLayout(true);
@@ -263,7 +270,6 @@ bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithmHorizontal(LayoutUnit& av
         if (hasPackingSpace(availableFreeSpace, totalPositiveFlexibility) && style()->flexPack() == PackJustify && childSizes.size() > 1)
             xOffset += availableFreeSpace / (childSizes.size() - 1);
     }
-    return true;
 }
 
 }

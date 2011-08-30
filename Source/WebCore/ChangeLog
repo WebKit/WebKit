@@ -1,3 +1,20 @@
+2011-08-30  Tony Chang  <tony@chromium.org>
+
+        refactor and cleanup RenderFlexibleBox
+        https://bugs.webkit.org/show_bug.cgi?id=67165
+
+        Reviewed by Ojan Vafai.
+
+        No new tests, just refactoring code.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutHorizontalBlock):
+        (WebCore::RenderFlexibleBox::runFreeSpaceAllocationAlgorithmHorizontal): Make childSizes a param so we can pass the results to layoutAndPlaceChildrenHorizontal.
+        (WebCore::hasPackingSpace): Move closer to where it's used.
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildrenHorizontal):
+            Pull this code out into its own function because it's not part of running the free space allocation algorithm.
+        * rendering/RenderFlexibleBox.h:
+
 2011-08-30  Tim Horton  <timothy_horton@apple.com>
 
         getBBox() on a SVGPathElement with curves incorrectly includes control points
