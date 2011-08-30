@@ -1,3 +1,15 @@
+2011-08-30  Adam Barth  <abarth@webkit.org>
+
+        Chromium Android should not be a core builder
+        https://bugs.webkit.org/show_bug.cgi?id=67184
+
+        Reviewed by Ryosuke Niwa.
+
+        This bot hasn't been consistently green yet because it has never actually run!
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
 2011-08-30  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [WebSocket] update pywebsocket to 0.6b4.

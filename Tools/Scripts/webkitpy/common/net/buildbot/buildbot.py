@@ -304,7 +304,7 @@ class BuildBot(object):
             "GTK.*32",
             "GTK.*64.*Debug",  # Disallow the 64-bit Release bot which is broken.
             "Qt",
-            "Chromium.*Release$",
+            "Chromium.*(Mac|Linux|Win).*Release$",
             "Chromium.*(Mac|Linux).*Release.*\(Tests",
         ]
 
