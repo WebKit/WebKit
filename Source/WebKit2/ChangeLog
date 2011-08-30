@@ -1,3 +1,24 @@
+2011-08-30  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67150
+        Would like API to use a custom device scale factor for a particular WebView/WKView
+        -and corresponding-
+        <rdar://problem/10041016>
+
+        Reviewed by Darin Adler.
+
+        New API is setOverrideBackingScaleFactor() on WKPage
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetOverrideBackingScaleFactor):
+        (WKPageSetOverrideBackingScaleFactor):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::deviceScaleFactor):
+        (WebKit::WebPageProxy::setOverrideBackingScaleFactor):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::overrideBackingScaleFactor):
+
 2011-08-30  Aaron Colwell  <acolwell@chromium.org>
 
         Add MediaSource API to HTMLMediaElement

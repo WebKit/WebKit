@@ -549,6 +549,8 @@ Could be worth adding to the API.
 - (BOOL)_useFixedLayout;
 - (NSSize)_fixedLayoutSize;
 
+- (void)_setOverrideBackingScaleFactor:(CGFloat)overrideScaleFactor;
+
 // Deprecated. Use the methods in pending public above instead.
 - (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit;
 - (NSUInteger)countMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit markMatches:(BOOL)markMatches;

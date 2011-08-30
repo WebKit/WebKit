@@ -193,5 +193,7 @@ extern int pluginDatabaseClientCount;
 
     BOOL interactiveFormValidationEnabled;
     int validationMessageTimerMagnification;
+
+    float overrideBackingScaleFactor;
 }
 @end

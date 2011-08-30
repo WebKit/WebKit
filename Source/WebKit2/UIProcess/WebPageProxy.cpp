@@ -145,6 +145,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_pageZoomFactor(1)
     , m_pageScaleFactor(1)
     , m_deviceScaleFactor(1)
+    , m_overrideBackingScaleFactor(0)
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
     , m_areMemoryCacheClientCallsEnabled(true)
@@ -1116,6 +1117,29 @@ void WebPageProxy::setDeviceScaleFactor(float scaleFactor)
 
     m_deviceScaleFactor = scaleFactor;
     m_drawingArea->deviceScaleFactorDidChange();
+}
+
+float WebPageProxy::deviceScaleFactor() const
+{
+    if (m_overrideBackingScaleFactor)
+        return m_overrideBackingScaleFactor;
+    return m_deviceScaleFactor;
+}
+
+void WebPageProxy::setOverrideBackingScaleFactor(float overrideScaleFactor)
+{
+    if (!isValid())
+        return;
+
+    if (m_overrideBackingScaleFactor == overrideScaleFactor)
+        return;
+
+    float oldScaleFactor = deviceScaleFactor();
+
+    m_overrideBackingScaleFactor = overrideScaleFactor;
+
+    if (deviceScaleFactor() != oldScaleFactor)
+        m_drawingArea->deviceScaleFactorDidChange();
 }
 
 void WebPageProxy::setUseFixedLayout(bool fixed)

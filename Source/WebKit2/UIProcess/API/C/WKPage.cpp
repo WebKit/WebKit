@@ -258,6 +258,16 @@ double WKPageGetTextZoomFactor(WKPageRef pageRef)
     return toImpl(pageRef)->textZoomFactor();
 }
 
+double WKPageGetOverrideBackingScaleFactor(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->overrideBackingScaleFactor();
+}
+
+void WKPageSetOverrideBackingScaleFactor(WKPageRef pageRef, double overrideScaleFactor)
+{
+    toImpl(pageRef)->setOverrideBackingScaleFactor(overrideScaleFactor);
+}
+
 bool WKPageSupportsTextZoom(WKPageRef pageRef)
 {
     return toImpl(pageRef)->supportsTextZoom();
