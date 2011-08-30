@@ -1,0 +1,53 @@
+Tests error cases with MediaSource API
+
+EVENT(loadstart)
+EVENT(webkitsourceopen)
+
+running didNotSendHeadersFirst
+EVENT(error) : MEDIA_ERR_SRC_NOT_SUPPORTED
+EVENT(emptied)
+EVENT(loadstart)
+EVENT(webkitsourceopen)
+
+running appendSameClusterTwice
+EVENT(loadedmetadata)
+EVENT(error) : MEDIA_ERR_DECODE
+EVENT(emptied)
+EVENT(loadstart)
+EVENT(webkitsourceopen)
+
+running appendClustersOutOfOrder
+EVENT(loadedmetadata)
+EVENT(error) : MEDIA_ERR_DECODE
+EVENT(emptied)
+EVENT(loadstart)
+EVENT(webkitsourceopen)
+
+running immediateDecodeErrorViaEndOfStream
+EVENT(webkitsourceended)
+EVENT(error) : MEDIA_ERR_SRC_NOT_SUPPORTED
+EVENT(emptied)
+EVENT(loadstart)
+EVENT(webkitsourceopen)
+
+running immediateNetworkErrorViaEndOfStream
+EVENT(webkitsourceended)
+EVENT(error) : MEDIA_ERR_SRC_NOT_SUPPORTED
+EVENT(emptied)
+EVENT(loadstart)
+EVENT(webkitsourceopen)
+
+running decodeErrorAfterHaveMetadata
+EVENT(loadedmetadata)
+EVENT(webkitsourceended)
+EVENT(error) : MEDIA_ERR_DECODE
+EVENT(emptied)
+EVENT(loadstart)
+EVENT(webkitsourceopen)
+
+running networkErrorAfterHaveMetadata
+EVENT(loadedmetadata)
+EVENT(webkitsourceended)
+EVENT(error) : MEDIA_ERR_NETWORK
+END OF TEST
+

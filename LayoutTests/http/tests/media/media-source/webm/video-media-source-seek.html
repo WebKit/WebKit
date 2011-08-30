@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../media-resources/video-test.js"></script>
+        <script src="webm-media-source.js"></script>
+        <script>
+            var firstOpen = true;
+            var doSeek = true;
+            var seekTime = getClusterTimeForIndex(3);
+
+            function onSourceOpen(event) 
+            {
+                var videoTag = event.target;
+
+                if (firstOpen) {
+                    firstOpen = false;
+
+                    appendHeaders(videoTag);
+                    appendUntilEndOfStream(videoTag, 0);
+                }
+            }
+
+            function onTimeUpdate(event) 
+            {
+                var videoTag = event.target;
+                if (videoTag.currentTime > 2 && doSeek) {
+                    consoleWrite("EVENT(timeupdate) : seeking to " + seekTime.toFixed(2));
+                    videoTag.pause();
+                    videoTag.currentTime = seekTime;
+                    doSeek = false;
+                }
+            }
+
+            function onSeeking(event) 
+            {
+                var videoTag = event.target;
+                var startIndex = getClusterIndexForTimestamp(videoTag.currentTime);
+                appendUntilEndOfStream(videoTag, startIndex);
+            }
+
+            function onSeeked(event) 
+            {
+                var videoTag = event.target;
+                var currentTime = videoTag.currentTime;
+
+                if (currentTime != seekTime ) {
+                    failTest("Seeked to " + currentTime.toFixed(2) + " instead of " + seekTime.toFixed(2));
+                    return;
+                }
+                videoTag.play();
+            }
+
+            function start() 
+            {
+                findMediaElement();
+
+                waitForEventAndFail('error');
+                waitForEvent('loadstart');
+                waitForEvent('webkitsourceopen');
+                waitForEvent('webkitsourceended');
+                waitForEvent('playing');
+                waitForEvent('seeking');
+                waitForEvent('seeked');
+                waitForEventAndEnd('ended');
+
+                video.addEventListener('webkitsourceopen', onSourceOpen);
+                video.addEventListener('timeupdate', onTimeUpdate);
+                video.addEventListener('seeking', onSeeking);
+                video.addEventListener('seeked', onSeeked);
+
+                setSrcToMediaSourceURL(video);
+            }
+         </script>
+    </head>
+    <body onload="start()">
+        <video autoplay controls> </video>
+        <p>Tests seeking with MediaSource API</p>
+    </body>
+</html>

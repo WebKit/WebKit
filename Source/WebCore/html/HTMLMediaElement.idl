@@ -88,5 +88,25 @@ module html {
     // The number of bytes consumed by the media decoder.
     readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitAudioDecodedByteCount;
     readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitVideoDecodedByteCount;
+
+#if defined(ENABLE_MEDIA_SOURCE) && ENABLE_MEDIA_SOURCE
+    // URL passed to src attribute to enable the media source logic.
+    readonly attribute [URL] DOMString webkitMediaSourceURL;
+
+    // Appends media to to the source.
+    void webkitSourceAppend(in Uint8Array data) raises (DOMException);
+
+    // Signals the end of stream.
+    const unsigned short EOS_NO_ERROR = 0; // End of stream reached w/o error.
+    const unsigned short EOS_NETWORK_ERR = 1; // A network error triggered end of stream.
+    const unsigned short EOS_DECODE_ERR = 2; // A decode error triggered end of stream.
+    void webkitSourceEndOfStream(in unsigned short status) raises (DOMException);
+
+    // Indicates the current state of the media source.
+    const unsigned short SOURCE_CLOSED = 0;
+    const unsigned short SOURCE_OPEN = 1;
+    const unsigned short SOURCE_ENDED = 2;
+    readonly attribute unsigned short webkitSourceState;
+#endif
 };
 }

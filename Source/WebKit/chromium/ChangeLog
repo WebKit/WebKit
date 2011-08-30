@@ -1,3 +1,21 @@
+2011-08-30  Aaron Colwell  <acolwell@chromium.org>
+
+        Add MediaSource API to HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=64731
+
+        Reviewed by Eric Carlson.
+
+        * public/WebMediaPlayer.h:
+        (WebKit::WebMediaPlayer::sourceAppend):
+        (WebKit::WebMediaPlayer::sourceEndOfStream):
+        * public/WebMediaPlayerClient.h:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::sourceOpened):
+        (WebKit::WebMediaPlayerClientImpl::sourceURL):
+        (WebKit::WebMediaPlayerClientImpl::sourceAppend):
+        (WebKit::WebMediaPlayerClientImpl::sourceEndOfStream):
+        * src/WebMediaPlayerClientImpl.h:
+
 2011-08-30  Nat Duca  <nduca@chromium.org>
 
         [chromium] Allow GraphicsContexts to be created from MockWebGraphicsContexts

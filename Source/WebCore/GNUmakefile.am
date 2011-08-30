@@ -336,6 +336,16 @@ endif # END USE_GSTREAMER
 endif # END ENABLE_VIDEO
 
 # ----
+# Media Source Support
+# ----
+if ENABLE_MEDIA_SOURCE
+FEATURE_DEFINES += ENABLE_MEDIA_SOURCE=1
+webcore_cppflags += -DENABLE_MEDIA_SOURCE=1
+else
+webcore_cppflags += -DENABLE_MEDIA_SOURCE=0
+endif # END ENABLE_MEDIA_SOURCE
+
+# ----
 # Media Statistics Support
 # ----
 if ENABLE_MEDIA_STATISTICS

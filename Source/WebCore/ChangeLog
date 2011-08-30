@@ -1,3 +1,68 @@
+2011-08-30  Aaron Colwell  <acolwell@chromium.org>
+
+        Add MediaSource API to HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=64731
+
+        Reviewed by Eric Carlson.
+
+        Tests: http/tests/media/media-source/webm/video-media-source-errors.html
+               http/tests/media/media-source/webm/video-media-source-play.html
+               http/tests/media/media-source/webm/video-media-source-seek.html
+               http/tests/media/media-source/webm/video-media-source-state-changes.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * dom/EventNames.h:
+        * features.pri:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Added initializers for new member variables.
+        (WebCore::HTMLMediaElement::prepareForLoad): Close the media source before starting a new load.
+        (WebCore::HTMLMediaElement::loadResource):
+            Fail loading if the media source url from another media element is used.
+        (WebCore::HTMLMediaElement::mediaEngineError):
+            Make sure the source is in the closed state before firing an emptied event.
+        (WebCore::HTMLMediaElement::mediaPlayerSourceOpened):
+            New method called by WebCore::MediaPlayer to signal when the source is open.
+        (WebCore::HTMLMediaElement::mediaPlayerSourceURL):
+            New method called by the WebCore::MediaPlayer to determine what the media source URL is for this
+            HTMLMediaElement instance.
+        (WebCore::HTMLMediaElement::seek):
+            Disabled noSeekRequired optimization if a media source is open and resets the source state to SOURCE_OPEN if
+            it was in the SOURCE_ENDED state when seek() was called.
+        (WebCore::HTMLMediaElement::webkitSourceAppend):
+            New method for passing media data from JavaScript to the WebCore::MediaPlayer.
+        (WebCore::HTMLMediaElement::webkitSourceEndOfStream):
+            New method that allows JavaScript to signal the end of the stream.
+        (WebCore::HTMLMediaElement::webkitSourceState): New method allowing JavaScript to read the current source state.
+        (WebCore::HTMLMediaElement::setSourceState): New method for updating the current source state.
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+            Transitions an open source to the closed state before firing an emptied event.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::webkitMediaSourceURL):
+            New method providing the media source URL to JavaScript for this HTMLMediaElement instance.
+        * html/HTMLMediaElement.idl: Added new methods, attributes, and constants for the media source api.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::sourceAppend):
+            Stub implementation of new WebCore::MediaPlayerPrivateInterface::sourceAppend.
+        (WebCore::NullMediaPlayerPrivate::sourceEndOfStream):
+            Stub implementation of new WebCore::MediaPlayerPrivateInterface::sourceEndOfStream.
+        (WebCore::MediaPlayer::sourceAppend): New method for receiving media data from WebCore::HTMLMediaElement.
+        (WebCore::MediaPlayer::sourceEndOfStream): New method for receiving end of stream from WebCore::HTMLMediaElement.
+        (WebCore::MediaPlayer::sourceOpened):
+            New method called by the MediaPlayerPrivate object to notify the MediaPlayer when the source has opened.
+        (WebCore::MediaPlayer::sourceURL):
+            New method called by the MediaPlayerPrivate implementation to get the media source URL from the MediaPlayer.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerSourceOpened):
+            Interface method used by the MediaPlayer to tell the HTMLMediaElement when the media source has been opened.
+        (WebCore::MediaPlayerClient::mediaPlayerSourceURL):
+            Interface method used by the MediaPlayer to get the media source URL from the HTMLMediaElement.
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::sourceAppend):
+            Interface method used by the MediaPlayer to pass media data to the MediaPlayerPrivate object.
+        (WebCore::MediaPlayerPrivateInterface::sourceEndOfStream):
+            Interface method used by the MediaPlayer to pass end of stream information to the MediaPlayerPrivate object.
+
 2011-08-30  Sam Weinig  <sam@webkit.org>
 
         Refactor JS dictionary code into helper class and covert geolocation code to use it

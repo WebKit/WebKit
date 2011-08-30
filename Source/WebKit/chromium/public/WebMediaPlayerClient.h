@@ -53,7 +53,8 @@ public:
     virtual float volume() const = 0;
     virtual void playbackStateChanged() = 0;
     virtual WebMediaPlayer::Preload preload() const = 0;
-
+    virtual void sourceOpened() = 0;
+    virtual WebKit::WebURL sourceURL() const = 0;
 protected:
     ~WebMediaPlayerClient() { }
 };

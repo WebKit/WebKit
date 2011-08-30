@@ -563,6 +563,14 @@ AC_ARG_ENABLE(video_track,
               [],[enable_video_track="yes"])
 AC_MSG_RESULT([$enable_video_track])
 
+# check whether to enable media source support
+AC_MSG_CHECKING([whether to enable media source support])
+AC_ARG_ENABLE(media_source,
+              AC_HELP_STRING([--enable-media-source],
+                             [enable support for media source [default=no]]),
+              [], [enable_media_source="no"])
+AC_MSG_RESULT([$enable_media_source])
+
 # check whether to enable media statistics support
 AC_MSG_CHECKING([whether to enable media statistics support])
 AC_ARG_ENABLE(media_statistics,
@@ -1185,6 +1193,7 @@ AM_CONDITIONAL([ENABLE_CLIENT_BASED_GEOLOCATION], [test "$enable_client_based_ge
 AM_CONDITIONAL([ENABLE_MATHML], [test "$enable_mathml" = "yes"])
 AM_CONDITIONAL([ENABLE_MHTML], [test "$enable_mhtml" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
+AM_CONDITIONAL([ENABLE_MEDIA_SOURCE],[test "$enable_media_source" = "yes"])
 AM_CONDITIONAL([ENABLE_MEDIA_STATISTICS],[test "$enable_media_statistics" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO_TRACK],[test "$enable_video_track" = "yes"])
 AM_CONDITIONAL([ENABLE_FULLSCREEN_API],[test "$enable_fullscreen_api" = "yes"])
@@ -1266,6 +1275,7 @@ Features:
  Client-based geolocation support                         : $enable_client_based_geolocation
  JavaScript debugger/profiler support                     : $enable_javascript_debugger
  MathML support                                           : $enable_mathml
+ Media source                                             : $enable_media_source
  Media statistics                                         : $enable_media_statistics
  HTML5 offline web applications support                   : $enable_offline_web_applications
  HTML5 channel messaging support                          : $enable_channel_messaging

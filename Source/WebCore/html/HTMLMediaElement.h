@@ -49,6 +49,7 @@ class MediaControls;
 class MediaError;
 class KURL;
 class TimeRanges;
+class Uint8Array;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 class Widget;
 #endif
@@ -139,6 +140,17 @@ public:
     unsigned webkitAudioDecodedByteCount() const;
     unsigned webkitVideoDecodedByteCount() const;
 #endif
+
+#if ENABLE(MEDIA_SOURCE)
+//  Media Source.
+    const KURL& webkitMediaSourceURL() const { return m_mediaSourceURL; }
+    void webkitSourceAppend(PassRefPtr<Uint8Array> data, ExceptionCode&);
+    enum EndOfStreamStatus { EOS_NO_ERROR, EOS_NETWORK_ERR, EOS_DECODE_ERR };
+    void webkitSourceEndOfStream(unsigned short, ExceptionCode&);
+    enum SourceState { SOURCE_CLOSED, SOURCE_OPEN, SOURCE_ENDED };
+    SourceState webkitSourceState() const;
+    void setSourceState(SourceState);
+#endif 
 
 // controls
     bool controls() const;
@@ -281,6 +293,11 @@ private:
     virtual void mediaPlayerFirstVideoFrameAvailable(MediaPlayer*);
     virtual void mediaPlayerCharacteristicChanged(MediaPlayer*);
 
+#if ENABLE(MEDIA_SOURCE)
+    virtual void mediaPlayerSourceOpened();
+    virtual String mediaPlayerSourceURL() const;
+#endif
+
     void loadTimerFired(Timer<HTMLMediaElement>*);
     void asyncEventTimerFired(Timer<HTMLMediaElement>*);
     void progressEventTimerFired(Timer<HTMLMediaElement>*);
@@ -410,6 +427,11 @@ private:
     // Counter incremented while processing a callback from the media player, so we can avoid
     // calling the media engine recursively.
     int m_processingMediaPlayerCallback;
+
+#if ENABLE(MEDIA_SOURCE)
+    KURL m_mediaSourceURL;
+    SourceState m_sourceState;
+#endif
 
     mutable float m_cachedTime;
     mutable double m_cachedTimeWallClockUpdateTime;

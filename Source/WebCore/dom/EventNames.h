@@ -147,6 +147,10 @@ namespace WebCore {
     macro(webkitbeginfullscreen) \
     macro(webkitendfullscreen) \
     \
+    macro(webkitsourceopen) \
+    macro(webkitsourceended) \
+    macro(webkitsourceclose) \
+    \
     macro(progress) \
     macro(stalled) \
     macro(suspend) \

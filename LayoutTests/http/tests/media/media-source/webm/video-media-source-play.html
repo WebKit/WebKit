@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../media-resources/video-test.js"></script>
+        <script src="webm-media-source.js"></script>
+        <script>
+            function onSourceOpen(event) 
+            {
+                var videoTag = event.target;
+                appendHeaders(videoTag);
+                appendUntilEndOfStream(videoTag, 0);
+            }
+
+            function onLoad() 
+            {
+                findMediaElement();
+
+                waitForEventAndFail('error');
+                waitForEvent('loadstart');
+                waitForEvent('webkitsourceopen');
+                waitForEvent('playing');
+                waitForEvent('webkitsourceended');
+                waitForEventAndEnd('ended');
+
+                video.addEventListener('webkitsourceopen', onSourceOpen);
+
+                setSrcToMediaSourceURL(video);
+            }
+        </script>
+    </head>
+    <body onload="onLoad()">
+        <video autoplay> </video>
+        <p>Tests normal playback case with MediaSource API</p>
+    </body>
+</html>

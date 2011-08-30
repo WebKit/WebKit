@@ -196,6 +196,24 @@ WebMediaPlayer::Preload WebMediaPlayerClientImpl::preload() const
     return static_cast<WebMediaPlayer::Preload>(m_preload);
 }
 
+void WebMediaPlayerClientImpl::sourceOpened()
+{
+#if ENABLE(MEDIA_SOURCE)
+    ASSERT(m_mediaPlayer);
+    m_mediaPlayer->sourceOpened();
+#endif
+}
+
+WebKit::WebURL WebMediaPlayerClientImpl::sourceURL() const
+{
+#if ENABLE(MEDIA_SOURCE)
+    ASSERT(m_mediaPlayer);
+    return KURL(ParsedURLString, m_mediaPlayer->sourceURL());
+#else
+    return KURL();
+#endif
+}
+
 // MediaPlayerPrivateInterface -------------------------------------------------
 
 void WebMediaPlayerClientImpl::load(const String& url)
@@ -257,6 +275,21 @@ void WebMediaPlayerClientImpl::pause()
     if (m_webMediaPlayer.get())
         m_webMediaPlayer->pause();
 }
+
+#if ENABLE(MEDIA_SOURCE)
+bool WebMediaPlayerClientImpl::sourceAppend(const unsigned char* data, unsigned length)
+{
+    if (m_webMediaPlayer.get())
+        return m_webMediaPlayer->sourceAppend(data, length);
+    return false;
+}
+
+void WebMediaPlayerClientImpl::sourceEndOfStream(WebCore::MediaPlayer::EndOfStreamStatus status)
+{
+    if (m_webMediaPlayer.get())
+        m_webMediaPlayer->sourceEndOfStream(static_cast<WebMediaPlayer::EndOfStreamStatus>(status));
+}
+#endif
 
 void WebMediaPlayerClientImpl::prepareToPlay()
 {

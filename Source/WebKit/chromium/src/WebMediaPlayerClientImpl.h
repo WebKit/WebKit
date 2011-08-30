@@ -80,6 +80,8 @@ public:
     virtual float volume() const;
     virtual void playbackStateChanged();
     virtual WebMediaPlayer::Preload preload() const;
+    virtual void sourceOpened();
+    virtual WebKit::WebURL sourceURL() const;
 
     // MediaPlayerPrivateInterface methods:
     virtual void load(const WTF::String& url);
@@ -132,6 +134,11 @@ public:
     // VideoFrameProvider methods:
     virtual WebCore::VideoFrameChromium* getCurrentFrame();
     virtual void putCurrentFrame(WebCore::VideoFrameChromium*);
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+    virtual bool sourceAppend(const unsigned char* data, unsigned length);
+    virtual void sourceEndOfStream(WebCore::MediaPlayer::EndOfStreamStatus);
 #endif
 
 private:

@@ -86,6 +86,12 @@ public:
         Auto,
     };
 
+    enum EndOfStreamStatus {
+        EosNoError,
+        EosNetworkError,
+        EosDecodeError,
+    };
+
     virtual ~WebMediaPlayer() {}
 
     virtual void load(const WebURL&) = 0;
@@ -156,6 +162,9 @@ public:
     virtual void putCurrentFrame(WebVideoFrame*) { }
 
     virtual WebAudioSourceProvider* audioSourceProvider() { return 0; }
+
+    virtual bool sourceAppend(const unsigned char* data, unsigned length) { return false; }
+    virtual void sourceEndOfStream(EndOfStreamStatus)  { }
 };
 
 } // namespace WebKit

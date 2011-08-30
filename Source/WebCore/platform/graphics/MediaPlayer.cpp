@@ -142,6 +142,11 @@ public:
 #endif
 
     virtual bool hasSingleSecurityOrigin() const { return true; }
+
+#if ENABLE(MEDIA_SOURCE)
+    virtual bool sourceAppend(const unsigned char*, unsigned) { return false; }
+    virtual void sourceEndOfStream(MediaPlayer::EndOfStreamStatus status) { }
+#endif
 };
 
 static PassOwnPtr<MediaPlayerPrivateInterface> createNullMediaPlayer(MediaPlayer* player) 
@@ -431,6 +436,18 @@ void MediaPlayer::pause()
 {
     m_private->pause();
 }
+
+#if ENABLE(MEDIA_SOURCE)
+bool MediaPlayer::sourceAppend(const unsigned char* data, unsigned length)
+{
+    return m_private->sourceAppend(data, length);
+}
+
+void MediaPlayer::sourceEndOfStream(MediaPlayer::EndOfStreamStatus status)
+{
+    return m_private->sourceEndOfStream(status);
+}
+#endif
 
 float MediaPlayer::duration() const
 {
@@ -787,6 +804,21 @@ void MediaPlayer::setPrivateBrowsingMode(bool privateBrowsingMode)
     m_privateBrowsing = privateBrowsingMode;
     m_private->setPrivateBrowsingMode(m_privateBrowsing);
 }
+
+#if ENABLE(MEDIA_SOURCE)
+void MediaPlayer::sourceOpened()
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerSourceOpened();
+}
+
+String MediaPlayer::sourceURL() const
+{
+    if (m_mediaPlayerClient)
+        return m_mediaPlayerClient->mediaPlayerSourceURL();
+    return String();
+}
+#endif
 
 // Client callbacks.
 void MediaPlayer::networkStateChanged()

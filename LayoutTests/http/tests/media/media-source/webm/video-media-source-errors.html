@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../media-resources/video-test.js"></script>
+        <script src="webm-media-source.js"></script>
+        <script>
+            function onError(event)
+            {
+                var videoTag = event.target;
+
+                var errorString = "UNKNOWN";
+                switch(videoTag.error.code) {
+                    case MediaError.MEDIA_ERR_ABORTED:
+                        errorString = "MEDIA_ERR_ABORTED";
+                        break;
+                    case MediaError.MEDIA_ERR_NETWORK:
+                        errorString = "MEDIA_ERR_NETWORK";
+                        break;
+                    case MediaError.MEDIA_ERR_DECODE:
+                        errorString = "MEDIA_ERR_DECODE";
+                        break;
+                    case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                        errorString = "MEDIA_ERR_SRC_NOT_SUPPORTED";
+                        break;
+                }
+                consoleWrite("EVENT(error) : " + errorString);
+                runNextTestCase(videoTag);
+            }
+
+            // The index of the next cluster to send to appendData().
+            var nextClusterIndex = 0;
+
+            function appendEnoughClustersToTriggerMetadataLoaded(videoTag, doneCallback)
+            {
+                nextClusterIndex = 0;
+                appendCluster(videoTag, nextClusterIndex++);
+                appendCluster(videoTag, nextClusterIndex++);
+
+                var eventHandler = function(event) {
+                    videoTag.removeEventListener('loadedmetadata', eventHandler);
+                    doneCallback();
+                };
+                videoTag.addEventListener('loadedmetadata', eventHandler);
+            }
+
+            // Test appending cluster data before sending the headers.
+            function didNotSendHeadersFirst(event)
+            {
+                appendCluster(event.target, 0);
+            }
+
+            // Test appending the same cluster twice.
+            function appendSameClusterTwice(event)
+            {
+                var videoTag = event.target;
+
+                appendHeaders(videoTag);
+                appendEnoughClustersToTriggerMetadataLoaded(videoTag, function() {
+                    appendCluster(videoTag, nextClusterIndex - 1);
+                });
+            }
+
+            // Test clusters appended out of order.
+            function appendClustersOutOfOrder(event)
+            {
+                var videoTag = event.target;
+
+                appendHeaders(videoTag);
+                appendEnoughClustersToTriggerMetadataLoaded(videoTag, function() {
+                    // Append 1 past the next cluster.
+                    appendCluster(videoTag, nextClusterIndex + 1);
+
+                    // Append the next cluster.
+                    appendCluster(videoTag, nextClusterIndex);
+                });
+            }
+
+            // Test signalling a decode error with webkitSourceEndOfStream.
+            function immediateDecodeErrorViaEndOfStream(event)
+            {
+                 var videoTag = event.target;
+                 videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_DECODE_ERR);
+            }
+
+            // Test signalling a network error with webkitSourceEndOfStream.
+            function immediateNetworkErrorViaEndOfStream(event)
+            {
+                var videoTag = event.target;
+                videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_NETWORK_ERR);
+            }
+
+            // Test signalling a decode error with webkitSourceEndOfStream after we
+            // have appended enough data to get to the HAVE_METADATA state.
+            function decodeErrorAfterHaveMetadata(event)
+            {
+                var videoTag = event.target;
+                appendHeaders(videoTag);
+
+                appendEnoughClustersToTriggerMetadataLoaded(videoTag, function() {
+                    videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_DECODE_ERR);
+                });
+            }
+
+            // Test signalling a network error with webkitSourceEndOfStream after we
+            // have appended enough data to get to the HAVE_METADATA state.
+            function networkErrorAfterHaveMetadata(event)
+            {
+                var videoTag = event.target;
+                appendHeaders(videoTag);
+                appendEnoughClustersToTriggerMetadataLoaded(videoTag, function() {
+                    videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_NETWORK_ERR);
+                });
+            }
+
+            var testCases = [
+                "didNotSendHeadersFirst",
+                "appendSameClusterTwice",
+                "appendClustersOutOfOrder",
+                "immediateDecodeErrorViaEndOfStream",
+                "immediateNetworkErrorViaEndOfStream",
+                "decodeErrorAfterHaveMetadata",
+                "networkErrorAfterHaveMetadata"
+            ];
+
+            var testCaseIndex = 0;
+
+            function runNextTestCase(videoTag)
+            {
+                if (testCaseIndex >= testCases.length) {
+                    endTest();
+                    return;
+                }
+
+                var functionName = testCases[testCaseIndex];
+                var onOpenFunction = eval(functionName);
+                testCaseIndex++;
+
+                var eventHandlerFunction = function (event) {
+                    consoleWrite("");
+                    consoleWrite("running " + functionName);
+                    event.target.removeEventListener('webkitsourceopen', eventHandlerFunction);
+                    onOpenFunction(event);
+                };
+                videoTag.addEventListener('webkitsourceopen', eventHandlerFunction);
+                setSrcToMediaSourceURL(videoTag);
+            }
+
+            function onLoad()
+            {
+                findMediaElement();
+
+                waitForEvent('loadstart');
+                waitForEvent('loadedmetadata');
+                waitForEvent('webkitsourceopen');
+                waitForEvent('playing');
+                waitForEvent('webkitsourceended');
+                waitForEvent('ended');
+                waitForEvent('emptied');
+
+                video.addEventListener('error', onError);
+                runNextTestCase(video);
+            }
+        </script>
+    </head>
+    <body onload="onLoad()">
+        <video> </video>
+        <p>Tests error cases with MediaSource API</p>
+    </body>
+</html>

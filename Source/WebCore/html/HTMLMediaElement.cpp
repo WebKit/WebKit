@@ -69,6 +69,8 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "TimeRanges.h"
+#include "UUID.h"
+#include "Uint8Array.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
@@ -126,6 +128,11 @@ static const char* boolString(bool val)
 
 static const float invalidMediaTime = -1;
 
+#if ENABLE(MEDIA_SOURCE)
+// URL protocol used to signal that the media source API is being used.
+static const char* mediaSourceURLProtocol = "x-media-source";
+#endif
+
 using namespace HTMLNames;
 
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* document)
@@ -158,6 +165,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_preload(MediaPlayer::Auto)
     , m_displayMode(Unknown)
     , m_processingMediaPlayerCallback(0)
+#if ENABLE(MEDIA_SOURCE)      
+    , m_sourceState(SOURCE_CLOSED)
+#endif
     , m_cachedTime(invalidMediaTime)
     , m_cachedTimeWallClockUpdateTime(0)
     , m_minimumWallClockTimeToCacheMediaTime(0)
@@ -194,6 +204,11 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     
     if (document->settings() && document->settings()->mediaPlaybackRequiresUserGesture())
         m_restrictions |= RequireUserGestureForRateChangeRestriction;
+
+#if ENABLE(MEDIA_SOURCE)
+    m_mediaSourceURL.setProtocol(mediaSourceURLProtocol);
+    m_mediaSourceURL.setPath(createCanonicalUUIDString());
+#endif
 }
 
 HTMLMediaElement::~HTMLMediaElement()
@@ -546,6 +561,11 @@ void HTMLMediaElement::prepareForLoad()
         createMediaPlayerProxy();
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+    if (m_sourceState != SOURCE_CLOSED)
+        setSourceState(SOURCE_CLOSED);
+#endif
+
     // 4 - If the media element's networkState is not set to NETWORK_EMPTY, then run these substeps
     if (m_networkState != NETWORK_EMPTY) {
         m_networkState = NETWORK_EMPTY;
@@ -735,6 +755,14 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
         mediaLoadingFailed(MediaPlayer::FormatError);
         return;
     }
+    
+#if ENABLE(MEDIA_SOURCE)
+    // If this is a media source URL, make sure it is the one for this media element.
+    if (url.protocolIs(mediaSourceURLProtocol) && url != m_mediaSourceURL) {
+        mediaLoadingFailed(MediaPlayer::FormatError);
+        return;
+    }
+#endif
 
     // The resource fetch algorithm 
     m_networkState = NETWORK_LOADING;
@@ -902,6 +930,11 @@ void HTMLMediaElement::mediaEngineError(PassRefPtr<MediaError> err)
 
     // 3 - Queue a task to fire a simple event named error at the media element.
     scheduleEvent(eventNames().errorEvent);
+
+#if ENABLE(MEDIA_SOURCE)
+    if (m_sourceState != SOURCE_CLOSED)
+        setSourceState(SOURCE_CLOSED);
+#endif
 
     // 4 - Set the element's networkState attribute to the NETWORK_EMPTY value and queue a
     // task to fire a simple event called emptied at the element.
@@ -1124,6 +1157,22 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     updatePlayState();
 }
 
+#if ENABLE(MEDIA_SOURCE)
+void HTMLMediaElement::mediaPlayerSourceOpened()
+{
+    beginProcessingMediaPlayerCallback();
+
+    setSourceState(SOURCE_OPEN);
+
+    endProcessingMediaPlayerCallback();
+}
+
+String HTMLMediaElement::mediaPlayerSourceURL() const
+{
+    return m_mediaSourceURL.string();
+}
+#endif
+
 void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
 {
     ASSERT(m_player);
@@ -1246,6 +1295,14 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
     // Don't skip calling the media engine if we are in poster mode because a seek should always 
     // cancel poster display.
     bool noSeekRequired = !seekableRanges->length() || (time == now && displayMode() != Poster);
+
+#if ENABLE(MEDIA_SOURCE)
+    // Always notify the media engine of a seek if the source is not closed. This ensures that the source is
+    // always in a flushed state when the 'seeking' event fires.
+    if (m_sourceState != SOURCE_CLOSED)
+      noSeekRequired = false;
+#endif
+
     if (noSeekRequired) {
         if (time == now) {
             scheduleEvent(eventNames().seekingEvent);
@@ -1263,6 +1320,11 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
     }
     m_lastSeekTime = time;
     m_sentEndEvent = false;
+
+#if ENABLE(MEDIA_SOURCE)
+    if (m_sourceState == SOURCE_ENDED)
+        setSourceState(SOURCE_OPEN);
+#endif
 
     // 8 - Set the current playback position to the given new playback position
     m_player->seek(time);
@@ -1578,6 +1640,78 @@ void HTMLMediaElement::pauseInternal()
 
     updatePlayState();
 }
+
+#if ENABLE(MEDIA_SOURCE)
+void HTMLMediaElement::webkitSourceAppend(PassRefPtr<Uint8Array> data, ExceptionCode& ec)
+{
+    if (!m_player || m_currentSrc != m_mediaSourceURL || m_sourceState != SOURCE_OPEN) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (!data.get() || !m_player->sourceAppend(data->data(), data->length())) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+}
+
+void HTMLMediaElement::webkitSourceEndOfStream(unsigned short status, ExceptionCode& ec)
+{
+    if (!m_player || m_currentSrc != m_mediaSourceURL || m_sourceState != SOURCE_OPEN) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    MediaPlayer::EndOfStreamStatus eosStatus = MediaPlayer::EosNoError;
+
+    switch (status) {
+    case EOS_NO_ERROR:
+        eosStatus = MediaPlayer::EosNoError;
+        break;
+    case EOS_NETWORK_ERR:
+        eosStatus = MediaPlayer::EosNetworkError;
+        break;
+    case EOS_DECODE_ERR:
+        eosStatus = MediaPlayer::EosDecodeError;
+        break;
+    default:
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    setSourceState(SOURCE_ENDED);
+    m_player->sourceEndOfStream(eosStatus);
+}
+
+HTMLMediaElement::SourceState HTMLMediaElement::webkitSourceState() const
+{
+    return m_sourceState;
+}
+
+void HTMLMediaElement::setSourceState(SourceState state)
+{
+    SourceState oldState = m_sourceState;
+    m_sourceState = static_cast<SourceState>(state);
+
+    if (m_sourceState == oldState)
+        return;
+
+    if (m_sourceState == SOURCE_CLOSED) {
+        scheduleEvent(eventNames().webkitsourcecloseEvent);
+        return;
+    }
+
+    if (oldState == SOURCE_OPEN && m_sourceState == SOURCE_ENDED) {
+        scheduleEvent(eventNames().webkitsourceendedEvent);
+        return;
+    }
+
+    if (m_sourceState == SOURCE_OPEN) {
+        scheduleEvent(eventNames().webkitsourceopenEvent);
+        return;
+    }
+}
+#endif
 
 bool HTMLMediaElement::loop() const
 {
@@ -2357,6 +2491,11 @@ void HTMLMediaElement::userCancelledLoad()
 
     // 3 - Queue a task to fire a simple event named error at the media element.
     scheduleEvent(eventNames().abortEvent);
+
+#if ENABLE(MEDIA_SOURCE)
+    if (m_sourceState != SOURCE_CLOSED)
+        setSourceState(SOURCE_CLOSED);
+#endif
 
     // 4 - If the media element's readyState attribute has a value equal to HAVE_NOTHING, set the 
     // element's networkState attribute to the NETWORK_EMPTY value and queue a task to fire a 

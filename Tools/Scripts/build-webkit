@@ -94,6 +94,7 @@ my (
     $javaScriptDebuggerSupport,
     $linkPrefetchSupport,
     $mathmlSupport,
+    $mediaSourceSupport,
     $mediaStatisticsSupport,
     $mediaStreamSupport,
     $meterTagSupport,
@@ -220,6 +221,9 @@ my @features = (
 
     { option => "mathml", desc => "Toggle MathML support",
       define => "ENABLE_MATHML", default => 1, value => \$mathmlSupport },
+
+    { option => "media-source", desc => "Toggle Media Source support",
+      define => "ENABLE_MEDIA_SOURCE", default => 0, value => \$mediaSourceSupport },
 
     { option => "media-statistics", desc => "Toggle Media Statistics support",
       define => "ENABLE_MEDIA_STATISTICS", default => 0, value => \$mediaStatisticsSupport },

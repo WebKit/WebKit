@@ -147,8 +147,14 @@ public:
 
     virtual void setPrivateBrowsingMode(bool) { }
 
+
 #if ENABLE(WEB_AUDIO)
     virtual AudioSourceProvider* audioSourceProvider() { return 0; }
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+    virtual bool sourceAppend(const unsigned char*, unsigned) { return false; }
+    virtual void sourceEndOfStream(MediaPlayer::EndOfStreamStatus) { };
 #endif
 };
 

@@ -1,3 +1,56 @@
+2011-08-30  Aaron Colwell  <acolwell@chromium.org>
+
+        Add MediaSource API to HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=64731
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/media-source/webm/video-media-source-errors-expected.txt: Added.
+        * http/tests/media/media-source/webm/video-media-source-errors.html: Added.
+        * http/tests/media/media-source/webm/video-media-source-play-expected.txt: Added.
+        * http/tests/media/media-source/webm/video-media-source-play.html: Added.
+        * http/tests/media/media-source/webm/video-media-source-seek-expected.txt: Added.
+        * http/tests/media/media-source/webm/video-media-source-seek.html: Added.
+        * http/tests/media/media-source/webm/video-media-source-state-changes-expected.txt: Added.
+        * http/tests/media/media-source/webm/video-media-source-state-changes.html: Added.
+        * http/tests/media/media-source/webm/webm-media-source.js: Added.
+        (getData):
+        (getHeaders):
+        (getClusterCount):
+        (getCluster):
+        (getClusterTimeForIndex):
+        (getClusterIndexForTimestamp):
+        (setSrcToMediaSourceURL):
+        (appendHeaders):
+        (appendCluster):
+        (appendUntilEndOfStream):
+        (logSourceState):
+        (getSourceStateName):
+        (expectSourceState):
+        * http/tests/media/resources/media-source/webm/test.webm: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-0: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-1: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-10: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-11: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-12: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-13: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-14: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-15: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-2: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-3: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-4: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-5: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-6: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-7: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-8: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.cluster-9: Added.
+        * http/tests/media/resources/media-source/webm/test.webm.headers: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-08-30  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Chromium rebaselines for r94109.
