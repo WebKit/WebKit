@@ -1,3 +1,20 @@
+2011-08-25  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r88115): Disabling a file upload control causes an endless busyloop.
+        https://bugs.webkit.org/show_bug.cgi?id=66659
+
+        Reviewed by Darin Adler.
+
+        Test: fast/forms/file/disabling-file-busy-loop.html
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::updateFromElement):
+        Don't call setDisabled() if the disabled status is not changed.
+        setDisabled() causes styleRecalc(), and
+        HTMLFormControlElement::styleRecalc() causes
+        updateFromElement(). updateFromElement() should not call
+        setDisabled() again.
+
 2011-08-29  Daniel Bates  <dbates@webkit.org>
 
         Add HAVE(VASPRINTF) macro to test for vasprintf() support

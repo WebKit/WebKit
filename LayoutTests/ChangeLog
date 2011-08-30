@@ -1,3 +1,13 @@
+2011-08-25  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r88115): Disabling a file upload control causes an endless busyloop.
+        https://bugs.webkit.org/show_bug.cgi?id=66659
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/file/disabling-file-busy-loop-expected.txt: Added.
+        * fast/forms/file/disabling-file-busy-loop.html: Added.
+
 2011-08-29  David Levin  <levin@chromium.org>
 
         [chromium] Minor update for test that is timing out.
