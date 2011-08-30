@@ -168,7 +168,7 @@ namespace WebCore {
 
         virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;
         virtual void layoutUpdated(Frame*) const { }
-        virtual void scrollRectIntoView(const IntRect&) { }; // Currently only Mac has a non empty implementation.
+        virtual void scrollRectIntoView(const IntRect&) const { }; // Currently only Mac has a non empty implementation.
        
         virtual bool shouldMissingPluginMessageBeButton() const { return false; }
         virtual void missingPluginButtonClicked(Element*) const { }

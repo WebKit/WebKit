@@ -1,3 +1,15 @@
+2011-08-30  Tony Chang  <tony@chromium.org>
+
+        Fix compile warning on clang:
+        error: 'WebKit::ChromeClientImpl::scrollRectIntoView' hides overloaded virtual function [-Werror,-Woverloaded-virtual]
+            virtual void scrollRectIntoView(
+                             ^
+        ../../WebCore/page/ChromeClient.h:171:22: note: hidden overloaded virtual function 'WebCore::ChromeClient::scrollRectIntoView' declared here
+            virtual void scrollRectIntoView(const IntRect&) { }; // Currently only Mac has a non empty implementation.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::scrollRectIntoView):
+
 2011-08-30  David Hyatt  <hyatt@apple.com>
 
         <rdar://problem/8832814> With large line-height, column break can happen anywhere in the
