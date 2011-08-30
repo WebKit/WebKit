@@ -1,3 +1,16 @@
+2011-08-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a test for lastChangeWasUserEdit in HTMLInputElement and HTMLTextAreaElement
+        https://bugs.webkit.org/show_bug.cgi?id=67173
+
+        Reviewed by Darin Adler.
+
+        Added some basic test for HTMLInputElement::lastChangeWasUserEdit and
+        HTMLTextAreaElement::lastChangeWasUserEdit.
+
+        * fast/forms/textfield-lastchange-was-useredit-expected.txt: Added.
+        * fast/forms/textfield-lastchange-was-useredit.html: Added.
+
 2011-08-29  Kenji Imasaki  <imasaki@chromium.org>
 
         [Chromium] Added new rebaselines for media/media-document-audio-repaint.

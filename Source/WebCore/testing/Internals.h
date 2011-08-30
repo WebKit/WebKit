@@ -76,6 +76,8 @@ public:
     void setPasswordEchoEnabled(Document*, bool enabled, ExceptionCode&);
     void setPasswordEchoDurationInSeconds(Document*, double durationInSeconds, ExceptionCode&);
 
+    bool wasLastChangeUserEdit(Element* textField, ExceptionCode&);
+
     static const char* internalsId;
 
 private:

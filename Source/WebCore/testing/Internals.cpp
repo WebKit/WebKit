@@ -32,6 +32,9 @@
 #include "DocumentMarkerController.h"
 #include "Element.h"
 #include "ExceptionCode.h"
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
+#include "HTMLTextAreaElement.h"
 #include "InspectorController.h"
 #include "MemoryCache.h"
 #include "NodeRenderingContext.h"
@@ -260,6 +263,23 @@ void Internals::reset(Document* document)
         document->settings()->setPasswordEchoEnabled(passwordEchoEnabledBackup);
         passwordEchoEnabledBackedUp = false;
     }
+}
+
+bool Internals::wasLastChangeUserEdit(Element* textField, ExceptionCode& ec)
+{
+    if (!textField) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    if (textField->hasTagName(HTMLNames::inputTag))
+        return static_cast<HTMLInputElement*>(textField)->lastChangeWasUserEdit();
+
+    if (textField->hasTagName(HTMLNames::textareaTag))
+        return static_cast<HTMLTextAreaElement*>(textField)->lastChangeWasUserEdit();
+
+    ec = INVALID_NODE_TYPE_ERR;
+    return false;
 }
 
 }
