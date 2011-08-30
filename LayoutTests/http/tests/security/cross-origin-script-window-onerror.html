@@ -16,7 +16,7 @@ window.onerror = function(message, url, line) {
   document.getElementById("result").textContent = "window.onerror message: " + message + " at " + url + ": " + line;
   if (window.layoutTestController)
     layoutTestController.notifyDone();
-  return false;
+  return true;
 }
 </script>
 <script src="http://localhost:8000/security/resources/cross-origin-script.txt">

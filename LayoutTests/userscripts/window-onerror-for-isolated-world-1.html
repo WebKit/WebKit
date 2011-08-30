@@ -31,13 +31,14 @@ function lastUrlComponent(url) {
 window.onerror = function(msg, url, line)
 {
     log("Main world window.onerror: " + msg + " at " + lastUrlComponent(url) + ":" + line);
-    return false;
+    return true;
 }
 
 window.addEventListener("error", function(e)
 {
     var url = lastUrlComponent(e.filename);
     log("Main world error event listener: " + e.message + " at " + url + ":" + e.lineno);
+    e.preventDefault();
 }, false);
 
 var exceptions = function(isolatedWorld)

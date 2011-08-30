@@ -44,7 +44,7 @@ var errorHandlers = function(isolatedWorld)
 
     window.onerror = function(msg, url, line) {
         log(isolatedWorld + " window.onerror: " + msg + " at " + lastUrlComponent(url) + ":" + line, "*");
-        return false;
+        return true;
     }
 
     window.addEventListener("error", function(e) {

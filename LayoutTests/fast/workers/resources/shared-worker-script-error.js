@@ -13,7 +13,7 @@ function handleMessage(event, port) {
     } else if (event.data == "handledError") {
         onerror = function(message, url, lineno) {
             port.postMessage("SUCCESS: error handled via onerror: " + message);
-            return false;
+            return true;
         };
         generateError();  // Undefined function call
     } else {
