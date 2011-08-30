@@ -1,3 +1,18 @@
+2011-08-30  Adam Barth  <abarth@webkit.org>
+
+        Flaky crash with JavaScript URLs
+        https://bugs.webkit.org/show_bug.cgi?id=66360
+
+        Reviewed by Nate Chapin.
+
+        This patch teaches DocumentWriter::begin to make a copy of the URL
+        before beginning a new document to avoid a crash.
+
+        Test: fast/loader/javascript-url-iframe-crash.html
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+
 2011-08-30  Tony Gentilcore  <tonyg@chromium.org>
 
         PreloadScanner shouldn't load images inside noscript via doc.write
