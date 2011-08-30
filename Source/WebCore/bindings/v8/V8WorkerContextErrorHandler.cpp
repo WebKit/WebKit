@@ -55,7 +55,7 @@ v8::Local<v8::Value> V8WorkerContextErrorHandler::callListenerFunction(ScriptExe
         v8::Local<v8::Object> thisValue = v8::Context::GetCurrent()->Global();
         v8::Handle<v8::Value> parameters[3] = { v8String(errorEvent->message()), v8String(errorEvent->filename()), v8::Integer::New(errorEvent->lineno()) };
         returnValue = callFunction->Call(thisValue, 3, parameters);
-        if (!returnValue.IsEmpty() && returnValue->IsBoolean() && !returnValue->BooleanValue())
+        if (!returnValue.IsEmpty() && returnValue->IsBoolean() && returnValue->BooleanValue())
             event->preventDefault();
     }
     return returnValue;

@@ -14,7 +14,7 @@ window.onerror = function(msg, url, line)
 {
     url = url ? url.match( /[^\/]+\/?$/ )[0] : url;
     log("Main frame window.onerror: " + msg + " at " + url + ":" + line);
-    return false;
+    return true;
 }
 </script>
 <script>

@@ -21,7 +21,7 @@ window.onerror = function(msg, url, line)
     if (++unhandledErrorCount === 3 && window.layoutTestController)
         layoutTestController.notifyDone();
 
-    return false;
+    return true;
 }
 
 function delayedThrowException()

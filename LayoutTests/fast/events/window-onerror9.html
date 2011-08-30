@@ -25,7 +25,7 @@ window.onerror = function(msg, url, line)
     log("window.event.lineno = " + window.event.lineno);
     if (window.layoutTestController)
         layoutTestController.notifyDone();
-    return false;
+    return true;
 }
 
 throw new Error(2010);

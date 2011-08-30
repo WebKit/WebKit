@@ -1,3 +1,21 @@
+2011-08-29  Yury Semikhatsky  <yurys@chromium.org>
+
+        Return value of window.onerror has inverted semantics
+        https://bugs.webkit.org/show_bug.cgi?id=67119
+
+        Error is now treated as handled only when window.onerror function returns true.
+
+        Reviewed by Darin Adler.
+
+        Test: fast/events/window-onerror13.html
+
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/v8/V8WindowErrorHandler.cpp:
+        (WebCore::V8WindowErrorHandler::callListenerFunction):
+        * bindings/v8/V8WorkerContextErrorHandler.cpp:
+        (WebCore::V8WorkerContextErrorHandler::callListenerFunction):
+
 2011-08-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Touch Internals.cpp in an attempt to fix GTK+ build.

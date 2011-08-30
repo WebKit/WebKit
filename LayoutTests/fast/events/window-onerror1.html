@@ -20,7 +20,7 @@ function test()
     window.onerror = function (error, url, line) {
         url = url ? url.match( /[^\/]+\/?$/ )[0] : url;
         print("PASS: caught global error: " + error + " at " + url + ":" + line, "green");
-        return false;
+        return true;
     };
     hahaha_good_luck_finding_me(); // caught by window.onerror
 }

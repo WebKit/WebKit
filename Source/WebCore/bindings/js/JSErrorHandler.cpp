@@ -102,7 +102,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
             reportCurrentException(exec);
         else {
             bool retvalbool;
-            if (returnValue.getBoolean(retvalbool) && !retvalbool)
+            if (returnValue.getBoolean(retvalbool) && retvalbool)
                 event->preventDefault();
         }
     }

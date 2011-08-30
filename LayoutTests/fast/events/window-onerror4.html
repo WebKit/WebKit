@@ -11,7 +11,7 @@ function test1()
     window.onerror = function (error, url, line) {
         url = url ? url.match( /[^\/]+\/?$/ )[0] : url;
         log("Error caught successfully: " + error + "\nFile: " + url + "\nLine: " + line)
-        return false;
+        return true;
     };
     eval("1=2");
 }

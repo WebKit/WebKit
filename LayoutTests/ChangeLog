@@ -1,3 +1,28 @@
+2011-08-29  Yury Semikhatsky  <yurys@chromium.org>
+
+        Return value of window.onerror has inverted semantics
+        https://bugs.webkit.org/show_bug.cgi?id=67119
+
+        Reviewed by Darin Adler.
+
+        * fast/events/window-onerror1.html:
+        * fast/events/window-onerror11.html:
+        * fast/events/window-onerror12.html:
+        * fast/events/window-onerror13-expected.txt: Added.
+        * fast/events/window-onerror13.html: Copied from LayoutTests/fast/events/window-onerror11.html.
+        * fast/events/window-onerror2.html:
+        * fast/events/window-onerror3.html:
+        * fast/events/window-onerror4.html:
+        * fast/events/window-onerror5.html:
+        * fast/events/window-onerror6.html:
+        * fast/events/window-onerror8.html:
+        * fast/events/window-onerror9.html:
+        * fast/workers/resources/worker-script-error-bubbled.js:
+        (onerror):
+        * fast/workers/resources/worker-script-error-handled.js:
+        (onerror):
+        * http/tests/security/window-onerror-exception-in-iframe.html:
+
 2011-08-30  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [WebSocket] Prevent unnecessary pywebsocket warnings on layout tests.
