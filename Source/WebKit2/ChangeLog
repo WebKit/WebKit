@@ -1,5 +1,12 @@
 2011-08-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another Windows build fix after r94047.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
+2011-08-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         Export more symbols for r94038.
 
         * win/WebKit2.def:
