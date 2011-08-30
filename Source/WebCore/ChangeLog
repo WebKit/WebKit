@@ -1,3 +1,15 @@
+2011-08-30  Chris Rogers  <crogers@google.com>
+
+        Don't allow nodes of one context to be connected to nodes of another context
+        https://bugs.webkit.org/show_bug.cgi?id=67245
+
+        Reviewed by Dimitri Glazkov.
+        
+        Tests: updated webaudio/audionode.html
+
+        * webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::connect):
+        
 2011-08-30  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of <rdar://problem/9281695> Add text search API for getting the DOM range of a text match

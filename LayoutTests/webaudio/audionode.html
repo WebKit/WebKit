@@ -15,6 +15,7 @@
 description("Basic tests for AudioNode API.");
 
 var context = 0;
+var context2 = 0;
 
 function runTest() {
     if (window.layoutTestController) {
@@ -71,6 +72,15 @@ function runTest() {
         testPassed("audioNode.connect(context.destination) succeeded.");
     } catch(e) {
         testFailed("audioNode.connect(context.destination) failed.");
+    }
+    
+    // Create a new context and try to connect the other context's node to this one.
+    try {
+        context2 = new webkitAudioContext();
+        window.audioNode.connect(context2.destination);
+        testFailed("exception should be thrown when connecting to other context's node.");
+    } catch(e) {
+        testPassed("exception thrown when connecting to other context's node.");
     }
 
     finishJSTest();

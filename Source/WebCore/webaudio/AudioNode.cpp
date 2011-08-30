@@ -126,6 +126,9 @@ bool AudioNode::connect(AudioNode* destination, unsigned outputIndex, unsigned i
         output->disconnectAllInputs();
         return true;
     }
+    
+    if (context() != destination->context())
+        return false;
 
     AudioNodeInput* input = destination->input(inputIndex);
     input->connect(output);
