@@ -17,6 +17,11 @@
     Boston, MA 02110-1301, USA.
 */
 
+/**
+ * @file    ewk_js.h
+ * @brief   Allows to export objects to JavaScript API.
+ */
+
 #ifndef ewk_js_h
 #define ewk_js_h
 

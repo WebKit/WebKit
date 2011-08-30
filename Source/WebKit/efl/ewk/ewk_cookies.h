@@ -122,6 +122,13 @@ EAPI void               ewk_cookies_cookie_free(Ewk_Cookie *cookie);
  * @see Ewk_Cookie_Policy
  */
 EAPI void               ewk_cookies_policy_set(Ewk_Cookie_Policy p);
+
+/**
+ * Gets the acceptance policy used in the current cookie jar.
+ *
+ * @return the current acceptance policy
+ * @see Ewk_Cookie_Policy
+ */
 EAPI Ewk_Cookie_Policy  ewk_cookies_policy_get(void);
 
 #ifdef __cplusplus

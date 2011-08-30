@@ -494,14 +494,6 @@ Eina_Bool ewk_frame_text_matches_unmark_all(Evas_Object *o)
     return EINA_TRUE;
 }
 
-/**
- * Sets whether matches marked with ewk_frame_text_matches_mark() should be highlighted.
- *
- * @param o frame object where to set if matches are highlighted or not
- * @param highlight @c EINA_TRUE if matches are highlighted, @c EINA_FALSE if not
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
- */
 Eina_Bool ewk_frame_text_matches_highlight_set(Evas_Object *o, Eina_Bool highlight)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);

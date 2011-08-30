@@ -381,13 +381,22 @@ EAPI Eina_Bool    ewk_frame_text_search(const Evas_Object *o, const char *string
  * @return number of matched @a string
  */
 EAPI unsigned int ewk_frame_text_matches_mark(Evas_Object *o, const char *string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit);
-EAPI Eina_Bool    ewk_frame_text_matches_unmark_all(Evas_Object *o);
 
 /**
  * Unmarks all marked matches in a document.
  * Reverses the effect of ewk_frame_text_matches_mark().
  *
  * @param o frame object where to unmark matches
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool    ewk_frame_text_matches_unmark_all(Evas_Object *o);
+
+/**
+ * Sets whether matches marked with ewk_frame_text_matches_mark() should be highlighted.
+ *
+ * @param o frame object where to set if matches are highlighted or not
+ * @param highlight @c EINA_TRUE if matches are highlighted, @c EINA_FALSE if not
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
  */

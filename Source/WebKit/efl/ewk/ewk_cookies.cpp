@@ -165,12 +165,6 @@ void ewk_cookies_policy_set(Ewk_Cookie_Policy p)
 #endif
 }
 
-/**
- * Gets the acceptance policy used in the current cookie jar.
- *
- * @return the current acceptance policy
- * @see Ewk_Cookie_Policy
- */
 Ewk_Cookie_Policy ewk_cookies_policy_get(void)
 {
     Ewk_Cookie_Policy ewk_policy = EWK_COOKIE_JAR_ACCEPT_ALWAYS;

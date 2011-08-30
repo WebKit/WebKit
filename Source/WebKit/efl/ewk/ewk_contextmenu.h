@@ -192,7 +192,7 @@ EAPI const Eina_List            *ewk_context_menu_item_list_get(Ewk_Context_Menu
  * @param action specifies a action of the item
  * @param submenu specifies a submenu of the item
  * @param title specifies a title of the item
- * @param checked
+ * @param checked @c EINA_TRUE if the item should be toggled or @c EINA_FALSE if not
  * @param enabled @c EINA_TRUE to enable the item or @c EINA_FALSE to disable
  * @return the pointer to the new item on success or @c 0 on failure
  *
@@ -282,7 +282,21 @@ EAPI const char                 *ewk_context_menu_item_title_get(Ewk_Context_Men
  */
 EAPI const char                 *ewk_context_menu_item_title_set(Ewk_Context_Menu_Item *o, const char *title);
 
+/**
+ * Queries if the item is toggled.
+ *
+ * @param o the item to query if the item is toggled
+ * @return @c EINA_TRUE if the item is toggled or @c EINA_FALSE if not or on failure
+ */
 EAPI Eina_Bool                   ewk_context_menu_item_checked_get(Ewk_Context_Menu_Item *o);
+
+/**
+ * Sets if the item should be toggled.
+ *
+ * @param o the item to be toggled
+ * @param checked @c EINA_TRUE if the item should be toggled or @c EINA_FALSE if not
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool                   ewk_context_menu_item_checked_set(Ewk_Context_Menu_Item *o, Eina_Bool checked);
 
 /**
