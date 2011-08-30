@@ -1,3 +1,17 @@
+2011-08-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move setInnerTextValue from RenderTextControl to HTMLTextFormControlElement
+        https://bugs.webkit.org/show_bug.cgi?id=67152
+
+        Reviewed by Darin Adler.
+
+        Updated call sites of lastChangeWasUserEdit since it's moved from RenderTextControl
+        to HTMLTextFormControlElement.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLInputElement::isUserEdited):
+        (DOMHTMLTextAreaElement::isUserEdited):
+
 2011-08-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r93987, r93992, r93995, r93998, and
