@@ -112,6 +112,7 @@ public slots:
     void handleErrorPages() { m_handleErrorPages = true; }
     void dumpEditingCallbacks();
     void dumpFrameLoadCallbacks();
+    void dumpProgressFinishedCallback();
     void dumpUserGestureInFrameLoadCallbacks();
     void dumpResourceLoadCallbacks();
     void dumpResourceResponseMIMETypes();

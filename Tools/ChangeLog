@@ -1,3 +1,45 @@
+2011-08-30  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Emit last progress notification before calling dispatchDidFinishLoad
+        https://bugs.webkit.org/show_bug.cgi?id=28851
+
+        Reviewed by Adam Barth.
+
+        Implement dumpProgressFinishedCallback() in the layoutTestController for Qt,
+        Chromium and GTK ports. The first two were simple changes.
+
+        Some refactoring was needed in GTK port to assure that the dumps are emitted
+        correctly and the processing after the page load finished is in the right place.
+
+        To detect the load finished, we use the callback for the "load-status" notifier
+        signal of the top loading frame. And we use the deprecated "load-finished" signal
+        for dumping (if enabled) the progress finished expected output.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (dumpProgressFinishedCallbackCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::dumpProgressFinishedCallback):
+        (LayoutTestController::setDumpProgressFinishedCallback):
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::dumpProgressFinishedCallback):
+        (LayoutTestController::reset):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController::shouldDumpProgressFinishedCallback):
+        (LayoutTestController::setShouldDumpProgressFinishedCallback):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didStopLoading):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewLoadFinished):
+        (topLoadingFrameLoadFinished):
+        (webFrameLoadStatusNotified):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::reset):
+        (LayoutTestController::dumpProgressFinishedCallback):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2011-08-30  Filip Pizlo  <fpizlo@apple.com>
 
         JavaScriptCore does not have a good mechanism for performance

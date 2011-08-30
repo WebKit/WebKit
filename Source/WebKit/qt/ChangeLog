@@ -1,3 +1,19 @@
+2011-08-30  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Emit last progress notification before calling dispatchDidFinishLoad
+        https://bugs.webkit.org/show_bug.cgi?id=28851
+
+        Reviewed by Adam Barth.
+
+        Add infrastructure to dump progressFinishedNotification callback in DRT.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::dumpProgressFinishedCallback):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::postProgressFinishedNotification):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2011-08-30  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         The unused ScrollView* argument can and should be removed from

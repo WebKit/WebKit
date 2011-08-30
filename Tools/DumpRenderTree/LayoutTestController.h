@@ -181,6 +181,9 @@ public:
 
     bool dumpFrameLoadCallbacks() const { return m_dumpFrameLoadCallbacks; }
     void setDumpFrameLoadCallbacks(bool dumpFrameLoadCallbacks) { m_dumpFrameLoadCallbacks = dumpFrameLoadCallbacks; }
+
+    bool dumpProgressFinishedCallback() const { return m_dumpProgressFinishedCallback; }
+    void setDumpProgressFinishedCallback(bool dumpProgressFinishedCallback) { m_dumpProgressFinishedCallback = dumpProgressFinishedCallback; }
     
     bool dumpUserGestureInFrameLoadCallbacks() const { return m_dumpUserGestureInFrameLoadCallbacks; }
     void setDumpUserGestureInFrameLoadCallbacks(bool dumpUserGestureInFrameLoadCallbacks) { m_dumpUserGestureInFrameLoadCallbacks = dumpUserGestureInFrameLoadCallbacks; }    
@@ -369,6 +372,7 @@ private:
     bool m_dumpDatabaseCallbacks;
     bool m_dumpEditingCallbacks;
     bool m_dumpFrameLoadCallbacks;
+    bool m_dumpProgressFinishedCallback;
     bool m_dumpUserGestureInFrameLoadCallbacks;
     bool m_dumpHistoryDelegateCallbacks;
     bool m_dumpResourceLoadCallbacks;

@@ -777,18 +777,12 @@ static char* getFrameNameSuitableForTestResult(WebKitWebView* view, WebKitWebFra
 
 static void webViewLoadFinished(WebKitWebView* view, WebKitWebFrame* frame, void*)
 {
+    // The deprecated "load-finished" signal is triggered by postProgressFinishedNotification(),
+    // so we can use it here in the DRT to provide the correct dump.
     if (frame != topLoadingFrame)
         return;
-
-    topLoadingFrame = 0;
-    WorkQueue::shared()->setFrozen(true); // first complete load freezes the queue for the rest of this test
-    if (gLayoutTestController->waitToDump())
-        return;
-
-    if (WorkQueue::shared()->count())
-        g_timeout_add(0, processWork, 0);
-    else
-        dump();
+    if (gLayoutTestController->dumpProgressFinishedCallback())
+        printf("postProgressFinishedNotification\n");
 }
 
 static gboolean webViewLoadError(WebKitWebView*, WebKitWebFrame*, gchar*, gpointer, gpointer)
@@ -1022,6 +1016,19 @@ static WebKitWebView* webInspectorInspectWebView(WebKitWebInspector*, gpointer d
     return WEBKIT_WEB_VIEW(webView);
 }
 
+static void topLoadingFrameLoadFinished()
+{
+    topLoadingFrame = 0;
+    WorkQueue::shared()->setFrozen(true); // first complete load freezes the queue for the rest of this test
+    if (gLayoutTestController->waitToDump())
+        return;
+
+    if (WorkQueue::shared()->count())
+        g_timeout_add(0, processWork, 0);
+    else
+        dump();
+}
+
 static void webFrameLoadStatusNotified(WebKitWebFrame* frame, gpointer user_data)
 {
     WebKitLoadStatus loadStatus = webkit_web_frame_get_load_status(frame);
@@ -1039,13 +1046,17 @@ static void webFrameLoadStatusNotified(WebKitWebFrame* frame, gpointer user_data
                 printf("%s - didCommitLoadForFrame\n", frameName.get());
             break;
         case WEBKIT_LOAD_FINISHED:
-            if (frame != topLoadingFrame || !done)
+            if (!done)
                 printf("%s - didFinishLoadForFrame\n", frameName.get());
             break;
         default:
             break;
         }
     }
+
+    if ((loadStatus == WEBKIT_LOAD_FINISHED || loadStatus == WEBKIT_LOAD_FAILED)
+        && frame == topLoadingFrame)
+        topLoadingFrameLoadFinished();
 }
 
 static void frameCreatedCallback(WebKitWebView* webView, WebKitWebFrame* webFrame, gpointer user_data)

@@ -2292,14 +2292,15 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             if (m_stateMachine.creatingInitialEmptyDocument() || !m_stateMachine.committedFirstRealDocumentLoad())
                 return;
 
+            if (Page* page = m_frame->page())
+                page->progress()->progressCompleted(m_frame);
+
             const ResourceError& error = dl->mainDocumentError();
             if (!error.isNull())
                 m_client->dispatchDidFailLoad(error);
             else
                 m_client->dispatchDidFinishLoad();
 
-            if (Page* page = m_frame->page())
-                page->progress()->progressCompleted(m_frame);
             return;
         }
         

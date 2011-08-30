@@ -94,6 +94,11 @@ public:
     void dumpFrameLoadCallbacks(const CppArgumentList&, CppVariant*);
 
     // This function sets a flag that tells the test_shell to print a line of
+    // descriptive text for the progress finished callback. It takes no
+    // arguments, and ignores any that may be present.
+    void dumpProgressFinishedCallback(const CppArgumentList&, CppVariant*);
+
+    // This function sets a flag that tells the test_shell to print a line of
     // user gesture status text for some frame load callbacks. It takes no
     // arguments, and ignores any that may be present.
     void dumpUserGestureInFrameLoadCallbacks(const CppArgumentList&, CppVariant*);
@@ -410,6 +415,8 @@ public:
     bool shouldDumpEditingCallbacks() { return m_dumpEditingCallbacks; }
     bool shouldDumpFrameLoadCallbacks() { return m_dumpFrameLoadCallbacks; }
     void setShouldDumpFrameLoadCallbacks(bool value) { m_dumpFrameLoadCallbacks = value; }
+    bool shouldDumpProgressFinishedCallback() { return m_dumpProgressFinishedCallback; }
+    void setShouldDumpProgressFinishedCallback(bool value) { m_dumpProgressFinishedCallback = value; }
     bool shouldDumpUserGestureInFrameLoadCallbacks() { return m_dumpUserGestureInFrameLoadCallbacks; }
     void setShouldDumpUserGestureInFrameLoadCallbacks(bool value) { m_dumpUserGestureInFrameLoadCallbacks = value; }
     bool shouldDumpResourceLoadCallbacks() {return m_dumpResourceLoadCallbacks; }
@@ -541,6 +548,10 @@ private:
     // If true, the test_shell will output a descriptive line for each frame
     // load callback.
     bool m_dumpFrameLoadCallbacks;
+
+    // If true, the test_shell will output a descriptive line for the progress
+    // finished callback.
+    bool m_dumpProgressFinishedCallback;
 
     // If true, the test_shell will output a line of the user gesture status
     // text for some frame load callbacks.

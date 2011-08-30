@@ -287,6 +287,8 @@ void WebViewHost::didStartLoading()
 
 void WebViewHost::didStopLoading()
 {
+    if (layoutTestController()->shouldDumpProgressFinishedCallback())
+        fputs("postProgressFinishedNotification\n", stdout);
     m_shell->setIsLoading(false);
 }
 

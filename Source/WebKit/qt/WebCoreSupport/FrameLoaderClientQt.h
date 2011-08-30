@@ -247,6 +247,7 @@ public:
     const KURL& lastRequestedUrl() const { return m_lastRequestedUrl; }
 
     static bool dumpFrameLoaderCallbacks;
+    static bool dumpProgressFinishedCallback;
     static bool dumpUserGestureInFrameLoaderCallbacks;
     static bool dumpResourceLoadCallbacks;
     static bool dumpResourceResponseMIMETypes;

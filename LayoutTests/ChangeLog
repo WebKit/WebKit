@@ -1,3 +1,18 @@
+2011-08-30  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Emit last progress notification before calling dispatchDidFinishLoad
+        https://bugs.webkit.org/show_bug.cgi?id=28851
+
+        Reviewed by Adam Barth.
+
+        Keep track of the order expected for the progressFinishedNotification, which is
+        before the didFinishLoadForFrame.
+
+        * http/tests/loading/progress-finished-callback-expected.txt: Added.
+        * http/tests/loading/progress-finished-callback.html: Added.
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2011-08-30  Ojan Vafai  <ojan@chromium.org>
 
         CSS parsing for -webkit-flex-flow

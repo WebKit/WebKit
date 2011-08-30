@@ -170,6 +170,7 @@ static QString drtDescriptionSuitableForTestResult(const RefPtr<WebCore::Node> n
 namespace WebCore {
 
 bool FrameLoaderClientQt::dumpFrameLoaderCallbacks = false;
+bool FrameLoaderClientQt::dumpProgressFinishedCallback = false;
 bool FrameLoaderClientQt::dumpUserGestureInFrameLoaderCallbacks = false;
 bool FrameLoaderClientQt::dumpResourceLoadCallbacks = false;
 bool FrameLoaderClientQt::sendRequestReturnsNullOnRedirect = false;
@@ -592,6 +593,9 @@ void FrameLoaderClientQt::postProgressEstimateChangedNotification()
 
 void FrameLoaderClientQt::postProgressFinishedNotification()
 {
+    if (dumpProgressFinishedCallback)
+        printf("postProgressFinishedNotification\n");
+
     // Send a mousemove event to:
     // (1) update the cursor to change according to whatever is underneath the mouse cursor right now;
     // (2) display the tool tip if the mouse hovers a node which has a tool tip.

@@ -102,6 +102,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("dumpDatabaseCallbacks", &LayoutTestController::dumpDatabaseCallbacks);
     bindMethod("dumpEditingCallbacks", &LayoutTestController::dumpEditingCallbacks);
     bindMethod("dumpFrameLoadCallbacks", &LayoutTestController::dumpFrameLoadCallbacks);
+    bindMethod("dumpProgressFinishedCallback", &LayoutTestController::dumpProgressFinishedCallback);
     bindMethod("dumpUserGestureInFrameLoadCallbacks", &LayoutTestController::dumpUserGestureInFrameLoadCallbacks);
     bindMethod("dumpResourceLoadCallbacks", &LayoutTestController::dumpResourceLoadCallbacks);
     bindMethod("dumpResourceResponseMIMETypes", &LayoutTestController::dumpResourceResponseMIMETypes);
@@ -320,6 +321,12 @@ void LayoutTestController::dumpBackForwardList(const CppArgumentList&, CppVarian
 void LayoutTestController::dumpFrameLoadCallbacks(const CppArgumentList&, CppVariant* result)
 {
     m_dumpFrameLoadCallbacks = true;
+    result->setNull();
+}
+
+void LayoutTestController::dumpProgressFinishedCallback(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpProgressFinishedCallback = true;
     result->setNull();
 }
 
@@ -577,6 +584,7 @@ void LayoutTestController::reset()
     m_dumpAsAudio = false;
     m_dumpEditingCallbacks = false;
     m_dumpFrameLoadCallbacks = false;
+    m_dumpProgressFinishedCallback = false;
     m_dumpUserGestureInFrameLoadCallbacks = false;
     m_dumpResourceLoadCallbacks = false;
     m_dumpResourceResponseMIMETypes = false;

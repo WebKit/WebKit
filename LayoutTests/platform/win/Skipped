@@ -1401,3 +1401,6 @@ editing/selection/caret-at-bidi-boundary.html
 
 # Need DRT change: https://bugs.webkit.org/show_bug.cgi?id=66620
 editing/spelling/spelling-insert-html.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=66773
+http/tests/loading/progress-finished-callback.html
