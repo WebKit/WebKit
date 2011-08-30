@@ -62,6 +62,7 @@ PassRefPtr<EventQueue> EventQueue::create(ScriptExecutionContext* context)
 
 EventQueue::EventQueue(ScriptExecutionContext* context)
     : m_pendingEventTimer(adoptPtr(new EventQueueTimer(this, context)))
+    , m_isClosed(false)
 {
 }
 
@@ -71,6 +72,9 @@ EventQueue::~EventQueue()
 
 void EventQueue::enqueueEvent(PassRefPtr<Event> event)
 {
+    if (m_isClosed)
+        return;
+
     ASSERT(event->target());
     bool wasAdded = m_queuedEvents.add(event).second;
     ASSERT_UNUSED(wasAdded, wasAdded); // It should not have already been in the list.
@@ -109,8 +113,9 @@ bool EventQueue::cancelEvent(Event* event)
     return found;
 }
 
-void EventQueue::cancelQueuedEvents()
+void EventQueue::close()
 {
+    m_isClosed = true;
     m_pendingEventTimer->stop();
     m_queuedEvents.clear();
 }

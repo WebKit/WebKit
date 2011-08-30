@@ -1776,7 +1776,7 @@ void Document::detach()
 
     clearAXObjectCache();
     stopActiveDOMObjects();
-    m_eventQueue->cancelQueuedEvents();
+    m_eventQueue->close();
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     // FIXME: consider using ActiveDOMObject.

@@ -53,7 +53,9 @@ public:
     void enqueueEvent(PassRefPtr<Event>);
     void enqueueOrDispatchScrollEvent(PassRefPtr<Node>, ScrollEventTargetType);
     bool cancelEvent(Event*);
-    void cancelQueuedEvents();
+
+    // The accumulated and all the future events will be discarded, no events will be dispatched anymore. 
+    void close();
 
 private:
     explicit EventQueue(ScriptExecutionContext*);
@@ -64,7 +66,8 @@ private:
     OwnPtr<EventQueueTimer> m_pendingEventTimer;
     ListHashSet<RefPtr<Event> > m_queuedEvents;
     HashSet<Node*> m_nodesWithQueuedScrollEvents;
-    
+    bool m_isClosed;
+
     friend class EventQueueTimer;    
 };
 
