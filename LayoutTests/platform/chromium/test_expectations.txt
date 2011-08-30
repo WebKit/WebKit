@@ -11,7 +11,7 @@ BUGCR24182 SLOW LINUX MAC DEBUG : fast/dom/Window/window-postmessage-clone-reall
 BUGCR24182 SLOW LINUX MAC DEBUG : fast/forms/form-associated-element-crash3.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/forms/select-set-length-with-mutation-remove.html = PASS
 BUGCR24182 SLOW LINUX WIN : fast/js/regexp-overflow.html = PASS
-BUGCR24182 SLOW LINUX WIN DEBUG : fast/js/toString-and-valueOf-override.html = PASS
+BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
 BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-errors-reload.html = PASS
 BUGCR24182 SLOW WIN RELEASE : http/tests/loading/onload-vs-immediate-refresh.pl = PASS
@@ -2596,7 +2596,7 @@ BUGCR74979 SKIP MAC GPU : media/video-canvas-alpha.html = IMAGE
 BUGWK67116 GPU DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
 
 // This test needs completely new baselines.
-BUGCR75354 BUGWK55718 : media/media-document-audio-repaint.html = IMAGE+TEXT
+BUGCR75354 BUGWK55718 : media/media-document-audio-repaint.html = IMAGE+TEXT IMAGE
 
 BUGWK55968 MAC GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT
 BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE

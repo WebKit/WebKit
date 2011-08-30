@@ -1,3 +1,14 @@
+2011-08-29  David Levin  <levin@chromium.org>
+
+        [chromium] Misc test expectations updates.
+
+        * platform/chromium-mac/fast/files/create-blob-url-crash-expected.txt: Copied from LayoutTests/platform/qt/fast/files/create-blob-url-crash-expected.txt.
+        * platform/chromium/fast/files/create-blob-url-crash-expected.txt: Renamed from LayoutTests/platform/qt/fast/files/create-blob-url-crash-expected.txt.
+           Added due to it being different from normal OSX result.
+        * platform/chromium/test_expectations.txt: Changes due to expectation
+          update for media-document-audio-repaint.html leading to only an image mismatch
+          and a test that is a slow on OS X as well as Linux and Windows.
+
 2011-08-29  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Receive binary message as Blob
