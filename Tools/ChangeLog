@@ -1,3 +1,20 @@
+2011-08-30  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [WebSocket] update pywebsocket to 0.6b4.
+        https://bugs.webkit.org/show_bug.cgi?id=66924
+
+        Reviewed by Kent Tamura.
+
+        pywebsocket 0.6b2 supported minimum features of Hybi-08 specification.
+        Now, pywebsocket 0.6b4 supports full features of Hybi-10 specification.
+        0.6b3 or later supports a closing handshake handler and it is useful to
+        verify client's closing handshake implementation.
+        0.6b4 supports AbortedByUserException. It is useful to eliminate
+        unnecessary server warning messages on intended abnormal closures.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        Update download URL and directory path.
+
 2011-08-29  Tom Zakrajsek  <tomz@codeaurora.org>
 
         sheriffbot "usage" help statements are wrong
