@@ -105,6 +105,7 @@ HTMLDocumentParser::~HTMLDocumentParser()
     ASSERT(!m_parserScheduler);
     ASSERT(!m_pumpSessionNestingLevel);
     ASSERT(!m_preloadScanner);
+    ASSERT(!m_insertionPreloadScanner);
 }
 
 void HTMLDocumentParser::detach()
@@ -116,6 +117,7 @@ void HTMLDocumentParser::detach()
     // FIXME: It seems wrong that we would have a preload scanner here.
     // Yet during fast/dom/HTMLScriptElement/script-load-events.html we do.
     m_preloadScanner.clear();
+    m_insertionPreloadScanner.clear();
     m_parserScheduler.clear(); // Deleting the scheduler will clear any timers.
 }
 
@@ -326,9 +328,10 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
     if (isWaitingForScripts()) {
         // Check the document.write() output with a separate preload scanner as
         // the main scanner can't deal with insertions.
-        HTMLPreloadScanner preloadScanner(document());
-        preloadScanner.appendToEnd(source);
-        preloadScanner.scan();
+        if (!m_insertionPreloadScanner)
+            m_insertionPreloadScanner = adoptPtr(new HTMLPreloadScanner(document()));
+        m_insertionPreloadScanner->appendToEnd(source);
+        m_insertionPreloadScanner->scan();
     }
 
     endIfDelayed();
@@ -475,6 +478,7 @@ void HTMLDocumentParser::resumeParsingAfterScriptExecution()
     ASSERT(!inScriptExecution());
     ASSERT(!m_treeBuilder->isPaused());
 
+    m_insertionPreloadScanner.clear();
     pumpTokenizerIfPossible(AllowYield);
     endIfDelayed();
 }

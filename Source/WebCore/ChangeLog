@@ -1,3 +1,22 @@
+2011-08-30  Tony Gentilcore  <tonyg@chromium.org>
+
+        PreloadScanner shouldn't load images inside noscript via doc.write
+        https://bugs.webkit.org/show_bug.cgi?id=67214
+
+        Reviewed by Adam Barth.
+
+        The problem was that the tokenizer state was lost between each call to document.write.
+        This works around that bug by making all document.write()s in the same script block share
+        the same tokenizer state.
+
+        Test: fast/preloader/document-write-noscript.html
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::~HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::detach):
+        (WebCore::HTMLDocumentParser::insert):
+        * html/parser/HTMLDocumentParser.h:
+
 2011-08-30  Dmitry Titov  <dimich@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=67210
