@@ -1,3 +1,9 @@
+2011-08-30  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, another attempt to fix GTK build after r94038.
+
+        * Source/autotools/symbols.filter:
+
 2011-08-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix attempt after r94038.
