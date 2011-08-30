@@ -289,6 +289,8 @@ public:
 
     RenderBox* embeddedContentBox() const;
 
+    void clearOwningRendererForCustomScrollbars(RenderBox*);
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const LayoutRect& rectToScroll, const LayoutRect& clipRect);
     virtual void scrollContentsSlowPath(const LayoutRect& updateRect);

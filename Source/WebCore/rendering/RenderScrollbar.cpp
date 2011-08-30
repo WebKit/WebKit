@@ -149,7 +149,7 @@ ScrollbarPart RenderScrollbar::partForStyleResolve()
 
 PassRefPtr<RenderStyle> RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart partType, PseudoId pseudoId)
 {
-    if (!m_owner)
+    if (!owningRenderer())
         return 0;
 
     s_styleResolvePart = partType;

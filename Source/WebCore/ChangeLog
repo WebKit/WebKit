@@ -1,3 +1,24 @@
+2011-08-30  Abhishek Arya  <inferno@chromium.org>
+
+        Removed m_owner accessed in custom scrollbars.
+        https://bugs.webkit.org/show_bug.cgi?id=64737
+
+        Reviewed by David Hyatt.
+
+        Problem does not reproduce in DRT, even with Eventhandler tricks
+        and gc(). So, adding a manual test.
+
+        * manual-tests/custom-scrollbar-renderer-removed-crash.html: Added.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::clearOwningRendererForCustomScrollbars):
+        * page/FrameView.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed): when this renderbox is getting
+        destroyed, clear the custom scrollbar in this frameview having this renderbox
+        as its owning renderer.
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::getScrollbarPseudoStyle): fix the null check.
+
 2011-08-30  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Emit last progress notification before calling dispatchDidFinishLoad
