@@ -1,3 +1,15 @@
+2011-08-30  Scott Byer  <scottbyer@chromium.org>
+
+        Switch chromium to use ScrollAnimatorNone on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=67000
+
+        Reviewed by Adam Barth.
+
+        Testing covered by Chromium webkit_unit_tests ScrollAnimatorNoneTest.*
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2011-08-30  Tony Chang  <tony@chromium.org>
 
         refactor and cleanup RenderFlexibleBox
