@@ -150,7 +150,7 @@ unsigned ewk_util_worker_thread_count();
 
 #if ENABLE(TOUCH_EVENTS)
 void ewk_view_need_touch_events_set(Evas_Object*, bool needed);
-Eina_Bool ewk_view_need_touch_events_get(Evas_Object*);
+Eina_Bool ewk_view_need_touch_events_get(const Evas_Object*);
 #endif
 
 Ewk_History *ewk_history_new(WebCore::BackForwardListImpl *history);
@@ -163,8 +163,8 @@ Eina_List *ewk_history_item_children_get(const Ewk_History_Item *item);
 Ewk_Context_Menu *ewk_context_menu_new(Evas_Object *view, WebCore::ContextMenuController *controller);
 Eina_Bool ewk_context_menu_free(Ewk_Context_Menu *o);
 void ewk_context_menu_item_append(Ewk_Context_Menu *o, WebCore::ContextMenuItem &core);
-Ewk_Context_Menu *ewk_context_menu_custom_get(Ewk_Context_Menu *o);
-void ewk_context_menu_show(Ewk_Context_Menu *o);
+Ewk_Context_Menu *ewk_context_menu_custom_get(const Ewk_Context_Menu *o);
+void ewk_context_menu_show(const Ewk_Context_Menu *o);
 #endif
 
 const Eina_Rectangle *ewk_view_repaints_get(const Ewk_View_Private_Data *priv, size_t *count);
@@ -212,7 +212,7 @@ Eina_Bool ewk_view_navigation_policy_decision(Evas_Object *o, Ewk_Frame_Resource
 
 void ewk_view_contents_size_changed(Evas_Object *o, Evas_Coord w, Evas_Coord h);
 
-WebCore::FloatRect ewk_view_page_rect_get(Evas_Object *o);
+WebCore::FloatRect ewk_view_page_rect_get(const Evas_Object *o);
 
 const char* ewk_settings_default_user_agent_get(void);
 

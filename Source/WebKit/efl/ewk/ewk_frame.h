@@ -422,7 +422,7 @@ EAPI Eina_Bool    ewk_frame_text_matches_highlight_get(const Evas_Object *o);
  * @return @c EINA_TRUE on success, @c EINA_FALSE when no matches were found or
  *         @a n is bigger than search results or on failure
  */
-EAPI Eina_Bool    ewk_frame_text_matches_nth_pos_get(Evas_Object *o, size_t n, int *x, int *y);
+EAPI Eina_Bool    ewk_frame_text_matches_nth_pos_get(const Evas_Object *o, size_t n, int *x, int *y);
 
 /**
  * Asks frame to stop loading.
@@ -772,7 +772,7 @@ EAPI Eina_Bool    ewk_frame_feed_key_up(Evas_Object *o, const Evas_Event_Key_Up 
  * @param o a frame object to check selection type
  * @return current text selection type on success or no selection otherwise
  */
-EAPI Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(Evas_Object *o);
+EAPI Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(const Evas_Object *o);
 
 /**
  * Gets the frame source.
@@ -787,7 +787,7 @@ EAPI Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(Evas_Object *o);
  *
  * @see ewk_frame_resources_location_get()
  */
-EAPI ssize_t ewk_frame_source_get(Evas_Object *o, char **frame_source);
+EAPI ssize_t ewk_frame_source_get(const Evas_Object *o, char **frame_source);
 
 /**
  * Gets the resource list of this frame.
@@ -802,7 +802,7 @@ EAPI ssize_t ewk_frame_source_get(Evas_Object *o, char **frame_source);
  *
  * @see ewk_frame_source_get()
  */
-EAPI Eina_List *ewk_frame_resources_location_get(Evas_Object *o);
+EAPI Eina_List *ewk_frame_resources_location_get(const Evas_Object *o);
 
 #ifdef __cplusplus
 }

@@ -54,7 +54,7 @@ void ewk_window_features_ref(Ewk_Window_Features *window_features)
     window_features->__ref++;
 }
 
-void ewk_window_features_bool_property_get(Ewk_Window_Features *window_features, Eina_Bool *toolbar_visible, Eina_Bool *statusbar_visible, Eina_Bool *scrollbars_visible, Eina_Bool *menubar_visible, Eina_Bool *locationbar_visible, Eina_Bool *fullscreen)
+void ewk_window_features_bool_property_get(const Ewk_Window_Features *window_features, Eina_Bool *toolbar_visible, Eina_Bool *statusbar_visible, Eina_Bool *scrollbars_visible, Eina_Bool *menubar_visible, Eina_Bool *locationbar_visible, Eina_Bool *fullscreen)
 {
     EINA_SAFETY_ON_NULL_RETURN(window_features);
     EINA_SAFETY_ON_NULL_RETURN(window_features->core);
@@ -78,7 +78,7 @@ void ewk_window_features_bool_property_get(Ewk_Window_Features *window_features,
         *fullscreen = window_features->core->fullscreen;
 }
 
-void ewk_window_features_int_property_get(Ewk_Window_Features *window_features, int *x, int *y, int *w, int *h)
+void ewk_window_features_int_property_get(const Ewk_Window_Features *window_features, int *x, int *y, int *w, int *h)
 {
     EINA_SAFETY_ON_NULL_RETURN(window_features);
     EINA_SAFETY_ON_NULL_RETURN(window_features->core);

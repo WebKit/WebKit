@@ -1030,7 +1030,7 @@ static void _ewk_view_zoom_animation_start(Ewk_View_Smart_Data *sd)
         (_ewk_view_zoom_animator_cb, sd);
 }
 
-static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(Evas_Object *o)
+static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET(o, sd);
     EWK_VIEW_PRIV_GET(sd, priv);
@@ -1137,7 +1137,7 @@ void ewk_view_fixed_layout_size_set(Evas_Object *o, Evas_Coord w, Evas_Coord h)
     view->forceLayout();
 }
 
-void ewk_view_fixed_layout_size_get(Evas_Object *o, Evas_Coord *w, Evas_Coord *h)
+void ewk_view_fixed_layout_size_get(const Evas_Object *o, Evas_Coord *w, Evas_Coord *h)
 {
     if (w)
         *w = 0;
@@ -1170,7 +1170,7 @@ void ewk_view_theme_set(Evas_Object *o, const char *path)
 
 }
 
-const char* ewk_view_theme_get(Evas_Object *o)
+const char* ewk_view_theme_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
@@ -1755,7 +1755,7 @@ Eina_Bool ewk_view_pre_render_relative_radius(Evas_Object *o, unsigned int n)
     return sd->api->pre_render_relative_radius(sd, n, cur_zoom);
 }
 
-unsigned int ewk_view_imh_get(Evas_Object *o)
+unsigned int ewk_view_imh_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
@@ -2101,14 +2101,14 @@ Eina_Bool ewk_view_setting_encoding_detector_set(Evas_Object *o, Eina_Bool enabl
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_encoding_detector_get(Evas_Object *o)
+Eina_Bool ewk_view_setting_encoding_detector_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.encoding_detector;
 }
 
-Eina_Bool ewk_view_setting_enable_developer_extras_get(Evas_Object *o)
+Eina_Bool ewk_view_setting_enable_developer_extras_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
@@ -2295,7 +2295,7 @@ Eina_Bool ewk_view_setting_font_sans_serif_set(Evas_Object *o, const char *famil
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_spatial_navigation_get(Evas_Object *o)
+Eina_Bool ewk_view_setting_spatial_navigation_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
@@ -2314,7 +2314,7 @@ Eina_Bool ewk_view_setting_spatial_navigation_set(Evas_Object *o, Eina_Bool enab
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_local_storage_get(Evas_Object *o)
+Eina_Bool ewk_view_setting_local_storage_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
@@ -2333,7 +2333,7 @@ Eina_Bool ewk_view_setting_local_storage_set(Evas_Object *o, Eina_Bool enable)
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_setting_page_cache_get(Evas_Object *o)
+Eina_Bool ewk_view_setting_page_cache_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
@@ -3443,7 +3443,7 @@ void ewk_view_viewport_attributes_set(Evas_Object *o, const WebCore::ViewportArg
     evas_object_smart_callback_call(o, "viewport,changed", 0);
 }
 
-void ewk_view_viewport_attributes_get(Evas_Object *o, float *w, float *h, float *init_scale, float *max_scale, float *min_scale, float *device_pixel_ratio, Eina_Bool *user_scalable)
+void ewk_view_viewport_attributes_get(const Evas_Object *o, float *w, float *h, float *init_scale, float *max_scale, float *min_scale, float *device_pixel_ratio, Eina_Bool *user_scalable)
 {
     WebCore::ViewportAttributes attributes = _ewk_view_viewport_attributes_compute(o);
 
@@ -3479,7 +3479,7 @@ Eina_Bool ewk_view_zoom_range_set(Evas_Object *o, float min_scale, float max_sca
     return EINA_TRUE;
 }
 
-float ewk_view_zoom_range_min_get(Evas_Object *o)
+float ewk_view_zoom_range_min_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, -1.0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, -1.0);
@@ -3487,7 +3487,7 @@ float ewk_view_zoom_range_min_get(Evas_Object *o)
     return priv->settings.zoom_range.min_scale;
 }
 
-float ewk_view_zoom_range_max_get(Evas_Object *o)
+float ewk_view_zoom_range_max_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, -1.0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, -1.0);
@@ -3505,7 +3505,7 @@ Eina_Bool ewk_view_user_scalable_set(Evas_Object *o, Eina_Bool user_scalable)
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_view_user_scalable_get(Evas_Object *o)
+Eina_Bool ewk_view_user_scalable_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
@@ -3513,7 +3513,7 @@ Eina_Bool ewk_view_user_scalable_get(Evas_Object *o)
     return priv->settings.zoom_range.user_scalable;
 }
 
-float ewk_view_device_pixel_ratio_get(Evas_Object *o)
+float ewk_view_device_pixel_ratio_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, -1.0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, -1.0);
@@ -3638,7 +3638,7 @@ void ewk_view_contents_size_changed(Evas_Object *o, int w, int h)
  *
  * @return page size.
  */
-WebCore::FloatRect ewk_view_page_rect_get(Evas_Object *o)
+WebCore::FloatRect ewk_view_page_rect_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET(o, sd);
     EWK_VIEW_PRIV_GET(sd, priv);
@@ -3692,7 +3692,7 @@ Eina_Bool ewk_view_mode_set(Evas_Object *o, Ewk_View_Mode view_mode)
     return EINA_TRUE;
 }
 
-Ewk_View_Mode ewk_view_mode_get(Evas_Object *o)
+Ewk_View_Mode ewk_view_mode_get(const Evas_Object *o)
 {
     Ewk_View_Mode mode = EWK_VIEW_MODE_WINDOWED;
 

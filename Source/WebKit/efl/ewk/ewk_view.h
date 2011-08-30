@@ -545,7 +545,7 @@ EAPI void         ewk_view_fixed_layout_size_set(Evas_Object *o, Evas_Coord w, E
  * @param h the pointer to store fixed height, returns @c 0 on failure or if there is no
  *        fixed layout in use
  */
-EAPI void         ewk_view_fixed_layout_size_get(Evas_Object *o, Evas_Coord *w, Evas_Coord *h);
+EAPI void         ewk_view_fixed_layout_size_get(const Evas_Object *o, Evas_Coord *w, Evas_Coord *h);
 
 /**
  * Sets the theme path that will be used by this view.
@@ -568,7 +568,7 @@ EAPI void         ewk_view_theme_set(Evas_Object *o, const char *path);
  *
  * @return the theme path, may be @c 0 if not set
  */
-EAPI const char  *ewk_view_theme_get(Evas_Object *o);
+EAPI const char  *ewk_view_theme_get(const Evas_Object *o);
 
 /**
  * Gets the object that represents the main frame.
@@ -1227,7 +1227,7 @@ EAPI Eina_Bool    ewk_view_disable_render(const Evas_Object *o);
  *
  * @return the input method hints as @a Ewk_Imh bits-field
  */
-EAPI unsigned int ewk_view_imh_get(Evas_Object *o);
+EAPI unsigned int ewk_view_imh_get(const Evas_Object *o);
 
 /**
  * Gets the user agent string.
@@ -1771,7 +1771,7 @@ EAPI Eina_Bool    ewk_view_setting_font_sans_serif_set(Evas_Object *o, const cha
  * @return @c EINA_TRUE if spatial navigation is enabled,
  *         @c EINA_FALSE if not or on failure
  */
-EAPI Eina_Bool    ewk_view_setting_spatial_navigation_get(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_spatial_navigation_get(const Evas_Object *o);
 
 /**
  * Enables/disables the spatial navigation feature.
@@ -1792,7 +1792,7 @@ EAPI Eina_Bool    ewk_view_setting_spatial_navigation_set(Evas_Object *o, Eina_B
  * @return @c EINA_TRUE if local storage is enabled,
  *         @c EINA_FALSE if not or on failure
  */
-EAPI Eina_Bool    ewk_view_setting_local_storage_get(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_local_storage_get(const Evas_Object *o);
 
 /**
  * Enables/disable the local storage feature of HTML5.
@@ -1833,7 +1833,7 @@ EAPI Eina_Bool    ewk_view_setting_local_storage_database_path_set(Evas_Object *
  * @return @c EINA_TRUE if page cache is enabled,
  *         @c EINA_FALSE if not or on failure
  */
-EAPI Eina_Bool    ewk_view_setting_page_cache_get(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_page_cache_get(const Evas_Object *o);
 
 /**
  * Enables/disables the page cache feature.
@@ -1854,7 +1854,7 @@ EAPI Eina_Bool    ewk_view_setting_page_cache_set(Evas_Object *o, Eina_Bool enab
  * @return @c EINA_TRUE if the encoding feature is enabled,
  *         @c EINA_FALSE if not or on failure
  */
-EAPI Eina_Bool    ewk_view_setting_encoding_detector_get(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_encoding_detector_get(const Evas_Object *o);
 
 /**
  * Enables/disables the encoding detector.
@@ -1878,7 +1878,7 @@ EAPI Eina_Bool    ewk_view_setting_encoding_detector_set(Evas_Object *o, Eina_Bo
  * @return @c EINA_TRUE if developer extensions are enabled, @c EINA_FALSE
  *         otherwise
  */
-EAPI Eina_Bool    ewk_view_setting_enable_developer_extras_get(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_enable_developer_extras_get(const Evas_Object *o);
 
 /**
  * Enables/disables developer extensions.
@@ -2114,7 +2114,7 @@ EAPI Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data *priv, cairo_t *cr,
  * @param device_pixel_ratio the pointer to store the device pixel ratio value
  * @param user_scalable the pointer to store if user can scale viewport
  */
-EAPI void ewk_view_viewport_attributes_get(Evas_Object *o, float *w, float *h, float *init_scale, float *max_scale, float *min_scale, float *device_pixel_ratio , Eina_Bool *user_scalable);
+EAPI void ewk_view_viewport_attributes_get(const Evas_Object *o, float *w, float *h, float *init_scale, float *max_scale, float *min_scale, float *device_pixel_ratio , Eina_Bool *user_scalable);
 
 /**
  * Sets the zoom range.
@@ -2135,7 +2135,7 @@ EAPI Eina_Bool ewk_view_zoom_range_set(Evas_Object *o, float min_scale, float ma
  * @return the minimum value of the zoom range on success, or
  *         @c -1 on failure
  */
-EAPI float ewk_view_zoom_range_min_get(Evas_Object *o);
+EAPI float ewk_view_zoom_range_min_get(const Evas_Object *o);
 
 /**
  * Gets the maximum value of the zoom range.
@@ -2145,7 +2145,7 @@ EAPI float ewk_view_zoom_range_min_get(Evas_Object *o);
  * @return the maximum value of the zoom range on success, or
  *         @c -1.0 on failure
  */
-EAPI float ewk_view_zoom_range_max_get(Evas_Object *o);
+EAPI float ewk_view_zoom_range_max_get(const Evas_Object *o);
 
 /**
  * Enables/disables the zoom.
@@ -2164,7 +2164,7 @@ EAPI Eina_Bool ewk_view_user_scalable_set(Evas_Object *o, Eina_Bool user_scalabl
  *
  * @return @c EINA_TRUE if the zoom is enabled, @c EINA_FALSE if not or on failure
  */
-EAPI Eina_Bool ewk_view_user_scalable_get(Evas_Object *o);
+EAPI Eina_Bool ewk_view_user_scalable_get(const Evas_Object *o);
 
 /**
  * Gets the device pixel ratio value.
@@ -2173,7 +2173,7 @@ EAPI Eina_Bool ewk_view_user_scalable_get(Evas_Object *o);
  *
  * @return the device pixel ratio value on success or @c -1.0 on failure
  */
-EAPI float ewk_view_device_pixel_ratio_get(Evas_Object *o);
+EAPI float ewk_view_device_pixel_ratio_get(const Evas_Object *o);
 
 /**
  * Sets the view mode.
@@ -2197,7 +2197,7 @@ EAPI Eina_Bool ewk_view_mode_set(Evas_Object *o, Ewk_View_Mode view_mode);
  *
  * @see ewk_view_mode_set()
  */
-EAPI Ewk_View_Mode ewk_view_mode_get(Evas_Object *o);
+EAPI Ewk_View_Mode ewk_view_mode_get(const Evas_Object *o);
 
 /**
  * Creates a JS object named @a obj_name as property of the window object. This should be called on a callback connectedto the

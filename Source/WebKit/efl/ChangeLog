@@ -1,3 +1,53 @@
+2011-08-30  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Add const modifier to passed objects where it's recommended
+        https://bugs.webkit.org/show_bug.cgi?id=67110
+
+        Reviewed by Kent Tamura.
+
+        Add const modifier to passed Evas_Object if the function doesn't change its
+        property (the most cases to the getter functions).
+
+        * ewk/ewk_contextmenu.cpp:
+        (ewk_context_menu_item_list_get):
+        (ewk_context_menu_item_type_get):
+        (ewk_context_menu_item_action_get):
+        (ewk_context_menu_item_title_get):
+        (ewk_context_menu_item_checked_get):
+        (ewk_context_menu_item_enabled_get):
+        (ewk_context_menu_custom_get):
+        (ewk_context_menu_show):
+        * ewk/ewk_contextmenu.h:
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_text_matches_nth_pos_get):
+        (ewk_frame_text_selection_type_get):
+        (ewk_frame_source_get):
+        (ewk_frame_resources_location_get):
+        * ewk/ewk_frame.h:
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute):
+        (ewk_view_fixed_layout_size_get):
+        (ewk_view_theme_get):
+        (ewk_view_imh_get):
+        (ewk_view_setting_encoding_detector_get):
+        (ewk_view_setting_enable_developer_extras_get):
+        (ewk_view_setting_spatial_navigation_get):
+        (ewk_view_setting_local_storage_get):
+        (ewk_view_setting_page_cache_get):
+        (ewk_view_viewport_attributes_get):
+        (ewk_view_zoom_range_min_get):
+        (ewk_view_zoom_range_max_get):
+        (ewk_view_user_scalable_get):
+        (ewk_view_device_pixel_ratio_get):
+        (ewk_view_page_rect_get):
+        (ewk_view_mode_get):
+        * ewk/ewk_view.h:
+        * ewk/ewk_window_features.cpp:
+        (ewk_window_features_bool_property_get):
+        (ewk_window_features_int_property_get):
+        * ewk/ewk_window_features.h:
+
 2011-08-29  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Add missing API documentation.

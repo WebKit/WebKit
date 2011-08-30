@@ -67,7 +67,7 @@ EAPI void         ewk_window_features_ref(Ewk_Window_Features *window_features);
  *
  * @see ewk_window_features_int_property_get
  */
-EAPI void         ewk_window_features_bool_property_get(Ewk_Window_Features *window_features, Eina_Bool *toolbar_visible, Eina_Bool *statusbar_visible, Eina_Bool *scrollbars_visible, Eina_Bool *menubar_visible, Eina_Bool *locationbar_visible, Eina_Bool *fullscreen);
+EAPI void         ewk_window_features_bool_property_get(const Ewk_Window_Features *window_features, Eina_Bool *toolbar_visible, Eina_Bool *statusbar_visible, Eina_Bool *scrollbars_visible, Eina_Bool *menubar_visible, Eina_Bool *locationbar_visible, Eina_Bool *fullscreen);
 
 /**
  * Gets int properties of an Ewk_Window_Features.
@@ -86,7 +86,7 @@ EAPI void         ewk_window_features_bool_property_get(Ewk_Window_Features *win
  *
  * @see ewk_window_features_bool_property_get
  */
-EAPI void         ewk_window_features_int_property_get(Ewk_Window_Features *window_features, int *x, int *y, int *w, int *h);
+EAPI void         ewk_window_features_int_property_get(const Ewk_Window_Features *window_features, int *x, int *y, int *w, int *h);
 
 #ifdef __cplusplus
 }

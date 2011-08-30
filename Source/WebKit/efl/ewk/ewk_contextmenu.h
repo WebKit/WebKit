@@ -183,7 +183,7 @@ EAPI Eina_Bool                   ewk_context_menu_destroy(Ewk_Context_Menu *menu
  * @param o the context menu object to get list of the items
  * @return the list of the items on success or @c 0 on failure
  */
-EAPI const Eina_List            *ewk_context_menu_item_list_get(Ewk_Context_Menu *o);
+EAPI const Eina_List            *ewk_context_menu_item_list_get(const Ewk_Context_Menu *o);
 
 /**
  * Creates a new item of the context menu.
@@ -227,7 +227,7 @@ EAPI Eina_Bool                   ewk_context_menu_item_select(Ewk_Context_Menu *
  *
  * @see ewk_context_menu_item_type_set
  */
-EAPI Ewk_Context_Menu_Item_Type  ewk_context_menu_item_type_get(Ewk_Context_Menu_Item *o);
+EAPI Ewk_Context_Menu_Item_Type  ewk_context_menu_item_type_get(const Ewk_Context_Menu_Item *o);
 
 /**
  * Sets the type of item.
@@ -248,7 +248,7 @@ EAPI Eina_Bool                   ewk_context_menu_item_type_set(Ewk_Context_Menu
  *
  * @see ewk_context_menu_item_action_set
  */
-EAPI Ewk_Context_Menu_Action     ewk_context_menu_item_action_get(Ewk_Context_Menu_Item *o);
+EAPI Ewk_Context_Menu_Action     ewk_context_menu_item_action_get(const Ewk_Context_Menu_Item *o);
 
 /**
  * Sets an action of the item.
@@ -269,7 +269,7 @@ EAPI Eina_Bool                   ewk_context_menu_item_action_set(Ewk_Context_Me
  *
  * @see ewk_context_menu_item_title_set
  */
-EAPI const char                 *ewk_context_menu_item_title_get(Ewk_Context_Menu_Item *o);
+EAPI const char                 *ewk_context_menu_item_title_get(const Ewk_Context_Menu_Item *o);
 
 /**
  * Sets a title of the item.
@@ -288,7 +288,7 @@ EAPI const char                 *ewk_context_menu_item_title_set(Ewk_Context_Men
  * @param o the item to query if the item is toggled
  * @return @c EINA_TRUE if the item is toggled or @c EINA_FALSE if not or on failure
  */
-EAPI Eina_Bool                   ewk_context_menu_item_checked_get(Ewk_Context_Menu_Item *o);
+EAPI Eina_Bool                   ewk_context_menu_item_checked_get(const Ewk_Context_Menu_Item *o);
 
 /**
  * Sets if the item should be toggled.
@@ -307,7 +307,7 @@ EAPI Eina_Bool                   ewk_context_menu_item_checked_set(Ewk_Context_M
  *
  * @see ewk_context_menu_item_enabled_set
  */
-EAPI Eina_Bool                   ewk_context_menu_item_enabled_get(Ewk_Context_Menu_Item *o);
+EAPI Eina_Bool                   ewk_context_menu_item_enabled_get(const Ewk_Context_Menu_Item *o);
 
 /**
  * Enables/disables the item.

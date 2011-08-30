@@ -525,7 +525,7 @@ static bool _ewk_frame_rect_is_negative_value(const WebCore::IntRect &i)
     return (i.x() < 0 || i.y() < 0);
 }
 
-Eina_Bool ewk_frame_text_matches_nth_pos_get(Evas_Object *o, size_t n, int *x, int *y)
+Eina_Bool ewk_frame_text_matches_nth_pos_get(const Evas_Object *o, size_t n, int *x, int *y)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
@@ -1055,7 +1055,7 @@ Eina_Bool ewk_frame_feed_key_up(Evas_Object *o, const Evas_Event_Key_Up *ev)
     return sd->frame->eventHandler()->keyEvent(event);
 }
 
-Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(Evas_Object *o)
+Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(const Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EWK_TEXT_SELECTION_NONE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EWK_TEXT_SELECTION_NONE);
@@ -1492,7 +1492,7 @@ void ewk_frame_view_create_for_view(Evas_Object *o, Evas_Object *view)
     sd->frame->view()->setEvasObject(o);
 }
 
-ssize_t ewk_frame_source_get(Evas_Object *o, char **frame_source)
+ssize_t ewk_frame_source_get(const Evas_Object *o, char **frame_source)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, -1);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, -1);
@@ -1542,7 +1542,7 @@ ssize_t ewk_frame_source_get(Evas_Object *o, char **frame_source)
     return source_length;
 }
 
-Eina_List *ewk_frame_resources_location_get(Evas_Object *o)
+Eina_List *ewk_frame_resources_location_get(const Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, 0);

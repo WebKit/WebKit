@@ -92,7 +92,7 @@ Eina_Bool ewk_context_menu_destroy(Ewk_Context_Menu *menu)
 #endif
 }
 
-const Eina_List *ewk_context_menu_item_list_get(Ewk_Context_Menu *o)
+const Eina_List *ewk_context_menu_item_list_get(const Ewk_Context_Menu *o)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, 0);
 
@@ -142,7 +142,7 @@ void ewk_context_menu_item_free(Ewk_Context_Menu_Item *item)
     free(item);
 }
 
-Ewk_Context_Menu_Item_Type ewk_context_menu_item_type_get(Ewk_Context_Menu_Item *o)
+Ewk_Context_Menu_Item_Type ewk_context_menu_item_type_get(const Ewk_Context_Menu_Item *o)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, EWK_ACTION_TYPE);
     return o->type;
@@ -155,7 +155,7 @@ Eina_Bool ewk_context_menu_item_type_set(Ewk_Context_Menu_Item *o, Ewk_Context_M
     return EINA_TRUE;
 }
 
-Ewk_Context_Menu_Action ewk_context_menu_item_action_get(Ewk_Context_Menu_Item *o)
+Ewk_Context_Menu_Action ewk_context_menu_item_action_get(const Ewk_Context_Menu_Item *o)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, EWK_CONTEXT_MENU_ITEM_TAG_NO_ACTION);
     return o->action;
@@ -168,7 +168,7 @@ Eina_Bool ewk_context_menu_item_action_set(Ewk_Context_Menu_Item *o, Ewk_Context
     return EINA_TRUE;
 }
 
-const char *ewk_context_menu_item_title_get(Ewk_Context_Menu_Item *o)
+const char *ewk_context_menu_item_title_get(const Ewk_Context_Menu_Item *o)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, 0);
     return o->title;
@@ -181,7 +181,7 @@ const char *ewk_context_menu_item_title_set(Ewk_Context_Menu_Item *o, const char
     return o->title;
 }
 
-Eina_Bool ewk_context_menu_item_checked_get(Ewk_Context_Menu_Item *o)
+Eina_Bool ewk_context_menu_item_checked_get(const Ewk_Context_Menu_Item *o)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, EINA_FALSE);
     return o->checked;
@@ -194,7 +194,7 @@ Eina_Bool ewk_context_menu_item_checked_set(Ewk_Context_Menu_Item *o, Eina_Bool 
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_context_menu_item_enabled_get(Ewk_Context_Menu_Item *o)
+Eina_Bool ewk_context_menu_item_enabled_get(const Ewk_Context_Menu_Item *o)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, EINA_FALSE);
     return o->enabled;
@@ -301,7 +301,7 @@ void ewk_context_menu_item_append(Ewk_Context_Menu *o, WebCore::ContextMenuItem 
  *
  * @see ewk_context_menu_item_list_get
  */
-Ewk_Context_Menu *ewk_context_menu_custom_get(Ewk_Context_Menu *o)
+Ewk_Context_Menu *ewk_context_menu_custom_get(const Ewk_Context_Menu *o)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, 0);
 
@@ -316,7 +316,7 @@ Ewk_Context_Menu *ewk_context_menu_custom_get(Ewk_Context_Menu *o)
  *
  * @param o the context menu object
  */
-void ewk_context_menu_show(Ewk_Context_Menu *o)
+void ewk_context_menu_show(const Ewk_Context_Menu *o)
 {
     EINA_SAFETY_ON_NULL_RETURN(o);
 
