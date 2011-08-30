@@ -32,6 +32,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSConsoleCustom.cpp
     bindings/js/JSCoordinatesCustom.cpp
     bindings/js/JSCustomVoidCallback.cpp
+    bindings/js/JSDictionary.cpp
     bindings/js/JSDOMBinding.cpp
     bindings/js/JSDOMFormDataCustom.cpp
     bindings/js/JSDOMGlobalObject.cpp

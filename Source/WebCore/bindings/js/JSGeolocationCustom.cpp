@@ -32,6 +32,7 @@
 #include "DOMWindow.h"
 #include "Geolocation.h"
 #include "JSDOMWindow.h"
+#include "JSDictionary.h"
 #include "JSPositionCallback.h"
 #include "JSPositionErrorCallback.h"
 #include "PositionOptions.h"
@@ -44,6 +45,34 @@ using namespace JSC;
 using namespace std;
 
 namespace WebCore {
+
+// JSDictionary helper functions
+
+static void setEnableHighAccuracy(PositionOptions* options, const bool& enableHighAccuracy)
+{
+    options->setEnableHighAccuracy(enableHighAccuracy);
+}
+
+static void setTimeout(PositionOptions* options, const double& timeout)
+{
+    // If the value is positive infinity, there's nothing to do.
+    if (!(isinf(timeout) && (timeout > 0))) {
+        // Wrap to int32 and force non-negative to match behavior of window.setTimeout.
+        options->setTimeout(max(0, static_cast<int>(timeout)));
+    }
+}
+
+static void setMaximumAge(PositionOptions* options, const double& maximumAge)
+{
+    if (isinf(maximumAge) && (maximumAge > 0)) {
+        // If the value is positive infinity, clear maximumAge.
+        options->clearMaximumAge();
+    } else {
+        // Wrap to int32 and force non-negative to match behavior of window.setTimeout.
+        options->setMaximumAge(max(0, static_cast<int>(maximumAge)));
+    }
+}
+
 
 static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValue value)
 {
@@ -59,52 +88,15 @@ static PassRefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValu
     // Given the above test, this will always yield an object.
     JSObject* object = value.toObject(exec);
 
-    // For all three properties, we apply the following ...
-    // - If the getter or the property's valueOf method throws an exception, we
-    //   quit so as not to risk overwriting the exception.
-    // - If the value is absent or undefined, we don't override the default.
-    JSValue enableHighAccuracyValue = object->get(exec, Identifier(exec, "enableHighAccuracy"));
-    if (exec->hadException())
-        return 0;
-    if (!enableHighAccuracyValue.isUndefined()) {
-        options->setEnableHighAccuracy(enableHighAccuracyValue.toBoolean(exec));
-        if (exec->hadException())
-            return 0;
-    }
+    // Create the dictionary wrapper from the initializer object.
+    JSDictionary dictionary(exec, object);
 
-    JSValue timeoutValue = object->get(exec, Identifier(exec, "timeout"));
-    if (exec->hadException())
+    if (!dictionary.tryGetProperty("enableHighAccuracy", options.get(), setEnableHighAccuracy))
         return 0;
-    if (!timeoutValue.isUndefined()) {
-        double timeoutNumber = timeoutValue.toNumber(exec);
-        if (exec->hadException())
-            return 0;
-        // If the value is positive infinity, there's nothing to do.
-        if (!(isinf(timeoutNumber) && (timeoutNumber > 0))) {
-            // Wrap to int32 and force non-negative to match behavior of window.setTimeout.
-            options->setTimeout(max(0, timeoutValue.toInt32(exec)));
-            if (exec->hadException())
-                return 0;
-        }
-    }
-
-    JSValue maximumAgeValue = object->get(exec, Identifier(exec, "maximumAge"));
-    if (exec->hadException())
+    if (!dictionary.tryGetProperty("timeout", options.get(), setTimeout))
         return 0;
-    if (!maximumAgeValue.isUndefined()) {
-        double maximumAgeNumber = maximumAgeValue.toNumber(exec);
-        if (exec->hadException())
-            return 0;
-        if (isinf(maximumAgeNumber) && (maximumAgeNumber > 0)) {
-            // If the value is positive infinity, clear maximumAge.
-            options->clearMaximumAge();
-        } else {
-            // Wrap to int32 and force non-negative to match behavior of window.setTimeout.
-            options->setMaximumAge(max(0, maximumAgeValue.toInt32(exec)));
-            if (exec->hadException())
-                return 0;
-        }
-    }
+    if (!dictionary.tryGetProperty("maximumAge", options.get(), setMaximumAge))
+        return 0;
 
     return options.release();
 }

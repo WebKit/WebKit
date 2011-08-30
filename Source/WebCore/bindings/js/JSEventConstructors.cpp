@@ -27,40 +27,15 @@
 #include "EventConstructors.h"
 
 #include "Event.h"
+#include "JSDictionary.h"
 #include "JSEvent.h"
-#include <runtime/Error.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-static void convertValue(ExecState* exec, JSValue value, bool& result)
-{
-    result = value.toBoolean(exec);
-}
-
-template <typename Result>
-static bool tryGetProperty(ExecState* exec, JSObject* initializerObject, const char* propertyName, Result& result)
-{
-    Identifier identifier(exec, propertyName);
-    PropertySlot slot(initializerObject);
-    if (initializerObject->getPropertySlot(exec, identifier, slot)) {
-        if (exec->hadException())
-            return false;
-
-        JSValue value = slot.getValue(exec, identifier);
-        
-        convertValue(exec, value, result);
-
-        if (exec->hadException())
-            return false;
-    }
-    
-    return true;
-}
-
 template<typename Constructor, typename EventType, typename EventInitType>
-static EncodedJSValue constructJSEventWithInitializer(ExecState* exec, bool (*filler)(EventInitType&, ExecState*, JSObject*))
+static EncodedJSValue constructJSEventWithInitializer(ExecState* exec, bool (*filler)(EventInitType&, JSDictionary&))
 {
     Constructor* jsConstructor = static_cast<Constructor*>(exec->callee());
 
@@ -79,8 +54,11 @@ static EncodedJSValue constructJSEventWithInitializer(ExecState* exec, bool (*fi
         // Given the above test, this will always yield an object.
         JSObject* initializerObject = initializerValue.toObject(exec);
 
+        // Create the dictionary wrapper from the initializer object.
+        JSDictionary dictionary(exec, initializerObject);
+
         // Attempt to fill in the EventInit.
-        if (!filler(eventInit, exec, initializerObject))
+        if (!filler(eventInit, dictionary))
             return JSValue::encode(jsUndefined());
     }
 
@@ -88,8 +66,9 @@ static EncodedJSValue constructJSEventWithInitializer(ExecState* exec, bool (*fi
     return JSValue::encode(toJS(exec, jsConstructor->globalObject(), event.get()));
 }
 
+
 #define DICTIONARY_START(Event) \
-    static bool fill##Event##Init(Event##Init& eventInit, ExecState* exec, JSObject* initializerObject) \
+    static bool fill##Event##Init(Event##Init& eventInit, JSDictionary& dictionary) \
     {
 
 #define DICTIONARY_END(Event) \
@@ -102,11 +81,11 @@ static EncodedJSValue constructJSEventWithInitializer(ExecState* exec, bool (*fi
     }
 
 #define FILL_PARENT_PROPERTIES(parent) \
-    if (!fill##parent##Init(eventInit, exec, initializerObject)) \
+    if (!fill##parent##Init(eventInit, dictionary)) \
         return false;
 
 #define FILL_PROPERTY(propertyName) \
-    if (!tryGetProperty(exec, initializerObject, #propertyName, eventInit.propertyName)) \
+    if (!dictionary.tryGetProperty(#propertyName, eventInit.propertyName)) \
         return false;
 
 INSTANTIATE_ALL_EVENT_INITIALIZING_CONSTRUCTORS(DICTIONARY_START, DICTIONARY_END, FILL_PARENT_PROPERTIES, FILL_PROPERTY)

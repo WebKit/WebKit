@@ -254,6 +254,7 @@ v8 {
         bindings/js/JSCoordinatesCustom.cpp \
         bindings/js/JSCustomVoidCallback.cpp \
         bindings/js/JSCustomXPathNSResolver.cpp \
+        bindings/js/JSDictionary.cpp \
         bindings/js/JSDOMBinding.cpp \
         bindings/js/JSDOMFormDataCustom.cpp \
         bindings/js/JSDOMGlobalObject.cpp \
@@ -1318,6 +1319,7 @@ v8 {
         bindings/js/JSCallbackData.h \
         bindings/js/JSCustomVoidCallback.h \
         bindings/js/JSCustomXPathNSResolver.h \
+        bindings/js/JSDictionary.h \
         bindings/js/JSDOMBinding.h \
         bindings/js/JSDOMGlobalObject.h \
         bindings/js/JSDOMStringMapCustom.h \
