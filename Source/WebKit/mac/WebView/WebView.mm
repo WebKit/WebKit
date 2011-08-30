@@ -1969,7 +1969,7 @@ static inline IMP getMethod(id o, SEL s)
     [request _web_setHTTPUserAgent:[self userAgentForURL:URL]];
     NSCachedURLResponse *cachedResponse;
 #if USE(CFURLSTORAGESESSIONS)
-    if (CFURLStorageSessionRef storageSession = ResourceHandle::privateBrowsingStorageSession())
+    if (CFURLStorageSessionRef storageSession = ResourceHandle::currentStorageSession())
         cachedResponse = WKCachedResponseForRequest(storageSession, request);
     else
 #endif

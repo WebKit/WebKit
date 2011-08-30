@@ -1798,7 +1798,7 @@
 		7EE6846112D26E3800E79415 /* AuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6844E12D26E3800E79415 /* AuthenticationChallenge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EE6846212D26E3800E79415 /* CookieJarCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6844F12D26E3800E79415 /* CookieJarCFNet.cpp */; };
 		7EE6846312D26E3800E79415 /* CookieStorageCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845012D26E3800E79415 /* CookieStorageCFNet.cpp */; };
-		7EE6846412D26E3800E79415 /* CookieStorageCFNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845112D26E3800E79415 /* CookieStorageCFNet.h */; };
+		7EE6846412D26E3800E79415 /* CookieStorageCFNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845112D26E3800E79415 /* CookieStorageCFNet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EE6846512D26E3800E79415 /* CredentialStorageCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845212D26E3800E79415 /* CredentialStorageCFNet.cpp */; };
 		7EE6846612D26E3800E79415 /* FormDataStreamCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845312D26E3800E79415 /* FormDataStreamCFNet.cpp */; };
 		7EE6846712D26E3800E79415 /* FormDataStreamCFNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845412D26E3800E79415 /* FormDataStreamCFNet.h */; };

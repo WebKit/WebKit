@@ -138,8 +138,8 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     setShouldPaintNativeControls(parameters.shouldPaintNativeControls);
 
 #if USE(CFNETWORK)
-    CFURLStorageSessionRef defaultStorageSession = wkDeserializeStorageSession(parameters.serializedDefaultStorageSession.get());
-    ResourceHandle::setDefaultStorageSession(defaultStorageSession);
+    RetainPtr<CFURLStorageSessionRef> defaultStorageSession(AdoptCF, wkDeserializeStorageSession(parameters.serializedDefaultStorageSession.get()));
+    ResourceHandle::setDefaultStorageSession(defaultStorageSession.get());
 
     WebCookieManager::shared().setHTTPCookieAcceptPolicy(parameters.initialHTTPCookieAcceptPolicy);
 

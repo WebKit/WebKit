@@ -384,7 +384,7 @@ void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
 
     m_alwaysAcceptCookies = alwaysAcceptCookies;
     NSHTTPCookieAcceptPolicy cookieAcceptPolicy = alwaysAcceptCookies ? NSHTTPCookieAcceptPolicyAlways : NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:cookieAcceptPolicy];
+    [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:cookieAcceptPolicy];
 }
 
 void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)

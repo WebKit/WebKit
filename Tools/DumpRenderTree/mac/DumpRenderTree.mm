@@ -481,7 +481,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setAsynchronousSpellCheckingEnabled:NO];
     [preferences setHixie76WebSocketProtocolEnabled:YES];
 
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
+    [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
     
     LayoutTestController::setSerializeHTTPLoads(false);
 
@@ -501,6 +501,7 @@ static void setDefaultsToConsistentValuesForTesting()
     [NSURLCache setSharedURLCache:sharedCache];
     [sharedCache release];
 
+    [WebPreferences _switchNetworkLoaderToNewTestingSession];
 }
 
 static void* runThread(void* arg)

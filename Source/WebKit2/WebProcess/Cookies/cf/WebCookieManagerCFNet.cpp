@@ -30,21 +30,34 @@
 #include <WebCore/CookieStorage.h>
 #include <WebCore/CookieStorageCFNet.h>
 
+#if PLATFORM(MAC)
+#include <WebKitSystemInterface.h>
+#elif PLATFORM(WIN)
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
+
+using namespace WebCore;
+
 namespace WebKit {
 
 void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
-    CFHTTPCookieStorageSetCookieAcceptPolicy(WebCore::defaultCookieStorage(), policy);
+#if PLATFORM(MAC)
+    CFHTTPCookieStorageRef defaultCookieStorage = WKGetDefaultHTTPCookieStorage();
+#elif PLATFORM(WIN)
+    CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage();
+#endif
 
-    CFHTTPCookieStorageRef privateBrowsingCookieStorage = WebCore::privateBrowsingCookieStorage().get();
-    if (!privateBrowsingCookieStorage)
-        return;
-    CFHTTPCookieStorageSetCookieAcceptPolicy(privateBrowsingCookieStorage, policy);
+    CFHTTPCookieStorageSetCookieAcceptPolicy(defaultCookieStorage, policy);
+
+    if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage())
+        CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
 }
 
 HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
 {
-    return CFHTTPCookieStorageGetCookieAcceptPolicy(WebCore::currentCookieStorage());
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
+    return CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage.get());
 }
 
 } // namespace WebKit

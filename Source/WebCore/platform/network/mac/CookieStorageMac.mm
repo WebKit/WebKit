@@ -78,21 +78,11 @@ namespace WebCore {
 
 void setCookieStoragePrivateBrowsingEnabled(bool enabled)
 {
-#if USE(CFURLSTORAGESESSIONS)
-    if (enabled && privateBrowsingCookieStorage())
-        return;
+    // FIXME: When Private Browsing is enabled, the Private Browsing Cookie Storage should be
+    // observed for changes, not the default Cookie Storage.
 
-    if (enabled && ResourceHandle::privateBrowsingStorageSession()) {
-        privateBrowsingCookieStorage().adoptCF(wkCopyHTTPCookieStorage(ResourceHandle::privateBrowsingStorageSession()));
-
-        // FIXME: When Private Browsing is enabled, the Private Browsing Cookie Storage should be
-        // observed for changes, not the default Cookie Storage.
-
-        return;
-    }
-
-    privateBrowsingCookieStorage() = nullptr;
-#endif
+    // There is nothing to do here if sessions are supported. But we don't know if they are,
+    // so enable legacy private browsing mode on sharedHTTPCookieStorage, too.
     wkSetCookieStoragePrivateBrowsingEnabled(enabled);
 }
 

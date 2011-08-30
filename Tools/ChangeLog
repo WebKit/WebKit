@@ -1,3 +1,20 @@
+2011-08-29  Alexey Proskuryakov  <ap@apple.com>
+
+        DumpRenderTree should begin each test with an empty cookie store
+        https://bugs.webkit.org/show_bug.cgi?id=63545
+        <rdar://problem/5666907>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        (setDefaultsToConsistentValuesForTesting):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setAlwaysAcceptCookies):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        Use new SPIs to manipulate sessions.
+
 2011-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94055 and r94057.

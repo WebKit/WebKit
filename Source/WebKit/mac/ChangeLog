@@ -1,3 +1,24 @@
+2011-08-29  Alexey Proskuryakov  <ap@apple.com>
+
+        DumpRenderTree should begin each test with an empty cookie store
+        https://bugs.webkit.org/show_bug.cgi?id=63545
+        <rdar://problem/5666907>
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (+[WebPreferences _switchNetworkLoaderToNewTestingSession]):
+        (+[WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:]):
+        * WebView/WebPreferencesPrivate.h:
+        Exposed an SPI to use a private default session. It's separate from private browsing,
+        because some tests enable the latter, and we don't want to mix them up.
+        Also exposed an SPI to set cookie accept policy regardless of what session we are currently
+        using.
+
+        * WebView/WebView.mm: (-[WebView _cachedResponseForURL:]): Updated to use currentStorageSession()
+        instead of privateBrowsingStorageSession().
+
 2011-08-30  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         The unused ScrollView* argument can and should be removed from

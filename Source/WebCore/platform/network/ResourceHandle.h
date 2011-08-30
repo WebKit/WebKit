@@ -198,14 +198,13 @@ public:
     void fireFailure(Timer<ResourceHandle>*);
 
 #if USE(CFURLSTORAGESESSIONS)
-    static void setPrivateBrowsingEnabled(bool);
-    static CFURLStorageSessionRef privateBrowsingStorageSession();
-    static void setPrivateBrowsingStorageSessionIdentifierBase(const String&);
     static CFURLStorageSessionRef currentStorageSession();
-#if PLATFORM(WIN)
     static void setDefaultStorageSession(CFURLStorageSessionRef);
     static CFURLStorageSessionRef defaultStorageSession();
-#endif // PLATFORM(WIN)
+    static void setPrivateBrowsingEnabled(bool);
+
+    static void setPrivateBrowsingStorageSessionIdentifierBase(const String&);
+    static RetainPtr<CFURLStorageSessionRef> createPrivateBrowsingStorageSession(CFStringRef identifier);
 #endif // USE(CFURLSTORAGESESSIONS)
 
     using RefCounted<ResourceHandle>::ref;
@@ -245,8 +244,8 @@ private:
 #endif
 
 #if USE(CFURLSTORAGESESSIONS)
-    static RetainPtr<CFURLStorageSessionRef> createPrivateBrowsingStorageSession(CFStringRef identifier);
     static String privateBrowsingStorageSessionIdentifierDefaultBase();
+    static CFURLStorageSessionRef privateBrowsingStorageSession();
 #endif
 
     friend class ResourceHandleInternal;

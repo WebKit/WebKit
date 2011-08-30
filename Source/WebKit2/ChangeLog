@@ -1,3 +1,38 @@
+2011-08-29  Alexey Proskuryakov  <ap@apple.com>
+
+        DumpRenderTree should begin each test with an empty cookie store
+        https://bugs.webkit.org/show_bug.cgi?id=63545
+        <rdar://problem/5666907>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Cookies/cf/WebCookieManagerCFNet.cpp:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::platformGetHTTPCookieAcceptPolicy):
+        Updated to use currentCFHTTPCookieStorage() instead of privateBrowsingCookieStorage().
+
+        * WebProcess/Cookies/mac/WebCookieManagerMac.mm:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        There is no no need to access cookie storage through session manually - we already have code
+        for that in WebCore.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSwitchNetworkLoaderToNewTestingSession):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::switchNetworkLoaderToNewTestingSession):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        Exposed bundle SPI to use a private default session. It's separate from private browsing,
+        because some tests enable the latter, and we don't want to mix them up.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformHasLocalDataForURL):
+        (WebKit::cachedResponseForURL):
+        Updated to use currentStorageSession() instead of privateBrowsingStorageSession().
+
+        * WebProcess/win/WebProcessWin.cpp: (WebKit::WebProcess::platformInitializeWebProcess):
+        ResourceHandle::setDefaultStorageSession() no longer steals a reference, so retain it properly.
+
 2011-08-30  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] Make mouse over work again for QDesktopWebView.

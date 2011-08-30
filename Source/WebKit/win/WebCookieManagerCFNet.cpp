@@ -40,13 +40,17 @@ HRESULT STDMETHODCALLTYPE WebCookieManager::cookieStorage(
    if (!storage)
         return E_POINTER;
 
-    *storage = currentCookieStorage();
+    // Need to retain locally to make sure the result is valid in caller.
+    static RetainPtr<CFHTTPCookieStorageRef> result;
+    result = currentCFHTTPCookieStorage();
+
+    *storage = result.get();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebCookieManager::setCookieStorage( 
     /* [in] */ CFHTTPCookieStorageRef storage)
 {
-    setCurrentCookieStorage(storage);
+    overrideCookieStorage(storage);
     return S_OK;
 }

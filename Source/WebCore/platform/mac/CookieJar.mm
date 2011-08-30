@@ -31,6 +31,7 @@
 #import "BlockExceptions.h"
 #import "Cookie.h"
 #import "CookieStorage.h"
+#import "CookieStorageCFNet.h"
 #import "Document.h"
 #import "KURL.h"
 #import "WebCoreSystemInterface.h"
@@ -82,8 +83,8 @@ String cookies(const Document*, const KURL& url)
     NSURL *cookieURL = url;
     NSArray *cookies;
 #if USE(CFURLSTORAGESESSIONS)
-    if (CFHTTPCookieStorageRef cookieStorage = privateBrowsingCookieStorage().get())
-        cookies = wkHTTPCookiesForURL(cookieStorage, cookieURL);
+    if (RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage())
+        cookies = wkHTTPCookiesForURL(cfCookieStorage.get(), cookieURL);
     else
 #endif
         cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:cookieURL];
@@ -101,8 +102,8 @@ String cookieRequestHeaderFieldValue(const Document*, const KURL& url)
     NSURL *cookieURL = url;
     NSArray *cookies;
 #if USE(CFURLSTORAGESESSIONS)
-    if (CFHTTPCookieStorageRef cookieStorage = privateBrowsingCookieStorage().get())
-        cookies = wkHTTPCookiesForURL(cookieStorage, cookieURL);
+    if (RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage())
+        cookies = wkHTTPCookiesForURL(cfCookieStorage.get(), cookieURL);
     else
 #endif
         cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:cookieURL];
@@ -130,8 +131,8 @@ void setCookies(Document* document, const KURL& url, const String& cookieStr)
     RetainPtr<NSArray> filteredCookies = filterCookies([NSHTTPCookie cookiesWithResponseHeaderFields:[NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"] forURL:cookieURL]);
 
 #if USE(CFURLSTORAGESESSIONS)
-    if (CFHTTPCookieStorageRef cookieStorage = privateBrowsingCookieStorage().get())
-        wkSetHTTPCookiesForURL(cookieStorage, filteredCookies.get(), cookieURL, document->firstPartyForCookies());
+    if (RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage())
+        wkSetHTTPCookiesForURL(cfCookieStorage.get(), filteredCookies.get(), cookieURL, document->firstPartyForCookies());
     else
 #endif
         [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:filteredCookies.get() forURL:cookieURL mainDocumentURL:document->firstPartyForCookies()];
@@ -145,8 +146,8 @@ bool cookiesEnabled(const Document*)
 
     NSHTTPCookieAcceptPolicy cookieAcceptPolicy;
 #if USE(CFURLSTORAGESESSIONS)
-    if (CFHTTPCookieStorageRef cookieStorage = privateBrowsingCookieStorage().get())
-        cookieAcceptPolicy = wkGetHTTPCookieAcceptPolicy(cookieStorage);
+    if (RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage())
+        cookieAcceptPolicy = wkGetHTTPCookieAcceptPolicy(cfCookieStorage.get());
     else
 #endif
         cookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];
@@ -165,8 +166,8 @@ bool getRawCookies(const Document*, const KURL& url, Vector<Cookie>& rawCookies)
     NSURL *cookieURL = url;
     NSArray *cookies;
 #if USE(CFURLSTORAGESESSIONS)
-    if (CFHTTPCookieStorageRef cookieStorage = privateBrowsingCookieStorage().get())
-        cookies = wkHTTPCookiesForURL(cookieStorage, cookieURL);
+    if (RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage())
+        cookies = wkHTTPCookiesForURL(cfCookieStorage.get(), cookieURL);
     else
 #endif
         cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:cookieURL];
@@ -198,9 +199,9 @@ void deleteCookie(const Document*, const KURL& url, const String& cookieName)
     NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
     NSArray *cookies;
 #if USE(CFURLSTORAGESESSIONS)
-    CFHTTPCookieStorageRef cfCookieStorage = privateBrowsingCookieStorage().get();
+    RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage();
     if (cfCookieStorage)
-        cookies = wkHTTPCookiesForURL(cfCookieStorage, cookieURL);
+        cookies = wkHTTPCookiesForURL(cfCookieStorage.get(), cookieURL);
     else
 #endif
         cookies = [cookieStorage cookiesForURL:cookieURL];
@@ -213,7 +214,7 @@ void deleteCookie(const Document*, const KURL& url, const String& cookieName)
         if ([[cookie name] isEqualToString:cookieNameString]) {
 #if USE(CFURLSTORAGESESSIONS)
             if (cfCookieStorage)
-                wkDeleteHTTPCookie(cfCookieStorage, cookie);
+                wkDeleteHTTPCookie(cfCookieStorage.get(), cookie);
             else
 #endif
                 [cookieStorage deleteCookie:cookie];
