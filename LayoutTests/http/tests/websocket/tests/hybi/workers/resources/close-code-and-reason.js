@@ -12,7 +12,7 @@ function postResult(result, actual, expected)
     postMessage(message);
 }
 
-var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/hanging-handshake");
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo");
 
 ws.onopen = function(event)
 {

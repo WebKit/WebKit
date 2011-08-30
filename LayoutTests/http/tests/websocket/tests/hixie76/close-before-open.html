@@ -12,7 +12,7 @@ description("Test if Web Socket fires close event when WebSocket is opened and c
 
 window.jsTestIsAsync = true;
 
-var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hixie76/hanging-handshake");
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hixie76/echo");
 ws.onclose = function() {
     debug("closed");
     finishJSTest();

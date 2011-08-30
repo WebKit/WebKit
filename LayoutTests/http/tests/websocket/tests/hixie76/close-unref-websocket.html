@@ -20,11 +20,10 @@ function endTest()
     finishJSTest();
 };
 
-var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hixie76/hanging-handshake");
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hixie76/echo");
 ws.onclose = function() {
     countCloseEvent += 1;
 };
-ws.close();
 ws = null;
 gc();
 setTimeout("endTest()", 100);
