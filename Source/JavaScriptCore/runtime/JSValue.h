@@ -392,11 +392,13 @@ namespace JSC {
 
     ALWAYS_INLINE JSValue jsDoubleNumber(double d)
     {
+        ASSERT(JSValue(JSValue::EncodeAsDouble, d).isNumber());
         return JSValue(JSValue::EncodeAsDouble, d);
     }
 
     ALWAYS_INLINE JSValue jsNumber(double d)
     {
+        ASSERT(JSValue(d).isNumber());
         return JSValue(d);
     }
 

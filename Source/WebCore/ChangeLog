@@ -1,3 +1,16 @@
+2011-08-29  Oliver Hunt  <oliver@apple.com>
+
+        TypedArrays don't ensure that denormalised values are normalised
+        https://bugs.webkit.org/show_bug.cgi?id=67178
+
+        Reviewed by Gavin Barraclough.
+
+        Ensure that we convert singaling nans to silent nans when loading
+        from a typed array. 
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+
 2011-08-29  Alexey Proskuryakov  <ap@apple.com>
 
         DumpRenderTree should begin each test with an empty cookie store

@@ -147,6 +147,14 @@ for (var i = 0; i < typeNames.length; i++) {
     }
 }
 
+buffer = new ArrayBuffer(40);
+ints = new Int32Array(buffer, 0, 10);
+floats = new Float32Array(buffer, 0, 10);
+// Plant a NaN into the buffer
+ints[0]=-0x7ffff;
+// Read the NaN out as a float
+shouldBeTrue("isNaN(floats[0])");
+
 successfullyParsed = true;
 
 </script>

@@ -2225,7 +2225,11 @@ sub GenerateImplementation
         push(@implContent, "\nJSValue ${className}::getByIndex(ExecState*, unsigned index)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
-        push(@implContent, "    return jsNumber(static_cast<$implClassName*>(impl())->item(index));\n");
+        push(@implContent, "    double result = static_cast<$implClassName*>(impl())->item(index);\n");
+        # jsNumber conversion doesn't suppress signalling NaNs, so enforce that here.
+        push(@implContent, "    if (isnan(result))\n");
+        push(@implContent, "        return jsNaN();\n");
+        push(@implContent, "    return JSValue(result);\n");
         push(@implContent, "}\n\n");
         if ($interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection") {
             $implIncludes{"JSNode.h"} = 1;

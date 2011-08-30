@@ -1,3 +1,17 @@
+2011-08-30  Oliver Hunt  <oliver@apple.com>
+
+        TypedArrays don't ensure that denormalised values are normalised
+        https://bugs.webkit.org/show_bug.cgi?id=67178
+
+        Reviewed by Gavin Barraclough.
+
+        Add a couple of assertions to jsNumber() to ensure that
+        we block signaling NaNs
+
+        * runtime/JSValue.h:
+        (JSC::jsDoubleNumber):
+        (JSC::jsNumber):
+
 2011-08-30  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
 
         [Qt] Do not unconditionally use pkg-config in .pro files
