@@ -54,7 +54,7 @@ private:
     bool handleMouseReleaseEvent(QGraphicsSceneMouseEvent*);
     bool handleMouseDoubleClickEvent(QGraphicsSceneMouseEvent*);
     bool handleWheelEvent(QGraphicsSceneWheelEvent*);
-    bool handleHoverMoveEvent(QGraphicsSceneHoverEvent*);
+    bool handleHoverMoveEvent(QHoverEvent*);
     bool handleDragEnterEvent(QGraphicsSceneDragDropEvent*);
     bool handleDragLeaveEvent(QGraphicsSceneDragDropEvent*);
     bool handleDragMoveEvent(QGraphicsSceneDragDropEvent*);

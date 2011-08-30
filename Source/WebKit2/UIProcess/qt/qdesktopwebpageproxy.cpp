@@ -91,8 +91,8 @@ bool QDesktopWebPageProxy::handleEvent(QEvent* ev)
         return handleMouseDoubleClickEvent(reinterpret_cast<QGraphicsSceneMouseEvent*>(ev));
     case QEvent::GraphicsSceneWheel:
         return handleWheelEvent(reinterpret_cast<QGraphicsSceneWheelEvent*>(ev));
-    case QEvent::GraphicsSceneHoverMove:
-        return handleHoverMoveEvent(reinterpret_cast<QGraphicsSceneHoverEvent*>(ev));
+    case QEvent::HoverMove:
+        return handleHoverMoveEvent(reinterpret_cast<QHoverEvent*>(ev));
     case QEvent::GraphicsSceneDragEnter:
         return handleDragEnterEvent(reinterpret_cast<QGraphicsSceneDragDropEvent*>(ev));
     case QEvent::GraphicsSceneDragLeave:
@@ -154,11 +154,10 @@ bool QDesktopWebPageProxy::handleWheelEvent(QGraphicsSceneWheelEvent* ev)
     return ev->isAccepted();
 }
 
-bool QDesktopWebPageProxy::handleHoverMoveEvent(QGraphicsSceneHoverEvent* ev)
+bool QDesktopWebPageProxy::handleHoverMoveEvent(QHoverEvent* ev)
 {
     QGraphicsSceneMouseEvent me(QEvent::GraphicsSceneMouseMove);
     me.setPos(ev->pos());
-    me.setScreenPos(ev->screenPos());
     me.setAccepted(ev->isAccepted());
 
     return handleMouseMoveEvent(&me);

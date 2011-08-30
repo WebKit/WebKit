@@ -1,3 +1,18 @@
+2011-08-30  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] Make mouse over work again for QDesktopWebView.
+        https://bugs.webkit.org/show_bug.cgi?id=67200
+
+        Reviewed by Noam Rosenthal.
+
+        The API has changed after QGraphicsView, SceneGraph sends
+        QHoverEvents now.
+
+        * UIProcess/qt/qdesktopwebpageproxy.cpp:
+        (QDesktopWebPageProxy::handleEvent):
+        (QDesktopWebPageProxy::handleHoverMoveEvent):
+        * UIProcess/qt/qdesktopwebpageproxy.h:
+
 2011-08-30  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         The unused ScrollView* argument can and should be removed from
