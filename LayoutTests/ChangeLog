@@ -1,3 +1,10 @@
+2011-08-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update test expectations for userscripts/window-onerror-for-isolated-world-1.html
+
+        * platform/chromium/userscripts/window-onerror-for-isolated-world-1-expected.txt:
+        * userscripts/window-onerror-for-isolated-world-1-expected.txt:
+
 2011-08-30  Oliver Varga  <voliver@inf.u-szeged.hu>
 
         [Qt] 3 test started crashing somewhere between r93878-r93935
