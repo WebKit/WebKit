@@ -1069,6 +1069,7 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitColumnCount, new ApplyPropertyAuto<unsigned short>(&RenderStyle::columnCount, &RenderStyle::setColumnCount, &RenderStyle::hasAutoColumnCount, &RenderStyle::setHasAutoColumnCount));
     setPropertyHandler(CSSPropertyWebkitColumnGap, new ApplyPropertyAuto<float, ComputeLength, CSSValueNormal>(&RenderStyle::columnGap, &RenderStyle::setColumnGap, &RenderStyle::hasNormalColumnGap, &RenderStyle::setHasNormalColumnGap));
     setPropertyHandler(CSSPropertyWebkitColumnWidth, new ApplyPropertyAuto<float, ComputeLength>(&RenderStyle::columnWidth, &RenderStyle::setColumnWidth, &RenderStyle::hasAutoColumnWidth, &RenderStyle::setHasAutoColumnWidth));
+    setPropertyHandler(CSSPropertyWebkitColumns, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyWebkitColumnWidth), propertyHandler(CSSPropertyWebkitColumnCount)));
 
     setPropertyHandler(CSSPropertyWebkitHighlight, new ApplyPropertyString<MapNoneToNull>(&RenderStyle::highlight, &RenderStyle::setHighlight, &RenderStyle::initialHighlight));
     setPropertyHandler(CSSPropertyWebkitHyphenateCharacter, new ApplyPropertyString<MapAutoToNull>(&RenderStyle::hyphenationString, &RenderStyle::setHyphenationString, &RenderStyle::initialHyphenationString));

@@ -4444,18 +4444,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInitial)
             m_style->resetColumnRule();
         return;
-    case CSSPropertyWebkitColumns:
-        if (isInherit) {
-            if (m_parentStyle->hasAutoColumnWidth())
-                m_style->setHasAutoColumnWidth();
-            else
-                m_style->setColumnWidth(m_parentStyle->columnWidth());
-            m_style->setColumnCount(m_parentStyle->columnCount());
-        } else if (isInitial) {
-            m_style->setHasAutoColumnWidth();
-            m_style->setColumnCount(RenderStyle::initialColumnCount());
-        }
-        return;
     case CSSPropertyWebkitRegionBreakBefore:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(regionBreakBefore, RegionBreakBefore, PageBreak)
         return;
@@ -5050,6 +5038,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitTransitionProperty:
     case CSSPropertyWebkitTransitionTimingFunction:
     case CSSPropertyCursor:
+    case CSSPropertyWebkitColumns:
     case CSSPropertyWebkitColumnCount:
     case CSSPropertyWebkitColumnGap:
     case CSSPropertyWebkitColumnWidth:

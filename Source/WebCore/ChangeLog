@@ -1,3 +1,21 @@
+2011-08-29  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement CSSPropertyWebkitColumns in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=67106
+
+        Reviewed by Darin Adler.
+
+        Tests:
+        LayoutTests/fast/multicol/inherit-column-values.html
+        LayoutTests/fast/multicol/initial-column-values.html
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Initialize handler for CSSPropertyWebkitColumns.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove existing implementation for CSSPropertyWebkitColumns.
+
 2011-08-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unzip initialization lists and constructors in JSCell hierarchy (3/7)
