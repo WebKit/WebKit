@@ -55,8 +55,9 @@ function test()
 
     function step3()
     {
-        InspectorTest.addResult("==== Computed style for ID3 ====");
-        InspectorTest.dumpSelectedElementStyles(false, true);
+        InspectorTest.addResult("==== Style for ID3 ====");
+        // The button[hidden] style specifies "display: none", which should not be /-- overloaded --/.
+        InspectorTest.dumpSelectedElementStyles(true, true);
         InspectorTest.completeTest();
     }
 

@@ -3675,9 +3675,6 @@ BUGWK66756 : fast/events/constructors/event-constructors.html = TEXT
 // Started to fail on all bots after r93951.
 BUGWK63878 : fast/dom/dom-constructors.html = TEXT
 
-// Failing after r93978 and r93983.
-BUGWK67153 LINUX : inspector/styles/styles-computed-trace.html = TEXT TIMEOUT
-
 // Failing after r93982.
 BUG_LEVIN MAC : canvas/philip/tests/2d.path.stroke.prune.arc.html = TEXT
 

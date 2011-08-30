@@ -1,3 +1,15 @@
+2011-08-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        REGRESSION(93978): inspector/styles/styles-computed-trace.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=67185
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/styles/styles-computed-trace-expected.txt:
+        * inspector/styles/styles-computed-trace.html:
+        * platform/chromium-win/inspector/styles/styles-computed-trace-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-08-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update test expectations for userscripts/window-onerror-for-isolated-world-1.html
