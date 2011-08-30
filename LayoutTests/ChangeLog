@@ -1,3 +1,13 @@
+2011-08-29  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: wrong script display name when there is a slash in its URL query parameters
+        https://bugs.webkit.org/show_bug.cgi?id=67120
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/scripts-sorting.html:
+        * platform/chromium/inspector/debugger/scripts-sorting-expected.txt:
+
 2011-08-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update window.onerror tests after r94061 to match new semantics

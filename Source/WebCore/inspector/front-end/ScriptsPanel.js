@@ -351,7 +351,11 @@ WebInspector.ScriptsPanel.prototype = {
         var folderName = "";
         var displayName = url;
 
-        var fromIndex = displayName.lastIndexOf("/", displayName.length - 2);
+        var pathLength = displayName.indexOf("?");
+        if (pathLength === -1)
+            pathLength = displayName.length;
+
+        var fromIndex = displayName.lastIndexOf("/", pathLength - 2);
         if (fromIndex !== -1) {
             folderName = displayName.substring(0, fromIndex);
             displayName = displayName.substring(fromIndex + 1);

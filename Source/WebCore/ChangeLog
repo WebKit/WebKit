@@ -1,5 +1,18 @@
 2011-08-29  Yury Semikhatsky  <yurys@chromium.org>
 
+        Web Inspector: wrong script display name when there is a slash in its URL query parameters
+        https://bugs.webkit.org/show_bug.cgi?id=67120
+
+        Fixed folder name computation in ScriptsPanel. Now search query is ignored
+        when searching for the script folder name.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._folderAndDisplayNameForScriptURL):
+
+2011-08-29  Yury Semikhatsky  <yurys@chromium.org>
+
         Return value of window.onerror has inverted semantics
         https://bugs.webkit.org/show_bug.cgi?id=67119
 
