@@ -7,6 +7,7 @@ PASS 2 % 0 is NaN
 PASS n % 0 is NaN
 PASS f() is NaN
 PASS g() is NaN
+PASS nonSpeculativeModReuse(0.5) is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE

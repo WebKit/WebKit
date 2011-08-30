@@ -1,3 +1,25 @@
+2011-08-29  Lucas Forschler  <lforschler@apple.com>
+
+    Merged 93934
+
+    2011-08-26  Gavin Barraclough  <barraclough@apple.com>
+
+            DFG JIT - ArithMod may clobber operands.
+            https://bugs.webkit.org/show_bug.cgi?id=67085
+
+            Reviewed by Sam Weinig.
+
+            unboxDouble must be called on a temporary.
+
+            * dfg/DFGJITCodeGenerator.cpp:
+            (JSC::DFG::JITCodeGenerator::fillDouble):
+            * dfg/DFGJITCodeGenerator.h:
+            (JSC::DFG::JITCodeGenerator::boxDouble):
+            * dfg/DFGNonSpeculativeJIT.cpp:
+            (JSC::DFG::NonSpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+
 2011-08-23  Mark Rowe  <mrowe@apple.com>
 
         Merge r93487.

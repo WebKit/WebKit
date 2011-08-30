@@ -371,10 +371,6 @@ protected:
     {
         return boxDouble(fpr, allocate());
     }
-    FPRReg unboxDouble(GPRReg gpr)
-    {
-        return unboxDouble(gpr, fprAllocate());
-    }
 
     // Spill a VirtualRegister to the RegisterFile.
     void spill(VirtualRegister spillMe)
