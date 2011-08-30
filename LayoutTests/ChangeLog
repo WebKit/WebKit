@@ -1,3 +1,18 @@
+2011-08-30  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. Chromium rebaselines for r94109.
+
+        * platform/chromium-linux/fast/css-generated-content/table-row-before-after-child-add-expected.txt: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-table-before-after-child-add-expected.txt: Added.
+        * platform/chromium-linux/fast/table/table-after-child-in-table-expected.txt: Added.
+        * platform/chromium-linux/fast/table/table-before-child-in-table-expected.txt: Added.
+        * platform/chromium-linux/fast/table/table-before-child-style-update-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-after-child-in-block-expected.txt: Added.
+        * platform/chromium-linux/fast/table/table-row-after-child-in-table-expected.txt: Added.
+        * platform/chromium-linux/fast/table/table-row-before-child-in-block-expected.txt: Added.
+        * platform/chromium-linux/fast/table/table-row-before-child-in-table-expected.txt: Added.
+        * platform/chromium-linux/fast/table/table-row-before-child-style-update-expected.png: Added.
+
 2011-08-30  Tim Horton  <timothy_horton@apple.com>
 
         getBBox() on a SVGPathElement with curves incorrectly includes control points
