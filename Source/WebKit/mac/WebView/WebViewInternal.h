@@ -34,6 +34,7 @@
 #import "WebTypesInternal.h"
 
 #ifdef __cplusplus
+#import <WebCore/FindOptions.h>
 #import <WebCore/WebCoreKeyboardUIMode.h>
 
 #include <wtf/Forward.h>
@@ -55,6 +56,8 @@ namespace WebCore {
 @class WebNodeHighlight;
 
 #ifdef __cplusplus
+
+WebCore::FindOptions coreOptions(WebFindOptions options);
 
 @interface WebView (WebViewEditingExtras)
 - (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag;

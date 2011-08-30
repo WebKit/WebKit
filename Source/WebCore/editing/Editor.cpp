@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2913,64 +2913,75 @@ bool Editor::findString(const String& target, bool forward, bool caseFlag, bool 
 
 bool Editor::findString(const String& target, FindOptions options)
 {
-    if (target.isEmpty())
-        return false;
-
-    if (m_frame->excludeFromTextSearch())
-        return false;
-
-    // Start from an edge of the selection, if there's a selection that's not in shadow content. Which edge
-    // is used depends on whether we're searching forward or backward, and whether startInSelection is set.
-    RefPtr<Range> searchRange(rangeOfContents(m_frame->document()));
     VisibleSelection selection = m_frame->selection()->selection();
 
-    bool forward = !(options & Backwards);
-    bool startInSelection = options & StartInSelection;
-    if (forward)
-        setStart(searchRange.get(), startInSelection ? selection.visibleStart() : selection.visibleEnd());
-    else
-        setEnd(searchRange.get(), startInSelection ? selection.visibleEnd() : selection.visibleStart());
+    RefPtr<Range> resultRange = rangeOfString(target, selection.firstRange().get(), options);
 
-    RefPtr<Node> shadowTreeRoot = selection.nonBoundaryShadowTreeRootNode();
-    if (shadowTreeRoot) {
-        ExceptionCode ec = 0;
+    if (!resultRange)
+        return false;
+
+    m_frame->selection()->setSelection(VisibleSelection(resultRange.get(), DOWNSTREAM));
+    m_frame->selection()->revealSelection();
+    return true;
+}
+
+PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRange, FindOptions options)
+{
+    if (target.isEmpty())
+        return 0;
+
+    if (m_frame->excludeFromTextSearch())
+        return 0;
+
+    // Start from an edge of the reference range, if there's a reference range that's not in shadow content. Which edge
+    // is used depends on whether we're searching forward or backward, and whether startInSelection is set.
+    RefPtr<Range> searchRange(rangeOfContents(m_frame->document()));
+
+    bool forward = !(options & Backwards);
+    bool startInReferenceRange = referenceRange && (options & StartInSelection);
+    if (referenceRange) {
         if (forward)
-            searchRange->setEnd(shadowTreeRoot.get(), shadowTreeRoot->childNodeCount(), ec);
+            searchRange->setStart(startInReferenceRange ? referenceRange->startPosition() : referenceRange->endPosition());
         else
-            searchRange->setStart(shadowTreeRoot.get(), 0, ec);
+            searchRange->setEnd(startInReferenceRange ? referenceRange->endPosition() : referenceRange->startPosition());
+    }
+
+    RefPtr<Node> shadowTreeRoot = referenceRange && referenceRange->startContainer() ? referenceRange->startContainer()->nonBoundaryShadowTreeRootNode() : 0;
+    if (shadowTreeRoot) {
+        if (forward)
+            searchRange->setEnd(shadowTreeRoot.get(), shadowTreeRoot->childNodeCount());
+        else
+            searchRange->setStart(shadowTreeRoot.get(), 0);
     }
 
     RefPtr<Range> resultRange(findPlainText(searchRange.get(), target, options));
-    // If we started in the selection and the found range exactly matches the existing selection, find again.
+    // If we started in the reference range and the found range exactly matches the reference range, find again.
     // Build a selection with the found range to remove collapsed whitespace.
     // Compare ranges instead of selection objects to ignore the way that the current selection was made.
-    if (startInSelection && areRangesEqual(VisibleSelection(resultRange.get()).toNormalizedRange().get(), selection.toNormalizedRange().get())) {
+    if (startInReferenceRange && areRangesEqual(VisibleSelection(resultRange.get()).toNormalizedRange().get(), referenceRange)) {
         searchRange = rangeOfContents(m_frame->document());
         if (forward)
-            setStart(searchRange.get(), selection.visibleEnd());
+            searchRange->setStart(referenceRange->endPosition());
         else
-            setEnd(searchRange.get(), selection.visibleStart());
+            searchRange->setEnd(referenceRange->startPosition());
 
         if (shadowTreeRoot) {
-            ExceptionCode ec = 0;
             if (forward)
-                searchRange->setEnd(shadowTreeRoot.get(), shadowTreeRoot->childNodeCount(), ec);
+                searchRange->setEnd(shadowTreeRoot.get(), shadowTreeRoot->childNodeCount());
             else
-                searchRange->setStart(shadowTreeRoot.get(), 0, ec);
+                searchRange->setStart(shadowTreeRoot.get(), 0);
         }
 
         resultRange = findPlainText(searchRange.get(), target, options);
     }
 
-    ExceptionCode exception = 0;
-
     // If nothing was found in the shadow tree, search in main content following the shadow tree.
-    if (resultRange->collapsed(exception) && shadowTreeRoot) {
+    if (resultRange->collapsed() && shadowTreeRoot) {
         searchRange = rangeOfContents(m_frame->document());
         if (forward)
-            searchRange->setStartAfter(shadowTreeRoot->shadowAncestorNode(), exception);
+            searchRange->setStartAfter(shadowTreeRoot->shadowAncestorNode());
         else
-            searchRange->setEndBefore(shadowTreeRoot->shadowAncestorNode(), exception);
+            searchRange->setEndBefore(shadowTreeRoot->shadowAncestorNode());
 
         resultRange = findPlainText(searchRange.get(), target, options);
     }
@@ -2978,25 +2989,20 @@ bool Editor::findString(const String& target, FindOptions options)
     if (!insideVisibleArea(resultRange.get())) {
         resultRange = nextVisibleRange(resultRange.get(), target, options);
         if (!resultRange)
-            return false;
+            return 0;
     }
 
     // If we didn't find anything and we're wrapping, search again in the entire document (this will
     // redundantly re-search the area already searched in some cases).
-    if (resultRange->collapsed(exception) && options & WrapAround) {
+    if (resultRange->collapsed() && options & WrapAround) {
         searchRange = rangeOfContents(m_frame->document());
         resultRange = findPlainText(searchRange.get(), target, options);
         // We used to return false here if we ended up with the same range that we started with
-        // (e.g., the selection was already the only instance of this text). But we decided that
+        // (e.g., the reference range was already the only instance of this text). But we decided that
         // this should be a success case instead, so we'll just fall through in that case.
     }
 
-    if (resultRange->collapsed(exception))
-        return false;
-
-    m_frame->selection()->setSelection(VisibleSelection(resultRange.get(), DOWNSTREAM));
-    m_frame->selection()->revealSelection();
-    return true;
+    return resultRange->collapsed() ? 0 : resultRange.release();
 }
 
 static bool isFrameInRange(Frame* frame, Range* range)

@@ -374,6 +374,16 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 - (id)initWithTarget:(id)target defaultTarget:(id)defaultTarget catchExceptions:(BOOL)catchExceptions;
 @end
 
+FindOptions coreOptions(WebFindOptions options)
+{
+    return (options & WebFindOptionsCaseInsensitive ? CaseInsensitive : 0)
+        | (options & WebFindOptionsAtWordStarts ? AtWordStarts : 0)
+        | (options & WebFindOptionsTreatMedialCapitalAsWordStart ? TreatMedialCapitalAsWordStart : 0)
+        | (options & WebFindOptionsBackwards ? Backwards : 0)
+        | (options & WebFindOptionsWrapAround ? WrapAround : 0)
+        | (options & WebFindOptionsStartInSelection ? StartInSelection : 0);
+}
+
 @interface WebView (WebFileInternal)
 - (float)_deviceScaleFactor;
 - (BOOL)_isLoading;
@@ -4545,6 +4555,14 @@ static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *stri
         }
     }
     return NO;
+}
+
+- (DOMRange *)DOMRangeOfString:(NSString *)string relativeTo:(DOMRange *)previousRange options:(WebFindOptions)options
+{
+    if (!_private->page)
+        return nil;
+
+    return kit(_private->page->rangeOfString(string, core(previousRange), coreOptions(options)).get());
 }
 
 - (void)setHoverFeedbackSuspended:(BOOL)newValue

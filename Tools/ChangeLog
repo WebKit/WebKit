@@ -1,3 +1,16 @@
+2011-08-30  Dan Bernstein  <mitz@apple.com>
+
+        Test for <rdar://problem/9281695> Add text search API for getting the DOM range of a text match
+        https://bugs.webkit.org/show_bug.cgi?id=67230
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/DOMRangeOfString.html: Added.
+        * TestWebKitAPI/Tests/mac/DOMRangeOfString.mm: Added.
+        (-[DOMRangeOfStringFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+
 2011-08-30  Aaron Colwell  <acolwell@chromium.org>
 
         Add MediaSource API to HTMLMediaElement

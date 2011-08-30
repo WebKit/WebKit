@@ -75,6 +75,7 @@ namespace WebCore {
     class PageGroup;
     class PluginData;
     class ProgressTracker;
+    class Range;
     class RenderTheme;
     class VisibleSelection;
     class ScrollableArea;
@@ -210,6 +211,9 @@ namespace WebCore {
         bool findString(const String&, FindOptions);
         // FIXME: Switch callers over to the FindOptions version and retire this one.
         bool findString(const String&, TextCaseSensitivity, FindDirection, bool shouldWrap);
+
+        PassRefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
+
         unsigned markAllMatchesForText(const String&, FindOptions, bool shouldHighlight, unsigned);
         // FIXME: Switch callers over to the FindOptions version and retire this one.
         unsigned markAllMatchesForText(const String&, TextCaseSensitivity, bool shouldHighlight, unsigned);

@@ -499,6 +499,34 @@ bool Page::findString(const String& target, FindOptions options)
     return false;
 }
 
+PassRefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRange, FindOptions options)
+{
+    if (target.isEmpty() || !mainFrame())
+        return 0;
+
+    if (referenceRange && referenceRange->ownerDocument()->page() != this)
+        return 0;
+
+    bool shouldWrap = options & WrapAround;
+    Frame* frame = referenceRange ? referenceRange->ownerDocument()->frame() : mainFrame();
+    Frame* startFrame = frame;
+    do {
+        if (RefPtr<Range> resultRange = frame->editor()->rangeOfString(target, frame == startFrame ? referenceRange : 0, (options & ~WrapAround) | StartInSelection))
+            return resultRange.release();
+
+        frame = incrementFrame(frame, !(options & Backwards), shouldWrap);
+    } while (frame && frame != startFrame);
+
+    // Search contents of startFrame, on the other side of the reference range that we did earlier.
+    // We cheat a bit and just search again with wrap on.
+    if (shouldWrap && referenceRange) {
+        if (RefPtr<Range> resultRange = startFrame->editor()->rangeOfString(target, referenceRange, options | WrapAround | StartInSelection))
+            return resultRange.release();
+    }
+
+    return 0;
+}
+
 unsigned int Page::markAllMatchesForText(const String& target, TextCaseSensitivity caseSensitivity, bool shouldHighlight, unsigned limit)
 {
     return markAllMatchesForText(target, caseSensitivity == TextCaseInsensitive ? CaseInsensitive : 0, shouldHighlight, limit);

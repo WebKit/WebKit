@@ -1,3 +1,26 @@
+2011-08-30  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of <rdar://problem/9281695> Add text search API for getting the DOM range of a text match
+        https://bugs.webkit.org/show_bug.cgi?id=67230
+
+        Reviewed by Darin Adler.
+
+        Test: TestWebKitAPI/Tests/mac/DOMRangeOfString.
+
+        * WebCore.exp.in: Export Page::rangeOfString().
+        * dom/Range.h: Added a default ASSERT_NO_EXCEPTION to a few more member functions.
+        * editing/Editor.cpp:
+        (WebCore::Editor::findString): Moved most of the logic into rangeOfString(), which this function
+        now calls, passing in the current selection as the reference range and setting the selection to
+        the returned range.
+        (WebCore::Editor::rangeOfString): Added. Contains the find logic from findString().
+        * editing/Editor.h:
+        * page/Page.cpp:
+        (WebCore::Page::rangeOfString): Added. This function is similar to findString(), but it takes an optional
+        reference range and returns a Range, rather than using the current selection as the reference range and setting the
+        selection to the next match.
+        * page/Page.h:
+
 2011-08-30  Sam Weinig  <sam@webkit.org>
 
         Add additional convertValue overloads to JSDictionary

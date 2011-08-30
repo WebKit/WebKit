@@ -117,6 +117,7 @@ typedef NSUInteger WebFindOptions;
 - (void)unscheduleFromRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
 
 - (BOOL)findString:(NSString *)string options:(WebFindOptions)options;
+- (DOMRange *)DOMRangeOfString:(NSString *)string relativeTo:(DOMRange *)previousRange options:(WebFindOptions)options;
 
 - (void)setMainFrameDocumentReady:(BOOL)mainFrameDocumentReady;
 
