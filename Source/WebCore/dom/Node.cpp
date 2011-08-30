@@ -81,7 +81,7 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "ScopedEventQueue.h"
-#include "SelectorNodeList.h"
+#include "SelectorQuery.h"
 #include "ShadowRoot.h"
 #include "StaticNodeList.h"
 #include "TagNodeList.h"
@@ -1765,29 +1765,9 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
         ec = NAMESPACE_ERR;
         return 0;
     }
-
-    CSSStyleSelector::SelectorChecker selectorChecker(document(), strictParsing);
-
-    // FIXME: we could also optimize for the the [id="foo"] case
-    if (strictParsing && inDocument() && querySelectorList.hasOneSelector() && querySelectorList.first()->m_match == CSSSelector::Id) {
-        Element* element = treeScope()->getElementById(querySelectorList.first()->value());
-        if (element && (isDocumentNode() || element->isDescendantOf(this)) && selectorChecker.checkSelector(querySelectorList.first(), element))
-            return element;
-        return 0;
-    }
-
-    // FIXME: We can speed this up by implementing caching similar to the one use by getElementById
-    for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {
-        if (n->isElementNode()) {
-            Element* element = static_cast<Element*>(n);
-            for (CSSSelector* selector = querySelectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
-                if (selectorChecker.checkSelector(selector, element))
-                    return element;
-            }
-        }
-    }
     
-    return 0;
+    SelectorQuery selectorQuery(this, querySelectorList);
+    return selectorQuery.queryFirst();
 }
 
 PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCode& ec)
@@ -1813,7 +1793,8 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
         return 0;
     }
 
-    return createSelectorNodeList(this, querySelectorList);
+    SelectorQuery selectorQuery(this, querySelectorList);
+    return selectorQuery.queryAll();
 }
 
 Document *Node::ownerDocument() const

@@ -542,7 +542,7 @@ SOURCES += \
     dom/ScriptExecutionContext.cpp \
     dom/ScriptRunner.cpp \
     dom/SelectElement.cpp \
-    dom/SelectorNodeList.cpp \
+    dom/SelectorQuery.cpp \
     dom/ShadowContentElement.cpp \
     dom/ShadowInclusionSelector.cpp \
     dom/ShadowRoot.cpp \
@@ -1536,7 +1536,7 @@ HEADERS += \
     dom/ScriptElement.h \
     dom/ScriptExecutionContext.h \
     dom/SelectElement.h \
-    dom/SelectorNodeList.h \
+    dom/SelectorQuery.h \
     dom/ShadowContentElement.h \
     dom/ShadowInclusionSelector.h \
     dom/ShadowRoot.h \

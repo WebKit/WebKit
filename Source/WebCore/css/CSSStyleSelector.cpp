@@ -875,9 +875,20 @@ EInsideLink CSSStyleSelector::SelectorChecker::determineLinkStateSlowCase(Elemen
 #endif
 }
 
-bool CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* element) const
+bool CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* element, bool isFastCheckableSelector) const
 {
     PseudoId dynamicPseudo = NOPSEUDO;
+    if (isFastCheckableSelector && !element->isSVGElement()) {
+        // fastCheckSelector assumes class and id match for the top selector.
+        if (sel->m_match == CSSSelector::Class) {
+            if (!(element->hasClass() && static_cast<StyledElement*>(element)->classNames().contains(sel->value())))
+                return false;
+        } else if (sel->m_match == CSSSelector::Id) {
+            if (!(element->hasID() && element->idForStyleResolution() == sel->value()))
+                return false;
+        }
+        return fastCheckSelector(sel, element);
+    }
     return checkSelector(sel, element, dynamicPseudo, false, false) == SelectorMatches;
 }
 
@@ -2012,17 +2023,6 @@ inline bool selectorTagMatches(const Element* element, const CSSSelector* select
     const AtomicString& namespaceURI = selector->tag().namespaceURI();
     return namespaceURI == starAtom || namespaceURI == element->namespaceURI();
 }
-
-inline bool isFastCheckableSelector(const CSSSelector* selector)
-{
-    for (; selector; selector = selector->tagHistory()) {
-        if (selector->relation() != CSSSelector::Descendant && selector->relation() != CSSSelector::Child && selector->relation() != CSSSelector::SubSelector)
-            return false;
-        if (selector->m_match != CSSSelector::None && selector->m_match != CSSSelector::Id && selector->m_match != CSSSelector::Class)
-            return false;
-    }
-    return true;
-}
     
 template <bool checkValue(const Element*, AtomicStringImpl*)>
 inline bool fastCheckSingleSelector(const CSSSelector*& selector, const Element*& element, const CSSSelector*& topChildOrSubselector, const Element*& topChildOrSubselectorMatchElement)
@@ -2112,6 +2112,17 @@ bool CSSStyleSelector::SelectorChecker::fastCheckSelector(const CSSSelector* sel
         default:
             ASSERT_NOT_REACHED();
         }
+    }
+    return true;
+}
+
+bool CSSStyleSelector::SelectorChecker::isFastCheckableSelector(const CSSSelector* selector)
+{
+    for (; selector; selector = selector->tagHistory()) {
+        if (selector->relation() != CSSSelector::Descendant && selector->relation() != CSSSelector::Child && selector->relation() != CSSSelector::SubSelector)
+            return false;
+        if (selector->m_match != CSSSelector::None && selector->m_match != CSSSelector::Id && selector->m_match != CSSSelector::Class)
+            return false;
     }
     return true;
 }
@@ -3035,7 +3046,7 @@ RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position)
     , m_selector(selector)
     , m_specificity(selector->specificity())
     , m_position(position)
-    , m_hasFastCheckableSelector(isFastCheckableSelector(selector))
+    , m_hasFastCheckableSelector(CSSStyleSelector::SelectorChecker::isFastCheckableSelector(selector))
     , m_hasMultipartSelector(selector->tagHistory())
     , m_hasTopSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(selector))
 {

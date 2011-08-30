@@ -568,7 +568,7 @@ SET(WebCore_SOURCES
     dom/ScriptExecutionContext.cpp
     dom/ScriptRunner.cpp
     dom/SelectElement.cpp
-    dom/SelectorNodeList.cpp
+    dom/SelectorQuery.cpp
     dom/ShadowContentElement.cpp
     dom/ShadowInclusionSelector.cpp
     dom/ShadowRoot.cpp

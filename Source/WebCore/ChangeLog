@@ -1,3 +1,55 @@
+2011-08-30  Antti Koivisto  <antti@apple.com>
+
+        querySelector/querySelectorAll should use selector checker fast path 
+        https://bugs.webkit.org/show_bug.cgi?id=67161
+
+        Reviewed by Sam Weinig.
+
+        Descendant and child selectors can be matches substantially faster using
+        SelectorChecker::fastCheckSelector() path. Currently it is used for style matching only.  
+        
+        Add SelectorQuery class that can do both querySelector and querySelectorAll efficiently using
+        fast path. Use inlined loop for DOM traversal.
+        
+        The patch is ~25% speedup in the overall native score of http://www.webkit.org/perf/slickspeed/.
+        Some individual subtests (using child or descendant selectors) execute twice as fast.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::isFastCheckableSelector):
+        (WebCore::RuleData::RuleData):
+        * css/CSSStyleSelector.h:
+        
+            Make fast path checking available outside CSSStyleSelector.
+            
+        * dom/DOMAllInOne.cpp:
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector):
+        (WebCore::Node::querySelectorAll):
+        
+            Switch to SelectorQuery.
+        
+        * dom/SelectorNodeList.cpp: Removed.
+        * dom/SelectorNodeList.h: Removed.
+        
+            SelectorQuery makes these obsolete.
+
+        * dom/SelectorQuery.cpp: Added.
+        (WebCore::SelectorQuery::SelectorQuery):
+        (WebCore::SelectorQuery::queryAll):
+        (WebCore::SelectorQuery::queryFirst):
+        (WebCore::SelectorQuery::canUseIdLookup):
+        (WebCore::SelectorQuery::execute):
+        * dom/SelectorQuery.h: Added.
+        
+            Class for selector matching in tree.
+    
 2011-08-30  Dmitry Titov  <dimich@chromium.org>
 
         REGRESSION (r93913): Failures in fast/replaced/frame-removed-during-resize.html and scrollbars/scrollable-iframe-remove-crash.html
