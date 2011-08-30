@@ -1,3 +1,26 @@
+2011-08-30  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        [Qt] Do not unconditionally use pkg-config in .pro files
+        https://bugs.webkit.org/show_bug.cgi?id=67055
+
+        Reviewed by Andreas Kling.
+
+        Original patch from Rohan McGovern <rohan.mcgovern@nokia.com>
+
+        Using the first pkg-config in PATH is prone to errors when cross
+        compiling inside the Qt repository (using Qt's build-system).
+
+        This patch protect calls for pkg-config with
+        !contains(QT_CONFIG, no-pkg-config). no-pkg-config is added to
+        QT_CONFIG by Qt's 'configure' when cross-compiling on systems
+        without pkg-config.
+
+        The respective change in Qt's configure has been submited already.
+
+        No new tests as this is just a build change.
+
+        * wtf/wtf.pri: protect pkg-config calls
+
 2011-08-29  Daniel Bates  <dbates@webkit.org>
 
         Add HAVE(VASPRINTF) macro to test for vasprintf() support
