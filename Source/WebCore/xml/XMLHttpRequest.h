@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2005, 2006 Alexey Proskuryakov <ap@nypop.com>
+ *  Copyright (C) 2011 Google Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -110,6 +111,11 @@ public:
     Blob* optionalResponseBlob() const { return m_responseBlob.get(); }
 #endif
 
+    // Expose HTTP validation methods for other untrusted requests.
+    static bool isAllowedHTTPMethod(const String&);
+    static String uppercaseKnownHTTPMethod(const String&);
+    static bool isAllowedHTTPHeader(const String&);
+
     void setResponseType(const String&, ExceptionCode&);
     String responseType();
     ResponseTypeCode responseTypeCode() const { return m_responseTypeCode; }
@@ -163,7 +169,6 @@ private:
 
     String getRequestHeader(const AtomicString& name) const;
     void setRequestHeaderInternal(const AtomicString& name, const String& value);
-    bool isSafeRequestHeader(const String&) const;
 
     void changeState(State newState);
     void callReadyStateChangeListener();

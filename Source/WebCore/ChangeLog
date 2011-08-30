@@ -1,3 +1,31 @@
+2011-08-30  Bill Budge  <bbudge@chromium.org>
+
+        This patch makes the XMLHttpRequest method/header validation logic available as
+        static methods so URL loaders can perform the same checks for untrusted HTTP requests
+        coming from plugins. 
+        https://bugs.webkit.org/show_bug.cgi?id=66909
+
+        Reviewed by David Levin.
+
+        No new tests. Exposes no new functionality.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/network/HTTPValidation.cpp: Added.
+        (WebCore::isValidHTTPToken):
+        (WebCore::isValidHTTPHeaderValue):
+        * platform/network/HTTPValidation.h: Added.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::isAllowedHTTPMethod):
+        (WebCore::XMLHttpRequest::uppercaseKnownHTTPMethod):
+        (WebCore::XMLHttpRequest::isAllowedHTTPHeader):
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        * xml/XMLHttpRequest.h:
+
 2011-08-30  Chris Rogers  <crogers@google.com>
 
         Don't allow nodes of one context to be connected to nodes of another context

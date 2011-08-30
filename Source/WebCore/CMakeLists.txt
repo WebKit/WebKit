@@ -1133,6 +1133,7 @@ SET(WebCore_SOURCES
     platform/network/FormData.cpp
     platform/network/HTTPHeaderMap.cpp
     platform/network/HTTPParsers.cpp
+    platform/network/HTTPValidation.cpp
     platform/network/MIMEHeader.cpp
     platform/network/NetworkStateNotifier.cpp
     platform/network/ProtectionSpace.cpp

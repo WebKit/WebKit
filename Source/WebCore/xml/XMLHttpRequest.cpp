@@ -2,7 +2,7 @@
  *  Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2005-2007 Alexey Proskuryakov <ap@webkit.org>
  *  Copyright (C) 2007, 2008 Julien Chaffraix <jchaffraix@webkit.org>
- *  Copyright (C) 2008 David Levin <levin@chromium.org>
+ *  Copyright (C) 2008, 2011 Google Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -36,6 +36,7 @@
 #include "ExceptionCode.h"
 #include "File.h"
 #include "HTTPParsers.h"
+#include "HTTPValidation.h"
 #include "InspectorInstrumentation.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -102,35 +103,6 @@ XMLHttpRequestStaticData::XMLHttpRequestStaticData()
     m_forbiddenRequestHeaders.add("upgrade");
     m_forbiddenRequestHeaders.add("user-agent");
     m_forbiddenRequestHeaders.add("via");
-}
-
-// Determines if a string is a valid token, as defined by
-// "token" in section 2.2 of RFC 2616.
-static bool isValidToken(const String& name)
-{
-    unsigned length = name.length();
-    for (unsigned i = 0; i < length; i++) {
-        UChar c = name[i];
-
-        if (c >= 127 || c <= 32)
-            return false;
-
-        if (c == '(' || c == ')' || c == '<' || c == '>' || c == '@' ||
-            c == ',' || c == ';' || c == ':' || c == '\\' || c == '\"' ||
-            c == '/' || c == '[' || c == ']' || c == '?' || c == '=' ||
-            c == '{' || c == '}')
-            return false;
-    }
-
-    return length > 0;
-}
-
-static bool isValidHeaderValue(const String& name)
-{
-    // FIXME: This should really match name against
-    // field-value in section 4.2 of RFC 2616.
-
-    return !name.contains('\r') && !name.contains('\n');
 }
 
 static bool isSetCookieHeader(const AtomicString& name)
@@ -398,6 +370,32 @@ void XMLHttpRequest::setAsBlob(bool value, ExceptionCode& ec)
 }
 #endif
 
+bool XMLHttpRequest::isAllowedHTTPMethod(const String& method)
+{
+    return !equalIgnoringCase(method, "TRACE")
+        && !equalIgnoringCase(method, "TRACK")
+        && !equalIgnoringCase(method, "CONNECT");
+}
+
+String XMLHttpRequest::uppercaseKnownHTTPMethod(const String& method)
+{
+    if (equalIgnoringCase(method, "COPY") || equalIgnoringCase(method, "DELETE") || equalIgnoringCase(method, "GET")
+        || equalIgnoringCase(method, "HEAD") || equalIgnoringCase(method, "INDEX") || equalIgnoringCase(method, "LOCK")
+        || equalIgnoringCase(method, "M-POST") || equalIgnoringCase(method, "MKCOL") || equalIgnoringCase(method, "MOVE")
+        || equalIgnoringCase(method, "OPTIONS") || equalIgnoringCase(method, "POST") || equalIgnoringCase(method, "PROPFIND")
+        || equalIgnoringCase(method, "PROPPATCH") || equalIgnoringCase(method, "PUT") || equalIgnoringCase(method, "UNLOCK")) {
+        return method.upper();
+    }
+    return method;
+}
+
+bool XMLHttpRequest::isAllowedHTTPHeader(const String& name)
+{
+    initializeXMLHttpRequestStaticData();
+    return !staticData->m_forbiddenRequestHeaders.contains(name) && !name.startsWith(staticData->m_proxyHeaderPrefix, false)
+        && !name.startsWith(staticData->m_secHeaderPrefix, false);
+}
+
 void XMLHttpRequest::open(const String& method, const KURL& url, ExceptionCode& ec)
 {
     open(method, url, true, ec);
@@ -418,28 +416,19 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
 
     ASSERT(m_state == UNSENT);
 
-    if (!isValidToken(method)) {
+    if (!isValidHTTPToken(method)) {
         ec = SYNTAX_ERR;
         return;
     }
 
-    // Method names are case sensitive. But since Firefox uppercases method names it knows, we'll do the same.
-    String methodUpper(method.upper());
-
-    if (methodUpper == "TRACE" || methodUpper == "TRACK" || methodUpper == "CONNECT") {
+    if (!isAllowedHTTPMethod(method)) {
         ec = SECURITY_ERR;
         return;
     }
 
-    m_url = url;
+    m_method = uppercaseKnownHTTPMethod(method);
 
-    if (methodUpper == "COPY" || methodUpper == "DELETE" || methodUpper == "GET" || methodUpper == "HEAD"
-        || methodUpper == "INDEX" || methodUpper == "LOCK" || methodUpper == "M-POST" || methodUpper == "MKCOL" || methodUpper == "MOVE"
-        || methodUpper == "OPTIONS" || methodUpper == "POST" || methodUpper == "PROPFIND" || methodUpper == "PROPPATCH" || methodUpper == "PUT"
-        || methodUpper == "UNLOCK")
-        m_method = methodUpper;
-    else
-        m_method = method;
+    m_url = url;
 
     m_async = async;
 
@@ -835,13 +824,13 @@ void XMLHttpRequest::setRequestHeader(const AtomicString& name, const String& va
         return;
     }
 
-    if (!isValidToken(name) || !isValidHeaderValue(value)) {
+    if (!isValidHTTPToken(name) || !isValidHTTPHeaderValue(value)) {
         ec = SYNTAX_ERR;
         return;
     }
 
     // A privileged script (e.g. a Dashboard widget) can set any headers.
-    if (!securityOrigin()->canLoadLocalResources() && !isSafeRequestHeader(name)) {
+    if (!securityOrigin()->canLoadLocalResources() && !isAllowedHTTPHeader(name)) {
         reportUnsafeUsage(scriptExecutionContext(), "Refused to set unsafe header \"" + name + "\"");
         return;
     }
@@ -854,12 +843,6 @@ void XMLHttpRequest::setRequestHeaderInternal(const AtomicString& name, const St
     pair<HTTPHeaderMap::iterator, bool> result = m_requestHeaders.add(name, value);
     if (!result.second)
         result.first->second += ", " + value;
-}
-
-bool XMLHttpRequest::isSafeRequestHeader(const String& name) const
-{
-    return !staticData->m_forbiddenRequestHeaders.contains(name) && !name.startsWith(staticData->m_proxyHeaderPrefix, false)
-        && !name.startsWith(staticData->m_secHeaderPrefix, false);
 }
 
 String XMLHttpRequest::getRequestHeader(const AtomicString& name) const

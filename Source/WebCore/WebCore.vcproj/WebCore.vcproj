@@ -30445,6 +30445,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\HTTPValidation.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\HTTPValidation.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\MIMEHeader.cpp"
 					>
 				</File>
