@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x293
-  RenderBlock {HTML} at (0,0) size 800x293
-    RenderBody {BODY} at (8,16) size 784x261
+layer at (0,0) size 800x298
+  RenderBlock {HTML} at (0,0) size 800x298
+    RenderBody {BODY} at (8,16) size 784x266
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 721x19
           text run at (0,0) width 370: "This test checks if CSS3 multi-column layout properly works "
@@ -11,19 +11,19 @@ layer at (0,0) size 800x293
         RenderText {#text} at (0,0) size 522x19
           text run at (0,0) width 280: "Test successful if the following text is readable "
           text run at (280,0) width 242: "(i.e. not split into two different columns)."
-      RenderBlock {DIV} at (0,242) size 784x19
-layer at (8,88) size 784x19
-  RenderBlock {P} at (0,72) size 784x19 [bgcolor=#EEEEEE]
+      RenderBlock {DIV} at (0,246) size 784x20
+layer at (8,88) size 784x20
+  RenderBlock {P} at (0,72) size 784x20 [bgcolor=#EEEEEE]
     RenderText {#text} at (0,0) size 63x19
       text run at (0,0) width 63: "Short text."
-layer at (8,123) size 784x34
-  RenderBlock {P} at (0,107) size 784x34 [bgcolor=#EEEEEE]
+layer at (8,124) size 784x35
+  RenderBlock {P} at (0,108) size 784x35 [bgcolor=#EEEEEE]
     RenderInline {SPAN} at (0,0) size 137x34
       RenderText {#text} at (0,0) size 137x34
         text run at (0,0) width 137: "Bigger text."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,173) size 784x34
-  RenderBlock {P} at (0,157) size 784x34 [bgcolor=#EEEEEE]
+layer at (8,175) size 784x35
+  RenderBlock {P} at (0,159) size 784x35 [bgcolor=#EEEEEE]
     RenderText {#text} at (0,12) size 52x19
       text run at (0,12) width 52: "Partially "
     RenderInline {SPAN} at (0,0) size 36x34
@@ -31,12 +31,12 @@ layer at (8,173) size 784x34
         text run at (52,0) width 36: "big"
     RenderText {#text} at (88,12) size 30x19
       text run at (88,12) width 30: " text."
-layer at (8,223) size 784x19
-  RenderBlock {DIV} at (0,207) size 784x19 [bgcolor=#EEEEEE]
-    RenderBlock {P} at (0,16) size 184x23
-      RenderText {#text} at (0,3) size 86x19
-        text run at (0,3) width 86: "Nested block."
-layer at (8,258) size 784x19
-  RenderBlock {P} at (0,0) size 784x19 [bgcolor=#EEEEEE]
+layer at (8,226) size 784x20
+  RenderBlock {DIV} at (0,210) size 784x20 [bgcolor=#EEEEEE]
+    RenderBlock {P} at (0,16) size 184x24
+      RenderText {#text} at (0,4) size 86x19
+        text run at (0,4) width 86: "Nested block."
+layer at (8,262) size 784x20
+  RenderBlock {P} at (0,0) size 784x20 [bgcolor=#EEEEEE]
     RenderText {#text} at (0,0) size 106x19
       text run at (0,0) width 106: "Nested block #2."

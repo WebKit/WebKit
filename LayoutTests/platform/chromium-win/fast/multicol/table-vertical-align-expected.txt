@@ -7,10 +7,10 @@ layer at (0,0) size 785x1010
       RenderBlock {HR} at (0,676) size 769x2 [border: (1px inset #000000)]
 layer at (8,8) size 769x350
   RenderBlock {DIV} at (0,0) size 769x350
-    RenderTable {TABLE} at (0,0) size 376x1287 [border: (1px outset #808080)]
-      RenderTableSection {TBODY} at (1,1) size 374x1285
-        RenderTableRow {TR} at (0,0) size 374x1285
-          RenderTableCell {TD} at (0,44) size 136x1241 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+    RenderTable {TABLE} at (0,0) size 376x1307 [border: (1px outset #808080)]
+      RenderTableSection {TBODY} at (1,1) size 374x1305
+        RenderTableRow {TR} at (0,0) size 374x1305
+          RenderTableCell {TD} at (0,44) size 136x1261 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (11,11) size 114x39
               text run at (11,11) width 114: "This cell has lots of"
               text run at (11,31) width 26: "text."
@@ -264,9 +264,9 @@ layer at (8,376) size 769x300
             RenderBR {BR} at (37,1215) size 0x0
           RenderTableCell {TD} at (136,528) size 238x174 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
             RenderInline {SPAN} at (0,0) size 145x149
-              RenderText {#text} at (11,72) size 145x149
-                text run at (11,72) width 145: "Other"
-                text run at (11,148) width 106: "cell."
+              RenderText {#text} at (11,73) size 145x149
+                text run at (11,73) width 145: "Other"
+                text run at (11,149) width 106: "cell."
 layer at (8,702) size 769x300
   RenderBlock {DIV} at (0,694) size 769x300
     RenderTable {TABLE} at (0,0) size 376x1233 [border: (1px outset #808080)]
@@ -394,7 +394,7 @@ layer at (8,702) size 769x300
               text run at (11,1200) width 26: "text."
             RenderBR {BR} at (37,1215) size 0x0
           RenderTableCell {TD} at (136,1057) size 238x174 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-            RenderInline {SPAN} at (0,0) size 145x204
-              RenderText {#text} at (11,12) size 145x204
+            RenderInline {SPAN} at (0,0) size 145x205
+              RenderText {#text} at (11,12) size 145x205
                 text run at (11,12) width 145: "Other"
-                text run at (11,143) width 106: "cell."
+                text run at (11,144) width 106: "cell."

@@ -3666,8 +3666,8 @@ BUGWK67007 DEBUG : fast/ruby/after-table-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.html = CRASH
 
-BUGWK67074 WIN LINUX DEBUG : fast/replaced/frame-removed-during-resize.html = CRASH
-BUGWK67074 WIN LINUX DEBUG : scrollbars/scrollbar-buttons.html = CRASH
+BUGWK67204 : fast/multicol/inherit-column-values.html = MISSING
+BUGWK67204 : fast/multicol/initial-column-values.html = MISSING
 
 // Implement an Event constructor in V8.
 BUGWK66756 : fast/events/constructors/event-constructors.html = TEXT
@@ -3681,6 +3681,5 @@ BUG_LEVIN MAC : canvas/philip/tests/2d.path.stroke.prune.arc.html = TEXT
 // Failing after r93988.
 BUGWK67144 GPU WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
 
-// Newly added tests likely just need baselines added.
-BUG_LEVIN : fast/multicol/inherit-column-values.html = MISSING
-BUG_LEVIN : fast/multicol/initial-column-values.html = MISSING
+// Failing after r94084. This looks like it may be a real regression.
+BUG_LEVIN : css2.1/t090204-display-change-01-b-ao.html = IMAGE+TEXT
