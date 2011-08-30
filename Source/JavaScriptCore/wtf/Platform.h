@@ -681,6 +681,12 @@
 #define HAVE_SIGNAL_H 1
 #endif
 
+#if !defined(HAVE_VASPRINTF)
+#if !COMPILER(MSVC) && !COMPILER(RVCT) && !COMPILER(MINGW)
+#define HAVE_VASPRINTF 1
+#endif
+#endif
+
 #if !defined(HAVE_STRNSTR)
 #if OS(DARWIN) || OS(FREEBSD)
 #define HAVE_STRNSTR 1

@@ -1,3 +1,13 @@
+2011-08-29  Daniel Bates  <dbates@webkit.org>
+
+        Add HAVE(VASPRINTF) macro to test for vasprintf() support
+        https://bugs.webkit.org/show_bug.cgi?id=67156
+
+        Reviewed by Darin Adler.
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::error): Modified to use HAVE(VASPRINTF).
+
 2011-08-29  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Receive binary message as Blob

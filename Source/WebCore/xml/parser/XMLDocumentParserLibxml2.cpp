@@ -938,13 +938,13 @@ void XMLDocumentParser::error(XMLErrors::ErrorType type, const char* message, va
     if (isStopped())
         return;
 
-#if COMPILER(MSVC) || COMPILER(RVCT) || COMPILER(MINGW)
-    char m[1024];
-    vsnprintf(m, sizeof(m) - 1, message, args);
-#else
+#if HAVE(VASPRINTF)
     char* m;
     if (vasprintf(&m, message, args) == -1)
         return;
+#else
+    char m[1024];
+    vsnprintf(m, sizeof(m) - 1, message, args);
 #endif
 
     if (m_parserPaused)
@@ -952,7 +952,7 @@ void XMLDocumentParser::error(XMLErrors::ErrorType type, const char* message, va
     else
         handleError(type, m, lineNumber(), columnNumber());
 
-#if !COMPILER(MSVC) && !COMPILER(RVCT) && !COMPILER(MINGW)
+#if HAVE(VASPRINTF)
     free(m);
 #endif
 }

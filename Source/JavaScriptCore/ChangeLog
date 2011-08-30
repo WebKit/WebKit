@@ -1,3 +1,16 @@
+2011-08-29  Daniel Bates  <dbates@webkit.org>
+
+        Add HAVE(VASPRINTF) macro to test for vasprintf() support
+        https://bugs.webkit.org/show_bug.cgi?id=67156
+
+        Reviewed by Darin Adler.
+
+        Encapsulate testing of vasprintf() support in a HAVE macro
+        instead of hardcoding the list of supported/unsupported
+        compilers at the call site.
+
+        * wtf/Platform.h:
+
 2011-08-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unzip initialization lists and constructors in JSCell hierarchy (3/7)
