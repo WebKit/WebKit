@@ -1,3 +1,11 @@
+2011-08-30  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/loader/document-destruction-within-unload.html causes an assertion failure in the next
+        test (currently, document-with-fragment-url-1.html)
+        https://bugs.webkit.org/show_bug.cgi?id=66783
+
+        * platform/mac/Skipped: Skipping the offending test.
+
 2011-08-29  Oliver Hunt  <oliver@apple.com>
 
         TypedArrays don't ensure that denormalised values are normalised
