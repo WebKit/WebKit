@@ -1398,3 +1398,6 @@ fast/harness/sample-fail-mismatch-reftest.html
 # editing/selection/caret-at-bidi-boundary.html timing out on Windows since it was added
 # https://bugs.webkit.org/show_bug.cgi?id=66551
 editing/selection/caret-at-bidi-boundary.html
+
+# Need DRT change: https://bugs.webkit.org/show_bug.cgi?id=66620
+editing/spelling/spelling-insert-html.html

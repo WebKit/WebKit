@@ -1,3 +1,9 @@
+2011-08-29  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed marking skip.
+
+        * platform/win/Skipped: Skipped editing/spelling/spelling-insert-html.html
+
 2011-08-25  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r88115): Disabling a file upload control causes an endless busyloop.
