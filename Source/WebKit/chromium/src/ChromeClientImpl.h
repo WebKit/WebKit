@@ -120,7 +120,7 @@ public:
     virtual void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const;
     virtual void layoutUpdated(WebCore::Frame*) const;
     virtual void scrollRectIntoView(
-        const WebCore::IntRect&, const WebCore::ScrollView*) const { }
+        const WebCore::IntRect&) const { }
     virtual void scrollbarsModeDidChange() const;
     virtual void mouseDidMoveOverElement(
         const WebCore::HitTestResult& result, unsigned modifierFlags);

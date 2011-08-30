@@ -1,5 +1,13 @@
 2011-08-30  Tony Chang  <tony@chromium.org>
 
+        Fix chromium compile when using clang.  Another compile error due
+        to r94080.
+
+        * src/ChromeClientImpl.h:
+        (WebKit::ChromeClientImpl::scrollRectIntoView):
+
+2011-08-30  Tony Chang  <tony@chromium.org>
+
         Roll chromium DEPS to r98771.
 
         * DEPS:
