@@ -21,6 +21,21 @@
 
 2011-08-30  David Levin  <levin@chromium.org>
 
+        [chromium] Add baselines for due to r94092 and r93909.
+
+        * platform/chromium-cg-mac/fast/multicol/overflow-across-columns-expected.png: Added.
+        * platform/chromium-cg-mac/fast/multicol/overflow-unsplittable-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/overflow-across-columns-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/overflow-unsplittable-expected.png: Added.
+        * platform/chromium-win/fast/multicol/overflow-across-columns-expected.png: Added.
+        * platform/chromium-win/fast/multicol/overflow-across-columns-expected.txt: Added.
+        * platform/chromium-win/fast/multicol/overflow-unsplittable-expected.png: Added.
+        * platform/chromium-win/fast/multicol/overflow-unsplittable-expected.txt: Added.
+        * platform/chromium-win/fast/text/complex-preferred-logical-widths-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-08-30  David Levin  <levin@chromium.org>
+
         [chromium] Update baselines after r94084 and r94088 and r93909.
 
         * platform/chromium-cg-mac/fast/multicol/positive-leading-expected.png: Added.

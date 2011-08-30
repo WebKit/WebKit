@@ -3666,8 +3666,8 @@ BUGWK67007 DEBUG : fast/ruby/after-table-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.html = CRASH
 
-BUGWK67204 : fast/multicol/inherit-column-values.html = MISSING
-BUGWK67204 : fast/multicol/initial-column-values.html = MISSING
+BUGWK67204 : fast/multicol/inherit-column-values.html = MISSING FAIL
+BUGWK67204 : fast/multicol/initial-column-values.html = MISSING FAIL
 
 // Implement an Event constructor in V8.
 BUGWK66756 : fast/events/constructors/event-constructors.html = TEXT
