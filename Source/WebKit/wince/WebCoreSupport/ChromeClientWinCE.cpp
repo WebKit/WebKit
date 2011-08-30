@@ -273,7 +273,7 @@ void ChromeClientWinCE::contentsSizeChanged(Frame*, const IntSize&) const
     notImplemented();
 }
 
-void ChromeClientWinCE::scrollRectIntoView(const IntRect&, const ScrollView*) const
+void ChromeClientWinCE::scrollRectIntoView(const IntRect&) const
 {
     notImplemented();
 }
