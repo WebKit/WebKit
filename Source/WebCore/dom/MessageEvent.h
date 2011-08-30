@@ -28,6 +28,7 @@
 #ifndef MessageEvent_h
 #define MessageEvent_h
 
+#include "Blob.h"
 #include "DOMWindow.h"
 #include "Event.h"
 #include "MessagePort.h"
@@ -48,6 +49,10 @@ namespace WebCore {
             return adoptRef(new MessageEvent(data, origin, lastEventId, source, ports));
         }
         static PassRefPtr<MessageEvent> create(const String& data)
+        {
+            return adoptRef(new MessageEvent(data));
+        }
+        static PassRefPtr<MessageEvent> create(PassRefPtr<Blob> data)
         {
             return adoptRef(new MessageEvent(data));
         }
@@ -72,20 +77,24 @@ namespace WebCore {
 
         enum DataType {
             DataTypeSerializedScriptValue,
-            DataTypeString
+            DataTypeString,
+            DataTypeBlob
         };
         DataType dataType() const { return m_dataType; }
         SerializedScriptValue* dataAsSerializedScriptValue() const { return m_dataAsSerializedScriptValue.get(); }
         String dataAsString() const { return m_dataAsString; }
+        Blob* dataAsBlob() const { return m_dataAsBlob.get(); }
 
     private:
         MessageEvent();
         MessageEvent(PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortArray>);
         explicit MessageEvent(const String& data);
+        explicit MessageEvent(PassRefPtr<Blob> data);
 
         DataType m_dataType;
         RefPtr<SerializedScriptValue> m_dataAsSerializedScriptValue;
         String m_dataAsString;
+        RefPtr<Blob> m_dataAsBlob;
         String m_origin;
         String m_lastEventId;
         RefPtr<DOMWindow> m_source;

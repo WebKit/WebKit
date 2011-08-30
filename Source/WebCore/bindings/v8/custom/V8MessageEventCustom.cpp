@@ -35,6 +35,7 @@
 #include "SerializedScriptValue.h"
 
 #include "V8Binding.h"
+#include "V8Blob.h"
 #include "V8DOMWindow.h"
 #include "V8MessagePort.h"
 #include "V8MessagePortCustom.h"
@@ -61,6 +62,10 @@ v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> n
         result = v8::String::New(fromWebCoreString(stringValue), stringValue.length());
         break;
     }
+
+    case MessageEvent::DataTypeBlob:
+        result = toV8(event->dataAsBlob());
+        break;
     }
 
     // Overwrite the data attribute so it returns the cached result in future invocations.

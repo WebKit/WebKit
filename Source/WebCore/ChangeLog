@@ -1,3 +1,50 @@
+2011-08-29  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Receive binary message as Blob
+        https://bugs.webkit.org/show_bug.cgi?id=67115
+
+        Reviewed by Kent Tamura.
+
+        Make WebSocketChannel be able to receive WebSocket binary messages and deliver them via
+        didReceiveBinaryData() callback of WebSocketChannelClient.
+
+        Tests: http/tests/websocket/tests/hybi/fragmented-binary-frames.html
+               http/tests/websocket/tests/hybi/receive-blob.html
+               http/tests/websocket/tests/hybi/workers/receive-blob.html
+
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::data): Convert Blob to JSValue.
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::dataAccessorGetter): Convert Blob to v8::Value.
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        * dom/MessageEvent.h:
+        Added DataTypeBlob and Blob-related functions.
+        (WebCore::MessageEvent::create):
+        (WebCore::MessageEvent::dataAsBlob):
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryDataCallback):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didReceiveBinaryData):
+        If binaryType attribute is "blob", construct a Blob using BlobData filled with the given
+        binary message.
+        * websockets/WebSocket.h:
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::processFrame):
+        Create continuousFrameData as OwnPtr<> rather than stack-allocated value so we can easily
+        pass it to didReceiveBinaryData() callback.
+        Save the content of a fragmented message even if it is a binary opcode.
+        * websockets/WebSocketChannelClient.h:
+        (WebCore::WebSocketChannelClient::didReceiveBinaryData):
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::workerContextDidReceiveBinaryData):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData):
+        Pass binaryData as PassOwnPtr<Vector<char> > to deliver the value efficiently (without
+        copying the content) across threads.
+        * websockets/WorkerThreadableWebSocketChannel.h:
+
 2011-08-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a test for lastChangeWasUserEdit in HTMLInputElement and HTMLTextAreaElement

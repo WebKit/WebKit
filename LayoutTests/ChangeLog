@@ -1,3 +1,26 @@
+2011-08-29  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Receive binary message as Blob
+        https://bugs.webkit.org/show_bug.cgi?id=67115
+
+        Reviewed by Kent Tamura.
+
+        * http/tests/websocket/tests/hybi/binary-frames_wsh.py: Added. Used from receive-blob.html.
+        * http/tests/websocket/tests/hybi/fragmented-binary-frames-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/fragmented-binary-frames.html:
+        Added. The content of this test is almost identical to receive-blob.html.
+        * http/tests/websocket/tests/hybi/fragmented-binary-frames_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/receive-blob-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/receive-blob.html:
+        Added. It is a bit complicated to validate the content of a Blob, because a Blob must be read
+        asynchronously. FileReader is used to read a blob as an ArrayBuffer, each byte of which is
+        compared with the expected result.
+        * http/tests/websocket/tests/hybi/workers/receive-blob-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/workers/receive-blob.html: Added.
+        * http/tests/websocket/tests/hybi/workers/resources/binary-frames_wsh.py:
+        Added. Same as above binary-frames_wsh.py.
+        * http/tests/websocket/tests/hybi/workers/resources/receive-blob.js: Added.
+
 2011-08-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a test for lastChangeWasUserEdit in HTMLInputElement and HTMLTextAreaElement

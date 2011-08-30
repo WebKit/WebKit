@@ -59,6 +59,15 @@ MessageEvent::MessageEvent(const String& data)
 {
 }
 
+MessageEvent::MessageEvent(PassRefPtr<Blob> data)
+    : Event(eventNames().messageEvent, false, false)
+    , m_dataType(DataTypeBlob)
+    , m_dataAsBlob(data)
+    , m_origin("")
+    , m_lastEventId("")
+{
+}
+
 MessageEvent::~MessageEvent()
 {
 }

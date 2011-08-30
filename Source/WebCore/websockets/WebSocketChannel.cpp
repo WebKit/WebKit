@@ -52,6 +52,8 @@
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -569,9 +571,7 @@ bool WebSocketChannel::processFrame()
             fail("Received unexpected continuation frame.");
             return false;
         }
-        // Throw away content of a binary message because binary messages are not supported yet.
-        if (m_continuousFrameOpCode == OpCodeText)
-            m_continuousFrameData.append(frame.payload, frame.payloadLength);
+        m_continuousFrameData.append(frame.payload, frame.payloadLength);
         skipBuffer(frame.frameEnd - m_buffer);
         if (frame.final) {
             // onmessage handler may eventually call the other methods of this channel,
@@ -579,23 +579,21 @@ bool WebSocketChannel::processFrame()
             // make sure that the member variables are in a consistent state before
             // the handler is invoked.
             // Vector<char>::swap() is used here to clear m_continuousFrameData.
-            Vector<char> continuousFrameData;
-            m_continuousFrameData.swap(continuousFrameData);
+            OwnPtr<Vector<char> > continuousFrameData = adoptPtr(new Vector<char>);
+            m_continuousFrameData.swap(*continuousFrameData);
             m_hasContinuousFrame = false;
             if (m_continuousFrameOpCode == OpCodeText) {
                 String message;
-                if (continuousFrameData.size())
-                    message = String::fromUTF8(continuousFrameData.data(), continuousFrameData.size());
+                if (continuousFrameData->size())
+                    message = String::fromUTF8(continuousFrameData->data(), continuousFrameData->size());
                 else
                     message = "";
                 if (message.isNull())
                     fail("Could not decode a text frame as UTF-8.");
                 else
                     m_client->didReceiveMessage(message);
-            } else if (m_continuousFrameOpCode == OpCodeBinary) {
-                ASSERT(m_continuousFrameData.isEmpty());
-                fail("Received a binary frame which is not supported yet.");
-            }
+            } else if (m_continuousFrameOpCode == OpCodeBinary)
+                m_client->didReceiveBinaryData(continuousFrameData.release());
         }
         break;
 
@@ -621,13 +619,16 @@ bool WebSocketChannel::processFrame()
         break;
 
     case OpCodeBinary:
-        if (frame.final)
-            fail("Received a binary frame which is not supported yet.");
-        else {
+        if (frame.final) {
+            OwnPtr<Vector<char> > binaryData = adoptPtr(new Vector<char>(frame.payloadLength));
+            memcpy(binaryData->data(), frame.payload, frame.payloadLength);
+            skipBuffer(frame.frameEnd - m_buffer);
+            m_client->didReceiveBinaryData(binaryData.release());
+        } else {
             m_hasContinuousFrame = true;
             m_continuousFrameOpCode = OpCodeBinary;
             ASSERT(m_continuousFrameData.isEmpty());
-            // Do not store data of a binary message to m_continuousFrameData to save memory.
+            m_continuousFrameData.append(frame.payload, frame.payloadLength);
             skipBuffer(frame.frameEnd - m_buffer);
         }
         break;

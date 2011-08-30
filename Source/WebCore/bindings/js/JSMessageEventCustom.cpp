@@ -31,6 +31,7 @@
 #include "config.h"
 #include "JSMessageEvent.h"
 
+#include "JSBlob.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "JSEventTarget.h"
@@ -59,6 +60,10 @@ JSValue JSMessageEvent::data(ExecState* exec) const
 
     case MessageEvent::DataTypeString:
         result = jsString(exec, event->dataAsString());
+        break;
+
+    case MessageEvent::DataTypeBlob:
+        result = toJS(exec, globalObject(), event->dataAsBlob());
         break;
     }
 

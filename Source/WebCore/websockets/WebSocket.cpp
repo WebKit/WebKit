@@ -34,6 +34,8 @@
 
 #include "WebSocket.h"
 
+#include "Blob.h"
+#include "BlobData.h"
 #include "CloseEvent.h"
 #include "DOMWindow.h"
 #include "Event.h"
@@ -49,6 +51,8 @@
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannel.h"
 #include <wtf/HashSet.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -394,6 +398,26 @@ void WebSocket::didReceiveMessage(const String& msg)
         return;
     ASSERT(scriptExecutionContext());
     dispatchEvent(MessageEvent::create(msg));
+}
+
+void WebSocket::didReceiveBinaryData(PassOwnPtr<Vector<char> > binaryData)
+{
+    switch (m_binaryType) {
+    case BinaryTypeBlob: {
+        size_t size = binaryData->size();
+        RefPtr<RawData> rawData = RawData::create();
+        binaryData->swap(*rawData->mutableData());
+        OwnPtr<BlobData> blobData = BlobData::create();
+        blobData->appendData(rawData.release(), 0, BlobDataItem::toEndOfFile);
+        RefPtr<Blob> blob = Blob::create(blobData.release(), size);
+        dispatchEvent(MessageEvent::create(blob.release()));
+        break;
+    }
+
+    case BinaryTypeArrayBuffer:
+        m_channel->fail("Cannot receive WebSocket binary data as ArrayBuffer yet.");
+        break;
+    }
 }
 
 void WebSocket::didReceiveMessageError()

@@ -132,6 +132,13 @@ void ThreadableWebSocketChannelClientWrapper::didReceiveMessage(const String& me
         processPendingTasks();
 }
 
+void ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData(PassOwnPtr<Vector<char> > binaryData)
+{
+    m_pendingTasks.append(createCallbackTask(&ThreadableWebSocketChannelClientWrapper::didReceiveBinaryDataCallback, AllowCrossThreadAccess(this), binaryData));
+    if (!m_suspended)
+        processPendingTasks();
+}
+
 void ThreadableWebSocketChannelClientWrapper::didStartClosingHandshake()
 {
     m_pendingTasks.append(createCallbackTask(&ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback, AllowCrossThreadAccess(this)));
@@ -178,6 +185,13 @@ void ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback(ScriptEx
     ASSERT_UNUSED(context, !context);
     if (wrapper->m_client)
         wrapper->m_client->didReceiveMessage(message);
+}
+
+void ThreadableWebSocketChannelClientWrapper::didReceiveBinaryDataCallback(ScriptExecutionContext* context, ThreadableWebSocketChannelClientWrapper* wrapper, PassOwnPtr<Vector<char> > binaryData)
+{
+    ASSERT_UNUSED(context, !context);
+    if (wrapper->m_client)
+        wrapper->m_client->didReceiveBinaryData(binaryData);
 }
 
 void ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback(ScriptExecutionContext* context, ThreadableWebSocketChannelClientWrapper* wrapper)
