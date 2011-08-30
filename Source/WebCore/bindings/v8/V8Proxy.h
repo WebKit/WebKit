@@ -146,9 +146,6 @@ namespace WebCore {
         bool inlineCode() const { return m_inlineCode; }
         void setInlineCode(bool value) { m_inlineCode = value; }
 
-        bool timerCallback() const { return m_timerCallback; }
-        void setTimerCallback(bool value) { m_timerCallback = value; }
-
         void finishedWithEvent(Event*) { }
 
         // Evaluate JavaScript in a new isolated world. The script gets its own
@@ -313,10 +310,6 @@ namespace WebCore {
         // True for <a href="javascript:foo()"> and false for <script>foo()</script>.
         // Only valid during execution.
         bool m_inlineCode;
-
-        // True when executing from within a timer callback. Only valid during
-        // execution.
-        bool m_timerCallback;
 
         // Track the recursion depth to be able to avoid too deep recursion. The V8
         // engine allows much more recursion than KJS does so we need to guard against

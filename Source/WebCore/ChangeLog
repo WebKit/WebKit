@@ -1,3 +1,19 @@
+2011-08-30  Dmitry Titov  <dimich@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67210
+        [Chromium] Use after free in ScheduledAction::execute(WebCore::V8Proxy*)
+
+        Reviewed by David Levin.
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        Removed usage of V8Proxy instance after it could have been deleted.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::V8Proxy):
+        * bindings/v8/V8Proxy.h:
+        Removed unused timerCallback() and setTimerCallback().
+
 2011-08-30  Abhishek Arya  <inferno@chromium.org>
 
         Style not updated for table parts in :before, :after content.
