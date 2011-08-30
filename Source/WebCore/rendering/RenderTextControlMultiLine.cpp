@@ -84,7 +84,7 @@ void RenderTextControlMultiLine::updateFromElement()
 {
     RenderTextControl::updateFromElement();
 
-    setInnerTextValue(static_cast<HTMLTextAreaElement*>(node())->value());
+    textFormControlElement()->setInnerTextValue(static_cast<HTMLTextAreaElement*>(node())->value());
 }
 
 PassRefPtr<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const RenderStyle* startStyle) const

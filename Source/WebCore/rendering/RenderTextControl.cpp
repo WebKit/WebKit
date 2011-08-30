@@ -22,7 +22,6 @@
 #include "config.h"
 #include "RenderTextControl.h"
 
-#include "AXObjectCache.h"
 #include "Editor.h"
 #include "Frame.h"
 #include "HTMLBRElement.h"
@@ -68,7 +67,6 @@ static Color disabledTextColor(const Color& textColor, const Color& backgroundCo
 
 RenderTextControl::RenderTextControl(Node* node)
     : RenderBlock(node)
-    , m_lastChangeWasUserEdit(false)
 {
     ASSERT(toTextFormControl(node));
 }
@@ -149,29 +147,6 @@ void RenderTextControl::updateFromElement()
     Element* innerText = innerTextElement();
     if (innerText)
         updateUserModifyProperty(node(), innerText->renderer()->style());
-}
-
-void RenderTextControl::setInnerTextValue(const String& value)
-{
-    bool textIsChanged = value != text();
-    if (textIsChanged || !innerTextElement()->hasChildNodes()) {
-        if (textIsChanged && document() && AXObjectCache::accessibilityEnabled())
-            document()->axObjectCache()->postNotification(this, AXObjectCache::AXValueChanged, false);
-
-        ExceptionCode ec = 0;
-        innerTextElement()->setInnerText(value, ec);
-        ASSERT(!ec);
-
-        if (value.endsWith("\n") || value.endsWith("\r")) {
-            innerTextElement()->appendChild(HTMLBRElement::create(document()), ec);
-            ASSERT(!ec);
-        }
-
-        // We set m_lastChangeWasUserEdit to false since this change was not explicitly made by the user (say, via typing on the keyboard), see <rdar://problem/5359921>.
-        m_lastChangeWasUserEdit = false;
-    }
-
-    textFormControlElement()->setFormControlValueMatchesRenderer(true);
 }
 
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const

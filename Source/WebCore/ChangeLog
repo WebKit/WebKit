@@ -1,3 +1,48 @@
+2011-08-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move setInnerTextValue from RenderTextControl to HTMLTextFormControlElement
+        https://bugs.webkit.org/show_bug.cgi?id=67152
+
+        Reviewed by Darin Adler.
+
+        Moved setInnerTextValue from RenderTextControl to HTMLTextFormControlElement.
+
+        Also moved m_lastChangeWasUserEdit from RenderTextControl to HTMLTextFormControlElement
+        and related inline functions from RenderTextControl to HTMLTextFormControlElement.
+        Because m_lastChangeWasUserEdit is no longer reset when RenderTextControl is recreated,
+        added explicit calls to setLastChangeWasNotUserEdit in setValue functions of HTMLInputElement
+        and HTMLTextAreaElement.
+
+        This patch also fixes the bug that lastChangeWasUserEdit() incorrectly returns false
+        when input or textarea don't have renderer (e.g. invisible).
+
+        Unfortunately, there is no way to test this behavioral change from layout tests.
+
+        * WebCore.exp.in: Exports lastChangeWasUserEdit in HTMLTextFormControlElement instead of
+        that of HTMLInputElement and HTMLTextAreaElement.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue): Explicitly calls setLastChangeWasNotUserEdit.
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValueCommon): Ditto.
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::HTMLTextFormControlElement):
+        (WebCore::HTMLTextFormControlElement::subtreeHasChanged): Sets m_lastChangeWasUserEdit true
+        as it used to do via respondToChangeByUser.
+        (WebCore::HTMLTextFormControlElement::lastChangeWasUserEdit): Moved from HTMLInputElement
+        and HTMLTextAreaElement.
+        (WebCore::HTMLTextFormControlElement::setInnerTextValue): Moved from RenderTextControl.
+        * html/HTMLTextFormControlElement.h:
+        (WebCore::HTMLTextFormControlElement::setLastChangeWasNotUserEdit): Added.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl): No longer initializes m_lastChangeWasUserEdit.
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::updateFromElement): Calls setInnerTextValue.
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::updateFromElement): Ditto.
+
 2011-08-25  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r88115): Disabling a file upload control causes an endless busyloop.

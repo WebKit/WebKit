@@ -75,6 +75,8 @@ public:
 
     void selectionChanged(bool userTriggered);
     void notifyFormStateChanged();
+    bool lastChangeWasUserEdit() const;
+    void setInnerTextValue(const String&);
 
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
@@ -97,6 +99,7 @@ protected:
     virtual void defaultEventHandler(Event*);
     virtual void subtreeHasChanged();
 
+    void setLastChangeWasNotUserEdit() { m_lastChangeWasUserEdit = false; }
 private:
     int computeSelectionStart() const;
     int computeSelectionEnd() const;
@@ -119,6 +122,7 @@ private:
     RenderTextControl* textRendererAfterUpdateLayout();
 
     String m_textAsOfLastFormControlChangeEvent;
+    bool m_lastChangeWasUserEdit;
     
     int m_cachedSelectionStart;
     int m_cachedSelectionEnd;

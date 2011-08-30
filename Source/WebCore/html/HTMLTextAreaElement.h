@@ -58,8 +58,6 @@ public:
     void setCols(int);
     void setRows(int);
 
-    bool lastChangeWasUserEdit() const;
-
 private:
     HTMLTextAreaElement(const QualifiedName&, Document*, HTMLFormElement*);
 

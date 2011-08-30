@@ -228,8 +228,6 @@ public:
     bool isConformToInputMask(const String&) const;
 #endif
 
-    bool lastChangeWasUserEdit() const;
-
     static const int maximumLength;
 
 protected:

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLTextFormControlElement.h"
 
+#include "AXObjectCache.h"
 #include "Attribute.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -32,6 +33,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "HTMLBRElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -50,6 +52,7 @@ using namespace std;
 
 HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* form)
     : HTMLFormControlElementWithState(tagName, doc, form)
+    , m_lastChangeWasUserEdit(false)
     , m_cachedSelectionStart(-1)
     , m_cachedSelectionEnd(-1)
     , m_cachedSelectionDirection(SelectionHasNoDirection)
@@ -102,7 +105,7 @@ void HTMLTextFormControlElement::forwardEvent(Event* event)
 
 void HTMLTextFormControlElement::subtreeHasChanged()
 {
-    toRenderTextControl(renderer())->respondToChangeByUser();
+    m_lastChangeWasUserEdit = true;
 }
 
 String HTMLTextFormControlElement::strippedPlaceholder() const
@@ -441,9 +444,43 @@ void HTMLTextFormControlElement::notifyFormStateChanged()
     Frame* frame = document()->frame();
     if (!frame)
         return;
-    
+
     if (Page* page = frame->page())
         page->chrome()->client()->formStateDidChange(this);
+}
+
+bool HTMLTextFormControlElement::lastChangeWasUserEdit() const
+{
+    if (!isTextFormControl())
+        return false;
+    return m_lastChangeWasUserEdit;
+}
+
+void HTMLTextFormControlElement::setInnerTextValue(const String& value)
+{
+    if (!renderer() || !isTextFormControl())
+        return;
+
+    RenderTextControl* textControl = toRenderTextControl(renderer());
+    bool textIsChanged = value != textControl->text();
+    if (textIsChanged || !innerTextElement()->hasChildNodes()) {
+        if (textIsChanged && document() && AXObjectCache::accessibilityEnabled())
+            document()->axObjectCache()->postNotification(textControl, AXObjectCache::AXValueChanged, false);
+
+        ExceptionCode ec = 0;
+        innerTextElement()->setInnerText(value, ec);
+        ASSERT(!ec);
+
+        if (value.endsWith("\n") || value.endsWith("\r")) {
+            innerTextElement()->appendChild(HTMLBRElement::create(document()), ec);
+            ASSERT(!ec);
+        }
+
+        // We set m_lastChangeWasUserEdit to false since this change was not explicitly made by the user (say, via typing on the keyboard), see <rdar://problem/5359921>.
+        m_lastChangeWasUserEdit = false;
+    }
+
+    setFormControlValueMatchesRenderer(true);
 }
 
 HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)

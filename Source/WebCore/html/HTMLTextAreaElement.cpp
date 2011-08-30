@@ -333,6 +333,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue)
         return;
 
     m_value = normalizedValue;
+    setLastChangeWasNotUserEdit();
     updatePlaceholderVisibility(false);
     setNeedsStyleRecalc();
     setFormControlValueMatchesRenderer(true);
@@ -431,13 +432,6 @@ void HTMLTextAreaElement::setCols(int cols)
 void HTMLTextAreaElement::setRows(int rows)
 {
     setAttribute(rowsAttr, String::number(rows));
-}
-
-bool HTMLTextAreaElement::lastChangeWasUserEdit() const
-{
-    if (!renderer())
-        return false;
-    return toRenderTextControl(renderer())->lastChangeWasUserEdit();
 }
 
 bool HTMLTextAreaElement::shouldUseInputMethod()

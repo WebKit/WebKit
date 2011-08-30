@@ -477,14 +477,14 @@ void RenderTextControlSingleLine::updateFromElement()
         updateCancelButtonVisibility();
 
     if (!inputElement()->suggestedValue().isNull())
-        setInnerTextValue(inputElement()->suggestedValue());
+        textFormControlElement()->setInnerTextValue(inputElement()->suggestedValue());
     else {
         if (node()->hasTagName(inputTag)) {
             // For HTMLInputElement, update the renderer value if the formControlValueMatchesRenderer()
             // flag is false. It protects an unacceptable renderer value from
             // being overwritten with the DOM value.
             if (!inputElement()->formControlValueMatchesRenderer())
-                setInnerTextValue(inputElement()->visibleValue());
+                textFormControlElement()->setInnerTextValue(inputElement()->visibleValue());
         }
     }
 

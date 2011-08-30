@@ -35,8 +35,6 @@ public:
     HTMLTextFormControlElement* textFormControlElement() const;
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
-    bool lastChangeWasUserEdit() const { return m_lastChangeWasUserEdit; }
-    void respondToChangeByUser() { m_lastChangeWasUserEdit = true; }
     String text();
     String textWithHardLineBreaks();
 
@@ -50,7 +48,6 @@ protected:
 
     int scrollbarThickness() const;
     void adjustInnerTextStyle(const RenderStyle* startStyle, RenderStyle* textBlockStyle) const;
-    void setInnerTextValue(const String&);
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
@@ -88,8 +85,6 @@ private:
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
     static bool isSelectableElement(HTMLElement*, Node*);
-    
-    bool m_lastChangeWasUserEdit;
 };
 
 inline RenderTextControl* toRenderTextControl(RenderObject* object)

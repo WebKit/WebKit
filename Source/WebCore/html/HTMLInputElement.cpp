@@ -206,17 +206,6 @@ void HTMLInputElement::updateCheckedRadioButtons()
     }
 }
 
-bool HTMLInputElement::lastChangeWasUserEdit() const
-{
-    if (!isTextField())
-        return false;
-    
-    if (!renderer())
-        return false;
-
-    return toRenderTextControl(renderer())->lastChangeWasUserEdit();
-}
-
 bool HTMLInputElement::isValidValue(const String& value) const
 {
     if (!m_inputType->canSetStringValue()) {
@@ -1068,6 +1057,7 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
     String sanitizedValue = sanitizeValue(value);
     bool valueChanged = sanitizedValue != this->value();
 
+    setLastChangeWasNotUserEdit();
     setFormControlValueMatchesRenderer(false);
     if (m_inputType->storesValueSeparateFromAttribute()) {
         if (files())
