@@ -283,4 +283,3 @@ bool Internals::wasLastChangeUserEdit(Element* textField, ExceptionCode& ec)
 }
 
 }
-
