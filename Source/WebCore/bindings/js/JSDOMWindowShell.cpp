@@ -47,6 +47,12 @@ JSDOMWindowShell::JSDOMWindowShell(PassRefPtr<DOMWindow> window, Structure* stru
     : Base(*world->globalData(), structure)
     , m_world(world)
 {
+    finishCreation(*world->globalData(), window);
+}
+
+void JSDOMWindowShell::finishCreation(JSGlobalData& globalData, PassRefPtr<DOMWindow> window)
+{
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
     setWindow(window);
 }

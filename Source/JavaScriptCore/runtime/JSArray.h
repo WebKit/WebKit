@@ -64,7 +64,11 @@ namespace JSC {
         explicit JSArray(JSGlobalData&, Structure*);
         JSArray(JSGlobalData&, Structure*, unsigned initialLength, ArrayCreationMode);
         JSArray(JSGlobalData&, Structure*, const ArgList& initialValues);
-        
+
+        void finishCreation(JSGlobalData&);
+        void finishCreation(JSGlobalData&, unsigned initialLength, ArrayCreationMode);
+        void finishCreation(JSGlobalData&, const ArgList&);
+    
     public:
         typedef JSNonFinalObject Base;
 

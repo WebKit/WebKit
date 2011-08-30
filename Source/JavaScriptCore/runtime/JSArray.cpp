@@ -134,6 +134,24 @@ JSArray::JSArray(VPtrStealingHackType)
 JSArray::JSArray(JSGlobalData& globalData, Structure* structure)
     : JSNonFinalObject(globalData, structure)
 {
+    finishCreation(globalData);
+}
+
+JSArray::JSArray(JSGlobalData& globalData, Structure* structure, unsigned initialLength, ArrayCreationMode creationMode)
+    : JSNonFinalObject(globalData, structure)
+{
+    finishCreation(globalData, initialLength, creationMode);
+}
+
+JSArray::JSArray(JSGlobalData& globalData, Structure* structure, const ArgList& list)
+    : JSNonFinalObject(globalData, structure)
+{
+    finishCreation(globalData, list);
+}
+
+void JSArray::finishCreation(JSGlobalData& globalData)
+{
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 
     unsigned initialCapacity = 0;
@@ -148,9 +166,9 @@ JSArray::JSArray(JSGlobalData& globalData, Structure* structure)
     Heap::heap(this)->reportExtraMemoryCost(storageSize(0));
 }
 
-JSArray::JSArray(JSGlobalData& globalData, Structure* structure, unsigned initialLength, ArrayCreationMode creationMode)
-    : JSNonFinalObject(globalData, structure)
+void JSArray::finishCreation(JSGlobalData& globalData, unsigned initialLength, ArrayCreationMode creationMode)
 {
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 
     unsigned initialCapacity;
@@ -190,9 +208,9 @@ JSArray::JSArray(JSGlobalData& globalData, Structure* structure, unsigned initia
     Heap::heap(this)->reportExtraMemoryCost(storageSize(initialCapacity));
 }
 
-JSArray::JSArray(JSGlobalData& globalData, Structure* structure, const ArgList& list)
-    : JSNonFinalObject(globalData, structure)
+void JSArray::finishCreation(JSGlobalData& globalData, const ArgList& list)
 {
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 
     unsigned initialCapacity = list.size();

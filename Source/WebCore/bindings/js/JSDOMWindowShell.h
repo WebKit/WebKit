@@ -64,6 +64,9 @@ namespace WebCore {
 
         DOMWrapperWorld* world() { return m_world.get(); }
 
+    protected:
+        void finishCreation(JSC::JSGlobalData&, PassRefPtr<DOMWindow>);
+
     private:
         static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | JSC::OverridesGetPropertyNames | Base::StructureFlags;
 

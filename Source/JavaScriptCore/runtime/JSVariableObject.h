@@ -74,6 +74,12 @@ namespace JSC {
             , m_symbolTable(symbolTable)
             , m_registers(reinterpret_cast<WriteBarrier<Unknown>*>(registers))
         {
+            finishCreation(globalData);
+        }
+
+        void finishCreation(JSGlobalData& globalData)
+        {
+            Base::finishCreation(globalData);
             ASSERT(m_symbolTable);
             COMPILE_ASSERT(sizeof(WriteBarrier<Unknown>) == sizeof(Register), Register_should_be_same_size_as_WriteBarrier);
         }

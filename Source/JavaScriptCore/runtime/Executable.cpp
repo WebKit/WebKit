@@ -127,6 +127,7 @@ const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::
 EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext)
     : ScriptExecutable(exec->globalData().evalExecutableStructure.get(), exec, source, inStrictContext)
 {
+    finishCreation(exec->globalData());
 }
 
 EvalExecutable::~EvalExecutable()
@@ -138,6 +139,7 @@ const ClassInfo ProgramExecutable::s_info = { "ProgramExecutable", &ScriptExecut
 ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
     : ScriptExecutable(exec->globalData().programExecutableStructure.get(), exec, source, false)
 {
+    finishCreation(exec->globalData());
 }
 
 ProgramExecutable::~ProgramExecutable()
@@ -165,8 +167,6 @@ FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, 
     , m_name(name)
     , m_symbolTable(0)
 {
-    m_firstLine = firstLine;
-    m_lastLine = lastLine;
     finishCreation(exec->globalData(), name, firstLine, lastLine);
 }
 

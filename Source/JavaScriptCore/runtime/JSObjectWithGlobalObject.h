@@ -34,6 +34,8 @@ class JSGlobalObject;
 
 class JSObjectWithGlobalObject : public JSNonFinalObject {
 public:
+    typedef JSNonFinalObject Base;
+
     static Structure* createStructure(JSGlobalData& globalData, JSValue proto)
     {
         return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
@@ -53,6 +55,9 @@ protected:
     {
         // Should only be used by JSFunction when we aquire the JSFunction vptr.
     }
+
+    void finishCreation(JSGlobalData&, JSGlobalObject*);
+
     static const unsigned AnonymousSlotCount = JSObject::AnonymousSlotCount + 1;
     static const unsigned GlobalObjectSlot = 0;
 };

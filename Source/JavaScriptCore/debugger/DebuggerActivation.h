@@ -30,15 +30,14 @@
 
 namespace JSC {
 
-    class JSActivation;
-
     class DebuggerActivation : public JSNonFinalObject {
     public:
         typedef JSNonFinalObject Base;
 
         static DebuggerActivation* create(JSGlobalData& globalData, JSObject* object)
         {
-            return new (allocateCell<DebuggerActivation>(globalData.heap)) DebuggerActivation(globalData, object);
+            DebuggerActivation* activation = new (allocateCell<DebuggerActivation>(globalData.heap)) DebuggerActivation(globalData, object);
+            return activation;
         }
 
         virtual void visitChildren(SlotVisitor&);
@@ -61,6 +60,8 @@ namespace JSC {
 
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | JSObject::StructureFlags;
+
+        void finishCreation(JSGlobalData&, JSObject* activation);
 
     private:
         DebuggerActivation(JSGlobalData&, JSObject*);

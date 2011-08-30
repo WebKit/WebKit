@@ -67,6 +67,12 @@ ObjectPrototype::ObjectPrototype(ExecState* exec, JSGlobalObject* globalObject, 
     : JSNonFinalObject(exec->globalData(), stucture)
     , m_hasNoPropertiesWithUInt32Names(true)
 {
+    finishCreation(exec->globalData(), globalObject);
+}
+
+void ObjectPrototype::finishCreation(JSGlobalData& globalData, JSGlobalObject* globalObject)
+{
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
     putAnonymousValue(globalObject->globalData(), 0, globalObject);
 }

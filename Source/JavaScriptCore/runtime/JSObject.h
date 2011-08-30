@@ -361,7 +361,6 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         explicit JSNonFinalObject(JSGlobalData& globalData, Structure* structure)
             : JSObject(globalData, structure, m_inlineStorage)
         {
-            finishCreation(globalData);
         }
 
         void finishCreation(JSGlobalData& globalData)

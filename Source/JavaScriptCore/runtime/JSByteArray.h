@@ -104,8 +104,9 @@ namespace JSC {
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
 
-        void constructorBody(ExecState* exec)
+        void finishCreation(ExecState* exec)
         {
+            Base::finishCreation(exec->globalData());
             putDirect(exec->globalData(), exec->globalData().propertyNames->length, jsNumber(m_storage->length()), ReadOnly | DontDelete);
         }
 

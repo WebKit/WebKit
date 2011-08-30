@@ -45,6 +45,8 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSNonFinalObject::StructureFlags;
         static const unsigned AnonymousSlotCount = JSNonFinalObject::AnonymousSlotCount + 1;
 
+        void finishCreation(JSGlobalData&, JSGlobalObject*);
+
     private:
         ObjectPrototype(ExecState*, JSGlobalObject*, Structure*);
         virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);

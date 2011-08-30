@@ -1,3 +1,25 @@
+2011-08-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Unzip initialization lists and constructors in JSCell hierarchy (3/7)
+        https://bugs.webkit.org/show_bug.cgi?id=67064
+
+        Reviewed by Darin Adler.
+
+        Completed the third level of the refactoring to add finishCreation() 
+        methods to all classes within the JSCell hierarchy with non-trivial 
+        constructor bodies.
+
+        This primarily consists of pushing the calls to finishCreation() down 
+        into the constructors of the subclasses of the second level of the hierarchy 
+        as well as pulling the finishCreation() calls out into the class's corresponding
+        create() method if it has one.  Doing both simultaneously allows us to 
+        maintain the invariant that the finishCreation() method chain is called exactly 
+        once during the creation of an object, since calling it any other number of 
+        times (0, 2, or more) will cause an assertion failure.
+
+        * UserObjectImp.cpp:
+        (UserObjectImp::UserObjectImp):
+
 2011-08-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Refactor JS objects to allocate in static create methods rather than constructors

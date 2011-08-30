@@ -50,10 +50,11 @@ namespace JSC {
         explicit ErrorInstance(JSGlobalData&, Structure*);
         explicit ErrorInstance(JSGlobalData&, Structure*, const UString&);
 
-        void constructorBody(JSGlobalData& globalData)
+        void finishCreation(JSGlobalData& globalData, const UString& message)
         {
+            Base::finishCreation(globalData);
             ASSERT(inherits(&s_info));
-            putDirect(globalData, globalData.propertyNames->message, jsString(&globalData, ""), DontEnum);
+            putDirect(globalData, globalData.propertyNames->message, jsString(&globalData, message), DontEnum);
         }
 
         bool m_appendSourceToMessage;

@@ -29,15 +29,14 @@ ErrorInstance::ErrorInstance(JSGlobalData& globalData, Structure* structure)
     : JSNonFinalObject(globalData, structure)
     , m_appendSourceToMessage(false)
 {
-    constructorBody(globalData);
+    finishCreation(globalData, UString("", 0));
 }
 
 ErrorInstance::ErrorInstance(JSGlobalData& globalData, Structure* structure, const UString& message)
     : JSNonFinalObject(globalData, structure)
     , m_appendSourceToMessage(false)
 {
-    ASSERT(inherits(&s_info));
-    putDirect(globalData, globalData.propertyNames->message, jsString(&globalData, message), DontEnum);
+    finishCreation(globalData, message);
 }
 
 ErrorInstance* ErrorInstance::create(JSGlobalData& globalData, Structure* structure, const UString& message)

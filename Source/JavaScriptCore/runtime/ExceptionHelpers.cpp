@@ -46,6 +46,7 @@ private:
     InterruptedExecutionError(JSGlobalData& globalData)
         : JSNonFinalObject(globalData, globalData.interruptedExecutionErrorStructure.get())
     {
+        finishCreation(globalData);
     }
 
 public:
@@ -71,6 +72,7 @@ private:
     TerminatedExecutionError(JSGlobalData& globalData)
         : JSNonFinalObject(globalData, globalData.terminatedExecutionErrorStructure.get())
     {
+        finishCreation(globalData);
     }
 
 public:

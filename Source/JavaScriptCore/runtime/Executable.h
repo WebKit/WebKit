@@ -243,7 +243,6 @@ namespace JSC {
             , m_source(source)
             , m_features(isInStrictContext ? StrictModeFeature : 0)
         {
-            finishCreation(globalData);
         }
 
         ScriptExecutable(Structure* structure, ExecState* exec, const SourceCode& source, bool isInStrictContext)
@@ -251,7 +250,6 @@ namespace JSC {
             , m_source(source)
             , m_features(isInStrictContext ? StrictModeFeature : 0)
         {
-            finishCreation(exec->globalData());
         }
 
         const SourceCode& source() { return m_source; }
@@ -318,7 +316,8 @@ namespace JSC {
 
         static EvalExecutable* create(ExecState* exec, const SourceCode& source, bool isInStrictContext) 
         {
-            return new (allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, source, isInStrictContext); 
+            EvalExecutable* executable = new (allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, source, isInStrictContext);
+            return executable;
         }
 
 #if ENABLE(JIT)
@@ -354,7 +353,8 @@ namespace JSC {
 
         static ProgramExecutable* create(ExecState* exec, const SourceCode& source)
         {
-            return new (allocateCell<ProgramExecutable>(*exec->heap())) ProgramExecutable(exec, source);
+            ProgramExecutable* executable = new (allocateCell<ProgramExecutable>(*exec->heap())) ProgramExecutable(exec, source);
+            return executable;
         }
 
         ~ProgramExecutable();
@@ -412,12 +412,14 @@ namespace JSC {
 
         static FunctionExecutable* create(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool isInStrictContext, int firstLine, int lastLine)
         {
-            return new (allocateCell<FunctionExecutable>(*exec->heap())) FunctionExecutable(exec, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);
+            FunctionExecutable* executable = new (allocateCell<FunctionExecutable>(*exec->heap())) FunctionExecutable(exec, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);
+            return executable;
         }
 
         static FunctionExecutable* create(JSGlobalData& globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool isInStrictContext, int firstLine, int lastLine)
         {
-            return new (allocateCell<FunctionExecutable>(globalData.heap)) FunctionExecutable(globalData, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);
+            FunctionExecutable* executable = new (allocateCell<FunctionExecutable>(globalData.heap)) FunctionExecutable(globalData, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);
+            return executable;
         }
 
         JSFunction* make(ExecState* exec, ScopeChainNode* scopeChain)
@@ -530,6 +532,7 @@ namespace JSC {
 
         void finishCreation(JSGlobalData& globalData, const Identifier& name, int firstLine, int lastLine)
         {
+            Base::finishCreation(globalData);
             m_firstLine = firstLine;
             m_lastLine = lastLine;
             m_nameValue.set(globalData, this, jsString(&globalData, name.ustring()));

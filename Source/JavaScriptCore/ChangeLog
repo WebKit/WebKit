@@ -1,3 +1,79 @@
+2011-08-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Unzip initialization lists and constructors in JSCell hierarchy (3/7)
+        https://bugs.webkit.org/show_bug.cgi?id=67064
+
+        Reviewed by Darin Adler.
+
+        Completed the third level of the refactoring to add finishCreation() 
+        methods to all classes within the JSCell hierarchy with non-trivial 
+        constructor bodies.
+
+        This primarily consists of pushing the calls to finishCreation() down 
+        into the constructors of the subclasses of the second level of the hierarchy 
+        as well as pulling the finishCreation() calls out into the class's corresponding
+        create() method if it has one.  Doing both simultaneously allows us to 
+        maintain the invariant that the finishCreation() method chain is called exactly 
+        once during the creation of an object, since calling it any other number of 
+        times (0, 2, or more) will cause an assertion failure.
+
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::DebuggerActivation):
+        (JSC::DebuggerActivation::finishCreation):
+        * debugger/DebuggerActivation.h:
+        (JSC::DebuggerActivation::create):
+        * runtime/Arguments.h:
+        (JSC::Arguments::create):
+        (JSC::Arguments::createNoParameters):
+        (JSC::Arguments::Arguments):
+        (JSC::Arguments::finishCreation):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::InterruptedExecutionError::InterruptedExecutionError):
+        (JSC::TerminatedExecutionError::TerminatedExecutionError):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        Moved the assignment of m_firstLine and m_lastLine into the 
+        FunctionExecutable::finishCreation() method in Executable.h
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::EvalExecutable::create):
+        (JSC::ProgramExecutable::create):
+        (JSC::FunctionExecutable::create):
+        (JSC::FunctionExecutable::finishCreation):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        (JSC::JSArray::finishCreation):
+        * runtime/JSArray.h:
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::JSByteArray):
+        * runtime/JSByteArray.h:
+        (JSC::JSByteArray::finishCreation):
+        * runtime/JSNotAnObject.h:
+        (JSC::JSNotAnObject::JSNotAnObject):
+        * runtime/JSObject.h:
+        (JSC::JSNonFinalObject::JSNonFinalObject):
+        * runtime/JSObjectWithGlobalObject.cpp:
+        (JSC::JSObjectWithGlobalObject::JSObjectWithGlobalObject):
+        (JSC::JSObjectWithGlobalObject::finishCreation):
+        * runtime/JSObjectWithGlobalObject.h:
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::JSVariableObject):
+        (JSC::JSVariableObject::finishCreation):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::JSWrapperObject):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::ObjectPrototype):
+        (JSC::ObjectPrototype::finishCreation):
+        * runtime/ObjectPrototype.h:
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::StrictEvalActivation):
+
 2011-08-29  Andreas Kling  <kling@webkit.org>
 
         Unreviewed build fix after r93990.

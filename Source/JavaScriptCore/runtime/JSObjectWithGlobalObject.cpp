@@ -33,17 +33,18 @@ namespace JSC {
 JSObjectWithGlobalObject::JSObjectWithGlobalObject(JSGlobalObject* globalObject, Structure* structure)
     : JSNonFinalObject(globalObject->globalData(), structure)
 {
-    COMPILE_ASSERT(AnonymousSlotCount == 1, AnonymousSlotCount_must_be_one);
-    ASSERT(!globalObject || globalObject->isGlobalObject());
-    if (!globalObject)
-        clearAnonymousValue(GlobalObjectSlot);
-    else
-        putAnonymousValue(globalObject->globalData(), GlobalObjectSlot, globalObject);
+    finishCreation(globalObject->globalData(), globalObject);
 }
 
 JSObjectWithGlobalObject::JSObjectWithGlobalObject(JSGlobalData& globalData, JSGlobalObject* globalObject, Structure* structure)
     : JSNonFinalObject(globalData, structure)
 {
+    finishCreation(globalData, globalObject);
+}
+
+void JSObjectWithGlobalObject::finishCreation(JSGlobalData& globalData, JSGlobalObject* globalObject)
+{
+    Base::finishCreation(globalData);
     COMPILE_ASSERT(AnonymousSlotCount == 1, AnonymousSlotCount_must_be_one);
     ASSERT(!globalObject || globalObject->isGlobalObject());
     if (!globalObject)

@@ -41,6 +41,7 @@ namespace JSC {
         JSNotAnObject(ExecState* exec)
             : JSNonFinalObject(exec->globalData(), exec->globalData().notAnObjectStructure.get())
         {
+            finishCreation(exec->globalData());
         }
         
     public:

@@ -53,6 +53,7 @@ namespace JSC {
     inline JSWrapperObject::JSWrapperObject(JSGlobalData& globalData, Structure* structure)
         : JSNonFinalObject(globalData, structure)
     {
+        finishCreation(globalData);
     }
 
     inline JSValue JSWrapperObject::internalValue() const

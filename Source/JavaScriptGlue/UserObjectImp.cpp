@@ -38,6 +38,7 @@ UserObjectImp::UserObjectImp(JSGlobalData& globalData, Structure* structure, JSU
     : JSNonFinalObject(globalData, structure)
     , fJSUserObject((JSUserObject*)userObject->Retain())
 {
+    finishCreation(globalData);
 }
 
 UserObjectImp::~UserObjectImp()
