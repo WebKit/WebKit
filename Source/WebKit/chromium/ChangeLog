@@ -1,3 +1,20 @@
+2011-08-29  Darin Fisher  <darin@chromium.org>
+
+        [chromium] DumpRenderTree should be explicit about its dependency on
+        GoogleURL
+        https://bugs.webkit.org/show_bug.cgi?id=67169
+
+        Reviewed by Ryosuke Niwa.
+
+        DumpRenderTree uses GoogleURL code directly, and it should be explicit
+        about that instead of picking up this dependency transitively, which
+        only works for the static build.
+
+        This is needed to support the "component" build of DumpRenderTree, in
+        which the various Chromium dependencies are built as separate DLLs.
+
+        * WebKit.gyp:
+
 2011-08-30  Tony Chang  <tony@chromium.org>
 
         Fix chromium compile when using clang.  Another compile error due
