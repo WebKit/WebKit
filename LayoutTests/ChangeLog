@@ -16,6 +16,12 @@
 
 2011-08-29  David Levin  <levin@chromium.org>
 
+        [chromium] Add exception due to missing results for r94037.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-29  David Levin  <levin@chromium.org>
+
         [chromium] Minor update for test that is timing out.
 
         * platform/chromium/test_expectations.txt:
