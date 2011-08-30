@@ -431,6 +431,7 @@ svg/animations/animate-color-rgba-calcMode-discrete.html
 svg/animations/animate-color-transparent.html
 svg/animations/animate-currentColor.html
 svg/animations/animate-dynamic-update-attributeName.html
+svg/animations/animate-end-attribute.html
 svg/animations/animate-endElement-beginElement.html
 svg/animations/animate-gradient-transform.html
 svg/animations/animate-inherit-css-property.html
