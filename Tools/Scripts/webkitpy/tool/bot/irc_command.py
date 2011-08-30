@@ -109,7 +109,7 @@ class Rollout(IRCCommand):
 
         if (not svn_revision_list or not rollout_reason):
             # return is equivalent to an irc().post(), but makes for easier unit testing.
-            return "%s: Usage: SVN_REVISION [SVN_REVISIONS] REASON" % nick
+            return "%s: Usage: rollout SVN_REVISION [SVN_REVISIONS] REASON" % nick
 
         self._update_working_copy(tool)
 
@@ -174,7 +174,7 @@ class Hi(IRCCommand):
 class Whois(IRCCommand):
     def execute(self, nick, args, tool, sheriff):
         if len(args) != 1:
-            return "%s: Usage: BUGZILLA_EMAIL" % nick
+            return "%s: Usage: whois BUGZILLA_EMAIL" % nick
         email = args[0]
         # FIXME: We should get the ContributorList off the tool somewhere.
         committer = CommitterList().contributor_by_email(email)
@@ -200,7 +200,7 @@ class Eliza(IRCCommand):
 class CreateBug(IRCCommand):
     def execute(self, nick, args, tool, sheriff):
         if not args:
-            return "%s: Usage: BUG_TITLE" % nick
+            return "%s: Usage: create-bug BUG_TITLE" % nick
 
         bug_title = " ".join(args)
         bug_description = "%s\nRequested by %s on %s." % (bug_title, nick, config_irc.channel)

@@ -118,12 +118,12 @@ class SheriffIRCBotTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, run, args=["rollout r21654 21655 r21656 This r21654 patch broke the world"], expected_stderr=expected_stderr)
 
     def test_rollout_bananas(self):
-        expected_stderr = "MOCK: irc.post: mock_nick: Usage: SVN_REVISION [SVN_REVISIONS] REASON\n"
+        expected_stderr = "MOCK: irc.post: mock_nick: Usage: rollout SVN_REVISION [SVN_REVISIONS] REASON\n"
         OutputCapture().assert_outputs(self, run, args=["rollout bananas"], expected_stderr=expected_stderr)
 
     def test_rollout_invalidate_revision(self):
         # When folks pass junk arguments, we should just spit the usage back at them.
-        expected_stderr = "MOCK: irc.post: mock_nick: Usage: SVN_REVISION [SVN_REVISIONS] REASON\n"
+        expected_stderr = "MOCK: irc.post: mock_nick: Usage: rollout SVN_REVISION [SVN_REVISIONS] REASON\n"
         OutputCapture().assert_outputs(self, run,
                                        args=["rollout --component=Tools 21654"],
                                        expected_stderr=expected_stderr)
@@ -149,9 +149,9 @@ MOCK: irc.post: The rollout reason may not begin with - (\"-bad (Requested by mo
                                        expected_stderr=expected_stderr)
 
     def test_rollout_no_reason(self):
-        expected_stderr = "MOCK: irc.post: mock_nick: Usage: SVN_REVISION [SVN_REVISIONS] REASON\n"
+        expected_stderr = "MOCK: irc.post: mock_nick: Usage: rollout SVN_REVISION [SVN_REVISIONS] REASON\n"
         OutputCapture().assert_outputs(self, run, args=["rollout 21654"], expected_stderr=expected_stderr)
 
     def test_multi_rollout_no_reason(self):
-        expected_stderr = "MOCK: irc.post: mock_nick: Usage: SVN_REVISION [SVN_REVISIONS] REASON\n"
+        expected_stderr = "MOCK: irc.post: mock_nick: Usage: rollout SVN_REVISION [SVN_REVISIONS] REASON\n"
         OutputCapture().assert_outputs(self, run, args=["rollout 21654 21655 r21656"], expected_stderr=expected_stderr)

@@ -41,9 +41,9 @@ class IRCCommandTest(unittest.TestCase):
 
     def test_whois(self):
         whois = Whois()
-        self.assertEquals("tom: Usage: BUGZILLA_EMAIL",
+        self.assertEquals("tom: Usage: whois BUGZILLA_EMAIL",
                           whois.execute("tom", [], None, None))
-        self.assertEquals("tom: Usage: BUGZILLA_EMAIL",
+        self.assertEquals("tom: Usage: whois BUGZILLA_EMAIL",
                           whois.execute("tom", ["Adam", "Barth"], None, None))
         self.assertEquals("tom: Sorry, I don't know unknown@example.com. Maybe you could introduce me?",
                           whois.execute("tom", ["unknown@example.com"], None, None))
@@ -54,7 +54,7 @@ class IRCCommandTest(unittest.TestCase):
 
     def test_create_bug(self):
         create_bug = CreateBug()
-        self.assertEquals("tom: Usage: BUG_TITLE",
+        self.assertEquals("tom: Usage: create-bug BUG_TITLE",
                           create_bug.execute("tom", [], None, None))
 
         example_args = ["sherrif-bot", "should", "have", "a", "create-bug", "command"]
@@ -93,7 +93,7 @@ class IRCCommandTest(unittest.TestCase):
         self.assertEquals((None, None), rollout._parse_args(["--bar", "1234"]))
 
         # Invalid arguments result in the USAGE message.
-        self.assertEquals("tom: Usage: SVN_REVISION [SVN_REVISIONS] REASON",
+        self.assertEquals("tom: Usage: rollout SVN_REVISION [SVN_REVISIONS] REASON",
                           rollout.execute("tom", [], None, None))
 
         # FIXME: We need a better way to test IRCCommands which call tool.irc().post()

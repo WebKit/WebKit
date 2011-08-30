@@ -1,3 +1,14 @@
+2011-08-29  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        sheriffbot "usage" help statements are wrong
+        https://bugs.webkit.org/show_bug.cgi?id=67170
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+
 2011-08-29  Adam Barth  <abarth@webkit.org>
 
         Add support for chomium-mac (non-CoreGraphics) baselines
