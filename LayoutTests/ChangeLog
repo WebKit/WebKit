@@ -1,3 +1,40 @@
+2011-08-30  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [WebSocket] Prevent unnecessary pywebsocket warnings on layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=67182
+
+        Reviewed by Kent Tamura.
+
+        Some layout tests for WebSocket raised Exception to prevent unnecessary
+        pywebsocket warning. But it doesn't work any more on pywebsocket 0.6b4.
+        Now pywebsocket support AbortedByUserException to prevent warning.
+        This change make raise AbortedByUserException instead of Exception.
+
+        handshake-fail-by-prepended-null_wsh.py didn't use Exception, but
+        expected abnormal closure on sending response could raise unexpected
+        Exception by chance. This change also takes care of it.
+
+        * http/tests/websocket/tests/hixie76/bad-handshake-crash_wsh.py:
+        * http/tests/websocket/tests/hixie76/frame-length-longer-than-buffer_wsh.py:
+        * http/tests/websocket/tests/hixie76/frame-length-overflow_wsh.py:
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-maxlength_wsh.py:
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-no-connection-header_wsh.py:
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-no-cr_wsh.py:
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-no-upgrade-header_wsh.py:
+        * http/tests/websocket/tests/hixie76/handshake-fail-by-prepended-null_wsh.py:
+        * http/tests/websocket/tests/hixie76/long-invalid-header_wsh.py:
+        * http/tests/websocket/tests/hybi/bad-handshake-crash_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-maxlength_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-connection-header_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-cr_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header_wsh.py:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header_wsh.py:
+        * http/tests/websocket/tests/hybi/long-invalid-header_wsh.py:
+        * http/tests/websocket/tests/hybi/masked-frames_wsh.py:
+        Use AbortedByUserException instead of Exception.
+
 2011-08-29  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Fix two layout tests which fails on Qt port with latest pywebsocket.
