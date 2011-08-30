@@ -94,7 +94,7 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
         m_pageOffset = m_next->m_pageOffset;
         
         // Disable pagination for objects we don't support.  For now this includes overflow:scroll/auto and inline blocks.
-        if (renderer->isReplaced() || renderer->scrollsOverflow())
+        if (renderer->isReplaced() || renderer->hasUnsplittableScrollingOverflow())
             m_pageLogicalHeight = 0;
     }
     

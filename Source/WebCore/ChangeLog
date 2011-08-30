@@ -1,3 +1,26 @@
+2011-08-30  David Hyatt  <hyatt@apple.com>
+
+        <rdar://problem/10002140> 9A309: Text gets clipped in book because of overflow:auto
+        
+        https://bugs.webkit.org/show_bug.cgi?id=67212 - Text gets clipped in multi-column layouts when overflow:auto
+        is used.
+        
+        Revise our overflow:auto pagination behavior. If the overflow block doesn't specify any logical height
+        information, then we'll just assume the plan is for it to enclose its contents, and we will be willing
+        to paginate in those circumstances.
+
+        Reviewed by Dan Bernstein.
+
+        Added overflow-across-columns.html and overflow-unsplittable.html
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::hasUnsplittableScrollingOverflow):
+        * rendering/RenderBox.h:
+
 2011-08-30  Antti Koivisto  <antti@apple.com>
 
         querySelector/querySelectorAll should use selector checker fast path 

@@ -3335,6 +3335,23 @@ void RenderBox::clearLayoutOverflow()
     m_overflow->resetLayoutOverflow(borderBoxRect());
 }
 
+bool RenderBox::hasUnsplittableScrollingOverflow() const
+{
+    // We will paginate as long as we don't scroll overflow in the pagination direction.
+    bool isHorizontal = isHorizontalWritingMode();
+    if ((isHorizontal && !scrollsOverflowY()) || (!isHorizontal && !scrollsOverflowX()))
+        return false;
+    
+    // We do have overflow. We'll still be willing to paginate as long as the block
+    // has auto logical height, auto or undefined max-logical-height and a zero or auto min-logical-height.
+    // Note this is just a heuristic, and it's still possible to have overflow under these
+    // conditions, but it should work out to be good enough for common cases. Paginating overflow
+    // with scrollbars present is not the end of the world and is what we used to do in the old model anyway.
+    return !style()->logicalHeight().isIntrinsicOrAuto()
+        || (!style()->logicalMaxHeight().isIntrinsicOrAuto() && !style()->logicalMaxHeight().isUndefined())
+        || (!style()->logicalMinHeight().isIntrinsicOrAuto() && style()->logicalMinHeight().isPositive());
+}
+
 LayoutUnit RenderBox::lineHeight(bool /*firstLine*/, LineDirectionMode direction, LinePositionMode /*linePositionMode*/) const
 {
     if (isReplaced())
