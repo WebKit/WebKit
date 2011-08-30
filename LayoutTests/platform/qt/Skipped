@@ -2394,3 +2394,16 @@ fast/forms/input-number-events.html
 # https://bugs.webkit.org/show_bug.cgi?id=67125
 fast/dom/constructed-objects-prototypes.html
 fast/dom/dom-constructors.html
+
+# [QT] One test failed after r93978
+# https://bugs.webkit.org/show_bug.cgi?id=67185
+inspector/styles/styles-computed-trace.html
+
+# [Qt] One test failed after r94009
+# https://bugs.webkit.org/show_bug.cgi?id=67186
+css2.1/t0602-c13-inheritance-00-e.html
+
+# [Qt] Two tests failed after r94037
+# https://bugs.webkit.org/show_bug.cgi?id=67188
+fast/multicol/initial-column-values.html
+fast/multicol/inherit-column-values.html

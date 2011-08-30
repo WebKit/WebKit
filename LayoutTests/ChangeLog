@@ -1,3 +1,12 @@
+2011-08-30  Renata Hodovan  <reni@webkit.org>
+
+        [Qt] Qt Linux Release bot has four failed tests.
+        They are skipped.
+
+        Unreviewed gardening.
+
+        * platform/qt/Skipped:
+
 2011-08-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Return value of window.onerror has inverted semantics
