@@ -1,5 +1,11 @@
 2011-08-29  David Levin  <levin@chromium.org>
 
+        [chromium] Minor update for test that is timing out.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-29  David Levin  <levin@chromium.org>
+
         [chromium] Misc test expectations updates.
 
         * platform/chromium-mac/fast/files/create-blob-url-crash-expected.txt: Copied from LayoutTests/platform/qt/fast/files/create-blob-url-crash-expected.txt.
