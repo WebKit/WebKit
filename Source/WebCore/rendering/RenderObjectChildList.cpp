@@ -416,6 +416,21 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
             if (!beforeAfterParent)
                 return;
 
+            // When beforeAfterParent is not equal to child (e.g. in tables),
+            // we need to create new styles inheriting from pseudoElementStyle 
+            // on all the intermediate parents (leaving their display same).
+            if (beforeAfterParent != child) {
+                RenderObject* curr = beforeAfterParent;
+                while (curr && curr != child) {
+                    ASSERT(curr->isAnonymous());
+                    RefPtr<RenderStyle> newStyle = RenderStyle::create();
+                    newStyle->inheritFrom(pseudoElementStyle);
+                    newStyle->setDisplay(curr->style()->display());
+                    curr->setStyle(newStyle);
+                    curr = curr->parent();
+                }
+            }
+
             // Note that if we ever support additional types of generated content (which should be way off
             // in the future), this code will need to be patched.
             for (RenderObject* genChild = beforeAfterParent->firstChild(); genChild; genChild = genChild->nextSibling()) {

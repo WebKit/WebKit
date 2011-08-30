@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 77x18
                     text run at (0,0) width 77: "CONTENT"
               RenderTable at (0,18) size 90x56 [color=#FF0000] [border: (3px solid #0000FF)]
-                RenderTableSection (anonymous) at (19,19) size 52x18 [color=#000000]
+                RenderTableSection (anonymous) at (19,19) size 52x18
                   RenderTableRow (anonymous) at (0,0) size 52x18
                     RenderTableCell (anonymous) at (0,0) size 52x18 [r=0 c=0 rs=1 cs=1]
                       RenderText at (0,0) size 52x18

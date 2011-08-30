@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
           RenderTableRow (anonymous) at (0,0) size 77x54
             RenderTableCell (anonymous) at (0,0) size 77x54 [r=0 c=0 rs=1 cs=1]
               RenderTable at (0,0) size 63x18 [color=#FF0000]
-                RenderTableSection (anonymous) at (0,0) size 63x18 [color=#000000]
+                RenderTableSection (anonymous) at (0,0) size 63x18
                   RenderTableRow (anonymous) at (0,0) size 63x18
                     RenderTableCell (anonymous) at (0,0) size 63x18 [r=0 c=0 rs=1 cs=1]
                       RenderText at (0,0) size 63x18
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 77x18
                   text run at (0,0) width 77: "CONTENT"
               RenderTable at (0,36) size 52x18 [color=#FF0000]
-                RenderTableSection (anonymous) at (0,0) size 52x18 [color=#000000]
+                RenderTableSection (anonymous) at (0,0) size 52x18
                   RenderTableRow (anonymous) at (0,0) size 52x18
                     RenderTableCell (anonymous) at (0,0) size 52x18 [r=0 c=0 rs=1 cs=1]
                       RenderText at (0,0) size 52x18
