@@ -1,3 +1,23 @@
+2011-08-30  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Add null checks for document()->loader()
+        https://bugs.webkit.org/show_bug.cgi?id=67077
+
+        Reviewed by Nate Chapin.
+
+        Document::loader can return 0 for a number of reasons.  Call sites need
+        to null check the result, like we do for Document::frame.  I suspect
+        some of these are real crashes, along the lines of
+        http://trac.webkit.org/changeset/93692, but null checking this function
+        is just good practice.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+        * src/WebSearchableFormData.cpp:
+        (HTMLNames::GetFormEncoding):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::pageEncoding):
+
 2011-08-29  Darin Fisher  <darin@chromium.org>
 
         [chromium] DumpRenderTree should be explicit about its dependency on

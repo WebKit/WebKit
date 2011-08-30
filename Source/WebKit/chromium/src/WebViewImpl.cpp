@@ -1643,6 +1643,9 @@ WebString WebViewImpl::pageEncoding() const
     if (!m_page.get())
         return WebString();
 
+    if (!m_page->mainFrame()->document()->loader())
+        return WebString();
+
     return m_page->mainFrame()->document()->loader()->writer()->encoding();
 }
 

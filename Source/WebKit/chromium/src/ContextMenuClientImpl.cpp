@@ -243,7 +243,8 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
 
     // If it's not a link, an image, a media element, or an image/media link,
     // show a selection menu or a more generic page menu.
-    data.frameEncoding = selectedFrame->document()->loader()->writer()->encoding();
+    if (selectedFrame->document()->loader())
+        data.frameEncoding = selectedFrame->document()->loader()->writer()->encoding();
 
     // Send the frame and page URLs in any case.
     data.pageURL = urlFromFrame(m_webView->mainFrameImpl()->frame());
