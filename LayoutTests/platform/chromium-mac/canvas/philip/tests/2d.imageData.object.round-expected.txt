@@ -1,0 +1,8 @@
+Failed assertion imgdata.data["0"] === 0 (got 1[number], expected 0[number])
+Failed assertion imgdata.data["0"] === 0 (got 1[number], expected 0[number])
+Failed assertion imgdata.data["0"] === 2 (got 3[number], expected 2[number])
+Failed assertion imgdata.data["0"] === 252 (got 253[number], expected 252[number])
+Failed assertion imgdata.data["0"] === 253 (got 254[number], expected 253[number])
+Failed assertion imgdata.data["0"] === 254 (got 255[number], expected 254[number])
+Failed assertion imgdata.data["0"] === 0 (got 255[number], expected 0[number])
+Failed assertion imgdata.data["0"] === 255 (got 0[number], expected 255[number])

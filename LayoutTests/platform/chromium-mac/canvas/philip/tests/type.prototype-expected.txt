@@ -1,0 +1,3 @@
+Failed assertion: window.HTMLCanvasElement.prototype
+Failed assertion: window.HTMLCanvasElement.prototype
+Aborted with exception: Cannot set property 'getContext' of null

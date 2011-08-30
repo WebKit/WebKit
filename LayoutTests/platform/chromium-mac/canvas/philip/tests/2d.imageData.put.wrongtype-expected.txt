@@ -1,0 +1,3 @@
+Failed assertion: expected exception of type TypeError, got: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Failed assertion: expected exception of type TypeError, got: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Failed assertion: expected exception of type TypeError, got: Error: TYPE_MISMATCH_ERR: DOM Exception 17

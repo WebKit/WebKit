@@ -1,3 +1,94 @@
+2011-08-30  Cary Clark  <caryclark@google.com>
+
+        LayoutTest expected results for Skia on Mac (animations and canvas directories only)
+        https://bugs.webkit.org/show_bug.cgi?id=67218
+
+        Reviewed by Adam Barth.
+
+        * platform/chromium-mac/animations: Added.
+        * platform/chromium-mac/animations/missing-values-first-keyframe-expected.png: Added.
+        * platform/chromium-mac/animations/missing-values-last-keyframe-expected.png: Added.
+        * platform/chromium-mac/animations/opacity-transform-animation-expected.png: Added.
+        * platform/chromium-mac/animations/state-at-end-event-expected.png: Added.
+        * platform/chromium-mac/animations/stop-animation-on-suspend-expected.txt: Added.
+        * platform/chromium-mac/canvas: Added.
+        * platform/chromium-mac/canvas/philip: Added.
+        * platform/chromium-mac/canvas/philip/tests: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.composite.operation.clear-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.composite.operation.darker-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.composite.uncovered.fill.copy-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.composite.uncovered.image.copy-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.composite.uncovered.image.destination-atop-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.composite.uncovered.image.destination-in-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.composite.uncovered.image.source-in-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.composite.uncovered.image.source-out-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.composite.uncovered.pattern.copy-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.drawImage.broken-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.drawImage.image.incomplete.omitted-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.fillStyle.parse.rgb-eof-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.fillStyle.parse.rgba-eof-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.cone.behind-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.cone.beside-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.cone.cylinder-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.cone.shape2-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.cone.top-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.outside3-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.touch1-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.touch3-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.imageData.create1.type-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.imageData.create2.type-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.imageData.get.type-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.imageData.object.round-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.imageData.object.wrap-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.imageData.put.wrongtype-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.line.width.basic-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.line.width.transformed-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.missingargs-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.path.arc.angle.3-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.path.arc.angle.5-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.path.arcTo.shape.curve1-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.path.arcTo.shape.curve2-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.pattern.image.broken-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.pattern.image.incomplete.empty-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.pattern.image.incomplete.omitted-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.pattern.image.string-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.pattern.image.undefined-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.pattern.paint.norepeat.coord3-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.pattern.paint.repeatx.coord1-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.pattern.paint.repeaty.coord1-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.shadow.canvas.alpha-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.shadow.canvas.basic-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.shadow.canvas.transparent.2-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.shadow.enable.blur-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.shadow.image.alpha-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.shadow.image.basic-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.shadow.image.scale-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.shadow.image.transparent.2-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.draw.align.center-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.draw.baseline.bottom-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.draw.baseline.hanging-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.draw.baseline.ideographic-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.draw.baseline.middle-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.draw.baseline.top-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.draw.space.collapse.end-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.draw.space.collapse.nonspace-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.draw.space.collapse.other-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.draw.space.collapse.space-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.draw.space.collapse.start-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.font.parse.basic-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.font.parse.complex-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.font.parse.invalid-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.font.parse.size.percentage-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.font.parse.size.percentage.default-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.font.parse.system-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.text.measure.width.space-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.transformation.setTransform.skewed-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.transformation.transform.skewed-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/toDataURL.jpeg.alpha-expected.txt: Added.
+        * platform/chromium-mac/canvas/philip/tests/type.prototype-expected.txt: Added.
+
 2011-08-30  Adam Barth  <abarth@webkit.org>
 
         Flaky crash with JavaScript URLs

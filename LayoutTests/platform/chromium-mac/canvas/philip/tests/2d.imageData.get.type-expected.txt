@@ -1,0 +1,2 @@
+Failed assertion window.CanvasPixelArray !== undefined (got [undefined], expected not [undefined])
+Aborted with exception: Cannot read property 'prototype' of undefined
