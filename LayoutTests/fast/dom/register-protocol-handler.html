@@ -32,6 +32,22 @@ invalid_protocols.forEach(function (protocol) {
         debug('Fail: Invalid protocol "' + protocol + '" allowed.');
 });
 
+var valid_protocols = ['irc', 'mailto', 'mms', 'news', 'nntp', 'sms', 'smsto', 'tel', 'urn', 'webcal'];
+valid_protocols.forEach(function (protocol) {
+    var succeeded = false;
+    try {
+        window.navigator.registerProtocolHandler(protocol, "valid protocol %s", "title");
+        succeeded = true;
+    } catch (e) {
+        succeeded = false;
+    }
+
+    if (succeeded)
+        debug('Pass: Valid protocol "' + protocol + '" allowed.');
+    else
+        debug('Fail: Valid protocol "' + protocol + '" failed.');
+});
+
 var invalid_urls = ["", "%S"];
 invalid_urls.forEach(function (url) {
    var succeeded = false;

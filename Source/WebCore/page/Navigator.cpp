@@ -190,10 +190,15 @@ static void initProtocolHandlerWhitelist()
 {
     protocolWhitelist = new HashSet<String>;
     static const char* protocols[] = {
+        "irc",
         "mailto",
         "mms",
+        "news",
         "nntp",
-        "rtsp",
+        "sms",
+        "smsto",
+        "tel",
+        "urn",
         "webcal",
     };
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(protocols); ++i)
