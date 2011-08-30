@@ -150,6 +150,8 @@ EXPORTS
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRect@1@@Z
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?jsStringSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@UStringHash@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
+        ?lastChangeWasUserEdit@HTMLTextAreaElement@WebCore@@QBE_NXZ
+        ?lastChangeWasUserEdit@HTMLInputElement@WebCore@@QBE_NXZ
         ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@@WTF@@PAVNode@2@@Z
         ?memoryCache@WebCore@@YAPAVMemoryCache@1@XZ
         ?page@Document@WebCore@@QBEPAVPage@2@XZ
