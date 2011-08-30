@@ -25,19 +25,17 @@
 
 #include "config.h"
 
+#include "GraphicsContext3D.h"
+
+#include "GraphicsContext3DPrivate.h"
 #include "MockWebGraphicsContext3D.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+using namespace WebCore;
 using namespace WebKit;
 using namespace testing;
-
-TEST(MockWebGraphicsContext3DTest, BasicMockDoesNothing)
-{
-    MockWebGraphicsContext3D context;
-    EXPECT_FALSE(context.makeContextCurrent());
-}
 
 class FrameCountingContext : public MockWebGraphicsContext3D {
 public:
@@ -52,49 +50,41 @@ private:
     int m_frame;
 };
 
-TEST(MockWebGraphicsContext3DTest, CanOverrideManually)
+TEST(MockGraphicsContext3DTest, CanOverrideManually)
 {
-    FrameCountingContext context;
+    GraphicsContext3D::Attributes attrs;
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FrameCountingContext()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow);
+    FrameCountingContext& mockContext = *static_cast<FrameCountingContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(context.get()));
 
-    context.makeContextCurrent();
+    context->makeContextCurrent();
     for (int i = 0; i < 10; i++) {
-        context.clearColor(0, 0, 0, 1);
-        context.prepareTexture();
+        context->clearColor(0, 0, 0, 1);
+        context->prepareTexture();
     }
-    context.finish();
+    context->finish();
 
-    EXPECT_EQ(10, context.frameCount());
+    EXPECT_EQ(10, mockContext.frameCount());
 }
+
 
 class GMockContext : public MockWebGraphicsContext3D {
 public:
-    MOCK_METHOD0(width, int());
-    MOCK_METHOD0(height, int());
-    MOCK_METHOD1(synthesizeGLError, void(WGC3Denum error));
     MOCK_METHOD0(getError, WGC3Denum());
 };
 
-TEST(MockWebGraphicsContext3DTest, CanUseGMock)
+TEST(MockGraphicsContext3DTest, CanUseGMock)
 {
-    GMockContext context;
+    GraphicsContext3D::Attributes attrs;
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new GMockContext()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow);
+    GMockContext& mockContext = *static_cast<GMockContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(context.get()));
 
-    EXPECT_CALL(context, width())
-        .WillRepeatedly(Return(512));
+    EXPECT_CALL(mockContext, getError())
+            .WillRepeatedly(Return(314));
 
-    EXPECT_CALL(context, height())
-        .WillRepeatedly(Return(384));
+    // It's OK to call methods GMock doesn't know about.
+    context->makeContextCurrent();
 
-    EXPECT_CALL(context, synthesizeGLError(_)) // Any parameter accepted
-        .Times(Exactly(10));
-
-    // No expectation for getError(), so calling that would make our test fail.
-
-    for (int i = 0; i < 10; i++) {
-        context.synthesizeGLError(i);
-        EXPECT_EQ(512, context.width());
-        EXPECT_EQ(384, context.height());
-
-        // It's OK to call methods GMock doesn't know about.
-        EXPECT_FALSE(context.makeContextCurrent());
-    }
+    // Check that the mocked method is returning as intended.
+    for (int i = 0; i < 10; i++)
+        EXPECT_EQ((int)context->getError(), 314);
 }

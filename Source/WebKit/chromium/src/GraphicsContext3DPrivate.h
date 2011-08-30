@@ -55,7 +55,11 @@ class SwapBuffersCompleteCallbackAdapter;
 
 class GraphicsContext3DPrivate {
 public:
-    GraphicsContext3DPrivate();
+    static PassOwnPtr<GraphicsContext3DPrivate> create(WebKit::WebViewImpl*, PassOwnPtr<WebKit::WebGraphicsContext3D>);
+
+    // Used in tests to create a GraphicsContext3D from a mocked WebGraphicsContext3D.
+    static PassRefPtr<GraphicsContext3D> createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::Attributes, HostWindow*, GraphicsContext3D::RenderStyle);
+
     ~GraphicsContext3DPrivate();
 
     bool initialize(GraphicsContext3D::Attributes, HostWindow*, bool renderDirectlyToHostWindow);
@@ -290,6 +294,8 @@ public:
     GC3Denum getGraphicsResetStatusARB();
 
 private:
+    GraphicsContext3DPrivate(WebKit::WebViewImpl*, PassOwnPtr<WebKit::WebGraphicsContext3D>);
+
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
     OwnPtr<Extensions3DChromium> m_extensions;
     OwnPtr<GraphicsContextLostCallbackAdapter> m_contextLostCallbackAdapter;
