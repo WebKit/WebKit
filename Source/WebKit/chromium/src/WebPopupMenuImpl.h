@@ -128,7 +128,7 @@ public:
     virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) const;
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) const;
     virtual PlatformPageClient platformPageClient() const { return 0; }
-    virtual void scrollRectIntoView(const WebCore::IntRect&, const WebCore::ScrollView*) const;
+    virtual void scrollRectIntoView(const WebCore::IntRect&) const;
     virtual void scrollbarsModeDidChange() const;
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);

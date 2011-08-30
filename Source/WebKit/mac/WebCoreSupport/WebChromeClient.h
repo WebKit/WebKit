@@ -97,7 +97,7 @@ public:
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) const;
     virtual PlatformPageClient platformPageClient() const;
     virtual void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const;
-    virtual void scrollRectIntoView(const WebCore::IntRect&, const WebCore::ScrollView*) const;
+    virtual void scrollRectIntoView(const WebCore::IntRect&) const;
     
     virtual void setStatusbarText(const WTF::String&);
 

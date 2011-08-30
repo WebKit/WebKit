@@ -133,7 +133,7 @@ namespace WebKit {
         virtual void setCursor(const WebCore::Cursor&);
         virtual void setCursorHiddenUntilMouseMoves(bool);
 
-        virtual void scrollRectIntoView(const WebCore::IntRect&, const WebCore::ScrollView*) const {}
+        virtual void scrollRectIntoView(const WebCore::IntRect&) const { }
         virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
         virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*, WebCore::Geolocation*);
 

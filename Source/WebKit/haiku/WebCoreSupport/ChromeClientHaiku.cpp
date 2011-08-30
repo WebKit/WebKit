@@ -301,7 +301,7 @@ void ChromeClientHaiku::contentsSizeChanged(Frame*, const IntSize&) const
     notImplemented();
 }
 
-void ChromeClientHaiku::scrollRectIntoView(const IntRect&, const ScrollView*) const
+void ChromeClientHaiku::scrollRectIntoView(const IntRect&) const
 {
     notImplemented();
 }

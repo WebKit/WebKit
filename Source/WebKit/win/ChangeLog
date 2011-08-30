@@ -1,3 +1,14 @@
+2011-08-30  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        The unused ScrollView* argument can and should be removed from
+        scrollRectIntoView.
+        https://bugs.webkit.org/show_bug.cgi?id=67117
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::scrollRectIntoView):
+
 2011-08-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move setInnerTextValue from RenderTextControl to HTMLTextFormControlElement

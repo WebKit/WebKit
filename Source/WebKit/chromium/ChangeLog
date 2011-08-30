@@ -1,3 +1,15 @@
+2011-08-30  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        The unused ScrollView* argument can and should be removed from
+        scrollRectIntoView.
+        https://bugs.webkit.org/show_bug.cgi?id=67117
+
+        Reviewed by Darin Adler.
+
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::scrollRectIntoView):
+        * src/WebPopupMenuImpl.h:
+
 2011-08-29  Greg Billock  <gbillock@google.com>
 
         [Chromium] Add ability to do static SerializedScriptValue deserialization

@@ -397,7 +397,7 @@ IntRect WebPopupMenuImpl::windowToScreen(const IntRect& rect) const
     return IntRect();
 }
 
-void WebPopupMenuImpl::scrollRectIntoView(const IntRect&, const ScrollView*) const
+void WebPopupMenuImpl::scrollRectIntoView(const IntRect&) const
 {
     // Nothing to be done here since we do not have the concept of a container
     // that implements its own scrolling.

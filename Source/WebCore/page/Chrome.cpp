@@ -127,8 +127,7 @@ void Chrome::layoutUpdated(Frame* frame) const
 
 void Chrome::scrollRectIntoView(const IntRect& rect) const
 {
-    // FIXME: The unused ScrollView* argument can and should be removed from ChromeClient::scrollRectIntoView.
-    m_client->scrollRectIntoView(rect, 0);
+    m_client->scrollRectIntoView(rect);
 }
 
 void Chrome::scrollbarsModeDidChange() const

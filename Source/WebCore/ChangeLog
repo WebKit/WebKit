@@ -1,3 +1,18 @@
+2011-08-30  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        The unused ScrollView* argument can and should be removed from
+        scrollRectIntoView.
+        https://bugs.webkit.org/show_bug.cgi?id=67117
+
+        Reviewed by Darin Adler.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::scrollRectIntoView):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::scrollRectIntoView):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::scrollRectIntoView):
+
 2011-08-30  Ben Wells  <benwells@chromium.org>
 
         Update registerProtocolHandler scheme whitelist to match spec

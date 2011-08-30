@@ -608,7 +608,7 @@ void WebChromeClient::contentsSizeChanged(Frame*, const IntSize&) const
 {
 }
 
-void WebChromeClient::scrollRectIntoView(const IntRect& r, const ScrollView*) const
+void WebChromeClient::scrollRectIntoView(const IntRect& r) const
 {
     // FIXME: This scrolling behavior should be under the control of the embedding client,
     // perhaps in a delegate method, rather than something WebKit does unconditionally.

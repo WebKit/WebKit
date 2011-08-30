@@ -1,3 +1,13 @@
+2011-08-30  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        The unused ScrollView* argument can and should be removed from
+        scrollRectIntoView.
+        https://bugs.webkit.org/show_bug.cgi?id=67117
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/ChromeClientWinCE.h:
+
 2011-08-17  Adam Roben  <aroben@apple.com>
 
         Make WebCore keep track of the current device scale factor

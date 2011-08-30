@@ -101,7 +101,7 @@ public:
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) const;
     virtual PlatformPageClient platformPageClient() const;
     virtual void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const;
-    virtual void scrollRectIntoView(const WebCore::IntRect&, const WebCore::ScrollView*) const; // Currently only Mac has a non empty implementation.
+    virtual void scrollRectIntoView(const WebCore::IntRect&) const; // Currently only Mac has a non empty implementation.
     virtual void scrollbarsModeDidChange() const;
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);
