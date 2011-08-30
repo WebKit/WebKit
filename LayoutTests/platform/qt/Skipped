@@ -2395,3 +2395,7 @@ fast/multicol/inherit-column-values.html
 http/tests/eventsource/workers/eventsource-simple.html
 fast/replaced/frame-removed-during-resize.html
 scrollbars/scrollbar-buttons.html
+
+# [Qt] The square-button-appearance test is wrong
+# https://bugs.webkit.org/show_bug.cgi?id=67128
+fast/css/square-button-appearance.html

@@ -2,6 +2,16 @@
 
         [Qt] Unreviewed gardening.
 
+        * platform/qt-4.8/fast/text/complex-preferred-logical-widths-expected.png: Added.
+        * platform/qt-4.8/fast/text/complex-preferred-logical-widths-expected.txt: Added.
+        * platform/qt-arm/Skipped:
+        * platform/qt/Skipped:
+        * platform/qt/test_expectations.txt:
+
+2011-08-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
         * platform/qt/Skipped: Unskip now passing tests.
         * platform/qt/css2.1/t0602-c13-inheritance-00-e-expected.png:
         * platform/qt/css2.1/t0602-c13-inheritance-00-e-expected.txt:
