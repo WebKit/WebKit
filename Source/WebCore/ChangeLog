@@ -1,3 +1,13 @@
+2011-08-30  Dawit Alemayehu  <adawit@kde.org>
+
+        [Qt] Replace QLibrary("libgtk-x11-2.0.so.0") with QLibrary("libgtk-x11-2.0", 0)
+        https://bugs.webkit.org/show_bug.cgi?id=66627
+
+        Reviewed by Simon Hausmann.
+
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::initializeGtk):
+
 2011-08-29  Oliver Hunt  <oliver@apple.com>
 
         TypedArrays don't ensure that denormalised values are normalised
