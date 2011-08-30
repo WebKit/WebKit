@@ -163,7 +163,13 @@ void Path::translate(const FloatSize& size)
 
 FloatRect Path::boundingRect() const
 {
+    // CGPathGetBoundingBox includes the path's control points, CGPathGetPathBoundingBox
+    // does not, but only exists on 10.6 and above.
+#if !defined(BUILDING_ON_LEOPARD)
+    return CGPathGetPathBoundingBox(m_path);
+#else
     return CGPathGetBoundingBox(m_path);
+#endif
 }
 
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const

@@ -1,5 +1,24 @@
 2011-08-30  Tim Horton  <timothy_horton@apple.com>
 
+        getBBox() on a SVGPathElement with curves incorrectly includes control points
+        https://bugs.webkit.org/show_bug.cgi?id=53512
+        <rdar://problem/9861154>
+
+        Reviewed by Dirk Schulze.
+
+        The CoreGraphics implementation of Path::boundingRect() called
+        CGPathGetBoundingBox, which includes the path's control points in its
+        calculations. Snow Leopard added CGPathGetPathBoundingBox, which
+        finds the bounding box of only points within the path, and does not
+        include control points. On Snow Leopard and above, we now use the latter.
+
+        Test: svg/custom/getBBox-path.svg
+
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::boundingRect):
+
+2011-08-30  Tim Horton  <timothy_horton@apple.com>
+
         SVG panning y-axis is flipped in WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=65800
         <rdar://problem/9908012>
