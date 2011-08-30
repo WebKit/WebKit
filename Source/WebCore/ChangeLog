@@ -1,3 +1,29 @@
+2011-08-30  Tony Chang  <tony@chromium.org>
+
+        refactor box-ordinal-group handling so we don't timeout on large values
+        https://bugs.webkit.org/show_bug.cgi?id=65783
+
+        Reviewed by David Hyatt.
+
+        The old code walked from 1 to the last box-ordinal-group while
+        iterating over each flex item.  The new code collects ordinals as
+        we do the first walk and sorts them.  Each additional iteration
+        through the flex items gets the next oridnal from the sorted list.
+
+        This maintains the single pass for the common case of no
+        box-ordinal-groups specified.  If there are ordinal groups,
+        the runtime is O(n*m + m lg m) where n is the # of flex items and
+        m is the number of unique box-ordinal-group values.  The memory
+        usage is O(2m).
+
+        Test: fast/flexbox/box-ordinal-group.html
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::FlexBoxIterator::FlexBoxIterator):
+        (WebCore::FlexBoxIterator::reset):
+        (WebCore::FlexBoxIterator::next):
+        (WebCore::FlexBoxIterator::compareFlexOrder):
+
 2011-08-30  Abhishek Arya  <inferno@chromium.org>
 
         Removed m_owner accessed in custom scrollbars.
