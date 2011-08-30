@@ -1,3 +1,13 @@
+2011-08-30  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Inspected page sometimes crashes in InspectorResourceAgent::didFailLoading
+        https://bugs.webkit.org/show_bug.cgi?id=67193
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didFailLoading):
+
 2011-08-30  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
 
         [Qt] Do not unconditionally use pkg-config in .pro files

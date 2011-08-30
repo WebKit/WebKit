@@ -292,8 +292,12 @@ void InspectorResourceAgent::didFinishLoading(unsigned long identifier, Document
 void InspectorResourceAgent::didFailLoading(unsigned long identifier, DocumentLoader* loader, const ResourceError& error)
 {
     String requestId = IdentifiersFactory::requestId(identifier);
-    if (m_resourcesData->resourceType(requestId) == InspectorPageAgent::DocumentResource)
-        m_resourcesData->addResourceSharedBuffer(requestId, loader->frameLoader()->documentLoader()->mainResourceData(), loader->frame()->document()->inputEncoding());
+
+    if (m_resourcesData->resourceType(requestId) == InspectorPageAgent::DocumentResource) {
+        Frame* frame = loader ? loader->frame() : 0;
+        if (frame && frame->loader()->documentLoader() && frame->document())
+            m_resourcesData->addResourceSharedBuffer(requestId, frame->loader()->documentLoader()->mainResourceData(), frame->document()->inputEncoding());
+    }
 
     m_frontend->loadingFailed(requestId, currentTime(), error.localizedDescription(), error.isCancellation());
 }
