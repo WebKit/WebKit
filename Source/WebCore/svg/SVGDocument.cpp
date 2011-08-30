@@ -83,13 +83,13 @@ bool SVGDocument::zoomAndPanEnabled() const
 void SVGDocument::startPan(const FloatPoint& start)
 {
     if (rootElement())
-        m_translate = FloatPoint(start.x() - rootElement()->currentTranslate().x(), rootElement()->currentTranslate().y() + start.y());
+        m_translate = FloatPoint(start.x() - rootElement()->currentTranslate().x(), start.y() - rootElement()->currentTranslate().y());
 }
 
 void SVGDocument::updatePan(const FloatPoint& pos) const
 {
     if (rootElement()) {
-        rootElement()->setCurrentTranslate(FloatPoint(pos.x() - m_translate.x(), m_translate.y() - pos.y()));
+        rootElement()->setCurrentTranslate(FloatPoint(pos.x() - m_translate.x(), pos.y() - m_translate.y()));
         if (renderer())
             renderer()->repaint();
     }

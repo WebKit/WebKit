@@ -473,7 +473,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
         && static_cast<SVGDocument*>(m_frame->document())->zoomAndPanEnabled()) {
         if (event.event().shiftKey() && singleClick) {
             m_svgPan = true;
-            static_cast<SVGDocument*>(m_frame->document())->startPan(event.event().pos());
+            static_cast<SVGDocument*>(m_frame->document())->startPan(m_frame->view()->windowToContents(event.event().pos()));
             return true;
         }
     }
@@ -1561,7 +1561,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
 
 #if ENABLE(SVG)
     if (m_svgPan) {
-        static_cast<SVGDocument*>(m_frame->document())->updatePan(m_currentMousePosition);
+        static_cast<SVGDocument*>(m_frame->document())->updatePan(m_frame->view()->windowToContents(m_currentMousePosition));
         return true;
     }
 #endif
@@ -1682,7 +1682,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 #if ENABLE(SVG)
     if (m_svgPan) {
         m_svgPan = false;
-        static_cast<SVGDocument*>(m_frame->document())->updatePan(m_currentMousePosition);
+        static_cast<SVGDocument*>(m_frame->document())->updatePan(m_frame->view()->windowToContents(m_currentMousePosition));
         return true;
     }
 #endif

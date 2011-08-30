@@ -1,3 +1,25 @@
+2011-08-30  Tim Horton  <timothy_horton@apple.com>
+
+        SVG panning y-axis is flipped in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=65800
+        <rdar://problem/9908012>
+
+        Reviewed by Darin Adler.
+
+        We previously were not transforming the pointer coordinates passed
+        to SVGDocument's panning implementation into the coordinate space of
+        the contents, so on different platforms, the drag direction was different.
+
+        Test: svg/custom/pan-direction.svg
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::startPan):
+        (WebCore::SVGDocument::updatePan):
+
 2011-08-30  Adam Barth  <abarth@webkit.org>
 
         Flaky crash with JavaScript URLs
