@@ -29,6 +29,7 @@
 #include "Event.h"
 #include "JSDictionary.h"
 #include "JSEvent.h"
+#include <runtime/Error.h>
 
 using namespace JSC;
 

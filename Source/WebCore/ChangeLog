@@ -1,3 +1,22 @@
+2011-08-30  Sam Weinig  <sam@webkit.org>
+
+        Add additional convertValue overloads to JSDictionary
+        https://bugs.webkit.org/show_bug.cgi?id=67244
+
+        Reviewed by Darin Adler.
+
+        Add overloads for convertValue that will be needed for Event
+        constructors.
+
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSDictionary.h:
+        Add overloads.  Remove #include of <runtime/Error.h> and just include
+        <interpreter/CallFrame.h>
+
+        * bindings/js/JSEventConstructors.cpp:
+        Add now necessary #include of <runtime/Error.h>.
+
 2011-08-30  Aaron Colwell  <acolwell@chromium.org>
 
         Add MediaSource API to HTMLMediaElement

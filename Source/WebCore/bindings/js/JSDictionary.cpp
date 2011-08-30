@@ -27,6 +27,12 @@
 #include "config.h"
 #include "JSDictionary.h"
 
+#include "JSDOMWindow.h"
+#include "JSEventTarget.h"
+#include "JSNode.h"
+#include "SerializedScriptValue.h"
+#include "ScriptValue.h"
+
 using namespace JSC;
 
 namespace WebCore {
@@ -54,9 +60,59 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, bool& result)
     result = value.toBoolean(exec);
 }
 
+void JSDictionary::convertValue(ExecState* exec, JSValue value, int& result)
+{
+    result = value.toInt32(exec);
+}
+
+void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned& result)
+{
+    result = value.toUInt32(exec);
+}
+
+void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned short& result)
+{
+    result = static_cast<unsigned short>(value.toUInt32(exec));
+}
+
+void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned long long& result)
+{
+    result = static_cast<unsigned long long>(value.toInteger(exec));
+}
+
 void JSDictionary::convertValue(ExecState* exec, JSValue value, double& result)
 {
     result = value.toNumber(exec);
+}
+
+void JSDictionary::convertValue(ExecState* exec, JSValue value, String& result)
+{
+    result = ustringToString(value.toString(exec));
+}
+
+void JSDictionary::convertValue(ExecState* exec, JSValue value, ScriptValue& result)
+{
+    result = ScriptValue(exec->globalData(), value);
+}
+
+void JSDictionary::convertValue(ExecState* exec, JSValue value, RefPtr<SerializedScriptValue>& result)
+{
+    result = SerializedScriptValue::create(exec, value);
+}
+
+void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<DOMWindow>& result)
+{
+    result = toDOMWindow(value);
+}
+
+void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<EventTarget>& result)
+{
+    result = toEventTarget(value);
+}
+
+void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Node>& result)
+{
+    result = toNode(value);
 }
 
 } // namespace WebCore

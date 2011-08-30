@@ -26,9 +26,16 @@
 #ifndef JSDictionary_h
 #define JSDictionary_h
 
-#include <runtime/Error.h>
+#include <interpreter/CallFrame.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
+
+class DOMWindow;
+class EventTarget;
+class Node;
+class ScriptValue;
+class SerializedScriptValue;
 
 class JSDictionary {
 public:
@@ -53,7 +60,17 @@ private:
     GetPropertyResult tryGetProperty(const char* propertyName, JSC::JSValue&);
 
     static void convertValue(JSC::ExecState*, JSC::JSValue, bool& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, int& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned short& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned long long& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, double& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, String& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, ScriptValue& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<SerializedScriptValue>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<DOMWindow>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<EventTarget>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Node>& result);
 
     JSC::ExecState* m_exec;
     JSC::JSObject* m_initializerObject;
