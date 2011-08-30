@@ -53,6 +53,21 @@
 
 namespace WebCore {
 
+// FIXME: This class is currently empty on Mac, but will get populated as 
+// the restructuring in https://bugs.webkit.org/show_bug.cgi?id=66903 is done
+class GraphicsContext3DPrivate {
+public:
+    GraphicsContext3DPrivate(GraphicsContext3D* graphicsContext3D)
+        : m_graphicsContext3D(graphicsContext3D)
+    {
+    }
+    
+    ~GraphicsContext3DPrivate() { }
+
+private:
+    GraphicsContext3D* m_graphicsContext3D; // Weak back-pointer
+};
+
 static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBits, int depthBits, bool accelerated, bool supersample, bool closest)
 {
     attribs.clear();
@@ -104,6 +119,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     , m_multisampleFBO(0)
     , m_multisampleDepthStencilBuffer(0)
     , m_multisampleColorBuffer(0)
+    , m_private(adoptPtr(new GraphicsContext3DPrivate(this)))
 {
     UNUSED_PARAM(hostWindow);
 

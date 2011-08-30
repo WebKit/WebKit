@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GraphicsContext3DInternal_h
-#define GraphicsContext3DInternal_h
+#ifndef GraphicsContext3DPrivate_h
+#define GraphicsContext3DPrivate_h
 
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
@@ -53,17 +53,17 @@ class WebGLLayerChromium;
 class GraphicsContextLostCallbackAdapter;
 class SwapBuffersCompleteCallbackAdapter;
 
-class GraphicsContext3DInternal {
+class GraphicsContext3DPrivate {
 public:
-    GraphicsContext3DInternal();
-    ~GraphicsContext3DInternal();
+    GraphicsContext3DPrivate();
+    ~GraphicsContext3DPrivate();
 
-    bool initialize(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, bool renderDirectlyToHostWindow);
+    bool initialize(GraphicsContext3D::Attributes, HostWindow*, bool renderDirectlyToHostWindow);
 
     // Helper function to provide access to the lower-level WebGraphicsContext3D,
     // which is needed for subordinate contexts like WebGL's to share resources
     // with the compositor's context.
-    static WebKit::WebGraphicsContext3D* extractWebGraphicsContext3D(GraphicsContext3D* context);
+    static WebKit::WebGraphicsContext3D* extractWebGraphicsContext3D(GraphicsContext3D*);
 
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
     Platform3DObject platformTexture() const;
@@ -113,9 +113,9 @@ public:
     void blendFunc(GC3Denum sfactor, GC3Denum dfactor);
     void blendFuncSeparate(GC3Denum srcRGB, GC3Denum dstRGB, GC3Denum srcAlpha, GC3Denum dstAlpha);
 
-    void bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage);
-    void bufferData(GC3Denum target, GC3Dsizeiptr size, const void* data, GC3Denum usage);
-    void bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr size, const void* data);
+    void bufferData(GC3Denum target, GC3Dsizeiptr, GC3Denum usage);
+    void bufferData(GC3Denum target, GC3Dsizeiptr, const void* data, GC3Denum usage);
+    void bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr, const void* data);
 
     GC3Denum checkFramebufferStatus(GC3Denum target);
     void clear(GC3Dbitfield mask);
@@ -192,7 +192,7 @@ public:
     void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height);
     void sampleCoverage(GC3Dclampf value, GC3Dboolean invert);
     void scissor(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
-    void shaderSource(Platform3DObject, const String& string);
+    void shaderSource(Platform3DObject, const String&);
     void stencilFunc(GC3Denum func, GC3Dint ref, GC3Duint mask);
     void stencilFuncSeparate(GC3Denum face, GC3Denum func, GC3Dint ref, GC3Duint mask);
     void stencilMask(GC3Duint mask);
@@ -207,24 +207,24 @@ public:
     void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels);
 
     void uniform1f(GC3Dint location, GC3Dfloat x);
-    void uniform1fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size);
+    void uniform1fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei);
     void uniform1i(GC3Dint location, GC3Dint x);
-    void uniform1iv(GC3Dint location, GC3Dint* v, GC3Dsizei size);
+    void uniform1iv(GC3Dint location, GC3Dint* v, GC3Dsizei);
     void uniform2f(GC3Dint location, GC3Dfloat x, float y);
-    void uniform2fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size);
+    void uniform2fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei);
     void uniform2i(GC3Dint location, GC3Dint x, GC3Dint y);
-    void uniform2iv(GC3Dint location, GC3Dint* v, GC3Dsizei size);
+    void uniform2iv(GC3Dint location, GC3Dint* v, GC3Dsizei);
     void uniform3f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z);
-    void uniform3fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size);
+    void uniform3fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei);
     void uniform3i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z);
-    void uniform3iv(GC3Dint location, GC3Dint* v, GC3Dsizei size);
+    void uniform3iv(GC3Dint location, GC3Dint* v, GC3Dsizei);
     void uniform4f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w);
-    void uniform4fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size);
+    void uniform4fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei);
     void uniform4i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z, GC3Dint w);
-    void uniform4iv(GC3Dint location, GC3Dint* v, GC3Dsizei size);
-    void uniformMatrix2fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size);
-    void uniformMatrix3fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size);
-    void uniformMatrix4fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size);
+    void uniform4iv(GC3Dint location, GC3Dint* v, GC3Dsizei);
+    void uniformMatrix2fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei);
+    void uniformMatrix3fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei);
+    void uniformMatrix4fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei);
 
     void useProgram(Platform3DObject);
     void validateProgram(Platform3DObject);
@@ -271,7 +271,7 @@ public:
 
     // GL_CHROMIUM_map_sub
     bool supportsMapSubCHROMIUM();
-    void* mapBufferSubDataCHROMIUM(GC3Denum target, GC3Dsizeiptr offset, GC3Dsizei size, GC3Denum access);
+    void* mapBufferSubDataCHROMIUM(GC3Denum target, GC3Dsizeiptr offset, GC3Dsizei, GC3Denum access);
     void unmapBufferSubDataCHROMIUM(const void*);
     void* mapTexSubImage2DCHROMIUM(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Denum access);
     void unmapTexSubImage2DCHROMIUM(const void*);
@@ -331,4 +331,4 @@ private:
 
 } // namespace WebCore
 
-#endif // GraphicsContext3D_h
+#endif // GraphicsContext3DPrivate_h

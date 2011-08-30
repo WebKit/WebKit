@@ -63,7 +63,7 @@
 #include "GeolocationClientProxy.h"
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
-#include "GraphicsContext3DInternal.h"
+#include "GraphicsContext3DPrivate.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
@@ -2691,17 +2691,17 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
 #if USE(ACCELERATED_COMPOSITING)
     if (m_page->settings()->acceleratedCompositingEnabled() && allowsAcceleratedCompositing()) {
         if (m_layerTreeHost) {
-            WebGraphicsContext3D* webContext = GraphicsContext3DInternal::extractWebGraphicsContext3D(m_layerTreeHost->context());
+            WebGraphicsContext3D* webContext = GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_layerTreeHost->context());
             if (webContext && !webContext->isContextLost())
                 return webContext;
         }
         if (m_temporaryOnscreenGraphicsContext3D) {
-            WebGraphicsContext3D* webContext = GraphicsContext3DInternal::extractWebGraphicsContext3D(m_temporaryOnscreenGraphicsContext3D.get());
+            WebGraphicsContext3D* webContext = GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_temporaryOnscreenGraphicsContext3D.get());
             if (webContext && !webContext->isContextLost())
                 return webContext;
         }
         m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-        return GraphicsContext3DInternal::extractWebGraphicsContext3D(m_temporaryOnscreenGraphicsContext3D.get());
+        return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_temporaryOnscreenGraphicsContext3D.get());
     }
 #endif
     return 0;

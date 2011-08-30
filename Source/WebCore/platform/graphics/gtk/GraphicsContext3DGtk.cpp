@@ -30,7 +30,7 @@
 #if ENABLE(WEBGL)
 #include <wtf/PassOwnPtr.h>
 #include "Extensions3DOpenGL.h"
-#include "GraphicsContext3DInternal.h"
+#include "GraphicsContext3DPrivate.h"
 #include "OpenGLShims.h"
 #include "ShaderLang.h"
 #include <wtf/NotFound.h>
@@ -43,12 +43,12 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
     if (renderStyle == RenderDirectlyToHostWindow)
         return 0;
 
-    OwnPtr<GraphicsContext3DInternal> internal = GraphicsContext3DInternal::create();
-    if (!internal)
+    OwnPtr<GraphicsContext3DPrivate> priv = GraphicsContext3DPrivate::create();
+    if (!priv)
         return 0;
 
     RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(attributes, hostWindow, false));
-    context->m_internal = internal.release();
+    context->m_private = priv.release();
     return context.release();
 }
 
@@ -64,7 +64,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
     , m_multisampleDepthStencilBuffer(0)
     , m_multisampleColorBuffer(0)
 {
-    GraphicsContext3DInternal::addActiveGraphicsContext(this);
+    GraphicsContext3DPrivate::addActiveGraphicsContext(this);
 
     validateAttributes();
 
@@ -118,8 +118,8 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
 
 GraphicsContext3D::~GraphicsContext3D()
 {
-    GraphicsContext3DInternal::removeActiveGraphicsContext(this);
-    if (!m_internal->m_context)
+    GraphicsContext3DPrivate::removeActiveGraphicsContext(this);
+    if (!m_private->m_context)
         return;
 
     makeContextCurrent();
@@ -138,14 +138,14 @@ GraphicsContext3D::~GraphicsContext3D()
 
 void GraphicsContext3D::makeContextCurrent()
 {
-    if (!m_internal)
+    if (!m_private)
         return;
-    m_internal->makeContextCurrent();
+    m_private->makeContextCurrent();
 }
 
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()
 {
-    return m_internal->m_context;
+    return m_private->m_context;
 }
 
 bool GraphicsContext3D::isGLES2Compliant() const

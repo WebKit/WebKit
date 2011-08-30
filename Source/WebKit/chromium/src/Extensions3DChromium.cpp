@@ -30,12 +30,12 @@
 #include "Extensions3DChromium.h"
 
 #include "GraphicsContext3D.h"
-#include "GraphicsContext3DInternal.h"
+#include "GraphicsContext3DPrivate.h"
 
 namespace WebCore {
 
-Extensions3DChromium::Extensions3DChromium(GraphicsContext3DInternal* internal)
-    : m_internal(internal)
+Extensions3DChromium::Extensions3DChromium(GraphicsContext3DPrivate* priv)
+    : m_private(priv)
 {
 }
 
@@ -45,7 +45,7 @@ Extensions3DChromium::~Extensions3DChromium()
 
 bool Extensions3DChromium::supports(const String& name)
 {
-    return m_internal->supportsExtension(name);
+    return m_private->supportsExtension(name);
 }
 
 void Extensions3DChromium::ensureEnabled(const String& name)
@@ -53,48 +53,48 @@ void Extensions3DChromium::ensureEnabled(const String& name)
 #ifndef NDEBUG
     bool result =
 #endif
-        m_internal->ensureExtensionEnabled(name);
+        m_private->ensureExtensionEnabled(name);
     ASSERT(result);
 }
 
 bool Extensions3DChromium::isEnabled(const String& name)
 {
-    return m_internal->isExtensionEnabled(name);
+    return m_private->isExtensionEnabled(name);
 }
 
 int Extensions3DChromium::getGraphicsResetStatusARB()
 {
-    return static_cast<int>(m_internal->getGraphicsResetStatusARB());
+    return static_cast<int>(m_private->getGraphicsResetStatusARB());
 }
 
 void Extensions3DChromium::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
 {
-    m_internal->blitFramebufferCHROMIUM(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+    m_private->blitFramebufferCHROMIUM(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
 void Extensions3DChromium::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
 {
-    m_internal->renderbufferStorageMultisampleCHROMIUM(target, samples, internalformat, width, height);
+    m_private->renderbufferStorageMultisampleCHROMIUM(target, samples, internalformat, width, height);
 }
 
 void* Extensions3DChromium::mapBufferSubDataCHROMIUM(unsigned target, int offset, int size, unsigned access)
 {
-    return m_internal->mapBufferSubDataCHROMIUM(target, offset, size, access);
+    return m_private->mapBufferSubDataCHROMIUM(target, offset, size, access);
 }
 
 void Extensions3DChromium::unmapBufferSubDataCHROMIUM(const void* data)
 {
-    m_internal->unmapBufferSubDataCHROMIUM(data);
+    m_private->unmapBufferSubDataCHROMIUM(data);
 }
 
 void* Extensions3DChromium::mapTexSubImage2DCHROMIUM(unsigned target, int level, int xoffset, int yoffset, int width, int height, unsigned format, unsigned type, unsigned access)
 {
-    return m_internal->mapTexSubImage2DCHROMIUM(target, level, xoffset, yoffset, width, height, format, type, access);
+    return m_private->mapTexSubImage2DCHROMIUM(target, level, xoffset, yoffset, width, height, format, type, access);
 }
 
 void Extensions3DChromium::unmapTexSubImage2DCHROMIUM(const void* data)
 {
-    m_internal->unmapTexSubImage2DCHROMIUM(data);
+    m_private->unmapTexSubImage2DCHROMIUM(data);
 }
 
 Platform3DObject Extensions3DChromium::createVertexArrayOES()
@@ -117,17 +117,17 @@ void Extensions3DChromium::bindVertexArrayOES(Platform3DObject)
 
 void Extensions3DChromium::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<SwapBuffersCompleteCallbackCHROMIUM> callback)
 {
-    m_internal->setSwapBuffersCompleteCallbackCHROMIUM(callback);
+    m_private->setSwapBuffersCompleteCallbackCHROMIUM(callback);
 }
 
 void Extensions3DChromium::rateLimitOffscreenContextCHROMIUM()
 {
-    m_internal->rateLimitOffscreenContextCHROMIUM();
+    m_private->rateLimitOffscreenContextCHROMIUM();
 }
 
 void Extensions3DChromium::paintFramebufferToCanvas(int framebuffer, int width, int height, bool premultiplyAlpha, ImageBuffer* imageBuffer)
 {
-    m_internal->paintFramebufferToCanvas(framebuffer, width, height, premultiplyAlpha, imageBuffer);
+    m_private->paintFramebufferToCanvas(framebuffer, width, height, premultiplyAlpha, imageBuffer);
 }
 
 } // namespace WebCore

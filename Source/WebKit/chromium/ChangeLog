@@ -1,3 +1,99 @@
+2011-08-29  Chris Marrin  <cmarrin@apple.com>
+
+        Rename GraphicsContext3DInternal to GraphicsContext3DPrivate and add a dummy version of this class for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=67172
+
+        Reviewed by Kenneth Russell.
+
+        * WebKit.gyp:
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::Extensions3DChromium):
+        (WebCore::Extensions3DChromium::supports):
+        (WebCore::Extensions3DChromium::ensureEnabled):
+        (WebCore::Extensions3DChromium::isEnabled):
+        (WebCore::Extensions3DChromium::getGraphicsResetStatusARB):
+        (WebCore::Extensions3DChromium::blitFramebuffer):
+        (WebCore::Extensions3DChromium::renderbufferStorageMultisample):
+        (WebCore::Extensions3DChromium::mapBufferSubDataCHROMIUM):
+        (WebCore::Extensions3DChromium::unmapBufferSubDataCHROMIUM):
+        (WebCore::Extensions3DChromium::mapTexSubImage2DCHROMIUM):
+        (WebCore::Extensions3DChromium::unmapTexSubImage2DCHROMIUM):
+        (WebCore::Extensions3DChromium::setSwapBuffersCompleteCallbackCHROMIUM):
+        (WebCore::Extensions3DChromium::rateLimitOffscreenContextCHROMIUM):
+        (WebCore::Extensions3DChromium::paintFramebufferToCanvas):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::initialize):
+        (WebCore::GraphicsContext3DPrivate::extractWebGraphicsContext3D):
+        (WebCore::GraphicsContext3DPrivate::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3DPrivate::platformTexture):
+        (WebCore::GraphicsContext3DPrivate::grContext):
+        (WebCore::GraphicsContext3DPrivate::prepareTexture):
+        (WebCore::GraphicsContext3DPrivate::platformLayer):
+        (WebCore::GraphicsContext3DPrivate::markContextChanged):
+        (WebCore::GraphicsContext3DPrivate::markLayerComposited):
+        (WebCore::GraphicsContext3DPrivate::layerComposited):
+        (WebCore::GraphicsContext3DPrivate::paintFramebufferToCanvas):
+        (WebCore::GraphicsContext3DPrivate::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3DPrivate::paintCompositedResultsToCanvas):
+        (WebCore::GraphicsContext3DPrivate::paintRenderingResultsToImageData):
+        (WebCore::GraphicsContext3DPrivate::paintsIntoCanvasBuffer):
+        (WebCore::GraphicsContext3DPrivate::reshape):
+        (WebCore::GraphicsContext3DPrivate::getInternalFramebufferSize):
+        (WebCore::GraphicsContext3DPrivate::isContextLost):
+        (WebCore::GraphicsContext3DPrivate::isGLES2Compliant):
+        (WebCore::GraphicsContext3DPrivate::bindAttribLocation):
+        (WebCore::GraphicsContext3DPrivate::bufferData):
+        (WebCore::GraphicsContext3DPrivate::bufferSubData):
+        (WebCore::GraphicsContext3DPrivate::getActiveAttrib):
+        (WebCore::GraphicsContext3DPrivate::getActiveUniform):
+        (WebCore::GraphicsContext3DPrivate::getAttribLocation):
+        (WebCore::GraphicsContext3DPrivate::getContextAttributes):
+        (WebCore::GraphicsContext3DPrivate::getProgramInfoLog):
+        (WebCore::GraphicsContext3DPrivate::getShaderInfoLog):
+        (WebCore::GraphicsContext3DPrivate::getShaderSource):
+        (WebCore::GraphicsContext3DPrivate::getString):
+        (WebCore::GraphicsContext3DPrivate::getUniformLocation):
+        (WebCore::GraphicsContext3DPrivate::shaderSource):
+        (WebCore::GraphicsContext3DPrivate::texImage2D):
+        (WebCore::GraphicsContext3DPrivate::texSubImage2D):
+        (WebCore::GraphicsContext3DPrivate::uniform1fv):
+        (WebCore::GraphicsContext3DPrivate::uniform1iv):
+        (WebCore::GraphicsContext3DPrivate::uniform2fv):
+        (WebCore::GraphicsContext3DPrivate::uniform2iv):
+        (WebCore::GraphicsContext3DPrivate::uniform3fv):
+        (WebCore::GraphicsContext3DPrivate::uniform3iv):
+        (WebCore::GraphicsContext3DPrivate::uniform4fv):
+        (WebCore::GraphicsContext3DPrivate::uniform4iv):
+        (WebCore::GraphicsContext3DPrivate::uniformMatrix2fv):
+        (WebCore::GraphicsContext3DPrivate::uniformMatrix3fv):
+        (WebCore::GraphicsContext3DPrivate::uniformMatrix4fv):
+        (WebCore::GraphicsContext3DPrivate::getExtensions):
+        (WebCore::GraphicsContext3DPrivate::isResourceSafe):
+        (WebCore::GraphicsContext3DPrivate::initializeExtensions):
+        (WebCore::GraphicsContext3DPrivate::supportsExtension):
+        (WebCore::GraphicsContext3DPrivate::ensureExtensionEnabled):
+        (WebCore::GraphicsContext3DPrivate::isExtensionEnabled):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformTexture):
+        (WebCore::GraphicsContext3D::grContext):
+        (WebCore::GraphicsContext3D::prepareTexture):
+        (WebCore::GraphicsContext3D::getInternalFramebufferSize):
+        (WebCore::GraphicsContext3D::isResourceSafe):
+        (WebCore::GraphicsContext3D::platformLayer):
+        (WebCore::GraphicsContext3D::layerComposited):
+        (WebCore::GraphicsContext3D::paintsIntoCanvasBuffer):
+        (WebCore::GraphicsContext3DPrivate::setContextLostCallback):
+        (WebCore::GraphicsContext3D::isGLES2Compliant):
+        (WebCore::GraphicsContext3DPrivate::setSwapBuffersCompleteCallbackCHROMIUM):
+        * src/GraphicsContext3DInternal.h: Removed.
+        * src/GraphicsContext3DPrivate.h: Copied from Source/WebKit/chromium/src/GraphicsContext3DInternal.h.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::graphicsContext3D):
+
 2011-08-30  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         The unused ScrollView* argument can and should be removed from

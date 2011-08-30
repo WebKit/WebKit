@@ -17,8 +17,8 @@
  *  Boston, MA 02110-1301 USA
  */
 
-#ifndef GraphicsContext3DInternal_h
-#define GraphicsContext3DInternal_h
+#ifndef GraphicsContext3DPrivate_h
+#define GraphicsContext3DPrivate_h
 
 typedef struct __GLXcontextRec *GLXContext;
 typedef unsigned long GLXPbuffer;
@@ -30,18 +30,18 @@ namespace WebCore {
 
 class GraphicsContext3D;
 
-class GraphicsContext3DInternal {
+class GraphicsContext3DPrivate {
     public:
-    static PassOwnPtr<GraphicsContext3DInternal> create();
-    ~GraphicsContext3DInternal();
+    static PassOwnPtr<GraphicsContext3DPrivate> create();
+    ~GraphicsContext3DPrivate();
     void makeContextCurrent();
 
     private:
     friend class GraphicsContext3D;
-    static GraphicsContext3DInternal* createPbufferContext();
-    static GraphicsContext3DInternal* createPixmapContext();
-    GraphicsContext3DInternal(GLXContext, GLXPbuffer);
-    GraphicsContext3DInternal(GLXContext, Pixmap, GLXPixmap);
+    static GraphicsContext3DPrivate* createPbufferContext();
+    static GraphicsContext3DPrivate* createPixmapContext();
+    GraphicsContext3DPrivate(GLXContext, GLXPbuffer);
+    GraphicsContext3DPrivate(GLXContext, Pixmap, GLXPixmap);
 
     static void addActiveGraphicsContext(GraphicsContext3D*);
     static void removeActiveGraphicsContext(GraphicsContext3D*);
@@ -55,4 +55,4 @@ class GraphicsContext3DInternal {
 
 }
 
-#endif // GraphicsContext3DIternal_h
+#endif // GraphicsContext3DPrivate_h
