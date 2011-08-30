@@ -1,3 +1,25 @@
+2011-08-30  Filip Pizlo  <fpizlo@apple.com>
+
+        JavaScriptCore does not have a good mechanism for performance
+        regression testing
+        https://bugs.webkit.org/show_bug.cgi?id=67177
+
+        Reviewed by Darin Adler.
+        
+        Added a new script, which allows for testing one, two, or more VMs
+        at once on SunSpider, V8, and Kraken benchmarks.  Benchmark/VM runs
+        are interleaved at random to minimize systematics.  The results
+        that bencher prints includes all possible relevant information about
+        how bencher was invoked.  Bencher can be easily used to measure
+        performance changes down to fractions of a percent.
+        
+        Bencher also includes experimental support for running benchmarks in
+        a DumpRenderTree release build.  This works in SunSpider and V8, but
+        not yet in Kraken.  Running benchmarks in DumpRenderTree more
+        closely mimics the performance when running in browser.
+
+        * Scripts/bencher: Added.
+
 2011-08-29  Alexey Proskuryakov  <ap@apple.com>
 
         DumpRenderTree should begin each test with an empty cookie store

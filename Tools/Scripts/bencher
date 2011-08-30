@@ -1,0 +1,1591 @@
+#!/usr/bin/env ruby
+
+# Copyright (C) 2011 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+require 'rubygems'
+
+require 'getoptlong'
+require 'pathname'
+require 'tempfile'
+
+begin
+  require 'json'
+rescue LoadError => e
+  $stderr.puts "It does not appear that you have the 'json' package installed.  Try running 'sudo gem install json'."
+  exit 1
+end
+
+# Configuration
+
+CONFIGURATION_FLNM = ENV["HOME"]+"/.bencher"
+
+unless FileTest.exist? CONFIGURATION_FLNM
+  $stderr.puts "Error: no configuration file at ~/.bencher."
+  $stderr.puts "This file should contain paths to SunSpider, V8, and Kraken, in JSON"
+  $stderr.puts "format.  For example:"
+  $stderr.puts "{ \"sunSpiderPath\": \"/Volumes/Data/pizlo/OpenSource/PerformanceTests/SunSpider/tests/sunspider-1.0\", \"v8Path\": \"/Volumes/Data/pizlo/OpenSource/PerformanceTests/SunSpider/tests/v8-v6\", \"krakenPath\": \"/Volumes/Data/pizlo/kraken/kraken-e119421cb325/tests/kraken-1.1\" }"
+  exit 1
+end
+
+CONFIGURATION = JSON.parse(File::read(CONFIGURATION_FLNM))
+
+SUNSPIDER_PATH = CONFIGURATION["sunSpiderPath"]
+V8_PATH = CONFIGURATION["v8Path"]
+KRAKEN_PATH = CONFIGURATION["krakenPath"]
+
+IBR_LOOKUP=[0.00615583, 0.0975, 0.22852, 0.341628, 0.430741, 0.500526, 0.555933, 
+            0.600706, 0.637513, 0.668244, 0.694254, 0.716537, 0.735827, 0.752684, 
+            0.767535, 0.780716, 0.792492, 0.803074, 0.812634, 0.821313, 0.829227, 
+            0.836472, 0.843129, 0.849267, 0.854943, 0.860209, 0.865107, 0.869674, 
+            0.873942, 0.877941, 0.881693, 0.885223, 0.888548, 0.891686, 0.894652, 
+            0.897461, 0.900124, 0.902652, 0.905056, 0.907343, 0.909524, 0.911604, 
+            0.91359, 0.91549, 0.917308, 0.919049, 0.920718, 0.92232, 0.923859, 0.925338, 
+            0.926761, 0.92813, 0.929449, 0.930721, 0.931948, 0.933132, 0.934275, 0.93538, 
+            0.936449, 0.937483, 0.938483, 0.939452, 0.940392, 0.941302, 0.942185, 
+            0.943042, 0.943874, 0.944682, 0.945467, 0.94623, 0.946972, 0.947694, 
+            0.948396, 0.94908, 0.949746, 0.950395, 0.951027, 0.951643, 0.952244, 
+            0.952831, 0.953403, 0.953961, 0.954506, 0.955039, 0.955559, 0.956067, 
+            0.956563, 0.957049, 0.957524, 0.957988, 0.958443, 0.958887, 0.959323, 
+            0.959749, 0.960166, 0.960575, 0.960975, 0.961368, 0.961752, 0.962129, 
+            0.962499, 0.962861, 0.963217, 0.963566, 0.963908, 0.964244, 0.964574, 
+            0.964897, 0.965215, 0.965527, 0.965834, 0.966135, 0.966431, 0.966722, 
+            0.967007, 0.967288, 0.967564, 0.967836, 0.968103, 0.968366, 0.968624, 
+            0.968878, 0.969128, 0.969374, 0.969617, 0.969855, 0.97009, 0.970321, 
+            0.970548, 0.970772, 0.970993, 0.97121, 0.971425, 0.971636, 0.971843, 
+            0.972048, 0.97225, 0.972449, 0.972645, 0.972839, 0.973029, 0.973217, 
+            0.973403, 0.973586, 0.973766, 0.973944, 0.97412, 0.974293, 0.974464, 
+            0.974632, 0.974799, 0.974963, 0.975125, 0.975285, 0.975443, 0.975599, 
+            0.975753, 0.975905, 0.976055, 0.976204, 0.97635, 0.976495, 0.976638, 
+            0.976779, 0.976918, 0.977056, 0.977193, 0.977327, 0.97746, 0.977592, 
+            0.977722, 0.97785, 0.977977, 0.978103, 0.978227, 0.978349, 0.978471, 
+            0.978591, 0.978709, 0.978827, 0.978943, 0.979058, 0.979171, 0.979283, 
+            0.979395, 0.979504, 0.979613, 0.979721, 0.979827, 0.979933, 0.980037, 
+            0.98014, 0.980242, 0.980343, 0.980443, 0.980543, 0.980641, 0.980738, 
+            0.980834, 0.980929, 0.981023, 0.981116, 0.981209, 0.9813, 0.981391, 0.981481, 
+            0.981569, 0.981657, 0.981745, 0.981831, 0.981916, 0.982001, 0.982085, 
+            0.982168, 0.982251, 0.982332, 0.982413, 0.982493, 0.982573, 0.982651, 
+            0.982729, 0.982807, 0.982883, 0.982959, 0.983034, 0.983109, 0.983183, 
+            0.983256, 0.983329, 0.983401, 0.983472, 0.983543, 0.983613, 0.983683, 
+            0.983752, 0.98382, 0.983888, 0.983956, 0.984022, 0.984089, 0.984154, 
+            0.984219, 0.984284, 0.984348, 0.984411, 0.984474, 0.984537, 0.984599, 
+            0.98466, 0.984721, 0.984782, 0.984842, 0.984902, 0.984961, 0.985019, 
+            0.985077, 0.985135, 0.985193, 0.985249, 0.985306, 0.985362, 0.985417, 
+            0.985472, 0.985527, 0.985582, 0.985635, 0.985689, 0.985742, 0.985795, 
+            0.985847, 0.985899, 0.985951, 0.986002, 0.986053, 0.986103, 0.986153, 
+            0.986203, 0.986252, 0.986301, 0.98635, 0.986398, 0.986446, 0.986494, 
+            0.986541, 0.986588, 0.986635, 0.986681, 0.986727, 0.986773, 0.986818, 
+            0.986863, 0.986908, 0.986953, 0.986997, 0.987041, 0.987084, 0.987128, 
+            0.987171, 0.987213, 0.987256, 0.987298, 0.98734, 0.987381, 0.987423, 
+            0.987464, 0.987504, 0.987545, 0.987585, 0.987625, 0.987665, 0.987704, 
+            0.987744, 0.987783, 0.987821, 0.98786, 0.987898, 0.987936, 0.987974, 
+            0.988011, 0.988049, 0.988086, 0.988123, 0.988159, 0.988196, 0.988232, 
+            0.988268, 0.988303, 0.988339, 0.988374, 0.988409, 0.988444, 0.988479, 
+            0.988513, 0.988547, 0.988582, 0.988615, 0.988649, 0.988682, 0.988716, 
+            0.988749, 0.988782, 0.988814, 0.988847, 0.988879, 0.988911, 0.988943, 
+            0.988975, 0.989006, 0.989038, 0.989069, 0.9891, 0.989131, 0.989161, 0.989192, 
+            0.989222, 0.989252, 0.989282, 0.989312, 0.989342, 0.989371, 0.989401, 
+            0.98943, 0.989459, 0.989488, 0.989516, 0.989545, 0.989573, 0.989602, 0.98963, 
+            0.989658, 0.989685, 0.989713, 0.98974, 0.989768, 0.989795, 0.989822, 
+            0.989849, 0.989876, 0.989902, 0.989929, 0.989955, 0.989981, 0.990007, 
+            0.990033, 0.990059, 0.990085, 0.99011, 0.990136, 0.990161, 0.990186, 
+            0.990211, 0.990236, 0.990261, 0.990285, 0.99031, 0.990334, 0.990358, 
+            0.990383, 0.990407, 0.99043, 0.990454, 0.990478, 0.990501, 0.990525, 
+            0.990548, 0.990571, 0.990594, 0.990617, 0.99064, 0.990663, 0.990686, 
+            0.990708, 0.990731, 0.990753, 0.990775, 0.990797, 0.990819, 0.990841, 
+            0.990863, 0.990885, 0.990906, 0.990928, 0.990949, 0.99097, 0.990991, 
+            0.991013, 0.991034, 0.991054, 0.991075, 0.991096, 0.991116, 0.991137, 
+            0.991157, 0.991178, 0.991198, 0.991218, 0.991238, 0.991258, 0.991278, 
+            0.991298, 0.991317, 0.991337, 0.991356, 0.991376, 0.991395, 0.991414, 
+            0.991433, 0.991452, 0.991471, 0.99149, 0.991509, 0.991528, 0.991547, 
+            0.991565, 0.991584, 0.991602, 0.99162, 0.991639, 0.991657, 0.991675, 
+            0.991693, 0.991711, 0.991729, 0.991746, 0.991764, 0.991782, 0.991799, 
+            0.991817, 0.991834, 0.991851, 0.991869, 0.991886, 0.991903, 0.99192, 
+            0.991937, 0.991954, 0.991971, 0.991987, 0.992004, 0.992021, 0.992037, 
+            0.992054, 0.99207, 0.992086, 0.992103, 0.992119, 0.992135, 0.992151, 
+            0.992167, 0.992183, 0.992199, 0.992215, 0.99223, 0.992246, 0.992262, 
+            0.992277, 0.992293, 0.992308, 0.992324, 0.992339, 0.992354, 0.992369, 
+            0.992384, 0.9924, 0.992415, 0.992429, 0.992444, 0.992459, 0.992474, 0.992489, 
+            0.992503, 0.992518, 0.992533, 0.992547, 0.992561, 0.992576, 0.99259, 
+            0.992604, 0.992619, 0.992633, 0.992647, 0.992661, 0.992675, 0.992689, 
+            0.992703, 0.992717, 0.99273, 0.992744, 0.992758, 0.992771, 0.992785, 
+            0.992798, 0.992812, 0.992825, 0.992839, 0.992852, 0.992865, 0.992879, 
+            0.992892, 0.992905, 0.992918, 0.992931, 0.992944, 0.992957, 0.99297, 
+            0.992983, 0.992995, 0.993008, 0.993021, 0.993034, 0.993046, 0.993059, 
+            0.993071, 0.993084, 0.993096, 0.993109, 0.993121, 0.993133, 0.993145, 
+            0.993158, 0.99317, 0.993182, 0.993194, 0.993206, 0.993218, 0.99323, 0.993242, 
+            0.993254, 0.993266, 0.993277, 0.993289, 0.993301, 0.993312, 0.993324, 
+            0.993336, 0.993347, 0.993359, 0.99337, 0.993382, 0.993393, 0.993404, 
+            0.993416, 0.993427, 0.993438, 0.993449, 0.99346, 0.993472, 0.993483, 
+            0.993494, 0.993505, 0.993516, 0.993527, 0.993538, 0.993548, 0.993559, 
+            0.99357, 0.993581, 0.993591, 0.993602, 0.993613, 0.993623, 0.993634, 
+            0.993644, 0.993655, 0.993665, 0.993676, 0.993686, 0.993697, 0.993707, 
+            0.993717, 0.993727, 0.993738, 0.993748, 0.993758, 0.993768, 0.993778, 
+            0.993788, 0.993798, 0.993808, 0.993818, 0.993828, 0.993838, 0.993848, 
+            0.993858, 0.993868, 0.993877, 0.993887, 0.993897, 0.993907, 0.993916, 
+            0.993926, 0.993935, 0.993945, 0.993954, 0.993964, 0.993973, 0.993983, 
+            0.993992, 0.994002, 0.994011, 0.99402, 0.99403, 0.994039, 0.994048, 0.994057, 
+            0.994067, 0.994076, 0.994085, 0.994094, 0.994103, 0.994112, 0.994121, 
+            0.99413, 0.994139, 0.994148, 0.994157, 0.994166, 0.994175, 0.994183, 
+            0.994192, 0.994201, 0.99421, 0.994218, 0.994227, 0.994236, 0.994244, 
+            0.994253, 0.994262, 0.99427, 0.994279, 0.994287, 0.994296, 0.994304, 
+            0.994313, 0.994321, 0.994329, 0.994338, 0.994346, 0.994354, 0.994363, 
+            0.994371, 0.994379, 0.994387, 0.994395, 0.994404, 0.994412, 0.99442, 
+            0.994428, 0.994436, 0.994444, 0.994452, 0.99446, 0.994468, 0.994476, 
+            0.994484, 0.994492, 0.9945, 0.994508, 0.994516, 0.994523, 0.994531, 0.994539, 
+            0.994547, 0.994554, 0.994562, 0.99457, 0.994577, 0.994585, 0.994593, 0.9946, 
+            0.994608, 0.994615, 0.994623, 0.994631, 0.994638, 0.994645, 0.994653, 
+            0.99466, 0.994668, 0.994675, 0.994683, 0.99469, 0.994697, 0.994705, 0.994712, 
+            0.994719, 0.994726, 0.994734, 0.994741, 0.994748, 0.994755, 0.994762, 
+            0.994769, 0.994777, 0.994784, 0.994791, 0.994798, 0.994805, 0.994812, 
+            0.994819, 0.994826, 0.994833, 0.99484, 0.994847, 0.994854, 0.99486, 0.994867, 
+            0.994874, 0.994881, 0.994888, 0.994895, 0.994901, 0.994908, 0.994915, 
+            0.994922, 0.994928, 0.994935, 0.994942, 0.994948, 0.994955, 0.994962, 
+            0.994968, 0.994975, 0.994981, 0.994988, 0.994994, 0.995001, 0.995007, 
+            0.995014, 0.99502, 0.995027, 0.995033, 0.99504, 0.995046, 0.995052, 0.995059, 
+            0.995065, 0.995071, 0.995078, 0.995084, 0.99509, 0.995097, 0.995103, 
+            0.995109, 0.995115, 0.995121, 0.995128, 0.995134, 0.99514, 0.995146, 
+            0.995152, 0.995158, 0.995164, 0.995171, 0.995177, 0.995183, 0.995189, 
+            0.995195, 0.995201, 0.995207, 0.995213, 0.995219, 0.995225, 0.995231, 
+            0.995236, 0.995242, 0.995248, 0.995254, 0.99526, 0.995266, 0.995272, 
+            0.995277, 0.995283, 0.995289, 0.995295, 0.995301, 0.995306, 0.995312, 
+            0.995318, 0.995323, 0.995329, 0.995335, 0.99534, 0.995346, 0.995352, 
+            0.995357, 0.995363, 0.995369, 0.995374, 0.99538, 0.995385, 0.995391, 
+            0.995396, 0.995402, 0.995407, 0.995413, 0.995418, 0.995424, 0.995429, 
+            0.995435, 0.99544, 0.995445, 0.995451, 0.995456, 0.995462, 0.995467, 
+            0.995472, 0.995478, 0.995483, 0.995488, 0.995493, 0.995499, 0.995504, 
+            0.995509, 0.995515, 0.99552, 0.995525, 0.99553, 0.995535, 0.995541, 0.995546, 
+            0.995551, 0.995556, 0.995561, 0.995566, 0.995571, 0.995577, 0.995582, 
+            0.995587, 0.995592, 0.995597, 0.995602, 0.995607, 0.995612, 0.995617, 
+            0.995622, 0.995627, 0.995632, 0.995637, 0.995642, 0.995647, 0.995652, 
+            0.995657, 0.995661, 0.995666, 0.995671, 0.995676, 0.995681, 0.995686, 
+            0.995691, 0.995695, 0.9957, 0.995705, 0.99571, 0.995715, 0.995719, 0.995724, 
+            0.995729, 0.995734, 0.995738, 0.995743, 0.995748, 0.995753, 0.995757, 
+            0.995762, 0.995767, 0.995771, 0.995776, 0.995781, 0.995785, 0.99579, 
+            0.995794, 0.995799, 0.995804, 0.995808, 0.995813, 0.995817, 0.995822, 
+            0.995826, 0.995831, 0.995835, 0.99584, 0.995844, 0.995849, 0.995853, 
+            0.995858, 0.995862, 0.995867, 0.995871, 0.995876, 0.99588, 0.995885, 
+            0.995889, 0.995893, 0.995898, 0.995902, 0.995906, 0.995911, 0.995915, 
+            0.99592, 0.995924, 0.995928, 0.995932, 0.995937, 0.995941, 0.995945, 0.99595, 
+            0.995954, 0.995958, 0.995962, 0.995967, 0.995971, 0.995975, 0.995979, 
+            0.995984, 0.995988, 0.995992, 0.995996, 0.996, 0.996004, 0.996009, 0.996013, 
+            0.996017, 0.996021, 0.996025, 0.996029, 0.996033, 0.996037, 0.996041, 
+            0.996046, 0.99605, 0.996054, 0.996058, 0.996062, 0.996066, 0.99607, 0.996074, 
+            0.996078, 0.996082, 0.996086, 0.99609, 0.996094, 0.996098, 0.996102, 
+            0.996106, 0.99611, 0.996114, 0.996117, 0.996121, 0.996125, 0.996129, 
+            0.996133, 0.996137, 0.996141, 0.996145, 0.996149, 0.996152, 0.996156, 
+            0.99616, 0.996164]
+
+# Run-time configuration parameters (can be set with command-line options)
+
+$inner=3
+$warmup=1
+$outer=4
+$includeSunSpider=true
+$includeV8=true
+$includeKraken=true
+$benchmarkPattern=nil
+$verbosity=0
+$innerMode=:reload
+$timeMode=:auto
+$keepFiles=false
+
+# Helpful functions and classes
+
+def smallUsage
+  puts "Use the --help option to get basic usage information."
+  exit 1
+end
+
+def usage
+  puts "bencher [options] <vm1> [<vm2> ...]"
+  puts
+  puts "Runs one or more JavaScript runtimes against SunSpider, V8, and/or Kraken"
+  puts "benchmarks, and reports detailed statistics.  What makes bencher special is"
+  puts "that each benchmark/VM configuration is run in a single VM invocation, and"
+  puts "the invocations are run in random order.  This minimizes systematics due to"
+  puts "one benchmark polluting the running time of another.  The fine-grained"
+  puts "interleaving of VM invocations further minimizes systematics due to changes in"
+  puts "the performance or behavior of your machine."
+  puts 
+  puts "Bencher is highly configurable.  You can compare as many VMs as you like.  You"
+  puts "can change the amount of warm-up iterations, number of iterations executed per"
+  puts "VM invocation, and the number of VM invocations per benchmark.  By default,"
+  puts "SunSpider, VM, and Kraken are all run; but you can run any combination of these"
+  puts "suites."
+  puts
+  puts "The <vm> should be either a path to a JavaScript runtime executable (such as"
+  puts "jsc), or a string of the form <name>:<path>, where the <path> is the path to"
+  puts "the executable and <name> is the name that you would like to give the"
+  puts "configuration for the purposeof reporting.  If no name is given, a generic name"
+  puts "of the form Conf#<n> will be ascribed to the configuration automatically."
+  puts 
+  puts "Options:"
+  puts "--inner <n>          Set the number of inner (per-runtime-invocation)"
+  puts "                     iterations.  Default is #{$inner}."
+  puts "--outer <n>          Set the number of runtime invocations for each benchmark."
+  puts "                     Default is #{$outer}."
+  puts "--warmup <n>         Set the number of warm-up runs per invocation.  Default"
+  puts "                     is #{$warmup}."
+  puts "--timing-mode        Set the way that bencher measures time.  Possible values"
+  puts "                     are 'preciseTime', 'date', and 'auto'.  Default is"
+  puts "                     'auto', which automatically detects the best way."
+  puts "--v8-only            Only run V8."
+  puts "--sunspider-only     Only run SunSpider."
+  puts "--kraken-only        Only run Kraken."
+  puts "--exclude-v8         Exclude V8 (only run SunSpider and Kraken)."
+  puts "--exclude-sunspider  Exclude SunSpider (only run V8 and Kraken)."
+  puts "--exclude-kraken     Exclude SunSpider (only run SunSpider and V8)."
+  puts "--benchmarks         Only run benchmarks matching the given regular expression."
+  puts "--keep-files         Keep temporary files.  Useful for debugging."
+  puts "--verbose or -v      Print more stuff."
+  puts "--help or -h         Display this message."
+  puts
+  puts "Example:"
+  puts "bencher TipOfTree:/Volumes/Data/pizlo/OpenSource/WebKitBuild/Release/jsc MyChanges:/Volumes/Data/pizlo/secondary/OpenSource/WebKitBuild/Release/jsc"
+  exit 1
+end
+
+def fail(reason)
+  if reason.respond_to? :backtrace
+    puts "FAILED: #{reason}"
+    puts "Stack trace:"
+    puts reason.backtrace.join("\n")
+  else
+    puts "FAILED: #{reason}"
+  end
+  smallUsage
+end
+
+def quickFail(r1,r2)
+  $stderr.puts "#{$0}: #{r1}"
+  puts
+  fail(r2)
+end
+
+def intArg(argName,arg,min,max)
+  result=arg.to_i
+  unless result.to_s == arg
+    quickFail("Expected an integer value for #{argName}, but got #{arg}.",
+              "Invalid argument for command-line option")
+  end
+  if min and result<min
+    quickFail("Argument for #{argName} cannot be smaller than #{min}.",
+              "Invalid argument for command-line option")
+  end
+  if max and result>max
+    quickFail("Argument for #{argName} cannot be greater than #{max}.",
+              "Invalid argument for command-line option")
+  end
+  result
+end
+
+def computeMean(array)
+  sum=0.0
+  array.each {
+    | value |
+    sum += value
+  }
+  sum/array.length
+end
+
+def computeGeometricMean(array)
+  mult=1.0
+  array.each {
+    | value |
+    mult*=value
+  }
+  mult**(1.0/array.length)
+end
+
+def computeHarmonicMean(array)
+  1.0 / computeMean(array.collect{ | value | 1.0 / value })
+end
+
+def computeStdDev(array)
+  case array.length
+  when 0
+    0.0/0.0
+  when 1
+    0.0
+  else
+    begin
+      mean=computeMean(array)
+      sum=0.0
+      array.each {
+        | value |
+        sum += (value-mean)**2
+      }
+      Math.sqrt(sum/(array.length-1))
+    rescue
+      0.0/0.0
+    end
+  end
+end
+
+class Array
+  def shuffle!
+    size.downto(1) { |n| push delete_at(rand(n)) }
+    self
+  end
+end
+
+def inverseBetaRegularized(n)
+  IBR_LOOKUP[n-1]
+end
+
+def numToStr(num)
+  "%.4f"%(num.to_f)
+end
+  
+class NoChange
+  attr_reader :amountFaster
+  
+  def initialize(amountFaster)
+    @amountFaster = amountFaster
+  end
+  
+  def shortForm
+    " "
+  end
+  
+  def to_s
+    if @amountFaster < 1.01
+      ""
+    else
+      "  might be #{numToStr(@amountFaster)}x faster"
+    end
+  end
+end
+
+class Faster
+  attr_reader :amountFaster
+  
+  def initialize(amountFaster)
+    @amountFaster = amountFaster
+  end
+  
+  def shortForm
+    "^"
+  end
+  
+  def to_s
+    "^ definitely #{numToStr(@amountFaster)}x faster"
+  end
+end
+
+class Slower
+  attr_reader :amountSlower
+  
+  def initialize(amountSlower)
+    @amountSlower = amountSlower
+  end
+  
+  def shortForm
+    "!"
+  end
+  
+  def to_s
+    "! definitely #{numToStr(@amountSlower)}x slower"
+  end
+end
+
+class MayBeSlower
+  attr_reader :amountSlower
+  
+  def initialize(amountSlower)
+    @amountSlower = amountSlower
+  end
+  
+  def shortForm
+    "?"
+  end
+  
+  def to_s
+    if @amountSlower < 1.01
+      "?"
+    else
+      "? might be #{numToStr(@amountSlower)}x slower"
+    end
+  end
+end
+
+class Stats
+  def initialize
+    @array = []
+  end
+  
+  def add(value)
+    if value.is_a? Stats
+      add(value.array)
+    elsif value.respond_to? :each
+      value.each {
+        | v |
+        add(v)
+      }
+    else
+      @array << value.to_f
+    end
+  end
+    
+  def array
+    @array
+  end
+  
+  def sum
+    result=0
+    @array.each {
+      | value |
+      result += value
+    }
+    result
+  end
+  
+  def min
+    @array.min
+  end
+  
+  def max
+    @array.max
+  end
+  
+  def size
+    @array.length
+  end
+  
+  def mean
+    computeMean(array)
+  end
+  
+  def arithmeticMean
+    mean
+  end
+  
+  def stdDev
+    computeStdDev(array)
+  end
+
+  def stdErr
+    stdDev/Math.sqrt(size)
+  end
+  
+  # Computes a 95% Student's t distribution confidence interval
+  def confInt
+    if size < 2
+      0.0/0.0
+    else
+      raise if size > 1000
+      Math.sqrt(size-1.0)*stdErr*Math.sqrt(-1.0+1.0/inverseBetaRegularized(size-1))
+    end
+  end
+  
+  def lower
+    mean-confInt
+  end
+  
+  def upper
+    mean+confInt
+  end
+  
+  def geometricMean
+    computeGeometricMean(array)
+  end
+  
+  def harmonicMean
+    computeHarmonicMean(array)
+  end
+  
+  def compareTo(other)
+    if upper < other.lower
+      Faster.new(other.mean/mean)
+    elsif lower > other.upper
+      Slower.new(mean/other.mean)
+    elsif mean > other.mean
+      MayBeSlower.new(mean/other.mean)
+    else
+      NoChange.new(other.mean/mean)
+    end
+  end
+  
+  def to_s
+    "size = #{size}, mean = #{mean}, stdDev = #{stdDev}, stdErr = #{stdErr}, confInt = #{confInt}"
+  end
+end
+
+def doublePuts(out1,out2,msg)
+  out1.puts "#{out2.path}: #{msg}" if $verbosity>=3
+  out2.puts msg
+end
+
+def benchRunHarness(vm, benchpath)
+  $stderr.puts "running #{benchpath} with #{vm}..." if $verbosity>=1
+  result=nil
+  Tempfile.open("bencher") {
+    | file |
+    yield(file)
+    file.flush
+    begin
+      result=vm.runAndReport(file.path)
+    rescue => e
+      $stderr.puts "Could not run #{file.path}:"
+      File.open(file.path,"r") {
+        | inp |
+        inp.each_line {
+          | line |
+          $stderr.puts "#{line}"
+        }
+      }
+    end
+    file.unlink unless $keepFiles
+  }
+  raise unless result and result.size == $inner
+  result
+end
+
+def emitTimeHelpers(file)
+  case $timeMode
+  when :preciseTime
+    doublePuts($stderr,file,"function __bencher_curTimeMS() {")
+    doublePuts($stderr,file,"   return preciseTime()*1000")
+    doublePuts($stderr,file,"}")
+  when :date
+    doublePuts($stderr,file,"function __bencher_curTimeMS() {")
+    doublePuts($stderr,file,"   return Date.now()")
+    doublePuts($stderr,file,"}")
+  else
+    raise
+  end
+  doublePuts($stderr,file,"function __bencher_run(__bencher_what) {")
+  doublePuts($stderr,file,"   var __bencher_before = __bencher_curTimeMS();")
+  doublePuts($stderr,file,"   run(__bencher_what);")
+  doublePuts($stderr,file,"   var __bencher_after = __bencher_curTimeMS();")
+  doublePuts($stderr,file,"   return __bencher_after - __bencher_before;")
+  doublePuts($stderr,file,"}")
+end
+
+def emitBenchRunCode(vm, file, benchpath)
+  emitTimeHelpers(file)
+  case $innerMode
+  when :reload
+    case vm.vmType
+    when :jsc
+      $warmup.times {
+        doublePuts($stderr,file,"__bencher_run(#{benchpath.inspect})")
+        doublePuts($stderr,file,"gc();")
+      }
+      $inner.times {
+        doublePuts($stderr,file,"print(\"Time: \"+__bencher_run(#{benchpath.inspect}));")
+        doublePuts($stderr,file,"gc();")
+      }
+    when :dumpRenderTree
+      doublePuts($stderr,file,"__bencher_count = 0;")
+      doublePuts($stderr,file,"function __bencher_doNext(result) {")
+      doublePuts($stderr,file,"    if (__bencher_count >= #{$warmup})")
+      doublePuts($stderr,file,"        debug(\"Time: \"+result);")
+      doublePuts($stderr,file,"    __bencher_count++;")
+      doublePuts($stderr,file,"    if (__bencher_count < #{$inner+$warmup})")
+      doublePuts($stderr,file,"        __bencher_runImpl(#{benchpath.inspect}, __bencher_doNext);")
+      doublePuts($stderr,file,"    else")
+      doublePuts($stderr,file,"        quit();")
+      doublePuts($stderr,file,"}")
+      doublePuts($stderr,file,"__bencher_runImpl(#{benchpath.inspect}, __bencher_doNext);")
+    else
+      raise vm.vmType
+    end
+  when :loadOnce
+    doublePuts($stderr,file,"function runit() {")
+    File.open(benchpath,'r') {
+      | inp |
+      inp.each_line {
+        | line |
+        doublePuts($stderr,file,line)
+      }
+    }
+    doublePuts($stderr,file,"}")
+    $warmup.times {
+      doublePuts($stderr,file,"runit();")
+      doublePuts($stderr,file,"gc();")
+    }
+    $inner.times {
+      doublePuts($stderr,file,"before = __bencher_curTimeMS();")
+      doublePuts($stderr,file,"runit();")
+      doublePuts($stderr,file,"after = __bencher_curTimeMS();")
+      doublePuts($stderr,file,"print(\"Time: \"+(after-before));")
+      doublePuts($stderr,file,"gc();")
+    }
+    if vm.vmType == :dumpRenderTree
+      doublePuts($stderr,file,"quit();")
+    end
+  else
+    raise "bad $innerMode: #{$innerMode}"
+  end
+end
+
+def runBenchmarkAndReport(vm, benchpath)
+  benchRunHarness(vm, benchpath) {
+    | file |
+    emitBenchRunCode(vm, file, benchpath)
+  }
+end
+
+class StatsAccumulator
+  def initialize
+    @stats = []
+    ($outer*$inner).times {
+      @stats << Stats.new
+    }
+  end
+  
+  def statsForIteration(outerIteration, innerIteration)
+    @stats[outerIteration*$inner + innerIteration]
+  end
+  
+  def stats
+    result = Stats.new
+    @stats.each {
+      | stat |
+      result.add(yield stat)
+    }
+    result
+  end
+  
+  def geometricMeanStats
+    stats {
+      | stat |
+      stat.geometricMean
+    }
+  end
+  
+  def arithmeticMeanStats
+    stats {
+      | stat |
+      stat.arithmeticMean
+    }
+  end
+end
+
+class VM < StatsAccumulator
+  def initialize(path, name, nameKind)
+    super()
+    @path = path
+    @name = name
+    @nameKind = nameKind
+    
+    Tempfile.open("bencher-vmtest") {
+      | file |
+      file.puts "print(\"here\");"
+      file.flush
+      
+      result = nil
+      @vmType = :jsc
+      run(file.path) {
+        | inp |
+        result = inp.read
+      }
+      
+      if result.chomp == "here"
+        $stderr.puts "#{@name} is definitely a jsc-style VM." if $verbosity>=1
+        @vmType = :jsc
+      else
+        $stderr.puts "Assuming that #{@name} is a DumpRenderTree-style VM." if $verbosity>=1
+        @vmType = :dumpRenderTree
+      end
+    }
+  end
+  
+  def to_s
+    @name
+  end
+  
+  def name
+    @name
+  end
+  
+  def path
+    @path
+  end
+  
+  def nameKind
+    @nameKind
+  end
+  
+  def vmType
+    @vmType
+  end
+  
+  def printFunction
+    case @vmType
+    when :jsc
+      "print"
+    when :dumpRenderTree
+      "debug"
+    else
+      raise @vmType
+    end
+  end
+  
+  def run(filename)
+    case @vmType
+    when :jsc
+      cmd = "#{@path} #{filename}"
+      $stderr.puts ">> #{cmd}" if $verbosity>=2
+      IO.popen(cmd,"r") {
+        | inp |
+        yield inp
+      }
+      $?.success?
+    when :dumpRenderTree
+      result = nil
+      Tempfile.open(["bencher-htmldoc",".html"]) {
+        | htmlFile |
+        Tempfile.open("bencher-css") {
+          | cssFile |
+          doublePuts($stderr,cssFile,".pass {\n    font-weight: bold;\n    color: green;\n}\n.fail {\n    font-weight: bold;\n    color: red;\n}\n\#console {\n    white-space: pre-wrap;\n    font-family: monospace;\n}")
+          Tempfile.open("bencher-pre") {
+            | preFile |
+            doublePuts($stderr,preFile,
+                       "if (window.layoutTestController) {\n"+
+                       "    layoutTestController.dumpAsText(window.enablePixelTesting);\n"+
+                       "    layoutTestController.waitUntilDone();\n"+
+                       "}\n"+
+                       "\n"+
+                       "function debug(msg)\n"+
+                       "{\n"+
+                       "    var span = document.createElement(\"span\");\n"+
+                       "    document.getElementById(\"console\").appendChild(span); // insert it first so XHTML knows the namespace\n"+
+                       "    span.innerHTML = msg + '<br />';\n"+
+                       "}\n"+
+                       "\n"+
+                       "function quit() {\n"+
+                       "    layoutTestController.notifyDone();\n"+
+                       "}\n"+
+                       "\n"+
+                       "__bencher_continuation=null;\n"+
+                       "\n"+
+                       "function reportResult(result) {\n"+
+                       "    __bencher_continuation(result);\n"+
+                       "}\n"+
+                       "\n"+
+                       "function __bencher_runImpl(filename, continuation) {\n"+
+                       "    function doit() {\n"+
+                       "        document.getElementById(\"frameparent\").innerHTML = \"\";\n"+
+                       "        document.getElementById(\"frameparent\").innerHTML = \"<iframe id='testframe'>\";\n"+
+                       "        var testFrame = document.getElementById(\"testframe\");\n"+
+                       "        testFrame.contentDocument.open();\n"+
+                       "        testFrame.contentDocument.write(\"<!DOCTYPE html>\\n<head></head><body><div id=\\\"console\\\"></div><script type=\\\"text/javascript\\\">__bencher_before = Date.now();</script><script src=\\\"file://\"+filename+\"\\\"></script><script type=\\\"text/javascript\\\">window.parent.reportResult(Date.now() - __bencher_before);</script></body></html>\");\n"+
+                       "        testFrame.contentDocument.close();\n"+
+                       "    }\n"+
+                       "    __bencher_continuation = continuation;\n"+
+                       "    window.setTimeout(doit, 10);\n"+
+                       "}\n")
+            doublePuts($stderr,htmlFile,"<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\">\n<html><head><link rel=\"stylesheet\" href=\"file://#{cssFile.path}\"><script src=\"file://#{preFile.path}\"></script></head><body><div id=\"console\"></div><div id=\"frameparent\"></div><script src=\"file://#{filename}\"></script></body></html>")
+            
+            htmlFile.flush
+            preFile.flush
+            cssFile.flush
+            
+            cmd = "#{path} #{htmlFile.path}"
+            $stderr.puts ">> #{cmd}" if $verbosity>=2
+            IO.popen(cmd, "r") {
+              | inp |
+              yield inp
+            }
+            result = $?
+            
+            #sleep 10000
+            
+            htmlFile.unlink unless $keepFiles
+            preFile.unlink unless $keepFiles
+            cssFile.unlink unless $keepFiles
+          }
+        }
+      }
+      result.success?
+    else
+      raise @vmType
+    end
+  end
+  
+  def runAndReport(filename)
+    result = nil
+    5.times {
+      result = Stats.new
+      run(filename) {
+        | inp |
+        inp.each_line {
+          | line |
+          $stderr.puts "stdout: #{line}" if $verbosity>=2
+          if line =~ /^Time: /
+            result.add($~.post_match.to_f)
+          end
+        }
+      }
+      break if result.size == $inner
+      if $verbosity == 0
+        $stderr.print "   "
+      end
+      $stderr.puts "Failed to run #{filename} on #{self}, retrying..."
+    }
+    raise "Failed to run #{filename} on #{self}" unless result and result.size == $inner
+    result
+  end
+end
+
+class SunSpiderBenchmark
+  attr_accessor :benchmarkSuite
+  
+  def initialize(name)
+    @name = name
+  end
+  
+  def to_s
+    @name
+  end
+  
+  def runAndReport(vm)
+    runBenchmarkAndReport(vm, "#{SUNSPIDER_PATH}/#{@name}.js")
+  end
+end
+
+class V8Benchmark
+  attr_accessor :benchmarkSuite
+  
+  def initialize(name)
+    @name = name
+  end
+  
+  def to_s
+    @name
+  end
+  
+  def runAndReport(vm)
+    runBenchmarkAndReport(vm, "#{V8_PATH}/v8-#{@name}.js")
+  end
+end
+
+class KrakenBenchmark
+  attr_accessor :benchmarkSuite
+  
+  def initialize(name)
+    @name = name
+  end
+  
+  def to_s
+    @name
+  end
+  
+  def runAndReport(vm)
+    # Kraken requires some special-casing
+    
+    dataPath="#{KRAKEN_PATH}/#{@name}-data.js"
+    benchPath="#{KRAKEN_PATH}/#{@name}.js"
+    
+    benchRunHarness(vm, benchPath) {
+      | file |
+      emitTimeHelpers(file)
+      doublePuts($stderr,file,"load(#{dataPath.inspect});")
+      doublePuts($stderr,file,"gc();");
+      if $innerMode == :reload
+        case vm.vmType
+        when :jsc
+          doublePuts($stderr,file,"for (var __bencher_index = 0; __bencher_index < #{$warmup+$inner}; ++__bencher_index) {")
+          doublePuts($stderr,file,"   before = __bencher_curTimeMS();")
+          doublePuts($stderr,file,"   load(#{benchPath.inspect});")
+          doublePuts($stderr,file,"   after = __bencher_curTimeMS();")
+          doublePuts($stderr,file,"   if (__bencher_index >= #{$warmup}) #{vm.printFunction}(\"Time: \"+(after-before));");
+          doublePuts($stderr,file,"   gc();");
+          doublePuts($stderr,file,"}")
+        when :dumpRenderTree
+          raise "Kraken in DumpRenderTree is currently unsupported."
+        else
+          raise vm.vmType
+        end
+      else
+        emitBenchRunCode(vm, file, benchPath)
+      end
+    }
+  end
+end
+
+class BenchmarkSuite
+  def initialize(name, path)
+    @name = name
+    @path = path
+    @benchmarks = []
+  end
+  
+  def name
+    @name
+  end
+  
+  def to_s
+    @name
+  end
+  
+  def path
+    @path
+  end
+  
+  def add(benchmark)
+    if not $benchmarkPattern or "#{@name}/#{benchmark.to_s}" =~ $benchmarkPattern
+      benchmark.benchmarkSuite = self
+      @benchmarks << benchmark
+    end
+  end
+  
+  def benchmarks
+    @benchmarks
+  end
+  
+  def empty?
+    @benchmarks.empty?
+  end
+  
+  def retain_if
+    @benchmarks.delete_if {
+      | benchmark |
+      not yield benchmark
+    }
+  end
+end
+
+class BenchmarkOnVM
+  def initialize(vm, benchmark, suiteOnVM)
+    @vm = vm
+    @benchmark = benchmark
+    @suiteOnVM = suiteOnVM
+    @stats = Stats.new
+  end
+  
+  def to_s
+    "#{@benchmark} on #{@vm}"
+  end
+  
+  def benchmark
+    @benchmark
+  end
+  
+  def vm
+    @vm
+  end
+  
+  def suite
+    @benchmark.benchmarkSuite
+  end
+  
+  def suiteOnVM
+    @suiteOnVM
+  end
+  
+  def stats
+    @stats
+  end
+  
+  def runRecordAndReport
+    result = @benchmark.runAndReport(@vm)
+    @stats.add(result)
+    result
+  end
+end
+
+class SuiteOnVM < StatsAccumulator
+  def initialize(vm, suite)
+    super()
+    @vm = vm
+    @suite = suite
+  end
+  
+  def to_s
+    "#{@suite} on #{@vm}"
+  end
+  
+  def suite
+    @suite
+  end
+  
+  def vm
+    @vm
+  end
+end
+
+class BenchPlan
+  def initialize(benchmarkOnVM, iteration)
+    @benchmarkOnVM = benchmarkOnVM
+    @iteration = iteration
+  end
+  
+  def to_s
+    "#{@benchmarkOnVM} \##{@iteration+1}"
+  end
+  
+  def benchmarkOnVM
+    @benchmarkOnVM
+  end
+  
+  def benchmark
+    @benchmarkOnVM.benchmark
+  end
+  
+  def suite
+    @benchmarkOnVM.suite
+  end
+  
+  def vm
+    @benchmarkOnVM.vm
+  end
+  
+  def iteration
+    @iteration
+  end
+  
+  def runAndRecord
+    @benchmarkOnVM.runRecordAndReport.array.each_with_index {
+      | value, index |
+      @benchmarkOnVM.vm.statsForIteration(@iteration, index).add(value)
+      @benchmarkOnVM.suiteOnVM.statsForIteration(@iteration, index).add(value)
+    }
+  end
+end
+
+def lpad(str,chars)
+  if str.length>chars
+    str
+  else
+    "%#{chars}s"%(str)
+  end
+end
+
+def rpad(str,chars)
+  while str.length<chars
+    str+=" "
+  end
+  str
+end
+
+def center(str,chars)
+  while str.length<chars
+    str+=" "
+    if str.length<chars
+      str=" "+str
+    end
+  end
+  str
+end
+
+def statsToStr(stats)
+  lpad(numToStr(stats.mean),11)+"+-"+rpad(numToStr(stats.confInt),9)
+end
+  
+begin
+  GetoptLong.new(['--inner', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--outer', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--warmup', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--time-mode', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--sunspider-only', GetoptLong::NO_ARGUMENT],
+                 ['--v8-only', GetoptLong::NO_ARGUMENT],
+                 ['--kraken-only', GetoptLong::NO_ARGUMENT],
+                 ['--exclude-sunspider', GetoptLong::NO_ARGUMENT],
+                 ['--exclude-v8', GetoptLong::NO_ARGUMENT],
+                 ['--exclude-kraken', GetoptLong::NO_ARGUMENT],
+                 ['--benchmarks', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--load-once', GetoptLong::NO_ARGUMENT],
+                 ['--keep-files', GetoptLong::NO_ARGUMENT],
+                 ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
+                 ['--help', '-h', GetoptLong::NO_ARGUMENT]).each {
+    | opt, arg |
+    case opt
+    when '--inner'
+      $inner = intArg(opt,arg,1,nil)
+    when '--outer'
+      $outer = intArg(opt,arg,1,nil)
+    when '--warmup'
+      $warmup = intArg(opt,arg,0,nil)
+    when '--time-mode'
+      if arg.upcase == "PRECISETIME"
+        $timeMode = :preciseTime
+      elsif arg.upcase == "DATE"
+        $timeMode = :date
+      elsif arg.upcase == "AUTO"
+        $timeMode = :auto
+      else
+        quickFail("Expected either 'preciseTime', 'date', or 'auto' for --time-mode, but got '#{arg}'.",
+                  "Invalid argument for command-line option")
+      end
+    when '--sunspider-only'
+      $includeV8 = false
+      $includeKraken = false
+    when '--v8-only'
+      $includeSunSpider = false
+      $includeKraken = false
+    when '--kraken-only'
+      $includeSunSpider = false
+      $includeV8 = false
+    when '--exclude-sunspider'
+      $includeSunSpider = false
+    when '--exclude-v8'
+      $includeV8 = false
+    when '--exclude-kraken'
+      $includeKraken = false
+    when '--benchmarks'
+      $benchmarkPattern = Regexp.new(arg)
+    when '--load-once'
+      $innerMode = :loadOnce
+    when '--keep-files'
+      $keepFiles = true
+    when '--verbose'
+      $verbosity += 1
+    when '--help'
+      usage
+    else
+      raise "bad option: #{opt}"
+    end
+  }
+  
+  if ARGV.empty?
+    quickFail("Please specify at least on configuraiton on the command line.",
+              "Insufficient arguments")
+  end
+  
+  SUNSPIDER = BenchmarkSuite.new("SunSpider", SUNSPIDER_PATH)
+  ["3d-cube", "3d-morph", "3d-raytrace", "access-binary-trees",
+   "access-fannkuch", "access-nbody", "access-nsieve",
+   "bitops-3bit-bits-in-byte", "bitops-bits-in-byte", "bitops-bitwise-and",
+   "bitops-nsieve-bits", "controlflow-recursive", "crypto-aes",
+   "crypto-md5", "crypto-sha1", "date-format-tofte", "date-format-xparb",
+   "math-cordic", "math-partial-sums", "math-spectral-norm", "regexp-dna",
+   "string-base64", "string-fasta", "string-tagcloud",
+   "string-unpack-code", "string-validate-input"].each {
+    | name |
+    SUNSPIDER.add SunSpiderBenchmark.new(name)
+  }
+
+  V8 = BenchmarkSuite.new("V8", V8_PATH)
+  ["crypto", "deltablue", "earley-boyer", "raytrace",
+   "regexp", "richards", "splay"].each {
+    | name |
+    V8.add V8Benchmark.new(name)
+  }
+
+  KRAKEN = BenchmarkSuite.new("Kraken", KRAKEN_PATH)
+  ["ai-astar", "audio-beat-detection", "audio-dft", "audio-fft",
+   "audio-oscillator", "imaging-darkroom", "imaging-desaturate",
+   "imaging-gaussian-blur", "json-parse-financial",
+   "json-stringify-tinderbox", "stanford-crypto-aes",
+   "stanford-crypto-ccm", "stanford-crypto-pbkdf2",
+   "stanford-crypto-sha256-iterative"].each {
+    | name |
+    KRAKEN.add KrakenBenchmark.new(name)
+  }
+
+  $vms = []
+  
+  ARGV.each {
+    | vm |
+    if vm =~ /([a-zA-Z0-9_ ]+):/
+      name = $1
+      nameKind = :given
+      vm = $~.post_match
+    else
+      name = "Conf\##{$vms.length+1}"
+      nameKind = :auto
+    end
+    $stderr.puts "#{name}: #{vm}" if $verbosity >= 1
+    $vms << VM.new(vm, name, nameKind)
+  }
+  
+  if $timeMode == :auto
+    havePreciseTime = true
+    $vms.each {
+      | vm |
+      if vm.vmType == :dumpRenderTree
+        $stderr.puts "Warning: #{vm} does not have preciseTime() because it is DumpRenderTree; using Date.now instead."
+        havePreciseTime = false
+      else
+        Tempfile.open("bencher-timetest") {
+          | file |
+          doublePuts($stderr,file,"#{vm.printFunction}(\"Time: \"+preciseTime());")
+          file.flush
+          result = nil
+          vm.run(file.path) {
+            | inp |
+            result = inp.read
+          }
+          thisVMHasPreciseTime = false
+          if result =~ /Time: /
+            secs = $~.post_match.to_i
+            if (secs - Time.now.to_i).abs < 5
+              thisVMHasPreciseTime = true
+            end
+          end
+          unless thisVMHasPreciseTime
+            $stderr.puts "Warning: #{vm} does not have preciseTime(); using Date.now instead."
+            havePreciseTime = false
+          end
+          file.unlink unless $keepFiles
+        }
+      end
+    }
+    
+    if havePreciseTime
+      $timeMode = :preciseTime
+    else
+      $timeMode = :date
+    end
+  end
+  
+  if $outer*$inner == 1
+    $stderr.puts "Warning: will only collect one sample per benchmark/VM.  Confidence interval calculation will fail."
+  end
+  
+  $stderr.puts "Using timeMode = #{$timeMode}." if $verbosity >= 1
+  
+  $suites = []
+  
+  if $includeSunSpider and not SUNSPIDER.empty?
+    $suites << SUNSPIDER
+  end
+  
+  if $includeV8 and not V8.empty?
+    $suites << V8
+  end
+  
+  if $includeKraken and not KRAKEN.empty?
+    $suites << KRAKEN
+  end
+  
+  $benchmarks = []
+  $suites.each {
+    | suite |
+    $benchmarks += suite.benchmarks
+  }
+  
+  $suitesOnVMs = []
+  $suitesOnVMsForSuite = {}
+  $suites.each {
+    | suite |
+    $suitesOnVMsForSuite[suite] = []
+  }
+  
+  $benchmarksOnVMs = []
+  $benchmarksOnVMsForBenchmark = {}
+  $benchmarks.each {
+    | benchmark |
+    $benchmarksOnVMsForBenchmark[benchmark] = []
+  }
+  
+  $vms.each {
+    | vm |
+    $suites.each {
+      | suite |
+      suiteOnVM = SuiteOnVM.new(vm, suite)
+      $suitesOnVMs << suiteOnVM
+      $suitesOnVMsForSuite[suite] << suiteOnVM
+      suite.benchmarks.each {
+        | benchmark |
+        benchmarkOnVM = BenchmarkOnVM.new(vm, benchmark, suiteOnVM)
+        $benchmarksOnVMs << benchmarkOnVM
+        $benchmarksOnVMsForBenchmark[benchmark] << benchmarkOnVM
+      }
+    }
+  }
+
+  $plans = []
+  $benchmarksOnVMs.each {
+    | benchmarkOnVM |
+    $outer.times {
+      | iteration |
+      $plans << BenchPlan.new(benchmarkOnVM, iteration)
+    }
+  }
+  
+  $plans.shuffle!
+  
+  $suitepad = $suites.collect {
+    | suite |
+    suite.to_s.size
+  }.max + 1
+  
+  $benchpad = ($benchmarks +
+               ["<arithmetic>", "<geometric>", "<harmonic>"]).collect {
+    | benchmark |
+    benchmark.to_s.size
+  }.max + 1
+
+  $vmpad = $vms.collect {
+    | vm |
+    vm.to_s.size
+  }.max + 1
+  
+  $plans.each_with_index {
+    | plan, idx |
+    if $verbosity == 0
+      text1 = lpad(idx.to_s,$plans.size.to_s.size)+"/"+$plans.size.to_s
+      text2 = plan.suite.to_s+"/"+plan.benchmark.to_s+"/"+plan.vm.to_s
+      $stderr.print "\r#{text1} #{rpad(text2,$suitepad+1+$benchpad+1+$vmpad)}"
+      $stderr.print "\r#{text1} #{text2}"
+      $stderr.flush
+    end
+    plan.runAndRecord
+  }
+  
+  if $verbosity == 0
+    $stderr.print "\r#{$plans.size}/#{$plans.size} #{' '*($suitepad+1+$benchpad+1+$vmpad)}"
+    $stderr.puts "\r#{$plans.size}/#{$plans.size}"
+  end
+  
+  if $verbosity >= 2
+    $benchmarksOnVMs.each {
+      | benchmarkOnVM |
+      $stderr.puts "#{benchmarkOnVM}: #{benchmarkOnVM.stats}"
+    }
+    
+    $vms.each {
+      | vm |
+      $stderr.puts "#{vm} (arithmeticMean): #{vm.arithmeticMeanStats}"
+      $stderr.puts "#{vm} (geometricMean): #{vm.geometricMeanStats}"
+    }
+  end
+  
+  reportName =
+    (if ($vms.collect {
+           | vm |
+           vm.nameKind
+         }.index :auto)
+       ""
+     else
+       $vms.collect {
+         | vm |
+         vm.to_s
+       }.join("_") + "_"
+     end) +
+    ($suites.collect {
+       | suite |
+       suite.to_s
+     }.join("")) + "_" +
+    (begin
+       time = Time.now
+       "%04d%02d%02d_%02d%02d" %
+         [ time.year, time.month, time.day,
+           time.hour, time.min ]
+     end) +
+    "_benchReport.txt"
+  
+  $stderr.puts "Generating benchmark report at #{reportName}"
+  
+  outp = $stdout
+  begin
+    outp = File.open(reportName,"w")
+  rescue => e
+    $stderr.puts "Error: could not save report to #{reportName}: #{e}"
+    $stderr.puts
+  end
+  
+  def createVMsString
+    result = ""
+    result += "   " if $suites.size > 1
+    result += rpad("", $benchpad)
+    result += " "
+    $vms.size.times {
+      | index |
+      if index != 0
+        result += " "+NoChange.new(0).shortForm
+      end
+      result += lpad(center($vms[index].name, 9+9+2), 11+9+2)
+    }
+    result += "    "
+    if $vms.size >= 3
+      result += center("#{$vms[-1].name} v. #{$vms[0].name}",26)
+    else
+      result += " "*26
+    end
+    result
+  end
+  
+  $columns = createVMsString.size
+  
+  def plural(num)
+    if num == 1
+      ""
+    else
+      "s"
+    end
+  end
+  
+  def wrap(str)
+    array = str.split
+    result = ""
+    curLine = array.shift
+    array.each {
+      | curStr |
+      if (curLine + " " + curStr).size > $columns
+        result += curLine + "\n"
+        curLine = curStr
+      else
+        curLine += " " + curStr
+      end
+    }
+    result + curLine + "\n"
+  end
+  
+  outp.print "Benchmark report for "
+  if $suites.size == 1
+    outp.print $suites[0].to_s
+  elsif $suites.size == 2
+    outp.print "#{$suites[0]} and #{$suites[1]}"
+  else
+    outp.print "#{$suites[0..-2].join(', ')}, and #{$suites[-1]}"
+  end
+  outp.puts "."
+  outp.puts
+  
+  # This looks stupid; revisit later.
+  if false
+    $suites.each {
+      | suite |
+      outp.puts "#{suite} at #{suite.path}"
+    }
+    
+    outp.puts
+  end
+  
+  outp.puts "VMs tested:"
+  $vms.each {
+    | vm |
+    outp.puts "\"#{vm.name}\" at #{Pathname.new(vm.path).realpath}"
+  }
+  
+  outp.puts
+  
+  outp.puts wrap("Collected #{$outer*$inner} sample#{plural($outer*$inner)} per benchmark/VM, "+
+                 "with #{$outer} VM invocation#{plural($outer)} per benchmark."+
+                 (if $warmup == 0 then (" Did not include any warm-up iterations; measurements "+
+                                        "began with the very first iteration.")
+                  else (" Used #{$warmup} benchmark iteration#{plural($warmup)} per VM "+
+                        "invocation for warm-up.") end)+
+                 (case $timeMode
+                  when :preciseTime then (" Used the jsc-specific preciseTime() function to get "+
+                                          "microsecond-level timing.")
+                  when :date then (" Used the portable Date.now() method to get millisecond-"+
+                                   "level timing.")
+                  else raise end)+
+                 (case $innerMode
+                  when :reload then "" # nothing interesting to say
+                  when :loadOnce then (" Ran benchmarks using an experimental mode that "+
+                                       "ensures that the benchmark code is loaded only once "+
+                                       "during each VM invocation, which enables more VM "+
+                                       "warm-up.")
+                  else raise end)+
+                 " Reporting benchmark execution times with 95% confidence "+
+                 "intervals in milliseconds.")
+  
+  outp.puts
+  
+  def printVMs(outp)
+    outp.puts createVMsString
+  end
+  
+  def summaryStats(outp, accumulators, name, &proc)
+    outp.print "   " if $suites.size > 1
+    outp.print rpad(name, $benchpad)
+    outp.print " "
+    accumulators.size.times {
+      | index |
+      if index != 0
+        outp.print " "+accumulators[index].stats(&proc).compareTo(accumulators[index-1].stats(&proc)).shortForm
+      end
+      outp.print statsToStr(accumulators[index].stats(&proc))
+    }
+    if accumulators.size>=2
+      outp.print("    "+accumulators[-1].stats(&proc).compareTo(accumulators[0].stats(&proc)).to_s)
+    end
+    outp.puts
+  end
+  
+  def allSummaryStats(outp, accumulators)
+    summaryStats(outp, accumulators, "<arithmetic>") {
+      | stat |
+      stat.arithmeticMean
+    }
+    
+    summaryStats(outp, accumulators, "<geometric>") {
+      | stat |
+      stat.geometricMean
+    }
+    
+    summaryStats(outp, accumulators, "<harmonic>") {
+      | stat |
+      stat.harmonicMean
+    }
+  end
+  
+  $suites.each {
+    | suite |
+    printVMs(outp)
+    if $suites.size > 1
+      outp.puts "#{suite.name}:"
+    else
+      outp.puts
+    end
+    suite.benchmarks.each {
+      | benchmark |
+      outp.print "   " if $suites.size > 1
+      outp.print rpad(benchmark.to_s, $benchpad)
+      outp.print " "
+      myConfigs = $benchmarksOnVMsForBenchmark[benchmark]
+      myConfigs.size.times {
+        | index |
+        if index != 0
+          outp.print " "+myConfigs[index].stats.compareTo(myConfigs[index-1].stats).shortForm
+        end
+        outp.print statsToStr(myConfigs[index].stats)
+      }
+      if $vms.size>=2
+        outp.print("    "+myConfigs[-1].stats.compareTo(myConfigs[0].stats).to_s)
+      end
+      outp.puts
+    }
+    outp.puts
+    allSummaryStats(outp, $suitesOnVMsForSuite[suite])
+    outp.puts if $suites.size > 1
+  }
+  
+  if $suites.size > 1
+    printVMs(outp)
+    outp.puts "All benchmarks:"
+    allSummaryStats(outp, $vms)
+  end
+  
+  if outp != $stdout
+    outp.close
+    puts
+    File.open(reportName) {
+      | inp |
+      puts inp.read
+    }
+  end
+  
+rescue => e
+  fail(e)
+end
+  
+  
