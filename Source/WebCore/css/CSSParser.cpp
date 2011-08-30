@@ -1546,6 +1546,12 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitFlexAlign:
         validPrimitive = id == CSSValueBefore || id == CSSValueAfter || id == CSSValueMiddle || id == CSSValueBaseline || id == CSSValueStretch;
         break;
+    case CSSPropertyWebkitFlexFlow:
+        // FIXME: -webkit-flex-flow takes a second "wrap" value.    
+        validPrimitive = id == CSSValueRow || id == CSSValueRowReverse || id == CSSValueColumn || id == CSSValueColumnReverse
+            || id == CSSValueHorizontal || id == CSSValueHorizontalReverse || id == CSSValueHorizontalLtr || id == CSSValueHorizontalRtl
+            || id == CSSValueVertical || id == CSSValueVerticalReverse || id == CSSValueVerticalTtb || id == CSSValueVerticalBtt;
+        break;
 #endif
     case CSSPropertyWebkitMarquee: {
         const int properties[5] = { CSSPropertyWebkitMarqueeDirection, CSSPropertyWebkitMarqueeIncrement,

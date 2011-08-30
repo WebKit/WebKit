@@ -53,6 +53,7 @@ public:
 
     unsigned m_flexPack : 2; // EFlexPack
     unsigned m_flexAlign : 3; // EFlexAlign
+    unsigned m_flexFlow : 4; // EFlexFlow
 
 private:
     StyleFlexibleBoxData();

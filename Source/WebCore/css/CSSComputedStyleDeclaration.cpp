@@ -203,6 +203,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitFlexOrder,
     CSSPropertyWebkitFlexPack,
     CSSPropertyWebkitFlexAlign,
+    CSSPropertyWebkitFlexFlow,
 #endif
     CSSPropertyWebkitFontSmoothing,
     CSSPropertyWebkitHighlight,
@@ -1111,6 +1112,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createValue(style->flexPack());
         case CSSPropertyWebkitFlexAlign:
             return primitiveValueCache->createValue(style->flexAlign());
+        case CSSPropertyWebkitFlexFlow:
+            return primitiveValueCache->createValue(style->flexFlow());
 #endif
         case CSSPropertyFloat:
             return primitiveValueCache->createValue(style->floating());

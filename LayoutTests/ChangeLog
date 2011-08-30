@@ -1,3 +1,13 @@
+2011-08-30  Ojan Vafai  <ojan@chromium.org>
+
+        CSS parsing for -webkit-flex-flow
+        https://bugs.webkit.org/show_bug.cgi?id=67224
+
+        Reviewed by Tony Chang.
+
+        * css3/flexbox/css-properties-expected.txt:
+        * css3/flexbox/script-tests/css-properties.js:
+
 2011-08-30  Alexey Proskuryakov  <ap@apple.com>
 
         fast/loader/document-destruction-within-unload.html causes an assertion failure in the next

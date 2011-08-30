@@ -680,6 +680,7 @@ public:
     int flexOrder() const { return rareNonInheritedData->m_flexibleBox->m_flexOrder; }
     EFlexPack flexPack() const { return static_cast<EFlexPack>(rareNonInheritedData->m_flexibleBox->m_flexPack); }
     EFlexAlign flexAlign() const { return static_cast<EFlexAlign>(rareNonInheritedData->m_flexibleBox->m_flexAlign); }
+    EFlexFlow flexFlow() const { return static_cast<EFlexFlow>(rareNonInheritedData->m_flexibleBox->m_flexFlow); }
 #endif
 
     const ShadowData* boxShadow() const { return rareNonInheritedData->m_boxShadow.get(); }
@@ -1067,6 +1068,7 @@ public:
     void setFlexOrder(int o) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexOrder, o); }
     void setFlexPack(EFlexPack p) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexPack, p); }
     void setFlexAlign(EFlexAlign a) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexAlign, a); }
+    void setFlexFlow(EFlexFlow flow) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexFlow, flow); }
 #endif
     void setMarqueeIncrement(const Length& f) { SET_VAR(rareNonInheritedData.access()->m_marquee, increment, f); }
     void setMarqueeSpeed(int f) { SET_VAR(rareNonInheritedData.access()->m_marquee, speed, f); }
@@ -1348,6 +1350,7 @@ public:
     static int initialFlexOrder() { return 1; }
     static EFlexPack initialFlexPack() { return PackStart; }
     static EFlexAlign initialFlexAlign() { return AlignStretch; }
+    static EFlexFlow initialFlexFlow() { return FlowRow; }
     static int initialMarqueeLoopCount() { return -1; }
     static int initialMarqueeSpeed() { return 85; }
     static Length initialMarqueeIncrement() { return Length(6, Fixed); }

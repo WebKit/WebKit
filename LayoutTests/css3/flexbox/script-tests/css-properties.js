@@ -100,4 +100,58 @@ flexbox.style.webkitFlexAlign = '';
 shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'stretch');
 
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row');
+
+flexbox.style.webkitFlexFlow = 'foo';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
+
+flexbox.style.webkitFlexFlow = 'row';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'row');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row');
+
+flexbox.style.webkitFlexFlow = 'row-reverse';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'row-reverse');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row-reverse');
+
+flexbox.style.webkitFlexFlow = 'column';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'column');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'column');
+
+flexbox.style.webkitFlexFlow = 'column-reverse';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'column-reverse');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'column-reverse');
+
+flexbox.style.webkitFlexFlow = 'horizontal';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'horizontal');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'horizontal');
+
+flexbox.style.webkitFlexFlow = 'horizontal-reverse';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'horizontal-reverse');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'horizontal-reverse');
+
+flexbox.style.webkitFlexFlow = 'horizontal-ltr';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'horizontal-ltr');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'horizontal-ltr');
+
+flexbox.style.webkitFlexFlow = 'horizontal-rtl';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'horizontal-rtl');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'horizontal-rtl');
+
+flexbox.style.webkitFlexFlow = 'vertical';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'vertical');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'vertical');
+
+flexbox.style.webkitFlexFlow = 'vertical-reverse';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'vertical-reverse');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'vertical-reverse');
+
+flexbox.style.webkitFlexFlow = 'vertical-ttb';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'vertical-ttb');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'vertical-ttb');
+
+flexbox.style.webkitFlexFlow = 'vertical-btt';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'vertical-btt');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'vertical-btt');
+
 successfullyParsed = true;

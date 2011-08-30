@@ -478,6 +478,21 @@ after
 // stretch
 // baseline
 
+// CSS_PROP_FLEX_FLOW
+// FIXME: Add the wrap values.
+row
+row-reverse
+column
+column-reverse
+// horizontal
+horizontal-reverse
+horizontal-ltr
+horizontal-rtl
+// vertical
+vertical-reverse
+vertical-ttb
+vertical-btt
+
 // CSS_PROP_MARQUEE_DIRECTION
 forwards
 backwards

@@ -988,6 +988,7 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitFlexOrder, new ApplyPropertyDefault<int>(&RenderStyle::flexOrder, &RenderStyle::setFlexOrder, &RenderStyle::initialFlexOrder));
     setPropertyHandler(CSSPropertyWebkitFlexPack, new ApplyPropertyDefault<EFlexPack>(&RenderStyle::flexPack, &RenderStyle::setFlexPack, &RenderStyle::initialFlexPack));
     setPropertyHandler(CSSPropertyWebkitFlexAlign, new ApplyPropertyDefault<EFlexAlign>(&RenderStyle::flexAlign, &RenderStyle::setFlexAlign, &RenderStyle::initialFlexAlign));
+    setPropertyHandler(CSSPropertyWebkitFlexFlow, new ApplyPropertyDefault<EFlexFlow>(&RenderStyle::flexFlow, &RenderStyle::setFlexFlow, &RenderStyle::initialFlexFlow));
 #endif
 
     setPropertyHandler(CSSPropertyFontStyle, new ApplyPropertyFont<FontItalic>(&FontDescription::italic, &FontDescription::setItalic, FontItalicOff));
