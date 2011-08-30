@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x42
-  RenderBlock {HTML} at (0,0) size 800x42
-    RenderBody {BODY} at (8,8) size 784x26
-      RenderTextControl {INPUT} at (2,2) size 246x22
-        RenderDeprecatedFlexibleBox {DIV} at (2,2) size 242x18
-          RenderBlock {DIV} at (0,0) size 226x18
-      RenderText {#text} at (250,4) size 4x17
-        text run at (250,4) width 4: " "
-      RenderTextControl {INPUT} at (256,2) size 246x22
-        RenderDeprecatedFlexibleBox {DIV} at (2,2) size 242x18
-          RenderBlock {DIV} at (0,0) size 226x18
+layer at (0,0) size 800x46
+  RenderBlock {HTML} at (0,0) size 800x46
+    RenderBody {BODY} at (8,8) size 784x30
+      RenderTextControl {INPUT} at (2,2) size 166x26
+        RenderDeprecatedFlexibleBox {DIV} at (2,2) size 162x22
+          RenderBlock {DIV} at (0,0) size 146x22
+      RenderText {#text} at (170,4) size 4x22
+        text run at (170,4) width 4: " "
+      RenderTextControl {INPUT} at (176,2) size 166x26
+        RenderDeprecatedFlexibleBox {DIV} at (2,2) size 162x22
+          RenderBlock {DIV} at (0,0) size 146x22
       RenderText {#text} at (0,0) size 0x0
-layer at (12,12) size 226x18
-  RenderBlock {DIV} at (0,0) size 226x18
-layer at (266,12) size 226x18
-  RenderBlock {DIV} at (0,0) size 226x18
-layer at (240,10) size 16x22
-  RenderBlock (relative positioned) {DIV} at (228,-2) size 16x22
+layer at (12,12) size 146x22
+  RenderBlock {DIV} at (0,0) size 146x22
+layer at (186,12) size 146x22
+  RenderBlock {DIV} at (0,0) size 146x22
+layer at (160,10) size 16x26
+  RenderBlock (relative positioned) {DIV} at (148,-2) size 16x26

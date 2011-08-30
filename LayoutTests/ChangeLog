@@ -1,3 +1,25 @@
+2011-08-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped: Unskip now passing tests.
+        * platform/qt/css2.1/t0602-c13-inheritance-00-e-expected.png:
+        * platform/qt/css2.1/t0602-c13-inheritance-00-e-expected.txt:
+        * platform/qt/fast/block/float/floats-and-text-indent-expected.png: Added.
+        * platform/qt/fast/block/float/floats-and-text-indent-expected.txt: Added.
+        * platform/qt/fast/block/float/floats-and-text-indent-rl-expected.png: Added.
+        * platform/qt/fast/block/float/floats-and-text-indent-rl-expected.txt: Added.
+        * platform/qt/fast/borders/border-fit-2-expected.png: Added.
+        * platform/qt/fast/borders/border-fit-2-expected.txt: Added.
+        * platform/qt/fast/forms/input-appearance-number-rtl-expected.png: Added.
+        * platform/qt/fast/forms/input-appearance-number-rtl-expected.txt:
+        * platform/qt/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.png: Added.
+        * platform/qt/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/qt/fast/forms/input-appearance-spinbutton-layer-expected.png: Added.
+        * platform/qt/fast/forms/input-appearance-spinbutton-layer-expected.txt:
+        * platform/qt/fast/forms/input-appearance-spinbutton-visibility-expected.png: Added.
+        * platform/qt/fast/forms/input-appearance-spinbutton-visibility-expected.txt:
+
 2011-08-30  Alexander Pavlov  <apavlov@chromium.org>
 
         REGRESSION(93978): inspector/styles/styles-computed-trace.html fails

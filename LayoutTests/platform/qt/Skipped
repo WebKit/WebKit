@@ -2380,28 +2380,10 @@ inspector/extensions/extensions-resources.html
 
 # [Qt] REGRESSION(r93937): 4 failing and 3 flaky tests
 # https://bugs.webkit.org/show_bug.cgi?id=67118
-# Failed
-fast/forms/input-appearance-number-rtl.html
-fast/forms/input-appearance-spinbutton-disabled-readonly.html
-fast/forms/input-appearance-spinbutton-layer.html
-fast/forms/input-appearance-spinbutton-visibility.html
 # Flaky
 fast/forms/input-number-large-padding.html
 fast/forms/input-spinbutton-capturing.html
 fast/forms/input-number-events.html
-
-# [Qt] 2 tests failed after r93951
-# https://bugs.webkit.org/show_bug.cgi?id=67125
-fast/dom/constructed-objects-prototypes.html
-fast/dom/dom-constructors.html
-
-# [QT] One test failed after r93978
-# https://bugs.webkit.org/show_bug.cgi?id=67185
-inspector/styles/styles-computed-trace.html
-
-# [Qt] One test failed after r94009
-# https://bugs.webkit.org/show_bug.cgi?id=67186
-css2.1/t0602-c13-inheritance-00-e.html
 
 # [Qt] Two tests failed after r94037
 # https://bugs.webkit.org/show_bug.cgi?id=67188
