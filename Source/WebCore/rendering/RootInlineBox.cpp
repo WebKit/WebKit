@@ -48,8 +48,9 @@ RootInlineBox::RootInlineBox(RenderBlock* block)
     , m_lineBreakPos(0)
     , m_lineTop(0)
     , m_lineBottom(0)
+    , m_lineTopWithLeading(0)
+    , m_lineBottomWithLeading(0)
     , m_paginationStrut(0)
-    , m_blockLogicalHeight(0)
     , m_baselineType(AlphabeticBaseline)
     , m_hasAnnotationsBefore(false)
     , m_hasAnnotationsAfter(false)
@@ -203,10 +204,11 @@ bool RootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 void RootInlineBox::adjustPosition(float dx, float dy)
 {
     InlineFlowBox::adjustPosition(dx, dy);
-    int blockDirectionDelta = isHorizontal() ? dy : dx; // The block direction delta will always be integral.
+    LayoutUnit blockDirectionDelta = isHorizontal() ? dy : dx; // The block direction delta is a LayoutUnit.
     m_lineTop += blockDirectionDelta;
     m_lineBottom += blockDirectionDelta;
-    m_blockLogicalHeight += blockDirectionDelta;
+    m_lineTopWithLeading += blockDirectionDelta;
+    m_lineBottomWithLeading += blockDirectionDelta;
 }
 
 void RootInlineBox::childRemoved(InlineBox* box)
@@ -258,7 +260,10 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
                                lineTopIncludingMargins, lineBottomIncludingMargins, hasAnnotationsBefore, hasAnnotationsAfter, baselineType());
     m_hasAnnotationsBefore = hasAnnotationsBefore;
     m_hasAnnotationsAfter = hasAnnotationsAfter;
-    setLineTopBottomPositions(lineTop, lineBottom);
+    
+    maxHeight = max<LayoutUnit>(0, maxHeight); // FIXME: Is this really necessary?
+
+    setLineTopBottomPositions(lineTop, lineBottom, heightOfBlock, heightOfBlock + maxHeight);
 
     int annotationsAdjustment = beforeAnnotationsAdjustment();
     if (annotationsAdjustment) {
@@ -267,8 +272,6 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
         adjustBlockDirectionPosition(annotationsAdjustment);
         heightOfBlock += annotationsAdjustment;
     }
-
-    maxHeight = max<LayoutUnit>(0, maxHeight);
 
     return heightOfBlock + maxHeight;
 }

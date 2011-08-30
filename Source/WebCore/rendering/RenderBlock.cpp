@@ -3649,12 +3649,12 @@ void RenderBlock::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit l
 
     RootInlineBox* lowestDirtyLine = lastRootBox();
     RootInlineBox* afterLowest = lowestDirtyLine;
-    while (lowestDirtyLine && lowestDirtyLine->blockLogicalHeight() >= logicalBottom && logicalBottom < numeric_limits<LayoutUnit>::max()) {
+    while (lowestDirtyLine && lowestDirtyLine->lineBottomWithLeading() >= logicalBottom && logicalBottom < numeric_limits<LayoutUnit>::max()) {
         afterLowest = lowestDirtyLine;
         lowestDirtyLine = lowestDirtyLine->prevRootBox();
     }
 
-    while (afterLowest && afterLowest != highest && (afterLowest->blockLogicalHeight() >= logicalTop || afterLowest->blockLogicalHeight() < 0)) {
+    while (afterLowest && afterLowest != highest && (afterLowest->lineBottomWithLeading() >= logicalTop || afterLowest->lineBottomWithLeading() < 0)) {
         afterLowest->markDirty();
         afterLowest = afterLowest->prevRootBox();
     }
@@ -6191,7 +6191,7 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
     // the line on the top of the next page will appear too far down relative to the same kind of line at the top
     // of the first column.
     //
-    // The rendering we would like to see is one where the lineTop is at the top of the column, and any line overflow
+    // The rendering we would like to see is one where the lineTopWithLeading is at the top of the column, and any line overflow
     // simply spills out above the top of the column.  This effect would match what happens at the top of the first column.
     // We can't achieve this rendering, however, until we stop columns from clipping to the column bounds (thus allowing
     // for overflow to occur), and then cache visible overflow for each column rect.
@@ -6199,14 +6199,17 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
     // Furthermore, the paint we have to do when a column has overflow has to be special.  We need to exclude
     // content that paints in a previous column (and content that paints in the following column).
     //
+    // For now we'll at least honor the lineTopWithLeading when paginating if it is above the logical top overflow. This will
+    // at least make positive leading work in typical cases.
+    //
     // FIXME: Another problem with simply moving lines is that the available line width may change (because of floats).
     // Technically if the location we move the line to has a different line width than our old position, then we need to dirty the
     // line and all following lines.
     LayoutState* layoutState = view()->layoutState();
     LayoutUnit pageLogicalHeight = layoutState->m_pageLogicalHeight;
     LayoutRect logicalVisualOverflow = lineBox->logicalVisualOverflowRect(lineBox->lineTop(), lineBox->lineBottom());
-    LayoutUnit logicalOffset = logicalVisualOverflow.y();
-    LayoutUnit lineHeight = logicalVisualOverflow.maxY() - logicalOffset;
+    LayoutUnit logicalOffset = min(lineBox->lineTopWithLeading(), logicalVisualOverflow.y());
+    LayoutUnit lineHeight = max(lineBox->lineBottomWithLeading(), logicalVisualOverflow.maxY()) - logicalOffset;
     if (layoutState->m_columnInfo)
         layoutState->m_columnInfo->updateMinimumColumnHeight(lineHeight);
     logicalOffset += delta;

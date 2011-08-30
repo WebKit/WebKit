@@ -196,8 +196,7 @@ void SVGRootInlineBox::layoutRootBox(const LayoutRect& childRect)
     setY(0);
     setLogicalWidth(widthBlock);
     setLogicalHeight(heightBlock);
-    setBlockLogicalHeight(heightBlock);
-    setLineTopBottomPositions(0, heightBlock);
+    setLineTopBottomPositions(0, heightBlock, 0, heightBlock);
 }
 
 InlineBox* SVGRootInlineBox::closestLeafChildForPosition(const LayoutPoint& point)

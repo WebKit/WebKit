@@ -1,3 +1,27 @@
+2011-08-30  David Hyatt  <hyatt@apple.com>
+
+        <rdar://problem/8832814> With large line-height, column break can happen anywhere in the
+        inter-line gap, causing staggered lines.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=67202 Handle positive leading when paginating lines.
+        
+        Technically we should paginate lines based solely off their line top and line bottom with
+        leading included. However there are two issues with always doing so. The first is that overflow
+        can cause lines to overlap, and the second is that negative leading can cause lines to overlap.
+
+        Since we're incapable of dealing with overlap until we stop clipping column boxes and allow them
+        to have a form of specialized overflow, we still have to at least factor in overflow and ignore
+        negative leading for now. However we can at least honor positive leading when the lines don't
+        overlap. This patch provides basic support for paginating when positive leading is involved.
+
+        Reviewed by Dan Bernstein.
+
+        Added fast/multicol/positive-leading.html.
+
+        * fast/multicol/positive-leading.html: Added.
+        * platform/mac/fast/multicol/positive-leading-expected.png: Added.
+        * platform/mac/fast/multicol/positive-leading-expected.txt: Added.
+
 2011-08-30  Young Han Lee  <joybro@company100.net>
 
         [Qt][WK2] svg/animations/animate-end-attribute.html r93949

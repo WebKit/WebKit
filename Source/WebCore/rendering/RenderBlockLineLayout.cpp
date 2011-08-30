@@ -665,7 +665,6 @@ void RenderBlock::computeBlockDirectionPositionsForLine(RootInlineBox* lineBox, 
                                                         VerticalPositionCache& verticalPositionCache)
 {
     setLogicalHeight(lineBox->alignBoxesInBlockDirection(logicalHeight(), textBoxDataMap, verticalPositionCache));
-    lineBox->setBlockLogicalHeight(logicalHeight());
 
     // Now make sure we place replaced render objects correctly.
     for (BidiRun* r = firstRun; r; r = r->next()) {
@@ -1078,7 +1077,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
                             continue;
                         }
 
-                        setLogicalHeight(lineBox->blockLogicalHeight());
+                        setLogicalHeight(lineBox->lineBottomWithLeading());
                     }
                 }
             }
@@ -1145,7 +1144,7 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
                     }
                 }
             }
-            setLogicalHeight(lastRootBox()->blockLogicalHeight());
+            setLogicalHeight(lastRootBox()->lineBottomWithLeading());
         } else {
             // Delete all the remaining lines.
             deleteLineRange(layoutState, renderArena(), layoutState.endLine());
@@ -1169,7 +1168,6 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
             IntRect logicalLayoutOverflow(0, blockLogicalHeight, 1, bottomLayoutOverflow - blockLogicalHeight);
             IntRect logicalVisualOverflow(0, blockLogicalHeight, 1, bottomVisualOverflow - blockLogicalHeight);
             trailingFloatsLineBox->setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow, trailingFloatsLineBox->lineTop(), trailingFloatsLineBox->lineBottom());
-            trailingFloatsLineBox->setBlockLogicalHeight(logicalHeight());
         }
 
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
@@ -1311,7 +1309,7 @@ void RenderBlock::checkFloatsInCleanLine(RootInlineBox* line, Vector<FloatWithRe
                                                                  : max(floats[floatIndex].rect.width(), newSize.width());
             floatHeight = min(floatHeight, numeric_limits<int>::max() - floatTop);
             line->markDirty();
-            markLinesDirtyInBlockRange(line->blockLogicalHeight(), floatTop + floatHeight, line);
+            markLinesDirtyInBlockRange(line->lineBottomWithLeading(), floatTop + floatHeight, line);
             floats[floatIndex].rect.setSize(newSize);
             dirtiedByFloat = true;
         }
@@ -1422,7 +1420,7 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
     layoutState.lineInfo().setPreviousLineBrokeCleanly(!last || last->endsWithBreak());
 
     if (last) {
-        setLogicalHeight(last->blockLogicalHeight());
+        setLogicalHeight(last->lineBottomWithLeading());
         resolver.setPosition(InlineIterator(this, last->lineBreakObj(), last->lineBreakPos()));
         resolver.setStatus(last->lineBreakBidiStatus());
     } else {
@@ -1465,7 +1463,7 @@ void RenderBlock::determineEndPosition(LineLayoutState& layoutState, RootInlineB
     RootInlineBox* prev = last->prevRootBox();
     cleanLineStart = InlineIterator(this, prev->lineBreakObj(), prev->lineBreakPos());
     cleanLineBidiStatus = prev->lineBreakBidiStatus();
-    layoutState.setEndLineLogicalTop(prev->blockLogicalHeight());
+    layoutState.setEndLineLogicalTop(prev->lineBottomWithLeading());
 
     for (RootInlineBox* line = last; line; line = line->nextRootBox())
         line->extractLine(); // Disconnect all line boxes from their render objects while preserving
@@ -1491,7 +1489,7 @@ bool RenderBlock::matchedEndLine(LineLayoutState& layoutState, const InlineBidiR
         while (RootInlineBox* nextLine = lastLine->nextRootBox())
             lastLine = nextLine;
 
-        int logicalBottom = lastLine->blockLogicalHeight() + abs(delta);
+        int logicalBottom = lastLine->lineBottomWithLeading() + abs(delta);
 
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
         FloatingObjectSetIterator end = floatingObjectSet.end();
@@ -1517,7 +1515,7 @@ bool RenderBlock::matchedEndLine(LineLayoutState& layoutState, const InlineBidiR
 
             // Set our logical top to be the block height of endLine.
             if (result)
-                layoutState.setEndLineLogicalTop(line->blockLogicalHeight());
+                layoutState.setEndLineLogicalTop(line->lineBottomWithLeading());
 
             int delta = logicalHeight() - layoutState.endLineLogicalTop();
             if (delta && m_floatingObjects) {
@@ -1528,7 +1526,7 @@ bool RenderBlock::matchedEndLine(LineLayoutState& layoutState, const InlineBidiR
                 while (RootInlineBox* nextLine = lastLine->nextRootBox())
                     lastLine = nextLine;
 
-                int logicalBottom = lastLine->blockLogicalHeight() + abs(delta);
+                int logicalBottom = lastLine->lineBottomWithLeading() + abs(delta);
 
                 const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
                 FloatingObjectSetIterator end = floatingObjectSet.end();

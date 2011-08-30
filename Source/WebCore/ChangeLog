@@ -1,3 +1,57 @@
+2011-08-30  David Hyatt  <hyatt@apple.com>
+
+        <rdar://problem/8832814> With large line-height, column break can happen anywhere in the
+        inter-line gap, causing staggered lines.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=67202 Handle positive leading when paginating lines.
+        
+        Technically we should paginate lines based solely off their line top and line bottom with
+        leading included. However there are two issues with always doing so. The first is that overflow
+        can cause lines to overlap, and the second is that negative leading can cause lines to overlap.
+
+        Since we're incapable of dealing with overlap until we stop clipping column boxes and allow them
+        to have a form of specialized overflow, we still have to at least factor in overflow and ignore
+        negative leading for now. However we can at least honor positive leading when the lines don't
+        overlap. This patch provides basic support for paginating when positive leading is involved.
+
+        Reviewed by Dan Bernstein.
+
+        Added fast/multicol/positive-leading.html.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::markLinesDirtyInBlockRange):
+        Renamed blockLogicalHeight() to lineBottomWithLeading(). The value is the same.
+
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        Grow the top and extent of the line to include our leading when deciding how to paginate
+        the line.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeBlockDirectionPositionsForLine):
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::linkToEndLineIfNeeded):
+        (WebCore::RenderBlock::checkFloatsInCleanLine):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::determineEndPosition):
+        (WebCore::RenderBlock::matchedEndLine):
+        Renamed blockLogicalHeight() to lineBottomWithLeading(). The value is the same.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        (WebCore::RootInlineBox::adjustPosition):
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::lineTopWithLeading):
+        (WebCore::RootInlineBox::lineBottomWithLeading):
+        (WebCore::RootInlineBox::setLineTopBottomPositions):
+        Instead of one member variable, blockLogicalHeight(), RootInlineBoxes now know both their top and
+        bottom including leading. These values are obtainable using lineTopWithLeading() and lineBottomWithLeading().
+        Add these two values to the setLineTopBottomPositions setter and remove setBlockLogicalHeight.
+
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::layoutRootBox):
+        Renamed blockLogicalHeight() to lineBottomWithLeading(). The value is the same.
+
 2011-08-29  Chris Marrin  <cmarrin@apple.com>
 
         Rename GraphicsContext3DInternal to GraphicsContext3DPrivate and add a dummy version of this class for Mac
