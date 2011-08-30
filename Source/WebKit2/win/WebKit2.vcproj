@@ -559,6 +559,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\StatisticsData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\StatisticsData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\StringPairVector.h"
 				>
 			</File>

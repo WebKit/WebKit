@@ -316,6 +316,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/Shared/SecurityOriginData.cpp \
 	Source/WebKit2/Shared/SessionState.cpp \
 	Source/WebKit2/Shared/SessionState.h \
+	Source/WebKit2/Shared/StatisticsData.cpp \
+	Source/WebKit2/Shared/StatisticsData.h \
 	Source/WebKit2/Shared/StringPairVector.h \
 	Source/WebKit2/Shared/TextCheckerState.h \
 	Source/WebKit2/Shared/UserMessageCoders.h \

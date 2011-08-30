@@ -150,6 +150,7 @@ SET(WebKit2_SOURCES
 
     Shared/SecurityOriginData.cpp
     Shared/SessionState.cpp
+    Shared/StatisticsData.cpp
     Shared/UpdateInfo.cpp
     Shared/VisitedLinkTable.cpp
     Shared/WebBackForwardListItem.cpp

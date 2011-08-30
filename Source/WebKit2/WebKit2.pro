@@ -135,6 +135,7 @@ HEADERS += \
     Shared/SameDocumentNavigationType.h \
     Shared/SecurityOriginData.h \
     Shared/SessionState.h \
+    Shared/StatisticsData.h \
     Shared/StringPairVector.h \
     Shared/UpdateInfo.h \
     Shared/UserMessageCoders.h \
@@ -368,6 +369,7 @@ SOURCES += \
     Shared/PrintInfo.cpp \
     Shared/SecurityOriginData.cpp \
     Shared/SessionState.cpp \
+    Shared/StatisticsData.cpp \
     Shared/UpdateInfo.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebBackForwardListItem.cpp \

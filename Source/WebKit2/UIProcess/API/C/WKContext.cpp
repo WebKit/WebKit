@@ -232,3 +232,8 @@ void WKContextWarmInitialProcess(WKContextRef contextRef)
     toImpl(contextRef)->warmInitialProcess();
 }
 
+void WKContextGetStatistics(WKContextRef contextRef, void* context, WKContextGetStatisticsFunction callback)
+{
+    toImpl(contextRef)->getWebCoreStatistics(DictionaryCallback::create(context, callback));    
+}
+

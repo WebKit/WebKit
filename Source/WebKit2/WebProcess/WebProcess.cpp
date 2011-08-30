@@ -33,6 +33,7 @@
 #include "InjectedBundleUserMessageCoders.h"
 #include "RunLoop.h"
 #include "SandboxExtension.h"
+#include "StatisticsData.h"
 #include "WebApplicationCacheManager.h"
 #include "WebContextMessages.h"
 #include "WebCookieManager.h"
@@ -816,6 +817,15 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
     m_connection->send(Messages::WebContext::DidClearPluginSiteData(callbackID), 0);
 }
 #endif
+    
+void WebProcess::getWebCoreStatistics(uint64_t callbackID)
+{
+    StatisticsData data;
+    
+    // FIXME: Gather performance data.
+    
+    m_connection->send(Messages::WebContext::DidGetWebCoreStatistics(data, callbackID), 0);
+}
 
 #if ENABLE(PLUGIN_PROCESS)
 void WebProcess::pluginProcessCrashed(const String& pluginPath)
