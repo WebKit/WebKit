@@ -47,7 +47,7 @@ public:
     int naturalWidth() const;
     int naturalHeight() const;
 
-    bool isServerMap() const { return ismap && usemap.isEmpty(); }
+    bool isServerMap() const;
 
     String altText() const;
 
@@ -103,8 +103,6 @@ private:
     virtual void removedFromTree(bool deep);
 
     HTMLImageLoader m_imageLoader;
-    String usemap;
-    bool ismap;
     HTMLFormElement* m_form;
     AtomicString m_name;
     AtomicString m_id;

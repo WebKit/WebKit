@@ -44,7 +44,6 @@ using namespace HTMLNames;
 HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLElement(tagName, document)
     , m_imageLoader(this)
-    , ismap(false)
     , m_form(form)
     , m_compositeOperator(CompositeSourceOver)
 {
@@ -127,14 +126,8 @@ void HTMLImageElement::parseMappedAttribute(Attribute* attr)
         addHTMLAlignment(attr);
     else if (attrName == valignAttr)
         addCSSProperty(attr, CSSPropertyVerticalAlign, attr->value());
-    else if (attrName == usemapAttr) {
-        if (attr->value().string()[0] == '#')
-            usemap = attr->value();
-        else
-            usemap = document()->completeURL(stripLeadingAndTrailingHTMLSpaces(attr->value())).string();
+    else if (attrName == usemapAttr)
         setIsLink(!attr->isNull());
-    } else if (attrName == ismapAttr)
-        ismap = true;
     else if (attrName == onabortAttr)
         setAttributeEventListener(eventNames().abortEvent, createAttributeEventListener(this, attr));
     else if (attrName == onloadAttr)
@@ -398,6 +391,20 @@ void HTMLImageElement::willMoveToNewOwnerDocument()
 {
     m_imageLoader.elementWillMoveToNewOwnerDocument();
     HTMLElement::willMoveToNewOwnerDocument();
+}
+
+bool HTMLImageElement::isServerMap() const
+{
+    if (!fastHasAttribute(ismapAttr))
+        return false;
+
+    const AtomicString& usemap = fastGetAttribute(usemapAttr);
+    
+    // If the usemap attribute starts with '#', it refers to a map element in the document.
+    if (usemap.string()[0] == '#')
+        return false;
+
+    return document()->completeURL(stripLeadingAndTrailingHTMLSpaces(usemap)).isEmpty();
 }
 
 }

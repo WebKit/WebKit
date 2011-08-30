@@ -1,3 +1,19 @@
+2011-08-30  Andreas Kling  <kling@webkit.org>
+
+        HTMLImageElement: Don't cache "ismap" and "usemap" attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=66784
+
+        Reviewed by Darin Adler.
+
+        * html/HTMLImageElement.h: Remove the "ismap" and "usemap" members,
+        shrinking HTMLImageElement by 16 bytes (on 64-bit.)
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::parseMappedAttribute): Most of the logic
+        for "ismap" and "usemap" moved into isServerMap().
+        (WebCore::HTMLImageElement::isServerMap): Out-of-lined and implemented
+        using fast*Attribute().
+
 2011-08-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         lastChangeWasUserEdit continues to return true when innerText or textContent is modified
