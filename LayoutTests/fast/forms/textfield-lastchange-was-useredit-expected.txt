@@ -19,9 +19,9 @@ PASS textField.value = "WebKit"; internals.wasLastChangeUserEdit(textField) is f
 PASS textField.style.display = null; internals.wasLastChangeUserEdit(textField) is false
 PASS document.execCommand("SelectAll", false, null); internals.wasLastChangeUserEdit(textField) is false
 PASS document.execCommand("Delete", false, null); internals.wasLastChangeUserEdit(textField) is true
-FAIL textField.textContent = "hello\nworld"; internals.wasLastChangeUserEdit(textField) should be false. Was true.
+PASS textField.textContent = "hello\nworld"; internals.wasLastChangeUserEdit(textField) is false
 PASS document.execCommand("InsertText", false, "\nWebKit rocks"); internals.wasLastChangeUserEdit(textField) is true
-FAIL textField.innerText = " WebKit "; internals.wasLastChangeUserEdit(textField) should be false. Was true.
+PASS textField.innerText = " WebKit "; internals.wasLastChangeUserEdit(textField) is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

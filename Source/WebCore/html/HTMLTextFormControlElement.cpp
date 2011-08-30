@@ -89,6 +89,7 @@ void HTMLTextFormControlElement::dispatchBlurEvent(PassRefPtr<Node> newFocusedNo
 void HTMLTextFormControlElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().webkitEditableContentChangedEvent && renderer() && renderer()->isTextControl()) {
+        m_lastChangeWasUserEdit = true;
         subtreeHasChanged();
         return;
     }
@@ -101,11 +102,6 @@ void HTMLTextFormControlElement::forwardEvent(Event* event)
     if (event->type() == eventNames().blurEvent || event->type() == eventNames().focusEvent)
         return;
     innerTextElement()->defaultEventHandler(event);
-}
-
-void HTMLTextFormControlElement::subtreeHasChanged()
-{
-    m_lastChangeWasUserEdit = true;
 }
 
 String HTMLTextFormControlElement::strippedPlaceholder() const
@@ -475,9 +471,6 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
             innerTextElement()->appendChild(HTMLBRElement::create(document()), ec);
             ASSERT(!ec);
         }
-
-        // We set m_lastChangeWasUserEdit to false since this change was not explicitly made by the user (say, via typing on the keyboard), see <rdar://problem/5359921>.
-        m_lastChangeWasUserEdit = false;
     }
 
     setFormControlValueMatchesRenderer(true);

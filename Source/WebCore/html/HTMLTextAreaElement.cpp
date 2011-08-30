@@ -98,6 +98,7 @@ void HTMLTextAreaElement::restoreFormControlState(const String& state)
 
 void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
+    setLastChangeWasNotUserEdit();
     if (!m_isDirty)
         setNonDirtyValue(defaultValue());
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
@@ -230,8 +231,6 @@ void HTMLTextAreaElement::defaultEventHandler(Event* event)
 
 void HTMLTextAreaElement::subtreeHasChanged()
 {
-    HTMLTextFormControlElement::subtreeHasChanged();
-
     setChangedSinceLastFormControlChangeEvent(true);
     setFormControlValueMatchesRenderer(false);
     setNeedsValidityCheck();

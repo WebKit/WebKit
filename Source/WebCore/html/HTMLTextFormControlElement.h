@@ -97,7 +97,7 @@ protected:
     bool hasCachedSelection() const { return m_cachedSelectionStart >= 0; }
 
     virtual void defaultEventHandler(Event*);
-    virtual void subtreeHasChanged();
+    virtual void subtreeHasChanged() = 0;
 
     void setLastChangeWasNotUserEdit() { m_lastChangeWasUserEdit = false; }
 private:

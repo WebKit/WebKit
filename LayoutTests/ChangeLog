@@ -1,3 +1,14 @@
+2011-08-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        lastChangeWasUserEdit continues to return true when innerText or textContent is modified
+        https://bugs.webkit.org/show_bug.cgi?id=67183
+
+        Reviewed by Kent Tamura.
+
+        Two test cases now pass.
+
+        * fast/forms/textfield-lastchange-was-useredit-expected.txt:
+
 2011-08-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: wrong script display name when there is a slash in its URL query parameters

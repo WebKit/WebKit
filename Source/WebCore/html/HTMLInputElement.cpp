@@ -616,8 +616,6 @@ void HTMLInputElement::subtreeHasChanged()
     ASSERT(renderer());
     RenderTextControlSingleLine* renderTextControl = toRenderTextControlSingleLine(renderer());
 
-    HTMLTextFormControlElement::subtreeHasChanged();
-
     bool wasChanged = wasChangedSinceLastFormControlChangeEvent();
     setChangedSinceLastFormControlChangeEvent(true);
 
