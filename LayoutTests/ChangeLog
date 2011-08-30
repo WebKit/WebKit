@@ -1,3 +1,17 @@
+2011-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94076.
+        http://trac.webkit.org/changeset/94076
+        https://bugs.webkit.org/show_bug.cgi?id=67201
+
+        Results will be different on each platform (Requested by
+        apavlov on #webkit).
+
+        * fast/multicol/huge-column-count-expected.png: Removed.
+        * fast/multicol/inherit-column-values-expected.png: Removed.
+        * fast/multicol/initial-column-values-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-08-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Unreviewed, add missing multicol test baselines.
