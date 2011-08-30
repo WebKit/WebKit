@@ -20,7 +20,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import time
-from mod_pywebsocket import handshake
 
 
 def web_socket_do_extra_handshake(request):
@@ -45,10 +44,7 @@ def web_socket_do_extra_handshake(request):
         time.sleep(1)
         numFrames = 1024 / len(frame) # write over 1024 bytes including the above handshake
         for i in range(0, numFrames):
-            try:
-                request.connection.write(frame)
-            except Exception, e:
-                raise handshake.AbortedByUserException(e)
+            request.connection.write(frame)
 
 
 def web_socket_transfer_data(request):

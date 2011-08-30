@@ -1,4 +1,3 @@
-from mod_pywebsocket import handshake
 from mod_pywebsocket.handshake.hybi import compute_accept
 
 
@@ -10,7 +9,7 @@ def web_socket_do_extra_handshake(request):
     message += 'Sec-WebSocket-Extensions: x-foo\r\n'
     message += '\r\n'
     request.connection.write(message)
-    raise handshake.AbortedByUserException('Abort the connection') # Prevents pywebsocket from sending its own handshake message.
+    raise Exception('Abort the connection') # Prevents pywebsocket from sending its own handshake message.
 
 
 def web_socket_transfer_data(request):

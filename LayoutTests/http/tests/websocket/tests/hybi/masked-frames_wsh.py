@@ -1,5 +1,4 @@
 from mod_pywebsocket import common
-from mod_pywebsocket import handshake
 from mod_pywebsocket import stream
 from mod_pywebsocket import msgutil
 
@@ -32,4 +31,4 @@ def web_socket_transfer_data(request):
     # the WebSocket object should be closed cleanly.
     request.connection.write(stream.create_close_frame('', mask=True))
 
-    raise handshake.AbortedByUserException('Abort the connection') # Prevents pywebsocket from starting its own closing handshake.
+    raise Exception('Abort the connection') # Prevents pywebsocket from starting its own closing handshake.

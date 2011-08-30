@@ -1,3 +1,14 @@
+2011-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94055 and r94057.
+        http://trac.webkit.org/changeset/94055
+        http://trac.webkit.org/changeset/94057
+        https://bugs.webkit.org/show_bug.cgi?id=67191
+
+        Many failures on Mac 10.5 (Requested by toyoshim on #webkit).
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+
 2011-08-30  Adam Barth  <abarth@webkit.org>
 
         Chromium Android should not be a core builder
