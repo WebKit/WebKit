@@ -161,7 +161,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_proxyWidget(0)
 #endif
-    , m_restrictions(RequireUserGestureForFullScreenRestriction | RequirePageConsentToLoadMedia)
+    , m_restrictions(RequireUserGestureForFullscreenRestriction | RequirePageConsentToLoadMediaRestriction)
     , m_preload(MediaPlayer::Auto)
     , m_displayMode(Unknown)
     , m_processingMediaPlayerCallback(0)
@@ -203,7 +203,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     document->registerForPrivateBrowsingStateChangedCallbacks(this);
     
     if (document->settings() && document->settings()->mediaPlaybackRequiresUserGesture())
-        m_restrictions |= RequireUserGestureForRateChangeRestriction;
+        addBehaviorRestriction(RequireUserGestureForRateChangeRestriction);
 
 #if ENABLE(MEDIA_SOURCE)
     m_mediaSourceURL.setProtocol(mediaSourceURLProtocol);
@@ -515,7 +515,7 @@ void HTMLMediaElement::load(ExceptionCode& ec)
 {
     LOG(Media, "HTMLMediaElement::load()");
 
-    if (m_restrictions & RequireUserGestureForLoadRestriction && !ScriptController::processingUserGesture())
+    if (userGestureRequiredForLoad() && !ScriptController::processingUserGesture())
         ec = INVALID_STATE_ERR;
     else {
         m_loadInitiatedByUserGesture = ScriptController::processingUserGesture();
@@ -611,7 +611,7 @@ void HTMLMediaElement::loadInternal()
 {
     // If we can't start a load right away, start it later.
     Page* page = document()->page();
-    if (requirePageConsentToLoadMedia() && page && !page->canStartMedia()) {
+    if (pageConsentRequiredForLoad() && page && !page->canStartMedia()) {
         if (m_isWaitingUntilMediaCanStart)
             return;
         document()->addMediaCanStartListener(this);
@@ -622,7 +622,7 @@ void HTMLMediaElement::loadInternal()
     // Once the page has allowed an element to load media, it is free to load at will. This allows a 
     // playlist that starts in a foreground tab to continue automatically if the tab is subsequently 
     // put in the the background.
-    removeBehaviorRestriction(RequirePageConsentToLoadMedia);
+    removeBehaviorRestriction(RequirePageConsentToLoadMediaRestriction);
 
     selectMediaResource();
 #if ENABLE(VIDEO_TRACK)
@@ -1567,7 +1567,7 @@ void HTMLMediaElement::play()
 {
     LOG(Media, "HTMLMediaElement::play()");
 
-    if (m_restrictions & RequireUserGestureForRateChangeRestriction && !ScriptController::processingUserGesture())
+    if (userGestureRequiredForRateChange() && !ScriptController::processingUserGesture())
         return;
 
     Settings* settings = document()->settings();
@@ -1615,7 +1615,7 @@ void HTMLMediaElement::pause()
 {
     LOG(Media, "HTMLMediaElement::pause()");
 
-    if (m_restrictions & RequireUserGestureForRateChangeRestriction && !ScriptController::processingUserGesture())
+    if (userGestureRequiredForRateChange() && !ScriptController::processingUserGesture())
         return;
 
     pauseInternal();

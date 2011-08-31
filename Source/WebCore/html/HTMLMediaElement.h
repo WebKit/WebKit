@@ -195,23 +195,6 @@ public:
 
     void privateBrowsingStateDidChange();
 
-    // Restrictions to change default behaviors.
-    enum BehaviorRestrictionFlags {
-        NoRestrictions = 0,
-        RequireUserGestureForLoadRestriction = 1 << 0,
-        RequireUserGestureForRateChangeRestriction = 1 << 1,
-        RequireUserGestureForFullScreenRestriction = 1 << 2,
-        RequirePageConsentToLoadMedia = 1 << 3,
-    };
-    typedef unsigned BehaviorRestrictions;
-    
-    bool requireUserGestureForLoad() const { return m_restrictions & RequireUserGestureForLoadRestriction; }
-    bool requireUserGestureForRateChange() const { return m_restrictions & RequireUserGestureForRateChangeRestriction; }
-    bool requireUserGestureForFullScreen() const { return m_restrictions & RequireUserGestureForFullScreenRestriction; }
-    bool requirePageConsentToLoadMedia() const { return m_restrictions & RequirePageConsentToLoadMedia; }
-
-    void setBehaviorRestrictions(BehaviorRestrictions restrictions) { m_restrictions = restrictions; }
-
     // Media cache management.
     static void getSitesInMediaCache(Vector<String>&);
     static void clearMediaCache();
@@ -243,6 +226,24 @@ protected:
     
     virtual bool isMediaElement() const { return true; }
 
+    // Restrictions to change default behaviors.
+    enum BehaviorRestrictionFlags {
+        NoRestrictions = 0,
+        RequireUserGestureForLoadRestriction = 1 << 0,
+        RequireUserGestureForRateChangeRestriction = 1 << 1,
+        RequireUserGestureForFullscreenRestriction = 1 << 2,
+        RequirePageConsentToLoadMediaRestriction = 1 << 3,
+    };
+    typedef unsigned BehaviorRestrictions;
+    
+    bool userGestureRequiredForLoad() const { return m_restrictions & RequireUserGestureForLoadRestriction; }
+    bool userGestureRequiredForRateChange() const { return m_restrictions & RequireUserGestureForRateChangeRestriction; }
+    bool userGestureRequiredForFullscreen() const { return m_restrictions & RequireUserGestureForFullscreenRestriction; }
+    bool pageConsentRequiredForLoad() const { return m_restrictions & RequirePageConsentToLoadMediaRestriction; }
+    
+    void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
+    void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
+    
 private:
     void createMediaPlayer();
 
@@ -363,8 +364,6 @@ private:
     void setPausedInternal(bool);
 
     virtual void mediaCanStart();
-
-    void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
 
     void setShouldDelayLoadEvent(bool);
 

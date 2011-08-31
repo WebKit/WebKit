@@ -1,3 +1,32 @@
+2011-08-31  Eric Carlson  <eric.carlson@apple.com>
+
+        Clean up HTMLMediaElement behavior restrictions
+        https://bugs.webkit.org/show_bug.cgi?id=67231
+
+        Reviewed by Darin Adler.
+
+        No new tests, cleanup only.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Deal with enum and function renaming.
+        (WebCore::HTMLMediaElement::load): Call userGestureRequiredForLoad() instead of testing bits
+            directly.
+        (WebCore::HTMLMediaElement::loadInternal): Deal with enum and function renaming.
+        (WebCore::HTMLMediaElement::play): Call userGestureRequiredForRateChange() instead of testing bits
+            directly.
+        (WebCore::HTMLMediaElement::pause): Ditto.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::userGestureRequiredForLoad): Renamed.
+        (WebCore::HTMLMediaElement::userGestureRequiredForRateChange):
+        (WebCore::HTMLMediaElement::userGestureRequiredForFullscreen):
+        (WebCore::HTMLMediaElement::pageConsentRequiredForLoad):
+        (WebCore::HTMLMediaElement::addBehaviorRestriction):
+        (WebCore::HTMLMediaElement::removeBehaviorRestriction):
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitEnterFullscreen): requireUserGestureForFullScreen renamed to
+            userGestureRequiredForFullscreen.
+
 2011-08-31  Andrei Popescu  <andreip@google.com>
 
         Investigate current uses of OS(ANDROID)
