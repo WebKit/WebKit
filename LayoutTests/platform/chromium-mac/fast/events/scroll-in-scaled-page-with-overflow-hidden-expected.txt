@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 27: Uncaught TypeError: Object [object Object] has no method 'scalePageBy'
+This tests that a usually overflow: hidden viewport should be scrollable when scaled. Otherwise, you can't get to content you would have been able to get to had you not been zoomed it.
+

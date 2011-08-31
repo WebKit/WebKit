@@ -1,0 +1,99 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x94
+  RenderBlock {HTML} at (0,0) size 800x94
+    RenderBody {BODY} at (8,16) size 784x70
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 233x18
+          text run at (0,0) width 233: "The following two lines should look "
+        RenderInline {EM} at (0,0) size 91x18
+          RenderText {#text} at (233,0) size 91x18
+            text run at (233,0) width 91: "approximately"
+        RenderText {#text} at (324,0) size 63x18
+          text run at (324,0) width 63: " the same:"
+      RenderBlock {DIV} at (0,34) size 784x18
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (0,0) size 10x18
+              text run at (0,0) width 10: "\x{25E6}"
+        RenderText {#text} at (9,0) size 5x18
+          text run at (9,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (13,0) size 10x18
+              text run at (13,0) width 10: "\x{25E6}"
+        RenderText {#text} at (22,0) size 5x18
+          text run at (22,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (26,0) size 10x18
+              text run at (26,0) width 10: "\x{25E6}"
+        RenderText {#text} at (35,0) size 5x18
+          text run at (35,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (39,0) size 10x18
+              text run at (39,0) width 10: "\x{25E6}"
+        RenderText {#text} at (49,0) size 4x18
+          text run at (49,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (53,0) size 10x18
+              text run at (53,0) width 10: "\x{25E6}"
+        RenderText {#text} at (62,0) size 5x18
+          text run at (62,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (66,0) size 10x18
+              text run at (66,0) width 10: "\x{25E6}"
+        RenderText {#text} at (75,0) size 5x18
+          text run at (75,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (79,0) size 10x18
+              text run at (79,0) width 10: "\x{25E6}"
+        RenderText {#text} at (88,0) size 5x18
+          text run at (88,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (92,0) size 10x18
+              text run at (92,0) width 10: "\x{25E6}"
+        RenderText {#text} at (102,0) size 4x18
+          text run at (102,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (106,0) size 10x18
+              text run at (106,0) width 10: "\x{25E6}"
+        RenderText {#text} at (115,0) size 5x18
+          text run at (115,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (119,0) size 10x18
+              text run at (119,0) width 10: "\x{25E6}"
+        RenderText {#text} at (128,0) size 5x18
+          text run at (128,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (132,0) size 10x18
+              text run at (132,0) width 10: "\x{25E6}"
+        RenderText {#text} at (141,0) size 5x18
+          text run at (141,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline (generated) at (0,0) size 10x18
+            RenderCounter at (145,0) size 10x18
+              text run at (145,0) width 10: "\x{25E6}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 155x18
+          text run at (0,0) width 14: "\x{25E6} "
+          text run at (13,0) width 14: "\x{25E6} "
+          text run at (26,0) width 14: "\x{25E6} "
+          text run at (39,0) width 14: "\x{25E6} "
+          text run at (53,0) width 14: "\x{25E6} "
+          text run at (66,0) width 14: "\x{25E6} "
+          text run at (79,0) width 14: "\x{25E6} "
+          text run at (92,0) width 14: "\x{25E6} "
+          text run at (106,0) width 14: "\x{25E6} "
+          text run at (119,0) width 14: "\x{25E6} "
+          text run at (132,0) width 14: "\x{25E6} "
+          text run at (145,0) width 10: "\x{25E6}"

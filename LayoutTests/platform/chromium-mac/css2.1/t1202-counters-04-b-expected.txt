@@ -1,0 +1,99 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x94
+  RenderBlock {HTML} at (0,0) size 800x94
+    RenderBody {BODY} at (8,16) size 784x70
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 233x18
+          text run at (0,0) width 233: "The following two lines should look "
+        RenderInline {EM} at (0,0) size 91x18
+          RenderText {#text} at (233,0) size 91x18
+            text run at (233,0) width 91: "approximately"
+        RenderText {#text} at (324,0) size 63x18
+          text run at (324,0) width 63: " the same:"
+      RenderBlock {DIV} at (0,34) size 784x18
+        RenderInline {SPAN} at (0,0) size 22x18
+          RenderInline (generated) at (0,0) size 22x18
+            RenderCounter at (0,0) size 22x18
+              text run at (0,0) width 22: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (21,0) size 5x18
+          text run at (21,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 22x18
+          RenderInline (generated) at (0,0) size 22x18
+            RenderCounter at (25,0) size 22x18
+              text run at (25,0) width 22: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (46,0) size 5x18
+          text run at (46,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 23x18
+          RenderInline (generated) at (0,0) size 23x18
+            RenderCounter at (50,0) size 23x18
+              text run at (50,0) width 23: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (72,0) size 5x18
+          text run at (72,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 22x18
+          RenderInline (generated) at (0,0) size 22x18
+            RenderCounter at (76,0) size 22x18
+              text run at (76,0) width 22: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (97,0) size 5x18
+          text run at (97,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 22x18
+          RenderInline (generated) at (0,0) size 22x18
+            RenderCounter at (101,0) size 22x18
+              text run at (101,0) width 22: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (122,0) size 5x18
+          text run at (122,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 23x18
+          RenderInline (generated) at (0,0) size 23x18
+            RenderCounter at (126,0) size 23x18
+              text run at (126,0) width 23: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (148,0) size 5x18
+          text run at (148,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 22x18
+          RenderInline (generated) at (0,0) size 22x18
+            RenderCounter at (152,0) size 22x18
+              text run at (152,0) width 22: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (173,0) size 5x18
+          text run at (173,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 22x18
+          RenderInline (generated) at (0,0) size 22x18
+            RenderCounter at (177,0) size 22x18
+              text run at (177,0) width 22: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (198,0) size 5x18
+          text run at (198,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 23x18
+          RenderInline (generated) at (0,0) size 23x18
+            RenderCounter at (202,0) size 23x18
+              text run at (202,0) width 23: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (224,0) size 5x18
+          text run at (224,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 22x18
+          RenderInline (generated) at (0,0) size 22x18
+            RenderCounter at (228,0) size 22x18
+              text run at (228,0) width 22: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (249,0) size 5x18
+          text run at (249,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 22x18
+          RenderInline (generated) at (0,0) size 22x18
+            RenderCounter at (253,0) size 22x18
+              text run at (253,0) width 22: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (274,0) size 5x18
+          text run at (274,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 23x18
+          RenderInline (generated) at (0,0) size 23x18
+            RenderCounter at (278,0) size 23x18
+              text run at (278,0) width 23: "\x{25A0}.\x{25A0}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 332x18
+          text run at (0,0) width 28: "\x{25FE}.\x{25FE} "
+          text run at (28,0) width 28: "\x{25FE}.\x{25FE} "
+          text run at (56,0) width 28: "\x{25FE}.\x{25FE} "
+          text run at (84,0) width 28: "\x{25FE}.\x{25FE} "
+          text run at (112,0) width 28: "\x{25FE}.\x{25FE} "
+          text run at (140,0) width 28: "\x{25FE}.\x{25FE} "
+          text run at (168,0) width 28: "\x{25FE}.\x{25FE} "
+          text run at (196,0) width 28: "\x{25FE}.\x{25FE} "
+          text run at (224,0) width 28: "\x{25FE}.\x{25FE} "
+          text run at (252,0) width 28: "\x{25FE}.\x{25FE} "
+          text run at (280,0) width 28: "\x{25FE}.\x{25FE} "
+          text run at (308,0) width 24: "\x{25FE}.\x{25FE}"
