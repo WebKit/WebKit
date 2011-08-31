@@ -20,7 +20,7 @@
 #ifndef VideoSinkGStreamer_h
 #define VideoSinkGStreamer_h
 
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include <glib-object.h>
 #include <gst/video/gstvideosink.h>

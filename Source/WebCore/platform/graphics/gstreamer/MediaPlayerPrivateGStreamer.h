@@ -22,7 +22,7 @@
 
 #ifndef MediaPlayerPrivateGStreamer_h
 #define MediaPlayerPrivateGStreamer_h
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include <wtf/Forward.h>
 #include "MediaPlayerPrivate.h"

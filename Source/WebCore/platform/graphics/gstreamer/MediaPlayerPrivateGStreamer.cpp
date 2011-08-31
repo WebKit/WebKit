@@ -24,7 +24,7 @@
 #include "config.h"
 #include "MediaPlayerPrivateGStreamer.h"
 
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "ColorSpace.h"
 #include "Document.h"

@@ -19,7 +19,7 @@
 
 #include "config.h"
 #include "PlatformVideoWindow.h"
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include <gtk/gtk.h>
 

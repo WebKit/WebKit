@@ -28,7 +28,7 @@
 
 #include "config.h"
 #include "VideoSinkGStreamer.h"
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include <glib.h>
 #include <gst/gst.h>

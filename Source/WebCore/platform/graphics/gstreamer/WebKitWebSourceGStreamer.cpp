@@ -18,7 +18,7 @@
 
 #include "config.h"
 #include "WebKitWebSourceGStreamer.h"
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "Document.h"
 #include "GOwnPtr.h"

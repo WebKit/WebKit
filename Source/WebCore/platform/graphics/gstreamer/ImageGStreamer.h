@@ -20,7 +20,7 @@
 #ifndef ImageGStreamer_h
 #define ImageGStreamer_h
 
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "BitmapImage.h"
 #include <gst/gst.h>

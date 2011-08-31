@@ -20,7 +20,7 @@
 
 #ifndef GStreamerGWorld_h
 #define GStreamerGWorld_h
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "PlatformVideoWindow.h"
 #include "RefCounted.h"

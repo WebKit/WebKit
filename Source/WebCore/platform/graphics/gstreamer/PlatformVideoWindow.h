@@ -19,7 +19,7 @@
 
 #ifndef PlatformVideoWindow_h
 #define PlatformVideoWindow_h
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "Widget.h"
 #include <wtf/PassRefPtr.h>

@@ -20,7 +20,7 @@
 #include "config.h"
 #include "ImageGStreamer.h"
 
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GOwnPtr.h"
 

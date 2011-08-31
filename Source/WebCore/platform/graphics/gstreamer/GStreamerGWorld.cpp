@@ -19,7 +19,7 @@
 
 #include "config.h"
 #include "GStreamerGWorld.h"
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GOwnPtrGStreamer.h"
 #include <gst/gst.h>

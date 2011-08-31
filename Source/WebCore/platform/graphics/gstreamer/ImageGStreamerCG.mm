@@ -21,7 +21,7 @@
 
 #include "GraphicsContextCG.h"
 #include "ImageGStreamer.h"
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 using namespace WebCore;
 

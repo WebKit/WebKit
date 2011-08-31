@@ -1,3 +1,28 @@
+2011-08-30  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] gstreamer/ files directly related to the MediaPlayer need VIDEO guards
+        https://bugs.webkit.org/show_bug.cgi?id=67196
+
+        Reviewed by Martin Robinson.
+
+        Guard those files with ENABLE(VIDEO) so other features using
+        GStreamer can be built even with VIDEO disabled.
+
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        * platform/graphics/gstreamer/GStreamerGWorld.h:
+        * platform/graphics/gstreamer/ImageGStreamer.h:
+        * platform/graphics/gstreamer/ImageGStreamerCG.mm:
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp:
+        * platform/graphics/gstreamer/ImageGStreamerQt.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/PlatformVideoWindow.h:
+        * platform/graphics/gstreamer/PlatformVideoWindowGtk.cpp:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.h:
+
 2011-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94142, r94144, r94145, and r94148.

@@ -18,7 +18,7 @@
 
 #ifndef WebKitWebSourceGStreamer_h
 #define WebKitWebSourceGStreamer_h
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "Frame.h"
 #include <gst/gst.h>
