@@ -2803,14 +2803,14 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     return view->fixedLayoutSize();
 }
 
-- (void)_setOverrideBackingScaleFactor:(CGFloat)overrideScaleFactor
+- (void)_setCustomBackingScaleFactor:(CGFloat)customScaleFactor
 {
     float oldScaleFactor = [self _deviceScaleFactor];
 
-    _private->overrideBackingScaleFactor = overrideScaleFactor;
+    _private->customDeviceScaleFactor = customScaleFactor;
 
     if (oldScaleFactor != [self _deviceScaleFactor])
-        _private->page->setDeviceScaleFactor(overrideScaleFactor);
+        _private->page->setDeviceScaleFactor(customScaleFactor);
 }
 
 - (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit
@@ -5548,8 +5548,8 @@ static WebFrameView *containingFrameView(NSView *view)
 
 - (float)_deviceScaleFactor
 {
-    if (_private->overrideBackingScaleFactor != 0)
-        return _private->overrideBackingScaleFactor;
+    if (_private->customDeviceScaleFactor != 0)
+        return _private->customDeviceScaleFactor;
 
     NSWindow *window = [self window];
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)

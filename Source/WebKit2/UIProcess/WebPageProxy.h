@@ -386,11 +386,9 @@ public:
     void scalePage(double scale, const WebCore::IntPoint& origin);
     double pageScaleFactor() const { return m_pageScaleFactor; }
 
-    void setDeviceScaleFactor(float);
     float deviceScaleFactor() const;
-
-    void setOverrideBackingScaleFactor(float);
-    float overrideBackingScaleFactor() const { return m_overrideBackingScaleFactor; }
+    void setIntrinsicDeviceScaleFactor(float);
+    void setCustomDeviceScaleFactor(float);
 
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);
@@ -862,8 +860,8 @@ private:
     double m_textZoomFactor;
     double m_pageZoomFactor;
     double m_pageScaleFactor;
-    float m_deviceScaleFactor;
-    float m_overrideBackingScaleFactor;
+    float m_intrinsicDeviceScaleFactor;
+    float m_customDeviceScaleFactor;
 
     bool m_drawsBackground;
     bool m_drawsTransparentBackground;

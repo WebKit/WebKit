@@ -110,7 +110,7 @@ struct WKViewInterpretKeyEventsParameters {
 };
 
 @interface WKView ()
-- (float)_deviceScaleFactor;
+- (float)_intrinsicDeviceScaleFactor;
 - (void)_setDrawingAreaSize:(NSSize)size;
 - (void)_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState;
 - (void)_disableComplexTextInputIfNecessary;
@@ -1858,7 +1858,7 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
 #endif
     }
 
-    _data->_page->setDeviceScaleFactor([self _deviceScaleFactor]);
+    _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
 }
 
 - (void)_windowDidBecomeKey:(NSNotification *)notification
@@ -1906,7 +1906,7 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
 
 - (void)_windowDidChangeResolution:(NSNotification *)notification
 {
-    _data->_page->setDeviceScaleFactor([self _deviceScaleFactor]);
+    _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
 }
 
 static void drawPageBackground(CGContextRef context, WebPageProxy* page, const IntRect& rect)
@@ -2064,7 +2064,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     }
 }
 
-- (float)_deviceScaleFactor
+- (float)_intrinsicDeviceScaleFactor
 {
     NSWindow *window = [self window];
 #if !defined(BUILDING_ON_SNOW_LEOPARD)

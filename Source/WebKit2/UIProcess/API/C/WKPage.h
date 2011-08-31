@@ -349,8 +349,8 @@ typedef bool (*WKPageSessionStateFilterCallback)(WKPageRef page, WKStringRef val
 WK_EXPORT WKDataRef WKPageCopySessionState(WKPageRef page, void* context, WKPageSessionStateFilterCallback urlAllowedCallback);
 WK_EXPORT void WKPageRestoreFromSessionState(WKPageRef page, WKDataRef sessionStateData);
 
-WK_EXPORT double WKPageGetOverrideBackingScaleFactor(WKPageRef page);
-WK_EXPORT void WKPageSetOverrideBackingScaleFactor(WKPageRef page, double overrideScaleFactor);
+WK_EXPORT double WKPageGetBackingScaleFactor(WKPageRef page);
+WK_EXPORT void WKPageSetCustomBackingScaleFactor(WKPageRef page, double customScaleFactor);
 
 WK_EXPORT bool WKPageSupportsTextZoom(WKPageRef page);
 WK_EXPORT double WKPageGetTextZoomFactor(WKPageRef page);

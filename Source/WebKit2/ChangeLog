@@ -1,3 +1,36 @@
+2011-08-31  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67322
+        Re-name overrideBackingScaleFactor
+
+        Reviewed by John Sullivan.
+
+        API is now WKPageSetCustomBackingScaleFactor() and WKPageGetBackingScaleFactor() 
+        which returns the custom scale factor if one was set, and the intrinsic scale 
+        factor otherwise. 
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetBackingScaleFactor):
+        (WKPageSetCustomBackingScaleFactor):
+        * UIProcess/API/C/WKPage.h:
+
+        Re-named _deviceScaleFactor to _intrinsicDeviceScaleFactor since it only ever 
+        refers to the intrinsic value.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView _windowDidChangeResolution:]):
+        (-[WKView _intrinsicDeviceScaleFactor]):
+
+        WebPageProxy stores both the customDeviceScaleFactor and the 
+        intrinsicDeviceScaleFactor. deviceScaleFactor() returns the appropriate value that 
+        should be the one used. 
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setIntrinsicDeviceScaleFactor):
+        (WebKit::WebPageProxy::deviceScaleFactor):
+        (WebKit::WebPageProxy::setCustomDeviceScaleFactor):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+
 2011-08-31  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION(r93902): Can't open external links on gmail

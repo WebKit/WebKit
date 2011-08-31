@@ -258,14 +258,14 @@ double WKPageGetTextZoomFactor(WKPageRef pageRef)
     return toImpl(pageRef)->textZoomFactor();
 }
 
-double WKPageGetOverrideBackingScaleFactor(WKPageRef pageRef)
+double WKPageGetBackingScaleFactor(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->overrideBackingScaleFactor();
+    return toImpl(pageRef)->deviceScaleFactor();
 }
 
-void WKPageSetOverrideBackingScaleFactor(WKPageRef pageRef, double overrideScaleFactor)
+void WKPageSetCustomBackingScaleFactor(WKPageRef pageRef, double customScaleFactor)
 {
-    toImpl(pageRef)->setOverrideBackingScaleFactor(overrideScaleFactor);
+    toImpl(pageRef)->setCustomDeviceScaleFactor(customScaleFactor);
 }
 
 bool WKPageSupportsTextZoom(WKPageRef pageRef)

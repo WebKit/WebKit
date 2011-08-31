@@ -144,8 +144,8 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_textZoomFactor(1)
     , m_pageZoomFactor(1)
     , m_pageScaleFactor(1)
-    , m_deviceScaleFactor(1)
-    , m_overrideBackingScaleFactor(0)
+    , m_intrinsicDeviceScaleFactor(1)
+    , m_customDeviceScaleFactor(0)
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
     , m_areMemoryCacheClientCallsEnabled(true)
@@ -1107,36 +1107,36 @@ void WebPageProxy::scalePage(double scale, const IntPoint& origin)
     process()->send(Messages::WebPage::ScalePage(scale, origin), m_pageID);
 }
 
-void WebPageProxy::setDeviceScaleFactor(float scaleFactor)
+void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
 {
     if (!isValid())
         return;
 
-    if (m_deviceScaleFactor == scaleFactor)
+    if (m_intrinsicDeviceScaleFactor == scaleFactor)
         return;
 
-    m_deviceScaleFactor = scaleFactor;
+    m_intrinsicDeviceScaleFactor = scaleFactor;
     m_drawingArea->deviceScaleFactorDidChange();
 }
 
 float WebPageProxy::deviceScaleFactor() const
 {
-    if (m_overrideBackingScaleFactor)
-        return m_overrideBackingScaleFactor;
-    return m_deviceScaleFactor;
+    if (m_customDeviceScaleFactor)
+        return m_customDeviceScaleFactor;
+    return m_intrinsicDeviceScaleFactor;
 }
 
-void WebPageProxy::setOverrideBackingScaleFactor(float overrideScaleFactor)
+void WebPageProxy::setCustomDeviceScaleFactor(float customScaleFactor)
 {
     if (!isValid())
         return;
 
-    if (m_overrideBackingScaleFactor == overrideScaleFactor)
+    if (m_customDeviceScaleFactor == customScaleFactor)
         return;
 
     float oldScaleFactor = deviceScaleFactor();
 
-    m_overrideBackingScaleFactor = overrideScaleFactor;
+    m_customDeviceScaleFactor = customScaleFactor;
 
     if (deviceScaleFactor() != oldScaleFactor)
         m_drawingArea->deviceScaleFactorDidChange();
@@ -2992,7 +2992,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient.canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_uiClient.canRunModal();
-    parameters.deviceScaleFactor = m_deviceScaleFactor;
+    parameters.deviceScaleFactor = m_intrinsicDeviceScaleFactor;
 
 #if PLATFORM(MAC)
     parameters.isSmartInsertDeleteEnabled = m_isSmartInsertDeleteEnabled;

@@ -1,3 +1,17 @@
+2011-08-31  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67322
+        Re-name overrideBackingScaleFactor
+
+        Reviewed by John Sullivan.
+
+        _setOverrideBackingScaleFactor is now _setCustomBackingScaleFactor
+        * WebView/WebView.mm:
+        (-[WebView _setCustomBackingScaleFactor:]):
+        (-[WebView _deviceScaleFactor]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewPrivate.h:
+
 2011-08-30  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9281695> Add text search API for getting the DOM range of a text match
