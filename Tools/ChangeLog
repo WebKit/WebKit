@@ -1,3 +1,12 @@
+2011-08-31  Adam Barth  <abarth@webkit.org>
+
+        Move summary.html to garden-o-matic.html.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/summary.html.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/garden-o-matic.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/summary.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/summary.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/summary.html: Removed.
+
 2011-08-31  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] DRT linux should pass nativeKeyCode to plugins
