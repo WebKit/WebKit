@@ -1,3 +1,15 @@
+2011-08-31  Peter Beverloo  <peter@chromium.org>
+
+        Add Android's platform specification and the right atomic functions.
+        https://bugs.webkit.org/show_bug.cgi?id=66687
+
+        Reviewed by Adam Barth.
+
+        * wtf/Atomics.h:
+        (WTF::atomicIncrement):
+        (WTF::atomicDecrement):
+        * wtf/Platform.h:
+
 2011-08-30  Oliver Hunt  <oliver@apple.com>
 
         Add support for checked arithmetic
