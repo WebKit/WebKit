@@ -1,3 +1,18 @@
+2011-08-31  Alexei Svitkine  <asvitkine@chromium.org>
+
+        Chromium Mac: Tweak rubber banding overhang shadows. Add a drop shadow from the browser's toolbar.
+        https://bugs.webkit.org/show_bug.cgi?id=67289
+
+        Chromium bug: http://crbug.com/93228
+
+        Reviewed by Dimitri Glazkov.
+
+        No new tests, since this merely tweaks Chromium overhang area appearance.
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::paintGivenTickmarks):
+        (WebCore::ScrollbarThemeChromiumMac::paintOverhangAreas):
+
 2011-08-31  Tony Chang  <tony@chromium.org>
 
         Remove webcore_bindings (including DerivedSources##.cpp) from the critical path
