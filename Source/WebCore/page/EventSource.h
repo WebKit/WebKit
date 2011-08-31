@@ -97,7 +97,7 @@ namespace WebCore {
         virtual void didFailRedirectCheck();
 
         void connect();
-        void endRequest();
+        void networkRequestEnded();
         void scheduleReconnect();
         void reconnectTimerFired(Timer<EventSource>*);
         void parseEventStream();
@@ -112,7 +112,6 @@ namespace WebCore {
         Timer<EventSource> m_reconnectTimer;
         Vector<UChar> m_receiveBuf;
         bool m_discardTrailingNewline;
-        bool m_failSilently;
         bool m_requestInFlight;
 
         String m_eventName;

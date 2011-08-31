@@ -1,3 +1,42 @@
+2011-08-31  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/eventsource/workers/eventsource-simple.html is a flaky crash because of
+        eventsource-status-error-iframe-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=61523
+
+        Reviewed by Nate Chapin.
+
+        The problem here was that canceling EventSource during frame removal erroneously resulted
+        in event dispatch, and event handler re-entered frame destruction code.
+
+        * page/EventSource.h: Renamed endRequest() to networkRequestEnded(), because this method
+        doesn't end request. It implements "reestablish the connection" or "fail the connection"
+        algotithms from the spec, depending on current state.
+        Removed m_failSilently, since we can make this decision with existing data, and want to
+        fail silently by default (e.g. when detaching a frame cancels all loads).
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::EventSource): Don't initialize m_failSilently.
+        (WebCore::EventSource::~EventSource): Assert taht we are in a correct state.
+        (WebCore::EventSource::connect): Ditto.
+        (WebCore::EventSource::networkRequestEnded): Moved errorevent dispatch elsewhere.
+        (WebCore::EventSource::scheduleReconnect): Error event should always be queued when
+        reconnecting; firing it synchronously after starting m_reconnectTimer implements that.
+        (WebCore::EventSource::reconnectTimerFired): Assert that state is correct (the timer is
+        stopped if EventSource is stopped while waiting on the timer).
+        (WebCore::EventSource::close): Don't set m_state before calling cancel() - it will indirectly
+        call didFail(), which asserts that EventSource is not stopped yet.
+        (WebCore::EventSource::didReceiveResponse): Explicitly dispatch an error event, since it
+        is no longer dispatched when canceling, and canceling is the only way to stop a ThreadableLoader.
+        Removed a special case for 2xx responses, since it's no longer in the spec.
+        (WebCore::EventSource::didReceiveData): Assert that state is correct.
+        (WebCore::EventSource::didFinishLoading): Don't set state to CONNECTING after parsing remaining
+        response bytes - that may well result in dispatching an event whose handler calls close().
+        (WebCore::EventSource::didFail): It's simple now - we always reconnect unless the request
+        got canceled.
+        (WebCore::EventSource::didFailRedirectCheck): Dispatch error event explicitly, as we are
+        not going to attempt reconnecting.
+
 2011-08-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94116.
