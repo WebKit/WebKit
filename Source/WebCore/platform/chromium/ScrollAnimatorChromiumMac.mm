@@ -506,7 +506,7 @@ bool ScrollAnimatorChromiumMac::scroll(ScrollbarOrientation orientation, ScrollG
     return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 #endif
 
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"AppleScrollAnimationEnabled"])
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"AppleScrollAnimationEnabled"] || !m_scrollableArea->scrollAnimatorEnabled())
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
     if (granularity == ScrollByPixel)

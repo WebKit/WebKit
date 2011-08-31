@@ -207,7 +207,7 @@ Settings::Settings(Page* page)
     , m_allowDisplayOfInsecureContent(true)
     , m_allowRunningOfInsecureContent(true)
 #if ENABLE(SMOOTH_SCROLLING)
-    , m_scrollAnimatorEnabled(false)
+    , m_scrollAnimatorEnabled(true)
 #endif
 #if ENABLE(WEB_SOCKETS)
     , m_useHixie76WebSocketProtocol(true)

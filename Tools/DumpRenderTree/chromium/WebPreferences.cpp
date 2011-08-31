@@ -176,6 +176,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setAllowScriptsToCloseWindows(false);
     settings->setNeedsSiteSpecificQuirks(true);
     settings->setEditableLinkBehaviorNeverLive();
+    settings->setEnableScrollAnimator(false);
     settings->setFontRenderingModeNormal();
     settings->setTextDirectionSubmenuInclusionBehaviorNeverIncluded();
     settings->setUsesEncodingDetector(false);

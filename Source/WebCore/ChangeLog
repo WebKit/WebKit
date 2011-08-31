@@ -1,3 +1,23 @@
+2011-08-31  Nico Weber  <thakis@chromium.org>
+
+        Make ScrollAnimator(Chromium)?Mac check scrollAnimatorEnabled()
+        https://bugs.webkit.org/show_bug.cgi?id=67297
+
+        Reviewed by Tony Chang.
+
+        I need this to disable smooth scrolling in chromium tests. I'm making
+        the change to ScrollAnimatorMac to make unforking the file easier. I
+        changed scrollAnimatorEnabled() to default to true so that this change
+        is a no-op for Safari; in chromium the flag is set explicitly to true
+        or false anyway.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * platform/chromium/ScrollAnimatorChromiumMac.mm:
+        (WebCore::ScrollAnimatorChromiumMac::scroll):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::scroll):
+
 2011-08-31  Nate Chapin  <japhet@chromium.org>
 
         Don't load resources with empty urls, since this
