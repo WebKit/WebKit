@@ -1,3 +1,10 @@
+2011-08-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed build fix. Restore debugger_script_source target dependency
+        broken in http://trac.webkit.org/changeset/94082.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-08-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Early return in CSSPrimitiveValue::getDoubleValueInternal() omits additional invalid enums

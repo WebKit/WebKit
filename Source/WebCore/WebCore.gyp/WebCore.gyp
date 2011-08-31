@@ -927,7 +927,6 @@
         'webcore_bindings_sources',
         'inspector_protocol_sources',
         'injected_script_source',
-        'debugger_script_source',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
@@ -1635,6 +1634,7 @@
       'type': 'static_library',
       'dependencies': [
         'webcore_prerequisites',
+        'debugger_script_source'
       ],
       # This is needed for mac because of webkit_system_interface. It'd be nice
       # if this hard dependency could be split off the rest.
