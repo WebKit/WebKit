@@ -186,13 +186,15 @@ public:
         NoRestrictions = 0,
         RequireUserGestureForLoadRestriction = 1 << 0,
         RequireUserGestureForRateChangeRestriction = 1 << 1,
-        RequireUserGestureForFullScreenRestriction = 1 << 2
+        RequireUserGestureForFullScreenRestriction = 1 << 2,
+        RequirePageConsentToLoadMedia = 1 << 3,
     };
     typedef unsigned BehaviorRestrictions;
     
     bool requireUserGestureForLoad() const { return m_restrictions & RequireUserGestureForLoadRestriction; }
     bool requireUserGestureForRateChange() const { return m_restrictions & RequireUserGestureForRateChangeRestriction; }
     bool requireUserGestureForFullScreen() const { return m_restrictions & RequireUserGestureForFullScreenRestriction; }
+    bool requirePageConsentToLoadMedia() const { return m_restrictions & RequirePageConsentToLoadMedia; }
 
     void setBehaviorRestrictions(BehaviorRestrictions restrictions) { m_restrictions = restrictions; }
 
@@ -334,6 +336,8 @@ private:
     void setPausedInternal(bool);
 
     virtual void mediaCanStart();
+
+    void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
 
     void setShouldDelayLoadEvent(bool);
 
