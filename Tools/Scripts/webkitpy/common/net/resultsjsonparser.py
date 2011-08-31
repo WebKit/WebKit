@@ -34,6 +34,7 @@ except ImportError:
     import webkitpy.thirdparty.simplejson as json
 
 from webkitpy.common.memoized import memoized
+from webkitpy.common.system.deprecated_logging import log
 # FIXME: common should never import from new-run-webkit-tests, one of these files needs to move.
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.models import test_expectations, test_results, test_failures
