@@ -2605,14 +2605,15 @@ BUGCR74979 SKIP MAC GPU : media/video-canvas-alpha.html = IMAGE
 
 BUGWK67116 GPU DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
 
-// This test needs completely new baselines.
-BUGCR75354 BUGWK55718 : media/media-document-audio-repaint.html = IMAGE+TEXT IMAGE
+// Skip test test since this test uses layoutTestController.display()
+// that needs to be implemented for GPU
+BUGCR94918 GPU SKIP : media/media-document-audio-repaint.html = IMAGE+TEXT IMAGE
 
 BUGWK55968 MAC GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT
 BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
 // 2 pixel stretching when rendering some videos with the GPU (Now it's flaky)
-BUGCR74102 LINUX GPU : media/video-controls-rendering.html = PASS IMAGE
+BUGCR94409 LINUX GPU : media/video-controls-rendering.html = PASS IMAGE
 
 BUGCR72223 : media/video-frame-accurate-seek.html = PASS IMAGE
 
