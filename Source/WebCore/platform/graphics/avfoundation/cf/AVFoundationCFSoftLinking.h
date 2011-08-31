@@ -171,6 +171,9 @@ SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerSetRate, void, __cdecl, (AVCFPlay
 SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerSetVolume, void, __cdecl, (AVCFPlayerRef player, Float32 volume), (player, volume))
 #define AVCFPlayerSetVolume softLink_AVCFPlayerSetVolume
 
+SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFURLAssetCopyAudiovisualMIMETypes, CFArrayRef, __cdecl, (), ())
+#define AVCFURLAssetCopyAudiovisualMIMETypes softLink_AVCFURLAssetCopyAudiovisualMIMETypes
+
 SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFURLAssetCreateWithURLAndOptions, AVCFURLAssetRef, __cdecl, (CFAllocatorRef allocator, CFURLRef URL, CFDictionaryRef options, dispatch_queue_t notificationQueue), (allocator, URL, options, notificationQueue))
 #define AVCFURLAssetCreateWithURLAndOptions softLink_AVCFURLAssetCreateWithURLAndOptions
 
