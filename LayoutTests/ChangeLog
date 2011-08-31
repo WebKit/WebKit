@@ -1,3 +1,10 @@
+2011-08-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, update Mac-Leopard expectations for multicol tests.
+
+        * platform/chromium-cg-mac-leopard/fast/multicol/overflow-unsplittable-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/multicol/positive-leading-expected.png: Added.
+
 2011-08-31  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [WebSocket] Prevent unnecessary pywebsocket warnings on layout tests.
