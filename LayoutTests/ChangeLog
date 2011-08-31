@@ -1,3 +1,12 @@
+2011-08-31  Ojan Vafai  <ojan@chromium.org>
+
+        fix bug in flexbox test with offsetWidth/offsetLeft of 0
+        https://bugs.webkit.org/show_bug.cgi?id=67330
+
+        Reviewed by Tony Chang.
+
+        * css3/flexbox/resources/flexbox.js:
+
 2011-08-31  Kenji Imasaki  <imasaki@chromium.org>
 
         [Chromium] Update a bug number in test expectation file and skip
