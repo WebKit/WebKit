@@ -1,3 +1,11 @@
+2011-08-31  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r93713 and r93909.
+
+        * fast/files/create-blob-url-crash-expected.txt:
+        * platform/gtk/css2.1/t0602-c13-inheritance-00-e-expected.txt:
+        * platform/gtk/css2.1/t090204-display-change-01-b-ao-expected.txt:
+
 2011-08-30  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: rename sourceFile to uiSourceCode and get rid of sourceFileId where possible.
