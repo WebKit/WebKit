@@ -1,3 +1,10 @@
+2011-08-31  Oliver Hunt  <oliver@apple.com>
+
+        Move CheckedArithmeticOperations.cpp to the intended location
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp: Renamed from Tools/TestWebKitAPI/Tests/CheckedArithmeticOperations.cpp.
+
 2011-08-31  Elliot Poger  <epoger@google.com>
 
         add unittest to validate the complete set of Chromium configurations
