@@ -1,5 +1,22 @@
 2011-08-31  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening. Add and update platform specific expected files after r94109.
+
+        Based on digging of Gabor Rapcsanyi.
+
+        * platform/qt/fast/table/table-after-child-in-table-expected.txt:
+        * platform/qt/fast/table/table-before-child-in-table-expected.txt:
+        * platform/qt/fast/table/table-before-child-style-update-expected.png: Added.
+        * platform/qt/fast/table/table-before-child-style-update-expected.txt: Added.
+        * platform/qt/fast/table/table-row-after-child-in-block-expected.txt:
+        * platform/qt/fast/table/table-row-after-child-in-table-expected.txt:
+        * platform/qt/fast/table/table-row-before-child-in-block-expected.txt:
+        * platform/qt/fast/table/table-row-before-child-in-table-expected.txt:
+        * platform/qt/fast/table/table-row-before-child-style-update-expected.png: Added.
+        * platform/qt/fast/table/table-row-before-child-style-update-expected.txt: Added.
+
+2011-08-31  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening. Update platform specific expected files after r94147.
 
         Based on digging of Gabor Rapcsanyi.
