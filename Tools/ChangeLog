@@ -1,3 +1,30 @@
+2011-08-31  Eric Seidel  <eric@webkit.org>
+
+        Add queues.webkit.org/active-bots page to make it easy to see which bots are down
+        https://bugs.webkit.org/show_bug.cgi?id=67314
+
+        Reviewed by Adam Barth.
+
+        Very simple page.  Just lists all the bots, what queue they belong to and what we last heard from them.
+        If we haven't heard from a bot in the last 500 messages (last day or so), then it won't show up here.
+        This makes it very easy for me to see which of my cr-jail bots might be down at any one time.
+
+        I also moved a bunch of code into dashboard.css which belonged there.
+
+        * QueueStatusServer/handlers/activebots.py: Added.
+        * QueueStatusServer/main.py:
+        * QueueStatusServer/stylesheets/dashboard.css:
+        (.queue_bubble):
+        (.queue_name):
+        (.last_heard_from):
+        (.status_text):
+        (.alive):
+        (.behind):
+        (.dead):
+        * QueueStatusServer/templates/activebots.html: Added.
+        * QueueStatusServer/templates/dashboard.html:
+        * QueueStatusServer/templates/recentstatus.html:
+
 2011-08-31  Oliver Hunt  <oliver@apple.com>
 
         Move CheckedArithmeticOperations.cpp to the intended location

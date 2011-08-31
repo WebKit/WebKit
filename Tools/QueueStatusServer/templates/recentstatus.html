@@ -3,32 +3,6 @@
 <head>
 <title>WebKit Queue Status</title>
 <link type="text/css" rel="stylesheet" href="/stylesheets/dashboard.css" />
-<style>
-.queue_bubble {
-    border: 1px solid black;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    padding: 5px;
-}
-.queue_name {
-    float:left;
-}
-.last_heard_from {
-    float: right;
-}
-.status_text {
-    clear: both;
-}
-.alive {
-    background-color: #8FDF5F;
-}
-.behind {
-    background-color: #FFFC6C;
-}
-.dead {
-    background-color: #E98080;
-}
-</style>
 </head>
 <body>
 <h1>WebKit Queue Status</h1>
@@ -50,5 +24,6 @@
     </div>
 </div>
 {% endfor %}
+<a href='/active-bots'>List of all active bots</a>
 </body>
 </html>
