@@ -46,38 +46,6 @@ var kExampleResultsByTest = {
     }
 }
 
-test("infobarMessageForCompileErrors", 1, function() {
-    var message = ui.infobarMessageForCompileErrors(['Mock Builder', 'Another Builder']);
-    message.wrap('<wrapper></wrapper>');
-    equal(message.parent().html(),
-        '<div class="compile-errors">Build Failed:<ul>' +
-            '<li><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Mock+Builder">Mock Builder</a></li>' +
-            '<li><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Another+Builder">Another Builder</a></li>' +
-        '</ul></div>');
-});
-
-test("rolloutReasonForTestNameList", 2, function() {
-    equal(ui.rolloutReasonForTestNameList(["path/to/test.html"]), "Broke:\n* path/to/test.html");
-    equal(ui.rolloutReasonForTestNameList(["path/to/test.html", "another/test.html"]), "Broke:\n* path/to/test.html\n* another/test.html");
-});
-
-test("failureDetailsStatus", 1, function() {
-    var status = ui.failureDetailsStatus({
-        'builderName': 'Mock Builder',
-        'testName': 'userscripts/another-test.html',
-        'failureTypeList': ['TEXT'],
-    }, ['Mock Builder', 'Another Builder']);
-    status.wrap('<wrapper></wrapper>');
-    equal(status.parent().html(),
-        '<span>' +
-            '<span class="test-name TEXT">userscripts/another-test.html</span>' +
-            '<span class="builder-list">' +
-                '<span class="builder-name selected">Mock Builder</span>' +
-                '<span class="builder-name">Another Builder</span>' +
-            '</span>' +
-        '</span>');
-});
-
 test("results.ResultsGrid", 1, function() {
     var grid = new ui.results.ResultsGrid()
     grid.addResults([
@@ -131,40 +99,6 @@ test("results.ResultsGrid (empty)", 1, function() {
     var grid = new ui.results.ResultsGrid()
     grid.addResults([]);
     equal(grid.innerHTML, '');
-});
-
-test("summarizeFailure", 1, function() {
-    var failureAnalysis = {
-        "testName": "svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html",
-        "resultNodesByBuilder": {
-            "Webkit Mac10.5 (CG)": {
-                "expected": "IMAGE",
-                "actual": "PASS"
-            },
-            "Webkit Mac10.5 (CG)(dbg)(2)": {
-                "expected": "IMAGE",
-                "actual":"PASS"
-            }
-        }
-    }
-
-    var failureSummary = ui.summarizeFailure(failureAnalysis);
-    var failureInfoList = ui.failureInfoListForSummary(failureSummary);
-
-    deepEqual(failureInfoList, [{
-        "testName": "svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html",
-        "builderName": "Webkit Mac10.5 (CG)",
-        "failureTypeList": [
-            "PASS"
-        ]
-      }, {
-        "testName": "svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html",
-        "builderName": "Webkit Mac10.5 (CG)(dbg)(2)",
-        "failureTypeList": [
-            "PASS"
-        ]
-      }
-    ]);
 });
 
 test("time", 6, function() {

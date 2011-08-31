@@ -1,3 +1,20 @@
+2011-08-30  Adam Barth  <abarth@webkit.org>
+
+        Remove old-style UI from garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=67257
+
+        Reviewed by Dimitri Glazkov.
+
+        This code is nowhere near as awesome as the new hotness.  Let's remove
+        it so it doesn't weigh us down.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/main.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/unexpected-passes.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/unexpected-passes.html: Removed.
+
 2011-08-30  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [WebSocket] update pywebsocket to 0.6b5.
