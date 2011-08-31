@@ -70,7 +70,7 @@ BUGCR89468 : css3/selectors3 = PASS FAIL
 BUGWK43668 SKIP : media/track/ = TIMEOUT
 
 // Tests for MediaSource API. Feature is not yet functional.
-BUGWK64731 SKIP : http/tests/media/media-source/ = TIMEOUT 
+BUGWK64731 SKIP : http/tests/media/media-source/ = TIMEOUT
 
 // Chrome does not support WebArchives yet.
 BUGCR10395 SKIP : webarchive = PASS FAIL

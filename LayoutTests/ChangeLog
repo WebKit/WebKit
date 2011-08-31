@@ -1,5 +1,12 @@
 2011-08-30  David Levin  <levin@chromium.org>
 
+        [chromium] Update result due to r94114.
+
+        * platform/chromium-win/svg/custom/pan-direction-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/custom/pan-direction-expected.png.
+        * platform/chromium/test_expectations.txt:
+
+2011-08-30  David Levin  <levin@chromium.org>
+
         [chromium] Update due to r94147.
 
         * platform/chromium-mac/fast/dom/prototype-inheritance-expected.txt: Copied from LayoutTests/platform/chromium/fast/dom/prototype-inheritance-expected.txt.
