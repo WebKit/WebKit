@@ -1,3 +1,12 @@
+2011-08-31  Elliot Poger  <epoger@google.com>
+
+        add unittest to validate the complete set of Chromium configurations
+        https://bugs.webkit.org/show_bug.cgi?id=67211
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+
 2011-08-31  Nico Weber  <thakis@chromium.org>
 
         Make ScrollAnimator(Chromium)?Mac check scrollAnimatorEnabled()

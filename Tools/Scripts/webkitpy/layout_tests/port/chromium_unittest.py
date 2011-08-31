@@ -41,6 +41,7 @@ import chromium_linux
 import chromium_mac
 import chromium_win
 
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port import port_testcase
 
 
@@ -118,6 +119,48 @@ class ChromiumDriverTest(unittest.TestCase):
 class ChromiumPortTest(port_testcase.PortTestCase):
     def port_maker(self, platform):
         return chromium.ChromiumPort
+
+    def test_all_test_configurations(self):
+        """Validate the complete set of configurations this port knows about."""
+        port = chromium.ChromiumPort()
+        self.assertEquals(set(port.all_test_configurations()), set([
+            TestConfiguration('leopard', 'x86', 'debug', 'cpu'),
+            TestConfiguration('leopard', 'x86', 'debug', 'gpu'),
+            TestConfiguration('leopard', 'x86', 'debug', 'cpu-cg'),
+            TestConfiguration('leopard', 'x86', 'debug', 'gpu-cg'),
+            TestConfiguration('leopard', 'x86', 'release', 'cpu'),
+            TestConfiguration('leopard', 'x86', 'release', 'gpu'),
+            TestConfiguration('leopard', 'x86', 'release', 'cpu-cg'),
+            TestConfiguration('leopard', 'x86', 'release', 'gpu-cg'),
+            TestConfiguration('snowleopard', 'x86', 'debug', 'cpu'),
+            TestConfiguration('snowleopard', 'x86', 'debug', 'gpu'),
+            TestConfiguration('snowleopard', 'x86', 'debug', 'cpu-cg'),
+            TestConfiguration('snowleopard', 'x86', 'debug', 'gpu-cg'),
+            TestConfiguration('snowleopard', 'x86', 'release', 'cpu'),
+            TestConfiguration('snowleopard', 'x86', 'release', 'gpu'),
+            TestConfiguration('snowleopard', 'x86', 'release', 'cpu-cg'),
+            TestConfiguration('snowleopard', 'x86', 'release', 'gpu-cg'),
+            TestConfiguration('xp', 'x86', 'debug', 'cpu'),
+            TestConfiguration('xp', 'x86', 'debug', 'gpu'),
+            TestConfiguration('xp', 'x86', 'release', 'cpu'),
+            TestConfiguration('xp', 'x86', 'release', 'gpu'),
+            TestConfiguration('vista', 'x86', 'debug', 'cpu'),
+            TestConfiguration('vista', 'x86', 'debug', 'gpu'),
+            TestConfiguration('vista', 'x86', 'release', 'cpu'),
+            TestConfiguration('vista', 'x86', 'release', 'gpu'),
+            TestConfiguration('win7', 'x86', 'debug', 'cpu'),
+            TestConfiguration('win7', 'x86', 'debug', 'gpu'),
+            TestConfiguration('win7', 'x86', 'release', 'cpu'),
+            TestConfiguration('win7', 'x86', 'release', 'gpu'),
+            TestConfiguration('lucid', 'x86', 'debug', 'cpu'),
+            TestConfiguration('lucid', 'x86', 'debug', 'gpu'),
+            TestConfiguration('lucid', 'x86', 'release', 'cpu'),
+            TestConfiguration('lucid', 'x86', 'release', 'gpu'),
+            TestConfiguration('lucid', 'x86_64', 'debug', 'cpu'),
+            TestConfiguration('lucid', 'x86_64', 'debug', 'gpu'),
+            TestConfiguration('lucid', 'x86_64', 'release', 'cpu'),
+            TestConfiguration('lucid', 'x86_64', 'release', 'gpu'),
+        ]))
 
     def test_driver_cmd_line(self):
         # Override this test since ChromiumPort doesn't implement driver_cmd_line().
