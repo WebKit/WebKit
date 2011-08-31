@@ -24,8 +24,9 @@
  */
 
 body {
- font-family: 'Open Sans';
- font-size: 14px;
+  font-family: 'Open Sans';
+  font-size: 14px;
+  margin: 0px;
 }
 
 a {
