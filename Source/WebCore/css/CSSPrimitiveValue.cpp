@@ -48,6 +48,55 @@ using namespace WTF;
 
 namespace WebCore {
 
+static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::UnitTypes unitType)
+{
+    switch (unitType) {
+    case CSSPrimitiveValue:: CSS_CM:
+    case CSSPrimitiveValue:: CSS_DEG:
+    case CSSPrimitiveValue:: CSS_DIMENSION:
+    case CSSPrimitiveValue:: CSS_EMS:
+    case CSSPrimitiveValue:: CSS_EXS:
+    case CSSPrimitiveValue:: CSS_GRAD:
+    case CSSPrimitiveValue:: CSS_HZ:
+    case CSSPrimitiveValue:: CSS_IN:
+    case CSSPrimitiveValue:: CSS_KHZ:
+    case CSSPrimitiveValue:: CSS_MM:
+    case CSSPrimitiveValue:: CSS_MS:
+    case CSSPrimitiveValue:: CSS_NUMBER:
+    case CSSPrimitiveValue:: CSS_PERCENTAGE:
+    case CSSPrimitiveValue:: CSS_PC:
+    case CSSPrimitiveValue:: CSS_PT:
+    case CSSPrimitiveValue:: CSS_PX:
+    case CSSPrimitiveValue:: CSS_RAD:
+    case CSSPrimitiveValue:: CSS_REMS:
+    case CSSPrimitiveValue:: CSS_S:
+    case CSSPrimitiveValue:: CSS_TURN:
+        return true;
+    case CSSPrimitiveValue:: CSS_ATTR:
+    case CSSPrimitiveValue:: CSS_COUNTER:
+    case CSSPrimitiveValue:: CSS_COUNTER_NAME:
+    case CSSPrimitiveValue:: CSS_DASHBOARD_REGION:
+    case CSSPrimitiveValue:: CSS_FROM_FLOW:
+    case CSSPrimitiveValue:: CSS_IDENT:
+    case CSSPrimitiveValue:: CSS_PAIR:
+    case CSSPrimitiveValue:: CSS_PARSER_HEXCOLOR:
+    case CSSPrimitiveValue:: CSS_PARSER_IDENTIFIER:
+    case CSSPrimitiveValue:: CSS_PARSER_INTEGER:
+    case CSSPrimitiveValue:: CSS_PARSER_OPERATOR:
+    case CSSPrimitiveValue:: CSS_RECT:
+    case CSSPrimitiveValue:: CSS_RGBCOLOR:
+    case CSSPrimitiveValue:: CSS_SHAPE:
+    case CSSPrimitiveValue:: CSS_STRING:
+    case CSSPrimitiveValue:: CSS_UNICODE_RANGE:
+    case CSSPrimitiveValue:: CSS_UNKNOWN:
+    case CSSPrimitiveValue:: CSS_URI:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 static CSSPrimitiveValue::UnitCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
 {
     // Here we violate the spec (http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSPrimitiveValue) and allow conversions
@@ -452,7 +501,7 @@ CSSPrimitiveValue::UnitTypes CSSPrimitiveValue::canonicalUnitTypeForCategory(Uni
 
 bool CSSPrimitiveValue::getDoubleValueInternal(UnitTypes requestedUnitType, double* result) const
 {
-    if (m_type < CSS_NUMBER || (m_type > CSS_DIMENSION && m_type < CSS_TURN) || requestedUnitType < CSS_NUMBER || (requestedUnitType > CSS_DIMENSION && requestedUnitType < CSS_TURN))
+    if (!isValidCSSUnitTypeForDoubleConversion(static_cast<UnitTypes>(m_type)) || !isValidCSSUnitTypeForDoubleConversion(requestedUnitType))
         return false;
     if (requestedUnitType == m_type || requestedUnitType == CSS_DIMENSION) {
         *result = m_value.num;
