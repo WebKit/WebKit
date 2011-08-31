@@ -1,3 +1,15 @@
+2011-08-31  David Levin  <levin@chromium.org>
+
+        [chromium] Update test expectation due to r94206 and r94211.
+
+        * platform/chromium-win/fast/borders/border-image-source-expected.png: Added.
+        * platform/chromium-win/fast/borders/border-image-source-expected.txt: Added.
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/captions1-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/captions2-expected.png:
+
 2011-08-31  Tom Sepez  <tsepez@chromium.org>
 
         Fix XSS filter bypass by multiply decoding both the URL and the body
