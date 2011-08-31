@@ -1,5 +1,12 @@
 2011-08-31  Balazs Kelemen  <kbalazs@webkit.org>
 
+        [Qt] Unreviewed gardening.
+        Skipped the wrong test in a previous gardening.
+
+        * platform/qt/Skipped:
+
+2011-08-31  Balazs Kelemen  <kbalazs@webkit.org>
+
         [Qt] Incorrect results for svg/custom/getBBox-js.svg
         Unreviewed gardening.
 
