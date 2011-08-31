@@ -21,10 +21,11 @@ function createArrayBufferContainingAllDistinctBytes()
 }
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/workers/resources/binary-frames");
-if (ws.binaryType === "blob")
-    postMessage("PASS: ws.binaryType is \"blob\"");
+ws.binaryType = "arraybuffer";
+if (ws.binaryType === "arraybuffer")
+    postMessage("PASS: ws.binaryType is \"arraybuffer\"");
 else
-    postMessage("FAIL: ws.binaryType should be \"blob\" but was \"" + ws.binaryType + "\"");
+    postMessage("FAIL: ws.binaryType should be \"arraybuffer\" but was \"" + ws.binaryType + "\"");
 
 var receivedMessages = [];
 var expectedValues = [createArrayBufferContainingHelloWorld(), createEmptyArrayBuffer(), createArrayBufferContainingAllDistinctBytes()];
@@ -40,34 +41,20 @@ ws.onclose = function(closeEvent)
         postMessage("PASS: receivedMessages.length is " + expectedValues.length);
     else
         postMessage("FAIL: receivedMessages.length should be " + expectedValues.length + " but was " + receivedMessages.length);
-    check(0);
+    for (var i = 0; i < expectedValues.length; ++i)
+        check(i);
+    postMessage("DONE");
 };
 
 function check(index)
 {
-    if (index == expectedValues.length) {
-        postMessage("DONE");
-        return;
-    }
-
     postMessage("INFO: Checking message #" + index + ".");
     var responseType = '' + receivedMessages[index];
-    if (responseType === "[object Blob]")
-        postMessage("PASS: responseType is \"[object Blob]\"");
+    if (responseType === "[object ArrayBuffer]")
+        postMessage("PASS: responseType is \"[object ArrayBuffer]\"");
     else
-        postMessage("FAIL: responseType should be \"[object Blob]\" but was \"" + responseType + "\"");
-    var reader = new FileReader();
-    reader.readAsArrayBuffer(receivedMessages[index]);
-    reader.onload = function(event)
-    {
-        checkArrayBuffer(index, reader.result, expectedValues[index]);
-        check(index + 1);
-    };
-    reader.onerror = function(event)
-    {
-        postMessage("FAIL: Failed to read blob: error code = " + reader.error.code);
-        check(index + 1);
-    };
+        postMessage("FAIL: responseType should be \"[object ArrayBuffer]\" but was \"" + responseType + "\"");
+    checkArrayBuffer(index, receivedMessages[index], expectedValues[index]);
 }
 
 function checkArrayBuffer(testIndex, actual, expected)

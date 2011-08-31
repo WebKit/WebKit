@@ -1,3 +1,22 @@
+2011-08-31  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Receive binary message as ArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=67180
+
+        Reviewed by Kent Tamura.
+
+        * http/tests/websocket/tests/hybi/receive-arraybuffer-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/receive-arraybuffer.html:
+        Added. Connect to binary-frames_wsh.py (which is also used from receive-blob.html) and
+        check the content of MessageEvent's data attribute.
+        * http/tests/websocket/tests/hybi/receive-blob.html:
+        Update function names to match ones in receive-arraybuffer.html.
+        * http/tests/websocket/tests/hybi/workers/receive-arraybuffer-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/workers/receive-arraybuffer.html: Added.
+        * http/tests/websocket/tests/hybi/workers/resources/receive-arraybuffer.js: Added.
+        * http/tests/websocket/tests/hybi/workers/resources/receive-blob.js:
+        Same as receive-blob.html above.
+
 2011-08-31  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r94109 and r93909.

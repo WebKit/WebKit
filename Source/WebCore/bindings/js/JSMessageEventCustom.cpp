@@ -31,6 +31,7 @@
 #include "config.h"
 #include "JSMessageEvent.h"
 
+#include "JSArrayBuffer.h"
 #include "JSBlob.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
@@ -64,6 +65,10 @@ JSValue JSMessageEvent::data(ExecState* exec) const
 
     case MessageEvent::DataTypeBlob:
         result = toJS(exec, globalObject(), event->dataAsBlob());
+        break;
+
+    case MessageEvent::DataTypeArrayBuffer:
+        result = toJS(exec, globalObject(), event->dataAsArrayBuffer());
         break;
     }
 

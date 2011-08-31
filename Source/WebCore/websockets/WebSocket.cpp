@@ -415,7 +415,7 @@ void WebSocket::didReceiveBinaryData(PassOwnPtr<Vector<char> > binaryData)
     }
 
     case BinaryTypeArrayBuffer:
-        m_channel->fail("Cannot receive WebSocket binary data as ArrayBuffer yet.");
+        dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData->data(), binaryData->size())));
         break;
     }
 }

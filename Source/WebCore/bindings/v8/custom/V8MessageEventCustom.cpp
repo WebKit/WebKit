@@ -34,6 +34,7 @@
 #include "MessageEvent.h"
 #include "SerializedScriptValue.h"
 
+#include "V8ArrayBuffer.h"
 #include "V8Binding.h"
 #include "V8Blob.h"
 #include "V8DOMWindow.h"
@@ -65,6 +66,10 @@ v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> n
 
     case MessageEvent::DataTypeBlob:
         result = toV8(event->dataAsBlob());
+        break;
+
+    case MessageEvent::DataTypeArrayBuffer:
+        result = toV8(event->dataAsArrayBuffer());
         break;
     }
 

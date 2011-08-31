@@ -1,3 +1,27 @@
+2011-08-31  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Receive binary message as ArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=67180
+
+        Reviewed by Kent Tamura.
+
+        Tests: http/tests/websocket/tests/hybi/receive-arraybuffer.html
+               http/tests/websocket/tests/hybi/workers/receive-arraybuffer.html
+
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::data): Convert ArrayBuffer to JSValue.
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::dataAccessorGetter): Convert ArrayBuffer to v8::Value.
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        * dom/MessageEvent.h:
+        Added DataTypeArrayBuffer and ArrayBuffer-related functions.
+        (WebCore::MessageEvent::create):
+        (WebCore::MessageEvent::dataAsArrayBuffer):
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didReceiveBinaryData):
+        Construct an ArrayBuffer from binaryData and raise MessageEvent.
+
 2011-08-31  Keishi Hattori  <keishi@webkit.org>
 
         input color: onchange event is not fired when changing color from color chooser

@@ -68,6 +68,15 @@ MessageEvent::MessageEvent(PassRefPtr<Blob> data)
 {
 }
 
+MessageEvent::MessageEvent(PassRefPtr<ArrayBuffer> data)
+    : Event(eventNames().messageEvent, false, false)
+    , m_dataType(DataTypeArrayBuffer)
+    , m_dataAsArrayBuffer(data)
+    , m_origin("")
+    , m_lastEventId("")
+{
+}
+
 MessageEvent::~MessageEvent()
 {
 }

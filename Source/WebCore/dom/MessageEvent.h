@@ -28,6 +28,7 @@
 #ifndef MessageEvent_h
 #define MessageEvent_h
 
+#include "ArrayBuffer.h"
 #include "Blob.h"
 #include "DOMWindow.h"
 #include "Event.h"
@@ -56,6 +57,10 @@ namespace WebCore {
         {
             return adoptRef(new MessageEvent(data));
         }
+        static PassRefPtr<MessageEvent> create(PassRefPtr<ArrayBuffer> data)
+        {
+            return adoptRef(new MessageEvent(data));
+        }
         virtual ~MessageEvent();
 
         void initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, DOMWindow* source, PassOwnPtr<MessagePortArray>);
@@ -78,23 +83,27 @@ namespace WebCore {
         enum DataType {
             DataTypeSerializedScriptValue,
             DataTypeString,
-            DataTypeBlob
+            DataTypeBlob,
+            DataTypeArrayBuffer
         };
         DataType dataType() const { return m_dataType; }
         SerializedScriptValue* dataAsSerializedScriptValue() const { return m_dataAsSerializedScriptValue.get(); }
         String dataAsString() const { return m_dataAsString; }
         Blob* dataAsBlob() const { return m_dataAsBlob.get(); }
+        ArrayBuffer* dataAsArrayBuffer() const { return m_dataAsArrayBuffer.get(); }
 
     private:
         MessageEvent();
         MessageEvent(PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortArray>);
         explicit MessageEvent(const String& data);
         explicit MessageEvent(PassRefPtr<Blob> data);
+        explicit MessageEvent(PassRefPtr<ArrayBuffer> data);
 
         DataType m_dataType;
         RefPtr<SerializedScriptValue> m_dataAsSerializedScriptValue;
         String m_dataAsString;
         RefPtr<Blob> m_dataAsBlob;
+        RefPtr<ArrayBuffer> m_dataAsArrayBuffer;
         String m_origin;
         String m_lastEventId;
         RefPtr<DOMWindow> m_source;

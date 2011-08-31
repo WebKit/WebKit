@@ -8,7 +8,7 @@
 <div id="description"></div>
 <div id="console"></div>
 <script>
-description("WebSocket: Receive Blobs.");
+description("WebSocket: Receive ArrayBuffers.");
 
 window.jsTestIsAsync = true;
 if (window.layoutTestController)
@@ -37,7 +37,8 @@ function createArrayBufferContainingAllDistinctBytes()
 }
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/binary-frames");
-shouldBeEqualToString("ws.binaryType", "blob");
+ws.binaryType = "arraybuffer";
+shouldBeEqualToString("ws.binaryType", "arraybuffer");
 
 var closeEvent;
 var receivedMessages = [];
@@ -53,33 +54,19 @@ ws.onclose = function(event)
     closeEvent = event;
 
     shouldEvaluateTo("receivedMessages.length", expectedValues.length);
-    check(0);
+    for (var i = 0; i < expectedValues.length; ++i)
+        check(i);
+    finishJSTest();
 };
 
 var responseType;
 
 function check(index)
 {
-    if (index == expectedValues.length) {
-        finishJSTest();
-        return;
-    }
-
     debug("Checking message #" + index + ".");
     responseType = '' + receivedMessages[index];
-    shouldBeEqualToString("responseType", "[object Blob]");
-    var reader = new FileReader();
-    reader.readAsArrayBuffer(receivedMessages[index]);
-    reader.onload = function(event)
-    {
-        checkArrayBuffer(index, reader.result, expectedValues[index]);
-        check(index + 1);
-    };
-    reader.onerror = function(event)
-    {
-        testFailed("Failed to read blob: error code = " + reader.error.code);
-        check(index + 1);
-    };
+    shouldBeEqualToString("responseType", "[object ArrayBuffer]");
+    checkArrayBuffer(index, receivedMessages[index], expectedValues[index]);
 }
 
 var actualArray;
