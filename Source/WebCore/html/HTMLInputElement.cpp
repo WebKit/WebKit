@@ -56,6 +56,11 @@
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
+#if ENABLE(INPUT_COLOR)
+#include "ColorChooser.h"
+#include "ColorInputType.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -1471,6 +1476,16 @@ bool HTMLInputElement::recalcWillValidate() const
     return m_inputType->supportsValidation() && HTMLTextFormControlElement::recalcWillValidate();
 }
 
+#if ENABLE(INPUT_COLOR)
+bool HTMLInputElement::connectToColorChooser()
+{
+    if (!m_inputType->isColorControl())
+        return false;
+    ColorChooser::chooser()->connectClient(static_cast<ColorInputType*>(m_inputType.get()));
+    return true;
+}
+#endif
+    
 #if ENABLE(DATALIST)
 
 HTMLElement* HTMLInputElement::list() const

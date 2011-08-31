@@ -60,6 +60,11 @@ public:
     Element* getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode&);
     void disableMemoryCache(bool disabled);
 
+#if ENABLE(INPUT_COLOR)
+    bool connectColorChooserClient(Element*);
+    void selectColorInColorChooser(const String& colorValue);
+#endif
+
 #if ENABLE(INSPECTOR)
     void setInspectorResourcesDataSizeLimits(Document*, int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode&);
 #else

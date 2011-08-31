@@ -228,6 +228,11 @@ public:
     bool isConformToInputMask(const String&) const;
 #endif
 
+#if ENABLE(INPUT_COLOR)
+    // For test purposes.
+    bool connectToColorChooser();
+#endif
+
     static const int maximumLength;
 
 protected:

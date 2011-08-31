@@ -1,3 +1,13 @@
+2011-08-31  Keishi Hattori  <keishi@webkit.org>
+
+        input color: onchange event is not fired when changing color from color chooser
+        https://bugs.webkit.org/show_bug.cgi?id=66848
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/color/input-color-onchange-event-expected.txt: Added.
+        * fast/forms/color/input-color-onchange-event.html: Added. Tests if change event is fired when user selects color from color chooser.
+
 2011-08-31  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r94147.

@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Test if change event fires properly when color chooser changes. Bug 66848');
+
+var input = document.createElement('input');
+input.type = 'color';
+input.value = '#000000';
+input.onchange = function() {
+    debug("value changed to " + input.value);
+    finishJSTest();
+};
+if (!internals.connectColorChooserClient(input))
+    testFailed("Could not connect ColorChooserClient.");
+internals.selectColorInColorChooser('#ff0000');
+// input.onchange should be called
+internals.selectColorInColorChooser('#ff0000');
+// input.onchange should not be called
+shouldBe('input.value', '"#ff0000"');
+</script>
+</body>
+</html>

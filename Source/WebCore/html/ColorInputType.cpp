@@ -167,10 +167,11 @@ void ColorInputType::detach()
 
 void ColorInputType::colorSelected(const Color& color)
 {
-    if (element()->disabled() || element()->readOnly())
+    if (element()->disabled() || element()->readOnly() || color == valueAsColor())
         return;
     element()->setValueFromRenderer(color.serialized());
     updateColorSwatch();
+    element()->dispatchFormControlChangeEvent();
 }
 
 bool ColorInputType::isColorInputType() const

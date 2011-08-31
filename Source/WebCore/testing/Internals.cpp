@@ -46,6 +46,10 @@
 #include "ShadowContentElement.h"
 #include "ShadowRoot.h"
 
+#if ENABLE(INPUT_COLOR)
+#include "ColorChooser.h"
+#endif
+
 namespace WebCore {
 
 const char* Internals::internalsId = "internals";
@@ -162,6 +166,23 @@ void Internals::disableMemoryCache(bool disabled)
 {
     WebCore::memoryCache()->setDisabled(disabled);
 }
+
+#if ENABLE(INPUT_COLOR)
+bool Internals::connectColorChooserClient(Element* element)
+{
+    if (!element->hasTagName(HTMLNames::inputTag))
+        return false;
+    HTMLInputElement* inputElement = element->toInputElement();
+    if (!inputElement)
+        return false;
+    return inputElement->connectToColorChooser();
+}
+
+void Internals::selectColorInColorChooser(const String& colorValue)
+{
+    ColorChooser::chooser()->colorSelected(Color(colorValue));
+}
+#endif
 
 #if ENABLE(INSPECTOR)
 void Internals::setInspectorResourcesDataSizeLimits(Document* document, int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode& ec)
