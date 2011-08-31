@@ -1,3 +1,10 @@
+2011-08-31  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, unskip fast/css/square-button-appearance.html which
+        got baselines in r93953.
+
+        * platform/gtk/test_expectations.txt:
+
 2011-08-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] 3 test started crashing somewhere between r93878-r93935
