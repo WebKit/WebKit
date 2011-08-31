@@ -521,4 +521,10 @@ void LayoutTestController::setPOSIXLocale(JSStringRef locale)
     setlocale(LC_ALL, localeBuf);
 }
 
+
+void LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload(bool shouldStayOnPage)
+{
+    InjectedBundle::shared().postNewBeforeUnloadReturnValue(!shouldStayOnPage);
+}
+
 } // namespace WTR

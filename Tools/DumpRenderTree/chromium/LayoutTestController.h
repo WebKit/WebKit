@@ -375,6 +375,8 @@ public:
     void setPageVisibility(const CppArgumentList&, CppVariant*);
     void resetPageVisibility(const CppArgumentList&, CppVariant*);
 
+    void setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList&, CppVariant*);
+
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }
@@ -434,6 +436,8 @@ public:
     };
 
     TaskList* taskList() { return &m_taskList; }
+
+    bool shouldStayOnPageAfterHandlingBeforeUnload() const { return m_shouldStayOnPageAfterHandlingBeforeUnload; }
 
 private:
     friend class WorkItem;
@@ -597,6 +601,8 @@ private:
     WebKit::WebURL m_userStyleSheetLocation;
 
     OwnPtr<WebKit::WebSpeechInputControllerMock> m_speechInputControllerMock;
+
+    bool m_shouldStayOnPageAfterHandlingBeforeUnload;
 };
 
 #endif // LayoutTestController_h

@@ -56,6 +56,9 @@ public:
     enum TimeoutDuration { ShortTimeout, LongTimeout };
     void runUntil(bool& done, TimeoutDuration);
     void notifyDone();
+    
+    bool beforeUnloadReturnValue() const { return m_beforeUnloadReturnValue; }
+    void setBeforeUnloadReturnValue(bool value) { m_beforeUnloadReturnValue = value; }
 
 private:
     void initialize(int argc, const char* argv[]);
@@ -121,6 +124,8 @@ private:
 
     bool m_didPrintWebProcessCrashedMessage;
     bool m_shouldExitWhenWebProcessCrashes;
+    
+    bool m_beforeUnloadReturnValue;
 };
 
 } // namespace WTR

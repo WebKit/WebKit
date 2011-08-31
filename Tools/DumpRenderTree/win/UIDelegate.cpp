@@ -465,14 +465,15 @@ HRESULT STDMETHODCALLTYPE UIDelegate::runJavaScriptTextInputPanelWithPrompt(
 
 HRESULT STDMETHODCALLTYPE UIDelegate::runBeforeUnloadConfirmPanelWithMessage( 
     /* [in] */ IWebView* /*sender*/,
-    /* [in] */ BSTR /*message*/,
+    /* [in] */ BSTR message,
     /* [in] */ IWebFrame* /*initiatedByFrame*/,
     /* [retval][out] */ BOOL* result)
 {
     if (!result)
         return E_POINTER;
-    *result = TRUE;
-    return E_NOTIMPL;
+    printf("CONFIRM NAVIGATION: %S\n", message ? message : L"");
+    *result = !gLayoutTestController->shouldStayOnPageAfterHandlingBeforeUnload();
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE UIDelegate::webViewAddMessageToConsole( 

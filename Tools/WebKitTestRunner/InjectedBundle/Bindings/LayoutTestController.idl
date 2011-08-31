@@ -112,6 +112,8 @@ module WTR {
         void setPOSIXLocale(in DOMString locale);
 
         void setWillSendRequestReturnsNull(in boolean flag);
+        
+        void setShouldStayOnPageAfterHandlingBeforeUnload(in boolean flag);
     };
 
 }

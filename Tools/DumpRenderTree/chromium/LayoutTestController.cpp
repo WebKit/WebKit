@@ -75,6 +75,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     , m_deferMainResourceDataLoad(false)
     , m_showDebugLayerTree(false)
     , m_workQueue(this)
+    , m_shouldStayOnPageAfterHandlingBeforeUnload(false)
 {
 
     // Initialize the map that associates methods of this class with the names
@@ -213,6 +214,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("deleteLocalStorageForOrigin", &LayoutTestController::deleteLocalStorageForOrigin);
     bindMethod("observeStorageTrackerNotifications", &LayoutTestController::observeStorageTrackerNotifications);
     bindMethod("syncLocalStorage", &LayoutTestController::syncLocalStorage);
+    bindMethod("setShouldStayOnPageAfterHandlingBeforeUnload", &LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload);
     
     // The fallback method is called when an unknown method is invoked.
     bindFallbackMethod(&LayoutTestController::fallbackMethod);
@@ -600,6 +602,7 @@ void LayoutTestController::reset()
         m_closeRemainingWindows = true;
     m_workQueue.reset();
     m_taskList.revokeAll();
+    m_shouldStayOnPageAfterHandlingBeforeUnload = false;
 }
 
 void LayoutTestController::locationChangeDone()
@@ -1801,6 +1804,14 @@ void LayoutTestController::observeStorageTrackerNotifications(const CppArgumentL
 void LayoutTestController::syncLocalStorage(const CppArgumentList&, CppVariant*)
 {
     // Not Implemented
+}
+
+void LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() == 1 && arguments[0].isBool())
+        m_shouldStayOnPageAfterHandlingBeforeUnload = arguments[0].toBoolean();
+
+    result->setNull();
 }
 
 void LayoutTestController::setPluginsEnabled(const CppArgumentList& arguments, CppVariant* result)

@@ -1,5 +1,19 @@
 2011-08-29  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 92982
+
+    2011-08-12  Andy Estes  <aestes@apple.com>
+
+            Cancel in onbeforeunload dialog sometime causes a button to stop working.
+            https://bugs.webkit.org/show_bug.cgi?id=26211
+
+            Reviewed by Alexey Proskuryakov.
+
+            * fast/loader/form-submission-after-beforeunload-cancel-expected.txt: Added.
+            * fast/loader/form-submission-after-beforeunload-cancel.html: Added.
+
+2011-08-29  Lucas Forschler  <lforschler@apple.com>
+
     Merged 93934
 
     2011-08-26  Gavin Barraclough  <barraclough@apple.com>
