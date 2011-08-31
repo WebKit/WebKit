@@ -277,7 +277,7 @@ layer at (0,0) size 784x3378
               RenderText {#text} at (1,1) size 33x22
                 text run at (1,1) width 33: "Data"
       RenderTable {TABLE} at (0,2105) size 96x166 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,74) size 76x72 [border: (3px solid #800080)]
+        RenderBlock {CAPTION} at (0,94) size 76x72 [border: (3px solid #800080)]
           RenderText {#text} at (24,3) size 54x66
             text run at (24,3) width 28: "The"
             text run at (16,25) width 44: "table's"
@@ -298,7 +298,7 @@ layer at (0,0) size 784x3378
               RenderText {#text} at (1,1) size 33x22
                 text run at (1,1) width 33: "Data"
       RenderTable {TABLE} at (0,2271) size 96x166 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,74) size 76x72 [border: (3px solid #800080)]
+        RenderBlock {CAPTION} at (0,94) size 76x72 [border: (3px solid #800080)]
           RenderText {#text} at (24,3) size 54x66
             text run at (24,3) width 28: "The"
             text run at (16,25) width 44: "table's"
@@ -319,7 +319,7 @@ layer at (0,0) size 784x3378
               RenderText {#text} at (1,1) size 33x22
                 text run at (1,1) width 33: "Data"
       RenderTable {TABLE} at (0,2452) size 96x161 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (0,74) size 76x72 [border: (3px solid #800080)]
+        RenderBlock {CAPTION} at (0,89) size 76x72 [border: (3px solid #800080)]
           RenderText {#text} at (24,3) size 54x66
             text run at (24,3) width 28: "The"
             text run at (16,25) width 44: "table's"

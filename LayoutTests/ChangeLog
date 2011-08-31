@@ -1,3 +1,25 @@
+2011-08-31  Robert Hogan  <robert@webkit.org>
+
+        Update platform-specific results after r94211
+
+        Unreviewed, update platform-specifc results.
+
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug10140-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug91057-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/core/captions1-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/core/captions2-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/core/captions3-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug10140-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug91057-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/core/captions1-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/core/captions2-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/core/captions3-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug10140-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug91057-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/core/captions1-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/core/captions2-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/core/captions3-expected.txt:
+
 2011-08-31  Simon Fraser  <simon.fraser@apple.com>
 
         Crash with -webkit-radial-gradient(top) gradient
