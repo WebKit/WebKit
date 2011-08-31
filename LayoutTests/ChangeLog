@@ -1,5 +1,11 @@
 2011-08-31  David Levin  <levin@chromium.org>
 
+        [chromium] Fix expectations due to r94213.
+
+        * platform/chromium-cg-mac/fast/tokenizer/script_extra_close-expected.txt: Removed.
+
+2011-08-31  David Levin  <levin@chromium.org>
+
         empty-urls.html is non-deterministic.
         https://bugs.webkit.org/show_bug.cgi?id=67327
 
