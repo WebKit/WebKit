@@ -177,7 +177,6 @@
     && !defined(__EABI__) \
     && !defined(__VFP_FP__) \
     && !defined(_WIN32_WCE) \
-    && !defined(ANDROID)
 #define WTF_CPU_MIDDLE_ENDIAN 1
 
 #endif
@@ -303,11 +302,6 @@
 /* ==== OS() - underlying operating system; only to be used for mandated low-level services like 
    virtual memory, not to choose a GUI toolkit ==== */
 
-/* OS(ANDROID) - Android */
-#ifdef ANDROID
-#define WTF_OS_ANDROID 1
-#endif
-
 /* OS(AIX) - AIX */
 #ifdef _AIX
 #define WTF_OS_AIX 1
@@ -395,7 +389,6 @@
 
 /* OS(UNIX) - Any Unix-like system */
 #if   OS(AIX)              \
-    || OS(ANDROID)          \
     || OS(DARWIN)           \
     || OS(FREEBSD)          \
     || OS(HAIKU)            \
@@ -695,7 +688,7 @@
 
 #if !OS(WINDOWS) && !OS(SOLARIS) && !OS(QNX) \
     && !OS(SYMBIAN) && !OS(HAIKU) && !OS(RVCT) \
-    && !OS(ANDROID) && !PLATFORM(BREWMP)
+    && !PLATFORM(BREWMP)
 #define HAVE_TM_GMTOFF 1
 #define HAVE_TM_ZONE 1
 #define HAVE_TIMEGM 1
@@ -762,16 +755,6 @@
 #elif OS(QNX)
 
 #define HAVE_ERRNO_H 1
-#define HAVE_MMAP 1
-#define HAVE_SBRK 1
-#define HAVE_STRINGS_H 1
-#define HAVE_SYS_PARAM_H 1
-#define HAVE_SYS_TIME_H 1
-
-#elif OS(ANDROID)
-
-#define HAVE_ERRNO_H 1
-#define HAVE_LANGINFO_H 0
 #define HAVE_MMAP 1
 #define HAVE_SBRK 1
 #define HAVE_STRINGS_H 1

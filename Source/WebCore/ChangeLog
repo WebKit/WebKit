@@ -1,3 +1,17 @@
+2011-08-31  Andrei Popescu  <andreip@google.com>
+
+        Investigate current uses of OS(ANDROID)
+        https://bugs.webkit.org/show_bug.cgi?id=66761
+
+        Reviewed by Darin Adler.
+
+        Remove the last legacy Android code.
+
+        No new tests needed as the code wasn't tested in the first place.
+
+        * bridge/jni/JNIUtility.cpp:
+        (JSC::Bindings::getJNIEnv):
+
 2011-08-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94082.

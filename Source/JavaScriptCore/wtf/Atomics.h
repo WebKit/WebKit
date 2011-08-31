@@ -65,8 +65,6 @@
 #include <windows.h>
 #elif OS(DARWIN)
 #include <libkern/OSAtomic.h>
-#elif OS(ANDROID)
-#include <cutils/atomic.h>
 #elif OS(QNX)
 #include <atomic.h>
 #elif COMPILER(GCC) && !OS(SYMBIAN)
@@ -102,11 +100,6 @@ inline int atomicDecrement(int volatile* addend) { return OSAtomicDecrement32Bar
 // Note, atomic_{add, sub}_value() return the previous value of addend's content.
 inline int atomicIncrement(int volatile* addend) { return static_cast<int>(atomic_add_value(reinterpret_cast<unsigned volatile*>(addend), 1)) + 1; }
 inline int atomicDecrement(int volatile* addend) { return static_cast<int>(atomic_sub_value(reinterpret_cast<unsigned volatile*>(addend), 1)) - 1; }
-
-#elif OS(ANDROID)
-
-inline int atomicIncrement(int volatile* addend) { return android_atomic_inc(addend); }
-inline int atomicDecrement(int volatile* addend) { return android_atomic_dec(addend); }
 
 #elif COMPILER(GCC) && !CPU(SPARC64) && !OS(SYMBIAN) // sizeof(_Atomic_word) != sizeof(int) on sparc64 gcc
 #define WTF_USE_LOCKFREE_THREADSAFEREFCOUNTED 1

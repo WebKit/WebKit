@@ -50,13 +50,6 @@
 #include <sys/time.h>
 #endif
 
-#if OS(ANDROID)
-#include "JNIUtility.h"
-#include "ThreadFunctionInvocation.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-#endif
-
 #if OS(MAC_OS_X) && !defined(BUILDING_ON_LEOPARD)
 #include <objc/objc-auto.h>
 #endif
@@ -153,38 +146,6 @@ void clearPthreadHandleForIdentifier(ThreadIdentifier id)
     threadMap().remove(id);
 }
 
-#if OS(ANDROID)
-static void* runThreadWithRegistration(void* arg)
-{
-    OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(static_cast<ThreadFunctionInvocation*>(arg));
-    JavaVM* vm = JSC::Bindings::getJavaVM();
-    JNIEnv* env;
-    void* ret = 0;
-    if (vm->AttachCurrentThread(&env, 0) == JNI_OK) {
-        ret = invocation->function(invocation->data);
-        vm->DetachCurrentThread();
-    }
-    return ret;
-}
-
-ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
-{
-    pthread_t threadHandle;
-
-    // On the Android platform, threads must be registered with the VM before they run.
-    OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(new ThreadFunctionInvocation(entryPoint, data));
-
-    if (pthread_create(&threadHandle, 0, runThreadWithRegistration, invocation.get())) {
-        LOG_ERROR("Failed to create pthread at entry point %p with data %p", entryPoint, data);
-        return 0;
-    }
-
-    // The thread will take ownership of invocation.
-    invocation.leakPtr();
-
-    return establishIdentifierForPthreadHandle(threadHandle);
-}
-#else
 ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
 {
     pthread_t threadHandle;
@@ -195,7 +156,6 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
 
     return establishIdentifierForPthreadHandle(threadHandle);
 }
-#endif
 
 void initializeCurrentThreadInternal(const char* threadName)
 {
