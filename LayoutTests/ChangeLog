@@ -1,3 +1,52 @@
+2011-08-31  Robert Hogan  <robert@webkit.org>
+
+        Add new platform-specific results from r94211
+        
+        Unreviewed.
+
+        * platform/gtk/css2.1/20110323/margin-applies-to-001-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/margin-applies-to-002-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/margin-applies-to-003-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/margin-applies-to-004-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/margin-applies-to-005-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/margin-applies-to-006-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/margin-applies-to-007-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/margin-applies-to-008-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/margin-applies-to-009-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/margin-applies-to-010-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/margin-applies-to-012-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/margin-applies-to-013-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/margin-applies-to-014-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/margin-applies-to-015-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-001-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-002-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-003-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-004-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-005-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-006-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-007-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-008-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-009-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-010-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-012-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-013-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-014-expected.txt: Added.
+        * platform/mac/css2.1/20110323/margin-applies-to-015-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-001-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-002-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-003-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-004-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-005-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-006-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-007-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-008-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-009-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-010-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-012-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-013-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-014-expected.txt: Added.
+        * platform/qt/css2.1/20110323/margin-applies-to-015-expected.txt: Added.
+
 2011-08-31  David Levin  <levin@chromium.org>
 
         [chromium] Update test expectation due to r94206 and r94211.
