@@ -1,3 +1,19 @@
+2011-08-31  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium Mac: Add fallback for drawing PDF overhang area
+        https://bugs.webkit.org/show_bug.cgi?id=66614
+
+        Reviewed by Darin Fisher.
+
+        This change adds a fallback for overhang drawing for PDF content. This fallback is needed until the PDF plugin uses the linen pattern to draw its own overhang.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::paintCustomOverhangArea):
+        * src/ChromeClientImpl.h:
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::paintCustomOverhangArea):
+        * src/WebPluginContainerImpl.h:
+
 2011-08-31  James Weatherall  <wez@chromium.org>
 
         [chromium] Have the FrameLoaderClient release any plugin widget

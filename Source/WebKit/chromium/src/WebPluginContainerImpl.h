@@ -134,6 +134,8 @@ public:
     void willStartLiveResize();
     void willEndLiveResize();
 
+    bool paintCustomOverhangArea(WebCore::GraphicsContext*, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&);
+
 private:
     WebPluginContainerImpl(WebCore::HTMLPlugInElement* element, WebPlugin* webPlugin);
     ~WebPluginContainerImpl();
