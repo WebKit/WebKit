@@ -1,3 +1,9 @@
+2011-08-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac build fix after r94128.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-08-30  Alice Boxhall  <aboxhall@chromium.org>
 
         Correctly report selected text range for accessibility APIs for role=textbox
