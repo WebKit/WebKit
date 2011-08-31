@@ -47,8 +47,11 @@ typedef void* LPVOID;
 typedef LPVOID HINTERNET;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || USE(CFURLSTORAGESESSIONS)
 #include <wtf/RetainPtr.h>
+#endif
+
+#if PLATFORM(MAC)
 #ifdef __OBJC__
 @class NSData;
 @class NSError;

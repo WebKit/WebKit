@@ -1,5 +1,11 @@
 2011-08-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Speculative WinCairo build fix after r94093.
+
+        * platform/network/ResourceHandle.h:
+
+2011-08-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Mac build fix after r94128.
 
         * WebCore.xcodeproj/project.pbxproj:
