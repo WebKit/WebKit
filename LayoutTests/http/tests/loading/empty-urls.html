@@ -4,15 +4,26 @@
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
-    layoutTestController.dumpResourceLoadCallbacks();
 }
 
 var expectedPasses = 6;
+var messages = new Array();
+var currentMessageIndex = 0;
 
 function log(message)
 {
     document.getElementById("console").appendChild(document.createTextNode(message));
     document.getElementById("console").appendChild(document.createElement("br"));
+}
+
+function logPass(message, messageNumber)
+{
+    messages[messageNumber] = 'PASS: ' + message;
+
+    while (messages[currentMessageIndex]) {
+        log(messages[currentMessageIndex]);
+        currentMessageIndex++;
+    }
 
     expectedPasses--;
     if (expectedPasses == 0 && window.layoutTestController)
@@ -29,12 +40,12 @@ function log(message)
 <object data="" onerror="log('FAIL: object onerror fired')"></object>
 <embed src="" onerror="log('FAIL: embed onerror fired')"></embed>
 <video poster="" onerror="log('FAIL: video poster onerror fired')"></video>
-<img src="" onerror="log('PASS: img onerror fired')"></img>
-<input type="image" src="" onerror="log('PASS: input type=image onerror fired')"></input>
-<script src="" onerror="log('PASS: script onerror fired')"></script>
-<video id="video" src="" onerror="log('PASS: video src onerror fired')"></video>
-<audio id="audio" src="" onerror="log('PASS: audio onerror fired')"></audio>
-<video><source src="" onerror="log('PASS: source onerror fired')"></source></video>
+<img src="" onerror="logPass('img onerror fired', 0)"></img>
+<input type="image" src="" onerror="logPass('input type=image onerror fired', 1)"></input>
+<script src="" onerror="logPass('script onerror fired', 2)"></script>
+<video id="video" src="" onerror="logPass('video src onerror fired', 3)"></video>
+<audio id="audio" src="" onerror="logPass('audio onerror fired', 4)"></audio>
+<video><source src="" onerror="logPass('source onerror fired', 5)"></source></video>
 <script>
 document.getElementById("video").load();
 document.getElementById("audio").load();
