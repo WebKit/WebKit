@@ -1229,6 +1229,7 @@ static const BatchedAttribute TestObjAttrs[] = {
     // Attribute 'hash' (Type: 'readonly attribute' ExtAttr: '')
     {"hash", TestObjInternal::hashAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
+
 static const BatchedCallback TestObjCallbacks[] = {
     {"voidMethod", TestObjInternal::voidMethodCallback},
     {"intMethod", TestObjInternal::intMethodCallback},
@@ -1259,6 +1260,7 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"methodWithCallbackAndOptionalArg", TestObjInternal::methodWithCallbackAndOptionalArgCallback},
     {"overloadedMethod", TestObjInternal::overloadedMethodCallback},
 };
+
 static const BatchedConstant TestObjConsts[] = {
     {"CONST_VALUE_0", static_cast<signed int>(0)},
     {"CONST_VALUE_1", static_cast<signed int>(1)},
@@ -1273,6 +1275,7 @@ static const BatchedConstant TestObjConsts[] = {
     {"CONST_VALUE_14", static_cast<signed int>(0x1abc)},
 };
 
+
 COMPILE_ASSERT(0 == TestObj::CONST_VALUE_0, TestObjEnumCONST_VALUE_0IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(1 == TestObj::CONST_VALUE_1, TestObjEnumCONST_VALUE_1IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(2 == TestObj::CONST_VALUE_2, TestObjEnumCONST_VALUE_2IsWrongUseDontCheckEnums);
@@ -1284,6 +1287,22 @@ COMPILE_ASSERT(0xffffffff == TestObj::CONST_VALUE_11, TestObjEnumCONST_VALUE_11I
 COMPILE_ASSERT(0x01 == TestObj::CONST_VALUE_12, TestObjEnumCONST_VALUE_12IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(0X20 == TestObj::CONST_VALUE_13, TestObjEnumCONST_VALUE_13IsWrongUseDontCheckEnums);
 COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWrongUseDontCheckEnums);
+
+v8::Handle<v8::Value> V8TestObj::constructorCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.Constructor");
+
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+
+
+    RefPtr<TestObj> obj = TestObj::create();
+
+    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, obj.get());
+    obj->ref();
+    V8DOMWrapper::setJSWrapperForDOMObject(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    return args.Holder();
+}
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {

@@ -23,8 +23,10 @@
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
+#include "ExceptionCode.h"
 #include "RuntimeEnabledFeatures.h"
 #include "V8Binding.h"
+#include "V8BindingMacros.h"
 #include "V8BindingState.h"
 #include "V8DOMWrapper.h"
 #include "V8IsolatedContext.h"
@@ -43,9 +45,34 @@ template <typename T> void V8_USE(T) { }
 
 v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestInterface.Contructor");
-    return V8Proxy::constructDOMObjectWithScriptExecutionContext<TestInterface>(args, &info);
+    INC_STATS("DOM.TestInterface.Constructor");
+
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+
+    ExceptionCode ec = 0;
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str1, args[0]);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str2, args[1]);
+
+    ScriptExecutionContext* context = getScriptExecutionContext();
+    if (!context)
+        return throwError("TestInterface constructor's associated context is not available", V8Proxy::ReferenceError);
+
+    RefPtr<TestInterface> obj = TestInterface::create(str1, str2, context, ec);
+    if (ec)
+        goto fail;
+
+    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, obj.get());
+    obj->ref();
+    V8DOMWrapper::setJSWrapperForActiveDOMObject(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    return args.Holder();
+  fail:
+    return throwError(ec);
 }
+
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
     desc->ReadOnlyPrototype();
@@ -54,7 +81,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
         0, 0,
         0, 0);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
-        desc->SetCallHandler(V8TestInterface::constructorCallback);
+    desc->SetCallHandler(V8TestInterface::constructorCallback);
     
 
     // Custom toString template

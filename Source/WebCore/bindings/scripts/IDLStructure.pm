@@ -40,6 +40,7 @@ struct( domClass => {
     functions => '@',    # List of 'domFunction'
     attributes => '@',    # List of 'domAttribute'    
     extendedAttributes => '$', # Extended attributes
+    constructor => '$', # Constructor
 });
 
 # Used to represent domClass contents (name of method, signature)
@@ -88,8 +89,8 @@ our $idlDataType = '[a-zA-Z0-9\ ]';   # Generic data type identifier
 # Magic IDL parsing regular expressions
 my $supportedTypes = "((?:unsigned )?(?:int|short|(?:long )?long)|(?:$idlIdNs*))";
 
-# Special IDL notations
-our $extendedAttributeSyntax = '\[[^]]*\]'; # Used for extended attributes
+# Special IDL notations. This regular expression extracts the string between the first [ and its corresponding ].
+our $extendedAttributeSyntax = qr/\[[^\[\]]*(?:(??{$IDLStructure::extendedAttributeSyntax})[^\[\]]*)*\]/x; # Used for extended attributes
 
 # Regular expression based IDL 'syntactical tokenizer' used in the IDLParser
 our $moduleSelector = 'module\s*(' . $idlId . '*)\s*{';

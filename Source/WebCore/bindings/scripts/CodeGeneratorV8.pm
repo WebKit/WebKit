@@ -354,7 +354,7 @@ END
         }
     }
 
-    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CanBeConstructed"}) {
+    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"Constructor"}) {
         push(@headerContent, <<END);
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments& args);
 END
@@ -1253,28 +1253,7 @@ END
 
     my $numParameters = @{$function->parameters};
 
-    my $requiresAllArguments;
-    my $requiresAllArgumentsDefault = "";
-    if (!$dataNode->extendedAttributes->{"LegacyDefaultOptionalArguments"}) {
-        $requiresAllArgumentsDefault = "Raise";
-    }
-    $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"} || $requiresAllArgumentsDefault;
-    if ($requiresAllArguments) {
-        my $numMandatoryParams = @{$function->parameters};
-        foreach my $param (reverse(@{$function->parameters})) {
-            if ($param->extendedAttributes->{"Optional"}) {
-                $numMandatoryParams--;
-            } else {
-                last;
-            }
-        }
-        push(@implContentDecls, "    if (args.Length() < $numMandatoryParams)\n");
-        if ($requiresAllArguments eq "Raise") {
-            push(@implContentDecls, "        return throwError(\"Not enough arguments\", V8Proxy::TypeError);\n");
-        } else {
-            push(@implContentDecls, "        return v8::Handle<v8::Value>();\n");
-        }
-    }
+    push(@implContentDecls, GenerateArgumentsCountCheck($function, $dataNode));
 
     my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implClassName);
 
@@ -1346,6 +1325,61 @@ END
 END
     }
 
+    my ($parameterCheckString, $paramIndex) = GenerateParametersCheck($function, $implClassName);
+    push(@implContentDecls, $parameterCheckString);
+
+    # Build the function call string.
+    push(@implContentDecls, GenerateFunctionCallString($function, $paramIndex, "    ", $implClassName));
+
+    if ($raisesExceptions) {
+        push(@implContentDecls, "    }\n");
+        push(@implContentDecls, "    fail:\n");
+        push(@implContentDecls, "    V8Proxy::setDOMException(ec);\n");
+        push(@implContentDecls, "    return v8::Handle<v8::Value>();\n");
+    }
+
+    push(@implContentDecls, "}\n\n");
+}
+
+sub GenerateArgumentsCountCheck
+{
+    my $function = shift;
+    my $dataNode = shift;
+
+    my $argumentsCountCheckString = "";
+    my $requiresAllArguments;
+    my $requiresAllArgumentsDefault = "";
+    if (!$dataNode->extendedAttributes->{"LegacyDefaultOptionalArguments"}) {
+        $requiresAllArgumentsDefault = "Raise";
+    }
+    $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"} || $requiresAllArgumentsDefault;
+    if ($requiresAllArguments) {
+        my $numMandatoryParams = @{$function->parameters};
+        foreach my $param (reverse(@{$function->parameters})) {
+            if ($param->extendedAttributes->{"Optional"}) {
+                $numMandatoryParams--;
+            } else {
+                last;
+            }
+        }
+        if ($numMandatoryParams >= 1) {
+            $argumentsCountCheckString .= "    if (args.Length() < $numMandatoryParams)\n";
+            if ($requiresAllArguments eq "Raise") {
+                $argumentsCountCheckString .= "        return throwError(\"Not enough arguments\", V8Proxy::TypeError);\n";
+            } else {
+                $argumentsCountCheckString .= "        return v8::Handle<v8::Value>();\n";
+            }
+        }
+    }
+    return $argumentsCountCheckString;
+}
+
+sub GenerateParametersCheck
+{
+    my $function = shift;
+    my $implClassName = shift;
+
+    my $parameterCheckString = "";
     my $paramIndex = 0;
     foreach my $parameter (@{$function->parameters}) {
         TranslateParameter($parameter);
@@ -1358,10 +1392,10 @@ END
         my $optional = $parameter->extendedAttributes->{"Optional"};        
         if ($optional && $optional ne "CallWithDefaultValue" && !$parameter->extendedAttributes->{"Callback"}) {
             # Generate early call if there are not enough parameters.
-            push(@implContentDecls, "    if (args.Length() <= $paramIndex) {\n");
+            $parameterCheckString .= "    if (args.Length() <= $paramIndex) {\n";
             my $functionCall = GenerateFunctionCallString($function, $paramIndex, "    " x 2, $implClassName);
-            push(@implContentDecls, $functionCall);
-            push(@implContentDecls, "    }\n");
+            $parameterCheckString .= $functionCall;
+            $parameterCheckString .= "    }\n";
         }
 
         $implIncludes{"ExceptionCode.h"} = 1;
@@ -1370,33 +1404,33 @@ END
             my $className = GetCallbackClassName($parameter->type);
             $implIncludes{"$className.h"} = 1;
             if ($parameter->extendedAttributes->{"Optional"}) {
-                push(@implContentDecls, "    RefPtr<" . $parameter->type . "> $parameterName;\n");
-                push(@implContentDecls, "    if (args.Length() > $paramIndex && !args[$paramIndex]->IsNull() && !args[$paramIndex]->IsUndefined()) {\n");
-                push(@implContentDecls, "        if (!args[$paramIndex]->IsObject())\n");
-                push(@implContentDecls, "            return throwError(TYPE_MISMATCH_ERR);\n");
-                push(@implContentDecls, "        $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n");
-                push(@implContentDecls, "    }\n");
+                $parameterCheckString .= "    RefPtr<" . $parameter->type . "> $parameterName;\n";
+                $parameterCheckString .= "    if (args.Length() > $paramIndex && !args[$paramIndex]->IsNull() && !args[$paramIndex]->IsUndefined()) {\n";
+                $parameterCheckString .= "        if (!args[$paramIndex]->IsObject())\n";
+                $parameterCheckString .= "            return throwError(TYPE_MISMATCH_ERR);\n";
+                $parameterCheckString .= "        $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n";
+                $parameterCheckString .= "    }\n";
             } else {
-                push(@implContentDecls, "    if (args.Length() <= $paramIndex || !args[$paramIndex]->IsObject())\n");
-                push(@implContentDecls, "        return throwError(TYPE_MISMATCH_ERR);\n");
-                push(@implContentDecls, "    RefPtr<" . $parameter->type . "> $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n");
+                $parameterCheckString .= "    if (args.Length() <= $paramIndex || !args[$paramIndex]->IsObject())\n";
+                $parameterCheckString .= "        return throwError(TYPE_MISMATCH_ERR);\n";
+                $parameterCheckString .= "    RefPtr<" . $parameter->type . "> $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n";
             }
         } elsif ($parameter->type eq "SerializedScriptValue") {
             $implIncludes{"SerializedScriptValue.h"} = 1;
-            push(@implContentDecls, "    bool ${parameterName}DidThrow = false;\n");
-            push(@implContentDecls, "    $nativeType $parameterName = SerializedScriptValue::create(args[$paramIndex], ${parameterName}DidThrow);\n");
-            push(@implContentDecls, "    if (${parameterName}DidThrow)\n");
-            push(@implContentDecls, "        return v8::Undefined();\n");
+            $parameterCheckString .= "    bool ${parameterName}DidThrow = false;\n";
+            $parameterCheckString .= "    $nativeType $parameterName = SerializedScriptValue::create(args[$paramIndex], ${parameterName}DidThrow);\n";
+            $parameterCheckString .= "    if (${parameterName}DidThrow)\n";
+            $parameterCheckString .= "        return v8::Undefined();\n";
         } elsif (TypeCanFailConversion($parameter)) {
-            push(@implContentDecls, "    $nativeType $parameterName = " .
-                 JSValueToNative($parameter, "args[$paramIndex]") . ";\n");
-            push(@implContentDecls, "    if (UNLIKELY(!$parameterName)) {\n");
-            push(@implContentDecls, "        ec = TYPE_MISMATCH_ERR;\n");
-            push(@implContentDecls, "        goto fail;\n");
-            push(@implContentDecls, "    }\n");
+            $parameterCheckString .= "    $nativeType $parameterName = " .
+                 JSValueToNative($parameter, "args[$paramIndex]") . ";\n";
+            $parameterCheckString .= "    if (UNLIKELY(!$parameterName)) {\n";
+            $parameterCheckString .= "        ec = TYPE_MISMATCH_ERR;\n";
+            $parameterCheckString .= "        goto fail;\n";
+            $parameterCheckString .= "    }\n";
         } elsif ($nativeType =~ /^V8Parameter/) {
             my $value = JSValueToNative($parameter, "args[$paramIndex]");
-            push(@implContentDecls, "    " . ConvertToV8Parameter($parameter, $nativeType, $parameterName, $value) . "\n");
+            $parameterCheckString .= "    " . ConvertToV8Parameter($parameter, $nativeType, $parameterName, $value) . "\n";
         } else {
             $implIncludes{"V8BindingMacros.h"} = 1;
             # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
@@ -1409,38 +1443,115 @@ END
                 my $argValue = "args[$paramIndex]";
                 my $argType = GetTypeFromSignature($parameter);
                 if (IsWrapperType($argType)) {
-                    push(@implContentDecls, "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !V8${argType}::HasInstance($argValue)) {\n");
-                    push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
-                    push(@implContentDecls, "        return notHandledByInterceptor();\n");
-                    push(@implContentDecls, "    }\n");
+                    $parameterCheckString .= "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !V8${argType}::HasInstance($argValue)) {\n";
+                    $parameterCheckString .= "        V8Proxy::throwTypeError();\n";
+                    $parameterCheckString .= "        return notHandledByInterceptor();\n";
+                    $parameterCheckString .= "    }\n";
                 }
             }
-            push(@implContentDecls, "    EXCEPTION_BLOCK($nativeType, $parameterName, " .
-                 JSValueToNative($parameter, "args[$paramIndex]") . ");\n");
+            $parameterCheckString .= "    EXCEPTION_BLOCK($nativeType, $parameterName, " .
+                 JSValueToNative($parameter, "args[$paramIndex]") . ");\n";
         }
 
         if ($parameter->extendedAttributes->{"IsIndex"}) {
-            push(@implContentDecls, "    if (UNLIKELY($parameterName < 0)) {\n");
-            push(@implContentDecls, "        ec = INDEX_SIZE_ERR;\n");
-            push(@implContentDecls, "        goto fail;\n");
-            push(@implContentDecls, "    }\n");
+            $parameterCheckString .= "    if (UNLIKELY($parameterName < 0)) {\n";
+            $parameterCheckString .= "        ec = INDEX_SIZE_ERR;\n";
+            $parameterCheckString .= "        goto fail;\n";
+            $parameterCheckString .= "    }\n";
         }
 
         $paramIndex++;
     }
+    return ($parameterCheckString, $paramIndex);
+}
 
-    # Build the function call string.
-    my $callString = GenerateFunctionCallString($function, $paramIndex, "    ", $implClassName);
-    push(@implContentDecls, "$callString");
+sub GenerateConstructorCallback
+{
+    my $function = shift;
+    my $dataNode = shift;
+    my $implClassName = shift;
 
-    if ($raisesExceptions) {
-        push(@implContentDecls, "    }\n");
-        push(@implContentDecls, "    fail:\n");
-        push(@implContentDecls, "    V8Proxy::setDOMException(ec);\n");
-        push(@implContentDecls, "    return v8::Handle<v8::Value>();\n");
+    my $raisesExceptions = @{$function->raisesExceptions};
+    if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+        $raisesExceptions = 1;
+    }
+    if (!$raisesExceptions) {
+        foreach my $parameter (@{$function->parameters}) {
+            if ((!$parameter->extendedAttributes->{"Callback"} and TypeCanFailConversion($parameter)) or $parameter->extendedAttributes->{"IsIndex"}) {
+                $raisesExceptions = 1;
+            }
+        }
     }
 
-    push(@implContentDecls, "}\n\n");
+    my @extraArgumentList;
+    push(@implContent, <<END);
+v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.${implClassName}.Constructor");
+
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+
+END
+
+    push(@implContent, GenerateArgumentsCountCheck($function, $dataNode));
+
+    if ($raisesExceptions) {
+        $implIncludes{"ExceptionCode.h"} = 1;
+        push(@implContent, "\n");
+        push(@implContent, "    ExceptionCode ec = 0;\n");
+    }
+
+    my ($parameterCheckString, $paramIndex) = GenerateParametersCheck($function, $implClassName);
+    push(@implContent, $parameterCheckString);
+
+    if ($dataNode->extendedAttributes->{"ConstructorWith"} && $dataNode->extendedAttributes->{"ConstructorWith"} eq "ScriptExecutionContext") {
+        push(@extraArgumentList, "context");
+        push(@implContent, <<END);
+
+    ScriptExecutionContext* context = getScriptExecutionContext();
+    if (!context)
+        return throwError("${implClassName} constructor's associated context is not available", V8Proxy::ReferenceError);
+END
+    }
+
+    if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+        push(@extraArgumentList, "ec");
+    }
+
+    my @argumentList;
+    my $index = 0;
+    foreach my $parameter (@{$function->parameters}) {
+        last if $index eq $paramIndex;
+        push(@argumentList, $parameter->name);
+        $index++;
+    }
+
+    my $argumentString = join(", ", @argumentList, @extraArgumentList);
+    push(@implContent, "\n");
+    push(@implContent, "    RefPtr<${implClassName}> obj = ${implClassName}::create(${argumentString});\n");
+
+    if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+        push(@implContent, "    if (ec)\n");
+        push(@implContent, "        goto fail;\n");
+    }
+
+    my $DOMObject = $dataNode->extendedAttributes->{"V8ConstructorSetsActiveDOMWrapper"} ? "ActiveDOMObject" : "DOMObject";
+    push(@implContent, <<END);
+
+    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, obj.get());
+    obj->ref();
+    V8DOMWrapper::setJSWrapperFor${DOMObject}(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    return args.Holder();
+END
+
+    if ($raisesExceptions) {
+        push(@implContent, "  fail:\n");
+        push(@implContent, "    return throwError(ec);\n");
+    }
+
+    push(@implContent, "}\n");
+    push(@implContent, "\n");
 }
 
 sub GenerateBatchedAttributeData
@@ -1901,7 +2012,7 @@ sub GenerateImplementation
     if (@disallowsShadowing) {
         push(@implContent, "static const BatchedAttribute shadowAttrs[] = {\n");
         GenerateBatchedAttributeData($dataNode, \@disallowsShadowing);
-        push(@implContent, "};\n");
+        push(@implContent, "};\n\n");
     }
 
     my $has_attributes = 0;
@@ -1909,7 +2020,7 @@ sub GenerateImplementation
         $has_attributes = 1;
         push(@implContent, "static const BatchedAttribute ${interfaceName}Attrs[] = {\n");
         GenerateBatchedAttributeData($dataNode, $attributes);
-        push(@implContent, "};\n");
+        push(@implContent, "};\n\n");
     }
 
     # Setup table of standard callback functions
@@ -1948,7 +2059,7 @@ sub GenerateImplementation
 END
         $num_callbacks++;
     }
-    push(@implContent, "};\n")  if $has_callbacks;
+    push(@implContent, "};\n\n")  if $has_callbacks;
 
     # Setup constants
     my $has_constants = 0;
@@ -1967,14 +2078,14 @@ END
 END
     }
     if ($has_constants) {
-        push(@implContent, "};\n");
+        push(@implContent, "};\n\n");
         push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($dataNode));
     }
 
     push(@implContentDecls, "} // namespace ${interfaceName}Internal\n\n");
 
     # In namespace WebCore, add generated implementation for 'CanBeConstructed'.
-    if ($dataNode->extendedAttributes->{"CanBeConstructed"} && !$dataNode->extendedAttributes->{"CustomConstructor"} && !$dataNode->extendedAttributes->{"V8CustomConstructor"}) {
+    if ($dataNode->extendedAttributes->{"CanBeConstructed"} && !$dataNode->extendedAttributes->{"CustomConstructor"} && !$dataNode->extendedAttributes->{"V8CustomConstructor"} && !$dataNode->extendedAttributes->{"Constructor"}) {
         my $v8ConstructFunction;
         my $callWith = $dataNode->extendedAttributes->{"CallWith"};
         if ($callWith and $callWith eq "ScriptExecutionContext") {
@@ -1988,8 +2099,13 @@ v8::Handle<v8::Value> ${className}::constructorCallback(const v8::Arguments& arg
     INC_STATS("DOM.${interfaceName}.Contructor");
     return V8Proxy::${v8ConstructFunction}<$interfaceName>(args, &info);
 }
+
 END
-   }
+    }
+
+    if ($dataNode->extendedAttributes->{"Constructor"}) {
+        GenerateConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
+    }
 
     my $access_check = "";
     if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !($interfaceName eq "DOMWindow")) {
@@ -2047,9 +2163,9 @@ END
         $implIncludes{"wtf/UnusedParam.h"} = 1;
     }
 
-    if ($dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CanBeConstructed"}) {
+    if ($dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructer"}) {
         push(@implContent, <<END);
-        desc->SetCallHandler(V8${interfaceName}::constructorCallback);
+    desc->SetCallHandler(V8${interfaceName}::constructorCallback);
 END
     }
 

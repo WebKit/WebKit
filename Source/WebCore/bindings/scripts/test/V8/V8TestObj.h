@@ -45,6 +45,7 @@ public:
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> customMethodCallback(const v8::Arguments&);
     static v8::Handle<v8::Value> customMethodWithArgsCallback(const v8::Arguments&);
+    static v8::Handle<v8::Value> constructorCallback(const v8::Arguments& args);
     static v8::Handle<v8::Value> customAttrAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info);
     static void customAttrAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;

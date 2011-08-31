@@ -53,6 +53,7 @@ static v8::Handle<v8::Value> methodCallback(const v8::Arguments& args)
 static const BatchedCallback TestMediaQueryListListenerCallbacks[] = {
     {"method", TestMediaQueryListListenerInternal::methodCallback},
 };
+
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListenerTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
     desc->ReadOnlyPrototype();

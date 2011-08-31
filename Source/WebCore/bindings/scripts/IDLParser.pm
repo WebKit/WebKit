@@ -22,6 +22,7 @@
 package IDLParser;
 
 use strict;
+use re 'eval';
 
 use IPC::Open2;
 use IDLStructure;
@@ -139,20 +140,85 @@ sub dumpExtendedAttributes
 sub parseExtendedAttributes
 {
     my $str = shift;
-    $str =~ s/\[\s*(.*?)\s*\]/$1/g;
+    $str =~ s/\[\s*(.*)\s*\]/$1/g;
 
     my %attrs = ();
 
-    foreach my $value (split(/\s*,\s*/, $str)) {
-        (my $name, my $val) = split(/\s*=\s*/, $value, 2);
+    while ($str !~ /^\s*$/) {
+        # Parse name
+        if ($str !~ /^\s*([\w\d]+)/) {
+            die("Invalid extended attribute: '$str'\n");
+        }
+        my $name = $1;
+        $str =~ s/^\s*([\w\d]+)//;
 
-        # Attributes with no value are set to be true
-        $val = 1 unless defined $val;
-        $attrs{$name} = $val;
-        die("Invalid extended attribute name: '$name'\n") if $name =~ /\s/;
+        if ($str =~ /^\s*=/) {
+            # Parse '=' value | '=' value ','
+            $str =~ s/^\s*=//;
+            if ($str =~ /^\s*([^,]*),?/) {
+                $attrs{$name} = $1;
+                $attrs{$name} =~ s/^(.*?)\s*$/$1/;
+                $str =~ s/^\s*([^,]*),?//;
+            } else {
+                die("Invalid extended attribute: '$str'\n");
+            }
+        } elsif ($str =~ /^\s*\(/) {
+            # Parse '(' arguments ')' | '(' arguments ')' ','
+            $str =~ s/^\s*\(//;
+            if ($str =~ /^([^)]*)\),?/) {
+                $attrs{$name} = $1;
+                $attrs{$name} =~ s/^(.*?)\s*$/$1/;
+                $str =~ s/^([^)]*)\),?//;
+            } else {
+                die("Invalid extended attribute: '$str'\n");
+            }
+        } elsif ($str =~ /^\s*,?/) {
+            # Parse '' | ','
+            if ($name eq "Constructor") {
+                $attrs{$name} = "";
+            } else {
+                $attrs{$name} = 1;
+            }
+            $str =~ s/^\s*,?//;
+        } else {
+            die("Invalid extended attribute: '$str'\n");
+        }
     }
 
     return \%attrs;
+}
+
+sub parseParameters
+{
+    my $newDataNode = shift;
+    my $methodSignature = shift;
+
+    # Split arguments at commas but only if the comma
+    # is not within attribute brackets, expressed here
+    # as being followed by a ']' without a preceding '['.
+    # Note that this assumes that attributes don't nest.
+    my @params = split(/,(?![^[]*\])/, $methodSignature);
+    foreach (@params) {
+        my $line = $_;
+
+        $line =~ /$IDLStructure::interfaceParameterSelector/;
+        my $paramDirection = $1;
+        my $paramExtendedAttributes = (defined($2) ? $2 : " "); chop($paramExtendedAttributes);
+        my $paramType = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
+        my $paramName = (defined($4) ? $4 : die("Parsing error!\nSource:\n$line\n)"));
+
+        my $paramDataNode = new domSignature();
+        $paramDataNode->direction($paramDirection);
+        $paramDataNode->name($paramName);
+        $paramDataNode->type($paramType);
+        $paramDataNode->extendedAttributes(parseExtendedAttributes($paramExtendedAttributes));
+
+        my $arrayRef = $newDataNode->parameters;
+        push(@$arrayRef, $paramDataNode);
+
+        print "  |   |>  Param; TYPE \"$paramType\" NAME \"$paramName\"" . 
+            dumpExtendedAttributes("\n  |              ", $paramDataNode->extendedAttributes) . "\n" unless $beQuiet;          
+    }
 }
 
 sub ParseInterface
@@ -220,7 +286,17 @@ sub ParseInterface
 
         # Fill in known parts of the domClass datastructure now...
         $dataNode->name($interfaceName);
-        $dataNode->extendedAttributes(parseExtendedAttributes($interfaceExtendedAttributes));
+        my $extendedAttributes = parseExtendedAttributes($interfaceExtendedAttributes);
+        if (defined $extendedAttributes->{"Constructor"}) {
+            my $newDataNode = new domFunction();
+            $newDataNode->signature(new domSignature());
+            $newDataNode->signature->name("Constructor");
+            $newDataNode->signature->extendedAttributes($extendedAttributes);
+            parseParameters($newDataNode, $extendedAttributes->{"Constructor"});
+            $extendedAttributes->{"Constructor"} = 1;
+            $dataNode->constructor($newDataNode);
+        }
+        $dataNode->extendedAttributes($extendedAttributes);
 
         # Inheritance detection
         my @interfaceParents = split(/,/, $interfaceBase);
@@ -299,32 +375,7 @@ sub ParseInterface
                 $methodException =~ s/\s+//g;
                 @{$newDataNode->raisesExceptions} = split(/,/, $methodException);
 
-                # Split arguments at commas but only if the comma
-                # is not within attribute brackets, expressed here
-                # as being followed by a ']' without a preceding '['.
-                # Note that this assumes that attributes don't nest.
-                my @params = split(/,(?![^[]*\])/, $methodSignature);
-                foreach(@params) {
-                    my $line = $_;
-
-                    $line =~ /$IDLStructure::interfaceParameterSelector/;
-                    my $paramDirection = $1;
-                    my $paramExtendedAttributes = (defined($2) ? $2 : " "); chop($paramExtendedAttributes);
-                    my $paramType = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
-                    my $paramName = (defined($4) ? $4 : die("Parsing error!\nSource:\n$line\n)"));
-
-                    my $paramDataNode = new domSignature();
-                    $paramDataNode->direction($paramDirection);
-                    $paramDataNode->name($paramName);
-                    $paramDataNode->type($paramType);
-                    $paramDataNode->extendedAttributes(parseExtendedAttributes($paramExtendedAttributes));
-
-                    my $arrayRef = $newDataNode->parameters;
-                    push(@$arrayRef, $paramDataNode);
-
-                    print "  |   |>  Param; TYPE \"$paramType\" NAME \"$paramName\"" . 
-                        dumpExtendedAttributes("\n  |              ", $paramDataNode->extendedAttributes) . "\n" unless $beQuiet;          
-                }
+                parseParameters($newDataNode, $methodSignature);
 
                 my $arrayRef = $dataNode->functions;
                 push(@$arrayRef, $newDataNode);
