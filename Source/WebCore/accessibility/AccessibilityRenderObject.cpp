@@ -2518,7 +2518,7 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
         return 0;
     
     Position indexPosition = pos.deepEquivalent();
-    if (indexPosition.isNull() || pos.rootEditableElement() != node)
+    if (indexPosition.isNull() || rootEditableElementForPosition(indexPosition) != node)
         return 0;
     
     ExceptionCode ec = 0;
@@ -2533,6 +2533,38 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
 #else
     return TextIterator::rangeLength(range.get());
 #endif
+}
+
+Element* AccessibilityRenderObject::rootEditableElementForPosition(const Position& position) const
+{
+    // Find the root editable or pseudo-editable (i.e. having an editable ARIA role) element.
+    Element* result = 0;
+    
+    Element* rootEditableElement = position.rootEditableElement();
+
+    for (Element* e = position.element(); e && e != rootEditableElement; e = e->parentElement()) {
+        if (nodeIsTextControl(e))
+            result = e;
+        if (e->hasTagName(bodyTag))
+            break;
+    }
+
+    if (result)
+        return result;
+
+    return rootEditableElement;
+}
+
+bool AccessibilityRenderObject::nodeIsTextControl(const Node* node) const
+{
+    if (!node)
+        return false;
+
+    const AccessibilityObject* axObjectForNode = axObjectCache()->getOrCreate(node->renderer());
+    if (!axObjectForNode)
+        return false;
+
+    return axObjectForNode->isTextControl();
 }
 
 LayoutRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
@@ -3026,7 +3058,7 @@ AccessibilityRole AccessibilityRenderObject::determineAriaRoleAttribute() const
     
     if (role)
         return role;
-    
+
     return UnknownRole;
 }
 

@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
@@ -247,7 +246,7 @@ public:
 
     virtual VisiblePosition visiblePositionForIndex(int) const;
     virtual int indexForVisiblePosition(const VisiblePosition&) const;
-    
+
     virtual PlainTextRange doAXRangeForLine(unsigned) const;
     virtual PlainTextRange doAXRangeForIndex(unsigned) const;
     
@@ -280,13 +279,15 @@ private:
     bool hasTextAlternative() const;
     String positionalDescriptionForMSAA() const;
     PlainTextRange ariaSelectedTextRange() const;
+    Element* rootEditableElementForPosition(const Position&) const;
+    bool nodeIsTextControl(const Node*) const;
 
     Element* menuElementForMenuButton() const;
     Element* menuItemElementForMenu() const;
     AccessibilityRole determineAccessibilityRole();
     AccessibilityRole determineAriaRoleAttribute() const;
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
-    
+
     bool isTabItemSelected() const;
     void alterSliderValue(bool increase);
     void changeValueByStep(bool increase);

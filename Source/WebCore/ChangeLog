@@ -1,3 +1,19 @@
+2011-08-30  Alice Boxhall  <aboxhall@chromium.org>
+
+        Correctly report selected text range for accessibility APIs for role=textbox
+        https://bugs.webkit.org/show_bug.cgi?id=65900
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/textbox-role-reports-selection.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::indexForVisiblePosition):
+        (WebCore::AccessibilityRenderObject::rootEditableElementForPosition):
+        (WebCore::AccessibilityRenderObject::nodeIsTextControl):
+        (WebCore::AccessibilityRenderObject::determineAriaRoleAttribute):
+        * accessibility/AccessibilityRenderObject.h:
+
 2011-08-30  Rachel Blum  <groby@chromium.org>
 
         The "port" property of an <a> whose href does not specify a port returns the wrong value
