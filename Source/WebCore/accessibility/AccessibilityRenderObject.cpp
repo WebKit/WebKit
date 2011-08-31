@@ -494,12 +494,16 @@ bool AccessibilityRenderObject::isAttachment() const
 bool AccessibilityRenderObject::isPasswordField() const
 {
     ASSERT(m_renderer);
-    if (!m_renderer->node() || !m_renderer->node()->hasTagName(inputTag))
+    if (!m_renderer->node() || !m_renderer->node()->isHTMLElement())
         return false;
     if (ariaRoleAttribute() != UnknownRole)
         return false;
 
-    return toHTMLInputElement(m_renderer->node())->isPasswordField();
+    HTMLInputElement* inputElement = m_renderer->node()->toInputElement();
+    if (!inputElement)
+        return false;
+
+    return inputElement->isPasswordField();
 }
     
 bool AccessibilityRenderObject::isFileUploadButton() const
@@ -585,20 +589,26 @@ bool AccessibilityRenderObject::isPressed() const
 bool AccessibilityRenderObject::isIndeterminate() const
 {
     ASSERT(m_renderer);
-    if (!m_renderer->node() || !m_renderer->node()->hasTagName(inputTag))
+    if (!m_renderer->node())
         return false;
 
-    return toHTMLInputElement(m_renderer->node())->isIndeterminate();
+    HTMLInputElement* inputElement = m_renderer->node()->toInputElement();
+    if (!inputElement)
+        return false;
+
+    return inputElement->isIndeterminate();
 }
 
 bool AccessibilityRenderObject::isNativeCheckboxOrRadio() const
 {
-    ASSERT(m_renderer);
-    if (!m_renderer->node() || !m_renderer->node()->hasTagName(inputTag))
-        return false;
-
-    HTMLInputElement* input = toHTMLInputElement(m_renderer->node());
-    return input->isCheckbox() || input->isRadioButton();
+    Node* elementNode = node();
+    if (elementNode) {
+        HTMLInputElement* input = elementNode->toInputElement();
+        if (input)
+            return input->isCheckbox() || input->isRadioButton();
+    }
+    
+    return false;
 }
     
 bool AccessibilityRenderObject::isChecked() const
@@ -608,8 +618,9 @@ bool AccessibilityRenderObject::isChecked() const
         return false;
 
     // First test for native checkedness semantics
-    if (m_renderer->node()->hasTagName(inputTag))
-        return toHTMLInputElement(m_renderer->node())->shouldAppearChecked();
+    HTMLInputElement* inputElement = m_renderer->node()->toInputElement();
+    if (inputElement)
+        return inputElement->shouldAppearChecked();
 
     // Else, if this is an ARIA checkbox or radio, respect the aria-checked attribute
     AccessibilityRole ariaRole = ariaRoleAttribute();

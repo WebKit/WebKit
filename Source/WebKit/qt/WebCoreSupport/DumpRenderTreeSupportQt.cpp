@@ -56,7 +56,6 @@
 #include "GeolocationPosition.h"
 #include "HistoryItem.h"
 #include "HTMLInputElement.h"
-#include "HTMLNames.h"
 #include "InspectorController.h"
 #include "NodeList.h"
 #include "NotificationPresenterClientQt.h"
@@ -233,10 +232,13 @@ bool DumpRenderTreeSupportQt::hasDocumentElement(QWebFrame* frame)
 void DumpRenderTreeSupportQt::setAutofilled(const QWebElement& element, bool isAutofilled)
 {
     WebCore::Element* webElement = element.m_element;
-    if (!webElement || !webElement->hasTagName(HTMLNames::inputTag))
+    if (!webElement)
+        return;
+    HTMLInputElement* inputElement = webElement->toInputElement();
+    if (!inputElement)
         return;
 
-    toHTMLInputElement(webElement)->setAutofilled(isAutofilled);
+    inputElement->setAutofilled(isAutofilled);
 }
 
 void DumpRenderTreeSupportQt::setJavaScriptProfilingEnabled(QWebFrame* frame, bool enabled)
@@ -256,10 +258,13 @@ void DumpRenderTreeSupportQt::setJavaScriptProfilingEnabled(QWebFrame* frame, bo
 void DumpRenderTreeSupportQt::setValueForUser(const QWebElement& element, const QString& value)
 {
     WebCore::Element* webElement = element.m_element;
-    if (!webElement || !webElement->hasTagName(HTMLNames::inputTag))
+    if (!webElement)
+        return;
+    HTMLInputElement* inputElement = webElement->toInputElement();
+    if (!inputElement)
         return;
 
-    toHTMLInputElement(webElement)->setValueForUser(value);
+    inputElement->setValueForUser(value);
 }
 
 // Pause a given CSS animation or transition on the target node at a specific time.
@@ -636,7 +641,7 @@ bool DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(QWebFrame*
     if (!coreNode || !coreNode->renderer())
         return false;
 
-    HTMLInputElement* inputElement = toHTMLInputElement(coreNode);
+    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(coreNode);
 
     return inputElement->isTextField() && !inputElement->isPasswordField() && inputElement->shouldAutocomplete();
 }

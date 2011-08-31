@@ -738,18 +738,26 @@ bool RenderTheme::isActive(const RenderObject* o) const
 
 bool RenderTheme::isChecked(const RenderObject* o) const
 {
-    if (!o->node() || !o->node()->hasTagName(inputTag))
+    if (!o->node())
         return false;
 
-    return toHTMLInputElement(o->node())->shouldAppearChecked();
+    HTMLInputElement* inputElement = o->node()->toInputElement();
+    if (!inputElement)
+        return false;
+
+    return inputElement->shouldAppearChecked();
 }
 
 bool RenderTheme::isIndeterminate(const RenderObject* o) const
 {
-    if (!o->node() || !o->node()->hasTagName(inputTag))
+    if (!o->node())
         return false;
 
-    return toHTMLInputElement(o->node())->isIndeterminate();
+    HTMLInputElement* inputElement = o->node()->toInputElement();
+    if (!inputElement)
+        return false;
+
+    return inputElement->isIndeterminate();
 }
 
 bool RenderTheme::isEnabled(const RenderObject* o) const

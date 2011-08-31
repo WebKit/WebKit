@@ -533,6 +533,8 @@ public:
 
     virtual Node* toNode() { return this; }
 
+    virtual HTMLInputElement* toInputElement();
+
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);

@@ -37,7 +37,6 @@
 #include "GCController.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
-#include "HTMLNames.h"
 #include "JSDOMWindow.h"
 #include "JSDocument.h"
 #include "JSElement.h"
@@ -756,23 +755,29 @@ void DumpRenderTreeSupportGtk::setAutofilled(JSContextRef context, JSValueRef no
 {
     JSC::ExecState* exec = toJS(context);
     Element* element = toElement(toJS(exec, nodeObject));
-    if (!element || !element->hasTagName(HTMLNames::inputTag))
+    if (!element)
+        return;
+    HTMLInputElement* inputElement = element->toInputElement();
+    if (!inputElement)
         return;
 
-    toHTMLInputElement(element)->setAutofilled(autofilled);
+    inputElement->setAutofilled(autofilled);
 }
 
 void DumpRenderTreeSupportGtk::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
 {
     JSC::ExecState* exec = toJS(context);
     Element* element = toElement(toJS(exec, nodeObject));
-    if (!element || !element->hasTagName(HTMLNames::inputTag))
+    if (!element)
+        return;
+    HTMLInputElement* inputElement = element->toInputElement();
+    if (!inputElement)
         return;
 
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(value);
     GOwnPtr<gchar> valueBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
     JSStringGetUTF8CString(value, valueBuffer.get(), bufferSize);
-    toHTMLInputElement(element)->setValueForUser(String::fromUTF8(valueBuffer.get()));
+    inputElement->setValueForUser(String::fromUTF8(valueBuffer.get()));
 }
 
 void DumpRenderTreeSupportGtk::rectangleForSelection(WebKitWebFrame* frame, cairo_rectangle_int_t* rectangle)

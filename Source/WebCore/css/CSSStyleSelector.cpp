@@ -959,14 +959,12 @@ bool CSSStyleSelector::canShareStyleWithControl(StyledElement* element) const
         return true;
     }
 #endif
-
-    ASSERT(element);
-    ASSERT(m_element);
-    if (!element->hasTagName(inputTag) || !m_element->hasTagName(inputTag))
-        return false;
     
-    HTMLInputElement* thisInputElement = toHTMLInputElement(element);
-    HTMLInputElement* otherInputElement = toHTMLInputElement(m_element);
+    HTMLInputElement* thisInputElement = element->toInputElement();
+    HTMLInputElement* otherInputElement = m_element->toInputElement();
+    
+    if (!thisInputElement || !otherInputElement)
+        return false;
     
     if (thisInputElement->isAutofilled() != otherInputElement->isAutofilled())
         return false;
@@ -1895,7 +1893,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
     if (e && e->isFormControlElement() && style->fontSize() >= 11) {
         // Don't apply intrinsic margins to image buttons.  The designer knows how big the images are,
         // so we have to treat all image buttons as though they were explicitly sized.
-        if (!e->hasTagName(inputTag) || !toHTMLInputElement(e)->isImageButton())
+        if (!e->hasTagName(inputTag) || !static_cast<HTMLInputElement*>(e)->isImageButton())
             addIntrinsicMargins(style);
     }
 
@@ -2759,9 +2757,10 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                     return true;
                 break;
             case CSSSelector::PseudoAutofill: {
-                if (!e || !e->isFormControlElement() || !e->hasTagName(inputTag))
+                if (!e || !e->isFormControlElement())
                     break;
-                return toHTMLInputElement(e)->isAutofilled();
+                if (HTMLInputElement* inputElement = e->toInputElement())
+                    return inputElement->isAutofilled();
                 break;
             }
             case CSSSelector::PseudoLink:
@@ -2848,20 +2847,20 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 e->document()->setContainsValidityStyleRules();
                 return (e->willValidate() && !e->isValidFormControlElement()) || e->hasUnacceptableValue();
             } case CSSSelector::PseudoChecked: {
-                if (!e || !e->isFormControlElement() || !e->hasTagName(inputTag))
+                if (!e || !e->isFormControlElement())
                     break;
                 // Even though WinIE allows checked and indeterminate to co-exist, the CSS selector spec says that
                 // you can't be both checked and indeterminate.  We will behave like WinIE behind the scenes and just
                 // obey the CSS spec here in the test for matching the pseudo.
-                HTMLInputElement* inputElement = toHTMLInputElement(e);
-                if (inputElement->shouldAppearChecked() && !inputElement->isIndeterminate())
+                HTMLInputElement* inputElement = e->toInputElement();
+                if (inputElement && inputElement->shouldAppearChecked() && !inputElement->isIndeterminate())
                     return true;
                 break;
             }
             case CSSSelector::PseudoIndeterminate: {
                 if (!e || !e->isFormControlElement())
                     break;
-
+                
 #if ENABLE(PROGRESS_TAG)
                 if (e->hasTagName(progressTag)) {
                     HTMLProgressElement* progress = static_cast<HTMLProgressElement*>(e);
@@ -2870,8 +2869,9 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                     break;
                 }
 #endif
-
-                if (e->hasTagName(inputTag) && toHTMLInputElement(e)->isIndeterminate())
+                
+                HTMLInputElement* inputElement = e->toInputElement();
+                if (inputElement && inputElement->isIndeterminate())
                     return true;
                 break;
             }
@@ -4844,7 +4844,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWapInputFormat:
         if (primitiveValue && m_element->hasTagName(WebCore::inputTag)) {
             String mask = primitiveValue->getStringValue();
-            toHTMLInputElement(m_element)->setWapInputFormat(mask);
+            static_cast<HTMLInputElement*>(m_element)->setWapInputFormat(mask);
         }
         return;
 

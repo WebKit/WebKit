@@ -75,7 +75,7 @@ RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node)
     , m_searchPopup(0)
 {
     ASSERT(node->isHTMLElement());
-    ASSERT(node->hasTagName(inputTag) || node->hasTagName(isindexTag));
+    ASSERT(node->toInputElement());
 }
 
 RenderTextControlSingleLine::~RenderTextControlSingleLine()
@@ -788,7 +788,7 @@ PassRefPtr<Scrollbar> RenderTextControlSingleLine::createScrollbar(ScrollableAre
 
 HTMLInputElement* RenderTextControlSingleLine::inputElement() const
 {
-    return toHTMLInputElement(node());
+    return node()->toInputElement();
 }
 
 }

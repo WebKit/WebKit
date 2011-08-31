@@ -32,7 +32,6 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
-#include "HTMLNames.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -311,7 +310,7 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
     // treatment, move them to special functions.
     if (type == SliderVertical || type == SliderHorizontal) {
         RenderSlider* renderSlider = toRenderSlider(object);
-        HTMLInputElement* input = renderSlider->node()->hasTagName(HTMLNames::inputTag) ? toHTMLInputElement(renderSlider->node()) : 0;
+        HTMLInputElement* input = renderSlider->node()->toInputElement();
         Edje_Message_Float_Set* msg;
         double valueRange = input->maximum() - input->minimum();
 
