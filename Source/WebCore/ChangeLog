@@ -1,3 +1,14 @@
+2011-08-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94176.
+        http://trac.webkit.org/changeset/94176
+        https://bugs.webkit.org/show_bug.cgi?id=67290
+
+        This does not fix the build failure on Macs (Requested by
+        apavlov on #webkit).
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-08-31  Mike Reed  <reed@google.com>
 
         [skia] antialias images if we're rotated
