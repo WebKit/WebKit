@@ -1,3 +1,23 @@
+2011-08-31  Tony Gentilcore  <tonyg@chromium.org>
+
+        Minor cleanup: remove inScriptExecution()
+        https://bugs.webkit.org/show_bug.cgi?id=67276
+
+        Reviewed by Adam Barth.
+
+        At one point inScriptExecution() existed as a non-virtual duplicate of isExecutingScript()
+        to avoid virtual method calls from a tight loop. Now we aren't calling it anywhere perf
+        sensitive, so remove the duplication.
+
+        No new tests because no change in functionality.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::isExecutingScript):
+        (WebCore::HTMLDocumentParser::resumeParsingAfterScriptExecution):
+        (WebCore::HTMLDocumentParser::notifyFinished):
+        * html/parser/HTMLDocumentParser.h:
+        (WebCore::HTMLDocumentParser::shouldDelayEnd):
+
 2011-08-31  Tom Sepez  <tsepez@chromium.org>
 
         Fix XSS filter bypass by multiply decoding both the URL and the body

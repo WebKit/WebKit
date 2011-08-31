@@ -434,14 +434,7 @@ bool HTMLDocumentParser::finishWasCalled()
     return m_input.haveSeenEndOfFile();
 }
 
-// This function is virtual and just for the DocumentParser interface.
 bool HTMLDocumentParser::isExecutingScript() const
-{
-    return inScriptExecution();
-}
-
-// This function is non-virtual and used throughout the implementation.
-bool HTMLDocumentParser::inScriptExecution() const
 {
     if (!m_scriptRunner)
         return false;
@@ -475,7 +468,7 @@ bool HTMLDocumentParser::isWaitingForScripts() const
 
 void HTMLDocumentParser::resumeParsingAfterScriptExecution()
 {
-    ASSERT(!inScriptExecution());
+    ASSERT(!isExecutingScript());
     ASSERT(!m_treeBuilder->isPaused());
 
     m_insertionPreloadScanner.clear();
@@ -511,7 +504,7 @@ void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)
     RefPtr<HTMLDocumentParser> protect(this);
 
     ASSERT(m_scriptRunner);
-    ASSERT(!inScriptExecution());
+    ASSERT(!isExecutingScript());
     if (isStopping()) {
         attemptToRunDeferredScriptsAndEnd();
         return;

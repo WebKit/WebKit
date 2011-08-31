@@ -135,9 +135,8 @@ private:
 
     bool isParsingFragment() const;
     bool isScheduledForResume() const;
-    bool inScriptExecution() const;
     bool inPumpSession() const { return m_pumpSessionNestingLevel > 0; }
-    bool shouldDelayEnd() const { return inPumpSession() || isWaitingForScripts() || inScriptExecution() || isScheduledForResume(); }
+    bool shouldDelayEnd() const { return inPumpSession() || isWaitingForScripts() || isScheduledForResume() || isExecutingScript(); }
 
     ScriptController* script() const;
 
