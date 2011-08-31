@@ -1,3 +1,10 @@
+2011-08-31  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, revert part of r94168, the test didn't need result
+        update. Proper fix is worked on in bug 66045.
+
+        * fast/files/create-blob-url-crash-expected.txt:
+
 2011-08-31  Mike Reed  <reed@google.com>
 
         [skia] antialias images if we're rotated
