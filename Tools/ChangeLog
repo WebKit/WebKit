@@ -1,3 +1,14 @@
+2011-08-31  Ai Makabi  <makabi@google.com>
+
+        Extract reference links from reftest test file.
+        https://bugs.webkit.org/show_bug.cgi?id=66838
+
+        Reviewed by Shinichiro Hamaji.
+
+        * Scripts/webkitpy/layout_tests/reftests/__init__.py: Added.
+        * Scripts/webkitpy/layout_tests/reftests/extract_reference_link.py: Added.
+        * Scripts/webkitpy/layout_tests/reftests/extract_reference_link_unittest.py: Added.
+
 2011-08-03  Philippe Normand  <pnormand@igalia.com>
 
         [webkitpy] missing log import in common/net/resultsjsonparser.py
