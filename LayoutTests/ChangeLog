@@ -1,5 +1,11 @@
 2011-08-31  Alexander Pavlov  <apavlov@chromium.org>
 
+        [Chromium] Unreviewed, rebaseline another multicol test expectation.
+
+        * platform/chromium-cg-mac-leopard/fast/multicol/overflow-across-columns-expected.png: Added.
+
+2011-08-31  Alexander Pavlov  <apavlov@chromium.org>
+
         [Chromium] Unreviewed, update Mac-Leopard expectations for multicol tests.
 
         * platform/chromium-cg-mac-leopard/fast/multicol/overflow-unsplittable-expected.png: Added.
