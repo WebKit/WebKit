@@ -1,5 +1,18 @@
 2011-08-31  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic results view shouldn't be horrifically ugly
+        https://bugs.webkit.org/show_bug.cgi?id=67264
+
+        Reviewed by Dimitri Glazkov.
+
+        Minor tweak to the results view CSS to make it fit in better with the new tabbed UI.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/results.css:
+
+2011-08-31  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic needs a tabstrip
         https://bugs.webkit.org/show_bug.cgi?id=67263
 

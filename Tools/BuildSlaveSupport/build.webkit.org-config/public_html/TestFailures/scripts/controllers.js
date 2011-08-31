@@ -38,12 +38,10 @@ controllers.ResultsDetails = base.extends(Object, {
         this._view.addAction(new ui.actions.Rebaseline().makeDefault());
         this._view.addAction(new ui.actions.Previous());
         this._view.addAction(new ui.actions.Next());
-        this._view.addAction(new ui.actions.Close());
 
         $(this._view).bind('testselected', this.onTestSelected.bind(this));
         $(this._view).bind('builderselected', this.onBuilderSelected.bind(this));
         $(this._view).bind('rebaseline', this.onRebaseline.bind(this));
-        $(this._view).bind('close', this.onClose.bind(this));
     },
     _failureInfoForTestAndBuilder: function(testName, builderName)
     {
@@ -52,10 +50,6 @@ controllers.ResultsDetails = base.extends(Object, {
             'builderName': builderName,
             'failureTypeList': results.failureTypeList(this._resultsByTest[testName][builderName].actual)
         }
-    },
-    dismiss: function()
-    {
-        $(this._view).detach();
     },
     showTest: function(testName)
     {
@@ -79,9 +73,6 @@ controllers.ResultsDetails = base.extends(Object, {
             'builderName': builderName
         });
     },
-    onClose: function() {
-        this.dismiss();
-    }
 });
 
 controllers.UnexpectedFailures = base.extends(Object, {

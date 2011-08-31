@@ -227,15 +227,14 @@ ui.results.View = base.extends('div', {
     init: function(delegate)
     {
         this.className = 'results-view';
-        this.innerHTML = '<div class="toolbar"><div class="selector"></div></div><div class="content"></div>';
+        this.innerHTML = '<div class="toolbar"></div><div class="content"></div>';
 
         this._testSelector = new ui.results.TestSelector();
         this._builderSelector = new ui.results.BuilderSelector();
         this._resultsDetails = new ui.results.ResultsDetails(delegate);
         this._actionList = new ui.actions.List();
 
-        $('.toolbar', this).prepend(this._actionList);
-        $('.selector', this).append(this._testSelector).append(this._builderSelector);
+        $('.toolbar', this).append(this._testSelector).append(this._builderSelector).append(this._actionList);
         $('.content', this).append(this._resultsDetails);
     },
     addAction: function(action)
