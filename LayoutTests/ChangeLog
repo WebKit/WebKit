@@ -1,3 +1,27 @@
+2011-08-31  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67300
+        
+        Add the new border-image-source property (and its corresponding analogue for masks, mask-box-image-source).
+        Change the border-image parsing code to no longer consider "none" to represent the entire border-image
+        expression, but instead to just mean "none" for the image component of the expression.
+        
+        Change the pending image code for border-image and mask-box-image to use the new *-source properties when
+        loading the image so that they're considered the same.
+        
+        This is the first step towards eliminating the border-image parsing code in favor of just parsing it as
+        a shorthand instead, but for now I'm implementing each property one by one, and once they're all there,
+        we can cut over to border-image as a true shorthand.
+
+        Reviewed by Beth Dakin.
+
+        Added fast/borders/border-image-source.html.
+
+        * fast/borders/border-image-source.html: Added.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2011-08-31  Cary Clark  <caryclark@google.com>
 
         Unreviewed; new baselines (Skia on Mac, remainder of fast directory)

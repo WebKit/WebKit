@@ -3681,6 +3681,18 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setListStyleImage(styleImage(CSSPropertyListStyleImage, value));
         return;
     }
+    case CSSPropertyBorderImageSource:
+    {
+        HANDLE_INHERIT_AND_INITIAL(borderImageSource, BorderImageSource)
+        m_style->setBorderImageSource(styleImage(CSSPropertyBorderImageSource, value));
+        return;
+    }
+    case CSSPropertyWebkitMaskBoxImageSource:
+    {
+        HANDLE_INHERIT_AND_INITIAL(maskBoxImageSource, MaskBoxImageSource)
+        m_style->setMaskBoxImageSource(styleImage(CSSPropertyWebkitMaskBoxImageSource, value));
+        return;
+    }
     case CSSPropertyWordBreak:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(wordBreak, WordBreak)
         return;
@@ -5650,7 +5662,14 @@ void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value
     CSSBorderImageValue* borderImage = static_cast<CSSBorderImageValue*>(value);
     
     // Set the image (this kicks off the load).
-    image.setImage(styleImage(property, borderImage->imageValue()));
+    CSSPropertyID imageProperty;
+    if (property == CSSPropertyWebkitBorderImage)
+        imageProperty = CSSPropertyBorderImageSource;
+    else if (property == CSSPropertyWebkitMaskBoxImage)
+        imageProperty = CSSPropertyWebkitMaskBoxImageSource;
+    else
+        imageProperty = property;
+    image.setImage(styleImage(imageProperty, borderImage->imageValue()));
 
     // Set up a length box to represent our image slices.
     LengthBox l;
@@ -6389,15 +6408,14 @@ void CSSStyleSelector::loadPendingImages()
                 break;
             }
 
-            case CSSPropertyWebkitBorderImage: {
-                const NinePieceImage& borderImage = m_style->borderImage();
-                if (borderImage.image() && borderImage.image()->isPendingImage()) {
-                    CSSImageValue* imageValue = static_cast<StylePendingImage*>(borderImage.image())->cssImageValue();
-                    m_style->setBorderImage(NinePieceImage(imageValue->cachedImage(cachedResourceLoader), borderImage.slices(), borderImage.horizontalRule(), borderImage.verticalRule()));
+            case CSSPropertyBorderImageSource: {
+                if (m_style->borderImageSource() && m_style->borderImageSource()->isPendingImage()) {
+                    CSSImageValue* imageValue = static_cast<StylePendingImage*>(m_style->borderImageSource())->cssImageValue();
+                    m_style->setBorderImageSource(imageValue->cachedImage(cachedResourceLoader));
                 }
                 break;
             }
-            
+
             case CSSPropertyWebkitBoxReflect: {
                 if (StyleReflection* reflection = m_style->boxReflect()) {
                     const NinePieceImage& maskImage = reflection->mask();
@@ -6409,15 +6427,14 @@ void CSSStyleSelector::loadPendingImages()
                 break;
             }
 
-            case CSSPropertyWebkitMaskBoxImage: {
-                const NinePieceImage& maskBoxImage = m_style->maskBoxImage();
-                if (maskBoxImage.image() && maskBoxImage.image()->isPendingImage()) {
-                    CSSImageValue* imageValue = static_cast<StylePendingImage*>(maskBoxImage.image())->cssImageValue();
-                    m_style->setMaskBoxImage(NinePieceImage(imageValue->cachedImage(cachedResourceLoader), maskBoxImage.slices(), maskBoxImage.horizontalRule(), maskBoxImage.verticalRule()));
+            case CSSPropertyWebkitMaskBoxImageSource: {
+                if (m_style->maskBoxImageSource() && m_style->maskBoxImageSource()->isPendingImage()) {
+                    CSSImageValue* imageValue = static_cast<StylePendingImage*>(m_style->maskBoxImageSource())->cssImageValue();
+                    m_style->setMaskBoxImageSource(imageValue->cachedImage(cachedResourceLoader));
                 }
                 break;
             }
-            
+
             case CSSPropertyWebkitMaskImage: {
                 for (FillLayer* maskLayer = m_style->accessMaskLayers(); maskLayer; maskLayer = maskLayer->next()) {
                     if (maskLayer->image() && maskLayer->image()->isPendingImage()) {

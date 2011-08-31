@@ -1205,6 +1205,8 @@ bool CSSParser::parseValue(int propId, bool important)
         return result;
     }
     case CSSPropertyListStyleImage:     // <uri> | none | inherit
+    case CSSPropertyBorderImageSource:
+    case CSSPropertyWebkitMaskBoxImageSource:
         if (id == CSSValueNone) {
             parsedValue = CSSImageValue::create();
             m_valueList->next();
@@ -1441,17 +1443,14 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSSPropertyWebkitBorderImage:
-    case CSSPropertyWebkitMaskBoxImage:
-        if (id == CSSValueNone)
-            validPrimitive = true;
-        else {
-            RefPtr<CSSValue> result;
-            if (parseBorderImage(propId, important, result)) {
-                addProperty(propId, result, important);
-                return true;
-            }
+    case CSSPropertyWebkitMaskBoxImage: {
+        RefPtr<CSSValue> result;
+        if (parseBorderImage(propId, important, result)) {
+            addProperty(propId, result, important);
+            return true;
         }
         break;
+    }
     case CSSPropertyBorderTopRightRadius:
     case CSSPropertyBorderTopLeftRadius:
     case CSSPropertyBorderBottomLeftRadius:
@@ -5257,7 +5256,7 @@ struct BorderImageParseContext {
 
 bool CSSParser::parseBorderImage(int propId, bool important, RefPtr<CSSValue>& result)
 {
-    // Look for an image initially.  If the first value is not a URI, then we're done.
+    // Look for an image initially. If the first value is not a URI or the keyword "none", then we're done.
     BorderImageParseContext context(primitiveValueCache());
     CSSParserValue* val = m_valueList->current();
     if (val->unit == CSSPrimitiveValue::CSS_URI && m_styleSheet) {
@@ -5270,7 +5269,9 @@ bool CSSParser::parseBorderImage(int propId, bool important, RefPtr<CSSValue>& r
             context.commitImage(value);
         else
             return false;
-    } else
+    } else if (val->id == CSSValueNone)
+        context.commitImage(CSSImageValue::create());
+    else
         return false;
 
     while ((val = m_valueList->next())) {
