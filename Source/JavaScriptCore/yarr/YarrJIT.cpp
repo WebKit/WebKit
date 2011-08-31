@@ -560,7 +560,7 @@ class YarrGenerator : private MacroAssembler {
             if (term->inputPosition == m_checked)
                 matchDest.append(atEndOfInput());
 
-            readCharacter((term->inputPosition - m_checked), character);
+            readCharacter(term->inputPosition - m_checked, character);
             matchCharacterClass(character, matchDest, m_pattern.newlineCharacterClass());
             op.m_jumps.append(jump());
 
@@ -716,10 +716,10 @@ class YarrGenerator : private MacroAssembler {
         const RegisterID countRegister = regT1;
 
         move(index, countRegister);
-        sub32(Imm32(term->quantityCount), countRegister);
+        sub32(Imm32(term->quantityCount.unsafeGet()), countRegister);
 
         Label loop(this);
-        BaseIndex address(input, countRegister, TimesTwo, (term->inputPosition - m_checked + term->quantityCount) * sizeof(UChar));
+        BaseIndex address(input, countRegister, TimesTwo, ((term->inputPosition - m_checked + Checked<int>(term->quantityCount)) * static_cast<int>(sizeof(UChar))).unsafeGet());
 
         if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
             load16(address, character);
@@ -765,7 +765,7 @@ class YarrGenerator : private MacroAssembler {
         if (term->quantityCount == quantifyInfinite)
             jump(loop);
         else
-            branch32(NotEqual, countRegister, Imm32(term->quantityCount)).linkTo(loop, this);
+            branch32(NotEqual, countRegister, Imm32(term->quantityCount.unsafeGet())).linkTo(loop, this);
 
         failures.link(this);
         op.m_reentry = label();
@@ -817,7 +817,7 @@ class YarrGenerator : private MacroAssembler {
 
         nonGreedyFailures.append(atEndOfInput());
         if (term->quantityCount != quantifyInfinite)
-            nonGreedyFailures.append(branch32(Equal, countRegister, Imm32(term->quantityCount)));
+            nonGreedyFailures.append(branch32(Equal, countRegister, Imm32(term->quantityCount.unsafeGet())));
         if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
             readCharacter(term->inputPosition - m_checked, character);
             or32(TrustedImm32(32), character);
@@ -845,7 +845,7 @@ class YarrGenerator : private MacroAssembler {
         const RegisterID character = regT0;
 
         JumpList matchDest;
-        readCharacter((term->inputPosition - m_checked), character);
+        readCharacter(term->inputPosition - m_checked, character);
         matchCharacterClass(character, matchDest, term->characterClass);
 
         if (term->invert())
@@ -869,11 +869,11 @@ class YarrGenerator : private MacroAssembler {
         const RegisterID countRegister = regT1;
 
         move(index, countRegister);
-        sub32(Imm32(term->quantityCount), countRegister);
+        sub32(Imm32(term->quantityCount.unsafeGet()), countRegister);
 
         Label loop(this);
         JumpList matchDest;
-        load16(BaseIndex(input, countRegister, TimesTwo, (term->inputPosition - m_checked + term->quantityCount) * sizeof(UChar)), character);
+        load16(BaseIndex(input, countRegister, TimesTwo, ((term->inputPosition - m_checked + Checked<int>(term->quantityCount)) * static_cast<int>(sizeof(UChar))).unsafeGet()), character);
         matchCharacterClass(character, matchDest, term->characterClass);
 
         if (term->invert())
@@ -919,7 +919,7 @@ class YarrGenerator : private MacroAssembler {
         add32(TrustedImm32(1), countRegister);
         add32(TrustedImm32(1), index);
         if (term->quantityCount != quantifyInfinite) {
-            branch32(NotEqual, countRegister, Imm32(term->quantityCount)).linkTo(loop, this);
+            branch32(NotEqual, countRegister, Imm32(term->quantityCount.unsafeGet())).linkTo(loop, this);
             failures.append(jump());
         } else
             jump(loop);
@@ -972,7 +972,7 @@ class YarrGenerator : private MacroAssembler {
         loadFromFrame(term->frameLocation, countRegister);
 
         nonGreedyFailures.append(atEndOfInput());
-        nonGreedyFailures.append(branch32(Equal, countRegister, Imm32(term->quantityCount)));
+        nonGreedyFailures.append(branch32(Equal, countRegister, Imm32(term->quantityCount.unsafeGet())));
 
         JumpList matchDest;
         readCharacter(term->inputPosition - m_checked, character);

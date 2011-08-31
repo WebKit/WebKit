@@ -1,3 +1,14 @@
+2011-08-30  Oliver Hunt  <oliver@apple.com>
+
+        Add support for checked arithmetic
+        https://bugs.webkit.org/show_bug.cgi?id=67095
+
+        Reviewed by Sam Weinig.
+
+        Add a forwarding header for CheckedArithmetic.h
+
+        * ForwardingHeaders/wtf/CheckedArithmetic.h: Added.
+
 2011-08-31  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67300

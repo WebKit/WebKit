@@ -1,3 +1,89 @@
+2011-08-30  Oliver Hunt  <oliver@apple.com>
+
+        Add support for checked arithmetic
+        https://bugs.webkit.org/show_bug.cgi?id=67095
+
+        Reviewed by Sam Weinig.
+
+        Add a checked arithmetic class Checked<T> that provides overflow-safe
+        arithmetic over all integral types.  Checked<T> supports addition, subtraction
+        and multiplication, along with "bool" conversions and equality operators.
+
+        Checked<> can be used in either CRASH() on overflow or delayed failure modes,
+        although the default is to CRASH().
+
+        To ensure the code is actually in use (rather than checking in dead code) I've
+        made a couple of properties in YARR use Checked<int> and Checked<unsigned>
+        instead of raw value arithmetic.  This has resulted in a moderate set of changes,
+        to YARR - mostly adding .get() calls, but a couple of casts from unsigned long
+        to unsigned for some uses of sizeof, as Checked<> currently does not support
+        mixed signed-ness of types wider that 32 bits.
+
+        Happily the increased type safety of Checked<> means that it's not possible to
+        accidentally assign away precision, nor accidentally call integer overload of
+        a function instead of the bool version.
+
+        No measurable regression in performance, and SunSpider claims this patch to be
+        a progression of 0.3%.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/CheckedArithmetic.h: Added.
+        (WTF::CrashOnOverflow::overflowed):
+        (WTF::CrashOnOverflow::clearOverflow):
+        (WTF::CrashOnOverflow::hasOverflowed):
+        (WTF::RecordOverflow::RecordOverflow):
+        (WTF::RecordOverflow::overflowed):
+        (WTF::RecordOverflow::clearOverflow):
+        (WTF::RecordOverflow::hasOverflowed):
+        (WTF::isInBounds):
+        (WTF::safeAdd):
+        (WTF::safeSub):
+        (WTF::safeMultiply):
+        (WTF::safeEquals):
+        (WTF::workAroundClangBug):
+        (WTF::Checked::Checked):
+        (WTF::Checked::operator=):
+        (WTF::Checked::operator++):
+        (WTF::Checked::operator--):
+        (WTF::Checked::operator!):
+        (WTF::Checked::operator UnspecifiedBoolType*):
+        (WTF::Checked::get):
+        (WTF::Checked::operator+=):
+        (WTF::Checked::operator-=):
+        (WTF::Checked::operator*=):
+        (WTF::Checked::operator==):
+        (WTF::Checked::operator!=):
+        (WTF::operator+):
+        (WTF::operator-):
+        (WTF::operator*):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::atomPatternCharacter):
+        (JSC::Yarr::ByteCompiler::atomCharacterClass):
+        (JSC::Yarr::ByteCompiler::atomBackReference):
+        (JSC::Yarr::ByteCompiler::atomParentheticalAssertionEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesOnceEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesTerminalEnd):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::ByteTerm::ByteTerm):
+        (JSC::Yarr::ByteTerm::CheckInput):
+        (JSC::Yarr::ByteTerm::UncheckInput):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateAssertionEOL):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterFixed):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackPatternCharacterNonGreedy):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassOnce):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassFixed):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::setupAlternativeOffsets):
+        * yarr/YarrPattern.h:
+
 2011-08-31  Andrei Popescu  <andreip@google.com>
 
         Investigate current uses of OS(ANDROID)

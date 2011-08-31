@@ -1,3 +1,15 @@
+2011-08-30  Oliver Hunt  <oliver@apple.com>
+
+        Add support for checked arithmetic
+        https://bugs.webkit.org/show_bug.cgi?id=67095
+
+        Reviewed by Sam Weinig.
+
+        Add test cases for Checked<>
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/CheckedArithmeticOperations.cpp: Added.
+
 2011-08-31  Adam Barth  <abarth@webkit.org>
 
         Move summary.html to garden-o-matic.html.

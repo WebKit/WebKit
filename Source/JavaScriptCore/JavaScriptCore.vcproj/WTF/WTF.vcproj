@@ -565,6 +565,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\CheckedArithmetic.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\Compiler.h"
 			>
 		</File>
