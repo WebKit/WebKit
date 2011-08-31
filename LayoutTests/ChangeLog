@@ -1,3 +1,10 @@
+2011-08-31  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Incorrect results for svg/custom/getBBox-js.svg
+        Unreviewed gardening.
+
+        * platform/qt/Skipped:
+
 2011-08-31  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, unskip fast/css/square-button-appearance.html which
