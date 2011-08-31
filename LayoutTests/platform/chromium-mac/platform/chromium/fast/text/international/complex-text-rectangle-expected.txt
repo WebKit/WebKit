@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 19: Uncaught TypeError: Cannot read property 'width' of null
+A⃕A︠A⃕A⃕A⃕A⃕A⃕⃕A͋ This test passes if it doesn't crash or log a failure message to the console.

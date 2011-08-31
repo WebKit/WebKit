@@ -1,0 +1,8 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+CONSOLE MESSAGE: line 4: Uncaught TypeError: Object [object Object] has no method 'addURLToRedirect'
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+
+The console message above should report failure to load foo.txt due to cross-origin access, not a network error.

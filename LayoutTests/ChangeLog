@@ -1,6 +1,14 @@
 2011-08-31  Cary Clark  <caryclark@google.com>
 
         Unreviewed; new baselines (Skia on Mac, next chunk of 800 files)
+        fast/overflow through svg/batik/text
+
+        * platform/chromium-mac/fast/overflow/overflow-with-local-background-attachment-expected.png: Added.
+        (remaining files omitted for brevity)
+
+2011-08-31  Cary Clark  <caryclark@google.com>
+
+        Unreviewed; new baselines (Skia on Mac, next chunk of 800 files)
         Most files were inadvertantly excluded from earlier checkins.
 
         * platform/chromium-mac/fast/overflow: Added.
@@ -190,14 +198,6 @@
         * fast/css/getComputedStyle/computed-style-expected.txt:
         * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
         * svg/css/getComputedStyle-basic-expected.txt:
-
-2011-08-31  Cary Clark  <caryclark@google.com>
-
-        Unreviewed; new baselines (Skia on Mac, next chunk of 800 files)
-        Most files were inadvertantly excluded from earlier checkins.
-
-        * platform/chromium-mac/fast/overflow: Added.
-        (remaining files omitted for brevity)
 
 2011-08-31  Cary Clark  <caryclark@google.com>
 
