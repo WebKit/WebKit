@@ -75,7 +75,7 @@ RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node)
     , m_searchPopup(0)
 {
     ASSERT(node->isHTMLElement());
-    ASSERT(node->hasTagName(inputTag));
+    ASSERT(node->hasTagName(inputTag) || node->hasTagName(isindexTag));
 }
 
 RenderTextControlSingleLine::~RenderTextControlSingleLine()
