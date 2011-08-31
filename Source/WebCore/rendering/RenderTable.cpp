@@ -257,7 +257,7 @@ void RenderTable::adjustLogicalHeightForCaption()
     ASSERT(m_caption);
     IntRect captionRect(m_caption->x(), m_caption->y(), m_caption->width(), m_caption->height());
 
-    m_caption->setLogicalLocation(IntPoint(m_caption->marginStart(), logicalHeight()));
+    m_caption->setLogicalLocation(IntPoint(m_caption->marginStart(), m_caption->marginBefore() + logicalHeight()));
     if (!selfNeedsLayout() && m_caption->checkForRepaintDuringLayout())
         m_caption->repaintDuringLayoutIfMoved(captionRect);
 

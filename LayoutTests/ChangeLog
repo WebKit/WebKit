@@ -1,3 +1,64 @@
+2011-08-28  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: margin-applies-to-015 fails, WebKit does not respect top margin for table captions
+        https://bugs.webkit.org/show_bug.cgi?id=34763
+
+        Reviewed by Simon Fraser.
+
+        * css2.1/20110323/margin-applies-to-001.htm: Added.
+        * css2.1/20110323/margin-applies-to-002.htm: Added.
+        * css2.1/20110323/margin-applies-to-003.htm: Added.
+        * css2.1/20110323/margin-applies-to-004.htm: Added.
+        * css2.1/20110323/margin-applies-to-005.htm: Added.
+        * css2.1/20110323/margin-applies-to-006.htm: Added.
+        * css2.1/20110323/margin-applies-to-007.htm: Added.
+        * css2.1/20110323/margin-applies-to-008.htm: Added.
+        * css2.1/20110323/margin-applies-to-009.htm: Added.
+        * css2.1/20110323/margin-applies-to-010.htm: Added.
+        * css2.1/20110323/margin-applies-to-012.htm: Added.
+        * css2.1/20110323/margin-applies-to-013.htm: Added.
+        * css2.1/20110323/margin-applies-to-014.htm: Added.
+        * css2.1/20110323/margin-applies-to-015.htm: Added.
+          - Added from http://test.csswg.org/suites/css2.1/20110323/html4/chapter-8.html
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-001-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-001-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-002-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-002-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-003-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-003-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-004-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-004-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-005-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-005-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-006-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-006-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-007-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-007-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-008-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-008-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-009-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-009-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-010-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-010-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-012-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-012-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-013-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-013-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-014-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-014-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-015-expected.png: Added.
+        * platform/chromium-linux/css2.1/20110323/margin-applies-to-015-expected.txt: Added.
+          - Chromium-Linux results for  http://test.csswg.org/suites/css2.1/20110323/html4/chapter-8.html
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions1-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions2-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug10140-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug91057-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/captions1-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/captions2-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/captions3-expected.txt:
+          - Updated to reflect position of table caption taking account of margin, matching Firefox where appropriate. Still some
+            unrelated failures that prevent matching Firefox exactly.
+
 2011-08-31  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67300
