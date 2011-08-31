@@ -1,3 +1,14 @@
+2011-08-30  Ojan Vafai  <ojan@chromium.org>
+
+        add a test for border/padding/margin on the flexbox container
+        https://bugs.webkit.org/show_bug.cgi?id=67243
+
+        Reviewed by Tony Chang.
+
+        * css3/flexbox/001-expected.txt:
+        * css3/flexbox/001.html:
+        * css3/flexbox/resources/flexbox.js:
+
 2011-08-30  Alice Boxhall  <aboxhall@chromium.org>
 
         Correctly report selected text range for accessibility APIs for role=textbox

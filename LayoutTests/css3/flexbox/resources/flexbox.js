@@ -6,31 +6,35 @@ function insertAfter(nodeToAdd, referenceNode)
         referenceNode.parentNode.appendChild(nodeToAdd);
 }
 
+function checkExpectedValues(node, failures)
+{
+    var expectedWidth = node.getAttribute && node.getAttribute("data-expected-width");
+    if (node.offsetWidth && expectedWidth) {
+        if (node.offsetWidth != parseInt(expectedWidth))
+            failures.push("Expected " + expectedWidth + " for width, but got " + node.offsetWidth + ". ");
+    }
+
+    var expectedOffset = node.getAttribute && node.getAttribute("data-offset-x");
+    if (node.offsetLeft && expectedOffset) {
+        if (node.offsetLeft != parseInt(expectedOffset))
+            failures.push("Expected " + expectedOffset + " for offsetLeft, but got " + node.offsetLeft + ". ");
+    }
+}
+
 function checkHorizontalBoxen()
 {
     var flexboxen = document.getElementsByClassName("horizontal-box");
     Array.prototype.forEach.call(flexboxen, function(flexbox) {
-      var failures = "";
+      var failures = [];
+      checkExpectedValues(flexbox, failures);
+
       var child = flexbox.firstChild;
       while (child) {
-          var expectedWidth = child.getAttribute && child.getAttribute("data-expected-width");
-          if (child.offsetWidth && expectedWidth) {
-              if (child.offsetWidth != parseInt(expectedWidth)) {
-                  failures += "Expected " + expectedWidth + " for width, but got " + child.offsetWidth + ". ";
-              }
-          }
-
-          var expectedOffset = child.getAttribute && child.getAttribute("data-offset-x");
-          if (child.offsetLeft && expectedOffset) {
-              if (child.offsetLeft != parseInt(expectedOffset)) {
-                  failures += "Expected " + expectedOffset + " for offsetLeft, but got " + child.offsetLeft + ". ";
-              }
-          }
-
+          checkExpectedValues(child, failures);
           child = child.nextSibling;
       }
 
       insertAfter(document.createElement("p"), flexbox);
-      insertAfter(document.createTextNode(failures ? failures : "PASS"), flexbox);
+      insertAfter(document.createTextNode(failures.length ? failures.join('<br>') : "PASS"), flexbox);
     });
 }
