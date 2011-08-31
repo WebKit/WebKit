@@ -76,7 +76,7 @@ void findPasswordFormFields(HTMLFormElement* form, PasswordFormFields* fields)
         if (!formElement->hasLocalName(HTMLNames::inputTag))
             continue;
 
-        HTMLInputElement* inputElement = toHTMLInputElement(formElement);
+        HTMLInputElement* inputElement = WebCore::toHTMLInputElement(formElement);
         if (!inputElement->isEnabledFormControl())
             continue;
 
@@ -98,7 +98,7 @@ void findPasswordFormFields(HTMLFormElement* form, PasswordFormFields* fields)
             if (!formElement->hasLocalName(HTMLNames::inputTag))
                 continue;
 
-            HTMLInputElement* inputElement = toHTMLInputElement(formElement);
+            HTMLInputElement* inputElement = WebCore::toHTMLInputElement(formElement);
             if (!inputElement->isEnabledFormControl())
                 continue;
 
