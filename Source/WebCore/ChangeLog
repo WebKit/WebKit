@@ -1,3 +1,21 @@
+2011-08-31  Sailesh Agrawal  <sail@chromium.org>
+
+        [Chromium] Switching between overlay and opaque scrollbars causes glitches
+        https://bugs.webkit.org/show_bug.cgi?id=62686
+
+        Reviewed by Beth Dakin.
+
+        When switching from opaque scrollbars to overlay scrollbars the page content size wouldn't change leaving a empty region under the overlay scrollbar.
+
+        The problem was that we were relying on ScrollView::updateScrollbars() to kick off a layout. Unfortunately this doesn't happen because updateScrollbars doesn't distinguish between overlay and opaque scrollbars.
+
+        To fix this I'm explicitly invalidating the layout when ScrollView::scrollbarStyleChanged() is called.
+
+        No tests because there are no Mac 10.7 chromium bots yet. Bug 66504 will track the work to add these tests once the bots are in place.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollbarStyleChanged):
+
 2011-08-31  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/eventsource/workers/eventsource-simple.html is a flaky crash because of

@@ -939,6 +939,7 @@ bool ScrollView::isScrollCornerVisible() const
 
 void ScrollView::scrollbarStyleChanged()
 {
+    contentsResized();
     updateScrollbars(scrollOffset());
 }
 
