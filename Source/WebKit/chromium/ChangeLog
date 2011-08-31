@@ -1,3 +1,15 @@
+2011-08-31  James Weatherall  <wez@chromium.org>
+
+        [chromium] Have the FrameLoaderClient release any plugin widget
+        reference is holding when the FrameLoader detaches it, to ensure that
+        the plugin won't out-live the containing page.
+        https://bugs.webkit.org/show_bug.cgi?id=66517
+
+        Reviewed by Darin Fisher.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::detachedFromParent3):
+
 2011-08-31  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Rename WebKitClient to WebKitPlatformSupport

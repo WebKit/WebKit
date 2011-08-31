@@ -289,6 +289,11 @@ void FrameLoaderClientImpl::detachedFromParent2()
 
 void FrameLoaderClientImpl::detachedFromParent3()
 {
+    // If we were reading data into a plugin, drop our reference to it. If we
+    // don't do this then it may end up out-living the rest of the page, which
+    // leads to problems if the plugin's destructor tries to script things.
+    m_pluginWidget = 0;
+
     // Close down the proxy.  The purpose of this change is to make the
     // call to ScriptController::clearWindowShell a no-op when called from
     // Frame::pageDestroyed.  Without this change, this call to clearWindowShell
