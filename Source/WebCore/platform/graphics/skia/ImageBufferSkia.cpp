@@ -116,6 +116,8 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderin
 
 ImageBuffer::~ImageBuffer()
 {
+    // This is so that the SkGpuDevice destructor has the correct context.
+    m_context->platformContext()->makeGrContextCurrent();
 }
 
 GraphicsContext* ImageBuffer::context() const

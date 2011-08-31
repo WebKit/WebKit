@@ -1,3 +1,20 @@
+2011-08-31  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Set the GrContext before SkGpuDevice is destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=67296
+
+        When SkGpuDevice is destroyed, it frees the FBO used for accelerated
+        rendering.  If the wrong context is set (e.g., compositor context),
+        a crash may result.
+
+        Reviewed by Kenneth Russell.
+
+        No new tests.  (Unfortunately, wrong-context bugs are difficult to
+        express in a layout test).
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::~ImageBuffer):
+
 2011-08-31  Eric Carlson  <eric.carlson@apple.com>
 
         Clean up HTMLMediaElement behavior restrictions
