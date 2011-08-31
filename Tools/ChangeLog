@@ -1,3 +1,16 @@
+2011-08-30  Philippe Normand  <pnormand@igalia.com>
+
+        [stylechecker] complains about NULL usage in some gst_structure_ calls
+        https://bugs.webkit.org/show_bug.cgi?id=67194
+
+        Reviewed by Martin Robinson.
+
+        Don't warn about NULL in some gst_structure_ calls. 0 can't be
+        used for these, a proper sentinel is required.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+
 2011-08-30  Adam Barth  <abarth@webkit.org>
 
         Remove old-style UI from garden-o-matic

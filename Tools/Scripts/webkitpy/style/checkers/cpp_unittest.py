@@ -4092,6 +4092,27 @@ class WebKitStyleTest(CppStyleTestBase):
             'gst_element_unlink_many(foo, bar, boo, NULL);',
             '')
         self.assert_lint(
+            'gst_structure_get(foo, "value", G_TYPE_INT, &value, NULL);',
+            '')
+        self.assert_lint(
+            'gst_structure_set(foo, "value", G_TYPE_INT, value, NULL);',
+            '')
+        self.assert_lint(
+            'gst_structure_remove_fields(foo, "value", "bar", NULL);',
+            '')
+        self.assert_lint(
+            'gst_structure_new("foo", "value", G_TYPE_INT, value, NULL);',
+            '')
+        self.assert_lint(
+            'gst_structure_id_new(FOO, VALUE, G_TYPE_INT, value, NULL);',
+            '')
+        self.assert_lint(
+            'gst_structure_id_set(FOO, VALUE, G_TYPE_INT, value, NULL);',
+            '')
+        self.assert_lint(
+            'gst_structure_id_get(FOO, VALUE, G_TYPE_INT, &value, NULL);',
+            '')
+        self.assert_lint(
             'gchar* result = g_strconcat("part1", "part2", "part3", NULL);',
             '')
         self.assert_lint(

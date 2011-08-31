@@ -2381,6 +2381,18 @@ def check_for_null(clean_lines, line_number, file_state, error):
     if search(r'\bgst_\w+_many\b', line):
         return
 
+    # Don't warn about NULL usage in some gst_structure_*(). See Bug 67194.
+    if search(r'\bgst_structure_[sg]et\b', line):
+        return
+    if search(r'\bgst_structure_remove_fields\b', line):
+        return
+    if search(r'\bgst_structure_new\b', line):
+        return
+    if search(r'\bgst_structure_id_new\b', line):
+        return
+    if search(r'\bgst_structure_id_[sg]et\b', line):
+        return
+
     # Don't warn about NULL usage in g_str{join,concat}(). See Bug 34834
     if search(r'\bg_str(join|concat)\b', line):
         return
