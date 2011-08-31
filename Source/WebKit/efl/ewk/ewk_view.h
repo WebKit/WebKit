@@ -312,6 +312,18 @@ enum _Ewk_View_Mode {
 /// Creates a type name for @a _Ewk_View_Mode.
 typedef enum _Ewk_View_Mode Ewk_View_Mode;
 
+/// Defines the font families.
+enum _Ewk_Font_Family {
+    EWK_FONT_FAMILY_STANDARD = 0,
+    EWK_FONT_FAMILY_CURSIVE,
+    EWK_FONT_FAMILY_FANTASY,
+    EWK_FONT_FAMILY_MONOSPACE,
+    EWK_FONT_FAMILY_SERIF,
+    EWK_FONT_FAMILY_SANS_SERIF
+};
+/// Creates a type name for @a _Ewk_Font_Family.
+typedef enum _Ewk_Font_Family Ewk_Font_Family;
+
 /**
  * @brief Creates a type name for @a _Ewk_Tile_Unused_Cache.
  *
@@ -1656,112 +1668,25 @@ EAPI int          ewk_view_setting_font_monospace_size_get(const Evas_Object *o)
 EAPI Eina_Bool    ewk_view_setting_font_monospace_size_set(Evas_Object *o, int size);
 
 /**
- * Gets the font standard family.
+ * Gets the name of font for the given font family.
  *
- * @param o view object to get the font standard family
+ * @param o view object to get name of font the for font family
+ * @param font_family the font family as @a Ewk_Font_Family enum to get font name
  *
- * @return the font standard family on success or @c 0 on failure
+ * @return the name of font family
  */
-EAPI const char  *ewk_view_setting_font_standard_get(const Evas_Object *o);
+EAPI const char *ewk_view_font_family_name_get(const Evas_Object *o, Ewk_Font_Family font_family);
 
 /**
- * Sets the font standard family.
+ * Sets the font for the given family.
  *
- * @param o view object to set the font standard family
+ * @param o view object to set font for the given family
+ * @param font_family the font family as @a Ewk_Font_Family enum
+ * @param name the font name to set
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
-EAPI Eina_Bool    ewk_view_setting_font_standard_set(Evas_Object *o, const char *family);
-
-/**
- * Gets the font cursive family.
- *
- * @param o view object to get the font cursive family
- *
- * @return the font cursive family on success or @c 0 on failure
- */
-EAPI const char  *ewk_view_setting_font_cursive_get(const Evas_Object *o);
-
-/**
- * Sets the font standard family.
- *
- * @param o view object to set the font standard family
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
- */
-EAPI Eina_Bool    ewk_view_setting_font_cursive_set(Evas_Object *o, const char *family);
-
-/**
- * Gets the font monospace family.
- *
- * @param o view object to get the font monospace family
- *
- * @return the font monospace family on success or @c 0 on failure
- */
-EAPI const char  *ewk_view_setting_font_monospace_get(const Evas_Object *o);
-
-/**
- * Sets the font monospace family.
- *
- * @param o view object to set the font monospace family
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
- */
-EAPI Eina_Bool    ewk_view_setting_font_monospace_set(Evas_Object *o, const char *family);
-
-/**
- * Gets the font fantasy family.
- *
- * @param o view object to get the font fantasy family
- *
- * @return the font fantasy family on success or @c 0 on failure
- */
-EAPI const char  *ewk_view_setting_font_fantasy_get(const Evas_Object *o);
-
-/**
- * Sets the font monospace family.
- *
- * @param o view object to set the font monospace family
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
- */
-EAPI Eina_Bool    ewk_view_setting_font_fantasy_set(Evas_Object *o, const char *family);
-
-/**
- * Gets the font serif family.
- *
- * @param o view object to get the font serif family
- *
- * @return the font serif family on success or @c 0 on failure
- */
-EAPI const char  *ewk_view_setting_font_serif_get(const Evas_Object *o);
-
-/**
- * Sets the font serif family.
- *
- * @param o view object to set the font serif family
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
- */
-EAPI Eina_Bool    ewk_view_setting_font_serif_set(Evas_Object *o, const char *family);
-
-/**
- * Gets the font sans serif family.
- *
- * @param o view object to get the font sans serif family
- *
- * @return the font sans serif family on success or @c 0 on failure
- */
-EAPI const char  *ewk_view_setting_font_sans_serif_get(const Evas_Object *o);
-
-/**
- * Sets the font sans serif family.
- *
- * @param o view object to set the font serif family
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
- */
-EAPI Eina_Bool    ewk_view_setting_font_sans_serif_set(Evas_Object *o, const char *family);
+EAPI Eina_Bool ewk_view_font_family_name_set(Evas_Object *o, Ewk_Font_Family font_family, const char *name);
 
 /**
  * Queries if the spatial naviagtion feature is enabled.

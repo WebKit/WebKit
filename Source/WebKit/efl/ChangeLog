@@ -1,3 +1,19 @@
+2011-08-31  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Fonts API refactoring.
+        https://bugs.webkit.org/show_bug.cgi?id=66654
+
+        Reviewed by Hajime Morita.
+
+        There are too many similar API regarding to fonts.
+        Add one consistent API to set/get the font name for the font family.
+        Remove the previous font API.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_font_family_name_get):
+        (ewk_view_font_family_name_set):
+        * ewk/ewk_view.h:
+
 2011-08-30  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         The unused ScrollView* argument can and should be removed from

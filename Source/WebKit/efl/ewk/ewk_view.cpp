@@ -2199,99 +2199,62 @@ Eina_Bool ewk_view_setting_font_monospace_size_set(Evas_Object *o, int size)
     return EINA_TRUE;
 }
 
-const char* ewk_view_setting_font_standard_get(const Evas_Object *o)
+const char *ewk_view_font_family_name_get(const Evas_Object *o, Ewk_Font_Family font_family)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
-    return priv->settings.font_standard;
+
+    switch (font_family) {
+    case EWK_FONT_FAMILY_STANDARD:
+        return priv->settings.font_standard;
+    case EWK_FONT_FAMILY_CURSIVE:
+        return priv->settings.font_cursive;
+    case EWK_FONT_FAMILY_FANTASY:
+        return priv->settings.font_fantasy;
+    case EWK_FONT_FAMILY_MONOSPACE:
+        return priv->settings.font_monospace;
+    case EWK_FONT_FAMILY_SERIF:
+        return priv->settings.font_serif;
+    case EWK_FONT_FAMILY_SANS_SERIF:
+        return priv->settings.font_sans_serif;
+    }
+    return 0;
 }
 
-Eina_Bool ewk_view_setting_font_standard_set(Evas_Object *o, const char *family)
+Eina_Bool ewk_view_font_family_name_set(Evas_Object *o, Ewk_Font_Family font_family, const char *name)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.font_standard, family))
-        priv->page_settings->setStandardFontFamily(AtomicString::fromUTF8(family));
-    return EINA_TRUE;
-}
 
-const char* ewk_view_setting_font_cursive_get(const Evas_Object *o)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
-    return priv->settings.font_cursive;
-}
+    switch (font_family) {
+    case EWK_FONT_FAMILY_STANDARD:
+        if (eina_stringshare_replace(&priv->settings.font_standard, name))
+            priv->page_settings->setStandardFontFamily(AtomicString::fromUTF8(name));
+        break;
+    case EWK_FONT_FAMILY_CURSIVE:
+        if (eina_stringshare_replace(&priv->settings.font_cursive, name))
+            priv->page_settings->setCursiveFontFamily(AtomicString::fromUTF8(name));
+        break;
+    case EWK_FONT_FAMILY_FANTASY:
+        if (eina_stringshare_replace(&priv->settings.font_fantasy, name))
+            priv->page_settings->setFantasyFontFamily(AtomicString::fromUTF8(name));
+        break;
+    case EWK_FONT_FAMILY_MONOSPACE:
+        if (eina_stringshare_replace(&priv->settings.font_monospace, name))
+            priv->page_settings->setFixedFontFamily(AtomicString::fromUTF8(name));
+        break;
+    case EWK_FONT_FAMILY_SERIF:
+        if (eina_stringshare_replace(&priv->settings.font_serif, name))
+            priv->page_settings->setSerifFontFamily(AtomicString::fromUTF8(name));
+        break;
+    case EWK_FONT_FAMILY_SANS_SERIF:
+        if (eina_stringshare_replace(&priv->settings.font_sans_serif, name))
+            priv->page_settings->setSansSerifFontFamily(AtomicString::fromUTF8(name));
+        break;
+    default:
+        return EINA_FALSE;
+    }
 
-Eina_Bool ewk_view_setting_font_cursive_set(Evas_Object *o, const char *family)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.font_cursive, family))
-        priv->page_settings->setCursiveFontFamily(AtomicString::fromUTF8(family));
-    return EINA_TRUE;
-}
-
-const char* ewk_view_setting_font_fantasy_get(const Evas_Object *o)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
-    return priv->settings.font_fantasy;
-}
-
-Eina_Bool ewk_view_setting_font_fantasy_set(Evas_Object *o, const char *family)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.font_fantasy, family))
-        priv->page_settings->setFantasyFontFamily(AtomicString::fromUTF8(family));
-    return EINA_TRUE;
-}
-
-const char *ewk_view_setting_font_monospace_get(const Evas_Object *o)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
-    return priv->settings.font_monospace;
-}
-
-Eina_Bool ewk_view_setting_font_monospace_set(Evas_Object *o, const char *family)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.font_monospace, family))
-        priv->page_settings->setFixedFontFamily(AtomicString::fromUTF8(family));
-    return EINA_TRUE;
-}
-
-const char *ewk_view_setting_font_serif_get(const Evas_Object *o)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
-    return priv->settings.font_serif;
-}
-
-Eina_Bool ewk_view_setting_font_serif_set(Evas_Object *o, const char *family)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.font_serif, family))
-        priv->page_settings->setSerifFontFamily(AtomicString::fromUTF8(family));
-    return EINA_TRUE;
-}
-
-const char *ewk_view_setting_font_sans_serif_get(const Evas_Object *o)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
-    return priv->settings.font_sans_serif;
-}
-
-Eina_Bool ewk_view_setting_font_sans_serif_set(Evas_Object *o, const char *family)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    if (eina_stringshare_replace(&priv->settings.font_sans_serif, family))
-        priv->page_settings->setSansSerifFontFamily(AtomicString::fromUTF8(family));
     return EINA_TRUE;
 }
 
