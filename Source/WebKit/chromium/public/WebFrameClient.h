@@ -94,7 +94,7 @@ public:
     // Services ------------------------------------------------------------
 
     // A frame specific cookie jar.  May return null, in which case
-    // WebKitClient::cookieJar() will be called to access cookies.
+    // WebKitPlatformSupport::cookieJar() will be called to access cookies.
     virtual WebCookieJar* cookieJar(WebFrame*) { return 0; }
 
 

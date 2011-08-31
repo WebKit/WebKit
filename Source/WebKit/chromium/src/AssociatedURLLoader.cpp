@@ -39,7 +39,7 @@
 #include "WebDataSource.h"
 #include "WebFrameImpl.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebURLError.h"
 #include "WebURLLoaderClient.h"
 #include "WebURLRequest.h"

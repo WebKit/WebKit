@@ -1,3 +1,170 @@
+2011-08-31  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Rename WebKitClient to WebKitPlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=67309
+
+        Reviewed by Darin Fisher.
+
+        WebKitClient doesn't actually represent the WebKit Client.  Instead, it
+        represents supporting code for the WebKit Platform.  This patch renames
+        WebKitClient to WebKitPlatformSupport to make it easier for folks to
+        understand the difference between the Client and the Platform.
+
+        This patch includes shims so as not to break the Chromium build.  Once
+        the Chromium side is updated, I'll remove the shims.
+
+        * WebKit.gyp:
+        * public/WebFrameClient.h:
+        * public/WebKit.h:
+        (WebKit::webKitClient):
+        * public/WebKitClient.h: Removed.
+        * public/WebKitPlatformSupport.h: Copied from Source/WebKit/chromium/public/WebKitClient.h.
+        (WebKit::WebKitPlatformSupport::~WebKitPlatformSupport):
+        * src/ApplicationCacheHostInternal.h:
+        * src/AssociatedURLLoader.cpp:
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore::AsyncFileSystemChromium::AsyncFileSystemChromium):
+        * src/AudioDestinationChromium.cpp:
+        (WebCore::AudioDestinationChromium::AudioDestinationChromium):
+        (WebCore::AudioDestination::hardwareSampleRate):
+        * src/BlobRegistryProxy.cpp:
+        (WebCore::BlobRegistryProxy::BlobRegistryProxy):
+        * src/CCThreadImpl.cpp:
+        (WebKit::CCThreadImpl::CCThreadImpl):
+        * src/ChromiumCurrentTime.cpp:
+        (WTF::currentTime):
+        (WTF::monotonicallyIncreasingTime):
+        * src/ChromiumOSRandomSource.cpp:
+        (WTF::cryptographicallyRandomValuesFromOS):
+        * src/ChromiumThreading.cpp:
+        (WTF::ChromiumThreading::callOnMainThread):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::canShowMIMEType):
+        (WebKit::FrameLoaderClientImpl::userAgent):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3D::create):
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::IDBFactoryBackendProxy):
+        * src/LocalizedStrings.cpp:
+        (WebCore::query):
+        * src/PlatformBridge.cpp:
+        (WebCore::getCookieJar):
+        (WebCore::PlatformBridge::cacheMetadata):
+        (WebCore::PlatformBridge::clipboardIsFormatAvailable):
+        (WebCore::PlatformBridge::clipboardReadPlainText):
+        (WebCore::PlatformBridge::clipboardReadHTML):
+        (WebCore::PlatformBridge::clipboardReadImage):
+        (WebCore::PlatformBridge::clipboardGetSequenceNumber):
+        (WebCore::PlatformBridge::clipboardWriteSelection):
+        (WebCore::PlatformBridge::clipboardWritePlainText):
+        (WebCore::PlatformBridge::clipboardWriteURL):
+        (WebCore::PlatformBridge::clipboardWriteImage):
+        (WebCore::PlatformBridge::clipboardWriteData):
+        (WebCore::PlatformBridge::clipboardReadAvailableTypes):
+        (WebCore::PlatformBridge::clipboardReadData):
+        (WebCore::PlatformBridge::clipboardReadFilenames):
+        (WebCore::PlatformBridge::prefetchDNS):
+        (WebCore::PlatformBridge::fileExists):
+        (WebCore::PlatformBridge::deleteFile):
+        (WebCore::PlatformBridge::deleteEmptyDirectory):
+        (WebCore::PlatformBridge::getFileSize):
+        (WebCore::PlatformBridge::revealFolderInOS):
+        (WebCore::PlatformBridge::getFileModificationTime):
+        (WebCore::PlatformBridge::directoryName):
+        (WebCore::PlatformBridge::pathByAppendingComponent):
+        (WebCore::PlatformBridge::makeAllDirectories):
+        (WebCore::PlatformBridge::getAbsolutePath):
+        (WebCore::PlatformBridge::isDirectory):
+        (WebCore::PlatformBridge::filePathToURL):
+        (WebCore::PlatformBridge::openFile):
+        (WebCore::PlatformBridge::closeFile):
+        (WebCore::PlatformBridge::seekFile):
+        (WebCore::PlatformBridge::truncateFile):
+        (WebCore::PlatformBridge::readFromFile):
+        (WebCore::PlatformBridge::writeToFile):
+        (WebCore::PlatformBridge::ensureFontLoaded):
+        (WebCore::PlatformBridge::loadFont):
+        (WebCore::PlatformBridge::getFontFamilyForCharacters):
+        (WebCore::PlatformBridge::getRenderStyleForStrike):
+        (WebCore::PlatformBridge::databaseOpenFile):
+        (WebCore::PlatformBridge::databaseDeleteFile):
+        (WebCore::PlatformBridge::databaseGetFileAttributes):
+        (WebCore::PlatformBridge::databaseGetFileSize):
+        (WebCore::PlatformBridge::databaseGetSpaceAvailableForOrigin):
+        (WebCore::PlatformBridge::createIDBKeysFromSerializedValuesAndKeyPath):
+        (WebCore::PlatformBridge::injectIDBKeyIntoSerializedValue):
+        (WebCore::PlatformBridge::signedPublicKeyAndChallengeString):
+        (WebCore::PlatformBridge::computedDefaultLanguage):
+        (WebCore::PlatformBridge::isSupportedImageMIMEType):
+        (WebCore::PlatformBridge::isSupportedJavaScriptMIMEType):
+        (WebCore::PlatformBridge::isSupportedNonImageMIMEType):
+        (WebCore::PlatformBridge::mimeTypeForExtension):
+        (WebCore::PlatformBridge::wellKnownMimeTypeForExtension):
+        (WebCore::PlatformBridge::mimeTypeFromFile):
+        (WebCore::PlatformBridge::preferredExtensionForMIMEType):
+        (WebCore::PlatformBridge::plugins):
+        (WebCore::PlatformBridge::loadPlatformImageResource):
+        (WebCore::PlatformBridge::loadPlatformAudioResource):
+        (WebCore::PlatformBridge::decodeAudioFileData):
+        (WebCore::PlatformBridge::sandboxEnabled):
+        (WebCore::PlatformBridge::setSharedTimerFiredFunction):
+        (WebCore::PlatformBridge::setSharedTimerFireInterval):
+        (WebCore::PlatformBridge::stopSharedTimer):
+        (WebCore::PlatformBridge::decrementStatsCounter):
+        (WebCore::PlatformBridge::incrementStatsCounter):
+        (WebCore::PlatformBridge::histogramCustomCounts):
+        (WebCore::PlatformBridge::histogramEnumeration):
+        (WebCore::PlatformBridge::suddenTerminationChanged):
+        (WebCore::PlatformBridge::paintButton):
+        (WebCore::PlatformBridge::paintMenuList):
+        (WebCore::PlatformBridge::paintScrollbarArrow):
+        (WebCore::PlatformBridge::paintScrollbarThumb):
+        (WebCore::PlatformBridge::paintScrollbarTrack):
+        (WebCore::PlatformBridge::paintSpinButton):
+        (WebCore::PlatformBridge::paintTextField):
+        (WebCore::PlatformBridge::paintTrackbar):
+        (WebCore::PlatformBridge::paintProgressBar):
+        (WebCore::PlatformBridge::getThemePartSize):
+        (WebCore::PlatformBridge::paintThemePart):
+        (WebCore::PlatformBridge::traceEventBegin):
+        (WebCore::PlatformBridge::traceEventEnd):
+        (WebCore::PlatformBridge::visitedLinkHash):
+        (WebCore::PlatformBridge::isLinkVisited):
+        (WebCore::PlatformBridge::memoryUsageMB):
+        (WebCore::PlatformBridge::actualMemoryUsageMB):
+        * src/PlatformMessagePortChannel.cpp:
+        (WebCore::PlatformMessagePortChannel::PlatformMessagePortChannel):
+        * src/ResourceHandle.cpp:
+        (WebCore::ResourceHandleInternal::start):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        * src/SharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerRepository::isAvailable):
+        (WebCore::SharedWorkerRepository::connect):
+        (WebCore::SharedWorkerRepository::documentDetached):
+        (WebCore::SharedWorkerRepository::hasSharedWorkers):
+        * src/SocketStreamHandle.cpp:
+        (WebCore::SocketStreamHandleInternal::connect):
+        * src/StorageEventDispatcherChromium.cpp:
+        (WebCore::StorageEventDispatcher::dispatch):
+        * src/StorageNamespaceProxy.cpp:
+        (WebCore::StorageNamespace::localStorageNamespace):
+        * src/WebKit.cpp:
+        (WebKit::generateEntropy):
+        (WebKit::initialize):
+        (WebKit::shutdown):
+        (WebKit::webKitPlatformSupport):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::supportsType):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::copy):
+        * src/WebViewImpl.cpp:
+        * src/WebWorkerClientImpl.cpp:
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        (WebCore::WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium):
+        * src/WorkerFileWriterCallbacksBridge.cpp:
+        (WebKit::WorkerFileWriterCallbacksBridge::initOnMainThread):
+        * tests/RunAllTests.cpp:
+
 2011-08-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

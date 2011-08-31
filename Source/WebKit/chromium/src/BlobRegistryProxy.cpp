@@ -40,7 +40,7 @@
 #include "WebBlobData.h"
 #include "WebBlobRegistry.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebURL.h"
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
@@ -58,7 +58,7 @@ BlobRegistry& blobRegistry()
 }
 
 BlobRegistryProxy::BlobRegistryProxy()
-    : m_webBlobRegistry(WebKit::webKitClient()->blobRegistry())
+    : m_webBlobRegistry(WebKit::webKitPlatformSupport()->blobRegistry())
 {
 }
 

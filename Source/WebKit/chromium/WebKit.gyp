@@ -208,6 +208,7 @@
                 'public/WebInputEvent.h',
                 'public/WebKit.h',
                 'public/WebKitClient.h',
+                'public/WebKitPlatformSupport.h',
                 'public/WebLabelElement.h',
                 'public/WebLocalizedString.h',
                 'public/WebMediaElement.h',

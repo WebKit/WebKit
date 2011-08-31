@@ -30,7 +30,7 @@
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebMediaElement.h"
 #include "WebMediaPlayer.h"
 #include "WebMimeRegistry.h"
@@ -627,8 +627,7 @@ void WebMediaPlayerClientImpl::getSupportedTypes(HashSet<String>& supportedTypes
 MediaPlayer::SupportsType WebMediaPlayerClientImpl::supportsType(const String& type,
                                                                  const String& codecs)
 {
-    WebMimeRegistry::SupportsType supportsType =
-        webKitClient()->mimeRegistry()->supportsMediaMIMEType(type, codecs);
+    WebMimeRegistry::SupportsType supportsType = webKitPlatformSupport()->mimeRegistry()->supportsMediaMIMEType(type, codecs);
 
     switch (supportsType) {
     default:

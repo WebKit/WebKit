@@ -41,7 +41,7 @@
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFileWriter.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebWorkerBase.h"
 #include "WorkerAsyncFileWriterChromium.h"
 #include "WorkerContext.h"
@@ -59,7 +59,7 @@ static const char fileSystemOperationsMode[] = "fileSystemOperationsMode";
 WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium(ScriptExecutionContext* context, AsyncFileSystem::Type type, const WebKit::WebURL& rootURL, bool synchronous)
     : AsyncFileSystem(type)
     , m_scriptExecutionContext(context)
-    , m_webFileSystem(WebKit::webKitClient()->fileSystem())
+    , m_webFileSystem(webKitPlatformSupport()->fileSystem())
     , m_workerContext(static_cast<WorkerContext*>(context))
     , m_synchronous(synchronous)
     , m_filesystemRootURL(rootURL)

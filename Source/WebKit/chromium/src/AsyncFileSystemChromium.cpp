@@ -39,7 +39,7 @@
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFileWriter.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 
 #include <wtf/text/CString.h>
 
@@ -52,7 +52,7 @@ bool AsyncFileSystem::isAvailable()
 
 AsyncFileSystemChromium::AsyncFileSystemChromium(AsyncFileSystem::Type type, const KURL& rootURL)
     : AsyncFileSystem(type)
-    , m_webFileSystem(WebKit::webKitClient()->fileSystem())
+    , m_webFileSystem(WebKit::webKitPlatformSupport()->fileSystem())
     , m_filesystemRootURL(rootURL)
 {
     ASSERT(m_webFileSystem);

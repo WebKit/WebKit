@@ -41,7 +41,7 @@
 #include "WebIDBDatabaseError.h"
 #include "WebIDBFactory.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebPermissionClient.h"
 #include "WebVector.h"
 #include "WebViewImpl.h"
@@ -56,7 +56,7 @@ PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendProxy::create()
 }
 
 IDBFactoryBackendProxy::IDBFactoryBackendProxy()
-    : m_webIDBFactory(webKitClient()->idbFactory())
+    : m_webIDBFactory(webKitPlatformSupport()->idbFactory())
 {
 }
 

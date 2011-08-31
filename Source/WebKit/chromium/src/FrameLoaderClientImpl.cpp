@@ -65,7 +65,7 @@
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebMimeRegistry.h"
 #include "WebNode.h"
 #include "WebPermissionClient.h"
@@ -1290,7 +1290,7 @@ bool FrameLoaderClientImpl::canShowMIMEType(const String& mimeType) const
     // mimeType strings are supposed to be ASCII, but if they are not for some
     // reason, then it just means that the mime type will fail all of these "is
     // supported" checks and go down the path of an unhandled mime type.
-    if (webKitClient()->mimeRegistry()->supportsMIMEType(mimeType) == WebMimeRegistry::IsSupported)
+    if (webKitPlatformSupport()->mimeRegistry()->supportsMIMEType(mimeType) == WebMimeRegistry::IsSupported)
         return true;
 
     // If Chrome is started with the --disable-plugins switch, pluginData is null.
@@ -1378,7 +1378,7 @@ void FrameLoaderClientImpl::setTitle(const StringWithDirection& title, const KUR
 
 String FrameLoaderClientImpl::userAgent(const KURL& url)
 {
-    return webKitClient()->userAgent(url);
+    return webKitPlatformSupport()->userAgent(url);
 }
 
 void FrameLoaderClientImpl::savePlatformDataToCachedFrame(CachedFrame*)

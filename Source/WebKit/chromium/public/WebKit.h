@@ -35,27 +35,31 @@
 
 namespace WebKit {
 
-class WebKitClient;
+class WebKitPlatformSupport;
 
 // Must be called on the thread that will be the main WebKit thread before
-// using any other WebKit APIs.  The provided WebKitClient must be non-null
-// and must remain valid until the current thread calls shutdown.
-WEBKIT_EXPORT void initialize(WebKitClient*);
+// using any other WebKit APIs. The provided WebKitPlatformSupport; must be
+// non-null and must remain valid until the current thread calls shutdown.
+WEBKIT_EXPORT void initialize(WebKitPlatformSupport*);
 
-// Once shutdown, the WebKitClient passed to initialize will no longer be
-// accessed.  No other WebKit objects should be in use when this function
-// is called.  Any background threads created by WebKit are promised to be
+// Once shutdown, the WebKitPlatformSupport passed to initialize will no longer
+// be accessed. No other WebKit objects should be in use when this function is
+// called. Any background threads created by WebKit are promised to be
 // terminated by the time this function returns.
 WEBKIT_EXPORT void shutdown();
 
-// Returns the WebKitClient instance passed to initialize.
-WEBKIT_EXPORT WebKitClient* webKitClient();
+// Returns the WebKitPlatformSupport instance passed to initialize.
+WEBKIT_EXPORT WebKitPlatformSupport* webKitPlatformSupport();
+
+#ifndef WEBKIT_RENAME_WEBKIT_CLIENT
+WEBKIT_EXPORT WebKitPlatformSupport* webKitClient();
+#endif
 
 // Alters the rendering of content to conform to a fixed set of rules.
 WEBKIT_EXPORT void setLayoutTestMode(bool);
 WEBKIT_EXPORT bool layoutTestMode();
 
-// Enables the named log channel.  See WebCore/platform/Logging.h for details.
+// Enables the named log channel. See WebCore/platform/Logging.h for details.
 WEBKIT_EXPORT void enableLogChannel(const char*);
 
 // Purge the plugin list cache. If |reloadPages| is true, any pages

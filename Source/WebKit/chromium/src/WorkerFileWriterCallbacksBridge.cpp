@@ -39,7 +39,7 @@
 #include "WebFileSystem.h"
 #include "WebFileWriter.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebWorkerBase.h"
 #include "WorkerContext.h"
 #include "WorkerLoaderProxy.h"
@@ -104,7 +104,7 @@ void WorkerFileWriterCallbacksBridge::abortOnMainThread(ScriptExecutionContext*,
 void WorkerFileWriterCallbacksBridge::initOnMainThread(ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge> bridge, const KURL& path)
 {
     ASSERT(!bridge->m_writer);
-    bridge->m_writer = adoptPtr(webKitClient()->fileSystem()->createFileWriter(path, bridge.get()));
+    bridge->m_writer = adoptPtr(webKitPlatformSupport()->fileSystem()->createFileWriter(path, bridge.get()));
 }
 
 void WorkerFileWriterCallbacksBridge::shutdownOnMainThread(ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge> bridge)

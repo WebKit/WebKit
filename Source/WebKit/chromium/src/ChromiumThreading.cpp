@@ -32,7 +32,7 @@
 #include <wtf/chromium/ChromiumThreading.h>
 
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 
 #include <wtf/MainThread.h>
 
@@ -40,7 +40,7 @@ namespace WTF {
 
 void ChromiumThreading::callOnMainThread(void (*func)(void*), void* context)
 {
-    WebKit::webKitClient()->callOnMainThread(func, context);
+    WebKit::webKitPlatformSupport()->callOnMainThread(func, context);
 }
 
 }  // namespace WTF

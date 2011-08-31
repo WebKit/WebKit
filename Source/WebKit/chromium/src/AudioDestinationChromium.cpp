@@ -34,7 +34,7 @@
 
 #include "AudioSourceProvider.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 
 using namespace WebKit;
 
@@ -71,7 +71,7 @@ AudioDestinationChromium::AudioDestinationChromium(AudioSourceProvider& provider
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
 {
-    m_audioDevice = adoptPtr(webKitClient()->createAudioDevice(callbackBufferSize, numberOfChannels, sampleRate, this));
+    m_audioDevice = adoptPtr(webKitPlatformSupport()->createAudioDevice(callbackBufferSize, numberOfChannels, sampleRate, this));
     ASSERT(m_audioDevice.get());
 }
 
@@ -98,7 +98,7 @@ void AudioDestinationChromium::stop()
 
 double AudioDestination::hardwareSampleRate()
 {
-    return webKitClient()->audioHardwareSampleRate();
+    return webKitPlatformSupport()->audioHardwareSampleRate();
 }
 
 // Pulls on our provider to get the rendered audio stream.

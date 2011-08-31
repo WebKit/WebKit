@@ -44,7 +44,7 @@
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebMessagePortChannel.h"
 #include "WebSharedWorker.h"
 #include "WebSharedWorkerRepository.h"
@@ -186,8 +186,8 @@ void SharedWorkerScriptLoader::connected()
 
 bool SharedWorkerRepository::isAvailable()
 {
-    // Allow the WebKitClient to determine if SharedWorkers are available.
-    return WebKit::webKitClient()->sharedWorkerRepository();
+    // Allow the WebKitPlatformSupport to determine if SharedWorkers are available.
+    return WebKit::webKitPlatformSupport()->sharedWorkerRepository();
 }
 
 static WebSharedWorkerRepository::DocumentID getId(void* document)
@@ -200,7 +200,7 @@ void SharedWorkerRepository::connect(PassRefPtr<SharedWorker> worker, PassOwnPtr
 {
     // This should not be callable unless there's a SharedWorkerRepository for
     // this context (since isAvailable() should have returned null).
-    ASSERT(WebKit::webKitClient()->sharedWorkerRepository());
+    ASSERT(WebKit::webKitPlatformSupport()->sharedWorkerRepository());
 
     // No nested workers (for now) - connect() should only be called from document context.
     ASSERT(worker->scriptExecutionContext()->isDocument());
@@ -215,7 +215,7 @@ void SharedWorkerRepository::connect(PassRefPtr<SharedWorker> worker, PassOwnPtr
         return;
     }
 
-    WebKit::webKitClient()->sharedWorkerRepository()->addSharedWorker(
+    WebKit::webKitPlatformSupport()->sharedWorkerRepository()->addSharedWorker(
         webWorker.get(), getId(document));
 
     // The loader object manages its own lifecycle (and the lifecycles of the two worker objects).
@@ -226,7 +226,7 @@ void SharedWorkerRepository::connect(PassRefPtr<SharedWorker> worker, PassOwnPtr
 
 void SharedWorkerRepository::documentDetached(Document* document)
 {
-    WebSharedWorkerRepository* repo = WebKit::webKitClient()->sharedWorkerRepository();
+    WebSharedWorkerRepository* repo = WebKit::webKitPlatformSupport()->sharedWorkerRepository();
     if (repo)
         repo->documentDetached(getId(document));
 
@@ -237,7 +237,7 @@ void SharedWorkerRepository::documentDetached(Document* document)
 
 bool SharedWorkerRepository::hasSharedWorkers(Document* document)
 {
-    WebSharedWorkerRepository* repo = WebKit::webKitClient()->sharedWorkerRepository();
+    WebSharedWorkerRepository* repo = WebKit::webKitPlatformSupport()->sharedWorkerRepository();
     return repo && repo->hasSharedWorkers(getId(document));
 }
 

@@ -37,7 +37,7 @@
 #include "StorageArea.h"
 
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebString.h"
 #include "WebURL.h"
 
@@ -48,7 +48,7 @@ void StorageEventDispatcher::dispatch(const String& key, const String& oldValue,
                                       SecurityOrigin* origin, Frame* sourceFrame)
 {
     ASSERT(!sourceFrame);  // Sad, but true.
-    WebKit::webKitClient()->dispatchStorageEvent(key, oldValue, newValue, origin->toString(), WebKit::WebURL(), storageType == LocalStorage);
+    WebKit::webKitPlatformSupport()->dispatchStorageEvent(key, oldValue, newValue, origin->toString(), WebKit::WebURL(), storageType == LocalStorage);
 }
 
 } // namespace WebCore

@@ -112,7 +112,7 @@
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebMediaPlayerAction.h"
 #include "WebNode.h"
 #include "WebPlugin.h"

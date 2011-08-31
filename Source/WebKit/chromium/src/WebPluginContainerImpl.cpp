@@ -42,7 +42,7 @@
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebPlugin.h"
 #include "WebRect.h"
 #include "WebString.h"
@@ -270,7 +270,7 @@ void WebPluginContainerImpl::copy()
     if (!m_webPlugin->hasSelection())
         return;
 
-    webKitClient()->clipboard()->writeHTML(m_webPlugin->selectionAsMarkup(), WebURL(), m_webPlugin->selectionAsText(), false);
+    webKitPlatformSupport()->clipboard()->writeHTML(m_webPlugin->selectionAsMarkup(), WebURL(), m_webPlugin->selectionAsText(), false);
 }
 
 WebElement WebPluginContainerImpl::element()

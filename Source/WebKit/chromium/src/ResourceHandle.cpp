@@ -38,7 +38,7 @@
 #include "SharedBuffer.h"
 
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebURLError.h"
 #include "WebURLLoader.h"
 #include "WebURLLoaderClient.h"
@@ -65,7 +65,7 @@ void ResourceHandleInternal::start()
         CRASH();
     m_state = ConnectionStateStarted;
 
-    m_loader = adoptPtr(webKitClient()->createURLLoader());
+    m_loader = adoptPtr(webKitPlatformSupport()->createURLLoader());
     ASSERT(m_loader.get());
 
     WrappedResourceRequest wrappedRequest(m_request);
@@ -258,7 +258,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context,
                                                ResourceResponse& response,
                                                Vector<char>& data)
 {
-    OwnPtr<WebURLLoader> loader = adoptPtr(webKitClient()->createURLLoader());
+    OwnPtr<WebURLLoader> loader = adoptPtr(webKitPlatformSupport()->createURLLoader());
     ASSERT(loader.get());
 
     WrappedResourceRequest requestIn(request);

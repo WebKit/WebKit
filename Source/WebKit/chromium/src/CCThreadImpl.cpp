@@ -26,7 +26,7 @@
 #include "CCThreadImpl.h"
 
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebThread.h"
 #include "cc/CCCompletionEvent.h"
 #include <stdint.h>
@@ -96,7 +96,7 @@ ThreadIdentifier CCThreadImpl::threadID() const
 }
 
 CCThreadImpl::CCThreadImpl()
-    : m_thread(adoptPtr(webKitClient()->createThread("CCThread")))
+    : m_thread(adoptPtr(webKitPlatformSupport()->createThread("CCThread")))
 {
     // Get the threadId for the newly-created thread by running a task
     // on that thread, blocking on the result.

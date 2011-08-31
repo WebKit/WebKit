@@ -48,7 +48,7 @@
 #include "WebIDBKey.h"
 #include "WebImage.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebMimeRegistry.h"
 #include "WebPluginContainerImpl.h"
 #include "WebPluginListBuilderImpl.h"
@@ -135,7 +135,7 @@ static WebCookieJar* getCookieJar(const Document* document)
         return 0;
     WebCookieJar* cookieJar = frameImpl->client()->cookieJar(frameImpl);
     if (!cookieJar)
-        cookieJar = webKitClient()->cookieJar();
+        cookieJar = webKitPlatformSupport()->cookieJar();
     return cookieJar;
 }
 
@@ -143,7 +143,7 @@ static WebCookieJar* getCookieJar(const Document* document)
 
 void PlatformBridge::cacheMetadata(const KURL& url, double responseTime, const Vector<char>& data)
 {
-    webKitClient()->cacheMetadata(url, responseTime, data.data(), data.size());
+    webKitPlatformSupport()->cacheMetadata(url, responseTime, data.data(), data.size());
 }
 
 // Clipboard ------------------------------------------------------------------
@@ -152,7 +152,7 @@ bool PlatformBridge::clipboardIsFormatAvailable(
     PasteboardPrivate::ClipboardFormat format,
     PasteboardPrivate::ClipboardBuffer buffer)
 {
-    return webKitClient()->clipboard()->isFormatAvailable(
+    return webKitPlatformSupport()->clipboard()->isFormatAvailable(
         static_cast<WebClipboard::Format>(format),
         static_cast<WebClipboard::Buffer>(buffer));
 }
@@ -160,7 +160,7 @@ bool PlatformBridge::clipboardIsFormatAvailable(
 String PlatformBridge::clipboardReadPlainText(
     PasteboardPrivate::ClipboardBuffer buffer)
 {
-    return webKitClient()->clipboard()->readPlainText(
+    return webKitPlatformSupport()->clipboard()->readPlainText(
         static_cast<WebClipboard::Buffer>(buffer));
 }
 
@@ -169,7 +169,7 @@ void PlatformBridge::clipboardReadHTML(
     String* htmlText, KURL* sourceURL)
 {
     WebURL url;
-    *htmlText = webKitClient()->clipboard()->readHTML(
+    *htmlText = webKitPlatformSupport()->clipboard()->readHTML(
         static_cast<WebClipboard::Buffer>(buffer), &url);
     *sourceURL = url;
 }
@@ -177,12 +177,12 @@ void PlatformBridge::clipboardReadHTML(
 PassRefPtr<SharedBuffer> PlatformBridge::clipboardReadImage(
     PasteboardPrivate::ClipboardBuffer buffer)
 {
-    return webKitClient()->clipboard()->readImage(static_cast<WebClipboard::Buffer>(buffer));
+    return webKitPlatformSupport()->clipboard()->readImage(static_cast<WebClipboard::Buffer>(buffer));
 }
 
 uint64_t PlatformBridge::clipboardGetSequenceNumber()
 {
-    return webKitClient()->clipboard()->getSequenceNumber();
+    return webKitPlatformSupport()->clipboard()->getSequenceNumber();
 }
 
 void PlatformBridge::clipboardWriteSelection(const String& htmlText,
@@ -190,18 +190,18 @@ void PlatformBridge::clipboardWriteSelection(const String& htmlText,
                                              const String& plainText,
                                              bool writeSmartPaste)
 {
-    webKitClient()->clipboard()->writeHTML(
+    webKitPlatformSupport()->clipboard()->writeHTML(
         htmlText, sourceURL, plainText, writeSmartPaste);
 }
 
 void PlatformBridge::clipboardWritePlainText(const String& plainText)
 {
-    webKitClient()->clipboard()->writePlainText(plainText);
+    webKitPlatformSupport()->clipboard()->writePlainText(plainText);
 }
 
 void PlatformBridge::clipboardWriteURL(const KURL& url, const String& title)
 {
-    webKitClient()->clipboard()->writeURL(url, title);
+    webKitPlatformSupport()->clipboard()->writeURL(url, title);
 }
 
 void PlatformBridge::clipboardWriteImage(NativeImagePtr image,
@@ -213,20 +213,20 @@ void PlatformBridge::clipboardWriteImage(NativeImagePtr image,
 #else
     WebImage webImage(image);
 #endif
-    webKitClient()->clipboard()->writeImage(webImage, sourceURL, title);
+    webKitPlatformSupport()->clipboard()->writeImage(webImage, sourceURL, title);
 }
 
 void PlatformBridge::clipboardWriteData(const String& type,
                                         const String& data,
                                         const String& metadata)
 {
-    webKitClient()->clipboard()->writeData(type, data, metadata);
+    webKitPlatformSupport()->clipboard()->writeData(type, data, metadata);
 }
 
 HashSet<String> PlatformBridge::clipboardReadAvailableTypes(
     PasteboardPrivate::ClipboardBuffer buffer, bool* containsFilenames)
 {
-    WebVector<WebString> result = webKitClient()->clipboard()->readAvailableTypes(
+    WebVector<WebString> result = webKitPlatformSupport()->clipboard()->readAvailableTypes(
         static_cast<WebClipboard::Buffer>(buffer), containsFilenames);
     HashSet<String> types;
     for (size_t i = 0; i < result.size(); ++i)
@@ -239,7 +239,7 @@ bool PlatformBridge::clipboardReadData(PasteboardPrivate::ClipboardBuffer buffer
 {
     WebString resultData;
     WebString resultMetadata;
-    bool succeeded = webKitClient()->clipboard()->readData(
+    bool succeeded = webKitPlatformSupport()->clipboard()->readData(
         static_cast<WebClipboard::Buffer>(buffer), type, &resultData, &resultMetadata);
     if (succeeded) {
         data = resultData;
@@ -250,7 +250,7 @@ bool PlatformBridge::clipboardReadData(PasteboardPrivate::ClipboardBuffer buffer
 
 Vector<String> PlatformBridge::clipboardReadFilenames(PasteboardPrivate::ClipboardBuffer buffer)
 {
-    WebVector<WebString> result = webKitClient()->clipboard()->readFilenames(
+    WebVector<WebString> result = webKitPlatformSupport()->clipboard()->readFilenames(
         static_cast<WebClipboard::Buffer>(buffer));
     Vector<String> convertedResult;
     for (size_t i = 0; i < result.size(); ++i)
@@ -331,40 +331,40 @@ bool PlatformBridge::cookiesEnabled(const Document* document)
 
 void PlatformBridge::prefetchDNS(const String& hostname)
 {
-    webKitClient()->prefetchHostName(hostname);
+    webKitPlatformSupport()->prefetchHostName(hostname);
 }
 
 // File ------------------------------------------------------------------------
 
 bool PlatformBridge::fileExists(const String& path)
 {
-    return webKitClient()->fileUtilities()->fileExists(path);
+    return webKitPlatformSupport()->fileUtilities()->fileExists(path);
 }
 
 bool PlatformBridge::deleteFile(const String& path)
 {
-    return webKitClient()->fileUtilities()->deleteFile(path);
+    return webKitPlatformSupport()->fileUtilities()->deleteFile(path);
 }
 
 bool PlatformBridge::deleteEmptyDirectory(const String& path)
 {
-    return webKitClient()->fileUtilities()->deleteEmptyDirectory(path);
+    return webKitPlatformSupport()->fileUtilities()->deleteEmptyDirectory(path);
 }
 
 bool PlatformBridge::getFileSize(const String& path, long long& result)
 {
-    return webKitClient()->fileUtilities()->getFileSize(path, result);
+    return webKitPlatformSupport()->fileUtilities()->getFileSize(path, result);
 }
 
 void PlatformBridge::revealFolderInOS(const String& path)
 {
-    webKitClient()->fileUtilities()->revealFolderInOS(path);
+    webKitPlatformSupport()->fileUtilities()->revealFolderInOS(path);
 }
 
 bool PlatformBridge::getFileModificationTime(const String& path, time_t& result)
 {
     double modificationTime;
-    if (!webKitClient()->fileUtilities()->getFileModificationTime(path, modificationTime))
+    if (!webKitPlatformSupport()->fileUtilities()->getFileModificationTime(path, modificationTime))
         return false;
     result = static_cast<time_t>(modificationTime);
     return true;
@@ -372,62 +372,62 @@ bool PlatformBridge::getFileModificationTime(const String& path, time_t& result)
 
 String PlatformBridge::directoryName(const String& path)
 {
-    return webKitClient()->fileUtilities()->directoryName(path);
+    return webKitPlatformSupport()->fileUtilities()->directoryName(path);
 }
 
 String PlatformBridge::pathByAppendingComponent(const String& path, const String& component)
 {
-    return webKitClient()->fileUtilities()->pathByAppendingComponent(path, component);
+    return webKitPlatformSupport()->fileUtilities()->pathByAppendingComponent(path, component);
 }
 
 bool PlatformBridge::makeAllDirectories(const String& path)
 {
-    return webKitClient()->fileUtilities()->makeAllDirectories(path);
+    return webKitPlatformSupport()->fileUtilities()->makeAllDirectories(path);
 }
 
 String PlatformBridge::getAbsolutePath(const String& path)
 {
-    return webKitClient()->fileUtilities()->getAbsolutePath(path);
+    return webKitPlatformSupport()->fileUtilities()->getAbsolutePath(path);
 }
 
 bool PlatformBridge::isDirectory(const String& path)
 {
-    return webKitClient()->fileUtilities()->isDirectory(path);
+    return webKitPlatformSupport()->fileUtilities()->isDirectory(path);
 }
 
 KURL PlatformBridge::filePathToURL(const String& path)
 {
-    return webKitClient()->fileUtilities()->filePathToURL(path);
+    return webKitPlatformSupport()->fileUtilities()->filePathToURL(path);
 }
 
 PlatformFileHandle PlatformBridge::openFile(const String& path, FileOpenMode mode)
 {
-    return webKitClient()->fileUtilities()->openFile(path, mode);
+    return webKitPlatformSupport()->fileUtilities()->openFile(path, mode);
 }
 
 void PlatformBridge::closeFile(PlatformFileHandle& handle)
 {
-    webKitClient()->fileUtilities()->closeFile(handle);
+    webKitPlatformSupport()->fileUtilities()->closeFile(handle);
 }
 
 long long PlatformBridge::seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
 {
-    return webKitClient()->fileUtilities()->seekFile(handle, offset, origin);
+    return webKitPlatformSupport()->fileUtilities()->seekFile(handle, offset, origin);
 }
 
 bool PlatformBridge::truncateFile(PlatformFileHandle handle, long long offset)
 {
-    return webKitClient()->fileUtilities()->truncateFile(handle, offset);
+    return webKitPlatformSupport()->fileUtilities()->truncateFile(handle, offset);
 }
 
 int PlatformBridge::readFromFile(PlatformFileHandle handle, char* data, int length)
 {
-    return webKitClient()->fileUtilities()->readFromFile(handle, data, length);
+    return webKitPlatformSupport()->fileUtilities()->readFromFile(handle, data, length);
 }
 
 int PlatformBridge::writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
-    return webKitClient()->fileUtilities()->writeToFile(handle, data, length);
+    return webKitPlatformSupport()->fileUtilities()->writeToFile(handle, data, length);
 }
 
 // Font -----------------------------------------------------------------------
@@ -435,7 +435,7 @@ int PlatformBridge::writeToFile(PlatformFileHandle handle, const char* data, int
 #if OS(WINDOWS)
 bool PlatformBridge::ensureFontLoaded(HFONT font)
 {
-    WebSandboxSupport* ss = webKitClient()->sandboxSupport();
+    WebSandboxSupport* ss = webKitPlatformSupport()->sandboxSupport();
 
     // if there is no sandbox, then we can assume the font
     // was able to be loaded successfully already
@@ -446,7 +446,7 @@ bool PlatformBridge::ensureFontLoaded(HFONT font)
 #if OS(DARWIN)
 bool PlatformBridge::loadFont(NSFont* srcFont, ATSFontContainerRef* container, uint32_t* fontID)
 {
-    WebSandboxSupport* ss = webKitClient()->sandboxSupport();
+    WebSandboxSupport* ss = webKitPlatformSupport()->sandboxSupport();
     if (ss)
         return ss->loadFont(srcFont, container, fontID);
 
@@ -461,8 +461,8 @@ bool PlatformBridge::loadFont(NSFont* srcFont, ATSFontContainerRef* container, u
 #elif OS(UNIX)
 String PlatformBridge::getFontFamilyForCharacters(const UChar* characters, size_t numCharacters, const char* preferredLocale)
 {
-    if (webKitClient()->sandboxSupport())
-        return webKitClient()->sandboxSupport()->getFontFamilyForCharacters(characters, numCharacters, preferredLocale);
+    if (webKitPlatformSupport()->sandboxSupport())
+        return webKitPlatformSupport()->sandboxSupport()->getFontFamilyForCharacters(characters, numCharacters, preferredLocale);
 
     WebCString family = WebFontInfo::familyForChars(characters, numCharacters, preferredLocale);
     if (family.data())
@@ -475,8 +475,8 @@ void PlatformBridge::getRenderStyleForStrike(const char* font, int sizeAndStyle,
 {
     WebFontRenderStyle style;
 
-    if (webKitClient()->sandboxSupport())
-        webKitClient()->sandboxSupport()->getRenderStyleForStrike(font, sizeAndStyle, &style);
+    if (webKitPlatformSupport()->sandboxSupport())
+        webKitPlatformSupport()->sandboxSupport()->getRenderStyleForStrike(font, sizeAndStyle, &style);
     else
         WebFontInfo::renderStyleForStrike(font, sizeAndStyle, &style);
 
@@ -488,27 +488,27 @@ void PlatformBridge::getRenderStyleForStrike(const char* font, int sizeAndStyle,
 
 PlatformFileHandle PlatformBridge::databaseOpenFile(const String& vfsFileName, int desiredFlags)
 {
-    return webKitClient()->databaseOpenFile(WebString(vfsFileName), desiredFlags);
+    return webKitPlatformSupport()->databaseOpenFile(WebString(vfsFileName), desiredFlags);
 }
 
 int PlatformBridge::databaseDeleteFile(const String& vfsFileName, bool syncDir)
 {
-    return webKitClient()->databaseDeleteFile(WebString(vfsFileName), syncDir);
+    return webKitPlatformSupport()->databaseDeleteFile(WebString(vfsFileName), syncDir);
 }
 
 long PlatformBridge::databaseGetFileAttributes(const String& vfsFileName)
 {
-    return webKitClient()->databaseGetFileAttributes(WebString(vfsFileName));
+    return webKitPlatformSupport()->databaseGetFileAttributes(WebString(vfsFileName));
 }
 
 long long PlatformBridge::databaseGetFileSize(const String& vfsFileName)
 {
-    return webKitClient()->databaseGetFileSize(WebString(vfsFileName));
+    return webKitPlatformSupport()->databaseGetFileSize(WebString(vfsFileName));
 }
 
 long long PlatformBridge::databaseGetSpaceAvailableForOrigin(const String& originIdentifier)
 {
-    return webKitClient()->databaseGetSpaceAvailableForOrigin(originIdentifier);
+    return webKitPlatformSupport()->databaseGetSpaceAvailableForOrigin(originIdentifier);
 }
 
 // Indexed Database -----------------------------------------------------------
@@ -524,7 +524,7 @@ void PlatformBridge::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<Re
 {
     WebVector<WebSerializedScriptValue> webValues = values;
     WebVector<WebIDBKey> webKeys;
-    webKitClient()->createIDBKeysFromSerializedValuesAndKeyPath(webValues, keyPath, webKeys);
+    webKitPlatformSupport()->createIDBKeysFromSerializedValuesAndKeyPath(webValues, keyPath, webKeys);
 
     size_t webKeysSize = webKeys.size();
     keys.reserveCapacity(webKeysSize);
@@ -534,7 +534,7 @@ void PlatformBridge::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<Re
 
 PassRefPtr<SerializedScriptValue> PlatformBridge::injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
 {
-    return webKitClient()->injectIDBKeyIntoSerializedValue(key, value, keyPath);
+    return webKitPlatformSupport()->injectIDBKeyIntoSerializedValue(key, value, keyPath);
 }
 
 // Keygen ---------------------------------------------------------------------
@@ -542,7 +542,7 @@ PassRefPtr<SerializedScriptValue> PlatformBridge::injectIDBKeyIntoSerializedValu
 String PlatformBridge::signedPublicKeyAndChallengeString(
     unsigned keySizeIndex, const String& challenge, const KURL& url)
 {
-    return webKitClient()->signedPublicKeyAndChallengeString(keySizeIndex,
+    return webKitPlatformSupport()->signedPublicKeyAndChallengeString(keySizeIndex,
                                                              WebString(challenge),
                                                              WebURL(url));
 }
@@ -551,7 +551,7 @@ String PlatformBridge::signedPublicKeyAndChallengeString(
 
 String PlatformBridge::computedDefaultLanguage()
 {
-    return webKitClient()->defaultLocale();
+    return webKitPlatformSupport()->defaultLocale();
 }
 
 // LayoutTestMode -------------------------------------------------------------
@@ -565,40 +565,40 @@ bool PlatformBridge::layoutTestMode()
 
 bool PlatformBridge::isSupportedImageMIMEType(const String& mimeType)
 {
-    return webKitClient()->mimeRegistry()->supportsImageMIMEType(mimeType)
+    return webKitPlatformSupport()->mimeRegistry()->supportsImageMIMEType(mimeType)
         != WebMimeRegistry::IsNotSupported;
 }
 
 bool PlatformBridge::isSupportedJavaScriptMIMEType(const String& mimeType)
 {
-    return webKitClient()->mimeRegistry()->supportsJavaScriptMIMEType(mimeType)
+    return webKitPlatformSupport()->mimeRegistry()->supportsJavaScriptMIMEType(mimeType)
         != WebMimeRegistry::IsNotSupported;
 }
 
 bool PlatformBridge::isSupportedNonImageMIMEType(const String& mimeType)
 {
-    return webKitClient()->mimeRegistry()->supportsNonImageMIMEType(mimeType)
+    return webKitPlatformSupport()->mimeRegistry()->supportsNonImageMIMEType(mimeType)
         != WebMimeRegistry::IsNotSupported;
 }
 
 String PlatformBridge::mimeTypeForExtension(const String& extension)
 {
-    return webKitClient()->mimeRegistry()->mimeTypeForExtension(extension);
+    return webKitPlatformSupport()->mimeRegistry()->mimeTypeForExtension(extension);
 }
 
 String PlatformBridge::wellKnownMimeTypeForExtension(const String& extension)
 {
-    return webKitClient()->mimeRegistry()->wellKnownMimeTypeForExtension(extension);
+    return webKitPlatformSupport()->mimeRegistry()->wellKnownMimeTypeForExtension(extension);
 }
 
 String PlatformBridge::mimeTypeFromFile(const String& path)
 {
-    return webKitClient()->mimeRegistry()->mimeTypeFromFile(path);
+    return webKitPlatformSupport()->mimeRegistry()->mimeTypeFromFile(path);
 }
 
 String PlatformBridge::preferredExtensionForMIMEType(const String& mimeType)
 {
-    return webKitClient()->mimeRegistry()->preferredExtensionForMIMEType(mimeType);
+    return webKitPlatformSupport()->mimeRegistry()->preferredExtensionForMIMEType(mimeType);
 }
 
 // Plugin ---------------------------------------------------------------------
@@ -606,7 +606,7 @@ String PlatformBridge::preferredExtensionForMIMEType(const String& mimeType)
 bool PlatformBridge::plugins(bool refresh, Vector<PluginInfo>* results)
 {
     WebPluginListBuilderImpl builder(results);
-    webKitClient()->getPluginList(refresh, &builder);
+    webKitPlatformSupport()->getPluginList(refresh, &builder);
     return true;  // FIXME: There is no need for this function to return a value.
 }
 
@@ -622,7 +622,7 @@ NPObject* PlatformBridge::pluginScriptableObject(Widget* widget)
 
 PassRefPtr<Image> PlatformBridge::loadPlatformImageResource(const char* name)
 {
-    const WebData& resource = webKitClient()->loadResource(name);
+    const WebData& resource = webKitPlatformSupport()->loadResource(name);
     if (resource.isEmpty())
         return Image::nullImage();
 
@@ -635,7 +635,7 @@ PassRefPtr<Image> PlatformBridge::loadPlatformImageResource(const char* name)
 
 PassOwnPtr<AudioBus> PlatformBridge::loadPlatformAudioResource(const char* name, double sampleRate)
 {
-    const WebData& resource = webKitClient()->loadResource(name);
+    const WebData& resource = webKitPlatformSupport()->loadResource(name);
     if (resource.isEmpty())
         return nullptr;
     
@@ -645,7 +645,7 @@ PassOwnPtr<AudioBus> PlatformBridge::loadPlatformAudioResource(const char* name,
 PassOwnPtr<AudioBus> PlatformBridge::decodeAudioFileData(const char* data, size_t size, double sampleRate)
 {
     WebAudioBus webAudioBus;
-    if (webKitClient()->loadAudioResource(&webAudioBus, data, size, sampleRate))
+    if (webKitPlatformSupport()->loadAudioResource(&webAudioBus, data, size, sampleRate))
         return webAudioBus.release();
     return nullptr;
 }
@@ -656,53 +656,53 @@ PassOwnPtr<AudioBus> PlatformBridge::decodeAudioFileData(const char* data, size_
 
 bool PlatformBridge::sandboxEnabled()
 {
-    return webKitClient()->sandboxEnabled();
+    return webKitPlatformSupport()->sandboxEnabled();
 }
 
 // SharedTimers ---------------------------------------------------------------
 
 void PlatformBridge::setSharedTimerFiredFunction(void (*func)())
 {
-    webKitClient()->setSharedTimerFiredFunction(func);
+    webKitPlatformSupport()->setSharedTimerFiredFunction(func);
 }
 
 void PlatformBridge::setSharedTimerFireInterval(double interval)
 {
-    webKitClient()->setSharedTimerFireInterval(interval);
+    webKitPlatformSupport()->setSharedTimerFireInterval(interval);
 }
 
 void PlatformBridge::stopSharedTimer()
 {
-    webKitClient()->stopSharedTimer();
+    webKitPlatformSupport()->stopSharedTimer();
 }
 
 // StatsCounters --------------------------------------------------------------
 
 void PlatformBridge::decrementStatsCounter(const char* name)
 {
-    webKitClient()->decrementStatsCounter(name);
+    webKitPlatformSupport()->decrementStatsCounter(name);
 }
 
 void PlatformBridge::incrementStatsCounter(const char* name)
 {
-    webKitClient()->incrementStatsCounter(name);
+    webKitPlatformSupport()->incrementStatsCounter(name);
 }
 
 void PlatformBridge::histogramCustomCounts(const char* name, int sample, int min, int max, int bucketCount)
 {
-    webKitClient()->histogramCustomCounts(name, sample, min, max, bucketCount);
+    webKitPlatformSupport()->histogramCustomCounts(name, sample, min, max, bucketCount);
 }
 
 void PlatformBridge::histogramEnumeration(const char* name, int sample, int boundaryValue)
 {
-    webKitClient()->histogramEnumeration(name, sample, boundaryValue);
+    webKitPlatformSupport()->histogramEnumeration(name, sample, boundaryValue);
 }
 
 // Sudden Termination ---------------------------------------------------------
 
 void PlatformBridge::suddenTerminationChanged(bool enabled)
 {
-    webKitClient()->suddenTerminationChanged(enabled);
+    webKitPlatformSupport()->suddenTerminationChanged(enabled);
 }
 
 // Theming --------------------------------------------------------------------
@@ -713,7 +713,7 @@ void PlatformBridge::paintButton(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
-    webKitClient()->themeEngine()->paintButton(
+    webKitPlatformSupport()->themeEngine()->paintButton(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
@@ -721,7 +721,7 @@ void PlatformBridge::paintMenuList(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
-    webKitClient()->themeEngine()->paintMenuList(
+    webKitPlatformSupport()->themeEngine()->paintMenuList(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
@@ -729,7 +729,7 @@ void PlatformBridge::paintScrollbarArrow(
     GraphicsContext* gc, int state, int classicState,
     const IntRect& rect)
 {
-    webKitClient()->themeEngine()->paintScrollbarArrow(
+    webKitPlatformSupport()->themeEngine()->paintScrollbarArrow(
         gc->platformContext()->canvas(), state, classicState, rect);
 }
 
@@ -737,7 +737,7 @@ void PlatformBridge::paintScrollbarThumb(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
-    webKitClient()->themeEngine()->paintScrollbarThumb(
+    webKitPlatformSupport()->themeEngine()->paintScrollbarThumb(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
@@ -745,7 +745,7 @@ void PlatformBridge::paintScrollbarTrack(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect, const IntRect& alignRect)
 {
-    webKitClient()->themeEngine()->paintScrollbarTrack(
+    webKitPlatformSupport()->themeEngine()->paintScrollbarTrack(
         gc->platformContext()->canvas(), part, state, classicState, rect,
         alignRect);
 }
@@ -754,7 +754,7 @@ void PlatformBridge::paintSpinButton(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
-    webKitClient()->themeEngine()->paintSpinButton(
+    webKitPlatformSupport()->themeEngine()->paintSpinButton(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
@@ -766,7 +766,7 @@ void PlatformBridge::paintTextField(
     // Fallback to white when |color| is invalid.
     RGBA32 backgroundColor = color.isValid() ? color.rgb() : Color::white;
 
-    webKitClient()->themeEngine()->paintTextField(
+    webKitPlatformSupport()->themeEngine()->paintTextField(
         gc->platformContext()->canvas(), part, state, classicState, rect,
         backgroundColor, fillContentArea, drawEdges);
 }
@@ -775,14 +775,14 @@ void PlatformBridge::paintTrackbar(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
-    webKitClient()->themeEngine()->paintTrackbar(
+    webKitPlatformSupport()->themeEngine()->paintTrackbar(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
 void PlatformBridge::paintProgressBar(
     GraphicsContext* gc, const IntRect& barRect, const IntRect& valueRect, bool determinate, double animatedSeconds)
 {
-    webKitClient()->themeEngine()->paintProgressBar(
+    webKitPlatformSupport()->themeEngine()->paintProgressBar(
         gc->platformContext()->canvas(), barRect, valueRect, determinate, animatedSeconds);
 }
 
@@ -805,7 +805,7 @@ void PlatformBridge::paintScrollbarThumb(
 #else
     WebKit::WebCanvas* webCanvas = gc->platformContext();
 #endif
-    webKitClient()->themeEngine()->paintScrollbarThumb(
+    webKitPlatformSupport()->themeEngine()->paintScrollbarThumb(
         webCanvas,
         static_cast<WebThemeEngine::State>(state),
         static_cast<WebThemeEngine::Size>(size),
@@ -909,7 +909,7 @@ static void GetWebThemeExtraParams(PlatformBridge::ThemePart part, PlatformBridg
 
 IntSize PlatformBridge::getThemePartSize(ThemePart part)
 {
-     return webKitClient()->themeEngine()->getSize(WebThemePart(part));
+     return webKitPlatformSupport()->themeEngine()->getSize(WebThemePart(part));
 }
 
 void PlatformBridge::paintThemePart(
@@ -917,7 +917,7 @@ void PlatformBridge::paintThemePart(
 {
     WebThemeEngine::ExtraParams webThemeExtraParams;
     GetWebThemeExtraParams(part, state, extraParams, &webThemeExtraParams);
-    webKitClient()->themeEngine()->paint(
+    webKitPlatformSupport()->themeEngine()->paint(
         gc->platformContext()->canvas(), WebThemePart(part), WebThemeState(state), rect, &webThemeExtraParams);
 }
 
@@ -927,12 +927,12 @@ void PlatformBridge::paintThemePart(
 
 void PlatformBridge::traceEventBegin(const char* name, void* id, const char* extra)
 {
-    webKitClient()->traceEventBegin(name, id, extra);
+    webKitPlatformSupport()->traceEventBegin(name, id, extra);
 }
 
 void PlatformBridge::traceEventEnd(const char* name, void* id, const char* extra)
 {
-    webKitClient()->traceEventEnd(name, id, extra);
+    webKitPlatformSupport()->traceEventEnd(name, id, extra);
 }
 
 // Visited Links --------------------------------------------------------------
@@ -943,7 +943,7 @@ LinkHash PlatformBridge::visitedLinkHash(const UChar* url, unsigned length)
     url_parse::Parsed parsed;
     if (!url_util::Canonicalize(url, length, 0, &buffer, &parsed))
         return 0;  // Invalid URLs are unvisited.
-    return webKitClient()->visitedLinkHash(buffer.data(), buffer.length());
+    return webKitPlatformSupport()->visitedLinkHash(buffer.data(), buffer.length());
 }
 
 LinkHash PlatformBridge::visitedLinkHash(const KURL& base,
@@ -977,12 +977,12 @@ LinkHash PlatformBridge::visitedLinkHash(const KURL& base,
                                    attributeURL.length(), 0, &buffer, &parsed))
         return 0;  // Invalid resolved URL.
 
-    return webKitClient()->visitedLinkHash(buffer.data(), buffer.length());
+    return webKitPlatformSupport()->visitedLinkHash(buffer.data(), buffer.length());
 }
 
 bool PlatformBridge::isLinkVisited(LinkHash visitedLinkHash)
 {
-    return webKitClient()->isLinkVisited(visitedLinkHash);
+    return webKitPlatformSupport()->isLinkVisited(visitedLinkHash);
 }
 
 // These are temporary methods that the WebKit layer can use to call to the
@@ -1002,12 +1002,12 @@ void PlatformBridge::notifyJSOutOfMemory(Frame* frame)
 
 int PlatformBridge::memoryUsageMB()
 {
-    return static_cast<int>(webKitClient()->memoryUsageMB());
+    return static_cast<int>(webKitPlatformSupport()->memoryUsageMB());
 }
 
 int PlatformBridge::actualMemoryUsageMB()
 {
-    return static_cast<int>(webKitClient()->actualMemoryUsageMB());
+    return static_cast<int>(webKitPlatformSupport()->actualMemoryUsageMB());
 }
 
 int PlatformBridge::screenDepth(Widget* widget)

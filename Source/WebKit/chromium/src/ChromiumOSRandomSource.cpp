@@ -32,13 +32,13 @@
 #include <wtf/OSRandomSource.h>
 
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 
 namespace WTF {
 
 void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length)
 {
-    WebKit::webKitClient()->cryptographicallyRandomValues(buffer, length);
+    WebKit::webKitPlatformSupport()->cryptographicallyRandomValues(buffer, length);
 }
 
 }

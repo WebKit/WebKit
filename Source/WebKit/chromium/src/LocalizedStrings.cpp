@@ -35,7 +35,7 @@
 #include "NotImplemented.h"
 
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebLocalizedString.h"
 #include "WebString.h"
 
@@ -49,17 +49,17 @@ namespace WebCore {
 
 static String query(WebLocalizedString::Name name)
 {
-    return WebKit::webKitClient()->queryLocalizedString(name);
+    return WebKit::webKitPlatformSupport()->queryLocalizedString(name);
 }
 
 static String query(WebLocalizedString::Name name, const WebString& parameter)
 {
-    return WebKit::webKitClient()->queryLocalizedString(name, parameter);
+    return WebKit::webKitPlatformSupport()->queryLocalizedString(name, parameter);
 }
 
 static String query(WebLocalizedString::Name name, const WebString& parameter1, const WebString& parameter2)
 {
-    return WebKit::webKitClient()->queryLocalizedString(name, parameter1, parameter2);
+    return WebKit::webKitPlatformSupport()->queryLocalizedString(name, parameter1, parameter2);
 }
 
 String searchableIndexIntroduction()

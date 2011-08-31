@@ -47,7 +47,7 @@
 #include "ImageData.h"
 #include "WebGraphicsContext3D.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebViewImpl.h"
 
 #include <stdio.h>
@@ -986,7 +986,7 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
     webAttributes.canRecoverFromContextLoss = attrs.canRecoverFromContextLoss;
     webAttributes.noExtensions = attrs.noExtensions;
     webAttributes.shareResources = attrs.shareResources;
-    OwnPtr<WebKit::WebGraphicsContext3D> webContext = adoptPtr(WebKit::webKitClient()->createGraphicsContext3D());
+    OwnPtr<WebKit::WebGraphicsContext3D> webContext = adoptPtr(WebKit::webKitPlatformSupport()->createGraphicsContext3D());
     if (!webContext)
         return 0;
 

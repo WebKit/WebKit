@@ -38,7 +38,7 @@
 #include "SocketStreamHandleClient.h"
 #include "WebData.h"
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebSocketStreamHandle.h"
 #include "WebSocketStreamHandleClient.h"
 #include "WebURL.h"
@@ -89,7 +89,7 @@ SocketStreamHandleInternal::~SocketStreamHandleInternal()
 
 void SocketStreamHandleInternal::connect(const KURL& url)
 {
-    m_socket = adoptPtr(webKitClient()->createSocketStreamHandle());
+    m_socket = adoptPtr(webKitPlatformSupport()->createSocketStreamHandle());
     LOG(Network, "connect");
     ASSERT(m_socket.get());
     m_socket->connect(url, this);
