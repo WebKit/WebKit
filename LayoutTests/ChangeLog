@@ -1,3 +1,22 @@
+2011-08-31  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r94109 and r93909.
+
+        * platform/gtk/fast/css-generated-content/table-row-before-after-child-add-expected.txt:
+        * platform/gtk/fast/css-generated-content/table-table-before-after-child-add-expected.txt:
+        * platform/gtk/fast/multicol/inherit-column-values-expected.txt: Added.
+        * platform/gtk/fast/multicol/initial-column-values-expected.txt: Added.
+        * platform/gtk/fast/multicol/single-line-expected.txt:
+        * platform/gtk/fast/multicol/table-vertical-align-expected.txt:
+        * platform/gtk/fast/repaint/multicol-repaint-expected.txt:
+        * platform/gtk/fast/table/table-before-child-in-table-expected.txt:
+        * platform/gtk/fast/table/table-before-child-style-update-expected.txt: Added.
+        * platform/gtk/fast/table/table-row-after-child-in-block-expected.txt:
+        * platform/gtk/fast/table/table-row-after-child-in-table-expected.txt:
+        * platform/gtk/fast/table/table-row-before-child-in-block-expected.txt:
+        * platform/gtk/fast/table/table-row-before-child-in-table-expected.txt:
+        * platform/gtk/fast/table/table-row-before-child-style-update-expected.txt: Added.
+
 2011-08-31  Keishi Hattori  <keishi@webkit.org>
 
         input color: onchange event is not fired when changing color from color chooser

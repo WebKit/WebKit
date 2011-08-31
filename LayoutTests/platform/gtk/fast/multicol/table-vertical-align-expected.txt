@@ -263,10 +263,10 @@ layer at (8,376) size 768x300
               text run at (11,1166) width 44: "of text."
             RenderBR {BR} at (55,1181) size 0x0
           RenderTableCell {TD} at (140,513) size 234x170 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-            RenderInline {SPAN} at (0,0) size 145x147
-              RenderText {#text} at (11,12) size 145x147
+            RenderInline {SPAN} at (0,0) size 145x148
+              RenderText {#text} at (11,12) size 145x148
                 text run at (11,12) width 145: "Other"
-                text run at (11,87) width 108: "cell."
+                text run at (11,88) width 108: "cell."
 layer at (8,702) size 768x300
   RenderBlock {DIV} at (0,694) size 768x300
     RenderTable {TABLE} at (0,0) size 376x1198 [border: (1px outset #808080)]

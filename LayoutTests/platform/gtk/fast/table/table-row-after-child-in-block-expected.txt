@@ -10,6 +10,6 @@ layer at (0,0) size 800x600
         RenderTable at (19,38) size 52x19 [color=#000000]
           RenderTableSection (anonymous) at (0,0) size 52x19
             RenderTableRow (anonymous) at (0,0) size 52x19 [color=#FF0000] [border: (3px solid #0000FF)]
-              RenderTableCell (anonymous) at (0,0) size 52x19 [color=#000000] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell (anonymous) at (0,0) size 52x19 [r=0 c=0 rs=1 cs=1]
                 RenderText at (0,0) size 52x19
                   text run at (0,0) width 52: "AFTER"
