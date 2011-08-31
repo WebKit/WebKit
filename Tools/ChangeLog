@@ -1,3 +1,14 @@
+2011-08-31  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] DRT linux should pass nativeKeyCode to plugins
+        https://bugs.webkit.org/show_bug.cgi?id=66679
+
+        Reviewed by Tony Chang.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::keyDown):  Call a Chromium Linux GTK helper routine that returns the
+        (simulated) nativeKeyCode for the given input keyboard code.
+
 2011-08-31  Adam Barth  <abarth@webkit.org>
 
         Tighen up UI for garden-o-matic tab strip
