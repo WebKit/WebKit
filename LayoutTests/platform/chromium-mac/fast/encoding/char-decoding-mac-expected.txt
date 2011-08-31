@@ -1,0 +1,19 @@
+This tests decoding characters in various character sets.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS decode('mac', '%C3') is 'U+221A'
+PASS decode('macintosh', '%C3') is 'U+221A'
+PASS decode('MacRoman', '%C3') is 'U+221A'
+FAIL decode('x-mac-greek', '%B0') should be U+0391. Was U+00B0.
+PASS decode('x-mac-ukrainian', '%80') is 'U+0410'
+PASS decode('x-mac-cyrillic', '%80') is 'U+0410'
+PASS decode('mac-cyrillic', '%80') is 'U+0410'
+FAIL decode('x-mac-centraleurroman', '%81') should be U+0100. Was U+0081.
+FAIL decode('x-mac-ce', '%81') should be U+0100. Was U+0081.
+FAIL decode('x-mac-turkish', '%81') should be U+00C5. Was U+0081.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

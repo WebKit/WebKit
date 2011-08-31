@@ -1,0 +1,11 @@
+Test for the datalist element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL datalist.options.length should be 4. Threw exception TypeError: Cannot read property 'length' of undefined
+FAIL datalist.options.length should be 3. Threw exception TypeError: Cannot read property 'length' of undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+The choices are , , , and .

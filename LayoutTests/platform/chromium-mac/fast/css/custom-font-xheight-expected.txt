@@ -1,0 +1,19 @@
+Test for bug 39682: WebKit nightly adding insane height to div at random.
+
+FAIL: 106px
+
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
+XXXX
