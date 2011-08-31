@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           RenderTableRow (anonymous) at (0,0) size 97x78
             RenderTableCell (anonymous) at (0,0) size 97x78 [r=0 c=0 rs=1 cs=1]
               RenderTable at (0,0) size 97x58 [color=#FF0000] [border: (3px solid #0000FF)]
-                RenderTableSection (anonymous) at (19,19) size 59x20 [color=#000000]
+                RenderTableSection (anonymous) at (19,19) size 59x20
                   RenderTableRow (anonymous) at (0,0) size 59x20
                     RenderTableCell (anonymous) at (0,0) size 59x20 [r=0 c=0 rs=1 cs=1]
                       RenderText at (0,0) size 59x19

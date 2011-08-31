@@ -1,3 +1,26 @@
+2011-08-30  David Levin  <levin@chromium.org>
+
+        [chromium] New baselines due to r94109.
+
+        * platform/chromium-linux/fast/css-generated-content/table-row-before-after-child-add-expected.txt: Removed.
+        * platform/chromium-linux/fast/css-generated-content/table-table-before-after-child-add-expected.txt: Removed.
+        * platform/chromium-linux/fast/table/table-after-child-in-table-expected.txt: Removed.
+        * platform/chromium-linux/fast/table/table-before-child-in-table-expected.txt: Removed.
+        * platform/chromium-linux/fast/table/table-row-after-child-in-block-expected.txt: Removed.
+        * platform/chromium-linux/fast/table/table-row-after-child-in-table-expected.txt: Removed.
+        * platform/chromium-linux/fast/table/table-row-before-child-in-block-expected.txt: Removed.
+        * platform/chromium-linux/fast/table/table-row-before-child-in-table-expected.txt: Removed.
+        * platform/chromium-win/fast/css-generated-content/table-row-before-after-child-add-expected.txt:
+        * platform/chromium-win/fast/css-generated-content/table-table-before-after-child-add-expected.txt:
+        * platform/chromium-win/fast/table/table-after-child-in-table-expected.txt:
+        * platform/chromium-win/fast/table/table-before-child-in-table-expected.txt:
+        * platform/chromium-win/fast/table/table-before-child-style-update-expected.png: Added.
+        * platform/chromium-win/fast/table/table-row-after-child-in-block-expected.txt:
+        * platform/chromium-win/fast/table/table-row-after-child-in-table-expected.txt:
+        * platform/chromium-win/fast/table/table-row-before-child-in-block-expected.txt:
+        * platform/chromium-win/fast/table/table-row-before-child-in-table-expected.txt:
+        * platform/chromium-win/fast/table/table-row-before-child-style-update-expected.png: Added.
+
 2011-08-30  Ojan Vafai  <ojan@chromium.org>
 
         add a test for border/padding/margin on the flexbox container
