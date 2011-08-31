@@ -262,7 +262,7 @@ WebInspector.MetricsSidebarPane.prototype = {
 
             var boxElement = document.createElement("div");
             boxElement.className = name;
-            boxElement.addEventListener("mouseover", this._highlightDOMNode.bind(this, true, name), false);
+            boxElement.addEventListener("mouseover", this._highlightDOMNode.bind(this, true, name === "position" ? "all" : name), false);
             boxElement.addEventListener("mouseout", this._highlightDOMNode.bind(this, false, ""), false);
 
             if (name === "content") {
@@ -305,8 +305,6 @@ WebInspector.MetricsSidebarPane.prototype = {
         metricsElement.addEventListener("mouseout", this._highlightDOMNode.bind(this, false, ""), false);
         this.bodyElement.removeChildren();
         this.bodyElement.appendChild(metricsElement);
-
-        WebInspector.highlightDOMNode(0);
     },
 
     startEditing: function(targetElement, box, styleProperty, computedStyle)

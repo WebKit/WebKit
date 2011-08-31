@@ -1,3 +1,13 @@
+2011-08-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Having the "Metrics" pane open affects the node highlight display
+        https://bugs.webkit.org/show_bug.cgi?id=67278
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype._updateMetrics):
+
 2011-08-31  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: console view does a style recalculation per each addMessage call.
