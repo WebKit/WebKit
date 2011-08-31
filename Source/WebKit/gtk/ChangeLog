@@ -1,3 +1,11 @@
+2011-08-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK build fix after r94142.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setAutofilled):
+        (DumpRenderTreeSupportGtk::setValueForUser):
+
 2011-08-30  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         The unused ScrollView* argument can and should be removed from

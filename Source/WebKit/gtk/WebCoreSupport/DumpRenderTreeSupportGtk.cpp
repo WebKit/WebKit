@@ -759,7 +759,7 @@ void DumpRenderTreeSupportGtk::setAutofilled(JSContextRef context, JSValueRef no
     if (!element || !element->hasTagName(HTMLNames::inputTag))
         return;
 
-    toHTMLInputElement(inputElement)->setAutofilled(autofilled);
+    toHTMLInputElement(element)->setAutofilled(autofilled);
 }
 
 void DumpRenderTreeSupportGtk::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
@@ -772,7 +772,7 @@ void DumpRenderTreeSupportGtk::setValueForUser(JSContextRef context, JSValueRef 
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(value);
     GOwnPtr<gchar> valueBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
     JSStringGetUTF8CString(value, valueBuffer.get(), bufferSize);
-    toHTMLInputElement(inputElement)->setValueForUser(String::fromUTF8(valueBuffer.get()));
+    toHTMLInputElement(element)->setValueForUser(String::fromUTF8(valueBuffer.get()));
 }
 
 void DumpRenderTreeSupportGtk::rectangleForSelection(WebKitWebFrame* frame, cairo_rectangle_int_t* rectangle)
