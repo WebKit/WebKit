@@ -1,3 +1,12 @@
+2011-08-31  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r94147.
+
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
 2011-08-30  David Levin  <levin@chromium.org>
 
         [chromium] Update result due to r94114.
