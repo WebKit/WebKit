@@ -1,3 +1,14 @@
+2011-08-31  Tom Sepez  <tsepez@chromium.org>
+
+        Fix XSS filter bypass by multiply decoding both the URL and the body
+        snippet until they are in the most minimal form before comparison.
+        https://bugs.webkit.org/show_bug.cgi?id=66585
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location2.html:
+        * http/tests/security/xssAuditor/resources/echo-dom-write-unescaped-location.html: Added.
+
 2011-08-31  Cary Clark  <caryclark@google.com>
 
         Unreviewed; new baselines (Skia on Mac, next chunk of 800 files)

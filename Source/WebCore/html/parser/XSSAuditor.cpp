@@ -39,6 +39,7 @@
 #include "Settings.h"
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"
+
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -114,17 +115,23 @@ static bool containsJavaScriptURL(const Vector<UChar, 32>& value)
     return equalIgnoringCase(value.data() + i, javaScriptScheme, lengthOfJavaScriptScheme);
 }
 
-static String decodeURL(const String& string, const TextEncoding& encoding)
+static String fullyDecodeString(const String& string, const TextResourceDecoder* decoder)
 {
+    size_t oldWorkingStringLength;
     String workingString = string;
+    do {
+        oldWorkingStringLength = workingString.length();
+        workingString = decodeURLEscapeSequences(workingString);
+    } while (workingString.length() < oldWorkingStringLength);
+    if (decoder) {
+        CString workingStringUTF8 = workingString.utf8();
+        String decodedString = decoder->encoding().decode(workingStringUTF8.data(), workingStringUTF8.length());
+        if (!decodedString.isEmpty())
+            workingString = decodedString;
+    }
     workingString.replace('+', ' ');
-    workingString = decodeURLEscapeSequences(workingString);
-    CString workingStringUTF8 = workingString.utf8();
-    String decodedString = encoding.decode(workingStringUTF8.data(), workingStringUTF8.length());
-    // FIXME: Is this check necessary?
-    if (decodedString.isEmpty())
-        return canonicalize(workingString);
-    return canonicalize(decodedString);
+    workingString = canonicalize(workingString);
+    return workingString;
 }
 
 XSSAuditor::XSSAuditor(HTMLDocumentParser* parser)
@@ -152,7 +159,7 @@ void XSSAuditor::init()
 
     if (!m_isEnabled)
         return;
-    
+
     // In theory, the Document could have detached from the Frame after the
     // XSSAuditor was constructed.
     if (!m_parser->document()->frame()) {
@@ -168,7 +175,7 @@ void XSSAuditor::init()
     }
 
     TextResourceDecoder* decoder = m_parser->document()->decoder();
-    m_decodedURL = decoder ? decodeURL(url.string(), decoder->encoding()) : url.string();
+    m_decodedURL = fullyDecodeString(url.string(), decoder);
     if (m_decodedURL.find(isRequiredForInjection, 0) == notFound)
         m_decodedURL = String();
 
@@ -179,7 +186,7 @@ void XSSAuditor::init()
         FormData* httpBody = documentLoader->originalRequest().httpBody();
         if (httpBody && !httpBody->isEmpty()) {
             String httpBodyAsString = httpBody->flattenToString();
-            m_decodedHTTPBody = decoder ? decodeURL(httpBodyAsString, decoder->encoding()) : httpBodyAsString;
+            m_decodedHTTPBody = fullyDecodeString(httpBodyAsString, decoder);
             if (m_decodedHTTPBody.find(isRequiredForInjection, 0) == notFound)
                 m_decodedHTTPBody = String();
             if (m_decodedHTTPBody.length() >= miniumLengthForSuffixTree)
@@ -207,7 +214,7 @@ void XSSAuditor::filterToken(HTMLToken& token)
     case Uninitialized:
         ASSERT_NOT_REACHED();
         break;
-    case Initial: 
+    case Initial:
         didBlockScript = filterTokenInitial(token);
         break;
     case AfterScriptStartTag:
@@ -454,13 +461,15 @@ String XSSAuditor::snippetForAttribute(const HTMLToken& token, const HTMLToken::
 bool XSSAuditor::isContainedInRequest(const String& snippet)
 {
     ASSERT(!snippet.isEmpty());
-    String canonicalizedSnippet = canonicalize(snippet);
-    ASSERT(!canonicalizedSnippet.isEmpty());
-    if (m_decodedURL.find(canonicalizedSnippet, 0, false) != notFound)
-        return true;
-    if (m_decodedHTTPBodySuffixTree && !m_decodedHTTPBodySuffixTree->mightContain(canonicalizedSnippet))
+    TextResourceDecoder* decoder = m_parser->document()->decoder();
+    String decodedSnippet = fullyDecodeString(snippet, decoder);
+    if (decodedSnippet.isEmpty())
         return false;
-    return m_decodedHTTPBody.find(canonicalizedSnippet, 0, false) != notFound;
+    if (m_decodedURL.find(decodedSnippet, 0, false) != notFound)
+        return true;
+    if (m_decodedHTTPBodySuffixTree && !m_decodedHTTPBodySuffixTree->mightContain(decodedSnippet))
+        return false;
+    return m_decodedHTTPBody.find(decodedSnippet, 0, false) != notFound;
 }
 
 bool XSSAuditor::isSameOriginResource(const String& url)
