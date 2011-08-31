@@ -133,8 +133,11 @@ controllers.UnexpectedFailures = base.extends(Object, {
         var controller = new controllers.ResultsDetails(resultsView, failuresByTest);
         controller.showTest(testNameList[0]);
 
-        // FIXME: This doesn't belong here. Also, we need some way to call controller.dismiss().
-        document.body.appendChild(resultsView);
+        // FIXME: This doesn't belong here.
+        var onebar = $('#onebar')[0];
+        var resultsContainer = onebar.results();
+        $(resultsContainer).empty().append(resultsView);
+        onebar.select('results');
     },
     onRollout: function(revision, testNameList)
     {

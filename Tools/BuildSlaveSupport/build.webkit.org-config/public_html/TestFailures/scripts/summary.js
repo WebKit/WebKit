@@ -57,19 +57,24 @@ $(document).ready(function() {
         alert('Please run "webkit-patch garden-o-matic" to enable this feature.');
     });
 
+    onebar = new ui.onebar();
+    onebar.attach();
+
     var actions = new ui.notifications.Stream();
     g_unexpectedFailures = new controllers.UnexpectedFailures(actions);
 
     g_info = new ui.notifications.Stream();
     g_failingBuilders = new controllers.FailingBuilders(g_info);
 
-    document.body.insertBefore(actions, document.body.firstChild);
-    document.body.insertBefore(g_info, document.body.firstChild);
-
     // FIXME: This should be an Action object.
-    var button = document.body.insertBefore(document.createElement('button'), document.body.firstChild);
-    button.addEventListener("click", update);
-    button.textContent = 'update';
+    var updateButton = document.body.insertBefore(document.createElement('button'), document.body.firstChild);
+    updateButton.addEventListener("click", update);
+    updateButton.textContent = 'update';
+
+    var summary = onebar.summary();
+    summary.appendChild(updateButton);
+    summary.appendChild(g_info);
+    summary.appendChild(actions);
 
     update();
 });

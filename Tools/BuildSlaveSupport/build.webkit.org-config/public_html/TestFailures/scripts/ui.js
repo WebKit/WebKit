@@ -51,6 +51,53 @@ ui.rolloutReasonForTestNameList = function(testNameList)
     }).join('\n');
 }
 
+ui.onebar = base.extends('div', {
+    init: function()
+    {
+        this.id = 'onebar';
+        this.innerHTML =
+            '<ul>' +
+                '<li><a href="#summary">Summary</a></li>' +
+                '<li><a href="#results">Results</a></li>' +
+                '<li><a href="#commits">Commits</a></li>' +
+            '</ul>' +
+            '<div id="summary"></div>' +
+            '<div id="results"></div>' +
+            '<div id="commits">Coming soon...</div>';
+        this._tabNames = [
+            'summary',
+            'results',
+            'commits,'
+        ]
+        this._tabs = $(this).tabs({
+            disabled: [1, 2],
+        });
+    },
+    attach: function()
+    {
+        document.body.insertBefore(this, document.body.firstChild);
+    },
+    tabNamed: function(tabName)
+    {
+        return $('#' + tabName, this)[0];
+    },
+    summary: function()
+    {
+        return this.tabNamed('summary');
+    },
+    results: function()
+    {
+        return this.tabNamed('results');
+    },
+    select: function(tabName)
+    {
+        var tabIndex = this._tabNames.indexOf(tabName);
+        this._tabs.tabs('enable', tabIndex);
+        this._tabs.tabs('select', tabIndex);
+    }
+});
+
+// FIXME: Loading a module shouldn't set off a timer.  The controller should kick this off.
 setInterval(function() {
     Array.prototype.forEach.call(document.querySelectorAll("time.relative"), function(time) {
         time.update && time.update();
