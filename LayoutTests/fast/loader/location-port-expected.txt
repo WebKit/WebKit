@@ -4,3 +4,4 @@ PASS: internalFrame.contentWindow.location.port == "" should be true and is.
 PASS: internalFrame.contentWindow.location.port == "88" should be true and is.
 PASS: internalFrame.contentWindow.location.port == "" should be true and is.
 PASS: internalFrame.contentWindow.location.port == "80" should be true and is.
+PASS: internalFrame.contentWindow.location.host should be :0 and is.

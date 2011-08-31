@@ -1,3 +1,28 @@
+2011-08-30  Rachel Blum  <groby@chromium.org>
+
+        The "port" property of an <a> whose href does not specify a port returns the wrong value
+        https://bugs.webkit.org/show_bug.cgi?id=66081
+
+        Updated tests to reflect behavior change around invalid port strings. 
+        Updated chromium location-port test to reflect chromium issues
+        
+        Reviewed by Adam Barth.
+
+        * fast/dom/HTMLAnchorElement/get-href-attribute-port-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/get-href-attribute-port.html: Added.
+        * fast/dom/HTMLAnchorElement/script-tests/get-href-attribute-port.js: Added.
+        * fast/loader/location-port-expected.txt:
+        * fast/loader/location-port.html:
+        * fast/url/script-tests/segments-from-data-url.js:
+        * fast/url/script-tests/segments.js:
+        * fast/url/script-tests/trivial-segments.js:
+        * fast/url/segments-expected.txt:
+        * fast/url/segments-from-data-url-expected.txt:
+        * fast/url/trivial-segments-expected.txt:
+        * platform/chromium-cg-mac/fast/loader/location-port-expected.txt:
+        * platform/chromium-win/fast/loader/location-port-expected.txt:
+        * platform/chromium/fast/dom/HTMLAnchorElement/set-href-attribute-port-expected.txt:
+
 2011-08-30  Scott Byer  <scottbyer@chromium.org>
 
         Fix pan scrolling on Windows to be clamped

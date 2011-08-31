@@ -2,7 +2,7 @@ description("Test basic features of URL segmentation");
 
 cases = [ 
   // [URL, [SCHEME, HOST, PORT, PATH, QUERY, REF]]
-  ["http://example.com/", ["http:", "example.com", "0", "/", "", ""]],
+  ["http://example.com/", ["http:", "example.com", "", "/", "", ""]],
 ];
 
 var originalBaseURL = canonicalize(".");

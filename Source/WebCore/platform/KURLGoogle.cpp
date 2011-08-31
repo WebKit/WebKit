@@ -670,16 +670,12 @@ void KURL::setPort(unsigned short i)
 {
     KURLGooglePrivate::Replacements replacements;
     String portStr;
-    if (i) {
-        portStr = String::number(i);
-        replacements.SetPort(
-            reinterpret_cast<const url_parse::UTF16Char*>(portStr.characters()),
-            url_parse::Component(0, portStr.length()));
 
-    } else {
-        // Clear any existing port when it is set to 0.
-        replacements.ClearPort();
-    }
+    portStr = String::number(i);
+    replacements.SetPort(
+        reinterpret_cast<const url_parse::UTF16Char*>(portStr.characters()),
+        url_parse::Component(0, portStr.length()));
+
     m_url.replaceComponents(replacements);
 }
 

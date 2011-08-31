@@ -8,15 +8,15 @@ PASS a.href is 'https://www.mydomain.com/path/testurl.html?key=value'
 Default port as string
 PASS a.href is 'https://www.mydomain.com/path/testurl.html?key=value'
 Set port to 0
-FAIL a.href should be https://www.mydomain.com:0/path/testurl.html?key=value. Was https://www.mydomain.com/path/testurl.html?key=value.
+PASS a.href is 'https://www.mydomain.com:0/path/testurl.html?key=value'
 Set port to non-number
 PASS a.href is 'https://www.mydomain.com:4/path/testurl.html?key=value'
 Set port to null
-FAIL a.href should be https://www.mydomain.com:0/path/testurl.html?key=value. Was https://www.mydomain.com/path/testurl.html?key=value.
+PASS a.href is 'https://www.mydomain.com:0/path/testurl.html?key=value'
 Set port to empty string
-FAIL a.href should be https://www.mydomain.com:0/path/testurl.html?key=value. Was https://www.mydomain.com/path/testurl.html?key=value.
+PASS a.href is 'https://www.mydomain.com:0/path/testurl.html?key=value'
 Set port to undefined
-FAIL a.href should be https://www.mydomain.com:0/path/testurl.html?key=value. Was https://www.mydomain.com/path/testurl.html?key=value.
+PASS a.href is 'https://www.mydomain.com:0/path/testurl.html?key=value'
 Set port to URL with foo: protocol
 FAIL a.href should be foo://bar:50/. Was foo://bar/.
 PASS successfullyParsed is true

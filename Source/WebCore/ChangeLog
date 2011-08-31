@@ -1,3 +1,31 @@
+2011-08-30  Rachel Blum  <groby@chromium.org>
+
+        The "port" property of an <a> whose href does not specify a port returns the wrong value
+        https://bugs.webkit.org/show_bug.cgi?id=66081
+
+        HTMLAnchorElement now returns "" instead of "0" for unset port
+        Fixed KURLGoogle.cpp to have same behavior as KURL.cpp when setting port 0
+        Fixed Location.cpp to have same behavior as KURL.cpp when setting port 0
+        
+        Reviewed by Adam Barth.
+
+        Tests: fast/dom/HTMLAnchorElement/get-href-attribute-port.html
+               fast/dom/HTMLAnchorElement/set-href-attribute-port.html
+               fast/loader/location-port.html
+               fast/url/segments-from-data-url.html
+               fast/url/segments.html
+               fast/url/trivial-segments.html
+               platform/chromium/fast/dom/HTMLAnchorElement/set-href-attribute-port.html
+               
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::port):
+        * page/Location.cpp:
+        (WebCore::Location::host):
+        (WebCore::Location::port):
+        (WebCore::Location::setPort):
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::setPort):
+
 2011-08-30  Scott Byer  <scottbyer@chromium.org>
 
         Fix pan scrolling on Windows to be clamped

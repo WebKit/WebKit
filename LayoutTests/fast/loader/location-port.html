@@ -27,7 +27,7 @@
         var internalFrame = document.getElementById ('internal');
         shouldBe('internalFrame.contentWindow.location.port == "88"', true);
 
-        internalFrame.contentWindow.location.port = 0;
+        internalFrame.contentWindow.location.port = "";
         setTimeout(checkTest2, 300);
     }
 
@@ -43,9 +43,18 @@
         var internalFrame = document.getElementById ('internal');
         shouldBe('internalFrame.contentWindow.location.port == "80"', true);
 
+        internalFrame.contentWindow.location.port = 0;
+        setTimeout(checkTest4, 300);
+    }
+
+    function checkTest4() {
+        var internalFrame = document.getElementById ('internal');
+        shouldBe('internalFrame.contentWindow.location.host', ':0');
+
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }
+
 
     function runTests() {
         if (window.layoutTestController) {
