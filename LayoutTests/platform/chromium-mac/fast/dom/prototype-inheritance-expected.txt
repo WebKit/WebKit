@@ -63,8 +63,6 @@ PASS inner.Comment.isInner is true
 PASS inner.Comment.constructor.isInner is true
 PASS inner.Counter.isInner is true
 PASS inner.Counter.constructor.isInner is true
-PASS inner.CustomEvent.isInner is true
-PASS inner.CustomEvent.constructor.isInner is true
 PASS inner.DOMException.isInner is true
 PASS inner.DOMException.constructor.isInner is true
 PASS inner.DOMImplementation.isInner is true

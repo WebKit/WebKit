@@ -1,3 +1,13 @@
+2011-08-30  David Levin  <levin@chromium.org>
+
+        [chromium] Update due to r94147.
+
+        * platform/chromium-mac/fast/dom/prototype-inheritance-expected.txt: Copied from LayoutTests/platform/chromium/fast/dom/prototype-inheritance-expected.txt.
+        * platform/chromium-mac/fast/events/constructors/custom-event-constructor-expected.txt: Added.
+        Several of these results are failures but that should be fixed by bug 66756.
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+        * platform/chromium/fast/events/constructors/custom-event-constructor-expected.txt: Added.
+
 2011-08-30  Sam Weinig  <sam@webkit.org>
 
         Add constructor for CustomEvent
