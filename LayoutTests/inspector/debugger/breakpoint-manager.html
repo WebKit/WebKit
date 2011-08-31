@@ -13,17 +13,17 @@ function test()
     };
 
     var uiBreakpoints = {};
-    function breakpointAdded(uiSourceCodeId, lineNumber, condition, enabled)
+    function breakpointAdded(breakpoint)
     {
-        InspectorTest.addResult("breakpointAdded(" + Array.prototype.join.call(arguments, ", ") + ")");
-        var breakpointId = uiSourceCodeId + ":" + lineNumber;
+        InspectorTest.addResult("breakpointAdded(" + [breakpoint.uiSourceCodeId, breakpoint.lineNumber, breakpoint.condition, breakpoint.enabled].join(", ") + ")");
+        var breakpointId = breakpoint.uiSourceCodeId + ":" + breakpoint.lineNumber;
         InspectorTest.assertTrue(!(breakpointId in uiBreakpoints));
-        uiBreakpoints[breakpointId] = condition + "|" + enabled;
+        uiBreakpoints[breakpointId] = breakpoint.condition + "|" + breakpoint.enabled;
     }
-    function breakpointRemoved(uiSourceCodeId, lineNumber)
+    function breakpointRemoved(breakpoint)
     {
-        InspectorTest.addResult("breakpointRemoved(" + Array.prototype.join.call(arguments, ", ") + ")");
-        var breakpointId = uiSourceCodeId + ":" + lineNumber;
+        InspectorTest.addResult("breakpointRemoved(" + [breakpoint.uiSourceCodeId, breakpoint.lineNumber].join(", ") + ")");
+        var breakpointId = breakpoint.uiSourceCodeId + ":" + breakpoint.lineNumber;
         InspectorTest.assertTrue(breakpointId in uiBreakpoints);
         delete uiBreakpoints[breakpointId];
     }
@@ -111,10 +111,10 @@ function test()
             {
                 breakpointManager.setBreakpoint(uiSourceCodeA, 30, "", true);
                 // Remove breakpoint immediately, breakpoint should be removed correctly from both debugger model and UI.
-                breakpointManager.removeBreakpoint(uiSourceCodeA.id, 30);
+                breakpointManager.removeBreakpoint(uiSourceCodeA, 30);
 
-                breakpointManager.removeBreakpoint(uiSourceCodeA.id, 10);
-                breakpointManager.removeBreakpoint(uiSourceCodeA.id, 20);
+                breakpointManager.removeBreakpoint(uiSourceCodeA, 10);
+                breakpointManager.removeBreakpoint(uiSourceCodeA, 20);
                 setTimeout(checkResults, 0);
             }
 
@@ -244,7 +244,7 @@ function test()
                 assertEquals({"c.js:2:0":""}, debuggerBreakpoints);
 
                 InspectorTest.addResult("\nChange breakpoints.");
-                breakpointManager.removeBreakpoint(uiSourceCodeCFormatted.id, 8);
+                breakpointManager.removeBreakpoint(uiSourceCodeCFormatted, 8);
                 breakpointManager.setBreakpoint(uiSourceCodeCFormatted, 12, "", true);
                 setTimeout(reload, 0);
             }

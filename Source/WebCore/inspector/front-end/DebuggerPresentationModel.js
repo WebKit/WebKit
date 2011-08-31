@@ -58,8 +58,8 @@ WebInspector.DebuggerPresentationModel = function()
 }
 
 WebInspector.DebuggerPresentationModel.Events = {
-    SourceFileAdded: "source-file-added",
-    SourceFileReplaced: "source-file-replaced",
+    UISourceCodeAdded: "source-file-added",
+    UISourceCodeReplaced: "source-file-replaced",
     ConsoleMessageAdded: "console-message-added",
     ConsoleMessagesCleared: "console-messages-cleared",
     BreakpointAdded: "breakpoint-added",
@@ -70,13 +70,6 @@ WebInspector.DebuggerPresentationModel.Events = {
 }
 
 WebInspector.DebuggerPresentationModel.prototype = {
-    uiSourceCode: function(uiSourceCodeId)
-    {
-        // FIXME: get rid of uiSourceCodeId (currently uiSourceCodeId == rawSourceCodeId).
-        var rawSourceCode = this._rawSourceCode[uiSourceCodeId];
-        return rawSourceCode && rawSourceCode.uiSourceCode;
-    },
-
     _scriptLocationToUILocation: function(sourceURL, scriptId, lineNumber, columnNumber, callback)
     {
         var rawSourceCode = this._rawSourceCodeForScript(sourceURL, scriptId);
@@ -91,9 +84,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
         rawSourceCode.createSourceMappingIfNeeded(didCreateSourceMapping);
     },
 
-    _uiLocationToScriptLocation: function(uiSourceCodeId, lineNumber, callback)
+    _uiLocationToScriptLocation: function(uiSourceCode, lineNumber, callback)
     {
-        var rawSourceCode = this.uiSourceCode(uiSourceCodeId).rawSourceCode;
+        var rawSourceCode = uiSourceCode.rawSourceCode;
 
         function didCreateSourceMapping()
         {
@@ -133,8 +126,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
             {
                 anchor.textContent = WebInspector.formatLinkText(uiSourceCode.url, lineNumber);
                 anchor.setAttribute("preferred_panel", "scripts");
-                anchor.setAttribute("source_file_id", uiSourceCode.id);
-                anchor.setAttribute("line_number", lineNumber);
+                anchor.uiSourceCode = uiSourceCode;
+                anchor.lineNumber = lineNumber;
             }
             this._scriptLocationToUILocation(sourceURL, null, lineNumber, columnNumber, didGetLocation.bind(this));
         }
@@ -169,38 +162,36 @@ WebInspector.DebuggerPresentationModel.prototype = {
         function didCreateSourceMapping()
         {
             this._breakpointManager.uiSourceCodeAdded(rawSourceCode.uiSourceCode);
-            var breakpoints = this._breakpointManager.breakpointsForUISourceCode(rawSourceCode.uiSourceCode.id);
-            for (var lineNumber in breakpoints) {
-                var breakpoint = breakpoints[lineNumber];
-                this._breakpointAdded(breakpoint.uiSourceCodeId, breakpoint.lineNumber, breakpoint.condition, breakpoint.enabled);
-            }
+            var breakpoints = this._breakpointManager.breakpointsForUISourceCode(rawSourceCode.uiSourceCode);
+            for (var lineNumber in breakpoints)
+                this._breakpointAdded(breakpoints[lineNumber]);
         }
         // FIXME: force source formatting if needed. This will go away once formatting
         // is fully encapsulated in RawSourceCode class.
         rawSourceCode.createSourceMappingIfNeeded(didCreateSourceMapping.bind(this));
 
         var uiSourceCode = rawSourceCode.uiSourceCode;
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileAdded, uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, uiSourceCode);
     },
 
     _uiSourceCodeReplaced: function(event)
     {
         // FIXME: restore breakpoints in new source code (currently we just recreate everything when switching to pretty-print mode).
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileReplaced, event.data);
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, event.data);
     },
 
-    canEditScriptSource: function(uiSourceCodeId)
+    canEditScriptSource: function(uiSourceCode)
     {
         if (!Preferences.canEditScriptSource || this._formatSource)
             return false;
-        var rawSourceCode = this.uiSourceCode(uiSourceCodeId).rawSourceCode;
+        var rawSourceCode = uiSourceCode.rawSourceCode;
         var script = this._scriptForRawSourceCode(rawSourceCode);
         return !script.lineOffset && !script.columnOffset;
     },
 
-    setScriptSource: function(uiSourceCodeId, newSource, callback)
+    setScriptSource: function(uiSourceCode, newSource, callback)
     {
-        var rawSourceCode = this.uiSourceCode(uiSourceCodeId).rawSourceCode;
+        var rawSourceCode = uiSourceCode.rawSourceCode;
         var script = this._scriptForRawSourceCode(rawSourceCode);
 
         function didEditScriptSource(error)
@@ -221,16 +212,16 @@ WebInspector.DebuggerPresentationModel.prototype = {
         WebInspector.debuggerModel.setScriptSource(script.scriptId, newSource, didEditScriptSource.bind(this));
     },
 
-    _updateBreakpointsAfterLiveEdit: function(uiSourceCodeId, oldSource, newSource)
+    _updateBreakpointsAfterLiveEdit: function(uiSourceCode, oldSource, newSource)
     {
-        var breakpoints = this._breakpointManager.breakpointsForUISourceCode(uiSourceCodeId);
+        var breakpoints = this._breakpointManager.breakpointsForUISourceCode(uiSourceCode);
 
         // Clear and re-create breakpoints according to text diff.
         var diff = Array.diff(oldSource.split("\n"), newSource.split("\n"));
         for (var lineNumber in breakpoints) {
             var breakpoint = breakpoints[lineNumber];
 
-            this.removeBreakpoint(uiSourceCodeId, lineNumber);
+            this.removeBreakpoint(uiSourceCode, lineNumber);
 
             var newLineNumber = diff.left[lineNumber].row;
             if (newLineNumber === undefined) {
@@ -247,11 +238,11 @@ WebInspector.DebuggerPresentationModel.prototype = {
                 }
             }
             if (newLineNumber !== undefined)
-                this.setBreakpoint(uiSourceCodeId, newLineNumber, breakpoint.condition, breakpoint.enabled);
+                this.setBreakpoint(uiSourceCode, newLineNumber, breakpoint.condition, breakpoint.enabled);
         }
     },
 
-    setFormatSourceFiles: function(formatSource)
+    setFormatSource: function(formatSource)
     {
         if (this._formatSource === formatSource)
             return;
@@ -296,7 +287,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         function didGetUILocation(uiSourceCode, lineNumber)
         {
             var presentationMessage = {};
-            presentationMessage.sourceFileId = uiSourceCode.id;
+            presentationMessage.uiSourceCode = uiSourceCode;
             presentationMessage.lineNumber = lineNumber;
             presentationMessage.originalMessage = message;
             uiSourceCode.messages.push(presentationMessage);
@@ -316,66 +307,67 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleMessagesCleared);
     },
 
-    continueToLine: function(uiSourceCodeId, lineNumber)
+    continueToLine: function(uiSourceCode, lineNumber)
     {
         function didGetScriptLocation(location)
         {
             WebInspector.debuggerModel.continueToLocation(location);
         }
-        this._uiLocationToScriptLocation(uiSourceCodeId, lineNumber, didGetScriptLocation);
+        this._uiLocationToScriptLocation(uiSourceCode, lineNumber, didGetScriptLocation);
     },
 
-    breakpointsForSourceFileId: function(uiSourceCodeId)
+    breakpointsForUISourceCode: function(uiSourceCode)
     {
-        var breakpointsMap = this._breakpointManager.breakpointsForUISourceCode(uiSourceCodeId);
+        var breakpointsMap = this._breakpointManager.breakpointsForUISourceCode(uiSourceCode);
         var breakpointsList = [];
         for (var lineNumber in breakpointsMap)
             breakpointsList.push(breakpointsMap[lineNumber]);
         return breakpointsList;
     },
 
-    setBreakpoint: function(uiSourceCodeId, lineNumber, condition, enabled)
+    setBreakpoint: function(uiSourceCode, lineNumber, condition, enabled)
     {
-        this._breakpointManager.setBreakpoint(this.uiSourceCode(uiSourceCodeId), lineNumber, condition, enabled);
+        this._breakpointManager.setBreakpoint(uiSourceCode, lineNumber, condition, enabled);
     },
 
-    setBreakpointEnabled: function(uiSourceCodeId, lineNumber, enabled)
+    setBreakpointEnabled: function(uiSourceCode, lineNumber, enabled)
     {
-        var breakpoint = this.findBreakpoint(uiSourceCodeId, lineNumber);
+        var breakpoint = this.findBreakpoint(uiSourceCode, lineNumber);
         if (!breakpoint)
             return;
-        this._breakpointManager.removeBreakpoint(uiSourceCodeId, lineNumber);
-        this._breakpointManager.setBreakpoint(this.uiSourceCode(uiSourceCodeId), lineNumber, breakpoint.condition, enabled);
+        this._breakpointManager.removeBreakpoint(uiSourceCode, lineNumber);
+        this._breakpointManager.setBreakpoint(uiSourceCode, lineNumber, breakpoint.condition, enabled);
     },
 
-    updateBreakpoint: function(uiSourceCodeId, lineNumber, condition, enabled)
+    updateBreakpoint: function(uiSourceCode, lineNumber, condition, enabled)
     {
-        this._breakpointManager.removeBreakpoint(uiSourceCodeId, lineNumber);
-        this._breakpointManager.setBreakpoint(this.uiSourceCode(uiSourceCodeId), lineNumber, condition, enabled);
+        this._breakpointManager.removeBreakpoint(uiSourceCode, lineNumber);
+        this._breakpointManager.setBreakpoint(uiSourceCode, lineNumber, condition, enabled);
     },
 
-    removeBreakpoint: function(uiSourceCodeId, lineNumber)
+    removeBreakpoint: function(uiSourceCode, lineNumber)
     {
-        this._breakpointManager.removeBreakpoint(uiSourceCodeId, lineNumber);
+        this._breakpointManager.removeBreakpoint(uiSourceCode, lineNumber);
     },
 
-    findBreakpoint: function(uiSourceCodeId, lineNumber)
+    findBreakpoint: function(uiSourceCode, lineNumber)
     {
-        return this._breakpointManager.breakpointsForUISourceCode(uiSourceCodeId)[lineNumber];
+        return this._breakpointManager.breakpointsForUISourceCode(uiSourceCode)[lineNumber];
     },
 
-    _breakpointAdded: function(uiSourceCodeId, lineNumber, condition, enabled)
+    _breakpointAdded: function(breakpoint)
     {
-        var uiSourceCode = this.uiSourceCode(uiSourceCodeId);
-        if (!uiSourceCode)
+        if (!breakpoint.uiSourceCode)
             return;
-        var presentationBreakpoint = new WebInspector.PresentationBreakpoint(uiSourceCode, lineNumber, condition, enabled);
+        var presentationBreakpoint = new WebInspector.PresentationBreakpoint(breakpoint.uiSourceCode, breakpoint.lineNumber, breakpoint.condition, breakpoint.enabled);
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, presentationBreakpoint);
     },
 
-    _breakpointRemoved: function(uiSourceCodeId, lineNumber)
+    _breakpointRemoved: function(breakpoint)
     {
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, { sourceFileId: uiSourceCodeId, lineNumber: lineNumber });
+        if (!breakpoint.uiSourceCode)
+            return;
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, { uiSourceCode: breakpoint.uiSourceCode, lineNumber: breakpoint.lineNumber });
     },
 
     _debuggerPaused: function()
@@ -459,8 +451,7 @@ WebInspector.DebuggerPresentationModel.prototype.__proto__ = WebInspector.Object
  */
 WebInspector.PresentationBreakpoint = function(uiSourceCode, lineNumber, condition, enabled)
 {
-    this.sourceFile = uiSourceCode;
-    this.sourceFileId = uiSourceCode.id;
+    this.uiSourceCode = uiSourceCode;
     this.lineNumber = lineNumber;
     this.condition = condition;
     this.enabled = enabled;
@@ -469,7 +460,7 @@ WebInspector.PresentationBreakpoint = function(uiSourceCode, lineNumber, conditi
 WebInspector.PresentationBreakpoint.prototype = {
     get url()
     {
-        return this.sourceFile.url;
+        return this.uiSourceCode.url;
     },
 
     get resolved()
@@ -487,23 +478,19 @@ WebInspector.PresentationBreakpoint.prototype = {
                 snippet = content.substring(lineEndings[this.lineNumber - 1], lineEndings[this.lineNumber]);
             callback(snippet);
         }
-        if (!this.sourceFile) {
-            callback(WebInspector.UIString("N/A"));
-            return;
-        }
-        this.sourceFile.requestContent(didRequestContent.bind(this));
+        this.uiSourceCode.requestContent(didRequestContent.bind(this));
     }
 }
 
 /**
  * @constructor
  */
-WebInspector.PresenationCallFrame = function(callFrame, index, model, sourceFile)
+WebInspector.PresenationCallFrame = function(callFrame, index, model, uiSourceCode)
 {
     this._callFrame = callFrame;
     this._index = index;
     this._model = model;
-    this._sourceFile = sourceFile;
+    this._uiSourceCode = uiSourceCode;
     this._script = WebInspector.debuggerModel.scriptForSourceID(callFrame.location.scriptId);
 }
 
@@ -525,8 +512,8 @@ WebInspector.PresenationCallFrame.prototype = {
 
     get url()
     {
-        if (this._sourceFile)
-            return this._sourceFile.url;
+        if (this._uiSourceCode)
+            return this._uiSourceCode.url;
     },
 
     get scopeChain()
@@ -546,8 +533,8 @@ WebInspector.PresenationCallFrame.prototype = {
 
     select: function()
     {
-        if (this._sourceFile)
-            this._sourceFile.forceLoadContent(this._script);
+        if (this._uiSourceCode)
+            this._uiSourceCode.forceLoadContent(this._script);
     },
 
     evaluate: function(code, objectGroup, includeCommandLineAPI, returnByValue, callback)
@@ -571,13 +558,9 @@ WebInspector.PresenationCallFrame.prototype = {
     sourceLine: function(callback)
     {
         var location = this._callFrame.location;
-        if (!this.isInternalScript) {
-            function didGetUILocation(uiSourceCode, lineNumber)
-            {
-                callback(uiSourceCode.id, lineNumber);
-            }
-            this._model._scriptLocationToUILocation(null, location.scriptId, location.lineNumber, location.columnNumber, didGetUILocation);
-        } else
+        if (!this.isInternalScript)
+            this._model._scriptLocationToUILocation(null, location.scriptId, location.lineNumber, location.columnNumber, callback);
+        else
             callback(undefined, location.lineNumber);
     }
 }

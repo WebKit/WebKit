@@ -60,7 +60,7 @@ WebInspector.CallStackSidebarPane.prototype = {
             placard.callFrame = callFrame;
             placard.element.addEventListener("click", this._placardSelected.bind(this, placard), false);
 
-            function didGetSourceLine(placard, sourceFileId, lineNumber)
+            function didGetSourceLine(placard, uiSourceCode, lineNumber)
             {
                 if (placard.subtitle)
                     placard.subtitle += ":" + (lineNumber + 1);

@@ -154,7 +154,7 @@ function test()
             model._addScript(createMockScript("foo.js", "1"));
             model._addScript(createMockScript("bar.js", "2"));
             var sourceFile = model._rawSourceCodeForScript("bar.js");
-            panel._sourceFileReplaced({ data: { oldSourceCode: sourceFile, sourceCode: sourceFile }});
+            panel._uiSourceCodeReplaced({ data: { oldSourceCode: sourceFile, sourceCode: sourceFile }});
             showSourceFrame(panel, "bar.js");
             next();
         }
