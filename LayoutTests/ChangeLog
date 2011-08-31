@@ -1,3 +1,10 @@
+2011-08-31  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Unreviewed gardening.
+        Unskip fast/files/create-blob-url.html after r94187
+
+        * platform/qt/Skipped:
+
 2011-08-31  Cary Clark  <caryclark@google.com>
 
         unreviewed; new baselines (Skia on Mac, css3, edit, partial fast directories)

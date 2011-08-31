@@ -2406,10 +2406,6 @@ svg/custom/getBBox-path.svg
 # https://bugs.webkit.org/show_bug.cgi?id=67286
 css2.1/t090204-display-change-01-b-ao.html
 
-# Ping-pong with fast/files/create-blob-url-crash-expected.txt
-# https://bugs.webkit.org/show_bug.cgi?id=67282
-fast/files/create-blob-url-crash.html
-
 # [Qt] Incorrect results for new fast/multicol tests added in r94084
 # https://bugs.webkit.org/show_bug.cgi?id=67293
 fast/multicol/positive-leading.html
