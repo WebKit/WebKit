@@ -1158,4 +1158,8 @@
 #endif
 #endif
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#define WTF_USE_AVFOUNDATION 1
+#endif
+
 #endif /* WTF_Platform_h */

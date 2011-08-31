@@ -1,3 +1,18 @@
+2011-08-31  Jeff Miller  <jeffm@apple.com>
+
+        REGRESSION(92210): AVFoundation media engine is disabled on OS X
+        https://bugs.webkit.org/show_bug.cgi?id=67316
+        
+        Move the definition of WTF_USE_AVFOUNDATION on the Mac back to JavaScriptCore/wtf/Platform.h,
+        since WebKit2 doesn't have access to WebCore/config.h on this platform. This reverts the
+        changes that were made in r92210.
+
+        Reviewed by Darin Adler.
+
+        No new tests, covered by existing media tests.
+
+        * config.h: Removed definition of WTF_USE_AVFOUNDATION on the Mac, add a comment about fixing this on Windows in the future.
+
 2011-08-31  Sailesh Agrawal  <sail@chromium.org>
 
         [Chromium] Switching between overlay and opaque scrollbars causes glitches
