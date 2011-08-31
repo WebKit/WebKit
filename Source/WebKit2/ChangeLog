@@ -1,3 +1,19 @@
+2011-08-31  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION(r93902): Can't open external links on gmail
+        https://bugs.webkit.org/show_bug.cgi?id=67234
+        <rdar://problem/10053636>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::decode):
+        If we encounter an empty URL string, create an empty url by using NSURL, just
+        like we do in WebCore when converting an empty KURL to an NSURL.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Compile ArgumentCodersCF.cpp as Objective-C++ for now.
+
 2011-08-30  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67150

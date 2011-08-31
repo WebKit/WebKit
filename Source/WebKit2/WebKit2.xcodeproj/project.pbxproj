@@ -1109,7 +1109,7 @@
 		1AAF061212B01131008E49E2 /* PDFViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFViewController.h; sourceTree = "<group>"; };
 		1AAF061312B01131008E49E2 /* PDFViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFViewController.mm; sourceTree = "<group>"; };
 		1AAF0C4812B16334008E49E2 /* ArgumentCodersCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersCF.h; sourceTree = "<group>"; };
-		1AAF0C4912B16334008E49E2 /* ArgumentCodersCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArgumentCodersCF.cpp; sourceTree = "<group>"; };
+		1AAF0C4912B16334008E49E2 /* ArgumentCodersCF.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ArgumentCodersCF.cpp; sourceTree = "<group>"; };
 		1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxy.h; sourceTree = "<group>"; };
 		1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadProxy.cpp; sourceTree = "<group>"; };
 		1AB7D5E91288B8C000CFD08C /* DownloadProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DownloadProxy.messages.in; sourceTree = "<group>"; };

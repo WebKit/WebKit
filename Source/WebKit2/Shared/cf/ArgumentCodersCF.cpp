@@ -31,6 +31,10 @@
 #include "DataReference.h"
 #include <wtf/Vector.h>
 
+#if PLATFORM(MAC)
+#import <Foundation/Foundation.h>
+#endif
+
 namespace CoreIPC {
 
 CFTypeRef tokenNullTypeRef()
@@ -513,6 +517,16 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<CFURLRef>& result)
     if (!decode(decoder, string))
         return false;
 
+#if PLATFORM(MAC)
+    // FIXME: Move this to ArgumentCodersCFMac.mm and change this file back to be C++
+    // instead of Objective-C++.
+    if (!CFStringGetLength(string.get())) {
+        // CFURL can't hold an empty URL, unlike NSURL.
+        result = reinterpret_cast<CFURLRef>([NSURL URLWithString:@""]);
+        return true;
+    }
+#endif
+                    
     CFURLRef url = CFURLCreateWithString(0, string.get(), baseURL.get());
     if (!url)
         return false;
