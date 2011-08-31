@@ -1,3 +1,10 @@
+2011-08-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] 3 test started crashing somewhere between r93878-r93935
+        https://bugs.webkit.org/show_bug.cgi?id=67197
+
+        * platform/qt/Skipped: Unskip tests, because bug was fixed by r94088.
+
 2011-08-31  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip failing fast/loader/location-port.html test on
