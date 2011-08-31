@@ -1,3 +1,18 @@
+2011-08-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash with -webkit-radial-gradient(top) gradient
+        https://bugs.webkit.org/show_bug.cgi?id=66686
+
+        Reviewed by Darin Adler.
+        
+        Null-check the current value after calling parseFillPosition(),
+        since it may be null for gradients with degenerate arguments.
+
+        Test: fast/gradients/css3-radial-gradient-crash.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseRadialGradient):
+
 2011-08-31  Nico Weber  <thakis@chromium.org>
 
         Make ScrollAnimator(Chromium)?Mac check scrollAnimatorEnabled()
