@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 22: Uncaught TypeError: Object [object Object] has no method 'findString'
+Lorem ipsum dolor sit amet
+

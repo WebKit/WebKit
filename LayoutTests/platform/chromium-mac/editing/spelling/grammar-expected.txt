@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 27: Uncaught TypeError: Object [object Object] has no method 'hasGrammarMarker'
+You should see the text 'I have a issue'. 'a' should have a grammar suggestion marking.
+I have a issue.
+

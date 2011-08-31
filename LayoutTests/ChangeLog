@@ -1,3 +1,12 @@
+2011-08-31  Cary Clark  <caryclark@google.com>
+
+        unreviewed; new baselines (Skia on Mac, css3, edit, partial fast directories)
+
+        * platform/chromium-mac/css3: Added.
+        * platform/chromium-mac/edit: Added.
+        * platform/chromium-mac/fast/backgrounds: Added.
+        (remaining files omitted for brevity)
+
 2011-08-31  Martin Robinson  <mrobinson@igalia.com>
 
         Unskip a test which now seems to be passing on GTK+.

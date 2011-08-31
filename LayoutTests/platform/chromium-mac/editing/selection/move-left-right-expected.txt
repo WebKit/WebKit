@@ -1,0 +1,51 @@
+abc
+אבג
+
+abc
+
+אבג
+abcאבגdef
+אבגabcדהו
+abcאבגדהו
+אבגabcdef
+١٢٣ابة
+ابة١٢٣
+abcאבגdef
+אבגabcדהו
+abcאבג123דהוdef
+abcאבג123
+abcאבג123def
+אבג123דהוabcזחט456יכל
+before אחרי אנציקלופדיה
+לפני after encyclopedia
+before אחרי אנציקלופדיה
+לפני after encyclopedia
+This is יותר צר מיתר the boxes.
+This is יותר צר מיתר the boxes.
+Lorem
+ipsum
+צלחת
+מצנפת
+abcdefאבגדהו
+אבגדהוabcdef
+abcאבגדהוghi
+אבגabcdefדהו
+abcאבגדהו
+אבגabcdef
+abcאבגdef
+אבגabcדהו
+abcאבגdef
+אבגabcדהו
+abcאdef
+אבגaדהו
+abcאבגdef
+אבגabcדהו
+abcאבגdef
+אבגabcדהו
+abc
+def
+אבג
+דהו
+abcקקק123נננdef
+Test 1, LTR:
+  Moving right: 
