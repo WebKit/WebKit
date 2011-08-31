@@ -1,5 +1,20 @@
 2011-08-31  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening.
+
+        Add Qt specific expected files after r94111, update Qt specific expected files after r94109.
+
+        Based on digging of Gabor Rapcsanyi.
+
+        * platform/qt/fast/css-generated-content/table-row-before-after-child-add-expected.png:
+        * platform/qt/fast/css-generated-content/table-row-before-after-child-add-expected.txt:
+        * platform/qt/fast/css-generated-content/table-table-before-after-child-add-expected.png:
+        * platform/qt/fast/css-generated-content/table-table-before-after-child-add-expected.txt:
+        * platform/qt/fast/preloader/document-write-noscript-expected.png: Added.
+        * platform/qt/fast/preloader/document-write-noscript-expected.txt: Added.
+
+2011-08-31  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening. Add and update platform specific expected files after r94109.
 
         Based on digging of Gabor Rapcsanyi.

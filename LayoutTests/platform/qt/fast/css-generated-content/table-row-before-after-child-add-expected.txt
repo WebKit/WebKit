@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderTable {DIV} at (0,38) size 81x66
         RenderTableSection (anonymous) at (0,0) size 81x66 [color=#000000]
           RenderTableRow (anonymous) at (0,0) size 81x22 [color=#FF0000]
-            RenderTableCell (anonymous) at (0,0) size 81x22 [color=#000000] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell (anonymous) at (0,0) size 81x22 [r=0 c=0 rs=1 cs=1]
               RenderText at (0,0) size 67x22
                 text run at (0,0) width 67: "BEFORE"
           RenderTableRow (anonymous) at (0,22) size 81x22
@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 81x22
                   text run at (0,0) width 81: "CONTENT"
           RenderTableRow (anonymous) at (0,44) size 81x22 [color=#FF0000]
-            RenderTableCell (anonymous) at (0,44) size 81x22 [color=#000000] [r=2 c=0 rs=1 cs=1]
+            RenderTableCell (anonymous) at (0,44) size 81x22 [r=2 c=0 rs=1 cs=1]
               RenderText at (0,0) size 56x22
                 text run at (0,0) width 56: "AFTER"
       RenderBlock (anonymous) at (0,104) size 784x22
