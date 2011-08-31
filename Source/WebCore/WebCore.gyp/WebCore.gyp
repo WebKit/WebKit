@@ -1045,7 +1045,10 @@
       'target_name': 'webcore_prerequisites',
       'type': 'none',
       'dependencies': [
-        'webcore_bindings',
+        'debugger_script_source',
+        'injected_script_source',
+        'inspector_protocol_sources',
+        'webcore_bindings_sources',
         '../../ThirdParty/glu/glu.gyp:libtess',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
@@ -1063,7 +1066,6 @@
         '<(libjpeg_gyp_path):libjpeg',
       ],
       'export_dependent_settings': [
-        'webcore_bindings',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
@@ -1091,6 +1093,8 @@
           '<@(webcore_include_dirs)',
           '<(chromium_src_dir)/gpu',
           '<(chromium_src_dir)/third_party/angle/include/GLSLANG',
+          '<(SHARED_INTERMEDIATE_DIR)/webkit',
+          '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
         ],
         'mac_framework_dirs': [
           '$(SDKROOT)/System/Library/Frameworks/ApplicationServices.framework/Frameworks',

@@ -1,3 +1,25 @@
+2011-08-31  Tony Chang  <tony@chromium.org>
+
+        Remove webcore_bindings (including DerivedSources##.cpp) from the critical path
+        https://bugs.webkit.org/show_bug.cgi?id=67168
+
+        Reviewed by Adam Barth.
+
+        webcore_bindings_sources, debugger_script_source, injected_script_source, and
+        inspector_protocol_sources generates various files (e.g., CSSPropertyNames,
+        DerivedSources, HTMLNames, etc).  webcore_bindings depends on *_sources and compiles
+        these files.  Previously, the other webcore libs (webcore_svg, webcore_html,
+        webcore_remaining, etc) depended on webcore_bindings.  This moves the *_sources
+        dependencies from webcore_bindings to the other webcore libs so the build can
+        parallelize the compile of webcore_bindings and the other webcore_* libs.
+
+        Also copy over the include dirs that we used to get from webcore_bindings'
+        direct_dependent_settings.
+
+        No new tests, just changing the build dependencies.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-08-31  Tony Gentilcore  <tonyg@chromium.org>
 
         Minor cleanup: remove inScriptExecution()
