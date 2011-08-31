@@ -34,8 +34,12 @@
 
 #include "WebSocketChannel.h"
 
+#include "ArrayBuffer.h"
+#include "Blob.h"
 #include "CookieJar.h"
 #include "Document.h"
+#include "FileError.h"
+#include "FileReaderLoader.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "Page.h"
@@ -102,6 +106,9 @@ WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketCha
     , m_hasContinuousFrame(false)
     , m_closeEventCode(CloseEventCodeAbnormalClosure)
     , m_outgoingFrameQueueStatus(OutgoingFrameQueueOpen)
+#if ENABLE(BLOB)
+    , m_blobLoaderStatus(BlobLoaderNotStarted)
+#endif
 {
     ASSERT(m_context->isDocument());
     Document* document = static_cast<Document*>(m_context);
@@ -323,6 +330,43 @@ void WebSocketChannel::didReceiveAuthenticationChallenge(SocketStreamHandle*, co
 void WebSocketChannel::didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&)
 {
 }
+
+#if ENABLE(BLOB)
+void WebSocketChannel::didStartLoading()
+{
+    LOG(Network, "WebSocketChannel %p didStartLoading", this);
+    ASSERT(m_blobLoader);
+    ASSERT(m_blobLoaderStatus == BlobLoaderStarted);
+}
+
+void WebSocketChannel::didReceiveData()
+{
+    LOG(Network, "WebSocketChannel %p didReceiveData", this);
+    ASSERT(m_blobLoader);
+    ASSERT(m_blobLoaderStatus == BlobLoaderStarted);
+}
+
+void WebSocketChannel::didFinishLoading()
+{
+    LOG(Network, "WebSocketChannel %p didFinishLoading", this);
+    ASSERT(m_blobLoader);
+    ASSERT(m_blobLoaderStatus == BlobLoaderStarted);
+    m_blobLoaderStatus = BlobLoaderFinished;
+    processOutgoingFrameQueue();
+    deref();
+}
+
+void WebSocketChannel::didFail(int errorCode)
+{
+    LOG(Network, "WebSocketChannel %p didFail %d", this, errorCode);
+    ASSERT(m_blobLoader);
+    ASSERT(m_blobLoaderStatus == BlobLoaderStarted);
+    m_blobLoader.clear();
+    m_blobLoaderStatus = BlobLoaderFailed;
+    fail("Failed to load Blob: error code = " + String::number(errorCode)); // FIXME: Generate human-friendly reason message.
+    deref();
+}
+#endif
 
 bool WebSocketChannel::appendToBuffer(const char* data, size_t len)
 {
@@ -783,6 +827,18 @@ void WebSocketChannel::enqueueRawFrame(OpCode opCode, const char* data, size_t d
     processOutgoingFrameQueue();
 }
 
+void WebSocketChannel::enqueueBlobFrame(OpCode opCode, const Blob& blob)
+{
+    ASSERT(!m_useHixie76Protocol);
+    ASSERT(m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen);
+    OwnPtr<QueuedFrame> frame = adoptPtr(new QueuedFrame);
+    frame->opCode = opCode;
+    frame->frameType = QueuedFrameTypeBlob;
+    frame->blobData = Blob::create(blob.url(), blob.type(), blob.size());
+    m_outgoingFrameQueue.append(frame.release());
+    processOutgoingFrameQueue();
+}
+
 void WebSocketChannel::processOutgoingFrameQueue()
 {
     ASSERT(!m_useHixie76Protocol);
@@ -804,6 +860,38 @@ void WebSocketChannel::processOutgoingFrameQueue()
                 fail("Failed to send WebSocket frame.");
             break;
 
+        case QueuedFrameTypeBlob: {
+#if ENABLE(BLOB)
+            switch (m_blobLoaderStatus) {
+            case BlobLoaderNotStarted:
+                ref(); // Will be derefed after didFinishLoading() or didFail().
+                ASSERT(!m_blobLoader);
+                m_blobLoader = adoptPtr(new FileReaderLoader(FileReaderLoader::ReadAsArrayBuffer, this));
+                m_blobLoaderStatus = BlobLoaderStarted;
+                m_blobLoader->start(m_context, frame->blobData.get());
+                m_outgoingFrameQueue.prepend(frame.release());
+                return;
+
+            case BlobLoaderStarted:
+            case BlobLoaderFailed:
+                m_outgoingFrameQueue.prepend(frame.release());
+                return;
+
+            case BlobLoaderFinished: {
+                RefPtr<ArrayBuffer> result = m_blobLoader->arrayBufferResult();
+                m_blobLoader.clear();
+                m_blobLoaderStatus = BlobLoaderNotStarted;
+                if (!sendFrame(frame->opCode, static_cast<const char*>(result->data()), result->byteLength()))
+                    fail("Failed to send WebSocket frame.");
+                break;
+            }
+            }
+#else
+            fail("FileReader is not available. Could not send a Blob as WebSocket binary message.");
+#endif
+            break;
+        }
+
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -822,6 +910,12 @@ void WebSocketChannel::abortOutgoingFrameQueue()
     ASSERT(!m_useHixie76Protocol);
     m_outgoingFrameQueue.clear();
     m_outgoingFrameQueueStatus = OutgoingFrameQueueClosed;
+#if ENABLE(BLOB)
+    if (m_blobLoaderStatus == BlobLoaderStarted) {
+        m_blobLoader->cancel();
+        didFail(FileError::ABORT_ERR);
+    }
+#endif
 }
 
 bool WebSocketChannel::sendFrame(OpCode opCode, const char* data, size_t dataLength)

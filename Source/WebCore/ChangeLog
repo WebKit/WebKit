@@ -1,5 +1,40 @@
 2011-08-31  Yuta Kitamura  <yutak@chromium.org>
 
+        WebSocket: Load Blob in WebSocketChannel
+        https://bugs.webkit.org/show_bug.cgi?id=67013
+
+        Reviewed by Kent Tamura.
+
+        Add WebSocketChannel::enqueueBlobFrame(). It makes WebSocketChannel start loading a Blob
+        and send a WebSocket frame after the Blob is loaded.
+
+        While a Blob is being loaded, subsequent send() requests cannot be processed and are blocked.
+        Pending requests are stored in m_outgoingFrameQueue. When we have finished loading a Blob,
+        requests in the queue are allowed to get processed.
+
+        No new tests are added, because nobody uses enqueueBlobFrame() yet. New tests will be added
+        when WebSocket.send(Blob) is implemented, and they will cover this code change.
+
+        * websockets/WebSocketChannel.cpp:
+        ref() is called when m_blobLoader is allocated, and deref() is called in didFinishLoading()
+        or didFail(). This is necessary because WebSocketChannel must be able to receive callbacks
+        from FileReaderLoader even if the channel is referred from no other objects.
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::didStartLoading):
+        (WebCore::WebSocketChannel::didReceiveData):
+        (WebCore::WebSocketChannel::didFinishLoading):
+        (WebCore::WebSocketChannel::didFail):
+        When we have failed to load a Blob, fail() is called, and eventually didCloseSocketStream()
+        will be called. It will clean up the pending requests in the queue.
+        (WebCore::WebSocketChannel::enqueueBlobFrame):
+        (WebCore::WebSocketChannel::processOutgoingFrameQueue):
+        (WebCore::WebSocketChannel::abortOutgoingFrameQueue):
+        Cancel the Blob loader when the outgoing request queue is about to be aborted. The loader
+        will not invoke didFail() callback once it is canceled, thus we need to call didFail()
+        manually so that we can free up the loader and decrement the reference count.
+
+2011-08-31  Yuta Kitamura  <yutak@chromium.org>
+
         WebSocket: Receive binary message as ArrayBuffer
         https://bugs.webkit.org/show_bug.cgi?id=67180
 
