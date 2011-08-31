@@ -20,6 +20,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+from mod_pywebsocket import handshake
 from mod_pywebsocket.handshake.hybi import compute_accept
 
 
@@ -33,7 +34,7 @@ def web_socket_do_extra_handshake(request):
     msg += 'Sec-WebSocket-Accept: %s\r\n' % compute_accept(request.headers_in['Sec-WebSocket-Key'])[0]
     msg += '\r\n'
     request.connection.write(msg)
-    raise Exception('abort the connection') # Prevents pywebsocket from sending its own handshake message.
+    raise handshake.AbortedByUserException('abort the connection') # Prevents pywebsocket from sending its own handshake message.
 
 
 def web_socket_transfer_data(request):

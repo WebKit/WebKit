@@ -20,6 +20,9 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+from mod_pywebsocket import handshake
+
+
 def web_socket_do_extra_handshake(request):
     # This will cause the handshake to fail because it pushes the length of the
     # status line past 1024 characters
@@ -32,7 +35,7 @@ def web_socket_do_extra_handshake(request):
     msg += '\r\n'
     msg += request.ws_challenge_md5
     request.connection.write(msg)
-    raise Exception('abort the connection') # Prevents pywebsocket from sending its own handshake message.
+    raise handshake.AbortedByUserException('abort the connection') # Prevents pywebsocket from sending its own handshake message.
 
 
 def web_socket_transfer_data(request):
