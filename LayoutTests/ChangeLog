@@ -1,3 +1,18 @@
+2011-08-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve appearance and performance of layout test results.html
+        https://bugs.webkit.org/show_bug.cgi?id=67252
+
+        Reviewed by Adam Barth, Ojan Vafai.
+        
+        Improve the appearance of the pixel result comparison overlay.
+        
+        Change the overlay from painting pixels into a canvas one by one
+        to using images enlarged with 'image-rendering: -webkit-optimize-contrast",
+        which is very much faster.
+
+        * fast/harness/results.html:
+
 2011-08-28  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: margin-applies-to-015 fails, WebKit does not respect top margin for table captions

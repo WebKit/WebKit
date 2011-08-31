@@ -1,4 +1,4 @@
-<!DocType html>
+<!DOCTYPE html>
 <style>
 body {
     margin: 4px;
@@ -86,6 +86,7 @@ th {
 .result-container {
     display: inline-block;
     border: 1px solid gray;
+    margin: 4px;
 }
 
 .result-container iframe, .result-container img {
@@ -122,33 +123,48 @@ th {
     padding-left: 3px;
     font-weight: bold;
     font-size: small;
-    border-bottom: 1px solid lightgray;
+    background-color: silver;
 }
 
 .pixel-zoom-container {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 96%;
+    margin: 10px;
+    padding: 10px;
     display: -webkit-box;
     display: -moz-box;
     pointer-events: none;
-    background-color: white;
+    background-color: silver;
+    border-radius: 20px;
+    border: 1px solid gray;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.75);
 }
 
 .pixel-zoom-container > * {
     -webkit-box-flex: 1;
     -moz-box-flex: 1;
-    border: 2px inset lightgray;
+    border: 1px solid black;
+    margin: 4px;
     overflow: hidden;
-    width: 0;
+    background-color: white;
 }
 
-.pixel-zoom-container img {
-    width: 800px;
-    height: 600px;
-    vertical-align: top;
+.pixel-zoom-container .scaled-image-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 400px;
 }
+
+.scaled-image-container > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    image-rendering: -webkit-optimize-contrast;
+}
+
 </style>
 <style id="unexpected-style"></style>
 
@@ -730,15 +746,20 @@ PixelZoomer._zoomImageContainer = function(url)
     container.className = 'zoom-image-container';
 
     var title = url.match(/\-([^\-]*)\.png/)[1];
-    container.innerHTML = '<div class=label>' + title + '</div><canvas></canvas>';    
     
-    var canvas = container.querySelector('canvas');    
-    canvas.backingImage = new Image();
-    canvas.backingImage.onload = function() {
-        canvas.backingImageIsLoaded = true;
-        PixelZoomer._drawAll();
-    }
-    canvas.backingImage.src = url;
+    var label = document.createElement('div');
+    label.className = 'label';
+    label.appendChild(document.createTextNode(title));
+    container.appendChild(label);
+    
+    var imageContainer = document.createElement('div');
+    imageContainer.className = 'scaled-image-container';
+    
+    var image = new Image();
+    image.src = url;
+    imageContainer.appendChild(image);
+    container.appendChild(imageContainer);
+    
     return container;
 }
 
@@ -767,45 +788,28 @@ PixelZoomer._createContainer = function(e)
     PixelZoomer._drawAll();
 }
 
-PixelZoomer._draw = function(canvas)
+PixelZoomer._draw = function(imageContainer)
 {
-    if (!canvas.backingImageIsLoaded)
-        return;
-
-    var destinationWidth = Math.floor(document.body.offsetWidth / 3) + 100;
-    var destinationHeight = 300;
+    var containerWidth = imageContainer.offsetWidth;
+    var containerHeight = imageContainer.offsetHeight;
+  
+    var scaledMiddleX = PixelZoomer._currentX * PixelZoomer._zoomFactor;
+    var scaledMiddleY = PixelZoomer._currentY * PixelZoomer._zoomFactor;
     
-    var sourceWidth = Math.ceil(destinationWidth / PixelZoomer._zoomFactor);
-    var sourceHeight = Math.ceil(destinationHeight / PixelZoomer._zoomFactor);
-
-    canvas.width = destinationWidth;
-    canvas.height = destinationHeight;
+    var left = scaledMiddleX - containerWidth / 2;
+    var top = scaledMiddleY - containerHeight / 2;
     
-    var startX = Math.floor(PixelZoomer._currentX - sourceWidth / 2);
-    var startY = Math.floor(PixelZoomer._currentY - sourceHeight / 2);
-        
-    startX = Math.max(startX, 0);
-    startX = Math.min(startX, 800 - sourceWidth);
-    
-    startY = Math.max(startY, 0);
-    startY = Math.min(startY, 600 - sourceHeight);
+    var image = imageContainer.querySelector('img');
+    image.style.width = (800 * PixelZoomer._zoomFactor) + 'px';
+    image.style.height = (600 * PixelZoomer._zoomFactor) + 'px';
 
-    var sourceNumPixels = 1;
-    var destinationNumPixels = PixelZoomer._zoomFactor;
-    var context = canvas.getContext('2d');
-    for (var sourceX = startX; sourceX < startX + sourceWidth; sourceX++) {
-        for (var sourceY = startY; sourceY < startY + sourceHeight; sourceY++) {
-            var destinationX = PixelZoomer._zoomFactor * (sourceX - startX);
-            var destinationY = PixelZoomer._zoomFactor * (sourceY - startY);            
-            context.drawImage(canvas.backingImage, sourceX, sourceY, sourceNumPixels, sourceNumPixels,
-                destinationX, destinationY, destinationNumPixels, destinationNumPixels);            
-        }
-    }
+    image.style.top = -top + 'px';
+    image.style.left = -left + 'px';
 }
 
 PixelZoomer._drawAll = function()
 {
-    forEach(document.querySelectorAll('.pixel-zoom-container canvas'), PixelZoomer._draw);
+    forEach(document.querySelectorAll('.pixel-zoom-container .scaled-image-container'), PixelZoomer._draw);
 }
 
 PixelZoomer.handleMouseOut = function(e)
