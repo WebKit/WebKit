@@ -1,3 +1,31 @@
+2011-08-30  Sam Weinig  <sam@webkit.org>
+
+        Add constructor for CustomEvent
+        https://bugs.webkit.org/show_bug.cgi?id=67248
+
+        Reviewed by Dan Bernstein.
+
+        Test: fast/events/constructors/custom-event-constructor.html
+
+        * bindings/generic/EventConstructors.h:
+        Add definition for CustomEvent constructor.
+
+        * bindings/js/JSEventConstructors.cpp:
+        Add CustomEvent #includes.
+
+        * dom/CustomEvent.cpp:
+        (WebCore::CustomEventInit::CustomEventInit):
+        (WebCore::CustomEvent::CustomEvent):
+        * dom/CustomEvent.h:
+        (WebCore::CustomEvent::create):
+        Add Initializer./
+
+        * dom/CustomEvent.idl:
+        Make constructible.
+
+        * page/DOMWindow.idl:
+        Add CustomEvent attribute.
+
 2011-08-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Get rid of toInputElement()

@@ -26,11 +26,20 @@
 #include "config.h"
 #include "CustomEvent.h"
 
-#include "EventNames.h"
-
 namespace WebCore {
 
+CustomEventInit::CustomEventInit()
+{
+}
+
+
 CustomEvent::CustomEvent()
+{
+}
+
+CustomEvent::CustomEvent(const AtomicString& type, const CustomEventInit& initializer)
+    : Event(type, initializer)
+    , m_detail(initializer.detail)
 {
 }
 

@@ -1,3 +1,21 @@
+2011-08-30  Sam Weinig  <sam@webkit.org>
+
+        Add constructor for CustomEvent
+        https://bugs.webkit.org/show_bug.cgi?id=67248
+
+        Reviewed by Dan Bernstein.
+
+        * fast/events/constructors/custom-event-constructor-expected.txt: Added.
+        * fast/events/constructors/custom-event-constructor.html: Added.
+        New test.
+
+        * fast/dom/constructed-objects-prototypes-expected.txt:
+        * platform/mac/fast/dom/Window/window-properties-expected.txt:
+        * platform/mac/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/mac/fast/dom/prototype-inheritance-expected.txt:
+        * platform/mac/fast/js/global-constructors-expected.txt:
+        Updated for add window.CustomEvent.
+
 2011-08-30  David Levin  <levin@chromium.org>
 
         [chromium] New baselines due to r94109.

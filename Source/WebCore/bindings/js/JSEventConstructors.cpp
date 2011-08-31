@@ -26,7 +26,9 @@
 #include "config.h"
 #include "EventConstructors.h"
 
+#include "CustomEvent.h"
 #include "Event.h"
+#include "JSCustomEvent.h"
 #include "JSDictionary.h"
 #include "JSEvent.h"
 #include <runtime/Error.h>
