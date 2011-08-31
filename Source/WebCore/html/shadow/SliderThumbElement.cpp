@@ -37,6 +37,7 @@
 #include "Event.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "MouseEvent.h"
 #include "RenderDeprecatedFlexibleBox.h"
@@ -66,7 +67,8 @@ inline static bool hasVerticalAppearance(HTMLInputElement* input)
 SliderThumbElement* sliderThumbElementOf(Node* node)
 {
     ASSERT(node);
-    ShadowRoot* shadow = node->toInputElement()->shadowRoot();
+    ASSERT(node->hasTagName(HTMLNames::inputTag));
+    ShadowRoot* shadow = toHTMLInputElement(node)->shadowRoot();
     ASSERT(shadow);
     Node* thumb = shadow->firstChild()->firstChild()->firstChild();
     ASSERT(thumb);
@@ -103,7 +105,8 @@ void RenderSliderThumb::layout()
 {
     // Do not cast node() to SliderThumbElement. This renderer is used for
     // TrackLimitElement too.
-    HTMLInputElement* input = node()->shadowAncestorNode()->toInputElement();
+    ASSERT(node()->shadowAncestorNode()->hasTagName(HTMLNames::inputTag));
+    HTMLInputElement* input = toHTMLInputElement(node()->shadowAncestorNode());
     bool isVertical = style()->appearance() == SliderThumbVerticalPart || style()->appearance() == MediaVolumeSliderThumbPart;
 
     double fraction = sliderPosition(input) * 100;
@@ -132,7 +135,8 @@ private:
 
 void RenderSliderContainer::layout()
 {
-    HTMLInputElement* input = node()->shadowAncestorNode()->toInputElement();
+    ASSERT(node()->shadowAncestorNode()->hasTagName(HTMLNames::inputTag));
+    HTMLInputElement* input = toHTMLInputElement(node()->shadowAncestorNode());
     bool isVertical = hasVerticalAppearance(input);
     style()->setBoxOrient(isVertical ? VERTICAL : HORIZONTAL);
     // Sets the concrete height if the height of the <input> is not fixed or a
@@ -313,7 +317,8 @@ HTMLInputElement* SliderThumbElement::hostInput() const
 {
     // Only HTMLInputElement creates SliderThumbElement instances as its shadow nodes.
     // So, shadowAncestorNode() must be an HTMLInputElement.
-    return shadowAncestorNode()->toInputElement();
+    ASSERT(shadowAncestorNode()->hasTagName(HTMLNames::inputTag));
+    return toHTMLInputElement(shadowAncestorNode());
 }
 
 const AtomicString& SliderThumbElement::shadowPseudoId() const
@@ -351,7 +356,8 @@ const AtomicString& TrackLimiterElement::shadowPseudoId() const
 TrackLimiterElement* trackLimiterElementOf(Node* node)
 {
     ASSERT(node);
-    ShadowRoot* shadow = node->toInputElement()->shadowRoot();
+    ASSERT(node->hasTagName(HTMLNames::inputTag));
+    ShadowRoot* shadow = toHTMLInputElement(node)->shadowRoot();
     ASSERT(shadow);
     Node* limiter = shadow->firstChild()->lastChild();
     ASSERT(limiter);

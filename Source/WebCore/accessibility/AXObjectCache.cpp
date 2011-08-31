@@ -615,11 +615,8 @@ void AXObjectCache::textMarkerDataForVisiblePosition(TextMarkerData& textMarkerD
     if (!domNode)
         return;
     
-    if (domNode->isHTMLElement()) {
-        HTMLInputElement* inputElement = domNode->toInputElement();
-        if (inputElement && inputElement->isPasswordField())
-            return;
-    }
+    if (domNode->isHTMLElement() && domNode->hasTagName(inputTag) && toHTMLInputElement(domNode)->isPasswordField())
+        return;
     
     // locate the renderer, which must exist for a visible dom node
     RenderObject* renderer = domNode->renderer();

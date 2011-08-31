@@ -1,5 +1,62 @@
 2011-08-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Get rid of toInputElement()
+        https://bugs.webkit.org/show_bug.cgi?id=67175
+
+        Reviewed by Darin Adler.
+
+        Got rid of Node::toInputElement and HTMLInputElement::toInputElement and replaced them by
+        a global toHTMLInputElement.
+
+        * WebCore.order:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isPasswordField):
+        (WebCore::AccessibilityRenderObject::isIndeterminate):
+        (WebCore::AccessibilityRenderObject::isNativeCheckboxOrRadio):
+        (WebCore::AccessibilityRenderObject::isChecked):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithControl):
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/CheckedRadioButtons.cpp:
+        (WebCore::CheckedRadioButtons::addButton):
+        (WebCore::CheckedRadioButtons::removeButton):
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::isInPasswordField):
+        * html/HTMLInputElement.h:
+        (WebCore::toHTMLInputElement):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::sliderThumbElementOf):
+        (WebCore::RenderSliderThumb::layout):
+        (WebCore::RenderSliderContainer::layout):
+        (WebCore::SliderThumbElement::hostInput):
+        (WebCore::trackLimiterElementOf):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldResultsButtonElement::shadowPseudoId):
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler):
+        (WebCore::SearchFieldCancelButtonElement::defaultEventHandler):
+        (WebCore::SpinButtonElement::defaultEventHandler):
+        (WebCore::SpinButtonElement::repeatingTimerFired):
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+        (WebCore::InputFieldSpeechButtonElement::setRecognitionResult):
+        * page/DragController.cpp:
+        (WebCore::asFileInput):
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintThemePart):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::inputElement):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isChecked):
+        (WebCore::RenderTheme::isIndeterminate):
+
+2011-08-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Speculative WinCairo build fix after r94093.
 
         * platform/network/ResourceHandle.h:

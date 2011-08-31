@@ -35,7 +35,7 @@ void CheckedRadioButtons::addButton(HTMLFormControlElement* element)
     if (element->name().isEmpty())
         return;
 
-    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
+    HTMLInputElement* inputElement = toHTMLInputElement(element);
 
     // We only track checked buttons.
     if (!inputElement->checked())
@@ -77,7 +77,7 @@ void CheckedRadioButtons::removeButton(HTMLFormControlElement* element)
     if (it == m_nameToCheckedRadioButtonMap->end() || it->second != element)
         return;
     
-    HTMLInputElement* inputElement = element->toInputElement();
+    HTMLInputElement* inputElement = toHTMLInputElement(element);
     ASSERT_UNUSED(inputElement, inputElement);
     ASSERT(inputElement->shouldAppearChecked());
     ASSERT(element->isRadioButton());

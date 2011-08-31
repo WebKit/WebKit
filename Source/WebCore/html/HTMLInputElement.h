@@ -24,6 +24,7 @@
 #ifndef HTMLInputElement_h
 #define HTMLInputElement_h
 
+#include "HTMLNames.h"
 #include "HTMLTextFormControlElement.h"
 
 namespace WebCore {
@@ -41,8 +42,6 @@ public:
     virtual ~HTMLInputElement();
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitspeechchange);
-
-    virtual HTMLInputElement* toInputElement() { return this; }
 
     virtual bool shouldAutocomplete() const;
 
@@ -356,6 +355,12 @@ private:
     bool m_wasModifiedByUser : 1;
     OwnPtr<InputType> m_inputType;
 };
+
+inline HTMLInputElement* toHTMLInputElement(Node* node)
+{
+    ASSERT(!node || node->hasTagName(HTMLNames::inputTag));
+    return static_cast<HTMLInputElement*>(node);
+}
 
 } //namespace
 

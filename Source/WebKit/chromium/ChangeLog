@@ -1,3 +1,13 @@
+2011-08-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Get rid of toInputElement()
+        https://bugs.webkit.org/show_bug.cgi?id=67175
+
+        Reviewed by Darin Adler.
+
+        * src/WebInputElement.cpp:
+        (WebKit::toWebInputElement):
+
 2011-08-30  Nat Duca  <nduca@chromium.org>
 
         Unreviewed, fix WebGL layout tests due to missing WebView pointer.

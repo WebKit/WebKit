@@ -254,14 +254,21 @@ DragOperation DragController::dragEnteredOrUpdated(DragData* dragData)
 static HTMLInputElement* asFileInput(Node* node)
 {
     ASSERT(node);
+    
+    if (!node->hasTagName(HTMLNames::inputTag))
+        return 0;
 
-    HTMLInputElement* inputElement = node->toInputElement();
+    HTMLInputElement* inputElement = toHTMLInputElement(node);
 
     // If this is a button inside of the a file input, move up to the file input.
-    if (inputElement && inputElement->isTextButton() && inputElement->treeScope()->isShadowRoot())
-        inputElement = inputElement->treeScope()->shadowHost()->toInputElement();
+    if (inputElement->isTextButton() && inputElement->treeScope()->isShadowRoot()) {
+        node = inputElement->treeScope()->shadowHost();
+        if (!node->hasTagName(HTMLNames::inputTag))
+            return 0;
+        inputElement = toHTMLInputElement(node);
+    }
 
-    return inputElement && inputElement->isFileUpload() ? inputElement : 0;
+    return inputElement->isFileUpload() ? inputElement : 0;
 }
 
 // This can return null if an empty document is loaded.

@@ -128,22 +128,21 @@ const AtomicString& SearchFieldResultsButtonElement::shadowPseudoId() const
     DEFINE_STATIC_LOCAL(AtomicString, resultsDecorationId, ("-webkit-search-results-decoration"));
     DEFINE_STATIC_LOCAL(AtomicString, decorationId, ("-webkit-search-decoration"));
     Node* host = shadowAncestorNode();
-    if (!host)
+    if (!host || !host->hasTagName(inputTag))
         return resultsId;
-    if (HTMLInputElement* input = host->toInputElement()) {
-        if (input->maxResults() < 0)
-            return decorationId;
-        if (input->maxResults() > 0)
-            return resultsId;
-        return resultsDecorationId;
-    }
-    return resultsId;
+
+    int maxResults = toHTMLInputElement(host)->maxResults();
+    if (maxResults < 0)
+        return decorationId;
+    if (maxResults > 0)
+        return resultsId;
+    return resultsDecorationId;
 }
 
 void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
 {
     // On mousedown, bring up a menu, if needed
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
+    HTMLInputElement* input = toHTMLInputElement(shadowAncestorNode());
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         input->focus();
         input->select();
@@ -191,7 +190,7 @@ void SearchFieldCancelButtonElement::detach()
 void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 {
     // If the element is visible, on mouseup, clear the value, and set selection
-    RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowAncestorNode()));
+    RefPtr<HTMLInputElement> input(toHTMLInputElement(shadowAncestorNode()));
     if (input->disabled() || input->isReadOnlyFormControl()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
@@ -271,7 +270,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
         return;
     }
 
-    RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowAncestorNode()));
+    RefPtr<HTMLInputElement> input(toHTMLInputElement(shadowAncestorNode()));
     if (input->disabled() || input->isReadOnlyFormControl()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
@@ -342,7 +341,7 @@ void SpinButtonElement::stopRepeatingTimer()
 
 void SpinButtonElement::repeatingTimerFired(Timer<SpinButtonElement>*)
 {
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
+    HTMLInputElement* input = toHTMLInputElement(shadowAncestorNode());
     if (input->disabled() || input->isReadOnlyFormControl())
         return;
     // On Mac OS, NSStepper updates the value for the button under the mouse
@@ -401,7 +400,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
     // The call to focus() below dispatches a focus event, and an event handler in the page might
     // remove the input element from DOM. To make sure it remains valid until we finish our work
     // here, we take a temporary reference.
-    RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowAncestorNode()));
+    RefPtr<HTMLInputElement> input(toHTMLInputElement(shadowAncestorNode()));
 
     if (input->disabled() || input->isReadOnlyFormControl()) {
         if (!event->defaultHandled())
@@ -486,7 +485,7 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
     // The call to setValue() below dispatches an event, and an event handler in the page might
     // remove the input element from DOM. To make sure it remains valid until we finish our work
     // here, we take a temporary reference.
-    RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowAncestorNode()));
+    RefPtr<HTMLInputElement> input(toHTMLInputElement(shadowAncestorNode()));
     if (input->disabled() || input->isReadOnlyFormControl())
         return;
 

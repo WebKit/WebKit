@@ -577,15 +577,6 @@ void Node::setShadowHost(Element* host)
     setParent(host);
 }
 
-HTMLInputElement* Node::toInputElement()
-{
-    // If one of the below ASSERTs trigger, you are calling this function
-    // directly or indirectly from a constructor or destructor of this object.
-    // Don't do this!
-    ASSERT(!(isHTMLElement() && hasTagName(inputTag)));
-    return 0;
-}
-
 short Node::tabIndex() const
 {
     return hasRareData() ? rareData()->tabIndex() : 0;
