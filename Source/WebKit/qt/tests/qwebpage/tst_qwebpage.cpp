@@ -3188,8 +3188,6 @@ void tst_QWebPage::loadSignalsOrder_data()
 
 void tst_QWebPage::loadSignalsOrder()
 {
-    QSKIP("https://bugs.webkit.org/show_bug.cgi?id=28851", SkipAll);
-
     QFETCH(QUrl, url);
     QWebPage page;
     SpyForLoadSignalsOrder loadSpy(&page);
