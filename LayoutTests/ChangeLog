@@ -12,6 +12,67 @@
 
 2011-08-31  David Levin  <levin@chromium.org>
 
+        [chromium] Test expectation updates due to r94211.
+
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-001-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-002-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-003-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-004-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-005-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-006-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-007-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-008-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-009-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-010-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-012-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-013-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-014-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css2.1/20110323/margin-applies-to-015-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-001-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-002-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-003-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-004-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-005-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-006-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-007-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-008-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-009-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-010-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-012-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-013-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-014-expected.png: Added.
+        * platform/chromium-cg-mac/css2.1/20110323/margin-applies-to-015-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-001-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-001-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-001-expected.txt.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-002-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-002-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-002-expected.txt.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-003-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-003-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-003-expected.txt.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-004-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-004-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-004-expected.txt.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-005-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-005-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-005-expected.txt.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-006-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-006-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-006-expected.txt.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-007-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-007-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-007-expected.txt.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-008-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-008-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-008-expected.txt.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-009-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-009-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-009-expected.txt.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-010-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-010-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-010-expected.txt.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-012-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-012-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-012-expected.txt.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-013-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-013-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-013-expected.txt.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-014-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-014-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-014-expected.txt.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-015-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/margin-applies-to-015-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css2.1/20110323/margin-applies-to-015-expected.txt.
+
+2011-08-31  David Levin  <levin@chromium.org>
+
         [chromium] Fix expectations due to r94213.
 
         * platform/chromium-cg-mac/fast/tokenizer/script_extra_close-expected.txt: Removed.
