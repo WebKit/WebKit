@@ -241,6 +241,11 @@ WebInspector.ConsoleView.prototype = {
         this.toggleConsoleButton.title = WebInspector.UIString("Show console.");
     },
 
+    _isScrollIntoViewScheduled: function()
+    {
+        return !!this._scrollIntoViewTimer;
+    },
+
     _scheduleScrollIntoView: function()
     {
         if (this._scrollIntoViewTimer)
@@ -261,7 +266,10 @@ WebInspector.ConsoleView.prototype = {
 
     _appendConsoleMessage: function(msg)
     {
-        var shouldScrollToLastMessage = this.messagesElement.isScrolledToBottom();
+        // this.messagesElement.isScrolledToBottom() is forcing style recalculation.
+        // We just skip it if the scroll action has been scheduled.
+        if (!this._isScrollIntoViewScheduled() && ((msg instanceof WebInspector.ConsoleCommandResult) || this.messagesElement.isScrolledToBottom()))
+            this._scheduleScrollIntoView();
 
         this.messages.push(msg);
 
@@ -278,10 +286,6 @@ WebInspector.ConsoleView.prototype = {
 
             this.currentGroup.addMessage(msg);
         }
-
-        // Always scroll when command result arrives.
-        if (shouldScrollToLastMessage || (msg instanceof WebInspector.ConsoleCommandResult))
-            this._scheduleScrollIntoView();
 
         this.dispatchEventToListeners(WebInspector.ConsoleView.Events.EntryAdded, msg);
     },

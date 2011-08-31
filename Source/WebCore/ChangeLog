@@ -1,3 +1,16 @@
+2011-08-31  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: console view does a style recalculation per each addMessage call.
+        https://bugs.webkit.org/show_bug.cgi?id=67198
+
+        It is bad from the performance point of view.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._isScrollIntoViewScheduled):
+        (WebInspector.ConsoleView.prototype._appendConsoleMessage):
+
 2011-08-31  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed build fix. Restore debugger_script_source target dependency
