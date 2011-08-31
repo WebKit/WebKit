@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLScriptElement.h"
 #include "IgnoreDestructiveWriteCountIncrementer.h"
 #include "MIMETypeRegistry.h"
@@ -254,10 +255,11 @@ bool ScriptElement::requestScript(const String& sourceUrl)
         return false;
 
     ASSERT(!m_cachedScript);
-    // FIXME: If sourceUrl is empty, we should dispatchErrorEvent().
-    ResourceRequest request(m_element->document()->completeURL(sourceUrl));
-    m_cachedScript = m_element->document()->cachedResourceLoader()->requestScript(request, scriptCharset());
-    m_isExternalScript = true;
+    if (!stripLeadingAndTrailingHTMLSpaces(sourceUrl).isEmpty()) {
+        ResourceRequest request(m_element->document()->completeURL(sourceUrl));
+        m_cachedScript = m_element->document()->cachedResourceLoader()->requestScript(request, scriptCharset());
+        m_isExternalScript = true;
+    }
 
     if (m_cachedScript) {
         ASSERT(m_cachedScriptState == NeverSet);

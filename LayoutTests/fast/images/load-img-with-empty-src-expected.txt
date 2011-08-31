@@ -6,5 +6,5 @@ PASS
 PASS
 [2] define a <img> with src='' to see whether it gets loaded. (It should NOT be loaded, because the base URI is a local file.)
 PASS
-[3] change the base URI to an http: URL and define a <img> with src='' to see whether it gets loaded. (It should be loaded.)
+[3] change the base URI to an http: URL and define a <img> with src='' to see whether it gets loaded. (It should NOT be loaded.)
 PASS

@@ -14,11 +14,11 @@
             layoutTestController.dumpAsText(); 
         }
         
-        var results = [true, true, true, false];
+        var results = [true, true, false, false];
         var description = ["remove src attribute of an <img> to see whether it gets loaded. (It should NOT be loaded.)",
                            "define an <img> with no src specified to see whether it gets loaded. (It should NOT be loaded.)",
                            "define a <img> with src='' to see whether it gets loaded. (It should NOT be loaded, because the base URI is a local file.)",
-                           "change the base URI to an http: URL and define a <img> with src='' to see whether it gets loaded. (It should be loaded.)" ]
+                           "change the base URI to an http: URL and define a <img> with src='' to see whether it gets loaded. (It should NOT be loaded.)" ]
 
         function outputResults() {
             for (index = 0; index < 4; index++) {
@@ -37,7 +37,7 @@
     <div id="console"></div>
     <img id="image1" style="display:none" src="resources/test-load.jpg" onerror="results[0] = false;" />
     <img id="image2" style="display:none" onerror="results[1] = false;" />
-    <img id="image3" style="display:none" src="" onerror="results[2] = false;" />
+    <img id="image3" style="display:none" src="" onerror="results[2] = true;" />
     <script type="text/javascript">
         var imgNode1 = document.getElementById("image1");
         imgNode1.removeAttribute("src");

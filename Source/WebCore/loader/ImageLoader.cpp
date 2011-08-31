@@ -27,8 +27,10 @@
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Element.h"
+#include "Event.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "HTMLParserIdioms.h"
 #include "RenderImage.h"
 
 #if ENABLE(SVG)
@@ -159,11 +161,9 @@ void ImageLoader::updateFromElement()
         return;
 
     // Do not load any image if the 'src' attribute is missing or if it is
-    // an empty string referring to a local file. The latter condition is
-    // a quirk that preserves old behavior that Dashboard widgets
-    // need (<rdar://problem/5994621>).
+    // an empty string.
     CachedImage* newImage = 0;
-    if (!(attr.isNull() || (attr.isEmpty() && document->baseURI().isLocalFile()))) {
+    if (!attr.isNull() && !stripLeadingAndTrailingHTMLSpaces(attr).isEmpty()) {
         ResourceRequest request = ResourceRequest(document->completeURL(sourceURI(attr)));
 
         String crossOriginMode = m_element->fastGetAttribute(HTMLNames::crossoriginAttr);
@@ -186,7 +186,8 @@ void ImageLoader::updateFromElement()
         // If we do not have an image here, it means that a cross-site
         // violation occurred.
         m_failedLoadURL = !newImage ? attr : AtomicString();
-    }
+    } else if (!attr.isNull()) // Fire an error event if the url is empty.
+        m_element->dispatchEvent(Event::create(eventNames().errorEvent, false, false));
     
     CachedImage* oldImage = m_image.get();
     if (newImage != oldImage) {

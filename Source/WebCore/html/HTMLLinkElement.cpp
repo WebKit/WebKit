@@ -133,7 +133,8 @@ void HTMLLinkElement::parseMappedAttribute(Attribute* attr)
         m_relAttribute = LinkRelAttribute(attr->value());
         process();
     } else if (attr->name() == hrefAttr) {
-        m_url = document()->completeURL(stripLeadingAndTrailingHTMLSpaces(attr->value()));
+        String url = stripLeadingAndTrailingHTMLSpaces(attr->value());
+        m_url = url.isEmpty() ? KURL() : document()->completeURL(url);
         process();
     } else if (attr->name() == typeAttr) {
         m_type = attr->value();

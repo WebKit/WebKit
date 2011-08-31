@@ -1,3 +1,23 @@
+2011-08-31  Nate Chapin  <japhet@chromium.org>
+
+        Don't load resources with empty urls, since this
+        will resolve to the current document.
+        https://bugs.webkit.org/show_bug.cgi?id=30303
+
+        Reviewed by Darin Adler.
+
+        Test: http/tests/loading/empty-urls.html
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestScript): If src="", fail through
+            to the error event case.
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseMappedAttribute): Ensure the url
+            stays empty if we try to resolve an empty href.
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement): Throw an error instead of
+            loading if the src is empty in all cases, not just local files.
+
 2011-08-28  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: margin-applies-to-015 fails, WebKit does not respect top margin for table captions

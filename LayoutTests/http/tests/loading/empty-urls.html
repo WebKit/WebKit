@@ -1,0 +1,43 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpResourceLoadCallbacks();
+}
+
+var expectedPasses = 6;
+
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message));
+    document.getElementById("console").appendChild(document.createElement("br"));
+
+    expectedPasses--;
+    if (expectedPasses == 0 && window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+<link rel="icon" src="" href="" onerror="log('FAIL: link rel=icon onerror fired')"></link>
+<link rel="prefetch" src="" href="" onerror="log('FAIL: link rel=prefetch onerror fired')"></link>
+<link rel="stylesheet" src="" href="" onerror="log('FAIL: link rel=stylesheet onerror fired')"></link>
+</head>
+<body>
+<div id="console"></div>
+<command icon="" onerror="log('FAIL: command onerror fired')"></command>
+<object data="" onerror="log('FAIL: object onerror fired')"></object>
+<embed src="" onerror="log('FAIL: embed onerror fired')"></embed>
+<video poster="" onerror="log('FAIL: video poster onerror fired')"></video>
+<img src="" onerror="log('PASS: img onerror fired')"></img>
+<input type="image" src="" onerror="log('PASS: input type=image onerror fired')"></input>
+<script src="" onerror="log('PASS: script onerror fired')"></script>
+<video id="video" src="" onerror="log('PASS: video src onerror fired')"></video>
+<audio id="audio" src="" onerror="log('PASS: audio onerror fired')"></audio>
+<video><source src="" onerror="log('PASS: source onerror fired')"></source></video>
+<script>
+document.getElementById("video").load();
+document.getElementById("audio").load();
+</script>
+</body>
+</html>

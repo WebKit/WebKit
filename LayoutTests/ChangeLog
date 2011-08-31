@@ -1,3 +1,54 @@
+2011-08-31  Nate Chapin  <japhet@chromium.org>
+
+        Test updates for https://bugs.webkit.org/show_bug.cgi?id=30303.
+
+        Reviewed by Darin Adler.
+
+        * fast/images/load-img-with-empty-src-expected.txt:
+        * fast/images/load-img-with-empty-src.html: Expect the same behavior whether or not an empty src
+            is in a local file document.
+        * fast/tokenizer/002-expected.txt: Added.
+        * fast/tokenizer/002.html: Make dumpAsText().
+        * fast/tokenizer/external-script-document-write_2-expected.txt: Added.
+        * fast/tokenizer/external-script-document-write_2.html:: Make dumpAsText().
+        * fast/tokenizer/script_extra_close-expected.txt: Added.
+        * fast/tokenizer/script_extra_close.html:: Make dumpAsText().
+        * http/tests/loading/empty-urls-expected.txt: Added.
+        * http/tests/loading/empty-urls.html: Added. Test empty urls with a bunch of subresource types
+            and ensure their error event behavior matches the spec.
+        * platform/chromium-cg-mac/fast/tokenizer/002-expected.txt: Removed.
+        * platform/chromium-cg-mac/fast/tokenizer/external-script-document-write_2-expected.txt: Removed.
+        * platform/chromium-linux/fast/tokenizer/002-expected.png: Removed.
+        * platform/chromium-linux/fast/tokenizer/external-script-document-write_2-expected.png: Removed.
+        * platform/chromium-linux/fast/tokenizer/script_extra_close-expected.png: Removed.
+        * platform/chromium-win/fast/tokenizer/002-expected.png: Removed.
+        * platform/chromium-win/fast/tokenizer/002-expected.txt: Removed.
+        * platform/chromium-win/fast/tokenizer/external-script-document-write_2-expected.png: Removed.
+        * platform/chromium-win/fast/tokenizer/external-script-document-write_2-expected.txt: Removed.
+        * platform/chromium-win/fast/tokenizer/script_extra_close-expected.png: Removed.
+        * platform/chromium-win/fast/tokenizer/script_extra_close-expected.txt: Removed.
+        * platform/gtk/fast/tokenizer/002-expected.png: Removed.
+        * platform/gtk/fast/tokenizer/002-expected.txt: Removed.
+        * platform/gtk/fast/tokenizer/external-script-document-write_2-expected.png: Removed.
+        * platform/gtk/fast/tokenizer/external-script-document-write_2-expected.txt: Removed.
+        * platform/gtk/fast/tokenizer/script_extra_close-expected.png: Removed.
+        * platform/gtk/fast/tokenizer/script_extra_close-expected.txt: Removed.
+        * platform/mac-leopard/fast/tokenizer/002-expected.png: Removed.
+        * platform/mac-leopard/fast/tokenizer/external-script-document-write_2-expected.png: Removed.
+        * platform/mac-leopard/fast/tokenizer/script_extra_close-expected.png: Removed.
+        * platform/mac/fast/tokenizer/002-expected.png: Removed.
+        * platform/mac/fast/tokenizer/002-expected.txt: Removed.
+        * platform/mac/fast/tokenizer/external-script-document-write_2-expected.png: Removed.
+        * platform/mac/fast/tokenizer/external-script-document-write_2-expected.txt: Removed.
+        * platform/mac/fast/tokenizer/script_extra_close-expected.png: Removed.
+        * platform/mac/fast/tokenizer/script_extra_close-expected.txt: Removed.
+        * platform/qt/fast/tokenizer/002-expected.png: Removed.
+        * platform/qt/fast/tokenizer/002-expected.txt: Removed.
+        * platform/qt/fast/tokenizer/external-script-document-write_2-expected.png: Removed.
+        * platform/qt/fast/tokenizer/external-script-document-write_2-expected.txt: Removed.
+        * platform/qt/fast/tokenizer/script_extra_close-expected.png: Removed.
+        * platform/qt/fast/tokenizer/script_extra_close-expected.txt: Removed.
+
 2011-08-31  Simon Fraser  <simon.fraser@apple.com>
 
         Improve appearance and performance of layout test results.html
