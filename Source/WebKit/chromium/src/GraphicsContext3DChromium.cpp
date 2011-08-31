@@ -120,7 +120,10 @@ PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(WebKit::We
 
 PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D> webContext, GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
 {
-    OwnPtr<GraphicsContext3DPrivate> priv = GraphicsContext3DPrivate::create(0, webContext);
+    Chrome* chrome = static_cast<Chrome*>(hostWindow);
+    WebKit::WebViewImpl* webViewImpl = chrome ? static_cast<WebKit::WebViewImpl*>(chrome->client()->webView()) : 0;
+
+    OwnPtr<GraphicsContext3DPrivate> priv = GraphicsContext3DPrivate::create(webViewImpl, webContext);
     if (!priv)
         return 0;
 

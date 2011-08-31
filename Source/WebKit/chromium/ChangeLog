@@ -1,3 +1,10 @@
+2011-08-30  Nat Duca  <nduca@chromium.org>
+
+        Unreviewed, fix WebGL layout tests due to missing WebView pointer.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DPrivate::createGraphicsContextFromWebContext):
+
 2011-08-30  Aaron Colwell  <acolwell@chromium.org>
 
         Add MediaSource API to HTMLMediaElement
