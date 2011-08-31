@@ -1,3 +1,11 @@
+2011-08-31  Cary Clark  <caryclark@google.com>
+
+        Unreviewed; new baselines (Skia on Mac, next chunk of 800 files)
+        svg/batik/text/textLayout through svg/text/multichar-glyph
+
+        * platform/chromium-mac/svg/batik/text/textLayout-expected.png: Added.
+        (remaining files omitted for brevity)
+
 2011-08-31  Robert Hogan  <robert@webkit.org>
 
         Add new platform-specific results from r94211
