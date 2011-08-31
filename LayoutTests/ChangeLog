@@ -1,3 +1,10 @@
+2011-08-31  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip failing fast/loader/location-port.html test on
+        GTK.
+
+        * platform/gtk/Skipped:
+
 2011-08-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.

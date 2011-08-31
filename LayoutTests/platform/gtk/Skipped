@@ -1624,3 +1624,6 @@ fast/harness/sample-fail-mismatch-reftest.html
 # https://bugs.webkit.org/show_bug.cgi?id=67014
 # Need layoutTestController.setShouldStayOnPageAfterHandlingBeforeUnload
 fast/loader/form-submission-after-beforeunload-cancel.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=67277
+fast/loader/location-port.html
