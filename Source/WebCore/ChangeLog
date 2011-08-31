@@ -1,3 +1,21 @@
+2011-08-30  Scott Byer  <scottbyer@chromium.org>
+
+        Fix pan scrolling on Windows to be clamped
+        https://bugs.webkit.org/show_bug.cgi?id=66910
+
+        With the recent change to support rubberband scrolling on the Mac, pan
+        scrolling of overflow divs became unclamped and would scroll infinitely
+        and along an axis without a scrollbar.
+
+        Reviewed by Simon Fraser
+
+        Test: platform/win/fast/events/panScroll-correct-direction.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::panScrollFromPoint):
+        (WebCore::RenderLayer::scrollByRecursively):
+        * rendering/RenderLayer.h:
+
 2011-08-30  Bill Budge  <bbudge@chromium.org>
 
         This patch makes the XMLHttpRequest method/header validation logic available as

@@ -224,8 +224,13 @@ public:
 
     void panScrollFromPoint(const LayoutPoint&);
 
+    enum ScrollOffsetClamping {
+        ScrollOffsetUnclamped,
+        ScrollOffsetClamped
+    };
+
     // Scrolling methods for layers that can scroll their overflow.
-    void scrollByRecursively(LayoutUnit xDelta, LayoutUnit yDelta);
+    void scrollByRecursively(LayoutUnit xDelta, LayoutUnit yDelta, ScrollOffsetClamping = ScrollOffsetUnclamped);
 
     LayoutSize scrolledContentOffset() const { return scrollOffset() + m_scrollOverflow; }
 
@@ -233,10 +238,6 @@ public:
     LayoutUnit scrollYOffset() const { return m_scrollOffset.height() + m_scrollOrigin.y(); }
     LayoutSize scrollOffset() const { return LayoutSize(scrollXOffset(), scrollYOffset()); }
 
-    enum ScrollOffsetClamping {
-        ScrollOffsetUnclamped,
-        ScrollOffsetClamped
-    };
     void scrollToOffset(LayoutUnit, LayoutUnit, ScrollOffsetClamping = ScrollOffsetUnclamped);
     void scrollToXOffset(LayoutUnit x, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(x, scrollYOffset(), clamp); }
     void scrollToYOffset(LayoutUnit y, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(scrollXOffset(), y, clamp); }

@@ -1272,10 +1272,10 @@ void RenderLayer::panScrollFromPoint(const LayoutPoint& sourcePoint)
     if (abs(yDelta) <= ScrollView::noPanScrollRadius)
         yDelta = 0;
 
-    scrollByRecursively(adjustedScrollDelta(xDelta), adjustedScrollDelta(yDelta));
+    scrollByRecursively(adjustedScrollDelta(xDelta), adjustedScrollDelta(yDelta), ScrollOffsetClamped);
 }
 
-void RenderLayer::scrollByRecursively(LayoutUnit xDelta, LayoutUnit yDelta)
+void RenderLayer::scrollByRecursively(LayoutUnit xDelta, LayoutUnit yDelta, ScrollOffsetClamping clamp)
 {
     if (!xDelta && !yDelta)
         return;
@@ -1287,7 +1287,7 @@ void RenderLayer::scrollByRecursively(LayoutUnit xDelta, LayoutUnit yDelta)
     if (renderer()->hasOverflowClip() && !restrictedByLineClamp) {
         LayoutUnit newOffsetX = scrollXOffset() + xDelta;
         LayoutUnit newOffsetY = scrollYOffset() + yDelta;
-        scrollToOffset(newOffsetX, newOffsetY);
+        scrollToOffset(newOffsetX, newOffsetY, clamp);
 
         // If this layer can't do the scroll we ask the next layer up that can scroll to try
         LayoutUnit leftToScrollX = newOffsetX - scrollXOffset();
