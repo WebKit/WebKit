@@ -186,6 +186,12 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     
     // Sanity check destinationFrameOffset, numberOfFrames.
     size_t destinationLength = bus->length();
+
+    bool isLengthGood = destinationLength <= 4096 && numberOfFrames <= 4096;
+    ASSERT(isLengthGood);
+    if (!isLengthGood)
+        return;
+
     bool isOffsetGood = destinationFrameOffset <= destinationLength && destinationFrameOffset + numberOfFrames <= destinationLength;
     ASSERT(isOffsetGood);
     if (!isOffsetGood)
