@@ -44,6 +44,8 @@ public:
 
     void initEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& statusMessage);
 
+    virtual bool isWebGLContextEvent() const;
+
     const String& statusMessage() const { return m_statusMessage; }
 
 private:

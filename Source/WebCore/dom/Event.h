@@ -163,6 +163,10 @@ namespace WebCore {
 #if ENABLE(MEDIA_STREAM)
         virtual bool isMediaStreamEvent() const;
 #endif
+#if ENABLE(WEBGL)
+        virtual bool isWebGLContextEvent() const;
+#endif
+
         bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
         bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }
 

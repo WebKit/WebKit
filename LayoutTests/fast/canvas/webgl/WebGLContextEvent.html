@@ -1,0 +1,75 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+<script>
+
+var evt;
+var canvas;
+var context;
+var extension;
+
+function createNewCanvas()
+{
+    canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+
+    context = WebGLTestUtils.create3DContext(canvas);
+    extension = context.getExtension("WEBKIT_lose_context");
+    if (!extension) {
+        debug("Could not find the WEBKIT_lose_context extension.");
+        return;
+    }
+}
+
+function runTest()
+{
+    createNewCanvas();
+    canvas.addEventListener("webglcontextlost", function(e) {
+        evt = e;
+        debug("Test that the event passed to a listener of webglcontextlost is a WebGLContextEvent.")
+        shouldBe("evt.toString()", "'[object WebGLContextEvent]'");
+        shouldBe("evt.statusMessage", "''");
+    }, false);
+    extension.loseContext();
+
+
+    createNewCanvas();
+    canvas.addEventListener("webglcontextlost", function(e) {
+        e.preventDefault();
+    }, false);
+    canvas.addEventListener("webglcontextrestored", function(e) {
+        evt = e;
+        debug("Test that the event passed to a listener of webglcontextrestored is a WebGLContextEvent.")
+        shouldBe("evt.toString()", "'[object WebGLContextEvent]'");
+        shouldBe("evt.statusMessage", "''");
+    }, false);
+    extension.loseContext();
+    WebGLTestUtils.shouldGenerateGLError(context, context.NO_ERROR, "extension.restoreContext()");
+
+    finish();
+}
+
+function finish() {
+    successfullyParsed = true;
+    var epilogue = document.createElement("script");
+    epilogue.onload = function() {
+        if (window.nonKhronosFrameworkNotifyDone)
+            window.nonKhronosFrameworkNotifyDone();
+    };
+    epilogue.src = "../../js/resources/js-test-post.js";
+    document.body.appendChild(epilogue);
+}
+
+</script>
+
+</head>
+<body onload="runTest()">
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas">
+</body>
+</html>

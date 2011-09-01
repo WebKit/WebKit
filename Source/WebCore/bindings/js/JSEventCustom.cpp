@@ -115,6 +115,11 @@
 #include "MediaStreamEvent.h"
 #endif
 
+#if ENABLE(WEBGL)
+#include "JSWebGLContextEvent.h"
+#include "WebGLContextEvent.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -216,6 +221,10 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
 #if ENABLE(MEDIA_STREAM)
     else if (event->isMediaStreamEvent())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, MediaStreamEvent, event);
+#endif
+#if ENABLE(WEBGL)
+    else if (event->isWebGLContextEvent())
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebGLContextEvent, event);
 #endif
     else
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Event, event);

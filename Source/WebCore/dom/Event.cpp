@@ -279,6 +279,14 @@ bool Event::isMediaStreamEvent() const
 }
 #endif
 
+#if ENABLE(WEBGL)
+bool Event::isWebGLContextEvent() const
+{
+    return false;
+}
+#endif
+
+
 bool Event::storesResultAsString() const
 {
     return false;

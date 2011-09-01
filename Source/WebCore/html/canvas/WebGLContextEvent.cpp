@@ -51,4 +51,9 @@ void WebGLContextEvent::initEvent(const AtomicString& type, bool canBubble, bool
     m_statusMessage = statusMessage;
 }
 
+bool WebGLContextEvent::isWebGLContextEvent() const
+{
+    return true;
+}
+
 } // namespace WebCore

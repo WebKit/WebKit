@@ -4925,6 +4925,8 @@
 		BC275B7D11C5D23500C9206C /* JSWebKitCSSMatrixCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC275B7C11C5D23500C9206C /* JSWebKitCSSMatrixCustom.cpp */; };
 		BC275B8111C5D2B400C9206C /* JSEventSourceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC275B8011C5D2B400C9206C /* JSEventSourceCustom.cpp */; };
 		BC275CB311C5E85C00C9206C /* JSArrayBufferCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC275CB211C5E85C00C9206C /* JSArrayBufferCustom.cpp */; };
+		BC2CBF4E140F1ABD003879BE /* JSWebGLContextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2CBF4B140F1A65003879BE /* JSWebGLContextEvent.h */; };
+		BC2CBF7B140F1D58003879BE /* JSWebGLContextEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2CBF7A140F1D58003879BE /* JSWebGLContextEvent.cpp */; };
 		BC2CC8DF0F32881000A9DF26 /* RenderObjectChildList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2CC8DE0F32881000A9DF26 /* RenderObjectChildList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2ED5550C6B9BD300920BFF /* JSElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */; };
 		BC2ED6BC0C6BD2F000920BFF /* JSAttrCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */; };
@@ -11641,6 +11643,8 @@
 		BC275B7C11C5D23500C9206C /* JSWebKitCSSMatrixCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSMatrixCustom.cpp; sourceTree = "<group>"; };
 		BC275B8011C5D2B400C9206C /* JSEventSourceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventSourceCustom.cpp; sourceTree = "<group>"; };
 		BC275CB211C5E85C00C9206C /* JSArrayBufferCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSArrayBufferCustom.cpp; sourceTree = "<group>"; };
+		BC2CBF4B140F1A65003879BE /* JSWebGLContextEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLContextEvent.h; sourceTree = "<group>"; };
+		BC2CBF7A140F1D58003879BE /* JSWebGLContextEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLContextEvent.cpp; sourceTree = "<group>"; };
 		BC2CC8DE0F32881000A9DF26 /* RenderObjectChildList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderObjectChildList.h; sourceTree = "<group>"; };
 		BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSElementCustom.cpp; sourceTree = "<group>"; };
 		BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAttrCustom.cpp; sourceTree = "<group>"; };
@@ -16948,6 +16952,8 @@
 				49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */,
 				6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */,
 				6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */,
+				BC2CBF7A140F1D58003879BE /* JSWebGLContextEvent.cpp */,
+				BC2CBF4B140F1A65003879BE /* JSWebGLContextEvent.h */,
 				49C7B9841042D2D30009D447 /* JSWebGLFramebuffer.cpp */,
 				49C7B9851042D2D30009D447 /* JSWebGLFramebuffer.h */,
 				49C7B9881042D2D30009D447 /* JSWebGLProgram.cpp */,
@@ -23470,6 +23476,7 @@
 				B10B6980140C174000BC1C26 /* WebVTTToken.h in Headers */,
 				B10B6982140C174000BC1C26 /* WebVTTTokenizer.h in Headers */,
 				9B0FB192140DB5790022588F /* HTTPValidation.h in Headers */,
+				BC2CBF4E140F1ABD003879BE /* JSWebGLContextEvent.h in Headers */,
 				BC274B2F140EBEB200EADFA6 /* CSSBorderImageSliceValue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -26283,6 +26290,7 @@
 				E45322AB140CE267005A0F92 /* SelectorQuery.cpp in Sources */,
 				B10B6981140C174000BC1C26 /* WebVTTTokenizer.cpp in Sources */,
 				9B0FB191140DB5790022588F /* HTTPValidation.cpp in Sources */,
+				BC2CBF7B140F1D58003879BE /* JSWebGLContextEvent.cpp in Sources */,
 				BC274B31140EBED800EADFA6 /* CSSBorderImageSliceValue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

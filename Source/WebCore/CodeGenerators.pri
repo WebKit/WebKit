@@ -226,6 +226,7 @@ IDL_BINDINGS += \
     html/canvas/WebGLActiveInfo.idl \
     html/canvas/WebGLBuffer.idl \
     html/canvas/WebGLContextAttributes.idl \
+    html/canvas/WebGLContextEvent.idl \
     html/canvas/WebGLFramebuffer.idl \
     html/canvas/WebGLProgram.idl \
     html/canvas/WebGLRenderbuffer.idl \

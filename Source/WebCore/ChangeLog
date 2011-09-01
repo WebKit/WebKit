@@ -1,3 +1,38 @@
+2011-09-01  Sam Weinig  <sam@webkit.org>
+
+        WebGLContextEvent should have its own JS wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=67352
+
+        Reviewed by Anders Carlsson.
+
+        The WebGLContextEvent was missing a proper JS wrapper, and thus
+        anyone using one in an EventListener was actually just getting
+        a plain old Event. Rectify this by generating the wrapper and 
+        wrapping it on creating.
+
+        Test: fast/canvas/webgl/WebGLContextEvent.html
+
+        * CodeGenerators.pri:
+        Add WebGLContextEvent.idl
+
+        * DerivedSources.make:
+        Add WebGLContextEvent and sort.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add generated JSWebGLContextEvent.h/cpp.
+
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        Wrap WebGLContextEvents as JSWebGLContextEvents.
+
+        * dom/Event.cpp:
+        (WebCore::Event::isWebGLContextEvent):
+        * dom/Event.h:
+        * html/canvas/WebGLContextEvent.cpp:
+        (WebCore::WebGLContextEvent::isWebGLContextEvent):
+        * html/canvas/WebGLContextEvent.h:
+        Add predicate for WebGLContextEvent.
+
 2011-09-01  Eric Carlson  <eric.carlson@apple.com>
 
         Add 'muted' content attribute to HTMLMediaElement
