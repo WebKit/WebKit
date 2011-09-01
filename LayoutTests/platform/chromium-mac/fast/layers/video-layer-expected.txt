@@ -1,0 +1,38 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderInline {A} at (0,0) size 305x18 [color=#0000EE]
+          RenderText {#text} at (0,0) size 305x18
+            text run at (0,0) width 305: "https://bugs.webkit.org/show_bug.cgi?id=25066"
+        RenderBR {BR} at (305,14) size 0x0
+        RenderText {#text} at (0,18) size 415x18
+          text run at (0,18) width 415: "controls should not be misplaced when video gets a RenderLayer."
+      RenderBlock (anonymous) at (0,52) size 784x252
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (58,110) size 302x152
+  RenderVideo {VIDEO} at (50,50) size 302x152 [border: (1px solid #000000)]
+layer at (59,111) size 300x150
+  RenderBlock (relative positioned) {DIV} at (1,1) size 300x150
+layer at (59,229) size 300x32
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,118) size 300x32 [bgcolor=#00000099]
+layer at (66,235) size 18x19
+  RenderButton {INPUT} at (7,6) size 18x19
+layer at (89,229) size 236x32
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (30,0) size 236x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+    RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+      RenderDeprecatedFlexibleBox {DIV} at (1,1) size 162x16
+        RenderBlock {DIV} at (0,0) size 153x29
+        RenderBlock {DIV} at (153,0) size 9x29
+layer at (266,235) size 58x20 scrollHeight 21
+  RenderDeprecatedFlexibleBox {DIV} at (177,6) size 58x20 [color=#FFFFFF]
+    RenderBlock (anonymous) at (8,0) size 41x21
+      RenderText {#text} at (0,2) size 41x17
+        text run at (0,2) width 41: "00:00"
+layer at (97,231) size 9x29
+  RenderBlock (relative positioned) {DIV} at (0,-6) size 9x29
+layer at (325,229) size 34x32
+  RenderButton {INPUT} at (266,0) size 34x32

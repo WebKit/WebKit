@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 14: Uncaught Error: this is an exception
+SUCCESS

@@ -1,0 +1,6 @@
+Test that a redirect makes resource caching fail.
+
+Should say SUCCESS:
+
+SUCCESS
+

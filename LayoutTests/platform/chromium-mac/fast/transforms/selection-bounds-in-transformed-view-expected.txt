@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 10: Uncaught TypeError: Object [object Object] has no method 'scalePageBy'
-target
-

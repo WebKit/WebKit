@@ -1,3 +1,13 @@
+2011-09-01  Cary Clark  <caryclark@google.com>
+
+        Unreviewed; new baselines (Skia on Mac, next chunk of files)
+        Some images incorrectly created with LCD text replaced with gray-scale.
+        Updated newer tests with reference images.
+        Deleted images with correct fallbacks.
+
+        * platform/chromium-mac/http/tests/navigation/error404-basic-expected.png: Removed.
+        (remaining files omitted for brevity)
+
 2011-09-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Land chromium baselines for fast/css/focus-ring-multiline-writingmode-vertical.html
