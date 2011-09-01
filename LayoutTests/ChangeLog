@@ -1,3 +1,14 @@
+2011-09-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94194.
+        http://trac.webkit.org/changeset/94194
+        https://bugs.webkit.org/show_bug.cgi?id=67410
+
+        Broke a test on the GTK+ bots. (Requested by mrobinson on
+        #webkit).
+
+        * platform/gtk/Skipped:
+
 2011-08-31  David Hyatt  <hyatt@apple.com>
 
         Implement border-image-slice. This will eventually be a component of the new border-image shorthand
