@@ -474,9 +474,9 @@ void Chrome::openColorChooser(ColorChooser* colorChooser, const Color& initialCo
     m_client->openColorChooser(colorChooser, initialColor);
 }
 
-void Chrome::closeColorChooser()
+void Chrome::cleanupColorChooser()
 {
-    m_client->closeColorChooser();
+    m_client->cleanupColorChooser();
 }
 
 void Chrome::setSelectedColorInColorChooser(const Color& color)

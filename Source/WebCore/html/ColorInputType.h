@@ -61,7 +61,7 @@ private:
     virtual void colorSelected(const Color&);
     virtual bool isColorInputType() const;
 
-    void closeColorChooserIfCurrentClient() const;
+    void cleanupColorChooserIfCurrentClient() const;
     void updateColorSwatch();
     HTMLElement* shadowColorSwatch() const;
 };

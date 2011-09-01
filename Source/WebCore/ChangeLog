@@ -1,3 +1,24 @@
+2011-08-31  Keishi Hattori  <keishi@webkit.org>
+
+        Rename closeColorChooser to cleanupColorChooser
+        https://bugs.webkit.org/show_bug.cgi?id=67270
+
+        Reviewed by Kent Tamura.
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::~ColorInputType):
+        (WebCore::ColorInputType::detach):
+        (WebCore::ColorInputType::cleanupColorChooserIfCurrentClient): NSColorPanel shouldn't be closed but the color
+        chooser listeners need to be taken care of. Therefore closeColorChooser will be renamed to cleanupColorChooser.
+        This will close the color chooser on platforms where appropriate.
+        * html/ColorInputType.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::cleanupColorChooser): Rename.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::cleanupColorChooser): Rename.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+
 2011-08-31  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r88115): "Choose File" button doesn't respect font-size property for the <input>

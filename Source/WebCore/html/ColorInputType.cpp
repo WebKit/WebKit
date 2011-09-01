@@ -66,8 +66,8 @@ PassOwnPtr<InputType> ColorInputType::create(HTMLInputElement* element)
 
 ColorInputType::~ColorInputType()
 {
-    closeColorChooserIfCurrentClient();
-}    
+    cleanupColorChooserIfCurrentClient();
+}
 
 bool ColorInputType::isColorControl() const
 {
@@ -162,7 +162,7 @@ void ColorInputType::handleDOMActivateEvent(Event* event)
 
 void ColorInputType::detach()
 {
-    closeColorChooserIfCurrentClient();
+    cleanupColorChooserIfCurrentClient();
 }
 
 void ColorInputType::colorSelected(const Color& color)
@@ -179,12 +179,12 @@ bool ColorInputType::isColorInputType() const
     return true;
 }
 
-void ColorInputType::closeColorChooserIfCurrentClient() const
+void ColorInputType::cleanupColorChooserIfCurrentClient() const
 {
     if (ColorChooser::chooser()->client() != this)
         return;
     if (Chrome* chrome = this->chrome())
-        chrome->closeColorChooser();
+        chrome->cleanupColorChooser();
 }
 
 void ColorInputType::updateColorSwatch()

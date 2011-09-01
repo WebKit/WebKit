@@ -157,7 +157,7 @@ namespace WebCore {
 
 #if ENABLE(INPUT_COLOR)
         void openColorChooser(ColorChooser*, const Color&);
-        void closeColorChooser();
+        void cleanupColorChooser();
         void setSelectedColorInColorChooser(const Color&);
 #endif
 
