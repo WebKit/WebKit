@@ -179,6 +179,14 @@ bool ColorInputType::isColorInputType() const
     return true;
 }
 
+void ColorInputType::closeColorChooserIfCurrentClient() const
+{
+    if (ColorChooser::chooser()->client() != this)
+        return;
+    if (Chrome* chrome = this->chrome())
+        chrome->closeColorChooser();
+}
+
 void ColorInputType::updateColorSwatch()
 {
     HTMLElement* colorSwatch = shadowColorSwatch();
@@ -193,14 +201,6 @@ HTMLElement* ColorInputType::shadowColorSwatch() const
 {
     ShadowRoot* shadow = element()->shadowRoot();
     return shadow ? toHTMLElement(shadow->firstChild()->firstChild()) : 0;
-}
-
-void ColorInputType::closeColorChooserIfCurrentClient() const
-{
-    if (ColorChooser::chooser()->client() != this)
-        return;
-    if (Chrome* chrome = this->chrome())
-        chrome->closeColorChooser();
 }
 
 } // namespace WebCore

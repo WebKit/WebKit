@@ -1,3 +1,17 @@
+2011-08-31  Keishi Hattori  <keishi@webkit.org>
+
+        Remove closeColorChooser call from FrameLoader::transitionToCommitted
+        https://bugs.webkit.org/show_bug.cgi?id=67267
+
+        Reviewed by Darin Adler.
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::closeColorChooserIfCurrentClient): Moved order to match header.
+        * html/ColorInputType.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted): Remove ColorInputType::closeColorChooserIfCurrentClient call.
+        It wasn't the right place to directly manipulate the UI.
+
 2011-08-31  Chris Rogers  <crogers@google.com>
 
         Add defensive bounds checking for AudioNode methods

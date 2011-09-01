@@ -43,8 +43,6 @@ public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
     virtual ~ColorInputType();
 
-    void closeColorChooserIfCurrentClient() const;
-
 private:
     ColorInputType(HTMLInputElement* element) : InputType(element) { }
     virtual bool isColorControl() const;
@@ -63,6 +61,7 @@ private:
     virtual void colorSelected(const Color&);
     virtual bool isColorInputType() const;
 
+    void closeColorChooserIfCurrentClient() const;
     void updateColorSwatch();
     HTMLElement* shadowColorSwatch() const;
 };

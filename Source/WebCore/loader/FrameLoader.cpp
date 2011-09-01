@@ -1854,12 +1854,6 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
     if (m_frame->view())
         m_frame->view()->scrollAnimator()->cancelAnimations();
 
-#if ENABLE(INPUT_COLOR)
-    ColorChooserClient* colorChooserClient = ColorChooser::chooser()->client();
-    if (colorChooserClient && colorChooserClient->isColorInputType())
-        static_cast<ColorInputType*>(colorChooserClient)->closeColorChooserIfCurrentClient();
-#endif
-
     m_client->setCopiesOnScroll();
     history()->updateForCommit();
 
