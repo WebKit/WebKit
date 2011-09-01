@@ -1,3 +1,16 @@
+2011-08-31  Chris Rogers  <crogers@google.com>
+
+        Add defensive bounds checking for AudioNode methods
+        https://bugs.webkit.org/show_bug.cgi?id=67346
+
+        Reviewed by Anders Carlsson.
+
+        No new tests since this does not change JavaScript API.
+
+        * webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::input):
+        (WebCore::AudioNode::output):
+
 2011-08-31  Simon Fraser  <simon.fraser@apple.com>
 
         TransformState.move() should be negated in the unapply code path

@@ -101,12 +101,16 @@ void AudioNode::addOutput(PassOwnPtr<AudioNodeOutput> output)
 
 AudioNodeInput* AudioNode::input(unsigned i)
 {
-    return m_inputs[i].get();
+    if (i < m_inputs.size())
+        return m_inputs[i].get();
+    return 0;
 }
 
 AudioNodeOutput* AudioNode::output(unsigned i)
 {
-    return m_outputs[i].get();
+    if (i < m_outputs.size())
+        return m_outputs[i].get();
+    return 0;
 }
 
 bool AudioNode::connect(AudioNode* destination, unsigned outputIndex, unsigned inputIndex)
