@@ -1,3 +1,26 @@
+2011-09-01  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for new tests.
+
+        * platform/gtk/fast/borders/border-fit-2-expected.png: Added.
+        * platform/gtk/fast/borders/border-fit-2-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-source-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-source-expected.txt: Added.
+        * platform/gtk/fast/multicol/overflow-across-columns-expected.png: Added.
+        * platform/gtk/fast/multicol/overflow-across-columns-expected.txt: Added.
+        * platform/gtk/fast/multicol/overflow-across-columns-percent-height-expected.png: Added.
+        * platform/gtk/fast/multicol/overflow-across-columns-percent-height-expected.txt: Added.
+        * platform/gtk/fast/multicol/overflow-unsplittable-expected.png: Added.
+        * platform/gtk/fast/multicol/overflow-unsplittable-expected.txt: Added.
+        * platform/gtk/fast/multicol/positive-leading-expected.png: Added.
+        * platform/gtk/fast/multicol/positive-leading-expected.txt: Added.
+        * platform/gtk/fast/table/table-after-child-in-table-expected.png: Added.
+        * platform/gtk/fast/table/table-after-child-in-table-expected.txt: Added.
+        * platform/gtk/fast/text/complex-preferred-logical-widths-expected.png: Added.
+        * platform/gtk/fast/text/complex-preferred-logical-widths-expected.txt: Added.
+        * platform/gtk/fast/text/midword-break-before-surrogate-pair-2-expected.png: Added.
+        * platform/gtk/fast/text/midword-break-before-surrogate-pair-2-expected.txt: Added.
+
 2011-09-01  Gabor Loki  <loki@webkit.org>
 
         Unreviewed, rebaseline Qt-specific tests.
