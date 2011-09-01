@@ -32,6 +32,7 @@
 #include "WebFontImpl.h"
 
 #include "Font.h"
+#include "FontCache.h"
 #include "FontDescription.h"
 #include "GraphicsContext.h"
 #include "painting/GraphicsContextBuilder.h"
@@ -93,6 +94,8 @@ void WebFontImpl::drawText(WebCanvas* canvas, const WebTextRun& run, const WebFl
                            WebColor color, const WebRect& clip, bool canvasIsOpaque,
                            int from, int to) const
 {
+    FontCachePurgePreventer fontCachePurgePreventer;
+
     GraphicsContextBuilder builder(canvas);
     GraphicsContext& gc = builder.context();
 
