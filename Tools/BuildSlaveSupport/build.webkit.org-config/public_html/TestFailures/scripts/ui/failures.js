@@ -28,6 +28,8 @@ ui.failures = ui.failures || {};
 
 (function(){
 
+var kBuildingResult = 'BUILDING';
+
 ui.failures.Configuration = base.extends('div', {
     init: function(configuration)
     {
@@ -71,14 +73,19 @@ ui.failures.FailureGrid = base.extends('table', {
         titles.insertCell().textContent = 'type';
         this._body = this.appendChild(document.createElement('tbody'));
         this._resultRows = {};
+        // Add the BUILDING row eagerly so that it appears last.
+        this._rowByResult(kBuildingResult);
+        $(this._resultRows[kBuildingResult]).hide();
     },
     _rowByResult: function(result)
     {
         var row = this._resultRows[result];
+        $(row).show();
         if (row)
             return row;
 
-        row = this._resultRows[result] = this._body.insertRow(-1);
+        row = this._resultRows[result] = this._body.insertRow(0);
+        row.className = result;
         row.insertCell();
         row.insertCell();
         row.insertCell().textContent = result;
