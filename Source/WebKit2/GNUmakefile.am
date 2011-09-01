@@ -908,6 +908,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIB
 	$(PNG_LIBS) \
 	$(SQLITE3_LIBS) \
 	$(UNICODE_LIBS) \
+	$(XRENDER_LIBS) \
 	$(XT_LIBS)
 
 # WebKit2 specific variables
