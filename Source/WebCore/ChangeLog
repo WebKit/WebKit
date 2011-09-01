@@ -1,3 +1,21 @@
+2011-08-31  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r88115): "Choose File" button doesn't respect font-size property for the <input>
+        https://bugs.webkit.org/show_bug.cgi?id=67181
+
+        Reviewed by Dimitri Glazkov.
+
+        r88115 removed the code to make inherited style of the owner input
+        element, and html.css contains "font: -webkit-small-control" for
+        input element. So -webkit-file-upload-button always had
+        -webkit-small-control font.
+
+        Test: fast/forms/file/file-style-inheritance.html
+
+        * css/html.css:
+        (input[type="file"]::-webkit-file-upload-button):
+        Specify font-size:inherit explicitly.
+
 2011-08-31  Chris Rogers  <crogers@google.com>
 
         Do more rigorous bounds checking in AudioBufferSourceNode::renderFromBuffer()

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<script src="../../js/resources/js-test-pre.js"></script>
+<style>
+#large {
+    font-size: 30px;
+}
+#large::-webkit-file-upload-button {
+    /* Uses square-button for ease of testing on Mac. */
+    -webkit-appearance: square-button;
+}
+</style>
+
+<p>Tests internal components of a file upload control correctly inherit the style of the container input element.</p>
+<div><input type=file id=large></div>
+<div id=console></div>
+<script>
+if (!window.internals) {
+    debug('Check if the "Choose File" button of the first file upload control is large.');
+} else {
+    var file1 = document.getElementById('large');
+    var button1 = internals.shadowRoot(file1).firstChild;
+    shouldBe('document.defaultView.getComputedStyle(button1, null).getPropertyValue("font-size")', '"30px"');
+}
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>

@@ -554,6 +554,7 @@ input[type="file"]::-webkit-file-upload-button {
     -webkit-appearance: push-button;
     white-space: nowrap;
     margin: 0;
+    font-size: inherit;
 }
 
 input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button, button {

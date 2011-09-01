@@ -1,0 +1,8 @@
+Tests internal components of a file upload control correctly inherit the style of the container input element.
+
+
+PASS document.defaultView.getComputedStyle(button1, null).getPropertyValue("font-size") is "30px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
