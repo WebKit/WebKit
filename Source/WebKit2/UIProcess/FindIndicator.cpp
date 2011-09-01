@@ -172,7 +172,9 @@ void FindIndicator::draw(GraphicsContext& graphicsContext, const IntRect& dirtyR
         {
             GraphicsContextStateSaver stateSaver(graphicsContext);
             graphicsContext.translate(FloatSize(roundf(leftBorderThickness), roundf(topBorderThickness)));
-            m_contentImage->paint(graphicsContext, m_contentImageScaleFactor, IntPoint(0, 0), m_contentImage->bounds());
+
+            IntRect contentImageRect = enclosingIntRect(m_textRectsInSelectionRectCoordinates[i]);
+            m_contentImage->paint(graphicsContext, m_contentImageScaleFactor, contentImageRect.location(), contentImageRect);
         }
     }
 }

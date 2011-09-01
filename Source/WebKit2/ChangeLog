@@ -1,3 +1,17 @@
+2011-08-31  Anders Carlsson  <andersca@apple.com>
+
+        Jagged text shown in find-in-page highlight
+        https://bugs.webkit.org/show_bug.cgi?id=67347
+        <rdar://problem/9870444>
+
+        Reviewed by Dan Bernstein.
+
+        When painting each text line in the find indicator, make sure to clip it against
+        the text rect and not paint the entire rect over and over.
+
+        * UIProcess/FindIndicator.cpp:
+        (WebKit::FindIndicator::draw):
+
 2011-08-31  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67322
