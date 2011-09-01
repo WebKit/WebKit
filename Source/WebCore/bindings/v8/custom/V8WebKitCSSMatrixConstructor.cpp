@@ -49,7 +49,7 @@ v8::Handle<v8::Value> V8WebKitCSSMatrix::constructorCallback(const v8::Arguments
     INC_STATS("DOM.WebKitCSSMatrix.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.");
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
     // FIXME: The logic here is almost exact duplicate of V8::constructDOMObject.
     // Consider refactoring to reduce duplication.

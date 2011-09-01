@@ -44,7 +44,7 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
     INC_STATS("DOM.AudioContext.Contructor");
 
     if (!args.IsConstructCall())
-        return throwError("AudioContext constructor cannot be called as a function.");
+        return throwError("AudioContext constructor cannot be called as a function.", V8Proxy::TypeError);
 
     Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
     if (!frame)

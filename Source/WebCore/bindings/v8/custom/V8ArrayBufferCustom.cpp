@@ -43,7 +43,7 @@ v8::Handle<v8::Value> V8ArrayBuffer::constructorCallback(const v8::Arguments& ar
     INC_STATS("DOM.ArrayBuffer.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::SyntaxError);
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
     // If we return a previously constructed ArrayBuffer,
     // e.g. from the call to ArrayBufferView.buffer, this code is called

@@ -51,7 +51,7 @@ static v8::Handle<v8::Value> v8HTMLAudioElementConstructorCallback(const v8::Arg
     INC_STATS("DOM.HTMLAudioElement.Contructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.");
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
     Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
     if (!frame)

@@ -52,7 +52,7 @@ v8::Handle<v8::Value> V8Worker::constructorCallback(const v8::Arguments& args)
     INC_STATS(L"DOM.Worker.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.");
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
     if (!args.Length())
         return throwError("Not enough arguments", V8Proxy::TypeError);

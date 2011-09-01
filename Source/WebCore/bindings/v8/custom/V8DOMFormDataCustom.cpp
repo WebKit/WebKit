@@ -45,7 +45,7 @@ v8::Handle<v8::Value> V8DOMFormData::constructorCallback(const v8::Arguments& ar
     INC_STATS("DOM.FormData.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::SyntaxError);
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
     HTMLFormElement* form = 0;
     if (args.Length() > 0 && V8HTMLFormElement::HasInstance(args[0]))

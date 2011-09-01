@@ -81,7 +81,7 @@ template<class ArrayClass, class ElementType>
 v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperTypeInfo* type, v8::ExternalArrayType arrayType)
 {
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.");
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
     int argLen = args.Length();
     if (!argLen) {

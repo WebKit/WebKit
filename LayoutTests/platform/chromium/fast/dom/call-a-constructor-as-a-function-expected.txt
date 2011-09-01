@@ -1,0 +1,32 @@
+This tests if TypeError is thrown or not when we call a constructor as a normal function.
+
+PASS ArrayBuffer() threw exception TypeError: DOM object constructor cannot be called as a function..
+SKIP AudioContext is not implemented.
+PASS FormData() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS DataView() threw exception TypeError: DOM object constructor cannot be called as a function.
+PASS EventSource() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS FileReader() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS Float32Array() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS Float64Array() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS Audio() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS Image() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS Option() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS Int16Array() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS Int32Array() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS Int8Array() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS MessageChannel() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS PeerConnection() threw exception TypeError: DOM object constructor cannot be called as a function..
+SKIP SharedWorker is not implemented.
+PASS Uint16Array() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS Uint32Array() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS Uint8Array() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS WebKitCSSMatrix() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS WebKitPoint() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS WebSocket() threw exception TypeError: DOM object custructor cannot be called as a function..
+PASS Worker() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS XMLHttpRequest() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS XSLTProcessor() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

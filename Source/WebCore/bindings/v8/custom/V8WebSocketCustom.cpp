@@ -51,7 +51,7 @@ v8::Handle<v8::Value> V8WebSocket::constructorCallback(const v8::Arguments& args
     INC_STATS("DOM.WebSocket.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object custructor cannot be called as a function.");
+        return throwError("DOM object custructor cannot be called as a function.", V8Proxy::TypeError);
     if (args.Length() == 0)
         return throwError("Not enough arguments", V8Proxy::SyntaxError);
 

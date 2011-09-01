@@ -45,7 +45,7 @@ v8::Handle<v8::Value> V8WebKitPoint::constructorCallback(const v8::Arguments& ar
     INC_STATS("DOM.WebKitPoint.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.");
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
     float x = 0;
     float y = 0;

@@ -51,7 +51,7 @@ v8::Handle<v8::Value> V8MessageChannel::constructorCallback(const v8::Arguments&
     // FIXME: The logic here is almost exact duplicate of V8::constructDOMObject.
     // Consider refactoring to reduce duplication.
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.");
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
     // Get the ScriptExecutionContext (WorkerContext or Document)
     ScriptExecutionContext* context = getScriptExecutionContext();
