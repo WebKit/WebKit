@@ -41,7 +41,7 @@ class ColorChooser;
 class ColorChooserClient {
 public:
     virtual ~ColorChooserClient();
-    virtual void colorSelected(const Color&) = 0;
+    virtual void didChooseColor(const Color&) = 0;
     virtual bool isColorInputType() const { return false; }
 };
 
@@ -53,7 +53,7 @@ public:
     void connectClient(ColorChooserClient*);
     void disconnectClient(ColorChooserClient*);
 
-    void colorSelected(const Color&) const;
+    void didChooseColor(const Color&) const;
 
 private:
     ColorChooser()

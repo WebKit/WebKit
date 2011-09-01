@@ -62,10 +62,10 @@ void ColorChooser::disconnectClient(ColorChooserClient* client)
         m_client = 0;
 }
 
-void ColorChooser::colorSelected(const Color& color) const
+void ColorChooser::didChooseColor(const Color& color) const
 {
     if (m_client)
-        m_client->colorSelected(color);
+        m_client->didChooseColor(color);
 }
 
 }

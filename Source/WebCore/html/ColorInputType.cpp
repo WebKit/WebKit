@@ -165,7 +165,7 @@ void ColorInputType::detach()
     cleanupColorChooserIfCurrentClient();
 }
 
-void ColorInputType::colorSelected(const Color& color)
+void ColorInputType::didChooseColor(const Color& color)
 {
     if (element()->disabled() || element()->readOnly() || color == valueAsColor())
         return;

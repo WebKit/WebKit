@@ -58,7 +58,7 @@ private:
     virtual void detach();
 
     // ColorChooserClient implementation.
-    virtual void colorSelected(const Color&);
+    virtual void didChooseColor(const Color&);
     virtual bool isColorInputType() const;
 
     void cleanupColorChooserIfCurrentClient() const;
