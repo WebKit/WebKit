@@ -334,9 +334,7 @@ module window {
         attribute [Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchend;
         attribute [Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchcancel;
 
-        attribute [Conditional=DEVICE_ORIENTATION,EnabledAtRuntime] DeviceMotionEventConstructor DeviceMotionEvent;
         attribute [Conditional=DEVICE_ORIENTATION,EnabledAtRuntime] EventListener ondevicemotion;
-        attribute [Conditional=DEVICE_ORIENTATION,EnabledAtRuntime] DeviceOrientationEventConstructor DeviceOrientationEvent;
         attribute [Conditional=DEVICE_ORIENTATION,EnabledAtRuntime] EventListener ondeviceorientation;
 
         attribute [Conditional=MEDIA_STREAM,EnabledAtRuntime] PeerConnectionConstructor PeerConnection;
@@ -518,23 +516,40 @@ module window {
         attribute [JSCCustomGetter,Conditional=WEB_AUDIO,EnabledAtRuntime] AudioContextConstructor webkitAudioContext; // Usable with new operator
         attribute [Conditional=WEB_AUDIO] AudioPannerNodeConstructor webkitAudioPannerNode; // Needed for panning model constants
 
-        attribute EventConstructor Event;
-        attribute CustomEventConstructor CustomEvent;
-
+        // Event Constructors
+        attribute EventConstructor Event; // Usable with new operator 
         attribute BeforeLoadEventConstructor BeforeLoadEvent;
+        attribute BeforeProcessEventConstructor BeforeProcessEvent;
+        attribute CompositionEventConstructor CompositionEvent;
+        attribute CustomEventConstructor CustomEvent; // Usable with new operator
+        attribute ErrorEventConstructor ErrorEvent;
         attribute HashChangeEventConstructor HashChangeEvent;
         attribute KeyboardEventConstructor KeyboardEvent;
+        attribute MessageEventConstructor MessageEvent;
         attribute MouseEventConstructor MouseEvent;
         attribute MutationEventConstructor MutationEvent;
         attribute OverflowEventConstructor OverflowEvent;
         attribute PageTransitionEventConstructor PageTransitionEvent;
+        attribute PopStateEventConstructor PopStateEvent;
         attribute ProgressEventConstructor ProgressEvent;
         attribute TextEventConstructor TextEvent;
         attribute UIEventConstructor UIEvent;
         attribute WebKitAnimationEventConstructor WebKitAnimationEvent;
         attribute WebKitTransitionEventConstructor WebKitTransitionEvent;
         attribute WheelEventConstructor WheelEvent;
-        attribute MessageEventConstructor MessageEvent;
+        attribute XMLHttpRequestProgressEventConstructor XMLHttpRequestProgressEvent;
+        attribute [Conditional=DEVICE_ORIENTATION, EnabledAtRuntime] DeviceMotionEventConstructor DeviceMotionEvent;
+        attribute [Conditional=DEVICE_ORIENTATION, EnabledAtRuntime] DeviceOrientationEventConstructor DeviceOrientationEvent;
+        attribute [Conditional=DOM_STORAGE] StorageEventConstructor StorageEvent;
+        attribute [Conditional=INPUT_SPEECH] SpeechInputEventConstructor SpeechInputEvent;
+        attribute [Conditional=MEDIA_STREAM] MediaStreamEventConstructor MediaStreamEvent;
+        attribute [Conditional=SVG] SVGZoomEventConstructor SVGZoomEvent;
+        attribute [Conditional=TOUCH_EVENTS] TouchEventConstructor TouchEvent;
+        attribute [Conditional=WEBGL] WebGLContextEventConstructor WebGLContextEvent;
+        attribute [Conditional=WEB_AUDIO] AudioProcessingEventConstructor AudioProcessingEvent;
+        attribute [Conditional=WEB_AUDIO] OfflineAudioCompletionEventConstructor OfflineAudioCompletionEvent;
+        attribute [Conditional=WEB_SOCKETS] CloseEventConstructor CloseEvent;
+
         attribute EventExceptionConstructor EventException;
 
         attribute WebKitCSSKeyframeRuleConstructor WebKitCSSKeyframeRule;
@@ -586,7 +601,6 @@ module window {
 
 #if defined(ENABLE_WEB_SOCKETS) && ENABLE_WEB_SOCKETS
         attribute [JSCCustomGetter,EnabledAtRuntime] WebSocketConstructor WebSocket; // Usable with the new operator
-        attribute CloseEventConstructor CloseEvent;
 #endif
 
         attribute DOMPluginConstructor Plugin;
@@ -600,7 +614,6 @@ module window {
 
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
         attribute StorageConstructor Storage;
-        attribute StorageEventConstructor StorageEvent;
 #endif
 
         attribute [CustomGetter, Conditional=VIDEO, EnabledAtRuntime] HTMLAudioElementConstructor Audio; // Usable with the new operator
@@ -720,7 +733,6 @@ module window {
         attribute SVGUseElementConstructor SVGUseElement;
         attribute SVGViewElementConstructor SVGViewElement;
 //      attribute SVGViewSpecConstructor SVGViewSpec;
-        attribute SVGZoomEventConstructor SVGZoomEvent;
 
 #if defined(ENABLE_SVG_ANIMATION) && ENABLE_SVG_ANIMATION
         attribute SVGAnimateColorElementConstructor SVGAnimateColorElement;
@@ -785,8 +797,6 @@ module window {
 #endif
 
         attribute [Conditional=DATABASE] SQLExceptionConstructor SQLException;
-
-        attribute [Conditional=TOUCH_EVENTS] TouchEventConstructor TouchEvent;
 
         attribute DOMFormDataConstructor FormData;
 

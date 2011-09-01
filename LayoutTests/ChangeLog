@@ -1,3 +1,16 @@
+2011-09-01  Sam Weinig  <sam@webkit.org>
+
+        Add missing Event constructors to DOMWindow.idl
+        https://bugs.webkit.org/show_bug.cgi?id=67449
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/fast/dom/Window/window-properties-expected.txt:
+        * platform/mac/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/mac/fast/dom/prototype-inheritance-expected.txt:
+        * platform/mac/fast/js/global-constructors-expected.txt:
+        Update results for new constructors.
+
 2011-09-01  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9528843> STIX glyphs not rendered on this stackoverflow answer

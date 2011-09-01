@@ -11,6 +11,8 @@ PASS inner.Audio.isInner is true
 PASS inner.Audio.constructor.isInner is true
 PASS inner.BeforeLoadEvent.isInner is true
 PASS inner.BeforeLoadEvent.constructor.isInner is true
+PASS inner.BeforeProcessEvent.isInner is true
+PASS inner.BeforeProcessEvent.constructor.isInner is true
 PASS inner.Blob.isInner is true
 PASS inner.Blob.constructor.isInner is true
 PASS inner.Boolean.isInner is true
@@ -61,6 +63,8 @@ PASS inner.CloseEvent.isInner is true
 PASS inner.CloseEvent.constructor.isInner is true
 PASS inner.Comment.isInner is true
 PASS inner.Comment.constructor.isInner is true
+PASS inner.CompositionEvent.isInner is true
+PASS inner.CompositionEvent.constructor.isInner is true
 PASS inner.Counter.isInner is true
 PASS inner.Counter.constructor.isInner is true
 PASS inner.CustomEvent.isInner is true
@@ -95,6 +99,8 @@ PASS inner.EntityReference.isInner is true
 PASS inner.EntityReference.constructor.isInner is true
 PASS inner.Error.isInner is true
 PASS inner.Error.constructor.isInner is true
+PASS inner.ErrorEvent.isInner is true
+PASS inner.ErrorEvent.constructor.isInner is true
 PASS inner.EvalError.isInner is true
 PASS inner.EvalError.constructor.isInner is true
 PASS inner.Event.isInner is true
@@ -303,6 +309,8 @@ PASS inner.Plugin.isInner is true
 PASS inner.Plugin.constructor.isInner is true
 PASS inner.PluginArray.isInner is true
 PASS inner.PluginArray.constructor.isInner is true
+PASS inner.PopStateEvent.isInner is true
+PASS inner.PopStateEvent.constructor.isInner is true
 PASS inner.ProcessingInstruction.isInner is true
 PASS inner.ProcessingInstruction.constructor.isInner is true
 PASS inner.ProgressEvent.isInner is true
@@ -631,6 +639,8 @@ PASS inner.UIEvent.isInner is true
 PASS inner.UIEvent.constructor.isInner is true
 PASS inner.URIError.isInner is true
 PASS inner.URIError.constructor.isInner is true
+PASS inner.WebGLContextEvent.isInner is true
+PASS inner.WebGLContextEvent.constructor.isInner is true
 PASS inner.WebKitAnimationEvent.isInner is true
 PASS inner.WebKitAnimationEvent.constructor.isInner is true
 PASS inner.WebKitCSSKeyframeRule.isInner is true
@@ -657,6 +667,8 @@ PASS inner.XMLHttpRequest.isInner is true
 PASS inner.XMLHttpRequest.constructor.isInner is true
 PASS inner.XMLHttpRequestException.isInner is true
 PASS inner.XMLHttpRequestException.constructor.isInner is true
+PASS inner.XMLHttpRequestProgressEvent.isInner is true
+PASS inner.XMLHttpRequestProgressEvent.constructor.isInner is true
 PASS inner.XMLHttpRequestUpload.isInner is true
 PASS inner.XMLHttpRequestUpload.constructor.isInner is true
 PASS inner.XMLSerializer.isInner is true
