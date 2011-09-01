@@ -6020,9 +6020,9 @@ void RenderBlock::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint
 
     if (!hasOverflowClip() && !hasControlClip()) {
         for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-            LayoutUnit top = max(curr->lineTop(), curr->logicalTop());
-            LayoutUnit bottom = min(curr->lineBottom(), curr->logicalTop() + curr->logicalHeight());
-            LayoutRect rect(additionalOffset.x() + curr->x(), additionalOffset.y() + top, curr->logicalWidth(), bottom - top);
+            LayoutUnit top = max(curr->lineTop(), static_cast<LayoutUnit>(curr->top()));
+            LayoutUnit bottom = min(curr->lineBottom(), static_cast<LayoutUnit>(curr->top() + curr->height()));
+            LayoutRect rect(additionalOffset.x() + curr->x(), additionalOffset.y() + top, curr->width(), bottom - top);
             if (!rect.isEmpty())
                 rects.append(rect);
         }

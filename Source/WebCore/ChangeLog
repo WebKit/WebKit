@@ -1,3 +1,18 @@
+2011-09-01  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
+
+        Focus ring is rendered incorrectly for a block with -webkit-writing-mode
+        https://bugs.webkit.org/show_bug.cgi?id=62915
+
+        Reviewed by Simon Fraser.
+
+        RenderBlock::addFocusRingRects() should consider physical box position and
+        dimension instead of logical values for focus ring rects calculation.
+
+        Test: fast/css/focus-ring-multiline-writingmode-vertical.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addFocusRingRects):
+
 2011-09-01  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix after r94299.
