@@ -1,3 +1,30 @@
+2011-08-31  Simon Fraser  <simon.fraser@apple.com>
+
+        TransformState.move() should be negated in the unapply code path
+        https://bugs.webkit.org/show_bug.cgi?id=66246
+
+        Reviewed by Chris Marrin.
+
+        Code using TransformState was confused about when to negate the arguments
+        to move() in the "UnapplyInverseTransform" direction (used by mapAbsoluteToLocal).
+        
+        Made the move() path equivalent to the applyTransform() path by not requiring
+        the caller to negate, and instead negating inside move().
+        
+        Fixed the erroneous negation in TransformState::move() when accumulating;
+        that negation will happen later via matrix inversion.
+
+        No behavior change.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        * platform/graphics/transforms/TransformState.cpp:
+        (WebCore::TransformState::move):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapAbsoluteToLocalPoint):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mapAbsoluteToLocalPoint):
+
 2011-08-31  Pratik Solanki  <psolanki@apple.com>
 
         Fix compile issues when enabling HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)

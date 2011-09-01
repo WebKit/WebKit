@@ -831,7 +831,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float 
     TransformState localState = state;
     
     TransformState::TransformAccumulation accumulation = preserves3D() ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
-    localState.move(-m_position.x(), -m_position.y(), accumulation);
+    localState.move(m_position.x(), m_position.y(), accumulation);
     
     if (!transform().isIdentity()) {
         TransformationMatrix transformWithAnchorPoint;

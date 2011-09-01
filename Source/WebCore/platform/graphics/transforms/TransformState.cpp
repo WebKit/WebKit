@@ -56,13 +56,17 @@ void TransformState::move(int x, int y, TransformAccumulation accumulate)
         if (m_direction == ApplyTransformDirection)
             m_accumulatedTransform->translateRight(x, y);
         else
-            m_accumulatedTransform->translate(-x, -y);  // We're unapplying, so negate
+            m_accumulatedTransform->translate(x, y);
         
         // Then flatten if necessary.
         if (accumulate == FlattenTransform)
             flatten();
     } else {
         // Just move the point and, optionally, the quad.
+        if (m_direction == UnapplyInverseTransformDirection) {
+            x = -x;
+            y = -y;
+        }
         if (m_mapPoint)
             m_lastPlanarPoint.move(x, y);
         if (m_mapQuad)
