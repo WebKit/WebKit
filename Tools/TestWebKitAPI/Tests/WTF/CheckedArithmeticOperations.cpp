@@ -58,12 +58,12 @@ namespace TestWebKitAPI {
         EXPECT_EQ(coerceLiteral(10), value.unsafeGet()); \
         value = std::numeric_limits<type>::min(); \
         EXPECT_EQ(true, (Checked<type, RecordOverflow>(value - coerceLiteral(1))).hasOverflowed()); \
-        EXPECT_EQ(false, (value--).hasOverflowed()); \
+        EXPECT_EQ(true, !((value--).hasOverflowed())); \
         EXPECT_EQ(true, value.hasOverflowed()); \
         value = std::numeric_limits<type>::max(); \
-        EXPECT_EQ(false, value.hasOverflowed()); \
+        EXPECT_EQ(true, !value.hasOverflowed()); \
         EXPECT_EQ(true, (Checked<type, RecordOverflow>(value + coerceLiteral(1))).hasOverflowed()); \
-        EXPECT_EQ(false, (value++).hasOverflowed()); \
+        EXPECT_EQ(true, !(value++).hasOverflowed()); \
         EXPECT_EQ(true, value.hasOverflowed()); \
         value = std::numeric_limits<type>::max(); \
         EXPECT_EQ(true, (value += coerceLiteral(1)).hasOverflowed()); \
@@ -75,24 +75,24 @@ namespace TestWebKitAPI {
         MixedSignednessTest(EXPECT_EQ(0U, (10U - value).unsafeGet())); \
         value = std::numeric_limits<type>::min(); \
         MixedSignednessTest(EXPECT_EQ(true, (Checked<type, RecordOverflow>(value - 1)).hasOverflowed())); \
-        MixedSignednessTest(EXPECT_EQ(false, (value--).hasOverflowed())); \
+        MixedSignednessTest(EXPECT_EQ(true, !(value--).hasOverflowed())); \
         MixedSignednessTest(EXPECT_EQ(true, value.hasOverflowed())); \
         value = std::numeric_limits<type>::max(); \
-        MixedSignednessTest(EXPECT_EQ(false, value.hasOverflowed())); \
+        MixedSignednessTest(EXPECT_EQ(true, !value.hasOverflowed())); \
         MixedSignednessTest(EXPECT_EQ(true, (Checked<type, RecordOverflow>(value + 1)).hasOverflowed())); \
-        MixedSignednessTest(EXPECT_EQ(false, (value++).hasOverflowed())); \
+        MixedSignednessTest(EXPECT_EQ(true, !(value++).hasOverflowed())); \
         MixedSignednessTest(EXPECT_EQ(true, value.hasOverflowed())); \
         value = std::numeric_limits<type>::max(); \
         MixedSignednessTest(EXPECT_EQ(true, (value += 1).hasOverflowed())); \
         MixedSignednessTest(EXPECT_EQ(true, value.hasOverflowed())); \
         value = std::numeric_limits<type>::min(); \
         MixedSignednessTest(EXPECT_EQ(true, (value - 1U).hasOverflowed())); \
-        MixedSignednessTest(EXPECT_EQ(false, (value--).hasOverflowed())); \
+        MixedSignednessTest(EXPECT_EQ(true, !(value--).hasOverflowed())); \
         MixedSignednessTest(EXPECT_EQ(true, value.hasOverflowed())); \
         value = std::numeric_limits<type>::max(); \
-        MixedSignednessTest(EXPECT_EQ(false, value.hasOverflowed())); \
+        MixedSignednessTest(EXPECT_EQ(true, !value.hasOverflowed())); \
         MixedSignednessTest(EXPECT_EQ(true, (Checked<type, RecordOverflow>(value + 1U)).hasOverflowed())); \
-        MixedSignednessTest(EXPECT_EQ(false, (value++).hasOverflowed())); \
+        MixedSignednessTest(EXPECT_EQ(true, !(value++).hasOverflowed())); \
         MixedSignednessTest(EXPECT_EQ(true, value.hasOverflowed())); \
         value = std::numeric_limits<type>::max(); \
         MixedSignednessTest(EXPECT_EQ(true, (value += 1U).hasOverflowed())); \

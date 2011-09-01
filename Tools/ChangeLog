@@ -1,3 +1,9 @@
+2011-09-01  Tim Horton  <hortont424@gmail.com>
+
+        Fix TestWebKitAPI build on clang-2.0
+
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+
 2011-09-01  Adam Barth  <abarth@webkit.org>
 
         Remove unused "extension" parameter from rebaseline gardeningserver handler
