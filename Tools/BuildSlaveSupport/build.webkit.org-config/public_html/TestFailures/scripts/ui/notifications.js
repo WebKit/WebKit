@@ -209,6 +209,7 @@ ui.notifications.BuildersFailing = base.extends(ui.notifications.Failure, {
     init: function()
     {
         this._problem.insertBefore(document.createTextNode('Build Failed:'), this._problem.firstChild);
+        $(this._where).detach();
     },
     setFailingBuilders: function(builderNameList)
     {

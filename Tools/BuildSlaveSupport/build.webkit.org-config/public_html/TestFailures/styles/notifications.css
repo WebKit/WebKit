@@ -72,7 +72,7 @@ ol.notifications ul.causes div.description, ol.notifications div.problem ul.effe
 }
 
 ol.notifications>li div.problem {
-    padding: 0 10px 10px 0;
+    padding-bottom: 10px;
 }
 
     ol.notifications>li div.problem>ul.actions {
@@ -80,6 +80,14 @@ ol.notifications>li div.problem {
     }
 
     ol.notifications>li:hover div.problem>ul.actions {
+        visibility: visible;
+    }
+
+    ol.notifications>li table.failures {
+        visibility: hidden;
+    }
+
+    ol.notifications>li:hover table.failures {
         visibility: visible;
     }
 

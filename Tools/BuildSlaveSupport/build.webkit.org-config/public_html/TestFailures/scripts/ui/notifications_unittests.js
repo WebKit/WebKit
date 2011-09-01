@@ -329,10 +329,6 @@ test('BuildersFailing', 1, function() {
     equal(builderFailing.innerHTML,
         '<div class="how">' +
             '<time class="relative">Just now</time>' +
-            '<table class="failures">' +
-                '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-                '<tbody><tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr></tbody>' +
-            '</table>' +
         '</div>' +
         '<div class="what">' +
             '<div class="problem">Build Failed:' +
