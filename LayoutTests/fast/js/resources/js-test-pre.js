@@ -2,17 +2,23 @@
 if (window.layoutTestController)
     layoutTestController.dumpAsText(window.enablePixelTesting);
 
-function description(msg)
+function description(msg, quiet)
 {
     // For MSIE 6 compatibility
     var span = document.createElement("span");
-    span.innerHTML = '<p>' + msg + '</p><p>On success, you will see a series of "<span class="pass">PASS</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
+    if (quiet)
+        span.innerHTML = '<p>' + msg + '</p><p>On success, you will no "<span class="fail">FAIL</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
+    else
+        span.innerHTML = '<p>' + msg + '</p><p>On success, you will see a series of "<span class="pass">PASS</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
+
     var description = document.getElementById("description");
     if (description.firstChild)
         description.replaceChild(span, description.firstChild);
     else
         description.appendChild(span);
 }
+
+function descriptionQuiet(msg) { description(msg, true); }
 
 function debug(msg)
 {
@@ -94,7 +100,7 @@ function evalAndLog(_a)
   return _av;
 }
 
-function shouldBe(_a, _b)
+function shouldBe(_a, _b, quiet)
 {
   if (typeof _a != "string" || typeof _b != "string")
     debug("WARN: shouldBe() expects string arguments");
@@ -109,15 +115,18 @@ function shouldBe(_a, _b)
 
   if (exception)
     testFailed(_a + " should be " + _bv + ". Threw exception " + exception);
-  else if (isResultCorrect(_av, _bv))
-    testPassed(_a + " is " + _b);
-  else if (typeof(_av) == typeof(_bv))
+  else if (isResultCorrect(_av, _bv)) {
+    if (!quiet) {
+        testPassed(_a + " is " + _b);
+    }
+  } else if (typeof(_av) == typeof(_bv))
     testFailed(_a + " should be " + _bv + ". Was " + stringify(_av) + ".");
   else
     testFailed(_a + " should be " + _bv + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
 }
 
 function shouldBeTrue(_a) { shouldBe(_a, "true"); }
+function shouldBeTrueQuiet(_a) { shouldBe(_a, "true", true); }
 function shouldBeFalse(_a) { shouldBe(_a, "false"); }
 function shouldBeNaN(_a) { shouldBe(_a, "NaN"); }
 function shouldBeNull(_a) { shouldBe(_a, "null"); }

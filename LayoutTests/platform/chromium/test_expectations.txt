@@ -2434,7 +2434,6 @@ BUGCR66751 DEBUG : http/tests/local/link-stylesheet-load-order.html = PASS CRASH
 
 BUGCR66923 MAC : fast/css/focus-ring-detached.html = IMAGE
 BUGCR66923 MAC : fast/css/focus-ring-multiline.html = IMAGE
-BUGCR66979 LINUX WIN : fast/dom/global-constructors.html = PASS TEXT
 
 // The test is just too slow and has never passed since on Dbg build.
 BUG_YURYS SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS

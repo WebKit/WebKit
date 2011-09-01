@@ -1,3 +1,32 @@
+2011-09-01  James Robinson  <jamesr@chromium.org>
+
+        fast/dom/global-constructors.html and fast/dom/prototype-inheritance.html are way too fragile
+        https://bugs.webkit.org/show_bug.cgi?id=67452
+
+        Reviewed by Darin Adler.
+
+        Modifies these tests to not print PASS lines for all of the expected successes, since that means they have to be
+        updated whenever the set of properties on the global object is changed.  That is not the point of these tests
+        and it just causes excessive churn.
+
+        * fast/dom/global-constructors-expected.txt:
+        * fast/dom/global-constructors.html:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/dom/script-tests/prototype-inheritance.js:
+        * fast/js/resources/js-test-pre.js:
+        (description):
+        (descriptionQuiet):
+        (shouldBe):
+        (shouldBeTrueQuiet):
+        * platform/chromium-mac/fast/dom/prototype-inheritance-expected.txt:
+        * platform/chromium/fast/dom/global-constructors-expected.txt: Removed.
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt: Removed.
+        * platform/mac/fast/dom/prototype-inheritance-expected.txt: Removed.
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt: Removed.
+        * platform/win/fast/dom/prototype-inheritance-expected.txt: Removed.
+
 2011-09-01  Dan Bernstein  <mitz@apple.com>
 
         Added Windows expected results to the test added in r94352.

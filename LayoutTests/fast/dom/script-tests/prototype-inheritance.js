@@ -1,4 +1,4 @@
-description("Make sure prototypes are set up using the window a property came from, instead of the lexical global object.")
+descriptionQuiet("Make sure prototypes are set up using the window a property came from, instead of the lexical global object.")
 
 var subframe = document.createElement("iframe");
 document.body.appendChild(subframe);
@@ -72,8 +72,8 @@ for (var x = 0; x < windowProperites.length; x++) {
     // Ignore primitive types like numbers because their prototype rules are different.
     if (typeof value !== "object" && typeof value !== "function")
         continue;
-    shouldBeTrue("inner." + property + ".isInner");
-    shouldBeTrue("inner." + property + ".constructor.isInner");
+    shouldBeTrueQuiet("inner." + property + ".isInner");
+    shouldBeTrueQuiet("inner." + property + ".constructor.isInner");
 }
 
 document.body.removeChild(subframe);
