@@ -287,6 +287,9 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     m_timeObserver = [m_avPlayer.get() addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(veryLongInterval, 10) queue:nil usingBlock:^(CMTime time){
         [observer timeChanged:CMTimeGetSeconds(time)];
     }];
+    
+    if (m_avPlayerItem)
+        [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
 
     setDelayCallbacks(false);
 }
@@ -298,8 +301,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem(%p)", this);
 
-    ASSERT(m_avPlayer);
-
     setDelayCallbacks(true);
 
     // Create the player item so we can load media data. 
@@ -310,7 +311,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     for (NSString *keyName in itemKVOProperties())
         [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:keyName options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
 
-    [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
+    if (m_avPlayer)
+        [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
 
     setDelayCallbacks(false);
 }

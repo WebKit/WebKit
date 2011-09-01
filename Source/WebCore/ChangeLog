@@ -1,3 +1,19 @@
+2011-08-31  Jeff Miller  <jeffm@apple.com>
+
+        Defer creating AVPlayer and AVPlayerItem in MediaPlayerPrivateAVFoundation::setPreload()
+        https://bugs.webkit.org/show_bug.cgi?id=66253
+
+        Reviewed by Jon Honeycutt.
+
+        No new tests, should be covered by existing media tests.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::setPreload): Use the same code on Mac and Windows to only create the AVPlayer and AVPlayerItem when needed.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Assign any existing AVPlayerItem to the new AVPlayer.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem): Allow creation of the AVPlayerItem before the AVPlayer.
+
 2011-08-31  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67321

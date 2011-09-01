@@ -617,23 +617,15 @@ void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
 
     if (m_preload >= MediaPlayer::MetaData && assetStatus() == MediaPlayerAVAssetStatusDoesNotExist) {
         createAVAssetForURL(m_assetURL);
-        // FIXME: Remove this Windows-specific code when <rdar://problem/9877730> is fixed, until then
-        // we can't create an AVPlayer without an AVPlayerItem on Windows, so we always have to create
-        // the item first.
-#if PLATFORM(WIN)
-        createAVPlayerItem();
-#endif
-        createAVPlayer();
         checkPlayability();
     }
 
-    // FIXME: Enable this code on Windows when <rdar://problem/9877730> is fixed.
-#if PLATFORM(MAC)
-    // Don't force creation of the player item unless we already know that the asset is playable. If we aren't
-    // there yet, or if we already know it is not playable, creating it now won't help.
-    if (m_preload == MediaPlayer::Auto && m_assetIsPlayable)
+    // Don't force creation of the player and player item unless we already know that the asset is playable. If we aren't
+    // there yet, or if we already know it is not playable, creating them now won't help.
+    if (m_preload == MediaPlayer::Auto && m_assetIsPlayable) {
         createAVPlayerItem();
-#endif
+        createAVPlayer();
+    }
 
     setDelayCallbacks(false);
 }
