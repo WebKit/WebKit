@@ -1,3 +1,24 @@
+2011-09-01  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
+
+        [Qt] TouchWebView crashes with segmentation fault
+        https://bugs.webkit.org/show_bug.cgi?id=67308
+
+        Reviewed by Benjamin Poulain.
+
+        If you instantiate TouchWebView element with height and width in a qml file and
+        load a url it crashes.
+        The functions setWidth() and setHeight() are called sequentially therefore it can happen
+        that computeViewportAttributes was called with a size like (width, 0) breaking the
+        assumption of the function that the size is valid. The patch makes sure we compute the
+        viewport when both height and width are valid.
+
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::updateViewportConstraints):
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_load.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadNegativeSizeView.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadZeroSizeView.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+
 2011-09-01  Ada Chan  <adachan@apple.com>
 
         Gather JavaScript, FastMalloc, icon, font, and glyph page statistics in WebProcess::getWebCoreStatistics().

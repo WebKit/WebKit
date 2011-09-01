@@ -59,6 +59,9 @@ void QTouchWebViewPrivate::updateViewportConstraints()
 {
     QSize availableSize = q->boundingRect().size().toSize();
 
+    if (availableSize.isEmpty())
+        return;
+
     WebPageProxy* wkPage = toImpl(page.pageRef());
     WebPreferences* wkPrefs = wkPage->pageGroup()->preferences();
 
