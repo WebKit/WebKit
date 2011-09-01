@@ -1,3 +1,18 @@
+2011-09-01  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r93247): 2 http/tests/misc tests failing on SnowLeopard Intel Release (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=67374
+
+        Reviewed by Simon Fraser.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::applyBasicAuthorizationHeader):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::applyBasicAuthorizationHeader):
+        Some versions of CFNetwork carry along an Authorization header, some don't. We shouldn't
+        repeat its value twice, this is not one of those headers that allow comma separated lists
+        of values.
+
 2011-09-01  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Move ImageBuffer::platformLayer()
