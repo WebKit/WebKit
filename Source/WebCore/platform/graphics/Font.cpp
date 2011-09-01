@@ -416,7 +416,7 @@ Font::CodePath Font::codePath(const TextRun& run) const
             return Complex;
     }
 
-    if (typesettingFeatures())
+    if (run.length() > 1 && typesettingFeatures())
         return Complex;
 
     return result;

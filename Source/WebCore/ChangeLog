@@ -1,3 +1,18 @@
+2011-09-01  Ned Holbrook  <nholbrook@apple.com>
+
+        Typesetting features need not force complex for single-character runs
+        https://bugs.webkit.org/show_bug.cgi?id=66498
+
+        Typesetting features have no effect on a solitary character, so they shouldn't enable complex layout
+        unless multiple characters are present.
+
+        Reviewed by Dan Bernstein.
+
+        No new tests, this is merely a performance optimization.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::codePath): typesettingFeatures() only forces Complex for multiple-character runs.
+
 2011-08-31  Jeff Miller  <jeffm@apple.com>
 
         Defer creating AVPlayer and AVPlayerItem in MediaPlayerPrivateAVFoundation::setPreload()
