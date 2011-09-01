@@ -2,6 +2,7 @@ main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 main frame - didFinishLoadForFrame
+main frame - didHandleOnloadEventsForFrame
 PASS: img onerror fired
 PASS: input type=image onerror fired
 PASS: script onerror fired
