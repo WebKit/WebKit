@@ -1,3 +1,12 @@
+2011-08-31  David Levin  <levin@chromium.org>
+
+        [chromium] Add baselines for test added by r94253.
+
+        * platform/chromium-cg-mac/fast/multicol/overflow-across-columns-percent-height-expected.png: Added.
+        * platform/chromium-linux/fast/multicol/overflow-across-columns-percent-height-expected.png: Added.
+        * platform/chromium-win/fast/multicol/overflow-across-columns-percent-height-expected.png: Added.
+        * platform/chromium-win/fast/multicol/overflow-across-columns-percent-height-expected.txt: Added.
+
 2011-08-31  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r88115): "Choose File" button doesn't respect font-size property for the <input>
