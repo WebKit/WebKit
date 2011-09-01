@@ -109,7 +109,7 @@ ui.notifications.SuspiciousCommit = base.extends(Cause, {
         linkToRevision.href = trac.changesetURL(commitData.revision);
         linkToRevision.target = '_blank';
         linkToRevision.textContent = commitData.revision;
-        this._addDescriptionPart('title', commitData);
+        this._addDescriptionPart('summary', commitData);
         this._addDescriptionPart('author', commitData);
         this._addDescriptionPart('reviewer', commitData);
     },

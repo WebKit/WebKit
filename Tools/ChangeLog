@@ -1,5 +1,24 @@
 2011-09-01  Adam Barth  <abarth@webkit.org>
 
+        Switch garden-o-matic from commitData.title to commitData.summary
+        https://bugs.webkit.org/show_bug.cgi?id=67375
+
+        Reviewed by Dimitri Glazkov.
+
+        commitData.title is a string provided by Trac, which isn't great in all
+        cases.  commitData.summary is my attempt to find the most important
+        one-line summary of the commit.  This patch switches garden-o-matic
+        over to summary.
+
+        Also, this patch tweaks a bunch of CSS to tighten up the summary page
+        and reduce visual noise.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/notifications.css:
+
+2011-09-01  Adam Barth  <abarth@webkit.org>
+
         Group failing tests in garden-o-matic if there are more than three in a folder
         https://bugs.webkit.org/show_bug.cgi?id=67373
 

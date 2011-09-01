@@ -58,6 +58,11 @@ ol.notifications div.what {
     -webkit-box-flex: 1;
 }
 
+    ol.notifications>li div.what ul.effects>li.builder-name {
+        display: inline;
+        padding-left: 10px;
+    }
+
 ol.notifications ul.causes>li, ol.notifications div.problem {
     display: -webkit-box;
 }
@@ -66,13 +71,19 @@ ol.notifications ul.causes div.description, ol.notifications div.problem ul.effe
     -webkit-box-flex: 1;
 }
 
-ol.notifications div.problem {
+ol.notifications>li div.problem {
     padding: 0 10px 10px 0;
 }
 
-ol.notifications ul.causes>li {
-    border-top: 1px solid LightGray;
-    padding: 10px 20px 10px 0;
+    ol.notifications>li div.problem>ul.actions {
+        visibility: hidden;
+    }
+
+    ol.notifications>li:hover div.problem>ul.actions {
+        visibility: visible;
+    }
+
+ol.notifications>li ul.causes>li>ul.actions {
 }
 
     ol.notifications>li ul.causes>li>div.description {
@@ -108,6 +119,10 @@ ol.notifications ul.causes>li {
             display: inline-block;
         }
 
+        ol.notifications>li ul.causes>li>div.description>span.author {
+            font-style: italic;
+        }
+
         ol.notifications>li ul.causes>li>div.description>span.reviewer {
             color: Gray;
         }
@@ -121,6 +136,11 @@ ol.notifications ul.causes>li {
         }
 
     ol.notifications>li ul.causes>li>ul.actions {
+        visibility: hidden;
+    }
+
+    ol.notifications>li ul.causes>li:hover>ul.actions {
+        visibility: visible;
     }
 
     ol.notifications>li ul.causes>li li {
