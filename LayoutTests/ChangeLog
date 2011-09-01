@@ -1,3 +1,15 @@
+2011-08-31  Dan Bernstein  <mitz@apple.com>
+
+        Additional test for <rdar://problem/10002140> Text gets clipped in
+        multi-column layouts when overflow:auto is used.
+        https://bugs.webkit.org/show_bug.cgi?id=67212
+
+        Reviewed by Dave Hyatt.
+
+        * fast/multicol/overflow-across-columns-percent-height.html: Added.
+        * platform/mac/fast/multicol/overflow-across-columns-percent-height-expected.png: Added.
+        * platform/mac/fast/multicol/overflow-across-columns-percent-height-expected.txt: Added.
+
 2011-08-31  Ojan Vafai  <ojan@chromium.org>
 
         fix bug in flexbox test with offsetWidth/offsetLeft of 0
@@ -1167,7 +1179,7 @@
 
 2011-08-30  David Hyatt  <hyatt@apple.com>
 
-        <rdar://problem/10002140> 9A309: Text gets clipped in book because of overflow:auto
+        <rdar://problem/10002140> Text gets clipped in book because of overflow:auto
         
         https://bugs.webkit.org/show_bug.cgi?id=67212 - Text gets clipped in multi-column layouts when overflow:auto
         is used.

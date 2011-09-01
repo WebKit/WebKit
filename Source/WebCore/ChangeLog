@@ -1,3 +1,20 @@
+2011-08-31  Dan Bernstein  <mitz@apple.com>
+
+        Refined the heuristic introduced to fix <rdar://problem/10002140> Text gets clipped in
+        multi-column layouts when overflow:auto is used.
+        https://bugs.webkit.org/show_bug.cgi?id=67212
+
+        Reviewed by Dave Hyatt.
+
+        Test: fast/multicol/overflow-across-columns-percent-height.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::percentageLogicalHeightIsResolvable): Added. This follows logic similar to the one
+        in computePercentageLogicalHeight() to determine whether percentage values for height properties
+        are resolved or treated as "auto".
+        (WebCore::RenderBox::hasUnsplittableScrollingOverflow): If min-height or max-height are specified
+        as a percentage but actually resolve to "auto", don’t let that prevent splitting.
+
 2011-08-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move text() and textWithHardLineBreaks() from RenderTextControl to HTMLTextFormControlElement

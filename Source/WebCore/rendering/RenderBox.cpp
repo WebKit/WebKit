@@ -3340,6 +3340,49 @@ void RenderBox::clearLayoutOverflow()
     m_overflow->resetLayoutOverflow(borderBoxRect());
 }
 
+static bool percentageLogicalHeightIsResolvable(const RenderBox* box)
+{
+    // In quirks mode, blocks with auto height are skipped, and we keep looking for an enclosing
+    // block that may have a specified height and then use it. In strict mode, this violates the
+    // specification, which states that percentage heights just revert to auto if the containing
+    // block has an auto height. We still skip anonymous containing blocks in both modes, though, and look
+    // only at explicit containers.
+    const RenderBlock* cb = box->containingBlock();
+    while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isPositioned() && cb->style()->logicalHeight().isAuto()) {
+        if (!box->document()->inQuirksMode() && !cb->isAnonymousBlock())
+            break;
+        cb = cb->containingBlock();
+    }
+
+    // A positioned element that specified both top/bottom or that specifies height should be treated as though it has a height
+    // explicitly specified that can be used for any percentage computations.
+    // FIXME: We can't just check top/bottom here.
+    // https://bugs.webkit.org/show_bug.cgi?id=46500
+    bool isPositionedWithSpecifiedHeight = cb->isPositioned() && (!cb->style()->logicalHeight().isAuto() || (!cb->style()->top().isAuto() && !cb->style()->bottom().isAuto()));
+
+    // Table cells violate what the CSS spec says to do with heights.  Basically we
+    // don't care if the cell specified a height or not.  We just always make ourselves
+    // be a percentage of the cell's current content height.
+    if (cb->isTableCell())
+        return true;
+
+    // Otherwise we only use our percentage height if our containing block had a specified
+    // height.
+    if (cb->style()->logicalHeight().isFixed())
+        return true;
+    if (cb->style()->logicalHeight().isPercent() && !isPositionedWithSpecifiedHeight)
+        return percentageLogicalHeightIsResolvable(cb);
+    if (cb->isRenderView() || (cb->isBody() && box->document()->inQuirksMode()) || isPositionedWithSpecifiedHeight)
+        return true;
+    if (cb->isRoot() && box->isPositioned()) {
+        // Match the positioned objects behavior, which is that positioned objects will fill their viewport
+        // always.  Note we could only hit this case by recurring into computePercentageLogicalHeight on a positioned containing block.
+        return true;
+    }
+
+    return false;
+}
+
 bool RenderBox::hasUnsplittableScrollingOverflow() const
 {
     // We will paginate as long as we don't scroll overflow in the pagination direction.
@@ -3353,8 +3396,8 @@ bool RenderBox::hasUnsplittableScrollingOverflow() const
     // conditions, but it should work out to be good enough for common cases. Paginating overflow
     // with scrollbars present is not the end of the world and is what we used to do in the old model anyway.
     return !style()->logicalHeight().isIntrinsicOrAuto()
-        || (!style()->logicalMaxHeight().isIntrinsicOrAuto() && !style()->logicalMaxHeight().isUndefined())
-        || (!style()->logicalMinHeight().isIntrinsicOrAuto() && style()->logicalMinHeight().isPositive());
+        || (!style()->logicalMaxHeight().isIntrinsicOrAuto() && !style()->logicalMaxHeight().isUndefined() && (!style()->logicalMaxHeight().isPercent() || percentageLogicalHeightIsResolvable(this)))
+        || (!style()->logicalMinHeight().isIntrinsicOrAuto() && style()->logicalMinHeight().isPositive() && (!style()->logicalMinHeight().isPercent() || percentageLogicalHeightIsResolvable(this)));
 }
 
 LayoutUnit RenderBox::lineHeight(bool /*firstLine*/, LineDirectionMode direction, LinePositionMode /*linePositionMode*/) const
