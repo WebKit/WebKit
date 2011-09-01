@@ -103,14 +103,13 @@ void LayerTextureUpdaterBitmap::updateTextureRect(GraphicsContext3D* context, Ma
 
 #if !USE(THREADED_COMPOSITING)
 #if USE(SKIA)
-PassOwnPtr<LayerTextureUpdaterSkPicture> LayerTextureUpdaterSkPicture::create(PassOwnPtr<LayerPainterChromium> painter, GrContext* skiaContext)
+PassOwnPtr<LayerTextureUpdaterSkPicture> LayerTextureUpdaterSkPicture::create(PassOwnPtr<LayerPainterChromium> painter)
 {
-    return adoptPtr(new LayerTextureUpdaterSkPicture(painter, skiaContext));
+    return adoptPtr(new LayerTextureUpdaterSkPicture(painter));
 }
 
-LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture(PassOwnPtr<LayerPainterChromium> painter, GrContext* skiaContext)
+LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture(PassOwnPtr<LayerPainterChromium> painter)
     : LayerTextureUpdaterCanvas(painter)
-    , m_skiaContext(skiaContext)
     , m_context(0)
     , m_createFrameBuffer(false)
     , m_fbo(0)
@@ -167,8 +166,9 @@ void LayerTextureUpdaterSkPicture::updateTextureRect(GraphicsContext3D* composit
     // Make sure SKIA uses the correct GL context.
     context()->makeContextCurrent();
 
+    GrContext* skiaContext = m_context->grContext();
     // Notify SKIA to sync its internal GL state.
-    m_skiaContext->resetContext();
+    skiaContext->resetContext();
     m_canvas->save();
     m_canvas->clipRect(SkRect(destRect));
     // Translate the origin of contentRect to that of destRect.
@@ -178,7 +178,7 @@ void LayerTextureUpdaterSkPicture::updateTextureRect(GraphicsContext3D* composit
     m_canvas->drawPicture(m_picture);
     m_canvas->restore();
     // Flush SKIA context so that all the rendered stuff appears on the texture.
-    m_skiaContext->flush();
+    skiaContext->flush();
 
     // Unbind texture.
     context()->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, 0, 0);
@@ -237,6 +237,7 @@ bool LayerTextureUpdaterSkPicture::createFrameBuffer()
     context()->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
 
     // Create a skia gpu canvas.
+    GrContext* skiaContext = m_context->grContext();
     GrPlatformSurfaceDesc targetDesc;
     targetDesc.reset();
     targetDesc.fSurfaceType = kRenderTarget_GrPlatformSurfaceType;
@@ -246,8 +247,8 @@ bool LayerTextureUpdaterSkPicture::createFrameBuffer()
     targetDesc.fConfig = kRGBA_8888_GrPixelConfig;
     targetDesc.fStencilBits = 8;
     targetDesc.fPlatformRenderTarget = m_fbo;
-    SkAutoTUnref<GrRenderTarget> target(static_cast<GrRenderTarget*>(m_skiaContext->createPlatformSurface(targetDesc)));
-    SkAutoTUnref<SkDevice> device(new SkGpuDevice(m_skiaContext, target.get()));
+    SkAutoTUnref<GrRenderTarget> target(static_cast<GrRenderTarget*>(skiaContext->createPlatformSurface(targetDesc)));
+    SkAutoTUnref<SkDevice> device(new SkGpuDevice(skiaContext, target.get()));
     m_canvas = adoptPtr(new SkCanvas(device.get()));
 
     context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);

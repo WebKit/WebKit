@@ -87,10 +87,6 @@ public:
     GraphicsContext3D* context();
     bool contextSupportsMapSub() const { return m_contextSupportsMapSub; }
 
-#if USE(SKIA)
-    GrContext* skiaContext() { return m_skiaContext.get(); }
-#endif
-
     const IntSize& viewportSize() { return m_owner->viewportSize(); }
     int viewportWidth() { return viewportSize().width(); }
     int viewportHeight() { return viewportSize().height(); }
@@ -230,9 +226,6 @@ private:
     OwnPtr<CCHeadsUpDisplay> m_headsUpDisplay;
 
     RefPtr<GraphicsContext3D> m_context;
-#if USE(SKIA)
-    OwnPtr<GrContext> m_skiaContext;
-#endif
 
     bool m_contextSupportsMapSub;
 

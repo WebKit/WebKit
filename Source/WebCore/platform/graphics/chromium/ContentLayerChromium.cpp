@@ -123,7 +123,7 @@ void ContentLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
 #if !USE(THREADED_COMPOSITING)
 #if USE(SKIA)
     if (host->settings().acceleratePainting) {
-        m_textureUpdater = LayerTextureUpdaterSkPicture::create(ContentLayerPainter::create(m_owner), host->layerRenderer()->skiaContext());
+        m_textureUpdater = LayerTextureUpdaterSkPicture::create(ContentLayerPainter::create(m_owner));
         return;
     }
 #endif // SKIA

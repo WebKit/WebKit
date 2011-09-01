@@ -1,3 +1,25 @@
+2011-09-01  Brian Salomon  <bsalomon@google.com>
+
+        [Chromium/Skia] Use GraphicsContext3D::grContext() to create GrContext for accelerated drawing
+        https://bugs.webkit.org/show_bug.cgi?id=67419
+
+        Reviewed by James Robinson.
+
+        Accelerated drawing is not enabled in layout tests. However, once it is this change will be tested by every test.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::contextSupportsAcceleratedPainting):
+        (WebCore::LayerRendererChromium::initialize):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::LayerTextureUpdaterSkPicture::create):
+        (WebCore::LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture):
+        (WebCore::LayerTextureUpdaterSkPicture::updateTextureRect):
+        (WebCore::LayerTextureUpdaterSkPicture::createFrameBuffer):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h:
+
 2011-09-01  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         Rename GraphicsContext3DInternal to GraphicsContext3DPrivate and add a dummy version of this class for Mac

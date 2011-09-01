@@ -85,7 +85,7 @@ private:
 class LayerTextureUpdaterSkPicture : public LayerTextureUpdaterCanvas {
     WTF_MAKE_NONCOPYABLE(LayerTextureUpdaterSkPicture);
 public:
-    static PassOwnPtr<LayerTextureUpdaterSkPicture> create(PassOwnPtr<LayerPainterChromium>, GrContext*);
+    static PassOwnPtr<LayerTextureUpdaterSkPicture> create(PassOwnPtr<LayerPainterChromium>);
     virtual ~LayerTextureUpdaterSkPicture();
 
     virtual Orientation orientation() { return LayerTextureUpdater::TopDownOrientation; }
@@ -94,12 +94,11 @@ public:
     virtual void updateTextureRect(GraphicsContext3D*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
 private:
-    LayerTextureUpdaterSkPicture(PassOwnPtr<LayerPainterChromium>, GrContext*);
+    explicit LayerTextureUpdaterSkPicture(PassOwnPtr<LayerPainterChromium>);
     void deleteFrameBuffer();
     bool createFrameBuffer();
     GraphicsContext3D* context() { return m_context; }
 
-    GrContext* m_skiaContext; // SKIA graphics context.
     GraphicsContext3D* m_context;
 
     bool m_createFrameBuffer; // Need to create FBO if true.

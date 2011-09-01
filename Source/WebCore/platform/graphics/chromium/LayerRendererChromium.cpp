@@ -444,6 +444,9 @@ bool contextSupportsAcceleratedPainting(GraphicsContext3D* context)
     else
         return false;
 
+    if (!context->grContext())
+        return false;
+
     return true;
 }
 #endif
@@ -474,16 +477,6 @@ LayerRendererChromium::LayerRendererChromium(CCLayerTreeHost* owner,
 bool LayerRendererChromium::initialize()
 {
     m_context->makeContextCurrent();
-#if USE(SKIA)
-    if (settings().acceleratePainting) {
-        m_skiaContext = adoptPtr(GrContext::CreateGLShaderContext());
-        // Limit the number of textures we hold in the bitmap->texture cache.
-        static const int maxTextureCacheCount = 512;
-        // Limit the bytes allocated toward textures in the bitmap->texture cache.
-        static const size_t maxTextureCacheBytes = 50 * 1024 * 1024;
-        m_skiaContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);
-    }
-#endif
 
     WebCore::Extensions3D* extensions = m_context->getExtensions();
     m_contextSupportsMapSub = extensions->supports("GL_CHROMIUM_map_sub");
