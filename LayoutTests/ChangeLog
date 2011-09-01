@@ -1,3 +1,9 @@
+2011-09-01  Dan Bernstein  <mitz@apple.com>
+
+        Added Windows expected results to the test added in r94352.
+
+        * platform/win/fast/text/fallback-traits-fixup-expected.txt: Added.
+
 2011-09-01  Kentaro Hara  <haraken@google.com>
 
         TypeError should be thrown when a constructor is called as a normal function.
