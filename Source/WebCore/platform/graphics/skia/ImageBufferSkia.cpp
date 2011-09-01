@@ -137,6 +137,11 @@ PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior) const
     return BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), true);
 }
 
+PlatformLayer* ImageBuffer::platformLayer() const
+{
+    return m_data.m_platformLayer.get();
+}
+
 void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
 {
     context->platformContext()->beginLayerClippedToImage(rect, this);
@@ -397,11 +402,6 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
     m_context->platformContext()->makeGrContextCurrent();
     SkDevice* device = context()->platformContext()->canvas()->getDevice();
     return ImageToDataURL(device->accessBitmap(false), mimeType, quality);
-}
-
-PlatformLayer* ImageBuffer::platformLayer() const
-{
-    return m_data.m_platformLayer.get();
 }
 
 String ImageDataToDataURL(const ImageData& source, const String& mimeType, const double* quality)
