@@ -45,7 +45,7 @@ namespace JSC {
 
     protected:
         ErrorPrototype(ExecState*, JSGlobalObject*, Structure*);
-        void constructorBody(ExecState*, JSGlobalObject*);
+        void finishCreation(ExecState*, JSGlobalObject*);
 
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ErrorInstance::StructureFlags;
         static const unsigned AnonymousSlotCount = ErrorInstance::AnonymousSlotCount + 1;

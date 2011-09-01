@@ -1,3 +1,148 @@
+2011-09-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Unzip initialization lists and constructors in JSCell hierarchy (4/7)
+        https://bugs.webkit.org/show_bug.cgi?id=67174
+
+        Reviewed by Oliver Hunt.
+
+        Completed the fourth level of the refactoring to add finishCreation() 
+        methods to all classes within the JSCell hierarchy with non-trivial 
+        constructor bodies.
+
+        This primarily consists of pushing the calls to finishCreation() down 
+        into the constructors of the subclasses of the second level of the hierarchy 
+        as well as pulling the finishCreation() calls out into the class's corresponding
+        create() method if it has one.  Doing both simultaneously allows us to 
+        maintain the invariant that the finishCreation() method chain is called exactly 
+        once during the creation of an object, since calling it any other number of 
+        times (0, 2, or more) will cause an assertion failure.
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::JSCallbackConstructor::JSCallbackConstructor):
+        (JSC::JSCallbackConstructor::finishCreation):
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::create):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::JSCallbackObject):
+        (JSC::::finishCreation):
+        * JavaScriptCore.JSVALUE64only.exp:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::DebuggerActivation):
+        (JSC::DebuggerActivation::create):
+        * debugger/DebuggerActivation.h:
+        * runtime/Arguments.h:
+        (JSC::Arguments::create):
+        (JSC::Arguments::createNoParameters):
+        (JSC::Arguments::Arguments):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::ArrayPrototype):
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/ArrayPrototype.h:
+        * runtime/BooleanObject.cpp:
+        (JSC::BooleanObject::BooleanObject):
+        (JSC::BooleanObject::finishCreation):
+        * runtime/BooleanObject.h:
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::DateInstance):
+        (JSC::DateInstance::finishCreation):
+        * runtime/DateInstance.h:
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+        (JSC::ErrorPrototype::finishCreation):
+        * runtime/ErrorPrototype.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::InterruptedExecutionError::InterruptedExecutionError):
+        (JSC::InterruptedExecutionError::create):
+        (JSC::TerminatedExecutionError::TerminatedExecutionError):
+        (JSC::TerminatedExecutionError::create):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/Executable.h:
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::NativeExecutable):
+        (JSC::EvalExecutable::create):
+        (JSC::ProgramExecutable::create):
+        (JSC::FunctionExecutable::create):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        (JSC::InternalFunction::finishCreation):
+        * runtime/InternalFunction.h:
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        (JSC::JSActivation::finishCreation):
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        * runtime/JSArray.h:
+        (JSC::JSArray::create):
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::JSByteArray):
+        * runtime/JSByteArray.h:
+        (JSC::JSByteArray::create):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::finishCreation):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::create):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::finishCreation):
+        * runtime/JSNotAnObject.h:
+        (JSC::JSNotAnObject::JSNotAnObject):
+        (JSC::JSNotAnObject::create):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::JSONObject):
+        (JSC::JSONObject::finishCreation):
+        * runtime/JSONObject.h:
+        * runtime/JSObjectWithGlobalObject.cpp:
+        (JSC::JSObjectWithGlobalObject::JSObjectWithGlobalObject):
+        * runtime/JSObjectWithGlobalObject.h:
+        * runtime/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::create):
+        (JSC::JSStaticScopeObject::finishCreation):
+        (JSC::JSStaticScopeObject::JSStaticScopeObject):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::JSVariableObject):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::JSWrapperObject):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::MathObject):
+        (JSC::MathObject::finishCreation):
+        * runtime/MathObject.h:
+        * runtime/NumberObject.cpp:
+        (JSC::NumberObject::NumberObject):
+        (JSC::NumberObject::finishCreation):
+        * runtime/NumberObject.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::ObjectPrototype):
+        * runtime/ObjectPrototype.h:
+        (JSC::ObjectPrototype::create):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpMatchesArray::RegExpMatchesArray):
+        (JSC::RegExpMatchesArray::finishCreation):
+        * runtime/RegExpMatchesArray.h:
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::RegExpObject):
+        (JSC::RegExpObject::finishCreation):
+        * runtime/RegExpObject.h:
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::StrictEvalActivation):
+        * runtime/StrictEvalActivation.h:
+        (JSC::StrictEvalActivation::create):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::StringObject):
+        (JSC::StringObject::finishCreation):
+        * runtime/StringObject.h:
+
 2011-09-01  Daniel Bates  <dbates@rim.com>
 
         QNX GCC distribution doesn't support vasprintf()

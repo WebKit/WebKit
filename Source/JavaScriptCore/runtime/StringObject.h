@@ -60,6 +60,7 @@ namespace JSC {
         }
 
     protected:
+        void finishCreation(JSGlobalData&, JSString*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSWrapperObject::StructureFlags;
         StringObject(JSGlobalData&, Structure*, JSString*);
     };

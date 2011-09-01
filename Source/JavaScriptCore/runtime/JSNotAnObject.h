@@ -41,7 +41,6 @@ namespace JSC {
         JSNotAnObject(ExecState* exec)
             : JSNonFinalObject(exec->globalData(), exec->globalData().notAnObjectStructure.get())
         {
-            finishCreation(exec->globalData());
         }
         
     public:
@@ -49,7 +48,9 @@ namespace JSC {
 
         static JSNotAnObject* create(ExecState* exec)
         {
-            return new (allocateCell<JSNotAnObject>(*exec->heap())) JSNotAnObject(exec);
+            JSNotAnObject* object = new (allocateCell<JSNotAnObject>(*exec->heap())) JSNotAnObject(exec);
+            object->finishCreation(exec->globalData());
+            return object;
         }
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)

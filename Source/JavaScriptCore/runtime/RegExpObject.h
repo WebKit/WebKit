@@ -74,6 +74,7 @@ namespace JSC {
 
     protected:
         RegExpObject(JSGlobalObject*, Structure*, RegExp*);
+        void finishCreation(JSGlobalObject*);
         static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | JSObjectWithGlobalObject::StructureFlags;
 
     private:

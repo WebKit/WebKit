@@ -57,6 +57,9 @@ public:
 
     NPObject* npObject() const { return m_npObject; }
 
+protected:
+    void finishCreation(JSC::JSGlobalObject*);
+
 private:
     JSNPObject(JSC::JSGlobalObject*, NPRuntimeObjectMap*, NPObject*, JSC::Structure*);
 

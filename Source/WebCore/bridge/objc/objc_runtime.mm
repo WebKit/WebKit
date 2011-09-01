@@ -201,6 +201,12 @@ ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Struc
     , _instance(i)
     , _item(propertyName)
 {
+    finishCreation(globalObject);
+}
+
+void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
+{
+    Base::finishCreation(globalObject->globalData(), globalObject);
     ASSERT(inherits(&s_info));
 }
 

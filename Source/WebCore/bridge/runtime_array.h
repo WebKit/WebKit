@@ -74,6 +74,8 @@ public:
     }
 
 protected:
+    void finishCreation(JSGlobalData&, Bindings::Array*);
+
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSArray::StructureFlags;
 
 private:

@@ -33,13 +33,11 @@ namespace JSC {
 JSObjectWithGlobalObject::JSObjectWithGlobalObject(JSGlobalObject* globalObject, Structure* structure)
     : JSNonFinalObject(globalObject->globalData(), structure)
 {
-    finishCreation(globalObject->globalData(), globalObject);
 }
 
-JSObjectWithGlobalObject::JSObjectWithGlobalObject(JSGlobalData& globalData, JSGlobalObject* globalObject, Structure* structure)
+JSObjectWithGlobalObject::JSObjectWithGlobalObject(JSGlobalData& globalData, Structure* structure)
     : JSNonFinalObject(globalData, structure)
 {
-    finishCreation(globalData, globalObject);
 }
 
 void JSObjectWithGlobalObject::finishCreation(JSGlobalData& globalData, JSGlobalObject* globalObject)

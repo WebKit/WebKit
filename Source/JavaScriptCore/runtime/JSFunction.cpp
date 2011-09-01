@@ -61,21 +61,11 @@ JSFunction::JSFunction(VPtrStealingHackType)
 {
 }
 
-JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, int length, const Identifier& name, NativeExecutable* thunk)
+JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : Base(globalObject, structure)
     , m_executable()
     , m_scopeChain(exec->globalData(), this, globalObject->globalScopeChain())
 {
-    constructorBody(exec, length, name, thunk);
-}
-
-JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, int length, const Identifier& name, NativeFunction func)
-    : Base(globalObject, structure)
-    , m_executable()
-    , m_scopeChain(exec->globalData(), this, globalObject->globalScopeChain())
-{
-    // Can't do this during initialization because getHostFunction might do a GC allocation.
-    constructorBody(exec, length, name,  exec->globalData().getHostFunction(func));
 }
 
 JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChainNode)
@@ -83,17 +73,23 @@ JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, ScopeCha
     , m_executable(exec->globalData(), this, executable)
     , m_scopeChain(exec->globalData(), this, scopeChainNode)
 {
-    ASSERT(inherits(&s_info));
-    setStructure(exec->globalData(), scopeChainNode->globalObject->namedFunctionStructure());
-    putDirectOffset(exec->globalData(), scopeChainNode->globalObject->functionNameOffset(), executable->nameValue());
 }
 
-inline void JSFunction::constructorBody(ExecState* exec, int length, const Identifier& name, ExecutableBase* executable)
+void JSFunction::finishCreation(ExecState* exec, JSGlobalObject* globalObject, int length, const Identifier& name, ExecutableBase* executable)
 {
+    Base::finishCreation(globalObject->globalData(), globalObject);
     ASSERT(inherits(&s_info));
     m_executable.set(exec->globalData(), this, executable);
     putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
+}
+
+void JSFunction::finishCreation(ExecState* exec, JSGlobalObject* globalObject, FunctionExecutable* executable, ScopeChainNode* scopeChainNode)
+{
+    Base::finishCreation(globalObject->globalData(), globalObject);
+    ASSERT(inherits(&s_info));
+    setStructure(exec->globalData(), scopeChainNode->globalObject->namedFunctionStructure());
+    putDirectOffset(exec->globalData(), scopeChainNode->globalObject->functionNameOffset(), executable->nameValue());
 }
 
 JSFunction::~JSFunction()

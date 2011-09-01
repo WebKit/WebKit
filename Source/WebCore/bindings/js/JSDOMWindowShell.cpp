@@ -43,11 +43,10 @@ ASSERT_CLASS_FITS_IN_CELL(JSDOMWindowShell);
 
 const ClassInfo JSDOMWindowShell::s_info = { "JSDOMWindowShell", &Base::s_info, 0, 0 };
 
-JSDOMWindowShell::JSDOMWindowShell(PassRefPtr<DOMWindow> window, Structure* structure, DOMWrapperWorld* world)
+JSDOMWindowShell::JSDOMWindowShell(Structure* structure, DOMWrapperWorld* world)
     : Base(*world->globalData(), structure)
     , m_world(world)
 {
-    finishCreation(*world->globalData(), window);
 }
 
 void JSDOMWindowShell::finishCreation(JSGlobalData& globalData, PassRefPtr<DOMWindow> window)
@@ -179,6 +178,13 @@ void* JSDOMWindowShell::operator new(size_t size)
     heap.globalData()->setInitializingObject(true);
 #endif
     return heap.allocate(size);
+}
+
+JSDOMWindowShell* JSDOMWindowShell::create(PassRefPtr<DOMWindow> window, JSC::Structure* structure, DOMWrapperWorld* world)
+{
+    JSDOMWindowShell* shell = new JSDOMWindowShell(structure, world);
+    shell->finishCreation(*world->globalData(), window);
+    return shell; 
 }
 
 // ----

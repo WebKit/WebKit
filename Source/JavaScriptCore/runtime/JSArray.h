@@ -62,8 +62,6 @@ namespace JSC {
 
     protected:
         explicit JSArray(JSGlobalData&, Structure*);
-        JSArray(JSGlobalData&, Structure*, unsigned initialLength, ArrayCreationMode);
-        JSArray(JSGlobalData&, Structure*, const ArgList& initialValues);
 
         void finishCreation(JSGlobalData&);
         void finishCreation(JSGlobalData&, unsigned initialLength, ArrayCreationMode);
@@ -77,19 +75,25 @@ namespace JSC {
 
         static JSArray* create(JSGlobalData& globalData, Structure* structure)
         {
-            return new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
+            JSArray* array = new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
+            array->finishCreation(globalData);
+            return array;
         }
-        
+
         static JSArray* create(JSGlobalData& globalData, Structure* structure, unsigned initialLength, ArrayCreationMode createMode)
         {
-            return new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure, initialLength, createMode);
+            JSArray* array = new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
+            array->finishCreation(globalData, initialLength, createMode);
+            return array;
         }
-        
+
         static JSArray* create(JSGlobalData& globalData, Structure* structure, const ArgList& initialValues)
         {
-            return new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure, initialValues);
+            JSArray* array = new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
+            array->finishCreation(globalData, initialValues);
+            return array;
         }
-        
+
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);

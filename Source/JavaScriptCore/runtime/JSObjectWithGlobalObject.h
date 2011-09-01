@@ -48,7 +48,7 @@ public:
 
 protected:
     JSObjectWithGlobalObject(JSGlobalObject*, Structure*);
-    JSObjectWithGlobalObject(JSGlobalData&, JSGlobalObject*, Structure*);
+    JSObjectWithGlobalObject(JSGlobalData&, Structure*);
 
     JSObjectWithGlobalObject(VPtrStealingHackType)
         : JSNonFinalObject(VPtrStealingHack)

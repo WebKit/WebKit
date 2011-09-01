@@ -64,12 +64,14 @@ namespace JSC {
         static Arguments* create(JSGlobalData& globalData, CallFrame* callFrame)
         {
             Arguments* arguments = new (allocateCell<Arguments>(globalData.heap)) Arguments(callFrame);
+            arguments->finishCreation(callFrame);
             return arguments;
         }
         
         static Arguments* createNoParameters(JSGlobalData& globalData, CallFrame* callFrame)
         {
             Arguments* arguments = new (allocateCell<Arguments>(globalData.heap)) Arguments(callFrame, NoParameters);
+            arguments->finishCreation(callFrame, NoParameters);
             return arguments;
         }
 
@@ -166,14 +168,12 @@ namespace JSC {
         : JSNonFinalObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(adoptPtr(new ArgumentsData))
     {
-        finishCreation(callFrame);
     }
 
     inline Arguments::Arguments(CallFrame* callFrame, NoParametersType)
         : JSNonFinalObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(adoptPtr(new ArgumentsData))
     {
-        finishCreation(callFrame, NoParameters);
     }
     
     inline void Arguments::finishCreation(CallFrame* callFrame)

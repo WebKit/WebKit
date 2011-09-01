@@ -55,7 +55,7 @@ namespace WebCore {
 
         DOMWindow* impl() const;
 
-        void* operator new(size_t);
+        static JSDOMWindowShell* create(PassRefPtr<DOMWindow>, JSC::Structure*, DOMWrapperWorld*);
 
         static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype) 
         {
@@ -65,9 +65,11 @@ namespace WebCore {
         DOMWrapperWorld* world() { return m_world.get(); }
 
     protected:
+        JSDOMWindowShell(JSC::Structure*, DOMWrapperWorld*);
         void finishCreation(JSC::JSGlobalData&, PassRefPtr<DOMWindow>);
 
     private:
+        void* operator new(size_t);
         static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | JSC::OverridesGetPropertyNames | Base::StructureFlags;
 
         virtual void visitChildren(JSC::SlotVisitor&);

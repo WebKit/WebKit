@@ -39,14 +39,8 @@ JSByteArray::JSByteArray(ExecState* exec, Structure* structure, ByteArray* stora
     : JSNonFinalObject(exec->globalData(), structure)
     , m_storage(storage)
 {
-    finishCreation(exec);
 }
         
-JSByteArray* JSByteArray::create(ExecState* exec, Structure* structure, ByteArray* storage)
-{
-    return new (allocateCell<JSByteArray>(*exec->heap())) JSByteArray(exec, structure, storage);
-}
-
 #if !ASSERT_DISABLED
 JSByteArray::~JSByteArray()
 {

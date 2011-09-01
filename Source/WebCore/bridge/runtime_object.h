@@ -74,6 +74,7 @@ public:
 
 protected:
     RuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<Instance>);
+    void finishCreation(JSGlobalObject*);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObjectWithGlobalObject::StructureFlags;
 
 private:

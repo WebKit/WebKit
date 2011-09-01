@@ -46,7 +46,6 @@ private:
     InterruptedExecutionError(JSGlobalData& globalData)
         : JSNonFinalObject(globalData, globalData.interruptedExecutionErrorStructure.get())
     {
-        finishCreation(globalData);
     }
 
 public:
@@ -54,7 +53,9 @@ public:
 
     static InterruptedExecutionError* create(JSGlobalData& globalData)
     {
-        return new (allocateCell<InterruptedExecutionError>(globalData.heap)) InterruptedExecutionError(globalData);
+        InterruptedExecutionError* error = new (allocateCell<InterruptedExecutionError>(globalData.heap)) InterruptedExecutionError(globalData);
+        error->finishCreation(globalData);
+        return error;
     }
 
     virtual ComplType exceptionType() const { return Interrupted; }
@@ -72,7 +73,6 @@ private:
     TerminatedExecutionError(JSGlobalData& globalData)
         : JSNonFinalObject(globalData, globalData.terminatedExecutionErrorStructure.get())
     {
-        finishCreation(globalData);
     }
 
 public:
@@ -80,7 +80,9 @@ public:
 
     static TerminatedExecutionError* create(JSGlobalData& globalData)
     {
-        return new (allocateCell<TerminatedExecutionError>(globalData.heap)) TerminatedExecutionError(globalData);
+        TerminatedExecutionError* error = new (allocateCell<TerminatedExecutionError>(globalData.heap)) TerminatedExecutionError(globalData);
+        error->finishCreation(globalData);
+        return error;
     }
 
     virtual ComplType exceptionType() const { return Terminated; }

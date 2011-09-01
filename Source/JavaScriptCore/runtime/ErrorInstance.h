@@ -36,9 +36,21 @@ namespace JSC {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
-        static ErrorInstance* create(JSGlobalData&, Structure*, const UString&);
-        static ErrorInstance* create(ExecState*, Structure*, JSValue message);
-
+        static ErrorInstance* create(JSGlobalData& globalData, Structure* structure, const UString& message)
+        {
+            ErrorInstance* instance = new (allocateCell<ErrorInstance>(globalData.heap)) ErrorInstance(globalData, structure);
+            instance->finishCreation(globalData, message);
+            return instance;
+        }
+        static ErrorInstance* create(ExecState* exec, Structure* structure, JSValue message)
+        {
+            if (message.isUndefined()) {
+                ErrorInstance* instance = new (allocateCell<ErrorInstance>(*exec->heap())) ErrorInstance(exec->globalData(), structure);
+                instance->finishCreation(exec->globalData(), UString("", 0));
+                return instance;
+            }
+            return create(exec->globalData(), structure, message.toString(exec));
+        }
 
         bool appendSourceToMessage() { return m_appendSourceToMessage; }
         void setAppendSourceToMessage() { m_appendSourceToMessage = true; }
@@ -48,7 +60,6 @@ namespace JSC {
 
     protected:
         explicit ErrorInstance(JSGlobalData&, Structure*);
-        explicit ErrorInstance(JSGlobalData&, Structure*, const UString&);
 
         void finishCreation(JSGlobalData& globalData, const UString& message)
         {

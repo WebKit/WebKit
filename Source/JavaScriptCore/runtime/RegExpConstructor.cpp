@@ -109,8 +109,14 @@ RegExpConstructor::RegExpConstructor(ExecState* exec, JSGlobalObject* globalObje
 }
 
 RegExpMatchesArray::RegExpMatchesArray(ExecState* exec, RegExpConstructorPrivate* data)
-    : JSArray(exec->globalData(), exec->lexicalGlobalObject()->regExpMatchesArrayStructure(), data->lastNumSubPatterns + 1, CreateInitialized)
+    : JSArray(exec->globalData(), exec->lexicalGlobalObject()->regExpMatchesArrayStructure())
 {
+    finishCreation(exec->globalData(), data);
+}
+
+void RegExpMatchesArray::finishCreation(JSGlobalData& globalData, RegExpConstructorPrivate* data)
+{
+    Base::finishCreation(globalData, data->lastNumSubPatterns + 1, CreateInitialized);
     RegExpConstructorPrivate* d = new RegExpConstructorPrivate;
     d->input = data->lastInput;
     d->lastInput = data->lastInput;

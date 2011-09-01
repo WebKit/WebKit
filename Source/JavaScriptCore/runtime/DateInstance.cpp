@@ -37,15 +37,27 @@ const ClassInfo DateInstance::s_info = {"Date", &JSWrapperObject::s_info, 0, 0};
 DateInstance::DateInstance(ExecState* exec, Structure* structure)
     : JSWrapperObject(exec->globalData(), structure)
 {
-    ASSERT(inherits(&s_info));
-    setInternalValue(exec->globalData(), jsNaN());
+    finishCreation(exec->globalData());
 }
 
 DateInstance::DateInstance(ExecState* exec, Structure* structure, double time)
     : JSWrapperObject(exec->globalData(), structure)
 {
+    finishCreation(exec->globalData(), time);
+}
+
+void DateInstance::finishCreation(JSGlobalData& globalData)
+{
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
-    setInternalValue(exec->globalData(), jsNumber(timeClip(time)));
+    setInternalValue(globalData, jsNaN());
+}
+
+void DateInstance::finishCreation(JSGlobalData& globalData, double time)
+{
+    Base::finishCreation(globalData);
+    ASSERT(inherits(&s_info));
+    setInternalValue(globalData, jsNumber(timeClip(time)));
 }
 
 const GregorianDateTime* DateInstance::calculateGregorianDateTime(ExecState* exec) const

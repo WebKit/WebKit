@@ -28,6 +28,7 @@ namespace JSC {
     class NumberObject : public JSWrapperObject {
     protected:
         NumberObject(JSGlobalData&, Structure*);
+        void finishCreation(JSGlobalData&);
 
     public:
         typedef JSWrapperObject Base;

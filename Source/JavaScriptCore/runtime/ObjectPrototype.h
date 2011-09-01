@@ -31,7 +31,9 @@ namespace JSC {
 
         static ObjectPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            return new (allocateCell<ObjectPrototype>(*exec->heap())) ObjectPrototype(exec, globalObject, structure);
+            ObjectPrototype* prototype = new (allocateCell<ObjectPrototype>(*exec->heap())) ObjectPrototype(exec, structure);
+            prototype->finishCreation(exec->globalData(), globalObject);
+            return prototype;
         }
 
         static const ClassInfo s_info;
@@ -48,7 +50,7 @@ namespace JSC {
         void finishCreation(JSGlobalData&, JSGlobalObject*);
 
     private:
-        ObjectPrototype(ExecState*, JSGlobalObject*, Structure*);
+        ObjectPrototype(ExecState*, Structure*);
         virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);

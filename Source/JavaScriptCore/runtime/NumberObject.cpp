@@ -34,6 +34,12 @@ const ClassInfo NumberObject::s_info = { "Number", &JSWrapperObject::s_info, 0, 
 NumberObject::NumberObject(JSGlobalData& globalData, Structure* structure)
     : JSWrapperObject(globalData, structure)
 {
+    finishCreation(globalData);
+}
+
+void NumberObject::finishCreation(JSGlobalData& globalData)
+{
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 }
 

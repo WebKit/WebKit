@@ -127,7 +127,6 @@ const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::
 EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext)
     : ScriptExecutable(exec->globalData().evalExecutableStructure.get(), exec, source, inStrictContext)
 {
-    finishCreation(exec->globalData());
 }
 
 EvalExecutable::~EvalExecutable()
@@ -139,7 +138,6 @@ const ClassInfo ProgramExecutable::s_info = { "ProgramExecutable", &ScriptExecut
 ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
     : ScriptExecutable(exec->globalData().programExecutableStructure.get(), exec, source, false)
 {
-    finishCreation(exec->globalData());
 }
 
 ProgramExecutable::~ProgramExecutable()
@@ -148,7 +146,7 @@ ProgramExecutable::~ProgramExecutable()
 
 const ClassInfo FunctionExecutable::s_info = { "FunctionExecutable", &ScriptExecutable::s_info, 0, 0 };
 
-FunctionExecutable::FunctionExecutable(JSGlobalData& globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext, int firstLine, int lastLine)
+FunctionExecutable::FunctionExecutable(JSGlobalData& globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext)
     : ScriptExecutable(globalData.functionExecutableStructure.get(), globalData, source, inStrictContext)
     , m_numCapturedVariables(0)
     , m_forceUsesArguments(forceUsesArguments)
@@ -156,10 +154,9 @@ FunctionExecutable::FunctionExecutable(JSGlobalData& globalData, const Identifie
     , m_name(name)
     , m_symbolTable(0)
 {
-    finishCreation(globalData, name, firstLine, lastLine);
 }
 
-FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext, int firstLine, int lastLine)
+FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext)
     : ScriptExecutable(exec->globalData().functionExecutableStructure.get(), exec, source, inStrictContext)
     , m_numCapturedVariables(0)
     , m_forceUsesArguments(forceUsesArguments)
@@ -167,7 +164,6 @@ FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, 
     , m_name(name)
     , m_symbolTable(0)
 {
-    finishCreation(exec->globalData(), name, firstLine, lastLine);
 }
 
 

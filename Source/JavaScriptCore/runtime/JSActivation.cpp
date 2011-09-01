@@ -46,6 +46,12 @@ JSActivation::JSActivation(CallFrame* callFrame, FunctionExecutable* functionExe
     , m_requiresDynamicChecks(functionExecutable->usesEval())
     , m_argumentsRegister(functionExecutable->generatedBytecode().argumentsRegister())
 {
+    finishCreation(callFrame);
+}
+
+void JSActivation::finishCreation(CallFrame* callFrame)
+{
+    Base::finishCreation(callFrame->globalData());
     ASSERT(inherits(&s_info));
 
     // We have to manually ref and deref the symbol table as JSVariableObject

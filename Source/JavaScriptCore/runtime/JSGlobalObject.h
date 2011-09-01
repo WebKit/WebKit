@@ -159,7 +159,7 @@ namespace JSC {
             , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
             , m_evalEnabled(true)
         {
-            constructorBody(this);
+            finishCreation(globalData, this);
         }
 
         JSGlobalObject(JSGlobalData& globalData, Structure* structure, JSObject* thisValue)
@@ -169,11 +169,12 @@ namespace JSC {
             , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
             , m_evalEnabled(true)
         {
-            constructorBody(thisValue);
+            finishCreation(globalData, thisValue);
         }
 
-        void constructorBody(JSObject* thisValue)
+        void finishCreation(JSGlobalData& globalData, JSObject* thisValue)
         {
+            Base::finishCreation(globalData);
             COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
             putThisToAnonymousValue(0);
             init(thisValue);

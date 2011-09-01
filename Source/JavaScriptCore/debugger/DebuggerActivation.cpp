@@ -30,10 +30,16 @@
 
 namespace JSC {
 
-DebuggerActivation::DebuggerActivation(JSGlobalData& globalData, JSObject* activation)
+DebuggerActivation::DebuggerActivation(JSGlobalData& globalData)
     : JSNonFinalObject(globalData, globalData.debuggerActivationStructure.get())
 {
-    finishCreation(globalData, activation);
+}
+
+DebuggerActivation* DebuggerActivation::create(JSGlobalData& globalData, JSObject* object)
+{
+    DebuggerActivation* activation = new (allocateCell<DebuggerActivation>(globalData.heap)) DebuggerActivation(globalData);
+    activation->finishCreation(globalData, object);
+    return activation;
 }
 
 void DebuggerActivation::finishCreation(JSGlobalData& globalData, JSObject* activation)

@@ -55,6 +55,12 @@ JSNPObject::JSNPObject(JSGlobalObject* globalObject, NPRuntimeObjectMap* objectM
     , m_objectMap(objectMap)
     , m_npObject(npObject)
 {
+    finishCreation(globalObject);
+}
+
+void JSNPObject::finishCreation(JSGlobalObject* globalObject)
+{
+    Base::finishCreation(globalObject->globalData(), globalObject);
     ASSERT(inherits(&s_info));
 
     // We should never have an NPJSObject inside a JSNPObject.

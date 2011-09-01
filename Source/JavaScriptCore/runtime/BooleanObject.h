@@ -28,6 +28,7 @@ namespace JSC {
     class BooleanObject : public JSWrapperObject {
     protected:
         BooleanObject(JSGlobalData&, Structure*);
+        void finishCreation(JSGlobalData&);
 
     public:
         typedef JSWrapperObject Base;

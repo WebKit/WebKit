@@ -49,6 +49,7 @@ namespace JSC {
         static const ClassInfo s_info;
 
     protected:
+        void finishCreation(JSGlobalObject*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
 
     private:

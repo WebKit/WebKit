@@ -37,6 +37,9 @@ namespace JSC {
         }
         virtual ~RegExpMatchesArray();
 
+    protected:
+        void finishCreation(JSGlobalData&, RegExpConstructorPrivate* data);
+
     private:
         virtual bool getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
         {

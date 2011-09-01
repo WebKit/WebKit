@@ -32,6 +32,12 @@ const ClassInfo StringObject::s_info = { "String", &JSWrapperObject::s_info, 0, 
 StringObject::StringObject(JSGlobalData& globalData, Structure* structure, JSString* string)
     : JSWrapperObject(globalData, structure)
 {
+    finishCreation(globalData, string);
+}
+
+void StringObject::finishCreation(JSGlobalData& globalData, JSString* string)
+{
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
     setInternalValue(globalData, string);
 }

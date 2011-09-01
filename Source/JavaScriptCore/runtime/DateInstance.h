@@ -33,6 +33,8 @@ namespace JSC {
     protected:
         DateInstance(ExecState*, Structure*, double);
         DateInstance(ExecState*, Structure*);
+        void finishCreation(JSGlobalData&);
+        void finishCreation(JSGlobalData&, double);
         
     public:
         typedef JSWrapperObject Base;

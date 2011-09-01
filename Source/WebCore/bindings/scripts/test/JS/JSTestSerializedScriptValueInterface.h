@@ -78,7 +78,7 @@ public:
     }
 
 private:
-    JSTestSerializedScriptValueInterfacePrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure) : JSC::JSObjectWithGlobalObject(globalData, globalObject, structure) { }
+    JSTestSerializedScriptValueInterfacePrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure) : JSC::JSObjectWithGlobalObject(globalData, structure) { finishCreation(globalData, globalObject); }
 protected:
     static const unsigned StructureFlags = Base::StructureFlags;
 };

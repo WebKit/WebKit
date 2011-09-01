@@ -47,6 +47,7 @@ namespace JSC {
         }
 
     protected:
+        void finishCreation(ExecState*, JSGlobalObject*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
     };
 

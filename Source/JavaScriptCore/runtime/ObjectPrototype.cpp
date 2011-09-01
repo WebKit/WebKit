@@ -63,11 +63,10 @@ const ClassInfo ObjectPrototype::s_info = { "Object", &JSNonFinalObject::s_info,
 
 ASSERT_CLASS_FITS_IN_CELL(ObjectPrototype);
 
-ObjectPrototype::ObjectPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* stucture)
+ObjectPrototype::ObjectPrototype(ExecState* exec, Structure* stucture)
     : JSNonFinalObject(exec->globalData(), stucture)
     , m_hasNoPropertiesWithUInt32Names(true)
 {
-    finishCreation(exec->globalData(), globalObject);
 }
 
 void ObjectPrototype::finishCreation(JSGlobalData& globalData, JSGlobalObject* globalObject)

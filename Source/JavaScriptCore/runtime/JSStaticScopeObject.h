@@ -34,9 +34,9 @@ namespace JSC{
     public:
         typedef JSVariableObject Base;
 
-        static JSStaticScopeObject* create(ExecState* exec, const Identifier& ident, JSValue value, unsigned attributes)
+        static JSStaticScopeObject* create(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes)
         {
-            return new (allocateCell<JSStaticScopeObject>(*exec->heap())) JSStaticScopeObject(exec, ident, value, attributes);
+            return new (allocateCell<JSStaticScopeObject>(*exec->heap())) JSStaticScopeObject(exec, identifier, value, attributes);
         }
 
         virtual void visitChildren(SlotVisitor&);
@@ -50,14 +50,19 @@ namespace JSC{
         static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); }
 
     protected:
+        void finishCreation(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes)
+        {
+            Base::finishCreation(exec->globalData());
+            m_registerStore.set(exec->globalData(), this, value);
+            symbolTable().add(identifier.impl(), SymbolTableEntry(-1, attributes));
+        }
         static const unsigned StructureFlags = IsEnvironmentRecord | OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
     private:
-        JSStaticScopeObject(ExecState* exec, const Identifier& ident, JSValue value, unsigned attributes)
+        JSStaticScopeObject(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes)
             : JSVariableObject(exec->globalData(), exec->globalData().staticScopeStructure.get(), &m_symbolTable, reinterpret_cast<Register*>(&m_registerStore + 1))
         {
-            m_registerStore.set(exec->globalData(), this, value);
-            symbolTable().add(ident.impl(), SymbolTableEntry(-1, attributes));
+            finishCreation(exec, identifier, value, attributes);
         }
         
         SymbolTable m_symbolTable;

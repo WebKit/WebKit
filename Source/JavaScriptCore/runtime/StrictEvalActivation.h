@@ -36,7 +36,9 @@ public:
 
     static StrictEvalActivation* create(ExecState* exec)
     {
-        return new (allocateCell<StrictEvalActivation>(*exec->heap())) StrictEvalActivation(exec);
+        StrictEvalActivation* activation = new (allocateCell<StrictEvalActivation>(*exec->heap())) StrictEvalActivation(exec);
+        activation->finishCreation(exec->globalData());
+        return activation;
     }
 
     virtual bool deleteProperty(ExecState*, const Identifier&);

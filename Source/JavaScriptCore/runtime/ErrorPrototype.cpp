@@ -53,11 +53,12 @@ ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
 ErrorPrototype::ErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : ErrorInstance(exec->globalData(), structure)
 {
-    constructorBody(exec, globalObject);
+    finishCreation(exec, globalObject);
 }
 
-void ErrorPrototype::constructorBody(ExecState* exec, JSGlobalObject* globalObject)
+void ErrorPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
 {
+    Base::finishCreation(exec->globalData(), "");
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().name, jsNontrivialString(exec, "Error"), DontEnum);
     putAnonymousValue(globalObject->globalData(), 0, globalObject);

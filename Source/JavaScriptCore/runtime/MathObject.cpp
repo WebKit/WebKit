@@ -87,6 +87,12 @@ const ClassInfo MathObject::s_info = { "Math", &JSObjectWithGlobalObject::s_info
 MathObject::MathObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : JSObjectWithGlobalObject(globalObject, structure)
 {
+    finishCreation(exec, globalObject);
+}
+
+void MathObject::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
+{
+    Base::finishCreation(globalObject->globalData(), globalObject);
     ASSERT(inherits(&s_info));
 
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "E"), jsNumber(exp(1.0)), DontDelete | DontEnum | ReadOnly);

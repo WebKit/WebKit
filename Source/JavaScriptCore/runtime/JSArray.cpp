@@ -134,19 +134,6 @@ JSArray::JSArray(VPtrStealingHackType)
 JSArray::JSArray(JSGlobalData& globalData, Structure* structure)
     : JSNonFinalObject(globalData, structure)
 {
-    finishCreation(globalData);
-}
-
-JSArray::JSArray(JSGlobalData& globalData, Structure* structure, unsigned initialLength, ArrayCreationMode creationMode)
-    : JSNonFinalObject(globalData, structure)
-{
-    finishCreation(globalData, initialLength, creationMode);
-}
-
-JSArray::JSArray(JSGlobalData& globalData, Structure* structure, const ArgList& list)
-    : JSNonFinalObject(globalData, structure)
-{
-    finishCreation(globalData, list);
 }
 
 void JSArray::finishCreation(JSGlobalData& globalData)

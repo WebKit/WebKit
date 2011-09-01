@@ -31,7 +31,6 @@ namespace JSC {
 StrictEvalActivation::StrictEvalActivation(ExecState* exec)
     : JSNonFinalObject(exec->globalData(), exec->globalData().strictEvalActivationStructure.get())
 {
-    finishCreation(exec->globalData());
 }
 
 bool StrictEvalActivation::deleteProperty(ExecState*, const Identifier&)

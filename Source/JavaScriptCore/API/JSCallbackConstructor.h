@@ -52,6 +52,7 @@ public:
 
 protected:
     JSCallbackConstructor(JSGlobalObject*, Structure*, JSClassRef, JSObjectCallAsConstructorCallback);
+    void finishCreation(JSGlobalObject*, JSClassRef);
     static const unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
 
 private:

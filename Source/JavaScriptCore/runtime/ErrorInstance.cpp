@@ -29,26 +29,6 @@ ErrorInstance::ErrorInstance(JSGlobalData& globalData, Structure* structure)
     : JSNonFinalObject(globalData, structure)
     , m_appendSourceToMessage(false)
 {
-    finishCreation(globalData, UString("", 0));
-}
-
-ErrorInstance::ErrorInstance(JSGlobalData& globalData, Structure* structure, const UString& message)
-    : JSNonFinalObject(globalData, structure)
-    , m_appendSourceToMessage(false)
-{
-    finishCreation(globalData, message);
-}
-
-ErrorInstance* ErrorInstance::create(JSGlobalData& globalData, Structure* structure, const UString& message)
-{
-    return new (allocateCell<ErrorInstance>(globalData.heap)) ErrorInstance(globalData, structure, message);
-}
-
-ErrorInstance* ErrorInstance::create(ExecState* exec, Structure* structure, JSValue message)
-{
-    if (message.isUndefined())
-        return new (allocateCell<ErrorInstance>(*exec->heap())) ErrorInstance(exec->globalData(), structure);
-    return create(exec->globalData(), structure, message.toString(exec));
 }
 
 } // namespace JSC

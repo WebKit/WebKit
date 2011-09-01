@@ -40,6 +40,12 @@ const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &JSArray::s_info, 0, 0 
 RuntimeArray::RuntimeArray(ExecState* exec, Structure* structure, Bindings::Array* array)
     : JSArray(exec->globalData(), structure)
 {
+    finishCreation(exec->globalData(), array);
+}
+
+void RuntimeArray::finishCreation(JSGlobalData& globalData, Bindings::Array* array)
+{
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
     setSubclassData(array);
 }

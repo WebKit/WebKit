@@ -40,7 +40,9 @@ public:
 
     static UserObjectImp* create(JSGlobalData& globalData, Structure* structure, JSUserObject* userObject)
     {
-        return new (allocateCell<UserObjectImp>(globalData.heap)) UserObjectImp(globalData, structure, userObject);
+        UserObjectImp* object = new (allocateCell<UserObjectImp>(globalData.heap)) UserObjectImp(globalData, structure, userObject);
+        object->finishCreation(globalData);
+        return object;
     }
     
     virtual ~UserObjectImp();

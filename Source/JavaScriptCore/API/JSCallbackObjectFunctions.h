@@ -54,8 +54,7 @@ JSCallbackObject<Parent>::JSCallbackObject(ExecState* exec, JSGlobalObject* glob
     : Parent(globalObject, structure)
     , m_callbackObjectData(adoptPtr(new JSCallbackObjectData(data, jsClass)))
 {
-    ASSERT(Parent::inherits(&s_info));
-    init(exec);
+    finishCreation(exec, globalObject);
 }
 
 // Global object constructor.
@@ -64,6 +63,21 @@ template <class Parent>
 JSCallbackObject<Parent>::JSCallbackObject(JSGlobalData& globalData, JSClassRef jsClass, Structure* structure)
     : Parent(globalData, structure)
     , m_callbackObjectData(adoptPtr(new JSCallbackObjectData(0, jsClass)))
+{
+    finishCreation();
+}
+
+template <class Parent>
+void JSCallbackObject<Parent>::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
+{
+    Base::finishCreation(globalObject->globalData(), globalObject);
+    ASSERT(Parent::inherits(&s_info));
+    init(exec);
+}
+
+// This is just for Global object, so we can assume that Base::finishCreation is JSGlobalObject::constructorBody.
+template <class Parent>
+void JSCallbackObject<Parent>::finishCreation()
 {
     ASSERT(Parent::inherits(&s_info));
     ASSERT(Parent::isGlobalObject());

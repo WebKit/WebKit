@@ -74,7 +74,6 @@ namespace JSC {
             , m_symbolTable(symbolTable)
             , m_registers(reinterpret_cast<WriteBarrier<Unknown>*>(registers))
         {
-            finishCreation(globalData);
         }
 
         void finishCreation(JSGlobalData& globalData)

@@ -79,7 +79,12 @@ namespace JSC {
         JSByteArray(ExecState*, Structure*, ByteArray* storage);
         
     public:
-        static JSByteArray* create(ExecState*, Structure*, ByteArray*);
+        static JSByteArray* create(ExecState* exec, Structure* structure, ByteArray* storage)
+        {
+            JSByteArray* array = new (allocateCell<JSByteArray>(*exec->heap())) JSByteArray(exec, structure, storage);
+            array->finishCreation(exec);
+            return array;
+        }
 
         static Structure* createStructure(JSGlobalData&, JSValue prototype, const JSC::ClassInfo* = &s_defaultInfo);
 

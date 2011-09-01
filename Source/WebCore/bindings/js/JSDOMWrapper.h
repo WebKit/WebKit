@@ -59,6 +59,7 @@ protected:
         // new JavaScript objects on detached windows due to DOMWindow::document()
         // needing to reach through the frame to get to the Document*.  See bug 27640.
         // ASSERT(globalObject->scriptExecutionContext());
+        finishCreation(globalObject->globalData(), globalObject);
     }
 };
 

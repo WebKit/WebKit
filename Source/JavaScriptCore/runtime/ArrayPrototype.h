@@ -49,6 +49,8 @@ namespace JSC {
         }
 
     protected:
+        void finishCreation(JSGlobalObject*);
+
         static const unsigned AnonymousSlotCount = JSArray::AnonymousSlotCount + 1;
     };
 

@@ -43,6 +43,12 @@ JSCallbackConstructor::JSCallbackConstructor(JSGlobalObject* globalObject, Struc
     , m_class(jsClass)
     , m_callback(callback)
 {
+    finishCreation(globalObject, jsClass);
+}
+
+void JSCallbackConstructor::finishCreation(JSGlobalObject* globalObject, JSClassRef jsClass)
+{
+    Base::finishCreation(globalObject->globalData(), globalObject);
     ASSERT(inherits(&s_info));
     if (m_class)
         JSClassRetain(jsClass);
