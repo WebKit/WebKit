@@ -486,6 +486,7 @@
                 'src/WebGeolocationPermissionRequestManager.cpp',
                 'src/WebGeolocationPosition.cpp',
                 'src/WebGlyphCache.cpp',
+                'src/WebGraphicsContext3D.cpp',
                 'src/WebHistoryItem.cpp',
                 'src/WebHTTPBody.cpp',
                 'src/WebHTTPLoadInfo.cpp',

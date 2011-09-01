@@ -63,6 +63,7 @@
 
 #if USE(SKIA)
 #include "GrContext.h"
+#include "GrGLInterface.h"
 #endif
 
 // There are two levels of delegation in this file:
@@ -161,8 +162,17 @@ GrContext* GraphicsContext3DPrivate::grContext()
     static const size_t maxTextureCacheBytes = 50 * 1024 * 1024;
 
     if (!m_grContext) {
-        GrPlatform3DContext glinterface = reinterpret_cast<GrPlatform3DContext>(m_impl->grGLInterface());
-        m_grContext = GrContext::Create(kOpenGL_Shaders_GrEngine, glinterface);
+        SkAutoTUnref<GrGLInterface> interface(m_impl->createGrGLInterface());
+        // FIXME: Remove this block after the WebGraphicsContext3D subclasses in Chromium no longer override grGLInterface().
+        if (!interface.get()) {
+            GrGLInterface* fallbackInterface = m_impl->grGLInterface();
+            if (fallbackInterface) {
+                fallbackInterface->ref(); // balance out the SkAutoTUnref
+                interface.reset(fallbackInterface);
+            }
+        }
+        // This is the end of the block to remove.
+        m_grContext = GrContext::Create(kOpenGL_Shaders_GrEngine, reinterpret_cast<GrPlatform3DContext>(interface.get()));
         if (m_grContext)
             m_grContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);
     }
