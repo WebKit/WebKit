@@ -1,3 +1,35 @@
+2011-09-01  Ada Chan  <adachan@apple.com>
+
+        Gather JavaScript, FastMalloc, icon, font, and glyph page statistics in WebProcess::getWebCoreStatistics().
+        https://bugs.webkit.org/show_bug.cgi?id=67160
+
+        Reviewed by Darin Adler.
+
+        Encode and decode the data members in StatisticsData.
+        * Shared/StatisticsData.cpp:
+        (WebKit::StatisticsData::encode):
+        (WebKit::StatisticsData::decode):
+        (WebKit::StatisticsData::StatisticsData):
+
+        Add three data members to StatisticsData:
+        - statisticsNumbers: Map containing statistics values that are numbers, mapped by their names, such as 
+        JavaScriptObjectsCount, CachedFontDataCount, etc.
+        - javaScriptProtectedObjectTypeCounts
+        - javaScriptObjectTypeCounts
+        * Shared/StatisticsData.h:
+
+        Create a WK::Dictionary containing statistics values mapped by their names and return that dictionary
+        in WebContext::didGetWebCoreStatistics().
+        * UIProcess/WebContext.cpp:
+        (WebKit::createDictionaryFromHashMap):
+        (WebKit::WebContext::didGetWebCoreStatistics):
+
+        Package JavaScript, FastMalloc, icon, font, and glyph page statistics into a StatisticsData object
+        and send it to the UIProcess.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::fromCountedSetToHashMap):
+        (WebKit::WebProcess::getWebCoreStatistics):
+
 2011-09-01  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Add XRender lib dependencies explicitly
