@@ -1,3 +1,11 @@
+2011-09-01  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/10063411> WebScriptObject.h declares an Objective-C method without a return type.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * bridge/objc/WebScriptObject.h:
+
 2011-09-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unzip initialization lists and constructors in JSCell hierarchy (4/7)
