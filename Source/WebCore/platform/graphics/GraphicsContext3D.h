@@ -521,10 +521,10 @@ public:
     // Computes the components per pixel and bytes per component
     // for the given format and type combination. Returns false if
     // either was an invalid enum.
-    bool computeFormatAndTypeParameters(GC3Denum format,
-                                        GC3Denum type,
-                                        unsigned int* componentsPerPixel,
-                                        unsigned int* bytesPerComponent);
+    static bool computeFormatAndTypeParameters(GC3Denum format,
+                                               GC3Denum type,
+                                               unsigned int* componentsPerPixel,
+                                               unsigned int* bytesPerComponent);
 
     // Computes the image size in bytes. If paddingInBytes is not null, padding
     // is also calculated in return. Returns NO_ERROR if succeed, otherwise

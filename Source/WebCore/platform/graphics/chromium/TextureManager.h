@@ -51,7 +51,7 @@ public:
     void releaseToken(TextureToken);
     bool hasTexture(TextureToken);
 
-    bool requestTexture(TextureToken, IntSize, unsigned textureFormat);
+    bool requestTexture(TextureToken, IntSize, GC3Denum textureFormat);
 
     void protectTexture(TextureToken);
     void unprotectTexture(TextureToken);
@@ -74,7 +74,7 @@ private:
 
     struct TextureInfo {
         IntSize size;
-        unsigned format;
+        GC3Denum format;
         unsigned textureId;
         bool isProtected;
     };

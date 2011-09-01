@@ -32,10 +32,16 @@
 
 namespace WebCore {
 
-static size_t memoryUseBytes(IntSize size, unsigned textureFormat)
+static size_t memoryUseBytes(IntSize size, GC3Denum textureFormat)
 {
-    // FIXME: This assumes all textures are 4 bytes/pixel, like RGBA.
-    return size.width() * size.height() * 4;
+    // FIXME: This assumes all textures are 1 byte/component.
+    const GC3Denum type = GraphicsContext3D::UNSIGNED_BYTE;
+    unsigned int componentsPerPixel = 4;
+    unsigned int bytesPerComponent = 1;
+    if (!GraphicsContext3D::computeFormatAndTypeParameters(textureFormat, type, &componentsPerPixel, &bytesPerComponent))
+        ASSERT_NOT_REACHED();
+
+    return size.width() * size.height() * componentsPerPixel * bytesPerComponent;
 }
 
 TextureManager::TextureManager(size_t memoryLimitBytes, int maxTextureSize)
