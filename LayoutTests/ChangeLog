@@ -1,3 +1,14 @@
+2011-09-01  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9528843> STIX glyphs not rendered on this stackoverflow answer
+        https://bugs.webkit.org/show_bug.cgi?id=67444
+
+        Reviewed by Darin Adler.
+
+        * fast/text/fallback-traits-fixup.html: Added.
+        * platform/mac/fast/text/fallback-traits-fixup-expected.png: Added.
+        * platform/mac/fast/text/fallback-traits-fixup-expected.txt: Added.
+
 2011-09-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update more SVG baselines

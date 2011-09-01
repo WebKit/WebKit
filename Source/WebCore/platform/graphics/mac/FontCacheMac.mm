@@ -101,7 +101,9 @@ static inline bool isAppKitFontWeightBold(NSInteger appKitFontWeight)
 
 const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-    const FontPlatformData& platformData = font.fontDataAt(0)->fontDataForCharacter(characters[0])->platformData();
+    UChar32 character;
+    U16_GET(characters, 0, 0, length, character);
+    const FontPlatformData& platformData = font.fontDataAt(0)->fontDataForCharacter(character)->platformData();
     NSFont *nsFont = platformData.font();
 
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(characters) length:length freeWhenDone:NO];
@@ -140,13 +142,21 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
         size = font.pixelSize();
     }
 
-    if (NSFont *bestVariation = [fontManager fontWithFamily:[substituteFont familyName] traits:traits weight:weight size:size])
-        substituteFont = bestVariation;
+    NSFontTraitMask substituteFontTraits = [fontManager traitsOfFont:substituteFont];
+    NSInteger substituteFontWeight = [fontManager weightOfFont:substituteFont];
+
+    if (traits != substituteFontTraits || weight != substituteFontWeight) {
+        if (NSFont *bestVariation = [fontManager fontWithFamily:[substituteFont familyName] traits:traits weight:weight size:size]) {
+            if (([fontManager traitsOfFont:bestVariation] != substituteFontTraits || [fontManager weightOfFont:bestVariation] != substituteFontWeight)
+                && [[bestVariation coveredCharacterSet] longCharacterIsMember:character])
+                substituteFont = bestVariation;
+        }
+    }
 
     substituteFont = font.fontDescription().usePrinterFont() ? [substituteFont printerFont] : [substituteFont screenFont];
 
-    NSFontTraitMask substituteFontTraits = [fontManager traitsOfFont:substituteFont];
-    NSInteger substituteFontWeight = [fontManager weightOfFont:substituteFont];
+    substituteFontTraits = [fontManager traitsOfFont:substituteFont];
+    substituteFontWeight = [fontManager weightOfFont:substituteFont];
 
     FontPlatformData alternateFont(substituteFont, platformData.size(),
         !font.isPlatformFont() && isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(substituteFontWeight),
