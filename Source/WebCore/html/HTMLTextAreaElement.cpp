@@ -36,7 +36,6 @@
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "RenderStyle.h"
 #include "RenderTextControlMultiLine.h"
 #include "ShadowRoot.h"
 #include "Text.h"
@@ -101,6 +100,7 @@ void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChan
     setLastChangeWasNotUserEdit();
     if (!m_isDirty)
         setNonDirtyValue(defaultValue());
+    setInnerTextValue(value());
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
     
@@ -329,6 +329,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue)
         return;
 
     m_value = normalizedValue;
+    setInnerTextValue(m_value);
     setLastChangeWasNotUserEdit();
     updatePlaceholderVisibility(false);
     setNeedsStyleRecalc();

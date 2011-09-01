@@ -49,7 +49,6 @@
 #include "NumberInputType.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SearchInputType.h"
 #include "ScriptEventListener.h"
 #include "WheelEvent.h"
@@ -59,6 +58,10 @@
 #if ENABLE(INPUT_COLOR)
 #include "ColorChooser.h"
 #include "ColorInputType.h"
+#endif
+
+#if ENABLE(INPUT_SPEECH)
+#include "RuntimeEnabledFeatures.h"
 #endif
 
 using namespace std;
@@ -583,6 +586,10 @@ void HTMLInputElement::updateType()
         m_valueIfDirty = sanitizeValue(fastGetAttribute(valueAttr));
     else
         updateValueIfNeeded();
+
+    setFormControlValueMatchesRenderer(false);
+    updateInnerTextValue();
+
     m_wasModifiedByUser = false;
 
     if (neededActivationCallback)
@@ -613,6 +620,20 @@ void HTMLInputElement::updateType()
 
     setNeedsValidityCheck();
     notifyFormStateChanged();
+}
+
+void HTMLInputElement::updateInnerTextValue()
+{
+    if (!isTextField())
+        return;
+
+    if (!suggestedValue().isNull())
+        setInnerTextValue(suggestedValue());
+    else if (!formControlValueMatchesRenderer()) {
+        // Update the renderer value if the formControlValueMatchesRenderer() flag is false.
+        // It protects an unacceptable renderer value from being overwritten with the DOM value.
+        setInnerTextValue(visibleValue());
+    }
 }
 
 void HTMLInputElement::subtreeHasChanged()
@@ -822,12 +843,14 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
             m_inputType->destroyShadowSubtree();
             m_inputType->createShadowSubtree();
         }
+        setFormControlValueMatchesRenderer(false);
         setNeedsStyleRecalc();
     } else if (attr->name() == onwebkitspeechchangeAttr)
         setAttributeEventListener(eventNames().webkitspeechchangeEvent, createAttributeEventListener(this, attr));
 #endif
     else
         HTMLTextFormControlElement::parseMappedAttribute(attr);
+    updateInnerTextValue();
 }
 
 void HTMLInputElement::finishParsingChildren()
@@ -1076,6 +1099,9 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
         setAttribute(valueAttr, sanitizedValue);
 
     setNeedsValidityCheck();
+
+    if (valueChanged)
+        updateInnerTextValue();
 
     if (isTextField()) {
         unsigned max = visibleValue().length();

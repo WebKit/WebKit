@@ -41,8 +41,6 @@ private:
     virtual void adjustControlHeightBasedOnLineHeight(LayoutUnit lineHeight);
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
-    virtual void updateFromElement();
-
     virtual RenderStyle* textBaseStyle() const;
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
     virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren);

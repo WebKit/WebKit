@@ -1,3 +1,48 @@
+2011-08-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash when inserting text with a trailing newline into a textarea via JS
+        https://bugs.webkit.org/show_bug.cgi?id=66241
+
+        Reviewed by Darin Adler and Kent Tamura.
+
+        The crash was caused by updateFromElement biting on the editing code.
+
+        When there is a style rule that applies on text nodes inside the shadow DOM, DOM modifications made
+        by the editing code may trigger style recalculation on input or textarea elements in the midst of editing
+        commands. In response to this style recalculation, HTMLInputElement::updateFromElement and
+        HTMLTextAreaElement::updateFromElement call setInnerTextValue to re-create the text nodes in the
+        shadow DOM. The editing code blows up because setInnerTextValue detaches old text nodes referenced by
+        Positions and VisiblePositions held by the editing commands in progress.
+
+        Fixed the crash by stop calling setInnerTextValue in updateFromElement. Instead, WebKit now creates
+        the text nodes when attributes, descendent nodes, etc... of input or textarea element changes.
+
+        Tests: fast/forms/update-from-element-during-editing-crash-1.html
+               fast/forms/update-from-element-during-editing-crash-2.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType): Force calling setInnerTextValue when input type changes.
+        (WebCore::HTMLInputElement::updateInnerTextValue): Extracted from RenderTextControlSingleLine's
+        updateElement.
+        (WebCore::HTMLInputElement::parseMappedAttribute): Calls updateInnerTextValue; force calling
+        setInnerTextValue when -webkit-speech attribute changes. In the theory, we should be able to call it less
+        frequently but there are too many cases to consider at the moment.
+        (WebCore::HTMLInputElement::setValue): Calls updateInnerTextValue when the value actually changed.
+        Note we need to call it before we set or restore selection.
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::childrenChanged): Calls updateInnerTextValue when textarea's descendants
+        nodes are changed by parser or scripts.
+        (WebCore::HTMLTextAreaElement::setValueCommon): Calls updateInnerTextValue when the value changes.
+        * html/HTMLTextFormControlElement.h:
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::willBlur): Calls updateInnerTextValue because input[type=number] forces
+        the value to be valid on blur.
+        * rendering/RenderTextControlMultiLine.cpp: Removed RenderTextControlMultiLine::updateFromElement.
+        * rendering/RenderTextControlMultiLine.h: Ditto.
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+
 2011-08-31  Tom Zakrajsek  <tomz@codeaurora.org>
 
         Fix snow-leopard regression caused by r93982

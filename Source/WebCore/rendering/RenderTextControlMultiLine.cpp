@@ -80,13 +80,6 @@ LayoutUnit RenderTextControlMultiLine::baselinePosition(FontBaseline baselineTyp
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
-void RenderTextControlMultiLine::updateFromElement()
-{
-    RenderTextControl::updateFromElement();
-
-    textFormControlElement()->setInnerTextValue(static_cast<HTMLTextAreaElement*>(node())->value());
-}
-
 PassRefPtr<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const RenderStyle* startStyle) const
 {
     RefPtr<RenderStyle> textBlockStyle = RenderStyle::create();

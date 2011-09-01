@@ -103,6 +103,7 @@ protected:
     void setLastChangeWasNotUserEdit() { m_lastChangeWasUserEdit = false; }
 
     String valueWithHardLineBreaks() const;
+
 private:
     int computeSelectionStart() const;
     int computeSelectionEnd() const;

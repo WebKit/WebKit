@@ -1,3 +1,18 @@
+2011-08-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash when inserting text with a trailing newline into a textarea via JS
+        https://bugs.webkit.org/show_bug.cgi?id=66241
+
+        Reviewed by Darin Adler and Kent Tamura.
+
+        Add regressions tests to ensure WebKit doesn't crash even when style recalc happens
+        in the midst of editing commands.
+
+        * fast/forms/update-from-element-during-editing-crash-1-expected.txt: Added.
+        * fast/forms/update-from-element-during-editing-crash-1.html: Added.
+        * fast/forms/update-from-element-during-editing-crash-2-expected.txt: Added.
+        * fast/forms/update-from-element-during-editing-crash-2.html: Added.
+
 2011-08-31  David Levin  <levin@chromium.org>
 
         [chromium] Add baselines due to r94253 and r94258.

@@ -280,8 +280,7 @@ void NumberInputType::willBlur()
 
     // We need to reset the renderer value explicitly because an unacceptable
     // renderer value should be purged before style calculation.
-    if (element()->renderer())
-        element()->renderer()->updateFromElement();
+    element()->updateInnerTextValue();
 }
 
 String NumberInputType::visibleValue() const
