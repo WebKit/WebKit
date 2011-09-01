@@ -1951,13 +1951,14 @@ String AccessibilityRenderObject::text() const
     
     if (!isTextControl() || isPasswordField())
         return String();
-    
-    if (isNativeTextControl())
-        return toRenderTextControl(m_renderer)->text();
-    
+
     Node* node = m_renderer->node();
     if (!node)
         return String();
+
+    if (isNativeTextControl())
+        return toRenderTextControl(m_renderer)->textFormControlElement()->value();
+
     if (!node->isElementNode())
         return String();
     

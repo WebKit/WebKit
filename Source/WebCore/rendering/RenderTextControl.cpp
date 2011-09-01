@@ -22,26 +22,17 @@
 #include "config.h"
 #include "RenderTextControl.h"
 
-#include "Editor.h"
-#include "Frame.h"
-#include "HTMLBRElement.h"
-#include "HTMLInputElement.h"
-#include "HTMLNames.h"
+#include "HTMLTextFormControlElement.h"
 #include "HitTestResult.h"
-#include "Position.h"
-#include "RenderLayer.h"
 #include "RenderText.h"
 #include "ScrollbarTheme.h"
-#include "Text.h"
 #include "TextIterator.h"
-#include <wtf/text/StringBuilder.h>
+#include "VisiblePosition.h"
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
 
 namespace WebCore {
-
-using namespace HTMLNames;
 
 // Value chosen by observation.  This can be tweaked.
 static const int minColorContrastValue = 1300;
@@ -160,90 +151,6 @@ VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
     CharacterIterator it(range.get());
     it.advance(index - 1);
     return VisiblePosition(it.range()->endPosition(), UPSTREAM);
-}
-
-static String finishText(StringBuilder& result)
-{
-    // Remove one trailing newline; there's always one that's collapsed out by rendering.
-    size_t size = result.length();
-    if (size && result[size - 1] == '\n')
-        result.resize(--size);
-    return result.toString();
-}
-
-String RenderTextControl::text()
-{
-    HTMLElement* innerText = innerTextElement();
-    if (!innerText)
-        return emptyString();
- 
-    StringBuilder result;
-    for (Node* node = innerText; node; node = node->traverseNextNode(innerText)) {
-        if (node->hasTagName(brTag))
-            result.append(newlineCharacter);
-        else if (node->isTextNode())
-            result.append(static_cast<Text*>(node)->data());
-    }
-    return finishText(result);
-}
-
-static void getNextSoftBreak(RootInlineBox*& line, Node*& breakNode, unsigned& breakOffset)
-{
-    RootInlineBox* next;
-    for (; line; line = next) {
-        next = line->nextRootBox();
-        if (next && !line->endsWithBreak()) {
-            ASSERT(line->lineBreakObj());
-            breakNode = line->lineBreakObj()->node();
-            breakOffset = line->lineBreakPos();
-            line = next;
-            return;
-        }
-    }
-    breakNode = 0;
-    breakOffset = 0;
-}
-
-String RenderTextControl::textWithHardLineBreaks()
-{
-    HTMLElement* innerText = innerTextElement();
-    if (!innerText)
-        return emptyString();
-
-    RenderBlock* renderer = toRenderBlock(innerText->renderer());
-    if (!renderer)
-        return emptyString();
-
-    Node* breakNode;
-    unsigned breakOffset;
-    RootInlineBox* line = renderer->firstRootBox();
-    if (!line)
-        return emptyString();
-
-    getNextSoftBreak(line, breakNode, breakOffset);
-
-    StringBuilder result;
-    for (Node* node = innerText->firstChild(); node; node = node->traverseNextNode(innerText)) {
-        if (node->hasTagName(brTag))
-            result.append(newlineCharacter);
-        else if (node->isTextNode()) {
-            String data = static_cast<Text*>(node)->data();
-            unsigned length = data.length();
-            unsigned position = 0;
-            while (breakNode == node && breakOffset <= length) {
-                if (breakOffset > position) {
-                    result.append(data.characters() + position, breakOffset - position);
-                    position = breakOffset;
-                    result.append(newlineCharacter);
-                }
-                getNextSoftBreak(line, breakNode, breakOffset);
-            }
-            result.append(data.characters() + position, length - position);
-        }
-        while (breakNode == node)
-            getNextSoftBreak(line, breakNode, breakOffset);
-    }
-    return finishText(result);
 }
 
 int RenderTextControl::scrollbarThickness() const

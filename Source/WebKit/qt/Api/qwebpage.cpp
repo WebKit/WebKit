@@ -1439,8 +1439,8 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
             return QVariant(frame->selection()->extent().offsetInContainerNode());
         }
         case Qt::ImSurroundingText: {
-            if (renderTextControl) {
-                QString text = renderTextControl->text();
+            if (renderTextControl && renderTextControl->textFormControlElement()) {
+                QString text = renderTextControl->textFormControlElement()->value();
                 RefPtr<Range> range = editor->compositionRange();
                 if (range)
                     text.remove(range->startPosition().offsetInContainerNode(), TextIterator::rangeLength(range.get()));
@@ -1449,11 +1449,11 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
             return QVariant();
         }
         case Qt::ImCurrentSelection: {
-            if (!editor->hasComposition() && renderTextControl) {
+            if (!editor->hasComposition() && renderTextControl && renderTextControl->textFormControlElement()) {
                 int start = frame->selection()->start().offsetInContainerNode();
                 int end = frame->selection()->end().offsetInContainerNode();
                 if (end > start)
-                    return QVariant(QString(renderTextControl->text()).mid(start, end - start));
+                    return QVariant(QString(renderTextControl->textFormControlElement()->value()).mid(start, end - start));
             }
             return QVariant();
 

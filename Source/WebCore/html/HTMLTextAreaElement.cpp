@@ -171,10 +171,7 @@ bool HTMLTextAreaElement::appendFormData(FormDataList& encoding, bool)
 
     document()->updateLayout();
 
-    // FIXME: It's not acceptable to ignore the HardWrap setting when there is no renderer.
-    // While we have no evidence this has ever been a practical problem, it would be best to fix it some day.
-    RenderTextControl* control = toRenderTextControl(renderer());
-    const String& text = (m_wrap == HardWrap && control) ? control->textWithHardLineBreaks() : value();
+    const String& text = (m_wrap == HardWrap) ? valueWithHardLineBreaks() : value();
     encoding.appendData(name(), text);
     return true;
 }
@@ -253,7 +250,7 @@ void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*
         return;
     unsigned unsignedMaxLength = static_cast<unsigned>(signedMaxLength);
 
-    unsigned currentLength = numGraphemeClusters(toRenderTextControl(renderer())->text());
+    unsigned currentLength = numGraphemeClusters(innerTextValue());
     // selectionLength represents the selection length of this text field to be
     // removed by this insertion.
     // If the text field has no focus, we don't need to take account of the
@@ -289,7 +286,7 @@ void HTMLTextAreaElement::updateValue() const
         return;
 
     ASSERT(renderer());
-    m_value = toRenderTextControl(renderer())->text();
+    m_value = innerTextValue();
     const_cast<HTMLTextAreaElement*>(this)->setFormControlValueMatchesRenderer(true);
     const_cast<HTMLTextAreaElement*>(this)->notifyFormStateChanged();
     m_isDirty = true;

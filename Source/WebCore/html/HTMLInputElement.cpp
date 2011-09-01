@@ -628,7 +628,7 @@ void HTMLInputElement::subtreeHasChanged()
     // HTMLInputElement::handleBeforeTextInsertedEvent() has already called
     // sanitizeUserInputValue().
     // sanitizeValue() is needed because IME input doesn't dispatch BeforeTextInsertedEvent.
-    String value = toRenderTextControl(renderer())->text();
+    String value = innerTextValue();
     if (isAcceptableValue(value))
         setValueFromRenderer(sanitizeValue(convertFromVisibleValue(value)));
     // Recalc for :invalid and hasUnacceptableValue() change.

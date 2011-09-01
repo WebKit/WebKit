@@ -77,6 +77,7 @@ public:
     void notifyFormStateChanged();
     bool lastChangeWasUserEdit() const;
     void setInnerTextValue(const String&);
+    String innerTextValue() const;
 
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
@@ -100,6 +101,8 @@ protected:
     virtual void subtreeHasChanged() = 0;
 
     void setLastChangeWasNotUserEdit() { m_lastChangeWasUserEdit = false; }
+
+    String valueWithHardLineBreaks() const;
 private:
     int computeSelectionStart() const;
     int computeSelectionEnd() const;

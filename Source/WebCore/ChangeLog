@@ -1,3 +1,43 @@
+2011-08-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move text() and textWithHardLineBreaks() from RenderTextControl to HTMLTextFormControlElement
+        https://bugs.webkit.org/show_bug.cgi?id=67320
+
+        Reviewed by Darin Adler.
+
+        Moved and renamed RenderText::text and RenderText::textWithHardLineBreaks to
+        HTMLTextFormControlElement::innerTextValue and HTMLTextFormControlElement::valueWithHardLineBreaks.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::text):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::subtreeHasChanged):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::appendFormData): Calls valueWithHardLineBreaks. It doesn't have to check
+        the existence of renderer anymore because valueWithHardLineBreaks returns value() when renderer do not
+        exist unlike RenderText::textWithHardLineBreaks returned emptyString() in such cases. This is the only place
+        valueWithHardLineBreaks is ever called; but we can't move valueWithHardLineBreaks because it calls
+        finishText.
+        (WebCore::HTMLTextAreaElement::handleBeforeTextInsertedEvent):
+        (WebCore::HTMLTextAreaElement::updateValue):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::selectedText):
+        (WebCore::HTMLTextFormControlElement::setInnerTextValue):
+        (WebCore::finishText): Moved from RenderText.cpp
+        (WebCore::HTMLTextFormControlElement::innerTextValue): Ditto.
+        (WebCore::getNextSoftBreak): Ditto.
+        (WebCore::HTMLTextFormControlElement::valueWithHardLineBreaks): Ditto; this function returns value()
+        when there are no renderers or root inline boxes instead of emptyString().
+        * html/HTMLTextFormControlElement.h:
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::hasUnacceptableValue):
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::startSearchEventTimer):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleBeforeTextInsertedEvent):
+        * rendering/RenderTextControl.cpp:
+        * rendering/RenderTextControl.h:
+
 2011-08-31  Jeff Miller  <jeffm@apple.com>
 
         REGRESSION(92210): AVFoundation media engine is disabled on OS X

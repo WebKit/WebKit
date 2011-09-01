@@ -128,7 +128,7 @@ void SearchInputType::destroyShadowSubtree()
 void SearchInputType::startSearchEventTimer()
 {
     ASSERT(element()->renderer());
-    unsigned length = toRenderTextControlSingleLine(element()->renderer())->text().length();
+    unsigned length = element()->innerTextValue().length();
 
     if (!length) {
         stopSearchEventTimer();

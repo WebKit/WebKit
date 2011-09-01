@@ -318,7 +318,7 @@ String NumberInputType::sanitizeValue(const String& proposedValue)
 
 bool NumberInputType::hasUnacceptableValue()
 {
-    return element()->renderer() && !isAcceptableValue(toRenderTextControl(element()->renderer())->text());
+    return element()->renderer() && !isAcceptableValue(element()->innerTextValue());
 }
 
 bool NumberInputType::shouldRespectSpeechAttribute()

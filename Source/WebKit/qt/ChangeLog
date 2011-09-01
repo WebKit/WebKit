@@ -1,3 +1,15 @@
+2011-08-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move text() and textWithHardLineBreaks() from RenderTextControl to HTMLTextFormControlElement
+        https://bugs.webkit.org/show_bug.cgi?id=67320
+
+        Reviewed by Darin Adler.
+
+        Call HTMLTextFormControlElement::value() instead of RenderText::text()
+
+        * Api/qwebpage.cpp:
+        (QWebPage::inputMethodQuery):
+
 2011-08-31  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Unskip API test for load signals order
