@@ -48,6 +48,8 @@ public:
     void addListener(ScriptDebugListener*, WorkerContext*);
     void removeListener(ScriptDebugListener*, WorkerContext*);
 
+    static const char* debuggerTaskMode;
+
 private:
     virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>*) { }
     virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) { return 0; }

@@ -58,6 +58,11 @@ namespace WebCore {
         virtual void postMessageToWorkerContext(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>);
         virtual bool hasPendingActivity() const;
         virtual void workerObjectDestroyed();
+#if ENABLE(INSPECTOR)
+        virtual void connectToInspector(WorkerContextProxy::PageInspector*);
+        virtual void disconnectFromInspector();
+        virtual void sendMessageToInspector(const String&);
+#endif
 
         // Implementations of WorkerObjectProxy.
         // (Only use these methods in the worker context thread.)
@@ -85,6 +90,7 @@ namespace WebCore {
 
     private:
         friend class MessageWorkerTask;
+        friend class PostMessageToPageInspectorTask;
         friend class WorkerContextDestroyedTask;
         friend class WorkerExceptionTask;
         friend class WorkerThreadActivityReportTask;
@@ -105,6 +111,9 @@ namespace WebCore {
         bool m_askedToTerminate;
 
         Vector<OwnPtr<ScriptExecutionContext::Task> > m_queuedEarlyTasks; // Tasks are queued here until there's a thread object created.
+#if ENABLE(INSPECTOR)
+        WorkerContextProxy::PageInspector* m_pageInspector;
+#endif
     };
 
 } // namespace WebCore

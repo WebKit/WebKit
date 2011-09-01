@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+const char* WorkerScriptDebugServer::debuggerTaskMode = "debugger";
+
 WorkerScriptDebugServer::WorkerScriptDebugServer()
     : ScriptDebugServer()
 {

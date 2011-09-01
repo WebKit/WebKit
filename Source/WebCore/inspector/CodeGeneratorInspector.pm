@@ -789,7 +789,7 @@ InspectorBackendStub.prototype = {
         var agentName = domainAndFunction[0] + "Agent";
         if (!window[agentName])
             window[agentName] = {};
-        window[agentName][domainAndFunction[1]] = this.sendMessageToBackend.bind(this, requestString);
+        window[agentName][domainAndFunction[1]] = this._sendMessageToBackend.bind(this, requestString);
         window[agentName][domainAndFunction[1]]["invoke"] = this._invoke.bind(this, requestString)
     },
 
@@ -797,10 +797,10 @@ InspectorBackendStub.prototype = {
     {
         var request = JSON.parse(requestString);
         request.params = args;
-        this.sendMessageObjectToBackend(request, callback);
+        this._wrapCallbackAndSendMessageObject(request, callback);
     },
 
-    sendMessageToBackend: function()
+    _sendMessageToBackend: function()
     {
         var args = Array.prototype.slice.call(arguments);
         var request = JSON.parse(args.shift());
@@ -844,17 +844,23 @@ InspectorBackendStub.prototype = {
             }
         }
 
-        this.sendMessageObjectToBackend(request, callback);
+        this._wrapCallbackAndSendMessageObject(request, callback);
     },
 
-    sendMessageObjectToBackend: function(messageObject, callback)
+    _wrapCallbackAndSendMessageObject: function(messageObject, callback)
     {
         messageObject.id = this._wrap(callback || function() {});
-        var message = JSON.stringify(messageObject);
+
         if (window.dumpInspectorProtocolMessages)
-            console.log("frontend: " + message);
+            console.log("frontend: " + JSON.stringify(messageObject));
 
         ++this._pendingResponsesCount;
+        this.sendMessageObjectToBackend(messageObject);
+    },
+
+    sendMessageObjectToBackend: function(messageObject)
+    {
+        var message = JSON.stringify(messageObject);
         InspectorFrontendHost.sendMessageToBackend(message);
     },
 

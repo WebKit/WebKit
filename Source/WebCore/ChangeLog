@@ -1,3 +1,30 @@
+2011-08-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: dedicated worker inspection is broken
+        https://bugs.webkit.org/show_bug.cgi?id=67279
+
+        Provide transport for inspector messages between Page and DedicatedWorker inspectors
+        in case of in-process workers.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/CodeGeneratorInspector.pm: sendMessageObjectToBackend should accept message
+        object which is ready for sending to backend. This method is overriden in WorkerManager
+        for dedicated workers and we don't want to replicate request id assignment there.
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::PostMessageToPageInspectorTask::create):
+        (WebCore::PostMessageToPageInspectorTask::PostMessageToPageInspectorTask):
+        (WebCore::PostMessageToPageInspectorTask::performTask):
+        (WebCore::WorkerMessagingProxy::WorkerMessagingProxy):
+        (WebCore::connectToWorkerContextInspectorTask):
+        (WebCore::WorkerMessagingProxy::connectToInspector):
+        (WebCore::disconnectFromWorkerContextInspectorTask):
+        (WebCore::WorkerMessagingProxy::disconnectFromInspector):
+        (WebCore::dispatchOnInspectorBackendTask):
+        (WebCore::WorkerMessagingProxy::sendMessageToInspector):
+        (WebCore::WorkerMessagingProxy::postMessageToPageInspector):
+        * workers/WorkerMessagingProxy.h:
+
 2011-09-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         [CSS3 Backgrounds and Borders] Implement border-image-slice
