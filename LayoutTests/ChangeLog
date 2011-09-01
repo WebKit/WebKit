@@ -1,5 +1,11 @@
 2011-09-01  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Mark test that renders differently in 32 vs 64 bit mode as failing (WTF?)
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-01  James Robinson  <jamesr@chromium.org>
+
         [chromium] Update chromium baselines for 94338 for windows/mac
 
         * platform/chromium-cg-mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png: Added.
