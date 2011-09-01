@@ -1,5 +1,19 @@
 2011-09-01  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Update more SVG baselines
+
+        * platform/chromium-cg-mac/svg/custom/non-scaling-stroke-expected.png:
+        * platform/chromium-cg-mac/svg/custom/pattern-skew-transformed-expected.png:
+        * platform/chromium-cg-mac/svg/custom/pattern-with-transformation-expected.png:
+        * platform/mac/svg/custom/non-scaling-stroke-expected.txt: Removed.
+        * platform/mac/svg/custom/pattern-skew-transformed-expected.txt: Removed.
+        * platform/qt/svg/custom/non-scaling-stroke-expected.txt: Removed.
+        * platform/qt/svg/custom/pattern-skew-transformed-expected.txt: Removed.
+        * svg/custom/non-scaling-stroke-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/non-scaling-stroke-expected.txt.
+        * svg/custom/pattern-skew-transformed-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/pattern-skew-transformed-expected.txt.
+
+2011-09-01  James Robinson  <jamesr@chromium.org>
+
         [chromium] Mark test that renders differently in 32 vs 64 bit mode as failing (WTF?)
 
         * platform/chromium/test_expectations.txt:
