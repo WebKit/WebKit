@@ -109,6 +109,10 @@ WebInspector.WorkerManager.prototype = {
         var workerInspectorWindow = window.open(url, undefined, "location=0");
         this._workerIdToWindow[workerId] = workerInspectorWindow;
         workerInspectorWindow.addEventListener("beforeunload", this._workerInspectorClosing.bind(this, workerId), true);
+
+        // Listen to beforeunload in detached state and to the InspectorClosing event in case of attached inspector.
+        window.addEventListener("beforeunload", this._pageInspectorClosing.bind(this), true);
+        WebInspector.notifications.addEventListener(WebInspector.Events.InspectorClosing, this._pageInspectorClosing, this);
     },
 
     closeWorkerInspector: function(workerId)
@@ -125,8 +129,19 @@ WebInspector.WorkerManager.prototype = {
         this.dispatchEventToListeners(WebInspector.WorkerManager.Events.WorkersCleared);
     },
 
+    _pageInspectorClosing: function()
+    {
+        this._ignoreWorkerInspectorClosing = true;
+        for (var workerId in this._workerIdToWindow) {
+            this._workerIdToWindow[workerId].close();
+            WorkerAgent.disconnectFromWorker(workerId);
+        }
+    },
+
     _workerInspectorClosing: function(workerId, event)
     {
+        if (this._ignoreWorkerInspectorClosing)
+            return;
         delete this._workerIdToWindow[workerId];
         WorkerAgent.disconnectFromWorker(workerId);
         this.dispatchEventToListeners(WebInspector.WorkerManager.Events.WorkerInspectorClosed, workerId);

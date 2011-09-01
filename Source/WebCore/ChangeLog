@@ -1,5 +1,21 @@
 2011-08-31  Yury Semikhatsky  <yurys@chromium.org>
 
+        Web Inspector: close dedicated worker inspectors when page inspector is closing
+        https://bugs.webkit.org/show_bug.cgi?id=67366
+
+        Close all dedicated worker inspector windows when page inspector is closing.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/WorkerManager.js:
+        (WebInspector.WorkerManager.prototype._openInspectorWindow):
+        (WebInspector.WorkerManager.prototype._pageInspectorClosing):
+        (WebInspector.WorkerManager.prototype._workerInspectorClosing):
+        * inspector/front-end/inspector.js:
+        (WebInspector.close):
+
+2011-08-31  Yury Semikhatsky  <yurys@chromium.org>
+
         [Chromium] Web Inspector: dedicated worker inspection is broken
         https://bugs.webkit.org/show_bug.cgi?id=67279
 

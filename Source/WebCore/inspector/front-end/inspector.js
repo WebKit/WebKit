@@ -432,6 +432,10 @@ var WebInspector = {
     }
 }
 
+WebInspector.Events = {
+    InspectorClosing: "InspectorClosing"
+}
+
 {(function parseQueryParameters()
 {
     WebInspector.queryParamsObject = {};
@@ -466,6 +470,8 @@ WebInspector.loaded = function()
 WebInspector.doLoadedDone = function()
 {
     InspectorFrontendHost.loaded();
+
+    this.notifications = new WebInspector.Object();
 
     var platform = WebInspector.platform;
     document.body.addStyleClass("platform-" + platform);
@@ -638,6 +644,7 @@ WebInspector.close = function(event)
     if (this._isClosing)
         return;
     this._isClosing = true;
+    this.notifications.dispatchEventToListeners(WebInspector.Events.InspectorClosing);
     InspectorFrontendHost.closeWindow();
 }
 
