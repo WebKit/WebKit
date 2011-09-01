@@ -36,7 +36,12 @@
 
 #include "Threading.h"
 
+#if OS(ANDROID)
+// PTHREAD_KEYS_MAX is not defined in bionic, so explicitly define it here.
+#define PTHREAD_KEYS_MAX 1024
+#else
 #include <limits.h>
+#endif
 
 namespace WTF {
 
@@ -87,4 +92,3 @@ void ThreadIdentifierData::destruct(void* data)
 } // namespace WTF
 
 #endif // USE(PTHREADS)
-
