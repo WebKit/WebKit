@@ -51,6 +51,10 @@ class PluginLayerChromium;
 class ResourceError;
 class ResourceResponse;
 class WheelEvent;
+
+#if ENABLE(GESTURE_EVENTS)
+class PlatformGestureEvent;
+#endif
 }
 
 namespace WebKit {
@@ -135,6 +139,10 @@ public:
     void willEndLiveResize();
 
     bool paintCustomOverhangArea(WebCore::GraphicsContext*, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&);
+
+#if ENABLE(GESTURE_EVENTS)
+    bool handleGestureEvent(const WebCore::PlatformGestureEvent&);
+#endif
 
 private:
     WebPluginContainerImpl(WebCore::HTMLPlugInElement* element, WebPlugin* webPlugin);

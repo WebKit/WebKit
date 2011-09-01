@@ -1,5 +1,22 @@
 2011-08-31  Sailesh Agrawal  <sail@chromium.org>
 
+        Chromium Mac: PDF: Scrollsbars should be visible when scrolling using the two finger gesture on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=66599
+
+        Reviewed by Darin Fisher.
+
+        Overlay scrollbars over a pdf wouldn't stay visible if a gesture was in progress. Normally we use a beginScrollGesture and endScrollGesture to keep the scrollbars visible. Unfortunately PDFs didn't handle gesture events so we didn't get the begin/end gesture events.
+
+        This change pipes gesture events to WebPluginContainerImpl if possible. This fixes this bug.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleGestureEvent):
+        * src/WebPluginContainerImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::gestureEvent):
+
+2011-08-31  Sailesh Agrawal  <sail@chromium.org>
+
         Chromium Mac: Add fallback for drawing PDF overhang area
         https://bugs.webkit.org/show_bug.cgi?id=66614
 

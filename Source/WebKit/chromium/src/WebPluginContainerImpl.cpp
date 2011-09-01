@@ -76,6 +76,10 @@
 #include "UserGestureIndicator.h"
 #include "WheelEvent.h"
 
+#if ENABLE(GESTURE_EVENTS)
+#include "PlatformGestureEvent.h"
+#endif
+
 #if WEBKIT_USING_SKIA
 #include "PlatformContextSkia.h"
 #endif
@@ -480,6 +484,17 @@ bool WebPluginContainerImpl::paintCustomOverhangArea(GraphicsContext* context, c
     context->restore();
     return true;
 }
+
+#if ENABLE(GESTURE_EVENTS)
+bool WebPluginContainerImpl::handleGestureEvent(const WebCore::PlatformGestureEvent& gestureEvent)
+{
+    if (m_scrollbarGroup) {
+        m_scrollbarGroup->handleGestureEvent(gestureEvent);
+        return true;
+    }
+    return false;
+}
+#endif
 
 // Private methods -------------------------------------------------------------
 
