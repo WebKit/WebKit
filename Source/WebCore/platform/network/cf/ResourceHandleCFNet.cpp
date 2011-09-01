@@ -234,7 +234,7 @@ static void didReceiveResponse(CFURLConnectionRef conn, CFURLResponseRef cfRespo
     handle->client()->didReceiveResponse(handle, cfResponse);
 }
 
-#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
 static void didReceiveDataArray(CFURLConnectionRef conn, CFArrayRef dataArray, const void* clientInfo)
 {
 #if LOG_DISABLED
@@ -481,7 +481,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
 
     RetainPtr<CFURLRequestRef> request(AdoptCF, makeFinalRequest(firstRequest(), shouldContentSniff));
 
-#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK) && USE(PROTECTION_SPACE_AUTH_CALLBACK)
+#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK) && USE(PROTECTION_SPACE_AUTH_CALLBACK)
     CFURLConnectionClient_V6 client = { 6, this, 0, 0, 0, WebCore::willSendRequest, didReceiveResponse, didReceiveData, 0, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData, shouldUseCredentialStorageCallback, 0, canRespondToProtectionSpace, 0, didReceiveDataArray};
 #else
     CFURLConnectionClient_V3 client = { 3, this, 0, 0, 0, WebCore::willSendRequest, didReceiveResponse, didReceiveData, 0, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData, shouldUseCredentialStorageCallback, 0};
@@ -897,7 +897,7 @@ bool WebCoreSynchronousLoaderClient::canAuthenticateAgainstProtectionSpace(Resou
 
 #endif // USE(CFNETWORK)
 
-#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
 void ResourceHandle::handleDataArray(CFArrayRef dataArray)
 {
     ASSERT(client());

@@ -33,7 +33,7 @@
 #include "FrameLoaderClient.h"
 #include "ResourceHandle.h"
 
-#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
 #include "InspectorInstrumentation.h"
 #endif
 
@@ -68,7 +68,7 @@ NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCached
 
 #endif
 
-#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
 
 void ResourceLoader::didReceiveDataArray(CFArrayRef dataArray)
 {

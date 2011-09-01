@@ -217,7 +217,7 @@ public:
     static CFStringRef synchronousLoadRunLoopMode();
 #endif
 
-#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
     void handleDataArray(CFArrayRef dataArray);
 #endif
 

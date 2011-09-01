@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
 void SubresourceLoader::didReceiveDataArray(CFArrayRef dataArray)
 {
     // Reference the object in this method since the additional processing can do

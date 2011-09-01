@@ -91,7 +91,7 @@ void SharedBuffer::clearPlatformData()
     m_cfData = 0;
 }
 
-#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
 void SharedBuffer::append(CFDataRef data)
 {
     ASSERT(data);

@@ -60,7 +60,7 @@ namespace WebCore {
         virtual void willCancel(const ResourceError&);
         virtual void didCancel(const ResourceError&);
 
-#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
+#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
         virtual bool supportsDataArray() { return true; }
         virtual void didReceiveDataArray(CFArrayRef);
 #endif
