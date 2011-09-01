@@ -3695,6 +3695,8 @@ BUG_LEVIN : css2.1/t090204-display-change-01-b-ao.html = IMAGE+TEXT
 
 BUGWK67352 : fast/canvas/webgl/WebGLContextEvent.html = TEXT
 
+BUGWK67433 WIN LINUX : svg/custom/pattern-rotate-gaps.svg = IMAGE
+
 BUGWK67353 : fast/events/document-elementFromPoint.html = TEXT
 BUGWK67353 : fast/events/offsetX-offsetY.html = TEXT
 BUGWK67359 : http/tests/loading/empty-urls.html = PASS TEXT
