@@ -391,7 +391,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_loadEventFinished(false)
     , m_startTime(currentTime())
     , m_overMinimumLayoutThreshold(false)
-    , m_extraLayoutDelay(0)
     , m_scriptRunner(ScriptRunner::create(this))
     , m_xmlVersion("1.0")
     , m_xmlStandalone(false)
@@ -2219,22 +2218,19 @@ bool Document::shouldScheduleLayout()
     
 bool Document::isLayoutTimerActive()
 {
-    if (!view() || !view()->layoutPending())
-        return false;
-    bool isPendingLayoutImmediate = minimumLayoutDelay() == m_extraLayoutDelay;
-    return isPendingLayoutImmediate;
+    return view() && view()->layoutPending() && !minimumLayoutDelay();
 }
 
 int Document::minimumLayoutDelay()
 {
     if (m_overMinimumLayoutThreshold)
-        return m_extraLayoutDelay;
+        return 0;
     
     int elapsed = elapsedTime();
     m_overMinimumLayoutThreshold = elapsed > cLayoutScheduleThreshold;
     
     // We'll want to schedule the timer to fire at the minimum layout threshold.
-    return max(0, cLayoutScheduleThreshold - elapsed) + m_extraLayoutDelay;
+    return max(0, cLayoutScheduleThreshold - elapsed);
 }
 
 int Document::elapsedTime() const

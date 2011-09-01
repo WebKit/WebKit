@@ -1,3 +1,36 @@
+2011-08-31  Steve Block  <steveblock@google.com>
+
+        Clean up all mentions of Android in comments
+        https://bugs.webkit.org/show_bug.cgi?id=67303
+
+        Also removes some superfluous guards and methods added for Android.
+
+        Reviewed by Darin Adler.
+
+        No new tests, removing dead code only.
+
+        * WebCorePrefix.h:
+          Chromium uses this file only on Mac, so these Android guards are no
+          longer required.
+        * bindings/v8/NPV8Object.cpp:
+        * bindings/v8/NPV8Object.h:
+          Including npruntime.h for non-Chromium ports was added in
+          http://trac.webkit.org/changeset/53634 for Android. However, this
+          file is included in WebCore.pro, so leaving the guard in place.
+        * bindings/v8/ScriptCachedFrameData.h:
+          This code was added for Android in
+          http://trac.webkit.org/changeset/56716 but is now also used by QT. The
+          comment should have been removed in
+          http://trac.webkit.org/changeset/93573.
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::isLayoutTimerActive):
+        (WebCore::Document::minimumLayoutDelay):
+        * dom/Document.h:
+          This method was added for Android in
+          http://trac.webkit.org/changeset/52919 and modified in
+          http://trac.webkit.org/changeset/79775. It is no longer needed.
+
 2011-09-01  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Build dependency problems

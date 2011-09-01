@@ -113,7 +113,7 @@
 
 #include <time.h>
 
-#if !defined(BUILDING_WX__) && !defined(ANDROID) && !defined(BUILDING_BREWMP__)
+#if !defined(BUILDING_WX__) && !defined(BUILDING_BREWMP__)
 #include <CoreFoundation/CoreFoundation.h>
 #ifdef WTF_PLATFORM_WIN_CAIRO
 #include <ConditionalMacros.h>
@@ -138,7 +138,7 @@
 #endif
 
 #endif
-#endif  // !defined(BUILDING_WX__) && !defined(ANDROID)
+#endif // !defined(BUILDING_WX__) && !defined(BUILDING_BREWMP__)
 
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>

@@ -54,9 +54,6 @@ public:
 #elif PLATFORM(QT)
 // FIXME: the right guard should be ENABLE(PAGE_CACHE). Replace with the right guard, once
 // https://bugs.webkit.org/show_bug.cgi?id=35061 is fixed.
-//
-// On Android we do use WebKit's page cache. For now we don't support isolated worlds
-// so our implementation does not take them into account.
 
 #include "OwnHandle.h"
 #include <v8.h>

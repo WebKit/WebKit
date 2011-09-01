@@ -655,9 +655,6 @@ public:
     bool parsing() const { return m_bParsing; }
     int minimumLayoutDelay();
 
-    // This method is used by Android.
-    void setExtraLayoutDelay(int delay) { m_extraLayoutDelay = delay; }
-
     bool shouldScheduleLayout();
     bool isLayoutTimerActive();
     int elapsedTime() const;
@@ -1297,10 +1294,6 @@ private:
     RefPtr<SerializedScriptValue> m_pendingStateObject;
     double m_startTime;
     bool m_overMinimumLayoutThreshold;
-    // This is used to increase the minimum delay between re-layouts. It is set
-    // using setExtraLayoutDelay to modify the minimum delay used at different
-    // points during the lifetime of the Document.
-    int m_extraLayoutDelay;
     
     OwnPtr<ScriptRunner> m_scriptRunner;
 

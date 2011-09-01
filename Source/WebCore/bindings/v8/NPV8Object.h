@@ -39,7 +39,7 @@
 // moved into bridge/npruntime.h, guarded by an #if PlATFORM(CHROMIUM).
 #include <bindings/npruntime.h>
 #else
-#include "npruntime.h" // Use WebCore version for Android and other ports.
+#include "npruntime.h" // Use WebCore version for other ports.
 #endif
 
 #include <v8.h>

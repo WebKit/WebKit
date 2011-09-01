@@ -43,12 +43,6 @@
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 
-#if PLATFORM(CHROMIUM)
-#include <bindings/npruntime.h>
-#else
-#include "npruntime.h"
-#endif
-
 #include <stdio.h>
 #include <wtf/StringExtras.h>
 
