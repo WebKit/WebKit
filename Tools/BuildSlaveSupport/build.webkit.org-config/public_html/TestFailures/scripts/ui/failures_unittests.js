@@ -51,25 +51,27 @@ test('FailureGrid', 9, function() {
     deepEqual(Object.getOwnPropertyNames(grid.__proto__), ["init", "_rowByResult", "add", "removeResultRows"]);
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-        '<tbody></tbody>' +
+        '<tbody><tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr></tbody>' +
     '</table>');
     var row = grid._rowByResult('TEXT');
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody>' +
-            '<tr>' +
+            '<tr class="TEXT">' +
                 '<td>TEXT</td><td></td><td></td>' +
             '</tr>' +
+            '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
         '</tbody>' +
     '</table>');
-    equal(row.outerHTML, '<tr><td>TEXT</td><td></td><td></td></tr>');
+    equal(row.outerHTML, '<tr class="TEXT"><td>TEXT</td><td></td><td></td></tr>');
     grid.add({});
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody>' +
-            '<tr>' +
+            '<tr class="TEXT">' +
                 '<td>TEXT</td><td></td><td></td>' +
             '</tr>' +
+            '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
         '</tbody>' +
     '</table>');
     raises(function() {
@@ -79,43 +81,46 @@ test('FailureGrid', 9, function() {
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody>' +
-            '<tr>' +
+            '<tr class="TEXT">' +
                 '<td>TEXT</td>' +
                 '<td></td>' +
                 '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
             '</tr>' +
+            '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
         '</tbody>' +
     '</table>');
     grid.add({'Webkit Mac10.5 (CG)': { actual: 'IMAGE+TEXT'}});
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody>' +
-            '<tr>' +
-                '<td>TEXT</td>' +
-                '<td></td>' +
-                '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
-            '</tr>' +
-            '<tr>' +
+            '<tr class="IMAGE+TEXT">' +
                 '<td>IMAGE+TEXT</td>' +
                 '<td><div><span class="version">leopard</span></div></td>' +
                 '<td></td>' +
             '</tr>' +
+            '<tr class="TEXT">' +
+                '<td>TEXT</td>' +
+                '<td></td>' +
+                '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
+            '</tr>' +
+            '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
         '</tbody>' +
     '</table>');
     grid.add({'Webkit Mac10.5 (CG)': { actual: 'IMAGE+TEXT'}});
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody>' +
-            '<tr>' +
-                '<td>TEXT</td>' +
-                '<td></td>' +
-                '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
-            '</tr>' +
-            '<tr>' +
+            '<tr class="IMAGE+TEXT">' +
                 '<td>IMAGE+TEXT</td>' +
                 '<td><div><span class="version">leopard</span></div></td>' +
                 '<td></td>' +
             '</tr>' +
+            '<tr class="TEXT">' +
+                '<td>TEXT</td>' +
+                '<td></td>' +
+                '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
+            '</tr>' +
+            '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
         '</tbody>' +
     '</table>');
 });

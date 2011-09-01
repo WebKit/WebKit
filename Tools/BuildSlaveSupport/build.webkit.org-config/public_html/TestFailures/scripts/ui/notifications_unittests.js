@@ -76,12 +76,10 @@ test('Info', 2, function() {
     equal(info.innerHTML, '<div class="how"></div><div class="what">info</div>');
 });
 
-test('FailingTest', 4, function() {
-    var failingTest = new ui.notifications.FailingTest({testName: 'test'});
+test('FailingTestGroup', 2, function() {
+    var failingTest = new ui.notifications.FailingTestGroup('test');
     equal(failingTest.tagName, 'LI');
     equal(failingTest.innerHTML, 'test');
-    ok(failingTest.equals({testName: 'test'}));
-    ok(!failingTest.equals({testName: 'foo'}));
 });
 
 test('SuspiciousCommit', 2, function() {
@@ -106,6 +104,7 @@ test('TestsFailing', 13, function() {
         "testNameList",
         "updateBuilderResults",
         "addFailureAnalysis",
+        "_forEachTestGroup",
         "containsFailureAnalysis",
         "addCommitData"
     ]);
@@ -115,7 +114,7 @@ test('TestsFailing', 13, function() {
             '<time class="relative">Just now</time>' +
             '<table class="failures">' +
                 '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-                '<tbody></tbody>' +
+                '<tbody><tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr></tbody>' +
             '</table>' +
         '</div>' +
         '<div class="what">' +
@@ -134,7 +133,7 @@ test('TestsFailing', 13, function() {
             '<time class="relative">Just now</time>' +
             '<table class="failures">' +
                 '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-                '<tbody></tbody>' +
+                '<tbody><tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr></tbody>' +
             '</table>' +
         '</div>' +
         '<div class="what">' +
@@ -156,7 +155,7 @@ test('TestsFailing', 13, function() {
             '<time class="relative">Just now</time>' +
             '<table class="failures">' +
                 '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-                '<tbody></tbody>' +
+                '<tbody><tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr></tbody>' +
             '</table>' +
         '</div>' +
         '<div class="what">' +
@@ -180,7 +179,7 @@ test('TestsFailing', 13, function() {
             '<time class="relative">10 minutes ago</time>' +
             '<table class="failures">' +
                 '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-                '<tbody></tbody>' +
+                '<tbody><tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr></tbody>' +
             '</table>' +
         '</div>' +
         '<div class="what">' +
@@ -214,11 +213,12 @@ test('TestsFailing', 13, function() {
             '<table class="failures">' +
                 '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
                 '<tbody>' +
-                    '<tr>' +
+                    '<tr class="TEXT">' +
                         '<td>TEXT</td>' +
                         '<td></td>' +
                         '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
                     '</tr>' +
+                    '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
                 '</tbody>' +
             '</table>' +
         '</div>' +
@@ -254,12 +254,12 @@ test('TestsFailing', 13, function() {
             '<table class="failures">' +
                 '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
                 '<tbody>' +
-                    '<tr>' +
+                    '<tr class="TEXT">' +
                         '<td>TEXT</td>' +
                         '<td></td>' +
                         '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
                     '</tr>' +
-                    '<tr>' +
+                    '<tr class="BUILDING" style="">' +
                         '<td>BUILDING</td>' +
                         '<td><div><span class="version">leopard</span></div></td>' +
                         '<td></td>' +
@@ -293,6 +293,36 @@ test('TestsFailing', 13, function() {
         '</div>');
 });
 
+test('TestsFailing (grouping)', 1, function() {
+    var testFailures = new ui.notifications.TestsFailing();
+    testFailures.addFailureAnalysis({testName: 'path/to/test1.html', resultNodesByBuilder: {}});
+    testFailures.addFailureAnalysis({testName: 'path/to/test2.html', resultNodesByBuilder: {}});
+    testFailures.addFailureAnalysis({testName: 'path/to/test3.html', resultNodesByBuilder: {}});
+    testFailures.addFailureAnalysis({testName: 'path/to/test4.html', resultNodesByBuilder: {}});
+    testFailures.addFailureAnalysis({testName: 'path/another/test.html', resultNodesByBuilder: {}});
+    equal(testFailures.innerHTML,
+        '<div class="how">' +
+            '<time class="relative">Just now</time>' +
+            '<table class="failures">' +
+                '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+                '<tbody><tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr></tbody>' +
+            '</table>' +
+        '</div>' +
+        '<div class="what">' +
+            '<div class="problem">' +
+                '<ul class="effects">' +
+                    '<li>path/to (4 tests)</li>' +
+                    '<li>path/another/test.html</li>' +
+                '</ul>' +
+                '<ul class="actions">' +
+                    '<li><button>Examine</button></li>' +
+                '</ul>' +
+            '</div>' +
+            '<ul class="causes"></ul>' +
+        '</div>');
+
+});
+
 test('BuildersFailing', 1, function() {
     var builderFailing = new ui.notifications.BuildersFailing();
     builderFailing.setFailingBuilders(['WebKit Linux', 'Webkit Vista']);
@@ -301,7 +331,7 @@ test('BuildersFailing', 1, function() {
             '<time class="relative">Just now</time>' +
             '<table class="failures">' +
                 '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
-                '<tbody></tbody>' +
+                '<tbody><tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr></tbody>' +
             '</table>' +
         '</div>' +
         '<div class="what">' +

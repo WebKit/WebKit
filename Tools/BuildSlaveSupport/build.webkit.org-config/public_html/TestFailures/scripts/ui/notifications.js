@@ -28,6 +28,8 @@ ui.notifications = ui.notifications || {};
 
 (function(){
 
+var kMaxTestsPerGroup = 3;
+
 ui.notifications.Stream = base.extends('ol', {
     init: function()
     {
@@ -82,15 +84,10 @@ ui.notifications.Info = base.extends(ui.notifications.Notification, {
     }
 });
 
-ui.notifications.FailingTest = base.extends('li', {
-    init: function(failureAnalysis)
+ui.notifications.FailingTestGroup = base.extends('li', {
+    init: function(testGroup)
     {
-        this._failureAnalysis = failureAnalysis;
-        this.textContent = failureAnalysis.testName;
-    },
-    equals: function(failureAnalysis)
-    {
-        return this._failureAnalysis.testName == failureAnalysis.testName;
+        this.textContent = testGroup;
     }
 })
 
@@ -160,9 +157,7 @@ ui.notifications.TestsFailing = base.extends(ui.notifications.Failure, {
     },
     containsFailureAnalysis: function(failureAnalysis)
     {
-        return Array.prototype.some.call(this._effects.children, function(child) {
-            return child.equals(failureAnalysis);
-        });
+        return this._testNameList.indexOf(failureAnalysis.testName) != -1;
     },
     updateBuilderResults: function(resultNodesByBuilder)
     {
@@ -174,7 +169,10 @@ ui.notifications.TestsFailing = base.extends(ui.notifications.Failure, {
             return;
         this._testNameList.push(failureAnalysis.testName);
         this.updateBuilderResults(failureAnalysis.resultNodesByBuilder);
-        return this._effects.appendChild(new ui.notifications.FailingTest(failureAnalysis));
+        $(this._effects).empty();
+        this._forEachTestGroup(function (testGroup) {
+            this._effects.appendChild(new ui.notifications.FailingTestGroup(testGroup))
+        }.bind(this));
     },
     addCommitData: function(commitData)
     {
@@ -184,6 +182,26 @@ ui.notifications.TestsFailing = base.extends(ui.notifications.Failure, {
             this._time.setDate(commitDataDate);
         }
         return this._causes.appendChild(new ui.notifications.SuspiciousCommit(commitData));
+    },
+    _forEachTestGroup: function(callback)
+    {
+        var testsByDirectory = {};
+        this._testNameList.forEach(function(testName) {
+            var directory = base.dirName(testName);
+            testsByDirectory[directory] = testsByDirectory[directory] || [];
+            testsByDirectory[directory].push(testName);
+        });
+        var individualTests = [];
+        Object.keys(testsByDirectory).forEach(function(directory) {
+            var testsInDirectory = testsByDirectory[directory];
+            var count = testsInDirectory.length;
+            if (count <= kMaxTestsPerGroup) {
+                individualTests = individualTests.concat(testsInDirectory);
+                return;
+            }
+            callback(directory + ' (' + count + ' tests)');
+        });
+        individualTests.forEach(callback);
     }
 });
 

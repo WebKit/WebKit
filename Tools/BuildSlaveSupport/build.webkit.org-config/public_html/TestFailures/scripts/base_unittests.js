@@ -58,6 +58,12 @@ test("joinPath with empty parent", 1, function() {
     equals(value, "test.html");
 });
 
+test("dirName", 3, function() {
+    equals(base.dirName("foo.html"), "foo.html");
+    equals(base.dirName("foo/bar.html"), "foo");
+    equals(base.dirName("foo/bar/baz.html"), "foo/bar");
+});
+
 test("uniquifyArray", 5, function() {
     deepEqual(base.uniquifyArray([]), []);
     deepEqual(base.uniquifyArray(["a"]), ["a"]);

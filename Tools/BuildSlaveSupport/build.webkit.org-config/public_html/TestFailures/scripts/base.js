@@ -54,6 +54,14 @@ base.joinPath = function(parent, child)
     return parent + '/' + child;
 };
 
+base.dirName = function(path)
+{
+    var directoryIndex = path.lastIndexOf('/');
+    if (directoryIndex == -1)
+        return path;
+    return path.substr(0, directoryIndex);
+};
+
 base.trimExtension = function(url)
 {
     var index = url.lastIndexOf('.');
