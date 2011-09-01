@@ -1,3 +1,15 @@
+2011-09-01  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Fix bufferedAmount after WebSocket is closed
+        https://bugs.webkit.org/show_bug.cgi?id=67363
+
+        Reviewed by Kent Tamura.
+
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close-expected.txt:
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close.html:
+        Try to send messages having various lengths to make sure we correctly calculate
+        the framing overhead.
+
 2011-09-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Temporarily skip a test that started failing after r94274.

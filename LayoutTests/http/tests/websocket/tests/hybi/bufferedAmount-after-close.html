@@ -14,6 +14,14 @@ window.jsTestIsAsync = true;
 if (window.layoutTestController)
     layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
+function createStringWithLength(length)
+{
+    var string = 'x';
+    while (string.length < length)
+        string = string + string;
+    return string.substring(0, length);
+}
+
 var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/simple");
 
 ws.onopen = function()
@@ -27,13 +35,34 @@ ws.onclose = function()
     debug("Closed.");
     shouldBe("ws.readyState", "3");
     shouldBe("ws.bufferedAmount", "0");
-    shouldBeFalse("ws.send('send to closed socket')");
+
+    var baseOverhead = 2 + 4; // Base header size and masking key size.
+    testBufferedAmount('send to closed socket', 21 + baseOverhead);
+    testBufferedAmount('', baseOverhead);
+    testBufferedAmount('a', 1 + baseOverhead);
+    testBufferedAmount(createStringWithLength(125), 125 + baseOverhead);
+    testBufferedAmount(createStringWithLength(126), 126 + baseOverhead + 2); // With 16-bit extended payload length field.
+    testBufferedAmount(createStringWithLength(0xFFFF), 0xFFFF + baseOverhead + 2);
+    testBufferedAmount(createStringWithLength(0x10000), 0x10000 + baseOverhead + 8); // With 64-bit extended payload length field.
+
+    finishJSTest();
+};
+
+var messageToSend;
+var bufferedAmountDifference;
+
+function testBufferedAmount(message, expectedBufferedAmountDifference)
+{
     // If the connection is closed, bufferedAmount attribute's value will only
     // increase with each call to the send() method.
     // (the number does not reset to zero once the connection closes).
-    shouldBe("ws.bufferedAmount", "23");
-    finishJSTest();
-};
+    messageToSend = message;
+    var bufferedAmountBeforeSend = ws.bufferedAmount;
+    shouldBeFalse("ws.send(messageToSend)");
+    var bufferedAmountAfterSend = ws.bufferedAmount;
+    bufferedAmountDifference = bufferedAmountAfterSend - bufferedAmountBeforeSend;
+    shouldEvaluateTo("bufferedAmountDifference", expectedBufferedAmountDifference);
+}
 
 var successfullyParsed = true;
 </script>

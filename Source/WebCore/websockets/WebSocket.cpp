@@ -254,7 +254,8 @@ bool WebSocket::send(const String& message, ExceptionCode& ec)
     }
     // No exception is raised if the connection was once established but has subsequently been closed.
     if (m_state == CLOSING || m_state == CLOSED) {
-        m_bufferedAmountAfterClose += message.utf8().length() + 2; // 2 for frameing
+        size_t payloadSize = message.utf8().length();
+        m_bufferedAmountAfterClose += payloadSize + getFramingOverhead(payloadSize);
         return false;
     }
     // FIXME: check message is valid utf8.
@@ -463,6 +464,24 @@ EventTargetData* WebSocket::eventTargetData()
 EventTargetData* WebSocket::ensureEventTargetData()
 {
     return &m_eventTargetData;
+}
+
+size_t WebSocket::getFramingOverhead(size_t payloadSize)
+{
+    static const size_t hixie76FramingOverhead = 2; // Payload is surrounded by 0x00 and 0xFF.
+    if (m_useHixie76Protocol)
+        return hixie76FramingOverhead;
+
+    static const size_t hybiBaseFramingOverhead = 2; // Every frame has at least two-byte header.
+    static const size_t hybiMaskingKeyLength = 4; // Every frame from client must have masking key.
+    static const size_t minimumPayloadSizeWithTwoByteExtendedPayloadLength = 126;
+    static const size_t minimumPayloadSizeWithEightByteExtendedPayloadLength = 0x10000;
+    size_t overhead = hybiBaseFramingOverhead + hybiMaskingKeyLength;
+    if (payloadSize >= minimumPayloadSizeWithEightByteExtendedPayloadLength)
+        overhead += 8;
+    else if (payloadSize >= minimumPayloadSizeWithTwoByteExtendedPayloadLength)
+        overhead += 2;
+    return overhead;
 }
 
 }  // namespace WebCore

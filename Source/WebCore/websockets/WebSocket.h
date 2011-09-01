@@ -113,6 +113,8 @@ private:
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
+    size_t getFramingOverhead(size_t payloadSize);
+
     enum BinaryType {
         BinaryTypeBlob,
         BinaryTypeArrayBuffer

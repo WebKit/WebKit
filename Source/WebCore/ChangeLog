@@ -1,3 +1,17 @@
+2011-09-01  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Fix bufferedAmount after WebSocket is closed
+        https://bugs.webkit.org/show_bug.cgi?id=67363
+
+        Reviewed by Kent Tamura.
+
+        Test: http/tests/websocket/tests/hybi/bufferedAmount-after-close.html (updated)
+
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::send):
+        (WebCore::WebSocket::getFramingOverhead):
+        * websockets/WebSocket.h:
+
 2011-09-01  Keishi Hattori  <keishi@webkit.org>
 
         Rename colorSelected to didChooseColor
