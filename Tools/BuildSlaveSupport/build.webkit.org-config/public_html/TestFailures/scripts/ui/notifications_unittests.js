@@ -93,7 +93,8 @@ test('SuspiciousCommit', 2, function() {
             '<span class="reviewer">reviewer</span>' +
         '</div>' +
         '<ul class="actions">' +
-            '<li><button>Roll out</button></li>' +
+            '<li><button class="action" title="Blames this failure on this revision.">Blame</button></li>' +
+            '<li><button class="action" title="Rolls out this revision.">Roll out</button></li>' +
         '</ul>');
 });
 
@@ -104,6 +105,7 @@ test('TestsFailing', 13, function() {
         "testNameList",
         "updateBuilderResults",
         "addFailureAnalysis",
+        "pinToCommitData",
         "_forEachTestGroup",
         "containsFailureAnalysis",
         "addCommitData"
@@ -121,7 +123,7 @@ test('TestsFailing', 13, function() {
             '<div class="problem">' +
                 '<ul class="effects"></ul>' +
                 '<ul class="actions">' +
-                    '<li><button>Examine</button></li>' +
+                    '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes"></ul>' +
@@ -142,7 +144,7 @@ test('TestsFailing', 13, function() {
                     '<li>test</li>' +
                 '</ul>' +
                 '<ul class="actions">' +
-                    '<li><button>Examine</button></li>' +
+                    '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes"></ul>' +
@@ -164,7 +166,7 @@ test('TestsFailing', 13, function() {
                     '<li>test</li>' +
                 '</ul>' +
                 '<ul class="actions">' +
-                    '<li><button>Examine</button></li>' +
+                    '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes"></ul>' +
@@ -188,7 +190,7 @@ test('TestsFailing', 13, function() {
                     '<li>test</li>' +
                 '</ul>' +
                 '<ul class="actions">' +
-                    '<li><button>Examine</button></li>' +
+                    '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes">' +
@@ -200,7 +202,8 @@ test('TestsFailing', 13, function() {
                         '<span class="reviewer">reviewer</span>' +
                     '</div>' +
                     '<ul class="actions">' +
-                        '<li><button>Roll out</button></li>' +
+                        '<li><button class="action" title="Blames this failure on this revision.">Blame</button></li>' +
+                        '<li><button class="action" title="Rolls out this revision.">Roll out</button></li>' +
                     '</ul>' +
                 '</li>' +
             '</ul>' +
@@ -229,7 +232,7 @@ test('TestsFailing', 13, function() {
                     '<li>foo</li>' +
                 '</ul>' +
                 '<ul class="actions">' +
-                    '<li><button>Examine</button></li>' +
+                    '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes">' +
@@ -241,7 +244,8 @@ test('TestsFailing', 13, function() {
                         '<span class="reviewer">reviewer</span>' +
                     '</div>' +
                     '<ul class="actions">' +
-                        '<li><button>Roll out</button></li>' +
+                        '<li><button class="action" title="Blames this failure on this revision.">Blame</button></li>' +
+                        '<li><button class="action" title="Rolls out this revision.">Roll out</button></li>' +
                     '</ul>' +
                 '</li>' +
             '</ul>' +
@@ -274,7 +278,7 @@ test('TestsFailing', 13, function() {
                     '<li>foo</li>' +
                 '</ul>' +
                 '<ul class="actions">' +
-                    '<li><button>Examine</button></li>' +
+                    '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes">' +
@@ -286,7 +290,8 @@ test('TestsFailing', 13, function() {
                         '<span class="reviewer">reviewer</span>' +
                     '</div>' +
                     '<ul class="actions">' +
-                        '<li><button>Roll out</button></li>' +
+                        '<li><button class="action" title="Blames this failure on this revision.">Blame</button></li>' +
+                        '<li><button class="action" title="Rolls out this revision.">Roll out</button></li>' +
                     '</ul>' +
                 '</li>' +
             '</ul>' +
@@ -315,7 +320,7 @@ test('TestsFailing (grouping)', 1, function() {
                     '<li>path/another/test.html</li>' +
                 '</ul>' +
                 '<ul class="actions">' +
-                    '<li><button>Examine</button></li>' +
+                    '<li><button class="action default" title="Examine these failures in detail.">Examine</button></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes"></ul>' +

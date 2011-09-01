@@ -58,7 +58,7 @@ test('click', 1, function() {
 test('default', 2, function() {
     var next = new ui.actions.Next();
     equal(next.makeDefault(), next);
-    equal(next.className, 'next default');
+    equal(next.className, 'action next default');
 });
 
 test('List', 1, function() {
@@ -68,9 +68,9 @@ test('List', 1, function() {
         new ui.actions.Next()
     ]);
     equal(list.innerHTML,
-        '<li><button>Rebaseline</button></li>' +
-        '<li><button class="previous">\u25C0</button></li>' +
-        '<li><button class="next">\u25B6</button></li>');
+        '<li><button class="action">Rebaseline</button></li>' +
+        '<li><button class="action previous">\u25C0</button></li>' +
+        '<li><button class="action next">\u25B6</button></li>');
 });
 
 }());

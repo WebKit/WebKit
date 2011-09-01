@@ -31,6 +31,7 @@ ui.actions = ui.actions || {};
 var Action = base.extends('button', {
     init: function() {
         this._eventName = null;
+        $(this).addClass('action');
         this.addEventListener('click', function() {
             if (this._eventName)
                 $(this).trigger(this._eventName);
@@ -42,10 +43,19 @@ var Action = base.extends('button', {
     }
 });
 
+ui.actions.Blame = base.extends(Action, {
+    init: function() {
+        this.textContent = 'Blame';
+        this._eventName = 'blame';
+        this.title = 'Blames this failure on this revision.'
+    }
+});
+
 ui.actions.Rollout = base.extends(Action, {
     init: function() {
         this.textContent = 'Roll out';
         this._eventName = 'rollout';
+        this.title = 'Rolls out this revision.'
     }
 });
 
@@ -53,6 +63,7 @@ ui.actions.Examine = base.extends(Action, {
     init: function() {
         this.textContent = 'Examine';
         this._eventName = 'examine';
+        this.title = 'Examine these failures in detail.'
     }
 });
 
@@ -63,18 +74,11 @@ ui.actions.Rebaseline = base.extends(Action, {
     }
 });
 
-ui.actions.Close = base.extends(Action, {
-    init: function() {
-        this.textContent = 'Close';
-        this._eventName = 'close';
-    }
-});
-
 ui.actions.Next = base.extends(Action, {
     init: function() {
         this.innerHTML = '&#9654;';
         this._eventName = 'next';
-        this.className = 'next';
+        $(this).addClass('next');
     }
 });
 
@@ -82,7 +86,7 @@ ui.actions.Previous = base.extends(Action, {
     init: function() {
         this.innerHTML = '&#9664;';
         this._eventName = 'previous';
-        this.className = 'previous';
+        $(this).addClass('previous');
     }
 });
 

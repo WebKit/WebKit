@@ -93,6 +93,9 @@ controllers.UnexpectedFailures = base.extends(Object, {
                 $(suspiciousCommit).bind('rollout', function() {
                     this.onRollout(commitData.revision, failure.testNameList());
                 }.bind(this));
+                $(failure).bind('blame', function() {
+                    this.onBlame(failure, commitData);
+                }.bind(this));
             }, this);
             this._view.add(failure);
             $(failure).bind('examine', function() {
@@ -129,6 +132,15 @@ controllers.UnexpectedFailures = base.extends(Object, {
         var resultsContainer = onebar.results();
         $(resultsContainer).empty().append(resultsView);
         onebar.select('results');
+    },
+    onBlame: function(failure, commitData)
+    {
+        failure.pinToCommitData(commitData);
+        $('.action', failure).each(function() {
+            // FIXME: This isn't the right way of finding and disabling this action.
+            if (this.textContent == 'Blame')
+                this.disabled = true;
+        });
     },
     onRollout: function(revision, testNameList)
     {

@@ -89,7 +89,7 @@ ui.notifications.FailingTestGroup = base.extends('li', {
     {
         this.textContent = testGroup;
     }
-})
+});
 
 var Cause = base.extends('li', {
     init: function()
@@ -97,7 +97,8 @@ var Cause = base.extends('li', {
         this._description = this.appendChild(document.createElement('div'));
         this._description.className = 'description';
         this.appendChild(new ui.actions.List([
-            new ui.actions.Rollout()
+            new ui.actions.Blame(),
+            new ui.actions.Rollout(),
         ]));
     }
 });
@@ -105,6 +106,7 @@ var Cause = base.extends('li', {
 ui.notifications.SuspiciousCommit = base.extends(Cause, {
     init: function(commitData)
     {
+        this._revision = commitData.revision;
         var linkToRevision = this._description.appendChild(document.createElement('a'));
         linkToRevision.href = trac.changesetURL(commitData.revision);
         linkToRevision.target = '_blank';
@@ -112,6 +114,10 @@ ui.notifications.SuspiciousCommit = base.extends(Cause, {
         this._addDescriptionPart('summary', commitData);
         this._addDescriptionPart('author', commitData);
         this._addDescriptionPart('reviewer', commitData);
+    },
+    hasRevision: function(revision)
+    {
+        return this._revision == revision;
     },
     _addDescriptionPart: function(part, commitData)
     {
@@ -147,9 +153,10 @@ ui.notifications.TestsFailing = base.extends(ui.notifications.Failure, {
     init: function() {
         // FIXME: Convert actions to a link from test!
         this._problem.appendChild(new ui.actions.List([
-            new ui.actions.Examine()
+            new ui.actions.Examine().makeDefault(),
         ]));
         this._testNameList = [];
+        this._commitDataPinned = false;
     },
     testNameList: function()
     {
@@ -174,8 +181,21 @@ ui.notifications.TestsFailing = base.extends(ui.notifications.Failure, {
             this._effects.appendChild(new ui.notifications.FailingTestGroup(testGroup))
         }.bind(this));
     },
+    pinToCommitData: function(commitData)
+    {
+        if (this._commitDataPinned)
+            return;
+        this._commitDataPinned = true;
+        $(this._causes).children().each(function() {
+            if (this.hasRevision(commitData.revision))
+                return;
+            $(this).detach();
+        });
+    },
     addCommitData: function(commitData)
     {
+        if (this._commitDataPinned)
+            return null;
         var commitDataDate = new Date(commitData.time);
         if (this._time.date > commitDataDate); {
             this.setIndex(commitDataDate.getTime());

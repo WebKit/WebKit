@@ -1,5 +1,21 @@
 2011-09-01  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic should let the gardener assign blame for a group of test failures
+        https://bugs.webkit.org/show_bug.cgi?id=67379
+
+        Reviewed by Dimitri Glazkov.
+
+        If a group of test failures has a large revision range, the gardener
+        might wish to blame a specific revision for the failure.  Currently,
+        this only effect of assigning blame in this way is to hide the other
+        suspect commits.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/actions.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+
+2011-09-01  Adam Barth  <abarth@webkit.org>
+
         Hide garden-o-matic failure table until hover
         https://bugs.webkit.org/show_bug.cgi?id=67376
 
