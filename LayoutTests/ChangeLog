@@ -1,5 +1,13 @@
 2011-08-31  David Levin  <levin@chromium.org>
 
+        [chromium] Add baselines due to r94253 and r94258.
+
+        * platform/chromium-cg-mac-leopard/fast/multicol/overflow-across-columns-percent-height-expected.png: Added.
+        * platform/chromium-win/http/tests/eventsource/existent-eventsource-status-error-iframe-crash-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-08-31  David Levin  <levin@chromium.org>
+
         [chromium] Add baselines for test added by r94253.
 
         * platform/chromium-cg-mac/fast/multicol/overflow-across-columns-percent-height-expected.png: Added.
