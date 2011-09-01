@@ -73,6 +73,7 @@ static const int computedProperties[] = {
     CSSPropertyBorderBottomStyle,
     CSSPropertyBorderBottomWidth,
     CSSPropertyBorderCollapse,
+    CSSPropertyBorderImageSlice,
     CSSPropertyBorderImageSource,
     CSSPropertyBorderLeftColor,
     CSSPropertyBorderLeftStyle,
@@ -224,6 +225,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitMarqueeStyle,
     CSSPropertyWebkitMaskAttachment,
     CSSPropertyWebkitMaskBoxImage,
+    CSSPropertyWebkitMaskBoxImageSlice,
     CSSPropertyWebkitMaskBoxImageSource,
     CSSPropertyWebkitMaskClip,
     CSSPropertyWebkitMaskComposite,
@@ -318,17 +320,10 @@ static int valueForRepeatRule(int rule)
             return CSSValueStretch;
     }
 }
-        
-static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image, CSSPrimitiveValueCache* primitiveValueCache)
+
+
+static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const NinePieceImage& image, CSSPrimitiveValueCache* primitiveValueCache)
 {
-    if (!image.hasImage())
-        return primitiveValueCache->createIdentifierValue(CSSValueNone);
-    
-    // Image first.
-    RefPtr<CSSValue> imageValue;
-    if (image.image())
-        imageValue = image.image()->cssValue();
-    
     // Create the slices.
     RefPtr<CSSPrimitiveValue> top;
     if (image.slices().top().isPercent())
@@ -360,7 +355,22 @@ static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image, 
     rect->setBottom(bottom);
     rect->setLeft(left);
 
-    return CSSBorderImageValue::create(imageValue, rect, valueForRepeatRule(image.horizontalRule()), valueForRepeatRule(image.verticalRule()));
+    return CSSBorderImageSliceValue::create(rect, image.fill());
+}
+
+static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image, CSSPrimitiveValueCache* primitiveValueCache)
+{
+    if (!image.hasImage())
+        return primitiveValueCache->createIdentifierValue(CSSValueNone);
+    
+    // Image first.
+    RefPtr<CSSValue> imageValue;
+    if (image.image())
+        imageValue = image.image()->cssValue();
+    
+    // Create the slices.
+    RefPtr<CSSBorderImageSliceValue> slice = valueForNinePieceImageSlice(image, primitiveValueCache);
+    return CSSBorderImageValue::create(imageValue, slice, valueForRepeatRule(image.horizontalRule()), valueForRepeatRule(image.verticalRule()));
 }
 
 inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedPixelValue(int value, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
@@ -1585,8 +1595,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createIdentifierValue((style->backfaceVisibility() == BackfaceVisibilityHidden) ? CSSValueHidden : CSSValueVisible);
         case CSSPropertyWebkitBorderImage:
             return valueForNinePieceImage(style->borderImage(), primitiveValueCache);
+        case CSSPropertyBorderImageSlice:
+            return valueForNinePieceImageSlice(style->borderImage(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImage:
             return valueForNinePieceImage(style->maskBoxImage(), primitiveValueCache);
+        case CSSPropertyWebkitMaskBoxImageSlice:
+            return valueForNinePieceImageSlice(style->maskBoxImage(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImageSource:
             if (style->maskBoxImageSource())
                 return style->maskBoxImageSource()->cssValue();

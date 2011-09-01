@@ -386,6 +386,7 @@ v8 {
 
 SOURCES += \
     css/CSSBorderImageValue.cpp \
+    css/CSSBorderImageValue.h \
     css/CSSCanvasValue.cpp \
     css/CSSCharsetRule.cpp \
     css/CSSComputedStyleDeclaration.cpp \

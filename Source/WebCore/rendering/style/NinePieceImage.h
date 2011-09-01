@@ -37,14 +37,17 @@ class NinePieceImage {
 public:
     NinePieceImage()
         : m_image(0)
+        , m_slices(Length(100, Percent), Length(100, Percent), Length(100, Percent), Length(100, Percent))
+        , m_fill(false)
         , m_horizontalRule(StretchImageRule)
         , m_verticalRule(StretchImageRule)
     {
     }
 
-    NinePieceImage(StyleImage* image, LengthBox slices, ENinePieceImageRule h, ENinePieceImageRule v) 
+    NinePieceImage(StyleImage* image, LengthBox slices, bool fill, ENinePieceImageRule h, ENinePieceImageRule v) 
       : m_image(image)
       , m_slices(slices)
+      , m_fill(fill)
       , m_horizontalRule(h)
       , m_verticalRule(v)
     {
@@ -60,17 +63,25 @@ public:
     const LengthBox& slices() const { return m_slices; }
     void setSlices(const LengthBox& l) { m_slices = l; }
 
+    bool fill() const { return m_fill; }
+    void setFill(bool fill) { m_fill = fill; }
+
     ENinePieceImageRule horizontalRule() const { return static_cast<ENinePieceImageRule>(m_horizontalRule); }
     void setHorizontalRule(ENinePieceImageRule rule) { m_horizontalRule = rule; }
     
     ENinePieceImageRule verticalRule() const { return static_cast<ENinePieceImageRule>(m_verticalRule); }
     void setVerticalRule(ENinePieceImageRule rule) { m_verticalRule = rule; }
 
-friend class RenderStyle;
+    void copySlicesFrom(const NinePieceImage& other)
+    {
+        m_slices = other.m_slices;
+        m_fill = other.m_fill;
+    }
 
 private:
     RefPtr<StyleImage> m_image;
     LengthBox m_slices;
+    bool m_fill : 1;
     unsigned m_horizontalRule : 2; // ENinePieceImageRule
     unsigned m_verticalRule : 2; // ENinePieceImageRule
 };

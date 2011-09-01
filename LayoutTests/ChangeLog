@@ -1,3 +1,28 @@
+2011-08-31  David Hyatt  <hyatt@apple.com>
+
+        Implement border-image-slice. This will eventually be a component of the new border-image shorthand
+        property. It holds the cuts that you make into the border image along with a new optional "fill"
+        keyword that indicates whether or not the center should be filled with the middle slice of the image.
+        
+        By default -webkit-border-image has always filled, but this does not match the specification. To preserve
+        backwards compatibility, -webkit-border-image will continue to fill by default, but this does slightly affect
+        computed style results, since the "fill" keyword will now be included in property dumps.
+
+        Reviewed by Beth Dakin.
+
+        Added fast/borders/border-image-slices.html.
+
+        * fast/borders/border-image-slices.html: Added.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-with-zoom-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-border-image-expected.txt:
+        * fast/css/uri-token-parsing-expected.txt:
+        * fast/css/uri-token-parsing.html:
+        * platform/mac/fast/borders/border-image-slices-expected.png: Added.
+        * platform/mac/fast/borders/border-image-slices-expected.txt: Added.
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2011-09-01  Zsolt Fehér  <feherzs@inf.u-szeged.hu>
 
         Unreviewed Qt gardening.

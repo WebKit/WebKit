@@ -1451,6 +1451,15 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
     }
+    case CSSPropertyBorderImageSlice:
+    case CSSPropertyWebkitMaskBoxImageSlice: {
+        RefPtr<CSSBorderImageSliceValue> result;
+        if (parseBorderImageSlice(propId, result)) {
+            addProperty(propId, result, important);
+            return true;
+        }
+        break;
+    }
     case CSSPropertyBorderTopRightRadius:
     case CSSPropertyBorderTopLeftRadius:
     case CSSPropertyBorderBottomLeftRadius:
@@ -5118,7 +5127,6 @@ struct BorderImageParseContext {
     BorderImageParseContext(CSSPrimitiveValueCache* primitiveValueCache)
     : m_primitiveValueCache(primitiveValueCache)
     , m_allowBreak(false)
-    , m_allowNumber(false)
     , m_allowSlash(false)
     , m_allowWidth(false)
     , m_allowRule(false)
@@ -5131,30 +5139,17 @@ struct BorderImageParseContext {
     {}
 
     bool allowBreak() const { return m_allowBreak; }
-    bool allowNumber() const { return m_allowNumber; }
     bool allowSlash() const { return m_allowSlash; }
     bool allowWidth() const { return m_allowWidth; }
     bool allowRule() const { return m_allowRule; }
 
-    void commitImage(PassRefPtr<CSSValue> image) { m_image = image; m_allowNumber = true; }
-    void commitNumber(CSSParserValue* v)
+    void commitImage(PassRefPtr<CSSValue> image) { m_image = image; }
+    void commitSlice(PassRefPtr<CSSBorderImageSliceValue> slice)
     {
-        PassRefPtr<CSSPrimitiveValue> val = m_primitiveValueCache->createValue(v->fValue, (CSSPrimitiveValue::UnitTypes)v->unit);
-        if (!m_top)
-            m_top = val;
-        else if (!m_right)
-            m_right = val;
-        else if (!m_bottom)
-            m_bottom = val;
-        else {
-            ASSERT(!m_left);
-            m_left = val;
-        }
-
+        m_slice = slice;
         m_allowBreak = m_allowSlash = m_allowRule = true;
-        m_allowNumber = !m_left;
     }
-    void commitSlash() { m_allowBreak = m_allowSlash = m_allowNumber = false; m_allowWidth = true; }
+    void commitSlash() { m_allowBreak = m_allowSlash = false; m_allowWidth = true; }
     void commitWidth(CSSParserValue* val)
     {
         if (!m_borderTop)
@@ -5181,26 +5176,6 @@ struct BorderImageParseContext {
     }
     PassRefPtr<CSSValue> commitBorderImage(CSSParser* p, bool important)
     {
-        // We need to clone and repeat values for any omissions.
-        if (!m_right) {
-            m_right = m_primitiveValueCache->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_bottom = m_primitiveValueCache->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_left = m_primitiveValueCache->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-        }
-        if (!m_bottom) {
-            m_bottom = m_primitiveValueCache->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_left = m_primitiveValueCache->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
-        }
-        if (!m_left)
-             m_left = m_primitiveValueCache->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
-
-        // Now build a rect value to hold all four of our primitive values.
-        RefPtr<Rect> rect = Rect::create();
-        rect->setTop(m_top);
-        rect->setRight(m_right);
-        rect->setBottom(m_bottom);
-        rect->setLeft(m_left);
-
         // Fill in STRETCH as the default if it wasn't specified.
         if (!m_horizontalRule)
             m_horizontalRule = CSSValueStretch;
@@ -5227,23 +5202,18 @@ struct BorderImageParseContext {
         }
 
         // Make our new border image value now.
-        return CSSBorderImageValue::create(m_image, rect.release(), m_horizontalRule, m_verticalRule);
+        return CSSBorderImageValue::create(m_image, m_slice, m_horizontalRule, m_verticalRule);
     }
     
     CSSPrimitiveValueCache* m_primitiveValueCache;
 
     bool m_allowBreak;
-    bool m_allowNumber;
     bool m_allowSlash;
     bool m_allowWidth;
     bool m_allowRule;
 
     RefPtr<CSSValue> m_image;
-
-    RefPtr<CSSPrimitiveValue> m_top;
-    RefPtr<CSSPrimitiveValue> m_right;
-    RefPtr<CSSPrimitiveValue> m_bottom;
-    RefPtr<CSSPrimitiveValue> m_left;
+    RefPtr<CSSBorderImageSliceValue> m_slice;
 
     CSSParserValue* m_borderTop;
     CSSParserValue* m_borderRight;
@@ -5274,10 +5244,15 @@ bool CSSParser::parseBorderImage(int propId, bool important, RefPtr<CSSValue>& r
     else
         return false;
 
-    while ((val = m_valueList->next())) {
-        if (context.allowNumber() && validUnit(val, FInteger | FNonNeg | FPercent, true)) {
-            context.commitNumber(val);
-        } else if (propId == CSSPropertyWebkitBorderImage && context.allowSlash() && val->unit == CSSParserValue::Operator && val->iValue == '/') {
+    // Parse the slice next.
+    m_valueList->next();
+    RefPtr<CSSBorderImageSliceValue> slice;
+    if (!parseBorderImageSlice(propId, slice))
+        return false;
+    context.commitSlice(slice);
+
+    while ((val = m_valueList->current())) {
+        if (propId == CSSPropertyWebkitBorderImage && context.allowSlash() && val->unit == CSSParserValue::Operator && val->iValue == '/') {
             context.commitSlash();
         } else if (context.allowWidth() &&
             (val->id == CSSValueThin || val->id == CSSValueMedium || val->id == CSSValueThick || validUnit(val, FLength, m_strict))) {
@@ -5289,17 +5264,130 @@ bool CSSParser::parseBorderImage(int propId, bool important, RefPtr<CSSValue>& r
             // Something invalid was encountered.
             return false;
         }
-    }
-
-    if (context.allowNumber() && propId != CSSPropertyWebkitBorderImage) {
-        // Allow the slices to be omitted for images that don't fit to a border.  We just set the slices to be 0.
-        context.m_top = primitiveValueCache()->createValue(0, CSSPrimitiveValue::CSS_NUMBER);
-        context.m_allowBreak = true;
+        m_valueList->next();
     }
 
     if (context.allowBreak()) {
         // Need to fully commit as a single value.
         result = context.commitBorderImage(this, important);
+        return true;
+    }
+
+    return false;
+}
+
+class BorderImageSliceParseContext {
+public:
+    BorderImageSliceParseContext(CSSPrimitiveValueCache* primitiveValueCache)
+    : m_primitiveValueCache(primitiveValueCache)
+    , m_allowNumber(true)
+    , m_allowFill(false)
+    , m_allowFinalCommit(false)
+    , m_fill(false)
+    { }
+
+    bool allowNumber() const { return m_allowNumber; }
+    bool allowFill() const { return m_allowFill; }
+    bool allowFinalCommit() const { return m_allowFinalCommit; }
+    CSSPrimitiveValue* top() const { return m_top.get(); }
+
+    void commitNumber(CSSParserValue* v)
+    {
+        RefPtr<CSSPrimitiveValue> val = m_primitiveValueCache->createValue(v->fValue, (CSSPrimitiveValue::UnitTypes)v->unit);
+        if (!m_top)
+            m_top = val;
+        else if (!m_right)
+            m_right = val;
+        else if (!m_bottom)
+            m_bottom = val;
+        else {
+            ASSERT(!m_left);
+            m_left = val;
+        }
+
+        m_allowNumber = !m_left;
+        m_allowFill = true;
+        m_allowFinalCommit = true;
+    }
+
+    void commitFill() { m_fill = true; m_allowFill = false; m_allowNumber = false; }
+
+    void setAllowFinalCommit() { m_allowFinalCommit = true; }
+    void setTop(PassRefPtr<CSSPrimitiveValue> val) { m_top = val; }
+
+    PassRefPtr<CSSBorderImageSliceValue> commitBorderImageSlice()
+    {
+        // We need to clone and repeat values for any omissions.
+        ASSERT(m_top);
+        if (!m_right) {
+            m_right = m_primitiveValueCache->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+            m_bottom = m_primitiveValueCache->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+            m_left = m_primitiveValueCache->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+        }
+        if (!m_bottom) {
+            m_bottom = m_primitiveValueCache->createValue(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+            m_left = m_primitiveValueCache->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
+        }
+        if (!m_left)
+             m_left = m_primitiveValueCache->createValue(m_right->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
+
+        // Now build a rect value to hold all four of our primitive values.
+        RefPtr<Rect> rect = Rect::create();
+        rect->setTop(m_top);
+        rect->setRight(m_right);
+        rect->setBottom(m_bottom);
+        rect->setLeft(m_left);
+
+        // Make our new border image value now.
+        return CSSBorderImageSliceValue::create(rect.release(), m_fill);
+    }
+    
+private:
+    CSSPrimitiveValueCache* m_primitiveValueCache;
+
+    bool m_allowNumber;
+    bool m_allowFill;
+    bool m_allowFinalCommit;
+
+    RefPtr<CSSPrimitiveValue> m_top;
+    RefPtr<CSSPrimitiveValue> m_right;
+    RefPtr<CSSPrimitiveValue> m_bottom;
+    RefPtr<CSSPrimitiveValue> m_left;
+    
+    bool m_fill;
+};
+
+bool CSSParser::parseBorderImageSlice(int propId, RefPtr<CSSBorderImageSliceValue>& result)
+{
+    BorderImageSliceParseContext context(primitiveValueCache());
+    CSSParserValue* val;
+    while ((val = m_valueList->current())) {
+        if (context.allowNumber() && validUnit(val, FInteger | FNonNeg | FPercent, true)) {
+            context.commitNumber(val);
+        } else if (context.allowFill() && val->id == CSSValueFill)
+            context.commitFill();
+        else if (propId == CSSPropertyBorderImageSlice || propId == CSSPropertyWebkitMaskBoxImageSlice) {
+            // If we're not parsing a shorthand then we are invalid.
+            return false;
+        } else
+            break;
+        m_valueList->next();
+    }
+
+    if (context.allowNumber() && !context.top() && (propId == CSSPropertyWebkitMaskBoxImage || propId == CSSPropertyWebkitBoxReflect)) {
+        // Allow the slices to be omitted for images that don't fit to a border.  We just set the slices to be 0.
+        context.setTop(primitiveValueCache()->createValue(0, CSSPrimitiveValue::CSS_NUMBER));
+        context.setAllowFinalCommit();
+    }
+
+    if (context.allowFinalCommit()) {
+        // FIXME: For backwards compatibility, -webkit-border-image, -webkit-mask-box-image and -webkit-box-reflect have to do a fill by default.
+        // FIXME: What do we do with -webkit-box-reflect and -webkit-mask-box-image? Probably just have to leave them filling...
+        if (propId == CSSPropertyWebkitBorderImage || propId == CSSPropertyWebkitMaskBoxImage || propId == CSSPropertyWebkitBoxReflect)
+            context.commitFill();
+
+        // Need to fully commit as a single value.
+        result = context.commitBorderImageSlice();
         return true;
     }
 

@@ -53,6 +53,7 @@ public:
     virtual bool isMutableValue() const { return false; }
 
     virtual bool isBorderImageValue() const { return false; }
+    virtual bool isBorderImageSliceValue() const { return false; }
     virtual bool isCursorImageValue() const { return false; }
 #if ENABLE(CSS3_FLEXBOX)
     virtual bool isFlexValue() const { return false; }

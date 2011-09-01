@@ -4328,6 +4328,24 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setMaskBoxImage(image);
         return;
     }
+    case CSSPropertyBorderImageSlice:
+    case CSSPropertyWebkitMaskBoxImageSlice: {
+        bool isBorderImage = id == CSSPropertyBorderImageSlice;
+        NinePieceImage image(isBorderImage ? m_style->borderImage() : m_style->maskBoxImage());
+        if (isInherit)
+            image.copySlicesFrom(isBorderImage ? m_parentStyle->borderImage() : m_parentStyle->maskBoxImage());
+        else if (isInitial) {
+            image.setSlices(LengthBox(Length(100, Percent), Length(100, Percent), Length(100, Percent), Length(100, Percent)));
+            image.setFill(false);
+        } else
+            mapNinePieceImageSlice(value, image);
+        
+        if (isBorderImage)
+            m_style->setBorderImage(image);
+        else
+            m_style->setMaskBoxImage(image);
+        return;
+    }
     case CSSPropertyImageRendering:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(imageRendering, ImageRendering);
         return;
@@ -5671,26 +5689,7 @@ void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value
         imageProperty = property;
     image.setImage(styleImage(imageProperty, borderImage->imageValue()));
 
-    // Set up a length box to represent our image slices.
-    LengthBox l;
-    Rect* r = borderImage->m_imageSliceRect.get();
-    if (r->top()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-        l.m_top = Length(r->top()->getDoubleValue(), Percent);
-    else
-        l.m_top = Length(r->top()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
-    if (r->bottom()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-        l.m_bottom = Length(r->bottom()->getDoubleValue(), Percent);
-    else
-        l.m_bottom = Length((int)r->bottom()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
-    if (r->left()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-        l.m_left = Length(r->left()->getDoubleValue(), Percent);
-    else
-        l.m_left = Length(r->left()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
-    if (r->right()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-        l.m_right = Length(r->right()->getDoubleValue(), Percent);
-    else
-        l.m_right = Length(r->right()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
-    image.setSlices(l);
+    mapNinePieceImageSlice(borderImage->m_slice.get(), image);
 
     // Set the appropriate rules for stretch/round/repeat of the slices
     ENinePieceImageRule horizontalRule;
@@ -5720,6 +5719,39 @@ void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value
             break;
     }
     image.setVerticalRule(verticalRule);
+}
+
+void CSSStyleSelector::mapNinePieceImageSlice(CSSValue* value, NinePieceImage& image)
+{
+    if (!value || !value->isBorderImageSliceValue())
+        return;
+
+    // Retrieve the border image value.
+    CSSBorderImageSliceValue* borderImageSlice = static_cast<CSSBorderImageSliceValue*>(value);
+
+    // Set up a length box to represent our image slices.
+    LengthBox box;
+    Rect* r = borderImageSlice->m_rect.get();
+    if (r->top()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+        box.m_top = Length(r->top()->getDoubleValue(), Percent);
+    else
+        box.m_top = Length(r->top()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+    if (r->bottom()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+        box.m_bottom = Length(r->bottom()->getDoubleValue(), Percent);
+    else
+        box.m_bottom = Length((int)r->bottom()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+    if (r->left()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+        box.m_left = Length(r->left()->getDoubleValue(), Percent);
+    else
+        box.m_left = Length(r->left()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+    if (r->right()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+        box.m_right = Length(r->right()->getDoubleValue(), Percent);
+    else
+        box.m_right = Length(r->right()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+    image.setSlices(box);
+
+    // Set our fill mode.
+    image.setFill(borderImageSlice->m_fill);
 }
 
 void CSSStyleSelector::checkForTextSizeAdjust()
@@ -6421,7 +6453,7 @@ void CSSStyleSelector::loadPendingImages()
                     const NinePieceImage& maskImage = reflection->mask();
                     if (maskImage.image() && maskImage.image()->isPendingImage()) {
                         CSSImageValue* imageValue = static_cast<StylePendingImage*>(maskImage.image())->cssImageValue();
-                        reflection->setMask(NinePieceImage(imageValue->cachedImage(cachedResourceLoader), maskImage.slices(), maskImage.horizontalRule(), maskImage.verticalRule()));
+                        reflection->setMask(NinePieceImage(imageValue->cachedImage(cachedResourceLoader), maskImage.slices(), maskImage.fill(), maskImage.horizontalRule(), maskImage.verticalRule()));
                     }
                 }
                 break;

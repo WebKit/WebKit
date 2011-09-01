@@ -1,3 +1,123 @@
+2011-08-31  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67321
+
+        Implement border-image-slice. This will eventually be a component of the new border-image shorthand
+        property. It holds the cuts that you make into the border image along with a new optional "fill"
+        keyword that indicates whether or not the center should be filled with the middle slice of the image.
+        
+        By default -webkit-border-image has always filled, but this does not match the specification. To preserve
+        backwards compatibility, -webkit-border-image will continue to fill by default, but this does slightly affect
+        computed style results, since the "fill" keyword will now be included in property dumps.
+
+        Reviewed by Beth Dakin.
+
+        Added fast/borders/border-image-slices.html.
+
+        * CMakeLists.txt:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSBorderImageSliceValue.cpp: Added.
+        (WebCore::CSSBorderImageSliceValue::CSSBorderImageSliceValue):
+        (WebCore::CSSBorderImageSliceValue::~CSSBorderImageSliceValue):
+        (WebCore::CSSBorderImageSliceValue::cssText):
+        * css/CSSBorderImageSliceValue.h: Added.
+        (WebCore::CSSBorderImageSliceValue::create):
+        (WebCore::CSSBorderImageSliceValue::isBorderImageSliceValue):
+        Add a new CSSBorderImageSliceValue that holds both the four slices (as a CSS rect) and the
+        fill keyword (as a boolean). Note that the cssText() dumping of the slices has been refined
+        to be smarter, and it will no longer dump repeating values.
+
+        * css/CSSBorderImageValue.cpp:
+        (WebCore::CSSBorderImageValue::CSSBorderImageValue):
+        (WebCore::CSSBorderImageValue::cssText):
+        * css/CSSBorderImageValue.h:
+        (WebCore::CSSBorderImageValue::create):
+        CSSBorderImageValue now owns a CSSBorderImageSliceValue instead of just a CSS rect.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForNinePieceImageSlice):
+        (WebCore::valueForNinePieceImage):
+        Add a new method, valueForNinePieceImageSlice, for getting the slices plus the fill value
+        from the NinePieceImage and putting it into a CSSBorderImageSliceValue. This method is now used by
+        valueForNinePieceImage to get the CSSBorderImageSliceValue that is part of the overall
+        CSSBorderImageValue.
+    
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Adding support for the new properties: border-image-slice and -webkit-mask-box-image-slice.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::BorderImageParseContext::BorderImageParseContext):
+        (WebCore::BorderImageParseContext::allowBreak):
+        (WebCore::BorderImageParseContext::commitImage):
+        (WebCore::BorderImageParseContext::commitSlice):
+        (WebCore::BorderImageParseContext::commitSlash):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (WebCore::CSSParser::parseBorderImage):
+        Modify parseBorderImage to no longer parse the slices itself. Instead it farms out the parsing
+        to parseBorderImageSlice.
+
+        (WebCore::BorderImageSliceParseContext::BorderImageSliceParseContext):
+        (WebCore::BorderImageSliceParseContext::allowNumber):
+        (WebCore::BorderImageSliceParseContext::allowFill):
+        (WebCore::BorderImageSliceParseContext::allowFinalCommit):
+        (WebCore::BorderImageSliceParseContext::top):
+        (WebCore::BorderImageSliceParseContext::commitNumber):
+        (WebCore::BorderImageSliceParseContext::commitFill):
+        (WebCore::BorderImageSliceParseContext::setAllowFinalCommit):
+        (WebCore::BorderImageSliceParseContext::setTop):
+        (WebCore::BorderImageSliceParseContext::commitBorderImageSlice):
+        (WebCore::CSSParser::parseBorderImageSlice):
+        Slice parsing has now been broken out so that it can be parsed as a single property. In addition
+        support for the "fill" keyword has been added to control image filling.
+
+        * css/CSSParser.h:
+        Modified to add the new parseBorderImageSlice method.
+
+        * css/CSSPropertyNames.in:
+        Add the new properties: border-image-slice and -webkit-mask-box-image-slice.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapNinePieceImage):
+        Rework mapNinePieceImage to call mapNinePieceImageSlice so that the mapping can be done just for
+        the slices.
+
+        (WebCore::CSSStyleSelector::mapNinePieceImageSlice):
+        A new method that handles mapping just the slices into the front-end NinePieceImage.
+
+        (WebCore::CSSStyleSelector::loadPendingImages):
+        Modified to ensure the fill value is preserved when box-reflect makes a new NinePieceImage.
+
+        * css/CSSStyleSelector.h:
+        Added the new mapNinePieceImageSlice method.
+
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isBorderImageSliceValue):
+        Virtual function for identifying border image slice values.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        The painting of the nine piece image has been modified to match the specification. The "fill"
+        keyword controls whether or not the middle is painted.
+
+        * rendering/style/NinePieceImage.cpp:
+        (WebCore::NinePieceImage::operator==):
+        The fill keyword has to be checked now for equality.
+
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImage::NinePieceImage):
+        (WebCore::NinePieceImage::fill):
+        (WebCore::NinePieceImage::setFill):
+        Added the fill keyword to the front end NinePieceImage.
+
+        (WebCore::NinePieceImage::copySlicesFrom):
+        Added a helper to copy only the slices over from another NinePieceImage. Used when inheriting
+        the border-image-slice property from a parent style.
+
 2011-09-01  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Decode query/form parameters names as well as values.
