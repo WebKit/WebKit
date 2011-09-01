@@ -162,7 +162,7 @@ void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, boo
 void RenderView::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState& transformState) const
 {
     if (fixed && m_frameView)
-        transformState.move(-m_frameView->scrollOffsetForFixedPosition());
+        transformState.move(m_frameView->scrollOffsetForFixedPosition());
 
     if (useTransforms && shouldUseTransformFromContainer(0)) {
         TransformationMatrix t;
