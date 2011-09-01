@@ -1,3 +1,13 @@
+2011-08-31  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Web Inspector: [Chromium] Perform a more effective JS GC
+        https://bugs.webkit.org/show_bug.cgi?id=67304
+
+        Reviewed by Pavel Feldman.
+
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::collectGarbage):
+
 2011-09-01  Sam Weinig  <sam@webkit.org>
 
         WebGLContextEvent should have its own JS wrapper

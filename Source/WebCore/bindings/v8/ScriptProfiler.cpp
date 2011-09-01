@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Google Inc. All rights reserved.
+ * Copyright (c) 2011, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -58,10 +58,11 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String&
 
 void ScriptProfiler::collectGarbage()
 {
-    // NOTE : There is currently no direct way to collect memory from the v8 C++ API
-    // but notifying low-memory forces a mark-compact, which is exactly what we want
-    // in this case.
-    v8::V8::LowMemoryNotification();
+    // Repeatedly call the V8 idle notification until it returns true ("nothing
+    // more to free"). Note that it makes more sense to do this than to implement
+    // a new "delete everything" pass because object references make it difficult
+    // to free everything possible in just one pass.
+    while (!v8::V8::IdleNotification()) { }
 }
 
 namespace {
