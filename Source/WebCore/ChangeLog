@@ -1,3 +1,28 @@
+2011-09-01  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION: Rendering artifacts on a rotated, pattern filled SVG shape
+        https://bugs.webkit.org/show_bug.cgi?id=53055
+        <rdar://problem/8910917>
+
+        Reviewed by Simon Fraser.
+
+        Make use of wkCGPatternCreateWithImageAndTransform
+        when tiling patterns in both directions. This helps to avoid
+        pixel-cracking along pattern tiling boundaries.
+
+        Ignore 2D rotation when computing the size of a pattern's tile image,
+        as it artificially inflates the size of the tile, which can cause
+        pixel-cracking.
+
+        Test: svg/custom/pattern-rotate-gaps.svg
+
+        * platform/graphics/cg/PatternCG.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        * rendering/svg/SVGImageBufferTools.cpp:
+        (WebCore::SVGImageBufferTools::roundedImageBufferSize):
+        * rendering/svg/SVGImageBufferTools.h:
+
 2011-09-01  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed, rolling out r94284.

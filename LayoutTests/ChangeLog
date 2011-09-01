@@ -1,3 +1,22 @@
+2011-09-01  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION: Rendering artifacts on a rotated, pattern filled SVG shape
+        https://bugs.webkit.org/show_bug.cgi?id=53055
+        <rdar://problem/8910917>
+
+        Reviewed by Simon Fraser.
+
+        Add a test that makes pixel cracking in transformed SVG patterns quite blatant,
+        and rebaseline some other tests affected by the change.
+
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/mac/svg/custom/pattern-rotate-expected.png:
+        * platform/mac/svg/custom/pattern-rotate-gaps-expected.png: Added.
+        * platform/mac/svg/custom/pattern-rotate-gaps-expected.txt: Added.
+        * platform/mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/mac/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * svg/custom/pattern-rotate-gaps.svg: Added.
+
 2011-09-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update expectations and baselines

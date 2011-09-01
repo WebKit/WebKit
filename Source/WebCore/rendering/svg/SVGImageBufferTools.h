@@ -42,6 +42,7 @@ public:
     static void calculateTransformationToOutermostSVGCoordinateSystem(const RenderObject*, AffineTransform& absoluteTransform);
     static FloatRect clampedAbsoluteTargetRectForRenderer(const RenderObject*, const FloatRect& absoluteTargetRect);
     static IntSize roundedImageBufferSize(const FloatSize&);
+    static void clear2DRotation(AffineTransform&);
 
 private:
     SVGImageBufferTools() { }
