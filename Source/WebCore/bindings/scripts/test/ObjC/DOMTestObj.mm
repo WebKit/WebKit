@@ -38,6 +38,9 @@
 #import "DOMOptionsObjectInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestObjInternal.h"
+#import "DOMTestObjectAConstructorInternal.h"
+#import "DOMTestObjectBConstructorInternal.h"
+#import "DOMTestObjectCConstructorInternal.h"
 #import "DOMlogInternal.h"
 #import "EventListener.h"
 #import "ExceptionHandlers.h"
@@ -49,6 +52,9 @@
 #import "OptionsObject.h"
 #import "SerializedScriptValue.h"
 #import "TestObj.h"
+#import "TestObjectAConstructor.h"
+#import "TestObjectBConstructor.h"
+#import "TestObjectCConstructor.h"
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
@@ -457,6 +463,54 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->setConditionalAttr3(newConditionalAttr3);
+}
+#endif
+
+#if ENABLE(Condition1)
+- (DOMTestObjectAConstructor *)conditionalAttr4
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->conditionalAttr4()));
+}
+
+- (void)setConditionalAttr4:(DOMTestObjectAConstructor *)newConditionalAttr4
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newConditionalAttr4);
+
+    IMPL->setConditionalAttr4(core(newConditionalAttr4));
+}
+#endif
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+- (DOMTestObjectBConstructor *)conditionalAttr5
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->conditionalAttr5()));
+}
+
+- (void)setConditionalAttr5:(DOMTestObjectBConstructor *)newConditionalAttr5
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newConditionalAttr5);
+
+    IMPL->setConditionalAttr5(core(newConditionalAttr5));
+}
+#endif
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+- (DOMTestObjectCConstructor *)conditionalAttr6
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->conditionalAttr6()));
+}
+
+- (void)setConditionalAttr6:(DOMTestObjectCConstructor *)newConditionalAttr6
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newConditionalAttr6);
+
+    IMPL->setConditionalAttr6(core(newConditionalAttr6));
 }
 #endif
 

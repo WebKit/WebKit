@@ -565,6 +565,60 @@ void WebDOMTestObj::setConditionalAttr3(int newConditionalAttr3)
 }
 
 #endif
+#if ENABLE(Condition1)
+WebDOMTestObjectAConstructor WebDOMTestObj::conditionalAttr4() const
+{
+    if (!impl())
+        return WebDOMTestObjectAConstructor();
+
+    return toWebKit(WTF::getPtr(impl()->conditionalAttr4()));
+}
+
+void WebDOMTestObj::setConditionalAttr4(const WebDOMTestObjectAConstructor& newConditionalAttr4)
+{
+    if (!impl())
+        return;
+
+    impl()->setConditionalAttr4(toWebCore(newConditionalAttr4));
+}
+
+#endif
+#if ENABLE(Condition1) && ENABLE(Condition2)
+WebDOMTestObjectBConstructor WebDOMTestObj::conditionalAttr5() const
+{
+    if (!impl())
+        return WebDOMTestObjectBConstructor();
+
+    return toWebKit(WTF::getPtr(impl()->conditionalAttr5()));
+}
+
+void WebDOMTestObj::setConditionalAttr5(const WebDOMTestObjectBConstructor& newConditionalAttr5)
+{
+    if (!impl())
+        return;
+
+    impl()->setConditionalAttr5(toWebCore(newConditionalAttr5));
+}
+
+#endif
+#if ENABLE(Condition1) || ENABLE(Condition2)
+WebDOMTestObjectCConstructor WebDOMTestObj::conditionalAttr6() const
+{
+    if (!impl())
+        return WebDOMTestObjectCConstructor();
+
+    return toWebKit(WTF::getPtr(impl()->conditionalAttr6()));
+}
+
+void WebDOMTestObj::setConditionalAttr6(const WebDOMTestObjectCConstructor& newConditionalAttr6)
+{
+    if (!impl())
+        return;
+
+    impl()->setConditionalAttr6(toWebCore(newConditionalAttr6));
+}
+
+#endif
 int WebDOMTestObj::description() const
 {
     if (!impl())

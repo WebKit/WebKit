@@ -141,6 +141,10 @@ module test {
         [Conditional=Condition1&Condition2] void conditionalMethod2();
         [Conditional=Condition1|Condition2] void conditionalMethod3();
 
+        attribute [Conditional=Condition1] TestObjectAConstructor conditionalAttr4;
+        attribute [Conditional=Condition1&Condition2] TestObjectBConstructor conditionalAttr5;
+        attribute [Conditional=Condition1|Condition2] TestObjectCConstructor conditionalAttr6;
+
 #if defined(TESTING_V8) || defined(TESTING_JS)
         // Overloads
         void    overloadedMethod(in TestObj objArg, in DOMString strArg);

@@ -45,6 +45,18 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+#if ENABLE(Condition1)
+#include "V8TestObjectA.h"
+#endif
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+#include "V8TestObjectB.h"
+#endif
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#include "V8TestObjectC.h"
+#endif
+
 namespace WebCore {
 
 WrapperTypeInfo V8TestObj::info = { V8TestObj::GetTemplate, V8TestObj::derefObject, 0, 0 };
@@ -629,6 +641,14 @@ static v8::Handle<v8::Value> hashAttrGetter(v8::Local<v8::String> name, const v8
     TestObj* imp = V8TestObj::toNative(info.Holder());
     return v8String(imp->hash());
 }
+
+static v8::Handle<v8::Value> TestObjConstructorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.constructors._get");
+    v8::Handle<v8::Value> data = info.Data();
+    ASSERT(data->IsExternal() || data->IsNumber());
+    WrapperTypeInfo* type = WrapperTypeInfo::unwrap(data);
+    return v8::Handle<v8::Value>();}
 
 static v8::Handle<v8::Value> voidMethodCallback(const v8::Arguments& args)
 {
@@ -1244,6 +1264,18 @@ static const BatchedAttribute TestObjAttrs[] = {
 #if ENABLE(Condition1) || ENABLE(Condition2)
     // Attribute 'conditionalAttr3' (Type: 'attribute' ExtAttr: 'Conditional')
     {"conditionalAttr3", TestObjInternal::conditionalAttr3AttrGetter, TestObjInternal::conditionalAttr3AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition1)
+    // Attribute 'conditionalAttr4' (Type: 'attribute' ExtAttr: 'Conditional')
+    {"conditionalAttr4", TestObjInternal::TestObjConstructorGetter, 0, &V8TestObjectA::info, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::ReadOnly), 0 /* on instance */},
+#endif // ENABLE(Condition1)
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    // Attribute 'conditionalAttr5' (Type: 'attribute' ExtAttr: 'Conditional')
+    {"conditionalAttr5", TestObjInternal::TestObjConstructorGetter, 0, &V8TestObjectB::info, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::ReadOnly), 0 /* on instance */},
+#endif // ENABLE(Condition1) && ENABLE(Condition2)
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    // Attribute 'conditionalAttr6' (Type: 'attribute' ExtAttr: 'Conditional')
+    {"conditionalAttr6", TestObjInternal::TestObjConstructorGetter, 0, &V8TestObjectC::info, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::ReadOnly), 0 /* on instance */},
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
     // Attribute 'description' (Type: 'readonly attribute' ExtAttr: '')
     {"description", TestObjInternal::descriptionAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},

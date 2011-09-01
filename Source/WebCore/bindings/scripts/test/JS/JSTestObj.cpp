@@ -42,6 +42,18 @@
 #include <runtime/JSString.h>
 #include <wtf/GetPtr.h>
 
+#if ENABLE(Condition1)
+#include "JSTestObjectA.h"
+#endif
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+#include "JSTestObjectB.h"
+#endif
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#include "JSTestObjectC.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -95,6 +107,15 @@ static const HashTableValue JSTestObjTableValues[] =
 #if ENABLE(Condition1) || ENABLE(Condition2)
     { "conditionalAttr3", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr3), (intptr_t)setJSTestObjConditionalAttr3 THUNK_GENERATOR(0) },
 #endif
+#if ENABLE(Condition1)
+    { "conditionalAttr4", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr4Constructor), (intptr_t)setJSTestObjConditionalAttr4Constructor THUNK_GENERATOR(0) },
+#endif
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    { "conditionalAttr5", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr5Constructor), (intptr_t)setJSTestObjConditionalAttr5Constructor THUNK_GENERATOR(0) },
+#endif
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    { "conditionalAttr6", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr6Constructor), (intptr_t)setJSTestObjConditionalAttr6Constructor THUNK_GENERATOR(0) },
+#endif
     { "description", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjDescription), (intptr_t)0 THUNK_GENERATOR(0) },
     { "id", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjId), (intptr_t)setJSTestObjId THUNK_GENERATOR(0) },
     { "hash", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjHash), (intptr_t)0 THUNK_GENERATOR(0) },
@@ -103,7 +124,7 @@ static const HashTableValue JSTestObjTableValues[] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestObjTable = { 133, 127, JSTestObjTableValues, 0 };
+static JSC_CONST_HASHTABLE HashTable JSTestObjTable = { 134, 127, JSTestObjTableValues, 0 };
 /* Hash table for constructor */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator
@@ -621,6 +642,33 @@ JSValue jsTestObjConditionalAttr3(ExecState* exec, JSValue slotBase, const Ident
 
 #endif
 
+#if ENABLE(Condition1)
+JSValue jsTestObjConditionalAttr4Constructor(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
+    return JSTestObjectA::getConstructor(exec, castedThis);
+}
+
+#endif
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+JSValue jsTestObjConditionalAttr5Constructor(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
+    return JSTestObjectB::getConstructor(exec, castedThis);
+}
+
+#endif
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+JSValue jsTestObjConditionalAttr6Constructor(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
+    return JSTestObjectC::getConstructor(exec, castedThis);
+}
+
+#endif
+
 JSValue jsTestObjDescription(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
@@ -895,6 +943,33 @@ void setJSTestObjConditionalAttr3(ExecState* exec, JSObject* thisObject, JSValue
     JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
     imp->setConditionalAttr3(value.toInt32(exec));
+}
+
+#endif
+
+#if ENABLE(Condition1)
+void setJSTestObjConditionalAttr4Constructor(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    // Shadowing a built-in constructor
+    static_cast<JSTestObj*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, "conditionalAttr4"), value);
+}
+
+#endif
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+void setJSTestObjConditionalAttr5Constructor(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    // Shadowing a built-in constructor
+    static_cast<JSTestObj*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, "conditionalAttr5"), value);
+}
+
+#endif
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+void setJSTestObjConditionalAttr6Constructor(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    // Shadowing a built-in constructor
+    static_cast<JSTestObj*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, "conditionalAttr6"), value);
 }
 
 #endif
