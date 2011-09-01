@@ -834,14 +834,8 @@ void CanvasRenderingContext2D::arc(float x, float y, float r, float sa, float ea
     }
 
     if (!r || sa == ea) {
-        // A subpath consisting of a single empty arc should draw nothing.
-        // However, an empty arc may comprise one point in a non-empty
-        // subpath, so do not ignore empty arcs entirely.
-        FloatPoint pt(x + r * cosf(sa), y + r * sinf(sa));
-        if (!m_path.hasCurrentPoint())
-            m_path.moveTo(pt);
-        else
-            m_path.addLineTo(pt);
+        // The arc is empty but we still need to draw the connecting line
+        lineTo(x + r * cosf(sa), y + r * sinf(sa));
         return;
     }
 
