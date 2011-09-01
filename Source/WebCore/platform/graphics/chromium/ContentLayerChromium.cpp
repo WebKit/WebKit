@@ -120,16 +120,17 @@ bool ContentLayerChromium::drawsContent() const
 
 void ContentLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
 {
-#if !USE(THREADED_COMPOSITING)
 #if USE(SKIA)
+    // Note that host->skiaContext() will crash if called while in threaded
+    // mode. This thus depends on CCLayerTreeHost::initialize turning off
+    // acceleratePainting to prevent this from crashing.
     if (host->settings().acceleratePainting) {
         m_textureUpdater = LayerTextureUpdaterSkPicture::create(ContentLayerPainter::create(m_owner));
         return;
     }
 #endif // SKIA
-#endif // !THREADED_COMPOSITING
 
-    m_textureUpdater = LayerTextureUpdaterBitmap::create(ContentLayerPainter::create(m_owner), host->contextSupportsMapSub());
+    m_textureUpdater = LayerTextureUpdaterBitmap::create(ContentLayerPainter::create(m_owner), host->layerRendererCapabilities().usingMapSub);
 }
 
 }

@@ -41,6 +41,7 @@ public:
     MOCK_METHOD2(method2, void(int a1, int a2));
     MOCK_METHOD3(method3, void(int a1, int a2, int a3));
     MOCK_METHOD4(method4, void(int a1, int a2, int a3, int a4));
+    MOCK_METHOD5(method5, void(int a1, int a2, int a3, int a4, int a5));
 };
 
 TEST(CCThreadTaskTest, runnableMethods)
@@ -51,12 +52,14 @@ TEST(CCThreadTaskTest, runnableMethods)
     EXPECT_CALL(mock, method2(9, 8)).Times(1);
     EXPECT_CALL(mock, method3(9, 8, 7)).Times(1);
     EXPECT_CALL(mock, method4(9, 8, 7, 6)).Times(1);
+    EXPECT_CALL(mock, method5(9, 8, 7, 6, 5)).Times(1);
 
     createCCThreadTask(&mock, &Mock::method0)->performTask();
     createCCThreadTask(&mock, &Mock::method1, 9)->performTask();
     createCCThreadTask(&mock, &Mock::method2, 9, 8)->performTask();
     createCCThreadTask(&mock, &Mock::method3, 9, 8, 7)->performTask();
     createCCThreadTask(&mock, &Mock::method4, 9, 8, 7, 6)->performTask();
+    createCCThreadTask(&mock, &Mock::method5, 9, 8, 7, 6, 5)->performTask();
 }
 
 } // namespace

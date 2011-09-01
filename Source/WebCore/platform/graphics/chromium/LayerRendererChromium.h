@@ -42,6 +42,7 @@
 #include "cc/CCHeadsUpDisplay.h"
 #include "cc/CCLayerSorter.h"
 #include "cc/CCLayerTreeHost.h"
+#include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCPluginLayerImpl.h"
 #include "cc/CCVideoLayerImpl.h"
 #include <wtf/HashMap.h>
@@ -63,7 +64,7 @@ namespace WebCore {
 
 class CCHeadsUpDisplay;
 class CCLayerImpl;
-class CCLayerTreeHostCommitter;
+class CCLayerTreeHost; // FIXME: remove pointers to this.
 class CCLayerTreeHostImpl;
 class GeometryBinding;
 class GraphicsContext3D;
@@ -72,11 +73,15 @@ class NonCompositedContentHost;
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public RefCounted<LayerRendererChromium> {
 public:
-    static PassRefPtr<LayerRendererChromium> create(CCLayerTreeHost*, PassRefPtr<GraphicsContext3D>);
+    static PassRefPtr<LayerRendererChromium> create(CCLayerTreeHost*, CCLayerTreeHostImpl*, PassRefPtr<GraphicsContext3D>);
+
+    // Must be called in order to allow the LayerRendererChromium to destruct
+    void close();
 
     virtual ~LayerRendererChromium();
 
     const CCSettings& settings() const { return m_owner->settings(); }
+    const LayerRendererCapabilities& capabilities() const { return m_capabilities; }
 
     CCLayerTreeHost* owner() { return m_owner; }
     const CCLayerTreeHost* owner() const { return m_owner; }
@@ -84,10 +89,13 @@ public:
     GraphicsLayer* rootLayer() { return m_owner->rootLayer(); }
     const GraphicsLayer* rootLayer() const { return m_owner->rootLayer(); }
 
-    GraphicsContext3D* context();
-    bool contextSupportsMapSub() const { return m_contextSupportsMapSub; }
+    CCLayerImpl* rootLayerImpl() { return m_ownerImpl->rootLayer(); }
+    const CCLayerImpl* rootLayerImpl() const { return m_ownerImpl->rootLayer(); }
 
-    const IntSize& viewportSize() { return m_owner->viewportSize(); }
+    GraphicsContext3D* context();
+    bool contextSupportsMapSub() const { return m_capabilities.usingMapSub; }
+
+    const IntSize& viewportSize() { return m_ownerImpl->viewportSize(); }
     int viewportWidth() { return viewportSize().width(); }
     int viewportHeight() { return viewportSize().height(); }
 
@@ -110,8 +118,6 @@ public:
 
     const TransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
     const TransformationMatrix& windowMatrix() const { return m_windowMatrix; }
-
-    int maxTextureSize() const { return m_maxTextureSize; }
 
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
     const LayerChromium::BorderProgram* borderProgram();
@@ -138,24 +144,17 @@ public:
 
     String layerTreeAsText() const;
 
-    // Return true if the compositor context has an error.
-    bool isCompositorContextLost();
+    bool isContextLost();
 
     void releaseTextures();
-
-    void setLayerRendererRecursive(LayerChromium*);
 
     GC3Denum bestTextureFormat();
 
     typedef Vector<RefPtr<LayerChromium> > LayerList;
     typedef Vector<RefPtr<CCLayerImpl> > CCLayerList;
 
-    void clearRootCCLayerImpl();
 private:
-    // FIXME: This needs to be moved to the CCLayerTreeHostImpl when that class exists.
-    RefPtr<CCLayerImpl> m_rootCCLayerImpl;
-
-    LayerRendererChromium(CCLayerTreeHost*, PassRefPtr<GraphicsContext3D>);
+    LayerRendererChromium(CCLayerTreeHost*, CCLayerTreeHostImpl*, PassRefPtr<GraphicsContext3D>);
     bool initialize();
 
     void updateLayers(LayerChromium*);
@@ -188,8 +187,12 @@ private:
 
     void clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl*);
 
-    // FIXME: Change this to CCLayerTreeHostImpl
+    // FIXME: Remove CCLayerTreeHost field
     CCLayerTreeHost* m_owner;
+
+    CCLayerTreeHostImpl* m_ownerImpl;
+
+    LayerRendererCapabilities m_capabilities;
 
     TransformationMatrix m_projectionMatrix;
     TransformationMatrix m_windowMatrix;
@@ -198,9 +201,6 @@ private:
 
     CCRenderSurface* m_currentRenderSurface;
     unsigned m_offscreenFramebufferId;
-
-    // Maximum texture dimensions supported.
-    int m_maxTextureSize;
 
     // Store values that are shared between instances of each layer type
     // associated with this instance of the compositor. Since there can be
@@ -226,8 +226,6 @@ private:
     OwnPtr<CCHeadsUpDisplay> m_headsUpDisplay;
 
     RefPtr<GraphicsContext3D> m_context;
-
-    bool m_contextSupportsMapSub;
 
     CCRenderSurface* m_defaultRenderSurface;
 

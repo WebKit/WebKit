@@ -45,6 +45,7 @@
 #include "LayerTextureUpdaterCanvas.h"
 #include "NonCompositedContentHost.h"
 #include "NotImplemented.h"
+#include "PlatformColor.h"
 #include "RenderSurfaceChromium.h"
 #include "TextStream.h"
 #include "TextureManager.h"
@@ -451,13 +452,13 @@ bool contextSupportsAcceleratedPainting(GraphicsContext3D* context)
 }
 #endif
 
-PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHost* owner, PassRefPtr<GraphicsContext3D> context)
+PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHost* owner, CCLayerTreeHostImpl* ownerImpl, PassRefPtr<GraphicsContext3D> context)
 {
 #if USE(SKIA)
     if (owner->settings().acceleratePainting && !contextSupportsAcceleratedPainting(context.get()))
         return 0;
 #endif
-    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(owner, context)));
+    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(owner, ownerImpl, context)));
     if (!layerRenderer->initialize())
         return 0;
 
@@ -465,8 +466,10 @@ PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHost*
 }
 
 LayerRendererChromium::LayerRendererChromium(CCLayerTreeHost* owner,
+                                             CCLayerTreeHostImpl* ownerImpl,
                                              PassRefPtr<GraphicsContext3D> context)
     : m_owner(owner)
+    , m_ownerImpl(ownerImpl)
     , m_currentRenderSurface(0)
     , m_offscreenFramebufferId(0)
     , m_context(context)
@@ -477,11 +480,17 @@ LayerRendererChromium::LayerRendererChromium(CCLayerTreeHost* owner,
 bool LayerRendererChromium::initialize()
 {
     m_context->makeContextCurrent();
+    if (settings().acceleratePainting) {
+        m_capabilities.usingAcceleratedPainting = true;
+    }
 
     WebCore::Extensions3D* extensions = m_context->getExtensions();
-    m_contextSupportsMapSub = extensions->supports("GL_CHROMIUM_map_sub");
-    if (m_contextSupportsMapSub)
+    m_capabilities.usingMapSub = extensions->supports("GL_CHROMIUM_map_sub");
+    if (m_capabilities.usingMapSub)
         extensions->ensureEnabled("GL_CHROMIUM_map_sub");
+
+    GLC(m_context.get(), m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_capabilities.maxTextureSize));
+    m_capabilities.bestTextureFormat = PlatformColor::bestTextureFormat(m_context.get());
 
     if (!initializeSharedObjects())
         return false;
@@ -506,11 +515,10 @@ void LayerRendererChromium::clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImp
     layer->clearRenderSurface();
 }
 
-void LayerRendererChromium::clearRootCCLayerImpl()
+void LayerRendererChromium::close()
 {
-    if (m_rootCCLayerImpl)
-        clearRenderSurfacesOnCCLayerImplRecursive(m_rootCCLayerImpl.get());
-    m_rootCCLayerImpl.clear();
+    if (rootLayerImpl())
+        clearRenderSurfacesOnCCLayerImplRecursive(rootLayerImpl());
 }
 
 GraphicsContext3D* LayerRendererChromium::context()
@@ -551,6 +559,9 @@ void LayerRendererChromium::viewportChanged()
 
 void LayerRendererChromium::updateLayers()
 {
+    if (!rootLayer())
+        return;
+
     if (m_owner->viewportSize().isEmpty())
         return;
 
@@ -559,13 +570,6 @@ void LayerRendererChromium::updateLayers()
     // RenderWidget.
     m_headsUpDisplay->onFrameBegin(currentTime());
 
-    // Recheck that we still have a root layer. This may become null if
-    // compositing gets turned off during a paint operation.
-    if (!rootLayer()) {
-        m_rootCCLayerImpl.clear();
-        return;
-    }
-
     updateLayers(rootLayer()->platformLayer());
 }
 
@@ -573,12 +577,6 @@ void LayerRendererChromium::drawLayers()
 {
     if (!rootLayer())
         return;
-
-    {
-        TRACE_EVENT("LayerRendererChromium::synchronizeTrees", this, 0);
-        m_rootCCLayerImpl = TreeSynchronizer::synchronizeTrees(rootLayer()->platformLayer(), m_rootCCLayerImpl.get());
-    }
-
 
     m_renderSurfaceTextureManager->setMemoryLimitBytes(textureMemoryHighLimitBytes - m_contentsTextureManager->currentMemoryUseBytes());
     drawLayersInternal();
@@ -616,7 +614,7 @@ void LayerRendererChromium::updateLayers(LayerChromium* rootLayer)
 
     {
         TRACE_EVENT("LayerRendererChromium::updateLayers::calcDrawEtc", this, 0);
-        calculateDrawTransformsAndVisibility<LayerChromium, RenderSurfaceChromium, void*>(rootLayer, rootLayer, identityMatrix, identityMatrix, renderSurfaceLayerList, rootRenderSurface->layerList(), 0, m_maxTextureSize);
+        calculateDrawTransformsAndVisibility<LayerChromium, RenderSurfaceChromium, void*>(rootLayer, rootLayer, identityMatrix, identityMatrix, renderSurfaceLayerList, rootRenderSurface->layerList(), 0, m_capabilities.maxTextureSize);
     }
 
     paintLayerContents(renderSurfaceLayerList);
@@ -724,7 +722,7 @@ void LayerRendererChromium::drawLayersInternal()
         return;
 
     TRACE_EVENT("LayerRendererChromium::drawLayers", this, 0);
-    CCLayerImpl* rootDrawLayer = m_rootCCLayerImpl.get();
+    CCLayerImpl* rootDrawLayer = rootLayerImpl();
     makeContextCurrent();
 
     if (!rootDrawLayer->renderSurface())
@@ -742,7 +740,7 @@ void LayerRendererChromium::drawLayersInternal()
 
     {
         TRACE_EVENT("LayerRendererChromium::drawLayersInternal::calcDrawEtc", this, 0);
-        calculateDrawTransformsAndVisibility<CCLayerImpl, CCRenderSurface, CCLayerSorter>(rootDrawLayer, rootDrawLayer, identityMatrix, identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->layerList(), &m_layerSorter, m_maxTextureSize);
+        calculateDrawTransformsAndVisibility<CCLayerImpl, CCRenderSurface, CCLayerSorter>(rootDrawLayer, rootDrawLayer, identityMatrix, identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->layerList(), &m_layerSorter, m_capabilities.maxTextureSize);
     }
 
     // The GL viewport covers the entire visible area, including the scrollbars.
@@ -830,20 +828,6 @@ void LayerRendererChromium::present()
     m_context->prepareTexture();
 
     m_headsUpDisplay->onPresent();
-}
-
-void LayerRendererChromium::setLayerRendererRecursive(LayerChromium* layer)
-{
-    const Vector<RefPtr<LayerChromium> >& children = layer->children();
-    for (size_t i = 0; i < children.size(); ++i)
-        setLayerRendererRecursive(children[i].get());
-
-    if (layer->maskLayer())
-        setLayerRendererRecursive(layer->maskLayer());
-    if (layer->replicaLayer())
-        setLayerRendererRecursive(layer->replicaLayer());
-
-    layer->setLayerRenderer(this);
 }
 
 void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& rect)
@@ -940,7 +924,7 @@ void LayerRendererChromium::updateCompositorResources(LayerChromium* layer)
 
 ManagedTexture* LayerRendererChromium::getOffscreenLayerTexture()
 {
-    return settings().compositeOffscreen && m_rootCCLayerImpl ? m_rootCCLayerImpl->renderSurface()->contentsTexture() : 0;
+    return settings().compositeOffscreen && rootLayerImpl() ? rootLayerImpl()->renderSurface()->contentsTexture() : 0;
 }
 
 void LayerRendererChromium::copyOffscreenTextureToDisplay()
@@ -1085,10 +1069,6 @@ bool LayerRendererChromium::initializeSharedObjects()
     TRACE_EVENT("LayerRendererChromium::initializeSharedObjects", this, 0);
     makeContextCurrent();
 
-    // Get the max texture size supported by the system.
-    m_maxTextureSize = 0;
-    GLC(m_context.get(), m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_maxTextureSize));
-
     // Create an FBO for doing offscreen rendering.
     GLC(m_context.get(), m_offscreenFramebufferId = m_context->createFramebuffer());
 
@@ -1100,8 +1080,8 @@ bool LayerRendererChromium::initializeSharedObjects()
 
     GLC(m_context.get(), m_context->flush());
 
-    m_contentsTextureManager = TextureManager::create(textureMemoryHighLimitBytes, m_maxTextureSize);
-    m_renderSurfaceTextureManager = TextureManager::create(textureMemoryHighLimitBytes, m_maxTextureSize);
+    m_contentsTextureManager = TextureManager::create(textureMemoryHighLimitBytes, m_capabilities.maxTextureSize);
+    m_renderSurfaceTextureManager = TextureManager::create(textureMemoryHighLimitBytes, m_capabilities.maxTextureSize);
 #ifndef NDEBUG
     m_contentsTextureManager->setAssociatedContextDebugOnly(m_context.get());
     m_renderSurfaceTextureManager->setAssociatedContextDebugOnly(m_context.get());
@@ -1291,7 +1271,7 @@ void LayerRendererChromium::dumpRenderSurfaces(TextStream& ts, int indent, const
         dumpRenderSurfaces(ts, indent, layer->children()[i].get());
 }
 
-bool LayerRendererChromium::isCompositorContextLost()
+bool LayerRendererChromium::isContextLost()
 {
     return (m_context.get()->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR);
 }

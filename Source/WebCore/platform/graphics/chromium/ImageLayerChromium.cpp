@@ -181,7 +181,7 @@ bool ImageLayerChromium::drawsContent() const
 
 void ImageLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
 {
-    m_textureUpdater = ImageLayerTextureUpdater::create(host->contextSupportsMapSub());
+    m_textureUpdater = ImageLayerTextureUpdater::create(host->layerRendererCapabilities().usingMapSub);
 }
 
 }

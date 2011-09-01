@@ -1,3 +1,18 @@
+2011-08-29  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Introduce CCSingleThreadProxy in order to move LayerRenderer to CCLayerTreeHostImpl
+        https://bugs.webkit.org/show_bug.cgi?id=66807
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::composite):
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::didRecreateGraphicsContext):
+        * tests/CCThreadTaskTest.cpp:
+        (WebCore::TEST):
+
 2011-09-01  Dominic Mazzoni  <dmazzoni@google.com>
 
         Add API functions to enable starting and stopping speech input,

@@ -24,21 +24,44 @@
 
 #include "config.h"
 
-#include "cc/CCLayerTreeHostCommitter.h"
+#include "cc/CCProxy.h"
 
+#include "TraceEvent.h"
 #include "cc/CCLayerTreeHost.h"
-#include "cc/CCLayerTreeHostImpl.h"
+#include "cc/CCMainThreadTask.h"
+#include "cc/CCThreadTask.h"
+#include <wtf/MainThread.h>
+
+using namespace WTF;
 
 namespace WebCore {
 
-PassOwnPtr<CCLayerTreeHostCommitter> CCLayerTreeHostCommitter::create()
+#ifndef NDEBUG
+bool CCProxy::isMainThread()
 {
-    return adoptPtr(new CCLayerTreeHostCommitter());
+    return ::isMainThread();
 }
 
-void CCLayerTreeHostCommitter::commit(CCLayerTreeHost* host, CCLayerTreeHostImpl* hostImpl)
-{
-    hostImpl->setSourceFrameNumber(host->frameNumber());
+namespace {
+bool fakeImplThread = false;
+static WTF::ThreadIdentifier implThreadID;
 }
+
+bool CCProxy::isImplThread()
+{
+    return fakeImplThread || currentThread() == implThreadID;
+}
+
+void CCProxy::setImplThread(bool isImplThread)
+{
+    fakeImplThread = isImplThread;
+}
+
+void CCProxy::setImplThread(WTF::ThreadIdentifier id)
+{
+    implThreadID = id;
+}
+
+#endif // !NDEBUG
 
 }

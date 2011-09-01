@@ -147,6 +147,7 @@ void VideoLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 
 void VideoLayerChromium::setLayerTreeHost(CCLayerTreeHost* layerTreeHost)
 {
+    LayerChromium::setLayerTreeHost(layerTreeHost);
     if (m_layerTreeHost == layerTreeHost)
         return;
 
@@ -178,7 +179,7 @@ bool VideoLayerChromium::reserveTextures(const VideoFrameChromium* frame, GC3Den
     ASSERT(frame);
     ASSERT(textureFormat != GraphicsContext3D::INVALID_VALUE);
 
-    int maxTextureSize = m_layerTreeHost->maxTextureSize();
+    int maxTextureSize = m_layerTreeHost->layerRendererCapabilities().maxTextureSize;
 
     for (unsigned plane = 0; plane < frame->planes(); plane++) {
         IntSize requiredTextureSize = frame->requiredTextureSize(plane);

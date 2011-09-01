@@ -1157,7 +1157,7 @@ void WebViewImpl::themeChanged()
     view->invalidateRect(damagedRect);
 }
 
-void WebViewImpl::composite(bool finish)
+void WebViewImpl::composite(bool)
 {
 #if USE(ACCELERATED_COMPOSITING)
 #if USE(THREADED_COMPOSITING)
@@ -1170,7 +1170,7 @@ void WebViewImpl::composite(bool finish)
     if (m_pageOverlay)
         m_pageOverlay->update();
 
-    m_layerTreeHost->composite(finish);
+    m_layerTreeHost->composite();
 #endif
 #endif
 }
@@ -2527,9 +2527,7 @@ void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
         m_layerTreeHost->setRootLayer(layer);
 
     IntRect damagedRect(0, 0, m_size.width, m_size.height);
-    if (m_isAcceleratedCompositingActive)
-        invalidateRootLayerRect(damagedRect);
-    else
+    if (!m_isAcceleratedCompositingActive)
         m_client->didInvalidateRect(damagedRect);
 }
 
@@ -2620,11 +2618,17 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         WebCore::CCSettings ccSettings;
         ccSettings.acceleratePainting = page()->settings()->acceleratedDrawingEnabled();
         ccSettings.compositeOffscreen = settings()->compositeToTextureEnabled();
+#if USE(THREADED_COMPOSITING)
+        ccSettings.enableCompositorThread = true;
+#else
+        ccSettings.enableCompositorThread = false;
+#endif
         ccSettings.showFPSCounter = settings()->showFPSCounter();
         ccSettings.showPlatformLayerTree = settings()->showPlatformLayerTree();
 
         m_layerTreeHost = CCLayerTreeHost::create(this, ccSettings);
         if (m_layerTreeHost) {
+            updateLayerTreeViewport();
             m_client->didActivateAcceleratedCompositing(true);
             m_isAcceleratedCompositingActive = true;
             m_compositorCreationFailed = false;
@@ -2669,11 +2673,20 @@ void WebViewImpl::animateAndLayout(double frameBeginTime)
 
 void WebViewImpl::didRecreateGraphicsContext(bool success)
 {
-    // Force ViewHostMsg_DidActivateAcceleratedCompositing to be sent so
-    // that the browser process can reacquire surfaces.
-    m_isAcceleratedCompositingActive = false;
-    setIsAcceleratedCompositingActive(success);
-    if (success && m_pageOverlay)
+
+    // Switch back to software rendering mode, if necessary
+    if (!success) {
+        ASSERT(m_isAcceleratedCompositingActive);
+        setIsAcceleratedCompositingActive(false);
+        m_compositorCreationFailed = true;
+        m_client->didInvalidateRect(IntRect(0, 0, m_size.width, m_size.height));
+
+        // Force a style recalc to remove all the composited layers.
+        m_page->mainFrame()->document()->scheduleForcedStyleRecalc();
+        return;
+    }
+
+    if (m_pageOverlay)
         m_pageOverlay->update();
 }
 

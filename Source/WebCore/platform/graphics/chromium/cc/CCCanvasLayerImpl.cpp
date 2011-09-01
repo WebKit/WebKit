@@ -31,7 +31,7 @@
 
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
-#include "cc/CCLayerTreeHostImplProxy.h"
+#include "cc/CCProxy.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -50,7 +50,7 @@ CCCanvasLayerImpl::~CCCanvasLayerImpl()
 
 void CCCanvasLayerImpl::draw()
 {
-    ASSERT(CCLayerTreeHostImplProxy::isImplThread());
+    ASSERT(CCProxy::isImplThread());
     ASSERT(layerRenderer());
     const CCCanvasLayerImpl::Program* program = layerRenderer()->canvasLayerProgram();
     ASSERT(program && program->initialized());

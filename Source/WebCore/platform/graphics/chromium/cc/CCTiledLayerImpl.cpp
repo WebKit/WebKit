@@ -31,7 +31,6 @@
 
 #include "FloatQuad.h"
 #include "LayerRendererChromium.h"
-#include "cc/CCLayerTreeHostImplProxy.h"
 #include <wtf/text/WTFString.h>
 
 using namespace std;

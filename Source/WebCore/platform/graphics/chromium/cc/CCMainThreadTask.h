@@ -158,6 +158,88 @@ private:
     P3 m_parameter3;
 };
 
+
+template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4>
+class MainThreadTask4 : public CCMainThread::Task {
+public:
+    typedef void (T::*Method)(MP1, MP2, MP3, MP4);
+    typedef MainThreadTask4<T, P1, MP1, P2, MP2, P3, MP3, P4, MP4> MainThreadTaskImpl;
+    typedef typename CrossThreadTaskTraits<P1>::ParamType Param1;
+    typedef typename CrossThreadTaskTraits<P2>::ParamType Param2;
+    typedef typename CrossThreadTaskTraits<P3>::ParamType Param3;
+    typedef typename CrossThreadTaskTraits<P4>::ParamType Param4;
+
+    static PassOwnPtr<MainThreadTaskImpl> create(T* instance, Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4)
+    {
+        return adoptPtr(new MainThreadTaskImpl(instance, method, parameter1, parameter2, parameter3, parameter4));
+    }
+
+private:
+    MainThreadTask4(T* instance, Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4)
+        : CCMainThread::Task(instance)
+        , m_method(method)
+        , m_parameter1(parameter1)
+        , m_parameter2(parameter2)
+        , m_parameter3(parameter3)
+        , m_parameter4(parameter4)
+    {
+    }
+
+    virtual void performTask()
+    {
+        (*static_cast<T*>(instance()).*m_method)(m_parameter1, m_parameter2, m_parameter3, m_parameter4);
+    }
+
+private:
+    Method m_method;
+    P1 m_parameter1;
+    P2 m_parameter2;
+    P3 m_parameter3;
+    P4 m_parameter4;
+};
+
+template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5>
+class MainThreadTask5 : public CCMainThread::Task {
+public:
+    typedef void (T::*Method)(MP1, MP2, MP3, MP4, MP5);
+    typedef MainThreadTask5<T, P1, MP1, P2, MP2, P3, MP3, P4, MP4, P5, MP5> MainThreadTaskImpl;
+    typedef typename CrossThreadTaskTraits<P1>::ParamType Param1;
+    typedef typename CrossThreadTaskTraits<P2>::ParamType Param2;
+    typedef typename CrossThreadTaskTraits<P3>::ParamType Param3;
+    typedef typename CrossThreadTaskTraits<P4>::ParamType Param4;
+    typedef typename CrossThreadTaskTraits<P5>::ParamType Param5;
+
+    static PassOwnPtr<MainThreadTaskImpl> create(T* instance, Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5)
+    {
+        return adoptPtr(new MainThreadTaskImpl(instance, method, parameter1, parameter2, parameter3, parameter4, parameter5));
+    }
+
+private:
+    MainThreadTask5(T* instance, Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5)
+        : CCMainThread::Task(instance)
+        , m_method(method)
+        , m_parameter1(parameter1)
+        , m_parameter2(parameter2)
+        , m_parameter3(parameter3)
+        , m_parameter4(parameter4)
+        , m_parameter5(parameter5)
+    {
+    }
+
+    virtual void performTask()
+    {
+        (*static_cast<T*>(instance()).*m_method)(m_parameter1, m_parameter2, m_parameter3, m_parameter4, m_parameter5);
+    }
+
+private:
+    Method m_method;
+    P1 m_parameter1;
+    P2 m_parameter2;
+    P3 m_parameter3;
+    P4 m_parameter4;
+    P5 m_parameter5;
+};
+
 template<typename T>
 PassOwnPtr<CCMainThread::Task> createMainThreadTask(
     T* const callee,
@@ -215,6 +297,46 @@ PassOwnPtr<CCMainThread::Task> createMainThreadTask(
         CrossThreadCopier<P3>::copy(parameter3));
 }
 
+template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4>
+PassOwnPtr<CCMainThread::Task> createMainThreadTask(
+    T* const callee,
+    void (T::*method)(MP1, MP2, MP3, MP4),
+    const P1& parameter1,
+    const P2& parameter2,
+    const P3& parameter3,
+    const P4& parameter4)
+{
+    return MainThreadTask4<T, typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2, typename CrossThreadCopier<P3>::Type, MP3, typename CrossThreadCopier<P4>::Type, MP4>::create(
+        callee,
+        method,
+        CrossThreadCopier<P1>::copy(parameter1),
+        CrossThreadCopier<P2>::copy(parameter2),
+        CrossThreadCopier<P3>::copy(parameter3),
+        CrossThreadCopier<P4>::copy(parameter4));
+
+}
+
+template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5>
+PassOwnPtr<CCMainThread::Task> createMainThreadTask(
+    T* const callee,
+    void (T::*method)(MP1, MP2, MP3, MP4, MP5),
+    const P1& parameter1,
+    const P2& parameter2,
+    const P3& parameter3,
+    const P4& parameter4,
+    const P5& parameter5)
+{
+    return MainThreadTask5<T, typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2, typename CrossThreadCopier<P3>::Type, MP3, typename CrossThreadCopier<P4>::Type, MP4, typename CrossThreadCopier<P5>::Type, MP5>::create(
+        callee,
+        method,
+        CrossThreadCopier<P1>::copy(parameter1),
+        CrossThreadCopier<P2>::copy(parameter2),
+        CrossThreadCopier<P3>::copy(parameter3),
+        CrossThreadCopier<P4>::copy(parameter4),
+        CrossThreadCopier<P5>::copy(parameter5));
+
+}
+
 } // namespace WebCore
 
-#endif // CCMainThreadTask_h
+#endif // MainThreadTask_h

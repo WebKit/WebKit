@@ -32,7 +32,7 @@
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "NotImplemented.h"
-#include "cc/CCLayerTreeHostImplProxy.h"
+#include "cc/CCProxy.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -79,7 +79,7 @@ void CCVideoLayerImpl::setTexture(size_t index, Platform3DObject textureId, cons
 
 void CCVideoLayerImpl::draw()
 {
-    ASSERT(CCLayerTreeHostImplProxy::isImplThread());
+    ASSERT(CCProxy::isImplThread());
 
     if (m_skipsDraw)
         return;

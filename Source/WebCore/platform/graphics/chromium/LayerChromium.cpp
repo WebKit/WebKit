@@ -96,6 +96,19 @@ void LayerChromium::cleanupResources()
 {
 }
 
+void LayerChromium::setLayerRendererRecursive(LayerRendererChromium* renderer)
+{
+    for (size_t i = 0; i < children().size(); ++i)
+        children()[i]->setLayerRendererRecursive(renderer);
+
+    if (maskLayer())
+        maskLayer()->setLayerRendererRecursive(renderer);
+    if (replicaLayer())
+        replicaLayer()->setLayerRendererRecursive(renderer);
+
+    setLayerRenderer(renderer);
+}
+
 void LayerChromium::setLayerRenderer(LayerRendererChromium* renderer)
 {
     // If we're changing layer renderers then we need to free up any resources

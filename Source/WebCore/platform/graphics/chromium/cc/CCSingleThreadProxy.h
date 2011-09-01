@@ -22,69 +22,58 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCLayerTreeHostImplProxy_h
-#define CCLayerTreeHostImplProxy_h
+#ifndef CCSingleThreadProxy_h
+#define CCSingleThreadProxy_h
 
 #include "cc/CCCompletionEvent.h"
 #include "cc/CCLayerTreeHostImpl.h"
+#include "cc/CCProxy.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
 class CCLayerTreeHost;
-class CCLayerTreeHostCommitter;
 
-class CCLayerTreeHostImplProxy : public CCLayerTreeHostImplClient {
-    WTF_MAKE_NONCOPYABLE(CCLayerTreeHostImplProxy);
+class CCSingleThreadProxy : public CCProxy {
 public:
-    virtual ~CCLayerTreeHostImplProxy();
+    static PassOwnPtr<CCProxy> create(CCLayerTreeHost*);
+    virtual ~CCSingleThreadProxy();
 
-    bool isStarted() const;
+    // CCProxy implementation
+    virtual bool compositeAndReadback(void *pixels, const IntRect&);
+    virtual GraphicsContext3D* context();
+    virtual void finishAllRendering();
+    virtual bool isStarted() const;
+    virtual bool initializeLayerRenderer(CCLayerTreeHost* ownerHack);
+    virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
+    virtual void loseCompositorContext();
+    virtual void setNeedsCommitAndRedraw();
+    virtual void setNeedsRedraw();
+    virtual void start();
+    virtual void stop();
 
-    void setNeedsCommitAndRedraw();
-    void setNeedsRedraw();
+    // Temporary hack while LayerChromiums hold references to LayerRendererChromiums
+    virtual TextureManager* contentsTextureManager();
 
-    void start(); // Must be called before using the proxy.
-    void stop(); // Must be called before deleting the proxy.
-
-    // CCLayerTreeHostImplCient -- called on CCThread
-    virtual void postDrawLayersTaskOnCCThread();
-    virtual void requestFrameAndCommitOnCCThread(double frameBeginTime);
-
-#ifndef NDEBUG
-    static bool isMainThread();
-    static bool isImplThread();
+    // Special case functions.
 #if !USE(THREADED_COMPOSITING)
-    // Fake threaded compositing so we can catch incorrect usage.
-    static void setImplThread(bool);
+    void compositeImmediately();
 #endif
-#endif
-
-protected:
-    explicit CCLayerTreeHostImplProxy(CCLayerTreeHost*);
-    virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl() = 0;
-    CCLayerTreeHost* host() const { return m_layerTreeHost; }
 
 private:
-    // Called on CCMainThread
-    void requestFrameAndCommit(double frameBeginTime);
-
-    // Called on CCThread
-    void commitOnCCThread(CCLayerTreeHostCommitter*, CCCompletionEvent*);
-    void drawLayersOnCCThread();
-    void initImplOnCCThread(CCCompletionEvent*);
-    void setNeedsCommitAndRedrawOnCCThread();
-    void setNeedsRedrawOnCCThread();
-    void layerTreeHostClosedOnCCThread(CCCompletionEvent*);
-
-    // Used on main-thread only.
-    bool m_commitPending;
+    explicit CCSingleThreadProxy(CCLayerTreeHost*);
+    bool recreateContextIfNeeded();
+    void commitIfNeeded();
+    bool doComposite();
 
     // Accessed on main thread only.
     CCLayerTreeHost* m_layerTreeHost;
 
     // Used on the CCThread, but checked on main thread during initialization/shutdown.
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;
+
+    int m_numFailedRecreateAttempts;
+    bool m_graphicsContextLost;
 };
 
 }

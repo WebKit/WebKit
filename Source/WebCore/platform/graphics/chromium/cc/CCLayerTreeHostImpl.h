@@ -25,56 +25,69 @@
 #ifndef CCLayerTreeHostImpl_h
 #define CCLayerTreeHostImpl_h
 
-#include "cc/CCThread.h"
+#include "cc/CCLayerTreeHost.h"
 #include <wtf/RefPtr.h>
-#include <wtf/ThreadSafeRefCounted.h>
+
+#if USE(SKIA)
+class GrContext;
+#endif
 
 namespace WebCore {
 
 class CCCompletionEvent;
+class CCLayerImpl;
 class LayerRendererChromium;
-
-// Provides scheduling infrastructure for a CCLayerTreeHostImpl
-class CCLayerTreeHostImplClient  {
-public:
-    virtual void postDrawLayersTaskOnCCThread() = 0;
-    virtual void requestFrameAndCommitOnCCThread(double frameBeginTime) = 0;
-
-protected:
-    virtual ~CCLayerTreeHostImplClient() { }
-};
+struct LayerRendererCapabilities;
 
 // CCLayerTreeHostImpl owns the CCLayerImpl tree as well as associated rendering state
 class CCLayerTreeHostImpl {
     WTF_MAKE_NONCOPYABLE(CCLayerTreeHostImpl);
 public:
-    static PassOwnPtr<CCLayerTreeHostImpl> create(CCLayerTreeHostImplClient*, PassRefPtr<LayerRendererChromium>);
+    static PassOwnPtr<CCLayerTreeHostImpl> create(const CCSettings&);
     virtual ~CCLayerTreeHostImpl();
 
     virtual void beginCommit();
     virtual void commitComplete();
 
+    GraphicsContext3D* context();
+
     void drawLayers();
 
+    void finishAllRendering();
     int frameNumber() const { return m_frameNumber; }
 
-    void setNeedsRedraw();
-    void setNeedsCommitAndRedraw();
+    bool initializeLayerRenderer(CCLayerTreeHost* ownerHack, PassRefPtr<GraphicsContext3D>);
+    bool isContextLost();
+    LayerRendererChromium* layerRenderer() { return m_layerRenderer.get(); }
+    const LayerRendererCapabilities& layerRendererCapabilities() const;
+
+    void present();
+
+    void readback(void* pixels, const IntRect&);
+
+    CCLayerImpl* rootLayer() const { return m_rootLayerImpl.get(); }
+    void setRootLayer(PassRefPtr<CCLayerImpl>);
+
+    void setVisible(bool);
 
     int sourceFrameNumber() const { return m_sourceFrameNumber; }
     void setSourceFrameNumber(int frameNumber) { m_sourceFrameNumber = frameNumber; }
 
+    void updateLayers();
+
+    void setViewport(const IntSize& viewportSize);
+    const IntSize& viewportSize() const { return m_viewportSize; }
+
 protected:
-    CCLayerTreeHostImpl(CCLayerTreeHostImplClient*, PassRefPtr<LayerRendererChromium>);
-    void drawLayersOnMainThread(CCCompletionEvent*, bool* contextLost);
+    explicit CCLayerTreeHostImpl(const CCSettings&);
     int m_sourceFrameNumber;
     int m_frameNumber;
 
 private:
-    CCLayerTreeHostImplClient* m_client;
-    bool m_commitPending;
     RefPtr<LayerRendererChromium> m_layerRenderer;
-    bool m_redrawPending;
+    RefPtr<CCLayerImpl> m_rootLayerImpl;
+    CCSettings m_settings;
+    IntSize m_viewportSize;
 };
 
 };

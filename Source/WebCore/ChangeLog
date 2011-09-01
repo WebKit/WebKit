@@ -1,3 +1,165 @@
+2011-08-29  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Introduce CCSingleThreadProxy in order to move LayerRenderer to CCLayerTreeHostImpl
+        https://bugs.webkit.org/show_bug.cgi?id=66807
+
+        Reviewed by James Robinson.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setLayerRendererRecursive):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::initialize):
+        (WebCore::LayerRendererChromium::close):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        (WebCore::LayerRendererChromium::getOffscreenLayerTexture):
+        (WebCore::LayerRendererChromium::isContextLost):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::capabilities):
+        (WebCore::LayerRendererChromium::rootLayerImpl):
+        (WebCore::LayerRendererChromium::contextSupportsMapSub):
+        (WebCore::LayerRendererChromium::viewportSize):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::setLayerTreeHost):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::reserveTextures):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        (WebCore::CCCanvasLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::~CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::animateAndLayout):
+        (WebCore::CCLayerTreeHost::preCommit):
+        (WebCore::CCLayerTreeHost::commitTo):
+        (WebCore::CCLayerTreeHost::createCompositorThread):
+        (WebCore::CCLayerTreeHost::createLayerTreeHostContext3D):
+        (WebCore::CCLayerTreeHost::createLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHost::didRecreateGraphicsContext):
+        (WebCore::CCLayerTreeHost::scheduleComposite):
+        (WebCore::CCLayerTreeHost::context):
+        (WebCore::CCLayerTreeHost::compositeAndReadback):
+        (WebCore::CCLayerTreeHost::finishAllRendering):
+        (WebCore::CCLayerTreeHost::layerRendererCapabilities):
+        (WebCore::CCLayerTreeHost::setRootLayer):
+        (WebCore::CCLayerTreeHost::skiaContext):
+        (WebCore::CCLayerTreeHost::setViewport):
+        (WebCore::CCLayerTreeHost::setVisible):
+        (WebCore::CCLayerTreeHost::loseCompositorContext):
+        (WebCore::CCLayerTreeHost::contentsTextureManager):
+        (WebCore::CCLayerTreeHost::composite):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+        (WebCore::LayerRendererCapabilities::LayerRendererCapabilities):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommitter.h: Removed.
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::create):
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::~CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::commitComplete):
+        (WebCore::CCLayerTreeHostImpl::context):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        (WebCore::CCLayerTreeHostImpl::finishAllRendering):
+        (WebCore::CCLayerTreeHostImpl::isContextLost):
+        (WebCore::CCLayerTreeHostImpl::layerRendererCapabilities):
+        (WebCore::CCLayerTreeHostImpl::present):
+        (WebCore::CCLayerTreeHostImpl::readback):
+        (WebCore::CCLayerTreeHostImpl::setRootLayer):
+        (WebCore::CCLayerTreeHostImpl::setVisible):
+        (WebCore::CCLayerTreeHostImpl::initializeLayerRenderer):
+        (WebCore::CCLayerTreeHostImpl::updateLayers):
+        (WebCore::CCLayerTreeHostImpl::setViewport):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (WebCore::CCLayerTreeHostImpl::layerRenderer):
+        (WebCore::CCLayerTreeHostImpl::rootLayer):
+        (WebCore::CCLayerTreeHostImpl::viewportSize):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImplProxy.cpp: Removed.
+        * platform/graphics/chromium/cc/CCMainThreadTask.h:
+        (WebCore::MainThreadTask4::create):
+        (WebCore::MainThreadTask4::MainThreadTask4):
+        (WebCore::MainThreadTask4::performTask):
+        (WebCore::MainThreadTask5::create):
+        (WebCore::MainThreadTask5::MainThreadTask5):
+        (WebCore::MainThreadTask5::performTask):
+        (WebCore::createMainThreadTask):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCProxy.cpp: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCLayerTreeHostCommitter.cpp.
+        (WebCore::CCProxy::isMainThread):
+        (WebCore::CCProxy::isImplThread):
+        (WebCore::CCProxy::setImplThread):
+        * platform/graphics/chromium/cc/CCProxy.h: Added.
+        (WebCore::CCProxy::~CCProxy):
+        (WebCore::CCProxy::CCProxy):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp: Added.
+        (WebCore::ScopedSetImplThread::ScopedSetImplThread):
+        (WebCore::ScopedSetImplThread::~ScopedSetImplThread):
+        (WebCore::CCSingleThreadProxy::create):
+        (WebCore::CCSingleThreadProxy::CCSingleThreadProxy):
+        (WebCore::CCSingleThreadProxy::start):
+        (WebCore::CCSingleThreadProxy::~CCSingleThreadProxy):
+        (WebCore::CCSingleThreadProxy::compositeAndReadback):
+        (WebCore::CCSingleThreadProxy::context):
+        (WebCore::CCSingleThreadProxy::finishAllRendering):
+        (WebCore::CCSingleThreadProxy::isStarted):
+        (WebCore::CCSingleThreadProxy::initializeLayerRenderer):
+        (WebCore::CCSingleThreadProxy::layerRendererCapabilities):
+        (WebCore::CCSingleThreadProxy::loseCompositorContext):
+        (WebCore::CCSingleThreadProxy::setNeedsCommitAndRedraw):
+        (WebCore::CCSingleThreadProxy::setNeedsRedraw):
+        (WebCore::CCSingleThreadProxy::stop):
+        (WebCore::CCSingleThreadProxy::skiaContext):
+        (WebCore::CCSingleThreadProxy::contentsTextureManager):
+        (WebCore::CCSingleThreadProxy::compositeImmediately):
+        (WebCore::CCSingleThreadProxy::compositeIfNeeded):
+        (WebCore::CCSingleThreadProxy::doComposite):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCLayerTreeHostImplProxy.h.
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp: Added.
+        (WebCore::CCThreadProxy::create):
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::~CCThreadProxy):
+        (WebCore::CCThreadProxy::compositeAndReadback):
+        (WebCore::CCThreadProxy::context):
+        (WebCore::CCThreadProxy::finishAllRendering):
+        (WebCore::CCThreadProxy::isStarted):
+        (WebCore::CCThreadProxy::initializeLayerRenderer):
+        (WebCore::CCThreadProxy::layerRendererCapabilities):
+        (WebCore::CCThreadProxy::loseCompositorContext):
+        (WebCore::CCThreadProxy::setNeedsCommitAndRedraw):
+        (WebCore::CCThreadProxy::setNeedsRedraw):
+        (WebCore::CCThreadProxy::start):
+        (WebCore::CCThreadProxy::stop):
+        (WebCore::CCThreadProxy::skiaContext):
+        (WebCore::CCThreadProxy::contentsTextureManager):
+        (WebCore::CCThreadProxy::beginFrameAndCommitOnCCThread):
+        (WebCore::CCThreadProxy::beginFrameAndCommit):
+        (WebCore::CCThreadProxy::commitOnCCThread):
+        (WebCore::CCThreadProxy::drawLayersOnCCThread):
+        (WebCore::CCThreadProxy::setNeedsCommitAndRedrawOnCCThread):
+        (WebCore::CCThreadProxy::setNeedsRedrawOnCCThread):
+        (WebCore::CCThreadProxy::initializeImplOnCCThread):
+        (WebCore::CCThreadProxy::initializeLayerRendererOnCCThread):
+        (WebCore::CCThreadProxy::layerTreeHostClosedOnCCThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCLayerTreeHostImplProxy.h.
+        * platform/graphics/chromium/cc/CCThreadTask.h:
+        (WebCore::CCThreadTask5::create):
+        (WebCore::CCThreadTask5::CCThreadTask5):
+        (WebCore::CCThreadTask5::performTask):
+        (WebCore::createCCThreadTask):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::draw):
+
 2011-09-01  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9528843> STIX glyphs not rendered on this stackoverflow answer

@@ -153,6 +153,8 @@ public:
     void setIsRootLayer(bool isRootLayer) { m_isRootLayer = isRootLayer; }
     bool isRootLayer() const { return m_isRootLayer; }
 
+    void setLayerRendererRecursive(LayerRendererChromium*);
+
     // Derived types must override this method if they need to react to a change
     // in the LayerRendererChromium.
     // FIXME, replace with CCLayerTreeHost.

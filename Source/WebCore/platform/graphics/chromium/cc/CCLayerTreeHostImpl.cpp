@@ -38,24 +38,23 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHostImpl::create(CCLayerTreeHostImplClient* client, PassRefPtr<LayerRendererChromium> renderer)
+PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHostImpl::create(const CCSettings& settings)
 {
-    return adoptPtr(new CCLayerTreeHostImpl(client, renderer));
+    return adoptPtr(new CCLayerTreeHostImpl(settings));
 }
 
-CCLayerTreeHostImpl::CCLayerTreeHostImpl(CCLayerTreeHostImplClient* client, PassRefPtr<LayerRendererChromium> renderer)
+CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings)
     : m_sourceFrameNumber(-1)
     , m_frameNumber(0)
-    , m_client(client)
-    , m_commitPending(false)
-    , m_layerRenderer(renderer)
-    , m_redrawPending(false)
+    , m_settings(settings)
 {
 }
 
 CCLayerTreeHostImpl::~CCLayerTreeHostImpl()
 {
     TRACE_EVENT("CCLayerTreeHostImpl::~CCLayerTreeHostImpl()", this, 0);
+    if (m_layerRenderer)
+        m_layerRenderer->close();
 }
 
 void CCLayerTreeHostImpl::beginCommit()
@@ -64,71 +63,107 @@ void CCLayerTreeHostImpl::beginCommit()
 
 void CCLayerTreeHostImpl::commitComplete()
 {
-    m_commitPending = false;
-    setNeedsRedraw();
+}
+
+GraphicsContext3D* CCLayerTreeHostImpl::context()
+{
+    return m_layerRenderer ? m_layerRenderer->context() : 0;
 }
 
 void CCLayerTreeHostImpl::drawLayers()
 {
-    // If a commit is pending, do not draw. This is a temporary restriction that
-    // is necessary because drawLayers is currently a blocking operation on the main thread.
-    if (m_commitPending)
-        return;
-
     TRACE_EVENT("CCLayerTreeHostImpl::drawLayers", this, 0);
-    ASSERT(m_redrawPending);
-    m_redrawPending = false;
-
-    {
-        TRACE_EVENT("CCLayerTreeHostImpl::drawLayersAndPresent", this, 0);
-        CCCompletionEvent completion;
-        bool contextLost;
-        CCMainThread::postTask(createMainThreadTask(this, &CCLayerTreeHostImpl::drawLayersOnMainThread, AllowCrossThreadAccess(&completion), AllowCrossThreadAccess(&contextLost)));
-        completion.wait();
-
-        // FIXME: Send the "UpdateRect" message up to the RenderWidget [or moveplugin equivalents...]
-
-        // FIXME: handle context lost
-        if (contextLost)
-            FATAL("LayerRendererChromiumImpl does not handle context lost yet.");
-    }
+    ASSERT(m_layerRenderer);
+    if (m_layerRenderer->owner()->rootLayer())
+        m_layerRenderer->drawLayers();
 
     ++m_frameNumber;
 }
 
-void CCLayerTreeHostImpl::setNeedsCommitAndRedraw()
+void CCLayerTreeHostImpl::finishAllRendering()
 {
-    TRACE_EVENT("CCLayerTreeHostImpl::setNeedsCommitAndRedraw", this, 0);
-
-    // FIXME: move the requestFrameAndCommit out from here once we add framerate throttling/animation
-    double frameBeginTime = currentTime();
-    m_commitPending = true;
-    m_client->requestFrameAndCommitOnCCThread(frameBeginTime);
+    m_layerRenderer->finish();
 }
 
-void CCLayerTreeHostImpl::setNeedsRedraw()
+bool CCLayerTreeHostImpl::isContextLost()
 {
-    if (m_redrawPending || m_commitPending)
-        return;
-
-    TRACE_EVENT("CCLayerTreeHostImpl::setNeedsRedraw", this, 0);
-    m_redrawPending = true;
-    m_client->postDrawLayersTaskOnCCThread();
+    ASSERT(m_layerRenderer);
+    return m_layerRenderer->isContextLost();
 }
 
-void CCLayerTreeHostImpl::drawLayersOnMainThread(CCCompletionEvent* completion, bool* contextLost)
+const LayerRendererCapabilities& CCLayerTreeHostImpl::layerRendererCapabilities() const
 {
-    ASSERT(isMainThread());
+    return m_layerRenderer->capabilities();
+}
 
-    if (m_layerRenderer->owner()->rootLayer()) {
-        m_layerRenderer->drawLayers();
-        m_layerRenderer->present();
+void CCLayerTreeHostImpl::present()
+{
+    ASSERT(m_layerRenderer && !isContextLost());
+    m_layerRenderer->present();
+}
 
-        GraphicsContext3D* context = m_layerRenderer->context();
-        *contextLost = context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR;
-    } else
-        *contextLost = false;
-    completion->signal();
+void CCLayerTreeHostImpl::readback(void* pixels, const IntRect& rect)
+{
+    ASSERT(m_layerRenderer && !isContextLost());
+    m_layerRenderer->getFramebufferPixels(pixels, rect);
+}
+
+void CCLayerTreeHostImpl::setRootLayer(PassRefPtr<CCLayerImpl> layer)
+{
+    m_rootLayerImpl = layer;
+}
+
+void CCLayerTreeHostImpl::setVisible(bool visible)
+{
+    if (m_layerRenderer && !visible)
+        m_layerRenderer->releaseTextures();
+}
+
+bool CCLayerTreeHostImpl::initializeLayerRenderer(CCLayerTreeHost* implHack, PassRefPtr<GraphicsContext3D> context)
+{
+    // If m_layerRenderer exists, then we are recovering from a lost context
+    bool recreatingRenderer = m_layerRenderer;
+
+    // First time layerRenderer creation
+    RefPtr<LayerRendererChromium> layerRenderer;
+    if (!recreatingRenderer)
+        layerRenderer = LayerRendererChromium::create(implHack, this, context);
+    else
+        layerRenderer = LayerRendererChromium::create(m_layerRenderer->owner(), this, context);
+
+
+    // If creation failed, and we had asked for accelerated painting, disable accelerated painting
+    // and try creating the renderer again.
+    if (!layerRenderer && m_settings.acceleratePainting) {
+        m_settings.acceleratePainting = false;
+
+        if (!recreatingRenderer)
+            layerRenderer = LayerRendererChromium::create(implHack, this, context);
+        else
+            layerRenderer = LayerRendererChromium::create(m_layerRenderer->owner(), this, context);
+    }
+
+    // If recreating renderer, update the layers to point at the new renderer
+    if (m_layerRenderer)
+        m_layerRenderer->rootLayer()->platformLayer()->setLayerRendererRecursive(layerRenderer.get());
+
+    m_layerRenderer = layerRenderer;
+    return m_layerRenderer;
+}
+
+// FIXME: move all this code to CCLayerTreeHost
+void CCLayerTreeHostImpl::updateLayers()
+{
+    if (m_layerRenderer)
+        m_layerRenderer->updateLayers();
+}
+
+void CCLayerTreeHostImpl::setViewport(const IntSize& viewportSize)
+{
+    bool changed = viewportSize != m_viewportSize;
+    m_viewportSize = viewportSize;
+    if (changed)
+        m_layerRenderer->viewportChanged();
 }
 
 }

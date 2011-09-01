@@ -80,7 +80,6 @@ private:
     LayerTextureSubImage m_texSubImage;
 };
 
-#if !USE(THREADED_COMPOSITING)
 #if USE(SKIA)
 class LayerTextureUpdaterSkPicture : public LayerTextureUpdaterCanvas {
     WTF_MAKE_NONCOPYABLE(LayerTextureUpdaterSkPicture);
@@ -109,7 +108,6 @@ private:
     OwnPtr<SkCanvas> m_canvas; // GPU accelerated canvas.
 };
 #endif // SKIA
-#endif // !THREADED_COMPOSITING
 
 } // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)

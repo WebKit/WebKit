@@ -65,6 +65,7 @@ private:
 
 TiledLayerChromium::TiledLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
+    , m_layerTreeHost(0)
     , m_tilingOption(AutoTile)
     , m_textureFormat(GraphicsContext3D::INVALID_ENUM)
     , m_skipsDraw(false)
@@ -115,7 +116,7 @@ void TiledLayerChromium::updateTileSizeAndTilingOption()
         isTiled = autoTiled;
 
     IntSize requestedSize = isTiled ? tileSize : contentBounds();
-    const int maxSize = layerRenderer()->maxTextureSize();
+    const int maxSize = m_layerTreeHost->layerRendererCapabilities().maxTextureSize;
     IntSize clampedSize = requestedSize.shrunkTo(IntSize(maxSize, maxSize));
     m_tiler->setTileSize(clampedSize);
 }
@@ -136,12 +137,14 @@ bool TiledLayerChromium::drawsContent() const
 
 void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
+    LayerChromium::setLayerTreeHost(host);
+    m_layerTreeHost = host;
     if (m_tiler)
         return;
 
     createTextureUpdater(host);
 
-    m_textureFormat = host->bestTextureFormat();
+    m_textureFormat = host->layerRendererCapabilities().bestTextureFormat;
     m_textureOrientation = textureUpdater()->orientation();
     m_sampledTexelFormat = textureUpdater()->sampledTexelFormat(m_textureFormat);
     m_tiler = CCLayerTilingData::create(
