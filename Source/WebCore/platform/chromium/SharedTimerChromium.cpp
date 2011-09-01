@@ -26,23 +26,23 @@
 #include "config.h"
 #include "SharedTimer.h"
 
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 
 namespace WebCore {
 
 void setSharedTimerFiredFunction(void (*f)())
 {                   
-    PlatformBridge::setSharedTimerFiredFunction(f);
+    PlatformSupport::setSharedTimerFiredFunction(f);
 }
 
 void setSharedTimerFireInterval(double fireTime)
 {
-    PlatformBridge::setSharedTimerFireInterval(fireTime);
+    PlatformSupport::setSharedTimerFireInterval(fireTime);
 }
 
 void stopSharedTimer()
 {
-    PlatformBridge::stopSharedTimer();
+    PlatformSupport::stopSharedTimer();
 }
 
 } // namespace WebCore

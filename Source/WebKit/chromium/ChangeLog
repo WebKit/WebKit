@@ -1,3 +1,27 @@
+2011-08-31  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Rename PlatformBridge to PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=67349
+
+        Reviewed by Darin Fisher.
+
+        This matches the WebKitPlatformSupport embedder API.
+
+        * WebKit.gyp:
+        * src/AssertMatchingEnums.cpp:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::shouldRunModalDialogDuringPageDismissal):
+        * src/PlatformBridge.cpp: Removed.
+        * src/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::cacheMetadata):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::WebFrameImpl):
+        (WebKit::WebFrameImpl::~WebFrameImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImplContentPainter::paint):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2011-08-31  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium Mac: PDF: Scrollsbars should be visible when scrolling using the two finger gesture on Lion

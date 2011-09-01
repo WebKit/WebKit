@@ -31,7 +31,7 @@
 #include "config.h"
 #include "Image.h"
 
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 
 namespace WebCore {
 
@@ -39,7 +39,7 @@ namespace WebCore {
 
 PassRefPtr<Image> Image::loadPlatformResource(const char *name)
 {
-    return PlatformBridge::loadPlatformImageResource(name);
+    return PlatformSupport::loadPlatformImageResource(name);
 }
 
 } // namespace WebCore

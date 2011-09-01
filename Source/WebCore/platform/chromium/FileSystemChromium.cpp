@@ -32,84 +32,84 @@
 #include "FileSystem.h"
 
 #include "NotImplemented.h"
-#include "PlatformBridge.h"
 #include "PlatformString.h"
+#include "PlatformSupport.h"
 
 namespace WebCore {
 
 bool deleteFile(const String& path)
 {
-    return PlatformBridge::deleteFile(path);
+    return PlatformSupport::deleteFile(path);
 }
 
 bool deleteEmptyDirectory(const String& path)
 {
-    return PlatformBridge::deleteEmptyDirectory(path);
+    return PlatformSupport::deleteEmptyDirectory(path);
 }
 
 bool getFileSize(const String& path, long long& result)
 {
-    return PlatformBridge::getFileSize(path, result);
+    return PlatformSupport::getFileSize(path, result);
 }
 
 bool getFileModificationTime(const String& path, time_t& result)
 {
-    return PlatformBridge::getFileModificationTime(path, result);
+    return PlatformSupport::getFileModificationTime(path, result);
 }
 
 void revealFolderInOS(const String& path)
 {
-    PlatformBridge::revealFolderInOS(path);
+    PlatformSupport::revealFolderInOS(path);
 }
 
 String directoryName(const String& path)
 {
-    return PlatformBridge::directoryName(path);
+    return PlatformSupport::directoryName(path);
 }
 
 String pathByAppendingComponent(const String& path, const String& component)
 {
-    return PlatformBridge::pathByAppendingComponent(path, component);
+    return PlatformSupport::pathByAppendingComponent(path, component);
 }
 
 bool makeAllDirectories(const String& path)
 {
-    return PlatformBridge::makeAllDirectories(path);
+    return PlatformSupport::makeAllDirectories(path);
 }
 
 bool fileExists(const String& path)
 {
-    return PlatformBridge::fileExists(path);
+    return PlatformSupport::fileExists(path);
 }
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)
 {
-    return PlatformBridge::openFile(path, mode);
+    return PlatformSupport::openFile(path, mode);
 }
 
 void closeFile(PlatformFileHandle& handle)
 {
-    return PlatformBridge::closeFile(handle);
+    return PlatformSupport::closeFile(handle);
 }
 
 long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
 {
-    return PlatformBridge::seekFile(handle, offset, origin);
+    return PlatformSupport::seekFile(handle, offset, origin);
 }
 
 bool truncateFile(PlatformFileHandle handle, long long offset)
 {
-    return PlatformBridge::truncateFile(handle, offset);
+    return PlatformSupport::truncateFile(handle, offset);
 }
 
 int readFromFile(PlatformFileHandle handle, char* data, int length)
 {
-    return PlatformBridge::readFromFile(handle, data, length);
+    return PlatformSupport::readFromFile(handle, data, length);
 }
 
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
-    return PlatformBridge::writeToFile(handle, data, length);
+    return PlatformSupport::writeToFile(handle, data, length);
 }
 
 Vector<String> listDirectory(const String& path, const String& filter)

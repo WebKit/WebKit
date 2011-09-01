@@ -108,7 +108,7 @@
 #include "PageOverlay.h"
 #include "painting/GraphicsContextBuilder.h"
 #include "Performance.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "PluginDocument.h"
 #include "PrintContext.h"
 #include "RenderFrame.h"
@@ -1869,13 +1869,13 @@ WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     , m_identifier(generateFrameIdentifier())
     , m_inSameDocumentHistoryLoad(false)
 {
-    PlatformBridge::incrementStatsCounter(webFrameActiveCount);
+    PlatformSupport::incrementStatsCounter(webFrameActiveCount);
     frameCount++;
 }
 
 WebFrameImpl::~WebFrameImpl()
 {
-    PlatformBridge::decrementStatsCounter(webFrameActiveCount);
+    PlatformSupport::decrementStatsCounter(webFrameActiveCount);
     frameCount--;
 
     cancelPendingScopingEffort();

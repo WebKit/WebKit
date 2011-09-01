@@ -29,19 +29,19 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKey.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {
 
 void IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue>, 0>& values,  const String& keyPath, Vector<RefPtr<IDBKey>, 0>& keys)
 {
-    PlatformBridge::createIDBKeysFromSerializedValuesAndKeyPath(values, keyPath, keys);
+    PlatformSupport::createIDBKeysFromSerializedValuesAndKeyPath(values, keyPath, keys);
 }
 
 PassRefPtr<SerializedScriptValue> IDBKeyPathBackendImpl::injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
 {
-    return PlatformBridge::injectIDBKeyIntoSerializedValue(key, value, keyPath);
+    return PlatformSupport::injectIDBKeyIntoSerializedValue(key, value, keyPath);
 }
 
 } // namespace WebCore

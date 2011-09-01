@@ -38,7 +38,7 @@
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
 #include "PaintInfo.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "RenderBox.h"
 #include "RenderProgress.h"
 #include "RenderSlider.h"
@@ -255,7 +255,7 @@ bool RenderThemeChromiumWin::supportsFocusRing(const RenderStyle* style) const
 
 Color RenderThemeChromiumWin::platformActiveSelectionBackgroundColor() const
 {
-    if (PlatformBridge::layoutTestMode())
+    if (PlatformSupport::layoutTestMode())
         return Color(0x00, 0x00, 0xff); // Royal blue.
     COLORREF color = GetSysColor(COLOR_HIGHLIGHT);
     return Color(GetRValue(color), GetGValue(color), GetBValue(color), 0xff);
@@ -263,7 +263,7 @@ Color RenderThemeChromiumWin::platformActiveSelectionBackgroundColor() const
 
 Color RenderThemeChromiumWin::platformInactiveSelectionBackgroundColor() const
 {
-    if (PlatformBridge::layoutTestMode())
+    if (PlatformSupport::layoutTestMode())
         return Color(0x99, 0x99, 0x99); // Medium gray.
     COLORREF color = GetSysColor(COLOR_GRAYTEXT);
     return Color(GetRValue(color), GetGValue(color), GetBValue(color), 0xff);
@@ -271,7 +271,7 @@ Color RenderThemeChromiumWin::platformInactiveSelectionBackgroundColor() const
 
 Color RenderThemeChromiumWin::platformActiveSelectionForegroundColor() const
 {
-    if (PlatformBridge::layoutTestMode())
+    if (PlatformSupport::layoutTestMode())
         return Color(0xff, 0xff, 0xcc); // Pale yellow.
     COLORREF color = GetSysColor(COLOR_HIGHLIGHTTEXT);
     return Color(GetRValue(color), GetGValue(color), GetBValue(color), 0xff);
@@ -392,7 +392,7 @@ static int cssValueIdToSysColorIndex(int cssValueId)
 Color RenderThemeChromiumWin::systemColor(int cssValueId) const
 {
     int sysColorIndex = cssValueIdToSysColorIndex(cssValueId);
-    if (PlatformBridge::layoutTestMode() || (sysColorIndex == -1))
+    if (PlatformSupport::layoutTestMode() || (sysColorIndex == -1))
         return RenderTheme::systemColor(cssValueId);
 
     COLORREF color = GetSysColor(sysColorIndex);
@@ -428,7 +428,7 @@ bool RenderThemeChromiumWin::paintButton(RenderObject* o, const PaintInfo& i, co
     const ThemeData& themeData = getThemeData(o);
 
     ThemePainter painter(i.context, r);
-    PlatformBridge::paintButton(painter.context(),
+    PlatformSupport::paintButton(painter.context(),
                                 themeData.m_part,
                                 themeData.m_state,
                                 themeData.m_classicState,
@@ -446,7 +446,7 @@ bool RenderThemeChromiumWin::paintSliderTrack(RenderObject* o, const PaintInfo& 
     const ThemeData& themeData = getThemeData(o);
 
     ThemePainter painter(i.context, r);
-    PlatformBridge::paintTrackbar(painter.context(),
+    PlatformSupport::paintTrackbar(painter.context(),
                                   themeData.m_part,
                                   themeData.m_state,
                                   themeData.m_classicState,
@@ -461,7 +461,7 @@ bool RenderThemeChromiumWin::paintSliderThumb(RenderObject* o, const PaintInfo& 
 
 static int menuListButtonWidth()
 {
-    static int width = PlatformBridge::layoutTestMode() ? kStandardMenuListButtonWidth : GetSystemMetrics(SM_CXVSCROLL);
+    static int width = PlatformSupport::layoutTestMode() ? kStandardMenuListButtonWidth : GetSystemMetrics(SM_CXVSCROLL);
     return width;
 }
 
@@ -509,11 +509,11 @@ bool RenderThemeChromiumWin::paintMenuList(RenderObject* o, const PaintInfo& i, 
 
     // Get the correct theme data for a textfield and paint the menu.
     ThemePainter painter(i.context, rect);
-    PlatformBridge::paintMenuList(painter.context(),
-                                  CP_DROPDOWNBUTTON,
-                                  determineState(o),
-                                  determineClassicState(o),
-                                  painter.drawRect());
+    PlatformSupport::paintMenuList(painter.context(),
+                                   CP_DROPDOWNBUTTON,
+                                   determineState(o),
+                                   determineClassicState(o),
+                                   painter.drawRect());
     return false;
 }
 
@@ -675,7 +675,7 @@ bool RenderThemeChromiumWin::paintTextFieldInternal(RenderObject* o,
                                                     bool drawEdges)
 {
     // Fallback to white if the specified color object is invalid.
-    // (Note PlatformBridge::paintTextField duplicates this check).
+    // (Note PlatformSupport::paintTextField duplicates this check).
     Color backgroundColor(Color::white);
     if (o->style()->visitedDependentColor(CSSPropertyBackgroundColor).isValid())
         backgroundColor = o->style()->visitedDependentColor(CSSPropertyBackgroundColor);
@@ -699,14 +699,14 @@ bool RenderThemeChromiumWin::paintTextFieldInternal(RenderObject* o,
     {
         const ThemeData& themeData = getThemeData(o);
         ThemePainter painter(i.context, r);
-        PlatformBridge::paintTextField(painter.context(),
-                                       themeData.m_part,
-                                       themeData.m_state,
-                                       themeData.m_classicState,
-                                       painter.drawRect(),
-                                       backgroundColor,
-                                       fillContentArea,
-                                       drawEdges);
+        PlatformSupport::paintTextField(painter.context(),
+                                        themeData.m_part,
+                                        themeData.m_state,
+                                        themeData.m_classicState,
+                                        painter.drawRect(),
+                                        backgroundColor,
+                                        fillContentArea,
+                                        drawEdges);
         // End of block commits the painter before restoring context.
     }
     if (o->style()->hasBorderRadius())
@@ -730,22 +730,22 @@ bool RenderThemeChromiumWin::paintInnerSpinButton(RenderObject* object, const Pa
         half.setHeight(rect.height() / 2);
         const ThemeData& upThemeData = getThemeData(object, SpinButtonUp);
         ThemePainter upPainter(info.context, half);
-        PlatformBridge::paintSpinButton(upPainter.context(),
-                                        upThemeData.m_part,
-                                        upThemeData.m_state,
-                                        upThemeData.m_classicState,
-                                        upPainter.drawRect());
+        PlatformSupport::paintSpinButton(upPainter.context(),
+                                         upThemeData.m_part,
+                                         upThemeData.m_state,
+                                         upThemeData.m_classicState,
+                                         upPainter.drawRect());
     }
 
     {
         half.setY(rect.y() + rect.height() / 2);
         const ThemeData& downThemeData = getThemeData(object, SpinButtonDown);
         ThemePainter downPainter(info.context, half);
-        PlatformBridge::paintSpinButton(downPainter.context(),
-                                        downThemeData.m_part,
-                                        downThemeData.m_state,
-                                        downThemeData.m_classicState,
-                                        downPainter.drawRect());
+        PlatformSupport::paintSpinButton(downPainter.context(),
+                                         downThemeData.m_part,
+                                         downThemeData.m_state,
+                                         downThemeData.m_classicState,
+                                         downPainter.drawRect());
     }
     return false;
 }
@@ -783,7 +783,7 @@ bool RenderThemeChromiumWin::paintProgressBar(RenderObject* o, const PaintInfo& 
     IntRect valueRect = renderProgress->isDeterminate() ? determinateProgressValueRectFor(renderProgress, r) : IntRect(0, 0, 0, 0);
     double animatedSeconds = renderProgress->animationStartTime() ?  WTF::currentTime() - renderProgress->animationStartTime() : 0;
     ThemePainter painter(i.context, r);
-    PlatformBridge::paintProgressBar(painter.context(), r, valueRect, renderProgress->isDeterminate(), animatedSeconds);
+    PlatformSupport::paintProgressBar(painter.context(), r, valueRect, renderProgress->isDeterminate(), animatedSeconds);
     return false;
 }
 

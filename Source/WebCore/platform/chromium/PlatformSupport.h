@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformBridge_h
-#define PlatformBridge_h
+#ifndef PlatformSupport_h
+#define PlatformSupport_h
 
 #if ENABLE(WEB_AUDIO)
 #include "AudioBus.h"
@@ -85,10 +85,11 @@ class Widget;
 struct Cookie;
 struct FontRenderStyle;
 
-// An interface to the embedding layer, which has the ability to answer
-// questions about the system and so on...
+// PlatformSupport an interface to the embedding layer that lets the embedder
+// supply implementations for Platform functionality that WebCore cannot access
+// directly (for example, because WebCore is in a sandbox).
 
-class PlatformBridge {
+class PlatformSupport {
 public:
     // Cache --------------------------------------------------------------
     static void cacheMetadata(const KURL&, double responseTime, const Vector<char>&);

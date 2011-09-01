@@ -30,7 +30,7 @@
 #import "CrossProcessFontLoading.h"
 
 #import "../graphics/FontPlatformData.h"
-#import "PlatformBridge.h"
+#import "PlatformSupport.h"
 #import <AppKit/NSFont.h>
 #import <wtf/HashMap.h>
 
@@ -135,7 +135,7 @@ PassRefPtr<MemoryActivatedFont> loadFontFromBrowserProcess(NSFont* nsFont)
     ATSFontContainerRef container;
     uint32_t fontID;
     // Send cross-process request to load font.
-    if (!PlatformBridge::loadFont(nsFont, &container, &fontID))
+    if (!PlatformSupport::loadFont(nsFont, &container, &fontID))
         return 0;
 
     // Now that we have the fontID from the browser process, we can consult
@@ -144,7 +144,7 @@ PassRefPtr<MemoryActivatedFont> loadFontFromBrowserProcess(NSFont* nsFont)
     if (font) {
         // We can safely discard the new container since we already have the
         // font in our cache.
-        // FIXME: PlatformBridge::loadFont() should consult the id cache
+        // FIXME: PlatformSupport::loadFont() should consult the id cache
         // before activating the font.  Then we can save this activate/deactive
         // dance altogether.
         ATSFontDeactivate(container, 0, kATSOptionFlagsDefault);

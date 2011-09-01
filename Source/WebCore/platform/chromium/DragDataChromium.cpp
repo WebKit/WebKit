@@ -37,8 +37,8 @@
 #include "Frame.h"
 #include "KURL.h"
 #include "NotImplemented.h"
-#include "PlatformBridge.h"
 #include "PlatformString.h"
+#include "PlatformSupport.h"
 #include "markup.h"
 
 namespace WebCore {
@@ -63,7 +63,7 @@ String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* 
         if (title)
             *title = m_platformDragData->urlTitle();
     } else if (filenamePolicy == ConvertFilenames && containsFiles()) {
-        url = PlatformBridge::filePathToURL(PlatformBridge::getAbsolutePath(m_platformDragData->filenames()[0]));
+        url = PlatformSupport::filePathToURL(PlatformSupport::getAbsolutePath(m_platformDragData->filenames()[0]));
     }
     return url;
 }

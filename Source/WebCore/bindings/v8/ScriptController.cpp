@@ -32,7 +32,7 @@
 #include "config.h"
 #include "ScriptController.h"
 
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "Document.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
@@ -276,7 +276,7 @@ PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widge
     if (widget->isFrameView())
         return 0;
 
-    NPObject* npObject = PlatformBridge::pluginScriptableObject(widget);
+    NPObject* npObject = PlatformSupport::pluginScriptableObject(widget);
 
     if (!npObject)
         return 0;

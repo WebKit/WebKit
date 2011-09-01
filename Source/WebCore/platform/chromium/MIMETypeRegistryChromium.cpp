@@ -32,26 +32,26 @@
 #include "MIMETypeRegistry.h"
 
 #include "MediaPlayer.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "PluginDataChromium.h"
 #include <wtf/text/CString.h>
 
 // NOTE: Unlike other ports, we don't use the shared implementation in
 // MIMETypeRegistry.cpp.  Instead, we need to route most functions via
-// the PlatformBridge to the embedder.
+// the PlatformSupport to the embedder.
 
 namespace WebCore {
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
-    return PlatformBridge::mimeTypeForExtension(ext);
+    return PlatformSupport::mimeTypeForExtension(ext);
 }
 
 #if ENABLE(FILE_SYSTEM)
 String MIMETypeRegistry::getWellKnownMIMETypeForExtension(const String &ext)
 {
     // This method must be thread safe and should not consult the OS/registry.
-    return PlatformBridge::wellKnownMimeTypeForExtension(ext);
+    return PlatformSupport::wellKnownMimeTypeForExtension(ext);
 }
 #endif
 
@@ -63,7 +63,7 @@ String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
     // FIXME: Is this really necessary??
     String mimeType = type.substring(0, static_cast<unsigned>(type.find(';')));
 
-    String ext = PlatformBridge::preferredExtensionForMIMEType(type);
+    String ext = PlatformSupport::preferredExtensionForMIMEType(type);
     if (!ext.isEmpty() && ext[0] == '.')
         ext = ext.substring(1);
 
@@ -89,7 +89,7 @@ String MIMETypeRegistry::getMIMETypeForPath(const String& path)
 
 bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
 { 
-    return PlatformBridge::isSupportedImageMIMEType(mimeType);
+    return PlatformSupport::isSupportedImageMIMEType(mimeType);
 }
 
 bool MIMETypeRegistry::isSupportedImageResourceMIMEType(const String& mimeType)
@@ -104,12 +104,12 @@ bool MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(const String& mimeTyp
 
 bool MIMETypeRegistry::isSupportedJavaScriptMIMEType(const String& mimeType)
 {
-    return PlatformBridge::isSupportedJavaScriptMIMEType(mimeType);
+    return PlatformSupport::isSupportedJavaScriptMIMEType(mimeType);
 }
     
 bool MIMETypeRegistry::isSupportedNonImageMIMEType(const String& mimeType)
 {
-    return PlatformBridge::isSupportedNonImageMIMEType(mimeType);
+    return PlatformSupport::isSupportedNonImageMIMEType(mimeType);
 }
 
 bool MIMETypeRegistry::isSupportedMediaMIMEType(const String& mimeType)

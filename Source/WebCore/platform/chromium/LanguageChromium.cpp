@@ -31,8 +31,8 @@
 #include "config.h"
 #include "Language.h"
 
-#include "PlatformBridge.h"
 #include "PlatformString.h"
+#include "PlatformSupport.h"
 
 namespace WebCore {
 
@@ -40,7 +40,7 @@ String platformDefaultLanguage()
 {
     static String computedDefaultLanguage;
     if (computedDefaultLanguage.isEmpty())
-        computedDefaultLanguage = PlatformBridge::computedDefaultLanguage();
+        computedDefaultLanguage = PlatformSupport::computedDefaultLanguage();
     return computedDefaultLanguage;
 }
 

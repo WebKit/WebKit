@@ -37,7 +37,7 @@
 #include "LayerPainterChromium.h"
 #include "LayerRendererChromium.h"
 #include "LayerTextureUpdaterCanvas.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "cc/CCLayerTreeHost.h"
 #include <wtf/CurrentTime.h>
 
@@ -59,8 +59,8 @@ public:
         m_owner->paintGraphicsLayerContents(context, contentRect);
         double paintEnd = currentTime();
         double pixelsPerSec = (contentRect.width() * contentRect.height()) / (paintEnd - paintStart);
-        PlatformBridge::histogramCustomCounts("Renderer4.AccelContentPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
-        PlatformBridge::histogramCustomCounts("Renderer4.AccelContentPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
+        PlatformSupport::histogramCustomCounts("Renderer4.AccelContentPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
+        PlatformSupport::histogramCustomCounts("Renderer4.AccelContentPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
     }
 private:
     explicit ContentLayerPainter(GraphicsLayerChromium* owner)

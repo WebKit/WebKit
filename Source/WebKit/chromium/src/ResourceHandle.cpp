@@ -31,7 +31,7 @@
 #include "config.h"
 #include "ResourceHandle.h"
 
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
@@ -293,7 +293,7 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
 // static
 void ResourceHandle::cacheMetadata(const ResourceResponse& response, const Vector<char>& data)
 {
-    PlatformBridge::cacheMetadata(response.url(), response.responseTime(), data);
+    PlatformSupport::cacheMetadata(response.url(), response.responseTime(), data);
 }
 
 } // namespace WebCore

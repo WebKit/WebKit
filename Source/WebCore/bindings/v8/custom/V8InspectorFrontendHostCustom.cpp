@@ -36,7 +36,7 @@
 #include "InspectorFrontendClient.h"
 #include "InspectorFrontendHost.h"
 #if !PLATFORM(QT)
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #endif
 #include "PlatformString.h"
 
@@ -125,7 +125,7 @@ static v8::Handle<v8::Value> histogramEnumeration(const char* name, const v8::Ar
 
     int sample = args[0]->ToInt32()->Value();
     if (sample < boundaryValue)
-        PlatformBridge::histogramEnumeration(name, sample, boundaryValue);
+        PlatformSupport::histogramEnumeration(name, sample, boundaryValue);
 
     return v8::Undefined();
 }

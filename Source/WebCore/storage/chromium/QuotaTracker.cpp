@@ -30,7 +30,7 @@
 
 #include "config.h"
 #include "QuotaTracker.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 
 #if ENABLE(DATABASE)
 
@@ -48,7 +48,7 @@ void QuotaTracker::getDatabaseSizeAndSpaceAvailableToOrigin(
     const String& originIdentifier, const String& databaseName,
     unsigned long long* databaseSize, unsigned long long* spaceAvailable)
 {
-    // Extra scope to unlock prior to potentially calling PlatformBridge.
+    // Extra scope to unlock prior to potentially calling PlatformSupport.
     {
         MutexLocker lockData(m_dataGuard);
         ASSERT(m_databaseSizes.contains(originIdentifier));
@@ -63,7 +63,7 @@ void QuotaTracker::getDatabaseSizeAndSpaceAvailableToOrigin(
     }
 
     // The embedder hasn't pushed this value to us, so we pull it as needed.
-    *spaceAvailable = PlatformBridge::databaseGetSpaceAvailableForOrigin(originIdentifier);
+    *spaceAvailable = PlatformSupport::databaseGetSpaceAvailableForOrigin(originIdentifier);
 }
 
 void QuotaTracker::updateDatabaseSize(

@@ -38,7 +38,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "MessagePort.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "RetainedDOMInfo.h"
 #include "RetainedObjectInfo.h"
 #include "V8Binding.h"
@@ -421,7 +421,7 @@ namespace {
 int getMemoryUsageInMB()
 {
 #if PLATFORM(CHROMIUM)
-    return PlatformBridge::memoryUsageMB();
+    return PlatformSupport::memoryUsageMB();
 #else
     return 0;
 #endif
@@ -430,7 +430,7 @@ int getMemoryUsageInMB()
 int getActualMemoryUsageInMB()
 {
 #if PLATFORM(CHROMIUM)
-    return PlatformBridge::actualMemoryUsageMB();
+    return PlatformSupport::actualMemoryUsageMB();
 #else
     return 0;
 #endif

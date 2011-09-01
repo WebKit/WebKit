@@ -33,7 +33,7 @@
 
 #include "ClipboardMimeTypes.h"
 #include "Pasteboard.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 
 namespace WebCore {
 
@@ -103,7 +103,7 @@ HashSet<String> ChromiumDataObject::types() const
 {
     if (m_clipboardType == Clipboard::CopyAndPaste) {
         bool ignoredContainsFilenames;
-        return PlatformBridge::clipboardReadAvailableTypes(PasteboardPrivate::StandardBuffer,
+        return PlatformSupport::clipboardReadAvailableTypes(PasteboardPrivate::StandardBuffer,
                                                            &ignoredContainsFilenames);
     }
 
@@ -134,7 +134,7 @@ String ChromiumDataObject::getData(const String& type, bool& success)
                 Pasteboard::generalPasteboard()->isSelectionMode() ?
                 PasteboardPrivate::SelectionBuffer :
                 PasteboardPrivate::StandardBuffer;
-            String text = PlatformBridge::clipboardReadPlainText(buffer);
+            String text = PlatformSupport::clipboardReadPlainText(buffer);
             success = !text.isEmpty();
             return text;
         }
@@ -160,7 +160,7 @@ String ChromiumDataObject::getData(const String& type, bool& success)
                 PasteboardPrivate::StandardBuffer;
             String htmlText;
             KURL sourceURL;
-            PlatformBridge::clipboardReadHTML(buffer, &htmlText, &sourceURL);
+            PlatformSupport::clipboardReadHTML(buffer, &htmlText, &sourceURL);
             success = !htmlText.isEmpty();
             return htmlText;
         }
@@ -228,7 +228,7 @@ bool ChromiumDataObject::setData(const String& type, const String& data)
 
 uint64_t ChromiumDataObject::getSequenceNumber()
 {
-    return PlatformBridge::clipboardGetSequenceNumber();
+    return PlatformSupport::clipboardGetSequenceNumber();
 }
 
 bool ChromiumDataObject::containsFilenames() const
@@ -236,7 +236,7 @@ bool ChromiumDataObject::containsFilenames() const
     bool containsFilenames;
     if (m_clipboardType == Clipboard::CopyAndPaste) {
         HashSet<String> ignoredResults =
-            PlatformBridge::clipboardReadAvailableTypes(PasteboardPrivate::StandardBuffer,
+            PlatformSupport::clipboardReadAvailableTypes(PasteboardPrivate::StandardBuffer,
                                                         &containsFilenames);
     } else
         containsFilenames = !m_filenames.isEmpty();

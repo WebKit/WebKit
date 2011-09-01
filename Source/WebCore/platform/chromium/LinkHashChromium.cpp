@@ -31,18 +31,18 @@
 #include "config.h"
 #include "LinkHash.h"
 
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 
 namespace WebCore {
 
 LinkHash visitedLinkHash(const UChar* url, unsigned length)
 {
-    return PlatformBridge::visitedLinkHash(url, length);
+    return PlatformSupport::visitedLinkHash(url, length);
 }
 
 LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
 {
-    return PlatformBridge::visitedLinkHash(base, attributeURL);
+    return PlatformSupport::visitedLinkHash(base, attributeURL);
 }
 
 } // namespace WebCore

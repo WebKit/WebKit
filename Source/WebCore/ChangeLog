@@ -1,3 +1,203 @@
+2011-08-31  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Rename PlatformBridge to PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=67349
+
+        Reviewed by Darin Fisher.
+
+        This matches the WebKitPlatformSupport embedder API.
+
+        * WebCore.gypi:
+        * WebCore.pro:
+        * bindings/v8/NPV8Object.cpp:
+        (_NPN_Evaluate):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::reportFatalErrorInV8):
+        * bindings/v8/V8GCController.cpp:
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::handleOutOfMemory):
+        (WebCore::V8Proxy::evaluate):
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::histogramEnumeration):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::isLinkVisited):
+        * platform/audio/chromium/AudioBusChromium.cpp:
+        (WebCore::AudioBus::loadPlatformResource):
+        (WebCore::createBusFromInMemoryAudioFile):
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::types):
+        (WebCore::ChromiumDataObject::getData):
+        (WebCore::ChromiumDataObject::getSequenceNumber):
+        (WebCore::ChromiumDataObject::containsFilenames):
+        * platform/chromium/DataTransferItemChromium.cpp:
+        (WebCore::DataTransferItemChromium::getAsString):
+        (WebCore::DataTransferItemChromium::getAsFile):
+        * platform/chromium/DragDataChromium.cpp:
+        (WebCore::DragData::asURL):
+        * platform/chromium/FileSystemChromium.cpp:
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        (WebCore::getFileSize):
+        (WebCore::getFileModificationTime):
+        (WebCore::revealFolderInOS):
+        (WebCore::directoryName):
+        (WebCore::pathByAppendingComponent):
+        (WebCore::makeAllDirectories):
+        (WebCore::fileExists):
+        (WebCore::openFile):
+        (WebCore::closeFile):
+        (WebCore::seekFile):
+        (WebCore::truncateFile):
+        (WebCore::readFromFile):
+        (WebCore::writeToFile):
+        * platform/chromium/LanguageChromium.cpp:
+        (WebCore::platformDefaultLanguage):
+        * platform/chromium/LinkHashChromium.cpp:
+        (WebCore::visitedLinkHash):
+        * platform/chromium/MIMETypeRegistryChromium.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::getWellKnownMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedJavaScriptMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedNonImageMIMEType):
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+        * platform/chromium/PlatformBridge.h: Removed.
+        * platform/chromium/PlatformScreenChromium.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/chromium/PlatformSupport.h: Copied from Source/WebCore/platform/chromium/PlatformBridge.h.
+        * platform/chromium/SSLKeyGeneratorChromium.cpp:
+        (WebCore::signedPublicKeyAndChallengeString):
+        * platform/chromium/ScrollbarThemeChromium.cpp:
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp:
+        (WebCore::ScrollbarThemeChromiumLinux::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromiumLinux::paintTrackPiece):
+        (WebCore::ScrollbarThemeChromiumLinux::paintButton):
+        (WebCore::ScrollbarThemeChromiumLinux::paintThumb):
+        (WebCore::ScrollbarThemeChromiumLinux::buttonSize):
+        (WebCore::ScrollbarThemeChromiumLinux::minimumThumbLength):
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::scrollbarStateToThemeState):
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+        * platform/chromium/ScrollbarThemeChromiumWin.cpp:
+        (WebCore::ScrollbarThemeChromiumWin::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromiumWin::paintTrackPiece):
+        (WebCore::ScrollbarThemeChromiumWin::paintButton):
+        (WebCore::ScrollbarThemeChromiumWin::paintThumb):
+        (WebCore::ScrollbarThemeChromiumWin::buttonSize):
+        * platform/chromium/SharedTimerChromium.cpp:
+        (WebCore::setSharedTimerFiredFunction):
+        (WebCore::setSharedTimerFireInterval):
+        (WebCore::stopSharedTimer):
+        * platform/chromium/SuddenTerminationChromium.cpp:
+        (WebCore::disableSuddenTermination):
+        (WebCore::enableSuddenTermination):
+        * platform/chromium/TraceEvent.h:
+        (WebCore::internal::ScopeTracer::ScopeTracer):
+        (WebCore::internal::ScopeTracer::~ScopeTracer):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerPainter::paint):
+        * platform/graphics/chromium/CrossProcessFontLoading.mm:
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::fontContainsCharacter):
+        (WebCore::FillLogFont):
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::drawGlyphsWin):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.cpp:
+        (WebCore::FontPlatformData::scriptFontProperties):
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+        (WebCore::FontPlatformData::querySystemForRenderStyle):
+        * platform/graphics/chromium/GlyphPageTreeNodeChromiumWin.cpp:
+        (WebCore::fillBMPGlyphs):
+        * platform/graphics/chromium/ImageChromium.cpp:
+        (WebCore::Image::loadPlatformResource):
+        * platform/graphics/chromium/ImageChromiumMac.mm:
+        (WebCore::Image::loadPlatformResource):
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/chromium/UniscribeHelperTextRun.cpp:
+        (WebCore::UniscribeHelperTextRun::tryToPreloadFont):
+        * platform/graphics/skia/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/network/chromium/CookieJarChromium.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        * platform/network/chromium/DNSChromium.cpp:
+        (WebCore::prefetchDNS):
+        * platform/qt/PlatformBridge.h: Removed.
+        * platform/qt/PlatformBridgeQt.cpp: Removed.
+        * platform/qt/PlatformSupport.h: Copied from Source/WebCore/platform/qt/PlatformBridge.h.
+        * platform/qt/PlatformSupportQt.cpp: Copied from Source/WebCore/platform/qt/PlatformBridgeQt.cpp.
+        (WebCore::PlatformSupport::popupsAllowed):
+        (WebCore::PlatformSupport::pluginScriptableObject):
+        * platform/sql/chromium/SQLiteFileSystemChromium.cpp:
+        (WebCore::SQLiteFileSystem::deleteDatabaseFile):
+        (WebCore::SQLiteFileSystem::getDatabaseFileSize):
+        * platform/sql/chromium/SQLiteFileSystemChromiumPosix.cpp:
+        * platform/sql/chromium/SQLiteFileSystemChromiumWin.cpp:
+        * plugins/chromium/PluginDataChromium.cpp:
+        (WebCore::PluginCache::plugins):
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::getWebThemeState):
+        (WebCore::RenderThemeChromiumLinux::adjustSliderThumbSize):
+        (WebCore::RenderThemeChromiumLinux::paintCheckbox):
+        (WebCore::RenderThemeChromiumLinux::setCheckboxSize):
+        (WebCore::RenderThemeChromiumLinux::paintRadio):
+        (WebCore::RenderThemeChromiumLinux::setRadioSize):
+        (WebCore::RenderThemeChromiumLinux::paintButton):
+        (WebCore::RenderThemeChromiumLinux::paintTextField):
+        (WebCore::RenderThemeChromiumLinux::paintMenuList):
+        (WebCore::RenderThemeChromiumLinux::paintSliderTrack):
+        (WebCore::RenderThemeChromiumLinux::paintSliderThumb):
+        (WebCore::RenderThemeChromiumLinux::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeChromiumLinux::paintInnerSpinButton):
+        (WebCore::RenderThemeChromiumLinux::paintProgressBar):
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::usesTestModeFocusRingColor):
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::caretBlinkInterval):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumWin::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumWin::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumWin::systemColor):
+        (WebCore::RenderThemeChromiumWin::paintButton):
+        (WebCore::RenderThemeChromiumWin::paintSliderTrack):
+        (WebCore::menuListButtonWidth):
+        (WebCore::RenderThemeChromiumWin::paintMenuList):
+        (WebCore::RenderThemeChromiumWin::paintTextFieldInternal):
+        (WebCore::RenderThemeChromiumWin::paintInnerSpinButton):
+        (WebCore::RenderThemeChromiumWin::paintProgressBar):
+        * storage/chromium/IDBFactoryBackendInterface.cpp:
+        (WebCore::IDBFactoryBackendInterface::create):
+        * storage/chromium/IDBKeyPathBackendImpl.cpp:
+        (WebCore::IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath):
+        (WebCore::IDBKeyPathBackendImpl::injectIDBKeyIntoSerializedValue):
+        * storage/chromium/QuotaTracker.cpp:
+        (WebCore::QuotaTracker::getDatabaseSizeAndSpaceAvailableToOrigin):
+
 2011-08-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash when inserting text with a trailing newline into a textarea via JS

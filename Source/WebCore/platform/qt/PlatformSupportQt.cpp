@@ -20,7 +20,7 @@
  *
  */
 #include "config.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 
 #include "Frame.h"
 #include "PluginView.h"
@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-bool PlatformBridge::popupsAllowed(NPP npp)
+bool PlatformSupport::popupsAllowed(NPP npp)
 {
     if (npp && npp->ndata)
         return static_cast<PluginView*>(npp->ndata)->arePopupsAllowed();
@@ -36,7 +36,7 @@ bool PlatformBridge::popupsAllowed(NPP npp)
     return false;
 }
 
-NPObject* PlatformBridge::pluginScriptableObject(Widget* widget)
+NPObject* PlatformSupport::pluginScriptableObject(Widget* widget)
 {
     if (!widget)
         return 0;

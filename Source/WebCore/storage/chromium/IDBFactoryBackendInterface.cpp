@@ -28,7 +28,7 @@
 #include "config.h"
 #include "IDBFactoryBackendInterface.h"
 
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -36,7 +36,7 @@ namespace WebCore {
 
 PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendInterface::create()
 {
-    return PlatformBridge::idbFactory();
+    return PlatformSupport::idbFactory();
 }
 
 } // namespace WebCore

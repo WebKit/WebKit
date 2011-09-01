@@ -31,7 +31,7 @@
 #include "config.h"
 #include "V8DOMWindowShell.h"
 
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "DateExtension.h"
 #include "DocumentLoader.h"
@@ -92,7 +92,7 @@ static void reportFatalErrorInV8(const char* location, const char* message)
     // FIXME: clean up V8Proxy and disable JavaScript.
     int memoryUsageMB = -1;
 #if PLATFORM(CHROMIUM)
-    memoryUsageMB = PlatformBridge::actualMemoryUsageMB();
+    memoryUsageMB = PlatformSupport::actualMemoryUsageMB();
 #endif
     printf("V8 error: %s (%s).  Current memory usage: %d MB\n", message, location, memoryUsageMB);
     handleFatalErrorInV8();

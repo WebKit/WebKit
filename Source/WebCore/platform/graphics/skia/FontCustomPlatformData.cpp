@@ -36,7 +36,7 @@
 #if OS(WINDOWS)
 #include "Base64.h"
 #include "OpenTypeUtilities.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #elif OS(UNIX) || PLATFORM(BREWMP)
 #include "SkStream.h"
 #endif
@@ -92,7 +92,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     logFont.lfStrikeOut = false;
     logFont.lfCharSet = DEFAULT_CHARSET;
     logFont.lfOutPrecision = OUT_TT_ONLY_PRECIS;
-    logFont.lfQuality = PlatformBridge::layoutTestMode() ?
+    logFont.lfQuality = PlatformSupport::layoutTestMode() ?
                         NONANTIALIASED_QUALITY :
                         DEFAULT_QUALITY; // Honor user's desktop settings.
     logFont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;

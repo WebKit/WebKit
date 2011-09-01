@@ -26,14 +26,14 @@
 #include "config.h"
 #include "DNS.h"
 
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "ResourceHandle.h"
 
 namespace WebCore {
 
 void prefetchDNS(const String& hostname)
 {
-    PlatformBridge::prefetchDNS(hostname);
+    PlatformSupport::prefetchDNS(hostname);
 }
 
 void ResourceHandle::prepareForURL(const KURL& url)

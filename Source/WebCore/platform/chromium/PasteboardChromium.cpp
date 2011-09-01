@@ -41,7 +41,7 @@
 #include "Image.h"
 #include "KURL.h"
 #include "NativeImageSkia.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "Range.h"
 #include "RenderImage.h"
 #include "markup.h"
@@ -91,7 +91,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
 #endif
     replaceNBSPWithSpace(plainText);
 
-    PlatformBridge::clipboardWriteSelection(html, url, plainText, canSmartCopyOrDelete);
+    PlatformSupport::clipboardWriteSelection(html, url, plainText, canSmartCopyOrDelete);
 }
 
 void Pasteboard::writePlainText(const String& text)
@@ -99,9 +99,9 @@ void Pasteboard::writePlainText(const String& text)
 #if OS(WINDOWS)
     String plainText(text);
     replaceNewlinesWithWindowsStyleNewlines(plainText);
-    PlatformBridge::clipboardWritePlainText(plainText);
+    PlatformSupport::clipboardWritePlainText(plainText);
 #else
-    PlatformBridge::clipboardWritePlainText(text);
+    PlatformSupport::clipboardWritePlainText(text);
 #endif
 }
 
@@ -116,7 +116,7 @@ void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)
             title = url.host();
     }
 
-    PlatformBridge::clipboardWriteURL(url, title);
+    PlatformSupport::clipboardWriteURL(url, title);
 }
 
 void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
@@ -152,17 +152,17 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
     }
     KURL url = urlString.isEmpty() ? KURL() : node->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
 
-    PlatformBridge::clipboardWriteImage(bitmap, url, title);
+    PlatformSupport::clipboardWriteImage(bitmap, url, title);
 }
 
 bool Pasteboard::canSmartReplace()
 {
-    return PlatformBridge::clipboardIsFormatAvailable(PasteboardPrivate::WebSmartPasteFormat, m_selectionMode ? PasteboardPrivate::SelectionBuffer : PasteboardPrivate::StandardBuffer);
+    return PlatformSupport::clipboardIsFormatAvailable(PasteboardPrivate::WebSmartPasteFormat, m_selectionMode ? PasteboardPrivate::SelectionBuffer : PasteboardPrivate::StandardBuffer);
 }
 
 String Pasteboard::plainText(Frame* frame)
 {
-    return PlatformBridge::clipboardReadPlainText(m_selectionMode ? PasteboardPrivate::SelectionBuffer : PasteboardPrivate::StandardBuffer);
+    return PlatformSupport::clipboardReadPlainText(m_selectionMode ? PasteboardPrivate::SelectionBuffer : PasteboardPrivate::StandardBuffer);
 }
 
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context, bool allowPlainText, bool& chosePlainText)
@@ -170,10 +170,10 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     chosePlainText = false;
     PasteboardPrivate::ClipboardBuffer buffer = m_selectionMode ? PasteboardPrivate::SelectionBuffer : PasteboardPrivate::StandardBuffer;
 
-    if (PlatformBridge::clipboardIsFormatAvailable(PasteboardPrivate::HTMLFormat, buffer)) {
+    if (PlatformSupport::clipboardIsFormatAvailable(PasteboardPrivate::HTMLFormat, buffer)) {
         String markup;
         KURL srcURL;
-        PlatformBridge::clipboardReadHTML(buffer, &markup, &srcURL);
+        PlatformSupport::clipboardReadHTML(buffer, &markup, &srcURL);
 
         RefPtr<DocumentFragment> fragment =
             createFragmentFromMarkup(frame->document(), markup, srcURL, FragmentScriptingNotAllowed);
@@ -182,7 +182,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     }
 
     if (allowPlainText) {
-        String markup = PlatformBridge::clipboardReadPlainText(buffer);
+        String markup = PlatformSupport::clipboardReadPlainText(buffer);
         if (!markup.isEmpty()) {
             chosePlainText = true;
 

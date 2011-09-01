@@ -32,11 +32,10 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
-#include <windows.h>
-#include <objidl.h>
 #include <mlang.h>
-
-#include "PlatformBridge.h"
+#include <objidl.h>
+#include <windows.h>
+#include "PlatformSupport.h"
 #include "SkiaFontWin.h"
 
 namespace WebCore {
@@ -135,7 +134,7 @@ SCRIPT_FONTPROPERTIES* FontPlatformData::scriptFontProperties() const
             HRESULT hr = ScriptGetFontProperties(dc, scriptCache(),
                                                  m_scriptFontProperties);
             if (S_OK != hr) {
-                if (PlatformBridge::ensureFontLoaded(hfont())) {
+                if (PlatformSupport::ensureFontLoaded(hfont())) {
                     // FIXME: Handle gracefully the error if this call also fails.
                     hr = ScriptGetFontProperties(dc, scriptCache(),
                                                  m_scriptFontProperties);

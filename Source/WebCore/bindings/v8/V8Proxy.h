@@ -31,7 +31,7 @@
 #ifndef V8Proxy_h
 #define V8Proxy_h
 
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "SharedPersistent.h"
 #include "V8AbstractEventListener.h"
 #include "V8DOMWindowShell.h"
@@ -46,7 +46,7 @@
 #include <wtf/text/TextPosition.h>
 
 #if defined(ENABLE_DOM_STATS_COUNTERS) && PLATFORM(CHROMIUM)
-#define INC_STATS(name) PlatformBridge::incrementStatsCounter(name)
+#define INC_STATS(name) PlatformSupport::incrementStatsCounter(name)
 #else
 #define INC_STATS(name)
 #endif

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformBridge_h
-#define PlatformBridge_h
+#ifndef PlatformSupport_h
+#define PlatformSupport_h
 
 #include "KURL.h"
 #include "PlatformString.h"
@@ -84,11 +84,9 @@ namespace WebCore {
 
 class Widget;
 
-// An interface to the embedding layer, which has the ability to answer
-// questions about the system and so on...
-// This is very similar to chromium/PlatformBridge and the two are likely to converge
-// in the future.
-class PlatformBridge {
+// This is very similar to chromium/PlatformSupport and the two are likely to
+// converge in the future.
+class PlatformSupport {
 public:
     static bool popupsAllowed(NPP npp);
     // Plugin
@@ -96,4 +94,4 @@ public:
 };
 
 }
-#endif // PlatformBridge_h
+#endif

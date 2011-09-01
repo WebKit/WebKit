@@ -32,8 +32,8 @@
 #include "Gradient.h"
 #include "ImageBuffer.h"
 #include "LocalCurrentGraphicsContext.h"
-#include "PlatformBridge.h"
 #include "PlatformMouseEvent.h"
+#include "PlatformSupport.h"
 #include "ScrollAnimatorChromiumMac.h"
 #include "ScrollView.h"
 #include <Carbon/Carbon.h>
@@ -456,16 +456,16 @@ static int scrollbarPartToHIPressedState(ScrollbarPart part)
     }
 }
 
-static PlatformBridge::ThemePaintState scrollbarStateToThemeState(Scrollbar* scrollbar)
+static PlatformSupport::ThemePaintState scrollbarStateToThemeState(Scrollbar* scrollbar)
 {
     if (!scrollbar->enabled())
-        return PlatformBridge::StateDisabled;
+        return PlatformSupport::StateDisabled;
     if (!scrollbar->scrollableArea()->isActive())
-        return PlatformBridge::StateInactive;
+        return PlatformSupport::StateInactive;
     if (scrollbar->pressedPart() == ThumbPart)
-        return PlatformBridge::StatePressed;
+        return PlatformSupport::StatePressed;
 
-    return PlatformBridge::StateActive;
+    return PlatformSupport::StateActive;
 }
 
 void ScrollbarThemeChromiumMac::updateEnabledState(Scrollbar* scrollbar)
@@ -622,18 +622,18 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
     paintGivenTickmarks(drawingContext, scrollbar, tickmarkTrackRect, tickmarks);
 
     if (hasThumb(scrollbar)) {
-        PlatformBridge::ThemePaintScrollbarInfo scrollbarInfo;
-        scrollbarInfo.orientation = scrollbar->orientation() == HorizontalScrollbar ? PlatformBridge::ScrollbarOrientationHorizontal : PlatformBridge::ScrollbarOrientationVertical;
-        scrollbarInfo.parent = scrollbar->parent() && scrollbar->parent()->isFrameView() && static_cast<FrameView*>(scrollbar->parent())->isScrollViewScrollbar(scrollbar) ? PlatformBridge::ScrollbarParentScrollView : PlatformBridge::ScrollbarParentRenderLayer;
+        PlatformSupport::ThemePaintScrollbarInfo scrollbarInfo;
+        scrollbarInfo.orientation = scrollbar->orientation() == HorizontalScrollbar ? PlatformSupport::ScrollbarOrientationHorizontal : PlatformSupport::ScrollbarOrientationVertical;
+        scrollbarInfo.parent = scrollbar->parent() && scrollbar->parent()->isFrameView() && static_cast<FrameView*>(scrollbar->parent())->isScrollViewScrollbar(scrollbar) ? PlatformSupport::ScrollbarParentScrollView : PlatformSupport::ScrollbarParentRenderLayer;
         scrollbarInfo.maxValue = scrollbar->maximum();
         scrollbarInfo.currentValue = scrollbar->currentPos();
         scrollbarInfo.visibleSize = scrollbar->visibleSize();
         scrollbarInfo.totalSize = scrollbar->totalSize();
 
-        PlatformBridge::paintScrollbarThumb(
+        PlatformSupport::paintScrollbarThumb(
             drawingContext,
             scrollbarStateToThemeState(scrollbar),
-            scrollbar->controlSize() == RegularScrollbar ? PlatformBridge::SizeRegular : PlatformBridge::SizeSmall,
+            scrollbar->controlSize() == RegularScrollbar ? PlatformSupport::SizeRegular : PlatformSupport::SizeSmall,
             scrollbar->frameRect(),
             scrollbarInfo);
     }

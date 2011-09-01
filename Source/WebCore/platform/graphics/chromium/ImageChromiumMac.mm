@@ -34,13 +34,13 @@
 #include "BitmapImage.h"
 
 #include "Image.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 
 namespace WebCore {
 
 PassRefPtr<Image> Image::loadPlatformResource(const char* name)
 {
-    return PlatformBridge::loadPlatformImageResource(name);
+    return PlatformSupport::loadPlatformImageResource(name);
 }
 
 // FIXME: These are temporary stubs, we need real implementations which

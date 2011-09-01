@@ -25,7 +25,7 @@
 #ifndef TraceEvent_h
 #define TraceEvent_h
 
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include <wtf/OwnArrayPtr.h>
 
 // Implementation detail: trace event macros create temporary variables
@@ -35,7 +35,7 @@
 #define TRACE_EVENT_MAKE_UNIQUE_IDENTIFIER2(a, b) TRACE_EVENT_MAKE_UNIQUE_IDENTIFIER3(a, b)
 #define TRACE_EVENT_MAKE_UNIQUE_IDENTIFIER(name_prefix) TRACE_EVENT_MAKE_UNIQUE_IDENTIFIER2(name_prefix, __LINE__)
 
-// Issues PlatformBridge::traceEventBegin and traceEventEnd calls for the enclosing scope
+// Issues PlatformSupport::traceEventBegin and traceEventEnd calls for the enclosing scope
 #define TRACE_EVENT(name, id, extra) WebCore::internal::ScopeTracer TRACE_EVENT_MAKE_UNIQUE_IDENTIFIER(__traceEventScope)(name, id, extra);
 
 namespace WebCore {
@@ -58,14 +58,14 @@ inline ScopeTracer::ScopeTracer(const char* name, void* id, const char* extra)
     : m_name(name)
     , m_id(id)
 {
-    PlatformBridge::traceEventBegin(name, id, extra); \
+    PlatformSupport::traceEventBegin(name, id, extra); \
     if (extra)
         m_extra = adoptArrayPtr(strdup(extra));
 }
 
 inline ScopeTracer::~ScopeTracer()
 {
-    PlatformBridge::traceEventEnd(m_name, m_id, m_extra.get());
+    PlatformSupport::traceEventEnd(m_name, m_id, m_extra.get());
 }
 
 } // namespace internal

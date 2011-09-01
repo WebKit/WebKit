@@ -32,7 +32,7 @@
 #include "FontPlatformData.h"
 
 #include "NotImplemented.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "PlatformString.h"
 
 #include "SkAdvancedTypefaceMetrics.h"
@@ -245,7 +245,7 @@ void FontPlatformData::querySystemForRenderStyle()
         return;
     }
 
-    PlatformBridge::getRenderStyleForStrike(m_family.data(), (((int)m_textSize) << 2) | (m_typeface->style() & 3), &m_style);
+    PlatformSupport::getRenderStyleForStrike(m_family.data(), (((int)m_textSize) << 2) | (m_typeface->style() & 3), &m_style);
 }
 
 }  // namespace WebCore

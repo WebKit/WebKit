@@ -45,7 +45,7 @@
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -231,7 +231,7 @@ bool V8Proxy::handleOutOfMemory()
     }
 
 #if PLATFORM(CHROMIUM)
-    PlatformBridge::notifyJSOutOfMemory(frame);
+    PlatformSupport::notifyJSOutOfMemory(frame);
 #endif
 
     // Disable JS.
@@ -368,7 +368,7 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
         // Compile the script.
         v8::Local<v8::String> code = v8ExternalString(source.source());
 #if PLATFORM(CHROMIUM)
-        PlatformBridge::traceEventBegin("v8.compile", node, "");
+        PlatformSupport::traceEventBegin("v8.compile", node, "");
 #endif
         OwnPtr<v8::ScriptData> scriptData = precompileScript(code, source.cachedScript());
 
@@ -376,9 +376,9 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
         // 1, whereas v8 starts at 0.
         v8::Handle<v8::Script> script = compileScript(code, source.url(), WTF::toZeroBasedTextPosition(source.startPosition()), scriptData.get());
 #if PLATFORM(CHROMIUM)
-        PlatformBridge::traceEventEnd("v8.compile", node, "");
+        PlatformSupport::traceEventEnd("v8.compile", node, "");
 
-        PlatformBridge::traceEventBegin("v8.run", node, "");
+        PlatformSupport::traceEventBegin("v8.run", node, "");
 #endif
         // Set inlineCode to true for <a href="javascript:doSomething()">
         // and false for <script>doSomething</script>. We make a rough guess at
@@ -386,7 +386,7 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
         result = runScript(script, source.url().string().isNull());
     }
 #if PLATFORM(CHROMIUM)
-    PlatformBridge::traceEventEnd("v8.run", node, "");
+    PlatformSupport::traceEventEnd("v8.run", node, "");
 #endif
 
     InspectorInstrumentation::didEvaluateScript(cookie);

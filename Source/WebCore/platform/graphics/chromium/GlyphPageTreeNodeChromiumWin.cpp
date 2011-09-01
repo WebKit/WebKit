@@ -34,7 +34,7 @@
 
 #include "Font.h"
 #include "GlyphPageTreeNode.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "SimpleFontData.h"
 #include "SystemInfo.h"
 #include "UniscribeHelperTextRun.h"
@@ -80,7 +80,7 @@ static bool fillBMPGlyphs(unsigned offset,
         ReleaseDC(0, dc);
 
         if (recurse) {
-            if (PlatformBridge::ensureFontLoaded(fontData->platformData().hfont()))
+            if (PlatformSupport::ensureFontLoaded(fontData->platformData().hfont()))
                 return fillBMPGlyphs(offset, length, buffer, page, fontData, false);
 
             fillEmptyGlyphs(page);

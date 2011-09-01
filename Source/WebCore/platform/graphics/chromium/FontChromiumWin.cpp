@@ -35,7 +35,7 @@
 #include "FontFallbackList.h"
 #include "GlyphBuffer.h"
 #include "NotImplemented.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "PlatformContextSkia.h"
 #include "SimpleFontData.h"
 #include "SkiaFontWin.h"
@@ -431,7 +431,7 @@ static void drawGlyphsWin(GraphicsContext* graphicsContext,
             success = painter.drawGlyphs(curLen, &glyphs[0], &advances[0], horizontalOffset - point.x() - currentWidth);
             if (!success && executions == 0) {
                 // Ask the browser to load the font for us and retry.
-                PlatformBridge::ensureFontLoaded(font->platformData().hfont());
+                PlatformSupport::ensureFontLoaded(font->platformData().hfont());
                 continue;
             }
             break;

@@ -37,7 +37,7 @@
 #include "Clipboard.h"
 #include "ClipboardChromium.h"
 #include "ClipboardMimeTypes.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "SharedBuffer.h"
 #include "StringCallback.h"
 
@@ -91,13 +91,13 @@ void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback)
     ASSERT(m_source == PasteboardSource);
     // This is ugly but there's no real alternative.
     if (type() == mimeTypeTextPlain) {
-        callback->scheduleCallback(m_context, PlatformBridge::clipboardReadPlainText(PasteboardPrivate::StandardBuffer));
+        callback->scheduleCallback(m_context, PlatformSupport::clipboardReadPlainText(PasteboardPrivate::StandardBuffer));
         return;
     }
     if (type() == mimeTypeTextHTML) {
         String html;
         KURL ignoredSourceURL;
-        PlatformBridge::clipboardReadHTML(PasteboardPrivate::StandardBuffer, &html, &ignoredSourceURL);
+        PlatformSupport::clipboardReadHTML(PasteboardPrivate::StandardBuffer, &html, &ignoredSourceURL);
         callback->scheduleCallback(m_context, html);
         return;
     }
@@ -123,7 +123,7 @@ PassRefPtr<Blob> DataTransferItemChromium::getAsFile()
         // method to the blob registry; that way the data is only copied over
         // into the renderer when it's actually read, not when the blob is
         // initially constructed).
-        RefPtr<SharedBuffer> data = PlatformBridge::clipboardReadImage(PasteboardPrivate::StandardBuffer);
+        RefPtr<SharedBuffer> data = PlatformSupport::clipboardReadImage(PasteboardPrivate::StandardBuffer);
         RefPtr<RawData> rawData = RawData::create();
         rawData->mutableData()->append(data->data(), data->size());
         OwnPtr<BlobData> blobData = BlobData::create();

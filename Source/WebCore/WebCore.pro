@@ -64,7 +64,7 @@ v8 {
     include($$PWD/../JavaScriptCore/wtf/wtf.pri)
 
     SOURCES += \
-        platform/qt/PlatformBridgeQt.cpp \
+        platform/qt/PlatformSupportQt.cpp \
         bindings/generic/BindingSecurityBase.cpp \
         \
         bindings/v8/WorldContextHandle.cpp \

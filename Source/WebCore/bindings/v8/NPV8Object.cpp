@@ -28,7 +28,7 @@
 
 #include "NPV8Object.h"
 
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "OwnArrayPtr.h"
@@ -279,7 +279,7 @@ bool _NPN_InvokeDefault(NPP npp, NPObject* npObject, const NPVariant* arguments,
 
 bool _NPN_Evaluate(NPP npp, NPObject* npObject, NPString* npScript, NPVariant* result)
 {
-    bool popupsAllowed = PlatformBridge::popupsAllowed(npp);
+    bool popupsAllowed = PlatformSupport::popupsAllowed(npp);
     return _NPN_EvaluateHelper(npp, popupsAllowed, npObject, npScript, result);
 }
 

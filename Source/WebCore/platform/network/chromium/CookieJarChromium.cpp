@@ -33,38 +33,38 @@
 
 #include "Cookie.h"
 #include "Document.h"
-#include "PlatformBridge.h"
+#include "PlatformSupport.h"
 
 namespace WebCore {
 
 void setCookies(Document* document, const KURL& url, const String& value)
 {
-    PlatformBridge::setCookies(document, url, value);
+    PlatformSupport::setCookies(document, url, value);
 }
 
 String cookies(const Document* document, const KURL& url)
 {
-    return PlatformBridge::cookies(document, url);
+    return PlatformSupport::cookies(document, url);
 }
 
 String cookieRequestHeaderFieldValue(const Document* document, const KURL& url)
 {
-    return PlatformBridge::cookieRequestHeaderFieldValue(document, url);
+    return PlatformSupport::cookieRequestHeaderFieldValue(document, url);
 }
 
 bool cookiesEnabled(const Document* document)
 {
-    return PlatformBridge::cookiesEnabled(document);
+    return PlatformSupport::cookiesEnabled(document);
 }
 
 bool getRawCookies(const Document* document, const KURL& url, Vector<Cookie>& rawCookies)
 {
-    return PlatformBridge::rawCookies(document, url, rawCookies);
+    return PlatformSupport::rawCookies(document, url, rawCookies);
 }
 
 void deleteCookie(const Document* document, const KURL& url, const String& cookieName)
 {
-    return PlatformBridge::deleteCookie(document, url, cookieName);
+    return PlatformSupport::deleteCookie(document, url, cookieName);
 }
 
 void getHostnamesWithCookies(HashSet<String>& hostnames)
