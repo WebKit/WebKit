@@ -1375,6 +1375,7 @@ sub GenerateImplementation
     my @hashValue1 = ();
     my @hashValue2 = ();
     my @hashSpecials = ();
+    my %conditionals = ();
 
     # FIXME: we should not need a function for every constant.
     foreach my $constant (@{$dataNode->constants}) {
@@ -1402,11 +1403,17 @@ sub GenerateImplementation
         push(@specials, "Function");
         my $special = (@specials > 0) ? join(" | ", @specials) : "0";
         push(@hashSpecials, $special);
+
+        my $conditional = $function->signature->extendedAttributes->{"Conditional"};
+        if ($conditional) {
+            $conditionals{$name} = $conditional;
+        }
     }
 
     $object->GenerateHashTable($hashName, $hashSize,
                                \@hashKeys, \@hashSpecials,
-                               \@hashValue1, \@hashValue2);
+                               \@hashValue1, \@hashValue2,
+                               \%conditionals);
 
     if ($dataNode->extendedAttributes->{"NoStaticTables"}) {
         push(@implContent, "static const HashTable* get${className}PrototypeTable(ExecState* exec)\n");
@@ -1945,6 +1952,12 @@ sub GenerateImplementation
             
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
 
+            my $conditional = $function->signature->extendedAttributes->{"Conditional"};
+            if ($conditional) {
+                my $conditionalString = GenerateConditionalStringFromAttributeValue($conditional);
+                push(@implContent, "#if ${conditionalString}\n");
+            }
+
             push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
             push(@implContent, "{\n");
 
@@ -2180,6 +2193,10 @@ sub GenerateImplementation
             if ($function->{overloads} && @{$function->{overloads}} > 1 && $function->{overloadIndex} == @{$function->{overloads}}) {
                 # Generate a function dispatching call to the rest of the overloads.
                 GenerateOverloadedPrototypeFunction($function, $dataNode, $implClassName);
+            }
+
+            if ($conditional) {
+                push(@implContent, "#endif\n\n");
             }
         }
     }

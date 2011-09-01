@@ -1044,6 +1044,29 @@ static v8::Handle<v8::Value> methodWithCallbackAndOptionalArgCallback(const v8::
     return v8::Handle<v8::Value>();
 }
 
+static v8::Handle<v8::Value> conditionalMethod1Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.conditionalMethod1");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    return v8String(imp->conditionalMethod1());
+}
+
+static v8::Handle<v8::Value> conditionalMethod2Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.conditionalMethod2");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    imp->conditionalMethod2();
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> conditionalMethod3Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.conditionalMethod3");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    imp->conditionalMethod3();
+    return v8::Handle<v8::Value>();
+}
+
 static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod1");
@@ -1258,6 +1281,15 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"methodWithCallbackArg", TestObjInternal::methodWithCallbackArgCallback},
     {"methodWithNonCallbackArgAndCallbackArg", TestObjInternal::methodWithNonCallbackArgAndCallbackArgCallback},
     {"methodWithCallbackAndOptionalArg", TestObjInternal::methodWithCallbackAndOptionalArgCallback},
+#if ENABLE(Condition1)
+    {"conditionalMethod1", TestObjInternal::conditionalMethod1Callback},
+#endif
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    {"conditionalMethod2", TestObjInternal::conditionalMethod2Callback},
+#endif
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    {"conditionalMethod3", TestObjInternal::conditionalMethod3Callback},
+#endif
     {"overloadedMethod", TestObjInternal::overloadedMethodCallback},
 };
 

@@ -136,6 +136,11 @@ module test {
         attribute [Conditional=Condition1&Condition2] long conditionalAttr2;
         attribute [Conditional=Condition1|Condition2] long conditionalAttr3;
 
+        // 'Conditional' extended method
+        [Conditional=Condition1] DOMString conditionalMethod1();
+        [Conditional=Condition1&Condition2] void conditionalMethod2();
+        [Conditional=Condition1|Condition2] void conditionalMethod3();
+
 #if defined(TESTING_V8) || defined(TESTING_JS)
         // Overloads
         void    overloadedMethod(in TestObj objArg, in DOMString strArg);

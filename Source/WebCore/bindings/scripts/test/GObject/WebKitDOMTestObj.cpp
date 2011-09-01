@@ -383,6 +383,42 @@ webkit_dom_test_obj_method_with_non_optional_arg_and_two_optional_args(WebKitDOM
     item->methodWithNonOptionalArgAndTwoOptionalArgs(non_opt, opt1, opt2);
 }
 
+gchar*
+webkit_dom_test_obj_conditional_method1(WebKitDOMTestObj* self)
+{
+#if ENABLE(Condition1)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    gchar* res = convertToUTF8String(item->conditionalMethod1());
+    return res;
+#else
+    return NULL;
+#endif /* ENABLE(Condition1) */
+}
+
+void
+webkit_dom_test_obj_conditional_method2(WebKitDOMTestObj* self)
+{
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    item->conditionalMethod2();
+#endif /* ENABLE(Condition1) && ENABLE(Condition2) */
+}
+
+void
+webkit_dom_test_obj_conditional_method3(WebKitDOMTestObj* self)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    item->conditionalMethod3();
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
 void
 webkit_dom_test_obj_class_method(WebKitDOMTestObj* self)
 {

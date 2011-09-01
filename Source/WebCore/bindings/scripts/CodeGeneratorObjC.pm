@@ -1650,11 +1650,16 @@ sub GenerateImplementation
                 }
             }
 
+            my $conditionalString = GenerateConditionalString($function->signature);
+            push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
+
             push(@implContent, "$functionSig\n");
             push(@implContent, "{\n");
             push(@implContent, "    $jsContextSetter\n");
             push(@implContent, @functionContent);
             push(@implContent, "}\n\n");
+
+            push(@implContent, "#endif\n\n") if $conditionalString;
 
             # generate the old style method names with un-named parameters, these methods are deprecated
             if (@{$function->parameters} > 1 and $function->signature->extendedAttributes->{"OldStyleObjC"}) {

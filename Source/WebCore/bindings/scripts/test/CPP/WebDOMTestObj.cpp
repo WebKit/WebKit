@@ -807,6 +807,42 @@ void WebDOMTestObj::methodWithNonOptionalArgAndTwoOptionalArgs(int nonOpt, int o
     impl()->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1, opt2);
 }
 
+
+#if ENABLE(Condition1)
+WebDOMString WebDOMTestObj::conditionalMethod1()
+{
+    if (!impl())
+        return WebDOMString();
+
+    return impl()->conditionalMethod1();
+}
+
+#endif
+
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+void WebDOMTestObj::conditionalMethod2()
+{
+    if (!impl())
+        return;
+
+    impl()->conditionalMethod2();
+}
+
+#endif
+
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+void WebDOMTestObj::conditionalMethod3()
+{
+    if (!impl())
+        return;
+
+    impl()->conditionalMethod3();
+}
+
+#endif
+
 void WebDOMTestObj::classMethod()
 {
     if (!impl())

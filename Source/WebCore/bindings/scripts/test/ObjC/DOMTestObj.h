@@ -150,6 +150,9 @@ enum {
 - (void)methodWithOptionalArg:(int)opt;
 - (void)methodWithNonOptionalArgAndOptionalArg:(int)nonOpt opt:(int)opt;
 - (void)methodWithNonOptionalArgAndTwoOptionalArgs:(int)nonOpt opt1:(int)opt1 opt2:(int)opt2;
+- (NSString *)conditionalMethod1;
+- (void)conditionalMethod2;
+- (void)conditionalMethod3;
 - (void)classMethod;
 - (int)classMethodWithOptional:(int)arg;
 @end

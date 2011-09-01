@@ -236,6 +236,15 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithCallbackArg", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackArg), (intptr_t)1 THUNK_GENERATOR(0) },
     { "methodWithNonCallbackArgAndCallbackArg", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg), (intptr_t)2 THUNK_GENERATOR(0) },
     { "methodWithCallbackAndOptionalArg", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg), (intptr_t)1 THUNK_GENERATOR(0) },
+#if ENABLE(Condition1)
+    { "conditionalMethod1", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionConditionalMethod1), (intptr_t)0 THUNK_GENERATOR(0) },
+#endif
+#if ENABLE(Condition1) && ENABLE(Condition2)
+    { "conditionalMethod2", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionConditionalMethod2), (intptr_t)0 THUNK_GENERATOR(0) },
+#endif
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    { "conditionalMethod3", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionConditionalMethod3), (intptr_t)0 THUNK_GENERATOR(0) },
+#endif
     { "overloadedMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethod), (intptr_t)2 THUNK_GENERATOR(0) },
     { "classMethod", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethod), (intptr_t)0 THUNK_GENERATOR(0) },
     { "classMethodWithOptional", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethodWithOptional), (intptr_t)1 THUNK_GENERATOR(0) },
@@ -243,7 +252,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable = { 136, 127, JSTestObjPrototypeTableValues, 0 };
+static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable = { 137, 127, JSTestObjPrototypeTableValues, 0 };
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", &JSC::JSObjectWithGlobalObject::s_info, &JSTestObjPrototypeTable, 0 };
 
 JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
@@ -1529,6 +1538,55 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOpti
     imp->methodWithCallbackAndOptionalArg(callback);
     return JSValue::encode(jsUndefined());
 }
+
+#if ENABLE(Condition1)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod1(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+
+
+    JSC::JSValue result = jsString(exec, imp->conditionalMethod1());
+    return JSValue::encode(result);
+}
+
+#endif
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod2(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+
+    imp->conditionalMethod2();
+    return JSValue::encode(jsUndefined());
+}
+
+#endif
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+
+    imp->conditionalMethod3();
+    return JSValue::encode(jsUndefined());
+}
+
+#endif
 
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod1(ExecState* exec)
 {

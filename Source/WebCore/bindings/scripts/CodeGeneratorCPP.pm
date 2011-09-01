@@ -869,11 +869,16 @@ sub GenerateImplementation
                 }
             }
 
+            my $conditionalString = GenerateConditionalString($function->signature);
+            push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
+
             push(@implContent, "$functionSig\n");
             push(@implContent, "{\n");
             push(@implContent, AddEarlyReturnStatement($returnType));
             push(@implContent, @functionContent);
             push(@implContent, "}\n\n");
+
+            push(@implContent, "#endif\n\n") if $conditionalString;
 
             # Clear the hash
             %needsCustom = ();

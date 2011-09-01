@@ -330,6 +330,36 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_non_optional_arg_and_two_optional_args(WebKitDOMTestObj* self, glong non_opt, glong opt1, glong opt2);
 
 /**
+ * webkit_dom_test_obj_conditional_method1:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gchar*
+webkit_dom_test_obj_conditional_method1(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_conditional_method2:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_conditional_method2(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_conditional_method3:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_conditional_method3(WebKitDOMTestObj* self);
+
+/**
  * webkit_dom_test_obj_class_method:
  * @self: A #WebKitDOMTestObj
  *

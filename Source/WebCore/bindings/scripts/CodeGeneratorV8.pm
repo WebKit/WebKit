@@ -2054,9 +2054,12 @@ sub GenerateImplementation
         }
         my $name = $function->signature->name;
         my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
+        my $conditionalString = GenerateConditionalString($function->signature);
+        push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
         push(@implContent, <<END);
     {"$name", $callback},
 END
+        push(@implContent, "#endif\n") if $conditionalString;
         $num_callbacks++;
     }
     push(@implContent, "};\n\n")  if $has_callbacks;

@@ -678,6 +678,36 @@
     IMPL->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1, opt2);
 }
 
+
+#if ENABLE(Condition1)
+- (NSString *)conditionalMethod1
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->conditionalMethod1();
+}
+
+#endif
+
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+- (void)conditionalMethod2
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->conditionalMethod2();
+}
+
+#endif
+
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+- (void)conditionalMethod3
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->conditionalMethod3();
+}
+
+#endif
+
 - (void)classMethod
 {
     WebCore::JSMainThreadNullState state;
