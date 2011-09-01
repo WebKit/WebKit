@@ -163,6 +163,14 @@ CGContextRef WKIOSurfaceContextCreate(IOSurfaceRef, unsigned width, unsigned hei
 CGImageRef WKIOSurfaceContextCreateImage(CGContextRef context);
 #endif
 
+typedef enum {
+    WKPatternTilingNoDistortion,
+    WKPatternTilingConstantSpacingMinimalDistortion,
+    WKPatternTilingConstantSpacing
+} WKPatternTiling;
+
+CGPatternRef WKCGPatternCreateWithImageAndTransform(CGImageRef image, CGAffineTransform transform, int tiling);
+
 #ifndef __LP64__
 NSEvent *WKCreateNSEventWithCarbonEvent(EventRef eventRef);
 NSEvent *WKCreateNSEventWithCarbonMouseMoveEvent(EventRef inEvent, NSWindow *window);

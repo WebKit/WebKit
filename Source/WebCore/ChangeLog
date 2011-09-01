@@ -1,3 +1,17 @@
+2011-09-01  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION: Rendering artifacts on a rotated, pattern filled shape
+        https://bugs.webkit.org/show_bug.cgi?id=53055
+        <rdar://problem/8910917>
+
+        Reviewed by Simon Fraser.
+
+        Introduce wkCGPatternCreateWithImageAndTransform.
+
+        * WebCore.exp.in:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2011-08-30  Adrienne Walker  <enne@google.com>
 
         [chromium] Fix scissor rects on clipped nested iframes

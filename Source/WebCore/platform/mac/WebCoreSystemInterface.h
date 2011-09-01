@@ -40,6 +40,7 @@ typedef struct CGImage *CGImageRef;
 typedef struct CGColor *CGColorRef;
 typedef struct CGFont *CGFontRef;
 typedef struct CGColorSpace *CGColorSpaceRef;
+typedef struct CGPattern *CGPatternRef;
 typedef unsigned short CGGlyph;
 typedef struct __CFReadStream * CFReadStreamRef;
 typedef struct __CFRunLoop * CFRunLoopRef;
@@ -133,6 +134,12 @@ extern "C" {
 
 extern void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
 extern BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
+typedef enum {
+    wkPatternTilingNoDistortion,
+    wkPatternTilingConstantSpacingMinimalDistortion,
+    wkPatternTilingConstantSpacing
+} wkPatternTiling;
+extern CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
 extern CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRef, void *), 
     void (*formFinalize)(CFReadStreamRef, void *), 
     Boolean (*formOpen)(CFReadStreamRef, CFStreamError *, Boolean *, void *), 
