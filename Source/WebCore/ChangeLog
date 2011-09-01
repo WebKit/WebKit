@@ -1,3 +1,24 @@
+2011-09-01  Eric Carlson  <eric.carlson@apple.com>
+
+        HTMLMediaElement should use fastHasAttribute instead of hasAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=67421
+
+        Reviewed by Simon Fraser.
+
+        Use fastHasAttribute instead of hasAttribute because it is faster, and HTMLMediaElement
+        doesn't ever need to check style or SVG animated attributes.
+
+        No new tests required, this is just an optimization.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::selectMediaResource): hasAttribute -> fastHasAttribute.
+        (WebCore::HTMLMediaElement::loadResource): Ditto.
+        (WebCore::HTMLMediaElement::autoplay): Ditto.
+        (WebCore::HTMLMediaElement::loop): Ditto.
+        (WebCore::HTMLMediaElement::controls): Ditto.
+        (WebCore::HTMLMediaElement::selectNextSourceChild): Ditto.
+        (WebCore::HTMLMediaElement::sourceWasAdded): Ditto.
+
 2011-09-01  Dominic Mazzoni  <dmazzoni@google.com>
 
         Add API functions to enable starting and stopping speech input,

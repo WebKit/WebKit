@@ -638,7 +638,7 @@ void HTMLMediaElement::selectMediaResource()
     Mode mode = attribute;
 
     // 3 - ... the media element has neither a src attribute ...
-    if (!hasAttribute(srcAttr)) {
+    if (!fastHasAttribute(srcAttr)) {
         // ... nor a source element child: ...
         Node* node;
         for (node = firstChild(); node; node = node->nextSibling()) {
@@ -809,7 +809,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
         m_player->setPreload(m_preload);
     m_player->setPreservesPitch(m_webkitPreservesPitch);
 
-    if (hasAttribute(mutedAttr))
+    if (fastHasAttribute(mutedAttr))
         m_muted = true;
     updateVolume();
 
@@ -1533,7 +1533,7 @@ bool HTMLMediaElement::ended() const
 
 bool HTMLMediaElement::autoplay() const
 {
-    return hasAttribute(autoplayAttr);
+    return fastHasAttribute(autoplayAttr);
 }
 
 void HTMLMediaElement::setAutoplay(bool b)
@@ -1718,7 +1718,7 @@ void HTMLMediaElement::setSourceState(SourceState state)
 
 bool HTMLMediaElement::loop() const
 {
-    return hasAttribute(loopAttr);
+    return fastHasAttribute(loopAttr);
 }
 
 void HTMLMediaElement::setLoop(bool b)
@@ -1743,7 +1743,7 @@ bool HTMLMediaElement::controls() const
     if (isFullscreen())
         return true;
 
-    return hasAttribute(controlsAttr);
+    return fastHasAttribute(controlsAttr);
 }
 
 void HTMLMediaElement::setControls(bool b)
@@ -1965,7 +1965,7 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidSo
         if (mediaURL.isEmpty())
             goto check_again;
         
-        if (source->hasAttribute(mediaAttr)) {
+        if (source->fastHasAttribute(mediaAttr)) {
             MediaQueryEvaluator screenEval("screen", document()->frame(), renderer() ? renderer()->style() : 0);
             RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(source->media());
 #if !LOG_DISABLED
@@ -1976,7 +1976,7 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidSo
                 goto check_again;
         }
 
-        if (source->hasAttribute(typeAttr)) {
+        if (source->fastHasAttribute(typeAttr)) {
 #if !LOG_DISABLED
             if (shouldLog)
                 LOG(Media, "HTMLMediaElement::selectNextSourceChild - 'type' is %s", source->type().utf8().data());
@@ -2028,7 +2028,7 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement* source)
 #endif
     
     // We should only consider a <source> element when there is not src attribute at all.
-    if (hasAttribute(srcAttr))
+    if (fastHasAttribute(srcAttr))
         return;
 
     // 4.8.8 - If a source element is inserted as a child of a media element that has no src 
