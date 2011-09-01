@@ -35,6 +35,7 @@ void StatisticsData::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(statisticsNumbers);
     encoder->encode(javaScriptProtectedObjectTypeCounts);
     encoder->encode(javaScriptObjectTypeCounts);
+    encoder->encode(webCoreCacheStatistics);
 }
 
 bool StatisticsData::decode(CoreIPC::ArgumentDecoder* decoder, StatisticsData& statisticsData)
@@ -44,6 +45,8 @@ bool StatisticsData::decode(CoreIPC::ArgumentDecoder* decoder, StatisticsData& s
     if (!decoder->decode(statisticsData.javaScriptProtectedObjectTypeCounts))
         return false;
     if (!decoder->decode(statisticsData.javaScriptObjectTypeCounts))
+        return false;
+    if (!decoder->decode(statisticsData.webCoreCacheStatistics))
         return false;
 
     return true;
