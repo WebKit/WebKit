@@ -1,5 +1,15 @@
 2011-09-01  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Update chromium baselines+expectations for fast/text/fallback-traits-fixup.html
+
+        * platform/chromium-cg-mac/fast/text/fallback-traits-fixup-expected.png: Added.
+        * platform/chromium-cg-mac/fast/text/fallback-traits-fixup-expected.txt: Added.
+        * platform/chromium-linux/fast/text/fallback-traits-fixup-expected.png: Added.
+        * platform/chromium-linux/fast/text/fallback-traits-fixup-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-09-01  James Robinson  <jamesr@chromium.org>
+
         fast/dom/global-constructors.html and fast/dom/prototype-inheritance.html are way too fragile
         https://bugs.webkit.org/show_bug.cgi?id=67452
 
