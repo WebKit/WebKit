@@ -1,3 +1,11 @@
+2011-09-01  Cary Clark  <caryclark@google.com>
+
+        Unreviewed; new baselines (Skia on Mac, next chunk of 800 files)
+        tables/mozilla/bugs/bug8361 through transitions/svg-text-shadow-transition
+
+        * platform/chromium-mac/transforms: Added.
+        (remaining files omitted for brevity)
+
 2011-09-01  Zsolt Fehér  <feherzs@inf.u-szeged.hu>
 
         Unreviewed Qt gardening.
