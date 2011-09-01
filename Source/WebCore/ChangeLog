@@ -1,3 +1,17 @@
+2011-08-31  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: remove PresentationBreakpoint class.
+        https://bugs.webkit.org/show_bug.cgi?id=67275
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype.addBreakpoint.didRequestContent):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype.addBreakpoint):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointRemoved):
+
 2011-08-31  Steve Block  <steveblock@google.com>
 
         Clean up all mentions of Android in comments

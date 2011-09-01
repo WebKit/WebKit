@@ -357,17 +357,14 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     _breakpointAdded: function(breakpoint)
     {
-        if (!breakpoint.uiSourceCode)
-            return;
-        var presentationBreakpoint = new WebInspector.PresentationBreakpoint(breakpoint.uiSourceCode, breakpoint.lineNumber, breakpoint.condition, breakpoint.enabled);
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, presentationBreakpoint);
+        if (breakpoint.uiSourceCode)
+            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, breakpoint);
     },
 
     _breakpointRemoved: function(breakpoint)
     {
-        if (!breakpoint.uiSourceCode)
-            return;
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, { uiSourceCode: breakpoint.uiSourceCode, lineNumber: breakpoint.lineNumber });
+        if (breakpoint.uiSourceCode)
+            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, breakpoint);
     },
 
     _debuggerPaused: function()
@@ -445,42 +442,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
 }
 
 WebInspector.DebuggerPresentationModel.prototype.__proto__ = WebInspector.Object.prototype;
-
-/**
- * @constructor
- */
-WebInspector.PresentationBreakpoint = function(uiSourceCode, lineNumber, condition, enabled)
-{
-    this.uiSourceCode = uiSourceCode;
-    this.lineNumber = lineNumber;
-    this.condition = condition;
-    this.enabled = enabled;
-}
-
-WebInspector.PresentationBreakpoint.prototype = {
-    get url()
-    {
-        return this.uiSourceCode.url;
-    },
-
-    get resolved()
-    {
-        return !!this.location;
-    },
-
-    loadSnippet: function(callback)
-    {
-        function didRequestContent(mimeType, content)
-        {
-            var lineEndings = content.lineEndings();
-            var snippet = "";
-            if (this.lineNumber < lineEndings.length)
-                snippet = content.substring(lineEndings[this.lineNumber - 1], lineEndings[this.lineNumber]);
-            callback(snippet);
-        }
-        this.uiSourceCode.requestContent(didRequestContent.bind(this));
-    }
-}
 
 /**
  * @constructor

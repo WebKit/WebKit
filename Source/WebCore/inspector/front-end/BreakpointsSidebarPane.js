@@ -45,6 +45,10 @@ WebInspector.JavaScriptBreakpointsSidebarPane = function(model, showSourceLineDe
 WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
     addBreakpoint: function(breakpoint)
     {
+        var breakpointItemId = this._createBreakpointItemId(breakpoint.uiSourceCode, breakpoint.lineNumber);
+        if (breakpointItemId in this._items)
+            return;
+
         var element = document.createElement("li");
         element.addStyleClass("cursor-pointer");
         element.addEventListener("contextmenu", this._contextMenu.bind(this, breakpoint), true);
@@ -57,20 +61,21 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
         checkbox.addEventListener("click", this._breakpointCheckboxClicked.bind(this, breakpoint), false);
         element.appendChild(checkbox);
 
-        var displayName = breakpoint.url ? WebInspector.displayNameForURL(breakpoint.url) : WebInspector.UIString("(program)");
+        var url = breakpoint.uiSourceCode.url;
+        var displayName = url ? WebInspector.displayNameForURL(url) : WebInspector.UIString("(program)");
         var labelElement = document.createTextNode(displayName + ":" + (breakpoint.lineNumber + 1));
         element.appendChild(labelElement);
 
         var snippetElement = document.createElement("div");
         snippetElement.className = "source-text monospace";
         element.appendChild(snippetElement);
-        if (breakpoint.loadSnippet) {
-            function didLoadSnippet(snippet)
-            {
-                snippetElement.textContent = snippet;
-            }
-            breakpoint.loadSnippet(didLoadSnippet);
+        function didRequestContent(mimeType, content)
+        {
+            var lineEndings = content.lineEndings();
+            if (breakpoint.lineNumber < lineEndings.length)
+                snippetElement.textContent = content.substring(lineEndings[breakpoint.lineNumber - 1], lineEndings[breakpoint.lineNumber]);
         }
+        breakpoint.uiSourceCode.requestContent(didRequestContent.bind(this));
 
         element._data = breakpoint;
         var currentElement = this.listElement.firstChild;
@@ -84,7 +89,7 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
         var breakpointItem = {};
         breakpointItem.element = element;
         breakpointItem.checkbox = checkbox;
-        this._items[this._createBreakpointItemId(breakpoint.uiSourceCode, breakpoint.lineNumber)] = breakpointItem;
+        this._items[breakpointItemId] = breakpointItem;
 
         if (!this.expanded)
             this.expanded = true;

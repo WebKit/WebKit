@@ -233,6 +233,16 @@ WebInspector.BreakpointManager.prototype = {
             }
         }
         this._forEachBreakpoint(resetOrDeleteBreakpoint.bind(this));
+
+        for (var id in this._breakpointsByUILocation) {
+            var empty = true;
+            for (var lineNumber in this._breakpointsByUILocation[id]) {
+                empty = false;
+                break;
+            }
+            if (empty)
+                delete this._breakpointsByUILocation[id];
+        }
     }
 }
 
