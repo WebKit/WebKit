@@ -57,8 +57,7 @@ def _baseline_name(fs, test_name, suffix):
 class RebaselineTest(AbstractDeclarativeCommand):
     name = "rebaseline-test"
     help_text = "Rebaseline a single test from a buildbot.  (Currently works only with build.chromium.org buildbots.)"
-    # FIXME: Remove SUFFIX argument.
-    argument_names = "BUILDER_NAME TEST_NAME [SUFFIX]"
+    argument_names = "BUILDER_NAME TEST_NAME"
 
     def _results_url(self, builder_name):
         # FIXME: Generalize this command to work with non-build.chromium.org builders.
