@@ -1,3 +1,9 @@
+2011-09-01  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix Windows build.
+
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.cpp:
+
 2011-08-31  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Rename PlatformBridge to PlatformSupport

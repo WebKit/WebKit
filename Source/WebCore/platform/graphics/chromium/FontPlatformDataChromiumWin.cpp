@@ -32,9 +32,10 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
-#include <mlang.h>
-#include <objidl.h>
 #include <windows.h>
+#include <objidl.h>
+#include <mlang.h>
+
 #include "PlatformSupport.h"
 #include "SkiaFontWin.h"
 
