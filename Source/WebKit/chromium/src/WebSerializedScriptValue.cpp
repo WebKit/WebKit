@@ -47,10 +47,10 @@ WebSerializedScriptValue WebSerializedScriptValue::fromString(const WebString& s
 WebSerializedScriptValue WebSerializedScriptValue::serialize(v8::Handle<v8::Value> value)
 {
     bool didThrow;
-    WebSerializedScriptValue v = SerializedScriptValue::create(value, didThrow);
+    WebSerializedScriptValue serializedValue = SerializedScriptValue::create(value, didThrow);
     if (didThrow)
-      return createInvalid();
-    return v;
+        return createInvalid();
+    return serializedValue;
 }
 #endif
 

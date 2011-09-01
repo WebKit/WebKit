@@ -36,6 +36,7 @@
 
 #if USE(V8)
 #include "ArrayBufferView.h"
+#include "DOMWindow.h"
 #include "NPV8Object.h"  // for PrivateIdentifier
 #include "Range.h"
 #include "V8ArrayBufferView.h"
@@ -331,5 +332,26 @@ void WebBindings::popExceptionHandler()
 {
     WebCore::popExceptionHandler();
 }
+
+#if WEBKIT_USING_V8
+void WebBindings::toNPVariant(v8::Local<v8::Value> object, NPObject* root, NPVariant* result)
+{
+    WebCore::convertV8ObjectToNPVariant(object, root, result);
+}
+
+v8::Handle<v8::Value> WebBindings::toV8Value(const NPVariant* variant)
+{
+    if (variant->type == NPVariantType_Object) {
+        NPObject* object = NPVARIANT_TO_OBJECT(*variant);
+        if (object->_class != npScriptObjectClass)
+            return v8::Undefined();
+        V8NPObject* v8Object = reinterpret_cast<V8NPObject*>(object);
+        return convertNPVariantToV8Object(variant, v8Object->rootObject->frame()->script()->windowScriptNPObject());
+    }
+    // Safe to pass 0 since we have checked the script object class to make sure the
+    // argument is a primitive v8 type.
+    return convertNPVariantToV8Object(variant, 0);
+}
+#endif
 
 } // namespace WebKit

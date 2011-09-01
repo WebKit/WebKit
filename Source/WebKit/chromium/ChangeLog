@@ -1,3 +1,17 @@
+2011-08-31  Greg Billock  <gbillock@google.com>
+
+        Add pass-throughs for NPObject/v8::Value marshalling to WebBindings
+        https://bugs.webkit.org/show_bug.cgi?id=67302
+
+        Reviewed by Darin Fisher.
+
+        * public/WebBindings.h:
+        * src/WebBindings.cpp:
+        (WebKit::WebBindings::toNPVariant):
+        (WebKit::WebBindings::toV8Value):
+        * src/WebSerializedScriptValue.cpp:
+        (WebKit::WebSerializedScriptValue::serialize):
+
 2011-08-31  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Rename PlatformBridge to PlatformSupport
