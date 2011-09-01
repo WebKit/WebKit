@@ -2411,3 +2411,7 @@ css2.1/t090204-display-change-01-b-ao.html
 fast/multicol/positive-leading.html
 fast/multicol/overflow-unsplittable.html
 fast/multicol/overflow-across-columns.html
+
+# [Qt] Incorrect absolute mouse pointer results after r94259
+fast/events/document-elementFromPoint.html
+plugins/mouse-events-fixedpos.html
