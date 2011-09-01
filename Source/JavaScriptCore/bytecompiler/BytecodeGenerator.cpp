@@ -2273,7 +2273,7 @@ static int32_t keyForCharacterSwitch(ExpressionNode* node, int32_t min, int32_t 
     StringImpl* clause = static_cast<StringNode*>(node)->value().impl();
     ASSERT(clause->length() == 1);
     
-    int32_t key = clause->characters()[0];
+    int32_t key = (*clause)[0];
     ASSERT(key >= min);
     ASSERT(key <= max);
     return key - min;

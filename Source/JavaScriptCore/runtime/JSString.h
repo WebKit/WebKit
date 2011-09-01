@@ -560,7 +560,7 @@ namespace JSC {
     {
         JSGlobalData* globalData = &exec->globalData();
         ASSERT(offset < static_cast<unsigned>(s.length()));
-        UChar c = s.characters()[offset];
+        UChar c = s[offset];
         if (c <= maxSingleCharacterString)
             return globalData->smallStrings.singleCharacterString(globalData, c);
         return fixupVPtr(globalData, JSString::create(*globalData, UString(StringImpl::create(s.impl(), offset, 1))));
@@ -595,7 +595,7 @@ namespace JSC {
         if (!size)
             return globalData->smallStrings.emptyString(globalData);
         if (size == 1) {
-            UChar c = s.characters()[0];
+            UChar c = s[0];
             if (c <= maxSingleCharacterString)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
@@ -623,7 +623,7 @@ namespace JSC {
         if (!length)
             return globalData->smallStrings.emptyString(globalData);
         if (length == 1) {
-            UChar c = s.characters()[offset];
+            UChar c = s[offset];
             if (c <= maxSingleCharacterString)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
@@ -636,7 +636,7 @@ namespace JSC {
         if (!size)
             return globalData->smallStrings.emptyString(globalData);
         if (size == 1) {
-            UChar c = s.characters()[0];
+            UChar c = s[0];
             if (c <= maxSingleCharacterString)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }

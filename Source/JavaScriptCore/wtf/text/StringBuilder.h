@@ -111,7 +111,7 @@ public:
         if (!m_string.isNull())
             return m_string[i];
         ASSERT(m_buffer);
-        return m_buffer->characters()[i];
+        return (*m_buffer)[i];
     }
 
     void clear()

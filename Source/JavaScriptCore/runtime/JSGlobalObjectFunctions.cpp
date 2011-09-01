@@ -367,7 +367,7 @@ double jsToNumber(const UString& s)
     unsigned size = s.length();
 
     if (size == 1) {
-        UChar c = s.characters()[0];
+        UChar c = s[0];
         if (isASCIIDigit(c))
             return c - '0';
         if (isStrWhiteSpace(c))
@@ -410,7 +410,7 @@ static double parseFloat(const UString& s)
     unsigned size = s.length();
 
     if (size == 1) {
-        UChar c = s.characters()[0];
+        UChar c = s[0];
         if (isASCIIDigit(c))
             return c - '0';
         return std::numeric_limits<double>::quiet_NaN();

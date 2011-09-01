@@ -3453,7 +3453,7 @@ DEFINE_STUB_FUNCTION(void*, op_switch_char)
     if (scrutinee.isString()) {
         StringImpl* value = asString(scrutinee)->value(callFrame).impl();
         if (value->length() == 1)
-            result = codeBlock->characterSwitchJumpTable(tableIndex).ctiForValue(value->characters()[0]).executableAddress();
+            result = codeBlock->characterSwitchJumpTable(tableIndex).ctiForValue((*value)[0]).executableAddress();
     }
 
     CHECK_FOR_EXCEPTION_AT_END();

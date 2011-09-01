@@ -194,7 +194,7 @@ JSString* JSString::substringFromRope(ExecState* exec, unsigned substringStart, 
 
     if (substringLength == 1) {
         ASSERT(substringFiberCount == 1);
-        UChar c = substringFibers[0].characters()[0];
+        UChar c = substringFibers[0][0];
         if (c <= maxSingleCharacterString)
             return globalData->smallStrings.singleCharacterString(globalData, c);
     }

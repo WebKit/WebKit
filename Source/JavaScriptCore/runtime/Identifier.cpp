@@ -232,7 +232,7 @@ PassRefPtr<StringImpl> Identifier::addSlowCase(JSGlobalData* globalData, StringI
     ASSERT(r->length());
 
     if (r->length() == 1) {
-        UChar c = r->characters()[0];
+        UChar c = (*r)[0];
         if (c <= maxSingleCharacterString)
             r = globalData->smallStrings.singleCharacterStringRep(c);
             if (r->isIdentifier())

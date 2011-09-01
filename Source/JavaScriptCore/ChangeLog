@@ -1,3 +1,40 @@
+2011-09-01  Michael Saboff  <msaboff@apple.com>
+
+        Remove simple usage of UString::characters() from JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=67340
+
+        In preparation to allowing StringImpl to be backed by 8 bit 
+        characters when appropriate, we need to eliminate or change the
+        usage of StringImpl::characters().  Most of the changes below
+        change s->characters()[0] to s[0].
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::keyForCharacterSwitch):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::processClauseList):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::addSlowCase):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::jsToNumber):
+        (JSC::parseFloat):
+        * runtime/JSString.cpp:
+        (JSC::JSString::substringFromRope):
+        * runtime/JSString.h:
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::jsString):
+        (JSC::jsSubstring):
+        (JSC::jsOwnedString):
+        * runtime/RegExp.cpp:
+        (JSC::regExpFlags):
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::operator[]):
+
 2011-09-01  Ada Chan  <adachan@apple.com>
 
         Export fastMallocStatistics and Heap::objectTypeCounts for https://bugs.webkit.org/show_bug.cgi?id=67160.

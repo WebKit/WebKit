@@ -42,7 +42,7 @@ RegExpFlags regExpFlags(const UString& string)
     RegExpFlags flags = NoFlags;
 
     for (unsigned i = 0; i < string.length(); ++i) {
-        switch (string.characters()[i]) {
+        switch (string[i]) {
         case 'g':
             if (flags & FlagGlobal)
                 return InvalidFlags;
