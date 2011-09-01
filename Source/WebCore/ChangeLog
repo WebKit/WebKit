@@ -1,3 +1,25 @@
+2011-09-01  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        Rename GraphicsContext3DInternal to GraphicsContext3DPrivate and add a dummy version of this class for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=67172
+
+        Build fix, completing rename for GTK file.
+
+        Reviewed by Chris Marrin.
+
+        * platform/graphics/gtk/GraphicsContext3DPrivate.cpp: Renamed from Source/WebCore/platform/graphics/gtk/GraphicsContext3DInternal.cpp.
+        (sharedDisplay):
+        (WebCore::activeGraphicsContexts):
+        (WebCore::GraphicsContext3DPrivate::addActiveGraphicsContext):
+        (WebCore::GraphicsContext3DPrivate::removeActiveGraphicsContext):
+        (WebCore::GraphicsContext3DPrivate::cleanupActiveContextsAtExit):
+        (WebCore::GraphicsContext3DPrivate::create):
+        (WebCore::GraphicsContext3DPrivate::createPbufferContext):
+        (WebCore::GraphicsContext3DPrivate::createPixmapContext):
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::makeContextCurrent):
+
 2011-09-01  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r94259): Two tests doing hit testing were broken by this change.

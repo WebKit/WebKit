@@ -18,8 +18,7 @@
  */
 
 #include "config.h"
-#include <wtf/PassOwnPtr.h>
-#include "GraphicsContext3DInternal.h"
+#include "GraphicsContext3DPrivate.h"
 
 #if ENABLE(WEBGL)
 
@@ -27,6 +26,7 @@
 #include "OpenGLShims.h"
 #include <GL/glx.h>
 #include <dlfcn.h>
+#include <wtf/PassOwnPtr.h>
 
 // We do not want to call glXMakeContextCurrent using different Display pointers,
 // because it might lead to crashes in some drivers (fglrx). We use a shared display
@@ -53,17 +53,17 @@ static Vector<GraphicsContext3D*>& activeGraphicsContexts()
     return contexts;
 }
 
-void GraphicsContext3DInternal::addActiveGraphicsContext(GraphicsContext3D* context)
+void GraphicsContext3DPrivate::addActiveGraphicsContext(GraphicsContext3D* context)
 {
     static bool addedAtExitHandler = false;
     if (!addedAtExitHandler) {
-        atexit(&GraphicsContext3DInternal::cleanupActiveContextsAtExit);
+        atexit(&GraphicsContext3DPrivate::cleanupActiveContextsAtExit);
         addedAtExitHandler = true;
     }
     activeGraphicsContexts().append(context);
 }
 
-void GraphicsContext3DInternal::removeActiveGraphicsContext(GraphicsContext3D* context)
+void GraphicsContext3DPrivate::removeActiveGraphicsContext(GraphicsContext3D* context)
 {
     if (cleaningUpAtExit)
         return;
@@ -74,7 +74,7 @@ void GraphicsContext3DInternal::removeActiveGraphicsContext(GraphicsContext3D* c
         contexts.remove(location);
 }
 
-void GraphicsContext3DInternal::cleanupActiveContextsAtExit()
+void GraphicsContext3DPrivate::cleanupActiveContextsAtExit()
 {
     cleaningUpAtExit = true;
 
@@ -88,7 +88,7 @@ void GraphicsContext3DInternal::cleanupActiveContextsAtExit()
     gSharedDisplay = 0;
 }
 
-PassOwnPtr<GraphicsContext3DInternal> GraphicsContext3DInternal::create()
+PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create()
 {
     if (!sharedDisplay())
         return nullptr;
@@ -102,7 +102,7 @@ PassOwnPtr<GraphicsContext3DInternal> GraphicsContext3DInternal::create()
     if (!success)
         return nullptr;
 
-    GraphicsContext3DInternal* internal = createPbufferContext();
+    GraphicsContext3DPrivate* internal = createPbufferContext();
     if (!internal)
         internal = createPixmapContext();
     if (!internal)
@@ -113,7 +113,7 @@ PassOwnPtr<GraphicsContext3DInternal> GraphicsContext3DInternal::create()
     return adoptPtr(internal);
 }
 
-GraphicsContext3DInternal* GraphicsContext3DInternal::createPbufferContext()
+GraphicsContext3DPrivate* GraphicsContext3DPrivate::createPbufferContext()
 {
     int fbConfigAttributes[] = {
         GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT,
@@ -152,10 +152,10 @@ GraphicsContext3DInternal* GraphicsContext3DInternal::createPbufferContext()
     XFree(configs);
     if (!context)
         return 0;
-    return new GraphicsContext3DInternal(context, pbuffer);
+    return new GraphicsContext3DPrivate(context, pbuffer);
 }
 
-GraphicsContext3DInternal* GraphicsContext3DInternal::createPixmapContext()
+GraphicsContext3DPrivate* GraphicsContext3DPrivate::createPixmapContext()
 {
     static int visualAttributes[] = {
         GLX_RGBA,
@@ -190,10 +190,10 @@ GraphicsContext3DInternal* GraphicsContext3DInternal::createPixmapContext()
         return 0;
     }
 
-    return new GraphicsContext3DInternal(context, pixmap, glxPixmap);
+    return new GraphicsContext3DPrivate(context, pixmap, glxPixmap);
 }
 
-GraphicsContext3DInternal::GraphicsContext3DInternal(GLXContext context, GLXPbuffer pbuffer)
+GraphicsContext3DPrivate::GraphicsContext3DPrivate(GLXContext context, GLXPbuffer pbuffer)
     : m_context(context)
     , m_pbuffer(pbuffer)
     , m_pixmap(0)
@@ -201,7 +201,7 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GLXContext context, GLXPbuf
 {
 }
 
-GraphicsContext3DInternal::GraphicsContext3DInternal(GLXContext context, Pixmap pixmap, GLXPixmap glxPixmap)
+GraphicsContext3DPrivate::GraphicsContext3DPrivate(GLXContext context, Pixmap pixmap, GLXPixmap glxPixmap)
     : m_context(context)
     , m_pbuffer(0)
     , m_pixmap(pixmap)
@@ -209,7 +209,7 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GLXContext context, Pixmap 
 {
 }
 
-GraphicsContext3DInternal::~GraphicsContext3DInternal()
+GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 {
     if (m_context) {
         // This may be necessary to prevent crashes with NVidia's closed source drivers. Originally
@@ -235,7 +235,7 @@ GraphicsContext3DInternal::~GraphicsContext3DInternal()
     }
 }
 
-void GraphicsContext3DInternal::makeContextCurrent()
+void GraphicsContext3DPrivate::makeContextCurrent()
 {
     if (::glXGetCurrentContext() == m_context)
         return;
