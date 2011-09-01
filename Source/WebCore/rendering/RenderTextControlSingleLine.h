@@ -49,6 +49,10 @@ public:
 
     void capsLockStateMayHaveChanged();
 
+#if ENABLE(INPUT_SPEECH)
+    HTMLElement* speechButtonElement() const;
+#endif
+
 private:
     virtual bool hasControlClip() const;
     virtual LayoutRect controlClipRect(const LayoutPoint&) const;
@@ -120,9 +124,6 @@ private:
     HTMLElement* innerSpinButtonElement() const;
     HTMLElement* resultsButtonElement() const;
     HTMLElement* cancelButtonElement() const;
-#if ENABLE(INPUT_SPEECH)
-    HTMLElement* speechButtonElement() const;
-#endif
 
     bool m_searchPopupIsVisible;
     bool m_shouldDrawCapsLockIndicator;

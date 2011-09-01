@@ -140,6 +140,8 @@ public:
     virtual void defaultEventHandler(Event*);
     virtual bool isInputFieldSpeechButtonElement() const { return true; }
     SpeechInputState state() const { return m_state; }
+    void startSpeechInput();
+    void stopSpeechInput();
 
     // SpeechInputListener methods.
     void didCompleteRecording(int);

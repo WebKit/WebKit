@@ -384,6 +384,13 @@ void LayoutTestController::addMockSpeechInputResult(JSStringRef, double, JSStrin
     notImplemented();
 }
 
+void LayoutTestController::startSpeechInput(JSContextRef inputElement)
+{
+    // FIXME: Implement for speech input layout tests.
+    // See https://bugs.webkit.org/show_bug.cgi?id=39485.
+    notImplemented();
+}
+
 void LayoutTestController::setIconDatabaseEnabled(bool enabled)
 {
     if (!enabled) {

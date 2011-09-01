@@ -502,6 +502,12 @@ void LayoutTestController::addMockSpeechInputResult(JSStringRef result, double c
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
+void LayoutTestController::startSpeechInput(JSContextRef inputElement)
+{
+    // FIXME: Implement for speech input layout tests.
+    // See https://bugs.webkit.org/show_bug.cgi?id=39485.
+}
+
 void LayoutTestController::setIconDatabaseEnabled(bool enabled)
 {
     WebKitIconDatabase* database = webkit_get_icon_database();

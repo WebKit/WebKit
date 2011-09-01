@@ -42,6 +42,12 @@ namespace WebKit {
     // Provides readonly access to some properties of a DOM input element node.
     class WebInputElement : public WebFormControlElement {
     public:
+        enum SpeechInputState {
+            Idle,
+            Recording,
+            Recognizing,
+        };
+
         WebInputElement() : WebFormControlElement() { }
         WebInputElement(const WebInputElement& element) : WebFormControlElement(element) { }
 
@@ -77,6 +83,11 @@ namespace WebKit {
         WEBKIT_EXPORT int selectionEnd() const;
         WEBKIT_EXPORT bool isValidValue(const WebString&) const;
         WEBKIT_EXPORT bool isChecked() const;
+
+        WEBKIT_EXPORT bool isSpeechInputEnabled() const;
+        WEBKIT_EXPORT SpeechInputState getSpeechInputState() const;
+        WEBKIT_EXPORT void startSpeechInput();
+        WEBKIT_EXPORT void stopSpeechInput();
 
         // Exposes the default value of the maxLength attribute.
         WEBKIT_EXPORT static int defaultMaxLength();

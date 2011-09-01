@@ -1,0 +1,10 @@
+Tests for triggering speech directly in a <input type="text" speech>.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById("speechInput").value is "Pictures of a sunset"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

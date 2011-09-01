@@ -33,6 +33,9 @@
 
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "RenderObject.h"
+#include "RenderTextControlSingleLine.h"
+#include "TextControlInnerElements.h"
 #include "WebString.h"
 #include <wtf/PassRefPtr.h>
 
@@ -148,6 +151,59 @@ bool WebInputElement::isValidValue(const WebString& value) const
 bool WebInputElement::isChecked() const
 {
     return constUnwrap<HTMLInputElement>()->checked();
+}
+
+bool WebInputElement::isSpeechInputEnabled() const
+{
+#if ENABLE(INPUT_SPEECH)
+    return constUnwrap<HTMLInputElement>()->isSpeechEnabled();
+#else
+    return false;
+#endif
+}
+
+WebInputElement::SpeechInputState WebInputElement::getSpeechInputState() const
+{
+#if ENABLE(INPUT_SPEECH)
+    RenderObject* renderer = constUnwrap<HTMLInputElement>()->renderer();
+    if (!renderer)
+        return Idle;
+
+    RenderTextControlSingleLine* control = toRenderTextControlSingleLine(renderer);
+    InputFieldSpeechButtonElement* speechButton = toInputFieldSpeechButtonElement(control->speechButtonElement());
+    if (speechButton)
+        return static_cast<WebInputElement::SpeechInputState>(speechButton->state());
+#endif
+
+    return Idle;
+}
+
+void WebInputElement::startSpeechInput()
+{
+#if ENABLE(INPUT_SPEECH)
+    RenderObject* renderer = constUnwrap<HTMLInputElement>()->renderer();
+    if (!renderer)
+        return;
+
+    RenderTextControlSingleLine* control = toRenderTextControlSingleLine(renderer);
+    InputFieldSpeechButtonElement* speechButton = toInputFieldSpeechButtonElement(control->speechButtonElement());
+    if (speechButton)
+        speechButton->startSpeechInput();
+#endif
+}
+
+void WebInputElement::stopSpeechInput()
+{
+#if ENABLE(INPUT_SPEECH)
+    RenderObject* renderer = constUnwrap<HTMLInputElement>()->renderer();
+    if (!renderer)
+        return;
+
+    RenderTextControlSingleLine* control = toRenderTextControlSingleLine(renderer);
+    InputFieldSpeechButtonElement* speechButton = toInputFieldSpeechButtonElement(control->speechButtonElement());
+    if (speechButton)
+        speechButton->stopSpeechInput();
+#endif
 }
 
 int WebInputElement::defaultMaxLength()

@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+description('Tests for triggering speech directly in a &lt;input type="text" speech>.');
+
+function startSpeechInput(id) {
+    // Test that we can trigger speech with a method call to the input
+    // element, so the user agent could toggle speech via a keypress,
+    // for example.
+    var input = document.getElementById(id);
+    layoutTestController.startSpeechInput(input);
+}
+
+function onWebkitSpeechChange() {
+    shouldBeEqualToString('document.getElementById("speechInput").value', 'Pictures of a sunset');
+    finishJSTest();
+}
+
+function run() {
+    if (window.layoutTestController && window.eventSender) {
+        layoutTestController.addMockSpeechInputResult('Pictures of a sunset', 1.0, '');
+        startSpeechInput("speechInput");
+    }
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+<input id='speechInput' x-webkit-speech onwebkitspeechchange="onWebkitSpeechChange()">
+</body>
+</html>

@@ -434,16 +434,11 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
 
     if (event->type() == eventNames().clickEvent && m_listenerId) {
         switch (m_state) {
-        case Idle: {
-              AtomicString language = input->computeInheritedLanguage();
-              String grammar = input->getAttribute(webkitgrammarAttr);
-              IntRect rect = renderer()->absoluteBoundingBoxRect();
-              if (speechInput()->startRecognition(m_listenerId, rect, language, grammar, document()->securityOrigin()))
-                  setState(Recording);
-            }
+        case Idle:
+            startSpeechInput();
             break;
         case Recording:
-            speechInput()->stopRecording(m_listenerId);
+            stopSpeechInput();
             break;
         case Recognizing:
             // Nothing to do here, we will continue to wait for results.
@@ -522,6 +517,25 @@ void InputFieldSpeechButtonElement::detach()
     }
 
     HTMLDivElement::detach();
+}
+
+void InputFieldSpeechButtonElement::startSpeechInput()
+{
+    if (m_state != Idle)
+        return;
+
+    RefPtr<HTMLInputElement> input = static_cast<HTMLInputElement*>(shadowAncestorNode());
+    AtomicString language = input->computeInheritedLanguage();
+    String grammar = input->getAttribute(webkitgrammarAttr);
+    IntRect rect = input->renderer()->absoluteBoundingBoxRect();
+    if (speechInput()->startRecognition(m_listenerId, rect, language, grammar, document()->securityOrigin()))
+        setState(Recording);
+}
+
+void InputFieldSpeechButtonElement::stopSpeechInput()
+{
+    if (m_state == Recording)
+        speechInput()->stopRecording(m_listenerId);
 }
 
 const AtomicString& InputFieldSpeechButtonElement::shadowPseudoId() const

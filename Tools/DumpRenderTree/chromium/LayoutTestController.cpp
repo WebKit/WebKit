@@ -188,6 +188,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setAsynchronousSpellCheckingEnabled", &LayoutTestController::setAsynchronousSpellCheckingEnabled);
     bindMethod("showWebInspector", &LayoutTestController::showWebInspector);
     bindMethod("simulateDesktopNotificationClick", &LayoutTestController::simulateDesktopNotificationClick);
+    bindMethod("startSpeechInput", &LayoutTestController::startSpeechInput);
     bindMethod("suspendAnimations", &LayoutTestController::suspendAnimations);
     bindMethod("testRepaint", &LayoutTestController::testRepaint);
     bindMethod("waitForPolicyDelegate", &LayoutTestController::waitForPolicyDelegate);
@@ -1723,6 +1724,26 @@ void LayoutTestController::addMockSpeechInputResult(const CppArgumentList& argum
         return;
 
     m_shell->webViewHost()->speechInputControllerMock()->addMockRecognitionResult(cppVariantToWebString(arguments[0]), arguments[1].toDouble(), cppVariantToWebString(arguments[2]));
+}
+
+void LayoutTestController::startSpeechInput(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() != 1)
+        return;
+
+    WebElement element;
+    if (!WebBindings::getElement(arguments[0].value.objectValue, &element))
+        return;
+
+    WebInputElement* input = toWebInputElement(&element);
+    if (!input)
+        return;
+
+    if (!input->isSpeechInputEnabled())
+        return;
+
+    input->startSpeechInput();
 }
 
 void LayoutTestController::layerTreeAsText(const CppArgumentList& args, CppVariant* result)

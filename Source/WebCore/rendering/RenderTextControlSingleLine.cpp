@@ -111,13 +111,6 @@ inline HTMLElement* RenderTextControlSingleLine::cancelButtonElement() const
     return inputElement()->cancelButtonElement();
 }
 
-#if ENABLE(INPUT_SPEECH)
-inline HTMLElement* RenderTextControlSingleLine::speechButtonElement() const
-{
-    return inputElement()->speechButtonElement();
-}
-#endif
-
 RenderStyle* RenderTextControlSingleLine::textBaseStyle() const
 {
     HTMLElement* innerBlock = innerBlockElement();
@@ -363,6 +356,13 @@ void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
         repaint();
     }
 }
+
+#if ENABLE(INPUT_SPEECH)
+HTMLElement* RenderTextControlSingleLine::speechButtonElement() const
+{
+    return inputElement()->speechButtonElement();
+}
+#endif
 
 bool RenderTextControlSingleLine::hasControlClip() const
 {
