@@ -1690,3 +1690,7 @@ editing/unsupported-content/table-type-before.html
 fast/loader/local-CSS-from-local.html
 fast/loader/local-JavaScript-from-local.html
 fast/loader/local-image-from-local.html
+
+# Missing layoutTestController.dumpResourceResponseMIMETypes()
+# https://bugs.webkit.org/show_bug.cgi?id=67392
+fast/preloader/document-write-noscript.html
