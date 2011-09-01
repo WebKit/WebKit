@@ -1,3 +1,12 @@
+2011-09-01  Gabor Loki  <loki@webkit.org>
+
+        Unreviewed, rebaseline Qt-specific tests.
+
+        * platform/qt/fast/borders/border-image-source-expected.png: Added.
+        * platform/qt/fast/borders/border-image-source-expected.txt: Added.
+        * platform/qt/fast/multicol/overflow-across-columns-percent-height-expected.png: Added.
+        * platform/qt/fast/multicol/overflow-across-columns-percent-height-expected.txt: Added.
+
 2011-09-01  Cary Clark  <caryclark@google.com>
 
         Unreviewed; new baselines (Skia on Mac, next chunk of 800 files)
