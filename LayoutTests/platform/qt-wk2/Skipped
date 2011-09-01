@@ -1685,3 +1685,8 @@ editing/unsupported-content/table-delete-003.html
 editing/unsupported-content/table-type-after.html
 editing/unsupported-content/table-type-before.html
 
+# Tests failed after r94178
+# https://bugs.webkit.org/show_bug.cgi?id=67388
+fast/loader/local-CSS-from-local.html
+fast/loader/local-JavaScript-from-local.html
+fast/loader/local-image-from-local.html

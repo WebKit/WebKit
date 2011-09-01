@@ -1,3 +1,9 @@
+2011-09-01  Zsolt Fehér  <feherzs@inf.u-szeged.hu>
+
+        Unreviewed Qt gardening.
+
+        * platform/qt-wk2/Skipped:
+
 2011-09-01  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Network error messages in console should link to the respective request in network panel if there is one.
