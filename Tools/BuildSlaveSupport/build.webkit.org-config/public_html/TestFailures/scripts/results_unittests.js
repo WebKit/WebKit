@@ -106,6 +106,18 @@ test("unexpectedSuccessesByTest", 1, function() {
     });
 });
 
+test("failureInfoForTestAndBuilder", 1, function() {
+    var unexpectedFailuresByTest = results.unexpectedFailuresByTest({
+        "Mock Builder": kExampleResultsJSON
+    });
+    var failureInfo = results.failureInfoForTestAndBuilder(unexpectedFailuresByTest, "userscripts/another-test.html", "Mock Builder");
+    deepEqual(failureInfo, {
+        "testName": "userscripts/another-test.html",
+        "builderName": "Mock Builder",
+        "failureTypeList": ["TEXT"],
+    });
+});
+
 test("resultKind", 12, function() {
     equals(results.resultKind("http://example.com/foo-actual.txt"), "actual");
     equals(results.resultKind("http://example.com/foo-expected.txt"), "expected");

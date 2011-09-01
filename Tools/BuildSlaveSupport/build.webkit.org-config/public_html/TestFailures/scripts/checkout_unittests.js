@@ -40,7 +40,7 @@ test("updateExpectations", 4, function() {
     simulator.post = function(url, data, callback)
     {
         equals(url, 'http://127.0.0.1:8127/updateexpectations');
-        equals(data, '[{"builderName":"WebKit Linux","testName":"another/test.svg","failureTypeList":["IMAGE"]}]');
+        equals(data, '[{"builderName":"WebKit Linux","testName":"another/test.svg"}]');
         simulator.scheduleCallback(callback);
     };
 
@@ -48,7 +48,6 @@ test("updateExpectations", 4, function() {
         checkout.updateExpectations([{
             'builderName': 'WebKit Linux',
             'testName': 'another/test.svg',
-            'failureTypeList': ['IMAGE'],
         }], function() {
             ok(true);
         });
@@ -84,25 +83,21 @@ test("rebaseline", 3, function() {
         checkout.rebaseline([{
             'builderName': 'WebKit Linux',
             'testName': 'another/test.svg',
-            'failureTypeList': ['IMAGE'],
         }, {
             'builderName': 'WebKit Mac10.6',
             'testName': 'another/test.svg',
-            'failureTypeList': ['IMAGE+TEXT'],
         }, {
             'builderName': 'Webkit Vista',
             'testName': 'fast/test.html',
-            'failureTypeList': ['TEXT'],
         }], function() {
             ok(true);
         });
     });
 
     deepEqual(requestedURLs, [
-        "http://127.0.0.1:8127/rebaseline?builder=WebKit+Linux&test=another%2Ftest.svg&extension=png",
-        "http://127.0.0.1:8127/rebaseline?builder=WebKit+Mac10.6&test=another%2Ftest.svg&extension=txt",
-        "http://127.0.0.1:8127/rebaseline?builder=WebKit+Mac10.6&test=another%2Ftest.svg&extension=png",
-        "http://127.0.0.1:8127/rebaseline?builder=Webkit+Vista&test=fast%2Ftest.html&extension=txt",
+        "http://127.0.0.1:8127/rebaseline?builder=WebKit+Linux&test=another%2Ftest.svg",
+        "http://127.0.0.1:8127/rebaseline?builder=WebKit+Mac10.6&test=another%2Ftest.svg",
+        "http://127.0.0.1:8127/rebaseline?builder=Webkit+Vista&test=fast%2Ftest.html",
         "http://127.0.0.1:8127/optimizebaselines?test=another%2Ftest.svg",
         "http://127.0.0.1:8127/optimizebaselines?test=fast%2Ftest.html"
     ]);

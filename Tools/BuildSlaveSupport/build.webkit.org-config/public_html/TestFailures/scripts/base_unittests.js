@@ -72,6 +72,14 @@ test("uniquifyArray", 5, function() {
     deepEqual(base.uniquifyArray(["a", "b", "b", "a"]), ["a", "b"]);
 });
 
+test("flattenArray", 5, function() {
+    deepEqual(base.flattenArray([]), []);
+    deepEqual(base.flattenArray([["a"]]), ["a"]);
+    deepEqual(base.flattenArray([["a",] ["b"]]), ["a", "b"]);
+    deepEqual(base.flattenArray([["a"], ["b", "c"]]), ["a", "b", "c"]);
+    deepEqual(base.flattenArray(["a"], [], ["b"]]), ["a", "b"]);
+});
+
 test("callInParallel", 4, function() {
     var expectedCall = [true, true, true];
     var expectCompletionCallback = true;

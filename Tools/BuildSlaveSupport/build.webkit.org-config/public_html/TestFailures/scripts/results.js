@@ -295,6 +295,15 @@ results.unexpectedSuccessesByTest = function(resultsByBuilder)
     return resultsByTest(resultsByBuilder, results.unexpectedSuccesses);
 };
 
+results.failureInfoForTestAndBuilder = function(resultsByTest, testName, builderName)
+{
+    return {
+        'testName': testName,
+        'builderName': builderName,
+        'failureTypeList': results.failureTypeList(resultsByTest[testName][builderName].actual)
+    }
+};
+
 results.collectUnexpectedResults = function(dictionaryOfResultNodes)
 {
     var collectedResults = [];

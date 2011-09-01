@@ -1,5 +1,30 @@
 2011-09-01  Adam Barth  <abarth@webkit.org>
 
+        Add a "rebaseline" button to the garden-o-matic summary page
+        https://bugs.webkit.org/show_bug.cgi?id=67382
+
+        Reviewed by Dimitri Glazkov.
+
+        As much as we might wish folks to not rebaseline entire test groups at
+        once, the truth is that doing so is a common operation.  Adding a
+        button for this operation is likely to make folks happy.
+
+        This patch also cleans up a bunch of plumbing surrounding failureInfo
+        objects.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/model.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+
+2011-09-01  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should let the gardener assign blame for a group of test failures
         https://bugs.webkit.org/show_bug.cgi?id=67379
 

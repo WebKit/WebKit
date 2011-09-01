@@ -185,6 +185,15 @@ model.analyzeUnexpectedFailures = function(callback, completionCallback)
     });
 };
 
+model.unexpectedFailureInfoForTestName = function(testName)
+{
+    var resultsByTest = results.unexpectedFailuresByTest(model.state.resultsByBuilder);
+
+    return Object.keys(resultsByTest[testName]).map(function(builderName) {
+        return results.failureInfoForTestAndBuilder(resultsByTest, testName, builderName);
+    });
+};
+
 model.analyzeUnexpectedSuccesses = function(callback)
 {
     var unexpectedSuccesses = results.unexpectedSuccessesByTest(model.state.resultsByBuilder);

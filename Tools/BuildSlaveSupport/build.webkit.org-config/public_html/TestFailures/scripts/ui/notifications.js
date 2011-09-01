@@ -154,6 +154,7 @@ ui.notifications.TestsFailing = base.extends(ui.notifications.Failure, {
         // FIXME: Convert actions to a link from test!
         this._problem.appendChild(new ui.actions.List([
             new ui.actions.Examine().makeDefault(),
+            new ui.actions.Rebaseline(),
         ]));
         this._testNameList = [];
         this._commitDataPinned = false;

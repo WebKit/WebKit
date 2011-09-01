@@ -23,6 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/* FIXME: This should really be in actions.css. */
+ul.actions>li {
+    display: inline-block;
+}
+
 ol.notifications {
     list-style: none;
     padding: 0;

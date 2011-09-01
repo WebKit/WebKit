@@ -108,16 +108,12 @@ checkout.rebaseline = function(failureInfoList, callback)
 {
     callIfCheckoutAvailable(function() {
         base.callInSequence(function(failureInfo, callback) {
-            var extensionList = Array.prototype.concat.apply([], failureInfo.failureTypeList.map(results.failureTypeToExtensionList));
-            base.callInSequence(function(extension, callback) {
-                net.post(config.kLocalServerURL + '/rebaseline?' + $.param({
-                    'builder': failureInfo.builderName,
-                    'test': failureInfo.testName,
-                    'extension': extension
-                }), function() {
-                    callback();
-                });
-            }, extensionList, callback);
+            net.post(config.kLocalServerURL + '/rebaseline?' + $.param({
+                'builder': failureInfo.builderName,
+                'test': failureInfo.testName,
+            }), function() {
+                callback();
+            });
         }, failureInfoList, function() {
             var testNameList = base.uniquifyArray(failureInfoList.map(function(failureInfo) { return failureInfo.testName; }));
             base.callInSequence(checkout.optimizeBaselines, testNameList, callback);

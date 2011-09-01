@@ -83,6 +83,13 @@ base.uniquifyArray = function(array)
     return result;
 };
 
+base.flattenArray = function(arrayOfArrays)
+{
+    return arrayOfArrays.reduce(function(left, right) {
+        return left.concat(right);  
+    });
+};
+
 base.filterDictionary = function(dictionary, predicate)
 {
     var result = {};

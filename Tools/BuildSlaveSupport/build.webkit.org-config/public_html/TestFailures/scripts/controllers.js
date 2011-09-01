@@ -43,27 +43,18 @@ controllers.ResultsDetails = base.extends(Object, {
         $(this._view).bind('builderselected', this.onBuilderSelected.bind(this));
         $(this._view).bind('rebaseline', this.onRebaseline.bind(this));
     },
-    _failureInfoForTestAndBuilder: function(testName, builderName)
-    {
-        return {
-            'testName': testName,
-            'builderName': builderName,
-            'failureTypeList': results.failureTypeList(this._resultsByTest[testName][builderName].actual)
-        }
-    },
     showTest: function(testName)
     {
         var builderNameList = Object.keys(this._resultsByTest[testName]);
         this._view.setBuilderList(builderNameList)
-        this._view.showResults(this._failureInfoForTestAndBuilder(testName, builderNameList[0]));
+        this._view.showResults(results.failureInfoForTestAndBuilder(this._resultsByTest, testName, builderNameList[0]));
     },
     onTestSelected: function()
     {
         this.showTest(this._view.currentTestName());
     },
     onBuilderSelected: function() {
-        this._view.showResults(this._failureInfoForTestAndBuilder(this._view.currentTestName(),
-                                                                  this._view.currentBuilderName()));
+        this._view.showResults(results.failureInfoForTestAndBuilder(this._resultsByTest, this._view.currentTestName(), this._view.currentBuilderName()));
     },
     onRebaseline: function() {
         var testName = this._view.currentTestName();
@@ -101,6 +92,9 @@ controllers.UnexpectedFailures = base.extends(Object, {
             $(failure).bind('examine', function() {
                 this.onExamine(failure);
             }.bind(this));
+            $(failure).bind('rebaseline', function() {
+                this.onRebaseline(failure);
+            }.bind(this));
         }
         failure.addFailureAnalysis(failureAnalysis);
         failure.updateBuilderResults(model.buildersInFlightForRevision(impliedFirstFailingRevision));
@@ -132,6 +126,14 @@ controllers.UnexpectedFailures = base.extends(Object, {
         var resultsContainer = onebar.results();
         $(resultsContainer).empty().append(resultsView);
         onebar.select('results');
+    },
+    onRebaseline: function(failures)
+    {
+        failureInfoList = base.flattenArray(failures.testNameList().map(model.unexpectedFailureInfoForTestName));
+        checkout.rebaseline(failureInfoList, function() {
+            // FIXME: We should have a better dialog than this!
+            alert('Rebaseline done! Please land with "webkit-patch land-cowboy".');
+        });
     },
     onBlame: function(failure, commitData)
     {
