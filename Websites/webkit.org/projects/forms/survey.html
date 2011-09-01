@@ -13,6 +13,12 @@ menu,li {margin:0;padding:0;}
 input.vertical {width:20px;height:100px;}
 .larger {font-size:1.25em;}
 .small {font-size:.6em;}
+
+.tiny {font-size:7px;}
+.mini {font-size:9px;}
+.small {font-size:11px;}
+.regular {font-size:13px;}
+.big {font-size:16px;}
 </style>
 
 
@@ -21,39 +27,38 @@ input.vertical {width:20px;height:100px;}
 
 
 <h1>HTML5 Interactive and Form Content Survey</h1>
-Todos: -webkit-transform? changes to font size? required? autocomplete? more lists.
+Todos: Validation. -webkit-transform? required? autocomplete? more lists.
 <p>WHATWG discussion of:
     <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/content-models.html#interactive-content">interactive content</a>
     <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/commands.html#commands">commands</a>
     <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#form-associated-element">form-associated elements</a>
     <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#category-label">labelable elements</a>
 </p>
-<p>Quick links:
-    <ul>
-        <li><a href="#section-image">Images</a></li>
-        <li><a href="#section-button">Button controls</a></li>
-        <li><a href="#section-text">Text controls</a></li>
-        <li><a href="#section-date">Date controls</a></li>
-        <li><a href="#section-slider">Slider control</a></li>
-        <li><a href="#section-color">Color control</a></li>
-        <li><a href="#section-check-radio">Checkboxes and radio buttons</a></li>
-        <li><a href="#section-file-input">File input</a></li>
-        <li><a href="#section-select">Select controls and option groups</a></li>
-        <li><a href="#section-textarea">Text area control</a></li>
-        <li><a href="#section-label">Labels</a></li>
-        <li><a href="#section-details">Details</a></li>
-        <li><a href="#section-meter">Meter</a></li>
-        <li><a href="#section-progress">Progress</a></li>
-        <li><a href="#section-output">Output form element</a></li>
-        <li><a href="#section-av">Audio and video controls</a></li>
-        <li><a href="#section-anchor">Anchor</a></li>
-        <li><a href="#section-menu">Menus</a></li>
-        <li><a href="#section-keygen">Keygen</a></li>
-        <li><a href="#section-object">Object</a></li>
-        <li><a href="#section-embed">Embed</a></li>
-        <li><a href="#section-iframe">Iframe</a></li>
-    </ul>
-</p>
+<ul style="-webkit-columns:3;">
+    <li><a href="#section-anchor">Anchor</a></li>
+    <li><a href="#section-av">Audio and video controls</a></li>
+    <li><a href="#section-button">Button controls</a></li>
+    <li><a href="#section-check-radio">Checkboxes</a></li>
+    <li><a href="#section-color">Color control</a></li>
+    <li><a href="#section-date">Date controls</a></li>
+    <li><a href="#section-details">Details</a></li>
+    <li><a href="#section-embed">Embed</a></li>
+    <li><a href="#section-file-input">File input</a></li>
+    <li><a href="#section-iframe">Iframe</a></li>
+    <li><a href="#section-image">Images</a></li>
+    <li><a href="#section-keygen">Keygen</a></li>
+    <li><a href="#section-label">Labels</a></li>
+    <li><a href="#section-menu">Menus</a></li>
+    <li><a href="#section-meter">Meter</a></li>
+    <li><a href="#section-object">Object</a></li>
+    <li><a href="#section-output">Output form element</a></li>
+    <li><a href="#section-progress">Progress</a></li>
+    <li><a href="#section-check-radio">Radio buttons</a></li>
+    <li><a href="#section-select">Select controls and option groups</a></li>
+    <li><a href="#section-slider">Slider control</a></li>
+    <li><a href="#section-text">Text controls</a></li>
+    <li><a href="#section-textarea">Text area control</a></li>
+</ul>
 
 <h2 id="section-image">Images</h2>
 <p>WHATWG specs:
@@ -137,6 +142,7 @@ Todos: -webkit-transform? changes to font size? required? autocomplete? more lis
         <tr>
             <td><code>&lt;input type="image" /&gt;</code><br/>
                 + large image - <code>alt</code><br/>
+                + small image + <code>alt</code><br/>
                 + invalid image - <code>alt</code><br/>
                 + invalid image + <code>alt</code><br/>
                 + invalid image + <code>width</code> + <code>height</code> - <code>alt</code><br/>
@@ -144,6 +150,7 @@ Todos: -webkit-transform? changes to font size? required? autocomplete? more lis
             </td>
             <td><input type="image" />
                 <input type="image" src="image1.png" alt="large icon"/>
+                <input type="image" src="image10.png" alt="small image" />
                 <input type="image" src="imageInvalid.png" />
                 <input type="image" src="imageInvalid.png" alt="invalid image" />
                 <input type="image" src="imageInvalid.png" width="60" height="60" />
@@ -200,6 +207,51 @@ Todos: -webkit-transform? changes to font size? required? autocomplete? more lis
 </table>
 
 ILLEGAL: usemap
+
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th><th>Small (11px)</th><th>Regular (13px)</th><th>"Big" (16px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="button"&gt;</code></td>
+            <td><input type="button" class="tiny" /> <input type="button" value="Button" class="tiny" /> Abc<br/>
+                <input type="button" disabled class="tiny" /> <input type="button" value="Button" class="tiny" disabled /> Abc
+            </td>
+            <td><input type="button" class="mini" /> <input type="button" value="Button" class="mini" /> Abc<br/>
+                <input type="button" disabled class="mini" /> <input type="button" value="Button" class="mini" disabled /> Abc
+            </td>
+            <td><input type="button" class="small" /> <input type="button" value="Button" class="small" /> Abc<br/>
+                <input type="button" disabled class="small" /> <input type="button" value="Button" class="small" disabled /> Abc
+            </td>
+            <td><input type="button" class="regular" /> <input type="button" value="Button" class="regular" /> Abc<br/>
+                <input type="button" disabled class="regular" /> <input type="button" value="Button" class="regular" disabled /> Abc
+            </td>
+            <td><input type="button" class="big" /> <input type="button" value="Button" class="big" /> Abc<br/>
+                <input type="button" disabled class="big" /> <input type="button" value="Button" class="big" disabled /> Abc
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;button&gt;</code></td>
+            <td><button class="tiny"></button> <button class="tiny">Button</button> Abc<br/>
+                <button class="tiny" disabled></button> <button class="tiny" disabled>Button</button> Abc
+            </td>
+            <td><button class="mini"></button> <button class="mini">Button</button> Abc<br/>
+                <button class="mini" disabled></button> <button class="mini" disabled>Button</button> Abc
+            </td>
+            <td><button class="small"></button> <button class="small">Button</button> Abc<br/>
+                <button class="small" disabled></button> <button class="small" disabled>Button</button> Abc
+            </td>
+            <td><button class="regular"></button> <button class="regular">Button</button> Abc<br/>
+                <button class="regular" disabled></button> <button class="regular" disabled>Button</button> Abc
+            </td>
+            <td><button class="big"></button> <button class="big">Button</button> Abc<br/>
+                <button class="big" disabled></button> <button class="big" disabled>Button</button> Abc
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 
 
@@ -304,9 +356,11 @@ ILLEGAL: usemap
             </td>
         </tr>
         <tr>
-            <td><code>&lt;input type="search" results /&gt;</code> [NOT STANDARD]
+            <td><code>&lt;input type="search" results /&gt;</code> [NOT STANDARD]<br/>
+                + <code>results=5</code>
             </td>
             <td>
+                <input type="search" results />
                 <input type="search" results=5 />
             </td>
         </tr>
@@ -359,6 +413,115 @@ ILLEGAL: usemap
     </tbody>
 </table>
 pattern (- number)
+
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th><th>Small (11px)</th><th>Regular (13px)</th><th>"Big" (16px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="text"&gt;</code><br/>
+                + <code>readonly</code><br/>
+                + <code>disabled</code></td>
+            <td><input type="text" value="Text field" class="tiny" /><br/>
+                <input type="text" readonly value="Text field" class="tiny" /><br/>
+                <input type="text" disabled value="Text field" class="tiny" />
+            </td>
+            <td><input type="text" value="Text field" class="mini" /><br/>
+                <input type="text" readonly value="Text field" class="mini" /><br/>
+                <input type="text" disabled value="Text field" class="mini" />
+            </td>
+            <td><input type="text" value="Text field" class="small" /><br/>
+                <input type="text" readonly value="Text field" class="small" /><br/>
+                <input type="text" disabled value="Text field" class="small" />
+            </td>
+            <td><input type="text" value="Text field" class="regular" /><br/>
+                <input type="text" readonly value="Text field" class="regular" /><br/>
+                <input type="text" disabled value="Text field" class="regular" />
+            </td>
+            <td><input type="text" value="Text field" class="big" /><br/>
+                <input type="text" readonly value="Text field" class="big" /><br/>
+                <input type="text" disabled value="Text field" class="big" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="search" results&gt;</code><br/>
+                + <code>readonly</code><br/>
+                + <code>disabled</code></td>
+            <td><input type="search" results value="Text field" class="tiny" /><br/>
+                <input type="search" readonly results value="Text field" class="tiny" /><br/>
+                <input type="search" disabled results value="Text field" class="tiny" />
+            </td>
+            <td><input type="search" results value="Text field" class="mini" /><br/>
+                <input type="search" readonly results value="Text field" class="mini" /><br/>
+                <input type="search" disabled results value="Text field" class="mini" />
+            </td>
+            <td><input type="search" results value="Text field" class="small" /><br/>
+                <input type="search" readonly results value="Text field" class="small" /><br/>
+                <input type="search" disabled results value="Text field" class="small" />
+            </td>
+            <td><input type="search" results value="Text field" class="regular" /><br/>
+                <input type="search" readonly results value="Text field" class="regular" /><br/>
+                <input type="search" disabled results value="Text field" class="regular" />
+            </td>
+            <td><input type="search" results value="Text field" class="big" /><br/>
+                <input type="search" readonly results value="Text field" class="big" /><br/>
+                <input type="search" disabled results value="Text field" class="big" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="search" results=5&gt;</code><br/>
+                + <code>readonly</code><br/>
+                + <code>disabled</code></td>
+            <td><input type="search" results=5 value="Text field" class="tiny" /><br/>
+                <input type="search" readonly results=5 value="Text field" class="tiny" /><br/>
+                <input type="search" disabled results=5 value="Text field" class="tiny" />
+            </td>
+            <td><input type="search" results=5 value="Text field" class="mini" /><br/>
+                <input type="search" readonly results=5 value="Text field" class="mini" /><br/>
+                <input type="search" disabled results=5 value="Text field" class="mini" />
+            </td>
+            <td><input type="search" results=5 value="Text field" class="small" /><br/>
+                <input type="search" readonly results=5 value="Text field" class="small" /><br/>
+                <input type="search" disabled results=5 value="Text field" class="small" />
+            </td>
+            <td><input type="search" results=5 value="Text field" class="regular" /><br/>
+                <input type="search" readonly results=5 value="Text field" class="regular" /><br/>
+                <input type="search" disabled results=5 value="Text field" class="regular" />
+            </td>
+            <td><input type="search" results=5 value="Text field" class="big" /><br/>
+                <input type="search" readonly results=5 value="Text field" class="big" /><br/>
+                <input type="search" disabled results=5 value="Text field" class="big" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="number"&gt;</code><br/>
+                + <code>readonly</code><br/>
+                + <code>disabled</code></td>
+            <td><input type="number" value="12345" class="tiny" /><br/>
+                <input type="number" readonly value="12345" class="tiny" /><br/>
+                <input type="number" disabled value="12345" class="tiny" />
+            </td>
+            <td><input type="number" value="12345" class="mini" /><br/>
+                <input type="number" readonly value="12345" class="mini" /><br/>
+                <input type="number" disabled value="12345" class="mini" />
+            </td>
+            <td><input type="number" value="12345" class="small" /><br/>
+                <input type="number" readonly value="12345" class="small" /><br/>
+                <input type="number" disabled value="12345" class="small" />
+            </td>
+            <td><input type="number" value="12345" class="regular" /><br/>
+                <input type="number" readonly value="12345" class="regular" /><br/>
+                <input type="number" disabled value="12345" class="regular" />
+            </td>
+            <td><input type="number" value="12345" class="big" /><br/>
+                <input type="number" readonly value="12345" class="big" /><br/>
+                <input type="number" disabled value="12345" class="big" />
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 
 
@@ -614,6 +777,56 @@ pattern (- number)
     </tbody>
 </table>
 
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th><th>Small (11px)</th><th>Regular (13px)</th><th>"Big" (16px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="range"&gt;</code><br/>
+                + <code>disabled</code>
+            </td>
+            <td><input type="range" class="tiny" /><br/>
+                <input type="range" disabled class="tiny" />
+            </td>
+            <td><input type="range" class="small" /><br/>
+                <input type="range" disabled class="small" />
+            </td>
+            <td><input type="range" class="mini" /><br/>
+                <input type="range" disabled class="mini" />
+            </td>
+            <td><input type="range" class="regular" /><br/>
+                <input type="range" disabled class="regular" />
+            </td>
+            <td><input type="range" class="big" /><br/>
+                <input type="range" disabled class="big" />
+            </td>
+        </tr>
+        <tr>
+            <td>vertical <code>&lt;input type="range"&gt;</code><br/>
+                + <code>disabled</code>
+            </td>
+            <td><input type="range" class="vertical tiny" />
+                <input type="range" disabled class="vertical tiny" />
+            </td>
+            <td><input type="range" class="vertical small" />
+                <input type="range" disabled class="vertical small" />
+            </td>
+            <td><input type="range" class="vertical mini" />
+                <input type="range" disabled class="vertical mini" />
+            </td>
+            <td><input type="range" class="vertical regular" />
+                <input type="range" disabled class="vertical regular" />
+            </td>
+            <td><input type="range" class="vertical big" />
+                <input type="range" disabled class="vertical big" />
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
 
 
 <h2 id="section-color">Color control</h2>
@@ -702,38 +915,104 @@ pattern (- number)
                 <input type="radio" name="radio-group" checked />
             </td>
         </tr>
-        <tr>
-            <td>Various sizes</td>
-            <td>
-                <input type="checkbox" class="larger" />
-                <input type="checkbox" checked class="larger" />
-                <input type="checkbox" id="checkbox-indeterminate-larger" class="larger" />
-                <input type="radio" class="larger"/>
-                <input type="radio" checked class="larger" />
-                <input type="checkbox" class="small" />
-                <input type="checkbox" checked class="small" />
-                <input type="checkbox" id="checkbox-indeterminate-small" class="small" />
-                <input type="radio" class="small" />
-                <input type="radio" checked class="small" /><br />
-                <input type="checkbox" class="larger" disabled />
-                <input type="checkbox" checked class="larger" disabled />
-                <input type="checkbox" id="checkbox-indeterminate-disabled-larger" class="larger" disabled />
-                <input type="radio" class="larger" disabled />
-                <input type="radio" checked class="larger" disabled />
-                <input type="checkbox" class="small" disabled />
-                <input type="checkbox" checked class="small" disabled />
-                <input type="checkbox" id="checkbox-indeterminate-disabled-small" class="small" disabled />
-                <input type="radio" class="small" disabled />
-                <input type="radio" checked class="small" disabled />
-                <script>
-                    document.getElementById("checkbox-indeterminate-larger").indeterminate = true;
-                    document.getElementById("checkbox-indeterminate-small").indeterminate = true;
-                    document.getElementById("checkbox-indeterminate-disabled-larger").indeterminate = true;
-                    document.getElementById("checkbox-indeterminate-disabled-small").indeterminate = true;
-                </script>
-            </td>
     </tbody>
 </table>
+
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th><th>Small (11px)</th><th>Regular (13px)</th><th>"Big" (16px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="checkbox"&gt;<br/>
+                + <code>checked</code><br/>
+                + indeterminate<br/>
+                * <code>disabled</code>
+            </td>
+            <td>
+                <input type="checkbox" class="tiny" />
+                <input type="checkbox" class="tiny" checked />
+                <input type="checkbox" class="tiny" id="ci1" /> Abc<br/>
+                <input type="checkbox" disabled class="tiny" />
+                <input type="checkbox" disabled class="tiny" checked />
+                <input type="checkbox" disabled class="tiny" id="ci2" /> Abc
+            </td>
+            <td>
+                <input type="checkbox" class="mini" />
+                <input type="checkbox" class="mini" checked />
+                <input type="checkbox" class="mini" id="ci3" /> Abc<br/>
+                <input type="checkbox" disabled class="mini" />
+                <input type="checkbox" disabled class="mini" checked />
+                <input type="checkbox" disabled class="mini" id="ci4" /> Abc
+            </td>
+            <td>
+                <input type="checkbox" class="small" />
+                <input type="checkbox" class="small" checked />
+                <input type="checkbox" class="small" id="ci5" /> Abc<br/>
+                <input type="checkbox" disabled class="small" />
+                <input type="checkbox" disabled class="small" checked />
+                <input type="checkbox" disabled class="small" id="ci6" /> Abc
+            </td>
+            <td>
+                <input type="checkbox" class="regular" />
+                <input type="checkbox" class="regular" checked />
+                <input type="checkbox" class="regular" id="ci7" /> Abc<br/>
+                <input type="checkbox" disabled class="regular" />
+                <input type="checkbox" disabled class="regular" checked />
+                <input type="checkbox" disabled class="regular" id="ci8" /> Abc
+            </td>
+            <td>
+                <input type="checkbox" class="big" />
+                <input type="checkbox" class="big" checked />
+                <input type="checkbox" class="big" id="ci9" /> Abc<br/>
+                <input type="checkbox" disabled class="big" />
+                <input type="checkbox" disabled class="big" checked />
+                <input type="checkbox" disabled class="big" id="ci10" /> Abc
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="radio"&gt;<br/>
+                + <code>checked</code><br/>
+                * <code>disabled</code>
+            </td>
+            <td>
+                <input type="radio" class="tiny" />
+                <input type="radio" class="tiny" checked /> Abc<br/>
+                <input type="radio" disabled class="tiny" />
+                <input type="radio" disabled class="tiny" checked /> Abc
+            </td>
+            <td>
+                <input type="radio" class="mini" />
+                <input type="radio" class="mini" checked /> Abc<br/>
+                <input type="radio" disabled class="mini" />
+                <input type="radio" disabled class="mini" checked /> Abc
+            </td>
+            <td>
+                <input type="radio" class="small" />
+                <input type="radio" class="small" checked /> Abc<br/>
+                <input type="radio" disabled class="small" />
+                <input type="radio" disabled class="small" checked /> Abc
+            </td>
+            <td>
+                <input type="radio" class="regular" />
+                <input type="radio" class="regular" checked /> Abc<br/>
+                <input type="radio" disabled class="regular" />
+                <input type="radio" disabled class="regular" checked /> Abc
+            </td>
+            <td>
+                <input type="radio" class="big" />
+                <input type="radio" class="big" checked /> Abc<br/>
+                <input type="radio" disabled class="big" />
+                <input type="radio" disabled class="big" checked /> Abc
+            </td>
+        </tr>
+    </tbody>
+<table>
+<script>
+    for (var i = 1; i <= 10; ++i )
+        document.getElementById("ci" + i).indeterminate = true;
+</script>
 
 
 
@@ -754,6 +1033,58 @@ pattern (- number)
         <tr>
             <td>+ <code>multiple</code></td>
             <td><input type="file" multiple /></td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="file"&gt;</code><br/
+                + <code>disabled</code><br/>
+                + <code>multiple</code></td>
+            <td>
+                <input type="file" class="tiny" /><br/>
+                <input type="file" disabled class="tiny" /><br/>
+                <input type="file" multiple class="tiny" /><br/>
+            </td>
+            <td>
+                <input type="file" class="mini" /><br/>
+                <input type="file" disabled class="mini" /><br/>
+                <input type="file" multiple class="mini" /><br/>
+            </td>
+        </tr>
+        <tr>
+            <th></th><th>Small (11px)</th><th>Regular (13px)</th>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="file" class="small" /><br/>
+                <input type="file" disabled class="small" /><br/>
+                <input type="file" multiple class="small" /><br/>
+            </td>
+            <td>
+                <input type="file" class="regular" /><br/>
+                <input type="file" disabled class="regular" /><br/>
+                <input type="file" multiple class="regular" /><br/>
+            </td>
+        </tr>
+        <tr>
+            <th></th><th>"Big" (16px)</th><th></th>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="file" class="big" /><br/>
+                <input type="file" disabled class="big" /><br/>
+                <input type="file" multiple class="big" /><br/>
+            </td>
+            <td></td>
         </tr>
     </tbody>
 </table>
@@ -803,8 +1134,20 @@ pattern (- number)
                 </select></td>
         </tr>
         <tr>
+            <td>+ script turns selected index to -1 (nothing selected)</td>
+            <td><select id="selectSelectedIndexNone">
+                    <option>Choice 1</option>
+                    <option>Choice 2</option>
+                    <option>Choice 3</option>
+                </select>
+                <script>
+                    document.getElementById("selectSelectedIndexNone").selectedIndex = -1;
+                </script>
+            </td>
+        </tr>
+        <tr>
             <td>+ <code>size</code><br />
-                + <code>size</code> + <code>&lt;option&gt;</code>s + <code>size</code><br />
+                + <code>size</code> + <code>&lt;option&gt;</code>s<br />
                 </td>
             <td><select size=5></select>
                 <select size=5>
@@ -818,6 +1161,16 @@ pattern (- number)
                     <option>Choice 8</option>
                     <option>Choice 9</option>
                     <option>Choice 10</option>
+                    <option>Choice 11</option>
+                    <option>Choice 12</option>
+                    <option>Choice 13</option>
+                    <option>Choice 14</option>
+                    <option>Choice 15</option>
+                    <option>Choice 16</option>
+                    <option>Choice 17</option>
+                    <option>Choice 18</option>
+                    <option>Choice 19</option>
+                    <option>Choice 20</option>
                 </select>
             </td>
         </tr>
@@ -847,7 +1200,24 @@ pattern (- number)
             </td>
         </tr>
         <tr>
-            <td>+ placeholder option: <code>required</code> + <code>size=1</code> + <code>&lt;option value=""&gt; + <code>&lt;option&gt;</code>s</code>
+            <td>+ <code>multiple</code> + <code>&lt;option [disabled] [selected]&gt;</code></td>
+            <td><select multiple>
+                    <option selected>Default Selected Choice 1</option>
+                    <option>Choice 2</option>
+                    <option selected>Default Selected Choice 3</option>
+                    <option>Choice 4</option>
+                    <option selected disabled>Default Selected Disabled Choice 5</option>
+                    <option>Choice 6</option>
+                    <option disabled>Disabled Choice 7</option>
+                    <option>Choice 8</option>
+                    <option>Choice 9</option>
+                    <option>Choice 10</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Placeholder option:<br/>
+                + <code>required</code> + <code>size=1</code> (either explicitly or implicitly) + <code>&lt;option value=""&gt; + <code>&lt;option&gt;</code>s</code>
             </td>
             <td>
                 <select required size=1>
@@ -978,6 +1348,61 @@ pattern (- number)
     </tbody>
 </table>
 
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th><th>Small (11px)</th><th>Regular (13px)</th><th>"Big" (16px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;select&gt;</code></td>
+            <td>
+                <select class="tiny"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled class="tiny"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select class="mini"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled class="mini"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select class="small"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled class="small"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select class="regular"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled class="regular"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select class="big"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled class="big"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;select size&gt;</code></td>
+            <td>
+                <select size=5 class="tiny"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled size=5 class="tiny"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select size=5 class="mini"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled size=5 class="mini"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select size=5 class="small"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled size=5 class="small"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select size=5 class="regular"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled size=5 class="regular"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select size=5 class="big"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled size=5 class="big"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
 
 
 <h2 id="section-textarea">Text area control</h2>
@@ -1049,6 +1474,52 @@ Nam porta, velit at consequat rutrum, lorem lacus fringilla nulla, a consequat p
         <tr>
             <td>+ content + <code>readonly</code></td>
             <td><textarea readonly>This is a readonly text area.</textarea></td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th><th>Small (11px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;textarea&gt;</code><br/>
+                + <code>readonly</code><br/>
+                + <code>disabled</code></td>
+            <td>
+                <textarea class="tiny">Text area</textarea>
+                <textarea readonly class="tiny">Text area</textarea>
+                <textarea disabled class="tiny">Text area</textarea>
+            </td>
+            <td>
+                <textarea class="mini">Text area</textarea>
+                <textarea readonly class="mini">Text area</textarea>
+                <textarea disabled class="mini">Text area</textarea>
+            </td>
+            <td>
+                <textarea class="small">Text area</textarea>
+                <textarea readonly class="small">Text area</textarea>
+                <textarea disabled class="small">Text area</textarea>
+            </td>
+        </tr>
+        <tr>
+            <th></th><th>Regular (13px)</th><th>"Big" (16px)</th><th></th>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <textarea class="regular">Text area</textarea>
+                <textarea readonly class="regular">Text area</textarea>
+                <textarea disabled class="regular">Text area</textarea>
+            </td>
+            <td>
+                <textarea class="big">Text area</textarea>
+                <textarea readonly class="big">Text area</textarea>
+                <textarea disabled class="big">Text area</textarea>
+            </td>
+            <td></td>
         </tr>
     </tbody>
 </table>

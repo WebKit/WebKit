@@ -1,3 +1,9 @@
+2011-09-01  Jon Lee  <jonlee@apple.com>
+
+        Adding control rendering at various sizes.
+
+        * projects/forms/survey.html:
+
 2011-08-29  Jon Lee  <jonlee@apple.com>
 
         Updating forms survey with non-standard wrap for textarea and more data-list driven text fields.
