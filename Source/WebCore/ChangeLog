@@ -1,3 +1,19 @@
+2011-08-30  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix scissor rects on clipped nested iframes
+        https://bugs.webkit.org/show_bug.cgi?id=67221
+
+        Reviewed by James Robinson.
+
+        Layers that mask to bounds (like iframes) weren't being properly
+        clipped if their parent scissor rect was empty. This case happens
+        when a parent iframe is clipped. Fixed by propagating the empty
+        scissor rect to child layers rather than ignoring it.
+
+        Test: compositing/iframes/nested-composited-iframe.html
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+
 2011-08-31  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: close dedicated worker inspectors when page inspector is closing

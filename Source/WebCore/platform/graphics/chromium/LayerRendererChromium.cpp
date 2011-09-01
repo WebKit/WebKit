@@ -258,8 +258,7 @@ void calculateDrawTransformsAndVisibility(LayerType* layer, LayerType* rootLayer
 
         if (layer->masksToBounds()) {
             IntRect scissor = transformedLayerRect;
-            if (!layer->scissorRect().isEmpty())
-                scissor.intersect(layer->scissorRect());
+            scissor.intersect(layer->scissorRect());
             layer->setScissorRect(scissor);
             layer->setUsesLayerScissor(true);
         }
