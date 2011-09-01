@@ -1,3 +1,18 @@
+2011-08-31  Adam Barth  <abarth@webkit.org>
+
+        Move DumpRenderTree to WebKitPlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=67331
+
+        Reviewed by Darin Fisher.
+
+        This patch update DumpRenderTree to account for the WebKitClient =>
+        WebKitPlatformSupport rename.
+
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        (NotificationPresenter::show):
+        * DumpRenderTree/chromium/Task.cpp:
+        (postTask):
+
 2011-08-31  Eric Seidel  <eric@webkit.org>
 
         Add queues.webkit.org/active-bots page to make it easy to see which bots are down

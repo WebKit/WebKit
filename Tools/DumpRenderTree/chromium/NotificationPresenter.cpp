@@ -32,7 +32,7 @@
 #include "NotificationPresenter.h"
 
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 #include "WebNotification.h"
 #include "WebNotificationPermissionCallback.h"
 #include "WebSecurityOrigin.h"
@@ -111,7 +111,7 @@ bool NotificationPresenter::show(const WebNotification& notification)
     WTF::String id(identifier.data(), identifier.length());
     m_activeNotifications.set(id, notification);
 
-    webKitClient()->callOnMainThread(deferredDisplayDispatch, new WebNotification(notification));
+    webKitPlatformSupport()->callOnMainThread(deferredDisplayDispatch, new WebNotification(notification));
     return true;
 }
 

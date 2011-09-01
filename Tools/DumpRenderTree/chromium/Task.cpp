@@ -32,7 +32,7 @@
 #include "Task.h"
 
 #include "WebKit.h"
-#include "WebKitClient.h"
+#include "WebKitPlatformSupport.h"
 
 WebTask::WebTask(TaskList* list)
     : m_taskList(list)
@@ -68,7 +68,7 @@ static void invokeTask(void* context)
 
 void postTask(WebTask* task)
 {
-    WebKit::webKitClient()->callOnMainThread(invokeTask, static_cast<void*>(task));
+    WebKit::webKitPlatformSupport()->callOnMainThread(invokeTask, static_cast<void*>(task));
 }
 
 void postDelayedTask(WebTask* task, int64_t ms)
