@@ -85,9 +85,9 @@ Leak: 0x25102fe0  size=176  zone: DefaultMallocZone_0x1d94000   string 'NSExcept
         detector = self._make_detector()
         self.assertEquals(detector.leaks_files_in_directory('/bogus-directory'), [])
         detector._filesystem = MockFileSystem({
-            '/mock-results/leaks-DumpRenderTree-0-1.txt': '',
-            '/mock-results/leaks-DumpRenderTree-1-1.txt': '',
-            '/mock-results/leaks-DumpRenderTree-0-2.txt': '',
+            '/mock-results/DumpRenderTree-1234-leaks.txt': '',
+            '/mock-results/DumpRenderTree-23423-leaks.txt': '',
+            '/mock-results/DumpRenderTree-823-leaks.txt': '',
         })
         self.assertEquals(len(detector.leaks_files_in_directory('/mock-results')), 3)
 
@@ -101,7 +101,7 @@ Leak: 0x25102fe0  size=176  zone: DefaultMallocZone_0x1d94000   string 'NSExcept
 total: 5,888 bytes (0 bytes excluded)."""
         detector._port._run_script = mock_run_script
 
-        leak_files = ['/mock-results/leaks-DumpRenderTree-1234.txt', '/mock-results/leaks-DumpRenderTree-1235.txt']
-        expected_stdout = "MOCK _run_script: parse-malloc-history ['--merge-depth', 5, '/mock-results/leaks-DumpRenderTree-1234.txt', '/mock-results/leaks-DumpRenderTree-1235.txt']\n"
+        leak_files = ['/mock-results/DumpRenderTree-1234-leaks.txt', '/mock-results/DumpRenderTree-1235-leaks.txt']
+        expected_stdout = "MOCK _run_script: parse-malloc-history ['--merge-depth', 5, '/mock-results/DumpRenderTree-1234-leaks.txt', '/mock-results/DumpRenderTree-1235-leaks.txt']\n"
         results_tuple = OutputCapture().assert_outputs(self, detector.parse_leak_files, [leak_files], expected_stdout=expected_stdout)
         self.assertEquals(results_tuple, ("5,888 bytes", 1))

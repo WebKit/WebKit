@@ -91,11 +91,11 @@ class LeakDetector(object):
         return int(count), int(excluded), int(bytes)
 
     def leaks_files_in_directory(self, directory):
-        return self._filesystem.glob(self._filesystem.join(directory, "leaks-*"))
+        return self._filesystem.glob(self._filesystem.join(directory, "*-leaks.txt"))
 
     def leaks_file_name(self, process_name, process_pid):
         # We include the number of files this worker has already written in the name to prevent overwritting previous leak results..
-        return "leaks-%s-%s.txt" % (process_name, process_pid)
+        return "%s-%s-leaks.txt" % (process_name, process_pid)
 
     def parse_leak_files(self, leak_files):
         merge_depth = 5  # ORWT had a --merge-leak-depth argument, but that seems out of scope for the run-webkit-tests tool.

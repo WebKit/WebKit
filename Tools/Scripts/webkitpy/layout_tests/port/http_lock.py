@@ -28,7 +28,6 @@
 """This class helps to block NRWT threads when more NRWTs run
 http and websocket tests in a same time."""
 
-import glob
 import logging
 import os
 import sys

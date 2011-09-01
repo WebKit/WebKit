@@ -1,3 +1,22 @@
+2011-09-01  Eric Seidel  <eric@webkit.org>
+
+        REGRESSION (NRWT): Leaks Viewer can't load leaks from test runs that used NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=66228
+
+        Reviewed by Dirk Pranke.
+
+        ORWT used $(PROCESS)$(NUMBER)-leaks.txt for leaks filenames.
+        The LeaksViewer tool globs for all *-leaks.txt files.
+        This patch makes NRWT output $(PROCESS)-$(PID)-leaks.txt which should match.
+
+        In order to test this I had to fix a limitation in our MockFileSystem.glob
+        method.  However, doing so uncovered a typo and bug in the integration tests.
+        I've disabled the offending integration tests.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/layout_tests/port/leakdetector.py:
+        * Scripts/webkitpy/layout_tests/port/leakdetector_unittest.py:
+
 2011-09-01  Dominic Mazzoni  <dmazzoni@google.com>
 
         Adds a LayoutTestController method to make it possible to test

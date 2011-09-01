@@ -142,13 +142,16 @@ class MockFileSystem(object):
         return self.cwd
 
     def glob(self, glob_string):
-        # FIXME: This only handles a wildcard '*' at the end of the path.
-        # Maybe it should handle more?
-        if glob_string[-1] == '*':
-            path_filter = lambda path: path.startswith(glob_string[:-1])
+        # FIXME: This only handles the simplest of wildcard matches.
+        wildcard_index = glob_string.find('*')
+        if wildcard_index != -1:
+            before_wildcard = glob_string[:wildcard_index - 1]
+            after_wildcard = glob_string[wildcard_index + 1:]
+            path_filter = lambda path: path.startswith(before_wildcard) and path.endswith(after_wildcard)
         else:
             path_filter = lambda path: glob_string == path
 
+        # We could use fnmatch.fnmatch, but that might not do the right thing on windows.
         existing_files = [path for path, contents in self.files.items() if contents is not None]
         return filter(path_filter, existing_files) + filter(path_filter, self.dirs)
 
