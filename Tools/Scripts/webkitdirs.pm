@@ -1671,6 +1671,10 @@ sub buildQMakeProject($@)
     push @buildArgs, "INSTALL_LIBS=" . $installLibs if defined($installLibs);
     my $dir = File::Spec->canonpath(productDir());
 
+    my $originalCwd = getcwd();
+    chdir File::Spec->catfile(sourceDir(), "Source", "WebCore");
+    my $defaults = `$qmakebin CONFIG+=compute_defaults 2>&1`;
+    chdir $originalCwd;
 
     # On Symbian qmake needs to run in the same directory where the pro file is located.
     if (isSymbian()) {
@@ -1679,6 +1683,23 @@ sub buildQMakeProject($@)
 
     File::Path::mkpath($dir);
     chdir $dir or die "Failed to cd into " . $dir . "\n";
+
+    my $pathToDefaultsTxt = File::Spec->catfile( $dir, "defaults.txt" );
+    my $defaultsTxt = "";
+    if(open DEFAULTS, "$pathToDefaultsTxt"){
+        $defaultsTxt = <DEFAULTS>.<DEFAULTS>;
+        close (DEFAULTS);
+    }
+    if(not($defaults eq $defaultsTxt)){
+        print "Make clean build because the Defines are changed.\n";
+        chdir $originalCwd;
+        File::Path::remove_tree($dir);
+        File::Path::mkpath($dir);
+        chdir $dir or die "Failed to cd into " . $dir . "\n";
+        open DEFAULTS, ">$pathToDefaultsTxt";
+        print DEFAULTS $defaults;
+        close (DEFAULTS);
+    }
 
     print "Generating derived sources\n\n";
 

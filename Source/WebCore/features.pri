@@ -215,12 +215,6 @@ symbian|maemo5|maemo6 {
     }
 }
 
-# Used to compute defaults for the build-webkit script
-CONFIG(compute_defaults) {
-    message($$DEFINES)
-    error("Done computing defaults")
-}
-
 contains(DEFINES, ENABLE_WCSS=1) {
     contains(DEFINES, ENABLE_XHTMLMP=0) {
         DEFINES -= ENABLE_XHTMLMP=0
@@ -267,3 +261,10 @@ contains(DEFINES, ENABLE_MEDIA_STATISTICS=1): FEATURE_DEFINES_JAVASCRIPT += ENAB
 contains(DEFINES, ENABLE_MEDIA_STREAM=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_MEDIA_STREAM=1
 contains(DEFINES, ENABLE_VIDEO_TRACK=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_VIDEO_TRACK=1
 contains(DEFINES, ENABLE_DATA_TRANSFER_ITEMS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_DATA_TRANSFER_ITEMS=1
+
+# Used to compute defaults for the build-webkit script
+# Don't place anything after this!
+CONFIG(compute_defaults) {
+    message($$DEFINES)
+    error("Done computing defaults")
+}

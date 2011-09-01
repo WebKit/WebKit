@@ -1,3 +1,15 @@
+2011-09-01  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Build dependency problems
+        https://bugs.webkit.org/show_bug.cgi?id=38054
+
+        Make clean build after the defines are changed.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProject):
+
 2011-08-31  Adam Barth  <abarth@webkit.org>
 
         Move DumpRenderTree to WebKitPlatformSupport
