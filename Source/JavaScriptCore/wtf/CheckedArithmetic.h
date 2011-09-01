@@ -446,7 +446,7 @@ public:
     {
         if (!isInBounds<T>(rhs.m_value))
             this->overflowed();
-        m_value = rhs.m_value;
+        m_value = static_cast<T>(rhs.m_value);
     }
     
     template <typename U, typename V> Checked(const Checked<U, V>& rhs)
@@ -455,7 +455,7 @@ public:
             this->overflowed();
         if (!isInBounds<T>(rhs.m_value))
             this->overflowed();
-        m_value = rhs.m_value;
+        m_value = static_cast<T>(rhs.m_value);
     }
     
     const Checked& operator=(Checked rhs)
@@ -463,7 +463,7 @@ public:
         this->clearOverflow();
         if (rhs.hasOverflowed())
             this->overflowed();
-        m_value = rhs.m_value;
+        m_value = static_cast<T>(rhs.m_value);
         return *this;
     }
     

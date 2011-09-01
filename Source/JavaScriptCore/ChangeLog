@@ -1,5 +1,13 @@
 2011-08-31  Oliver Hunt  <oliver@apple.com>
 
+        Fix build.
+
+        * wtf/CheckedArithmetic.h:
+        (WTF::Checked::Checked):
+        (WTF::Checked::operator=):
+
+2011-08-31  Oliver Hunt  <oliver@apple.com>
+
         fast/regex/overflow.html asserts in debug builds
         https://bugs.webkit.org/show_bug.cgi?id=67326
 
