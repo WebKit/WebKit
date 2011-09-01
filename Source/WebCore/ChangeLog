@@ -1,3 +1,17 @@
+2011-09-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Add 'muted' content attribute to HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=58369
+
+        Reviewed by Darin Adler.
+
+        Test: media/video-defaultmuted.html
+
+        * html/HTMLAttributeNames.in: Add muted.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): Deal with the 'muted' attribute.
+        * html/HTMLMediaElement.idl: Add defaultMuted.
+
 2011-09-01  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION: Rendering artifacts on a rotated, pattern filled shape

@@ -808,6 +808,9 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     if (!autoplay())
         m_player->setPreload(m_preload);
     m_player->setPreservesPitch(m_webkitPreservesPitch);
+
+    if (hasAttribute(mutedAttr))
+        m_muted = true;
     updateVolume();
 
     if (!m_player->load(url.string(), contentType))

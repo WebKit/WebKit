@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+    <head>
+        <script src=video-test.js></script>
+        <script src=media-file.js></script>
+        <script>
+            var index = 0;
+
+            function testMuted(expectedMuted, expectedDefaultMuted)
+            {
+                testExpected("video.muted", expectedMuted);
+                testExpected("video.defaultMuted", expectedDefaultMuted);
+            }
+
+            function test(defaultMuted)
+            {
+                consoleWrite("<br><br><b>*** Test <em>" + (defaultMuted ? "with" : "without") + "</em> 'muted' content attribute</b><br>");
+
+                run("video = document.createElement('video')");
+                run("video.setAttribute('controls', 'controls')");
+                video.setAttribute('width', '300');
+                if (defaultMuted)
+                    run("video.setAttribute('muted', 'muted')");
+                document.getElementById('parent').appendChild(video);
+
+                consoleWrite("<br>*** Test before setting src, IDL attribute should default to false");
+                testMuted(false, defaultMuted);
+
+                var loadedmetadata = function(evt)
+                {
+                    consoleWrite("<br>EVENT(" + evt.type + ")");
+
+                    consoleWrite("<br>*** After setting url, content attribute should have set IDL attribute");
+                    testMuted(defaultMuted, defaultMuted);
+
+                    consoleWrite("<br>*** Change 'defaultMuted', IDL attribute should not change but content attribute should.");
+                    var newDefaultMuted = !defaultMuted;
+                    run("video.defaultMuted = " + newDefaultMuted);
+                    testMuted(defaultMuted, newDefaultMuted);
+                    testExpected("video.hasAttribute('muted')", newDefaultMuted);
+    
+                    consoleWrite("<br>*** Change 'muted' IDL attribute, content attribute should not change");
+                    run("video.muted = false");
+                    testMuted(false, newDefaultMuted);
+                    testExpected("video.hasAttribute('muted')", newDefaultMuted);
+
+                    var action = defaultMuted ? "Remove" : "Add";
+                    consoleWrite("<br>*** " + action + " 'muted' content attribute, it should have no effect on IDL attribute");
+                    if (defaultMuted)
+                        run("video.removeAttribute('muted')");
+                    else
+                        run("video.setAttribute('muted', 'muted')");
+                    testMuted(false, video.hasAttribute('muted'));
+
+                    runNextTest();
+                }
+                video.addEventListener('loadedmetadata', loadedmetadata);
+                video.src = findMediaFile("audio", "content/test");
+            }
+
+            function runNextTest()
+            {
+                if (video) {
+                    video.parentNode.removeChild(video);
+                    video = null;
+                }
+
+                switch (++index)
+                {
+                case 1:
+                    test(true);
+                    break;
+                case 2:
+                    test(false);
+                    break;
+                case 3:
+                    consoleWrite("");
+                    endTest();
+                    break;
+                }
+            }
+
+        </script>
+    </head>
+
+    <body onload="runNextTest()">
+        <div id="parent"></div>
+        <p>Test 'muted' content attribute<p>
+    </body>
+</html>

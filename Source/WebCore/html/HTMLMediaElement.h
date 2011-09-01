@@ -159,6 +159,7 @@ public:
     void setVolume(float, ExceptionCode&);
     bool muted() const;
     void setMuted(bool);
+
     void togglePlayState();
     void beginScrubbing();
     void endScrubbing();

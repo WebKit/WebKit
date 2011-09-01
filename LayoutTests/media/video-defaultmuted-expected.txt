@@ -1,0 +1,72 @@
+Test 'muted' content attribute
+
+
+
+*** Test with 'muted' content attribute
+
+RUN(video = document.createElement('video'))
+RUN(video.setAttribute('controls', 'controls'))
+RUN(video.setAttribute('muted', 'muted'))
+
+*** Test before setting src, IDL attribute should default to false
+EXPECTED (video.muted == 'false') OK
+EXPECTED (video.defaultMuted == 'true') OK
+
+EVENT(loadedmetadata)
+
+*** After setting url, content attribute should have set IDL attribute
+EXPECTED (video.muted == 'true') OK
+EXPECTED (video.defaultMuted == 'true') OK
+
+*** Change 'defaultMuted', IDL attribute should not change but content attribute should.
+RUN(video.defaultMuted = false)
+EXPECTED (video.muted == 'true') OK
+EXPECTED (video.defaultMuted == 'false') OK
+EXPECTED (video.hasAttribute('muted') == 'false') OK
+
+*** Change 'muted' IDL attribute, content attribute should not change
+RUN(video.muted = false)
+EXPECTED (video.muted == 'false') OK
+EXPECTED (video.defaultMuted == 'false') OK
+EXPECTED (video.hasAttribute('muted') == 'false') OK
+
+*** Remove 'muted' content attribute, it should have no effect on IDL attribute
+RUN(video.removeAttribute('muted'))
+EXPECTED (video.muted == 'false') OK
+EXPECTED (video.defaultMuted == 'false') OK
+
+
+*** Test without 'muted' content attribute
+
+RUN(video = document.createElement('video'))
+RUN(video.setAttribute('controls', 'controls'))
+
+*** Test before setting src, IDL attribute should default to false
+EXPECTED (video.muted == 'false') OK
+EXPECTED (video.defaultMuted == 'false') OK
+
+EVENT(loadedmetadata)
+
+*** After setting url, content attribute should have set IDL attribute
+EXPECTED (video.muted == 'false') OK
+EXPECTED (video.defaultMuted == 'false') OK
+
+*** Change 'defaultMuted', IDL attribute should not change but content attribute should.
+RUN(video.defaultMuted = true)
+EXPECTED (video.muted == 'false') OK
+EXPECTED (video.defaultMuted == 'true') OK
+EXPECTED (video.hasAttribute('muted') == 'true') OK
+
+*** Change 'muted' IDL attribute, content attribute should not change
+RUN(video.muted = false)
+EXPECTED (video.muted == 'false') OK
+EXPECTED (video.defaultMuted == 'true') OK
+EXPECTED (video.hasAttribute('muted') == 'true') OK
+
+*** Add 'muted' content attribute, it should have no effect on IDL attribute
+RUN(video.setAttribute('muted', 'muted'))
+EXPECTED (video.muted == 'false') OK
+EXPECTED (video.defaultMuted == 'true') OK
+
+END OF TEST
+
