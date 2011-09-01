@@ -385,8 +385,8 @@ v8 {
 }
 
 SOURCES += \
+    css/CSSBorderImageSliceValue.cpp \
     css/CSSBorderImageValue.cpp \
-    css/CSSBorderImageValue.h \
     css/CSSCanvasValue.cpp \
     css/CSSCharsetRule.cpp \
     css/CSSComputedStyleDeclaration.cpp \
@@ -1392,6 +1392,7 @@ v8 {
 }
 
 HEADERS += \
+    css/CSSBorderImageSliceValue.h \
     css/CSSBorderImageValue.h \
     css/CSSCanvasValue.h \
     css/CSSCharsetRule.h \

@@ -1,3 +1,10 @@
+2011-09-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [CSS3 Backgrounds and Borders] Implement border-image-slice
+        https://bugs.webkit.org/show_bug.cgi?id=67321
+
+        * WebCore.pro: Unreviewed buildfix after Dave "scattered" Hyatt (r94299).
+
 2011-09-01  Ned Holbrook  <nholbrook@apple.com>
 
         Typesetting features need not force complex for single-character runs
