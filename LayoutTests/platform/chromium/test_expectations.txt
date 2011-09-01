@@ -2342,8 +2342,6 @@ BUG_YUTAK LEOPARD : fast/images/imagemap-polygon-focus-ring.html = IMAGE
 
 // Need to rebaseline now that we antialias rotated images
 BUGCR36902 LINUX WIN : fast/borders/border-image-rotate-transform.html = IMAGE
-BUGCR36902 LINUX WIN : media/audio-repaint.html = IMAGE
-BUGCR36902 LINUX WIN : media/video-zoom-controls.html = IMAGE
 BUGCR36902 LINUX WIN : svg/batik/filters/feTile.svg = IMAGE
 BUGCR36902 LINUX WIN : svg/custom/focus-ring.svg = IMAGE
 
