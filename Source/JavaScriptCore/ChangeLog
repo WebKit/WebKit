@@ -1,3 +1,12 @@
+2011-09-01  Daniel Bates  <dbates@rim.com>
+
+        QNX GCC distribution doesn't support vasprintf()
+        https://bugs.webkit.org/show_bug.cgi?id=67423
+
+        Reviewed by Antonio Gomes.
+
+        * wtf/Platform.h: Don't enable HAVE_VASPRINTF when building with GCC on QNX.
+
 2011-09-01  Michael Saboff  <msaboff@apple.com>
 
         Remove simple usage of UString::characters() from JavaScriptCore
