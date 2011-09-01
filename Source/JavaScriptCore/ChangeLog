@@ -1,3 +1,18 @@
+2011-08-31  Oliver Hunt  <oliver@apple.com>
+
+        fast/regex/overflow.html asserts in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=67326
+
+        Reviewed by Gavin Barraclough.
+
+        The deliberate overflows in these expressions don't interact nicely
+        with Checked<32bit-type> so we just bump up to Checked<int64_t> for the
+        intermediate calculations.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterFixed):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassFixed):
+
 2011-08-31  Jeff Miller  <jeffm@apple.com>
 
         REGRESSION(92210): AVFoundation media engine is disabled on OS X

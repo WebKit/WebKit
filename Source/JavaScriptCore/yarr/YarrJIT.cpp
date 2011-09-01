@@ -719,7 +719,7 @@ class YarrGenerator : private MacroAssembler {
         sub32(Imm32(term->quantityCount.unsafeGet()), countRegister);
 
         Label loop(this);
-        BaseIndex address(input, countRegister, TimesTwo, ((term->inputPosition - m_checked + Checked<int>(term->quantityCount)) * static_cast<int>(sizeof(UChar))).unsafeGet());
+        BaseIndex address(input, countRegister, TimesTwo, (Checked<int>(term->inputPosition - m_checked + Checked<int64_t>(term->quantityCount)) * static_cast<int>(sizeof(UChar))).unsafeGet());
 
         if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
             load16(address, character);
@@ -873,7 +873,7 @@ class YarrGenerator : private MacroAssembler {
 
         Label loop(this);
         JumpList matchDest;
-        load16(BaseIndex(input, countRegister, TimesTwo, ((term->inputPosition - m_checked + Checked<int>(term->quantityCount)) * static_cast<int>(sizeof(UChar))).unsafeGet()), character);
+        load16(BaseIndex(input, countRegister, TimesTwo, (Checked<int>(term->inputPosition - m_checked + Checked<int64_t>(term->quantityCount)) * static_cast<int>(sizeof(UChar))).unsafeGet()), character);
         matchCharacterClass(character, matchDest, term->characterClass);
 
         if (term->invert())
