@@ -36,7 +36,7 @@ module xml {
         Conditional=XSLT,
         CanBeConstructed,
         CustomConstructFunction,
-        V8CustomConstructor
+        Constructor
     ] XSLTProcessor {
         
         [Custom] void importStylesheet(in Node stylesheet);
