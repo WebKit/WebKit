@@ -1,3 +1,41 @@
+2011-09-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Transform QtFallbackWebPopupCombo into QtWebComboBox
+        https://bugs.webkit.org/show_bug.cgi?id=67344
+
+        Reviewed by Andreas Kling.
+
+        Renamed QtFallbackWebPopup to QtWebComboBox and decoupled it from
+        QtFallbackWebPopup. The new class is a QComboBox with the features that
+        we need for QtWebKit: tracking when the popup is hidden (via the didHide()
+        signal) and a convenience method to show its popup in the cursor position.
+
+        An important change was made to the combobox: instead of hooking our actions in
+        showPopup() and hidePopup(), as well as watching for popup visibility events, we
+        now just watch for the visibility events. This allowed us to get rid of
+        m_popupVisible and tracking the Show event.
+
+        This commit also removed a workaround for input focus added in r40970 after
+        reviewers request. See bug report for details.
+
+        * QtWebKit.pro:
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopup::QtFallbackWebPopup):
+        (WebCore::QtFallbackWebPopup::~QtFallbackWebPopup):
+        (WebCore::QtFallbackWebPopup::show):
+        (WebCore::QtFallbackWebPopup::deleteComboBox):
+        * WebCoreSupport/QtFallbackWebPopup.h:
+        * WebCoreSupport/QtWebComboBox.cpp: Added.
+        (WebCore::QtWebComboBox::QtWebComboBox):
+        (WebCore::QtWebComboBox::showPopupAtCursorPosition):
+        (WebCore::QtWebComboBox::eventFilter):
+        * WebCoreSupport/QtWebComboBox.h: Added.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::popupFocus):
+        Change the test to use QObject::findChild(). The old method couldn't find our
+        new class because we defined a new metaclass for it.
+
 2011-08-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move text() and textWithHardLineBreaks() from RenderTextControl to HTMLTextFormControlElement

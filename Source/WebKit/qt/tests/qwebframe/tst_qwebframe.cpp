@@ -709,15 +709,6 @@ private:
         evalJS("delete retvalue; delete typevalue");
         return ret;
     }
-    QObject* firstChildByClassName(QObject* parent, const char* className) {
-        const QObjectList & children = parent->children();
-        foreach (QObject* child, children) {
-            if (!strcmp(child->metaObject()->className(), className)) {
-                return child;
-            }
-        }
-        return 0;
-    }
 
     const QString sTrue;
     const QString sFalse;
@@ -2711,8 +2702,8 @@ void tst_QWebFrame::popupFocus()
     // open the popup by clicking. check if focus is on the popup
     const QWebElement webCombo = view.page()->mainFrame()->documentElement().findFirst(QLatin1String("select[name=select]"));
     QTest::mouseClick(&view, Qt::LeftButton, 0, webCombo.geometry().center());
-    QObject* webpopup = firstChildByClassName(&view, "QComboBox");
-    QComboBox* combo = qobject_cast<QComboBox*>(webpopup);
+
+    QComboBox* combo = view.findChild<QComboBox*>();
     QVERIFY(combo != 0);
     QTRY_VERIFY(!view.hasFocus() && combo->view()->hasFocus()); // Focus should be on the popup
 

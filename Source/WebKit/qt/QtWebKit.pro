@@ -177,6 +177,7 @@ SOURCES += \
     $$PWD/Api/qwebkitversion.cpp \
     \
     $$PWD/WebCoreSupport/QtFallbackWebPopup.cpp \
+    $$PWD/WebCoreSupport/QtWebComboBox.cpp \
     $$PWD/WebCoreSupport/ChromeClientQt.cpp \
     $$PWD/WebCoreSupport/ContextMenuClientQt.cpp \
     $$PWD/WebCoreSupport/DragClientQt.cpp \
@@ -202,6 +203,7 @@ HEADERS += \
     \
     $$PWD/WebCoreSupport/InspectorServerQt.h \
     $$PWD/WebCoreSupport/QtFallbackWebPopup.h \
+    $$PWD/WebCoreSupport/QtWebComboBox.h \
     $$PWD/WebCoreSupport/FrameLoaderClientQt.h \
     $$PWD/WebCoreSupport/FrameNetworkingContextQt.h \
     $$PWD/WebCoreSupport/GeolocationPermissionClientQt.h \

@@ -24,82 +24,23 @@
 #ifndef QT_NO_COMBOBOX
 
 #include "ChromeClientQt.h"
+#include "QtWebComboBox.h"
 #include "QWebPageClient.h"
 #include "qgraphicswebview.h"
-#include <QAbstractItemView>
-#include <QApplication>
 #include <QGraphicsProxyWidget>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QInputContext>
-#include <QMouseEvent>
 #include <QStandardItemModel>
 
 namespace WebCore {
 
-QtFallbackWebPopupCombo::QtFallbackWebPopupCombo(QtFallbackWebPopup& ownerPopup)
-    : m_ownerPopup(ownerPopup)
-{
-    // Install an event filter on the view inside the combo box popup to make sure we know
-    // when the popup got closed. E.g. QComboBox::hidePopup() won't be called when the popup
-    // is closed by a mouse wheel event outside its window.
-    view()->installEventFilter(this);
-}
-
-void QtFallbackWebPopupCombo::showPopup()
-{
-    QComboBox::showPopup();
-    m_ownerPopup.m_popupVisible = true;
-}
-
-void QtFallbackWebPopupCombo::hidePopup()
-{
-#ifndef QT_NO_IM
-    QWidget* activeFocus = QApplication::focusWidget();
-    if (activeFocus && activeFocus == QComboBox::view()
-        && activeFocus->testAttribute(Qt::WA_InputMethodEnabled)) {
-        QInputContext* qic = activeFocus->inputContext();
-        if (qic) {
-            qic->reset();
-            qic->setFocusWidget(0);
-        }
-    }
-#endif // QT_NO_IM
-
-    QComboBox::hidePopup();
-
-    if (!m_ownerPopup.m_popupVisible)
-        return;
-
-    m_ownerPopup.m_popupVisible = false;
-    emit m_ownerPopup.didHide();
-    m_ownerPopup.destroyPopup();
-}
-
-bool QtFallbackWebPopupCombo::eventFilter(QObject* watched, QEvent* event)
-{
-    Q_ASSERT(watched == view());
-
-    if (event->type() == QEvent::Show && !m_ownerPopup.m_popupVisible)
-        showPopup();
-    else if (event->type() == QEvent::Hide && m_ownerPopup.m_popupVisible)
-        hidePopup();
-
-    return false;
-}
-
-// QtFallbackWebPopup
-
 QtFallbackWebPopup::QtFallbackWebPopup(const ChromeClientQt* chromeClient)
-    : m_popupVisible(false)
-    , m_combo(0)
+    : m_combo(0)
     , m_chromeClient(chromeClient)
 {
 }
 
 QtFallbackWebPopup::~QtFallbackWebPopup()
 {
-    destroyPopup();
+    deleteComboBox();
 }
 
 void QtFallbackWebPopup::show(const QWebSelectData& data)
@@ -107,10 +48,12 @@ void QtFallbackWebPopup::show(const QWebSelectData& data)
     if (!pageClient())
         return;
 
-    destroyPopup();
-    m_combo = new QtFallbackWebPopupCombo(*this);
-    connect(m_combo, SIGNAL(activated(int)),
-            SLOT(activeChanged(int)), Qt::QueuedConnection);
+    deleteComboBox();
+
+    m_combo = new QtWebComboBox();
+    connect(m_combo, SIGNAL(activated(int)), SLOT(activeChanged(int)), Qt::QueuedConnection);
+    connect(m_combo, SIGNAL(didHide()), SLOT(deleteComboBox()));
+    connect(m_combo, SIGNAL(didHide()), SIGNAL(didHide()));
 
     populate(data);
 
@@ -123,12 +66,9 @@ void QtFallbackWebPopup::show(const QWebSelectData& data)
         m_combo->setParent(pageClient()->ownerWidget());
         m_combo->setGeometry(QRect(rect.left(), rect.top(),
                                rect.width(), m_combo->sizeHint().height()));
-
     }
 
-    QMouseEvent event(QEvent::MouseButtonPress, QCursor::pos(), Qt::LeftButton,
-                      Qt::LeftButton, Qt::NoModifier);
-    QCoreApplication::sendEvent(m_combo, &event);
+    m_combo->showPopupAtCursorPosition();
 }
 
 void QtFallbackWebPopup::hide()
@@ -136,14 +76,6 @@ void QtFallbackWebPopup::hide()
     // Destroying the QComboBox here cause problems if the popup is in the
     // middle of its show animation. Instead we rely on the fact that the
     // Qt::Popup window will hide itself on mouse events outside its window.
-}
-
-void QtFallbackWebPopup::destroyPopup()
-{
-    if (m_combo) {
-        m_combo->deleteLater();
-        m_combo = 0;
-    }
 }
 
 void QtFallbackWebPopup::populate(const QWebSelectData& data)
@@ -189,6 +121,14 @@ void QtFallbackWebPopup::activeChanged(int index)
         return;
 
     emit selectItem(index, false, false);
+}
+
+void QtFallbackWebPopup::deleteComboBox()
+{
+    if (!m_combo)
+        return;
+    m_combo->deleteLater();
+    m_combo = 0;
 }
 
 QWebPageClient* QtFallbackWebPopup::pageClient() const
