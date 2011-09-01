@@ -894,6 +894,8 @@ bool WebCoreSynchronousLoaderClient::canAuthenticateAgainstProtectionSpace(Resou
 }
 #endif
 
+#endif // USE(CFNETWORK)
+
 #if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
 void ResourceHandle::handleDataArray(CFArrayRef dataArray)
 {
@@ -926,8 +928,6 @@ void ResourceHandle::handleDataArray(CFArrayRef dataArray)
     client()->didReceiveData(this, reinterpret_cast<const char*>(CFDataGetBytePtr(mergedData.get())), totalSize, static_cast<int>(totalSize));
 }
 #endif
-
-#endif // USE(CFNETWORK)
 
 #if USE(CFURLSTORAGESESSIONS)
 
