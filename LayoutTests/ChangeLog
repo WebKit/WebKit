@@ -1,3 +1,21 @@
+2011-08-31  Abhishek Arya  <inferno@chromium.org>
+
+        Add test for testing non-existent eventsource and
+        fix typo in previous test.
+        https://bugs.webkit.org/show_bug.cgi?id=49448
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/eventsource/eventsource-status-error-iframe-crash-expected.txt: Removed.
+        * http/tests/eventsource/eventsource-status-error-iframe-crash.html: Removed.
+        * http/tests/eventsource/existent-eventsource-status-error-iframe-crash-expected.txt: Copied from LayoutTests/http/tests/eventsource/eventsource-status-error-iframe-crash-expected.txt.
+        * http/tests/eventsource/existent-eventsource-status-error-iframe-crash.html: Copied from LayoutTests/http/tests/eventsource/eventsource-status-error-iframe-crash.html.
+        * http/tests/eventsource/non-existent-eventsource-status-error-iframe-crash-expected.txt: Added.
+        * http/tests/eventsource/non-existent-eventsource-status-error-iframe-crash.html: Added.
+        * http/tests/eventsource/resources/request-existent-eventsource-error.html: Copied from LayoutTests/http/tests/eventsource/resources/request-status-error.htm.
+        * http/tests/eventsource/resources/request-non-existent-eventsource-error.html: Added.
+        * http/tests/eventsource/resources/request-status-error.htm: Removed.
+
 2011-08-31  Dan Bernstein  <mitz@apple.com>
 
         Additional test for <rdar://problem/10002140> Text gets clipped in
