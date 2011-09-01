@@ -2667,10 +2667,6 @@ BUGWK54322 SNOWLEOPARD : storage/indexeddb/data-corruption.html = PASS TIMEOUT
 BUGWK54322 SNOWLEOPARD : svg/custom/acid3-test-77.html = PASS TIMEOUT
 BUGWK54322 SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS TEXT
 
-// Release definitely renders wrong; debug differences from reference may just
-// need rebaseline.
-BUGWK54499 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
-
 // Flaky
 BUGCR73080 LINUX DEBUG : fast/forms/form-attribute-elements-order.html = PASS TIMEOUT
 BUGCR73091 : animations/play-state-suspend.html = PASS TEXT
@@ -2990,7 +2986,6 @@ BUGCR79917 LINUX WIN : fast/table/table-and-parts-outline.html = IMAGE
 BUGCR79917 LINUX WIN : fast/transforms/transformed-caret.html = IMAGE
 BUGCR79917 LINUX WIN : svg/custom/no-inherited-dashed-stroke.xhtml = IMAGE
 BUGCR79917 LINUX WIN : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
-BUGCR79917 LINUX WIN : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE
 BUGCR79917 LINUX WIN : tables/mozilla/bugs/bug22019.html = IMAGE
 BUGCR79917 LINUX WIN : tables/mozilla/bugs/bug2886.html = IMAGE
 BUGCR79917 LINUX WIN : tables/mozilla/bugs/bug2947.html = IMAGE

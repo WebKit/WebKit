@@ -1,5 +1,19 @@
 2011-09-01  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Update chromium baselines for 94338 for windows/mac
+
+        * platform/chromium-cg-mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png: Added.
+        * platform/chromium-cg-mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.png: Added.
+        * platform/chromium-cg-mac/svg/transforms/text-with-pattern-with-svg-transform-expected.png: Added.
+        * platform/chromium-linux-x86/svg/transforms/text-with-pattern-with-svg-transform-expected.png: Added.
+        * platform/chromium-linux/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-linux/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-09-01  James Robinson  <jamesr@chromium.org>
+
         [chromium] Update chromium baselines for 94338
 
         * platform/chromium-linux/svg/custom/pattern-rotate-expected.png:
