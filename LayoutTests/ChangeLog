@@ -15,6 +15,12 @@
 
 2011-08-31  David Levin  <levin@chromium.org>
 
+        [chromium] Add baseline due to r94258.
+
+        * platform/chromium-linux/http/tests/eventsource/existent-eventsource-status-error-iframe-crash-expected.txt: Added.
+
+2011-08-31  David Levin  <levin@chromium.org>
+
         [chromium] Add baselines due to r94253 and r94258.
 
         * platform/chromium-cg-mac-leopard/fast/multicol/overflow-across-columns-percent-height-expected.png: Added.
