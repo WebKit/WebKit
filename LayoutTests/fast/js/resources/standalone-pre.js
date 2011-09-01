@@ -94,7 +94,7 @@ function shouldBeNull(_a) { shouldBe(_a, "null"); }
 
 function shouldBeEqualToString(a, b)
 {
-  var unevaledString = '"' + b.replace(/"/g, "\"") + '"';
+  var unevaledString = '"' + b.replace(/\\/g, "\\\\").replace(/"/g, "\"").replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"';
   shouldBe(a, unevaledString);
 }
 
