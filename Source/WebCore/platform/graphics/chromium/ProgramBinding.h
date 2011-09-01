@@ -37,20 +37,20 @@ class GraphicsContext3D;
 
 class ProgramBindingBase {
 public:
-    explicit ProgramBindingBase(GraphicsContext3D*);
+    ProgramBindingBase();
     ~ProgramBindingBase();
 
-    void init(const String& vertexShader, const String& fragmentShader);
+    void init(GraphicsContext3D*, const String& vertexShader, const String& fragmentShader);
+    void cleanup(GraphicsContext3D*);
 
     unsigned program() const { return m_program; }
     bool initialized() const { return m_initialized; }
 
 protected:
 
-    unsigned loadShader(unsigned type, const String& shaderSource);
-    unsigned createShaderProgram(const String& vertexShaderSource, const String& fragmentShaderSource);
+    unsigned loadShader(GraphicsContext3D*, unsigned type, const String& shaderSource);
+    unsigned createShaderProgram(GraphicsContext3D*, const String& vertexShaderSource, const String& fragmentShaderSource);
 
-    GraphicsContext3D* m_context;
     unsigned m_program;
     bool m_initialized;
 };
@@ -59,15 +59,17 @@ template<class VertexShader, class FragmentShader>
 class ProgramBinding : public ProgramBindingBase {
 public:
     explicit ProgramBinding(GraphicsContext3D* context)
-        : ProgramBindingBase(context)
     {
-        ProgramBindingBase::init(m_vertexShader.getShaderString(), m_fragmentShader.getShaderString());
+        ProgramBindingBase::init(context, m_vertexShader.getShaderString(), m_fragmentShader.getShaderString());
     }
 
-    void initialize()
+    void initialize(GraphicsContext3D* context)
     {
-        m_vertexShader.init(m_context, m_program);
-        m_fragmentShader.init(m_context, m_program);
+        ASSERT(context);
+        ASSERT(m_program);
+
+        m_vertexShader.init(context, m_program);
+        m_fragmentShader.init(context, m_program);
         m_initialized = true;
     }
 

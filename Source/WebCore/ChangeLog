@@ -1,3 +1,39 @@
+2011-08-31  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove unsafe raw GraphicsContext3D pointer from ProgramBinding
+        https://bugs.webkit.org/show_bug.cgi?id=67003
+
+        Reviewed by James Robinson.
+
+        ProgramBinding now takes an explicit cleanup call to destroy its
+        resources. This will assert if it is not called and will leak no
+        longer potentially dereference a dead pointer.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::borderProgram):
+        (WebCore::LayerRendererChromium::headsUpDisplayProgram):
+        (WebCore::LayerRendererChromium::renderSurfaceProgram):
+        (WebCore::LayerRendererChromium::renderSurfaceMaskProgram):
+        (WebCore::LayerRendererChromium::tilerProgram):
+        (WebCore::LayerRendererChromium::tilerProgramSwizzle):
+        (WebCore::LayerRendererChromium::tilerProgramAA):
+        (WebCore::LayerRendererChromium::tilerProgramSwizzleAA):
+        (WebCore::LayerRendererChromium::canvasLayerProgram):
+        (WebCore::LayerRendererChromium::pluginLayerProgram):
+        (WebCore::LayerRendererChromium::videoLayerRGBAProgram):
+        (WebCore::LayerRendererChromium::videoLayerYUVProgram):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/ProgramBinding.cpp:
+        (WebCore::ProgramBindingBase::ProgramBindingBase):
+        (WebCore::ProgramBindingBase::~ProgramBindingBase):
+        (WebCore::ProgramBindingBase::init):
+        (WebCore::ProgramBindingBase::cleanup):
+        (WebCore::ProgramBindingBase::loadShader):
+        (WebCore::ProgramBindingBase::createShaderProgram):
+        * platform/graphics/chromium/ProgramBinding.h:
+        (WebCore::ProgramBinding::ProgramBinding):
+        (WebCore::ProgramBinding::initialize):
+
 2011-09-01  Patrick Gansterer  <paroga@webkit.org>
 
         Don't include unnecessary headers in V8 bindings
