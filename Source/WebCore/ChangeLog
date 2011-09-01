@@ -1,3 +1,27 @@
+2011-09-01  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Network error messages in console should link to the respective request in network panel if there is one.
+        https://bugs.webkit.org/show_bug.cgi?id=65550
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessage.prototype._formatMessage):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype.refresh):
+        (WebInspector.NetworkLogView.prototype.switchToBriefView):
+        (WebInspector.NetworkLogView.prototype.searchCanceled):
+        (WebInspector.NetworkLogView.prototype.revealAndHighlightResource):
+        (WebInspector.NetworkLogView.prototype._removeAllNodeHighlights):
+        (WebInspector.NetworkLogView.prototype._highlightNode):
+        (WebInspector.NetworkPanel.prototype._resourceByAnchor):
+        (WebInspector.NetworkPanel.prototype.canShowAnchorLocation):
+        (WebInspector.NetworkPanel.prototype.showAnchorLocation):
+        * inspector/front-end/networkLogView.css:
+        (.network-log-grid tr.highlighted-row):
+        (from):
+        (to):
+
 2011-09-01  Patrick Gansterer  <paroga@webkit.org>
 
         Replace preprocessor statements in DOMWindow.idl with Conditional attribute

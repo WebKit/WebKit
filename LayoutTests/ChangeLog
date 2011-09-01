@@ -1,3 +1,13 @@
+2011-09-01  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Network error messages in console should link to the respective request in network panel if there is one.
+        https://bugs.webkit.org/show_bug.cgi?id=65550
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/console-resource-errors-expected.txt:
+        * http/tests/inspector/console-xhr-logging-expected.txt:
+
 2011-09-01  Cary Clark  <caryclark@google.com>
 
         Unreviewed; new baselines (Skia on Mac, next chunk of 800 files)

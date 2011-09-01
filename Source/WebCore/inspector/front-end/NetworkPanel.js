@@ -654,6 +654,7 @@ WebInspector.NetworkLogView.prototype = {
             delete this._refreshTimeout;
         }
 
+        this._removeAllNodeHighlights();
         var wasScrolledToLastRow = this._dataGrid.isScrolledToLastRow();
         var staleItemsLength = this._staleResources.length;
         var boundariesChanged = false;
@@ -848,6 +849,7 @@ WebInspector.NetworkLogView.prototype = {
     switchToBriefView: function()
     {
         this.element.addStyleClass("brief-mode");
+        this._removeAllNodeHighlights();
 
         this._dataGrid.hideColumn("method");
         this._dataGrid.hideColumn("status");
@@ -1222,6 +1224,32 @@ WebInspector.NetworkLogView.prototype = {
     {
         this._clearSearchMatchedList();
         this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.SearchCountUpdated, 0);
+    },
+    
+    revealAndHighlightResource: function(resource)
+    {
+        this._removeAllNodeHighlights();
+        
+        var node = this._resourceGridNode(resource);
+        if (node) {
+            this._dataGrid.element.focus();
+            node.reveal();
+            this._highlightNode(node);
+        }
+    },
+    
+    _removeAllNodeHighlights: function(node, decoration)
+    {
+        if (this._highlightedNode) {
+            this._highlightedNode.element.removeStyleClass("highlighted-row");
+            delete this._highlightedNode;
+        }
+    },
+    
+    _highlightNode: function(node)
+    {
+        node.element.addStyleClass("highlighted-row");
+        this._highlightedNode = node;
     }
 };
 
@@ -1330,14 +1358,29 @@ WebInspector.NetworkPanel.prototype = {
         return this._networkLogView.resourceById(id);
     },
 
+    _resourceByAnchor: function(anchor)
+    {
+        var resource;
+        if (anchor.getAttribute("request_id"))
+            resource = this.resourceById(anchor.getAttribute("request_id"));
+        if (!resource)
+            resource = this._resourcesByURL[anchor.href];
+
+        return resource;
+    },
+
     canShowAnchorLocation: function(anchor)
     {
-        return !!this.resourceById(anchor.href);
+        return !!this._resourceByAnchor(anchor);
     },
 
     showAnchorLocation: function(anchor)
     {
-        this._showResource(this._resourcesByURL[anchor.href]);
+        var resource = this._resourceByAnchor(anchor);
+
+        this._toggleGridMode();
+        if (resource)
+            this._networkLogView.revealAndHighlightResource(resource);
     },
 
     _onViewCleared: function(event)

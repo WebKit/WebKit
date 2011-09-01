@@ -80,6 +80,10 @@ WebInspector.ConsoleMessage.prototype = {
     _formatMessage: function()
     {
         var stackTrace = this._stackTrace;
+
+        this._formattedMessage = document.createElement("span");
+        this._formattedMessage.className = "console-message-text source-code";
+        
         var messageText;
         switch (this.type) {
             case WebInspector.ConsoleMessage.MessageType.Trace:
@@ -94,13 +98,20 @@ WebInspector.ConsoleMessage.prototype = {
 
                     messageText = document.createElement("span");
                     messageText.appendChild(document.createTextNode(this._request.requestMethod + " "));
-                    messageText.appendChild(WebInspector.linkifyURLAsNode(this._request.url));
+                    var anchor = WebInspector.linkifyURLAsNode(this._request.url);
+                    anchor.setAttribute("request_id", this._request.requestId);
+                    anchor.setAttribute("preferred_panel", "network");
+                    messageText.appendChild(anchor);
                     if (this._request.failed)
                         messageText.appendChild(document.createTextNode(" " + this._request.localizedFailDescription));
                     else
                         messageText.appendChild(document.createTextNode(" " + this._request.statusCode + " (" + this._request.statusText + ")"));
-                } else
+                } else {
+                    var isExternal = !WebInspector.resourceForURL(this.url);
+                    var anchor = WebInspector.linkifyURLAsNode(this.url, this.url, "console-message-url", isExternal);
+                    this._formattedMessage.appendChild(anchor);
                     messageText = this._format([this._messageText]);
+                }
                 break;
             case WebInspector.ConsoleMessage.MessageType.Assert:
                 var args = [WebInspector.UIString("Assertion failed:")];
@@ -119,15 +130,14 @@ WebInspector.ConsoleMessage.prototype = {
                 break;
         }
 
-        this._formattedMessage = document.createElement("span");
-        this._formattedMessage.className = "console-message-text source-code";
-
-        if (this._stackTrace && this._stackTrace.length && this._stackTrace[0].url) {
-            var urlElement = this._linkifyCallFrame(this._stackTrace[0]);
-            this._formattedMessage.appendChild(urlElement);
-        } else if (this.url && this.url !== "undefined") {
-            var urlElement = this._linkifyLocation(this.url, this.line, 0);
-            this._formattedMessage.appendChild(urlElement);
+        if (this.type !== WebInspector.ConsoleMessage.MessageType.NetworkError) {
+            if (this._stackTrace && this._stackTrace.length && this._stackTrace[0].url) {
+                var urlElement = this._linkifyCallFrame(this._stackTrace[0]);
+                this._formattedMessage.appendChild(urlElement);
+            } else if (this.url && this.url !== "undefined") {
+                var urlElement = this._linkifyLocation(this.url, this.line, 0);
+                this._formattedMessage.appendChild(urlElement);
+            }
         }
 
         this._formattedMessage.appendChild(messageText);
