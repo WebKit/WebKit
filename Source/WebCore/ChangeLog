@@ -1,3 +1,14 @@
+2011-09-01  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Decode query/form parameters names as well as values.
+        https://bugs.webkit.org/show_bug.cgi?id=67393
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ResourceHeadersView.js:
+        (WebInspector.ResourceHeadersView.prototype._decodeURIComponent):
+        (WebInspector.ResourceHeadersView.prototype._refreshParms):
+
 2011-08-31  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: remove PresentationBreakpoint class.

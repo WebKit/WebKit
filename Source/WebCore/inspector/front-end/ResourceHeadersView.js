@@ -174,6 +174,26 @@ WebInspector.ResourceHeadersView.prototype = {
         this._requestPayloadTreeElement.appendChild(parmTreeElement);
     },
 
+    _decodeURIComponent: function(value)
+    {
+        var errorDecoding = false;
+        
+        if (value.indexOf("%") >= 0) {
+            try {
+                value = decodeURIComponent(value);
+            } catch(e) {
+                errorDecoding = true;
+            }
+        }
+        value = value.replace(/\+/g, " ");
+
+        var valueEscaped = value.escapeHTML();
+        if (errorDecoding)
+            valueEscaped += " <span class=\"error-message\">" + WebInspector.UIString("(unable to decode value)").escapeHTML() + "</span>";
+        
+        return valueEscaped; 
+    },
+    
     _refreshParms: function(title, parms, parmsTreeElement)
     {
         parmsTreeElement.removeChildren();
@@ -196,24 +216,10 @@ WebInspector.ResourceHeadersView.prototype = {
             var name = parms[i].name;
             var value = parms[i].value;
 
-            var errorDecoding = false;
-            if (this._decodeRequestParameters) {
-                if (value.indexOf("%") >= 0) {
-                    try {
-                        value = decodeURIComponent(value);
-                    } catch(e) {
-                        errorDecoding = true;
-                    }
-                }
-                    
-                value = value.replace(/\+/g, " ");
-            }
+            var valueEscaped = this._decodeRequestParameters ? this._decodeURIComponent(value) : value.escapeHTML();
+            var nameEscaped = this._decodeRequestParameters ? this._decodeURIComponent(name) : name.escapeHTML();
 
-            valueEscaped = value.escapeHTML();
-            if (errorDecoding)
-                valueEscaped += " <span class=\"error-message\">" + WebInspector.UIString("(unable to decode value)").escapeHTML() + "</span>";
-
-            var title = "<div class=\"header-name\">" + name.escapeHTML() + ":</div>";
+            var title = "<div class=\"header-name\">" + nameEscaped + ":</div>";
             title += "<div class=\"header-value source-code\">" + valueEscaped + "</div>";
 
             var parmTreeElement = new TreeElement(null, null, false);
