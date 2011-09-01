@@ -1,3 +1,13 @@
+2011-09-01  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.
+
+        Fix a typo in unittests.  Unfortunately fixing it
+        caused several assertions.  Just disabling the test
+        instead, since it was providing no value before due to the typo.
+
+        * Scripts/webkitpy/layout_tests/port/test.py:
+
 2011-09-01  Adam Barth  <abarth@webkit.org>
 
         Add a "rebaseline" button to the garden-o-matic summary page
