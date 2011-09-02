@@ -1187,6 +1187,7 @@ SET(WebCore_SOURCES
     rendering/InlineFlowBox.cpp
     rendering/InlineTextBox.cpp
     rendering/LayoutState.cpp
+    rendering/LayoutRepainter.cpp
     rendering/RenderApplet.cpp
     rendering/RenderArena.cpp
     rendering/RenderBR.cpp

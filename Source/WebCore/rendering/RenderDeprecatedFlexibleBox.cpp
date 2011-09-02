@@ -25,6 +25,7 @@
 #include "config.h"
 #include "RenderDeprecatedFlexibleBox.h"
 
+#include "LayoutRepainter.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include <wtf/StdLibExtras.h>

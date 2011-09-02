@@ -32,6 +32,7 @@
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "HitTestRequest.h"
+#include "LayoutRepainter.h"
 #include "PointerEventsHitRules.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGResourceMarker.h"

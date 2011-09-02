@@ -35,6 +35,7 @@
 #include "InlineBox.cpp"
 #include "InlineFlowBox.cpp"
 #include "InlineTextBox.cpp"
+#include "LayoutRepainter.cpp"
 #include "LayoutState.cpp"
 #include "PointerEventsHitRules.cpp"
 #include "RenderApplet.cpp"

@@ -32,6 +32,7 @@
 #include "FloatConversion.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
+#include "LayoutRepainter.h"
 #include "PointerEventsHitRules.h"
 #include "RenderImageResource.h"
 #include "RenderLayer.h"

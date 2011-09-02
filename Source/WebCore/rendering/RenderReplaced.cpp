@@ -24,6 +24,7 @@
 #include "RenderReplaced.h"
 
 #include "GraphicsContext.h"
+#include "LayoutRepainter.h"
 #include "RenderBlock.h"
 #include "RenderLayer.h"
 #include "RenderTheme.h"

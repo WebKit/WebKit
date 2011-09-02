@@ -114,6 +114,7 @@ const int showTreeCharacterOffset = 39;
 
 // Base class for all rendering tree objects.
 class RenderObject : public CachedResourceClient {
+    friend class LayoutRepainter;
     friend class RenderBlock;
     friend class RenderBox;
     friend class RenderLayer;
@@ -824,36 +825,6 @@ protected:
 
     virtual IntRect outlineBoundsForRepaint(RenderBoxModelObject* /*repaintContainer*/, IntPoint* /*cachedOffsetToRepaintContainer*/ = 0) const { return IntRect(); }
 
-    class LayoutRepainter {
-    public:
-        LayoutRepainter(RenderObject& object, bool checkForRepaint, const IntRect* oldBounds = 0)
-            : m_object(object)
-            , m_repaintContainer(0)
-            , m_checkForRepaint(checkForRepaint)
-        {
-            if (m_checkForRepaint) {
-                m_repaintContainer = m_object.containerForRepaint();
-                m_oldBounds = oldBounds ? *oldBounds : m_object.clippedOverflowRectForRepaint(m_repaintContainer);
-                m_oldOutlineBox = m_object.outlineBoundsForRepaint(m_repaintContainer);
-            }
-        }
-        
-        // Return true if it repainted.
-        bool repaintAfterLayout()
-        {
-            return m_checkForRepaint ? m_object.repaintAfterLayoutIfNeeded(m_repaintContainer, m_oldBounds, m_oldOutlineBox) : false;
-        }
-        
-        bool checkForRepaint() const { return m_checkForRepaint; }
-        
-    private:
-        RenderObject& m_object;
-        RenderBoxModelObject* m_repaintContainer;
-        IntRect m_oldBounds;
-        IntRect m_oldOutlineBox;
-        bool m_checkForRepaint;
-    };
-    
 private:
     RenderStyle* firstLineStyleSlowCase() const;
     StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;

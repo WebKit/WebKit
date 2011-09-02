@@ -34,6 +34,7 @@
 #include "FrameView.h"
 #include "HitTestResult.h"
 #include "HTMLNames.h"
+#include "LayoutRepainter.h"
 #include "RenderLayer.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"

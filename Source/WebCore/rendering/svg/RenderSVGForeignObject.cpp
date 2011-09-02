@@ -25,6 +25,7 @@
 #include "RenderSVGForeignObject.h"
 
 #include "GraphicsContext.h"
+#include "LayoutRepainter.h"
 #include "RenderSVGResource.h"
 #include "RenderView.h"
 #include "SVGForeignObjectElement.h"

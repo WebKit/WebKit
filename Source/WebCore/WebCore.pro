@@ -1110,6 +1110,7 @@ SOURCES += \
     rendering/InlineFlowBox.cpp \
     rendering/InlineTextBox.cpp \
     rendering/LayoutState.cpp \
+    rendering/LayoutRepainter.cpp \
     rendering/RenderApplet.cpp \
     rendering/RenderArena.cpp \
     rendering/RenderBlock.cpp \
@@ -2157,6 +2158,7 @@ HEADERS += \
     rendering/InlineTextBox.h \
     rendering/LayoutState.h \
     rendering/LayoutTypes.h \
+    rendering/LayoutRepainter.h \
     rendering/mathml/RenderMathMLBlock.h \
     rendering/mathml/RenderMathMLFenced.h \
     rendering/mathml/RenderMathMLFraction.h \
