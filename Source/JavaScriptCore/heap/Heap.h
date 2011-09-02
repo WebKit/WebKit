@@ -91,6 +91,9 @@ namespace JSC {
         void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
         void collectAllGarbage();
 
+        inline void* allocatePropertyStorage(size_t);
+        inline bool inPropertyStorageNursery(void*);
+
         void reportExtraMemoryCost(size_t cost);
 
         void protect(JSValue);
@@ -356,6 +359,22 @@ namespace JSC {
         ASSERT(isValidAllocation(bytes));
         NewSpace::SizeClass& sizeClass = sizeClassFor(bytes);
         return allocate(sizeClass);
+    }
+
+    inline void* Heap::allocatePropertyStorage(size_t bytes)
+    {
+        ASSERT(!(bytes % sizeof(JSValue)));
+        if (bytes >= NewSpace::PropertyStorageNurserySize)
+            return fastMalloc(bytes);
+        if (void* result = m_newSpace.allocatePropertyStorage(bytes))
+            return result;
+        collect(DoNotSweep);
+        return m_newSpace.allocatePropertyStorage(bytes);
+    }
+    
+    inline bool Heap::inPropertyStorageNursery(void* ptr)
+    {
+        return m_newSpace.inPropertyStorageNursery(ptr);
     }
 
 } // namespace JSC

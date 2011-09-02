@@ -594,21 +594,20 @@ Structure* JSObject::createInheritorID(JSGlobalData& globalData)
     return m_inheritorID.get();
 }
 
-void JSObject::allocatePropertyStorage(size_t oldSize, size_t newSize)
+void JSObject::allocatePropertyStorage(JSGlobalData& globalData, size_t oldSize, size_t newSize)
 {
     ASSERT(newSize > oldSize);
 
     // It's important that this function not rely on m_structure, since
     // we might be in the middle of a transition.
-    bool wasInline = (oldSize < JSObject::baseExternalStorageCapacity);
-
     PropertyStorage oldPropertyStorage = m_propertyStorage;
-    PropertyStorage newPropertyStorage = new WriteBarrierBase<Unknown>[newSize];
+    PropertyStorage newPropertyStorage = static_cast<PropertyStorage>(globalData.heap.allocatePropertyStorage(newSize * sizeof(WriteBarrierBase<Unknown>)));
+    ASSERT(newPropertyStorage);
 
     for (unsigned i = 0; i < oldSize; ++i)
        newPropertyStorage[i] = oldPropertyStorage[i];
 
-    if (!wasInline)
+    if (!isUsingInlineStorage() && !globalData.heap.inPropertyStorageNursery(oldPropertyStorage))
         delete [] oldPropertyStorage;
 
     m_propertyStorage = newPropertyStorage;

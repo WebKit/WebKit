@@ -1,3 +1,42 @@
+2011-09-02  Oliver Hunt  <oliver@apple.com>
+
+        Use bump allocator for initial property storage
+        https://bugs.webkit.org/show_bug.cgi?id=67494
+
+        Reviewed by Gavin Barraclough.
+
+        Switch to a bump allocator for the initial out of line
+        property storage.  This gives us slightly faster allocation
+        for short lived objects that need out of line storage at
+        the cost of an additional memcpy when the object survives
+        a GC pass.
+
+        No performance impact.
+
+        * JavaScriptCore.exp:
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        (JSC::Heap::allocatePropertyStorage):
+        (JSC::Heap::inPropertyStorageNursary):
+        * heap/NewSpace.cpp:
+        (JSC::NewSpace::NewSpace):
+        * heap/NewSpace.h:
+        (JSC::NewSpace::resetPropertyStorageNursary):
+        (JSC::NewSpace::allocatePropertyStorage):
+        (JSC::NewSpace::inPropertyStorageNursary):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::allocatePropertyStorage):
+        * runtime/JSObject.h:
+        (JSC::JSObject::~JSObject):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSObject::putDirectFunctionWithoutTransition):
+        (JSC::JSObject::transitionTo):
+        (JSC::JSObject::visitChildrenDirect):
+
 2011-09-01  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.
