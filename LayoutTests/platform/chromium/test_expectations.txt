@@ -3664,9 +3664,6 @@ BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.htm
 BUGWK67204 : fast/multicol/inherit-column-values.html = MISSING FAIL
 BUGWK67204 : fast/multicol/initial-column-values.html = MISSING FAIL
 
-// Implement an Event constructor in V8.
-BUGWK66756 : fast/events/constructors/event-constructors.html = TEXT
-
 // Failing after r93982.
 BUG_LEVIN MAC : canvas/philip/tests/2d.path.stroke.prune.arc.html = TEXT
 

@@ -79,6 +79,7 @@ v8 {
         bindings/v8/custom/V8DataViewCustom.cpp \
         bindings/v8/custom/V8DeviceMotionEventCustom.cpp \
         bindings/v8/custom/V8DeviceOrientationEventCustom.cpp \
+        bindings/v8/custom/V8EventConstructors.cpp \
         bindings/v8/custom/V8Float32ArrayCustom.cpp \
         bindings/v8/custom/V8Float64ArrayCustom.cpp \
         bindings/v8/custom/V8Int8ArrayCustom.cpp \
