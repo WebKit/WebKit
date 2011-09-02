@@ -1,3 +1,11 @@
+2011-09-02  Darin Adler  <darin@apple.com>
+
+        Added Subversion ignore for .pyc generated files.
+
+        * Scripts/webkitpy/layout_tests/models: Added property svn:ignore.
+        * Scripts/webkitpy/layout_tests/servers: Added property svn:ignore.
+        * Scripts/webkitpy/tool/servers: Added property svn:ignore.
+
 2011-09-02  Adam Barth  <abarth@webkit.org>
 
         Enable testing on mac-ews
