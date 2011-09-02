@@ -97,7 +97,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
                         DEFAULT_QUALITY; // Honor user's desktop settings.
     logFont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
     logFont.lfItalic = italic;
-    logFont.lfWeight = bold ? 700 : 400;
+    logFont.lfWeight = bold ? FW_BOLD : FW_DONTCARE;
 
     HFONT hfont = CreateFontIndirect(&logFont);
     return FontPlatformData(hfont, size);
