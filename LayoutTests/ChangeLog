@@ -1,3 +1,10 @@
+2011-09-02  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt][WK2] 4 tests are failing, skip them
+        https://bugs.webkit.org/show_bug.cgi?id=67485
+
+        * platform/qt-wk2/Skipped:
+
 2011-09-02  Dominic Cooney  <dominicc@chromium.org>
 
         Unreviewed test fix.
