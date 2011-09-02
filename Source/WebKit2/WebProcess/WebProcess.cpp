@@ -934,6 +934,11 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
     m_connection->send(Messages::WebContext::DidGetWebCoreStatistics(data, callbackID), 0);
 }
 
+void WebProcess::garbageCollectJavaScriptObjects()
+{
+    gcController().garbageCollectNow();
+}
+
 #if ENABLE(PLUGIN_PROCESS)
 void WebProcess::pluginProcessCrashed(const String& pluginPath)
 {
