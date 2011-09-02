@@ -533,7 +533,7 @@ class WebKitDriver(Driver):
                 eof = True
                 line = chomped_line[:-4]
 
-            if line.startswith(TYPE_HEADER) and content_type is None:
+            if line.startswith(self.TYPE_HEADER) and content_type is None:
                 content_type = line.split()[1]
             elif line.startswith(self.ENCODING_HEADER) and encoding is None:
                 encoding = line.split()[1]
