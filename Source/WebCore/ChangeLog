@@ -1,3 +1,15 @@
+2011-09-02  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9755843> anonymous RenderMathMLOperator sets itself as the renderer of its parent mfenced node
+
+        Reviewed by Darin Adler.
+
+        Test: mathml/operator-hijacks-fenced-node.xhtml
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::updateFromElement): Rather than unconditionally setting the
+        node’s renderer to this, just restore it to whatever it was before calling destroyLeftoverChildren().
+
 2011-09-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Incorporate newer, faster dtoa library
