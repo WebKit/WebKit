@@ -1,3 +1,12 @@
+2011-09-02  Jade Han  <jade.han@nokia.com>
+
+        [Qt][Symbian] REGRESSION(93235) Missing .def update
+        https://bugs.webkit.org/show_bug.cgi?id=67307
+
+        Reviewed by Laszlo Gombos.
+
+        * symbian/eabi/QtWebKitu.def:
+
 2011-09-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Transform QtFallbackWebPopupCombo into QtWebComboBox
