@@ -304,8 +304,12 @@ WebInspector.ResourceHeadersView.prototype = {
             requestMethodElement.titleHTML = "<div class=\"header-name\">" + WebInspector.UIString("Request Method") + ":</div>" +
                 "<div class=\"header-value source-code\">" + this._resource.requestMethod + "</div>";
 
+            var fromCacheSpan = "";
+            if (this._resource.cached)
+                fromCacheSpan = " " + "<span class=\"status-from-cache\">" + WebInspector.UIString("(from cache)").escapeHTML() + "</span>";
+
             statusCodeElement.titleHTML = "<div class=\"header-name\">" + WebInspector.UIString("Status Code") + ":</div>" +
-                statusCodeImage + "<div class=\"header-value source-code\">" + statusTextEscaped + "</div>";
+                statusCodeImage + "<div class=\"header-value source-code\">" + statusTextEscaped + fromCacheSpan + "</div>";
         }
     },
     

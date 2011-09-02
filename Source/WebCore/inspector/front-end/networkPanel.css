@@ -135,6 +135,10 @@
     display: none;
 }
 
+.resource-headers-view .outline-disclosure li .status-from-cache {
+    color: gray;
+}
+
 .resource-headers-view .outline-disclosure li.expanded .header-toggle {
     display: inline;
     margin-left: 30px;

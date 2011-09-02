@@ -1962,11 +1962,12 @@ WebInspector.NetworkDataGridNode.prototype = {
 
         if (this._resource.statusCode) {
             this._statusCell.appendChild(document.createTextNode(this._resource.statusCode));
-            this._statusCell.removeStyleClass("network-dim-cell");
             this._appendSubtitle(this._statusCell, this._resource.statusText);
             this._statusCell.title = this._resource.statusCode + " " + this._resource.statusText;
             if (this._resource.statusCode >= 400)
                 this.element.addStyleClass("network-error-row");
+            if (this._resource.cached)
+                this._statusCell.addStyleClass("network-dim-cell");
         } else {
             if (!this._resource.isHttpFamily() && this._resource.finished)
                 this._statusCell.setTextAndTitle(WebInspector.UIString("Success"));
