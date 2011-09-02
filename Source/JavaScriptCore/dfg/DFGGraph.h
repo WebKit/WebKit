@@ -135,35 +135,41 @@ public:
         return *m_blocks[blockIndexForBytecodeOffset(bytecodeBegin)];
     }
 
-    void predict(int operand, PredictedType prediction)
+    void predict(int operand, PredictedType prediction, PredictionSource source)
     {
         if (operandIsArgument(operand)) {
             unsigned argument = operand + m_argumentPredictions.size() + RegisterFile::CallFrameHeaderSize;
-            m_argumentPredictions[argument].m_value |= prediction;
+            mergePrediction(m_argumentPredictions[argument].m_value, makePrediction(prediction, source));
         } else if ((unsigned)operand < m_variablePredictions.size())
-            m_variablePredictions[operand].m_value |= prediction;
+            mergePrediction(m_variablePredictions[operand].m_value, makePrediction(prediction, source));
     }
     
-    void predictGlobalVar(unsigned varNumber, PredictedType prediction)
+    void predictGlobalVar(unsigned varNumber, PredictedType prediction, PredictionSource source)
     {
         HashMap<unsigned, PredictionSlot>::iterator iter = m_globalVarPredictions.find(varNumber + 1);
         if (iter == m_globalVarPredictions.end()) {
             PredictionSlot predictionSlot;
-            predictionSlot.m_value |= prediction;
+            mergePrediction(predictionSlot.m_value, makePrediction(prediction, source));
             m_globalVarPredictions.add(varNumber + 1, predictionSlot);
         } else
-            iter->second.m_value |= prediction;
+            mergePrediction(iter->second.m_value, makePrediction(prediction, source));
     }
     
-    void predict(Node& node, PredictedType prediction)
+    void predict(Node& node, PredictedType prediction, PredictionSource source)
     {
         switch (node.op) {
         case GetLocal:
-            predict(node.local(), prediction);
+            predict(node.local(), prediction, source);
             break;
         case GetGlobalVar:
-            predictGlobalVar(node.varNumber(), prediction);
+            predictGlobalVar(node.varNumber(), prediction, source);
             break;
+        case GetById:
+        case GetMethod:
+        case GetByVal:
+        case Call:
+        case Construct:
+            node.predict(prediction, source);
         default:
             break;
         }

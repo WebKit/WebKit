@@ -1,3 +1,37 @@
+2011-09-02  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG graph has no way of distinguishing or reconciling between static
+        and dynamic predictions
+        https://bugs.webkit.org/show_bug.cgi?id=67343
+
+        Reviewed by Gavin Barraclough.
+        
+        PredictedType now stores the source of the prediction.  Merging predictions,
+        which was previously done with a bitwise or, is now done via the
+        mergePredictions (equivalent to |) and mergePrediction (equivalent to |=)
+        functions, which correctly handle combinations of static and dynamic.
+        
+        This is performance-neutral, since all predictions are currently static and
+        so the code has no visible effects.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::set):
+        (JSC::DFG::ByteCodeParser::staticallyPredictArray):
+        (JSC::DFG::ByteCodeParser::staticallyPredictInt32):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::predict):
+        (JSC::DFG::Graph::predictGlobalVar):
+        * dfg/DFGNode.h:
+        (JSC::DFG::isArrayPrediction):
+        (JSC::DFG::isInt32Prediction):
+        (JSC::DFG::isDoublePrediction):
+        (JSC::DFG::isDynamicPrediction):
+        (JSC::DFG::mergePredictions):
+        (JSC::DFG::mergePrediction):
+        (JSC::DFG::makePrediction):
+        (JSC::DFG::Node::predict):
+
 2011-09-02  Oliver Hunt  <oliver@apple.com>
 
         Fix 32bit build.

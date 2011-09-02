@@ -195,6 +195,10 @@ static const PredictedType PredictArray  = 0x03;
 static const PredictedType PredictInt32  = 0x04;
 static const PredictedType PredictDouble = 0x08;
 static const PredictedType PredictNumber = 0x0c;
+static const PredictedType DynamicPredictionTag = 0x80;
+static const PredictedType PredictionTagMask    = 0x80;
+
+enum PredictionSource { StaticPrediction, DynamicPrediction };
 
 inline bool isCellPrediction(PredictedType value)
 {
@@ -203,22 +207,56 @@ inline bool isCellPrediction(PredictedType value)
 
 inline bool isArrayPrediction(PredictedType value)
 {
-    return value == PredictArray;
+    return (value & ~PredictionTagMask) == PredictArray;
 }
 
 inline bool isInt32Prediction(PredictedType value)
 {
-    return value == PredictInt32;
+    return (value & ~PredictionTagMask) == PredictInt32;
 }
 
 inline bool isDoublePrediction(PredictedType value)
 {
-    return value == PredictDouble;
+    return (value & ~PredictionTagMask) == PredictDouble;
 }
 
 inline bool isNumberPrediction(PredictedType value)
 {
     return !!(value & PredictNumber) && !(value & ~PredictNumber);
+}
+
+inline bool isDynamicPrediction(PredictedType value)
+{
+    ASSERT(value != (PredictNone | DynamicPredictionTag));
+    return !!(value & DynamicPredictionTag);
+}
+
+inline PredictedType mergePredictions(PredictedType left, PredictedType right)
+{
+    if (isDynamicPrediction(left) == isDynamicPrediction(right))
+        return left | right;
+    if (isDynamicPrediction(left)) {
+        ASSERT(!isDynamicPrediction(right));
+        return left;
+    }
+    ASSERT(!isDynamicPrediction(left));
+    ASSERT(isDynamicPrediction(right));
+    return right;
+}
+
+template<typename T>
+inline void mergePrediction(T& left, PredictedType right)
+{
+    left = static_cast<T>(mergePredictions(static_cast<PredictedType>(left), right));
+}
+
+inline PredictedType makePrediction(PredictedType type, PredictionSource source)
+{
+    ASSERT(!(type & DynamicPredictionTag));
+    ASSERT(source == DynamicPrediction || source == StaticPrediction);
+    if (type == PredictNone)
+        return PredictNone;
+    return type | (source == DynamicPrediction ? DynamicPredictionTag : 0);
 }
 
 #ifndef NDEBUG
@@ -432,10 +470,22 @@ struct Node {
         return static_cast<PredictedType>(m_opInfo2);
     }
     
-    void predict(PredictedType prediction)
+    void predict(PredictedType prediction, PredictionSource source)
     {
         ASSERT(hasPrediction());
-        m_opInfo2 |= prediction;
+        
+        // We have previously found empirically that ascribing static predictions
+        // to heap loads as well as calls is not profitable, as these predictions
+        // are wrong too often. Hence, this completely ignores static predictions.
+        if (source == StaticPrediction)
+            return;
+        
+        if (prediction == PredictNone)
+            return;
+        
+        ASSERT(source == DynamicPrediction);
+        
+        m_opInfo2 |= DynamicPredictionTag | prediction;
     }
 
     VirtualRegister virtualRegister()
