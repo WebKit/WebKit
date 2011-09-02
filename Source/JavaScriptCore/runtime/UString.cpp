@@ -35,10 +35,10 @@
 #include <stdlib.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
-#include <wtf/DecimalNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/dtoa.h>
 #include <wtf/unicode/UTF8.h>
 
 #if HAVE(STRINGS_H)
@@ -196,8 +196,7 @@ UString UString::number(long l)
 UString UString::number(double d)
 {
     NumberToStringBuffer buffer;
-    unsigned length = numberToString(d, buffer);
-    return UString(buffer, length);
+    return UString(numberToString(d, buffer));
 }
 
 UString UString::substringSharingImpl(unsigned offset, unsigned length) const

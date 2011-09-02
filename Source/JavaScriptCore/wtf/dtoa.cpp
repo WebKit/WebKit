@@ -75,12 +75,12 @@
 #include <string.h>
 #include <wtf/AlwaysInline.h>
 #include <wtf/Assertions.h>
-#include <wtf/DecimalNumber.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
+#include <wtf/dtoa/double-conversion.h>
 
 #if COMPILER(MSVC)
 #pragma warning(disable: 4244)
@@ -1802,33 +1802,13 @@ void dtoaRoundDP(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exp
     dtoa<false, false, true, false>(result, dd, ndigits, sign, exponent, precision);
 }
 
-static ALWAYS_INLINE void copyAsciiToUTF16(UChar* next, const char* src, unsigned size)
-{
-    for (unsigned i = 0; i < size; ++i)
-        *next++ = *src++;
-}
 
-unsigned numberToString(double d, NumberToStringBuffer buffer)
+const char *numberToString(double d, NumberToStringBuffer buffer)
 {
-    // Handle NaN and Infinity.
-    if (!isfinite(d)) {
-        if (isnan(d)) {
-            copyAsciiToUTF16(buffer, "NaN", 3);
-            return 3;
-        }
-        if (d > 0) {
-            copyAsciiToUTF16(buffer, "Infinity", 8);
-            return 8;
-        }
-        copyAsciiToUTF16(buffer, "-Infinity", 9);
-        return 9;
-    }
-
-    // Convert to decimal with rounding.
-    DecimalNumber number(d);
-    return number.exponent() >= -6 && number.exponent() < 21
-        ? number.toStringDecimal(buffer, NumberToStringBufferLength)
-        : number.toStringExponential(buffer, NumberToStringBufferLength);
+    double_conversion::StringBuilder builder(buffer, NumberToStringBufferLength);
+    const double_conversion::DoubleToStringConverter& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverter();
+    converter.ToShortest(d, &builder);
+    return builder.Finalize();
 }
 
 } // namespace WTF

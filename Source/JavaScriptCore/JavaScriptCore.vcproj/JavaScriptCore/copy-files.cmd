@@ -46,6 +46,7 @@ for %%d in (
     profiler
     runtime
     wtf
+    wtf\dtoa
     wtf\text
     wtf\unicode
     wtf\unicode\icu

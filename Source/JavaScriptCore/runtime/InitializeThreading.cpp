@@ -30,7 +30,6 @@
 #include "InitializeThreading.h"
 
 #include "Heap.h"
-#include "dtoa.h"
 #include "Identifier.h"
 #include "JSGlobalObject.h"
 #include "UString.h"

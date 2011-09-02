@@ -30,9 +30,11 @@
 #include "Uint16WithFraction.h"
 #include "dtoa.h"
 #include <wtf/Assertions.h>
-#include <wtf/DecimalNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/dtoa/double-conversion.h>
+
+using namespace WTF::double_conversion;
 
 namespace JSC {
 
@@ -339,12 +341,14 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
         return JSValue::encode(jsString(exec, UString::number(x)));
 
     // Round if the argument is not undefined, always format as exponential.
-    NumberToStringBuffer buffer;
-    unsigned length = isUndefined
-        ? DecimalNumber(x).toStringExponential(buffer, WTF::NumberToStringBufferLength)
-        : DecimalNumber(x, RoundingSignificantFigures, decimalPlacesInExponent + 1).toStringExponential(buffer, WTF::NumberToStringBufferLength);
-
-    return JSValue::encode(jsString(exec, UString(buffer, length)));
+    char buffer[WTF::NumberToStringBufferLength];
+    StringBuilder builder(buffer, WTF::NumberToStringBufferLength);
+    const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
+    builder.Reset();
+    isUndefined
+        ? converter.ToExponential(x, -1, &builder)
+        : converter.ToExponential(x, decimalPlacesInExponent, &builder);
+    return JSValue::encode(jsString(exec, UString(builder.Finalize())));
 }
 
 // toFixed converts a number to a string, always formatting as an a decimal fraction.
@@ -376,10 +380,12 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     // handled by numberToString.
     ASSERT(isfinite(x));
 
-    // Convert to decimal with rounding, and format as decimal.
-    NumberToStringBuffer buffer;
-    unsigned length = DecimalNumber(x, RoundingDecimalPlaces, decimalPlaces).toStringDecimal(buffer, WTF::NumberToStringBufferLength);
-    return JSValue::encode(jsString(exec, UString(buffer, length)));
+    char buffer[WTF::NumberToStringBufferLength];
+    StringBuilder builder(buffer, WTF::NumberToStringBufferLength);
+    const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
+    builder.Reset();
+    converter.ToFixed(x, decimalPlaces, &builder);
+    return JSValue::encode(jsString(exec, UString(builder.Finalize())));
 }
 
 // toPrecision converts a number to a string, takeing an argument specifying a
@@ -412,17 +418,12 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     if (!isfinite(x))
         return JSValue::encode(jsString(exec, UString::number(x)));
 
-    // Convert to decimal with rounding.
-    DecimalNumber number(x, RoundingSignificantFigures, significantFigures);
-    // If number is in the range 1e-6 <= x < pow(10, significantFigures) then format
-    // as decimal. Otherwise, format the number as an exponential. Decimal format
-    // demands a minimum of (exponent + 1) digits to represent a number, for example
-    // 1234 (1.234e+3) requires 4 digits. (See ECMA-262 15.7.4.7.10.c)
-    NumberToStringBuffer buffer;
-    unsigned length = number.exponent() >= -6 && number.exponent() < significantFigures
-        ? number.toStringDecimal(buffer, WTF::NumberToStringBufferLength)
-        : number.toStringExponential(buffer, WTF::NumberToStringBufferLength);
-    return JSValue::encode(jsString(exec, UString(buffer, length)));
+    char buffer[WTF::NumberToStringBufferLength];
+    StringBuilder builder(buffer, WTF::NumberToStringBufferLength);
+    const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
+    builder.Reset();
+    converter.ToPrecision(x, significantFigures, &builder);
+    return JSValue::encode(jsString(exec, UString(builder.Finalize())));
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)

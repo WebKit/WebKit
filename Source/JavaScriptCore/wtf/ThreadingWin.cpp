@@ -87,6 +87,7 @@
 #include "Threading.h"
 #include "DateMath.h"
 #include "dtoa.h"
+#include "dtoa/cached-powers.h"
 
 #include "MainThread.h"
 #include "ThreadFunctionInvocation.h"
@@ -163,6 +164,7 @@ void initializeThreading()
     if (atomicallyInitializedStaticMutex)
         return;
 
+    WTF::double_conversion::initialize();
     // StringImpl::empty() does not construct its static string in a threadsafe fashion,
     // so ensure it has been initialized from here.
     StringImpl::empty();

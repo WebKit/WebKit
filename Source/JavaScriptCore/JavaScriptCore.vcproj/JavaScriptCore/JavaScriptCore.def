@@ -41,6 +41,11 @@ EXPORTS
     ??1WeakHandleOwner@JSC@@UAE@XZ
     ??8JSC@@YA_NABVUString@0@0@Z
     ??8WTF@@YA_NABVCString@0@0@Z
+    ?EcmaScriptConverter@DoubleToStringConverter@double_conversion@WTF@@SAABV123@XZ
+    ?ToExponential@DoubleToStringConverter@double_conversion@WTF@@QBE_NNHPAVStringBuilder@23@@Z
+    ?ToFixed@DoubleToStringConverter@double_conversion@WTF@@QBE_NNHPAVStringBuilder@23@@Z
+    ?ToPrecision@DoubleToStringConverter@double_conversion@WTF@@QBE_NNHPAVStringBuilder@23@@Z
+    ?ToShortest@DoubleToStringConverter@double_conversion@WTF@@QBE_NNPAVStringBuilder@23@@Z
     ?absoluteTimeToWaitTimeoutInterval@WTF@@YAKN@Z
     ?activityCallback@Heap@JSC@@QAEPAVGCActivityCallback@2@XZ
     ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PBD@Z
@@ -223,6 +228,7 @@ EXPORTS
     ?increment@RefCountedLeakCounter@WTF@@QAEXXZ
     ?init@AtomicString@WTF@@SAXXZ
     ?init@JSGlobalObject@JSC@@AAEXPAVJSObject@2@@Z
+    ?initialize@double_conversion@WTF@@YAXXZ
     ?initializeMainThread@WTF@@YAXXZ
     ?initializeThreading@JSC@@YAXXZ
     ?initializeThreading@WTF@@YAXXZ
@@ -258,7 +264,7 @@ EXPORTS
     ?number@UString@JSC@@SA?AV12@H@Z
     ?number@UString@JSC@@SA?AV12@I@Z
     ?number@UString@JSC@@SA?AV12@N@Z
-    ?numberToString@WTF@@YAINQA_W@Z
+    ?numberToString@WTF@@YAPBDNQAD@Z
     ?objectCount@Heap@JSC@@QAEIXZ
     ?objectProtoFuncToString@JSC@@YI_JPAVExecState@1@@Z
     ?objectTypeCounts@Heap@JSC@@QAE?AV?$PassOwnPtr@V?$HashCountedSet@PBDU?$PtrHash@PBD@WTF@@U?$HashTraits@PBD@2@@WTF@@@WTF@@XZ

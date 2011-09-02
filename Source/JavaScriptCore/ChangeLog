@@ -1,3 +1,124 @@
+2011-09-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Incorporate newer, faster dtoa library
+        https://bugs.webkit.org/show_bug.cgi?id=66346
+
+        Reviewed by Oliver Hunt.
+
+        Added new dtoa library at http://code.google.com/p/double-conversion/.
+        Replaced old call to dtoa.  The new library is much faster than the old one.
+        We still use the old dtoa for some stuff in WebCore as well as the old strtod, 
+        but we can phase these out eventually as well.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/InitializeThreading.cpp:
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        * runtime/UString.cpp:
+        (JSC::UString::number):
+        * wtf/CMakeLists.txt:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading):
+        * wtf/ThreadingWin.cpp:
+        (WTF::initializeThreading):
+        * wtf/dtoa.cpp:
+        (WTF::dtoa):
+        * wtf/dtoa.h:
+        * wtf/dtoa/COPYING: Added.
+        * wtf/dtoa/LICENSE: Added.
+        * wtf/dtoa/README: Added.
+        * wtf/dtoa/bignum-dtoa.cc: Added.
+        * wtf/dtoa/bignum-dtoa.h: Added.
+        * wtf/dtoa/bignum.cc: Added.
+        * wtf/dtoa/bignum.h: Added.
+        (WTF::double_conversion::Bignum::Times10):
+        (WTF::double_conversion::Bignum::Equal):
+        (WTF::double_conversion::Bignum::LessEqual):
+        (WTF::double_conversion::Bignum::Less):
+        (WTF::double_conversion::Bignum::PlusEqual):
+        (WTF::double_conversion::Bignum::PlusLessEqual):
+        (WTF::double_conversion::Bignum::PlusLess):
+        (WTF::double_conversion::Bignum::EnsureCapacity):
+        (WTF::double_conversion::Bignum::BigitLength):
+        * wtf/dtoa/cached-powers.cc: Added.
+        * wtf/dtoa/cached-powers.h: Added.
+        * wtf/dtoa/diy-fp.cc: Added.
+        * wtf/dtoa/diy-fp.h: Added.
+        (WTF::double_conversion::DiyFp::DiyFp):
+        (WTF::double_conversion::DiyFp::Subtract):
+        (WTF::double_conversion::DiyFp::Minus):
+        (WTF::double_conversion::DiyFp::Times):
+        (WTF::double_conversion::DiyFp::Normalize):
+        (WTF::double_conversion::DiyFp::f):
+        (WTF::double_conversion::DiyFp::e):
+        (WTF::double_conversion::DiyFp::set_f):
+        (WTF::double_conversion::DiyFp::set_e):
+        * wtf/dtoa/double-conversion.cc: Added.
+        * wtf/dtoa/double-conversion.h: Added.
+        (WTF::double_conversion::DoubleToStringConverter::DoubleToStringConverter):
+        (WTF::double_conversion::StringToDoubleConverter::StringToDoubleConverter):
+        * wtf/dtoa/double.h: Added.
+        (WTF::double_conversion::double_to_uint64):
+        (WTF::double_conversion::uint64_to_double):
+        (WTF::double_conversion::Double::Double):
+        (WTF::double_conversion::Double::AsDiyFp):
+        (WTF::double_conversion::Double::AsNormalizedDiyFp):
+        (WTF::double_conversion::Double::AsUint64):
+        (WTF::double_conversion::Double::NextDouble):
+        (WTF::double_conversion::Double::Exponent):
+        (WTF::double_conversion::Double::Significand):
+        (WTF::double_conversion::Double::IsDenormal):
+        (WTF::double_conversion::Double::IsSpecial):
+        (WTF::double_conversion::Double::IsNan):
+        (WTF::double_conversion::Double::IsInfinite):
+        (WTF::double_conversion::Double::Sign):
+        (WTF::double_conversion::Double::UpperBoundary):
+        (WTF::double_conversion::Double::NormalizedBoundaries):
+        (WTF::double_conversion::Double::value):
+        (WTF::double_conversion::Double::SignificandSizeForOrderOfMagnitude):
+        (WTF::double_conversion::Double::Infinity):
+        (WTF::double_conversion::Double::NaN):
+        (WTF::double_conversion::Double::DiyFpToUint64):
+        * wtf/dtoa/fast-dtoa.cc: Added.
+        * wtf/dtoa/fast-dtoa.h: Added.
+        * wtf/dtoa/fixed-dtoa.cc: Added.
+        * wtf/dtoa/fixed-dtoa.h: Added.
+        * wtf/dtoa/strtod.cc: Added.
+        * wtf/dtoa/strtod.h: Added.
+        * wtf/dtoa/utils.h: Added.
+        (WTF::double_conversion::Max):
+        (WTF::double_conversion::Min):
+        (WTF::double_conversion::StrLength):
+        (WTF::double_conversion::Vector::Vector):
+        (WTF::double_conversion::Vector::SubVector):
+        (WTF::double_conversion::Vector::length):
+        (WTF::double_conversion::Vector::is_empty):
+        (WTF::double_conversion::Vector::start):
+        (WTF::double_conversion::Vector::operator[]):
+        (WTF::double_conversion::Vector::first):
+        (WTF::double_conversion::Vector::last):
+        (WTF::double_conversion::StringBuilder::StringBuilder):
+        (WTF::double_conversion::StringBuilder::~StringBuilder):
+        (WTF::double_conversion::StringBuilder::size):
+        (WTF::double_conversion::StringBuilder::position):
+        (WTF::double_conversion::StringBuilder::Reset):
+        (WTF::double_conversion::StringBuilder::AddCharacter):
+        (WTF::double_conversion::StringBuilder::AddString):
+        (WTF::double_conversion::StringBuilder::AddSubstring):
+        (WTF::double_conversion::StringBuilder::AddPadding):
+        (WTF::double_conversion::StringBuilder::Finalize):
+        (WTF::double_conversion::StringBuilder::is_finalized):
+        (WTF::double_conversion::BitCast):
+        * wtf/wtf.pri:
+
 2011-09-02  Filip Pizlo  <fpizlo@apple.com>
 
         DFG graph has no way of distinguishing or reconciling between static

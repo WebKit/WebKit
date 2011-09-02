@@ -468,9 +468,27 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/CurrentTime.h \
 	Source/JavaScriptCore/wtf/DateMath.cpp \
 	Source/JavaScriptCore/wtf/DateMath.h \
-	Source/JavaScriptCore/wtf/DecimalNumber.h \
-	Source/JavaScriptCore/wtf/DecimalNumber.cpp \
-	Source/JavaScriptCore/wtf/Decoder.h \
+    Source/JavaScriptCore/wtf/DecimalNumber.cpp \
+    Source/JavaScriptCore/wtf/DecimalNumber.h \
+    Source/JavaScriptCore/wtf/dtoa/bignum-dtoa.cc \
+    Source/JavaScriptCore/wtf/dtoa/bignum.cc \
+    Source/JavaScriptCore/wtf/dtoa/cached-powers.cc \
+    Source/JavaScriptCore/wtf/dtoa/diy-fp.cc \
+    Source/JavaScriptCore/wtf/dtoa/double-conversion.cc \
+    Source/JavaScriptCore/wtf/dtoa/fast-dtoa.cc \
+    Source/JavaScriptCore/wtf/dtoa/fixed-dtoa.cc \
+    Source/JavaScriptCore/wtf/dtoa/strtod.cc \
+    Source/JavaScriptCore/wtf/dtoa/bignum-dtoa.h \
+    Source/JavaScriptCore/wtf/dtoa/bignum.h \
+    Source/JavaScriptCore/wtf/dtoa/cached-powers.h \
+    Source/JavaScriptCore/wtf/dtoa/diy-fp.h \
+    Source/JavaScriptCore/wtf/dtoa/double-conversion.h \
+    Source/JavaScriptCore/wtf/dtoa/double.h \
+    Source/JavaScriptCore/wtf/dtoa/fast-dtoa.h \
+    Source/JavaScriptCore/wtf/dtoa/fixed-dtoa.h \
+    Source/JavaScriptCore/wtf/dtoa/strtod.h \
+    Source/JavaScriptCore/wtf/dtoa/utils.h \
+    Source/JavaScriptCore/wtf/Decoder.h \
 	Source/JavaScriptCore/wtf/Deque.h \
 	Source/JavaScriptCore/wtf/DisallowCType.h \
 	Source/JavaScriptCore/wtf/DoublyLinkedList.h \

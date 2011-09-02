@@ -209,7 +209,7 @@ String Color::serialized() const
     if (!alpha())
         result.append('0');
     else {
-        NumberToStringBuffer buffer;
+        NumberToUStringBuffer buffer;
         unsigned length = DecimalNumber(alpha() / 255.0).toStringDecimal(buffer, WTF::NumberToStringBufferLength);
         result.append(buffer, length);
     }

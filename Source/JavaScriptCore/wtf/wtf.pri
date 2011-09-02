@@ -6,8 +6,16 @@ SOURCES += \
     wtf/CryptographicallyRandomNumber.cpp \
     wtf/CurrentTime.cpp \
     wtf/DateMath.cpp \
-    wtf/dtoa.cpp \
     wtf/DecimalNumber.cpp \
+    wtf/dtoa.cpp \
+    wtf/dtoa/bignum-dtoa.cc \
+    wtf/dtoa/bignum.cc \
+    wtf/dtoa/cached-powers.cc \
+    wtf/dtoa/diy-fp.cc \
+    wtf/dtoa/double-conversion.cc \
+    wtf/dtoa/fast-dtoa.cc \
+    wtf/dtoa/fixed-dtoa.cc \
+    wtf/dtoa/strtod.cc \
     wtf/FastMalloc.cpp \
     wtf/gobject/GOwnPtr.cpp \
     wtf/gobject/GRefPtr.cpp \

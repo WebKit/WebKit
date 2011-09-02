@@ -1,3 +1,28 @@
+2011-09-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Incorporate newer, faster dtoa library
+        https://bugs.webkit.org/show_bug.cgi?id=66346
+
+        Reviewed by Oliver Hunt.
+
+        No new tests.
+
+        Added new dtoa library at http://code.google.com/p/double-conversion/.
+        Replaced old call to dtoa.  The new library is much faster than the old one.
+        We still use the old dtoa for some stuff in WebCore as well as the old strtod, 
+        but we can phase these out eventually as well.
+
+        * ForwardingHeaders/wtf/dtoa/double-conversion.h: Added.
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::formatNumber):
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::serializeForNumberType):
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorBasicValue::writeJSON):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::serialized):
+
 2011-09-02  Nat Duca  <nduca@chromium.org>
 
         [chromium] Check for null context when reinitializing compositor

@@ -99,6 +99,28 @@ SET(WTF_HEADERS
     WTFThreadData.h
     dtoa.h
 
+    dtoa/bignum-dtoa.h
+    dtoa/bignum.h
+    dtoa/cached-powers.h
+    dtoa/diy-fp.h
+    dtoa/double-conversion.h
+    dtoa/double.h
+    dtoa/fast-dtoa.h
+    dtoa/fixed-dtoa.h
+    dtoa/strtod.h
+    dtoa/utils.h
+
+    dtoa/bignum-dtoa.h
+    dtoa/bignum.h
+    dtoa/cached-powers.h
+    dtoa/diy-fp.h
+    dtoa/double-conversion.h
+    dtoa/double.h
+    dtoa/fast-dtoa.h
+    dtoa/fixed-dtoa.h
+    dtoa/strtod.h
+    dtoa/utils.h
+
     text/AtomicString.h
     text/AtomicStringImpl.h
     text/CString.h
@@ -140,6 +162,24 @@ SET(WTF_SOURCES
     WTFThreadData.cpp
     dtoa.cpp
 
+    dtoa/bignum-dtoa.cc
+    dtoa/bignum.cc
+    dtoa/cached-powers.cc
+    dtoa/diy-fp.cc
+    dtoa/double-conversion.cc
+    dtoa/fast-dtoa.cc
+    dtoa/fixed-dtoa.cc
+    dtoa/strtod.cc
+
+    dtoa/bignum-dtoa.cc
+    dtoa/bignum.cc
+    dtoa/cached-powers.cc
+    dtoa/diy-fp.cc
+    dtoa/double-conversion.cc
+    dtoa/fast-dtoa.cc
+    dtoa/fixed-dtoa.cc
+    dtoa/strtod.cc
+
     text/AtomicString.cpp
     text/CString.cpp
     text/StringBuilder.cpp
@@ -154,6 +194,7 @@ SET(WTF_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}"
     "${JAVASCRIPTCORE_DIR}/wtf"
     "${JAVASCRIPTCORE_DIR}/wtf/unicode"
+    "${JAVASCRIPTCORE_DIR}/wtf/dtoa"
     "${JavaScriptCore_INCLUDE_DIRECTORIES}"
 )
 

@@ -658,7 +658,7 @@ int CSSPrimitiveValue::getIdent() const
 static String formatNumber(double number)
 {
     DecimalNumber decimal(number);
-    
+
     StringBuffer buffer(decimal.bufferLengthForStringDecimal());
     unsigned length = decimal.toStringDecimal(buffer.characters(), buffer.length());
     ASSERT_UNUSED(length, length == buffer.length());
