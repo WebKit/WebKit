@@ -1,3 +1,17 @@
+2011-09-02  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [chromium] editing/selection/regional-indicators.html timing out on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=66510
+
+        Reviewed by Kent Tamura.
+
+        ComplexTextControllerLinux is now surrogate pairs aware, therefore;
+        - editing/selection/regional-indicators.html should pass.
+        - editing/deleting/regional-indicators.html should not timeout.
+        - fast/text/regional-indicator-symbols.html should pass.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94399.

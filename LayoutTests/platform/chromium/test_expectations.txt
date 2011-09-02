@@ -3481,8 +3481,6 @@ BUGWK65219 WIN : webaudio/audionode.html = PASS CRASH
 
 BUGWK65366 : fast/js/parseInt.html = TEXT
 
-BUGCR91061 LINUX DEBUG : fast/text/regional-indicator-symobls.html = TIMEOUT
-
 BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
 BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = PASS TIMEOUT
@@ -3597,8 +3595,7 @@ BUGWK63796 MAC WIN : css3/font-feature-settings-rendering.html = MISSING FAIL
 
 // New test in r93068
 BUGWK66268 WIN MAC : editing/deleting/regional-indicators.html = TEXT
-BUGWK66268 LINUX RELEASE : editing/deleting/regional-indicators.html = TEXT
-BUGWK66268 LINUX DEBUG : editing/deleting/regional-indicators.html = TIMEOUT
+BUGWK66268 LINUX : editing/deleting/regional-indicators.html = TEXT
 
 BUGWK66310 DEBUG : media/video-source-error.html = PASS TEXT
 BUGWK66310 : media/media-blocked-by-beforeload.html = PASS TEXT
@@ -3614,8 +3611,6 @@ BUGWK66417 LINUX : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+
 BUGWK66419 : http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html = TEXT
 BUGWK66419 : http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html = TEXT
 BUGWK66419 : http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html = TEXT
-
-BUGWK66510 LINUX DEBUG : editing/selection/regional-indicators.html = TIMEOUT
 
 BUGWK67121 DEBUG SLOW : editing/selection/move-by-word-visually-multi-space.html = PASS
 

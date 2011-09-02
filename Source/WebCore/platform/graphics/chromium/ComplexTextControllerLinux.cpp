@@ -33,6 +33,7 @@
 
 #include "FloatRect.h"
 #include "Font.h"
+#include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
 
 extern "C" {
@@ -177,15 +178,21 @@ bool ComplexTextController::nextScriptRun()
     // in the harfbuzz data structures to e.g. pick the correct script's shaper.
     // So we allow that to run first, then do a second pass over the range it
     // found and take the largest subregion that stays within a single font.
-    m_currentFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false).fontData;
-    unsigned endOfRun;
-    for (endOfRun = 1; endOfRun < m_item.item.length; ++endOfRun) {
-        const SimpleFontData* nextFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos + endOfRun], false).fontData;
+    SurrogatePairAwareTextIterator iterator(static_cast<const UChar*>(&m_item.string[m_item.item.pos]), 0, static_cast<int>(m_item.item.length), static_cast<int>(m_item.item.length));
+    UChar32 character;
+    unsigned clusterLength = 0;
+    if (!iterator.consume(character, clusterLength))
+        return false;
+    m_currentFontData = m_font->glyphDataForCharacter(character, false).fontData;
+    iterator.advance(clusterLength);
+    while (iterator.consume(character, clusterLength)) {
+        const SimpleFontData* nextFontData = m_font->glyphDataForCharacter(character, false).fontData;
         if (nextFontData != m_currentFontData)
             break;
+        iterator.advance(clusterLength);
     }
-    m_item.item.length = endOfRun;
-    m_indexOfNextScriptRun = m_item.item.pos + endOfRun;
+    m_item.item.length = iterator.currentCharacter();
+    m_indexOfNextScriptRun = m_item.item.pos + iterator.currentCharacter();
 
     setupFontForScriptRun();
     shapeGlyphs();
@@ -229,6 +236,16 @@ static void setupFontFeatures(const FontFeatureSettings* settings, HB_FaceRec_* 
     }
 }
 
+static UChar32 surrogatePairAwareFirstCharacter(const UChar* characters, unsigned length)
+{
+    if (U16_IS_SURROGATE(characters[0])) {
+        if (!U16_IS_SURROGATE_LEAD(characters[0]) || length < 2 || !U16_IS_TRAIL(characters[1]))
+            return ' ';
+        return U16_GET_SUPPLEMENTARY(characters[0], characters[1]);
+    }
+    return characters[0];
+}
+
 void ComplexTextController::setupFontForScriptRun()
 {
     FontDataVariant fontDataVariant = AutoVariant;
@@ -243,7 +260,8 @@ void ComplexTextController::setupFontForScriptRun()
         m_item.item.pos = 0;
         fontDataVariant = SmallCapsVariant;
     }
-    const FontData* fontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false, fontDataVariant).fontData;
+    UChar32 current = surrogatePairAwareFirstCharacter(static_cast<const UChar*>(&m_item.string[m_item.item.pos]), m_item.item.length - m_item.item.pos);
+    const FontData* fontData = m_font->glyphDataForCharacter(current, false, fontDataVariant).fontData;
     const FontPlatformData& platformData = fontData->fontDataForCharacter(' ')->platformData();
     m_item.face = platformData.harfbuzzFace()->face();
     // We only need to setup font features at the beginning of the run.
