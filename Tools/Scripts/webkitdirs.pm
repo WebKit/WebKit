@@ -1687,7 +1687,9 @@ sub buildQMakeProject($@)
     my $pathToDefaultsTxt = File::Spec->catfile( $dir, "defaults.txt" );
     my $defaultsTxt = "";
     if(open DEFAULTS, "$pathToDefaultsTxt"){
-        $defaultsTxt = <DEFAULTS>.<DEFAULTS>;
+        while (<DEFAULTS>) {
+            $defaultsTxt .= $_;
+        }
         close (DEFAULTS);
     }
     if(not($defaults eq $defaultsTxt)){

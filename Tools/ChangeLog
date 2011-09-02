@@ -1,3 +1,15 @@
+2011-09-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Build dependency problems
+        https://bugs.webkit.org/show_bug.cgi?id=38054
+
+        Trivial fix after r94288.
+
+        Rubber-stamped by Andras Becsi.
+
+        * Scripts/webkitdirs.pm: We should read the whole defaults.txt, not only the first two lines.
+        (buildQMakeProject):
+
 2011-09-02  Andras Becsi  <andras.becsi@nokia.com>
 
         Remove my old e-mail address and add my new one.
