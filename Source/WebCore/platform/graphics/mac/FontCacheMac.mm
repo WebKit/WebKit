@@ -145,10 +145,10 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     NSFontTraitMask substituteFontTraits = [fontManager traitsOfFont:substituteFont];
     NSInteger substituteFontWeight = [fontManager weightOfFont:substituteFont];
 
-    if (traits != substituteFontTraits || weight != substituteFontWeight) {
+    if (traits != substituteFontTraits || weight != substituteFontWeight || !nsFont) {
         if (NSFont *bestVariation = [fontManager fontWithFamily:[substituteFont familyName] traits:traits weight:weight size:size]) {
-            if (([fontManager traitsOfFont:bestVariation] != substituteFontTraits || [fontManager weightOfFont:bestVariation] != substituteFontWeight)
-                && [[bestVariation coveredCharacterSet] longCharacterIsMember:character])
+            if (!nsFont || (([fontManager traitsOfFont:bestVariation] != substituteFontTraits || [fontManager weightOfFont:bestVariation] != substituteFontWeight)
+                && [[bestVariation coveredCharacterSet] longCharacterIsMember:character]))
                 substituteFont = bestVariation;
         }
     }

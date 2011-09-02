@@ -1,3 +1,13 @@
+2011-09-01  Dan Bernstein  <mitz@apple.com>
+
+        Fix layout test regressions from r94352.
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::getFontDataForCharacters): In the custom font case (that is, when there is
+        not base NSFont) always get and use the best variation.
+
 2011-09-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert r94355 because it caused bunch of builds to break.
