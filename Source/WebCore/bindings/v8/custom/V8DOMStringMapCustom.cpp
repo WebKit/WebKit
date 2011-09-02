@@ -58,7 +58,7 @@ v8::Handle<v8::Array> V8DOMStringMap::namedPropertyEnumerator(const v8::Accessor
     Vector<String> names;
     V8DOMStringMap::toNative(info.Holder())->getNames(names);
     v8::Handle<v8::Array> properties = v8::Array::New(names.size());
-    for (unsigned i = 0; i < names.size(); ++i)
+    for (size_t i = 0; i < names.size(); ++i)
         properties->Set(v8::Integer::New(i), v8String(names[i]));
     return properties;
 }
