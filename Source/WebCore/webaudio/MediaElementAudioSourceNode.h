@@ -25,8 +25,6 @@
 #ifndef MediaElementAudioSourceNode_h
 #define MediaElementAudioSourceNode_h
 
-#if ENABLE(VIDEO)
-
 #include "AudioSourceNode.h"
 #include "HTMLMediaElement.h"
 #include <wtf/PassRefPtr.h>
@@ -59,7 +57,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(VIDEO)
 
 #endif // MediaElementAudioSourceNode_h

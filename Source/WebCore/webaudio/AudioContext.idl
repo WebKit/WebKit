@@ -59,10 +59,9 @@ module webaudio {
 
         // Sources
         AudioBufferSourceNode createBufferSource();
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
         MediaElementAudioSourceNode createMediaElementSource(in HTMLMediaElement mediaElement)
             raises(DOMException);
-#endif
+
         // Processing nodes
         AudioGainNode createGainNode();
         DelayNode createDelayNode();
