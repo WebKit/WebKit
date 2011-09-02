@@ -1,3 +1,14 @@
+2011-09-02  Tom Sepez  <tsepez@chromium.org>
+
+        Add LayoutTest for the case where long strings are processed by the XSSAuditor.
+        https://bugs.webkit.org/show_bug.cgi?id=66580
+        
+        Reviewed by Adam Barth.
+
+        * http/tests/security/xssAuditor/resources/xss-filter-bypass-long-string-reply.html: Added.
+        * http/tests/security/xssAuditor/xss-filter-bypass-long-string-expected.txt: Added.
+        * http/tests/security/xssAuditor/xss-filter-bypass-long-string.html: Added.
+
 2011-09-02  Jer Noble  <jer.noble@apple.com>
 
         Some media layout tests fail because of ambiguous ordering of canplaythough event.
