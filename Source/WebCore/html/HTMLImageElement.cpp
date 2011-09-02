@@ -111,11 +111,7 @@ void HTMLImageElement::parseMappedAttribute(Attribute* attr)
         addCSSLength(attr, CSSPropertyHeight, attr->value());
     else if (attrName == borderAttr) {
         // border="noborder" -> border="0"
-        addCSSLength(attr, CSSPropertyBorderWidth, String::number(parseBorderWidthAttribute(attr)));
-        addCSSProperty(attr, CSSPropertyBorderTopStyle, CSSValueSolid);
-        addCSSProperty(attr, CSSPropertyBorderRightStyle, CSSValueSolid);
-        addCSSProperty(attr, CSSPropertyBorderBottomStyle, CSSValueSolid);
-        addCSSProperty(attr, CSSPropertyBorderLeftStyle, CSSValueSolid);
+        applyBorderAttribute(attr);
     } else if (attrName == vspaceAttr) {
         addCSSLength(attr, CSSPropertyMarginTop, attr->value());
         addCSSLength(attr, CSSPropertyMarginBottom, attr->value());

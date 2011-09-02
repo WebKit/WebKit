@@ -10,6 +10,11 @@ PASS elementBorderWidth('object', '-10%') is 0
 PASS elementBorderWidth('object', ' +10%') is 10
 PASS elementBorderWidth('object', 0, 'border-width: 10%') is 0
 PASS elementBorderWidth('object', 0, 'border-width: -10%') is 0
+PASS inputElementBorderWidth('image', '10%') is 10
+PASS inputElementBorderWidth('image', '-10%') is 0
+PASS inputElementBorderWidth('image', ' +10%') is 10
+PASS inputElementBorderWidth('image', 0, 'border-width: 10%') is 0
+PASS inputElementBorderWidth('image', 0, 'border-width: -10%') is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -31,6 +31,7 @@
 #include "AXObjectCache.h"
 #include "BeforeTextInsertedEvent.h"
 #include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -793,6 +794,8 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == heightAttr) {
         if (m_inputType->shouldRespectHeightAndWidthAttributes())
             addCSSLength(attr, CSSPropertyHeight, attr->value());
+    } else if (attr->name() == borderAttr && isImageButton()) {
+        applyBorderAttribute(attr);
     } else if (attr->name() == onsearchAttr) {
         // Search field and slider attributes all just cause updateFromElement to be called through style recalcing.
         setAttributeEventListener(eventNames().searchEvent, createAttributeEventListener(this, attr));

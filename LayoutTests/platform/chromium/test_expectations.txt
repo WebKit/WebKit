@@ -978,6 +978,8 @@ BUGCR8402 MAC : fast/forms/drag-out-of-textarea.html = FAIL
 // GURL doesn't handle switching from standard URL to path URL correctly
 BUGWK27914 WIN : fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html = TEXT
 
+BUGWK66467 : fast/dom/HTMLInputElement/input-image-alt-text.html = FAIL
+
 // ----------------------------------------------------------------------------
 // NEW FOR THE MERGE
 //

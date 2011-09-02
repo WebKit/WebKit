@@ -21,6 +21,20 @@ function elementBorderWidth(element, borderValue, style)
     return borderBoxWidth / 2;
 }
 
+function inputElementBorderWidth(elementType, borderValue, style)
+{
+    var inputElement = document.createElement("input");
+    inputElement.setAttribute("type", elementType);
+    if (borderValue != undefined)
+        inputElement.setAttribute("border", borderValue);
+    inputElement.setAttribute("style", style);
+    inputElement.setAttribute("width", "0");
+    document.body.appendChild(inputElement);
+    var borderBoxWidth = inputElement.offsetWidth;
+    document.body.removeChild(inputElement);
+    return borderBoxWidth / 2;
+}
+
 shouldBe("elementBorderWidth('img', '10%')", "10");
 shouldBe("elementBorderWidth('img', '-10%')", "0");
 shouldBe("elementBorderWidth('img', ' +10%')", "10");
@@ -34,6 +48,13 @@ shouldBe("elementBorderWidth('object', ' +10%')", "10");
 
 shouldBe("elementBorderWidth('object', 0, 'border-width: 10%')", "0");
 shouldBe("elementBorderWidth('object', 0, 'border-width: -10%')", "0");
+
+shouldBe("inputElementBorderWidth('image', '10%')", "10");
+shouldBe("inputElementBorderWidth('image', '-10%')", "0");
+shouldBe("inputElementBorderWidth('image', ' +10%')", "10");
+
+shouldBe("inputElementBorderWidth('image', 0, 'border-width: 10%')", "0");
+shouldBe("inputElementBorderWidth('image', 0, 'border-width: -10%')", "0");
 
 var successfullyParsed = true;
 </script>

@@ -1,3 +1,28 @@
+2011-09-02  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        BORDER attribute percent with the input image tag not working.
+        https://bugs.webkit.org/show_bug.cgi?id=66467
+
+        Reviewed by Simon Fraser.
+
+        This patch fixes 2 issues regarding the border attribute of an input image element.
+        1. The border attribute, if specified, is now taken into account and the border of the input image element is displayed.
+        2. If the border attribute contains percent, the border is displayed.
+        The value of the border attribute for input image element is now parsed according to the rules for parsing non-negative integers.
+        This implies that when percent is specified in the border attribute, parsing takes place and the percent is ignored.
+        If after parsing, the value of the border is greater than zero, the border of the input image element is displayed.
+
+        * html/HTMLElement.cpp:
+        (WebCore::parseBorderWidthAttribute):
+        (WebCore::HTMLElement::applyBorderAttribute):
+        * html/HTMLElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+
 2011-09-02  Kentaro Hara  <haraken@google.com>
 
         Implement the Event constructor for V8.

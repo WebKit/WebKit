@@ -1,3 +1,21 @@
+2011-09-02  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        BORDER attribute percent with the input image tag not working.
+        https://bugs.webkit.org/show_bug.cgi?id=66467
+
+        Reviewed by Simon Fraser.
+
+        Test border-width-percent was modified with tests for input image element.
+        Expected results for input-image-alt-test were regenerated since an image input element
+        takes border attribute into account.
+        Also, mark the test as failure for chromium.
+
+        * fast/borders/border-width-percent-expected.txt:
+        * fast/borders/border-width-percent.html:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/dom/HTMLInputElement/input-image-alt-text-expected.png:
+        * platform/mac/fast/dom/HTMLInputElement/input-image-alt-text-expected.txt:
+
 2011-09-02  Kentaro Hara  <haraken@google.com>
 
         Implement the Event constructor for V8.

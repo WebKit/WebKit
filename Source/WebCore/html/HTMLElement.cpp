@@ -137,7 +137,7 @@ static inline int unicodeBidiAttributeForDirAuto(HTMLElement* element)
     return CSSValueEmbed;
 }
 
-unsigned HTMLElement::parseBorderWidthAttribute(Attribute* attr)
+static unsigned parseBorderWidthAttribute(Attribute* attr)
 {
     ASSERT(attr && attr->name() == borderAttr);
 
@@ -146,6 +146,15 @@ unsigned HTMLElement::parseBorderWidthAttribute(Attribute* attr)
         parseHTMLNonNegativeInteger(attr->value(), borderWidth);
 
     return borderWidth;
+}
+
+void HTMLElement::applyBorderAttribute(Attribute* attr)
+{
+    addCSSLength(attr, CSSPropertyBorderWidth, String::number(parseBorderWidthAttribute(attr)));
+    addCSSProperty(attr, CSSPropertyBorderTopStyle, CSSValueSolid);
+    addCSSProperty(attr, CSSPropertyBorderRightStyle, CSSValueSolid);
+    addCSSProperty(attr, CSSPropertyBorderBottomStyle, CSSValueSolid);
+    addCSSProperty(attr, CSSPropertyBorderLeftStyle, CSSValueSolid);
 }
 
 void HTMLElement::parseMappedAttribute(Attribute* attr)
