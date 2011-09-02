@@ -31,27 +31,16 @@
 #include "config.h"
 #include "GestureRecognizerChromium.h"
 
-#include "PlatformMouseEvent.h"
-#include "PlatformWheelEvent.h"
-
 namespace WebCore {
-
-// FIXME: Convert to methods.
-static bool click(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
-static bool isClickOrScroll(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
-static bool inScroll(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
-static bool scrollEnd(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
-static bool noGesture(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
-static bool touchDown(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
 
 // FIXME: Make these configurable programmatically.
 static const double maximumTouchDownDurationInSecondsForClick = 0.8;
 static const double minimumTouchDownDurationInSecondsForClick = 0.01;
 static const int maximumTouchMoveInPixelsForClick = 20;
 
-InnerGestureRecognizer::InnerGestureRecognizer()
+GestureRecognizerChromium::GestureRecognizerChromium()
     : m_firstTouchTime(0.0)
-    , m_state(InnerGestureRecognizer::NoGesture)
+    , m_state(GestureRecognizerChromium::NoGesture)
     , m_lastTouchTime(0.0)
     , m_ctrlKey(false)
     , m_altKey(false)
@@ -65,50 +54,50 @@ InnerGestureRecognizer::InnerGestureRecognizer()
     const PlatformTouchPoint::State Stationary = PlatformTouchPoint::TouchStationary;
     const PlatformTouchPoint::State Cancelled = PlatformTouchPoint::TouchCancelled;
 
-    addEdgeFunction(NoGesture, FirstFinger, Pressed, false, touchDown);
-    addEdgeFunction(PendingSyntheticClick, FirstFinger, Cancelled, false, noGesture);
-    addEdgeFunction(PendingSyntheticClick, FirstFinger, Released, false, click);
-    addEdgeFunction(PendingSyntheticClick, FirstFinger, Moved, false, isClickOrScroll);
-    addEdgeFunction(PendingSyntheticClick, FirstFinger, Stationary, false, isClickOrScroll);
-    addEdgeFunction(Scroll, FirstFinger, Moved, false, inScroll);
-    addEdgeFunction(Scroll, FirstFinger, Released, false, scrollEnd);
-    addEdgeFunction(Scroll, FirstFinger, Cancelled, false, scrollEnd);
+    addEdgeFunction(NoGesture, FirstFinger, Pressed, false, &GestureRecognizerChromium::touchDown);
+    addEdgeFunction(PendingSyntheticClick, FirstFinger, Cancelled, false, &GestureRecognizerChromium::noGesture);
+    addEdgeFunction(PendingSyntheticClick, FirstFinger, Released, false, &GestureRecognizerChromium::click);
+    addEdgeFunction(PendingSyntheticClick, FirstFinger, Moved, false, &GestureRecognizerChromium::isClickOrScroll);
+    addEdgeFunction(PendingSyntheticClick, FirstFinger, Stationary, false, &GestureRecognizerChromium::isClickOrScroll);
+    addEdgeFunction(Scroll, FirstFinger, Moved, false, &GestureRecognizerChromium::inScroll);
+    addEdgeFunction(Scroll, FirstFinger, Released, false, &GestureRecognizerChromium::scrollEnd);
+    addEdgeFunction(Scroll, FirstFinger, Cancelled, false, &GestureRecognizerChromium::scrollEnd);
 }
 
-void InnerGestureRecognizer::reset()
+void GestureRecognizerChromium::reset()
 {
     m_firstTouchTime = 0.0;
-    m_state = InnerGestureRecognizer::NoGesture;
+    m_state = GestureRecognizerChromium::NoGesture;
     m_lastTouchTime = 0.0;
 }
 
-InnerGestureRecognizer::~InnerGestureRecognizer()
+GestureRecognizerChromium::~GestureRecognizerChromium()
 {
 }
 
-void InnerGestureRecognizer::addEdgeFunction(State state, unsigned fingerId, PlatformTouchPoint::State touchType, bool touchHandledByJavaScript, GestureTransitionFunction transitionFunction)
+void GestureRecognizerChromium::addEdgeFunction(State state, unsigned fingerId, PlatformTouchPoint::State touchType, bool touchHandledByJavaScript, GestureTransitionFunction transitionFunction)
 {
     m_edgeFunctions.add(signature(state, fingerId, touchType, touchHandledByJavaScript), transitionFunction);
 }
 
-bool InnerGestureRecognizer::isInClickTimeWindow()
+bool GestureRecognizerChromium::isInClickTimeWindow()
 {
     double duration(m_lastTouchTime - m_firstTouchTime);
     return duration >= minimumTouchDownDurationInSecondsForClick && duration < maximumTouchDownDurationInSecondsForClick;
 }
 
-bool InnerGestureRecognizer::isInsideManhattanSquare(const PlatformTouchPoint& point)
+bool GestureRecognizerChromium::isInsideManhattanSquare(const PlatformTouchPoint& point)
 {
     int manhattanDistance = abs(point.pos().x() - m_firstTouchPosition.x()) + abs(point.pos().y() - m_firstTouchPosition.y());
     return manhattanDistance < maximumTouchMoveInPixelsForClick;
 }
 
-void InnerGestureRecognizer::appendClickGestureEvent(const PlatformTouchPoint& touchPoint, InnerGestureRecognizer::Gestures gestures)
+void GestureRecognizerChromium::appendClickGestureEvent(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::TapType, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, 0.0f, 0.0f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    gestures->append(PlatformGestureEvent(PlatformGestureEvent::TapType, m_firstTouchPosition, m_firstTouchScreenPosition, m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
 }
 
-PlatformGestureRecognizer::PassGestures InnerGestureRecognizer::processTouchEventForGestures(const PlatformTouchEvent& event, bool defaultPrevented)
+PlatformGestureRecognizer::PassGestures GestureRecognizerChromium::processTouchEventForGestures(const PlatformTouchEvent& event, bool defaultPrevented)
 {
     m_ctrlKey = event.ctrlKey();
     m_altKey = event.altKey();
@@ -122,38 +111,37 @@ PlatformGestureRecognizer::PassGestures InnerGestureRecognizer::processTouchEven
         updateValues(event.timestamp(), p);
 
         if (GestureTransitionFunction ef = m_edgeFunctions.get(signature(m_state, p.id(), p.state(), defaultPrevented)))
-            (*ef)(this, p, gestures.get());
+            ((*this).*ef)(p, gestures.get());
     }
     return gestures.release();
 }
 
-void InnerGestureRecognizer::appendScrollGestureBegin(const IntPoint& touchPoint, Gestures gestures)
+void GestureRecognizerChromium::appendScrollGestureBegin(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollBeginType, touchPoint, touchPoint, m_lastTouchTime, 0.0f, 0.0f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
-    m_firstTouchPosition = touchPoint;
-    m_lastTouchPosition = m_firstTouchPosition;
+    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollBeginType, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
 }
 
-void InnerGestureRecognizer::appendScrollGestureEnd(const IntPoint& touchPoint, Gestures gestures)
+void GestureRecognizerChromium::appendScrollGestureEnd(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollEndType, m_firstTouchPosition, m_firstTouchPosition, m_lastTouchTime, 0.0f, 0.0f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollEndType, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
 }
 
-void InnerGestureRecognizer::appendScrollGestureUpdate(const IntPoint& touchPoint, Gestures gestures)
+void GestureRecognizerChromium::appendScrollGestureUpdate(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
-    float deltaX(touchPoint.x() - m_lastTouchPosition.x());
-    float deltaY(touchPoint.y() - m_lastTouchPosition.y());
+    float deltaX(touchPoint.pos().x() - m_firstTouchPosition.x());
+    float deltaY(touchPoint.pos().y() - m_firstTouchPosition.y());
 
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollUpdateType, m_firstTouchPosition, m_firstTouchPosition, m_lastTouchTime, deltaX, deltaY, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
-    m_lastTouchPosition = touchPoint;
+    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollUpdateType, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, deltaX, deltaY, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    m_firstTouchPosition = touchPoint.pos();
 }
 
-void InnerGestureRecognizer::updateValues(const double touchTime, const PlatformTouchPoint& touchPoint)
+void GestureRecognizerChromium::updateValues(const double touchTime, const PlatformTouchPoint& touchPoint)
 {
     m_lastTouchTime = touchTime;
     if (state() == NoGesture) {
         m_firstTouchTime = touchTime;
         m_firstTouchPosition = touchPoint.pos();
+        m_firstTouchScreenPosition = touchPoint.screenPos();
     }
 }
 
@@ -163,60 +151,62 @@ void InnerGestureRecognizer::updateValues(const double touchTime, const Platform
 // 1 bit for |handled|
 // 12 bits for |id|
 // 15 bits for the |gestureState|.
-unsigned int InnerGestureRecognizer::signature(State gestureState, unsigned id, PlatformTouchPoint::State touchType, bool handled)
+unsigned int GestureRecognizerChromium::signature(State gestureState, unsigned id, PlatformTouchPoint::State touchType, bool handled)
 {
     ASSERT((id & 0xfff) == id);
     return 1 + ((touchType & 0x7) << 1 | (handled ? 1 << 4 : 0) | ((id & 0xfff) << 5 ) | (gestureState << 17));
 }
 
-static bool touchDown(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures gestures)
+bool GestureRecognizerChromium::touchDown(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
-    gestureRecognizer->setState(InnerGestureRecognizer::PendingSyntheticClick);
+    setState(PendingSyntheticClick);
+    // FIXME: Divide TapType into down and up events.
     return false;
 }
 
-static bool scrollEnd(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint& point, InnerGestureRecognizer::Gestures gestures)
+bool GestureRecognizerChromium::scrollEnd(const PlatformTouchPoint& point, Gestures gestures)
 {
-    gestureRecognizer->appendScrollGestureEnd(point.pos(), gestures);
-    gestureRecognizer->setState(InnerGestureRecognizer::NoGesture);
+    appendScrollGestureEnd(point, gestures);
+    setState(NoGesture);
+    reset();
     return false;
 }
 
-static bool noGesture(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures gestures)
+bool GestureRecognizerChromium::noGesture(const PlatformTouchPoint&, Gestures)
 {
-    gestureRecognizer->reset();
+    reset();
     return false;
 }
 
-static bool click(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint& point, InnerGestureRecognizer::Gestures gestures)
+bool GestureRecognizerChromium::click(const PlatformTouchPoint& point, Gestures gestures)
 {
-    if (gestureRecognizer->isInClickTimeWindow() && gestureRecognizer->isInsideManhattanSquare(point)) {
-        gestureRecognizer->setState(InnerGestureRecognizer::NoGesture);
-        gestureRecognizer->appendClickGestureEvent(point, gestures);
+    if (isInClickTimeWindow() && isInsideManhattanSquare(point)) {
+        setState(NoGesture);
+        appendClickGestureEvent(point, gestures);
         return true;
     }
-    return noGesture(gestureRecognizer, point, gestures);
+    return noGesture(point, gestures);
 }
 
-static bool isClickOrScroll(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint& point, InnerGestureRecognizer::Gestures gestures)
+bool GestureRecognizerChromium::isClickOrScroll(const PlatformTouchPoint& point, Gestures gestures)
 {
-    if (gestureRecognizer->isInClickTimeWindow() && gestureRecognizer->isInsideManhattanSquare(point)) {
-        gestureRecognizer->setState(InnerGestureRecognizer::PendingSyntheticClick);
+    if (isInClickTimeWindow() && isInsideManhattanSquare(point)) {
+        setState(GestureRecognizerChromium::PendingSyntheticClick);
         return false;
     }
 
-    if (point.state() == PlatformTouchPoint::TouchMoved && !gestureRecognizer->isInsideManhattanSquare(point)) {
-        gestureRecognizer->appendScrollGestureBegin(gestureRecognizer->firstTouchPosition(), gestures);
-        gestureRecognizer->appendScrollGestureUpdate(point.pos(), gestures);
-        gestureRecognizer->setState(InnerGestureRecognizer::Scroll);
+    if (point.state() == PlatformTouchPoint::TouchMoved && !isInsideManhattanSquare(point)) {
+        appendScrollGestureBegin(point, gestures);
+        appendScrollGestureUpdate(point, gestures);
+        setState(Scroll);
         return true;
     }
     return false;
 }
 
-static bool inScroll(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint& point, InnerGestureRecognizer::Gestures gestures)
+bool GestureRecognizerChromium::inScroll(const PlatformTouchPoint& point, Gestures gestures)
 {
-    gestureRecognizer->appendScrollGestureUpdate(point.pos(), gestures);
+    appendScrollGestureUpdate(point, gestures);
     return true;
 }
 
@@ -232,25 +222,6 @@ PlatformGestureRecognizer::PlatformGestureRecognizer()
 
 PlatformGestureRecognizer::~PlatformGestureRecognizer()
 {
-}
-
-GestureRecognizerChromium::GestureRecognizerChromium()
-    : m_innerGestureRecognizer()
-{
-}
-
-GestureRecognizerChromium::~GestureRecognizerChromium()
-{
-}
-
-PlatformGestureRecognizer::PassGestures GestureRecognizerChromium::processTouchEventForGestures(const PlatformTouchEvent& touchEvent, bool defaultPrevented)
-{
-    return m_innerGestureRecognizer.processTouchEventForGestures(touchEvent, defaultPrevented);
-}
-
-void GestureRecognizerChromium::reset()
-{
-    m_innerGestureRecognizer.reset();
 }
 
 } // namespace WebCore

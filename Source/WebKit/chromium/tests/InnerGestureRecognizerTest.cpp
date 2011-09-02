@@ -36,18 +36,17 @@
 
 using namespace WebCore;
 
-namespace {
 
-class InspectableInnerGestureRecognizer : public InnerGestureRecognizer {
+class InspectableGestureRecognizerChromium : public WebCore::GestureRecognizerChromium {
 public:
-    InspectableInnerGestureRecognizer()
-        : WebCore::InnerGestureRecognizer()
+    InspectableGestureRecognizerChromium()
+        : WebCore::GestureRecognizerChromium()
     {
     }
 
     int signature(State gestureState, unsigned id, PlatformTouchPoint::State touchType, bool handled)
     {
-        return InnerGestureRecognizer::signature(gestureState, id, touchType, handled);
+        return GestureRecognizerChromium::signature(gestureState, id, touchType, handled);
     };
 
     IntPoint firstTouchPosition() { return m_firstTouchPosition; };
@@ -58,20 +57,43 @@ public:
     void setLastTouchTime(double t) { m_lastTouchTime = t; };
     double lastTouchTime() { return m_lastTouchTime; };
 
-    InnerGestureRecognizer::GestureTransitionFunction edgeFunction(int hash)
+    GestureRecognizerChromium::GestureTransitionFunction edgeFunction(int hash)
     {
         return m_edgeFunctions.get(hash);
     };
 
     virtual void updateValues(double d, const PlatformTouchPoint &p)
     {
-        InnerGestureRecognizer::updateValues(d, p);
+        GestureRecognizerChromium::updateValues(d, p);
     };
 
     void addEdgeFunction(State state, unsigned finger, PlatformTouchPoint::State touchState, bool touchHandledByJavaScript, GestureTransitionFunction function)
     {
-        InnerGestureRecognizer::addEdgeFunction(state, finger, touchState, touchHandledByJavaScript, function);
+        GestureRecognizerChromium::addEdgeFunction(state, finger, touchState, touchHandledByJavaScript, function);
     };
+
+    bool stubEdgeFunction(const PlatformTouchPoint&, GestureRecognizerChromium::Gestures*);
+
+    void setStateTest(State value)
+    {
+        GestureRecognizerChromium::setState(value);
+    };
+
+    bool isInsideManhattanSquare(const PlatformTouchPoint& touchPoint)
+    {
+        return GestureRecognizerChromium::isInsideManhattanSquare(touchPoint);
+    };
+
+    bool isInClickTimeWindow()
+    {
+        return GestureRecognizerChromium::isInClickTimeWindow();
+    };
+
+};
+
+bool InspectableGestureRecognizerChromium::stubEdgeFunction(const PlatformTouchPoint&, GestureRecognizerChromium::Gestures*)
+{
+    return false;
 };
 
 class BuildablePlatformTouchPoint : public WebCore::PlatformTouchPoint {
@@ -126,46 +148,46 @@ public:
     }
 };
 
-class TestGestureRecognizer : public testing::Test {
+class GestureRecognizerTest : public testing::Test {
 public:
-    TestGestureRecognizer() { }
+    GestureRecognizerTest() { }
 
 protected:
     virtual void SetUp() { }
     virtual void TearDown() { }
 };
 
-TEST_F(TestGestureRecognizer, hash)
+TEST_F(GestureRecognizerTest, hash)
 {
-    InspectableInnerGestureRecognizer testGm;
+    InspectableGestureRecognizerChromium testGm;
     const unsigned FirstFinger = 0;
     const unsigned SecondFinger = 1;
 
-    ASSERT_EQ(1 + 0, testGm.signature(InnerGestureRecognizer::NoGesture, FirstFinger, PlatformTouchPoint::TouchReleased, false));
+    ASSERT_EQ(1 + 0, testGm.signature(GestureRecognizerChromium::NoGesture, FirstFinger, PlatformTouchPoint::TouchReleased, false));
 
-    ASSERT_EQ(1 + ((8 | 1) << 1), testGm.signature(InnerGestureRecognizer::NoGesture, FirstFinger, PlatformTouchPoint::TouchPressed, true));
+    ASSERT_EQ(1 + ((8 | 1) << 1), testGm.signature(GestureRecognizerChromium::NoGesture, FirstFinger, PlatformTouchPoint::TouchPressed, true));
 
-    ASSERT_EQ(1 + ((0x10000 | 2) << 1), testGm.signature(InnerGestureRecognizer::PendingSyntheticClick, FirstFinger, PlatformTouchPoint::TouchMoved, false));
+    ASSERT_EQ(1 + ((0x10000 | 2) << 1), testGm.signature(GestureRecognizerChromium::PendingSyntheticClick, FirstFinger, PlatformTouchPoint::TouchMoved, false));
 
-    ASSERT_EQ(1 + (0x20000 << 1), testGm.signature(InnerGestureRecognizer::Scroll, FirstFinger, PlatformTouchPoint::TouchReleased, false));
+    ASSERT_EQ(1 + (0x20000 << 1), testGm.signature(GestureRecognizerChromium::Scroll, FirstFinger, PlatformTouchPoint::TouchReleased, false));
 
-    ASSERT_EQ(1 + ((0x20000 | 1) << 1), testGm.signature(InnerGestureRecognizer::Scroll, FirstFinger, PlatformTouchPoint::TouchPressed, false));
+    ASSERT_EQ(1 + ((0x20000 | 1) << 1), testGm.signature(GestureRecognizerChromium::Scroll, FirstFinger, PlatformTouchPoint::TouchPressed, false));
 
-    ASSERT_EQ(1 + ((0x20000 | 0x10 | 8 | 1) << 1), testGm.signature(InnerGestureRecognizer::Scroll, SecondFinger, PlatformTouchPoint::TouchPressed, true));
+    ASSERT_EQ(1 + ((0x20000 | 0x10 | 8 | 1) << 1), testGm.signature(GestureRecognizerChromium::Scroll, SecondFinger, PlatformTouchPoint::TouchPressed, true));
 }
 
-TEST_F(TestGestureRecognizer, state)
+TEST_F(GestureRecognizerTest, state)
 {
-    InspectableInnerGestureRecognizer testGm;
+    InspectableGestureRecognizerChromium testGm;
 
     ASSERT_EQ(0, testGm.state());
-    testGm.setState(InnerGestureRecognizer::PendingSyntheticClick);
-    ASSERT_EQ(InnerGestureRecognizer::PendingSyntheticClick, testGm.state());
+    testGm.setStateTest(GestureRecognizerChromium::PendingSyntheticClick);
+    ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, testGm.state());
 }
 
-TEST_F(TestGestureRecognizer, isInsideManhattanSquare)
+TEST_F(GestureRecognizerTest, isInsideManhattanSquare)
 {
-    InspectableInnerGestureRecognizer gm;
+    InspectableGestureRecognizerChromium gm;
     BuildablePlatformTouchPoint p;
 
     ASSERT_EQ(0.0, gm.firstTouchPosition().x());
@@ -196,9 +218,9 @@ TEST_F(TestGestureRecognizer, isInsideManhattanSquare)
     ASSERT_FALSE(gm.isInsideManhattanSquare(p));
 }
 
-TEST_F(TestGestureRecognizer, isInClickTimeWindow)
+TEST_F(GestureRecognizerTest, isInClickTimeWindow)
 {
-    InspectableInnerGestureRecognizer gm;
+    InspectableGestureRecognizerChromium gm;
 
     gm.setFirstTouchTime(0.0);
     gm.setLastTouchTime(0.0);
@@ -217,21 +239,21 @@ TEST_F(TestGestureRecognizer, isInClickTimeWindow)
     ASSERT_FALSE(gm.isInClickTimeWindow());
 }
 
-TEST_F(TestGestureRecognizer, addEdgeFunction)
+TEST_F(GestureRecognizerTest, addEdgeFunction)
 {
-    InspectableInnerGestureRecognizer gm;
-    gm.addEdgeFunction(InnerGestureRecognizer::Scroll, 0, PlatformTouchPoint::TouchReleased, true, (InnerGestureRecognizer::GestureTransitionFunction)4096);
+    InspectableGestureRecognizerChromium gm;
+    gm.addEdgeFunction(GestureRecognizerChromium::Scroll, 0, PlatformTouchPoint::TouchReleased, true, (GestureRecognizerChromium::GestureTransitionFunction)&InspectableGestureRecognizerChromium::stubEdgeFunction);
 
-    ASSERT_EQ((InnerGestureRecognizer::GestureTransitionFunction)4096, gm.edgeFunction(gm.signature(InnerGestureRecognizer::Scroll, 0, PlatformTouchPoint::TouchReleased, true)));
+    ASSERT_EQ((GestureRecognizerChromium::GestureTransitionFunction)&InspectableGestureRecognizerChromium::stubEdgeFunction, gm.edgeFunction(gm.signature(GestureRecognizerChromium::Scroll, 0, PlatformTouchPoint::TouchReleased, true)));
 }
 
-TEST_F(TestGestureRecognizer, updateValues)
+TEST_F(GestureRecognizerTest, updateValues)
 {
-    InspectableInnerGestureRecognizer gm;
+    InspectableGestureRecognizerChromium gm;
 
     ASSERT_EQ(0.0, gm.firstTouchTime());
     ASSERT_EQ(0.0, gm.lastTouchTime());
-    ASSERT_EQ(InnerGestureRecognizer::NoGesture, gm.state());
+    ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 
     BuildablePlatformTouchPoint p1(10, 11);
     gm.updateValues(1.1, p1);
@@ -242,7 +264,7 @@ TEST_F(TestGestureRecognizer, updateValues)
     ASSERT_EQ(0.0, gm.lastTouchTime() - gm.firstTouchTime());
 
     BuildablePlatformTouchPoint p2(13, 14);
-    gm.setState(InnerGestureRecognizer::PendingSyntheticClick);
+    gm.setStateTest(GestureRecognizerChromium::PendingSyntheticClick);
     gm.updateValues(2.0, p2);
 
     ASSERT_EQ(10, gm.firstTouchPosition().x());
@@ -251,7 +273,7 @@ TEST_F(TestGestureRecognizer, updateValues)
     ASSERT_EQ(2.0 - 1.1, gm.lastTouchTime() - gm.firstTouchTime());
 
     BuildablePlatformTouchPoint p3(23, 34);
-    gm.setState(InnerGestureRecognizer::NoGesture);
+    gm.setStateTest(GestureRecognizerChromium::NoGesture);
     gm.updateValues(3.0, p3);
 
     ASSERT_EQ(23, gm.firstTouchPosition().x());
@@ -260,17 +282,17 @@ TEST_F(TestGestureRecognizer, updateValues)
     ASSERT_EQ(0.0, gm.lastTouchTime() - gm.firstTouchTime());
 }
 
-TEST_F(TestGestureRecognizer, gestureScrollEvents)
+TEST_F(GestureRecognizerTest, gestureScrollEvents)
 {
-    InspectableInnerGestureRecognizer gm;
+    InspectableGestureRecognizerChromium gm;
 
-    ASSERT_EQ(InnerGestureRecognizer::NoGesture, gm.state());
+    ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 
     BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
     BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press);
     gm.processTouchEventForGestures(pressEvent, false);
 
-    ASSERT_EQ(InnerGestureRecognizer::PendingSyntheticClick, gm.state());
+    ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint move(10, 50, PlatformTouchPoint::TouchMoved);
     BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move);
@@ -291,7 +313,7 @@ TEST_F(TestGestureRecognizer, gestureScrollEvents)
 
     ASSERT_TRUE(scrollStarted);
     ASSERT_TRUE(scrollUpdated);
-    ASSERT_EQ(InnerGestureRecognizer::Scroll, gm.state());
+    ASSERT_EQ(GestureRecognizerChromium::Scroll, gm.state());
 
     BuildablePlatformTouchPoint release(10, 50, PlatformTouchPoint::TouchReleased);
     BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release);
@@ -307,7 +329,5 @@ TEST_F(TestGestureRecognizer, gestureScrollEvents)
         }
     }
     ASSERT_TRUE(scrollEnd);
-    ASSERT_EQ(InnerGestureRecognizer::NoGesture, gm.state());
+    ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 }
-
-} // namespace
