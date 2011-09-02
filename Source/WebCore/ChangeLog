@@ -1,3 +1,31 @@
+2011-09-02  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Send Blob as WebSocket binary message
+        https://bugs.webkit.org/show_bug.cgi?id=67465
+
+        Reviewed by Kent Tamura.
+
+        Re-lands r94399 with a fix for Leopard builds.
+
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocket::send):
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        (WebCore::V8WebSocket::sendCallback):
+        * websockets/ThreadableWebSocketChannel.h:
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::send):
+        * websockets/WebSocket.h:
+        * websockets/WebSocket.idl:
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::send):
+        * websockets/WebSocketChannel.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::send):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSendBlob):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+
 2011-09-02  Patrick Gansterer  <paroga@webkit.org>
 
         [GTK] Generate gobject bindings for Notification and NotificationCenter

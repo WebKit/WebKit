@@ -1,3 +1,37 @@
+2011-09-02  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Send Blob as WebSocket binary message
+        https://bugs.webkit.org/show_bug.cgi?id=67465
+
+        Reviewed by Kent Tamura.
+
+        Re-lands r94399 with a fix for Leopard builds.
+
+        * http/tests/websocket/tests/hixie76/send-empty-expected.txt: Added.
+        * http/tests/websocket/tests/hixie76/send-empty.html: Added.
+        * http/tests/websocket/tests/hixie76/send-object-expected.txt: Added.
+        * http/tests/websocket/tests/hixie76/send-object.html: Added.
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close-expected.txt:
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close.html:
+        * http/tests/websocket/tests/hybi/send-blob-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/send-blob.html: Added.
+        * http/tests/websocket/tests/hybi/send-blob_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/send-empty-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/send-empty.html: Added.
+        * http/tests/websocket/tests/hybi/send-file-blob-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/send-file-blob-fail-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/send-file-blob-fail.html: Added.
+        * http/tests/websocket/tests/hybi/send-file-blob.html: Added.
+        * http/tests/websocket/tests/hybi/send-file-blob_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/workers/resources/send-blob.js: Added.
+        * http/tests/websocket/tests/hybi/workers/resources/send-blob_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/workers/send-blob-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/workers/send-blob.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-09-02  Kenichi Ishibashi  <bashi@chromium.org>
 
         [chromium] editing/selection/regional-indicators.html timing out on Linux
