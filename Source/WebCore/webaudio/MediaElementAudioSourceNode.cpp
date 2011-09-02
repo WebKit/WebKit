@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEB_AUDIO)
+#if ENABLE(WEB_AUDIO) && ENABLE(VIDEO)
 
 #include "MediaElementAudioSourceNode.h"
 

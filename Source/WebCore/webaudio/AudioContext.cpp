@@ -49,17 +49,20 @@
 #include "FFTFrame.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
-#include "HTMLMediaElement.h"
 #include "HighPass2FilterNode.h"
 #include "JavaScriptAudioNode.h"
 #include "LowPass2FilterNode.h"
-#include "MediaElementAudioSourceNode.h"
 #include "OfflineAudioCompletionEvent.h"
 #include "OfflineAudioDestinationNode.h"
 #include "PlatformString.h"
 #include "RealtimeAnalyserNode.h"
 #include "WaveShaperNode.h"
 #include "ScriptCallStack.h"
+
+#if ENABLE(VIDEO)
+#include "HTMLMediaElement.h"
+#include "MediaElementAudioSourceNode.h"
+#endif
 
 #if DEBUG_AUDIONODE_REFERENCES
 #include <stdio.h>
@@ -312,6 +315,7 @@ PassRefPtr<AudioBufferSourceNode> AudioContext::createBufferSource()
     return node;
 }
 
+#if ENABLE(VIDEO)
 PassRefPtr<MediaElementAudioSourceNode> AudioContext::createMediaElementSource(HTMLMediaElement* mediaElement, ExceptionCode& ec)
 {
     ASSERT(mediaElement);
@@ -336,6 +340,7 @@ PassRefPtr<MediaElementAudioSourceNode> AudioContext::createMediaElementSource(H
     refNode(node.get()); // context keeps reference until node is disconnected
     return node;
 }
+#endif
 
 PassRefPtr<JavaScriptAudioNode> AudioContext::createJavaScriptNode(size_t bufferSize)
 {

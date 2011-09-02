@@ -24,7 +24,7 @@
 
 module audio {
     interface [
-        Conditional=WEB_AUDIO,
+        Conditional=WEB_AUDIO&VIDEO,
         GenerateToJS
     ] MediaElementAudioSourceNode : AudioSourceNode {
         readonly attribute HTMLMediaElement mediaElement;
