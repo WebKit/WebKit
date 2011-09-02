@@ -52,7 +52,7 @@ function addSecondIFrame() {
     addIFrameWithContinuation("resources/origin-usage-iframe-2.html", function(event) {
         log(event.data);
         var usage = layoutTestController.applicationCacheDiskUsageForOrigin(drtURL);
-        log("Usage for " + drtURL + " after second frame is between 30000 and 31000 bytes: " + ((usage > 30000) && (usage < 31000)));
+        log("Usage for " + drtURL + " after second frame is between 30000 and 32000 bytes: " + ((usage > 30000) && (usage < 32000)));
 
         log("Removing Application Cache for " + drtURL);
         layoutTestController.clearApplicationCacheForOrigin(drtURL);
