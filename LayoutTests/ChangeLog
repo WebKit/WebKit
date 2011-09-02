@@ -1,5 +1,11 @@
 2011-09-02  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Update expectations for tests with animations and reflections
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-02  James Robinson  <jamesr@chromium.org>
+
         [chromium] Update some chromium gpu baselines
 
         * platform/chromium-gpu-cg-mac/compositing/images/content-image-change-expected.png: Added.

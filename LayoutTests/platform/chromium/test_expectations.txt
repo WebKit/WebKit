@@ -2582,9 +2582,8 @@ BUGWK47949 MAC GPU : compositing/reflections/nested-reflection-anchor-point.html
 BUGWK47949 LINUX WIN GPU : compositing/reflections/reflection-opacity.html = IMAGE+TEXT
 BUGWK47949 MAC GPU : compositing/reflections/reflection-opacity.html = IMAGE
 
-// Flaky in debug mode because this is a poorly written test
-BUGWK54306 GPU DEBUG : compositing/reflections/animation-inside-reflection.html = PASS IMAGE+TEXT
-// Flaky everywhere for the same reason
+// Flaky because these are a poorly written tests. Need dino's new animation API
+BUGWK54306 GPU : compositing/reflections/animation-inside-reflection.html = PASS IMAGE IMAGE+TEXT
 BUGWK54306 GPU : compositing/reflections/nested-reflection-animated.html = PASS IMAGE
 
 // These tests are too slow with our MESA backend.  We can re-enable when we have
