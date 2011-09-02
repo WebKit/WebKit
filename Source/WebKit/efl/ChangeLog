@@ -1,3 +1,11 @@
+2011-09-02  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed build fix after r67110.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_need_touch_events_get): Make the function signature match
+        its declaration.
+
 2011-09-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Allow controlling minimum DOMTimer interval on a per-page basis
