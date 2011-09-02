@@ -1,5 +1,13 @@
 2011-09-01  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Add chromium leopard baselines
+
+        * platform/chromium-cg-mac-leopard/fast/text/international/bidi-mirror-he-ar-expected.png:
+        * platform/chromium-cg-mac-leopard/fast/text/international/bidi-mirror-he-ar-expected.txt: Copied from LayoutTests/platform/win/fast/text/international/bidi-mirror-he-ar-expected.txt.
+        * platform/win-wk2/fast/text/international/bidi-mirror-he-ar-expected.txt: Renamed from LayoutTests/platform/win/fast/text/international/bidi-mirror-he-ar-expected.txt.
+
+2011-09-01  James Robinson  <jamesr@chromium.org>
+
         [chromium] Remove expectation lines for tests that pass
 
         * platform/chromium/test_expectations.txt:
