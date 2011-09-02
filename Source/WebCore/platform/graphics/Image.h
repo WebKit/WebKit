@@ -128,7 +128,7 @@ public:
     // Typically the CachedImage that owns us.
     ImageObserver* imageObserver() const { return m_imageObserver; }
 
-    enum TileRule { StretchTile, RoundTile, RepeatTile };
+    enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };
 
     virtual NativeImagePtr nativeImageForCurrentFrame() { return 0; }
     

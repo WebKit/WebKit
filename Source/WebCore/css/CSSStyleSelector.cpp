@@ -4328,6 +4328,24 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setMaskBoxImage(image);
         return;
     }
+    case CSSPropertyBorderImageRepeat:
+    case CSSPropertyWebkitMaskBoxImageRepeat: {
+        bool isBorderImage = id == CSSPropertyBorderImageRepeat;
+        NinePieceImage image(isBorderImage ? m_style->borderImage() : m_style->maskBoxImage());
+        if (isInherit)
+            image.copyRepeatFrom(isBorderImage ? m_parentStyle->borderImage() : m_parentStyle->maskBoxImage());
+        else if (isInitial) {
+            image.setHorizontalRule(StretchImageRule);
+            image.setVerticalRule(StretchImageRule);
+        } else
+            mapNinePieceImageRepeat(value, image);
+        
+        if (isBorderImage)
+            m_style->setBorderImage(image);
+        else
+            m_style->setMaskBoxImage(image);
+        return;
+    }
     case CSSPropertyBorderImageSlice:
     case CSSPropertyWebkitMaskBoxImageSlice: {
         bool isBorderImage = id == CSSPropertyBorderImageSlice;
@@ -5692,33 +5710,7 @@ void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value
     mapNinePieceImageSlice(borderImage->m_slice.get(), image);
 
     // Set the appropriate rules for stretch/round/repeat of the slices
-    ENinePieceImageRule horizontalRule;
-    switch (borderImage->m_horizontalSizeRule) {
-        case CSSValueStretch:
-            horizontalRule = StretchImageRule;
-            break;
-        case CSSValueRound:
-            horizontalRule = RoundImageRule;
-            break;
-        default: // CSSValueRepeat
-            horizontalRule = RepeatImageRule;
-            break;
-    }
-    image.setHorizontalRule(horizontalRule);
-
-    ENinePieceImageRule verticalRule;
-    switch (borderImage->m_verticalSizeRule) {
-        case CSSValueStretch:
-            verticalRule = StretchImageRule;
-            break;
-        case CSSValueRound:
-            verticalRule = RoundImageRule;
-            break;
-        default: // CSSValueRepeat
-            verticalRule = RepeatImageRule;
-            break;
-    }
-    image.setVerticalRule(verticalRule);
+    mapNinePieceImageRepeat(borderImage->m_repeat.get(), image);
 }
 
 void CSSStyleSelector::mapNinePieceImageSlice(CSSValue* value, NinePieceImage& image)
@@ -5752,6 +5744,54 @@ void CSSStyleSelector::mapNinePieceImageSlice(CSSValue* value, NinePieceImage& i
 
     // Set our fill mode.
     image.setFill(borderImageSlice->m_fill);
+}
+
+void CSSStyleSelector::mapNinePieceImageRepeat(CSSValue* value, NinePieceImage& image)
+{
+    if (!value || !value->isPrimitiveValue())
+        return;
+    
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+    Pair* pair = primitiveValue->getPairValue();
+    if (!pair || !pair->first() || !pair->second())
+        return;
+
+    int firstIdentifier = pair->first()->getIdent();
+    int secondIdentifier = pair->second()->getIdent();
+
+    ENinePieceImageRule horizontalRule;
+    switch (firstIdentifier) {
+    case CSSValueStretch:
+        horizontalRule = StretchImageRule;
+        break;
+    case CSSValueRound:
+        horizontalRule = RoundImageRule;
+        break;
+    case CSSValueSpace:
+        horizontalRule = SpaceImageRule;
+        break;
+    default: // CSSValueRepeat
+        horizontalRule = RepeatImageRule;
+        break;
+    }
+    image.setHorizontalRule(horizontalRule);
+
+    ENinePieceImageRule verticalRule;
+    switch (secondIdentifier) {
+    case CSSValueStretch:
+        verticalRule = StretchImageRule;
+        break;
+    case CSSValueRound:
+        verticalRule = RoundImageRule;
+        break;
+    case CSSValueSpace:
+        verticalRule = SpaceImageRule;
+        break;
+    default: // CSSValueRepeat
+        verticalRule = RepeatImageRule;
+        break;
+    }
+    image.setVerticalRule(verticalRule);
 }
 
 void CSSStyleSelector::checkForTextSizeAdjust()

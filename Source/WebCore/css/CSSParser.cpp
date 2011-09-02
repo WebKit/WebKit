@@ -1451,6 +1451,15 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         break;
     }
+    case CSSPropertyBorderImageRepeat:
+    case CSSPropertyWebkitMaskBoxImageRepeat: {
+        RefPtr<CSSValue> result;
+        if (parseBorderImageRepeat(result)) {
+            addProperty(propId, result, important);
+            return true;
+        }
+        break;
+    }
     case CSSPropertyBorderImageSlice:
     case CSSPropertyWebkitMaskBoxImageSlice: {
         RefPtr<CSSBorderImageSliceValue> result;
@@ -5129,27 +5138,25 @@ struct BorderImageParseContext {
     , m_allowBreak(false)
     , m_allowSlash(false)
     , m_allowWidth(false)
-    , m_allowRule(false)
+    , m_allowRepeat(false)
     , m_borderTop(0)
     , m_borderRight(0)
     , m_borderBottom(0)
     , m_borderLeft(0)
-    , m_horizontalRule(0)
-    , m_verticalRule(0)
     {}
 
     bool allowBreak() const { return m_allowBreak; }
     bool allowSlash() const { return m_allowSlash; }
     bool allowWidth() const { return m_allowWidth; }
-    bool allowRule() const { return m_allowRule; }
+    bool allowRepeat() const { return m_allowRepeat; }
 
     void commitImage(PassRefPtr<CSSValue> image) { m_image = image; }
     void commitSlice(PassRefPtr<CSSBorderImageSliceValue> slice)
     {
         m_slice = slice;
-        m_allowBreak = m_allowSlash = m_allowRule = true;
+        m_allowBreak = m_allowSlash = m_allowRepeat = true;
     }
-    void commitSlash() { m_allowBreak = m_allowSlash = false; m_allowWidth = true; }
+    void commitSlash() { m_allowBreak = m_allowSlash = m_allowRepeat = false; m_allowWidth = true; }
     void commitWidth(CSSParserValue* val)
     {
         if (!m_borderTop)
@@ -5163,26 +5170,22 @@ struct BorderImageParseContext {
             m_borderLeft = val;
         }
 
-        m_allowBreak = m_allowRule = true;
+        m_allowBreak = m_allowRepeat = true;
         m_allowWidth = !m_borderLeft;
     }
-    void commitRule(int keyword)
+    void commitRepeat(PassRefPtr<CSSValue> repeat)
     {
-        if (!m_horizontalRule)
-            m_horizontalRule = keyword;
-        else if (!m_verticalRule)
-            m_verticalRule = keyword;
-        m_allowRule = !m_verticalRule;
+        m_repeat = repeat;
+        m_allowRepeat = m_allowSlash = m_allowWidth = false;
+        m_allowBreak = true;
     }
+
     PassRefPtr<CSSValue> commitBorderImage(CSSParser* p, bool important)
     {
-        // Fill in STRETCH as the default if it wasn't specified.
-        if (!m_horizontalRule)
-            m_horizontalRule = CSSValueStretch;
-
-        // The vertical rule should match the horizontal rule if unspecified.
-        if (!m_verticalRule)
-            m_verticalRule = m_horizontalRule;
+        if (!m_repeat) {
+            // Fill in STRETCH as the initial value if no repeat value was specified.
+            m_repeat = m_primitiveValueCache->createValue(Pair::create(m_primitiveValueCache->createIdentifierValue(CSSValueStretch), m_primitiveValueCache->createIdentifierValue(CSSValueStretch)));
+        }
 
         // Now we have to deal with the border widths.  The best way to deal with these is to actually put these values into a value
         // list and then make our parsing machinery do the parsing.
@@ -5202,7 +5205,7 @@ struct BorderImageParseContext {
         }
 
         // Make our new border image value now.
-        return CSSBorderImageValue::create(m_image, m_slice, m_horizontalRule, m_verticalRule);
+        return CSSBorderImageValue::create(m_image, m_slice, m_repeat);
     }
     
     CSSPrimitiveValueCache* m_primitiveValueCache;
@@ -5210,7 +5213,7 @@ struct BorderImageParseContext {
     bool m_allowBreak;
     bool m_allowSlash;
     bool m_allowWidth;
-    bool m_allowRule;
+    bool m_allowRepeat;
 
     RefPtr<CSSValue> m_image;
     RefPtr<CSSBorderImageSliceValue> m_slice;
@@ -5219,9 +5222,8 @@ struct BorderImageParseContext {
     CSSParserValue* m_borderRight;
     CSSParserValue* m_borderBottom;
     CSSParserValue* m_borderLeft;
-
-    int m_horizontalRule;
-    int m_verticalRule;
+    
+    RefPtr<CSSValue> m_repeat;
 };
 
 bool CSSParser::parseBorderImage(int propId, bool important, RefPtr<CSSValue>& result)
@@ -5257,9 +5259,10 @@ bool CSSParser::parseBorderImage(int propId, bool important, RefPtr<CSSValue>& r
         } else if (context.allowWidth() &&
             (val->id == CSSValueThin || val->id == CSSValueMedium || val->id == CSSValueThick || validUnit(val, FLength, m_strict))) {
             context.commitWidth(val);
-        } else if (context.allowRule() &&
-            (val->id == CSSValueStretch || val->id == CSSValueRound || val->id == CSSValueRepeat)) {
-            context.commitRule(val->id);
+        } else if (context.allowRepeat()) {
+            RefPtr<CSSValue> repeat;
+            if (parseBorderImageRepeat(repeat))
+                context.commitRepeat(repeat);
         } else {
             // Something invalid was encountered.
             return false;
@@ -5356,6 +5359,34 @@ private:
     
     bool m_fill;
 };
+
+static bool isBorderImageRepeatKeyword(int id)
+{
+     return id == CSSValueStretch || id == CSSValueRepeat || id == CSSValueSpace || id == CSSValueRound;
+}
+
+bool CSSParser::parseBorderImageRepeat(RefPtr<CSSValue>& result)
+{
+    RefPtr<CSSPrimitiveValue> firstValue;
+    RefPtr<CSSPrimitiveValue> secondValue;
+    CSSParserValue* val = m_valueList->current();
+    if (isBorderImageRepeatKeyword(val->id))
+        firstValue = primitiveValueCache()->createIdentifierValue(val->id);
+    else
+        return false;
+    
+    val = m_valueList->next();
+    if (val) {
+        if (isBorderImageRepeatKeyword(val->id))
+            secondValue = primitiveValueCache()->createIdentifierValue(val->id);
+        else
+            return false;
+    } else
+        secondValue = firstValue;
+
+    result = primitiveValueCache()->createValue(Pair::create(firstValue, secondValue));
+    return true;
+}
 
 bool CSSParser::parseBorderImageSlice(int propId, RefPtr<CSSBorderImageSliceValue>& result)
 {

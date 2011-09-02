@@ -158,10 +158,10 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
         return;
     }
     
-    // FIXME: We do not support 'round' yet.  For now just map it to 'repeat'.
-    if (hRule == RoundTile)
+    // FIXME: We do not support 'round' or 'space' yet. For now just map them to 'repeat'.
+    if (hRule == RoundTile || hRule == SpaceTile)
         hRule = RepeatTile;
-    if (vRule == RoundTile)
+    if (vRule == RoundTile || vRule == SpaceTile)
         vRule = RepeatTile;
 
     FloatSize scale = calculatePatternScale(dstRect, srcRect, hRule, vRule);

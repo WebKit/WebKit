@@ -1,3 +1,70 @@
+2011-09-01  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67431
+        
+        Implement border-image-repeat. Similar to how border-image-slice was implemented, the parsing of the two
+        repeat values has been moved into separate functions. The value is represented as a Pair (similar to how we
+        handle border radius).
+
+        Reviewed by Beth Dakin.
+
+        Added fast/borders/border-image-repeat.html.
+
+        * css/CSSBorderImageValue.cpp:
+        (WebCore::CSSBorderImageValue::CSSBorderImageValue):
+        (WebCore::CSSBorderImageValue::cssText):
+        * css/CSSBorderImageValue.h:
+        (WebCore::CSSBorderImageValue::create):
+        Modified the CSSBorderImageValue (you're living on borrowed time, my friend!) to have a CSSValue that
+        contains a Pair.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForRepeatRule):
+        (WebCore::valueForNinePieceImageRepeat):
+        (WebCore::valueForNinePieceImage):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Add support for the new properties. Break out the value retrieval for the image repeat rules into its
+        own function, valueForNinePieceImageRepeat.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::BorderImageParseContext::BorderImageParseContext):
+        (WebCore::BorderImageParseContext::allowRepeat):
+        (WebCore::BorderImageParseContext::commitSlice):
+        (WebCore::BorderImageParseContext::commitSlash):
+        (WebCore::BorderImageParseContext::commitWidth):
+        (WebCore::BorderImageParseContext::commitRepeat):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (WebCore::CSSParser::parseBorderImage):
+        Modified the parsing of border image to call into parseBorderImageRepeat for the repeat values.
+
+        (WebCore::isBorderImageRepeatKeyword):
+        (WebCore::CSSParser::parseBorderImageRepeat):
+        The new parsing code for border-image-repeat is here. It will build up a CSSValue containing a Pair and
+        return the result.
+
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        Add the new properties.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapNinePieceImage):
+        (WebCore::CSSStyleSelector::mapNinePieceImageRepeat):
+        * css/CSSStyleSelector.h:
+        The mapping into the front end is done the same way as border-image-slice. Factor out the image repeat rules
+        portion into mapNinePieceImageRepeat.
+
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        Add the new 'space' value as a valid image tiling rule. It's not yet supported and, like the 'round' value,
+        is just mapped to 'repeat' for now.
+        
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImage::copyRepeatFrom):
+        Helper for copying only the repeat rules from another NinePieceImage.
+
 2011-09-02  Jarred Nicholls  <jarred@sencha.com>
 
         [Qt] number input not rendering spin buttons properly in RTL direction

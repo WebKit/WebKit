@@ -44,6 +44,7 @@
 #include "ExceptionCode.h"
 #include "FontFeatureSettings.h"
 #include "FontFeatureValue.h"
+#include "Pair.h"
 #include "Rect.h"
 #include "RenderBox.h"
 #include "RenderLayer.h"
@@ -73,6 +74,7 @@ static const int computedProperties[] = {
     CSSPropertyBorderBottomStyle,
     CSSPropertyBorderBottomWidth,
     CSSPropertyBorderCollapse,
+    CSSPropertyBorderImageRepeat,
     CSSPropertyBorderImageSlice,
     CSSPropertyBorderImageSource,
     CSSPropertyBorderLeftColor,
@@ -225,6 +227,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitMarqueeStyle,
     CSSPropertyWebkitMaskAttachment,
     CSSPropertyWebkitMaskBoxImage,
+    CSSPropertyWebkitMaskBoxImageRepeat,
     CSSPropertyWebkitMaskBoxImageSlice,
     CSSPropertyWebkitMaskBoxImageSource,
     CSSPropertyWebkitMaskClip,
@@ -316,11 +319,12 @@ static int valueForRepeatRule(int rule)
             return CSSValueRepeat;
         case RoundImageRule:
             return CSSValueRound;
+        case SpaceImageRule:
+            return CSSValueSpace;
         default:
             return CSSValueStretch;
     }
 }
-
 
 static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const NinePieceImage& image, CSSPrimitiveValueCache* primitiveValueCache)
 {
@@ -358,6 +362,12 @@ static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const Ni
     return CSSBorderImageSliceValue::create(rect, image.fill());
 }
 
+static PassRefPtr<CSSValue> valueForNinePieceImageRepeat(const NinePieceImage& image, CSSPrimitiveValueCache* primitiveValueCache)
+{
+    return primitiveValueCache->createValue(Pair::create(primitiveValueCache->createIdentifierValue(valueForRepeatRule(image.horizontalRule())),
+        primitiveValueCache->createIdentifierValue(valueForRepeatRule(image.verticalRule()))));
+}
+
 static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image, CSSPrimitiveValueCache* primitiveValueCache)
 {
     if (!image.hasImage())
@@ -370,7 +380,11 @@ static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image, 
     
     // Create the slices.
     RefPtr<CSSBorderImageSliceValue> slice = valueForNinePieceImageSlice(image, primitiveValueCache);
-    return CSSBorderImageValue::create(imageValue, slice, valueForRepeatRule(image.horizontalRule()), valueForRepeatRule(image.verticalRule()));
+    
+    // Create the repeat rules.
+    RefPtr<CSSValue> repeat = valueForNinePieceImageRepeat(image, primitiveValueCache);
+
+    return CSSBorderImageValue::create(imageValue, slice, repeat);
 }
 
 inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedPixelValue(int value, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
@@ -1595,10 +1609,14 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createIdentifierValue((style->backfaceVisibility() == BackfaceVisibilityHidden) ? CSSValueHidden : CSSValueVisible);
         case CSSPropertyWebkitBorderImage:
             return valueForNinePieceImage(style->borderImage(), primitiveValueCache);
+        case CSSPropertyBorderImageRepeat:
+            return valueForNinePieceImageRepeat(style->borderImage(), primitiveValueCache);
         case CSSPropertyBorderImageSlice:
             return valueForNinePieceImageSlice(style->borderImage(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImage:
             return valueForNinePieceImage(style->maskBoxImage(), primitiveValueCache);
+        case CSSPropertyWebkitMaskBoxImageRepeat:
+            return valueForNinePieceImageRepeat(style->maskBoxImage(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImageSlice:
             return valueForNinePieceImageSlice(style->maskBoxImage(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImageSource:
