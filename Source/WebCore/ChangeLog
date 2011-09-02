@@ -1,3 +1,14 @@
+2011-09-02  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r94093): Private browsing doesn't start with a clean state on Snow Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=67356
+
+        Reviewed by Darin Adler.
+
+        * platform/network/mac/CookieStorageMac.mm: (WebCore::setCookieStoragePrivateBrowsingEnabled):
+        Don't enable old-style private browsing when using sessions - it would take precedence over
+        session cookie storage on Snow Leopard.
+
 2011-09-02  Mihnea Ovidenie  <mihnea@adobe.com>
 
         BORDER attribute percent with the input image tag not working.
