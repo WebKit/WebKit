@@ -6,7 +6,6 @@ RUN(mediaElement.play())
 EVENT(play)
 EVENT(loadedmetadata)
 EVENT(canplay)
-EVENT(canplaythrough)
 EVENT(playing)
 END OF TEST
 

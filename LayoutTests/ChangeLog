@@ -1,3 +1,21 @@
+2011-09-02  Jer Noble  <jer.noble@apple.com>
+
+        Some media layout tests fail because of ambiguous ordering of canplaythough event.
+        https://bugs.webkit.org/show_bug.cgi?id=67520
+
+        Reviewed by Eric Carlson.
+
+        The "canplaythrough" event can occur either before or after the "playing" event, causing layout tests
+        to fail for certain media engines (AVFoundation). The "canplaythrough" event check isn't adding anything
+        of value which isn't covered in other layout tests, so remove this event check.
+
+        * media/audio-play-event-expected.txt:
+        * media/audio-play-event.html:
+        * media/video-play-empty-events-expected.txt:
+        * media/video-play-empty-events.html:
+        * media/video-timeupdate-during-playback-expected.txt:
+        * media/video-timeupdate-during-playback.html:
+
 2011-09-02  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update expectations for tests with animations and reflections

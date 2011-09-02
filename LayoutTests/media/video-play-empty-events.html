@@ -16,7 +16,6 @@
         waitForEvent("loadedmetadata");
         waitForEvent("loadeddata");
         waitForEvent("canplay");
-        waitForEvent("canplaythrough");
         waitForEvent("play");
     
         waitForEvent('playing', function () { testExpected("video.paused", false); endTest(); } );
