@@ -247,7 +247,7 @@ void HTMLFormControlElement::setDisabled(bool b)
 
 bool HTMLFormControlElement::autofocus() const
 {
-    return fastHasAttribute(autofocusAttr);
+    return hasAttribute(autofocusAttr);
 }
 
 bool HTMLFormControlElement::required() const
@@ -360,7 +360,7 @@ void HTMLFormControlElement::updateVisibleValidationMessage()
         // HTML5 specification doesn't ask UA to show the title attribute value
         // with the validationMessage.  However, this behavior is same as Opera
         // and the specification describes such behavior as an example.
-        const AtomicString& title = fastGetAttribute(titleAttr);
+        const AtomicString& title = getAttribute(titleAttr);
         if (!message.isEmpty() && !title.isEmpty()) {
             message.append('\n');
             message.append(title);

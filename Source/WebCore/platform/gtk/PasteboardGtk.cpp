@@ -89,14 +89,14 @@ static KURL getURLForImageNode(Node* node)
     // FIXME: Later this code should be shared with Chromium somehow. Chances are all platforms want it.
     AtomicString urlString;
     if (node->hasTagName(HTMLNames::imgTag) || node->hasTagName(HTMLNames::inputTag))
-        urlString = static_cast<Element*>(node)->fastGetAttribute(HTMLNames::srcAttr);
+        urlString = static_cast<Element*>(node)->getAttribute(HTMLNames::srcAttr);
 #if ENABLE(SVG)
     else if (node->hasTagName(SVGNames::imageTag))
         urlString = static_cast<Element*>(node)->getAttribute(XLinkNames::hrefAttr);
 #endif
     else if (node->hasTagName(HTMLNames::embedTag) || node->hasTagName(HTMLNames::objectTag)) {
         Element* element = static_cast<Element*>(node);
-        urlString = element->fastGetAttribute(element->imageSourceAttributeName());
+        urlString = element->getAttribute(element->imageSourceAttributeName());
     }
     return urlString.isEmpty() ? KURL() : node->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
 }

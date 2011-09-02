@@ -76,7 +76,7 @@ void HTMLTrackElement::willRemove()
 
 KURL HTMLTrackElement::src() const
 {
-    return document()->completeURL(fastGetAttribute(srcAttr));
+    return document()->completeURL(getAttribute(srcAttr));
 }
 
 void HTMLTrackElement::setSrc(const String& url)
@@ -86,7 +86,7 @@ void HTMLTrackElement::setSrc(const String& url)
 
 String HTMLTrackElement::kind() const
 {
-    return fastGetAttribute(kindAttr);
+    return getAttribute(kindAttr);
 }
 
 void HTMLTrackElement::setKind(const String& kind)
@@ -96,7 +96,7 @@ void HTMLTrackElement::setKind(const String& kind)
 
 String HTMLTrackElement::srclang() const
 {
-    return fastGetAttribute(srclangAttr);
+    return getAttribute(srclangAttr);
 }
 
 void HTMLTrackElement::setSrclang(const String& srclang)
@@ -106,7 +106,7 @@ void HTMLTrackElement::setSrclang(const String& srclang)
 
 String HTMLTrackElement::label() const
 {
-    return fastGetAttribute(labelAttr);
+    return getAttribute(labelAttr);
 }
 
 void HTMLTrackElement::setLabel(const String& label)
@@ -116,7 +116,7 @@ void HTMLTrackElement::setLabel(const String& label)
 
 bool HTMLTrackElement::isDefault() const
 {
-    return fastHasAttribute(defaultAttr);
+    return hasAttribute(defaultAttr);
 }
 
 void HTMLTrackElement::setIsDefault(bool isDefault)
@@ -133,7 +133,7 @@ void HTMLTrackElement::load(ScriptExecutionContext* context)
 {
     m_track = LoadableTextTrack::create(kind(), label(), srclang(), isDefault());
 
-    if (fastHasAttribute(srcAttr))
+    if (hasAttribute(srcAttr))
         m_track->load(getNonEmptyURLAttribute(srcAttr), context);
 }
 

@@ -150,7 +150,7 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
 
         isVerticalText = parentRenderObject->style()->svgStyle()->isVerticalWritingMode();
         if (Element* parentRenderObjectElement = toElement(parentRenderObject->node())) {
-            language = parentRenderObjectElement->fastGetAttribute(XMLNames::langAttr);
+            language = parentRenderObjectElement->getAttribute(XMLNames::langAttr);
 
             if (parentRenderObjectElement->hasTagName(SVGNames::altGlyphTag)) {
                 SVGAltGlyphElement* altGlyph = static_cast<SVGAltGlyphElement*>(parentRenderObjectElement);

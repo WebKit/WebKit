@@ -499,11 +499,11 @@ String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* e
     // See 7538330 for one popular site that benefits from the id element check.
     // FIXME: This code is mirrored in FrameMac.mm. It would be nice to make the Mac code call the platform-agnostic
     // code, which would require converting the NSArray of NSStrings to a Vector of Strings somewhere along the way.
-    String resultFromNameAttribute = matchLabelsAgainstString(labels, element->fastGetAttribute(nameAttr));
+    String resultFromNameAttribute = matchLabelsAgainstString(labels, element->getAttribute(nameAttr));
     if (!resultFromNameAttribute.isEmpty())
         return resultFromNameAttribute;
     
-    return matchLabelsAgainstString(labels, element->fastGetAttribute(idAttr));
+    return matchLabelsAgainstString(labels, element->getAttribute(idAttr));
 }
 
 void Frame::setPrinting(bool printing, const FloatSize& pageSize, float maximumShrinkRatio, AdjustViewSizeOrNot shouldAdjustViewSize)

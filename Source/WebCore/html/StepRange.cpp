@@ -35,10 +35,9 @@ using namespace HTMLNames;
 
 StepRange::StepRange(const HTMLInputElement* element)
 {
-    const AtomicString& precisionValue = element->fastGetAttribute(precisionAttr);
-    if (!precisionValue.isNull()) {
+    if (element->hasAttribute(precisionAttr)) {
         step = 1.0;
-        hasStep = !equalIgnoringCase(precisionValue.string(), "float");
+        hasStep = !equalIgnoringCase(element->getAttribute(precisionAttr), "float");
     } else
         hasStep = element->getAllowedValueStep(&step);
 

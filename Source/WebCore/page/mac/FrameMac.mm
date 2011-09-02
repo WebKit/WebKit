@@ -246,11 +246,11 @@ NSString* Frame::matchLabelsAgainstElement(NSArray* labels, Element* element)
     // See 7538330 for one popular site that benefits from the id element check.
     // FIXME: This code is mirrored in Frame.cpp. It would be nice to make the Mac code call the platform-agnostic
     // code, which would require converting the NSArray of NSStrings to a Vector of Strings somewhere along the way.
-    String resultFromNameAttribute = matchLabelsAgainstString(labels, element->fastGetAttribute(nameAttr));
+    String resultFromNameAttribute = matchLabelsAgainstString(labels, element->getAttribute(nameAttr));
     if (!resultFromNameAttribute.isEmpty())
         return resultFromNameAttribute;
     
-    return matchLabelsAgainstString(labels, element->fastGetAttribute(idAttr));
+    return matchLabelsAgainstString(labels, element->getAttribute(idAttr));
 }
 
 NSImage* Frame::imageFromRect(NSRect rect) const

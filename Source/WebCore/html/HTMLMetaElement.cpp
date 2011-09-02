@@ -81,17 +81,17 @@ void HTMLMetaElement::process()
 
 String HTMLMetaElement::content() const
 {
-    return fastGetAttribute(contentAttr);
+    return getAttribute(contentAttr);
 }
 
 String HTMLMetaElement::httpEquiv() const
 {
-    return fastGetAttribute(http_equivAttr);
+    return getAttribute(http_equivAttr);
 }
 
 String HTMLMetaElement::name() const
 {
-    return fastGetAttribute(nameAttr);
+    return getAttribute(nameAttr);
 }
 
 }

@@ -155,7 +155,7 @@ void ImageLoader::updateFromElement()
     if (!document->renderer())
         return;
 
-    AtomicString attr = m_element->fastGetAttribute(m_element->imageSourceAttributeName());
+    AtomicString attr = m_element->getAttribute(m_element->imageSourceAttributeName());
 
     if (attr == m_failedLoadURL)
         return;

@@ -619,9 +619,9 @@ PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrame(Frame* frame
     if (frame->tree()->parent())
         frameObject->setString("parentId", frameId(frame->tree()->parent()));
     if (frame->ownerElement()) {
-        String name = frame->ownerElement()->fastGetAttribute(HTMLNames::nameAttr);
+        String name = frame->ownerElement()->getAttribute(HTMLNames::nameAttr);
         if (name.isEmpty())
-            name = frame->ownerElement()->fastGetAttribute(HTMLNames::idAttr);
+            name = frame->ownerElement()->getAttribute(HTMLNames::idAttr);
         frameObject->setString("name", name);
     }
     frameObject->setString("url", frame->document()->url().string());

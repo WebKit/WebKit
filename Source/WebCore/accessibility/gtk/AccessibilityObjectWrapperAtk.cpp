@@ -190,7 +190,7 @@ static const gchar* webkit_accessible_get_name(AtkObject* object)
         Node* node = coreObject->node();
         if (node && node->isHTMLElement()) {
             // Get the attribute rather than altText String so as not to fall back on title.
-            String alt = toHTMLElement(node)->fastGetAttribute(HTMLNames::altAttr);
+            String alt = toHTMLElement(node)->getAttribute(HTMLNames::altAttr);
             if (!alt.isEmpty())
                 return returnString(alt);
         }

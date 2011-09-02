@@ -544,7 +544,7 @@ EVisibility RenderTextControlSingleLine::visibilityForCancelButton() const
 
 const AtomicString& RenderTextControlSingleLine::autosaveName() const
 {
-    return static_cast<Element*>(node())->fastGetAttribute(autosaveAttr);
+    return static_cast<Element*>(node())->getAttribute(autosaveAttr);
 }
 
 // PopupMenuClient methods

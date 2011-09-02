@@ -861,7 +861,7 @@ void HTMLInputElement::finishParsingChildren()
     m_parsingInProgress = false;
     HTMLTextFormControlElement::finishParsingChildren();
     if (!m_stateRestored) {
-        bool checked = fastHasAttribute(checkedAttr);
+        bool checked = hasAttribute(checkedAttr);
         if (checked)
             setChecked(checked);
         m_reflectsCheckedAttribute = true;
@@ -910,9 +910,9 @@ String HTMLInputElement::altText() const
     String alt = fastGetAttribute(altAttr);
     // fall back to title attribute
     if (alt.isNull())
-        alt = fastGetAttribute(titleAttr);
+        alt = getAttribute(titleAttr);
     if (alt.isNull())
-        alt = fastGetAttribute(valueAttr);
+        alt = getAttribute(valueAttr);
     if (alt.isEmpty())
         alt = inputElementAltText();
     return alt;
@@ -946,7 +946,7 @@ void HTMLInputElement::reset()
         setValue(String());
 
     setAutofilled(false);
-    setChecked(fastHasAttribute(checkedAttr));
+    setChecked(hasAttribute(checkedAttr));
     m_reflectsCheckedAttribute = true;
 }
 
@@ -1171,7 +1171,7 @@ void HTMLInputElement::setPlaceholder(const String& value)
 
 bool HTMLInputElement::searchEventsShouldBeDispatched() const
 {
-    return fastHasAttribute(incrementalAttr);
+    return hasAttribute(incrementalAttr);
 }
 
 void HTMLInputElement::setValueFromRenderer(const String& value)
@@ -1828,7 +1828,7 @@ void HTMLInputElement::setWapInputFormat(String& mask)
 bool HTMLInputElement::isSpeechEnabled() const
 {
     // FIXME: Add support for RANGE, EMAIL, URL, COLOR and DATE/TIME input types.
-    return m_inputType->shouldRespectSpeechAttribute() && RuntimeEnabledFeatures::speechInputEnabled() && fastHasAttribute(webkitspeechAttr);
+    return m_inputType->shouldRespectSpeechAttribute() && RuntimeEnabledFeatures::speechInputEnabled() && hasAttribute(webkitspeechAttr);
 }
 
 #endif

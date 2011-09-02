@@ -1028,7 +1028,7 @@ void RenderObject::addPDFURLRect(GraphicsContext* context, const IntRect& rect)
     Node* n = node();
     if (!n || !n->isLink() || !n->isElementNode())
         return;
-    const AtomicString& href = static_cast<Element*>(n)->fastGetAttribute(hrefAttr);
+    const AtomicString& href = static_cast<Element*>(n)->getAttribute(hrefAttr);
     if (href.isNull())
         return;
     context->setURLForRect(n->document()->completeURL(href), rect);

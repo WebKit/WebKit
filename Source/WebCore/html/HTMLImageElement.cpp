@@ -160,10 +160,10 @@ String HTMLImageElement::altText() const
     // lets figure out the alt text.. magic stuff
     // http://www.w3.org/TR/1998/REC-html40-19980424/appendix/notes.html#altgen
     // also heavily discussed by Hixie on bugzilla
-    String alt = fastGetAttribute(altAttr);
+    String alt = getAttribute(altAttr);
     // fall back to title attribute
     if (alt.isNull())
-        alt = fastGetAttribute(titleAttr);
+        alt = getAttribute(titleAttr);
     return alt;
 }
 
@@ -251,7 +251,7 @@ int HTMLImageElement::width(bool ignorePendingStylesheets)
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
         bool ok;
-        int width = fastGetAttribute(widthAttr).toInt(&ok);
+        int width = getAttribute(widthAttr).toInt(&ok);
         if (ok)
             return width;
 
@@ -274,7 +274,7 @@ int HTMLImageElement::height(bool ignorePendingStylesheets)
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
         bool ok;
-        int height = fastGetAttribute(heightAttr).toInt(&ok);
+        int height = getAttribute(heightAttr).toInt(&ok);
         if (ok)
             return height;
 
@@ -318,13 +318,13 @@ bool HTMLImageElement::isURLAttribute(Attribute* attr) const
 
 const AtomicString& HTMLImageElement::alt() const
 {
-    return fastGetAttribute(altAttr);
+    return getAttribute(altAttr);
 }
 
 bool HTMLImageElement::draggable() const
 {
     // Image elements are draggable by default.
-    return !equalIgnoringCase(fastGetAttribute(draggableAttr), "false");
+    return !equalIgnoringCase(getAttribute(draggableAttr), "false");
 }
 
 void HTMLImageElement::setHeight(int value)
@@ -334,7 +334,7 @@ void HTMLImageElement::setHeight(int value)
 
 KURL HTMLImageElement::src() const
 {
-    return document()->completeURL(fastGetAttribute(srcAttr));
+    return document()->completeURL(getAttribute(srcAttr));
 }
 
 void HTMLImageElement::setSrc(const String& value)
@@ -380,7 +380,7 @@ void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
 
     addSubresourceURL(urls, src());
     // FIXME: What about when the usemap attribute begins with "#"?
-    addSubresourceURL(urls, document()->completeURL(fastGetAttribute(usemapAttr)));
+    addSubresourceURL(urls, document()->completeURL(getAttribute(usemapAttr)));
 }
 
 void HTMLImageElement::willMoveToNewOwnerDocument()

@@ -88,12 +88,12 @@ void HTMLStyleElement::childrenChanged(bool changedByParser, Node* beforeChange,
 
 const AtomicString& HTMLStyleElement::media() const
 {
-    return fastGetAttribute(mediaAttr);
+    return getAttribute(mediaAttr);
 }
 
 const AtomicString& HTMLStyleElement::type() const
 {
-    return fastGetAttribute(typeAttr);
+    return getAttribute(typeAttr);
 }
 
 void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

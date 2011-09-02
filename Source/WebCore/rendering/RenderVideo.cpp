@@ -122,7 +122,7 @@ IntSize RenderVideo::calculateIntrinsicSize()
     // When the natural size of the video is unavailable, we use the provided
     // width and height attributes of the video element as the intrinsic size until
     // better values become available. 
-    if (video->fastHasAttribute(widthAttr) && video->fastHasAttribute(heightAttr))
+    if (video->hasAttribute(widthAttr) && video->hasAttribute(heightAttr))
         return IntSize(video->width(), video->height());
 
     // <video> in standalone media documents should not use the default 300x150

@@ -61,7 +61,7 @@ Element* HTMLNameCollection::itemAfter(Element* previous) const
                     e->hasTagName(appletTag) ||
                     e->hasTagName(embedTag) ||
                     e->hasTagName(objectTag))
-                    if (e->fastGetAttribute(nameAttr) == m_name)
+                    if (e->getAttribute(nameAttr) == m_name)
                         return e;
                 if (e->getIdAttribute() == m_name)
                     return e;
@@ -71,17 +71,17 @@ Element* HTMLNameCollection::itemAfter(Element* previous) const
                 // applets and object by id, and images by id but only if they have
                 // a name attribute (this very strange rule matches IE)
                 if (e->hasTagName(formTag) || e->hasTagName(embedTag) || e->hasTagName(iframeTag)) {
-                    if (e->fastGetAttribute(nameAttr) == m_name)
+                    if (e->getAttribute(nameAttr) == m_name)
                         return e;
                 } else if (e->hasTagName(appletTag)) {
-                    if (e->fastGetAttribute(nameAttr) == m_name || e->getIdAttribute() == m_name)
+                    if (e->getAttribute(nameAttr) == m_name || e->getIdAttribute() == m_name)
                         return e;
                 } else if (e->hasTagName(objectTag)) {
-                    if ((e->fastGetAttribute(nameAttr) == m_name || e->getIdAttribute() == m_name)
+                    if ((e->getAttribute(nameAttr) == m_name || e->getIdAttribute() == m_name)
                             && static_cast<HTMLObjectElement*>(e)->isDocNamedItem())
                         return e;
                 } else if (e->hasTagName(imgTag)) {
-                    if (e->fastGetAttribute(nameAttr) == m_name || (e->getIdAttribute() == m_name && e->fastHasAttribute(nameAttr)))
+                    if (e->getAttribute(nameAttr) == m_name || (e->getIdAttribute() == m_name && e->hasAttribute(nameAttr)))
                         return e;
                 }
                 break;

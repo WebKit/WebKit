@@ -146,13 +146,13 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
     copiedAttributes.copyFrom(attributes);
     if (submitButton) {
         String attributeValue;
-        if (!(attributeValue = submitButton->fastGetAttribute(formactionAttr)).isNull())
+        if (!(attributeValue = submitButton->getAttribute(formactionAttr)).isNull())
             copiedAttributes.parseAction(attributeValue);
-        if (!(attributeValue = submitButton->fastGetAttribute(formenctypeAttr)).isNull())
+        if (!(attributeValue = submitButton->getAttribute(formenctypeAttr)).isNull())
             copiedAttributes.parseEncodingType(attributeValue);
-        if (!(attributeValue = submitButton->fastGetAttribute(formmethodAttr)).isNull())
+        if (!(attributeValue = submitButton->getAttribute(formmethodAttr)).isNull())
             copiedAttributes.parseMethodType(attributeValue);
-        if (!(attributeValue = submitButton->fastGetAttribute(formtargetAttr)).isNull())
+        if (!(attributeValue = submitButton->getAttribute(formtargetAttr)).isNull())
             copiedAttributes.setTarget(attributeValue);
     }
     

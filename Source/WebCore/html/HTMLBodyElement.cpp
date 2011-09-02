@@ -216,7 +216,7 @@ bool HTMLBodyElement::supportsFocus() const
 
 String HTMLBodyElement::aLink() const
 {
-    return fastGetAttribute(alinkAttr);
+    return getAttribute(alinkAttr);
 }
 
 void HTMLBodyElement::setALink(const String& value)
@@ -226,7 +226,7 @@ void HTMLBodyElement::setALink(const String& value)
 
 String HTMLBodyElement::bgColor() const
 {
-    return fastGetAttribute(bgcolorAttr);
+    return getAttribute(bgcolorAttr);
 }
 
 void HTMLBodyElement::setBgColor(const String& value)
@@ -236,7 +236,7 @@ void HTMLBodyElement::setBgColor(const String& value)
 
 String HTMLBodyElement::link() const
 {
-    return fastGetAttribute(linkAttr);
+    return getAttribute(linkAttr);
 }
 
 void HTMLBodyElement::setLink(const String& value)
@@ -246,7 +246,7 @@ void HTMLBodyElement::setLink(const String& value)
 
 String HTMLBodyElement::text() const
 {
-    return fastGetAttribute(textAttr);
+    return getAttribute(textAttr);
 }
 
 void HTMLBodyElement::setText(const String& value)
@@ -256,7 +256,7 @@ void HTMLBodyElement::setText(const String& value)
 
 String HTMLBodyElement::vLink() const
 {
-    return fastGetAttribute(vlinkAttr);
+    return getAttribute(vlinkAttr);
 }
 
 void HTMLBodyElement::setVLink(const String& value)
@@ -342,7 +342,7 @@ void HTMLBodyElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, document()->completeURL(fastGetAttribute(backgroundAttr)));
+    addSubresourceURL(urls, document()->completeURL(getAttribute(backgroundAttr)));
 }
 
 void HTMLBodyElement::didMoveToNewOwnerDocument()

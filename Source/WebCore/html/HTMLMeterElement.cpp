@@ -88,7 +88,7 @@ void HTMLMeterElement::attach()
 double HTMLMeterElement::min() const
 {
     double min = 0;
-    parseToDoubleForNumberType(fastGetAttribute(minAttr), &min);
+    parseToDoubleForNumberType(getAttribute(minAttr), &min);
     return min;
 }
 
@@ -104,7 +104,7 @@ void HTMLMeterElement::setMin(double min, ExceptionCode& ec)
 double HTMLMeterElement::max() const
 {
     double max = std::max(1.0, min());
-    parseToDoubleForNumberType(fastGetAttribute(maxAttr), &max);
+    parseToDoubleForNumberType(getAttribute(maxAttr), &max);
     return std::max(max, min());
 }
 
@@ -120,7 +120,7 @@ void HTMLMeterElement::setMax(double max, ExceptionCode& ec)
 double HTMLMeterElement::value() const
 {
     double value = 0;
-    parseToDoubleForNumberType(fastGetAttribute(valueAttr), &value);
+    parseToDoubleForNumberType(getAttribute(valueAttr), &value);
     return std::min(std::max(value, min()), max());
 }
 
@@ -136,7 +136,7 @@ void HTMLMeterElement::setValue(double value, ExceptionCode& ec)
 double HTMLMeterElement::low() const
 {
     double low = min();
-    parseToDoubleForNumberType(fastGetAttribute(lowAttr), &low);
+    parseToDoubleForNumberType(getAttribute(lowAttr), &low);
     return std::min(std::max(low, min()), max());
 }
 
@@ -152,7 +152,7 @@ void HTMLMeterElement::setLow(double low, ExceptionCode& ec)
 double HTMLMeterElement::high() const
 {
     double high = max();
-    parseToDoubleForNumberType(fastGetAttribute(highAttr), &high);
+    parseToDoubleForNumberType(getAttribute(highAttr), &high);
     return std::min(std::max(high, low()), max());
 }
 
@@ -168,7 +168,7 @@ void HTMLMeterElement::setHigh(double high, ExceptionCode& ec)
 double HTMLMeterElement::optimum() const
 {
     double optimum = (max() + min()) / 2;
-    parseToDoubleForNumberType(fastGetAttribute(optimumAttr), &optimum);
+    parseToDoubleForNumberType(getAttribute(optimumAttr), &optimum);
     return std::min(std::max(optimum, min()), max());
 }
 

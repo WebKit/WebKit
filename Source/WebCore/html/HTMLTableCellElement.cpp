@@ -128,12 +128,12 @@ bool HTMLTableCellElement::isURLAttribute(Attribute *attr) const
 
 String HTMLTableCellElement::abbr() const
 {
-    return fastGetAttribute(abbrAttr);
+    return getAttribute(abbrAttr);
 }
 
 String HTMLTableCellElement::axis() const
 {
-    return fastGetAttribute(axisAttr);
+    return getAttribute(axisAttr);
 }
 
 void HTMLTableCellElement::setColSpan(int n)
@@ -143,7 +143,7 @@ void HTMLTableCellElement::setColSpan(int n)
 
 String HTMLTableCellElement::headers() const
 {
-    return fastGetAttribute(headersAttr);
+    return getAttribute(headersAttr);
 }
 
 void HTMLTableCellElement::setRowSpan(int n)
@@ -153,14 +153,14 @@ void HTMLTableCellElement::setRowSpan(int n)
 
 String HTMLTableCellElement::scope() const
 {
-    return fastGetAttribute(scopeAttr);
+    return getAttribute(scopeAttr);
 }
 
 void HTMLTableCellElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     HTMLTablePartElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, document()->completeURL(fastGetAttribute(backgroundAttr)));
+    addSubresourceURL(urls, document()->completeURL(getAttribute(backgroundAttr)));
 }
 
 HTMLTableCellElement* HTMLTableCellElement::cellAbove() const

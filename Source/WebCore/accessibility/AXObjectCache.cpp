@@ -188,7 +188,7 @@ bool nodeHasRole(Node* node, const String& role)
     if (!node || !node->isElementNode())
         return false;
 
-    return equalIgnoringCase(static_cast<Element*>(node)->fastGetAttribute(roleAttr), role);
+    return equalIgnoringCase(static_cast<Element*>(node)->getAttribute(roleAttr), role);
 }
 
 static PassRefPtr<AccessibilityObject> createFromRenderer(RenderObject* renderer)

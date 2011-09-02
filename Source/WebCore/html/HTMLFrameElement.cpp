@@ -69,7 +69,7 @@ static inline HTMLFrameSetElement* containingFrameSetElement(Node* node)
 
 bool HTMLFrameElement::noResize() const
 {
-    return fastHasAttribute(noresizeAttr);
+    return hasAttribute(noresizeAttr);
 }
 
 void HTMLFrameElement::attach()

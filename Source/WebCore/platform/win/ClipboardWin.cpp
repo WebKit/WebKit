@@ -642,7 +642,7 @@ static void writeImageToDataObject(IDataObject* dataObject, Element* element, co
     if (!imageBuffer || !imageBuffer->size())
         return;
 
-    HGLOBAL imageFileDescriptor = createGlobalImageFileDescriptor(url.string(), element->fastGetAttribute(altAttr), cachedImage);
+    HGLOBAL imageFileDescriptor = createGlobalImageFileDescriptor(url.string(), element->getAttribute(altAttr), cachedImage);
     if (!imageFileDescriptor)
         return;
 
@@ -671,7 +671,7 @@ void ClipboardWin::declareAndWriteDragImage(Element* element, const KURL& url, c
 
     writeImageToDataObject(m_writableDataObject.get(), element, url);
 
-    AtomicString imageURL = element->fastGetAttribute(srcAttr);
+    AtomicString imageURL = element->getAttribute(srcAttr);
     if (imageURL.isEmpty()) 
         return;
 

@@ -134,32 +134,32 @@ void HTMLScriptElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) con
 
 String HTMLScriptElement::sourceAttributeValue() const
 {
-    return fastGetAttribute(srcAttr).string();
+    return getAttribute(srcAttr).string();
 }
 
 String HTMLScriptElement::charsetAttributeValue() const
 {
-    return fastGetAttribute(charsetAttr).string();
+    return getAttribute(charsetAttr).string();
 }
 
 String HTMLScriptElement::typeAttributeValue() const
 {
-    return fastGetAttribute(typeAttr).string();
+    return getAttribute(typeAttr).string();
 }
 
 String HTMLScriptElement::languageAttributeValue() const
 {
-    return fastGetAttribute(languageAttr).string();
+    return getAttribute(languageAttr).string();
 }
 
 String HTMLScriptElement::forAttributeValue() const
 {
-    return fastGetAttribute(forAttr).string();
+    return getAttribute(forAttr).string();
 }
 
 String HTMLScriptElement::eventAttributeValue() const
 {
-    return fastGetAttribute(eventAttr).string();
+    return getAttribute(eventAttr).string();
 }
 
 bool HTMLScriptElement::asyncAttributeValue() const

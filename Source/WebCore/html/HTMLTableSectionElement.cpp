@@ -111,7 +111,7 @@ int HTMLTableSectionElement::numRows() const
 
 String HTMLTableSectionElement::align() const
 {
-    return fastGetAttribute(alignAttr);
+    return getAttribute(alignAttr);
 }
 
 void HTMLTableSectionElement::setAlign(const String &value)
@@ -121,7 +121,7 @@ void HTMLTableSectionElement::setAlign(const String &value)
 
 String HTMLTableSectionElement::ch() const
 {
-    return fastGetAttribute(charAttr);
+    return getAttribute(charAttr);
 }
 
 void HTMLTableSectionElement::setCh(const String &value)
@@ -131,7 +131,7 @@ void HTMLTableSectionElement::setCh(const String &value)
 
 String HTMLTableSectionElement::chOff() const
 {
-    return fastGetAttribute(charoffAttr);
+    return getAttribute(charoffAttr);
 }
 
 void HTMLTableSectionElement::setChOff(const String &value)
@@ -141,7 +141,7 @@ void HTMLTableSectionElement::setChOff(const String &value)
 
 String HTMLTableSectionElement::vAlign() const
 {
-    return fastGetAttribute(valignAttr);
+    return getAttribute(valignAttr);
 }
 
 void HTMLTableSectionElement::setVAlign(const String &value)

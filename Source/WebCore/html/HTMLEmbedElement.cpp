@@ -180,7 +180,7 @@ void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
 
     SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
     // FIXME: beforeLoad could have detached the renderer!  Just like in the <object> case above.
-    loader->requestObject(this, m_url, fastGetAttribute(nameAttr), m_serviceType, paramNames, paramValues);
+    loader->requestObject(this, m_url, getAttribute(nameAttr), m_serviceType, paramNames, paramValues);
 }
 
 bool HTMLEmbedElement::rendererIsNeeded(const NodeRenderingContext& context)
@@ -223,8 +223,8 @@ void HTMLEmbedElement::insertedIntoDocument()
     if (document()->isHTMLDocument())
         static_cast<HTMLDocument*>(document())->addNamedItem(m_name);
 
-    String width = fastGetAttribute(widthAttr);
-    String height = fastGetAttribute(heightAttr);
+    String width = getAttribute(widthAttr);
+    String height = getAttribute(heightAttr);
     if (!width.isEmpty() || !height.isEmpty()) {
         Node* n = parentNode();
         while (n && !n->hasTagName(objectTag))
@@ -273,7 +273,7 @@ void HTMLEmbedElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
 {
     HTMLPlugInImageElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, document()->completeURL(fastGetAttribute(srcAttr)));
+    addSubresourceURL(urls, document()->completeURL(getAttribute(srcAttr)));
 }
 
 }

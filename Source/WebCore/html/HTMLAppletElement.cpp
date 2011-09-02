@@ -112,22 +112,22 @@ RenderObject* HTMLAppletElement::createRenderer(RenderArena*, RenderStyle* style
     if (canEmbedJava()) {
         HashMap<String, String> args;
 
-        args.set("code", fastGetAttribute(codeAttr));
+        args.set("code", getAttribute(codeAttr));
 
-        const AtomicString& codeBase = fastGetAttribute(codebaseAttr);
+        const AtomicString& codeBase = getAttribute(codebaseAttr);
         if (!codeBase.isNull())
             args.set("codeBase", codeBase);
 
-        const AtomicString& name = document()->isHTMLDocument() ? fastGetAttribute(nameAttr) : getIdAttribute();
+        const AtomicString& name = document()->isHTMLDocument() ? getAttribute(nameAttr) : getIdAttribute();
         if (!name.isNull())
             args.set("name", name);
-        const AtomicString& archive = fastGetAttribute(archiveAttr);
+        const AtomicString& archive = getAttribute(archiveAttr);
         if (!archive.isNull())
             args.set("archive", archive);
 
         args.set("baseURL", document()->baseURL().string());
 
-        const AtomicString& mayScript = fastGetAttribute(mayscriptAttr);
+        const AtomicString& mayScript = getAttribute(mayscriptAttr);
         if (!mayScript.isNull())
             args.set("mayScript", mayScript);
 

@@ -147,7 +147,7 @@ void HTMLFrameElementBase::parseMappedAttribute(Attribute* attr)
 
 void HTMLFrameElementBase::setNameAndOpenURL()
 {
-    m_frameName = fastGetAttribute(nameAttr);
+    m_frameName = getAttribute(nameAttr);
     if (m_frameName.isNull())
         m_frameName = getIdAttribute();
     openURL();
@@ -199,7 +199,7 @@ void HTMLFrameElementBase::attach()
 
 KURL HTMLFrameElementBase::location() const
 {
-    return document()->completeURL(fastGetAttribute(srcAttr));
+    return document()->completeURL(getAttribute(srcAttr));
 }
 
 void HTMLFrameElementBase::setLocation(const String& str)
@@ -283,7 +283,7 @@ void HTMLFrameElementBase::willRemove()
 #if ENABLE(FULLSCREEN_API)
 bool HTMLFrameElementBase::allowFullScreen() const
 {
-    return fastHasAttribute(webkitallowfullscreenAttr);
+    return hasAttribute(webkitallowfullscreenAttr);
 }
 #endif
 

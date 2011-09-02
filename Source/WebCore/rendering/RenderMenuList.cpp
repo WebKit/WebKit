@@ -398,7 +398,7 @@ String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
     if (listIndex >= listItems.size())
         return String();
 
-    return listItems[listIndex]->fastGetAttribute(aria_labelAttr);
+    return listItems[listIndex]->getAttribute(aria_labelAttr);
 }
     
 String RenderMenuList::itemToolTip(unsigned listIndex) const

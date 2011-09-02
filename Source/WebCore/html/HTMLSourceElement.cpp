@@ -77,7 +77,7 @@ void HTMLSourceElement::setSrc(const String& url)
 
 String HTMLSourceElement::media() const
 {
-    return fastGetAttribute(mediaAttr);
+    return getAttribute(mediaAttr);
 }
 
 void HTMLSourceElement::setMedia(const String& media)
@@ -87,7 +87,7 @@ void HTMLSourceElement::setMedia(const String& media)
 
 String HTMLSourceElement::type() const
 {
-    return fastGetAttribute(typeAttr);
+    return getAttribute(typeAttr);
 }
 
 void HTMLSourceElement::setType(const String& type)

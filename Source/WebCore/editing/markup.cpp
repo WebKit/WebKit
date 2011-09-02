@@ -512,7 +512,7 @@ static bool isElementPresentational(const Node* node)
 
 static bool shouldIncludeWrapperForFullySelectedRoot(Node* fullySelectedRoot)
 {
-    if (fullySelectedRoot->isElementNode() && static_cast<Element*>(fullySelectedRoot)->fastHasAttribute(backgroundAttr))
+    if (fullySelectedRoot->isElementNode() && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
         return true;
     
     RefPtr<EditingStyle> style = styleFromMatchedRulesAndInlineDecl(fullySelectedRoot);
@@ -642,8 +642,8 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
                 // Bring the background attribute over, but not as an attribute because a background attribute on a div
                 // appears to have no effect.
                 if ((!fullySelectedRootStyle || !fullySelectedRootStyle->style() || !fullySelectedRootStyle->style()->getPropertyCSSValue(CSSPropertyBackgroundImage))
-                    && static_cast<Element*>(fullySelectedRoot)->fastHasAttribute(backgroundAttr))
-                    fullySelectedRootStyle->style()->setProperty(CSSPropertyBackgroundImage, "url('" + static_cast<Element*>(fullySelectedRoot)->fastGetAttribute(backgroundAttr) + "')");
+                    && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
+                    fullySelectedRootStyle->style()->setProperty(CSSPropertyBackgroundImage, "url('" + static_cast<Element*>(fullySelectedRoot)->getAttribute(backgroundAttr) + "')");
 
                 if (fullySelectedRootStyle->style()) {
                     // Reset the CSS properties to avoid an assertion error in addStyleMarkup().

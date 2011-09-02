@@ -243,7 +243,7 @@ bool HTMLAreaElement::supportsFocus() const
 
 String HTMLAreaElement::target() const
 {
-    return fastGetAttribute(targetAttr);
+    return getAttribute(targetAttr);
 }
 
 }
