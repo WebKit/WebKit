@@ -29,10 +29,6 @@
        (subpath "/private/var/db/DetachedSignatures")
        (regex #"^/private/etc/(hosts|group|passwd)$")
 
-       ;; Plugins
-       (subpath "/Library/Internet Plug-Ins")
-       (home-subpath "/Library/Internet Plug-Ins")
-
        ;; System and user preferences
        (literal "/Library/Preferences/.GlobalPreferences.plist")
        (literal "/Library/Preferences/com.apple.crypto.plist")
