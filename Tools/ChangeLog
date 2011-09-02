@@ -1,3 +1,13 @@
+2011-09-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] run-gtk-tests leaves a zombie Xvfb process
+        https://bugs.webkit.org/show_bug.cgi?id=67389
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/run-gtk-tests: Properly close STDIN and STDERR on the
+        child process instead of doing shell redirection.
+
 2011-09-01  Mark Rowe  <mrowe@apple.com>
 
         Fix the build by adding some more missing return types.

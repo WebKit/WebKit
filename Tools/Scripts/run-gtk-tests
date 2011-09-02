@@ -35,7 +35,9 @@ if ($#unitTests < 1) {
 
 my $pid = fork();
 if ($pid == 0) {
-    exec("Xvfb :31 -screen 0 800x600x24 -nolisten tcp > /dev/null 2>&1");
+    close(STDOUT) or die "Can't close STDOUT: $!\n";
+    close(STDERR) or die "Can't close STDERR: $!\n";
+    exec("Xvfb :31 -screen 0 800x600x24 -nolisten tcp");
     exit 1;
 } elsif ($pid == -1) {
     print "Failed to fork Xvfb.";
