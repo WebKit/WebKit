@@ -282,6 +282,7 @@ WebInspector.NetworkLogView.prototype = {
 
     _sortItems: function()
     {
+        this._removeAllNodeHighlights();
         var columnIdentifier = this._dataGrid.sortColumnIdentifier;
         if (columnIdentifier === "timeline") {
             this._sortByTimeline();
@@ -300,6 +301,7 @@ WebInspector.NetworkLogView.prototype = {
 
     _sortByTimeline: function()
     {
+        this._removeAllNodeHighlights();
         var selectedIndex = this._timelineSortSelector.selectedIndex;
         if (!selectedIndex)
             selectedIndex = 1; // Sort by start time by default.
@@ -426,6 +428,7 @@ WebInspector.NetworkLogView.prototype = {
 
     _updateFilter: function(e)
     {
+        this._removeAllNodeHighlights();
         var isMac = WebInspector.isMac();
         var selectMultiple = false;
         if (isMac && e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey)
