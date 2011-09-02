@@ -52,6 +52,8 @@ inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document* do
 {
     ASSERT(hasTagName(SVGNames::trefTag));
     registerAnimatedPropertiesForSVGTRefElement();
+    
+    setHasCustomWillOrDidRecalcStyle();
 }
 
 PassRefPtr<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Document* document)
@@ -119,7 +121,7 @@ private:
     {
     }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void recalcStyle(StyleChange);
+    virtual bool willRecalcStyle(StyleChange);
 };
 
 RenderObject* SVGShadowText::createRenderer(RenderArena* arena, RenderStyle*)
@@ -127,13 +129,13 @@ RenderObject* SVGShadowText::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGInlineText(this, dataImpl());
 }
 
-void SVGShadowText::recalcStyle(StyleChange change)
+bool SVGShadowText::willRecalcStyle(StyleChange change)
 {
     if (change != NoChange && parentNode()->shadowHost()) {
         if (renderer())
             renderer()->setStyle(parentNode()->shadowHost()->renderer()->style());
     }
-    Text::recalcStyle(change);
+    return true;
 }
 
 void SVGTRefElement::updateReferencedText()

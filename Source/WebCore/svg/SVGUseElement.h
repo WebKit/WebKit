@@ -64,7 +64,9 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
 
-    virtual void recalcStyle(StyleChange = NoChange);
+    virtual bool willRecalcStyle(StyleChange);
+    virtual void didRecalcStyle(StyleChange);
+
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void attach();
     virtual void detach();

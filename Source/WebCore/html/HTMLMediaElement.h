@@ -253,7 +253,7 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-    virtual void recalcStyle(StyleChange);
+    virtual void didRecalcStyle(StyleChange);
     
     virtual void defaultEventHandler(Event*);
 

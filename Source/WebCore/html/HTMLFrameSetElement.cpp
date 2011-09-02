@@ -55,6 +55,8 @@ HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document*
     , m_noresize(false)
 {
     ASSERT(hasTagName(framesetTag));
+    
+    setHasCustomWillOrDidRecalcStyle();
 }
 
 PassRefPtr<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName& tagName, Document* document)
@@ -198,13 +200,13 @@ void HTMLFrameSetElement::defaultEventHandler(Event* evt)
     HTMLElement::defaultEventHandler(evt);
 }
 
-void HTMLFrameSetElement::recalcStyle(StyleChange ch)
+bool HTMLFrameSetElement::willRecalcStyle(StyleChange)
 {
     if (needsStyleRecalc() && renderer()) {
         renderer()->setNeedsLayout(true);
         clearNeedsStyleRecalc();
     }
-    HTMLElement::recalcStyle(ch);
+    return true;
 }
 
 void HTMLFrameSetElement::insertedIntoDocument()

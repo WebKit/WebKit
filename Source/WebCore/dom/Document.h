@@ -539,7 +539,7 @@ public:
     PassRefPtr<CSSStyleDeclaration> createCSSStyleDeclaration();
     PassRefPtr<EditingText> createEditingTextNode(const String&);
 
-    virtual void recalcStyle(StyleChange = NoChange);
+    void recalcStyle(StyleChange = NoChange);
     bool childNeedsAndNotInStyleRecalc();
     virtual void updateStyleIfNeeded();
     void updateLayout();

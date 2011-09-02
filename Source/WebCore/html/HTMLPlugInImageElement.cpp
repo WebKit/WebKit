@@ -42,6 +42,7 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_needsWidgetUpdate(!createdByParser)
     , m_shouldPreferPlugInsForImages(preferPlugInsForImagesOption == ShouldPreferPlugInsForImages)
 {
+    setHasCustomWillOrDidRecalcStyle();
 }
 
 RenderEmbeddedObject* HTMLPlugInImageElement::renderEmbeddedObject() const
@@ -121,12 +122,12 @@ RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena* arena, RenderS
     return new (arena) RenderEmbeddedObject(this);
 }
 
-void HTMLPlugInImageElement::recalcStyle(StyleChange ch)
+bool HTMLPlugInImageElement::willRecalcStyle(StyleChange)
 {
     // FIXME: Why is this necessary?  Manual re-attach is almost always wrong.
     if (!useFallbackContent() && needsWidgetUpdate() && renderer() && !isImageType())
         reattach();
-    HTMLPlugInElement::recalcStyle(ch);
+    return true;
 }
 
 void HTMLPlugInImageElement::attach()

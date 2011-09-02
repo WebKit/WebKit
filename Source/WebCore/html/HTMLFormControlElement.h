@@ -117,7 +117,7 @@ protected:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
 
-    virtual void recalcStyle(StyleChange);
+    virtual void didRecalcStyle(StyleChange);
 
     virtual void dispatchBlurEvent(PassRefPtr<Node> newFocusedNode);
     virtual void detach();

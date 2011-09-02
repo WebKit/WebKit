@@ -254,7 +254,7 @@ void Text::attach()
     CharacterData::attach();
 }
 
-void Text::recalcStyle(StyleChange change)
+void Text::recalcTextStyle(StyleChange change)
 {
     if (change != NoChange && parentNode() && parentNode()->renderer()) {
         if (renderer())

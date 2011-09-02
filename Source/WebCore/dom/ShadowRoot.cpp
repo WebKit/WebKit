@@ -32,6 +32,7 @@
 #include "NodeRareData.h"
 #include "ShadowContentElement.h"
 #include "ShadowInclusionSelector.h"
+#include "Text.h"
 
 namespace WebCore {
 
@@ -83,13 +84,17 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
     }
 }
 
-void ShadowRoot::recalcStyle(StyleChange change)
+void ShadowRoot::recalcShadowTreeStyle(StyleChange change)
 {
     if (hasContentElement())
         reattach();
     else {
-        for (Node* n = firstChild(); n; n = n->nextSibling())
-            n->recalcStyle(change);
+        for (Node* n = firstChild(); n; n = n->nextSibling()) {
+            if (n->isElementNode())
+                static_cast<Element*>(n)->recalcStyle(change);
+            else if (n->isTextNode())
+                static_cast<Text*>(n)->recalcTextStyle(change);
+        }
     }
 
     clearNeedsStyleRecalc();

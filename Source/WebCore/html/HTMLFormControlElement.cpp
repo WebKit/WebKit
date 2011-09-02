@@ -64,6 +64,8 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
         setForm(findFormAncestor());
     if (this->form())
         this->form()->registerFormElement(this);
+
+    setHasCustomWillOrDidRecalcStyle();
 }
 
 HTMLFormControlElement::~HTMLFormControlElement()
@@ -262,10 +264,8 @@ static void updateFromElementCallback(Node* node, unsigned)
         renderer->updateFromElement();
 }
 
-void HTMLFormControlElement::recalcStyle(StyleChange change)
+void HTMLFormControlElement::didRecalcStyle(StyleChange)
 {
-    HTMLElement::recalcStyle(change);
-
     // updateFromElement() can cause the selection to change, and in turn
     // trigger synchronous layout, so it must not be called during style recalc.
     if (renderer())

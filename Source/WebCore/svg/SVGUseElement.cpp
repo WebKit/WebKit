@@ -86,6 +86,8 @@ inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* docu
 {
     ASSERT(hasTagName(SVGNames::useTag));
     registerAnimatedPropertiesForSVGUseElement();
+    
+    setHasCustomWillOrDidRecalcStyle();
 }
 
 PassRefPtr<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Document* document)
@@ -343,16 +345,18 @@ void SVGUseElement::updateContainerOffsets()
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
 }
 
-void SVGUseElement::recalcStyle(StyleChange change)
+bool SVGUseElement::willRecalcStyle(StyleChange change)
 {
     // Eventually mark shadow root element needing style recalc
     if ((change >= Inherit || needsStyleRecalc() || childNeedsStyleRecalc()) && m_targetElementInstance && !m_updatesBlocked) {
         if (SVGElement* shadowRoot = m_targetElementInstance->shadowTreeElement())
             shadowRoot->setNeedsStyleRecalc();
     }
+    return true;
+}
 
-    SVGStyledTransformableElement::recalcStyle(change);
-
+void SVGUseElement::didRecalcStyle(StyleChange change)
+{
     // Assure that the shadow tree has not been marked for recreation, while we're building it.
     if (m_updatesBlocked)
         ASSERT(!m_needsShadowTreeRecreation);

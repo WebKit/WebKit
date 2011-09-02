@@ -1529,9 +1529,13 @@ void Document::recalcStyle(StyleChange change)
             renderer()->setStyle(documentStyle.release());
     }
 
-    for (Node* n = firstChild(); n; n = n->nextSibling())
-        if (change >= Inherit || n->childNeedsStyleRecalc() || n->needsStyleRecalc())
-            n->recalcStyle(change);
+    for (Node* n = firstChild(); n; n = n->nextSibling()) {
+        if (!n->isElementNode())
+            continue;
+        Element* element = static_cast<Element*>(n);
+        if (change >= Inherit || element->childNeedsStyleRecalc() || element->needsStyleRecalc())
+            element->recalcStyle(change);
+    }
 
 #if USE(ACCELERATED_COMPOSITING)
     if (view()) {

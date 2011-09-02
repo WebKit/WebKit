@@ -57,6 +57,7 @@
 #include "RenderWidget.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "Text.h"
 #include "TextIterator.h"
 #include "WebKitAnimationList.h"
 #include "XMLNames.h"
@@ -1095,6 +1096,11 @@ bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderS
 
 void Element::recalcStyle(StyleChange change)
 {
+    if (hasCustomWillOrDidRecalcStyle()) {
+        if (!willRecalcStyle(change))
+            return;
+    }
+
     // Ref currentStyle in case it would otherwise be deleted when setRenderStyle() is called.
     RefPtr<RenderStyle> currentStyle(renderStyle());
     bool hasParentStyle = parentNodeForRenderingAndStyle() ? static_cast<bool>(parentNodeForRenderingAndStyle()->renderStyle()) : false;
@@ -1114,9 +1120,12 @@ void Element::recalcStyle(StyleChange change)
         if (ch == Detach || !currentStyle) {
             // FIXME: The style gets computed twice by calling attach. We could do better if we passed the style along.
             reattach();
-            // attach recalulates the style for all children. No need to do it twice.
+            // attach recalculates the style for all children. No need to do it twice.
             clearNeedsStyleRecalc();
             clearChildNeedsStyleRecalc();
+
+            if (hasCustomWillOrDidRecalcStyle())
+                didRecalcStyle(change);
             return;
         }
 
@@ -1171,28 +1180,37 @@ void Element::recalcStyle(StyleChange change)
     bool forceCheckOfNextElementSibling = false;
     bool forceCheckOfAnyElementSibling = false;
     for (Node *n = firstChild(); n; n = n->nextSibling()) {
-        bool childRulesChanged = n->needsStyleRecalc() && n->styleChangeType() == FullStyleChange;
-        if ((forceCheckOfNextElementSibling || forceCheckOfAnyElementSibling) && n->isElementNode())
-            n->setNeedsStyleRecalc();
-        if (change >= Inherit || n->isTextNode() || n->childNeedsStyleRecalc() || n->needsStyleRecalc()) {
+        if (n->isTextNode()) {
             parentPusher.push();
-            n->recalcStyle(change);
+            static_cast<Text*>(n)->recalcTextStyle(change);
+            continue;
+        } 
+        if (!n->isElementNode()) 
+            continue;
+        Element* element = static_cast<Element*>(n);
+        bool childRulesChanged = element->needsStyleRecalc() && element->styleChangeType() == FullStyleChange;
+        if ((forceCheckOfNextElementSibling || forceCheckOfAnyElementSibling))
+            element->setNeedsStyleRecalc();
+        if (change >= Inherit || element->childNeedsStyleRecalc() || element->needsStyleRecalc()) {
+            parentPusher.push();
+            element->recalcStyle(change);
         }
-        if (n->isElementNode()) {
-            forceCheckOfNextElementSibling = childRulesChanged && hasDirectAdjacentRules;
-            forceCheckOfAnyElementSibling = forceCheckOfAnyElementSibling || (childRulesChanged && hasIndirectAdjacentRules);
-        }
+        forceCheckOfNextElementSibling = childRulesChanged && hasDirectAdjacentRules;
+        forceCheckOfAnyElementSibling = forceCheckOfAnyElementSibling || (childRulesChanged && hasIndirectAdjacentRules);
     }
     // FIXME: This does not care about sibling combinators. Will be necessary in XBL2 world.
     if (ShadowRoot* shadow = shadowRoot()) {
         if (change >= Inherit || shadow->childNeedsStyleRecalc() || shadow->needsStyleRecalc()) {
             parentPusher.push();
-            shadow->recalcStyle(change);
+            shadow->recalcShadowTreeStyle(change);
         }
     }
 
     clearNeedsStyleRecalc();
     clearChildNeedsStyleRecalc();
+    
+    if (hasCustomWillOrDidRecalcStyle())
+        didRecalcStyle(change);
 }
 
 ShadowRoot* Element::shadowRoot() const

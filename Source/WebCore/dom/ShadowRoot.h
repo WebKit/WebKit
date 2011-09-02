@@ -39,7 +39,7 @@ class ShadowRoot : public TreeScope {
 public:
     static PassRefPtr<ShadowRoot> create(Document*);
 
-    virtual void recalcStyle(StyleChange = NoChange);
+    void recalcShadowTreeStyle(StyleChange);
 
     ShadowContentElement* includerFor(Node*) const;
     void hostChildrenChanged();

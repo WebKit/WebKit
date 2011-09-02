@@ -229,7 +229,7 @@ public:
     virtual void attach();
     virtual void detach();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void recalcStyle(StyleChange = NoChange);
+    void recalcStyle(StyleChange = NoChange);
 
     ShadowRoot* shadowRoot() const;
     void setShadowRoot(PassRefPtr<ShadowRoot>, ExceptionCode&);
@@ -380,6 +380,8 @@ protected:
     virtual void insertedIntoTree(bool);
     virtual void removedFromTree(bool);
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    virtual bool willRecalcStyle(StyleChange) { return true; }
+    virtual void didRecalcStyle(StyleChange) { }
 
     // The implementation of Element::attributeChanged() calls the following two functions.
     // They are separated to allow a different flow of control in StyledElement::attributeChanged().

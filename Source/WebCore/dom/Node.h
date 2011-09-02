@@ -352,8 +352,6 @@ public:
     // Note: This method only works properly after layout has occurred.
     bool hasNonEmptyBoundingBox() const;
 
-    virtual void recalcStyle(StyleChange = NoChange) { }
-
     unsigned nodeIndex() const;
 
     // Returns the DOM ownerDocument attribute. This method never returns NULL, except in the case 
@@ -617,6 +615,7 @@ private:
         StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1),
 
         SelfOrAncestorHasDirAutoFlag = 1 << 27,
+        HasCustomWillOrDidRecalcStyle = 1 << 28,
 
 #if ENABLE(SVG)
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag
@@ -625,7 +624,7 @@ private:
 #endif
     };
 
-    // 4 bits remaining
+    // 3 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
@@ -657,6 +656,9 @@ protected:
     NodeRareData* rareData() const;
     NodeRareData* ensureRareData();
     void clearRareData();
+
+    bool hasCustomWillOrDidRecalcStyle() const { return getFlag(HasCustomWillOrDidRecalcStyle); }
+    void setHasCustomWillOrDidRecalcStyle() { setFlag(true, HasCustomWillOrDidRecalcStyle); }
 
 private:
     // Do not use this method to change the document of a node until after the node has been

@@ -58,11 +58,6 @@ PassRefPtr<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tag
     return adoptRef(new HTMLSelectElement(tagName, document, form));
 }
 
-void HTMLSelectElement::recalcStyle(StyleChange change)
-{
-    HTMLFormControlElementWithState::recalcStyle(change);
-}
-
 const AtomicString& HTMLSelectElement::formControlType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, selectMultiple, ("select-multiple"));

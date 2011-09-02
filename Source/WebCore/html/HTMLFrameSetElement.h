@@ -76,7 +76,7 @@ private:
     
     virtual void defaultEventHandler(Event*);
 
-    virtual void recalcStyle(StyleChange);
+    virtual bool willRecalcStyle(StyleChange);
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();

@@ -209,6 +209,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     m_mediaSourceURL.setProtocol(mediaSourceURLProtocol);
     m_mediaSourceURL.setPath(createCanonicalUUIDString());
 #endif
+
+    setHasCustomWillOrDidRecalcStyle();
 }
 
 HTMLMediaElement::~HTMLMediaElement()
@@ -407,10 +409,8 @@ void HTMLMediaElement::attach()
 #endif
 }
 
-void HTMLMediaElement::recalcStyle(StyleChange change)
+void HTMLMediaElement::didRecalcStyle(StyleChange)
 {
-    HTMLElement::recalcStyle(change);
-
     if (renderer())
         renderer()->updateFromElement();
 }

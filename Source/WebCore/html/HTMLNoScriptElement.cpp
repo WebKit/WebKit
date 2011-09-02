@@ -35,6 +35,8 @@ inline HTMLNoScriptElement::HTMLNoScriptElement(const QualifiedName& tagName, Do
     : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(noscriptTag));
+
+    setHasCustomWillOrDidRecalcStyle();
 }
 
 PassRefPtr<HTMLNoScriptElement> HTMLNoScriptElement::create(const QualifiedName& tagName, Document* document)
@@ -54,10 +56,10 @@ void HTMLNoScriptElement::attach()
     }
 }
 
-void HTMLNoScriptElement::recalcStyle(StyleChange change)
+bool HTMLNoScriptElement::willRecalcStyle(StyleChange)
 {
     if (!document()->shouldProcessNoscriptElement() || !renderer() || !renderer()->style())
-        return;
+        return false;
 
     // If <noscript> needs processing, we make it visiable here, including its visible children
     RefPtr<RenderStyle> style = renderer()->style();
@@ -71,6 +73,7 @@ void HTMLNoScriptElement::recalcStyle(StyleChange change)
                     n->createRendererIfNeeded();
         }
     }
+    return false;
 }
 
 bool HTMLNoScriptElement::childShouldCreateRenderer(Node*) const

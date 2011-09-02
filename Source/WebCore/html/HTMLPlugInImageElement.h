@@ -73,7 +73,7 @@ protected:
 
 private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void recalcStyle(StyleChange);
+    virtual bool willRecalcStyle(StyleChange);
     
     virtual void finishParsingChildren();
 
