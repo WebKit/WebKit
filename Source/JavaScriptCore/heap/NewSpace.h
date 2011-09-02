@@ -46,7 +46,7 @@ namespace JSC {
         WTF_MAKE_NONCOPYABLE(NewSpace);
     public:
         static const size_t maxCellSize = 1024;
-        static const ptrdiff_t PropertyStorageNurserySize = 1024 * 1024 * 4;
+        static const size_t PropertyStorageNurserySize = 1024 * 1024 * 4;
 
         struct SizeClass {
             SizeClass();
@@ -175,10 +175,10 @@ namespace JSC {
     inline void* NewSpace::allocatePropertyStorage(size_t size)
     {
         char* result = m_propertyStorageAllocationPoint;
-        if (size > static_cast<size_t>(PropertyStorageNurserySize))
+        if (size > PropertyStorageNurserySize)
             CRASH();
         m_propertyStorageAllocationPoint += size;
-        if ((m_propertyStorageAllocationPoint - m_propertyStorageNursery) > PropertyStorageNurserySize) {
+        if (static_cast<size_t>(m_propertyStorageAllocationPoint - m_propertyStorageNursery) > PropertyStorageNurserySize) {
             m_propertyStorageAllocationPoint = result;
             return 0;
         }
@@ -188,7 +188,7 @@ namespace JSC {
     inline bool NewSpace::inPropertyStorageNursery(void* ptr)
     {
         char* addr = static_cast<char*>(ptr);
-        return static_cast<uintptr_t>(addr - m_propertyStorageNursery) < PropertyStorageNurserySize;
+        return static_cast<size_t>(addr - m_propertyStorageNursery) < PropertyStorageNurserySize;
     }
     
     template <typename Functor> inline typename Functor::ReturnType NewSpace::forEachBlock(Functor& functor)
