@@ -3680,10 +3680,13 @@ BUGWK67352 : fast/canvas/webgl/WebGLContextEvent.html = TEXT
 
 BUGWK67433 WIN LINUX : svg/custom/pattern-rotate-gaps.svg = IMAGE
 
-// Renders differently in 32 vs 64 bit mode
-BUGJAMESR LINUX X86_64 : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
+// Renders differently in 32 vs 64 bit mode and is flaky
+BUGJAMESR LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE PASS
 
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
 BUGWK67359 : http/tests/loading/empty-urls.html = PASS TEXT
+
+// Failing after r94406.
+BUGWK67480 : svg/batik/text/textStyles.svg = IMAGE+TEXT

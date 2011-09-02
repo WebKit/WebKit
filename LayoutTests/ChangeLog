@@ -1,3 +1,9 @@
+2011-09-02  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, update test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-02  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Send Blob as WebSocket binary message
