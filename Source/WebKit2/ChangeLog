@@ -1,3 +1,15 @@
+2011-09-02  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Cannot gathering glyph page statistics
+        https://bugs.webkit.org/show_bug.cgi?id=67475
+
+        Rubber stamped by Csaba Osztrogonác.
+
+        Fix Qt WK2 build without having QRAWFONT.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getWebCoreStatistics):
+
 2011-09-02  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/67467> WebProcessProxy::secItemCopyMatching / WebProcessProxy::secItemAdd
