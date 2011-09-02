@@ -220,6 +220,10 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMNodeList.cpp \
 	DerivedSources/webkit/WebKitDOMNodeListPrivate.h \
 	DerivedSources/webkit/WebKitDOMNodePrivate.h \
+	DerivedSources/webkit/WebKitDOMNotification.cpp \
+	DerivedSources/webkit/WebKitDOMNotificationPrivate.h \
+	DerivedSources/webkit/WebKitDOMNotificationCenter.cpp \
+	DerivedSources/webkit/WebKitDOMNotificationCenterPrivate.h \
 	DerivedSources/webkit/WebKitDOMProcessingInstruction.cpp \
 	DerivedSources/webkit/WebKitDOMProcessingInstructionPrivate.h \
 	DerivedSources/webkit/WebKitDOMRange.cpp \
