@@ -143,10 +143,6 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(CCLayerTreeHost* implHack, Pas
             layerRenderer = LayerRendererChromium::create(m_layerRenderer->owner(), this, context);
     }
 
-    // If recreating renderer, update the layers to point at the new renderer
-    if (m_layerRenderer)
-        m_layerRenderer->rootLayer()->platformLayer()->setLayerRendererRecursive(layerRenderer.get());
-
     m_layerRenderer = layerRenderer;
     return m_layerRenderer;
 }

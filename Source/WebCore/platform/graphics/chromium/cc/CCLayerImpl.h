@@ -124,6 +124,7 @@ public:
     void drawDebugBorder();
 
     void setLayerRenderer(LayerRendererChromium*);
+    void setLayerRendererRecursive(LayerRendererChromium*);
     LayerRendererChromium* layerRenderer() const { return m_layerRenderer.get(); }
 
     CCRenderSurface* renderSurface() const { return m_renderSurface.get(); }

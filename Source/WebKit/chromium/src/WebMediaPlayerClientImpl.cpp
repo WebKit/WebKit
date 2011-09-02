@@ -572,7 +572,7 @@ bool WebMediaPlayerClientImpl::supportsAcceleratedRendering() const
 
 bool WebMediaPlayerClientImpl::acceleratedRenderingInUse()
 {
-    return m_videoLayer.get() && m_videoLayer->layerRenderer();
+    return m_videoLayer.get() && m_videoLayer->layerTreeHost();
 }
 
 VideoFrameChromium* WebMediaPlayerClientImpl::getCurrentFrame()

@@ -87,8 +87,6 @@ public:
     void setMaskLayer(LayerChromium* maskLayer) { m_maskLayer = maskLayer; }
 
 private:
-    LayerRendererChromium* layerRenderer();
-
     LayerChromium* m_owningLayer;
     LayerChromium* m_maskLayer;
 

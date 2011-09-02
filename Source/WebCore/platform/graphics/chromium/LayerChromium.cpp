@@ -96,36 +96,29 @@ void LayerChromium::cleanupResources()
 {
 }
 
-void LayerChromium::setLayerRendererRecursive(LayerRendererChromium* renderer)
+void LayerChromium::cleanupResourcesRecursive()
 {
     for (size_t i = 0; i < children().size(); ++i)
-        children()[i]->setLayerRendererRecursive(renderer);
+        children()[i]->cleanupResourcesRecursive();
 
     if (maskLayer())
-        maskLayer()->setLayerRendererRecursive(renderer);
+        maskLayer()->cleanupResourcesRecursive();
     if (replicaLayer())
-        replicaLayer()->setLayerRendererRecursive(renderer);
+        replicaLayer()->cleanupResourcesRecursive();
 
-    setLayerRenderer(renderer);
+    cleanupResources();
 }
 
-void LayerChromium::setLayerRenderer(LayerRendererChromium* renderer)
+void LayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
     // If we're changing layer renderers then we need to free up any resources
     // allocated by the old renderer.
-    if (layerRenderer() && layerRenderer() != renderer) {
+    if (layerTreeHost() && layerTreeHost() != host) {
         cleanupResources();
         setNeedsDisplay();
     }
-    m_layerRenderer = renderer;
 
-    // FIXME: Once setLayerRenderer is no longer needed on the LayerChromium
-    // tree, move this call to LayerRendererChromium::paintLayerContents.
-    setLayerTreeHost(renderer->owner());
-}
-
-void LayerChromium::setLayerTreeHost(CCLayerTreeHost*)
-{
+    m_layerTreeHost = host;
 }
 
 void LayerChromium::setNeedsCommit()
@@ -332,7 +325,6 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setDoubleSided(m_doubleSided);
     layer->setDrawsContent(drawsContent());
     layer->setIsRootLayer(m_isRootLayer);
-    layer->setLayerRenderer(m_layerRenderer.get());
     layer->setMasksToBounds(m_masksToBounds);
     layer->setName(m_name);
     layer->setOpacity(m_opacity);
@@ -347,12 +339,6 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         maskLayer()->pushPropertiesTo(layer->maskLayer());
     if (replicaLayer())
         replicaLayer()->pushPropertiesTo(layer->replicaLayer());
-}
-
-GraphicsContext3D* LayerChromium::layerRendererContext() const
-{
-    ASSERT(layerRenderer());
-    return layerRenderer()->context();
 }
 
 void LayerChromium::drawTexturedQuad(GraphicsContext3D* context, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
@@ -434,11 +420,6 @@ void LayerChromium::setBorderWidth(float width)
 {
     m_debugBorderWidth = width;
     setNeedsCommit();
-}
-
-LayerRendererChromium* LayerChromium::layerRenderer() const
-{
-    return m_layerRenderer.get();
 }
 
 void LayerChromium::createRenderSurface()

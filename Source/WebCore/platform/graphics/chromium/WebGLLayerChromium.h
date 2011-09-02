@@ -64,6 +64,8 @@ private:
     explicit WebGLLayerChromium(GraphicsLayerChromium* owner);
     friend class WebGLLayerChromiumRateLimitTask;
 
+    GraphicsContext3D* layerRendererContext();
+
     void rateLimitContext(Timer<WebGLLayerChromium>*);
 
     // GraphicsContext3D::platformLayer has a side-effect of assigning itself

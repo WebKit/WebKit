@@ -114,14 +114,9 @@ void CCLayerTreeHost::commitTo(CCLayerTreeHostImpl* hostImpl)
     hostImpl->setSourceFrameNumber(frameNumber());
 
     // Synchronize trees, if one exists at all...
-    if (rootLayer()) {
-        // The layerRenderer needs to be set so that child layers pick up the layerRenderer
-        // as well during the synchronize step.
-        if (rootLayer()->platformLayer()->layerRenderer() != hostImpl->layerRenderer())
-            rootLayer()->platformLayer()->setLayerRendererRecursive(hostImpl->layerRenderer());
-
+    if (rootLayer())
         hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer()->platformLayer(), hostImpl->rootLayer()));
-    } else
+    else
         hostImpl->setRootLayer(0);
 
     m_frameNumber++;
@@ -144,6 +139,8 @@ PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl()
 
 void CCLayerTreeHost::didRecreateGraphicsContext(bool success)
 {
+    if (rootLayer())
+        rootLayer()->platformLayer()->cleanupResourcesRecursive();
     m_client->didRecreateGraphicsContext(success);
 }
 

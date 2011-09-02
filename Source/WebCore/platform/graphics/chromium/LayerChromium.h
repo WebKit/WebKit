@@ -55,7 +55,6 @@ namespace WebCore {
 class CCLayerImpl;
 class CCLayerTreeHost;
 class GraphicsContext3D;
-class LayerRendererChromium;
 
 // Base class for composited layers. Special layer types are derived from
 // this class.
@@ -153,13 +152,6 @@ public:
     void setIsRootLayer(bool isRootLayer) { m_isRootLayer = isRootLayer; }
     bool isRootLayer() const { return m_isRootLayer; }
 
-    void setLayerRendererRecursive(LayerRendererChromium*);
-
-    // Derived types must override this method if they need to react to a change
-    // in the LayerRendererChromium.
-    // FIXME, replace with CCLayerTreeHost.
-    virtual void setLayerRenderer(LayerRendererChromium*);
-
     virtual void setLayerTreeHost(CCLayerTreeHost*);
 
     void setOwner(GraphicsLayerChromium* owner) { m_owner = owner; }
@@ -190,10 +182,6 @@ public:
 
     virtual void pushPropertiesTo(CCLayerImpl*);
 
-    // Begin calls that forward to the CCLayerImpl.
-    LayerRendererChromium* layerRenderer() const;
-    // End calls that forward to the CCLayerImpl.
-
     typedef ProgramBinding<VertexShaderPos, FragmentShaderColor> BorderProgram;
 
     int id() const { return m_layerId; }
@@ -218,6 +206,9 @@ public:
     // Returns true if any of the layer's descendants has content to draw.
     bool descendantDrawsContent();
 
+    CCLayerTreeHost* layerTreeHost() const { return m_layerTreeHost.get(); }
+    virtual void cleanupResourcesRecursive();
+
 protected:
     GraphicsLayerChromium* m_owner;
     explicit LayerChromium(GraphicsLayerChromium* owner);
@@ -226,8 +217,6 @@ protected:
     // layerRendererContext(). Subclasses should override this method if they
     // hold context-dependent resources such as textures.
     virtual void cleanupResources();
-
-    GraphicsContext3D* layerRendererContext() const;
 
     static void toGLMatrix(float*, const TransformationMatrix&);
 
@@ -267,7 +256,7 @@ private:
     Vector<RefPtr<LayerChromium> > m_children;
     LayerChromium* m_parent;
 
-    RefPtr<LayerRendererChromium> m_layerRenderer;
+    RefPtr<CCLayerTreeHost> m_layerTreeHost;
 
     // Layer properties.
     IntSize m_bounds;

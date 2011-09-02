@@ -83,7 +83,6 @@ private:
     bool m_skipsDraw;
     VideoFrameChromium::Format m_frameFormat;
     VideoFrameProvider* m_provider;
-    CCLayerTreeHost* m_layerTreeHost;
 
     Texture m_textures[3];
 

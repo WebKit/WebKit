@@ -88,8 +88,6 @@ private:
 
     TextureManager* textureManager() const;
 
-    CCLayerTreeHost* m_layerTreeHost;
-
     // State held between update and upload.
     IntRect m_paintRect;
     IntRect m_updateRect;

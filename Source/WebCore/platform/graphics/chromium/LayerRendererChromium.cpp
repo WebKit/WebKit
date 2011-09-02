@@ -575,8 +575,11 @@ void LayerRendererChromium::updateLayers()
 
 void LayerRendererChromium::drawLayers()
 {
-    if (!rootLayer())
+    if (!rootLayerImpl())
         return;
+
+    // FIXME: No need to walk the tree here. This could be passed via draw.
+    rootLayerImpl()->setLayerRendererRecursive(this);
 
     m_renderSurfaceTextureManager->setMemoryLimitBytes(textureMemoryHighLimitBytes - m_contentsTextureManager->currentMemoryUseBytes());
     drawLayersInternal();
@@ -654,10 +657,7 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
         RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
 
-        // Make sure any renderSurfaceLayer is associated with this layerRenderer.
-        // This is a defensive assignment in case the owner of this layer hasn't
-        // set the layerRenderer on this layer already.
-        renderSurfaceLayer->setLayerRenderer(this);
+        renderSurfaceLayer->setLayerTreeHost(owner());
 
         // Render surfaces whose drawable area has zero width or height
         // will have no layers associated with them and should be skipped.
@@ -677,17 +677,17 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
             if (layer->renderSurface() && layer->renderSurface() != renderSurface)
                 continue;
 
-            layer->setLayerRenderer(this);
+            layer->setLayerTreeHost(owner());
 
             if (!layer->opacity())
                 continue;
 
             if (layer->maskLayer())
-                layer->maskLayer()->setLayerRenderer(this);
+                layer->maskLayer()->setLayerTreeHost(owner());
             if (layer->replicaLayer()) {
-                layer->replicaLayer()->setLayerRenderer(this);
+                layer->replicaLayer()->setLayerTreeHost(owner());
                 if (layer->replicaLayer()->maskLayer())
-                    layer->replicaLayer()->maskLayer()->setLayerRenderer(this);
+                    layer->replicaLayer()->maskLayer()->setLayerTreeHost(owner());
             }
 
             if (layer->bounds().isEmpty())

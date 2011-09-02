@@ -119,6 +119,19 @@ void CCLayerImpl::setLayerRenderer(LayerRendererChromium* renderer)
     m_layerRenderer = renderer;
 }
 
+void CCLayerImpl::setLayerRendererRecursive(LayerRendererChromium* renderer)
+{
+    for (size_t i = 0; i < children().size(); ++i)
+        children()[i]->setLayerRendererRecursive(renderer);
+
+    if (maskLayer())
+        maskLayer()->setLayerRendererRecursive(renderer);
+    if (replicaLayer())
+        replicaLayer()->setLayerRendererRecursive(renderer);
+
+    setLayerRenderer(renderer);
+}
+
 void CCLayerImpl::createRenderSurface()
 {
     ASSERT(!m_renderSurface);

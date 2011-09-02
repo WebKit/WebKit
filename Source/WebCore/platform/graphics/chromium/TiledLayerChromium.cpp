@@ -65,7 +65,6 @@ private:
 
 TiledLayerChromium::TiledLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
-    , m_layerTreeHost(0)
     , m_tilingOption(AutoTile)
     , m_textureFormat(GraphicsContext3D::INVALID_ENUM)
     , m_skipsDraw(false)
@@ -116,7 +115,7 @@ void TiledLayerChromium::updateTileSizeAndTilingOption()
         isTiled = autoTiled;
 
     IntSize requestedSize = isTiled ? tileSize : contentBounds();
-    const int maxSize = m_layerTreeHost->layerRendererCapabilities().maxTextureSize;
+    const int maxSize = layerTreeHost()->layerRendererCapabilities().maxTextureSize;
     IntSize clampedSize = requestedSize.shrunkTo(IntSize(maxSize, maxSize));
     m_tiler->setTileSize(clampedSize);
 }
@@ -138,7 +137,7 @@ bool TiledLayerChromium::drawsContent() const
 void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
     LayerChromium::setLayerTreeHost(host);
-    m_layerTreeHost = host;
+
     if (m_tiler)
         return;
 
@@ -281,9 +280,9 @@ void TiledLayerChromium::dumpLayerProperties(TextStream& ts, int indent) const
 
 TextureManager* TiledLayerChromium::textureManager() const
 {
-    if (!layerRenderer())
+    if (!layerTreeHost())
         return 0;
-    return layerRenderer()->contentsTextureManager();
+    return layerTreeHost()->contentsTextureManager();
 }
 
 UpdatableTile* TiledLayerChromium::tileAt(int i, int j) const

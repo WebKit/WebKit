@@ -56,7 +56,6 @@ VideoLayerChromium::VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameP
     , m_skipsDraw(true)
     , m_frameFormat(VideoFrameChromium::Invalid)
     , m_provider(provider)
-    , m_layerTreeHost(0)
     , m_currentFrame(0)
 {
 }
@@ -74,6 +73,8 @@ PassRefPtr<CCLayerImpl> VideoLayerChromium::createCCLayerImpl()
 void VideoLayerChromium::cleanupResources()
 {
     LayerChromium::cleanupResources();
+    for (size_t i = 0; i < 3; ++i)
+        m_textures[i].m_texture.clear();
     releaseCurrentFrame();
 }
 
@@ -145,18 +146,16 @@ void VideoLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     }
 }
 
-void VideoLayerChromium::setLayerTreeHost(CCLayerTreeHost* layerTreeHost)
+void VideoLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
-    LayerChromium::setLayerTreeHost(layerTreeHost);
-    if (m_layerTreeHost == layerTreeHost)
-        return;
-
-    m_layerTreeHost = layerTreeHost;
-
-    for (size_t i = 0; i < 3; ++i) {
-        m_textures[i].m_visibleSize = IntSize();
-        m_textures[i].m_texture = ManagedTexture::create(layerTreeHost->contentsTextureManager());
+    if (layerTreeHost() != host) {
+        for (size_t i = 0; i < 3; ++i) {
+            m_textures[i].m_visibleSize = IntSize();
+            m_textures[i].m_texture = ManagedTexture::create(host->contentsTextureManager());
+        }
     }
+
+    LayerChromium::setLayerTreeHost(host);
 }
 
 GC3Denum VideoLayerChromium::determineTextureFormat(const VideoFrameChromium* frame)
@@ -175,11 +174,11 @@ GC3Denum VideoLayerChromium::determineTextureFormat(const VideoFrameChromium* fr
 
 bool VideoLayerChromium::reserveTextures(const VideoFrameChromium* frame, GC3Denum textureFormat)
 {
-    ASSERT(m_layerTreeHost);
+    ASSERT(layerTreeHost());
     ASSERT(frame);
     ASSERT(textureFormat != GraphicsContext3D::INVALID_VALUE);
 
-    int maxTextureSize = m_layerTreeHost->layerRendererCapabilities().maxTextureSize;
+    int maxTextureSize = layerTreeHost()->layerRendererCapabilities().maxTextureSize;
 
     for (unsigned plane = 0; plane < frame->planes(); plane++) {
         IntSize requiredTextureSize = frame->requiredTextureSize(plane);

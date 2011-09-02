@@ -97,7 +97,7 @@ void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererCo
 
 bool WebGLLayerChromium::paintRenderedResultsToCanvas(ImageBuffer* imageBuffer)
 {
-    if (m_textureUpdated || !layerRenderer() || !drawsContent())
+    if (m_textureUpdated || !layerRendererContext() || !drawsContent())
         return false;
 
     IntSize framebufferSize = m_context->getInternalFramebufferSize();
@@ -119,7 +119,7 @@ void WebGLLayerChromium::setTextureUpdated()
     m_textureUpdated = true;
     // If WebGL commands are issued outside of a the animation callbacks, then use
     // call rateLimitOffscreenContextCHROMIUM() to keep the context from getting too far ahead.
-    if (layerRenderer() && !layerRenderer()->owner()->animating() && m_contextSupportsRateLimitingExtension && !m_rateLimitingTimer.isActive())
+    if (layerTreeHost() && !layerTreeHost()->animating() && m_contextSupportsRateLimitingExtension && !m_rateLimitingTimer.isActive())
         m_rateLimitingTimer.startOneShot(0);
 }
 
@@ -142,6 +142,15 @@ void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
     m_hasAlpha = attributes.alpha;
     m_premultipliedAlpha = attributes.premultipliedAlpha;
     m_contextSupportsRateLimitingExtension = m_context->getExtensions()->supports("GL_CHROMIUM_rate_limit_offscreen_context");
+}
+
+GraphicsContext3D* WebGLLayerChromium::layerRendererContext()
+{
+    // FIXME: In the threaded case, paintRenderedResultsToCanvas must be
+    // refactored to be asynchronous. Currently this is unimplemented.
+    if (!layerTreeHost() || layerTreeHost()->settings().enableCompositorThread)
+        return 0;
+    return layerTreeHost()->context();
 }
 
 void WebGLLayerChromium::rateLimitContext(Timer<WebGLLayerChromium>*)

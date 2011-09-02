@@ -1,3 +1,64 @@
+2011-09-02  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove LayerRendererChromium references from the LayerChromium tree
+        https://bugs.webkit.org/show_bug.cgi?id=66430
+
+        Reviewed by James Robinson.
+
+        Covered by existing tests.
+
+        Replace references to LayerRendererChromium in the LayerChromium tree
+        with references to LayerTreeHost. The LayerRendererChromium property
+        is no longer synced and instead is set recursively on the CCLayerImpl
+        tree during commit.
+
+        WebGLLayerChromium's paintRenderedResultsToCanvas function is
+        temporarily turned off for threaded compositing because it needs
+        access to the compositor context.
+
+        Previously, changing the layer renderer on a layer called cleanup
+        resources on that layer.  Now, call that explicitly clean up all
+        resources explicitly from the proxy when the layer renderer gets
+        created. This cleans up all of the ManagedTexture objects which may be
+        hanging onto stale GraphicsContext3D pointers.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::cleanupResourcesRecursive):
+        (WebCore::LayerChromium::setLayerTreeHost):
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::layerTreeHost):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::paintLayerContents):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::TiledLayerChromium):
+        (WebCore::TiledLayerChromium::updateTileSizeAndTilingOption):
+        (WebCore::TiledLayerChromium::setLayerTreeHost):
+        (WebCore::TiledLayerChromium::textureManager):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::cleanupResources):
+        (WebCore::VideoLayerChromium::setLayerTreeHost):
+        (WebCore::VideoLayerChromium::reserveTextures):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::paintRenderedResultsToCanvas):
+        (WebCore::WebGLLayerChromium::setTextureUpdated):
+        (WebCore::WebGLLayerChromium::layerRendererContext):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::setLayerRendererRecursive):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::commitTo):
+        (WebCore::CCLayerTreeHost::didRecreateGraphicsContext):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::initializeLayerRenderer):
+
 2011-09-02  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.
