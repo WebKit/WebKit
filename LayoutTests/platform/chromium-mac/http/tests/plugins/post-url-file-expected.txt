@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 15: Uncaught Error: Error calling method on NPObject.
+
+
+
+
+--------
+Frame: 'result'
+--------
+FAIL

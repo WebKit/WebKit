@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 14: Uncaught TypeError: Object [object Object] has no method 'nodesFromRect'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

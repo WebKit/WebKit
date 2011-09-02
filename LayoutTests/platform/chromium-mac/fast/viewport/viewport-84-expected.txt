@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 3: Viewport argument value "" for key "width" not recognized. Content ignored.
+CONSOLE MESSAGE: line 8: Uncaught TypeError: Object [object Object] has no method 'dumpConfigurationForViewport'
+

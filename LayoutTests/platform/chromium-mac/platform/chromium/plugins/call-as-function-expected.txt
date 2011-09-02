@@ -1,0 +1,6 @@
+
+This tests that call a plugin object (NPObject) as a function invokes invokeDefault() function on the object.
+
+plg() = undefined
+plg.testObject() = undefined
+

@@ -1,0 +1,92 @@
+Tests that typing at the end of a line where the line-breaks are all BRs is linear in the number of lines.
+FAIL: got O(1) expected O(n)
+
+DEBUG LOG:
+run iteration. magnitude 512 milliseconds 50 runsPerIteration 1
+iterations 63
+run iteration. magnitude 1 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 2 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 4 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 8 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 16 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 32 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 64 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 128 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 256 milliseconds 50 runsPerIteration 1
+magnitude: 1 iterations: 121 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.4132231404958678
+magnitude: 2 iterations: 146 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.3424657534246575
+magnitude: 4 iterations: 184 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.2717391304347826
+magnitude: 8 iterations: 183 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.273224043715847
+magnitude: 16 iterations: 180 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.2777777777777778
+magnitude: 32 iterations: 178 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.2808988764044944
+magnitude: 64 iterations: 145 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.3448275862068966
+magnitude: 128 iterations: 106 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.4716981132075472
+magnitude: 256 iterations: 79 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.6329113924050633
+magnitude: 512 iterations: 63 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.7936507936507936
+magnitudes: 1,2,4,8,16,32,64,128,256,512
+iterations: 121,146,184,183,180,178,145,106,79,63
+milliseconds/iteration: 0.4132231404958678,0.3424657534246575,0.2717391304347826,0.273224043715847,0.2777777777777778,0.2808988764044944,0.3448275862068966,0.4716981132075472,0.6329113924050633,0.7936507936507936
+numPoints 10 slope 0.0010166439535201112 intercept 0.30623898432726543 rSquared 0.8991581603719285
+numPoints 10 slope 0.0583609052320045 intercept 0.22820452464816746 rSquared 0.47963175654466444
+numPoints 10 slope 0.11926215706989214 intercept -1.3331065096469705 rSquared 0.4380572936067421
+rSquared 0.8991581603719285 rSquaredXLog 0.47963175654466444 rSquaredXYLog 0.4380572936067421
+numTriesLeft: 2
+run iteration. magnitude 512 milliseconds 50 runsPerIteration 1
+iterations 62
+run iteration. magnitude 1 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 2 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 4 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 8 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 16 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 32 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 64 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 128 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 256 milliseconds 50 runsPerIteration 1
+magnitude: 1 iterations: 136 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.36764705882352944
+magnitude: 2 iterations: 182 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.27472527472527475
+magnitude: 4 iterations: 182 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.27472527472527475
+magnitude: 8 iterations: 149 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.33557046979865773
+magnitude: 16 iterations: 113 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.4424778761061947
+magnitude: 32 iterations: 119 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.42016806722689076
+magnitude: 64 iterations: 112 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.44642857142857145
+magnitude: 128 iterations: 105 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.47619047619047616
+magnitude: 256 iterations: 133 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.37593984962406013
+magnitude: 512 iterations: 62 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.8064516129032258
+magnitudes: 1,2,4,8,16,32,64,128,256,512
+iterations: 136,182,182,149,113,119,112,105,133,62
+milliseconds/iteration: 0.36764705882352944,0.27472527472527475,0.27472527472527475,0.33557046979865773,0.4424778761061947,0.42016806722689076,0.44642857142857145,0.47619047619047616,0.37593984962406013,0.8064516129032258
+numPoints 10 slope 0.0007847117899130158 intercept 0.3417564370471141 rSquared 0.7260312432980668
+numPoints 10 slope 0.052245963810930045 intercept 0.25906881185489167 rSquared 0.5209619567499146
+numPoints 10 slope 0.11209413222810614 intercept -1.2597236485102121 rSquared 0.5721851690606745
+rSquared 0.7260312432980668 rSquaredXLog 0.5209619567499146 rSquaredXYLog 0.5721851690606745
+numTriesLeft: 1
+run iteration. magnitude 512 milliseconds 50 runsPerIteration 1
+iterations 95
+run iteration. magnitude 1 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 2 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 4 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 8 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 16 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 32 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 64 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 128 milliseconds 50 runsPerIteration 1
+run iteration. magnitude 256 milliseconds 50 runsPerIteration 1
+magnitude: 1 iterations: 186 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.26881720430107525
+magnitude: 2 iterations: 186 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.26881720430107525
+magnitude: 4 iterations: 118 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.423728813559322
+magnitude: 8 iterations: 121 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.4132231404958678
+magnitude: 16 iterations: 126 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.3968253968253968
+magnitude: 32 iterations: 123 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.4065040650406504
+magnitude: 64 iterations: 143 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.34965034965034963
+magnitude: 128 iterations: 155 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.3225806451612903
+magnitude: 256 iterations: 133 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.37593984962406013
+magnitude: 512 iterations: 95 runsPerIteration 1 loop-time 50 time/iteration(ms): 0.5263157894736842
+magnitudes: 1,2,4,8,16,32,64,128,256,512
+iterations: 186,186,118,121,126,123,143,155,133,95
+milliseconds/iteration: 0.26881720430107525,0.26881720430107525,0.423728813559322,0.4132231404958678,0.3968253968253968,0.4065040650406504,0.34965034965034963,0.3225806451612903,0.37593984962406013,0.5263157894736842
+numPoints 10 slope 0.00028862392896738897 intercept 0.3457140179099133 rSquared 0.3767705079173719
+numPoints 10 slope 0.020814725228231006 intercept 0.31031573936592494 rSquared 0.31718976216831685
+numPoints 10 slope 0.057304229056539153 intercept -1.1784112408744256 rSquared 0.3298345300679189
+rSquared 0.3767705079173719 rSquaredXLog 0.31718976216831685 rSquaredXYLog 0.3298345300679189
+
+

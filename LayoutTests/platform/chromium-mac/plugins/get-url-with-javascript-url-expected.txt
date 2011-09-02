@@ -1,0 +1,5 @@
+
+
+Test that evaluating a javascript: URL will send a stream with the result of the evaluation.
+
+FAILURE

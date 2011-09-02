@@ -1,0 +1,96 @@
+Tests that binary search over an array is logarithmic.
+FAIL: got O(1) expected O(log n)
+
+DEBUG LOG:
+run iteration. magnitude 512 milliseconds 50 runsPerIteration 1
+iterations 48629
+run iteration. magnitude 512 milliseconds 50 runsPerIteration 48
+iterations 1851
+run iteration. magnitude 512 milliseconds 50 runsPerIteration 96
+iterations 932
+run iteration. magnitude 1 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 2 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 4 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 8 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 16 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 32 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 64 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 128 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 256 milliseconds 50 runsPerIteration 96
+magnitude: 1 iterations: 10208 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.004898119122257054
+magnitude: 2 iterations: 2776 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.018011527377521614
+magnitude: 4 iterations: 1716 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.029137529137529136
+magnitude: 8 iterations: 2458 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.02034174125305126
+magnitude: 16 iterations: 1551 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.032237266279819474
+magnitude: 32 iterations: 1183 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.042265426880811495
+magnitude: 64 iterations: 1014 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.04930966469428008
+magnitude: 128 iterations: 866 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.057736720554272515
+magnitude: 256 iterations: 641 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.078003120124805
+magnitude: 512 iterations: 932 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.0536480686695279
+magnitudes: 1,2,4,8,16,32,64,128,256,512
+iterations: 10208,2776,1716,2458,1551,1183,1014,866,641,932
+milliseconds/iteration: 0.004898119122257054,0.018011527377521614,0.029137529137529136,0.02034174125305126,0.032237266279819474,0.042265426880811495,0.04930966469428008,0.057736720554272515,0.078003120124805,0.0536480686695279
+numPoints 10 slope 0.00008463785907190165 intercept 0.029900465426332016 rSquared 0.40827897713269473
+numPoints 10 slope 0.009605888374305099 intercept 0.008596593413983444 rSquared 0.8512719348521464
+numPoints 10 slope 0.33356000533563845 intercept -4.510696521064656 rSquared 0.7692999803847472
+rSquared 0.40827897713269473 rSquaredXLog 0.8512719348521464 rSquaredXYLog 0.7692999803847472
+numTriesLeft: 2
+run iteration. magnitude 512 milliseconds 50 runsPerIteration 96
+iterations 566
+run iteration. magnitude 1 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 2 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 4 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 8 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 16 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 32 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 64 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 128 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 256 milliseconds 50 runsPerIteration 96
+magnitude: 1 iterations: 5979 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.008362602441879913
+magnitude: 2 iterations: 2442 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.020475020475020474
+magnitude: 4 iterations: 1693 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.029533372711163616
+magnitude: 8 iterations: 2409 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.020755500207555
+magnitude: 16 iterations: 1748 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.028604118993135013
+magnitude: 32 iterations: 1496 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.03342245989304813
+magnitude: 64 iterations: 1511 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.03309066843150232
+magnitude: 128 iterations: 731 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.06839945280437756
+magnitude: 256 iterations: 758 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.06596306068601583
+magnitude: 512 iterations: 566 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.08833922261484099
+magnitudes: 1,2,4,8,16,32,64,128,256,512
+iterations: 5979,2442,1693,2409,1748,1496,1511,731,758,566
+milliseconds/iteration: 0.008362602441879913,0.020475020475020474,0.029533372711163616,0.020755500207555,0.028604118993135013,0.03342245989304813,0.03309066843150232,0.06839945280437756,0.06596306068601583,0.08833922261484099
+numPoints 10 slope 0.0001398375334765018 intercept 0.025389168251207756 rSquared 0.811685990682668
+numPoints 10 slope 0.011142503088873261 intercept 0.004939272223905472 rSquared 0.8342027773377028
+numPoints 10 slope 0.3074267086110252 intercept -4.384770922825109 rSquared 0.8634667083588908
+rSquared 0.811685990682668 rSquaredXLog 0.8342027773377028 rSquaredXYLog 0.8634667083588908
+numTriesLeft: 1
+run iteration. magnitude 512 milliseconds 50 runsPerIteration 96
+iterations 709
+run iteration. magnitude 1 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 2 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 4 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 8 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 16 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 32 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 64 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 128 milliseconds 50 runsPerIteration 96
+run iteration. magnitude 256 milliseconds 50 runsPerIteration 96
+magnitude: 1 iterations: 6943 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.007201497911565605
+magnitude: 2 iterations: 2757 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.018135654697134566
+magnitude: 4 iterations: 1633 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.03061849357011635
+magnitude: 8 iterations: 2250 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.022222222222222223
+magnitude: 16 iterations: 1960 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.025510204081632654
+magnitude: 32 iterations: 1400 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.03571428571428571
+magnitude: 64 iterations: 886 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.056433408577878104
+magnitude: 128 iterations: 944 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.05296610169491525
+magnitude: 256 iterations: 612 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.08169934640522876
+magnitude: 512 iterations: 709 runsPerIteration 96 loop-time 50 time/iteration(ms): 0.07052186177715092
+magnitudes: 1,2,4,8,16,32,64,128,256,512
+iterations: 6943,2757,1633,2250,1960,1400,886,944,612,709
+milliseconds/iteration: 0.007201497911565605,0.018135654697134566,0.03061849357011635,0.022222222222222223,0.025510204081632654,0.03571428571428571,0.056433408577878104,0.05296610169491525,0.08169934640522876,0.07052186177715092
+numPoints 10 slope 0.0001155040092423253 intercept 0.028286247519723137 rSquared 0.6170137109576975
+numPoints 10 slope 0.010836867611093086 intercept 0.00630035862692549 rSquared 0.8791718963193044
+numPoints 10 slope 0.32301927797448865 intercept -4.428187095604116 rSquared 0.8581641094906686
+rSquared 0.6170137109576975 rSquaredXLog 0.8791718963193044 rSquaredXYLog 0.8581641094906686
+
+

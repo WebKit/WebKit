@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 8: Uncaught TypeError: Object [object Object] has no method 'setHandlesAuthenticationChallenges'
+
+
