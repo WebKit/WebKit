@@ -123,7 +123,7 @@ committers_unable_to_review = [
     Committer("Andrew Wellington", ["andrew@webkit.org", "proton@wiretapped.net"], "proton"),
     Committer("Andrew Scherkus", "scherkus@chromium.org", "scherkus"),
     Committer("Andrey Kosyakov", "caseq@chromium.org", "caseq"),
-    Committer("Andras Becsi", ["abecsi@webkit.org", "abecsi@inf.u-szeged.hu"], "bbandix"),
+    Committer("Andras Becsi", ["abecsi@webkit.org", "andras.becsi@nokia.com"], "bbandix"),
     Committer("Andy Estes", "aestes@apple.com", "estes"),
     Committer("Anthony Ricaud", "rik@webkit.org", "rik"),
     Committer("Anton D'Auria", "adauria@apple.com", "antonlefou"),
