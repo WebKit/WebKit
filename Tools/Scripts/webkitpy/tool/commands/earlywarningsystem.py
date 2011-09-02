@@ -207,3 +207,4 @@ class ChromiumMacEWS(AbstractChromiumEWS, AbstractCommitterOnlyEWS):
 class MacEWS(AbstractCommitterOnlyEWS):
     name = "mac-ews"
     port_name = "mac"
+    _run_tests = True

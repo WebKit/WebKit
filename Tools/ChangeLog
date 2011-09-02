@@ -1,3 +1,15 @@
+2011-09-02  Adam Barth  <abarth@webkit.org>
+
+        Enable testing on mac-ews
+        https://bugs.webkit.org/show_bug.cgi?id=67505
+
+        Reviewed by Eric Seidel.
+
+        This patch enables testing on the Mac EWS, which should help
+        contributors not turn the Mac bots red.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+
 2011-09-01  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67451
