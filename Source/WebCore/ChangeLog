@@ -1,3 +1,18 @@
+2011-09-02  Kentaro Hara  <haraken@google.com>
+
+        Generate an EventSource constructor of V8 using the IDL 'Constructor' extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=67459
+
+        Reviewed by Adam Barth.
+
+        Tests: fast/eventsource/eventsource-constructor.html
+               fast/eventsource/eventsource-attribute-listeners.html
+
+        * WebCore.gypi: Removed V8EventSourceConstructor.cpp.
+        * WebCore.pro: Removed V8EventSourceConstructor.cpp.
+        * bindings/v8/custom/V8EventSourceConstructor.cpp: Removed.
+        * page/EventSource.idl: Added the 'Constructor' extended attribute.
+
 2011-09-02  Philippe Normand  <pnormand@igalia.com>
 
         [WebAudio] Undeclared dependency to VIDEO

@@ -37,7 +37,10 @@ module window {
         CanBeConstructed,
         CustomConstructFunction,
         ConstructorParameters=1,
-        V8CustomConstructor,
+        Constructor(in DOMString scriptUrl),
+        ConstructorWith=ScriptExecutionContext,
+        ConstructorRaisesException,
+        V8ConstructorSetsActiveDOMWrapper,
         EventTarget,
         NoStaticTables
     ] EventSource {
