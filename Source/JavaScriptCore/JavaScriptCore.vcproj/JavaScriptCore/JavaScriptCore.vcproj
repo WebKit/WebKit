@@ -1906,14 +1906,6 @@
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\OldSpace.cpp"
-                                    >
-                            </File>
-                            <File
-                                    RelativePath="..\..\heap\OldSpace.h"
-                                    >
-                            </File>
-                            <File
                                     RelativePath="..\..\heap\MarkStack.cpp"
                                     >
                             </File>

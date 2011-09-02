@@ -84,24 +84,6 @@ namespace JSC {
             void returnValue() { }
         };
 
-        class OwnerSet {
-        public:
-            OwnerSet();
-            
-            void add(const JSCell*);
-            void clear();
-
-            size_t size();
-            bool didOverflow();
-            
-            const JSCell** owners();
-
-        private:
-            static const size_t capacity = 5;
-            unsigned char m_size;
-            const JSCell* m_owners[capacity];
-        };
-
         static MarkedBlock* create(Heap*, size_t cellSize);
         static void destroy(MarkedBlock*);
 
@@ -153,8 +135,6 @@ namespace JSC {
         bool testAndClearMarked(const void*);
         void setMarked(const void*);
 
-        void addOldSpaceOwner(const JSCell* owner, const JSCell*);
-
         template <typename Functor> void forEachCell(Functor&);
 
     private:
@@ -198,7 +178,6 @@ namespace JSC {
         WTF::Bitmap<blockSize / atomSize> m_marks;
         bool m_inNewSpace;
         int8_t m_destructorState; // use getters/setters for this, particularly since we may want to compact this (effectively log(3)/log(2)-bit) field into other fields
-        OwnerSet m_ownerSets[ownerSetsPerBlock];
         PageAllocationAligned m_allocation;
         Heap* m_heap;
         MarkedBlock* m_prev;
@@ -328,46 +307,6 @@ namespace JSC {
     inline size_t MarkedBlock::ownerSetNumber(const JSCell* cell)
     {
         return (reinterpret_cast<Bits>(cell) - reinterpret_cast<Bits>(this)) * ownerSetsPerBlock / blockSize;
-    }
-
-    inline void MarkedBlock::addOldSpaceOwner(const JSCell* owner, const JSCell* cell)
-    {
-        OwnerSet& ownerSet = m_ownerSets[ownerSetNumber(cell)];
-        ownerSet.add(owner);
-    }
-
-    inline MarkedBlock::OwnerSet::OwnerSet()
-        : m_size(0)
-    {
-    }
-
-    inline void MarkedBlock::OwnerSet::add(const JSCell* owner)
-    {
-        if (m_size < capacity) {
-            m_owners[m_size++] = owner;
-            return;
-        }
-        m_size = capacity + 1; // Signals overflow.
-    }
-
-    inline void MarkedBlock::OwnerSet::clear()
-    {
-        m_size = 0;
-    }
-
-    inline size_t MarkedBlock::OwnerSet::size()
-    {
-        return m_size;
-    }
-
-    inline bool MarkedBlock::OwnerSet::didOverflow()
-    {
-        return m_size > capacity;
-    }
-
-    inline const JSCell** MarkedBlock::OwnerSet::owners()
-    {
-        return m_owners;
     }
 
 } // namespace JSC

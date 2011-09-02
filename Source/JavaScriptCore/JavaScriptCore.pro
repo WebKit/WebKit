@@ -78,7 +78,6 @@ SOURCES += \
     heap/MarkStack.cpp \
     heap/MarkedBlock.cpp \
     heap/NewSpace.cpp \
-    heap/OldSpace.cpp \
     heap/VTableSpectrum.cpp \
     heap/WriteBarrierSupport.cpp \
     debugger/DebuggerActivation.cpp \

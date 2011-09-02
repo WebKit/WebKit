@@ -808,9 +808,6 @@ void Heap::releaseFreeBlocks()
 #if ENABLE(GGC)
 void Heap::writeBarrierSlowCase(const JSCell* owner, JSCell* cell)
 {
-    if (!cell)
-        return;
-    MarkedBlock::blockFor(cell)->addOldSpaceOwner(owner, cell);
 }
 
 #else

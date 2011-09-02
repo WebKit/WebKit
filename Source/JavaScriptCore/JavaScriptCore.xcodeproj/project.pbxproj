@@ -50,10 +50,10 @@
 		0BF28A2911A33DC300638F84 /* SizeLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BF28A2811A33DC300638F84 /* SizeLimits.cpp */; };
 		0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7700911402FF280078EB39 /* SamplingCounter.cpp */; };
 		0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FC815151405119B00CFA603 /* VTableSpectrum.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC815141405118D00CFA603 /* VTableSpectrum.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FC81516140511B500CFA603 /* VTableSpectrum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC815121405118600CFA603 /* VTableSpectrum.cpp */; };
 		0FC8150A14043BF500CFA603 /* WriteBarrierSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC8150B14043C0E00CFA603 /* WriteBarrierSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */; };
+		0FC815151405119B00CFA603 /* VTableSpectrum.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC815141405118D00CFA603 /* VTableSpectrum.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FC81516140511B500CFA603 /* VTableSpectrum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC815121405118600CFA603 /* VTableSpectrum.cpp */; };
 		1400067712A6F7830064D123 /* OSAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400067612A6F7830064D123 /* OSAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400069312A6F9E10064D123 /* OSAllocatorPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */; };
 		140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */; };
@@ -91,8 +91,6 @@
 		1429D8DE0ED2205B00B89619 /* CallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D8DC0ED2205B00B89619 /* CallFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1429D92F0ED22D7000B89619 /* JIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D92D0ED22D7000B89619 /* JIT.cpp */; };
 		1429D9300ED22D7000B89619 /* JIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D92E0ED22D7000B89619 /* JIT.h */; };
-		142A1D8313A19C84009DA5FE /* OldSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142A1D8113A19C84009DA5FE /* OldSpace.cpp */; };
-		142A1D8413A19C84009DA5FE /* OldSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 142A1D8213A19C84009DA5FE /* OldSpace.h */; };
 		142D3939103E4560007DCB52 /* NumericStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 142D3938103E4560007DCB52 /* NumericStrings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142D6F0813539A2800B02E86 /* MarkedBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142D6F0613539A2800B02E86 /* MarkedBlock.cpp */; };
 		142D6F0913539A2800B02E86 /* MarkedBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 142D6F0713539A2800B02E86 /* MarkedBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -757,10 +755,10 @@
 		0F77008E1402FDD60078EB39 /* SamplingCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingCounter.h; sourceTree = "<group>"; };
 		0F7700911402FF280078EB39 /* SamplingCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingCounter.cpp; sourceTree = "<group>"; };
 		0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueProfile.h; sourceTree = "<group>"; };
-		0FC815121405118600CFA603 /* VTableSpectrum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VTableSpectrum.cpp; sourceTree = "<group>"; };
-		0FC815141405118D00CFA603 /* VTableSpectrum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VTableSpectrum.h; sourceTree = "<group>"; };
 		0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WriteBarrierSupport.cpp; sourceTree = "<group>"; };
 		0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrierSupport.h; sourceTree = "<group>"; };
+		0FC815121405118600CFA603 /* VTableSpectrum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VTableSpectrum.cpp; sourceTree = "<group>"; };
+		0FC815141405118D00CFA603 /* VTableSpectrum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VTableSpectrum.h; sourceTree = "<group>"; };
 		1400067612A6F7830064D123 /* OSAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSAllocator.h; sourceTree = "<group>"; };
 		1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSAllocatorPosix.cpp; sourceTree = "<group>"; };
 		140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasePrivate.h; sourceTree = "<group>"; };
@@ -783,8 +781,6 @@
 		1429D8DC0ED2205B00B89619 /* CallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallFrame.h; sourceTree = "<group>"; };
 		1429D92D0ED22D7000B89619 /* JIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JIT.cpp; sourceTree = "<group>"; };
 		1429D92E0ED22D7000B89619 /* JIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIT.h; sourceTree = "<group>"; };
-		142A1D8113A19C84009DA5FE /* OldSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OldSpace.cpp; sourceTree = "<group>"; };
-		142A1D8213A19C84009DA5FE /* OldSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OldSpace.h; sourceTree = "<group>"; };
 		142D3938103E4560007DCB52 /* NumericStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumericStrings.h; sourceTree = "<group>"; };
 		142D6F0613539A2800B02E86 /* MarkedBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedBlock.cpp; sourceTree = "<group>"; };
 		142D6F0713539A2800B02E86 /* MarkedBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedBlock.h; sourceTree = "<group>"; };
@@ -1583,8 +1579,6 @@
 				142D6F0F13539A4100B02E86 /* MarkStack.h */,
 				14D2F3D8139F4BE200491031 /* NewSpace.cpp */,
 				14D2F3D9139F4BE200491031 /* NewSpace.h */,
-				142A1D8113A19C84009DA5FE /* OldSpace.cpp */,
-				142A1D8213A19C84009DA5FE /* OldSpace.h */,
 				14BA78F013AAB88F005B7C2C /* SlotVisitor.h */,
 				142E3132134FF0A600AFADB5 /* Strong.h */,
 				141448CC13A1783700F5BA1A /* TinyBloomFilter.h */,
@@ -2688,7 +2682,6 @@
 				14D2F3DB139F4BE200491031 /* NewSpace.h in Headers */,
 				141448CB13A176EC00F5BA1A /* MarkedBlockSet.h in Headers */,
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
-				142A1D8413A19C84009DA5FE /* OldSpace.h in Headers */,
 				14BA78F113AAB88F005B7C2C /* SlotVisitor.h in Headers */,
 				14BA7A9813AADFF8005B7C2C /* Heap.h in Headers */,
 				A76F54A313B28AAB00EF2BCE /* JITWriteBarrier.h in Headers */,
@@ -3144,7 +3137,6 @@
 				7934BB7C1361979400CB99A1 /* ParallelJobsGeneric.cpp in Sources */,
 				86BB09C0138E381B0056702F /* DFGRepatch.cpp in Sources */,
 				14D2F3DA139F4BE200491031 /* NewSpace.cpp in Sources */,
-				142A1D8313A19C84009DA5FE /* OldSpace.cpp in Sources */,
 				14BA7A9713AADFF8005B7C2C /* Heap.cpp in Sources */,
 				C22C52F113FAF6EF00B7DC0D /* bignum-dtoa.cc in Sources */,
 				C22C52F313FAF6EF00B7DC0D /* bignum.cc in Sources */,

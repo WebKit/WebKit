@@ -339,8 +339,6 @@
             'heap/TinyBloomFilter.h',
             'heap/NewSpace.cpp',
             'heap/NewSpace.h',
-            'heap/OldSpace.cpp',
-            'heap/OldSpace.h',
             'debugger/Debugger.cpp',
             'debugger/DebuggerActivation.cpp',
             'debugger/DebuggerCallFrame.cpp',
