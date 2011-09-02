@@ -1,0 +1,14 @@
+WebSocket: send(object) should be interpreted as send(object.toString()).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS closeEvent.wasClean is true
+PASS receivedMessages.length is 4
+PASS receivedMessages[0] is "[object Object]"
+PASS receivedMessages[1] is "[object ArrayBuffer]"
+PASS receivedMessages[2] is "[object Blob]"
+PASS receivedMessages[3] is "Goodbye"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

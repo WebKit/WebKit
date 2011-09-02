@@ -366,6 +366,8 @@ fast/filesystem
 http/tests/filesystem
 http/tests/local/fileapi
 http/tests/security/filesystem-iframe-from-remote.html
+http/tests/websocket/tests/hybi/send-file-blob.html
+http/tests/websocket/tests/hybi/send-file-blob-fail.html
 
 # Requires WebP support.
 fast/images/webp-image-decoding.html

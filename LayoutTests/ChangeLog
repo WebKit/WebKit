@@ -1,3 +1,44 @@
+2011-09-02  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Send Blob as WebSocket binary message
+        https://bugs.webkit.org/show_bug.cgi?id=67465
+
+        Reviewed by Kent Tamura.
+
+        * http/tests/websocket/tests/hixie76/send-empty-expected.txt: Added.
+        * http/tests/websocket/tests/hixie76/send-empty.html: Added.
+        * http/tests/websocket/tests/hixie76/send-object-expected.txt: Added.
+        * http/tests/websocket/tests/hixie76/send-object.html: Added.
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close-expected.txt:
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close.html:
+        Updated. Added tests to send Blobs.
+        * http/tests/websocket/tests/hybi/send-blob-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/send-blob.html:
+        Added. Send three Blobs each of which contains a small binary message.
+        * http/tests/websocket/tests/hybi/send-blob_wsh.py:
+        Added. receive_message() returns a unicode value if the received message was text, or
+        a str value if the message was binary.
+        * http/tests/websocket/tests/hybi/send-empty-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/send-empty.html: Added.
+        * http/tests/websocket/tests/hybi/send-file-blob-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/send-file-blob-fail-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/send-file-blob-fail.html:
+        Added. If we delete a file before reading it, FileReaderLoader reliably fails.
+        * http/tests/websocket/tests/hybi/send-file-blob.html:
+        Added. Create a File and try to send it as a Blob.
+        * http/tests/websocket/tests/hybi/send-file-blob_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/workers/resources/send-blob.js:
+        Added. Same as send-blob.html above.
+        * http/tests/websocket/tests/hybi/workers/resources/send-blob_wsh.py:
+        Added. Same as send-blob_wsh.py above.
+        * http/tests/websocket/tests/hybi/workers/send-blob-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/workers/send-blob.html: Added.
+        * platform/gtk/Skipped:
+        send-file-blob.html and send-file-blob-fail.html depend on availability of File API.
+        * platform/mac/Skipped: Ditto.
+        * platform/qt/Skipped: Ditto.
+        * platform/win/Skipped: Ditto.
+
 2011-09-02  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r94304.

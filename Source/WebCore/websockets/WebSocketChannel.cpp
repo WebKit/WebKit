@@ -170,6 +170,14 @@ bool WebSocketChannel::send(const String& message)
     return true;
 }
 
+bool WebSocketChannel::send(const Blob& binaryData)
+{
+    LOG(Network, "WebSocketChannel %p send blob %s", this, binaryData.url().string().utf8().data());
+    ASSERT(!m_useHixie76Protocol);
+    enqueueBlobFrame(OpCodeBinary, binaryData);
+    return true;
+}
+
 unsigned long WebSocketChannel::bufferedAmount() const
 {
     LOG(Network, "WebSocketChannel %p bufferedAmount", this);

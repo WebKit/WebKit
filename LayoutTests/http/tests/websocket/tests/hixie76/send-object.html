@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../../../js-test-resources/js-test-style.css">
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("WebSocket: send(object) should be interpreted as send(object.toString()).");
+
+window.jsTestIsAsync = true;
+
+function createEmptyBlob()
+{
+    var builder = new WebKitBlobBuilder();
+    return builder.getBlob();
+}
+
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hixie76/echo");
+
+var closeEvent;
+var receivedMessages = [];
+var expectedMessages = ["[object Object]", "[object ArrayBuffer]", "[object Blob]", "Goodbye"];
+
+ws.onopen = function()
+{
+    ws.send({});
+    ws.send(new ArrayBuffer());
+    ws.send(createEmptyBlob());
+    ws.send("Goodbye");
+};
+
+ws.onmessage = function(event)
+{
+    receivedMessages.push(event.data);
+};
+
+ws.onclose = function(event)
+{
+    closeEvent = event;
+    shouldBeTrue("closeEvent.wasClean");
+
+    shouldEvaluateTo("receivedMessages.length", expectedMessages.length);
+    for (var i = 0; i < expectedMessages.length; ++i)
+        shouldBeEqualToString("receivedMessages[" + i + "]", expectedMessages[i]);
+    finishJSTest();
+};
+
+var successfullyParsed = true;
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

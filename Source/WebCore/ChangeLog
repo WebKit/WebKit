@@ -1,3 +1,44 @@
+2011-09-02  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Send Blob as WebSocket binary message
+        https://bugs.webkit.org/show_bug.cgi?id=67465
+
+        Reviewed by Kent Tamura.
+
+        Tests: http/tests/websocket/tests/hixie76/send-empty.html
+               http/tests/websocket/tests/hixie76/send-object.html
+               http/tests/websocket/tests/hybi/send-blob.html
+               http/tests/websocket/tests/hybi/send-empty.html
+               http/tests/websocket/tests/hybi/send-file-blob-fail.html
+               http/tests/websocket/tests/hybi/send-file-blob.html
+               http/tests/websocket/tests/hybi/workers/send-blob.html
+               http/tests/websocket/tests/hybi/bufferedAmount-after-close.html (updated)
+
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocket::send):
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        (WebCore::V8WebSocket::sendCallback):
+        * websockets/ThreadableWebSocketChannel.h:
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::send):
+        * websockets/WebSocket.h:
+        * websockets/WebSocket.idl:
+        Fixing code generator did not sound easy, because there are some classes depending on
+        broken behavior of current code generator (one such example is CanvasRenderingContext2D).
+        As a temporary workaround, new custom handlers for send() are added.
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::send):
+        * websockets/WebSocketChannel.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::send):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSendBlob):
+        A Blob can be deserialized from url, type and size.
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        KURL, String and long long (corresponding to url, type and size, respectively) can be passed
+        safely across threads.
+        * websockets/WorkerThreadableWebSocketChannel.h:
+
 2011-09-02  Philippe Normand  <pnormand@igalia.com>
 
         [WebAudio] Undeclared dependency to VIDEO
