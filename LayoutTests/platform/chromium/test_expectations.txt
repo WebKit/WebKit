@@ -1871,9 +1871,6 @@ BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.path.arcTo.shape.curve2.html =
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
-BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT
-// This test times out due to Mesa slowness.
-BUGWK45991 LINUX WIN GPU : canvas/philip/tests/2d.shadow.canvas.alpha.html = TIMEOUT TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.transparent.2.html = TEXT
 BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
@@ -2567,7 +2564,6 @@ BUGCR90669 LINUX : svg/as-background-image/svg-as-background-5.html = IMAGE
 WONTFIX GPU LEOPARD : media = IMAGE PASS
 
 // Will need windows and linux baselines
-BUGWK58182 GPU : compositing/images/content-image-change.html = PASS FAIL
 
 BUGWK47923 GPU : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 
@@ -2585,7 +2581,10 @@ BUGWK47949 LINUX WIN GPU : compositing/reflections/nested-reflection-anchor-poin
 BUGWK47949 MAC GPU : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 BUGWK47949 LINUX WIN GPU : compositing/reflections/reflection-opacity.html = IMAGE+TEXT
 BUGWK47949 MAC GPU : compositing/reflections/reflection-opacity.html = IMAGE
-BUGWK54306 GPU : compositing/reflections/animation-inside-reflection.html = PASS IMAGE
+
+// Flaky in debug mode because this is a poorly written test
+BUGWK54306 GPU DEBUG : compositing/reflections/animation-inside-reflection.html = PASS IMAGE+TEXT
+// Flaky everywhere for the same reason
 BUGWK54306 GPU : compositing/reflections/nested-reflection-animated.html = PASS IMAGE
 
 // These tests are too slow with our MESA backend.  We can re-enable when we have
@@ -2608,8 +2607,8 @@ BUGCR94918 GPU SKIP : media/media-document-audio-repaint.html = IMAGE+TEXT IMAGE
 BUGWK55968 MAC GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT
 BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
-// 2 pixel stretching when rendering some videos with the GPU (Now it's flaky)
-BUGCR94409 LINUX GPU : media/video-controls-rendering.html = PASS IMAGE
+// Flaky scrollbar issues
+BUGCR94409 LINUX GPU : media/video-controls-rendering.html = IMAGE
 
 BUGCR72223 : media/video-frame-accurate-seek.html = PASS IMAGE
 
@@ -3686,6 +3685,8 @@ BUGJAMESR LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAG
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
 BUGWK67359 : http/tests/loading/empty-urls.html = PASS TEXT
+
+BUGWK67515 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT
 
 // Failing after r94406.
 BUGWK67480 : svg/batik/text/textStyles.svg = IMAGE+TEXT

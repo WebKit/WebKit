@@ -1,3 +1,13 @@
+2011-09-02  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Update some chromium gpu baselines
+
+        * platform/chromium-gpu-cg-mac/compositing/images/content-image-change-expected.png: Added.
+        * platform/chromium-gpu-cg-mac/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/chromium-gpu-win/compositing/images/content-image-change-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-09-02  Alexey Proskuryakov  <ap@apple.com>
 
         Flaky Test: http/tests/appcache/origin-usage.html
