@@ -1,3 +1,16 @@
+2011-09-01  Michael Nordman  <michaeln@google.com>
+
+        [Chromium] Fix a crashing bug due to raciness around SQL database shutdown.
+        https://bugs.webkit.org/show_bug.cgi?id=67457
+
+        The removeOpenDatabase() method can get called multiple times.
+        Subsequent calls to it should be harmeless instead of cause a crash.
+
+        Reviewed by David Levin.
+
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+
 2011-09-01  Kent Tamura  <tkent@chromium.org>
 
         The filename text color of a file upload control should be inherited.
@@ -186,6 +199,7 @@
 
         * page/DOMWindow.idl:
 
+>>>>>>> .r94382
 2011-09-01  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/10063411> WebScriptObject.h declares an Objective-C method without a return type.

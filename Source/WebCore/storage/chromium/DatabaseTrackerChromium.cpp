@@ -129,12 +129,19 @@ void DatabaseTracker::removeOpenDatabase(AbstractDatabase* database)
     MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
     ASSERT(m_openDatabaseMap);
     DatabaseNameMap* nameMap = m_openDatabaseMap->get(originIdentifier);
-    ASSERT(nameMap);
+    if (!nameMap)
+        return;
+
     String name(database->stringIdentifier());
     DatabaseSet* databaseSet = nameMap->get(name);
-    ASSERT(databaseSet);
-    databaseSet->remove(database);
+    if (!databaseSet)
+        return;
 
+    DatabaseSet::iterator found = databaseSet->find(database);
+    if (found == databaseSet->end())
+        return;
+
+    databaseSet->remove(found);
     if (databaseSet->isEmpty()) {
         nameMap->remove(name);
         delete databaseSet;
