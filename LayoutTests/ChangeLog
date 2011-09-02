@@ -1,3 +1,10 @@
+2011-09-01  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add chromium-mac-leopard pixel baselines for new/modified tests with text
+
+        * platform/chromium-cg-mac-leopard/fast/text/fallback-traits-fixup-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/custom/pattern-rotate-gaps-expected.png: Added.
+
 2011-09-01  Kent Tamura  <tkent@chromium.org>
 
         The filename text color of a file upload control should be inherited.
