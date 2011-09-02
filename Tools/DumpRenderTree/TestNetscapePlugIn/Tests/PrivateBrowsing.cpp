@@ -70,7 +70,7 @@ private:
         }
 
     private:
-        PrivateBrowsing* pluginTest() const { return static_cast<PrivateBrowsing*>(Object::pluginTest()); }
+        PrivateBrowsing* pluginTest() const { return static_cast<PrivateBrowsing*>(Object<ScriptableObject>::pluginTest()); }
     };
 
     virtual NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData *saved)
