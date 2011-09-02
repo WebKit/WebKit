@@ -285,10 +285,3 @@ void ewk_view_tiled_unused_cache_set(Evas_Object *o, Ewk_Tile_Unused_Cache *cach
     EINA_SAFETY_ON_NULL_RETURN(sd);
     ewk_tiled_backing_store_tile_unused_cache_set(sd->backing_store, cache);
 }
-
-void ewk_view_tiled_process_entire_queue_set(Evas_Object *o, Eina_Bool flag)
-{
-    Ewk_View_Smart_Data *sd = ewk_view_smart_data_get(o);
-    EINA_SAFETY_ON_NULL_RETURN(sd);
-    ewk_tiled_backing_store_process_entire_queue_set(sd->backing_store, flag);
-}

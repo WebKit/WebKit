@@ -1,3 +1,22 @@
+2011-09-01  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Remove unused code related with priv->render.process_entire_queue in ewk_tiled_backing_store.
+        https://bugs.webkit.org/show_bug.cgi?id=63377
+
+        priv->render.process_entire_queue affects no logical flow of ewk_tiled_backing_store,
+        But, ewk_view_tiled_process_entire_queue_set is now provided as setter api for it.
+        So removal of this api and some codes related with it is required.
+
+        Reviewed by Antonio Gomes.
+
+        * ewk/ewk_tiled_backing_store.c:
+        (_ewk_tiled_backing_store_smart_add):
+        (ewk_tiled_backing_store_enable_render):
+        * ewk/ewk_tiled_backing_store.h:
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_tiled.c:
+        (ewk_view_tiled_unused_cache_set):
+
 2011-08-31  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Fonts API refactoring.

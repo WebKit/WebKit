@@ -99,7 +99,6 @@ struct _Ewk_Tiled_Backing_Store_Data {
     struct {
         Eina_Bool (*cb)(void *data, Ewk_Tile *t, const Eina_Rectangle *area);
         void *data;
-        Eina_Bool process_entire_queue;
         Eina_Inlist *pre_render_requests;
         Ecore_Idler *idler;
         Eina_Bool disabled;
@@ -718,7 +717,6 @@ static void _ewk_tiled_backing_store_smart_add(Evas_Object *o)
     priv->model.old.rows = 0;
     priv->model.width = 0;
     priv->model.height = 0;
-    priv->render.process_entire_queue = EINA_TRUE;
     priv->render.suspend = EINA_FALSE;
     priv->cspace = EVAS_COLORSPACE_ARGB8888; // TODO: detect it.
 
@@ -1917,18 +1915,4 @@ Eina_Bool ewk_tiled_backing_store_enable_render(Evas_Object *o)
     PRIV_DATA_GET_OR_RETURN(o, priv, EINA_FALSE);
     _ewk_tiled_backing_store_changed(priv);
     return _ewk_tiled_backing_store_enable_render(priv);
-}
-
-/**
- * Set the process_entire_queue flag of the renderer idler.
- *
- *
- * @param o the tiled backing store object
- * @param value EINA_TRUE if we want to process all the request of our queue. EINA_FALSE otherwise.
- */
-void ewk_tiled_backing_store_process_entire_queue_set(Evas_Object *o, Eina_Bool value)
-{
-    PRIV_DATA_GET_OR_RETURN(o, priv);
-    if (priv->render.process_entire_queue != value)
-        priv->render.process_entire_queue = value;
 }

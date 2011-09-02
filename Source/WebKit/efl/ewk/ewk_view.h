@@ -522,15 +522,6 @@ EAPI Ewk_Tile_Unused_Cache *ewk_view_tiled_unused_cache_get(const Evas_Object *o
  */
 EAPI void                   ewk_view_tiled_unused_cache_set(Evas_Object *o, Ewk_Tile_Unused_Cache *cache);
 
-// FIXME: this function should be removed later, when we find the best flag to use.
-/**
- * Sets if all the requests of the queue should be processed.
- *
- * @param o the view object
- * @param flag @c EINA_TRUE if all the request of queue should be processed, @c EINA_FALSE if not
- */
-EAPI void                   ewk_view_tiled_process_entire_queue_set(Evas_Object *o, Eina_Bool flag);
-
 /**
  * Sets a fixed layout size to be used, dissociating it from viewport size.
  *

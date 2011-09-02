@@ -107,7 +107,6 @@ void ewk_tiled_backing_store_zoom_weak_smooth_scale_set(Evas_Object *o, Eina_Boo
 Eina_Bool ewk_tiled_backing_store_update(Evas_Object *o, const Eina_Rectangle *update);
 void ewk_tiled_backing_store_updates_process_pre_set(Evas_Object *o, void *(*cb)(void *data, Evas_Object *o), const void *data);
 void ewk_tiled_backing_store_updates_process_post_set(Evas_Object *o, void *(*cb)(void *data, void *pre_data, Evas_Object *o), const void *data);
-void ewk_tiled_backing_store_process_entire_queue_set(Evas_Object *o, Eina_Bool value);
 void ewk_tiled_backing_store_updates_process(Evas_Object *o);
 void ewk_tiled_backing_store_updates_clear(Evas_Object *o);
 void ewk_tiled_backing_store_contents_resize(Evas_Object *o, Evas_Coord width, Evas_Coord height);
