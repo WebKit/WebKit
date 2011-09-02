@@ -1,5 +1,18 @@
 2011-09-02  Anders Carlsson  <andersca@apple.com>
 
+        Assertion/crash when running netscape-plugin-property-access-exception.html test
+        https://bugs.webkit.org/show_bug.cgi?id=67517
+
+        Reviewed by Adam Roben.
+
+        Make sure to initialize the NPVariant in case the plug-in returns true from NP_GetProperty,
+        but doesn't set the result NPVariant to anything.
+
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::getProperty):
+
+2011-09-02  Anders Carlsson  <andersca@apple.com>
+
         The private browsing state isn't saved when it changes
         https://bugs.webkit.org/show_bug.cgi?id=67508
 

@@ -145,6 +145,8 @@ void NPObjectMessageReceiver::getProperty(const NPIdentifierData& propertyNameDa
     }
 
     NPVariant result;
+    VOID_TO_NPVARIANT(result);
+
     returnValue = m_npObject->_class->getProperty(m_npObject, propertyNameData.createNPIdentifier(), &result);
     if (!returnValue)
         return;
