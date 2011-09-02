@@ -129,7 +129,7 @@ const LayerRendererCapabilities& CCThreadProxy::layerRendererCapabilities() cons
     return m_layerRendererCapabilitiesMainThreadCopy;
 }
 
-void CCThreadProxy::loseCompositorContext()
+void CCThreadProxy::loseCompositorContext(int numTimes)
 {
     ASSERT_NOT_REACHED();
 }

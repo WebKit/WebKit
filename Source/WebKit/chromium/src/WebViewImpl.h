@@ -406,7 +406,7 @@ public:
     void resetGestureRecognizer();
 #endif
 
-    void loseCompositorContext();
+    void loseCompositorContext(int numTimes);
 
 private:
     friend class WebView;  // So WebView::Create can call our constructor

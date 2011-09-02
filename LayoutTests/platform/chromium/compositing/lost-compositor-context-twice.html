@@ -31,7 +31,8 @@
   if (window.layoutTestController) {
     layoutTestController.dumpAsText(true);  // This is only useful as a pixel test.
     layoutTestController.display();
-    layoutTestController.loseCompositorContext(1);
+    layoutTestController.loseCompositorContext(2); // Lose the compositor context, then lose it again on the next redisplay
+    layoutTestController.display(); // Will also fail
   }
   var target = document.getElementById("target");
   target.classList.remove("red");

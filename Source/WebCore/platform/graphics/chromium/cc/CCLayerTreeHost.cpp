@@ -226,9 +226,9 @@ void CCLayerTreeHost::setVisible(bool visible)
     m_proxy->setNeedsCommitAndRedraw();
 }
 
-void CCLayerTreeHost::loseCompositorContext()
+void CCLayerTreeHost::loseCompositorContext(int numTimes)
 {
-    m_proxy->loseCompositorContext();
+    m_proxy->loseCompositorContext(numTimes);
 }
 
 TextureManager* CCLayerTreeHost::contentsTextureManager() const

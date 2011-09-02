@@ -62,6 +62,7 @@ CCSingleThreadProxy::CCSingleThreadProxy(CCLayerTreeHost* layerTreeHost)
     : m_layerTreeHost(layerTreeHost)
     , m_numFailedRecreateAttempts(0)
     , m_graphicsContextLost(false)
+    , m_timesRecreateShouldFail(0)
 {
     TRACE_EVENT("CCSingleThreadProxy::CCSingleThreadProxy", this, 0);
     ASSERT(isMainThread());
@@ -140,9 +141,10 @@ const LayerRendererCapabilities& CCSingleThreadProxy::layerRendererCapabilities(
     return m_layerTreeHostImpl->layerRendererCapabilities();
 }
 
-void CCSingleThreadProxy::loseCompositorContext()
+void CCSingleThreadProxy::loseCompositorContext(int numTimes)
 {
     m_graphicsContextLost = true;
+    m_timesRecreateShouldFail = numTimes - 1;
 }
 
 void CCSingleThreadProxy::setNeedsCommitAndRedraw()
@@ -198,12 +200,19 @@ bool CCSingleThreadProxy::recreateContextIfNeeded()
 {
     if (!m_graphicsContextLost)
         return true;
-    RefPtr<GraphicsContext3D> context = m_layerTreeHost->createLayerTreeHostContext3D();
-    ASSERT(context->hasOneRef());
-    if (m_layerTreeHostImpl->initializeLayerRenderer(0, context)) {
-        m_layerTreeHost->didRecreateGraphicsContext(true);
-        m_graphicsContextLost = false;
-        return true;
+    RefPtr<GraphicsContext3D> context;
+    if (!m_timesRecreateShouldFail)
+        context = m_layerTreeHost->createLayerTreeHostContext3D();
+    else
+        m_timesRecreateShouldFail--;
+
+    if (context) {
+        ASSERT(context->hasOneRef());
+        if (m_layerTreeHostImpl->initializeLayerRenderer(0, context)) {
+            m_layerTreeHost->didRecreateGraphicsContext(true);
+            m_graphicsContextLost = false;
+            return true;
+        }
     }
 
     // Tolerate a certain number of recreation failures to work around races

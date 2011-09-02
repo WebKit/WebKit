@@ -1751,9 +1751,14 @@ void LayoutTestController::layerTreeAsText(const CppArgumentList& args, CppVaria
     result->set(m_shell->webView()->mainFrame()->layerTreeAsText(m_showDebugLayerTree).utf8());
 }
 
-void LayoutTestController::loseCompositorContext(const CppArgumentList&, CppVariant*)
+void LayoutTestController::loseCompositorContext(const CppArgumentList& args, CppVariant*)
 {
-    m_shell->webView()->loseCompositorContext();
+    int numTimes;
+    if (args.size() == 1 || !args[0].isNumber())
+        numTimes = 1;
+    else
+        numTimes = args[0].toInt32();
+    m_shell->webView()->loseCompositorContext(numTimes);
 }
 
 void LayoutTestController::markerTextForListItem(const CppArgumentList& args, CppVariant* result)

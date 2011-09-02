@@ -135,7 +135,7 @@ public:
     const LayerRendererCapabilities& layerRendererCapabilities() const;
 
     // Test-only hook
-    void loseCompositorContext();
+    void loseCompositorContext(int numTimes);
 
     void setNeedsCommitAndRedraw();
     void setNeedsRedraw();

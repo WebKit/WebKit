@@ -393,7 +393,7 @@ public:
     // Testing functionality for LayoutTestController -----------------------
 
     // Simulates a compositor lost context.
-    virtual void loseCompositorContext() = 0;
+    virtual void loseCompositorContext(int numTimes) = 0;
 
 
 protected:

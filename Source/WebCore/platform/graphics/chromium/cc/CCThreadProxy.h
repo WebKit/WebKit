@@ -47,7 +47,7 @@ public:
     virtual bool isStarted() const;
     virtual bool initializeLayerRenderer(CCLayerTreeHost* ownerHack);
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
-    virtual void loseCompositorContext();
+    virtual void loseCompositorContext(int numTimes);
     virtual void setNeedsCommitAndRedraw();
     virtual void setNeedsRedraw();
     virtual void start();

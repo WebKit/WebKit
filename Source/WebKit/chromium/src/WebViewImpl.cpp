@@ -1175,11 +1175,11 @@ void WebViewImpl::composite(bool)
 #endif
 }
 
-void WebViewImpl::loseCompositorContext()
+void WebViewImpl::loseCompositorContext(int numTimes)
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (m_layerTreeHost)
-        m_layerTreeHost->loseCompositorContext();
+        m_layerTreeHost->loseCompositorContext(numTimes);
 #endif
 }
 

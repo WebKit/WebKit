@@ -31,7 +31,13 @@
   if (window.layoutTestController) {
     layoutTestController.dumpAsText(true);  // This is only useful as a pixel test.
     layoutTestController.display();
-    layoutTestController.loseCompositorContext(1);
+    layoutTestController.loseCompositorContext(100); // Make it lose the context over and over again.
+
+    // Force display many times so that the compositor gives up on GPU acceleration
+    // The number of times to try should be at least as many as the
+    // m_numFailedRecreateAttempts in CCSingleThreadProxy.
+    for (var i = 0; i < 10; ++i)
+        layoutTestController.display();
   }
   var target = document.getElementById("target");
   target.classList.remove("red");

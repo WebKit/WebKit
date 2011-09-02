@@ -75,7 +75,7 @@ public:
 #endif
 
     // Testing hooks
-    virtual void loseCompositorContext() = 0;
+    virtual void loseCompositorContext(int numTimes) = 0;
 
     // Temporary hack while render_widget still does scheduling for CCLayerTreeHostMainThreadI
     virtual GraphicsContext3D* context() = 0;
