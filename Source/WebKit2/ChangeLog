@@ -1,3 +1,15 @@
+2011-09-02  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/67467> WebProcessProxy::secItemCopyMatching / WebProcessProxy::secItemAdd
+        leak the results of the APIs they wrap.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::secItemCopyMatching): Adopt the result of SecItemCopyMatching in to a
+        RetainPtr to ensure it gets released at the appropriate time.
+        (WebKit::WebProcessProxy::secItemAdd): Ditto for SecItemAdd.
+
 2011-09-01  Ada Chan  <adachan@apple.com>
 
         Cut down the ifdefs in WebKit::getWebCoreMemoryCacheStatistics() now that 

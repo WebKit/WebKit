@@ -37,23 +37,21 @@ namespace WebKit {
 void WebProcessProxy::secItemCopyMatching(const SecItemRequestData& queryData, SecItemResponseData& result)
 {
     CFDictionaryRef query = queryData.query();
-    CFTypeRef resultObject;
-    OSStatus resultCode;
+    CFTypeRef resultObjectRef;
+    OSStatus resultCode = SecItemCopyMatching(query, &resultObjectRef);
 
-    resultCode = SecItemCopyMatching(query, &resultObject);
-
-    result = SecItemResponseData(resultCode, resultObject);
+    RetainPtr<CFTypeRef> resultObject(AdoptCF, resultObjectRef);
+    result = SecItemResponseData(resultCode, resultObject.get());
 }
 
 void WebProcessProxy::secItemAdd(const SecItemRequestData& queryData, SecItemResponseData& result)
 {
     CFDictionaryRef query = queryData.query();
-    CFTypeRef resultObject;
-    OSStatus resultCode;
+    CFTypeRef resultObjectRef;
+    OSStatus resultCode = SecItemAdd(query, &resultObjectRef);
 
-    resultCode = SecItemAdd(query, &resultObject);
-
-    result = SecItemResponseData(resultCode, resultObject);
+    RetainPtr<CFTypeRef> resultObject(AdoptCF, resultObjectRef);
+    result = SecItemResponseData(resultCode, resultObject.get());
 }
 
 void WebProcessProxy::secItemUpdate(const SecItemRequestData& queryData, SecItemResponseData& result)
