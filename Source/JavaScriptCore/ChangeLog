@@ -1,3 +1,11 @@
+2011-09-01  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build.
+
+        * JavaScriptCore.JSVALUE32_64only.exp:
+        * JavaScriptCore.JSVALUE64only.exp:
+        * JavaScriptCore.exp:
+
 2011-09-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unzip initialization lists and constructors in JSCell hierarchy (4/7)
