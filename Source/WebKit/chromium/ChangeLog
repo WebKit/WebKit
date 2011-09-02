@@ -1,3 +1,20 @@
+2011-09-02  Peng Huang  <penghuang@chromium.org>
+
+        Need API for getting surrounding text from webkit in chromium
+        https://bugs.webkit.org/show_bug.cgi?id=66681
+
+        Reviewed by Ryosuke Niwa.
+
+        Add getSelectionOffsetsAndTextInEditableContent() to Chromium's
+        WebViewImpl. This function is for supporting some input methods which
+        need input context around the edit caret.
+
+        * public/WebWidget.h:
+        (WebKit::WebWidget::getSelectionOffsetsAndTextInEditableContent):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::getSelectionOffsetsAndTextInEditableContent):
+        * src/WebViewImpl.h:
+
 2011-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

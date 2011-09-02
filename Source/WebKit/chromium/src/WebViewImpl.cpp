@@ -1508,6 +1508,36 @@ WebTextInputType WebViewImpl::textInputType()
     return WebTextInputTypeNone;
 }
 
+bool WebViewImpl::getSelectionOffsetsAndTextInEditableContent(WebString& text, size_t& focus, size_t& anchor) const
+{
+    const Frame* frame = focusedWebCoreFrame();
+    if (!frame)
+        return false;
+
+    const FrameSelection* selection = frame->selection();
+    Element* element = selection->rootEditableElement();
+    if (!element)
+        return false;
+
+    size_t location;
+    size_t length;
+    RefPtr<Range> range = selection->selection().firstRange();
+    if (!range || !TextIterator::locationAndLengthFromRange(range.get(), location, length))
+        return false;
+
+    if (selection->selection().isBaseFirst()) {
+        anchor = location;
+        focus = location + length;
+    } else {
+        anchor = location;
+        focus = location + length;
+    }
+
+    text = element->innerText();
+
+    return true;
+}
+
 WebRect WebViewImpl::caretOrSelectionBounds()
 {
     WebRect rect;

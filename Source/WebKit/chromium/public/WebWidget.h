@@ -147,6 +147,11 @@ public:
     // Returns the current text input type of this WebWidget.
     virtual WebTextInputType textInputType() { return WebKit::WebTextInputTypeNone; }
 
+    // Returns the plain text around the edit caret and the focus index in the
+    // text. If selection exists, it will return the anchor index as well,
+    // otherwise the anchor index will be the same value of the focus index.
+    virtual bool getSelectionOffsetsAndTextInEditableContent(WebString&, size_t& focus, size_t& anchor) const { return false; }
+
     // Returns the current caret bounds of this WebWidget. The selection bounds
     // will be returned if a selection range is available.
     virtual WebRect caretOrSelectionBounds() { return WebRect(); }

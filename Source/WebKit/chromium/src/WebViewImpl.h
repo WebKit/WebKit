@@ -117,6 +117,7 @@ public:
     virtual bool confirmComposition(const WebString& text);
     virtual bool compositionRange(size_t* location, size_t* length);
     virtual WebTextInputType textInputType();
+    virtual bool getSelectionOffsetsAndTextInEditableContent(WebString&, size_t& focus, size_t& anchor) const;
     virtual WebRect caretOrSelectionBounds();
     virtual bool selectionRange(WebPoint& start, WebPoint& end) const;
     virtual bool caretOrSelectionRange(size_t* location, size_t* length);
