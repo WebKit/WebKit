@@ -1,5 +1,18 @@
 2011-09-01  Kentaro Hara  <haraken@google.com>
 
+        Generate a Worker constructor of V8 using the IDL 'Constructor' extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=67447
+
+        Reviewed by Dimitri Glazkov.
+
+        Test: fast/workers/worker-constructor.html
+              fast/workers/worker-event-listener.html
+
+        * bindings/v8/custom/V8WorkerCustom.cpp: Removed constructorCallback().
+        * workers/Worker.idl: Added the 'Constructor' extended attribute.
+
+2011-09-01  Kentaro Hara  <haraken@google.com>
+
         Generate a FileReader constructor of V8 using the IDL 'Constructor' extended attribute
         https://bugs.webkit.org/show_bug.cgi?id=67412
 
