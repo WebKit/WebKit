@@ -1568,11 +1568,6 @@ fast/loader/stateobjects/state-url-sets-links-visited.html
 # https://bugs.webkit.org/show_bug.cgi?id=59192
 http/tests/security/contentSecurityPolicy/report-uri-from-child-frame.html
 
-# WebKitTestRunner needs layoutTestController.setPrivateBrowsingEnabled
-# http://webkit.org/b/59857
-plugins/private-browsing-mode.html
-plugins/private-browsing-mode-2.html
-
 # WebKitTestRunner needs layoutTestController.setPopupBlockingEnabled
 # https://bugs.webkit.org/show_bug.cgi?id=63458
 fast/events/popup-blocked-from-untrusted-click-event-on-anchor.html
@@ -1591,7 +1586,7 @@ fast/events/popup-blocked-to-post-blank.html
 fast/events/popup-blocking-timers.html
 plugins/plugin-initiate-popup-window.html
 
-# WebKitTestRunner needs an implemenation of allowRoundingHacks
+# WebKitTestRunner needs an implementation of allowRoundingHacks
 # http://webkit.org/b/63477
 platform/mac/fast/text/rounding-hacks.html
 platform/mac/fast/text/rounding-hacks-expansion.html

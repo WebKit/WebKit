@@ -573,6 +573,8 @@ void PluginControllerProxy::getPluginScriptableNPObject(uint64_t& pluginScriptab
 
 void PluginControllerProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
 {
+    m_isPrivateBrowsingEnabled = isPrivateBrowsingEnabled;
+
     m_plugin->privateBrowsingStateChanged(isPrivateBrowsingEnabled);
 }
 
