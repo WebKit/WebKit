@@ -38,7 +38,6 @@
 #include "Frame.h"
 #include "Settings.h"
 #include "V8Binding.h"
-#include "V8Blob.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WebSocket.h"
@@ -110,34 +109,6 @@ v8::Handle<v8::Value> V8WebSocket::constructorCallback(const v8::Arguments& args
     V8DOMWrapper::setJSWrapperForActiveDOMObject(webSocket.get(), v8::Persistent<v8::Object>::New(args.Holder()));
 
     return args.Holder();
-}
-
-v8::Handle<v8::Value> V8WebSocket::sendCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.WebSocket.send()");
-
-    if (!args.Length())
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
-
-    WebSocket* webSocket = V8WebSocket::toNative(args.Holder());
-    v8::Handle<v8::Value> message = args[0];
-    ExceptionCode ec = 0;
-    bool result;
-    if (V8Blob::HasInstance(message)) {
-        Blob* blob = V8Blob::toNative(v8::Handle<v8::Object>::Cast(message));
-        ASSERT(blob);
-        result = webSocket->send(blob, ec);
-    } else {
-        v8::TryCatch tryCatch;
-        v8::Handle<v8::String> stringMessage = message->ToString();
-        if (tryCatch.HasCaught())
-            return throwError(tryCatch.Exception());
-        result = webSocket->send(toWebCoreString(message), ec);
-    }
-    if (ec)
-        return throwError(ec);
-
-    return v8Boolean(result);
 }
 
 v8::Handle<v8::Value> V8WebSocket::closeCallback(const v8::Arguments& args)

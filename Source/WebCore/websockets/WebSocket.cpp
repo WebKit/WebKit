@@ -265,24 +265,6 @@ bool WebSocket::send(const String& message, ExceptionCode& ec)
     return m_channel->send(message);
 }
 
-bool WebSocket::send(Blob* binaryData, ExceptionCode& ec)
-{
-    LOG(Network, "WebSocket %p send blob %s", this, binaryData->url().string().utf8().data());
-    ASSERT(binaryData);
-    if (m_useHixie76Protocol)
-        return send("[object Blob]", ec);
-    if (m_state == CONNECTING) {
-        ec = INVALID_STATE_ERR;
-        return false;
-    }
-    if (m_state == CLOSING || m_state == CLOSED) {
-        m_bufferedAmountAfterClose += binaryData->size() + getFramingOverhead(binaryData->size());
-        return false;
-    }
-    ASSERT(m_channel);
-    return m_channel->send(*binaryData);
-}
-
 void WebSocket::close(int code, const String& reason, ExceptionCode& ec)
 {
     if (code == WebSocketChannel::CloseEventCodeNotSpecified)

@@ -34,7 +34,6 @@
 
 #include "WorkerThreadableWebSocketChannel.h"
 
-#include "Blob.h"
 #include "CrossThreadTask.h"
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"
@@ -86,13 +85,6 @@ bool WorkerThreadableWebSocketChannel::send(const String& message)
     if (!m_bridge)
         return false;
     return m_bridge->send(message);
-}
-
-bool WorkerThreadableWebSocketChannel::send(const Blob& binaryData)
-{
-    if (!m_bridge)
-        return false;
-    return m_bridge->send(binaryData);
 }
 
 unsigned long WorkerThreadableWebSocketChannel::bufferedAmount() const
@@ -177,15 +169,6 @@ void WorkerThreadableWebSocketChannel::Peer::send(const String& message)
     if (!m_mainWebSocketChannel || !m_workerClientWrapper)
         return;
     bool sent = m_mainWebSocketChannel->send(message);
-    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidSend, m_workerClientWrapper, sent), m_taskMode);
-}
-
-void WorkerThreadableWebSocketChannel::Peer::send(const Blob& binaryData)
-{
-    ASSERT(isMainThread());
-    if (!m_mainWebSocketChannel || !m_workerClientWrapper)
-        return;
-    bool sent = m_mainWebSocketChannel->send(binaryData);
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidSend, m_workerClientWrapper, sent), m_taskMode);
 }
 
@@ -375,16 +358,6 @@ void WorkerThreadableWebSocketChannel::mainThreadSend(ScriptExecutionContext* co
     peer->send(message);
 }
 
-void WorkerThreadableWebSocketChannel::mainThreadSendBlob(ScriptExecutionContext* context, Peer* peer, const KURL& url, const String& type, long long size)
-{
-    ASSERT(isMainThread());
-    ASSERT_UNUSED(context, context->isDocument());
-    ASSERT(peer);
-
-    RefPtr<Blob> blob = Blob::create(url, type, size);
-    peer->send(*blob);
-}
-
 bool WorkerThreadableWebSocketChannel::Bridge::send(const String& message)
 {
     if (!m_workerClientWrapper)
@@ -392,19 +365,6 @@ bool WorkerThreadableWebSocketChannel::Bridge::send(const String& message)
     ASSERT(m_peer);
     setMethodNotCompleted();
     m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadSend, AllowCrossThreadAccess(m_peer), message));
-    RefPtr<Bridge> protect(this);
-    waitForMethodCompletion();
-    ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.get();
-    return clientWrapper && clientWrapper->sent();
-}
-
-bool WorkerThreadableWebSocketChannel::Bridge::send(const Blob& binaryData)
-{
-    if (!m_workerClientWrapper)
-        return false;
-    ASSERT(m_peer);
-    setMethodNotCompleted();
-    m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadSendBlob, AllowCrossThreadAccess(m_peer), binaryData.url(), binaryData.type(), binaryData.size()));
     RefPtr<Bridge> protect(this);
     waitForMethodCompletion();
     ThreadableWebSocketChannelClientWrapper* clientWrapper = m_workerClientWrapper.get();

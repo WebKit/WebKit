@@ -46,7 +46,6 @@
 
 namespace WebCore {
 
-class Blob;
 class ThreadableWebSocketChannel;
 
 class WebSocket : public RefCounted<WebSocket>, public EventTarget, public ActiveDOMObject, public WebSocketChannelClient {
@@ -68,7 +67,6 @@ public:
     void connect(const String& url, const Vector<String>& protocols, ExceptionCode&);
 
     bool send(const String& message, ExceptionCode&);
-    bool send(Blob*, ExceptionCode&);
 
     void close(int code, const String& reason, ExceptionCode&);
 

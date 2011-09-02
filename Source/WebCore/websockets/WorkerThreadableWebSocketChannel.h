@@ -64,7 +64,6 @@ public:
     virtual void connect(const KURL&, const String& protocol);
     virtual String subprotocol();
     virtual bool send(const String& message);
-    virtual bool send(const Blob&);
     virtual unsigned long bufferedAmount() const;
     virtual void close(int code, const String& reason);
     virtual void fail(const String& reason);
@@ -94,7 +93,6 @@ private:
         bool useHixie76Protocol();
         void connect(const KURL&, const String& protocol);
         void send(const String& message);
-        void send(const Blob&);
         void bufferedAmount();
         void close(int code, const String& reason);
         void fail(const String& reason);
@@ -127,7 +125,6 @@ private:
         ~Bridge();
         void connect(const KURL&, const String& protocol);
         bool send(const String& message);
-        bool send(const Blob&);
         unsigned long bufferedAmount();
         void close(int code, const String& reason);
         void fail(const String& reason);
@@ -163,7 +160,6 @@ private:
 
     static void mainThreadConnect(ScriptExecutionContext*, Peer*, const KURL&, const String& protocol);
     static void mainThreadSend(ScriptExecutionContext*, Peer*, const String& message);
-    static void mainThreadSendBlob(ScriptExecutionContext*, Peer*, const KURL&, const String& type, long long size);
     static void mainThreadBufferedAmount(ScriptExecutionContext*, Peer*);
     static void mainThreadClose(ScriptExecutionContext*, Peer*, int code, const String& reason);
     static void mainThreadFail(ScriptExecutionContext*, Peer*, const String& reason);

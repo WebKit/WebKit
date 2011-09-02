@@ -36,9 +36,8 @@
 #include "JSWebSocket.h"
 
 #include "ExceptionCode.h"
-#include "JSBlob.h"
-#include "JSEventListener.h"
 #include "KURL.h"
+#include "JSEventListener.h"
 #include "WebSocket.h"
 #include "WebSocketChannel.h"
 #include <runtime/Error.h>
@@ -87,30 +86,6 @@ EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecSt
     }
     setDOMException(exec, ec);
     return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), WebSocket, webSocket.get()));
-}
-
-JSValue JSWebSocket::send(ExecState* exec)
-{
-    if (!exec->argumentCount())
-        return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
-
-    JSValue message = exec->argument(0);
-    ExceptionCode ec = 0;
-    bool result;
-    if (message.inherits(&JSBlob::s_info))
-        result = impl()->send(toBlob(message), ec);
-    else {
-        String stringMessage = ustringToString(message.toString(exec));
-        if (exec->hadException())
-            return jsUndefined();
-        result = impl()->send(stringMessage, ec);
-    }
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-
-    return jsBoolean(result);
 }
 
 JSValue JSWebSocket::close(ExecState* exec)
