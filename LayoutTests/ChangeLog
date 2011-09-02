@@ -1,3 +1,14 @@
+2011-09-02  Jarred Nicholls  <jarred@sencha.com>
+
+        [Qt] number input not rendering spin buttons properly in RTL direction
+        https://bugs.webkit.org/show_bug.cgi?id=67445
+        
+        New baseline for Qt number input with RTL direction.
+
+        Reviewed by Andreas Kling.
+
+        * platform/qt/fast/forms/input-appearance-number-rtl-expected.png:
+
 2011-09-02  Arko Saha  <nghq36@motorola.com>
 
         Controls not reset when media element url changed from a valid url to an invalid url.

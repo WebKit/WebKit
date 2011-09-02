@@ -1,3 +1,15 @@
+2011-09-02  Jarred Nicholls  <jarred@sencha.com>
+
+        [Qt] number input not rendering spin buttons properly in RTL direction
+        https://bugs.webkit.org/show_bug.cgi?id=67445
+        
+        Properly render Qt's number input with RTL direction, and fix Plastique styling.
+
+        Reviewed by Andreas Kling.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintInnerSpinButton):
+
 2011-09-02  Arko Saha  <nghq36@motorola.com>
 
         Resetting media controls when the src is changed from a valid url to an

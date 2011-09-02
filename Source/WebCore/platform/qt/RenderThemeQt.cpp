@@ -76,6 +76,7 @@
 #include <QLineEdit>
 #include <QMacStyle>
 #include <QPainter>
+#include <QPlastiqueStyle>
 #include <QPushButton>
 #include <QStyleFactory>
 #include <QStyleOptionButton>
@@ -1098,23 +1099,34 @@ bool RenderThemeQt::paintInnerSpinButton(RenderObject* o, const PaintInfo& paint
                 option.activeSubControls = QStyle::SC_SpinBoxDown;
         }
     }
+    // Render the spin buttons for LTR or RTL accordingly.
+    option.direction = o->style()->isLeftToRightDirection() ? Qt::LeftToRight : Qt::RightToLeft;
 
     IntRect buttonRect = rect;
-    buttonRect.inflateY(-2);
+    // Default to moving the buttons a little bit within the editor frame.
+    int inflateX = -2;
+    int inflateY = -2;
 #if defined(Q_WS_MAC) && !defined(QT_NO_STYLE_MAC)
     // QMacStyle will position the aqua buttons flush to the right.
-    // This will move them more left for better style, a la
+    // This will move them more within the control for better style, a la
     // Chromium look & feel.
     if (qobject_cast<QMacStyle*>(p.style)) {
-        buttonRect.inflateX(-4);
+        inflateX = -4;
         // Render mini aqua spin buttons for QMacStyle to fit nicely into
         // the editor area, like Chromium.
         option.state |= QStyle::State_Mini;
-#else
-    {
-        buttonRect.inflateX(-2);
-#endif
     }
+#endif
+#if defined(Q_WS_X11) && !defined(QT_NO_STYLE_PLASTIQUE)
+    // QPlastiqueStyle looks best when the spin buttons are flush with the frame's edge.
+    if (qobject_cast<QPlastiqueStyle*>(p.style)) {
+        inflateX = 0;
+        inflateY = 0;
+    }
+#endif
+
+    buttonRect.inflateX(inflateX);
+    buttonRect.inflateY(inflateY);
     option.rect = buttonRect;
 
     p.drawComplexControl(QStyle::CC_SpinBox, option);
