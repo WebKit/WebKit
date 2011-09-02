@@ -1,3 +1,17 @@
+2011-09-02  Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
+
+        [WK2] Anchor elements doesn't get focus on TAB key press.
+        https://bugs.webkit.org/show_bug.cgi?id=66949
+
+        Reviewed by Adam Roben.
+
+        Setting the default property value of TabsToLinks to true
+        only for GTK platform since Win & Mac platforms doesn't want 
+        it to be set to true by default.
+
+        * Shared/WebPreferencesStore.h:
+        Set the default value of key TabsToLinks to true for GTK platform only.
+
 2011-09-02  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Cannot gathering glyph page statistics

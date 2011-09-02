@@ -42,6 +42,12 @@ namespace WebKit {
 #define DEFAULT_WEBKIT_AVFOUNDATION_ENABLED true
 #endif
 
+#if PLATFORM(GTK)
+#define DEFAULT_WEBKIT_TABSTOLINKS_ENABLED true
+#else
+#define DEFAULT_WEBKIT_TABSTOLINKS_ENABLED false
+#endif
+
 #define FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
     macro(JavaScriptEnabled, javaScriptEnabled, Bool, bool, true) \
     macro(LoadsImagesAutomatically, loadsImagesAutomatically, Bool, bool, true) \
@@ -66,7 +72,7 @@ namespace WebKit {
     macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false) \
     macro(WebGLEnabled, webGLEnabled, Bool, bool, false) \
     macro(ForceFTPDirectoryListings, forceFTPDirectoryListings, Bool, bool, false) \
-    macro(TabsToLinks, tabsToLinks, Bool, bool, false) \
+    macro(TabsToLinks, tabsToLinks, Bool, bool, DEFAULT_WEBKIT_TABSTOLINKS_ENABLED) \
     macro(DNSPrefetchingEnabled, dnsPrefetchingEnabled, Bool, bool, false) \
     macro(WebArchiveDebugModeEnabled, webArchiveDebugModeEnabled, Bool, bool, false) \
     macro(LocalFileContentSniffingEnabled, localFileContentSniffingEnabled, Bool, bool, false) \
@@ -168,7 +174,7 @@ namespace WebPreferencesKey {
 
 #define DECLARE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) const String& KeyLower##Key();
 
-    FOR_EACH_WEBKIT_PREFERENCE(DECLARE_KEY_GETTERS)
+FOR_EACH_WEBKIT_PREFERENCE(DECLARE_KEY_GETTERS)
 
 #undef DECLARE_KEY_GETTERS
 
@@ -177,7 +183,7 @@ namespace WebPreferencesKey {
 struct WebPreferencesStore {
     WebPreferencesStore();
 
-    void encode(CoreIPC::ArgumentEncoder* encoder) const;
+    void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WebPreferencesStore&);
 
     // NOTE: The getters in this class have non-standard names to aid in the use of the preference macros.
