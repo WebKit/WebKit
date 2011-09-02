@@ -845,66 +845,42 @@ static void getWebCoreMemoryCacheStatistics(Vector<HashMap<String, uint64_t> >& 
     HashMap<String, uint64_t> counts;
     counts.set(imagesString, memoryCacheStatistics.images.count);
     counts.set(cssString, memoryCacheStatistics.cssStyleSheets.count);
-#if ENABLE(XSLT)
     counts.set(xslString, memoryCacheStatistics.xslStyleSheets.count);
-#else
-    counts.set(xslString, 0);
-#endif
     counts.set(javaScriptString, memoryCacheStatistics.scripts.count);
     result.append(counts);
     
     HashMap<String, uint64_t> sizes;
     sizes.set(imagesString, memoryCacheStatistics.images.size);
     sizes.set(cssString, memoryCacheStatistics.cssStyleSheets.size);
-#if ENABLE(XSLT)
     sizes.set(xslString, memoryCacheStatistics.xslStyleSheets.size);
-#else
-    sizes.set(xslString, 0);
-#endif
     sizes.set(javaScriptString, memoryCacheStatistics.scripts.size);
     result.append(sizes);
     
     HashMap<String, uint64_t> liveSizes;
     liveSizes.set(imagesString, memoryCacheStatistics.images.liveSize);
     liveSizes.set(cssString, memoryCacheStatistics.cssStyleSheets.liveSize);
-#if ENABLE(XSLT)
     liveSizes.set(xslString, memoryCacheStatistics.xslStyleSheets.liveSize);
-#else
-    liveSizes.set(xslString, 0);
-#endif
     liveSizes.set(javaScriptString, memoryCacheStatistics.scripts.liveSize);
     result.append(liveSizes);
     
     HashMap<String, uint64_t> decodedSizes;
     decodedSizes.set(imagesString, memoryCacheStatistics.images.decodedSize);
     decodedSizes.set(cssString, memoryCacheStatistics.cssStyleSheets.decodedSize);
-#if ENABLE(XSLT)
     decodedSizes.set(xslString, memoryCacheStatistics.xslStyleSheets.decodedSize);
-#else
-    decodedSizes.set(xslString, 0);
-#endif
     decodedSizes.set(javaScriptString, memoryCacheStatistics.scripts.decodedSize);
     result.append(decodedSizes);
     
     HashMap<String, uint64_t> purgeableSizes;
     purgeableSizes.set(imagesString, memoryCacheStatistics.images.purgeableSize);
     purgeableSizes.set(cssString, memoryCacheStatistics.cssStyleSheets.purgeableSize);
-#if ENABLE(XSLT)
     purgeableSizes.set(xslString, memoryCacheStatistics.xslStyleSheets.purgeableSize);
-#else
-    purgeableSizes.set(xslString, 0);
-#endif
     purgeableSizes.set(javaScriptString, memoryCacheStatistics.scripts.purgeableSize);
     result.append(purgeableSizes);
     
     HashMap<String, uint64_t> purgedSizes;
     purgedSizes.set(imagesString, memoryCacheStatistics.images.purgedSize);
     purgedSizes.set(cssString, memoryCacheStatistics.cssStyleSheets.purgedSize);
-#if ENABLE(XSLT)
     purgedSizes.set(xslString, memoryCacheStatistics.xslStyleSheets.purgedSize);
-#else
-    purgedSizes.set(xslString, 0);
-#endif
     purgedSizes.set(javaScriptString, memoryCacheStatistics.scripts.purgedSize);
     result.append(purgedSizes);
 }

@@ -1,3 +1,13 @@
+2011-09-01  Ada Chan  <adachan@apple.com>
+
+        Cut down the ifdefs in WebKit::getWebCoreMemoryCacheStatistics() now that 
+        MemoryCache::Statistics always has the xslStyleSheets field.
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getWebCoreMemoryCacheStatistics):
+
 2011-09-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unzip initialization lists and constructors in JSCell hierarchy (4/7)

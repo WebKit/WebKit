@@ -99,9 +99,7 @@ public:
         TypeStatistic images;
         TypeStatistic cssStyleSheets;
         TypeStatistic scripts;
-#if ENABLE(XSLT)
         TypeStatistic xslStyleSheets;
-#endif
         TypeStatistic fonts;
     };
     
