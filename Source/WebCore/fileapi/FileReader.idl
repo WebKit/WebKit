@@ -37,7 +37,9 @@ module html {
         CallWith=ScriptExecutionContext,
         EventTarget,
         NoStaticTables,
-        V8CustomConstructor
+        Constructor,
+        ConstructorWith=ScriptExecutionContext,
+        V8ConstructorSetsActiveDOMWrapper
     ] FileReader {
         // ready states
         const unsigned short EMPTY = 0;

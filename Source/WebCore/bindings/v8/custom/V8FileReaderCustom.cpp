@@ -40,27 +40,6 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8FileReader::constructorCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.FileReader.Constructor");
-
-    if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
-
-    // Expect no parameters.
-    // Allocate a FileReader object as its internal field.
-    ScriptExecutionContext* context = getScriptExecutionContext();
-    if (!context)
-        return throwError("FileReader constructor's associated context is not available", V8Proxy::ReferenceError);
-    RefPtr<FileReader> fileReader = FileReader::create(context);
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, fileReader.get());
-
-    // Add object to the wrapper map.
-    fileReader->ref();
-    V8DOMWrapper::setJSWrapperForActiveDOMObject(fileReader.get(), v8::Persistent<v8::Object>::New(args.Holder()));
-    return args.Holder();
-}
-
 v8::Handle<v8::Value> V8FileReader::resultAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.FileReader.result._get");
