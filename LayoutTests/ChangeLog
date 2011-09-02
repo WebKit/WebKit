@@ -1,3 +1,17 @@
+2011-09-01  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Update leopard pixel baselines for svg tests
+
+        * platform/chromium-cg-mac-leopard/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/custom/non-scaling-stroke-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/custom/pattern-rotate-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/custom/pattern-skew-transformed-expected.png: Removed.
+        * platform/chromium-cg-mac-leopard/svg/custom/pattern-with-transformation-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-cg-mac/svg/custom/pattern-rotate-expected.png: Added.
+        * platform/chromium-cg-mac/svg/custom/pattern-rotate-gaps-expected.png: Added.
+
 2011-09-01  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION (r84327-r84329): CSS stylesheets fail to load on www.flagstar.com login page
