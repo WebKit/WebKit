@@ -1,3 +1,34 @@
+2011-09-01  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67451
+        Add a test for going back to a cached page after changing the device scale factor
+
+        Reviewed by Adam Roben.
+
+        New test DeviceScaleFactorOnBack.mm inherits from WebKitAgnosticTest.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/DeviceScaleFactorOnBack.mm: Added.
+        (TestWebKitAPI::DeviceScaleFactorOnBack::url):
+        (TestWebKitAPI::DeviceScaleFactorOnBack::didLoadURL):
+        (TestWebKitAPI::DeviceScaleFactorOnBack::createWindow):
+        (TestWebKitAPI::DeviceScaleFactorOnBack::initializeView):
+        (TestWebKitAPI::DeviceScaleFactorOnBack::runTest):
+        (TestWebKitAPI::TEST_F):
+
+        Added new function to WebKitAgnosticTest to goBack. Separated 
+        waitForLoadToFinish() into its own function (instead of being a part of 
+        loadAndWaitUntilFinished()) so that it can be called from goBack as 
+        well. Also added initializeView() so we can set the cache model.
+        * TestWebKitAPI/mac/WebKitAgnosticTest.h:
+        (TestWebKitAPI::WebKitAgnosticTest::initializeView):
+        * TestWebKitAPI/mac/WebKitAgnosticTest.mm:
+        (TestWebKitAPI::WebKitAgnosticTest::WebKitAgnosticTest):
+        (TestWebKitAPI::WebKitAgnosticTest::runWebKit1Test):
+        (TestWebKitAPI::WebKitAgnosticTest::runWebKit2Test):
+        (TestWebKitAPI::WebKitAgnosticTest::loadURL):
+        (TestWebKitAPI::WebKitAgnosticTest::goBack):
+        (TestWebKitAPI::WebKitAgnosticTest::waitForLoadToFinish):
+
 2011-09-02  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

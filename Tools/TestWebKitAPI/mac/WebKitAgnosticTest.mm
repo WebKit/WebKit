@@ -74,8 +74,8 @@ static void setPageLoaderClient(WKPageRef page, bool* didFinishLoad)
 }
 
 WebKitAgnosticTest::WebKitAgnosticTest()
-    : didFinishLoad(false)
-    , viewFrame(NSMakeRect(0, 0, 800, 600))
+    : viewFrame(NSMakeRect(0, 0, 800, 600))
+    , didFinishLoad(false)
 {
 }
 
@@ -84,8 +84,10 @@ void WebKitAgnosticTest::runWebKit1Test()
     RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:viewFrame]);
     RetainPtr<FrameLoadDelegate> delegate(AdoptNS, [[FrameLoadDelegate alloc] initWithDidFinishLoadBoolean:&didFinishLoad]);
     [webView.get() setFrameLoadDelegate:delegate.get()];
+    initializeView(webView.get());
 
-    loadAndWaitUntilFinished(webView.get(), url());
+    loadURL(webView.get(), url());
+    waitForLoadToFinish();
     didLoadURL(webView.get());
 }
 
@@ -94,19 +96,41 @@ void WebKitAgnosticTest::runWebKit2Test()
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     RetainPtr<WKView> view(AdoptNS, [[WKView alloc] initWithFrame:viewFrame contextRef:context.get()]);
     setPageLoaderClient([view.get() pageRef], &didFinishLoad);
+    initializeView(view.get());
 
-    loadAndWaitUntilFinished(view.get(), url());
+    loadURL(view.get(), url());
+    waitForLoadToFinish();
     didLoadURL(view.get());
 }
 
 void WebKitAgnosticTest::loadURL(WebView *webView, NSURL *url)
 {
+    EXPECT_FALSE(didFinishLoad);
     [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
 }
 
 void WebKitAgnosticTest::loadURL(WKView *view, NSURL *url)
 {
+    EXPECT_FALSE(didFinishLoad);
     WKPageLoadURL([view pageRef], adoptWK(WKURLCreateWithCFURL((CFURLRef)url)).get());
+}
+
+void WebKitAgnosticTest::goBack(WebView *webView)
+{
+    EXPECT_FALSE(didFinishLoad);
+    [webView goBack];
+}
+
+void WebKitAgnosticTest::goBack(WKView *view)
+{
+    EXPECT_FALSE(didFinishLoad);
+    WKPageGoBack([view pageRef]);
+}
+
+void WebKitAgnosticTest::waitForLoadToFinish()
+{
+    Util::run(&didFinishLoad);
+    didFinishLoad = false;
 }
 
 } // namespace TestWebKitAPI

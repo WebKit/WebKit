@@ -42,24 +42,24 @@ public:
 
     void loadURL(WebView *, NSURL *);
     void loadURL(WKView *, NSURL *);
-    template <typename View> void loadAndWaitUntilFinished(View, NSURL *);
 
-    bool didFinishLoad;
+    void goBack(WebView *);
+    void goBack(WKView *);
+
+    void waitForLoadToFinish();
+
     NSRect viewFrame;
 
+private:
     virtual NSURL *url() const = 0;
     virtual void didLoadURL(WebView *) = 0;
     virtual void didLoadURL(WKView *) = 0;
-};
 
-template <typename View>
-void WebKitAgnosticTest::loadAndWaitUntilFinished(View view, NSURL *url)
-{
-    EXPECT_FALSE(didFinishLoad);
-    loadURL(view, url);
-    Util::run(&didFinishLoad);
-    didFinishLoad = false;
-}
+    virtual void initializeView(WebView *) { }
+    virtual void initializeView(WKView *) { }
+
+    bool didFinishLoad;
+};
 
 } // namespace TestWebKitAPI
 
