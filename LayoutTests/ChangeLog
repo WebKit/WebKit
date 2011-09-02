@@ -1,3 +1,13 @@
+2011-09-02  Renata Hodovan  <reni@webkit.org>
+
+        [Qt] Two tests are passing after r94324. They are unskipped:
+        fast/events/document-elementFromPoint.html
+        plugins/mouse-events-fixedpos.html
+
+        Unreviewed gardening.
+
+        * platform/qt/Skipped:
+
 2011-09-02  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, update test expectations.
