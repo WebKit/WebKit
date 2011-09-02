@@ -1,6 +1,6 @@
 Make sure prototypes are set up using the window a property came from, instead of the lexical global object.
 
-On success, you will no "FAIL" messages, followed by "TEST COMPLETE".
+On success, you will see no "FAIL" messages, followed by "TEST COMPLETE".
 
 
 FAIL inner.applicationCache.isInner should be true. Was false.

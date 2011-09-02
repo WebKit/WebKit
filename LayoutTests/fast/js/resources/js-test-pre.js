@@ -7,7 +7,7 @@ function description(msg, quiet)
     // For MSIE 6 compatibility
     var span = document.createElement("span");
     if (quiet)
-        span.innerHTML = '<p>' + msg + '</p><p>On success, you will no "<span class="fail">FAIL</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
+        span.innerHTML = '<p>' + msg + '</p><p>On success, you will see no "<span class="fail">FAIL</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
     else
         span.innerHTML = '<p>' + msg + '</p><p>On success, you will see a series of "<span class="pass">PASS</span>" messages, followed by "<span class="pass">TEST COMPLETE</span>".</p>';
 
