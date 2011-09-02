@@ -1,3 +1,11 @@
+2011-09-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert r94355 because it caused bunch of builds to break.
+
+        * platform/mac/fast/dom/Window/window-properties-expected.txt:
+        * platform/mac/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/mac/fast/js/global-constructors-expected.txt:
+
 2011-09-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update chromium baselines+expectations for fast/text/fallback-traits-fixup.html
