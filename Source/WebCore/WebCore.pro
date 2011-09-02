@@ -983,7 +983,6 @@ SOURCES += \
     platform/graphics/FontFallbackList.cpp \
     platform/graphics/FontFamily.cpp \
     platform/graphics/FontFeatureSettings.cpp \
-    platform/graphics/GlyphPageTreeNode.cpp \
     platform/graphics/BitmapImage.cpp \
     platform/graphics/Color.cpp \
     platform/graphics/FloatPoint3D.cpp \
