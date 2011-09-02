@@ -56,8 +56,6 @@ void HTMLStyleElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == titleAttr && m_sheet)
         m_sheet->setTitle(attr->value());
-    else if (attr->name() == onbeforeprocessAttr)
-        setAttributeEventListener(eventNames().beforeprocessEvent, createAttributeEventListener(this, attr));
     else
         HTMLElement::parseMappedAttribute(attr);
 }

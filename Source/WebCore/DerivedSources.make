@@ -74,7 +74,6 @@ DOM_CLASSES = \
     AudioSourceNode \
     BarInfo \
     BeforeLoadEvent \
-    BeforeProcessEvent \
     BiquadFilterNode \
     Blob \
     CDATASection \

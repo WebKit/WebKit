@@ -37,8 +37,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSBarInfo.h \
 	DerivedSources/WebCore/JSBeforeLoadEvent.cpp \
 	DerivedSources/WebCore/JSBeforeLoadEvent.h \
-	DerivedSources/WebCore/JSBeforeProcessEvent.cpp \
-	DerivedSources/WebCore/JSBeforeProcessEvent.h \
 	DerivedSources/WebCore/JSBlob.cpp \
 	DerivedSources/WebCore/JSBlob.h \
 	DerivedSources/WebCore/JSCanvasGradient.cpp \
@@ -1078,8 +1076,6 @@ webcore_sources += \
 	Source/WebCore/dom/Attribute.cpp \
 	Source/WebCore/dom/Attribute.h \
 	Source/WebCore/dom/BeforeLoadEvent.h \
-	Source/WebCore/dom/BeforeProcessEvent.cpp \
-	Source/WebCore/dom/BeforeProcessEvent.h \
 	Source/WebCore/dom/BeforeTextInsertedEvent.cpp \
 	Source/WebCore/dom/BeforeTextInsertedEvent.h \
 	Source/WebCore/dom/BeforeUnloadEvent.cpp \
