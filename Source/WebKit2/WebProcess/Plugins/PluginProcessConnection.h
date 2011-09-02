@@ -68,6 +68,10 @@ private:
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
     virtual void syncMessageSendTimedOut(CoreIPC::Connection*);
 
+    // Message handlers.
+    void didReceiveSyncPluginProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
+    void setException(const String&);
+
     PluginProcessConnectionManager* m_pluginProcessConnectionManager;
     String m_pluginPath;
 

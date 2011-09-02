@@ -29,6 +29,7 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "NPRemoteObjectMap.h"
+#include "NPRuntimeObjectMap.h"
 #include "PluginProcessConnectionManager.h"
 #include "PluginProxy.h"
 #include "WebProcess.h"
@@ -134,9 +135,14 @@ void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connect
         return;
     }
 
-    ASSERT(arguments->destinationID());
+    uint64_t destinationID = arguments->destinationID();
 
-    PluginProxy* pluginProxy = m_plugins.get(arguments->destinationID());
+    if (!destinationID) {
+        didReceiveSyncPluginProcessConnectionMessage(connection, messageID, arguments, reply);
+        return;
+    }
+
+    PluginProxy* pluginProxy = m_plugins.get(destinationID);
     if (!pluginProxy)
         return;
 
@@ -160,6 +166,11 @@ void PluginProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, Cor
 void PluginProcessConnection::syncMessageSendTimedOut(CoreIPC::Connection*)
 {
     WebProcess::shared().connection()->send(Messages::WebProcessProxy::PluginSyncMessageSendTimedOut(m_pluginPath), 0);
+}
+
+void PluginProcessConnection::setException(const String& exceptionString)
+{
+    NPRuntimeObjectMap::setGlobalException(exceptionString);
 }
 
 } // namespace WebKit

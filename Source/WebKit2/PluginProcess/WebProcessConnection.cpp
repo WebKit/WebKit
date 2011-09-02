@@ -28,13 +28,61 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#include "ArgumentCoders.h"
 #include "NPRemoteObjectMap.h"
 #include "PluginControllerProxy.h"
 #include "PluginCreationParameters.h"
 #include "PluginProcess.h"
+#include "PluginProcessConnectionMessages.h"
 #include "RunLoop.h"
 
 namespace WebKit {
+
+
+class ConnectionStack {
+public:
+    CoreIPC::Connection* current()
+    {
+        return m_connectionStack.last();
+    }
+
+    class CurrentConnectionPusher {
+    public:
+        CurrentConnectionPusher(ConnectionStack& connectionStack, CoreIPC::Connection* connection)
+            : m_connectionStack(connectionStack)
+#if !ASSERT_DISABLED
+            , m_connection(connection)
+#endif
+        {
+            m_connectionStack.m_connectionStack.append(connection);
+        }
+
+        ~CurrentConnectionPusher()
+        {
+            ASSERT(m_connectionStack.current() == m_connection);
+            m_connectionStack.m_connectionStack.removeLast();
+        }
+
+    private:
+        ConnectionStack& m_connectionStack;
+#if !ASSERT_DISABLED
+        CoreIPC::Connection* m_connection;
+#endif
+    };
+
+private:
+    // It's OK for these to be weak pointers because we only push object on the stack
+    // from within didReceiveMessage and didReceiveSyncMessage and the Connection objects are
+    // already ref'd for the duration of those functions.
+    Vector<CoreIPC::Connection*, 4> m_connectionStack;
+};
+
+static ConnectionStack& connectionStack()
+{
+    DEFINE_STATIC_LOCAL(ConnectionStack, connectionStack, ());
+
+    return connectionStack;
+}
 
 PassRefPtr<WebProcessConnection> WebProcessConnection::create(CoreIPC::Connection::Identifier connectionIdentifier)
 {
@@ -98,8 +146,19 @@ void WebProcessConnection::removePluginControllerProxy(PluginControllerProxy* pl
     PluginProcess::shared().removeWebProcessConnection(this);
 }
 
+void WebProcessConnection::setGlobalException(const String& exceptionString)
+{
+    CoreIPC::Connection* connection = connectionStack().current();
+    if (!connection)
+        return;
+
+    connection->sendSync(Messages::PluginProcessConnection::SetException(exceptionString), Messages::PluginProcessConnection::SetException::Reply(), 0);
+}
+
 void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
+    ConnectionStack::CurrentConnectionPusher currentConnection(connectionStack(), connection);
+
     if (!arguments->destinationID()) {
         ASSERT_NOT_REACHED();
         return;
@@ -110,12 +169,13 @@ void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, Co
         return;
 
     PluginController::PluginDestructionProtector protector(pluginControllerProxy->asPluginController());
-
     pluginControllerProxy->didReceivePluginControllerProxyMessage(connection, messageID, arguments);
 }
 
 void WebProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
+    ConnectionStack::CurrentConnectionPusher currentConnection(connectionStack(), connection);
+
     uint64_t destinationID = arguments->destinationID();
 
     if (!destinationID) {

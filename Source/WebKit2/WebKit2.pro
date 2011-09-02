@@ -25,6 +25,7 @@ WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/NPObjectMessageReceiverMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginControllerProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessConnectionMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProxyMessages.h \
@@ -63,6 +64,7 @@ WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/NPObjectMessageReceiverMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginControllerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessConnectionMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProcessProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/PluginProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebApplicationCacheManagerMessageReceiver.cpp \

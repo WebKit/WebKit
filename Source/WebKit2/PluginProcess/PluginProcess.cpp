@@ -30,6 +30,7 @@
 
 #include "ArgumentCoders.h"
 #include "Attachment.h"
+#include "NetscapePlugin.h"
 #include "NetscapePluginModule.h"
 #include "PluginProcessProxyMessages.h"
 #include "PluginProcessCreationParameters.h"
@@ -79,6 +80,8 @@ void PluginProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier,
     m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, runLoop);
     m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
     m_connection->open();
+
+    NetscapePlugin::setSetExceptionFunction(WebProcessConnection::setGlobalException);
 }
 
 void PluginProcess::removeWebProcessConnection(WebProcessConnection* webProcessConnection)

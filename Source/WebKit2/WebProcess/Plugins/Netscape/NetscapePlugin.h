@@ -90,6 +90,8 @@ public:
     bool evaluate(NPObject*, const String&scriptString, NPVariant* result);
     bool isPrivateBrowsingEnabled();
 
+    static void setSetExceptionFunction(void (*)(const String&));
+
     // These return retained objects.
     NPObject* windowScriptNPObject();
     NPObject* pluginElementNPObject();

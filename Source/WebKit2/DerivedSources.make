@@ -50,6 +50,7 @@ MESSAGE_RECEIVERS = \
     NPObjectMessageReceiver \
     PluginControllerProxy \
     PluginProcess \
+    PluginProcessConnection \
     PluginProcessProxy \
     PluginProxy \
     WebApplicationCacheManager \

@@ -1,3 +1,68 @@
+2011-09-02  Anders Carlsson  <andersca@apple.com>
+
+        NPN_SetException doesn't work with OOP plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=67524
+
+        Reviewed by Sam Weinig.
+
+        * DerivedSources.make:
+        Add PluginProcessConnection.messages.in.
+
+        * GNUmakefile.am:
+        Add generated files.
+
+        * Platform/CoreIPC/MessageID.h:
+        Add MessageClassPluginProcessConnection.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::initialize):
+        Set the set exception function.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::ConnectionStack::current):
+        (WebKit::ConnectionStack::CurrentConnectionPusher::CurrentConnectionPusher):
+        (WebKit::ConnectionStack::CurrentConnectionPusher::~CurrentConnectionPusher):
+        Add a helper class for managing a stack of CoreIPC connections, along with a RAII
+        object to push/pop connections onto it.
+
+        (WebKit::connectionStack):
+        Add getter.
+
+        (WebKit::WebProcessConnection::setGlobalException):
+        Get the current connection and send a PluginProcessConnection::SetException message to it.
+
+        (WebKit::WebProcessConnection::didReceiveMessage):
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+        Create connection pushers.
+
+        * PluginProcess/WebProcessConnection.h:
+        Add setGlobalException.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::setSetExceptionFunction):
+        New function for setting the 'setException' function.
+
+        (WebKit::NetscapePlugin::setException):
+        Call the 'setException' function.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::didReceiveSyncMessage):
+        Call the message receiver function.
+
+        (WebKit::PluginProcessConnection::setException):
+        Call the NPRuntimeObjectMap.
+        
+        * WebProcess/Plugins/PluginProcessConnection.messages.in:
+        Add new messages file.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        When not using the plug-in process, make sure to call NetscapePlugin::setSetExceptionFunction.
+
 2011-09-02  Ada Chan  <adachan@apple.com>
 
         Add WKContextGarbageCollectJavaScriptObjects() which does a garbage collection in the WebProcess

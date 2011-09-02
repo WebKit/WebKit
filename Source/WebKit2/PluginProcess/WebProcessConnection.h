@@ -50,6 +50,8 @@ public:
 
     void removePluginControllerProxy(PluginControllerProxy*, Plugin*);
 
+    static void setGlobalException(const String&);
+
 private:
     WebProcessConnection(CoreIPC::Connection::Identifier);
 

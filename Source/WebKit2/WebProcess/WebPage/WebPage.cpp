@@ -342,6 +342,7 @@ PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
 #if ENABLE(PLUGIN_PROCESS)
     return PluginProxy::create(pluginPath);
 #else
+    NetscapePlugin::setSetExceptionFunction(NPRuntimeObjectMap::setGlobalException);
     return NetscapePlugin::create(NetscapePluginModule::getOrCreate(pluginPath));
 #endif
 }

@@ -76,6 +76,8 @@
 		1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24B5F111F531E800C38269 /* MachUtilities.h */; };
 		1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24BED3120894D100FBB059 /* SharedMemory.h */; };
 		1A24BF3A120896A600FBB059 /* SharedMemoryMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */; };
+		1A2BB6D014117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2BB6CE14117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp */; };
+		1A2BB6D114117B4D000F35D4 /* PluginProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2BB6CF14117B4D000F35D4 /* PluginProcessConnectionMessages.h */; };
 		1A2C307112D555450063DAA2 /* ContextMenuState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2C306F12D555450063DAA2 /* ContextMenuState.h */; };
 		1A2D82A4127F4EAB001EB962 /* NPObjectMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA35C127A45BF0050E709 /* NPObjectMessageReceiver.cpp */; };
 		1A2D82A5127F4EAB001EB962 /* NPObjectMessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1FA35B127A45BF0050E709 /* NPObjectMessageReceiver.h */; };
@@ -990,6 +992,9 @@
 		1A24B5F111F531E800C38269 /* MachUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachUtilities.h; sourceTree = "<group>"; };
 		1A24BED3120894D100FBB059 /* SharedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedMemory.h; sourceTree = "<group>"; };
 		1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryMac.cpp; sourceTree = "<group>"; };
+		1A2BB6CC14117A5F000F35D4 /* PluginProcessConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PluginProcessConnection.messages.in; sourceTree = "<group>"; };
+		1A2BB6CE14117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
+		1A2BB6CF14117B4D000F35D4 /* PluginProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessConnectionMessages.h; sourceTree = "<group>"; };
 		1A2C306F12D555450063DAA2 /* ContextMenuState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMenuState.h; sourceTree = "<group>"; };
 		1A2D8411127F64E8001EB962 /* NPObjectMessageReceiver.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NPObjectMessageReceiver.messages.in; sourceTree = "<group>"; };
 		1A2D8437127F65D5001EB962 /* NPObjectMessageReceiverMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPObjectMessageReceiverMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -2055,6 +2060,7 @@
 				1AA56F2811E92BC80061B882 /* PluginController.h */,
 				1A0EC905124C0AB8007EF4A5 /* PluginProcessConnection.cpp */,
 				1A0EC904124C0AB8007EF4A5 /* PluginProcessConnection.h */,
+				1A2BB6CC14117A5F000F35D4 /* PluginProcessConnection.messages.in */,
 				1A0EC90E124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp */,
 				1A0EC90D124C0AF5007EF4A5 /* PluginProcessConnectionManager.h */,
 				1A043DC0124FF87500FFBFB5 /* PluginProxy.cpp */,
@@ -3282,18 +3288,20 @@
 		C0CE729D1247E71D00BC0EC4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
-				1A64230612DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp */,
-				1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */,
 				512F58A012A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp */,
 				512F58A112A883AD00629530 /* AuthenticationManagerMessages.h */,
 				1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */,
 				1AB7D6181288B9D900CFD08C /* DownloadProxyMessages.h */,
 				1A64229712DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp */,
 				1A64229812DD029200CAAE2C /* DrawingAreaMessages.h */,
+				1A64230612DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp */,
+				1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */,
 				1A2D8437127F65D5001EB962 /* NPObjectMessageReceiverMessageReceiver.cpp */,
 				1A2D8438127F65D5001EB962 /* NPObjectMessageReceiverMessages.h */,
 				1A8EF96C1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp */,
 				1A8EF96D1252AF6B00F7067F /* PluginControllerProxyMessages.h */,
+				1A2BB6CE14117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp */,
+				1A2BB6CF14117B4D000F35D4 /* PluginProcessConnectionMessages.h */,
 				1A0EC6BD124BBD9B007EF4A5 /* PluginProcessMessageReceiver.cpp */,
 				1A0EC6BE124BBD9B007EF4A5 /* PluginProcessMessages.h */,
 				1A043B5B124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp */,
@@ -3316,8 +3324,8 @@
 				F62A76B512B1B25F0005F1B6 /* WebDatabaseManagerProxyMessages.h */,
 				CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */,
 				CD73BA49131ACD8E00EEDED2 /* WebFullScreenManagerMessages.h */,
-				CD73BA4A131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h */,
 				CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */,
+				CD73BA4A131ACD8F00EEDED2 /* WebFullScreenManagerProxyMessages.h */,
 				BC0E605F12D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp */,
 				BC0E606012D6BA910012A72A /* WebGeolocationManagerMessages.h */,
 				BC0E618012D6CB1D0012A72A /* WebGeolocationManagerProxyMessageReceiver.cpp */,
@@ -3829,6 +3837,7 @@
 				5D51845613BCF9CC00C7FF4A /* APIClientTraits.h in Headers */,
 				1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */,
 				5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */,
+				1A2BB6D114117B4D000F35D4 /* PluginProcessConnectionMessages.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4497,6 +4506,7 @@
 				1A3D610513A7F03A00F95D4E /* ArgumentCoders.cpp in Sources */,
 				5D51845513BCF9CC00C7FF4A /* APIClientTraits.cpp in Sources */,
 				5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */,
+				1A2BB6D014117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

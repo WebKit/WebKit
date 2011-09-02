@@ -80,6 +80,7 @@ enum MessageClass {
     MessageClassPluginControllerProxy,
 
     // Messages sent by the plug-in process to the web process.
+    MessageClassPluginProcessConnection,
     MessageClassPluginProxy,
 
     // NPObject messages sent by both the plug-in process and the web process.
