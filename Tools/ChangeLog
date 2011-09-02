@@ -1,3 +1,10 @@
+2011-09-01  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build by adding some more missing return types.
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]):
+
 2011-09-01  Eric Seidel  <eric@webkit.org>
 
         REGRESSION (NRWT): Leaks Viewer can't load leaks from test runs that used NRWT

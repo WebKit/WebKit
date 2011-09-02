@@ -114,7 +114,7 @@ using namespace std;
 
 @implementation ResourceLoadDelegate
 
-- webView: (WebView *)wv identifierForInitialRequest: (NSURLRequest *)request fromDataSource: (WebDataSource *)dataSource
+- (id)webView: (WebView *)wv identifierForInitialRequest: (NSURLRequest *)request fromDataSource: (WebDataSource *)dataSource
 {
     ASSERT([[dataSource webFrame] dataSource] || [[dataSource webFrame] provisionalDataSource]);
 

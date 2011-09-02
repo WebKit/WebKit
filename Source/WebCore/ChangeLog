@@ -1,3 +1,10 @@
+2011-09-01  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build by adding some more missing return types.
+
+        * page/mac/WebCoreViewFactory.m:
+        (-[WebCoreViewFactory init]):
+
 2011-09-01  Michael Nordman  <michaeln@google.com>
 
         [Chromium] Fix a crashing bug due to raciness around SQL database shutdown.

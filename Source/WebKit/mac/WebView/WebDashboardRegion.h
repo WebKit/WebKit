@@ -42,7 +42,7 @@ typedef enum {
     NSRect clip;
     WebDashboardRegionType type;
 }
-- initWithRect:(NSRect)rect clip:(NSRect)clip type:(WebDashboardRegionType)type;
+- (id)initWithRect:(NSRect)rect clip:(NSRect)clip type:(WebDashboardRegionType)type;
 - (NSRect)dashboardRegionClip;
 - (NSRect)dashboardRegionRect;
 - (WebDashboardRegionType)dashboardRegionType;

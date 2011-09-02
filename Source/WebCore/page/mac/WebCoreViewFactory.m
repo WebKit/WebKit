@@ -35,7 +35,7 @@ static WebCoreViewFactory *sharedFactory;
     return sharedFactory;
 }
 
-- init
+- (id)init
 {
     self = [super init];
     
