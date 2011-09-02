@@ -1,0 +1,108 @@
+CONSOLE MESSAGE: line 0: WebSocket is closed before the connection is established.
+CONSOLE MESSAGE: line 0: WebSocket is closed before the connection is established.
+Verify WebSocket::close behaviors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Invalid code test: 0
+Code 999 must cause INVALID_ACCESS_ERR.
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is invalidAccessErr
+Invalid code test: 1
+Code 1001 must cause INVALID_ACCESS_ERR.
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is invalidAccessErr
+Invalid code test: 2
+Code 2999 must cause INVALID_ACCESS_ERR.
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is invalidAccessErr
+Invalid code test: 3
+Code 5000 must cause INVALID_ACCESS_ERR.
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is invalidAccessErr
+Invalid code test: 4
+Code 66536 must cause INVALID_ACCESS_ERR.
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is invalidAccessErr
+Invalid code test: 5
+Code 4294968296 must cause INVALID_ACCESS_ERR.
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is invalidAccessErr
+Invalid code test: 6
+Code 2999.9 must cause INVALID_ACCESS_ERR.
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is invalidAccessErr
+Invalid code test: 7
+Code NaN must cause INVALID_ACCESS_ERR.
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is invalidAccessErr
+Invalid code test: 8
+Code 0 must cause INVALID_ACCESS_ERR.
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is invalidAccessErr
+Invalid code test: 9
+Code 100 must cause INVALID_ACCESS_ERR.
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is invalidAccessErr
+Invalid code test: 10
+Code Infinity must cause INVALID_ACCESS_ERR.
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is invalidAccessErr
+Invalid code test: 11
+Code -Infinity must cause INVALID_ACCESS_ERR.
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is invalidAccessErr
+Invalid code test: 12
+Code NaN must cause INVALID_ACCESS_ERR.
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is invalidAccessErr
+runCodeTest: onclose().
+PASS closeEvent.code is abnormalClosure
+Skip invalid string test.
+Reason test: 0
+  with invalid reason: 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234
+Reason 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234 must cause SYNTAX_ERR.
+PASS result is false
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is syntaxErr
+Reason test: 1
+  with invalid reason: 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012©
+Reason 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012© must cause SYNTAX_ERR.
+PASS result is false
+PASS exceptionProto === DOMException.prototype is true
+PASS exceptionName is syntaxErr
+Reason test: 2
+runReasonTest: onclose().
+PASS closeEvent.code is abnormalClosure
+Code and reason test: 0
+Code and reason must be
+  code  : 1000
+  reason: OK, Bye!
+PASS closeEvent.wasClean is true
+PASS closeEvent.code is code
+PASS closeEvent.reason is reason
+Code and reason test: 1
+Code and reason must be
+  code  : 3000
+  reason: 3000
+PASS closeEvent.wasClean is true
+PASS closeEvent.code is code
+PASS closeEvent.reason is reason
+Code and reason test: 2
+Code and reason must be
+  code  : 4000
+  reason: code is 4000
+PASS closeEvent.wasClean is true
+PASS closeEvent.code is code
+PASS closeEvent.reason is reason
+Code and reason test: 3
+Code and reason must be
+  code  : 4999
+  reason: © Google
+PASS closeEvent.wasClean is true
+PASS closeEvent.code is code
+PASS closeEvent.reason is reason
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

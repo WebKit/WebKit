@@ -67,7 +67,7 @@ public:
     virtual String subprotocol();
     virtual bool send(const String& message);
     virtual unsigned long bufferedAmount() const;
-    virtual void close(); // Start closing handshake.
+    virtual void close(int code, const String& reason); // Start closing handshake.
     virtual void fail(const String& reason);
     virtual void disconnect();
 
@@ -83,6 +83,7 @@ public:
     virtual void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
 
     enum CloseEventCode {
+        CloseEventCodeNotSpecified = -1,
         CloseEventCodeNormalClosure = 1000,
         CloseEventCodeGoingAway = 1001,
         CloseEventCodeProtocolError = 1002,
@@ -90,7 +91,9 @@ public:
         CloseEventCodeFrameTooLarge = 1004,
         CloseEventCodeNoStatusRcvd = 1005,
         CloseEventCodeAbnormalClosure = 1006,
-        CloseEventCodeInvalidUTF8 = 1007
+        CloseEventCodeInvalidUTF8 = 1007,
+        CloseEventCodeMinimumUserDefined = 3000,
+        CloseEventCodeMaximumUserDefined = 4999
     };
 
 #if ENABLE(BLOB)
@@ -115,7 +118,7 @@ private:
     void skipBuffer(size_t len);
     bool processBuffer();
     void resumeTimerFired(Timer<WebSocketChannel>*);
-    void startClosingHandshake();
+    void startClosingHandshake(int code, const String& reason);
     void closingTimerFired(Timer<WebSocketChannel>*);
 
     // Hybi-10 opcodes.

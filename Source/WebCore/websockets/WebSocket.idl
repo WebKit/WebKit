@@ -64,7 +64,8 @@ module websockets {
             setter raises(DOMException);
 
         [RequiresAllArguments] boolean send(in DOMString data) raises(DOMException);
-        void close();
+        // FIXME: Implement and apply [Clamp] attribute instead of [Custom].
+        [Custom] void close(in [Optional] unsigned short code, in [Optional] DOMString reason) raises(DOMException);
 
         // EventTarget interface
         void addEventListener(in DOMString type,

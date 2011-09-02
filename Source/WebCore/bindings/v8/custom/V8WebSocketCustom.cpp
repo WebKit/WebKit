@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,14 +34,17 @@
 
 #include "V8WebSocket.h"
 
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "Settings.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WebSocket.h"
+#include "WebSocketChannel.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
+#include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -106,6 +109,38 @@ v8::Handle<v8::Value> V8WebSocket::constructorCallback(const v8::Arguments& args
     V8DOMWrapper::setJSWrapperForActiveDOMObject(webSocket.get(), v8::Persistent<v8::Object>::New(args.Holder()));
 
     return args.Holder();
+}
+
+v8::Handle<v8::Value> V8WebSocket::closeCallback(const v8::Arguments& args)
+{
+    // FIXME: We should implement [Clamp] for IDL binding code generator, and
+    // remove this custom method.
+    WebSocket* webSocket = toNative(args.Holder());
+    int argumentCount = args.Length();
+    int code = WebSocketChannel::CloseEventCodeNotSpecified;
+    String reason = "";
+    if (argumentCount >= 1) {
+        double x = args[0]->NumberValue();
+        double maxValue = static_cast<double>(std::numeric_limits<uint16_t>::max());
+        double minValue = static_cast<double>(std::numeric_limits<uint16_t>::min());
+        if (isnan(x))
+            x = 0.0;
+        else
+            x = clampTo(x, minValue, maxValue);
+        code = clampToInteger(x);
+        if (argumentCount >= 2) {
+            v8::TryCatch tryCatch;
+            v8::Handle<v8::String> reasonValue = args[1]->ToString();
+            if (tryCatch.HasCaught())
+                return throwError(tryCatch.Exception());
+            reason = toWebCoreString(reasonValue);
+        }
+    }
+    ExceptionCode ec = 0;
+    webSocket->close(code, reason, ec);
+    if (ec)
+        return throwError(ec);
+    return v8::Undefined();
 }
 
 }  // namespace WebCore

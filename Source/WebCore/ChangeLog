@@ -1,3 +1,39 @@
+2011-09-01  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [WebSocket] Implement WebSocket::close() code and reason handling.
+        https://bugs.webkit.org/show_bug.cgi?id=66925
+
+        Reviewed by Kent Tamura.
+
+        Tests: http/tests/websocket/tests/hybi/close.html
+               http/tests/websocket/tests/hybi/workers/close.html
+
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocket::close):
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        (WebCore::V8WebSocket::closeCallback):
+        Add custom bridge for WebSocket::close().
+        * websockets/ThreadableWebSocketChannel.h:
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::close):
+        * websockets/WebSocket.h:
+        * websockets/WebSocket.idl:
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::close):
+        Add code and reason arguments handling.
+        (WebCore::WebSocketChannel::startClosingHandshake):
+        Send a close frame without code and reason on server initiated closing handshakes.
+        (WebCore::WebSocketChannel::processFrame):
+        (WebCore::WebSocketChannel::processFrameHixie76):
+        * websockets/WebSocketChannel.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::close):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::close):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadClose):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::close):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+        Add code and reason arguments handling.
+
 2011-09-01  Mark Rowe  <mrowe@apple.com>
 
         Fix the build by adding some more missing return types.

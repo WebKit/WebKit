@@ -65,7 +65,7 @@ public:
     virtual String subprotocol();
     virtual bool send(const String& message);
     virtual unsigned long bufferedAmount() const;
-    virtual void close();
+    virtual void close(int code, const String& reason);
     virtual void fail(const String& reason);
     virtual void disconnect(); // Will suppress didClose().
     virtual void suspend();
@@ -94,7 +94,7 @@ private:
         void connect(const KURL&, const String& protocol);
         void send(const String& message);
         void bufferedAmount();
-        void close();
+        void close(int code, const String& reason);
         void fail(const String& reason);
         void disconnect();
         void suspend();
@@ -126,7 +126,7 @@ private:
         void connect(const KURL&, const String& protocol);
         bool send(const String& message);
         unsigned long bufferedAmount();
-        void close();
+        void close(int code, const String& reason);
         void fail(const String& reason);
         void disconnect();
         void suspend();
@@ -161,7 +161,7 @@ private:
     static void mainThreadConnect(ScriptExecutionContext*, Peer*, const KURL&, const String& protocol);
     static void mainThreadSend(ScriptExecutionContext*, Peer*, const String& message);
     static void mainThreadBufferedAmount(ScriptExecutionContext*, Peer*);
-    static void mainThreadClose(ScriptExecutionContext*, Peer*);
+    static void mainThreadClose(ScriptExecutionContext*, Peer*, int code, const String& reason);
     static void mainThreadFail(ScriptExecutionContext*, Peer*, const String& reason);
     static void mainThreadDestroy(ScriptExecutionContext*, Peer*);
     static void mainThreadSuspend(ScriptExecutionContext*, Peer*);

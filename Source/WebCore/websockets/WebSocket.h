@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -68,7 +68,7 @@ public:
 
     bool send(const String& message, ExceptionCode&);
 
-    void close();
+    void close(int code, const String& reason, ExceptionCode&);
 
     const KURL& url() const;
     State readyState() const;

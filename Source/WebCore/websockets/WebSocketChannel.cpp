@@ -178,13 +178,13 @@ unsigned long WebSocketChannel::bufferedAmount() const
     return m_handle->bufferedAmount();
 }
 
-void WebSocketChannel::close()
+void WebSocketChannel::close(int code, const String& reason)
 {
     LOG(Network, "WebSocketChannel %p close", this);
     ASSERT(!m_suspended);
     if (!m_handle)
         return;
-    startClosingHandshake();
+    startClosingHandshake(code, reason);
     if (m_closing && !m_closingTimer.isActive())
         m_closingTimer.startOneShot(2 * TCPMaximumSegmentLifetime);
 }
@@ -468,7 +468,7 @@ void WebSocketChannel::resumeTimerFired(Timer<WebSocketChannel>* timer)
         didCloseSocketStream(m_handle.get());
 }
 
-void WebSocketChannel::startClosingHandshake()
+void WebSocketChannel::startClosingHandshake(int code, const String& reason)
 {
     LOG(Network, "WebSocketChannel %p closing %d %d", this, m_closing, m_receivedClosingHandshake);
     if (m_closing)
@@ -482,9 +482,17 @@ void WebSocketChannel::startClosingHandshake()
             m_handle->disconnect();
             return;
         }
-    } else
-        enqueueRawFrame(OpCodeClose, "", 0); // FIXME: Send status code and reason message.
-
+    } else {
+        Vector<char> buf;
+        if (!m_receivedClosingHandshake && code != CloseEventCodeNotSpecified) {
+            unsigned char highByte = code >> 8;
+            unsigned char lowByte = code;
+            buf.append(static_cast<char>(highByte));
+            buf.append(static_cast<char>(lowByte));
+            buf.append(reason.utf8().data(), reason.utf8().length());
+        }
+        enqueueRawFrame(OpCodeClose, buf.data(), buf.size());
+    }
     m_closing = true;
     if (m_client)
         m_client->didStartClosingHandshake();
@@ -690,7 +698,7 @@ bool WebSocketChannel::processFrame()
             m_closeEventReason = "";
         skipBuffer(frame.frameEnd - m_buffer);
         m_receivedClosingHandshake = true;
-        startClosingHandshake();
+        startClosingHandshake(m_closeEventCode, m_closeEventReason);
         if (m_closing) {
             m_outgoingFrameQueueStatus = OutgoingFrameQueueClosing;
             processOutgoingFrameQueue();
@@ -771,7 +779,7 @@ bool WebSocketChannel::processFrameHixie76()
             skipBuffer(nextFrame - m_buffer);
             if (frameByte == 0xff && !length) {
                 m_receivedClosingHandshake = true;
-                startClosingHandshake();
+                startClosingHandshake(CloseEventCodeNotSpecified, "");
                 if (m_closing)
                     m_handle->close(); // close after sending FF 00.
             } else

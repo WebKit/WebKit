@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -59,6 +59,8 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+const size_t maxReasonSizeInBytes = 123;
 
 static inline bool isValidProtocolCharacter(UChar character)
 {
@@ -263,9 +265,23 @@ bool WebSocket::send(const String& message, ExceptionCode& ec)
     return m_channel->send(message);
 }
 
-void WebSocket::close()
+void WebSocket::close(int code, const String& reason, ExceptionCode& ec)
 {
-    LOG(Network, "WebSocket %p close", this);
+    if (code == WebSocketChannel::CloseEventCodeNotSpecified)
+        LOG(Network, "WebSocket %p close without code and reason", this);
+    else {
+        LOG(Network, "WebSocket %p close with code = %d, reason = %s", this, code, reason.utf8().data());
+        if (!(code == WebSocketChannel::CloseEventCodeNormalClosure || (WebSocketChannel::CloseEventCodeMinimumUserDefined <= code && code <= WebSocketChannel::CloseEventCodeMaximumUserDefined))) {
+            ec = INVALID_ACCESS_ERR;
+            return;
+        }
+        // FIXME: if reason contains any unpaired surrogates, raise SYNTAX_ERR.
+        if (reason.utf8().length() > maxReasonSizeInBytes) {
+            ec = SYNTAX_ERR;
+            return;
+        }
+    }
+
     if (m_state == CLOSING || m_state == CLOSED)
         return;
     if (m_state == CONNECTING) {
@@ -278,7 +294,7 @@ void WebSocket::close()
     // didClose notification may be already queued, which we will inadvertently process while waiting for bufferedAmount() to return.
     // In this case m_channel will be set to null during didClose() call, thus we need to test validness of m_channel here.
     if (m_channel)
-        m_channel->close();
+        m_channel->close(code, reason);
 }
 
 const KURL& WebSocket::url() const

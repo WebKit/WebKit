@@ -94,10 +94,10 @@ unsigned long WorkerThreadableWebSocketChannel::bufferedAmount() const
     return m_bridge->bufferedAmount();
 }
 
-void WorkerThreadableWebSocketChannel::close()
+void WorkerThreadableWebSocketChannel::close(int code, const String& reason)
 {
     if (m_bridge)
-        m_bridge->close();
+        m_bridge->close(code, reason);
 }
 
 void WorkerThreadableWebSocketChannel::fail(const String& reason)
@@ -187,12 +187,12 @@ void WorkerThreadableWebSocketChannel::Peer::bufferedAmount()
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidGetBufferedAmount, m_workerClientWrapper, bufferedAmount), m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::close()
+void WorkerThreadableWebSocketChannel::Peer::close(int code, const String& reason)
 {
     ASSERT(isMainThread());
     if (!m_mainWebSocketChannel)
         return;
-    m_mainWebSocketChannel->close();
+    m_mainWebSocketChannel->close(code, reason);
 }
 
 void WorkerThreadableWebSocketChannel::Peer::fail(const String& reason)
@@ -395,19 +395,19 @@ unsigned long WorkerThreadableWebSocketChannel::Bridge::bufferedAmount()
     return 0;
 }
 
-void WorkerThreadableWebSocketChannel::mainThreadClose(ScriptExecutionContext* context, Peer* peer)
+void WorkerThreadableWebSocketChannel::mainThreadClose(ScriptExecutionContext* context, Peer* peer, int code, const String&reason)
 {
     ASSERT(isMainThread());
     ASSERT_UNUSED(context, context->isDocument());
     ASSERT(peer);
 
-    peer->close();
+    peer->close(code, reason);
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::close()
+void WorkerThreadableWebSocketChannel::Bridge::close(int code, const String& reason)
 {
     ASSERT(m_peer);
-    m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadClose, AllowCrossThreadAccess(m_peer)));
+    m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadClose, AllowCrossThreadAccess(m_peer), code, reason));
 }
 
 void WorkerThreadableWebSocketChannel::mainThreadFail(ScriptExecutionContext* context, Peer* peer, const String& reason)

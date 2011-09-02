@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc.  All rights reserved.
  * Copyright (C) 2009, 2010 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,10 +35,13 @@
 
 #include "JSWebSocket.h"
 
+#include "ExceptionCode.h"
 #include "KURL.h"
 #include "JSEventListener.h"
 #include "WebSocket.h"
+#include "WebSocketChannel.h"
 #include <runtime/Error.h>
+#include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 
 using namespace JSC;
@@ -83,6 +86,38 @@ EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecSt
     }
     setDOMException(exec, ec);
     return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), WebSocket, webSocket.get()));
+}
+
+JSValue JSWebSocket::close(ExecState* exec)
+{
+    // FIXME: We should implement [Clamp] for IDL binding code generator, and
+    // remove this custom method.
+    WebSocket* webSocket = static_cast<WebSocket*>(impl());
+    size_t argumentCount = exec->argumentCount();
+    int code = WebSocketChannel::CloseEventCodeNotSpecified;
+    String reason = "";
+    if (argumentCount >= 1) {
+        JSValue v = exec->argument(0);
+        double x = v.toNumber(exec);
+        double maxValue = static_cast<double>(std::numeric_limits<uint16_t>::max());
+        double minValue = static_cast<double>(std::numeric_limits<uint16_t>::min());
+        if (isnan(x))
+            x = 0.0;
+        else
+            x = clampTo(x, minValue, maxValue);
+        code = clampToInteger(x);
+        if (argumentCount >= 2) {
+            reason = ustringToString(exec->argument(1).toString(exec));
+            if (exec->hadException()) {
+                setDOMException(exec, SYNTAX_ERR);
+                return jsUndefined();
+            }
+        }
+    }
+    ExceptionCode ec = 0;
+    webSocket->close(code, reason, ec);
+    setDOMException(exec, ec);
+    return jsUndefined();
 }
 
 } // namespace WebCore
