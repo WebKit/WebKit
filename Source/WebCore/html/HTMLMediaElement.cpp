@@ -1012,8 +1012,10 @@ void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState error)
         noneSupported();
     
     updateDisplayState();
-    if (hasMediaControls())
+    if (hasMediaControls()) {
+        mediaControls()->reset();
         mediaControls()->reportedError();
+    }
 }
 
 void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
