@@ -1,3 +1,9 @@
+2011-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2011-09-02  Adrienne Walker  <enne@google.com>
 
         [chromium] Remove LayerRendererChromium references from the LayerChromium tree
