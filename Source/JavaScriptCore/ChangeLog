@@ -1,3 +1,21 @@
+2011-08-30  Matthew Delaney  <mdelaney@apple.com>
+
+        Read out of bounds in sUnpremultiplyData_RGBA8888 / ImageBufferData::getData
+        https://bugs.webkit.org/show_bug.cgi?id=65352
+
+        Reviewed by Simon Fraser.
+
+        New test: fast/canvas/canvas-getImageData-large-crash.html
+
+        This patch prevents overflows from happening in getImageData, createImageData, and canvas creation
+        calls that specify widths and heights that end up overflowing the ints that we store those values in
+        as well as derived values such as area and maxX / maxY of the bounding rects involved. Overflow of integer
+        arithmetic is detected via the use of the new Checked type that was introduced in r94207. The change to JSC
+        is just to add a new helper method described below.
+
+        * wtf/MathExtras.h:
+        (isWithinIntRange): Reports if a float's value is within the range expressible by an int.
+
 2011-09-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Incorporate newer, faster dtoa library

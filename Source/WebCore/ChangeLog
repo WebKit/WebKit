@@ -1,3 +1,36 @@
+2011-08-30  Matthew Delaney  <mdelaney@apple.com>
+
+        Read out of bounds in sUnpremultiplyData_RGBA8888 / ImageBufferData::getData
+        https://bugs.webkit.org/show_bug.cgi?id=65352
+
+        Reviewed by Simon Fraser.
+
+        New test: fast/canvas/canvas-getImageData-large-crash.html
+
+        This patch prevents overflows from happening in getImageData, createImageData, and canvas creation
+        calls that specify widths and heights that end up overflowing the ints that we store those values in
+        as well as derived values such as area and maxX / maxY of the bounding rects involved. Overflow of integer
+        arithmetic is detected via the use of the new Checked type that was introduced in r94207.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::convertLogicalToDevice): Removed dependency on ints, using FloatRects/Sizes instead.
+        (WebCore::HTMLCanvasElement::createImageBuffer): Moved the check for max canvas area and dimensions here.
+          Added in check that prevents us from having canvases of sizes that will cause overflows.
+        (WebCore::HTMLCanvasElement::baseTransform): Updated use of convertLogicalToDevice.
+        * html/HTMLCanvasElement.h: Updated method signatures.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::createEmptyImageData): Added in check to prevent creating ImageData objects that will cause overflow when computing their size.
+        (WebCore::CanvasRenderingContext2D::createImageData): Avoid creating ImageData objects of size that will overflow later.
+        (WebCore::CanvasRenderingContext2D::getImageData): Added in check to prevent trying to get ImageData objects that will cause overflow when computing their size.
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::isExpressibleAsIntRect): New method that tests whether a FloatRect can become an IntRect without overflow or having to be clamped.
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.cpp:
+        (WebCore::FloatSize::isExpressibleAsIntSize): Same as FloatRect, but for FloatSize->IntSize.
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/cg/ImageBufferCG.cpp: Added check for overflow.
+        (WebCore::ImageBuffer::ImageBuffer):
+
 2011-09-02  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9755843> anonymous RenderMathMLOperator sets itself as the renderer of its parent mfenced node

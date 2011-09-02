@@ -254,6 +254,11 @@ inline int clampToInteger(unsigned x)
     return static_cast<int>(x);
 }
 
+inline bool isWithinIntRange(float x)
+{
+    return x > static_cast<float>(std::numeric_limits<int>::min()) && x < static_cast<float>(std::numeric_limits<int>::max());
+}
+
 #if !COMPILER(MSVC) && !(COMPILER(RVCT) && PLATFORM(BREWMP)) && !OS(SOLARIS) && !OS(SYMBIAN)
 using std::isfinite;
 using std::isinf;

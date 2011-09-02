@@ -63,6 +63,7 @@ public:
 
     bool isEmpty() const { return m_width <= 0 || m_height <= 0; }
     bool isZero() const;
+    bool isExpressibleAsIntSize() const;
 
     float aspectRatio() const { return m_width / m_height; }
 

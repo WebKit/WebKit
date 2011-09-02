@@ -371,39 +371,28 @@ PassRefPtr<ImageData> HTMLCanvasElement::getImageData()
 #endif
 }
 
-IntRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) const
+FloatRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) const
 {
-    // Prevent under/overflow by ensuring the rect's bounds stay within integer-expressible range
-    int left = clampToInteger(floorf(logicalRect.x() * m_deviceScaleFactor));
-    int top = clampToInteger(floorf(logicalRect.y() * m_deviceScaleFactor));
-    int right = clampToInteger(ceilf(logicalRect.maxX() * m_deviceScaleFactor));
-    int bottom = clampToInteger(ceilf(logicalRect.maxY() * m_deviceScaleFactor));
+    FloatRect deviceRect(logicalRect);
+    deviceRect.scale(m_deviceScaleFactor);
 
-    return IntRect(IntPoint(left, top), convertToValidDeviceSize(right - left, bottom - top));
+    float x = floorf(deviceRect.x());
+    float y = floorf(deviceRect.y());
+    float w = ceilf(deviceRect.maxX() - x);
+    float h = ceilf(deviceRect.maxY() - y);
+    deviceRect.setX(x);
+    deviceRect.setY(y);
+    deviceRect.setWidth(w);
+    deviceRect.setHeight(h);
+
+    return deviceRect;
 }
 
-IntSize HTMLCanvasElement::convertLogicalToDevice(const FloatSize& logicalSize) const
+FloatSize HTMLCanvasElement::convertLogicalToDevice(const FloatSize& logicalSize) const
 {
-    // Prevent overflow by ensuring the rect's bounds stay within integer-expressible range
-    float width = clampToInteger(ceilf(logicalSize.width() * m_deviceScaleFactor));
-    float height = clampToInteger(ceilf(logicalSize.height() * m_deviceScaleFactor));
-    return convertToValidDeviceSize(width, height);
-}
-
-IntSize HTMLCanvasElement::convertToValidDeviceSize(float width, float height) const
-{
-    width = ceilf(width);
-    height = ceilf(height);
-    
-    if (width < 1 || height < 1 || width * height > MaxCanvasArea)
-        return IntSize();
-
-#if USE(SKIA)
-    if (width > MaxSkiaDim || height > MaxSkiaDim)
-        return IntSize();
-#endif
-
-    return IntSize(width, height);
+    float width = ceilf(logicalSize.width() * m_deviceScaleFactor);
+    float height = ceilf(logicalSize.height() * m_deviceScaleFactor);
+    return FloatSize(width, height);
 }
 
 SecurityOrigin* HTMLCanvasElement::securityOrigin() const
@@ -446,18 +435,27 @@ void HTMLCanvasElement::createImageBuffer() const
 
     m_hasCreatedImageBuffer = true;
 
-    FloatSize unscaledSize(width(), height());
-    IntSize size = convertLogicalToDevice(unscaledSize);
-    if (!size.width() || !size.height())
+    FloatSize logicalSize(width(), height());
+    FloatSize deviceSize = convertLogicalToDevice(logicalSize);
+    if (!deviceSize.isExpressibleAsIntSize())
         return;
 
-    RenderingMode renderingMode = shouldAccelerate(size) ? Accelerated : Unaccelerated;
-    m_imageBuffer = ImageBuffer::create(size, ColorSpaceDeviceRGB, renderingMode);
-    // The convertLogicalToDevice MaxCanvasArea check should prevent common cases
-    // where ImageBuffer::create() returns 0, however we could still be low on memory.
+    if (deviceSize.width() * deviceSize.height() > MaxCanvasArea)
+        return;
+#if USE(SKIA)
+    if (deviceSize.width() > MaxSkiaDim || deviceSize.height() > MaxSkiaDim)
+        return;
+#endif
+
+    IntSize bufferSize(deviceSize.width(), deviceSize.height());
+    if (!bufferSize.width() || !bufferSize.height())
+        return;
+
+    RenderingMode renderingMode = shouldAccelerate(bufferSize) ? Accelerated : Unaccelerated;
+    m_imageBuffer = ImageBuffer::create(bufferSize, ColorSpaceDeviceRGB, renderingMode);
     if (!m_imageBuffer)
         return;
-    m_imageBuffer->context()->scale(FloatSize(size.width() / unscaledSize.width(), size.height() / unscaledSize.height()));
+    m_imageBuffer->context()->scale(FloatSize(bufferSize.width() / logicalSize.width(), bufferSize.height() / logicalSize.height()));
     m_imageBuffer->context()->setShadowsIgnoreTransforms(true);
     m_imageBuffer->context()->setImageInterpolationQuality(DefaultInterpolationQuality);
 
@@ -512,7 +510,8 @@ AffineTransform HTMLCanvasElement::baseTransform() const
 {
     ASSERT(m_hasCreatedImageBuffer);
     FloatSize unscaledSize(width(), height());
-    IntSize size = convertLogicalToDevice(unscaledSize);
+    FloatSize deviceSize = convertLogicalToDevice(unscaledSize);
+    IntSize size(deviceSize.width(), deviceSize.height());
     AffineTransform transform;
     if (size.width() && size.height())
         transform.scaleNonUniform(size.width() / unscaledSize.width(), size.height() / unscaledSize.height());

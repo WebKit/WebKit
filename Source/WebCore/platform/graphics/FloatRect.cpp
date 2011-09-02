@@ -47,6 +47,13 @@ FloatRect FloatRect::narrowPrecision(double x, double y, double width, double he
     return FloatRect(narrowPrecisionToFloat(x), narrowPrecisionToFloat(y), narrowPrecisionToFloat(width), narrowPrecisionToFloat(height));
 }
 
+bool FloatRect::isExpressibleAsIntRect() const
+{
+    return isWithinIntRange(x()) && isWithinIntRange(y())
+        && isWithinIntRange(width()) && isWithinIntRange(height())
+        && isWithinIntRange(maxX()) && isWithinIntRange(maxY());
+}
+
 bool FloatRect::intersects(const FloatRect& other) const
 {
     // Checking emptiness handles negative widths as well as zero.
