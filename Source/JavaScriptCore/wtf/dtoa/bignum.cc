@@ -66,7 +66,7 @@ namespace double_conversion {
         int needed_bigits = kUInt64Size / kBigitSize + 1;
         EnsureCapacity(needed_bigits);
         for (int i = 0; i < needed_bigits; ++i) {
-            bigits_[i] = value & kBigitMask;
+            bigits_[i] = (uint32_t)value & kBigitMask;
             value = value >> kBigitSize;
         }
         used_digits_ = needed_bigits;
@@ -265,7 +265,7 @@ namespace double_conversion {
         }
         while (carry != 0) {
             EnsureCapacity(used_digits_ + 1);
-            bigits_[used_digits_] = carry & kBigitMask;
+            bigits_[used_digits_] = (uint32_t)carry & kBigitMask;
             used_digits_++;
             carry >>= kBigitSize;
         }
@@ -286,13 +286,13 @@ namespace double_conversion {
             uint64_t product_low = low * bigits_[i];
             uint64_t product_high = high * bigits_[i];
             uint64_t tmp = (carry & kBigitMask) + product_low;
-            bigits_[i] = tmp & kBigitMask;
+            bigits_[i] = (uint32_t)tmp & kBigitMask;
             carry = (carry >> kBigitSize) + (tmp >> kBigitSize) +
             (product_high << (32 - kBigitSize));
         }
         while (carry != 0) {
             EnsureCapacity(used_digits_ + 1);
-            bigits_[used_digits_] = carry & kBigitMask;
+            bigits_[used_digits_] = (uint32_t)carry & kBigitMask;
             used_digits_++;
             carry >>= kBigitSize;
         }
@@ -747,7 +747,7 @@ namespace double_conversion {
         for (int i = 0; i < other.used_digits_; ++i) {
             DoubleChunk product = static_cast<DoubleChunk>(factor) * other.bigits_[i];
             DoubleChunk remove = borrow + product;
-            Chunk difference = bigits_[i + exponent_diff] - (remove & kBigitMask);
+            Chunk difference = bigits_[i + exponent_diff] - ((uint32_t)remove & kBigitMask);
             bigits_[i + exponent_diff] = difference & kBigitMask;
             borrow = static_cast<Chunk>((difference >> (kChunkSize - 1)) +
                                         (remove >> kBigitSize));

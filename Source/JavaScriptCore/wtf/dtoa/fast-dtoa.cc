@@ -241,7 +241,7 @@ namespace double_conversion {
                                 int number_bits,
                                 uint32_t* power,
                                 int* exponent) {
-        ASSERT(number < (1 << (number_bits + 1)));
+        ASSERT(number < (uint32_t)(1 << (number_bits + 1)));
         
         switch (number_bits) {
             case 32:

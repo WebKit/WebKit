@@ -28,6 +28,7 @@
 #ifndef DOUBLE_CONVERSION_UTILS_H_
 #define DOUBLE_CONVERSION_UTILS_H_
 
+#include "Platform.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -51,6 +52,8 @@
 #if defined(_M_X64) || defined(__x86_64__) || \
 defined(__ARMEL__) || \
 defined(_MIPS_ARCH_MIPS32R2)
+#define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
+#elif CPU(MIPS)
 #define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
 #elif defined(_M_IX86) || defined(__i386__)
 #if defined(_WIN32)
