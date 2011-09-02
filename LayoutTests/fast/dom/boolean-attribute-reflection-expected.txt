@@ -59,6 +59,10 @@ PASS e = make('input'); e.removeAttribute('required'); e.required is false
 PASS e = make('input'); e.setAttribute('required', ''); e.required is true
 PASS e = make('input'); e.setAttribute('required', 'x'); e.required = false; e.getAttribute('required') is null
 PASS e = make('input'); e.setAttribute('required', 'x'); e.required = true; e.getAttribute('required') is ''
+PASS e = make('link'); e.removeAttribute('disabled'); e.disabled is false
+PASS e = make('link'); e.setAttribute('disabled', ''); e.disabled is true
+PASS e = make('link'); e.setAttribute('disabled', 'x'); e.disabled = false; e.getAttribute('disabled') is null
+PASS e = make('link'); e.setAttribute('disabled', 'x'); e.disabled = true; e.getAttribute('disabled') is ''
 PASS e = make('menu'); e.removeAttribute('compact'); e.compact is false
 PASS e = make('menu'); e.setAttribute('compact', ''); e.compact is true
 PASS e = make('menu'); e.setAttribute('compact', 'x'); e.compact = false; e.getAttribute('compact') is null

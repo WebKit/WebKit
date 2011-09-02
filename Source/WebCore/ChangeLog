@@ -1,3 +1,43 @@
+2011-09-01  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION (r84327-r84329): CSS stylesheets fail to load on www.flagstar.com login page
+        https://bugs.webkit.org/show_bug.cgi?id=65140
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/css/stylesheet-enable-first-alternate-link.html
+               fast/css/stylesheet-enable-first-alternate-on-load-link.html
+               fast/css/stylesheet-enable-first-alternate-on-load-sheet.html
+               fast/css/stylesheet-enable-second-alternate-link.html
+               fast/css/stylesheet-enable-second-alternate-on-load-link.html
+               fast/css/stylesheet-enable-second-alternate-on-load-sheet.html
+               http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html
+               http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html
+
+        This patch basically reverts 88479 and 84329 while keeping the tests
+        we developped during the implementation.
+
+        Following discussion, it looks like HTML5 will need to be amended.
+        In the meantime, we will just revert the changes so that we can come
+        up with a better change.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyleSelector):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement):
+        (WebCore::HTMLLinkElement::setDisabledState):
+        (WebCore::HTMLLinkElement::parseMappedAttribute):
+        (WebCore::HTMLLinkElement::process):
+        Revert those method to their original content.
+
+        * html/HTMLLinkElement.h:
+        (WebCore::HTMLLinkElement::isDisabled):
+        (WebCore::HTMLLinkElement::isEnabledViaScript):
+        (WebCore::HTMLLinkElement::isAlternate):
+        Re-introduced the DisabledState enum.
+
+        * html/HTMLLinkElement.idl: |disabled| is Reflect'ed again.
+
 2011-09-01  Dan Bernstein  <mitz@apple.com>
 
         Fix layout test regressions from r94352.

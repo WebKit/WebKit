@@ -22,7 +22,7 @@
 module html {
 
     interface HTMLLinkElement : HTMLElement {
-        attribute boolean disabled;
+        attribute [Reflect] boolean disabled;
         attribute [Reflect] DOMString charset;
         attribute [Reflect, URL] DOMString href;
         attribute [Reflect] DOMString hreflang;

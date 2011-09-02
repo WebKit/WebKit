@@ -1,3 +1,46 @@
+2011-09-01  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION (r84327-r84329): CSS stylesheets fail to load on www.flagstar.com login page
+        https://bugs.webkit.org/show_bug.cgi?id=65140
+
+        Reviewed by Darin Adler.
+
+        * fast/css/stylesheet-enable-first-alternate-link-expected.txt: Added.
+        * fast/css/stylesheet-enable-first-alternate-link.html: Added.
+        * fast/css/stylesheet-enable-first-alternate-on-load-link-expected.txt: Added.
+        * fast/css/stylesheet-enable-first-alternate-on-load-link.html: Added.
+        * fast/css/stylesheet-enable-first-alternate-on-load-sheet-expected.txt: Added.
+        * fast/css/stylesheet-enable-first-alternate-on-load-sheet.html: Added.
+        * fast/css/stylesheet-enable-second-alternate-link-expected.txt: Added.
+        * fast/css/stylesheet-enable-second-alternate-link.html: Added.
+        * fast/css/stylesheet-enable-second-alternate-on-load-link-expected.txt: Added.
+        * fast/css/stylesheet-enable-second-alternate-on-load-link.html: Added.
+        * fast/css/stylesheet-enable-second-alternate-on-load-sheet-expected.txt: Added.
+        * fast/css/stylesheet-enable-second-alternate-on-load-sheet.html: Added.
+        * http/tests/css/link-css-disabled-value-with-slow-loading-sheet-expected.txt: Added.
+        * http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error-expected.txt: Added.
+        * http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html: Added.
+        * http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html: Added.
+        * http/tests/css/resources/link-css-disabled-value-with-slow-loading-sheet-in-error.js: Added.
+        (onSheetLoaded):
+        (testWhenLoaded):
+        * http/tests/css/resources/link-css-disabled-value-with-slow-loading-sheet.js: Added.
+        (onSheetLoaded):
+        (testWhenLoaded):
+        * http/tests/css/resources/slow-loading-sheet-in-error.php: Added.
+        * http/tests/css/resources/slow-loading-sheet.php: Added.
+        New tests developped for 65140. The baselines matches what FF and Opera are doing (IE does not support
+        link.sheet at the moment). Those failures are covered by bug 67436.
+
+        * fast/css/link-disabled-attr-expected.txt:
+        * fast/dom/HTMLLinkElement/disabled-attribute-expected.txt:
+        Fixed the baseline to match our behavior. The FAIL are our current deviation from the spec. Those
+        failures are covered by bug 67436.
+
+        * fast/dom/boolean-attribute-reflection-expected.txt:
+        * fast/dom/script-tests/boolean-attribute-reflection.js:
+        Re-added link.disabled as a reflected attribute.
+
 2011-09-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert r94355 because it caused bunch of builds to break.

@@ -3,15 +3,15 @@ Test for bug 61400: REGRESSION(84329): Stylesheets on some pages do not load
 
 notsheet
 PASS link.sheet is null
-PASS link.disabled is false
+FAIL link.disabled should be false. Was true.
 sheet
 PASS link.sheet is non-null.
-PASS link.disabled is true
+FAIL link.disabled should be true. Was false.
 PASS link.sheet.disabled is true
 PASS getComputedStyle(console).whiteSpace is 'normal'
 PASS link.disabled is false
-PASS link.sheet.disabled is false
-PASS getComputedStyle(console).whiteSpace is 'pre-wrap'
+FAIL link.sheet.disabled should be false. Was true.
+FAIL getComputedStyle(console).whiteSpace should be pre-wrap. Was normal.
 altsheet
 FAIL link.disabled should be true. Was false.
 PASS link.sheet is non-null.

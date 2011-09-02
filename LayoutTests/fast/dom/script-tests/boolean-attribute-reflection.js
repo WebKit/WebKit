@@ -15,6 +15,7 @@ var attributes = [
     [ "input", "multiple" ],
     [ "input", "readOnly" ],
     [ "input", "required" ],
+    [ "link", "disabled" ],
     [ "menu", "compact" ],
     [ "object", "declare" ],
     [ "ol", "compact" ],
