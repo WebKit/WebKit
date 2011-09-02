@@ -317,6 +317,8 @@ WebInspector.NetworkDispatcher.prototype = {
         var previousRedirects = originalResource.redirects || [];
         originalResource.requestId = "redirected:" + requestId + "." + previousRedirects.length;
         delete originalResource.redirects;
+        if (previousRedirects.length > 0)
+            originalResource.redirectSource = previousRedirects[previousRedirects.length - 1];
         this._finishResource(originalResource, time);
         var newResource = this._createResource(requestId, originalResource.frameId, originalResource.loaderId,
              redirectURL, originalResource.documentURL, originalResource.initiator, originalResource.stackTrace);

@@ -1992,13 +1992,18 @@ WebInspector.NetworkDataGridNode.prototype = {
     _refreshInitiatorCell: function()
     {
         var initiator = this._resource.initiator;
-        if (!initiator || initiator.type === "other") {
-            this._initiatorCell.addStyleClass("network-dim-cell");
-            this._initiatorCell.setTextAndTitle(WebInspector.UIString("Other"));
-        } else {
+        if ((initiator && initiator.type !== "other") || this._resource.redirectSource) {
             this._initiatorCell.removeStyleClass("network-dim-cell");
             this._initiatorCell.removeChildren();
-            if (initiator.type === "script") {
+            if (this._resource.redirectSource) {
+                var redirectSource = this._resource.redirectSource;
+                var anchor = WebInspector.linkifyURLAsNode(redirectSource.url, redirectSource.url, null, false);
+                anchor.setAttribute("request_id", redirectSource.requestId);
+                anchor.setAttribute("preferred_panel", "network");
+                this._initiatorCell.title = redirectSource.url;
+                this._initiatorCell.appendChild(anchor);
+                this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Redirect"));
+            } else if (initiator.type === "script") {
                 var topFrame = initiator.stackTrace[0];
                 // This could happen when resource loading was triggered by console. 
                 if (!topFrame.url) {
@@ -2015,6 +2020,9 @@ WebInspector.NetworkDataGridNode.prototype = {
                 this._initiatorCell.appendChild(WebInspector.linkifyResourceAsNode(initiator.url, initiator.lineNumber - 1));
                 this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Parser"));
             }
+        } else {
+            this._initiatorCell.addStyleClass("network-dim-cell");
+            this._initiatorCell.setTextAndTitle(WebInspector.UIString("Other"));
         }
     },
 

@@ -1,3 +1,19 @@
+2011-09-02  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Network: jump to initiator's record in case of redirect
+        https://bugs.webkit.org/show_bug.cgi?id=67367
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype._appendRedirect):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype._refreshInitiatorCell):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.get redirectSource):
+        (WebInspector.Resource.prototype.set redirectSource):
+
 2011-09-02  Antti Koivisto  <antti@apple.com>
 
         De-virtualize recalcStyle()

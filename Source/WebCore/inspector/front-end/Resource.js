@@ -541,6 +541,18 @@ WebInspector.Resource.prototype = {
                 break;
         }
     },
+    
+    get redirectSource()
+    {
+        if (this.redirects && this.redirects.length > 0)
+            return this.redirects[this.redirects.length - 1];
+        return this._redirectSource;
+    },
+
+    set redirectSource(x)
+    {
+        this._redirectSource = x;
+    },
 
     get requestHeaders()
     {
