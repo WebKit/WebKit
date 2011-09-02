@@ -623,7 +623,7 @@ template <typename U, typename V, typename OverflowHandler> static inline Checke
     U x = 0;
     V y = 0;
     bool overflowed = lhs.safeGet(x) || rhs.safeGet(y);
-    typename Result<U, V>::ResultType result;
+    typename Result<U, V>::ResultType result = 0;
     overflowed |= !safeAdd(x, y, result);
     if (overflowed)
         return ResultOverflowed;
@@ -635,7 +635,7 @@ template <typename U, typename V, typename OverflowHandler> static inline Checke
     U x = 0;
     V y = 0;
     bool overflowed = lhs.safeGet(x) || rhs.safeGet(y);
-    typename Result<U, V>::ResultType result;
+    typename Result<U, V>::ResultType result = 0;
     overflowed |= !safeSub(x, y, result);
     if (overflowed)
         return ResultOverflowed;
@@ -647,7 +647,7 @@ template <typename U, typename V, typename OverflowHandler> static inline Checke
     U x = 0;
     V y = 0;
     bool overflowed = lhs.safeGet(x) || rhs.safeGet(y);
-    typename Result<U, V>::ResultType result;
+    typename Result<U, V>::ResultType result = 0;
     overflowed |= !safeMultiply(x, y, result);
     if (overflowed)
         return ResultOverflowed;
