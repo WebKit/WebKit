@@ -2237,9 +2237,6 @@ BUGCR81837 LINUX WIN CPU : fast/canvas/canvas-currentColor.html = TEXT
 // Expected result file added in r83450. Still no match.
 BUGJAPHET : platform/gtk/accessibility/aria-table-hierarchy.html = TEXT
 
-// Added in WebKit r69824, failed immediately due to KURL/KURLGoogle differences.
-BUGJAPHET : fast/dom/HTMLAnchorElement/set-href-attribute-prevents-rebase.html = TEXT
-
 // r69833, JSC/V8 Date parsing differences
 BUGJAPHET : fast/js/date-parse-test.html = TEXT
 
@@ -3675,9 +3672,6 @@ BUGWK67204 : fast/multicol/initial-column-values.html = MISSING FAIL
 // Implement an Event constructor in V8.
 BUGWK66756 : fast/events/constructors/event-constructors.html = TEXT
 
-// Started to fail on all bots after r93951.
-BUGWK63878 : fast/dom/dom-constructors.html = TEXT
-
 // Failing after r93982.
 BUG_LEVIN MAC : canvas/philip/tests/2d.path.stroke.prune.arc.html = TEXT
 
@@ -3697,6 +3691,4 @@ BUGJAMESR LINUX X86_64 : svg/transforms/text-with-pattern-with-svg-transform.svg
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
-BUGWK67353 : fast/events/document-elementFromPoint.html = TEXT
-BUGWK67353 : fast/events/offsetX-offsetY.html = TEXT
 BUGWK67359 : http/tests/loading/empty-urls.html = PASS TEXT
