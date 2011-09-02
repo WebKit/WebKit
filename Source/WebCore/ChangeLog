@@ -1,3 +1,19 @@
+2011-09-01  Kent Tamura  <tkent@chromium.org>
+
+        The filename text color of a file upload control should be inherited.
+        https://bugs.webkit.org/show_bug.cgi?id=67368
+
+        Reviewed by Darin Adler.
+
+        * css/html.css:
+        (input[type="file"]):
+        Add 'color: inherit'.
+        The declaration for 'input' contains 'color: initial;'. So a file
+        upload control has had black foreground color unless it has been
+        specified 'color' property explicitly.
+        Because a file upload control uses inherited background color, the
+        foreground color also should be inherited.
+
 2011-09-01  Kentaro Hara  <haraken@google.com>
 
         Generate a Worker constructor of V8 using the IDL 'Constructor' extended attribute
