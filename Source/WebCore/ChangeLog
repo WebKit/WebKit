@@ -1,3 +1,10 @@
+2011-09-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        * platform/network/mac/CookieStorageMac.mm: (WebCore::setCookieStoragePrivateBrowsingEnabled):
+        Can't use BUILDING_ON_SNOW_LEOPARD without defined() when not on Snow Leopard.
+
 2011-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94421.
