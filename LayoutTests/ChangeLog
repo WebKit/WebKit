@@ -1,3 +1,9 @@
+2011-09-01  Dan Bernstein  <mitz@apple.com>
+
+        Added Snow Leopard expected results to the test added in r94352.
+
+        * platform/mac-snowleopard/fast/text/fallback-traits-fixup-expected.txt: Added.
+
 2011-09-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update leopard pixel baselines for svg tests
