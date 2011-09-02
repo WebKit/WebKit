@@ -90,7 +90,7 @@ HTMLImageElement* HTMLMapElement::imageElement()
         // The HTMLImageElement's useMap() value includes the '#' symbol at the beginning,
         // which has to be stripped off.
         HTMLImageElement* imageElement = static_cast<HTMLImageElement*>(curr);
-        String useMapName = imageElement->getAttribute(usemapAttr).string().substring(1);
+        String useMapName = imageElement->fastGetAttribute(usemapAttr).string().substring(1);
         if (equalIgnoringCase(useMapName, m_name))
             return imageElement;
     }

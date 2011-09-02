@@ -94,8 +94,8 @@ void SplitElementCommand::doUnapply()
         m_element2->insertBefore(children[i].get(), refChild.get(), ec);
 
     // Recover the id attribute of the original element.
-    if (m_element1->hasAttribute(HTMLNames::idAttr))
-        m_element2->setAttribute(HTMLNames::idAttr, m_element1->getAttribute(HTMLNames::idAttr));
+    if (m_element1->fastHasAttribute(HTMLNames::idAttr))
+        m_element2->setAttribute(HTMLNames::idAttr, m_element1->fastGetAttribute(HTMLNames::idAttr));
 
     m_element1->remove(ec);
 }

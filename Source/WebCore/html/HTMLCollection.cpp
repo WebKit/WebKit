@@ -277,7 +277,7 @@ bool HTMLCollection::checkForNameMatch(Element* element, bool checkName, const A
           e->hasLocalName(selectTag)))
         return false;
 
-    return e->getAttribute(nameAttr) == name && e->getIdAttribute() != name;
+    return e->fastGetAttribute(nameAttr) == name && e->getIdAttribute() != name;
 }
 
 Node* HTMLCollection::namedItem(const AtomicString& name) const
@@ -320,7 +320,7 @@ void HTMLCollection::updateNameCache() const
             continue;
         HTMLElement* e = toHTMLElement(element);
         const AtomicString& idAttrVal = e->getIdAttribute();
-        const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
+        const AtomicString& nameAttrVal = e->fastGetAttribute(nameAttr);
         if (!idAttrVal.isEmpty()) {
             // add to id cache
             Vector<Element*>* idVector = m_info->idCache.get(idAttrVal.impl());

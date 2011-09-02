@@ -55,14 +55,14 @@ void RenderMathMLFenced::updateFromElement()
     Element* fenced = static_cast<Element*>(node());
  
     // FIXME: Handle open/close values with more than one character (they should be treated like text).
-    AtomicString openValue = fenced->getAttribute(MathMLNames::openAttr);
+    AtomicString openValue = fenced->fastGetAttribute(MathMLNames::openAttr);
     if (openValue.length() > 0)
         m_open = openValue[0];
-    AtomicString closeValue = fenced->getAttribute(MathMLNames::closeAttr);
+    AtomicString closeValue = fenced->fastGetAttribute(MathMLNames::closeAttr);
     if (closeValue.length() > 0)
         m_close = closeValue[0];
     
-    AtomicString separators = static_cast<Element*>(fenced)->getAttribute(MathMLNames::separatorsAttr);
+    AtomicString separators = static_cast<Element*>(fenced)->fastGetAttribute(MathMLNames::separatorsAttr);
     if (!separators.isNull()) {
         Vector<UChar> characters;
         for (unsigned int i = 0; i < separators.length(); i++) {

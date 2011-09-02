@@ -70,7 +70,7 @@ void HTMLHtmlElement::insertedByParser()
     if (!documentLoader)
         return;
 
-    const AtomicString& manifest = getAttribute(manifestAttr);
+    const AtomicString& manifest = fastGetAttribute(manifestAttr);
     if (manifest.isEmpty())
         documentLoader->applicationCacheHost()->selectCacheWithoutManifest();
     else

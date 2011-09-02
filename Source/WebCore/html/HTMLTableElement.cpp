@@ -655,19 +655,19 @@ PassRefPtr<HTMLCollection> HTMLTableElement::tBodies()
 
 String HTMLTableElement::rules() const
 {
-    return getAttribute(rulesAttr);
+    return fastGetAttribute(rulesAttr);
 }
 
 String HTMLTableElement::summary() const
 {
-    return getAttribute(summaryAttr);
+    return fastGetAttribute(summaryAttr);
 }
 
 void HTMLTableElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, document()->completeURL(getAttribute(backgroundAttr)));
+    addSubresourceURL(urls, document()->completeURL(fastGetAttribute(backgroundAttr)));
 }
 
 }

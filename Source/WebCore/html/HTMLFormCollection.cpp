@@ -112,7 +112,7 @@ Element* HTMLFormCollection::getNamedFormItem(const QualifiedName& attrName, con
     for (unsigned i = 0; i < form->m_associatedElements.size(); ++i) {
         FormAssociatedElement* associatedElement = form->m_associatedElements[i];
         HTMLElement* element = toHTMLElement(associatedElement);
-        if (associatedElement->isEnumeratable() && element->getAttribute(attrName) == name) {
+        if (associatedElement->isEnumeratable() && element->fastGetAttribute(attrName) == name) {
             foundInputElements = true;
             if (!duplicateNumber)
                 return element;
@@ -123,7 +123,7 @@ Element* HTMLFormCollection::getNamedFormItem(const QualifiedName& attrName, con
     if (!foundInputElements) {
         for (unsigned i = 0; i < form->m_imageElements.size(); ++i) {
             HTMLImageElement* element = form->m_imageElements[i];
-            if (element->getAttribute(attrName) == name) {
+            if (element->fastGetAttribute(attrName) == name) {
                 if (!duplicateNumber)
                     return element;
                 --duplicateNumber;
@@ -196,7 +196,7 @@ void HTMLFormCollection::updateNameCache() const
         if (associatedElement->isEnumeratable()) {
             HTMLElement* element = toHTMLElement(associatedElement);
             const AtomicString& idAttrVal = element->getIdAttribute();
-            const AtomicString& nameAttrVal = element->getAttribute(nameAttr);
+            const AtomicString& nameAttrVal = element->fastGetAttribute(nameAttr);
             if (!idAttrVal.isEmpty()) {
                 // add to id cache
                 Vector<Element*>* idVector = info()->idCache.get(idAttrVal.impl());
@@ -223,7 +223,7 @@ void HTMLFormCollection::updateNameCache() const
     for (unsigned i = 0; i < f->m_imageElements.size(); ++i) {
         HTMLImageElement* element = f->m_imageElements[i];
         const AtomicString& idAttrVal = element->getIdAttribute();
-        const AtomicString& nameAttrVal = element->getAttribute(nameAttr);
+        const AtomicString& nameAttrVal = element->fastGetAttribute(nameAttr);
         if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl())) {
             // add to id cache
             Vector<Element*>* idVector = info()->idCache.get(idAttrVal.impl());

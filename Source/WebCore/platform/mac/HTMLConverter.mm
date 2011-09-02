@@ -1750,7 +1750,7 @@ static NSFileWrapper *fileWrapperForElement(Element* element)
 {
     NSFileWrapper *wrapper = nil;
     
-    const AtomicString& attr = element->getAttribute(srcAttr);
+    const AtomicString& attr = element->fastGetAttribute(srcAttr);
     if (!attr.isEmpty()) {
         NSURL *URL = element->document()->completeURL(attr);
         if (DocumentLoader* loader = element->document()->loader())

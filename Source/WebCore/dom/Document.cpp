@@ -628,7 +628,7 @@ void Document::buildAccessKeyMap(TreeScope* root)
         if (!n->isElementNode())
             continue;
         Element* element = static_cast<Element*>(n);
-        const AtomicString& accessKey = element->getAttribute(accesskeyAttr);
+        const AtomicString& accessKey = element->fastGetAttribute(accesskeyAttr);
         if (!accessKey.isEmpty())
             m_elementsByAccessKey.set(accessKey.impl(), element);
         buildAccessKeyMap(element->shadowRoot());
@@ -2958,7 +2958,7 @@ void Document::recalcStyleSelector()
 #endif
         ) {
             Element* e = static_cast<Element*>(n);
-            AtomicString title = e->getAttribute(titleAttr);
+            AtomicString title = e->fastGetAttribute(titleAttr);
             bool enabledViaScript = false;
             if (e->hasLocalName(linkTag)) {
                 // <LINK> element
@@ -2969,7 +2969,7 @@ void Document::recalcStyleSelector()
                 if (linkElement->isLoading()) {
                     // it is loading but we should still decide which style sheet set to use
                     if (!enabledViaScript && !title.isEmpty() && m_preferredStylesheetSet.isEmpty()) {
-                        const AtomicString& rel = e->getAttribute(relAttr);
+                        const AtomicString& rel = e->fastGetAttribute(relAttr);
                         if (!rel.contains("alternate")) {
                             m_preferredStylesheetSet = title;
                             m_selectedStylesheetSet = title;
@@ -3004,7 +3004,7 @@ void Document::recalcStyleSelector()
                     // we are NOT an alternate sheet, then establish
                     // us as the preferred set.  Otherwise, just ignore
                     // this sheet.
-                    AtomicString rel = e->getAttribute(relAttr);
+                    AtomicString rel = e->fastGetAttribute(relAttr);
                     if (e->hasLocalName(styleTag) || !rel.contains("alternate"))
                         m_preferredStylesheetSet = m_selectedStylesheetSet = title;
                 }

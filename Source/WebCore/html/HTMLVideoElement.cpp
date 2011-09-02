@@ -156,14 +156,14 @@ unsigned HTMLVideoElement::videoHeight() const
 unsigned HTMLVideoElement::width() const
 {
     bool ok;
-    unsigned w = getAttribute(widthAttr).string().toUInt(&ok);
+    unsigned w = fastGetAttribute(widthAttr).string().toUInt(&ok);
     return ok ? w : 0;
 }
     
 unsigned HTMLVideoElement::height() const
 {
     bool ok;
-    unsigned h = getAttribute(heightAttr).string().toUInt(&ok);
+    unsigned h = fastGetAttribute(heightAttr).string().toUInt(&ok);
     return ok ? h : 0;
 }
     

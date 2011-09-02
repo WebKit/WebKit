@@ -277,7 +277,7 @@ String HitTestResult::altDisplayString() const
     
     if (m_innerNonSharedNode->hasTagName(imgTag)) {
         HTMLImageElement* image = static_cast<HTMLImageElement*>(m_innerNonSharedNode.get());
-        return displayString(image->getAttribute(altAttr), m_innerNonSharedNode.get());
+        return displayString(image->fastGetAttribute(altAttr), m_innerNonSharedNode.get());
     }
     
     if (m_innerNonSharedNode->hasTagName(inputTag)) {
@@ -328,7 +328,7 @@ KURL HitTestResult::absoluteImageURL() const
 #endif
        ) {
         Element* element = static_cast<Element*>(m_innerNonSharedNode.get());
-        urlString = element->getAttribute(element->imageSourceAttributeName());
+        urlString = element->fastGetAttribute(element->imageSourceAttributeName());
     } else
         return KURL();
 
@@ -476,7 +476,7 @@ KURL HitTestResult::absoluteLinkURL() const
 
     AtomicString urlString;
     if (m_innerURLElement->hasTagName(aTag) || m_innerURLElement->hasTagName(areaTag) || m_innerURLElement->hasTagName(linkTag))
-        urlString = m_innerURLElement->getAttribute(hrefAttr);
+        urlString = m_innerURLElement->fastGetAttribute(hrefAttr);
 #if ENABLE(SVG)
     else if (m_innerURLElement->hasTagName(SVGNames::aTag))
         urlString = m_innerURLElement->getAttribute(XLinkNames::hrefAttr);

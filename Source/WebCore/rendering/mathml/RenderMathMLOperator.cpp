@@ -140,7 +140,7 @@ void RenderMathMLOperator::updateFromElement()
     // We made need the element later if we can't stretch.
     if (node()->nodeType() == Node::ELEMENT_NODE) {
         if (Element* mo = static_cast<Element*>(node())) {
-            AtomicString stretchyAttr = mo->getAttribute(MathMLNames::stretchyAttr);
+            AtomicString stretchyAttr = mo->fastGetAttribute(MathMLNames::stretchyAttr);
             stretchDisabled = equalIgnoringCase(stretchyAttr, "false");
             
             // If stretching isn't disabled, get the character from the text content.

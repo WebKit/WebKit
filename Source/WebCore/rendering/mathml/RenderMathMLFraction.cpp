@@ -62,7 +62,7 @@ void RenderMathMLFraction::updateFromElement()
     Element* fraction = static_cast<Element*>(node());
     
     RenderObject* numerator = firstChild();
-    String nalign = fraction->getAttribute(MathMLNames::numalignAttr);
+    String nalign = fraction->fastGetAttribute(MathMLNames::numalignAttr);
     if (equalIgnoringCase(nalign, "left"))
         numerator->style()->setTextAlign(LEFT);
     else if (equalIgnoringCase(nalign, "right"))
@@ -74,7 +74,7 @@ void RenderMathMLFraction::updateFromElement()
     if (!denominator)
         return;
     
-    String dalign = fraction->getAttribute(MathMLNames::denomalignAttr);
+    String dalign = fraction->fastGetAttribute(MathMLNames::denomalignAttr);
     if (equalIgnoringCase(dalign, "left"))
         denominator->style()->setTextAlign(LEFT);
     else if (equalIgnoringCase(dalign, "right"))
@@ -83,7 +83,7 @@ void RenderMathMLFraction::updateFromElement()
         denominator->style()->setTextAlign(CENTER);
     
     // FIXME: parse units
-    String thickness = fraction->getAttribute(MathMLNames::linethicknessAttr);
+    String thickness = fraction->fastGetAttribute(MathMLNames::linethicknessAttr);
     m_lineThickness = gLineMedium;
     if (equalIgnoringCase(thickness, "thin"))
         m_lineThickness = gLineThin;

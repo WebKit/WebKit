@@ -332,7 +332,7 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
         return;
 
     SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
-    bool success = beforeLoadAllowedLoad && hasValidClassId() && loader->requestObject(this, url, getAttribute(nameAttr), serviceType, paramNames, paramValues);
+    bool success = beforeLoadAllowedLoad && hasValidClassId() && loader->requestObject(this, url, fastGetAttribute(nameAttr), serviceType, paramNames, paramValues);
 
     if (!success && fallbackContent)
         renderFallbackContent();
@@ -483,13 +483,13 @@ void HTMLObjectElement::updateDocNamedItem()
 
 bool HTMLObjectElement::containsJavaApplet() const
 {
-    if (MIMETypeRegistry::isJavaAppletMIMEType(getAttribute(typeAttr)))
+    if (MIMETypeRegistry::isJavaAppletMIMEType(fastGetAttribute(typeAttr)))
         return true;
         
     for (Element* child = firstElementChild(); child; child = child->nextElementSibling()) {
         if (child->hasTagName(paramTag)
-                && equalIgnoringCase(child->getAttribute(nameAttr), "type")
-                && MIMETypeRegistry::isJavaAppletMIMEType(child->getAttribute(valueAttr).string()))
+                && equalIgnoringCase(child->fastGetAttribute(nameAttr), "type")
+                && MIMETypeRegistry::isJavaAppletMIMEType(child->fastGetAttribute(valueAttr).string()))
             return true;
         if (child->hasTagName(objectTag)
                 && static_cast<HTMLObjectElement*>(child)->containsJavaApplet())
@@ -505,11 +505,11 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) con
 {
     HTMLPlugInImageElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, document()->completeURL(getAttribute(dataAttr)));
+    addSubresourceURL(urls, document()->completeURL(fastGetAttribute(dataAttr)));
 
     // FIXME: Passing a string that starts with "#" to the completeURL function does
     // not seem like it would work. The image element has similar but not identical code.
-    const AtomicString& useMap = getAttribute(usemapAttr);
+    const AtomicString& useMap = fastGetAttribute(usemapAttr);
     if (useMap.startsWith("#"))
         addSubresourceURL(urls, document()->completeURL(useMap));
 }

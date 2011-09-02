@@ -46,7 +46,7 @@ void RenderDetails::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 
 bool RenderDetails::isOpen() const
 {
-    return node() && node()->isElementNode() ? !static_cast<Element*>(node())->getAttribute(openAttr).isNull() : false;
+    return node() && node()->isElementNode() ? !static_cast<Element*>(node())->fastGetAttribute(openAttr).isNull() : false;
 }
 
 } // namespace WebCore

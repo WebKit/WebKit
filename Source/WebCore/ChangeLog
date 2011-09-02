@@ -1,3 +1,239 @@
+2011-09-02  Andreas Kling  <kling@webkit.org>
+
+        Use fastGetAttribute() and fastHasAttribute() where appropriate.
+        https://bugs.webkit.org/show_bug.cgi?id=67394
+
+        Reviewed by Darin Adler.
+
+        Change call sites that don't check the "style" or SVG animatable
+        attributes to use fastGetAttribute()/fastHasAttribute() instead
+        of getAttribute()/hasAttribute().
+
+        No new tests, this is a minor performance optimization.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::nodeHasRole):
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_name):
+        * dom/Document.cpp:
+        (WebCore::Document::buildAccessKeyMap):
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Element.cpp:
+        (WebCore::Element::baseURI):
+        (WebCore::Element::formatForDebugger):
+        (WebCore::Element::spellcheckAttributeState):
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::nodeMatches):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::doUnapply):
+        * editing/markup.cpp:
+        (WebCore::shouldIncludeWrapperForFullySelectedRoot):
+        (WebCore::createMarkup):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::draggable):
+        (WebCore::HTMLAnchorElement::href):
+        (WebCore::HTMLAnchorElement::name):
+        (WebCore::HTMLAnchorElement::target):
+        (WebCore::HTMLAnchorElement::sendPings):
+        (WebCore::HTMLAnchorElement::handleClick):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::createRenderer):
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::target):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::aLink):
+        (WebCore::HTMLBodyElement::bgColor):
+        (WebCore::HTMLBodyElement::link):
+        (WebCore::HTMLBodyElement::text):
+        (WebCore::HTMLBodyElement::vLink):
+        (WebCore::HTMLBodyElement::addSubresourceAttributeURLs):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::value):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::checkForNameMatch):
+        (WebCore::HTMLCollection::updateNameCache):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::dir):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        (WebCore::HTMLElement::draggable):
+        (WebCore::HTMLElement::title):
+        (WebCore::setHasDirAutoFlagRecursively):
+        (WebCore::HTMLElement::directionalityIfhasDirAutoAttribute):
+        (WebCore::HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged):
+        (WebCore::HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        (WebCore::HTMLEmbedElement::insertedIntoDocument):
+        (WebCore::HTMLEmbedElement::addSubresourceAttributeURLs):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::getNamedFormItem):
+        (WebCore::HTMLFormCollection::updateNameCache):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::autofocus):
+        (WebCore::HTMLFormControlElement::updateVisibleValidationMessage):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::name):
+        (WebCore::HTMLFormElement::action):
+        (WebCore::HTMLFormElement::method):
+        (WebCore::HTMLFormElement::target):
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::noResize):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::setNameAndOpenURL):
+        (WebCore::HTMLFrameElementBase::location):
+        (WebCore::HTMLFrameElementBase::allowFullScreen):
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::insertedByParser):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::altText):
+        (WebCore::HTMLImageElement::width):
+        (WebCore::HTMLImageElement::height):
+        (WebCore::HTMLImageElement::alt):
+        (WebCore::HTMLImageElement::draggable):
+        (WebCore::HTMLImageElement::src):
+        (WebCore::HTMLImageElement::addSubresourceAttributeURLs):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::finishParsingChildren):
+        (WebCore::HTMLInputElement::altText):
+        (WebCore::HTMLInputElement::reset):
+        (WebCore::HTMLInputElement::searchEventsShouldBeDispatched):
+        (WebCore::HTMLInputElement::isSpeechEnabled):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::control):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::href):
+        (WebCore::HTMLLinkElement::rel):
+        (WebCore::HTMLLinkElement::target):
+        (WebCore::HTMLLinkElement::type):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::imageElement):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attributeChanged):
+        (WebCore::HTMLMediaElement::insertedIntoDocument):
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::content):
+        (WebCore::HTMLMetaElement::httpEquiv):
+        (WebCore::HTMLMetaElement::name):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::min):
+        (WebCore::HTMLMeterElement::max):
+        (WebCore::HTMLMeterElement::value):
+        (WebCore::HTMLMeterElement::low):
+        (WebCore::HTMLMeterElement::high):
+        (WebCore::HTMLMeterElement::optimum):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::itemAfter):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+        (WebCore::HTMLObjectElement::containsJavaApplet):
+        (WebCore::HTMLObjectElement::addSubresourceAttributeURLs):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::groupLabelText):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::max):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::sourceAttributeValue):
+        (WebCore::HTMLScriptElement::charsetAttributeValue):
+        (WebCore::HTMLScriptElement::typeAttributeValue):
+        (WebCore::HTMLScriptElement::languageAttributeValue):
+        (WebCore::HTMLScriptElement::forAttributeValue):
+        (WebCore::HTMLScriptElement::eventAttributeValue):
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::media):
+        (WebCore::HTMLSourceElement::type):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::media):
+        (WebCore::HTMLStyleElement::type):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::abbr):
+        (WebCore::HTMLTableCellElement::axis):
+        (WebCore::HTMLTableCellElement::headers):
+        (WebCore::HTMLTableCellElement::scope):
+        (WebCore::HTMLTableCellElement::addSubresourceAttributeURLs):
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::width):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::rules):
+        (WebCore::HTMLTableElement::summary):
+        (WebCore::HTMLTableElement::addSubresourceAttributeURLs):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::align):
+        (WebCore::HTMLTableSectionElement::ch):
+        (WebCore::HTMLTableSectionElement::chOff):
+        (WebCore::HTMLTableSectionElement::vAlign):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::maxLength):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::strippedPlaceholder):
+        (WebCore::HTMLTextFormControlElement::isPlaceholderEmpty):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::src):
+        (WebCore::HTMLTrackElement::kind):
+        (WebCore::HTMLTrackElement::srclang):
+        (WebCore::HTMLTrackElement::label):
+        (WebCore::HTMLTrackElement::isDefault):
+        (WebCore::HTMLTrackElement::load):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::width):
+        (WebCore::HTMLVideoElement::height):
+        * html/StepRange.cpp:
+        (WebCore::StepRange::StepRange):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::startSpeechInput):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::buildObjectForFrame):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        * page/Frame.cpp:
+        (WebCore::Frame::matchLabelsAgainstElement):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame):
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::matchLabelsAgainstElement):
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::writeImageToDataObject):
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::getURLForImageNode):
+        * platform/mac/HTMLConverter.mm:
+        (fileWrapperForElement):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::writeImageToDataObject):
+        (WebCore::ClipboardWin::declareAndWriteDragImage):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::altDisplayString):
+        (WebCore::HitTestResult::absoluteImageURL):
+        (WebCore::HitTestResult::absoluteLinkURL):
+        * rendering/RenderDetails.cpp:
+        (WebCore::RenderDetails::isOpen):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemAccessibilityText):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addPDFURLRect):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computePreferredLogicalWidths):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::autosaveName):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::calculateIntrinsicSize):
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::updateFromElement):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::updateFromElement):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::updateFromElement):
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::applySVGGlyphSelection):
+
 2011-09-01  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67431

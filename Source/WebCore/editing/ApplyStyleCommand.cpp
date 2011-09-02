@@ -507,7 +507,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
         // and all matching style rules in order to determine how to best set the unicode-bidi property to 'normal'.
         // For now, it assumes that if the 'dir' attribute is present, then removing it will suffice, and
         // otherwise it sets the property in the inline style declaration.
-        if (element->hasAttribute(dirAttr)) {
+        if (element->fastHasAttribute(dirAttr)) {
             // FIXME: If this is a BDO element, we should probably just remove it if it has no
             // other attributes, like we (should) do with B and I elements.
             removeNodeAttribute(element, dirAttr);

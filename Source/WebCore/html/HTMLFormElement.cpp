@@ -519,7 +519,7 @@ PassRefPtr<HTMLCollection> HTMLFormElement::elements()
 
 String HTMLFormElement::name() const
 {
-    return getAttribute(nameAttr);
+    return fastGetAttribute(nameAttr);
 }
 
 bool HTMLFormElement::noValidate() const
@@ -532,7 +532,7 @@ bool HTMLFormElement::noValidate() const
 // (Darin Adler) removed this, someone added it back, so I am leaving it in for now.
 String HTMLFormElement::action() const
 {
-    return getAttribute(actionAttr);
+    return fastGetAttribute(actionAttr);
 }
 
 void HTMLFormElement::setAction(const String &value)
@@ -547,7 +547,7 @@ void HTMLFormElement::setEnctype(const String &value)
 
 String HTMLFormElement::method() const
 {
-    return getAttribute(methodAttr);
+    return fastGetAttribute(methodAttr);
 }
 
 void HTMLFormElement::setMethod(const String &value)
@@ -557,7 +557,7 @@ void HTMLFormElement::setMethod(const String &value)
 
 String HTMLFormElement::target() const
 {
-    return getAttribute(targetAttr);
+    return fastGetAttribute(targetAttr);
 }
 
 bool HTMLFormElement::wasUserSubmitted() const

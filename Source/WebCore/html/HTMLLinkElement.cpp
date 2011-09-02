@@ -187,7 +187,7 @@ void HTMLLinkElement::process()
     if (m_disabledState != Disabled && (m_relAttribute.m_isStyleSheet || (acceptIfTypeContainsTextCSS && type.contains("text/css")))
         && document()->frame() && m_url.isValid()) {
         
-        String charset = getAttribute(charsetAttr);
+        String charset = fastGetAttribute(charsetAttr);
         if (charset.isEmpty() && document()->frame())
             charset = document()->charset();
         
@@ -380,22 +380,22 @@ bool HTMLLinkElement::isURLAttribute(Attribute *attr) const
 
 KURL HTMLLinkElement::href() const
 {
-    return document()->completeURL(getAttribute(hrefAttr));
+    return document()->completeURL(fastGetAttribute(hrefAttr));
 }
 
 String HTMLLinkElement::rel() const
 {
-    return getAttribute(relAttr);
+    return fastGetAttribute(relAttr);
 }
 
 String HTMLLinkElement::target() const
 {
-    return getAttribute(targetAttr);
+    return fastGetAttribute(targetAttr);
 }
 
 String HTMLLinkElement::type() const
 {
-    return getAttribute(typeAttr);
+    return fastGetAttribute(typeAttr);
 }
 
 void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

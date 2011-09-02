@@ -238,7 +238,7 @@ static void writeImageToDataObject(ChromiumDataObject* dataObject, Element* elem
     if (filename.isEmpty())
         filename = url.lastPathComponent();
     if (filename.isEmpty())
-        filename = element->getAttribute(altAttr);
+        filename = element->fastGetAttribute(altAttr);
     else {
         // Strip any existing extension. Assume that alt text is usually not a filename.
         int extensionIndex = filename.reverseFind('.');

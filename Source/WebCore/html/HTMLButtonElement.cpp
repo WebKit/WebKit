@@ -176,7 +176,7 @@ bool HTMLButtonElement::isURLAttribute(Attribute* attr) const
 
 String HTMLButtonElement::value() const
 {
-    return getAttribute(valueAttr);
+    return fastGetAttribute(valueAttr);
 }
 
 bool HTMLButtonElement::recalcWillValidate() const

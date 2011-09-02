@@ -251,17 +251,17 @@ bool HTMLAnchorElement::canStartSelection() const
 bool HTMLAnchorElement::draggable() const
 {
     // Should be draggable if we have an href attribute.
-    const AtomicString& value = getAttribute(draggableAttr);
+    const AtomicString& value = fastGetAttribute(draggableAttr);
     if (equalIgnoringCase(value, "true"))
         return true;
     if (equalIgnoringCase(value, "false"))
         return false;
-    return hasAttribute(hrefAttr);
+    return fastHasAttribute(hrefAttr);
 }
 
 KURL HTMLAnchorElement::href() const
 {
-    return document()->completeURL(stripLeadingAndTrailingHTMLSpaces(getAttribute(hrefAttr)));
+    return document()->completeURL(stripLeadingAndTrailingHTMLSpaces(fastGetAttribute(hrefAttr)));
 }
 
 void HTMLAnchorElement::setHref(const AtomicString& value)
@@ -285,7 +285,7 @@ void HTMLAnchorElement::setRel(const String& value)
 
 const AtomicString& HTMLAnchorElement::name() const
 {
-    return getAttribute(nameAttr);
+    return fastGetAttribute(nameAttr);
 }
 
 short HTMLAnchorElement::tabIndex() const
@@ -296,7 +296,7 @@ short HTMLAnchorElement::tabIndex() const
 
 String HTMLAnchorElement::target() const
 {
-    return getAttribute(targetAttr);
+    return fastGetAttribute(targetAttr);
 }
 
 String HTMLAnchorElement::hash() const
@@ -485,10 +485,10 @@ bool HTMLAnchorElement::isLiveLink() const
 
 void HTMLAnchorElement::sendPings(const KURL& destinationURL)
 {
-    if (!hasAttribute(pingAttr) || !document()->settings()->hyperlinkAuditingEnabled())
+    if (!fastHasAttribute(pingAttr) || !document()->settings()->hyperlinkAuditingEnabled())
         return;
 
-    SpaceSplitString pingURLs(getAttribute(pingAttr), true);
+    SpaceSplitString pingURLs(fastGetAttribute(pingAttr), true);
     for (unsigned i = 0; i < pingURLs.size(); i++)
         PingLoader::sendPing(document()->frame(), document()->completeURL(pingURLs[i]), destinationURL);
 }
@@ -506,7 +506,7 @@ void HTMLAnchorElement::handleClick(Event* event)
     KURL kurl = document()->completeURL(url);
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
-    if (hasAttribute(downloadAttr)) {
+    if (fastHasAttribute(downloadAttr)) {
         ResourceRequest request(kurl);
 
         if (!hasRel(RelationNoReferrer)) {

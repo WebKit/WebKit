@@ -230,10 +230,10 @@ void HTMLCanvasElement::reset()
 
     bool ok;
     bool hadImageBuffer = hasCreatedImageBuffer();
-    int w = getAttribute(widthAttr).toInt(&ok);
+    int w = fastGetAttribute(widthAttr).toInt(&ok);
     if (!ok || w < 0)
         w = DefaultWidth;
-    int h = getAttribute(heightAttr).toInt(&ok);
+    int h = fastGetAttribute(heightAttr).toInt(&ok);
     if (!ok || h < 0)
         h = DefaultHeight;
 

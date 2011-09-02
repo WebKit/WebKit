@@ -164,7 +164,7 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == hiddenAttr) {
         addCSSProperty(attr, CSSPropertyDisplay, CSSValueNone);
     } else if (attr->name() == tabindexAttr) {
-        indexstring = getAttribute(tabindexAttr);
+        indexstring = fastGetAttribute(tabindexAttr);
         int tabindex = 0;
         if (!indexstring.length()) {
             clearTabIndexExplicitly();
@@ -732,7 +732,7 @@ void HTMLElement::setContentEditable(const String& enabled, ExceptionCode& ec)
 
 bool HTMLElement::draggable() const
 {
-    return equalIgnoringCase(getAttribute(draggableAttr), "true");
+    return equalIgnoringCase(fastGetAttribute(draggableAttr), "true");
 }
 
 void HTMLElement::setDraggable(bool value)
@@ -771,7 +771,7 @@ void HTMLElement::accessKeyAction(bool sendToAnyElement)
 
 String HTMLElement::title() const
 {
-    return getAttribute(titleAttr);
+    return fastGetAttribute(titleAttr);
 }
 
 short HTMLElement::tabIndex() const
@@ -841,7 +841,7 @@ static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastN
         if (node->selfOrAncestorHasDirAutoAttribute() == flag)
             return;
 
-        if (node->isHTMLElement() && toElement(node)->hasAttribute(dirAttr)) {
+        if (node->isHTMLElement() && toElement(node)->fastHasAttribute(dirAttr)) {
             if (node == lastNode)
                 return;
             node = node->traverseNextSibling(firstNode);
@@ -862,7 +862,7 @@ void HTMLElement::childrenChanged(bool changedByParser, Node* beforeChange, Node
 
 TextDirection HTMLElement::directionalityIfhasDirAutoAttribute(bool& isAuto) const
 {
-    if (!(selfOrAncestorHasDirAutoAttribute() && equalIgnoringCase(getAttribute(dirAttr), "auto"))) {
+    if (!(selfOrAncestorHasDirAutoAttribute() && equalIgnoringCase(fastGetAttribute(dirAttr), "auto"))) {
         isAuto = false;
         return LTR;
     }
@@ -935,7 +935,7 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged(Element
     if (renderer() && renderer()->style() && renderer()->style()->direction() != textDirection) {
         Element* elementToAdjust = this;
         for (; elementToAdjust; elementToAdjust = elementToAdjust->parentElement()) {
-            if (elementToAdjust->hasAttribute(dirAttr)) {
+            if (elementToAdjust->fastHasAttribute(dirAttr)) {
                 elementToAdjust->setNeedsStyleRecalc();
                 return;
             }
@@ -957,7 +957,7 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeC
     if ((!document() || document()->renderer()) && childCountDelta < 0) {
         Node* node = beforeChange ? beforeChange->traverseNextSibling() : 0;
         for (int counter = 0; node && counter < childCountDelta; counter++, node = node->traverseNextSibling()) {
-            if (node->isElementNode() && toElement(node)->hasAttribute(dirAttr))
+            if (node->isElementNode() && toElement(node)->fastHasAttribute(dirAttr))
                 continue;
 
             setHasDirAutoFlagRecursively(node, false);
@@ -968,13 +968,13 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeC
         return;
 
     Node* oldMarkedNode = beforeChange ? beforeChange->traverseNextSibling() : 0;
-    while (oldMarkedNode && oldMarkedNode->isHTMLElement() && toHTMLElement(oldMarkedNode)->hasAttribute(dirAttr))
+    while (oldMarkedNode && oldMarkedNode->isHTMLElement() && toHTMLElement(oldMarkedNode)->fastHasAttribute(dirAttr))
         oldMarkedNode = oldMarkedNode->traverseNextSibling(this);
     if (oldMarkedNode)
         setHasDirAutoFlagRecursively(oldMarkedNode, false);
 
     for (Element* elementToAdjust = this; elementToAdjust; elementToAdjust = elementToAdjust->parentElement()) {
-        if (elementToAdjust->isHTMLElement() && elementToAdjust->hasAttribute(dirAttr)) {
+        if (elementToAdjust->isHTMLElement() && elementToAdjust->fastHasAttribute(dirAttr)) {
             toHTMLElement(elementToAdjust)->calculateAndAdjustDirectionality();
             return;
         }

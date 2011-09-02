@@ -252,7 +252,7 @@ void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
     const QualifiedName& attrName = attr->name();
     if (attrName == srcAttr) {
         // Trigger a reload, as long as the 'src' attribute is present.
-        if (!getAttribute(srcAttr).isEmpty())
+        if (!fastGetAttribute(srcAttr).isEmpty())
             scheduleLoad();
     }
     else if (attrName == controlsAttr) {
@@ -375,7 +375,7 @@ void HTMLMediaElement::insertedIntoDocument()
 {
     LOG(Media, "HTMLMediaElement::removedFromDocument");
     HTMLElement::insertedIntoDocument();
-    if (!getAttribute(srcAttr).isEmpty() && m_networkState == NETWORK_EMPTY)
+    if (!fastGetAttribute(srcAttr).isEmpty() && m_networkState == NETWORK_EMPTY)
         scheduleLoad();
 }
 

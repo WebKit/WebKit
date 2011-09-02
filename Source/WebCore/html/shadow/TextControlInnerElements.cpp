@@ -526,7 +526,7 @@ void InputFieldSpeechButtonElement::startSpeechInput()
 
     RefPtr<HTMLInputElement> input = static_cast<HTMLInputElement*>(shadowAncestorNode());
     AtomicString language = input->computeInheritedLanguage();
-    String grammar = input->getAttribute(webkitgrammarAttr);
+    String grammar = input->fastGetAttribute(webkitgrammarAttr);
     IntRect rect = input->renderer()->absoluteBoundingBoxRect();
     if (speechInput()->startRecognition(m_listenerId, rect, language, grammar, document()->securityOrigin()))
         setState(Recording);

@@ -892,7 +892,7 @@ void Element::setPrefix(const AtomicString& prefix, ExceptionCode& ec)
 
 KURL Element::baseURI() const
 {
-    const AtomicString& baseAttribute = getAttribute(baseAttr);
+    const AtomicString& baseAttribute = fastGetAttribute(baseAttr);
     KURL base(KURL(), baseAttribute);
     if (!base.protocol().isEmpty())
         return base;
@@ -1503,7 +1503,7 @@ void Element::formatForDebugger(char* buffer, unsigned length) const
         result += "id=";
         result += s;
     }
-          
+
     s = getAttribute(classAttr);
     if (s.length() > 0) {
         if (result.length() > 0)
@@ -2021,7 +2021,7 @@ void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(boo
 
 SpellcheckAttributeState Element::spellcheckAttributeState() const
 {
-    const AtomicString& value = getAttribute(HTMLNames::spellcheckAttr);
+    const AtomicString& value = fastGetAttribute(spellcheckAttr);
     if (value == nullAtom)
         return SpellcheckAttributeDefault;
     if (equalIgnoringCase(value, "true") || equalIgnoringCase(value, ""))

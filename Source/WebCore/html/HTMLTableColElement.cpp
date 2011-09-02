@@ -97,7 +97,7 @@ void HTMLTableColElement::setSpan(int n)
 
 String HTMLTableColElement::width() const
 {
-    return getAttribute(widthAttr);
+    return fastGetAttribute(widthAttr);
 }
 
 }
