@@ -274,8 +274,6 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
         obj->coreAnimationLayer = createCoreAnimationLayer();
 #endif
 
-    browser->getvalue(instance, NPNVprivateModeBool, (void *)&obj->cachedPrivateBrowsingMode);
-
     obj->pluginTest = PluginTest::create(instance, testIdentifier);
 
     if (!obj->pluginTest) {
@@ -817,14 +815,7 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
 NPError NPP_SetValue(NPP instance, NPNVariable variable, void *value)
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
-
-    switch (variable) {
-        case NPNVprivateModeBool:
-            obj->cachedPrivateBrowsingMode = *(NPBool*)value;
-            return NPERR_NO_ERROR;
-        default:
-            return NPERR_GENERIC_ERROR;
-    }
+    return obj->pluginTest->NPP_SetValue(variable, value);
 }
 
 #ifdef XP_UNIX

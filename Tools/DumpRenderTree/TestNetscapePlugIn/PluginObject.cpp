@@ -141,8 +141,6 @@ enum {
     ID_PROPERTY_LOG_DESTROY,
     ID_PROPERTY_RETURN_ERROR_FROM_NEWSTREAM,
     ID_PROPERTY_RETURN_NEGATIVE_ONE_FROM_WRITE,
-    ID_PROPERTY_PRIVATE_BROWSING_ENABLED,
-    ID_PROPERTY_CACHED_PRIVATE_BROWSING_ENABLED,
     ID_PROPERTY_THROW_EXCEPTION_PROPERTY,
     ID_LAST_SET_WINDOW_ARGUMENTS,
     ID_PROPERTY_WINDOWED_PLUGIN,
@@ -159,8 +157,6 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
     "logDestroy",
     "returnErrorFromNewStream",
     "returnNegativeOneFromWrite",
-    "privateBrowsingEnabled",
-    "cachedPrivateBrowsingEnabled",
     "testThrowExceptionProperty",
     "lastSetWindowArguments",
     "windowedPlugin",
@@ -316,16 +312,6 @@ static bool pluginGetProperty(NPObject* obj, NPIdentifier name, NPVariant* resul
     }
     if (name == pluginPropertyIdentifiers[ID_PROPERTY_RETURN_NEGATIVE_ONE_FROM_WRITE]) {
         BOOLEAN_TO_NPVARIANT(plugin->returnNegativeOneFromWrite, *result);
-        return true;
-    }
-    if (name == pluginPropertyIdentifiers[ID_PROPERTY_PRIVATE_BROWSING_ENABLED]) {
-        NPBool privateBrowsingEnabled = FALSE;
-        browser->getvalue(plugin->npp, NPNVprivateModeBool, &privateBrowsingEnabled);
-        BOOLEAN_TO_NPVARIANT(privateBrowsingEnabled, *result);
-        return true;
-    }
-    if (name == pluginPropertyIdentifiers[ID_PROPERTY_CACHED_PRIVATE_BROWSING_ENABLED]) {
-        BOOLEAN_TO_NPVARIANT(plugin->cachedPrivateBrowsingMode, *result);
         return true;
     }
     if (name == pluginPropertyIdentifiers[ID_PROPERTY_THROW_EXCEPTION_PROPERTY]) {

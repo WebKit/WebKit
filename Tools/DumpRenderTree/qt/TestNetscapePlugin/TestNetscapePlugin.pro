@@ -42,7 +42,8 @@ SOURCES = PluginObject.cpp \
           Tests/NPRuntimeRemoveProperty.cpp \
           Tests/NullNPPGetValuePointer.cpp \
           Tests/PassDifferentNPPStruct.cpp \
-          Tests/PluginScriptableNPObjectInvokeDefault.cpp
+          Tests/PluginScriptableNPObjectInvokeDefault.cpp \
+          Tests/PrivateBrowsing.cpp
 
 mac {
     OBJECTIVE_SOURCES += PluginObjectMac.mm

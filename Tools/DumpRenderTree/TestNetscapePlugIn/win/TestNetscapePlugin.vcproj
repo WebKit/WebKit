@@ -449,6 +449,10 @@
 				RelativePath="..\Tests\PluginScriptableNPObjectInvokeDefault.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\Tests\PrivateBrowsing.cpp"
+				>
+			</File>
 			<Filter
 				Name="win"
 				>

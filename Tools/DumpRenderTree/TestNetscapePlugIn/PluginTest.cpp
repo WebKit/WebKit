@@ -135,6 +135,11 @@ NPError PluginTest::NPP_GetValue(NPPVariable variable, void *value)
     return NPERR_GENERIC_ERROR;
 }
 
+NPError PluginTest::NPP_SetValue(NPNVariable, void *value)
+{
+    return NPERR_GENERIC_ERROR;
+}
+
 // NPN functions.
 
 NPError PluginTest::NPN_GetURL(const char* url, const char* target)

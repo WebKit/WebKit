@@ -15,6 +15,7 @@ function runTest()
     
     plugin1 = document.createElement("embed");
     plugin1.type = "application/x-webkit-test-netscape";
+    plugin1.setAttribute('test', 'private-browsing');
     document.body.appendChild(plugin1);
     
     shouldBe("plugin1.privateBrowsingEnabled", "false");
@@ -28,6 +29,7 @@ function runTest()
     
     plugin2 = document.createElement("embed");
     plugin2.type = "application/x-webkit-test-netscape";
+    plugin2.setAttribute('test', 'private-browsing');
     document.body.appendChild(plugin2);
     
     shouldBe("plugin2.privateBrowsingEnabled", "true");

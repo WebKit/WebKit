@@ -69,6 +69,7 @@ public:
     virtual int16_t NPP_HandleEvent(void* event);
     virtual bool NPP_URLNotify(const char* url, NPReason, void* notifyData);
     virtual NPError NPP_GetValue(NPPVariable, void* value);
+    virtual NPError NPP_SetValue(NPNVariable, void *value);
 
     // NPN functions.
     NPError NPN_GetURL(const char* url, const char* target);

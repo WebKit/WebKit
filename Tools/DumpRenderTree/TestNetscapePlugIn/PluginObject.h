@@ -53,7 +53,6 @@ typedef struct {
     NPBool logDestroy;
     NPBool returnNegativeOneFromWrite;
     NPBool returnErrorFromNewStream;
-    NPBool cachedPrivateBrowsingMode;
     NPObject* testObject;
     NPObject* rememberedObject;
     NPStream* stream;
