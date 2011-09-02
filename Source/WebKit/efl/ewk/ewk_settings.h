@@ -194,6 +194,15 @@ EAPI void             ewk_settings_cache_capacity_set(unsigned capacity);
  */
 EAPI void             ewk_settings_repaint_throttling_set(double deferred_repaint_delay, double initial_deferred_repaint_delay_during_loading, double max_deferred_repaint_delay_during_loading, double deferred_repaint_delay_increment_during_loading);
 
+/**
+ * Gets the default interval for DOMTimers on all pages.
+ *
+ * DOMTimer processes javascript function registered by setInterval() based on interval value.
+ *
+ * @return default minimum interval for DOMTimers
+ */
+EAPI double           ewk_settings_default_timer_interval_get(void);
+
 #ifdef __cplusplus
 }
 #endif

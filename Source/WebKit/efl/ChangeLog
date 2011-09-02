@@ -1,3 +1,29 @@
+2011-09-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Allow controlling minimum DOMTimer interval on a per-page basis
+        https://bugs.webkit.org/show_bug.cgi?id=67012
+
+        Reviewed by Kenneth Russell.
+
+        Set default minimum DOMTimer interval to 4ms instead of 10ms. Because, 4ms is known
+        to better minimum value for performance. Mac, android, chromium and window ports already
+        use 4ms instead of 10ms.
+
+        It is desirable to be able to change the minimum DOMTimer interval on per-page basis
+        in order to avoid consuming excessive CPU and battery life on mobile devices. In addition,
+        other ports have already used this setting by means of Bug 54312.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_default_timer_interval_get):
+        * ewk/ewk_settings.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_setting_minimum_timer_interval_set):
+        (ewk_view_setting_minimum_timer_interval_get):
+        * ewk/ewk_view.h:
+
 2011-09-01  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Remove unused code related with priv->render.process_entire_queue in ewk_tiled_backing_store.

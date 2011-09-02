@@ -56,6 +56,8 @@
 #include <Evas.h>
 #include <eina_safety_checks.h>
 #include <inttypes.h>
+#include <limits>
+#include <math.h>
 #include <sys/time.h>
 
 #if ENABLE(DEVICE_ORIENTATION)
@@ -149,6 +151,7 @@ struct _Ewk_View_Private_Data {
             Eina_Bool user_scalable:1;
         } zoom_range;
         float device_pixel_ratio;
+        double dom_timer_interval;
     } settings;
     struct {
         struct {
@@ -654,6 +657,8 @@ static Ewk_View_Private_Data *_ewk_view_priv_new(Ewk_View_Smart_Data *sd)
     priv->settings.zoom_range.max_scale = ZOOM_MAX;
     priv->settings.zoom_range.user_scalable = EINA_TRUE;
     priv->settings.device_pixel_ratio = DEVICE_PIXEL_RATIO;
+
+    priv->settings.dom_timer_interval = priv->page_settings->defaultMinDOMTimerInterval();
 
     priv->main_frame = _ewk_view_core_frame_new(sd, priv, 0).get();
     if (!priv->main_frame) {
@@ -2329,6 +2334,24 @@ Eina_Bool ewk_view_setting_local_storage_database_path_set(Evas_Object *o, const
     if (eina_stringshare_replace(&priv->settings.local_storage_database_path, path))
         priv->page_settings->setLocalStorageDatabasePath(String::fromUTF8(path));
     return EINA_TRUE;
+}
+
+Eina_Bool ewk_view_setting_minimum_timer_interval_set(Evas_Object *o, double interval)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    if (fabs(priv->settings.dom_timer_interval - interval) >= std::numeric_limits<double>::epsilon()) {
+        priv->page_settings->setMinDOMTimerInterval(interval);
+        priv->settings.dom_timer_interval = interval;
+    }
+    return EINA_TRUE;
+}
+
+double ewk_view_setting_minimum_timer_interval_get(const Evas_Object *o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    return priv->settings.dom_timer_interval;
 }
 
 Ewk_View_Smart_Data *ewk_view_smart_data_get(const Evas_Object *o)

@@ -278,3 +278,8 @@ const char *ewk_settings_cache_directory_path_get()
     EINA_SAFETY_ON_TRUE_RETURN_VAL(1, 0);
 #endif
 }
+
+double ewk_settings_default_timer_interval_get(void)
+{
+    return WebCore::Settings::defaultMinDOMTimerInterval();
+}

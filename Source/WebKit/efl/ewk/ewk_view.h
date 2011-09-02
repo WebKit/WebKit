@@ -1810,6 +1810,24 @@ EAPI Eina_Bool    ewk_view_setting_enable_developer_extras_get(const Evas_Object
 EAPI Eina_Bool    ewk_view_setting_enable_developer_extras_set(Evas_Object *o, Eina_Bool enable);
 
 /**
+ * Sets the minimum interval for DOMTimers on current page.
+ *
+ * @param o view object to set the minimum interval
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool    ewk_view_setting_minimum_timer_interval_set(Evas_Object *o, double interval);
+
+/**
+ * Gets the minimum interval for DOMTimers on current page.
+ *
+ * @param o view object to get the minimum interval
+ *
+ * @return the minimum interval on success or @c 0 on failure
+ */
+EAPI double       ewk_view_setting_minimum_timer_interval_get(const Evas_Object *o);
+
+/**
  * Gets the internal data of @a o.
  *
  * This is similar to evas_object_smart_data_get(), but additionally does type checking.
