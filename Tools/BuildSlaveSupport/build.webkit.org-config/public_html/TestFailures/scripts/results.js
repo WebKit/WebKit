@@ -48,7 +48,9 @@ var kFailingResults = [TIMEOUT, TEXT, CRASH, IMAGE, IMAGE_TEXT];
 var kExpectedImageSuffix = '-expected.png';
 var kActualImageSuffix = '-actual.png';
 var kImageDiffSuffix = '-diff.png';
-var kTextDiffSuffix = '-diff.txt';
+var kExpectedTextSuffix = '-expected.txt';
+var kActualTextSuffix = '-actual.txt';
+var kDiffTextSuffix = '-diff.txt';
 var kCrashLogSuffix = '-crash-log.txt';
 
 var kPNGExtension = 'png';
@@ -58,7 +60,9 @@ var kPreferredSuffixOrder = [
     kExpectedImageSuffix,
     kActualImageSuffix,
     kImageDiffSuffix,
-    kTextDiffSuffix,
+    kExpectedTextSuffix,
+    kActualTextSuffix,
+    kDiffTextSuffix,
     kCrashLogSuffix,
     // FIXME: Add support for the rest of the result types.
 ];
@@ -107,9 +111,9 @@ function possibleSuffixListFor(failureTypeList)
 
     function pushTextSuffixes()
     {
-        // '-expected.txt',
-        // '-actual.txt',
-        suffixList.push(kTextDiffSuffix);
+        suffixList.push(kActualTextSuffix);
+        suffixList.push(kExpectedTextSuffix);
+        suffixList.push(kDiffTextSuffix);
         // '-wdiff.html',
         // '-pretty-diff.html',
     }

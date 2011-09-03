@@ -1,5 +1,24 @@
 2011-09-03  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic results view should show Actual and Expected results for text failures
+        https://bugs.webkit.org/show_bug.cgi?id=67536
+
+        Reviewed by Eric Seidel.
+
+        In the past, we didn't show actual and expected text results (we just
+        showed the diff) because we didn't have the awesome six-by-two results
+        grid.  Now that we do, we can move show these results.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base_unittests.js:
+          - Fixed some typos that were preventing these unit tests from running.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js:
+        (.):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results_unittests.js:
+          - Report -actual.txt and -expected.txt as possible results URLs.
+
+2011-09-03  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic shows "ghost" failures that are already fixed
         https://bugs.webkit.org/show_bug.cgi?id=67535
 

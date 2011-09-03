@@ -85,6 +85,8 @@ base.uniquifyArray = function(array)
 
 base.flattenArray = function(arrayOfArrays)
 {
+    if (!arrayOfArrays.length)
+        return [];
     return arrayOfArrays.reduce(function(left, right) {
         return left.concat(right);  
     });
