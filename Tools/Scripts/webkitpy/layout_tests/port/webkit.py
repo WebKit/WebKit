@@ -509,46 +509,44 @@ class WebKitDriver(Driver):
             crash=self.detected_crash(), test_time=time.time() - start_time,
             timeout=self._server_process.timed_out, error=error)
 
-    LENGTH_HEADER = 'Content-Length: '
-    HASH_HEADER = 'ActualHash: '
-    TYPE_HEADER = 'Content-Type: '
-    ENCODING_HEADER = 'Content-Transfer-Encoding: '
-
-    def _read_line_until(self, deadline):
-        return self._server_process.read_line(deadline - time.time())
-
     def _read_block(self, deadline):
+        LENGTH_HEADER = 'Content-Length: '
+        HASH_HEADER = 'ActualHash: '
+        TYPE_HEADER = 'Content-Type: '
+        ENCODING_HEADER = 'Content-Transfer-Encoding: '
         content_type = None
         encoding = None
         content_hash = None
         content_length = None
 
         # Content is treated as binary data even though the text output is usually UTF-8.
-        content = str()  # FIXME: Should be bytearray() once we require Python 2.6.
-        line = self._read_line_until(deadline - time.time())
+        content = ''
+        timeout = deadline - time.time()
+        line = self._server_process.read_line(timeout)
         eof = False
         while (not self._server_process.timed_out and not self.detected_crash() and not eof):
-            chomped_line = line.rstrip()  # FIXME: This will remove trailing lines from test output.  Is that right?
+            chomped_line = line.rstrip()
             if chomped_line.endswith("#EOF"):
                 eof = True
                 line = chomped_line[:-4]
 
             if line.startswith(self.TYPE_HEADER) and content_type is None:
                 content_type = line.split()[1]
-            elif line.startswith(self.ENCODING_HEADER) and encoding is None:
+            elif line.startswith(ENCODING_HEADER) and encoding is None:
                 encoding = line.split()[1]
-            elif line.startswith(self.LENGTH_HEADER) and content_length is None:
-                content_length = int(line[len(self.LENGTH_HEADER):])
-                # FIXME: In real HTTP there should probably be a blank line
-                # after headers before content, but DRT doesn't write one.
-                content = self._server_process.read(deadline - time.time(), content_length)
-            elif line.startswith(self.HASH_HEADER):
+            elif line.startswith(LENGTH_HEADER) and content_length is None:
+                timeout = deadline - time.time()
+                content_length = int(line[len(LENGTH_HEADER):])
+                # FIXME: Technically there should probably be another blank
+                # line here, but DRT doesn't write one.
+                content = self._server_process.read(timeout, content_length)
+            elif line.startswith(HASH_HEADER):
                 content_hash = line.split()[1]
             elif line:
                 content += line
-            if eof:
-                break
-            line = self._read_line_until(deadline)
+            if not eof:
+                line = self._server_process.read_line(timeout)
+                timeout = deadline - time.time()
         return ContentBlock(content_type, encoding, content_hash, content)
 
     def stop(self):
