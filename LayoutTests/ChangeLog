@@ -1,3 +1,12 @@
+2011-09-02  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Update baselines and expectations.
+
+        * platform/chromium-win-xp/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-09-02  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Enable RenderLayer::updateLayerPosition's cachedOffset optimization for more cases
