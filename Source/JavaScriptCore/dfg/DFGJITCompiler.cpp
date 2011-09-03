@@ -495,8 +495,16 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
     if (recovery) {
         // The only additional recovery we currently support is for integer add operation
         ASSERT(recovery->type() == SpeculativeAdd);
+        ASSERT(check.m_gprInfo[GPRInfo::toIndex(recovery->dest())].nodeIndex != NoNode);
         // Revert the add.
         sub32(recovery->src(), recovery->dest());
+        
+        // If recovery->dest() should have been boxed prior to the addition, then rebox
+        // it.
+        DataFormat format = check.m_gprInfo[GPRInfo::toIndex(recovery->dest())].format;
+        ASSERT(format == DataFormatInteger || format == DataFormatJSInteger || format == DataFormatJS);
+        if (format != DataFormatInteger)
+            orPtr(GPRInfo::tagTypeNumberRegister, recovery->dest());
     }
     
     // First, we need a reverse mapping that tells us, for a NodeIndex, which register
