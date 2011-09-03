@@ -335,46 +335,6 @@ WebView *createWebViewAndOffscreenWindow()
     return webView;
 }
 
-void testStringByEvaluatingJavaScriptFromString()
-{
-    // maps expected result <= JavaScript expression
-    NSDictionary *expressions = [NSDictionary dictionaryWithObjectsAndKeys:
-        @"0", @"0", 
-        @"0", @"'0'", 
-        @"", @"",
-        @"", @"''", 
-        @"", @"new String()", 
-        @"", @"new String('0')", 
-        @"", @"throw 1", 
-        @"", @"{ }", 
-        @"", @"[ ]", 
-        @"", @"//", 
-        @"", @"a.b.c", 
-        @"", @"(function() { throw 'error'; })()", 
-        @"", @"null",
-        @"", @"undefined",
-        @"true", @"true",
-        @"false", @"false",
-        @"", @"alert('Should not be result')",
-        nil
-    ];
-
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    WebView *webView = [[WebView alloc] initWithFrame:NSZeroRect frameName:@"" groupName:@""];
-
-    NSEnumerator *enumerator = [expressions keyEnumerator];
-    id expression;
-    while ((expression = [enumerator nextObject])) {
-        NSString *expectedResult = [expressions objectForKey:expression];
-        NSString *result = [webView stringByEvaluatingJavaScriptFromString:expression];
-        assert([result isEqualToString:expectedResult]);
-    }
-
-    [webView close];
-    [webView release];
-    [pool release];
-}
-
 static NSString *libraryPathForDumpRenderTree()
 {
     //FIXME: This may not be sufficient to prevent interactions/crashes
@@ -672,9 +632,6 @@ void dumpRenderTree(int argc, const char *argv[])
     // is set to log frame load delegate calls we ignore SSL certificate errors on localhost and 127.0.0.1.
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"localhost"];
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"127.0.0.1"];
-
-    // <rdar://problem/5222911>
-    testStringByEvaluatingJavaScriptFromString();
 
     // http://webkit.org/b/32689
     testThreadIdentifierMap();

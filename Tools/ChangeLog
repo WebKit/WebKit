@@ -1,3 +1,20 @@
+2011-09-03  Dan Bernstein  <mitz@apple.com>
+
+        Move testStringByEvaluatingJavaScriptFromString() from DumpRenderTree to TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=67559
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree): Moved testStringByEvaluatingJavaScriptFromString() from here and removed
+        the call to it.
+        * TestWebKitAPI/PlatformUtilities.h: Declared Util::toSTD(NSString *)
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added StringByEvaluatingJavaScriptFromString.mm.
+        * TestWebKitAPI/Tests/mac/StringByEvaluatingJavaScriptFromString.mm: Added.
+        (TestWebKitAPI::TEST): Added. Moved testStringByEvaluatingJavaScriptFromString() to here.
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        (TestWebKitAPI::Util::toSTD): Added.
+
 2011-09-03  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic results view should have a better results selector
