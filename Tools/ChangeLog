@@ -1,5 +1,24 @@
 2011-09-03  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic results view should have a better results selector
+        https://bugs.webkit.org/show_bug.cgi?id=67542
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch adds a basic grid-based results selector to the results
+        view.  Currently, this grid just shows how the tests fail on the
+        various bots.  A future patch will let you select which failure to view
+        and to mark the failures for rebaselining.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base_unittests.js:
+          - Add some more basic functions for manipulating dictionaries.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results_unittests.js:
+
+2011-09-03  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic results view should show Actual and Expected results for text failures
         https://bugs.webkit.org/show_bug.cgi?id=67536
 

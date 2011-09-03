@@ -92,6 +92,17 @@ base.flattenArray = function(arrayOfArrays)
     });
 };
 
+base.values = function(dictionary)
+{
+    var result = [];
+
+    for (var key in dictionary) {
+        result.push(dictionary[key]);
+    }
+
+    return result;
+};
+
 base.filterDictionary = function(dictionary, predicate)
 {
     var result = {};
@@ -99,6 +110,19 @@ base.filterDictionary = function(dictionary, predicate)
     for (var key in dictionary) {
         if (predicate(key))
             result[key] = dictionary[key];
+    }
+
+    return result;
+};
+
+base.mapDictionary = function(dictionary, functor)
+{
+    var result = {};
+
+    for (var key in dictionary) {
+        var value = functor(dictionary[key]);
+        if (typeof value !== 'undefined')
+            result[key] = value;
     }
 
     return result;

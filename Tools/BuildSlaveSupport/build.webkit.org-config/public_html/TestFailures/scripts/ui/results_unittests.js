@@ -66,6 +66,30 @@ test("View", 6, function() {
     });
     equal(resultsView.currentTestName(), "scrollbars/custom-scrollbar-with-incomplete-style.html");
     equal(resultsView.currentBuilderName(), "Mock Linux");
-})
+});
+
+test("ResultsSelector", 1, function() {
+    var resultsSelector = new ui.results.ResultsSelector();
+    resultsSelector.setResultsByTest(kExampleResultsByTest);
+    equal($(resultsSelector).wrap('<div>').parent().html(),
+        '<table class="results-selector">' +
+            '<thead>' +
+                '<tr><td></td><td>Mock Builder</td><td>Mock Linux</td></tr>' +
+            '</thead>' +
+            '<tbody>' +
+                '<tr>' +
+                    '<td class="test-name">userscripts/another-test.html</td>' +
+                    '<td class="result">TEXT</td>' +
+                    '<td></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td class="test-name">scrollbars/custom-scrollbar-with-incomplete-style.html</td>' +
+                    '<td class="result">CRASH</td>' +
+                    '<td class="result">CRASH</td>' +
+                '</tr>' +
+            '</tbody>' +
+        '</table>');
+});
+
 
 })();

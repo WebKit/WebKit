@@ -80,6 +80,13 @@ test("flattenArray", 5, function() {
     deepEqual(base.flattenArray([["a"], [], ["b"]]), ["a", "b"]);
 });
 
+test("values", 4, function() {
+    deepEqual(base.values({}), []);
+    deepEqual(base.values({a: 1}), [1]);
+    deepEqual(base.values({a: 1, b: 2}), [1, 2]);
+    deepEqual(base.values({a: 1, b: 2, c: 1}), [1, 2, 1]);
+});
+
 test("callInParallel", 4, function() {
     var expectedCall = [true, true, true];
     var expectCompletionCallback = true;
@@ -185,7 +192,7 @@ test("filterDictionary", 3, function() {
     var dictionary = {
         'foo': 43,
         'bar': 11
-    }
+    };
     deepEqual(base.filterDictionary(dictionary, function() { return true; }), {
         "foo": 43,
         "bar": 11
@@ -193,6 +200,24 @@ test("filterDictionary", 3, function() {
     deepEqual(base.filterDictionary(dictionary, function() { return false; }), { });
     deepEqual(base.filterDictionary(dictionary, function(key) { return key == 'foo'; }), {
         "foo": 43
+    });
+});
+
+test("mapDictionary", 3, function() {
+    deepEqual(base.mapDictionary({}, function(value) { return value - 10; }), {});
+    var dictionary = {
+        'foo': 43,
+        'bar': 11
+    };
+    deepEqual(base.mapDictionary(dictionary, function(value) { return value - 10; }), {
+        "foo": 33,
+        "bar": 1
+    });
+    deepEqual(base.mapDictionary(dictionary, function(value) {
+        if (value > 20)
+            return value - 20;
+    }), {
+        "foo": 23,
     });
 });
 

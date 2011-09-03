@@ -223,6 +223,45 @@ ui.results.BuilderSelector = base.extends(Selector, {
     }
 });
 
+ui.results.ResultsSelector = base.extends('table', {
+    init: function()
+    {
+        this.className = 'results-selector';
+    },
+    setResultsByTest: function(resultsByTest)
+    {
+        var buildersByTest = base.mapDictionary(resultsByTest, Object.keys);
+
+        var testNameList = Object.keys(buildersByTest);
+        var builderNameList = base.uniquifyArray(base.flattenArray(base.values(buildersByTest)));
+        builderNameList.sort();
+
+        var titles = this.createTHead().insertRow();
+        // Note the reverse iteration because insertCell() inserts at the beginning of the row.
+        for (var i = builderNameList.length - 1; i >= 0; --i) {
+            titles.insertCell().textContent = builderNameList[i];
+        }
+        titles.insertCell(); // For the test names.
+
+        this._body = this.appendChild(document.createElement('tbody'));
+
+        testNameList.forEach(function(testName) {
+            row = this._body.insertRow();
+            for (var i = builderNameList.length - 1; i >= 0; --i) {
+                var cell = row.insertCell();
+                var builderName = builderNameList[i];
+                if (buildersByTest[testName].indexOf(builderName) != -1) {
+                    cell.className = 'result';
+                    cell.textContent = resultsByTest[testName][builderName].actual;
+                }
+            }
+            var cell = row.insertCell()
+            cell.className = 'test-name';
+            cell.textContent = testName;
+        }.bind(this));
+    },
+});
+
 ui.results.View = base.extends('div', {
     init: function(delegate)
     {
@@ -231,10 +270,11 @@ ui.results.View = base.extends('div', {
 
         this._testSelector = new ui.results.TestSelector();
         this._builderSelector = new ui.results.BuilderSelector();
+        this._resultsSelector = new ui.results.ResultsSelector();
         this._resultsDetails = new ui.results.ResultsDetails(delegate);
         this._actionList = new ui.actions.List();
 
-        $('.toolbar', this).append(this._testSelector).append(this._builderSelector).append(this._actionList);
+        $('.toolbar', this).append(this._testSelector).append(this._builderSelector).append(this._resultsSelector).append(this._actionList);
         $('.content', this).append(this._resultsDetails);
     },
     addAction: function(action)
@@ -248,6 +288,10 @@ ui.results.View = base.extends('div', {
     setBuilderList: function(buildNameList)
     {
         this._builderSelector.setBuilderList(buildNameList);
+    },
+    setResultsByTest: function(resultsByTest)
+    {
+        this._resultsSelector.setResultsByTest(resultsByTest);
     },
     currentTestName: function()
     {

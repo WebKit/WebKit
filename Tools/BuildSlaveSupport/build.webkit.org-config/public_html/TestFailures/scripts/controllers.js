@@ -34,6 +34,7 @@ controllers.ResultsDetails = base.extends(Object, {
         this._resultsByTest = resultsByTest;
 
         this._view.setTestList(Object.keys(this._resultsByTest));
+        this._view.setResultsByTest(resultsByTest);
 
         this._view.addAction(new ui.actions.Rebaseline().makeDefault());
         this._view.addAction(new ui.actions.Previous());
