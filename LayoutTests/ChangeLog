@@ -1,3 +1,50 @@
+2011-08-27  Robert Hogan  <robert@webkit.org>
+
+        div align="center" rendering problem
+        https://bugs.webkit.org/show_bug.cgi?id=4860
+
+        Reviewed by David Hyatt.
+
+        * fast/css/bug4860-absolute-block-child-does-not-inherit-alignment-expected.png: Added.
+        * fast/css/bug4860-absolute-block-child-does-not-inherit-alignment-expected.txt: Added.
+        * fast/css/bug4860-absolute-block-child-does-not-inherit-alignment.html: Added.
+        * fast/css/bug4860-absolute-inline-child-inherits-alignment-expected.png: Added.
+        * fast/css/bug4860-absolute-inline-child-inherits-alignment-expected.txt: Added.
+        * fast/css/bug4860-absolute-inline-child-inherits-alignment.html: Added.
+        * fast/inline/absolute-positioned-block-in-centred-block-expected.png: Added.
+        * fast/inline/absolute-positioned-block-in-centred-block-expected.txt: Added.
+        * fast/inline/absolute-positioned-block-in-centred-block.html: Added.
+        * fast/inline/absolute-positioned-inline-in-centred-block-expected.png: Added.
+        * fast/inline/absolute-positioned-inline-in-centred-block-expected.txt: Added.
+        * fast/inline/absolute-positioned-inline-in-centred-block.html: Added.
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-float-positioned-expected.png:
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-float-positioned-expected.txt:
+          Both of these two tests were based on the incorrect behaviour of ignoring the alignment specified
+          by the container of an element absolute position when there was no text preceding the element.
+          The updated results agree with Firefox and IE.
+        * fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.txt:
+        * platform/chromium-win/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png:
+          This test expected the wrong alignment of the red block - it should be centred, not aligned to the left.
+
+2011-07-25  Robert Hogan  <robert@webkit.org>
+
+        div align="center" rendering problem
+        https://bugs.webkit.org/show_bug.cgi?id=4860
+
+        Reviewed by David Hyatt.
+
+        * fast/inline/absolute-positioned-block-in-centred-block-expected.png: Added.
+        * fast/inline/absolute-positioned-block-in-centred-block-expected.txt: Added.
+        * fast/inline/absolute-positioned-block-in-centred-block.html: Added.
+        * fast/inline/absolute-positioned-inline-in-centred-block-expected.png: Added.
+        * fast/inline/absolute-positioned-inline-in-centred-block-expected.txt: Added.
+        * fast/inline/absolute-positioned-inline-in-centred-block.html: Added.
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-float-positioned-expected.png:
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-float-positioned-expected.txt:
+          Both of these two tests were based on the incorrect behaviour of ignoring the alignment specified
+          by the container of an element absolute position when there was no text preceding the element.
+          The updated results agree with Firefox and IE.
+
 2011-09-03  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Send ArrayBuffer as WebSocket binary message
