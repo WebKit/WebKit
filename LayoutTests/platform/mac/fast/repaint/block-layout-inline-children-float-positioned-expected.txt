@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
           RenderBlock (floating) {SPAN} at (309,1) size 292x18
             RenderText {#text} at (0,0) size 292x18
               text run at (0,0) width 292: "the quick brown fox jumped over the lazy dog"
-layer at (1,35) size 292x18
-  RenderBlock (positioned) {SPAN} at (1,35) size 292x18
+layer at (155,35) size 292x18
+  RenderBlock (positioned) {SPAN} at (155,35) size 292x18
     RenderText {#text} at (0,0) size 292x18
       text run at (0,0) width 292: "the quick brown fox jumped over the lazy dog"

@@ -1,3 +1,17 @@
+2011-09-03  Robert Hogan  <robert@webkit.org>
+
+        Add platform-specific results for r94492
+
+        Unreviewed.
+
+        * platform/chromium-win/fast/repaint/block-layout-inline-children-float-positioned-expected.png:
+        * platform/gtk/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.txt: Added.
+        * platform/gtk/fast/css/bug4860-absolute-inline-child-inherits-alignment-expected.txt: Added.
+        * platform/gtk/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt: Added.
+        * platform/gtk/fast/repaint/block-layout-inline-children-float-positioned-expected.txt:
+        * platform/mac/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt: Added.
+        * platform/mac/fast/repaint/block-layout-inline-children-float-positioned-expected.txt:
+
 2011-09-03  Sam Weinig  <sam@webkit.org>
 
         Add missing Event constructors to DOMWindow.idl
