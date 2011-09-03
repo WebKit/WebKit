@@ -181,7 +181,6 @@ public:
     bool httpPipeliningEnabled();
     
     void getWebCoreStatistics(PassRefPtr<DictionaryCallback>);
-    void garbageCollectJavaScriptObjects();
 
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);

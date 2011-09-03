@@ -140,8 +140,6 @@ WK_EXPORT WKResourceCacheManagerRef WKContextGetResourceCacheManager(WKContextRe
     
 typedef void (*WKContextGetStatisticsFunction)(WKDictionaryRef statistics, WKErrorRef error, void* functionContext);
 WK_EXPORT void WKContextGetStatistics(WKContextRef context, void* functionContext, WKContextGetStatisticsFunction function);
-    
-WK_EXPORT void WKContextGarbageCollectJavaScriptObjects(WKContextRef context);
 
 #ifdef __cplusplus
 }
