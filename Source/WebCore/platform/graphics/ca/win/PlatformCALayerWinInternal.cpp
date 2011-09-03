@@ -34,6 +34,7 @@
 #include "PlatformCALayer.h"
 #include "TextRun.h"
 #include <QuartzCore/CACFLayer.h>
+#include <wtf/MainThread.h>
 
 using namespace std;
 using namespace WebCore;
@@ -62,6 +63,8 @@ PlatformCALayerWinInternal::~PlatformCALayerWinInternal()
 
 void PlatformCALayerWinInternal::displayCallback(CACFLayerRef caLayer, CGContextRef context)
 {
+    ASSERT(isMainThread());
+    
     if (!owner() || !owner()->owner())
         return;
 

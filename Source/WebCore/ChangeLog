@@ -1,3 +1,15 @@
+2011-09-02  Jeff Miller  <jeffm@apple.com>
+
+        Assert that PlatformCALayerWinInternal::displayCallback() is only called on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=67541
+
+        Reviewed by Simon Fraser.
+
+        No new tests, covered by existing media tests.
+
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::displayCallback): Assert that is function is only called on the main thread.
+
 2011-09-02  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Enable RenderLayer::updateLayerPosition's cachedOffset optimization for more cases
