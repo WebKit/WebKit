@@ -103,13 +103,6 @@ WebKitPlatformSupport* webKitPlatformSupport()
     return s_webKitPlatformSupport;
 }
 
-#ifndef WEBKIT_RENAME_WEBKIT_CLIENT
-WebKitPlatformSupport* webKitClient()
-{
-    return webKitPlatformSupport();
-}
-#endif
-
 void setLayoutTestMode(bool value)
 {
     s_layoutTestMode = value;

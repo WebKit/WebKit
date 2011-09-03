@@ -51,10 +51,6 @@ WEBKIT_EXPORT void shutdown();
 // Returns the WebKitPlatformSupport instance passed to initialize.
 WEBKIT_EXPORT WebKitPlatformSupport* webKitPlatformSupport();
 
-#ifndef WEBKIT_RENAME_WEBKIT_CLIENT
-WEBKIT_EXPORT WebKitPlatformSupport* webKitClient();
-#endif
-
 // Alters the rendering of content to conform to a fixed set of rules.
 WEBKIT_EXPORT void setLayoutTestMode(bool);
 WEBKIT_EXPORT bool layoutTestMode();
