@@ -37,6 +37,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "Settings.h"
+#include "V8ArrayBuffer.h"
 #include "V8Binding.h"
 #include "V8Blob.h"
 #include "V8Proxy.h"
@@ -123,7 +124,11 @@ v8::Handle<v8::Value> V8WebSocket::sendCallback(const v8::Arguments& args)
     v8::Handle<v8::Value> message = args[0];
     ExceptionCode ec = 0;
     bool result;
-    if (V8Blob::HasInstance(message)) {
+    if (V8ArrayBuffer::HasInstance(message)) {
+        ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(message));
+        ASSERT(arrayBuffer);
+        result = webSocket->send(arrayBuffer, ec);
+    } else if (V8Blob::HasInstance(message)) {
         Blob* blob = V8Blob::toNative(v8::Handle<v8::Object>::Cast(message));
         ASSERT(blob);
         result = webSocket->send(blob, ec);

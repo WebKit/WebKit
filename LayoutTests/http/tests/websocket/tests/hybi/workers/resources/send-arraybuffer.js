@@ -1,24 +1,23 @@
-function createBlobContainingHelloWorld()
+function createArrayBufferContainingHelloWorld()
 {
-    var builder = new WebKitBlobBuilder();
-    builder.append("Hello, world!");
-    return builder.getBlob();
+    var hello = "Hello, world!";
+    var array = new Uint8Array(hello.length);
+    for (var i = 0; i < hello.length; ++i)
+        array[i] = hello.charCodeAt(i);
+    return array.buffer;
 }
 
-function createEmptyBlob()
+function createEmptyArrayBuffer()
 {
-    var builder = new WebKitBlobBuilder();
-    return builder.getBlob();
+    return new ArrayBuffer(0);
 }
 
-function createBlobContainingAllDistinctBytes()
+function createArrayBufferContainingAllDistinctBytes()
 {
     var array = new Uint8Array(256);
     for (var i = 0; i < 256; ++i)
         array[i] = i;
-    var builder = new WebKitBlobBuilder();
-    builder.append(array.buffer);
-    return builder.getBlob();
+    return array.buffer;
 }
 
 var url = "ws://127.0.0.1:8880/websocket/tests/hybi/workers/resources/check-binary-messages";
@@ -26,9 +25,9 @@ var ws = new WebSocket(url);
 
 ws.onopen = function()
 {
-    ws.send(createBlobContainingHelloWorld());
-    ws.send(createEmptyBlob());
-    ws.send(createBlobContainingAllDistinctBytes());
+    ws.send(createArrayBufferContainingHelloWorld());
+    ws.send(createEmptyArrayBuffer());
+    ws.send(createArrayBufferContainingAllDistinctBytes());
 };
 
 ws.onmessage = function(event)

@@ -21,6 +21,19 @@ PASS ws.send(messageToSend) is false
 PASS bufferedAmountDifference is 65543
 PASS ws.send(messageToSend) is false
 PASS bufferedAmountDifference is 65550
+Testing send(ArrayBuffer)...
+PASS ws.send(messageToSend) is false
+PASS bufferedAmountDifference is 6
+PASS ws.send(messageToSend) is false
+PASS bufferedAmountDifference is 7
+PASS ws.send(messageToSend) is false
+PASS bufferedAmountDifference is 131
+PASS ws.send(messageToSend) is false
+PASS bufferedAmountDifference is 134
+PASS ws.send(messageToSend) is false
+PASS bufferedAmountDifference is 65543
+PASS ws.send(messageToSend) is false
+PASS bufferedAmountDifference is 65550
 Testing send(Blob)...
 PASS ws.send(messageToSend) is false
 PASS bufferedAmountDifference is 6

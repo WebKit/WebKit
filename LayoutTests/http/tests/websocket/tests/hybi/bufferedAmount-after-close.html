@@ -53,6 +53,14 @@ ws.onclose = function()
     testBufferedAmount(createStringWithLength(0xFFFF), 0xFFFF + baseOverhead + 2);
     testBufferedAmount(createStringWithLength(0x10000), 0x10000 + baseOverhead + 8); // With 64-bit extended payload length field.
 
+    debug("Testing send(ArrayBuffer)...");
+    testBufferedAmount(new ArrayBuffer(0), baseOverhead);
+    testBufferedAmount(new ArrayBuffer(1), 1 + baseOverhead);
+    testBufferedAmount(new ArrayBuffer(125), 125 + baseOverhead);
+    testBufferedAmount(new ArrayBuffer(126), 126 + baseOverhead + 2);
+    testBufferedAmount(new ArrayBuffer(0xFFFF), 0xFFFF + baseOverhead + 2);
+    testBufferedAmount(new ArrayBuffer(0x10000), 0x10000 + baseOverhead + 8);
+
     debug("Testing send(Blob)...");
     testBufferedAmount(createBlobWithLength(0), baseOverhead);
     testBufferedAmount(createBlobWithLength(1), 1 + baseOverhead);

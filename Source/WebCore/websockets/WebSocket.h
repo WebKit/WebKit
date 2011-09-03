@@ -46,6 +46,7 @@
 
 namespace WebCore {
 
+class ArrayBuffer;
 class Blob;
 class ThreadableWebSocketChannel;
 
@@ -68,6 +69,7 @@ public:
     void connect(const String& url, const Vector<String>& protocols, ExceptionCode&);
 
     bool send(const String& message, ExceptionCode&);
+    bool send(ArrayBuffer*, ExceptionCode&);
     bool send(Blob*, ExceptionCode&);
 
     void close(int code, const String& reason, ExceptionCode&);

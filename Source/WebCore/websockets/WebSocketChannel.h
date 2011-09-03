@@ -45,6 +45,7 @@
 
 namespace WebCore {
 
+class ArrayBuffer;
 class Blob;
 class FileReaderLoader;
 class ScriptExecutionContext;
@@ -66,6 +67,7 @@ public:
     virtual void connect(const KURL&, const String& protocol);
     virtual String subprotocol();
     virtual bool send(const String& message);
+    virtual bool send(const ArrayBuffer&);
     virtual bool send(const Blob&);
     virtual unsigned long bufferedAmount() const;
     virtual void close(int code, const String& reason); // Start closing handshake.

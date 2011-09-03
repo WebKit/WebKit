@@ -45,7 +45,7 @@ ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper
     , m_syncMethodDone(false)
     , m_useHixie76Protocol(true)
     , m_subprotocol("")
-    , m_sent(false)
+    , m_sendRequestResult(false)
     , m_bufferedAmount(0)
     , m_suspended(false)
 {
@@ -91,14 +91,14 @@ void ThreadableWebSocketChannelClientWrapper::setSubprotocol(const String& subpr
     m_subprotocol = subprotocol;
 }
 
-bool ThreadableWebSocketChannelClientWrapper::sent() const
+bool ThreadableWebSocketChannelClientWrapper::sendRequestResult() const
 {
-    return m_sent;
+    return m_sendRequestResult;
 }
 
-void ThreadableWebSocketChannelClientWrapper::setSent(bool sent)
+void ThreadableWebSocketChannelClientWrapper::setSendRequestResult(bool sendRequestResult)
 {
-    m_sent = sent;
+    m_sendRequestResult = sendRequestResult;
     m_syncMethodDone = true;
 }
 

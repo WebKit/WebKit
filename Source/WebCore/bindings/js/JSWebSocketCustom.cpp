@@ -36,6 +36,7 @@
 #include "JSWebSocket.h"
 
 #include "ExceptionCode.h"
+#include "JSArrayBuffer.h"
 #include "JSBlob.h"
 #include "JSEventListener.h"
 #include "KURL.h"
@@ -97,7 +98,9 @@ JSValue JSWebSocket::send(ExecState* exec)
     JSValue message = exec->argument(0);
     ExceptionCode ec = 0;
     bool result;
-    if (message.inherits(&JSBlob::s_info))
+    if (message.inherits(&JSArrayBuffer::s_info))
+        result = impl()->send(toArrayBuffer(message), ec);
+    else if (message.inherits(&JSBlob::s_info))
         result = impl()->send(toBlob(message), ec);
     else {
         String stringMessage = ustringToString(message.toString(exec));

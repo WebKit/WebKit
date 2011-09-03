@@ -1,3 +1,29 @@
+2011-09-03  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Send ArrayBuffer as WebSocket binary message
+        https://bugs.webkit.org/show_bug.cgi?id=67477
+
+        Reviewed by Kent Tamura.
+
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close-expected.txt:
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close.html:
+        Add tests to send ArrayBuffers.
+        * http/tests/websocket/tests/hybi/check-binary-messages_wsh.py:
+        Renamed from LayoutTests/http/tests/websocket/tests/hybi/send-blob_wsh.py, because this handler
+        is used from send-blob.html and send-arraybuffer.html.
+        * http/tests/websocket/tests/hybi/send-arraybuffer-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/send-arraybuffer.html:
+        Added. Send three small binary messages as ArrayBuffers.
+        * http/tests/websocket/tests/hybi/send-blob.html:
+        * http/tests/websocket/tests/hybi/workers/resources/check-binary-messages_wsh.py:
+        Renamed from LayoutTests/http/tests/websocket/tests/hybi/workers/resources/send-blob_wsh.py.
+        * http/tests/websocket/tests/hybi/workers/resources/send-arraybuffer.js:
+        Added. Same as send-arraybuffer.html, except that this test is run on the worker.
+        * http/tests/websocket/tests/hybi/workers/resources/send-blob.js:
+        Removed the definition of unnecessary function startsWith().
+        * http/tests/websocket/tests/hybi/workers/send-arraybuffer-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/workers/send-arraybuffer.html: Added
+
 2011-09-02  Kentaro Hara  <haraken@google.com>
 
         Implement a CustomEvent constructor for V8

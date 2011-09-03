@@ -1,3 +1,46 @@
+2011-09-03  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Send ArrayBuffer as WebSocket binary message
+        https://bugs.webkit.org/show_bug.cgi?id=67477
+
+        Reviewed by Kent Tamura.
+
+        Tests: http/tests/websocket/tests/hybi/send-arraybuffer.html
+               http/tests/websocket/tests/hybi/workers/send-arraybuffer.html
+               http/tests/websocket/tests/hybi/bufferedAmount-after-close.html (updated)
+
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocket::send):
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        (WebCore::V8WebSocket::sendCallback):
+        * websockets/ThreadableWebSocketChannel.h:
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::sendRequestResult):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::setSendRequestResult):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        Rename "sent" to "sendRequestResult" to clarify the meaning. Messages from the script may not
+        be sent immediately, thus the return value of WebSocketChannel::send() indicates whether the
+        message has been queued successfully, rather than whether the message has been sent or not.
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::send):
+        Case of sending "[object ArrayBuffer]" is covered by an existing test
+        http/tests/websocket/tests/{hybi,hixie76}/send-object.html.
+        * websockets/WebSocket.h:
+        * websockets/WebSocket.idl:
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::send):
+        * websockets/WebSocketChannel.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::send):
+        (WebCore::workerContextDidSend):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::send):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSendArrayBuffer):
+        Construct an ArrayBuffer from the data on Vector<char>.
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        Copy the content into temporary buffer of Vector<char>, and send it to the main thread.
+        * websockets/WorkerThreadableWebSocketChannel.h:
+
 2011-09-02  Kentaro Hara  <haraken@google.com>
 
         Implement a CustomEvent constructor for V8

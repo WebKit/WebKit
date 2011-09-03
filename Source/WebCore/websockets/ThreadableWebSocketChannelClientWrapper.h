@@ -63,8 +63,8 @@ public:
     String subprotocol() const;
     void setSubprotocol(const String&);
 
-    bool sent() const;
-    void setSent(bool);
+    bool sendRequestResult() const;
+    void setSendRequestResult(bool);
 
     unsigned long bufferedAmount() const;
     void setBufferedAmount(unsigned long);
@@ -94,7 +94,7 @@ protected:
     bool m_syncMethodDone;
     bool m_useHixie76Protocol;
     String m_subprotocol;
-    bool m_sent;
+    bool m_sendRequestResult;
     unsigned long m_bufferedAmount;
     bool m_suspended;
     Vector<OwnPtr<ScriptExecutionContext::Task> > m_pendingTasks;
