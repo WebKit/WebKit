@@ -1,3 +1,13 @@
+2011-09-03  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Test that document.all.tags() matches IE behavior with too few arguments
+        https://bugs.webkit.org/show_bug.cgi?id=66535
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/document-all-tags-expected.txt: Added.
+        * fast/dom/document-all-tags.html: Added.
+
 2011-09-03  Robert Hogan  <robert@webkit.org>
 
         Add platform-specific results for r94492

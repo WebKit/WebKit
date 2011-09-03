@@ -1,0 +1,10 @@
+Test that HTMLAllCollection.tags() matches IE behavior with too few arguments.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.all.tags() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
