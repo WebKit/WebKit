@@ -121,6 +121,15 @@ void ResourceHandleInternal::didReceiveResponse(WebURLLoader*, const WebURLRespo
     m_client->didReceiveResponse(m_owner, response.toResourceResponse());
 }
 
+void ResourceHandleInternal::didDownloadData(WebURLLoader*, int dataLength)
+{
+    ASSERT(m_client);
+    if (m_state != ConnectionStateReceivedResponse)
+        CRASH();
+
+    m_client->didDownloadData(m_owner, dataLength);
+}
+
 void ResourceHandleInternal::didReceiveData(WebURLLoader*, const char* data, int dataLength, int encodedDataLength)
 {
     ASSERT(m_client);

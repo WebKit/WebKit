@@ -107,6 +107,9 @@ namespace WebCore {
 #if PLATFORM(WIN) && USE(CFNETWORK)
         virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) { return true; }
 #endif
+#if PLATFORM(CHROMIUM)
+        virtual void didDownloadData(ResourceHandle*, int /*dataLength*/) { }
+#endif
 #if ENABLE(BLOB)
         virtual AsyncFileStream* createAsyncFileStream(FileStreamClient*) { return 0; }
 #endif

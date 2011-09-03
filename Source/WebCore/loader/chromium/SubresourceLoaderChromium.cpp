@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
- *
+ * Copyright (c) 2011, Google Inc. All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- *
+ * 
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,38 +28,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThreadableLoaderClient_h
-#define ThreadableLoaderClient_h
+#include "config.h"
+#include "SubresourceLoader.h"
 
+#include "SubresourceLoaderClient.h"
+#include <wtf/RefCountedLeakCounter.h>
 
 namespace WebCore {
 
-    class ResourceError;
-    class ResourceResponse;
+void SubresourceLoader::didDownloadData(int length)
+{
+    // Reference the object in this method since the additional processing can do
+    // anything including removing the last reference to this object; one example of this is 3266216.
+    RefPtr<SubresourceLoader> protect(this);
+    
+    ResourceLoader::didDownloadData(length);
 
-    class ThreadableLoaderClient {
-        WTF_MAKE_NONCOPYABLE(ThreadableLoaderClient); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
+    if (m_client)
+        m_client->didDownloadData(this, length);
+}
 
-        virtual void didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse&) { }
-        virtual void didReceiveData(const char*, int /*dataLength*/) { }
-        virtual void didReceiveCachedMetadata(const char*, int /*dataLength*/) { }
-        virtual void didFinishLoading(unsigned long /*identifier*/, double /*finishTime*/) { }
-        virtual void didFail(const ResourceError&) { }
-        virtual void didFailRedirectCheck() { }
-
-        virtual bool isDocumentThreadableLoaderClient() { return false; }
-
-#if PLATFORM(CHROMIUM)
-        virtual void didDownloadData(int /*dataLength*/) { }
-#endif
-
-    protected:
-        ThreadableLoaderClient() { }
-        virtual ~ThreadableLoaderClient() { }
-    };
-
-} // namespace WebCore
-
-#endif // ThreadableLoaderClient_h
+}

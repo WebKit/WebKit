@@ -1,3 +1,36 @@
+2011-09-02  Bill Budge  <bbudge@chromium.org>
+
+        Add a 'didDownloadData' method to ResourceLoader, SubresourceLoader,
+        SubresourceLoaderClient, DocumentThreadableLoader, ResourceHandleClient,
+        and ThreadableLoaderClient for the Chromium port only, so we can pass
+        these notifications from our ResourceHandle implementation through the
+        WebCore loader framework.
+        https://bugs.webkit.org/show_bug.cgi?id=67229
+
+        Reviewed by Darin Fisher.
+
+        No new tests. Exposes no new functionality.
+
+        * WebCore.gypi:
+        * loader/DocumentThreadableLoader.h:
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.h:
+        * loader/SubresourceLoaderClient.h:
+        (WebCore::SubresourceLoaderClient::didDownloadData):
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::didDownloadData):
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::didDownloadData):
+        * loader/chromium: Added.
+        * loader/chromium/DocumentThreadableLoaderChromium.cpp: Added.
+        (WebCore::DocumentThreadableLoader::didDownloadData):
+        * loader/chromium/ResourceLoaderChromium.cpp: Added.
+        (WebCore::ResourceLoader::didDownloadData):
+        * loader/chromium/SubresourceLoaderChromium.cpp: Added.
+        (WebCore::SubresourceLoader::didDownloadData):
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didDownloadData):
+
 2011-09-02  Jeff Miller  <jeffm@apple.com>
 
         Assert that PlatformCALayerWinInternal::displayCallback() is only called on the main thread

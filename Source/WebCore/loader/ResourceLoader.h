@@ -129,6 +129,10 @@ namespace WebCore {
         // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
         virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef);
 #endif
+#if PLATFORM(CHROMIUM)
+        virtual void didDownloadData(ResourceHandle*, int);
+        virtual void didDownloadData(int);
+#endif
 #if ENABLE(BLOB)
         virtual AsyncFileStream* createAsyncFileStream(FileStreamClient*);
 #endif

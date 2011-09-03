@@ -84,6 +84,10 @@ namespace WebCore {
 
         virtual void didReceiveAuthenticationChallenge(SubresourceLoader*, const AuthenticationChallenge&);
 
+#if PLATFORM(CHROMIUM)
+        virtual void didDownloadData(SubresourceLoader*, int dataLength);
+#endif
+
         void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
         void didFinishLoading(unsigned long identifier, double finishTime);
         void makeSimpleCrossOriginAccessRequest(const ResourceRequest& request);

@@ -64,6 +64,9 @@ namespace WebCore {
         virtual bool supportsDataArray() { return true; }
         virtual void didReceiveDataArray(CFArrayRef);
 #endif
+#if PLATFORM(CHROMIUM)
+        virtual void didDownloadData(int);
+#endif
 
         SubresourceLoaderClient* m_client;
         bool m_loadingMultipartContent;

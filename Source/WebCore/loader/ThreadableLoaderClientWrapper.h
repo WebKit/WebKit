@@ -107,6 +107,14 @@ public:
             m_client->didReceiveResponse(identifier, response);
     }
 
+#if PLATFORM(CHROMIUM)
+    void didDownloadData(int dataLength)
+    {
+        if (m_client)
+            m_client->didDownloadData(dataLength);
+    }
+#endif
+
 protected:
     ThreadableLoaderClientWrapper(ThreadableLoaderClient* client)
         : m_client(client)

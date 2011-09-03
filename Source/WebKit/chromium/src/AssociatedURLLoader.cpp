@@ -63,6 +63,7 @@ public:
     virtual void willSendRequest(ResourceRequest& /*newRequest*/, const ResourceResponse& /*redirectResponse*/);
 
     virtual void didReceiveResponse(unsigned long, const ResourceResponse&);
+    virtual void didDownloadData(int /*dataLength*/);
     virtual void didReceiveData(const char*, int /*dataLength*/);
     virtual void didReceiveCachedMetadata(const char*, int /*dataLength*/);
     virtual void didFinishLoading(unsigned long /*identifier*/, double /*finishTime*/);
@@ -87,7 +88,6 @@ private:
     WebURLError m_error;
 
     Timer<ClientAdapter> m_errorTimer;
-    unsigned long m_downloadLength;
     bool m_downloadToFile;
     bool m_enableErrorNotifications;
     bool m_didFail;
@@ -102,7 +102,6 @@ AssociatedURLLoader::ClientAdapter::ClientAdapter(AssociatedURLLoader* loader, W
     : m_loader(loader)
     , m_client(client)
     , m_errorTimer(this, &ClientAdapter::notifyError)
-    , m_downloadLength(0)
     , m_downloadToFile(downloadToFile)
     , m_enableErrorNotifications(false)
     , m_didFail(false)
@@ -135,13 +134,20 @@ void AssociatedURLLoader::ClientAdapter::didReceiveResponse(unsigned long, const
     m_client->didReceiveResponse(m_loader, wrappedResponse);
 }
 
+void AssociatedURLLoader::ClientAdapter::didDownloadData(int dataLength)
+{
+    if (!m_client)
+        return;
+
+    m_client->didDownloadData(m_loader, dataLength);
+}
+
 void AssociatedURLLoader::ClientAdapter::didReceiveData(const char* data, int dataLength)
 {
     if (!m_client)
         return;
 
     m_client->didReceiveData(m_loader, data, dataLength, -1);
-    m_downloadLength += dataLength;
 }
 
 void AssociatedURLLoader::ClientAdapter::didReceiveCachedMetadata(const char* data, int dataLength)
@@ -156,12 +162,6 @@ void AssociatedURLLoader::ClientAdapter::didFinishLoading(unsigned long identifi
 {
     if (!m_client)
         return;
-
-    if (m_downloadToFile) {
-        int downloadLength = m_downloadLength <= INT_MAX ? m_downloadLength : INT_MAX;
-        m_client->didDownloadData(m_loader, downloadLength);
-        // While the client could have canceled, continue, since the load finished.
-    }
 
     m_client->didFinishLoading(m_loader, finishTime);
 }

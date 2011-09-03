@@ -56,6 +56,7 @@ public:
     virtual void willSendRequest(WebKit::WebURLLoader*, WebKit::WebURLRequest&, const WebKit::WebURLResponse&);
     virtual void didSendData(WebKit::WebURLLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(WebKit::WebURLLoader*, const WebKit::WebURLResponse&);
+    virtual void didDownloadData(WebKit::WebURLLoader*, int dataLength);
     virtual void didReceiveData(WebKit::WebURLLoader*, const char* data, int dataLength, int encodedDataLength);
 
     virtual void didReceiveCachedMetadata(WebKit::WebURLLoader*, const char* data, int dataLength);
