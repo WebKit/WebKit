@@ -1,5 +1,39 @@
 2011-09-02  Michael Saboff  <msaboff@apple.com>
 
+        Add JSC:RegExp functional tests
+        https://bugs.webkit.org/show_bug.cgi?id=67339
+
+        Added new test driver program (testRegExp) and corresponding data file
+        along with build scripts changes.
+
+        Reviewed by Gavin Barraclough.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * testRegExp.cpp: Added.
+        (Options::Options):
+        (StopWatch::start):
+        (StopWatch::stop):
+        (StopWatch::getElapsedMS):
+        (RegExpTest::RegExpTest):
+        (GlobalObject::create):
+        (GlobalObject::className):
+        (GlobalObject::GlobalObject):
+        (main):
+        (cleanupGlobalData):
+        (testOneRegExp):
+        (scanString):
+        (parseRegExpLine):
+        (parseTestLine):
+        (runFromFiles):
+        (printUsageStatement):
+        (parseArguments):
+        (realMain):
+        * tests/regexp: Added.
+        * tests/regexp/RegExpTest.data: Added.
+
+2011-09-02  Michael Saboff  <msaboff@apple.com>
+
         Add JSC:RegExp functional test data generator
         https://bugs.webkit.org/show_bug.cgi?id=67519
 

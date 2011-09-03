@@ -27,6 +27,7 @@
 				141214BF0A49190E00480255 /* PBXTargetDependency */,
 				932F5BE90822A1C700736975 /* PBXTargetDependency */,
 				14BD59C70A3E8FA400BAF59C /* PBXTargetDependency */,
+				651123091404768B002B101D /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = All;
@@ -227,6 +228,9 @@
 		5DBB1525131D0BD70056AD36 /* minidom.js in Copy Support Script */ = {isa = PBXBuildFile; fileRef = 1412110D0A48788700480255 /* minidom.js */; };
 		5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */ = {isa = PBXBuildFile; fileRef = F692A8540255597D01FF60F7 /* create_hash_table */; settings = {ATTRIBUTES = (); }; };
 		6507D29E0E871E5E00D7D896 /* JSTypeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6507D2970E871E4A00D7D896 /* JSTypeInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		651122FD14046A4C002B101D /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
+		651122FE14046A4C002B101D /* libedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */; };
+		6511230714046B0A002B101D /* testRegExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651122E5140469BA002B101D /* testRegExp.cpp */; };
 		651DCA04136A6FEF00F74194 /* PassTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 651DCA02136A6FAB00F74194 /* PassTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		655EB29B10CE2581001A990E /* NodesCodegen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 655EB29A10CE2581001A990E /* NodesCodegen.cpp */; };
 		65DFC93308EA173A00F7300B /* HashTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DFC92D08EA173A00F7300B /* HashTable.cpp */; };
@@ -676,6 +680,20 @@
 			remoteGlobalIDString = 14BD59BE0A3E8F9000BAF59C;
 			remoteInfo = testapi;
 		};
+		651122F914046A4C002B101D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 932F5B3E0822A1C700736975;
+			remoteInfo = JavaScriptCore;
+		};
+		651123081404768B002B101D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 651122F714046A4C002B101D;
+			remoteInfo = testRegExp;
+		};
 		65FB3F7D09D11EF300F49DEB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -904,6 +922,10 @@
 		5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MallocZoneSupport.h; sourceTree = "<group>"; };
 		5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAvailability.h; sourceTree = "<group>"; };
 		6507D2970E871E4A00D7D896 /* JSTypeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypeInfo.h; sourceTree = "<group>"; };
+		651122E5140469BA002B101D /* testRegExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testRegExp.cpp; sourceTree = "<group>"; };
+		651122EE14046A19002B101D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		651122F014046A19002B101D /* regexp_test.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = regexp_test.1; sourceTree = "<group>"; };
+		6511230514046A4C002B101D /* testRegExp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testRegExp; sourceTree = BUILT_PRODUCTS_DIR; };
 		651DCA02136A6FAB00F74194 /* PassTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassTraits.h; sourceTree = "<group>"; };
 		651F6412039D5B5F0078395C /* dtoa.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dtoa.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		651F6413039D5B5F0078395C /* dtoa.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dtoa.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -1397,6 +1419,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		651122FC14046A4C002B101D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				651122FD14046A4C002B101D /* JavaScriptCore.framework in Frameworks */,
+				651122FE14046A4C002B101D /* libedit.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		932F5BD20822A1C700736975 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1427,6 +1458,7 @@
 				932F5BE10822A1C700736975 /* jsc */,
 				141211200A48793C00480255 /* minidom */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
+				6511230514046A4C002B101D /* testRegExp */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1444,6 +1476,7 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
+				651122E5140469BA002B101D /* testRegExp.cpp */,
 				A718F8211178EB4B002465A7 /* create_regex_tables */,
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
 				A7C225CC139981F100FF1662 /* KeywordLookupGenerator.py */,
@@ -1471,6 +1504,7 @@
 				86EAC48C0F93E8B9008EC948 /* yarr */,
 				1C90513E0BA9E8830081E9D0 /* Configurations */,
 				650FDF8D09D0FCA700769E54 /* Derived Sources */,
+				651122ED14046A19002B101D /* regexp_test */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				932FC3C20824BB70005B3C75 /* Resources */,
@@ -1704,6 +1738,15 @@
 			sourceTree = BUILT_PRODUCTS_DIR;
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		651122ED14046A19002B101D /* regexp_test */ = {
+			isa = PBXGroup;
+			children = (
+				651122EE14046A19002B101D /* main.cpp */,
+				651122F014046A19002B101D /* regexp_test.1 */,
+			);
+			path = regexp_test;
+			sourceTree = "<group>";
 		};
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
@@ -2733,6 +2776,25 @@
 			productReference = 14BD59BF0A3E8F9000BAF59C /* testapi */;
 			productType = "com.apple.product-type.tool";
 		};
+		651122F714046A4C002B101D /* testRegExp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6511230014046A4C002B101D /* Build configuration list for PBXNativeTarget "testRegExp" */;
+			buildPhases = (
+				651122FA14046A4C002B101D /* Sources */,
+				651122FC14046A4C002B101D /* Frameworks */,
+				651122FF14046A4C002B101D /* Copy Into Framework */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				651122F814046A4C002B101D /* PBXTargetDependency */,
+			);
+			name = testRegExp;
+			productInstallPath = /usr/local/bin;
+			productName = jsc;
+			productReference = 6511230514046A4C002B101D /* testRegExp */;
+			productType = "com.apple.product-type.tool";
+		};
 		932F5B3E0822A1C700736975 /* JavaScriptCore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 149C275D08902AFE008A9EFC /* Build configuration list for PBXNativeTarget "JavaScriptCore" */;
@@ -2805,6 +2867,7 @@
 				1412111F0A48793C00480255 /* minidom */,
 				14BD59BE0A3E8F9000BAF59C /* testapi */,
 				932F5BDA0822A1C700736975 /* jsc */,
+				651122F714046A4C002B101D /* testRegExp */,
 			);
 		};
 /* End PBXProject section */
@@ -2872,6 +2935,21 @@
 			shellPath = /bin/sh;
 			shellScript = "# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\n# Copy and update the jsc binary to refer to JavaScriptcore.framework relative to its location.\nditto \"${BUILT_PRODUCTS_DIR}/jsc\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Resources/jsc\"\ninstall_name_tool -change \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Resources/jsc\"\n";
 		};
+		651122FF14046A4C002B101D /* Copy Into Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/Resources/jsc",
+			);
+			name = "Copy Into Framework";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Skip for Production builds.\nif [[ ${CONFIGURATION:=Debug} == \"Production\" ]]; then\n    exit\nfi\n\n# Copy and update the testRegExp binary to refer to JavaScriptcore.framework relative to its location.\nditto \"${BUILT_PRODUCTS_DIR}/testRegExp\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Resources/testRegExp\"\ninstall_name_tool -change \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Resources/testRegExp\"\n";
+		};
 		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2936,6 +3014,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				1440F6100A4F85670005F061 /* testapi.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		651122FA14046A4C002B101D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6511230714046B0A002B101D /* testRegExp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3185,6 +3271,16 @@
 			target = 14BD59BE0A3E8F9000BAF59C /* testapi */;
 			targetProxy = 14BD59C60A3E8FA400BAF59C /* PBXContainerItemProxy */;
 		};
+		651122F814046A4C002B101D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 932F5B3E0822A1C700736975 /* JavaScriptCore */;
+			targetProxy = 651122F914046A4C002B101D /* PBXContainerItemProxy */;
+		};
+		651123091404768B002B101D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 651122F714046A4C002B101D /* testRegExp */;
+			targetProxy = 651123081404768B002B101D /* PBXContainerItemProxy */;
+		};
 		65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
@@ -3341,6 +3437,35 @@
 			};
 			name = Production;
 		};
+		6511230114046A4C002B101D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = testRegExp;
+			};
+			name = Debug;
+		};
+		6511230214046A4C002B101D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = testRegExp;
+			};
+			name = Release;
+		};
+		6511230314046A4C002B101D /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = testRegExp;
+			};
+			name = Profiling;
+		};
+		6511230414046A4C002B101D /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INSTALL_PATH = "$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/Resources";
+				PRODUCT_NAME = testRegExp;
+			};
+			name = Production;
+		};
 		65FB3F7809D11EBD00F49DEB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3479,6 +3604,17 @@
 				14BD59D80A3E8FC900BAF59C /* Release */,
 				A76148420E6402F700E357FA /* Profiling */,
 				14BD59D90A3E8FC900BAF59C /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		6511230014046A4C002B101D /* Build configuration list for PBXNativeTarget "testRegExp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6511230114046A4C002B101D /* Debug */,
+				6511230214046A4C002B101D /* Release */,
+				6511230314046A4C002B101D /* Profiling */,
+				6511230414046A4C002B101D /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

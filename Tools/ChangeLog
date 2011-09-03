@@ -1,3 +1,25 @@
+2011-09-02  Michael Saboff  <msaboff@apple.com>
+
+        Add JSC:RegExp functional tests
+        https://bugs.webkit.org/show_bug.cgi?id=67339
+
+        New perl script to build JavaScriptCore and run the RegExp tests.
+
+        Reviewed by Gavin Barraclough.
+
+        * Scripts/run-regexp-tests: Added.
+
+2011-09-02  Michael Saboff  <msaboff@apple.com>
+
+        Add JSC:RegExp functional tests
+        https://bugs.webkit.org/show_bug.cgi?id=67339
+
+        New perl script to build JavaScriptCore and run the RegExp tests.
+
+        Reviewed by Gavin Barraclough.
+
+        * Scripts/run-regexp-tests: Added.
+
 2011-09-02  Eric Seidel  <eric@webkit.org>
 
         Reshuffle some code in WebKitDriver._read_block in preparation for reading stderr/stdout separately
