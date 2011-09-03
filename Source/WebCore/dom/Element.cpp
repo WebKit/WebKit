@@ -235,12 +235,6 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
     ExceptionCode ec;
     setAttribute(name, value, ec);
 }
-    
-void Element::setCStringAttribute(const QualifiedName& name, const char* cStringValue)
-{
-    ExceptionCode ec;
-    setAttribute(name, AtomicString(cStringValue), ec);
-}
 
 void Element::setBooleanAttribute(const QualifiedName& name, bool b)
 {
@@ -1458,31 +1452,6 @@ void Element::dispatchAttrAdditionEvent(Attribute*)
     dispatchScopedEvent(MutationEvent::create(DOMAttrModifiedEvent, true, attr, attr->value(),
         attr->value(), document()->attrName(attr->id()), MutationEvent::ADDITION), ec);
 #endif
-}
-
-String Element::openTagStartToString() const
-{
-    String result = "<" + nodeName();
-
-    NamedNodeMap* attrMap = attributes(true);
-
-    if (attrMap) {
-        unsigned numAttrs = attrMap->length();
-        for (unsigned i = 0; i < numAttrs; i++) {
-            result += " ";
-
-            Attribute *attribute = attrMap->attributeItem(i);
-            result += attribute->name().toString();
-            if (!attribute->value().isNull()) {
-                result += "=\"";
-                // FIXME: substitute entities for any instances of " or '
-                result += attribute->value();
-                result += "\"";
-            }
-        }
-    }
-
-    return result;
 }
 
 #ifndef NDEBUG
