@@ -1,3 +1,17 @@
+2011-09-02  Chris Marrin  <cmarrin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67510
+        Crash can occur when doing a PlatformCAAnimation::copy() with no valueFunction
+
+        Reviewed by Simon Fraser.
+        
+        Test to tickle crash when pause is called. Currently animation-play-state is broken
+        (https://bugs.webkit.org/show_bug.cgi?id=67540) so this test doesn't reliably 
+        tickle the crash, but it does on occasion.
+
+        * animations/pause-crash-expected.txt: Added.
+        * animations/pause-crash.html: Added.
+
 2011-09-02  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update baselines and expectations.

@@ -1,0 +1,59 @@
+<html>
+<head>
+  <title>Pause and resume animation should not crash</title>
+  <style type="text/css" media="screen">
+    .box {
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-direction: alternate;
+      -webkit-animation-iteration-count: infinite;
+    }
+    
+    @-webkit-keyframes anim {
+        from { -webkit-transform: matrix3d(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1); }
+        to   { -webkit-transform: matrix3d(1,0,0,0, 0,1,0,0, 0,0,1,0, 400,0,0,1); }
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    function animationStarted()
+    {
+        setTimeout(function() {
+            document.getElementById('box1').style.webkitAnimationPlayState = "paused";
+            setTimeout(function() {
+                document.getElementById('box1').style.webkitAnimationPlayState = "running";
+                setTimeout(function() {
+                    document.getElementById('results').innerHTML = 'Did not crash, so PASSED';
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                }, 50);
+            }, 50);
+        }, 50);
+    }
+    
+    function startTest()
+    {
+        document.getElementById('box1').addEventListener('webkitAnimationStart', animationStarted);
+        document.getElementById('box1').style.webkitAnimationName = "anim";
+    }
+
+    window.addEventListener('load', startTest, false);
+  </script>
+</head>
+<body>
+
+<p>Tests pause and resume animation. Should not crash. (https://bugs.webkit.org/show_bug.cgi?id=67510)</p>
+
+<div id="container">
+  <div id="box1" class="box"></div>
+</div>
+<div id="results"></div>
+</body>
+</html>

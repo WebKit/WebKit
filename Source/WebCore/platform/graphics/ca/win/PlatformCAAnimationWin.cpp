@@ -319,12 +319,14 @@ void PlatformCAAnimation::setAdditive(bool value)
 
 PlatformCAAnimation::ValueFunctionType PlatformCAAnimation::valueFunction() const
 {
-    return fromCACFValueFunctionType(CACFValueFunctionGetName(CACFAnimationGetValueFunction(m_animation.get())));
+    CACFValueFunctionRef func = CACFAnimationGetValueFunction(m_animation.get());
+    return func ? fromCACFValueFunctionType(CACFValueFunctionGetName(func)) : NoValueFunction;
 }
 
 void PlatformCAAnimation::setValueFunction(ValueFunctionType value)
 {
-    CACFAnimationSetValueFunction(m_animation.get(), CACFValueFunctionGetFunctionWithName(toCACFValueFunctionType(value)));
+    CFStringRef valueString = toCACFValueFunctionType(value);
+    CACFAnimationSetValueFunction(m_animation.get(), valueString ? CACFValueFunctionGetFunctionWithName(valueString) : 0);
 }
 
 void PlatformCAAnimation::setFromValue(float value)
