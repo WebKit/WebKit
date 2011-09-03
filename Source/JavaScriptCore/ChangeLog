@@ -1,3 +1,16 @@
+2011-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG variable predictions only work for local variables, not temporaries
+        https://bugs.webkit.org/show_bug.cgi?id=67554
+
+        Reviewed by Gavin Barraclough.
+        
+        This appears to be a slight speed-up in Kraken (0.3% but significant)
+        and neutral elsewhere.
+
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::predict):
+
 2011-09-02  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT speculation failure does recovery of additions in reverse and

@@ -140,8 +140,15 @@ public:
         if (operandIsArgument(operand)) {
             unsigned argument = operand + m_argumentPredictions.size() + RegisterFile::CallFrameHeaderSize;
             mergePrediction(m_argumentPredictions[argument].m_value, makePrediction(prediction, source));
-        } else if ((unsigned)operand < m_variablePredictions.size())
-            mergePrediction(m_variablePredictions[operand].m_value, makePrediction(prediction, source));
+            return;
+        }
+        
+        if ((unsigned)operand >= m_variablePredictions.size()) {
+            ASSERT(operand >= 0);
+            m_variablePredictions.resize(operand + 1);
+        }
+        
+        mergePrediction(m_variablePredictions[operand].m_value, makePrediction(prediction, source));
     }
     
     void predictGlobalVar(unsigned varNumber, PredictedType prediction, PredictionSource source)
