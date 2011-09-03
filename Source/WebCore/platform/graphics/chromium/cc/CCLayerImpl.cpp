@@ -32,6 +32,7 @@
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "LayerRendererChromium.h"
+#include "cc/CCLayerSorter.h"
 #include <wtf/text/WTFString.h>
 
 namespace {
@@ -218,6 +219,12 @@ void CCLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
     ts << m_drawTransform.m21() << ", " << m_drawTransform.m22() << ", " << m_drawTransform.m23() << ", " << m_drawTransform.m24() << ", ";
     ts << m_drawTransform.m31() << ", " << m_drawTransform.m32() << ", " << m_drawTransform.m33() << ", " << m_drawTransform.m34() << ", ";
     ts << m_drawTransform.m41() << ", " << m_drawTransform.m42() << ", " << m_drawTransform.m43() << ", " << m_drawTransform.m44() << "\n";
+}
+
+void sortLayers(Vector<RefPtr<CCLayerImpl> >::iterator first, Vector<RefPtr<CCLayerImpl> >::iterator end, CCLayerSorter* layerSorter)
+{
+    TRACE_EVENT("LayerRendererChromium::sortLayers", 0, 0);
+    layerSorter->sort(first, end);
 }
 
 }

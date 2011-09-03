@@ -73,8 +73,6 @@ public:
     int sourceFrameNumber() const { return m_sourceFrameNumber; }
     void setSourceFrameNumber(int frameNumber) { m_sourceFrameNumber = frameNumber; }
 
-    void updateLayers();
-
     void setViewport(const IntSize& viewportSize);
     const IntSize& viewportSize() const { return m_viewportSize; }
 

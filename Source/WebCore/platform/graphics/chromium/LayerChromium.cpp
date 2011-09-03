@@ -437,5 +437,10 @@ bool LayerChromium::descendantDrawsContent()
     return false;
 }
 
+void sortLayers(Vector<RefPtr<LayerChromium> >::iterator, Vector<RefPtr<LayerChromium> >::iterator, void*)
+{
+    // Currently we don't use z-order to decide what to paint, so there's no need to actually sort LayerChromiums.
+}
+
 }
 #endif // USE(ACCELERATED_COMPOSITING)

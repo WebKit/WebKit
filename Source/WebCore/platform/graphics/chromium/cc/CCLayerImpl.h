@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+class CCLayerSorter;
 class LayerChromium;
 class LayerRendererChromium;
 
@@ -246,6 +247,8 @@ private:
     // Points to the layer renderer that updates and draws this layer.
     RefPtr<LayerRendererChromium> m_layerRenderer;
 };
+
+void sortLayers(Vector<RefPtr<CCLayerImpl> >::iterator first, Vector<RefPtr<CCLayerImpl> >::iterator end, CCLayerSorter*);
 
 }
 

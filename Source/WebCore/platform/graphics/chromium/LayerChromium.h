@@ -300,6 +300,8 @@ private:
     String m_name;
 };
 
+void sortLayers(Vector<RefPtr<LayerChromium> >::iterator, Vector<RefPtr<LayerChromium> >::iterator, void*);
+
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 

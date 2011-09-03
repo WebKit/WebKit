@@ -99,7 +99,6 @@ public:
 
     // CCLayerTreeHost interface to CCProxy.
     void animateAndLayout(double frameBeginTime);
-    void preCommit(CCLayerTreeHostImpl*); // Temporary hack until CCLayerTreeHostImpl::updateLayers is split apart.
     void commitTo(CCLayerTreeHostImpl*);
     PassOwnPtr<CCThread> createCompositorThread();
     PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D();
@@ -155,10 +154,19 @@ public:
 
     NonCompositedContentHost* nonCompositedContentHost() const { return m_nonCompositedContentHost.get(); }
 
+    void updateLayers();
+
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, const CCSettings&);
 
 private:
+    typedef Vector<RefPtr<LayerChromium> > LayerList;
+
+    void paintLayerContents(const LayerList&);
+    void updateLayers(LayerChromium*);
+    void updateCompositorResources(const LayerList&, GraphicsContext3D*);
+    void updateCompositorResources(LayerChromium*, GraphicsContext3D*);
+
     bool initialize();
 
     PassRefPtr<LayerRendererChromium> createLayerRenderer();
@@ -173,6 +181,8 @@ private:
 
     OwnPtr<GraphicsLayer> m_rootLayer;
     OwnPtr<NonCompositedContentHost> m_nonCompositedContentHost;
+
+    LayerList m_updateList;
 
     CCSettings m_settings;
 

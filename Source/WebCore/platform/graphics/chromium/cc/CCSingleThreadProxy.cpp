@@ -234,18 +234,7 @@ void CCSingleThreadProxy::commitIfNeeded()
     // Update
     double frameBeginTime = currentTime();
     m_layerTreeHost->animateAndLayout(frameBeginTime);
-
-    // Precommit is a temporary step we need to perform to push things like
-    // the viewport to the LayerTreeHostImpl, because
-    // LayerTreeHostImpl::updateLayers() isn't split into host and impl parts.
-    {
-        ScopedSetImplThread impl;
-        m_layerTreeHost->preCommit(m_layerTreeHostImpl.get());
-    }
-
-    // This should become m_layerTreeHost->updateLayers() once we split apart
-    // LayerTreeHostImpl::updateLayers.
-    m_layerTreeHostImpl->updateLayers();
+    m_layerTreeHost->updateLayers();
 
     // Commit
     {

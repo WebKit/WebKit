@@ -1,3 +1,46 @@
+2011-09-02  Adrienne Walker  <enne@google.com>
+
+        [chromium] Move updateLayers from LayerRendererChromium to CCLayerTreeHost
+        https://bugs.webkit.org/show_bug.cgi?id=67438
+
+        Reviewed by James Robinson.
+
+        Covered by existing tests.
+
+        Move functionality used by both CCLayerTreeHost and
+        LayerRendererChromium into CCLayerTreeHostCommon. Move update, paint,
+        and updateCompositorResource functions into CClayerTreeHost.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::sortLayers):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::textureMemoryReclaimLimit):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::sortLayers):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::commitTo):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        (WebCore::paintContentsIfDirty):
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        (WebCore::CCLayerTreeHost::updateCompositorResources):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp: Added.
+        (WebCore::CCLayerTreeHostCommon::isScaleOrTranslation):
+        (WebCore::CCLayerTreeHostCommon::calculateVisibleRect):
+        (WebCore::CCLayerTreeHostCommon::calculateVisibleLayerRect):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.h: Added.
+        (WebCore::CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::commitIfNeeded):
+
 2011-09-02  Chris Marrin  <cmarrin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67510

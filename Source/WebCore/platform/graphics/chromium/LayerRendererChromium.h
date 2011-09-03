@@ -101,8 +101,6 @@ public:
 
     void viewportChanged();
 
-    // updates and draws the current layers onto the backbuffer
-    void updateLayers();
     void drawLayers();
 
     // waits for rendering to finish
@@ -150,19 +148,14 @@ public:
 
     GC3Denum bestTextureFormat();
 
-    typedef Vector<RefPtr<LayerChromium> > LayerList;
     typedef Vector<RefPtr<CCLayerImpl> > CCLayerList;
+
+    // FIXME: Remove this when the contents texture manager has moved to CCLayerTreeHost.
+    static size_t textureMemoryReclaimLimit();
 
 private:
     LayerRendererChromium(CCLayerTreeHost*, CCLayerTreeHostImpl*, PassRefPtr<GraphicsContext3D>);
     bool initialize();
-
-    void updateLayers(LayerChromium*);
-    void updateRootLayerContents();
-
-    void paintLayerContents(const LayerList&);
-    void updateCompositorResources(const LayerList& renderSurfaceLayerList);
-    void updateCompositorResources(LayerChromium*);
 
     void drawLayersInternal();
     void drawLayer(CCLayerImpl*, CCRenderSurface*);
@@ -196,8 +189,6 @@ private:
 
     TransformationMatrix m_projectionMatrix;
     TransformationMatrix m_windowMatrix;
-
-    OwnPtr<LayerList> m_computedRenderSurfaceLayerList;
 
     CCRenderSurface* m_currentRenderSurface;
     unsigned m_offscreenFramebufferId;

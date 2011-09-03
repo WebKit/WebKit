@@ -147,13 +147,6 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(CCLayerTreeHost* implHack, Pas
     return m_layerRenderer;
 }
 
-// FIXME: move all this code to CCLayerTreeHost
-void CCLayerTreeHostImpl::updateLayers()
-{
-    if (m_layerRenderer)
-        m_layerRenderer->updateLayers();
-}
-
 void CCLayerTreeHostImpl::setViewport(const IntSize& viewportSize)
 {
     bool changed = viewportSize != m_viewportSize;

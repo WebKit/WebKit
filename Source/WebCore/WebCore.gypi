@@ -3540,6 +3540,8 @@
             'platform/graphics/chromium/cc/CCLayerTilingData.h',
             'platform/graphics/chromium/cc/CCLayerTreeHost.cpp',
             'platform/graphics/chromium/cc/CCLayerTreeHost.h',
+            'platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp',
+            'platform/graphics/chromium/cc/CCLayerTreeHostCommon.h',
             'platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp',
             'platform/graphics/chromium/cc/CCLayerTreeHostImpl.h',
             'platform/graphics/chromium/cc/CCMainThread.cpp',

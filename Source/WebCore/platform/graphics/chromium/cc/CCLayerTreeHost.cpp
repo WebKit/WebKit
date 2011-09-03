@@ -32,6 +32,7 @@
 #include "NonCompositedContentHost.h"
 #include "TraceEvent.h"
 #include "TreeSynchronizer.h"
+#include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCThread.h"
@@ -101,17 +102,20 @@ void CCLayerTreeHost::animateAndLayout(double frameBeginTime)
     m_animating = false;
 }
 
-void CCLayerTreeHost::preCommit(CCLayerTreeHostImpl* hostImpl)
-{
-    hostImpl->setVisible(m_visible);
-    hostImpl->setViewport(viewportSize());
-}
-
 void CCLayerTreeHost::commitTo(CCLayerTreeHostImpl* hostImpl)
 {
     ASSERT(CCProxy::isImplThread());
     TRACE_EVENT("CCLayerTreeHost::commitTo", this, 0);
     hostImpl->setSourceFrameNumber(frameNumber());
+
+    contentsTextureManager()->reduceMemoryToLimit(hostImpl->layerRenderer()->textureMemoryReclaimLimit());
+    contentsTextureManager()->deleteEvictedTextures(hostImpl->context());
+
+    updateCompositorResources(m_updateList, hostImpl->context());
+    m_updateList.clear();
+
+    hostImpl->setVisible(m_visible);
+    hostImpl->setViewport(viewportSize());
 
     // Synchronize trees, if one exists at all...
     if (rootLayer())
@@ -243,5 +247,158 @@ void CCLayerTreeHost::composite()
     static_cast<CCSingleThreadProxy*>(m_proxy.get())->compositeImmediately();
 }
 #endif // !USE(THREADED_COMPOSITING)
+
+void CCLayerTreeHost::updateLayers()
+{
+    if (!rootLayer())
+        return;
+
+    if (viewportSize().isEmpty())
+        return;
+
+    updateLayers(rootLayer()->platformLayer());
+}
+
+void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
+{
+    TRACE_EVENT("CCLayerTreeHost::updateLayers", this, 0);
+
+    if (!rootLayer->renderSurface())
+        rootLayer->createRenderSurface();
+    rootLayer->renderSurface()->setContentRect(IntRect(IntPoint(0, 0), viewportSize()));
+
+    IntRect rootScissorRect(IntPoint(), viewportSize());
+    rootLayer->setScissorRect(rootScissorRect);
+
+    // This assert fires if updateCompositorResources wasn't called after
+    // updateLayers. Only one update can be pending at any given time.
+    ASSERT(!m_updateList.size());
+    m_updateList.append(rootLayer);
+
+    RenderSurfaceChromium* rootRenderSurface = rootLayer->renderSurface();
+    rootRenderSurface->clearLayerList();
+
+    TransformationMatrix identityMatrix;
+
+    {
+        TRACE_EVENT("CCLayerTreeHost::updateLayers::calcDrawEtc", this, 0);
+        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, identityMatrix, identityMatrix, m_updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
+    }
+
+    paintLayerContents(m_updateList);
+}
+
+static void paintContentsIfDirty(LayerChromium* layer, const IntRect& visibleLayerRect)
+{
+    if (layer->drawsContent()) {
+        layer->setVisibleLayerRect(visibleLayerRect);
+        layer->paintContentsIfDirty();
+    }
+}
+
+void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList)
+{
+    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        LayerChromium* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
+        ASSERT(renderSurface);
+
+        renderSurfaceLayer->setLayerTreeHost(this);
+
+        // Render surfaces whose drawable area has zero width or height
+        // will have no layers associated with them and should be skipped.
+        if (!renderSurface->layerList().size())
+            continue;
+
+        if (!renderSurface->drawOpacity())
+            continue;
+
+        const LayerList& layerList = renderSurface->layerList();
+        ASSERT(layerList.size());
+        for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
+            LayerChromium* layer = layerList[layerIndex].get();
+
+            // Layers that start a new render surface will be painted when the render
+            // surface's list is processed.
+            if (layer->renderSurface() && layer->renderSurface() != renderSurface)
+                continue;
+
+            layer->setLayerTreeHost(this);
+
+            if (!layer->opacity())
+                continue;
+
+            if (layer->maskLayer())
+                layer->maskLayer()->setLayerTreeHost(this);
+            if (layer->replicaLayer()) {
+                layer->replicaLayer()->setLayerTreeHost(this);
+                if (layer->replicaLayer()->maskLayer())
+                    layer->replicaLayer()->maskLayer()->setLayerTreeHost(this);
+            }
+
+            if (layer->bounds().isEmpty())
+                continue;
+
+            IntRect defaultContentRect = IntRect(rootLayer()->platformLayer()->scrollPosition(), viewportSize());
+
+            IntRect targetSurfaceRect = layer->targetRenderSurface() ? layer->targetRenderSurface()->contentRect() : defaultContentRect;
+            if (layer->usesLayerScissor())
+                targetSurfaceRect.intersect(layer->scissorRect());
+            IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleLayerRect(targetSurfaceRect, layer->bounds(), layer->contentBounds(), layer->drawTransform());
+
+            visibleLayerRect.move(toSize(layer->scrollPosition()));
+            paintContentsIfDirty(layer, visibleLayerRect);
+
+            if (LayerChromium* maskLayer = layer->maskLayer())
+                paintContentsIfDirty(maskLayer, IntRect(IntPoint(), maskLayer->contentBounds()));
+
+            if (LayerChromium* replicaLayer = layer->replicaLayer()) {
+                paintContentsIfDirty(replicaLayer, visibleLayerRect);
+
+                if (LayerChromium* replicaMaskLayer = replicaLayer->maskLayer())
+                    paintContentsIfDirty(replicaMaskLayer, IntRect(IntPoint(), replicaMaskLayer->contentBounds()));
+            }
+        }
+    }
+}
+
+void CCLayerTreeHost::updateCompositorResources(const LayerList& renderSurfaceLayerList, GraphicsContext3D* context)
+{
+    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        LayerChromium* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
+        ASSERT(renderSurface);
+
+        if (!renderSurface->layerList().size() || !renderSurface->drawOpacity())
+            continue;
+
+        const LayerList& layerList = renderSurface->layerList();
+        ASSERT(layerList.size());
+        for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
+            LayerChromium* layer = layerList[layerIndex].get();
+            if (layer->renderSurface() && layer->renderSurface() != renderSurface)
+                continue;
+
+            updateCompositorResources(layer, context);
+        }
+    }
+}
+
+void CCLayerTreeHost::updateCompositorResources(LayerChromium* layer, GraphicsContext3D* context)
+{
+    if (layer->bounds().isEmpty())
+        return;
+
+    if (!layer->opacity())
+        return;
+
+    if (layer->maskLayer())
+        updateCompositorResources(layer->maskLayer(), context);
+    if (layer->replicaLayer())
+        updateCompositorResources(layer->replicaLayer(), context);
+
+    if (layer->drawsContent())
+        layer->updateCompositorResources(context);
+}
 
 }
