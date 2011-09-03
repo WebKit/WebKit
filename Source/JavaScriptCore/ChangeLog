@@ -1,5 +1,28 @@
 2011-09-02  Michael Saboff  <msaboff@apple.com>
 
+        Replace local implementation of string equals() methods with UString versions
+        https://bugs.webkit.org/show_bug.cgi?id=67342
+
+        In preparation to allowing StringImpl to be backed by 8 bit 
+        characters when appropriate, we need to eliminate or change the
+        usage of StringImpl::characters(). Change the uses of characters()
+        that are used to implement redundant equals() methods.
+
+        Reviewed by Gavin Barraclough.
+
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::equal):
+        * runtime/Identifier.h:
+        (JSC::Identifier::equal):
+        * wtf/text/AtomicString.cpp:
+        (WTF::CStringTranslator::equal): Moved an optimized method to here.
+        (WTF::operator==):
+        * wtf/text/StringImpl.cpp:
+        (WTF::equal):
+        * wtf/text/StringImpl.h:
+
+2011-09-02  Michael Saboff  <msaboff@apple.com>
+
         Add JSC:RegExp functional tests
         https://bugs.webkit.org/show_bug.cgi?id=67339
 

@@ -995,6 +995,42 @@ bool equal(const StringImpl* a, const char* b)
     return !b[length];
 }
 
+bool equal(const StringImpl* a, const UChar* b, unsigned length)
+{
+    if (!a)
+        return !b;
+    if (!b)
+        return false;
+
+    if (a->length() != length)
+        return false;
+    // FIXME: perhaps we should have a more abstract macro that indicates when
+    // going 4 bytes at a time is unsafe
+#if CPU(ARM) || CPU(SH4) || CPU(MIPS) || CPU(SPARC)
+    const UChar* as = a->characters();
+    for (unsigned i = 0; i != length; ++i)
+        if (as[i] != b[i])
+            return false;
+    return true;
+#else
+    /* Do it 4-bytes-at-a-time on architectures where it's safe */
+    
+    const uint32_t* aCharacters = reinterpret_cast<const uint32_t*>(a->characters());
+    const uint32_t* bCharacters = reinterpret_cast<const uint32_t*>(b);
+    
+    unsigned halfLength = length >> 1;
+    for (unsigned i = 0; i != halfLength; ++i) {
+        if (*aCharacters++ != *bCharacters++)
+            return false;
+    }
+    
+    if (length & 1 &&  *reinterpret_cast<const uint16_t*>(aCharacters) != *reinterpret_cast<const uint16_t*>(bCharacters))
+        return false;
+    
+    return true;
+#endif
+}
+
 bool equalIgnoringCase(StringImpl* a, StringImpl* b)
 {
     return CaseFoldingHash::equal(a, b);

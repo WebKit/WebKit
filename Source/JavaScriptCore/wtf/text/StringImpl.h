@@ -347,6 +347,7 @@ private:
 bool equal(const StringImpl*, const StringImpl*);
 bool equal(const StringImpl*, const char*);
 inline bool equal(const char* a, StringImpl* b) { return equal(b, a); }
+bool equal(const StringImpl*, const UChar*, unsigned);
 
 bool equalIgnoringCase(StringImpl*, StringImpl*);
 bool equalIgnoringCase(StringImpl*, const char*);
