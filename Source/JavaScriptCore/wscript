@@ -55,7 +55,7 @@ def build(bld):
 
     # 1. A simple program
     jscore = bld.new_task_gen(
-        features = 'cxx cstaticlib',
+        features = 'cc cxx cstaticlib',
         includes = '. .. assembler DerivedSources ForwardingHeaders ' + ' '.join(includes),
         source = sources,
         target = 'jscore',

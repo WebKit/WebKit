@@ -1,3 +1,9 @@
+2011-09-03  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Add wtf/dtoa directory to build.
+
+        * waf/build/settings.py:
+
 2011-09-03  Dan Bernstein  <mitz@apple.com>
 
         32-bit build fix.
