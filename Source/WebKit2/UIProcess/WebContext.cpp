@@ -829,4 +829,9 @@ void WebContext::didGetWebCoreStatistics(const StatisticsData& statisticsData, u
     callback->performCallbackWithReturnValue(statistics.get());
 }
     
+void WebContext::garbageCollectJavaScriptObjects()
+{
+    process()->send(Messages::WebProcess::GarbageCollectJavaScriptObjects(), 0);
+}
+
 } // namespace WebKit

@@ -237,3 +237,8 @@ void WKContextGetStatistics(WKContextRef contextRef, void* context, WKContextGet
     toImpl(contextRef)->getWebCoreStatistics(DictionaryCallback::create(context, callback));    
 }
 
+void WKContextGarbageCollectJavaScriptObjects(WKContextRef contextRef)
+{
+    toImpl(contextRef)->garbageCollectJavaScriptObjects();
+}
+

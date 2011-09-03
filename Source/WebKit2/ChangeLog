@@ -1,5 +1,26 @@
 2011-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r94473.
+        http://trac.webkit.org/changeset/94473
+        https://bugs.webkit.org/show_bug.cgi?id=67547
+
+        Putting http://trac.webkit.org/changeset/94454 back in as
+        http://trac.webkit.org/changeset/94472 fixed the problem
+        (Requested by msaboff on #webkit).
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGarbageCollectJavaScriptObjects):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::garbageCollectJavaScriptObjects):
+        * UIProcess/WebContext.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::garbageCollectJavaScriptObjects):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
+2011-09-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r94454.
         http://trac.webkit.org/changeset/94454
         https://bugs.webkit.org/show_bug.cgi?id=67546
