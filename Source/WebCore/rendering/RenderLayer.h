@@ -308,7 +308,10 @@ public:
         UpdatePagination = 1 << 3
     };
     typedef unsigned UpdateLayerPositionsFlags;
-    void updateLayerPositions(UpdateLayerPositionsFlags = CheckForRepaint | IsCompositingUpdateRoot | UpdateCompositingLayers, LayoutPoint* cachedOffset = 0);
+    static const UpdateLayerPositionsFlags defaultFlags = CheckForRepaint | IsCompositingUpdateRoot | UpdateCompositingLayers;
+    // Providing |cachedOffset| prevents a outlineBoxForRepaint from walking back to the root for each layer in our subtree.
+    // This is an optimistic optimization that is not guaranteed to succeed.
+    void updateLayerPositions(LayoutPoint* offsetFromRoot, UpdateLayerPositionsFlags = defaultFlags);
 
     void updateTransform();
 
@@ -400,6 +403,9 @@ public:
     LayoutRect absoluteBoundingBox() const;
 
     void updateHoverActiveState(const HitTestRequest&, HitTestResult&);
+
+    // WARNING: This method returns the offset for the parent as this is what updateLayerPositions expects.
+    LayoutPoint computeOffsetFromRoot(bool& hasLayerOffset) const;
 
     // Return a cached repaint rect, computed relative to the layer renderer's containerForRepaint.
     LayoutRect repaintRect() const { return m_repaintRect; }
@@ -627,6 +633,16 @@ private:
     LayoutUnit overflowBottom() const;
     LayoutUnit overflowLeft() const;
     LayoutUnit overflowRight() const;
+
+    bool canUseConvertToLayerCoords() const
+    {
+        // These RenderObject have an impact on their layers' without them knowing about it.
+        return !renderer()->hasColumns() && !renderer()->hasTransform() && !isComposited()
+#if ENABLE(SVG)
+            && !renderer()->isSVGRoot()
+#endif
+            ;
+    }
 
 protected:
     RenderBoxModelObject* m_renderer;

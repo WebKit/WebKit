@@ -356,7 +356,9 @@ void RenderBoxModelObject::styleDidChange(StyleDifference diff, const RenderStyl
             m_layer->insertOnlyThisLayer();
             if (parent() && !needsLayout() && containingBlock()) {
                 m_layer->setNeedsFullRepaint();
-                m_layer->updateLayerPositions();
+                // There is only one layer to update, it is not worth using |cachedOffset| since
+                // we are not sure the value will be used.
+                m_layer->updateLayerPositions(0);
             }
         }
     } else if (layer() && layer()->parent()) {

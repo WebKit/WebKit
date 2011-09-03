@@ -1,3 +1,55 @@
+2011-09-02  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Enable RenderLayer::updateLayerPosition's cachedOffset optimization for more cases
+        https://bugs.webkit.org/show_bug.cgi?id=66901
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/layers/assert-RenderLayer-update-positions.html
+              Also covered by existing tests under the new ASSERT.
+
+        This change extends the range of callers making use of the cachedOffset optimization.
+
+        Most callers did not make use of cachedOffset as it did not work when called on a subtree.
+        This limitation is now gone thus we can enable it more widely.
+
+        The semantics of the optimization are changed a bit as we now return if it is enabled whereas
+        the old code would check if it was *disabled*. Also there were some renames done to match more
+        closely what was going on (s/cachedOffset/offsetFromRoot/ and s/cachedOffsetDisabled/hasLayerOffset/).
+
+        Note that this is an optimistic optimization: if cachedOffset is not used, then we have
+        done at least an extra traversal up to the root. I have found it to be a wash on file
+        cycler (alexa) but to be a nice improvement (~20%) on some table benchmarks (modifying
+        a cell, scrolling).
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Extended the use of cachedOffset to subtree layouts.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::styleDidChange): Forbid the use cachedOffset in this
+        case as we have only a single layer to update.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::computeOffsetFromRoot): Added this function to get the offset from the root
+        layer at a certain point in the RenderLayer's tree. It gets the root layer's checking if no layer
+        in between would prevent convertToLayerCoords to work and return the position relative to
+        this layer.
+
+        (WebCore::RenderLayer::updateLayerPositions): Added a new ASSERT to make sure our cachedOffset
+        is always fine. Also added a comment about calling convertToLayerCoords.
+
+        (WebCore::RenderLayer::removeOnlyThisLayer): Added cachedOffset here too as we may have to
+        update several layers. We save the offset prior to being removed from the hierarchy for
+        correctness.
+
+        (WebCore::RenderLayer::paintChildLayerIntoColumns): Added a comment here about calling convertToLayerCoords.
+
+        * rendering/RenderLayer.h: Swapped the argument in updateLayerPositions to make
+        cachedOffset a mandatory field. Patched all the callers.
+
+        (WebCore::RenderLayer::canUseConvertToLayerCoords): Added this helper method to know when a
+        renderer prevents convertToLayerCoords from working. Added some FIXME around suspicious use
+        of convertToLayerCoords.
+
 2011-08-30  Matthew Delaney  <mdelaney@apple.com>
 
         Read out of bounds in sUnpremultiplyData_RGBA8888 / ImageBufferData::getData

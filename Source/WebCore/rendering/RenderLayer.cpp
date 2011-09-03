@@ -253,45 +253,75 @@ bool RenderLayer::canRender3DTransforms() const
 #endif
 }
 
-void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, LayoutPoint* cachedOffset)
+LayoutPoint RenderLayer::computeOffsetFromRoot(bool& hasLayerOffset) const
 {
+    hasLayerOffset = true;
+
+    if (!parent())
+        return LayoutPoint();
+
+    // This is similar to root() but we check if an ancestor layer would
+    // prevent the optimization from working.
+    const RenderLayer* rootLayer = 0;
+    for (const RenderLayer* parentLayer = parent(); parentLayer; rootLayer = parentLayer, parentLayer = parentLayer->parent()) {
+        hasLayerOffset = parentLayer->canUseConvertToLayerCoords();
+        if (!hasLayerOffset)
+            return LayoutPoint();
+    }
+    ASSERT(rootLayer == root());
+
+    LayoutPoint offset;
+    parent()->convertToLayerCoords(rootLayer, offset);
+    return offset;
+}
+
+void RenderLayer::updateLayerPositions(LayoutPoint* offsetFromRoot, UpdateLayerPositionsFlags flags)
+{
+#ifndef NDEBUG
+    if (offsetFromRoot) {
+        bool hasLayerOffset;
+        LayoutPoint computedOffsetFromRoot = computeOffsetFromRoot(hasLayerOffset);
+        ASSERT(hasLayerOffset);
+        ASSERT(*offsetFromRoot == computedOffsetFromRoot);
+    }
+#endif
+
     updateLayerPosition(); // For relpositioned layers or non-positioned layers,
                            // we need to keep in sync, since we may have shifted relative
                            // to our parent layer.
-    LayoutPoint oldCachedOffset;
-    if (cachedOffset) {
+    LayoutPoint oldOffsetFromRoot;
+    if (offsetFromRoot) {
         // We can't cache our offset to the repaint container if the mapping is anything more complex than a simple translation
-        bool disableOffsetCache = renderer()->hasColumns() || renderer()->hasTransform() || isComposited();
-#if ENABLE(SVG)
-        disableOffsetCache = disableOffsetCache || renderer()->isSVGRoot();
-#endif
-        if (disableOffsetCache)
-            cachedOffset = 0; // If our cached offset is invalid make sure it's not passed to any of our children
+        if (!canUseConvertToLayerCoords())
+            offsetFromRoot = 0; // If our cached offset is invalid make sure it's not passed to any of our children
         else {
-            oldCachedOffset = *cachedOffset;
+            oldOffsetFromRoot = *offsetFromRoot;
             // Frequently our parent layer's renderer will be the same as our renderer's containing block.  In that case,
             // we just update the cache using our offset to our parent (which is m_topLeft). Otherwise, regenerated cached
             // offsets to the root from the render tree.
             if (!m_parent || m_parent->renderer() == renderer()->containingBlock())
-                cachedOffset->move(m_topLeft.x(), m_topLeft.y()); // Fast case
+                offsetFromRoot->move(m_topLeft.x(), m_topLeft.y()); // Fast case
             else {
                 LayoutPoint offset;
                 convertToLayerCoords(root(), offset);
-                *cachedOffset = offset;
+                *offsetFromRoot = offset;
             }
         }
     }
 
     LayoutPoint offset;
-    if (cachedOffset) {
-        offset = *cachedOffset;
+    if (offsetFromRoot) {
+        offset = *offsetFromRoot;
 #ifndef NDEBUG
-        LayoutPoint nonCachedOffset;
-        convertToLayerCoords(root(), nonCachedOffset);
-        ASSERT(offset == nonCachedOffset);
+        LayoutPoint computedOffsetFromRoot;
+        convertToLayerCoords(root(), computedOffsetFromRoot);
+        ASSERT(offset == computedOffsetFromRoot);
 #endif
-    } else
+    } else {
+        // FIXME: It looks suspicious to call convertToLayerCoords here
+        // as canUseConvertToLayerCoords may be true for an ancestor layer.
         convertToLayerCoords(root(), offset);
+    }
     positionOverflowControls(toSize(offset));
 
     updateVisibilityStatus();
@@ -344,7 +374,7 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, LayoutPo
         flags |= UpdatePagination;
 
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->updateLayerPositions(flags, cachedOffset);
+        child->updateLayerPositions(offsetFromRoot, flags);
 
 #if USE(ACCELERATED_COMPOSITING)
     if ((flags & UpdateCompositingLayers) && isComposited())
@@ -355,8 +385,8 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, LayoutPo
     if (m_marquee)
         m_marquee->updateMarqueePosition();
 
-    if (cachedOffset)
-        *cachedOffset = oldCachedOffset;
+    if (offsetFromRoot)
+        *offsetFromRoot = oldOffsetFromRoot;
 }
 
 LayoutRect RenderLayer::repaintRectIncludingDescendants() const
@@ -1101,6 +1131,8 @@ void RenderLayer::removeOnlyThisLayer()
     // Remove us from the parent.
     RenderLayer* parent = m_parent;
     RenderLayer* nextSib = nextSibling();
+    bool hasLayerOffset;
+    const LayoutPoint offsetFromRootBeforeMove = computeOffsetFromRoot(hasLayerOffset);
     parent->removeChild(this);
     
     if (reflection())
@@ -1113,7 +1145,10 @@ void RenderLayer::removeOnlyThisLayer()
         removeChild(current);
         parent->addChild(current, nextSib);
         current->setNeedsFullRepaint();
-        current->updateLayerPositions(); // Depends on hasLayer() already being false for proper layout.
+        LayoutPoint offsetFromRoot = offsetFromRootBeforeMove;
+        // updateLayerPositions depends on hasLayer() already being false for proper layout.
+        ASSERT(!renderer()->hasLayer());
+        current->updateLayerPositions(hasLayerOffset ? &offsetFromRoot : 0);
         current = next;
     }
 
@@ -2799,6 +2834,8 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
         return;
     
     LayoutPoint layerOffset;
+    // FIXME: It looks suspicious to call convertToLayerCoords here
+    // as canUseConvertToLayerCoords is true for this layer.
     columnBlock->layer()->convertToLayerCoords(rootLayer, layerOffset);
     
     bool isHorizontal = columnBlock->style()->isHorizontalWritingMode();
