@@ -31,7 +31,6 @@
 module events {
 
     interface [
-        Conditional=WORKERS,
         NoStaticTables
     ] ErrorEvent : Event {
 
