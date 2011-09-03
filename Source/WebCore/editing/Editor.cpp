@@ -1472,11 +1472,13 @@ void Editor::confirmComposition()
     confirmComposition(m_compositionNode->data().substring(m_compositionStart, m_compositionEnd - m_compositionStart), false);
 }
 
+// FIXME: This function is poorly named. Callers of this function uses this function to cancel composition,
+// and don't expect it to insert the current composition as the name suggests.
 void Editor::confirmCompositionWithoutDisturbingSelection()
 {
     if (!m_compositionNode)
         return;
-    confirmComposition(m_compositionNode->data().substring(m_compositionStart, m_compositionEnd - m_compositionStart), true);
+    confirmComposition(emptyString(), true);
 }
 
 void Editor::confirmComposition(const String& text)
@@ -1490,9 +1492,10 @@ void Editor::confirmComposition(const String& text, bool preserveSelection)
 
     setIgnoreCompositionSelectionChange(true);
 
-    VisibleSelection oldSelection = m_frame->selection()->selection();
-
-    selectComposition();
+    if (preserveSelection)
+        ASSERT(text == emptyString());
+    else
+        selectComposition();
 
     if (m_frame->selection()->isNone()) {
         setIgnoreCompositionSelectionChange(false);
@@ -1520,7 +1523,6 @@ void Editor::confirmComposition(const String& text, bool preserveSelection)
     insertTextForConfirmedComposition(text);
 
     if (preserveSelection) {
-        m_frame->selection()->setSelection(oldSelection, 0);
         // An open typing command that disagrees about current selection would cause issues with typing later on.
         TypingCommand::closeTyping(m_lastEditCommand.get());
     }

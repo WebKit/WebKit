@@ -1,3 +1,23 @@
+2011-09-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r94274): selection-change-closes-typing.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=67377
+
+        Reviewed by Kent Tamura.
+
+        The problem was that when the shadow DOM is updated by setInnerTextValue, WebKit layer detects the selection
+        change and calls confirmCompositionWithoutDisturbingSelection, which in turn modifies the shadow DOM by
+        inserting text.
+
+        Fixed the bug by not inserting text in confirmCompositionWithoutDisturbingSelection. It turned out that this
+        function is only used to cancel composition but never to confirming composition and restoring selection.
+
+        Test: platform/mac/editing/input/selection-change-closes-typing-2.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::confirmCompositionWithoutDisturbingSelection):
+        (WebCore::Editor::confirmComposition):
+
 2011-09-03  Sam Weinig  <sam@webkit.org>
 
         Add missing Event constructors to DOMWindow.idl
