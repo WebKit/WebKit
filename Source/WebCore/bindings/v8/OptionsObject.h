@@ -27,6 +27,7 @@
 #define OptionsObject_h
 
 #include "PlatformString.h"
+#include "ScriptValue.h"
 #include <v8.h>
 
 namespace WebCore {
@@ -66,6 +67,15 @@ public:
     bool getKeyValue(const String& key, String& value) const
     {
         return getKeyString(key, value);
+    }
+    bool getKeyValue(const String& key, ScriptValue& value) const
+    {
+        v8::Local<v8::Value> v8Value;
+        if (!getKey(key, v8Value))
+            return false;
+
+        value = ScriptValue(v8Value);
+        return true;
     }
 
 private:

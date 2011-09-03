@@ -31,6 +31,7 @@
 #include "config.h"
 #include "EventConstructors.h"
 
+#include "CustomEvent.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Node.h"
@@ -38,6 +39,7 @@
 #include "OptionsObject.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
+#include "V8CustomEvent.h"
 #include "V8Document.h"
 #include "V8Event.h"
 #include "V8Node.h"
@@ -76,7 +78,7 @@ static v8::Handle<v8::Value> constructV8Event(const v8::Arguments& args, bool (*
 }
 
 #define DICTIONARY_START(EventType) \
-    static bool fill##EventType##Init(Event##Init& eventInit, const OptionsObject& options) \
+    static bool fill##EventType##Init(EventType##Init& eventInit, const OptionsObject& options) \
     {
 
 #define DICTIONARY_END(EventType) \
@@ -85,17 +87,18 @@ static v8::Handle<v8::Value> constructV8Event(const v8::Arguments& args, bool (*
     \
     v8::Handle<v8::Value> V8##EventType::constructorCallback(const v8::Arguments& args) \
     { \
-      return constructV8Event<EventType, EventType##Init>(args, fill##EventType##Init, &info); \
+        return constructV8Event<EventType, EventType##Init>(args, fill##EventType##Init, &info); \
     }
 
 #define FILL_PARENT_PROPERTIES(parentEventType) \
-    if (!fill##parentEventType##Init(eventInit)) \
+    if (!fill##parentEventType##Init(eventInit, options)) \
         return false;
 
 #define FILL_PROPERTY(propertyName) \
     options.getKeyValue(#propertyName, eventInit.propertyName); // This can fail but it is OK.
 
 INSTANTIATE_INITIALIZING_CONSTRUCTOR_FOR_EVENT(DICTIONARY_START, DICTIONARY_END, FILL_PARENT_PROPERTIES, FILL_PROPERTY)
+INSTANTIATE_INITIALIZING_CONSTRUCTOR_FOR_CUSTOM_EVENT(DICTIONARY_START, DICTIONARY_END, FILL_PARENT_PROPERTIES, FILL_PROPERTY)
 
 
 } // namespace WebCore

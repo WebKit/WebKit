@@ -1,3 +1,17 @@
+2011-09-02  Kentaro Hara  <haraken@google.com>
+
+        Implement a CustomEvent constructor for V8
+        https://bugs.webkit.org/show_bug.cgi?id=67527
+
+        Reviewed by Sam Weinig.
+
+        Test: fast/events/constructors/custom-event-constructor.html
+
+        * bindings/v8/OptionsObject.h:
+        (WebCore::OptionsObject::getKeyValue): Returns ScriptValue corresponding to a given key.
+        * bindings/v8/custom/V8EventConstructors.cpp: Added the CustomEvent constructor.
+        * dom/CustomEvent.idl: Added a 'V8CustomConstructor' attribute.
+
 2011-09-02  Adrienne Walker  <enne@google.com>
 
         [chromium] Move updateLayers from LayerRendererChromium to CCLayerTreeHost

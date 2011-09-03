@@ -29,7 +29,8 @@ module events {
     // Introduced in DOM Level 3:
     interface [
         CanBeConstructed,
-        CustomConstructFunction
+        CustomConstructFunction,
+        V8CustomConstructor
     ] CustomEvent : Event {
 
        readonly attribute DOMObject detail;
