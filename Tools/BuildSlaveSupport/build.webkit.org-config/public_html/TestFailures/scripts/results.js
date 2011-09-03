@@ -30,11 +30,11 @@ var results = results || {};
 var kTestResultsServer = 'http://test-results.appspot.com/';
 var kTestResultsQuery = kTestResultsServer + 'testfile?'
 var kTestType = 'layout-tests';
-var kResultsName = 'full_results.json';
 var kMasterName = 'ChromiumWebkit';
 
 var kLayoutTestResultsServer = 'http://build.chromium.org/f/chromium/layout_test_results/';
 var kLayoutTestResultsPath = '/results/layout-test-results/';
+var kResultsName = 'full_results.json';
 
 var PASS = 'PASS';
 var TIMEOUT = 'TIMEOUT';
@@ -175,9 +175,9 @@ results.canRebaseline = function(failureTypeList)
     });
 };
 
-function resultsSummaryURL(builderName, testName)
+function resultsSummaryURL(builderName, resultsName)
 {
-    return kTestResultsQuery + $.param(resultsParameters(builderName, testName));
+    return resultsDirectoryURL(builderName) + resultsName;
 }
 
 function directoryOfResultsSummaryURL(builderName, testName)
@@ -536,8 +536,8 @@ results.fetchResultsURLs = function(failureInfo, callback)
 
 results.fetchResultsForBuilder = function(builderName, callback)
 {
-    net.jsonp(resultsSummaryURL(builderName, kResultsName), function(resultsTree) {
-        callback(resultsTree);
+    net.get(resultsSummaryURL(builderName, kResultsName), function(jsonp) {
+        callback(base.parseJSONP(jsonp));
     });
 };
 

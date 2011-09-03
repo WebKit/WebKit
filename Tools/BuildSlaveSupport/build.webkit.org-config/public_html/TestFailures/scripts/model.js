@@ -115,9 +115,6 @@ function updateCommitIndex() {
     });
 }
 
-/*
-    Assumes SVN-style, consecutive revision scheme.
-*/
 model.commitDataListForRevisionRange = function(fromRevision, toRevision)
 {
     var result = [];

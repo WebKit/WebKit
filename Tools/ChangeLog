@@ -1,3 +1,23 @@
+2011-09-03  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic shows "ghost" failures that are already fixed
+        https://bugs.webkit.org/show_bug.cgi?id=67535
+
+        Reviewed by Eric Seidel.
+
+        About 10% of writes fail to stick on test-results.appspot.com.  This
+        patch causes us to fetch the full_results.json blob directly from
+        build.chromium.org rather than relying upon AppEngine.
+
+        Unforuntately, we still need to get historical information from
+        AppEngine.  That will take several patches to fix becuase I need to
+        change the bots to write the full_results.json file to the
+        build-specific directory in addition to the zip file.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/model.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js:
+
 2011-09-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94458.

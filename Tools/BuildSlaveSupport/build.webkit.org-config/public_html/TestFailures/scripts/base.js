@@ -124,6 +124,13 @@ base.filterTree = function(tree, isLeaf, predicate)
     return filteredTree;
 };
 
+base.parseJSONP = function(jsonp)
+{
+    var startIndex = jsonp.indexOf('(') + 1;
+    var endIndex = jsonp.lastIndexOf(')');
+    return JSON.parse(jsonp.substr(startIndex, endIndex - startIndex));
+}
+
 base.RequestTracker = function(requestsInFlight, callback, args)
 {
     this._requestsInFlight = requestsInFlight;
