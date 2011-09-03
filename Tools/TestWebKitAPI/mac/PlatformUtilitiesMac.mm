@@ -79,7 +79,7 @@ std::string toSTD(NSString *string)
 {
     size_t bufferSize = [string lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
     OwnArrayPtr<char> buffer = adoptArrayPtr(new char[bufferSize]);
-    size_t stringLength;
+    NSUInteger stringLength;
     [string getBytes:buffer.get() maxLength:bufferSize usedLength:&stringLength encoding:NSUTF8StringEncoding options:0 range:NSMakeRange(0, [string length]) remainingRange:0];
     return std::string(buffer.get(), stringLength);
 }
