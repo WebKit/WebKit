@@ -105,7 +105,7 @@ bool Extensions3DOpenGL::supports(const String& name)
 
 void Extensions3DOpenGL::ensureEnabled(const String& name)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(QT)
     if (name == "GL_OES_standard_derivatives") {
         // Enable support in ANGLE (if not enabled already)
         ANGLEWebKitBridge& compiler = m_context->m_compiler;
@@ -122,7 +122,7 @@ void Extensions3DOpenGL::ensureEnabled(const String& name)
 
 bool Extensions3DOpenGL::isEnabled(const String& name)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(QT)
     if (name == "GL_OES_standard_derivatives") {
         ANGLEWebKitBridge& compiler = m_context->m_compiler;
         return compiler.getResources().OES_standard_derivatives;

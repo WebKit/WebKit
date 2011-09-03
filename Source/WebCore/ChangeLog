@@ -1,3 +1,18 @@
+2011-09-03  Andrew Wason  <rectalogic@rectalogic.com>
+
+        [Qt] Enable support for WebGL OES_standard_derivatives for Qt
+        https://bugs.webkit.org/show_bug.cgi?id=67430
+
+        Reviewed by Noam Rosenthal.
+
+        Tested using https://cvs.khronos.org/svn/repos/registry/trunk/public/webgl/sdk/tests/conformance/extensions/oes-standard-derivatives.html
+
+        Enable existing support for OES_standard_derivatives for Qt.
+
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::ensureEnabled):
+        (WebCore::Extensions3DOpenGL::isEnabled):
+
 2011-09-03  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Send ArrayBuffer as WebSocket binary message
