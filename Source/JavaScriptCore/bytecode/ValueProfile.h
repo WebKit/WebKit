@@ -29,6 +29,8 @@
 #ifndef ValueProfile_h
 #define ValueProfile_h
 
+#include "JSArray.h"
+#include "Structure.h"
 #include "WriteBarrier.h"
 
 namespace JSC {
@@ -45,14 +47,25 @@ struct ValueProfile {
         : bytecodeOffset(bytecodeOffset)
     {
         for (unsigned i = 0; i < numberOfBuckets; ++i)
-            buckets[i].setWithoutWriteBarrier(JSValue());
+            buckets[i] = JSValue::encode(JSValue());
+    }
+    
+    const ClassInfo* classInfo(unsigned bucket) const
+    {
+        if (!!buckets[bucket]) {
+            JSValue value = JSValue::decode(buckets[bucket]);
+            if (!value.isCell())
+                return 0;
+            return value.asCell()->structure()->classInfo();
+        }
+        return weakBuckets[bucket].getClassInfo();
     }
     
     unsigned numberOfSamples() const
     {
         unsigned result = 0;
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
-            if (!!buckets[i])
+            if (!!buckets[i] || !!weakBuckets[i])
                 result++;
         }
         return result;
@@ -69,7 +82,7 @@ struct ValueProfile {
     {
         unsigned result = 0;
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
-            if (!!buckets[i] && buckets[i].get().isInt32())
+            if (!!buckets[i] && JSValue::decode(buckets[i]).isInt32())
                 result++;
         }
         return result;
@@ -79,7 +92,7 @@ struct ValueProfile {
     {
         unsigned result = 0;
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
-            if (!!buckets[i] && buckets[i].get().isDouble())
+            if (!!buckets[i] && JSValue::decode(buckets[i]).isDouble())
                 result++;
         }
         return result;
@@ -89,7 +102,17 @@ struct ValueProfile {
     {
         unsigned result = 0;
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
-            if (!!buckets[i] && buckets[i].get().isCell())
+            if (!!classInfo(i))
+                result++;
+        }
+        return result;
+    }
+    
+    unsigned numberOfArrays() const
+    {
+        unsigned result = 0;
+        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+            if (classInfo(i) == &JSArray::s_info)
                 result++;
         }
         return result;
@@ -115,8 +138,77 @@ struct ValueProfile {
         return computeProbability(numberOfCells(), numberOfSamples());
     }
     
+    unsigned probabilityOfArray() const
+    {
+        return computeProbability(numberOfArrays(), numberOfSamples());
+    }
+    
     int bytecodeOffset; // -1 for prologue
-    WriteBarrierBase<Unknown> buckets[numberOfBuckets];
+    EncodedJSValue buckets[numberOfBuckets];
+    
+    class WeakBucket {
+    public:
+        WeakBucket()
+            : m_value(0)
+        {
+        }
+        
+        WeakBucket(Structure* structure)
+            : m_value(reinterpret_cast<uintptr_t>(structure))
+        {
+        }
+        
+        WeakBucket(const ClassInfo* classInfo)
+            : m_value(reinterpret_cast<uintptr_t>(classInfo) | 1)
+        {
+        }
+        
+        bool operator!() const
+        {
+            return !m_value;
+        }
+        
+        bool isEmpty() const
+        {
+            return !m_value;
+        }
+        
+        bool isClassInfo() const
+        {
+            return !!(m_value & 1);
+        }
+        
+        bool isStructure() const
+        {
+            return !isEmpty() && !isClassInfo();
+        }
+        
+        Structure* asStructure() const
+        {
+            ASSERT(isStructure());
+            return reinterpret_cast<Structure*>(m_value);
+        }
+        
+        const ClassInfo* asClassInfo() const
+        {
+            ASSERT(isClassInfo());
+            return reinterpret_cast<ClassInfo*>(m_value & ~static_cast<uintptr_t>(1));
+        }
+        
+        const ClassInfo* getClassInfo() const
+        {
+            if (isEmpty())
+                return 0;
+            if (isClassInfo())
+                return asClassInfo();
+            return asStructure()->classInfo();
+        }
+        
+    private:
+        uintptr_t m_value;
+    };
+    
+    WeakBucket weakBuckets[numberOfBuckets]; // this is not covered by a write barrier because it is only set from GC
 };
 
 inline int getValueProfileBytecodeOffset(ValueProfile* valueProfile)

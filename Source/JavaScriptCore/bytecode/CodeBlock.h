@@ -39,6 +39,7 @@
 #include "Nodes.h"
 #include "RegExpObject.h"
 #include "UString.h"
+#include "WeakReferenceHarvester.h"
 #include "ValueProfile.h"
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
@@ -205,7 +206,7 @@ namespace JSC {
     }
 #endif
 
-    class CodeBlock {
+    class CodeBlock: public WeakReferenceHarvester {
         WTF_MAKE_FAST_ALLOCATED;
         friend class JIT;
     protected:
@@ -218,6 +219,7 @@ namespace JSC {
         virtual ~CodeBlock();
 
         void visitAggregate(SlotVisitor&);
+        void visitWeakReferences(SlotVisitor&);
 
         static void dumpStatistics();
 

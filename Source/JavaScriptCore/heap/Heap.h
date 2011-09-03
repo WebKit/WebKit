@@ -152,6 +152,7 @@ namespace JSC {
         void markRoots();
         void markProtectedObjects(HeapRootVisitor&);
         void markTempSortVectors(HeapRootVisitor&);
+        void harvestWeakReferences();
 
         void* tryAllocate(NewSpace::SizeClass&);
         void* allocateSlowCase(NewSpace::SizeClass&);

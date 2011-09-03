@@ -35,7 +35,8 @@ public:
     SlotVisitor(void* jsArrayVPtr);
 
     void drain();
-
+    void harvestWeakReferences();
+    
 private:
     void visitChildren(JSCell*);
 };

@@ -1433,19 +1433,21 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
 CodeBlock::~CodeBlock()
 {
 #if ENABLE(VERBOSE_VALUE_PROFILE)
-    printf("ValueProfile for %p:\n", this);
+    fprintf(stderr, "ValueProfile for %p:\n", this);
     for (unsigned i = 0; i < numberOfValueProfiles(); ++i) {
         ValueProfile* profile = valueProfile(i);
         if (profile->bytecodeOffset < 0) {
             ASSERT(profile->bytecodeOffset == -1);
-            printf("   arg = %u: ", i + 1);
+            fprintf(stderr, "   arg = %u: ", i + 1);
         } else
-            printf("   bc = %d: ", profile->bytecodeOffset);
-        printf("samples = %u, int32 = %u, double = %u, cell = %u\n",
-               profile->numberOfSamples(),
-               profile->probabilityOfInt32(),
-               profile->probabilityOfDouble(),
-               profile->probabilityOfCell());
+            fprintf(stderr, "   bc = %d: ", profile->bytecodeOffset);
+        fprintf(stderr,
+                "samples = %u, int32 = %u, double = %u, cell = %u, array = %u\n",
+                profile->numberOfSamples(),
+                profile->probabilityOfInt32(),
+                profile->probabilityOfDouble(),
+                profile->probabilityOfCell(),
+                profile->probabilityOfArray());
     }
 #endif
 
@@ -1515,6 +1517,8 @@ void EvalCodeCache::visitAggregate(SlotVisitor& visitor)
 
 void CodeBlock::visitAggregate(SlotVisitor& visitor)
 {
+    bool handleWeakReferences = false;
+    
     visitor.append(&m_globalObject);
     visitor.append(&m_ownerExecutable);
     if (m_rareData) {
@@ -1559,6 +1563,64 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
             visitor.append(&m_methodCallLinkInfos[i].cachedPrototypeStructure);
             visitor.append(&m_methodCallLinkInfos[i].cachedFunction);
             visitor.append(&m_methodCallLinkInfos[i].cachedPrototype);
+        }
+    }
+#endif
+
+#if ENABLE(VALUE_PROFILER)
+    for (unsigned profileIndex = 0; profileIndex < numberOfValueProfiles(); ++profileIndex) {
+        ValueProfile* profile = valueProfile(profileIndex);
+        
+        for (unsigned index = 0; index < ValueProfile::numberOfBuckets; ++index) {
+            if (!profile->buckets[index]) {
+                if (!!profile->weakBuckets[index])
+                    handleWeakReferences = true;
+                continue;
+            }
+            
+            if (!JSValue::decode(profile->buckets[index]).isCell()) {
+                profile->weakBuckets[index] = ValueProfile::WeakBucket();
+                continue;
+            }
+            
+            handleWeakReferences = true;
+        }
+    }
+#endif
+    
+    if (handleWeakReferences)
+        visitor.addWeakReferenceHarvester(this);
+}
+
+void CodeBlock::visitWeakReferences(SlotVisitor&)
+{
+#if ENABLE(VALUE_PROFILER)
+    for (unsigned profileIndex = 0; profileIndex < numberOfValueProfiles(); ++profileIndex) {
+        ValueProfile* profile = valueProfile(profileIndex);
+        
+        for (unsigned index = 0; index < ValueProfile::numberOfBuckets; ++index) {
+            if (!!profile->buckets[index]) {
+                JSValue value = JSValue::decode(profile->buckets[index]);
+                if (!value.isCell())
+                    continue;
+                
+                JSCell* cell = value.asCell();
+                if (Heap::isMarked(cell))
+                    continue;
+                
+                profile->buckets[index] = JSValue::encode(JSValue());
+                profile->weakBuckets[index] = cell->structure();
+            }
+            
+            ValueProfile::WeakBucket weak = profile->weakBuckets[index];
+            if (!weak || weak.isClassInfo())
+                continue;
+            
+            ASSERT(weak.isStructure());
+            if (Heap::isMarked(weak.asStructure()))
+                continue;
+            
+            profile->weakBuckets[index] = weak.asStructure()->classInfo();
         }
     }
 #endif

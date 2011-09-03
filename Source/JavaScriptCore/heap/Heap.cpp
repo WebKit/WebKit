@@ -513,6 +513,11 @@ void Heap::markTempSortVectors(HeapRootVisitor& heapRootVisitor)
     }
 }
 
+void Heap::harvestWeakReferences()
+{
+    m_slotVisitor.harvestWeakReferences();
+}
+
 inline RegisterFile& Heap::registerFile()
 {
     return m_globalData->interpreter->registerFile();
@@ -580,6 +585,8 @@ void Heap::markRoots()
 
     m_handleStack.visit(heapRootVisitor);
     visitor.drain();
+
+    harvestWeakReferences();
 
     // Weak handles must be marked last, because their owners use the set of
     // opaque roots to determine reachability.

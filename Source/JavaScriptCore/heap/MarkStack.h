@@ -30,6 +30,7 @@
 #include "JSValue.h"
 #include "Register.h"
 #include "VTableSpectrum.h"
+#include "WeakReferenceHarvester.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -93,6 +94,9 @@ namespace JSC {
         template<typename T> inline void append(WriteBarrierBase<T>*);
         inline void appendValues(WriteBarrierBase<Unknown>*, size_t count);
         
+        template<typename T>
+        inline void appendUnbarrieredPointer(T**);
+        
         bool addOpaqueRoot(void*);
         bool containsOpaqueRoot(void*);
         int opaqueRootCount();
@@ -102,6 +106,14 @@ namespace JSC {
 #if ENABLE(SIMPLE_HEAP_PROFILING)
         VTableSpectrum m_visitedTypeCounts;
 #endif
+
+        void addWeakReferenceHarvester(WeakReferenceHarvester* weakReferenceHarvester)
+        {
+            if (weakReferenceHarvester->m_nextAndFlag & 1)
+                return;
+            weakReferenceHarvester->m_nextAndFlag = reinterpret_cast<uintptr_t>(m_firstWeakReferenceHarvester) | 1;
+            m_firstWeakReferenceHarvester = weakReferenceHarvester;
+        }
 
     protected:
 #if ENABLE(GC_VALIDATION)
@@ -120,6 +132,7 @@ namespace JSC {
         MarkStackArray<MarkSet> m_markSets;
         MarkStackArray<JSCell*> m_values;
         HashSet<void*> m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
+        WeakReferenceHarvester* m_firstWeakReferenceHarvester;
         
 #if !ASSERT_DISABLED
     public:
@@ -130,6 +143,7 @@ namespace JSC {
 
     inline MarkStack::MarkStack(void* jsArrayVPtr)
         : m_jsArrayVPtr(jsArrayVPtr)
+        , m_firstWeakReferenceHarvester(0)
 #if !ASSERT_DISABLED
         , m_isCheckingForDefaultMarkViolation(false)
         , m_isDraining(false)
@@ -254,6 +268,15 @@ namespace JSC {
         validateSet(slot, count);
 #endif
         m_markSets.append(MarkSet(slot, slot + count));
+    }
+
+    template<typename T>
+    inline void MarkStack::appendUnbarrieredPointer(T** slot)
+    {
+        ASSERT(slot);
+        JSCell* value = *slot;
+        if (value)
+            internalAppend(value);
     }
     
     ALWAYS_INLINE void MarkStack::append(JSValue* value)

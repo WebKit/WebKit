@@ -1,3 +1,56 @@
+2011-09-02  Filip Pizlo  <fpizlo@apple.com>
+
+        ValueProfile does not make it safe to introspect cell values
+        after garbage collection
+        https://bugs.webkit.org/show_bug.cgi?id=67354
+
+        Reviewed by Gavin Barraclough.
+        
+        ValueProfile buckets are now weak references, implemented using a
+        light-weight weak reference mechanism that this patch also adds (the
+        WeakReferenceHarvester).  If a cell stored in a ValueProfile bucket
+        is not marked, then the bucket is transformed into a Structure
+        pointer.  If the Structure is not marked either, then it is turned
+        into a ClassInfo pointer.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::visitAggregate):
+        (JSC::CodeBlock::visitWeakReferences):
+        * bytecode/CodeBlock.h:
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfile::ValueProfile):
+        (JSC::ValueProfile::classInfo):
+        (JSC::ValueProfile::numberOfInt32s):
+        (JSC::ValueProfile::numberOfDoubles):
+        (JSC::ValueProfile::numberOfCells):
+        (JSC::ValueProfile::numberOfArrays):
+        (JSC::ValueProfile::probabilityOfArray):
+        (JSC::ValueProfile::WeakBucket::WeakBucket):
+        (JSC::ValueProfile::WeakBucket::operator!):
+        (JSC::ValueProfile::WeakBucket::isEmpty):
+        (JSC::ValueProfile::WeakBucket::isClassInfo):
+        (JSC::ValueProfile::WeakBucket::isStructure):
+        (JSC::ValueProfile::WeakBucket::asStructure):
+        (JSC::ValueProfile::WeakBucket::asClassInfo):
+        (JSC::ValueProfile::WeakBucket::getClassInfo):
+        * heap/Heap.cpp:
+        (JSC::Heap::harvestWeakReferences):
+        (JSC::Heap::markRoots):
+        * heap/Heap.h:
+        * heap/MarkStack.cpp:
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::harvestWeakReferences):
+        * heap/MarkStack.h:
+        (JSC::MarkStack::addWeakReferenceHarvester):
+        (JSC::MarkStack::MarkStack):
+        (JSC::MarkStack::appendUnbarrieredPointer):
+        * heap/SlotVisitor.h:
+        * heap/WeakReferenceHarvester.h: Added.
+        (JSC::WeakReferenceHarvester::WeakReferenceHarvester):
+        (JSC::WeakReferenceHarvester::~WeakReferenceHarvester):
+
 2011-09-02  Michael Saboff  <msaboff@apple.com>
 
         Replace local implementation of string equals() methods with UString versions

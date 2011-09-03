@@ -136,6 +136,17 @@ void SlotVisitor::drain()
 #endif
 }
 
+void SlotVisitor::harvestWeakReferences()
+{
+    while (m_firstWeakReferenceHarvester) {
+        WeakReferenceHarvester* current = m_firstWeakReferenceHarvester;
+        WeakReferenceHarvester* next = reinterpret_cast<WeakReferenceHarvester*>(current->m_nextAndFlag & ~1);
+        current->m_nextAndFlag = 0;
+        m_firstWeakReferenceHarvester = next;
+        current->visitWeakReferences(*this);
+    }
+}
+
 #if ENABLE(GC_VALIDATION)
 void MarkStack::validateSet(JSValue* values, size_t count)
 {
