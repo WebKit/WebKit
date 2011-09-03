@@ -1,3 +1,27 @@
+2011-09-02  Michael Saboff  <msaboff@apple.com>
+
+        Add JSC:RegExp functional test data generator
+        https://bugs.webkit.org/show_bug.cgi?id=67519
+
+        Add a data generator for regular expressions.  To enable, change the
+        #undef REGEXP_FUNC_TEST_DATA_GEN to #define.  Then compile and use
+        regular expressions.  The resulting data will be in /tmp/RegExpTestsData.
+
+        Reviewed by Gavin Barraclough.
+
+        * runtime/RegExp.cpp:
+        (JSC::regExpFlags):
+        (JSC::RegExpFunctionalTestCollector::clearRegExp):
+        (JSC::RegExpFunctionalTestCollector::get):
+        (JSC::RegExpFunctionalTestCollector::outputOneTest):
+        (JSC::RegExpFunctionalTestCollector::RegExpFunctionalTestCollector):
+        (JSC::RegExpFunctionalTestCollector::~RegExpFunctionalTestCollector):
+        (JSC::RegExpFunctionalTestCollector::outputEscapedUString):
+        (JSC::RegExp::~RegExp):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::match):
+        (JSC::RegExp::matchCompareWithInterpreter):
+
 2011-09-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fix the broken build due to dtoa patch

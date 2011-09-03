@@ -33,6 +33,9 @@
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
 
+
+#define REGEXP_FUNC_TEST_DATA_GEN 0
+
 namespace JSC {
 
 const ClassInfo RegExp::s_info = { "RegExp", 0, 0, 0 };
@@ -68,7 +71,152 @@ RegExpFlags regExpFlags(const UString& string)
 
     return flags;
 }
-  
+
+#if REGEXP_FUNC_TEST_DATA_GEN
+class RegExpFunctionalTestCollector {
+    // This class is not thread safe.
+protected:
+    static const char* const s_fileName;
+
+public:
+    static RegExpFunctionalTestCollector* get();
+
+    ~RegExpFunctionalTestCollector();
+
+    void outputOneTest(RegExp*, UString, int, int*, int);
+    void clearRegExp(RegExp* regExp)
+    {
+        if (regExp == m_lastRegExp)
+            m_lastRegExp = 0;
+    }
+
+private:
+    RegExpFunctionalTestCollector();
+
+    void outputEscapedUString(const UString&, bool escapeSlash = false);
+
+    static RegExpFunctionalTestCollector* s_instance;
+    FILE* m_file;
+    RegExp* m_lastRegExp;
+};
+
+const char* const RegExpFunctionalTestCollector::s_fileName = "/tmp/RegExpTestsData";
+RegExpFunctionalTestCollector* RegExpFunctionalTestCollector::s_instance = 0;
+
+RegExpFunctionalTestCollector* RegExpFunctionalTestCollector::get()
+{
+    if (!s_instance)
+        s_instance = new RegExpFunctionalTestCollector();
+
+    return s_instance;
+}
+
+void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, UString s, int startOffset, int* ovector, int result)
+{
+    if ((!m_lastRegExp) || (m_lastRegExp != regExp)) {
+        m_lastRegExp = regExp;
+        fputc('/', m_file);
+        outputEscapedUString(regExp->pattern(), true);
+        fputc('/', m_file);
+        if (regExp->global())
+            fputc('g', m_file);
+        if (regExp->ignoreCase())
+            fputc('i', m_file);
+        if (regExp->multiline())
+            fputc('m', m_file);
+        fprintf(m_file, "\n");
+    }
+
+    fprintf(m_file, " \"");
+    outputEscapedUString(s);
+    fprintf(m_file, "\", %d, %d, (", startOffset, result);
+    for (unsigned i = 0; i <= regExp->numSubpatterns(); i++) {
+        int subPatternBegin = ovector[i * 2];
+        int subPatternEnd = ovector[i * 2 + 1];
+        if (subPatternBegin == -1)
+            subPatternEnd = -1;
+        fprintf(m_file, "%d, %d", subPatternBegin, subPatternEnd);
+        if (i < regExp->numSubpatterns())
+            fputs(", ", m_file);
+    }
+
+    fprintf(m_file, ")\n");
+    fflush(m_file);
+}
+
+RegExpFunctionalTestCollector::RegExpFunctionalTestCollector()
+{
+    m_file = fopen(s_fileName, "r+");
+    if  (!m_file)
+        m_file = fopen(s_fileName, "w+");
+
+    fseek(m_file, 0L, SEEK_END);
+}
+
+RegExpFunctionalTestCollector::~RegExpFunctionalTestCollector()
+{
+    fclose(m_file);
+    s_instance = 0;
+}
+
+void RegExpFunctionalTestCollector::outputEscapedUString(const UString& s, bool escapeSlash)
+{
+    int len = s.length();
+    
+    for (int i = 0; i < len; ++i) {
+        UChar c = s[i];
+
+        switch (c) {
+        case '\0':
+            fputs("\\0", m_file);
+            break;
+        case '\a':
+            fputs("\\a", m_file);
+            break;
+        case '\b':
+            fputs("\\b", m_file);
+            break;
+        case '\f':
+            fputs("\\f", m_file);
+            break;
+        case '\n':
+            fputs("\\n", m_file);
+            break;
+        case '\r':
+            fputs("\\r", m_file);
+            break;
+        case '\t':
+            fputs("\\t", m_file);
+            break;
+        case '\v':
+            fputs("\\v", m_file);
+            break;
+        case '/':
+            if (escapeSlash)
+                fputs("\\/", m_file);
+            else
+                fputs("/", m_file);
+            break;
+        case '\"':
+            fputs("\\\"", m_file);
+            break;
+        case '\\':
+            fputs("\\\\", m_file);
+            break;
+        case '\?':
+            fputs("\?", m_file);
+            break;
+        default:
+            if (c > 0x7f)
+                fprintf(m_file, "\\u%04x", c);
+            else 
+                fputc(c, m_file);
+            break;
+        }
+    }
+}
+#endif
+
 struct RegExpRepresentation {
 #if ENABLE(YARR_JIT)
     Yarr::YarrCodeBlock m_regExpJITCode;
@@ -102,6 +250,9 @@ void RegExp::finishCreation(JSGlobalData& globalData)
 
 RegExp::~RegExp()
 {
+#if REGEXP_FUNC_TEST_DATA_GEN
+    RegExpFunctionalTestCollector::get()->clearRegExp(this);
+#endif
 }
 
 RegExp* RegExp::createWithoutCaching(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)
@@ -197,6 +348,10 @@ int RegExp::match(JSGlobalData& globalData, const UString& s, int startOffset, V
 #endif
             result = Yarr::interpret(m_representation->m_regExpBytecode.get(), s.characters(), startOffset, s.length(), offsetVector);
         ASSERT(result >= -1);
+
+#if REGEXP_FUNC_TEST_DATA_GEN
+        RegExpFunctionalTestCollector::get()->outputOneTest(this, s, startOffset, offsetVector, result);
+#endif
 
 #if ENABLE(REGEXP_TRACING)
         if (result != -1)
