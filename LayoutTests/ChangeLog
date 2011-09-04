@@ -1,3 +1,19 @@
+2011-09-04  Sam Weinig  <sam@webkit.org>
+
+        Document.createEvent should support all the interfaces of Event we got
+        https://bugs.webkit.org/show_bug.cgi?id=67568
+
+        Reviewed by Anders Carlsson.
+
+        * fast/events/event-creation.html:
+        Converted to shouldBe style test, changed prototype check to us instanceof and constructor check,
+        added enumeration based catchall.
+
+        * fast/events/event-instanceof-expected.txt: Removed.
+        * fast/events/event-instanceof.html: Removed.
+        * fast/events/script-tests/event-instanceof.js: Removed.
+        Moved contents to fast/events/event-creation.html.
+
 2011-09-04  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed fix for chromium expectations.

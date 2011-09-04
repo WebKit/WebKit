@@ -30,6 +30,11 @@ class HashChangeEvent : public Event {
 public:
     virtual bool isHashChangeEvent() const { return true; }
 
+    static PassRefPtr<HashChangeEvent> create()
+    {
+        return adoptRef(new HashChangeEvent);
+    }
+
     static PassRefPtr<HashChangeEvent> create(const String& oldURL, const String& newURL)
     {
         return adoptRef(new HashChangeEvent(oldURL, newURL));
@@ -50,11 +55,16 @@ public:
     const String& newURL() const { return m_newURL; }
 
 private:
+    HashChangeEvent()
+    {
+    }
+
     HashChangeEvent(const String& oldURL, const String& newURL)
         : Event(eventNames().hashchangeEvent, false, false)
         , m_oldURL(oldURL)
         , m_newURL(newURL)
-    {}
+    {
+    }
 
     String m_oldURL;
     String m_newURL;

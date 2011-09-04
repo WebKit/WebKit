@@ -36,6 +36,11 @@ class BeforeLoadEvent : public Event {
 public:
     virtual bool isBeforeLoadEvent() const { return true; }
 
+    static PassRefPtr<BeforeLoadEvent> create()
+    {
+        return adoptRef(new BeforeLoadEvent);
+    }
+
     static PassRefPtr<BeforeLoadEvent> create(const String& url)
     {
         return adoptRef(new BeforeLoadEvent(url));
@@ -54,10 +59,15 @@ public:
     const String& url() const { return m_url; }
 
 private:
+    BeforeLoadEvent()
+    {
+    }
+
     BeforeLoadEvent(const String& url)
         : Event(eventNames().beforeloadEvent, false, true)
         , m_url(url)
-    {}
+    {
+    }
 
     String m_url;
 };
