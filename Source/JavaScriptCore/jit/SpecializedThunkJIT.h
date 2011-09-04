@@ -95,11 +95,22 @@ namespace JSC {
         {
 #if USE(JSVALUE64)
             moveDoubleToPtr(src, regT0);
+            Jump zero = branchTestPtr(Zero, regT0);
             subPtr(tagTypeNumberRegister, regT0);
+            Jump done = jump();
+            zero.link(this);
+            move(tagTypeNumberRegister, regT0);
+            done.link(this);
 #else
             storeDouble(src, Address(stackPointerRegister, -(int)sizeof(double)));
             loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(JSValue, u.asBits.tag) - sizeof(double)), regT1);
             loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(JSValue, u.asBits.payload) - sizeof(double)), regT0);
+            Jump lowNonZero = branchTestPtr(NonZero, regT1);
+            Jump highNonZero = branchTestPtr(NonZero, regT0);
+            move(TrustedImm32(0), regT0);
+            move(TrustedImm32(Int32Tag), regT1);
+            lowNonZero.link(this);
+            highNonZero.link(this);
 #endif
             loadPtr(payloadFor(RegisterFile::CallerFrame, callFrameRegister), callFrameRegister);
             ret();

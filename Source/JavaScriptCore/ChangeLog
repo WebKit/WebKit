@@ -1,3 +1,15 @@
+2011-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        ThunkGenerators does not convert positive double zero into integer zero
+        https://bugs.webkit.org/show_bug.cgi?id=67553
+
+        Reviewed by Gavin Barraclough.
+        
+        This is an 0.5% speed-up on V8 and neutral elsewhere.
+
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::returnDouble):
+
 2011-09-03  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Add wtf/dtoa directory to build.
