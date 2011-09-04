@@ -197,9 +197,14 @@ public:
     // Returns the current space allocated for the pagefile, in MB.
     // That is committed size for Windows and virtual memory size for POSIX
     static int memoryUsageMB();
-
     // Same as above, but always returns actual value, without any caches.
     static int actualMemoryUsageMB();
+    // If memory usage is below this threshold, do not bother forcing GC.
+    static int lowMemoryUsageMB();
+    // If memory usage is above this threshold, force GC more aggressively.
+    static int highMemoryUsageMB();
+    // Delta of memory usage growth (vs. last actualMemoryUsageMB()) to force GC when memory usage is high.
+    static int highUsageDeltaMB();
 
     // MimeType -----------------------------------------------------------
     static bool isSupportedImageMIMEType(const String& mimeType);

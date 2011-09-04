@@ -1,3 +1,20 @@
+2011-09-04  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Add memory threshold values to WebKitPlatformSupport.h
+        https://bugs.webkit.org/show_bug.cgi?id=67575
+
+        Reviewed by Darin Fisher.
+
+        Grab these memory thresholds from PlatformSupport rather than hard-coding them.
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::V8GCController::checkMemoryUsage):
+        * platform/chromium/PlatformSupport.h:
+        * platform/qt/PlatformSupport.h:
+        (WebCore::PlatformSupport::lowMemoryUsageMB):
+        (WebCore::PlatformSupport::highMemoryUsageMB):
+        (WebCore::PlatformSupport::highUsageDeltaMB):
+
 2011-09-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Add new / moved files missing from last commit.

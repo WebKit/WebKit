@@ -1,3 +1,30 @@
+2011-09-04  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Add memory threshold values to WebKitPlatformSupport.h
+        https://bugs.webkit.org/show_bug.cgi?id=67575
+
+        Reviewed by Darin Fisher.
+
+        Instead of hard-coding these values, we now grab them from
+        WebKitPlatformSupport because Android wishes to configure them on a
+        per-device basis.
+
+        One could view grabing these values from PlatformSupport as a bit of a
+        layering violation (because they feel like policy), but another view is
+        that the alternative implementation is to query the OS for various
+        memory parameters.  In either case, getting these values via
+        PlatformSupport is much easier and consistent with the other memory
+        related queries in PlatformSupport already.
+
+        * public/WebKitPlatformSupport.h:
+        (WebKit::WebKitPlatformSupport::lowMemoryUsageMB):
+        (WebKit::WebKitPlatformSupport::highMemoryUsageMB):
+        (WebKit::WebKitPlatformSupport::highUsageDeltaMB):
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::lowMemoryUsageMB):
+        (WebCore::PlatformSupport::highMemoryUsageMB):
+        (WebCore::PlatformSupport::highUsageDeltaMB):
+
 2011-09-02  Adam Barth  <abarth@webkit.org>
 
         Remove WebKitClient.h

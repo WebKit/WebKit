@@ -91,6 +91,15 @@ public:
     static bool popupsAllowed(NPP npp);
     // Plugin
     static NPObject* pluginScriptableObject(Widget*);
+
+    // If memory usage is below this threshold, do not bother forcing GC.
+    static int lowMemoryUsageMB() { return 256; }
+
+    // If memory usage is above this threshold, force GC more aggressively.
+    static int highMemoryUsageMB() { return 1024; }
+
+    // Delta of memory usage growth (vs. last actualMemoryUsageMB()) to force GC when memory usage is high.
+    static int highUsageDeltaMB() { return 128; }
 };
 
 }

@@ -1010,6 +1010,21 @@ int PlatformSupport::actualMemoryUsageMB()
     return static_cast<int>(webKitPlatformSupport()->actualMemoryUsageMB());
 }
 
+int PlatformSupport::lowMemoryUsageMB()
+{
+    return static_cast<int>(webKitPlatformSupport()->lowMemoryUsageMB());
+}
+
+int PlatformSupport::highMemoryUsageMB()
+{
+    return static_cast<int>(webKitPlatformSupport()->highMemoryUsageMB());
+}
+
+int PlatformSupport::highUsageDeltaMB()
+{
+    return static_cast<int>(webKitPlatformSupport()->highUsageDeltaMB());
+}
+
 int PlatformSupport::screenDepth(Widget* widget)
 {
     WebWidgetClient* client = toWebWidgetClient(widget);
