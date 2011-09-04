@@ -43,8 +43,9 @@ struct WebPopupMenuInfo {
     int selectedIndex;
     WebVector<WebMenuItemInfo> items;
     bool rightAligned;
+    bool allowMultipleSelection;
 };
 
-} // namespace WebKit
+}
 
 #endif

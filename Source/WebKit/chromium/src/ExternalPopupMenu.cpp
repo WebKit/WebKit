@@ -128,8 +128,7 @@ void ExternalPopupMenu::didCancel()
 void ExternalPopupMenu::getPopupMenuInfo(WebPopupMenuInfo* info)
 {
     int itemCount = m_popupMenuClient->listSize();
-    WebVector<WebMenuItemInfo> items(
-        static_cast<size_t>(itemCount));
+    WebVector<WebMenuItemInfo> items(static_cast<size_t>(itemCount));
     for (int i = 0; i < itemCount; ++i) {
         WebMenuItemInfo& popupItem = items[i];
         popupItem.label = m_popupMenuClient->itemText(i);
@@ -150,12 +149,15 @@ void ExternalPopupMenu::getPopupMenuInfo(WebPopupMenuInfo* info)
     }
 
     info->itemHeight = m_popupMenuClient->menuStyle().font().fontMetrics().height();
-    info->itemFontSize =
-        static_cast<int>(m_popupMenuClient->menuStyle().font().size());
+    info->itemFontSize = static_cast<int>(m_popupMenuClient->menuStyle().font().size());
     info->selectedIndex = m_popupMenuClient->selectedIndex();
-    info->rightAligned =
-        m_popupMenuClient->menuStyle().textDirection() == WebCore::RTL;
+    info->rightAligned = m_popupMenuClient->menuStyle().textDirection() == WebCore::RTL;
+#if ENABLE(NO_LISTBOX_RENDERING)
+    // FIXME: Why is this cast safe?
+    ListPopupMenuClient* client = static_cast<ListPopupMenuClient*>(m_popupMenuClient);
+    info->allowMultipleSelection = client->multiple();
+#endif
     info->items.swap(items);
 }
 
-} // namespace WebKit
+}
