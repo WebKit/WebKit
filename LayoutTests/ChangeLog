@@ -1,3 +1,11 @@
+2011-09-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed fix for chromium expectations.
+        The expectations for http/tests/security/xssAuditor/dom-write-innerHTML.html
+        were in conflict. The first was for LINUX the second was for DEBUG. I just added RELEASE flag for LINUX one.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r94274): selection-change-closes-typing.html fails
