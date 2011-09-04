@@ -48,6 +48,10 @@
 #include <wx/dcgraph.h>
 #include <wx/graphics.h>
 
+#if wxUSE_CAIRO
+#include <cairo.h>
+#endif
+
 #if __WXMAC__
 #include <Carbon/Carbon.h>
 #elif __WXMSW__
@@ -354,7 +358,18 @@ void GraphicsContext::clipOut(const IntRect& rect)
 #if USE(WXGC)
     wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
 
-#ifdef __WXMAC__
+#if wxUSE_CAIRO
+    double x1, y1, x2, y2;
+    cairo_t* cr = (cairo_t*)gc->GetNativeContext();
+    cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
+    cairo_rectangle(cr, x1, y1, x2 - x1, y2 - y1);
+    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
+    cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
+    cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
+    cairo_clip(cr);
+    cairo_set_fill_rule(cr, savedFillRule);
+
+#elif __WXMAC__
     CGContextRef context = (CGContextRef)gc->GetNativeContext();
 
     CGRect rects[2] = { CGContextGetClipBoundingBox(context), CGRectMake(rect.x(), rect.y(), rect.width(), rect.height()) };
@@ -362,9 +377,8 @@ void GraphicsContext::clipOut(const IntRect& rect)
     CGContextAddRects(context, rects, 2);
     CGContextEOClip(context);
     return;
-#endif
 
-#ifdef __WXMSW__
+#elif __WXMSW__
     Gdiplus::Graphics* g = (Gdiplus::Graphics*)gc->GetNativeContext();
     Gdiplus::Region excludeRegion(Gdiplus::Rect(rect.x(), rect.y(), rect.width(), rect.height()));
     g->ExcludeClip(&excludeRegion);
@@ -386,7 +400,16 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
     
     wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
 
-#if __WXMAC__
+#if wxUSE_CAIRO
+    cairo_t* cr = (cairo_t*)gc->GetNativeContext();
+    cairo_path_t* nativePath = (cairo_path_t*)path.platformPath()->GetNativePath();
+
+    cairo_new_path(cr);
+    cairo_append_path(cr, nativePath);
+
+    cairo_set_fill_rule(cr, clipRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+    cairo_clip(cr);
+#elif __WXMAC__
     CGContextRef context = (CGContextRef)gc->GetNativeContext();   
     CGPathRef nativePath = (CGPathRef)path.platformPath()->GetNativePath(); 
     

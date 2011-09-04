@@ -1,3 +1,58 @@
+2011-09-04  Robin Dunn  <robin@alldunn.com>
+
+        [wx] Enable wxWebKit to run using the wxGC Cairo backend on platforms other than GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=67577
+
+        Reviewed by Kevin Ollivier.
+
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::glyphAt):
+        (WebCore::GlyphBuffer::add):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipPath):
+        * platform/graphics/wx/PathWx.cpp:
+        (WebCore::Path::Path):
+        (WebCore::Path::clear):
+        * platform/graphics/wx/TransformationMatrixWx.cpp:
+        (WebCore::TransformationMatrix::operator wxGraphicsMatrix):
+        (WebCore::AffineTransform::operator wxGraphicsMatrix):
+        * platform/image-decoders/wx/ImageDecoderWx.cpp:
+        (WebCore::ImageFrame::asNewNativeImage):
+        * platform/wx/ContextMenuWx.cpp:
+        (ContextMenu::ContextMenu):
+        * platform/wx/LocalDC.h: Added.
+        (WebCore::LocalDC::LocalDC):
+        (WebCore::LocalDC::context):
+        (WebCore::LocalDC::~LocalDC):
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::RenderThemeWx::paintButton):
+        (WebCore::RenderThemeWx::paintTextField):
+        (WebCore::RenderThemeWx::paintMenuList):
+        (WebCore::RenderThemeWx::paintMenuListButton):
+        * platform/wx/ScrollbarThemeWx.cpp:
+        (WebCore::ScrollbarThemeWx::paint):
+        * platform/wx/wxcode/cairo: Added.
+        * platform/wx/wxcode/cairo/non-kerned-drawing.cpp: Added.
+        (WebCore::pangoFontMap):
+        (WebCore::createPangoFontForFont):
+        (WebCore::createScaledFontForFont):
+        (WebCore::pango_font_get_glyph):
+        (WebCore::drawTextWithSpacing):
+        * platform/wx/wxcode/gdiplus: Added.
+        * platform/wx/wxcode/gdiplus/non-kerned-drawing.cpp: Added.
+        (dmin):
+        (dmax):
+        (DegToRad):
+        (RadToDeg):
+        (WebCore::drawTextWithSpacing):
+        * platform/wx/wxcode/gtk/non-kerned-drawing.cpp: Removed.
+        * platform/wx/wxcode/win/non-kerned-drawing.cpp: Removed.
+        * platform/wx/wxcode/win/scrollbar_render.cpp:
+        (GraphicsHDC::GraphicsHDC):
+        (GraphicsHDC::~GraphicsHDC):
+        (wxRenderer_DrawScrollbar):
+
 2011-09-03  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         REGRESSION (r86268): Fix for qt_networkAccessAllowed()

@@ -685,7 +685,15 @@ void wxWebView::OnPaint(wxPaintEvent& event)
 
     if (IsShown() && frame->document()) {
 #if USE(WXGC)
+#if wxCHECK_VERSION(2, 9, 2) && defined(wxUSE_CAIRO) && wxUSE_CAIRO
+        wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetCairoRenderer();
+        if (!renderer)
+            renderer = wxGraphicsRenderer::GetDefaultRenderer();
+        wxGraphicsContext* context = renderer->CreateContext(dc);
+        wxGCDC gcdc(context);
+#else
         wxGCDC gcdc(dc);
+#endif
 #endif
 
         if (dc.IsOk()) {

@@ -44,7 +44,7 @@ ContextMenuItem* ContextMenu::itemWithId(int id)
 
 ContextMenu::ContextMenu()
 {
-    m_platformDescription = new wxMenu(0);
+    m_platformDescription = new wxMenu((long)0);
 }
 
 ContextMenu::~ContextMenu()

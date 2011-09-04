@@ -57,7 +57,12 @@ Path::Path()
     // renderer an app is using right now with wx API, so we will just handle
     // the common case.
 #if USE(WXGC)
-    wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetDefaultRenderer(); 
+    wxGraphicsRenderer* renderer = 0;
+#if wxUSE_CAIRO
+    renderer = wxGraphicsRenderer::GetCairoRenderer();
+#else
+    renderer = wxGraphicsRenderer::GetDefaultRenderer();
+#endif
     if (renderer) {
         wxGraphicsPath path = renderer->CreatePath();
         m_path = new wxGraphicsPath(path);
@@ -128,8 +133,12 @@ void Path::clear()
     if (m_path)
         delete m_path;
 
-#if USE(WXGC)   
-    wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetDefaultRenderer(); 
+#if USE(WXGC)
+#if wxUSE_CAIRO
+    wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetCairoRenderer();
+#else
+    wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetDefaultRenderer();
+#endif
     if (renderer) {
         wxGraphicsPath path = renderer->CreatePath();
         m_path = new wxGraphicsPath(path);

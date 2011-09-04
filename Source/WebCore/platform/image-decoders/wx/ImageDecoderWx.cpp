@@ -84,7 +84,14 @@ NativeImagePtr ImageFrame::asNewNativeImage() const
     ASSERT(bmp->IsOk());
 
 #if USE(WXGC)
-    wxGraphicsBitmap* bitmap = new wxGraphicsBitmap(wxGraphicsRenderer::GetDefaultRenderer()->CreateBitmap(*bmp));
+    wxGraphicsRenderer* renderer = 0;
+#if wxUSE_CAIRO
+    renderer = wxGraphicsRenderer::GetCairoRenderer();
+#else
+    renderer = wxGraphicsRenderer::GetDefaultRenderer();
+#endif
+    ASSERT(renderer);
+    wxGraphicsBitmap* bitmap = new wxGraphicsBitmap(renderer->CreateBitmap(*bmp));
     delete bmp;
     return bitmap;
 #else

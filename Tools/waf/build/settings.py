@@ -29,6 +29,7 @@ import platform
 import re
 import sys
 
+import Logs
 import Options
 
 from build_utils import *
@@ -225,6 +226,7 @@ def common_set_options(opt):
     opt.add_option('--msvc-version', action='store', default='', help="MSVC version to use to build. Use 8 for 2005, 9 for 2008")
     opt.add_option('--mac_universal_binary', action='store_true', default=False, help='Build Mac as universal (i386, x86_64, ppc) binary.')
     opt.add_option('--mac_archs', action='store', default='', help='Comma separated list of architectures (i386, x86_64, ppc) to build on Mac.')
+    opt.add_option('--cairo', action='store_true', default=sys.platform.startswith('linux'), help='Use cairo for drawing (experimental for Win/Mac')
 
 def common_configure(conf):
     """
@@ -261,6 +263,11 @@ def common_configure(conf):
     global msvclibs_dir
 
     libprefix = ''
+
+    if Options.options.cairo and build_port == 'wx':
+        if building_on_win32 and not "CAIRO_ROOT" in os.environ:
+            Log.error("To build with Cairo on Windows, you must set the CAIRO_ROOT environment variable.")
+            sys.exit(1)
 
     if building_on_win32:
         libprefix = 'lib'
@@ -314,6 +321,10 @@ def common_configure(conf):
             conf.env['CPPPATH_WX'] = wxincludes
             conf.env['LIB_WX'] = wxlibs
             conf.env['LIBPATH_WX'] = wxlibpaths
+            if Options.options.cairo and 'CAIRO_ROOT' in os.environ:
+                conf.env.append_value('CPPPATH_WX', [os.path.join(os.environ['CAIRO_ROOT'], 'include', 'cairo')])
+                conf.env.append_value('LIBPATH_WX', [os.path.join(os.environ['CAIRO_ROOT'], 'lib')])
+                conf.env.append_value('LIB_WX', ['cairo'])
         else:
             conf.check_cfg(path=get_path_to_wxconfig(), args='--cxxflags --libs', package='', uselib_store='WX', mandatory=True)
 

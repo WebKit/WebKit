@@ -40,7 +40,12 @@ namespace WebCore {
 #if USE(WXGC)
 TransformationMatrix::operator wxGraphicsMatrix() const
 {
-    wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetDefaultRenderer();
+    wxGraphicsRenderer* renderer = 0;
+#if wxUSE_CAIRO
+    renderer = wxGraphicsRenderer::GetCairoRenderer();
+#else
+    renderer = wxGraphicsRenderer::GetDefaultRenderer();
+#endif
     ASSERT(renderer);
     
     wxGraphicsMatrix matrix = renderer->CreateMatrix(a(), b(), c(), d(), e(), f());
@@ -49,7 +54,12 @@ TransformationMatrix::operator wxGraphicsMatrix() const
 
 AffineTransform::operator wxGraphicsMatrix() const
 {
-    wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetDefaultRenderer();
+    wxGraphicsRenderer* renderer = 0;
+#if wxUSE_CAIRO
+    renderer = wxGraphicsRenderer::GetCairoRenderer();
+#else
+    renderer = wxGraphicsRenderer::GetDefaultRenderer();
+#endif
     ASSERT(renderer);
     
     wxGraphicsMatrix matrix = renderer->CreateMatrix(a(), b(), c(), d(), e(), f());

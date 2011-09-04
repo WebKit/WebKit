@@ -26,7 +26,14 @@
 #include "config.h"
 #include "ScrollbarThemeWx.h"
 
+// see http://trac.wxwidgets.org/ticket/11482
+// we need to include this before LocalDC as it includes wx headers
+#ifdef __WXMSW__
+#   include "wx/msw/winundef.h"
+#endif
+
 #include "HostWindow.h"
+#include "LocalDC.h"
 #include "NotImplemented.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollableArea.h"
@@ -193,18 +200,17 @@ bool ScrollbarThemeWx::paint(Scrollbar* scrollbar, GraphicsContext* context, con
     
     wxDC* dc = static_cast<wxDC*>(context->platformContext());
     
-    context->save();
     ScrollView* root = scrollbar->root();
     ASSERT(root);
     if (!root)
         return false;
     
-    wxWindow* webview = root->hostWindow()->platformPageClient(); 
+    wxWindow* webview = root->hostWindow()->platformPageClient();
+    LocalDC localDC(dc, scrollbar->frameRect());
     
-    wxRenderer_DrawScrollbar(webview, *dc, scrollbar->frameRect(), orientation, scrollbar->currentPos(), static_cast<wxScrollbarPart>(scrollbar->pressedPart()),    
+    wxRenderer_DrawScrollbar(webview, *localDC.context(), scrollbar->frameRect(), orientation, scrollbar->currentPos(), static_cast<wxScrollbarPart>(scrollbar->pressedPart()),    
                      static_cast<wxScrollbarPart>(scrollbar->hoveredPart()), scrollbar->maximum(), scrollbar->pageStep(), flags);
 
-    context->restore();
     return true;
 }
 

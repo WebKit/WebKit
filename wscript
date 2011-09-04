@@ -170,6 +170,10 @@ def build(bld):
                    'Source/WebCore/plugins/win/PluginPackageWin.cpp',
                    'Source/WebCore/plugins/win/PluginViewWin.cpp',
             ]
+            if Options.options.cairo:
+                webcore_dirs.append('Source/WebCore/platform/wx/wxcode/cairo')
+            else:
+                webcore_dirs.append('Source/WebCore/platform/wx/wxcode/gdiplus')
         elif sys.platform.startswith('darwin'):
             webcore_dirs.append('Source/WebCore/plugins/mac')
             webcore_dirs.append('Source/WebCore/platform/wx/wxcode/mac/carbon')
@@ -197,6 +201,7 @@ def build(bld):
                    'Source/WebCore/plugins/PluginPackageNone.cpp'
             ]
             webcore_dirs.append('Source/WebCore/platform/wx/wxcode/gtk')
+            webcore_dirs.append('Source/WebCore/platform/wx/wxcode/cairo')
         
 
     import TaskGen
@@ -350,7 +355,12 @@ def build(bld):
         
             for dep in windows_deps:
                 bld.install_files(webcore.install_path, [os.path.join(msvclibs_dir, dep)])
-
+            
+            if "CAIRO_ROOT" in os.environ and Options.options.cairo:
+                cairo_bin_dir = os.path.join(os.environ["CAIRO_ROOT"], "bin") 
+                for dep in glob.glob(os.path.join(cairo_bin_dir, "*.dll")):
+                    bld.install_files(webcore.install_path, [os.path.join(cairo_bin_dir, dep)])
+                    
     webcore.find_sources_in_dirs(full_dirs, excludes = excludes, exts=['.c', '.cpp'])
 
     bld.add_group()

@@ -77,7 +77,7 @@ class GraphicsHDC
 public:
     GraphicsHDC(wxDC* dc)
     {
-#if wxUSE_GRAPHICS_CONTEXT
+#if wxUSE_GRAPHICS_CONTEXT && (!defined(wxUSE_CAIRO) || !wxUSE_CAIRO)
         m_graphics = NULL;
         wxGCDC* gcdc = wxDynamicCast(dc, wxGCDC);
         if (gcdc) {
@@ -91,7 +91,7 @@ public:
 
     ~GraphicsHDC()
     {
-#if wxUSE_GRAPHICS_CONTEXT
+#if wxUSE_GRAPHICS_CONTEXT  && (!defined(wxUSE_CAIRO) || !wxUSE_CAIRO)
         if (m_graphics)
             m_graphics->ReleaseHDC(m_hdc);
 #endif
@@ -101,7 +101,7 @@ public:
 
 private:
     HDC         m_hdc;
-#if wxUSE_GRAPHICS_CONTEXT
+#if wxUSE_GRAPHICS_CONTEXT  && (!defined(wxUSE_CAIRO) || !wxUSE_CAIRO)
     Graphics*   m_graphics;
 #endif
 };
@@ -135,7 +135,7 @@ void wxRenderer_DrawScrollbar(wxWindow* window, wxDC& dc,
     int xpState = TS_NORMAL;
     wxRect transRect = rect;
 
-#if USE(WXGC)
+#if USE(WXGC) && !defined(wxUSE_CAIRO) || !wxUSE_CAIRO
     // when going from GdiPlus -> Gdi, any GdiPlus transformations are lost
     // so we need to alter the coordinates to reflect their transformed point.
     double xtrans = 0;
@@ -147,6 +147,8 @@ void wxRenderer_DrawScrollbar(wxWindow* window, wxDC& dc,
 
     transRect.x += (int)xtrans;
     transRect.y += (int)ytrans;
+#else
+
 #endif
 
     RECT r;
@@ -208,6 +210,8 @@ void wxRenderer_DrawScrollbar(wxWindow* window, wxDC& dc,
         else
             part = SP_GRIPPERVERT;
         
+
+
         engine->DrawThemeBackground(hTheme, GraphicsHDC(&dc), part, xpState, &buttonRect, 0);
     }
 }

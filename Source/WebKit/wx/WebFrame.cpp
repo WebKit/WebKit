@@ -106,21 +106,22 @@ public:
     void SetFirstPage(int page) { m_fromPage = page; }
     void SetLastPage(int page) { m_toPage = page; }
 
-    void InitializeWithPageSize(wxRect pageRect)
+    void InitializeWithPageSize(wxRect pageRect, bool isMM = true)
     {
-        double mmToPixelsX = (double)wxGetDisplaySize().GetWidth() /
-                                (double)wxGetDisplaySizeMM().GetWidth();
-        double mmToPixelsY = (double)wxGetDisplaySize().GetHeight() /
-                                (double)wxGetDisplaySizeMM().GetHeight();
-        // convert mm to pixels
-        pageRect.x = pageRect.x * mmToPixelsX;
-        pageRect.y = pageRect.y * mmToPixelsY;
-        pageRect.width = pageRect.width * mmToPixelsX;
-        pageRect.height = pageRect.height * mmToPixelsY;
-        
+        if (isMM) {
+            double mmToPixelsX = (double)wxGetDisplaySize().GetWidth() /
+                                    (double)wxGetDisplaySizeMM().GetWidth();
+            double mmToPixelsY = (double)wxGetDisplaySize().GetHeight() /
+                                    (double)wxGetDisplaySizeMM().GetHeight();
+            // convert mm to pixels
+            pageRect.x = pageRect.x * mmToPixelsX;
+            pageRect.y = pageRect.y * mmToPixelsY;
+            pageRect.width = pageRect.width * mmToPixelsX;
+            pageRect.height = pageRect.height * mmToPixelsY;
+        }
         m_pageWidth = pageRect.width;
         m_printContext.begin(m_pageWidth);
-        
+
         float pageHeight = pageRect.height;
         m_printContext.computePageRects(WebCore::FloatRect(pageRect), /* headerHeight */ 0, /* footerHeight */ 0, /* userScaleFactor */ 1.0, pageHeight);
     }
@@ -129,11 +130,12 @@ public:
     {
         wxPrinterDC* pdc = dynamic_cast<wxPrinterDC*>(GetDC());
         pdc->SetMapMode(wxMM_POINTS);
-        int pageWidth = 0;
-        int pageHeight = 0;
-        GetPageSizeMM(&pageWidth, &pageHeight);
-        
-        InitializeWithPageSize(wxRect(0, 0, pageWidth, pageHeight));
+        int pixelsW = 0;
+        int pixelsH = 0;
+        pdc->GetSize(&pixelsW, &pixelsH);
+        pixelsW = pdc->DeviceToLogicalXRel(pixelsW);
+        pixelsH = pdc->DeviceToLogicalYRel(pixelsH);
+        InitializeWithPageSize(wxRect(0, 0, pixelsW, pixelsH - 40), false);
     }
     
     void GetPageInfo(int *minPage, int *maxPage, int *pageFrom, int *pageTo)
@@ -156,8 +158,15 @@ public:
     bool OnPrintPage(int pageNum)
     {
         wxPrinterDC* pdc = dynamic_cast<wxPrinterDC*>(GetDC());
-        
-        wxGCDC gcdc(*pdc);
+#if wxCHECK_VERSION(2, 9, 2) && defined(wxUSE_CAIRO) && wxUSE_CAIRO
+        wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetCairoRenderer();
+        if (!renderer)
+            renderer = wxGraphicsRenderer::GetDefaultRenderer();
+        wxGraphicsContext* context = renderer->CreateContext(*pdc);
+        wxGCDC gcdc(context);
+#else
+        wxGCDC gcdc(pdc);
+#endif
         if (!gcdc.IsOk())
             return false;
 
@@ -592,8 +601,14 @@ void wxWebFrame::Print(bool showDialog)
     wxPrintDialogData printdata;
     printdata.GetPrintData().SetPrintMode(wxPRINT_MODE_PRINTER);
     printdata.GetPrintData().SetNoCopies(1);
+#if wxCHECK_VERSION(2, 9, 2)
     printdata.GetPrintData().ConvertFromNative();
-    
+#else
+    // due to wx bugs, we cannot get the actual native default paper type before showing the dialog until 2.9.2, 
+    // so pick a common default instead.
+    printdata.GetPrintData().SetPaperId(wxPAPER_LETTER);
+#endif
+
     wxPageSetupDialogData pageSetup(printdata.GetPrintData());
 
     wxRect paperSize = pageSetup.GetPaperSize();
@@ -613,9 +628,9 @@ void wxWebFrame::Print(bool showDialog)
     if (showDialog) {
         wxPrintDialog dialog(0, &printdata);
         if (dialog.ShowModal() == wxID_OK) {
-            wxPrintDialogData updatedPrintdata = dialog.GetPrintDialogData();            
-            printout->SetFirstPage(updatedPrintdata.GetFromPage());
-            printout->SetLastPage(updatedPrintdata.GetToPage());
+            printdata = dialog.GetPrintDialogData();            
+            printout->SetFirstPage(printdata.GetFromPage());
+            printout->SetLastPage(printdata.GetToPage());
         } else
             return;
     }
