@@ -2081,6 +2081,7 @@ HEADERS += \
     platform/network/ResourceRequestBase.h \
     platform/network/ResourceResponseBase.h \
     platform/network/qt/DnsPrefetchHelper.h \
+    platform/network/qt/NetworkStateNotifierPrivate.h \
     platform/PlatformTouchEvent.h \
     platform/PlatformTouchPoint.h \
     platform/PopupMenu.h \
@@ -2587,6 +2588,7 @@ SOURCES += \
     platform/network/qt/ResourceHandleQt.cpp \
     platform/network/qt/ResourceRequestQt.cpp \
     platform/network/qt/DnsPrefetchHelper.cpp \
+    platform/network/qt/NetworkStateNotifierQt.cpp \
     platform/network/qt/ProxyServerQt.cpp \
     platform/network/qt/QtMIMETypeSniffer.cpp \
     platform/network/qt/QNetworkReplyHandler.cpp \
@@ -3216,14 +3218,6 @@ contains(DEFINES, ENABLE_MATHML=1) {
 contains(DEFINES, ENABLE_XHTMLMP=1) {
     SOURCES += \
         html/HTMLNoScriptElement.cpp
-}
-
-contains(DEFINES, WTF_USE_QT_BEARER=1) {
-    HEADERS += \
-        platform/network/qt/NetworkStateNotifierPrivate.h
-
-    SOURCES += \
-        platform/network/qt/NetworkStateNotifierQt.cpp
 }
 
 # QRawFont feature added in Qt 4.8.0

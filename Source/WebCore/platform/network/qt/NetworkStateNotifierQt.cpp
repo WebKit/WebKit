@@ -20,7 +20,7 @@
 #include "config.h"
 #include "NetworkStateNotifier.h"
 
-#if PLATFORM(QT) && USE(QT_BEARER)
+#if (PLATFORM(QT) && !defined(QT_NO_BEARERMANAGEMENT))
 
 #include "NetworkStateNotifierPrivate.h"
 #include "qnetworkconfigmanager.h"

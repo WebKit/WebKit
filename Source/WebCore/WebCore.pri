@@ -245,15 +245,6 @@ contains(DEFINES, WTF_USE_QT_MOBILITY_SYSTEMINFO=1) {
      MOBILITY *= systeminfo
 }
 
-contains(DEFINES, WTF_USE_QT_BEARER=1) {
-    # Bearer management is part of Qt 4.7, so don't accidentially
-    # pull in Qt Mobility when building against >= 4.7
-    !greaterThan(QT_MINOR_VERSION, 6) {
-        CONFIG *= mobility
-        MOBILITY *= bearer
-    }
-}
-
 contains(DEFINES, ENABLE_VIDEO=1) {
     contains(DEFINES, WTF_USE_QTKIT=1) {
         INCLUDEPATH += $$PWD/platform/graphics/mac

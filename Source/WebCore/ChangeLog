@@ -1,3 +1,19 @@
+2011-09-03  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        REGRESSION (r86268): Fix for qt_networkAccessAllowed()
+        https://bugs.webkit.org/show_bug.cgi?id=67570
+
+        Reviewed by Noam Rosenthal.
+
+        No new tests as this change only removes dead code.
+        Support for Qt 4.6 has  been removed a while back.
+
+        * WebCore.pri:
+        * WebCore.pro:
+        * features.pri:
+        * platform/network/NetworkStateNotifier.h:
+        * platform/network/qt/NetworkStateNotifierQt.cpp:
+
 2011-09-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r94274): selection-change-closes-typing.html fails

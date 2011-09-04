@@ -171,18 +171,6 @@ symbian|maemo5|maemo6 {
     }
 }
 
-# Bearer management is part of Qt 4.7
-# for older version, check for mobility with bearer
-!contains(DEFINES, WTF_USE_QT_BEARER=.) {
-     !lessThan(QT_MINOR_VERSION, 7) {
-        DEFINES += WTF_USE_QT_BEARER=1
-     } else {
-        contains(MOBILITY_CONFIG, bearer) {
-            DEFINES += WTF_USE_QT_BEARER=1
-        }
-    }
-}
-
 !contains(DEFINES, ENABLE_TOUCH_EVENTS=.): DEFINES += ENABLE_TOUCH_EVENTS=1
 
 # HTML5 Media Support
