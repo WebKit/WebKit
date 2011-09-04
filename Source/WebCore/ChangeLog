@@ -1,3 +1,26 @@
+2011-09-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Add new / moved files missing from last commit.
+
+        * platform/wx/LocalDC.h: Added.
+        (WebCore::LocalDC::LocalDC):
+        (WebCore::LocalDC::context):
+        (WebCore::LocalDC::~LocalDC):
+        * platform/wx/wxcode/cairo: Added.
+        * platform/wx/wxcode/cairo/non-kerned-drawing.cpp: Added.
+        (WebCore::pangoFontMap):
+        (WebCore::createPangoFontForFont):
+        (WebCore::createScaledFontForFont):
+        (WebCore::pango_font_get_glyph):
+        (WebCore::drawTextWithSpacing):
+        * platform/wx/wxcode/gdiplus: Added.
+        * platform/wx/wxcode/gdiplus/non-kerned-drawing.cpp: Added.
+        (dmin):
+        (dmax):
+        (DegToRad):
+        (RadToDeg):
+        (WebCore::drawTextWithSpacing):
+
 2011-09-04  Robin Dunn  <robin@alldunn.com>
 
         [wx] Enable wxWebKit to run using the wxGC Cairo backend on platforms other than GTK.
