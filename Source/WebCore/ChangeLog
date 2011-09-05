@@ -1,3 +1,16 @@
+2011-09-05  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Fix the regression of bug 65333 introduced by 60170.
+        This caused the speech input bubble to appear in the wrong side for RTL text inputs.
+        https://bugs.webkit.org/show_bug.cgi?id=67597
+
+        Reviewed by Tony Gentilcore.
+
+        No new tests. Fixing regression.
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::startSpeechInput):
+
 2011-09-05  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: F5 results in a Web Inspector frontend reload on non-Macs
