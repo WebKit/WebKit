@@ -1,3 +1,18 @@
+2011-09-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94537.
+        http://trac.webkit.org/changeset/94537
+        https://bugs.webkit.org/show_bug.cgi?id=67618
+
+        Does not compile on Chromium Mac (Requested by abarth_ on
+        #webkit).
+
+        * platform/image-encoders/skia/JPEGImageEncoder.cpp:
+        (WebCore::preMultipliedBGRAtoRGB):
+        (WebCore::RGBAtoRGB):
+        (WebCore::encodePixels):
+        (WebCore::JPEGImageEncoder::encode):
+
 2011-09-05  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium skia] JPEGImageEncoder: hoist contants out of the encoding loop

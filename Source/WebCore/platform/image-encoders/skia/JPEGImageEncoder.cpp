@@ -35,6 +35,7 @@
 #include "IntSize.h"
 #include "SkBitmap.h"
 #include "SkColorPriv.h"
+#include "SkUnPreMultiply.h"
 extern "C" {
 #include <stdio.h> // jpeglib.h needs stdio.h FILE
 #include "jpeglib.h"
@@ -79,9 +80,9 @@ static void handleError(j_common_ptr common)
     longjmp(*jumpBufferPtr, -1);
 }
 
-static void preMultipliedBGRAtoRGB(const unsigned char* pixels, unsigned int pixelCount, unsigned char* output)
+static void preMultipliedBGRAtoRGB(const void* pixels, unsigned int pixelCount, unsigned char* output)
 {
-    const SkPMColor* input = reinterpret_cast<const SkPMColor*>(pixels);
+    const SkPMColor* input = static_cast<const SkPMColor*>(pixels);
     for (; pixelCount-- > 0; ++input) {
         *output++ = SkGetPackedR32(*input);
         *output++ = SkGetPackedG32(*input);
@@ -89,17 +90,20 @@ static void preMultipliedBGRAtoRGB(const unsigned char* pixels, unsigned int pix
     }
 }
 
-static void RGBAtoRGB(const unsigned char* pixels, unsigned int pixelCount, unsigned char* output)
+static void RGBAtoRGB(const unsigned char* input, unsigned int pixels, unsigned char* output)
 {
-    for (; pixelCount-- > 0; pixels += 4) {
-        *output++ = pixels[0];
-        *output++ = pixels[1];
-        *output++ = pixels[2];
+    for (; pixels-- > 0; input += 4) {
+        *output++ = input[0];
+        *output++ = input[1];
+        *output++ = input[2];
     }
 }
 
-static bool encodePixels(IntSize imageSize, unsigned char* pixels, bool premultiplied, int quality, Vector<unsigned char>* output)
+static bool encodePixels(const IntSize& inputSize, unsigned char* inputPixels,
+                         bool premultiplied, int quality, Vector<unsigned char>* output)
 {
+    IntSize imageSize(inputSize);
+    imageSize.clampNegativeToZero();
     JPEGOutputBuffer destination;
     destination.output = output;
     Vector<JSAMPLE> row;
@@ -121,28 +125,24 @@ static bool encodePixels(IntSize imageSize, unsigned char* pixels, bool premulti
     cinfo.dest->init_destination = prepareOutput;
     cinfo.dest->empty_output_buffer = writeOutput;
     cinfo.dest->term_destination = finishOutput;
-
-    imageSize.clampNegativeToZero();
     cinfo.image_height = imageSize.height();
     cinfo.image_width = imageSize.width();
     cinfo.in_color_space = JCS_RGB;
     cinfo.input_components = 3;
 
-    void (*extractRowRGB)(const unsigned char*, unsigned int, unsigned char* output);
-    extractRowRGB = &RGBAtoRGB;
-    if (premultiplied)
-      extractRowRGB = &preMultipliedBGRAtoRGB;
-
     jpeg_set_defaults(&cinfo);
     jpeg_set_quality(&cinfo, quality, TRUE);
     jpeg_start_compress(&cinfo, TRUE);
 
+    unsigned char* pixels = inputPixels;
     row.resize(cinfo.image_width * cinfo.input_components);
-    const size_t pixelRowStride = cinfo.image_width * 4;
     while (cinfo.next_scanline < cinfo.image_height) {
-        extractRowRGB(pixels, cinfo.image_width, row.data());
+        if (premultiplied)
+            preMultipliedBGRAtoRGB(pixels, cinfo.image_width, row.data());
+        else 
+            RGBAtoRGB(pixels, cinfo.image_width, row.data());
         jpeg_write_scanlines(&cinfo, row.dataSlot(), 1);
-        pixels += pixelRowStride;
+        pixels += cinfo.image_width * 4;
     }
 
     jpeg_finish_compress(&cinfo);
@@ -152,17 +152,20 @@ static bool encodePixels(IntSize imageSize, unsigned char* pixels, bool premulti
 
 bool JPEGImageEncoder::encode(const SkBitmap& bitmap, int quality, Vector<unsigned char>* output)
 {
-    SkAutoLockPixels bitmapLock(bitmap);
-
     if (bitmap.config() != SkBitmap::kARGB_8888_Config)
-        return false; // Only support 32 bit/pixel skia bitmaps.
+        return false; // Only support ARGB 32 bpp skia bitmaps.
 
-    return encodePixels(IntSize(bitmap.width(), bitmap.height()), static_cast<unsigned char *>(bitmap.getPixels()), true, quality, output);
+    SkAutoLockPixels bitmapLock(bitmap);
+    IntSize imageSize(bitmap.width(), bitmap.height());
+
+    return encodePixels(imageSize, static_cast<unsigned char *>(bitmap.getPixels()),
+                        true, quality, output);
 }
 
 bool JPEGImageEncoder::encode(const ImageData& imageData, int quality, Vector<unsigned char>* output)
 {
-    return encodePixels(imageData.size(), imageData.data()->data()->data(), false, quality, output);
+    return encodePixels(imageData.size(), imageData.data()->data()->data(),
+                        false, quality, output);
 }
 
 } // namespace WebCore
