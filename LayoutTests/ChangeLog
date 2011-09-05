@@ -1,3 +1,9 @@
+2011-09-05  Zsolt Fehér  <feherzs@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/border-image-repeat-expected.txt: Added.
+
 2011-09-05  Kristof Kosztyo <kkristof@inf.u-szeged.hu>
 
         [Qt] Update expected result after r94425
