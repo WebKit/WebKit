@@ -60,14 +60,17 @@ ui.onebar = base.extends('div', {
                 '<li><a href="#summary">Summary</a></li>' +
                 '<li><a href="#results">Results</a></li>' +
                 '<li><a href="#commits">Commits</a></li>' +
+                '<li><a href="#failures">Failures</a></li>' +
             '</ul>' +
             '<div id="summary"></div>' +
             '<div id="results"></div>' +
-            '<div id="commits">Coming soon...</div>';
+            '<div id="commits">Coming soon...</div>' +
+            '<div id="failures"></div>';
         this._tabNames = [
             'summary',
             'results',
-            'commits,'
+            'commits',
+            'failures',
         ]
         this._tabs = $(this).tabs({
             disabled: [1, 2],
@@ -88,6 +91,10 @@ ui.onebar = base.extends('div', {
     results: function()
     {
         return this.tabNamed('results');
+    },
+    failures: function()
+    {
+        return this.tabNamed('failures');
     },
     select: function(tabName)
     {

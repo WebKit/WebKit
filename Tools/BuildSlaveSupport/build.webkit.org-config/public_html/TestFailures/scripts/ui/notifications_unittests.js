@@ -98,18 +98,8 @@ test('SuspiciousCommit', 2, function() {
         '</ul>');
 });
 
-test('TestsFailing', 13, function() {
-    var testFailures = new ui.notifications.TestsFailing();
-    deepEqual(Object.getOwnPropertyNames(testFailures.__proto__), [
-        "init",
-        "testNameList",
-        "updateBuilderResults",
-        "addFailureAnalysis",
-        "pinToCommitData",
-        "_forEachTestGroup",
-        "containsFailureAnalysis",
-        "addCommitData"
-    ]);
+test('FailingTestsSummary', 12, function() {
+    var testFailures = new ui.notifications.FailingTestsSummary();
     equal(testFailures.tagName, 'LI');
     equal(testFailures.innerHTML,
         '<div class="how">' +
@@ -304,8 +294,8 @@ test('TestsFailing', 13, function() {
         '</div>');
 });
 
-test('TestsFailing (grouping)', 1, function() {
-    var testFailures = new ui.notifications.TestsFailing();
+test('FailingTestsSummary (grouping)', 1, function() {
+    var testFailures = new ui.notifications.FailingTestsSummary();
     testFailures.addFailureAnalysis({testName: 'path/to/test1.html', resultNodesByBuilder: {}});
     testFailures.addFailureAnalysis({testName: 'path/to/test2.html', resultNodesByBuilder: {}});
     testFailures.addFailureAnalysis({testName: 'path/to/test3.html', resultNodesByBuilder: {}});

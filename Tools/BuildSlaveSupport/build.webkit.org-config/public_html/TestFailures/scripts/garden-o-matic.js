@@ -30,7 +30,9 @@ var g_info = null;
 var g_updateTimerId = 0;
 var g_buildersFailing = null;
 
-var g_unexpectedFailures = null;
+var g_unexpectedFailuresController = null;
+var g_failuresController = null;
+
 var g_failingBuilders = null;
 
 function update()
@@ -43,10 +45,12 @@ function update()
     builders.buildersFailingStepRequredForTestCoverage(g_failingBuilders.update.bind(g_failingBuilders));
 
     base.callInParallel([model.updateRecentCommits, model.updateResultsByBuilder], function() {
-        model.analyzeUnexpectedFailures(g_unexpectedFailures.update.bind(g_unexpectedFailures), function() {
-            g_unexpectedFailures.purge();
+        model.analyzeUnexpectedFailures(g_unexpectedFailuresController.update.bind(g_unexpectedFailuresController), function() {
+            g_unexpectedFailuresController.purge();
             updating.dismiss();
         });
+
+        model.analyzeExpectedOrUnexpectedFailures(g_failuresController.update.bind(g_failuresController));
     });
 }
 
@@ -60,8 +64,11 @@ $(document).ready(function() {
     onebar = new ui.onebar();
     onebar.attach();
 
-    var actions = new ui.notifications.Stream();
-    g_unexpectedFailures = new controllers.UnexpectedFailures(actions);
+    var unexpectedFailuresView = new ui.notifications.Stream();
+    g_unexpectedFailuresController = new controllers.UnexpectedFailures(unexpectedFailuresView);
+
+    var failuresView = new ui.notifications.Stream();
+    g_failuresController = new controllers.Failures(failuresView);
 
     g_info = new ui.notifications.Stream();
     g_failingBuilders = new controllers.FailingBuilders(g_info);
@@ -74,7 +81,10 @@ $(document).ready(function() {
     var summary = onebar.summary();
     summary.appendChild(updateButton);
     summary.appendChild(g_info);
-    summary.appendChild(actions);
+    summary.appendChild(unexpectedFailuresView);
+
+    var failures = onebar.failures();
+    failures.appendChild(failuresView);
 
     update();
 });

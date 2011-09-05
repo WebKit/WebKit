@@ -135,7 +135,6 @@ ui.notifications.Failure = base.extends(ui.notifications.Notification, {
     init: function()
     {
         this._time = this._how.appendChild(new ui.RelativeTime());
-        this._where = this._how.appendChild(new ui.failures.FailureGrid());
         this._problem = this._what.appendChild(document.createElement('div'));
         this._problem.className = 'problem';
         this._effects = this._problem.appendChild(document.createElement('ul'));
@@ -149,7 +148,7 @@ ui.notifications.Failure = base.extends(ui.notifications.Notification, {
     }
 });
 
-ui.notifications.TestsFailing = base.extends(ui.notifications.Failure, {
+ui.notifications.FailingTests = base.extends(ui.notifications.Failure, {
     init: function() {
         // FIXME: Convert actions to a link from test!
         this._problem.appendChild(new ui.actions.List([
@@ -157,7 +156,6 @@ ui.notifications.TestsFailing = base.extends(ui.notifications.Failure, {
             new ui.actions.Rebaseline(),
         ]));
         this._testNameList = [];
-        this._commitDataPinned = false;
     },
     testNameList: function()
     {
@@ -167,42 +165,16 @@ ui.notifications.TestsFailing = base.extends(ui.notifications.Failure, {
     {
         return this._testNameList.indexOf(failureAnalysis.testName) != -1;
     },
-    updateBuilderResults: function(resultNodesByBuilder)
-    {
-        this._where.add(resultNodesByBuilder);
-    },
     addFailureAnalysis: function(failureAnalysis)
     {
         if (this.containsFailureAnalysis(failureAnalysis))
-            return;
+            return false;
         this._testNameList.push(failureAnalysis.testName);
-        this.updateBuilderResults(failureAnalysis.resultNodesByBuilder);
         $(this._effects).empty();
         this._forEachTestGroup(function (testGroup) {
             this._effects.appendChild(new ui.notifications.FailingTestGroup(testGroup))
         }.bind(this));
-    },
-    pinToCommitData: function(commitData)
-    {
-        if (this._commitDataPinned)
-            return;
-        this._commitDataPinned = true;
-        $(this._causes).children().each(function() {
-            if (this.hasRevision(commitData.revision))
-                return;
-            $(this).detach();
-        });
-    },
-    addCommitData: function(commitData)
-    {
-        if (this._commitDataPinned)
-            return null;
-        var commitDataDate = new Date(commitData.time);
-        if (this._time.date > commitDataDate); {
-            this.setIndex(commitDataDate.getTime());
-            this._time.setDate(commitDataDate);
-        }
-        return this._causes.appendChild(new ui.notifications.SuspiciousCommit(commitData));
+        return true;
     },
     _forEachTestGroup: function(callback)
     {
@@ -226,15 +198,52 @@ ui.notifications.TestsFailing = base.extends(ui.notifications.Failure, {
     }
 });
 
+ui.notifications.FailingTestsSummary = base.extends(ui.notifications.FailingTests, {
+    init: function() {
+        this._where = this._how.appendChild(new ui.failures.FailureGrid());
+        this._commitDataPinned = false;
+    },
+    updateBuilderResults: function(resultNodesByBuilder)
+    {
+        this._where.add(resultNodesByBuilder);
+    },
+    addFailureAnalysis: function(failureAnalysis)
+    {
+        if (!ui.notifications.FailingTests.prototype.addFailureAnalysis.call(this, failureAnalysis))
+            return false;
+        this.updateBuilderResults(failureAnalysis.resultNodesByBuilder);
+    },
+    pinToCommitData: function(commitData)
+    {
+        if (this._commitDataPinned)
+            return;
+        this._commitDataPinned = true;
+        $(this._causes).children().each(function() {
+            if (this.hasRevision(commitData.revision))
+                return;
+            $(this).detach();
+        });
+    },
+    addCommitData: function(commitData)
+    {
+        if (this._commitDataPinned)
+            return null;
+        var commitDataDate = new Date(commitData.time);
+        if (this._time.date > commitDataDate); {
+            this.setIndex(commitDataDate.getTime());
+            this._time.setDate(commitDataDate);
+        }
+        return this._causes.appendChild(new ui.notifications.SuspiciousCommit(commitData));
+    }
+});
+
 ui.notifications.BuildersFailing = base.extends(ui.notifications.Failure, {
     init: function()
     {
         this._problem.insertBefore(document.createTextNode('Build Failed:'), this._problem.firstChild);
-        $(this._where).detach();
     },
     setFailingBuilders: function(builderNameList)
     {
-        // FIXME: Populate this._where with failing builders.
         $(this._effects).empty().append(builderNameList.map(function(builderName) {
             var effect = document.createElement('li');
             effect.className = 'builder-name';

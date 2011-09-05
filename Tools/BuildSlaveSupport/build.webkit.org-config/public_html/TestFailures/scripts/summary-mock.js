@@ -116,11 +116,11 @@ function createResultNodesByBuilder(builderFailureCount)
 var currentRevision = 66666;
 var currentMinutesAgo = 0;
 
-function createTestsFailing(commitDataCount, failureAnalysisCount, builderFailureCount)
+function createFailingTestsSummary(commitDataCount, failureAnalysisCount, builderFailureCount)
 {
-    var testsFailing = new ui.notifications.TestsFailing();
+    var failingTestsSummary = new ui.notifications.FailingTestsSummary();
     for (var i = 0; i < commitDataCount; ++i)
-        testsFailing.addCommitData({
+        failingTestsSummary.addCommitData({
             time: minutesAgo(currentMinutesAgo++),
             revision: currentRevision++,
             title: bugTitles.cycle(),
@@ -128,11 +128,11 @@ function createTestsFailing(commitDataCount, failureAnalysisCount, builderFailur
             reviewer: people.cycle()
         });
     for (var i = 0; i < failureAnalysisCount; ++i)
-        testsFailing.addFailureAnalysis({
+        failingTestsSummary.addFailureAnalysis({
             testName: testNames.cycle(),
             resultNodesByBuilder: createResultNodesByBuilder(builderFailureCount)
         });
-    return testsFailing;
+    return failingTestsSummary;
 }
 
 function createBuildersFailing(failingBuilderCount)
@@ -154,9 +154,9 @@ $(document).ready(function() {
     var button = document.body.insertBefore(document.createElement('button'), document.body.firstChild);
     button.textContent = 'update';
 
-    actions.add(createTestsFailing(3, 4, 1));
-    actions.add(createTestsFailing(3, 1, 3));
-    actions.add(createTestsFailing(1, 20, 1));
+    actions.add(createFailingTestsSummary(3, 4, 1));
+    actions.add(createFailingTestsSummary(3, 1, 3));
+    actions.add(createFailingTestsSummary(1, 20, 1));
     actions.add(createBuildersFailing(1));
     actions.add(createBuildersFailing(8));
 });

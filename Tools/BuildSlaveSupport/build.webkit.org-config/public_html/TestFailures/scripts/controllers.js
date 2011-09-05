@@ -67,7 +67,11 @@ controllers.ResultsDetails = base.extends(Object, {
     },
 });
 
-controllers.UnexpectedFailures = base.extends(Object, {
+var FailureStreamController = base.extends(Object, {
+    _resultsFilter: null,
+    _keyFor: function(failureAnalysis) { throw "Not implemented!"; },
+    _createFailureView: function(failureAnalysis) { throw "Not implemented!"; },
+
     init: function(view)
     {
         this._view = view;
@@ -75,20 +79,10 @@ controllers.UnexpectedFailures = base.extends(Object, {
     },
     update: function(failureAnalysis)
     {
-        var key = failureAnalysis.newestPassingRevision + "+" + failureAnalysis.oldestFailingRevision;
+        var key = this._keyFor(failureAnalysis);
         var failure = this._testFailures.get(key);
-        var impliedFirstFailingRevision = failureAnalysis.newestPassingRevision + 1;
         if (!failure) {
-            failure = new ui.notifications.TestsFailing();
-            model.commitDataListForRevisionRange(impliedFirstFailingRevision, failureAnalysis.oldestFailingRevision).forEach(function(commitData) {
-                var suspiciousCommit = failure.addCommitData(commitData);
-                $(suspiciousCommit).bind('rollout', function() {
-                    this.onRollout(commitData.revision, failure.testNameList());
-                }.bind(this));
-                $(failure).bind('blame', function() {
-                    this.onBlame(failure, commitData);
-                }.bind(this));
-            }, this);
+            failure = this._createFailureView(failureAnalysis);
             this._view.add(failure);
             $(failure).bind('examine', function() {
                 this.onExamine(failure);
@@ -98,8 +92,8 @@ controllers.UnexpectedFailures = base.extends(Object, {
             }.bind(this));
         }
         failure.addFailureAnalysis(failureAnalysis);
-        failure.updateBuilderResults(model.buildersInFlightForRevision(impliedFirstFailingRevision));
         this._testFailures.update(key, failure);
+        return failure;
     },
     purge: function() {
         this._testFailures.purge(function(failure) {
@@ -114,7 +108,7 @@ controllers.UnexpectedFailures = base.extends(Object, {
 
         var testNameList = failures.testNameList();
         var failuresByTest = base.filterDictionary(
-            results.unexpectedFailuresByTest(model.state.resultsByBuilder),
+            this._resultsFilter(model.state.resultsByBuilder),
             function(key) {
                 return testNameList.indexOf(key) != -1;
             });
@@ -135,6 +129,39 @@ controllers.UnexpectedFailures = base.extends(Object, {
             // FIXME: We should have a better dialog than this!
             alert('Rebaseline done! Please land with "webkit-patch land-cowboy".');
         });
+    }
+});
+
+controllers.UnexpectedFailures = base.extends(FailureStreamController, {
+    _resultsFilter: results.expectedOrUnexpectedFailuresByTest,
+
+    _impliedFirstFailingRevision: function(failureAnalysis)
+    {
+        return failureAnalysis.newestPassingRevision + 1;
+    },
+    _keyFor: function(failureAnalysis)
+    {
+        return failureAnalysis.newestPassingRevision + "+" + failureAnalysis.oldestFailingRevision;
+    },
+    _createFailureView: function(failureAnalysis)
+    {
+        var failure = new ui.notifications.FailingTestsSummary();
+        model.commitDataListForRevisionRange(this._impliedFirstFailingRevision(failureAnalysis), failureAnalysis.oldestFailingRevision).forEach(function(commitData) {
+            var suspiciousCommit = failure.addCommitData(commitData);
+            $(suspiciousCommit).bind('rollout', function() {
+                this.onRollout(commitData.revision, failure.testNameList());
+            }.bind(this));
+            $(failure).bind('blame', function() {
+                this.onBlame(failure, commitData);
+            }.bind(this));
+        }, this);
+
+        return failure;
+    },
+    update: function(failureAnalysis)
+    {
+        var failure = FailureStreamController.prototype.update.call(this, failureAnalysis);
+        failure.updateBuilderResults(model.buildersInFlightForRevision(this._impliedFirstFailingRevision(failureAnalysis)));
     },
     onBlame: function(failure, commitData)
     {
@@ -149,6 +176,19 @@ controllers.UnexpectedFailures = base.extends(Object, {
     {
         checkout.rollout(revision, ui.rolloutReasonForTestNameList(testNameList), $.noop);
     }
+});
+
+controllers.Failures = base.extends(FailureStreamController, {
+    _resultsFilter: results.expectedOrUnexpectedFailuresByTest,
+
+    _keyFor: function(failureAnalysis)
+    {
+        return base.dirName(failureAnalysis.testName);
+    },
+    _createFailureView: function(failureAnalysis)
+    {
+        return new ui.notifications.FailingTests();
+    },
 });
 
 controllers.FailingBuilders = base.extends(Object, {

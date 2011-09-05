@@ -207,4 +207,20 @@ model.analyzeUnexpectedSuccesses = function(callback)
     });
 };
 
+model.analyzeExpectedOrUnexpectedFailures = function(callback)
+{
+    var expectedFailures = results.expectedOrUnexpectedFailuresByTest(model.state.resultsByBuilder);
+    $.each(expectedFailures, function(testName, resultNodesByBuilder) {
+        var failureAnalysis = {
+            'testName': testName,
+            'resultNodesByBuilder': resultNodesByBuilder,
+        };
+
+        // FIXME: Consider looking at the history to see how long this test
+        // has been failing.
+
+        callback(failureAnalysis);
+    });
+};
+
 })();
