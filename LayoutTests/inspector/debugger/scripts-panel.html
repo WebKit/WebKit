@@ -6,17 +6,25 @@
 
 function test()
 {
-    function createMockScript(url, scriptId)
+    function createDebuggerPresentationModelMock()
     {
-        return {
-            sourceURL: url,
-            scriptId: scriptId,
-            requestSource: function(callback)
+        var model = new WebInspector.Object();
+        model.breakpointsForUISourceCode = function() { return []; };
+        return model;
+    }
+    function addUISouceCode(model, url)
+    {
+        var uiSourceCode = {
+            url: url,
+            requestContent: function(callback)
             {
                 InspectorTest.addResult("Source requested for " + url);
                 callback("");
-            }
+            },
+            messages: []
         };
+        model.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, uiSourceCode);
+        return uiSourceCode;
     }
 
     function showSourceFrame(panel, fileName)
@@ -34,12 +42,12 @@ function test()
     InspectorTest.runTestSuite([
         function testInitialLoad(next)
         {
-            var model = new WebInspector.DebuggerPresentationModel();
+            var model = createDebuggerPresentationModelMock();
             var panel = new WebInspector.ScriptsPanel(model);
 
-            model._addScript(createMockScript("foo.js", "1"));
-            model._addScript(createMockScript("bar.js", "2"));
-            model._addScript(createMockScript("baz.js", "3"));
+            addUISouceCode(model, "foo.js");
+            addUISouceCode(model, "bar.js");
+            addUISouceCode(model, "baz.js");
 
             InspectorTest.addResult("Dump files select:");
             var select = panel._filesSelectElement;
@@ -59,12 +67,12 @@ function test()
 
         function testHistory(next)
         {
-            var model = new WebInspector.DebuggerPresentationModel();
+            var model = createDebuggerPresentationModelMock();
             var panel = new WebInspector.ScriptsPanel(model);
 
             var files = ["index.html", "script1.js", "script2.js", "script3.js"];
             for (var i = 0; i < files.length; ++i)
-                model._addScript(createMockScript(files[i], (i + 1).toString()));
+                addUISouceCode(model, files[i]);
 
             function checkCurrentlySelectedFileName(fileName)
             {
@@ -115,7 +123,7 @@ function test()
 
         function testFilesSelect(next)
         {
-            var model = new WebInspector.DebuggerPresentationModel();
+            var model = createDebuggerPresentationModelMock();
             var panel = new WebInspector.ScriptsPanel(model);
 
             var rootURL = "http://localhost:8080/LayoutTests/inspector/debugger/";
@@ -148,13 +156,12 @@ function test()
 
         function testSourceReplaced(next)
         {
-            var model = new WebInspector.DebuggerPresentationModel();
+            var model = createDebuggerPresentationModelMock();
             var panel = new WebInspector.ScriptsPanel(model);
 
-            model._addScript(createMockScript("foo.js", "1"));
-            model._addScript(createMockScript("bar.js", "2"));
-            var sourceFile = model._rawSourceCodeForScript("bar.js");
-            panel._uiSourceCodeReplaced({ data: { oldSourceCode: sourceFile, sourceCode: sourceFile }});
+            addUISouceCode(model, "foo.js");
+            var uiSourceCode = addUISouceCode(model, "bar.js");
+            panel._uiSourceCodeReplaced({ data: { oldSourceCode: uiSourceCode, sourceCode: uiSourceCode }});
             showSourceFrame(panel, "bar.js");
             next();
         }
