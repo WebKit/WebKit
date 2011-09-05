@@ -1,5 +1,12 @@
 2011-09-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed update expected image for chromium Linux.
+        The test was introduced at r94492.
+
+        * platform/chromium-linux/fast/inline/absolute-positioned-inline-in-centred-block-expected.png: Added.
+
+2011-09-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed rebaseline for chromium: fast/repaint/block-layout-inline-children-float-positioned.html
 
         * platform/chromium-cg-mac-leopard/fast/repaint/block-layout-inline-children-float-positioned-expected.png:
