@@ -26,10 +26,52 @@
 #include "config.h"
 #include "TestInvocation.h"
 
+#include <QBuffer>
+#include <QCryptographicHash>
+#include <WebKit2/WKImageQt.h>
+#include <stdio.h>
+
 namespace WTR {
 
-void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef)
+static void dumpImage(const QImage& image)
 {
+    QBuffer buffer;
+    buffer.open(QBuffer::WriteOnly);
+    image.save(&buffer, "PNG");
+    buffer.close();
+    const QByteArray& data = buffer.data();
+
+    printf("Content-Type: %s\n", "image/png");
+    printf("Content-Length: %lu\n", static_cast<unsigned long>(data.length()));
+
+    const quint32 bytesToWriteInOneChunk = 1 << 15;
+    quint32 dataRemainingToWrite = data.length();
+    const char* ptr = data.data();
+    while (dataRemainingToWrite) {
+        quint32 bytesToWriteInThisChunk = qMin(dataRemainingToWrite, bytesToWriteInOneChunk);
+        quint32 bytesWritten = fwrite(ptr, 1, bytesToWriteInThisChunk, stdout);
+        if (bytesWritten != bytesToWriteInThisChunk)
+            break;
+        dataRemainingToWrite -= bytesWritten;
+        ptr += bytesWritten;
+    }
+
+    fflush(stdout);
+}
+
+void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef imageRef)
+{
+    QImage image = WKImageCreateQImage(imageRef);
+    QCryptographicHash hash(QCryptographicHash::Md5);
+    for (unsigned row = 0; row < image.height(); ++row)
+        hash.addData(reinterpret_cast<const char*>(image.constScanLine(row)), image.width() * image.bytesPerLine());
+
+    QByteArray actualHash = hash.result().toHex();
+    ASSERT(actualHash.size() == 32);
+    if (!compareActualHashToExpectedAndDumpResults(actualHash)) {
+        image.setText("checksum", actualHash);
+        dumpImage(image);
+    }
 }
 
 } // namespace WTR

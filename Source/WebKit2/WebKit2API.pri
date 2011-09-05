@@ -19,6 +19,7 @@ WEBKIT2_API_SOURCES = \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKURLRequest.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKURLResponse.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKUserContentURLPattern.cpp \
+    $$SOURCE_DIR/WebKit2/Shared/API/c/qt/WKImageQt.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKAuthenticationChallenge.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKAuthenticationDecisionListener.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKBackForwardList.cpp \
@@ -89,6 +90,7 @@ WEBKIT2_API_HEADERS += \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKURLRequest.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKURLResponse.h \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKUserContentURLPattern.h \
+    $$SOURCE_DIR/WebKit2/Shared/API/c/qt/WKImageQt.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKAPICast.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKAuthenticationChallenge.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKAuthenticationDecisionListener.h \

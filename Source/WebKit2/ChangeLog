@@ -1,3 +1,18 @@
+2011-09-05  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Add pixel test support
+        https://bugs.webkit.org/show_bug.cgi?id=66283
+
+        Reviewed by Andreas Kling.
+
+        * Shared/API/c/qt/WKImageQt.cpp: Added.
+        (WKImageCreateQImage):  C style (private) API to get the contents of the backing
+        store as an image.
+        * Shared/API/c/qt/WKImageQt.h: Added.
+        * Shared/qt/ShareableBitmapQt.cpp:
+        (WebKit::ShareableBitmap::createImage): Typo. Remove useless ifdef.
+        * WebKit2API.pri:
+
 2011-09-05  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Fix the build

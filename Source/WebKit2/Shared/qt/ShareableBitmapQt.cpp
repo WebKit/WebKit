@@ -42,13 +42,11 @@ QImage ShareableBitmap::createQImage()
                   m_flags & SupportsAlpha ? QImage::Format_ARGB32_Premultiplied : QImage::Format_RGB32);
 }
 
-#if PLATFORM(QT)
 PassRefPtr<Image> ShareableBitmap::createImage()
 {
     QPixmap* pixmap = new QPixmap(QPixmap::fromImage(createQImage()));
     return BitmapImage::create(pixmap);
 }
-#endif
 
 PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {

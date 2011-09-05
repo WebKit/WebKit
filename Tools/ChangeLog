@@ -1,3 +1,16 @@
+2011-09-05  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Add pixel test support
+        https://bugs.webkit.org/show_bug.cgi?id=66283
+
+        Reviewed by Andreas Kling.
+
+        Implemented pixel result generation by reusing the logic
+        that we have in DumpRenderTree.
+        * WebKitTestRunner/qt/TestInvocationQt.cpp:
+        (WTR::dumpImage):
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+
 2011-09-04  Robin Dunn  <robin@alldunn.com>
 
         [wx] Enable wxWebKit to run using the wxGC Cairo backend on platforms other than GTK.
