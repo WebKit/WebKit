@@ -196,17 +196,17 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         function didEditScriptSource(error)
         {
-            if (!error) {
-                rawSourceCode.content = newSource;
-
-                var resource = WebInspector.resourceForURL(rawSourceCode.url);
-                if (resource)
-                    resource.addRevision(newSource);
-            }
-
             callback(error);
+            if (error)
+                return;
 
-            if (!error && WebInspector.debuggerModel.callFrames)
+            var resource = WebInspector.resourceForURL(rawSourceCode.url);
+            if (resource)
+                resource.addRevision(newSource);
+
+            rawSourceCode.contentEdited();
+
+            if (WebInspector.debuggerModel.callFrames)
                 this._debuggerPaused();
         }
         WebInspector.debuggerModel.setScriptSource(script.scriptId, newSource, didEditScriptSource.bind(this));
@@ -542,7 +542,7 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
         var rawSourceCode = this._presentationModel._rawSourceCodeForScript(resource.url)
         if (!rawSourceCode)
             return false;
-        return this._presentationModel.canEditScriptSource(rawSourceCode.id);
+        return this._presentationModel.canEditScriptSource(rawSourceCode.uiSourceCode);
     },
 
     setContent: function(resource, content, majorChange, userCallback)
@@ -556,21 +556,19 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
             return;
         }
 
-        resource.requestContent(this._setContentWithInitialContent.bind(this, rawSourceCode, content, userCallback));
+        resource.requestContent(this._setContentWithInitialContent.bind(this, rawSourceCode.uiSourceCode, content, userCallback));
     },
 
-    _setContentWithInitialContent: function(rawSourceCode, content, userCallback, oldContent)
+    _setContentWithInitialContent: function(uiSourceCode, content, userCallback, oldContent)
     {
         function callback(error)
         {
             if (userCallback)
                 userCallback(error);
-            if (!error) {
-                this._presentationModel._updateBreakpointsAfterLiveEdit(rawSourceCode.id, oldContent, content);
-                rawSourceCode.reload();
-            }
+            if (!error)
+                this._presentationModel._updateBreakpointsAfterLiveEdit(uiSourceCode, oldContent, content);
         }
-        this._presentationModel.setScriptSource(rawSourceCode.id, content, callback.bind(this));
+        this._presentationModel.setScriptSource(uiSourceCode, content, callback.bind(this));
     }
 }
 

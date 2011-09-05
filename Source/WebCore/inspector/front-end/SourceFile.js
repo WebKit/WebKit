@@ -51,7 +51,7 @@ WebInspector.RawSourceCode = function(id, script, formatter, formatted)
     this.messages = [];
 
     if (this._hasPendingResource())
-        this._resource.addEventListener("finished", this.reload.bind(this));
+        this._resource.addEventListener("finished", this._reload.bind(this));
 }
 
 WebInspector.RawSourceCode.Events = {
@@ -74,6 +74,11 @@ WebInspector.RawSourceCode.prototype = {
     {
         // FIXME: extract UISourceCode from RawSourceCode (currently RawSourceCode implements methods from both interfaces).
         return this;
+    },
+
+    contentEdited: function()
+    {
+        this._reload();
     },
 
     rawLocationToUILocation: function(rawLocation)
@@ -116,17 +121,6 @@ WebInspector.RawSourceCode.prototype = {
         this._requestContent();
     },
 
-    get content()
-    {
-        return this._content;
-    },
-
-    set content(content)
-    {
-        // FIXME: move live edit implementation to SourceFile and remove this setter.
-        this._content = content;
-    },
-
     createSourceMappingIfNeeded: function(callback)
     {
         if (!this._formatted) {
@@ -162,7 +156,7 @@ WebInspector.RawSourceCode.prototype = {
         for (var i = 0; i < this._scripts.length; ++i)
             this._concatenatedScripts[this._scripts[i].scriptId] = true;
 
-        this.reload();
+        this._reload();
 
         if (!this._contentRequested) {
             this._contentRequested = true;
@@ -170,7 +164,7 @@ WebInspector.RawSourceCode.prototype = {
         }
     },
 
-    reload: function()
+    _reload: function()
     {
         if (this._contentLoaded) {
             this._contentLoaded = false;
@@ -232,7 +226,7 @@ WebInspector.RawSourceCode.prototype = {
         this._requestContentCallbacks = [];
 
         if (this._reloadContent)
-            this.reload();
+            this._reload();
     },
 
     _hasPendingResource: function()
