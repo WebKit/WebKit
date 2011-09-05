@@ -1,3 +1,14 @@
+2011-09-05  Adam Barth  <abarth@webkit.org>
+
+        Fix global variable leak in garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=67617
+
+        Reviewed by Dimitri Glazkov.
+
+        Caught by running the unit tests with noglobals turned on.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+
 2011-09-05  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Add pixel test support

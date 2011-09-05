@@ -246,7 +246,7 @@ ui.results.ResultsSelector = base.extends('table', {
         this._body = this.appendChild(document.createElement('tbody'));
 
         testNameList.forEach(function(testName) {
-            row = this._body.insertRow();
+            var row = this._body.insertRow();
             for (var i = builderNameList.length - 1; i >= 0; --i) {
                 var cell = row.insertCell();
                 var builderName = builderNameList[i];
