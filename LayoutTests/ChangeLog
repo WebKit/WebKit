@@ -1,3 +1,9 @@
+2011-09-05  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Unreviewed gardening - move expectation to the correct place.
+
+        * platform/qt/fast/borders/border-image-repeat-expected.txt: Renamed from LayoutTests/platform/qt/border-image-repeat-expected.txt.
+
 2011-09-02  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: cleanup scripts-panel.html test.
