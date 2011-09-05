@@ -1,3 +1,32 @@
+2011-09-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94445 and r94448.
+        http://trac.webkit.org/changeset/94445
+        http://trac.webkit.org/changeset/94448
+        https://bugs.webkit.org/show_bug.cgi?id=67595
+
+        It broke everything (Requested by ossy on #webkit).
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        * heap/NewSpace.cpp:
+        (JSC::NewSpace::NewSpace):
+        * heap/NewSpace.h:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::allocatePropertyStorage):
+        * runtime/JSObject.h:
+        (JSC::JSObject::~JSObject):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSObject::putDirectFunctionWithoutTransition):
+        (JSC::JSObject::transitionTo):
+        (JSC::JSObject::visitChildrenDirect):
+
 2011-09-05  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix for r94452.

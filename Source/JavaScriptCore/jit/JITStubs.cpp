@@ -1481,7 +1481,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_put_by_id_transition_realloc)
 
     ASSERT(baseValue.isObject());
     JSObject* base = asObject(baseValue);
-    base->allocatePropertyStorage(*stackFrame.globalData, oldSize, newSize);
+    base->allocatePropertyStorage(oldSize, newSize);
 
     return base;
 }
