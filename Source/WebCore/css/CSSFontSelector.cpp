@@ -383,6 +383,16 @@ void CSSFontSelector::fontCacheInvalidated()
     dispatchInvalidationCallbacks();
 }
 
+void CSSFontSelector::retireCustomFont(FontData* fontData)
+{
+    if (m_document)
+        m_document->retireCustomFont(fontData);
+    else {
+        GlyphPageTreeNode::pruneTreeCustomFontData(fontData);
+        delete fontData;
+    }
+}
+
 static FontData* fontDataForGenericFamily(Document* document, const FontDescription& fontDescription, const AtomicString& familyName)
 {
     if (!document || !document->frame())

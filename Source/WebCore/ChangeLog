@@ -1,3 +1,37 @@
+2011-09-04  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10071256> Retain retired custom fonts until the next style recalc
+
+        Reviewed by Darin Adler.
+
+        Test: fast/css/font-face-used-after-retired.html
+
+        During style recalc, existing renderers may reference their old style, including font data.
+        Allow them to do so safely by keeping retired custom font data around until after style recalc.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::retireCustomFont): Added. Calls through to CSSFontSelector, if the font
+        face is still part of any segmented font face. Otherwise, deletes the custom font data.
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::pruneTable): Changed to call retireCustomFont() instead of deleting
+        retired font data.
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::retireCustomFont): Added. Calls through to the Document, if this is
+        still the active font selector for a document. Otherwise, deletes the custom font data.
+        * css/CSSFontSelector.h:
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::pruneTable): Changed to call retireCustomFont() instead of
+        deleting retired font data.
+        * dom/Document.cpp:
+        (WebCore::Document::~Document): Added a call to deleteRetiredCustomFonts(), in case the Document
+        is destroyed before getting a chance to recalc style after custom fonts have been retired.
+        (WebCore::Document::recalcStyle): Added a call to deleteRetiredCustomFonts() after style recalc.
+        (WebCore::Document::deleteRetiredCustomFonts): Added. Deletes all previously-retired custom font
+        data.
+        * dom/Document.h:
+        (WebCore::Document::retireCustomFont): Added.
+
 2011-09-04  Sam Weinig  <sam@webkit.org>
 
         Document.createEvent should support all the interfaces of Event we got

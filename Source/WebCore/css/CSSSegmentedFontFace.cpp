@@ -52,10 +52,11 @@ void CSSSegmentedFontFace::pruneTable()
     // Make sure the glyph page tree prunes out all uses of this custom font.
     if (m_fontDataTable.isEmpty())
         return;
+
     HashMap<unsigned, SegmentedFontData*>::iterator end = m_fontDataTable.end();
     for (HashMap<unsigned, SegmentedFontData*>::iterator it = m_fontDataTable.begin(); it != end; ++it)
-        GlyphPageTreeNode::pruneTreeCustomFontData(it->second);
-    deleteAllValues(m_fontDataTable);
+        m_fontSelector->retireCustomFont(it->second);
+
     m_fontDataTable.clear();
 }
 

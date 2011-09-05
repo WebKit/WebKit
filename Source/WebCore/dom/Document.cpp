@@ -574,6 +574,8 @@ Document::~Document()
             (*m_userSheets)[i]->clearOwnerNode();
     }
 
+    deleteRetiredCustomFonts();
+
     m_weakReference->clear();
 
     if (m_mediaQueryMatcher)
@@ -1562,6 +1564,9 @@ void Document::recalcStyle(StyleChange change)
             element->recalcStyle(change);
     }
 
+    // Now that all RenderStyles that pointed to retired fonts have been updated, the fonts can safely be deleted.
+    deleteRetiredCustomFonts();
+
 #if USE(ACCELERATED_COMPOSITING)
     if (view()) {
         bool layoutPending = view()->layoutPending() || renderer()->needsLayout();
@@ -1696,6 +1701,20 @@ PassRefPtr<RenderStyle> Document::styleForPage(int pageIndex)
 {
     RefPtr<RenderStyle> style = styleSelector()->styleForPage(pageIndex);
     return style.release();
+}
+
+void Document::retireCustomFont(FontData* fontData)
+{
+    m_retiredCustomFonts.append(adoptPtr(fontData));
+}
+
+void Document::deleteRetiredCustomFonts()
+{
+    size_t size = m_retiredCustomFonts.size();
+    for (size_t i = 0; i < size; ++i)
+        GlyphPageTreeNode::pruneTreeCustomFontData(m_retiredCustomFonts[i].get());
+
+    m_retiredCustomFonts.clear();
 }
 
 bool Document::isPageBoxVisible(int pageIndex)
