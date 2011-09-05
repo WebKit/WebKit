@@ -1,3 +1,18 @@
+2011-09-05  John Knottenbelt  <jknotten@chromium.org>
+
+        Take pageScaleFactor into account for MouseRelatedEvents.
+        https://bugs.webkit.org/show_bug.cgi?id=67592
+
+        Mouse-related events currently take account of the zoom factor, but they
+        also need to take account of the page scale factor so that pageX and pageY
+        event coordinates are properly determined.
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/events/page-scaled-mouse-click-expected.txt: Added.
+        * fast/events/page-scaled-mouse-click.html: Added.
+        * fast/events/script-tests/page-scaled-mouse-click.js: Added.
+
 2011-09-05  Balazs Kelemen  <kbalazs@webkit.org>
 
         D'oh! Missed the name of the test in the previous gardening.
