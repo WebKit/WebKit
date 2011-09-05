@@ -840,8 +840,10 @@ WebInspector.documentKeyDown = function(event)
             }
             break;
         case "F5":
-            if (!isMac)
+            if (!isMac) {
                 PageAgent.reload(event.ctrlKey || event.shiftKey);
+                event.preventDefault();
+            }
             break;
     }
 }
