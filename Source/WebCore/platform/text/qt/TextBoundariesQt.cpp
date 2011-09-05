@@ -33,12 +33,11 @@
 #include <QString>
 #include <QChar>
 
-#include <QDebug>
-#include <stdio.h>
-
 #include <qtextboundaryfinder.h>
 
 namespace WebCore {
+
+#if !USE(ICU_UNICODE)
 
 int findNextWordFromIndex(UChar const* buffer, int len, int position, bool forward)
 {
@@ -72,6 +71,8 @@ void findWordBoundary(UChar const* buffer, int len, int position, int* start, in
     *start = position > 0 ? iterator.toPreviousBoundary() : 0;
     *end = position == len ? len : iterator.toNextBoundary();
 }
+
+#endif
 
 }
 

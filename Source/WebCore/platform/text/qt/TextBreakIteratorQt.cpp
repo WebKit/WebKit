@@ -36,6 +36,8 @@ using namespace std;
 
 namespace WebCore {
 
+#if !USE(ICU_UNICODE)
+
     class TextBreakIterator : public QTextBoundaryFinder {
     public:
         TextBreakIterator(QTextBoundaryFinder::BoundaryType type, const QString& string)
@@ -149,5 +151,7 @@ namespace WebCore {
     {
         return true;
     }
+
+#endif
 
 }

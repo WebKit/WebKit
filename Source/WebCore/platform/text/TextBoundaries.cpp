@@ -60,7 +60,7 @@ int startOfLastWordBoundaryContext(const UChar* characters, int length)
     return 0;
 }
 
-#if !PLATFORM(BREWMP) && !PLATFORM(MAC) && !PLATFORM(QT)
+#if !PLATFORM(BREWMP) && !PLATFORM(MAC) && USE(ICU_UNICODE)
 
 int findNextWordFromIndex(const UChar* chars, int len, int position, bool forward)
 {
