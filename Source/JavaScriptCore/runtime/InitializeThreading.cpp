@@ -36,6 +36,7 @@
 #include "WriteBarrier.h"
 #include <wtf/DateMath.h>
 #include <wtf/Threading.h>
+#include <wtf/dtoa/cached-powers.h>
 
 using namespace WTF;
 
@@ -47,6 +48,7 @@ static pthread_once_t initializeThreadingKeyOnce = PTHREAD_ONCE_INIT;
 
 static void initializeThreadingOnce()
 {
+    WTF::double_conversion::initialize();
     WTF::initializeThreading();
 #if ENABLE(WRITE_BARRIER_PROFILING)
     WriteBarrierCounters::initialize();

@@ -53,6 +53,8 @@ namespace double_conversion {
     int PowersOfTenCache::kMaxDecimalExponent = 1;
     
     void initialize() {
+        if (kCachedPowers)
+            return;
         static CachedPower cachedPowers[] = {
             {UINT64_2PART_C(0xfa8fd5a0, 081c0288), -1220, -348},
             {UINT64_2PART_C(0xbaaee17f, a23ebf76), -1193, -340},

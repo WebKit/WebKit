@@ -1,3 +1,19 @@
+2011-09-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        REGRESSION (r94452): 20 http/tests tests failing on Qt Linux Release
+        https://bugs.webkit.org/show_bug.cgi?id=67562
+
+        Reviewed by Darin Adler.
+
+        Fixing the build (again which was broken by the dtoa patch.  Needed 
+        to make sure WTF::double_conversion::initialize() is called for Qt
+        as well as adding a check for WinCE in dtoa/utils.h
+
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * wtf/dtoa/cached-powers.cc:
+        * wtf/dtoa/utils.h:
+
 2011-09-03  Filip Pizlo  <fpizlo@apple.com>
 
         ThunkGenerators does not convert positive double zero into integer zero
