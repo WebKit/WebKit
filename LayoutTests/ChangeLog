@@ -1,5 +1,14 @@
 2011-09-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed rebaseline for chromium: fast/repaint/block-layout-inline-children-float-positioned.html
+
+        * platform/chromium-cg-mac-leopard/fast/repaint/block-layout-inline-children-float-positioned-expected.png:
+        * platform/chromium-cg-mac/fast/repaint/block-layout-inline-children-float-positioned-expected.png:
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-float-positioned-expected.txt: Removed.
+        * platform/chromium-win/fast/repaint/block-layout-inline-children-float-positioned-expected.txt:
+
+2011-09-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed rebaseline for fast/inline/absolute-positioned-inline-in-centred-block
 
         * platform/chromium-cg-mac-leopard/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt: Added.
