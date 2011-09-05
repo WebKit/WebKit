@@ -606,8 +606,6 @@ namespace double_conversion {
         int significant_digits = 0;
         int insignificant_digits = 0;
         bool nonzero_digit_dropped = false;
-        bool fractional_part = false;
-        
         bool sign = false;
         
         if (*current == '+' || *current == '-') {
@@ -749,10 +747,7 @@ namespace double_conversion {
                     exponent--;  // Move this 0 into the exponent.
                 }
             }
-            
-            // We don't emit a '.', but adjust the exponent instead.
-            fractional_part = true;
-            
+
             // There is a fractional part.
             while (*current >= '0' && *current <= '9') {
                 if (significant_digits < kMaxSignificantDigits) {

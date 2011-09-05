@@ -1,3 +1,12 @@
+2011-09-05  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Fix the build
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        * wtf/dtoa/double-conversion.cc: Remove dead variable in file added in r94452.
+        The variable fractional_part is only set but never used.
+
 2011-09-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         REGRESSION (r94452): 20 http/tests tests failing on Qt Linux Release

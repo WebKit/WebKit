@@ -99,6 +99,7 @@ MESSAGE_RECEIVERS = \
     DrawingAreaProxy.messages.in \
     PluginControllerProxy.messages.in \
     PluginProcess.messages.in \
+    PluginProcessConnection.messages.in \
     PluginProcessProxy.messages.in \
     PluginProxy.messages.in \
     WebApplicationCacheManager.messages.in \
