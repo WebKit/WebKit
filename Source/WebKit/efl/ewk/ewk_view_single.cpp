@@ -23,6 +23,7 @@
 
 #include "ewk_frame.h"
 #include "ewk_logging.h"
+#include "ewk_private.h"
 
 #include <Evas.h>
 #include <eina_safety_checks.h>

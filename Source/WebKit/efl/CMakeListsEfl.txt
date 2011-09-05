@@ -78,8 +78,8 @@ LIST(APPEND WebKit_SOURCES
     efl/ewk/ewk_tiled_model.c
     efl/ewk/ewk_util.cpp
     efl/ewk/ewk_view.cpp
-    efl/ewk/ewk_view_single.c
-    efl/ewk/ewk_view_tiled.c
+    efl/ewk/ewk_view_single.cpp
+    efl/ewk/ewk_view_tiled.cpp
     efl/ewk/ewk_window_features.cpp
     efl/ewk/ewk_js.cpp
 )
