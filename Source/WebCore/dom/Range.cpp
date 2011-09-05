@@ -58,6 +58,8 @@ using namespace std;
 static WTF::RefCountedLeakCounter rangeCounter("Range");
 #endif
 
+typedef Vector<RefPtr<Node> > NodeVector;
+
 inline Range::Range(PassRefPtr<Document> ownerDocument)
     : m_ownerDocument(ownerDocument)
     , m_start(m_ownerDocument)
@@ -681,8 +683,6 @@ static inline unsigned lengthOfContentsInNode(Node* node)
 
 PassRefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode& ec)
 {
-    typedef Vector<RefPtr<Node> > NodeVector;
-
     RefPtr<DocumentFragment> fragment;
     if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS)
         fragment = DocumentFragment::create(m_ownerDocument.get());
@@ -896,9 +896,14 @@ PassRefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node
         // FIXME: This assertion may fail if DOM is modified during mutation event
         // FIXME: Share code with Range::processNodes
         ASSERT(!firstChildInAncestorToProcess || firstChildInAncestorToProcess->parentNode() == ancestor);
-        RefPtr<Node> next;
-        for (Node* child = firstChildInAncestorToProcess.get(); child; child = next.get()) {
-            next = direction == ProcessContentsForward ? child->nextSibling() : child->previousSibling();
+        
+        NodeVector nodes;
+        for (Node* child = firstChildInAncestorToProcess.get(); child;
+            child = (direction == ProcessContentsForward) ? child->nextSibling() : child->previousSibling())
+            nodes.append(child);
+
+        for (NodeVector::const_iterator it = nodes.begin(); it != nodes.end(); it++) {
+            Node* child = it->get();
             switch (action) {
             case DELETE_CONTENTS:
                 ancestor->removeChild(child, ec);
