@@ -1,3 +1,16 @@
+2011-09-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94525.
+        http://trac.webkit.org/changeset/94525
+        https://bugs.webkit.org/show_bug.cgi?id=67599
+
+        WinCE compilation failed. (Requested by loislo on #webkit).
+
+        * platform/text/TextBoundaries.cpp:
+        * platform/text/TextBreakIteratorICU.cpp:
+        * platform/text/qt/TextBoundariesQt.cpp:
+        * platform/text/qt/TextBreakIteratorQt.cpp:
+
 2011-09-05  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] Compiling using system ICU uses QTextBreakIterator in some cases.

@@ -29,8 +29,6 @@ using namespace std;
 
 namespace WebCore {
 
-#if USE(ICU_UNICODE)
-
 static TextBreakIterator* setUpIterator(bool& createdIterator, TextBreakIterator*& iterator,
     UBreakIteratorType type, const UChar* string, int length)
 {
@@ -252,7 +250,5 @@ TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
     static TextBreakIterator* staticCursorMovementIterator;
     return setUpIteratorWithRules(createdCursorMovementIterator, staticCursorMovementIterator, kRules, string, length);
 }
-
-#endif
 
 }
