@@ -1,3 +1,20 @@
+2011-09-05  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix for r94452.
+
+        Add config.h as the first header to the cc files as required by the coding style.
+        Reuse macros from Assertions.h instead of adding addional #ifdefs.
+
+        * wtf/dtoa/bignum-dtoa.cc:
+        * wtf/dtoa/bignum.cc:
+        * wtf/dtoa/cached-powers.cc:
+        * wtf/dtoa/diy-fp.cc:
+        * wtf/dtoa/double-conversion.cc:
+        * wtf/dtoa/fast-dtoa.cc:
+        * wtf/dtoa/fixed-dtoa.cc:
+        * wtf/dtoa/strtod.cc:
+        * wtf/dtoa/utils.h:
+
 2011-09-05  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Fix the build

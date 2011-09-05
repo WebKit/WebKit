@@ -28,16 +28,12 @@
 #ifndef DOUBLE_CONVERSION_UTILS_H_
 #define DOUBLE_CONVERSION_UTILS_H_
 
-#include "Platform.h"
+#include "Assertions.h"
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef ASSERT
-#include <assert.h>
-#define ASSERT(condition)      (assert(condition))
-#define UNIMPLEMENTED() (abort())
-#define UNREACHABLE()   (abort())
-#endif
+#define UNIMPLEMENTED ASSERT_NOT_REACHED
+#define UNREACHABLE ASSERT_NOT_REACHED
 
 // Double operations detection based on target architecture.
 // Linux uses a 80bit wide floating point stack on x86. This induces double
