@@ -1,5 +1,12 @@
 2011-09-05  Balazs Kelemen  <kbalazs@webkit.org>
 
+        D'oh! Missed the name of the test in the previous gardening.
+        Unreviewed regardening.
+
+        * platform/qt-wk2/Skipped:
+
+2011-09-05  Balazs Kelemen  <kbalazs@webkit.org>
+
         [Qt][WK2] fast/inline/absolute-positioned-inline-in-centred-block.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=67607
 
