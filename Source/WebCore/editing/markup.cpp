@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Google Inc.
  * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2011 Motorola Mobility. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -682,12 +683,9 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
 
 PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const String& markup, const String& baseURL, FragmentScriptingPermission scriptingPermission)
 {
-    // We use a fake body element here to trick the HTML parser to using the
-    // InBody insertion mode.  Really, all this code is wrong and need to be
-    // changed not to use deprecatedCreateContextualFragment.
+    // We use a fake body element here to trick the HTML parser to using the InBody insertion mode.
     RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(document);
-    // FIXME: This should not use deprecatedCreateContextualFragment
-    RefPtr<DocumentFragment> fragment = fakeBody->deprecatedCreateContextualFragment(markup, scriptingPermission);
+    RefPtr<DocumentFragment> fragment =  Range::createDocumentFragmentForElement(markup, fakeBody.get(), scriptingPermission);
 
     if (fragment && !baseURL.isEmpty() && baseURL != blankURL() && baseURL != document->baseURL())
         completeURLs(fragment.get(), baseURL);

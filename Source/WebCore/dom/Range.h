@@ -27,6 +27,7 @@
 
 #include "ExceptionCodePlaceholder.h"
 #include "FloatRect.h"
+#include "FragmentScriptingPermission.h"
 #include "IntRect.h"
 #include "Node.h"
 #include "RangeBoundaryPoint.h"
@@ -88,7 +89,8 @@ public:
     String toHTML() const;
     String text() const;
 
-    PassRefPtr<DocumentFragment> createContextualFragment(const String& html, ExceptionCode&) const;
+    PassRefPtr<DocumentFragment> createContextualFragment(const String& html, ExceptionCode&, FragmentScriptingPermission = FragmentScriptingAllowed);
+    static PassRefPtr<DocumentFragment> createDocumentFragmentForElement(const String& markup, Element*,  FragmentScriptingPermission = FragmentScriptingAllowed);
 
     void detach(ExceptionCode&);
     PassRefPtr<Range> cloneRange(ExceptionCode&) const;

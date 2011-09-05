@@ -141,48 +141,6 @@ DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, error);
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, focus);
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, load);
 
-PassRefPtr<DocumentFragment> Element::deprecatedCreateContextualFragment(const String& markup, FragmentScriptingPermission scriptingPermission)
-{
-    RefPtr<DocumentFragment> fragment = document()->createDocumentFragment();
-
-    if (document()->isHTMLDocument())
-        fragment->parseHTML(markup, this, scriptingPermission);
-    else {
-        if (!fragment->parseXML(markup, this, scriptingPermission))
-            // FIXME: We should propagate a syntax error exception out here.
-            return 0;
-    }
-
-    // Exceptions are ignored because none ought to happen here.
-    ExceptionCode ignoredExceptionCode;
-
-    // We need to pop <html> and <body> elements and remove <head> to
-    // accommodate folks passing complete HTML documents to make the
-    // child of an element.
-
-    RefPtr<Node> nextNode;
-    for (RefPtr<Node> node = fragment->firstChild(); node; node = nextNode) {
-        nextNode = node->nextSibling();
-        if (node->hasTagName(htmlTag) || node->hasTagName(headTag) || node->hasTagName(bodyTag)) {
-            HTMLElement* element = toHTMLElement(node.get());
-            Node* firstChild = element->firstChild();
-            if (firstChild)
-                nextNode = firstChild;
-            RefPtr<Node> nextChild;
-            for (RefPtr<Node> child = firstChild; child; child = nextChild) {
-                nextChild = child->nextSibling();
-                element->removeChild(child.get(), ignoredExceptionCode);
-                ASSERT(!ignoredExceptionCode);
-                fragment->insertBefore(child, element, ignoredExceptionCode);
-                ASSERT(!ignoredExceptionCode);
-            }
-            fragment->removeChild(element, ignoredExceptionCode);
-            ASSERT(!ignoredExceptionCode);
-        }
-    }
-    return fragment.release();
-}
-
 PassRefPtr<Node> Element::cloneNode(bool deep)
 {
     return deep ? cloneElementWithChildren() : cloneElementWithoutChildren();

@@ -108,8 +108,6 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitfullscreenchange);
 #endif
 
-    virtual PassRefPtr<DocumentFragment> deprecatedCreateContextualFragment(const String&, FragmentScriptingPermission = FragmentScriptingAllowed);
-
     bool hasAttribute(const QualifiedName&) const;
     const AtomicString& getAttribute(const QualifiedName&) const;
     void setAttribute(const QualifiedName&, const AtomicString& value, ExceptionCode&);
