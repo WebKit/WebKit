@@ -320,22 +320,6 @@ RenderObject* NodeRendererFactory::createRendererAndStyle()
     return newRenderer;
 }
 
-#if ENABLE(FULLSCREEN_API)
-static RenderObject* wrapWithRenderFullScreen(RenderObject* object, Document* document)
-{
-    RenderFullScreen* fullscreenRenderer = new (document->renderArena()) RenderFullScreen(document);
-    fullscreenRenderer->setStyle(RenderFullScreen::createFullScreenStyle());
-    // It's possible that we failed to create the new render and end up wrapping nothing.
-    // We'll end up displaying a black screen, but Jer says this is expected.
-    if (object)
-        fullscreenRenderer->addChild(object);
-    document->setFullScreenRenderer(fullscreenRenderer);
-    if (fullscreenRenderer->placeholder())
-        return fullscreenRenderer->placeholder();
-    return fullscreenRenderer;
-}
-#endif
-
 void NodeRendererFactory::createRendererIfNeeded()
 {
     Node* node = m_context.node();
@@ -356,7 +340,7 @@ void NodeRendererFactory::createRendererIfNeeded()
 
 #if ENABLE(FULLSCREEN_API)
     if (document->webkitIsFullScreen() && document->webkitCurrentFullScreenElement() == node)
-        newRenderer = wrapWithRenderFullScreen(newRenderer, document);
+        newRenderer = RenderFullScreen::wrapRenderer(newRenderer, document);
 #endif
 
     // FIXME: This side effect should be visible from attach() code.

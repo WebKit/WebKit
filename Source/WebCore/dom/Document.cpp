@@ -4887,7 +4887,7 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     }
 
     if (m_fullScreenElement != documentElement())
-        m_fullScreenElement->detach();
+        RenderFullScreen::wrapRenderer(renderer, this);
 
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
     
@@ -4938,15 +4938,11 @@ void Document::webkitDidExitFullScreenForElement(Element*)
 {
     m_areKeysEnabledInFullScreen = false;
     setAnimatingFullScreen(false);
-
-    if (m_fullScreenRenderer)
-        m_fullScreenRenderer->remove();
     
-    if (m_fullScreenElement != documentElement())
-        m_fullScreenElement->detach();
+    if (m_fullScreenRenderer)
+        m_fullScreenRenderer->unwrapRenderer();
 
     m_fullScreenChangeEventTargetQueue.append(m_fullScreenElement.release());
-    setFullScreenRenderer(0);
 #if USE(ACCELERATED_COMPOSITING)
     page()->chrome()->client()->setRootFullScreenLayer(0);
 #endif

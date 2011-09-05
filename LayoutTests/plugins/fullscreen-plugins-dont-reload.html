@@ -1,0 +1,26 @@
+<html>
+<a id='link' href="javascript:document.getElementById('plg').webkitRequestFullScreen()">go
+fullscreen</a>
+<embed id="plg" type="application/x-webkit-test-netscape" src="data:application/x-webkit-test-netscape,alertwhenloaded"></iframe>
+
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+
+    setTimeout(function () {
+        var link = document.getElementById('link');
+        var x = link.offsetLeft + 5;
+        var y = link.offsetTop + 5;
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        setTimeout(function () {
+            layoutTestController.notifyDone();
+        }, 0);
+    }, 100);
+}
+
+
+</script>
+</html>
