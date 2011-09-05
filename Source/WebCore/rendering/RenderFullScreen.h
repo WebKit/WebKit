@@ -41,9 +41,7 @@ public:
     RenderBlock* placeholder() { return m_placeholder; }
     void createPlaceholder(PassRefPtr<RenderStyle>, const IntRect& frameRect);
 
-
-    static RenderObject* wrapRenderer(RenderObject* renderer, Document*);
-    void unwrapRenderer();
+    static PassRefPtr<RenderStyle> createFullScreenStyle();
 
 private:
     virtual void willBeDestroyed();
