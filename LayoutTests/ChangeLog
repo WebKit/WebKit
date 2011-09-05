@@ -1,5 +1,14 @@
 2011-09-05  Balazs Kelemen  <kbalazs@webkit.org>
 
+        [Qt][WK2] fast/inline/absolute-positioned-inline-in-centred-block.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=67607
+
+        Unreviewed gardening.
+
+        * platform/qt-wk2/Skipped:
+
+2011-09-05  Balazs Kelemen  <kbalazs@webkit.org>
+
         [Qt] Unreviewed gardening - move expectation to the correct place.
 
         * platform/qt/fast/borders/border-image-repeat-expected.txt: Renamed from LayoutTests/platform/qt/border-image-repeat-expected.txt.
