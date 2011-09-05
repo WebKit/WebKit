@@ -1,5 +1,13 @@
 2011-09-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed update expected image for chromium MAC.
+        The test was introduced at r94492.
+
+        * platform/chromium-cg-mac-leopard/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png:
+        * platform/chromium-cg-mac/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png:
+
+2011-09-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed update expected image for chromium Linux.
         The test was introduced at r94492.
 
