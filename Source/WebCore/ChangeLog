@@ -1,3 +1,25 @@
+2011-09-05  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium skia] JPEGImageEncoder: hoist contants out of the encoding loop
+        https://bugs.webkit.org/show_bug.cgi?id=67589
+
+        Reviewed by Adam Barth.
+
+        Change the row converter function signatures to be the same.  Call them via a function
+        pointer during the encoding loop.  Minor webkit stlye cleanup, remove unused include.
+
+        No new tests.  Covered by existing canvas 2d and 3d tests.
+        canvas/philip/tests/toDataURL.jpeg.alpha.html
+        fast/canvas/webgl/premultiplyalpha-test.html
+
+        * platform/image-encoders/skia/JPEGImageEncoder.cpp:  Remove SkUnPreMultiply.h (not used).
+        (WebCore::preMultipliedBGRAtoRGB):  Use unsigned char* instead of void* for pixels.
+        (WebCore::RGBAtoRGB):  pixels & pixelCount to match the preMultipliedBGRAtoRGB() signature.
+        (WebCore::encodePixels):  Move contants out of the encoding loop: use a function pointer to
+        call preMultipliedBGRAtoRGB or RGBAtoRGB (now they have identical signatures) during the
+        image row encoding loop.  Add/use pixelRowStride constant.
+        (WebCore::JPEGImageEncoder::encode):  webkit style: no need to split lines.
+
 2011-09-05  John Knottenbelt  <jknotten@chromium.org>
 
         Take pageScaleFactor into account for MouseRelatedEvents.
