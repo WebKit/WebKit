@@ -1,4 +1,4 @@
-SVG 1.1 transform animation tests
+SVG 1.1 dynamic animation tests
 
 Test calcMode=discrete animation on SVGAnimateTransform.
 

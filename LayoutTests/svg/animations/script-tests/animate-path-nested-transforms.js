@@ -35,13 +35,13 @@ function passIfCloseEnough(name, value, error) {
 }
 
 function startSample() {
-    passIfCloseEnough("rootSVGElement.getBBox().x", 400, 20);
-    passIfCloseEnough("rootSVGElement.getBBox().y", 240, 20);
+    passIfCloseEnough("rootSVGElement.getBBox().x", 132, 20);
+    passIfCloseEnough("rootSVGElement.getBBox().y", -90, 20);
 }
 
 function endSample() {
-    passIfCloseEnough("rootSVGElement.getBBox().x", 660, 20);
-    passIfCloseEnough("rootSVGElement.getBBox().y", 270, 20);
+    passIfCloseEnough("rootSVGElement.getBBox().x", 332, 20);
+    passIfCloseEnough("rootSVGElement.getBBox().y", 550, 20);
 }
 
 function executeTest() {

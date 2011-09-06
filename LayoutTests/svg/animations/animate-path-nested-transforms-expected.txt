@@ -5,10 +5,10 @@ test to determine whether auto-rotate animateMotion path animations pre-muliply 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS rootSVGElement.getBBox().x is almost 400 (within 20)
-PASS rootSVGElement.getBBox().y is almost 240 (within 20)
-PASS rootSVGElement.getBBox().x is almost 660 (within 20)
-PASS rootSVGElement.getBBox().y is almost 270 (within 20)
+PASS rootSVGElement.getBBox().x is almost 132 (within 20)
+PASS rootSVGElement.getBBox().y is almost -90 (within 20)
+PASS rootSVGElement.getBBox().x is almost 332 (within 20)
+PASS rootSVGElement.getBBox().y is almost 550 (within 20)
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,24 @@
+2011-09-06  Dirk Schulze  <krit@webkit.org>
+
+        Return to transform multiplication: motion transform * other transforms
+        https://bugs.webkit.org/show_bug.cgi?id=67601
+
+        Reviewed by Nikolas Zimmermann.
+        
+        Change the expected results of nested transformations to match new behavior
+        on matrices multiplications.
+
+        * svg/animations/animate-path-nested-transforms-expected.txt:
+        * svg/animations/animate-text-nested-transforms-expected.txt:
+        * svg/animations/script-tests/animate-path-nested-transforms.js:
+        (startSample):
+        (endSample):
+        * svg/animations/script-tests/animate-text-nested-transforms.js:
+        (startSample):
+        (endSample):
+        * svg/animations/svgtransform-animation-discrete-expected.txt:
+        * svg/animations/svgtransform-animation-discrete.html:
+
 2011-09-06  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] http/tests/history/popstate-fires-with-pending-requests.html breaks ~400 subsequent tests

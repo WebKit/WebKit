@@ -1,3 +1,34 @@
+2011-09-06  Dirk Schulze  <krit@webkit.org>
+
+        Return to transform multiplication: motion transform * other transforms
+        https://bugs.webkit.org/show_bug.cgi?id=67601
+
+        Reviewed by Nikolas Zimmermann.
+        
+        Right now we take the current transform of a transformable SVG element, post multiply the animation transform
+        and post multiply the motion transform to the other both:
+
+          transform * animation transform * motion transform
+
+        We switched to this behavior with the clean up of AffineTransform.
+        While the specification of SVG demands us to do so, no other SVG viewer is doing it that way. Now switching back to:
+
+          motion transform * transform * animation transform
+
+        This is done by other SVG viewers as well. While their is no consense about how to multiply the different transforms
+        on the SVG WG, their is a consense that the current specified behavior is unwanted. See
+        http://lists.w3.org/Archives/Public/www-svg/2011Jan/0055.html for more details.
+
+        We pass the following tests of the official W3C SVG test suite again now:
+
+        - animate-elem-24-t.svg
+        - animate-elem-30-t.svg
+
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::animatedLocalTransform):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::animatedLocalTransform):
+
 2011-09-05  Adam Barth  <abarth@webkit.org>
 
         window.HTMLSpanElement does not exist

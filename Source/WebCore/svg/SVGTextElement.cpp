@@ -113,7 +113,7 @@ AffineTransform SVGTextElement::animatedLocalTransform() const
     AffineTransform matrix;
     transform().concatenate(matrix);
     if (m_supplementalTransform)
-        matrix *= *m_supplementalTransform;
+        return *m_supplementalTransform * matrix;
     return matrix;
 }
 
