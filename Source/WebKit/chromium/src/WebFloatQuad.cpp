@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,64 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFloatPoint_h
-#define WebFloatPoint_h
-
-#include "WebCommon.h"
-
-#if WEBKIT_IMPLEMENTATION
-#include "FloatPoint.h"
-#endif
+#include "config.h"
+#include "WebFloatQuad.h"
 
 namespace WebKit {
 
-struct WebFloatPoint {
-    float x;
-    float y;
-
-    WebFloatPoint()
-        : x(0.0f)
-        , y(0.0f)
-    {
-    }
-
-    WebFloatPoint(float x, float y)
-        : x(x)
-        , y(y)
-    {
-    }
-
-#if WEBKIT_IMPLEMENTATION
-    WebFloatPoint(const WebCore::FloatPoint& p)
-        : x(p.x())
-        , y(p.y())
-    {
-    }
-
-    WebFloatPoint& operator=(const WebCore::FloatPoint& p)
-    {
-        x = p.x();
-        y = p.y();
-        return *this;
-    }
-
-    operator WebCore::FloatPoint() const
-    {
-        return WebCore::FloatPoint(x, y);
-    }
-#endif
-};
-
-inline bool operator==(const WebFloatPoint& a, const WebFloatPoint& b)
+WebRect WebFloatQuad::enclosingRect() const
 {
-    return a.x == b.x && a.y == b.y;
-}
+    int left = static_cast<int>(floorf(std::min(std::min(std::min(p[0].x, p[1].x), p[2].x), p[3].x)));
+    int top = static_cast<int>(floorf(std::min(std::min(std::min(p[0].y, p[1].y), p[2].y), p[3].y)));
+    int right = static_cast<int>(ceilf(std::max(std::max(std::max(p[0].x, p[1].x), p[2].x), p[3].x)));
+    int bottom = static_cast<int>(ceilf(std::max(std::max(std::max(p[0].y, p[1].y), p[2].y), p[3].y)));
 
-inline bool operator!=(const WebFloatPoint& a, const WebFloatPoint& b)
-{
-    return !(a == b);
+    return WebRect(left, top, right - left, bottom - top);
 }
 
 } // namespace WebKit
-
-#endif

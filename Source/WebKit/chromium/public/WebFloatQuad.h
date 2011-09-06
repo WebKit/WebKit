@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,63 +28,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFloatPoint_h
-#define WebFloatPoint_h
+#ifndef WebFloatQuad_h
+#define WebFloatQuad_h
 
 #include "WebCommon.h"
+#include "WebFloatPoint.h"
+#include "WebRect.h"
+#include <algorithm>
+#include <cmath>
 
 #if WEBKIT_IMPLEMENTATION
-#include "FloatPoint.h"
+#include "FloatQuad.h"
 #endif
 
 namespace WebKit {
 
-struct WebFloatPoint {
-    float x;
-    float y;
+struct WebFloatQuad {
+    WebFloatPoint p[4];
 
-    WebFloatPoint()
-        : x(0.0f)
-        , y(0.0f)
+    WebFloatQuad()
     {
     }
 
-    WebFloatPoint(float x, float y)
-        : x(x)
-        , y(y)
+    WebFloatQuad(const WebFloatPoint& p0, const WebFloatPoint& p1, const WebFloatPoint& p2, const WebFloatPoint& p3)
     {
+        p[0] = p0;
+        p[1] = p1;
+        p[2] = p2;
+        p[3] = p3;
     }
+
+    WEBKIT_EXPORT WebRect enclosingRect() const;
 
 #if WEBKIT_IMPLEMENTATION
-    WebFloatPoint(const WebCore::FloatPoint& p)
-        : x(p.x())
-        , y(p.y())
+    WebFloatQuad& operator=(const WebCore::FloatQuad& q)
     {
-    }
-
-    WebFloatPoint& operator=(const WebCore::FloatPoint& p)
-    {
-        x = p.x();
-        y = p.y();
+        p[0] = q.p1();
+        p[1] = q.p2();
+        p[2] = q.p3();
+        p[3] = q.p4();
         return *this;
     }
-
-    operator WebCore::FloatPoint() const
+    WebFloatQuad(const WebCore::FloatQuad& q)
     {
-        return WebCore::FloatPoint(x, y);
+        *this = q;
     }
 #endif
 };
-
-inline bool operator==(const WebFloatPoint& a, const WebFloatPoint& b)
-{
-    return a.x == b.x && a.y == b.y;
-}
-
-inline bool operator!=(const WebFloatPoint& a, const WebFloatPoint& b)
-{
-    return !(a == b);
-}
 
 } // namespace WebKit
 
