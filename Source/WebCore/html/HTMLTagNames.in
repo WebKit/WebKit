@@ -107,7 +107,7 @@ section interfaceName=HTMLElement
 select constructorNeedsFormElement
 small interfaceName=HTMLElement
 source wrapperOnlyIfMediaIsAvailable, conditional=VIDEO
-span interfaceName=HTMLElement
+span
 strike interfaceName=HTMLElement
 strong interfaceName=HTMLElement
 style constructorNeedsCreatedByParser

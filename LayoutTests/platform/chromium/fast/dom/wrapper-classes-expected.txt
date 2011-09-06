@@ -428,9 +428,9 @@ FAIL tagJSWrapperConstructorClass('select') should be HTMLSelectElementConstruct
 PASS tagJSWrapperClass('small') is 'HTMLElement'
 FAIL tagJSWrapperPrototypeClass('small') should be HTMLElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('small') should be HTMLElementConstructor. Was Function.
-PASS tagJSWrapperClass('span') is 'HTMLElement'
-FAIL tagJSWrapperPrototypeClass('span') should be HTMLElementPrototype. Was Object.
-FAIL tagJSWrapperConstructorClass('span') should be HTMLElementConstructor. Was Function.
+PASS tagJSWrapperClass('span') is 'HTMLSpanElement'
+FAIL tagJSWrapperPrototypeClass('span') should be HTMLSpanElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('span') should be HTMLSpanElementConstructor. Was Function.
 PASS tagJSWrapperClass('strike') is 'HTMLElement'
 FAIL tagJSWrapperPrototypeClass('strike') should be HTMLElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('strike') should be HTMLElementConstructor. Was Function.

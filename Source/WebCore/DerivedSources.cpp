@@ -195,6 +195,7 @@
 #include "JSHTMLScriptElement.cpp"
 #include "JSHTMLSelectElement.cpp"
 #include "JSHTMLSourceElement.cpp"
+#include "JSHTMLSpanElement.cpp"
 #include "JSHTMLStyleElement.cpp"
 #include "JSHTMLTableCaptionElement.cpp"
 #include "JSHTMLTableCellElement.cpp"

@@ -1,7 +1,7 @@
 This page tests whether a click event propogates with the correct target and positioning. See rdar://problem/4477126.
 
 click inside the red box:[]
-PASS: event target should be [object HTMLElement] and is
+PASS: event target should be [object HTMLSpanElement] and is
 PASS: event.pageX should be 175 and is
 PASS: event.pageY should be 105 and is
 PASS: event.clientX should be 175 and is

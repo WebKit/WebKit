@@ -257,6 +257,7 @@ SET(WebCore_IDL_FILES
     html/HTMLScriptElement.idl
     html/HTMLSelectElement.idl
     html/HTMLSourceElement.idl
+    html/HTMLSpanElement.idl
     html/HTMLStyleElement.idl
     html/HTMLTableCaptionElement.idl
     html/HTMLTableCellElement.idl
@@ -754,6 +755,7 @@ SET(WebCore_SOURCES
     html/HTMLQuoteElement.cpp
     html/HTMLScriptElement.cpp
     html/HTMLSelectElement.cpp
+    html/HTMLSpanElement.cpp
     html/HTMLStyleElement.cpp
     html/HTMLSummaryElement.cpp
     html/HTMLTableCaptionElement.cpp

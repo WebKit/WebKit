@@ -1,12 +1,12 @@
 Unmodified span
-span : [object HTMLElement]
-[span] : [object HTMLElement]
-String(span) : [object HTMLElement]
-String([span]) : [object HTMLElement]
-span.toString() : [object HTMLElement]
-[span].toString() : [object HTMLElement]
-span.valueOf() : [object HTMLElement]
-[span].valueOf() : [object HTMLElement]
+span : [object HTMLSpanElement]
+[span] : [object HTMLSpanElement]
+String(span) : [object HTMLSpanElement]
+String([span]) : [object HTMLSpanElement]
+span.toString() : [object HTMLSpanElement]
+[span].toString() : [object HTMLSpanElement]
+span.valueOf() : [object HTMLSpanElement]
+[span].valueOf() : [object HTMLSpanElement]
 
 span with modified toString and valueOf
 span : valueOf

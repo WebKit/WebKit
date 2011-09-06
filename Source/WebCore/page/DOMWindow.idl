@@ -467,6 +467,7 @@ module window {
         attribute HTMLQuoteElementConstructor HTMLQuoteElement;
         attribute HTMLScriptElementConstructor HTMLScriptElement;
         attribute HTMLSelectElementConstructor HTMLSelectElement;
+        attribute HTMLSpanElementConstructor HTMLSpanElement;
         attribute HTMLStyleElementConstructor HTMLStyleElement;
         attribute HTMLTableCaptionElementConstructor HTMLTableCaptionElement;
         attribute HTMLTableCellElementConstructor HTMLTableCellElement;

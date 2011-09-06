@@ -727,6 +727,7 @@ SOURCES += \
     html/HTMLQuoteElement.cpp \
     html/HTMLScriptElement.cpp \
     html/HTMLSelectElement.cpp \
+    html/HTMLSpanElement.cpp \
     html/HTMLStyleElement.cpp \
     html/HTMLSummaryElement.cpp \
     html/HTMLTableCaptionElement.cpp \
@@ -1737,6 +1738,7 @@ HEADERS += \
     html/HTMLScriptElement.h \
     html/HTMLSelectElement.h \
     html/HTMLSourceElement.h \
+    html/HTMLSpanElement.h \
     html/HTMLStyleElement.h \
     html/HTMLSummaryElement.h \
     html/HTMLTableCaptionElement.h \

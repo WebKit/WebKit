@@ -92,6 +92,7 @@
 #include "HTMLScriptElement.cpp"
 #include "HTMLSelectElement.cpp"
 #include "HTMLSourceElement.cpp"
+#include "HTMLSpanElement.cpp"
 #include "HTMLStyleElement.cpp"
 #include "HTMLSummaryElement.cpp"
 #include "HTMLTableCaptionElement.cpp"

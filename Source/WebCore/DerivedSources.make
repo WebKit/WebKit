@@ -240,6 +240,7 @@ DOM_CLASSES = \
     HTMLScriptElement \
     HTMLSelectElement \
     HTMLSourceElement \
+    HTMLSpanElement \
     HTMLStyleElement \
     HTMLTableCaptionElement \
     HTMLTableCellElement \

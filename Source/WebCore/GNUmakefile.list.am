@@ -303,6 +303,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLSelectElement.h \
 	DerivedSources/WebCore/JSHTMLSourceElement.cpp \
 	DerivedSources/WebCore/JSHTMLSourceElement.h \
+	DerivedSources/WebCore/JSHTMLSpanElement.cpp \
+	DerivedSources/WebCore/JSHTMLSpanElement.h \
 	DerivedSources/WebCore/JSHTMLStyleElement.cpp \
 	DerivedSources/WebCore/JSHTMLStyleElement.h \
 	DerivedSources/WebCore/JSHTMLTableCaptionElement.cpp \
@@ -1769,6 +1771,8 @@ webcore_sources += \
 	Source/WebCore/html/HTMLSelectElement.h \
 	Source/WebCore/html/HTMLSourceElement.cpp \
 	Source/WebCore/html/HTMLSourceElement.h \
+	Source/WebCore/html/HTMLSpanElement.cpp \
+	Source/WebCore/html/HTMLSpanElement.h \
 	Source/WebCore/html/HTMLStyleElement.cpp \
 	Source/WebCore/html/HTMLStyleElement.h \
 	Source/WebCore/html/HTMLSummaryElement.cpp \
