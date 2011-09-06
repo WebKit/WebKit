@@ -810,7 +810,7 @@ protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     // Overrides should call the superclass at the start
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-    void propagateStyleToAnonymousChildren();
+    void propagateStyleToAnonymousChildren(bool blockChildrenOnly = false);
 
     void drawLineForBoxSide(GraphicsContext*, int x1, int y1, int x2, int y2, BoxSide,
                             Color, EBorderStyle, int adjbw1, int adjbw2, bool antialias = false);

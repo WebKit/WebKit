@@ -246,21 +246,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         }
     }
 
-    // FIXME: We could save this call when the change only affected non-inherited properties
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isAnonymousBlock()) {
-            RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
-            if (style()->specifiesColumns()) {
-                if (child->style()->specifiesColumns())
-                    newStyle->inheritColumnPropertiesFrom(style());
-                if (child->style()->columnSpan())
-                    newStyle->setColumnSpan(true);
-            }
-            newStyle->setDisplay(BLOCK);
-            child->setStyle(newStyle.release());
-        }
-    }
-
+    propagateStyleToAnonymousChildren(true);    
     m_lineHeight = -1;
 
     // Update pseudos for :before and :after now.

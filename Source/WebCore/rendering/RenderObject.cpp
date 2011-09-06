@@ -1810,10 +1810,11 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     }
 }
 
-void RenderObject::propagateStyleToAnonymousChildren()
+void RenderObject::propagateStyleToAnonymousChildren(bool blockChildrenOnly)
 {
+    // FIXME: We could save this call when the change only affected non-inherited properties.
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isAnonymous() && !child->isBeforeOrAfterContent()) {
+        if (blockChildrenOnly ? child->isAnonymousBlock() : child->isAnonymous() && !child->isBeforeOrAfterContent()) {
             RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
             if (style()->specifiesColumns()) {
                 if (child->style()->specifiesColumns())
@@ -1821,7 +1822,7 @@ void RenderObject::propagateStyleToAnonymousChildren()
                 if (child->style()->columnSpan())
                     newStyle->setColumnSpan(true);
             }
-            newStyle->setDisplay(child->style()->display());
+            newStyle->setDisplay(blockChildrenOnly ? BLOCK : child->style()->display());
             child->setStyle(newStyle.release());
         }
     }

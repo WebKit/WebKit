@@ -1,3 +1,19 @@
+2011-09-06  Abhishek Arya  <inferno@chromium.org>
+
+        Style not propagated to anonymous boxes and anonymous
+        inline-blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=67364
+
+        Reviewed by James Robinson.
+
+        Share propagateStyleToAnonymousChildren with RenderBlock::styleDidChange.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::propagateStyleToAnonymousChildren):
+        * rendering/RenderObject.h:
+
 2011-09-06  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [skia] States of GraphicsContext may never be restored after clipToImageBuffer

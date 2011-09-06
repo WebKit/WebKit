@@ -1,3 +1,23 @@
+2011-09-06  Abhishek Arya  <inferno@chromium.org>
+
+        Style not propagated to anonymous boxes and anonymous
+        inline-blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=67364
+
+        Add comments explaining what the test does.
+
+        Reviewed by James Robinson.
+
+        * fast/ruby/ruby-block-style-not-updated-with-before-after-content.html:
+        * fast/ruby/ruby-block-style-not-updated.html:
+        * fast/ruby/ruby-inline-style-not-updated-with-before-after-content.html:
+        * fast/ruby/ruby-inline-style-not-updated.html:
+        * fast/table/table-before-child-style-update.html:
+        * fast/table/table-row-before-child-style-update.html:
+        * fast/table/table-row-style-not-updated-with-after-content.html:
+        * fast/table/table-row-style-not-updated-with-before-content.html:
+        * fast/table/table-style-not-updated.html:
+
 2011-09-06  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [skia] States of GraphicsContext may never be restored after clipToImageBuffer
