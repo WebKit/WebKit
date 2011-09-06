@@ -1,3 +1,14 @@
+2011-09-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rolling out r94564.
+        http://trac.webkit.org/changeset/94564
+        https://bugs.webkit.org/show_bug.cgi?id=67555
+
+        It broke many tests
+
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::svgAttributeChanged):
+
 2011-09-06  Rob Buis  <rbuis@rim.com>
 
         use after free in WebCore::SVGTRefElement::updateReferencedText

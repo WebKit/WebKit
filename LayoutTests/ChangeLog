@@ -1,3 +1,14 @@
+2011-09-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rolling out r94564.
+        http://trac.webkit.org/changeset/94564
+        https://bugs.webkit.org/show_bug.cgi?id=67555
+
+        It broke many tests
+
+        * svg/custom/tref-clone-crash-expected.txt: Removed.
+        * svg/custom/tref-clone-crash.html: Removed.
+
 2011-09-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Web Inspector: nuke background events collection (dead feature)
