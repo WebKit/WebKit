@@ -880,3 +880,4 @@ EXPORTS
 	_ZN8QDRTNodeaSERKS_ @ 879 NONAME
 	_ZN23DumpRenderTreeSupportQt21injectInternalsObjectEP9QWebFrame @ 880 NONAME
 	_ZN23DumpRenderTreeSupportQt20resetInternalsObjectEP9QWebFrame @ 881 NONAME
+	_ZN23DumpRenderTreeSupportQt28dumpProgressFinishedCallbackEb @ 882 NONAME
