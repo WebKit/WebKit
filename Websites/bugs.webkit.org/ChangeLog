@@ -1,3 +1,15 @@
+2011-09-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94554.
+        http://trac.webkit.org/changeset/94554
+        https://bugs.webkit.org/show_bug.cgi?id=67631
+
+        This patch did not quite fix the problem (Requested by
+        benwells on #webkit).
+
+        * PrettyPatch/PrettyPatch.rb:
+        * PrettyPatch/PrettyPatch_test.rb:
+
 2011-09-06  Ben Wells  <benwells@chromium.org>
 
         PrettyPatch should handle "delta" patch mechanism in git binary patches
