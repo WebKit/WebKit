@@ -200,6 +200,7 @@ private:
     const char* edjeGroupFromFormType(FormType) const;
     void applyEdjeStateFromForm(Evas_Object*, ControlStates);
     bool paintThemePart(RenderObject*, FormType, const PaintInfo&, const IntRect&);
+    bool isFormElementTooLargeToDisplay(const IntSize&);
 
 #if ENABLE(VIDEO)
     bool emitMediaButtonSignal(FormType, MediaControlElementType, const IntRect&);

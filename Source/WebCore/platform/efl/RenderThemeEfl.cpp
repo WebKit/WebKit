@@ -143,11 +143,25 @@ bool RenderThemeEfl::themePartCacheEntrySurfaceCreate(struct ThemePartCacheEntry
     return true;
 }
 
+bool RenderThemeEfl::isFormElementTooLargeToDisplay(const IntSize& elementSize)
+{
+    // This limit of 20000 pixels is hardcoded inside edje -- anything above this size
+    // will be clipped. This value seems to be reasonable enough so that hardcoding it
+    // here won't be a problem.
+    static const int maxEdjeDimension = 20000;
+
+    return elementSize.width() > maxEdjeDimension || elementSize.height() > maxEdjeDimension;
+}
+
 // allocate a new entry and fill it with edje group
 struct RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::cacheThemePartNew(FormType type, const IntSize& size)
 {
-    struct ThemePartCacheEntry *entry = new struct ThemePartCacheEntry;
+    if (isFormElementTooLargeToDisplay(size)) {
+        EINA_LOG_ERR("cannot render an element of size %dx%d", size.width(), size.height());
+        return 0;
+    }
 
+    ThemePartCacheEntry* entry = new ThemePartCacheEntry;
     if (!entry) {
         EINA_LOG_ERR("could not allocate ThemePartCacheEntry.");
         return 0;
@@ -297,7 +311,6 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
     ASSERT(m_edje);
 
     entry = cacheThemePartGet(type, rect.size());
-    ASSERT(entry);
     if (!entry)
         return false;
 
