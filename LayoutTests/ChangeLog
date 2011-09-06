@@ -1,3 +1,21 @@
+2011-09-05  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in RenderObjectChildList::destroyLeftOverChildren()
+        https://bugs.webkit.org/show_bug.cgi?id=64753
+
+        Reviewed by James Robinson.
+
+        anonymous-split-block-crash rendering was already wrong. The fix prevents
+        the tree to go bad and hence does not do the column-span rendering. same issue
+        with clone-anonymous-block-non-inline-child-crash test.
+
+        * fast/multicol/column-span-parent-continuation-crash-expected.txt: Added.
+        * fast/multicol/column-span-parent-continuation-crash.html: Added.
+        * platform/mac/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/mac/fast/multicol/span/anonymous-split-block-crash-expected.txt:
+        * platform/mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+
 2011-09-05  John Knottenbelt  <jknotten@chromium.org>
 
         Take pageScaleFactor into account for MouseRelatedEvents.
