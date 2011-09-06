@@ -5041,6 +5041,7 @@ css2.1/20110323/margin-applies-to-015.htm
 fast/borders/border-image-repeat.html
 fast/borders/border-image-slices.html
 fast/borders/border-image-source.html
+fast/css/focus-ring-multiline-writingmode-vertical.html
 fast/forms/input-appearance-spinbutton-disabled-readonly.html
 fast/forms/input-appearance-spinbutton-layer.html
 fast/forms/input-appearance-spinbutton-visibility.html
