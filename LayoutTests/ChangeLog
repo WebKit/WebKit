@@ -1,5 +1,48 @@
 2011-09-05  Abhishek Arya  <inferno@chromium.org>
 
+        Unreviewed. Chromium rebaselines for r94541, r94543.
+
+        * platform/chromium-cg-mac-leopard/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/chromium-cg-mac-leopard/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/chromium-cg-mac/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/chromium-cg-mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/chromium-cg-mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Removed.
+        * platform/chromium-linux/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/chromium-linux/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/chromium-linux/fast/ruby/ruby-block-style-not-updated-expected.png: Added.
+        * platform/chromium-linux/fast/ruby/ruby-block-style-not-updated-with-before-after-content-expected.png: Added.
+        * platform/chromium-linux/fast/ruby/ruby-inline-style-not-updated-expected.png: Added.
+        * platform/chromium-linux/fast/ruby/ruby-inline-style-not-updated-with-before-after-content-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-style-not-updated-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-style-not-updated-with-after-content-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-style-not-updated-with-before-content-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-style-not-updated-expected.png: Added.
+        * platform/chromium-win/fast/css-generated-content/table-before-after-child-add-expected.txt:
+        * platform/chromium-win/fast/css-generated-content/table-cell-before-after-child-add-expected.txt:
+        * platform/chromium-win/fast/css-generated-content/table-row-before-after-child-add-expected.txt:
+        * platform/chromium-win/fast/css-generated-content/table-table-before-after-child-add-expected.txt:
+        * platform/chromium-win/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/chromium-win/fast/multicol/span/anonymous-split-block-crash-expected.txt:
+        * platform/chromium-win/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/chromium-win/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/chromium-win/fast/ruby/ruby-block-style-not-updated-expected.png: Added.
+        * platform/chromium-win/fast/ruby/ruby-block-style-not-updated-with-before-after-content-expected.png: Added.
+        * platform/chromium-win/fast/ruby/ruby-inline-style-not-updated-expected.png: Added.
+        * platform/chromium-win/fast/ruby/ruby-inline-style-not-updated-with-before-after-content-expected.png: Added.
+        * platform/chromium-win/fast/table/table-after-child-in-table-expected.txt:
+        * platform/chromium-win/fast/table/table-before-child-in-table-expected.txt:
+        * platform/chromium-win/fast/table/table-cell-after-child-in-table-expected.txt:
+        * platform/chromium-win/fast/table/table-cell-before-child-in-table-expected.txt:
+        * platform/chromium-win/fast/table/table-row-after-child-in-table-expected.txt:
+        * platform/chromium-win/fast/table/table-row-before-child-in-table-expected.txt:
+        * platform/chromium-win/fast/table/table-row-style-not-updated-expected.png: Added.
+        * platform/chromium-win/fast/table/table-row-style-not-updated-with-after-content-expected.png: Added.
+        * platform/chromium-win/fast/table/table-row-style-not-updated-with-before-content-expected.png: Added.
+        * platform/chromium-win/fast/table/table-style-not-updated-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-09-05  Abhishek Arya  <inferno@chromium.org>
+
         Unreviewed. Qt rebaselines for r94543.
 
         * platform/qt/fast/css-generated-content/table-before-after-child-add-expected.txt:
