@@ -863,6 +863,9 @@ static PassRefPtr<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, CSSPrim
     if (fillSize.type == Cover)
         return primitiveValueCache->createIdentifierValue(CSSValueCover);
 
+    if (fillSize.size.height().isAuto())
+        return primitiveValueCache->createValue(fillSize.size.width());
+
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     list->append(primitiveValueCache->createValue(fillSize.size.width()));
     list->append(primitiveValueCache->createValue(fillSize.size.height()));

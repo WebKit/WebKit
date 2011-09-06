@@ -2993,7 +2993,7 @@ PassRefPtr<CSSValue> CSSParser::parseFillSize(int propId, bool& allowComma)
     RefPtr<CSSPrimitiveValue> parsedValue1;
 
     if (value->id == CSSValueAuto)
-        parsedValue1 = primitiveValueCache()->createValue(0, CSSPrimitiveValue::CSS_UNKNOWN);
+        parsedValue1 = primitiveValueCache()->createIdentifierValue(CSSValueAuto);
     else {
         if (!validUnit(value, FLength | FPercent, m_strict))
             return 0;
@@ -3003,23 +3003,22 @@ PassRefPtr<CSSValue> CSSParser::parseFillSize(int propId, bool& allowComma)
     CSSPropertyID property = static_cast<CSSPropertyID>(propId);
     RefPtr<CSSPrimitiveValue> parsedValue2;
     if ((value = m_valueList->next())) {
-        if (value->id == CSSValueAuto)
-            parsedValue2 = primitiveValueCache()->createValue(0, CSSPrimitiveValue::CSS_UNKNOWN);
-        else if (value->unit == CSSParserValue::Operator && value->iValue == ',')
+        if (value->unit == CSSParserValue::Operator && value->iValue == ',')
             allowComma = false;
-        else {
+        else if (value->id != CSSValueAuto) {
             if (!validUnit(value, FLength | FPercent, m_strict))
                 return 0;
             parsedValue2 = createPrimitiveNumericValue(value);
         }
-    }
-    if (!parsedValue2) {
-        if (property == CSSPropertyWebkitBackgroundSize || property == CSSPropertyWebkitMaskSize)
-            parsedValue2 = parsedValue1;
-        else
-            parsedValue2 = primitiveValueCache()->createValue(0, CSSPrimitiveValue::CSS_UNKNOWN);
+    } else if (!parsedValue2 && property == CSSPropertyWebkitBackgroundSize) {
+        // For backwards compatibility we set the second value to the first if it is omitted.
+        // We only need to do this for -webkit-background-size. It should be safe to let masks match
+        // the real property.
+        parsedValue2 = parsedValue1;
     }
 
+    if (!parsedValue2)
+        return parsedValue1;
     return primitiveValueCache()->createValue(Pair::create(parsedValue1.release(), parsedValue2.release()));
 }
 
