@@ -1,3 +1,16 @@
+2011-09-06  Wajahat Siddiqui  <mdwajahatali.siddiqui@motorola.com>
+
+        [GTK] Use soup_session_add_feature_by_type uniformly in WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=67593
+
+        Reviewed by Martin Robinson.
+
+        Using soup_session_add_feature_by_type for adding all soup features 
+        instead of adding using GRefPtr.
+
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainGtk):
+
 2011-09-05  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Add pixel test support
