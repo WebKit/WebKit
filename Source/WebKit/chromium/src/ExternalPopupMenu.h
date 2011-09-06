@@ -64,6 +64,7 @@ private:
     // WebExternalPopupClient methods:
     virtual void didChangeSelection(int index);
     virtual void didAcceptIndex(int index);
+    virtual void didAcceptIndices(const WebVector<int>& indices);
     virtual void didCancel();
 
     // Fills |info| with the popup menu information contained in the

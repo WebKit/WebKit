@@ -31,6 +31,8 @@
 #ifndef WebExternalPopupMenuClient_h
 #define WebExternalPopupMenuClient_h
 
+#include "WebVector.h"
+
 namespace WebKit {
 
 class WebExternalPopupMenuClient {
@@ -43,6 +45,11 @@ public:
     // Note that it is not safe to access this WebExternalPopupClientMenu after
     // this has been called as it might not be valid anymore.
     virtual void didAcceptIndex(int index) = 0;
+
+    // Should be called when a set of indices have been selected.
+    // Note that it is not safe to access this WebExternalPopupClientMenu after
+    // this has been called as it might not be valid anymore.
+    virtual void didAcceptIndices(const WebVector<int>& indices) = 0;
 
     // Should be called when the popup menu was discarded (closed without a
     // selection.

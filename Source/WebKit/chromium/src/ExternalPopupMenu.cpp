@@ -115,6 +115,39 @@ void ExternalPopupMenu::didAcceptIndex(int index)
     m_webExternalPopupMenu = 0;
 }
 
+void ExternalPopupMenu::didAcceptIndices(const WebVector<int>& indices)
+{
+#if ENABLE(NO_LISTBOX_RENDERING)
+    if (!m_popupMenuClient) {
+        m_webExternalPopupMenu = 0;
+        return
+    }
+
+    // Calling methods on the PopupMenuClient might lead to this object being
+    // derefed. This ensures it does not get deleted while we are running this
+    // method.
+    RefPtr<ExternalPopupMenu> protect(this);
+    ListPopupMenuClient* listPopupMenuClient = static_cast<ListPopupMenuClient*>(m_popupMenuClient);
+
+    if (!indices.size())
+        listPopupMenuClient->valueChanged(-1, true);
+    else {
+        for (size_t i = 0; i < indices.size(); ++i)
+            listPopupMenuClient->listBoxSelectItem(indices[i], (i > 0), false, (i == indices.size() - 1));
+    }
+
+    // The call to valueChanged above might have lead to a call to
+    // disconnectClient, so we might not have a PopupMenuClient anymore.
+    if (m_popupMenuClient)
+        m_popupMenuClient->popupDidHide();
+
+    m_webExternalPopupMenu = 0;
+
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
 void ExternalPopupMenu::didCancel()
 {
     // See comment in didAcceptIndex on why we need this.
