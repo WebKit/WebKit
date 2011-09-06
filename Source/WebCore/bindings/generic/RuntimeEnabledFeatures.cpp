@@ -155,4 +155,8 @@ bool RuntimeEnabledFeatures::isQuotaEnabled = false;
 bool RuntimeEnabledFeatures::isFullScreenAPIEnabled = true;
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+bool RuntimeEnabledFeatures::isMediaSourceEnabled = false;
+#endif
+
 } // namespace WebCore

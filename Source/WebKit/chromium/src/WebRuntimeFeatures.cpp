@@ -374,4 +374,22 @@ bool WebRuntimeFeatures::isFullScreenAPIEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableMediaSource(bool enable)
+{
+#if ENABLE(MEDIA_SOURCE)
+    RuntimeEnabledFeatures::setWebkitMediaSourceEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isMediaSourceEnabled()
+{
+#if ENABLE(MEDIA_SOURCE)
+    return RuntimeEnabledFeatures::webkitMediaSourceEnabled();
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

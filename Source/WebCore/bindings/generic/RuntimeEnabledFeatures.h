@@ -167,6 +167,11 @@ public:
     static void setQuotaEnabled(bool isEnabled) { isQuotaEnabled = isEnabled; }
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+    static bool webkitMediaSourceEnabled() { return isMediaSourceEnabled; }
+    static void setWebkitMediaSourceEnabled(bool isEnabled) { isMediaSourceEnabled = isEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -206,6 +211,10 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     static bool isFullScreenAPIEnabled;
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+    static bool isMediaSourceEnabled;
 #endif
 };
 
