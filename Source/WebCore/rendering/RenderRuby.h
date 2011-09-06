@@ -59,6 +59,9 @@ public:
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject* child);
 
+protected:
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
 private:
     virtual bool isRuby() const { return true; }
     virtual const char* renderName() const { return "RenderRuby (inline)"; }
@@ -74,6 +77,9 @@ public:
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject* child);
+
+protected:
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
 private:
     virtual bool isRuby() const { return true; }

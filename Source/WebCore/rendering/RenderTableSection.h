@@ -118,6 +118,9 @@ public:
 
     LayoutUnit getBaseline(int row) { return m_grid[row].baseline; }
 
+protected:
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }

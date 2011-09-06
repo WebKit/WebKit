@@ -119,6 +119,12 @@ RenderRubyAsInline::~RenderRubyAsInline()
 {
 }
 
+void RenderRubyAsInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderInline::styleDidChange(diff, oldStyle);
+    propagateStyleToAnonymousChildren();
+}
+
 void RenderRubyAsInline::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     // Insert :before and :after content before/after the RenderRubyRun(s)
@@ -218,6 +224,12 @@ RenderRubyAsBlock::RenderRubyAsBlock(Node* node)
 
 RenderRubyAsBlock::~RenderRubyAsBlock()
 {
+}
+
+void RenderRubyAsBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+    propagateStyleToAnonymousChildren();
 }
 
 void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)

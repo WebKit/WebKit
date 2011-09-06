@@ -74,6 +74,7 @@ RenderTable::~RenderTable()
 void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
+    propagateStyleToAnonymousChildren();
 
     ETableLayout oldTableLayout = oldStyle ? oldStyle->tableLayout() : TAUTO;
 
