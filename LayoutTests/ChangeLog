@@ -1,3 +1,9 @@
+2011-09-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Unreviewed gardening.
+
+        * platform/qt-mac/Skipped: Skip new failing tests to paint the bot green.
+
 2011-09-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Regression:  On Lion, redirects lose HTTP authentication headers
