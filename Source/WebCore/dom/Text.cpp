@@ -256,6 +256,9 @@ void Text::attach()
 
 void Text::recalcTextStyle(StyleChange change)
 {
+    if (hasCustomWillOrDidRecalcStyle())
+        willRecalcTextStyle(change);
+
     if (change != NoChange && parentNode() && parentNode()->renderer()) {
         if (renderer())
             renderer()->setStyle(parentNode()->renderer()->style());

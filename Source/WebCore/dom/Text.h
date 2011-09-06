@@ -53,6 +53,8 @@ protected:
     {
     }
 
+    virtual void willRecalcTextStyle(StyleChange) { ASSERT_NOT_REACHED(); }
+
 private:
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
