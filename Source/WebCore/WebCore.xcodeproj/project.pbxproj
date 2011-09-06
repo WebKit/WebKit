@@ -537,8 +537,6 @@
 		1AE2AE5C0A1D26F200B42B25 /* JSHTMLMenuElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AE5A0A1D26F200B42B25 /* JSHTMLMenuElement.h */; };
 		1AE2AEC70A1D297B00B42B25 /* JSHTMLQuoteElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AEC30A1D297B00B42B25 /* JSHTMLQuoteElement.cpp */; };
 		1AE2AEC80A1D297B00B42B25 /* JSHTMLQuoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */; };
-		1AE2AEE60A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AEE40A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp */; };
-		1AE2AEE70A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */; };
 		1AE82F8F0CAAFA9D002237AE /* JSDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE82F8D0CAAFA9D002237AE /* JSDatabase.cpp */; };
 		1AE82F900CAAFA9D002237AE /* JSDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE82F8E0CAAFA9D002237AE /* JSDatabase.h */; };
 		1AE82FEC0CAB07EE002237AE /* JSSQLResultSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE82FEA0CAB07EE002237AE /* JSSQLResultSet.cpp */; };
@@ -3899,9 +3897,7 @@
 		A8EA7CB10A192B9C00A8EF5F /* HTMLDivElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7CA30A192B9C00A8EF5F /* HTMLDivElement.cpp */; };
 		A8EA7CB20A192B9C00A8EF5F /* HTMLParagraphElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7CA40A192B9C00A8EF5F /* HTMLParagraphElement.cpp */; };
 		A8EA7CB30A192B9C00A8EF5F /* HTMLHRElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7CA50A192B9C00A8EF5F /* HTMLHRElement.cpp */; };
-		A8EA7CB40A192B9C00A8EF5F /* HTMLBlockquoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7CA60A192B9C00A8EF5F /* HTMLBlockquoteElement.h */; };
 		A8EA7CB50A192B9C00A8EF5F /* HTMLParagraphElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7CA70A192B9C00A8EF5F /* HTMLParagraphElement.h */; };
-		A8EA7CB60A192B9C00A8EF5F /* HTMLBlockquoteElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7CA80A192B9C00A8EF5F /* HTMLBlockquoteElement.cpp */; };
 		A8EA7CB70A192B9C00A8EF5F /* HTMLDivElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7CA90A192B9C00A8EF5F /* HTMLDivElement.h */; };
 		A8EA7CB80A192B9C00A8EF5F /* HTMLHeadingElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7CAA0A192B9C00A8EF5F /* HTMLHeadingElement.h */; };
 		A8EA7D2B0A19385500A8EF5F /* HTMLImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7D230A19385500A8EF5F /* HTMLImageLoader.h */; settings = {ATTRIBUTES = (); }; };
@@ -7082,11 +7078,8 @@
 		1AE2AE590A1D26F200B42B25 /* JSHTMLMenuElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMenuElement.cpp; sourceTree = "<group>"; };
 		1AE2AE5A0A1D26F200B42B25 /* JSHTMLMenuElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLMenuElement.h; sourceTree = "<group>"; };
 		1AE2AEA30A1D28E800B42B25 /* HTMLQuoteElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLQuoteElement.idl; sourceTree = "<group>"; };
-		1AE2AEA70A1D291900B42B25 /* HTMLBlockquoteElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLBlockquoteElement.idl; sourceTree = "<group>"; };
 		1AE2AEC30A1D297B00B42B25 /* JSHTMLQuoteElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLQuoteElement.cpp; sourceTree = "<group>"; };
 		1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLQuoteElement.h; sourceTree = "<group>"; };
-		1AE2AEE40A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLBlockquoteElement.cpp; sourceTree = "<group>"; };
-		1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLBlockquoteElement.h; sourceTree = "<group>"; };
 		1AE82F8D0CAAFA9D002237AE /* JSDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDatabase.cpp; sourceTree = "<group>"; };
 		1AE82F8E0CAAFA9D002237AE /* JSDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDatabase.h; sourceTree = "<group>"; };
 		1AE82FEA0CAB07EE002237AE /* JSSQLResultSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLResultSet.cpp; sourceTree = "<group>"; };
@@ -10565,9 +10558,7 @@
 		A8EA7CA30A192B9C00A8EF5F /* HTMLDivElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDivElement.cpp; sourceTree = "<group>"; };
 		A8EA7CA40A192B9C00A8EF5F /* HTMLParagraphElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLParagraphElement.cpp; sourceTree = "<group>"; };
 		A8EA7CA50A192B9C00A8EF5F /* HTMLHRElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLHRElement.cpp; sourceTree = "<group>"; };
-		A8EA7CA60A192B9C00A8EF5F /* HTMLBlockquoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLBlockquoteElement.h; sourceTree = "<group>"; };
 		A8EA7CA70A192B9C00A8EF5F /* HTMLParagraphElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLParagraphElement.h; sourceTree = "<group>"; };
-		A8EA7CA80A192B9C00A8EF5F /* HTMLBlockquoteElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLBlockquoteElement.cpp; sourceTree = "<group>"; };
 		A8EA7CA90A192B9C00A8EF5F /* HTMLDivElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLDivElement.h; sourceTree = "<group>"; };
 		A8EA7CAA0A192B9C00A8EF5F /* HTMLHeadingElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLHeadingElement.h; sourceTree = "<group>"; };
 		A8EA7D230A19385500A8EF5F /* HTMLImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLImageLoader.h; sourceTree = "<group>"; };
@@ -16222,9 +16213,6 @@
 				A8DF3FCB097FA0FB0052981B /* HTMLBaseFontElement.cpp */,
 				A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElement.h */,
 				1AE2A9F10A1CDA5700B42B25 /* HTMLBaseFontElement.idl */,
-				A8EA7CA80A192B9C00A8EF5F /* HTMLBlockquoteElement.cpp */,
-				A8EA7CA60A192B9C00A8EF5F /* HTMLBlockquoteElement.h */,
-				1AE2AEA70A1D291900B42B25 /* HTMLBlockquoteElement.idl */,
 				A871DE1D0A152AC800B12A68 /* HTMLBodyElement.cpp */,
 				A871DE200A152AC800B12A68 /* HTMLBodyElement.h */,
 				1AE2A9F20A1CDA5700B42B25 /* HTMLBodyElement.idl */,
@@ -16792,8 +16780,6 @@
 				A80E7B070A19D606007FB8C5 /* JSHTMLBaseElement.h */,
 				1AE2AA0C0A1CDAB300B42B25 /* JSHTMLBaseFontElement.cpp */,
 				1AE2AA0D0A1CDAB300B42B25 /* JSHTMLBaseFontElement.h */,
-				1AE2AEE40A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp */,
-				1AE2AEE50A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h */,
 				1AE2AA0E0A1CDAB300B42B25 /* JSHTMLBodyElement.cpp */,
 				1AE2AA0F0A1CDAB300B42B25 /* JSHTMLBodyElement.h */,
 				1AE2AA100A1CDAB300B42B25 /* JSHTMLBRElement.cpp */,
@@ -21648,7 +21634,6 @@
 				E44613A20CD6331000FADA75 /* HTMLAudioElement.h in Headers */,
 				A871DC1F0A15205700B12A68 /* HTMLBaseElement.h in Headers */,
 				A8DF3FD2097FA0FC0052981B /* HTMLBaseFontElement.h in Headers */,
-				A8EA7CB40A192B9C00A8EF5F /* HTMLBlockquoteElement.h in Headers */,
 				A871DE2C0A152AC800B12A68 /* HTMLBodyElement.h in Headers */,
 				A8CFF7AA0A156978000A4234 /* HTMLBRElement.h in Headers */,
 				A81369D2097374F600D74463 /* HTMLButtonElement.h in Headers */,
@@ -22019,7 +22004,6 @@
 				E44614380CD689C500FADA75 /* JSHTMLAudioElement.h in Headers */,
 				A80E7B110A19D606007FB8C5 /* JSHTMLBaseElement.h in Headers */,
 				1AE2AA210A1CDAB400B42B25 /* JSHTMLBaseFontElement.h in Headers */,
-				1AE2AEE70A1D2A7500B42B25 /* JSHTMLBlockquoteElement.h in Headers */,
 				1AE2AA230A1CDAB400B42B25 /* JSHTMLBodyElement.h in Headers */,
 				1AE2AA250A1CDAB400B42B25 /* JSHTMLBRElement.h in Headers */,
 				A80E7E9F0A1A83E3007FB8C5 /* JSHTMLButtonElement.h in Headers */,
@@ -24593,7 +24577,6 @@
 				E44613A10CD6331000FADA75 /* HTMLAudioElement.cpp in Sources */,
 				A871DC2A0A15205700B12A68 /* HTMLBaseElement.cpp in Sources */,
 				A8DF3FD3097FA0FC0052981B /* HTMLBaseFontElement.cpp in Sources */,
-				A8EA7CB60A192B9C00A8EF5F /* HTMLBlockquoteElement.cpp in Sources */,
 				A871DE290A152AC800B12A68 /* HTMLBodyElement.cpp in Sources */,
 				A8CFF7A80A156978000A4234 /* HTMLBRElement.cpp in Sources */,
 				A81369D3097374F600D74463 /* HTMLButtonElement.cpp in Sources */,
@@ -24994,7 +24977,6 @@
 				E44614370CD689C400FADA75 /* JSHTMLAudioElement.cpp in Sources */,
 				A80E7B120A19D606007FB8C5 /* JSHTMLBaseElement.cpp in Sources */,
 				1AE2AA200A1CDAB400B42B25 /* JSHTMLBaseFontElement.cpp in Sources */,
-				1AE2AEE60A1D2A7500B42B25 /* JSHTMLBlockquoteElement.cpp in Sources */,
 				1AE2AA220A1CDAB400B42B25 /* JSHTMLBodyElement.cpp in Sources */,
 				1AE2AA240A1CDAB400B42B25 /* JSHTMLBRElement.cpp in Sources */,
 				A80E7EA00A1A83E3007FB8C5 /* JSHTMLButtonElement.cpp in Sources */,

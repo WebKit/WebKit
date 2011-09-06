@@ -27,8 +27,7 @@
 #include "IndentOutdentCommand.h"
 
 #include "Document.h"
-#include "Element.h"
-#include "HTMLBlockquoteElement.h"
+#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InsertLineBreakCommand.h"
 #include "InsertListCommand.h"

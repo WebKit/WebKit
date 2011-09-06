@@ -1,3 +1,42 @@
+2011-09-06  Eric Seidel  <eric@webkit.org>
+
+        Remove window.HTMLBlockquoteElement per HTML5 (and DOM Core 1)
+        https://bugs.webkit.org/show_bug.cgi?id=67678
+
+        Reviewed by Darin Adler.
+
+        This is why we can't have nice things.
+
+        There was some confusion in the original DOM HTML 1 spec about
+        the existence of HTMlBlockquoteElement which was clarified by
+        a later errata, removing HTMLBlockquoteElement:
+        http://www.w3.org/DOM/updates/REC-DOM-Level-1-19981001-errata.html
+        "This interface is an error and must be ignored. The Interface HTMLQuoteElement is used for both the Q and BLOCKQUOTE elements"
+
+        Le sigh.  Personally I think having a separate HTMLBlockquoteElement
+        is clearer, but thats not how the web works.  Removed it and updated test results.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/gobject/GNUmakefile.am:
+        * editing/IndentOutdentCommand.cpp:
+        * html/HTMLBlockquoteElement.cpp: Removed.
+        * html/HTMLBlockquoteElement.h: Removed.
+        * html/HTMLBlockquoteElement.idl: Removed.
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLQuoteElement.cpp:
+        (WebCore::HTMLQuoteElement::HTMLQuoteElement):
+        (WebCore::HTMLQuoteElement::insertedIntoDocument):
+        * html/HTMLTagNames.in:
+        * page/DOMWindow.idl:
+
 2011-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename confirmCompositionWithoutDisturbingSelection to cancelComposition

@@ -102,6 +102,12 @@ PASS HTMLAudioElementPrototype from inner.document.forms.testForm.0.parentNode.f
 PASS HTMLBRElement from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling
 PASS HTMLBRElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.constructor
 PASS HTMLBRElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.__proto__
+PASS HTMLBaseElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.previousElementSibling
+PASS HTMLBaseElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.previousElementSibling.constructor
+PASS HTMLBaseElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLBaseFontElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling
+PASS HTMLBaseFontElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.constructor
+PASS HTMLBaseFontElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.__proto__
 PASS HTMLBodyElement from inner.document.forms.testForm.0.parentNode
 PASS HTMLBodyElementConstructor from inner.document.forms.testForm.0.parentNode.constructor
 PASS HTMLBodyElementPrototype from inner.document.forms.testForm.0.parentNode.__proto__
@@ -118,8 +124,6 @@ PASS HTMLDListElementPrototype from inner.document.getElementsByTagName("canvas"
 PASS HTMLDocument from inner.document.forms.testForm.0.ownerDocument
 PASS HTMLDocumentConstructor from inner.document.forms.testForm.0.ownerDocument.constructor
 PASS HTMLDocumentPrototype from inner.document.forms.testForm.0.ownerDocument.__proto__
-PASS HTMLElement from inner.document.forms.testForm.0.parentNode.lastElementChild
-PASS HTMLElementConstructor from inner.document.forms.testForm.0.parentNode.lastElementChild.constructor
 PASS HTMLElementPrototype from inner.document.forms.testForm.0.__proto__.__proto__
 PASS HTMLFormElement from inner.document.forms.testForm.0
 PASS HTMLFormElementConstructor from inner.document.forms.testForm.0.constructor
@@ -134,6 +138,9 @@ PASS HTMLInputElement from inner.document.forms.testForm.0.0
 PASS HTMLInputElementConstructor from inner.document.forms.testForm.0.0.constructor
 PASS HTMLInputElementPrototype from inner.document.forms.testForm.0.0.__proto__
 PASS HTMLMediaElementPrototype from inner.document.forms.testForm.0.previousElementSibling.__proto__.__proto__
+PASS HTMLSpanElement from inner.document.forms.testForm.0.parentNode.lastElementChild
+PASS HTMLSpanElementConstructor from inner.document.forms.testForm.0.parentNode.lastElementChild.constructor
+PASS HTMLSpanElementPrototype from inner.document.forms.testForm.0.parentNode.lastElementChild.__proto__
 PASS HTMLStyleElement from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling
 PASS HTMLStyleElementConstructor from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.constructor
 PASS HTMLStyleElementPrototype from inner.document.forms.testForm.0.parentNode.lastElementChild.previousElementSibling.__proto__
@@ -238,11 +245,9 @@ Never found File
 Never found FileList
 Never found FormData
 Never found HTMLAllCollection
-Never found HTMLBaseElement
-Never found HTMLBaseFontElement
-Never found HTMLBlockquoteElement
 Never found HTMLDirectoryElement
 Never found HTMLDivElement
+Never found HTMLElement
 Never found HTMLEmbedElement
 Never found HTMLFieldSetElement
 Never found HTMLFontElement

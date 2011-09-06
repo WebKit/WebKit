@@ -668,7 +668,6 @@ SOURCES += \
     html/HTMLBRElement.cpp \
     html/HTMLBaseElement.cpp \
     html/HTMLBaseFontElement.cpp \
-    html/HTMLBlockquoteElement.cpp \
     html/HTMLBodyElement.cpp \
     html/HTMLButtonElement.cpp \
     html/HTMLCanvasElement.cpp \
@@ -1676,7 +1675,6 @@ HEADERS += \
     html/HTMLAudioElement.h \
     html/HTMLBaseElement.h \
     html/HTMLBaseFontElement.h \
-    html/HTMLBlockquoteElement.h \
     html/HTMLBodyElement.h \
     html/HTMLBRElement.h \
     html/HTMLButtonElement.h \

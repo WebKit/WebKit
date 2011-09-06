@@ -38,7 +38,6 @@
 #include "HTMLBRElement.cpp"
 #include "HTMLBaseElement.cpp"
 #include "HTMLBaseFontElement.cpp"
-#include "HTMLBlockquoteElement.cpp"
 #include "HTMLBodyElement.cpp"
 #include "HTMLButtonElement.cpp"
 #include "HTMLCanvasElement.cpp"

@@ -66,7 +66,6 @@ var propertyInfo = [
     ["HTMLBRElement", "object"],
     ["HTMLBaseElement", "object"],
     ["HTMLBaseFontElement", "object"],
-    ["HTMLBlockquoteElement", "object"],
     ["HTMLBodyElement", "object"],
     ["HTMLButtonElement", "object"],
     ["HTMLCanvasElement", "object"],

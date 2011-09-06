@@ -78,8 +78,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMHTMLBaseElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLBaseFontElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLBaseFontElementPrivate.h \
-	DerivedSources/webkit/WebKitDOMHTMLBlockquoteElement.cpp \
-	DerivedSources/webkit/WebKitDOMHTMLBlockquoteElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLBodyElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLBodyElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLBRElement.cpp \
@@ -301,7 +299,6 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMHTMLAreaElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLBaseElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLBaseFontElement.h \
-	DerivedSources/webkit/WebKitDOMHTMLBlockquoteElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLBodyElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLBRElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLButtonElement.h \

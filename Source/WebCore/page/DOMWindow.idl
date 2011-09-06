@@ -419,7 +419,6 @@ module window {
         attribute HTMLBRElementConstructor HTMLBRElement;
         attribute HTMLBaseElementConstructor HTMLBaseElement;
         attribute HTMLBaseFontElementConstructor HTMLBaseFontElement;
-        attribute HTMLBlockquoteElementConstructor HTMLBlockquoteElement;
         attribute HTMLBodyElementConstructor HTMLBodyElement;
         attribute HTMLButtonElementConstructor HTMLButtonElement;
         attribute HTMLCanvasElementConstructor HTMLCanvasElement;

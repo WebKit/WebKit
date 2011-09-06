@@ -196,8 +196,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLBaseElement.h \
 	DerivedSources/WebCore/JSHTMLBaseFontElement.cpp \
 	DerivedSources/WebCore/JSHTMLBaseFontElement.h \
-	DerivedSources/WebCore/JSHTMLBlockquoteElement.cpp \
-	DerivedSources/WebCore/JSHTMLBlockquoteElement.h \
 	DerivedSources/WebCore/JSHTMLBodyElement.cpp \
 	DerivedSources/WebCore/JSHTMLBodyElement.h \
 	DerivedSources/WebCore/JSHTMLBRElement.cpp \
@@ -1644,8 +1642,6 @@ webcore_sources += \
 	Source/WebCore/html/HTMLBaseElement.h \
 	Source/WebCore/html/HTMLBaseFontElement.cpp \
 	Source/WebCore/html/HTMLBaseFontElement.h \
-	Source/WebCore/html/HTMLBlockquoteElement.cpp \
-	Source/WebCore/html/HTMLBlockquoteElement.h \
 	Source/WebCore/html/HTMLBodyElement.cpp \
 	Source/WebCore/html/HTMLBodyElement.h \
 	Source/WebCore/html/HTMLBRElement.cpp \

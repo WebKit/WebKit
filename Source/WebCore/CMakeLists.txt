@@ -204,7 +204,6 @@ SET(WebCore_IDL_FILES
     html/HTMLAudioElement.idl
     html/HTMLBaseElement.idl
     html/HTMLBaseFontElement.idl
-    html/HTMLBlockquoteElement.idl
     html/HTMLBodyElement.idl
     html/HTMLBRElement.idl
     html/HTMLButtonElement.idl
@@ -696,7 +695,6 @@ SET(WebCore_SOURCES
     html/HTMLBRElement.cpp
     html/HTMLBaseElement.cpp
     html/HTMLBaseFontElement.cpp
-    html/HTMLBlockquoteElement.cpp
     html/HTMLBodyElement.cpp
     html/HTMLButtonElement.cpp
     html/HTMLCanvasElement.cpp

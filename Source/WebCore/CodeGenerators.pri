@@ -250,7 +250,6 @@ IDL_BINDINGS += \
     html/HTMLAreaElement.idl \
     html/HTMLBaseElement.idl \
     html/HTMLBaseFontElement.idl \
-    html/HTMLBlockquoteElement.idl \
     html/HTMLBodyElement.idl \
     html/HTMLBRElement.idl \
     html/HTMLButtonElement.idl \

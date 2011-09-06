@@ -188,7 +188,6 @@ DOM_CLASSES = \
     HTMLBRElement \
     HTMLBaseElement \
     HTMLBaseFontElement \
-    HTMLBlockquoteElement \
     HTMLBodyElement \
     HTMLButtonElement \
     HTMLCanvasElement \
