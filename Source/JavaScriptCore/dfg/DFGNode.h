@@ -54,6 +54,9 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CodeBlock.h"
+#include "JSValue.h"
+#include "ValueProfile.h"
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
@@ -195,14 +198,15 @@ static const PredictedType PredictArray  = 0x03;
 static const PredictedType PredictInt32  = 0x04;
 static const PredictedType PredictDouble = 0x08;
 static const PredictedType PredictNumber = 0x0c;
-static const PredictedType DynamicPredictionTag = 0x80;
+static const PredictedType PredictTop    = 0x0f;
+static const PredictedType StrongPredictionTag = 0x80;
 static const PredictedType PredictionTagMask    = 0x80;
 
-enum PredictionSource { StaticPrediction, DynamicPrediction };
+enum PredictionSource { WeakPrediction, StrongPrediction };
 
 inline bool isCellPrediction(PredictedType value)
 {
-    return (value & PredictCell) == PredictCell && !(value & ~PredictArray);
+    return (value & PredictCell) == PredictCell && !(value & ~(PredictArray | PredictionTagMask));
 }
 
 inline bool isArrayPrediction(PredictedType value)
@@ -222,60 +226,107 @@ inline bool isDoublePrediction(PredictedType value)
 
 inline bool isNumberPrediction(PredictedType value)
 {
-    return !!(value & PredictNumber) && !(value & ~PredictNumber);
+    return !!(value & PredictNumber) && !(value & ~(PredictNumber | PredictionTagMask));
 }
 
-inline bool isDynamicPrediction(PredictedType value)
+inline bool isStrongPrediction(PredictedType value)
 {
-    ASSERT(value != (PredictNone | DynamicPredictionTag));
-    return !!(value & DynamicPredictionTag);
-}
-
-inline PredictedType mergePredictions(PredictedType left, PredictedType right)
-{
-    if (isDynamicPrediction(left) == isDynamicPrediction(right))
-        return left | right;
-    if (isDynamicPrediction(left)) {
-        ASSERT(!isDynamicPrediction(right));
-        return left;
-    }
-    ASSERT(!isDynamicPrediction(left));
-    ASSERT(isDynamicPrediction(right));
-    return right;
-}
-
-template<typename T>
-inline void mergePrediction(T& left, PredictedType right)
-{
-    left = static_cast<T>(mergePredictions(static_cast<PredictedType>(left), right));
-}
-
-inline PredictedType makePrediction(PredictedType type, PredictionSource source)
-{
-    ASSERT(!(type & DynamicPredictionTag));
-    ASSERT(source == DynamicPrediction || source == StaticPrediction);
-    if (type == PredictNone)
-        return PredictNone;
-    return type | (source == DynamicPrediction ? DynamicPredictionTag : 0);
+    ASSERT(value != (PredictNone | StrongPredictionTag));
+    return !!(value & StrongPredictionTag);
 }
 
 #ifndef NDEBUG
 inline const char* predictionToString(PredictedType value)
 {
+    if (isStrongPrediction(value)) {
+        switch (value & ~PredictionTagMask) {
+        case PredictNone:
+            return "p-strong-bottom";
+        case PredictCell:
+            return "p-strong-cell";
+        case PredictArray:
+            return "p-strong-array";
+        case PredictInt32:
+            return "p-strong-int32";
+        case PredictNumber:
+            return "p-strong-number";
+        default:
+            return "p-strong-top";
+        }
+    }
     switch (value) {
     case PredictNone:
-        return "p-bottom";
+        return "p-weak-bottom";
     case PredictCell:
-        return "p-cell";
+        return "p-weak-cell";
     case PredictArray:
-        return "p-array";
+        return "p-weak-array";
     case PredictInt32:
-        return "p-int32";
+        return "p-weak-int32";
     case PredictNumber:
-        return "p-number";
+        return "p-weak-number";
     default:
-        return "p-top";
+        return "p-weak-top";
     }
+}
+#endif
+
+inline PredictedType mergePredictions(PredictedType left, PredictedType right)
+{
+    if (isStrongPrediction(left) == isStrongPrediction(right))
+        return left | right;
+    if (isStrongPrediction(left)) {
+        ASSERT(!isStrongPrediction(right));
+        return left;
+    }
+    ASSERT(!isStrongPrediction(left));
+    ASSERT(isStrongPrediction(right));
+    return right;
+}
+
+template<typename T>
+inline bool mergePrediction(T& left, PredictedType right)
+{
+    PredictedType newPrediction = static_cast<T>(mergePredictions(static_cast<PredictedType>(left), right));
+    bool result = newPrediction != static_cast<PredictedType>(left);
+    left = newPrediction;
+    return result;
+}
+
+inline PredictedType makePrediction(PredictedType type, PredictionSource source)
+{
+    ASSERT(!(type & StrongPredictionTag));
+    ASSERT(source == StrongPrediction || source == WeakPrediction);
+    if (type == PredictNone)
+        return PredictNone;
+    return type | (source == StrongPrediction ? StrongPredictionTag : 0);
+}
+
+#if ENABLE(VALUE_PROFILER)
+inline PredictedType makePrediction(JSGlobalData& globalData, const ValueProfile& profile)
+{
+    ValueProfile::Statistics statistics;
+    profile.computeStatistics(globalData, statistics);
+    
+    if (!statistics.samples)
+        return PredictNone;
+    
+    if (statistics.int32s == statistics.samples)
+        return StrongPredictionTag | PredictInt32;
+    
+    if (statistics.doubles == statistics.samples)
+        return StrongPredictionTag | PredictDouble;
+    
+    if (statistics.int32s + statistics.doubles == statistics.samples)
+        return StrongPredictionTag | PredictNumber;
+    
+    if (statistics.arrays == statistics.samples)
+        return StrongPredictionTag | PredictArray;
+    
+    if (statistics.cells == statistics.samples)
+        return StrongPredictionTag | PredictCell;
+    
+    return StrongPredictionTag | PredictTop;
 }
 #endif
 
@@ -355,6 +406,33 @@ struct Node {
     {
         ASSERT(isConstant());
         return m_opInfo;
+    }
+    
+    JSValue valueOfJSConstant(CodeBlock* codeBlock)
+    {
+        return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
+    }
+    
+    bool isInt32Constant(CodeBlock* codeBlock)
+    {
+        return isConstant() && valueOfJSConstant(codeBlock).isInt32();
+    }
+    
+    bool isDoubleConstant(CodeBlock* codeBlock)
+    {
+        return isConstant() && valueOfJSConstant(codeBlock).isNumber();
+    }
+    
+    int32_t valueOfInt32Constant(CodeBlock* codeBlock)
+    {
+        ASSERT(isInt32Constant(codeBlock));
+        return valueOfJSConstant(codeBlock).asInt32();
+    }
+
+    double valueOfDoubleConstant(CodeBlock* codeBlock)
+    {
+        ASSERT(isDoubleConstant(codeBlock));
+        return valueOfJSConstant(codeBlock).uncheckedGetNumber();
     }
 
     bool hasLocal()
@@ -470,24 +548,27 @@ struct Node {
         return static_cast<PredictedType>(m_opInfo2);
     }
     
-    void predict(PredictedType prediction, PredictionSource source)
+    bool predict(PredictedType prediction, PredictionSource source)
     {
         ASSERT(hasPrediction());
         
         // We have previously found empirically that ascribing static predictions
         // to heap loads as well as calls is not profitable, as these predictions
         // are wrong too often. Hence, this completely ignores static predictions.
-        if (source == StaticPrediction)
-            return;
+        if (source == WeakPrediction)
+            return false;
         
         if (prediction == PredictNone)
-            return;
+            return false;
         
-        ASSERT(source == DynamicPrediction);
+        ASSERT(source == StrongPrediction);
         
-        m_opInfo2 |= DynamicPredictionTag | prediction;
+        PredictedType newPrediction = StrongPredictionTag | prediction;
+        bool result = m_opInfo2 != newPrediction;
+        m_opInfo2 |= newPrediction;
+        return result;
     }
-
+    
     VirtualRegister virtualRegister()
     {
         ASSERT(hasResult());

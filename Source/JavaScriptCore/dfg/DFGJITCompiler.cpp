@@ -913,6 +913,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     for (unsigned i = 0; i < m_jsCalls.size(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
         info.isCall = m_jsCalls[i].m_isCall;
+        info.isDFG = true;
         info.callReturnLocation = CodeLocationLabel(linkBuffer.locationOf(m_jsCalls[i].m_slowCall));
         info.hotPathBegin = linkBuffer.locationOf(m_jsCalls[i].m_targetToCheck);
         info.hotPathOther = linkBuffer.locationOfNearCall(m_jsCalls[i].m_fastCall);

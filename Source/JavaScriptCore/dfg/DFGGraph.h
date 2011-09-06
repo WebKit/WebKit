@@ -28,8 +28,9 @@
 
 #if ENABLE(DFG_JIT)
 
-#include <RegisterFile.h>
-#include <dfg/DFGNode.h>
+#include "CodeBlock.h"
+#include "DFGNode.h"
+#include "RegisterFile.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/StdLibExtras.h>
@@ -135,12 +136,11 @@ public:
         return *m_blocks[blockIndexForBytecodeOffset(bytecodeBegin)];
     }
 
-    void predict(int operand, PredictedType prediction, PredictionSource source)
+    bool predict(int operand, PredictedType prediction, PredictionSource source)
     {
         if (operandIsArgument(operand)) {
             unsigned argument = operand + m_argumentPredictions.size() + RegisterFile::CallFrameHeaderSize;
-            mergePrediction(m_argumentPredictions[argument].m_value, makePrediction(prediction, source));
-            return;
+            return mergePrediction(m_argumentPredictions[argument].m_value, makePrediction(prediction, source));
         }
         
         if ((unsigned)operand >= m_variablePredictions.size()) {
@@ -148,37 +148,37 @@ public:
             m_variablePredictions.resize(operand + 1);
         }
         
-        mergePrediction(m_variablePredictions[operand].m_value, makePrediction(prediction, source));
+        return mergePrediction(m_variablePredictions[operand].m_value, makePrediction(prediction, source));
     }
     
-    void predictGlobalVar(unsigned varNumber, PredictedType prediction, PredictionSource source)
+    bool predictGlobalVar(unsigned varNumber, PredictedType prediction, PredictionSource source)
     {
         HashMap<unsigned, PredictionSlot>::iterator iter = m_globalVarPredictions.find(varNumber + 1);
         if (iter == m_globalVarPredictions.end()) {
             PredictionSlot predictionSlot;
-            mergePrediction(predictionSlot.m_value, makePrediction(prediction, source));
+            bool result = mergePrediction(predictionSlot.m_value, makePrediction(prediction, source));
             m_globalVarPredictions.add(varNumber + 1, predictionSlot);
+            return result;
         } else
-            mergePrediction(iter->second.m_value, makePrediction(prediction, source));
+            return mergePrediction(iter->second.m_value, makePrediction(prediction, source));
     }
     
-    void predict(Node& node, PredictedType prediction, PredictionSource source)
+    bool predict(Node& node, PredictedType prediction, PredictionSource source)
     {
         switch (node.op) {
         case GetLocal:
-            predict(node.local(), prediction, source);
+            return predict(node.local(), prediction, source);
             break;
         case GetGlobalVar:
-            predictGlobalVar(node.varNumber(), prediction, source);
-            break;
+            return predictGlobalVar(node.varNumber(), prediction, source);
         case GetById:
         case GetMethod:
         case GetByVal:
         case Call:
         case Construct:
-            node.predict(prediction, source);
+            return node.predict(prediction, source);
         default:
-            break;
+            return false;
         }
     }
 
@@ -226,12 +226,43 @@ public:
             return PredictNone;
         }
     }
+    
+    // Helper methods to check nodes for constants.
+    bool isConstant(NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).isConstant();
+    }
+    bool isJSConstant(NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).isConstant();
+    }
+    bool isInt32Constant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).isInt32Constant(codeBlock);
+    }
+    bool isDoubleConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).isDoubleConstant(codeBlock);
+    }
+    // Helper methods get constant values from nodes.
+    JSValue valueOfJSConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).valueOfJSConstant(codeBlock);
+    }
+    int32_t valueOfInt32Constant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).valueOfInt32Constant(codeBlock);
+    }
+    double valueOfDoubleConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).valueOfDoubleConstant(codeBlock);
+    }
 
 #ifndef NDEBUG
     static const char *opName(NodeType);
 #endif
 
-    void predictArgumentTypes(ExecState*);
+    void predictArgumentTypes(ExecState*, CodeBlock*);
 
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;
     Vector<NodeIndex, 16> m_varArgChildren;

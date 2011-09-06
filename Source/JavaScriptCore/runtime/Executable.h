@@ -306,10 +306,12 @@ namespace JSC {
             ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_evalCodeBlock)
-                error = compileInternal(exec, scopeChainNode);
+                error = compileInternal(exec, scopeChainNode, JITCode::bottomTierJIT());
             ASSERT(!error == !!m_evalCodeBlock);
             return error;
         }
+        
+        JSObject* compileOptimized(ExecState*, ScopeChainNode*);
 
         EvalCodeBlock& generatedBytecode()
         {
@@ -344,7 +346,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         EvalExecutable(ExecState*, const SourceCode&, bool);
 
-        JSObject* compileInternal(ExecState*, ScopeChainNode*);
+        JSObject* compileInternal(ExecState*, ScopeChainNode*, JITCode::JITType);
         virtual void visitChildren(SlotVisitor&);
         void unlinkCalls();
 
@@ -369,10 +371,12 @@ namespace JSC {
             ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_programCodeBlock)
-                error = compileInternal(exec, scopeChainNode);
+                error = compileInternal(exec, scopeChainNode, JITCode::bottomTierJIT());
             ASSERT(!error == !!m_programCodeBlock);
             return error;
         }
+
+        JSObject* compileOptimized(ExecState*, ScopeChainNode*);
 
         ProgramCodeBlock& generatedBytecode()
         {
@@ -403,7 +407,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         ProgramExecutable(ExecState*, const SourceCode&);
 
-        JSObject* compileInternal(ExecState*, ScopeChainNode*);
+        JSObject* compileInternal(ExecState*, ScopeChainNode*, JITCode::JITType);
         virtual void visitChildren(SlotVisitor&);
         void unlinkCalls();
 
@@ -450,10 +454,12 @@ namespace JSC {
             ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForCall)
-                error = compileForCallInternal(exec, scopeChainNode, calleeArgsExec);
+                error = compileForCallInternal(exec, scopeChainNode, calleeArgsExec, JITCode::bottomTierJIT());
             ASSERT(!error == !!m_codeBlockForCall);
             return error;
         }
+
+        JSObject* compileOptimizedForCall(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec = 0);
 
         bool isGeneratedForCall() const
         {
@@ -471,10 +477,12 @@ namespace JSC {
             ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForConstruct)
-                error = compileForConstructInternal(exec, scopeChainNode);
+                error = compileForConstructInternal(exec, scopeChainNode, JITCode::bottomTierJIT());
             ASSERT(!error == !!m_codeBlockForConstruct);
             return error;
         }
+
+        JSObject* compileOptimizedForConstruct(ExecState*, ScopeChainNode*);
 
         bool isGeneratedForConstruct() const
         {
@@ -499,6 +507,20 @@ namespace JSC {
                 return compileForCall(exec, scopeChainNode, exec);
             ASSERT(kind == CodeForConstruct);
             return compileForConstruct(exec, scopeChainNode);
+        }
+        
+        JSObject* compileOptimizedFor(ExecState* exec, ScopeChainNode* scopeChainNode, CodeSpecializationKind kind)
+        {
+            // compileOptimizedFor should only be called with a callframe set up to call this function,
+            // since we will make speculative optimizations based on the arguments.
+            ASSERT(exec->callee());
+            ASSERT(exec->callee()->inherits(&JSFunction::s_info));
+            ASSERT(asFunction(exec->callee())->jsExecutable() == this);
+            
+            if (kind == CodeForCall)
+                return compileOptimizedForCall(exec, scopeChainNode, exec);
+            ASSERT(kind == CodeForConstruct);
+            return compileOptimizedForConstruct(exec, scopeChainNode);
         }
         
         bool isGeneratedFor(CodeSpecializationKind kind)
@@ -549,8 +571,8 @@ namespace JSC {
         FunctionExecutable(JSGlobalData&, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool);
         FunctionExecutable(ExecState*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool);
 
-        JSObject* compileForCallInternal(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec);
-        JSObject* compileForConstructInternal(ExecState*, ScopeChainNode*);
+        JSObject* compileForCallInternal(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec, JITCode::JITType);
+        JSObject* compileForConstructInternal(ExecState*, ScopeChainNode*, JITCode::JITType);
         
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         unsigned m_numCapturedVariables : 31;

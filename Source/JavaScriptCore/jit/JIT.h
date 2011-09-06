@@ -972,6 +972,13 @@ namespace JSC {
         // Loads the character value of a single character string into dst.
         void emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures);
         
+        enum OptimizationCheckKind { LoopOptimizationCheck, RetOptimizationCheck };
+#if ENABLE(TIERED_COMPILATION)
+        void emitOptimizationCheck(OptimizationCheckKind);
+#else
+        void emitOptimizationCheck(OptimizationCheckKind) { }
+#endif
+        
         void emitTimeoutCheck();
 #ifndef NDEBUG
         void printBytecodeOperandTypes(unsigned src1, unsigned src2);

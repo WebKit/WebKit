@@ -1816,6 +1816,32 @@ DEFINE_STUB_FUNCTION(void, op_check_has_instance)
     VM_THROW_EXCEPTION_AT_END();
 }
 
+DEFINE_STUB_FUNCTION(void, optimize_from_loop)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+    
+    CallFrame* callFrame = stackFrame.callFrame;
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    ScopeChainNode* scopeChain = callFrame->scopeChain();
+
+    JSObject* error = codeBlock->compileOptimized(callFrame, scopeChain);
+    if (error)
+        fprintf(stderr, "WARNING: optimized compilation from loop failed.\n");
+}
+
+DEFINE_STUB_FUNCTION(void, optimize_from_ret)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+    
+    CallFrame* callFrame = stackFrame.callFrame;
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    ScopeChainNode* scopeChain = callFrame->scopeChain();
+
+    JSObject* error = codeBlock->compileOptimized(callFrame, scopeChain);
+    if (error)
+        fprintf(stderr, "WARNING: optimized compilation from ret failed.\n");
+}
+
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_instanceof)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

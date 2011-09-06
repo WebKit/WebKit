@@ -1401,9 +1401,10 @@ void CodeBlock::dumpStatistics()
 #endif
 }
 
-CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject *globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab, bool isConstructor)
+CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject *globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab, bool isConstructor, PassOwnPtr<CodeBlock> alternative)
     : m_globalObject(globalObject->globalData(), ownerExecutable, globalObject)
     , m_heap(&m_globalObject->globalData().heap)
+    , m_executeCounter(-1000) // trigger optimization when sign bit clears
     , m_numCalleeRegisters(0)
     , m_numVars(0)
     , m_numParameters(0)
@@ -1422,6 +1423,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
     , m_symbolTable(symTab)
+    , m_alternative(alternative)
 {
     ASSERT(m_source);
 
@@ -1441,15 +1443,18 @@ CodeBlock::~CodeBlock()
             fprintf(stderr, "   arg = %u: ", i + 1);
         } else
             fprintf(stderr, "   bc = %d: ", profile->bytecodeOffset);
-        fprintf(stderr,
-                "samples = %u, int32 = %u, double = %u, cell = %u, array = %u\n",
-                profile->numberOfSamples(),
-                profile->probabilityOfInt32(),
-                profile->probabilityOfDouble(),
-                profile->probabilityOfCell(),
-                profile->probabilityOfArray());
+        profile->dump(stderr);
+        fprintf(stderr, "\n");
     }
 #endif
+    
+    // We should not be garbage collected if there are incoming calls. But
+    // if this is called during heap destruction, then there may still be
+    // incoming calls, which is harmless.
+    
+    // Note that our outgoing calls will be removed from other CodeBlocks'
+    // m_incomingCalls linked lists through the execution of the ~CallLinkInfo
+    // destructors.
 
 #if ENABLE(JIT)
     for (size_t size = m_structureStubInfos.size(), i = 0; i < size; ++i)
@@ -1519,6 +1524,8 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
 {
     bool handleWeakReferences = false;
     
+    if (!!m_alternative)
+        m_alternative->visitAggregate(visitor);
     visitor.append(&m_globalObject);
     visitor.append(&m_ownerExecutable);
     if (m_rareData) {
@@ -1789,8 +1796,30 @@ void CodeBlock::createActivation(CallFrame* callFrame)
 }
     
 #if ENABLE(JIT)
+void CallLinkInfo::unlink(JSGlobalData& globalData, RepatchBuffer& repatchBuffer)
+{
+    ASSERT(isLinked());
+    
+    if (isDFG) {
+#if ENABLE(DFG_JIT)
+        repatchBuffer.relink(CodeLocationCall(callReturnLocation), isCall ? operationLinkCall : operationLinkConstruct);
+#else
+        ASSERT_NOT_REACHED();
+#endif
+    } else
+        repatchBuffer.relink(CodeLocationNearCall(callReturnLocation), isCall? globalData.jitStubs->ctiVirtualCallLink() : globalData.jitStubs->ctiVirtualConstructLink());
+    hasSeenShouldRepatch = false;
+    callee.clear();
+
+    // It will be on a list if the callee has a code block.
+    if (isOnList())
+        remove();
+}
+
 void CodeBlock::unlinkCalls()
 {
+    if (!!m_alternative)
+        m_alternative->unlinkCalls();
     if (!(m_callLinkInfos.size() || m_methodCallLinkInfos.size()))
         return;
     if (!m_globalData->canUseJIT())
@@ -1799,24 +1828,101 @@ void CodeBlock::unlinkCalls()
     for (size_t i = 0; i < m_callLinkInfos.size(); i++) {
         if (!m_callLinkInfos[i].isLinked())
             continue;
-        if (getJITCode().jitType() == JITCode::DFGJIT) {
-#if ENABLE(DFG_JIT)
-            repatchBuffer.relink(CodeLocationCall(m_callLinkInfos[i].callReturnLocation), m_callLinkInfos[i].isCall ? operationLinkCall : operationLinkConstruct);
-#else
-            ASSERT_NOT_REACHED();
-#endif
-        } else
-            repatchBuffer.relink(CodeLocationNearCall(m_callLinkInfos[i].callReturnLocation), m_callLinkInfos[i].isCall ? m_globalData->jitStubs->ctiVirtualCallLink() : m_globalData->jitStubs->ctiVirtualConstructLink());
-        m_callLinkInfos[i].unlink();
+        m_callLinkInfos[i].unlink(*m_globalData, repatchBuffer);
     }
+}
+
+void CodeBlock::unlinkIncomingCalls()
+{
+    RepatchBuffer repatchBuffer(this);
+    while (m_incomingCalls.begin() != m_incomingCalls.end())
+        m_incomingCalls.begin()->unlink(*m_globalData, repatchBuffer);
 }
 #endif
 
 void CodeBlock::clearEvalCache()
 {
+    if (!!m_alternative)
+        m_alternative->clearEvalCache();
     if (!m_rareData)
         return;
     m_rareData->m_evalCodeCache.clear();
+}
+
+template<typename T>
+inline void replaceExistingEntries(Vector<T>& target, Vector<T>& source)
+{
+    ASSERT(target.size() <= source.size());
+    for (size_t i = 0; i < target.size(); ++i)
+        target[i] = source[i];
+}
+
+void CodeBlock::copyDataFromAlternative()
+{
+    if (!m_alternative)
+        return;
+    
+    replaceExistingEntries(m_constantRegisters, m_alternative->m_constantRegisters);
+    replaceExistingEntries(m_functionDecls, m_alternative->m_functionDecls);
+    replaceExistingEntries(m_functionExprs, m_alternative->m_functionExprs);
+}
+
+// FIXME: Implement OSR. If compileOptimized() is called from somewhere other than the
+// epilogue, do OSR from the old code block to the new one.
+
+// FIXME: After doing successful optimized compilation, reset the profiling counter to -1, so
+// that the next execution of the old code block will jump straight into compileOptimized()
+// and perform OSR.
+
+// FIXME: Ensure that a call to compileOptimized() just does OSR (and resets the counter to -1)
+// if the code had already been compiled.
+
+CodeBlock* ProgramCodeBlock::replacement()
+{
+    return &static_cast<ProgramExecutable*>(ownerExecutable())->generatedBytecode();
+}
+
+CodeBlock* EvalCodeBlock::replacement()
+{
+    return &static_cast<EvalExecutable*>(ownerExecutable())->generatedBytecode();
+}
+
+CodeBlock* FunctionCodeBlock::replacement()
+{
+    return &static_cast<FunctionExecutable*>(ownerExecutable())->generatedBytecodeFor(m_isConstructor ? CodeForConstruct : CodeForCall);
+}
+
+JSObject* ProgramCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode)
+{
+    if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType())) {
+        // No OSR yet, so make sure we don't hit this again anytime soon.
+        dontOptimizeAnytimeSoon();
+        return 0;
+    }
+    JSObject* error = static_cast<ProgramExecutable*>(ownerExecutable())->compileOptimized(exec, scopeChainNode);
+    return error;
+}
+
+JSObject* EvalCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode)
+{
+    if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType())) {
+        // No OSR yet, so make sure we don't hit this again anytime soon.
+        dontOptimizeAnytimeSoon();
+        return 0;
+    }
+    JSObject* error = static_cast<EvalExecutable*>(ownerExecutable())->compileOptimized(exec, scopeChainNode);
+    return error;
+}
+
+JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode)
+{
+    if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType())) {
+        // No OSR yet, so make sure we don't hit this again anytime soon.
+        dontOptimizeAnytimeSoon();
+        return 0;
+    }
+    JSObject* error = static_cast<FunctionExecutable*>(ownerExecutable())->compileOptimizedFor(exec, scopeChainNode, m_isConstructor ? CodeForConstruct : CodeForCall);
+    return error;
 }
 
 } // namespace JSC

@@ -191,7 +191,7 @@ void BytecodeGenerator::preserveLastVar()
         m_lastVar = &m_calleeRegisters.last();
 }
 
-BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* scopeChain, SymbolTable* symbolTable, ProgramCodeBlock* codeBlock)
+BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* scopeChain, SymbolTable* symbolTable, ProgramCodeBlock* codeBlock, CompilationKind compilationKind)
     : m_shouldEmitDebugHooks(scopeChain->globalObject->debugger())
     , m_shouldEmitProfileHooks(scopeChain->globalObject->supportsProfiling())
     , m_shouldEmitRichSourceInfo(scopeChain->globalObject->supportsRichSourceInfo())
@@ -228,6 +228,9 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
     
     m_codeBlock->m_numParameters = 1; // Allocate space for "this"
     codeBlock->m_numCapturedVars = codeBlock->m_numVars;
+    
+    if (compilationKind == OptimizingCompilation)
+        return;
 
     JSGlobalObject* globalObject = scopeChain->globalObject.get();
     ExecState* exec = globalObject->globalExec();
@@ -258,7 +261,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
     }
 }
 
-BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainNode* scopeChain, SymbolTable* symbolTable, CodeBlock* codeBlock)
+BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainNode* scopeChain, SymbolTable* symbolTable, CodeBlock* codeBlock, CompilationKind)
     : m_shouldEmitDebugHooks(scopeChain->globalObject->debugger())
     , m_shouldEmitProfileHooks(scopeChain->globalObject->supportsProfiling())
     , m_shouldEmitRichSourceInfo(scopeChain->globalObject->supportsRichSourceInfo())
@@ -419,7 +422,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
     }
 }
 
-BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, ScopeChainNode* scopeChain, SymbolTable* symbolTable, EvalCodeBlock* codeBlock)
+BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, ScopeChainNode* scopeChain, SymbolTable* symbolTable, EvalCodeBlock* codeBlock, CompilationKind)
     : m_shouldEmitDebugHooks(scopeChain->globalObject->debugger())
     , m_shouldEmitProfileHooks(scopeChain->globalObject->supportsProfiling())
     , m_shouldEmitRichSourceInfo(scopeChain->globalObject->supportsRichSourceInfo())

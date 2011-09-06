@@ -27,23 +27,50 @@
 #define JITCode_h
 
 #if ENABLE(JIT)
-
 #include "CallFrame.h"
 #include "JSValue.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Profiler.h"
+#endif
 
 namespace JSC {
 
+#if ENABLE(JIT)
     class JSGlobalData;
     class RegisterFile;
+#endif
     
     class JITCode {
+#if ENABLE(JIT)
         typedef MacroAssemblerCodeRef CodeRef;
         typedef MacroAssemblerCodePtr CodePtr;
+#else
+        JITCode() { }
+#endif
     public:
         enum JITType { HostCallThunk, BaselineJIT, DFGJIT };
-
+        
+        static JITType bottomTierJIT()
+        {
+#if ENABLE(TIERED_COMPILATION)
+            return BaselineJIT;
+#else
+            return DFGJIT;
+#endif
+        }
+        
+        static JITType topTierJIT()
+        {
+            return DFGJIT;
+        }
+        
+        static JITType nextTierJIT(JITType jitType)
+        {
+            ASSERT_UNUSED(jitType, jitType == BaselineJIT || jitType == DFGJIT);
+            return DFGJIT;
+        }
+        
+#if ENABLE(JIT)
         JITCode()
         {
         }
@@ -53,7 +80,7 @@ namespace JSC {
             , m_jitType(jitType)
         {
         }
-
+        
         bool operator !() const
         {
             return !m_ref.m_code.executableAddress();
@@ -124,10 +151,9 @@ namespace JSC {
 
         CodeRef m_ref;
         JITType m_jitType;
+#endif // ENABLE(JIT)
     };
 
 };
-
-#endif
 
 #endif

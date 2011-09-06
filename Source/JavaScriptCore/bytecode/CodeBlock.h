@@ -45,6 +45,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SegmentedVector.h>
+#include <wtf/SentinelLinkedList.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(JIT)
@@ -98,11 +99,18 @@ namespace JSC {
     };
 
 #if ENABLE(JIT)
-    struct CallLinkInfo {
+    struct CallLinkInfo: public BasicRawSentinelNode<CallLinkInfo> {
         CallLinkInfo()
             : hasSeenShouldRepatch(false)
             , isCall(false)
+            , isDFG(false)
         {
+        }
+        
+        ~CallLinkInfo()
+        {
+            if (isOnList())
+                remove();
         }
 
         CodeLocationLabel callReturnLocation; // it's a near call in the old JIT, or a normal call in DFG
@@ -111,13 +119,10 @@ namespace JSC {
         JITWriteBarrier<JSFunction> callee;
         bool hasSeenShouldRepatch : 1;
         bool isCall : 1;
+        bool isDFG : 1;
 
         bool isLinked() { return callee; }
-        void unlink()
-        {
-            hasSeenShouldRepatch = false;
-            callee.clear();
-        }
+        void unlink(JSGlobalData&, RepatchBuffer&);
 
         bool seenOnce()
         {
@@ -210,13 +215,16 @@ namespace JSC {
         WTF_MAKE_FAST_ALLOCATED;
         friend class JIT;
     protected:
-        CodeBlock(ScriptExecutable* ownerExecutable, CodeType, JSGlobalObject*, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable* symbolTable, bool isConstructor);
+        CodeBlock(ScriptExecutable* ownerExecutable, CodeType, JSGlobalObject*, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable*, bool isConstructor, PassOwnPtr<CodeBlock> alternative);
 
         WriteBarrier<JSGlobalObject> m_globalObject;
         Heap* m_heap;
 
     public:
         virtual ~CodeBlock();
+        
+        CodeBlock* alternative() { return m_alternative.get(); }
+        PassOwnPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
 
         void visitAggregate(SlotVisitor&);
         void visitWeakReferences(SlotVisitor&);
@@ -279,6 +287,15 @@ namespace JSC {
         }
 
         void unlinkCalls();
+        
+        bool hasIncomingCalls() { return m_incomingCalls.begin() != m_incomingCalls.end(); }
+        
+        void linkIncomingCall(CallLinkInfo* incoming)
+        {
+            m_incomingCalls.push(incoming);
+        }
+        
+        void unlinkIncomingCalls();
 #endif
 
 #if ENABLE(INTERPRETER)
@@ -300,8 +317,18 @@ namespace JSC {
 #endif
 
 #if ENABLE(JIT)
-        JITCode& getJITCode() { return m_isConstructor ? ownerExecutable()->generatedJITCodeForConstruct() : ownerExecutable()->generatedJITCodeForCall(); }
+        void setJITCode(const JITCode& code, MacroAssemblerCodePtr codeWithArityCheck)
+        {
+            m_jitCode = code;
+            m_jitCodeWithArityCheck = codeWithArityCheck;
+        }
+        JITCode& getJITCode() { return m_jitCode; }
+        JITCode::JITType getJITType() { return m_jitCode.jitType(); }
         ExecutablePool* executablePool() { return getJITCode().getExecutablePool(); }
+        virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*) = 0;
+        virtual CodeBlock* replacement() = 0;
+#else
+        JITCode::JITType getJITType() { return JITCode::BaselineJIT; }
 #endif
 
         ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
@@ -397,6 +424,16 @@ namespace JSC {
         ValueProfile* valueProfileForBytecodeOffset(int bytecodeOffset)
         {
             return WTF::genericBinarySearch<ValueProfile, int, getValueProfileBytecodeOffset>(m_valueProfiles, m_valueProfiles.size(), bytecodeOffset);
+        }
+        ValueProfile* valueProfileForArgument(int argumentIndex)
+        {
+            int index = argumentIndex - 1;
+            if (static_cast<unsigned>(index) >= m_valueProfiles.size())
+                return 0;
+            ValueProfile* result = valueProfile(argumentIndex - 1);
+            if (result->bytecodeOffset != -1)
+                return 0;
+            return result;
         }
 #endif
 
@@ -535,6 +572,20 @@ namespace JSC {
         EvalCodeCache& evalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_evalCodeCache; }
 
         void shrinkToFit();
+        
+        void copyDataFromAlternative();
+        
+        void optimizeNextInvocation()
+        {
+            m_executeCounter = 0;
+        }
+        
+        void dontOptimizeAnytimeSoon()
+        {
+            m_executeCounter = std::numeric_limits<int32_t>::min();
+        }
+        
+        int32_t m_executeCounter;
 
         // FIXME: Make these remaining members private.
 
@@ -594,6 +645,9 @@ namespace JSC {
         Vector<GlobalResolveInfo> m_globalResolveInfos;
         Vector<CallLinkInfo> m_callLinkInfos;
         Vector<MethodCallLinkInfo> m_methodCallLinkInfos;
+        JITCode m_jitCode;
+        MacroAssemblerCodePtr m_jitCodeWithArityCheck;
+        SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo> > m_incomingCalls;
 #endif
 #if ENABLE(VALUE_PROFILER)
         SegmentedVector<ValueProfile, 8> m_valueProfiles;
@@ -609,6 +663,8 @@ namespace JSC {
         Vector<WriteBarrier<FunctionExecutable> > m_functionExprs;
 
         SymbolTable* m_symbolTable;
+
+        OwnPtr<CodeBlock> m_alternative; // FIXME make this do something
 
         struct RareData {
            WTF_MAKE_FAST_ALLOCATED;
@@ -646,9 +702,9 @@ namespace JSC {
     // responsible for marking it.
 
     class GlobalCodeBlock : public CodeBlock {
-    public:
-        GlobalCodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset)
-            : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, &m_unsharedSymbolTable, false)
+    protected:
+        GlobalCodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, PassOwnPtr<CodeBlock> alternative)
+            : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, &m_unsharedSymbolTable, false, alternative)
         {
         }
 
@@ -658,16 +714,22 @@ namespace JSC {
 
     class ProgramCodeBlock : public GlobalCodeBlock {
     public:
-        ProgramCodeBlock(ProgramExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider)
-            : GlobalCodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, 0)
+        ProgramCodeBlock(ProgramExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, PassOwnPtr<CodeBlock> alternative)
+            : GlobalCodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, 0, alternative)
         {
         }
+        
+#if ENABLE(JIT)
+    protected:
+        virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
+        virtual CodeBlock* replacement();
+#endif
     };
 
     class EvalCodeBlock : public GlobalCodeBlock {
     public:
-        EvalCodeBlock(EvalExecutable* ownerExecutable, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, int baseScopeDepth)
-            : GlobalCodeBlock(ownerExecutable, EvalCode, globalObject, sourceProvider, 0)
+        EvalCodeBlock(EvalExecutable* ownerExecutable, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, int baseScopeDepth, PassOwnPtr<CodeBlock> alternative)
+            : GlobalCodeBlock(ownerExecutable, EvalCode, globalObject, sourceProvider, 0, alternative)
             , m_baseScopeDepth(baseScopeDepth)
         {
         }
@@ -681,6 +743,12 @@ namespace JSC {
             ASSERT(m_variables.isEmpty());
             m_variables.swap(variables);
         }
+        
+#if ENABLE(JIT)
+    protected:
+        virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
+        virtual CodeBlock* replacement();
+#endif
 
     private:
         int m_baseScopeDepth;
@@ -693,14 +761,20 @@ namespace JSC {
         // as we need to initialise the CodeBlock before we could initialise any RefPtr to hold the shared
         // symbol table, so we just pass as a raw pointer with a ref count of 1.  We then manually deref
         // in the destructor.
-        FunctionCodeBlock(FunctionExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, bool isConstructor)
-            : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, SharedSymbolTable::create().leakRef(), isConstructor)
+        FunctionCodeBlock(FunctionExecutable* ownerExecutable, CodeType codeType, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, bool isConstructor, PassOwnPtr<CodeBlock> alternative)
+            : CodeBlock(ownerExecutable, codeType, globalObject, sourceProvider, sourceOffset, SharedSymbolTable::create().leakRef(), isConstructor, alternative)
         {
         }
         ~FunctionCodeBlock()
         {
             sharedSymbolTable()->deref();
         }
+        
+#if ENABLE(JIT)
+    protected:
+        virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
+        virtual CodeBlock* replacement();
+#endif
     };
 
     inline Register& ExecState::r(int index)

@@ -1550,6 +1550,14 @@
 				>
 			</File>
 		</Filter>
+                <Filter
+                        Name="dfg"
+                        >
+                        <File
+                                RelativePath="..\..\dfg\DFGDriver.h"
+                                >
+                        </File>
+                </Filter>
 		<Filter
 			Name="yarr"
 			>

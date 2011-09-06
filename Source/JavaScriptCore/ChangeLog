@@ -1,3 +1,182 @@
+2011-09-06  Filip Pizlo  <fpizlo@apple.com>
+
+        JavaScriptCore does not have tiered compilation
+        https://bugs.webkit.org/show_bug.cgi?id=67176
+
+        Reviewed by Gavin Barraclough.
+        
+        This adds the ability to have multiple CodeBlocks associated with
+        a particular role in an Executable.  These are stored in
+        descending order of compiler tier.  CodeBlocks are optimized when
+        a counter (m_executeCounter) that is incremented in loops and
+        epilogues becomes positive.  Optimizing means that all calls to
+        the old CodeBlock are unlinked.
+        
+        The DFG can now pull in predictions from ValueProfiles, and
+        propagate them along the graph.  To support the new phase while
+        maintaing some level of abstraction, a DFGDriver was introduced
+        that encapsulates how to run the DFG compiler.
+        
+        This is turned off by default because it's not yet a performance
+        win on all benchmarks.  It speeds up crypto and richards by
+        10% and 6% respectively, but still does not do as good of a job
+        as it could.  Notably, the DFG backend has not changed, and
+        is largely oblivious to the new information being made available
+        to it.
+        
+        When turned off (the default), this patch is performance neutral.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::branchAdd32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branchAdd32):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::visitAggregate):
+        (JSC::CallLinkInfo::unlink):
+        (JSC::CodeBlock::unlinkCalls):
+        (JSC::CodeBlock::unlinkIncomingCalls):
+        (JSC::CodeBlock::clearEvalCache):
+        (JSC::replaceExistingEntries):
+        (JSC::CodeBlock::copyDataFromAlternative):
+        (JSC::ProgramCodeBlock::replacement):
+        (JSC::EvalCodeBlock::replacement):
+        (JSC::FunctionCodeBlock::replacement):
+        (JSC::ProgramCodeBlock::compileOptimized):
+        (JSC::EvalCodeBlock::compileOptimized):
+        (JSC::FunctionCodeBlock::compileOptimized):
+        * bytecode/CodeBlock.h:
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        (JSC::ProgramCodeBlock::ProgramCodeBlock):
+        (JSC::EvalCodeBlock::EvalCodeBlock):
+        (JSC::FunctionCodeBlock::FunctionCodeBlock):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfile::dump):
+        (JSC::ValueProfile::computeStatistics):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::dynamicallyPredict):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::parse):
+        * dfg/DFGDriver.cpp: Added.
+        (JSC::DFG::compile):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGDriver.h: Added.
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::predict):
+        (JSC::DFG::Graph::predictGlobalVar):
+        (JSC::DFG::Graph::isConstant):
+        (JSC::DFG::Graph::isJSConstant):
+        (JSC::DFG::Graph::isInt32Constant):
+        (JSC::DFG::Graph::isDoubleConstant):
+        (JSC::DFG::Graph::valueOfJSConstant):
+        (JSC::DFG::Graph::valueOfInt32Constant):
+        (JSC::DFG::Graph::valueOfDoubleConstant):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::isConstant):
+        (JSC::DFG::JITCompiler::isJSConstant):
+        (JSC::DFG::JITCompiler::isInt32Constant):
+        (JSC::DFG::JITCompiler::isDoubleConstant):
+        (JSC::DFG::JITCompiler::valueOfJSConstant):
+        (JSC::DFG::JITCompiler::valueOfInt32Constant):
+        (JSC::DFG::JITCompiler::valueOfDoubleConstant):
+        * dfg/DFGNode.h:
+        (JSC::DFG::isCellPrediction):
+        (JSC::DFG::isNumberPrediction):
+        (JSC::DFG::predictionToString):
+        (JSC::DFG::mergePrediction):
+        (JSC::DFG::makePrediction):
+        (JSC::DFG::Node::valueOfJSConstant):
+        (JSC::DFG::Node::isInt32Constant):
+        (JSC::DFG::Node::isDoubleConstant):
+        (JSC::DFG::Node::valueOfInt32Constant):
+        (JSC::DFG::Node::valueOfDoubleConstant):
+        (JSC::DFG::Node::predict):
+        * dfg/DFGPropagation.cpp: Added.
+        (JSC::DFG::Propagator::Propagator):
+        (JSC::DFG::Propagator::fixpoint):
+        (JSC::DFG::Propagator::setPrediction):
+        (JSC::DFG::Propagator::mergePrediction):
+        (JSC::DFG::Propagator::propagateNode):
+        (JSC::DFG::Propagator::propagateForward):
+        (JSC::DFG::Propagator::propagateBackward):
+        (JSC::DFG::propagate):
+        * dfg/DFGPropagation.h: Added.
+        (JSC::DFG::propagate):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgLinkFor):
+        * heap/HandleHeap.h:
+        (JSC::HandleHeap::Node::Node):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitOptimizationCheck):
+        (JSC::JIT::emitTimeoutCheck):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::linkFor):
+        * jit/JIT.h:
+        (JSC::JIT::emitOptimizationCheck):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        * jit/JITCode.h:
+        (JSC::JITCode::JITCode):
+        (JSC::JITCode::bottomTierJIT):
+        (JSC::JITCode::topTierJIT):
+        (JSC::JITCode::nextTierJIT):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileOptimized):
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileOptimized):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileOptimizedForCall):
+        (JSC::FunctionExecutable::compileOptimizedForConstruct):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (JSC::EvalExecutable::compile):
+        (JSC::ProgramExecutable::compile):
+        (JSC::FunctionExecutable::compileForCall):
+        (JSC::FunctionExecutable::compileForConstruct):
+        (JSC::FunctionExecutable::compileOptimizedFor):
+        * wtf/Platform.h:
+        * wtf/SentinelLinkedList.h:
+        (WTF::BasicRawSentinelNode::BasicRawSentinelNode):
+        (WTF::BasicRawSentinelNode::setPrev):
+        (WTF::BasicRawSentinelNode::setNext):
+        (WTF::BasicRawSentinelNode::prev):
+        (WTF::BasicRawSentinelNode::next):
+        (WTF::BasicRawSentinelNode::isOnList):
+        (WTF::::remove):
+        (WTF::::SentinelLinkedList):
+        (WTF::::begin):
+        (WTF::::end):
+        (WTF::::push):
+
 2011-09-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94445 and r94448.

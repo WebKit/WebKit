@@ -43,6 +43,7 @@ public:
 
     using MacroAssemblerX86Common::add32;
     using MacroAssemblerX86Common::and32;
+    using MacroAssemblerX86Common::branchAdd32;
     using MacroAssemblerX86Common::or32;
     using MacroAssemblerX86Common::sub32;
     using MacroAssemblerX86Common::load32;
@@ -321,6 +322,13 @@ public:
             m_assembler.cmpq_ir(right.m_value, left);
         m_assembler.setCC_r(x86Condition(cond), dest);
         m_assembler.movzbl_rr(dest, dest);
+    }
+    
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 src, AbsoluteAddress dest)
+    {
+        move(TrustedImmPtr(dest.m_ptr), scratchRegister);
+        add32(src, Address(scratchRegister));
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchPtr(RelationalCondition cond, RegisterID left, RegisterID right)

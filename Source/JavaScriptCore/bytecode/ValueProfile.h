@@ -77,7 +77,7 @@ struct ValueProfile {
             return 0;
         return counts * certainty / numberOfSamples;
     }
-        
+    
     unsigned numberOfInt32s() const
     {
         unsigned result = 0;
@@ -141,6 +141,86 @@ struct ValueProfile {
     unsigned probabilityOfArray() const
     {
         return computeProbability(numberOfArrays(), numberOfSamples());
+    }
+
+#ifndef NDEBUG
+    void dump(FILE* out)
+    {
+        fprintf(out,
+                "samples = %u, int32 = %u, double = %u, cell = %u, array = %u",
+                numberOfSamples(),
+                numberOfInt32s(),
+                numberOfDoubles(),
+                numberOfCells(),
+                numberOfArrays());
+        bool first = true;
+        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+            if (!!buckets[i] || !!weakBuckets[i]) {
+                if (first) {
+                    fprintf(out, ": ");
+                    first = false;
+                } else
+                    fprintf(out, ", ");
+            }
+            
+            if (!!buckets[i])
+                fprintf(out, "%s", JSValue::decode(buckets[i]).description());
+            
+            if (!!weakBuckets[i])
+                fprintf(out, "DeadCell");
+        }
+    }
+#endif
+    
+    struct Statistics {
+        unsigned samples;
+        unsigned int32s;
+        unsigned doubles;
+        unsigned cells;
+        unsigned arrays;
+    };
+
+    // Optimized method for getting all counts at once.
+    void computeStatistics(JSGlobalData& globalData, Statistics& statistics) const
+    {
+        unsigned samples = 0;
+        unsigned int32s  = 0;
+        unsigned doubles = 0;
+        unsigned cells   = 0;
+        unsigned arrays  = 0;
+        
+        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+            if (!buckets[i]) {
+                WeakBucket weakBucket = weakBuckets[i];
+                if (!!weakBucket) {
+                    samples++;
+                    cells++;
+                    if (weakBucket.getClassInfo() == &JSArray::s_info)
+                        arrays++;
+                }
+                
+                continue;
+            }
+            
+            samples++;
+            
+            JSValue value = JSValue::decode(buckets[i]);
+            if (value.isInt32())
+                int32s++;
+            else if (value.isDouble())
+                doubles++;
+            else if (value.isCell()) {
+                cells++;
+                if (isJSArray(&globalData, value.asCell()))
+                    arrays++;
+            }
+        }
+        
+        statistics.samples = samples;
+        statistics.int32s  = int32s;
+        statistics.doubles = doubles;
+        statistics.cells   = cells;
+        statistics.arrays  = arrays;
     }
     
     int bytecodeOffset; // -1 for prologue

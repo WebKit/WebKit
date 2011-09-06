@@ -38,6 +38,7 @@ mkdir "%PrivateHeadersDirectory%" 2>NUL
 for %%d in (
     assembler
     bytecode
+    dfg
     heap
     debugger
     interpreter

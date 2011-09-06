@@ -43,6 +43,7 @@ public:
 
     using MacroAssemblerX86Common::add32;
     using MacroAssemblerX86Common::and32;
+    using MacroAssemblerX86Common::branchAdd32;
     using MacroAssemblerX86Common::sub32;
     using MacroAssemblerX86Common::or32;
     using MacroAssemblerX86Common::load32;
@@ -106,6 +107,12 @@ public:
     void store32(RegisterID src, void* address)
     {
         m_assembler.movl_rm(src, address);
+    }
+
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 src, AbsoluteAddress dest)
+    {
+        m_assembler.addl_im(src.m_value, dest.m_ptr);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branch32(RelationalCondition cond, AbsoluteAddress left, RegisterID right)

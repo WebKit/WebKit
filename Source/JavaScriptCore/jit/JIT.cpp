@@ -93,6 +93,16 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
 {
 }
 
+#if ENABLE(TIERED_COMPILATION)
+void JIT::emitOptimizationCheck(OptimizationCheckKind kind)
+{
+    Jump skipOptimize = branchAdd32(Signed, TrustedImm32(kind == LoopOptimizationCheck ? 1 : 30), AbsoluteAddress(&m_codeBlock->m_executeCounter));
+    JITStubCall stubCall(this, kind == LoopOptimizationCheck ? cti_optimize_from_loop : cti_optimize_from_ret);
+    stubCall.call();
+    skipOptimize.link(this);
+}
+#endif
+
 #if USE(JSVALUE32_64)
 void JIT::emitTimeoutCheck()
 {
@@ -102,6 +112,8 @@ void JIT::emitTimeoutCheck()
     stubCall.call(timeoutCheckRegister);
     stubCall.getArgument(0, regT1, regT0); // reload last result registers.
     skipTimeout.link(this);
+    
+    emitOptimizationCheck(LoopOptimizationCheck);
 }
 #else
 void JIT::emitTimeoutCheck()
@@ -111,6 +123,8 @@ void JIT::emitTimeoutCheck()
     skipTimeout.link(this);
 
     killLastResultRegister();
+    
+    emitOptimizationCheck(LoopOptimizationCheck);
 }
 #endif
 
@@ -623,7 +637,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 
     if (m_codeBlock->codeType() == FunctionCode && functionEntryArityCheck)
         *functionEntryArityCheck = patchBuffer.locationOf(arityCheck);
-
+    
     return JITCode(patchBuffer.finalizeCode(), JITCode::BaselineJIT);
 }
 
@@ -637,6 +651,9 @@ void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* cal
         ASSERT(!callLinkInfo->isLinked());
         callLinkInfo->callee.set(*globalData, callLinkInfo->hotPathBegin, callerCodeBlock->ownerExecutable(), callee);
         repatchBuffer.relink(callLinkInfo->hotPathOther, code);
+        
+        if (calleeCodeBlock)
+            calleeCodeBlock->linkIncomingCall(callLinkInfo);
     }
 
     // patch the call so we do not continue to try to link.

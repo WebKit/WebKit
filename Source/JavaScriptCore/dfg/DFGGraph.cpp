@@ -121,6 +121,10 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     }
     if (op == JSConstant) {
         printf("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
+        if (codeBlock) {
+            JSValue value = node.valueOfJSConstant(codeBlock);
+            printf(" = %s", value.description());
+        }
         hasPrinted = true;
     }
     if  (node.isBranch() || node.isJump()) {
@@ -186,17 +190,47 @@ void Graph::refChildren(NodeIndex op)
     }
 }
 
-void Graph::predictArgumentTypes(ExecState* exec)
+void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
 {
-    size_t numberOfArguments = std::min(exec->argumentCountIncludingThis(), m_argumentPredictions.size());
-
-    for (size_t arg = 1; arg < numberOfArguments; ++arg) {
-        JSValue argumentValue = exec->argument(arg - 1);
-        if (argumentValue.isInt32())
-            m_argumentPredictions[arg].m_value |= PredictInt32;
-        else if (argumentValue.isDouble())
-            m_argumentPredictions[arg].m_value |= PredictDouble;
+    if (exec) {
+        size_t numberOfArguments = std::min(exec->argumentCountIncludingThis(), m_argumentPredictions.size());
+        
+        for (size_t arg = 1; arg < numberOfArguments; ++arg) {
+            JSValue argumentValue = exec->argument(arg - 1);
+            if (argumentValue.isInt32())
+                m_argumentPredictions[arg].m_value |= PredictInt32;
+            else if (argumentValue.isDouble())
+                m_argumentPredictions[arg].m_value |= PredictDouble;
+        }
     }
+    
+#if ENABLE(DYNAMIC_OPTIMIZATION)
+    ASSERT(codeBlock);
+    ASSERT(codeBlock->alternative);
+
+    JSGlobalData& globalData = exec->globalData();
+    CodeBlock* profiledCodeBlock = codeBlock->alternative();
+    ASSERT(codeBlock->m_numParameters >= 1);
+    for (size_t arg = 1; arg < static_cast<size_t>(codeBlock->m_numParameters); ++arg) {
+        ValueProfile* profile = profiledCodeBlock->valueProfileForArgument(arg);
+        if (!profile)
+            continue;
+        
+#if DFG_DEBUG_VERBOSE
+        printf("Argument profile [%lu]: ", arg);
+        profile->dump(stdout);
+        printf("\n");
+#endif
+        
+        mergePrediction(m_argumentPredictions[arg].m_value, makePrediction(globalData, *profile));
+        
+#if DFG_DEBUG_VERBOSE
+        printf("    Prediction: %s\n", predictionToString(m_argumentPredictions[arg].m_value));
+#endif
+    }
+#else
+    UNUSED_PARAM(codeBlock);
+#endif
 }
 
 } } // namespace JSC::DFG

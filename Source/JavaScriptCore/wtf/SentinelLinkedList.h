@@ -41,24 +41,63 @@ namespace WTF {
 
 enum SentinelTag { Sentinel };
 
-template <typename Node> class SentinelLinkedList {
+template<typename T>
+class BasicRawSentinelNode {
 public:
-    typedef Node* iterator;
+    BasicRawSentinelNode(SentinelTag)
+        : m_next(0)
+        , m_prev(0)
+    {
+    }
+    
+    BasicRawSentinelNode()
+        : m_next(0)
+        , m_prev(0)
+    {
+    }
+    
+    void setPrev(BasicRawSentinelNode* prev) { m_prev = prev; }
+    void setNext(BasicRawSentinelNode* next) { m_next = next; }
+    
+    T* prev() { return static_cast<T*>(m_prev); }
+    T* next() { return static_cast<T*>(m_next); }
+    
+    bool isOnList() const
+    {
+        ASSERT(!!m_prev == !!m_next);
+        return !!m_prev;
+    }
+    
+    void remove();
+    
+private:
+    BasicRawSentinelNode* m_next;
+    BasicRawSentinelNode* m_prev;
+};
+
+template <typename T, typename RawNode = T> class SentinelLinkedList {
+public:
+    typedef T* iterator;
 
     SentinelLinkedList();
 
-    void push(Node*);
-    static void remove(Node*);
+    void push(T*);
+    static void remove(T*);
 
     iterator begin();
     iterator end();
 
 private:
-    Node m_headSentinel;
-    Node m_tailSentinel;
+    RawNode m_headSentinel;
+    RawNode m_tailSentinel;
 };
 
-template <typename Node> inline SentinelLinkedList<Node>::SentinelLinkedList()
+template <typename T> void BasicRawSentinelNode<T>::remove()
+{
+    SentinelLinkedList<T, BasicRawSentinelNode<T> >::remove(static_cast<T*>(this));
+}
+
+template <typename T, typename RawNode> inline SentinelLinkedList<T, RawNode>::SentinelLinkedList()
     : m_headSentinel(Sentinel)
     , m_tailSentinel(Sentinel)
 {
@@ -69,21 +108,24 @@ template <typename Node> inline SentinelLinkedList<Node>::SentinelLinkedList()
     m_tailSentinel.setNext(0);
 }
 
-template <typename Node> inline typename SentinelLinkedList<Node>::iterator SentinelLinkedList<Node>::begin()
+template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::iterator SentinelLinkedList<T, RawNode>::begin()
 {
-    return m_headSentinel.next();
+    return static_cast<T*>(m_headSentinel.next());
 }
 
-template <typename Node> inline typename SentinelLinkedList<Node>::iterator SentinelLinkedList<Node>::end()
+template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::iterator SentinelLinkedList<T, RawNode>::end()
 {
-    return &m_tailSentinel;
+    return static_cast<T*>(&m_tailSentinel);
 }
 
-template <typename Node> inline void SentinelLinkedList<Node>::push(Node* node)
+template <typename T, typename RawNode> inline void SentinelLinkedList<T, RawNode>::push(T* node)
 {
     ASSERT(node);
-    Node* prev = &m_headSentinel;
-    Node* next = m_headSentinel.next();
+    ASSERT(!node->prev());
+    ASSERT(!node->next());
+    
+    RawNode* prev = &m_headSentinel;
+    RawNode* next = m_headSentinel.next();
 
     node->setPrev(prev);
     node->setNext(next);
@@ -92,17 +134,25 @@ template <typename Node> inline void SentinelLinkedList<Node>::push(Node* node)
     next->setPrev(node);
 }
 
-template <typename Node> inline void SentinelLinkedList<Node>::remove(Node* node)
+template <typename T, typename RawNode> inline void SentinelLinkedList<T, RawNode>::remove(T* node)
 {
-    Node* prev = node->prev();
-    Node* next = node->next();
+    ASSERT(node);
+    ASSERT(!!node->prev());
+    ASSERT(!!node->next());
+    
+    RawNode* prev = node->prev();
+    RawNode* next = node->next();
 
     prev->setNext(next);
     next->setPrev(prev);
+    
+    node->setPrev(0);
+    node->setNext(0);
 }
 
 }
 
+using WTF::BasicRawSentinelNode;
 using WTF::SentinelLinkedList;
 
 #endif

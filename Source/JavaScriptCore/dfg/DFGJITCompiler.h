@@ -207,39 +207,14 @@ public:
     }
 
     // Helper methods to check nodes for constants.
-    bool isConstant(NodeIndex nodeIndex)
-    {
-        return graph()[nodeIndex].isConstant();
-    }
-    bool isJSConstant(NodeIndex nodeIndex)
-    {
-        return graph()[nodeIndex].isConstant();
-    }
-    bool isInt32Constant(NodeIndex nodeIndex)
-    {
-        return isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isInt32();
-    }
-    bool isDoubleConstant(NodeIndex nodeIndex)
-    {
-        return isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isNumber();
-    }
+    bool isConstant(NodeIndex nodeIndex) { return graph().isConstant(nodeIndex); }
+    bool isJSConstant(NodeIndex nodeIndex) { return graph().isJSConstant(nodeIndex); }
+    bool isInt32Constant(NodeIndex nodeIndex) { return graph().isInt32Constant(codeBlock(), nodeIndex); }
+    bool isDoubleConstant(NodeIndex nodeIndex) { return graph().isDoubleConstant(codeBlock(), nodeIndex); }
     // Helper methods get constant values from nodes.
-    JSValue valueOfJSConstant(NodeIndex nodeIndex)
-    {
-        ASSERT(isJSConstant(nodeIndex));
-        unsigned constantIndex = graph()[nodeIndex].constantNumber();
-        return codeBlock()->constantRegister(FirstConstantRegisterIndex + constantIndex).get();
-    }
-    int32_t valueOfInt32Constant(NodeIndex nodeIndex)
-    {
-        ASSERT(isInt32Constant(nodeIndex));
-        return valueOfJSConstant(nodeIndex).asInt32();
-    }
-    double valueOfDoubleConstant(NodeIndex nodeIndex)
-    {
-        ASSERT(isDoubleConstant(nodeIndex));
-        return valueOfJSConstant(nodeIndex).uncheckedGetNumber();
-    }
+    JSValue valueOfJSConstant(NodeIndex nodeIndex) { return graph().valueOfJSConstant(codeBlock(), nodeIndex); }
+    int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return graph().valueOfInt32Constant(codeBlock(), nodeIndex); }
+    double valueOfDoubleConstant(NodeIndex nodeIndex) { return graph().valueOfDoubleConstant(codeBlock(), nodeIndex); }
 
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
 #if DFG_JIT_ASSERT
