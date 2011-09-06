@@ -69,6 +69,28 @@ function test()
                 next();
             }
             contentProvider.requestContent(didRequestContent);
+        },
+
+        function testFormattedContentProvider(next)
+        {
+            var mapping = {};
+            var formatter = {
+                formatContent: function(mimeType, content, callback)
+                {
+                    setTimeout(callback.bind(null, "<formatted> " + content, mapping), 0);
+                }
+            };
+            var resource = { type: WebInspector.Resource.Type.Document, requestContent: function(callback) { callback("<resource content>"); } };
+            var contentProvider = new WebInspector.ResourceContentProvider(resource);
+            var formattedContentProvider = new WebInspector.FormattedContentProvider(contentProvider, formatter);
+            function didRequestContent(mimeType, content)
+            {
+                InspectorTest.assertEquals("text/html", mimeType);
+                InspectorTest.assertEquals("<formatted> <resource content>", content);
+                InspectorTest.assertEquals(mapping, formattedContentProvider.mapping);
+                next();
+            }
+            formattedContentProvider.requestContent(didRequestContent);
         }
     ]);
 };

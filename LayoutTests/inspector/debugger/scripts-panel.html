@@ -10,7 +10,6 @@ function test()
     {
         var model = new WebInspector.Object();
         model.breakpointsForUISourceCode = function() { return []; };
-        model.messagesForUISourceCode = function() { return []; };
         return model;
     }
     function addUISouceCode(model, url)
@@ -162,7 +161,7 @@ function test()
 
             addUISouceCode(model, "foo.js");
             var uiSourceCode = addUISouceCode(model, "bar.js");
-            panel._uiSourceCodeReplaced({ data: { oldUISourceCode: uiSourceCode, uiSourceCode: uiSourceCode }});
+            panel._uiSourceCodeReplaced({ data: { oldSourceCode: uiSourceCode, sourceCode: uiSourceCode }});
             showSourceFrame(panel, "bar.js");
             next();
         }

@@ -214,6 +214,7 @@ WebInspector.BreakpointManager.prototype = {
     {
         function resetBreakpoint(breakpoint)
         {
+            delete breakpoint.uiSourceCode;
             this._removeBreakpointFromDebugger(breakpoint);
         }
         this._forEachBreakpoint(resetBreakpoint.bind(this));
