@@ -31,8 +31,13 @@ function test()
 
             function didReload()
             {
+                InspectorTest.showScriptSource("source-frame-count.html", didShowScriptSourceAgain);
+            }
+
+            function didShowScriptSourceAgain()
+            {
                 InspectorTest.assertTrue(select[select.selectedIndex].text.indexOf("source-frame-count.html") !== -1);
-                // There should be maximum 2 source frames: first one is the first shown, second one is the last viewed ("scripts-panel.html").
+                // There should be maximum 2 source frames: first one is the first shown, second one is the last viewed ("source-frame-count.html").
                 InspectorTest.assertEquals(true, sourceFrameCount <= 2, "too many source frames created after page reload");
                 next();
             }

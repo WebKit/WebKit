@@ -21,5 +21,3 @@ function baz()
 Running: testResourceContentProvider
 Request resource content.
 
-Running: testFormattedContentProvider
-

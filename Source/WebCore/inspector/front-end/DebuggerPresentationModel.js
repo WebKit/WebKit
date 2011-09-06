@@ -157,27 +157,39 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         rawSourceCode = new WebInspector.RawSourceCode(rawSourceCodeId, script, this._formatter, this._formatSource);
         this._rawSourceCode[rawSourceCodeId] = rawSourceCode;
-        rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
-
-        function didCreateSourceMapping()
-        {
-            this._breakpointManager.uiSourceCodeAdded(rawSourceCode.uiSourceCode);
-            var breakpoints = this._breakpointManager.breakpointsForUISourceCode(rawSourceCode.uiSourceCode);
-            for (var lineNumber in breakpoints)
-                this._breakpointAdded(breakpoints[lineNumber]);
-        }
-        // FIXME: force source formatting if needed. This will go away once formatting
-        // is fully encapsulated in RawSourceCode class.
-        rawSourceCode.createSourceMappingIfNeeded(didCreateSourceMapping.bind(this));
-
-        var uiSourceCode = rawSourceCode.uiSourceCode;
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, uiSourceCode);
+        rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, this._sourceMappingUpdated, this);
     },
 
-    _uiSourceCodeReplaced: function(event)
+    _sourceMappingUpdated: function(event)
     {
-        // FIXME: restore breakpoints in new source code (currently we just recreate everything when switching to pretty-print mode).
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, event.data);
+        for (var i = 0; i < this._sourceMappingListeners.length; ++i)
+            this._sourceMappingListeners[i]();
+
+        var rawSourceCode = event.target;
+        var oldUISourceCode = event.data.oldUISourceCode;
+        var uiSourceCode = rawSourceCode.uiSourceCode;
+
+        if (!oldUISourceCode)
+            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, uiSourceCode);
+        else {
+            var breakpoints = this._breakpointManager.breakpointsForUISourceCode(oldUISourceCode);
+            for (var lineNumber in breakpoints) {
+                var breakpoint = breakpoints[lineNumber];
+                this._breakpointRemoved(breakpoint);
+                delete breakpoint.uiSourceCode;
+            }
+            var eventData = { uiSourceCode: uiSourceCode, oldUISourceCode: oldUISourceCode };
+            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, eventData);
+        }
+        this._restoreBreakpoints(uiSourceCode);
+    },
+
+    _restoreBreakpoints: function(uiSourceCode)
+    {
+        this._breakpointManager.uiSourceCodeAdded(uiSourceCode);
+        var breakpoints = this._breakpointManager.breakpointsForUISourceCode(uiSourceCode);
+        for (var lineNumber in breakpoints)
+            this._breakpointAdded(breakpoints[lineNumber]);
     },
 
     canEditScriptSource: function(uiSourceCode)
@@ -250,6 +262,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._formatSource = formatSource;
 
         this._breakpointManager.reset();
+        for (var id in this._rawSourceCode)
+            this._rawSourceCode[id].removeEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, this._sourceMappingUpdated, this);
         this._rawSourceCode = {};
         var messages = this._messages;
         this._messages = [];
@@ -290,7 +304,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
             presentationMessage.uiSourceCode = uiSourceCode;
             presentationMessage.lineNumber = lineNumber;
             presentationMessage.originalMessage = message;
-            uiSourceCode.messages.push(presentationMessage);
+            rawSourceCode.messages.push(presentationMessage);
             this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleMessageAdded, presentationMessage);
         }
         // FIXME(62725): stack trace line/column numbers are one-based.
@@ -323,6 +337,12 @@ WebInspector.DebuggerPresentationModel.prototype = {
         for (var lineNumber in breakpointsMap)
             breakpointsList.push(breakpointsMap[lineNumber]);
         return breakpointsList;
+    },
+
+    messagesForUISourceCode: function(uiSourceCode)
+    {
+        var rawSourceCode = uiSourceCode.rawSourceCode;
+        return rawSourceCode.messages;
     },
 
     setBreakpoint: function(uiSourceCode, lineNumber, condition, enabled)
@@ -495,7 +515,7 @@ WebInspector.PresenationCallFrame.prototype = {
     select: function()
     {
         if (this._uiSourceCode)
-            this._uiSourceCode.forceLoadContent(this._script);
+            this._uiSourceCode.rawSourceCode.forceUpdateSourceMapping();
     },
 
     evaluate: function(code, objectGroup, includeCommandLineAPI, returnByValue, callback)
