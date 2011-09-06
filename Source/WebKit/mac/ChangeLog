@@ -1,3 +1,13 @@
+2011-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename confirmCompositionWithoutDisturbingSelection to cancelComposition
+        https://bugs.webkit.org/show_bug.cgi?id=67569
+
+        Reviewed by Antonio Gomes.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateSelectionForInputManager]):
+
 2011-09-05  Oliver Hunt  <oliver@apple.com>
 
         An object's structure should reference the global object responsible for its creation

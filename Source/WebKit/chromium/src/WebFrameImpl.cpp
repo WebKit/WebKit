@@ -1088,7 +1088,7 @@ void WebFrameImpl::setMarkedText(
 
 void WebFrameImpl::unmarkText()
 {
-    frame()->editor()->confirmCompositionWithoutDisturbingSelection();
+    frame()->editor()->cancelComposition();
 }
 
 bool WebFrameImpl::hasMarkedText() const

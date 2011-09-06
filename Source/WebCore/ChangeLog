@@ -1,3 +1,20 @@
+2011-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename confirmCompositionWithoutDisturbingSelection to cancelComposition
+        https://bugs.webkit.org/show_bug.cgi?id=67569
+
+        Reviewed by Antonio Gomes.
+
+        Renamed Editor::confirmCompositionWithoutDisturbingSelection to Editor::cancelComposition.
+        Also renamed the shared function from confirmComposition to setComposition.
+
+        * WebCore.exp.in:
+        * editing/Editor.cpp:
+        (WebCore::Editor::confirmComposition):
+        (WebCore::Editor::cancelComposition):
+        (WebCore::Editor::setComposition):
+        * editing/Editor.h:
+
 2011-09-06  Sam Weinig  <sam@webkit.org>
 
         WebVTTTokenizer files in the wrong place in the Xcode project.

@@ -328,7 +328,7 @@ void EditorClient::respondToChangedSelection()
     if (!targetFrame->editor()->getCompositionSelection(start, end)) {
         // gtk_im_context_reset() clears the composition for us.
         gtk_im_context_reset(priv->imContext.get());
-        targetFrame->editor()->confirmCompositionWithoutDisturbingSelection();
+        targetFrame->editor()->cancelComposition();
     }
 }
 

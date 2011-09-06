@@ -1,3 +1,13 @@
+2011-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename confirmCompositionWithoutDisturbingSelection to cancelComposition
+        https://bugs.webkit.org/show_bug.cgi?id=67569
+
+        Reviewed by Antonio Gomes.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::respondToChangedSelection):
+
 2011-08-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94142, r94144, r94145, and r94148.

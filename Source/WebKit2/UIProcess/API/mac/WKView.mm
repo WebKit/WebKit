@@ -323,7 +323,7 @@ struct WKViewInterpretKeyEventsParameters {
     _data->_inResignFirstResponder = true;
 
     if (_data->_page->editorState().hasComposition && !_data->_page->editorState().shouldIgnoreCompositionSelectionChange)
-        _data->_page->confirmCompositionWithoutDisturbingSelection();
+        _data->_page->cancelComposition();
     [self _resetTextInputState];
     
     if (!_data->_page->maintainsInactiveSelection())
@@ -2537,7 +2537,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     if (!editorState.hasComposition || editorState.shouldIgnoreCompositionSelectionChange)
         return;
 
-    _data->_page->confirmCompositionWithoutDisturbingSelection();
+    _data->_page->cancelComposition();
 
     [self _notifyInputContextAboutDiscardedComposition];
 }

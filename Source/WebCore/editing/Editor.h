@@ -280,7 +280,7 @@ public:
     void setComposition(const String&, const Vector<CompositionUnderline>&, unsigned selectionStart, unsigned selectionEnd);
     void confirmComposition();
     void confirmComposition(const String&); // if no existing composition, replaces selection
-    void confirmCompositionWithoutDisturbingSelection();
+    void cancelComposition();
     PassRefPtr<Range> compositionRange() const;
     bool getCompositionSelection(unsigned& selectionStart, unsigned& selectionEnd) const;
 
@@ -409,7 +409,8 @@ private:
     TextCheckingTypeMask resolveTextCheckingTypeMask(TextCheckingTypeMask);
 
     void selectComposition();
-    void confirmComposition(const String&, bool preserveSelection);
+    enum SetCompositionMode { ConfirmComposition, CancelComposition };
+    void setComposition(const String&, SetCompositionMode);
     void setIgnoreCompositionSelectionChange(bool ignore);
 
     PassRefPtr<Range> firstVisibleRange(const String&, FindOptions);

@@ -252,11 +252,11 @@ void WebPage::confirmComposition(EditorState& newState)
     newState = editorState();
 }
 
-void WebPage::confirmCompositionWithoutDisturbingSelection(EditorState& newState)
+void WebPage::cancelComposition(EditorState& newState)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
-    frame->editor()->confirmCompositionWithoutDisturbingSelection();
+    frame->editor()->cancelComposition();
 
     newState = editorState();
 }

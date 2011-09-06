@@ -5412,7 +5412,7 @@ void WebView::prepareCandidateWindow(Frame* targetFrame, HIMC hInputContext)
 void WebView::resetIME(Frame* targetFrame)
 {
     if (targetFrame)
-        targetFrame->editor()->confirmCompositionWithoutDisturbingSelection();
+        targetFrame->editor()->cancelComposition();
 
     if (HIMC hInputContext = getIMMContext()) {
         IMMDict::dict().notifyIME(hInputContext, NI_COMPOSITIONSTR, CPS_CANCEL, 0);

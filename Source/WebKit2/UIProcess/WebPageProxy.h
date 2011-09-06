@@ -299,7 +299,7 @@ public:
 
     void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
     void confirmComposition();
-    void confirmCompositionWithoutDisturbingSelection();
+    void cancelComposition();
     bool insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
     void getMarkedRange(uint64_t& location, uint64_t& length);
     void getSelectedRange(uint64_t& location, uint64_t& length);

@@ -194,7 +194,7 @@ messages -> WebPage {
     # Text input.
     SetComposition(WTF::String text, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (WebKit::EditorState newState)
     ConfirmComposition() -> (WebKit::EditorState newState)
-    ConfirmCompositionWithoutDisturbingSelection() -> (WebKit::EditorState newState)
+    CancelComposition() -> (WebKit::EditorState newState)
     InsertText(WTF::String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (bool handled, WebKit::EditorState newState)
     GetMarkedRange() -> (uint64_t location, uint64_t length)
     GetSelectedRange() -> (uint64_t location, uint64_t length)

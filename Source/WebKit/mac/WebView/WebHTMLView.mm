@@ -5940,7 +5940,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (coreFrame->editor()->getCompositionSelection(start, end))
         [[NSInputManager currentInputManager] markedTextSelectionChanged:NSMakeRange(start, end - start) client:self];
     else {
-        coreFrame->editor()->confirmCompositionWithoutDisturbingSelection();
+        coreFrame->editor()->cancelComposition();
         [[NSInputManager currentInputManager] markedTextAbandoned:self];
     }
 }
