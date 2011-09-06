@@ -182,6 +182,8 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
+        if (!inDocument())
+            return;
         if (m_eventListener) {
             m_eventListener->removeFromTarget();
             m_eventListener = 0;
