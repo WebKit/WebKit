@@ -1,3 +1,19 @@
+2011-09-06  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Fix API test failure after r92823 and r93001.
+        https://bugs.webkit.org/show_bug.cgi?id=67676
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        r92823 and r93001 make WebKit no longer produce wrapping style 
+        spans on copy and paste and class="Apple-style-span" anymore.
+        Our expectations need to be updated.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::cursorMovements):
+        (tst_QWebPage::textSelection):
+        (tst_QWebPage::findText):
+
 2011-09-06  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
 
         [Qt][Symbian] REGRESSION[94105] DumpRenderTree.exe doesn't build on Symbian

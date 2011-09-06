@@ -1037,7 +1037,7 @@ void tst_QWebPage::cursorMovements()
 
     QRegExp regExp(" style=\".*\"");
     regExp.setMinimal(true);
-    QCOMPARE(page->selectedHtml().trimmed().replace(regExp, ""), QString::fromLatin1("<span class=\"Apple-style-span\"><p id=\"one\">The quick brown fox</p></span>"));
+    QCOMPARE(page->selectedHtml().trimmed().replace(regExp, ""), QString::fromLatin1("<p id=\"one\">The quick brown fox</p>"));
 
     // these actions must exist
     QVERIFY(page->action(QWebPage::MoveToNextChar) != 0);
@@ -1270,7 +1270,7 @@ void tst_QWebPage::textSelection()
     QCOMPARE(page->selectedText().trimmed(), QString::fromLatin1("The quick brown fox"));
     QRegExp regExp(" style=\".*\"");
     regExp.setMinimal(true);
-    QCOMPARE(page->selectedHtml().trimmed().replace(regExp, ""), QString::fromLatin1("<span class=\"Apple-style-span\"><p id=\"one\">The quick brown fox</p></span>"));
+    QCOMPARE(page->selectedHtml().trimmed().replace(regExp, ""), QString::fromLatin1("<p id=\"one\">The quick brown fox</p>"));
 
     // Make sure hasSelection returns true, since there is selected text now...
     QCOMPARE(page->hasSelection(), true);
@@ -2880,7 +2880,7 @@ void tst_QWebPage::findText()
     foreach (QString subString, words) {
         m_page->findText(subString, QWebPage::FindWrapsAroundDocument);
         QCOMPARE(m_page->selectedText(), subString);
-        QCOMPARE(m_page->selectedHtml().trimmed().replace(regExp, ""), QString("<span class=\"Apple-style-span\">%1</span>").arg(subString));
+        QCOMPARE(m_page->selectedHtml().trimmed().replace(regExp, ""), QString("<span>%1</span>").arg(subString));
         m_page->findText("");
         QVERIFY(m_page->selectedText().isEmpty());
         QVERIFY(m_page->selectedHtml().isEmpty());
