@@ -26,7 +26,7 @@
 #ifndef CSSBorderImageSliceValue_h
 #define CSSBorderImageSliceValue_h
 
-#include "CSSValue.h"
+#include "CSSPrimitiveValue.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -36,21 +36,23 @@ class Rect;
 
 class CSSBorderImageSliceValue : public CSSValue {
 public:
-    static PassRefPtr<CSSBorderImageSliceValue> create(PassRefPtr<Rect> sliceRect, bool fill)
+    static PassRefPtr<CSSBorderImageSliceValue> create(PassRefPtr<CSSPrimitiveValue> slices, bool fill)
     {
-        return adoptRef(new CSSBorderImageSliceValue(sliceRect, fill));
+        return adoptRef(new CSSBorderImageSliceValue(slices, fill));
     }
     virtual ~CSSBorderImageSliceValue();
 
     virtual String cssText() const;
 
+    Quad* slices() { return m_slices ? m_slices->getQuadValue() : 0; }
+
     // These four values are used to make "cuts" in the border image. They can be numbers
     // or percentages.
-    RefPtr<Rect> m_rect;
+    RefPtr<CSSPrimitiveValue> m_slices;
     bool m_fill;
 
 private:
-    CSSBorderImageSliceValue(PassRefPtr<Rect> sliceRect, bool fill);
+    CSSBorderImageSliceValue(PassRefPtr<CSSPrimitiveValue> slices, bool fill);
     virtual bool isBorderImageSliceValue() const { return true; }
 };
 

@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-CSSBorderImageSliceValue::CSSBorderImageSliceValue(PassRefPtr<Rect> sliceRect, bool fill)
-    : m_rect(sliceRect)
+CSSBorderImageSliceValue::CSSBorderImageSliceValue(PassRefPtr<CSSPrimitiveValue> slices, bool fill)
+    : m_slices(slices)
     , m_fill(fill)
 {
 }
@@ -43,21 +43,9 @@ CSSBorderImageSliceValue::~CSSBorderImageSliceValue()
 
 String CSSBorderImageSliceValue::cssText() const
 {
-    // This isn't really a CSS rect, so we dump manually
-    String text = m_rect->top()->cssText();
-    if (m_rect->right() != m_rect->top() || m_rect->bottom() != m_rect->top() || m_rect->left() != m_rect->top()) {
-        text += " ";
-        text += m_rect->right()->cssText();
-        if (m_rect->bottom() != m_rect->top() || m_rect->right() != m_rect->left()) {
-            text += " ";
-            text += m_rect->bottom()->cssText();
-            if (m_rect->left() != m_rect->right()) {
-                text += " ";
-                text += m_rect->left()->cssText();
-            }
-        }
-    }
-
+    // Dump the slices first.
+    String text = m_slices->cssText();
+    
     // Now the fill keywords if it is present.
     if (m_fill)
         text += " fill";

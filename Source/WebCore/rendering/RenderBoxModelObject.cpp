@@ -952,6 +952,15 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
     geometry.setDestOrigin(geometry.destRect().location());
 }
 
+static LayoutUnit computeBorderImageSide(Length borderSlice, LayoutUnit borderSide, LayoutUnit imageSide, LayoutUnit boxExtent)
+{
+    if (borderSlice.isRelative())
+        return borderSlice.value() * borderSide;
+    if (borderSlice.isAuto())
+        return imageSide;
+    return borderSlice.calcValue(boxExtent);
+}
+
 bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext, const LayoutRect& rect, const RenderStyle* style,
                                                const NinePieceImage& ninePieceImage, CompositeOperator op)
 {
@@ -972,20 +981,32 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     LayoutUnit imageWidth = imageSize.width();
     LayoutUnit imageHeight = imageSize.height();
 
-    LayoutUnit topSlice = min<LayoutUnit>(imageHeight, ninePieceImage.slices().top().calcValue(imageHeight));
-    LayoutUnit bottomSlice = min<LayoutUnit>(imageHeight, ninePieceImage.slices().bottom().calcValue(imageHeight));
-    LayoutUnit leftSlice = min<LayoutUnit>(imageWidth, ninePieceImage.slices().left().calcValue(imageWidth));
-    LayoutUnit rightSlice = min<LayoutUnit>(imageWidth, ninePieceImage.slices().right().calcValue(imageWidth));
+    LayoutUnit topSlice = min<LayoutUnit>(imageHeight, ninePieceImage.imageSlices().top().calcValue(imageHeight));
+    LayoutUnit rightSlice = min<LayoutUnit>(imageWidth, ninePieceImage.imageSlices().right().calcValue(imageWidth));
+    LayoutUnit bottomSlice = min<LayoutUnit>(imageHeight, ninePieceImage.imageSlices().bottom().calcValue(imageHeight));
+    LayoutUnit leftSlice = min<LayoutUnit>(imageWidth, ninePieceImage.imageSlices().left().calcValue(imageWidth));
 
     ENinePieceImageRule hRule = ninePieceImage.horizontalRule();
     ENinePieceImageRule vRule = ninePieceImage.verticalRule();
-
-    bool fitToBorder = style->borderImage() == ninePieceImage;
+   
+    LayoutUnit topWidth = computeBorderImageSide(ninePieceImage.borderSlices().top(), style->borderTopWidth(), topSlice, rect.height());
+    LayoutUnit rightWidth = computeBorderImageSide(ninePieceImage.borderSlices().right(), style->borderRightWidth(), rightSlice, rect.width());
+    LayoutUnit bottomWidth = computeBorderImageSide(ninePieceImage.borderSlices().bottom(), style->borderBottomWidth(), bottomSlice, rect.height());
+    LayoutUnit leftWidth = computeBorderImageSide(ninePieceImage.borderSlices().left(), style->borderLeftWidth(), leftSlice, rect.width());
     
-    LayoutUnit leftWidth = fitToBorder ? style->borderLeftWidth() : leftSlice;
-    LayoutUnit topWidth = fitToBorder ? style->borderTopWidth() : topSlice;
-    LayoutUnit rightWidth = fitToBorder ? style->borderRightWidth() : rightSlice;
-    LayoutUnit bottomWidth = fitToBorder ? style->borderBottomWidth() : bottomSlice;
+    // Reduce the widths if they're too large.
+    // The spec says: Given Lwidth as the width of the border image area, Lheight as its height, and Wside as the border image width
+    // offset for the side, let f = min(Lwidth/(Wleft+Wright), Lheight/(Wtop+Wbottom)). If f < 1, then all W are reduced by
+    // multiplying them by f.
+    int borderSideWidth = max(1, leftWidth + rightWidth);
+    int borderSideHeight = max(1, topWidth + bottomWidth);
+    float borderSideScaleFactor = min((float)rect.width() / borderSideWidth, (float)rect.height() / borderSideHeight);
+    if (borderSideScaleFactor < 1) {
+        topWidth *= borderSideScaleFactor;
+        rightWidth *= borderSideScaleFactor;
+        bottomWidth *= borderSideScaleFactor;
+        leftWidth *= borderSideScaleFactor;
+    }
 
     bool drawLeft = leftSlice > 0 && leftWidth > 0;
     bool drawTop = topSlice > 0 && topWidth > 0;

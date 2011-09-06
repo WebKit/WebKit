@@ -1,3 +1,31 @@
+2011-09-06  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67657
+        
+        Implement border-image-width. This patch stops short of converting -webkit-border-image to a shorthand.
+        I'll do that in the next patch.
+
+        Note that unlike the -webkit-border-image syntax, border-image-width does not actually set the border
+        width values. It simply makes cuts into the border image drawing area (which for now is just the border
+        box, but that will change once border-image-outset is implemented).
+        
+        This means we need additional storage for the slices, since they are now separate from the border widths.
+        
+        For backwards compatibility, -webkit-border-image will continue to set the border widths when
+        border-image-width is specified in the -webkit-border-image shorthand.
+
+        Reviewed by Beth Dakin.
+
+        * fast/borders/border-image-longhand.html: Added.
+        * fast/borders/border-image-scaled.html: Added.
+        * fast/borders/border-image-side-reduction.html: Added.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-with-zoom-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-border-image-expected.txt:
+        * fast/css/large-value-csstext-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2011-09-06  Mike Reed  <reed@google.com>
 
         [skia] never draw with GDI, so that all text can be gpu-accelerated

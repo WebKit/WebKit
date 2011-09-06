@@ -58,6 +58,8 @@ private:
         : m_direction(ReflectionBelow)
         , m_offset(0, Fixed)
     {
+         m_mask.setImageSlices(LengthBox(0)); // Preserve the value of 0 for mask image slices for backwards compatibility.
+         m_mask.setBorderSlices(LengthBox()); // The border slices for a mask image default to auto instead of 1.
     }
     
     CSSReflectionDirection m_direction;

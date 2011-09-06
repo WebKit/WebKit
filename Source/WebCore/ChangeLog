@@ -1,3 +1,136 @@
+2011-09-06  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67657
+        
+        Implement border-image-width. This patch stops short of converting -webkit-border-image to a shorthand.
+        I'll do that in the next patch.
+
+        Note that unlike the -webkit-border-image syntax, border-image-width does not actually set the border
+        width values. It simply makes cuts into the border image drawing area (which for now is just the border
+        box, but that will change once border-image-outset is implemented).
+        
+        This means we need additional storage for the slices, since they are now separate from the border widths.
+        
+        For backwards compatibility, -webkit-border-image will continue to set the border widths when
+        border-image-width is specified in the -webkit-border-image shorthand.
+
+        Reviewed by Beth Dakin.
+
+        Added new tests in fast/borders.
+
+        * css/CSSBorderImageSliceValue.cpp:
+        (WebCore::CSSBorderImageSliceValue::CSSBorderImageSliceValue):
+        (WebCore::CSSBorderImageSliceValue::cssText):
+        * css/CSSBorderImageSliceValue.h:
+        (WebCore::CSSBorderImageSliceValue::create):
+        (WebCore::CSSBorderImageSliceValue::slices):
+        Rename slices() to imageSlices() and add borderSlices() and m_borderSlices to hold the desired cuts
+        for the border image drawing area. Converted the slices over to the new Quad primitive value (a RectBase
+        subclass that is identical to Rect but dumps as a quad instead of a rect primitive).
+
+        * css/CSSBorderImageValue.cpp:
+        (WebCore::CSSBorderImageValue::CSSBorderImageValue):
+        (WebCore::CSSBorderImageValue::cssText):
+        * css/CSSBorderImageValue.h:
+        (WebCore::CSSBorderImageValue::create):
+        Make CSSBorderImageValue take the border slices during construction now.
+    
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForNinePieceImageSlice):
+        (WebCore::valueForNinePieceImageWidth):
+        (WebCore::valueForNinePieceImageRepeat):
+        (WebCore::valueForNinePieceImage):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Add support for computed style via valueForNinePieceImageWidth. Patch all of the border image properties
+        to dump the most compact form possible for the property values, e.g., "stretch stretch" becomes "stretch."
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseReflect):
+        (WebCore::BorderImageParseContext::BorderImageParseContext):
+        (WebCore::BorderImageParseContext::commitImageSlice):
+        (WebCore::BorderImageParseContext::commitBorderWidth):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::isBorderImageRepeatKeyword):
+        (WebCore::CSSParser::parseBorderImageRepeat):
+        (WebCore::BorderImageSliceParseContext::commitBorderImageSlice):
+        (WebCore::CSSParser::parseBorderImageSlice):
+        (WebCore::BorderImageWidthParseContext::BorderImageWidthParseContext):
+        (WebCore::BorderImageWidthParseContext::allowNumber):
+        (WebCore::BorderImageWidthParseContext::allowFinalCommit):
+        (WebCore::BorderImageWidthParseContext::top):
+        (WebCore::BorderImageWidthParseContext::commitNumber):
+        (WebCore::BorderImageWidthParseContext::setAllowFinalCommit):
+        (WebCore::BorderImageWidthParseContext::setTop):
+        (WebCore::BorderImageWidthParseContext::commitBorderImageWidth):
+        (WebCore::CSSParser::parseBorderImageWidth):
+        * css/CSSParser.h:
+        Modify the border-image code to pass off border-image-width parsing to parseBorderImageWidth.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::CSSPrimitiveValue::init):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::getQuadValue):
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::getQuadValue):
+        Add the new Quad value to CSSPrimitiveValue.
+    
+        * css/CSSPropertyNames.in:
+        Add the new properties for border-image-width and -webkit-mask-box-image-width.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapNinePieceImage):
+        (WebCore::CSSStyleSelector::mapNinePieceImageSlice):
+        (WebCore::CSSStyleSelector::mapNinePieceImageWidth):
+        (WebCore::CSSStyleSelector::loadPendingImages):
+        * css/CSSStyleSelector.h:
+        Add the code to map the image width into border slices.
+    
+        * css/Rect.h:
+        (WebCore::RectBase::top):
+        (WebCore::RectBase::right):
+        (WebCore::RectBase::bottom):
+        (WebCore::RectBase::left):
+        (WebCore::RectBase::setTop):
+        (WebCore::RectBase::setRight):
+        (WebCore::RectBase::setBottom):
+        (WebCore::RectBase::setLeft):
+        (WebCore::RectBase::RectBase):
+        (WebCore::RectBase::~RectBase):
+        (WebCore::Rect::create):
+        (WebCore::Rect::Rect):
+        (WebCore::Quad::create):
+        (WebCore::Quad::Quad):
+        Adding the new Quad value.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::computeBorderImageSide):
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        Modify painting to treat the border slices as separate from the border widths.
+        
+        * rendering/style/NinePieceImage.cpp:
+        (WebCore::NinePieceImage::operator==):
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImage::NinePieceImage):
+        (WebCore::NinePieceImage::imageSlices):
+        (WebCore::NinePieceImage::setImageSlices):
+        (WebCore::NinePieceImage::borderSlices):
+        (WebCore::NinePieceImage::setBorderSlices):
+        (WebCore::NinePieceImage::copyImageSlicesFrom):
+        (WebCore::NinePieceImage::copyBorderSlicesFrom):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        Add the border slices.
+        
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        * rendering/style/StyleReflection.h:
+        (WebCore::StyleReflection::StyleReflection):
+        Make sure masks and reflections default border-image-width to auto instead of 1, since that matches
+        old behavior.
+
 2011-09-06  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium skia] JPEGImageEncoder: hoist constants out of the encoding loop

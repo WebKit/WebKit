@@ -61,6 +61,7 @@ border-color
 border-image-repeat
 border-image-slice
 border-image-source
+border-image-width
 border-left
 border-left-color
 border-left-style
@@ -284,6 +285,7 @@ z-index
 -webkit-mask-box-image-repeat
 -webkit-mask-box-image-slice
 -webkit-mask-box-image-source
+-webkit-mask-box-image-width
 -webkit-mask-clip
 -webkit-mask-composite
 -webkit-mask-image

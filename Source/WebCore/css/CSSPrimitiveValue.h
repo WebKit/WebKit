@@ -33,6 +33,7 @@ namespace WebCore {
 class Counter;
 class DashboardRegion;
 class Pair;
+class Quad;
 class RGBColor;
 class Rect;
 class RenderStyle;
@@ -99,7 +100,10 @@ public:
         CSS_FROM_FLOW = 110,
 
         // This is used by the CSS Exclusions draft
-        CSS_SHAPE = 111
+        CSS_SHAPE = 111,
+        
+        // Used by border images.
+        CSS_QUAD = 112
     };
     
     // This enum follows the CSSParser::Units enum augmented with UNIT_FREQUENCY for frequencies.
@@ -176,6 +180,9 @@ public:
     Rect* getRectValue(ExceptionCode&) const;
     Rect* getRectValue() const { return m_type != CSS_RECT ? 0 : m_value.rect; }
 
+    Quad* getQuadValue(ExceptionCode&) const;
+    Quad* getQuadValue() const { return m_type != CSS_QUAD ? 0 : m_value.quad; }
+    
     PassRefPtr<RGBColor> getRGBColorValue(ExceptionCode&) const;
     RGBA32 getRGBA32Value() const { return m_type != CSS_RGBCOLOR ? 0 : m_value.rgbcolor; }
 
@@ -224,6 +231,7 @@ private:
     void init(PassRefPtr<Counter>);
     void init(PassRefPtr<Rect>);
     void init(PassRefPtr<Pair>);
+    void init(PassRefPtr<Quad>);
     void init(PassRefPtr<DashboardRegion>); // FIXME: Dashboard region should not be a primitive value.
     void init(PassRefPtr<CSSWrapShape>);
 
@@ -243,6 +251,7 @@ private:
         StringImpl* string;
         Counter* counter;
         Rect* rect;
+        Quad* quad;
         unsigned rgbcolor;
         Pair* pair;
         DashboardRegion* region;

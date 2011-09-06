@@ -77,6 +77,7 @@ static const int computedProperties[] = {
     CSSPropertyBorderImageRepeat,
     CSSPropertyBorderImageSlice,
     CSSPropertyBorderImageSource,
+    CSSPropertyBorderImageWidth,
     CSSPropertyBorderLeftColor,
     CSSPropertyBorderLeftStyle,
     CSSPropertyBorderLeftWidth,
@@ -230,6 +231,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitMaskBoxImageRepeat,
     CSSPropertyWebkitMaskBoxImageSlice,
     CSSPropertyWebkitMaskBoxImageSource,
+    CSSPropertyWebkitMaskBoxImageWidth,
     CSSPropertyWebkitMaskClip,
     CSSPropertyWebkitMaskComposite,
     CSSPropertyWebkitMaskImage,
@@ -330,42 +332,119 @@ static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const Ni
 {
     // Create the slices.
     RefPtr<CSSPrimitiveValue> top;
-    if (image.slices().top().isPercent())
-        top = primitiveValueCache->createValue(image.slices().top().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
-    else
-        top = primitiveValueCache->createValue(image.slices().top().value(), CSSPrimitiveValue::CSS_NUMBER);
-        
     RefPtr<CSSPrimitiveValue> right;
-    if (image.slices().right().isPercent())
-        right = primitiveValueCache->createValue(image.slices().right().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
-    else
-        right = primitiveValueCache->createValue(image.slices().right().value(), CSSPrimitiveValue::CSS_NUMBER);
-        
     RefPtr<CSSPrimitiveValue> bottom;
-    if (image.slices().bottom().isPercent())
-        bottom = primitiveValueCache->createValue(image.slices().bottom().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
-    else
-        bottom = primitiveValueCache->createValue(image.slices().bottom().value(), CSSPrimitiveValue::CSS_NUMBER);
-    
     RefPtr<CSSPrimitiveValue> left;
-    if (image.slices().left().isPercent())
-        left = primitiveValueCache->createValue(image.slices().left().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+
+    if (image.imageSlices().top().isPercent())
+        top = primitiveValueCache->createValue(image.imageSlices().top().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
     else
-        left = primitiveValueCache->createValue(image.slices().left().value(), CSSPrimitiveValue::CSS_NUMBER);
+        top = primitiveValueCache->createValue(image.imageSlices().top().value(), CSSPrimitiveValue::CSS_NUMBER);
+    
+    if (image.imageSlices().right() == image.imageSlices().top() && image.imageSlices().bottom() == image.imageSlices().top() 
+        && image.imageSlices().left() == image.imageSlices().top()) {
+        right = top;
+        bottom = top;
+        left = top;
+    } else {
+        if (image.imageSlices().right().isPercent())
+            right = primitiveValueCache->createValue(image.imageSlices().right().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+        else
+            right = primitiveValueCache->createValue(image.imageSlices().right().value(), CSSPrimitiveValue::CSS_NUMBER);
+            
+        if (image.imageSlices().bottom() == image.imageSlices().top() && image.imageSlices().right() == image.imageSlices().left()) {
+            bottom = top;
+            right = left;
+        } else {
+            if (image.imageSlices().bottom().isPercent())
+                bottom = primitiveValueCache->createValue(image.imageSlices().bottom().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+            else
+                bottom = primitiveValueCache->createValue(image.imageSlices().bottom().value(), CSSPrimitiveValue::CSS_NUMBER);
+            
+            if (image.imageSlices().left() == image.imageSlices().right())
+                left = right;
+            else {
+                if (image.imageSlices().left().isPercent())
+                    left = primitiveValueCache->createValue(image.imageSlices().left().value(), CSSPrimitiveValue::CSS_PERCENTAGE);
+                else
+                    left = primitiveValueCache->createValue(image.imageSlices().left().value(), CSSPrimitiveValue::CSS_NUMBER);
+            }
+        }
+    }
 
-    RefPtr<Rect> rect = Rect::create();
-    rect->setTop(top);
-    rect->setRight(right);
-    rect->setBottom(bottom);
-    rect->setLeft(left);
+    RefPtr<Quad> quad = Quad::create();
+    quad->setTop(top);
+    quad->setRight(right);
+    quad->setBottom(bottom);
+    quad->setLeft(left);
 
-    return CSSBorderImageSliceValue::create(rect, image.fill());
+    return CSSBorderImageSliceValue::create(primitiveValueCache->createValue(quad.release()), image.fill());
+}
+
+static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageWidth(const NinePieceImage& image, CSSPrimitiveValueCache* primitiveValueCache)
+{
+    // Create the slices.
+    RefPtr<CSSPrimitiveValue> top;
+    RefPtr<CSSPrimitiveValue> right;
+    RefPtr<CSSPrimitiveValue> bottom;
+    RefPtr<CSSPrimitiveValue> left;
+
+    if (image.borderSlices().top().isRelative())
+        top = primitiveValueCache->createValue(image.borderSlices().top().value(), CSSPrimitiveValue::CSS_NUMBER);
+    else
+        top = primitiveValueCache->createValue(image.borderSlices().top());
+
+    if (image.borderSlices().right() == image.borderSlices().top() && image.borderSlices().bottom() == image.borderSlices().top() 
+        && image.borderSlices().left() == image.borderSlices().top()) {
+        right = top;
+        bottom = top;
+        left = top;
+    } else {
+        if (image.borderSlices().right().isRelative())
+            right = primitiveValueCache->createValue(image.borderSlices().right().value(), CSSPrimitiveValue::CSS_NUMBER);
+        else
+            right = primitiveValueCache->createValue(image.borderSlices().right());
+        
+        if (image.borderSlices().bottom() == image.borderSlices().top() && image.borderSlices().right() == image.borderSlices().left()) {
+            bottom = top;
+            right = left;
+        } else {
+            if (image.borderSlices().bottom().isRelative())
+                bottom = primitiveValueCache->createValue(image.borderSlices().bottom().value(), CSSPrimitiveValue::CSS_NUMBER);
+            else
+                bottom = primitiveValueCache->createValue(image.borderSlices().bottom());
+    
+            if (image.borderSlices().left() == image.borderSlices().right())
+                left = right;
+            else {
+                if (image.borderSlices().left().isRelative())
+                    left = primitiveValueCache->createValue(image.borderSlices().left().value(), CSSPrimitiveValue::CSS_NUMBER);
+                else
+                    left = primitiveValueCache->createValue(image.borderSlices().left());
+            }
+        }
+    }
+
+    RefPtr<Quad> quad = Quad::create();
+    quad->setTop(top);
+    quad->setRight(right);
+    quad->setBottom(bottom);
+    quad->setLeft(left);
+
+    return primitiveValueCache->createValue(quad.release());
 }
 
 static PassRefPtr<CSSValue> valueForNinePieceImageRepeat(const NinePieceImage& image, CSSPrimitiveValueCache* primitiveValueCache)
 {
-    return primitiveValueCache->createValue(Pair::create(primitiveValueCache->createIdentifierValue(valueForRepeatRule(image.horizontalRule())),
-        primitiveValueCache->createIdentifierValue(valueForRepeatRule(image.verticalRule()))));
+    RefPtr<CSSPrimitiveValue> horizontalRepeat;
+    RefPtr<CSSPrimitiveValue> verticalRepeat;
+    
+    horizontalRepeat = primitiveValueCache->createIdentifierValue(valueForRepeatRule(image.horizontalRule()));
+    if (image.horizontalRule() == image.verticalRule())
+        verticalRepeat = horizontalRepeat;
+    else
+        verticalRepeat = primitiveValueCache->createIdentifierValue(valueForRepeatRule(image.verticalRule()));
+    return primitiveValueCache->createValue(Pair::create(horizontalRepeat.release(), verticalRepeat.release()));
 }
 
 static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image, CSSPrimitiveValueCache* primitiveValueCache)
@@ -378,13 +457,16 @@ static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image, 
     if (image.image())
         imageValue = image.image()->cssValue();
     
-    // Create the slices.
-    RefPtr<CSSBorderImageSliceValue> slice = valueForNinePieceImageSlice(image, primitiveValueCache);
+    // Create the image slice.
+    RefPtr<CSSBorderImageSliceValue> imageSlices = valueForNinePieceImageSlice(image, primitiveValueCache);
     
+    // Create the border area slices.
+    RefPtr<CSSValue> borderSlices = valueForNinePieceImageWidth(image, primitiveValueCache);
+
     // Create the repeat rules.
     RefPtr<CSSValue> repeat = valueForNinePieceImageRepeat(image, primitiveValueCache);
 
-    return CSSBorderImageValue::create(imageValue, slice, repeat);
+    return CSSBorderImageValue::create(imageValue.release(), imageSlices.release(), borderSlices.release(), repeat);
 }
 
 inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedPixelValue(int value, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
@@ -1613,12 +1695,16 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return valueForNinePieceImageRepeat(style->borderImage(), primitiveValueCache);
         case CSSPropertyBorderImageSlice:
             return valueForNinePieceImageSlice(style->borderImage(), primitiveValueCache);
+        case CSSPropertyBorderImageWidth:
+            return valueForNinePieceImageWidth(style->borderImage(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImage:
             return valueForNinePieceImage(style->maskBoxImage(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImageRepeat:
             return valueForNinePieceImageRepeat(style->maskBoxImage(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImageSlice:
             return valueForNinePieceImageSlice(style->maskBoxImage(), primitiveValueCache);
+        case CSSPropertyWebkitMaskBoxImageWidth:
+            return valueForNinePieceImageWidth(style->maskBoxImage(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImageSource:
             if (style->maskBoxImageSource())
                 return style->maskBoxImageSource()->cssValue();

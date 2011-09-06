@@ -64,6 +64,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_regionBreakBefore(RenderStyle::initialPageBreak())
     , m_regionBreakInside(RenderStyle::initialPageBreak())
 {
+    m_maskBoxImage.setImageSlices(LengthBox(0)); // Preserve the value of 0 for mask box image slices for backwards compatibility.
+    m_maskBoxImage.setBorderSlices(LengthBox()); // The border slices for a mask box image default to auto instead of 1.
 }
 
 StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInheritedData& o)
