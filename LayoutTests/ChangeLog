@@ -1,3 +1,12 @@
+2011-09-06  David Hyatt  <hyatt@apple.com>
+
+        Update some layout test results following the improved Pair parsing code that landed in r94593.
+
+        * fast/backgrounds/size/parsing-background-size-values-expected.txt:
+        * fast/backgrounds/size/resources/parsing-background-size-values.js:
+        * fast/reflections/reflection-computed-style-expected.txt:
+        * inspector/elements/elements-panel-styles-expected.txt:
+
 2011-09-06  Filip Pizlo  <fpizlo@apple.com>
 
         LayoutTests does not include a test for DFG speculation recovery of additions
