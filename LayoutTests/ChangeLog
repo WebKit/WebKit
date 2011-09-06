@@ -1,3 +1,28 @@
+2011-09-05  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. GTK rebaselines for r94541, r94543.
+
+        * platform/gtk/fast/css-generated-content/table-before-after-child-add-expected.txt:
+        * platform/gtk/fast/css-generated-content/table-cell-before-after-child-add-expected.txt:
+        * platform/gtk/fast/css-generated-content/table-row-before-after-child-add-expected.txt:
+        * platform/gtk/fast/css-generated-content/table-table-before-after-child-add-expected.txt:
+        * platform/gtk/fast/multicol/span/anonymous-split-block-crash-expected.txt:
+        * platform/gtk/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/gtk/fast/ruby/ruby-block-style-not-updated-expected.txt: Added.
+        * platform/gtk/fast/ruby/ruby-block-style-not-updated-with-before-after-content-expected.txt: Added.
+        * platform/gtk/fast/ruby/ruby-inline-style-not-updated-expected.txt: Added.
+        * platform/gtk/fast/ruby/ruby-inline-style-not-updated-with-before-after-content-expected.txt: Added.
+        * platform/gtk/fast/table/table-after-child-in-table-expected.txt:
+        * platform/gtk/fast/table/table-before-child-in-table-expected.txt:
+        * platform/gtk/fast/table/table-cell-after-child-in-table-expected.txt:
+        * platform/gtk/fast/table/table-cell-before-child-in-table-expected.txt:
+        * platform/gtk/fast/table/table-row-after-child-in-table-expected.txt:
+        * platform/gtk/fast/table/table-row-before-child-in-table-expected.txt:
+        * platform/gtk/fast/table/table-row-style-not-updated-expected.txt: Added.
+        * platform/gtk/fast/table/table-row-style-not-updated-with-after-content-expected.txt: Added.
+        * platform/gtk/fast/table/table-row-style-not-updated-with-before-content-expected.txt: Added.
+        * platform/gtk/fast/table/table-style-not-updated-expected.txt: Added.
+
 2011-09-05  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unnecessary expectation, results match the fallback path.
