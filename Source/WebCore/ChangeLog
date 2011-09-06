@@ -1,3 +1,53 @@
+2011-09-05  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: re-implement RawSourceCode.
+        https://bugs.webkit.org/show_bug.cgi?id=67609
+
+        RawSourceCode content and source mapping loading logic is too complex, re-implement it using simpler semantics:
+        1) Initially, RawSourceCode doesn't have any content or mapping because content loading and
+        formatting operations are asynchronous, it only has scripts metadata. We don't update UI right
+        after RawSourceCode creation until full RawSourceCode representation is ready (content + mapping).
+        2) When RawSourceCode representation is ready (e.g. resource is finished, or content is formatted
+        if in pretty-print mode) we dispatch SourceMappingUpdated event to notify the listeners that
+        source code should be shown to user and raw locations should be converted to ui locations
+        (to show breakpoins, messages, call frames etc in UI). At this moment, all source file's content
+        is ready for loading and source mapping is available.
+        3) Later, RawSourceCode representation may change again, e.g. if pretty-print mode is toggled, or
+        blocked resource is finished etc., in that case SourceMappingUpdated is dispatched again to update
+        source code, links and decorations in UI.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.linkifyLocation):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        (WebInspector.DebuggerPresentationModel.prototype._sourceMappingUpdated):
+        (WebInspector.DebuggerPresentationModel.prototype._restoreBreakpoints):
+        (WebInspector.DebuggerPresentationModel.prototype._addConsoleMessage.didGetUILocation):
+        (WebInspector.DebuggerPresentationModel.prototype._addConsoleMessage):
+        (WebInspector.DebuggerPresentationModel.prototype.messagesForUISourceCode):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeReplaced):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameLoaded):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.RawSourceCode):
+        (WebInspector.RawSourceCode.prototype.addScript):
+        (WebInspector.RawSourceCode.prototype.contentEdited):
+        (WebInspector.RawSourceCode.prototype._resourceFinished):
+        (WebInspector.RawSourceCode.prototype.requestContent):
+        (WebInspector.RawSourceCode.prototype.createSourceMappingIfNeeded.sourceMappingUpdated):
+        (WebInspector.RawSourceCode.prototype.createSourceMappingIfNeeded):
+        (WebInspector.RawSourceCode.prototype.forceLoadContent):
+        (WebInspector.RawSourceCode.prototype._updateSourceMapping.didCreateSourceMapping):
+        (WebInspector.RawSourceCode.prototype._updateSourceMapping):
+        (WebInspector.RawSourceCode.prototype._createContentProvider):
+        (WebInspector.RawSourceCode.prototype._createSourceMapping.didRequestContent.didFormatContent):
+        (WebInspector.RawSourceCode.prototype._createSourceMapping.didRequestContent):
+        (WebInspector.RawSourceCode.prototype._createSourceMapping):
+        (WebInspector.RawSourceCode.prototype._saveSourceMapping):
+        (WebInspector.StaticContentProvider):
+        (WebInspector.StaticContentProvider.prototype.requestContent):
+
 2011-09-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r94564.

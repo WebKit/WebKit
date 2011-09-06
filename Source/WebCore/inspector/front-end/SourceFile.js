@@ -43,25 +43,29 @@ WebInspector.RawSourceCode = function(id, script, formatter, formatted)
 
     if (script.sourceURL)
         this._resource = WebInspector.networkManager.inflightResourceForURL(script.sourceURL) || WebInspector.resourceForURL(script.sourceURL);
-    this._requestContentCallbacks = [];
 
     this.id = id;
     this.url = script.sourceURL;
     this.isContentScript = script.isContentScript;
     this.messages = [];
 
-    if (this._hasPendingResource())
-        this._resource.addEventListener("finished", this._reload.bind(this));
+    this._useTemporaryContent = this._resource && !this._resource.finished;
+    this._hasNewScripts = true;
+    if (!this._useTemporaryContent)
+        this._updateSourceMapping();
+    else if (this._resource)
+        this._resource.addEventListener("finished", this._resourceFinished.bind(this));
 }
 
 WebInspector.RawSourceCode.Events = {
-    UISourceCodeReplaced: "ui-source-code-replaced"
+    SourceMappingUpdated: "source-mapping-updated"
 }
 
 WebInspector.RawSourceCode.prototype = {
     addScript: function(script)
     {
         this._scripts.push(script);
+        this._hasNewScripts = true;
     },
 
     get uiSourceCode()
@@ -78,7 +82,13 @@ WebInspector.RawSourceCode.prototype = {
 
     contentEdited: function()
     {
-        this._reload();
+        this._updateSourceMapping();
+    },
+
+    _resourceFinished: function()
+    {
+        this._useTemporaryContent = false;
+        this._updateSourceMapping();
     },
 
     rawLocationToUILocation: function(rawLocation)
@@ -112,126 +122,93 @@ WebInspector.RawSourceCode.prototype = {
 
     requestContent: function(callback)
     {
-        if (this._contentLoaded) {
-            callback(this._mimeType, this._content);
-            return;
-        }
-
-        this._requestContentCallbacks.push(callback);
-        this._requestContent();
+        // FIXME: remove this.
+        this._uiSourceCode.requestContent(callback);
     },
 
     createSourceMappingIfNeeded: function(callback)
     {
-        if (!this._formatted) {
+        // FIXME: remove createSourceMappingIfNeeded, client should listen to SourceMappingUpdated event instead.
+        if (this._uiSourceCode && !this._updatingSourceMapping) {
             callback();
             return;
         }
 
-        function didRequestContent()
+        function sourceMappingUpdated()
         {
+            this.removeEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, sourceMappingUpdated, this);
             callback();
         }
-        // Force content formatting to obtain the mapping.
-        this.requestContent(didRequestContent.bind(this));
+        this.addEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, sourceMappingUpdated, this);
     },
 
-    _setContentProvider: function(contentProvider)
+    forceUpdateSourceMapping: function(script)
     {
-        if (this._formatted)
-            this._contentProvider = new WebInspector.FormattedContentProvider(contentProvider, this._formatter);
-        else
-            this._contentProvider = contentProvider;
+        if (!this._useTemporaryContent || !this._hasNewScripts)
+            return;
+        this._hasNewScripts = false;
+        this._updateSourceMapping();
     },
 
-    forceLoadContent: function(script)
+    _updateSourceMapping: function()
     {
-        if (!this._hasPendingResource())
+        if (this._updatingSourceMapping) {
+            this._updateNeeded = true;
             return;
+        }
+        this._updatingSourceMapping = true;
+        this._updateNeeded = false;
 
-        if (!this._concatenatedScripts)
-            this._concatenatedScripts = {};
-        if (this._concatenatedScripts[script.scriptId])
-            return;
-        for (var i = 0; i < this._scripts.length; ++i)
-            this._concatenatedScripts[this._scripts[i].scriptId] = true;
+        var originalContentProvider = this._createContentProvider();
+        this._createSourceMapping(originalContentProvider, didCreateSourceMapping.bind(this));
 
-        this._reload();
-
-        if (!this._contentRequested) {
-            this._contentRequested = true;
-            this._loadAndConcatenateScriptsContent();
+        function didCreateSourceMapping(contentProvider, mapping)
+        {
+            this._updatingSourceMapping = false;
+            if (!this._updateNeeded)
+                this._saveSourceMapping(contentProvider, mapping);
+            else
+                this._updateSourceMapping();
         }
     },
 
-    _reload: function()
+    _createContentProvider: function()
     {
-        if (this._contentLoaded) {
-            this._contentLoaded = false;
-            // FIXME: create another UISourceCode instance here, UISourceCode should be immutable.
-            this.dispatchEventToListeners(WebInspector.RawSourceCode.Events.UISourceCodeReplaced, { oldSourceCode: this, sourceCode: this });
-        } else if (this._contentRequested)
-            this._reloadContent = true;
-        else if (this._requestContentCallbacks.length)
-            this._requestContent();
-    },
-
-    _requestContent: function()
-    {
-        if (this._contentRequested)
-            return;
-
-        this._contentRequested = true;
         if (this._resource && this._resource.finished)
-            this._loadResourceContent(this._resource);
-        else if (!this._resource)
-            this._loadScriptContent();
-        else if (this._concatenatedScripts)
-            this._loadAndConcatenateScriptsContent();
-        else
-            this._contentRequested = false;
-    },
-
-    _loadResourceContent: function(resource)
-    {
-        this._setContentProvider(new WebInspector.ResourceContentProvider(resource));
-        this._contentProvider.requestContent(this._didRequestContent.bind(this));
-    },
-
-    _loadScriptContent: function()
-    {
-        this._setContentProvider(new WebInspector.ScriptContentProvider(this._scripts[0]));
-        this._contentProvider.requestContent(this._didRequestContent.bind(this));
-    },
-
-    _loadAndConcatenateScriptsContent: function()
-    {
+            return new WebInspector.ResourceContentProvider(this._resource);
         if (this._scripts.length === 1 && !this._scripts[0].lineOffset && !this._scripts[0].columnOffset)
-            this._setContentProvider(new WebInspector.ScriptContentProvider(this._scripts[0]));
-        else
-            this._setContentProvider(new WebInspector.ConcatenatedScriptsContentProvider(this._scripts));
-        this._contentProvider.requestContent(this._didRequestContent.bind(this));
+            return new WebInspector.ScriptContentProvider(this._scripts[0]);
+        return new WebInspector.ConcatenatedScriptsContentProvider(this._scripts);
     },
 
-    _didRequestContent: function(mimeType, content)
+    _createSourceMapping: function(originalContentProvider, callback)
     {
-        this._contentLoaded = true;
-        this._contentRequested = false;
-        this._mimeType = mimeType;
-        this._content = content;
-        this._mapping = this._contentProvider.mapping;
+        if (!this._formatted) {
+            setTimeout(callback.bind(null, originalContentProvider, null), 0);
+            return;
+        }
 
-        for (var i = 0; i < this._requestContentCallbacks.length; ++i)
-            this._requestContentCallbacks[i](mimeType, content);
-        this._requestContentCallbacks = [];
-
-        if (this._reloadContent)
-            this._reload();
+        function didRequestContent(mimeType, content)
+        {
+            function didFormatContent(formattedContent, mapping)
+            {
+                var contentProvider = new WebInspector.StaticContentProvider(mimeType, formattedContent)
+                callback(contentProvider, mapping);
+            }
+            this._formatter.formatContent(mimeType, content, didFormatContent.bind(this));
+        }
+        originalContentProvider.requestContent(didRequestContent.bind(this));
     },
 
-    _hasPendingResource: function()
+    _saveSourceMapping: function(contentProvider, mapping)
     {
-        return this._resource && !this._resource.finished;
+        var oldUISourceCode;
+        if (this._uiSourceCode)
+            oldUISourceCode = this;
+        var uiSourceCodeId = (this._formatted ? "deobfuscated:" : "") + (this._scripts[0].sourceURL || this._scripts[0].scriptId);
+        this._uiSourceCode = new WebInspector.UISourceCode(uiSourceCodeId, this.url, this.isContentScript, this, contentProvider);
+        this._mapping = mapping;
+        this.dispatchEventToListeners(WebInspector.RawSourceCode.Events.SourceMappingUpdated, { oldUISourceCode: oldUISourceCode });
     }
 }
 
@@ -364,26 +341,17 @@ WebInspector.ResourceContentProvider.prototype = {
 WebInspector.ResourceContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
 
 
-WebInspector.FormattedContentProvider = function(contentProvider, formatter)
+WebInspector.StaticContentProvider = function(mimeType, content)
 {
-    this._contentProvider = contentProvider;
-    this._formatter = formatter;
+    this._mimeType = mimeType;
+    this._content = content;
 };
 
-WebInspector.FormattedContentProvider.prototype = {
+WebInspector.StaticContentProvider.prototype = {
     requestContent: function(callback)
     {
-        function didRequestContent(mimeType, content)
-        {
-            function didFormatContent(formattedContent, mapping)
-            {
-                this.mapping = mapping;
-                callback(mimeType, formattedContent);
-            }
-            this._formatter.formatContent(mimeType, content, didFormatContent.bind(this));
-        }
-        this._contentProvider.requestContent(didRequestContent.bind(this));
+        callback(this._mimeType, this._content);
     }
 }
 
-WebInspector.FormattedContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
+WebInspector.StaticContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;

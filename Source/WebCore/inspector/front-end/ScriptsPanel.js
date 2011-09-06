@@ -671,11 +671,13 @@ WebInspector.ScriptsPanel.prototype = {
 
     _uiSourceCodeReplaced: function(event)
     {
-        var oldUISourceCode = event.data.oldSourceCode;
-        var uiSourceCode = event.data.sourceCode;
+        var oldUISourceCode = event.data.oldUISourceCode;
+        var uiSourceCode = event.data.uiSourceCode;
 
         // Re-bind file select option from old source file to new one.
         var option = oldUISourceCode._option;
+        if (!option)
+            return;
         delete oldUISourceCode._option;
         option._uiSourceCode = uiSourceCode;
         uiSourceCode._option = option;
@@ -691,7 +693,7 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceFrame = event.target;
         var uiSourceCode = sourceFrame._uiSourceCode;
 
-        var messages = uiSourceCode.messages;
+        var messages = this._presentationModel.messagesForUISourceCode(uiSourceCode);
         for (var i = 0; i < messages.length; ++i) {
             var message = messages[i];
             sourceFrame.addMessageToSource(message.lineNumber, message.originalMessage);
