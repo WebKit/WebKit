@@ -269,7 +269,6 @@ void UniscribeHelper::draw(GraphicsContext* graphicsContext,
     HGDIOBJ oldFont = 0;
     int curX = x;
     bool firstRun = true;
-    bool useWindowsDrawing = windowsCanHandleTextDrawing(graphicsContext);
 
     for (size_t screenIndex = 0; screenIndex < m_runs.size(); screenIndex++) {
         int itemIndex = m_screenOrder[screenIndex];
@@ -348,43 +347,25 @@ void UniscribeHelper::draw(GraphicsContext* graphicsContext,
             // Pass 0 in when there is no justification.
             const int* justify = shaping.m_justify.size() == 0 ? 0 : &shaping.m_justify[fromGlyph];
 
-            if (useWindowsDrawing) {
-                if (firstRun) {
-                    oldFont = SelectObject(dc, shaping.m_hfont);
-                    firstRun = false;
-                } else
-                    SelectObject(dc, shaping.m_hfont);
-            }
-
+            const int* advances = shaping.m_justify.size() ?
+                                      &shaping.m_justify[fromGlyph]
+                                    : &shaping.m_advance[fromGlyph];
             // Fonts with different ascents can be used to render different
             // runs.  'Across-runs' y-coordinate correction needs to be
             // adjusted for each font.
             bool textOutOk = false;
             for (int executions = 0; executions < 2; ++executions) {
-                if (useWindowsDrawing) {
-                    HRESULT hr = ScriptTextOut(dc, shaping.m_scriptCache,
-                                               curX + innerOffset,
-                                               y - shaping.m_ascentOffset,
-                                               0, 0, &item.a, 0, 0,
-                                               &shaping.m_glyphs[fromGlyph],
-                                               glyphCount,
-                                               &shaping.m_advance[fromGlyph],
-                                               justify,
-                                               &shaping.m_offsets[fromGlyph]);
-                    textOutOk = (hr == S_OK);
-                } else {
-                    SkPoint origin;
-                    origin.fX = curX + + innerOffset;
-                    origin.fY = y + m_ascent;
-                    paintSkiaText(graphicsContext,
-                                  shaping.m_hfont,
-                                  glyphCount,
-                                  &shaping.m_glyphs[fromGlyph],
-                                  &shaping.m_advance[fromGlyph],
-                                  &shaping.m_offsets[fromGlyph],
-                                  &origin);
-                    textOutOk = true;
-                }
+                SkPoint origin;
+                origin.fX = curX + + innerOffset;
+                origin.fY = y + m_ascent;
+                paintSkiaText(graphicsContext,
+                              shaping.m_hfont,
+                              glyphCount,
+                              &shaping.m_glyphs[fromGlyph],
+                              advances,
+                              &shaping.m_offsets[fromGlyph],
+                              &origin);
+                textOutOk = true;
 
                 if (!textOutOk && 0 == executions) {
                     // If TextOut is called from the renderer it might fail

@@ -580,17 +580,6 @@ const SkBitmap* PlatformContextSkia::bitmap() const
     return &m_canvas->getDevice()->accessBitmap(false);
 }
 
-bool PlatformContextSkia::isNativeFontRenderingAllowed()
-{
-#if ENABLE(SKIA_TEXT)
-    return false;
-#else
-    if (isAccelerated())
-        return false;
-    return skia::SupportsPlatformPaint(m_canvas);
-#endif
-}
-
 void PlatformContextSkia::getImageResamplingHint(IntSize* srcSize, FloatSize* dstSize) const
 {
     *srcSize = m_imageResamplingHintSrcSize;

@@ -43,58 +43,6 @@
 
 namespace WebCore {
 
-bool windowsCanHandleDrawTextShadow(GraphicsContext *context)
-{
-    FloatSize shadowOffset;
-    float shadowBlur;
-    Color shadowColor;
-    ColorSpace shadowColorSpace;
-
-    bool hasShadow = context->getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
-    return !hasShadow || (!shadowBlur && (shadowColor.alpha() == 255) && (context->fillColor().alpha() == 255));
-}
-
-bool windowsCanHandleTextDrawing(GraphicsContext* context)
-{
-    if (!windowsCanHandleTextDrawingWithoutShadow(context))
-        return false;
-
-    // Check for shadow effects.
-    if (!windowsCanHandleDrawTextShadow(context))
-        return false;
-
-    return true;
-}
-
-bool windowsCanHandleTextDrawingWithoutShadow(GraphicsContext* context)
-{
-    // Check for non-translation transforms. Sometimes zooms will look better in
-    // Skia, and sometimes better in Windows. The main problem is that zooming
-    // in using Skia will show you the hinted outlines for the smaller size,
-    // which look weird. All else being equal, it's better to use Windows' text
-    // drawing, so we don't check for zooms.
-    const AffineTransform& matrix = context->getCTM();
-    if (matrix.b() != 0 || matrix.c() != 0)  // Check for skew.
-        return false;
-
-    // Check for stroke effects.
-    if (context->platformContext()->getTextDrawingMode() != TextModeFill)
-        return false;
-
-    // Check for gradients.
-    if (context->fillGradient() || context->strokeGradient())
-        return false;
-
-    // Check for patterns.
-    if (context->fillPattern() || context->strokePattern())
-        return false;
-
-    if (!context->platformContext()->isNativeFontRenderingAllowed())
-        return false;
-
-    return true;
-}
-
 static void skiaDrawText(SkCanvas* canvas,
                          const SkPoint& point,
                          SkPaint* paint,
@@ -103,19 +51,34 @@ static void skiaDrawText(SkCanvas* canvas,
                          const GOFFSET* offsets,
                          int numGlyphs)
 {
-    // Reserve space for 64 glyphs on the stack. If numGlyphs is larger, the array
-    // will dynamically allocate it space for numGlyph glyphs.
+    // Reserve space for 64 SkPoints on the stack. If numGlyphs is larger, the array
+    // will dynamically allocate it space for numGlyph glyphs. This is used to store
+    // the computed x,y locations. In the case where offsets==null, then we use it
+    // to store (twice as many) SkScalars for x[]
     static const size_t kLocalGlyphMax = 64;
-    SkAutoSTArray<kLocalGlyphMax, SkPoint> posStorage(numGlyphs);
-    SkPoint* pos = posStorage.get();
+
     SkScalar x = point.fX;
     SkScalar y = point.fY;
-    for (int i = 0; i < numGlyphs; i++) {
-        pos[i].set(x + (offsets ? offsets[i].du : 0),
-                   y + (offsets ? offsets[i].dv : 0));
-        x += SkIntToScalar(advances[i]);
+    if (offsets) {
+        SkAutoSTArray<kLocalGlyphMax, SkPoint> storage(numGlyphs);
+        SkPoint* pos = storage.get();
+        for (int i = 0; i < numGlyphs; i++) {
+            // GDI has dv go up, so we negate it
+            pos[i].set(x + SkIntToScalar(offsets[i].du),
+                       y + -SkIntToScalar(offsets[i].dv));
+            x += SkIntToScalar(advances[i]);
+        }
+        canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, *paint);
+    } else {
+        SkAutoSTArray<kLocalGlyphMax * 2, SkScalar> storage(numGlyphs);
+        SkScalar* xpos = storage.get();
+        for (int i = 0; i < numGlyphs; i++) {
+            xpos[i] = x;
+            x += SkIntToScalar(advances[i]);
+        }
+        canvas->drawPosTextH(glyphs, numGlyphs * sizeof(uint16_t),
+                             xpos, y, *paint);
     }
-    canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, *paint);
 }
 
 static bool isCanvasMultiLayered(SkCanvas* canvas)
