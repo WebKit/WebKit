@@ -1587,11 +1587,6 @@ http/tests/appcache/interrupted-update.html
 # https://bugs.webkit.org/show_bug.cgi?id=61122
 http/tests/navigation/post-307-response.html
 
-# ASSERT(!priv->loader->isLoading()); in webkitwebdatasource.cpp
-# https://bugs.webkit.org/show_bug.cgi?id=61523
-http/tests/eventsource/workers/eventsource-simple.html
-http/tests/eventsource/eventsource-status-error-iframe-crash.html
-
 # failing dropzone test(http://bugs.webkit.org/show_bug.cgi?id=61630)
 fast/events/dropzone-002.html
 
