@@ -2056,6 +2056,11 @@ BUGWK65203 WIN : svg/zoom/page/zoom-hixie-mixed-009.xml = IMAGE
 BUGWK65203 WIN : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE
 BUGWK65203 WIN : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE
 
+// On XP, some glyphs show subpixel antialiasing when they shouldn't
+BUGWK65203 XP : fast/text/international/bidi-mirror-he-ar.html = IMAGE
+BUGWK65203 XP : svg/batik/text/textStyles.svg = IMAGE
+
+
 // These tests all fail because the expected output is wrong. The
 // reason is that JSC does not currently implement Function.prototype.bind
 // These test has intentionally been marked as FAIL, which makes it easy
@@ -3759,6 +3764,3 @@ BUGWK67515 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT
 
 BUGCR54348 LINUX RELEASE : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
 BUGWK67538 DEBUG : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
-
-// Failing after r94406.
-BUGWK67480 : svg/batik/text/textStyles.svg = IMAGE+TEXT
