@@ -31,6 +31,7 @@ import sys
 import unittest
 
 from webkitpy.common.system import outputcapture
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.tool import mocktool
 
 from webkitpy.layout_tests.port import chromium_win
@@ -134,6 +135,17 @@ class ChromiumWinTest(port_testcase.PortTestCase):
         port = chromium_win.ChromiumWinPort(port_name='chromium-win-win7')
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-win'))
 
+    def test_build_path(self):
+        mock = MockFileSystem(files={
+            '/mock-checkout/Source/WebKit/chromium/build/Release/DumpRenderTree.exe': 'exe'})
+
+        port = chromium_win.ChromiumWinPort(filesystem=mock)
+        self.assertEquals(
+            '/mock-checkout/Source/WebKit/chromium/build/Release/DumpRenderTree.exe',
+            port._path_to_driver('Release'))
+        self.assertEquals(
+            '/mock-checkout/Source/WebKit/chromium/Debug/DumpRenderTree.exe',
+            port._path_to_driver('Debug'))
 
 
 if __name__ == '__main__':
