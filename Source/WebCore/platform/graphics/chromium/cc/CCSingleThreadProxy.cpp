@@ -90,7 +90,6 @@ bool CCSingleThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect
 
     commitIfNeeded();
 
-
     if (!doComposite())
         return false;
 
@@ -232,8 +231,6 @@ bool CCSingleThreadProxy::recreateContextIfNeeded()
 void CCSingleThreadProxy::commitIfNeeded()
 {
     // Update
-    double frameBeginTime = currentTime();
-    m_layerTreeHost->animateAndLayout(frameBeginTime);
     m_layerTreeHost->updateLayers();
 
     // Commit
