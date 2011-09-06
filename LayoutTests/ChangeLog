@@ -1,3 +1,13 @@
+2011-09-06  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r94545.
+
+        * platform/gtk/fast/dom/HTMLInputElement/input-image-alt-text-expected.txt:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
 2011-09-05  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, fullscreen tests rebaseline after r94545.
