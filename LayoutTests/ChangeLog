@@ -1,3 +1,13 @@
+2011-09-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Web Inspector: nuke background events collection (dead feature)
+        https://bugs.webkit.org/show_bug.cgi?id=66296
+
+        Reviewed by Yury Semikhatsky.
+
+        * platform/wk2/Skipped: Remove non-existent tests from the Skipped list
+        as well.
+
 2011-09-06  Andreas Kling  <kling@webkit.org>
 
         Unreviewed, removing non-existent test from Qt skiplist.

@@ -2051,11 +2051,6 @@ inspector/timeline/timeline-paint.html
 inspector/timeline/timeline-script-tag-1.html
 inspector/debugger/open-close-open.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=61437
-http/tests/inspector/network/network-clear-after-disabled.html
-http/tests/inspector/network/network-close-load-open.html
-http/tests/inspector/network/network-open-load-reopen.html
-
 # Crashes the WebProcess
 editing/pasteboard/copy-standalone-image.html
 
