@@ -1,3 +1,11 @@
+2011-09-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Updated expectations on Mac for fast/js/global-constructors.html.
+
+        Rubber-stampted by Gavin Barraclough.
+
+        * platform/mac/fast/js/global-constructors-expected.txt:
+
 2011-09-06  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r94545.
