@@ -635,29 +635,34 @@ void HTMLMediaElement::selectMediaResource()
     LOG(Media, "HTMLMediaElement::selectMediaResource");
 
     enum Mode { attribute, children };
-    Mode mode = attribute;
 
-    // 3 - ... the media element has neither a src attribute ...
+    // 3 - If the media element has a src attribute, then let mode be attribute.
+    Mode mode = attribute;
     if (!fastHasAttribute(srcAttr)) {
-        // ... nor a source element child: ...
         Node* node;
         for (node = firstChild(); node; node = node->nextSibling()) {
             if (node->hasTagName(sourceTag))
                 break;
         }
 
-        if (!node) {
+        // Otherwise, if the media element does not have a src attribute but has a source 
+        // element child, then let mode be children and let candidate be the first such 
+        // source element child in tree order.
+        if (node) {
+            mode = children;
+            m_nextChildNodeToConsider = 0;
+            m_currentSourceNode = 0;
+        } else {
+            // Otherwise the media element has neither a src attribute nor a source element 
+            // child: set the networkState to NETWORK_EMPTY, and abort these steps; the 
+            // synchronous section ends.
             m_loadState = WaitingForSource;
             setShouldDelayLoadEvent(false);
-
-            // ... set the networkState to NETWORK_EMPTY, and abort these steps
             m_networkState = NETWORK_EMPTY;
 
             LOG(Media, "HTMLMediaElement::selectMediaResource, nothing to load");
             return;
         }
-
-        mode = children;
     }
 
     // 4 - Set the media element's delaying-the-load-event flag to true (this delays the load event), 
@@ -665,7 +670,7 @@ void HTMLMediaElement::selectMediaResource()
     setShouldDelayLoadEvent(true);
     m_networkState = NETWORK_LOADING;
 
-    // 5
+    // 5 - Queue a task to fire a simple event named loadstart at the media element.
     scheduleEvent(eventNames().loadstartEvent);
 
     // 6 - If mode is attribute, then run these substeps
@@ -694,7 +699,6 @@ void HTMLMediaElement::selectMediaResource()
     }
 
     // Otherwise, the source elements will be used
-    m_currentSourceNode = 0;
     loadNextSourceChild();
 }
 
@@ -895,23 +899,27 @@ void HTMLMediaElement::noneSupported()
     m_loadState = WaitingForSource;
     m_currentSourceNode = 0;
 
-    // 5 - Reaching this step indicates that either the URL failed to resolve, or the media
-    // resource failed to load. Set the error attribute to a new MediaError object whose
-    // code attribute is set to MEDIA_ERR_SRC_NOT_SUPPORTED.
+    // 4.8.10.5 
+    // 6 - Reaching this step indicates that the media resource failed to load or that the given 
+    // URL could not be resolved. In one atomic operation, run the following steps:
+
+    // 6.1 - Set the error attribute to a new MediaError object whose code attribute is set to
+    // MEDIA_ERR_SRC_NOT_SUPPORTED.
     m_error = MediaError::create(MediaError::MEDIA_ERR_SRC_NOT_SUPPORTED);
 
-    // 6 - Set the element's networkState attribute to the NETWORK_NO_SOURCE value.
+    // 6.2 - Forget the media element's media-resource-specific text tracks.
+
+    // 6.3 - Set the element's networkState attribute to the NETWORK_NO_SOURCE value.
     m_networkState = NETWORK_NO_SOURCE;
 
-    // 7 - Queue a task to fire a progress event called error at the media element, in
-    // the context of the fetching process that was used to try to obtain the media
-    // resource in the resource fetch algorithm.
+    // 7 - Queue a task to fire a simple event named error at the media element.
     scheduleEvent(eventNames().errorEvent);
 
     // 8 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
     setShouldDelayLoadEvent(false);
 
-    // 9 -Abort these steps. Until the load() method is invoked, the element won't attempt to load another resource.
+    // 9 - Abort these steps. Until the load() method is invoked or the src attribute is changed, 
+    // the element won't attempt to load another resource.
 
     updateDisplayState();
 

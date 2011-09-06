@@ -1,3 +1,17 @@
+2011-09-06  Eric Carlson  <eric.carlson@apple.com>
+
+        load() does not reset the resource selection algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=64917
+
+        Reviewed by Darin Adler.
+
+        Test: media/video-source-load.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::selectMediaResource): Reset m_nextChildNodeToConsider, update
+            comments and rearrange logic to more closely match logic in spec.
+        (WebCore::HTMLMediaElement::noneSupported): Update comments.
+
 2011-09-06  Abhishek Arya  <inferno@chromium.org>
 
         Style not propagated to anonymous boxes and anonymous
