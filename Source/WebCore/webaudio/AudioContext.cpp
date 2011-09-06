@@ -257,10 +257,25 @@ bool AudioContext::isRunnable() const
     return m_hrtfDatabaseLoader->isLoaded();
 }
 
+void AudioContext::uninitializeDispatch(void* userData)
+{
+    AudioContext* context = reinterpret_cast<AudioContext*>(userData);
+    ASSERT(context);
+    if (!context)
+        return;
+
+    context->uninitialize();
+}
+
 void AudioContext::stop()
 {
     m_document = 0; // document is going away
-    uninitialize();
+
+    // Don't call uninitialize() immediately here because the ScriptExecutionContext is in the middle
+    // of dealing with all of its ActiveDOMObjects at this point. uninitialize() can de-reference other
+    // ActiveDOMObjects so let's schedule uninitialize() to be called later.
+    // FIXME: see if there's a more direct way to handle this issue.
+    callOnMainThread(uninitializeDispatch, this);
 }
 
 Document* AudioContext::document() const

@@ -1,3 +1,19 @@
+2011-09-06  Chris Rogers  <crogers@google.com>
+
+        MediaElementAudioSourceNode destruction triggers ASSERTS
+        https://bugs.webkit.org/show_bug.cgi?id=67665
+
+        Reviewed by Nate Chapin.
+
+        Test: webaudio/mediaelementaudiosourcenode-gc.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setAudioSourceNode):
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::uninitializeDispatch):
+        (WebCore::AudioContext::stop):
+        * webaudio/AudioContext.h:
+
 2011-09-05  Oliver Hunt  <oliver@apple.com>
 
         An object's structure should reference the global object responsible for its creation

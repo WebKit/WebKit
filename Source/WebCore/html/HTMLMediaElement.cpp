@@ -2984,7 +2984,6 @@ void HTMLMediaElement::createMediaPlayer()
 #if ENABLE(WEB_AUDIO)
 void HTMLMediaElement::setAudioSourceNode(MediaElementAudioSourceNode* sourceNode)
 {
-    ASSERT(!m_audioSourceNode);
     m_audioSourceNode = sourceNode;
 }
 

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests garbage collection of MediaElementAudioSourceNode.");
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("abc");
+    }
+}
+
+function runTest() {
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    
+    audioElement = document.createElement("audio");
+    context = new webkitAudioContext(1, 1000, 44100);
+    source = context.createMediaElementSource(audioElement);
+    audioElement = null;
+    context = null;
+    source = null;
+    gc();
+
+    testPassed("MediaElementAudioSourceNode survived garbage collection.");
+
+    finishJSTest();
+}
+
+runTest();
+successfullyParsed = true;
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

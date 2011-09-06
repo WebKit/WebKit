@@ -231,6 +231,7 @@ private:
 
     void lazyInitialize();
     void uninitialize();
+    static void uninitializeDispatch(void* userData);
 
     void scheduleNodeDeletion();
     static void deleteMarkedNodesDispatch(void* userData);
