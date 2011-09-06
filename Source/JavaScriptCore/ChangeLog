@@ -1,3 +1,15 @@
+2011-09-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Fix broken PPC build due to new dtoa library
+        https://bugs.webkit.org/show_bug.cgi?id=67654
+
+        Reviewed by Dan Bernstein.
+
+        Added condition for PPC in the new dtoa compatibility check so that
+        building won't fail.
+
+        * wtf/dtoa/utils.h:
+
 2011-09-05  Oliver Hunt  <oliver@apple.com>
 
         An object's structure should reference the global object responsible for its creation
