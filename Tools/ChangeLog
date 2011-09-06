@@ -1,3 +1,13 @@
+2011-09-06  Anders Carlsson  <andersca@apple.com>
+
+        Move NPAPI headers in bridge to plugins
+        https://bugs.webkit.org/show_bug.cgi?id=67661
+
+        Update forwarding headers.
+
+        * DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npapi.h:
+        * DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npruntime.h:
+
 2011-09-06  Tony Chang  <tony@chromium.org>
 
         [chromium] Check in 'build' for compiled binaries first

@@ -1,3 +1,23 @@
+2011-09-06  Anders Carlsson  <andersca@apple.com>
+
+        Move NPAPI headers in bridge to plugins
+        https://bugs.webkit.org/show_bug.cgi?id=67661
+
+        Reviewed by Darin Adler.
+
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Update build systems.
+
+        * bridge/npapi.h: Removed.
+        * bridge/npruntime.h: Removed.
+        * bridge/nptypes.h: Removed.
+        * plugins/npapi.h: Copied from Source/WebCore/bridge/npapi.h.
+        * plugins/npruntime.h: Copied from Source/WebCore/bridge/npruntime.h.
+        * plugins/nptypes.h: Copied from Source/WebCore/bridge/nptypes.h.
+
 2011-09-06  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67672

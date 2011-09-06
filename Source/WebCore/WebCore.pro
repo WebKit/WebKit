@@ -1381,7 +1381,6 @@ v8 {
         bridge/jsc/BridgeJSC.h \
         bridge/IdentifierRep.h \
         bridge/NP_jsobject.h \
-        bridge/npruntime.h \
         bridge/qt/qt_class.h \
         bridge/qt/qt_instance.h \
         bridge/qt/qt_runtime.h \
@@ -1389,7 +1388,8 @@ v8 {
         bridge/runtime_array.h \
         bridge/runtime_method.h \
         bridge/runtime_object.h \
-        bridge/runtime_root.h
+        bridge/runtime_root.h \
+        plugins/npruntime.h
 }
 
 HEADERS += \
