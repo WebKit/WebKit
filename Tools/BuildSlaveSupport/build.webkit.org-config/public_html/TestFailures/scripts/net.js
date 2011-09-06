@@ -33,19 +33,18 @@ net.ajax = $.ajax;
 
 net.probe = function(url, options)
 {
-    var scriptElement = document.createElement('script');
-    scriptElement.addEventListener('load', function() {
-        $(scriptElement).detach();
-        if (options.success)
-            options.success.call();
-    }, false);
-    scriptElement.addEventListener('error', function() {
-        $(scriptElement).detach();
-        if (options.error)
-            options.error.call();
-    }, false);
-    scriptElement.src = url;
-    document.head.appendChild(scriptElement);
+    $.ajax({
+        url: url,
+        type: 'HEAD',
+        success: function() {
+            if (options.success)
+                options.success.call();
+        },
+        error: function() {
+            if (options.error)
+                options.error.call();
+        },
+    });
 };
 
 // jQuery makes jsonp requests somewhat ugly (which is fair given that they're
