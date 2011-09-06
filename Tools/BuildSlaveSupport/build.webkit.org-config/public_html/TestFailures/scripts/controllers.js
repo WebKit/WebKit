@@ -32,38 +32,8 @@ controllers.ResultsDetails = base.extends(Object, {
     {
         this._view = view;
         this._resultsByTest = resultsByTest;
-
-        this._view.setTestList(Object.keys(this._resultsByTest));
         this._view.setResultsByTest(resultsByTest);
-
-        this._view.addAction(new ui.actions.Rebaseline().makeDefault());
-        this._view.addAction(new ui.actions.Previous());
-        this._view.addAction(new ui.actions.Next());
-
-        $(this._view).bind('testselected', this.onTestSelected.bind(this));
-        $(this._view).bind('builderselected', this.onBuilderSelected.bind(this));
-        $(this._view).bind('rebaseline', this.onRebaseline.bind(this));
-    },
-    showTest: function(testName)
-    {
-        var builderNameList = Object.keys(this._resultsByTest[testName]);
-        this._view.setBuilderList(builderNameList)
-        this._view.showResults(results.failureInfoForTestAndBuilder(this._resultsByTest, testName, builderNameList[0]));
-    },
-    onTestSelected: function()
-    {
-        this.showTest(this._view.currentTestName());
-    },
-    onBuilderSelected: function() {
-        this._view.showResults(results.failureInfoForTestAndBuilder(this._resultsByTest, this._view.currentTestName(), this._view.currentBuilderName()));
-    },
-    onRebaseline: function() {
-        var testName = this._view.currentTestName();
-        var builderName = this._view.currentBuilderName();
-        model.queueForRebaseline({
-            'testName': testName,
-            'builderName': builderName
-        });
+        // FIXME: Wire up some actions.
     },
 });
 
@@ -114,7 +84,6 @@ var FailureStreamController = base.extends(Object, {
             });
 
         var controller = new controllers.ResultsDetails(resultsView, failuresByTest);
-        controller.showTest(testNameList[0]);
 
         // FIXME: This doesn't belong here.
         var onebar = $('#onebar')[0];

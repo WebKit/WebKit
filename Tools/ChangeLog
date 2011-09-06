@@ -1,5 +1,35 @@
 2011-09-06  Adam Barth  <abarth@webkit.org>
 
+        Use a hierarchial structure for the garden-o-matic results view
+        https://bugs.webkit.org/show_bug.cgi?id=67620
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch re-organizes the results view to use a hierachial structure
+        for selection.  At the top-level are sections for each test.  Expanding
+        the test section shows a tab selector for builders.
+
+        This structure prepares us for wiring up various actions to this view.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        (.):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js:
+        ():
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        (.):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/results.css:
+        (.results-view>.toolbar):
+        (.results-view>.toolbar ul.actions):
+        (.results-view>.toolbar ul.actions li):
+        (.results-grid table):
+        (.results-grid table td, .results-view table th):
+        (.results-grid table th):
+        (.results-grid .text-result):
+        (.results-grid .image-result):
+
+2011-09-06  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic's base.probe generates spam in the JavaScript console
         https://bugs.webkit.org/show_bug.cgi?id=67622
 

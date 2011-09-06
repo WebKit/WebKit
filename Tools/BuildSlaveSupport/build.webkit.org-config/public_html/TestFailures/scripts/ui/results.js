@@ -28,6 +28,8 @@ ui.results = ui.results || {};
 
 (function(){
 
+var kResultsPrefetchDelayMS = 500;
+
 // FIXME: Rather than using table, should we be using something fancier?
 ui.results.Comparison = base.extends('table', {
     init: function()
@@ -137,13 +139,18 @@ ui.results.ResultsGrid = base.extends('div', {
 });
 
 ui.results.ResultsDetails = base.extends('div', {
-    init: function(delegate)
+    init: function(delegate, failureInfo)
     {
         this.className = 'results-detail';
         this._delegate = delegate;
+        this._failureInfo = failureInfo;
+        this._haveShownOnce = false;
     },
-    show: function(failureInfo) {
-        this._delegate.fetchResultsURLs(failureInfo, function(resultsURLs) {
+    show: function() {
+        if (this._haveShownOnce)
+            return;
+        this._haveShownOnce = true;
+        this._delegate.fetchResultsURLs(this._failureInfo, function(resultsURLs) {
             var resultsGrid = new ui.results.ResultsGrid();
             resultsGrid.addResults(resultsURLs);
             $(this).empty().append(resultsGrid);
@@ -151,161 +158,94 @@ ui.results.ResultsDetails = base.extends('div', {
     },
 });
 
-var Selector = base.extends('select', {
-    init: function()
-    {
-        this._eventName = null;
-        $(this).change(function() {
-            if (this._eventName)
-                $(this).trigger(this._eventName);
-        }.bind(this));
-    },
-    setItemList: function(itemList)
-    {
-        $(this).empty();
-        itemList.forEach(function(item) {
-            var element = document.createElement('option');
-            element.textContent = item.displayName;
-            element.value = item.name;
-            this.appendChild(element);
-        }.bind(this));
-        $(this).show();
-    },
-    select: function(itemName) {
-        var index = -1;
-        for (var i = 0; i < this.options.length; ++i) {
-            if (this.options[i].value == itemName) {
-                index = i;
-                break;
-            }
-        }
-        if (index == -1)
-            return;
-        this.selectedIndex = index;
-    },
-    selectedItem: function() {
-        if (this.selectedIndex == -1)
-            return;
-        return this.options[this.selectedIndex].value;
-    }
-});
-
-ui.results.TestSelector = base.extends(Selector, {
-    init: function()
+ui.results.TestSelector = base.extends('div', {
+    init: function(delegate, resultsByTest)
     {
         this.className = 'test-selector';
-        this._eventName = 'testselected';
-    },
-    setTestList: function(testNameList)
-    {
-        this.setItemList(testNameList.map(function(testName) {
-            return {
-                'displayName': testName,
-                'name': testName
-            };
-        }));
+        this._delegate = delegate;
+
+        Object.keys(resultsByTest).forEach(function (testName) {
+            var link = document.createElement('a');
+            $(link).attr('href', '#').text(testName);
+            this.appendChild(document.createElement('h3')).appendChild(link);
+            this.appendChild(this._delegate.contentForTest(testName));
+        }, this);
+
+        $(this).accordion({
+            collapsible: true,
+            autoHeight: false,
+        });
+        $(this).accordion("activate", false);
     }
 });
 
-ui.results.BuilderSelector = base.extends(Selector, {
-    init: function()
+ui.results.BuilderSelector = base.extends('div', {
+    init: function(delegate, testName, resultsByBuilder)
     {
         this.className = 'builder-selector';
-        this._eventName = 'builderselected';
-    },
-    setBuilderList: function(builderNameList) {
-        this.setItemList(builderNameList.map(function(builderName) {
-            return {
-                'displayName': ui.displayNameForBuilder(builderName),
-                'name': builderName
-            };
-        }));
+        this._delegate = delegate;
+
+        var tabStrip = this.appendChild(document.createElement('ul'));
+
+        Object.keys(resultsByBuilder).forEach(function(builderName) {
+            var builderDirectory = results.directoryForBuilder(builderName);
+
+            var link = document.createElement('a');
+            $(link).attr('href', "#" + builderDirectory).text(ui.displayNameForBuilder(builderName));
+            tabStrip.appendChild(document.createElement('li')).appendChild(link);
+
+            var content = this._delegate.contentForTestAndBuilder(testName, builderName);
+            content.id = builderDirectory;
+            this.appendChild(content);
+        }, this);
+
+        $(this).tabs();
     }
-});
-
-ui.results.ResultsSelector = base.extends('table', {
-    init: function()
-    {
-        this.className = 'results-selector';
-    },
-    setResultsByTest: function(resultsByTest)
-    {
-        var buildersByTest = base.mapDictionary(resultsByTest, Object.keys);
-
-        var testNameList = Object.keys(buildersByTest);
-        var builderNameList = base.uniquifyArray(base.flattenArray(base.values(buildersByTest)));
-        builderNameList.sort();
-
-        var titles = this.createTHead().insertRow();
-        // Note the reverse iteration because insertCell() inserts at the beginning of the row.
-        for (var i = builderNameList.length - 1; i >= 0; --i) {
-            titles.insertCell().textContent = builderNameList[i];
-        }
-        titles.insertCell(); // For the test names.
-
-        this._body = this.appendChild(document.createElement('tbody'));
-
-        testNameList.forEach(function(testName) {
-            var row = this._body.insertRow();
-            for (var i = builderNameList.length - 1; i >= 0; --i) {
-                var cell = row.insertCell();
-                var builderName = builderNameList[i];
-                if (buildersByTest[testName].indexOf(builderName) != -1) {
-                    cell.className = 'result';
-                    cell.textContent = resultsByTest[testName][builderName].actual;
-                }
-            }
-            var cell = row.insertCell()
-            cell.className = 'test-name';
-            cell.textContent = testName;
-        }.bind(this));
-    },
 });
 
 ui.results.View = base.extends('div', {
     init: function(delegate)
     {
         this.className = 'results-view';
-        this.innerHTML = '<div class="toolbar"></div><div class="content"></div>';
-
-        this._testSelector = new ui.results.TestSelector();
-        this._builderSelector = new ui.results.BuilderSelector();
-        this._resultsSelector = new ui.results.ResultsSelector();
-        this._resultsDetails = new ui.results.ResultsDetails(delegate);
-        this._actionList = new ui.actions.List();
-
-        $('.toolbar', this).append(this._testSelector).append(this._builderSelector).append(this._resultsSelector).append(this._actionList);
-        $('.content', this).append(this._resultsDetails);
+        this._delegate = delegate;
     },
-    addAction: function(action)
+    contentForTest: function(testName)
     {
-        this._actionList.add(action);
+        var builderSelector = new ui.results.BuilderSelector(this, testName, this._resultsByTest[testName]);
+        $(builderSelector).bind('tabsselect', function(event, ui) {
+            // We will probably have pre-fetched the tab already, but we need to make sure.
+            ui.panel.show();
+        });
+        return builderSelector;
     },
-    setTestList: function(testNameList)
+    contentForTestAndBuilder: function(testName, builderName)
     {
-        this._testSelector.setTestList(testNameList);
-    },
-    setBuilderList: function(buildNameList)
-    {
-        this._builderSelector.setBuilderList(buildNameList);
+        var failureInfo = results.failureInfoForTestAndBuilder(this._resultsByTest, testName, builderName);
+        return new ui.results.ResultsDetails(this, failureInfo);
     },
     setResultsByTest: function(resultsByTest)
     {
-        this._resultsSelector.setResultsByTest(resultsByTest);
+        $(this).empty();
+        this._resultsByTest = resultsByTest;
+
+        var testSelector = new ui.results.TestSelector(this, resultsByTest);
+        $(testSelector).bind("accordionchangestart", function(event, ui) {
+            // Prefetch the first results from the network.
+            var resultsDetails = $('.results-detail', ui.newContent);
+            if (resultsDetails.length)
+                resultsDetails[0].show();
+            // Prefetch the rest kResultsPrefetchDelayMS later.
+            setTimeout(function() {
+                resultsDetails.each(function() {
+                    this.show();
+                });
+            }, kResultsPrefetchDelayMS);
+        });
+        this.appendChild(testSelector);
     },
-    currentTestName: function()
+    fetchResultsURLs: function(failureInfo, callback)
     {
-        return this._testSelector.selectedItem();
-    },
-    currentBuilderName: function()
-    {
-        return this._builderSelector.selectedItem();
-    },
-    showResults: function(failureInfo)
-    {
-        this._testSelector.select(failureInfo.testName);
-        this._builderSelector.select(failureInfo.builderName);
-        this._resultsDetails.show(failureInfo);
+        this._delegate.fetchResultsURLs(failureInfo, callback)
     }
 });
 

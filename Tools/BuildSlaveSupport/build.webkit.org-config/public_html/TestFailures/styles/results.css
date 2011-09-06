@@ -23,53 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.results-view table {
+.results-view>.toolbar {
+    padding-bottom: 15px;
+}
+
+    .results-view>.toolbar ul.actions {
+        float: right;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: inline-block;
+    }
+
+    .results-view>.toolbar ul.actions li {
+        display: inline-block;
+    }
+
+.results-grid table {
     table-layout: fixed;
     width: 100%;
     border-collapse: collapse;
 }
 
-.results-view table td, .results-view table th {
+.results-grid table td, .results-view table th {
     overflow: hidden;
     vertical-align: top;
 }
 
-.results-view table th {
+.results-grid table th {
     padding: 3px;
     border-bottom: 1px solid #AAA;
 }
 
-.results-view .toolbar {
-    padding-bottom: 15px;
-}
-
-.results-view .test-selector {
-    width: 400px;
-    margin-right: 6px;
-}
-
-.results-view .actions {
-    float: right;
-}
-
-.results-view .toolbar ul.actions {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: inline-block;
-}
-
-.results-view .toolbar ul.actions li {
-    display: inline-block;
-}
-
-.results-view .text-result {
+.results-grid .text-result {
     border: none;
     width: 100%;
     height: 400px; /* FIXME: How do we get a reasonable height here? */
 }
 
-.results-view .image-result {
+.results-grid .image-result {
     width: 100%;
     height: auto;
 }

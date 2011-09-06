@@ -462,14 +462,14 @@ results.resultNodeForTest = function(resultsTree, testName)
     return currentNode;
 };
 
-function resultsDirectoryForBuilder(builderName)
+results.directoryForBuilder = function(builderName)
 {
     return builderName.replace(/[ .()]/g, '_');
 }
 
 function resultsDirectoryURL(builderName)
 {
-    return kLayoutTestResultsServer + resultsDirectoryForBuilder(builderName) + kLayoutTestResultsPath;
+    return kLayoutTestResultsServer + results.directoryForBuilder(builderName) + kLayoutTestResultsPath;
 }
 
 results.resultKind = function(url)
