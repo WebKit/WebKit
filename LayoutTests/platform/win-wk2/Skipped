@@ -209,5 +209,5 @@ media/video-load-readyState.html
 inspector/debugger/source-frame.html
 
 # Flaky http://webkit.org/b/57491
-http/tests/inspector/extensions-resources-redirect.html
+http/tests/inspector/extensions-network-redirect.html
 inspector/extensions/extensions-resources.html
