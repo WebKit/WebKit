@@ -68901,6 +68901,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\CompilerSourceMapping.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ConsoleMessage.js"
 					>
 				</File>

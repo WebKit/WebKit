@@ -1,0 +1,54 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+
+<script>
+
+function test()
+{
+    function checkMapping(compiledLineNumber, compiledColumnNumber, sourceURL, sourceLineNumber, sourceColumnNumber, mapping)
+    {
+        var sourceLocation = mapping.compiledLocationToSourceLocation(compiledLineNumber, compiledColumnNumber);
+        InspectorTest.assertEquals(sourceURL, sourceLocation.sourceURL);
+        InspectorTest.assertEquals(sourceLineNumber, sourceLocation.lineNumber);
+        InspectorTest.assertEquals(sourceColumnNumber, sourceLocation.columnNumber);
+    }
+
+    InspectorTest.runTestSuite([
+        function testSimpleMapping(next)
+        {
+            // example.js:
+            // 0         1         2         3
+            // 012345678901234567890123456789012345
+            // function add(variable_x, variable_y)
+            // {
+            //     return variable_x + variable_y;
+            // }
+            // example-compiled.js:
+            // 0         1         2         3
+            // 012345678901234567890123456789012345
+            // function add(a,b){return a+b};
+            var mappingPayload = {
+                "mappings":"AAASA,QAAAA,IAAG,CAACC,CAAD,CAAaC,CAAb,CACZ,CACI,MAAOD,EAAP,CAAoBC,CADxB;",
+                "sources":["example.js"]
+            };
+            var mapping = new WebInspector.ClosureCompilerSourceMapping(mappingPayload);
+            checkMapping(0, 9, "example.js", 0, 9, mapping);
+            checkMapping(0, 13, "example.js", 0, 13, mapping);
+            checkMapping(0, 15, "example.js", 0, 25, mapping);
+            checkMapping(0, 18, "example.js", 2, 4, mapping);
+            checkMapping(0, 25, "example.js", 2, 11, mapping);
+            checkMapping(0, 27, "example.js", 2, 24, mapping);
+            next();
+        }
+    ]);
+};
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests ClosureCompilerSourceMapping.</p>
+</body>
+</html>
