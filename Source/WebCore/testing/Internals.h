@@ -82,6 +82,8 @@ public:
     void setPasswordEchoDurationInSeconds(Document*, double durationInSeconds, ExceptionCode&);
 
     bool wasLastChangeUserEdit(Element* textField, ExceptionCode&);
+    String suggestedValue(Element* inputElement, ExceptionCode&);
+    void setSuggestedValue(Element* inputElement, const String&, ExceptionCode&);
 
     static const char* internalsId;
 

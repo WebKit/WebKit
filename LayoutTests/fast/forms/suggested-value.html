@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This test setting a suggested value on an input element.
+The dump below should have the "suggested value" instead of "initial value".</p>
+<pre><input id="test" type="text" value="initial value"></pre>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+var input = document.getElementById('test');
+var result = document.getElementById('result');
+if (!window.internals)
+    testFailed('This test requires internals object');
+else {
+    input.focus();
+    input.selectionStart = input.selectionEnd = 0;
+
+    internals.setSuggestedValue(input, 'suggested value');
+
+    Markup.description(document.getElementById('description').textContent)
+
+    function addTextResult(value) { input.parentNode.appendChild(document.createTextNode(value + ': ' + eval(value))); }
+    addTextResult('input.value');
+    addTextResult('internals.suggestedValue(input)');
+    addTextResult('input.selectionStart');
+    addTextResult('input.selectionEnd');
+
+    Markup.dump(input.parentNode);
+}
+
+</script>
+</body>
+</html>

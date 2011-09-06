@@ -159,8 +159,10 @@ EXPORTS
         ?setDisabled@MemoryCache@WebCore@@QAEX_N@Z
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
         ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z
+        ?setSuggestedValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
         ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
         ?shadowRoot@Element@WebCore@@QBEPAVShadowRoot@2@XZ
+        ?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ
         ?textareaTag@HTMLNames@WebCore@@3VQualifiedName@2@B
         ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
         ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z

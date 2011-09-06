@@ -303,4 +303,34 @@ bool Internals::wasLastChangeUserEdit(Element* textField, ExceptionCode& ec)
     return false;
 }
 
+String Internals::suggestedValue(Element* inputElement, ExceptionCode& ec)
+{
+    if (!inputElement) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    if (!inputElement->hasTagName(HTMLNames::inputTag)) {
+        ec = INVALID_NODE_TYPE_ERR;
+        return String();
+    }
+
+    return static_cast<HTMLInputElement*>(inputElement)->suggestedValue();
+}
+
+void Internals::setSuggestedValue(Element* inputElement, const String& value, ExceptionCode& ec)
+{
+    if (!inputElement) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    if (!inputElement->hasTagName(HTMLNames::inputTag)) {
+        ec = INVALID_NODE_TYPE_ERR;
+        return;
+    }
+
+    static_cast<HTMLInputElement*>(inputElement)->setSuggestedValue(value);
+}
+
 }

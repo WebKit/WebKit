@@ -1,3 +1,15 @@
+2011-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r94274): FormManagerTest.PreviewForm and FillFormNonEmptyField fail on chromium
+        https://bugs.webkit.org/show_bug.cgi?id=67453
+
+        Reviewed by Kent Tamura.
+
+        Added a regression test to ensure HTMLInputElement updates its inner text value when the suggested value is set.
+
+        * fast/forms/suggested-value-expected.txt: Added.
+        * fast/forms/suggested-value.html: Added.
+
 2011-09-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Web Inspector: [Extensions API] rename webInspector.resources to webInspector.network

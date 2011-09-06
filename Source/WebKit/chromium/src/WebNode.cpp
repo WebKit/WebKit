@@ -147,6 +147,7 @@ bool WebNode::isTextNode() const
 
 bool WebNode::isFocusable() const
 {
+    m_private->document()->updateLayout();
     return m_private->isFocusable();
 }
 

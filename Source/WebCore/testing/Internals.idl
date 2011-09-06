@@ -56,6 +56,8 @@ module window {
         void setPasswordEchoDurationInSeconds(in Document document, in double durationInSeconds) raises(DOMException);
 
         boolean wasLastChangeUserEdit(in Element textField) raises (DOMException);
+        DOMString suggestedValue(in Element inputElement) raises (DOMException);
+        void setSuggestedValue(in Element inputElement, in DOMString value) raises (DOMException);
     };
 }
 

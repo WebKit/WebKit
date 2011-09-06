@@ -1073,9 +1073,8 @@ void HTMLInputElement::setSuggestedValue(const String& value)
     setFormControlValueMatchesRenderer(false);
     m_suggestedValue = sanitizeValue(value);
     updatePlaceholderVisibility(false);
-    if (renderer())
-        renderer()->updateFromElement();
     setNeedsStyleRecalc();
+    updateInnerTextValue();
 }
 
 void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
