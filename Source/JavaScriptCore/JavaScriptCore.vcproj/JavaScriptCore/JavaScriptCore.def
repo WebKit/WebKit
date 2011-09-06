@@ -253,6 +253,7 @@ EXPORTS
     ?lockCount@JSLock@JSC@@SAHXZ
     ?lookupGetter@JSObject@JSC@@UAE?AVJSValue@2@PAVExecState@2@ABVIdentifier@2@@Z
     ?lookupSetter@JSObject@JSC@@UAE?AVJSValue@2@PAVExecState@2@ABVIdentifier@2@@Z
+    ?match@RegExp@JSC@@QAEHAAVJSGlobalData@2@ABVUString@2@HPAV?$Vector@H$0CA@@WTF@@@Z
     ?materializePropertyMap@Structure@JSC@@AAEXAAVJSGlobalData@2@@Z
     ?monotonicallyIncreasingTime@WTF@@YANXZ
     ?monthFromDayInYear@WTF@@YAHH_N@Z

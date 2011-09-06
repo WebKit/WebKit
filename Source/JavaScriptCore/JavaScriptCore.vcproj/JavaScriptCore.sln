@@ -23,6 +23,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FindSafari", "..\..\..\Tool
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCoreGenerated", "JavaScriptCore\JavaScriptCoreGenerated.vcproj", "{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testRegExp", "testRegExp\testRegExp.vcproj", "{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{011D10F1-B656-4A1B-A0C3-3842F02122C5} = {011D10F1-B656-4A1B-A0C3-3842F02122C5}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_All|Win32 = Debug_All|Win32
@@ -93,6 +98,18 @@ Global
 		{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}.Release_PGO|Win32.Build.0 = Release_PGO|Win32
 		{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}.Release|Win32.ActiveCfg = Release|Win32
 		{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}.Release|Win32.Build.0 = Release|Win32
+		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Debug_All|Win32.ActiveCfg = Debug_All|Win32
+		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Debug_All|Win32.Build.0 = Debug_All|Win32
+		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Debug|Win32.Build.0 = Debug|Win32
+		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Production|Win32.ActiveCfg = Production|Win32
+		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Production|Win32.Build.0 = Production|Win32
+		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Release_PGO_Optimize|Win32.ActiveCfg = Release_PGO|Win32
+		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Release_PGO_Optimize|Win32.Build.0 = Release_PGO|Win32
+		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Release_PGO|Win32.ActiveCfg = Release_PGO|Win32
+		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Release_PGO|Win32.Build.0 = Release_PGO|Win32
+		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Release|Win32.ActiveCfg = Release|Win32
+		{14C94979-1ED3-4E1D-9B55-A80FCF4677D0}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

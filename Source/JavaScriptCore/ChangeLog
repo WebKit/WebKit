@@ -1,3 +1,28 @@
+2011-09-06  Michael Saboff  <msaboff@apple.com>
+
+        Add windows changes for JSC:RegExp functional tests
+        https://bugs.webkit.org/show_bug.cgi?id=67521
+
+        Windows build changes for regular expression functional test.
+
+        Rubber-stamped by Gavin Barraclough.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/testRegExp: Added.
+        * JavaScriptCore.vcproj/testRegExp/testRegExp.vcproj: Added.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpCommon.vsprops: Added.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpDebug.vsprops: Added.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpDebugAll.vsprops: Added.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpDebugCairoCFLite.vsprops: Added.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpPostBuild.cmd: Added.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpPreBuild.cmd: Added.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpPreLink.cmd: Added.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpProduction.vsprops: Added.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpRelease.vsprops: Added.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpReleaseCairoCFLite.vsprops: Added.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpReleasePGO.vsprops: Added.
+
 2011-09-06  Filip Pizlo  <fpizlo@apple.com>
 
         JavaScriptCore does not have tiered compilation
