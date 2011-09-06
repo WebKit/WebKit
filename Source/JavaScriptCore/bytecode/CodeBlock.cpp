@@ -1867,6 +1867,7 @@ void CodeBlock::copyDataFromAlternative()
     replaceExistingEntries(m_functionExprs, m_alternative->m_functionExprs);
 }
 
+#if ENABLE(JIT)
 // FIXME: Implement OSR. If compileOptimized() is called from somewhere other than the
 // epilogue, do OSR from the old code block to the new one.
 
@@ -1924,5 +1925,6 @@ JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* s
     JSObject* error = static_cast<FunctionExecutable*>(ownerExecutable())->compileOptimizedFor(exec, scopeChainNode, m_isConstructor ? CodeForConstruct : CodeForCall);
     return error;
 }
+#endif
 
 } // namespace JSC

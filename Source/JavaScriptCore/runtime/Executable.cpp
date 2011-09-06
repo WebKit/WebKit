@@ -129,6 +129,9 @@ JSObject* EvalExecutable::compileOptimized(ExecState* exec, ScopeChainNode* scop
 
 JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType)
 {
+#if !ENABLE(JIT)
+    UNUSED_PARAM(jitType);
+#endif
     JSObject* exception = 0;
     JSGlobalData* globalData = &exec->globalData();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
@@ -249,6 +252,9 @@ JSObject* ProgramExecutable::compileOptimized(ExecState* exec, ScopeChainNode* s
 
 JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType)
 {
+#if !ENABLE(JIT)
+    UNUSED_PARAM(jitType);
+#endif
     JSObject* exception = 0;
     JSGlobalData* globalData = &exec->globalData();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
@@ -365,6 +371,9 @@ JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, Scop
 
 JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec, JITCode::JITType jitType)
 {
+#if !ENABLE(JIT)
+    UNUSED_PARAM(jitType);
+#endif
     JSObject* exception = 0;
     JSGlobalData* globalData = scopeChainNode->globalData;
     RefPtr<FunctionBodyNode> body = globalData->parser->parse<FunctionBodyNode>(exec->lexicalGlobalObject(), 0, 0, m_source, m_parameters.get(), isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
