@@ -1,3 +1,13 @@
+2011-09-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][ARM] http/tests/loading/empty-urls.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=67638
+
+        [Qt][ARM]fast/dom/call-a-constructor-as-a-function.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=67639
+
+        * platform/qt-arm/Skipped: Skip failing tests.
+
 2011-09-06  Rob Buis  <rbuis@rim.com>
 
         use after free in WebCore::SVGTRefElement::updateReferencedText

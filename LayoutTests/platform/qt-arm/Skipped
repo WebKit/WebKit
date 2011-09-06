@@ -88,3 +88,11 @@ http/tests/security/local-video-src-from-remote.html
 svg/batik/filters/filterRegions.svg
 svg/batik/text/longTextOnPath.svg
 svg/carto.net/scrollbar.svg
+
+# [Qt][ARM] http/tests/loading/empty-urls.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=67638
+http/tests/loading/empty-urls.html
+
+# [Qt][ARM]fast/dom/call-a-constructor-as-a-function.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=67639
+fast/dom/call-a-constructor-as-a-function.html
