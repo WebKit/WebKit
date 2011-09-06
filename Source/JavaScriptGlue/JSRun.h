@@ -40,7 +40,7 @@ class JSGlueGlobalObject : public JSGlobalObject {
 
         static JSGlueGlobalObject* create(JSGlobalData& globalData, Structure* structure, JSFlags flags = kJSFlagNone)
         {
-            Structure* userObjectStructure = UserObjectImp::createStructure(globalData, jsNull());
+            Structure* userObjectStructure = UserObjectImp::createStructure(globalData, 0, jsNull());
             return new (allocateCell<JSGlueGlobalObject>(globalData.heap)) JSGlueGlobalObject(globalData, structure, userObjectStructure, flags);
         }
 

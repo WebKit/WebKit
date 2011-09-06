@@ -50,7 +50,7 @@ JSNPMethod::JSNPMethod(ExecState* exec, JSGlobalObject* globalObject, const Iden
 
 JSNPMethod* JSNPMethod::create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& ident, NPIdentifier npIdent)
 {
-    JSC::Structure* structure = createStructure(exec->globalData(), globalObject->functionPrototype());
+    JSC::Structure* structure = createStructure(exec->globalData(), globalObject, globalObject->functionPrototype());
     return new (JSC::allocateCell<JSNPMethod>(*exec->heap())) JSNPMethod(exec, globalObject, ident, npIdent, structure);
 }
 

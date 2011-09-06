@@ -71,7 +71,7 @@ void JSNPObject::finishCreation(JSGlobalObject* globalObject)
 
 JSNPObject* JSNPObject::create(JSC::JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
 {
-    Structure* structure = createStructure(globalObject->globalData(), globalObject->objectPrototype());
+    Structure* structure = createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype());
     return new (JSC::allocateCell<JSNPObject>(globalObject->globalData().heap)) JSNPObject(globalObject, objectMap, npObject, structure);
 }
 

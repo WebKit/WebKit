@@ -66,9 +66,9 @@ namespace JSC {
         void printTraceData();
 #endif
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(LeafType, 0), 0, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(LeafType, 0), 0, &s_info);
         }
         
         static JS_EXPORTDATA const ClassInfo s_info;

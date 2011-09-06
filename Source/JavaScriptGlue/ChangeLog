@@ -1,3 +1,17 @@
+2011-09-05  Oliver Hunt  <oliver@apple.com>
+
+        An object's structure should reference the global object responsible for its creation
+        https://bugs.webkit.org/show_bug.cgi?id=67624
+
+        Reviewed by Gavin Barraclough.
+
+        Update for Structure::create() requiring a global object.
+
+        * JSRun.h:
+        (JSGlueGlobalObject::create):
+        * UserObjectImp.h:
+        (UserObjectImp::createStructure):
+
 2011-09-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unzip initialization lists and constructors in JSCell hierarchy (4/7)

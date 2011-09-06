@@ -83,7 +83,7 @@ namespace JSC {
             return m_numParametersForCall == NUM_PARAMETERS_IS_HOST;
         }
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info); }
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info); }
         
         static const ClassInfo s_info;
 
@@ -198,7 +198,7 @@ namespace JSC {
 
         NativeFunction function() { return m_function; }
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(LeafType, StructureFlags), AnonymousSlotCount, &s_info); }
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(LeafType, StructureFlags), AnonymousSlotCount, &s_info); }
         
         static const ClassInfo s_info;
 
@@ -332,9 +332,9 @@ namespace JSC {
             return generatedJITCodeForCall();
         }
 #endif
-        static Structure* createStructure(JSGlobalData& globalData, JSValue proto)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info);
         }
         
         static const ClassInfo s_info;
@@ -393,9 +393,9 @@ namespace JSC {
         }
 #endif
         
-        static Structure* createStructure(JSGlobalData& globalData, JSValue proto)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info);
         }
         
         static const ClassInfo s_info;
@@ -549,9 +549,9 @@ namespace JSC {
         void discardCode();
         void visitChildren(SlotVisitor&);
         static FunctionExecutable* fromGlobalCode(const Identifier&, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
-        static Structure* createStructure(JSGlobalData& globalData, JSValue proto)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info);
         }
         
         static const ClassInfo s_info;

@@ -114,7 +114,7 @@ EXPORTS
     ?createReferenceError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createSingleCharacterString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@E@Z
     ?createStackOverflowError@JSC@@YAPAVJSObject@1@PAVExecState@1@@Z
-    ?createStructure@JSByteArray@JSC@@SAPAVStructure@2@AAVJSGlobalData@2@VJSValue@2@PBUClassInfo@2@@Z
+    ?createStructure@JSByteArray@JSC@@SAPAVStructure@2@AAVJSGlobalData@2@PAVJSGlobalObject@2@VJSValue@2@PBUClassInfo@2@@Z
     ?createSyntaxError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createTable@HashTable@JSC@@ABEXPAVJSGlobalData@2@@Z
     ?createThread@WTF@@YAIP6APAXPAX@Z0@Z

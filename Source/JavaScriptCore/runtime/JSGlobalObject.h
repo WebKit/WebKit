@@ -175,6 +175,7 @@ namespace JSC {
         void finishCreation(JSGlobalData& globalData, JSObject* thisValue)
         {
             Base::finishCreation(globalData);
+            structure()->setGlobalObject(globalData, this);
             COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
             putThisToAnonymousValue(0);
             init(thisValue);
@@ -282,7 +283,7 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, 0, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
         void registerWeakMap(OpaqueJSWeakObjectMap* map)

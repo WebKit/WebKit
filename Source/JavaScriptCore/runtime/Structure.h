@@ -62,7 +62,7 @@ namespace JSC {
 
         typedef JSCell Base;
 
-        static Structure* create(JSGlobalData& globalData, JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
+        static Structure* create(JSGlobalData& globalData, JSGlobalObject*, JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
         {
             ASSERT(globalData.structureStructure);
             ASSERT(classInfo);
@@ -121,6 +121,9 @@ namespace JSC {
 
         const TypeInfo& typeInfo() const { ASSERT(structure()->classInfo() == &s_info); return m_typeInfo; }
 
+        JSGlobalObject* globalObject() { return m_globalObject.get(); }
+        void setGlobalObject(JSGlobalData& globalData, JSGlobalObject* globalObject) { m_globalObject.set(globalData, this, globalObject); }
+        
         JSValue storedPrototype() const { return m_prototype.get(); }
         JSValue prototypeForLookup(ExecState*) const;
         StructureChain* prototypeChain(ExecState*) const;
@@ -240,7 +243,8 @@ namespace JSC {
         static const unsigned maxSpecificFunctionThrashCount = 3;
 
         TypeInfo m_typeInfo;
-
+        
+        WriteBarrier<JSGlobalObject> m_globalObject;
         WriteBarrier<Unknown> m_prototype;
         mutable WriteBarrier<StructureChain> m_cachedPrototypeChain;
 

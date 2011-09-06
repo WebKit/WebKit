@@ -216,6 +216,8 @@ Structure::Structure(JSGlobalData& globalData, const Structure* previous)
     , m_preventExtensions(previous->m_preventExtensions)
     , m_didTransition(true)
 {
+    if (previous->m_globalObject)
+        m_globalObject.set(globalData, this, previous->m_globalObject.get());
 }
 
 Structure::~Structure()
@@ -752,6 +754,8 @@ void Structure::visitChildren(SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     ASSERT(structure()->typeInfo().overridesVisitChildren());
     JSCell::visitChildren(visitor);
+    if (m_globalObject)
+        visitor.append(&m_globalObject);
     if (m_prototype)
         visitor.append(&m_prototype);
     if (m_cachedPrototypeChain)

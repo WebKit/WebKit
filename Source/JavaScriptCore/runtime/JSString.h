@@ -436,9 +436,9 @@ namespace JSC {
 
         JSValue replaceCharacter(ExecState*, UChar, const UString& replacement);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue proto)
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(globalData, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot), AnonymousSlotCount, &s_info);
         }
         
         static const ClassInfo s_info;
