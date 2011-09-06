@@ -1,3 +1,10 @@
+2011-09-06  Sam Weinig  <sam@webkit.org>
+
+        WebVTTTokenizer files in the wrong place in the Xcode project.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Move WebVTTTokenizer files so they are in the right place in the project.
+
 2011-09-06  Chris Rogers  <crogers@google.com>
 
         MediaElementAudioSourceNode destruction triggers ASSERTS
