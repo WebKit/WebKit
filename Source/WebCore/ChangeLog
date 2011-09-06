@@ -1,3 +1,18 @@
+2011-09-06  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [skia] States of GraphicsContext may never be restored after clipToImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=67358
+
+        beginLayerClippedToImage/applyClipFromImage are mismatched when clipping to
+        an empty ImageBuffer, which will make states of GraphicsContext incorrect.
+
+        Reviewed by James Robinson.
+
+        Test: fast/repaint/background-clip-text.html
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::beginLayerClippedToImage):
+
 2011-09-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Do not allocate memory for extremely large surfaces.

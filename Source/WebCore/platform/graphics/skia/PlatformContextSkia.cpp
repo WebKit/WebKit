@@ -244,6 +244,9 @@ void PlatformContextSkia::beginLayerClippedToImage(const FloatRect& rect,
                       SkFloatToScalar(rect.maxX()), SkFloatToScalar(rect.maxY()) };
 
     canvas()->clipRect(bounds);
+    if (imageBuffer->size().isEmpty())
+        return;
+
     canvas()->saveLayerAlpha(&bounds, 255,
                              static_cast<SkCanvas::SaveFlags>(SkCanvas::kHasAlphaLayer_SaveFlag | SkCanvas::kFullColorLayer_SaveFlag));
     // Copy off the image as |imageBuffer| may be deleted before restore is invoked.

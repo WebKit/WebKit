@@ -687,6 +687,7 @@ fast/repaint/table-writing-modes-h.html
 fast/repaint/table-writing-modes-v.html
 fast/repaint/text-emphasis-h.html
 fast/repaint/text-emphasis-v.html
+fast/repaint/background-clip-text.html
 
 # This requires didClearWindowObjectForFrameInIsolatedWorld foo in FrameLoaderClient
 http/tests/security/isolatedWorld/didClearWindowObject.html
