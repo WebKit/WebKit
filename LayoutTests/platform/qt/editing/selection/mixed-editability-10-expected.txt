@@ -22,4 +22,4 @@ Anchor ([object HTMLDivElement], 0 caret[8,119] refpos=8) is correct.
 Anchor ([object HTMLDivElement], 0 caret[73,193] refpos=73) is correct.
 Anchor ([object HTMLDivElement], 3 caret[47,267] refpos=47) is correct.
 Anchor ([object HTMLDivElement], 0 caret[58,341] refpos=58) is correct.
-Anchor ([object HTMLElement], 0 caret[0,0] refpos=0) is correct.
+Anchor ([object HTMLSpanElement], 0 caret[0,0] refpos=0) is correct.

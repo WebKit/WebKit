@@ -1,3 +1,17 @@
+2011-09-06  Adam Barth  <abarth@webkit.org>
+
+        editing/selection/mixed-editability-10.html is failing on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=67683
+
+        Update editing/selection/mixed-editability-10.html baselines after
+        HTMLSpanElement introduction.
+
+        * editing/selection/mixed-editability-10-expected.txt:
+        * platform/qt/editing/selection/mixed-editability-10-expected.png: Removed.
+            - This test is no longer an image test.
+        * platform/qt/editing/selection/mixed-editability-10-expected.txt:
+        * platform/win/editing/selection/mixed-editability-10-expected.txt:
+
 2011-09-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update expectations for a few tests that render oddly on xp due to r94589
