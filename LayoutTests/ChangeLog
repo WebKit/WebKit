@@ -1,3 +1,9 @@
+2011-09-06  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed, removing non-existent test from Qt skiplist.
+
+        * platform/qt/Skipped:
+
 2011-09-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][ARM] http/tests/loading/empty-urls.html fails
