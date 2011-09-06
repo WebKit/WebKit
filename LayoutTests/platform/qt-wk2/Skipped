@@ -281,10 +281,6 @@ http/tests/security/aboutBlank/security-context-window-open.html
 http/tests/security/aboutBlank/security-context-write.html
 http/tests/security/aboutBlank/security-context-grandchildren-writeln-lexical.html
 
-# Breaks ~400 subsequent tests and causes http/tests/incremental/slow-utf8-css.html to crash intermittently
-# https://bugs.webkit.org/show_bug.cgi?id=49321
-http/tests/history/popstate-fires-with-pending-requests.html
-
 # These tests always fail (with and without --singly). It needs investigation.
 animations/animation-controller-drt-api.html
 editing/execCommand/format-block-multiple-paragraphs-in-pre.html
