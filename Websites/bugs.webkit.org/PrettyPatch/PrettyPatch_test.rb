@@ -26,6 +26,7 @@ class PrettyPatch_test < Test::Unit::TestCase
         80852 => ["Changes one line plus ChangeLog", 2, 2, 1, 4],
         83127 => ["Only add stuff", 2, 2, 0, 3],
         85071 => ["Adds and removes from a file plus git signature", 2, 5, 3, 9],
+        104633 => ["Delta mechanism for binary patch in git diff", 12, 3, 5, 3],
     }
 
     def get_patch_uri(id)
@@ -57,6 +58,7 @@ class PrettyPatch_test < Test::Unit::TestCase
         assert_equal(info[Info::ADD], $last_prettify_part_count["add"], "Wrong number of 'add' parts in " + description)
         assert_equal(info[Info::REMOVE], $last_prettify_part_count["remove"], "Wrong number of 'remove' parts in " + description)
         assert_equal(info[Info::SHARED], $last_prettify_part_count["shared"], "Wrong number of 'shared' parts in " + description)
+        assert_equal(0, $last_prettify_part_count["binary"], "Wrong number of 'binary' parts in " + description)
     end
 
     def test_patches

@@ -1,3 +1,20 @@
+2011-09-06  Ben Wells  <benwells@chromium.org>
+
+        PrettyPatch should handle "delta" patch mechanism in git binary patches
+        https://bugs.webkit.org/show_bug.cgi?id=67628
+
+        Git patches are encoded using two mechanisms - "literal" and "delta".
+        See this email from the git mailing list archive for info
+        http://marc.info/?l=git&m=114682417113315&w=2
+
+        When determining if a binary file patch is an image or not we should accept
+        both literal and delta patch encodings.
+
+        Reviewed by Shinichiro Hamaji.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * PrettyPatch/PrettyPatch_test.rb:
+
 2011-06-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

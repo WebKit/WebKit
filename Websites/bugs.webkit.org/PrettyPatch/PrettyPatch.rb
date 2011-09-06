@@ -13,7 +13,7 @@ public
 
     def self.prettify(string)
         $last_prettify_file_count = -1
-        $last_prettify_part_count = { "remove" => 0, "add" => 0, "shared" => 0 }
+        $last_prettify_part_count = { "remove" => 0, "add" => 0, "shared" => 0, "binary" => 0 }
         string = normalize_line_ending(string)
         fileDiffs = FileDiff.parse(string)
 
@@ -65,7 +65,7 @@ private
 
     GIT_BINARY_FILE_MARKER_FORMAT = /^GIT binary patch$/
 
-    GIT_LITERAL_FORMAT = /^literal \d+$/
+    GIT_BINARY_PATCH_FORMAT = /^(literal|delta) \d+$/
 
     START_OF_BINARY_DATA_FORMAT = /^[0-9a-zA-Z\+\/=]{20,}/ # Assume 20 chars without a space is base64 binary data.
 
@@ -508,7 +508,7 @@ EOF
                     @git_indexes = [$1, $2]
                 when GIT_BINARY_FILE_MARKER_FORMAT
                     @binary = true
-                    if (GIT_LITERAL_FORMAT.match(lines[i + 1]) and PrettyPatch.has_image_suffix(@filename)) then
+                    if (GIT_BINARY_PATCH_FORMAT.match(lines[i + 1]) and PrettyPatch.has_image_suffix(@filename)) then
                         @git_image = true
                         startOfSections = i + 1
                     end
@@ -585,6 +585,7 @@ EOF
                     end
                 end
             elsif @binary then
+                $last_prettify_part_count["binary"] += 1
                 str += "<span class='text'>Binary file, nothing to see here</span>"
             else
                 str += @sections.collect{ |section| section.to_html }.join("<br>\n") unless @sections.nil?
