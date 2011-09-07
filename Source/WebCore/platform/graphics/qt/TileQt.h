@@ -53,6 +53,7 @@ public:
 
     const Tile::Coordinate& coordinate() const { return m_coordinate; }
     const IntRect& rect() const { return m_rect; }
+    void resize(const WebCore::IntSize&);
 
 private:
     TileQt(TiledBackingStore*, const Coordinate&);

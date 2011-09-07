@@ -153,6 +153,16 @@ void TileQt::paint(GraphicsContext* context, const IntRect& rect)
     context->platformContext()->drawPixmap(target, *m_buffer, source);
 }
     
+void TileQt::resize(const IntSize& newSize)
+{
+    IntRect oldRect = m_rect;
+    m_rect = IntRect(m_rect.location(), newSize);
+    if (m_rect.maxX() > oldRect.maxX())
+        invalidate(IntRect(oldRect.maxX(), oldRect.y(), m_rect.maxX() - oldRect.maxX(), m_rect.height()));
+    if (m_rect.maxY() > oldRect.maxY())
+        invalidate(IntRect(oldRect.x(), oldRect.maxY(), m_rect.width(), m_rect.maxY() - oldRect.maxY()));
+}
+
 void TiledBackingStoreBackend::paintCheckerPattern(GraphicsContext* context, const FloatRect& target)
 {
     QPainter* painter = context->platformContext();

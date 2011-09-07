@@ -56,6 +56,7 @@ public:
 
     const Coordinate& coordinate() const { return m_coordinate; }
     const WebCore::IntRect& rect() const { return m_rect; }
+    void resize(const WebCore::IntSize&);
 
 private:
     TiledBackingStoreRemoteTile(TiledBackingStoreRemoteTileClient*, WebCore::TiledBackingStore*, const Coordinate&);

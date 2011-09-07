@@ -75,7 +75,7 @@ Vector<IntRect> TiledBackingStoreRemoteTile::updateBackBuffer()
     // FIXME: Only use a local buffer when we know the tile is animated (after the first invalidate)
     // and destroy it after a few seconds of inactivity. We can render directly to shared
     // memory in other cases.
-    if (!m_localBuffer) {
+    if (!m_localBuffer || m_localBuffer->size() != m_rect.size()) {
         m_localBuffer = ImageBuffer::create(m_rect.size());
         m_localBuffer->context()->translate(-m_rect.x(), -m_rect.y());
         m_localBuffer->context()->scale(FloatSize(m_tiledBackingStore->contentsScale(), m_tiledBackingStore->contentsScale()));
@@ -117,6 +117,12 @@ bool TiledBackingStoreRemoteTile::isReadyToPaint() const
 void TiledBackingStoreRemoteTile::paint(GraphicsContext* context, const IntRect& rect)
 {
     ASSERT_NOT_REACHED();
+}
+
+void TiledBackingStoreRemoteTile::resize(const IntSize& newSize)
+{
+    m_rect = IntRect(m_rect.location(), newSize);
+    m_dirtyRect = m_rect;
 }
 
 TiledBackingStoreRemoteTileBackend::TiledBackingStoreRemoteTileBackend(TiledBackingStoreRemoteTileClient* client)

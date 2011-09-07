@@ -46,6 +46,7 @@ public:
 
     virtual const Tile::Coordinate& coordinate() const = 0;
     virtual const IntRect& rect() const = 0;
+    virtual void resize(const WebCore::IntSize&) = 0;
 };
 
 }

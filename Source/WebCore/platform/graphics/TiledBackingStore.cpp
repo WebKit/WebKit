@@ -237,8 +237,8 @@ void TiledBackingStore::createTiles()
     if (visibleRect.isEmpty())
         return;
 
-    // Remove tiles that extend outside the current contents rect.
-    dropOverhangingTiles();
+    // Resize tiles on edges in case the contents size has changed.
+    bool didResizeTiles = resizeEdgeTiles();
 
     IntRect keepRect = visibleRect;
     // Inflates to both sides, so divide inflate delta by 2
@@ -288,7 +288,7 @@ void TiledBackingStore::createTiles()
     requiredTileCount -= tilesToCreateCount;
     
     // Paint the content of the newly created tiles
-    if (tilesToCreateCount)
+    if (tilesToCreateCount || didResizeTiles)
         updateTileBuffers();
 
     // Keep creating tiles until the whole coverRect is covered.
@@ -296,9 +296,10 @@ void TiledBackingStore::createTiles()
         m_tileCreationTimer->startOneShot(m_tileCreationDelay);
 }
 
-void TiledBackingStore::dropOverhangingTiles()
-{    
+bool TiledBackingStore::resizeEdgeTiles()
+{
     IntRect contentsRect = this->contentsRect();
+    bool wasResized = false;
 
     Vector<Tile::Coordinate> tilesToRemove;
     TileMap::iterator end = m_tiles.end();
@@ -306,12 +307,17 @@ void TiledBackingStore::dropOverhangingTiles()
         Tile::Coordinate tileCoordinate = it->second->coordinate();
         IntRect tileRect = it->second->rect();
         IntRect expectedTileRect = tileRectForCoordinate(tileCoordinate);
-        if (expectedTileRect != tileRect || !contentsRect.contains(tileRect))
+        if (expectedTileRect.isEmpty())
             tilesToRemove.append(tileCoordinate);
+        else if (expectedTileRect != tileRect) {
+            it->second->resize(expectedTileRect.size());
+            wasResized = true;
+        }
     }
     unsigned removeCount = tilesToRemove.size();
     for (unsigned n = 0; n < removeCount; ++n)
         removeTile(tilesToRemove[n]);
+    return wasResized;
 }
 
 void TiledBackingStore::dropTilesOutsideRect(const IntRect& keepRect)

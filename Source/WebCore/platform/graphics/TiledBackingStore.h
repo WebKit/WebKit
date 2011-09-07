@@ -92,7 +92,7 @@ private:
     
     void commitScaleChange();
 
-    void dropOverhangingTiles();
+    bool resizeEdgeTiles();
     void dropTilesOutsideRect(const IntRect&);
     
     PassRefPtr<Tile> tileAt(const Tile::Coordinate&) const;
