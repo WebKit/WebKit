@@ -144,6 +144,7 @@ public:
     }
 
 protected:
+    void finishCreation(ExecState*, const Identifier&, PassRefPtr<QtInstance>);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | InternalFunction::StructureFlags | OverridesVisitChildren;
 
     QtRuntimeMethodData *d_func() const {return d_ptr;}

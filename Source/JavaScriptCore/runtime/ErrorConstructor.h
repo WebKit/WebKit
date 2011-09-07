@@ -36,6 +36,9 @@ namespace JSC {
         {
             return new (allocateCell<ErrorConstructor>(*exec->heap())) ErrorConstructor(exec, globalObject, structure, errPrototype);
         }
+
+    protected:
+        void finishCreation(ExecState*, JSGlobalObject*, ErrorPrototype*);
         
     private:
         ErrorConstructor(ExecState*, JSGlobalObject*, Structure*, ErrorPrototype*);

@@ -76,8 +76,14 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
 */
 
 ObjectConstructor::ObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ObjectPrototype* objectPrototype)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, "Object"))
+    : InternalFunction(globalObject, structure)
 {
+    finishCreation(exec, globalObject, objectPrototype);
+}
+
+void ObjectConstructor::finishCreation(ExecState* exec, JSGlobalObject* globalObject, ObjectPrototype* objectPrototype)
+{
+    Base::finishCreation(exec->globalData(), globalObject, Identifier(exec, "Object"));
     // ECMA 15.2.3.1
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, objectPrototype, DontEnum | DontDelete | ReadOnly);
     // no. of arguments for constructor

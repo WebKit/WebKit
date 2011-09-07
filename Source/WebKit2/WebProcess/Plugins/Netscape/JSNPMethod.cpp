@@ -30,6 +30,7 @@
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSObject.h>
 #include <WebCore/JSHTMLElement.h>
 #include <WebCore/JSPluginElementFunctions.h>
 #include <WebCore/NotImplemented.h>
@@ -41,17 +42,16 @@ namespace WebKit {
 
 const ClassInfo JSNPMethod::s_info = { "NPMethod", &InternalFunction::s_info, 0, 0 };
 
-JSNPMethod::JSNPMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, NPIdentifier npIdentifier, Structure* structure)
-    : InternalFunction(&exec->globalData(), globalObject, structure, name)
-    , m_npIdentifier(npIdentifier)
+JSNPMethod::JSNPMethod(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& name, NPIdentifier npIdentifier)
+    : InternalFunction(globalObject, structure)
 {
-    ASSERT(inherits(&s_info));
+    finishCreation(exec->globalData(), globalObject, name);
 }
 
-JSNPMethod* JSNPMethod::create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& ident, NPIdentifier npIdent)
+void JSNPMethod::finishCreation(JSGlobalData& globalData, JSGlobalObject* globalObject, const Identifier& name)
 {
-    JSC::Structure* structure = createStructure(exec->globalData(), globalObject, globalObject->functionPrototype());
-    return new (JSC::allocateCell<JSNPMethod>(*exec->heap())) JSNPMethod(exec, globalObject, ident, npIdent, structure);
+    Base::finishCreation(globalData, globalObject, name);
+    ASSERT(inherits(&s_info));
 }
 
 static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)

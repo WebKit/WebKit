@@ -132,6 +132,7 @@ JSTestSerializedScriptValueInterface::JSTestSerializedScriptValueInterface(Struc
     : JSDOMWrapper(structure, globalObject)
     , m_impl(impl)
 {
+    finishCreation(globalObject->globalData(), globalObject);
     ASSERT(inherits(&s_info));
 }
 

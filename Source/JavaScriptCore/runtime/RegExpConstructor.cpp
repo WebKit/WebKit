@@ -96,9 +96,15 @@ const ClassInfo RegExpConstructor::s_info = { "Function", &InternalFunction::s_i
 */
 
 RegExpConstructor::RegExpConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExpPrototype* regExpPrototype)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, "RegExp"))
+    : InternalFunction(globalObject, structure)
     , d(adoptPtr(new RegExpConstructorPrivate))
 {
+    finishCreation(exec, globalObject, regExpPrototype);
+}
+
+void RegExpConstructor::finishCreation(ExecState* exec, JSGlobalObject* globalObject, RegExpPrototype* regExpPrototype)
+{
+    Base::finishCreation(exec->globalData(), globalObject, Identifier(exec, "RegExp"));
     ASSERT(inherits(&s_info));
 
     // ECMA 15.10.5.1 RegExp.prototype
@@ -108,10 +114,9 @@ RegExpConstructor::RegExpConstructor(ExecState* exec, JSGlobalObject* globalObje
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
 }
 
-RegExpMatchesArray::RegExpMatchesArray(ExecState* exec, RegExpConstructorPrivate* data)
+RegExpMatchesArray::RegExpMatchesArray(ExecState* exec)
     : JSArray(exec->globalData(), exec->lexicalGlobalObject()->regExpMatchesArrayStructure())
 {
-    finishCreation(exec->globalData(), data);
 }
 
 void RegExpMatchesArray::finishCreation(JSGlobalData& globalData, RegExpConstructorPrivate* data)

@@ -36,7 +36,9 @@ namespace JSC{
 
         static JSStaticScopeObject* create(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes)
         {
-            return new (allocateCell<JSStaticScopeObject>(*exec->heap())) JSStaticScopeObject(exec, identifier, value, attributes);
+            JSStaticScopeObject* scopeObject = new (allocateCell<JSStaticScopeObject>(*exec->heap())) JSStaticScopeObject(exec);
+            scopeObject->finishCreation(exec, identifier, value, attributes);
+            return scopeObject;
         }
 
         virtual void visitChildren(SlotVisitor&);
@@ -59,10 +61,9 @@ namespace JSC{
         static const unsigned StructureFlags = IsEnvironmentRecord | OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
     private:
-        JSStaticScopeObject(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes)
+        JSStaticScopeObject(ExecState* exec)
             : JSVariableObject(exec->globalData(), exec->globalData().staticScopeStructure.get(), &m_symbolTable, reinterpret_cast<Register*>(&m_registerStore + 1))
         {
-            finishCreation(exec, identifier, value, attributes);
         }
         
         SymbolTable m_symbolTable;

@@ -131,9 +131,15 @@ const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, 
 */
 
 // ECMA 15.5.4
-StringPrototype::StringPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSString* string)
-    : StringObject(exec->globalData(), structure, string)
+StringPrototype::StringPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSString* nameAndMessage)
+    : StringObject(exec->globalData(), structure)
 {
+    finishCreation(exec, globalObject, nameAndMessage);
+}
+
+void StringPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject, JSString* nameAndMessage)
+{
+    Base::finishCreation(exec->globalData(), nameAndMessage);
     ASSERT(inherits(&s_info));
 
     putAnonymousValue(exec->globalData(), 0, globalObject);

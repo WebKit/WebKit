@@ -1,3 +1,83 @@
+2011-09-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Unzip initialization lists and constructors in JSCell hierarchy (5/7)
+        https://bugs.webkit.org/show_bug.cgi?id=67420
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        Completed the fifth level of the refactoring to add finishCreation() 
+        methods to all classes within the JSCell hierarchy with non-trivial 
+        constructor bodies.
+
+        This primarily consists of pushing the calls to finishCreation() down 
+        into the constructors of the subclasses of the second level of the hierarchy 
+        as well as pulling the finishCreation() calls out into the class's corresponding
+        create() method if it has one.  Doing both simultaneously allows us to 
+        maintain the invariant that the finishCreation() method chain is called exactly 
+        once during the creation of an object, since calling it any other number of 
+        times (0, 2, or more) will cause an assertion failure.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMConstructorObject::DOMConstructorObject):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::JSDOMGlobalObject):
+        (WebCore::JSDOMGlobalObject::finishCreation):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::create):
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::JSDOMWrapper::JSDOMWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterface::JSTestInterface):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListener::JSTestMediaQueryListListener):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::JSTestObj):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterface::JSTestSerializedScriptValueInterface):
+        * bridge/c/CRuntimeObject.cpp:
+        (JSC::Bindings::CRuntimeObject::CRuntimeObject):
+        (JSC::Bindings::CRuntimeObject::finishCreation):
+        * bridge/c/CRuntimeObject.h:
+        * bridge/jni/jsc/JavaRuntimeObject.cpp:
+        (JSC::Bindings::JavaRuntimeObject::JavaRuntimeObject):
+        (JSC::Bindings::JavaRuntimeObject::finishCreation):
+        * bridge/jni/jsc/JavaRuntimeObject.h:
+        * bridge/objc/ObjCRuntimeObject.h:
+        * bridge/objc/ObjCRuntimeObject.mm:
+        (JSC::Bindings::ObjCRuntimeObject::ObjCRuntimeObject):
+        (JSC::Bindings::ObjCRuntimeObject::finishCreation):
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::create):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::ObjcFallbackObjectImp):
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtRuntimeObject::QtRuntimeObject):
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::QtPixmapRuntimeObject::QtPixmapRuntimeObject):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMethod::QtRuntimeMethod):
+        (JSC::Bindings::QtRuntimeMethod::finishCreation):
+        * bridge/qt/qt_runtime.h:
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::RuntimeArray):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::create):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::RuntimeMethod):
+        (JSC::RuntimeMethod::finishCreation):
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::RuntimeObject):
+        * bridge/runtime_object.h:
+        (JSC::Bindings::RuntimeObject::create):
+
 2011-09-06  Luke Macpherson   <macpherson@chromium.org>
 
         Implement list style properties in CSSStyleApplyProperty.

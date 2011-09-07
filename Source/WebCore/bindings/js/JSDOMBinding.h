@@ -55,6 +55,7 @@ namespace WebCore {
         DOMConstructorObject(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
             : JSDOMWrapper(structure, globalObject)
         {
+            finishCreation(globalObject->globalData(), globalObject);
         }
     };
 

@@ -61,6 +61,7 @@ public:
 
 private:
     CRuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<CInstance>);
+    void finishCreation(JSGlobalObject*);
 };
 
 }

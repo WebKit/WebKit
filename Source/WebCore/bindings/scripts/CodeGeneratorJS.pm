@@ -1514,20 +1514,24 @@ sub GenerateImplementation
         AddIncludesForTypeInImpl("JSDOMWindowShell");
         push(@implContent, "${className}::$className(JSGlobalData& globalData, Structure* structure, PassRefPtr<$implType> impl, JSDOMWindowShell* shell)\n");
         push(@implContent, "    : $parentClassName(globalData, structure, impl, shell)\n");
+        push(@implContent, "{\n");
     } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
         AddIncludesForTypeInImpl($interfaceName);
         push(@implContent, "${className}::$className(JSGlobalData& globalData, Structure* structure, PassRefPtr<$implType> impl)\n");
         push(@implContent, "    : $parentClassName(globalData, structure, impl)\n");
+        push(@implContent, "{\n");
     } else {
         push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<$implType> impl)\n");
         if ($hasParent) {
             push(@implContent, "    : $parentClassName(structure, globalObject, impl)\n");
+            push(@implContent, "{\n");
         } else {
             push(@implContent, "    : $parentClassName(structure, globalObject)\n");
             push(@implContent, "    , m_impl(impl)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    finishCreation(globalObject->globalData(), globalObject);\n");
         }
     }
-    push(@implContent, "{\n");
     push(@implContent, "    ASSERT(inherits(&s_info));\n");
     if ($numCachedAttributes > 0) {
         push(@implContent, "    for (unsigned i = Base::AnonymousSlotCount; i < AnonymousSlotCount; i++)\n");

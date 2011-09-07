@@ -298,7 +298,9 @@ UString JSString::toString(ExecState* exec) const
 
 inline StringObject* StringObject::create(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
 {
-    return new (allocateCell<StringObject>(*exec->heap())) StringObject(exec->globalData(), globalObject->stringObjectStructure(), string);
+    StringObject* object = new (allocateCell<StringObject>(*exec->heap())) StringObject(exec->globalData(), globalObject->stringObjectStructure());
+    object->finishCreation(exec->globalData(), string);
+    return object;
 }
 
 JSObject* JSString::toObject(ExecState* exec, JSGlobalObject* globalObject) const

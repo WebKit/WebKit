@@ -41,6 +41,9 @@ namespace JSC {
             return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
+    protected:
+        void finishCreation(ExecState*, JSGlobalObject*, const Identifier& name);
+
     private:
         FunctionPrototype(ExecState*, JSGlobalObject*, Structure*);
         virtual CallType getCallData(CallData&);

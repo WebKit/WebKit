@@ -42,6 +42,7 @@ namespace JSC {
         }
 
     protected:
+        void finishCreation(ExecState*, JSGlobalObject*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | BooleanObject::StructureFlags;
         static const unsigned AnonymousSlotCount = BooleanObject::AnonymousSlotCount + 1;
 

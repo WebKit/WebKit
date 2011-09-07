@@ -43,9 +43,15 @@ ASSERT_CLASS_FITS_IN_CELL(JSCallbackFunction);
 const ClassInfo JSCallbackFunction::s_info = { "CallbackFunction", &InternalFunction::s_info, 0, 0 };
 
 JSCallbackFunction::JSCallbackFunction(ExecState* exec, JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, const Identifier& name)
-    : InternalFunction(&exec->globalData(), globalObject, globalObject->callbackFunctionStructure(), name)
+    : InternalFunction(globalObject, globalObject->callbackFunctionStructure())
     , m_callback(callback)
 {
+    finishCreation(exec->globalData(), globalObject, name);
+}
+
+void JSCallbackFunction::finishCreation(JSGlobalData& globalData, JSGlobalObject* globalObject, const Identifier& name)
+{
+    Base::finishCreation(globalData, globalObject, name);
     ASSERT(inherits(&s_info));
 }
 

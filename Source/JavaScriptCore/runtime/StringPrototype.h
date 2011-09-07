@@ -50,6 +50,7 @@ namespace JSC {
         static const ClassInfo s_info;
         
     protected:
+        void finishCreation(ExecState*, JSGlobalObject*, JSString*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | StringObject::StructureFlags;
 
         COMPILE_ASSERT(!StringObject::AnonymousSlotCount, StringPrototype_stomps_on_your_anonymous_slot);

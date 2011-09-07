@@ -59,6 +59,7 @@ public:
     static const JSC::ClassInfo s_info;
 private:
     ProxyRuntimeObject(JSC::ExecState*, JSC::JSGlobalObject*, JSC::Structure*, PassRefPtr<ProxyInstance>);
+    void finishCreation(JSC::JSGlobalObject*);
 };
 
 }
