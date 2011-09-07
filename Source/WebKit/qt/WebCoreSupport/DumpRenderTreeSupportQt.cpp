@@ -1057,7 +1057,7 @@ static QStringList iterateContextMenu(QMenu* menu)
 QStringList DumpRenderTreeSupportQt::contextMenu(QWebPage* page)
 {
 #ifndef QT_NO_CONTEXTMENU
-    return iterateContextMenu(page->d->currentContextMenu);
+    return iterateContextMenu(page->d->currentContextMenu.data());
 #else
     return QStringList();
 #endif

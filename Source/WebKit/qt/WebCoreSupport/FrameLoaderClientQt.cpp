@@ -1320,15 +1320,15 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
     frameData.marginWidth = marginWidth;
     frameData.marginHeight = marginHeight;
 
-    QPointer<QWebFrame> webFrame = new QWebFrame(m_webFrame, &frameData);
+    QWeakPointer<QWebFrame> webFrame = new QWebFrame(m_webFrame, &frameData);
     // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
-    if (!webFrame->d->frame->page()) {
+    if (!webFrame.data()->d->frame->page()) {
         frameData.frame.release();
-        ASSERT(webFrame.isNull());
+        ASSERT(webFrame.data().isNull());
         return 0;
     }
 
-    emit m_webFrame->page()->frameCreated(webFrame);
+    emit m_webFrame->page()->frameCreated(webFrame.data());
 
     // FIXME: Set override encoding if we have one.
 

@@ -1924,7 +1924,7 @@ QWebFrame *QWebHitTestResult::linkTargetFrame() const
 {
     if (!d)
         return 0;
-    return d->linkTargetFrame;
+    return d->linkTargetFrame.data();
 }
 
 /*!
@@ -1997,7 +1997,7 @@ QWebFrame *QWebHitTestResult::frame() const
 {
     if (!d)
         return 0;
-    return d->frame;
+    return d->frame.data();
 }
 
 #include "moc_qwebframe.cpp"

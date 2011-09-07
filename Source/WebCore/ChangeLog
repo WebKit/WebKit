@@ -1,3 +1,25 @@
+2011-09-06  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Move away from QPointer as it is slow and it has a replacement QWeakPointer.
+        https://bugs.webkit.org/show_bug.cgi?id=67673
+
+        Reviewed by Ariya Hidayat.
+
+        Move away from QPointer to QWeakPointer, it is faster.
+
+        No new tests, the existing ones should cover.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::~QtInstance):
+        (JSC::Bindings::QtInstance::getClass):
+        (JSC::Bindings::QtField::name):
+        (JSC::Bindings::QtField::valueFromInstance):
+        * bridge/qt/qt_instance.h:
+        (JSC::Bindings::QtInstance::getObject):
+        * bridge/qt/qt_runtime.h:
+        * platform/qt/SharedTimerQt.cpp:
+        (WebCore::SharedTimerQt::inst):
+
 2011-09-06  Oliver Hunt  <oliver@apple.com>
 
         Update expected results of bindings tests.

@@ -1,5 +1,55 @@
 2011-09-06  Alexis Menard  <alexis.menard@openbossa.org>
 
+        [Qt] Move away from QPointer as it is slow and it has a replacement QWeakPointer.
+        https://bugs.webkit.org/show_bug.cgi?id=67673
+
+        Reviewed by Ariya Hidayat.
+
+        Move away from QPointer as Qt provides a better and faster solution : QWeakPointer.
+
+        * Api/qwebframe.cpp:
+        (QWebHitTestResult::linkTargetFrame):
+        (QWebHitTestResult::frame):
+        * Api/qwebframe_p.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::~QWebPagePrivate):
+        (QWebPagePrivate::acceptNavigationRequest):
+        (QWebPagePrivate::createMainFrame):
+        (QWebPagePrivate::updateAction):
+        (QWebPagePrivate::mouseMoveEvent):
+        (QWebPagePrivate::mousePressEvent):
+        (QWebPagePrivate::mouseDoubleClickEvent):
+        (QWebPagePrivate::mouseTripleClickEvent):
+        (QWebPagePrivate::mouseReleaseEvent):
+        (QWebPage::createStandardContextMenu):
+        (QWebPagePrivate::wheelEvent):
+        (QWebPagePrivate::focusInEvent):
+        (QWebPage::setPalette):
+        (QWebPagePrivate::touchEvent):
+        (QWebPage::~QWebPage):
+        (QWebPage::mainFrame):
+        (QWebPage::viewportSize):
+        (QWebPage::preferredContentsSize):
+        (QWebPage::setContentEditable):
+        (QWebPage::updatePositionDependentActions):
+        * Api/qwebpage_p.h:
+        * Api/qwebview.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::contextMenu):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createFrame):
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::ownership):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (PluginCounterPage::PluginCounterPage):
+        (PluginTracerPage::createPlugin):
+        (tst_QWebPage::createViewlessPlugin):
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::reusePage):
+
+2011-09-06  Alexis Menard  <alexis.menard@openbossa.org>
+
         [Qt] Fix API test failure after r92823 and r93001.
         https://bugs.webkit.org/show_bug.cgi?id=67676
 

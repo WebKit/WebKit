@@ -116,11 +116,11 @@ QtInstance::~QtInstance()
         case QScriptEngine::QtOwnership:
             break;
         case QScriptEngine::AutoOwnership:
-            if (m_object->parent())
+            if (m_object.data()->parent())
                 break;
             // fall through!
         case QScriptEngine::ScriptOwnership:
-            delete m_object;
+            delete m_object.data();
             break;
         }
     }
@@ -182,7 +182,7 @@ Class* QtInstance::getClass() const
     if (!m_class) {
         if (!m_object)
             return 0;
-        m_class = QtClass::classForObject(m_object);
+        m_class = QtClass::classForObject(m_object.data());
     }
     return m_class;
 }
@@ -342,7 +342,7 @@ QByteArray QtField::name() const
     if (m_type == MetaProperty)
         return m_property.name();
     if (m_type == ChildObject && m_childObject)
-        return m_childObject->objectName().toLatin1();
+        return m_childObject.data()->objectName().toLatin1();
 #ifndef QT_NO_PROPERTIES
     if (m_type == DynamicProperty)
         return m_dynamicProperty;
@@ -363,7 +363,7 @@ JSValue QtField::valueFromInstance(ExecState* exec, const Instance* inst) const
             else
                 return jsUndefined();
         } else if (m_type == ChildObject)
-            val = QVariant::fromValue((QObject*) m_childObject);
+            val = QVariant::fromValue((QObject*) m_childObject.data());
 #ifndef QT_NO_PROPERTIES
         else if (m_type == DynamicProperty)
             val = obj->property(m_dynamicProperty);

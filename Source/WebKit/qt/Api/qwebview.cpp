@@ -203,7 +203,7 @@ protected:
 
     QWebView* m_view;
     bool m_ignoreEvents;
-    QPointer<QWebFrame> m_frame;
+    QWeakPointer<QWebFrame> m_frame;
     Qt::ScrollBarPolicy m_oldVerticalScrollBarPolicy;
     Qt::ScrollBarPolicy m_oldHorizontalScrollBarPolicy;
 };

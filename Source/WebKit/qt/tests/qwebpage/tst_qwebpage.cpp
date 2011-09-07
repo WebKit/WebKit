@@ -374,7 +374,7 @@ public:
     TestPage(QObject* parent = 0) : QWebPage(parent) {}
 
     struct Navigation {
-        QPointer<QWebFrame> frame;
+        QWeakPointer<QWebFrame> frame;
         QNetworkRequest request;
         NavigationType type;
     };
@@ -846,12 +846,11 @@ void tst_QWebPage::createPluginWithPluginsDisabled()
 class PluginCounterPage : public QWebPage {
 public:
     int m_count;
-    QPointer<QObject> m_widget;
+    QWeakPointer<QObject> m_widget;
     QObject* m_pluginParent;
     PluginCounterPage(QObject* parent = 0)
         : QWebPage(parent)
         , m_count(0)
-        , m_widget(0)
         , m_pluginParent(0)
     {
        settings()->setAttribute(QWebSettings::PluginsEnabled, true);
@@ -881,7 +880,7 @@ public:
         // which also takes a QWidget* instead of a QObject*. Therefore we need to
         // upcast to T*, which is a QWidget.
         static_cast<T*>(m_widget.data())->setParent(static_cast<T*>(m_pluginParent));
-        return m_widget;
+        return m_widget.data();
     }
 };
 
@@ -948,7 +947,7 @@ void tst_QWebPage::createViewlessPlugin()
     QCOMPARE(page->m_count, 1);
     QVERIFY(page->m_widget);
     QVERIFY(page->m_pluginParent);
-    QVERIFY(page->m_widget->parent() == page->m_pluginParent);
+    QVERIFY(page->m_widget.data()->parent() == page->m_pluginParent);
     delete page;
 
 }

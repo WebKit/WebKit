@@ -27,9 +27,10 @@
 #include "qt_instance.h"
 #include "runtime_method.h"
 
+#include <QWeakPointer>
+
 #include <qbytearray.h>
 #include <qmetaobject.h>
-#include <qpointer.h>
 #include <qvariant.h>
 
 namespace JSC {
@@ -68,7 +69,7 @@ private:
     QtFieldType m_type;
     QByteArray m_dynamicProperty;
     QMetaProperty m_property;
-    QPointer<QObject> m_childObject;
+    QWeakPointer<QObject> m_childObject;
 };
 
 
