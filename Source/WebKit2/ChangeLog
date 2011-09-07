@@ -1,3 +1,9 @@
+2011-09-07  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Unreviewed suppression of an unnecessary debug output. 
+
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+
 2011-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94627 and r94632.
