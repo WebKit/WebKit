@@ -1,5 +1,17 @@
 2011-09-07  Adam Barth  <abarth@webkit.org>
 
+        These results are also off by just factional pixels.
+
+        * platform/chromium-cg-mac/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+
+2011-09-07  Adam Barth  <abarth@webkit.org>
+
         These results all differ only in less than one pixel border or text rendering.
 
         * platform/chromium-cg-mac-leopard/tables/mozilla/bugs/bug82946-2-expected.png: Added.
