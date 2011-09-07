@@ -59,6 +59,11 @@
 #include "XLinkNames.h"
 #endif
 
+#if PLATFORM(QT)
+//FIXME: Remove this Qt specific code from a platform neutral file.
+#include <qwebhistoryinterface.h>
+#endif
+
 namespace WebCore {
     
 using namespace HTMLNames;
@@ -101,6 +106,7 @@ EInsideLink SelectorChecker::determineLinkStateSlowCase(Element* element) const
         return NotInsideLink;
     
 #if PLATFORM(QT)
+    //FIXME: Remove this Qt specific code from a platform neutral file.
     Vector<UChar, 512> url;
     visitedURL(m_document->baseURL(), *attr, url);
     if (url.isEmpty())

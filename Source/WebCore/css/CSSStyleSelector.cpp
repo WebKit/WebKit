@@ -115,10 +115,6 @@
 #include "SVGNames.h"
 #endif
 
-#if PLATFORM(QT)
-#include <qwebhistoryinterface.h>
-#endif
-
 using namespace std;
 
 namespace WebCore {
