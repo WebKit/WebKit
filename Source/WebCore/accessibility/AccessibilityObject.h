@@ -550,6 +550,8 @@ public:
     virtual bool canHaveChildren() const { return true; }
     virtual bool hasChildren() const { return m_haveChildren; }
     virtual void updateChildrenIfNecessary();
+    virtual void clearChildren();
+
     virtual void selectedChildren(AccessibilityChildrenVector&) { }
     virtual void visibleChildren(AccessibilityChildrenVector&) { }
     virtual void tabChildren(AccessibilityChildrenVector&) { }
@@ -670,7 +672,6 @@ protected:
     mutable bool m_haveChildren;
     AccessibilityRole m_role;
     
-    virtual void clearChildren();
     virtual bool isDetached() const { return true; }
     
 #if PLATFORM(GTK)

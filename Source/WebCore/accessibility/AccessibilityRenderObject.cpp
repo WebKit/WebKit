@@ -1702,7 +1702,7 @@ bool AccessibilityRenderObject::ariaIsHidden() const
     // aria-hidden hides this object and any children
     AccessibilityObject* object = parentObject();
     while (object) {
-        if (object->isAccessibilityRenderObject() && equalIgnoringCase(static_cast<AccessibilityRenderObject*>(object)->getAttribute(aria_hiddenAttr), "true"))
+        if (equalIgnoringCase(object->getAttribute(aria_hiddenAttr), "true"))
             return true;
         object = object->parentObject();
     }
@@ -3374,7 +3374,7 @@ void AccessibilityRenderObject::childrenChanged()
         if (!parent->isAccessibilityRenderObject())
             continue;
         
-        AccessibilityRenderObject* axParent = static_cast<AccessibilityRenderObject*>(parent);
+        AccessibilityRenderObject* axParent = toAccessibilityRenderObject(parent);
         
         // Send the children changed notification on the first accessibility render object ancestor.
         if (!sentChildrenChanged) {
@@ -3456,7 +3456,12 @@ void AccessibilityRenderObject::addChildren()
     // add all unignored acc children
     for (RefPtr<AccessibilityObject> obj = firstChild(); obj; obj = obj->nextSibling()) {
         if (obj->accessibilityIsIgnored()) {
-            obj->updateChildrenIfNecessary();
+
+            // If the parent is asking for this child's children, then either it's the first time (and clearing is a no-op), 
+            // or its visibility has changed. In the latter case, this child may have a stale child cached. 
+            // This can prevent aria-hidden changes from working correctly. Hence, whenever a parent is getting children, ensure data is not stale.
+            obj->clearChildren();
+            
             AccessibilityChildrenVector children = obj->children();
             unsigned length = children.size();
             for (unsigned i = 0; i < length; ++i)
