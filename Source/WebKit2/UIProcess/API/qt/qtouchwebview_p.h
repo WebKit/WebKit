@@ -35,7 +35,7 @@ public:
     QTouchWebViewPrivate(QTouchWebView* q);
 
     void loadDidCommit();
-    void _q_viewportRectUpdated();
+    void _q_viewportUpdated();
     void updateViewportConstraints();
 
     void setViewportArguments(const WebCore::ViewportArguments& args);

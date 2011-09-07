@@ -56,18 +56,9 @@ TiledDrawingAreaProxy::~TiledDrawingAreaProxy()
 {
 }
 
-void TiledDrawingAreaProxy::setVisibleContentRect(const WebCore::IntRect& visibleContentsRect)
+void TiledDrawingAreaProxy::setVisibleContentRectAndScale(const WebCore::IntRect& visibleContentRect, float scale)
 {
-    // FIXME: Throttle those message enough not to flood the IPC queue and get a good tile creation responsiveness.
-    page()->process()->send(Messages::DrawingArea::SetVisibleContentRect(visibleContentsRect), page()->pageID());
-}
-
-void TiledDrawingAreaProxy::setContentsScale(float scale)
-{
-    // FIXME: Since the visibleContentRect size depends on the scale, they should get to the web process in
-    // one single message to avoid unecessary tile rendering because of a possibly very
-    // oversized calculated visible rect.
-    page()->process()->send(Messages::DrawingArea::SetContentsScale(scale), page()->pageID());
+    page()->process()->send(Messages::DrawingArea::SetVisibleContentRectAndScale(visibleContentRect, scale), page()->pageID());
 }
 
 void TiledDrawingAreaProxy::renderNextFrame()

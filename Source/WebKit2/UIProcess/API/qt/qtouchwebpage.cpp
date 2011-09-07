@@ -159,27 +159,11 @@ QTouchWebPagePrivate::QTouchWebPagePrivate(QTouchWebPage* view)
 {
 }
 
-void QTouchWebPagePrivate::_q_commitScaleChange()
-{
-    commitScaleChange();
-}
-
-void QTouchWebPagePrivate::commitScaleChange()
-{
-    page->setContentsScale(q->scale());
-}
-
 void QTouchWebPagePrivate::setPage(QTouchWebPageProxy* page)
 {
     ASSERT(!this->page);
     ASSERT(page);
     this->page = page;
-}
-
-void QTouchWebPagePrivate::setViewportRect(const QRectF& viewportRect)
-{
-    const QRectF visibleContentRect = q->boundingRect().intersected(viewportRect);
-    page->setVisibleContentRect(visibleContentRect);
 }
 
 #include "moc_qtouchwebpage.cpp"

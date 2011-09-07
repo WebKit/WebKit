@@ -28,8 +28,7 @@ messages -> DrawingArea {
 
 #if ENABLE(TILED_BACKING_STORE)
     SetSize(WebCore::IntSize viewSize)
-    SetVisibleContentRect(WebCore::IntRect visibleContentRect)
-    SetContentsScale(float scale)
+    SetVisibleContentRectAndScale(WebCore::IntRect visibleContentRect, float scale)
     RenderNextFrame()
     TakeSnapshot(WebCore::IntSize size, WebCore::IntRect contentsRect)
 #endif

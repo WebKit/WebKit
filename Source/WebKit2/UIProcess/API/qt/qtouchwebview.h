@@ -47,7 +47,7 @@ protected:
     virtual void geometryChanged(const QRectF&, const QRectF&);
 
 private:
-    Q_PRIVATE_SLOT(d, void _q_viewportRectUpdated());
+    Q_PRIVATE_SLOT(d, void _q_viewportUpdated());
 
     friend class WebKit::TouchViewInterface;
     QTouchWebViewPrivate *d;

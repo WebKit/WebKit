@@ -39,8 +39,7 @@ QTouchWebViewPrivate::QTouchWebViewPrivate(QTouchWebView* q)
     QTouchWebPagePrivate* const pageViewPrivate = pageView.data()->d;
     pageViewPrivate->setPage(&page);
 
-    QObject::connect(&interactionEngine, SIGNAL(viewportUpdateRequested()), q, SLOT(_q_viewportRectUpdated()));
-    QObject::connect(&interactionEngine, SIGNAL(commitScaleChange()), pageView.data(), SLOT(_q_commitScaleChange()));
+    QObject::connect(&interactionEngine, SIGNAL(viewportUpdateRequested()), q, SLOT(_q_viewportUpdated()));
 }
 
 void QTouchWebViewPrivate::loadDidCommit()
@@ -48,11 +47,11 @@ void QTouchWebViewPrivate::loadDidCommit()
     interactionEngine.reset();
 }
 
-void QTouchWebViewPrivate::_q_viewportRectUpdated()
+void QTouchWebViewPrivate::_q_viewportUpdated()
 {
-    QTouchWebPagePrivate* const pageViewPrivate = pageView.data()->d;
-    const QRectF viewportRectInPageViewCoordinate = q->mapRectToItem(pageView.data(), q->boundingRect());
-    pageViewPrivate->setViewportRect(viewportRectInPageViewCoordinate);
+    const QRectF visibleRectInPageViewCoordinate = q->mapRectToItem(pageView.data(), q->boundingRect()).intersected(pageView->boundingRect());
+    float scale = pageView->scale();
+    page.setVisibleContentRectAndScale(visibleRectInPageViewCoordinate, scale);
 }
 
 void QTouchWebViewPrivate::updateViewportConstraints()
@@ -110,7 +109,7 @@ void QTouchWebView::geometryChanged(const QRectF& newGeometry, const QRectF& old
     QSGItem::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size()) {
         d->updateViewportConstraints();
-        d->_q_viewportRectUpdated();
+        d->_q_viewportUpdated();
     }
 }
 

@@ -70,17 +70,16 @@ void TiledDrawingArea::setSize(const IntSize& viewSize)
     m_webPage->setSize(viewSize);
 }
 
-void TiledDrawingArea::setVisibleContentRect(const WebCore::IntRect& visibleContentsRect)
+void TiledDrawingArea::setVisibleContentRectAndScale(const WebCore::IntRect& visibleContentsRect, float scale)
 {
     m_visibleContentRect = visibleContentsRect;
-    m_mainBackingStore->adjustVisibleRect();
-}
 
-void TiledDrawingArea::setContentsScale(float scale)
-{
-    m_previousBackingStore = m_mainBackingStore.release();
-    m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
-    m_mainBackingStore->setContentsScale(scale);
+    if (scale != m_mainBackingStore->contentsScale()) {
+        m_previousBackingStore = m_mainBackingStore.release();
+        m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
+        m_mainBackingStore->setContentsScale(scale);
+    } else
+        m_mainBackingStore->adjustVisibleRect();
 }
 
 void TiledDrawingArea::renderNextFrame()

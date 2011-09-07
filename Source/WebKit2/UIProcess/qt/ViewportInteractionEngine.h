@@ -21,6 +21,7 @@
 #ifndef ViewportInteractionEngine_h
 #define ViewportInteractionEngine_h
 
+#include "OwnPtr.h"
 #include "qwebkitglobal.h"
 #include <QtCore/QObject>
 
@@ -31,11 +32,14 @@ QT_END_NAMESPACE
 
 namespace WebKit {
 
+class ViewportUpdateGuard;
+
 class ViewportInteractionEngine : public QObject {
     Q_OBJECT
 
 public:
     ViewportInteractionEngine(const QSGItem*, QSGItem*);
+    ~ViewportInteractionEngine();
 
     struct Constraints {
         Constraints()
@@ -66,12 +70,9 @@ public:
 Q_SIGNALS:
     void viewportUpdateRequested();
 
-    void commitScaleChange();
-
 private Q_SLOTS:
     // Respond to changes of content that are not driven by us, like the page resizing itself.
-    void contentGeometryChanged();
-    void contentScaleChanged();
+    void contentViewportChanged();
 
 private:
     void updateContentIfNeeded();
@@ -91,6 +92,7 @@ private:
 
     Constraints m_constraints;
     bool m_isUpdatingContent;
+    OwnPtr<ViewportUpdateGuard> m_pinchViewportUpdateDeferrer;
     enum UserInteractionFlag {
         UserHasNotInteractedWithContent = 0,
         UserHasMovedContent = 1,

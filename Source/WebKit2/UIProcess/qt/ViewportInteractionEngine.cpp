@@ -18,8 +18,10 @@
  *
  */
 
+#include "config.h"
 #include "ViewportInteractionEngine.h"
 
+#include "PassOwnPtr.h"
 #include <QPointF>
 #include <QtDeclarative/qsgitem.h>
 
@@ -42,6 +44,8 @@ static inline QRectF contentRectInViewportCoordinate(const QSGItem* content, con
 // to them when we are the one changing the content.
 //
 // The guard make sure the signal viewportUpdateRequested() is sent if necessary.
+// When multiple guards are alive, their lifetime must be perfectly imbricated (e.g. if used ouside stack frames).
+// We rely on the first one to trigger the update at the end since it only uses one bool internally.
 //
 // The public methods should create the guard if they might update content.
 class ViewportUpdateGuard {
@@ -83,11 +87,15 @@ ViewportInteractionEngine::ViewportInteractionEngine(const QSGItem* viewport, QS
     , m_pinchStartScale(1.f)
 {
     reset();
-    connect(m_content, SIGNAL(xChanged()), this, SLOT(contentGeometryChanged()), Qt::DirectConnection);
-    connect(m_content, SIGNAL(yChanged()), this, SLOT(contentGeometryChanged()), Qt::DirectConnection);
-    connect(m_content, SIGNAL(widthChanged()), this, SLOT(contentGeometryChanged()), Qt::DirectConnection);
-    connect(m_content, SIGNAL(heightChanged()), this, SLOT(contentGeometryChanged()), Qt::DirectConnection);
-    connect(m_content, SIGNAL(scaleChanged()), this, SLOT(contentScaleChanged()), Qt::DirectConnection);
+    connect(m_content, SIGNAL(xChanged()), this, SLOT(contentViewportChanged()), Qt::DirectConnection);
+    connect(m_content, SIGNAL(yChanged()), this, SLOT(contentViewportChanged()), Qt::DirectConnection);
+    connect(m_content, SIGNAL(widthChanged()), this, SLOT(contentViewportChanged()), Qt::DirectConnection);
+    connect(m_content, SIGNAL(heightChanged()), this, SLOT(contentViewportChanged()), Qt::DirectConnection);
+    connect(m_content, SIGNAL(scaleChanged()), this, SLOT(contentViewportChanged()), Qt::DirectConnection);
+}
+
+ViewportInteractionEngine::~ViewportInteractionEngine()
+{
 }
 
 void ViewportInteractionEngine::reset()
@@ -111,14 +119,9 @@ void ViewportInteractionEngine::setConstraints(const Constraints& constraints)
     // -animate the page back in viewport if necessary (if the page is fully in
     //  viewport, it does not pan horizontally anymore).
 
-    const qreal previousScale = m_content->scale();
-    {
-        ViewportUpdateGuard guard(this);
-        m_constraints = constraints;
-        updateContentIfNeeded();
-    }
-    if (m_content->scale() != previousScale)
-        emit commitScaleChange();
+    ViewportUpdateGuard guard(this);
+    m_constraints = constraints;
+    updateContentIfNeeded();
 }
 
 void ViewportInteractionEngine::panGestureStarted()
@@ -156,6 +159,8 @@ void ViewportInteractionEngine::pinchGestureStarted()
     if (!m_constraints.isUserScalable)
         return;
 
+    m_pinchViewportUpdateDeferrer = adoptPtr(new ViewportUpdateGuard(this));
+
     m_userInteractionFlags |= UserHasScaledContent;
     m_userInteractionFlags |= UserHasMovedContent;
     m_pinchStartScale = m_content->scale();
@@ -187,11 +192,10 @@ void ViewportInteractionEngine::pinchGestureEnded()
         // FIXME: resume the engine after the animation.
         animateContentIntoBoundariesIfNeeded();
     }
-    if (m_pinchStartScale != m_content->scale())
-        emit commitScaleChange();
+    m_pinchViewportUpdateDeferrer.clear();
 }
 
-void ViewportInteractionEngine::contentGeometryChanged()
+void ViewportInteractionEngine::contentViewportChanged()
 {
     if (m_isUpdatingContent)
         return;
@@ -201,19 +205,6 @@ void ViewportInteractionEngine::contentGeometryChanged()
 
     // We must notify the change so the client can rely on us for all change of Geometry.
     emit viewportUpdateRequested();
-}
-
-void ViewportInteractionEngine::contentScaleChanged()
-{
-    if (m_isUpdatingContent)
-        return;
-
-    ViewportUpdateGuard guard(this);
-    updateContentIfNeeded();
-
-    // We must notify the change so the client can rely on us for all change of Geometry.
-    emit viewportUpdateRequested();
-    emit commitScaleChange();
 }
 
 void ViewportInteractionEngine::updateContentIfNeeded()

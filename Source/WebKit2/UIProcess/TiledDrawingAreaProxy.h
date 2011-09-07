@@ -71,8 +71,7 @@ public:
     TiledDrawingAreaProxy(PlatformWebView*, WebPageProxy*);
     virtual ~TiledDrawingAreaProxy();
 
-    void setVisibleContentRect(const WebCore::IntRect&);
-    void setContentsScale(float);
+    void setVisibleContentRectAndScale(const WebCore::IntRect&, float);
     void renderNextFrame();
 
 #if USE(ACCELERATED_COMPOSITING)

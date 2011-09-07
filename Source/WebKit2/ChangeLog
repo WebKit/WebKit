@@ -1,3 +1,52 @@
+2011-08-30  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt][WK2] Make sure that the visible content rect and the content scale get to the web process in one single message.
+        https://bugs.webkit.org/show_bug.cgi?id=67189
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The TiledBackingStore needs to know the screen size of the viewport to know how many tiles to
+        create, and since the visible content rect is given in page coordinates, the contents scale is
+        necessary to calculate the viewport size.
+        Both the rect and the scale then need to arrive to the web process at the same time to prevent
+        picking the new visible rect with the old scale or vice-versa which can produce a huge viewport size
+        and create/render an insane amount of tiles.
+
+        Things this patch does:
+        - Merge the visible contents rect and content scale handling together.
+        - Make QTouchWebView responsible for telling those viewport values to the web process instead of QTouchWebPage.
+        - Prevent updating the viewport in ViewportInteractionEngine while a pinch is in progress and update the viewport at the end.
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebpage_p.h:
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::QTouchWebViewPrivate):
+        (QTouchWebViewPrivate::_q_viewportUpdated):
+        (QTouchWebView::geometryChanged):
+        * UIProcess/API/qt/qtouchwebview.h:
+        * UIProcess/API/qt/qtouchwebview_p.h:
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::setVisibleContentRectAndScale):
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/qt/ViewportInteractionEngine.cpp:
+        (WebKit::ViewportInteractionEngine::ViewportInteractionEngine):
+        (WebKit::ViewportInteractionEngine::~ViewportInteractionEngine): Allows OwnPtr with the forward declaration of ViewportUpdateGuard.
+        (WebKit::ViewportInteractionEngine::setConstraints):
+        (WebKit::ViewportInteractionEngine::pinchGestureStarted):
+        (WebKit::ViewportInteractionEngine::pinchGestureEnded):
+        (WebKit::ViewportInteractionEngine::contentViewportChanged):
+        * UIProcess/qt/ViewportInteractionEngine.h:
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::setVisibleContentRectAndScale):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setVisibleContentRectAndScale):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::setVisibleContentRectAndScale):
+        * WebProcess/WebPage/TiledDrawingArea.h:
+
 2011-08-29  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt][WK2] Rename SGAgent to SGUpdateQueue to sharpen it's responsability.
