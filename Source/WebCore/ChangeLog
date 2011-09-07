@@ -1,3 +1,119 @@
+2011-09-07  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Render surface anti-aliasing.
+        https://bugs.webkit.org/show_bug.cgi?id=66437
+
+        Reviewed by James Robinson.
+
+        Add CCLayerQuad class and CCLayerQuad::Edge subclass to allow
+        edge computations to be shared between tiled layers and render
+        surfaces. Move isCCW utility function to FloatQuad class and
+        add to2dTransform method to TransformationMatrix class. Add
+        necessary anti-aliasing shaders for render surfaces and use them
+        to avoid aliased edges.
+
+        Tests: compositing/reflections/nested-reflection-transformed.html (existing)
+
+        * WebCore.gypi:
+        * platform/graphics/FloatQuad.cpp:
+        (WebCore::FloatQuad::isCounterclockwise):
+        * platform/graphics/FloatQuad.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::drawTexturedQuad):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::headsUpDisplayProgram):
+        (WebCore::LayerRendererChromium::renderSurfaceProgram):
+        (WebCore::LayerRendererChromium::renderSurfaceProgramAA):
+        (WebCore::LayerRendererChromium::renderSurfaceMaskProgram):
+        (WebCore::LayerRendererChromium::renderSurfaceMaskProgramAA):
+        (WebCore::LayerRendererChromium::tilerProgramSwizzle):
+        (WebCore::LayerRendererChromium::canvasLayerProgram):
+        (WebCore::LayerRendererChromium::pluginLayerProgram):
+        (WebCore::LayerRendererChromium::videoLayerRGBAProgram):
+        (WebCore::LayerRendererChromium::videoLayerYUVProgram):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::sharedGeometryQuad):
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::VertexShaderQuad::VertexShaderQuad):
+        (WebCore::VertexShaderQuad::init):
+        (WebCore::VertexShaderQuad::getShaderString):
+        (WebCore::FragmentShaderRGBATexAlphaAA::FragmentShaderRGBATexAlphaAA):
+        (WebCore::FragmentShaderRGBATexAlphaAA::init):
+        (WebCore::FragmentShaderRGBATexAlphaAA::getShaderString):
+        (WebCore::FragmentTexClampAlphaAABinding::FragmentTexClampAlphaAABinding):
+        (WebCore::FragmentTexClampAlphaAABinding::init):
+        (WebCore::FragmentShaderRGBATexClampAlphaAA::getShaderString):
+        (WebCore::FragmentShaderRGBATexClampSwizzleAlphaAA::getShaderString):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::FragmentShaderRGBATexAlphaMaskAA):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::init):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::getShaderString):
+        * platform/graphics/chromium/ShaderChromium.h:
+        (WebCore::VertexShaderQuad::matrixLocation):
+        (WebCore::VertexShaderQuad::pointLocation):
+        (WebCore::FragmentShaderRGBATexAlphaAA::alphaLocation):
+        (WebCore::FragmentShaderRGBATexAlphaAA::samplerLocation):
+        (WebCore::FragmentShaderRGBATexAlphaAA::edgeLocation):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::alphaLocation):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::samplerLocation):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::maskSamplerLocation):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::edgeLocation):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        (WebCore::CCCanvasLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCLayerQuad.cpp: Added.
+        (WebCore::CCLayerQuad::Edge::Edge):
+        (WebCore::CCLayerQuad::CCLayerQuad):
+        (WebCore::CCLayerQuad::floatQuad):
+        (WebCore::CCLayerQuad::toFloatArray):
+        * platform/graphics/chromium/cc/CCLayerQuad.h: Added.
+        (WebCore::CCLayerQuad::Edge::Edge):
+        (WebCore::CCLayerQuad::Edge::x):
+        (WebCore::CCLayerQuad::Edge::y):
+        (WebCore::CCLayerQuad::Edge::z):
+        (WebCore::CCLayerQuad::Edge::setX):
+        (WebCore::CCLayerQuad::Edge::setY):
+        (WebCore::CCLayerQuad::Edge::setZ):
+        (WebCore::CCLayerQuad::Edge::set):
+        (WebCore::CCLayerQuad::Edge::moveX):
+        (WebCore::CCLayerQuad::Edge::moveY):
+        (WebCore::CCLayerQuad::Edge::moveZ):
+        (WebCore::CCLayerQuad::Edge::move):
+        (WebCore::CCLayerQuad::Edge::scaleX):
+        (WebCore::CCLayerQuad::Edge::scaleY):
+        (WebCore::CCLayerQuad::Edge::scaleZ):
+        (WebCore::CCLayerQuad::Edge::scale):
+        (WebCore::CCLayerQuad::Edge::intersect):
+        (WebCore::CCLayerQuad::CCLayerQuad):
+        (WebCore::CCLayerQuad::left):
+        (WebCore::CCLayerQuad::top):
+        (WebCore::CCLayerQuad::right):
+        (WebCore::CCLayerQuad::bottom):
+        (WebCore::CCLayerQuad::inflateX):
+        (WebCore::CCLayerQuad::inflateY):
+        (WebCore::CCLayerQuad::inflate):
+        (WebCore::CCLayerQuad::inflateAntiAliasingDistance):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::draw):
+        (WebCore::CCRenderSurface::drawLayer):
+        (WebCore::CCRenderSurface::drawSurface):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::draw):
+        (WebCore::CCTiledLayerImpl::drawTiles):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::drawYUV):
+        (WebCore::CCVideoLayerImpl::drawRGBA):
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::to2dTransform):
+        * platform/graphics/transforms/TransformationMatrix.h:
+
 2011-09-06  Oliver Hunt  <oliver@apple.com>
 
         Remove JSObjectWithGlobalObject

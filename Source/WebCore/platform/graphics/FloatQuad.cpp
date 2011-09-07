@@ -102,4 +102,11 @@ bool FloatQuad::containsQuad(const FloatQuad& other) const
     return containsPoint(other.p1()) && containsPoint(other.p2()) && containsPoint(other.p3()) && containsPoint(other.p4());
 }
 
+bool FloatQuad::isCounterclockwise() const
+{
+    FloatPoint v1 = FloatPoint(m_p2.x() - m_p1.x(), m_p2.y() - m_p1.y());
+    FloatPoint v2 = FloatPoint(m_p3.x() - m_p2.x(), m_p3.y() - m_p2.y());
+    return (v1.x() * v2.y() - v1.y() * v2.x()) < 0;
+}
+
 } // namespace WebCore

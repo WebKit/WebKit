@@ -35,6 +35,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "ContentLayerChromium.h"
+#include "FloatQuad.h"
 #include "IntRect.h"
 #include "LayerChromium.h"
 #include "VideoLayerChromium.h"
@@ -118,13 +119,16 @@ public:
     const TransformationMatrix& windowMatrix() const { return m_windowMatrix; }
 
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
+    const FloatQuad& sharedGeometryQuad() const { return m_sharedGeometryQuad; }
     const LayerChromium::BorderProgram* borderProgram();
     const CCHeadsUpDisplay::Program* headsUpDisplayProgram();
     const CCRenderSurface::Program* renderSurfaceProgram();
+    const CCRenderSurface::ProgramAA* renderSurfaceProgramAA();
     const CCRenderSurface::MaskProgram* renderSurfaceMaskProgram();
+    const CCRenderSurface::MaskProgramAA* renderSurfaceMaskProgramAA();
     const CCTiledLayerImpl::Program* tilerProgram();
-    const CCTiledLayerImpl::ProgramSwizzle* tilerProgramSwizzle();
     const CCTiledLayerImpl::ProgramAA* tilerProgramAA();
+    const CCTiledLayerImpl::ProgramSwizzle* tilerProgramSwizzle();
     const CCTiledLayerImpl::ProgramSwizzleAA* tilerProgramSwizzleAA();
     const CCCanvasLayerImpl::Program* canvasLayerProgram();
     const CCPluginLayerImpl::Program* pluginLayerProgram();
@@ -208,6 +212,8 @@ private:
     OwnPtr<CCPluginLayerImpl::Program> m_pluginLayerProgram;
     OwnPtr<CCRenderSurface::MaskProgram> m_renderSurfaceMaskProgram;
     OwnPtr<CCRenderSurface::Program> m_renderSurfaceProgram;
+    OwnPtr<CCRenderSurface::MaskProgramAA> m_renderSurfaceMaskProgramAA;
+    OwnPtr<CCRenderSurface::ProgramAA> m_renderSurfaceProgramAA;
     OwnPtr<CCVideoLayerImpl::RGBAProgram> m_videoLayerRGBAProgram;
     OwnPtr<CCVideoLayerImpl::YUVProgram> m_videoLayerYUVProgram;
 
@@ -221,6 +227,8 @@ private:
     CCRenderSurface* m_defaultRenderSurface;
 
     CCLayerSorter m_layerSorter;
+
+    FloatQuad m_sharedGeometryQuad;
 };
 
 // Setting DEBUG_GL_CALLS to 1 will call glGetError() after almost every GL

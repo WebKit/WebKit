@@ -177,8 +177,8 @@ public:
     void setBorderWidth(float);
 
     static void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
-                                 float width, float height, float opacity,
-                                 int matrixLocation, int alphaLocation);
+                                 float width, float height, float opacity, const FloatQuad&,
+                                 int matrixLocation, int alphaLocation, int quadLocation);
 
     virtual void pushPropertiesTo(CCLayerImpl*);
 

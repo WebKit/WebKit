@@ -342,8 +342,8 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 }
 
 void LayerChromium::drawTexturedQuad(GraphicsContext3D* context, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
-                                     float width, float height, float opacity,
-                                     int matrixLocation, int alphaLocation)
+                                     float width, float height, float opacity, const FloatQuad& quad,
+                                     int matrixLocation, int alphaLocation, int quadLocation)
 {
     static float glMatrix[16];
 
@@ -356,6 +356,19 @@ void LayerChromium::drawTexturedQuad(GraphicsContext3D* context, const Transform
     toGLMatrix(&glMatrix[0], projectionMatrix * renderMatrix);
 
     GLC(context, context->uniformMatrix4fv(matrixLocation, false, &glMatrix[0], 1));
+
+    if (quadLocation != -1) {
+        float point[8];
+        point[0] = quad.p1().x();
+        point[1] = quad.p1().y();
+        point[2] = quad.p2().x();
+        point[3] = quad.p2().y();
+        point[4] = quad.p3().x();
+        point[5] = quad.p3().y();
+        point[6] = quad.p4().x();
+        point[7] = quad.p4().y();
+        GLC(context, context->uniform2fv(quadLocation, point, 4));
+    }
 
     if (alphaLocation != -1)
         GLC(context, context->uniform1f(alphaLocation, opacity));

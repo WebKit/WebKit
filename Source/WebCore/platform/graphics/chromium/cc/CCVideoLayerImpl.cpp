@@ -135,9 +135,10 @@ void CCVideoLayerImpl::drawYUV(const CCVideoLayerImpl::YUVProgram* program) cons
     GLC(context, context->uniform3fv(program->fragmentShader().yuvAdjLocation(), const_cast<float*>(yuvAdjust), 1));
 
     LayerChromium::drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
-                                    bounds().width(), bounds().height(), drawOpacity(),
+                                    bounds().width(), bounds().height(), drawOpacity(), FloatQuad(),
                                     program->vertexShader().matrixLocation(),
-                                    program->fragmentShader().alphaLocation());
+                                    program->fragmentShader().alphaLocation(),
+                                    -1);
 
     // Reset active texture back to texture 0.
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
@@ -158,9 +159,10 @@ void CCVideoLayerImpl::drawRGBA(const CCVideoLayerImpl::RGBAProgram* program) co
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
     LayerChromium::drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
-                                    bounds().width(), bounds().height(), drawOpacity(),
+                                    bounds().width(), bounds().height(), drawOpacity(), layerRenderer()->sharedGeometryQuad(),
                                     program->vertexShader().matrixLocation(),
-                                    program->fragmentShader().alphaLocation());
+                                    program->fragmentShader().alphaLocation(),
+                                    -1);
 }
 
 

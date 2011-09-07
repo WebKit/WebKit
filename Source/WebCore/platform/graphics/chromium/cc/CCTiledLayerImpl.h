@@ -61,8 +61,8 @@ public:
     typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexSwizzleAlpha> ProgramSwizzle;
 
     // Shader program that produces anti-aliased layer edges.
-    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexAlphaAA> ProgramAA;
-    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexSwizzleAlphaAA> ProgramSwizzleAA;
+    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexClampAlphaAA> ProgramAA;
+    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexClampSwizzleAlphaAA> ProgramSwizzleAA;
 
 private:
     explicit CCTiledLayerImpl(int id);
@@ -75,7 +75,7 @@ private:
 
     // Draw all tiles that intersect with contentRect.
     template <class T>
-    void drawTiles(LayerRendererChromium*, const IntRect& contentRect, const TransformationMatrix&, float opacity, const T* program, int fragmentTexTransformLocation, int edgeLocation);
+    void drawTiles(LayerRendererChromium*, const IntRect& contentRect, const TransformationMatrix& globalTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad&, float opacity, const T* program, int fragmentTexTransformLocation, int edgeLocation);
 
     TransformationMatrix m_tilingTransform;
     bool m_skipsDraw;

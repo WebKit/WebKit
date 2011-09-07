@@ -118,6 +118,10 @@ public:
         m_p4.scale(dx, dy);
     }
 
+    // Tests whether points are in clock-wise, or counter clock-wise order.
+    // Note that output is undefined when all points are colinear.
+    bool isCounterclockwise() const;
+
 private:
     FloatPoint m_p1;
     FloatPoint m_p2;

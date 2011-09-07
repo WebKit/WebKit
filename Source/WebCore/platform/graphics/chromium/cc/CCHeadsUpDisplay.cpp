@@ -153,8 +153,9 @@ void CCHeadsUpDisplay::draw()
     matrix.translate3d(hudSize.width() * 0.5, hudSize.height() * 0.5, 0);
     LayerChromium::drawTexturedQuad(context, m_layerRenderer->projectionMatrix(),
                                     matrix, hudSize.width(), hudSize.height(),
-                                    1.0f, program->vertexShader().matrixLocation(),
-                                    program->fragmentShader().alphaLocation());
+                                    1.0f, m_layerRenderer->sharedGeometryQuad(), program->vertexShader().matrixLocation(),
+                                    program->fragmentShader().alphaLocation(),
+                                    -1);
     m_hudTexture->unreserve();
 }
 

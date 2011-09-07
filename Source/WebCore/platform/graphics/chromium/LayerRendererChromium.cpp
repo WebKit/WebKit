@@ -165,6 +165,7 @@ LayerRendererChromium::LayerRendererChromium(CCLayerTreeHost* owner,
     , m_offscreenFramebufferId(0)
     , m_context(context)
     , m_defaultRenderSurface(0)
+    , m_sharedGeometryQuad(FloatRect(-0.5f, -0.5f, 1.0f, 1.0f))
 {
 }
 
@@ -625,7 +626,7 @@ const CCHeadsUpDisplay::Program* LayerRendererChromium::headsUpDisplayProgram()
     if (!m_headsUpDisplayProgram)
         m_headsUpDisplayProgram = adoptPtr(new CCHeadsUpDisplay::Program(m_context.get()));
     if (!m_headsUpDisplayProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        TRACE_EVENT("LayerRendererChromium::headsUpDisplayProgram::initialize", this, 0);
         m_headsUpDisplayProgram->initialize(m_context.get());
     }
     return m_headsUpDisplayProgram.get();
@@ -635,10 +636,21 @@ const CCRenderSurface::Program* LayerRendererChromium::renderSurfaceProgram()
 {
     ASSERT(m_renderSurfaceProgram);
     if (!m_renderSurfaceProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        TRACE_EVENT("LayerRendererChromium::renderSurfaceProgram::initialize", this, 0);
         m_renderSurfaceProgram->initialize(m_context.get());
     }
     return m_renderSurfaceProgram.get();
+}
+
+const CCRenderSurface::ProgramAA* LayerRendererChromium::renderSurfaceProgramAA()
+{
+    if (!m_renderSurfaceProgramAA)
+        m_renderSurfaceProgramAA = adoptPtr(new CCRenderSurface::ProgramAA(m_context.get()));
+    if (!m_renderSurfaceProgramAA->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::renderSurfaceProgramAA::initialize", this, 0);
+        m_renderSurfaceProgramAA->initialize(m_context.get());
+    }
+    return m_renderSurfaceProgramAA.get();
 }
 
 const CCRenderSurface::MaskProgram* LayerRendererChromium::renderSurfaceMaskProgram()
@@ -646,10 +658,21 @@ const CCRenderSurface::MaskProgram* LayerRendererChromium::renderSurfaceMaskProg
     if (!m_renderSurfaceMaskProgram)
         m_renderSurfaceMaskProgram = adoptPtr(new CCRenderSurface::MaskProgram(m_context.get()));
     if (!m_renderSurfaceMaskProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        TRACE_EVENT("LayerRendererChromium::renderSurfaceMaskProgram::initialize", this, 0);
         m_renderSurfaceMaskProgram->initialize(m_context.get());
     }
     return m_renderSurfaceMaskProgram.get();
+}
+
+const CCRenderSurface::MaskProgramAA* LayerRendererChromium::renderSurfaceMaskProgramAA()
+{
+    if (!m_renderSurfaceMaskProgramAA)
+        m_renderSurfaceMaskProgramAA = adoptPtr(new CCRenderSurface::MaskProgramAA(m_context.get()));
+    if (!m_renderSurfaceMaskProgramAA->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::renderSurfaceMaskProgramAA::initialize", this, 0);
+        m_renderSurfaceMaskProgramAA->initialize(m_context.get());
+    }
+    return m_renderSurfaceMaskProgramAA.get();
 }
 
 const CCTiledLayerImpl::Program* LayerRendererChromium::tilerProgram()
@@ -662,17 +685,6 @@ const CCTiledLayerImpl::Program* LayerRendererChromium::tilerProgram()
     return m_tilerProgram.get();
 }
 
-const CCTiledLayerImpl::ProgramSwizzle* LayerRendererChromium::tilerProgramSwizzle()
-{
-    if (!m_tilerProgramSwizzle)
-        m_tilerProgramSwizzle = adoptPtr(new CCTiledLayerImpl::ProgramSwizzle(m_context.get()));
-    if (!m_tilerProgramSwizzle->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::tilerProgramSwizzle::initialize", this, 0);
-        m_tilerProgramSwizzle->initialize(m_context.get());
-    }
-    return m_tilerProgramSwizzle.get();
-}
-
 const CCTiledLayerImpl::ProgramAA* LayerRendererChromium::tilerProgramAA()
 {
     if (!m_tilerProgramAA)
@@ -682,6 +694,17 @@ const CCTiledLayerImpl::ProgramAA* LayerRendererChromium::tilerProgramAA()
         m_tilerProgramAA->initialize(m_context.get());
     }
     return m_tilerProgramAA.get();
+}
+
+const CCTiledLayerImpl::ProgramSwizzle* LayerRendererChromium::tilerProgramSwizzle()
+{
+    if (!m_tilerProgramSwizzle)
+        m_tilerProgramSwizzle = adoptPtr(new CCTiledLayerImpl::ProgramSwizzle(m_context.get()));
+    if (!m_tilerProgramSwizzle->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::tilerProgramSwizzle::initialize", this, 0);
+        m_tilerProgramSwizzle->initialize(m_context.get());
+    }
+    return m_tilerProgramSwizzle.get();
 }
 
 const CCTiledLayerImpl::ProgramSwizzleAA* LayerRendererChromium::tilerProgramSwizzleAA()
@@ -700,7 +723,7 @@ const CCCanvasLayerImpl::Program* LayerRendererChromium::canvasLayerProgram()
     if (!m_canvasLayerProgram)
         m_canvasLayerProgram = adoptPtr(new CCCanvasLayerImpl::Program(m_context.get()));
     if (!m_canvasLayerProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        TRACE_EVENT("LayerRendererChromium::canvasLayerProgram::initialize", this, 0);
         m_canvasLayerProgram->initialize(m_context.get());
     }
     return m_canvasLayerProgram.get();
@@ -711,7 +734,7 @@ const CCPluginLayerImpl::Program* LayerRendererChromium::pluginLayerProgram()
     if (!m_pluginLayerProgram)
         m_pluginLayerProgram = adoptPtr(new CCPluginLayerImpl::Program(m_context.get()));
     if (!m_pluginLayerProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        TRACE_EVENT("LayerRendererChromium::pluginLayerProgram::initialize", this, 0);
         m_pluginLayerProgram->initialize(m_context.get());
     }
     return m_pluginLayerProgram.get();
@@ -722,7 +745,7 @@ const CCVideoLayerImpl::RGBAProgram* LayerRendererChromium::videoLayerRGBAProgra
     if (!m_videoLayerRGBAProgram)
         m_videoLayerRGBAProgram = adoptPtr(new CCVideoLayerImpl::RGBAProgram(m_context.get()));
     if (!m_videoLayerRGBAProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        TRACE_EVENT("LayerRendererChromium::videoLayerRGBAProgram::initialize", this, 0);
         m_videoLayerRGBAProgram->initialize(m_context.get());
     }
     return m_videoLayerRGBAProgram.get();
@@ -733,7 +756,7 @@ const CCVideoLayerImpl::YUVProgram* LayerRendererChromium::videoLayerYUVProgram(
     if (!m_videoLayerYUVProgram)
         m_videoLayerYUVProgram = adoptPtr(new CCVideoLayerImpl::YUVProgram(m_context.get()));
     if (!m_videoLayerYUVProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        TRACE_EVENT("LayerRendererChromium::videoLayerYUVProgram::initialize", this, 0);
         m_videoLayerYUVProgram->initialize(m_context.get());
     }
     return m_videoLayerYUVProgram.get();
@@ -752,10 +775,10 @@ void LayerRendererChromium::cleanupSharedObjects()
         m_headsUpDisplayProgram->cleanup(m_context.get());
     if (m_tilerProgram)
         m_tilerProgram->cleanup(m_context.get());
-    if (m_tilerProgramSwizzle)
-        m_tilerProgramSwizzle->cleanup(m_context.get());
     if (m_tilerProgramAA)
         m_tilerProgramAA->cleanup(m_context.get());
+    if (m_tilerProgramSwizzle)
+        m_tilerProgramSwizzle->cleanup(m_context.get());
     if (m_tilerProgramSwizzleAA)
         m_tilerProgramSwizzleAA->cleanup(m_context.get());
     if (m_canvasLayerProgram)
@@ -764,8 +787,12 @@ void LayerRendererChromium::cleanupSharedObjects()
         m_pluginLayerProgram->cleanup(m_context.get());
     if (m_renderSurfaceMaskProgram)
         m_renderSurfaceMaskProgram->cleanup(m_context.get());
+    if (m_renderSurfaceMaskProgramAA)
+        m_renderSurfaceMaskProgramAA->cleanup(m_context.get());
     if (m_renderSurfaceProgram)
         m_renderSurfaceProgram->cleanup(m_context.get());
+    if (m_renderSurfaceProgramAA)
+        m_renderSurfaceProgramAA->cleanup(m_context.get());
     if (m_videoLayerRGBAProgram)
         m_videoLayerRGBAProgram->cleanup(m_context.get());
     if (m_videoLayerYUVProgram)
@@ -774,13 +801,15 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_borderProgram.clear();
     m_headsUpDisplayProgram.clear();
     m_tilerProgram.clear();
-    m_tilerProgramSwizzle.clear();
     m_tilerProgramAA.clear();
+    m_tilerProgramSwizzle.clear();
     m_tilerProgramSwizzleAA.clear();
     m_canvasLayerProgram.clear();
     m_pluginLayerProgram.clear();
     m_renderSurfaceMaskProgram.clear();
+    m_renderSurfaceMaskProgramAA.clear();
     m_renderSurfaceProgram.clear();
+    m_renderSurfaceProgramAA.clear();
     m_videoLayerRGBAProgram.clear();
     m_videoLayerYUVProgram.clear();
     if (m_offscreenFramebufferId)

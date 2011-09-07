@@ -106,47 +106,6 @@ void CCRenderSurface::releaseContentsTexture()
     m_contentsTexture->unreserve();
 }
 
-
-void CCRenderSurface::drawSurface(CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform)
-{
-    GraphicsContext3D* context3D = layerRenderer()->context();
-
-    int shaderMatrixLocation = -1;
-    int shaderAlphaLocation = -1;
-    const CCRenderSurface::Program* program = layerRenderer()->renderSurfaceProgram();
-    const CCRenderSurface::MaskProgram* maskProgram = layerRenderer()->renderSurfaceMaskProgram();
-    ASSERT(program && program->initialized());
-    bool useMask = false;
-    if (maskLayer && maskLayer->drawsContent()) {
-        if (!maskLayer->bounds().isEmpty()) {
-            context3D->makeContextCurrent();
-            GLC(context3D, context3D->useProgram(maskProgram->program()));
-            GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
-            GLC(context3D, context3D->uniform1i(maskProgram->fragmentShader().samplerLocation(), 0));
-            m_contentsTexture->bindTexture(context3D);
-            GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE1));
-            GLC(context3D, context3D->uniform1i(maskProgram->fragmentShader().maskSamplerLocation(), 1));
-            maskLayer->bindContentsTexture();
-            GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
-            shaderMatrixLocation = maskProgram->vertexShader().matrixLocation();
-            shaderAlphaLocation = maskProgram->fragmentShader().alphaLocation();
-            useMask = true;
-        }
-    }
-
-    if (!useMask) {
-        GLC(context3D, context3D->useProgram(program->program()));
-        m_contentsTexture->bindTexture(context3D);
-        GLC(context3D, context3D->uniform1i(program->fragmentShader().samplerLocation(), 0));
-        shaderMatrixLocation = program->vertexShader().matrixLocation();
-        shaderAlphaLocation = program->fragmentShader().alphaLocation();
-    }
-
-    LayerChromium::drawTexturedQuad(layerRenderer()->context(), layerRenderer()->projectionMatrix(), drawTransform,
-                                        m_contentRect.width(), m_contentRect.height(), m_drawOpacity,
-                                        shaderMatrixLocation, shaderAlphaLocation);
-}
-
 void CCRenderSurface::draw(const IntRect&)
 {
     if (m_skipsDraw || !m_contentsTexture)
@@ -168,9 +127,92 @@ void CCRenderSurface::draw(const IntRect&)
 
     // Reflection draws before the layer.
     if (m_owningLayer->replicaLayer())
-        drawSurface(replicaMaskLayer, m_replicaDrawTransform);
+        drawLayer(replicaMaskLayer, m_replicaDrawTransform);
 
-    drawSurface(m_maskLayer, m_drawTransform);
+    drawLayer(m_maskLayer, m_drawTransform);
+}
+
+void CCRenderSurface::drawLayer(CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform)
+{
+    TransformationMatrix renderMatrix = drawTransform;
+    // Apply a scaling factor to size the quad from 1x1 to its intended size.
+    renderMatrix.scale3d(m_contentRect.width(), m_contentRect.height(), 1);
+
+    TransformationMatrix deviceMatrix = TransformationMatrix(layerRenderer()->windowMatrix() * layerRenderer()->projectionMatrix() * renderMatrix).to2dTransform();
+
+    // Can only draw surface if device matrix is invertible.
+    if (!deviceMatrix.isInvertible())
+        return;
+
+    FloatQuad quad = deviceMatrix.mapQuad(layerRenderer()->sharedGeometryQuad());
+    CCLayerQuad layerQuad = CCLayerQuad(quad);
+
+#if defined(OS_CHROMEOS)
+    // FIXME: Disable anti-aliasing to workaround broken driver.
+    bool useAA = false;
+#else
+    // Use anti-aliasing programs only when necessary.
+    bool useAA = (!quad.isRectilinear() || !quad.boundingBox().isExpressibleAsIntRect());
+#endif
+
+    if (useAA)
+        layerQuad.inflateAntiAliasingDistance();
+
+    bool useMask = false;
+    if (maskLayer && maskLayer->drawsContent())
+        if (!maskLayer->bounds().isEmpty())
+            useMask = true;
+
+    if (useMask) {
+        if (useAA) {
+            const MaskProgramAA* program = layerRenderer()->renderSurfaceMaskProgramAA();
+            drawSurface(maskLayer, drawTransform, deviceMatrix, layerQuad, program, program->fragmentShader().maskSamplerLocation(), program->vertexShader().pointLocation(), program->fragmentShader().edgeLocation());
+        } else {
+            const MaskProgram* program = layerRenderer()->renderSurfaceMaskProgram();
+            drawSurface(maskLayer, drawTransform, deviceMatrix, layerQuad, program, program->fragmentShader().maskSamplerLocation(), -1, -1);
+        }
+    } else {
+        if (useAA) {
+            const ProgramAA* program = layerRenderer()->renderSurfaceProgramAA();
+            drawSurface(maskLayer, drawTransform, deviceMatrix, layerQuad, program, -1, program->vertexShader().pointLocation(), program->fragmentShader().edgeLocation());
+        } else {
+            const Program* program = layerRenderer()->renderSurfaceProgram();
+            drawSurface(maskLayer, drawTransform, deviceMatrix, layerQuad, program, -1, -1, -1);
+        }
+    }
+}
+
+template <class T>
+void CCRenderSurface::drawSurface(CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& layerQuad, const T* program, int shaderMaskSamplerLocation, int shaderQuadLocation, int shaderEdgeLocation)
+{
+    GraphicsContext3D* context3D = layerRenderer()->context();
+
+    context3D->makeContextCurrent();
+    GLC(context3D, context3D->useProgram(program->program()));
+
+    GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
+    GLC(context3D, context3D->uniform1i(program->fragmentShader().samplerLocation(), 0));
+    m_contentsTexture->bindTexture(context3D);
+
+    if (shaderMaskSamplerLocation != -1) {
+        GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE1));
+        GLC(context3D, context3D->uniform1i(shaderMaskSamplerLocation, 1));
+        maskLayer->bindContentsTexture();
+        GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
+    }
+
+    if (shaderEdgeLocation != -1) {
+        float edge[12];
+        layerQuad.toFloatArray(edge);
+        GLC(context3D, context3D->uniform3fv(shaderEdgeLocation, edge, 4));
+    }
+
+    // Map device space quad to layer space.
+    FloatQuad quad = deviceTransform.inverse().mapQuad(layerQuad.floatQuad());
+
+    LayerChromium::drawTexturedQuad(layerRenderer()->context(), layerRenderer()->projectionMatrix(), drawTransform,
+                                    m_contentRect.width(), m_contentRect.height(), m_drawOpacity, quad,
+                                    program->vertexShader().matrixLocation(), program->fragmentShader().alphaLocation(), shaderQuadLocation);
 }
 
 String CCRenderSurface::name() const

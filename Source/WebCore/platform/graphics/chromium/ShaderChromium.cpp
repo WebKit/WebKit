@@ -150,6 +150,41 @@ String VertexShaderPosTexTransform::getShaderString() const
     );
 }
 
+VertexShaderQuad::VertexShaderQuad()
+    : m_matrixLocation(-1)
+    , m_pointLocation(-1)
+{
+}
+
+void VertexShaderQuad::init(GraphicsContext3D* context, unsigned program)
+{
+    m_matrixLocation = context->getUniformLocation(program, "matrix");
+    m_pointLocation = context->getUniformLocation(program, "point");
+    ASSERT(m_matrixLocation != -1 && m_pointLocation != -1);
+}
+
+String VertexShaderQuad::getShaderString() const
+{
+    return SHADER(
+        attribute vec4 a_position;
+        attribute vec2 a_texCoord;
+        uniform mat4 matrix;
+        uniform vec2 point[4];
+        varying vec2 v_texCoord;
+        void main()
+        {
+            vec2 complement = abs(a_texCoord - 1.0);
+            vec4 pos = vec4(0.0, 0.0, a_position.z, a_position.w);
+            pos.xy += (complement.x * complement.y) * point[0];
+            pos.xy += (a_texCoord.x * complement.y) * point[1];
+            pos.xy += (a_texCoord.x * a_texCoord.y) * point[2];
+            pos.xy += (complement.x * a_texCoord.y) * point[3];
+            gl_Position = matrix * pos;
+            v_texCoord = pos.xy + vec2(0.5);
+        }
+    );
+}
+
 VertexShaderTile::VertexShaderTile()
     : m_matrixLocation(-1)
     , m_pointLocation(-1)
@@ -247,7 +282,44 @@ String FragmentShaderRGBATexSwizzleAlpha::getShaderString() const
     );
 }
 
-FragmentTexAlphaAABinding::FragmentTexAlphaAABinding()
+FragmentShaderRGBATexAlphaAA::FragmentShaderRGBATexAlphaAA()
+    : m_samplerLocation(-1)
+    , m_alphaLocation(-1)
+    , m_edgeLocation(-1)
+{
+}
+
+void FragmentShaderRGBATexAlphaAA::init(GraphicsContext3D* context, unsigned program)
+{
+    m_samplerLocation = context->getUniformLocation(program, "s_texture");
+    m_alphaLocation = context->getUniformLocation(program, "alpha");
+    m_edgeLocation = context->getUniformLocation(program, "edge");
+
+    ASSERT(m_samplerLocation != -1 && m_alphaLocation != -1 && m_edgeLocation != -1);
+}
+
+String FragmentShaderRGBATexAlphaAA::getShaderString() const
+{
+    return SHADER(
+        precision mediump float;
+        varying vec2 v_texCoord;
+        uniform sampler2D s_texture;
+        uniform float alpha;
+        uniform vec3 edge[4];
+        void main()
+        {
+            vec4 texColor = texture2D(s_texture, v_texCoord);
+            vec3 pos = vec3(gl_FragCoord.xy, 1);
+            float a0 = clamp(dot(edge[0], pos), 0.0, 1.0);
+            float a1 = clamp(dot(edge[1], pos), 0.0, 1.0);
+            float a2 = clamp(dot(edge[2], pos), 0.0, 1.0);
+            float a3 = clamp(dot(edge[3], pos), 0.0, 1.0);
+            gl_FragColor = texColor * alpha * min(a0, a2) * min(a1, a3);
+        }
+    );
+}
+
+FragmentTexClampAlphaAABinding::FragmentTexClampAlphaAABinding()
     : m_samplerLocation(-1)
     , m_alphaLocation(-1)
     , m_fragmentTexTransformLocation(-1)
@@ -255,7 +327,7 @@ FragmentTexAlphaAABinding::FragmentTexAlphaAABinding()
 {
 }
 
-void FragmentTexAlphaAABinding::init(GraphicsContext3D* context, unsigned program)
+void FragmentTexClampAlphaAABinding::init(GraphicsContext3D* context, unsigned program)
 {
     m_samplerLocation = context->getUniformLocation(program, "s_texture");
     m_alphaLocation = context->getUniformLocation(program, "alpha");
@@ -265,7 +337,7 @@ void FragmentTexAlphaAABinding::init(GraphicsContext3D* context, unsigned progra
     ASSERT(m_samplerLocation != -1 && m_alphaLocation != -1 && m_fragmentTexTransformLocation != -1 && m_edgeLocation != -1);
 }
 
-String FragmentShaderRGBATexAlphaAA::getShaderString() const
+String FragmentShaderRGBATexClampAlphaAA::getShaderString() const
 {
     return SHADER(
         precision mediump float;
@@ -288,7 +360,7 @@ String FragmentShaderRGBATexAlphaAA::getShaderString() const
     );
 }
 
-String FragmentShaderRGBATexSwizzleAlphaAA::getShaderString() const
+String FragmentShaderRGBATexClampSwizzleAlphaAA::getShaderString() const
 {
     return SHADER(
         precision mediump float;
@@ -339,6 +411,46 @@ String FragmentShaderRGBATexAlphaMask::getShaderString() const
             vec4 texColor = texture2D(s_texture, v_texCoord);
             vec4 maskColor = texture2D(s_mask, v_texCoord);
             gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha * maskColor.w;
+        }
+    );
+}
+
+FragmentShaderRGBATexAlphaMaskAA::FragmentShaderRGBATexAlphaMaskAA()
+    : m_samplerLocation(-1)
+    , m_maskSamplerLocation(-1)
+    , m_alphaLocation(-1)
+    , m_edgeLocation(-1)
+{
+}
+
+void FragmentShaderRGBATexAlphaMaskAA::init(GraphicsContext3D* context, unsigned program)
+{
+    m_samplerLocation = context->getUniformLocation(program, "s_texture");
+    m_maskSamplerLocation = context->getUniformLocation(program, "s_mask");
+    m_alphaLocation = context->getUniformLocation(program, "alpha");
+    m_edgeLocation = context->getUniformLocation(program, "edge");
+    ASSERT(m_samplerLocation != -1 && m_maskSamplerLocation != -1 && m_alphaLocation != -1 && m_edgeLocation != -1);
+}
+
+String FragmentShaderRGBATexAlphaMaskAA::getShaderString() const
+{
+    return SHADER(
+        precision mediump float;
+        varying vec2 v_texCoord;
+        uniform sampler2D s_texture;
+        uniform sampler2D s_mask;
+        uniform float alpha;
+        uniform vec3 edge[4];
+        void main()
+        {
+            vec4 texColor = texture2D(s_texture, v_texCoord);
+            vec4 maskColor = texture2D(s_mask, v_texCoord);
+            vec3 pos = vec3(gl_FragCoord.xy, 1);
+            float a0 = clamp(dot(edge[0], pos), 0.0, 1.0);
+            float a1 = clamp(dot(edge[1], pos), 0.0, 1.0);
+            float a2 = clamp(dot(edge[2], pos), 0.0, 1.0);
+            float a3 = clamp(dot(edge[3], pos), 0.0, 1.0);
+            gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha * maskColor.w * min(a0, a2) * min(a1, a3);
         }
     );
 }

@@ -345,6 +345,9 @@ public:
 
     bool isIntegerTranslation() const;
 
+    // This method returns the matrix without 3D components.
+    TransformationMatrix to2dTransform() const;
+
 private:
     // multiply passed 2D point by matrix (assume z=0)
     void multVecMatrix(double x, double y, double& dstX, double& dstY) const;

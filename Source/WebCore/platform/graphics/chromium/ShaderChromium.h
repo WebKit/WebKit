@@ -96,6 +96,21 @@ private:
     int m_texTransformLocation;
 };
 
+class VertexShaderQuad {
+public:
+    VertexShaderQuad();
+
+    void init(GraphicsContext3D*, unsigned program);
+    String getShaderString() const;
+
+    int matrixLocation() const { return m_matrixLocation; }
+    int pointLocation() const { return m_pointLocation; }
+
+private:
+    int m_matrixLocation;
+    int m_pointLocation;
+};
+
 class VertexShaderTile {
 public:
     VertexShaderTile();
@@ -142,9 +157,26 @@ public:
     String getShaderString() const;
 };
 
-class FragmentTexAlphaAABinding {
+class FragmentShaderRGBATexAlphaAA {
 public:
-    FragmentTexAlphaAABinding();
+    FragmentShaderRGBATexAlphaAA();
+
+    void init(GraphicsContext3D*, unsigned program);
+    String getShaderString() const;
+
+    int alphaLocation() const { return m_alphaLocation; }
+    int samplerLocation() const { return m_samplerLocation; }
+    int edgeLocation() const { return m_edgeLocation; }
+
+private:
+    int m_samplerLocation;
+    int m_alphaLocation;
+    int m_edgeLocation;
+};
+
+class FragmentTexClampAlphaAABinding {
+public:
+    FragmentTexClampAlphaAABinding();
 
     void init(GraphicsContext3D*, unsigned program);
     int alphaLocation() const { return m_alphaLocation; }
@@ -159,13 +191,13 @@ private:
     int m_edgeLocation;
 };
 
-class FragmentShaderRGBATexAlphaAA : public FragmentTexAlphaAABinding {
+class FragmentShaderRGBATexClampAlphaAA : public FragmentTexClampAlphaAABinding {
 public:
     String getShaderString() const;
 };
 
 // Swizzles the red and blue component of sampled texel.
-class FragmentShaderRGBATexSwizzleAlphaAA : public FragmentTexAlphaAABinding {
+class FragmentShaderRGBATexClampSwizzleAlphaAA : public FragmentTexClampAlphaAABinding {
 public:
     String getShaderString() const;
 };
@@ -184,6 +216,24 @@ private:
     int m_samplerLocation;
     int m_maskSamplerLocation;
     int m_alphaLocation;
+};
+
+class FragmentShaderRGBATexAlphaMaskAA {
+public:
+    FragmentShaderRGBATexAlphaMaskAA();
+    String getShaderString() const;
+
+    void init(GraphicsContext3D*, unsigned program);
+    int alphaLocation() const { return m_alphaLocation; }
+    int samplerLocation() const { return m_samplerLocation; }
+    int maskSamplerLocation() const { return m_maskSamplerLocation; }
+    int edgeLocation() const { return m_edgeLocation; }
+
+private:
+    int m_samplerLocation;
+    int m_maskSamplerLocation;
+    int m_alphaLocation;
+    int m_edgeLocation;
 };
 
 class FragmentShaderYUVVideo {

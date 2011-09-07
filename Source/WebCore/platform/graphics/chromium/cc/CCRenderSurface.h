@@ -35,6 +35,7 @@
 #include "ShaderChromium.h"
 #include "TextureManager.h"
 #include "TransformationMatrix.h"
+#include "cc/CCLayerQuad.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -90,13 +91,17 @@ public:
 
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlpha> Program;
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlphaMask> MaskProgram;
+    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexAlphaAA> ProgramAA;
+    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexAlphaMaskAA> MaskProgramAA;
 
     ManagedTexture* contentsTexture() const { return m_contentsTexture.get(); }
 
     int owningLayerId() const;
 private:
     LayerRendererChromium* layerRenderer();
-    void drawSurface(CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform);
+    void drawLayer(CCLayerImpl*, const TransformationMatrix&);
+    template <class T>
+    void drawSurface(CCLayerImpl*, const TransformationMatrix& drawTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad&, const T* program, int shaderMaskSamplerLocation, int shaderQuadLocation, int shaderEdgeLocation);
 
     CCLayerImpl* m_owningLayer;
     CCLayerImpl* m_maskLayer;

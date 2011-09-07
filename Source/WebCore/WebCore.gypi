@@ -3537,6 +3537,8 @@
             'platform/graphics/chromium/cc/CCHeadsUpDisplay.h',
             'platform/graphics/chromium/cc/CCLayerImpl.cpp',
             'platform/graphics/chromium/cc/CCLayerImpl.h',
+            'platform/graphics/chromium/cc/CCLayerQuad.cpp',
+            'platform/graphics/chromium/cc/CCLayerQuad.h',
             'platform/graphics/chromium/cc/CCLayerSorter.cpp',
             'platform/graphics/chromium/cc/CCLayerSorter.h',
             'platform/graphics/chromium/cc/CCLayerTilingData.cpp',
