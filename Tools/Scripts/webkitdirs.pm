@@ -33,7 +33,7 @@ use warnings;
 use Config;
 use FindBin;
 use File::Basename;
-use File::Path;
+use File::Path qw(mkpath rmtree);
 use File::Spec;
 use POSIX;
 use VCSUtils;
@@ -1695,7 +1695,7 @@ sub buildQMakeProject($@)
     if(not($defaults eq $defaultsTxt)){
         print "Make clean build because the Defines are changed.\n";
         chdir $originalCwd;
-        File::Path::remove_tree($dir);
+        File::Path::rmtree($dir);
         File::Path::mkpath($dir);
         chdir $dir or die "Failed to cd into " . $dir . "\n";
         open DEFAULTS, ">$pathToDefaultsTxt";
