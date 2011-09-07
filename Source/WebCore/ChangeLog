@@ -1,3 +1,22 @@
+2011-09-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: disable popover when a mouse button is pressed
+        https://bugs.webkit.org/show_bug.cgi?id=67610
+
+        Reviewed by Pavel Feldman.
+
+        - disable popover when a mouse button is pressed
+        - disable popover in a SourceFrame when the source is being edited
+
+        * inspector/front-end/Popover.js:
+        (WebInspector.PopoverHelper):
+        (WebInspector.PopoverHelper.prototype._mouseUp):
+        (WebInspector.PopoverHelper.prototype._mouseDown):
+        (WebInspector.PopoverHelper.prototype._handleMouseAction):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._onHidePopover):
+        (WebInspector.SourceFrame.prototype.doubleClick):
+
 2011-09-07  Antti Koivisto  <antti@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67634

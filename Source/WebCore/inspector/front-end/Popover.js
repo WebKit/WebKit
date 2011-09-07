@@ -181,12 +181,13 @@ WebInspector.Popover.prototype = {
 /**
  * @constructor
  */
-WebInspector.PopoverHelper = function(panelElement, getAnchor, showPopover, onHide)
+WebInspector.PopoverHelper = function(panelElement, getAnchor, showPopover, onHide, disableOnClick)
 {
     this._panelElement = panelElement;
     this._getAnchor = getAnchor;
     this._showPopover = showPopover;
     this._onHide = onHide;
+    this._disableOnClick = !!disableOnClick;
     panelElement.addEventListener("mousedown", this._mouseDown.bind(this), false);
     panelElement.addEventListener("mousemove", this._mouseMove.bind(this), false);
     this.setTimeout(1000);
@@ -200,8 +201,12 @@ WebInspector.PopoverHelper.prototype = {
 
     _mouseDown: function(event)
     {
-        this._killHidePopoverTimer();
-        this._handleMouseAction(event, true);
+        if (this._disableOnClick)
+            this.hidePopover();
+        else {
+            this._killHidePopoverTimer();
+            this._handleMouseAction(event, true);
+        }
     },
 
     _mouseMove: function(event)
@@ -227,11 +232,11 @@ WebInspector.PopoverHelper.prototype = {
     _handleMouseAction: function(event, isMouseDown)
     {
         this._resetHoverTimer();
-
+        if (event.which && this._disableOnClick)
+            return;
         this._hoverElement = this._getAnchor(event.target);
         if (!this._hoverElement)
             return;
-
         const toolTipDelay = isMouseDown ? 0 : (this._popup ? this._timeout * 0.6 : this._timeout);
         this._hoverTimer = setTimeout(this._mouseHover.bind(this, this._hoverElement), toolTipDelay);
     },

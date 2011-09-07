@@ -282,7 +282,7 @@ WebInspector.SourceFrame.prototype = {
         var element = this._textViewer.element;
         if (this._delegate.debuggingSupported()) {
             this._popoverHelper = new WebInspector.PopoverHelper(element,
-                this._getPopoverAnchor.bind(this), this._onShowPopover.bind(this), this._onHidePopover.bind(this));
+                this._getPopoverAnchor.bind(this), this._onShowPopover.bind(this), this._onHidePopover.bind(this), true);
             element.addEventListener("mousedown", this._mouseDown.bind(this), true);
             element.addEventListener("scroll", this._scroll.bind(this), true);
         }
@@ -663,6 +663,8 @@ WebInspector.SourceFrame.prototype = {
     {
         // Replace higlight element with its contents inplace.
         var highlightElement = this._highlightElement;
+        if (!highlightElement)
+            return;
         var parentElement = highlightElement.parentElement;
         var child = highlightElement.firstChild;
         while (child) {
@@ -671,6 +673,7 @@ WebInspector.SourceFrame.prototype = {
             child = nextSibling;
         }
         parentElement.removeChild(highlightElement);
+        delete this._highlightElement;
         this._delegate.releaseEvaluationResult();
     },
 
@@ -718,6 +721,10 @@ WebInspector.SourceFrame.prototype = {
 
     _onShowPopover: function(element, popover)
     {
+        if (!this._textViewer.readOnly) {
+            this._popoverHelper.hidePopover();
+            return;
+        }
         this._highlightElement = this._highlightExpression(element);
 
         function showObjectPopover(result, wasThrown)
@@ -876,6 +883,9 @@ WebInspector.SourceFrame.prototype = {
 
     _setReadOnly: function(readOnly)
     {
+        if (!readOnly && this._popoverHelper)
+            this._popoverHelper.hidePopover();
+
         this._textViewer.readOnly = readOnly;
         WebInspector.markBeingEdited(this._textViewer.element, !readOnly);
         if (readOnly)
