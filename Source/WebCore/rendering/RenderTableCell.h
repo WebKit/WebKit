@@ -119,7 +119,7 @@ public:
     virtual LayoutUnit paddingBefore(bool includeIntrinsicPadding = true) const;
     virtual LayoutUnit paddingAfter(bool includeIntrinsicPadding = true) const;
 
-    void setOverrideSizeFromRowHeight(int);
+    void setOverrideHeightFromRowHeight(int);
 
     bool hasVisualOverflow() const { return m_overflow && !borderBoxRect().contains(m_overflow->visualOverflowRect()); }
 

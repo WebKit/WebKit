@@ -1,3 +1,47 @@
+2011-09-02  Ojan Vafai  <ojan@chromium.org>
+
+        split overrideSize into overrideHeight and overrideWidth
+        https://bugs.webkit.org/show_bug.cgi?id=67550
+
+        Reviewed by Sam Weinig.
+
+        All uses of overrideSize only set one of the width or the height.
+        This change removes a bool from RenderObject and removes some
+        flexbox specific logic from RenderBox.
+
+        The only downside is that we have two global maps where we used
+        to have one.
+
+        No functional changes so existing tests are sufficient.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::hasOverrideHeight):
+        (WebCore::RenderBox::hasOverrideWidth):
+        (WebCore::RenderBox::setOverrideHeight):
+        (WebCore::RenderBox::setOverrideWidth):
+        (WebCore::RenderBox::clearOverrideSize):
+        (WebCore::RenderBox::overrideWidth):
+        (WebCore::RenderBox::overrideHeight):
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        * rendering/RenderBox.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildrenHorizontal):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        * rendering/RenderObject.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::setOverrideHeightFromRowHeight):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        (WebCore::RenderTableSection::layoutRows):
+
 2011-09-07  Alexei Svitkine  <asvitkine@chromium.org>
 
         Add test infrastructure to test rubber-banding overhang drawing along with layout tests for existing Chromium Mac overhang drawing in the non-gpu path.

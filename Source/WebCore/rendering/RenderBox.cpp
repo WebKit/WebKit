@@ -61,8 +61,9 @@ namespace WebCore {
 using namespace HTMLNames;
 
 // Used by flexible boxes when flexing this element and by table cells.
-typedef WTF::HashMap<const RenderBox*, LayoutSize> OverrideSizeMap;
-static OverrideSizeMap* gOverrideSizeMap = 0;
+typedef WTF::HashMap<const RenderBox*, LayoutUnit> OverrideSizeMap;
+static OverrideSizeMap* gOverrideHeightMap = 0;
+static OverrideSizeMap* gOverrideWidthMap = 0;
 
 bool RenderBox::s_hadOverflowClip = false;
 
@@ -692,37 +693,46 @@ LayoutUnit RenderBox::maxPreferredLogicalWidth() const
     return m_maxPreferredLogicalWidth;
 }
 
-LayoutSize RenderBox::overrideSize() const
+bool RenderBox::hasOverrideHeight() const
 {
-    if (!hasOverrideSize())
-        return LayoutSize(-1, -1);
-    return gOverrideSizeMap->get(this);
+    return gOverrideHeightMap && gOverrideHeightMap->contains(this);
 }
 
-void RenderBox::setOverrideSize(const LayoutSize& size)
+bool RenderBox::hasOverrideWidth() const
 {
-    if (!gOverrideSizeMap)
-        gOverrideSizeMap = new OverrideSizeMap();
-    setHasOverrideSize(true);
-    gOverrideSizeMap->set(this, size);
+    return gOverrideWidthMap && gOverrideWidthMap->contains(this);
+}
+
+void RenderBox::setOverrideHeight(LayoutUnit height)
+{
+    if (!gOverrideHeightMap)
+        gOverrideHeightMap = new OverrideSizeMap();
+    gOverrideHeightMap->set(this, height);
+}
+
+void RenderBox::setOverrideWidth(LayoutUnit width)
+{
+    if (!gOverrideWidthMap)
+        gOverrideWidthMap = new OverrideSizeMap();
+    gOverrideWidthMap->set(this, width);
 }
 
 void RenderBox::clearOverrideSize()
 {
-    if (!hasOverrideSize())
-        return;
-    setHasOverrideSize(false);
-    gOverrideSizeMap->remove(this);
+    if (hasOverrideHeight())
+        gOverrideHeightMap->remove(this);
+    if (hasOverrideWidth())
+        gOverrideWidthMap->remove(this);
 }
 
 LayoutUnit RenderBox::overrideWidth() const
 {
-    return hasOverrideSize() ? overrideSize().width() : width();
+    return hasOverrideWidth() ? gOverrideWidthMap->get(this) : width();
 }
 
 LayoutUnit RenderBox::overrideHeight() const
 {
-    return hasOverrideSize() ? overrideSize().height() : height();
+    return hasOverrideHeight() ? gOverrideHeightMap->get(this) : height();
 }
 
 LayoutUnit RenderBox::computeBorderBoxLogicalWidth(LayoutUnit width) const
@@ -1572,18 +1582,10 @@ void RenderBox::computeLogicalWidth()
     // width.  Use the width from the style context.
     // FIXME: Account for block-flow in flexible boxes.
     // https://bugs.webkit.org/show_bug.cgi?id=46418
-    if (hasOverrideSize() &&  parent()->style()->boxOrient() == HORIZONTAL
-            && parent()->isDeprecatedFlexibleBox() && parent()->isFlexingChildren()) {
+    if (hasOverrideWidth() && parent()->isFlexibleBoxIncludingDeprecated()) {
         setLogicalWidth(overrideWidth());
         return;
     }
-#if ENABLE(CSS3_FLEXBOX)
-    // FIXME: Check direction once flex-direction is implemented.
-    if (hasOverrideSize() && parent()->isFlexibleBox()) {
-        setLogicalWidth(overrideWidth());
-        return;
-    }
-#endif
 
     // FIXME: Account for block-flow in flexible boxes.
     // https://bugs.webkit.org/show_bug.cgi?id=46418
@@ -1800,8 +1802,7 @@ void RenderBox::computeLogicalHeight()
         // grab our cached flexible height.
         // FIXME: Account for block-flow in flexible boxes.
         // https://bugs.webkit.org/show_bug.cgi?id=46418
-        if (hasOverrideSize() && parent()->isDeprecatedFlexibleBox() && parent()->style()->boxOrient() == VERTICAL
-                && parent()->isFlexingChildren())
+        if (hasOverrideHeight() && parent()->isFlexibleBoxIncludingDeprecated())
             h = Length(overrideHeight() - borderAndPaddingLogicalHeight(), Fixed);
         else if (treatAsReplaced)
             h = Length(computeReplacedLogicalHeight(), Fixed);
@@ -1922,7 +1923,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height)
     // be a percentage of the cell's current content height.
     if (cb->isTableCell()) {
         if (!skippedAutoHeightContainingBlock) {
-            if (!cb->hasOverrideSize()) {
+            if (!cb->hasOverrideHeight()) {
                 // Normally we would let the cell size intrinsically, but scrolling overflow has to be
                 // treated differently, since WinIE lets scrolled overflow regions shrink as needed.
                 // While we can't get all cases right, we can at least detect when the cell has a specified

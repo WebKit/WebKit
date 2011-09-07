@@ -344,7 +344,7 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
 
             int indx = max(r - cell->rowSpan() + 1, 0);
 
-            if (cell->hasOverrideSize()) {
+            if (cell->hasOverrideHeight()) {
                 if (!statePusher.didPush()) {
                     // Technically, we should also push state for the row, but since
                     // rows don't push a coordinate transform, that's not necessary.
@@ -572,7 +572,7 @@ LayoutUnit RenderTableSection::layoutRows(LayoutUnit toAdd)
                 // Alignment within a cell is based off the calculated
                 // height, which becomes irrelevant once the cell has
                 // been resized based off its percentage.
-                cell->setOverrideSizeFromRowHeight(rHeight);
+                cell->setOverrideHeightFromRowHeight(rHeight);
                 cell->layoutIfNeeded();
 
                 // If the baseline moved, we may have to update the data for our row. Find out the new baseline.

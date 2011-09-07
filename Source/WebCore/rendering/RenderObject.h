@@ -780,9 +780,6 @@ public:
     virtual bool willRenderImage(CachedImage*);
 
     void selectionStartEnd(int& spos, int& epos) const;
-
-    bool hasOverrideSize() const { return m_hasOverrideSize; }
-    void setHasOverrideSize(bool b) { m_hasOverrideSize = b; }
     
     void remove() { if (parent()) parent()->removeChild(this); }
 
@@ -873,8 +870,6 @@ private:
     bool m_hasOverflowClip           : 1; // Set in the case of overflow:auto/scroll/hidden
     bool m_hasTransform              : 1;
     bool m_hasReflection             : 1;
-
-    bool m_hasOverrideSize           : 1;
     
 public:
     bool m_hasCounterNodeMap         : 1;

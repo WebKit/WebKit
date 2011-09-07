@@ -212,10 +212,10 @@ LayoutUnit RenderTableCell::paddingAfter(bool includeIntrinsicPadding) const
     return result + intrinsicPaddingAfter();
 }
 
-void RenderTableCell::setOverrideSizeFromRowHeight(int rowHeight)
+void RenderTableCell::setOverrideHeightFromRowHeight(int rowHeight)
 {
     clearIntrinsicPadding();
-    RenderBlock::setOverrideSize(LayoutSize(0, max<LayoutUnit>(0, rowHeight - borderBefore() - paddingBefore() - borderAfter() - paddingAfter())));
+    RenderBlock::setOverrideHeight(max<LayoutUnit>(0, rowHeight - borderBefore() - paddingBefore() - borderAfter() - paddingAfter()));
 }
 
 LayoutSize RenderTableCell::offsetFromContainer(RenderObject* o, const LayoutPoint& point) const

@@ -252,7 +252,7 @@ void RenderFlexibleBox::layoutAndPlaceChildrenHorizontal(const WTF::Vector<Layou
     for (RenderBox* child = iterator.first(); child; child = iterator.next(), ++i) {
         LayoutUnit childPreferredSize = child->borderLeft() + child->paddingLeft() + childSizes[i] + child->paddingRight() + child->borderRight();
         // FIXME: Handle vertical writing modes with horizontal flexing.
-        child->setOverrideSize(LayoutSize(childPreferredSize, 0));
+        child->setOverrideWidth(childPreferredSize);
         child->setChildNeedsLayout(true);
         child->layoutIfNeeded();
 
