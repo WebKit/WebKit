@@ -1,3 +1,11 @@
+2011-09-07  Oliver Varga  <voliver@inf.u-szeged.hu>
+
+        Update LayoutTests/platform/qt-arm/fast/dom/Window/window-property-descriptors-expected.txt
+
+        Unreviewed gardening.
+
+        * platform/qt-arm/fast/dom/Window/window-property-descriptors-expected.txt:
+
 2011-09-07  Balazs Kelemen  <kbalazs@webkit.org>
 
         [WK2] evetSender.keyDown is unimplemented

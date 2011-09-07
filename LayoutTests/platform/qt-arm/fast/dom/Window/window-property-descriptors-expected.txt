@@ -69,7 +69,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLAudioElement') is 'obje
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLBRElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLBaseElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLBaseFontElement') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLBlockquoteElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLBodyElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLButtonElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLCanvasElement') is 'object'
