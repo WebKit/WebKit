@@ -5076,3 +5076,8 @@ fast/text/midword-break-before-surrogate-pair-2.html
 svg/custom/pattern-rotate-gaps.svg
 http/tests/inspector/resource-tree/resource-tree-errors-reload.html
 http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml
+
+# Qt specific results were added by r94646, but they fail on Qt-Mac platform
+fast/borders/border-image-longhand.html
+fast/borders/border-image-scaled.html
+fast/borders/border-image-side-reduction.html

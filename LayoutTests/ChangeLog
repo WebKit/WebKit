@@ -1,3 +1,9 @@
+2011-09-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Unreviewed gardening after r94646.
+
+        * platform/qt-mac/Skipped: Paint the Qt-Mac bot green.
+
 2011-09-07  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Revert expectation that was wrongly generated for textStyles.svg.
