@@ -1,3 +1,13 @@
+2011-09-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: repair console sniffing for interactive ui tests
+        https://bugs.webkit.org/show_bug.cgi?id=67608
+
+        Reviewed by Pavel Feldman.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.evaluateInConsole_):
+
 2011-09-06  Eric Boren  <borenet@gmail.com>
 
         [Chromium] Modify WebTouchEvent structure to match WebCore::TouchEvent
