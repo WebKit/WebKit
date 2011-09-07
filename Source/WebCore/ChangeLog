@@ -1,3 +1,19 @@
+2011-09-06  Abhishek Arya  <inferno@chromium.org>
+
+        Null owningRenderer crash in RenderScrollbar::updateScrollbarParts.
+        https://bugs.webkit.org/show_bug.cgi?id=67669
+
+        Reviewed by James Robinson.
+
+        Owning renderer can be cleared for custom scrollbars in clearOwningRenderer()
+        call. We need a null check in updateScrollbarParts, so that we do not crash.
+
+        No tests since issue seen in crash reports only and I donot know a way to
+        reproduce.
+
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::updateScrollbarParts):
+
 2011-09-05  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt][WK2] Make TiledDrawingArea request tiles only in the direction the viewport is panned to.
