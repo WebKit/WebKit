@@ -529,7 +529,7 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     
     // Check that prototype is an object
     loadPtr(Address(regT1, JSCell::structureOffset()), regT3);
-    addSlowCase(branch8(NotEqual, Address(regT3, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+    addSlowCase(emitJumpIfNotObject(regT3));
 
     // Fixme: this check is only needed because the JSC API allows HasInstance to be overridden; we should deprecate this.
     // Check that baseVal 'ImplementsDefaultHasInstance'.
@@ -1147,7 +1147,7 @@ void JIT::emit_op_get_pnames(Instruction* currentInstruction)
         isNotObject.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
     if (base != m_codeBlock->thisRegister() || m_codeBlock->isStrictMode()) {
         loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-        isNotObject.append(branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+        isNotObject.append(emitJumpIfNotObject(regT2));
     }
 
     // We could inline the case where you have a valid cache, but
@@ -1442,7 +1442,7 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
     emitLoad(currentInstruction[2].u.operand, regT1, regT0);
     emitJumpSlowCaseIfNotJSCell(currentInstruction[2].u.operand, regT1);
     loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
-    addSlowCase(branch8(NotEqual, Address(regT1, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+    addSlowCase(emitJumpIfNotObject(regT1));
     
     // now we know that the prototype is an object, but we don't know if it's got an
     // inheritor ID

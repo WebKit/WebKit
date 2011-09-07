@@ -296,6 +296,7 @@ namespace JSC {
         
         void emitLoadDouble(unsigned index, FPRegisterID value);
         void emitLoadInt32ToDouble(unsigned index, FPRegisterID value);
+        Jump emitJumpIfNotObject(RegisterID structureReg);
 
         void testPrototype(JSValue, JumpList& failureCases);
 
@@ -565,9 +566,9 @@ namespace JSC {
             return emitJumpIfNotImmediateInteger(reg);
         }
 #endif
-        JIT::Jump emitJumpIfImmediateInteger(RegisterID);
-        JIT::Jump emitJumpIfNotImmediateInteger(RegisterID);
-        JIT::Jump emitJumpIfNotImmediateIntegers(RegisterID, RegisterID, RegisterID);
+        Jump emitJumpIfImmediateInteger(RegisterID);
+        Jump emitJumpIfNotImmediateInteger(RegisterID);
+        Jump emitJumpIfNotImmediateIntegers(RegisterID, RegisterID, RegisterID);
         void emitJumpSlowCaseIfNotImmediateInteger(RegisterID);
         void emitJumpSlowCaseIfNotImmediateNumber(RegisterID);
         void emitJumpSlowCaseIfNotImmediateIntegers(RegisterID, RegisterID, RegisterID);

@@ -1,3 +1,30 @@
+2011-09-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Refactor JIT checks for ObjectType into helper functions.
+
+        Rubber stamped by Sam Weinig.
+
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::branchIfNotObject):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JIT.h:
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_ret_object_or_this):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitJumpIfNotObject):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_create_this):
+
 2011-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94627 and r94632.

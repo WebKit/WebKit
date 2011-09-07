@@ -185,7 +185,12 @@ public:
     {
         return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
-    
+
+    Jump branchIfNotObject(GPRReg structureReg)
+    {
+        return branch8(NotEqual, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+    }
+
     // Notify the JIT of a call that does not require linking.
     void notifyCall(Call call, unsigned exceptionInfo)
     {

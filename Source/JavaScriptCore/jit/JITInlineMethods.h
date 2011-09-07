@@ -313,6 +313,11 @@ ALWAYS_INLINE void JIT::emitJumpSlowToHot(Jump jump, int relativeOffset)
     jump.linkTo(m_labels[m_bytecodeOffset + relativeOffset], this);
 }
 
+ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotObject(RegisterID structureReg)
+{
+    return branch8(NotEqual, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+}
+
 #if ENABLE(SAMPLING_FLAGS)
 ALWAYS_INLINE void JIT::setSamplingFlag(int32_t flag)
 {

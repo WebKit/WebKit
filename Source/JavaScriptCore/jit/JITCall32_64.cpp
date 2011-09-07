@@ -128,7 +128,7 @@ void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
     emitLoad(result, regT1, regT0);
     Jump notJSCell = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-    Jump notObject = branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+    Jump notObject = emitJumpIfNotObject(regT2);
 
     emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT2);
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);

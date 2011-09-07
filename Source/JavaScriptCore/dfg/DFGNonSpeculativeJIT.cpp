@@ -1161,7 +1161,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
 
         // Check that prototype is an object
         m_jit.loadPtr(MacroAssembler::Address(prototypeReg, JSCell::structureOffset()), scratchReg);
-        MacroAssembler::Jump protoNotObject = m_jit.branch8(MacroAssembler::NotEqual, MacroAssembler::Address(scratchReg, Structure::typeInfoTypeOffset()), MacroAssembler::TrustedImm32(ObjectType));
+        MacroAssembler::Jump protoNotObject = m_jit.branchIfNotObject(scratchReg);
 
         // Initialize scratchReg with the value being checked.
         m_jit.move(valueReg, scratchReg);

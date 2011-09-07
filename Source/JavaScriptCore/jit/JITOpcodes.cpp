@@ -377,7 +377,7 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
 
     // Check that prototype is an object
     loadPtr(Address(regT1, JSCell::structureOffset()), regT3);
-    addSlowCase(branch8(NotEqual, Address(regT3, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+    addSlowCase(emitJumpIfNotObject(regT3));
     
     // Fixme: this check is only needed because the JSC API allows HasInstance to be overridden; we should deprecate this.
     // Check that baseVal 'ImplementsDefaultHasInstance'.
@@ -484,7 +484,7 @@ void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
     emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueRegister);
     Jump notJSCell = emitJumpIfNotJSCell(returnValueRegister);
     loadPtr(Address(returnValueRegister, JSCell::structureOffset()), regT2);
-    Jump notObject = branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+    Jump notObject = emitJumpIfNotObject(regT2);
 
     // Grab the return address.
     emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
@@ -801,7 +801,7 @@ void JIT::emit_op_get_pnames(Instruction* currentInstruction)
         isNotObject.append(emitJumpIfNotJSCell(regT0));
     if (base != m_codeBlock->thisRegister() || m_codeBlock->isStrictMode()) {
         loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-        isNotObject.append(branch8(NotEqual, Address(regT2, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+        isNotObject.append(emitJumpIfNotObject(regT2));
     }
 
     // We could inline the case where you have a valid cache, but
@@ -1167,7 +1167,7 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT2);
     emitJumpSlowCaseIfNotJSCell(regT2, currentInstruction[2].u.operand);
     loadPtr(Address(regT2, JSCell::structureOffset()), regT1);
-    addSlowCase(branch8(NotEqual, Address(regT1, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType)));
+    addSlowCase(emitJumpIfNotObject(regT1));
     
     // now we know that the prototype is an object, but we don't know if it's got an
     // inheritor ID
