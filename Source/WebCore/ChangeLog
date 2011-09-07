@@ -1,3 +1,17 @@
+2011-09-07  Tim Horton  <timothy_horton@apple.com>
+
+        FELighting is using width instead of height to determine skip for parallel(n>2) case
+        https://bugs.webkit.org/show_bug.cgi?id=67719
+        <rdar://problem/10086178>
+
+        Reviewed by Dirk Schulze.
+
+        No new tests, because the bug only exhibits under conditions which are currently
+        impossible by default (using more than 2 cores) on some platforms.
+
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::platformApplyGeneric):
+
 2011-09-07  W. James MacLean  <wjmaclean@chromium.org>
 
         Eliminate motion jitter in animated, blurred SVG image
