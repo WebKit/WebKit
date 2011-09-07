@@ -132,7 +132,7 @@ public:
 
     static JSCallbackObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, void* data)
     {
-        ASSERT(!structure->globalObject() || structure->globalObject() == globalObject);
+        ASSERT_UNUSED(globalObject, !structure->globalObject() || structure->globalObject() == globalObject);
         JSCallbackObject* callbackObject = new (allocateCell<JSCallbackObject>(*exec->heap())) JSCallbackObject(exec, structure, classRef, data);
         return callbackObject;
     }
