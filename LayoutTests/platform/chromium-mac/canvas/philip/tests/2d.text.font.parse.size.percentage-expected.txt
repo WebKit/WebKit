@@ -1,2 +1,0 @@
-Failed assertion ctx.font === '72px serif' (got 50% serif[string], expected 72px serif[string])
-Failed assertion ctx.font === '72px serif' (got 50% serif[string], expected 72px serif[string])

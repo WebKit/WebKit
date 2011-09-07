@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 35: Uncaught TypeError: Cannot read property 'style' of null
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification

@@ -4,8 +4,8 @@ Resource requests:
 
 script.js
 no-media.css
-media-screen.css
 media-empty.css
+media-screen.css
 media-all.css
 media-braille-screen.css
 no-media-2.css
@@ -13,8 +13,8 @@ media-empty-2.css
 media-all-2.css
 media-screen-2.css
 media-braille-screen-2.css
-media-screen-query-success.css
 script-2.js
+media-screen-query-success.css
 media-screen-query-success-2.css
 image.jpg
 media-print.css

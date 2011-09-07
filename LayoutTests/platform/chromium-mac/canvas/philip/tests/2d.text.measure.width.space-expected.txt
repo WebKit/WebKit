@@ -1,4 +1,0 @@
-Failed assertion ctx.measureText('A B').width === 150 (got 200[number], expected 150[number])
-Failed assertion ctx.measureText('A \x09\x0a\x0c\x0d \x09\x0a\x0c\x0dB').width === 150 (got 450[number], expected 150[number])
-Failed assertion ctx.measureText(' AB').width === 100 (got 150[number], expected 100[number])
-Failed assertion ctx.measureText('AB ').width === 100 (got 150[number], expected 100[number])
