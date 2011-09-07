@@ -1,3 +1,17 @@
+2011-09-07  Jarred Nicholls  <jarred@sencha.com>
+
+        [Qt][DRT] Normalize file:///tmp/LayoutTests in LayoutTestController::pathToLocalResource()
+        https://bugs.webkit.org/show_bug.cgi?id=67254
+
+        Reviewed by Csaba Osztrogonác.
+
+        Translate file:///tmp/LayoutTests/* urls into the repository LayoutTests directory, which is
+        derived from the running location of DumpRenderTree binary.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::pathToLocalResource):
+        (LayoutTestController::setUserStyleSheetLocation): pass the url through pathToLocalResource
+
 2011-09-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r94288) build-webkit doesn't work on Symbian
