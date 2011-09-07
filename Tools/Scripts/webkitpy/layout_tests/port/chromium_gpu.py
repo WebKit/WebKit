@@ -51,6 +51,8 @@ def get(platform=None, port_name='chromium-gpu', **kwargs):
     if port_name.startswith('chromium-gpu-linux'):
         return ChromiumGpuLinuxPort(port_name=port_name, **kwargs)
     if port_name.startswith('chromium-gpu-cg-mac'):
+        return ChromiumGpuCgMacPort(port_name=port_name, **kwargs)
+    if port_name.startswith('chromium-gpu-mac'):
         return ChromiumGpuMacPort(port_name=port_name, **kwargs)
     if port_name.startswith('chromium-gpu-win'):
         return ChromiumGpuWinPort(port_name=port_name, **kwargs)
@@ -59,8 +61,8 @@ def get(platform=None, port_name='chromium-gpu', **kwargs):
 
 # FIXME: These should really be a mixin class.
 
-def _set_gpu_options(port):
-    port._graphics_type = 'gpu'
+def _set_gpu_options(port, graphics_type='gpu'):
+    port._graphics_type = graphics_type
     if port.get_option('accelerated_compositing') is None:
         port._options.accelerated_compositing = True
     if port.get_option('accelerated_2d_canvas') is None:
@@ -101,13 +103,26 @@ class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
         return _tests(self, paths)
 
 
-class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
+class ChromiumGpuCgMacPort(chromium_mac.ChromiumMacPort):
     def __init__(self, port_name='chromium-gpu-cg-mac', **kwargs):
+        chromium_mac.ChromiumMacPort.__init__(self, port_name=port_name, **kwargs)
+        _set_gpu_options(self, graphics_type='gpu-cg')
+
+    def baseline_search_path(self):
+        return (map(self._webkit_baseline_path, ['chromium-gpu-cg-mac', 'chromium-gpu']) +
+                chromium_mac.ChromiumMacPort.baseline_search_path(self))
+
+    def tests(self, paths):
+        return _tests(self, paths)
+
+
+class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
+    def __init__(self, port_name='chromium-gpu-mac', **kwargs):
         chromium_mac.ChromiumMacPort.__init__(self, port_name=port_name, **kwargs)
         _set_gpu_options(self)
 
     def baseline_search_path(self):
-        return (map(self._webkit_baseline_path, ['chromium-gpu-cg-mac', 'chromium-gpu']) +
+        return (map(self._webkit_baseline_path, ['chromium-gpu-mac', 'chromium-gpu']) +
                 chromium_mac.ChromiumMacPort.baseline_search_path(self))
 
     def tests(self, paths):

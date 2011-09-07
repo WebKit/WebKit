@@ -225,14 +225,14 @@ WONTFIX SKIP LINUX WIN : fast/events/option-tab.html = FAIL
 
 // Compositing tests will never pass in the non-accelerated GPU code
 // paths.
-WONTFIX SKIP CPU : compositing = PASS TIMEOUT FAIL
-WONTFIX SKIP CPU : platform/chromium/compositing = PASS TIMEOUT FAIL
-WONTFIX SKIP CPU : animations/3d = PASS TIMEOUT FAIL
+WONTFIX SKIP CPU CPU-CG : compositing = PASS TIMEOUT FAIL
+WONTFIX SKIP CPU CPU-CG : platform/chromium/compositing = PASS TIMEOUT FAIL
+WONTFIX SKIP CPU CPU-CG : animations/3d = PASS TIMEOUT FAIL
 
 // We don't ship compositing on Leopard.
-WONTFIX SKIP GPU LEOPARD : compositing = PASS TIMEOUT FAIL
-WONTFIX SKIP GPU LEOPARD : platform/chromium/compositing = PASS TIMEOUT FAIL
-WONTFIX SKIP GPU LEOPARD : animations/3d = PASS TIMEOUT FAIL
+WONTFIX SKIP GPU GPU-CG LEOPARD : compositing = PASS TIMEOUT FAIL
+WONTFIX SKIP GPU GPU-CG LEOPARD : platform/chromium/compositing = PASS TIMEOUT FAIL
+WONTFIX SKIP GPU GPU-CG LEOPARD : animations/3d = PASS TIMEOUT FAIL
 
 WONTFIX MAC WIN : platform/chromium-linux = FAIL
 WONTFIX SKIP LINUX MAC : platform/win = FAIL CRASH PASS
@@ -2650,41 +2650,41 @@ BUGCR90669 LINUX : svg/as-background-image/svg-as-background-5.html = IMAGE
 //
 
 // We only maintain pixel GPU baselines for Snow Leopard
-WONTFIX GPU LEOPARD : media = IMAGE PASS
+WONTFIX GPU GPU-CG LEOPARD : media = IMAGE PASS
 
 // Will need windows and linux baselines
 
-BUGWK47923 GPU : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
+BUGWK47923 GPU GPU-CG : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 
 // Chromium does not support PDF content in <img> tags.
 WONTFIX GPU WIN LINUX : compositing/color-matching/pdf-image-match.html = IMAGE+TEXT
-WONTFIX GPU MAC : compositing/color-matching/pdf-image-match.html = IMAGE
-WONTFIX GPU : compositing/images/direct-pdf-image.html = IMAGE
+WONTFIX GPU GPU-CG MAC : compositing/color-matching/pdf-image-match.html = IMAGE
+WONTFIX GPU GPU-CG : compositing/images/direct-pdf-image.html = IMAGE
 
 // Chromium does not support PDF or plugin content in layers right now.
 BUGWK47925 LINUX WIN GPU : compositing/plugins/composited-plugin.html = IMAGE+TEXT
-BUGWK47925 MAC GPU : compositing/plugins/composited-plugin.html = IMAGE+TEXT
-BUGWK47925 MAC GPU : compositing/plugins/small-to-large-composited-plugin.html = TEXT
+BUGWK47925 MAC GPU GPU-CG : compositing/plugins/composited-plugin.html = IMAGE+TEXT
+BUGWK47925 MAC GPU GPU-CG : compositing/plugins/small-to-large-composited-plugin.html = TEXT
 
 BUGWK47949 LINUX WIN GPU : compositing/reflections/nested-reflection-anchor-point.html = IMAGE+TEXT
-BUGWK47949 MAC GPU : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
+BUGWK47949 MAC GPU GPU-CG : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 BUGWK47949 LINUX WIN GPU : compositing/reflections/reflection-opacity.html = IMAGE+TEXT
-BUGWK47949 MAC GPU : compositing/reflections/reflection-opacity.html = IMAGE
+BUGWK47949 MAC GPU GPU-CG : compositing/reflections/reflection-opacity.html = IMAGE
 
 // Flaky because these are a poorly written tests. Need dino's new animation API
-BUGWK54306 GPU : compositing/reflections/animation-inside-reflection.html = PASS IMAGE IMAGE+TEXT
-BUGWK54306 GPU : compositing/reflections/nested-reflection-animated.html = PASS IMAGE
+BUGWK54306 GPU GPU-CG : compositing/reflections/animation-inside-reflection.html = PASS IMAGE IMAGE+TEXT
+BUGWK54306 GPU GPU-CG : compositing/reflections/nested-reflection-animated.html = PASS IMAGE
 
 // These tests are too slow with our MESA backend.  We can re-enable when we have
 // bots running tests on real hardware.
-BUGWK49629 SKIP GPU : platform/chromium/compositing/lots-of-img-layers.html = PASS
-BUGWK49629 SKIP GPU : platform/chromium/compositing/lots-of-img-layers-with-opacity.html = PASS
-BUGWK49629 SKIP GPU : compositing/iframes/page-cache-layer-tree.html = PASS
+BUGWK49629 SKIP GPU GPU-CG : platform/chromium/compositing/lots-of-img-layers.html = PASS
+BUGWK49629 SKIP GPU GPU-CG : platform/chromium/compositing/lots-of-img-layers-with-opacity.html = PASS
+BUGWK49629 SKIP GPU GPU-CG : compositing/iframes/page-cache-layer-tree.html = PASS
 
 BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
 
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
-BUGCR74979 SKIP MAC GPU : media/video-canvas-alpha.html = IMAGE
+BUGCR74979 SKIP MAC GPU GPU-CG : media/video-canvas-alpha.html = IMAGE
 
 BUGWK67116 GPU DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
 
@@ -2692,7 +2692,7 @@ BUGWK67116 GPU DEBUG : compositing/layer-creation/overflow-scroll-overlap.html =
 // that needs to be implemented for GPU
 BUGCR94918 GPU SKIP : media/media-document-audio-repaint.html = IMAGE+TEXT IMAGE
 
-BUGWK55968 MAC GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT
+BUGWK55968 MAC GPU GPU-CG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT
 BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
 // Flaky scrollbar issues
@@ -3125,7 +3125,7 @@ BUGDPRANKE LINUX WIN : animations/change-one-anim.html = PASS TEXT
 // pulled in from downstream during webkit roll 84350:84431
 BUGCASEQ LINUX WIN : editing/selection/select-from-textfield-outwards.html = IMAGE+TEXT
 BUGCASEQ LINUX WIN : fast/forms/input-text-drag-down.html = IMAGE+TEXT
-BUGCASEQ LEOPARD CPU : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGCASEQ LEOPARD CPU CPU-CG : fast/canvas/image-object-in-canvas.html = IMAGE
 
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = PASS TEXT
 BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = PASS CRASH
@@ -3193,10 +3193,10 @@ BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TI
 BUGWK59642 WIN : editing/input/scroll-viewport-page-up-down.html = PASS TEXT
 
 // These seem to be minor debug-only differences.
-BUGWK60135 SNOWLEOPARD CPU : css2.1/t1508-c527-font-05-b.html = PASS IMAGE+TEXT
-BUGWK60135 SNOWLEOPARD CPU : css2.1/t1508-c527-font-10-c.html = PASS IMAGE+TEXT
-BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-line-breaks.html = PASS IMAGE
-BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-baht-space.html = PASS IMAGE+TEXT
+BUGWK60135 SNOWLEOPARD CPU CPU-CG : css2.1/t1508-c527-font-05-b.html = PASS IMAGE+TEXT
+BUGWK60135 SNOWLEOPARD CPU CPU-CG : css2.1/t1508-c527-font-10-c.html = PASS IMAGE+TEXT
+BUGWK60135 SNOWLEOPARD DEBUG CPU CPU-CG : fast/text/international/thai-line-breaks.html = PASS IMAGE
+BUGWK60135 SNOWLEOPARD DEBUG CPU CPU-CG : fast/text/international/thai-baht-space.html = PASS IMAGE+TEXT
 BUGWK60135 SNOWLEOPARD : css1/font_properties/font.html = PASS IMAGE+TEXT
 
 BUGWK60133 DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = PASS TIMEOUT
@@ -3438,13 +3438,13 @@ BUGWK59921 SLOW LINUX WIN : inspector/debugger/debugger-scripts.html = PASS TEXT
 BUGCR86359 WIN : fast/dom/DeviceOrientation/add-listener-from-callback.html = PASS CRASH
 
 // Broken because Chromium disables compositing for RTL pages
-BUGWK56591 GPU : compositing/rtl/rtl-absolute-overflow-scrolled.html = TEXT
-BUGWK56591 GPU : compositing/rtl/rtl-absolute-overflow.html = TEXT
-BUGWK56591 GPU : compositing/rtl/rtl-absolute.html = TEXT
-BUGWK56591 GPU : compositing/rtl/rtl-fixed-overflow-scrolled.html = TEXT
-BUGWK56591 GPU : compositing/rtl/rtl-fixed-overflow.html = TEXT
-BUGWK56591 GPU : compositing/rtl/rtl-fixed.html = TEXT
-BUGWK56591 GPU : compositing/rtl/rtl-relative.html = TEXT
+BUGWK56591 GPU GPU-CG : compositing/rtl/rtl-absolute-overflow-scrolled.html = TEXT
+BUGWK56591 GPU GPU-CG : compositing/rtl/rtl-absolute-overflow.html = TEXT
+BUGWK56591 GPU GPU-CG : compositing/rtl/rtl-absolute.html = TEXT
+BUGWK56591 GPU GPU-CG : compositing/rtl/rtl-fixed-overflow-scrolled.html = TEXT
+BUGWK56591 GPU GPU-CG : compositing/rtl/rtl-fixed-overflow.html = TEXT
+BUGWK56591 GPU GPU-CG : compositing/rtl/rtl-fixed.html = TEXT
+BUGWK56591 GPU GPU-CG : compositing/rtl/rtl-relative.html = TEXT
 
 BUGWK63033 : svg/custom/absolute-root-position-masking.xhtml = IMAGE
 BUGWK63036 MAC : svg/dom/SVGTransformList-basics.xhtml = IMAGE

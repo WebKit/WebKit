@@ -45,6 +45,8 @@ class ChromiumGpuTest(unittest.TestCase):
         if sys.platform != 'darwin':
             return
         self.assert_port_works('chromium-gpu-cg-mac')
+        self.assert_port_works('chromium-gpu-mac')
+        # For now, chromium-gpu on Mac defaults to the chromium-gpu-cg-mac port.
         self.assert_port_works('chromium-gpu-cg-mac', 'chromium-gpu', 'darwin')
 
     def integration_test_chromium_gpu_win(self):
@@ -124,6 +126,12 @@ class ChromiumGpuTest(unittest.TestCase):
         port = factory.get('chromium-gpu-cg-mac-snowleopard')
         self.assertEquals(port.name(), 'chromium-gpu-cg-mac-snowleopard')
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-cg-mac'))
+
+    def test_graphics_type(self):
+        port = factory.get('chromium-gpu-cg-mac')
+        self.assertEquals('gpu-cg', port.graphics_type())
+        port = factory.get('chromium-gpu-mac')
+        self.assertEquals('gpu', port.graphics_type())
 
 
 if __name__ == '__main__':

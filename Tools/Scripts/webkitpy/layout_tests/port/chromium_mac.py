@@ -101,6 +101,10 @@ class ChromiumMacPort(chromium.ChromiumPort):
             self._version = port_name[port_name.index('-mac-') + len('-mac-'):]
             assert self._version in self.SUPPORTED_OS_VERSIONS
         self._using_core_graphics = port_name.find('-cg-') != -1
+        if self._using_core_graphics:
+            self._graphics_type = 'cpu-cg'
+        else:
+            self._graphics_type = 'cpu'
         self._operating_system = 'mac'
 
     def baseline_search_path(self):
