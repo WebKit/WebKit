@@ -1448,6 +1448,7 @@ CodeBlock::~CodeBlock()
     }
 #endif
     
+#if ENABLE(JIT)
     // We may be destroyed before any CodeBlocks that refer to us are destroyed.
     // Consider that two CodeBlocks become unreachable at the same time. There
     // is no guarantee about the order in which the CodeBlocks are destroyed.
@@ -1461,7 +1462,6 @@ CodeBlock::~CodeBlock()
     // m_incomingCalls linked lists through the execution of the ~CallLinkInfo
     // destructors.
 
-#if ENABLE(JIT)
     for (size_t size = m_structureStubInfos.size(), i = 0; i < size; ++i)
         m_structureStubInfos[i].deref();
 #endif // ENABLE(JIT)
