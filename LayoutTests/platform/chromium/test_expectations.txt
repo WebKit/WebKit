@@ -464,7 +464,7 @@ WONTFIX SKIP : fast/frames/cross-site-this.html = FAIL
 WONTFIX SKIP : fast/js/reparsing-semicolon-insertion.html = FAIL
 
 // Rubber-banding is currently a Mac only feature.
-WONTFIX WIN LINUX : platform/chromium/rubberbanding = IMAGE
+WONTFIX WIN LINUX : platform/chromium/rubberbanding = FAIL
 
 // -----------------------------------------------------------------
 // LIGHTTPD
