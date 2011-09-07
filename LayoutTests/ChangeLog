@@ -1,3 +1,24 @@
+2011-09-07  W. James MacLean  <wjmaclean@chromium.org>
+
+        Eliminate motion jitter in animated, blurred SVG image
+        https://bugs.webkit.org/show_bug.cgi?id=67503
+
+        Fixes filter shear-free transform applied to SVG images.
+
+        Reviewed by Dirk Schulze.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-linux/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-linux/svg/batik/text/textFeatures-expected.txt: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-linux/svg/filters/filterRes-expected.png:
+        * platform/chromium-linux/svg/filters/filterRes-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png: Added.
+        * svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.txt: Added.
+        * svg/W3C-SVG-1.1-SE/filters-image-05-f.svg: Added.
+
 2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         css2.1/t090204-display-change-01-b-ao.html is not attaching event listener properly

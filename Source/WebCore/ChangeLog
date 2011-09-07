@@ -1,3 +1,26 @@
+2011-09-07  W. James MacLean  <wjmaclean@chromium.org>
+
+        Eliminate motion jitter in animated, blurred SVG image
+        https://bugs.webkit.org/show_bug.cgi?id=67503
+
+        Fixes filter shear-free transform applied to SVG images.
+
+        In applyResource() the shearFreeAbsoluteTransform is applied to the drawing region,
+        which is based on the object bounding box (which doesn't move). For a rotation
+        around the centre of the box, this should really just be the identity matrix,
+        since the BB should neither change size nor location. So really, we're just interested
+        in the scale change of the BB here, and not in moving it.
+
+        This impacts how slices are extracted, and affects the {x|y}Mid and {x|y}Max extractions
+        for vertical and horizontal slices, so the test verifies these.
+
+        Reviewed by Dirk Schulze.
+
+        Test: svg/W3C-SVG-1.1-SE/filters-image-05-f.svg
+
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+
 2011-09-03  Robert Hogan  <robert@webkit.org>
 
         Elements with position:absolute don't move to correct position after images load

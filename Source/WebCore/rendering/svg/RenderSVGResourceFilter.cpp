@@ -171,7 +171,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
         return false;
 
     // Eliminate shear of the absolute transformation matrix, to be able to produce unsheared tile images for feTile.
-    filterData->shearFreeAbsoluteTransform = AffineTransform(absoluteTransform.xScale(), 0, 0, absoluteTransform.yScale(), absoluteTransform.e(), absoluteTransform.f());
+    filterData->shearFreeAbsoluteTransform = AffineTransform(absoluteTransform.xScale(), 0, 0, absoluteTransform.yScale(), 0, 0);
 
     // Determine absolute boundaries of the filter and the drawing region.
     FloatRect absoluteFilterBoundaries = filterData->shearFreeAbsoluteTransform.mapRect(filterData->boundaries);
