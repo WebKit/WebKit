@@ -1,3 +1,41 @@
+2011-08-29  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt][WK2] Rename SGAgent to SGUpdateQueue to sharpen it's responsability.
+        https://bugs.webkit.org/show_bug.cgi?id=67122
+
+        Reviewed by Tor Arne Vestbø.
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::updatePaintNode):
+        (QTouchWebPagePrivate::QTouchWebPagePrivate):
+        * UIProcess/API/qt/qtouchwebpage_p.h:
+        * UIProcess/qt/SGUpdateQueue.cpp: Renamed from Source/WebKit2/UIProcess/qt/SGAgent.cpp.
+        (WebKit::NodeUpdateCreateTile::NodeUpdateCreateTile):
+        (WebKit::NodeUpdateRemoveTile::NodeUpdateRemoveTile):
+        (WebKit::NodeUpdateSetBackBuffer::NodeUpdateSetBackBuffer):
+        (WebKit::NodeUpdateSwapTileBuffers::NodeUpdateSwapTileBuffers):
+        (WebKit::SGUpdateQueue::SGUpdateQueue):
+        (WebKit::SGUpdateQueue::createTileNode):
+        (WebKit::SGUpdateQueue::removeTileNode):
+        (WebKit::SGUpdateQueue::setNodeBackBuffer):
+        (WebKit::SGUpdateQueue::swapTileBuffers):
+        (WebKit::SGUpdateQueue::applyUpdates):
+        (WebKit::SGUpdateQueue::getScaleNode):
+        * UIProcess/qt/SGUpdateQueue.h: Renamed from Source/WebKit2/UIProcess/qt/SGAgent.h.
+        (WebKit::SGUpdateQueue::isSwapPending):
+        (WebKit::NodeUpdate::NodeUpdate):
+        (WebKit::NodeUpdate::~NodeUpdate):
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp:
+        (WebKit::TiledDrawingAreaProxy::updateWebView):
+        (WebKit::TiledDrawingAreaProxy::createTile):
+        (WebKit::TiledDrawingAreaProxy::updateTile):
+        (WebKit::TiledDrawingAreaProxy::didRenderFrame):
+        (WebKit::TiledDrawingAreaProxy::removeTile):
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::sceneGraphUpdateQueue):
+        * UIProcess/qt/TouchViewInterface.h:
+        * WebKit2.pro:
+
 2011-09-07  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Unreviewed suppression of an unnecessary debug output. 

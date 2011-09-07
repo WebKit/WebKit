@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "SGAgent.h"
+#include "SGUpdateQueue.h"
 
 #include "PassOwnPtr.h"
 #include "SGTileNode.h"
@@ -65,7 +65,7 @@ struct NodeUpdateSwapTileBuffers : public NodeUpdate {
     { }
 };
 
-SGAgent::SGAgent(QSGItem* item)
+SGUpdateQueue::SGUpdateQueue(QSGItem* item)
     : item(item)
     , lastScale(0)
     , lastScaleNode(0)
@@ -74,37 +74,37 @@ SGAgent::SGAgent(QSGItem* item)
 {
 }
 
-int SGAgent::createTileNode(float scale)
+int SGUpdateQueue::createTileNode(float scale)
 {
     int nodeID = nextNodeID++;
-    nodeUpdatesQueue.append(adoptPtr(new NodeUpdateCreateTile(nodeID, scale)));
+    nodeUpdateQueue.append(adoptPtr(new NodeUpdateCreateTile(nodeID, scale)));
     item->update();
     return nodeID;
 }
 
-void SGAgent::removeTileNode(int nodeID)
+void SGUpdateQueue::removeTileNode(int nodeID)
 {
-    nodeUpdatesQueue.append(adoptPtr(new NodeUpdateRemoveTile(nodeID)));
+    nodeUpdateQueue.append(adoptPtr(new NodeUpdateRemoveTile(nodeID)));
     item->update();
 }
 
-void SGAgent::setNodeBackBuffer(int nodeID, const QImage& backBuffer, const QRect& sourceRect, const QRect& targetRect)
+void SGUpdateQueue::setNodeBackBuffer(int nodeID, const QImage& backBuffer, const QRect& sourceRect, const QRect& targetRect)
 {
-    nodeUpdatesQueue.append(adoptPtr(new NodeUpdateSetBackBuffer(nodeID, backBuffer, sourceRect, targetRect)));
+    nodeUpdateQueue.append(adoptPtr(new NodeUpdateSetBackBuffer(nodeID, backBuffer, sourceRect, targetRect)));
     item->update();
 }
 
-void SGAgent::swapTileBuffers()
+void SGUpdateQueue::swapTileBuffers()
 {
-    nodeUpdatesQueue.append(adoptPtr(new NodeUpdateSwapTileBuffers()));
+    nodeUpdateQueue.append(adoptPtr(new NodeUpdateSwapTileBuffers()));
     m_isSwapPending = true;
     item->update();
 }
 
-void SGAgent::updatePaintNode(QSGNode* itemNode)
+void SGUpdateQueue::applyUpdates(QSGNode* itemNode)
 {
-    while (!nodeUpdatesQueue.isEmpty()) {
-        OwnPtr<NodeUpdate> nodeUpdate(nodeUpdatesQueue.takeFirst());
+    while (!nodeUpdateQueue.isEmpty()) {
+        OwnPtr<NodeUpdate> nodeUpdate(nodeUpdateQueue.takeFirst());
         switch (nodeUpdate->type) {
         case NodeUpdate::CreateTile: {
             NodeUpdateCreateTile* createTileUpdate = static_cast<NodeUpdateCreateTile*>(nodeUpdate.get());
@@ -148,7 +148,7 @@ void SGAgent::updatePaintNode(QSGNode* itemNode)
     }
 }
 
-QSGNode* SGAgent::getScaleNode(float scale, QSGNode* itemNode)
+QSGNode* SGUpdateQueue::getScaleNode(float scale, QSGNode* itemNode)
 {
     if (scale == lastScale)
         return lastScaleNode;

@@ -18,12 +18,12 @@
  *
  */
 
-#ifndef SGAgent_h
-#define SGAgent_h
+#ifndef SGUpdateQueue_h
+#define SGUpdateQueue_h
 
 #include "Deque.h"
-#include "OwnPtr.h"
 #include "HashMap.h"
+#include "OwnPtr.h"
 
 class QImage;
 class QRect;
@@ -38,9 +38,9 @@ class PageNode;
 class SGTileNode;
 
 // Takes care of taking update requests then fulfilling them asynchronously on the scene graph thread.
-class SGAgent {
+class SGUpdateQueue {
 public:
-    SGAgent(QSGItem*);
+    SGUpdateQueue(QSGItem*);
 
     int createTileNode(float scale);
     void removeTileNode(int nodeID);
@@ -48,14 +48,14 @@ public:
     void swapTileBuffers();
 
     // Called by the QSGItem.
-    void updatePaintNode(QSGNode* itemNode);
+    void applyUpdates(QSGNode* itemNode);
     bool isSwapPending() const { return m_isSwapPending; }
 
 private:
     QSGNode* getScaleNode(float scale, QSGNode* itemNode);
 
     QSGItem* item;
-    Deque<OwnPtr<NodeUpdate> > nodeUpdatesQueue;
+    Deque<OwnPtr<NodeUpdate> > nodeUpdateQueue;
     HashMap<int, SGTileNode*> nodes;
     float lastScale;
     QSGNode* lastScaleNode;
@@ -79,4 +79,4 @@ struct NodeUpdate {
 
 }
 
-#endif /* SGAgent_h */
+#endif /* SGUpdateQueue_h */

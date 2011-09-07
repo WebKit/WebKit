@@ -40,9 +40,9 @@ void TouchViewInterface::didFindZoomableArea(const QPoint&, const QRect&)
 {
 }
 
-SGAgent* TouchViewInterface::sceneGraphAgent() const
+SGUpdateQueue* TouchViewInterface::sceneGraphUpdateQueue() const
 {
-    return &m_pageView->d->sgAgent;
+    return &m_pageView->d->sgUpdateQueue;
 }
 
 void TouchViewInterface::setViewNeedsDisplay(const QRect&)

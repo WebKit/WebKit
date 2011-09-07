@@ -33,14 +33,14 @@ class ViewportArguments;
 
 namespace WebKit {
 
-class SGAgent;
+class SGUpdateQueue;
 
 class TouchViewInterface : public ViewInterface
 {
 public:
     TouchViewInterface(QTouchWebView* viewportView, QTouchWebPage* pageView);
 
-    SGAgent* sceneGraphAgent() const;
+    SGUpdateQueue* sceneGraphUpdateQueue() const;
 
 private:
     /* Implementation of ViewInterface */

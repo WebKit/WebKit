@@ -72,16 +72,16 @@ QSGNode* QTouchWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     if (!oldNode)
         oldNode = new QSGNode;
 
-    // A swap is on the queue, and SGAgent::updatePaintNode will empty the queue, so we know that
+    // A swap is on the queue, and SGUpdateQueue::applyUpdates will empty the queue, so we know that
     // the old frame's buffers won't be used anymore (for buffers used all the way from the web process
     // to the graphic card). Notify the web process that it can render the next frame.
-    if (d->sgAgent.isSwapPending())
+    if (d->sgUpdateQueue.isSwapPending())
         // The UI thread is currently locked and calling this from the rendering thread didn't crash
         // yet, so I'm assuming that this is OK. Else we have to wait until the SG update is over
         // and the UI thread returns to the event loop picking our event before it can be sent to
         // the web process. This would increase our chances of missing a frame.
         d->page->renderNextFrame();
-    d->sgAgent.updatePaintNode(oldNode);
+    d->sgUpdateQueue.applyUpdates(oldNode);
 
     // QSGItem takes ownership of this return value and it's children between and after updatePaintNode calls.
     return oldNode;
@@ -155,7 +155,7 @@ QTouchWebPagePrivate::QTouchWebPagePrivate(QTouchWebPage* view)
     : q(view)
     , page(0)
     , navigationController(0)
-    , sgAgent(view)
+    , sgUpdateQueue(view)
 {
 }
 

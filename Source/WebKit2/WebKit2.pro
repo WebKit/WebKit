@@ -251,7 +251,7 @@ HEADERS += \
     UIProcess/qt/qwkhistory_p.h \
     UIProcess/qt/qwkpreferences.h \
     UIProcess/qt/qwkpreferences_p.h \
-    UIProcess/qt/SGAgent.h \
+    UIProcess/qt/SGUpdateQueue.h \
     UIProcess/qt/SGTileNode.h \
     UIProcess/qt/ViewInterface.h \
     UIProcess/qt/ViewportInteractionEngine.h \
@@ -481,7 +481,7 @@ SOURCES += \
     UIProcess/qt/QtWebPageProxy.cpp \
     UIProcess/qt/qwkhistory.cpp \
     UIProcess/qt/qwkpreferences.cpp \
-    UIProcess/qt/SGAgent.cpp \
+    UIProcess/qt/SGUpdateQueue.cpp \
     UIProcess/qt/SGTileNode.cpp \
     UIProcess/qt/TiledDrawingAreaProxyQt.cpp \
     UIProcess/qt/TextCheckerQt.cpp \

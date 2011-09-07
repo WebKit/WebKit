@@ -21,7 +21,7 @@
 #ifndef qtouchwebpage_p_h
 #define qtouchwebpage_p_h
 
-#include "SGAgent.h"
+#include "SGUpdateQueue.h"
 #include "qtouchwebpage.h"
 #include "qwebnavigationcontroller.h"
 #include <QMenu>
@@ -45,7 +45,7 @@ public:
     QTouchWebPage* const q;
     QTouchWebPageProxy* page;
     QWebNavigationController* navigationController;
-    WebKit::SGAgent sgAgent;
+    WebKit::SGUpdateQueue sgUpdateQueue;
 };
 
 #endif /* qtouchwebpage_p_h */
