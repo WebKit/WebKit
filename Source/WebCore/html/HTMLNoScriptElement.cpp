@@ -37,6 +37,9 @@ inline HTMLNoScriptElement::HTMLNoScriptElement(const QualifiedName& tagName, Do
     ASSERT(hasTagName(noscriptTag));
 
     setHasCustomWillOrDidRecalcStyle();
+#if ENABLE(XHTMLMP)
+    setHasCustomStyleForRenderer();
+#endif
 }
 
 PassRefPtr<HTMLNoScriptElement> HTMLNoScriptElement::create(const QualifiedName& tagName, Document* document)
@@ -75,6 +78,15 @@ bool HTMLNoScriptElement::willRecalcStyle(StyleChange)
     }
     return false;
 }
+    
+#if ENABLE(XHTMLMP)
+PassRefPtr<RenderStyle> HTMLNoScriptElement::customStyleForRenderer()
+{
+    // noscript needs the display property protected - it's a special case
+    // FIXME: Why?
+    return document()->styleSelector()->styleForElement(static_cast<Element*>(this), 0, false/*allowSharing*/);
+}
+#endif
 
 bool HTMLNoScriptElement::childShouldCreateRenderer(Node*) const
 {

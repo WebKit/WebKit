@@ -296,13 +296,15 @@ RenderObject* NodeRendererFactory::createRendererAndStyle()
     if (!m_context.shouldCreateRenderer())
         return 0;
 
-    m_context.setStyle(node->styleForRenderer(m_context));
+    Element* element = node->isElementNode() ? toElement(node) : 0;
+    if (element)
+        m_context.setStyle(element->styleForRenderer());
+    else if (RenderObject* parentRenderer = m_context.parentRenderer())
+        m_context.setStyle(parentRenderer->style());
+
     if (!node->rendererIsNeeded(m_context)) {
-        if (node->isElementNode()) {
-            Element* element = toElement(node);
-            if (m_context.style()->affectedByEmpty())
-                element->setStyleAffectedByEmpty();
-        }
+        if (element && m_context.style()->affectedByEmpty())
+            element->setStyleAffectedByEmpty();
         return 0;
     }
 

@@ -1,3 +1,64 @@
+2011-09-07  Antti Koivisto  <antti@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67634
+        De-virtualize styleForRenderer()
+
+        Reviewed by Sam Weinig.
+        
+        This has performance and code clarity benefits.
+
+        - move styleForRenderer from Node to Element
+        - get rid of the now unnecessary NodeRenderingContext parameter
+        - de-virtualize, add virtual customStyleForRenderer()
+
+        * dom/Element.cpp:
+        (WebCore::Element::customStyleForRenderer):
+        (WebCore::Element::styleForRenderer):
+        (WebCore::Element::recalcStyle):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        (WebCore::Node::hasCustomWillOrDidRecalcStyle):
+        (WebCore::Node::setHasCustomWillOrDidRecalcStyle):
+        (WebCore::Node::hasCustomStyleForRenderer):
+        (WebCore::Node::setHasCustomStyleForRenderer):
+        
+            Move styleForRenderer, add customStyleForRenderer, add a bit.
+        
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRendererFactory::createRendererAndStyle): 
+        
+            Handle non-element case separately since styleForRenderer was moved from Node to Element.
+
+        * html/HTMLNoScriptElement.cpp:
+        (WebCore::HTMLNoScriptElement::HTMLNoScriptElement):
+        (WebCore::HTMLNoScriptElement::customStyleForRenderer):
+        * html/HTMLNoScriptElement.h:
+        
+            Move a strange XHTMLMP special case to where it belongs.
+
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::attach):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::attach):
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::textWithDirection):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::TextControlInnerElement):
+        (WebCore::TextControlInnerElement::customStyleForRenderer):
+        (WebCore::TextControlInnerTextElement::TextControlInnerTextElement):
+        (WebCore::TextControlInnerTextElement::customStyleForRenderer):
+        * html/shadow/TextControlInnerElements.h:
+        * rendering/svg/SVGShadowTreeElements.cpp:
+        (WebCore::SVGShadowTreeContainerElement::customStyleForRenderer):
+        * rendering/svg/SVGShadowTreeElements.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement):
+        (WebCore::SVGElement::customStyleForRenderer):
+        * svg/SVGElement.h:
+        
+            Adopt customStyleForRenderer().
+
 2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Change event is not fired for input[type=number] when the user reverts a change made by script
@@ -47,7 +108,7 @@
         * css/SelectorChecker.cpp:
         (WebCore::SelectorChecker::determineLinkStateSlowCase):
 
-2011-09-06  Antti Koivisto  <antti@apple.com>
+2011-09-07  Antti Koivisto  <antti@apple.com>
 
         Move SelectorChecker out from CSSStyleSelector scope
         https://bugs.webkit.org/show_bug.cgi?id=67648

@@ -455,7 +455,6 @@ public:
 
     virtual void willRemove();
     void createRendererIfNeeded();
-    virtual PassRefPtr<RenderStyle> styleForRenderer(const NodeRenderingContext&);
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual bool childShouldCreateRenderer(Node*) const { return true; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
@@ -615,7 +614,8 @@ private:
         StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1),
 
         SelfOrAncestorHasDirAutoFlag = 1 << 27,
-        HasCustomWillOrDidRecalcStyle = 1 << 28,
+        HasCustomWillOrDidRecalcStyleFlag = 1 << 28,
+        HasCustomStyleForRendererFlag = 1 << 29,
 
 #if ENABLE(SVG)
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag
@@ -624,7 +624,7 @@ private:
 #endif
     };
 
-    // 3 bits remaining
+    // 2 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
@@ -657,8 +657,11 @@ protected:
     NodeRareData* ensureRareData();
     void clearRareData();
 
-    bool hasCustomWillOrDidRecalcStyle() const { return getFlag(HasCustomWillOrDidRecalcStyle); }
-    void setHasCustomWillOrDidRecalcStyle() { setFlag(true, HasCustomWillOrDidRecalcStyle); }
+    bool hasCustomWillOrDidRecalcStyle() const { return getFlag(HasCustomWillOrDidRecalcStyleFlag); }
+    void setHasCustomWillOrDidRecalcStyle() { setFlag(true, HasCustomWillOrDidRecalcStyleFlag); }
+    
+    bool hasCustomStyleForRenderer() const { return getFlag(HasCustomStyleForRendererFlag); }
+    void setHasCustomStyleForRenderer() { setFlag(true, HasCustomStyleForRendererFlag); } 
 
 private:
     // Do not use this method to change the document of a node until after the node has been

@@ -39,7 +39,7 @@ public:
     bool containerOffsetChanged() const { return m_containerOffsetChanged; }
     void setContainerOffsetChanged(bool containerOffsetChanged) { m_containerOffsetChanged = containerOffsetChanged; }
 
-    virtual PassRefPtr<RenderStyle> styleForRenderer(const NodeRenderingContext&);
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer();
 
 protected:
     SVGShadowTreeContainerElement(Document*);

@@ -51,6 +51,7 @@ using namespace HTMLNames;
 TextControlInnerElement::TextControlInnerElement(Document* document)
     : HTMLDivElement(divTag, document)
 {
+    setHasCustomStyleForRenderer();
 }
 
 PassRefPtr<TextControlInnerElement> TextControlInnerElement::create(Document* document)
@@ -58,7 +59,7 @@ PassRefPtr<TextControlInnerElement> TextControlInnerElement::create(Document* do
     return adoptRef(new TextControlInnerElement(document));
 }
 
-PassRefPtr<RenderStyle> TextControlInnerElement::styleForRenderer(const NodeRenderingContext&)
+PassRefPtr<RenderStyle> TextControlInnerElement::customStyleForRenderer()
 {
     RenderTextControlSingleLine* parentRenderer = toRenderTextControlSingleLine(shadowAncestorNode()->renderer());
     return parentRenderer->createInnerBlockStyle(parentRenderer->style());
@@ -69,6 +70,7 @@ PassRefPtr<RenderStyle> TextControlInnerElement::styleForRenderer(const NodeRend
 inline TextControlInnerTextElement::TextControlInnerTextElement(Document* document)
     : HTMLDivElement(divTag, document)
 {
+    setHasCustomStyleForRenderer();
 }
 
 PassRefPtr<TextControlInnerTextElement> TextControlInnerTextElement::create(Document* document)
@@ -104,7 +106,7 @@ RenderObject* TextControlInnerTextElement::createRenderer(RenderArena* arena, Re
     return new (arena) RenderTextControlInnerBlock(this, multiLine);
 }
 
-PassRefPtr<RenderStyle> TextControlInnerTextElement::styleForRenderer(const NodeRenderingContext&)
+PassRefPtr<RenderStyle> TextControlInnerTextElement::customStyleForRenderer()
 {
     RenderTextControl* parentRenderer = toRenderTextControl(shadowAncestorNode()->renderer());
     return parentRenderer->createInnerTextStyle(parentRenderer->style());

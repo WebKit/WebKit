@@ -1464,21 +1464,6 @@ void Node::createRendererIfNeeded()
     NodeRendererFactory(this).createRendererIfNeeded();
 }
 
-PassRefPtr<RenderStyle> Node::styleForRenderer(const NodeRenderingContext& context)
-{
-    if (isElementNode()) {
-        bool allowSharing = true;
-#if ENABLE(XHTMLMP)
-        // noscript needs the display property protected - it's a special case
-        allowSharing = localName() != HTMLNames::noscriptTag.localName();
-#endif
-        return document()->styleSelector()->styleForElement(static_cast<Element*>(this), 0, allowSharing);
-    }
-    if (RenderObject* renderer = context.parentRenderer())
-        return renderer->style();
-    return 0;
-}
-
 bool Node::rendererIsNeeded(const NodeRenderingContext& context)
 {
     return (document()->documentElement() == this) || (context.style()->display() != NONE);

@@ -98,7 +98,7 @@ void SVGShadowTreeRootElement::clearSVGShadowHost()
     setParent(0);
 }
 
-PassRefPtr<RenderStyle> SVGShadowTreeContainerElement::styleForRenderer(const NodeRenderingContext&)
+PassRefPtr<RenderStyle> SVGShadowTreeContainerElement::customStyleForRenderer()
 {
     return document()->styleSelector()->styleForElement(this, 0, true/*allowSharing*/);
 }

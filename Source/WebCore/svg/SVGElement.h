@@ -89,7 +89,7 @@ public:
 
     virtual void updateAnimatedSVGAttribute(const QualifiedName&) const;
  
-    virtual PassRefPtr<RenderStyle> styleForRenderer(const NodeRenderingContext&);
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer();
 
     static void synchronizeRequiredFeatures(void* contextElement);
     static void synchronizeRequiredExtensions(void* contextElement);

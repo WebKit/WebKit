@@ -90,7 +90,7 @@ void HTMLOptGroupElement::recalcSelectOptions()
 void HTMLOptGroupElement::attach()
 {
     if (parentNode()->renderStyle())
-        setRenderStyle(styleForRenderer(NodeRenderingContext(this, 0)));
+        setRenderStyle(styleForRenderer());
     HTMLFormControlElement::attach();
 }
 

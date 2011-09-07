@@ -58,6 +58,7 @@ using namespace HTMLNames;
 SVGElement::SVGElement(const QualifiedName& tagName, Document* document)
     : StyledElement(tagName, document, CreateSVGElement)
 {
+    setHasCustomStyleForRenderer();
 }
 
 PassRefPtr<SVGElement> SVGElement::create(const QualifiedName& tagName, Document* document)
@@ -426,12 +427,12 @@ void SVGElement::synchronizeSystemLanguage(void* contextElement)
     static_cast<SVGElement*>(contextElement)->synchronizeSystemLanguage();
 }
 
-PassRefPtr<RenderStyle> SVGElement::styleForRenderer(const NodeRenderingContext& context)
+PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
 {
     if (correspondingElement())
         return document()->styleSelector()->styleForElement(correspondingElement(), parentNode() ? parentNode()->renderer()->style() : 0, false/*allowSharing*/);
 
-    return StyledElement::styleForRenderer(context);
+    return document()->styleSelector()->styleForElement(static_cast<Element*>(this), 0, true);
 }
 
 }

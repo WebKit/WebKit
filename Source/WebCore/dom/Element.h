@@ -359,6 +359,8 @@ public:
     virtual bool isSpellCheckingEnabled() const;
 
     PassRefPtr<WebKitAnimationList> webkitGetAnimations() const;
+    
+    PassRefPtr<RenderStyle> styleForRenderer();
 
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
@@ -375,6 +377,7 @@ protected:
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
     virtual bool willRecalcStyle(StyleChange) { return true; }
     virtual void didRecalcStyle(StyleChange) { }
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer();
 
     // The implementation of Element::attributeChanged() calls the following two functions.
     // They are separated to allow a different flow of control in StyledElement::attributeChanged().

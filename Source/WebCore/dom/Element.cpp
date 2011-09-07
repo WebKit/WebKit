@@ -1046,6 +1046,19 @@ bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderS
     return false;
 }
 
+PassRefPtr<RenderStyle> Element::customStyleForRenderer()
+{
+    ASSERT_NOT_REACHED(); 
+    return 0; 
+}
+
+PassRefPtr<RenderStyle> Element::styleForRenderer()
+{
+    if (hasCustomStyleForRenderer())
+        return customStyleForRenderer();
+    return document()->styleSelector()->styleForElement(static_cast<Element*>(this), 0, true/*allowSharing*/);
+}
+
 void Element::recalcStyle(StyleChange change)
 {
     if (hasCustomWillOrDidRecalcStyle()) {
@@ -1067,7 +1080,7 @@ void Element::recalcStyle(StyleChange change)
         }
     }
     if (hasParentStyle && (change >= Inherit || needsStyleRecalc())) {
-        RefPtr<RenderStyle> newStyle = styleForRenderer(NodeRenderingContext(this, 0));
+        RefPtr<RenderStyle> newStyle = styleForRenderer();
         StyleChange ch = diff(currentStyle.get(), newStyle.get());
         if (ch == Detach || !currentStyle) {
             // FIXME: The style gets computed twice by calling attach. We could do better if we passed the style along.

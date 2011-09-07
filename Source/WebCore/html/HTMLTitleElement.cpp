@@ -81,7 +81,7 @@ StringWithDirection HTMLTitleElement::textWithDirection()
     TextDirection direction = LTR;
     if (RenderStyle* style = computedStyle())
         direction = style->direction();
-    else if (RefPtr<RenderStyle> style = styleForRenderer(NodeRenderingContext(this, 0)))
+    else if (RefPtr<RenderStyle> style = styleForRenderer())
         direction = style->direction();
     return StringWithDirection(text(), direction);
 }
