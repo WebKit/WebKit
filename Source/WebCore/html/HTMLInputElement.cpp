@@ -1102,6 +1102,7 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
 
     setNeedsValidityCheck();
 
+    m_suggestedValue = String(); // updateInnerTextValue uses the suggested value.
     if (valueChanged)
         updateInnerTextValue();
 
@@ -1111,7 +1112,6 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
             setSelectionRange(max, max);
         else
             cacheSelection(max, max, SelectionHasNoDirection);
-        m_suggestedValue = String();
     }
 
     if (!valueChanged)
