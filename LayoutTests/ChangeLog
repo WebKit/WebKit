@@ -1,3 +1,30 @@
+2011-09-06  Ben Wells  <benwells@chromium.org>
+
+        Rebaseline for bug 65583 (path based border radius drawing on skia)
+        https://bugs.webkit.org/show_bug.cgi?id=67596
+
+        Reviewed by Kenneth Russell.
+
+        * fast/backgrounds/gradient-background-leakage-expected.txt: Renamed from LayoutTests/platform/gtk/fast/backgrounds/gradient-background-leakage-expected.txt.
+        * fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.txt: Renamed from LayoutTests/platform/gtk/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.txt.
+        * fast/box-shadow/spread-expected.txt: Renamed from LayoutTests/platform/gtk/fast/box-shadow/spread-expected.txt.
+        * fast/css/box-shadow-and-border-radius-expected.txt: Renamed from LayoutTests/platform/gtk/fast/css/box-shadow-and-border-radius-expected.txt.
+        * fast/css/color-leakage-expected.txt: Renamed from LayoutTests/platform/gtk/fast/css/color-leakage-expected.txt.
+        * fast/css/nested-rounded-corners-expected.txt:
+        * platform/chromium-linux-x86/fast/css/box-shadow-and-border-radius-expected.png: Added.
+        * platform/chromium-linux/css2.1/t0805-c5517-brdr-s-00-c-expected.png:
+        * platform/chromium-linux/fast/: 17 changes
+        * platform/chromium-win-vista/fast/css/box-shadow-and-border-radius-expected.png: Added.
+        * platform/chromium-win-xp/fast/css/box-shadow-and-border-radius-expected.png: Added.
+        * platform/chromium-win/css2.1/t0805-c5517-brdr-s-00-c-expected.png:
+        * platform/chromium-win/fast/: 19 changes
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png: Renamed from LayoutTests/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png.
+        * platform/gtk/fast/css/nested-rounded-corners-expected.txt: Removed.
+        * platform/mac/fast/: 5 files removed
+        * platform/mac/fast/css/nested-rounded-corners-expected.txt: Copied from LayoutTests/fast/css/nested-rounded-corners-expected.txt.
+        * platform/qt/: 6 files removed
+
 2011-09-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update chromium gpu baseline due to skia roll

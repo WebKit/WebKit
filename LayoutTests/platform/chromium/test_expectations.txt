@@ -3562,26 +3562,6 @@ BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-ag
 
 // Need new baselines due to border drawing now using the PATH_BASED_BORDER_RADIUS_DRAWING
 // code path.
-BUGWK65583 WIN LINUX : css2.1/t0805-c5517-brdr-s-00-c.html = IMAGE
-BUGWK65583 WIN LINUX : fast/backgrounds/border-radius-split-background-image.html = IMAGE
-BUGWK65583 WIN LINUX : fast/backgrounds/border-radius-split-background.html = IMAGE
-BUGWK65583 WIN LINUX : fast/backgrounds/gradient-background-leakage.html = IMAGE
-BUGWK65583 WIN LINUX : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
-BUGWK65583 WIN LINUX : fast/writing-mode/border-radius-clipping-vertical-lr.html = IMAGE
-BUGWK65583 WIN LINUX : fast/writing-mode/box-shadow-horizontal-bt.html = IMAGE
-BUGWK65583 WIN LINUX : fast/writing-mode/box-shadow-vertical-lr.html = IMAGE
-BUGWK65583 WIN LINUX : fast/writing-mode/box-shadow-vertical-rl.html = IMAGE
-BUGWK65583 WIN LINUX : fast/box-shadow/basic-shadows.html = IMAGE
-BUGWK65583 WIN LINUX : fast/box-shadow/border-radius-big.html = IMAGE
-BUGWK65583 WIN LINUX : fast/box-shadow/inset-box-shadow-radius.html = IMAGE
-BUGWK65583 WIN LINUX : fast/box-shadow/inset-box-shadows.html = IMAGE
-BUGWK65583 WIN LINUX : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
-BUGWK65583 WIN LINUX : fast/box-shadow/inset.html = IMAGE
-BUGWK65583 WIN LINUX : fast/box-shadow/spread-multiple-normal.html = IMAGE
-BUGWK65583 WIN LINUX : fast/box-shadow/spread.html = IMAGE
-BUGWK65583 WIN LINUX : fast/css/box-shadow-and-border-radius.html = IMAGE
-BUGWK65583 WIN LINUX : fast/css/color-leakage.html = IMAGE
-BUGWK65583 WIN LINUX : fast/css/nested-rounded-corners.html = IMAGE
 BUGWK65583 WIN LINUX : fast/css/text-input-with-webkit-border-radius.html = IMAGE
 BUGWK65583 WIN LINUX : fast/forms/basic-selects.html = IMAGE
 BUGWK65583 WIN LINUX : fast/forms/validation-message-appearance.html = IMAGE
@@ -3597,7 +3577,6 @@ BUGWK65583 WIN LINUX : fast/repaint/shadow-multiple-vertical.html = IMAGE
 BUGWK65583 WIN LINUX : fast/transforms/rotated-transform-affects-scrolling-1.html = IMAGE
 BUGWK65583 WIN LINUX : fast/transforms/rotated-transform-affects-scrolling-2.html = IMAGE
 BUGWK65583 WIN LINUX : fast/transforms/shadows.html = IMAGE
-
 BUGWK65583 LINUX WIN : fast/borders/border-radius-circle.html = IMAGE
 BUGWK65583 LINUX WIN : fast/borders/border-radius-groove-01.html = IMAGE
 BUGWK65583 LINUX WIN : fast/borders/border-radius-groove-02.html = IMAGE
@@ -3618,13 +3597,10 @@ BUGWK65583 LINUX WIN : fast/borders/borderRadiusDouble06.html = IMAGE
 BUGWK65583 LINUX WIN : fast/borders/borderRadiusDouble07.html = IMAGE
 BUGWK65583 LINUX WIN : fast/borders/borderRadiusDouble08.html = IMAGE
 BUGWK65583 LINUX WIN : fast/borders/borderRadiusDouble09.html = IMAGE
-
 BUGWK65583 LINUX WIN : fast/borders/mixed-border-styles-radius.html = IMAGE+TEXT
 BUGWK65583 LINUX WIN : fast/borders/mixed-border-styles-radius2.html = IMAGE+TEXT
 BUGWK65583 LINUX WIN : fast/borders/mixed-border-styles.html = IMAGE+TEXT
-
 BUGWK65583 LINUX : fast/frames/iframe-scaling-with-scroll.html = IMAGE
-
 BUGWK65583 LINUX WIN : fast/css/border-radius-non-negative.html = IMAGE
 
 // Introduced in r92298, which might cause another test crashing.
