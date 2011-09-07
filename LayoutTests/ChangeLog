@@ -1,5 +1,12 @@
 2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add Mac baseline for the test added by r94331.
+
+        * platform/mac/fast/css/focus-ring-multiline-writingmode-vertical-expected.png: Added.
+        * platform/mac/fast/css/focus-ring-multiline-writingmode-vertical-expected.txt: Added.
+
+2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
+
         Rebaseline for r94710.
 
         * fast/css/getComputedStyle/computed-style-expected.txt:
