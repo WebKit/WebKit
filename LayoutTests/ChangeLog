@@ -1,3 +1,37 @@
+2011-09-07  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        fast/dom/replaceChild.html may not test what it's supposed to test and may sometimes be flaky
+        https://bugs.webkit.org/show_bug.cgi?id=67629
+
+        Reviewed by Darin Adler.
+
+        The test is supposed to test Node.replaceChild() called from a frame.
+        However, in most cases, it's not executed because the test finishes before
+        the iframe's onload event handler. For now, the expected result is just
+        the original render tree before replaceChild(). In chance that iframe's
+        onload is executed earlier, the actual result might be different from
+        expected (that is, replaceChild() is executed and the DOM is actually changed.)
+
+        Use waitUntilDone() and notifyDone() to ensure the frame's onload handler
+        is called.
+
+        BTW changed it to a pure text test to avoid platform branches.
+
+        * fast/dom/replaceChild.html:
+        * fast/dom/replaceChild-expected.txt: Added.
+        * fast/dom/resources/replaceChildHelper.html:
+        * platform/chromium-linux/fast/dom/replaceChild-expected.png: Removed.
+        * platform/chromium-mac/fast/dom/replaceChild-expected.png: Removed.
+        * platform/chromium-win/fast/dom/replaceChild-expected.png: Removed.
+        * platform/chromium-win/fast/dom/replaceChild-expected.txt: Removed.
+        * platform/gtk/fast/dom/replaceChild-expected.png: Removed.
+        * platform/gtk/fast/dom/replaceChild-expected.txt: Removed.
+        * platform/mac-leopard/fast/dom/replaceChild-expected.png: Removed.
+        * platform/mac/fast/dom/replaceChild-expected.png: Removed.
+        * platform/mac/fast/dom/replaceChild-expected.txt: Removed.
+        * platform/qt/fast/dom/replaceChild-expected.png: Removed.
+        * platform/qt/fast/dom/replaceChild-expected.txt: Removed.
+
 2011-09-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening. Add platform specific expected results for new passing tests.

@@ -16,15 +16,21 @@
 	}
 </style>
 <script language="javascript" type="text/javascript">
+	if (window.layoutTestController) {
+		layoutTestController.waitUntilDone();
+		layoutTestController.dumpAsText();
+	}
 	function loadMenu(m){
 		var w = document.getElementById("menu_content_area");
 		w.replaceChild(m, document.getElementById("menu_import"));
+		document.body.appendChild(document.createTextNode("PASS"));
+		if (window.layoutTestController)
+			layoutTestController.notifyDone();
 	}
 </script>
 </head>
 
 <body>
-
 	<div id="menu_content_area"><iframe src="resources/replaceChildHelper.html" id="menu_import" name="menu_import" ></iframe></div>
 
 </body>
