@@ -1,3 +1,9 @@
+2011-09-07  Xiaomei Ji  <xji@chromium.org>
+
+        Rebaseline after r93935.
+
+        * platform/gtk/editing/selection/move-by-word-visually-multi-line-expected.txt:
+
 2011-09-07  Elliot Poger  <epoger@google.com>
 
         now that layout tests distinguish between Core Graphics and Skia
