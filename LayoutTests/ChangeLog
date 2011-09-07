@@ -1,5 +1,11 @@
 2011-09-06  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Update chromium gpu baseline due to skia roll
+
+        * platform/chromium-gpu-win/fast/canvas/canvas-text-alignment-expected.png:
+
+2011-09-06  James Robinson  <jamesr@chromium.org>
+
         [chromium] Update various chromium baselines.
 
         * platform/chromium-cg-mac-leopard/fast/css/value-list-out-of-bounds-crash-expected.png:
