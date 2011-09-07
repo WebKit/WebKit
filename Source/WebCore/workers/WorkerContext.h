@@ -79,6 +79,9 @@ namespace WebCore {
 
         WorkerScriptController* script() { return m_script.get(); }
         void clearScript() { m_script.clear(); }
+#if ENABLE(INSPECTOR)
+        void clearInspector();
+#endif
 
         WorkerThread* thread() const { return m_thread; }
 

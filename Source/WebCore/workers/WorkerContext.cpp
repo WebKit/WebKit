@@ -219,6 +219,13 @@ void WorkerContext::clearTimeout(int timeoutId)
     DOMTimer::removeById(scriptExecutionContext(), timeoutId);
 }
 
+#if ENABLE(INSPECTOR)
+void WorkerContext::clearInspector()
+{
+    m_workerInspectorController.clear();
+}
+#endif
+
 int WorkerContext::setInterval(PassOwnPtr<ScheduledAction> action, int timeout)
 {
     return DOMTimer::install(scriptExecutionContext(), action, timeout, false);

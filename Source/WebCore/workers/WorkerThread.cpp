@@ -174,6 +174,9 @@ public:
     {
         ASSERT(context->isWorkerContext());
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
+#if ENABLE(INSPECTOR)
+        workerContext->clearInspector();
+#endif
         // It's not safe to call clearScript until all the cleanup tasks posted by functions initiated by WorkerThreadShutdownStartTask have completed.
         workerContext->clearScript();
         workerContext->thread()->runLoop().terminate();
