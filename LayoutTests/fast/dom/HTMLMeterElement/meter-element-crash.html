@@ -5,9 +5,16 @@
  }  
 </style>
 <script>
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
         layoutTestController.dumpAsText();
-    setTimeout(function() { document.body.offsetTop; document.getElementById('test').innerHTML=1 }, 0);
+        layoutTestController.waitUntilDone();
+    }
+    setTimeout(function() {
+        document.body.offsetTop;
+        document.getElementById('test').innerHTML="PASS";
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 0);
 </script>
 <span id="test">
     <script>
