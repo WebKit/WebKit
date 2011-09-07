@@ -1,5 +1,11 @@
 2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
 
+        One last GTK+ rebaseline for r94614.
+
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
+2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
+
         GTK+ rebaselines after r94614.
 
         * platform/gtk/fast/dom/Window/window-properties-expected.txt:
