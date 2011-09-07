@@ -1,3 +1,10 @@
+2011-09-07  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Rebaseline expectations for svg/batik/text/textStyles.svg after r94624.
+
+        * platform/chromium-linux/svg/batik/text/textStyles-expected.png:
+        * platform/chromium-win/svg/batik/text/textStyles-expected.txt:
+
 2011-08-31  Yury Semikhatsky  <yurys@chromium.org>
 
         fast/workers/worker-script-error.html fails on Chromium after r94061
