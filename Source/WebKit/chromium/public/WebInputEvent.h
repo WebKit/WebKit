@@ -344,25 +344,14 @@ public:
 
 class WebTouchEvent : public WebInputEvent {
 public:
-    enum { touchesLengthCap = 8 };
+    static const int touchPointsLengthCap = 4;
 
-    unsigned touchesLength;
-    // List of all touches which are currently down.
-    WebTouchPoint touches[touchesLengthCap];
-
-    unsigned changedTouchesLength;
-    // List of all touches whose state has changed since the last WebTouchEvent
-    WebTouchPoint changedTouches[touchesLengthCap];
-
-    unsigned targetTouchesLength;
-    // List of all touches which are currently down and are targeting the event recipient.
-    WebTouchPoint targetTouches[touchesLengthCap];
+    int touchPointsLength;
+    WebTouchPoint touchPoints[touchPointsLengthCap];
 
     WebTouchEvent(unsigned sizeParam = sizeof(WebTouchEvent))
         : WebInputEvent(sizeParam)
-        , touchesLength(0)
-        , changedTouchesLength(0)
-        , targetTouchesLength(0)
+        , touchPointsLength(0)
     {
     }
 };

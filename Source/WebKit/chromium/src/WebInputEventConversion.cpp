@@ -39,9 +39,6 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollView.h"
-#include "Touch.h"
-#include "TouchEvent.h"
-#include "TouchList.h"
 #include "WebInputEvent.h"
 #include "WheelEvent.h"
 #include "Widget.h"
@@ -49,8 +46,6 @@
 using namespace WebCore;
 
 namespace WebKit {
-
-static const double millisPerSecond = 1000.0;
 
 // MakePlatformMouseEvent -----------------------------------------------------
 
@@ -266,8 +261,8 @@ PlatformTouchEventBuilder::PlatformTouchEventBuilder(Widget* widget, const WebTo
     m_metaKey = event.modifiers & WebInputEvent::MetaKey;
     m_timestamp = event.timeStampSeconds;
 
-    for (unsigned i = 0; i < event.touchesLength; ++i)
-        m_touchPoints.append(PlatformTouchPointBuilder(widget, event.touches[i]));
+    for (int i = 0; i < event.touchPointsLength; ++i)
+        m_touchPoints.append(PlatformTouchPointBuilder(widget, event.touchPoints[i]));
 }
 #endif
 
@@ -301,7 +296,7 @@ WebMouseEventBuilder::WebMouseEventBuilder(const Widget* widget, const MouseEven
         type = WebInputEvent::ContextMenu;
     else
         return; // Skip all other mouse events.
-    timeStampSeconds = event.timeStamp() / millisPerSecond;
+    timeStampSeconds = event.timeStamp() * 1.0e-3;
     switch (event.button()) {
     case LeftButton:
         button = WebMouseEvent::ButtonLeft;
@@ -344,7 +339,7 @@ WebMouseWheelEventBuilder::WebMouseWheelEventBuilder(const Widget* widget, const
     if (event.type() != eventNames().mousewheelEvent)
         return;
     type = WebInputEvent::MouseWheel;
-    timeStampSeconds = event.timeStamp() / millisPerSecond;
+    timeStampSeconds = event.timeStamp() * 1.0e-3;
     modifiers = getWebInputModifiers(event);
     ScrollView* view = widget->parent();
     IntPoint p = view->contentsToWindow(
@@ -374,7 +369,7 @@ WebKeyboardEventBuilder::WebKeyboardEventBuilder(const KeyboardEvent& event)
     else
         return; // Skip all other keyboard events.
     modifiers = getWebInputModifiers(event);
-    timeStampSeconds = event.timeStamp() / millisPerSecond;
+    timeStampSeconds = event.timeStamp() * 1.0e-3;
     windowsKeyCode = event.keyCode();
 
     // The platform keyevent does not exist if the event was created using
@@ -382,59 +377,12 @@ WebKeyboardEventBuilder::WebKeyboardEventBuilder(const KeyboardEvent& event)
     if (!event.keyEvent())
         return;
     nativeKeyCode = event.keyEvent()->nativeVirtualKeyCode();
-    unsigned numberOfCharacters = std::min(event.keyEvent()->text().length(), static_cast<unsigned>(textLengthCap));
-    for (unsigned i = 0; i < numberOfCharacters; ++i) {
+    unsigned int numChars = std::min(event.keyEvent()->text().length(),
+        static_cast<unsigned int>(WebKeyboardEvent::textLengthCap));
+    for (unsigned int i = 0; i < numChars; i++) {
         text[i] = event.keyEvent()->text()[i];
         unmodifiedText[i] = event.keyEvent()->unmodifiedText()[i];
     }
 }
-
-#if ENABLE(TOUCH_EVENTS)
-
-static void addTouchPoints(TouchList* touches, const IntPoint& offset, WebTouchPoint* touchPoints, unsigned* touchPointsLength)
-{
-    unsigned numberOfTouches = std::min(touches->length(), static_cast<unsigned>(WebTouchEvent::touchesLengthCap));
-    for (unsigned i = 0; i < numberOfTouches; ++i) {
-        const Touch* touch = touches->item(i);
-
-        WebTouchPoint point;
-        point.id = touch->identifier();
-        point.screenPosition = WebPoint(touch->screenX(), touch->screenY());
-        point.position = WebPoint(touch->pageX() - offset.x(), touch->pageY() - offset.y());
-        point.radiusX = touch->webkitRadiusX();
-        point.radiusY = touch->webkitRadiusY();
-        point.rotationAngle = touch->webkitRotationAngle();
-        point.force = touch->webkitForce();
-
-        touchPoints[i] = point;
-    }
-    *touchPointsLength = numberOfTouches;
-}
-
-WebTouchEventBuilder::WebTouchEventBuilder(const Widget* widget, const TouchEvent& event)
-{
-    if (event.type() == eventNames().touchstartEvent)
-        type = TouchStart;
-    else if (event.type() == eventNames().touchmoveEvent)
-        type = TouchMove;
-    else if (event.type() == eventNames().touchendEvent)
-        type = TouchEnd;
-    else if (event.type() == eventNames().touchcancelEvent)
-        type = TouchCancel;
-    else {
-        ASSERT_NOT_REACHED();
-        type = Undefined;
-        return;
-    }
-
-    modifiers = getWebInputModifiers(event);
-    timeStampSeconds = event.timeStamp() / millisPerSecond;
-
-    addTouchPoints(event.touches(), widget->location(), touches, &touchesLength);
-    addTouchPoints(event.changedTouches(), widget->location(), changedTouches, &changedTouchesLength);
-    addTouchPoints(event.targetTouches(), widget->location(), targetTouches, &targetTouchesLength);
-}
-
-#endif // ENABLE(TOUCH_EVENTS)
 
 } // namespace WebKit

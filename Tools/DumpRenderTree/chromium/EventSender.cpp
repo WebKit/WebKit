@@ -948,16 +948,16 @@ void EventSender::cancelTouchPoint(const CppArgumentList& arguments, CppVariant*
 
 void EventSender::sendCurrentTouchEvent(const WebInputEvent::Type type)
 {
-    ASSERT(static_cast<unsigned>(WebTouchEvent::touchesLengthCap) > touchPoints.size());
+    ASSERT(static_cast<unsigned>(WebTouchEvent::touchPointsLengthCap) > touchPoints.size());
     webview()->layout();
 
     WebTouchEvent touchEvent;
     touchEvent.type = type;
     touchEvent.modifiers = touchModifiers;
     touchEvent.timeStampSeconds = getCurrentEventTimeSec();
-    touchEvent.touchesLength = touchPoints.size();
+    touchEvent.touchPointsLength = touchPoints.size();
     for (unsigned i = 0; i < touchPoints.size(); ++i)
-        touchEvent.touches[i] = touchPoints[i];
+        touchEvent.touchPoints[i] = touchPoints[i];
     webview()->handleInputEvent(touchEvent);
 
     for (unsigned i = 0; i < touchPoints.size(); ++i) {
