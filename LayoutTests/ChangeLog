@@ -1,5 +1,16 @@
 2011-09-07  Adam Barth  <abarth@webkit.org>
 
+        Update results.  The actual results are only off by a fraction of a
+        pixel around the curve in the zero.
+
+        * platform/chromium-cg-mac/media/audio-repaint-expected.txt: Removed.
+        * platform/chromium-mac/media/audio-repaint-expected.txt: Removed.
+        * platform/chromium-win-xp/media: Removed.
+        * platform/chromium-win/media/audio-repaint-expected.png:
+        * platform/chromium/media/audio-repaint-expected.txt: Added.
+
+2011-09-07  Adam Barth  <abarth@webkit.org>
+
         These results are also off by just factional pixels.
 
         * platform/chromium-cg-mac/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
