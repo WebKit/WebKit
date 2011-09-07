@@ -386,7 +386,7 @@ WebString WebPluginContainerImpl::executeScriptURL(const WebURL& url, bool popup
 void WebPluginContainerImpl::loadFrameRequest(const WebURLRequest& request, const WebString& target, bool notifyNeeded, void* notifyData)
 {
     Frame* frame = m_element->document()->frame();
-    if (!frame)
+    if (!frame || !frame->loader()->documentLoader())
         return;  // FIXME: send a notification in this case?
 
     if (notifyNeeded) {

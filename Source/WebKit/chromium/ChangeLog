@@ -1,3 +1,20 @@
+2011-09-07  Adam Barth  <abarth@webkit.org>
+
+        FrameLoader::addExtraFieldsToRequest can crash when called from or after FrameLoader::detachFromParent
+        https://bugs.webkit.org/show_bug.cgi?id=61810
+
+        Reviewed by Eric Seidel.
+
+        Fix this crash as suggested by Darin Fisher in
+        https://bugs.webkit.org/show_bug.cgi?id=61810#c21.  This patch does not
+        include the test requested by Alexey Proskuryakov in
+        https://bugs.webkit.org/show_bug.cgi?id=61810#c6.  I would really much
+        rather include a test with this patch, but my attempts to write a test
+        have failed.  :(
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::loadFrameRequest):
+
 2011-09-07  Eric Boren  <borenet@gmail.com>
 
         [Chromium] Modify WebTouchEvent structure to match WebCore::TouchEvent
