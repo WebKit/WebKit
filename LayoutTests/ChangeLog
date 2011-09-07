@@ -1,3 +1,11 @@
+2011-09-07  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed, Chromium baselines for svg/custom/simple-text-double-shadow
+
+        * platform/chromium-linux/svg/custom/simple-text-double-shadow.png: Added.
+        * platform/chromium-mac/svg/custom/simple-text-double-shadow.png: Added.
+        * platform/chromium-win/svg/custom/simple-text-double-shadow.png: Added.
+
 2011-09-07  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, chromium fast/css/ rebaslines.
