@@ -155,7 +155,6 @@ ui.results.ResultsDetails = base.extends('div', {
             resultsGrid.addResults(resultsURLs);
             $(this).empty().append(
                 new ui.actions.List([
-                    new ui.actions.Rebaseline().makeDefault(),
                     new ui.actions.Previous(),
                     new ui.actions.Next()
                 ])).append(resultsGrid);
@@ -173,7 +172,12 @@ ui.results.TestSelector = base.extends('div', {
         Object.keys(resultsByTest).forEach(function (testName) {
             var link = document.createElement('a');
             $(link).attr('href', '#').text(testName);
-            this.appendChild(document.createElement('h3')).appendChild(link);
+
+            var header = document.createElement('h3');
+            $(header).append(new ui.actions.List([
+                new ui.actions.Rebaseline().makeDefault()
+            ])).append(link);
+            this.appendChild(header);
             this.appendChild(this._delegate.contentForTest(testName));
             ++this._length; // There doesn't seem to be any good way to get this information from accordion.
         }, this);
@@ -224,6 +228,11 @@ ui.results.TestSelector = base.extends('div', {
     {
         $(this).accordion('option', 'active', 0);
         $('.builder-selector', this)[0].firstResult();
+    },
+    currentTestName: function()
+    {
+        var currentIndex = $(this).accordion('option', 'active');
+        return $('h3 a', this)[currentIndex].textContent;
     }
 });
 
@@ -329,6 +338,10 @@ ui.results.View = base.extends('div', {
     firstResult: function()
     {
         this._testSelector.firstResult()
+    },
+    currentTestName: function()
+    {
+        return this._testSelector.currentTestName()
     }
 });
 

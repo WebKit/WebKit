@@ -35,6 +35,18 @@
     display: inline-block;
 }
 
+.results-view h3 ul.actions {
+    padding: 2px 0px;
+}
+
+.results-view h3 ul.actions {
+    visibility: hidden;
+}
+
+.results-view h3.ui-state-active ul.actions {
+    visibility: visible;
+}
+
 .ui-tabs .ui-tabs-panel.results-detail {
     padding: 0px;
 }

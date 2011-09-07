@@ -32,9 +32,11 @@ var Action = base.extends('button', {
     init: function() {
         this._eventName = null;
         $(this).addClass('action');
-        this.addEventListener('click', function() {
-            if (this._eventName)
+        this.addEventListener('click', function(event) {
+            if (this._eventName) {
                 $(this).trigger(this._eventName);
+                event.stopPropagation();
+            }
         }.bind(this));
     },
     makeDefault: function() {

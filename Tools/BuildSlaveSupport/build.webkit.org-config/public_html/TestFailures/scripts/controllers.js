@@ -36,6 +36,7 @@ controllers.ResultsDetails = base.extends(Object, {
 
         $(this._view).bind('next', this.onNext.bind(this));
         $(this._view).bind('previous', this.onPrevious.bind(this));
+        $(this._view).bind('rebaseline', this.onRebaseline.bind(this));
     },
     onNext: function()
     {
@@ -44,6 +45,20 @@ controllers.ResultsDetails = base.extends(Object, {
     onPrevious: function()
     {
         this._view.previousResult();
+    },
+    onRebaseline: function()
+    {
+        var testName = this._view.currentTestName();
+        var failureInfoList = Object.keys(this._resultsByTest[testName]).map(function(builderName) {
+            return {
+                'testName': testName,
+                'builderName': builderName
+            }
+        });
+        checkout.rebaseline(failureInfoList, function() {
+            // FIXME: We should have a better dialog than this!
+            alert('Rebaseline done! Please land with "webkit-patch land-cowboy".');
+        });
     }
 });
 
@@ -103,7 +118,7 @@ var FailureStreamController = base.extends(Object, {
     },
     onRebaseline: function(failures)
     {
-        failureInfoList = base.flattenArray(failures.testNameList().map(model.unexpectedFailureInfoForTestName));
+        var failureInfoList = base.flattenArray(failures.testNameList().map(model.unexpectedFailureInfoForTestName));
         checkout.rebaseline(failureInfoList, function() {
             // FIXME: We should have a better dialog than this!
             alert('Rebaseline done! Please land with "webkit-patch land-cowboy".');

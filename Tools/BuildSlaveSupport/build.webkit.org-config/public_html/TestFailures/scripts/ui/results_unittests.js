@@ -46,7 +46,7 @@ var kExampleResultsByTest = {
     }
 }
 
-test('View', 6, function() {
+test('View', 8, function() {
     var delegate = {
         fetchResultsURLs: function(failureInfo, callback) { return;}
     };
@@ -58,9 +58,11 @@ test('View', 6, function() {
     view.nextResult();
     equals($('.test-selector', view).accordion('option', 'active'), 0);
     equals($($('.builder-selector', view)[0]).tabs('option', 'selected'), 1);
+    equals(view.currentTestName(), 'scrollbars/custom-scrollbar-with-incomplete-style.html');
     view.nextResult();
     equals($('.test-selector', view).accordion('option', 'active'), 1);
     equals($($('.builder-selector', view)[1]).tabs('option', 'selected'), 0);
+    equals(view.currentTestName(), 'userscripts/another-test.html');
     view.previousResult();
     equals($('.test-selector', view).accordion('option', 'active'), 0);
     equals($($('.builder-selector', view)[0]).tabs('option', 'selected'), 1);
