@@ -39,6 +39,16 @@ WebInspector.commonExtensionSymbols = function(apiPrivate)
         Warning: "warning",
         Severe: "severe"
     };
+
+    if (!apiPrivate.console)
+        apiPrivate.console = {};
+    apiPrivate.console.Severity = {
+        Tip: "tip",
+        Debug: "debug",
+        Log: "log",
+        Warning: "warning",
+        Error: "error"
+    };
 }
 
 WebInspector.extensionAPI = {};

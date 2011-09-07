@@ -41,13 +41,15 @@ WebInspector.ExtensionServer = function()
     this._allowedOrigins = {};
     this._status = new WebInspector.ExtensionStatus();
 
-    this._registerHandler("addRequestHeaders", this._onAddRequestHeaders.bind(this));
     this._registerHandler("addAuditCategory", this._onAddAuditCategory.bind(this));
     this._registerHandler("addAuditResult", this._onAddAuditResult.bind(this));
+    this._registerHandler("addConsoleMessage", this._onAddConsoleMessage.bind(this));
+    this._registerHandler("addRequestHeaders", this._onAddRequestHeaders.bind(this));
     this._registerHandler("createPanel", this._onCreatePanel.bind(this));
     this._registerHandler("createSidebarPane", this._onCreateSidebarPane.bind(this));
     this._registerHandler("evaluateOnInspectedPage", this._onEvaluateOnInspectedPage.bind(this));
     this._registerHandler("getHAR", this._onGetHAR.bind(this));
+    this._registerHandler("getConsoleMessages", this._onGetConsoleMessages.bind(this));
     this._registerHandler("getPageResources", this._onGetPageResources.bind(this));
     this._registerHandler("getRequestContent", this._onGetRequestContent.bind(this));
     this._registerHandler("getResourceContent", this._onGetResourceContent.bind(this));
@@ -61,17 +63,10 @@ WebInspector.ExtensionServer = function()
     this._registerHandler("subscribe", this._onSubscribe.bind(this));
     this._registerHandler("unsubscribe", this._onUnsubscribe.bind(this));
 
-    this._registerSubscriptionHandler("timeline-event-recorded", WebInspector.timelineManager.start.bind(WebInspector.timelineManager), WebInspector.timelineManager.stop.bind(WebInspector.timelineManager));
-
     window.addEventListener("message", this._onWindowMessage.bind(this), false);
 }
 
 WebInspector.ExtensionServer.prototype = {
-    _addRecordToTimeline: function(event)
-    {
-        this._postNotification("timeline-event-recorded", event.data);
-    },
-
     notifyObjectSelected: function(panelId, objectId)
     {
         this._postNotification("panel-objectSelected-" + panelId, objectId);
@@ -120,27 +115,9 @@ WebInspector.ExtensionServer.prototype = {
         delete this._clientObjects[auditRun.id];
     },
 
-    _notifyResourceAdded: function(event)
-    {
-        var resource = event.data;
-        this._postNotification("resource-added", this._makeResource(resource));
-    },
-
     notifyResourceContentCommitted: function(resource, content)
     {
         this._postNotification("resource-content-committed", this._makeResource(resource), content);
-    },
-
-    _notifyRequestFinished: function(event)
-    {
-        var request = event.data;
-        if (this._hasSubscribers("network-request-finished"))
-            this._postNotification("network-request-finished", this._requestId(request), (new WebInspector.HAREntry(request)).build());
-    },
-
-    _hasSubscribers: function(type)
-    {
-        return !!this._subscribers[type];
     },
 
     _postNotification: function(type, details)
@@ -164,7 +141,7 @@ WebInspector.ExtensionServer.prototype = {
         else {
             this._subscribers[message.type] = [ port ];
             if (this._subscriptionStartHandlers[message.type])
-                this._subscriptionStartHandlers[message.type]()
+                this._subscriptionStartHandlers[message.type]();
         }
     },
 
@@ -177,7 +154,7 @@ WebInspector.ExtensionServer.prototype = {
         if (!subscribers.length) {
             delete this._subscribers[message.type];
             if (this._subscriptionStopHandlers[message.type])
-                this._subscriptionStopHandlers[message.type]()
+                this._subscriptionStopHandlers[message.type]();
         }
     },
 
@@ -305,9 +282,76 @@ WebInspector.ExtensionServer.prototype = {
         RuntimeAgent.evaluate(evalExpression, "", true, callback.bind(this));
     },
 
-    _dispatchCallback: function(requestId, port, result)
+    _onGetConsoleMessages: function()
     {
-        port.postMessage({ command: "callback", requestId: requestId, result: result });
+        return WebInspector.console.messages.map(this._makeConsoleMessage);
+    },
+
+    _onAddConsoleMessage: function(message)
+    {
+        function convertSeverity(level)
+        {
+            switch (level) {
+                case WebInspector.extensionAPI.console.Severity.Tip:
+                    return WebInspector.ConsoleMessage.MessageLevel.Tip;
+                case WebInspector.extensionAPI.console.Severity.Log:
+                    return WebInspector.ConsoleMessage.MessageLevel.Log;
+                case WebInspector.extensionAPI.console.Severity.Warning:
+                    return WebInspector.ConsoleMessage.MessageLevel.Warning;
+                case WebInspector.extensionAPI.console.Severity.Error:
+                    return WebInspector.ConsoleMessage.MessageLevel.Error;
+                case WebInspector.extensionAPI.console.Severity.Debug:
+                    return WebInspector.ConsoleMessage.MessageLevel.Debug;
+            }
+        }
+        var level = convertSeverity(message.severity);
+        if (!level)
+            return this._status.E_BADARG("message.severity", message.severity);
+
+        var consoleMessage = new WebInspector.ConsoleMessage(
+            WebInspector.ConsoleMessage.MessageSource.JS,
+            WebInspector.ConsoleMessage.MessageType.Log,
+            level,
+            message.line,
+            message.url,
+            1,
+            message.text,
+            null, // parameters
+            null, // stackTrace
+            null); // networkRequestId
+        WebInspector.console.addMessage(consoleMessage);
+    },
+
+    _makeConsoleMessage: function(message)
+    {
+        function convertLevel(level)
+        {
+            if (!level)
+                return;
+            switch (level) {
+                case WebInspector.ConsoleMessage.MessageLevel.Tip:
+                    return WebInspector.extensionAPI.console.Severity.Tip;
+                case WebInspector.ConsoleMessage.MessageLevel.Log:
+                    return WebInspector.extensionAPI.console.Severity.Log;
+                case WebInspector.ConsoleMessage.MessageLevel.Warning:
+                    return WebInspector.extensionAPI.console.Severity.Warning;
+                case WebInspector.ConsoleMessage.MessageLevel.Error:
+                    return WebInspector.extensionAPI.console.Severity.Error;
+                case WebInspector.ConsoleMessage.MessageLevel.Debug:
+                    return WebInspector.extensionAPI.console.Severity.Debug;
+                default:
+                    return WebInspector.extensionAPI.console.Severity.Log;
+            }
+        }
+        var result = {
+            severity: convertLevel(message.level),
+            text: message.text,
+        };
+        if (message.url)
+            result.url = message.url;
+        if (message.line)
+            result.line = message.line;
+        return result;
     },
 
     _onGetHAR: function()
@@ -424,15 +468,59 @@ WebInspector.ExtensionServer.prototype = {
         auditRun.cancel();
     },
 
+    _dispatchCallback: function(requestId, port, result)
+    {
+        port.postMessage({ command: "callback", requestId: requestId, result: result });
+    },
+
     initExtensions: function()
     {
-        // The networkManager is normally created after the ExtensionServer is constructed, but before initExtensions() is called.
-        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._notifyRequestFinished, this);
-        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
-        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._notifyResourceAdded, this);
-        WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._addRecordToTimeline, this);
+        this._registerAutosubscriptionHandler("console-message-added",
+            WebInspector.console, WebInspector.ConsoleModel.Events.MessageAdded, this._notifyConsoleMessageAdded);
+        this._registerAutosubscriptionHandler("network-request-finished",
+            WebInspector.networkManager, WebInspector.NetworkManager.EventTypes.ResourceFinished, this._notifyRequestFinished);
+        this._registerAutosubscriptionHandler("resource-added",
+            WebInspector.resourceTreeModel, WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._notifyResourceAdded);
 
+        function onTimelineSubscriptionStarted()
+        {
+            WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded,
+                this._notifyTimelineEventRecorded, this);
+            WebInspector.timelineManager.start();
+        }
+        function onTimelineSubscriptionStopped()
+        {
+            WebInspector.timelineManager.stop();
+            WebInspector.timelineManager.removeEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded,
+                this._notifyTimelineEventRecorded, this);
+        }
+        this._registerSubscriptionHandler("timeline-event-recorded", onTimelineSubscriptionStarted.bind(this), onTimelineSubscriptionStopped.bind(this));
+
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged,
+            this._inspectedURLChanged, this);
         InspectorExtensionRegistry.getExtensionsAsync();
+    },
+
+    _notifyConsoleMessageAdded: function(event)
+    {
+        this._postNotification("console-message-added", this._makeConsoleMessage(event.data));
+    },
+
+    _notifyResourceAdded: function(event)
+    {
+        var resource = event.data;
+        this._postNotification("resource-added", this._makeResource(resource));
+    },
+
+    _notifyRequestFinished: function(event)
+    {
+        var request = event.data;
+        this._postNotification("network-request-finished", this._requestId(request), (new WebInspector.HAREntry(request)).build());
+    },
+
+    _notifyTimelineEventRecorded: function(event)
+    {
+        this._postNotification("timeline-event-recorded", event.data);
     },
 
     _addExtensions: function(extensions)
@@ -519,6 +607,13 @@ WebInspector.ExtensionServer.prototype = {
     {
         this._subscriptionStartHandlers[eventTopic] =  onSubscribeFirst;
         this._subscriptionStopHandlers[eventTopic] =  onUnsubscribeLast;
+    },
+
+    _registerAutosubscriptionHandler: function(eventTopic, eventTarget, frontendEventType, handler)
+    {
+        this._registerSubscriptionHandler(eventTopic,
+            WebInspector.Object.prototype.addEventListener.bind(eventTarget, frontendEventType, handler, this),
+            WebInspector.Object.prototype.removeEventListener.bind(eventTarget, frontendEventType, handler, this));
     },
 
     _expandResourcePath: function(extensionPath, resourcePath)

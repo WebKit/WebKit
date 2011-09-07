@@ -93,6 +93,7 @@ function InspectorExtensionAPI()
     this.network = new Network();
     defineDeprecatedProperty(this, "webInspector", "resources", "network");
     this.timeline = new Timeline();
+    this.console = new Console();
 
     this.onReset = new EventSink("reset");
 }
@@ -104,15 +105,37 @@ InspectorExtensionAPI.prototype = {
     }
 }
 
+function Console()
+{
+    this.onMessageAdded = new EventSink("console-message-added");
+}
+
+Console.prototype = {
+    getMessages: function(callback)
+    {
+        extensionServer.sendRequest({ command: "getConsoleMessages" }, callback);
+    },
+
+    addMessage: function(severity, text, url, line)
+    {
+        extensionServer.sendRequest({ command: "addConsoleMessage", severity: severity, text: text, url: url, line: line });
+    },
+
+    get Severity()
+    {
+        return apiPrivate.console.Severity;
+    },
+};
+
 function Network()
 {
-    function requestDispatch(message)
+    function dispatchRequestEvent(message)
     {
         var request = message.arguments[1];
         request.__proto__ = new Request(message.arguments[0]);
         this._fire(request);
     }
-    this.onRequestFinished = new EventSink("network-request-finished", requestDispatch);
+    this.onRequestFinished = new EventSink("network-request-finished", dispatchRequestEvent);
     defineDeprecatedProperty(this, "network", "onFinished", "onRequestFinished");
     this.onNavigated = new EventSink("inspectedURLChanged");
 }
@@ -271,7 +294,7 @@ Audits.prototype = {
 
 function AuditCategoryImpl(id)
 {
-    function auditResultDispatch(request)
+    function dispatchAuditEvent(request)
     {
         var auditResult = new AuditResult(request.arguments[0]);
         try {
@@ -282,7 +305,7 @@ function AuditCategoryImpl(id)
         }
     }
     this._id = id;
-    this.onAuditStarted = new EventSink("audit-started-" + id, auditResultDispatch);
+    this.onAuditStarted = new EventSink("audit-started-" + id, dispatchAuditEvent);
 }
 
 function AuditResultImpl(id)
@@ -357,16 +380,16 @@ AuditResultNode.prototype = {
 
 function InspectedWindow()
 {
-    function resourceDispatch(message)
+    function dispatchResourceEvent(message)
     {
         this._fire(new Resource(message.arguments[0]));
     }
-    function resourceContentDispatch(message)
+    function dispatchResourceContentEvent(message)
     {
         this._fire(new Resource(message.arguments[0]), message.arguments[1]);
     }
-    this.onResourceAdded = new EventSink("resource-added", resourceDispatch);
-    this.onResourceContentCommitted = new EventSink("resource-content-committed", resourceContentDispatch);
+    this.onResourceAdded = new EventSink("resource-added", dispatchResourceEvent);
+    this.onResourceContentCommitted = new EventSink("resource-content-committed", dispatchResourceContentEvent);
 }
 
 InspectedWindow.prototype = {

@@ -76,6 +76,21 @@ RUNNING TEST: extension_testAPI
             removeListener : <function>
         }
     }
+    console : {
+        onMessageAdded : {
+            addListener : <function>
+            removeListener : <function>
+        }
+        getMessages : <function>
+        addMessage : <function>
+        Severity : {
+            Tip : "tip"
+            Debug : "debug"
+            Log : "log"
+            Warning : "warning"
+            Error : "error"
+        }
+    }
     onReset : {
         addListener : <function>
         removeListener : <function>

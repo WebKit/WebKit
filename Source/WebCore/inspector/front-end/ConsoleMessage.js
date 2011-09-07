@@ -444,6 +444,11 @@ WebInspector.ConsoleMessage.prototype = {
         return sourceString + " " + typeString + " " + levelString + ": " + this._formattedMessage.textContent + "\n" + this.url + " line " + this.line;
     },
 
+    get text()
+    {
+        return this._messageText;
+    },
+
     isEqual: function(msg)
     {
         if (!msg)

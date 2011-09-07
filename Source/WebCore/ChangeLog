@@ -1,3 +1,40 @@
+2011-09-02  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] expose console API
+        https://bugs.webkit.org/show_bug.cgi?id=67506
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/extensions/extensions-console.html
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessage.prototype.get text):
+        (WebInspector.ConsoleMessage.prototype.get parameters):
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI.InspectorExtensionAPI):
+        (WebInspector.injectedExtensionAPI):
+        (WebInspector.injectedExtensionAPI.Console.prototype.getMessages):
+        (WebInspector.injectedExtensionAPI.Console.prototype.addMessage):
+        (WebInspector.injectedExtensionAPI.Console.prototype.get MessageLevel):
+        (WebInspector.injectedExtensionAPI.Network.dispatchRequestEvent):
+        (WebInspector.injectedExtensionAPI.Network):
+        (WebInspector.injectedExtensionAPI.AuditCategoryImpl.dispatchAuditEvent):
+        (WebInspector.injectedExtensionAPI.AuditCategoryImpl):
+        (WebInspector.injectedExtensionAPI.InspectedWindow.dispatchResourceEvent):
+        (WebInspector.injectedExtensionAPI.InspectedWindow.dispatchResourceContentEvent):
+        (WebInspector.injectedExtensionAPI.InspectedWindow):
+        * inspector/front-end/ExtensionCommon.js:
+        (WebInspector.commonExtensionSymbols):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype._notifyConsoleMessageAdded):
+        (WebInspector.ExtensionServer.prototype._onGetConsoleMessages):
+        (WebInspector.ExtensionServer.prototype._onAddConsoleMessage):
+        (WebInspector.ExtensionServer.prototype._makeConsoleMessage):
+        (WebInspector.ExtensionServer.prototype._makeConsoleMessage.convertParameter):
+        (WebInspector.ExtensionServer.prototype._dispatchCallback):
+        (WebInspector.ExtensionServer.prototype.initExtensions):
+
 2011-09-05  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: disable popover when a mouse button is pressed
