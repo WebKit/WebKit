@@ -1,5 +1,13 @@
 2011-09-07  Csaba Osztrogonác  <ossy@webkit.org>
 
+        REGRESSION(r94288) build-webkit doesn't work on Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=67706
+
+        * Scripts/webkitdirs.pm: Disable automatic clean build on Symbian, because it doesn't support shadow build.
+        (buildQMakeProject):
+
+2011-09-07  Csaba Osztrogonác  <ossy@webkit.org>
+
         REGRESSION(r94288) build-webkit doesn't work on Windows
         https://bugs.webkit.org/show_bug.cgi?id=67646
 

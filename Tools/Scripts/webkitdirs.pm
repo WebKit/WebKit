@@ -1692,7 +1692,8 @@ sub buildQMakeProject($@)
         }
         close (DEFAULTS);
     }
-    if(not($defaults eq $defaultsTxt)){
+    # Automatic clean build isn't supported on Symbian yet, see https://bugs.webkit.org/show_bug.cgi?id=67706 for details.
+    if (($defaults ne $defaultsTxt) and !isSymbian()){
         print "Make clean build because the Defines are changed.\n";
         chdir $originalCwd;
         File::Path::rmtree($dir);
