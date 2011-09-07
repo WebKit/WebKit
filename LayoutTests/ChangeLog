@@ -1,3 +1,10 @@
+2011-09-07  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, patch up some chromium gpu expectations
+        that are failing on the cg mac builds.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-07  Chris Fleizach  <cfleizach@apple.com>
 
         Changes to aria-hidden don't change VO navigation

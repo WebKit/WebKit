@@ -3462,14 +3462,15 @@ BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = IMAGE
 // Strange scrollbar.
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
 
-BUGWK66437 WIN MAC GPU : compositing/color-matching/image-color-matching.html = IMAGE
-BUGWK66437 WIN MAC GPU : compositing/masks/masked-ancestor.html = IMAGE
-BUGWK66437 WIN MAC GPU : compositing/reflections/nested-reflection-transformed.html = IMAGE
-BUGWK66437 WIN MAC GPU : compositing/reflections/nested-reflection-transformed2.html = IMAGE
-BUGWK66437 WIN MAC GPU : compositing/reflections/reflection-in-composited.html = IMAGE
-BUGWK66437 WIN MAC GPU : compositing/scaling/tiled-layer-recursion.html = IMAGE
-BUGWK66437 WIN MAC GPU : media/video-layer-crash.html = IMAGE
-BUGWK66437 WIN MAC GPU : media/video-transformed.html = IMAGE
+BUGWK66437 WIN MAC GPU GPU-CG : compositing/color-matching/image-makering.html = IMAGE
+BUGWK66437 WIN MAC LINUX GPU GPU-CG : compositing/flat-with-transformed-child.html = IMAGE
+BUGWK66437 WIN MAC GPU GPU-CG : compositing/masks/masked-ancestor.html = IMAGE
+BUGWK66437 WIN MAC GPU GPU-CG : compositing/reflections/nested-reflection-transformed.html = IMAGE
+BUGWK66437 WIN MAC GPU GPU-CG : compositing/reflections/nested-reflection-transformed2.html = IMAGE
+BUGWK66437 WIN MAC GPU GPU-CG : compositing/reflections/reflection-in-composited.html = IMAGE
+BUGWK66437 WIN MAC GPU GPU-CG : compositing/scaling/tiled-layer-recursion.html = IMAGE
+BUGWK66437 WIN MAC GPU GPU-CG : media/video-layer-crash.html = IMAGE
+BUGWK66437 WIN MAC GPU GPU-CG : media/video-transformed.html = IMAGE
 
 // This test ASSERTs in skia since it was added.
 BUGWK63400 LINUX DEBUG : svg/text/svg-zoom-large-value.xhtml = CRASH TEXT
