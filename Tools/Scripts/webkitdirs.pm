@@ -33,7 +33,7 @@ use warnings;
 use Config;
 use FindBin;
 use File::Basename;
-use File::Path qw(mkpath remove_tree);
+use File::Path;
 use File::Spec;
 use POSIX;
 use VCSUtils;
