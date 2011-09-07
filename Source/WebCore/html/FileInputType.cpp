@@ -216,6 +216,13 @@ bool FileInputType::storesValueSeparateFromAttribute()
     return true;
 }
 
+void FileInputType::setValue(const String&, bool)
+{
+    m_fileList->clear();
+    m_icon.clear();
+    element()->setNeedsStyleRecalc();
+}
+
 void FileInputType::setFileList(const Vector<String>& paths)
 {
     m_fileList->clear();

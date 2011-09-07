@@ -49,6 +49,7 @@ private:
     virtual bool storesValueSeparateFromAttribute();
     virtual bool isHiddenType() const;
     virtual bool shouldRespectHeightAndWidthAttributes();
+    virtual void setValue(const String&, bool);
 };
 
 } // namespace WebCore

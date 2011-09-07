@@ -525,6 +525,12 @@ bool InputType::storesValueSeparateFromAttribute()
     return true;
 }
 
+void InputType::setValue(const String& sanitizedValue, bool sendChangeEvent)
+{
+    element()->setValueInternal(sanitizedValue, sendChangeEvent);
+    element()->setNeedsStyleRecalc();
+}
+
 bool InputType::canSetValue(const String&)
 {
     return true;

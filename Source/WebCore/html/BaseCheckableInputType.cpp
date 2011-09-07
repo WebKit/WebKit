@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 bool BaseCheckableInputType::saveFormControlState(String& result) const
 {
     result = element()->checked() ? "on" : "off";
@@ -100,6 +102,11 @@ String BaseCheckableInputType::fallbackValue()
 bool BaseCheckableInputType::storesValueSeparateFromAttribute()
 {
     return false;
+}
+
+void BaseCheckableInputType::setValue(const String& sanitizedValue, bool)
+{
+    element()->setAttribute(valueAttr, sanitizedValue);
 }
 
 bool BaseCheckableInputType::isCheckable()

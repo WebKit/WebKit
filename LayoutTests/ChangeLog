@@ -1,3 +1,13 @@
+2011-09-05  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION (Safari 5.1 - ToT): File input retains its file icon when the value is reset
+        https://bugs.webkit.org/show_bug.cgi?id=67567
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/forms/file/file-reset-in-change-expected.html: Added.
+        * fast/forms/file/file-reset-in-change.html: Added.
+
 2011-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Qt rebaseline after r94614.

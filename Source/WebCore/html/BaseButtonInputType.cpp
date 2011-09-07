@@ -33,10 +33,13 @@
 #include "BaseButtonInputType.h"
 
 #include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "RenderButton.h"
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 bool BaseButtonInputType::appendFormData(FormDataList&, bool) const
 {
@@ -95,6 +98,11 @@ void BaseButtonInputType::accessKeyAction(bool sendToAnyElement)
 bool BaseButtonInputType::storesValueSeparateFromAttribute()
 {
     return false;
+}
+
+void BaseButtonInputType::setValue(const String& sanitizedValue, bool)
+{
+    element()->setAttribute(valueAttr, sanitizedValue);
 }
 
 } // namespace WebCore

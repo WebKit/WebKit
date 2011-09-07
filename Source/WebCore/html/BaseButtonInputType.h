@@ -48,6 +48,7 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
     virtual void accessKeyAction(bool sendToAnyElement);
     virtual bool storesValueSeparateFromAttribute();
+    virtual void setValue(const String&, bool);
 };
 
 } // namespace WebCore

@@ -1087,18 +1087,7 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
 
     setLastChangeWasNotUserEdit();
     setFormControlValueMatchesRenderer(false);
-    if (m_inputType->storesValueSeparateFromAttribute()) {
-        if (files())
-            files()->clear();
-        else {
-            m_valueIfDirty = sanitizedValue;
-            m_wasModifiedByUser = sendChangeEvent;
-            if (isTextField())
-                updatePlaceholderVisibility(false);
-        }
-        setNeedsStyleRecalc();
-    } else
-        setAttribute(valueAttr, sanitizedValue);
+    m_inputType->setValue(sanitizedValue, sendChangeEvent);
 
     setNeedsValidityCheck();
 
@@ -1132,6 +1121,12 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
         setTextAsOfLastFormControlChangeEvent(value);
 
     notifyFormStateChanged();
+}
+
+void HTMLInputElement::setValueInternal(const String& sanitizedValue, bool sendChangeEvent)
+{
+    m_valueIfDirty = sanitizedValue;
+    m_wasModifiedByUser = sendChangeEvent;
 }
 
 double HTMLInputElement::valueAsDate() const

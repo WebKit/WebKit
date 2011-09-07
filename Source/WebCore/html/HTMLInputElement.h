@@ -226,6 +226,7 @@ public:
     // Otherwise, they would be private.
     CheckedRadioButtons& checkedRadioButtons() const;
     void updateCheckedRadioButtons();
+    void setValueInternal(const String&, bool sendChangeEvent);
 #if ENABLE(WCSS)
     bool isConformToInputMask(const String&) const;
 #endif

@@ -73,6 +73,12 @@ bool TextFieldInputType::canSetSuggestedValue()
     return true;
 }
 
+void TextFieldInputType::setValue(const String& sanitizedValue, bool sendChangeEvent)
+{
+    InputType::setValue(sanitizedValue, sendChangeEvent);
+    element()->updatePlaceholderVisibility(false);
+}
+
 void TextFieldInputType::handleKeydownEvent(KeyboardEvent* event)
 {
     if (!element()->focused())

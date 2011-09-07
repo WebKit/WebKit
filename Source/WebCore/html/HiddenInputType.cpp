@@ -32,9 +32,13 @@
 #include "config.h"
 #include "HiddenInputType.h"
 
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 PassOwnPtr<InputType> HiddenInputType::create(HTMLInputElement* element)
 {
@@ -68,6 +72,11 @@ bool HiddenInputType::rendererIsNeeded()
 bool HiddenInputType::storesValueSeparateFromAttribute()
 {
     return false;
+}
+
+void HiddenInputType::setValue(const String& sanitizedValue, bool)
+{
+    element()->setAttribute(valueAttr, sanitizedValue);
 }
 
 bool HiddenInputType::isHiddenType() const

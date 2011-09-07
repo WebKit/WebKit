@@ -1,3 +1,50 @@
+2011-09-05  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION (Safari 5.1 - ToT): File input retains its file icon when the value is reset
+        https://bugs.webkit.org/show_bug.cgi?id=67567
+
+        Reviewed by Dimitri Glazkov.
+
+        - Introduce InputType::setValue(), which is called by HTMLInputElement::setValue().
+        - Clear m_icon in FileInputType::setValue().
+
+        Tests: fast/forms/file/file-reset-in-change-expected.html
+               fast/forms/file/file-reset-in-change.html
+
+        * html/BaseButtonInputType.cpp:
+        (WebCore::BaseButtonInputType::setValue):
+        Implemenation for the "default" mode.
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/common-input-element-attributes.html#dom-input-value-default
+        * html/BaseButtonInputType.h:
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::setValue):
+        Implemenation for the "default/on" mode.
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/common-input-element-attributes.html#dom-input-value-default-on
+        * html/BaseCheckableInputType.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::setValue):
+        Implemenation for the "filename" mode, and clearing m_icon.
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/common-input-element-attributes.html#dom-input-value-filename
+        * html/FileInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue):
+        Move some code to InputType::setValue().
+        (WebCore::HTMLInputElement::setValueInternal): A helper for InputType::setValue().
+        * html/HTMLInputElement.h:
+        * html/HiddenInputType.cpp:
+        (WebCore::HiddenInputType::setValue):
+        Implementation for the "default" mode.
+        * html/HiddenInputType.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::setValue):
+        Implementation for the "value" mode.
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/common-input-element-attributes.html#dom-input-value-value
+        * html/InputType.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::setValue):
+        In addition to the "value" mode processing, updates placeholder visibililty.
+        * html/TextFieldInputType.h:
+
 2011-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r94274): The inner text value of an input element is not updated when input.value is set
