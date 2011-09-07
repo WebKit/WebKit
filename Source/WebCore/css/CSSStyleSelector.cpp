@@ -3641,12 +3641,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyFloat:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(floating, Floating)
         return;
-    case CSSPropertyListStylePosition:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(listStylePosition, ListStylePosition)
-        return;
-    case CSSPropertyListStyleType:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(listStyleType, ListStyleType)
-        return;
     case CSSPropertyPageBreakBefore:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(pageBreakBefore, PageBreakBefore, PageBreak)
         return;
@@ -3675,12 +3669,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(whiteSpace, WhiteSpace)
         return;
 // uri || inherit
-    case CSSPropertyListStyleImage:
-    {
-        HANDLE_INHERIT_AND_INITIAL(listStyleImage, ListStyleImage)
-        m_style->setListStyleImage(styleImage(CSSPropertyListStyleImage, value));
-        return;
-    }
     case CSSPropertyBorderImageSource:
     {
         HANDLE_INHERIT_AND_INITIAL(borderImageSource, BorderImageSource)
@@ -4280,19 +4268,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             applyProperty(CSSPropertyFontFamily, font->family.get());
         }
         return;
-        
-    case CSSPropertyListStyle:
-        if (isInherit) {
-            m_style->setListStyleType(m_parentStyle->listStyleType());
-            m_style->setListStyleImage(m_parentStyle->listStyleImage());
-            m_style->setListStylePosition(m_parentStyle->listStylePosition());
-        }
-        else if (isInitial) {
-            m_style->setListStyleType(RenderStyle::initialListStyleType());
-            m_style->setListStyleImage(RenderStyle::initialListStyleImage());
-            m_style->setListStylePosition(RenderStyle::initialListStylePosition());
-        }
-        return;
+
     case CSSPropertyOutline:
         if (isInherit) {
             m_style->setOutlineWidth(m_parentStyle->outlineWidth());
@@ -5089,6 +5065,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBottom:
     case CSSPropertyWidth:
     case CSSPropertyMinWidth:
+    case CSSPropertyListStyle:
+    case CSSPropertyListStyleImage:
+    case CSSPropertyListStylePosition:
+    case CSSPropertyListStyleType:
     case CSSPropertyMarginTop:
     case CSSPropertyMarginRight:
     case CSSPropertyMarginBottom:

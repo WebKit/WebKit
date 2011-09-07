@@ -79,12 +79,12 @@ private:
     ApplyPropertyBase* m_propertyMap[5];
 };
 
-template <typename T>
+template <typename GetterType, typename SetterType = GetterType, typename InitialType = GetterType>
 class ApplyPropertyDefaultBase : public ApplyPropertyBase {
 public:
-    typedef T (RenderStyle::*GetterFunction)() const;
-    typedef void (RenderStyle::*SetterFunction)(T);
-    typedef T (*InitialFunction)();
+    typedef GetterType (RenderStyle::*GetterFunction)() const;
+    typedef void (RenderStyle::*SetterFunction)(SetterType);
+    typedef InitialType (*InitialFunction)();
 
     ApplyPropertyDefaultBase(GetterFunction getter, SetterFunction setter, InitialFunction initial)
         : m_getter(getter)
@@ -105,17 +105,17 @@ private:
     }
 
 protected:
-    void setValue(RenderStyle* style, T value) const
+    void setValue(RenderStyle* style, SetterType value) const
     {
         (style->*m_setter)(value);
     }
 
-    T value(RenderStyle* style) const
+    GetterType value(RenderStyle* style) const
     {
         return (style->*m_getter)();
     }
 
-    T initial() const
+    InitialType initial() const
     {
         return (*m_initial)();
     }
@@ -140,6 +140,23 @@ protected:
         if (value->isPrimitiveValue())
             ApplyPropertyDefaultBase<T>::setValue(selector->style(), *static_cast<CSSPrimitiveValue*>(value));
     }
+};
+
+class ApplyPropertyStyleImage : public ApplyPropertyDefaultBase<StyleImage*, PassRefPtr<StyleImage> > {
+public:
+    ApplyPropertyStyleImage(GetterFunction getter, SetterFunction setter, InitialFunction initial, CSSPropertyID property)
+        : ApplyPropertyDefaultBase<StyleImage*, PassRefPtr<StyleImage> >(getter, setter, initial)
+        , m_property(property)
+    {
+    }
+
+private:
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        setValue(selector->style(), selector->styleImage(m_property, value));
+    }
+
+    CSSPropertyID m_property;
 };
 
 enum AutoValueType {Number = 0, ComputeLength};
@@ -1020,6 +1037,11 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyHeight, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneDisabled, UndefinedDisabled, FlexHeight>(&RenderStyle::height, &RenderStyle::setHeight, &RenderStyle::initialSize));
 
     setPropertyHandler(CSSPropertyTextIndent, new ApplyPropertyLength<>(&RenderStyle::textIndent, &RenderStyle::setTextIndent, &RenderStyle::initialTextIndent));
+
+    setPropertyHandler(CSSPropertyListStyleImage, new ApplyPropertyStyleImage(&RenderStyle::listStyleImage, &RenderStyle::setListStyleImage, &RenderStyle::initialListStyleImage, CSSPropertyListStyleImage));
+    setPropertyHandler(CSSPropertyListStylePosition, new ApplyPropertyDefault<EListStylePosition>(&RenderStyle::listStylePosition, &RenderStyle::setListStylePosition, &RenderStyle::initialListStylePosition));
+    setPropertyHandler(CSSPropertyListStyleType, new ApplyPropertyDefault<EListStyleType>(&RenderStyle::listStyleType, &RenderStyle::setListStyleType, &RenderStyle::initialListStyleType));
+    setPropertyHandler(CSSPropertyListStyle, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyListStyleType), propertyHandler(CSSPropertyListStyleImage), propertyHandler(CSSPropertyListStylePosition)));
 
     setPropertyHandler(CSSPropertyMaxHeight, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneEnabled, UndefinedEnabled>(&RenderStyle::maxHeight, &RenderStyle::setMaxHeight, &RenderStyle::initialMaxSize));
     setPropertyHandler(CSSPropertyMaxWidth, new ApplyPropertyLength<AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneEnabled, UndefinedEnabled>(&RenderStyle::maxWidth, &RenderStyle::setMaxWidth, &RenderStyle::initialMaxSize));

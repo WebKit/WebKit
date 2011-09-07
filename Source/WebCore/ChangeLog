@@ -1,3 +1,22 @@
+2011-09-06  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement list style properties in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=67103
+
+        Reviewed by Eric Seidel.
+
+        No new tests / no behavioral changes.
+
+        * css/CSSStyleApplyProperty.cpp:
+        Add class to wrap call to CSSStyleSelector::styleImage().
+        (WebCore::ApplyPropertyStyleImage::ApplyPropertyStyleImage):
+        (WebCore::ApplyPropertyStyleImage::applyValue):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Initialize handlers for list style properties.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove existing property implementations.
+
 2011-09-06  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Move away from QPointer as it is slow and it has a replacement QWeakPointer.
