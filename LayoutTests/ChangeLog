@@ -1,3 +1,19 @@
+2011-09-07  Adam Barth  <abarth@webkit.org>
+
+        These results all differ only in less than one pixel border or text rendering.
+
+        * platform/chromium-cg-mac-leopard/tables/mozilla/bugs/bug82946-2-expected.png: Added.
+        * platform/chromium-cg-mac/tables/mozilla/bugs/bug82946-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug22019-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug28341-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2886-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2947-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug6674-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug22019-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug2886-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug2947-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug6674-expected.png:
+
 2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Mac baseline for the test added by r94331.
