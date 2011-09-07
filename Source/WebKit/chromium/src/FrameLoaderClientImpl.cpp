@@ -966,7 +966,7 @@ void FrameLoaderClientImpl::dispatchDecidePolicyForNavigationAction(
             KURL url = ds->request().url();
             ASSERT(!url.protocolIs(backForwardNavigationScheme));
 
-            bool isRedirect = ds->hasRedirectChain();
+            bool isRedirect = ds->isRedirect();
 
             WebNavigationType webnavType =
                 WebDataSourceImpl::toWebNavigationType(action.type());

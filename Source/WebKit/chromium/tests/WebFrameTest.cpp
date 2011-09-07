@@ -30,6 +30,7 @@
 
 #include "config.h"
 
+#include "ResourceError.h"
 #include "WebDocument.h"
 #include "WebFormElement.h"
 #include "WebFrame.h"
@@ -213,6 +214,45 @@ TEST_F(WebFrameTest, ChromePageNoJavascript)
     std::string content = webView->mainFrame()->contentAsText(1024).utf8();
     EXPECT_NE(std::string::npos, content.find("Simulated Chromium History Page"));
     EXPECT_EQ(std::string::npos, content.find("Clobbered"));
+}
+
+class TestReloadDoesntRedirectWebFrameClient : public WebFrameClient {
+public:
+    virtual WebNavigationPolicy decidePolicyForNavigation(
+        WebFrame*, const WebURLRequest&, WebNavigationType,
+        const WebNode& originatingNode,
+        WebNavigationPolicy defaultPolicy, bool isRedirect)
+    {
+        EXPECT_EQ(false, isRedirect);
+        return WebNavigationPolicyCurrentTab;
+    }
+
+    virtual WebURLError cancelledError(WebFrame*, const WebURLRequest& request)
+    {
+        // Return a dummy error so the DocumentLoader doesn't assert when
+        // the reload cancels it.
+        return WebURLError(WebCore::ResourceError("", 1, "", "cancelled"));
+    }
+};
+
+TEST_F(WebFrameTest, ReloadDoesntSetRedirect)
+{
+    // Test for case in http://crbug.com/73104. Reloading a frame very quickly
+    // would sometimes call decidePolicyForNavigation with isRedirect=true
+    registerMockedHttpURLLoad("form.html");
+
+    TestReloadDoesntRedirectWebFrameClient webFrameClient;
+    WebView* webView = WebView::create(0);
+    webView->initializeMainFrame(&webFrameClient);
+
+    loadHttpFrame(webView->mainFrame(), "form.html");
+    serveRequests();
+    // Frame is loaded.
+
+    webView->mainFrame()->reload(true);
+    // start reload before request is delivered.
+    webView->mainFrame()->reload(true);
+    serveRequests();
 }
 
 } // namespace

@@ -74,6 +74,7 @@ public:
     static WebNavigationType toWebNavigationType(WebCore::NavigationType type);
 
     bool hasRedirectChain() const { return !m_redirectChain.isEmpty(); }
+    bool isRedirect() const { return m_redirectChain.size() > 1; }
     const WebCore::KURL& endOfRedirectChain() const;
     void clearRedirectChain();
     void appendRedirect(const WebCore::KURL& url);
