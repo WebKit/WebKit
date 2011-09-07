@@ -1,3 +1,32 @@
+2011-09-03  Robert Hogan  <robert@webkit.org>
+
+        Elements with position:absolute don't move to correct position after images load
+        https://bugs.webkit.org/show_bug.cgi?id=54611
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/block/positioning/absolute-layout-after-image-load.html
+              fast/block/positioning/positioned-float-layout-after-image-load.html
+
+        In the test the 'label' block is an absolutely positioned child of an inline flow. So during layout, 
+        this RenderBlock::layoutPositionedObjects fails to dirty it for rendering because it requires 
+        the parent to be a BlockFlow. The code to do this was introduced in http://trac.webkit.org/changeset/8284. 
+        There doesn't seem to be a good reason for requiring a BlockFlow, so remove the check. Do the same
+        for positioned floats in RenderBlock::positionedFloatsNeedRelayout(), although currently layoutPositionedObjects()
+        takes care of it this at least ensures no regression in future.
+
+        Note: Although the issue is encountered only on first load without a fragment identifier, it 
+        happens reliably when you include the fragment identifier in the url (#Footnote_1). This is so 
+        because scrolling to the fragment always happens before the image has loaded, rendering the page 
+        and clearing the initial dirty bits in the positioned element's renderer. When the image finally 
+        loads in this scenario, the positioned element is otherwise clean and relies on the above code to get 
+        re-rendered.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutPositionedObjects): remove the check for r->parent()->isBlockFlow() when 
+                                                         deciding whether to mark children for layout
+        (WebCore::RenderBlock::positionedFloatsNeedRelayout): ditto
+
 2011-09-07  Anna Cavender  <annacc@chromium.org>
 
         Moving platform/track to html/track to avoid layering violation.
