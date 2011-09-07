@@ -1113,20 +1113,15 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float width)
     SelectObject(dc, oldPen);
 }
 
-void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
+void GraphicsContext::beginTransparencyLayer(float opacity)
 {
     m_data->save();
     m_data->m_opacity *= opacity;
 }
 
-void GraphicsContext::endPlatformTransparencyLayer()
+void GraphicsContext::endTransparencyLayer()
 {
     m_data->restore();
-}
-
-bool GraphicsContext::supportsTransparencyLayers()
-{
-    return true;
 }
 
 void GraphicsContext::concatCTM(const AffineTransform& transform)

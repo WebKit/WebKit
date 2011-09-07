@@ -665,19 +665,14 @@ void GraphicsContext::clearPlatformShadow()
     notImplemented(); 
 }
 
-void GraphicsContext::beginPlatformTransparencyLayer(float)
+void GraphicsContext::beginTransparencyLayer(float) 
 { 
     notImplemented(); 
 }
 
-void GraphicsContext::endPlatformTransparencyLayer()
+void GraphicsContext::endTransparencyLayer() 
 { 
     notImplemented(); 
-}
-
-bool GraphicsContext::supportsTransparencyLayers()
-{
-    return false;
 }
 
 void GraphicsContext::clearRect(const FloatRect&) 

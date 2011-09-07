@@ -963,7 +963,7 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     CGContextEOClip(context);
 }
 
-void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
+void GraphicsContext::beginTransparencyLayer(float opacity)
 {
     if (paintingDisabled())
         return;
@@ -973,22 +973,19 @@ void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
     CGContextRef context = platformContext();
     CGContextSetAlpha(context, opacity);
     CGContextBeginTransparencyLayer(context, 0);
+    m_data->beginTransparencyLayer();
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::endPlatformTransparencyLayer()
+void GraphicsContext::endTransparencyLayer()
 {
     if (paintingDisabled())
         return;
     CGContextRef context = platformContext();
     CGContextEndTransparencyLayer(context);
+    m_data->endTransparencyLayer();
 
     restore();
-}
-
-bool GraphicsContext::supportsTransparencyLayers()
-{
-    return true;
 }
 
 void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, const Color& color, ColorSpace colorSpace)

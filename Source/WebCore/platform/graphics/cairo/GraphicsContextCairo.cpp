@@ -879,7 +879,7 @@ void GraphicsContext::clearPlatformShadow()
     platformContext()->shadowBlur().clear();
 }
 
-void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
+void GraphicsContext::beginTransparencyLayer(float opacity)
 {
     if (paintingDisabled())
         return;
@@ -887,9 +887,10 @@ void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
     cairo_t* cr = platformContext()->cr();
     cairo_push_group(cr);
     m_data->layers.append(opacity);
+    m_data->beginTransparencyLayer();
 }
 
-void GraphicsContext::endPlatformTransparencyLayer()
+void GraphicsContext::endTransparencyLayer()
 {
     if (paintingDisabled())
         return;
@@ -899,11 +900,7 @@ void GraphicsContext::endPlatformTransparencyLayer()
     cairo_pop_group_to_source(cr);
     cairo_paint_with_alpha(cr, m_data->layers.last());
     m_data->layers.removeLast();
-}
-
-bool GraphicsContext::supportsTransparencyLayers()
-{
-    return true;
+    m_data->endTransparencyLayer();
 }
 
 void GraphicsContext::clearRect(const FloatRect& rect)

@@ -249,7 +249,7 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
     return rect;
 }
 
-void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
+void GraphicsContext::beginTransparencyLayer(float opacity)
 {
     if (paintingDisabled())
         return;
@@ -257,17 +257,12 @@ void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
     notImplemented();
 }
 
-void GraphicsContext::endPlatformTransparencyLayer()
+void GraphicsContext::endTransparencyLayer()
 {
     if (paintingDisabled())
         return;
 
     notImplemented();
-}
-
-bool GraphicsContext::supportsTransparencyLayers()
-{
-    return false;
 }
 
 void GraphicsContext::clearRect(const FloatRect& rect)

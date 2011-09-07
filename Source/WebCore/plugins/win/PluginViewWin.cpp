@@ -636,7 +636,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     // In the Qt port we always draw in an offscreen buffer and therefore need to preserve
     // the translation set in getWindowsContext.
 #if !PLATFORM(QT) && !OS(WINCE)
-    if (!context->isInTransparencyLayer()) {
+    if (!context->inTransparencyLayer()) {
         XFORM transform;
         GetWorldTransform(windowsContext.hdc(), &transform);
         transform.eDx = 0;

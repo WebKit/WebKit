@@ -89,7 +89,7 @@ void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
 // suitable for all clients?
 void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
-    bool createdBitmap = mayCreateBitmap && (!m_data->m_hdc || isInTransparencyLayer());
+    bool createdBitmap = mayCreateBitmap && (!m_data->m_hdc || inTransparencyLayer());
     if (!createdBitmap) {
         m_data->restore();
         return;

@@ -370,7 +370,6 @@ namespace WebCore {
 
         void beginTransparencyLayer(float opacity);
         void endTransparencyLayer();
-        bool isInTransparencyLayer() const;
 
         bool hasShadow() const;
         void setShadow(const FloatSize&, float blur, const Color&, ColorSpace);
@@ -426,11 +425,13 @@ namespace WebCore {
         void drawBitmap(SharedBitmap*, const IntRect& dstRect, const IntRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp);
         void drawBitmapPattern(SharedBitmap*, const FloatRect& tileRectIn, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, const IntSize& origSourceSize);
         void drawIcon(HICON icon, const IntRect& dstRect, UINT flags);
+        bool inTransparencyLayer() const { return false; }
         HDC getWindowsContext(const IntRect&, bool supportAlphaBlend = false, bool mayCreateBitmap = true); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
         void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend = false, bool mayCreateBitmap = true);    // The passed in HDC should be the one handed back by getWindowsContext.
         void drawRoundCorner(bool newClip, RECT clipRect, RECT rectWin, HDC dc, int width, int height);
 #elif PLATFORM(WIN)
         GraphicsContext(HDC, bool hasAlpha = false); // FIXME: To be removed.
+        bool inTransparencyLayer() const;
         HDC getWindowsContext(const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
         void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true);    // The passed in HDC should be the one handed back by getWindowsContext.
 
@@ -480,9 +481,11 @@ namespace WebCore {
         // This is needed because of a bug whereby getting an HDC from a GDI+ context
         // loses the scale operations applied to the context.
         FloatSize currentScale(); 
+        bool inTransparencyLayer() const { return false; }
 #endif
 
 #if PLATFORM(QT)
+        bool inTransparencyLayer() const;
         void pushTransparencyLayerInternal(const QRect &rect, qreal opacity, QPixmap& alphaMask);
         void takeOwnershipOfPlatformContext();
 #endif
@@ -535,16 +538,11 @@ namespace WebCore {
 
         void setPlatformCompositeOperation(CompositeOperator);
 
-        void beginPlatformTransparencyLayer(float opacity);
-        void endPlatformTransparencyLayer();
-        static bool supportsTransparencyLayers();
-
         GraphicsContextPlatformPrivate* m_data;
 
         GraphicsContextState m_state;
         Vector<GraphicsContextState> m_stack;
         bool m_updatingControlTints;
-        unsigned m_transparencyCount;
     };
 
     class GraphicsContextStateSaver {

@@ -285,7 +285,7 @@ void GraphicsContext::clearPlatformShadow()
     notImplemented();
 }
 
-void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
+void GraphicsContext::beginTransparencyLayer(float opacity)
 {
     if (paintingDisabled())
         return;
@@ -294,17 +294,12 @@ void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
     UNUSED_PARAM(opacity);
 }
 
-void GraphicsContext::endPlatformTransparencyLayer()
+void GraphicsContext::endTransparencyLayer()
 {
     if (paintingDisabled())
         return;
 
     notImplemented();
-}
-
-bool GraphicsContext::supportsTransparencyLayers()
-{
-    return false;
 }
 
 void GraphicsContext::clearRect(const FloatRect& rect)

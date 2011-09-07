@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="asdf" style="-webkit-svg-shadow: 50px 50px 0px red;">
-<text x="20" y="40" fill="black">This text should appear only twice</text>
-<rect x="100" y="100" height="20" width="200" fill="blue" />
-</svg>

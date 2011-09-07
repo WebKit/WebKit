@@ -77,6 +77,8 @@ public:
     void translate(float, float);
     void concatCTM(const AffineTransform&);
     void setCTM(const AffineTransform&);
+    void beginTransparencyLayer() { m_transparencyCount++; }
+    void endTransparencyLayer() { m_transparencyCount--; }
     void syncContext(cairo_t* cr);
 #else
     // On everything else, we do nothing.
@@ -90,6 +92,8 @@ public:
     void translate(float, float) {}
     void concatCTM(const AffineTransform&) {}
     void setCTM(const AffineTransform&) {}
+    void beginTransparencyLayer() {}
+    void endTransparencyLayer() {}
     void syncContext(cairo_t* cr) {}
 #endif
 
@@ -101,6 +105,7 @@ public:
     GdkEventExpose* expose;
 #elif PLATFORM(WIN)
     HDC m_hdc;
+    unsigned m_transparencyCount;
     bool m_shouldIncludeChildWindows;
 #endif
 };

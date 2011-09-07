@@ -122,7 +122,7 @@ static void drawBitmapToContext(GraphicsContextPlatformPrivate* context, cairo_t
 
 void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
-    bool createdBitmap = mayCreateBitmap && (!m_data->m_hdc || isInTransparencyLayer());
+    bool createdBitmap = mayCreateBitmap && (!m_data->m_hdc || inTransparencyLayer());
     if (!hdc || !createdBitmap) {
         m_data->restore();
         return;

@@ -51,6 +51,8 @@ static void fillWithClearColor(HBITMAP bitmap)
     memset(bmpInfo.bmBits, 0, bufferSize);
 }
 
+bool GraphicsContext::inTransparencyLayer() const { return m_data->m_transparencyCount; }
+
 void GraphicsContext::setShouldIncludeChildWindows(bool include)
 {
     m_data->m_shouldIncludeChildWindows = include;
@@ -98,7 +100,7 @@ PassOwnPtr<GraphicsContext::WindowsBitmap> GraphicsContext::createWindowsBitmap(
 HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
     // FIXME: Should a bitmap be created also when a shadow is set?
-    if (mayCreateBitmap && (!m_data->m_hdc || isInTransparencyLayer())) {
+    if (mayCreateBitmap && (!m_data->m_hdc || inTransparencyLayer())) {
         if (dstRect.isEmpty())
             return 0;
 

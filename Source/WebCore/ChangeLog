@@ -1,3 +1,71 @@
+2011-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94714 and r94723.
+        http://trac.webkit.org/changeset/94714
+        http://trac.webkit.org/changeset/94723
+        https://bugs.webkit.org/show_bug.cgi?id=67746
+
+        breaks gtk-linux tests with assertion failure (Requested by
+        thorton on #webkit).
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::inTransparencyLayer):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        (WebCore::GraphicsContextPlatformPrivate::beginTransparencyLayer):
+        (WebCore::GraphicsContextPlatformPrivate::endTransparencyLayer):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::beginTransparencyLayer):
+        (WebCore::GraphicsContextPlatformPrivate::endTransparencyLayer):
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::inTransparencyLayer):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::drawGDIGlyphs):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::inTransparencyLayer):
+        (WebCore::GraphicsContext::getWindowsContext):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::paintTrackPiece):
+        (WebCore::ScrollbarThemeWin::paintButton):
+        (WebCore::ScrollbarThemeWin::paintThumb):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::paint):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::drawControl):
+
 2011-09-07  Chris Fleizach  <cfleizach@apple.com>
 
         Changes to aria-hidden don't change VO navigation
