@@ -1,3 +1,14 @@
+2011-09-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Add platform specific expected results for new passing tests.
+
+        * platform/qt/fast/borders/border-image-longhand-expected.png: Added.
+        * platform/qt/fast/borders/border-image-longhand-expected.txt: Added.
+        * platform/qt/fast/borders/border-image-scaled-expected.png: Added.
+        * platform/qt/fast/borders/border-image-scaled-expected.txt: Added.
+        * platform/qt/fast/borders/border-image-side-reduction-expected.png: Added.
+        * platform/qt/fast/borders/border-image-side-reduction-expected.txt: Added.
+
 2011-09-07  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Rebaseline expectations for svg/batik/text/textStyles.svg after r94624.
