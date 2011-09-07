@@ -1,5 +1,12 @@
 2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Skip media/media-controls-invalid-url.html on Mac for now because it has been failing.
+        The failure is tracked by the bug 67716.
+
+        * platform/mac/Skipped:
+
+2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
+
         Finally, Mac rebaseline for r93237.
 
         * platform/mac-snowleopard/fast/text/midword-break-before-surrogate-pair-2-expected.txt: Copied from
