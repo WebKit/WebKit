@@ -288,6 +288,8 @@ rect: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto
 rect: style.getPropertyCSSValue(-webkit-hyphenate-limit-after) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-limit-before) : auto
 rect: style.getPropertyCSSValue(-webkit-hyphenate-limit-before) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-hyphenate-limit-lines) : no-limit
+rect: style.getPropertyCSSValue(-webkit-hyphenate-limit-lines) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphens) : manual
 rect: style.getPropertyCSSValue(-webkit-hyphens) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-line-box-contain) : block inline replaced
@@ -762,6 +764,8 @@ g: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto
 g: style.getPropertyCSSValue(-webkit-hyphenate-limit-after) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-limit-before) : auto
 g: style.getPropertyCSSValue(-webkit-hyphenate-limit-before) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-hyphenate-limit-lines) : no-limit
+g: style.getPropertyCSSValue(-webkit-hyphenate-limit-lines) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphens) : manual
 g: style.getPropertyCSSValue(-webkit-hyphens) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-line-box-contain) : block inline replaced

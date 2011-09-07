@@ -145,6 +145,7 @@ zoom: 1;
 -webkit-hyphenate-character: auto;
 -webkit-hyphenate-limit-after: auto;
 -webkit-hyphenate-limit-before: auto;
+-webkit-hyphenate-limit-lines: no-limit;
 -webkit-hyphens: manual;
 -webkit-line-box-contain: block inline replaced;
 -webkit-line-break: normal;
