@@ -1,3 +1,19 @@
+2011-09-06  Eric Boren  <borenet@gmail.com>
+
+        [Chromium] Modify WebTouchEvent structure to match WebCore::TouchEvent
+        https://bugs.webkit.org/show_bug.cgi?id=66800
+
+        Reviewed by Darin Fisher.
+
+        * public/WebInputEvent.h:
+        (WebKit::WebTouchEvent::WebTouchEvent):
+        * public/WebTouchPoint.h:
+        (WebKit::WebTouchPoint::WebTouchPoint):
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformTouchEventBuilder::PlatformTouchEventBuilder):
+        (WebKit::WebTouchEventBuilder::WebTouchEventBuilder):
+        * src/WebInputEventConversion.h:
+
 2011-09-06  Ben Smith  <binji@chromium.org>
 
         [chromium] Fix WebFrameClient receiving isRedirect when reloading
