@@ -48,6 +48,7 @@ protected:
 
 private:
     Q_PRIVATE_SLOT(d, void _q_viewportUpdated());
+    Q_PRIVATE_SLOT(d, void _q_viewportTrajectoryVectorChanged(const QPointF&));
 
     friend class WebKit::TouchViewInterface;
     QTouchWebViewPrivate *d;

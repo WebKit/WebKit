@@ -61,6 +61,11 @@ void TiledDrawingAreaProxy::setVisibleContentRectAndScale(const WebCore::IntRect
     page()->process()->send(Messages::DrawingArea::SetVisibleContentRectAndScale(visibleContentRect, scale), page()->pageID());
 }
 
+void TiledDrawingAreaProxy::setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint& trajectoryVector)
+{
+    page()->process()->send(Messages::DrawingArea::SetVisibleContentRectTrajectoryVector(trajectoryVector), page()->pageID());
+}
+
 void TiledDrawingAreaProxy::renderNextFrame()
 {
     page()->process()->send(Messages::DrawingArea::RenderNextFrame(), page()->pageID());

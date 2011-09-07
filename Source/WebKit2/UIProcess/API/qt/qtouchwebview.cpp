@@ -40,6 +40,7 @@ QTouchWebViewPrivate::QTouchWebViewPrivate(QTouchWebView* q)
     pageViewPrivate->setPage(&page);
 
     QObject::connect(&interactionEngine, SIGNAL(viewportUpdateRequested()), q, SLOT(_q_viewportUpdated()));
+    QObject::connect(&interactionEngine, SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), q, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
 }
 
 void QTouchWebViewPrivate::loadDidCommit()
@@ -52,6 +53,11 @@ void QTouchWebViewPrivate::_q_viewportUpdated()
     const QRectF visibleRectInPageViewCoordinate = q->mapRectToItem(pageView.data(), q->boundingRect()).intersected(pageView->boundingRect());
     float scale = pageView->scale();
     page.setVisibleContentRectAndScale(visibleRectInPageViewCoordinate, scale);
+}
+
+void QTouchWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& trajectoryVector)
+{
+    page.setVisibleContentRectTrajectoryVector(trajectoryVector);
 }
 
 void QTouchWebViewPrivate::updateViewportConstraints()

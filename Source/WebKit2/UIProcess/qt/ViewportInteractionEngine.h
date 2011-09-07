@@ -69,6 +69,7 @@ public:
 
 Q_SIGNALS:
     void viewportUpdateRequested();
+    void viewportTrajectoryVectorChanged(const QPointF&);
 
 private Q_SLOTS:
     // Respond to changes of content that are not driven by us, like the page resizing itself.

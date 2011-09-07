@@ -27,6 +27,7 @@
 #define DrawingArea_h
 
 #include "DrawingAreaInfo.h"
+#include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -100,6 +101,7 @@ private:
 #if ENABLE(TILED_BACKING_STORE)
     virtual void setSize(const WebCore::IntSize& viewSize) { }
     virtual void setVisibleContentRectAndScale(const WebCore::IntRect&, float) { }
+    virtual void setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint&) { }
     virtual void setContentsScale(float scale) { }
     virtual void renderNextFrame() { }
     virtual void takeSnapshot(const WebCore::IntSize& targetSize, const WebCore::IntRect& contentsRect) { }

@@ -1,3 +1,38 @@
+2011-09-05  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt][WK2] Make TiledDrawingArea request tiles only in the direction the viewport is panned to.
+        https://bugs.webkit.org/show_bug.cgi?id=67606
+
+        TiledBackingStore previously used different values for horizontal and vertial multiplication
+        to calculate the cover area. 
+        This patch replaces this mechanism, used to give a bigger panning range to vertical panning,
+        with the possibility to use the motion vector of the viewport to request tiles ahead instead.
+        This allows economies on rendering resources as tiles won't be rendered beside the trajectory
+        of the viewport.
+
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::QTouchWebViewPrivate):
+        (QTouchWebViewPrivate::_q_viewportMotionVectorChanged):
+        * UIProcess/API/qt/qtouchwebview.h:
+        * UIProcess/API/qt/qtouchwebview_p.h:
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::setVisibleContentRectMotionVector):
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/qt/ViewportInteractionEngine.cpp:
+        (WebKit::ViewportInteractionEngine::panGestureRequestUpdate):
+        (WebKit::ViewportInteractionEngine::panGestureEnded):
+        (WebKit::ViewportInteractionEngine::pinchGestureStarted):
+        * UIProcess/qt/ViewportInteractionEngine.h:
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::setVisibleContentRectMotionVector):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setVisibleContentRectMotionVector):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::setVisibleContentRectMotionVector):
+        * WebProcess/WebPage/TiledDrawingArea.h:
+
 2011-09-01  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] TiledBackingStore: Import the resizeEdgeTiles logic from TiledDrawindAreaProxy.

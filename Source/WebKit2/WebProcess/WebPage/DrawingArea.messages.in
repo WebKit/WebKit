@@ -29,6 +29,7 @@ messages -> DrawingArea {
 #if ENABLE(TILED_BACKING_STORE)
     SetSize(WebCore::IntSize viewSize)
     SetVisibleContentRectAndScale(WebCore::IntRect visibleContentRect, float scale)
+    SetVisibleContentRectTrajectoryVector(WebCore::FloatPoint trajectoryVector)
     RenderNextFrame()
     TakeSnapshot(WebCore::IntSize size, WebCore::IntRect contentsRect)
 #endif

@@ -89,6 +89,11 @@ void TiledDrawingArea::setVisibleContentRectAndScale(const WebCore::IntRect& vis
         m_mainBackingStore->adjustVisibleRect();
 }
 
+void TiledDrawingArea::setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint& trajectoryVector)
+{
+    m_mainBackingStore->setVisibleRectTrajectoryVector(trajectoryVector);
+}
+
 void TiledDrawingArea::renderNextFrame()
 {
     m_isWaitingForUIProcess = false;

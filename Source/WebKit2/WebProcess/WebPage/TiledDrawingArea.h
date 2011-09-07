@@ -55,6 +55,7 @@ private:
     // CoreIPC message handlers.
     virtual void setSize(const WebCore::IntSize& viewSize);
     virtual void setVisibleContentRectAndScale(const WebCore::IntRect&, float);
+    virtual void setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint&);
     virtual void renderNextFrame();
     virtual void suspendPainting();
     virtual void resumePainting();

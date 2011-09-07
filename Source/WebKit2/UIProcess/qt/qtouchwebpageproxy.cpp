@@ -86,6 +86,11 @@ void QTouchWebPageProxy::setVisibleContentRectAndScale(const QRectF& visibleCont
     m_webPageProxy->setFixedVisibleContentRect(alignedVisibleContentRect);
 }
 
+void QTouchWebPageProxy::setVisibleContentRectTrajectoryVector(const QPointF& trajectoryVector)
+{
+    drawingArea()->setVisibleContentRectTrajectoryVector(trajectoryVector);
+}
+
 void QTouchWebPageProxy::setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize)
 {
     m_webPageProxy->setResizesToContentsUsingLayoutSize(targetLayoutSize);

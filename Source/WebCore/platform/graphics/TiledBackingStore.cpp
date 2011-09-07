@@ -43,12 +43,13 @@ TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, PassOwnPtr
     , m_tileCreationTimer(new TileTimer(this, &TiledBackingStore::tileCreationTimerFired))
     , m_tileSize(defaultTileWidth, defaultTileHeight)
     , m_tileCreationDelay(0.01)
-    , m_keepAreaMultiplier(2.f, 3.5f)
-    , m_coverAreaMultiplier(1.5f, 2.5f)
+    , m_keepAreaMultiplier(3.5f)
+    , m_coverAreaMultiplier(2.5f)
     , m_contentsScale(1.f)
     , m_pendingScale(0)
     , m_contentsFrozen(false)
 {
+    ASSERT(m_coverAreaMultiplier <= m_keepAreaMultiplier);
 }
 
 TiledBackingStore::~TiledBackingStore()
@@ -69,10 +70,20 @@ void TiledBackingStore::setTileCreationDelay(double delay)
     m_tileCreationDelay = delay;
 }
 
-void TiledBackingStore::setKeepAndCoverAreaMultipliers(const FloatSize& keepMultiplier, const FloatSize& coverMultiplier)
+void TiledBackingStore::setKeepAndCoverAreaMultipliers(float keepMultiplier, float coverMultiplier)
 {
+    ASSERT(coverMultiplier <= keepMultiplier);
     m_keepAreaMultiplier = keepMultiplier;
     m_coverAreaMultiplier = coverMultiplier;
+    startTileCreationTimer();
+}
+
+void TiledBackingStore::setVisibleRectTrajectoryVector(const FloatPoint& vector)
+{
+    if (m_visibleRectTrajectoryVector == vector)
+        return;
+
+    m_visibleRectTrajectoryVector = vector;
     startTileCreationTimer();
 }
 
@@ -240,19 +251,12 @@ void TiledBackingStore::createTiles()
     // Resize tiles on edges in case the contents size has changed.
     bool didResizeTiles = resizeEdgeTiles();
 
-    IntRect keepRect = visibleRect;
-    // Inflates to both sides, so divide inflate delta by 2
-    keepRect.inflateX(visibleRect.width() * (m_keepAreaMultiplier.width() - 1.f) / 2);
-    keepRect.inflateY(visibleRect.height() * (m_keepAreaMultiplier.height() - 1.f) / 2);
-    keepRect.intersect(contentsRect());
+    IntRect keepRect = computeKeepRect(visibleRect);
     
     dropTilesOutsideRect(keepRect);
     
-    IntRect coverRect = visibleRect;
-    // Inflates to both sides, so divide inflate delta by 2
-    coverRect.inflateX(visibleRect.width() * (m_coverAreaMultiplier.width() - 1.f) / 2);
-    coverRect.inflateY(visibleRect.height() * (m_coverAreaMultiplier.height() - 1.f) / 2);
-    coverRect.intersect(contentsRect());
+    IntRect coverRect = computeCoverRect(visibleRect);
+    ASSERT(keepRect.contains(coverRect));
     
     // Search for the tile position closest to the viewport center that does not yet contain a tile. 
     // Which position is considered the closest depends on the tileDistance function.
@@ -294,6 +298,44 @@ void TiledBackingStore::createTiles()
     // Keep creating tiles until the whole coverRect is covered.
     if (requiredTileCount)
         m_tileCreationTimer->startOneShot(m_tileCreationDelay);
+}
+
+IntRect TiledBackingStore::computeKeepRect(const IntRect& visibleRect) const
+{
+    IntRect result = visibleRect;
+    // Inflates to both sides, so divide the inflate delta by 2.
+    result.inflateX(visibleRect.width() * (m_keepAreaMultiplier - 1) / 2);
+    result.inflateY(visibleRect.height() * (m_keepAreaMultiplier - 1) / 2);
+    result.intersect(contentsRect());
+
+    return result;
+}
+
+// A null trajectory vector means that tiles intersecting all the coverArea (i.e. visibleRect * coverMultiplier) will be created.
+// A non-null trajectory vector will shrink the intersection rect to visibleRect plus its expansion from its
+// center toward the cover area edges in the direction of the given vector.
+// E.g. if visibleRect == (10,10)5x5 and coverMultiplier == 3.0:
+// a (0,0) trajectory vector will create tiles intersecting (5,5)15x15,
+// a (1,0) trajectory vector will create tiles intersecting (10,10)10x5,
+// and a (1,1) trajectory vector will create tiles intersecting (10,10)10x10.
+IntRect TiledBackingStore::computeCoverRect(const IntRect& visibleRect) const
+{
+    IntRect result = visibleRect;
+    float trajectoryVectorNorm = sqrt(pow(m_visibleRectTrajectoryVector.x(), 2) + pow(m_visibleRectTrajectoryVector.y(), 2));
+    if (trajectoryVectorNorm > 0) {
+        // Multiply the vector by the distance to the edge of the cover area.
+        float trajectoryVectorMultiplier = (m_coverAreaMultiplier - 1) / 2;
+        // Unite the visible rect with a "ghost" of the visible rect moved in the direction of the trajectory vector.
+        result.move(result.width() * m_visibleRectTrajectoryVector.x() / trajectoryVectorNorm * trajectoryVectorMultiplier,
+                    result.height() * m_visibleRectTrajectoryVector.y() / trajectoryVectorNorm * trajectoryVectorMultiplier);
+        result.unite(visibleRect);
+    } else {
+        result.inflateX(visibleRect.width() * (m_coverAreaMultiplier - 1) / 2);
+        result.inflateY(visibleRect.height() * (m_coverAreaMultiplier - 1) / 2);
+    }
+    result.intersect(contentsRect());
+
+    return result;
 }
 
 bool TiledBackingStore::resizeEdgeTiles()

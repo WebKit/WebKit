@@ -36,6 +36,7 @@ public:
 
     void loadDidCommit();
     void _q_viewportUpdated();
+    void _q_viewportTrajectoryVectorChanged(const QPointF&);
     void updateViewportConstraints();
 
     void setViewportArguments(const WebCore::ViewportArguments& args);

@@ -72,6 +72,7 @@ public:
     virtual ~TiledDrawingAreaProxy();
 
     void setVisibleContentRectAndScale(const WebCore::IntRect&, float);
+    void setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint&);
     void renderNextFrame();
 
 #if USE(ACCELERATED_COMPOSITING)

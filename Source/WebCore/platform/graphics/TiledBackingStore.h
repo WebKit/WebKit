@@ -22,7 +22,7 @@
 
 #if ENABLE(TILED_BACKING_STORE)
 
-#include "FloatSize.h"
+#include "FloatPoint.h"
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "Tile.h"
@@ -64,12 +64,13 @@ public:
     void setTileCreationDelay(double delay);
     
     // Tiled are dropped outside the keep area, and created for cover area. The values a relative to the viewport size.
-    void getKeepAndCoverAreaMultipliers(FloatSize& keepMultiplier, FloatSize& coverMultiplier)
+    void getKeepAndCoverAreaMultipliers(float& keepMultiplier, float& coverMultiplier)
     {
         keepMultiplier = m_keepAreaMultiplier;
         coverMultiplier = m_coverAreaMultiplier;
     }
-    void setKeepAndCoverAreaMultipliers(const FloatSize& keepMultiplier, const FloatSize& coverMultiplier);    
+    void setKeepAndCoverAreaMultipliers(float keepMultiplier, float coverMultiplier);
+    void setVisibleRectTrajectoryVector(const FloatPoint&);
 
     IntRect mapToContents(const IntRect&) const;
     IntRect mapFromContents(const IntRect&) const;
@@ -89,6 +90,8 @@ private:
     void tileCreationTimerFired(TileTimer*);
     
     void createTiles();
+    IntRect computeKeepRect(const IntRect& visibleRect) const;
+    IntRect computeCoverRect(const IntRect& visibleRect) const;
     
     void commitScaleChange();
 
@@ -115,8 +118,9 @@ private:
 
     IntSize m_tileSize;
     double m_tileCreationDelay;
-    FloatSize m_keepAreaMultiplier;
-    FloatSize m_coverAreaMultiplier;
+    float m_keepAreaMultiplier;
+    float m_coverAreaMultiplier;
+    FloatPoint m_visibleRectTrajectoryVector;
     
     IntRect m_previousVisibleRect;
     float m_contentsScale;

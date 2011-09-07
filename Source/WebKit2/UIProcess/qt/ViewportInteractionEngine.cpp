@@ -139,6 +139,8 @@ void ViewportInteractionEngine::panGestureRequestUpdate(qreal deltaX, qreal delt
     QPointF destInViewportCoords = m_viewport->mapFromItem(m_content, itemPositionInItemCoords + QPointF(deltaX, deltaY));
 
     m_content->setPos(destInViewportCoords);
+    // This must be emitted before viewportUpdateRequested so that the web process knows where to look for tiles.
+    emit viewportTrajectoryVectorChanged(QPointF(-deltaX, -deltaY));
 }
 
 void ViewportInteractionEngine::panGestureCancelled()
@@ -152,6 +154,7 @@ void ViewportInteractionEngine::panGestureEnded()
 {
     ViewportUpdateGuard guard(this);
     animateContentIntoBoundariesIfNeeded();
+    // FIXME: emit viewportTrajectoryVectorChanged(QPointF()) when the pan throw animation ends and the page stops moving.
 }
 
 void ViewportInteractionEngine::pinchGestureStarted()
@@ -164,6 +167,9 @@ void ViewportInteractionEngine::pinchGestureStarted()
     m_userInteractionFlags |= UserHasScaledContent;
     m_userInteractionFlags |= UserHasMovedContent;
     m_pinchStartScale = m_content->scale();
+
+    // Reset the tiling look-ahead vector so that tiles all around the viewport will be requested on pinch-end.
+    emit viewportTrajectoryVectorChanged(QPointF());
 }
 
 void ViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinchCenterInContentCoordinate, qreal totalScaleFactor)
