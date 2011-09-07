@@ -76,7 +76,13 @@ void TiledDrawingArea::setVisibleContentRectAndScale(const WebCore::IntRect& vis
     m_visibleContentRect = visibleContentsRect;
 
     if (scale != m_mainBackingStore->contentsScale()) {
-        m_previousBackingStore = m_mainBackingStore.release();
+        // Keep the tiles for the previous scale until enough content is available to be shown on the screen for the new scale.
+        // If we already have a previous set of tiles it means that two scale changed happened successively.
+        // In that case, make sure that our current main tiles have more content to show than the "previous previous"
+        // within the visible rect before replacing it.
+        if (!m_previousBackingStore || m_mainBackingStore->coverageRatio(m_visibleContentRect) > m_previousBackingStore->coverageRatio(m_visibleContentRect))
+            m_previousBackingStore = m_mainBackingStore.release();
+
         m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
         m_mainBackingStore->setContentsScale(scale);
     } else
@@ -122,6 +128,12 @@ void TiledDrawingArea::tiledBackingStorePaintEnd(const Vector<IntRect>& paintedA
         m_webPage->send(Messages::DrawingAreaProxy::DidRenderFrame());
         m_isWaitingForUIProcess = true;
         m_didSendTileUpdate = false;
+
+        // Make sure that we destroy the previous backing store and remove its tiles only after DidRenderFrame
+        // was sent to swap recently created tiles' buffer. Else a frame could be rendered after the previous
+        // tiles were removed and before the new tile have their first back buffer swapped.
+        if (m_previousBackingStore && m_mainBackingStore->coverageRatio(m_visibleContentRect) >= 1.0f)
+            m_previousBackingStore.clear();
     }
 }
 
@@ -149,9 +161,6 @@ void TiledDrawingArea::createTile(int tileID, const UpdateInfo& updateInfo)
 {
     m_webPage->send(Messages::DrawingAreaProxy::CreateTile(tileID, updateInfo));
     m_didSendTileUpdate = true;
-
-    if (m_previousBackingStore && m_mainBackingStore->coverageRatio(m_visibleContentRect) >= 1.0f)
-        m_previousBackingStore.clear();
 }
 void TiledDrawingArea::updateTile(int tileID, const UpdateInfo& updateInfo)
 {
