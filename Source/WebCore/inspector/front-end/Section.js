@@ -124,6 +124,38 @@ WebInspector.Section.prototype = {
         }
     },
 
+    get firstSibling()
+    {
+        var parent = this.element.parentElement;
+        if (!parent)
+            return null;
+
+        var childElement = parent.firstChild;
+        while (childElement) {
+            if (childElement._section)
+                return childElement._section;
+            childElement = childElement.nextSibling;
+        }
+
+        return null;
+    },
+
+    get lastSibling()
+    {
+        var parent = this.element.parentElement;
+        if (!parent)
+            return null;
+
+        var childElement = parent.lastChild;
+        while (childElement) {
+            if (childElement._section)
+                return childElement._section;
+            childElement = childElement.previousSibling;
+        }
+
+        return null;
+    },
+
     get nextSibling()
     {
         var curElement = this.element;

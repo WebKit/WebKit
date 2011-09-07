@@ -937,7 +937,13 @@ WebInspector.StylePropertiesSection.prototype = {
             curSection = curSection.nextSibling;
         } while (curSection && !curSection.editable);
 
-        return curSection;
+        if (!curSection) {
+            curSection = this.firstSibling;
+            while (curSection && !curSection.editable)
+                curSection = curSection.nextSibling;
+        }
+
+        return (curSection && curSection.editable) ? curSection : null;
     },
 
     previousEditableSibling: function()
@@ -947,7 +953,13 @@ WebInspector.StylePropertiesSection.prototype = {
             curSection = curSection.previousSibling;
         } while (curSection && !curSection.editable);
 
-        return curSection;
+        if (!curSection) {
+            curSection = this.lastSibling;
+            while (curSection && !curSection.editable)
+                curSection = curSection.previousSibling;
+        }
+
+        return (curSection && curSection.editable) ? curSection : null;
     },
 
     update: function(full)
@@ -1122,6 +1134,7 @@ WebInspector.StylePropertiesSection.prototype = {
         if (WebInspector.isBeingEdited(element))
             return;
 
+        this._selectorElement.scrollIntoViewIfNeeded(false);
         WebInspector.startEditing(this._selectorElement, {
             context: null,
             commitHandler: this.editingSelectorCommitted.bind(this),
@@ -1130,32 +1143,32 @@ WebInspector.StylePropertiesSection.prototype = {
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     },
 
-    editingSelectorCommitted: function(element, newContent, oldContent, context, moveDirection)
+    _moveEditorFromSelector: function(moveDirection)
     {
-        function moveToNextIfNeeded() {
-            if (!moveDirection)
+        if (!moveDirection)
+            return;
+
+        if (moveDirection === "forward") {
+            this.expand();
+            var firstChild = this.propertiesTreeOutline.children[0];
+            if (!firstChild)
+                this.addNewBlankProperty().startEditing();
+            else
+                firstChild.startEditing(firstChild.nameElement);
+        } else {
+            var previousSection = this.previousEditableSibling();
+            if (!previousSection)
                 return;
 
-            if (moveDirection === "forward") {
-                this.expand();
-                if (this.propertiesTreeOutline.children.length === 0)
-                    this.addNewBlankProperty().startEditing();
-                else {
-                    var item = this.propertiesTreeOutline.children[0]
-                    item.startEditing(item.nameElement);
-                }
-            } else {
-                var previousSection = this.previousEditableSibling();
-                if (!previousSection)
-                    return;
-
-                previousSection.expand();
-                previousSection.addNewBlankProperty().startEditing();
-            }
+            previousSection.expand();
+            previousSection.addNewBlankProperty().startEditing();
         }
+    },
 
+    editingSelectorCommitted: function(element, newContent, oldContent, context, moveDirection)
+    {
         if (newContent === oldContent)
-            return moveToNextIfNeeded.call(this);
+            return this._moveEditorFromSelector(moveDirection);
 
         var self = this;
 
@@ -1179,7 +1192,7 @@ WebInspector.StylePropertiesSection.prototype = {
 
             WebInspector.panels.elements.renameSelector(oldIdentifier, this.identifier, oldContent, newContent);
 
-            moveToNextIfNeeded.call(self);
+            self._moveEditorFromSelector(moveDirection);
         }
 
         var selectedNode = WebInspector.panels.elements.selectedDOMNode();
@@ -1839,6 +1852,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
         delete this.originalPropertyText;
 
         this._parentPane._isEditingStyle = true;
+        if (selectElement.parentElement)
+            selectElement.parentElement.scrollIntoViewIfNeeded(false);
         WebInspector.startEditing(selectElement, {
             context: context,
             commitHandler: this.editingCommitted.bind(this),
@@ -1982,7 +1997,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             else
                 this.updateTitle();
         }
-    }, 
+    },
 
     editingCommitted: function(element, userInput, previousContent, context, moveDirection)
     {
@@ -2000,11 +2015,11 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 moveTo = (moveDirection === "forward" ? moveTo.nextSibling : moveTo.previousSibling);
             } while(moveTo && !moveTo.selectable);
 
-           if (moveTo)
+            if (moveTo)
                 moveToPropertyName = moveTo.name;
             else if (moveDirection === "forward" && (!this._newProperty || userInput))
                 createNewProperty = true;
-            else if (moveDirection === "backward" && this.treeOutline.section.rule)
+            else if (moveDirection === "backward")
                 moveToSelector = true;
         }
 
@@ -2074,13 +2089,21 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
             if (abandonNewProperty) {
                 var sectionToEdit = moveDirection === "backward" ? section : section.nextEditableSibling();
-                if (sectionToEdit && sectionToEdit.rule)
-                    sectionToEdit.startEditingSelector();
+                if (sectionToEdit) {
+                    if (sectionToEdit.rule)
+                        sectionToEdit.startEditingSelector();
+                    else
+                        sectionToEdit._moveEditorFromSelector(moveDirection);
+                }
                 return;
             }
 
-            if (moveToSelector)
-                section.startEditingSelector();
+            if (moveToSelector) {
+                if (section.rule)
+                    section.startEditingSelector();
+                else
+                    section._moveEditorFromSelector(moveDirection);
+            }
         }
     },
 

@@ -10,12 +10,14 @@ function test()
     InspectorTest.selectNodeAndWaitForStyles("inspected", step1);
 
     var treeElement;
+    var treeOutline;
     var section;
 
     function step1()
     {
         InspectorTest.dumpSelectedElementStyles(true);
         treeElement = InspectorTest.getElementStylePropertyTreeItem("color");
+        treeOutline = treeElement.treeOutline;
 
         treeElement.startEditing();
         treeElement.nameElement.textContent = "color";
@@ -34,10 +36,19 @@ function test()
 
     function step2()
     {
-        if (!WebInspector.isEditingAnyField()) {
+        var blankTreeElement = treeOutline.children[1];
+        if (!WebInspector.isBeingEdited(blankTreeElement.nameElement)) {
             InspectorTest.addResult("No new property editor active!");
             InspectorTest.completeTest();
         }
+
+        // Test Styles pane editor looping.
+        blankTreeElement.nameElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        if (!WebInspector.isBeingEdited(treeOutline.children[0].nameElement)) {
+            InspectorTest.addResult("Original property name editor not active!");
+            InspectorTest.completeTest();
+        }
+
         InspectorTest.selectNodeWithId("other");
         InspectorTest.runAfterPendingDispatches(step3);
     }

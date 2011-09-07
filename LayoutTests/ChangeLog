@@ -1,3 +1,12 @@
+2011-09-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Implement circular tabbing through the Styles sidebar pane contents
+        https://bugs.webkit.org/show_bug.cgi?id=67127
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/styles/styles-commit-editing.html:
+
 2011-09-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed test fix (removed a call to console.trace() to avoid having platform-specific expectations).
