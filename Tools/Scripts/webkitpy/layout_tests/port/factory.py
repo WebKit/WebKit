@@ -43,7 +43,6 @@ class BuilderOptions(object):
 
 class PortFactory(object):
     def __init__(self, host=None):
-        # FIXME: All callers should pass a port.
         self._host = host
 
     def _port_name_from_arguments_and_options(self, **kwargs):
@@ -109,6 +108,15 @@ class PortFactory(object):
             maker = google_chrome.GetGoogleChromePort
         else:
             raise NotImplementedError('unsupported port: %s' % port_to_use)
+
+        # Make sure that any Ports created by this factory inherit
+        # the executive/user/filesystem from the provided host.
+        # FIXME: Eventually NRWT will use a Host object and Port will no longer store these pointers.
+        if self._host:
+            kwargs.setdefault('executive', self._host.executive)
+            kwargs.setdefault('user', self._host.user)
+            kwargs.setdefault('filesystem', self._host.filesystem)
+
         return maker(**kwargs)
 
     def all_port_names(self):

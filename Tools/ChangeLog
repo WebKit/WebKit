@@ -1,5 +1,26 @@
 2011-09-07  Eric Seidel  <eric@webkit.org>
 
+        Teach the PortFactory object how to pass along executive/user/filesystem to port objects (which fixes the failing rebaseline_test on bots)
+        https://bugs.webkit.org/show_bug.cgi?id=67737
+
+        Reviewed by Adam Barth.
+
+        I got a little over-eager when deprecating host.port_factory in the previous commit.
+        Turns out that Host.port_factory was already the "modern" port/factory.py
+        it was just the Module object.  I un-deprecated the variable, and changed it from
+        being the module to being an actual PortFactory, passing it a host object.
+        I also taught PortFactory how to set user/executive/filesystem in the kwargs
+        when instantiating a new Port object.
+        This magically fixed the test_rebaseline test, since its now no longer talking
+        to the real filesystem.
+
+        * Scripts/webkitpy/common/host.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
+2011-09-07  Eric Seidel  <eric@webkit.org>
+
         Add a new PortFactory class for creating new-style ports and deprecate the old PortFactory
         https://bugs.webkit.org/show_bug.cgi?id=67734
 

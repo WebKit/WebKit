@@ -36,7 +36,7 @@ from webkitpy.common.net import bugzilla, buildbot, statusserver, web
 from webkitpy.common.net.buildbot.chromiumbuildbot import ChromiumBuildBot
 from webkitpy.common.net.irc import ircproxy
 from webkitpy.common.system import executive, filesystem, platforminfo, user, workspace
-from webkitpy.layout_tests import port
+from webkitpy.layout_tests.port.factory import PortFactory
 
 
 class Host(object):
@@ -53,7 +53,10 @@ class Host(object):
         self._scm = None
         self._checkout = None
         self.status_server = statusserver.StatusServer()
-        self._deprecated_port_factory = port.factory
+        # FIXME: Unfortunately Port objects are currently the central-dispatch objects of the NRWT world.
+        # In order to instantiate a port correctly, we have to pass it at least an executive, user, scm, and filesystem
+        # so for now we just pass along the whole Host object.
+        self.port_factory = PortFactory(self)
         self.platform = platforminfo.PlatformInfo()
 
     def _initialize_scm(self, patch_directories=None):

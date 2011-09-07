@@ -790,19 +790,16 @@ class MockPort(object):
 
 
 class MockTestPort1(object):
-
     def skips_layout_test(self, test_name):
         return test_name in ["media/foo/bar.html", "foo"]
 
 
 class MockTestPort2(object):
-
     def skips_layout_test(self, test_name):
         return test_name == "media/foo/bar.html"
 
 
-class MockDeprecatedPortFactory(object):
-
+class MockPortFactory(object):
     def get_all(self, options=None):
         return {"test_port1": MockTestPort1(), "test_port2": MockTestPort2()}
 
@@ -826,7 +823,6 @@ class MockWeb(object):
 
 
 class MockTool(object):
-
     def __init__(self, log_executive=False):
         self.wakeup_event = threading.Event()
         self.bugs = MockBugzilla()
@@ -845,7 +841,7 @@ class MockTool(object):
         self._checkout = MockCheckout()
         self.status_server = MockStatusServer()
         self.irc_password = "MOCK irc password"
-        self._deprecated_port_factory = MockDeprecatedPortFactory()
+        self.port_factory = MockPortFactory()
         self.platform = MockPlatformInfo()
 
     def scm(self):
