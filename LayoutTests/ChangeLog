@@ -1,3 +1,12 @@
+2011-09-07  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Rebaseline expectations after r94593
+
+        * platform/chromium-linux/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/chromium-win-vista/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/chromium-win-vista/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+
 2011-09-07  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         fast/dom/replaceChild.html may not test what it's supposed to test and may sometimes be flaky
