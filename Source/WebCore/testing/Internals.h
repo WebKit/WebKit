@@ -81,6 +81,8 @@ public:
     void setPasswordEchoEnabled(Document*, bool enabled, ExceptionCode&);
     void setPasswordEchoDurationInSeconds(Document*, double durationInSeconds, ExceptionCode&);
 
+    void setScrollViewPosition(Document*, long x, long y, ExceptionCode&);
+
     bool wasLastChangeUserEdit(Element* textField, ExceptionCode&);
     String suggestedValue(Element* inputElement, ExceptionCode&);
     void setSuggestedValue(Element* inputElement, const String&, ExceptionCode&);

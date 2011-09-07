@@ -55,6 +55,8 @@ module window {
         void setPasswordEchoEnabled(in Document document, in boolean enabled) raises(DOMException);
         void setPasswordEchoDurationInSeconds(in Document document, in double durationInSeconds) raises(DOMException);
 
+        void setScrollViewPosition(in Document document, in long x, in long y) raises(DOMException);
+
         boolean wasLastChangeUserEdit(in Element textField) raises (DOMException);
         DOMString suggestedValue(in Element inputElement) raises (DOMException);
         void setSuggestedValue(in Element inputElement, in DOMString value) raises (DOMException);

@@ -1,3 +1,12 @@
+2011-09-07  Alexei Svitkine  <asvitkine@chromium.org>
+
+        Add test infrastructure to test rubber-banding overhang drawing along with layout tests for existing Chromium Mac overhang drawing in the non-gpu path.
+        https://bugs.webkit.org/show_bug.cgi?id=67511
+
+        Reviewed by Dimitri Glazkov.
+
+        * Source/autotools/symbols.filter:
+
 2011-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r94274): FormManagerTest.PreviewForm and FillFormNonEmptyField fail on chromium

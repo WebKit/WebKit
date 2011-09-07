@@ -1,3 +1,36 @@
+2011-09-07  Alexei Svitkine  <asvitkine@chromium.org>
+
+        Add test infrastructure to test rubber-banding overhang drawing along with layout tests for existing Chromium Mac overhang drawing in the non-gpu path.
+        https://bugs.webkit.org/show_bug.cgi?id=67511
+
+        Reviewed by Dimitri Glazkov.
+
+        * platform/chromium-mac/rubberbanding: Added.
+        * platform/chromium-mac/rubberbanding/overhang-e-expected.png: Added.
+        * platform/chromium-mac/rubberbanding/overhang-e-expected.txt: Added.
+        * platform/chromium-mac/rubberbanding/overhang-e.html: Added.
+        * platform/chromium-mac/rubberbanding/overhang-n-expected.png: Added.
+        * platform/chromium-mac/rubberbanding/overhang-n-expected.txt: Added.
+        * platform/chromium-mac/rubberbanding/overhang-n.html: Added.
+        * platform/chromium-mac/rubberbanding/overhang-ne-expected.png: Added.
+        * platform/chromium-mac/rubberbanding/overhang-ne-expected.txt: Added.
+        * platform/chromium-mac/rubberbanding/overhang-ne.html: Added.
+        * platform/chromium-mac/rubberbanding/overhang-nw-expected.png: Added.
+        * platform/chromium-mac/rubberbanding/overhang-nw-expected.txt: Added.
+        * platform/chromium-mac/rubberbanding/overhang-nw.html: Added.
+        * platform/chromium-mac/rubberbanding/overhang-s-expected.png: Added.
+        * platform/chromium-mac/rubberbanding/overhang-s-expected.txt: Added.
+        * platform/chromium-mac/rubberbanding/overhang-s.html: Added.
+        * platform/chromium-mac/rubberbanding/overhang-se-expected.png: Added.
+        * platform/chromium-mac/rubberbanding/overhang-se-expected.txt: Added.
+        * platform/chromium-mac/rubberbanding/overhang-se.html: Added.
+        * platform/chromium-mac/rubberbanding/overhang-sw-expected.png: Added.
+        * platform/chromium-mac/rubberbanding/overhang-sw-expected.txt: Added.
+        * platform/chromium-mac/rubberbanding/overhang-sw.html: Added.
+        * platform/chromium-mac/rubberbanding/overhang-w-expected.png: Added.
+        * platform/chromium-mac/rubberbanding/overhang-w-expected.txt: Added.
+        * platform/chromium-mac/rubberbanding/overhang-w.html: Added.
+
 2011-09-07  David Reveman  <reveman@chromium.org>
 
         [Chromium] Render surface anti-aliasing.

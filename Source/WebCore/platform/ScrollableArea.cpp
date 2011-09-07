@@ -135,6 +135,12 @@ void ScrollableArea::handleGestureEvent(const PlatformGestureEvent& gestureEvent
 }
 #endif
 
+// NOTE: Only called from Internals for testing.
+void ScrollableArea::setScrollOffsetFromInternals(const IntPoint& offset)
+{
+    setScrollOffsetFromAnimation(offset);
+}
+
 void ScrollableArea::setScrollOffsetFromAnimation(const IntPoint& offset)
 {
     // Tell the derived class to scroll its contents.

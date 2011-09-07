@@ -32,6 +32,7 @@
 #include "DocumentMarkerController.h"
 #include "Element.h"
 #include "ExceptionCode.h"
+#include "FrameView.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
@@ -268,6 +269,24 @@ void Internals::setPasswordEchoDurationInSeconds(Document* document, double dura
         passwordEchoDurationInSecondsBackedUp = true;
     }
     document->settings()->setPasswordEchoDurationInSeconds(durationInSeconds);
+}
+
+void Internals::setScrollViewPosition(Document* document, long x, long y, ExceptionCode& ec)
+{
+    if (!document || !document->view()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    FrameView* frameView = document->view();
+    bool constrainsScrollingToContentEdgeOldValue = frameView->constrainsScrollingToContentEdge();
+    bool scrollbarsSuppressedOldValue = frameView->scrollbarsSuppressed();
+
+    frameView->setConstrainsScrollingToContentEdge(false);
+    frameView->setScrollbarsSuppressed(false);
+    frameView->setScrollOffsetFromInternals(IntPoint(x, y));
+    frameView->setScrollbarsSuppressed(scrollbarsSuppressedOldValue);
+    frameView->setConstrainsScrollingToContentEdge(constrainsScrollingToContentEdgeOldValue);
 }
 
 void Internals::reset(Document* document)

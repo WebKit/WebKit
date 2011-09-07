@@ -158,11 +158,14 @@ public:
 
     virtual bool scrollAnimatorEnabled() const { return false; }
 
+    // NOTE: Only called from Internals for testing.
+    void setScrollOffsetFromInternals(const IntPoint&);
+
 private:
     // NOTE: Only called from the ScrollAnimator.
     friend class ScrollAnimator;
     void setScrollOffsetFromAnimation(const IntPoint&);
-    
+
     mutable OwnPtr<ScrollAnimator> m_scrollAnimator;
     bool m_constrainsScrollingToContentEdge;
 

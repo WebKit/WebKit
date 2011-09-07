@@ -165,6 +165,8 @@ EXPORTS
         ?setDisabled@MemoryCache@WebCore@@QAEX_N@Z
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
         ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z
+        ?setScrollbarsSuppressed@ScrollView@WebCore@@QAEX_N0@Z
+        ?setScrollOffsetFromInternals@ScrollableArea@WebCore@@QAEXABVIntPoint@2@@Z
         ?setSuggestedValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
         ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
         ?shadowRoot@Element@WebCore@@QBEPAVShadowRoot@2@XZ
@@ -175,4 +177,5 @@ EXPORTS
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVRange@1@@Z
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
+        ?view@Document@WebCore@@QBEPAVFrameView@2@XZ
         ?virtualFunctionToPreventWeakVtable@JSDOMWrapper@WebCore@@MAEXXZ
