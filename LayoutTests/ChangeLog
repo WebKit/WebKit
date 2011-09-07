@@ -1,5 +1,13 @@
 2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
 
+        GTK+ rebaseline after r94357. GTK+ port apparently implements PeerConnection.
+
+        * fast/dom/call-a-constructor-as-a-function-expected.txt: Removed.
+        * platform/gtk/fast/dom/call-a-constructor-as-a-function-expected.txt: Copied from
+        LayoutTests/fast/dom/call-a-constructor-as-a-function-expected.txt.
+
+2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
+
         Skip accessibility/textbox-role-reports-selection.html on GTK+ bots because it has been failing.
         The failure is tracked by the bug 67713.
 
