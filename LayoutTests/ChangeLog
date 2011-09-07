@@ -1,3 +1,15 @@
+2011-09-06  Yong Li  <yoli@rim.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67486
+        Add a test case for branchTruncateDoubleToInt32() which is
+        used in right shift optimization when the assembler
+        "supportsFloatingPointTruncate".
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/floating-point-truncate-rshift-expected.txt: Added.
+        * fast/js/floating-point-truncate-rshift.html: Added.
+
 2011-09-06  Adam Barth  <abarth@webkit.org>
 
         editing/selection/mixed-editability-10.html is failing on the bots

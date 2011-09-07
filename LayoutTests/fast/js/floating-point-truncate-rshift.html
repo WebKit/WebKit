@@ -1,0 +1,11 @@
+<body>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+var largeNeg = -2715228072;
+if ((largeNeg >>> 5) == 49366850)
+    document.write("PASS");
+else
+    document.write(largeNeg >>> 5);
+</script>
+</body>
