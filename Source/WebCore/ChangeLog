@@ -1,3 +1,32 @@
+2011-09-06  Oliver Hunt  <oliver@apple.com>
+
+        Update expected results of bindings tests.
+
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::createStructure):
+        (WebCore::JSTestInterface::createPrototype):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (WebCore::JSTestInterface::createStructure):
+        (WebCore::JSTestInterfacePrototype::createStructure):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerConstructor::createStructure):
+        (WebCore::JSTestMediaQueryListListener::createPrototype):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        (WebCore::JSTestMediaQueryListListener::createStructure):
+        (WebCore::JSTestMediaQueryListListenerPrototype::createStructure):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::createStructure):
+        (WebCore::JSTestObj::createPrototype):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore::JSTestObj::createStructure):
+        (WebCore::JSTestObjPrototype::createStructure):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::createStructure):
+        (WebCore::JSTestSerializedScriptValueInterface::createPrototype):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (WebCore::JSTestSerializedScriptValueInterface::createStructure):
+        (WebCore::JSTestSerializedScriptValueInterfacePrototype::createStructure):
+
 2011-09-06  Eric Seidel  <eric@webkit.org>
 
         Remove window.HTMLBlockquoteElement per HTML5 (and DOM Core 1)
