@@ -1448,9 +1448,14 @@ CodeBlock::~CodeBlock()
     }
 #endif
     
-    // We should not be garbage collected if there are incoming calls. But
-    // if this is called during heap destruction, then there may still be
-    // incoming calls, which is harmless.
+    // We may be destroyed before any CodeBlocks that refer to us are destroyed.
+    // Consider that two CodeBlocks become unreachable at the same time. There
+    // is no guarantee about the order in which the CodeBlocks are destroyed.
+    // So, if we don't remove incoming calls, and get destroyed before the
+    // CodeBlock(s) that have calls into us, then the CallLinkInfo vector's
+    // destructor will try to remove nodes from our (no longer valid) linked list.
+    while (m_incomingCalls.begin() != m_incomingCalls.end())
+        m_incomingCalls.begin()->remove();
     
     // Note that our outgoing calls will be removed from other CodeBlocks'
     // m_incomingCalls linked lists through the execution of the ~CallLinkInfo
