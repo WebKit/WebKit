@@ -800,7 +800,7 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 BUGWK67503 MAC WIN : svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.html = IMAGE+TEXT
 BUGWK67503 MAC WIN : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE+TEXT
 BUGWK67503 MAC WIN : svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html = IMAGE+TEXT
-BUGWK67503 MAC WIN : svg/batik/text/textFeatures.svg = IMAGE+TEXT
+BUGWK67503 MAC : svg/batik/text/textFeatures.svg = IMAGE+TEXT
 BUGWK67503 MAC WIN : svg/filters/filterRes.svg = IMAGE+TEXT
 
 BUGCR8763 MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE
@@ -3676,7 +3676,8 @@ BUGWK66338 MAC : fast/repaint/scale-page-shrink.html = IMAGE
 
 BUGWK66394 LINUX DEBUG : fast/canvas/webgl/data-view-crash.html = PASS CRASH
 
-BUGWK66417 WIN MAC : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
+BUGWK66417 WIN LEOPARD : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
+BUGWK66417 SNOWLEOPARD : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE
 BUGWK66417 LINUX : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT TIMEOUT
 
 BUGWK66419 : http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html = TEXT

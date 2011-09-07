@@ -1,3 +1,13 @@
+2011-09-07  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, chromium expectations update.
+
+        * platform/chromium-cg-mac-leopard/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-cg-mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-win-xp/svg/transforms: Removed.
+        * platform/chromium-win/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-09-07  Alexei Svitkine  <asvitkine@chromium.org>
 
         Add test infrastructure to test rubber-banding overhang drawing along with layout tests for existing Chromium Mac overhang drawing in the non-gpu path.
