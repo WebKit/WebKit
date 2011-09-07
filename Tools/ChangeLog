@@ -1,3 +1,19 @@
+2011-09-06  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic details view should having working rebaseline and next/previous buttons
+        https://bugs.webkit.org/show_bug.cgi?id=67659
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch wires up basic back/forward buttons that let you traverse
+        through the results we're examining in the details view.  This ended up
+        being more code than I expected, but I wanted to keep all the state
+        information in the DOM itself.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/results.css:
+
 2011-09-01  Dirk Pranke  <dpranke@chromium.org>
 
         fix MockFileSystem.glob(), refactor filesystem tests

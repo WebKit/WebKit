@@ -33,8 +33,18 @@ controllers.ResultsDetails = base.extends(Object, {
         this._view = view;
         this._resultsByTest = resultsByTest;
         this._view.setResultsByTest(resultsByTest);
-        // FIXME: Wire up some actions.
+
+        $(this._view).bind('next', this.onNext.bind(this));
+        $(this._view).bind('previous', this.onPrevious.bind(this));
     },
+    onNext: function()
+    {
+        this._view.nextResult();
+    },
+    onPrevious: function()
+    {
+        this._view.previousResult();
+    }
 });
 
 var FailureStreamController = base.extends(Object, {

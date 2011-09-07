@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.results-view>.toolbar {
-    padding-bottom: 15px;
+.results-view ul.actions {
+    float: right;
+    margin: 0;
+    padding: 5px 0px;
+    list-style: none;
+    display: inline-block;
 }
 
-    .results-view>.toolbar ul.actions {
-        float: right;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        display: inline-block;
-    }
+.results-view ul.actions li {
+    display: inline-block;
+}
 
-    .results-view>.toolbar ul.actions li {
-        display: inline-block;
-    }
+.ui-tabs .ui-tabs-panel.results-detail {
+    padding: 0px;
+}
 
 .results-grid table {
     table-layout: fixed;
@@ -52,7 +52,8 @@
 
 .results-grid table th {
     padding: 3px;
-    border-bottom: 1px solid #AAA;
+    border-top: 1px solid #DDD;
+    border-bottom: 1px solid #DDD;
 }
 
 .results-grid .text-result {

@@ -46,6 +46,24 @@ var kExampleResultsByTest = {
     }
 }
 
-// FIXME: Add some unit tests.
+test('View', 6, function() {
+    var delegate = {
+        fetchResultsURLs: function(failureInfo, callback) { return;}
+    };
+
+    var view = new ui.results.View(delegate);
+    view.setResultsByTest(kExampleResultsByTest);
+    view.firstResult();
+
+    view.nextResult();
+    equals($('.test-selector', view).accordion('option', 'active'), 0);
+    equals($($('.builder-selector', view)[0]).tabs('option', 'selected'), 1);
+    view.nextResult();
+    equals($('.test-selector', view).accordion('option', 'active'), 1);
+    equals($($('.builder-selector', view)[1]).tabs('option', 'selected'), 0);
+    view.previousResult();
+    equals($('.test-selector', view).accordion('option', 'active'), 0);
+    equals($($('.builder-selector', view)[0]).tabs('option', 'selected'), 1);
+});
 
 })();
