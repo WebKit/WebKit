@@ -30,6 +30,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/html/canvas \
 	-I$(srcdir)/Source/WebCore/html/parser \
 	-I$(srcdir)/Source/WebCore/html/shadow \
+	-I$(srcdir)/Source/WebCore/html/track \
 	-I$(srcdir)/Source/WebCore/inspector \
 	-I$(srcdir)/Source/WebCore/loader \
 	-I$(srcdir)/Source/WebCore/loader/appcache \
@@ -64,7 +65,6 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/sql \
 	-I$(srcdir)/Source/WebCore/platform/text \
 	-I$(srcdir)/Source/WebCore/platform/text/transcoder \
-	-I$(srcdir)/Source/WebCore/platform/track \
 	-I$(srcdir)/Source/WebCore/platform/win \
 	-I$(srcdir)/Source/WebCore/plugins \
 	-I$(srcdir)/Source/WebCore/plugins/win \

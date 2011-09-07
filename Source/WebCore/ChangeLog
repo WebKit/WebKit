@@ -1,3 +1,28 @@
+2011-09-07  Anna Cavender  <annacc@chromium.org>
+
+        Moving platform/track to html/track to avoid layering violation.
+        https://bugs.webkit.org/show_bug.cgi?id=67680
+
+        Reviewed by Adam Barth.
+
+        No new tests. No new functionality.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * html/track/CueParser.cpp: Renamed from Source/WebCore/platform/track/CueParser.cpp.
+        * html/track/CueParser.h: Renamed from Source/WebCore/platform/track/CueParser.h.
+        * html/track/CueParserPrivate.h: Renamed from Source/WebCore/platform/track/CueParserPrivate.h.
+        * html/track/WebVTTParser.cpp: Renamed from Source/WebCore/platform/track/WebVTTParser.cpp.
+        * html/track/WebVTTParser.h: Renamed from Source/WebCore/platform/track/WebVTTParser.h.
+        * html/track/WebVTTToken.h: Renamed from Source/WebCore/platform/track/WebVTTToken.h.
+        * html/track/WebVTTTokenizer.cpp: Renamed from Source/WebCore/platform/track/WebVTTTokenizer.cpp.
+        * html/track/WebVTTTokenizer.h: Renamed from Source/WebCore/platform/track/WebVTTTokenizer.h.
+
 2011-09-07  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67286

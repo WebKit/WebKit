@@ -1790,6 +1790,11 @@ HEADERS += \
     html/parser/XSSAuditor.h \
     html/shadow/MediaControlElements.h \
     html/shadow/DetailsMarkerControl.h \
+    html/track/CueParser.h \
+    html/track/CueParserPrivate.h \
+    html/track/WebVTTParser.h \
+    html/track/WebVTTToken.h \
+    html/track/WebVTTTokenizer.h \
     inspector/ConsoleMessage.h \
     inspector/DOMNodeHighlighter.h \
     inspector/IdentifiersFactory.h \
@@ -2127,11 +2132,6 @@ HEADERS += \
     platform/ThreadGlobalData.h \
     platform/ThreadTimers.h \
     platform/Timer.h \
-    platform/track/CueParser.h \
-    platform/track/CueParserPrivate.h \
-    platform/track/WebVTTParser.h \
-    platform/track/WebVTTToken.h \
-    platform/track/WebVTTTokenizer.h \
     platform/Widget.h \
     platform/PlatformStrategies.h \
     platform/LocalizedStrings.h \

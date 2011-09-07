@@ -1927,6 +1927,14 @@ webcore_sources += \
 	Source/WebCore/html/TimeInputType.h \
 	Source/WebCore/html/TimeRanges.cpp \
 	Source/WebCore/html/TimeRanges.h \
+	Source/WebCore/html/track/CueParser.h \
+	Source/WebCore/html/track/CueParser.cpp \
+	Source/WebCore/html/track/CueParserPrivate.h \
+	Source/WebCore/html/track/WebVTTParser.cpp \
+	Source/WebCore/html/track/WebVTTParser.h \
+	Source/WebCore/html/track/WebVTTToken.h \
+	Source/WebCore/html/track/WebVTTTokenizer.h \
+	Source/WebCore/html/track/WebVTTTokenizer.cpp \
 	Source/WebCore/html/URLInputType.cpp \
 	Source/WebCore/html/URLInputType.h \
 	Source/WebCore/html/ValidationMessage.cpp \
@@ -2874,14 +2882,6 @@ webcore_sources += \
 	Source/WebCore/platform/ThreadTimers.h \
 	Source/WebCore/platform/Timer.cpp \
 	Source/WebCore/platform/Timer.h \
-	Source/WebCore/platform/track/CueParser.h \
-	Source/WebCore/platform/track/CueParser.cpp \
-	Source/WebCore/platform/track/CueParserPrivate.h \
-	Source/WebCore/platform/track/WebVTTParser.cpp \
-	Source/WebCore/platform/track/WebVTTParser.h \
-	Source/WebCore/platform/track/WebVTTToken.h \
-	Source/WebCore/platform/track/WebVTTTokenizer.h \
-	Source/WebCore/platform/track/WebVTTTokenizer.cpp \
 	Source/WebCore/platform/TreeShared.h \
 	Source/WebCore/platform/URLString.h \
 	Source/WebCore/platform/UUID.cpp \

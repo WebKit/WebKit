@@ -15,6 +15,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/html/canvas"
     "${WEBCORE_DIR}/html/parser"
     "${WEBCORE_DIR}/html/shadow"
+    "${WEBCORE_DIR}/html/track"
     "${WEBCORE_DIR}/inspector"
     "${WEBCORE_DIR}/loader"
     "${WEBCORE_DIR}/loader/appcache"
@@ -46,7 +47,6 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/sql"
     "${WEBCORE_DIR}/platform/text"
     "${WEBCORE_DIR}/platform/text/transcoder"
-    "${WEBCORE_DIR}/platform/track"
     "${WEBCORE_DIR}/plugins"
     "${WEBCORE_DIR}/rendering"
     "${WEBCORE_DIR}/rendering/mathml"
@@ -2040,10 +2040,10 @@ IF (ENABLE_VIDEO_TRACK)
         html/TextTrack.cpp
         html/TextTrackCue.cpp
         html/TextTrackCueList.cpp
+        html/track/CueParser.cpp
+        html/track/WebVTTParser.cpp
+        html/track/WebVTTTokenizer.cpp
         loader/CueLoader.cpp
-        platform/track/CueParser.cpp
-        platform/track/WebVTTParser.cpp
-        platform/track/WebVTTTokenizer.cpp
     )
 ENDIF()
 

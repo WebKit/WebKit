@@ -76,6 +76,7 @@ WEBCORE_INCLUDEPATH = \
     $$SOURCE_DIR/WebCore/html/canvas \
     $$SOURCE_DIR/WebCore/html/parser \
     $$SOURCE_DIR/WebCore/html/shadow \
+    $$SOURCE_DIR/WebCore/html/track \
     $$SOURCE_DIR/WebCore/inspector \
     $$SOURCE_DIR/WebCore/loader \
     $$SOURCE_DIR/WebCore/loader/appcache \
@@ -101,7 +102,6 @@ WEBCORE_INCLUDEPATH = \
     $$SOURCE_DIR/WebCore/platform/sql \
     $$SOURCE_DIR/WebCore/platform/text \
     $$SOURCE_DIR/WebCore/platform/text/transcoder \
-    $$SOURCE_DIR/WebCore/platform/track \
     $$SOURCE_DIR/WebCore/plugins \
     $$SOURCE_DIR/WebCore/rendering \
     $$SOURCE_DIR/WebCore/rendering/mathml \
