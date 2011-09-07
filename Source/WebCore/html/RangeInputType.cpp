@@ -78,9 +78,9 @@ double RangeInputType::valueAsNumber() const
     return parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
 }
 
-void RangeInputType::setValueAsNumber(double newValue, ExceptionCode&) const
+void RangeInputType::setValueAsNumber(double newValue, bool sendChangeEvent, ExceptionCode&) const
 {
-    element()->setValue(serialize(newValue));
+    element()->setValue(serialize(newValue), sendChangeEvent);
 }
 
 bool RangeInputType::supportsRequired() const
@@ -220,7 +220,8 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 
     if (newValue != current) {
         ExceptionCode ec;
-        setValueAsNumber(newValue, ec);
+        bool sendChangeEvent = true;
+        setValueAsNumber(newValue, sendChangeEvent, ec);
 
         if (AXObjectCache::accessibilityEnabled())
             element()->document()->axObjectCache()->postNotification(element()->renderer(), AXObjectCache::AXValueChanged, true);

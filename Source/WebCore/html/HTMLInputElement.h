@@ -160,7 +160,7 @@ public:
     void setValueAsDate(double, ExceptionCode&);
 
     double valueAsNumber() const;
-    void setValueAsNumber(double, ExceptionCode&);
+    void setValueAsNumber(double, ExceptionCode&, bool sendChangeEvent = false);
 
     virtual String placeholder() const;
     virtual void setPlaceholder(const String&);
@@ -326,7 +326,7 @@ private:
     bool getAllowedValueStepWithDecimalPlaces(AnyStepHandling, double*, unsigned*) const;
 
     // Helper for stepUp()/stepDown().  Adds step value * count to the current value.
-    void applyStep(double count, AnyStepHandling, ExceptionCode&);
+    void applyStep(double count, AnyStepHandling, bool sendChangeEvent, ExceptionCode&);
     double alignValueForStep(double value, double step, unsigned currentDecimalPlaces, unsigned stepDecimalPlaces);
 
 #if ENABLE(DATALIST)

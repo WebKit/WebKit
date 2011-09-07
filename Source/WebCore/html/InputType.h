@@ -126,7 +126,7 @@ public:
     virtual double valueAsDate() const;
     virtual void setValueAsDate(double, ExceptionCode&) const;
     virtual double valueAsNumber() const;
-    virtual void setValueAsNumber(double, ExceptionCode&) const;
+    virtual void setValueAsNumber(double, bool sendChangeEvent, ExceptionCode&) const;
 
     // Validation functions
 

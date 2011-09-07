@@ -1,3 +1,42 @@
+2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Change event is not fired for input[type=number] when the user reverts a change made by script
+        https://bugs.webkit.org/show_bug.cgi?id=67697
+
+        Reviewed by Kent Tamura.
+
+        The bug was caused by HTMLInputElement::setValue not calling setTextAsOfLastFormControlChangeEvent
+        for text fields other than type=text.
+
+        Also fixed a that stepUpFromRenderer does not call setTextAsOfLastFormControlChangeEvent at appropriate
+        timing due to setValueAsNumber always passing sendChangeEvent=false to setValue by propagating values
+        through setValueAsNumber and applyStep. This refactoring allows us to remove calls to dispatch* in
+        stepUpFromRenderer because they're now called in setValueAsNumber or applyStep.
+
+        Test: fast/forms/number-input-changeevent.html
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::setValueAsNumber):
+        * html/BaseDateAndTimeInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::applyStep):
+        (WebCore::HTMLInputElement::stepUp):
+        (WebCore::HTMLInputElement::stepDown):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::setValueAsNumber):
+        (WebCore::HTMLInputElement::stepUpFromRenderer):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::setValueAsNumber):
+        * html/InputType.h:
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::setValueAsNumber):
+        * html/NumberInputType.h:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::setValueAsNumber):
+        (WebCore::RangeInputType::handleKeydownEvent):
+        * html/RangeInputType.h:
+
 2011-09-07  Antti Koivisto  <antti@apple.com>
 
         Try to fix Qt build by moving the Qt specific include (which is not really allowed here!).

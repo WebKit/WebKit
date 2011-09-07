@@ -83,7 +83,7 @@ double NumberInputType::valueAsNumber() const
     return parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
 }
 
-void NumberInputType::setValueAsNumber(double newValue, ExceptionCode& ec) const
+void NumberInputType::setValueAsNumber(double newValue, bool sendChangeEvent, ExceptionCode& ec) const
 {
     if (newValue < -numeric_limits<float>::max()) {
         ec = INVALID_STATE_ERR;
@@ -93,7 +93,7 @@ void NumberInputType::setValueAsNumber(double newValue, ExceptionCode& ec) const
         ec = INVALID_STATE_ERR;
         return;
     }
-    element()->setValue(serialize(newValue));
+    element()->setValue(serialize(newValue), sendChangeEvent);
 }
 
 bool NumberInputType::typeMismatchFor(const String& value) const

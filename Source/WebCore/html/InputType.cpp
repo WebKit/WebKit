@@ -182,7 +182,7 @@ double InputType::valueAsNumber() const
     return numeric_limits<double>::quiet_NaN();
 }
 
-void InputType::setValueAsNumber(double, ExceptionCode& ec) const
+void InputType::setValueAsNumber(double, bool, ExceptionCode& ec) const
 {
     ec = INVALID_STATE_ERR;
 }

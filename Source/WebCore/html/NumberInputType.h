@@ -43,7 +43,7 @@ private:
     NumberInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
     virtual const AtomicString& formControlType() const;
     virtual double valueAsNumber() const;
-    virtual void setValueAsNumber(double, ExceptionCode&) const;
+    virtual void setValueAsNumber(double, bool sendChangeEvent, ExceptionCode&) const;
     virtual bool typeMismatchFor(const String&) const;
     virtual bool typeMismatch() const;
     virtual bool rangeUnderflow(const String&) const;

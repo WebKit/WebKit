@@ -388,7 +388,7 @@ bool HTMLInputElement::getAllowedValueStepWithDecimalPlaces(AnyStepHandling anyS
     return true;
 }
 
-void HTMLInputElement::applyStep(double count, AnyStepHandling anyStepHandling, ExceptionCode& ec)
+void HTMLInputElement::applyStep(double count, AnyStepHandling anyStepHandling, bool sendChangeEvent, ExceptionCode& ec)
 {
     double step;
     unsigned stepDecimalPlaces, currentDecimalPlaces;
@@ -428,7 +428,7 @@ void HTMLInputElement::applyStep(double count, AnyStepHandling anyStepHandling, 
     if (newValue > m_inputType->maximum())
         newValue = m_inputType->maximum();
 
-    setValueAsNumber(newValue, ec);
+    setValueAsNumber(newValue, ec, sendChangeEvent);
 
     if (AXObjectCache::accessibilityEnabled())
          document()->axObjectCache()->postNotification(renderer(), AXObjectCache::AXValueChanged, true);
@@ -455,12 +455,14 @@ double HTMLInputElement::alignValueForStep(double newValue, double step, unsigne
 
 void HTMLInputElement::stepUp(int n, ExceptionCode& ec)
 {
-    applyStep(n, RejectAny, ec);
+    bool sendChangeEvent = false;
+    applyStep(n, RejectAny, sendChangeEvent, ec);
 }
 
 void HTMLInputElement::stepDown(int n, ExceptionCode& ec)
 {
-    applyStep(-n, RejectAny, ec);
+    bool sendChangeEvent = false;
+    applyStep(-n, RejectAny, sendChangeEvent, ec);
 }
 
 bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
@@ -1117,7 +1119,7 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
             dispatchFormControlChangeEvent();
     }
 
-    if (isText() && (!focused() || !sendChangeEvent))
+    if (isTextField() && (!focused() || !sendChangeEvent))
         setTextAsOfLastFormControlChangeEvent(value);
 
     notifyFormStateChanged();
@@ -1144,13 +1146,13 @@ double HTMLInputElement::valueAsNumber() const
     return m_inputType->valueAsNumber();
 }
 
-void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec)
+void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec, bool sendChangeEvent)
 {
     if (!isfinite(newValue)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    m_inputType->setValueAsNumber(newValue, ec);
+    m_inputType->setValueAsNumber(newValue, sendChangeEvent, ec);
 }
 
 String HTMLInputElement::placeholder() const
@@ -1628,6 +1630,7 @@ void HTMLInputElement::stepUpFromRenderer(int n)
     const double nan = numeric_limits<double>::quiet_NaN();
     String currentStringValue = value();
     double current = m_inputType->parseToDouble(currentStringValue, nan);
+    const bool sendChangeEvent = true;
     if (!isfinite(current)) {
         ExceptionCode ec;
         current = m_inputType->defaultValueForStepUp();
@@ -1636,10 +1639,10 @@ void HTMLInputElement::stepUpFromRenderer(int n)
             current = m_inputType->minimum() - nextDiff;
         if (current > m_inputType->maximum() - nextDiff)
             current = m_inputType->maximum() - nextDiff;
-        setValueAsNumber(current, ec);
+        setValueAsNumber(current, ec, sendChangeEvent);
     }
     if ((sign > 0 && current < m_inputType->minimum()) || (sign < 0 && current > m_inputType->maximum()))
-        setValue(m_inputType->serialize(sign > 0 ? m_inputType->minimum() : m_inputType->maximum()));
+        setValue(m_inputType->serialize(sign > 0 ? m_inputType->minimum() : m_inputType->maximum()), sendChangeEvent);
     else {
         ExceptionCode ec;
         if (stepMismatch(value())) {
@@ -1659,21 +1662,14 @@ void HTMLInputElement::stepUpFromRenderer(int n)
             if (newValue > m_inputType->maximum())
                 newValue = m_inputType->maximum();
 
-            setValueAsNumber(newValue, ec);
+            setValueAsNumber(newValue, ec, n == 1 || n == -1);
             current = newValue;
             if (n > 1)
-                applyStep(n - 1, AnyIsDefaultStep, ec);
+                applyStep(n - 1, AnyIsDefaultStep, sendChangeEvent, ec);
             else if (n < -1)
-                applyStep(n + 1, AnyIsDefaultStep, ec);
+                applyStep(n + 1, AnyIsDefaultStep, sendChangeEvent, ec);
         } else
-            applyStep(n, AnyIsDefaultStep, ec);
-    }
-
-    if (currentStringValue != value()) {
-        if (m_inputType->isRangeControl())
-            dispatchFormControlChangeEvent();
-        else
-            dispatchFormControlInputEvent();
+            applyStep(n, AnyIsDefaultStep, sendChangeEvent, ec);
     }
 }
 
