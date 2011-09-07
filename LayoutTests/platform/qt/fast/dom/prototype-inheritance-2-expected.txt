@@ -102,6 +102,12 @@ PASS HTMLAudioElementPrototype from inner.document.forms.testForm.0.parentNode.f
 PASS HTMLBRElement from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling
 PASS HTMLBRElementConstructor from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.constructor
 PASS HTMLBRElementPrototype from inner.document.forms.testForm.0.parentNode.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.__proto__
+PASS HTMLBaseElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.previousElementSibling
+PASS HTMLBaseElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.previousElementSibling.constructor
+PASS HTMLBaseElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.previousElementSibling.__proto__
+PASS HTMLBaseFontElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling
+PASS HTMLBaseFontElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.constructor
+PASS HTMLBaseFontElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.previousElementSibling.previousElementSibling.__proto__
 PASS HTMLBodyElement from inner.document.forms.testForm.0.parentNode
 PASS HTMLBodyElementConstructor from inner.document.forms.testForm.0.parentNode.constructor
 PASS HTMLBodyElementPrototype from inner.document.forms.testForm.0.parentNode.__proto__
@@ -247,9 +253,6 @@ Never found File
 Never found FileList
 Never found FormData
 Never found HTMLAllCollection
-Never found HTMLBaseElement
-Never found HTMLBaseFontElement
-Never found HTMLBlockquoteElement
 Never found HTMLDirectoryElement
 Never found HTMLDivElement
 Never found HTMLElement
