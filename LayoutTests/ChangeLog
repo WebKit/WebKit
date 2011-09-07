@@ -1,3 +1,10 @@
+2011-09-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed test fix (removed a call to console.trace() to avoid having platform-specific expectations).
+
+        * inspector/extensions/extensions-console-expected.txt:
+        * inspector/extensions/extensions-console.html:
+
 2011-09-07  Cary Clark  <caryclark@google.com>
 
         Unreviewed; new baselines (Skia on Mac, next chunk of files)

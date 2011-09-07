@@ -27,7 +27,7 @@ function extension_testAddConsoleMessages(nextTest)
 
 function extension_testOnConsoleMessageAdded(nextTest)
 {
-    var expectedMessages = 7;
+    var expectedMessages = 6;
 
     function onMessage(message)
     {
@@ -47,7 +47,6 @@ function log()
     console.debug("debug message");
     console.warn("warning message");
     console.error("error message");
-    console.trace("trace message");
     console.log("log message with two parameters, an integer: %d and a string: %s", 42, "foo");
     eval("console.log('log message from evaluated code')");
 }
