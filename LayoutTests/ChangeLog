@@ -1,5 +1,12 @@
 2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Finally, Mac rebaseline for r93237.
+
+        * platform/mac-snowleopard/fast/text/midword-break-before-surrogate-pair-2-expected.txt: Copied from
+        LayoutTests/platform/mac/fast/text/midword-break-before-surrogate-pair-2-expected.txt.
+
+2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix my accidental svn mv (instead of cp) in r94680.
 
         * fast/dom/call-a-constructor-as-a-function-expected.txt: Copied from
