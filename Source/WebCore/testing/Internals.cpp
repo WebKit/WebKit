@@ -293,44 +293,47 @@ bool Internals::wasLastChangeUserEdit(Element* textField, ExceptionCode& ec)
         return false;
     }
 
-    if (textField->hasTagName(HTMLNames::inputTag))
-        return static_cast<HTMLInputElement*>(textField)->lastChangeWasUserEdit();
+    if (HTMLInputElement* inputElement = textField->toInputElement())
+        return inputElement->lastChangeWasUserEdit();
 
-    if (textField->hasTagName(HTMLNames::textareaTag))
+    // FIXME: We should be using hasTagName instead but Windows port doesn't link QualifiedNames properly.
+    if (textField->tagName() == "TEXTAREA")
         return static_cast<HTMLTextAreaElement*>(textField)->lastChangeWasUserEdit();
 
     ec = INVALID_NODE_TYPE_ERR;
     return false;
 }
 
-String Internals::suggestedValue(Element* inputElement, ExceptionCode& ec)
+String Internals::suggestedValue(Element* element, ExceptionCode& ec)
 {
-    if (!inputElement) {
+    if (!element) {
         ec = INVALID_ACCESS_ERR;
         return String();
     }
 
-    if (!inputElement->hasTagName(HTMLNames::inputTag)) {
+    HTMLInputElement* inputElement = element->toInputElement();
+    if (!inputElement) {
         ec = INVALID_NODE_TYPE_ERR;
         return String();
     }
 
-    return static_cast<HTMLInputElement*>(inputElement)->suggestedValue();
+    return inputElement->suggestedValue();
 }
 
-void Internals::setSuggestedValue(Element* inputElement, const String& value, ExceptionCode& ec)
+void Internals::setSuggestedValue(Element* element, const String& value, ExceptionCode& ec)
 {
-    if (!inputElement) {
+    if (!element) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
 
-    if (!inputElement->hasTagName(HTMLNames::inputTag)) {
+    HTMLInputElement* inputElement = element->toInputElement();
+    if (!inputElement) {
         ec = INVALID_NODE_TYPE_ERR;
         return;
     }
 
-    static_cast<HTMLInputElement*>(inputElement)->setSuggestedValue(value);
+    inputElement->setSuggestedValue(value);
 }
 
 }

@@ -151,11 +151,11 @@ EXPORTS
         ?create@ShadowContentElement@WebCore@@SA?AV?$PassRefPtr@VShadowContentElement@WebCore@@@WTF@@PAVDocument@2@@Z
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?ensureShadowRoot@Element@WebCore@@QAEPAVShadowRoot@2@XZ
+        ?equal@WTF@@YA_NPBVStringImpl@1@PBD@Z
         ?externalRepresentation@WebCore@@YA?AVString@WTF@@PAVElement@1@I@Z
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
         ?getElementById@TreeScope@WebCore@@QBEPAVElement@2@ABVAtomicString@WTF@@@Z
         ?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z
-        ?inputTag@HTMLNames@WebCore@@3VQualifiedName@2@B
         ?jsStringSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@UStringHash@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
         ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ
         ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@@WTF@@PAVNode@2@@Z
@@ -169,7 +169,6 @@ EXPORTS
         ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
         ?shadowRoot@Element@WebCore@@QBEPAVShadowRoot@2@XZ
         ?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ
-        ?textareaTag@HTMLNames@WebCore@@3VQualifiedName@2@B
         ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
         ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRect@1@@Z

@@ -1,3 +1,15 @@
+2011-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        fast/forms/suggested-value-crash.html crashes on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=67688
+
+        Reviewed by Adam Barth.
+
+        Removed sybmols for inputTag and textareaTag. Added the symbol for StringImpl::equal.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2011-09-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unzip initialization lists and constructors in JSCell hierarchy (5/7)
