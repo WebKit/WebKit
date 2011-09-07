@@ -1,3 +1,10 @@
+2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the forgotten expected results for r94696.
+
+        * fast/css/line-after-floating-div-expected.png: Added.
+        * fast/css/line-after-floating-div-expected.txt: Added.
+
 2011-09-07  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/8881922> Support the hyphenate-limit-lines property
