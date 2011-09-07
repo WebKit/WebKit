@@ -78,6 +78,7 @@ private:
 
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContext)
     : m_updatingControlTints(false)
+    , m_transparencyCount(0)
 {
     platformInit(platformGraphicsContext);
 }
@@ -85,6 +86,7 @@ GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContex
 GraphicsContext::~GraphicsContext()
 {
     ASSERT(m_stack.isEmpty());
+    ASSERT(!m_transparencyCount);
     platformDestroy();
 }
 
@@ -329,6 +331,26 @@ bool GraphicsContext::shadowsIgnoreTransforms() const
 {
     return m_state.shadowsIgnoreTransforms;
 }
+
+void GraphicsContext::beginTransparencyLayer(float opacity)
+{
+    beginPlatformTransparencyLayer(opacity);
+    ++m_transparencyCount;
+}
+
+void GraphicsContext::endTransparencyLayer()
+{
+    endPlatformTransparencyLayer();
+    ASSERT(m_transparencyCount > 0);
+    --m_transparencyCount;
+}
+
+#if !PLATFORM(QT)
+bool GraphicsContext::isInTransparencyLayer() const
+{
+    return (m_transparencyCount > 0) && supportsTransparencyLayers();
+}
+#endif
 
 bool GraphicsContext::updatingControlTints() const
 {

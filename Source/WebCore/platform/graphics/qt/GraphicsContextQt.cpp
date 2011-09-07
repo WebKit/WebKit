@@ -186,7 +186,7 @@ public:
     bool antiAliasingForRectsAndLines;
 
     QStack<TransparencyLayer*> layers;
-    // Counting real layers. Required by inTransparencyLayer() calls
+    // Counting real layers. Required by isInTransparencyLayer() calls
     // For example, layers with valid alphaMask are not real layers
     int layerCount;
 
@@ -763,7 +763,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     p->fillPath(path.platformPath(), QColor(color));
 }
 
-bool GraphicsContext::inTransparencyLayer() const
+bool GraphicsContext::isInTransparencyLayer() const
 {
     return m_data->layerCount;
 }
@@ -1060,7 +1060,7 @@ void GraphicsContext::pushTransparencyLayerInternal(const QRect &rect, qreal opa
     m_data->layers.push(new TransparencyLayer(p, deviceClip, 1.0, alphaMask));
 }
 
-void GraphicsContext::beginTransparencyLayer(float opacity)
+void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
 {
     if (paintingDisabled())
         return;
@@ -1084,7 +1084,7 @@ void GraphicsContext::beginTransparencyLayer(float opacity)
     ++m_data->layerCount;
 }
 
-void GraphicsContext::endTransparencyLayer()
+void GraphicsContext::endPlatformTransparencyLayer()
 {
     if (paintingDisabled())
         return;
@@ -1106,6 +1106,11 @@ void GraphicsContext::endTransparencyLayer()
     p->restore();
 
     delete layer;
+}
+
+bool GraphicsContext::supportsTransparencyLayers()
+{
+    return true;
 }
 
 void GraphicsContext::clearRect(const FloatRect& rect)

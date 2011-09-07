@@ -138,7 +138,7 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
         if (!fillColor.alpha())
             return;
 
-        drawIntoBitmap = fillColor.alpha() != 255 || graphicsContext->inTransparencyLayer();
+        drawIntoBitmap = fillColor.alpha() != 255 || graphicsContext->isInTransparencyLayer();
         if (!drawIntoBitmap) {
             FloatSize offset;
             float blur;

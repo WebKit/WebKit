@@ -46,17 +46,9 @@ public:
         , m_hdc(0)
         , m_shouldIncludeChildWindows(false)
 #endif
-#if PLATFORM(WIN) || !ASSERT_DISABLED
-        , m_transparencyCount(0)
-#endif
         , m_userToDeviceTransformKnownToBeIdentity(false)
         , m_contextFlags(flags)
     {
-    }
-    
-    ~GraphicsContextPlatformPrivate()
-    {
-        ASSERT(!m_transparencyCount);
     }
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
@@ -90,24 +82,7 @@ public:
     bool m_shouldIncludeChildWindows;
 #endif
 
-    void beginTransparencyLayer()
-    {
-#if PLATFORM(WIN) || !ASSERT_DISABLED
-        m_transparencyCount++;
-#endif
-    }
-    void endTransparencyLayer()
-    {
-#if PLATFORM(WIN) || !ASSERT_DISABLED
-        ASSERT(m_transparencyCount > 0);
-        m_transparencyCount--;
-#endif
-    }
-
     RetainPtr<CGContextRef> m_cgContext;
-#if PLATFORM(WIN) || !ASSERT_DISABLED
-    int m_transparencyCount;
-#endif
     bool m_userToDeviceTransformKnownToBeIdentity;
     GraphicsContextCGFlags m_contextFlags;
 };
