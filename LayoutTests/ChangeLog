@@ -1,3 +1,12 @@
+2011-09-07  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, upstream some chromium expected failure after skia roll,
+        and rebaseline 2 tests for leopard cg.
+
+        * platform/chromium-cg-mac-leopard/fast/borders/border-image-scaled-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/borders/border-image-side-reduction-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-09-07  Tim Horton  <timothy_horton@apple.com>
 
         Text rendered with a simple (i.e. 0px blur) shadow inside a transparency layer has a double shadow

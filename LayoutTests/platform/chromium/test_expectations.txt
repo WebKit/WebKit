@@ -3761,3 +3761,8 @@ BUGWK67515 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT
 
 BUGCR54348 LINUX RELEASE : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
 BUGWK67538 DEBUG : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
+
+BUG_REED : compositing/overflow/overflow-positioning.html = IMAGE
+BUG_REED : fast/canvas/canvas-text-baseline.html = IMAGE
+BUG_REED : fast/canvas/quadraticCurveTo.xml = IMAGE
+BUG_REED : fast/canvas/canvas-lineWidth.html = TEXT
