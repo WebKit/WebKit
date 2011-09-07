@@ -36,57 +36,6 @@
 
 namespace WebCore {
 
-static void affineTransformDecompose(const AffineTransform& matrix, double sr[9])
-{
-    AffineTransform m(matrix);
-
-    // Compute scaling factors
-    double sx = matrix.xScale();
-    double sy = matrix.yScale();
-
-    // Compute cross product of transformed unit vectors. If negative,
-    // one axis was flipped.
-    if (m.a() * m.d() - m.c() * m.b() < 0.0) {
-        // Flip axis with minimum unit vector dot product
-        if (m.a() < m.d())
-            sx = -sx;
-        else
-            sy = -sy;
-    }
-
-    // Remove scale from matrix
-    m.scale(1.0 / sx, 1.0 / sy);
-
-    // Compute rotation
-    double angle = atan2(m.b(), m.a());
-
-    // Remove rotation from matrix
-    m.rotate(rad2deg(-angle));
-
-    // Return results
-    sr[0] = sx;
-    sr[1] = sy;
-    sr[2] = angle;
-    sr[3] = m.a();
-    sr[4] = m.b();
-    sr[5] = m.c();
-    sr[6] = m.d();
-    sr[7] = m.e();
-    sr[8] = m.f();
-}
-
-static void affineTransformCompose(AffineTransform& m, const double sr[9])
-{
-    m.setA(sr[3]);
-    m.setB(sr[4]);
-    m.setC(sr[5]);
-    m.setD(sr[6]);
-    m.setE(sr[7]);
-    m.setF(sr[8]);
-    m.rotate(rad2deg(sr[2]));
-    m.scale(sr[0], sr[1]);
-}
-
 AffineTransform::AffineTransform()
 {
     setMatrix(1, 0, 0, 1, 0, 0);
@@ -340,39 +289,99 @@ FloatQuad AffineTransform::mapQuad(const FloatQuad& q) const
 
 void AffineTransform::blend(const AffineTransform& from, double progress)
 {
-    double srA[9], srB[9];
+    DecomposedType srA, srB;
 
-    affineTransformDecompose(from, srA);
-    affineTransformDecompose(*this, srB);
+    from.decompose(srA);
+    this->decompose(srB);
 
     // If x-axis of one is flipped, and y-axis of the other, convert to an unflipped rotation.
-    if ((srA[0] < 0 && srB[1] < 0) || (srA[1] < 0 &&  srB[0] < 0)) {
-        srA[0] = -srA[0];
-        srA[1] = -srA[1];
-        srA[2] += srA[2] < 0 ? piDouble : -piDouble;
+    if ((srA.scaleX < 0 && srB.scaleY < 0) || (srA.scaleY < 0 &&  srB.scaleX < 0)) {
+        srA.scaleX = -srA.scaleX;
+        srA.scaleY = -srA.scaleY;
+        srA.angle += srA.angle < 0 ? piDouble : -piDouble;
     }
 
     // Don't rotate the long way around.
-    srA[2] = fmod(srA[2], 2.0 * piDouble);
-    srB[2] = fmod(srB[2], 2.0 * piDouble);
+    srA.angle = fmod(srA.angle, 2 * piDouble);
+    srB.angle = fmod(srB.angle, 2 * piDouble);
 
-    if (fabs(srA[2] - srB[2]) > piDouble) {
-        if (srA[2] > srB[2])
-            srA[2] -= piDouble * 2.0;
+    if (fabs(srA.angle - srB.angle) > piDouble) {
+        if (srA.angle > srB.angle)
+            srA.angle -= piDouble * 2;
         else
-            srB[2] -= piDouble * 2.0;
+            srB.angle -= piDouble * 2;
     }
+    
+    srA.scaleX += progress * (srB.scaleX - srA.scaleX);
+    srA.scaleY += progress * (srB.scaleY - srA.scaleY);
+    srA.angle += progress * (srB.angle - srA.angle);
+    srA.remainderA += progress * (srB.remainderA - srA.remainderA);
+    srA.remainderB += progress * (srB.remainderB - srA.remainderB);
+    srA.remainderC += progress * (srB.remainderC - srA.remainderC);
+    srA.remainderD += progress * (srB.remainderD - srA.remainderD);
+    srA.translateX += progress * (srB.translateX - srA.translateX);
+    srA.translateY += progress * (srB.translateY - srA.translateY);
 
-    for (int i = 0; i < 9; i++)
-        srA[i] = srA[i] + progress * (srB[i] - srA[i]);
-
-    affineTransformCompose(*this, srA);
+    this->recompose(srA);
 }
 
 TransformationMatrix AffineTransform::toTransformationMatrix() const
 {
     return TransformationMatrix(m_transform[0], m_transform[1], m_transform[2],
                                 m_transform[3], m_transform[4], m_transform[5]);
+}
+
+bool AffineTransform::decompose(DecomposedType& decomp) const
+{
+    AffineTransform m(*this);
+    
+    // Compute scaling factors
+    double sx = xScale();
+    double sy = yScale();
+    
+    // Compute cross product of transformed unit vectors. If negative,
+    // one axis was flipped.
+    if (m.a() * m.d() - m.c() * m.b() < 0) {
+        // Flip axis with minimum unit vector dot product
+        if (m.a() < m.d())
+            sx = -sx;
+        else
+            sy = -sy;
+    }
+    
+    // Remove scale from matrix
+    m.scale(1 / sx, 1 / sy);
+    
+    // Compute rotation
+    double angle = atan2(m.b(), m.a());
+    
+    // Remove rotation from matrix
+    m.rotate(rad2deg(-angle));
+    
+    // Return results    
+    decomp.scaleX = sx;
+    decomp.scaleY = sy;
+    decomp.angle = angle;
+    decomp.remainderA = m.a();
+    decomp.remainderB = m.b();
+    decomp.remainderC = m.c();
+    decomp.remainderD = m.d();
+    decomp.translateX = m.e();
+    decomp.translateY = m.f();
+    
+    return true;
+}
+
+void AffineTransform::recompose(const DecomposedType& decomp)
+{
+    this->setA(decomp.remainderA);
+    this->setB(decomp.remainderB);
+    this->setC(decomp.remainderC);
+    this->setD(decomp.remainderD);
+    this->setE(decomp.translateX);
+    this->setF(decomp.translateY);
+    this->rotate(rad2deg(decomp.angle));
+    this->scale(decomp.scaleX, decomp.scaleY);
 }
 
 }

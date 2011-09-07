@@ -125,12 +125,10 @@ FloatRect SVGImageBufferTools::clampedAbsoluteTargetRectForRenderer(const Render
 
 void SVGImageBufferTools::clear2DRotation(AffineTransform& transform)
 {
-    TransformationMatrix::DecomposedType decomposition;
-    TransformationMatrix tm = transform.toTransformationMatrix();
-    tm.decompose(decomposition);
-    decomposition.quaternionZ = 0.0;
-    tm.recompose(decomposition);
-    transform = tm.toAffineTransform();
+    AffineTransform::DecomposedType decomposition;
+    transform.decompose(decomposition);
+    decomposition.angle = 0;
+    transform.recompose(decomposition);
 }
 
 }
