@@ -1,3 +1,16 @@
+2011-09-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Update various chromium baselines.
+
+        * platform/chromium-cg-mac-leopard/fast/css/value-list-out-of-bounds-crash-expected.png:
+        * platform/chromium-cg-mac-leopard/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac/fast/dom/Window/window-lookup-precedence-expected.txt: Copied from LayoutTests/platform/chromium/fast/dom/Window/window-lookup-precedence-expected.txt.
+        * platform/chromium-mac/fast/dom/wrapper-classes-expected.txt: Copied from LayoutTests/platform/chromium/fast/dom/wrapper-classes-expected.txt.
+        * platform/chromium-win/svg/batik/text/textStyles-expected.png:
+        * platform/chromium-win/svg/batik/text/textStyles-expected.txt:
+        * platform/chromium/fast/dom/Window/window-lookup-precedence-expected.txt:
+        * platform/chromium/fast/dom/wrapper-classes-expected.txt:
+
 2011-09-06  Yong Li  <yoli@rim.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67486

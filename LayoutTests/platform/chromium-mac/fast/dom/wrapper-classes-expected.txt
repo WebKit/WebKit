@@ -185,9 +185,9 @@ FAIL tagJSWrapperConstructorClass('bdo') should be HTMLElementConstructor. Was F
 PASS tagJSWrapperClass('big') is 'HTMLElement'
 FAIL tagJSWrapperPrototypeClass('big') should be HTMLElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('big') should be HTMLElementConstructor. Was Function.
-PASS tagJSWrapperClass('blockquote') is 'HTMLQuoteElement'
-FAIL tagJSWrapperPrototypeClass('blockquote') should be HTMLQuoteElementPrototype. Was Object.
-FAIL tagJSWrapperConstructorClass('blockquote') should be HTMLQuoteElementConstructor. Was Function.
+PASS tagJSWrapperClass('blockquote') is 'HTMLBlockquoteElement'
+FAIL tagJSWrapperPrototypeClass('blockquote') should be HTMLBlockquoteElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('blockquote') should be HTMLBlockquoteElementConstructor. Was Function.
 PASS tagJSWrapperClass('body') is 'HTMLBodyElement'
 FAIL tagJSWrapperPrototypeClass('body') should be HTMLBodyElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('body') should be HTMLBodyElementConstructor. Was Function.
