@@ -776,6 +776,9 @@ maximized
 minimized
 windowed
 
+// -webkit-hyphenate-limit-lines
+no-limit
+
 // -webkit-hyphens
 // none
 manual

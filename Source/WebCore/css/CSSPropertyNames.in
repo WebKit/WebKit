@@ -257,6 +257,7 @@ z-index
 -webkit-hyphenate-character
 -webkit-hyphenate-limit-after
 -webkit-hyphenate-limit-before
+-webkit-hyphenate-limit-lines
 -webkit-hyphens
 -epub-hyphens = -webkit-hyphens
 -webkit-line-box-contain

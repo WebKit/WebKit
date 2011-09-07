@@ -92,6 +92,7 @@ public:
     AtomicString hyphenationString;
     short hyphenationLimitBefore;
     short hyphenationLimitAfter;
+    short hyphenationLimitLines;
 
     AtomicString locale;
 

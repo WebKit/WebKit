@@ -3551,6 +3551,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setHyphenationLimitBefore(primitiveValue->getValue<short>(CSSPrimitiveValue::CSS_NUMBER));
         return;
     }
+    case CSSPropertyWebkitHyphenateLimitLines: {
+        HANDLE_INHERIT_AND_INITIAL(hyphenationLimitLines, HyphenationLimitLines);
+        if (primitiveValue->getIdent() == CSSValueNoLimit)
+            m_style->setHyphenationLimitLines(-1);
+        else
+            m_style->setHyphenationLimitLines(primitiveValue->getValue<short>(CSSPrimitiveValue::CSS_NUMBER));
+        return;
+    }
     case CSSPropertyWebkitLocale: {
         HANDLE_INHERIT_AND_INITIAL(locale, Locale);
         if (primitiveValue->getIdent() == CSSValueAuto)

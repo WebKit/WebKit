@@ -88,6 +88,18 @@ void RootInlineBox::clearTruncation()
     }
 }
 
+bool RootInlineBox::isHyphenated() const
+{
+    for (InlineBox* box = firstLeafChild(); box; box = box->nextLeafChild()) {
+        if (box->isInlineTextBox()) {
+            if (toInlineTextBox(box)->hasHyphen())
+                return true;
+        }
+    }
+
+    return false;
+}
+
 bool RootInlineBox::lineCanAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth)
 {
     // First sanity-check the unoverflowed width of the whole line to see if there is sufficient room.

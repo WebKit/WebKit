@@ -215,6 +215,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitHyphenateCharacter,
     CSSPropertyWebkitHyphenateLimitAfter,
     CSSPropertyWebkitHyphenateLimitBefore,
+    CSSPropertyWebkitHyphenateLimitLines,
     CSSPropertyWebkitHyphens,
     CSSPropertyWebkitLineBoxContain,
     CSSPropertyWebkitLineBreak,
@@ -1308,6 +1309,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->hyphenationLimitBefore() < 0)
                 return CSSPrimitiveValue::createIdentifier(CSSValueAuto);
             return CSSPrimitiveValue::create(style->hyphenationLimitBefore(), CSSPrimitiveValue::CSS_NUMBER);
+        case CSSPropertyWebkitHyphenateLimitLines:
+            if (style->hyphenationLimitLines() < 0)
+                return CSSPrimitiveValue::createIdentifier(CSSValueNoLimit);
+            return CSSPrimitiveValue::create(style->hyphenationLimitLines(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitBorderFit:
             if (style->borderFit() == BorderFitBorder)
                 return primitiveValueCache->createIdentifierValue(CSSValueBorder);
