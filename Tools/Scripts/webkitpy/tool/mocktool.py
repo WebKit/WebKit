@@ -801,7 +801,7 @@ class MockTestPort2(object):
         return test_name == "media/foo/bar.html"
 
 
-class MockPortFactory(object):
+class MockDeprecatedPortFactory(object):
 
     def get_all(self, options=None):
         return {"test_port1": MockTestPort1(), "test_port2": MockTestPort2()}
@@ -845,7 +845,7 @@ class MockTool(object):
         self._checkout = MockCheckout()
         self.status_server = MockStatusServer()
         self.irc_password = "MOCK irc password"
-        self.port_factory = MockPortFactory()
+        self._deprecated_port_factory = MockDeprecatedPortFactory()
         self.platform = MockPlatformInfo()
 
     def scm(self):

@@ -53,7 +53,7 @@ class Host(object):
         self._scm = None
         self._checkout = None
         self.status_server = statusserver.StatusServer()
-        self.port_factory = port.factory
+        self._deprecated_port_factory = port.factory
         self.platform = platforminfo.PlatformInfo()
 
     def _initialize_scm(self, patch_directories=None):

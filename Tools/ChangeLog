@@ -1,3 +1,25 @@
+2011-09-07  Eric Seidel  <eric@webkit.org>
+
+        Add a new PortFactory class for creating new-style ports and deprecate the old PortFactory
+        https://bugs.webkit.org/show_bug.cgi?id=67734
+
+        Reviewed by Adam Barth.
+
+        Right now every place that creates a Port object has to be very careful
+        to pass in a MockSCM/MockUser/MockFilesystem when appropriate.
+        The correct fix is for port/factory.py (which creates most port objects)
+        to know how to pass these in automatically.  However, currently all port/factory.py
+        functions are free functions instead of being on an object.  This patch
+        adds a new PortFactory object and deprecates the PortFactory for the old-style Port objects.
+
+        In a follow-up patch I will add PortFactory to the Host object and teach PortFactory how to
+        pass along the proper scm/user/filesystem to the Port object.
+
+        * Scripts/webkitpy/common/host.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2011-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94441.
