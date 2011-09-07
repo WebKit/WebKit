@@ -35,6 +35,7 @@
 
 #include "PlatformString.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/DateMath.h>
 
 using namespace WTF;
@@ -196,7 +197,7 @@ String filenameFromHTTPContentDisposition(const String& value)
 
 String extractMIMETypeFromMediaType(const String& mediaType)
 {
-    Vector<UChar, 64> mimeType;
+    StringBuilder mimeType;
     unsigned length = mediaType.length();
     mimeType.reserveCapacity(length);
     for (unsigned i = 0; i < length; i++) {
@@ -224,9 +225,9 @@ String extractMIMETypeFromMediaType(const String& mediaType)
         mimeType.append(c);
     }
 
-    if (mimeType.size() == length)
+    if (mimeType.length() == length)
         return mediaType;
-    return String(mimeType.data(), mimeType.size());
+    return mimeType.toString();
 }
 
 String extractCharsetFromMediaType(const String& mediaType)

@@ -30,6 +30,7 @@
 #include "Text.h"
 #include "TextIterator.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -57,7 +58,7 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
     if (node->renderer() && node->renderer()->style()->preserveNewline())
         return in;
 
-    Vector<UChar> s;
+    StringBuilder s;
 
     unsigned i = 0;
     unsigned consumed = 0;
@@ -74,28 +75,28 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
                 unsigned add = count % 3;
                 switch (add) {
                     case 0:
-                        append(s, convertedSpaceString());
+                        s.append(convertedSpaceString());
                         s.append(' ');
-                        append(s, convertedSpaceString());
+                        s.append(convertedSpaceString());
                         add = 3;
                         break;
                     case 1:
                         if (i == 0 || i + 1 == in.length()) // at start or end of string
-                            append(s, convertedSpaceString());
+                            s.append(convertedSpaceString());
                         else
                             s.append(' ');
                         break;
                     case 2:
                         if (i == 0) {
                              // at start of string
-                            append(s, convertedSpaceString());
+                            s.append(convertedSpaceString());
                             s.append(' ');
                         } else if (i + 2 == in.length()) {
                              // at end of string
-                            append(s, convertedSpaceString());
-                            append(s, convertedSpaceString());
+                            s.append(convertedSpaceString());
+                            s.append(convertedSpaceString());
                         } else {
-                            append(s, convertedSpaceString());
+                            s.append(convertedSpaceString());
                             s.append(' ');
                         }
                         break;
@@ -107,7 +108,7 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
         i += consumed;
     }
 
-    return String::adopt(s);
+    return s.toString();
 }
 
 } // namespace WebCore

@@ -145,7 +145,7 @@ void HTMLTokenizer::reset()
 inline bool HTMLTokenizer::processEntity(SegmentedString& source)
 {
     bool notEnoughCharacters = false;
-    Vector<UChar, 16> decodedEntity;
+    StringBuilder decodedEntity;
     bool success = consumeHTMLEntity(source, decodedEntity, notEnoughCharacters);
     if (notEnoughCharacters)
         return false;
@@ -153,9 +153,8 @@ inline bool HTMLTokenizer::processEntity(SegmentedString& source)
         ASSERT(decodedEntity.isEmpty());
         bufferCharacter('&');
     } else {
-        Vector<UChar>::const_iterator iter = decodedEntity.begin();
-        for (; iter != decodedEntity.end(); ++iter)
-            bufferCharacter(*iter);
+        for (unsigned i = 0; i < decodedEntity.length(); ++i)
+            bufferCharacter(decodedEntity[i]);
     }
     return true;
 }
@@ -987,7 +986,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     HTML_BEGIN_STATE(CharacterReferenceInAttributeValueState) {
         bool notEnoughCharacters = false;
-        Vector<UChar, 16> decodedEntity;
+        StringBuilder decodedEntity;
         bool success = consumeHTMLEntity(source, decodedEntity, notEnoughCharacters, m_additionalAllowedCharacter);
         if (notEnoughCharacters)
             return haveBufferedCharacterToken();
@@ -995,9 +994,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             ASSERT(decodedEntity.isEmpty());
             m_token->appendToAttributeValue('&');
         } else {
-            Vector<UChar>::const_iterator iter = decodedEntity.begin();
-            for (; iter != decodedEntity.end(); ++iter)
-                m_token->appendToAttributeValue(*iter);
+            for (unsigned i = 0; i < decodedEntity.length(); ++i)
+                m_token->appendToAttributeValue(decodedEntity[i]);
         }
         // We're supposed to switch back to the attribute value state that
         // we were in when we were switched into this state. Rather than

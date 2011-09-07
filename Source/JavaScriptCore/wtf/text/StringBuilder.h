@@ -108,10 +108,17 @@ public:
     UChar operator[](unsigned i) const
     {
         ASSERT(i < m_length);
+        return characters()[i];
+    }
+
+    const UChar* characters() const
+    {
+        if (!m_length)
+            return 0;
         if (!m_string.isNull())
-            return m_string[i];
+            return m_string.characters();
         ASSERT(m_buffer);
-        return (*m_buffer)[i];
+        return m_buffer->characters();
     }
 
     void clear()

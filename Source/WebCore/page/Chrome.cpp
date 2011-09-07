@@ -47,6 +47,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(DOM_STORAGE)
 #include "StorageNamespace.h"
@@ -427,13 +428,13 @@ void Chrome::setToolTip(const HitTestResult& result)
                     FileList* files = input->files();
                     unsigned listSize = files->length();
                     if (listSize > 1) {
-                        Vector<UChar> names;
+                        StringBuilder names;
                         for (size_t i = 0; i < listSize; ++i) {
-                            append(names, files->item(i)->fileName());
+                            names.append(files->item(i)->fileName());
                             if (i != listSize - 1)
                                 names.append('\n');
                         }
-                        toolTip = String::adopt(names);
+                        toolTip = names.toString();
                         // filename always display as LTR.
                         toolTipDirection = LTR;
                     }

@@ -33,6 +33,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Threading.h>
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -115,19 +116,19 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     const HTTPHeaderMap& requestHeaderFields = request.httpHeaderFields();
 
     if (requestHeaderFields.size() > 0) {
-        Vector<UChar> headerBuffer;
+        StringBuilder headerBuffer;
         HTTPHeaderMap::const_iterator it = requestHeaderFields.begin();
-        append(headerBuffer, it->first);
+        headerBuffer.append(it->first);
         ++it;
 
         HTTPHeaderMap::const_iterator end = requestHeaderFields.end();
         for (; it != end; ++it) {
             headerBuffer.append(',');
             headerBuffer.append(' ');
-            append(headerBuffer, it->first);
+            headerBuffer.append(it->first);
         }
 
-        preflightRequest.setHTTPHeaderField("Access-Control-Request-Headers", String::adopt(headerBuffer));
+        preflightRequest.setHTTPHeaderField("Access-Control-Request-Headers", headerBuffer.toString());
     }
 
     return preflightRequest;

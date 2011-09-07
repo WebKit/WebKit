@@ -46,7 +46,7 @@ public:
         return value;
     }
 
-    inline static bool convertToUTF16(UChar32 value, Vector<UChar, 16>& decodedCharacter)
+    inline static bool convertToUTF16(UChar32 value, StringBuilder& decodedCharacter)
     {
         if (U_IS_BMP(value)) {
         UChar character = static_cast<UChar>(value);
@@ -61,7 +61,7 @@ public:
 
     inline static bool acceptMalformed() { return false; }
 
-    inline static bool consumeNamedEntity(SegmentedString&, Vector<UChar, 16>&, bool&, UChar, UChar&)
+    inline static bool consumeNamedEntity(SegmentedString&, StringBuilder&, bool&, UChar, UChar&)
     {
         ASSERT_NOT_REACHED();
         return false;
@@ -70,7 +70,7 @@ public:
 
 }
 
-bool consumeXMLCharacterReference(SegmentedString& source, Vector<UChar, 16>& decodedCharacter, bool& notEnoughCharacters)
+bool consumeXMLCharacterReference(SegmentedString& source, StringBuilder& decodedCharacter, bool& notEnoughCharacters)
 {
     return consumeCharacterReference<XMLCharacterReferenceParser>(source, decodedCharacter, notEnoughCharacters, 0);
 }

@@ -27,7 +27,7 @@
 #ifndef CharacterReferenceParserInlineMethods_h
 #define CharacterReferenceParserInlineMethods_h
 
-#include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -36,19 +36,19 @@ inline bool isHexDigit(UChar cc)
     return (cc >= '0' && cc <= '9') || (cc >= 'a' && cc <= 'f') || (cc >= 'A' && cc <= 'F');
 }
 
-inline void unconsumeCharacters(SegmentedString& source, const Vector<UChar, 10>& consumedCharacters)
+inline void unconsumeCharacters(SegmentedString& source, const StringBuilder& consumedCharacters)
 {
-    if (consumedCharacters.size() == 1)
+    if (consumedCharacters.length() == 1)
         source.push(consumedCharacters[0]);
-    else if (consumedCharacters.size() == 2) {
+    else if (consumedCharacters.length() == 2) {
         source.push(consumedCharacters[0]);
         source.push(consumedCharacters[1]);
     } else
-        source.prepend(SegmentedString(String(consumedCharacters.data(), consumedCharacters.size())));
+        source.prepend(SegmentedString(String(consumedCharacters.characters(), consumedCharacters.length())));
 }
 
 template <typename ParserFunctions>
-bool consumeCharacterReference(SegmentedString& source, Vector<UChar, 16>& decodedCharacter, bool& notEnoughCharacters, UChar additionalAllowedCharacter)
+bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCharacter, bool& notEnoughCharacters, UChar additionalAllowedCharacter)
 {
     ASSERT(!additionalAllowedCharacter || additionalAllowedCharacter == '"' || additionalAllowedCharacter == '\'' || additionalAllowedCharacter == '>');
     ASSERT(!notEnoughCharacters);
@@ -65,7 +65,7 @@ bool consumeCharacterReference(SegmentedString& source, Vector<UChar, 16>& decod
     };
     EntityState entityState = Initial;
     UChar32 result = 0;
-    Vector<UChar, 10> consumedCharacters;
+    StringBuilder consumedCharacters;
     
     while (!source.isEmpty()) {
         UChar cc = *source;

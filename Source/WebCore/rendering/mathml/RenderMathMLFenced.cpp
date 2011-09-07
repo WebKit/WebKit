@@ -34,6 +34,7 @@
 #include "RenderInline.h"
 #include "RenderMathMLOperator.h"
 #include "RenderText.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
     
@@ -64,12 +65,12 @@ void RenderMathMLFenced::updateFromElement()
     
     AtomicString separators = static_cast<Element*>(fenced)->getAttribute(MathMLNames::separatorsAttr);
     if (!separators.isNull()) {
-        Vector<UChar> characters;
+        StringBuilder characters;
         for (unsigned int i = 0; i < separators.length(); i++) {
             if (!isSpaceOrNewline(separators[i]))
                 characters.append(separators[i]);
         }
-        m_separators = !characters.size() ? 0 : StringImpl::create(characters.data() , characters.size());
+        m_separators = !characters.length() ? 0 : characters.toString().impl();
     } else {
         // The separator defaults to a single comma.
         m_separators = StringImpl::create(",");

@@ -35,6 +35,7 @@
 
 #include <wtf/DecimalNumber.h>
 #include <wtf/dtoa.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -262,7 +263,7 @@ inline int hexToInt(UChar c)
     return 0;
 }
 
-bool decodeString(const UChar* start, const UChar* end, Vector<UChar>* output)
+bool decodeString(const UChar* start, const UChar* end, StringBuilder* output)
 {
     while (start < end) {
         UChar c = *start++;
@@ -322,11 +323,11 @@ bool decodeString(const UChar* start, const UChar* end, String* output)
     }
     if (start > end)
         return false;
-    Vector<UChar> buffer;
+    StringBuilder buffer;
     buffer.reserveCapacity(end - start);
     if (!decodeString(start, end, &buffer))
         return false;
-    *output = String(buffer.data(), buffer.size());    
+    *output = buffer.toString();
     return true;
 }
 
@@ -445,7 +446,7 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
     return result.release();
 }
 
-inline bool escapeChar(UChar c, Vector<UChar>* dst)
+inline bool escapeChar(UChar c, StringBuilder* dst)
 {
     switch (c) {
     case '\b': dst->append("\\b", 2); break;
@@ -461,7 +462,7 @@ inline bool escapeChar(UChar c, Vector<UChar>* dst)
     return true;
 }
 
-inline void doubleQuoteString(const String& str, Vector<UChar>* dst)
+inline void doubleQuoteString(const String& str, StringBuilder* dst)
 {
     dst->append('"');
     for (unsigned i = 0; i < str.length(); ++i) {
@@ -557,13 +558,13 @@ PassRefPtr<InspectorValue> InspectorValue::parseJSON(const String& json)
 
 String InspectorValue::toJSONString() const
 {
-    Vector<UChar> result;
+    StringBuilder result;
     result.reserveCapacity(512);
     writeJSON(&result);
-    return String(result.data(), result.size());
+    return result.toString();
 }
 
-void InspectorValue::writeJSON(Vector<UChar>* output) const
+void InspectorValue::writeJSON(StringBuilder* output) const
 {
     ASSERT(m_type == TypeNull);
     output->append(nullString, 4);
@@ -617,7 +618,7 @@ bool InspectorBasicValue::asNumber(unsigned int* output) const
     return true;
 }
 
-void InspectorBasicValue::writeJSON(Vector<UChar>* output) const
+void InspectorBasicValue::writeJSON(StringBuilder* output) const
 {
     ASSERT(type() == TypeBoolean || type() == TypeNumber);
     if (type() == TypeBoolean) {
@@ -653,7 +654,7 @@ bool InspectorString::asString(String* output) const
     return true;
 }
 
-void InspectorString::writeJSON(Vector<UChar>* output) const
+void InspectorString::writeJSON(StringBuilder* output) const
 {
     ASSERT(type() == TypeString);
     doubleQuoteString(m_stringValue, output);
@@ -725,7 +726,7 @@ void InspectorObject::remove(const String& name)
     }
 }
 
-void InspectorObject::writeJSON(Vector<UChar>* output) const
+void InspectorObject::writeJSON(StringBuilder* output) const
 {
     output->append('{');
     for (size_t i = 0; i < m_order.size(); ++i) {
@@ -762,7 +763,7 @@ PassRefPtr<InspectorArray> InspectorArray::asArray()
     return this;
 }
 
-void InspectorArray::writeJSON(Vector<UChar>* output) const
+void InspectorArray::writeJSON(StringBuilder* output) const
 {
     output->append('[');
     for (Vector<RefPtr<InspectorValue> >::const_iterator it = m_data.begin(); it != m_data.end(); ++it) {

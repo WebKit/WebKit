@@ -84,13 +84,7 @@ TextStream& TextStream::operator<<(double d)
 
 TextStream& TextStream::operator<<(const char* string)
 {
-    size_t stringLength = strlen(string);
-    size_t textLength = m_text.size();
-    if (stringLength > numeric_limits<size_t>::max() - textLength)
-        CRASH();
-    m_text.grow(textLength + stringLength);
-    for (size_t i = 0; i < stringLength; ++i)
-        m_text[textLength + i] = string[i];
+    m_text.append(string);
     return *this;
 }
 
@@ -103,13 +97,15 @@ TextStream& TextStream::operator<<(const void* p)
 
 TextStream& TextStream::operator<<(const String& string)
 {
-    append(m_text, string);
+    m_text.append(string);
     return *this;
 }
 
 String TextStream::release()
 {
-    return String::adopt(m_text);
+    String result = m_text.toString();
+    m_text.clear();
+    return result;
 }
 
 #if OS(WINDOWS) && CPU(X86_64)

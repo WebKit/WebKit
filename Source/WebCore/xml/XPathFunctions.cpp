@@ -38,6 +38,7 @@
 #include "XPathUtil.h"
 #include "XPathValue.h"
 #include <wtf/MathExtras.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace XPath {
@@ -318,26 +319,26 @@ Value FunPosition::evaluate() const
 Value FunId::evaluate() const
 {
     Value a = arg(0)->evaluate();
-    Vector<UChar> idList; // A whitespace-separated list of IDs
+    StringBuilder idList; // A whitespace-separated list of IDs
 
     if (a.isNodeSet()) {
         const NodeSet& nodes = a.toNodeSet();
         for (size_t i = 0; i < nodes.size(); ++i) {
             String str = stringValue(nodes[i]);
-            idList.append(str.characters(), str.length());
+            idList.append(str);
             idList.append(' ');
         }
     } else {
         String str = a.toString();
-        idList.append(str.characters(), str.length());
+        idList.append(str);
     }
     
     TreeScope* contextScope = evaluationContext().node->treeScope();
     NodeSet result;
     HashSet<Node*> resultSet;
 
-    size_t startPos = 0;
-    size_t length = idList.size();
+    unsigned startPos = 0;
+    unsigned length = idList.length();
     while (true) {
         while (startPos < length && isWhitespace(idList[startPos]))
             ++startPos;
@@ -351,7 +352,7 @@ Value FunId::evaluate() const
 
         // If there are several nodes with the same id, id() should return the first one.
         // In WebKit, getElementById behaves so, too, although its behavior in this case is formally undefined.
-        Node* node = contextScope->getElementById(String(&idList[startPos], endPos - startPos));
+        Node* node = contextScope->getElementById(String(idList.characters() + startPos, endPos - startPos));
         if (node && resultSet.add(node).second)
             result.append(node);
         
@@ -436,15 +437,16 @@ Value FunString::evaluate() const
 
 Value FunConcat::evaluate() const
 {
-    Vector<UChar, 1024> result;
+    StringBuilder result;
+    result.reserveCapacity(1024);
 
     unsigned count = argCount();
     for (unsigned i = 0; i < count; ++i) {
         String str(arg(i)->evaluate().toString());
-        result.append(str.characters(), str.length());
+        result.append(str);
     }
 
-    return String(result.data(), result.size());
+    return result.toString();
 }
 
 Value FunStartsWith::evaluate() const

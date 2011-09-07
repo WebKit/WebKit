@@ -30,6 +30,7 @@
 #if ENABLE(XPATH)
 
 #include "ContainerNode.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace XPath {
@@ -51,17 +52,17 @@ String stringValue(Node* node)
             return node->nodeValue();
         default:
             if (isRootDomNode(node) || node->nodeType() == Node::ELEMENT_NODE) {
-                Vector<UChar> result;
+                StringBuilder result;
                 result.reserveCapacity(1024);
 
                 for (Node* n = node->firstChild(); n; n = n->traverseNextNode(node)) {
                     if (n->isTextNode()) {
                         const String& nodeValue = n->nodeValue();
-                        result.append(nodeValue.characters(), nodeValue.length());
+                        result.append(nodeValue);
                     }
                 }
 
-                return String::adopt(result);
+                return result.toString();
             }
     }
     

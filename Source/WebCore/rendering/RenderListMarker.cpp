@@ -31,6 +31,7 @@
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderView.h"
+#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
@@ -123,12 +124,12 @@ static String toSymbolic(int number, const UChar* symbols, unsigned symbolsSize)
     --numberShadow;
 
     // The asterisks list-style-type is the worst case; we show |numberShadow| asterisks.
-    Vector<UChar> letters;
+    StringBuilder letters;
     letters.append(symbols[numberShadow % symbolsSize]);
     unsigned numSymbols = numberShadow / symbolsSize;
     while (numSymbols--)
         letters.append(symbols[numberShadow % symbolsSize]);
-    return String::adopt(letters);
+    return letters.toString();
 }
 
 static String toAlphabetic(int number, const UChar* alphabet, unsigned alphabetSize)
@@ -1274,13 +1275,13 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         // Text is not arbitrary. We can judge whether it's RTL from the first character,
         // and we only need to handle the direction RightToLeft for now.
         bool textNeedsReversing = direction(m_text[0]) == RightToLeft;
-        Vector<UChar> reversedText;
+        StringBuilder reversedText;
         if (textNeedsReversing) {
             int length = m_text.length();
-            reversedText.grow(length);
-            for (int i = 0; i < length; ++i)
-                reversedText[length - i - 1] = m_text[i];
-            textRun.setText(reversedText.data(), length);
+            reversedText.reserveCapacity(length);
+            for (int i = length - 1; i >= 0; --i)
+                reversedText.append(m_text[i]);
+            textRun.setText(reversedText.characters(), length);
         }
 
         const UChar suffix = listMarkerSuffix(type, m_listItem->value());
@@ -1552,18 +1553,20 @@ String RenderListMarker::suffix() const
     EListStyleType type = style()->listStyleType();
     const UChar suffix = listMarkerSuffix(type, m_listItem->value());
 
-    Vector<UChar> resultVector;
-    resultVector.append(suffix);
+    if (suffix == ' ')
+        return String(" ");
 
     // If the suffix is not ' ', an extra space is needed
-    if (suffix != ' ') {
-        if (style()->isLeftToRightDirection())
-            resultVector.append(' ');
-        else
-            resultVector.prepend(' ');
+    UChar data[2];
+    if (style()->isLeftToRightDirection()) {
+        data[0] = suffix;
+        data[1] = ' ';
+    } else {
+        data[0] = ' ';
+        data[1] = suffix;
     }
 
-    return String::adopt(resultVector);
+    return String(data, 2);
 }
 
 bool RenderListMarker::isInside() const

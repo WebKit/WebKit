@@ -33,12 +33,13 @@
 #include "HTMLElementStack.h"
 #include "HTMLFormattingElementList.h"
 #include "HTMLTokenizer.h"
-#include <wtf/text/TextPosition.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextPosition.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
@@ -241,7 +242,7 @@ private:
     InsertionMode m_originalInsertionMode;
 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#pending-table-character-tokens
-    Vector<UChar> m_pendingTableCharacters;
+    StringBuilder m_pendingTableCharacters;
 
     // We access parser because HTML5 spec requires that we be able to change the state of the tokenizer
     // from within parser actions. We also need it to track the current position.

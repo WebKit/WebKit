@@ -1,3 +1,24 @@
+2011-09-06  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Replace usages of Vector<UChar> with existing StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=67079
+
+        Reviewed by Gavin Barraclough.
+
+        This is part of work to support 8-bit string buffers.
+        Adds StringBuilder::characters() because the original Vector<UChar>::data()
+        is widely used.
+        Sets the minimum size of buffer to 16 to prevent possible performance
+        regression. Further performance investigation should be done in
+        https://bugs.webkit.org/show_bug.cgi?id=67084.
+
+        * wtf/Forward.h:
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::appendUninitialized): Sets minimum buffer size to 16 bytes.
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::operator[]):
+        (WTF::StringBuilder::characters): Added.
+
 2011-09-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fix broken snow leopard build

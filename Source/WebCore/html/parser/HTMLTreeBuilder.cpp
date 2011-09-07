@@ -291,7 +291,7 @@ public:
         return String(start, m_current - start);
     }
 
-    void giveRemainingTo(Vector<UChar>& recipient)
+    void giveRemainingTo(StringBuilder& recipient)
     {
         recipient.append(m_current, m_end - m_current);
         m_current = m_end;
@@ -2718,7 +2718,8 @@ void HTMLTreeBuilder::defaultForAfterHead()
 
 void HTMLTreeBuilder::defaultForInTableText()
 {
-    String characters = String::adopt(m_pendingTableCharacters);
+    String characters = m_pendingTableCharacters.toString();
+    m_pendingTableCharacters.clear();
     if (!isAllWhitespace(characters)) {
         // FIXME: parse error
         HTMLConstructionSite::RedirectToFosterParentGuard redirecter(m_tree);

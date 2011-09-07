@@ -168,8 +168,8 @@ static void adjustCharactersAndLengthForHyphen(BufferForAppendingHyphen& charact
     const AtomicString& hyphenString = style->hyphenString();
     charactersWithHyphen.reserveCapacity(length + hyphenString.length());
     charactersWithHyphen.append(characters, length);
-    charactersWithHyphen.append(hyphenString.characters(), hyphenString.length());
-    characters = charactersWithHyphen.data();
+    charactersWithHyphen.append(hyphenString);
+    characters = charactersWithHyphen.characters();
     length += hyphenString.length();
 }
 

@@ -66,7 +66,7 @@ String DOMTokenList::removeToken(const AtomicString& input, const AtomicString& 
     // Algorithm defined at http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#remove-a-token-from-a-string
 
     unsigned inputLength = input.length();
-    Vector<UChar> output; // 3
+    StringBuilder output; // 3
     output.reserveCapacity(inputLength);
     unsigned position = 0; // 4
 
@@ -78,18 +78,18 @@ String DOMTokenList::removeToken(const AtomicString& input, const AtomicString& 
         }
 
         // Step 7
-        Vector<UChar> s;
+        StringBuilder s;
         while (position < inputLength && isNotHTMLSpace(input[position]))
             s.append(input[position++]);
 
         // Step 8
-        if (s == token) {
+        if (s.toStringPreserveCapacity() == token) {
             // Step 8.1
             while (position < inputLength && isHTMLSpace(input[position]))
                 ++position;
 
             // Step 8.2
-            size_t j = output.size();
+            size_t j = output.length();
             while (j > 0 && isHTMLSpace(output[j - 1]))
                 --j;
             output.resize(j);
@@ -98,11 +98,10 @@ String DOMTokenList::removeToken(const AtomicString& input, const AtomicString& 
             if (position < inputLength && !output.isEmpty())
                 output.append(' ');
         } else
-            output.append(s); // Step 9
+            output.append(s.toStringPreserveCapacity()); // Step 9
     }
 
-    output.shrinkToFit();
-    return String::adopt(output);
+    return output.toString();
 }
 
 } // namespace WebCore

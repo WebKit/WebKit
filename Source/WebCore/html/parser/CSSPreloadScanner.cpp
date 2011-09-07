@@ -192,14 +192,14 @@ static String parseCSSStringOrURL(const UChar* characters, size_t length)
 
 void CSSPreloadScanner::emitRule()
 {
-    if (equalIgnoringCase("import", m_rule.data(), m_rule.size())) {
-        String value = parseCSSStringOrURL(m_ruleValue.data(), m_ruleValue.size());
+    if (equalIgnoringCase("import", m_rule.characters(), m_rule.length())) {
+        String value = parseCSSStringOrURL(m_ruleValue.characters(), m_ruleValue.length());
         if (!value.isEmpty()) {
             ResourceRequest request(m_document->completeURL(value));
             m_document->cachedResourceLoader()->preload(CachedResource::CSSStyleSheet, request, String(), m_scanningBody);
         }
         m_state = Initial;
-    } else if (equalIgnoringCase("charset", m_rule.data(), m_rule.size()))
+    } else if (equalIgnoringCase("charset", m_rule.characters(), m_rule.length()))
         m_state = Initial;
     else
         m_state = DoneParsingImportRules;

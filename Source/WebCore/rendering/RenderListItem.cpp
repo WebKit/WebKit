@@ -30,6 +30,7 @@
 #include "RenderListMarker.h"
 #include "RenderView.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace std;
 
@@ -370,17 +371,17 @@ String RenderListItem::markerTextWithSuffix() const
 
     const String& markerText = m_marker->text();
     const String markerSuffix = m_marker->suffix();
-    Vector<UChar> resultVector;
+    StringBuilder result;
 
     if (!m_marker->style()->isLeftToRightDirection())
-        resultVector.append(markerSuffix.characters(), markerSuffix.length());
+        result.append(markerSuffix);
 
-    resultVector.append(markerText.characters(), markerText.length());
+    result.append(markerText);
 
     if (m_marker->style()->isLeftToRightDirection())
-        resultVector.append(markerSuffix.characters(), markerSuffix.length());
+        result.append(markerSuffix);
 
-    return String::adopt(resultVector);
+    return result.toString();
 }
 
 void RenderListItem::explicitValueChanged()

@@ -44,7 +44,6 @@
 #include "ScriptEventListener.h"
 #include "Text.h"
 #include "TextIterator.h"
-#include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -114,7 +113,7 @@ String HTMLTextFormControlElement::strippedPlaceholder() const
     if (!attributeValue.contains(newlineCharacter) && !attributeValue.contains(carriageReturn))
         return attributeValue;
 
-    Vector<UChar> stripped;
+    StringBuilder stripped;
     unsigned length = attributeValue.length();
     stripped.reserveCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
@@ -123,7 +122,7 @@ String HTMLTextFormControlElement::strippedPlaceholder() const
             continue;
         stripped.append(character);
     }
-    return String::adopt(stripped);
+    return stripped.toString();
 }
 
 static bool isNotLineBreak(UChar ch) { return ch != newlineCharacter && ch != carriageReturn; }

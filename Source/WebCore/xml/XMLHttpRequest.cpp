@@ -857,7 +857,7 @@ String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
         return "";
     }
 
-    Vector<UChar> stringBuilder;
+    StringBuilder stringBuilder;
 
     HTTPHeaderMap::const_iterator end = m_response.httpHeaderFields().end();
     for (HTTPHeaderMap::const_iterator it = m_response.httpHeaderFields().begin(); it!= end; ++it) {
@@ -873,15 +873,15 @@ String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
         if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(it->first))
             continue;
 
-        stringBuilder.append(it->first.characters(), it->first.length());
+        stringBuilder.append(it->first);
         stringBuilder.append(':');
         stringBuilder.append(' ');
-        stringBuilder.append(it->second.characters(), it->second.length());
+        stringBuilder.append(it->second);
         stringBuilder.append('\r');
         stringBuilder.append('\n');
     }
 
-    return String::adopt(stringBuilder);
+    return stringBuilder.toString();
 }
 
 String XMLHttpRequest::getResponseHeader(const AtomicString& name, ExceptionCode& ec) const

@@ -59,6 +59,7 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
@@ -129,13 +130,13 @@ public:
     String takeResults();
 
 private:
-    void appendStyleNodeOpenTag(Vector<UChar>&, CSSStyleDeclaration*, Document*, bool isBlock = false);
+    void appendStyleNodeOpenTag(StringBuilder&, CSSStyleDeclaration*, Document*, bool isBlock = false);
     const String styleNodeCloseTag(bool isBlock = false);
-    virtual void appendText(Vector<UChar>& out, Text*);
+    virtual void appendText(StringBuilder& out, Text*);
     String renderedText(const Node*, const Range*);
     String stringValueForRange(const Node*, const Range*);
-    void appendElement(Vector<UChar>& out, Element* element, bool addDisplayInline, RangeFullySelectsNode);
-    void appendElement(Vector<UChar>& out, Element* element, Namespaces*) { appendElement(out, element, false, DoesFullySelectNode); }
+    void appendElement(StringBuilder& out, Element*, bool addDisplayInline, RangeFullySelectsNode);
+    void appendElement(StringBuilder& out, Element* element, Namespaces*) { appendElement(out, element, false, DoesFullySelectNode); }
 
     enum NodeTraversalMode { EmitString, DoNotEmitString };
     Node* traverseNodesForSerialization(Node* startNode, Node* pastEnd, NodeTraversalMode);
@@ -163,12 +164,12 @@ inline StyledMarkupAccumulator::StyledMarkupAccumulator(Vector<Node*>* nodes, EA
 
 void StyledMarkupAccumulator::wrapWithNode(Node* node, bool convertBlocksToInlines, RangeFullySelectsNode rangeFullySelectsNode)
 {
-    Vector<UChar> markup;
+    StringBuilder markup;
     if (node->isElementNode())
         appendElement(markup, static_cast<Element*>(node), convertBlocksToInlines && isBlock(const_cast<Node*>(node)), rangeFullySelectsNode);
     else
         appendStartMarkup(markup, node, 0);
-    m_reversedPrecedingMarkup.append(String::adopt(markup));
+    m_reversedPrecedingMarkup.append(markup.toString());
     appendEndTag(node);
     if (m_nodes)
         m_nodes->append(node);
@@ -176,20 +177,20 @@ void StyledMarkupAccumulator::wrapWithNode(Node* node, bool convertBlocksToInlin
 
 void StyledMarkupAccumulator::wrapWithStyleNode(CSSStyleDeclaration* style, Document* document, bool isBlock)
 {
-    Vector<UChar> openTag;
+    StringBuilder openTag;
     appendStyleNodeOpenTag(openTag, style, document, isBlock);
-    m_reversedPrecedingMarkup.append(String::adopt(openTag));
+    m_reversedPrecedingMarkup.append(openTag.toString());
     appendString(styleNodeCloseTag(isBlock));
 }
 
-void StyledMarkupAccumulator::appendStyleNodeOpenTag(Vector<UChar>& out, CSSStyleDeclaration* style, Document* document, bool isBlock)
+void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, CSSStyleDeclaration* style, Document* document, bool isBlock)
 {
     // All text-decoration-related elements should have been treated as special ancestors
     // If we ever hit this ASSERT, we should export StyleChange in ApplyStyleCommand and use it here
     ASSERT(propertyMissingOrEqualToNone(style, CSSPropertyTextDecoration) && propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
     DEFINE_STATIC_LOCAL(const String, divStyle, ("<div style=\""));
     DEFINE_STATIC_LOCAL(const String, styleSpanOpen, ("<span style=\""));
-    append(out, isBlock ? divStyle : styleSpanOpen);
+    out.append(isBlock ? divStyle : styleSpanOpen);
     appendAttributeValue(out, style->cssText(), document->isHTMLDocument());
     out.append('\"');
     out.append('>');
@@ -204,19 +205,19 @@ const String StyledMarkupAccumulator::styleNodeCloseTag(bool isBlock)
 
 String StyledMarkupAccumulator::takeResults()
 {
-    Vector<UChar> result;
-    result.reserveInitialCapacity(totalLength(m_reversedPrecedingMarkup) + length());
+    StringBuilder result;
+    result.reserveCapacity(totalLength(m_reversedPrecedingMarkup) + length());
 
     for (size_t i = m_reversedPrecedingMarkup.size(); i > 0; --i)
-        append(result, m_reversedPrecedingMarkup[i - 1]);
+        result.append(m_reversedPrecedingMarkup[i - 1]);
 
     concatenateMarkup(result);
 
     // We remove '\0' characters because they are not visibly rendered to the user.
-    return String::adopt(result).replace(0, "");
+    return result.toString().replace(0, "");
 }
 
-void StyledMarkupAccumulator::appendText(Vector<UChar>& out, Text* text)
+void StyledMarkupAccumulator::appendText(StringBuilder& out, Text* text)
 {    
     const bool parentIsTextarea = text->parentElement() && text->parentElement()->tagQName() == textareaTag;
     const bool wrappingSpan = shouldApplyWrappingStyle(text) && !parentIsTextarea;
@@ -228,9 +229,9 @@ void StyledMarkupAccumulator::appendText(Vector<UChar>& out, Text* text)
         // FIXME: Should this be included in forceInline?
         wrappingStyle->style()->setProperty(CSSPropertyFloat, CSSValueNone);
 
-        Vector<UChar> openTag;
+        StringBuilder openTag;
         appendStyleNodeOpenTag(openTag, wrappingStyle->style(), text->document());
-        append(out, String::adopt(openTag));
+        out.append(openTag.characters(), openTag.length());
     }
 
     if (!shouldAnnotate() || parentIsTextarea)
@@ -238,13 +239,13 @@ void StyledMarkupAccumulator::appendText(Vector<UChar>& out, Text* text)
     else {
         const bool useRenderedText = !enclosingNodeWithTag(firstPositionInNode(text), selectTag);
         String content = useRenderedText ? renderedText(text, m_range) : stringValueForRange(text, m_range);
-        Vector<UChar> buffer;
+        StringBuilder buffer;
         appendCharactersReplacingEntities(buffer, content.characters(), content.length(), EntityMaskInPCDATA);
-        append(out, convertHTMLTextToInterchangeFormat(String::adopt(buffer), text));
+        out.append(convertHTMLTextToInterchangeFormat(buffer.toString(), text));
     }
 
     if (wrappingSpan)
-        append(out, styleNodeCloseTag());
+        out.append(styleNodeCloseTag());
 }
     
 String StyledMarkupAccumulator::renderedText(const Node* node, const Range* range)
@@ -281,7 +282,7 @@ String StyledMarkupAccumulator::stringValueForRange(const Node* node, const Rang
     return str;
 }
 
-void StyledMarkupAccumulator::appendElement(Vector<UChar>& out, Element* element, bool addDisplayInline, RangeFullySelectsNode rangeFullySelectsNode)
+void StyledMarkupAccumulator::appendElement(StringBuilder& out, Element* element, bool addDisplayInline, RangeFullySelectsNode rangeFullySelectsNode)
 {
     const bool documentIsHTML = element->document()->isHTMLDocument();
     appendOpenTag(out, element, 0);
@@ -326,7 +327,7 @@ void StyledMarkupAccumulator::appendElement(Vector<UChar>& out, Element* element
 
         if (!newInlineStyle->isEmpty()) {
             DEFINE_STATIC_LOCAL(const String, stylePrefix, (" style=\""));
-            append(out, stylePrefix);
+            out.append(stylePrefix);
             appendAttributeValue(out, newInlineStyle->style()->cssText(), documentIsHTML);
             out.append('\"');
         }
@@ -913,13 +914,13 @@ String createFullMarkup(const Range* range)
 
 String urlToMarkup(const KURL& url, const String& title)
 {
-    Vector<UChar> markup;
-    append(markup, "<a href=\"");
-    append(markup, url.string());
-    append(markup, "\">");
+    StringBuilder markup;
+    markup.append("<a href=\"");
+    markup.append(url.string());
+    markup.append("\">");
     appendCharactersReplacingEntities(markup, title.characters(), title.length(), EntityMaskInPCDATA);
-    append(markup, "</a>");
-    return String::adopt(markup);
+    markup.append("</a>");
+    return markup.toString();
 }
 
 }

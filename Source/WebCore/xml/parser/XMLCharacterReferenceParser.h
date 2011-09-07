@@ -31,7 +31,7 @@
 
 namespace WebCore {
     
-bool consumeXMLCharacterReference(SegmentedString&, Vector<UChar, 16>& decodedCharacter, bool& notEnoughCharacters);
+bool consumeXMLCharacterReference(SegmentedString&, StringBuilder& decodedCharacter, bool& notEnoughCharacters);
 
 }
 

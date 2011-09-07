@@ -28,7 +28,7 @@
 #define CSSPreloadScanner_h
 
 #include "PlatformString.h"
-#include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -61,8 +61,8 @@ private:
     void emitRule();
 
     State m_state;
-    Vector<UChar, 16> m_rule;
-    Vector<UChar> m_ruleValue;
+    StringBuilder m_rule;
+    StringBuilder m_ruleValue;
 
     bool m_scanningBody;
     Document* m_document;

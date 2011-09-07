@@ -87,7 +87,7 @@ public:
     static PassRefPtr<InspectorValue> parseJSON(const String& json);
 
     String toJSONString() const;
-    virtual void writeJSON(Vector<UChar>* output) const;
+    virtual void writeJSON(StringBuilder* output) const;
 
 protected:
     explicit InspectorValue(Type type) : m_type(type) { }
@@ -121,7 +121,7 @@ public:
     virtual bool asNumber(unsigned long* output) const;
     virtual bool asNumber(unsigned int* output) const;
 
-    virtual void writeJSON(Vector<UChar>* output) const;
+    virtual void writeJSON(StringBuilder* output) const;
 
 private:
     explicit InspectorBasicValue(bool value) : InspectorValue(TypeBoolean), m_boolValue(value) { }
@@ -148,7 +148,7 @@ public:
 
     virtual bool asString(String* output) const;    
 
-    virtual void writeJSON(Vector<UChar>* output) const;
+    virtual void writeJSON(StringBuilder* output) const;
 
 private:
     explicit InspectorString(const String& value) : InspectorValue(TypeString), m_stringValue(value) { }
@@ -199,7 +199,7 @@ public:
 
     void remove(const String& name);
 
-    virtual void writeJSON(Vector<UChar>* output) const;
+    virtual void writeJSON(StringBuilder* output) const;
 
     iterator begin() { return m_data.begin(); }
     iterator end() { return m_data.end(); }
@@ -233,7 +233,7 @@ public:
 
     PassRefPtr<InspectorValue> get(size_t index);
 
-    virtual void writeJSON(Vector<UChar>* output) const;
+    virtual void writeJSON(StringBuilder* output) const;
 
 private:
     InspectorArray();

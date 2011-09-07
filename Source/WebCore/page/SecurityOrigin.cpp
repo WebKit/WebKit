@@ -37,6 +37,7 @@
 #include "SchemeRegistry.h"
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -395,18 +396,18 @@ String SecurityOrigin::toString() const
         return "file://";
     }
 
-    Vector<UChar> result;
-    result.reserveInitialCapacity(m_protocol.length() + m_host.length() + 10);
-    append(result, m_protocol);
-    append(result, "://");
-    append(result, m_host);
+    StringBuilder result;
+    result.reserveCapacity(m_protocol.length() + m_host.length() + 10);
+    result.append(m_protocol);
+    result.append("://");
+    result.append(m_host);
 
     if (m_port) {
-        append(result, ":");
-        append(result, String::number(m_port));
+        result.append(":");
+        result.append(String::number(m_port));
     }
 
-    return String::adopt(result);
+    return result.toString();
 }
 
 PassRefPtr<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)

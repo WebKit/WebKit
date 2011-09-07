@@ -1,3 +1,164 @@
+2011-09-06  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Replace usages of Vector<UChar> with existing StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=67079
+
+        Reviewed by Gavin Barraclough.
+
+        No new tests. All existing unit tests and layout tests should run
+        as before.
+
+        * css/CSSOMUtils.cpp:
+        (WebCore::appendCharacter):
+        (WebCore::serializeCharacter):
+        (WebCore::serializeCharacterAsCodePoint):
+        (WebCore::serializeIdentifier):
+        (WebCore::serializeString):
+        * css/CSSOMUtils.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::determineLinkStateSlowCase):
+        * css/CSSWrapShapes.cpp:
+        (WebCore::CSSWrapShapeRect::cssText):
+        (WebCore::CSSWrapShapeCircle::cssText):
+        (WebCore::CSSWrapShapeEllipse::cssText):
+        (WebCore::CSSWrapShapePolygon::cssText):
+        * editing/HTMLInterchange.cpp:
+        (WebCore::convertHTMLTextToInterchangeFormat):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::appendCharactersReplacingEntities):
+        (WebCore::MarkupAccumulator::serializeNodes):
+        (WebCore::MarkupAccumulator::appendStartTag):
+        (WebCore::MarkupAccumulator::appendEndTag):
+        (WebCore::MarkupAccumulator::concatenateMarkup):
+        (WebCore::MarkupAccumulator::appendAttributeValue):
+        (WebCore::MarkupAccumulator::appendCustomAttributes):
+        (WebCore::MarkupAccumulator::appendQuotedURLAttributeValue):
+        (WebCore::MarkupAccumulator::appendNodeValue):
+        (WebCore::MarkupAccumulator::appendNamespace):
+        (WebCore::MarkupAccumulator::appendText):
+        (WebCore::MarkupAccumulator::appendComment):
+        (WebCore::MarkupAccumulator::appendDocumentType):
+        (WebCore::MarkupAccumulator::appendProcessingInstruction):
+        (WebCore::MarkupAccumulator::appendElement):
+        (WebCore::MarkupAccumulator::appendOpenTag):
+        (WebCore::MarkupAccumulator::appendCloseTag):
+        (WebCore::MarkupAccumulator::appendAttribute):
+        (WebCore::MarkupAccumulator::appendCDATASection):
+        (WebCore::MarkupAccumulator::appendStartMarkup):
+        (WebCore::MarkupAccumulator::appendEndMarkup):
+        * editing/MarkupAccumulator.h:
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendElement):
+        (WebCore::StyledMarkupAccumulator::wrapWithNode):
+        (WebCore::StyledMarkupAccumulator::wrapWithStyleNode):
+        (WebCore::StyledMarkupAccumulator::appendStyleNodeOpenTag):
+        (WebCore::StyledMarkupAccumulator::takeResults):
+        (WebCore::StyledMarkupAccumulator::appendText):
+        (WebCore::urlToMarkup):
+        * html/DOMTokenList.cpp:
+        (WebCore::DOMTokenList::removeToken):
+        * html/HTMLFontElement.cpp:
+        (WebCore::parseFontSize):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::strippedPlaceholder):
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::emitRule):
+        * html/parser/CSSPreloadScanner.h:
+        * html/parser/HTMLEntityParser.cpp:
+        (WebCore::consumeHTMLEntity):
+        * html/parser/HTMLEntityParser.h:
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseHTMLInteger):
+        (WebCore::parseHTMLNonNegativeInteger):
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::processEntity):
+        (WebCore::HTMLTokenizer::nextToken):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::giveRemainingTo):
+        (WebCore::HTMLTreeBuilder::defaultForInTableText):
+        * html/parser/HTMLTreeBuilder.h:
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorValue::toJSONString):
+        (WebCore::InspectorValue::writeJSON):
+        (WebCore::InspectorBasicValue::writeJSON):
+        (WebCore::InspectorString::writeJSON):
+        (WebCore::InspectorObject::writeJSON):
+        (WebCore::InspectorArray::writeJSON):
+        * inspector/InspectorValues.h:
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::createAccessControlPreflightRequest):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::store):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setToolTip):
+        * page/PageSerializer.cpp:
+        (WebCore::SerializerMarkupAccumulator::appendText):
+        (WebCore::SerializerMarkupAccumulator::appendElement):
+        (WebCore::SerializerMarkupAccumulator::appendCustomAttributes):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::toString):
+        * platform/KURL.cpp:
+        (WebCore::KURL::deprecatedString):
+        (WebCore::decodeURLEscapeSequences):
+        * platform/LinkHash.cpp:
+        (WebCore::squeezeOutNullCharacters):
+        (WebCore::cleanSlashDotDotSlashes):
+        (WebCore::mergeDoubleSlashes):
+        (WebCore::cleanSlashDotSlashes):
+        (WebCore::cleanPath):
+        (WebCore::visitedURLInline):
+        (WebCore::visitedURL):
+        (WebCore::visitedLinkHash):
+        * platform/LinkHash.h:
+        * platform/gtk/DataObjectGtk.cpp:
+        (WebCore::DataObjectGtk::setURL):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::extractMIMETypeFromMediaType):
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::decode):
+        * platform/text/TextStream.cpp:
+        (WebCore::TextStream::operator<<):
+        (WebCore::TextStream::release):
+        * platform/text/TextStream.h:
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::startStream):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::adjustCharactersAndLengthForHyphen):
+        * rendering/InlineTextBox.h:
+        (WebCore::BufferForAppendingHyphen::BufferForAppendingHyphen):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::markerTextWithSuffix):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toSymbolic):
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::suffix):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::quoteAndEscapeNonPrintables):
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::updateFromElement):
+        * storage/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::decodeString):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunId::evaluate):
+        (WebCore::XPath::FunConcat::evaluate):
+        * xml/XPathUtil.cpp:
+        (WebCore::XPath::stringValue):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::writeToStringBuilder):
+        (WebCore::saveResultToString):
+        * xml/parser/CharacterReferenceParserInlineMethods.h:
+        (WebCore::unconsumeCharacters):
+        (WebCore::consumeCharacterReference):
+        * xml/parser/XMLCharacterReferenceParser.cpp:
+        (WebCore::consumeXMLCharacterReference):
+        * xml/parser/XMLCharacterReferenceParser.h:
+        * xml/parser/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::nextToken):
+
 2011-09-05  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION (Safari 5.1 - ToT): File input retains its file icon when the value is reset

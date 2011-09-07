@@ -39,6 +39,7 @@
 #include <wtf/DecimalNumber.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuffer.h>
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
@@ -779,14 +780,14 @@ String CSSPrimitiveValue::cssText() const
         case CSS_ATTR: {
             DEFINE_STATIC_LOCAL(const String, attrParen, ("attr("));
 
-            Vector<UChar> result;
-            result.reserveInitialCapacity(6 + m_value.string->length());
+            StringBuilder result;
+            result.reserveCapacity(6 + m_value.string->length());
 
-            append(result, attrParen);
-            append(result, m_value.string);
-            result.uncheckedAppend(')');
+            result.append(attrParen);
+            result.append(m_value.string);
+            result.append(')');
 
-            text = String::adopt(result);
+            text = result.toString();
             break;
         }
         case CSS_COUNTER_NAME:
@@ -804,23 +805,23 @@ String CSSPrimitiveValue::cssText() const
             DEFINE_STATIC_LOCAL(const String, rectParen, ("rect("));
 
             Rect* rectVal = getRectValue();
-            Vector<UChar> result;
-            result.reserveInitialCapacity(32);
-            append(result, rectParen);
+            StringBuilder result;
+            result.reserveCapacity(32);
+            result.append(rectParen);
 
-            append(result, rectVal->top()->cssText());
+            result.append(rectVal->top()->cssText());
             result.append(' ');
 
-            append(result, rectVal->right()->cssText());
+            result.append(rectVal->right()->cssText());
             result.append(' ');
 
-            append(result, rectVal->bottom()->cssText());
+            result.append(rectVal->bottom()->cssText());
             result.append(' ');
 
-            append(result, rectVal->left()->cssText());
+            result.append(rectVal->left()->cssText());
             result.append(')');
 
-            text = String::adopt(result);
+            text = result.toString();
             break;
         }
         case CSS_QUAD: {

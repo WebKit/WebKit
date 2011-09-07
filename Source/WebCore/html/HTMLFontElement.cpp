@@ -28,6 +28,7 @@
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include <wtf/text/StringBuilder.h>
 
 using namespace WTF;
 
@@ -89,7 +90,8 @@ static bool parseFontSize(const String& input, int& size)
     }
 
     // Step 6
-    Vector<UChar, 16> digits;
+    StringBuilder digits;
+    digits.reserveCapacity(16);
     while (position < end) {
         if (!isASCIIDigit(*position))
             break;
@@ -101,7 +103,7 @@ static bool parseFontSize(const String& input, int& size)
         return false;
 
     // Step 8
-    int value = charactersToIntStrict(digits.data(), digits.size());
+    int value = charactersToIntStrict(digits.characters(), digits.length());
 
     // Step 9
     if (mode == RelativePlus)

@@ -32,6 +32,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 #if USE(ICU_UNICODE)
@@ -889,47 +890,47 @@ String KURL::deprecatedString() const
     if (!m_isValid)
         return m_string;
 
-    Vector<UChar> result;
+    StringBuilder result;
 
-    append(result, protocol());
+    result.append(protocol());
     result.append(':');
 
-    Vector<UChar> authority;
+    StringBuilder authority;
 
     if (m_hostEnd != m_passwordEnd) {
         if (m_userEnd != m_userStart) {
-            append(authority, user());
+            authority.append(user());
             authority.append('@');
         }
-        append(authority, host());
+        authority.append(host());
         if (hasPort()) {
             authority.append(':');
-            append(authority, String::number(port()));
+            authority.append(String::number(port()));
         }
     }
 
     if (!authority.isEmpty()) {
         result.append('/');
         result.append('/');
-        result.append(authority);
+        result.append(authority.characters(), authority.length());
     } else if (protocolIs("file")) {
         result.append('/');
         result.append('/');
     }
 
-    append(result, path());
+    result.append(path());
 
     if (m_pathEnd != m_queryEnd) {
         result.append('?');
-        append(result, query());
+        result.append(query());
     }
 
     if (m_fragmentEnd != m_queryEnd) {
         result.append('#');
-        append(result, fragmentIdentifier());
+        result.append(fragmentIdentifier());
     }
 
-    return String::adopt(result);
+    return result.toString();
 }
 
 String decodeURLEscapeSequences(const String& str)
@@ -939,7 +940,7 @@ String decodeURLEscapeSequences(const String& str)
 
 String decodeURLEscapeSequences(const String& str, const TextEncoding& encoding)
 {
-    Vector<UChar> result;
+    StringBuilder result;
 
     CharBuffer buffer;
 
@@ -978,13 +979,13 @@ String decodeURLEscapeSequences(const String& str, const TextEncoding& encoding)
 
         // Build up the string with what we just skipped and what we just decoded.
         result.append(str.characters() + decodedPosition, encodedRunPosition - decodedPosition);
-        result.append(decoded.characters(), decoded.length());
+        result.append(decoded);
         decodedPosition = encodedRunEnd;
     }
 
     result.append(str.characters() + decodedPosition, length - decodedPosition);
 
-    return String::adopt(result);
+    return result.toString();
 }
 
 // Caution: This function does not bounds check.

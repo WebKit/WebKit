@@ -77,34 +77,34 @@ protected:
     virtual void appendEndTag(Node*);
     static size_t totalLength(const Vector<String>&);
     size_t length() const { return totalLength(m_succeedingMarkup); }
-    void concatenateMarkup(Vector<UChar>& out);
-    void appendAttributeValue(Vector<UChar>& result, const String& attribute, bool documentIsHTML);
-    virtual void appendCustomAttributes(Vector<UChar>&, Element*, Namespaces*);
-    void appendNodeValue(Vector<UChar>& out, const Node*, const Range*, EntityMask);
+    void concatenateMarkup(StringBuilder& out);
+    void appendAttributeValue(StringBuilder& result, const String& attribute, bool documentIsHTML);
+    virtual void appendCustomAttributes(StringBuilder&, Element*, Namespaces*);
+    void appendNodeValue(StringBuilder& out, const Node*, const Range*, EntityMask);
     bool shouldAddNamespaceElement(const Element*);
     bool shouldAddNamespaceAttribute(const Attribute&, Namespaces&);
-    void appendNamespace(Vector<UChar>& result, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&);
+    void appendNamespace(StringBuilder& result, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&);
     EntityMask entityMaskForText(Text*) const;
-    virtual void appendText(Vector<UChar>& out, Text*);
-    void appendComment(Vector<UChar>& out, const String& comment);
-    void appendDocumentType(Vector<UChar>& result, const DocumentType*);
-    void appendProcessingInstruction(Vector<UChar>& out, const String& target, const String& data);
-    virtual void appendElement(Vector<UChar>& out, Element*, Namespaces*);
-    void appendOpenTag(Vector<UChar>& out, Element*, Namespaces*);
-    void appendCloseTag(Vector<UChar>& out, Element*);
-    void appendAttribute(Vector<UChar>& out, Element*, const Attribute&, Namespaces*);
-    void appendCDATASection(Vector<UChar>& out, const String& section);
-    void appendStartMarkup(Vector<UChar>& result, const Node*, Namespaces*);
+    virtual void appendText(StringBuilder& out, Text*);
+    void appendComment(StringBuilder& out, const String& comment);
+    void appendDocumentType(StringBuilder& result, const DocumentType*);
+    void appendProcessingInstruction(StringBuilder& out, const String& target, const String& data);
+    virtual void appendElement(StringBuilder& out, Element*, Namespaces*);
+    void appendOpenTag(StringBuilder& out, Element*, Namespaces*);
+    void appendCloseTag(StringBuilder& out, Element*);
+    void appendAttribute(StringBuilder& out, Element*, const Attribute&, Namespaces*);
+    void appendCDATASection(StringBuilder& out, const String& section);
+    void appendStartMarkup(StringBuilder& result, const Node*, Namespaces*);
     bool shouldSelfClose(const Node*);
     bool elementCannotHaveEndTag(const Node* node);
-    void appendEndMarkup(Vector<UChar>& result, const Node*);
+    void appendEndMarkup(StringBuilder& result, const Node*);
 
     Vector<Node*>* const m_nodes;
     const Range* const m_range;
 
 private:
     String resolveURLIfNeeded(const Element*, const String& urlString) const;
-    void appendQuotedURLAttributeValue(Vector<UChar>& result, const Element*, const Attribute&);
+    void appendQuotedURLAttributeValue(StringBuilder& result, const Element*, const Attribute&);
     void serializeNodesWithNamespaces(Node*, Node* nodeToSkip, EChildrenOnly, const Namespaces*);
 
     Vector<String> m_succeedingMarkup;
@@ -112,7 +112,7 @@ private:
 };
 
 // FIXME: This method should be integrated with MarkupAccumulator.
-void appendCharactersReplacingEntities(Vector<UChar>& out, const UChar* content, size_t length, EntityMask entityMask);
+void appendCharactersReplacingEntities(StringBuilder& out, const UChar* content, size_t length, EntityMask);
 
 }
 

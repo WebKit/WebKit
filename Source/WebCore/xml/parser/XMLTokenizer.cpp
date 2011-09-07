@@ -37,6 +37,7 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WTF;
 
@@ -251,11 +252,10 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
     XML_BEGIN_STATE(CharacterReferenceStartState) {
         if (cc == '#') {
             bool notEnoughCharacters = false;
-            Vector<UChar, 16> decodedCharacter;
+            StringBuilder decodedCharacter;
             if (consumeXMLCharacterReference(source, decodedCharacter, notEnoughCharacters)) {
-                Vector<UChar, 16>::const_iterator iter = decodedCharacter.begin();
-                for (; iter != decodedCharacter.end(); ++iter)
-                    bufferCharacter(*iter);
+                for (unsigned i = 0; i < decodedCharacter.length(); ++i)
+                    bufferCharacter(decodedCharacter[i]);
                 XML_SWITCH_TO(DataState);
             } else if (notEnoughCharacters)
                 return haveBufferedCharacterToken();
@@ -437,12 +437,11 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
     XML_BEGIN_STATE(CharacterReferenceInAttributeValueState) {
         if (cc == '#') {
             bool notEnoughCharacters = false;
-            Vector<UChar, 16> decodedCharacter;
+            StringBuilder decodedCharacter;
             source.push(cc);
             if (consumeXMLCharacterReference(source, decodedCharacter, notEnoughCharacters)) {
-                Vector<UChar, 16>::const_iterator iter = decodedCharacter.begin();
-                for (; iter != decodedCharacter.end(); ++iter)
-                    m_token->appendToAttributeValue(*iter);
+                for (unsigned i = 0; i < decodedCharacter.length(); ++i)
+                    m_token->appendToAttributeValue(decodedCharacter[i]);
                 XML_ADVANCE_TO(AttributeValueQuotedState);
             } else if (notEnoughCharacters)
                 return haveBufferedCharacterToken();

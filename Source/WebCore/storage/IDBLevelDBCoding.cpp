@@ -31,6 +31,7 @@
 
 #include "IDBKey.h"
 #include "LevelDBSlice.h"
+#include <wtf/text/StringBuilder.h>
 
 // LevelDB stores key/value pairs. Keys and values are strings of bytes, normally of type Vector<char>.
 //
@@ -264,16 +265,17 @@ String decodeString(const char* p, const char* end)
     ASSERT(!((end - p) % 2));
 
     size_t len = (end - p) / 2;
-    Vector<UChar> vector(len);
+    StringBuilder result;
+    result.reserveCapacity(len);
 
     for (size_t i = 0; i < len; ++i) {
         unsigned char hi = *p++;
         unsigned char lo = *p++;
 
-        vector[i] = (hi << 8) | lo;
+        result.append(static_cast<UChar>((hi << 8) | lo));
     }
 
-    return String::adopt(vector);
+    return result.toString();
 }
 
 Vector<char> encodeStringWithLength(const String& s)

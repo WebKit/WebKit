@@ -32,10 +32,11 @@
 #include "CSSOMUtils.h"
 
 #include <wtf/HexNumber.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-static void appendCharacter(UChar32 c, Vector<UChar>& appendTo)
+static void appendCharacter(UChar32 c, StringBuilder& appendTo)
 {
     if (U16_LENGTH(c) == 1)
         appendTo.append(static_cast<UChar>(c));
@@ -45,13 +46,13 @@ static void appendCharacter(UChar32 c, Vector<UChar>& appendTo)
     }
 }
 
-void serializeCharacter(UChar32 c, Vector<UChar>& appendTo)
+void serializeCharacter(UChar32 c, StringBuilder& appendTo)
 {
     appendTo.append('\\');
     appendCharacter(c, appendTo);
 }
 
-void serializeCharacterAsCodePoint(UChar32 c, Vector<UChar>& appendTo)
+void serializeCharacterAsCodePoint(UChar32 c, StringBuilder& appendTo)
 {
     appendTo.append('\\');
     appendUnsignedAsHex(c, appendTo, Lowercase);
@@ -60,12 +61,12 @@ void serializeCharacterAsCodePoint(UChar32 c, Vector<UChar>& appendTo)
 
 void serializeIdentifier(const String& identifier, String& appendTo)
 {
-    Vector<UChar> addend;
+    StringBuilder addend;
     serializeIdentifier(identifier, addend);
-    appendTo.append(String::adopt(addend));
+    appendTo.append(addend.toString());
 }
 
-void serializeIdentifier(const String& identifier, Vector<UChar>& appendTo)
+void serializeIdentifier(const String& identifier, StringBuilder& appendTo)
 {
     bool isFirst = true;
     bool isSecond = false;
@@ -96,12 +97,12 @@ void serializeIdentifier(const String& identifier, Vector<UChar>& appendTo)
 
 void serializeString(const String& string, String& appendTo)
 {
-    Vector<UChar> addend;
+    StringBuilder addend;
     serializeString(string, addend);
-    appendTo.append(String::adopt(addend));
+    appendTo.append(addend.toString());
 }
 
-void serializeString(const String& string, Vector<UChar>& appendTo)
+void serializeString(const String& string, StringBuilder& appendTo)
 {
     appendTo.append('\"');
 

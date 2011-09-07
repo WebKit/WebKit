@@ -30,6 +30,8 @@
 
 namespace WTF {
 
+static const unsigned minimumCapacity = 16;
+
 void StringBuilder::reifyString()
 {
     // Check if the string already exists.
@@ -126,10 +128,10 @@ UChar* StringBuilder::appendUninitialized(unsigned length)
         }
 
         // We need to realloc the buffer.
-        allocateBuffer(m_buffer->characters(), std::max(requiredLength, m_buffer->length() * 2));
+        allocateBuffer(m_buffer->characters(), std::max(requiredLength, std::max(minimumCapacity, m_buffer->length() * 2)));
     } else {
         ASSERT(m_string.length() == m_length);
-        allocateBuffer(m_string.characters(), std::max(requiredLength, requiredLength * 2));
+        allocateBuffer(m_string.characters(), std::max(requiredLength, std::max(minimumCapacity, m_length * 2)));
     }
 
     UChar* result = m_bufferCharacters + m_length;

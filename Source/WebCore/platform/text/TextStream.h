@@ -27,7 +27,7 @@
 #define TextStream_h
 
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
@@ -52,7 +52,7 @@ public:
     String release();
 
 private:
-    Vector<UChar> m_text;
+    StringBuilder m_text;
 };
 
 }

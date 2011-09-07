@@ -96,9 +96,9 @@ public:
     virtual ~SerializerMarkupAccumulator();
 
 protected:
-    virtual void appendText(Vector<UChar>& out, Text*);
-    virtual void appendElement(Vector<UChar>& out, Element*, Namespaces*);
-    virtual void appendCustomAttributes(Vector<UChar>& out, Element*, Namespaces*);
+    virtual void appendText(StringBuilder& out, Text*);
+    virtual void appendElement(StringBuilder& out, Element*, Namespaces*);
+    virtual void appendCustomAttributes(StringBuilder& out, Element*, Namespaces*);
     virtual void appendEndTag(Node*);
 
 private:
@@ -120,27 +120,28 @@ SerializerMarkupAccumulator::~SerializerMarkupAccumulator()
 {
 }
 
-void SerializerMarkupAccumulator::appendText(Vector<UChar>& out, Text* text)
+void SerializerMarkupAccumulator::appendText(StringBuilder& out, Text* text)
 {
     Element* parent = text->parentElement();
     if (parent && !shouldIgnoreElement(parent))
         MarkupAccumulator::appendText(out, text);
 }
 
-void SerializerMarkupAccumulator::appendElement(Vector<UChar>& out, Element* element, Namespaces* namespaces)
+void SerializerMarkupAccumulator::appendElement(StringBuilder& out, Element* element, Namespaces* namespaces)
 {
     if (!shouldIgnoreElement(element))
         MarkupAccumulator::appendElement(out, element, namespaces);
 
     if (element->hasTagName(HTMLNames::headTag)) {
-        String meta = "<meta charset=\"" + m_document->charset() + "\">";
-        out.append(meta.characters(), meta.length());
+        out.append("<meta charset=\"");
+        out.append(m_document->charset());
+        out.append("\">");
     }
 
     // FIXME: For object (plugins) tags and video tag we could replace them by an image of their current contents.
 }
 
-void SerializerMarkupAccumulator::appendCustomAttributes(Vector<UChar>& out, Element* element, Namespaces* namespaces)
+void SerializerMarkupAccumulator::appendCustomAttributes(StringBuilder& out, Element* element, Namespaces* namespaces)
 {
     if (!element->isFrameOwnerElement())
         return;

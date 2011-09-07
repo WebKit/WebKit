@@ -36,6 +36,7 @@
 #include "SubresourceLoader.h"
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 // We use -2 here because some plugins like to return -1 to indicate error
@@ -138,21 +139,21 @@ void PluginStream::startStream()
     long long expectedContentLength = m_resourceResponse.expectedContentLength();
 
     if (m_resourceResponse.isHTTP()) {
-        Vector<UChar> stringBuilder;
+        StringBuilder stringBuilder;
         String separator(": ");
 
         String statusLine = "HTTP " + String::number(m_resourceResponse.httpStatusCode()) + " OK\n";
-        stringBuilder.append(statusLine.characters(), statusLine.length());
+        stringBuilder.append(statusLine);
 
         HTTPHeaderMap::const_iterator end = m_resourceResponse.httpHeaderFields().end();
         for (HTTPHeaderMap::const_iterator it = m_resourceResponse.httpHeaderFields().begin(); it != end; ++it) {
-            stringBuilder.append(it->first.characters(), it->first.length());
-            stringBuilder.append(separator.characters(), separator.length());
-            stringBuilder.append(it->second.characters(), it->second.length());
+            stringBuilder.append(it->first);
+            stringBuilder.append(separator);
+            stringBuilder.append(it->second);
             stringBuilder.append('\n');
         }
 
-        m_headers = String::adopt(stringBuilder).utf8();
+        m_headers = stringBuilder.toString().utf8();
 
         // If the content is encoded (most likely compressed), then don't send its length to the plugin,
         // which is only interested in the decoded length, not yet known at the moment.

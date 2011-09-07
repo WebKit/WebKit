@@ -31,7 +31,7 @@
 #include "CharacterReferenceParserInlineMethods.h"
 #include "HTMLEntitySearch.h"
 #include "HTMLEntityTable.h"
-#include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WTF;
 
@@ -70,7 +70,7 @@ public:
         return value;
     }
 
-    inline static bool convertToUTF16(UChar32 value, Vector<UChar, 16>& decodedEntity)
+    inline static bool convertToUTF16(UChar32 value, StringBuilder& decodedEntity)
     {
         if (U_IS_BMP(value)) {
             UChar character = static_cast<UChar>(value);
@@ -85,9 +85,9 @@ public:
 
     inline static bool acceptMalformed() { return true; }
 
-    inline static bool consumeNamedEntity(SegmentedString& source, Vector<UChar, 16>& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter, UChar& cc)
+    inline static bool consumeNamedEntity(SegmentedString& source, StringBuilder& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter, UChar& cc)
     {
-        Vector<UChar, 10> consumedCharacters;
+        StringBuilder consumedCharacters;
         HTMLEntitySearch entitySearch;
         while (!source.isEmpty()) {
             cc = *source;
@@ -139,7 +139,7 @@ public:
 }
 
 
-bool consumeHTMLEntity(SegmentedString& source, Vector<UChar, 16>& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter)
+bool consumeHTMLEntity(SegmentedString& source, StringBuilder& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter)
 {
     return consumeCharacterReference<HTMLEntityParser>(source, decodedEntity, notEnoughCharacters, additionalAllowedCharacter);
 }

@@ -36,6 +36,9 @@
 
 using namespace WTF::double_conversion;
 
+// To avoid conflict with WTF::StringBuilder.
+typedef WTF::double_conversion::StringBuilder DoubleConversionStringBuilder;
+
 namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState*);
@@ -348,7 +351,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 
     // Round if the argument is not undefined, always format as exponential.
     char buffer[WTF::NumberToStringBufferLength];
-    StringBuilder builder(buffer, WTF::NumberToStringBufferLength);
+    DoubleConversionStringBuilder builder(buffer, WTF::NumberToStringBufferLength);
     const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
     builder.Reset();
     isUndefined
@@ -387,7 +390,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     ASSERT(isfinite(x));
 
     char buffer[WTF::NumberToStringBufferLength];
-    StringBuilder builder(buffer, WTF::NumberToStringBufferLength);
+    DoubleConversionStringBuilder builder(buffer, WTF::NumberToStringBufferLength);
     const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
     builder.Reset();
     converter.ToFixed(x, decimalPlaces, &builder);
@@ -425,7 +428,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
         return JSValue::encode(jsString(exec, UString::number(x)));
 
     char buffer[WTF::NumberToStringBufferLength];
-    StringBuilder builder(buffer, WTF::NumberToStringBufferLength);
+    DoubleConversionStringBuilder builder(buffer, WTF::NumberToStringBufferLength);
     const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
     builder.Reset();
     converter.ToPrecision(x, significantFigures, &builder);

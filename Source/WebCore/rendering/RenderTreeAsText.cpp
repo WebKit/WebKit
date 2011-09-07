@@ -197,7 +197,7 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
 
 String quoteAndEscapeNonPrintables(const String& s)
 {
-    Vector<UChar> result;
+    StringBuilder result;
     result.append('"');
     for (unsigned i = 0; i != s.length(); ++i) {
         UChar c = s[i];
@@ -222,7 +222,7 @@ String quoteAndEscapeNonPrintables(const String& s)
         }
     }
     result.append('"');
-    return String::adopt(result);
+    return result.toString();
 }
 
 void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, RenderAsTextBehavior behavior)

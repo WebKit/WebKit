@@ -207,7 +207,7 @@ bool parseHTMLInteger(const String& input, int& value)
         return false;
 
     // Step 8
-    Vector<UChar, 16> digits;
+    StringBuilder digits;
     while (position < end) {
         if (!isASCIIDigit(*position))
             break;
@@ -215,7 +215,7 @@ bool parseHTMLInteger(const String& input, int& value)
     }
 
     // Step 9
-    value = sign * charactersToIntStrict(digits.data(), digits.size());
+    value = sign * charactersToIntStrict(digits.characters(), digits.length());
     return true;
 }
 
@@ -253,7 +253,7 @@ bool parseHTMLNonNegativeInteger(const String& input, unsigned int& value)
         return false;
 
     // Step 8
-    Vector<UChar, 16> digits;
+    StringBuilder digits;
     while (position < end) {
         if (!isASCIIDigit(*position))
             break;
@@ -261,7 +261,7 @@ bool parseHTMLNonNegativeInteger(const String& input, unsigned int& value)
     }
 
     // Step 9
-    value = charactersToUIntStrict(digits.data(), digits.size());
+    value = charactersToUIntStrict(digits.characters(), digits.length());
     return true;
 }
 

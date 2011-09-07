@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-bool consumeHTMLEntity(SegmentedString&, Vector<UChar, 16>& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter = '\0');
+bool consumeHTMLEntity(SegmentedString&, StringBuilder& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter = '\0');
 
 // Used by the XML parser.  Not suitable for use in HTML parsing.  Use consumeHTMLEntity instead.
 UChar decodeNamedEntity(const char*);
