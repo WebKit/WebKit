@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "DFGNode.h"
+#include "DFGPredictionTracker.h"
 #include "RegisterFile.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -41,18 +42,6 @@ class CodeBlock;
 class ExecState;
 
 namespace DFG {
-
-// helper function to distinguish vars & temporaries from arguments.
-inline bool operandIsArgument(int operand) { return operand < 0; }
-
-struct PredictionSlot {
-public:
-    PredictionSlot()
-        : m_value(PredictNone)
-    {
-    }
-    PredictedType m_value;
-};
 
 typedef uint32_t BlockIndex;
 
@@ -103,8 +92,7 @@ struct BasicBlock {
 class Graph : public Vector<Node, 64> {
 public:
     Graph(unsigned numArguments, unsigned numVariables)
-        : m_argumentPredictions(numArguments)
-        , m_variablePredictions(numVariables)
+        : m_predictions(numArguments, numVariables)
     {
     }
 
@@ -135,70 +123,35 @@ public:
     {
         return *m_blocks[blockIndexForBytecodeOffset(bytecodeBegin)];
     }
-
+    
+    PredictionTracker& predictions()
+    {
+        return m_predictions;
+    }
+    
     bool predict(int operand, PredictedType prediction, PredictionSource source)
     {
-        if (operandIsArgument(operand)) {
-            unsigned argument = operand + m_argumentPredictions.size() + RegisterFile::CallFrameHeaderSize;
-            return mergePrediction(m_argumentPredictions[argument].m_value, makePrediction(prediction, source));
-        }
-        
-        if ((unsigned)operand >= m_variablePredictions.size()) {
-            ASSERT(operand >= 0);
-            m_variablePredictions.resize(operand + 1);
-        }
-        
-        return mergePrediction(m_variablePredictions[operand].m_value, makePrediction(prediction, source));
+        return m_predictions.predict(operand, prediction, source);
     }
     
     bool predictGlobalVar(unsigned varNumber, PredictedType prediction, PredictionSource source)
     {
-        HashMap<unsigned, PredictionSlot>::iterator iter = m_globalVarPredictions.find(varNumber + 1);
-        if (iter == m_globalVarPredictions.end()) {
-            PredictionSlot predictionSlot;
-            bool result = mergePrediction(predictionSlot.m_value, makePrediction(prediction, source));
-            m_globalVarPredictions.add(varNumber + 1, predictionSlot);
-            return result;
-        } else
-            return mergePrediction(iter->second.m_value, makePrediction(prediction, source));
+        return m_predictions.predictGlobalVar(varNumber, prediction, source);
     }
     
     bool predict(Node& node, PredictedType prediction, PredictionSource source)
     {
-        switch (node.op) {
-        case GetLocal:
-            return predict(node.local(), prediction, source);
-            break;
-        case GetGlobalVar:
-            return predictGlobalVar(node.varNumber(), prediction, source);
-        case GetById:
-        case GetMethod:
-        case GetByVal:
-        case Call:
-        case Construct:
-            return node.predict(prediction, source);
-        default:
-            return false;
-        }
+        return m_predictions.predict(node, prediction, source);
     }
 
     PredictedType getPrediction(int operand)
     {
-        if (operandIsArgument(operand)) {
-            unsigned argument = operand + m_argumentPredictions.size() + RegisterFile::CallFrameHeaderSize;
-            return m_argumentPredictions[argument].m_value;
-        }
-        if ((unsigned)operand < m_variablePredictions.size())
-            return m_variablePredictions[operand].m_value;
-        return PredictNone;
+        return m_predictions.getPrediction(operand);
     }
     
     PredictedType getGlobalVarPrediction(unsigned varNumber)
     {
-        HashMap<unsigned, PredictionSlot>::iterator iter = m_globalVarPredictions.find(varNumber + 1);
-        if (iter == m_globalVarPredictions.end())
-            return PredictNone;
-        return iter->second.m_value;
+        return m_predictions.getGlobalVarPrediction(varNumber);
     }
     
     PredictedType getPrediction(Node& node)
@@ -211,20 +164,7 @@ public:
         if (nodePtr->op == ValueToInt32)
             nodePtr = &(*this)[nodePtr->child1()];
         
-        switch (nodePtr->op) {
-        case GetLocal:
-            return getPrediction(nodePtr->local());
-        case GetGlobalVar:
-            return getGlobalVarPrediction(nodePtr->varNumber());
-        case GetById:
-        case GetMethod:
-        case GetByVal:
-        case Call:
-        case Construct:
-            return nodePtr->getPrediction();
-        default:
-            return PredictNone;
-        }
+        return m_predictions.getPrediction(*nodePtr);
     }
     
     // Helper methods to check nodes for constants.
@@ -244,6 +184,10 @@ public:
     {
         return at(nodeIndex).isDoubleConstant(codeBlock);
     }
+    bool isBooleanConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).isBooleanConstant(codeBlock);
+    }
     // Helper methods get constant values from nodes.
     JSValue valueOfJSConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
@@ -256,6 +200,10 @@ public:
     double valueOfDoubleConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
         return at(nodeIndex).valueOfDoubleConstant(codeBlock);
+    }
+    bool valueOfBooleanConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).valueOfBooleanConstant(codeBlock);
     }
 
 #ifndef NDEBUG
@@ -271,9 +219,7 @@ private:
     // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children, and vice versa.
     void refChildren(NodeIndex);
 
-    Vector<PredictionSlot, 16> m_argumentPredictions;
-    Vector<PredictionSlot, 16> m_variablePredictions;
-    HashMap<unsigned, PredictionSlot> m_globalVarPredictions;
+    PredictionTracker m_predictions;
 };
 
 } } // namespace JSC::DFG

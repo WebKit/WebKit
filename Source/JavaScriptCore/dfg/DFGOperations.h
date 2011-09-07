@@ -115,6 +115,10 @@ double dfgConvertJSValueToNumber(ExecState*, EncodedJSValue);
 int32_t dfgConvertJSValueToInt32(ExecState*, EncodedJSValue);
 RegisterSizedBoolean dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue);
 
+#if DFG_VERBOSE_SPECULATION_FAILURE
+void debugOperationPrintSpeculationFailure(ExecState*, void*);
+#endif
+
 } // extern "C"
 } } // namespace JSC::DFG
 

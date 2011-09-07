@@ -678,6 +678,14 @@ RegisterSizedBoolean dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue 
     return JSValue::decode(encodedOp).toBoolean(exec);
 }
 
+#if DFG_VERBOSE_SPECULATION_FAILURE
+void debugOperationPrintSpeculationFailure(ExecState*, void* debugInfoRaw)
+{
+    SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
+    printf("Speculation failure in %p at 0x%x!\n", debugInfo->codeBlock, debugInfo->debugOffset);
+}
+#endif
+
 } // extern "C"
 } } // namespace JSC::DFG
 

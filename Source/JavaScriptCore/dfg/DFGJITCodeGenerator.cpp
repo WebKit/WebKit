@@ -80,6 +80,8 @@ GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnForm
     case DataFormatJS:
     case DataFormatCell:
     case DataFormatJSCell:
+    case DataFormatBoolean:
+    case DataFormatJSBoolean:
         // Should only be calling this function if we know this operand to be integer.
         ASSERT_NOT_REACHED();
 
@@ -153,6 +155,8 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
         // Should have filled, above.
     case DataFormatCell:
     case DataFormatJSCell:
+    case DataFormatBoolean:
+    case DataFormatJSBoolean:
         // Should only be calling this function if we know this operand to be numeric.
         ASSERT_NOT_REACHED();
 
@@ -295,11 +299,16 @@ GPRReg JITCodeGenerator::fillJSValue(NodeIndex nodeIndex)
     case DataFormatJS:
     case DataFormatJSInteger:
     case DataFormatJSDouble:
-    case DataFormatJSCell: {
+    case DataFormatJSCell:
+    case DataFormatJSBoolean: {
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
         return gpr;
     }
+        
+    case DataFormatBoolean:
+        // this type currently never occurs
+        ASSERT_NOT_REACHED();
     }
 
     ASSERT_NOT_REACHED();
@@ -406,7 +415,24 @@ bool JITCodeGenerator::isKnownNotInteger(NodeIndex nodeIndex)
     
     return (info.registerFormat() | DataFormatJS) == DataFormatJSDouble
         || (info.registerFormat() | DataFormatJS) == DataFormatJSCell
+        || (info.registerFormat() | DataFormatJS) == DataFormatJSBoolean
         || (node.isConstant() && !valueOfJSConstant(nodeIndex).isInt32());
+}
+
+bool JITCodeGenerator::isKnownBoolean(NodeIndex nodeIndex)
+{
+    Node& node = m_jit.graph()[nodeIndex];
+    if (node.hasBooleanResult())
+        return true;
+    
+    if (isBooleanConstant(nodeIndex))
+        return true;
+    
+    VirtualRegister virtualRegister = node.virtualRegister();
+    GenerationInfo& info = m_generationInfo[virtualRegister];
+    
+    return (info.registerFormat() | DataFormatJS) == DataFormatJSBoolean
+        || (info.spillFormat() | DataFormatJS) == DataFormatJSBoolean;
 }
 
 template<typename To, typename From>
@@ -588,7 +614,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, b
     }
     
     m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
-    jsValueResult(resultGPR, m_compileIndex);
+    jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean);
 }
 
 void JITCodeGenerator::nonSpeculativePeepholeBranchNull(NodeIndex operand, NodeIndex branchNodeIndex, bool invert)
@@ -743,7 +769,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
         callOperation(helperFunction, resultGPR, arg1GPR, arg2GPR);
         
         m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
-        jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
+        jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
     } else {
         GPRTemporary result(this, arg2);
         GPRReg resultGPR = result.gpr();
@@ -777,7 +803,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeCompare(Node& node, MacroAssembl
         
         m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
         
-        jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
+        jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
     }
 }
 
@@ -939,7 +965,7 @@ void JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq(Node& node, bool invert
         done2.link(&m_jit);
     }
     
-    jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
+    jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean, UseChildrenCalledExplicitly);
 }
 
 bool JITCodeGenerator::nonSpeculativeStrictEq(Node& node, bool invert)
@@ -968,31 +994,63 @@ void JITCodeGenerator::emitBranch(Node& node)
     JSValueOperand value(this, node.child1());
     GPRReg valueGPR = value.gpr();
     
-    GPRTemporary result(this);
-    GPRReg resultGPR = result.gpr();
-    
-    value.use();
-    
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
     BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
-
-    addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsNumber(0)))), notTaken);
-    addBranch(m_jit.branchPtr(MacroAssembler::AboveOrEqual, valueGPR, GPRInfo::tagTypeNumberRegister), taken);
-    addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(false)))), notTaken);
-    addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(true)))), taken);
     
-    silentSpillAllRegisters(resultGPR);
-    m_jit.move(valueGPR, GPRInfo::argumentGPR1);
-    m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
-    m_jit.move(GPRInfo::returnValueGPR, resultGPR);
-    silentFillAllRegisters(resultGPR);
+    if (isKnownBoolean(node.child1())) {
+        MacroAssembler::ResultCondition condition = MacroAssembler::NonZero;
+        
+        if (taken == (m_block + 1)) {
+            condition = MacroAssembler::Zero;
+            BlockIndex tmp = taken;
+            taken = notTaken;
+            notTaken = tmp;
+        }
+        
+        addBranch(m_jit.branchTest32(condition, valueGPR, TrustedImm32(true)), taken);
+        if (notTaken != (m_block + 1))
+            addBranch(m_jit.jump(), notTaken);
+        
+        noResult(m_compileIndex);
+    } else {
+        GPRTemporary result(this);
+        GPRReg resultGPR = result.gpr();
+        
+        bool predictBoolean = isBooleanPrediction(m_jit.graph().getPrediction(m_jit.graph()[node.child1()]));
     
-    addBranch(m_jit.branchTest8(MacroAssembler::NonZero, resultGPR), taken);
-    if (notTaken != (m_block + 1))
-        addBranch(m_jit.jump(), notTaken);
+        if (predictBoolean) {
+            addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(false)))), notTaken);
+            addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(true)))), taken);
+        }
+        
+        if (m_isSpeculative && predictBoolean) {
+            speculationCheck(m_jit.jump());
+            value.use();
+        } else {
+            addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsNumber(0)))), notTaken);
+            addBranch(m_jit.branchPtr(MacroAssembler::AboveOrEqual, valueGPR, GPRInfo::tagTypeNumberRegister), taken);
     
-    noResult(m_compileIndex, UseChildrenCalledExplicitly);
+            if (!predictBoolean) {
+                addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(false)))), notTaken);
+                addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(true)))), taken);
+            }
+    
+            value.use();
+    
+            silentSpillAllRegisters(resultGPR);
+            m_jit.move(valueGPR, GPRInfo::argumentGPR1);
+            m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+            appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
+            m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+            silentFillAllRegisters(resultGPR);
+    
+            addBranch(m_jit.branchTest8(MacroAssembler::NonZero, resultGPR), taken);
+            if (notTaken != (m_block + 1))
+                addBranch(m_jit.jump(), notTaken);
+        }
+        
+        noResult(m_compileIndex, UseChildrenCalledExplicitly);
+    }
 }
 
 void JITCodeGenerator::emitCall(Node& node)
@@ -1079,6 +1137,12 @@ void JITCodeGenerator::emitCall(Node& node)
     jsValueResult(resultGPR, m_compileIndex, DataFormatJS, UseChildrenCalledExplicitly);
     
     m_jit.addJSCall(fastCall, slowCall, targetToCheck, isCall, m_jit.graph()[m_compileIndex].exceptionInfo);
+}
+
+void JITCodeGenerator::speculationCheck(MacroAssembler::Jump jumpToFail)
+{
+    ASSERT(m_isSpeculative);
+    static_cast<SpeculativeJIT*>(this)->speculationCheck(jumpToFail);
 }
 
 #ifndef NDEBUG
@@ -1278,6 +1342,16 @@ GPRTemporary::GPRTemporary(JITCodeGenerator* jit, IntegerOperand& op1, IntegerOp
 }
 
 GPRTemporary::GPRTemporary(JITCodeGenerator* jit, SpeculateCellOperand& op1)
+    : m_jit(jit)
+    , m_gpr(InvalidGPRReg)
+{
+    if (m_jit->canReuse(op1.index()))
+        m_gpr = m_jit->reuse(op1.gpr());
+    else
+        m_gpr = m_jit->allocate();
+}
+
+GPRTemporary::GPRTemporary(JITCodeGenerator* jit, SpeculateBooleanOperand& op1)
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
 {

@@ -44,6 +44,8 @@
 #define DFG_JIT_BREAK_ON_EVERY_NODE 0
 // Emit a breakpoint into the speculation failure code.
 #define DFG_JIT_BREAK_ON_SPECULATION_FAILURE 0
+// Log every speculation failure.
+#define DFG_VERBOSE_SPECULATION_FAILURE 0
 // Disable the DFG JIT without having to touch Platform.h!
 #define DFG_DEBUG_LOCAL_DISBALE 0
 // Disable the SpeculativeJIT without having to touch Platform.h!
@@ -89,6 +91,7 @@ typedef uint32_t ExceptionInfo;
 #define NodeResultJS      0x1000
 #define NodeResultDouble  0x2000
 #define NodeResultInt32   0x3000
+#define NodeResultBoolean 0x4000
 
 // This macro defines a set of information about all known node types, used to populate NodeId, NodeType below.
 #define FOR_EACH_DFG_OP(macro) \
@@ -140,12 +143,12 @@ typedef uint32_t ExceptionInfo;
     macro(PutGlobalVar, NodeMustGenerate) \
     \
     /* Nodes for comparison operations. */\
-    macro(CompareLess, NodeResultJS | NodeMustGenerate) \
-    macro(CompareLessEq, NodeResultJS | NodeMustGenerate) \
-    macro(CompareGreater, NodeResultJS | NodeMustGenerate) \
-    macro(CompareGreaterEq, NodeResultJS | NodeMustGenerate) \
-    macro(CompareEq, NodeResultJS | NodeMustGenerate) \
-    macro(CompareStrictEq, NodeResultJS) \
+    macro(CompareLess, NodeResultBoolean | NodeMustGenerate) \
+    macro(CompareLessEq, NodeResultBoolean | NodeMustGenerate) \
+    macro(CompareGreater, NodeResultBoolean | NodeMustGenerate) \
+    macro(CompareGreaterEq, NodeResultBoolean | NodeMustGenerate) \
+    macro(CompareEq, NodeResultBoolean | NodeMustGenerate) \
+    macro(CompareStrictEq, NodeResultBoolean) \
     \
     /* Calls. */\
     macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
@@ -159,8 +162,8 @@ typedef uint32_t ExceptionInfo;
     /* Nodes for misc operations. */\
     macro(Breakpoint, NodeMustGenerate) \
     macro(CheckHasInstance, NodeMustGenerate) \
-    macro(InstanceOf, NodeResultJS) \
-    macro(LogicalNot, NodeResultJS) \
+    macro(InstanceOf, NodeResultBoolean) \
+    macro(LogicalNot, NodeResultBoolean) \
     \
     /* Block terminals. */\
     macro(Jump, NodeMustGenerate | NodeIsTerminal | NodeIsJump) \
@@ -198,7 +201,8 @@ static const PredictedType PredictArray  = 0x03;
 static const PredictedType PredictInt32  = 0x04;
 static const PredictedType PredictDouble = 0x08;
 static const PredictedType PredictNumber = 0x0c;
-static const PredictedType PredictTop    = 0x0f;
+static const PredictedType PredictBoolean = 0x10;
+static const PredictedType PredictTop    = 0x1f;
 static const PredictedType StrongPredictionTag = 0x80;
 static const PredictedType PredictionTagMask    = 0x80;
 
@@ -229,6 +233,11 @@ inline bool isNumberPrediction(PredictedType value)
     return !!(value & PredictNumber) && !(value & ~(PredictNumber | PredictionTagMask));
 }
 
+inline bool isBooleanPrediction(PredictedType value)
+{
+    return (value & ~PredictionTagMask) == PredictBoolean;
+}
+
 inline bool isStrongPrediction(PredictedType value)
 {
     ASSERT(value != (PredictNone | StrongPredictionTag));
@@ -248,8 +257,12 @@ inline const char* predictionToString(PredictedType value)
             return "p-strong-array";
         case PredictInt32:
             return "p-strong-int32";
+        case PredictDouble:
+            return "p-strong-double";
         case PredictNumber:
             return "p-strong-number";
+        case PredictBoolean:
+            return "p-strong-boolean";
         default:
             return "p-strong-top";
         }
@@ -263,8 +276,12 @@ inline const char* predictionToString(PredictedType value)
         return "p-weak-array";
     case PredictInt32:
         return "p-weak-int32";
+    case PredictDouble:
+        return "p-weak-double";
     case PredictNumber:
         return "p-weak-number";
+    case PredictBoolean:
+        return "p-weak-boolean";
     default:
         return "p-weak-top";
     }
@@ -325,6 +342,9 @@ inline PredictedType makePrediction(JSGlobalData& globalData, const ValueProfile
     
     if (statistics.cells == statistics.samples)
         return StrongPredictionTag | PredictCell;
+    
+    if (statistics.booleans == statistics.samples)
+        return StrongPredictionTag | PredictBoolean;
     
     return StrongPredictionTag | PredictTop;
 }
@@ -423,6 +443,11 @@ struct Node {
         return isConstant() && valueOfJSConstant(codeBlock).isNumber();
     }
     
+    bool isBooleanConstant(CodeBlock* codeBlock)
+    {
+        return isConstant() && valueOfJSConstant(codeBlock).isBoolean();
+    }
+    
     int32_t valueOfInt32Constant(CodeBlock* codeBlock)
     {
         ASSERT(isInt32Constant(codeBlock));
@@ -433,6 +458,12 @@ struct Node {
     {
         ASSERT(isDoubleConstant(codeBlock));
         return valueOfJSConstant(codeBlock).uncheckedGetNumber();
+    }
+    
+    bool valueOfBooleanConstant(CodeBlock* codeBlock)
+    {
+        ASSERT(isBooleanConstant(codeBlock));
+        return valueOfJSConstant(codeBlock).getBoolean();
     }
 
     bool hasLocal()
@@ -492,13 +523,16 @@ struct Node {
     {
         return (op & NodeResultMask) == NodeResultJS;
     }
+    
+    bool hasBooleanResult()
+    {
+        return (op & NodeResultMask) == NodeResultBoolean;
+    }
 
     // Check for integers or doubles.
     bool hasNumericResult()
     {
-        // This check will need updating if more result types are added.
-        ASSERT((hasInt32Result() || hasDoubleResult()) == !hasJSResult());
-        return !hasJSResult();
+        return hasInt32Result() || hasDoubleResult();
     }
 
     bool isJump()
@@ -563,9 +597,9 @@ struct Node {
         
         ASSERT(source == StrongPrediction);
         
-        PredictedType newPrediction = StrongPredictionTag | prediction;
+        PredictedType newPrediction = StrongPredictionTag | prediction | m_opInfo2;
         bool result = m_opInfo2 != newPrediction;
-        m_opInfo2 |= newPrediction;
+        m_opInfo2 = newPrediction;
         return result;
     }
     

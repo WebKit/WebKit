@@ -41,6 +41,7 @@ class SpeculateIntegerOperand;
 class SpeculateStrictInt32Operand;
 class SpeculateDoubleOperand;
 class SpeculateCellOperand;
+class SpeculateBooleanOperand;
 
 
 // === JITCodeGenerator ===
@@ -410,14 +411,18 @@ protected:
     
     bool isKnownNotInteger(NodeIndex);
 
+    bool isKnownBoolean(NodeIndex);
+    
     // Checks/accessors for constant values.
     bool isConstant(NodeIndex nodeIndex) { return m_jit.isConstant(nodeIndex); }
     bool isJSConstant(NodeIndex nodeIndex) { return m_jit.isJSConstant(nodeIndex); }
     bool isInt32Constant(NodeIndex nodeIndex) { return m_jit.isInt32Constant(nodeIndex); }
     bool isDoubleConstant(NodeIndex nodeIndex) { return m_jit.isDoubleConstant(nodeIndex); }
+    bool isBooleanConstant(NodeIndex nodeIndex) { return m_jit.isBooleanConstant(nodeIndex); }
     int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return m_jit.valueOfInt32Constant(nodeIndex); }
     double valueOfDoubleConstant(NodeIndex nodeIndex) { return m_jit.valueOfDoubleConstant(nodeIndex); }
     JSValue valueOfJSConstant(NodeIndex nodeIndex) { return m_jit.valueOfJSConstant(nodeIndex); }
+    bool valueOfBooleanConstant(NodeIndex nodeIndex) { return m_jit.valueOfBooleanConstant(nodeIndex); }
     bool isNullConstant(NodeIndex nodeIndex)
     {
         if (!isConstant(nodeIndex))
@@ -575,6 +580,8 @@ protected:
     }
     
     void emitCall(Node&);
+    
+    void speculationCheck(MacroAssembler::Jump jumpToFail);
 
     // Called once a node has completed code generation but prior to setting
     // its result, to free up its children. (This must happen prior to setting
@@ -1121,6 +1128,7 @@ public:
     GPRTemporary(JITCodeGenerator*, IntegerOperand&);
     GPRTemporary(JITCodeGenerator*, IntegerOperand&, IntegerOperand&);
     GPRTemporary(JITCodeGenerator*, SpeculateCellOperand&);
+    GPRTemporary(JITCodeGenerator*, SpeculateBooleanOperand&);
     GPRTemporary(JITCodeGenerator*, JSValueOperand&);
 
     ~GPRTemporary()

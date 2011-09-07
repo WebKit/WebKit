@@ -232,6 +232,9 @@ namespace JSC {
 #if ENABLE(JIT)
         ReturnAddressPtr exceptionLocation;
         JSValue hostCallReturnValue;
+#ifndef NDEBUG
+        int64_t debugDataBuffer[64];
+#endif
 #endif
 
         HashMap<OpaqueJSClass*, OpaqueJSClassContextData*> opaqueJSClassData;

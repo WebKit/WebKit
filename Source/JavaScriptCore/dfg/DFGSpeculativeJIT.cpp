@@ -128,8 +128,10 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
 
     case DataFormatDouble:
     case DataFormatCell:
+    case DataFormatBoolean:
     case DataFormatJSDouble:
-    case DataFormatJSCell: {
+    case DataFormatJSCell:
+    case DataFormatJSBoolean: {
         terminateSpeculativeExecution();
         returnFormat = DataFormatInteger;
         return allocate();
@@ -223,13 +225,14 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
     }
 
     switch (info.registerFormat()) {
-    case DataFormatNone:
-        // Should have filled, above.
+    case DataFormatNone: // Should have filled, above.
+    case DataFormatBoolean: // This type never occurs.
         ASSERT_NOT_REACHED();
         
     case DataFormatCell:
     case DataFormatJSCell:
-    case DataFormatJS: {
+    case DataFormatJS:
+    case DataFormatJSBoolean: {
         GPRReg jsValueGpr = info.gpr();
         m_gprs.lock(jsValueGpr);
         FPRReg fpr = fprAllocate();
@@ -349,7 +352,76 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
     case DataFormatJSInteger:
     case DataFormatInteger:
     case DataFormatJSDouble:
-    case DataFormatDouble: {
+    case DataFormatDouble:
+    case DataFormatJSBoolean:
+    case DataFormatBoolean: {
+        terminateSpeculativeExecution();
+        return allocate();
+    }
+    }
+
+    ASSERT_NOT_REACHED();
+    return InvalidGPRReg;
+}
+
+GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
+{
+    Node& node = m_jit.graph()[nodeIndex];
+    VirtualRegister virtualRegister = node.virtualRegister();
+    GenerationInfo& info = m_generationInfo[virtualRegister];
+
+    switch (info.registerFormat()) {
+    case DataFormatNone: {
+        GPRReg gpr = allocate();
+
+        if (node.isConstant()) {
+            JSValue jsValue = valueOfJSConstant(nodeIndex);
+            if (jsValue.isBoolean()) {
+                m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
+                m_jit.move(MacroAssembler::TrustedImmPtr(JSValue::encode(jsValue)), gpr);
+                info.fillJSValue(gpr, DataFormatJSBoolean);
+                return gpr;
+            }
+            terminateSpeculativeExecution();
+            return gpr;
+        }
+        ASSERT(info.spillFormat() & DataFormatJS);
+        m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
+        m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
+
+        info.fillJSValue(gpr, DataFormatJS);
+        if (info.spillFormat() != DataFormatJSBoolean) {
+            m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), gpr);
+            speculationCheck(m_jit.branchTestPtr(MacroAssembler::NonZero, gpr, TrustedImm32(static_cast<int32_t>(~1))), SpeculationRecovery(BooleanSpeculationCheck, gpr, InvalidGPRReg));
+            m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), gpr);
+        }
+        info.fillJSValue(gpr, DataFormatJSBoolean);
+        return gpr;
+    }
+
+    case DataFormatBoolean:
+    case DataFormatJSBoolean: {
+        GPRReg gpr = info.gpr();
+        m_gprs.lock(gpr);
+        return gpr;
+    }
+
+    case DataFormatJS: {
+        GPRReg gpr = info.gpr();
+        m_gprs.lock(gpr);
+        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), gpr);
+        speculationCheck(m_jit.branchTestPtr(MacroAssembler::NonZero, gpr, TrustedImm32(static_cast<int32_t>(~1))), SpeculationRecovery(BooleanSpeculationCheck, gpr, InvalidGPRReg));
+        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), gpr);
+        info.fillJSValue(gpr, DataFormatJSBoolean);
+        return gpr;
+    }
+
+    case DataFormatJSInteger:
+    case DataFormatInteger:
+    case DataFormatJSDouble:
+    case DataFormatDouble:
+    case DataFormatJSCell:
+    case DataFormatCell: {
         terminateSpeculativeExecution();
         return allocate();
     }
@@ -528,7 +600,7 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
         
         // If we add a DataFormatBool, we should use it here.
         m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
-        jsValueResult(result.gpr(), m_compileIndex);
+        jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
     }
     
     return false;
@@ -561,7 +633,16 @@ void SpeculativeJIT::compile(Node& node)
             // and don't represent values within this dataflow with virtual registers.
             VirtualRegister virtualRegister = node.virtualRegister();
             m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
-            m_generationInfo[virtualRegister].initJSValue(m_compileIndex, node.refCount(), result.gpr(), isArrayPrediction(prediction) ? DataFormatJSCell : DataFormatJS);
+            
+            DataFormat format;
+            if (isArrayPrediction(prediction))
+                format = DataFormatJSCell;
+            else if (isBooleanPrediction(prediction))
+                format = DataFormatJSBoolean;
+            else
+                format = DataFormatJS;
+            
+            m_generationInfo[virtualRegister].initJSValue(m_compileIndex, node.refCount(), result.gpr(), format);
         }
         break;
     }
@@ -577,6 +658,10 @@ void SpeculativeJIT::compile(Node& node)
             GPRReg cellGPR = cell.gpr();
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
             m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
+            noResult(m_compileIndex);
+        } else if (isBooleanPrediction(predictedType)) {
+            SpeculateBooleanOperand boolean(this, node.child1());
+            m_jit.storePtr(boolean.gpr(), JITCompiler::addressFor(node.local()));
             noResult(m_compileIndex);
         } else {
             JSValueOperand value(this, node.child1());
@@ -841,6 +926,17 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case LogicalNot: {
+        if (isKnownBoolean(node.child1())) {
+            SpeculateBooleanOperand value(this, node.child1());
+            GPRTemporary result(this, value);
+            
+            m_jit.move(value.gpr(), result.gpr());
+            m_jit.xorPtr(TrustedImm32(true), result.gpr());
+            
+            jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
+            break;
+        }
+        
         JSValueOperand value(this, node.child1());
         GPRTemporary result(this); // FIXME: We could reuse, but on speculation fail would need recovery to restore tag (akin to add).
 
@@ -850,7 +946,7 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueTrue)), result.gpr());
 
         // If we add a DataFormatBool, we should use it here.
-        jsValueResult(result.gpr(), m_compileIndex);
+        jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
         break;
     }
 
@@ -1227,7 +1323,7 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.move(MacroAssembler::TrustedImmPtr(JSValue::encode(jsBoolean(true))), scratchReg);
 
         putResult.link(&m_jit);
-        jsValueResult(scratchReg, m_compileIndex);
+        jsValueResult(scratchReg, m_compileIndex, DataFormatJSBoolean);
         break;
     }
 

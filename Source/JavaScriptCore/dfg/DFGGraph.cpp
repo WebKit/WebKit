@@ -52,8 +52,10 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     NodeType op = node.op;
 
     unsigned refCount = node.refCount();
-    if (!refCount)
+    if (!refCount) {
+        printf("% 4d:\tskipped %s\n", (int)nodeIndex, opName(op));
         return;
+    }
     bool mustGenerate = node.mustGenerate();
     if (mustGenerate)
         --refCount;
@@ -193,14 +195,14 @@ void Graph::refChildren(NodeIndex op)
 void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
 {
     if (exec) {
-        size_t numberOfArguments = std::min(exec->argumentCountIncludingThis(), m_argumentPredictions.size());
+        size_t numberOfArguments = std::min(exec->argumentCountIncludingThis(), m_predictions.numberOfArguments());
         
         for (size_t arg = 1; arg < numberOfArguments; ++arg) {
             JSValue argumentValue = exec->argument(arg - 1);
             if (argumentValue.isInt32())
-                m_argumentPredictions[arg].m_value |= PredictInt32;
+                m_predictions.predictArgument(arg, PredictInt32, WeakPrediction);
             else if (argumentValue.isDouble())
-                m_argumentPredictions[arg].m_value |= PredictDouble;
+                m_predictions.predictArgument(arg, PredictDouble, WeakPrediction);
         }
     }
     
@@ -222,10 +224,10 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
         printf("\n");
 #endif
         
-        mergePrediction(m_argumentPredictions[arg].m_value, makePrediction(globalData, *profile));
+        m_predictions.predictArgument(arg, makePrediction(globalData, *profile) & ~PredictionTagMask, StrongPrediction);
         
 #if DFG_DEBUG_VERBOSE
-        printf("    Prediction: %s\n", predictionToString(m_argumentPredictions[arg].m_value));
+        printf("    Prediction: %s\n", predictionToString(m_predictions.getArgumentPrediction(arg)));
 #endif
     }
 #else

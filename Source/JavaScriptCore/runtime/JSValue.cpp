@@ -126,9 +126,18 @@ char* JSValue::description()
         snprintf(description, size, "<JSValue()>");
     else if (isInt32())
         snprintf(description, size, "Int32: %d", asInt32());
-    else if (isDouble())
-        snprintf(description, size, "Double: %lf", asDouble());
-    else if (isCell())
+    else if (isDouble()) {
+#if USE(JSVALUE64)
+        snprintf(description, size, "Double: %lf, %lx", asDouble(), reinterpretDoubleToIntptr(asDouble()));
+#else
+        union {
+            double asDouble;
+            uint32_t asTwoInt32s[2];
+        } u;
+        u.asDouble = asDouble();
+        snprintf(description, size, "Double: %lf, %08x:%08x", asDouble(), u.asTwoInt32s[1], u.asTwoInt32s[0]);
+#endif
+    } else if (isCell())
         snprintf(description, size, "Cell: %p", asCell());
     else if (isTrue())
         snprintf(description, size, "True");

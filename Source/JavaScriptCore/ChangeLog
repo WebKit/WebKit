@@ -1,3 +1,138 @@
+2011-09-06  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT does not optimize booleans
+        https://bugs.webkit.org/show_bug.cgi?id=67670
+
+        Reviewed by Gavin Barraclough.
+        
+        This adds boolean value profiling, boolean prediction in the DFG,
+        boolean forward flow propagation in the DFGPropagator, boolean
+        data format in DFG generation info, and comprehensive optimizations
+        based on both boolean prediction and boolean generation info.
+        This is brings the speed-up on v8-richards to 12%, and gives slight
+        speed-ups elsewhere as well.
+        
+        Making this work right required navigating some subtleties in
+        value profiling.  Some functions get compiled with insufficient
+        information because some important path of the function never
+        executed.  In these cases, we wish to fall back on static
+        speculation.  But to do so, we need to ensure that predictions that
+        are inherent in the code (like that GetById almost certainly takes
+        a cell operand) are reflected in predictions that we make in
+        DFGPropagator.  Thus, DFGPropagator now does both backward and
+        forward flow, using a both forward and backward fixpoint.
+        
+        The backward flow in DFGPropagator is a separate static analysis,
+        and needs to keep a set of backward flow abstract values for
+        variables, arguments, and globals.  To make this easy, this patch
+        factors out DFGGraph's prediction tracking capability into
+        DFGPredictionTracker, which now gets used by both DFGGraph (for
+        forward flow predictions) and DFGPropagator (for backward flow
+        predictions).  Backward flow predictions eventually get merged
+        into forward flow ones, but the two are not equivalent: a forward
+        flow prediction is a superset of the backward flow prediction.
+        
+        Debugging these prediction issues required a better understanding
+        of where we fail speculation, and what our value predictions look
+        like.  This patch also adds optional verbose speculation failure
+        (so an informative printf fires whenever speculation failure occurs)
+        and slight improvements to the verbosity in other places.
+
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfile::numberOfBooleans):
+        (JSC::ValueProfile::probabilityOfBoolean):
+        (JSC::ValueProfile::dump):
+        (JSC::ValueProfile::computeStatistics):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::stronglyPredict):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::dataFormatToString):
+        (JSC::DFG::needDataFormatConversion):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::predictions):
+        (JSC::DFG::Graph::predict):
+        (JSC::DFG::Graph::predictGlobalVar):
+        (JSC::DFG::Graph::getPrediction):
+        (JSC::DFG::Graph::getGlobalVarPrediction):
+        (JSC::DFG::Graph::isBooleanConstant):
+        (JSC::DFG::Graph::valueOfBooleanConstant):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::fillInteger):
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        (JSC::DFG::JITCodeGenerator::isKnownNotInteger):
+        (JSC::DFG::JITCodeGenerator::isKnownBoolean):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::JITCodeGenerator::emitBranch):
+        (JSC::DFG::JITCodeGenerator::speculationCheck):
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::isBooleanConstant):
+        (JSC::DFG::JITCodeGenerator::valueOfBooleanConstant):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::jumpFromSpeculativeToNonSpeculative):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::debugCall):
+        (JSC::DFG::JITCompiler::isBooleanConstant):
+        (JSC::DFG::JITCompiler::valueOfBooleanConstant):
+        * dfg/DFGNode.h:
+        (JSC::DFG::isBooleanPrediction):
+        (JSC::DFG::predictionToString):
+        (JSC::DFG::mergePredictions):
+        (JSC::DFG::makePrediction):
+        (JSC::DFG::Node::isBooleanConstant):
+        (JSC::DFG::Node::valueOfBooleanConstant):
+        (JSC::DFG::Node::hasBooleanResult):
+        (JSC::DFG::Node::hasNumericResult):
+        (JSC::DFG::Node::predict):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionTracker.h: Added.
+        (JSC::DFG::operandIsArgument):
+        (JSC::DFG::PredictionSlot::PredictionSlot):
+        (JSC::DFG::PredictionTracker::PredictionTracker):
+        (JSC::DFG::PredictionTracker::initializeSimilarTo):
+        (JSC::DFG::PredictionTracker::numberOfArguments):
+        (JSC::DFG::PredictionTracker::numberOfVariables):
+        (JSC::DFG::PredictionTracker::argumentIndexForOperand):
+        (JSC::DFG::PredictionTracker::predictArgument):
+        (JSC::DFG::PredictionTracker::predict):
+        (JSC::DFG::PredictionTracker::predictGlobalVar):
+        (JSC::DFG::PredictionTracker::getArgumentPrediction):
+        (JSC::DFG::PredictionTracker::getPrediction):
+        (JSC::DFG::PredictionTracker::getGlobalVarPrediction):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::Propagator):
+        (JSC::DFG::Propagator::fixpoint):
+        (JSC::DFG::Propagator::setPrediction):
+        (JSC::DFG::Propagator::mergeUse):
+        (JSC::DFG::Propagator::mergePrediction):
+        (JSC::DFG::Propagator::propagateNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculateBooleanOperand::SpeculateBooleanOperand):
+        (JSC::DFG::SpeculateBooleanOperand::~SpeculateBooleanOperand):
+        (JSC::DFG::SpeculateBooleanOperand::index):
+        (JSC::DFG::SpeculateBooleanOperand::gpr):
+        (JSC::DFG::SpeculateBooleanOperand::use):
+        * runtime/JSGlobalData.h:
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::description):
+
 2011-09-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unzip initialization lists and constructors in JSCell hierarchy (5/7)

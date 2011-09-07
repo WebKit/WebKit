@@ -42,11 +42,13 @@ enum DataFormat {
     DataFormatNone = 0,
     DataFormatInteger = 1,
     DataFormatDouble = 2,
-    DataFormatCell = 3,
+    DataFormatBoolean = 3,
+    DataFormatCell = 4,
     DataFormatJS = 8,
     DataFormatJSInteger = DataFormatJS | DataFormatInteger,
     DataFormatJSDouble = DataFormatJS | DataFormatDouble,
     DataFormatJSCell = DataFormatJS | DataFormatCell,
+    DataFormatJSBoolean = DataFormatJS | DataFormatBoolean
 };
 
 #ifndef NDEBUG
@@ -61,6 +63,8 @@ inline const char* dataFormatToString(DataFormat dataFormat)
         return "Double";
     case DataFormatCell:
         return "Cell";
+    case DataFormatBoolean:
+        return "Boolean";
     case DataFormatJS:
         return "JS";
     case DataFormatJSInteger:
@@ -69,6 +73,8 @@ inline const char* dataFormatToString(DataFormat dataFormat)
         return "JSDouble";
     case DataFormatJSCell:
         return "JSCell";
+    case DataFormatJSBoolean:
+        return "JSBoolean";
     default:
         return "Unknown";
     }
@@ -88,6 +94,7 @@ inline bool needDataFormatConversion(DataFormat from, DataFormat to)
     case DataFormatJSInteger:
     case DataFormatJSDouble:
     case DataFormatJSCell:
+    case DataFormatJSBoolean:
         switch (to) {
         case DataFormatInteger:
         case DataFormatDouble:
@@ -97,11 +104,14 @@ inline bool needDataFormatConversion(DataFormat from, DataFormat to)
         case DataFormatJSInteger:
         case DataFormatJSDouble:
         case DataFormatJSCell:
+        case DataFormatJSBoolean:
             return false;
         default:
+            // This captures DataFormatBoolean, which is currently unused.
             ASSERT_NOT_REACHED();
         }
     default:
+        // This captures DataFormatBoolean, which is currently unused.
         ASSERT_NOT_REACHED();
     }
     return true;

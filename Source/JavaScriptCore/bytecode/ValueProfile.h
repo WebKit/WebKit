@@ -117,6 +117,16 @@ struct ValueProfile {
         }
         return result;
     }
+    
+    unsigned numberOfBooleans() const
+    {
+        unsigned result = 0;
+        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+            if (!!buckets[i] && JSValue::decode(buckets[i]).isBoolean())
+                result++;
+        }
+        return result;
+    }
         
     // These methods are not particularly optimized, in that they will each
     // perform two passes over the buckets array. However, they are
@@ -142,17 +152,23 @@ struct ValueProfile {
     {
         return computeProbability(numberOfArrays(), numberOfSamples());
     }
+    
+    unsigned probabilityOfBoolean() const
+    {
+        return computeProbability(numberOfBooleans(), numberOfSamples());
+    }
 
 #ifndef NDEBUG
     void dump(FILE* out)
     {
         fprintf(out,
-                "samples = %u, int32 = %u, double = %u, cell = %u, array = %u",
+                "samples = %u, int32 = %u (%u), double = %u (%u), cell = %u (%u), array = %u (%u), boolean = %u (%u)",
                 numberOfSamples(),
-                numberOfInt32s(),
-                numberOfDoubles(),
-                numberOfCells(),
-                numberOfArrays());
+                probabilityOfInt32(), numberOfInt32s(),
+                probabilityOfDouble(), numberOfDoubles(),
+                probabilityOfCell(), numberOfCells(),
+                probabilityOfArray(), numberOfArrays(),
+                probabilityOfBoolean(), numberOfBooleans());
         bool first = true;
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
             if (!!buckets[i] || !!weakBuckets[i]) {
@@ -178,16 +194,18 @@ struct ValueProfile {
         unsigned doubles;
         unsigned cells;
         unsigned arrays;
+        unsigned booleans;
     };
 
     // Optimized method for getting all counts at once.
     void computeStatistics(JSGlobalData& globalData, Statistics& statistics) const
     {
-        unsigned samples = 0;
-        unsigned int32s  = 0;
-        unsigned doubles = 0;
-        unsigned cells   = 0;
-        unsigned arrays  = 0;
+        unsigned samples  = 0;
+        unsigned int32s   = 0;
+        unsigned doubles  = 0;
+        unsigned cells    = 0;
+        unsigned arrays   = 0;
+        unsigned booleans = 0;
         
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
             if (!buckets[i]) {
@@ -213,14 +231,16 @@ struct ValueProfile {
                 cells++;
                 if (isJSArray(&globalData, value.asCell()))
                     arrays++;
-            }
+            } else if (value.isBoolean())
+                booleans++;
         }
         
-        statistics.samples = samples;
-        statistics.int32s  = int32s;
-        statistics.doubles = doubles;
-        statistics.cells   = cells;
-        statistics.arrays  = arrays;
+        statistics.samples  = samples;
+        statistics.int32s   = int32s;
+        statistics.doubles  = doubles;
+        statistics.cells    = cells;
+        statistics.arrays   = arrays;
+        statistics.booleans = booleans;
     }
     
     int bytecodeOffset; // -1 for prologue

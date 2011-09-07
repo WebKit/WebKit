@@ -488,23 +488,45 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
 #if DFG_JIT_BREAK_ON_SPECULATION_FAILURE
     breakpoint();
 #endif
+    
+#if DFG_VERBOSE_SPECULATION_FAILURE
+    SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
+    debugInfo->codeBlock = m_codeBlock;
+    debugInfo->debugOffset = debugOffset();
+    
+    debugCall(debugOperationPrintSpeculationFailure, debugInfo);
+#endif
 
     // Does this speculation check require any additional recovery to be performed,
     // to restore any state that has been overwritten before we enter back in to the
     // non-speculative path.
     if (recovery) {
-        // The only additional recovery we currently support is for integer add operation
-        ASSERT(recovery->type() == SpeculativeAdd);
-        ASSERT(check.m_gprInfo[GPRInfo::toIndex(recovery->dest())].nodeIndex != NoNode);
-        // Revert the add.
-        sub32(recovery->src(), recovery->dest());
-        
-        // If recovery->dest() should have been boxed prior to the addition, then rebox
-        // it.
-        DataFormat format = check.m_gprInfo[GPRInfo::toIndex(recovery->dest())].format;
-        ASSERT(format == DataFormatInteger || format == DataFormatJSInteger || format == DataFormatJS);
-        if (format != DataFormatInteger)
-            orPtr(GPRInfo::tagTypeNumberRegister, recovery->dest());
+        switch (recovery->type()) {
+        case SpeculativeAdd: {
+            ASSERT(check.m_gprInfo[GPRInfo::toIndex(recovery->dest())].nodeIndex != NoNode);
+            // Revert the add.
+            sub32(recovery->src(), recovery->dest());
+            
+            // If recovery->dest() should have been boxed prior to the addition, then rebox
+            // it.
+            DataFormat format = check.m_gprInfo[GPRInfo::toIndex(recovery->dest())].format;
+            ASSERT(format == DataFormatInteger || format == DataFormatJSInteger || format == DataFormatJS);
+            if (format != DataFormatInteger)
+                orPtr(GPRInfo::tagTypeNumberRegister, recovery->dest());
+            break;
+        }
+            
+        case BooleanSpeculationCheck: {
+            ASSERT(check.m_gprInfo[GPRInfo::toIndex(recovery->dest())].nodeIndex != NoNode);
+            // Rebox the (non-)boolean
+            xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), recovery->dest());
+            break;
+        }
+            
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
     }
     
     // First, we need a reverse mapping that tells us, for a NodeIndex, which register
@@ -875,7 +897,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 {
     // Link the code, populate data in CodeBlock data structures.
 #if DFG_DEBUG_VERBOSE
-    fprintf(stderr, "JIT code start at [%p, %p)\n", linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize());
+    fprintf(stderr, "JIT code for %p start at [%p, %p)\n", m_codeBlock, linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize());
 #endif
 
     // Link all calls out from the JIT code to their respective functions.

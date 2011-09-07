@@ -54,6 +54,17 @@ class SpeculationRecovery;
 struct EntryLocation;
 struct SpeculationCheck;
 
+#ifndef NDEBUG
+typedef void (*V_DFGDebugOperation_EP)(ExecState*, void*);
+#endif
+
+#if DFG_VERBOSE_SPECULATION_FAILURE
+struct SpeculationFailureDebugInfo {
+    CodeBlock* codeBlock;
+    unsigned debugOffset;
+};
+#endif
+
 // === CallRecord ===
 //
 // A record of a call out from JIT code to a helper function.
@@ -205,16 +216,41 @@ public:
         m_calls.append(CallRecord(functionCall, function, exceptionCheck, exceptionInfo));
         return functionCall;
     }
+    
+#ifndef NDEBUG
+    // Add a debug call. This call has no effect on JIT code execution state.
+    void debugCall(V_DFGDebugOperation_EP function, void* argument)
+    {
+        for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i)
+            storePtr(GPRInfo::toRegister(i), m_globalData->debugDataBuffer + i);
+        for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
+            move(TrustedImmPtr(m_globalData->debugDataBuffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
+            storeDouble(FPRInfo::toRegister(i), GPRInfo::regT0);
+        }
+        move(TrustedImmPtr(argument), GPRInfo::argumentGPR1);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        move(TrustedImmPtr(reinterpret_cast<void*>(function)), GPRInfo::regT0);
+        call(GPRInfo::regT0);
+        for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
+            move(TrustedImmPtr(m_globalData->debugDataBuffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
+            loadDouble(GPRInfo::regT0, FPRInfo::toRegister(i));
+        }
+        for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i)
+            loadPtr(m_globalData->debugDataBuffer + i, GPRInfo::toRegister(i));
+    }
+#endif
 
     // Helper methods to check nodes for constants.
     bool isConstant(NodeIndex nodeIndex) { return graph().isConstant(nodeIndex); }
     bool isJSConstant(NodeIndex nodeIndex) { return graph().isJSConstant(nodeIndex); }
     bool isInt32Constant(NodeIndex nodeIndex) { return graph().isInt32Constant(codeBlock(), nodeIndex); }
     bool isDoubleConstant(NodeIndex nodeIndex) { return graph().isDoubleConstant(codeBlock(), nodeIndex); }
+    bool isBooleanConstant(NodeIndex nodeIndex) { return graph().isBooleanConstant(codeBlock(), nodeIndex); }
     // Helper methods get constant values from nodes.
     JSValue valueOfJSConstant(NodeIndex nodeIndex) { return graph().valueOfJSConstant(codeBlock(), nodeIndex); }
     int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return graph().valueOfInt32Constant(codeBlock(), nodeIndex); }
     double valueOfDoubleConstant(NodeIndex nodeIndex) { return graph().valueOfDoubleConstant(codeBlock(), nodeIndex); }
+    bool valueOfBooleanConstant(NodeIndex nodeIndex) { return graph().valueOfBooleanConstant(codeBlock(), nodeIndex); }
 
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
 #if DFG_JIT_ASSERT

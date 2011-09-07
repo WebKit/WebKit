@@ -37,7 +37,8 @@ class SpeculativeJIT;
 // This enum describes the types of additional recovery that
 // may need be performed should a speculation check fail.
 enum SpeculationRecoveryType {
-    SpeculativeAdd
+    SpeculativeAdd,
+    BooleanSpeculationCheck
 };
 
 // === SpeculationRecovery ===
@@ -132,8 +133,11 @@ public:
     GPRReg fillSpeculateIntStrict(NodeIndex);
     FPRReg fillSpeculateDouble(NodeIndex);
     GPRReg fillSpeculateCell(NodeIndex);
+    GPRReg fillSpeculateBoolean(NodeIndex);
 
 private:
+    friend class JITCodeGenerator;
+    
     void compile(Node&);
     void compile(BasicBlock&);
 
@@ -394,6 +398,47 @@ public:
     {
         if (m_gprOrInvalid == InvalidGPRReg)
             m_gprOrInvalid = m_jit->fillSpeculateCell(index());
+        return m_gprOrInvalid;
+    }
+    
+    void use()
+    {
+        m_jit->use(m_index);
+    }
+
+private:
+    SpeculativeJIT* m_jit;
+    NodeIndex m_index;
+    GPRReg m_gprOrInvalid;
+};
+
+class SpeculateBooleanOperand {
+public:
+    explicit SpeculateBooleanOperand(SpeculativeJIT* jit, NodeIndex index)
+        : m_jit(jit)
+        , m_index(index)
+        , m_gprOrInvalid(InvalidGPRReg)
+    {
+        ASSERT(m_jit);
+        if (jit->isFilled(index))
+            gpr();
+    }
+    
+    ~SpeculateBooleanOperand()
+    {
+        ASSERT(m_gprOrInvalid != InvalidGPRReg);
+        m_jit->unlock(m_gprOrInvalid);
+    }
+    
+    NodeIndex index() const
+    {
+        return m_index;
+    }
+    
+    GPRReg gpr()
+    {
+        if (m_gprOrInvalid == InvalidGPRReg)
+            m_gprOrInvalid = m_jit->fillSpeculateBoolean(index());
         return m_gprOrInvalid;
     }
     
