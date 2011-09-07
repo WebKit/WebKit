@@ -1,3 +1,44 @@
+2011-09-07  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, chromium svg/ rebaselines.
+
+        * platform/chromium-cg-mac-leopard/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-cg-mac-leopard/svg/filters/filterRes-expected.png:
+        * platform/chromium-cg-mac/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png: Added.
+        * platform/chromium-cg-mac/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.txt: Added.
+        * platform/chromium-cg-mac/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-cg-mac/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-cg-mac/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-cg-mac/svg/css/getComputedStyle-basic-expected.txt: Added.
+        * platform/chromium-cg-mac/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-cg-mac/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-cg-mac/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-cg-mac/svg/custom/simple-text-double-shadow-expected.png: Added.
+        * platform/chromium-cg-mac/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-cg-mac/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-cg-mac/svg/filters/filterRes-expected.png:
+        * platform/chromium-linux/svg/batik/text/textFeatures-expected.txt: Removed.
+        * platform/chromium-linux/svg/custom/simple-text-double-shadow-expected.png: Added.
+        * platform/chromium-win-vista/svg/filters: Removed.
+        * platform/chromium-win-xp/svg/css: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/svg/custom/simple-text-double-shadow-expected.png: Added.
+        * platform/chromium-win/svg/custom/simple-text-double-shadow-expected.txt: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-win/svg/filters/filterRes-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         css2.1/t090204-display-change-01-b-ao.html is not attaching event listener properly
