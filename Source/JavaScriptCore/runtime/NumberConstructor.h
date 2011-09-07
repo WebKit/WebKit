@@ -50,7 +50,6 @@ namespace JSC {
         enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
 
     protected:
-        void finishCreation(ExecState*, JSGlobalObject*, NumberPrototype*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | InternalFunction::StructureFlags;
 
     private:

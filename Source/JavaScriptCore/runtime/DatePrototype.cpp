@@ -432,12 +432,6 @@ const ClassInfo DatePrototype::s_info = {"Date", &DateInstance::s_info, 0, ExecS
 DatePrototype::DatePrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : DateInstance(exec, structure)
 {
-    finishCreation(exec, globalObject);
-}
-
-void DatePrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
-{
-    Base::finishCreation(exec->globalData(), jsNaN());
     ASSERT(inherits(&s_info));
 
     // The constructor will be added later, after DateConstructor has been built.

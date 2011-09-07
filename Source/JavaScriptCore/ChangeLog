@@ -1,3 +1,139 @@
+2011-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94627 and r94632.
+        http://trac.webkit.org/changeset/94627
+        http://trac.webkit.org/changeset/94632
+        https://bugs.webkit.org/show_bug.cgi?id=67698
+
+        It broke tests on GTK and Qt (Requested by Ossy on #webkit).
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::JSCallbackConstructor::JSCallbackConstructor):
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::create):
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::JSCallbackFunction):
+        * API/JSCallbackFunction.h:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::create):
+        * debugger/DebuggerActivation.h:
+        * jsc.cpp:
+        (GlobalObject::constructorBody):
+        (GlobalObject::GlobalObject):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::ArrayConstructor):
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::ArrayPrototype):
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::create):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::BooleanConstructor):
+        * runtime/BooleanConstructor.h:
+        * runtime/BooleanObject.cpp:
+        (JSC::BooleanObject::BooleanObject):
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::create):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::BooleanPrototype):
+        * runtime/BooleanPrototype.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::DateConstructor):
+        * runtime/DateConstructor.h:
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::DateInstance):
+        * runtime/DateInstance.h:
+        (JSC::DateInstance::create):
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::DatePrototype):
+        * runtime/DatePrototype.h:
+        * runtime/Error.cpp:
+        (JSC::StrictModeTypeErrorFunction::StrictModeTypeErrorFunction):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::ErrorConstructor):
+        * runtime/ErrorConstructor.h:
+        (JSC::ErrorConstructor::create):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+        * runtime/ErrorPrototype.h:
+        (JSC::ErrorPrototype::create):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::FunctionConstructor):
+        * runtime/FunctionConstructor.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::FunctionPrototype):
+        * runtime/FunctionPrototype.h:
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        * runtime/InternalFunction.h:
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::create):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::create):
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::JSONObject):
+        * runtime/JSONObject.h:
+        (JSC::JSONObject::create):
+        * runtime/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::create):
+        (JSC::JSStaticScopeObject::JSStaticScopeObject):
+        * runtime/JSString.cpp:
+        (JSC::StringObject::create):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::MathObject):
+        * runtime/MathObject.h:
+        (JSC::MathObject::create):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructor::constructorBody):
+        * runtime/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::NativeErrorPrototype):
+        (JSC::NativeErrorPrototype::constructorBody):
+        * runtime/NativeErrorPrototype.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::NumberConstructor):
+        * runtime/NumberConstructor.h:
+        * runtime/NumberObject.cpp:
+        (JSC::NumberObject::NumberObject):
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::create):
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::NumberPrototype):
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        * runtime/ObjectConstructor.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::RegExpConstructor):
+        (JSC::RegExpMatchesArray::RegExpMatchesArray):
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::create):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::RegExpObject):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::create):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::RegExpPrototype):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+        * runtime/StringConstructor.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::StringObject):
+        * runtime/StringObject.h:
+        (JSC::StringObject::create):
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::StringObjectThatMasqueradesAsUndefined):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::StringPrototype):
+        * runtime/StringPrototype.h:
+
 2011-09-06  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Replace usages of Vector<UChar> with existing StringBuilder

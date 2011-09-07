@@ -52,12 +52,6 @@ ASSERT_CLASS_FITS_IN_CELL(BooleanPrototype);
 BooleanPrototype::BooleanPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : BooleanObject(exec->globalData(), structure)
 {
-    finishCreation(exec, globalObject);
-}
-
-void BooleanPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
-{
-    Base::finishCreation(exec->globalData());
     setInternalValue(exec->globalData(), jsBoolean(false));
 
     ASSERT(inherits(&s_info));

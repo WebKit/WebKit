@@ -74,14 +74,8 @@ const ClassInfo DateConstructor::s_info = { "Function", &InternalFunction::s_inf
 ASSERT_CLASS_FITS_IN_CELL(DateConstructor);
 
 DateConstructor::DateConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, DatePrototype* datePrototype)
-    : InternalFunction(globalObject, structure) 
+    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, datePrototype->classInfo()->className))
 {
-    finishCreation(exec, globalObject, datePrototype);
-}
-
-void DateConstructor::finishCreation(ExecState* exec, JSGlobalObject* globalObject, DatePrototype* datePrototype)
-{
-    Base::finishCreation(exec->globalData(), globalObject, Identifier(exec, datePrototype->classInfo()->className));
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, datePrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(7), ReadOnly | DontEnum | DontDelete);
 }

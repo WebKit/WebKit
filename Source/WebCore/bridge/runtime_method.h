@@ -58,7 +58,6 @@ public:
 
 protected:
     RuntimeMethod(ExecState*, JSGlobalObject*, Structure*, const Identifier& name, Bindings::MethodList&);
-    void finishCreation(JSGlobalData&, JSGlobalObject*, const Identifier&);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
 private:

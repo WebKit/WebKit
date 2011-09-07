@@ -33,16 +33,12 @@ namespace JSC {
         static StringObject* create(ExecState* exec, Structure* structure)
         {
             JSString* string = jsEmptyString(exec);
-            StringObject* object = new (allocateCell<StringObject>(*exec->heap())) StringObject(exec->globalData(), structure);  
-            object->finishCreation(exec->globalData(), string);
-            return object;
+            return new (allocateCell<StringObject>(*exec->heap())) StringObject(exec->globalData(), structure, string);  
         }
         static StringObject* create(ExecState* exec, Structure* structure, const UString& str)
         {
             JSString* string = jsString(exec, str);
-            StringObject* object = new (allocateCell<StringObject>(*exec->heap())) StringObject(exec->globalData(), structure);
-            object->finishCreation(exec->globalData(), string);
-            return object;
+            return new (allocateCell<StringObject>(*exec->heap())) StringObject(exec->globalData(), structure, string);
         }
         static StringObject* create(ExecState*, JSGlobalObject*, JSString*);
 
@@ -66,7 +62,7 @@ namespace JSC {
     protected:
         void finishCreation(JSGlobalData&, JSString*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSWrapperObject::StructureFlags;
-        StringObject(JSGlobalData&, Structure*);
+        StringObject(JSGlobalData&, Structure*, JSString*);
     };
 
     StringObject* asStringObject(JSValue);

@@ -33,9 +33,7 @@ namespace JSC {
 
         static ErrorPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            ErrorPrototype* prototype = new (allocateCell<ErrorPrototype>(*exec->heap())) ErrorPrototype(exec, structure);
-            prototype->finishCreation(exec, globalObject);
-            return prototype;
+            return new (allocateCell<ErrorPrototype>(*exec->heap())) ErrorPrototype(exec, globalObject, structure);
         }
         
         static const ClassInfo s_info;
@@ -46,7 +44,7 @@ namespace JSC {
         }
 
     protected:
-        ErrorPrototype(ExecState*, Structure*);
+        ErrorPrototype(ExecState*, JSGlobalObject*, Structure*);
         void finishCreation(ExecState*, JSGlobalObject*);
 
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ErrorInstance::StructureFlags;

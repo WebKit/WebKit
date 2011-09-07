@@ -39,7 +39,7 @@ namespace JSC {
         }
 
     protected:
-        void finishCreation(ExecState*, JSGlobalObject*, const UString& nameAndMessage, NativeErrorConstructor*);
+        void constructorBody(ExecState*, const UString& name, NativeErrorConstructor*);
     };
 
 } // namespace JSC

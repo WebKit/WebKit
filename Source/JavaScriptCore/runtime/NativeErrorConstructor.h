@@ -49,9 +49,8 @@ namespace JSC {
         Structure* errorStructure() { return m_errorStructure.get(); }
 
     protected:
-        void finishCreation(ExecState* exec, JSGlobalObject* globalObject, Structure* prototypeStructure, const UString& name)
+        void constructorBody(ExecState* exec, JSGlobalObject* globalObject, Structure* prototypeStructure, const UString& name)
         {
-            Base::finishCreation(exec->globalData(), globalObject, Identifier(exec, name));
             ASSERT(inherits(&s_info));
 
             NativeErrorPrototype* prototype = NativeErrorPrototype::create(exec, globalObject, prototypeStructure, name, this);

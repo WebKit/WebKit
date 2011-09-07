@@ -41,9 +41,8 @@ namespace JSC {
 
     private:
         StringObjectThatMasqueradesAsUndefined(ExecState* exec, Structure* structure, JSString* string)
-            : StringObject(exec->globalData(), structure)
+            : StringObject(exec->globalData(), structure, string)
         {
-            finishCreation(exec->globalData(), string);
         }
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) 

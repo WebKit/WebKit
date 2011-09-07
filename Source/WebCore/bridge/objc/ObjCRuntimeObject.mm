@@ -38,12 +38,6 @@ const ClassInfo ObjCRuntimeObject::s_info = { "ObjCRuntimeObject", &RuntimeObjec
 ObjCRuntimeObject::ObjCRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<ObjcInstance> instance, Structure* structure)
     : RuntimeObject(exec, globalObject, structure, instance)
 {
-    finishCreation(globalObject);
-}
-
-void ObjCRuntimeObject::finishCreation(JSGlobalObject* globalObject)
-{
-    Base::finishCreation(globalObject);
     ASSERT(inherits(&s_info));
 }
 

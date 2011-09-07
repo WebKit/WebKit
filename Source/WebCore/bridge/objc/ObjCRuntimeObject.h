@@ -58,7 +58,6 @@ public:
 
 private:
     ObjCRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<ObjcInstance>, Structure*);
-    void finishCreation(JSGlobalObject*);
 };
 
 }

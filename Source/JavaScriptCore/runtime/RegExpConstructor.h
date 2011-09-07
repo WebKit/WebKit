@@ -90,7 +90,6 @@ namespace JSC {
         JSValue getRightContext(ExecState*) const;
 
     protected:
-        void finishCreation(ExecState*, JSGlobalObject*, RegExpPrototype*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | InternalFunction::StructureFlags;
 
     private:

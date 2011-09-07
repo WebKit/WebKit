@@ -26,7 +26,6 @@
 #ifndef JSNPMethod_h
 #define JSNPMethod_h
 
-#include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/InternalFunction.h>
 
 typedef void* NPIdentifier;
@@ -38,21 +37,14 @@ class JSNPMethod : public JSC::InternalFunction {
 public:
     typedef JSC::InternalFunction Base;
 
-    static JSNPMethod* create(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, const JSC::Identifier& ident, NPIdentifier npIdent)
-    {
-        JSC::Structure* structure = createStructure(exec->globalData(), globalObject, globalObject->functionPrototype());
-        return new (JSC::allocateCell<JSNPMethod>(*exec->heap())) JSNPMethod(exec, globalObject, structure, ident, npIdent);
-    }
+    static JSNPMethod* create(JSC::ExecState*, JSC::JSGlobalObject*, const JSC::Identifier&, NPIdentifier);
 
     static const JSC::ClassInfo s_info;
 
     NPIdentifier npIdentifier() const { return m_npIdentifier; }
 
-protected:
-    void finishCreation(JSC::JSGlobalData&, JSC::JSGlobalObject*, const JSC::Identifier& name);
-
 private:    
-    JSNPMethod(JSC::ExecState*, JSC::JSGlobalObject*, JSC::Structure*, const JSC::Identifier&, NPIdentifier);
+    JSNPMethod(JSC::ExecState*, JSC::JSGlobalObject*, const JSC::Identifier&, NPIdentifier, JSC::Structure*);
 
     static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {

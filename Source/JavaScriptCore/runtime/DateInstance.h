@@ -31,6 +31,7 @@ namespace JSC {
 
     class DateInstance : public JSWrapperObject {
     protected:
+        DateInstance(ExecState*, Structure*, double);
         DateInstance(ExecState*, Structure*);
         void finishCreation(JSGlobalData&);
         void finishCreation(JSGlobalData&, double);
@@ -40,18 +41,13 @@ namespace JSC {
 
         static DateInstance* create(ExecState* exec, Structure* structure, double date)
         {
-            DateInstance* instance = new (allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure);
-            instance->finishCreation(exec->globalData(), date);
-            return instance;
+            return new (allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure, date);
         }
-
         static DateInstance* create(ExecState* exec, Structure* structure)
         {
-            DateInstance* instance = new (allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure);
-            instance->finishCreation(exec->globalData());
-            return instance;
+            return new (allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure);
         }
-
+        
         double internalNumber() const { return internalValue().uncheckedGetNumber(); }
 
         static JS_EXPORTDATA const ClassInfo s_info;

@@ -66,6 +66,7 @@ RegExpObject::RegExpObject(JSGlobalObject* globalObject, Structure* structure, R
     : JSObjectWithGlobalObject(globalObject, structure)
     , d(adoptPtr(new RegExpObjectData(globalObject->globalData(), this, regExp)))
 {
+    finishCreation(globalObject);
 }
 
 void RegExpObject::finishCreation(JSGlobalObject* globalObject)

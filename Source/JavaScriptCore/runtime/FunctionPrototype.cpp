@@ -38,14 +38,8 @@ static EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncCall(ExecState*);
 
 FunctionPrototype::FunctionPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
-    : InternalFunction(globalObject, structure)
+    : InternalFunction(&exec->globalData(), globalObject, structure, exec->propertyNames().nullIdentifier)
 {
-    finishCreation(exec, globalObject, exec->propertyNames().nullIdentifier);
-}
-
-void FunctionPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name)
-{
-    Base::finishCreation(exec->globalData(), globalObject, name);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
 }
 

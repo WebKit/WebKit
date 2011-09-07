@@ -157,9 +157,8 @@ public:
     virtual UString className() const { return "global"; }
 
 protected:
-    void finishCreation(JSGlobalData& globalData, const Vector<UString>& arguments)
+    void constructorBody(const Vector<UString>& arguments)
     {
-        Base::finishCreation(globalData, this);
         putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "debug"), functionDebug));
         putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "print"), functionPrint));
         putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "quit"), functionQuit));
@@ -191,7 +190,7 @@ ASSERT_CLASS_FITS_IN_CELL(GlobalObject);
 GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
     : JSGlobalObject(globalData, structure)
 {
-    finishCreation(globalData, arguments);
+    constructorBody(arguments);
 }
 
 EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)

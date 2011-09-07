@@ -49,7 +49,6 @@ namespace JSC {
         }
 
     protected:
-        void finishCreation(ExecState*, JSGlobalObject*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | DateInstance::StructureFlags;
 
         COMPILE_ASSERT(!DateInstance::AnonymousSlotCount, DatePrototype_stomps_on_your_anonymous_slot);

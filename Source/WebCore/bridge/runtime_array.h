@@ -41,9 +41,7 @@ public:
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "array".
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<RuntimeArray>(exec);
-        RuntimeArray* runtimeArray = new (allocateCell<RuntimeArray>(*exec->heap())) RuntimeArray(exec, domStructure);
-        runtimeArray->finishCreation(exec->globalData(), array);
-        return runtimeArray;
+        return new (allocateCell<RuntimeArray>(*exec->heap())) RuntimeArray(exec, domStructure, array);
     }
 
     typedef Bindings::Array BindingsArray;
@@ -81,7 +79,7 @@ protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSArray::StructureFlags;
 
 private:
-    RuntimeArray(ExecState*, Structure*);
+    RuntimeArray(ExecState*, Structure*, Bindings::Array*);
     static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
     static JSValue indexGetter(ExecState*, JSValue, unsigned);
 };

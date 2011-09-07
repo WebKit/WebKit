@@ -34,13 +34,7 @@ namespace JSC {
     public:
         typedef JSNonFinalObject Base;
 
-        static DebuggerActivation* create(JSGlobalData& globalData, JSObject* object)
-        {
-            DebuggerActivation* activation = new (allocateCell<DebuggerActivation>(globalData.heap)) DebuggerActivation(globalData);
-            activation->finishCreation(globalData, object);
-            return activation;
-        }
-
+        static DebuggerActivation* create(JSGlobalData&, JSObject*);
         virtual void visitChildren(SlotVisitor&);
         virtual UString className() const;
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);

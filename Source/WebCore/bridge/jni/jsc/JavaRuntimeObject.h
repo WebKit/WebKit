@@ -59,7 +59,6 @@ public:
 
 private:
     JavaRuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<JavaInstance>);
-    void finishCreation(JSGlobalObject*);
 };
 
 }

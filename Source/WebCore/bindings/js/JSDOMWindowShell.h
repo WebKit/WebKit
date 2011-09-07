@@ -55,12 +55,7 @@ namespace WebCore {
 
         DOMWindow* impl() const;
 
-        static JSDOMWindowShell* create(PassRefPtr<DOMWindow> window, JSC::Structure* structure, DOMWrapperWorld* world) 
-        {
-            JSDOMWindowShell* shell = new JSDOMWindowShell(structure, world);
-            shell->finishCreation(*world->globalData(), window);
-            return shell; 
-        }
+        static JSDOMWindowShell* create(PassRefPtr<DOMWindow>, JSC::Structure*, DOMWrapperWorld*);
 
         static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype) 
         {

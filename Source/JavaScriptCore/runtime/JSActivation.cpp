@@ -46,6 +46,7 @@ JSActivation::JSActivation(CallFrame* callFrame, FunctionExecutable* functionExe
     , m_requiresDynamicChecks(functionExecutable->usesEval())
     , m_argumentsRegister(functionExecutable->generatedBytecode().argumentsRegister())
 {
+    finishCreation(callFrame);
 }
 
 void JSActivation::finishCreation(CallFrame* callFrame)

@@ -39,12 +39,6 @@ const ClassInfo ProxyRuntimeObject::s_info = { "ProxyRuntimeObject", &RuntimeObj
 ProxyRuntimeObject::ProxyRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<ProxyInstance> instance)
     : RuntimeObject(exec, globalObject, structure, instance)
 {
-    finishCreation(globalObject);
-}
-
-void ProxyRuntimeObject::finishCreation(JSGlobalObject* globalObject)
-{
-    Base::finishCreation(globalObject);
     ASSERT(inherits(&s_info));
 }
 

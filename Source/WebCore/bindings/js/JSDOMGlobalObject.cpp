@@ -43,16 +43,10 @@ namespace WebCore {
 const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSGlobalObject::s_info, 0, 0 };
 
 JSDOMGlobalObject::JSDOMGlobalObject(JSGlobalData& globalData, Structure* structure, PassRefPtr<DOMWrapperWorld> world, JSObject* thisValue)
-    : JSGlobalObject(globalData, structure)
+    : JSGlobalObject(globalData, structure, thisValue)
     , m_currentEvent(0)
     , m_world(world)
 {
-    finishCreation(globalData, thisValue);
-}
-
-void JSDOMGlobalObject::finishCreation(JSGlobalData& globalData, JSObject* thisValue)
-{
-    Base::finishCreation(globalData, thisValue);
     ASSERT(inherits(&s_info));
 }
 

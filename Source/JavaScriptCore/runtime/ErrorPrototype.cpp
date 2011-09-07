@@ -50,9 +50,10 @@ const ClassInfo ErrorPrototype::s_info = { "Error", &ErrorInstance::s_info, 0, E
 
 ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
 
-ErrorPrototype::ErrorPrototype(ExecState* exec, Structure* structure)
+ErrorPrototype::ErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : ErrorInstance(exec->globalData(), structure)
 {
+    finishCreation(exec, globalObject);
 }
 
 void ErrorPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)

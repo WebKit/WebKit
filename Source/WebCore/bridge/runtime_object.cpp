@@ -41,6 +41,7 @@ RuntimeObject::RuntimeObject(ExecState*, JSGlobalObject* globalObject, Structure
     : JSObjectWithGlobalObject(globalObject, structure)
     , m_instance(instance)
 {
+    finishCreation(globalObject);
 }
 
 void RuntimeObject::finishCreation(JSGlobalObject* globalObject)

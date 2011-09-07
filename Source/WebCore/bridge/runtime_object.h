@@ -39,9 +39,7 @@ public:
 
     static RuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
     {
-        RuntimeObject* object = new (allocateCell<RuntimeObject>(*exec->heap())) RuntimeObject(exec, globalObject, structure, instance);
-        object->finishCreation(globalObject);
-        return object;
+        return new (allocateCell<RuntimeObject>(*exec->heap())) RuntimeObject(exec, globalObject, structure, instance);
     }
 
     virtual ~RuntimeObject();

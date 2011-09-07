@@ -297,7 +297,6 @@ JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject* globalObject, Pass
     : JSDOMWrapper(structure, globalObject)
     , m_impl(impl)
 {
-    finishCreation(globalObject->globalData(), globalObject);
     ASSERT(inherits(&s_info));
 }
 

@@ -29,9 +29,10 @@ ASSERT_CLASS_FITS_IN_CELL(StringObject);
 
 const ClassInfo StringObject::s_info = { "String", &JSWrapperObject::s_info, 0, 0 };
 
-StringObject::StringObject(JSGlobalData& globalData, Structure* structure)
+StringObject::StringObject(JSGlobalData& globalData, Structure* structure, JSString* string)
     : JSWrapperObject(globalData, structure)
 {
+    finishCreation(globalData, string);
 }
 
 void StringObject::finishCreation(JSGlobalData& globalData, JSString* string)

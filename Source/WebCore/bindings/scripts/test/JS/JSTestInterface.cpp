@@ -146,7 +146,6 @@ JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject* global
     : JSDOMWrapper(structure, globalObject)
     , m_impl(impl)
 {
-    finishCreation(globalObject->globalData(), globalObject);
     ASSERT(inherits(&s_info));
 }
 

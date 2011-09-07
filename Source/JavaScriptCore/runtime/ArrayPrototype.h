@@ -35,9 +35,7 @@ namespace JSC {
 
         static ArrayPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            ArrayPrototype* prototype = new (allocateCell<ArrayPrototype>(*exec->heap())) ArrayPrototype(globalObject, structure);
-            prototype->finishCreation(globalObject);
-            return prototype;
+            return new (allocateCell<ArrayPrototype>(*exec->heap())) ArrayPrototype(globalObject, structure);
         }
         
         bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);

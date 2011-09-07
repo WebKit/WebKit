@@ -224,7 +224,6 @@ private:
 QtPixmapRuntimeObject::QtPixmapRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
     : RuntimeObject(exec, globalObject, structure, instance)
 {
-    finishCreation(globalObject);
 }
 
 const ClassInfo QtPixmapRuntimeObject::s_info = { "QtPixmapRuntimeObject", &RuntimeObject::s_info, 0, 0 };

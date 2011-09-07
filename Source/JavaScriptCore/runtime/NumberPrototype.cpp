@@ -72,12 +72,6 @@ ASSERT_CLASS_FITS_IN_CELL(NumberPrototype);
 NumberPrototype::NumberPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : NumberObject(exec->globalData(), structure)
 {
-    finishCreation(exec, globalObject);
-}
-
-void NumberPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
-{
-    Base::finishCreation(exec->globalData());
     setInternalValue(exec->globalData(), jsNumber(0));
 
     ASSERT(inherits(&s_info));

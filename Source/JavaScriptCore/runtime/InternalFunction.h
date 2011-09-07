@@ -52,7 +52,7 @@ namespace JSC {
         // Only used to allow us to determine the JSFunction vptr
         InternalFunction(VPtrStealingHackType);
 
-        InternalFunction(JSGlobalObject*, Structure*);
+        InternalFunction(JSGlobalData*, JSGlobalObject*, Structure*, const Identifier&);
 
         void finishCreation(JSGlobalData&, JSGlobalObject*, const Identifier& name);
 

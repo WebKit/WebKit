@@ -1,3 +1,21 @@
+2011-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94627 and r94632.
+        http://trac.webkit.org/changeset/94627
+        http://trac.webkit.org/changeset/94632
+        https://bugs.webkit.org/show_bug.cgi?id=67698
+
+        It broke tests on GTK and Qt (Requested by Ossy on #webkit).
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        (WebKit::JSNPMethod::JSNPMethod):
+        (WebKit::JSNPMethod::create):
+        * WebProcess/Plugins/Netscape/JSNPMethod.h:
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::JSNPObject):
+        (WebKit::JSNPObject::create):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
 2011-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         fast/forms/suggested-value-crash.html crashes on Windows

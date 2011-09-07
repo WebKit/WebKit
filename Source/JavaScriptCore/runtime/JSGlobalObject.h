@@ -146,9 +146,7 @@ namespace JSC {
 
         static JSGlobalObject* create(JSGlobalData& globalData, Structure* structure)
         {
-            JSGlobalObject* globalObject = new (allocateCell<JSGlobalObject>(globalData.heap)) JSGlobalObject(globalData, structure);
-            globalObject->finishCreation(globalData, globalObject);
-            return globalObject;
+            return new (allocateCell<JSGlobalObject>(globalData.heap)) JSGlobalObject(globalData, structure);
         }
 
         static JS_EXPORTDATA const ClassInfo s_info;
@@ -161,6 +159,17 @@ namespace JSC {
             , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
             , m_evalEnabled(true)
         {
+            finishCreation(globalData, this);
+        }
+
+        JSGlobalObject(JSGlobalData& globalData, Structure* structure, JSObject* thisValue)
+            : JSVariableObject(globalData, structure, &m_symbolTable, 0)
+            , m_registerArraySize(0)
+            , m_globalScopeChain()
+            , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
+            , m_evalEnabled(true)
+        {
+            finishCreation(globalData, thisValue);
         }
 
         void finishCreation(JSGlobalData& globalData, JSObject* thisValue)

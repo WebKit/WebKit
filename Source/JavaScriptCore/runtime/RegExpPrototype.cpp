@@ -65,7 +65,6 @@ ASSERT_CLASS_FITS_IN_CELL(RegExpPrototype);
 RegExpPrototype::RegExpPrototype(ExecState*, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
     : RegExpObject(globalObject, structure, regExp)
 {
-    finishCreation(globalObject);
 }
 
 bool RegExpPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)

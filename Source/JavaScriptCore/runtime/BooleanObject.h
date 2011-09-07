@@ -35,9 +35,7 @@ namespace JSC {
 
         static BooleanObject* create(JSGlobalData& globalData, Structure* structure)
         {
-            BooleanObject* boolean = new (allocateCell<BooleanObject>(globalData.heap)) BooleanObject(globalData, structure);
-            boolean->finishCreation(globalData);
-            return boolean;
+            return new (allocateCell<BooleanObject>(globalData.heap)) BooleanObject(globalData, structure);
         }
         
         static const ClassInfo s_info;

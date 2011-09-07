@@ -27,16 +27,14 @@ namespace JSC {
 
     class MathObject : public JSObjectWithGlobalObject {
     private:
-        MathObject(JSGlobalObject*, Structure*);
+        MathObject(ExecState*, JSGlobalObject*, Structure*);
 
     public:
         typedef JSObjectWithGlobalObject Base;
 
         static MathObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            MathObject* object = new (allocateCell<MathObject>(*exec->heap())) MathObject(globalObject, structure);
-            object->finishCreation(exec, globalObject);
-            return object;
+            return new (allocateCell<MathObject>(*exec->heap())) MathObject(exec, globalObject, structure);
         }
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);

@@ -30,17 +30,16 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(NativeErrorPrototype);
 
-NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& nameAndMessage, NativeErrorConstructor* constructor)
-    : ErrorPrototype(exec, structure)
+NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& name, NativeErrorConstructor* constructor)
+    : ErrorPrototype(exec, globalObject, structure)
 {
-    finishCreation(exec, globalObject, nameAndMessage, constructor);
+    constructorBody(exec, name, constructor);
 }
 
-inline void NativeErrorPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject, const UString& nameAndMessage, NativeErrorConstructor* constructor)
+inline void NativeErrorPrototype::constructorBody(ExecState* exec, const UString& name, NativeErrorConstructor* constructor)
 {
-    Base::finishCreation(exec, globalObject);
-    putDirect(exec->globalData(), exec->propertyNames().name, jsString(exec, nameAndMessage), DontEnum);
-    putDirect(exec->globalData(), exec->propertyNames().message, jsString(exec, nameAndMessage), DontEnum);
+    putDirect(exec->globalData(), exec->propertyNames().name, jsString(exec, name), DontEnum);
+    putDirect(exec->globalData(), exec->propertyNames().message, jsEmptyString(exec), DontEnum);
     putDirect(exec->globalData(), exec->propertyNames().constructor, constructor, DontEnum);
 }
 
