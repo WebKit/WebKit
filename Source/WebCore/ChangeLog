@@ -1,3 +1,33 @@
+2011-09-06  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: do not re-create RawSourceCode when toggling pretty-print mode.
+        https://bugs.webkit.org/show_bug.cgi?id=67647
+
+        1) Implement RawSourceCode.setFormatted that allows toggling pretty-print mode on the fly without resetting everything.
+        2) Add RawSourceCode unit tests.
+        3) Remove source mapping listeners and console messages from presentation model (they live in RawSourceCode now).
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/debugger/raw-source-code.html
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype.linkifyLocation):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        (WebInspector.DebuggerPresentationModel.prototype._sourceMappingUpdated):
+        (WebInspector.DebuggerPresentationModel.prototype.setFormatSource):
+        (WebInspector.DebuggerPresentationModel.prototype._createRawSourceCodeId):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerReset):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._toggleFormatSource):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.RawSourceCode):
+        (WebInspector.RawSourceCode.prototype.get uiSourceCode):
+        (WebInspector.RawSourceCode.prototype.setFormatted):
+        (WebInspector.RawSourceCode.prototype.rawLocationToUILocation):
+        (WebInspector.RawSourceCode.prototype._saveSourceMapping):
+
 2011-09-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Implement circular tabbing through the Styles sidebar pane contents

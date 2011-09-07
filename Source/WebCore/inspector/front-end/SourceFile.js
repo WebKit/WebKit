@@ -35,18 +35,15 @@
  * @constructor
  * @extends {WebInspector.Object}
  */
-WebInspector.RawSourceCode = function(id, script, formatter, formatted)
+WebInspector.RawSourceCode = function(id, script, resource, formatter, formatted)
 {
-    this._scripts = [script];
-    this._formatter = formatter;
-    this._formatted = formatted;
-
-    if (script.sourceURL)
-        this._resource = WebInspector.networkManager.inflightResourceForURL(script.sourceURL) || WebInspector.resourceForURL(script.sourceURL);
-
     this.id = id;
     this.url = script.sourceURL;
     this.isContentScript = script.isContentScript;
+    this._scripts = [script];
+    this._formatter = formatter;
+    this._formatted = formatted;
+    this._resource = resource;
     this.messages = [];
 
     this._useTemporaryContent = this._resource && !this._resource.finished;
@@ -70,14 +67,15 @@ WebInspector.RawSourceCode.prototype = {
 
     get uiSourceCode()
     {
-        // FIXME: extract UISourceCode from RawSourceCode (currently RawSourceCode implements methods from both interfaces).
-        return this;
+        return this._uiSourceCode;
     },
 
-    get rawSourceCode()
+    setFormatted: function(formatted)
     {
-        // FIXME: extract UISourceCode from RawSourceCode (currently RawSourceCode implements methods from both interfaces).
-        return this;
+        if (this._formatted === formatted)
+            return;
+        this._formatted = formatted;
+        this._updateSourceMapping();
     },
 
     contentEdited: function()
@@ -94,7 +92,7 @@ WebInspector.RawSourceCode.prototype = {
     rawLocationToUILocation: function(rawLocation)
     {
         var location = this._mapping ? this._mapping.originalToFormatted(rawLocation) : rawLocation;
-        return new WebInspector.UILocation(this, location.lineNumber, location.columnNumber);
+        return new WebInspector.UILocation(this.uiSourceCode, location.lineNumber, location.columnNumber);
     },
 
     uiLocationToRawLocation: function(lineNumber, columnNumber)
@@ -118,12 +116,6 @@ WebInspector.RawSourceCode.prototype = {
                 closestScript = script;
         }
         return closestScript;
-    },
-
-    requestContent: function(callback)
-    {
-        // FIXME: remove this.
-        this._uiSourceCode.requestContent(callback);
     },
 
     createSourceMappingIfNeeded: function(callback)
@@ -184,7 +176,7 @@ WebInspector.RawSourceCode.prototype = {
     _createSourceMapping: function(originalContentProvider, callback)
     {
         if (!this._formatted) {
-            setTimeout(callback.bind(null, originalContentProvider, null), 0);
+            callback(originalContentProvider, null);
             return;
         }
 
@@ -202,9 +194,7 @@ WebInspector.RawSourceCode.prototype = {
 
     _saveSourceMapping: function(contentProvider, mapping)
     {
-        var oldUISourceCode;
-        if (this._uiSourceCode)
-            oldUISourceCode = this;
+        var oldUISourceCode = this._uiSourceCode;
         var uiSourceCodeId = (this._formatted ? "deobfuscated:" : "") + (this._scripts[0].sourceURL || this._scripts[0].scriptId);
         this._uiSourceCode = new WebInspector.UISourceCode(uiSourceCodeId, this.url, this.isContentScript, this, contentProvider);
         this._mapping = mapping;

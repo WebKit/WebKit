@@ -1,0 +1,17 @@
+Tests RawSourceCode class.
+
+
+Running: testScriptWithoutResource
+
+Running: testHTMLWithPendingResource
+
+Running: testHTMLWithFinishedResource
+
+Running: testContentEdited
+
+Running: testForceUpdateSourceMapping
+
+Running: testFormattingWithFinishedResource
+
+Running: testFormattingWithPendingResource
+
