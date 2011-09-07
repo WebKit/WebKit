@@ -26,7 +26,7 @@
 #ifndef JSNPObject_h
 #define JSNPObject_h
 
-#include <JavaScriptCore/JSObjectWithGlobalObject.h>
+#include <JavaScriptCore/JSObject.h>
 
 typedef void* NPIdentifier;
 struct NPObject;
@@ -37,9 +37,9 @@ class NPRuntimeObjectMap;
     
 // JSNPObject is a JSObject that wraps an NPObject.
 
-class JSNPObject : public JSC::JSObjectWithGlobalObject {
+class JSNPObject : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSObjectWithGlobalObject Base;
+    typedef JSC::JSNonFinalObject Base;
 
     static JSNPObject* create(JSC::JSGlobalObject*, NPRuntimeObjectMap*, NPObject*);
     ~JSNPObject();

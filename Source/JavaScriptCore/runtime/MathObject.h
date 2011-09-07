@@ -21,16 +21,16 @@
 #ifndef MathObject_h
 #define MathObject_h
 
-#include "JSObjectWithGlobalObject.h"
+#include "JSObject.h"
 
 namespace JSC {
 
-    class MathObject : public JSObjectWithGlobalObject {
+    class MathObject : public JSNonFinalObject {
     private:
         MathObject(ExecState*, JSGlobalObject*, Structure*);
 
     public:
-        typedef JSObjectWithGlobalObject Base;
+        typedef JSNonFinalObject Base;
 
         static MathObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {

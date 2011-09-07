@@ -73,9 +73,10 @@ void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
 
     Structure* structure = JSDOMWindow::createStructure(*JSDOMWindow::commonJSGlobalData(), 0, prototype.get());
     JSDOMWindow* jsDOMWindow = JSDOMWindow::create(*JSDOMWindow::commonJSGlobalData(), structure, domWindow, this);
-    prototypeStructure->setGlobalObject(*JSDOMWindow::commonJSGlobalData(), jsDOMWindow);
-    prototype->putAnonymousValue(*JSDOMWindow::commonJSGlobalData(), 0, jsDOMWindow);
+    prototype->structure()->setGlobalObject(*JSDOMWindow::commonJSGlobalData(), jsDOMWindow);
     setWindow(*JSDOMWindow::commonJSGlobalData(), jsDOMWindow);
+    ASSERT(jsDOMWindow->globalObject() == jsDOMWindow);
+    ASSERT(prototype->globalObject() == jsDOMWindow);
 }
 
 // ----

@@ -1,3 +1,33 @@
+2011-09-06  Oliver Hunt  <oliver@apple.com>
+
+        Remove JSObjectWithGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=67689
+
+        Reviewed by Geoff Garen.
+
+        Remove use of anonymous storage and JSObjectWithGlobalObject for
+        accessing a JSObject's global object now that they're available
+        on the object's structure.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::JSDOMWrapper::globalObject):
+        (WebCore::JSDOMWrapper::JSDOMWrapper):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initScript):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::ObjcFallbackObjectImp):
+        (JSC::Bindings::ObjcFallbackObjectImp::finishCreation):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::RuntimeObject):
+        (JSC::Bindings::RuntimeObject::finishCreation):
+        * bridge/runtime_object.h:
+
 2011-09-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac build fix after r94694.

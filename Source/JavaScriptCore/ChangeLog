@@ -1,3 +1,91 @@
+2011-09-06  Oliver Hunt  <oliver@apple.com>
+
+        Remove JSObjectWithGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=67689
+
+        Reviewed by Geoff Garen.
+
+        Remove JSObjectWithGlobalObject, and update code to stop using anonymous
+        storage to access the global object that a JSObject comes from.  Largely
+        mechanical change to remove the use of anonymous storage and JSObjectWithGlobalObject.
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::JSCallbackConstructor::JSCallbackConstructor):
+        (JSC::JSCallbackConstructor::finishCreation):
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackObject.cpp:
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::create):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::JSCallbackObject):
+        (JSC::::finishCreation):
+        (JSC::::staticFunctionGetter):
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype):
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSObjectGetPrivate):
+        (JSObjectSetPrivate):
+        (JSObjectGetPrivateProperty):
+        (JSObjectSetPrivateProperty):
+        (JSObjectDeletePrivateProperty):
+        * API/JSValueRef.cpp:
+        (JSValueIsObjectOfClass):
+        * API/JSWeakObjectMapRefPrivate.cpp:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgRepatchGetMethodFast):
+        (JSC::DFG::tryCacheGetMethod):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateJSFunction):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::patchMethodCallProto):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/DatePrototype.cpp:
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        (JSC::InternalFunction::finishCreation):
+        * runtime/InternalFunction.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::finishCreation):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::create):
+        (JSC::JSFunction::createStructure):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::JSONObject):
+        (JSC::JSONObject::finishCreation):
+        * runtime/JSONObject.h:
+        * runtime/JSObject.h:
+        (JSC::JSObject::globalObject):
+        * runtime/JSObjectWithGlobalObject.cpp: Removed.
+        * runtime/JSObjectWithGlobalObject.h: Removed.
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::isValidCallee):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::MathObject):
+        (JSC::MathObject::finishCreation):
+        * runtime/MathObject.h:
+        * runtime/NumberPrototype.cpp:
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::RegExpObject):
+        (JSC::RegExpObject::finishCreation):
+        * runtime/RegExpObject.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/Structure.h:
+        (JSC::Structure::create):
+        (JSC::Structure::globalObject):
+
 2011-09-07  Gavin Barraclough  <barraclough@apple.com>
 
         Refactor JIT checks for ObjectType into helper functions.

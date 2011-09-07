@@ -201,7 +201,7 @@ int32_t toInt32(double number)
 
 bool JSValue::isValidCallee()
 {
-    return asObject(asObject(asCell())->getAnonymousValue(0))->isGlobalObject();
+    return asObject(asCell())->globalObject();
 }
 
 } // namespace JSC

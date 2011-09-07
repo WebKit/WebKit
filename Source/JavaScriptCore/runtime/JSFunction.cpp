@@ -62,31 +62,31 @@ JSFunction::JSFunction(VPtrStealingHackType)
 }
 
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
-    : Base(globalObject, structure)
+    : Base(exec->globalData(), structure)
     , m_executable()
     , m_scopeChain(exec->globalData(), this, globalObject->globalScopeChain())
 {
 }
 
 JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChainNode)
-    : Base(scopeChainNode->globalObject.get(), scopeChainNode->globalObject->functionStructure())
+    : Base(exec->globalData(), scopeChainNode->globalObject->functionStructure())
     , m_executable(exec->globalData(), this, executable)
     , m_scopeChain(exec->globalData(), this, scopeChainNode)
 {
 }
 
-void JSFunction::finishCreation(ExecState* exec, JSGlobalObject* globalObject, int length, const Identifier& name, ExecutableBase* executable)
+void JSFunction::finishCreation(ExecState* exec, int length, const Identifier& name, ExecutableBase* executable)
 {
-    Base::finishCreation(globalObject->globalData(), globalObject);
+    Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
     m_executable.set(exec->globalData(), this, executable);
     putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
 
-void JSFunction::finishCreation(ExecState* exec, JSGlobalObject* globalObject, FunctionExecutable* executable, ScopeChainNode* scopeChainNode)
+void JSFunction::finishCreation(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChainNode)
 {
-    Base::finishCreation(globalObject->globalData(), globalObject);
+    Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
     setStructure(exec->globalData(), scopeChainNode->globalObject->namedFunctionStructure());
     putDirectOffset(exec->globalData(), scopeChainNode->globalObject->functionNameOffset(), executable->nameValue());

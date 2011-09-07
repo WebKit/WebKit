@@ -21,14 +21,14 @@
 #ifndef RegExpObject_h
 #define RegExpObject_h
 
-#include "JSObjectWithGlobalObject.h"
+#include "JSObject.h"
 #include "RegExp.h"
 
 namespace JSC {
     
-    class RegExpObject : public JSObjectWithGlobalObject {
+    class RegExpObject : public JSNonFinalObject {
     public:
-        typedef JSObjectWithGlobalObject Base;
+        typedef JSNonFinalObject Base;
 
         static RegExpObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
         {
@@ -75,7 +75,7 @@ namespace JSC {
     protected:
         RegExpObject(JSGlobalObject*, Structure*, RegExp*);
         void finishCreation(JSGlobalObject*);
-        static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | JSObjectWithGlobalObject::StructureFlags;
+        static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | Base::StructureFlags;
 
     private:
         virtual void visitChildren(SlotVisitor&);

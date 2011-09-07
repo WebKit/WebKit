@@ -156,7 +156,7 @@ namespace JSC {
         JITWriteBarrier<Structure> cachedPrototypeStructure;
         // We'd like this to actually be JSFunction, but InternalFunction and JSFunction
         // don't have a common parent class and we allow specialisation on both
-        JITWriteBarrier<JSObjectWithGlobalObject> cachedFunction;
+        JITWriteBarrier<JSObject> cachedFunction;
         JITWriteBarrier<JSObject> cachedPrototype;
         bool seen;
     };

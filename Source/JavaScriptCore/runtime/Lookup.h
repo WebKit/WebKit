@@ -24,7 +24,6 @@
 #include "CallFrame.h"
 #include "Identifier.h"
 #include "JSGlobalObject.h"
-#include "JSObject.h"
 #include "PropertySlot.h"
 #include <stdio.h>
 #include <wtf/Assertions.h>

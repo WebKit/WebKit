@@ -34,22 +34,22 @@ void InternalFunction::vtableAnchor() {}
 
 ASSERT_CLASS_FITS_IN_CELL(InternalFunction);
 
-const ClassInfo InternalFunction::s_info = { "Function", &JSObjectWithGlobalObject::s_info, 0, 0 };
+const ClassInfo InternalFunction::s_info = { "Function", &JSNonFinalObject::s_info, 0, 0 };
 
 InternalFunction::InternalFunction(VPtrStealingHackType)
-    : JSObjectWithGlobalObject(VPtrStealingHack)
+    : JSNonFinalObject(VPtrStealingHack)
 {
 }
 
-InternalFunction::InternalFunction(JSGlobalData* globalData, JSGlobalObject* globalObject, Structure* structure, const Identifier& name)
-    : JSObjectWithGlobalObject(globalObject, structure)
+InternalFunction::InternalFunction(JSGlobalData* globalData, JSGlobalObject*, Structure* structure, const Identifier& name)
+    : JSNonFinalObject(*globalData, structure)
 {
-    finishCreation(*globalData, globalObject, name);
+    finishCreation(*globalData, name);
 }
 
-void InternalFunction::finishCreation(JSGlobalData& globalData, JSGlobalObject* globalObject, const Identifier& name)
+void InternalFunction::finishCreation(JSGlobalData& globalData, const Identifier& name)
 {
-    Base::finishCreation(globalData, globalObject);
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
     putDirect(globalData, globalData.propertyNames->name, jsString(&globalData, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
 }

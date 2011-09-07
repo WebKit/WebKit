@@ -346,8 +346,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSNotAnObject.h \
 	Source/JavaScriptCore/runtime/JSObject.cpp \
 	Source/JavaScriptCore/runtime/JSObject.h \
-	Source/JavaScriptCore/runtime/JSObjectWithGlobalObject.cpp \
-	Source/JavaScriptCore/runtime/JSObjectWithGlobalObject.h \
 	Source/JavaScriptCore/runtime/JSONObject.cpp \
 	Source/JavaScriptCore/runtime/JSONObject.h \
 	Source/JavaScriptCore/runtime/JSPropertyNameIterator.cpp \

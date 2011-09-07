@@ -48,19 +48,20 @@ static NPIdentifier npIdentifierFromIdentifier(const Identifier& identifier)
     return static_cast<NPIdentifier>(IdentifierRep::get(identifier.ustring().utf8().data()));
 }
 
-const ClassInfo JSNPObject::s_info = { "NPObject", &JSObjectWithGlobalObject::s_info, 0, 0 };
+const ClassInfo JSNPObject::s_info = { "NPObject", &JSNonFinalObject::s_info, 0, 0 };
 
 JSNPObject::JSNPObject(JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject, Structure* structure)
-    : JSObjectWithGlobalObject(globalObject, structure)
+    : JSNonFinalObject(globalObject->globalData(), structure)
     , m_objectMap(objectMap)
     , m_npObject(npObject)
 {
+    ASSERT(globalObject == structure->globalObject());
     finishCreation(globalObject);
 }
 
 void JSNPObject::finishCreation(JSGlobalObject* globalObject)
 {
-    Base::finishCreation(globalObject->globalData(), globalObject);
+    Base::finishCreation(globalObject->globalData());
     ASSERT(inherits(&s_info));
 
     // We should never have an NPJSObject inside a JSNPObject.

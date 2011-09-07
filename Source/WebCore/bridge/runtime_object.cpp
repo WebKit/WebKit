@@ -35,18 +35,19 @@ using namespace WebCore;
 namespace JSC {
 namespace Bindings {
 
-const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &JSObjectWithGlobalObject::s_info, 0, 0 };
+const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &JSNonFinalObject::s_info, 0, 0 };
 
 RuntimeObject::RuntimeObject(ExecState*, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
-    : JSObjectWithGlobalObject(globalObject, structure)
+    : JSNonFinalObject(globalObject->globalData(), structure)
     , m_instance(instance)
 {
+    ASSERT(structure->globalObject() == globalObject);
     finishCreation(globalObject);
 }
 
 void RuntimeObject::finishCreation(JSGlobalObject* globalObject)
 {
-    Base::finishCreation(globalObject->globalData(), globalObject);
+    Base::finishCreation(globalObject->globalData());
     ASSERT(inherits(&s_info));
 }
 

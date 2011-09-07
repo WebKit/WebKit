@@ -194,19 +194,20 @@ unsigned int ObjcArray::getLength() const
     return [_array.get() count];
 }
 
-const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", &JSObjectWithGlobalObject::s_info, 0, 0 };
+const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", &JSNonFinalObject::s_info, 0, 0 };
 
 ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Structure* structure, ObjcInstance* i, const Identifier& propertyName)
-    : JSObjectWithGlobalObject(globalObject, structure)
+    : JSNonFinalObject(globalObject->globalData(), structure)
     , _instance(i)
     , _item(propertyName)
 {
     finishCreation(globalObject);
+    ASSERT(structure->globalObject() == globalObject);
 }
 
 void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
 {
-    Base::finishCreation(globalObject->globalData(), globalObject);
+    Base::finishCreation(globalObject->globalData());
     ASSERT(inherits(&s_info));
 }
 

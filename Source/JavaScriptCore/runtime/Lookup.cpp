@@ -70,14 +70,13 @@ void HashTable::deleteTable() const
 
 void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
 {
-    ASSERT(thisObj->structure()->anonymousSlotCount() > 0);
-    ASSERT(thisObj->getAnonymousValue(0).isCell() && asObject(thisObj->getAnonymousValue(0).asCell())->isGlobalObject());
+    ASSERT(thisObj->globalObject());
     ASSERT(entry->attributes() & Function);
     WriteBarrierBase<Unknown>* location = thisObj->getDirectLocation(exec->globalData(), propertyName);
 
     if (!location) {
         JSFunction* function;
-        JSGlobalObject* globalObject = asGlobalObject(thisObj->getAnonymousValue(0).asCell());
+        JSGlobalObject* globalObject = thisObj->globalObject();
 #if ENABLE(JIT)
         if (entry->generator())
             function = JSFunction::create(exec, globalObject, globalObject->functionStructure(), entry->functionLength(), propertyName, exec->globalData().getHostFunction(entry->function(), entry->generator()));

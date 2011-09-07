@@ -846,14 +846,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSObjectWithGlobalObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\JSObjectWithGlobalObject.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\JSONObject.cpp"
 				>
 			</File>

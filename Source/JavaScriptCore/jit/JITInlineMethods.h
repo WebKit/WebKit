@@ -423,14 +423,6 @@ inline void JIT::emitAllocateJSFunction(FunctionExecutable* executable, Register
     // store the function's executable member
     storePtr(TrustedImmPtr(executable), Address(result, JSFunction::offsetOfExecutable()));
 
-    
-    // store the function's global object
-    int globalObjectOffset = sizeof(JSValue) * JSFunction::GlobalObjectSlot;
-    storePtr(TrustedImmPtr(m_codeBlock->globalObject()), Address(regT1, globalObjectOffset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
-#if USE(JSVALUE32_64)
-    store32(TrustedImm32(JSValue::CellTag), Address(regT1, globalObjectOffset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
-#endif
-
     // store the function's name
     ASSERT(executable->nameValue());
     int functionNameOffset = sizeof(JSValue) * m_codeBlock->globalObject()->functionNameOffset();

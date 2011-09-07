@@ -62,11 +62,11 @@ namespace JSC {
 
         typedef JSCell Base;
 
-        static Structure* create(JSGlobalData& globalData, JSGlobalObject*, JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
+        static Structure* create(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
         {
             ASSERT(globalData.structureStructure);
             ASSERT(classInfo);
-            Structure* structure = new (allocateCell<Structure>(globalData.heap)) Structure(globalData, prototype, typeInfo, anonymousSlotCount, classInfo);
+            Structure* structure = new (allocateCell<Structure>(globalData.heap)) Structure(globalData, globalObject, prototype, typeInfo, anonymousSlotCount, classInfo);
             structure->finishCreation(globalData);
             return structure;
         }
@@ -121,7 +121,7 @@ namespace JSC {
 
         const TypeInfo& typeInfo() const { ASSERT(structure()->classInfo() == &s_info); return m_typeInfo; }
 
-        JSGlobalObject* globalObject() { return m_globalObject.get(); }
+        JSGlobalObject* globalObject() const { return m_globalObject.get(); }
         void setGlobalObject(JSGlobalData& globalData, JSGlobalObject* globalObject) { m_globalObject.set(globalData, this, globalObject); }
         
         JSValue storedPrototype() const { return m_prototype.get(); }
@@ -191,7 +191,7 @@ namespace JSC {
         static JS_EXPORTDATA const ClassInfo s_info;
 
     private:
-        Structure(JSGlobalData&, JSValue prototype, const TypeInfo&, unsigned anonymousSlotCount, const ClassInfo*);
+        Structure(JSGlobalData&, JSGlobalObject*, JSValue prototype, const TypeInfo&, unsigned anonymousSlotCount, const ClassInfo*);
         Structure(JSGlobalData&);
         Structure(JSGlobalData&, const Structure*);
 

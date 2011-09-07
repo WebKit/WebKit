@@ -25,6 +25,7 @@
 #include "BigInteger.h"
 #include "Error.h"
 #include "JSFunction.h"
+#include "JSGlobalObject.h"
 #include "JSString.h"
 #include "Operations.h"
 #include "Uint16WithFraction.h"

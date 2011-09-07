@@ -24,16 +24,16 @@
 #ifndef InternalFunction_h
 #define InternalFunction_h
 
-#include "JSObjectWithGlobalObject.h"
+#include "JSObject.h"
 #include "Identifier.h"
 
 namespace JSC {
 
     class FunctionPrototype;
 
-    class InternalFunction : public JSObjectWithGlobalObject {
+    class InternalFunction : public JSNonFinalObject {
     public:
-        typedef JSObjectWithGlobalObject Base;
+        typedef JSNonFinalObject Base;
 
         static JS_EXPORTDATA const ClassInfo s_info;
 
@@ -54,7 +54,7 @@ namespace JSC {
 
         InternalFunction(JSGlobalData*, JSGlobalObject*, Structure*, const Identifier&);
 
-        void finishCreation(JSGlobalData&, JSGlobalObject*, const Identifier& name);
+        void finishCreation(JSGlobalData&, const Identifier& name);
 
     private:
         virtual CallType getCallData(CallData&) = 0;

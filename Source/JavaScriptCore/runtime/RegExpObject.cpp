@@ -50,7 +50,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(RegExpObject);
 
-const ClassInfo RegExpObject::s_info = { "RegExp", &JSObjectWithGlobalObject::s_info, 0, ExecState::regExpTable };
+const ClassInfo RegExpObject::s_info = { "RegExp", &JSNonFinalObject::s_info, 0, ExecState::regExpTable };
 
 /* Source for RegExpObject.lut.h
 @begin regExpTable
@@ -63,7 +63,7 @@ const ClassInfo RegExpObject::s_info = { "RegExp", &JSObjectWithGlobalObject::s_
 */
 
 RegExpObject::RegExpObject(JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
-    : JSObjectWithGlobalObject(globalObject, structure)
+    : JSNonFinalObject(globalObject->globalData(), structure)
     , d(adoptPtr(new RegExpObjectData(globalObject->globalData(), this, regExp)))
 {
     finishCreation(globalObject);
@@ -71,7 +71,7 @@ RegExpObject::RegExpObject(JSGlobalObject* globalObject, Structure* structure, R
 
 void RegExpObject::finishCreation(JSGlobalObject* globalObject)
 {
-    Base::finishCreation(globalObject->globalData(), globalObject);
+    Base::finishCreation(globalObject->globalData());
     ASSERT(inherits(&s_info));
 }
 

@@ -54,14 +54,14 @@ static EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState*);
 namespace JSC {
 
 JSONObject::JSONObject(JSGlobalObject* globalObject, Structure* structure)
-    : JSObjectWithGlobalObject(globalObject, structure)
+    : JSNonFinalObject(globalObject->globalData(), structure)
 {
     finishCreation(globalObject);
 }
 
 void JSONObject::finishCreation(JSGlobalObject* globalObject)
 {
-    Base::finishCreation(globalObject->globalData(), globalObject);
+    Base::finishCreation(globalObject->globalData());
     ASSERT(inherits(&s_info));
 }
 
@@ -589,7 +589,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
 
 // ------------------------------ JSONObject --------------------------------
 
-const ClassInfo JSONObject::s_info = { "JSON", &JSObjectWithGlobalObject::s_info, 0, ExecState::jsonTable };
+const ClassInfo JSONObject::s_info = { "JSON", &JSNonFinalObject::s_info, 0, ExecState::jsonTable };
 
 /* Source for JSONObject.lut.h
 @begin jsonTable

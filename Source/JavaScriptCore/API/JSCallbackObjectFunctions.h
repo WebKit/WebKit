@@ -50,11 +50,11 @@ inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(JSVa
 }
 
 template <class Parent>
-JSCallbackObject<Parent>::JSCallbackObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSClassRef jsClass, void* data)
-    : Parent(globalObject, structure)
+JSCallbackObject<Parent>::JSCallbackObject(ExecState* exec, Structure* structure, JSClassRef jsClass, void* data)
+    : Parent(exec->globalData(), structure)
     , m_callbackObjectData(adoptPtr(new JSCallbackObjectData(data, jsClass)))
 {
-    finishCreation(exec, globalObject);
+    finishCreation(exec);
 }
 
 // Global object constructor.
@@ -68,9 +68,9 @@ JSCallbackObject<Parent>::JSCallbackObject(JSGlobalData& globalData, JSClassRef 
 }
 
 template <class Parent>
-void JSCallbackObject<Parent>::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
+void JSCallbackObject<Parent>::finishCreation(ExecState* exec)
 {
-    Base::finishCreation(globalObject->globalData(), globalObject);
+    Base::finishCreation(exec->globalData());
     ASSERT(Parent::inherits(&s_info));
     init(exec);
 }
@@ -574,7 +574,7 @@ JSValue JSCallbackObject<Parent>::staticFunctionGetter(ExecState* exec, JSValue 
             if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.impl())) {
                 if (JSObjectCallAsFunctionCallback callAsFunction = entry->callAsFunction) {
                     
-                    JSObject* o = JSCallbackFunction::create(exec, asGlobalObject(thisObj->getAnonymousValue(0)), callAsFunction, propertyName);
+                    JSObject* o = JSCallbackFunction::create(exec, thisObj->globalObject(), callAsFunction, propertyName);
                     thisObj->putDirect(exec->globalData(), propertyName, o, entry->attributes);
                     return o;
                 }

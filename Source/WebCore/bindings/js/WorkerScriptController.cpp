@@ -92,8 +92,6 @@ void WorkerScriptController::initScript()
         ASSERT(m_workerContextWrapper->structure()->globalObject() == m_workerContextWrapper);
         workerContextPrototype->structure()->setGlobalObject(*m_globalData, m_workerContextWrapper.get());
         dedicatedContextPrototype->structure()->setGlobalObject(*m_globalData, m_workerContextWrapper.get());
-        workerContextPrototype->putAnonymousValue(*m_globalData, 0, m_workerContextWrapper.get());
-        dedicatedContextPrototype->putAnonymousValue(*m_globalData, 0, m_workerContextWrapper.get());
 #if ENABLE(SHARED_WORKERS)
     } else {
         ASSERT(m_workerContext->isSharedWorkerContext());
@@ -102,12 +100,12 @@ void WorkerScriptController::initScript()
         Structure* structure = JSSharedWorkerContext::createStructure(*m_globalData, 0, sharedContextPrototype.get());
 
         m_workerContextWrapper.set(*m_globalData, JSSharedWorkerContext::create(*m_globalData, structure, m_workerContext->toSharedWorkerContext()));
-        m_workerContextWrapper->structure()->setGlobalObject(*m_globalData, m_workerContextWrapper.get());
+        workerContextPrototype->structure()->setGlobalObject(*m_globalData, m_workerContextWrapper.get());
         sharedContextPrototype->structure()->setGlobalObject(*m_globalData, m_workerContextWrapper.get());
-        workerContextPrototype->putAnonymousValue(*m_globalData, 0, m_workerContextWrapper.get());
-        sharedContextPrototype->putAnonymousValue(*m_globalData, 0, m_workerContextWrapper.get());
 #endif
     }
+    ASSERT(m_workerContextWrapper->globalObject() == m_workerContextWrapper);
+    ASSERT(asObject(m_workerContextWrapper->prototype())->globalObject() == m_workerContextWrapper);
 }
 
 ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)

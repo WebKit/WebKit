@@ -26,15 +26,15 @@
 #ifndef JSONObject_h
 #define JSONObject_h
 
-#include "JSObjectWithGlobalObject.h"
+#include "JSObject.h"
 
 namespace JSC {
 
     class Stringifier;
 
-    class JSONObject : public JSObjectWithGlobalObject {
+    class JSONObject : public JSNonFinalObject {
     public:
-        typedef JSObjectWithGlobalObject Base;
+        typedef JSNonFinalObject Base;
 
         static JSONObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {

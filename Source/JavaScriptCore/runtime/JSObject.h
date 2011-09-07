@@ -252,6 +252,13 @@ namespace JSC {
             return locationForOffset(index)->get();
         }
 
+        JSGlobalObject* globalObject() const
+        {
+            ASSERT(structure()->globalObject());
+            ASSERT(!isGlobalObject() || ((JSObject*)structure()->globalObject()) == this);
+            return structure()->globalObject();
+        }
+        
         static size_t offsetOfInlineStorage();
         static size_t offsetOfPropertyStorage();
         static size_t offsetOfInheritorID();

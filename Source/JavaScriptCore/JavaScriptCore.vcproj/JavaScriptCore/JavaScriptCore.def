@@ -12,15 +12,13 @@ EXPORTS
     ??0JSByteArray@JSC@@AAE@PAVExecState@1@PAVStructure@1@PAVByteArray@WTF@@@Z
     ??0JSFunction@JSC@@AAE@PAVExecState@1@PAVJSGlobalObject@1@PAVStructure@1@@Z
     ??0JSLock@JSC@@QAE@PAVExecState@1@@Z
-    ??0JSObjectWithGlobalObject@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@@Z
-    ??0JSObjectWithGlobalObject@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@@Z
     ??0MD5@WTF@@QAE@XZ
     ??0Mutex@WTF@@QAE@XZ
     ??0RefCountedLeakCounter@WTF@@QAE@PBD@Z
     ??0RegExpObject@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@PAVRegExp@1@@Z
     ??0SHA1@WTF@@QAE@XZ
     ??0StringObject@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@PAVJSString@1@@Z
-    ??0Structure@JSC@@AAE@AAVJSGlobalData@1@VJSValue@1@ABVTypeInfo@1@IPBUClassInfo@1@@Z
+    ??0Structure@JSC@@AAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@VJSValue@1@ABVTypeInfo@1@IPBUClassInfo@1@@Z
     ??0ThreadCondition@WTF@@QAE@XZ
     ??0UString@JSC@@QAE@PBD@Z
     ??0UString@JSC@@QAE@PBDI@Z
@@ -177,8 +175,7 @@ EXPORTS
     ?finalize@WeakHandleOwner@JSC@@UAEXV?$Handle@W4Unknown@JSC@@@2@PAX@Z
     ?finishCreation@JSArray@JSC@@IAEXAAVJSGlobalData@2@@Z
     ?finishCreation@JSArray@JSC@@IAEXAAVJSGlobalData@2@ABVArgList@2@@Z
-    ?finishCreation@JSFunction@JSC@@IAEXPAVExecState@2@PAVJSGlobalObject@2@HABVIdentifier@2@PAVExecutableBase@2@@Z
-    ?finishCreation@JSObjectWithGlobalObject@JSC@@IAEXAAVJSGlobalData@2@PAVJSGlobalObject@2@@Z
+    ?finishCreation@JSFunction@JSC@@IAEXPAVExecState@2@HABVIdentifier@2@PAVExecutableBase@2@@Z
     ?focus@Profile@JSC@@QAEXPBVProfileNode@2@@Z
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@H@Z
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@I@Z
@@ -218,7 +215,6 @@ EXPORTS
     ?getUInt32@JSCell@JSC@@UBE_NAAI@Z
     ?getter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
     ?globalExec@JSGlobalObject@JSC@@QAEPAVExecState@2@XZ
-    ?globalObject@JSObjectWithGlobalObject@JSC@@QBEPAVJSGlobalObject@2@XZ
     ?globalObjectCount@Heap@JSC@@QAEIXZ
     ?grow@HandleHeap@JSC@@AAEXXZ
     ?hasInstance@JSObject@JSC@@UAE_NPAVExecState@2@VJSValue@2@1@Z

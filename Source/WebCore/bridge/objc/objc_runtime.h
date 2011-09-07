@@ -30,7 +30,6 @@
 #include "JSDOMBinding.h"
 #include "objc_header.h"
 #include <runtime/JSGlobalObject.h>
-#include <runtime/JSObjectWithGlobalObject.h>
 #include <wtf/RetainPtr.h>
 
 namespace JSC {
@@ -91,9 +90,9 @@ private:
     RetainPtr<ObjectStructPtr> _array;
 };
 
-class ObjcFallbackObjectImp : public JSObjectWithGlobalObject {
+class ObjcFallbackObjectImp : public JSNonFinalObject {
 public:
-    typedef JSObjectWithGlobalObject Base;
+    typedef JSNonFinalObject Base;
 
     static ObjcFallbackObjectImp* create(ExecState* exec, JSGlobalObject* globalObject, ObjcInstance* instance, const Identifier& propertyName)
     {

@@ -1,3 +1,17 @@
+2011-09-06  Oliver Hunt  <oliver@apple.com>
+
+        Remove JSObjectWithGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=67689
+
+        Reviewed by Geoff Garen.
+
+        Remove JSObjectWithGlobalObject usage.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::JSNPObject):
+        (WebKit::JSNPObject::finishCreation):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
 2011-09-05  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt][WK2] Make TiledDrawingArea request tiles only in the direction the viewport is panned to.

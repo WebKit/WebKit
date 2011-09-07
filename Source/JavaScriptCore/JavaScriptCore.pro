@@ -156,7 +156,6 @@ SOURCES += \
     runtime/JSLock.cpp \
     runtime/JSNotAnObject.cpp \
     runtime/JSObject.cpp \
-    runtime/JSObjectWithGlobalObject.cpp \
     runtime/JSONObject.cpp \
     runtime/JSPropertyNameIterator.cpp \
     runtime/JSStaticScopeObject.cpp \

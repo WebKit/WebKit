@@ -1526,7 +1526,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_method_check)
         && specific
         ) {
 
-        JSObjectWithGlobalObject* callee = (JSObjectWithGlobalObject*)specific;
+        JSObject* callee = asObject(specific);
 
         // Since we're accessing a prototype in a loop, it's a good bet that it
         // should not be treated as a dictionary.

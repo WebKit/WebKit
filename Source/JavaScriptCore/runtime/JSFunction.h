@@ -24,7 +24,7 @@
 #ifndef JSFunction_h
 #define JSFunction_h
 
-#include "JSObjectWithGlobalObject.h"
+#include "JSObject.h"
 
 namespace JSC {
 
@@ -41,7 +41,7 @@ namespace JSC {
 
     EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
 
-    class JSFunction : public JSObjectWithGlobalObject {
+    class JSFunction : public JSNonFinalObject {
         friend class JIT;
         friend class DFG::JITCodeGenerator;
         friend class JSGlobalData;
@@ -50,28 +50,35 @@ namespace JSC {
         JSFunction(ExecState*, FunctionExecutable*, ScopeChainNode*);
         
     public:
-        typedef JSObjectWithGlobalObject Base;
+        typedef JSNonFinalObject Base;
 
         static JSFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, int length, const Identifier& name, NativeFunction nativeFunction)
         {
+            ASSERT(structure->globalObject());
+            ASSERT(structure->globalObject() == globalObject);
+            
             ExecutableBase* executable = (ExecutableBase*)exec->globalData().getHostFunction(nativeFunction);
             JSFunction* function = new (allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, globalObject, structure);
             // Can't do this during initialization because getHostFunction might do a GC allocation.
-            function->finishCreation(exec, globalObject, length, name, executable);
+            function->finishCreation(exec, length, name, executable);
             return function;
         }
 
         static JSFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, int length, const Identifier& name, NativeExecutable* nativeExecutable)
         {
+            ASSERT(structure->globalObject());
+            ASSERT(structure->globalObject() == globalObject);
+
             JSFunction* function = new (allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, globalObject, structure);
-            function->finishCreation(exec, globalObject, length, name, (ExecutableBase*)nativeExecutable);
+            function->finishCreation(exec, length, name, (ExecutableBase*)nativeExecutable);
             return function;
         }
 
         static JSFunction* create(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChain)
         {
             JSFunction* function = new (allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, executable, scopeChain);
-            function->finishCreation(exec, scopeChain->globalObject.get(), executable, scopeChain);
+            ASSERT(function->structure()->globalObject());
+            function->finishCreation(exec, executable, scopeChain);
             return function;
         }
         
@@ -110,7 +117,8 @@ namespace JSC {
         static JS_EXPORTDATA const ClassInfo s_info;
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
-        { 
+        {
+            ASSERT(globalObject);
             return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); 
         }
 
@@ -132,8 +140,8 @@ namespace JSC {
     protected:
         const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
-        void finishCreation(ExecState*, JSGlobalObject*, int length, const Identifier& name, ExecutableBase*);
-        void finishCreation(ExecState*, JSGlobalObject*, FunctionExecutable*, ScopeChainNode*);
+        void finishCreation(ExecState*, int length, const Identifier& name, ExecutableBase*);
+        void finishCreation(ExecState*, FunctionExecutable*, ScopeChainNode*);
 
     private:
         explicit JSFunction(VPtrStealingHackType);

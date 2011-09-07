@@ -28,14 +28,13 @@
 
 #include "BridgeJSC.h"
 #include <runtime/JSGlobalObject.h>
-#include <runtime/JSObjectWithGlobalObject.h>
 
 namespace JSC {
 namespace Bindings {
 
-class RuntimeObject : public JSObjectWithGlobalObject {
+class RuntimeObject : public JSNonFinalObject {
 public:
-    typedef JSObjectWithGlobalObject Base;
+    typedef JSNonFinalObject Base;
 
     static RuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
     {
@@ -75,7 +74,7 @@ public:
 protected:
     RuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<Instance>);
     void finishCreation(JSGlobalObject*);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObjectWithGlobalObject::StructureFlags;
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | Base::StructureFlags;
 
 private:
     static JSValue fallbackObjectGetter(ExecState*, JSValue, const Identifier&);

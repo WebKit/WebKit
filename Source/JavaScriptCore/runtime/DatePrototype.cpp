@@ -27,6 +27,7 @@
 #include "DateConversion.h"
 #include "DateInstance.h"
 #include "Error.h"
+#include "JSGlobalObject.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
 #include "Lookup.h"
