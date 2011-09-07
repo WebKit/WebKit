@@ -50,6 +50,7 @@ private:
     V8WorkerContextErrorHandler(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext);
 
     virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
+    virtual bool shouldPreventDefault(v8::Local<v8::Value> returnValue);
 };
 
 } // namespace WebCore

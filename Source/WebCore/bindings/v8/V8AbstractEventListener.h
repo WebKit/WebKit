@@ -123,6 +123,8 @@ namespace WebCore {
 
         virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsevent, Event*) = 0;
 
+        virtual bool shouldPreventDefault(v8::Local<v8::Value> returnValue);
+
         v8::Persistent<v8::Object> m_listener;
 
         // Indicates if this is an HTML type listener.

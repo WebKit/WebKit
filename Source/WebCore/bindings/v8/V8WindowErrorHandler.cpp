@@ -57,10 +57,13 @@ v8::Local<v8::Value> V8WindowErrorHandler::callListenerFunction(ScriptExecutionC
         v8::TryCatch tryCatch;
         tryCatch.SetVerbose(true);
         returnValue = callFunction->Call(thisValue, 3, parameters);
-        if (!tryCatch.HasCaught() && !returnValue.IsEmpty() && returnValue->IsBoolean() && returnValue->BooleanValue())
-            event->preventDefault();
     }
     return returnValue;
+}
+
+bool V8WindowErrorHandler::shouldPreventDefault(v8::Local<v8::Value> returnValue)
+{
+    return returnValue->IsBoolean() && returnValue->BooleanValue();
 }
 
 } // namespace WebCore
