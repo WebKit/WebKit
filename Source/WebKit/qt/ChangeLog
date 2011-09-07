@@ -1,3 +1,10 @@
+2011-09-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r94620.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createFrame):
+
 2011-09-06  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Move away from QPointer as it is slow and it has a replacement QWeakPointer.

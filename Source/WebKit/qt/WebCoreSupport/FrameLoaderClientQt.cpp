@@ -1324,7 +1324,7 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
     // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
     if (!webFrame.data()->d->frame->page()) {
         frameData.frame.release();
-        ASSERT(webFrame.data().isNull());
+        ASSERT(webFrame.isNull());
         return 0;
     }
 
