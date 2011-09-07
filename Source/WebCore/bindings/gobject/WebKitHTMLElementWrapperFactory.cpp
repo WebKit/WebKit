@@ -41,7 +41,6 @@
 #include "HTMLBRElement.h"
 #include "HTMLBaseElement.h"
 #include "HTMLBaseFontElement.h"
-#include "HTMLBlockquoteElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLCanvasElement.h"
@@ -101,7 +100,6 @@
 #include "webkit/WebKitDOMHTMLBRElementPrivate.h"
 #include "webkit/WebKitDOMHTMLBaseElementPrivate.h"
 #include "webkit/WebKitDOMHTMLBaseFontElementPrivate.h"
-#include "webkit/WebKitDOMHTMLBlockquoteElementPrivate.h"
 #include "webkit/WebKitDOMHTMLBodyElementPrivate.h"
 #include "webkit/WebKitDOMHTMLButtonElementPrivate.h"
 #include "webkit/WebKitDOMHTMLCanvasElementPrivate.h"
@@ -204,11 +202,6 @@ static gpointer createBaseWrapper(PassRefPtr<HTMLElement> element)
 static gpointer createBaseFontWrapper(PassRefPtr<HTMLElement> element)
 {
     return wrapHTMLBaseFontElement(static_cast<HTMLBaseFontElement*>(element.get()));
-}
-
-static gpointer createBlockquoteWrapper(PassRefPtr<HTMLElement> element)
-{
-    return wrapHTMLBlockquoteElement(static_cast<HTMLBlockquoteElement*>(element.get()));
 }
 
 static gpointer createBodyWrapper(PassRefPtr<HTMLElement> element)
@@ -479,7 +472,7 @@ gpointer createHTMLElementWrapper(PassRefPtr<WebCore::HTMLElement> element)
        map.set(areaTag.localName().impl(), createAreaWrapper);
        map.set(baseTag.localName().impl(), createBaseWrapper);
        map.set(basefontTag.localName().impl(), createBaseFontWrapper);
-       map.set(blockquoteTag.localName().impl(), createBlockquoteWrapper);
+       map.set(blockquoteTag.localName().impl(), createQuoteWrapper);
        map.set(bodyTag.localName().impl(), createBodyWrapper);
        map.set(brTag.localName().impl(), createBRWrapper);
        map.set(buttonTag.localName().impl(), createButtonWrapper);
