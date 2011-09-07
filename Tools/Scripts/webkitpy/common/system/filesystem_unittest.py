@@ -42,11 +42,52 @@ import unittest
 from filesystem import FileSystem
 
 
-class FileSystemTest(unittest.TestCase):
+class GenericFileSystemTests(object):
+    """Tests that should pass on either a real or mock filesystem."""
+    def setup_generic_test_dir(self):
+        fs = self.fs
+        self.generic_test_dir = str(self.fs.mkdtemp())
+        self.orig_cwd = fs.getcwd()
+        fs.chdir(self.generic_test_dir)
+        fs.write_text_file('foo.txt', 'foo')
+        fs.write_text_file('foobar', 'foobar')
+        fs.maybe_make_directory('foodir')
+        fs.write_text_file(fs.join('foodir', 'baz'), 'baz')
+        fs.chdir(self.orig_cwd)
+
+    def teardown_generic_test_dir(self):
+        self.fs.rmtree(self.generic_test_dir)
+        self.fs.chdir(self.orig_cwd)
+        self.generic_test_dir = None
+
+    def test_glob__trailing_asterisk(self):
+        self.fs.chdir(self.generic_test_dir)
+        self.assertEquals(set(self.fs.glob('fo*')), set(['foo.txt', 'foobar', 'foodir']))
+
+    def test_glob__leading_asterisk(self):
+        self.fs.chdir(self.generic_test_dir)
+        self.assertEquals(set(self.fs.glob('*xt')), set(['foo.txt']))
+
+    def test_glob__middle_asterisk(self):
+        self.fs.chdir(self.generic_test_dir)
+        self.assertEquals(set(self.fs.glob('f*r')), set(['foobar', 'foodir']))
+
+    def test_glob__period_is_escaped(self):
+        self.fs.chdir(self.generic_test_dir)
+        self.assertEquals(set(self.fs.glob('foo.*')), set(['foo.txt']))
+
+class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
     def setUp(self):
+        self.fs = FileSystem()
+        self.setup_generic_test_dir()
+
         self._this_dir = os.path.dirname(os.path.abspath(__file__))
         self._missing_file = os.path.join(self._this_dir, 'missing_file.py')
         self._this_file = os.path.join(self._this_dir, 'filesystem_unittest.py')
+
+    def tearDown(self):
+        self.teardown_generic_test_dir()
+        self.fs = None
 
     def test_chdir(self):
         fs = FileSystem()
@@ -195,11 +236,11 @@ class FileSystemTest(unittest.TestCase):
         self.assertRaises(IOError, fs.read_text_file, self._missing_file)
 
     def test_remove_file_with_retry(self):
-        FileSystemTest._remove_failures = 2
+        RealFileSystemTest._remove_failures = 2
 
         def remove_with_exception(filename):
-            FileSystemTest._remove_failures -= 1
-            if FileSystemTest._remove_failures >= 0:
+            RealFileSystemTest._remove_failures -= 1
+            if RealFileSystemTest._remove_failures >= 0:
                 try:
                     raise WindowsError
                 except NameError:
@@ -207,7 +248,7 @@ class FileSystemTest(unittest.TestCase):
 
         fs = FileSystem()
         self.assertTrue(fs.remove('filename', remove_with_exception))
-        self.assertEquals(-1, FileSystemTest._remove_failures)
+        self.assertEquals(-1, RealFileSystemTest._remove_failures)
 
     def test_sep(self):
         fs = FileSystem()
@@ -221,7 +262,6 @@ class FileSystemTest(unittest.TestCase):
             fs.sep = ' '
         fs = FileSystem()
         self.assertRaises(AttributeError, assign_sep)
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,3 +1,24 @@
+2011-09-01  Dirk Pranke  <dpranke@chromium.org>
+
+        fix MockFileSystem.glob(), refactor filesystem tests
+        https://bugs.webkit.org/show_bug.cgi?id=67462
+
+        Reviewed by Eric Seidel.
+
+        In debugging why my proposed change for MockFileSystem.glob()
+        in bug 66228 didn't work, I stumbled across two real bugs
+        that cancelled each other out for the unit tests. I fixed those
+        (glob shouldn't recurse into subdirs, and we weren't populating
+        self.dirs from self.files properly).
+
+        I have also created a "mixin" class for tests that can be shared
+        between the real filesystem and the mock filesystem - MockFileSystem
+        is being used enough it needs its own tests.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/common/system/filesystem_mock_unittest.py: Added.
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+
 2011-09-06  Anders Carlsson  <andersca@apple.com>
 
         Move NPAPI headers in bridge to plugins
