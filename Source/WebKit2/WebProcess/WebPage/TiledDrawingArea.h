@@ -75,6 +75,7 @@ private:
 
     bool m_suspended;
     bool m_isWaitingForUIProcess;
+    bool m_didSendTileUpdate;
     WebCore::IntRect m_visibleContentRect;
 
     OwnPtr<WebCore::TiledBackingStore> m_mainBackingStore;

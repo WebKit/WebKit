@@ -43,6 +43,7 @@ TiledDrawingArea::TiledDrawingArea(WebPage* webPage)
     : DrawingArea(DrawingAreaTypeTiled, webPage)
     , m_suspended(false)
     , m_isWaitingForUIProcess(false)
+    , m_didSendTileUpdate(false)
     , m_mainBackingStore(adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this))))
 {
 }
@@ -115,10 +116,13 @@ void TiledDrawingArea::tiledBackingStorePaint(GraphicsContext* graphicsContext, 
 
 void TiledDrawingArea::tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea)
 {
-    // Since we know that all tile updates following a page invalidate will all be rendered
-    // in one paint pass for all the tiles, we can send the swap tile message here.
-    m_webPage->send(Messages::DrawingAreaProxy::DidRenderFrame());
-    m_isWaitingForUIProcess = true;
+    if (m_didSendTileUpdate) {
+        // Since we know that all tile updates following a page invalidate will all be rendered
+        // in one paint pass for all the tiles, we can send the swap tile message here.
+        m_webPage->send(Messages::DrawingAreaProxy::DidRenderFrame());
+        m_isWaitingForUIProcess = true;
+        m_didSendTileUpdate = false;
+    }
 }
 
 bool TiledDrawingArea::tiledBackingStoreUpdatesAllowed() const
@@ -144,6 +148,7 @@ Color TiledDrawingArea::tiledBackingStoreBackgroundColor() const
 void TiledDrawingArea::createTile(int tileID, const UpdateInfo& updateInfo)
 {
     m_webPage->send(Messages::DrawingAreaProxy::CreateTile(tileID, updateInfo));
+    m_didSendTileUpdate = true;
 
     if (m_previousBackingStore && m_mainBackingStore->coverageRatio(m_visibleContentRect) >= 1.0f)
         m_previousBackingStore.clear();
@@ -151,6 +156,7 @@ void TiledDrawingArea::createTile(int tileID, const UpdateInfo& updateInfo)
 void TiledDrawingArea::updateTile(int tileID, const UpdateInfo& updateInfo)
 {
     m_webPage->send(Messages::DrawingAreaProxy::UpdateTile(tileID, updateInfo));
+    m_didSendTileUpdate = true;
 }
 void TiledDrawingArea::removeTile(int tileID)
 {
