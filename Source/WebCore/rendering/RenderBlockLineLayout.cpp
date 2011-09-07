@@ -1168,8 +1168,9 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
             trailingFloatsLineBox->setConstructed();
             GlyphOverflowAndFallbackFontsMap textBoxDataMap;
             VerticalPositionCache verticalPositionCache;
-            trailingFloatsLineBox->alignBoxesInBlockDirection(logicalHeight(), textBoxDataMap, verticalPositionCache);
             int blockLogicalHeight = logicalHeight();
+            trailingFloatsLineBox->alignBoxesInBlockDirection(blockLogicalHeight, textBoxDataMap, verticalPositionCache);
+            trailingFloatsLineBox->setLineTopBottomPositions(blockLogicalHeight, blockLogicalHeight, blockLogicalHeight, blockLogicalHeight);
             IntRect logicalLayoutOverflow(0, blockLogicalHeight, 1, bottomLayoutOverflow - blockLogicalHeight);
             IntRect logicalVisualOverflow(0, blockLogicalHeight, 1, bottomVisualOverflow - blockLogicalHeight);
             trailingFloatsLineBox->setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow, trailingFloatsLineBox->lineTop(), trailingFloatsLineBox->lineBottom());

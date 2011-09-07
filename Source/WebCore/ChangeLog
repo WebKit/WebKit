@@ -1,3 +1,17 @@
+2011-09-07  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67286
+
+        REGRESSION: css2.1/t090204-display-change-01-b-ao.html fails after r94084.
+
+        Make sure that the trailing floats line box explicitly sets the line top with leading and line bottom with
+        leading to just be the block height.
+
+        Reviewed by Dan Bernstein.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::linkToEndLineIfNeeded):
+
 2011-09-06  Abhishek Arya  <inferno@chromium.org>
 
         Null owningRenderer crash in RenderScrollbar::updateScrollbarParts.
