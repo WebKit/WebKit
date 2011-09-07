@@ -1,5 +1,22 @@
 2011-09-07  Nate Chapin  <japhet@chromium.org>
 
+        Unreviewed, chromium fast/css/ rebaslines.
+
+        * platform/chromium-cg-mac/fast/css/getComputedStyle/computed-style-expected.txt: Added.
+        * platform/chromium-cg-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Added.
+        * platform/chromium-cg-mac/fast/css/line-after-floating-div-expected.png: Added.
+        * platform/chromium-cg-mac/fast/css/line-after-floating-div-expected.txt: Added.
+        * platform/chromium-linux/fast/css/getComputedStyle: Removed.
+        * platform/chromium-linux/fast/css/line-after-floating-div-expected.png: Added.
+        * platform/chromium-win-vista/fast/css/getComputedStyle: Removed.
+        * platform/chromium-win-xp/fast/css/getComputedStyle: Removed.
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/fast/css/line-after-floating-div-expected.png: Added.
+        * platform/chromium-win/fast/css/line-after-floating-div-expected.txt: Added.
+
+2011-09-07  Nate Chapin  <japhet@chromium.org>
+
         Unreviewed, patch up some chromium gpu expectations
         that are failing on the cg mac builds.
 

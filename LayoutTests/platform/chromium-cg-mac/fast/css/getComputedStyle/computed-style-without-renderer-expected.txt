@@ -40,7 +40,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     display: block
     empty-cells: show
     float: none
-    font-family: 'times new roman'
+    font-family: Times
     font-size: 16px
     font-style: normal
     font-variant: normal

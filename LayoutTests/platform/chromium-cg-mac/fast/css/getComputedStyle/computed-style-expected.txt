@@ -41,7 +41,7 @@ direction: ltr;
 display: block;
 empty-cells: show;
 float: none;
-font-family: 'times new roman';
+font-family: Times;
 font-size: 16px;
 font-style: normal;
 font-variant: normal;
