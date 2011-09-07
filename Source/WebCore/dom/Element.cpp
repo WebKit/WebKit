@@ -1823,7 +1823,7 @@ bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
         return false;
     }
 
-    CSSStyleSelector::SelectorChecker selectorChecker(document(), strictParsing);
+    SelectorChecker selectorChecker(document(), strictParsing);
     for (CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
         if (selectorChecker.checkSelector(selector, this))
             return true;

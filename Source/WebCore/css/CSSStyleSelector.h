@@ -26,6 +26,7 @@
 #include "LinkHash.h"
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
+#include "SelectorChecker.h"
 #include <wtf/BloomFilter.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -84,307 +85,279 @@ public:
     bool m_result;
 };
 
-    // This class selects a RenderStyle for a given element based on a collection of stylesheets.
-    class CSSStyleSelector {
-        friend class CSSStyleApplyProperty;
-        WTF_MAKE_NONCOPYABLE(CSSStyleSelector); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        CSSStyleSelector(Document*, StyleSheetList* authorSheets, CSSStyleSheet* mappedElementSheet,
-                         CSSStyleSheet* pageUserSheet, const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets, const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets,
-                         bool strictParsing, bool matchAuthorAndUserStyles);
-        ~CSSStyleSelector();
-        
-        // Using these during tree walk will allow style selector to optimize child and descendant selector lookups.
-        void pushParent(Element* parent);
-        void popParent(Element* parent);
+// This class selects a RenderStyle for a given element based on a collection of stylesheets.
+class CSSStyleSelector {
+    WTF_MAKE_NONCOPYABLE(CSSStyleSelector); WTF_MAKE_FAST_ALLOCATED;
+public:
+    CSSStyleSelector(Document*, StyleSheetList* authorSheets, CSSStyleSheet* mappedElementSheet,
+                     CSSStyleSheet* pageUserSheet, const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets, const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets,
+                     bool strictParsing, bool matchAuthorAndUserStyles);
+    ~CSSStyleSelector();
+    
+    // Using these during tree walk will allow style selector to optimize child and descendant selector lookups.
+    void pushParent(Element* parent);
+    void popParent(Element* parent);
 
 
-        PassRefPtr<RenderStyle> styleForElement(Element* e, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false, bool matchVisitedPseudoClass = false);
-        
-        void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList& list);
+    PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false, bool matchVisitedPseudoClass = false);
+    
+    void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList&);
 
-        PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle = 0, bool matchVisitedPseudoClass = false);
+    PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle* parentStyle = 0, bool matchVisitedPseudoClass = false);
 
-        PassRefPtr<RenderStyle> styleForPage(int pageIndex);
+    PassRefPtr<RenderStyle> styleForPage(int pageIndex);
 
-        static PassRefPtr<RenderStyle> styleForDocument(Document*);
+    static PassRefPtr<RenderStyle> styleForDocument(Document*);
 
-        RenderStyle* style() const { return m_style.get(); }
-        RenderStyle* parentStyle() const { return m_parentStyle; }
-        RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
-        Element* element() const { return m_element; }
-        FontDescription fontDescription() { return style()->fontDescription(); }
-        FontDescription parentFontDescription() {return parentStyle()->fontDescription(); }
-        void setFontDescription(FontDescription fontDescription) { m_fontDirty |= style()->setFontDescription(fontDescription); }
-        void setZoom(float f) { m_fontDirty |= style()->setZoom(f); }
-        void setEffectiveZoom(float f) { m_fontDirty |= style()->setEffectiveZoom(f); }
-        void setTextSizeAdjust(bool b) { m_fontDirty |= style()->setTextSizeAdjust(b); }
+    RenderStyle* style() const { return m_style.get(); }
+    RenderStyle* parentStyle() const { return m_parentStyle; }
+    RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
+    Element* element() const { return m_element; }
+    FontDescription fontDescription() { return style()->fontDescription(); }
+    FontDescription parentFontDescription() {return parentStyle()->fontDescription(); }
+    void setFontDescription(FontDescription fontDescription) { m_fontDirty |= style()->setFontDescription(fontDescription); }
+    void setZoom(float f) { m_fontDirty |= style()->setZoom(f); }
+    void setEffectiveZoom(float f) { m_fontDirty |= style()->setEffectiveZoom(f); }
+    void setTextSizeAdjust(bool b) { m_fontDirty |= style()->setTextSizeAdjust(b); }
 
-    private:
-        void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
-        void initElement(Element*);
-        RenderStyle* locateSharedStyle();
-        bool matchesSiblingRules();
-        Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
-        Node* findSiblingForStyleSharing(Node*, unsigned& count) const;
-        bool canShareStyleWithElement(Node*) const;
-        
-        void pushParentStackFrame(Element* parent);
-        void popParentStackFrame();
+private:
+    void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
+    void initElement(Element*);
+    RenderStyle* locateSharedStyle();
+    bool matchesSiblingRules();
+    Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
+    Node* findSiblingForStyleSharing(Node*, unsigned& count) const;
+    bool canShareStyleWithElement(Node*) const;
+    
+    void pushParentStackFrame(Element* parent);
+    void popParentStackFrame();
 
-        PassRefPtr<RenderStyle> styleForKeyframe(const RenderStyle*, const WebKitCSSKeyframeRule*, KeyframeValue&);
+    PassRefPtr<RenderStyle> styleForKeyframe(const RenderStyle*, const WebKitCSSKeyframeRule*, KeyframeValue&);
 
-    public:
-        // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
-        enum CSSRuleFilter {
-            UAAndUserCSSRules   = 1 << 1,
-            AuthorCSSRules      = 1 << 2,
-            EmptyCSSRules       = 1 << 3,
-            CrossOriginCSSRules = 1 << 4,
-            AllButEmptyCSSRules = UAAndUserCSSRules | AuthorCSSRules | CrossOriginCSSRules,
-            AllCSSRules         = AllButEmptyCSSRules | EmptyCSSRules,
-        };
-        PassRefPtr<CSSRuleList> styleRulesForElement(Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
-        PassRefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
+public:
+    // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
+    enum CSSRuleFilter {
+        UAAndUserCSSRules   = 1 << 1,
+        AuthorCSSRules      = 1 << 2,
+        EmptyCSSRules       = 1 << 3,
+        CrossOriginCSSRules = 1 << 4,
+        AllButEmptyCSSRules = UAAndUserCSSRules | AuthorCSSRules | CrossOriginCSSRules,
+        AllCSSRules         = AllButEmptyCSSRules | EmptyCSSRules,
+    };
+    PassRefPtr<CSSRuleList> styleRulesForElement(Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
+    PassRefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
 
-        // Given a CSS keyword in the range (xx-small to -webkit-xxx-large), this function will return
-        // the correct font size scaled relative to the user's default (medium).
-        static float fontSizeForKeyword(Document*, int keyword, bool shouldUseFixedDefaultSize);
+    // Given a CSS keyword in the range (xx-small to -webkit-xxx-large), this function will return
+    // the correct font size scaled relative to the user's default (medium).
+    static float fontSizeForKeyword(Document*, int keyword, bool shouldUseFixedDefaultSize);
 
-        // Given a font size in pixel, this function will return legacy font size between 1 and 7.
-        static int legacyFontSize(Document*, int pixelFontSize, bool shouldUseFixedDefaultSize);
+    // Given a font size in pixel, this function will return legacy font size between 1 and 7.
+    static int legacyFontSize(Document*, int pixelFontSize, bool shouldUseFixedDefaultSize);
 
-    private:
+private:
 
-        // When the CSS keyword "larger" is used, this function will attempt to match within the keyword
-        // table, and failing that, will simply multiply by 1.2.
-        float largerFontSize(float size, bool quirksMode) const;
+    // When the CSS keyword "larger" is used, this function will attempt to match within the keyword
+    // table, and failing that, will simply multiply by 1.2.
+    float largerFontSize(float size, bool quirksMode) const;
 
-        // Like the previous function, but for the keyword "smaller".
-        float smallerFontSize(float size, bool quirksMode) const;
+    // Like the previous function, but for the keyword "smaller".
+    float smallerFontSize(float size, bool quirksMode) const;
 
-    public:
-        void setStyle(PassRefPtr<RenderStyle> s) { m_style = s; } // Used by the document when setting up its root style.
+public:
+    void setStyle(PassRefPtr<RenderStyle> s) { m_style = s; } // Used by the document when setting up its root style.
 
-        void applyPropertyToStyle(int id, CSSValue*, RenderStyle*);
-        
-        static float getComputedSizeFromSpecifiedSize(Document*, float zoomFactor, bool isAbsoluteSize, float specifiedSize, ESmartMinimumForFontSize = UseSmartMinimumForFontFize);
+    void applyPropertyToStyle(int id, CSSValue*, RenderStyle*);
+    
+    static float getComputedSizeFromSpecifiedSize(Document*, float zoomFactor, bool isAbsoluteSize, float specifiedSize, ESmartMinimumForFontSize = UseSmartMinimumForFontFize);
 
-    private:
-        void setFontSize(FontDescription&, float size);
+private:
+    void setFontSize(FontDescription&, float size);
 
-        static float getComputedSizeFromSpecifiedSize(Document*, RenderStyle*, bool isAbsoluteSize, float specifiedSize, bool useSVGZoomRules);
+    static float getComputedSizeFromSpecifiedSize(Document*, RenderStyle*, bool isAbsoluteSize, float specifiedSize, bool useSVGZoomRules);
 
-    public:
-        bool useSVGZoomRules();
+public:
+    bool useSVGZoomRules();
 
-        Color getColorFromPrimitiveValue(CSSPrimitiveValue*) const;
+    Color getColorFromPrimitiveValue(CSSPrimitiveValue*) const;
 
-        bool hasSelectorForAttribute(const AtomicString&) const;
- 
-        CSSFontSelector* fontSelector() const { return m_fontSelector.get(); }
+    bool hasSelectorForAttribute(const AtomicString&) const;
 
-        void addViewportDependentMediaQueryResult(const MediaQueryExp*, bool result);
+    CSSFontSelector* fontSelector() const { return m_fontSelector.get(); }
 
-        bool affectedByViewportChange() const;
+    void addViewportDependentMediaQueryResult(const MediaQueryExp*, bool result);
 
-        void allVisitedStateChanged() { m_checker.allVisitedStateChanged(); }
-        void visitedStateChanged(LinkHash visitedHash) { m_checker.visitedStateChanged(visitedHash); }
+    bool affectedByViewportChange() const;
 
-        void addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule> rule);
-        void addPageStyle(PassRefPtr<CSSPageRule>);
+    void allVisitedStateChanged() { m_checker.allVisitedStateChanged(); }
+    void visitedStateChanged(LinkHash visitedHash) { m_checker.visitedStateChanged(visitedHash); }
 
-        bool usesSiblingRules() const { return m_features.siblingRules; }
-        bool usesFirstLineRules() const { return m_features.usesFirstLineRules; }
-        bool usesBeforeAfterRules() const { return m_features.usesBeforeAfterRules; }
-        bool usesLinkRules() const { return m_features.usesLinkRules; }
+    void addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule>);
+    void addPageStyle(PassRefPtr<CSSPageRule>);
 
-        static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, TransformOperations& outOperations);
+    bool usesSiblingRules() const { return m_features.siblingRules; }
+    bool usesFirstLineRules() const { return m_features.usesFirstLineRules; }
+    bool usesBeforeAfterRules() const { return m_features.usesBeforeAfterRules; }
+    bool usesLinkRules() const { return m_features.usesLinkRules; }
 
-        struct Features {
-            Features();
-            ~Features();
-            HashSet<AtomicStringImpl*> idsInRules;
-            HashSet<AtomicStringImpl*> attrsInRules;
-            OwnPtr<RuleSet> siblingRules;
-            bool usesFirstLineRules;
-            bool usesBeforeAfterRules;
-            bool usesLinkRules;
-        };
+    static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, TransformOperations& outOperations);
 
-    private:
-        enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsCompletely };
+    struct Features {
+        Features();
+        ~Features();
+        HashSet<AtomicStringImpl*> idsInRules;
+        HashSet<AtomicStringImpl*> attrsInRules;
+        OwnPtr<RuleSet> siblingRules;
+        bool usesFirstLineRules;
+        bool usesBeforeAfterRules;
+        bool usesLinkRules;
+    };
 
-        // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
-        void checkForGenericFamilyChange(RenderStyle*, RenderStyle* parentStyle);
-        void checkForZoomChange(RenderStyle*, RenderStyle* parentStyle);
-        void checkForTextSizeAdjust();
+private:
+    // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
+    void checkForGenericFamilyChange(RenderStyle*, RenderStyle* parentStyle);
+    void checkForZoomChange(RenderStyle*, RenderStyle* parentStyle);
+    void checkForTextSizeAdjust();
 
-        void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
+    void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
 
-        void addMatchedRule(const RuleData* rule) { m_matchedRules.append(rule); }
-        void addMatchedDeclaration(CSSMutableStyleDeclaration* decl);
+    void addMatchedRule(const RuleData* rule) { m_matchedRules.append(rule); }
+    void addMatchedDeclaration(CSSMutableStyleDeclaration*);
 
-        void matchRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
-        void matchRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
-        bool fastRejectSelector(const RuleData&) const;
-        void sortMatchedRules();
-        
-        bool checkSelector(const RuleData&);
+    void matchRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
+    void matchRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, bool includeEmptyRules);
+    bool fastRejectSelector(const RuleData&) const;
+    void sortMatchedRules();
+    
+    bool checkSelector(const RuleData&);
 
-        template <bool firstPass>
-        void applyDeclarations(bool important, int startIndex, int endIndex);
+    template <bool firstPass>
+    void applyDeclarations(bool important, int startIndex, int endIndex);
 
-        void matchPageRules(RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
-        void matchPageRulesForList(const Vector<RuleData>*, bool isLeftPage, bool isFirstPage, const String& pageName);
-        bool isLeftPage(int pageIndex) const;
-        bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
-        bool isFirstPage(int pageIndex) const;
-        String pageName(int pageIndex) const;
-        
-        OwnPtr<RuleSet> m_authorStyle;
-        OwnPtr<RuleSet> m_userStyle;
+    void matchPageRules(RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
+    void matchPageRulesForList(const Vector<RuleData>*, bool isLeftPage, bool isFirstPage, const String& pageName);
+    bool isLeftPage(int pageIndex) const;
+    bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
+    bool isFirstPage(int pageIndex) const;
+    String pageName(int pageIndex) const;
+    
+    OwnPtr<RuleSet> m_authorStyle;
+    OwnPtr<RuleSet> m_userStyle;
 
-        Features m_features;
+    Features m_features;
 
-        struct ParentStackFrame {
-            ParentStackFrame() {}
-            ParentStackFrame(Element* element) : element(element) {}
-            Element* element;
-            Vector<unsigned, 4> identifierHashes;
-        };
-        Vector<ParentStackFrame> m_parentStack;
-        
-        // With 100 unique strings in the filter, 2^12 slot table has false positive rate of ~0.2%.
-        static const unsigned bloomFilterKeyBits = 12;
-        OwnPtr<BloomFilter<bloomFilterKeyBits> > m_ancestorIdentifierFilter;
+    struct ParentStackFrame {
+        ParentStackFrame() { }
+        ParentStackFrame(Element* element) : element(element) { }
+        Element* element;
+        Vector<unsigned, 4> identifierHashes;
+    };
+    Vector<ParentStackFrame> m_parentStack;
+    
+    // With 100 unique strings in the filter, 2^12 slot table has false positive rate of ~0.2%.
+    static const unsigned bloomFilterKeyBits = 12;
+    OwnPtr<BloomFilter<bloomFilterKeyBits> > m_ancestorIdentifierFilter;
 
-        bool m_hasUAAppearance;
-        BorderData m_borderData;
-        FillLayer m_backgroundData;
-        Color m_backgroundColor;
+    bool m_hasUAAppearance;
+    BorderData m_borderData;
+    FillLayer m_backgroundData;
+    Color m_backgroundColor;
 
-        typedef HashMap<AtomicStringImpl*, RefPtr<WebKitCSSKeyframesRule> > KeyframesRuleMap;
-        KeyframesRuleMap m_keyframesRuleMap;
+    typedef HashMap<AtomicStringImpl*, RefPtr<WebKitCSSKeyframesRule> > KeyframesRuleMap;
+    KeyframesRuleMap m_keyframesRuleMap;
 
-    public:
-        static RenderStyle* styleNotYetAvailable() { return s_styleNotYetAvailable; }
+public:
+    static RenderStyle* styleNotYetAvailable() { return s_styleNotYetAvailable; }
 
-        class SelectorChecker {
-            WTF_MAKE_NONCOPYABLE(SelectorChecker);
-        public:
-            SelectorChecker(Document*, bool strictParsing);
+    StyleImage* styleImage(CSSPropertyID, CSSValue*);
+    StyleImage* cachedOrPendingFromValue(CSSPropertyID, CSSImageValue*);
 
-            bool checkSelector(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
-            SelectorMatch checkSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
-            bool checkOneSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle*, RenderStyle* elementParentStyle) const;
-            bool checkScrollbarPseudoClass(CSSSelector*, PseudoId& dynamicPseudo) const;
-            static bool isFastCheckableSelector(const CSSSelector*);
-            static bool fastCheckSelector(const CSSSelector*, const Element*);
+private:
+    static RenderStyle* s_styleNotYetAvailable;
 
-            EInsideLink determineLinkState(Element* element) const;
-            EInsideLink determineLinkStateSlowCase(Element* element) const;
-            void allVisitedStateChanged();
-            void visitedStateChanged(LinkHash visitedHash);
+    void matchUARules(int& firstUARule, int& lastUARule);
+    void updateFont();
+    void cacheBorderAndBackground();
 
-            Document* m_document;
-            bool m_strictParsing;
-            bool m_collectRulesOnly;
-            bool m_sameOriginOnly;
-            PseudoId m_pseudoStyle;
-            bool m_documentIsHTML;
-            mutable bool m_hasUnknownPseudoElements;
-            mutable bool m_matchVisitedPseudoClass;
-            mutable HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;
-        };
+    void mapFillAttachment(CSSPropertyID, FillLayer*, CSSValue*);
+    void mapFillClip(CSSPropertyID, FillLayer*, CSSValue*);
+    void mapFillComposite(CSSPropertyID, FillLayer*, CSSValue*);
+    void mapFillOrigin(CSSPropertyID, FillLayer*, CSSValue*);
+    void mapFillImage(CSSPropertyID, FillLayer*, CSSValue*);
+    void mapFillRepeatX(CSSPropertyID, FillLayer*, CSSValue*);
+    void mapFillRepeatY(CSSPropertyID, FillLayer*, CSSValue*);
+    void mapFillSize(CSSPropertyID, FillLayer*, CSSValue*);
+    void mapFillXPosition(CSSPropertyID, FillLayer*, CSSValue*);
+    void mapFillYPosition(CSSPropertyID, FillLayer*, CSSValue*);
 
-        StyleImage* styleImage(CSSPropertyID, CSSValue*);
-        StyleImage* cachedOrPendingFromValue(CSSPropertyID, CSSImageValue*);
+    void mapAnimationDelay(Animation*, CSSValue*);
+    void mapAnimationDirection(Animation*, CSSValue*);
+    void mapAnimationDuration(Animation*, CSSValue*);
+    void mapAnimationFillMode(Animation*, CSSValue*);
+    void mapAnimationIterationCount(Animation*, CSSValue*);
+    void mapAnimationName(Animation*, CSSValue*);
+    void mapAnimationPlayState(Animation*, CSSValue*);
+    void mapAnimationProperty(Animation*, CSSValue*);
+    void mapAnimationTimingFunction(Animation*, CSSValue*);
 
-    private:
-        static RenderStyle* s_styleNotYetAvailable;
+    void mapNinePieceImage(CSSPropertyID, CSSValue*, NinePieceImage&);
+    void mapNinePieceImageSlice(CSSValue*, NinePieceImage&);
+    void mapNinePieceImageWidth(CSSValue*, NinePieceImage&);
+    void mapNinePieceImageRepeat(CSSValue*, NinePieceImage&);
 
-        void matchUARules(int& firstUARule, int& lastUARule);
-        void updateFont();
-        void cacheBorderAndBackground();
+    bool canShareStyleWithControl(StyledElement*) const;
 
-        void mapFillAttachment(CSSPropertyID, FillLayer*, CSSValue*);
-        void mapFillClip(CSSPropertyID, FillLayer*, CSSValue*);
-        void mapFillComposite(CSSPropertyID, FillLayer*, CSSValue*);
-        void mapFillOrigin(CSSPropertyID, FillLayer*, CSSValue*);
-        void mapFillImage(CSSPropertyID, FillLayer*, CSSValue*);
-        void mapFillRepeatX(CSSPropertyID, FillLayer*, CSSValue*);
-        void mapFillRepeatY(CSSPropertyID, FillLayer*, CSSValue*);
-        void mapFillSize(CSSPropertyID, FillLayer*, CSSValue*);
-        void mapFillXPosition(CSSPropertyID, FillLayer*, CSSValue*);
-        void mapFillYPosition(CSSPropertyID, FillLayer*, CSSValue*);
-
-        void mapAnimationDelay(Animation*, CSSValue*);
-        void mapAnimationDirection(Animation*, CSSValue*);
-        void mapAnimationDuration(Animation*, CSSValue*);
-        void mapAnimationFillMode(Animation*, CSSValue*);
-        void mapAnimationIterationCount(Animation*, CSSValue*);
-        void mapAnimationName(Animation*, CSSValue*);
-        void mapAnimationPlayState(Animation*, CSSValue*);
-        void mapAnimationProperty(Animation*, CSSValue*);
-        void mapAnimationTimingFunction(Animation*, CSSValue*);
-
-        void mapNinePieceImage(CSSPropertyID, CSSValue*, NinePieceImage&);
-        void mapNinePieceImageSlice(CSSValue*, NinePieceImage&);
-        void mapNinePieceImageWidth(CSSValue*, NinePieceImage&);
-        void mapNinePieceImageRepeat(CSSValue*, NinePieceImage&);
-
-        bool canShareStyleWithControl(StyledElement*) const;
-
-        void applyProperty(int id, CSSValue*);
-        void applyPageSizeProperty(CSSValue*);
-        bool pageSizeFromName(CSSPrimitiveValue*, CSSPrimitiveValue*, Length& width, Length& height);
-        Length mmLength(double mm) const;
-        Length inchLength(double inch) const;
+    void applyProperty(int id, CSSValue*);
+    void applyPageSizeProperty(CSSValue*);
+    bool pageSizeFromName(CSSPrimitiveValue*, CSSPrimitiveValue*, Length& width, Length& height);
+    Length mmLength(double mm) const;
+    Length inchLength(double inch) const;
 #if ENABLE(SVG)
-        void applySVGProperty(int id, CSSValue*);
+    void applySVGProperty(int id, CSSValue*);
 #endif
 
-        void loadPendingImages();
+    void loadPendingImages();
 
-        // We collect the set of decls that match in |m_matchedDecls|.  We then walk the
-        // set of matched decls four times, once for those properties that others depend on (like font-size),
-        // and then a second time for all the remaining properties.  We then do the same two passes
-        // for any !important rules.
-        Vector<CSSMutableStyleDeclaration*, 64> m_matchedDecls;
+    // We collect the set of decls that match in |m_matchedDecls|. We then walk the
+    // set of matched decls four times, once for those properties that others depend on (like font-size),
+    // and then a second time for all the remaining properties. We then do the same two passes
+    // for any !important rules.
+    Vector<CSSMutableStyleDeclaration*, 64> m_matchedDecls;
 
-        // A buffer used to hold the set of matched rules for an element, and a temporary buffer used for
-        // merge sorting.
-        Vector<const RuleData*, 32> m_matchedRules;
+    // A buffer used to hold the set of matched rules for an element, and a temporary buffer used for
+    // merge sorting.
+    Vector<const RuleData*, 32> m_matchedRules;
 
-        RefPtr<CSSRuleList> m_ruleList;
-        
-        HashSet<int> m_pendingImageProperties; // Hash of CSSPropertyIDs
+    RefPtr<CSSRuleList> m_ruleList;
+    
+    HashSet<int> m_pendingImageProperties; // Hash of CSSPropertyIDs
 
-        OwnPtr<MediaQueryEvaluator> m_medium;
-        RefPtr<RenderStyle> m_rootDefaultStyle;
+    OwnPtr<MediaQueryEvaluator> m_medium;
+    RefPtr<RenderStyle> m_rootDefaultStyle;
 
-        PseudoId m_dynamicPseudo;
+    PseudoId m_dynamicPseudo;
 
-        SelectorChecker m_checker;
+    SelectorChecker m_checker;
 
-        RefPtr<RenderStyle> m_style;
-        RenderStyle* m_parentStyle;
-        RenderStyle* m_rootElementStyle;
-        Element* m_element;
-        StyledElement* m_styledElement;
-        EInsideLink m_elementLinkState;
-        ContainerNode* m_parentNode;
-        CSSValue* m_lineHeightValue;
-        bool m_fontDirty;
-        bool m_matchAuthorAndUserStyles;
-        
-        RefPtr<CSSFontSelector> m_fontSelector;
-        Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
-        Vector<MediaQueryResult*> m_viewportDependentMediaQueryResults;
+    RefPtr<RenderStyle> m_style;
+    RenderStyle* m_parentStyle;
+    RenderStyle* m_rootElementStyle;
+    Element* m_element;
+    StyledElement* m_styledElement;
+    EInsideLink m_elementLinkState;
+    ContainerNode* m_parentNode;
+    CSSValue* m_lineHeightValue;
+    bool m_fontDirty;
+    bool m_matchAuthorAndUserStyles;
+    bool m_sameOriginOnly;
+    
+    RefPtr<CSSFontSelector> m_fontSelector;
+    Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
+    Vector<MediaQueryResult*> m_viewportDependentMediaQueryResults;
 
-        const CSSStyleApplyProperty& m_applyProperty;
-    };
+    const CSSStyleApplyProperty& m_applyProperty;
+    
+    friend class CSSStyleApplyProperty;
+};
 
 } // namespace WebCore
 

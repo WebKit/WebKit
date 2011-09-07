@@ -33218,6 +33218,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\SelectorChecker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\SelectorChecker.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\ShadowValue.cpp"
 				>
 			</File>

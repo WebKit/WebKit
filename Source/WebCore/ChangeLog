@@ -1,3 +1,97 @@
+2011-09-06  Antti Koivisto  <antti@apple.com>
+
+        Move SelectorChecker out from CSSStyleSelector scope
+        https://bugs.webkit.org/show_bug.cgi?id=67648
+
+        Reviewed by Sam Weinig.
+
+        - Move SelectorChecker to SelectorChecker.h/cpp
+        - Make private functions private
+        - Make members private, add accessors
+        - Move m_sameOriginOnly to CSSStyleSelector as it is not used by SelectorChecker
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::matchRulesForList):
+        (WebCore::CSSStyleSelector::sortMatchedRules):
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::CSSStyleSelector::matchUARules):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::styleForPage):
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::pseudoStyleRulesForElement):
+        (WebCore::CSSStyleSelector::checkSelector):
+        (WebCore::RuleData::RuleData):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::checkForGenericFamilyChange):
+        (WebCore::CSSStyleSelector::setFontSize):
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::style):
+        (WebCore::CSSStyleSelector::parentStyle):
+        (WebCore::CSSStyleSelector::rootElementStyle):
+        (WebCore::CSSStyleSelector::element):
+        (WebCore::CSSStyleSelector::fontDescription):
+        (WebCore::CSSStyleSelector::parentFontDescription):
+        (WebCore::CSSStyleSelector::setFontDescription):
+        (WebCore::CSSStyleSelector::setZoom):
+        (WebCore::CSSStyleSelector::setEffectiveZoom):
+        (WebCore::CSSStyleSelector::setTextSizeAdjust):
+        (WebCore::CSSStyleSelector::setStyle):
+        (WebCore::CSSStyleSelector::fontSelector):
+        (WebCore::CSSStyleSelector::allVisitedStateChanged):
+        (WebCore::CSSStyleSelector::visitedStateChanged):
+        (WebCore::CSSStyleSelector::usesSiblingRules):
+        (WebCore::CSSStyleSelector::usesFirstLineRules):
+        (WebCore::CSSStyleSelector::usesBeforeAfterRules):
+        (WebCore::CSSStyleSelector::usesLinkRules):
+        (WebCore::CSSStyleSelector::addMatchedRule):
+        (WebCore::CSSStyleSelector::isRightPage):
+        (WebCore::CSSStyleSelector::ParentStackFrame::ParentStackFrame):
+        (WebCore::CSSStyleSelector::styleNotYetAvailable):
+        * css/SelectorChecker.cpp: Added.
+        (WebCore::SelectorChecker::SelectorChecker):
+        (WebCore::linkAttribute):
+        (WebCore::SelectorChecker::determineLinkStateSlowCase):
+        (WebCore::SelectorChecker::checkSelector):
+        (WebCore::SelectorChecker::fastCheckSelector):
+        (WebCore::SelectorChecker::isFastCheckableSelector):
+        (WebCore::addLocalNameToSet):
+        (WebCore::createHtmlCaseInsensitiveAttributesSet):
+        (WebCore::htmlAttributeHasCaseInsensitiveValue):
+        (WebCore::attributeQualifiedNameMatches):
+        (WebCore::attributeValueMatches):
+        (WebCore::anyAttributeMatches):
+        (WebCore::SelectorChecker::checkOneSelector):
+        (WebCore::SelectorChecker::checkScrollbarPseudoClass):
+        (WebCore::SelectorChecker::allVisitedStateChanged):
+        (WebCore::SelectorChecker::visitedStateChanged):
+        * css/SelectorChecker.h: Added.
+        (WebCore::SelectorChecker::document):
+        (WebCore::SelectorChecker::strictParsing):
+        (WebCore::SelectorChecker::isCollectingRulesOnly):
+        (WebCore::SelectorChecker::setCollectingRulesOnly):
+        (WebCore::SelectorChecker::isMatchingVisitedPseudoClass):
+        (WebCore::SelectorChecker::setMatchingVisitedPseudoClass):
+        (WebCore::SelectorChecker::pseudoStyle):
+        (WebCore::SelectorChecker::setPseudoStyle):
+        (WebCore::SelectorChecker::hasUnknownPseudoElements):
+        (WebCore::SelectorChecker::clearHasUnknownPseudoElements):
+        (WebCore::SelectorChecker::determineLinkState):
+        * dom/Element.cpp:
+        (WebCore::Element::webkitMatchesSelector):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorQuery::SelectorQuery):
+        * dom/SelectorQuery.h:
+
 2011-09-07  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67413 

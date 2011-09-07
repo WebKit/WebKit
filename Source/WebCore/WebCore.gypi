@@ -2416,6 +2416,8 @@
             'css/SVGCSSComputedStyleDeclaration.cpp',
             'css/SVGCSSParser.cpp',
             'css/SVGCSSStyleSelector.cpp',
+            'css/SelectorChecker.cpp',
+            'css/SelectorChecker.h',
             'css/ShadowValue.cpp',
             'css/ShadowValue.h',
             'css/StyleBase.cpp',

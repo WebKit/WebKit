@@ -443,6 +443,7 @@ SOURCES += \
     css/MediaQueryListListener.cpp \
     css/MediaQueryMatcher.cpp \
     css/RGBColor.cpp \
+    css/SelectorChecker.cpp \
     css/ShadowValue.cpp \
     css/StyleBase.cpp \
     css/StyleList.cpp \
@@ -1449,6 +1450,7 @@ HEADERS += \
     css/MediaQueryListListener.h \
     css/MediaQueryMatcher.h \
     css/RGBColor.h \
+    css/SelectorChecker.h \
     css/ShadowValue.h \
     css/StyleBase.h \
     css/StyleList.h \

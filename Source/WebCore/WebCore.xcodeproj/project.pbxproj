@@ -5656,6 +5656,8 @@
 		E446143C0CD689CC00FADA75 /* JSHTMLSourceElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B423720CBFB6E000AF2ECE /* JSHTMLSourceElement.h */; };
 		E44614510CD68A3500FADA75 /* RenderVideo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E330CBFB60900AF2ECE /* RenderVideo.cpp */; };
 		E44614520CD68A3500FADA75 /* RenderVideo.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E340CBFB60900AF2ECE /* RenderVideo.h */; };
+		E44B4BB3141650D7002B1D8B /* SelectorChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44B4BB1141650D7002B1D8B /* SelectorChecker.cpp */; };
+		E44B4BB4141650D7002B1D8B /* SelectorChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = E44B4BB2141650D7002B1D8B /* SelectorChecker.h */; };
 		E45322AB140CE267005A0F92 /* SelectorQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E45322A9140CE267005A0F92 /* SelectorQuery.cpp */; };
 		E45322AC140CE267005A0F92 /* SelectorQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = E45322AA140CE267005A0F92 /* SelectorQuery.h */; };
 		E462A4A1113E71BE004A4220 /* IntPointHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E462A4A0113E71BE004A4220 /* IntPointHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12414,6 +12416,8 @@
 		E44614110CD6826900FADA75 /* JSMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaError.h; sourceTree = "<group>"; };
 		E44614120CD6826900FADA75 /* JSTimeRanges.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTimeRanges.cpp; sourceTree = "<group>"; };
 		E44614130CD6826900FADA75 /* JSTimeRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTimeRanges.h; sourceTree = "<group>"; };
+		E44B4BB1141650D7002B1D8B /* SelectorChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorChecker.cpp; sourceTree = "<group>"; };
+		E44B4BB2141650D7002B1D8B /* SelectorChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorChecker.h; sourceTree = "<group>"; };
 		E45322A9140CE267005A0F92 /* SelectorQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorQuery.cpp; sourceTree = "<group>"; };
 		E45322AA140CE267005A0F92 /* SelectorQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorQuery.h; sourceTree = "<group>"; };
 		E462A4A0113E71BE004A4220 /* IntPointHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntPointHash.h; sourceTree = "<group>"; };
@@ -19552,6 +19556,8 @@
 				BC74DA361013F3F7007987AD /* RGBColor.cpp */,
 				BC74DA351013F3F7007987AD /* RGBColor.h */,
 				858C38EF0AA8FDD100B187A4 /* RGBColor.idl */,
+				E44B4BB1141650D7002B1D8B /* SelectorChecker.cpp */,
+				E44B4BB2141650D7002B1D8B /* SelectorChecker.h */,
 				A80E6CCA0A1989CA007FB8C5 /* ShadowValue.cpp */,
 				A80E6CBE0A1989CA007FB8C5 /* ShadowValue.h */,
 				A80E734C0A199C77007FB8C5 /* StyleBase.cpp */,
@@ -23464,6 +23470,7 @@
 				9B0FB192140DB5790022588F /* HTTPValidation.h in Headers */,
 				BC2CBF4E140F1ABD003879BE /* JSWebGLContextEvent.h in Headers */,
 				BC274B2F140EBEB200EADFA6 /* CSSBorderImageSliceValue.h in Headers */,
+				E44B4BB4141650D7002B1D8B /* SelectorChecker.h in Headers */,
 				978AD67514130A8D00C7CAE3 /* HTMLSpanElement.h in Headers */,
 				9752D38E1413104B003305BD /* JSHTMLSpanElement.h in Headers */,
 				1A927FD21416A15B003A83C8 /* npapi.h in Headers */,
@@ -26280,6 +26287,7 @@
 				9B0FB191140DB5790022588F /* HTTPValidation.cpp in Sources */,
 				BC2CBF7B140F1D58003879BE /* JSWebGLContextEvent.cpp in Sources */,
 				BC274B31140EBED800EADFA6 /* CSSBorderImageSliceValue.cpp in Sources */,
+				E44B4BB3141650D7002B1D8B /* SelectorChecker.cpp in Sources */,
 				978AD67414130A8D00C7CAE3 /* HTMLSpanElement.cpp in Sources */,
 				9752D38D1413104B003305BD /* JSHTMLSpanElement.cpp in Sources */,
 			);

@@ -26,7 +26,7 @@
 #ifndef SelectorQuery_h
 #define SelectorQuery_h
 
-#include "CSSStyleSelector.h"
+#include "SelectorChecker.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -38,6 +38,7 @@ class CSSSelector;
 class CSSSelectorList;
 
 class SelectorQuery {
+    WTF_MAKE_NONCOPYABLE(SelectorQuery);
 public:
     SelectorQuery(Node* rootNode, const CSSSelectorList&);
     
@@ -57,7 +58,7 @@ private:
     };
     Node* m_rootNode;
     Vector<SelectorData> m_selectors;
-    CSSStyleSelector::SelectorChecker m_selectorChecker;
+    SelectorChecker m_selectorChecker;
 };
 
 }
