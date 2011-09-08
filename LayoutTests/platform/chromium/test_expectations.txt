@@ -786,8 +786,6 @@ BUGCR23270 LINUX WIN : fast/css/font-smoothing.html = FAIL
 BUGCR11153 LINUX WIN : fast/canvas/canvas-incremental-repaint-2.html = FAIL
 BUGCR11153 LINUX WIN : fast/canvas/canvas-incremental-repaint.html = FAIL
 
-BUGCR20507 : http/tests/uri/resolve-encoding-relative.html = FAIL
-
 // test_shell, DRT do not correctly schedule paints when invalidating.
 BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 

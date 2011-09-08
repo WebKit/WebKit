@@ -1,5 +1,15 @@
 2011-09-07  Adam Barth  <abarth@webkit.org>
 
+        Our results here reflect an intentional difference between GURL and
+        KURL.  KURL doesn't handle non-ASCII characters in the fragment in the
+        same was as IE whereas GURL does.
+
+        * platform/chromium/http/tests/uri: Added.
+        * platform/chromium/http/tests/uri/resolve-encoding-relative-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-09-07  Adam Barth  <abarth@webkit.org>
+
         Our behavior is correct with respect to the new cookie RFC.  I'm told
         that CFNetwork is going to change this behavior to match every other
         browser.
