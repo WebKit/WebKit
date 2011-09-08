@@ -340,7 +340,6 @@ IntRect TiledBackingStore::computeCoverRect(const IntRect& visibleRect) const
 
 bool TiledBackingStore::resizeEdgeTiles()
 {
-    IntRect contentsRect = this->contentsRect();
     bool wasResized = false;
 
     Vector<Tile::Coordinate> tilesToRemove;

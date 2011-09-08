@@ -1,3 +1,16 @@
+2011-09-08  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt] Build fails with strict compiler
+        https://bugs.webkit.org/show_bug.cgi?id=67778
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests needed.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::resizeEdgeTiles): Remove unused contentsRect variable
+        which's usage was removed in r94681 to fix the build with [-Werror=unused-but-set-variable].
+
 2011-09-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94695.

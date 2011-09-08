@@ -859,6 +859,10 @@ int yyget_lineno (yyscan_t yyscanner );
 
 void yyset_lineno (int line_number ,yyscan_t yyscanner );
 
+int yyget_column  (yyscan_t yyscanner );
+
+void yyset_column (int column_no ,yyscan_t yyscanner );
+
 YYSTYPE * yyget_lval (yyscan_t yyscanner );
 
 void yyset_lval (YYSTYPE * yylval_param ,yyscan_t yyscanner );
@@ -909,7 +913,7 @@ static int input (yyscan_t yyscanner );
 /* This used to be an fputs(), but since the string might contain NUL's,
  * we now use fwrite().
  */
-#define ECHO fwrite( yytext, yyleng, 1, yyout )
+#define ECHO do { if (fwrite( yytext, yyleng, 1, yyout )) {} } while (0)
 #endif
 
 /* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
@@ -920,7 +924,7 @@ static int input (yyscan_t yyscanner );
 	if ( YY_CURRENT_BUFFER_LVALUE->yy_is_interactive ) \
 		{ \
 		int c = '*'; \
-		int n; \
+		unsigned n; \
 		for ( n = 0; n < max_size && \
 			     (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
 			buf[n] = (char) c; \
