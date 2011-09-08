@@ -509,7 +509,7 @@ bool WebPageSerializerImpl::serialize()
 
         didSerialization = true;
 
-        String encoding = document->loader()->writer()->encoding();
+        String encoding = document->encoding();
         const TextEncoding& textEncoding = encoding.isEmpty() ? UTF8Encoding() : TextEncoding(encoding);
         String directoryName = url == mainURL ? m_localDirectoryName : "";
 
