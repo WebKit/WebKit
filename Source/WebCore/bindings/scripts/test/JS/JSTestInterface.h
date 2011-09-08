@@ -26,7 +26,7 @@
 #include "JSDOMBinding.h"
 #include "TestInterface.h"
 #include <runtime/JSGlobalObject.h>
-#include <runtime/JSObjectWithGlobalObject.h>
+#include <runtime/JSObject.h>
 #include <runtime/ObjectPrototype.h>
 
 namespace WebCore {
@@ -62,9 +62,9 @@ protected:
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestInterface*);
 TestInterface* toTestInterface(JSC::JSValue);
 
-class JSTestInterfacePrototype : public JSC::JSObjectWithGlobalObject {
+class JSTestInterfacePrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSObjectWithGlobalObject Base;
+    typedef JSC::JSNonFinalObject Base;
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     static JSTestInterfacePrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
@@ -78,7 +78,7 @@ public:
     }
 
 private:
-    JSTestInterfacePrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure) : JSC::JSObjectWithGlobalObject(globalData, structure) { finishCreation(globalData, globalObject); }
+    JSTestInterfacePrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { finishCreation(globalData); }
 protected:
     static const unsigned StructureFlags = Base::StructureFlags;
 };

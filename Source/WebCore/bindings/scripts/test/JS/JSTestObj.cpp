@@ -274,7 +274,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
 
 #undef THUNK_GENERATOR
 static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable = { 137, 127, JSTestObjPrototypeTableValues, 0 };
-const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", &JSC::JSObjectWithGlobalObject::s_info, &JSTestObjPrototypeTable, 0 };
+const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", &JSC::JSNonFinalObject::s_info, &JSTestObjPrototypeTable, 0 };
 
 JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
 {

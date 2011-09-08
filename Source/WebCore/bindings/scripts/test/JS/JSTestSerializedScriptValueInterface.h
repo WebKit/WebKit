@@ -26,7 +26,7 @@
 #include "JSDOMBinding.h"
 #include "TestSerializedScriptValueInterface.h"
 #include <runtime/JSGlobalObject.h>
-#include <runtime/JSObjectWithGlobalObject.h>
+#include <runtime/JSObject.h>
 #include <runtime/ObjectPrototype.h>
 
 namespace WebCore {
@@ -62,9 +62,9 @@ protected:
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestSerializedScriptValueInterface*);
 TestSerializedScriptValueInterface* toTestSerializedScriptValueInterface(JSC::JSValue);
 
-class JSTestSerializedScriptValueInterfacePrototype : public JSC::JSObjectWithGlobalObject {
+class JSTestSerializedScriptValueInterfacePrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSObjectWithGlobalObject Base;
+    typedef JSC::JSNonFinalObject Base;
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     static JSTestSerializedScriptValueInterfacePrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
@@ -78,7 +78,7 @@ public:
     }
 
 private:
-    JSTestSerializedScriptValueInterfacePrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure) : JSC::JSObjectWithGlobalObject(globalData, structure) { finishCreation(globalData, globalObject); }
+    JSTestSerializedScriptValueInterfacePrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { finishCreation(globalData); }
 protected:
     static const unsigned StructureFlags = Base::StructureFlags;
 };

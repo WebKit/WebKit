@@ -24,7 +24,7 @@
 #include "JSDOMBinding.h"
 #include "TestMediaQueryListListener.h"
 #include <runtime/JSGlobalObject.h>
-#include <runtime/JSObjectWithGlobalObject.h>
+#include <runtime/JSObject.h>
 #include <runtime/ObjectPrototype.h>
 
 namespace WebCore {
@@ -60,9 +60,9 @@ protected:
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestMediaQueryListListener*);
 TestMediaQueryListListener* toTestMediaQueryListListener(JSC::JSValue);
 
-class JSTestMediaQueryListListenerPrototype : public JSC::JSObjectWithGlobalObject {
+class JSTestMediaQueryListListenerPrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSObjectWithGlobalObject Base;
+    typedef JSC::JSNonFinalObject Base;
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     static JSTestMediaQueryListListenerPrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
@@ -78,7 +78,7 @@ public:
     }
 
 private:
-    JSTestMediaQueryListListenerPrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure) : JSC::JSObjectWithGlobalObject(globalData, structure) { finishCreation(globalData, globalObject); }
+    JSTestMediaQueryListListenerPrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { finishCreation(globalData); }
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
