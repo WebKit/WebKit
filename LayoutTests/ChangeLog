@@ -1,5 +1,31 @@
 2011-09-07  Adam Barth  <abarth@webkit.org>
 
+        Update baselines for svg/as-background-image.  These results all appear
+        correct and test_expectations indicates that they just need new
+        baselines.
+
+        * platform/chromium-cg-mac/svg/as-background-image/svg-as-background-5-expected.png: Added.
+        * platform/chromium-linux/svg/as-background-image/svg-as-background-1-expected.png:
+        * platform/chromium-linux/svg/as-background-image/svg-as-background-3-expected.png:
+        * platform/chromium-linux/svg/as-background-image/svg-as-background-5-expected.png:
+        * platform/chromium-win-vista/svg/as-background-image: Added.
+        * platform/chromium-win-vista/svg/as-background-image/svg-as-background-1-expected.png: Added.
+        * platform/chromium-win-vista/svg/as-background-image/svg-as-background-3-expected.png: Added.
+        * platform/chromium-win/svg/as-background-image/animated-svg-as-background-expected.png:
+        * platform/chromium-win/svg/as-background-image/svg-as-background-1-expected.png:
+        * platform/chromium-win/svg/as-background-image/svg-as-background-3-expected.png:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/svg/as-background-image/animated-svg-as-background-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-1-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-3-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-5-expected.txt: Removed.
+        * svg/as-background-image/animated-svg-as-background-expected.txt: Added.
+        * svg/as-background-image/svg-as-background-1-expected.txt: Added.
+        * svg/as-background-image/svg-as-background-3-expected.txt: Added.
+        * svg/as-background-image/svg-as-background-5-expected.txt: Added.
+
+2011-09-07  Adam Barth  <abarth@webkit.org>
+
         These tests just differ in how JSC and V8 report error messages.
 
         * platform/chromium-cg-mac-leopard/http/tests/security: Added.

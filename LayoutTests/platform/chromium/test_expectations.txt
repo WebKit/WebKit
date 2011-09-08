@@ -900,6 +900,7 @@ BUGCR3244 LINUX WIN : fast/backgrounds/repeat/mask-negative-offset-repeat.html =
 // or change the test upstream to specify explicitly what font to use.
 // The mask part of this test is totally wrong.
 BUGCR3244 LEOPARD LINUX WIN : svg/as-background-image/svg-as-background-6.html = FAIL
+BUGWK54322 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = IMAGE
 
 // Our gradients are wrong here.
 BUGCR19559 LINUX WIN : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
@@ -1745,10 +1746,6 @@ BUGCR41292 : fast/url/anchor.html = TEXT
 
 BUGWK33812 SKIP : fast/dom/icon-url-property.html = FAIL
 
-// Diffs are kind of close; may just need rebaseline?
-BUGCR41817 LINUX WIN : svg/as-background-image/svg-as-background-1.html = IMAGE
-BUGCR41817 LINUX WIN : svg/as-background-image/svg-as-background-3.html = IMAGE
-
 BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 
 // might have been flaky
@@ -2012,7 +2009,6 @@ BUGWK65203 WIN : svg/W3C-SVG-1.1/text-align-05-b.svg = IMAGE
 BUGWK65203 WIN : svg/W3C-SVG-1.1/text-align-06-b.svg = IMAGE
 BUGWK65203 WIN : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE
 BUGWK65203 WIN : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE
-BUGWK65203 WIN : svg/as-background-image/animated-svg-as-background.html = IMAGE
 BUGWK65203 WIN : svg/as-image/animated-svg-as-image.html = IMAGE
 BUGWK65203 WIN : svg/batik/filters/filterRegions.svg = IMAGE
 BUGWK65203 WIN : svg/batik/text/longTextOnPath.svg = IMAGE
@@ -2623,10 +2619,6 @@ BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = PASS CRASH
 //   (WebCore::ScrollView::calculateOverhangAreasForPainting):
 BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
-// Most results looked better after skia r1924, but this one looks a little
-// fuzzier.
-BUGCR90669 LINUX : svg/as-background-image/svg-as-background-5.html = IMAGE
-
 //
 // GPU
 //
@@ -2690,8 +2682,6 @@ BUGWK54051 MAC : plugins/windowless_plugin_paint_test.html = TIMEOUT
 // Snow Leopard-only failures (generally just need updated pixel results)
 BUGWK54322 SNOWLEOPARD : css1/text_properties/text_transform.html = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : css2.1/t1605-c545-txttrans-00-b-ag.html = IMAGE+TEXT
-BUGWK54322 SNOWLEOPARD : svg/as-background-image/svg-as-background-5.html = IMAGE
-BUGWK54322 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/canvas/arc360.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/canvas/set-colors.html = TEXT
 BUGWK54322 SNOWLEOPARD : fast/css/transform-default-parameter.html = IMAGE
