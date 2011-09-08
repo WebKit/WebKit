@@ -30,11 +30,6 @@
 
 namespace JSC {
 
-bool JSCell::getUInt32(uint32_t&) const
-{
-    return false;
-}
-
 bool JSCell::getString(ExecState* exec, UString&stringValue) const
 {
     if (!isString())

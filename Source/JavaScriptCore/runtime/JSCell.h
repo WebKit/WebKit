@@ -103,10 +103,6 @@ namespace JSC {
         virtual CallType getCallData(CallData&);
         virtual ConstructType getConstructData(ConstructData&);
 
-        // Extracting integer values.
-        // FIXME: remove these methods, can check isNumberCell in JSValue && then call asNumberCell::*.
-        virtual bool getUInt32(uint32_t&) const;
-
         // Basic conversions.
         virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue&);
