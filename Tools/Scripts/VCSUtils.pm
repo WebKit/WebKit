@@ -37,6 +37,7 @@ use English; # for $POSTMATCH, etc.
 use File::Basename;
 use File::Spec;
 use POSIX;
+use Term::ANSIColor qw(colored);
 
 BEGIN {
     use Exporter   ();
@@ -72,6 +73,7 @@ BEGIN {
         &parseFirstEOL
         &parsePatch
         &pathRelativeToSVNRepositoryRootForPath
+        &possiblyColored
         &prepareParsedPatch
         &removeEOL
         &runPatchCommand
@@ -408,6 +410,17 @@ sub normalizePath($)
     my ($path) = @_;
     $path =~ s/\\/\//g;
     return $path;
+}
+
+sub possiblyColored($$)
+{
+    my ($colors, $string) = @_;
+
+    if (-t STDOUT) {
+        return colored([$colors], $string);
+    } else {
+        return $string;
+    }
 }
 
 sub adjustPathForRecentRenamings($)

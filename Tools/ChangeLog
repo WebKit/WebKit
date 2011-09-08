@@ -1,3 +1,15 @@
+2011-09-07  Matthew Delaney  <mdelaney@apple.com>
+
+        Add standalone script that filters the output of build-webkit to be more human-readable
+        https://bugs.webkit.org/show_bug.cgi?id=44081
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/filter-build-webkit: Added. Just need to feed it the output of
+        a build script (e.g. build-webkit) and it spits out a prettier version.
+        * Scripts/VCSUtils.pm: Refactored "possiblyColored" out of run-api-tests into VCSUtils.
+        * Scripts/run-api-tests: Now includes VCSUtils to use "possiblyColored"
+
 2011-09-07  Noel Gordon  <noel.gordon@gmail.com>
 
         Add myself to committers.py                 

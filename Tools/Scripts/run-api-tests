@@ -36,7 +36,7 @@ use Getopt::Long qw(:config pass_through);
 use IPC::Open3;
 use lib $FindBin::Bin;
 use webkitdirs;
-use Term::ANSIColor qw(colored);
+use VCSUtils;
 
 sub buildTestTool();
 sub dumpAllTests();
@@ -44,9 +44,11 @@ sub populateTests();
 sub runAllTests();
 sub runAllTestsInSuite($);
 sub runTest($$);
-sub possiblyColored($$);
 sub prepareEnvironmentForRunningTestTool();
 sub testToolPath();
+
+# Defined in VCSUtils.
+sub possiblyColored($$);
 
 # Timeout for individual test, in sec
 my $timeout = 10;
@@ -289,17 +291,6 @@ sub buildTestTool()
     }
 
     chdir $originalCwd;
-}
-
-sub possiblyColored($$)
-{
-    my ($colors, $string) = @_;
-
-    if (-t STDOUT) {
-        return colored([$colors], $string);
-    } else {
-        return $string;
-    }
 }
 
 sub prepareEnvironmentForRunningTestTool()
