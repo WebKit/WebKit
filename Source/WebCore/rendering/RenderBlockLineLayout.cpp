@@ -478,6 +478,12 @@ void RenderBlock::setMarginsForRubyRun(BidiRun* run, RenderRubyRun* renderer, Re
     setMarginEndForChild(renderer, -endOverhang);
 }
 
+static inline float measureHyphenWidth(RenderText* renderer, const Font& font)
+{
+    RenderStyle* style = renderer->style();
+    return font.width(RenderBlock::constructTextRun(renderer, font, style->hyphenString().string(), style));
+}
+
 static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* run, RenderText* renderer, float xPos, const LineInfo& lineInfo,
                                    GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
 {
@@ -500,9 +506,8 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     
     int hyphenWidth = 0;
     if (toInlineTextBox(run->m_box)->hasHyphen()) {
-        const AtomicString& hyphenString = renderer->style()->hyphenString();
         const Font& font = renderer->style(lineInfo.isFirstLine())->font();
-        hyphenWidth = font.width(RenderBlock::constructTextRun(renderer, font, hyphenString.string(), renderer->style()));
+        hyphenWidth = measureHyphenWidth(renderer, font);
     }
     run->m_box->setLogicalWidth(renderer->width(run->m_start, run->m_stop - run->m_start, xPos, lineInfo.isFirstLine(), &fallbackFonts, &glyphOverflow) + hyphenWidth);
     if (!fallbackFonts.isEmpty()) {
@@ -1753,8 +1758,7 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
     if (consecutiveHyphenatedLinesLimit >= 0 && consecutiveHyphenatedLines >= static_cast<unsigned>(consecutiveHyphenatedLinesLimit))
         return;
 
-    const AtomicString& hyphenString = text->style()->hyphenString();
-    int hyphenWidth = font.width(RenderBlock::constructTextRun(text, font, hyphenString.string(), text->style()));
+    int hyphenWidth = measureHyphenWidth(text, font);
 
     float maxPrefixWidth = availableWidth - xPos - hyphenWidth - lastSpaceWordSpacing;
     // If the maximum width available for the prefix before the hyphen is small, then it is very unlikely
@@ -2254,8 +2258,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                     lineInfo.setEmpty(false);
 
                 if (c == softHyphen && autoWrap && !hyphenWidth && style->hyphens() != HyphensNone) {
-                    const AtomicString& hyphenString = style->hyphenString();
-                    hyphenWidth = f.width(constructTextRun(t, f, hyphenString.string(), current.m_obj->style()));
+                    hyphenWidth = measureHyphenWidth(t, f);
                     width.addUncommittedWidth(hyphenWidth);
                 }
 

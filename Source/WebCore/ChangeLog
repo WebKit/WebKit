@@ -1,3 +1,18 @@
+2011-09-08  Ned Holbrook  <nholbrook@apple.com>
+
+        Refactor hyphen measurement
+        https://bugs.webkit.org/show_bug.cgi?id=67728
+
+        Reviewed by Darin Adler.
+
+        No new tests, purely refactoring.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::measureHyphenWidth): Added.
+        (WebCore::setLogicalWidthForTextRun): Use measureHyphenWidth().
+        (WebCore::tryHyphenating): Ditto.
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): Ditto.
+
 2011-09-08  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Remove LayoutStateDisabler instances from RenderLayer
