@@ -1431,7 +1431,7 @@ void SpeculativeJIT::checkArgumentTypes()
 void SpeculativeJIT::initializeVariableTypes()
 {
     ASSERT(!m_compileIndex);
-    for (int var = 0; var < m_jit.codeBlock()->m_numVars; ++var) {
+    for (int var = 0; var < (int)m_jit.graph().predictions().numberOfVariables(); ++var) {
         if (isInt32Prediction(m_jit.graph().getPrediction(var)))
             m_jit.storePtr(GPRInfo::tagTypeNumberRegister, JITCompiler::addressFor((VirtualRegister)var));
     }

@@ -1,3 +1,13 @@
+2011-09-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG speculative JIT does not initialize integer tags for PredictInt32 temporaries
+        https://bugs.webkit.org/show_bug.cgi?id=67840
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::initializeVariableTypes):
+
 2011-09-08  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67771
