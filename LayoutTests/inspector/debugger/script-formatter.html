@@ -185,14 +185,8 @@ var test = function()
             function didEvaluate()
             {
                 dumpConsoleMessageURLs();
-                panel._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded,  uiSourceCodeReplaced);
+                InspectorTest.addSniffer(WebInspector, "formatLinkText", setTimeout.bind(window, didFormatLinkText, 0));
                 panel._toggleFormatSource();
-            }
-
-            function uiSourceCodeReplaced(event)
-            {
-                if (event.data.uiSourceCode.url.indexOf("script-formatter.html") !== -1)
-                    InspectorTest.runAfterPendingDispatches(didFormatLinkText);
             }
 
             function didFormatLinkText()

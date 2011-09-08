@@ -1,3 +1,19 @@
+2011-09-06  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: do not re-create RawSourceCode when toggling pretty-print mode.
+        https://bugs.webkit.org/show_bug.cgi?id=67647
+
+        1) Implement RawSourceCode.setFormatted that allows toggling pretty-print mode on the fly without resetting everything.
+        2) Add RawSourceCode unit tests.
+        3) Remove source mapping listeners and console messages from presentation model (they live in RawSourceCode now).
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/raw-source-code-expected.txt: Added.
+        * inspector/debugger/raw-source-code.html: Added.
+        * inspector/debugger/script-formatter.html:
+        * inspector/debugger/source-file.html:
+
 2011-09-08  Cary Clark  <caryclark@google.com>
 
         Unreviewed; new baselines (Skia on Mac, next chunk of files)
