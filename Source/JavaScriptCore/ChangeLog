@@ -1,5 +1,41 @@
 2011-09-08  Filip Pizlo  <fpizlo@apple.com>
 
+        Value profling and execution count profiling is performed even for
+        code that cannot be optimized
+        https://bugs.webkit.org/show_bug.cgi?id=67694
+
+        Reviewed by Gavin Barraclough.
+        
+        This is a 2% speed-up on V8 when tiered compilation is enabled.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::ProgramCodeBlock::canCompileWithDFG):
+        (JSC::EvalCodeBlock::canCompileWithDFG):
+        (JSC::FunctionCodeBlock::canCompileWithDFG):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGCapabilities.cpp: Added.
+        (JSC::DFG::canCompileOpcodes):
+        * dfg/DFGCapabilities.h: Added.
+        (JSC::DFG::mightCompileEval):
+        (JSC::DFG::mightCompileProgram):
+        (JSC::DFG::mightCompileFunctionForCall):
+        (JSC::DFG::mightCompileFunctionForConstruct):
+        (JSC::DFG::canCompileOpcode):
+        (JSC::DFG::canCompileEval):
+        (JSC::DFG::canCompileProgram):
+        (JSC::DFG::canCompileFunctionForCall):
+        (JSC::DFG::canCompileFunctionForConstruct):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitOptimizationCheck):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::shouldEmitProfiling):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitValueProfilingSite):
+
+2011-09-08  Filip Pizlo  <fpizlo@apple.com>
+
         DFG speculative JIT does not initialize integer tags for PredictInt32 temporaries
         https://bugs.webkit.org/show_bug.cgi?id=67840
 

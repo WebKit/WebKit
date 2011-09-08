@@ -36,6 +36,7 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 
 #include "CodeBlock.h"
 #include "CryptographicallyRandomNumber.h"
+#include "DFGNode.h" // for DFG_SUCCESS_STATS
 #include "Interpreter.h"
 #include "JITInlineMethods.h"
 #include "JITStubCall.h"
@@ -45,7 +46,6 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
-#include "dfg/DFGNode.h" // for DFG_SUCCESS_STATS
 
 using namespace std;
 
@@ -96,6 +96,9 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
 #if ENABLE(TIERED_COMPILATION)
 void JIT::emitOptimizationCheck(OptimizationCheckKind kind)
 {
+    if (!shouldEmitProfiling())
+        return;
+    
     Jump skipOptimize = branchAdd32(Signed, TrustedImm32(kind == LoopOptimizationCheck ? 1 : 30), AbsoluteAddress(&m_codeBlock->m_executeCounter));
     JITStubCall stubCall(this, kind == LoopOptimizationCheck ? cti_optimize_from_loop : cti_optimize_from_ret);
     stubCall.call();
@@ -497,6 +500,10 @@ void JIT::privateCompileSlowCases()
 
 JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 {
+#if ENABLE(TIERED_COMPILATION)
+    m_canBeOptimized = m_codeBlock->canCompileWithDFG();
+#endif
+    
     // Just add a little bit of randomness to the codegen
     if (m_randomGenerator.getUint32() & 1)
         nop();

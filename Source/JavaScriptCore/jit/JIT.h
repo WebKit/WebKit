@@ -1004,6 +1004,14 @@ namespace JSC {
         void sampleCodeBlock(CodeBlock*) {}
 #endif
 
+#if ENABLE(TIERED_COMPILATION)
+        bool shouldEmitProfiling() { return m_canBeOptimized; }
+#else
+        // Enables use of value profiler with tiered compilation turned off,
+        // in which case all code gets profiled.
+        bool shouldEmitProfiling() { return true; }
+#endif
+
         Interpreter* m_interpreter;
         JSGlobalData* m_globalData;
         CodeBlock* m_codeBlock;
@@ -1043,6 +1051,10 @@ namespace JSC {
 #endif
         WeakRandom m_randomGenerator;
         static CodePtr stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool);
+        
+#if ENABLE(TIERED_COMPILATION)
+        bool m_canBeOptimized;
+#endif
     } JIT_CLASS_ALIGNMENT;
 
     inline void JIT::emit_op_loop(Instruction* currentInstruction)

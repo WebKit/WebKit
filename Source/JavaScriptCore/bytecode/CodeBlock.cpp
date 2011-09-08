@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 
 #include "BytecodeGenerator.h"
+#include "DFGCapabilities.h"
 #include "Debugger.h"
 #include "Interpreter.h"
 #include "JIT.h"
@@ -1929,6 +1930,23 @@ JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* s
     }
     JSObject* error = static_cast<FunctionExecutable*>(ownerExecutable())->compileOptimizedFor(exec, scopeChainNode, m_isConstructor ? CodeForConstruct : CodeForCall);
     return error;
+}
+
+bool ProgramCodeBlock::canCompileWithDFG()
+{
+    return DFG::canCompileProgram(this);
+}
+
+bool EvalCodeBlock::canCompileWithDFG()
+{
+    return DFG::canCompileEval(this);
+}
+
+bool FunctionCodeBlock::canCompileWithDFG()
+{
+    if (m_isConstructor)
+        return DFG::canCompileFunctionForConstruct(this);
+    return DFG::canCompileFunctionForCall(this);
 }
 #endif
 

@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAliasTracker.h"
+#include "DFGCapabilities.h"
 #include "DFGScoreBoard.h"
 #include "CodeBlock.h"
 
@@ -598,7 +599,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         
         // Switch on the current bytecode opcode.
         Instruction* currentInstruction = instructionsBegin + m_currentIndex;
-        switch (interpreter->getOpcodeID(currentInstruction->u.opcode)) {
+        OpcodeID opcodeID = interpreter->getOpcodeID(currentInstruction->u.opcode);
+        switch (opcodeID) {
 
         // === Function entry opcodes ===
 
@@ -1208,8 +1210,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         default:
             // Parse failed!
+            ASSERT(!canCompileOpcode(opcodeID));
             return false;
         }
+        
+        ASSERT(canCompileOpcode(opcodeID));
     }
 }
 

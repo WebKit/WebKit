@@ -435,6 +435,9 @@ inline void JIT::emitAllocateJSFunction(FunctionExecutable* executable, Register
 #if ENABLE(VALUE_PROFILER)
 inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
 {
+    if (!shouldEmitProfiling())
+        return;
+    
     const RegisterID value = regT0;
     const RegisterID scratch = regT3;
     

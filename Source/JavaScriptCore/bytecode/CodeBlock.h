@@ -327,6 +327,7 @@ namespace JSC {
         ExecutablePool* executablePool() { return getJITCode().getExecutablePool(); }
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*) = 0;
         virtual CodeBlock* replacement() = 0;
+        virtual bool canCompileWithDFG() = 0;
 #else
         JITCode::JITType getJITType() { return JITCode::BaselineJIT; }
 #endif
@@ -334,6 +335,7 @@ namespace JSC {
         ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
 
         void setGlobalData(JSGlobalData* globalData) { m_globalData = globalData; }
+        JSGlobalData* globalData() { return m_globalData; }
 
         void setThisRegister(int thisRegister) { m_thisRegister = thisRegister; }
         int thisRegister() const { return m_thisRegister; }
@@ -723,6 +725,7 @@ namespace JSC {
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         virtual CodeBlock* replacement();
+        virtual bool canCompileWithDFG();
 #endif
     };
 
@@ -748,6 +751,7 @@ namespace JSC {
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         virtual CodeBlock* replacement();
+        virtual bool canCompileWithDFG();
 #endif
 
     private:
@@ -774,6 +778,7 @@ namespace JSC {
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         virtual CodeBlock* replacement();
+        virtual bool canCompileWithDFG();
 #endif
     };
 
