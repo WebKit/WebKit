@@ -1,3 +1,15 @@
+2011-09-07  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: get rid of RawSourceCode.createSourceMappingIfNeeded.
+        https://bugs.webkit.org/show_bug.cgi?id=67717
+
+        Merge source-file.html into raw-source-code.html.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/raw-source-code.html:
+        * inspector/debugger/source-file.html: Removed.
+
 2011-09-08  Cary Clark  <caryclark@google.com>
 
         Unreviewed; removed one erroneous baseline (Skia on Mac)

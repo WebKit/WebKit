@@ -91,9 +91,10 @@ WebInspector.BreakpointManager.prototype = {
 
     _materializeBreakpoint: function(breakpoint)
     {
-        if (!breakpoint.enabled || breakpoint._debuggerId)
+        if (!breakpoint.enabled || breakpoint._materialized)
             return;
 
+        breakpoint._materialized = true;
         var rawLocation = breakpoint.uiSourceCode.rawSourceCode.uiLocationToRawLocation(breakpoint.lineNumber, 0);
         this._setBreakpointInDebugger(breakpoint, rawLocation);
     },
@@ -215,6 +216,7 @@ WebInspector.BreakpointManager.prototype = {
         function resetBreakpoint(breakpoint)
         {
             this._removeBreakpointFromDebugger(breakpoint);
+            delete breakpoint._materialized;
         }
         this._forEachBreakpoint(resetBreakpoint.bind(this));
     },

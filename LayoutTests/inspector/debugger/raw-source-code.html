@@ -80,6 +80,25 @@ function test()
         throw "Unexpected SourceMappingUpdated event.";
     }
 
+    function createRawLocation(lineNumber, columnNumber)
+    {
+        return { lineNumber: lineNumber, columnNumber: columnNumber };
+    }
+
+    function checkRawLocation(script, lineNumber, columnNumber, location)
+    {
+        InspectorTest.assertEquals(script.scriptId, location.scriptId);
+        InspectorTest.assertEquals(lineNumber, location.lineNumber);
+        InspectorTest.assertEquals(columnNumber, location.columnNumber);
+    }
+
+    function checkUILocation(uiSourceCode, lineNumber, columnNumber, location)
+    {
+        InspectorTest.assertEquals(uiSourceCode, location.uiSourceCode);
+        InspectorTest.assertEquals(lineNumber, location.lineNumber);
+        InspectorTest.assertEquals(columnNumber, location.columnNumber);
+    }
+
     InspectorTest.runTestSuite([
         function testScriptWithoutResource(next)
         {
@@ -91,6 +110,8 @@ function test()
             InspectorTest.assertEquals("foo.js", uiSourceCode.url);
             InspectorTest.assertEquals(true, uiSourceCode.isContentScript);
             InspectorTest.assertEquals(rawSourceCode, uiSourceCode.rawSourceCode);
+            checkUILocation(uiSourceCode, 0, 5, rawSourceCode.rawLocationToUILocation(createRawLocation(0, 5)));
+            checkRawLocation(script, 0, 10, rawSourceCode.uiLocationToRawLocation(0, 10));
             uiSourceCode.requestContent(didRequestContent);
 
             function didRequestContent(mimeType, content)
@@ -134,8 +155,8 @@ function test()
 
         function testHTMLWithFinishedResource(next)
         {
-            var script1 = createScriptMock("index.html", 0, 10, false, "<script source 1>");
-            var script2 = createScriptMock("index.html", 0, 45, false, "<script source 2>");
+            var script1 = createScriptMock("index.html", 1, 10, false, "<script source 1>");
+            var script2 = createScriptMock("index.html", 5, 45, false, "<script\nsource\n2>");
             var resource = createFinishedResourceMock("document", "<resource content>");
             var rawSourceCode = createRawSourceCode(script1, resource);
 
@@ -152,6 +173,10 @@ function test()
 
                 rawSourceCode.addScript(script2);
                 rawSourceCode.forceUpdateSourceMapping();
+                checkUILocation(uiSourceCode, 1, 20, rawSourceCode.rawLocationToUILocation(createRawLocation(1, 20)));
+                checkRawLocation(script1, 1, 20, rawSourceCode.uiLocationToRawLocation(1, 20));
+                checkRawLocation(script2, 6, 2, rawSourceCode.uiLocationToRawLocation(6, 2));
+
                 next();
             }
         },
@@ -256,10 +281,8 @@ function test()
 
             InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode);
             var uiSourceCode = rawSourceCode.uiSourceCode;
-            var uiLocation = rawSourceCode.rawLocationToUILocation({ lineNumber : 1, columnNumber: 2 });
-            InspectorTest.assertEquals(uiSourceCode, uiLocation.uiSourceCode);
-            InspectorTest.assertEquals(1, uiLocation.lineNumber);
-            InspectorTest.assertEquals(2, uiLocation.columnNumber);
+            checkUILocation(uiSourceCode, 1, 2, rawSourceCode.rawLocationToUILocation(createRawLocation(1, 2)));
+            checkRawLocation(script, 1, 2, rawSourceCode.uiLocationToRawLocation(1, 2));
             uiSourceCode.requestContent(didRequestContent);
 
             function didRequestContent(mimeType, content)
@@ -275,10 +298,8 @@ function test()
             function requestFormattedContent()
             {
                 var uiSourceCode = rawSourceCode.uiSourceCode;
-                var uiLocation = rawSourceCode.rawLocationToUILocation({ lineNumber : 1, columnNumber: 2 });
-                InspectorTest.assertEquals(uiSourceCode, uiLocation.uiSourceCode);
-                InspectorTest.assertEquals(2, uiLocation.lineNumber);
-                InspectorTest.assertEquals(4, uiLocation.columnNumber);
+                checkUILocation(uiSourceCode, 2, 4, rawSourceCode.rawLocationToUILocation(createRawLocation(1, 2)));
+                checkRawLocation(script, 1, 2, rawSourceCode.uiLocationToRawLocation(2, 4));
                 uiSourceCode.requestContent(didRequestFormattedContent);
             }
 
@@ -294,10 +315,8 @@ function test()
             function requestNotFormattedContent()
             {
                 var uiSourceCode = rawSourceCode.uiSourceCode;
-                var uiLocation = rawSourceCode.rawLocationToUILocation({ lineNumber : 1, columnNumber: 2 });
-                InspectorTest.assertEquals(uiSourceCode, uiLocation.uiSourceCode);
-                InspectorTest.assertEquals(1, uiLocation.lineNumber);
-                InspectorTest.assertEquals(2, uiLocation.columnNumber);
+                checkUILocation(uiSourceCode, 1, 2, rawSourceCode.rawLocationToUILocation(createRawLocation(1, 2)));
+                checkRawLocation(script, 1, 2, rawSourceCode.uiLocationToRawLocation(1, 2));
                 uiSourceCode.requestContent(didRequestNotFormattedContent);
             }
 
@@ -324,11 +343,8 @@ function test()
             function checkMapping()
             {
                 var uiSourceCode = rawSourceCode.uiSourceCode;
-                var uiLocation = rawSourceCode.rawLocationToUILocation({ lineNumber : 1, columnNumber: 2 });
-                InspectorTest.assertEquals(uiSourceCode, uiLocation.uiSourceCode);
-                InspectorTest.assertEquals(2, uiLocation.lineNumber);
-                InspectorTest.assertEquals(4, uiLocation.columnNumber);
-
+                checkUILocation(uiSourceCode, 2, 4, rawSourceCode.rawLocationToUILocation(createRawLocation(1, 2)));
+                checkRawLocation(script, 1, 2, rawSourceCode.uiLocationToRawLocation(2, 4));
                 next();
             }
         }

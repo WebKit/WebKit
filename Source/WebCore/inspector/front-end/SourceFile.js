@@ -118,22 +118,6 @@ WebInspector.RawSourceCode.prototype = {
         return closestScript;
     },
 
-    createSourceMappingIfNeeded: function(callback)
-    {
-        // FIXME: remove createSourceMappingIfNeeded, client should listen to SourceMappingUpdated event instead.
-        if (this._uiSourceCode && !this._updatingSourceMapping) {
-            callback();
-            return;
-        }
-
-        function sourceMappingUpdated()
-        {
-            this.removeEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, sourceMappingUpdated, this);
-            callback();
-        }
-        this.addEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, sourceMappingUpdated, this);
-    },
-
     forceUpdateSourceMapping: function(script)
     {
         if (!this._useTemporaryContent || !this._hasNewScripts)
