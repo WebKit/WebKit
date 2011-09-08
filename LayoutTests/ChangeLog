@@ -1,3 +1,14 @@
+2011-09-08  Nate Chapin  <japhet@chromium.org>
+
+        Chromium rebaseline zoom-animator-scale-test.html and mark a couple
+        svg-as-background tests flaky on chromium-win.
+
+        * platform/chromium-gpu-linux/platform/chromium/compositing/zoom-animator-scale-test-expected.png: Removed.
+        * platform/chromium-gpu-linux/platform/chromium/compositing/zoom-animator-scale-test-expected.txt: Removed.
+        * platform/chromium-gpu-win/platform/chromium/compositing/zoom-animator-scale-test-expected.png: Added.
+        * platform/chromium-gpu-win/platform/chromium/compositing/zoom-animator-scale-test-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-09-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94781.

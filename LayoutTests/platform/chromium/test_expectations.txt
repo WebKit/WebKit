@@ -3717,3 +3717,6 @@ BUG_REED : compositing/overflow/overflow-positioning.html = IMAGE
 BUG_REED : fast/canvas/canvas-text-baseline.html = IMAGE
 BUG_REED : fast/canvas/quadraticCurveTo.xml = IMAGE
 BUG_REED : fast/canvas/canvas-lineWidth.html = TEXT
+
+BUG_ABARTH WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
+BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
