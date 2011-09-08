@@ -1,3 +1,143 @@
+2011-04-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        [BiDi] [CSS3] MASTER: Add support for the unicode-bidi:isolate CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=50912
+
+        This patch adds support for CSS3 unicode-bidi: isolate property, under the -webkit- vendor prefix.
+        Parsing support was added in a previous patch, this wires up the RenderStyle values
+        to code changes in the BidiResolver.
+
+        The effect of this patch is that it makes it possible to "isolate" runs of text
+        so that their RTL-ness or LTR-ness does not bleed out into the rest of your text
+        and effect layout.  This is important because many unicode characters (like parenthesis, ':', '-', etc.)
+        do not have intrinsic directionality and are affected by whatever characters come before/after.
+        If you have usernames which include RTL text, if you inject those usernames in your page
+        you might end up with nearby characters moving!
+        (like 'RTL USERNAME - my awesome site' as a title, could end up as
+        'my awesome site - USERNAME RTL' when correct would be 'USERNAME RTL - my awesome site'.)
+        This patch makes it possible to wrap sections of text in isolated spans, so that
+        they correctly order all their RTL/LTR contents, but also correctly participate in the
+        larger RTL/LTR ordering without affecting nearby characters.
+
+        Because much of this code is old and rarely touched, I've included extra background
+        information in hopes of expanding my set of potential reviewers:
+
+        WebKit uses the standard "Unicode Bidi Algorithm" henceforth known as the UBA.
+        The UBA is defined at http://unicode.org/reports/tr9/ for those not faint of heart.
+
+        Text layout is done per-block (<div>, <p>, etc), and begins with a string of text
+        (which in our case comes from the rendering tree) and a specified width.
+        First:  Text is measured and wrapped into lines.
+        Second: The UBA is run over the lines of text.
+        Third:  WebKit builds InlineBoxes (its linebox tree) and eventually render the text.
+
+        This patch modifies our UBA to ignore all text content inside "isolated" inlines (treating them as neutral characters)
+        and then adds another step after running the UBA, where we run the UBA recursively on any
+        previously identified "isolated" content.
+
+        The result of the UBA is an ordered list of "runs" of text with the RTL runs
+        correctly RTL and the LTR runs LTR.
+
+        The UBA does three things:
+        1.  It assigns a "class" to each character in a text stream (like neutral, strongly-RTL, strongly-LTR, etc.)
+        2.  Divides the text stream up into "runs" of characters of the same directionality (all RTL, all LTR).
+        3.  Re-orders those runs.
+
+        The UBA in WebKit is implemented by BidiResolver<T> in BidiResolver.h
+
+        The InlineBidiResolver (BidiResolver specialization which knows about the rendering tree)
+        walks along its InlineIterators, looking at each character and running the
+        Unicode Bidi Algorithm (UBA).  It walks through the rendering tree subtree under
+        a block, using a (poorly named) bidiNext function which returns the next inline object.
+        Each inline object (or text character there-in) has a corresponding meaning in the UBA
+        such as a "strong RTL" character or a "neutral" character.  The UBA reads these sequence
+        of characters, and figures out what direction (RTL or LTR) to assign to any neutral
+        characters it encounters, based on surrounding characters.
+
+        As the InlineBidiResolver is walking the rendering tree, the InlineIterator::advance()
+        function calls bidiNext(), which in turn can call notifyObserverEnteredObject/notifyObserverWillExitObject
+        notifying InlineBidiResolver that it is entering or exiting an "isolated"
+        span, at which point it will either start or stop ignoring the stream of characters
+        from the InlineIterator.  When the InlineBidiResolver is ignoring the stream of
+        characters, instead of creating separate BidiRuns at each RTL/LTR boundary
+        as it normally would, it instead creates one "fake" run for the entire
+        isolated span.  These fake runs participate in the normal UBA run ordering process,
+        but after the main UBA, a second pass is made where we examine
+        the list of isolatedRuns() and run the UBA on each of them, replacing the fake
+        run we previously inserted, with the resulting list of runs from that inner UBA run.
+        The way it "ignores" characters is by treating them all as neutral when inside an isolate.
+        Thus all the characters end up grouped in a single run, but their directionality (as a group)
+        is correctly affected by any surrounding strong characters.
+
+        If you understood that last paragraph, than the rest of the change is just plumbing.
+
+        I added a huge number of FIXMEs to this code, because this code has a variety of
+        design choices (or lack there of) which make some of this very difficult.
+
+        For example the bidiNext iterator function has two sets of mutually exclusive
+        parameters and can be used optionally with or without an observer.  Prior to this
+        change there was only ever one object which cared about observing a walk over inlines
+        and that was InlineBidiResolver.  This patch (regretfully) templatizes bidiNext
+        to support a new Observer type.  The correct fix would be to rip bidiNext into
+        multiple functions and rip need for observation out of InlineBidiResolver.
+        Unfortunately I've tried both in separate bugs and failed.  This code is very very
+        old and very poorly understood.  We're slowly moving forward, this is another tiny step.
+
+        This is my fourth iteration of this patch (I'm happy to do more!), but I believe
+        it's a good compromise between fixing all of the design gotcha's of our bidi
+        system and doing the minimum amount to add this killer CSS feature.
+
+        I ran the PLT.  (It averaged 0.2% faster with this change, but I attribute that to noise).
+
+        Test: css3/unicode-bidi-isolate-basic.html and css3/unicode-bidi-isolate-aharon.html
+
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiCharacterRun::setNext):
+         - Needed by the new replaceRunWithRuns function.
+        (WebCore::BidiResolver::BidiResolver):
+        (WebCore::BidiResolver::~BidiResolver):
+        (WebCore::BidiResolver::enterIsolate):
+        (WebCore::BidiResolver::exitIsolate):
+        (WebCore::BidiResolver::inIsolate):
+        (WebCore::BidiResolver::isolatedRuns):
+         - Used to track isolated spans of text as they're encoutered.
+           They're stuffed away here to be processed recursively
+           after the main UBA has done its thang.
+        (WebCore::::appendRun):
+        (WebCore::::embed):
+        (WebCore::::commitExplicitEmbedding):
+        (WebCore::::createBidiRunsForLine):
+        * platform/text/BidiRunList.h:
+        (WebCore::::replaceRunWithRuns):
+         - This effectively takes all the runs from one runlist and adds them to
+           this one, replacing the fake run we inserted during a previous pass of the UBA.
+         - This RunList now owns the runs, so we call clear() on the other RunList
+           so that we don't end up double-freeing the runs.
+        (WebCore::::clear):
+         - This allows us to "take" runs from another run list and then clear it.
+        * rendering/BidiRun.h:
+        (WebCore::BidiRun::object):
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::object):
+        (WebCore::InlineIterator::offset):
+        (WebCore::notifyObserverEnteredObject): Mostly just renaming and adding a FIXME about plaintext.
+        (WebCore::notifyObserverWillExitObject): Mostly just renaming.
+        (WebCore::addPlaceholderRunForIsolatedInline):
+        (WebCore::isIsolatedInline):
+        (WebCore::InlineBidiResolver::appendRun):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::statusWithDirection):
+        (WebCore::constructBidiRuns):
+         - This is the heavy-lifting of this change.  This function
+           runs the UBA recursively on all the previously identified isolated spans.
+         - If we encounter more isolated spans in our run, we just add them to the
+           main list an keep going.  Because the runs are linked lists and we have
+           direct pointers to our placeholder objects, we don't care what order
+           we process the placeholders in, so long as when we're done, they're all processed.
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2011-09-08  Kentaro Hara  <haraken@google.com>
 
         Implement a ProgressEvent constructor for JSC

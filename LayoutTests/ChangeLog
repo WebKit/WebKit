@@ -1,3 +1,27 @@
+2011-04-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        [BiDi] [CSS3] MASTER: Add support for the unicode-bidi:isolate CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=50912
+
+        Two new tests for testing unicode-bidi: isolate behavior.
+        Note that the test from Aharon Lanin has one failing subtest
+        I've asked him if the test might have a typo in:
+        https://bugs.webkit.org/show_bug.cgi?id=50912#c30
+
+        * css3/unicode-bidi-isolate-aharon.html: Added.
+         - Some various unicode-bidi: isolate tests from Aharon.
+        * css3/unicode-bidi-isolate-basic.html: Added.
+         - This test tries all possible orderings of strong-LTR, strong-RTL and neutral characters
+           across unicode-bidi: isolate spans to make sure that we match expected rendering.
+         - A little red bleeds through the test, but that appears to be from anti-aliasing
+           and possible automatic font kerning, not layout failures.
+        * platform/mac/css3/unicode-bidi-isolate-aharon-expected.png: Added.
+        * platform/mac/css3/unicode-bidi-isolate-aharon-expected.txt: Added.
+        * platform/mac/css3/unicode-bidi-isolate-basic-expected.png: Added.
+        * platform/mac/css3/unicode-bidi-isolate-basic-expected.txt: Added.
+
 2011-09-08  Luke Macpherson   <macpherson@chromium.org>
 
         Update tests for inherit and initial values for -webkit-columns and related CSS properties.

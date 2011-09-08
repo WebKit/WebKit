@@ -144,6 +144,7 @@ struct BidiCharacterRun {
     bool dirOverride(bool visuallyOrdered) { return m_override || visuallyOrdered; }
 
     BidiCharacterRun* next() const { return m_next; }
+    void setNext(BidiCharacterRun* next) { m_next = next; }
 
     unsigned char m_level;
     int m_start;
@@ -167,8 +168,13 @@ public:
         : m_direction(WTF::Unicode::OtherNeutral)
         , m_reachedEndOfLine(false)
         , m_emptyRun(true)
+        , m_nestedIsolateCount(0)
     {
     }
+
+#ifndef NDEBUG
+    ~BidiResolver();
+#endif
 
     const Iterator& position() const { return m_current; }
     void setPosition(const Iterator& position) { m_current = position; }
@@ -190,6 +196,13 @@ public:
 
     MidpointState<Iterator>& midpointState() { return m_midpointState; }
 
+    // The current algorithm handles nested isolates one layer of nesting at a time.
+    // But when we layout each isolated span, we will walk into (and ignore) all
+    // child isolated spans.
+    void enterIsolate() { m_nestedIsolateCount++; }
+    void exitIsolate() { ASSERT(m_nestedIsolateCount >= 1); m_nestedIsolateCount--; }
+    bool inIsolate() const { return m_nestedIsolateCount; }
+
     void embed(WTF::Unicode::Direction, BidiEmbeddingSource);
     bool commitExplicitEmbedding();
 
@@ -201,6 +214,8 @@ public:
     // It's unclear if this is still needed.
     void markCurrentRunEmpty() { m_emptyRun = true; }
 
+    Vector<Run*>& isolatedRuns() { return m_isolatedRuns; }
+
 protected:
     // FIXME: Instead of InlineBidiResolvers subclassing this method, we should
     // pass in some sort of Traits object which knows how to create runs for appending.
@@ -209,8 +224,8 @@ protected:
     Iterator m_current;
     // sor and eor are "start of run" and "end of run" respectively and correpond
     // to abreviations used in UBA spec: http://unicode.org/reports/tr9/#BD7
-    Iterator m_sor;
-    Iterator m_eor;
+    Iterator m_sor; // Points to the first character in the current run.
+    Iterator m_eor; // Points to the last character in the current run.
     Iterator m_last;
     BidiStatus m_status;
     WTF::Unicode::Direction m_direction;
@@ -225,6 +240,9 @@ protected:
 
     MidpointState<Iterator> m_midpointState;
 
+    unsigned m_nestedIsolateCount;
+    Vector<Run*> m_isolatedRuns;
+
 private:
     void raiseExplicitEmbeddingLevel(WTF::Unicode::Direction from, WTF::Unicode::Direction to);
     void lowerExplicitEmbeddingLevel(WTF::Unicode::Direction from);
@@ -235,6 +253,17 @@ private:
 
     Vector<BidiEmbedding, 8> m_currentExplicitEmbeddingSequence;
 };
+
+#ifndef NDEBUG
+template <class Iterator, class Run>
+BidiResolver<Iterator, Run>::~BidiResolver()
+{
+    // The owner of this resolver should have handled the isolated runs
+    // or should never have called enterIsolate().
+    ASSERT(m_isolatedRuns.isEmpty());
+    ASSERT(!m_nestedIsolateCount);
+}
+#endif
 
 template <class Iterator, class Run>
 void BidiResolver<Iterator, Run>::appendRun()
@@ -262,6 +291,9 @@ void BidiResolver<Iterator, Run>::appendRun()
 template <class Iterator, class Run>
 void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction dir, BidiEmbeddingSource source)
 {
+    // Isolated spans compute base directionality during their own UBA run.
+    // Do not insert fake embed characters once we enter an isolated span.
+    ASSERT(!inIsolate());
     using namespace WTF::Unicode;
 
     ASSERT(dir == PopDirectionalFormat || dir == LeftToRightEmbedding || dir == LeftToRightOverride || dir == RightToLeftEmbedding || dir == RightToLeftOverride);
@@ -365,6 +397,9 @@ void BidiResolver<Iterator, Run>::raiseExplicitEmbeddingLevel(WTF::Unicode::Dire
 template <class Iterator, class Run>
 bool BidiResolver<Iterator, Run>::commitExplicitEmbedding()
 {
+    // This gets called from bidiFirst when setting up our start position.
+    ASSERT(!inIsolate() || m_currentExplicitEmbeddingSequence.isEmpty());
+
     using namespace WTF::Unicode;
 
     unsigned char fromLevel = context()->level();
@@ -544,6 +579,11 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
             else if (dirCurrent == NonSpacingMark)
                 dirCurrent = m_status.last;
         }
+
+        // We ignore all character directionality while in unicode-bidi: isolate spans.
+        // We'll handle ordering the isolated characters in a second pass.
+        if (inIsolate())
+            dirCurrent = OtherNeutral;
 
         ASSERT(m_status.eor != OtherNeutral || m_eor.atEnd());
         switch (dirCurrent) {

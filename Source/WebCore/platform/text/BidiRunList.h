@@ -59,7 +59,11 @@ public:
 
     void setLogicallyLastRun(Run* run) { m_logicallyLastRun = run; }
 
+    void replaceRunWithRuns(Run* toReplace, BidiRunList<Run>& newRuns);
+
 private:
+    void clearWithoutDestroyingRuns();
+
     Run* m_firstRun;
     Run* m_lastRun;
     Run* m_logicallyLastRun;
@@ -134,6 +138,46 @@ inline void BidiRunList<Run>::moveRunToBeginning(Run* run)
 
     run->m_next = m_firstRun;
     m_firstRun = run;
+}
+
+template <class Run>
+void BidiRunList<Run>::replaceRunWithRuns(Run* toReplace, BidiRunList<Run>& newRuns)
+{
+    ASSERT(newRuns.runCount());
+    ASSERT(m_firstRun);
+    ASSERT(toReplace);
+
+    if (m_firstRun == toReplace)
+        m_firstRun = newRuns.firstRun();
+    else {
+        // Find the run just before "toReplace" in the list of runs.
+        Run* previousRun = m_firstRun;
+        while (previousRun->next() != toReplace)
+            previousRun = previousRun->next();
+        ASSERT(previousRun);
+        previousRun->setNext(newRuns.firstRun());
+    }
+
+    newRuns.lastRun()->setNext(toReplace->next());
+
+    // Fix up any of other pointers which may now be stale.
+    if (m_lastRun == toReplace)
+        m_lastRun = newRuns.lastRun();
+    if (m_logicallyLastRun == toReplace)
+        m_logicallyLastRun = newRuns.logicallyLastRun();
+    m_runCount += newRuns.runCount() - 1; // We added the new runs and removed toReplace.
+
+    toReplace->destroy();
+    newRuns.clearWithoutDestroyingRuns();
+}
+
+template <class Run>
+void BidiRunList<Run>::clearWithoutDestroyingRuns()
+{
+    m_firstRun = 0;
+    m_lastRun = 0;
+    m_logicallyLastRun = 0;
+    m_runCount = 0;
 }
 
 template <class Run>

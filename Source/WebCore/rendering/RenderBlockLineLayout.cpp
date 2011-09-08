@@ -787,6 +787,56 @@ void RenderBlock::appendFloatingObjectToLastLine(FloatingObject* floatingObject)
     lastRootBox()->appendFloat(floatingObject->renderer());
 }
 
+// FIXME: This should be a BidiStatus constructor or create method.
+static inline BidiStatus statusWithDirection(TextDirection textDirection)
+{
+    WTF::Unicode::Direction direction = textDirection == LTR ? LeftToRight : RightToLeft;
+    RefPtr<BidiContext> context = BidiContext::create(textDirection == LTR ? 0 : 1, direction, false, FromStyleOrDOM);
+
+    // This copies BidiStatus and may churn the ref on BidiContext. I doubt it matters.
+    return BidiStatus(direction, direction, direction, context.release());
+}
+
+// FIXME: BidiResolver should have this logic.
+static inline void constructBidiRuns(InlineBidiResolver& topResolver, BidiRunList<BidiRun>& bidiRuns, const InlineIterator& endOfLine, VisualDirectionOverride override, bool previousLineBrokeCleanly)
+{
+    // FIXME: We should pass a BidiRunList into createBidiRunsForLine instead
+    // of the resolver owning the runs.
+    ASSERT(&topResolver.runs() == &bidiRuns);
+    topResolver.createBidiRunsForLine(endOfLine, override, previousLineBrokeCleanly);
+
+    while (!topResolver.isolatedRuns().isEmpty()) {
+        // It does not matter which order we resolve the runs as long as we resolve them all.
+        BidiRun* isolatedRun = topResolver.isolatedRuns().last();
+        topResolver.isolatedRuns().removeLast();
+
+        // Only inlines make sense with unicode-bidi: isolate (blocks are already isolated).
+        RenderInline* isolatedSpan = toRenderInline(isolatedRun->object());
+        InlineBidiResolver isolatedResolver;
+        isolatedResolver.setStatus(statusWithDirection(isolatedSpan->style()->direction()));
+
+        // FIXME: The fact that we have to construct an Iterator here
+        // currently prevents this code from moving into BidiResolver.
+        RenderObject* startObj = bidiFirstSkippingEmptyInlines(isolatedSpan, &isolatedResolver);
+        isolatedResolver.setPosition(InlineIterator(isolatedSpan, startObj, 0));
+
+        // FIXME: isolatedEnd should probably equal end or the last char in isolatedSpan.
+        InlineIterator isolatedEnd = endOfLine;
+        // FIXME: What should end and previousLineBrokeCleanly be?
+        // rniwa says previousLineBrokeCleanly is just a WinIE hack and could always be false here?
+        isolatedResolver.createBidiRunsForLine(isolatedEnd, NoVisualOverride, previousLineBrokeCleanly);
+        // Note that we do not delete the runs from the resolver.
+        bidiRuns.replaceRunWithRuns(isolatedRun, isolatedResolver.runs());
+
+        // If we encountered any nested isolate runs, just move them
+        // to the top resolver's list for later processing.
+        if (!isolatedResolver.isolatedRuns().isEmpty()) {
+            topResolver.isolatedRuns().append(isolatedResolver.isolatedRuns());
+            isolatedResolver.isolatedRuns().clear();
+        }
+    }
+}
+
 // This function constructs line boxes for all of the text runs in the resolver and computes their position.
 RootInlineBox* RenderBlock::createLineBoxesFromBidiRuns(BidiRunList<BidiRun>& bidiRuns, const InlineIterator& end, LineInfo& lineInfo, VerticalPositionCache& verticalPositionCache, BidiRun* trailingSpaceRun)
 {
@@ -1046,7 +1096,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
             }
             // FIXME: This ownership is reversed. We should own the BidiRunList and pass it to createBidiRunsForLine.
             BidiRunList<BidiRun>& bidiRuns = resolver.runs();
-            resolver.createBidiRunsForLine(end, override, layoutState.lineInfo().previousLineBrokeCleanly());
+            constructBidiRuns(resolver, bidiRuns, end, override, layoutState.lineInfo().previousLineBrokeCleanly());
             ASSERT(resolver.position() == end);
 
             BidiRun* trailingSpaceRun = !layoutState.lineInfo().previousLineBrokeCleanly() ? handleTrailingSpaces(bidiRuns, resolver.context()) : 0;

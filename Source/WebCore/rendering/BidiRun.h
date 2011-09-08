@@ -51,6 +51,7 @@ struct BidiRun : BidiCharacterRun {
     void operator delete(void*, size_t);
 
     BidiRun* next() { return static_cast<BidiRun*>(m_next); }
+    RenderObject* object() { return m_object; }
 
 private:
     // The normal operator new is disallowed.
