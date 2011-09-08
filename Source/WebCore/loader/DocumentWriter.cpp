@@ -236,16 +236,6 @@ void DocumentWriter::endIfNotLoadingMainResource()
     m_parser = 0;
 }
 
-String DocumentWriter::encoding() const
-{
-    if (m_encodingWasChosenByUser && !m_encoding.isEmpty())
-        return m_encoding;
-    if (m_decoder && m_decoder->encoding().isValid())
-        return m_decoder->encoding().name();
-    Settings* settings = m_frame->settings();
-    return settings ? settings->defaultTextEncodingName() : String();
-}
-
 void DocumentWriter::setEncoding(const String& name, bool userChosen)
 {
     m_frame->loader()->willSetEncoding();
@@ -255,7 +245,17 @@ void DocumentWriter::setEncoding(const String& name, bool userChosen)
 
 String DocumentWriter::deprecatedFrameEncoding() const
 {
-    return m_frame->document()->url().isEmpty() ? m_encoding : encoding();
+    if (m_frame->document()->url().isEmpty())
+        return m_encoding;
+
+    if (m_encodingWasChosenByUser && !m_encoding.isEmpty())
+        return m_encoding;
+
+    if (m_decoder && m_decoder->encoding().isValid())
+        return m_decoder->encoding().name();
+
+    Settings* settings = m_frame->settings();
+    return settings ? settings->defaultTextEncodingName() : String();
 }
 
 void DocumentWriter::setDocumentWasLoadedAsPartOfNavigation()

@@ -57,7 +57,6 @@ public:
     
     void setFrame(Frame* frame) { m_frame = frame; }
 
-    String encoding() const;
     void setEncoding(const String& encoding, bool userChosen);
 
     // FIXME: It's really unforunate to need to expose this piece of state.
