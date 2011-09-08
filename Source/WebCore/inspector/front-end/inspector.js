@@ -511,7 +511,7 @@ WebInspector.doLoadedDone = function()
     this.debuggerPresentationModel = new WebInspector.DebuggerPresentationModel();
 
     this.searchController = new WebInspector.SearchController();
-    
+
     if (Preferences.nativeInstrumentationEnabled)
         this.domBreakpointsSidebarPane = new WebInspector.DOMBreakpointsSidebarPane();
 

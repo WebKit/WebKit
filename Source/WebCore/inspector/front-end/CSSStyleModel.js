@@ -713,7 +713,7 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
             var url = this._styleSheetIdToURL[styleSheetId];
             if (!url)
                 return;
-    
+
             var resource = WebInspector.resourceForURL(url);
             if (!resource)
                 return;

@@ -91,7 +91,7 @@ WebInspector.EventListenersSidebarPane.prototype = {
                 }
                 section.addListener(eventListener);
             }
-            
+
             if (sectionNames.length === 0) {
                 var div = document.createElement("div");
                 div.className = "info";

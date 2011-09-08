@@ -143,7 +143,7 @@ WebInspector.View.prototype = {
     removeChildView: function(view)
     {
         var childIndex = this._children.indexOf(view);
-        if (childIndex < 0) 
+        if (childIndex < 0)
             return;
 
         this._children.splice(childIndex, 1);

@@ -101,7 +101,7 @@ WebInspector.ResourceSourceFrame.prototype = {
             var mimeType = WebInspector.ResourceSourceFrame.mimeTypeForResource(this.resource);
             callback(mimeType, text);
         }
-        
+
         this.resource.requestContent(contentLoaded.bind(this));
     },
 

@@ -291,7 +291,7 @@ WebInspector.ElementsTreeOutline.prototype = {
     {
         if (!this._nodeBeingDragged)
             return false;
-        
+
         var treeElement = this._treeElementFromEvent(event);
         if (!this._isValidDragSourceOrTarget(treeElement))
             return false;
@@ -1213,7 +1213,7 @@ WebInspector.ElementsTreeElement.prototype = {
             for (var i = 0; i < attributes.length; ++i) {
                 if (attributes[i].name !== attributeName)
                     continue;
-                    
+
                 if (moveDirection === "backward") {
                     if (i === 0)
                         this._startEditingTagName();

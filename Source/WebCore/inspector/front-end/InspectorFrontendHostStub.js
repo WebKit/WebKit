@@ -138,7 +138,7 @@ WebInspector.InspectorFrontendHostStub.prototype = {
         var builder = new WebKitBlobBuilder();
         builder.append(content);
         var blob = builder.getBlob("application/octet-stream");
-    
+
         var fr = new FileReader();
         fr.onload = function(e) {
             // Force download

@@ -79,7 +79,7 @@ WebInspector.ApplicationCacheItemsView = function(treeElement, appcacheDomain)
     this.divider.style.display = "none";
     this.statusIcon.style.display = "none";
     this.statusMessage.style.display = "none";
-    
+
 }
 
 WebInspector.ApplicationCacheItemsView.prototype = {

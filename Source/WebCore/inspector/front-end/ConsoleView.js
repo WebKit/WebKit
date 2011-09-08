@@ -299,7 +299,7 @@ WebInspector.ConsoleView.prototype = {
 
         delete this.commandSincePreviousMessage;
         delete this.previousMessage;
-        
+
         this.dispatchEventToListeners(WebInspector.ConsoleView.Events.ConsoleCleared);
     },
 

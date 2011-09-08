@@ -70,7 +70,7 @@ WebInspector.HeapSnapshotWorkerDispatcher.prototype = {
                 var object = this._objects[data.objectId];
                 var result = object[data.methodName].apply(object, data.methodArguments);
                 if (result)
-                    this._objects[data.newObjectId] = result;            
+                    this._objects[data.newObjectId] = result;
                 this._postMessage({callId: data.callId, result: !!result});
                 break;
             }

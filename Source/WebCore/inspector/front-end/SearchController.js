@@ -124,7 +124,7 @@ WebInspector.SearchController.prototype = {
 
         if (!this._currentQuery)
             return;
-         
+
         panel = WebInspector.currentPanel;
         if (panel.performSearch) {
             function performPanelSearch()

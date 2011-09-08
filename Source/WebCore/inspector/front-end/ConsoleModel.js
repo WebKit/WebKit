@@ -51,7 +51,7 @@ WebInspector.ConsoleModel.prototype = {
     {
         if (WebInspector.settings.monitoringXHREnabled.get())
             ConsoleAgent.setMonitoringXHREnabled(true);
-    
+
         // There is no console agent for workers yet.
         if (!WebInspector.WorkerManager.isWorkerFrontend())
             ConsoleAgent.enable(this._setConsoleMessageExpiredCount.bind(this));

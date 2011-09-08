@@ -155,7 +155,7 @@ WebInspector.HeapSnapshotLoader.prototype = {
             this._json = this._json.slice(closingBracketIndex);
             this._state = "parse-nodes";
             this.pushJSONChunk("");
-            break;          
+            break;
         }
         case "parse-nodes": {
             if (this._parseNodes())
@@ -760,7 +760,7 @@ WebInspector.HeapSnapshot.prototype = {
 
         var dominatedIndexFrom = this._getDominatedIndex(node.nodeIndex);
         var dominatedIndexTo = this._getDominatedIndex(node._nextNodeIndex);
-        return new WebInspector.HeapSnapshotArraySlice(this, "_dominatedNodes", dominatedIndexFrom, dominatedIndexTo);        
+        return new WebInspector.HeapSnapshotArraySlice(this, "_dominatedNodes", dominatedIndexFrom, dominatedIndexTo);
     },
 
     aggregates: function(sortedIndexes)
@@ -926,7 +926,7 @@ WebInspector.HeapSnapshot.prototype = {
         var nodePosition = this._findNodePositionInIndex(nodeIndex);
         return this._dominatedIndex[nodePosition];
     },
-  
+
     _markInvisibleEdges: function()
     {
         // Mark hidden edges of global objects as invisible.
@@ -1304,7 +1304,7 @@ WebInspector.HeapSnapshotPathFinder.prototype = {
     {
         if (filter)
             filter = eval("(function(){return " + filter + "})()");
-        this._rootChildren = this._fillRootChildren(filter);  
+        this._rootChildren = this._fillRootChildren(filter);
         this._reset();
     },
 
@@ -1464,7 +1464,7 @@ WebInspector.HeapSnapshotsDiff.prototype = {
         var i = 0, l = this._baseIds.length;
         var j = 0, m = indexes.length;
         var diff = { addedCount: 0, removedCount: 0, addedSize: 0, removedSize: 0 };
-           
+
         var nodeB = new WebInspector.HeapSnapshotNode(this._snapshot, indexes[j]);
         while (i < l && j < m) {
             var nodeAId = this._baseIds[i];
@@ -1475,10 +1475,10 @@ WebInspector.HeapSnapshotsDiff.prototype = {
             } else if (nodeAId > nodeB.id) {
                 diff.addedCount++;
                 diff.addedSize += nodeB.selfSize;
-                nodeB.nodeIndex = indexes[++j];                
+                nodeB.nodeIndex = indexes[++j];
             } else {
                 ++i;
-                nodeB.nodeIndex = indexes[++j];                
+                nodeB.nodeIndex = indexes[++j];
             }
         }
         while (i < l) {

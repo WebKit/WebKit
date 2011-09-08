@@ -39,9 +39,9 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 
     this._dataTable.addEventListener("mousedown", this._mouseDownInDataTable.bind(this), true);
     this._dataTable.addEventListener("click", this._clickInDataTable.bind(this), true);
-    
+
     this._dataTable.addEventListener("contextmenu", this._contextMenuInDataTable.bind(this), true);
-    
+
     // FIXME: Add a createCallback which is different from editCallback and has different
     // behavior when creating a new node.
     if (editCallback) {
@@ -50,7 +50,7 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
     }
     if (deleteCallback)
         this._deleteCallback = deleteCallback;
-    
+
     this.aligned = {};
 
     this._scrollContainer = document.createElement("div");
@@ -159,12 +159,12 @@ WebInspector.DataGrid.prototype = {
     {
         return this._refreshCallback;
     },
-        
+
     set refreshCallback(refreshCallback)
     {
         this._refreshCallback = refreshCallback;
     },
-    
+
     _ondblclick: function(event)
     {
         if (this._editing || this._editingNode)
@@ -218,7 +218,7 @@ WebInspector.DataGrid.prototype = {
     {
         // FIXME: We need more column identifiers here throughout this function.
         // Not needed yet since only editable DataGrid is DOM Storage, which is Key - Value.
-        
+
         // FIXME: Better way to do this than regular expressions?
         var columnIdentifier = parseInt(element.className.match(/\b(\d+)-column\b/)[1]);
 
@@ -265,7 +265,7 @@ WebInspector.DataGrid.prototype = {
 
         // Update the text in the datagrid that we typed
         this._editingNode.data[columnIdentifier] = newText;
-        
+
         // Make the callback - expects an editing node (table row), the column number that is being edited,
         // the text that used to be there, and the new text.
         this._editCallback(this._editingNode, columnIdentifier, textBeforeEditing, newText);
@@ -282,7 +282,7 @@ WebInspector.DataGrid.prototype = {
         delete this._editing;
         this._editingNode = null;
     },
-    
+
     get sortColumnIdentifier()
     {
         if (!this._sortColumnCell)
@@ -415,10 +415,10 @@ WebInspector.DataGrid.prototype = {
     updateWidths: function()
     {
         var headerTableColumns = this._headerTableColumnGroup.children;
-        
+
         var tableWidth = this._dataTable.offsetWidth;
         var numColumns = headerTableColumns.length;
-        
+
         // Do not attempt to use offsetes if we're not attached to the document tree yet.
         if (!this._columnWidthsInitialized && this.element.offsetWidth) {
             // Give all the columns initial widths now so that during a resize,
@@ -506,7 +506,7 @@ WebInspector.DataGrid.prototype = {
 
     get scrollContainer()
     {
-        return this._scrollContainer;        
+        return this._scrollContainer;
     },
 
     isScrolledToLastRow: function()
@@ -526,7 +526,7 @@ WebInspector.DataGrid.prototype = {
         var left = 0;
         var previousResizer = null;
 
-        // Make n - 1 resizers for n columns. 
+        // Make n - 1 resizers for n columns.
         for (var i = 0; i < numColumns - 1; i++) {
             var resizer = this.resizers[i];
 
@@ -890,7 +890,7 @@ WebInspector.DataGrid.prototype = {
         } else
             gridNode.select();
     },
-    
+
     _contextMenuInDataTable: function(event)
     {
         var contextMenu = new WebInspector.ContextMenu();
@@ -910,7 +910,7 @@ WebInspector.DataGrid.prototype = {
             if (this.dataGrid._deleteCallback && gridNode !== this.creationNode)
                 contextMenu.appendItem(WebInspector.UIString("Delete"), this._deleteCallback.bind(this, gridNode));
         }
-        
+
         contextMenu.show(event);
     },
 
@@ -935,7 +935,7 @@ WebInspector.DataGrid.prototype = {
                 gridNode.expand();
         }
     },
-    
+
     get resizeMethod()
     {
         if (typeof this._resizeMethod === "undefined")
@@ -947,7 +947,7 @@ WebInspector.DataGrid.prototype = {
     {
         this._resizeMethod = method;
     },
-    
+
     _startResizerDragging: function(event)
     {
         this.currentResizer = event.target;
@@ -956,13 +956,13 @@ WebInspector.DataGrid.prototype = {
         WebInspector.elementDragStart(this.lastResizer, this._resizerDragging.bind(this),
             this._endResizerDragging.bind(this), event, "col-resize");
     },
-    
+
     _resizerDragging: function(event)
     {
         var resizer = this.currentResizer;
         if (!resizer)
             return;
-        
+
         // Constrain the dragpoint to be within the containing div of the
         // datagrid.
         var dragPoint = event.clientX - this.element.totalOffsetLeft();
@@ -974,7 +974,7 @@ WebInspector.DataGrid.prototype = {
         var leftEdgeOfPreviousColumn = 0;
         for (var i = 0; i < leftCellIndex; i++)
             leftEdgeOfPreviousColumn += firstRowCells[i].offsetWidth;
-        
+
         // Differences for other resize methods
         if (this.resizeMethod == WebInspector.DataGrid.ResizeMethod.Last) {
             rightCellIndex = this.resizers.length;
@@ -982,9 +982,9 @@ WebInspector.DataGrid.prototype = {
             leftEdgeOfPreviousColumn += firstRowCells[leftCellIndex].offsetWidth - firstRowCells[0].offsetWidth;
             leftCellIndex = 0;
         }
-        
+
         var rightEdgeOfNextColumn = leftEdgeOfPreviousColumn + firstRowCells[leftCellIndex].offsetWidth + firstRowCells[rightCellIndex].offsetWidth;
-        
+
         // Give each column some padding so that they don't disappear.
         var leftMinimum = leftEdgeOfPreviousColumn + this.ColumnResizePadding;
         var rightMaximum = rightEdgeOfNextColumn - this.ColumnResizePadding;
@@ -1005,16 +1005,16 @@ WebInspector.DataGrid.prototype = {
         event.preventDefault();
         this.dispatchEventToListeners("width changed");
     },
-    
+
     _endResizerDragging: function(event)
     {
         WebInspector.elementDragEnd(event);
         this.currentResizer = null;
         this.dispatchEventToListeners("width changed");
     },
-    
+
     ColumnResizePadding: 10,
-    
+
     CenterResizerOverBorderAdjustment: 3,
 }
 

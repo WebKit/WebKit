@@ -47,7 +47,7 @@ WebInspector.GoToLineDialog = function(view)
     this._input.setAttribute("size", 6);
     var blurHandler = this._onBlur.bind(this);
     this._input.addEventListener("blur", blurHandler, false);
-    
+
 
     var go = dialogWindow.createChild("button");
     go.textContent = WebInspector.UIString("Go");

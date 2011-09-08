@@ -6,13 +6,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -156,7 +156,7 @@ Node.prototype.rangeBoundaryForOffset = function(offset)
     return { container: node, offset: offset };
 }
 
-Element.prototype.removeStyleClass = function(className) 
+Element.prototype.removeStyleClass = function(className)
 {
     this.classList.remove(className);
 }
@@ -168,12 +168,12 @@ Element.prototype.removeMatchingStyleClasses = function(classNameRegex)
         this.className = this.className.replace(regex, " ");
 }
 
-Element.prototype.addStyleClass = function(className) 
+Element.prototype.addStyleClass = function(className)
 {
     this.classList.add(className);
 }
 
-Element.prototype.hasStyleClass = function(className) 
+Element.prototype.hasStyleClass = function(className)
 {
     return this.classList.contains(className);
 }
@@ -230,7 +230,7 @@ Node.prototype.enclosingNodeWithClass = function(className)
     return this.parentNode.enclosingNodeOrSelfWithClass(className);
 }
 
-Element.prototype.query = function(query) 
+Element.prototype.query = function(query)
 {
     return this.ownerDocument.evaluate(query, this, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 }
@@ -571,7 +571,7 @@ Object.defineProperty(Array.prototype, "remove",
                 this.splice(index, 1);
             return;
         }
-    
+
         var length = this.length;
         for (var i = 0; i < length; ++i) {
             if (this[i] === value)
@@ -594,7 +594,7 @@ Object.defineProperty(Array.prototype, "keySet",
     }
 });
 
-Object.defineProperty(Array.prototype, "upperBound", 
+Object.defineProperty(Array.prototype, "upperBound",
 {
     /**
      * @this {Array.<number>}
@@ -651,7 +651,7 @@ Array.diff = function(left, right)
     }
 
     for (var i = n.length - 1; i > 0; i--) {
-        if (n[i].text != null && n[i - 1].text == null && n[i].row > 0 && o[n[i].row - 1].text == null && 
+        if (n[i].text != null && n[i - 1].text == null && n[i].row > 0 && o[n[i].row - 1].text == null &&
             n[i - 1] == o[n[i].row - 1]) {
             n[i - 1] = { text: n[i - 1], row: n[i].row - 1 };
             o[n[i].row - 1] = { text: o[n[i].row - 1], row: i - 1 };

@@ -749,17 +749,17 @@ WebInspector.NetworkLogView.prototype = {
     _appendResource: function(resource)
     {
         this._resources.push(resource);
-        
-        // In case of redirect request id is reassigned to a redirected 
-        // resource and we need to update _resourcesById ans search results. 
+
+        // In case of redirect request id is reassigned to a redirected
+        // resource and we need to update _resourcesById ans search results.
         if (this._resourcesById[resource.requestId]) {
             var oldResource = resource.redirects[resource.redirects.length - 1];
             this._resourcesById[oldResource.requestId] = oldResource;
-            
+
             this._updateSearchMatchedListAfterRequestIdChanged(resource.requestId, oldResource.requestId);
         }
         this._resourcesById[resource.requestId] = resource;
-        
+
         this._resourcesByURL[resource.url] = resource;
 
         // Pull all the redirects of the main resource upon commit load.
@@ -1228,11 +1228,11 @@ WebInspector.NetworkLogView.prototype = {
         this._clearSearchMatchedList();
         this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.SearchCountUpdated, 0);
     },
-    
+
     revealAndHighlightResource: function(resource)
     {
         this._removeAllNodeHighlights();
-        
+
         var node = this._resourceGridNode(resource);
         if (node) {
             this._dataGrid.element.focus();
@@ -1240,7 +1240,7 @@ WebInspector.NetworkLogView.prototype = {
             this._highlightNode(node);
         }
     },
-    
+
     _removeAllNodeHighlights: function(node, decoration)
     {
         if (this._highlightedNode) {
@@ -1248,7 +1248,7 @@ WebInspector.NetworkLogView.prototype = {
             delete this._highlightedNode;
         }
     },
-    
+
     _highlightNode: function(node)
     {
         node.element.addStyleClass("highlighted-row");
@@ -1322,7 +1322,7 @@ WebInspector.NetworkPanel.prototype = {
     {
         if (!this._viewingResourceMode)
             return;
-        
+
         var preferredWidth = WebInspector.Panel.prototype.preferredSidebarWidth.call(this);
         if (typeof(preferredWidth) === "undefined")
             preferredWidth = 200;
@@ -2009,7 +2009,7 @@ WebInspector.NetworkDataGridNode.prototype = {
                 this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Redirect"));
             } else if (initiator.type === "script") {
                 var topFrame = initiator.stackTrace[0];
-                // This could happen when resource loading was triggered by console. 
+                // This could happen when resource loading was triggered by console.
                 if (!topFrame.url) {
                     this._initiatorCell.addStyleClass("network-dim-cell");
                     this._initiatorCell.setTextAndTitle(WebInspector.UIString("Other"));

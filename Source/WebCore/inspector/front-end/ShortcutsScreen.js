@@ -138,7 +138,7 @@ WebInspector.ShortcutsSection.prototype = {
     _renderHeader: function(parent)
     {
         var trHead = parent.createChild("tr");
- 
+
         trHead.createChild("th");
         trHead.createChild("th").textContent = this.name;
     },

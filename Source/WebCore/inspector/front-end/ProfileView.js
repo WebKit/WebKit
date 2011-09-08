@@ -87,12 +87,12 @@ WebInspector.CPUProfileView = function(profile)
             return;
         self.profile.head = profile.head;
         self._assignParentsInProfile();
-      
+
         self.profileDataGridTree = self.bottomUpProfileDataGridTree;
         self.profileDataGridTree.sort(WebInspector.ProfileDataGridTree.propertyComparator("selfTime", false));
-     
+
         self.refresh();
-     
+
         self._updatePercentButton();
     }
 

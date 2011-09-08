@@ -36,7 +36,7 @@ Object.defineProperty(Array.prototype, "sortRange", { value: function(comparator
         array[i1] = array[i2];
         array[i2] = temp;
     }
-     
+
     function partition(array, comparator, left, right, pivotIndex)
     {
         var pivotValue = array[pivotIndex];
@@ -51,7 +51,7 @@ Object.defineProperty(Array.prototype, "sortRange", { value: function(comparator
         swap(array, right, storeIndex);
         return storeIndex;
     }
-     
+
     function quickSortFirstK(array, comparator, left, right, k)
     {
         if (right <= left)

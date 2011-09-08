@@ -7,13 +7,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -566,7 +566,7 @@ body.port-qt #dock-status-bar-item {
     vertical-align: -1px;
     margin-right: 2px;
 }
-    
+
 #error-count + #warning-count {
     margin-left: 6px;
 }
@@ -643,7 +643,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     position: relative;
     padding: 1px 22px 1px 0px;
     margin-left: 24px;
-    min-height: 16px; 
+    min-height: 16px;
     white-space: pre-wrap;
     -webkit-user-modify: read-write-plaintext-only;
 }
@@ -1519,7 +1519,7 @@ body.inactive .placard.selected {
 .event-bars .event-bar .header .title {
     font-weight: normal;
     color: black;
-    text-shadow: white 0 1px 0; 
+    text-shadow: white 0 1px 0;
 }
 
 .event-bars .event-bar .header .subtitle {
@@ -1594,7 +1594,7 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
 }
 
 .watch-expressions > li.editing-sub-part .name {
-    display: block; 
+    display: block;
     width: 100%;
 }
 
@@ -2137,7 +2137,7 @@ li.selected .base-storage-tree-element-subtitle {
 .database-query-prompt {
     position: relative;
     padding: 1px 22px 1px 24px;
-    min-height: 16px; 
+    min-height: 16px;
     white-space: pre-wrap;
     -webkit-user-modify: read-write-plaintext-only;
     -webkit-user-select: text;
@@ -2163,7 +2163,7 @@ li.selected .base-storage-tree-element-subtitle {
     position: relative;
     border-bottom: 1px solid rgb(245, 245, 245);
     padding: 1px 22px 1px 24px;
-    min-height: 16px; 
+    min-height: 16px;
 }
 
 .database-user-query::before {
@@ -2386,7 +2386,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 }
 
 .scripts-pause-on-exceptions-status-bar-item.toggled-uncaught .glyph {
-    background-color: purple;   
+    background-color: purple;
 }
 
 .scripts-toggle-pretty-print-status-bar-item .glyph {
@@ -3734,20 +3734,20 @@ li.breakpoint-hit .breakpoint-hit-marker {
     padding: 4px;
     background-color: rgb(203, 226, 255);
     -webkit-border-radius: 7px;
-    border: 2px solid rgb(169, 172, 203); 
-    width: 90%; 
+    border: 2px solid rgb(169, 172, 203);
+    width: 90%;
 }
 
 .source-frame-breakpoint-message {
     background-color: transparent;
-    font-family: Lucida Grande, sans-serif; 
+    font-family: Lucida Grande, sans-serif;
     font-weight: normal;
     font-size: 11px;
     text-align: left;
     text-shadow: none;
     color: rgb(85, 85, 85);
     cursor: default;
-    margin: 0 0 2px 0; 
+    margin: 0 0 2px 0;
 }
 
 #source-frame-breakpoint-condition {
@@ -3805,7 +3805,7 @@ li.breakpoint-hit .breakpoint-hit-marker {
     margin: 0;
     padding: 0;
 }
- 
+
 .workers-list > li {
     overflow: hidden;
     text-overflow: ellipsis;

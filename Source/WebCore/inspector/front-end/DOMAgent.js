@@ -243,7 +243,7 @@ WebInspector.DOMNode.prototype = {
     {
         if (!node)
             return false;
-    
+
         var currentNode = node.parentNode;
         while (currentNode) {
             if (this === currentNode)
@@ -350,7 +350,7 @@ WebInspector.DOMNode.prototype = {
 
     moveTo: function(targetNode, anchorNode, callback)
     {
-        DOMAgent.moveTo(this.id, targetNode.id, anchorNode ? anchorNode.id : undefined, callback); 
+        DOMAgent.moveTo(this.id, targetNode.id, anchorNode ? anchorNode.id : undefined, callback);
     }
 }
 
@@ -600,7 +600,7 @@ WebInspector.DOMAgent.prototype = {
         if (node)
             this.dispatchEventToListeners(WebInspector.DOMAgent.Events.InspectElementRequested, node);
     },
-     
+
     performSearch: function(query, searchResultCollector, searchSynchronously)
     {
         this._searchResultCollector = searchResultCollector;

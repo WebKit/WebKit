@@ -155,7 +155,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
             }
             this._saveChildren();
             this.removeChildren();
- 
+
             function afterPopulate()
             {
                 for (var i = 0, l = this.children.length; i < l; ++i) {
@@ -595,7 +595,7 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
     calculateDiff: function(dataGrid, callback)
     {
         var diff = dataGrid.snapshot.createDiff(this._name);
-        
+
         function diffCalculated(diffResult)
         {
             diff.dispose();

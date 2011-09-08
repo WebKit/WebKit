@@ -110,7 +110,7 @@ WebInspector.ResourceTimingView.createTimingTable = function(resource)
     var sendStart = resource.timing.sendStart;
     if (resource.timing.sslStart !== -1)
         sendStart += resource.timing.sslEnd - resource.timing.sslStart;
- 
+
     addRow(WebInspector.UIString("Sending"), "sending", resource.timing.sendStart, resource.timing.sendEnd);
     addRow(WebInspector.UIString("Waiting"), "waiting", resource.timing.sendEnd, resource.timing.receiveHeadersEnd);
     addRow(WebInspector.UIString("Receiving"), "receiving", (resource.responseReceivedTime - resource.timing.requestTime) * 1000, (resource.endTime - resource.timing.requestTime) * 1000);

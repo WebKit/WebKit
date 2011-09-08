@@ -60,8 +60,8 @@ WebInspector.ResourceJSONView.parseJSONP = function(text)
     var end = text.lastIndexOf(")");
     if (start == -1 || end == -1 || end < start)
         return;
-    
-    var prefix = text.substring(0, start + 1); 
+
+    var prefix = text.substring(0, start + 1);
     var suffix = text.substring(end);
     var text = text.substring(start + 1, end);
 

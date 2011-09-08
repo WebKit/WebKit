@@ -243,7 +243,7 @@ WebInspector.RemoteObjectProperty = function(name, value, descriptor)
     this.enumerable = descriptor ? !!descriptor.enumerable : true;
     this.writable = descriptor ? !!descriptor.writable : true;
     if (descriptor && descriptor.wasThrown)
-        this.wasThrown = true; 
+        this.wasThrown = true;
 }
 
 WebInspector.RemoteObjectProperty.fromPrimitiveValue = function(name, value)

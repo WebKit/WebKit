@@ -146,7 +146,7 @@ WebInspector.ResourcesPanel.prototype = {
         this._domStorage = [];
 
         this._cookieViews = {};
-        
+
         this._applicationCacheView = null;
         delete this._cachedApplicationCacheViewStatus;
 
@@ -173,8 +173,8 @@ WebInspector.ResourcesPanel.prototype = {
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
-        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._cachedResourcesLoaded, this); 
-        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this._resetResourcesTree, this); 
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._cachedResourcesLoaded, this);
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this._resetResourcesTree, this);
 
         function populateFrame(frameId)
         {
@@ -197,7 +197,7 @@ WebInspector.ResourcesPanel.prototype = {
     {
         var frame = event.data;
         var parentFrameId = frame.parentId;
-        
+
         var parentTreeElement = parentFrameId ? this._treeElementForFrameId[parentFrameId] : this.resourcesListTreeElement;
         if (!parentTreeElement) {
             console.warn("No frame with id:" + parentFrameId + " to route " + frame.name + "/" + frame.url + " to.")
@@ -442,7 +442,7 @@ WebInspector.ResourcesPanel.prototype = {
     {
         if (!database)
             return;
-            
+
         var view;
         if (tableName) {
             if (!("_tableViews" in database))
@@ -684,7 +684,7 @@ WebInspector.ResourcesPanel.prototype = {
         this.storageViewStatusBarItemsContainer.style.left = width + "px";
     },
 
-    performSearch: function(query) 
+    performSearch: function(query)
     {
         this._resetSearchResults();
         var regex = WebInspector.SourceFrame.createSearchRegex(query);
@@ -710,30 +710,30 @@ WebInspector.ResourcesPanel.prototype = {
                         continue;
                     var resource = frameTreeElement.resourceByURL(searchResult.url);
 
-                    // FIXME: When the same script is used in several frames and this script contains at least 
+                    // FIXME: When the same script is used in several frames and this script contains at least
                     // one search result then some search results can not be matched with a resource on panel.
-                    // https://bugs.webkit.org/show_bug.cgi?id=66005 
+                    // https://bugs.webkit.org/show_bug.cgi?id=66005
                     if (!resource)
                         continue;
-                    
+
                     if (resource.history.length > 0)
                         continue; // Skip edited resources.
                     this._findTreeElementForResource(resource).searchMatchesFound(searchResult.matchesCount);
                     totalMatchesCount += searchResult.matchesCount;
                 }
             }
-            
+
             WebInspector.searchController.updateSearchMatchesCount(totalMatchesCount, this);
             this._searchController = new WebInspector.ResourcesSearchController(this.resourcesListTreeElement);
 
             if (this.sidebarTree.selectedTreeElement && this.sidebarTree.selectedTreeElement.searchMatchesCount)
                 this.jumpToNextSearchResult();
         }
-        
+
         this._forAllResourceTreeElements(searchInEditedResource.bind(this));
-        PageAgent.searchInResources(regex.source, !regex.ignoreCase, true, callback.bind(this));            
+        PageAgent.searchInResources(regex.source, !regex.ignoreCase, true, callback.bind(this));
     },
-    
+
     _ensureViewSearchPerformed: function(callback)
     {
         function viewSearchPerformedCallback(searchId)
@@ -765,7 +765,7 @@ WebInspector.ResourcesPanel.prototype = {
             this.showResource(searchResult.treeElement.representedObject);
             WebInspector.searchController.focusSearchField();
         }
-        
+
         function callback(searchId)
         {
             if (this.sidebarTree.selectedTreeElement !== this._lastSearchResultTreeElement)
@@ -814,7 +814,7 @@ WebInspector.ResourcesPanel.prototype = {
         var nextSearchResult = this._searchController.nextSearchResult(currentTreeElement);
         this._showSearchResult(nextSearchResult);
     },
-    
+
     jumpToPreviousSearchResult: function()
     {
         if (!this.currentSearchMatches)
@@ -823,7 +823,7 @@ WebInspector.ResourcesPanel.prototype = {
         var previousSearchResult = this._searchController.previousSearchResult(currentTreeElement);
         this._showSearchResult(previousSearchResult);
     },
-    
+
     _forAllResourceTreeElements: function(callback)
     {
         var stop = false;
@@ -1156,7 +1156,7 @@ WebInspector.FrameTreeElement.prototype = {
                 var title2 = treeElement2.displayName || treeElement2.titleText;
                 result = title1.localeCompare(title2);
             }
-            return result;            
+            return result;
         }
 
         var children = parentTreeElement.children;
@@ -1258,7 +1258,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
         contextMenu.appendSeparator();
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), save.bind(this));
     },
-    
+
     _setBubbleText: function(x)
     {
         if (!this._bubbleElement) {
@@ -1324,16 +1324,16 @@ WebInspector.FrameResourceTreeElement.prototype = {
         if (this._resource.errors)
             this._bubbleElement.addStyleClass("error");
     },
-    
+
     _consoleMessagesCleared: function()
     {
         // FIXME: move to the SourceFrame.
         if (this._sourceView)
             this._sourceView.clearMessages();
-        
+
         this._updateErrorsAndWarningsBubbles();
     },
-    
+
     _consoleMessageAdded: function(event)
     {
         var msg = event.data;
@@ -1398,7 +1398,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
             newView.show(oldViewParentNode);
 
         return newView;
-    }    
+    }
 }
 
 WebInspector.FrameResourceTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
@@ -1603,8 +1603,8 @@ WebInspector.StorageCategoryView = function()
 WebInspector.StorageCategoryView.prototype = {
     setText: function(text)
     {
-        this._emptyView.text = text;    
-    }        
+        this._emptyView.text = text;
+    }
 }
 
 WebInspector.StorageCategoryView.prototype.__proto__ = WebInspector.View.prototype;
@@ -1625,7 +1625,7 @@ WebInspector.ResourcesSearchController.prototype = {
 
         if (!currentTreeElement.searchMatchesCount)
             return this._searchResult(this._traverser.next(currentTreeElement), 0);
-        
+
         if (this._lastTreeElement !== currentTreeElement || this._lastIndex === -1)
             return this._searchResult(currentTreeElement, 0);
 
@@ -1634,17 +1634,17 @@ WebInspector.ResourcesSearchController.prototype = {
 
         return this._searchResult(currentTreeElement, this._lastIndex + 1);
     },
-    
+
     previousSearchResult: function(currentTreeElement)
     {
         if (!currentTreeElement) {
             var treeElement = this._traverser.last();
-            return this._searchResult(treeElement, treeElement.searchMatchesCount - 1);            
+            return this._searchResult(treeElement, treeElement.searchMatchesCount - 1);
         }
-        
+
         if (currentTreeElement.searchMatchesCount && this._lastTreeElement === currentTreeElement && this._lastIndex > 0)
             return this._searchResult(currentTreeElement, this._lastIndex - 1);
-         
+
         var treeElement = this._traverser.previous(currentTreeElement)
         return this._searchResult(treeElement, treeElement.searchMatchesCount - 1);
     },
@@ -1667,10 +1667,10 @@ WebInspector.SearchResultsTreeElementsTraverser.prototype = {
     {
         return this.next(this._root);
     },
-        
+
     last: function(startTreeElement)
     {
-        return this.previous(this._root);    
+        return this.previous(this._root);
     },
 
     next: function(startTreeElement)
@@ -1709,9 +1709,9 @@ WebInspector.SearchResultsTreeElementsTraverser.prototype = {
     _lastTreeElement: function()
     {
         var treeElement = this._root;
-        var nextTreeElement; 
+        var nextTreeElement;
         while (nextTreeElement = this._traverseNext(treeElement))
             treeElement = nextTreeElement;
-        return treeElement;        
+        return treeElement;
     }
 }

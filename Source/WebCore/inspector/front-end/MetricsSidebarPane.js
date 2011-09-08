@@ -82,7 +82,7 @@ WebInspector.MetricsSidebarPane.prototype = {
         // "style" attribute might have changed. Update metrics unless they are being edited.
         if (!this._isEditingMetrics)
             this._innerUpdate();
-    },    
+    },
 
     _getPropertyValueAsPx: function(style, propertyName)
     {

@@ -272,7 +272,7 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
             this.dispatchEventToListeners("sorting complete");
             return;
         }
-        this.populateChildren();        
+        this.populateChildren();
     },
 
     populateChildren: function()
@@ -414,7 +414,7 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
     {
         if (this._state)
             this._state.cancel();
-    }, 
+    },
 
     _sortFields: function(sortColumn, sortAscending)
     {
@@ -985,7 +985,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         }
         this.views[viewIndex].grid.addEventListener("sorting complete", sortingComplete, this);
         this.viewSelectElement.selectedIndex = viewIndex;
-        this._changeView({target: {selectedIndex: viewIndex}});      
+        this._changeView({target: {selectedIndex: viewIndex}});
     },
 
     _changeView: function(event)
@@ -1173,7 +1173,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         height = Number.constrain(height, Preferences.minConsoleHeight, this.element.clientHeight - Preferences.minConsoleHeight);
         this.viewsContainer.style.bottom = (height + this.retainmentViewHeader.clientHeight) + "px";
         this.retainmentView.element.style.height = height + "px";
-        this.retainmentViewHeader.style.bottom = height + "px";        
+        this.retainmentViewHeader.style.bottom = height + "px";
     },
 
     _updateBaseOptions: function()

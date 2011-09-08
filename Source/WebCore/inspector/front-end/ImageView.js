@@ -86,7 +86,7 @@ WebInspector.ImageView.prototype = {
                 { name: WebInspector.UIString("File size"), value: Number.bytesToString(resourceSize) },
                 { name: WebInspector.UIString("MIME type"), value: this.resource.mimeType }
             ];
-    
+
             infoListElement.removeChildren();
             for (var i = 0; i < imageProperties.length; ++i) {
                 var dt = document.createElement("dt");

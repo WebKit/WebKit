@@ -38,7 +38,7 @@ WebInspector.ConsoleStackFrame = function()
     this.lineNumber = undefined;
     this.columnNumber = undefined;
 }
-                    
+
 /**
  * @constructor
  * @param {Array.<WebInspector.ConsoleStackFrame>=} stackTrace
@@ -83,7 +83,7 @@ WebInspector.ConsoleMessage.prototype = {
 
         this._formattedMessage = document.createElement("span");
         this._formattedMessage.className = "console-message-text source-code";
-        
+
         var messageText;
         switch (this.type) {
             case WebInspector.ConsoleMessage.MessageType.Trace:

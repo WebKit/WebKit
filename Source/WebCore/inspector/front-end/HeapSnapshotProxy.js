@@ -197,7 +197,7 @@ WebInspector.HeapSnapshotWorker.prototype = {
 
     _postMessage: function(message)
     {
-        this._worker.postMessage(message);      
+        this._worker.postMessage(message);
     }
 };
 

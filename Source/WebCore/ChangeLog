@@ -1,3 +1,70 @@
+2011-09-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed, strip trailing whitespace in the Web Inspector frontend (*.js and *.css).
+
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        * inspector/front-end/AuditResultView.js:
+        * inspector/front-end/BinarySearch.js:
+        * inspector/front-end/CSSStyleModel.js:
+        * inspector/front-end/ConsoleMessage.js:
+        * inspector/front-end/ConsoleModel.js:
+        * inspector/front-end/ConsoleView.js:
+        * inspector/front-end/CookieItemsView.js:
+        * inspector/front-end/CookieParser.js:
+        * inspector/front-end/DOMAgent.js:
+        * inspector/front-end/DOMStorage.js:
+        * inspector/front-end/DOMStorageItemsView.js:
+        * inspector/front-end/DataGrid.js:
+        * inspector/front-end/Database.js:
+        * inspector/front-end/DatabaseQueryView.js:
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        * inspector/front-end/DetailedHeapshotView.js:
+        * inspector/front-end/ElementsTreeOutline.js:
+        * inspector/front-end/EmptyView.js:
+        * inspector/front-end/EventListenersSidebarPane.js:
+        * inspector/front-end/ExtensionCommon.js:
+        * inspector/front-end/GoToLineDialog.js:
+        * inspector/front-end/HeapSnapshot.js:
+        * inspector/front-end/HeapSnapshotProxy.js:
+        * inspector/front-end/HeapSnapshotWorkerDispatcher.js:
+        * inspector/front-end/ImageView.js:
+        * inspector/front-end/InjectedFakeWorker.js:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        * inspector/front-end/MetricsSidebarPane.js:
+        * inspector/front-end/NetworkManager.js:
+        * inspector/front-end/NetworkPanel.js:
+        * inspector/front-end/ObjectPropertiesSection.js:
+        * inspector/front-end/PartialQuickSort.js:
+        * inspector/front-end/ProfileView.js:
+        * inspector/front-end/ProfilesPanel.js:
+        * inspector/front-end/RemoteObject.js:
+        * inspector/front-end/Resource.js:
+        * inspector/front-end/ResourceCategory.js:
+        * inspector/front-end/ResourceHTMLView.js:
+        * inspector/front-end/ResourceHeadersView.js:
+        * inspector/front-end/ResourceJSONView.js:
+        * inspector/front-end/ResourceTimingView.js:
+        * inspector/front-end/ResourceTreeModel.js:
+        * inspector/front-end/ResourceView.js:
+        * inspector/front-end/ResourcesPanel.js:
+        * inspector/front-end/SearchController.js:
+        * inspector/front-end/SettingsScreen.js:
+        * inspector/front-end/ShortcutsScreen.js:
+        * inspector/front-end/SourceCSSTokenizer.js:
+        * inspector/front-end/SourceHTMLTokenizer.js:
+        * inspector/front-end/SourceJavaScriptTokenizer.js:
+        * inspector/front-end/StatusBarButton.js:
+        * inspector/front-end/TextEditorModel.js:
+        * inspector/front-end/TimelineGrid.js:
+        * inspector/front-end/View.js:
+        * inspector/front-end/heapProfiler.css:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        * inspector/front-end/inspectorSyntaxHighlight.css:
+        * inspector/front-end/networkPanel.css:
+        * inspector/front-end/treeoutline.js:
+        * inspector/front-end/utilities.js:
+
 2011-09-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: trying to scroll mouse wheel when in TextViewer's gutter pane causes EventException::DISPATCH_REQUEST_ERR

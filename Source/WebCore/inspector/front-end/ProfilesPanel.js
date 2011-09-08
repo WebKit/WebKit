@@ -261,10 +261,10 @@ WebInspector.ProfilesPanel.prototype = {
             var part1 = document.createElement("span");
             part1.textContent = message.substr(0, buttonPos);
             container.appendChild(part1);
-     
+
             var button = new WebInspector.StatusBarButton(profileType.buttonTooltip, profileType.buttonStyle, profileType.buttonCaption);
             container.appendChild(button.element);
-       
+
             var part2 = document.createElement("span");
             part2.textContent = message.substr(buttonPos + 2);
             container.appendChild(part2);
@@ -534,7 +534,7 @@ WebInspector.ProfilesPanel.prototype = {
                 // incremented twice as often as it's displayed
                 title += " " + WebInspector.UIString("Run %d", (groupNumber + 1) / 2);
         }
-        
+
         return title;
     },
 

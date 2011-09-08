@@ -61,14 +61,14 @@ WebInspector.ObjectPropertiesSection.prototype = {
     {
         if (!rootTreeElementConstructor)
             rootTreeElementConstructor = this.treeElementConstructor;
-            
+
         if (!rootPropertyComparer)
             rootPropertyComparer = WebInspector.ObjectPropertiesSection.CompareProperties;
-            
+
         if (this.extraProperties)
             for (var i = 0; i < this.extraProperties.length; ++i)
                 properties.push(this.extraProperties[i]);
-                
+
         properties.sort(rootPropertyComparer);
 
         this.propertiesTreeOutline.removeChildren();
@@ -90,7 +90,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
 
 WebInspector.ObjectPropertiesSection.prototype.__proto__ = WebInspector.PropertiesSection.prototype;
 
-WebInspector.ObjectPropertiesSection.CompareProperties = function(propertyA, propertyB) 
+WebInspector.ObjectPropertiesSection.CompareProperties = function(propertyA, propertyB)
 {
     var a = propertyA.name;
     var b = propertyB.name;
@@ -186,7 +186,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         var separatorElement = document.createElement("span");
         separatorElement.className = "separator";
         separatorElement.textContent = ": ";
-        
+
         this.valueElement = document.createElement("span");
         this.valueElement.className = "value";
 

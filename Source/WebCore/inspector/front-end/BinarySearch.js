@@ -65,6 +65,6 @@ function insertionIndexForObjectInListSortedByFunction(anObject, aList, aFunctio
         // Return the first occurance of an item in the list.
         while (index > 0 && aFunction(anObject, aList[index - 1]) === 0)
             index--;
-        return index;        
+        return index;
     }
 }

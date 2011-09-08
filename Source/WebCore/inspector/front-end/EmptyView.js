@@ -42,7 +42,7 @@ WebInspector.EmptyView.prototype = {
         this.element.className = "storage-empty-view";
         this.element.textContent = this._text;
     },
-    
+
     set text(text)
     {
         this._text = text;

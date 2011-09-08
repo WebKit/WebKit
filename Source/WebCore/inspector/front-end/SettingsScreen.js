@@ -82,7 +82,7 @@ WebInspector.SettingsScreen.prototype = {
 
     _columnElement: function(right)
     {
-        return right ? this._rightColumnElement : this._leftColumnElement; 
+        return right ? this._rightColumnElement : this._leftColumnElement;
     },
 
     _createCheckboxSetting: function(name, setting)
@@ -130,7 +130,7 @@ WebInspector.SettingsScreen.prototype = {
             input.value = options[i][0];
             input.addEventListener("click", clickListener, false);
             if (settingValue == input.value)
-                input.checked = true; 
+                input.checked = true;
 
             label.appendChild(input);
             label.appendChild(document.createTextNode(options[i][1]));

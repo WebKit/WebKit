@@ -85,7 +85,7 @@ WebInspector.SourceJavaScriptTokenizer.prototype = {
         while (1) {
             switch (gotoCase)
             // Following comment is replaced with generated state machine.
-            
+
         {
             case 1: var yych;
             var yyaccept = 0;

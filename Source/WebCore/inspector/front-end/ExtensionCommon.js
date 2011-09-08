@@ -30,7 +30,7 @@
 
 WebInspector.commonExtensionSymbols = function(apiPrivate)
 {
-    
+
     if (!apiPrivate.audits)
         apiPrivate.audits = {};
 

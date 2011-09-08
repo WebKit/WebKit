@@ -45,7 +45,7 @@ WebInspector.CookieItemsView = function(treeElement, cookieDomain)
 
     this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This site has no cookies."));
     this._emptyView.show(this.element);
-    
+
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
 }
 
@@ -154,7 +154,7 @@ WebInspector.CookieItemsView.prototype = {
     {
         this._update();
     },
-    
+
     _contextMenu: function()
     {
         if (!this._cookies.length) {

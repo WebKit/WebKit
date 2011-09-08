@@ -128,7 +128,7 @@ WebInspector.DOMStorageItemsView.prototype = {
     {
         this.update();
     },
-    
+
     _editingCallback: function(editingNode, columnIdentifier, oldText, newText)
     {
         var domStorage = this.domStorage;
@@ -140,10 +140,10 @@ WebInspector.DOMStorageItemsView.prototype = {
         } else {
             domStorage.setItem(editingNode.data[0], newText);
         }
-        
+
         this.update();
     },
-    
+
     _deleteCallback: function(node)
     {
         if (!node || node.isCreationNode)
@@ -151,7 +151,7 @@ WebInspector.DOMStorageItemsView.prototype = {
 
         if (this.domStorage)
             this.domStorage.removeItem(node.data[0]);
-            
+
         this.update();
     }
 }

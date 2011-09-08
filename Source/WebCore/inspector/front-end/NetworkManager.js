@@ -39,7 +39,7 @@ WebInspector.NetworkManager = function()
     if (WebInspector.settings.cacheDisabled.get())
         NetworkAgent.setCacheDisabled(true);
     NetworkAgent.enable();
-    
+
     WebInspector.settings.cacheDisabled.addChangeListener(this._cacheDisabledSettingChanged.bind(this));
 }
 
@@ -59,7 +59,7 @@ WebInspector.NetworkManager.prototype = {
             else
                 callback(content, content && contentEncoded);
         }
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=61363 We should separate NetworkResource (NetworkPanel resource) 
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=61363 We should separate NetworkResource (NetworkPanel resource)
         // from ResourceRevision (ResourcesPanel/ScriptsPanel resource) and request content accordingly.
         if (resource.requestId)
             NetworkAgent.getResourceContent(resource.requestId, callbackWrapper);
@@ -71,7 +71,7 @@ WebInspector.NetworkManager.prototype = {
     {
         return this._dispatcher._inflightResourcesByURL[url];
     },
-    
+
     _cacheDisabledSettingChanged: function(event)
     {
         NetworkAgent.setCacheDisabled(event.data);

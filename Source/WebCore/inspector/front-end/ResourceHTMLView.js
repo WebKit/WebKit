@@ -54,7 +54,7 @@ WebInspector.ResourceHTMLView.prototype = {
 
     _createIFrame: function()
     {
-        // We need to create iframe again each time because contentDocument 
+        // We need to create iframe again each time because contentDocument
         // is deleted when iframe is removed from its parent.
         this.element.removeChildren();
         var iframe = document.createElement("iframe");

@@ -56,12 +56,12 @@ WebInspector.DOMStorage.prototype = {
     {
         DOMStorageAgent.getDOMStorageEntries(this._id, callback);
     },
-    
+
     setItem: function(key, value, callback)
     {
         DOMStorageAgent.setDOMStorageItem(this._id, key, value, callback);
     },
-    
+
     removeItem: function(key, callback)
     {
         DOMStorageAgent.removeDOMStorageItem(this._id, key, callback);
@@ -70,7 +70,7 @@ WebInspector.DOMStorage.prototype = {
 
 /**
  * @constructor
- * @implements {DOMStorageAgent.Dispatcher} 
+ * @implements {DOMStorageAgent.Dispatcher}
  */
 WebInspector.DOMStorageDispatcher = function()
 {

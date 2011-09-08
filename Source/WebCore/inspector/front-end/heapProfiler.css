@@ -145,7 +145,7 @@ body.inactive .heap-snapshot-sidebar-tree-item.wait.selected .icon {
     bottom: 0;
 }
 
-.detailed-heapshot-view .views-container { 
+.detailed-heapshot-view .views-container {
     position: absolute;
     top: 0;
     left: 0;

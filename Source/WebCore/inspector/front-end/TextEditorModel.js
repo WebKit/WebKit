@@ -49,7 +49,7 @@ WebInspector.TextRange.prototype = {
 
     clone: function()
     {
-        return new WebInspector.TextRange(this.startLine, this.startColumn, this.endLine, this.endColumn); 
+        return new WebInspector.TextRange(this.startLine, this.startColumn, this.endLine, this.endColumn);
     }
 }
 

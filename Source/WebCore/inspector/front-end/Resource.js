@@ -541,7 +541,7 @@ WebInspector.Resource.prototype = {
                 break;
         }
     },
-    
+
     get redirectSource()
     {
         if (this.redirects && this.redirects.length > 0)
@@ -758,7 +758,7 @@ WebInspector.Resource.prototype = {
 
     addMessage: function(msg)
     {
-        if (!msg.isErrorOrWarning() || !msg.message) 
+        if (!msg.isErrorOrWarning() || !msg.message)
             return;
 
         if (!this._messages)
