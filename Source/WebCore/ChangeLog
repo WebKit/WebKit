@@ -1,3 +1,17 @@
+2011-09-08  Chris Rogers  <crogers@google.com>
+
+        Check AudioContext createChannelMerger() for thread safety
+        https://bugs.webkit.org/show_bug.cgi?id=67247
+
+        Reviewed by Kenneth Russell.
+
+        Test: webaudio/audiochannelmerger-stereo.html
+
+        * webaudio/AudioChannelMerger.cpp:
+        (WebCore::AudioChannelMerger::process):
+        (WebCore::AudioChannelMerger::checkNumberOfChannelsForInput):
+        * webaudio/AudioChannelMerger.h:
+
 2011-09-08  Ned Holbrook  <nholbrook@apple.com>
 
         Refactor hyphen measurement

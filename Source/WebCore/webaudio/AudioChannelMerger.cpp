@@ -32,6 +32,7 @@
 
 #include "AudioChannelMerger.h"
 
+#include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 
@@ -61,18 +62,7 @@ void AudioChannelMerger::process(size_t framesToProcess)
     ASSERT(output);
     ASSERT_UNUSED(framesToProcess, framesToProcess == output->bus()->length());    
     
-    // Count how many channels we have all together from all of the inputs.
-    unsigned numberOfOutputChannels = 0;
-    for (unsigned i = 0; i < numberOfInputs(); ++i) {
-        AudioNodeInput* input = this->input(i);
-        if (input->isConnected())
-            numberOfOutputChannels += input->bus()->numberOfChannels();
-    }
-
-    // Set the correct number of channels on the output
-    output->setNumberOfChannels(numberOfOutputChannels);
-    
-    // Now merge the channels back into one output.
+    // Merge all the channels from all the inputs into one output.
     unsigned outputChannelIndex = 0;
     for (unsigned i = 0; i < numberOfInputs(); ++i) {
         AudioNodeInput* input = this->input(i);
@@ -90,11 +80,31 @@ void AudioChannelMerger::process(size_t framesToProcess)
         }
     }
     
-    ASSERT(outputChannelIndex == numberOfOutputChannels);
+    ASSERT(outputChannelIndex == output->numberOfChannels());
 }
 
 void AudioChannelMerger::reset()
 {
+}
+
+// Any time a connection or disconnection happens on any of our inputs, we potentially need to change the
+// number of channels of our output.
+void AudioChannelMerger::checkNumberOfChannelsForInput(AudioNodeInput* input)
+{
+    ASSERT(context()->isAudioThread() && context()->isGraphOwner());
+
+    // Count how many channels we have all together from all of the inputs.
+    unsigned numberOfOutputChannels = 0;
+    for (unsigned i = 0; i < numberOfInputs(); ++i) {
+        AudioNodeInput* input = this->input(i);
+        if (input->isConnected())
+            numberOfOutputChannels += input->bus()->numberOfChannels();
+    }
+
+    // Set the correct number of channels on the output
+    AudioNodeOutput* output = this->output(0);
+    ASSERT(output);
+    output->setNumberOfChannels(numberOfOutputChannels);
 }
 
 } // namespace WebCore

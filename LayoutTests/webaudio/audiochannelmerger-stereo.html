@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<!--
+Tests that that we can merge two mono streams into a stereo stream.
+-->
+
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+<script type="text/javascript" src="resources/buffer-loader.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests audio channel merging of two mono streams into a single stereo stream.");
+
+var sampleRate = 44100.0;
+var lengthInSampleFrames = 512;
+
+var context = 0;
+var bufferLoader = 0;
+var buffer1;
+var buffer2;
+var bufferSource1;
+var bufferSource2;
+var channelMerger;
+
+function createBufferWithDCOffset(length, sampleRate, offset) {
+    var buffer = context.createBuffer(1, length, sampleRate);
+    var data = buffer.getChannelData(0);
+    for (var i = 0; i < buffer.length; ++i)
+        data[i] = offset;
+    
+    return buffer;
+}
+
+// checkResult() checks that the rendered buffer is stereo and that the left channel is all -1 and right channel all +1.
+function checkResult(event) {
+    var buffer = event.renderedBuffer;
+
+    var success = true;
+
+    if (buffer.numberOfChannels == 2) {
+        var bufferDataL = buffer.getChannelData(0);
+        var bufferDataR = buffer.getChannelData(1);
+    
+        // Go through every sample and make sure it's all -1 for the left-channel, and all +1 for the right-channel.
+        for (var i = 0; i < buffer.length; ++i) {
+            if (bufferDataL[i] != -1 || bufferDataR[i] != 1) {
+                success = false;
+                break;
+            }
+        }
+    } else {
+        success = false;
+    }
+
+    if (success) {
+        testPassed("Correctly merged from two mono streams to stereo.");
+    } else {
+        testFailed("Merging error from two mono streams to stereo.");
+    }
+
+    finishJSTest();
+}
+
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+        
+    // Create stereo offline audio context.
+    context = new webkitAudioContext(2, lengthInSampleFrames, sampleRate);
+
+    // Create two mono buffers, one having all -1 values, the other all +1.
+    buffer1 = createBufferWithDCOffset(lengthInSampleFrames, sampleRate, -1);
+    buffer2 = createBufferWithDCOffset(lengthInSampleFrames, sampleRate, 1);
+
+    // Create a buffer source for each of these buffers.
+    bufferSource1 = context.createBufferSource();
+    bufferSource2 = context.createBufferSource();
+    bufferSource1.buffer = buffer1;
+    bufferSource2.buffer = buffer2;
+
+    // Create a channel merger and connect it so that it merges two mono streams into a single stereo stream.
+    
+    channelMerger = context.createChannelMerger();
+    bufferSource1.connect(channelMerger, 0, 0); // connect to input 0 of the channel merger
+    bufferSource2.connect(channelMerger, 0, 1); // connect to input 1 of the channel merger
+    
+    channelMerger.connect(context.destination);
+
+    // Trigger both sources to start at the beginning.
+    bufferSource1.noteOn(0);
+    bufferSource2.noteOn(0);
+    
+    context.oncomplete = checkResult;
+    context.startRendering();
+}
+
+runTest();
+successfullyParsed = true;
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

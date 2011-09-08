@@ -47,6 +47,9 @@ public:
     virtual void process(size_t framesToProcess);
     virtual void reset();
 
+    // Called in the audio thread (pre-rendering task) when the number of channels for an input may have changed.
+    virtual void checkNumberOfChannelsForInput(AudioNodeInput*);
+
 private:
     AudioChannelMerger(AudioContext*, double sampleRate);
 };
