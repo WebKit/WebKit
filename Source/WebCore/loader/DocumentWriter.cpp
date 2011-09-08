@@ -253,11 +253,6 @@ void DocumentWriter::setEncoding(const String& name, bool userChosen)
     m_encodingWasChosenByUser = userChosen;
 }
 
-void DocumentWriter::setDecoder(TextResourceDecoder* decoder)
-{
-    m_decoder = decoder;
-}
-
 String DocumentWriter::deprecatedFrameEncoding() const
 {
     return m_frame->document()->url().isEmpty() ? m_encoding : encoding();
