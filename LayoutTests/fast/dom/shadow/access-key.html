@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/create-dom.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="sandbox"></div>
+<pre id="console"></pre>
+<script>
+description("Tests to ensure that accesskey works in regard to shadow DOM boundary. Can only run within DRT.");
+
+function pressAccessKey(key)
+{
+    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+        modifiers = ["ctrlKey", "altKey"];
+    else
+        modifiers = ["altKey"];
+    eventSender.keyDown(key, modifiers);
+}
+
+var eventRecords = {};
+
+function clearEventRecords()
+{
+    eventRecords = {};
+}
+
+function dispatchedEvent(eventType)
+{
+    var events = eventRecords[eventType];
+    if (!events)
+        return [];
+    return events;
+}
+
+function recordEvent(event)
+{
+    var eventType = event.type
+    if (!eventRecords[eventType]) {
+        eventRecords[eventType] = []
+    }
+    eventRecords[eventType].push(event.target.id);
+}
+
+function getElementInShadow(path)
+{
+    var ids = path.split('/');
+    var element = document.getElementById(ids[0]);
+    for (var i = 1; element != null && i < ids.length; ++i) {
+        var shadowRoot = internals.shadowRoot(element);
+        element = internals.getElementByIdInShadowRoot(shadowRoot, ids[i]);
+    }
+    return element;
+}
+
+function prepareDomTree(parent)
+{
+    parent.appendChild(
+        createDom('div', {'id': 'divA'},
+                  createDom('input', {'id': 'inputB'}),
+                  createShadow('div', {'id': 'shadowC', 'tabindex': 0},
+                               createDom('input', {'id': 'inputD'}),
+                               createDom('input', {'id': 'inputE', 'accesskey': 'a'}),
+                               createShadow('div', {'id': 'shadowF', 'tabindex': 0},
+                                            createDom('input', {'id': 'inputG'})))));
+
+    var ids = ['inputB',
+               'shadowC/inputD', 'shadowC/inputE',
+               'shadowC/shadowF/inputG'];
+    for (var i = 0; i < ids.length; ++i) {
+        var element = getElementInShadow(ids[i]);
+        element.addEventListener('focus', recordEvent, false);
+    }
+}
+
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    prepareDomTree(document.getElementById('sandbox'));
+
+    // Please see the discussion of https://bugs.webkit.org/show_bug.cgi?id=67096.
+    // We don't have a clear idea how accesskey should work in regard to shadow DOM.
+    // In current implementation, accesskeys defined inside of components are exposed to an outer document.
+    // Every accesskeys are flattened per each document.
+    document.getElementById('inputB').focus();
+    clearEventRecords();
+    pressAccessKey('a');
+    shouldBe('dispatchedEvent("focus")', '["inputE"]');
+
+    getElementInShadow('shadowC/inputD').focus();
+    clearEventRecords();
+    pressAccessKey('a');
+    shouldBe('dispatchedEvent("focus")', '["inputE"]');
+
+    getElementInShadow('shadowC/shadowF/inputG').focus();
+    clearEventRecords();
+    pressAccessKey('a');
+    shouldBe('dispatchedEvent("focus")', '["inputE"]');
+}
+
+test();
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
