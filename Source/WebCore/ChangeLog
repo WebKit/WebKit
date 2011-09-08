@@ -1,3 +1,25 @@
+2011-09-08  Erik Arvidsson  <arv@chromium.org>
+
+        Move Element.contains to Node
+        https://bugs.webkit.org/show_bug.cgi?id=67651
+
+        Reviewed by Darin Adler.
+
+        This moves the contains method from Element to Node as in the DOM4 working draft: 
+        http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-node-contains
+
+        This also special cases Document contains to make it O(1) instead of O(depth).
+
+        Tests: fast/dom/Node/contains-method.html
+               perf/document-contains.html
+
+        * dom/Element.idl:
+        * dom/Node.cpp:
+        (WebCore::Node::contains): Added document special case.
+        * dom/Node.idl:
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Added a null check.
+
 2011-09-08  Chris Rogers  <crogers@google.com>
 
         Check AudioContext createChannelMerger() for thread safety
