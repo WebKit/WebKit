@@ -489,14 +489,14 @@ WebInspector.ConsoleView.prototype = {
         this._shortcuts = {};
 
         var shortcut = WebInspector.KeyboardShortcut;
-        var shortcutK = shortcut.makeDescriptor("k", WebInspector.KeyboardShortcut.Modifiers.Meta);
-        // This case requires a separate bound function as its isMacOnly property should not be shared among different shortcut handlers.
-        var clearConsoleHandler = this._requestClearMessages.bind(this);
-        this._shortcuts[shortcutK.key] = clearConsoleHandler;
-        this._shortcuts[shortcutK.key].isMacOnly = true;
+
+        if (WebInspector.isMac()) {
+            var shortcutK = shortcut.makeDescriptor("k", WebInspector.KeyboardShortcut.Modifiers.Meta);
+            this._shortcuts[shortcutK.key] = this._requestClearMessages.bind(this);
+        }
 
         var shortcutL = shortcut.makeDescriptor("l", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
-        this._shortcuts[shortcutL.key] = clearConsoleHandler;
+        this._shortcuts[shortcutL.key] = this._requestClearMessages.bind(this);
 
         var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("Console"));
         var keys = WebInspector.isMac() ? [ shortcutK.name, shortcutL.name ] : [ shortcutL.name ];
@@ -537,11 +537,9 @@ WebInspector.ConsoleView.prototype = {
         var shortcut = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);
         var handler = this._shortcuts[shortcut];
         if (handler) {
-            if (!this._shortcuts[shortcut].isMacOnly || WebInspector.isMac()) {
-                handler();
-                event.preventDefault();
-                return;
-            }
+            handler();
+            event.preventDefault();
+            return;
         }
     },
 
