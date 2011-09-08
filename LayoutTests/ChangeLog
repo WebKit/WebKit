@@ -1,3 +1,19 @@
+2011-09-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94695.
+        http://trac.webkit.org/changeset/94695
+        https://bugs.webkit.org/show_bug.cgi?id=67776
+
+        Hitting an assertion on Snow Leopard, Qt, GTK (Requested by
+        Zoltan on #webkit).
+
+        * fast/block/positioning/absolute-layout-after-image-load-expected.txt: Removed.
+        * fast/block/positioning/absolute-layout-after-image-load.html: Removed.
+        * fast/block/positioning/positioned-float-layout-after-image-load-expected.txt: Removed.
+        * fast/block/positioning/positioned-float-layout-after-image-load.html: Removed.
+        * fast/block/positioning/resources/absolute-layout-after-image-load-2.html: Removed.
+        * fast/block/positioning/resources/positioned-float-layout-after-image-load-2.html: Removed.
+
 2011-09-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Couple of tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode

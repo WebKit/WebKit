@@ -1,3 +1,16 @@
+2011-09-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94695.
+        http://trac.webkit.org/changeset/94695
+        https://bugs.webkit.org/show_bug.cgi?id=67776
+
+        Hitting an assertion on Snow Leopard, Qt, GTK (Requested by
+        Zoltan on #webkit).
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionedFloatsNeedRelayout):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+
 2011-09-08  Alexander Pavlov  <apavlov@chromium.org>
 
         Unreviewed, strip trailing whitespace in the Web Inspector frontend (*.js and *.css).
