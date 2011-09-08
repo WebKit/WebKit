@@ -1,3 +1,10 @@
+2011-09-08  Tony Chang  <tony@chromium.org>
+
+        remove fast/exclusions/triangle-exclusion.html which was originally added as a placeholder
+        https://bugs.webkit.org/show_bug.cgi?id=67795
+
+        * fast/exclusions/triangle-exclusion.html: Removed.
+
 2011-09-08  Nate Chapin  <japhet@chromium.org>
 
         Chromium rebaseline zoom-animator-scale-test.html and mark a couple
