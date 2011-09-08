@@ -370,7 +370,7 @@ void RenderTable::layout()
         sectionLogicalLeft += style()->isLeftToRightDirection() ? paddingStart() : paddingEnd();
 
     // position the table sections
-    RenderTableSection* section = m_head ? m_head : (m_firstBody ? m_firstBody : m_foot);
+    RenderTableSection* section = topSection();
     while (section) {
         if (!sectionMoved && section->logicalTop() != logicalHeight()) {
             sectionMoved = true;
@@ -593,6 +593,14 @@ void RenderTable::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
+RenderTableSection* RenderTable::topNonEmptySection() const
+{
+    RenderTableSection* section = topSection();
+    if (section && !section->numRows())
+        section = sectionBelow(section, SkipEmptySections);
+    return section;
+}
+
 void RenderTable::splitColumn(int pos, int firstSpan)
 {
     // we need to add a new columnStruct
@@ -800,19 +808,15 @@ LayoutUnit RenderTable::calcBorderStart() const
                 borderWidth = max<LayoutUnit>(borderWidth, gb.width());
         }
         
-        RenderTableSection* firstNonEmptySection = m_head ? m_head : (m_firstBody ? m_firstBody : m_foot);
-        if (firstNonEmptySection && !firstNonEmptySection->numRows())
-            firstNonEmptySection = sectionBelow(firstNonEmptySection, true);
-        
-        if (firstNonEmptySection) {
-            const BorderValue& sb = firstNonEmptySection->style()->borderStart();
+        if (const RenderTableSection* topNonEmptySection = this->topNonEmptySection()) {
+            const BorderValue& sb = topNonEmptySection->style()->borderStart();
             if (sb.style() == BHIDDEN)
                 return 0;
 
             if (sb.style() > BHIDDEN)
                 borderWidth = max<LayoutUnit>(borderWidth, sb.width());
 
-            const RenderTableSection::CellStruct& cs = firstNonEmptySection->cellAt(0, 0);
+            const RenderTableSection::CellStruct& cs = topNonEmptySection->cellAt(0, 0);
             
             if (cs.hasCells()) {
                 const BorderValue& cb = cs.primaryCell()->style()->borderStart(); // FIXME: Make this work with perpendicualr and flipped cells.
@@ -857,20 +861,16 @@ LayoutUnit RenderTable::calcBorderEnd() const
             if (gb.style() > BHIDDEN)
                 borderWidth = max<LayoutUnit>(borderWidth, gb.width());
         }
-        
-        RenderTableSection* firstNonEmptySection = m_head ? m_head : (m_firstBody ? m_firstBody : m_foot);
-        if (firstNonEmptySection && !firstNonEmptySection->numRows())
-            firstNonEmptySection = sectionBelow(firstNonEmptySection, true);
-        
-        if (firstNonEmptySection) {
-            const BorderValue& sb = firstNonEmptySection->style()->borderEnd();
+
+        if (const RenderTableSection* topNonEmptySection = this->topNonEmptySection()) {
+            const BorderValue& sb = topNonEmptySection->style()->borderEnd();
             if (sb.style() == BHIDDEN)
                 return 0;
 
             if (sb.style() > BHIDDEN)
                 borderWidth = max<LayoutUnit>(borderWidth, sb.width());
 
-            const RenderTableSection::CellStruct& cs = firstNonEmptySection->cellAt(0, endColumn);
+            const RenderTableSection::CellStruct& cs = topNonEmptySection->cellAt(0, endColumn);
             
             if (cs.hasCells()) {
                 const BorderValue& cb = cs.primaryCell()->style()->borderEnd(); // FIXME: Make this work with perpendicular and flipped cells.
@@ -917,16 +917,7 @@ LayoutUnit RenderTable::outerBorderBefore() const
     if (!collapseBorders())
         return 0;
     LayoutUnit borderWidth = 0;
-    RenderTableSection* topSection;
-    if (m_head)
-        topSection = m_head;
-    else if (m_firstBody)
-        topSection = m_firstBody;
-    else if (m_foot)
-        topSection = m_foot;
-    else
-        topSection = 0;
-    if (topSection) {
+    if (RenderTableSection* topSection = this->topSection()) {
         borderWidth = topSection->outerBorderBefore();
         if (borderWidth < 0)
             return 0;   // Overridden by hidden
@@ -1023,7 +1014,7 @@ LayoutUnit RenderTable::outerBorderEnd() const
     return borderWidth;
 }
 
-RenderTableSection* RenderTable::sectionAbove(const RenderTableSection* section, bool skipEmptySections) const
+RenderTableSection* RenderTable::sectionAbove(const RenderTableSection* section, SkipEmptySectionsValue skipEmptySections) const
 {
     recalcSectionsIfNeeded();
 
@@ -1032,16 +1023,16 @@ RenderTableSection* RenderTable::sectionAbove(const RenderTableSection* section,
 
     RenderObject* prevSection = section == m_foot ? lastChild() : section->previousSibling();
     while (prevSection) {
-        if (prevSection->isTableSection() && prevSection != m_head && prevSection != m_foot && (!skipEmptySections || toRenderTableSection(prevSection)->numRows()))
+        if (prevSection->isTableSection() && prevSection != m_head && prevSection != m_foot && (skipEmptySections == DoNotSkipEmptySections || toRenderTableSection(prevSection)->numRows()))
             break;
         prevSection = prevSection->previousSibling();
     }
-    if (!prevSection && m_head && (!skipEmptySections || m_head->numRows()))
+    if (!prevSection && m_head && (skipEmptySections == DoNotSkipEmptySections || m_head->numRows()))
         prevSection = m_head;
     return toRenderTableSection(prevSection);
 }
 
-RenderTableSection* RenderTable::sectionBelow(const RenderTableSection* section, bool skipEmptySections) const
+RenderTableSection* RenderTable::sectionBelow(const RenderTableSection* section, SkipEmptySectionsValue skipEmptySections) const
 {
     recalcSectionsIfNeeded();
 
@@ -1050,11 +1041,11 @@ RenderTableSection* RenderTable::sectionBelow(const RenderTableSection* section,
 
     RenderObject* nextSection = section == m_head ? firstChild() : section->nextSibling();
     while (nextSection) {
-        if (nextSection->isTableSection() && nextSection != m_head && nextSection != m_foot && (!skipEmptySections || toRenderTableSection(nextSection)->numRows()))
+        if (nextSection->isTableSection() && nextSection != m_head && nextSection != m_foot && (skipEmptySections  == DoNotSkipEmptySections || toRenderTableSection(nextSection)->numRows()))
             break;
         nextSection = nextSection->nextSibling();
     }
-    if (!nextSection && m_foot && (!skipEmptySections || m_foot->numRows()))
+    if (!nextSection && m_foot && (skipEmptySections == DoNotSkipEmptySections || m_foot->numRows()))
         nextSection = m_foot;
     return toRenderTableSection(nextSection);
 }
@@ -1072,7 +1063,7 @@ RenderTableCell* RenderTable::cellAbove(const RenderTableCell* cell) const
         section = cell->section();
         rAbove = r - 1;
     } else {
-        section = sectionAbove(cell->section(), true);
+        section = sectionAbove(cell->section(), SkipEmptySections);
         if (section)
             rAbove = section->numRows() - 1;
     }
@@ -1099,7 +1090,7 @@ RenderTableCell* RenderTable::cellBelow(const RenderTableCell* cell) const
         section = cell->section();
         rBelow = r + 1;
     } else {
-        section = sectionBelow(cell->section(), true);
+        section = sectionBelow(cell->section(), SkipEmptySections);
         if (section)
             rBelow = 0;
     }
@@ -1153,14 +1144,11 @@ LayoutUnit RenderTable::firstLineBoxBaseline() const
 
     recalcSectionsIfNeeded();
 
-    RenderTableSection* firstNonEmptySection = m_head ? m_head : (m_firstBody ? m_firstBody : m_foot);
-    if (firstNonEmptySection && !firstNonEmptySection->numRows())
-        firstNonEmptySection = sectionBelow(firstNonEmptySection, true);
-
-    if (!firstNonEmptySection)
+    const RenderTableSection* topNonEmptySection = this->topNonEmptySection();
+    if (!topNonEmptySection)
         return -1;
 
-    return firstNonEmptySection->logicalTop() + firstNonEmptySection->firstLineBoxBaseline();
+    return topNonEmptySection->logicalTop() + topNonEmptySection->firstLineBoxBaseline();
 }
 
 LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy relevancy)

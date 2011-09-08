@@ -139,13 +139,7 @@ int FixedTableLayout::calcWidthArray(int)
     }
 
     // Iterate over the first row in case some are unspecified.
-    RenderTableSection* section = m_table->header();
-    if (!section)
-        section = m_table->firstBody();
-    if (!section)
-        section = m_table->footer();
-    if (section && !section->numRows())
-        section = m_table->sectionBelow(section, true);
+    RenderTableSection* section = m_table->topNonEmptySection();
     if (section) {
         int cCol = 0;
         RenderObject* firstRow = section->firstChild();

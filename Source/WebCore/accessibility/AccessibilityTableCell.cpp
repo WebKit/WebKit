@@ -112,7 +112,8 @@ void AccessibilityTableCell::rowIndexRange(pair<int, int>& rowRange)
     RenderTable* table = renderCell->table();
     if (!table || !section)
         return;
-    
+
+    // FIXME: This will skip a table with just a tfoot. Should fix by using RenderTable::topSection.
     RenderTableSection* tableSection = table->header();
     if (!tableSection)
         tableSection = table->firstBody();
@@ -122,7 +123,7 @@ void AccessibilityTableCell::rowIndexRange(pair<int, int>& rowRange)
         if (tableSection == section)
             break;
         rowOffset += tableSection->numRows();
-        tableSection = table->sectionBelow(tableSection, true); 
+        tableSection = table->sectionBelow(tableSection, SkipEmptySections);
     }
 
     rowRange.first += rowOffset;

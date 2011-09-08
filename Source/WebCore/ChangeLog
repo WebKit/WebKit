@@ -1,3 +1,47 @@
+2011-09-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Factor out the code to get the first non-null RenderTableSection in RenderTable
+        https://bugs.webkit.org/show_bug.cgi?id=66972
+
+        Reviewed by Darin Adler.
+
+        Refactoring only, covered by existing tests.
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::addChildren):
+        (WebCore::AccessibilityTable::cellForColumnAndRow):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::rowIndexRange):
+        Updated those for the signature change in sectionBelow. Also added
+        a FIXME where topSection should be used instead of iterating
+        over the section (and likely missing some corner cases).
+
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcBorderStart):
+        (WebCore::RenderTable::calcBorderEnd):
+        (WebCore::RenderTable::outerBorderBefore):
+        (WebCore::RenderTable::sectionAbove):
+        (WebCore::RenderTable::sectionBelow):
+        (WebCore::RenderTable::firstLineBoxBaseline):
+        Updated all those functions to use the newly added functions. Also changed
+        the variable names to match the functions.
+
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::topNonEmptySection): Newly added function
+        that returns the top non null section of the table that has at least a
+        row.
+
+        (WebCore::RenderTable::cellAbove):
+        (WebCore::RenderTable::cellBelow):
+        Update the signature of those 2 functions to take an enum as it makes the
+        rest of the code more readable.
+
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::topSection): Newly added function to return
+        the top non null section in the table.
+
 2011-04-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.

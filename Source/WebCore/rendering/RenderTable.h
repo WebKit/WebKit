@@ -37,6 +37,8 @@ class RenderTableCell;
 class RenderTableSection;
 class TableLayout;
 
+enum SkipEmptySectionsValue { DoNotSkipEmptySections, SkipEmptySections };
+
 class RenderTable : public RenderBlock {
 public:
     explicit RenderTable(Node*);
@@ -144,6 +146,12 @@ public:
     RenderTableSection* footer() const { return m_foot; }
     RenderTableSection* firstBody() const { return m_firstBody; }
 
+    // This function returns 0 if the table has no section.
+    RenderTableSection* topSection() const;
+
+    // This function returns 0 if the table has no non-empty sections.
+    RenderTableSection* topNonEmptySection() const;
+
     void splitColumn(int pos, int firstSpan);
     void appendColumn(int span);
     int numEffCols() const { return m_columns.size(); }
@@ -184,8 +192,8 @@ public:
         setNeedsLayout(true);
     }
 
-    RenderTableSection* sectionAbove(const RenderTableSection*, bool skipEmptySections = false) const;
-    RenderTableSection* sectionBelow(const RenderTableSection*, bool skipEmptySections = false) const;
+    RenderTableSection* sectionAbove(const RenderTableSection*, SkipEmptySectionsValue = DoNotSkipEmptySections) const;
+    RenderTableSection* sectionBelow(const RenderTableSection*, SkipEmptySectionsValue = DoNotSkipEmptySections) const;
 
     RenderTableCell* cellAbove(const RenderTableCell*) const;
     RenderTableCell* cellBelow(const RenderTableCell*) const;
@@ -261,6 +269,15 @@ private:
     LayoutUnit m_borderStart;
     LayoutUnit m_borderEnd;
 };
+
+inline RenderTableSection* RenderTable::topSection() const
+{
+    if (m_head)
+        return m_head;
+    if (m_firstBody)
+        return m_firstBody;
+    return m_foot;
+}
 
 inline RenderTable* toRenderTable(RenderObject* object)
 {

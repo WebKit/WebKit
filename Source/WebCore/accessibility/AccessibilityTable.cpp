@@ -299,6 +299,7 @@ void AccessibilityTable::addChildren()
 
     // go through all the available sections to pull out the rows
     // and add them as children
+    // FIXME: This will skip a table with just a tfoot. Should fix by using RenderTable::topSection.
     RenderTableSection* tableSection = table->header();
     if (!tableSection)
         tableSection = table->firstBody();
@@ -343,7 +344,7 @@ void AccessibilityTable::addChildren()
             }
         }
         
-        tableSection = table->sectionBelow(tableSection, true);
+        tableSection = table->sectionBelow(tableSection, SkipEmptySections);
     }
     
     // make the columns based on the number of columns in the first body
@@ -466,6 +467,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
     updateChildrenIfNecessary();
     
     RenderTable* table = toRenderTable(m_renderer);
+    // FIXME: This will skip a table with just a tfoot. Should fix by using RenderTable::topSection.
     RenderTableSection* tableSection = table->header();
     if (!tableSection)
         tableSection = table->firstBody();
@@ -517,7 +519,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
         // we didn't find anything between the rows we should have
         if (row < rowCount)
             break;
-        tableSection = table->sectionBelow(tableSection, true);        
+        tableSection = table->sectionBelow(tableSection, SkipEmptySections);
     }
     
     if (!cell)
