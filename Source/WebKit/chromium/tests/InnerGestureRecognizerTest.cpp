@@ -157,6 +157,8 @@ protected:
     virtual void TearDown() { }
 };
 
+typedef OwnPtr<Vector<WebCore::PlatformGestureEvent> > Gestures;
+
 TEST_F(GestureRecognizerTest, hash)
 {
     InspectableGestureRecognizerChromium testGm;
@@ -282,6 +284,63 @@ TEST_F(GestureRecognizerTest, updateValues)
     ASSERT_EQ(0.0, gm.lastTouchTime() - gm.firstTouchTime());
 }
 
+TEST_F(GestureRecognizerTest, tapDownWithoutTapGestureTest)
+{
+    InspectableGestureRecognizerChromium gm;
+    ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
+
+    BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
+    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press);
+    Gestures gestureStart(gm.processTouchEventForGestures(pressEvent, false));
+    ASSERT_EQ((unsigned int)1, gestureStart->size());
+    ASSERT_EQ(PlatformGestureEvent::TapDownType, (*gestureStart)[0].type());
+    ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
+
+    BuildablePlatformTouchPoint move(10, 50, PlatformTouchPoint::TouchMoved);
+    BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move);
+    Gestures gestureMove(gm.processTouchEventForGestures(moveEvent, false));
+    for (unsigned int i = 0; i < gestureMove->size(); i++)
+        ASSERT_NE(PlatformGestureEvent::TapType, (*gestureMove)[i].type());
+    ASSERT_EQ(GestureRecognizerChromium::Scroll, gm.state());
+
+    BuildablePlatformTouchPoint release(10, 50, PlatformTouchPoint::TouchReleased);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release);
+    Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
+    for (unsigned int i = 0; i < gestureEnd->size(); i++)
+        ASSERT_NE(PlatformGestureEvent::TapType, (*gestureEnd)[i].type());
+    ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
+}
+
+TEST_F(GestureRecognizerTest, tapDownWithTapGestureTest)
+{
+    InspectableGestureRecognizerChromium gm;
+    ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
+
+    BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
+    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press);
+    Gestures gestureStart(gm.processTouchEventForGestures(pressEvent, false));
+    ASSERT_EQ((unsigned int)1, gestureStart->size());
+    ASSERT_EQ(PlatformGestureEvent::TapDownType, (*gestureStart)[0].type());
+    ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
+
+    BuildablePlatformTouchPoint move(10, 16, PlatformTouchPoint::TouchMoved);
+    BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move);
+    Gestures gestureMove(gm.processTouchEventForGestures(moveEvent, false));
+    ASSERT_EQ((unsigned int)0, gestureMove->size());
+    ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
+
+    BuildablePlatformTouchPoint release(10, 16, PlatformTouchPoint::TouchReleased);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release);
+
+    // set first touch time so that we pass the test for
+    // minimumTouchDownDurationInSecondsForClick
+    gm.setFirstTouchTime(gm.firstTouchTime() - 0.01);
+    Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
+    ASSERT_EQ((unsigned int)1, gestureEnd->size());
+    ASSERT_EQ(PlatformGestureEvent::TapType, (*gestureEnd)[0].type());
+    ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
+}
+
 TEST_F(GestureRecognizerTest, gestureScrollEvents)
 {
     InspectableGestureRecognizerChromium gm;
@@ -296,7 +355,7 @@ TEST_F(GestureRecognizerTest, gestureScrollEvents)
 
     BuildablePlatformTouchPoint move(10, 50, PlatformTouchPoint::TouchMoved);
     BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move);
-    OwnPtr<Vector<WebCore::PlatformGestureEvent> > gestureStart(gm.processTouchEventForGestures(moveEvent, false));
+    Gestures gestureStart(gm.processTouchEventForGestures(moveEvent, false));
     bool scrollStarted = false, scrollUpdated = false;
     for (unsigned int i = 0; i < gestureStart->size(); i++) {
         switch ((*gestureStart)[i].type()) {
@@ -318,7 +377,7 @@ TEST_F(GestureRecognizerTest, gestureScrollEvents)
     BuildablePlatformTouchPoint release(10, 50, PlatformTouchPoint::TouchReleased);
     BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release);
     bool scrollEnd = false;
-    OwnPtr<Vector<WebCore::PlatformGestureEvent> > gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
+    Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
     for (unsigned int i = 0; i < gestureEnd->size(); i++) {
         switch ((*gestureEnd)[i].type()) {
         case PlatformGestureEvent::ScrollEndType:

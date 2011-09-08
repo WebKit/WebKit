@@ -313,6 +313,7 @@ bool PopupContainer::handleGestureEvent(const PlatformGestureEvent& gestureEvent
     }
     case PlatformGestureEvent::ScrollBeginType:
     case PlatformGestureEvent::ScrollEndType:
+    case PlatformGestureEvent::TapDownType:
         break;
     }
     return false;

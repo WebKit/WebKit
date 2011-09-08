@@ -66,6 +66,7 @@ private:
 
     static unsigned int signature(State, unsigned, PlatformTouchPoint::State, bool);
     void addEdgeFunction(State, unsigned finger, PlatformTouchPoint::State, bool touchHandledByJavaScript, GestureTransitionFunction);
+    void appendTapDownGestureEvent(const PlatformTouchPoint&, Gestures);
     void appendClickGestureEvent(const PlatformTouchPoint&, Gestures);
     void appendScrollGestureBegin(const PlatformTouchPoint&, Gestures);
     void appendScrollGestureEnd(const PlatformTouchPoint&, Gestures);
@@ -87,7 +88,6 @@ private:
     IntPoint m_firstTouchScreenPosition;
     double m_firstTouchTime;
     State m_state;
-    IntPoint m_lastTouchPosition;
     double m_lastTouchTime;
 
     bool m_ctrlKey;

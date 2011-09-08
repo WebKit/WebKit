@@ -92,6 +92,11 @@ bool GestureRecognizerChromium::isInsideManhattanSquare(const PlatformTouchPoint
     return manhattanDistance < maximumTouchMoveInPixelsForClick;
 }
 
+void GestureRecognizerChromium::appendTapDownGestureEvent(const PlatformTouchPoint& touchPoint, Gestures gestures)
+{
+    gestures->append(PlatformGestureEvent(PlatformGestureEvent::TapDownType, m_firstTouchPosition, m_firstTouchScreenPosition, m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+}
+
 void GestureRecognizerChromium::appendClickGestureEvent(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
     gestures->append(PlatformGestureEvent(PlatformGestureEvent::TapType, m_firstTouchPosition, m_firstTouchScreenPosition, m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
@@ -160,7 +165,7 @@ unsigned int GestureRecognizerChromium::signature(State gestureState, unsigned i
 bool GestureRecognizerChromium::touchDown(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
     setState(PendingSyntheticClick);
-    // FIXME: Divide TapType into down and up events.
+    appendTapDownGestureEvent(touchPoint, gestures);
     return false;
 }
 

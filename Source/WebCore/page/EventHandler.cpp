@@ -2209,6 +2209,8 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
     // end gesture as well.
 
     switch (gestureEvent.type()) {
+    case PlatformGestureEvent::TapDownType:
+        break;
     case PlatformGestureEvent::TapType: {
         // FIXME: Refactor this code to not hit test multiple times once hit testing has been corrected as suggested above.
         PlatformMouseEvent fakeMouseMove(gestureEvent.position(), gestureEvent.globalPosition(), NoButton, MouseEventMoved, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
