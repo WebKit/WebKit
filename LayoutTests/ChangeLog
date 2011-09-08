@@ -1,3 +1,13 @@
+2011-09-07  Adam Barth  <abarth@webkit.org>
+
+        Our behavior is correct with respect to the new cookie RFC.  I'm told
+        that CFNetwork is going to change this behavior to match every other
+        browser.
+
+        * platform/chromium/http/tests/cookies: Added.
+        * platform/chromium/http/tests/cookies/double-quoted-value-with-semi-colon-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94714 and r94723.

@@ -1433,14 +1433,6 @@ BUGCR11251 LINUX WIN : fast/forms/textarea-metrics.html = FAIL
 BUGCR11483 LINUX : fast/forms/input-text-double-click.html = FAIL
 BUGCR11483 LINUX : svg/text/foreignObject-repaint.xml = FAIL
 
-// Regressions from WebKit merge 43242:43321.  These just need to re-baselining:
-
-// Details for all of these are in the bugs.
-BUGCR12361 WIN : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
-BUGCR12361 LINUX MAC DEBUG : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
-BUGCR12361 LINUX RELEASE : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
-BUGCR12361 SLOW MAC RELEASE : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
-
 BUGCR14207 LINUX : tables/mozilla/bugs/bug28341.html = FAIL
 BUGCR32231 MAC WIN : tables/mozilla/bugs/bug28341.html = PASS IMAGE
 
