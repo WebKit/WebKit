@@ -2660,7 +2660,7 @@ BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
 BUGCR74979 SKIP MAC GPU GPU-CG : media/video-canvas-alpha.html = IMAGE
 
-BUGWK67116 GPU DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
+BUGWK67116 GPU GPU-CG DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
 
 // Skip test test since this test uses layoutTestController.display()
 // that needs to be implemented for GPU
@@ -2697,7 +2697,6 @@ BUGWK54322 SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE // See "SVG tests" s
 BUGWK54322 SNOWLEOPARD : svg/custom/animate-path-discrete.svg = IMAGE
 BUGWK54322 SNOWLEOPARD : svg/W3C-SVG-1.1/coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
-BUGWK54322 SNOWLEOPARD : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/bloomberg.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/misc.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/row_span.html = IMAGE
@@ -3642,8 +3641,8 @@ BUGWK66338 MAC : fast/repaint/scale-page-shrink.html = IMAGE
 
 BUGWK66394 LINUX DEBUG : fast/canvas/webgl/data-view-crash.html = PASS CRASH
 
-BUGWK66417 WIN LEOPARD : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
-BUGWK66417 SNOWLEOPARD : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE
+BUGWK66417 WIN : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
+BUGWK66417 MAC : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE
 BUGWK66417 LINUX : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT TIMEOUT
 
 BUGWK66419 : http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html = TEXT
