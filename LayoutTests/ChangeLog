@@ -1,3 +1,10 @@
+2011-09-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped: Skip tests introduced in r94775 because of missing test fonts.
+        * platform/qt/fast/dom/constructed-objects-prototypes-expected.txt: Added. (test introduced in r94147)
+
 2011-09-08  Eric Carlson  <eric.carlson@apple.com>
 
         HTMLMediaElement is missing initialTime attribute

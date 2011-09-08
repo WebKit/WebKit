@@ -2415,3 +2415,7 @@ fast/multicol/overflow-across-columns.html
 # new test introduced in r94696, but fails on Qt.
 # https://bugs.webkit.org/show_bug.cgi?id=67772
 fast/css/line-after-floating-div.html
+
+# new tests introduced in r94775, but fails on Qt because of missing test font
+css3/unicode-bidi-isolate-aharon.html
+css3/unicode-bidi-isolate-basic.html
