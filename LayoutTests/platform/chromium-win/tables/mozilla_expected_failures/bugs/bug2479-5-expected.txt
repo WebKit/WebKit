@@ -175,5 +175,3 @@ layer at (8,8) size 769x1429
                 text run at (1,1) width 164: "Last updated in June 1999."
 layer at (317,1214) size 151x16
   RenderBlock {DIV} at (2,3) size 151x16
-
-

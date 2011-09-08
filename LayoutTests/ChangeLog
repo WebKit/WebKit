@@ -1,3 +1,21 @@
+2011-09-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Rebaselines for chromium.
+
+        * platform/chromium-cg-mac-leopard/fast/css/line-after-floating-div-expected.png: Added.
+        * platform/chromium-cg-mac/fast/css/line-after-floating-div-expected.png:
+        * platform/chromium-cg-mac/fast/css/line-after-floating-div-expected.txt: Removed.
+        * platform/chromium-cg-mac/fast/text/hyphenate-limit-lines-expected.png: Added.
+        * platform/chromium-linux/fast/css/line-after-floating-div-expected.png:
+        * platform/chromium-linux/fast/text/hyphenate-limit-lines-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png: Added.
+        * platform/chromium-win/fast/css/line-after-floating-div-expected.png:
+        * platform/chromium-win/fast/css/line-after-floating-div-expected.txt:
+        * platform/chromium-win/fast/text/hyphenate-limit-lines-expected.png: Added.
+        * platform/chromium-win/fast/text/hyphenate-limit-lines-expected.txt: Added.
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-09-07  Ben Wells  <benwells@chromium.org>
 
         Fix typo in test_expectations introduced with r94725

@@ -3053,7 +3053,7 @@ BUGCR79917 LINUX WIN : tables/mozilla/marvin/backgr_simple-table-row-group.html 
 BUGCR79917 LINUX WIN : tables/mozilla/marvin/backgr_simple-table-row.html = IMAGE
 BUGCR79917 LINUX WIN : tables/mozilla/marvin/backgr_simple-table.html = IMAGE
 BUGCR79917 LINUX WIN : tables/mozilla/marvin/tables_style.html = IMAGE
-BUGCR79917 LINUX WIN : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
+BUGCR79917 LINUX : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
 BUGCR79917 LINUX WIN : tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html = IMAGE
 BUGCR79917 LINUX WIN : tables/mozilla_expected_failures/marvin/backgr_border-table-column-group.html = IMAGE
 BUGCR79917 LINUX WIN : tables/mozilla_expected_failures/marvin/backgr_border-table-column.html = IMAGE
@@ -3732,3 +3732,5 @@ BUG_REED : compositing/overflow/overflow-positioning.html = IMAGE
 BUG_REED : fast/canvas/canvas-text-baseline.html = IMAGE
 BUG_REED : fast/canvas/quadraticCurveTo.xml = IMAGE
 BUG_REED : fast/canvas/canvas-lineWidth.html = TEXT
+
+BUGWK67769 DEBUG : fast/block/positioning/positioned-float-layout-after-image-load.html = CRASH
