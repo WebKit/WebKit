@@ -83,6 +83,9 @@ BUGCR10395 SKIP : http/tests/webarchive = PASS FAIL
 // fails for other platforms...
 BUGCR20404 : editing/execCommand/copy-without-selection.html = TEXT
 
+// Skia clipped blur change in progress.
+BUGWK67724 SKIP : fast/box-shadow/shadow-buffer-partial.html = PASS FAIL
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------

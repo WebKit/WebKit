@@ -1,3 +1,14 @@
+2011-09-08  Ben Wagner  <bungeman@chromium.org>
+
+        Chromium shadow-buffer-partial test change.
+        Part1: Update and disable test.
+        https://bugs.webkit.org/show_bug.cgi?id=67724
+
+        Reviewed by Kenneth Russell.
+
+        * platform/chromium-win/fast/box-shadow/shadow-buffer-partial-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-09-08  Jarred Nicholls  <jarred@sencha.com>
 
         frame-loading-via-document-write.html test cases have extra slash in path
