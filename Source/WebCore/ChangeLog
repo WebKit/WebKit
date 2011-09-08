@@ -1,3 +1,34 @@
+2011-09-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94674 and r94689.
+        http://trac.webkit.org/changeset/94674
+        http://trac.webkit.org/changeset/94689
+        https://bugs.webkit.org/show_bug.cgi?id=67754
+
+        Broke inspector/debugger/script-formatter.html (Requested by
+        rniwa on #webkit).
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype.addSourceMappingListener):
+        (WebInspector.DebuggerPresentationModel.prototype.removeSourceMappingListener):
+        (WebInspector.DebuggerPresentationModel.prototype.linkifyLocation):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        (WebInspector.DebuggerPresentationModel.prototype._sourceMappingUpdated):
+        (WebInspector.DebuggerPresentationModel.prototype._restoreBreakpoints):
+        (WebInspector.DebuggerPresentationModel.prototype.setFormatSource):
+        (WebInspector.DebuggerPresentationModel.prototype._createRawSourceCodeId):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerReset):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._toggleFormatSource):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.RawSourceCode):
+        (WebInspector.RawSourceCode.prototype.get uiSourceCode):
+        (WebInspector.RawSourceCode.prototype.get rawSourceCode):
+        (WebInspector.RawSourceCode.prototype.rawLocationToUILocation):
+        (WebInspector.RawSourceCode.prototype.requestContent):
+        (WebInspector.RawSourceCode.prototype._saveSourceMapping):
+
 2011-09-07  Julien Chaffraix  <jchaffraix@webkit.org>
 
         offsetFromRoot optimization is disabled after r93837

@@ -1132,6 +1132,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _toggleFormatSource: function()
     {
+        WebInspector.panels.scripts.reset();
         this._toggleFormatSourceButton.toggled = !this._toggleFormatSourceButton.toggled;
         this._presentationModel.setFormatSource(this._toggleFormatSourceButton.toggled);
     },
