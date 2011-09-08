@@ -1,5 +1,15 @@
 2011-09-07  Adam Barth  <abarth@webkit.org>
 
+        These tests just differ in how JSC and V8 report error messages.
+
+        * platform/chromium-cg-mac-leopard/http/tests/security: Added.
+        * platform/chromium-cg-mac-leopard/http/tests/security/xss-DENIED-xml-external-entity-expected.txt: Added.
+        * platform/chromium-cg-mac-leopard/http/tests/security/xss-DENIED-xsl-external-entity-expected.txt: Added.
+        * platform/chromium/http/tests/security/xss-DENIED-assign-location-href-javascript-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-09-07  Adam Barth  <abarth@webkit.org>
+
         Our results here reflect an intentional difference between GURL and
         KURL.  KURL doesn't handle non-ASCII characters in the fragment in the
         same was as IE whereas GURL does.

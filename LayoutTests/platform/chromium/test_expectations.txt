@@ -1644,9 +1644,6 @@ BUGCR25977 WIN DEBUG : http/tests/appcache/empty-manifest.html = PASS TIMEOUT
 BUGCR25977 XP DEBUG : http/tests/appcache/main-resource-hash.html = PASS TIMEOUT
 BUGCR25977 XP DEBUG : http/tests/appcache/online-whitelist.html = PASS TIMEOUT
 
-// WebKit update 52293->52323
-BUGCR31253 : http/tests/security/xss-DENIED-assign-location-href-javascript.html = TEXT
-
 // WebKit update 52323->52366
 BUGCR30826 WIN : platform/win/fast/events/panScroll-imageMap-noHref-scroll.html = TEXT
 BUGCR30826 WIN DEBUG : platform/win/fast/events/panScroll-event-fired.html = PASS TIMEOUT TEXT
@@ -2795,10 +2792,6 @@ BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 
 // Skip an overly restrictive cross-origin HTTPS test
 BUGCR69594 SKIP : http/tests/appcache/different-https-origin-resource-main.html = FAIL
-
-// Need a rebaseline.
-BUG_ANTONM LEOPARD : http/tests/security/xss-DENIED-xml-external-entity.xhtml = TEXT
-BUG_ANTONM LEOPARD : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
 
 BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = TEXT
 
