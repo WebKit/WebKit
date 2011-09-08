@@ -994,7 +994,7 @@ void ReplaceSelectionCommand::doApply()
 
     Node* blockStart = enclosingBlock(insertionPos.deprecatedNode());
     if ((isListElement(refNode.get()) || (isLegacyAppleStyleSpan(refNode.get()) && isListElement(refNode->firstChild())))
-        && blockStart->renderer()->isListItem())
+        && blockStart && blockStart->renderer()->isListItem())
         refNode = insertAsListItems(refNode, blockStart, insertionPos);
     else
         insertNodeAtAndUpdateNodesInserted(refNode, insertionPos);
