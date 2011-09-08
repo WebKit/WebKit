@@ -1,3 +1,16 @@
+2011-09-08  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67771
+
+        Fix sequenceGetByIdSlowCaseInstructionSpace, sequenceGetByIdSlowCaseConstantSpace
+        and patchOffsetGetByIdSlowCaseCall
+        and enables DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS flag for SH4 platforms.
+
+        Reviewed by Gavin Barraclough.
+
+        * jit/JIT.h:
+        * wtf/dtoa/utils.h:
+
 2011-09-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove getUInt32 from JSCell
