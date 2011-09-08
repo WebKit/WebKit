@@ -1,0 +1,16 @@
+BOGUS! Added this line to get get DRT to pass
+Test the default lineWidth is consistent.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ctx.lineWidth is 1
+PASS ctx.lineWidth is 1
+PASS ctx.lineWidth is 1
+PASS ctx.lineWidth is 1
+PASS ctx.lineWidth is 1
+PASS ctx.lineWidth is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
