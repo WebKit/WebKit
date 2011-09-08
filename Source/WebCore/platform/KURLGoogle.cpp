@@ -284,6 +284,7 @@ void KURLGooglePrivate::copyTo(KURLGooglePrivate* dest) const
     dest->m_utf8 = CString(m_utf8.data(), m_utf8.length());
     dest->m_utf8IsASCII = m_utf8IsASCII;
     dest->m_stringIsValid = false;
+    dest->m_string = String(); // Clear the invalid string to avoid cross thread ref counting.
 }
 
 String KURLGooglePrivate::componentString(const url_parse::Component& comp) const
