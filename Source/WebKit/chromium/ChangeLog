@@ -1,3 +1,12 @@
+2011-09-08  Scott Byer  <scottbyer@chromium.org>
+
+        Compile in ScrollAnimator for Chromium on all platforms by default.
+        https://bugs.webkit.org/show_bug.cgi?id=67650
+
+        Reviewed by Adam Barth.
+
+        * features.gypi:
+
 2011-09-07  Adam Barth  <abarth@webkit.org>
 
         FrameLoader::addExtraFieldsToRequest can crash when called from or after FrameLoader::detachFromParent

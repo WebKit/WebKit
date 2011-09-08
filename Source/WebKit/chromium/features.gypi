@@ -76,6 +76,7 @@
       'ENABLE_SANDBOX=1',
       'ENABLE_SHARED_WORKERS=1',
       'ENABLE_SKIA_GPU=<(use_skia_gpu)',
+      'ENABLE_SMOOTH_SCROLLING=1',
       'ENABLE_SVG=<(enable_svg)',
       'ENABLE_SVG_ANIMATION=<(enable_svg)',
       'ENABLE_SVG_AS_IMAGE=<(enable_svg)',
@@ -111,14 +112,12 @@
       'use_skia_gpu%': 0,
       'use_skia%': 0,
       'enable_touch_icon_loading%' : 0,
-      'enable_smooth_scrolling%': 0,
       'enable_css3_flexbox%': 0,
     },
     'use_accelerated_compositing%': '<(use_accelerated_compositing)',
     'use_threaded_compositing%': '<(use_threaded_compositing)',
     'enable_svg%': '<(enable_svg)',
     'enable_touch_events%': '<(enable_touch_events)',
-    'enable_smooth_scrolling%': '<(enable_smooth_scrolling)',
     'use_skia%': '<(use_skia)',
     'conditions': [
       ['use_accelerated_compositing==1', {
@@ -156,11 +155,6 @@
         'feature_defines': [
           'ENABLE_RUBBER_BANDING=1',
           'WTF_USE_SKIA_ON_MAC_CHROMIUM=<(use_skia)',
-        ],
-      }],
-      ['enable_smooth_scrolling==1', {
-        'feature_defines': [
-          'ENABLE_SMOOTH_SCROLLING=1',
         ],
       }],
       ['enable_css3_flexbox==1', {
