@@ -1,3 +1,15 @@
+2011-09-08  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: Add 'scoped' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=67718
+
+        Test setting/resetting of the 'scoped' attribute in various circumstances.
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/css/style-scoped/basic-attribute-expected.txt: Added.
+        * fast/css/style-scoped/basic-attribute.html: Added.
+
 2011-09-08  Tony Chang  <tony@chromium.org>
 
         remove fast/exclusions/triangle-exclusion.html which was originally added as a placeholder

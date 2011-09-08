@@ -94,6 +94,31 @@ const AtomicString& HTMLStyleElement::type() const
     return getAttribute(typeAttr);
 }
 
+bool HTMLStyleElement::scoped() const
+{
+    return fastHasAttribute(scopedAttr);
+}
+
+void HTMLStyleElement::setScoped(bool scopedValue)
+{
+    setBooleanAttribute(scopedAttr, scopedValue);
+}
+
+Element* HTMLStyleElement::scopingElement() const
+{
+    if (!scoped())
+        return 0;
+
+    // FIXME: This probably needs to be refined for scoped stylesheets within shadow DOM.
+    // As written, such a stylesheet could style the host element, as well as children of the host.
+    // OTOH, this paves the way for a :bound-element implementation.
+    ContainerNode* parentOrHost = parentOrHostNode();
+    if (!parentOrHost || !parentOrHost->isElementNode())
+        return 0;
+
+    return toElement(parentOrHost);
+}
+
 void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {    
     HTMLElement::addSubresourceAttributeURLs(urls);

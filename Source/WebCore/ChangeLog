@@ -1,3 +1,23 @@
+2011-09-08  Roland Steiner  <rolandsteiner@chromium.org>
+
+        <style scoped>: Add 'scoped' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=67718
+
+        Add 'scoped' attribute to IDL and attribute list,
+        implement and test setting/resetting of the attribute.
+
+        Reviewed by Dimitri Glazkov.
+
+        Test: fast/css/style-scoped/basic-attribute.html
+
+        * html/HTMLAttributeNames.in:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::scoped):
+        (WebCore::HTMLStyleElement::setScoped):
+        (WebCore::HTMLStyleElement::scopingElement):
+        * html/HTMLStyleElement.h:
+        * html/HTMLStyleElement.idl:
+
 2011-09-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94781.
