@@ -31,6 +31,8 @@
 #include "JSCustomEvent.h"
 #include "JSDictionary.h"
 #include "JSEvent.h"
+#include "JSProgressEvent.h"
+#include "ProgressEvent.h"
 #include <runtime/Error.h>
 
 using namespace JSC;

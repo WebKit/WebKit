@@ -1,3 +1,26 @@
+2011-09-08  Kentaro Hara  <haraken@google.com>
+
+        Implement a ProgressEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=67537
+
+        Reviewed by Sam Weinig.
+
+        The spec for the ProgressEvent constructor is here:
+        http://www.w3.org/TR/progress-events/#interface-progressevent
+
+        Test: fast/events/constructors/progress-event-constructor.html
+
+        * bindings/generic/EventConstructors.h: Added a definition for the ProgressEvent constructor.
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue): Converts an ECMA-262 Number into an IDL unsigned long long value. Spec: http://www.w3.org/TR/WebIDL/#es-unsigned-long-long
+        * bindings/js/JSEventConstructors.cpp: Added #includes for ProgressEvent.
+        * dom/ProgressEvent.cpp:
+        (WebCore::ProgressEventInit::ProgressEventInit):
+        (WebCore::ProgressEvent::ProgressEvent):
+        * dom/ProgressEvent.h: Added a definition for ProgressEventInit.
+        (WebCore::ProgressEvent::create):
+        * dom/ProgressEvent.idl: Makes ProgressEvent constructible.
+
 2011-09-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make bindings tests quiet after r94701.

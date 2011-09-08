@@ -25,7 +25,10 @@
 
 module events {
 
-    interface ProgressEvent : Event {
+    interface [
+        CanBeConstructed,
+        CustomConstructFunction
+    ] ProgressEvent : Event {
         readonly attribute boolean lengthComputable;
         readonly attribute unsigned long long loaded;
         readonly attribute unsigned long long total;
