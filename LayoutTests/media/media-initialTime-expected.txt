@@ -1,0 +1,8 @@
+Test the, so far unused, 'initialTime' attribute.
+
+EVENT(loadeddata)
+EXPECTED (video.initialTime == '0') OK
+RUN(video.initialTime = 10)
+EXPECTED (video.initialTime == '0') OK
+END OF TEST
+

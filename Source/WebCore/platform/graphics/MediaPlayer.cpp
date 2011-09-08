@@ -459,6 +459,11 @@ float MediaPlayer::startTime() const
     return m_private->startTime();
 }
 
+double MediaPlayer::initialTime() const
+{
+    return m_private->initialTime();
+}
+
 float MediaPlayer::currentTime() const
 {
     return m_private->currentTime();

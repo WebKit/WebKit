@@ -111,6 +111,7 @@ public:
 // playback state
     float currentTime() const;
     void setCurrentTime(float, ExceptionCode&);
+    double initialTime() const;
     float startTime() const;
     float duration() const;
     bool paused() const;

@@ -234,6 +234,8 @@ public:
 
     float startTime() const;
 
+    double initialTime() const;
+
     float rate() const;
     void setRate(float);
 

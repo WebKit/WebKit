@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <title>initialTime attribute test</title>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+            function loadeddata()
+            {
+                testExpected("video.initialTime", 0);
+                run("video.initialTime = 10");
+                testExpected("video.initialTime", 0);
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                waitForEvent('loadeddata', loadeddata);
+
+                video.src = findMediaFile("video", "content/test");
+            }
+
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls> </video>
+        <p>Test the, so far unused, 'initialTime' attribute.</p>
+    
+    </body>
+</html>

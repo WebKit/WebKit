@@ -1472,6 +1472,13 @@ float HTMLMediaElement::startTime() const
     return m_player->startTime();
 }
 
+double HTMLMediaElement::initialTime() const
+{
+    if (!m_player)
+        return 0;
+    return m_player->initialTime();
+}
+
 float HTMLMediaElement::duration() const
 {
     if (m_player && m_readyState >= HAVE_METADATA)

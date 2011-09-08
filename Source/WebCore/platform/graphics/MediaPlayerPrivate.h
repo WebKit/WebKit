@@ -72,6 +72,8 @@ public:
 
     virtual float startTime() const { return 0; }
 
+    virtual double initialTime() const { return 0; }
+
     virtual void setRate(float) = 0;
     virtual void setPreservesPitch(bool) { }
 

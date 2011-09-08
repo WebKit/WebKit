@@ -60,6 +60,7 @@ module html {
     // playback state
     attribute float currentTime
         setter raises (DOMException);
+    readonly attribute double initialTime;
     readonly attribute float startTime;
     readonly attribute float duration;
     readonly attribute boolean paused;
