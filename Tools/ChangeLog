@@ -1,3 +1,35 @@
+2011-09-08  Brian Weinstein  <bweinstein@apple.com>
+
+        WebKit2: Assertion when calling didPerform*Redirect on null source/destination URL string
+        https://bugs.webkit.org/show_bug.cgi?id=67794
+        <rdar://problem/9892024>
+        
+        Add a test that we don't send a didPerformServerRedirect when a load is cancelled from willSendRequest.
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKit2/LoadCanceledNoServerRedirectCallback.cpp: Added.
+        (TestWebKitAPI::didFinishLoadForFrame): Set flags on whether we've loaded the main frame, iframe, or both.
+        (TestWebKitAPI::didPerformServerRedirect): Set a flag for whether we've performed a server redirect.
+        (TestWebKitAPI::TEST): Set up a WKPageLoaderClient and WKContextHistoryClient, and load simple-iframe.html.
+            Once both frames have loaded (main frame and blocked iframe), make sure that we have never called
+            didPerformServerRedirect.
+
+        * TestWebKitAPI/Tests/WebKit2/LoadCanceledNoServerRedirectCallback_Bundle.cpp: Added.
+        (TestWebKitAPI::LoadCanceledNoServerRedirectCallbackTest::LoadCanceledNoServerRedirectCallbackTest): Initialize
+            our InjectedBundleTest.
+        (TestWebKitAPI::LoadCanceledNoServerRedirectCallbackTest::willSendRequestForFrame): If we are dealing with a request
+            from the main frame (the main resource in simple-iframe.html), allow it. If not (dealing with the iframe), block
+            the request.
+        (TestWebKitAPI::LoadCanceledNoServerRedirectCallbackTest::didCreatePage): Set up the WKBundlePageResourceLoadClient.
+
+        * TestWebKitAPI/Tests/WebKit2/simple-iframe.html: Added.
+        
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add new files.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Ditto.
+        * TestWebKitAPI/win/TestWebKitAPIInjectedBundle.vcproj: Ditto.
+        * TestWebKitAPI/win/copy-resources.cmd: Ditto.
+
 2011-09-08  David Levin  <levin@chromium.org>
 
         check-webkit-style: Ref|Own Ptr& should be allowed as a parameter.

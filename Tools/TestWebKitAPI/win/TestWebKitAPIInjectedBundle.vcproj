@@ -420,6 +420,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\LoadCanceledNoServerRedirectCallback_Bundle.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\MouseMoveAfterCrash_Bundle.cpp"
 					>
 				</File>

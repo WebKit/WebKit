@@ -484,6 +484,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\LoadCanceledNoServerRedirectCallback.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\mouse-move-listener.html"
 					>
 				</File>
@@ -517,6 +521,10 @@
 				</File>
 				<File
 					RelativePath="..\Tests\WebKit2\simple-form.html"
+					>
+				</File>
+				<File
+					RelativePath="..\Tests\WebKit2\simple-iframe.html"
 					>
 				</File>
 				<File

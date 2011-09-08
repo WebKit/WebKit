@@ -432,6 +432,9 @@ void WebContext::didPerformClientRedirect(uint64_t pageID, const String& sourceU
     WebPageProxy* page = m_process->webPage(pageID);
     if (!page)
         return;
+
+    if (sourceURLString.isEmpty() || destinationURLString.isEmpty())
+        return;
     
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
@@ -444,6 +447,9 @@ void WebContext::didPerformServerRedirect(uint64_t pageID, const String& sourceU
 {
     WebPageProxy* page = m_process->webPage(pageID);
     if (!page)
+        return;
+    
+    if (sourceURLString.isEmpty() || destinationURLString.isEmpty())
         return;
     
     WebFrameProxy* frame = m_process->webFrame(frameID);
