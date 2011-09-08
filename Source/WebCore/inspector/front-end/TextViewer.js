@@ -51,9 +51,17 @@ WebInspector.TextViewer = function(textModel, platform, url, delegate)
     this.element.appendChild(this._gutterPanel.element);
 
     // Forward mouse wheel events from the unscrollable gutter to the main panel.
-    this._gutterPanel.element.addEventListener("mousewheel", function(e) {
-        this._mainPanel.element.dispatchEvent(e);
-    }.bind(this), false);
+    function forwardWheelEvent(event)
+    {
+        var clone = document.createEvent("WheelEvent");
+        clone.initWebKitWheelEvent(event.wheelDeltaX, event.wheelDeltaY,
+                                   event.view,
+                                   event.screenX, event.screenY,
+                                   event.clientX, event.clientY,
+                                   event.ctrlKey, event.altKey, event.shiftKey, event.metaKey);
+        this._mainPanel.element.dispatchEvent(clone);
+    }
+    this._gutterPanel.element.addEventListener("mousewheel", forwardWheelEvent.bind(this), false);
 
     this.element.addEventListener("dblclick", this._doubleClick.bind(this), true);
     this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
