@@ -74,7 +74,7 @@ WebSecurityOrigin WebDocument::securityOrigin() const
 
 WebString WebDocument::encoding() const
 {
-    return constUnwrap<Document>()->loader()->writer()->encoding();
+    return constUnwrap<Document>()->encoding();
 }
 
 WebURL WebDocument::openSearchDescriptionURL() const

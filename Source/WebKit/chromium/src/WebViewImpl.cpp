@@ -1680,10 +1680,11 @@ WebString WebViewImpl::pageEncoding() const
     if (!m_page.get())
         return WebString();
 
+    // FIXME: Is this check needed?
     if (!m_page->mainFrame()->document()->loader())
         return WebString();
 
-    return m_page->mainFrame()->document()->loader()->writer()->encoding();
+    return m_page->mainFrame()->document()->encoding();
 }
 
 void WebViewImpl::setPageEncoding(const WebString& encodingName)
