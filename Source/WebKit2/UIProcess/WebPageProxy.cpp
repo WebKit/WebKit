@@ -726,6 +726,10 @@ void WebPageProxy::executeEditCommand(const String& commandName)
     if (!isValid())
         return;
 
+    DEFINE_STATIC_LOCAL(String, ignoreSpellingCommandName, ("ignoreSpelling"));
+    if (commandName == ignoreSpellingCommandName)
+        ++m_pendingLearnOrIgnoreWordMessageCount;
+
     process()->send(Messages::WebPage::ExecuteEditCommand(commandName), m_pageID);
 }
     
