@@ -243,6 +243,7 @@ committers_unable_to_review = [
     Committer("Mikhail Naganov", "mnaganov@chromium.org"),
     Committer("Nat Duca", ["nduca@chromium.org", "nduca@google.com"], "nduca"),
     Committer("Nico Weber", ["thakis@chromium.org", "thakis@google.com"], "thakis"),
+    Committer("Noel Gordon", ["noel.gordon@gmail.com", "noel@chromium.org", "noel@google.com"], "noel"),
     Committer("Pam Greene", "pam@chromium.org", "pamg"),
     Committer("Patrick Gansterer", ["paroga@paroga.com", "paroga@webkit.org"], "paroga"),
     Committer("Pavel Podivilov", "podivilov@chromium.org", "podivilov"),
