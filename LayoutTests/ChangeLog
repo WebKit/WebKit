@@ -1,3 +1,9 @@
+2011-09-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Unreviewed gardening.
+
+        * platform/qt-mac/Skipped: Skip a new failing test.
+
 2011-09-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94695.
