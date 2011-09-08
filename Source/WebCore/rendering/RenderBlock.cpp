@@ -4607,32 +4607,44 @@ void RenderBlock::adjustRectForColumns(LayoutRect& r) const
         return;
     
     ColumnInfo* colInfo = columnInfo();
-
-    // Begin with a result rect that is empty.
-    LayoutRect result;
     
     // Determine which columns we intersect.
     unsigned colCount = columnCount(colInfo);
     if (!colCount)
         return;
-    
-    LayoutUnit logicalLeft = logicalLeftOffsetForContent();
-    LayoutUnit currLogicalOffset = 0;
 
-    for (unsigned i = 0; i < colCount; i++) {
-        LayoutRect colRect = columnRectAt(colInfo, i);
+    // Begin with a result rect that is empty.
+    LayoutRect result;
+
+    bool isHorizontal = isHorizontalWritingMode();
+    LayoutUnit beforeBorderPadding = borderBefore() + paddingBefore();
+    LayoutUnit colHeight = colInfo->columnHeight();
+    if (!colHeight)
+        return;
+
+    LayoutUnit startOffset = max(isHorizontal ? r.y() : r.x(), beforeBorderPadding);
+    LayoutUnit endOffset = min<LayoutUnit>(isHorizontal ? r.maxY() : r.maxX(), beforeBorderPadding + colCount * colHeight);
+    
+    unsigned startColumn = (startOffset - beforeBorderPadding) / colHeight;
+    unsigned endColumn = (endOffset - beforeBorderPadding) / colHeight;
+
+    if (startColumn == endColumn) {
+        // The rect is fully contained within one column. Adjust for our offsets
+        // and repaint only that portion.
+        LayoutUnit logicalLeftOffset = logicalLeftOffsetForContent();
+        LayoutRect colRect = columnRectAt(colInfo, startColumn);
         LayoutRect repaintRect = r;
-        if (isHorizontalWritingMode()) {
-            LayoutUnit currXOffset = colRect.x() - logicalLeft;
-            repaintRect.move(currXOffset, currLogicalOffset);
-            currLogicalOffset -= colRect.height();
-        } else {
-            LayoutUnit currYOffset = colRect.y() - logicalLeft;
-            repaintRect.move(currLogicalOffset, currYOffset);
-            currLogicalOffset -= colRect.width();
-        }
+        if (isHorizontal)
+            repaintRect.move(colRect.x() - logicalLeftOffset, -startColumn * colHeight);
+        else
+            repaintRect.move(-startColumn * colHeight, colRect.y() - logicalLeftOffset);
         repaintRect.intersect(colRect);
         result.unite(repaintRect);
+    } else {
+        // We span multiple columns. We can just unite the start and end column to get the final
+        // repaint rect.
+        result.unite(columnRectAt(colInfo, startColumn));
+        result.unite(columnRectAt(colInfo, endColumn));
     }
 
     r = result;
