@@ -38,7 +38,6 @@ example-cp.cp has MIME type text/plain
 example-cpgz.cpgz has MIME type application/x-gzip
 example-cpio.cpio has MIME type application/x-cpio
 example-cpp.cpp has MIME type text/plain
-example-cpt.cpt has MIME type application/mac-compactpro
 example-cr2.cr2 has MIME type application/octet-stream
 example-crw.crw has MIME type image/x-canon-crw
 example-csh.csh has MIME type application/x-csh

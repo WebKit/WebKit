@@ -3,13 +3,11 @@ example-jscript.jscript has MIME type text/javascript
 example-kar.kar has MIME type audio/midi
 example-l.l has MIME type text/plain
 example-latex.latex has MIME type application/x-latex
-example-lha.lha has MIME type application/octet-stream
 example-lid.lid has MIME type text/plain
 example-lm.lm has MIME type text/plain
 example-lmm.lmm has MIME type text/plain
 example-lpp.lpp has MIME type text/plain
 example-lxx.lxx has MIME type text/plain
-example-lzh.lzh has MIME type application/octet-stream
 example-m.m has MIME type text/plain
 example-m15.m15 has MIME type video/mpeg
 example-m2v.m2v has MIME type video/mpeg2
