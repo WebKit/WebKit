@@ -365,10 +365,12 @@ public:
     String readyState() const;
 
     String defaultCharset() const;
-    
+
     String inputEncoding() const { return Document::encoding(); }
     String charset() const { return Document::encoding(); }
     String characterSet() const { return Document::encoding(); }
+
+    String encoding() const;
 
     void setCharset(const String&);
 
@@ -1125,8 +1127,6 @@ private:
     virtual KURL virtualCompleteURL(const String&) const; // Same as completeURL() for the same reason as above.
 
     virtual double minimumTimerInterval() const;
-
-    String encoding() const;
 
     void updateTitle(const StringWithDirection&);
     void updateFocusAppearanceTimerFired(Timer<Document>*);
