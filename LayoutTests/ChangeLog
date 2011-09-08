@@ -1,3 +1,25 @@
+2011-09-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94781.
+        http://trac.webkit.org/changeset/94781
+        https://bugs.webkit.org/show_bug.cgi?id=67806
+
+        Broke Objective-C binding on Mac (Requested by rniwa on
+        #webkit).
+
+        * fast/dom/Element/contains-method-expected.txt: Added.
+        * fast/dom/Element/contains-method.html: Renamed from LayoutTests/fast/dom/Node/contains-method.html.
+        * fast/dom/Element/script-tests/contains-method.js: Added.
+        * fast/dom/Node/contains-method-expected.txt: Removed.
+        * fast/dom/Node/script-tests/contains-method.js: Removed.
+        * fast/dom/Window/window-properties-expected.txt:
+        * perf/document-contains-expected.txt: Removed.
+        * perf/document-contains.html: Removed.
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/mac/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt-wk2/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
 2011-09-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] evetSender.keyDown is unimplemented

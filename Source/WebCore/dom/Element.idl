@@ -85,6 +85,10 @@ module core {
         void blur();
         void scrollIntoView(in [Optional] boolean alignWithTop);
 
+        // IE extensions
+
+        boolean contains(in [Optional=CallWithDefaultValue] Element element);
+
         // WebKit extensions
 
         void scrollIntoViewIfNeeded(in [Optional] boolean centerIfNeeded);

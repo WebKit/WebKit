@@ -1338,8 +1338,6 @@ bool Node::contains(const Node* node) const
 {
     if (!node)
         return false;
-    if (document() == this)
-        return node->document() == this && node->inDocument();
     return this == node || node->isDescendantOf(this);
 }
 
