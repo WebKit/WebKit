@@ -1,3 +1,13 @@
+2011-09-08  Oliver Varga  <voliver@inf.u-szeged.hu>
+
+        Gardening: add missing result after: r94710.
+        https://bugs.webkit.org/show_bug.cgi?id=67768
+
+        Reviewed by Zoltan Herczeg.
+
+        * platform/qt/fast/text/hyphenate-limit-lines-expected.png: Added.
+        * platform/qt/fast/text/hyphenate-limit-lines-expected.txt: Added.
+
 2011-09-08  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Rebaselines for chromium.
