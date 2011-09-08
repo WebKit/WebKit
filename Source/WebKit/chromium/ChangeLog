@@ -1,3 +1,17 @@
+2011-09-08  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Add backend compositor support for rescaling (zooming) textures during zoom animation.
+        https://bugs.webkit.org/show_bug.cgi?id=66472
+
+        This patch contains plumbing from Internals to WebViewImpl that can be removed
+        at a later time when the zoom animator code is complete.
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setZoomLevel):
+        (WebKit::WebViewImpl::setRootLayerNeedsDisplay):
+
 2011-09-08  Scott Byer  <scottbyer@chromium.org>
 
         Compile in ScrollAnimator for Chromium on all platforms by default.

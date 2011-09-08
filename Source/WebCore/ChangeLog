@@ -1,3 +1,39 @@
+2011-09-08  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Add backend compositor support for rescaling (zooming) textures during zoom animation.
+        https://bugs.webkit.org/show_bug.cgi?id=66472
+
+        This patch contains plumbing from Internals to WebViewImpl that can be removed
+        at a later time when the zoom animator code is complete.
+
+        Reviewed by James Robinson.
+
+        Test: platform/chromium/compositing/zoom-animator-scale-test.html
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setZoomAnimatorScale):
+        (WebCore::Settings::zoomAnimatorScale):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::setZoomAnimatorScale):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::commitTo):
+        (WebCore::CCLayerTreeHost::setZoomAnimatorScale):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::setZoomAnimatorScale):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setZoomAnimatorScale):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-09-08  Eric Carlson  <eric.carlson@apple.com>
 
         HTMLMediaElement is missing initialTime attribute

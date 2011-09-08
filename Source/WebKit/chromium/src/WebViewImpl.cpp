@@ -1823,6 +1823,9 @@ double WebViewImpl::zoomLevel()
 
 double WebViewImpl::setZoomLevel(bool textOnly, double zoomLevel)
 {
+    if (m_layerTreeHost)
+        m_layerTreeHost->setZoomAnimatorScale(1);
+
     if (zoomLevel < m_minimumZoomLevel)
         m_zoomLevel = m_minimumZoomLevel;
     else if (zoomLevel > m_maximumZoomLevel)
@@ -2563,6 +2566,8 @@ void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
 
 void WebViewImpl::setRootLayerNeedsDisplay()
 {
+    if (m_layerTreeHost)
+        m_layerTreeHost->setZoomAnimatorScale(m_page->settings()->zoomAnimatorScale());
 #if USE(THREADED_COMPOSITING)
     if (m_layerTreeHost)
         m_layerTreeHost->setNeedsCommitAndRedraw();

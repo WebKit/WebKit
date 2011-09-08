@@ -130,6 +130,7 @@ public:
     int frameNumber() const { return m_frameNumber; }
 
     void invalidateRootLayerRect(const IntRect& dirtyRect);
+    void setZoomAnimatorScale(double);
 
     const LayerRendererCapabilities& layerRendererCapabilities() const;
 
@@ -187,6 +188,7 @@ private:
     CCSettings m_settings;
 
     IntSize m_viewportSize;
+    double m_zoomAnimatorScale;
     bool m_visible;
 };
 

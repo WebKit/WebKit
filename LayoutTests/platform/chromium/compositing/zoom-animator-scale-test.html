@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <script>
+        if (window.internals) {
+            window.internals.setForceCompositingMode(document, true);
+            window.internals.setZoomAnimatorScale(document, 1.25);
+        }
+        if (window.layoutTestController) {
+            window.layoutTestController.dumpAsText(true);
+        }
+
+        function doTest() {
+            document.getElementById("aBox").style.backgroundColor = "green";
+        }
+
+        window.addEventListener("load", doTest, false);
+    </script>
+  </head>
+<body>
+  <!--    If successful, the box should enlarge to be 125x125 at (125,125).
+    -->
+  <div id="aBox" style="width:100px; height:100px; position:absolute; left:100px; top:100px; background-color:#FF0000"></div>
+</body>
+</html>

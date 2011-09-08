@@ -216,6 +216,7 @@ Settings::Settings(Page* page)
     , m_mediaPlaybackAllowsInline(true)
     , m_passwordEchoEnabled(false)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
+    , m_zoomAnimatorScale(1)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.

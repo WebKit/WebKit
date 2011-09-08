@@ -75,6 +75,7 @@ public:
 
     void setViewport(const IntSize& viewportSize);
     const IntSize& viewportSize() const { return m_viewportSize; }
+    void setZoomAnimatorScale(double);
 
 protected:
     explicit CCLayerTreeHostImpl(const CCSettings&);

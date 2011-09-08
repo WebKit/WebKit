@@ -1,3 +1,16 @@
+2011-09-08  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Add backend compositor support for rescaling (zooming) textures during zoom animation.
+        https://bugs.webkit.org/show_bug.cgi?id=66472
+
+        Initial tests for zoomAnimatorChromium backend.
+
+        Reviewed by James Robinson.
+
+        * platform/chromium-gpu-linux/platform/chromium/compositing/zoom-animator-scale-test-expected.png: Added.
+        * platform/chromium-gpu-linux/platform/chromium/compositing/zoom-animator-scale-test-expected.txt: Added.
+        * platform/chromium/compositing/zoom-animator-scale-test.html: Added.
+
 2011-09-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.

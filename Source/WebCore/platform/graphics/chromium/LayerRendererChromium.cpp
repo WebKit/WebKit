@@ -163,6 +163,7 @@ LayerRendererChromium::LayerRendererChromium(CCLayerTreeHost* owner,
     , m_ownerImpl(ownerImpl)
     , m_currentRenderSurface(0)
     , m_offscreenFramebufferId(0)
+    , m_zoomAnimatorScale(1)
     , m_context(context)
     , m_defaultRenderSurface(0)
     , m_sharedGeometryQuad(FloatRect(-0.5f, -0.5f, 1.0f, 1.0f))
@@ -294,13 +295,14 @@ void LayerRendererChromium::drawLayersInternal()
     CCLayerList renderSurfaceLayerList;
     renderSurfaceLayerList.append(rootDrawLayer);
 
-    TransformationMatrix identityMatrix;
+    TransformationMatrix zoomMatrix;
+    zoomMatrix.scale3d(m_zoomAnimatorScale, m_zoomAnimatorScale, 1);
     m_defaultRenderSurface = rootDrawLayer->renderSurface();
     m_defaultRenderSurface->clearLayerList();
 
     {
         TRACE_EVENT("LayerRendererChromium::drawLayersInternal::calcDrawEtc", this, 0);
-        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootDrawLayer, rootDrawLayer, identityMatrix, identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->layerList(), &m_layerSorter, m_capabilities.maxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootDrawLayer, rootDrawLayer, zoomMatrix, zoomMatrix, renderSurfaceLayerList, m_defaultRenderSurface->layerList(), &m_layerSorter, m_capabilities.maxTextureSize);
     }
 
     // The GL viewport covers the entire visible area, including the scrollbars.

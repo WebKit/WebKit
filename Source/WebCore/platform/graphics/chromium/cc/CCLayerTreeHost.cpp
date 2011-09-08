@@ -54,6 +54,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
     , m_frameNumber(0)
     , m_nonCompositedContentHost(NonCompositedContentHost::create(m_client->createRootLayerPainter()))
     , m_settings(settings)
+    , m_zoomAnimatorScale(1)
     , m_visible(true)
 {
 }
@@ -115,6 +116,7 @@ void CCLayerTreeHost::commitTo(CCLayerTreeHostImpl* hostImpl)
     m_updateList.clear();
 
     hostImpl->setVisible(m_visible);
+    hostImpl->setZoomAnimatorScale(m_zoomAnimatorScale);
     hostImpl->setViewport(viewportSize());
 
     // Synchronize trees, if one exists at all...
@@ -180,6 +182,16 @@ void CCLayerTreeHost::invalidateRootLayerRect(const IntRect& dirtyRect)
 const LayerRendererCapabilities& CCLayerTreeHost::layerRendererCapabilities() const
 {
     return m_proxy->layerRendererCapabilities();
+}
+
+void CCLayerTreeHost::setZoomAnimatorScale(double zoom)
+{
+    bool zoomChanged = m_zoomAnimatorScale != zoom;
+
+    m_zoomAnimatorScale = zoom;
+
+    if (zoomChanged)
+        setNeedsCommitAndRedraw();
 }
 
 void CCLayerTreeHost::setNeedsCommitAndRedraw()
@@ -278,11 +290,11 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
     RenderSurfaceChromium* rootRenderSurface = rootLayer->renderSurface();
     rootRenderSurface->clearLayerList();
 
-    TransformationMatrix identityMatrix;
-
+    TransformationMatrix zoomMatrix;
+    zoomMatrix.scale3d(m_zoomAnimatorScale, m_zoomAnimatorScale, 1);
     {
         TRACE_EVENT("CCLayerTreeHost::updateLayers::calcDrawEtc", this, 0);
-        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, identityMatrix, identityMatrix, m_updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, zoomMatrix, zoomMatrix, m_updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
     }
 
     paintLayerContents(m_updateList);

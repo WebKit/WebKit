@@ -437,7 +437,10 @@ namespace WebCore {
 
         void setForceCompositingMode(bool flag) { m_forceCompositingMode = flag; }
         bool forceCompositingMode() { return m_forceCompositingMode; }
-        
+
+        void setZoomAnimatorScale(double scale) { m_zoomAnimatorScale = scale; }
+        double zoomAnimatorScale() { return m_zoomAnimatorScale; }
+
         void setShouldInjectUserScriptsInInitialEmptyDocument(bool flag) { m_shouldInjectUserScriptsInInitialEmptyDocument = flag; }
         bool shouldInjectUserScriptsInInitialEmptyDocument() { return m_shouldInjectUserScriptsInInitialEmptyDocument; }
 
@@ -595,6 +598,8 @@ namespace WebCore {
 #if USE(AVFOUNDATION)
         static bool gAVFoundationEnabled;
 #endif
+
+        double m_zoomAnimatorScale;
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;
