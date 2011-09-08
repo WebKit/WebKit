@@ -19,6 +19,8 @@ PASS (new inner.MessageChannel()).isInner is true
 PASS (new inner.MessageChannel()).constructor.isInner is true
 PASS (new inner.Option()).isInner is true
 PASS (new inner.Option()).constructor.isInner is true
+PASS (new inner.ProgressEvent()).isInner is true
+PASS (new inner.ProgressEvent()).constructor.isInner is true
 PASS (new inner.WebKitCSSMatrix()).isInner is true
 PASS (new inner.WebKitCSSMatrix()).constructor.isInner is true
 PASS (new inner.WebKitPoint()).isInner is true
