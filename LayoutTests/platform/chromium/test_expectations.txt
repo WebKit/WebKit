@@ -3550,27 +3550,6 @@ BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-ag
 
 // Need new baselines due to border drawing now using the PATH_BASED_BORDER_RADIUS_DRAWING
 // code path.
-BUGWK65583 WIN LINUX : fast/css/text-input-with-webkit-border-radius.html = IMAGE
-BUGWK65583 WIN LINUX : fast/forms/basic-selects.html = IMAGE
-BUGWK65583 WIN LINUX : fast/forms/validation-message-appearance.html = IMAGE
-BUGWK65583 WIN LINUX : fast/gradients/background-clipped.html = IMAGE
-BUGWK65583 WIN LINUX : fast/inline/inline-borders-with-bidi-override.html = IMAGE
-BUGWK65583 WIN LINUX : fast/multicol/client-rects.html = IMAGE
-BUGWK65583 WIN LINUX : fast/overflow/border-radius-clipping.html = IMAGE
-BUGWK65583 WIN LINUX : fast/repaint/border-radius-repaint.html = IMAGE
-BUGWK65583 WIN LINUX : fast/repaint/shadow-multiple-horizontal.html = IMAGE
-BUGWK65583 WIN LINUX : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
-BUGWK65583 WIN LINUX : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
-BUGWK65583 WIN LINUX : fast/repaint/shadow-multiple-vertical.html = IMAGE
-BUGWK65583 WIN LINUX : fast/transforms/rotated-transform-affects-scrolling-1.html = IMAGE
-BUGWK65583 WIN LINUX : fast/transforms/rotated-transform-affects-scrolling-2.html = IMAGE
-BUGWK65583 WIN LINUX : fast/transforms/shadows.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/border-radius-circle.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/border-radius-groove-01.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/border-radius-groove-02.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/border-radius-groove-03.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/border-radius-wide-border-01.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/border-radius-wide-border-02.html = IMAGE
 BUGWK65583 LINUX WIN : fast/borders/border-radius-wide-border-03.html = IMAGE
 BUGWK65583 LINUX WIN : fast/borders/border-radius-wide-border-04.html = IMAGE
 BUGWK65583 LINUX WIN : fast/borders/borderRadiusDashed04.html = IMAGE
@@ -3590,6 +3569,7 @@ BUGWK65583 LINUX WIN : fast/borders/mixed-border-styles-radius2.html = IMAGE+TEX
 BUGWK65583 LINUX WIN : fast/borders/mixed-border-styles.html = IMAGE+TEXT
 BUGWK65583 LINUX : fast/frames/iframe-scaling-with-scroll.html = IMAGE
 BUGWK65583 LINUX WIN : fast/css/border-radius-non-negative.html = IMAGE
+BUGWK65583 WIN LINUX : fast/forms/validation-message-appearance.html = IMAGE
 
 // Introduced in r92298, which might cause another test crashing.
 BUGZMO SKIP : fast/loader/reload-zero-byte-plugin.html = FAIL
