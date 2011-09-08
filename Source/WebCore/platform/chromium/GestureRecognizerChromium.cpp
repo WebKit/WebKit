@@ -62,6 +62,12 @@ GestureRecognizerChromium::GestureRecognizerChromium()
     addEdgeFunction(Scroll, FirstFinger, Moved, false, &GestureRecognizerChromium::inScroll);
     addEdgeFunction(Scroll, FirstFinger, Released, false, &GestureRecognizerChromium::scrollEnd);
     addEdgeFunction(Scroll, FirstFinger, Cancelled, false, &GestureRecognizerChromium::scrollEnd);
+
+    addEdgeFunction(FirstClickReceived, FirstFinger, Pressed, false, &GestureRecognizerChromium::touchDown);
+    addEdgeFunction(PendingDoubleClick, FirstFinger, Cancelled, false, &GestureRecognizerChromium::noGesture);
+    addEdgeFunction(PendingDoubleClick, FirstFinger, Released, false, &GestureRecognizerChromium::doubleClick);
+    addEdgeFunction(PendingDoubleClick, FirstFinger, Moved, false, &GestureRecognizerChromium::maybeDoubleClick);
+    addEdgeFunction(PendingDoubleClick, FirstFinger, Stationary, false, &GestureRecognizerChromium::maybeDoubleClick);
 }
 
 void GestureRecognizerChromium::reset()
@@ -86,6 +92,12 @@ bool GestureRecognizerChromium::isInClickTimeWindow()
     return duration >= minimumTouchDownDurationInSecondsForClick && duration < maximumTouchDownDurationInSecondsForClick;
 }
 
+bool GestureRecognizerChromium::isInSecondClickTimeWindow()
+{
+    double duration(m_lastTouchTime - m_lastClickTime);
+    return duration >= minimumTouchDownDurationInSecondsForClick && duration < maximumTouchDownDurationInSecondsForClick;
+}
+
 bool GestureRecognizerChromium::isInsideManhattanSquare(const PlatformTouchPoint& point)
 {
     int manhattanDistance = abs(point.pos().x() - m_firstTouchPosition.x()) + abs(point.pos().y() - m_firstTouchPosition.y());
@@ -100,6 +112,11 @@ void GestureRecognizerChromium::appendTapDownGestureEvent(const PlatformTouchPoi
 void GestureRecognizerChromium::appendClickGestureEvent(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
     gestures->append(PlatformGestureEvent(PlatformGestureEvent::TapType, m_firstTouchPosition, m_firstTouchScreenPosition, m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+}
+
+void GestureRecognizerChromium::appendDoubleClickGestureEvent(const PlatformTouchPoint& touchPoint, Gestures gestures)
+{
+    gestures->append(PlatformGestureEvent(PlatformGestureEvent::DoubleTapType, m_firstTouchPosition, m_firstTouchScreenPosition, m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
 }
 
 PlatformGestureRecognizer::PassGestures GestureRecognizerChromium::processTouchEventForGestures(const PlatformTouchEvent& event, bool defaultPrevented)
@@ -142,6 +159,10 @@ void GestureRecognizerChromium::appendScrollGestureUpdate(const PlatformTouchPoi
 
 void GestureRecognizerChromium::updateValues(const double touchTime, const PlatformTouchPoint& touchPoint)
 {
+    if (state() == FirstClickReceived) {
+        m_firstTouchTime = touchTime;
+        m_lastClickTime = m_lastTouchTime;
+    }
     m_lastTouchTime = touchTime;
     if (state() == NoGesture) {
         m_firstTouchTime = touchTime;
@@ -164,8 +185,13 @@ unsigned int GestureRecognizerChromium::signature(State gestureState, unsigned i
 
 bool GestureRecognizerChromium::touchDown(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
-    setState(PendingSyntheticClick);
+    ASSERT(state() == NoGesture || state() == FirstClickReceived);
     appendTapDownGestureEvent(touchPoint, gestures);
+    if (state() == FirstClickReceived && isInSecondClickTimeWindow() && isInsideManhattanSquare(touchPoint)) {
+        setState(PendingDoubleClick);
+        return false;
+    }
+    setState(PendingSyntheticClick);
     return false;
 }
 
@@ -174,6 +200,24 @@ bool GestureRecognizerChromium::scrollEnd(const PlatformTouchPoint& point, Gestu
     appendScrollGestureEnd(point, gestures);
     setState(NoGesture);
     reset();
+    return false;
+}
+
+bool GestureRecognizerChromium::doubleClick(const PlatformTouchPoint& point, Gestures gestures)
+{
+    if (isInClickTimeWindow() && isInsideManhattanSquare(point)) {
+        setState(NoGesture);
+        appendDoubleClickGestureEvent(point, gestures);
+        return true;
+    }
+    return noGesture(point, gestures);
+}
+
+bool GestureRecognizerChromium::maybeDoubleClick(const PlatformTouchPoint& point, Gestures gestures)
+{
+    ASSERT(state() == GestureRecognizerChromium::PendingDoubleClick);
+    if (point.state() == PlatformTouchPoint::TouchMoved && !isInsideManhattanSquare(point))
+        return noGesture(point, gestures);
     return false;
 }
 
@@ -186,7 +230,7 @@ bool GestureRecognizerChromium::noGesture(const PlatformTouchPoint&, Gestures)
 bool GestureRecognizerChromium::click(const PlatformTouchPoint& point, Gestures gestures)
 {
     if (isInClickTimeWindow() && isInsideManhattanSquare(point)) {
-        setState(NoGesture);
+        setState(FirstClickReceived);
         appendClickGestureEvent(point, gestures);
         return true;
     }

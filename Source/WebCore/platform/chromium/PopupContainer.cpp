@@ -306,6 +306,8 @@ bool PopupContainer::handleGestureEvent(const PlatformGestureEvent& gestureEvent
         handleMouseReleaseEvent(fakeMouseUp);
         return true;
     }
+    case PlatformGestureEvent::DoubleTapType:
+        break;
     case PlatformGestureEvent::ScrollUpdateType: {
         PlatformWheelEvent syntheticWheelEvent(gestureEvent.position(), gestureEvent.globalPosition(), gestureEvent.deltaX(), gestureEvent.deltaY(), gestureEvent.deltaX() / 120.0f, gestureEvent.deltaY() / 120.0f, ScrollByPixelWheelEvent, /* isAccepted */ false, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
         handleWheelEvent(syntheticWheelEvent);

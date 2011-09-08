@@ -40,6 +40,7 @@ public:
         ScrollUpdateType,
         TapType,
         TapDownType,
+        DoubleTapType,
     };
 
     PlatformGestureEvent()

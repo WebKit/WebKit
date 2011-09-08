@@ -48,7 +48,9 @@ public:
     enum State {
         NoGesture,
         PendingSyntheticClick,
-        Scroll
+        Scroll,
+        FirstClickReceived,
+        PendingDoubleClick,
     };
 
     typedef Vector<PlatformGestureEvent>* Gestures;
@@ -68,10 +70,12 @@ private:
     void addEdgeFunction(State, unsigned finger, PlatformTouchPoint::State, bool touchHandledByJavaScript, GestureTransitionFunction);
     void appendTapDownGestureEvent(const PlatformTouchPoint&, Gestures);
     void appendClickGestureEvent(const PlatformTouchPoint&, Gestures);
+    void appendDoubleClickGestureEvent(const PlatformTouchPoint&, Gestures);
     void appendScrollGestureBegin(const PlatformTouchPoint&, Gestures);
     void appendScrollGestureEnd(const PlatformTouchPoint&, Gestures);
     void appendScrollGestureUpdate(const PlatformTouchPoint&, Gestures);
     bool isInClickTimeWindow();
+    bool isInSecondClickTimeWindow();
     bool isInsideManhattanSquare(const PlatformTouchPoint&);
     void setState(State value) { m_state = value; }
     void updateValues(double touchTime, const PlatformTouchPoint&);
@@ -83,12 +87,16 @@ private:
     bool touchDown(const PlatformTouchPoint&, Gestures);
     bool scrollEnd(const PlatformTouchPoint&, Gestures);
 
+    bool doubleClick(const PlatformTouchPoint&, Gestures);
+    bool maybeDoubleClick(const PlatformTouchPoint&, Gestures);
+
     WTF::HashMap<int, GestureTransitionFunction> m_edgeFunctions;
     IntPoint m_firstTouchPosition;
     IntPoint m_firstTouchScreenPosition;
     double m_firstTouchTime;
     State m_state;
     double m_lastTouchTime;
+    double m_lastClickTime;
 
     bool m_ctrlKey;
     bool m_altKey;

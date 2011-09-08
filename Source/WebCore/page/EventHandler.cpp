@@ -2221,6 +2221,8 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         handleMouseReleaseEvent(fakeMouseUp);
         return true;
     }
+    case PlatformGestureEvent::DoubleTapType:
+        break;
     case PlatformGestureEvent::ScrollUpdateType: {
         const float tickDivisor = (float)WheelEvent::tickMultiplier;
         // FIXME: Replace this interim implementation once the above fixme has been addressed.
