@@ -1,0 +1,5 @@
+layer at (0,0) size 360x240
+  RenderView at (0,0) size 360x240
+layer at (0,0) size 360x240
+  RenderBlock {HTML} at (0,0) size 360x240
+    RenderBody {BODY} at (8,8) size 344x224 [bgcolor=#008000]

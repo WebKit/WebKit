@@ -1,3 +1,17 @@
+2011-09-08  Fady Samuel  <fsamuel@chromium.org>
+
+        Fixed Layout Mode should be adjustable from layoutTestController for testing on Chromium platforms
+        https://bugs.webkit.org/show_bug.cgi?id=67723
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/EventSender.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::enableFixedLayoutMode):
+        (LayoutTestController::setFixedLayoutSize):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+
 2011-09-07  Matthew Delaney  <mdelaney@apple.com>
 
         Add standalone script that filters the output of build-webkit to be more human-readable

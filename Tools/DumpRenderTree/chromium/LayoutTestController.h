@@ -404,6 +404,9 @@ public:
 
     void setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList&, CppVariant*);
 
+    void enableFixedLayoutMode(const CppArgumentList&, CppVariant*);
+    void setFixedLayoutSize(const CppArgumentList&, CppVariant*);
+
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }

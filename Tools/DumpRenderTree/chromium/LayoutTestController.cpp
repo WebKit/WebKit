@@ -224,6 +224,8 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("observeStorageTrackerNotifications", &LayoutTestController::observeStorageTrackerNotifications);
     bindMethod("syncLocalStorage", &LayoutTestController::syncLocalStorage);
     bindMethod("setShouldStayOnPageAfterHandlingBeforeUnload", &LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload);
+    bindMethod("enableFixedLayoutMode", &LayoutTestController::enableFixedLayoutMode);
+    bindMethod("setFixedLayoutSize", &LayoutTestController::setFixedLayoutSize);
     
     // The fallback method is called when an unknown method is invoked.
     bindFallbackMethod(&LayoutTestController::fallbackMethod);
@@ -1854,6 +1856,25 @@ void LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload(const Cp
     if (arguments.size() == 1 && arguments[0].isBool())
         m_shouldStayOnPageAfterHandlingBeforeUnload = arguments[0].toBoolean();
 
+    result->setNull();
+}
+
+void LayoutTestController::enableFixedLayoutMode(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() <  1 || !arguments[0].isBool())
+        return;
+    bool enableFixedLayout = arguments[0].toBoolean();
+    m_shell->webView()->enableFixedLayoutMode(enableFixedLayout);
+    result->setNull();
+}
+
+void LayoutTestController::setFixedLayoutSize(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() <  2 || !arguments[0].isNumber() || !arguments[1].isNumber())
+        return;
+    int width = arguments[0].toInt32();
+    int height = arguments[1].toInt32();
+    m_shell->webView()->setFixedLayoutSize(WebSize(width, height));
     result->setNull();
 }
 

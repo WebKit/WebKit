@@ -72,11 +72,13 @@ public:
     void leapForward(const CppArgumentList&, CppVariant*);
     void keyDown(const CppArgumentList&, CppVariant*);
     void dispatchMessage(const CppArgumentList&, CppVariant*);
+    // FIXME: These aren't really events. They should be moved to layout controller.
     void textZoomIn(const CppArgumentList&, CppVariant*);
     void textZoomOut(const CppArgumentList&, CppVariant*);
     void zoomPageIn(const CppArgumentList&, CppVariant*);
     void zoomPageOut(const CppArgumentList&, CppVariant*);
     void scalePageBy(const CppArgumentList&, CppVariant*);
+
     void mouseScrollBy(const CppArgumentList&, CppVariant*);
     void continuousMouseScrollBy(const CppArgumentList&, CppVariant*);
     void scheduleAsynchronousClick(const CppArgumentList&, CppVariant*);
