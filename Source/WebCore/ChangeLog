@@ -1,5 +1,28 @@
 2011-09-08  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Remove LayoutStateDisabler instances from RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=66896
+
+        Reviewed by Simon Fraser.
+
+        As part of r93614, scrollTo does not call updateLayerPositions anymore.
+        This means that we don't need to disable LayoutState from the scrolling code
+        in RenderLayer.
+
+        This change is covered by the existing tests.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions): Updated the comment
+        that was not accurate anymore. Also explained what is wrong with
+        LayoutState vs RenderLayer now. Note that the ASSERT is still
+        valid and will not trigger as the remaining calls to updateLayerPositions
+        are done *outside* layout() where LayoutState is not set (thus disabled).
+
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout): Removed
+        2 LayoutStateDisabler surrounding scrollToOffset.
+
+2011-09-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Factor out the code to get the first non-null RenderTableSection in RenderTable
         https://bugs.webkit.org/show_bug.cgi?id=66972
 

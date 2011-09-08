@@ -334,8 +334,9 @@ void RenderLayer::updateLayerPositions(LayoutPoint* offsetFromRoot, UpdateLayerP
     if (m_hasVisibleContent) {
         RenderView* view = renderer()->view();
         ASSERT(view);
-        // FIXME: Optimize using LayoutState and remove LayoutStateDisabler instantiation
-        // from updateScrollInfoAfterLayout().
+        // FIXME: LayoutState does not work with RenderLayers as there is not a 1-to-1
+        // mapping between them and the RenderObjects. It would be neat to enable
+        // LayoutState outside the layout() phase and use it here.
         ASSERT(!view->layoutStateEnabled());
 
         RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
@@ -2247,15 +2248,8 @@ void RenderLayer::updateScrollInfoAfterLayout()
         // to pull our scroll offsets back to the max (or push them up to the min).
         LayoutUnit newX = max<LayoutUnit>(0, min(scrollXOffset(), scrollWidth() - box->clientWidth()));
         LayoutUnit newY = max<LayoutUnit>(0, min(scrollYOffset(), scrollHeight() - box->clientHeight()));
-        if (newX != scrollXOffset() || newY != scrollYOffset()) {
-            RenderView* view = renderer()->view();
-            ASSERT(view);
-            // scrollToOffset() may call updateLayerPositions(), which doesn't work
-            // with LayoutState.
-            // FIXME: Remove the LayoutStateDisabler instantiation if the above changes.
-            LayoutStateDisabler layoutStateDisabler(view);
+        if (newX != scrollXOffset() || newY != scrollYOffset())
             scrollToOffset(newX, newY);
-        }
     }
 
     bool haveHorizontalBar = m_hBar;
@@ -2328,11 +2322,7 @@ void RenderLayer::updateScrollInfoAfterLayout()
         m_vBar->setProportion(clientHeight, m_scrollSize.height());
     }
  
-    RenderView* view = renderer()->view();
-    {
-        LayoutStateDisabler layoutStateDisabler(view);
-        scrollToOffset(scrollXOffset(), scrollYOffset());
-    }
+    scrollToOffset(scrollXOffset(), scrollYOffset());
 
     if (renderer()->node() && renderer()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(horizontalOverflow, verticalOverflow);
