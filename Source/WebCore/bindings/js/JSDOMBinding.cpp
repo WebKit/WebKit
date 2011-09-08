@@ -57,6 +57,7 @@
 #include "XPathException.h"
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
+#include <runtime/ExceptionHelpers.h>
 #include <runtime/JSFunction.h>
 
 using namespace JSC;
@@ -170,7 +171,7 @@ double valueToDate(ExecState* exec, JSValue value)
 
 void reportException(ExecState* exec, JSValue exception)
 {
-    if (exception.isObject() && asObject(exception)->exceptionType() == Terminated)
+    if (exception.inherits(&TerminatedExecutionError::s_info))
         return;
 
     UString errorMessage = exception.toString(exec);

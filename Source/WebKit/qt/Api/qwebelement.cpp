@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "HTMLElement.h"
 #if USE(JSC)
+#include "Completion.h"
 #include "JSGlobalObject.h"
 #include "JSHTMLElement.h"
 #include "JSObject.h"
@@ -789,16 +790,14 @@ QVariant QWebElement::evaluateJavaScript(const QString& scriptSource)
 #if USE(JSC)
     JSC::ScopeChainNode* scopeChain = state->dynamicGlobalObject()->globalScopeChain();
     JSC::UString script(reinterpret_cast_ptr<const UChar*>(scriptSource.data()), scriptSource.length());
-    JSC::Completion completion = JSC::evaluate(state, scopeChain, JSC::makeSource(script), thisValue);
-    if ((completion.complType() != JSC::ReturnValue) && (completion.complType() != JSC::Normal))
-        return QVariant();
 
-    JSC::JSValue result = completion.value();
-    if (!result)
+    JSC::JSValue evaluationException;
+    JSC::JSValue evaluationResult = JSC::evaluate(state, scopeChain, JSC::makeSource(script), thisValue, &evaluationException);
+    if (evaluationException)
         return QVariant();
 
     int distance = 0;
-    return JSC::Bindings::convertValueToQVariant(state, result, QMetaType::Void, &distance);
+    return JSC::Bindings::convertValueToQVariant(state, evaluationResult, QMetaType::Void, &distance);
 #elif USE(V8)
     notImplemented();
     return QVariant();

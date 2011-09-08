@@ -40,7 +40,7 @@
 #include "WorkerThread.h"
 #include <interpreter/Interpreter.h>
 #include <runtime/Completion.h>
-#include <runtime/Completion.h>
+#include <runtime/ExceptionHelpers.h>
 #include <runtime/Error.h>
 #include <runtime/JSLock.h>
 
@@ -131,31 +131,30 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode,
     JSLock lock(SilenceAssertionsOnly);
 
     ExecState* exec = m_workerContextWrapper->globalExec();
+
+    JSValue evaluationException;
+
     m_workerContextWrapper->globalData().timeoutChecker.start();
-    Completion comp = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode.jsSourceCode(), m_workerContextWrapper.get());
+    JSValue returnValue = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode.jsSourceCode(), m_workerContextWrapper.get(), &evaluationException);
     m_workerContextWrapper->globalData().timeoutChecker.stop();
 
-
-    ComplType completionType = comp.complType();
-
-    if (completionType == Terminated || m_workerContextWrapper->globalData().terminator.shouldTerminate()) {
+    if ((evaluationException && evaluationException.inherits(&TerminatedExecutionError::s_info)) ||  m_workerContextWrapper->globalData().terminator.shouldTerminate()) {
         forbidExecution();
         return ScriptValue();
     }
 
-    if (completionType == Normal || completionType == ReturnValue)
-        return ScriptValue(*m_globalData, comp.value());
-
-    if (completionType == Throw) {
+    if (evaluationException) {
         String errorMessage;
         int lineNumber = 0;
         String sourceURL = sourceCode.url().string();
         if (m_workerContext->sanitizeScriptError(errorMessage, lineNumber, sourceURL))
             *exception = ScriptValue(*m_globalData, throwError(exec, createError(exec, errorMessage.impl())));
         else
-            *exception = ScriptValue(*m_globalData, comp.value());
+            *exception = ScriptValue(*m_globalData, evaluationException);
     }
-    return ScriptValue();
+
+    return ScriptValue(*m_globalData, returnValue);
+
 }
 
 void WorkerScriptController::setException(ScriptValue exception)

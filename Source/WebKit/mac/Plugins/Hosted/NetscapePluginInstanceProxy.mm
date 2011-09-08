@@ -41,6 +41,7 @@
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
+#import <JavaScriptCore/Completion.h>
 #import <JavaScriptCore/Error.h>
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/PropertyNameArray.h>
@@ -875,17 +876,10 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
     globalObject->globalData().timeoutChecker.start();
 
     UserGestureIndicator gestureIndicator(allowPopups ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
-    Completion completion = JSC::evaluate(exec, globalObject->globalScopeChain(), makeSource(script));
-
-    globalObject->globalData().timeoutChecker.stop();
-    ComplType type = completion.complType();
-
-    JSValue result;
-    if (type == Normal)
-        result = completion.value();
     
-    if (!result)
-        result = jsUndefined();
+    JSValue result = JSC::evaluate(exec, globalObject->globalScopeChain(), makeSource(script));
+    
+    globalObject->globalData().timeoutChecker.stop();
     
     marshalValue(exec, result, resultData, resultLength);
     exec->clearException();

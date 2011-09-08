@@ -26,6 +26,7 @@
 #include "JSEventTarget.h"
 #include "JSMainThreadExecState.h"
 #include "WorkerContext.h"
+#include <runtime/ExceptionHelpers.h>
 #include <runtime/JSLock.h>
 #include <wtf/RefCountedLeakCounter.h>
 
@@ -133,7 +134,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
 
 #if ENABLE(WORKERS)
         if (scriptExecutionContext->isWorkerContext()) {
-            bool terminatorCausedException = (exec->hadException() && exec->exception().isObject() && asObject(exec->exception())->exceptionType() == Terminated);
+            bool terminatorCausedException = (exec->hadException() && exec->exception().inherits(&TerminatedExecutionError::s_info));
             if (terminatorCausedException || globalData.terminator.shouldTerminate())
                 static_cast<WorkerContext*>(scriptExecutionContext)->script()->forbidExecution();
         }

@@ -216,8 +216,8 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     structureStructure.set(*this, Structure::createStructure(*this));
     debuggerActivationStructure.set(*this, DebuggerActivation::createStructure(*this, 0, jsNull()));
     activationStructure.set(*this, JSActivation::createStructure(*this, 0, jsNull()));
-    interruptedExecutionErrorStructure.set(*this, JSNonFinalObject::createStructure(*this, 0, jsNull()));
-    terminatedExecutionErrorStructure.set(*this, JSNonFinalObject::createStructure(*this, 0, jsNull()));
+    interruptedExecutionErrorStructure.set(*this, InterruptedExecutionError::createStructure(*this, 0, jsNull()));
+    terminatedExecutionErrorStructure.set(*this, TerminatedExecutionError::createStructure(*this, 0, jsNull()));
     staticScopeStructure.set(*this, JSStaticScopeObject::createStructure(*this, 0, jsNull()));
     strictEvalActivationStructure.set(*this, StrictEvalActivation::createStructure(*this, 0, jsNull()));
     stringStructure.set(*this, JSString::createStructure(*this, 0, jsNull()));

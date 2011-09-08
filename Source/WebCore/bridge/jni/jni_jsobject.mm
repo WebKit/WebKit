@@ -306,8 +306,6 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
 jobject JavaJSObject::eval(jstring script) const
 {
     LOG(LiveConnect, "JavaJSObject::eval script = %s", JavaString(script).utf8());
-    
-    JSValue result;
 
     JSLock lock(SilenceAssertionsOnly);
     
@@ -316,18 +314,10 @@ jobject JavaJSObject::eval(jstring script) const
         return 0;
 
     rootObject->globalObject()->globalData().timeoutChecker.start();
-    Completion completion = JSC::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(JavaString(script).impl()), JSC::JSValue());
+    JSValue result = JSC::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(JavaString(script).impl()));
     rootObject->globalObject()->globalData().timeoutChecker.stop();
-    ComplType type = completion.complType();
-    
-    if (type == Normal) {
-        result = completion.value();
-        if (!result)
-            result = jsUndefined();
-    } else
-        result = jsUndefined();
-    
-    return convertValueToJObject (result);
+
+    return convertValueToJObject(result);
 }
 
 jobject JavaJSObject::getMember(jstring memberName) const

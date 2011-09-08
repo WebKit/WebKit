@@ -61,7 +61,7 @@ class JSRun : public JSBase {
 
         UString GetSource() const;
         JSGlobalObject* GlobalObject() const;
-        Completion Evaluate();
+        JSValue Evaluate(JSValue* exception);
         bool CheckSyntax();
         JSFlags Flags() const;
     private:

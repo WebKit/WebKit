@@ -325,28 +325,13 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSValue result;
     JSLock lock(SilenceAssertionsOnly);
     
     [self _rootObject]->globalObject()->globalData().timeoutChecker.start();
-    Completion completion = JSMainThreadExecState::evaluate([self _rootObject]->globalObject()->globalExec(), [self _rootObject]->globalObject()->globalScopeChain(), makeSource(String(script)), JSC::JSValue());
+    JSValue returnValue = JSMainThreadExecState::evaluate(exec, [self _rootObject]->globalObject()->globalScopeChain(), makeSource(String(script)), JSC::JSValue(), 0);
     [self _rootObject]->globalObject()->globalData().timeoutChecker.stop();
-    ComplType type = completion.complType();
-    
-    if (type == Normal) {
-        result = completion.value();
-        if (!result)
-            result = jsUndefined();
-    } else
-        result = jsUndefined();
-    
-    if (exec->hadException()) {
-        addExceptionToConsole(exec);
-        result = jsUndefined();
-        exec->clearException();
-    }
-    
-    id resultObj = [WebScriptObject _convertValueToObjcValue:result originRootObject:[self _originRootObject] rootObject:[self _rootObject]];
+
+    id resultObj = [WebScriptObject _convertValueToObjcValue:returnValue originRootObject:[self _originRootObject] rootObject:[self _rootObject]];
     
     _didExecute(self);
     

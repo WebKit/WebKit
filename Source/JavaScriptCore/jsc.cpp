@@ -261,10 +261,12 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
         return JSValue::encode(throwError(exec, createError(exec, "Could not open file.")));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    Completion result = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
-    if (result.complType() == Throw)
-        throwError(exec, result.value());
-    return JSValue::encode(result.value());
+    
+    JSValue evaluationException;
+    JSValue result = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName), JSValue(), &evaluationException);
+    if (evaluationException)
+        throwError(exec, evaluationException);
+    return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
@@ -278,11 +280,13 @@ EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
 
     StopWatch stopWatch;
     stopWatch.start();
-    Completion result = checkSyntax(globalObject->globalExec(), makeSource(script.data(), fileName));
+
+    JSValue syntaxException;
+    bool validSyntax = checkSyntax(globalObject->globalExec(), makeSource(script.data(), fileName), &syntaxException);
     stopWatch.stop();
 
-    if (result.complType() == Throw)
-        throwError(exec, result.value());
+    if (!validSyntax)
+        throwError(exec, syntaxException);
     return JSValue::encode(jsNumber(stopWatch.getElapsedMS()));
 }
 
@@ -436,13 +440,14 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 
         globalData.startSampling();
 
-        Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script, fileName));
-        success = success && completion.complType() != Throw;
+        JSValue evaluationException;
+        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script, fileName), JSValue(), &evaluationException);
+        success = success && !evaluationException;
         if (dump) {
-            if (completion.complType() == Throw)
-                printf("Exception: %s\n", completion.value().toString(globalObject->globalExec()).utf8().data());
+            if (evaluationException)
+                printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec()).utf8().data());
             else
-                printf("End: %s\n", completion.value().toString(globalObject->globalExec()).utf8().data());
+                printf("End: %s\n", returnValue.toString(globalObject->globalExec()).utf8().data());
         }
 
         globalData.stopSampling();
@@ -473,7 +478,8 @@ static void runInteractive(GlobalObject* globalObject)
             break;
         if (line[0])
             add_history(line);
-        Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line, interpreterName));
+        JSValue evaluationException;
+        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line, interpreterName), JSValue(), &evaluationException);
         free(line);
 #else
         printf("%s", interactivePrompt);
@@ -488,12 +494,14 @@ static void runInteractive(GlobalObject* globalObject)
         if (line.isEmpty())
             break;
         line.append('\0');
-        Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line.data(), interpreterName));
+
+        JSValue evaluationException;
+        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line.data(), interpreterName), JSValue(), &evaluationException);
 #endif
-        if (completion.complType() == Throw)
-            printf("Exception: %s\n", completion.value().toString(globalObject->globalExec()).utf8().data());
+        if (evaluationException)
+            printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec()).utf8().data());
         else
-            printf("%s\n", completion.value().toString(globalObject->globalExec()).utf8().data());
+            printf("%s\n", returnValue.toString(globalObject->globalExec()).utf8().data());
 
         globalObject->globalExec()->clearException();
     }

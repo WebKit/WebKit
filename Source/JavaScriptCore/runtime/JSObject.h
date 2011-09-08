@@ -26,7 +26,6 @@
 #include "ArgList.h"
 #include "ClassInfo.h"
 #include "CommonIdentifiers.h"
-#include "Completion.h"
 #include "CallFrame.h"
 #include "JSCell.h"
 #include "PropertySlot.h"
@@ -218,8 +217,6 @@ namespace JSC {
         bool isSealed(JSGlobalData& globalData) { return m_structure->isSealed(globalData); }
         bool isFrozen(JSGlobalData& globalData) { return m_structure->isFrozen(globalData); }
         bool isExtensible() { return m_structure->isExtensible(); }
-
-        virtual ComplType exceptionType() const { return Throw; }
 
         void allocatePropertyStorage(size_t oldSize, size_t newSize);
         bool isUsingInlineStorage() const { return static_cast<const void*>(m_propertyStorage) == static_cast<const void*>(this + 1); }

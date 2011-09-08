@@ -67,12 +67,12 @@ JSGlobalObject* JSRun::GlobalObject() const
     return fGlobalObject.get();
 }
 
-Completion JSRun::Evaluate()
+JSValue JSRun::Evaluate(JSValue* expception)
 {
-    return JSC::evaluate(fGlobalObject->globalExec(), fGlobalObject->globalScopeChain(), makeSource(fSource));
+    return JSC::evaluate(fGlobalObject->globalExec(), fGlobalObject->globalScopeChain(), makeSource(fSource), JSValue(), expception);
 }
 
 bool JSRun::CheckSyntax()
 {
-    return JSC::checkSyntax(fGlobalObject->globalExec(), makeSource(fSource)).complType() != Throw;
+    return JSC::checkSyntax(fGlobalObject->globalExec(), makeSource(fSource));
 }

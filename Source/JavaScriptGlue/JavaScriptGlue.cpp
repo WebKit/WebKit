@@ -292,14 +292,14 @@ JSObjectRef JSRunEvaluate(JSRunRef ref)
     if (ptr)
     {
         JSGlueAPIEntry entry;
-        Completion completion = ptr->Evaluate();
-        if (completion.isValueCompletion())
+        
+        JSValue evaluationException;
+        JSValue returnValue = ptr->Evaluate(&evaluationException);
+        
+        if (evaluationException)
         {
-            result = (JSObjectRef)KJSValueToJSObject(completion.value(), ptr->GlobalObject()->globalExec());
-        }
-
-        if (completion.complType() == Throw)
-        {
+            result = (JSObjectRef)KJSValueToJSObject(evaluationException, ptr->GlobalObject()->globalExec());
+            
             JSFlags flags = ptr->Flags();
             if (flags & kJSFlagDebug)
             {
@@ -310,6 +310,10 @@ JSObjectRef JSRunEvaluate(JSRunRef ref)
                     CFRelease(error);
                 }
             }
+        }
+        else
+        {
+            result = (JSObjectRef)KJSValueToJSObject(returnValue, ptr->GlobalObject()->globalExec());
         }
     }
     return result;

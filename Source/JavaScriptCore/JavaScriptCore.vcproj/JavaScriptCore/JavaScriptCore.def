@@ -39,6 +39,8 @@ EXPORTS
     ??1WeakHandleOwner@JSC@@UAE@XZ
     ??8JSC@@YA_NABVUString@0@0@Z
     ??8WTF@@YA_NABVCString@0@0@Z
+    ?checkSyntax@JSC@@YA_NPAVExecState@1@ABVSourceCode@1@PAVJSValue@1@@Z
+    ?evaluate@JSC@@YA?AVJSValue@1@PAVExecState@1@PAVScopeChainNode@1@ABVSourceCode@1@V21@PAV21@@Z
     ?EcmaScriptConverter@DoubleToStringConverter@double_conversion@WTF@@SAABV123@XZ
     ?ToExponential@DoubleToStringConverter@double_conversion@WTF@@QBE_NNHPAVStringBuilder@23@@Z
     ?ToFixed@DoubleToStringConverter@double_conversion@WTF@@QBE_NNHPAVStringBuilder@23@@Z
@@ -80,7 +82,6 @@ EXPORTS
     ?changePrototypeTransition@Structure@JSC@@SAPAV12@AAVJSGlobalData@2@PAV12@VJSValue@2@@Z
     ?checkCurrentIdentifierTable@Identifier@JSC@@CAXPAVExecState@2@@Z
     ?checkCurrentIdentifierTable@Identifier@JSC@@CAXPAVJSGlobalData@2@@Z
-    ?checkSyntax@JSC@@YA?AVCompletion@1@PAVExecState@1@ABVSourceCode@1@@Z
     ?checksum@MD5@WTF@@QAEXAAV?$Vector@E$0BA@@2@@Z
     ?className@JSObject@JSC@@UBE?AVUString@2@XZ
     ?clear@SourceProviderCache@JSC@@QAEXXZ
@@ -160,7 +161,6 @@ EXPORTS
     ?equal@Identifier@JSC@@SA_NPBVStringImpl@WTF@@PBD@Z
     ?equalUTF16WithUTF8@Unicode@WTF@@YA_NPB_W0PBD1@Z
     ?evaluate@DebuggerCallFrame@JSC@@QBE?AVJSValue@2@ABVUString@2@AAV32@@Z
-    ?evaluate@JSC@@YA?AVCompletion@1@PAVExecState@1@PAVScopeChainNode@1@ABVSourceCode@1@VJSValue@1@@Z
     ?exclude@Profile@JSC@@QAEXPBVProfileNode@2@@Z
     ?fastCalloc@WTF@@YAPAXII@Z
     ?fastFree@WTF@@YAXPAX@Z

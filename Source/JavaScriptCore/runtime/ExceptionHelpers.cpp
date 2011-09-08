@@ -41,54 +41,25 @@
 
 namespace JSC {
 
-class InterruptedExecutionError : public JSNonFinalObject {
-private:
-    InterruptedExecutionError(JSGlobalData& globalData)
-        : JSNonFinalObject(globalData, globalData.interruptedExecutionErrorStructure.get())
-    {
-    }
+const ClassInfo InterruptedExecutionError::s_info = { "InterruptedExecutionError", 0, 0, 0 };
 
-public:
-    typedef JSNonFinalObject Base;
+UString InterruptedExecutionError::toString(ExecState*) const
+{
+    return "JavaScript execution exceeded timeout.";
+}
 
-    static InterruptedExecutionError* create(JSGlobalData& globalData)
-    {
-        InterruptedExecutionError* error = new (allocateCell<InterruptedExecutionError>(globalData.heap)) InterruptedExecutionError(globalData);
-        error->finishCreation(globalData);
-        return error;
-    }
+const ClassInfo TerminatedExecutionError::s_info = { "TerminatedExecutionError", 0, 0, 0 };
 
-    virtual ComplType exceptionType() const { return Interrupted; }
+UString TerminatedExecutionError::toString(ExecState*) const
+{
+    return "JavaScript execution terminated.";
+}
 
-    virtual UString toString(ExecState*) const { return "JavaScript execution exceeded timeout."; }
-};
 
 JSObject* createInterruptedExecutionException(JSGlobalData* globalData)
 {
     return InterruptedExecutionError::create(*globalData);
 }
-
-class TerminatedExecutionError : public JSNonFinalObject {
-private:
-    TerminatedExecutionError(JSGlobalData& globalData)
-        : JSNonFinalObject(globalData, globalData.terminatedExecutionErrorStructure.get())
-    {
-    }
-
-public:
-    typedef JSNonFinalObject Base;
-
-    static TerminatedExecutionError* create(JSGlobalData& globalData)
-    {
-        TerminatedExecutionError* error = new (allocateCell<TerminatedExecutionError>(globalData.heap)) TerminatedExecutionError(globalData);
-        error->finishCreation(globalData);
-        return error;
-    }
-
-    virtual ComplType exceptionType() const { return Terminated; }
-
-    virtual UString toString(ExecState*) const { return "JavaScript execution terminated."; }
-};
 
 JSObject* createTerminatedExecutionException(JSGlobalData* globalData)
 {

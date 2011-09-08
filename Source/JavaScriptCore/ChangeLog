@@ -1,3 +1,45 @@
+2011-09-08  Sam Weinig  <sam@webkit.org>
+
+        Remove the Completion object from JSC, I have never liked it
+        https://bugs.webkit.org/show_bug.cgi?id=67755
+
+        Reviewed by Gavin Barraclough.
+
+        - Removes the Completion object and replaces its use with out parameter exceptions.
+        - Remove ComplType and virtual exceptionType() function on JSObject. Replace with
+          ClassInfo for InterruptedExecutionError and TerminatedExecutionError.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+        * jsc.cpp:
+        (functionLoad):
+        (functionCheckSyntax):
+        (runWithScripts):
+        (runInteractive):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::evaluate):
+        * runtime/Completion.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::InterruptedExecutionError::toString):
+        (JSC::TerminatedExecutionError::toString):
+        (JSC::createInterruptedExecutionException):
+        * runtime/ExceptionHelpers.h:
+        (JSC::InterruptedExecutionError::InterruptedExecutionError):
+        (JSC::InterruptedExecutionError::create):
+        (JSC::InterruptedExecutionError::createStructure):
+        (JSC::TerminatedExecutionError::TerminatedExecutionError):
+        (JSC::TerminatedExecutionError::create):
+        (JSC::TerminatedExecutionError::createStructure):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSObject.h:
+
 2011-09-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix.

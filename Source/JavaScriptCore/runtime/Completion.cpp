@@ -34,47 +34,51 @@
 
 namespace JSC {
 
-Completion checkSyntax(ExecState* exec, const SourceCode& source)
+bool checkSyntax(ExecState* exec, const SourceCode& source, JSValue* returnedException)
 {
     JSLock lock(exec);
     ASSERT(exec->globalData().identifierTable == wtfThreadData().currentIdentifierTable());
 
     ProgramExecutable* program = ProgramExecutable::create(exec, source);
     JSObject* error = program->checkSyntax(exec);
-    if (error)
-        return Completion(Throw, error);
+    if (error) {
+        if (returnedException)
+            *returnedException = error;
+        return false;
+    }
 
-    return Completion(Normal);
+    return true;
 }
 
-Completion evaluate(ExecState* exec, ScopeChainNode* scopeChain, const SourceCode& source, JSValue thisValue)
+JSValue evaluate(ExecState* exec, ScopeChainNode* scopeChain, const SourceCode& source, JSValue thisValue, JSValue* returnedException)
 {
     JSLock lock(exec);
     ASSERT(exec->globalData().identifierTable == wtfThreadData().currentIdentifierTable());
 
     ProgramExecutable* program = ProgramExecutable::create(exec, source);
     if (!program) {
-        JSValue exception = exec->globalData().exception;
+        if (returnedException)
+            *returnedException = exec->globalData().exception;
+
         exec->globalData().exception = JSValue();
-        return Completion(Throw, exception);
+        return jsUndefined();
     }
 
     if (!thisValue || thisValue.isUndefinedOrNull())
         thisValue = exec->dynamicGlobalObject();
     JSObject* thisObj = thisValue.toThisObject(exec);
-
     JSValue result = exec->interpreter()->execute(program, exec, scopeChain, thisObj);
 
     if (exec->hadException()) {
-        JSValue exception = exec->exception();
-        exec->clearException();
+        if (returnedException)
+            *returnedException = exec->exception();
 
-        ComplType exceptionType = Throw;
-        if (exception.isObject())
-            exceptionType = asObject(exception)->exceptionType();
-        return Completion(exceptionType, exception);
+        exec->clearException();
+        return jsUndefined();
     }
-    return Completion(Normal, result);
+
+    ASSERT(result);
+    return result;
 }
 
 } // namespace JSC
