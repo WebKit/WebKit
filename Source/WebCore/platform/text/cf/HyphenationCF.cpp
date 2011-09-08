@@ -35,8 +35,6 @@
 
 namespace WebCore {
 
-#if !PLATFORM(WIN) || (defined(MAC_OS_X_VERSION_10_7) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7)
-
 template<>
 RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >::createValueForNullKey()
 {
@@ -75,21 +73,6 @@ size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeI
     CFIndex result = CFStringGetHyphenationLocationBeforeIndex(string.get(), beforeIndex, CFRangeMake(0, length), 0, locale.get(), 0);
     return result == kCFNotFound ? 0 : result;
 }
-
-#else
-
-bool canHyphenate(const AtomicString&)
-{
-    return false;
-}
-
-size_t lastHyphenLocation(const UChar*, size_t, size_t, const AtomicString&)
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-#endif // PLATFORM(WIN) && (!defined(MAC_OS_X_VERSION_10_7) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7)
 
 } // namespace WebCore
 
