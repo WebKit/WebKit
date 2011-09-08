@@ -341,7 +341,7 @@ void RenderLayer::updateLayerPositions(LayoutPoint* offsetFromRoot, UpdateLayerP
         RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
         IntRect oldRepaintRect = m_repaintRect;
         IntRect oldOutlineBox = m_outlineBox;
-        computeRepaintRects();
+        computeRepaintRects(offsetFromRoot);
         // FIXME: Should ASSERT that value calculated for m_outlineBox using the cached offset is the same
         // as the value not using the cached offset, but we can't due to https://bugs.webkit.org/show_bug.cgi?id=37048
         if (flags & CheckForRepaint) {
@@ -397,14 +397,14 @@ LayoutRect RenderLayer::repaintRectIncludingDescendants() const
     return repaintRect;
 }
 
-void RenderLayer::computeRepaintRects(IntPoint* cachedOffset)
+void RenderLayer::computeRepaintRects(IntPoint* offsetFromRoot)
 {
     ASSERT(m_hasVisibleContent);
     ASSERT(!m_visibleContentStatusDirty);
 
     RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
     m_repaintRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
-    m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer, cachedOffset);
+    m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer, offsetFromRoot);
 }
 
 void RenderLayer::clearRepaintRects()
@@ -429,7 +429,7 @@ void RenderLayer::updateLayerPositionsAfterScroll(bool fixed)
     updateLayerPosition();
 
     if (fixed || renderer()->style()->position() == FixedPosition) {
-        // FIXME: Is it worth passing the cachedOffset around like in updateLayerPositions?
+        // FIXME: Is it worth passing the offsetFromRoot around like in updateLayerPositions?
         computeRepaintRects();
         fixed = true;
     } else if (renderer()->hasTransform() && !renderer()->isRenderView()) {

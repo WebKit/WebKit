@@ -467,7 +467,7 @@ public:
     void setContainsDirtyOverlayScrollbars(bool dirtyScrollbars) { m_containsDirtyOverlayScrollbars = dirtyScrollbars; }
 
 private:
-    void computeRepaintRects(IntPoint* cachedOffset = 0);
+    void computeRepaintRects(IntPoint* offsetFromRoot = 0);
     void clearRepaintRects();
 
     // The normal operator new is disallowed on all render objects.
