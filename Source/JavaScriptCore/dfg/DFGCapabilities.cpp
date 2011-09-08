@@ -31,6 +31,8 @@
 
 namespace JSC { namespace DFG {
 
+#if ENABLE(DFG_JIT)
+
 bool canCompileOpcodes(CodeBlock* codeBlock)
 {
     Interpreter* interpreter = codeBlock->globalData()->interpreter;
@@ -55,6 +57,8 @@ bool canCompileOpcodes(CodeBlock* codeBlock)
     
     return true;
 }
+
+#endif
 
 } } // namespace JSC::DFG
 
