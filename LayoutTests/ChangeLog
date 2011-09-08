@@ -1,3 +1,12 @@
+2011-09-08  Nate Chapin  <japhet@chromium.org>
+
+        Rebaseline svg/W3C-SVG-1.1-SE/filters-image-05-f.svg text for chromium win/linux.
+
+        * platform/chromium-cg-mac/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1-SE: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.txt: Added.
+
 2011-09-08  Mark Pilgrim  <pilgrim@chromium.org>
 
         Test how animation methods react to too few arguments
