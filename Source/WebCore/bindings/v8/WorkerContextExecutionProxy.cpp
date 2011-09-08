@@ -41,6 +41,7 @@
 #include "SharedWorker.h"
 #include "SharedWorkerContext.h"
 #include "V8Binding.h"
+#include "V8BindingScripts.h"
 #include "V8DOMMap.h"
 #include "V8DedicatedWorkerContext.h"
 #include "V8Proxy.h"
@@ -174,6 +175,9 @@ bool WorkerContextExecutionProxy::initContextIfNeeded()
     // Insert the object instance as the prototype of the shadow object.
     v8::Handle<v8::Object> globalObject = v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype());
     globalObject->SetPrototype(jsWorkerContext);
+
+    V8BindingScripts::runScripts(context);
+
     return true;
 }
 

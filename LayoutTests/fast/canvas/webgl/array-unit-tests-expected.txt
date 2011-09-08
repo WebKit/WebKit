@@ -43,8 +43,16 @@ PASS array.subarray(2).length is (32 / typeSize) - 2
 PASS array.subarray(-2).length is 2
 PASS array.subarray(-2147483648).length is (32 / typeSize)
 PASS Setting Float32Array from array with out-of-range offset was caught
-PASS Setting Float32Array from fake array with invalid length was caught
 PASS Setting Float32Array from Float32Array with out-of-range offset was caught
+PASS Setting Float32Array from array with negative offset was caught
+PASS Setting Float32Array from Float32Array with negative offset was caught
+PASS Setting Float32Array from array with -0 offset
+PASS Setting Float32Array from Float32Array with -0 offset
+PASS Setting Float32Array from array with boundary offset
+PASS Setting Float32Array from Float32Array with boundary offset
+PASS Setting Float32Array from array with non-integer offset
+PASS Setting Float32Array from Float32Array with non-integer offset
+PASS Setting Float32Array from fake array with invalid length was caught
 PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test storing NaN in Float32Array
@@ -89,8 +97,16 @@ PASS array.subarray(2).length is (32 / typeSize) - 2
 PASS array.subarray(-2).length is 2
 PASS array.subarray(-2147483648).length is (32 / typeSize)
 PASS Setting Float64Array from array with out-of-range offset was caught
-PASS Setting Float64Array from fake array with invalid length was caught
 PASS Setting Float64Array from Float64Array with out-of-range offset was caught
+PASS Setting Float64Array from array with negative offset was caught
+PASS Setting Float64Array from Float64Array with negative offset was caught
+PASS Setting Float64Array from array with -0 offset
+PASS Setting Float64Array from Float64Array with -0 offset
+PASS Setting Float64Array from array with boundary offset
+PASS Setting Float64Array from Float64Array with boundary offset
+PASS Setting Float64Array from array with non-integer offset
+PASS Setting Float64Array from Float64Array with non-integer offset
+PASS Setting Float64Array from fake array with invalid length was caught
 PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test storing NaN in Float64Array
@@ -131,8 +147,16 @@ PASS array.subarray(2).length is (32 / typeSize) - 2
 PASS array.subarray(-2).length is 2
 PASS array.subarray(-2147483648).length is (32 / typeSize)
 PASS Setting Int8Array from array with out-of-range offset was caught
-PASS Setting Int8Array from fake array with invalid length was caught
 PASS Setting Int8Array from Int8Array with out-of-range offset was caught
+PASS Setting Int8Array from array with negative offset was caught
+PASS Setting Int8Array from Int8Array with negative offset was caught
+PASS Setting Int8Array from array with -0 offset
+PASS Setting Int8Array from Int8Array with -0 offset
+PASS Setting Int8Array from array with boundary offset
+PASS Setting Int8Array from Int8Array with boundary offset
+PASS Setting Int8Array from array with non-integer offset
+PASS Setting Int8Array from Int8Array with non-integer offset
+PASS Setting Int8Array from fake array with invalid length was caught
 PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test storing NaN in Int8Array
@@ -178,8 +202,16 @@ PASS array.subarray(2).length is (32 / typeSize) - 2
 PASS array.subarray(-2).length is 2
 PASS array.subarray(-2147483648).length is (32 / typeSize)
 PASS Setting Int16Array from array with out-of-range offset was caught
-PASS Setting Int16Array from fake array with invalid length was caught
 PASS Setting Int16Array from Int16Array with out-of-range offset was caught
+PASS Setting Int16Array from array with negative offset was caught
+PASS Setting Int16Array from Int16Array with negative offset was caught
+PASS Setting Int16Array from array with -0 offset
+PASS Setting Int16Array from Int16Array with -0 offset
+PASS Setting Int16Array from array with boundary offset
+PASS Setting Int16Array from Int16Array with boundary offset
+PASS Setting Int16Array from array with non-integer offset
+PASS Setting Int16Array from Int16Array with non-integer offset
+PASS Setting Int16Array from fake array with invalid length was caught
 PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test storing NaN in Int16Array
@@ -225,8 +257,16 @@ PASS array.subarray(2).length is (32 / typeSize) - 2
 PASS array.subarray(-2).length is 2
 PASS array.subarray(-2147483648).length is (32 / typeSize)
 PASS Setting Int32Array from array with out-of-range offset was caught
-PASS Setting Int32Array from fake array with invalid length was caught
 PASS Setting Int32Array from Int32Array with out-of-range offset was caught
+PASS Setting Int32Array from array with negative offset was caught
+PASS Setting Int32Array from Int32Array with negative offset was caught
+PASS Setting Int32Array from array with -0 offset
+PASS Setting Int32Array from Int32Array with -0 offset
+PASS Setting Int32Array from array with boundary offset
+PASS Setting Int32Array from Int32Array with boundary offset
+PASS Setting Int32Array from array with non-integer offset
+PASS Setting Int32Array from Int32Array with non-integer offset
+PASS Setting Int32Array from fake array with invalid length was caught
 PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test storing NaN in Int32Array
@@ -267,8 +307,16 @@ PASS array.subarray(2).length is (32 / typeSize) - 2
 PASS array.subarray(-2).length is 2
 PASS array.subarray(-2147483648).length is (32 / typeSize)
 PASS Setting Uint8Array from array with out-of-range offset was caught
-PASS Setting Uint8Array from fake array with invalid length was caught
 PASS Setting Uint8Array from Uint8Array with out-of-range offset was caught
+PASS Setting Uint8Array from array with negative offset was caught
+PASS Setting Uint8Array from Uint8Array with negative offset was caught
+PASS Setting Uint8Array from array with -0 offset
+PASS Setting Uint8Array from Uint8Array with -0 offset
+PASS Setting Uint8Array from array with boundary offset
+PASS Setting Uint8Array from Uint8Array with boundary offset
+PASS Setting Uint8Array from array with non-integer offset
+PASS Setting Uint8Array from Uint8Array with non-integer offset
+PASS Setting Uint8Array from fake array with invalid length was caught
 PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test storing NaN in Uint8Array
@@ -314,8 +362,16 @@ PASS array.subarray(2).length is (32 / typeSize) - 2
 PASS array.subarray(-2).length is 2
 PASS array.subarray(-2147483648).length is (32 / typeSize)
 PASS Setting Uint16Array from array with out-of-range offset was caught
-PASS Setting Uint16Array from fake array with invalid length was caught
 PASS Setting Uint16Array from Uint16Array with out-of-range offset was caught
+PASS Setting Uint16Array from array with negative offset was caught
+PASS Setting Uint16Array from Uint16Array with negative offset was caught
+PASS Setting Uint16Array from array with -0 offset
+PASS Setting Uint16Array from Uint16Array with -0 offset
+PASS Setting Uint16Array from array with boundary offset
+PASS Setting Uint16Array from Uint16Array with boundary offset
+PASS Setting Uint16Array from array with non-integer offset
+PASS Setting Uint16Array from Uint16Array with non-integer offset
+PASS Setting Uint16Array from fake array with invalid length was caught
 PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test storing NaN in Uint16Array
@@ -361,8 +417,16 @@ PASS array.subarray(2).length is (32 / typeSize) - 2
 PASS array.subarray(-2).length is 2
 PASS array.subarray(-2147483648).length is (32 / typeSize)
 PASS Setting Uint32Array from array with out-of-range offset was caught
-PASS Setting Uint32Array from fake array with invalid length was caught
 PASS Setting Uint32Array from Uint32Array with out-of-range offset was caught
+PASS Setting Uint32Array from array with negative offset was caught
+PASS Setting Uint32Array from Uint32Array with negative offset was caught
+PASS Setting Uint32Array from array with -0 offset
+PASS Setting Uint32Array from Uint32Array with -0 offset
+PASS Setting Uint32Array from array with boundary offset
+PASS Setting Uint32Array from Uint32Array with boundary offset
+PASS Setting Uint32Array from array with non-integer offset
+PASS Setting Uint32Array from Uint32Array with non-integer offset
+PASS Setting Uint32Array from fake array with invalid length was caught
 PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test storing NaN in Uint32Array

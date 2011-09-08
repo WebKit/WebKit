@@ -616,18 +616,93 @@ function testSubarrayWithDefaultValues(type, name, sz) {
     }
 }
 
-function testSettingFromArrayWithOutOfRangeOffset(type, name) {
-    var webglArray = new type(32);
-    var array = [];
-    for (var i = 0; i < 16; i++) {
-        array.push(i);
-    }
+function setWithInvalidOffset(type, name, length,
+                              sourceType, sourceName, sourceLength,
+                              offset, offsetDescription) {
+    var webglArray = new type(length);
+    var sourceArray = new sourceType(sourceLength);
+    for (var i = 0; i < sourceLength; i++)
+        sourceArray[i] = 42 + i;
     try {
-        webglArray.set(array, 0x7FFFFFF8);
-        testFailed("Setting " + name + " from array with out-of-range offset was not caught");
+        webglArray.set(sourceArray, offset);
+        testFailed("Setting " + name + " from " + sourceName + " with " +
+                   offsetDescription + " offset was not caught");
     } catch (e) {
-        testPassed("Setting " + name + " from array with out-of-range offset was caught");
+        testPassed("Setting " + name + " from " + sourceName + " with " +
+                   offsetDescription + " offset was caught");
     }
+}
+
+function setWithValidOffset(type, name, length,
+                            sourceType, sourceName, sourceLength,
+                            offset, offsetDescription) {
+    running("Setting " + name + " from " + sourceName + " with " +
+            offsetDescription + " offset");
+    var webglArray = new type(length);
+    var sourceArray = new sourceType(sourceLength);
+    for (var i = 0; i < sourceLength; i++)
+        sourceArray[i] = 42 + i;
+    try {
+        webglArray.set(sourceArray, offset);
+        offset = Math.floor(offset);
+        for (var i = 0; i < sourceLength; i++) {
+            assertEq("Element " + i + offset, sourceArray[i], webglArray[i + offset]);
+        }
+        pass();
+    } catch (e) {
+        fail(e);
+    }
+}
+
+
+function testSettingFromArrayWithOutOfRangeOffset(type, name) {
+    setWithInvalidOffset(type, name, 32, Array, "array", 16,
+                         0x7FFFFFF8, "out-of-range");
+}
+
+function testSettingFromTypedArrayWithOutOfRangeOffset(type, name) {
+    setWithInvalidOffset(type, name, 32, type, name, 16,
+                         0x7FFFFFF8, "out-of-range");
+}
+
+function testSettingFromArrayWithNegativeOffset(type, name) {
+    setWithInvalidOffset(type, name, 32, Array, "array", 16,
+                         -1, "negative");
+}
+
+function testSettingFromTypedArrayWithNegativeOffset(type, name) {
+    setWithInvalidOffset(type, name, 32, type, name, 16,
+                         -1, "negative");
+}
+
+function testSettingFromArrayWithMinusZeroOffset(type, name) {
+    setWithValidOffset(type, name, 32, Array, "array", 16,
+                       -0, "-0");
+}
+
+function testSettingFromTypedArrayWithMinusZeroOffset(type, name) {
+    setWithValidOffset(type, name, 32, type, name, 16,
+                       -0, "-0");
+}
+
+function testSettingFromArrayWithBoundaryOffset(type, name) {
+    setWithValidOffset(type, name, 32, Array, "array", 16,
+                       16, "boundary");
+}
+
+function testSettingFromTypedArrayWithBoundaryOffset(type, name) {
+    setWithValidOffset(type, name, 32, type, name, 16,
+                       16, "boundary");
+}
+
+function testSettingFromArrayWithNonIntegerOffset(type, name) {
+    setWithValidOffset(type, name, 32, Array, "array", 16,
+                       16.999, "non-integer");
+}
+
+function testSettingFromTypedArrayWithNonIntegerOffset(type, name) {
+    setWithValidOffset(type, name, 32, type, name, 16,
+                       16.999, "non-integer");
 }
 
 function testSettingFromFakeArrayWithOutOfRangeLength(type, name) {
@@ -642,19 +717,6 @@ function testSettingFromFakeArrayWithOutOfRangeLength(type, name) {
     }
 }
 
-function testSettingFromTypedArrayWithOutOfRangeOffset(type, name) {
-    var webglArray = new type(32);
-    var srcArray = new type(16);
-    for (var i = 0; i < 16; i++) {
-        srcArray[i] = i;
-    }
-    try {
-        webglArray.set(srcArray, 0x7FFFFFF8);
-        testFailed("Setting " + name + " from " + name + " with out-of-range offset was not caught");
-    } catch (e) {
-        testPassed("Setting " + name + " from " + name + " with out-of-range offset was caught");
-    }
-}
 
 function negativeTestGetAndSetMethods(type, name) {
     array = new type([2, 3]);
@@ -872,8 +934,16 @@ function runTests() {
     testSubarrayWithOutOfRangeValues(type, name, testCase.elementSizeInBytes);
     testSubarrayWithDefaultValues(type, name, testCase.elementSizeInBytes);
     testSettingFromArrayWithOutOfRangeOffset(type, name);
-    testSettingFromFakeArrayWithOutOfRangeLength(type, name);
     testSettingFromTypedArrayWithOutOfRangeOffset(type, name);
+    testSettingFromArrayWithNegativeOffset(type, name);
+    testSettingFromTypedArrayWithNegativeOffset(type, name);
+    testSettingFromArrayWithMinusZeroOffset(type, name);
+    testSettingFromTypedArrayWithMinusZeroOffset(type, name);
+    testSettingFromArrayWithBoundaryOffset(type, name);
+    testSettingFromTypedArrayWithBoundaryOffset(type, name);
+    testSettingFromArrayWithNonIntegerOffset(type, name);
+    testSettingFromTypedArrayWithNonIntegerOffset(type, name);
+    testSettingFromFakeArrayWithOutOfRangeLength(type, name);
     negativeTestGetAndSetMethods(type, name);
     testNaNConversion(type, name);
   }

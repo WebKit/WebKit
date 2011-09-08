@@ -480,6 +480,23 @@
       'actions': [
         # Actions to build derived sources.
         {
+          'action_name': 'generateV8ArrayBufferViewCustomScript',
+          'inputs': [
+            '../bindings/v8/custom/V8ArrayBufferViewCustomScript.js',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/V8ArrayBufferViewCustomScript.h',
+          ],
+          'action': [
+            'perl',
+            '../inspector/xxd.pl',
+            'V8ArrayBufferViewCustomScript_js',
+            '<@(_inputs)',
+            '<@(_outputs)'
+          ],
+          'message': 'Generating V8ArrayBufferViewCustomScript.h from V8ArrayBufferViewCustomScript.js',
+        },
+        {
           'action_name': 'generateXMLViewerCSS',
           'inputs': [
             '../xml/XMLViewer.css',

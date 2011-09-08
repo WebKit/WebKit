@@ -1,3 +1,25 @@
+2011-09-08  Ulan Degenbaev  <ulan@chromium.org>
+
+        [v8] Improve performance of typed array set() taking Array
+        https://bugs.webkit.org/show_bug.cgi?id=63644
+
+        Reviewed by Kenneth Russell.
+
+        Overwrite the native 'set' method of the type arrays with JS
+        implementation after initialization of the global context.
+
+        Add tests for invalid and boundary offsets. No performance tests.
+
+        * LayoutTests/fast/canvas/webgl/array-unit-tests-expected.txt:
+        * LayoutTests/fast/canvas/webgl/array-unit-tests.html:
+        * Source/WebCore/WebCore.gyp/WebCore.gyp:
+        * Source/WebCore/WebCore.gypi:
+        * Source/WebCore/bindings/v8/V8BindingScripts.cpp: Added.
+        * Source/WebCore/bindings/v8/V8BindingScripts.h: Added.
+        * Source/WebCore/bindings/v8/V8DOMWindowShell.cpp:
+        * Source/WebCore/bindings/v8/WorkerContextExecutionProxy.cpp:
+        * Source/WebCore/bindings/v8/custom/V8ArrayBufferViewCustomScript.js: Added.
+
 2011-09-08  Varun Jain  <varunjain@google.com>
 
         Split Tap gesture detection into TapDown and Tap.
