@@ -4635,9 +4635,9 @@ void RenderBlock::adjustRectForColumns(LayoutRect& r) const
         LayoutRect colRect = columnRectAt(colInfo, startColumn);
         LayoutRect repaintRect = r;
         if (isHorizontal)
-            repaintRect.move(colRect.x() - logicalLeftOffset, -startColumn * colHeight);
+            repaintRect.move(colRect.x() - logicalLeftOffset, - static_cast<singed>(startColumn) * colHeight);
         else
-            repaintRect.move(-startColumn * colHeight, colRect.y() - logicalLeftOffset);
+            repaintRect.move(- static_cast<signed>(startColumn) * colHeight, colRect.y() - logicalLeftOffset);
         repaintRect.intersect(colRect);
         result.unite(repaintRect);
     } else {
