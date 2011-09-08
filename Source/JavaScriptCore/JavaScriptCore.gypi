@@ -114,6 +114,7 @@
             'runtime/RopeImpl.h',
             'runtime/ScopeChain.h',
             'runtime/SmallStrings.h',
+            'runtime/StorageBarrier.h',
             'runtime/StringObject.h',
             'runtime/StringObjectThatMasqueradesAsUndefined.h',
             'runtime/StringPrototype.h',

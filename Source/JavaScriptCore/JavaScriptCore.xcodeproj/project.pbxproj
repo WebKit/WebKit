@@ -416,6 +416,7 @@
 		A766B44F0EE8DCD1009518CA /* ExecutableAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A76C51761182748D00715B05 /* JSInterfaceJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = A76C51741182748D00715B05 /* JSInterfaceJIT.h */; };
 		A76F54A313B28AAB00EF2BCE /* JITWriteBarrier.h in Headers */ = {isa = PBXBuildFile; fileRef = A76F54A213B28AAB00EF2BCE /* JITWriteBarrier.h */; };
+		A781E359141970C700094D90 /* StorageBarrier.h in Headers */ = {isa = PBXBuildFile; fileRef = A781E358141970C700094D90 /* StorageBarrier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A784A26111D16622005776AC /* ASTBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A7EE7411B98B8D0065A14F /* ASTBuilder.h */; };
 		A784A26211D16622005776AC /* JSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A7EE7511B98B8D0065A14F /* JSParser.cpp */; };
 		A784A26311D16622005776AC /* JSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A7EE7611B98B8D0065A14F /* JSParser.h */; };
@@ -1182,6 +1183,7 @@
 		A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic32_64.cpp; sourceTree = "<group>"; };
 		A76C51741182748D00715B05 /* JSInterfaceJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInterfaceJIT.h; sourceTree = "<group>"; };
 		A76F54A213B28AAB00EF2BCE /* JITWriteBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITWriteBarrier.h; sourceTree = "<group>"; };
+		A781E358141970C700094D90 /* StorageBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageBarrier.h; sourceTree = "<group>"; };
 		A791EF260F11E07900AE1F68 /* JSByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSByteArray.h; sourceTree = "<group>"; };
 		A791EF270F11E07900AE1F68 /* JSByteArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSByteArray.cpp; sourceTree = "<group>"; };
 		A79EDB0811531CD60019E912 /* JSObjectRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectRefPrivate.h; sourceTree = "<group>"; };
@@ -2104,6 +2106,7 @@
 				7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */,
 				93303FE80E6A72B500786E6A /* SmallStrings.cpp */,
 				93303FEA0E6A72C000786E6A /* SmallStrings.h */,
+				A781E358141970C700094D90 /* StorageBarrier.h */,
 				A730B6111250068F009D25B1 /* StrictEvalActivation.cpp */,
 				A730B6101250068F009D25B1 /* StrictEvalActivation.h */,
 				BC18C3C00E16EE3300B34460 /* StringConstructor.cpp */,
@@ -2748,6 +2751,7 @@
 				866739D313BFDE710023D87C /* Uint16WithFraction.h in Headers */,
 				BC66BAE413F492CC00C23FAE /* Compiler.h in Headers */,
 				A7BC0C82140608B000B1BB71 /* CheckedArithmetic.h in Headers */,
+				A781E359141970C700094D90 /* StorageBarrier.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

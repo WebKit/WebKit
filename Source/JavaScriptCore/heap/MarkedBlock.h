@@ -48,6 +48,7 @@ namespace JSC {
     typedef uintptr_t Bits;
 
     static const size_t KB = 1024;
+    static const size_t MB = 1024 * 1024;
     
     // A marked block is a page-aligned container for heap-allocated objects.
     // Objects are allocated within cells of the marked block. For a given

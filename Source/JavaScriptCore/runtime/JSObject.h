@@ -31,6 +31,7 @@
 #include "PropertySlot.h"
 #include "PutPropertySlot.h"
 #include "ScopeChain.h"
+#include "StorageBarrier.h"
 #include "Structure.h"
 #include "JSGlobalData.h"
 #include "JSString.h"
@@ -67,9 +68,6 @@ namespace JSC {
         Getter       = 1 << 5,  // property is a getter
         Setter       = 1 << 6   // property is a setter
     };
-
-    typedef WriteBarrierBase<Unknown>* PropertyStorage;
-    typedef const WriteBarrierBase<Unknown>* ConstPropertyStorage;
 
     class JSObject : public JSCell {
         friend class BatchedTransitionOptimizer;
@@ -218,8 +216,8 @@ namespace JSC {
         bool isFrozen(JSGlobalData& globalData) { return m_structure->isFrozen(globalData); }
         bool isExtensible() { return m_structure->isExtensible(); }
 
-        void allocatePropertyStorage(size_t oldSize, size_t newSize);
-        bool isUsingInlineStorage() const { return static_cast<const void*>(m_propertyStorage) == static_cast<const void*>(this + 1); }
+        void allocatePropertyStorage(JSGlobalData&, size_t oldSize, size_t newSize);
+        bool isUsingInlineStorage() const { return static_cast<const void*>(m_propertyStorage.get()) == static_cast<const void*>(this + 1); }
 
         void* addressOfPropertyAtOffset(size_t offset)
         {
@@ -291,7 +289,7 @@ namespace JSC {
         JSObject(JSGlobalData&, Structure*, PropertyStorage inlineStorage);
         JSObject(VPtrStealingHackType, PropertyStorage inlineStorage)
             : JSCell(VPtrStealingHack)
-            , m_propertyStorage(inlineStorage)
+            , m_propertyStorage(inlineStorage, StorageBarrier::Unchecked)
         {
         }
 
@@ -305,8 +303,8 @@ namespace JSC {
         void isObject();
         void isString();
         
-        ConstPropertyStorage propertyStorage() const { return m_propertyStorage; }
-        PropertyStorage propertyStorage() { return m_propertyStorage; }
+        ConstPropertyStorage propertyStorage() const { return m_propertyStorage.get(); }
+        PropertyStorage propertyStorage() { return m_propertyStorage.get(); }
 
         const WriteBarrierBase<Unknown>* locationForOffset(size_t offset) const
         {
@@ -327,7 +325,7 @@ namespace JSC {
         const HashEntry* findPropertyHashEntry(ExecState*, const Identifier& propertyName) const;
         Structure* createInheritorID(JSGlobalData&);
 
-        PropertyStorage m_propertyStorage;
+        StorageBarrier m_propertyStorage;
         WriteBarrier<Structure> m_inheritorID;
     };
 
@@ -461,14 +459,14 @@ inline JSObject* asObject(JSValue value)
 
 inline JSObject::JSObject(JSGlobalData& globalData, Structure* structure, PropertyStorage inlineStorage)
     : JSCell(globalData, structure)
-    , m_propertyStorage(inlineStorage)
+    , m_propertyStorage(globalData, this, inlineStorage)
 {
 }
 
 inline JSObject::~JSObject()
 {
-    if (!isUsingInlineStorage())
-        delete [] m_propertyStorage;
+    if (!isUsingInlineStorage() && !Heap::heap(this)->inPropertyStorageNursery(m_propertyStorage.get()))
+        delete [] m_propertyStorage.get();
 }
 
 inline JSValue JSObject::prototype() const
@@ -661,7 +659,7 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
         size_t currentCapacity = m_structure->propertyStorageCapacity();
         offset = m_structure->addPropertyWithoutTransition(globalData, propertyName, attributes, specificFunction);
         if (currentCapacity != m_structure->propertyStorageCapacity())
-            allocatePropertyStorage(currentCapacity, m_structure->propertyStorageCapacity());
+            allocatePropertyStorage(globalData, currentCapacity, m_structure->propertyStorageCapacity());
 
         ASSERT(offset < m_structure->propertyStorageCapacity());
         putDirectOffset(globalData, offset, value);
@@ -675,7 +673,7 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
     size_t currentCapacity = m_structure->propertyStorageCapacity();
     if (Structure* structure = Structure::addPropertyTransitionToExistingStructure(m_structure.get(), propertyName, attributes, specificFunction, offset)) {    
         if (currentCapacity != structure->propertyStorageCapacity())
-            allocatePropertyStorage(currentCapacity, structure->propertyStorageCapacity());
+            allocatePropertyStorage(globalData, currentCapacity, structure->propertyStorageCapacity());
 
         ASSERT(offset < structure->propertyStorageCapacity());
         setStructure(globalData, structure);
@@ -725,7 +723,7 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
     Structure* structure = Structure::addPropertyTransition(globalData, m_structure.get(), propertyName, attributes, specificFunction, offset);
 
     if (currentCapacity != structure->propertyStorageCapacity())
-        allocatePropertyStorage(currentCapacity, structure->propertyStorageCapacity());
+        allocatePropertyStorage(globalData, currentCapacity, structure->propertyStorageCapacity());
 
     ASSERT(offset < structure->propertyStorageCapacity());
     setStructure(globalData, structure);
@@ -786,7 +784,7 @@ inline void JSObject::putDirectWithoutTransition(JSGlobalData& globalData, const
     size_t currentCapacity = m_structure->propertyStorageCapacity();
     size_t offset = m_structure->addPropertyWithoutTransition(globalData, propertyName, attributes, 0);
     if (currentCapacity != m_structure->propertyStorageCapacity())
-        allocatePropertyStorage(currentCapacity, m_structure->propertyStorageCapacity());
+        allocatePropertyStorage(globalData, currentCapacity, m_structure->propertyStorageCapacity());
     putDirectOffset(globalData, offset, value);
 }
 
@@ -795,14 +793,14 @@ inline void JSObject::putDirectFunctionWithoutTransition(JSGlobalData& globalDat
     size_t currentCapacity = m_structure->propertyStorageCapacity();
     size_t offset = m_structure->addPropertyWithoutTransition(globalData, propertyName, attributes, value);
     if (currentCapacity != m_structure->propertyStorageCapacity())
-        allocatePropertyStorage(currentCapacity, m_structure->propertyStorageCapacity());
+        allocatePropertyStorage(globalData, currentCapacity, m_structure->propertyStorageCapacity());
     putDirectOffset(globalData, offset, value);
 }
 
 inline void JSObject::transitionTo(JSGlobalData& globalData, Structure* newStructure)
 {
     if (m_structure->propertyStorageCapacity() != newStructure->propertyStorageCapacity())
-        allocatePropertyStorage(m_structure->propertyStorageCapacity(), newStructure->propertyStorageCapacity());
+        allocatePropertyStorage(globalData, m_structure->propertyStorageCapacity(), newStructure->propertyStorageCapacity());
     setStructure(globalData, newStructure);
 }
 
@@ -893,6 +891,12 @@ ALWAYS_INLINE void JSObject::visitChildrenDirect(SlotVisitor& visitor)
     JSCell::visitChildren(visitor);
 
     PropertyStorage storage = propertyStorage();
+    if (Heap::heap(this)->inPropertyStorageNursery(storage)) {
+        m_propertyStorage.set(new WriteBarrierBase<Unknown>[structure()->propertyStorageCapacity()], StorageBarrier::Unchecked);
+        if (structure()->propertyStorageCapacity() > m_structure->propertyStorageSize())
+            ASSERT(!storage[m_structure->propertyStorageSize()]);
+        memcpy(m_propertyStorage.get(), storage, m_structure->propertyStorageSize() * sizeof(WriteBarrierBase<Unknown>));
+    }
     size_t storageSize = m_structure->propertyStorageSize();
     visitor.appendValues(storage, storageSize);
     if (m_inheritorID)

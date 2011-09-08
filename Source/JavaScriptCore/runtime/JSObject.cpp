@@ -594,24 +594,34 @@ Structure* JSObject::createInheritorID(JSGlobalData& globalData)
     return m_inheritorID.get();
 }
 
-void JSObject::allocatePropertyStorage(size_t oldSize, size_t newSize)
+void JSObject::allocatePropertyStorage(JSGlobalData& globalData, size_t oldSize, size_t newSize)
 {
     ASSERT(newSize > oldSize);
 
     // It's important that this function not rely on m_structure, since
     // we might be in the middle of a transition.
-    bool wasInline = (oldSize < JSObject::baseExternalStorageCapacity);
+    PropertyStorage newPropertyStorage = 0;
+    if (globalData.heap.inPropertyStorageNursery(m_propertyStorage.get())) {
+        newPropertyStorage = static_cast<PropertyStorage>(globalData.heap.allocatePropertyStorage(newSize * sizeof(WriteBarrierBase<Unknown>)));
+        if (!newPropertyStorage || !globalData.heap.inPropertyStorageNursery(m_propertyStorage.get())) {
+            // If allocation failed because it's too big, or it triggered a GC
+            // that promoted us to old space, we need to allocate our property
+            // storage in old space.
+            newPropertyStorage = new WriteBarrierBase<Unknown>[newSize];
+        }
+    } else
+        newPropertyStorage = new WriteBarrierBase<Unknown>[newSize];
 
-    PropertyStorage oldPropertyStorage = m_propertyStorage;
-    PropertyStorage newPropertyStorage = new WriteBarrierBase<Unknown>[newSize];
+    PropertyStorage oldPropertyStorage = m_propertyStorage.get();
+    ASSERT(newPropertyStorage);
 
     for (unsigned i = 0; i < oldSize; ++i)
        newPropertyStorage[i] = oldPropertyStorage[i];
 
-    if (!wasInline)
+    if (!isUsingInlineStorage() && !globalData.heap.inPropertyStorageNursery(m_propertyStorage.get()))
         delete [] oldPropertyStorage;
 
-    m_propertyStorage = newPropertyStorage;
+    m_propertyStorage.set(globalData, this, newPropertyStorage);
 }
 
 bool JSObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

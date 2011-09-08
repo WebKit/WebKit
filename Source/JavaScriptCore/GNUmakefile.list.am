@@ -417,6 +417,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/ScopeChainMark.h \
 	Source/JavaScriptCore/runtime/SmallStrings.cpp \
 	Source/JavaScriptCore/runtime/SmallStrings.h \
+	Source/JavaScriptCore/runtime/StorageBarrier.h \
 	Source/JavaScriptCore/runtime/StrictEvalActivation.cpp \
 	Source/JavaScriptCore/runtime/StrictEvalActivation.h \
 	Source/JavaScriptCore/runtime/StringConstructor.cpp \
