@@ -465,7 +465,7 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
 
         // We didn't find a sync reply yet, keep waiting.
 #if PLATFORM(WIN)
-        timedOut = !m_syncMessageState->wait\oluteTime, m_client->windowsToReceiveSentMessagesWhileWaitingForSyncReply());
+        timedOut = !m_syncMessageState->waitWhileDispatchingSentWin32Messages(absoluteTime, m_client->windowsToReceiveSentMessagesWhileWaitingForSyncReply());
 #else
 
         // This allows the WebProcess to still serve clients while waiting for the message to return. 
