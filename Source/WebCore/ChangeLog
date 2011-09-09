@@ -1,3 +1,24 @@
+2011-09-08  Adam Klein  <adamk@chromium.org>
+
+        Always zero-out m_sortedTextBoxesPosition to avoid uninitialized read in TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=67810
+
+        Reviewed by Tony Chang.
+
+        Reported as a valgrind failure in http://crbug.com/84777.
+
+        No possible change in behavior, so no tests. The unitialized read
+        could never have an impact:
+
+           if (m_sortedTextBoxesPosition + 1 < m_sortedTextBoxes.size()) ...
+
+        Since m_sortedTextBoxes.size() will be zero here if
+        m_sortedTextBoxesPosition is uninitialized, and they're both unsigned,
+        so no possible value of m_sortedTextBoxesPosition could be < 0.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator):
+
 2011-09-08  Tony Chang  <tony@chromium.org>
 
         Cleanup of switch statements with default cases
