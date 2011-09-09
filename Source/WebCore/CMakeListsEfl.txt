@@ -55,7 +55,6 @@ LIST(APPEND WebCore_SOURCES
   platform/efl/TemporaryLinkStubs.cpp
   platform/efl/WidgetEfl.cpp
   platform/graphics/ImageSource.cpp
-  platform/graphics/efl/FontEfl.cpp
   platform/graphics/efl/GraphicsLayerEfl.cpp
   platform/graphics/efl/IconEfl.cpp
   platform/graphics/efl/ImageEfl.cpp
@@ -109,6 +108,7 @@ IF (WTF_USE_CAIRO)
     )
     LIST(APPEND WebCore_SOURCES
       platform/graphics/WOFFFileFormat.cpp
+      platform/graphics/efl/FontEfl.cpp
       platform/graphics/freetype/FontCacheFreeType.cpp
       platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
       platform/graphics/freetype/FontPlatformDataFreeType.cpp
@@ -123,6 +123,7 @@ IF (WTF_USE_CAIRO)
       ${Pango_INCLUDE_DIRS}
     )
     LIST(APPEND WebCore_SOURCES
+      platform/graphics/pango/FontPango.cpp
       platform/graphics/pango/FontCachePango.cpp
       platform/graphics/pango/FontCustomPlatformDataPango.cpp
       platform/graphics/pango/FontPlatformDataPango.cpp

@@ -1,3 +1,17 @@
+2011-09-09  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Make the EFL port use the correct rendering file.
+        https://bugs.webkit.org/show_bug.cgi?id=66323
+
+        Reviewed by Martin Robinson.
+
+        When compiling with Pango support, the EFL port should use
+        FontPango.cpp instead of FontEfl.cpp (which is just full of stubs).
+
+        No new functionality so no new tests.
+
+        * CMakeListsEfl.txt:
+
 2011-09-09  Chris Rogers  <crogers@google.com>
 
         AudioBufferSourceNode must validate AudioBuffer in .buffer attribute setter
