@@ -1,3 +1,13 @@
+2011-09-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94851.
+        http://trac.webkit.org/changeset/94851
+        https://bugs.webkit.org/show_bug.cgi?id=67847
+
+        It broke a webkitpy test (Requested by ossy on #webkit).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+
 2011-09-09  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [NRWT] the nrwt check httpd with --no-http option

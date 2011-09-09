@@ -817,8 +817,7 @@ class Manager(object):
         return (thread_timings, test_timings, individual_test_timings)
 
     def needs_servers(self):
-        return any(self._test_requires_lock(test_name) for test_name in self._test_files) and self._options.http
-
+        return any(self._test_requires_lock(test_name) for test_name in self._test_files)
 
     def set_up_run(self):
         """Configures the system to be ready to run tests.
