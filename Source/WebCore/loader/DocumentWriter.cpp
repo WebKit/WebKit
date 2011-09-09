@@ -254,8 +254,7 @@ String DocumentWriter::deprecatedFrameEncoding() const
     if (m_decoder && m_decoder->encoding().isValid())
         return m_decoder->encoding().name();
 
-    Settings* settings = m_frame->settings();
-    return settings ? settings->defaultTextEncodingName() : String();
+    return String();
 }
 
 void DocumentWriter::setDocumentWasLoadedAsPartOfNavigation()
