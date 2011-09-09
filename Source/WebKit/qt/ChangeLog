@@ -1,3 +1,23 @@
+2011-09-09  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt] QWebElement::encloseWith doesn't work at all
+        https://bugs.webkit.org/show_bug.cgi?id=62464
+
+        Enclosing an element means wrapping something around an element,
+        not inserting something into an element. Therefore we need to check
+        if the parent of the element allows insertion rather than checking
+        the element itself.
+
+        Reviewed by Andreas Kling.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::prependOutside):
+        (QWebElement::appendOutside):
+        (QWebElement::encloseWith):
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::appendAndPrepend):
+        (tst_QWebElement::encloseWith):
+
 2011-09-08  Sam Weinig  <sam@webkit.org>
 
         Remove the Completion object from JSC, I have never liked it

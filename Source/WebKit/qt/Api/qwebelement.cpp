@@ -1111,16 +1111,17 @@ void QWebElement::prependOutside(const QString &markup)
     if (!m_element)
         return;
 
-    if (!m_element->parentNode())
+    Node* parent = m_element->parentNode();
+    if (!parent)
         return;
 
-    if (!m_element->isHTMLElement())
+    if (!parent->isHTMLElement())
         return;
 
-    RefPtr<DocumentFragment> fragment =  Range::createDocumentFragmentForElement(markup, toHTMLElement(m_element));
+    RefPtr<DocumentFragment> fragment = Range::createDocumentFragmentForElement(markup, toHTMLElement(parent));
 
     ExceptionCode exception = 0;
-    m_element->parentNode()->insertBefore(fragment, m_element, exception);
+    parent->insertBefore(fragment, m_element, exception);
 }
 
 /*!
@@ -1160,19 +1161,20 @@ void QWebElement::appendOutside(const QString &markup)
     if (!m_element)
         return;
 
-    if (!m_element->parentNode())
+    Node* parent = m_element->parentNode();
+    if (!parent)
         return;
 
-    if (!m_element->isHTMLElement())
+    if (!parent->isHTMLElement())
         return;
 
-    RefPtr<DocumentFragment> fragment =  Range::createDocumentFragmentForElement(markup, toHTMLElement(m_element));
+    RefPtr<DocumentFragment> fragment = Range::createDocumentFragmentForElement(markup, toHTMLElement(parent));
 
     ExceptionCode exception = 0;
     if (!m_element->nextSibling())
-        m_element->parentNode()->appendChild(fragment, exception);
+        parent->appendChild(fragment, exception);
     else
-        m_element->parentNode()->insertBefore(fragment, m_element->nextSibling(), exception);
+        parent->insertBefore(fragment, m_element->nextSibling(), exception);
 }
 
 /*!
@@ -1380,13 +1382,14 @@ void QWebElement::encloseWith(const QString &markup)
     if (!m_element)
         return;
 
-    if (!m_element->parentNode())
+    Node* parent = m_element->parentNode();
+    if (!parent)
         return;
 
-    if (!m_element->isHTMLElement())
+    if (!parent->isHTMLElement())
         return;
 
-    RefPtr<DocumentFragment> fragment =  Range::createDocumentFragmentForElement(markup, toHTMLElement(m_element));
+    RefPtr<DocumentFragment> fragment = Range::createDocumentFragmentForElement(markup, toHTMLElement(parent));
 
     if (!fragment || !fragment->firstChild())
         return;
@@ -1396,11 +1399,10 @@ void QWebElement::encloseWith(const QString &markup)
     if (!insertionPoint)
         return;
 
-    // Keep reference to these two nodes before pulling out this element and
+    // Keep reference to parent & siblingNode before pulling out this element and
     // wrapping it in the fragment. The reason for doing it in this order is
     // that once the fragment has been added to the document it is empty, so
     // we no longer have access to the nodes it contained.
-    Node* parent = m_element->parentNode();
     Node* siblingNode = m_element->nextSibling();
 
     ExceptionCode exception = 0;

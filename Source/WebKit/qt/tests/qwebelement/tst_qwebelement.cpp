@@ -646,6 +646,26 @@ void tst_QWebElement::appendAndPrepend()
     body.findFirst("div").prependInside("<code>yepp</code>");
     QCOMPARE(body.findAll("p div code").count(), 1);
     QCOMPARE(body.findFirst("p div code").toPlainText(), QString("yepp"));
+
+    // Inserting HTML into an img tag is not allowed, but appending/prepending outside is.
+    body.findFirst("div").appendInside("<img src=\"test.png\">");
+    QCOMPARE(body.findAll("p div img").count(), 1);
+
+    QWebElement img = body.findFirst("img");
+    QVERIFY(!img.isNull());
+    img.appendInside("<p id=\"fail1\"></p>");
+    QCOMPARE(body.findAll("p#fail1").count(), 0);
+
+    img.appendOutside("<p id=\"success1\"></p>");
+    QCOMPARE(body.findAll("p#success1").count(), 1);
+
+    img.prependInside("<p id=\"fail2\"></p>");
+    QCOMPARE(body.findAll("p#fail2").count(), 0);
+
+    img.prependOutside("<p id=\"success2\"></p>");
+    QCOMPARE(body.findAll("p#success2").count(), 1);
+
+
 }
 
 void tst_QWebElement::insertBeforeAndAfter()
@@ -881,6 +901,19 @@ void tst_QWebElement::encloseWith()
 
     body.findFirst("em").encloseWith(snippet);
     QCOMPARE(body.findFirst("table tbody tr td em").toPlainText(), QString("hey"));
+
+    // Enclosing the contents of an img tag is not allowed, but enclosing the img tag itself is.
+    body.findFirst("td").appendInside("<img src=\"test.png\">");
+    QCOMPARE(body.findAll("img").count(), 1);
+
+    QWebElement img = body.findFirst("img");
+    QVERIFY(!img.isNull());
+    img.encloseWith("<p id=\"success\"></p>");
+    QCOMPARE(body.findAll("p#success").count(), 1);
+
+    img.encloseContentsWith("<p id=\"fail\"></p>");
+    QCOMPARE(body.findAll("p#fail").count(), 0);
+
 }
 
 void tst_QWebElement::nullSelect()
