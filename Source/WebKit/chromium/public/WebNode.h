@@ -96,6 +96,7 @@ public:
     WEBKIT_EXPORT bool hasChildNodes() const;
     WEBKIT_EXPORT WebNodeList childNodes();
     WEBKIT_EXPORT WebString createMarkup() const;
+    WEBKIT_EXPORT bool isLink() const;
     WEBKIT_EXPORT bool isTextNode() const;
     WEBKIT_EXPORT bool isFocusable() const;
     WEBKIT_EXPORT bool isContentEditable() const;

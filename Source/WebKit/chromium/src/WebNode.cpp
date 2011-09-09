@@ -140,6 +140,11 @@ WebString WebNode::createMarkup() const
     return WebCore::createMarkup(m_private.get());
 }
 
+bool WebNode::isLink() const
+{
+    return m_private->isLink();
+}
+
 bool WebNode::isTextNode() const
 {
     return m_private->isTextNode();
