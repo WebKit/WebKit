@@ -235,6 +235,7 @@ WONTFIX SKIP CPU CPU-CG : animations/3d = PASS TIMEOUT FAIL
 // We don't ship compositing on Leopard.
 WONTFIX SKIP GPU GPU-CG LEOPARD : compositing = PASS TIMEOUT FAIL
 WONTFIX SKIP GPU GPU-CG LEOPARD : platform/chromium/compositing = PASS TIMEOUT FAIL
+WONTFIX SKIP GPU GPU-CG LEOPARD : platform/chromium/compositing/zoom-animator-scale-test.html = MISSING
 WONTFIX SKIP GPU GPU-CG LEOPARD : animations/3d = PASS TIMEOUT FAIL
 
 WONTFIX MAC WIN : platform/chromium-linux = FAIL
