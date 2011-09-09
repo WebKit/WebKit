@@ -1,3 +1,13 @@
+2011-09-08  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Test how HTMLAnchorElement.getParameter reacts to too few arguments
+        https://bugs.webkit.org/show_bug.cgi?id=66522
+
+        Reviewed by Adam Barth.
+
+        * LayoutTests/fast/dom/HTMLAnchorElement/get-parameter-expected.txt: Added.
+        * LayoutTests/fast/dom/HTMLAnchorElement/get-parameter.html: Added.
+
 2011-09-08  Varun Jain  <varunjain@google.com>
 
         Implement double tap detection in GestureRecognizerChromium
