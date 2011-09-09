@@ -1520,6 +1520,7 @@ void Element::removeAttribute(const String& name, ExceptionCode& ec)
     String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
 
     if (m_attributeMap) {
+        ec = 0;
         m_attributeMap->removeNamedItem(localName, ec);
         if (ec == NOT_FOUND_ERR)
             ec = 0;

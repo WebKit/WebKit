@@ -1,3 +1,18 @@
+2011-09-09  Adam Klein  <adamk@chromium.org>
+
+        Initialize ExceptionCode in Element::removeAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=67820
+
+        Reviewed by Darin Adler.
+
+        Silences valgrind warning reported in http://crbug.com/76490.
+
+        No new tests since this would only very occasionally be flaky,
+        and in the codepath in the valgrind report, the ec is ignored anyway.
+
+        * dom/Element.cpp:
+        (WebCore::Element::removeAttribute): Initialize ec to 0.
+
 2011-09-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         [Qt] Remove common.pri
