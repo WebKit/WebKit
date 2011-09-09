@@ -1,3 +1,39 @@
+2011-09-08  Daniel Bates  <dbates@webkit.org>
+
+        XSS filter bypass via non-standard URL encoding
+        https://bugs.webkit.org/show_bug.cgi?id=66588
+
+        Reviewed by Adam Barth.
+
+        Add tests for decoding non-standard 16-bit Unicode escape sequences.
+
+        Also add a test to ensure that we don't cause an assertion failure when
+        calling window.open("").
+
+        * http/tests/security/xssAuditor/resources/echo-intertag-decode-16bit-unicode.pl: Added.
+        (isUTF16Surrogate):
+        (decodeRunOf16BitUnicodeEscapeSequences):
+        (decode16BitUnicodeEscapeSequences):
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode-surrogate-pair-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode-surrogate-pair.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode2-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode2.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode3-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode3.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode4-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode4.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode5-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-16bit-unicode5.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-fancy-unicode-expected.txt: Updated expected
+        result since we now pass this test. We should rename this file to something more descriptive,
+        see <https://bugs.webkit.org/show_bug.cgi?id=67818>.
+        * http/tests/security/xssAuditor/script-tag-with-three-times-url-encoded-16bit-unicode-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-three-times-url-encoded-16bit-unicode.html: Added.
+        * http/tests/security/xssAuditor/window-open-without-url-should-not-assert-expected.txt: Added.
+        * http/tests/security/xssAuditor/window-open-without-url-should-not-assert.html: Added.
+
 2011-09-08  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed. Chromium rebaseline of css3/bdi-element.html

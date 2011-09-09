@@ -31549,6 +31549,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\DecodeEscapeSequences.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\Hyphenation.h"
 					>
 				</File>

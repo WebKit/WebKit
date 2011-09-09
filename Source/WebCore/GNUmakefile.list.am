@@ -2821,6 +2821,7 @@ webcore_sources += \
 	Source/WebCore/platform/text/BidiContext.h \
 	Source/WebCore/platform/text/BidiResolver.h \
 	Source/WebCore/platform/text/BidiRunList.h \
+	Source/WebCore/platform/text/DecodeEscapeSequences.h \
 	Source/WebCore/platform/text/Hyphenation.cpp \
 	Source/WebCore/platform/text/Hyphenation.h \
 	Source/WebCore/platform/text/LineBreakIteratorPoolICU.h \

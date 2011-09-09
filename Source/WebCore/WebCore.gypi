@@ -846,6 +846,7 @@
             'platform/text/BidiRunList.h',
             'platform/text/BidiContext.h',
             'platform/text/BidiResolver.h',
+            'platform/text/DecodeEscapeSequences.h',
             'platform/text/LineBreakIteratorPoolICU.h',
             'platform/text/LineEnding.h',
             'platform/text/PlatformString.h',

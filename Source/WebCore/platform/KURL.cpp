@@ -26,6 +26,7 @@
 #include "config.h"
 #include "KURL.h"
 
+#include "DecodeEscapeSequences.h"
 #include "TextEncoding.h"
 #include <stdio.h>
 #include <wtf/HashMap.h>
@@ -249,14 +250,6 @@ static inline bool isSchemeCharacterMatchIgnoringCase(char character, char schem
     ASSERT(schemeCharacter & 0x20);
     ASSERT(isASCIILower(schemeCharacter) || (!isASCIIUpper(schemeCharacter) && isSchemeChar(schemeCharacter)));
     return (character | 0x20) == schemeCharacter;
-}
-
-static inline int hexDigitValue(UChar c)
-{
-    ASSERT(isASCIIHexDigit(c));
-    if (c < 'A')
-        return c - '0';
-    return (c - 'A' + 10) & 0xF; // handle both upper and lower case without a branch
 }
 
 // Copies the source to the destination, assuming all the source characters are
@@ -933,59 +926,14 @@ String KURL::deprecatedString() const
     return result.toString();
 }
 
-String decodeURLEscapeSequences(const String& str)
+String decodeURLEscapeSequences(const String& string)
 {
-    return decodeURLEscapeSequences(str, UTF8Encoding());
+    return decodeEscapeSequences<URLEscapeSequence>(string, UTF8Encoding());
 }
 
-String decodeURLEscapeSequences(const String& str, const TextEncoding& encoding)
+String decodeURLEscapeSequences(const String& string, const TextEncoding& encoding)
 {
-    StringBuilder result;
-
-    CharBuffer buffer;
-
-    unsigned length = str.length();
-    unsigned decodedPosition = 0;
-    unsigned searchPosition = 0;
-    size_t encodedRunPosition;
-    while ((encodedRunPosition = str.find('%', searchPosition)) != notFound) {
-        // Find the sequence of %-escape codes.
-        unsigned encodedRunEnd = encodedRunPosition;
-        while (length - encodedRunEnd >= 3
-                && str[encodedRunEnd] == '%'
-                && isASCIIHexDigit(str[encodedRunEnd + 1])
-                && isASCIIHexDigit(str[encodedRunEnd + 2]))
-            encodedRunEnd += 3;
-        searchPosition = encodedRunEnd;
-        if (encodedRunEnd == encodedRunPosition) {
-            ++searchPosition;
-            continue;
-        }
-
-        // Decode the %-escapes into bytes.
-        unsigned runLength = (encodedRunEnd - encodedRunPosition) / 3;
-        buffer.resize(runLength);
-        char* p = buffer.data();
-        const UChar* q = str.characters() + encodedRunPosition;
-        for (unsigned i = 0; i < runLength; ++i) {
-            *p++ = (hexDigitValue(q[1]) << 4) | hexDigitValue(q[2]);
-            q += 3;
-        }
-
-        // Decode the bytes into Unicode characters.
-        String decoded = (encoding.isValid() ? encoding : UTF8Encoding()).decode(buffer.data(), p - buffer.data());
-        if (decoded.isEmpty())
-            continue;
-
-        // Build up the string with what we just skipped and what we just decoded.
-        result.append(str.characters() + decodedPosition, encodedRunPosition - decodedPosition);
-        result.append(decoded);
-        decodedPosition = encodedRunEnd;
-    }
-
-    result.append(str.characters() + decodedPosition, length - decodedPosition);
-
-    return result.toString();
+    return decodeEscapeSequences<URLEscapeSequence>(string, encoding);
 }
 
 // Caution: This function does not bounds check.

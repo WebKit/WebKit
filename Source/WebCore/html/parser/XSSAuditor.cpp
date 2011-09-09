@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Adam Barth. All Rights Reserved.
+ * Copyright (C) 2011 Daniel Bates (dbates@intudata.com).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +29,7 @@
 
 #include "Console.h"
 #include "DOMWindow.h"
+#include "DecodeEscapeSequences.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -115,20 +117,29 @@ static bool containsJavaScriptURL(const Vector<UChar, 32>& value)
     return equalIgnoringCase(value.data() + i, javaScriptScheme, lengthOfJavaScriptScheme);
 }
 
+static inline String decode16BitUnicodeEscapeSequences(const String& string)
+{
+    // Note, the encoding is ignored since each %u-escape sequence represents a UTF-16 code unit.
+    return decodeEscapeSequences<Unicode16BitEscapeSequence>(string, UTF8Encoding());
+}
+
+static inline String decodeStandardURLEscapeSequences(const String& string, const TextEncoding& encoding)
+{
+    // We use decodeEscapeSequences() instead of decodeURLEscapeSequences() (declared in KURL.h) to
+    // avoid platform-specific URL decoding differences (e.g. KURLGoogle).
+    return decodeEscapeSequences<URLEscapeSequence>(string, encoding);
+}
+
 static String fullyDecodeString(const String& string, const TextResourceDecoder* decoder)
 {
+    const TextEncoding& encoding = decoder ? decoder->encoding() : UTF8Encoding();
     size_t oldWorkingStringLength;
     String workingString = string;
     do {
         oldWorkingStringLength = workingString.length();
-        workingString = decodeURLEscapeSequences(workingString);
+        workingString = decode16BitUnicodeEscapeSequences(decodeStandardURLEscapeSequences(workingString, encoding));
     } while (workingString.length() < oldWorkingStringLength);
-    if (decoder) {
-        CString workingStringUTF8 = workingString.utf8();
-        String decodedString = decoder->encoding().decode(workingStringUTF8.data(), workingStringUTF8.length());
-        if (!decodedString.isEmpty())
-            workingString = decodedString;
-    }
+    ASSERT(!workingString.isEmpty());
     workingString.replace('+', ' ');
     workingString = canonicalize(workingString);
     return workingString;
@@ -168,6 +179,12 @@ void XSSAuditor::init()
     }
 
     const KURL& url = m_parser->document()->url();
+
+    if (url.isEmpty()) {
+        // The URL can be empty when opening a new browser window or calling window.open("").
+        m_isEnabled = false;
+        return;
+    }
 
     if (url.protocolIsData()) {
         m_isEnabled = false;

@@ -1,3 +1,48 @@
+2011-09-08  Daniel Bates  <dbates@webkit.org>
+
+        XSS filter bypass via non-standard URL encoding
+        https://bugs.webkit.org/show_bug.cgi?id=66588
+
+        Reviewed by Adam Barth.
+
+        Tests: http/tests/security/xssAuditor/script-tag-with-16bit-unicode-surrogate-pair.html
+               http/tests/security/xssAuditor/script-tag-with-16bit-unicode.html
+               http/tests/security/xssAuditor/script-tag-with-16bit-unicode2.html
+               http/tests/security/xssAuditor/script-tag-with-16bit-unicode3.html
+               http/tests/security/xssAuditor/script-tag-with-16bit-unicode4.html
+               http/tests/security/xssAuditor/script-tag-with-16bit-unicode5.html
+               http/tests/security/xssAuditor/script-tag-with-three-times-url-encoded-16bit-unicode.html
+               http/tests/security/xssAuditor/window-open-without-url-should-not-assert.html
+
+        Implement support for decoding non-standard 16-bit Unicode escape sequences of
+        the form %u26C4 as described in <http://www.w3.org/International/iri-edit/draft-duerst-iri.html#anchor29>.
+
+        See also <http://en.wikipedia.org/wiki/Percent-encoding#Non-standard_implementations>.
+
+        * GNUmakefile.list.am: Added DecodeEscapeSequences.h.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::decode16BitUnicodeEscapeSequences): Added.
+        (WebCore::decodeStandardURLEscapeSequences): Added.
+        (WebCore::fullyDecodeString): Modified to call decode16BitUnicodeEscapeSequences().
+        (WebCore::XSSAuditor::init): Modified to return early when the URL of the document
+        is the empty string. This can happen when opening a new browser window or calling
+        window.open("").
+        * platform/KURL.cpp:
+        (WebCore::decodeURLEscapeSequences): Abstracted code into template-function decodeEscapeSequences().
+        This function just calls decodeEscapeSequences<URLEscapeSequence>().
+        * platform/text/DecodeEscapeSequences.h: Added.
+        (WebCore::Unicode16BitEscapeSequence::findInString):
+        (WebCore::Unicode16BitEscapeSequence::matchStringPrefix):
+        (WebCore::Unicode16BitEscapeSequence::decodeRun):
+        (WebCore::URLEscapeSequence::findInString):
+        (WebCore::URLEscapeSequence::matchStringPrefix):
+        (WebCore::URLEscapeSequence::decodeRun):
+        (WebCore::decodeEscapeSequences):
+
 2011-09-08  Adam Barth  <abarth@webkit.org>
 
         DocumentWriter::deprecatedFrameEncoding doesn't need to refert to Settings
