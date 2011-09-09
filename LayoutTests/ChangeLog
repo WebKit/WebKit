@@ -1,3 +1,19 @@
+2011-09-09  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. Chromium, GTK, Qt rebaselines for r94857.
+
+        * platform/chromium-linux/fast/lists/list-marker-before-content-table-expected.png: Added.
+        * platform/chromium-linux/fast/runin/runin-generated-before-content-expected.png: Added.
+        * platform/chromium-win-xp/fast/lists: Removed.
+        * platform/chromium-win/fast/lists/list-marker-before-content-table-expected.png: Added.
+        * platform/chromium-win/fast/runin/runin-generated-before-content-expected.png: Added.
+        * platform/gtk/fast/lists/list-marker-before-content-table-expected.txt: Added.
+        * platform/gtk/fast/runin/runin-generated-before-content-expected.txt: Added.
+        * platform/mac/fast/lists/list-marker-before-content-table-expected.txt: Added.
+        * platform/mac/fast/runin/runin-generated-before-content-expected.txt: Added.
+        * platform/qt/fast/lists/list-marker-before-content-table-expected.txt: Added.
+        * platform/qt/fast/runin/runin-generated-before-content-expected.txt: Added.
+
 2011-09-09  Dominic Mazzoni  <dmazzoni@google.com>
 
         Add a test to catch a case where adjacent continuations were
