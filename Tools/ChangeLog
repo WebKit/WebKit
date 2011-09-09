@@ -1,3 +1,9 @@
+2011-09-09  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Add Source/JavaScriptCore/dfg directory to the build.
+
+        * waf/build/settings.py:
+
 2011-09-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94851.
