@@ -1,3 +1,36 @@
+2011-09-08  Kentaro Hara  <haraken@google.com>
+
+        Implement a WebKitAnimationEvent constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=67825
+
+        Reviewed by Sam Weinig.
+
+        There is no spec for the WebKitAnimationEvent constructor
+        since it is WebKit-specific. However, based on the current
+        IDL of initWebKitAnimationEvent(), the constructor IDL
+        should be as follows.
+
+        [Constructor(DOMString type, optional WebKitAnimationEventInit eventInitDict)]
+        interface WebKitAnimationEvent : Event {
+            ...;
+        }
+
+        dictionary WebKitAnimationEventInit : EventInit {
+            DOMString animationName;
+            double elapsedTime;
+        }
+
+        Test: fast/events/constructors/webkit-animation-event-constructor.html
+
+        * bindings/generic/EventConstructors.h: Added a definition for the WebKitAnimationEvent constructor.
+        * bindings/js/JSEventConstructors.cpp: Added #includes for WebKitAnimationEvent.
+        * dom/WebKitAnimationEvent.cpp:
+        (WebCore::WebKitAnimationEventInit::WebKitAnimationEventInit):
+        (WebCore::WebKitAnimationEvent::WebKitAnimationEvent):
+        * dom/WebKitAnimationEvent.h: Added a definition for WebKitAnimationEventInit.
+        (WebCore::WebKitAnimationEvent::create):
+        * dom/WebKitAnimationEvent.idl: Makes WebKitAnimationEvent constructible.
+
 2011-09-08  Abhishek Arya  <inferno@chromium.org>
 
         :before content rendering issues with list markers and run-ins.

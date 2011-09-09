@@ -32,7 +32,9 @@
 #include "JSDictionary.h"
 #include "JSEvent.h"
 #include "JSProgressEvent.h"
+#include "JSWebKitAnimationEvent.h"
 #include "ProgressEvent.h"
+#include "WebKitAnimationEvent.h"
 #include <runtime/Error.h>
 
 using namespace JSC;

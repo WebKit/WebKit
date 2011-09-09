@@ -1,3 +1,17 @@
+2011-09-08  Kentaro Hara  <haraken@google.com>
+
+        Implement a WebKitAnimationEvent constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=67825
+
+        Checks the behavior of the WebKitAnimationEvent constructor.
+
+        Reviewed by Sam Weinig.
+
+        * fast/dom/constructed-objects-prototypes-expected.txt:
+        * fast/events/constructors/webkit-animation-event-constructor-expected.txt: Added.
+        * fast/events/constructors/webkit-animation-event-constructor.html: Added.
+        * platform/chromium/test_expectations.txt: Skipped webkit-animation-event-constructor.html, since V8 does not yet have the WebKitAnimationEvent constructor.
+
 2011-09-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening after r94857. Add platform specific expected files.

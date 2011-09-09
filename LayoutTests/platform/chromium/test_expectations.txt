@@ -63,6 +63,9 @@ BUGPKASTING SKIP : animations/animation-api-1.html = TEXT
 BUGWK60877 SKIP : loader/navigation-while-deferring-loads.html = FAIL
 BUGWK60877 SKIP : loader/load-defer-resume-crash.html = FAIL
 
+// This will soon be fixed after implementing a WebKitAnimationEvent constructor for V8.
+BUGWK67825 : fast/events/constructors/webkit-animation-event-constructor.html = FAIL
+
 // CSS3 Selectors3 test suite
 BUGCR89468 : css3/selectors3 = PASS FAIL
 

@@ -25,7 +25,10 @@
 
 module events {
 
-    interface WebKitAnimationEvent : Event {
+    interface [
+        CanBeConstructed,
+        CustomConstructFunction
+    ] WebKitAnimationEvent : Event {
      readonly attribute DOMString          animationName;
      readonly attribute double             elapsedTime;
      void               initWebKitAnimationEvent(in [Optional=CallWithDefaultValue] DOMString typeArg,
