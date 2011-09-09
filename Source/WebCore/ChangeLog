@@ -1,3 +1,25 @@
+2011-09-08  Abhishek Arya  <inferno@chromium.org>
+
+        :before content rendering issues with list markers and run-ins.
+        https://bugs.webkit.org/show_bug.cgi?id=67735
+
+        1) Remove the isAnonymous checks for run-in detection since the
+        run-in can belong to a node.
+        2) When the parent has block children, then the list marker will
+        be enclosed in an anonymous block. In that case, for going to the
+        next list marker, we need to traverse one level up. We don't need
+        this check when searching for generated run-in (loop 2), since we
+        know parent will have inline children, so the list marker wont be
+        enclosed in an anonymous block.
+
+        Reviewed by Dave Hyatt.
+
+        Tests: fast/lists/list-marker-before-content-table.html
+               fast/runin/runin-generated-before-content.html
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::beforePseudoElementRenderer):
+
 2011-09-09  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: introduce JavaScriptSourceFrame class.

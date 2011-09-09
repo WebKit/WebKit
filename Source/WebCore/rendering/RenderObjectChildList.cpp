@@ -299,7 +299,12 @@ RenderObject* RenderObjectChildList::beforePseudoElementRenderer(const RenderObj
     do {
         // Skip list markers and generated run-ins
         first = first->firstChild();
-        while (first && (first->isListMarker() || (first->isRenderInline() && first->isRunIn() && first->isAnonymous())))
+        while (first && first->isListMarker()) {
+            if (first->parent() != owner && first->parent()->isAnonymousBlock())
+                first = first->parent();
+            first = first->nextSibling();
+        }
+        while (first && first->isRenderInline() && first->isRunIn())
             first = first->nextSibling();
     } while (first && first->isAnonymous() && first->style()->styleType() == NOPSEUDO);
 
@@ -321,7 +326,7 @@ RenderObject* RenderObjectChildList::beforePseudoElementRenderer(const RenderObj
         // We still need to skip any list markers that could exist before the run-in.
         while (first && first->isListMarker())
             first = first->nextSibling();
-        if (first && first->style()->styleType() == BEFORE && first->isRenderInline() && first->isRunIn() && first->isAnonymous())
+        if (first && first->style()->styleType() == BEFORE && first->isRenderInline() && first->isRunIn())
             return first;
     }
     return 0;

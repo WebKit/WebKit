@@ -1,3 +1,17 @@
+2011-09-08  Abhishek Arya  <inferno@chromium.org>
+
+        :before content rendering issues with list markers and run-ins.
+        https://bugs.webkit.org/show_bug.cgi?id=67735
+
+        Reviewed by Dave Hyatt.
+
+        * fast/lists/list-marker-before-content-table-expected.png: Added.
+        * fast/lists/list-marker-before-content-table-expected.txt: Added.
+        * fast/lists/list-marker-before-content-table.html: Added.
+        * fast/runin/runin-generated-before-content-expected.png: Added.
+        * fast/runin/runin-generated-before-content-expected.txt: Added.
+        * fast/runin/runin-generated-before-content.html: Added.
+
 2011-09-09  Nate Chapin  <japhet@chromium.org>
 
         Chromium leopard css3 baselines, and new mac gpu baselines.
