@@ -67,7 +67,7 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubb
         if (FrameView* frameView = frame->view()) {
             scrollPosition = frameView->scrollPosition();
             adjustedPageLocation = frameView->windowToContents(windowLocation);
-            float pageZoom = frame->pageZoomFactor() * frame->pageScaleFactor();
+            float pageZoom = frame->pageZoomFactor();
             if (pageZoom != 1.0f) {
                 // Adjust our pageX and pageY to account for the page zoom.
                 adjustedPageLocation.scale(1 / pageZoom, 1 / pageZoom);
