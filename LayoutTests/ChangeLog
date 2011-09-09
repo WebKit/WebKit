@@ -1,3 +1,12 @@
+2011-09-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening after r94857. Add platform specific expected files.
+
+        * platform/qt/fast/lists/list-marker-before-content-table-expected.png: Added.
+        * platform/qt/fast/lists/list-marker-before-content-table-expected.txt: Added.
+        * platform/qt/fast/runin/runin-generated-before-content-expected.png: Added.
+        * platform/qt/fast/runin/runin-generated-before-content-expected.txt: Added.
+
 2011-09-08  Abhishek Arya  <inferno@chromium.org>
 
         :before content rendering issues with list markers and run-ins.
