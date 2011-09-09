@@ -615,4 +615,3 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 @end
 
 #endif /* ENABLE(VIDEO) */
-

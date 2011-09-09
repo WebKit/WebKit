@@ -677,4 +677,3 @@ static NSString *timeToString(double time)
 @end
 
 #endif
-
