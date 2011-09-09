@@ -414,13 +414,17 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
     else if (parent && (firstChild = parent->firstChild()) && firstChild->node()) {
         // Get the node's renderer and follow that continuation chain until the first child is found
         RenderObject* nodeRenderFirstChild = firstChild->node()->renderer();
-        if (nodeRenderFirstChild != firstChild) {
+        while (nodeRenderFirstChild != firstChild) {
             for (RenderObject* contsTest = nodeRenderFirstChild; contsTest; contsTest = nextContinuation(contsTest)) {
                 if (contsTest == firstChild) {
                     parent = nodeRenderFirstChild->parent();
                     break;
                 }
             }
+            if (firstChild == parent->firstChild())
+                break;
+            firstChild = parent->firstChild();
+            nodeRenderFirstChild = firstChild->node()->renderer();
         }
     }
         

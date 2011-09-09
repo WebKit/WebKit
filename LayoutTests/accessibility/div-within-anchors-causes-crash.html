@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"> 
+<html> 
+<head> 
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css"> 
+<script> 
+    var successfullyParsed = false;
+
+    function buildAccessibilityTree(accessibilityObject, indent) {
+        var str = "";
+        for (var i = 0; i < indent; i++)
+            str += "    ";
+        str += accessibilityObject.role;
+        str += " " + accessibilityObject.stringValue;
+        str += "\n";
+        document.getElementById("tree").innerText += str;
+
+        if (accessibilityObject.stringValue.indexOf('End of test') >= 0)
+            return false;
+
+        var count = accessibilityObject.childrenCount;
+        for (var i = 0; i < count; ++i) {
+            if (!buildAccessibilityTree(accessibilityObject.childAtIndex(i), indent + 1))
+                return false;
+        }
+
+        return true;
+    }
+</script> 
+<script src="../fast/js/resources/js-test-pre.js"></script> 
+</head> 
+<body> 
+ 
+<a><div></div></a>
+
+<a><div></div></a>
+
+<a href="about:blank"><div></div></a> 
+
+<div>End of test</div>
+
+<pre id="tree"></pre>
+ 
+<p id="description"></p> 
+<div id="console"></div> 
+ 
+<script> 
+    description("This can cause a crash.");
+ 
+    if (window.accessibilityController) {
+        // First build up full accessibility tree.
+        document.getElementById("tree").innerText += "Before:\n";
+        document.body.focus();
+        buildAccessibilityTree(accessibilityController.focusedElement, 0);
+        
+        // Remove anchor that causes debug assert in AccessibilityRenderObject::addChildren
+        document.body.removeChild(document.body.children[2])
+        
+        // Build up full accessibility tree again.
+        document.getElementById("tree").innerText += "After:\n";
+        document.body.focus();
+        buildAccessibilityTree(accessibilityController.focusedElement, 0);
+    }
+ 
+    successfullyParsed = true;
+</script> 
+ 
+<script src="../fast/js/resources/js-test-post.js"></script> 
+</body> 
+</html> 

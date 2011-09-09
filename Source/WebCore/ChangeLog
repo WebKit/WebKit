@@ -1,3 +1,18 @@
+2011-09-09  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Images within anchors causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=44149
+
+        Reviewed by Chris Fleizach.
+
+        Fixes the way parent RenderObject of an AccessibilityRenderObject
+        is computed in the presence of adjacent continuations.
+
+        Test: accessibility/div-within-anchors-causes-crash.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::renderParentObject):
+
 2011-09-09  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
 
         CSS rules not being applied when a hidden field is inserted between an input[type=checkbox] and a label
