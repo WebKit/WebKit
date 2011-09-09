@@ -1,3 +1,17 @@
+2011-09-09  Nate Chapin  <japhet@chromium.org>
+
+        Chromium leopard css3 baselines, and new mac gpu baselines.
+
+        * platform/chromium-cg-mac-leopard/css3: Added.
+        * platform/chromium-cg-mac-leopard/css3/bdi-element-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css3/bdi-element-expected.txt: Added.
+        * platform/chromium-cg-mac-leopard/css3/unicode-bidi-isolate-aharon-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/css3/unicode-bidi-isolate-basic-expected.png: Added.
+        * platform/chromium-gpu-cg-mac/platform/chromium/compositing/zoom-animator-scale-test-expected.png: Added.
+        * platform/chromium-gpu-win/platform/chromium/compositing/zoom-animator-scale-test-expected.txt: Removed.
+        * platform/chromium-gpu/platform/chromium/compositing/zoom-animator-scale-test-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-09-09  Cary Clark  <caryclark@google.com>
 
         Unreviewed; new baselines (Skia on Mac, GPU edition)
