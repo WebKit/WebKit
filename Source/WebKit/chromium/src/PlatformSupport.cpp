@@ -73,10 +73,12 @@
 
 #if OS(DARWIN)
 #include "mac/WebThemeEngine.h"
-#elif OS(UNIX)
+#elif OS(UNIX) && !OS(ANDROID)
 #include "linux/WebThemeEngine.h"
 #include "WebFontInfo.h"
 #include "WebFontRenderStyle.h"
+#elif OS(ANDROID)
+#include "android/WebThemeEngine.h"
 #endif
 
 #if WEBKIT_USING_SKIA
@@ -461,6 +463,11 @@ bool PlatformSupport::loadFont(NSFont* srcFont, ATSFontContainerRef* container, 
 #elif OS(UNIX)
 String PlatformSupport::getFontFamilyForCharacters(const UChar* characters, size_t numCharacters, const char* preferredLocale)
 {
+#if OS(ANDROID)
+    // FIXME: We do not use fontconfig on Android, so use simple logic for now.
+    // https://bugs.webkit.org/show_bug.cgi?id=67587
+    return WebString("Arial");
+#else
     if (webKitPlatformSupport()->sandboxSupport())
         return webKitPlatformSupport()->sandboxSupport()->getFontFamilyForCharacters(characters, numCharacters, preferredLocale);
 
@@ -469,10 +476,12 @@ String PlatformSupport::getFontFamilyForCharacters(const UChar* characters, size
         return WebString::fromUTF8(family.data());
 
     return WebString();
+#endif
 }
 
 void PlatformSupport::getRenderStyleForStrike(const char* font, int sizeAndStyle, FontRenderStyle* result)
 {
+#if !OS(ANDROID)
     WebFontRenderStyle style;
 
     if (webKitPlatformSupport()->sandboxSupport())
@@ -481,6 +490,7 @@ void PlatformSupport::getRenderStyleForStrike(const char* font, int sizeAndStyle
         WebFontInfo::renderStyleForStrike(font, sizeAndStyle, &style);
 
     style.toFontRenderStyle(result);
+#endif
 }
 #endif
 

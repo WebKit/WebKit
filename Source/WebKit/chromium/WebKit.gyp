@@ -89,6 +89,8 @@
                 'WEBKIT_IMPLEMENTATION=1',
             ],
             'sources': [
+                'public/android/WebSandboxSupport.h',
+                'public/android/WebThemeEngine.h',
                 'public/gtk/WebInputEventFactory.h',
                 'public/linux/WebFontRendering.h',
                 'public/linux/WebFontRenderStyle.h',
@@ -702,6 +704,11 @@
                         ['exclude', '/gtk/'],
                         ['exclude', '/x11/'],
                         ['exclude', '/linux/'],
+                    ],
+                }],
+                ['OS=="android"', {
+                    'include_dirs': [
+                        'public/android',
                     ],
                 }],
                 ['OS=="mac"', {

@@ -1,3 +1,24 @@
+2011-09-09  Hao Zheng  <zhenghao@chromium.org>
+
+        [Chromium] Add WebSandboxSupport and WebThemeEngine for Android.
+        https://bugs.webkit.org/show_bug.cgi?id=67584
+
+        Reviewed by Steve Block.
+
+        Make src/PlatformSupport.cpp and src/WebFrameImpl.cpp compile on
+        Chromium port for Android.
+
+        * WebKit.gyp:
+        * public/android: Added.
+        * public/android/WebSandboxSupport.h: Added.
+        * public/android/WebThemeEngine.h: Added.
+        (WebKit::WebThemeEngine::getSize):
+        (WebKit::WebThemeEngine::paint):
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::getFontFamilyForCharacters):
+        (WebCore::PlatformSupport::getRenderStyleForStrike):
+        * src/WebFrameImpl.cpp:
+
 2011-09-09  Martin Kosiba  <mkosiba@chromium.org>
 
         Exposing the isLink method on WebNode for the Chromium port on Android.
