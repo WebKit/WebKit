@@ -11,6 +11,7 @@ function test()
         var model = new WebInspector.Object();
         model.breakpointsForUISourceCode = function() { return []; };
         model.messagesForUISourceCode = function() { return []; };
+        model.canEditScriptSource = function() { return true; };
         return model;
     }
     function addUISouceCode(model, url)

@@ -151,6 +151,9 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._toggleFormatSourceButton.toggled = false;
     this._toggleFormatSourceButton.addEventListener("click", this._toggleFormatSource.bind(this), false);
 
+    this._scriptViewStatusBarItemsContainer = document.createElement("div");
+    this._scriptViewStatusBarItemsContainer.style.display = "inline-block";
+
     this._debuggerEnabled = Preferences.debuggerAlwaysEnabled;
 
     this.reset();
@@ -196,7 +199,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.enableToggleButton.element, this._pauseOnExceptionButton.element, this._toggleFormatSourceButton.element];
+        return [this.enableToggleButton.element, this._pauseOnExceptionButton.element, this._toggleFormatSourceButton.element, this._scriptViewStatusBarItemsContainer];
     },
 
     get defaultFocusedElement()
@@ -590,8 +593,13 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._visibleView = x;
 
-        if (x)
+        if (x) {
             x.show(this.viewsContainerElement);
+            this._scriptViewStatusBarItemsContainer.removeChildren();
+            var statusBarItems = x.statusBarItems || [];
+            for (var i = 0; i < statusBarItems.length; ++i)
+                this._scriptViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
+        }
     },
 
     canShowAnchorLocation: function(anchor)

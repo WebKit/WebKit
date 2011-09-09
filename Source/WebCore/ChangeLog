@@ -1,3 +1,36 @@
+2011-09-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: live edit both for JS and CSS is not discoverable.
+        https://bugs.webkit.org/show_bug.cgi?id=65962
+
+        Add the "Edit" button to SourceFrame, so that resources/scripts can be edited both in the
+        Resources and the Scripts panels. The button is grayed out if the resource/script is not editable.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/Images/statusbarButtonGlyphs.png:
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.EditableResourceSourceFrame.prototype.canEditSource):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.get statusBarItems):
+        (WebInspector.ScriptsPanel.prototype.set visibleView):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.get statusBarItems):
+        (WebInspector.SourceFrame.prototype._initializeTextViewer):
+        (WebInspector.SourceFrame.prototype._editButtonClicked):
+        (WebInspector.SourceFrame.prototype.canEditSource):
+        (WebInspector.SourceFrame.prototype.startEditing):
+        (WebInspector.SourceFrame.prototype.commitEditing):
+        (WebInspector.SourceFrame.prototype._setReadOnly):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.doubleClick):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorMainPanel.prototype.set readOnly):
+        (WebInspector.TextEditorMainPanel.prototype._updateSelectionOnStartEditing):
+        * inspector/front-end/inspector.css:
+        (button.edit-source-status-bar-item .glyph):
+        (button.edit-source-status-bar-item.toggled-on .glyph):
+
 2011-09-09  Shinya Kawanaka  <shinyak@google.com>
 
         Crashes in WebCore::AppendNodeCommand::create().

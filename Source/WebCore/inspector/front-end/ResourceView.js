@@ -119,16 +119,9 @@ WebInspector.EditableResourceSourceFrame = function(resource)
 }
 
 WebInspector.EditableResourceSourceFrame.prototype = {
-    doubleClick: function(lineNumber)
+    canEditSource: function()
     {
-        if (!this.resource.isEditable())
-            return;
-
-        if (this._commitEditingInProgress)
-            return;
-
-        this._textViewer.readOnly = false;
-        WebInspector.markBeingEdited(this._textViewer.element, true);
+        return this.resource.isEditable() && !this._commitEditingInProgress;
     },
 
     editContent: function(newText, callback)

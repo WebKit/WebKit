@@ -43,6 +43,9 @@ WebInspector.SourceFrame = function(delegate, url)
     this.addChildView(this._textViewer);
     this.element.appendChild(this._textViewer.element);
 
+    this._editButton = new WebInspector.StatusBarButton(WebInspector.UIString("Edit"), "edit-source-status-bar-item");
+    this._editButton.addEventListener("click", this._editButtonClicked.bind(this), this);
+
     this._currentSearchResultIndex = -1;
     this._searchResults = [];
 
@@ -94,6 +97,11 @@ WebInspector.SourceFrame.prototype = {
         if (this._popoverHelper)
             this._popoverHelper.hidePopover();
         this._clearLineHighlight();
+    },
+
+    get statusBarItems()
+    {
+        return [this._editButton.element];
     },
 
     get loaded()
@@ -307,6 +315,9 @@ WebInspector.SourceFrame.prototype = {
         this.dispatchEventToListeners(WebInspector.SourceFrame.Events.Loaded);
 
         this._textViewer.endUpdates();
+
+        if (!this.canEditSource())
+            this._editButton.disabled = true;
     },
 
     _setTextViewerDecorations: function()
@@ -816,15 +827,33 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.inheritScrollPositions(sourceFrame._textViewer);
     },
 
-    doubleClick: function(lineNumber)
+    _editButtonClicked: function()
     {
-        if (!this._delegate.canEditScriptSource())
+        if (!this.canEditSource())
             return;
+
+        const shouldStartEditing = !this._editButton.toggled;
+        if (shouldStartEditing)
+            this.startEditing();
+        else
+            this.commitEditing();
+    },
+
+    canEditSource: function()
+    {
+        return this._delegate.canEditScriptSource();
+    },
+
+    startEditing: function(lineNumber)
+    {
+        if (!this.canEditSource())
+            return false;
 
         if (this._commitEditingInProgress)
-            return;
+            return false;
 
         this._setReadOnly(false);
+        return true;
     },
 
     commitEditing: function()
@@ -867,6 +896,7 @@ WebInspector.SourceFrame.prototype = {
         }
         this._commitEditingInProgress = true;
         this._textViewer.readOnly = true;
+        this._editButton.toggled = false;
         this.editContent(this._textModel.text, didEditContent.bind(this));
     },
 
@@ -887,6 +917,7 @@ WebInspector.SourceFrame.prototype = {
             this._popoverHelper.hidePopover();
 
         this._textViewer.readOnly = readOnly;
+        this._editButton.toggled = !readOnly;
         WebInspector.markBeingEdited(this._textViewer.element, !readOnly);
         if (readOnly)
             this._delegate.setScriptSourceIsBeingEdited(false);
@@ -904,7 +935,7 @@ WebInspector.TextViewerDelegateForSourceFrame = function(sourceFrame)
 WebInspector.TextViewerDelegateForSourceFrame.prototype = {
     doubleClick: function(lineNumber)
     {
-        this._sourceFrame.doubleClick(lineNumber);
+        this._sourceFrame.startEditing(lineNumber);
     },
 
     beforeTextChanged: function()
