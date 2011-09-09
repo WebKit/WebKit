@@ -1,3 +1,12 @@
+2011-09-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        [Qt] Remove common.pri
+        https://bugs.webkit.org/show_bug.cgi?id=67814
+
+        Reviewed by Andreas Kling.
+
+        * JavaScriptCore.pri:
+
 2011-09-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         REGRESSION(r94811): Assertion failure in 2 worker tests

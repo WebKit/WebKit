@@ -1,7 +1,5 @@
 # JavaScriptCore - Qt4 build info
 
-include(../common.pri)
-
 VPATH += $$PWD
 
 # Use a config-specific target to prevent parallel builds file clashes on Mac

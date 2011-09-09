@@ -1,6 +1,5 @@
 # Include file for WebCore
 
-include(../common.pri)
 include(features.pri)
 
 # We enable TextureMapper by default; remove this line to enable GraphicsLayerQt.

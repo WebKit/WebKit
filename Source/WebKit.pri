@@ -136,6 +136,17 @@ valgrind {
     JAVASCRIPTCORE_JIT = no
 }
 
+contains(JAVASCRIPTCORE_JIT,yes): DEFINES+=ENABLE_JIT=1
+contains(JAVASCRIPTCORE_JIT,no): DEFINES+=ENABLE_JIT=0
+
+linux-g++ {
+isEmpty($$(SBOX_DPKG_INST_ARCH)):exists(/usr/bin/ld.gold) {
+    message(Using gold linker)
+    QMAKE_LFLAGS+=-fuse-ld=gold
+}
+}
+
+
 # Disable dependency to a specific version of a Qt package for non-production builds
 symbian:!CONFIG(production):default_deployment.pkg_prerules -= pkg_depends_qt
 

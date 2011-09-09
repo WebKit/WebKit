@@ -2,7 +2,6 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-include($$PWD/../Source/common.pri)
 include($$PWD/../Source/WebCore/features.pri)
 
 exists($$PWD/QtTestBrowser/QtTestBrowser.pro): SUBDIRS += QtTestBrowser/QtTestBrowser.pro

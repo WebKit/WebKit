@@ -1,3 +1,13 @@
+2011-09-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        [Qt] Remove common.pri
+        https://bugs.webkit.org/show_bug.cgi?id=67814
+
+        Reviewed by Andreas Kling.
+
+        * Source/WebKit.pri: Move rules from common.pri to WebKit.pri.
+        * Source/common.pri: Removed.
+
 2011-09-08  Mark Pilgrim  <pilgrim@chromium.org>
 
         Test how HTMLAnchorElement.getParameter reacts to too few arguments
