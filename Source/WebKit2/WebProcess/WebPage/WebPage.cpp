@@ -777,20 +777,14 @@ void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFa
 
 void WebPage::scalePage(double scale, const IntPoint& origin)
 {
-    Frame* frame = m_mainFrame->coreFrame();
-    if (!frame)
-        return;
-    frame->scalePage(scale, origin);
+    m_page->setPageScaleFactor(scale, origin);
 
     send(Messages::WebPageProxy::PageScaleFactorDidChange(scale));
 }
 
 double WebPage::pageScaleFactor() const
 {
-    Frame* frame = m_mainFrame->coreFrame();
-    if (!frame)
-        return 1;
-    return frame->pageScaleFactor();
+    return m_page->pageScaleFactor();
 }
 
 void WebPage::setDeviceScaleFactor(float scaleFactor)

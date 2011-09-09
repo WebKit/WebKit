@@ -514,10 +514,8 @@ PassRefPtr<ClientRectList> Element::getClientRects()
     renderBoxModelObject->absoluteQuads(quads);
 
     float pageScale = 1;
-    if (Page* page = document()->page()) {
-        if (Frame* frame = page->mainFrame())
-            pageScale = frame->pageScaleFactor();
-    }
+    if (Page* page = document()->page()) 
+        pageScale = page->pageScaleFactor();
 
     if (FrameView* view = document()->view()) {
         LayoutRect visibleContentRect = view->visibleContentRect();
@@ -565,10 +563,8 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect()
     }
 
     adjustFloatRectForAbsoluteZoom(result, renderer());
-    if (Page* page = document()->page()) {
-        if (Frame* frame = page->mainFrame())
-            adjustFloatRectForPageScale(result, frame->pageScaleFactor());
-    }
+    if (Page* page = document()->page())
+        adjustFloatRectForPageScale(result, page->pageScaleFactor());
 
     return ClientRect::create(result);
 }

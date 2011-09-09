@@ -160,7 +160,6 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     , m_animationController(this)
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
-    , m_pageScaleFactor(1)
 #if ENABLE(ORIENTATION_EVENTS)
     , m_orientation(0)
 #endif
@@ -1026,6 +1025,14 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
         page->backForward()->markPagesForFullStyleRecalc();
 }
 
+float Frame::pageScaleFactor() const
+{
+    Page* page = this->page();
+    if (!page)
+        return 1;
+    return page->pageScaleFactor();
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 void Frame::deviceOrPageScaleFactorChanged()
 {
@@ -1037,33 +1044,6 @@ void Frame::deviceOrPageScaleFactorChanged()
         root->compositor()->deviceOrPageScaleFactorChanged();
 }
 #endif
-
-void Frame::scalePage(float scale, const LayoutPoint& origin)
-{
-    Document* document = this->document();
-    if (!document)
-        return;
-
-    if (scale != m_pageScaleFactor) {
-        m_pageScaleFactor = scale;
-
-        if (document->renderer())
-            document->renderer()->setNeedsLayout(true);
-
-        document->recalcStyle(Node::Force);
-
-#if USE(ACCELERATED_COMPOSITING)
-        deviceOrPageScaleFactorChanged();
-#endif
-    }
-
-    if (FrameView* view = this->view()) {
-        if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
-            view->layout();
-        view->setScrollPosition(origin);
-    }
-}
-
 void Frame::notifyChromeClientWheelEventHandlerCountChanged() const
 {
     // Ensure that this method is being called on the main frame of the page.

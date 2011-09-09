@@ -29,6 +29,7 @@
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
+#include "Page.h"
 #include "RenderFlowThread.h"
 #include "RenderLayer.h"
 #include "RenderSelectionInfo.h"
@@ -226,10 +227,9 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         RenderBox* rootBox = rootRenderer->isBox() ? toRenderBox(rootRenderer) : 0;
         rootFillsViewport = rootBox && !rootBox->x() && !rootBox->y() && rootBox->width() >= width() && rootBox->height() >= height();
     }
-
-    float pageScaleFactor = 1;
-    if (Frame* frame = m_frameView->frame())
-        pageScaleFactor = frame->pageScaleFactor();
+    
+    Page* page = document()->page();
+    float pageScaleFactor = page ? page->pageScaleFactor() : 1;
 
     // If painting will entirely fill the view, no need to fill the background.
     if (rootFillsViewport && rendererObscuresBackground(firstChild()) && pageScaleFactor >= 1)

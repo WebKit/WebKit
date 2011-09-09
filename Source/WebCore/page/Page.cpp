@@ -147,6 +147,7 @@ Page::Page(PageClients& pageClients)
     , m_cookieEnabled(true)
     , m_areMemoryCacheClientCallsEnabled(true)
     , m_mediaVolume(1)
+    , m_pageScaleFactor(1)
     , m_deviceScaleFactor(1)
     , m_javaScriptURLsAreAllowed(true)
     , m_didLoadUserStyleSheet(false)
@@ -607,6 +608,34 @@ void Page::setMediaVolume(float volume)
         frame->document()->mediaVolumeDidChange();
     }
 }
+
+void Page::setPageScaleFactor(float scale, const LayoutPoint& origin)
+{
+    if (scale == m_pageScaleFactor)
+        return;
+
+    Document* document = mainFrame()->document();
+
+    m_pageScaleFactor = scale;
+
+    if (document->renderer())
+        document->renderer()->setNeedsLayout(true);
+
+    document->recalcStyle(Node::Force);
+
+#if USE(ACCELERATED_COMPOSITING)
+    mainFrame()->deviceOrPageScaleFactorChanged();
+#endif
+
+    if (FrameView* view = document->view()) {
+        if (view->scrollPosition() != origin) {
+          if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
+              view->layout();
+          view->setScrollPosition(origin);
+        }
+    }
+}
+
 
 void Page::setDeviceScaleFactor(float scaleFactor)
 {

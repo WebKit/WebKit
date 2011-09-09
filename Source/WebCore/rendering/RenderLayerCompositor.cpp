@@ -1251,7 +1251,7 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame() const
     // document, or the parent is already compositing, or the main frame is scaled.
     Frame* frame = m_renderView->frameView()->frame();
     Page* page = frame ? frame->page() : 0;
-    if (page->mainFrame()->pageScaleFactor() != 1)
+    if (page && page->pageScaleFactor() != 1)
         return true;
     
     RenderPart* frameRenderer = toRenderPart(renderer);
@@ -1566,7 +1566,7 @@ float RenderLayerCompositor::pageScaleFactor() const
     Page* page = frame->page();
     if (!page)
         return 1;
-    return page->mainFrame()->pageScaleFactor();
+    return page->pageScaleFactor();
 }
 
 void RenderLayerCompositor::didCommitChangesForLayer(const GraphicsLayer*) const

@@ -2732,20 +2732,12 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
 
 - (void)_scaleWebView:(float)scale atOrigin:(NSPoint)origin
 {
-    Frame* coreFrame = [self _mainCoreFrame];
-    if (!coreFrame)
-        return;
-
-    coreFrame->scalePage(scale, IntPoint(origin));
+    _private->page->setPageScaleFactor(scale, IntPoint(origin));
 }
 
 - (float)_viewScaleFactor
 {
-    Frame* coreFrame = [self _mainCoreFrame];
-    if (!coreFrame)
-        return 1;
-
-    return coreFrame->pageScaleFactor();
+    return _private->page->pageScaleFactor();
 }
 
 - (void)_setUseFixedLayout:(BOOL)fixed

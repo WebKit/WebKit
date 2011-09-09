@@ -2028,10 +2028,8 @@ static void adjustFloatQuadsForScrollAndAbsoluteZoomAndPageScale(Vector<FloatQua
         return;
 
     float pageScale = 1;
-    if (Page* page = document->page()) {
-        if (Frame* frame = page->mainFrame())
-            pageScale = frame->pageScaleFactor();
-    }
+    if (Page* page = document->page())
+        pageScale = page->pageScaleFactor();
 
     LayoutRect visibleContentRect = view->visibleContentRect();
     for (size_t i = 0; i < quads.size(); ++i) {

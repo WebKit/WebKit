@@ -23,6 +23,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "FindOptions.h"
+#include "LayoutTypes.h"
 #include "PageVisibilityState.h"
 #include "PlatformString.h"
 #include "ViewportArguments.h"
@@ -243,6 +244,9 @@ namespace WebCore {
         float mediaVolume() const { return m_mediaVolume; }
         void setMediaVolume(float volume);
 
+        void setPageScaleFactor(float scale, const LayoutPoint& origin);
+        float pageScaleFactor() const { return m_pageScaleFactor; }
+
         float deviceScaleFactor() const { return m_deviceScaleFactor; }
         void setDeviceScaleFactor(float);
 
@@ -369,6 +373,7 @@ namespace WebCore {
         bool m_areMemoryCacheClientCallsEnabled;
         float m_mediaVolume;
 
+        float m_pageScaleFactor;
         float m_deviceScaleFactor;
 
         bool m_javaScriptURLsAreAllowed;

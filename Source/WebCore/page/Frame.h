@@ -161,9 +161,9 @@ namespace WebCore {
         float textZoomFactor() const { return m_textZoomFactor; }
         void setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor);
 
-        // FIXME: These functions should move to Page.
-        void scalePage(float scale, const LayoutPoint& origin);
-        float pageScaleFactor() const { return m_pageScaleFactor; }
+        // Convenience helper method that grabs the pageScaleFactor from Page.
+        float pageScaleFactor() const;
+
 #if USE(ACCELERATED_COMPOSITING)
         void deviceOrPageScaleFactorChanged();
 #endif
@@ -240,8 +240,6 @@ namespace WebCore {
 
         float m_pageZoomFactor;
         float m_textZoomFactor;
-
-        float m_pageScaleFactor;
 
 #if ENABLE(ORIENTATION_EVENTS)
         int m_orientation;

@@ -803,9 +803,5 @@ bool DumpRenderTreeSupportGtk::shouldClose(WebKitWebFrame* frame)
 
 void DumpRenderTreeSupportGtk::scalePageBy(WebKitWebView* webView, float scaleFactor, float x, float y)
 {
-    Frame* coreFrame = core(webView)->mainFrame();
-    if (!coreFrame)
-        return;
-
-    coreFrame->scalePage(scaleFactor, IntPoint(x, y));
+    core(webView)->setPageScaleFactor(scaleFactor, IntPoint(x, y));
 }

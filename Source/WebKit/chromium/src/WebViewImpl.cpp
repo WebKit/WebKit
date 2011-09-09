@@ -1881,11 +1881,7 @@ float WebViewImpl::pageScaleFactor() const
     if (!page())
         return 1.0;
 
-    Frame* frame = page()->mainFrame();
-    if (!frame)
-        return 1.0;
-
-    return frame->pageScaleFactor();
+    return page()->pageScaleFactor();
 }
 
 void WebViewImpl::scalePage(float scaleFactor, WebPoint origin)
@@ -1893,11 +1889,7 @@ void WebViewImpl::scalePage(float scaleFactor, WebPoint origin)
     if (!page())
         return;
 
-    Frame* frame = page()->mainFrame();
-    if (!frame)
-        return;
-
-    frame->scalePage(scaleFactor, origin);
+    page()->setPageScaleFactor(scaleFactor, origin);
 }
 
 bool WebViewImpl::isFixedLayoutModeEnabled() const
