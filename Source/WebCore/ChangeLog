@@ -1,3 +1,19 @@
+2011-09-09  Dan Bernstein  <mitz@apple.com>
+
+        RenderBlock::addOverhangingFloats() takes superfluous parameters
+        https://bugs.webkit.org/show_bug.cgi?id=67863
+
+        Reviewed by Dave Hyatt.
+
+        No new tests, because behavior is unchanged.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::addOverhangingFloats): Removed the logical{Left, Top}Offset parameters,
+        since they were always the inverse of the logical{Left, Top}() of the child parameter.
+        * rendering/RenderBlock.h:
+
 2011-09-09  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Add replacement functions for gdk ones.

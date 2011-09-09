@@ -1295,7 +1295,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
                 if (child->isBlockFlow() && !child->isFloatingOrPositioned()) {
                     RenderBlock* block = toRenderBlock(child);
                     if (block->lowestFloatLogicalBottomIncludingPositionedFloats() + block->logicalTop() > newHeight)
-                        addOverhangingFloats(block, -block->logicalLeft(), -block->logicalTop(), false);
+                        addOverhangingFloats(block, false);
                 }
             }
         }
@@ -2105,7 +2105,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
     // If the child has overhanging floats that intrude into following siblings (or possibly out
     // of this block), then the parent gets notified of the floats now.
     if (childRenderBlock && childRenderBlock->containsFloats())
-        maxFloatLogicalBottom = max(maxFloatLogicalBottom, addOverhangingFloats(toRenderBlock(child), -child->logicalLeft(), -child->logicalTop(), !childNeededLayout));
+        maxFloatLogicalBottom = max(maxFloatLogicalBottom, addOverhangingFloats(toRenderBlock(child), !childNeededLayout));
 
     LayoutSize childOffset(child->x() - oldRect.x(), child->y() - oldRect.y());
     if (childOffset.width() || childOffset.height()) {
@@ -3809,13 +3809,14 @@ void RenderBlock::clearFloats(BlockLayoutPass layoutPass)
     }
 }
 
-LayoutUnit RenderBlock::addOverhangingFloats(RenderBlock* child, LayoutUnit logicalLeftOffset, LayoutUnit logicalTopOffset, bool makeChildPaintOtherFloats)
+LayoutUnit RenderBlock::addOverhangingFloats(RenderBlock* child, bool makeChildPaintOtherFloats)
 {
     // Prevent floats from being added to the canvas by the root element, e.g., <html>.
     if (child->hasOverflowClip() || !child->containsFloats() || child->isRoot() || child->hasColumns() || child->isWritingModeRoot())
         return 0;
 
     LayoutUnit childLogicalTop = child->logicalTop();
+    LayoutUnit childLogicalLeft = child->logicalLeft();
     LayoutUnit lowestFloatLogicalBottom = 0;
 
     // Floats that will remain the child's responsibility to paint should factor into its
@@ -3830,8 +3831,8 @@ LayoutUnit RenderBlock::addOverhangingFloats(RenderBlock* child, LayoutUnit logi
         if (logicalBottom > logicalHeight()) {
             // If the object is not in the list, we add it now.
             if (!containsFloat(r->m_renderer)) {
-                LayoutUnit leftOffset = isHorizontalWritingMode() ? logicalLeftOffset : logicalTopOffset;
-                LayoutUnit topOffset = isHorizontalWritingMode() ? logicalTopOffset : logicalLeftOffset;
+                LayoutUnit leftOffset = isHorizontalWritingMode() ? -childLogicalLeft : -childLogicalTop;
+                LayoutUnit topOffset = isHorizontalWritingMode() ? -childLogicalTop : -childLogicalLeft;
                 FloatingObject* floatingObj = new FloatingObject(r->type(), LayoutRect(r->x() - leftOffset, r->y() - topOffset, r->width(), r->height()));
                 floatingObj->m_renderer = r->m_renderer;
 
