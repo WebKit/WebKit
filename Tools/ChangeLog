@@ -1,3 +1,34 @@
+2011-09-09  Hao Zheng  <zhenghao@chromium.org>
+
+        [chromium] Implement DRT support for Android.
+        https://bugs.webkit.org/show_bug.cgi?id=67590
+
+        Reviewed by Tony Chang.
+
+        Add 2 mechanism to make DRT interaction more robust on Android:
+        - Send 'QUIT' to DRT to make it stop.
+        - Wait until receiving '#READY' from DRT, so that DRT won't miss any
+        input commands before it starts.
+        And LayoutTestController.cpp needs to include <cctype> for 'tolower'
+        and <clocale> for 'LC_ALL' to compile on Android.
+
+        Also change to use sigaction instead of signal for TestShellGtk.cpp,
+        as signal() man page recommends using sigaction().
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        * DumpRenderTree/chromium/TestShellAndroid.cpp: Added.
+        (AlarmHandler):
+        (TestShell::waitTestFinished):
+        (platformInit):
+        (openStartupDialog):
+        (checkLayoutTestSystemDependencies):
+        * DumpRenderTree/chromium/TestShellGtk.cpp:
+        (AlarmHandler):
+        (TestShell::waitTestFinished):
+
 2011-09-09  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Add Source/JavaScriptCore/dfg directory to the build.

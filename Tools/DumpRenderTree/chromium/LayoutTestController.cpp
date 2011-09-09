@@ -59,6 +59,8 @@
 #include "WebViewHost.h"
 #include "webkit/support/webkit_support.h"
 #include <algorithm>
+#include <cctype>
+#include <clocale>
 #include <cstdlib>
 #include <limits>
 #include <wtf/text/WTFString.h>

@@ -36,7 +36,7 @@
 #include <gtk/gtk.h>
 #include <signal.h>
 
-static void AlarmHandler(int signatl)
+static void AlarmHandler(int)
 {
     // If the alarm alarmed, kill the process since we have a really bad hang.
     puts("\n#TEST_TIMED_OUT\n");
@@ -171,11 +171,16 @@ static void setupFontconfig()
 void TestShell::waitTestFinished()
 {
     ASSERT(!m_testIsPending);
-
     m_testIsPending = true;
 
     // Install an alarm signal handler that will kill us if we time out.
-    signal(SIGALRM, AlarmHandler);
+    struct sigaction alarmAction;
+    alarmAction.sa_handler = AlarmHandler;
+    sigemptyset(&alarmAction.sa_mask);
+    alarmAction.sa_flags = 0;
+
+    struct sigaction oldAction;
+    sigaction(SIGALRM, &alarmAction, &oldAction);
     alarm(layoutTestTimeoutForWatchDog() / 1000);
 
     // TestFinished() will post a quit message to break this loop when the page
@@ -185,7 +190,7 @@ void TestShell::waitTestFinished()
 
     // Remove the alarm.
     alarm(0);
-    signal(SIGALRM, SIG_DFL);
+    sigaction(SIGALRM, &oldAction, 0);
 }
 
 void platformInit(int* argc, char*** argv)

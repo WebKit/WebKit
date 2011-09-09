@@ -237,6 +237,11 @@ int main(int argc, char* argv[])
             shell.setLayoutTestTimeout(0x20000000);
         }
         if (serverMode && !tests.size()) {
+#if OS(ANDROID)
+            // Send a signal to host to indicate DRT is ready to process commands.
+            puts("#READY");
+            fflush(stdout);
+#endif
             params.printSeparators = true;
             char testString[2048]; // 2048 is the same as the sizes of other platforms.
             while (fgets(testString, sizeof(testString), stdin)) {
@@ -245,10 +250,13 @@ int main(int argc, char* argv[])
                     *newLinePosition = '\0';
                 if (testString[0] == '\0')
                     continue;
+                // Explicitly quit on platforms where EOF is not reliable.
+                if (!strcmp(testString, "QUIT"))
+                    break;
                 runTest(shell, params, testString, testShellMode);
             }
         } else if (!tests.size())
-            printf("#EOF\n");
+            puts("#EOF");
         else {
             params.printSeparators = tests.size() > 1;
             for (unsigned i = 0; i < tests.size(); i++)

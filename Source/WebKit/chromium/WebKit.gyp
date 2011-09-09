@@ -1134,6 +1134,11 @@
                         ['exclude', '(Gtk|Linux)\\.cpp$']
                     ]
                 }],
+                ['OS!="android"', {
+                    'sources/': [
+                        ['exclude', '(Android)\\.cpp$']
+                    ],
+                }],
                 ['inside_chromium_build==1 and component=="shared_library"', {
                     'sources': [
                         'src/ChromiumCurrentTime.cpp',

@@ -1,5 +1,16 @@
 2011-09-09  Hao Zheng  <zhenghao@chromium.org>
 
+        [chromium] Implement DRT support for Android.
+        https://bugs.webkit.org/show_bug.cgi?id=67590
+
+        Reviewed by Tony Chang.
+
+        Exclude Android specific files of DRT from other platforms.
+
+        * WebKit.gyp:
+
+2011-09-09  Hao Zheng  <zhenghao@chromium.org>
+
         [Chromium] Add WebSandboxSupport and WebThemeEngine for Android.
         https://bugs.webkit.org/show_bug.cgi?id=67584
 
