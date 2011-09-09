@@ -1110,6 +1110,7 @@ InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(const Strin
     : InspectorStyleSheet(id, 0, origin, "")
     , m_element(element)
     , m_ruleSourceData(0)
+    , m_isStyleTextValid(false)
 {
     ASSERT(m_element);
     m_inspectorStyle = InspectorStyle::create(InspectorCSSId(id, 0), inlineStyle(), this);
