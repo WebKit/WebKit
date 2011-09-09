@@ -41,14 +41,14 @@
 
 namespace JSC {
 
-const ClassInfo InterruptedExecutionError::s_info = { "InterruptedExecutionError", 0, 0, 0 };
+const ClassInfo InterruptedExecutionError::s_info = { "InterruptedExecutionError", &Base::s_info, 0, 0 };
 
 UString InterruptedExecutionError::toString(ExecState*) const
 {
     return "JavaScript execution exceeded timeout.";
 }
 
-const ClassInfo TerminatedExecutionError::s_info = { "TerminatedExecutionError", 0, 0, 0 };
+const ClassInfo TerminatedExecutionError::s_info = { "TerminatedExecutionError", &Base::s_info, 0, 0 };
 
 UString TerminatedExecutionError::toString(ExecState*) const
 {

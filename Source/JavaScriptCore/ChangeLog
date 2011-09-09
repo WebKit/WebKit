@@ -1,3 +1,16 @@
+2011-09-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        REGRESSION(r94811): Assertion failure in 2 worker tests
+        https://bugs.webkit.org/show_bug.cgi?id=67829
+
+        Reviewed by Sam Weinig.
+
+        Fixing a couple tests that were broken due to the wrong values being 
+        set in the parent class pointers in the ClassInfo structs for 
+        TerminatedExecutionError and InterruptedExecutionError.
+
+        * runtime/ExceptionHelpers.cpp:
+
 2011-09-08  Oliver Hunt  <oliver@apple.com>
 
         Use bump allocator for initial property storage
