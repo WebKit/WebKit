@@ -1913,7 +1913,7 @@ BUGCR47083 : fast/text/hyphenate-character.html = IMAGE+TEXT
 BUGCR47083 : fast/text/hyphens.html = IMAGE+TEXT
 BUGCR47083 : fast/text/hyphenate-locale.html = IMAGE+TEXT
 BUGCR47083 : fast/text/hyphenate-first-word.html = IMAGE+TEXT
-BUGCR47083 : fast/text/hyphenate-limit-lines.html = IMAGE+TEXT
+BUGCR47083 : fast/text/hyphenate-limit-lines.html = IMAGE IMAGE+TEXT
 // it was CR75019 for unknown reason.
 BUGCR47083 : fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
