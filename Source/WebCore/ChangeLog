@@ -1,3 +1,16 @@
+2011-09-08  James Weatherall  <wez@chromium.org>
+
+        Release the reference to the HTMLPlugInElement's script object, when the element is removed from the document.  This breaks a cyclical reference that would otherwise cause the element to be retained until the document is torn down.
+        https://bugs.webkit.org/show_bug.cgi?id=66181
+
+        Reviewed by Anders Carlsson.
+
+        No new tests - no functional change.
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::removedFromDocument):
+        * html/HTMLPlugInElement.h:
+
 2011-09-08  Daniel Bates  <dbates@webkit.org>
 
         XSS filter bypass via non-standard URL encoding
