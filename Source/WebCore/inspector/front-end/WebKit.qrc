@@ -67,6 +67,7 @@
     <file>InspectorFrontendHostStub.js</file>
     <file>JavaScriptContextManager.js</file>
     <file>JavaScriptFormatter.js</file>
+    <file>JavaScriptSourceFrame.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
     <file>NetworkItemView.js</file>

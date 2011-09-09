@@ -658,8 +658,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _createSourceFrame: function(uiSourceCode)
     {
-        var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this._presentationModel, uiSourceCode);
-        var sourceFrame = new WebInspector.SourceFrame(delegate, uiSourceCode.url);
+        var sourceFrame = new WebInspector.JavaScriptSourceFrame(this._presentationModel, uiSourceCode);
         this.addChildView(sourceFrame);
         sourceFrame._uiSourceCode = uiSourceCode;
         sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
@@ -1172,90 +1171,3 @@ WebInspector.ScriptsPanel.prototype = {
 }
 
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
-
-
-WebInspector.SourceFrameDelegateForScriptsPanel = function(model, uiSourceCode)
-{
-    WebInspector.SourceFrameDelegate.call(this);
-    this._model = model;
-    this._uiSourceCode = uiSourceCode;
-    this._popoverObjectGroup = "popover";
-}
-
-WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
-    requestContent: function(callback)
-    {
-        this._uiSourceCode.requestContent(callback);
-    },
-
-    debuggingSupported: function()
-    {
-        return true;
-    },
-
-    setBreakpoint: function(lineNumber, condition, enabled)
-    {
-        this._model.setBreakpoint(this._uiSourceCode, lineNumber, condition, enabled);
-
-        if (!WebInspector.panels.scripts.breakpointsActivated)
-            WebInspector.panels.scripts.toggleBreakpointsClicked();
-    },
-
-    updateBreakpoint: function(lineNumber, condition, enabled)
-    {
-        this._model.updateBreakpoint(this._uiSourceCode, lineNumber, condition, enabled);
-    },
-
-    removeBreakpoint: function(lineNumber)
-    {
-        this._model.removeBreakpoint(this._uiSourceCode, lineNumber);
-    },
-
-    findBreakpoint: function(lineNumber)
-    {
-        return this._model.findBreakpoint(this._uiSourceCode, lineNumber);
-    },
-
-    continueToLine: function(lineNumber)
-    {
-        this._model.continueToLine(this._uiSourceCode, lineNumber);
-    },
-
-    canEditScriptSource: function()
-    {
-        return this._model.canEditScriptSource(this._uiSourceCode);
-    },
-
-    setScriptSource: function(text, callback)
-    {
-        this._model.setScriptSource(this._uiSourceCode, text, callback);
-    },
-
-    setScriptSourceIsBeingEdited: function(inEditMode)
-    {
-        WebInspector.panels.scripts.setScriptSourceIsBeingEdited(this._uiSourceCode, inEditMode);
-    },
-
-    debuggerPaused: function()
-    {
-        return WebInspector.panels.scripts.paused;
-    },
-
-    evaluateInSelectedCallFrame: function(string, callback)
-    {
-        WebInspector.panels.scripts.evaluateInSelectedCallFrame(string, this._popoverObjectGroup, false, false, callback);
-    },
-
-    releaseEvaluationResult: function()
-    {
-        RuntimeAgent.releaseObjectGroup(this._popoverObjectGroup);
-    },
-
-    suggestedFileName: function()
-    {
-        var names = WebInspector.panels.scripts._folderAndDisplayNameForScriptURL(this._uiSourceCode.url);
-        return names.displayName || "untitled.js";
-    }
-}
-
-WebInspector.SourceFrameDelegateForScriptsPanel.prototype.__proto__ = WebInspector.SourceFrameDelegate.prototype;

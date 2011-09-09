@@ -6368,6 +6368,7 @@
             'inspector/front-end/InjectedFakeWorker.js',
             'inspector/front-end/inspector.js',
             'inspector/front-end/JavaScriptFormatter.js',
+            'inspector/front-end/JavaScriptSourceFrame.js',
             'inspector/front-end/KeyboardShortcut.js',
             'inspector/front-end/MetricsSidebarPane.js',
             'inspector/front-end/NetworkItemView.js',
