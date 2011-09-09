@@ -48,7 +48,9 @@ namespace JSC {
 
         static JSActivation* create(JSGlobalData& globalData, CallFrame* callFrame, FunctionExecutable* funcExec)
         {
-            return new (allocateCell<JSActivation>(globalData.heap)) JSActivation(callFrame, funcExec);
+            JSActivation* activation = new (allocateCell<JSActivation>(globalData.heap)) JSActivation(callFrame, funcExec);
+            activation->finishCreation(callFrame);
+            return activation;
         }
 
         virtual ~JSActivation();

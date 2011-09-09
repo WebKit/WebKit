@@ -56,7 +56,6 @@ namespace JSC {
 JSONObject::JSONObject(JSGlobalObject* globalObject, Structure* structure)
     : JSNonFinalObject(globalObject->globalData(), structure)
 {
-    finishCreation(globalObject);
 }
 
 void JSONObject::finishCreation(JSGlobalObject* globalObject)

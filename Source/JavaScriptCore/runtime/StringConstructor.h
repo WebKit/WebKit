@@ -48,6 +48,7 @@ namespace JSC {
 
     private:
         StringConstructor(ExecState*, JSGlobalObject*, Structure*, StringPrototype*);
+        void finishCreation(ExecState*, StringPrototype*);
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
 

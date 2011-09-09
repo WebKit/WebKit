@@ -34,6 +34,7 @@ namespace JSC {
 class JSCallbackFunction : public InternalFunction {
 protected:
     JSCallbackFunction(ExecState*, JSGlobalObject*, JSObjectCallAsFunctionCallback, const Identifier& name);
+    void finishCreation(JSGlobalData&, const Identifier& name);
 
 public:
     typedef InternalFunction Base;

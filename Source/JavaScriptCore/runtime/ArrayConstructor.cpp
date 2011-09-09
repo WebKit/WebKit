@@ -52,8 +52,14 @@ const ClassInfo ArrayConstructor::s_info = { "Function", &InternalFunction::s_in
 ASSERT_CLASS_FITS_IN_CELL(ArrayConstructor);
 
 ArrayConstructor::ArrayConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ArrayPrototype* arrayPrototype)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, arrayPrototype->classInfo()->className))
+    : InternalFunction(globalObject, structure)
 {
+    finishCreation(exec, arrayPrototype);
+}
+
+void ArrayConstructor::finishCreation(ExecState* exec, ArrayPrototype* arrayPrototype)
+{
+    Base::finishCreation(exec->globalData(), Identifier(exec, arrayPrototype->classInfo()->className));
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }

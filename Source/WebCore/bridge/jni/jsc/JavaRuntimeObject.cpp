@@ -38,6 +38,12 @@ const ClassInfo JavaRuntimeObject::s_info = { "JavaRuntimeObject", &RuntimeObjec
 JavaRuntimeObject::JavaRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<JavaInstance> instance)
     : RuntimeObject(exec, globalObject, structure, instance)
 {
+    finishCreation(globalObject);
+}
+
+void JavaRuntimeObject::finishCreation(JSGlobalObject* globalObject)
+{
+    Base::finishCreation(globalObject);
     ASSERT(inherits(&s_info));
 }
 

@@ -38,8 +38,14 @@ namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(FunctionConstructor);
 
 FunctionConstructor::FunctionConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, FunctionPrototype* functionPrototype)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, functionPrototype->classInfo()->className))
+    : InternalFunction(globalObject, structure)
 {
+    finishCreation(exec, functionPrototype);
+}
+
+void FunctionConstructor::finishCreation(ExecState* exec, FunctionPrototype* functionPrototype)
+{
+    Base::finishCreation(exec->globalData(), Identifier(exec, functionPrototype->classInfo()->className));
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, functionPrototype, DontEnum | DontDelete | ReadOnly);
 
     // Number of arguments for constructor

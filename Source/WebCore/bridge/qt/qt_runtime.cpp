@@ -1006,12 +1006,18 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 
 const ClassInfo QtRuntimeMethod::s_info = { "QtRuntimeMethod", &InternalFunction::s_info, 0, 0 };
 
-QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, Structure* structure, const Identifier& ident, PassRefPtr<QtInstance> inst)
-    : InternalFunction(&exec->globalData(), exec->lexicalGlobalObject(), structure, ident)
+QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, Structure* structure, const Identifier& identifier, PassRefPtr<QtInstance> instance)
+    : InternalFunction(exec->lexicalGlobalObject(), structure)
     , d_ptr(dd)
 {
+    finishCreation(exec, identifier, instance);
+}
+
+void QtRuntimeMethod::finishCreation(ExecState* exec, const Identifier& identifier, PassRefPtr<QtInstance> instance)
+{
+    Base::finishCreation(exec->globalData(), identifier);
     QW_D(QtRuntimeMethod);
-    d->m_instance = inst;
+    d->m_instance = instance;
     d->m_finalizer.set(exec->globalData(), this, d);
 }
 

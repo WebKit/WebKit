@@ -26,14 +26,16 @@ namespace JSC {
 
     class RegExpMatchesArray : public JSArray {
     private:
-        RegExpMatchesArray(ExecState*, RegExpConstructorPrivate*);
+        RegExpMatchesArray(ExecState*);
 
     public:
         typedef JSArray Base;
 
         static RegExpMatchesArray* create(ExecState* exec, RegExpConstructorPrivate* ctorPrivate)
         {
-            return new (allocateCell<RegExpMatchesArray>(*exec->heap())) RegExpMatchesArray(exec, ctorPrivate);
+            RegExpMatchesArray* regExp = new (allocateCell<RegExpMatchesArray>(*exec->heap())) RegExpMatchesArray(exec);
+            regExp->finishCreation(exec->globalData(), ctorPrivate);
+            return regExp;
         }
         virtual ~RegExpMatchesArray();
 

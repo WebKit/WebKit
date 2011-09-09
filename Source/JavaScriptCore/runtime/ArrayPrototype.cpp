@@ -117,7 +117,6 @@ const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, 0, ExecStat
 ArrayPrototype::ArrayPrototype(JSGlobalObject* globalObject, Structure* structure)
     : JSArray(globalObject->globalData(), structure)
 {
-    finishCreation(globalObject);
 }
 
 void ArrayPrototype::finishCreation(JSGlobalObject* globalObject)

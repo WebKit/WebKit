@@ -30,8 +30,14 @@ namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(ErrorConstructor);
 
 ErrorConstructor::ErrorConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ErrorPrototype* errorPrototype)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, errorPrototype->classInfo()->className))
+    : InternalFunction(globalObject, structure)
 {
+    finishCreation(exec, errorPrototype);
+}
+
+void ErrorConstructor::finishCreation(ExecState* exec, ErrorPrototype* errorPrototype)
+{
+    Base::finishCreation(exec->globalData(), Identifier(exec, errorPrototype->classInfo()->className));
     // ECMA 15.11.3.1 Error.prototype
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, errorPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum);

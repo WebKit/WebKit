@@ -45,9 +45,15 @@ const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_
 
 RuntimeMethod::RuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& ident, Bindings::MethodList& m)
     // Callers will need to pass in the right global object corresponding to this native object "m".
-    : InternalFunction(&exec->globalData(), globalObject, structure, ident)
+    : InternalFunction(globalObject, structure)
     , _methodList(adoptPtr(new MethodList(m)))
 {
+    finishCreation(exec->globalData(), ident);
+}
+
+void RuntimeMethod::finishCreation(JSGlobalData& globalData, const Identifier& ident)
+{
+    Base::finishCreation(globalData, ident);
     ASSERT(inherits(&s_info));
 }
 

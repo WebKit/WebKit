@@ -55,8 +55,14 @@ const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_i
 */
 
 NumberConstructor::NumberConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, NumberPrototype* numberPrototype)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, numberPrototype->s_info.className))
+    : InternalFunction(globalObject, structure) 
 {
+    finishCreation(exec, numberPrototype);
+}
+
+void NumberConstructor::finishCreation(ExecState* exec, NumberPrototype* numberPrototype)
+{
+    Base::finishCreation(exec->globalData(), Identifier(exec, numberPrototype->s_info.className));
     ASSERT(inherits(&s_info));
 
     // Number.Prototype

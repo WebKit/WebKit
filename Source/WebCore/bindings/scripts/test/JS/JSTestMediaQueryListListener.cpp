@@ -142,6 +142,7 @@ JSTestMediaQueryListListener::JSTestMediaQueryListListener(Structure* structure,
     : JSDOMWrapper(structure, globalObject)
     , m_impl(impl)
 {
+    finishCreation(globalObject->globalData());
     ASSERT(inherits(&s_info));
 }
 

@@ -37,7 +37,9 @@ public:
 
     static JSCallbackConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, JSObjectCallAsConstructorCallback callback) 
     {
-        return new (allocateCell<JSCallbackConstructor>(*exec->heap())) JSCallbackConstructor(globalObject, structure, classRef, callback);
+        JSCallbackConstructor* constructor = new (allocateCell<JSCallbackConstructor>(*exec->heap())) JSCallbackConstructor(globalObject, structure, classRef, callback);
+        constructor->finishCreation(globalObject, classRef);
+        return constructor;
     }
     
     virtual ~JSCallbackConstructor();

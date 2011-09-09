@@ -44,6 +44,7 @@ namespace JSC {
         }
 
     protected:
+        void finishCreation(ExecState*, ArrayPrototype*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
     private:

@@ -30,7 +30,6 @@ const ClassInfo BooleanObject::s_info = { "Boolean", &JSWrapperObject::s_info, 0
 BooleanObject::BooleanObject(JSGlobalData& globalData, Structure* structure)
     : JSWrapperObject(globalData, structure)
 {
-    finishCreation(globalData);
 }
 
 void BooleanObject::finishCreation(JSGlobalData& globalData)

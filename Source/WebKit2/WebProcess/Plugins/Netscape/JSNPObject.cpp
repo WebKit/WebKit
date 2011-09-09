@@ -50,13 +50,12 @@ static NPIdentifier npIdentifierFromIdentifier(const Identifier& identifier)
 
 const ClassInfo JSNPObject::s_info = { "NPObject", &JSNonFinalObject::s_info, 0, 0 };
 
-JSNPObject::JSNPObject(JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject, Structure* structure)
+JSNPObject::JSNPObject(JSGlobalObject* globalObject, Structure* structure, NPRuntimeObjectMap* objectMap, NPObject* npObject)
     : JSNonFinalObject(globalObject->globalData(), structure)
     , m_objectMap(objectMap)
     , m_npObject(npObject)
 {
     ASSERT(globalObject == structure->globalObject());
-    finishCreation(globalObject);
 }
 
 void JSNPObject::finishCreation(JSGlobalObject* globalObject)
@@ -68,12 +67,6 @@ void JSNPObject::finishCreation(JSGlobalObject* globalObject)
     ASSERT(!NPJSObject::isNPJSObject(m_npObject));
 
     retainNPObject(m_npObject);
-}
-
-JSNPObject* JSNPObject::create(JSC::JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
-{
-    Structure* structure = createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype());
-    return new (JSC::allocateCell<JSNPObject>(globalObject->globalData().heap)) JSNPObject(globalObject, objectMap, npObject, structure);
 }
 
 JSNPObject::~JSNPObject()

@@ -85,6 +85,7 @@ const ClassInfo QtRuntimeObject::s_info = { "QtRuntimeObject", &RuntimeObject::s
 QtRuntimeObject::QtRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
     : RuntimeObject(exec, globalObject, structure, instance)
 {
+    finishCreation(globalObject);
 }
 
 // QtInstance

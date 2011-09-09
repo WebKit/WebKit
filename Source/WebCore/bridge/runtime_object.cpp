@@ -41,8 +41,6 @@ RuntimeObject::RuntimeObject(ExecState*, JSGlobalObject* globalObject, Structure
     : JSNonFinalObject(globalObject->globalData(), structure)
     , m_instance(instance)
 {
-    ASSERT(structure->globalObject() == globalObject);
-    finishCreation(globalObject);
 }
 
 void RuntimeObject::finishCreation(JSGlobalObject* globalObject)

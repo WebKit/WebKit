@@ -26,7 +26,9 @@
 #ifndef JSNPObject_h
 #define JSNPObject_h
 
+#include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/ObjectPrototype.h>
 
 typedef void* NPIdentifier;
 struct NPObject;
@@ -41,7 +43,14 @@ class JSNPObject : public JSC::JSNonFinalObject {
 public:
     typedef JSC::JSNonFinalObject Base;
 
-    static JSNPObject* create(JSC::JSGlobalObject*, NPRuntimeObjectMap*, NPObject*);
+    static JSNPObject* create(JSC::JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
+    {
+        JSC::Structure* structure = createStructure(globalObject->globalData(), globalObject, globalObject->objectPrototype());
+        JSNPObject* object = new (JSC::allocateCell<JSNPObject>(globalObject->globalData().heap)) JSNPObject(globalObject, structure, objectMap, npObject);
+        object->finishCreation(globalObject);
+        return object;
+    }
+
     ~JSNPObject();
 
     void invalidate();
@@ -61,7 +70,7 @@ protected:
     void finishCreation(JSC::JSGlobalObject*);
 
 private:
-    JSNPObject(JSC::JSGlobalObject*, NPRuntimeObjectMap*, NPObject*, JSC::Structure*);
+    JSNPObject(JSC::JSGlobalObject*, JSC::Structure*, NPRuntimeObjectMap*, NPObject*);
 
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | JSObject::StructureFlags;
     

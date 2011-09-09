@@ -48,8 +48,14 @@ const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_i
 ASSERT_CLASS_FITS_IN_CELL(StringConstructor);
 
 StringConstructor::StringConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, StringPrototype* stringPrototype)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, stringPrototype->classInfo()->className))
+    : InternalFunction(globalObject, structure)
 {
+    finishCreation(exec, stringPrototype);
+}
+
+void StringConstructor::finishCreation(ExecState* exec, StringPrototype* stringPrototype)
+{
+    Base::finishCreation(exec->globalData(), Identifier(exec, stringPrototype->classInfo()->className));
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, stringPrototype, ReadOnly | DontEnum | DontDelete);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }

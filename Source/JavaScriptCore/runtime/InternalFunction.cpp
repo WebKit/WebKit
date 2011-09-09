@@ -41,10 +41,9 @@ InternalFunction::InternalFunction(VPtrStealingHackType)
 {
 }
 
-InternalFunction::InternalFunction(JSGlobalData* globalData, JSGlobalObject*, Structure* structure, const Identifier& name)
-    : JSNonFinalObject(*globalData, structure)
+InternalFunction::InternalFunction(JSGlobalObject* globalObject, Structure* structure)
+    : JSNonFinalObject(globalObject->globalData(), structure)
 {
-    finishCreation(*globalData, name);
 }
 
 void InternalFunction::finishCreation(JSGlobalData& globalData, const Identifier& name)

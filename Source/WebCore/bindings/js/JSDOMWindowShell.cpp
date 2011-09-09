@@ -182,13 +182,6 @@ void* JSDOMWindowShell::operator new(size_t size)
     return heap.allocate(size);
 }
 
-JSDOMWindowShell* JSDOMWindowShell::create(PassRefPtr<DOMWindow> window, JSC::Structure* structure, DOMWrapperWorld* world)
-{
-    JSDOMWindowShell* shell = new JSDOMWindowShell(structure, world);
-    shell->finishCreation(*world->globalData(), window);
-    return shell; 
-}
-
 // ----
 // Conversion methods
 // ----

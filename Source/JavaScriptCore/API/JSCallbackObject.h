@@ -125,7 +125,7 @@ protected:
     void* operator new(size_t, void* ptr) { return ptr; }
 
     void finishCreation(ExecState*);
-    void finishCreation();
+    void finishCreation(JSGlobalData&);
 
 public:
     typedef Parent Base;

@@ -84,10 +84,9 @@ const ClassInfo MathObject::s_info = { "Math", &JSNonFinalObject::s_info, 0, Exe
 @end
 */
 
-MathObject::MathObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+MathObject::MathObject(JSGlobalObject* globalObject, Structure* structure)
     : JSNonFinalObject(globalObject->globalData(), structure)
 {
-    finishCreation(exec, globalObject);
 }
 
 void MathObject::finishCreation(ExecState* exec, JSGlobalObject* globalObject)

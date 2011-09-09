@@ -35,13 +35,6 @@ DebuggerActivation::DebuggerActivation(JSGlobalData& globalData)
 {
 }
 
-DebuggerActivation* DebuggerActivation::create(JSGlobalData& globalData, JSObject* object)
-{
-    DebuggerActivation* activation = new (allocateCell<DebuggerActivation>(globalData.heap)) DebuggerActivation(globalData);
-    activation->finishCreation(globalData, object);
-    return activation;
-}
-
 void DebuggerActivation::finishCreation(JSGlobalData& globalData, JSObject* activation)
 {
     Base::finishCreation(globalData);

@@ -36,6 +36,9 @@ namespace JSC {
             return new (allocateCell<BooleanConstructor>(*exec->heap())) BooleanConstructor(exec, globalObject, structure, boolPrototype);
         }
 
+    protected:
+        void finishCreation(ExecState*, BooleanPrototype*);
+
     private:
         BooleanConstructor(ExecState*, JSGlobalObject*, Structure*, BooleanPrototype*);
         virtual ConstructType getConstructData(ConstructData&);

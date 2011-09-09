@@ -37,10 +37,9 @@ namespace JSC {
 
 const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &JSArray::s_info, 0, 0 };
 
-RuntimeArray::RuntimeArray(ExecState* exec, Structure* structure, Bindings::Array* array)
+RuntimeArray::RuntimeArray(ExecState* exec, Structure* structure)
     : JSArray(exec->globalData(), structure)
 {
-    finishCreation(exec->globalData(), array);
 }
 
 void RuntimeArray::finishCreation(JSGlobalData& globalData, Bindings::Array* array)
