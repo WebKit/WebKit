@@ -190,6 +190,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 #elif OS(UNIX) || PLATFORM(BREWMP)
     RemoteFontStream* stream = new RemoteFontStream(buffer);
     SkTypeface* typeface = SkTypeface::CreateFromStream(stream);
+    stream->unref();
     if (!typeface)
         return 0;
     return new FontCustomPlatformData(typeface);

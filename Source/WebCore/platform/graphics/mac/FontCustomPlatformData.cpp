@@ -163,6 +163,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 #if USE(SKIA_ON_MAC_CHROMIUM)
     RemoteFontStream* stream = new RemoteFontStream(buffer);
     fontCustomPlatformData->m_typeface = SkTypeface::CreateFromStream(stream);
+    stream->unref();
 #endif
     return fontCustomPlatformData;
 }
