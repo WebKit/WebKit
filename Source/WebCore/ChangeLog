@@ -1,3 +1,17 @@
+2011-09-08  Eric Seidel  <eric@webkit.org>
+
+        [BiDi] Add support for the BDI element
+        https://bugs.webkit.org/show_bug.cgi?id=50913
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch is ridiculously trivial now that we have unicode-bidi: isolate support in WebKit.
+
+        Test: css3/bdi-element.html
+
+        * css/html.css:
+        (bdi):
+
 2011-09-08  David Levin  <levin@chromium.org>
 
         [chromium] KURL::copy doesn't produce something usable on another thread.

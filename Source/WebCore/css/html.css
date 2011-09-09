@@ -992,6 +992,10 @@ summary::-webkit-details-marker {
     margin-right: 0.4em;
 }
 
+bdi {
+    unicode-bidi: -webkit-isolate;
+}
+
 /* page */
 
 @page {
