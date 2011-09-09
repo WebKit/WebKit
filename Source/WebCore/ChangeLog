@@ -1,3 +1,26 @@
+2011-09-09  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Add replacement functions for gdk ones.
+        https://bugs.webkit.org/show_bug.cgi?id=66323
+
+        Reviewed by Martin Robinson.
+
+        This will allow the EFL port to don't depend on gdk anymore.
+
+        No new functionality so no new tests.
+
+        * CMakeListsEfl.txt:
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::appendRegionToCairoContext):
+        * platform/graphics/cairo/CairoUtilities.h:
+        * platform/graphics/pango/FontPango.cpp:
+        (WebCore::drawGlyphsShadow):
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/pango/PangoUtilities.cpp: Added.
+        (WebCore::getLineClipRegionFromLayoutIter):
+        (WebCore::getClipRegionFromPangoLayoutLine):
+        * platform/graphics/pango/PangoUtilities.h: Added.
+
 2011-09-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unzip initialization lists and constructors in JSCell hierarchy (5/7)

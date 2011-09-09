@@ -128,9 +128,11 @@ IF (WTF_USE_CAIRO)
       platform/graphics/pango/FontPlatformDataPango.cpp
       platform/graphics/pango/GlyphPageTreeNodePango.cpp
       platform/graphics/pango/SimpleFontDataPango.cpp
+      platform/graphics/pango/PangoUtilities.cpp
     )
     LIST(APPEND WebCore_LIBRARIES
-      ${Pango_LIBRARIES}
+      ${Pango_LIBRARY}
+      ${Pango_Cairo_LIBRARY}
     )
   ENDIF ()
 ENDIF ()

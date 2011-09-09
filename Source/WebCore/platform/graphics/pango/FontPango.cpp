@@ -6,6 +6,7 @@
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Xan Lopez <xan@gnome.org>
  * Copyright (C) 2008 Nuanti Ltd.
+ * Copyright (C) 2011 ProFUSION embedded systems
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,9 +43,14 @@
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include <cairo.h>
-#include <gdk/gdk.h>
 #include <pango/pango.h>
 #include <pango/pangocairo.h>
+
+#if PLATFORM(GTK)
+#include <gdk/gdk.h>
+#else
+#include "PangoUtilities.h"
+#endif
 
 #if USE(FREETYPE)
 #include <pango/pangofc-fontmap.h>
@@ -234,7 +240,11 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
         cairo_translate(context, totalOffset.x(), totalOffset.y());
 
         setSourceRGBAFromColor(context, graphicsContext->state().shadowColor);
+#if PLATFORM(GTK)
         gdk_cairo_region(context, renderRegion);
+#else
+        appendRegionToCairoContext(context, renderRegion);
+#endif
         cairo_clip(context);
         pango_cairo_show_layout_line(context, layoutLine);
 
@@ -256,7 +266,11 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
         cairo_t* context = graphicsContext->platformContext()->cr();
         cairo_save(context);
         cairo_translate(context, totalOffset.x(), totalOffset.y());
+#if PLATFORM(GTK)
         gdk_cairo_region(context, renderRegion);
+#else
+        appendRegionToCairoContext(context, renderRegion);
+#endif
         cairo_clip(context);
         cairo_translate(context, -totalOffset.x(), -totalOffset.y());
 
@@ -291,7 +305,11 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
     char* start = g_utf8_offset_to_pointer(utf8, from);
     char* end = g_utf8_offset_to_pointer(start, to - from);
     int ranges[] = {start - utf8, end - utf8};
+#if PLATFORM(GTK)
     partialRegion = gdk_pango_layout_line_get_clip_region(layoutLine, 0, 0, ranges, 1);
+#else
+    partialRegion = getClipRegionFromPangoLayoutLine(layoutLine, ranges);
+#endif
 
     drawGlyphsShadow(context, point, layoutLine, partialRegion);
 
@@ -301,7 +319,11 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
     float red, green, blue, alpha;
     context->fillColor().getRGBA(red, green, blue, alpha);
     cairo_set_source_rgba(cr, red, green, blue, alpha);
-    gdk_cairo_region(cr, partialRegion);
+#if PLATFORM(GTK)
+        gdk_cairo_region(cr, partialRegion);
+#else
+        appendRegionToCairoContext(cr, partialRegion);
+#endif
     cairo_clip(cr);
 
     pango_cairo_show_layout_line(cr, layoutLine);

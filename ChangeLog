@@ -1,3 +1,12 @@
+2011-09-09  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Add replacement functions for gdk ones.
+        https://bugs.webkit.org/show_bug.cgi?id=66323
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/FindPango.cmake:
+
 2011-09-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         [Qt] Remove common.pri

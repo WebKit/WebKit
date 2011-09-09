@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Igalia S.L.
+ * Copyright (C) 2011 ProFUSION embedded systems
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,6 +79,19 @@ void setPathOnCairoContext(cairo_t* to, cairo_t* from)
 void appendWebCorePathToCairoContext(cairo_t* context, const Path& path)
 {
     appendPathToCairoContext(context, path.platformPath()->context());
+}
+
+void appendRegionToCairoContext(cairo_t* to, const cairo_region_t* region)
+{
+    if (!region)
+        return;
+
+    const int rectCount = cairo_region_num_rectangles(region);
+    for (int i = 0; i < rectCount; ++i) {
+        cairo_rectangle_int_t rect;
+        cairo_region_get_rectangle(region, i, &rect);
+        cairo_rectangle(to, rect.x, rect.y, rect.width, rect.height);
+    }
 }
 
 cairo_operator_t toCairoOperator(CompositeOperator op)
