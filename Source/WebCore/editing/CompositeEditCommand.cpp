@@ -808,7 +808,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
     appendNode(topNode, blockElement);
     RefPtr<Node> lastNode = topNode;
 
-    if (start.deprecatedNode() != outerNode) {
+    if (start.deprecatedNode() != outerNode && lastNode->isElementNode()) {
         Vector<RefPtr<Node> > ancestors;
         
         // Insert each node from innerNode to outerNode (excluded) in a list.
