@@ -94,17 +94,15 @@ WebKitAnimation::FillMode WebKitAnimation::fillMode() const
     switch (m_keyframeAnimation->animation()->fillMode()) {
     case AnimationFillModeNone:
         return FILL_NONE;
-        break;
     case AnimationFillModeForwards:
         return FILL_FORWARDS;
-        break;
     case AnimationFillModeBackwards:
         return FILL_BACKWARDS;
-        break;
-    default:
+    case AnimationFillModeBoth:
         return FILL_BOTH;
-        break;
     }
+    ASSERT_NOT_REACHED();
+    return FILL_BOTH;
 }
 
 void WebKitAnimation::pause()

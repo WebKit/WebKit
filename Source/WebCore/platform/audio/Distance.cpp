@@ -60,17 +60,13 @@ double DistanceEffect::gain(double distance)
     switch (m_model) {
     case ModelLinear:
         return linearGain(distance);
-        break;
     case ModelInverse:
         return inverseGain(distance);
-        break;
     case ModelExponential:
         return exponentialGain(distance);
-        break;
-
-    default:
-        return 0.0;
     }
+    ASSERT_NOT_REACHED();
+    return 0.0;
 }
 
 double DistanceEffect::linearGain(double distance)
