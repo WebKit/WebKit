@@ -121,8 +121,13 @@ void ColorInputType::createShadowSubtree()
     updateColorSwatch();
 }
 
-void ColorInputType::valueChanged()
+void ColorInputType::setValue(const String& value, bool valueChanged, bool sendChangeEvent);
 {
+    InputType::setValue(value, valueChanged, sendChangeEvent);
+
+    if (!valueChanged)
+        return;
+
     updateColorSwatch();
     if (ColorChooser::chooser()->client() == this) {
         if (Chrome* chrome = this->chrome())

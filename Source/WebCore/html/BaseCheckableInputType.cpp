@@ -104,7 +104,7 @@ bool BaseCheckableInputType::storesValueSeparateFromAttribute()
     return false;
 }
 
-void BaseCheckableInputType::setValue(const String& sanitizedValue, bool)
+void BaseCheckableInputType::setValue(const String& sanitizedValue, bool, bool)
 {
     element()->setAttribute(valueAttr, sanitizedValue);
 }

@@ -449,10 +449,6 @@ void InputType::srcAttributeChanged()
 {
 }
 
-void InputType::valueChanged()
-{
-}
-
 void InputType::willMoveToNewOwnerDocument()
 {
 }
@@ -525,10 +521,15 @@ bool InputType::storesValueSeparateFromAttribute()
     return true;
 }
 
-void InputType::setValue(const String& sanitizedValue, bool sendChangeEvent)
+void InputType::setValue(const String& sanitizedValue, bool, bool sendChangeEvent)
 {
     element()->setValueInternal(sanitizedValue, sendChangeEvent);
     element()->setNeedsStyleRecalc();
+}
+
+void InputType::dispatchChangeEventInResponseToSetValue()
+{
+    element()->dispatchFormControlChangeEvent();
 }
 
 bool InputType::canSetValue(const String&)

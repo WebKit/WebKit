@@ -285,8 +285,13 @@ void RangeInputType::minOrMaxAttributeChanged()
     element()->setNeedsStyleRecalc();
 }
 
-void RangeInputType::valueChanged()
+void RangeInputType::setValue(const String& value, bool valueChanged, bool sendChangeEvent)
 {
+    InputType::setValue(value, valueChanged, sendChangeEvent);
+
+    if (!valueChanged)
+        return;
+
     sliderThumbElementOf(element())->setPositionFromValue();
 }
 

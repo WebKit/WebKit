@@ -50,7 +50,7 @@ private:
     virtual void accessKeyAction(bool sendToAnyElement);
     virtual String fallbackValue();
     virtual bool storesValueSeparateFromAttribute();
-    virtual void setValue(const String&, bool);
+    virtual void setValue(const String&, bool, bool);
     virtual bool isCheckable();
 };
 

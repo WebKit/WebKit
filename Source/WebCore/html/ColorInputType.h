@@ -52,7 +52,7 @@ private:
     virtual String sanitizeValue(const String&);
     virtual Color valueAsColor() const;
     virtual void createShadowSubtree();
-    virtual void valueChanged();
+    virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent);
     virtual void handleClickEvent(MouseEvent*);
     virtual void handleDOMActivateEvent(Event*);
     virtual void detach();

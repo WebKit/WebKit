@@ -231,6 +231,8 @@ public:
     bool isConformToInputMask(const String&) const;
 #endif
 
+    void cacheSelectionInResponseToSetValue(int caretOffset) { cacheSelection(caretOffset, caretOffset, SelectionHasNoDirection); }
+
 #if ENABLE(INPUT_COLOR)
     // For test purposes.
     bool connectToColorChooser();

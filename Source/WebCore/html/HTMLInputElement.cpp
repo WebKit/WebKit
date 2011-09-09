@@ -1084,41 +1084,24 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
     if (!m_inputType->canSetValue(value))
         return;
 
+    RefPtr<HTMLInputElement> protector(this);
     String sanitizedValue = sanitizeValue(value);
     bool valueChanged = sanitizedValue != this->value();
 
     setLastChangeWasNotUserEdit();
     setFormControlValueMatchesRenderer(false);
-    m_inputType->setValue(sanitizedValue, sendChangeEvent);
+    m_suggestedValue = String(); // Prevent TextFieldInputType::setValue from using the suggested value.
+    m_inputType->setValue(sanitizedValue, valueChanged, sendChangeEvent);
 
     setNeedsValidityCheck();
 
-    m_suggestedValue = String(); // updateInnerTextValue uses the suggested value.
-    if (valueChanged)
-        updateInnerTextValue();
-
-    if (isTextField()) {
-        unsigned max = visibleValue().length();
-        if (document()->focusedNode() == this)
-            setSelectionRange(max, max);
-        else
-            cacheSelection(max, max, SelectionHasNoDirection);
-    }
-
     if (!valueChanged)
         return;
-    
-    m_inputType->valueChanged();
 
-    if (sendChangeEvent) {
-        // If the user is still editing this field, dispatch an input event rather than a change event.
-        // The change event will be dispatched when editing finishes.
-        if (isTextField() && focused())
-            dispatchFormControlInputEvent();
-        else
-            dispatchFormControlChangeEvent();
-    }
+    if (sendChangeEvent)
+        m_inputType->dispatchChangeEventInResponseToSetValue();
 
+    // FIXME: Why do we do this when !sendChangeEvent?
     if (isTextField() && (!focused() || !sendChangeEvent))
         setTextAsOfLastFormControlChangeEvent(value);
 

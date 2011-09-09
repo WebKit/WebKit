@@ -73,10 +73,30 @@ bool TextFieldInputType::canSetSuggestedValue()
     return true;
 }
 
-void TextFieldInputType::setValue(const String& sanitizedValue, bool sendChangeEvent)
+void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChanged, bool sendChangeEvent)
 {
-    InputType::setValue(sanitizedValue, sendChangeEvent);
+    InputType::setValue(sanitizedValue, valueChanged, sendChangeEvent);
     element()->updatePlaceholderVisibility(false);
+
+    if (valueChanged)
+        element()->updateInnerTextValue();
+
+    unsigned max = visibleValue().length();
+    if (element()->focused())
+        element()->setSelectionRange(max, max);
+    else
+        element()->cacheSelectionInResponseToSetValue(max);
+}
+
+void TextFieldInputType::dispatchChangeEventInResponseToSetValue()
+{
+    // If the user is still editing this field, dispatch an input event rather than a change event.
+    // The change event will be dispatched when editing finishes.
+    if (element()->focused()) {
+        element()->dispatchFormControlInputEvent();
+        return;
+    }
+    InputType::dispatchChangeEventInResponseToSetValue();
 }
 
 void TextFieldInputType::handleKeydownEvent(KeyboardEvent* event)

@@ -74,7 +74,7 @@ bool HiddenInputType::storesValueSeparateFromAttribute()
     return false;
 }
 
-void HiddenInputType::setValue(const String& sanitizedValue, bool)
+void HiddenInputType::setValue(const String& sanitizedValue, bool, bool)
 {
     element()->setAttribute(valueAttr, sanitizedValue);
 }

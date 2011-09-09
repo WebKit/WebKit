@@ -213,7 +213,6 @@ public:
     virtual void stepAttributeChanged();
     virtual void altAttributeChanged();
     virtual void srcAttributeChanged();
-    virtual void valueChanged();
     virtual void willMoveToNewOwnerDocument();
     virtual bool shouldRespectAlignAttribute();
     virtual FileList* files();
@@ -224,7 +223,8 @@ public:
     virtual bool shouldSendChangeEventAfterCheckedChanged();
     virtual bool canSetValue(const String&);
     virtual bool storesValueSeparateFromAttribute();
-    virtual void setValue(const String&, bool sendChangeEvent);
+    virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent);
+    virtual void dispatchChangeEventInResponseToSetValue();
     virtual bool shouldResetOnDocumentActivation();
     virtual bool shouldRespectListAttribute();
     virtual bool shouldRespectSpeechAttribute();
