@@ -1,3 +1,12 @@
+2011-09-08  Daniel Bates  <dbates@webkit.org>
+
+        Fix the GTK build after <http://trac.webkit.org/changeset/94810>
+        (https://bugs.webkit.org/show_bug.cgi?id=67807).
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_encoding): Substitute DocumentWriter::deprecatedFrameEncoding() for
+        DocumentWriter::encoding().
+
 2011-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename confirmCompositionWithoutDisturbingSelection to cancelComposition
