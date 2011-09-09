@@ -1913,6 +1913,9 @@ BUGCR47083 : fast/text/hyphenate-character.html = IMAGE+TEXT
 BUGCR47083 : fast/text/hyphens.html = IMAGE+TEXT
 BUGCR47083 : fast/text/hyphenate-locale.html = IMAGE+TEXT
 BUGCR47083 : fast/text/hyphenate-first-word.html = IMAGE+TEXT
+BUGCR47083 : fast/text/hyphenate-limit-lines.html = IMAGE+TEXT
+// it was CR75019 for unknown reason.
+BUGCR47083 : fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
 // WebKit roll 61547:61629. Still need to investigate.
 BUG_HCLAM : fast/js/script-line-number.html = TEXT
@@ -2765,8 +2768,6 @@ BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEX
 BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = PASS TEXT
 
 BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
-
-BUGCR75019 : fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
 // Chromium GPU draws scrollbars slightly differently in debug vs. release.
 BUGWK58587 LINUX DEBUG GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
