@@ -334,7 +334,7 @@ void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const
 static PangoLayout* getDefaultPangoLayout(const TextRun& run)
 {
     static PangoFontMap* map = pango_cairo_font_map_get_default();
-#if PANGO_VERSION_CHECK(1,21,5)
+#if PANGO_VERSION_CHECK(1, 21, 5)
     static PangoContext* pangoContext = pango_font_map_create_context(map);
 #else
     // Deprecated in Pango 1.21.
@@ -352,7 +352,7 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
         return floatWidthForSimpleText(run, 0, fallbackFonts, overflow);
 #endif
 
-    if (run.length() == 0)
+    if (!run.length())
         return 0.0f;
 
     PangoLayout* layout = getDefaultPangoLayout(run);
@@ -423,17 +423,17 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint
     }
 
     PangoLayoutLine* layoutLine = pango_layout_get_line_readonly(layout, 0);
-    int x_pos;
+    int xPos;
 
-    x_pos = 0;
+    xPos = 0;
     if (from < layoutLine->length)
-        pango_layout_line_index_to_x(layoutLine, from, FALSE, &x_pos);
-    float beforeWidth = PANGO_PIXELS_FLOOR(x_pos);
+        pango_layout_line_index_to_x(layoutLine, from, FALSE, &xPos);
+    float beforeWidth = PANGO_PIXELS_FLOOR(xPos);
 
-    x_pos = 0;
+    xPos = 0;
     if (run.ltr() || to < layoutLine->length)
-        pango_layout_line_index_to_x(layoutLine, to, FALSE, &x_pos);
-    float afterWidth = PANGO_PIXELS(x_pos);
+        pango_layout_line_index_to_x(layoutLine, to, FALSE, &xPos);
+    float afterWidth = PANGO_PIXELS(xPos);
 
     g_free(utf8);
     g_object_unref(layout);

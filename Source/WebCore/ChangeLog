@@ -1,3 +1,18 @@
+2011-09-09  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Rename FontGtk.cpp to FontPango.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=66323
+
+        Reviewed by Martin Robinson.
+
+        This file will be used by the EFL port too, and since it's not GTK
+        specific anymore, rename it to something better.
+
+        No new functionality so no new tests.
+
+        * GNUmakefile.list.am:
+        * platform/graphics/pango/FontPango.cpp: Renamed from Source/WebCore/platform/graphics/gtk/FontGtk.cpp.
+
 2011-09-09  Adam Klein  <adamk@chromium.org>
 
         Initialize ExceptionCode in Element::removeAttribute

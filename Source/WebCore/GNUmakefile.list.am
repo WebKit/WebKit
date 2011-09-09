@@ -3959,7 +3959,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp \
 	Source/WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.h \
 	Source/WebCore/platform/graphics/gtk/ColorGtk.cpp \
-	Source/WebCore/platform/graphics/gtk/FontGtk.cpp \
 	Source/WebCore/platform/graphics/gtk/GdkCairoUtilities.cpp \
 	Source/WebCore/platform/graphics/gtk/GdkCairoUtilities.h \
 	Source/WebCore/platform/graphics/gtk/IconGtk.cpp \
@@ -4085,6 +4084,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp \
 	Source/WebCore/platform/graphics/freetype/SimpleFontDataFreeType.cpp
 webcoregtk_sources += \
+	Source/WebCore/platform/graphics/pango/FontPango.cpp \
 	Source/WebCore/platform/graphics/freetype/FontPlatformDataFreeType.cpp
 endif # END USE_FREETYPE
 
@@ -4099,6 +4099,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/pango/FontPlatformData.h \
 	Source/WebCore/platform/graphics/pango/GlyphPageTreeNodePango.cpp \
 	Source/WebCore/platform/graphics/pango/SimpleFontDataPango.cpp
+webcoregtk_sources += \
+	Source/WebCore/platform/graphics/pango/FontPango.cpp
 endif # END USE_PANGO
 
 # ----
