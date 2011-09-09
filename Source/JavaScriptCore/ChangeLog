@@ -1,3 +1,17 @@
+2011-09-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Never #define ENABLE_SINGLE_THREADED, !ENABLE_JSC_MULTIPLE_THREADS, or
+        !ENABLE_WTF_MULTIPLE_THREADS
+        https://bugs.webkit.org/show_bug.cgi?id=67860
+
+        First step toward making the baseline platform assumption that threads
+        exist: Never #define ENABLE_SINGLE_THREADED, !ENABLE_JSC_MULTIPLE_THREADS,
+        or !ENABLE_WTF_MULTIPLE_THREADS.
+
+        * wtf/Platform.h:
+
 2011-09-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         [Qt] Remove common.pri
