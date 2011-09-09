@@ -1,3 +1,30 @@
+2011-09-09  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
+
+        CSS rules not being applied when a hidden field is inserted between an input[type=checkbox] and a label
+        https://bugs.webkit.org/show_bug.cgi?id=66887
+
+        Reviewed by David Hyatt.
+
+        Test: fast/css/adjacent-sibling-selector.html
+
+        This patch addresses the problem of elements not getting their style recomputed
+        when they are affected by direct adjacent sibling rules and one of their sibling in
+        their corresponding rules is modified dynamically.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::parentStylePreventsSharing):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector):
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+        (WebCore::checkForSiblingStyleChanges):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::affectedByDirectAdjacentRules):
+        (WebCore::InheritedFlags::setAffectedByDirectAdjacentRules):
+
 2011-09-09  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Make the EFL port use the correct rendering file.

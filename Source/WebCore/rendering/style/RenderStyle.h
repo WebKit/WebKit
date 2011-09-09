@@ -132,11 +132,11 @@ protected:
     // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
     bool m_childrenAffectedByFirstChildRules : 1;
     bool m_childrenAffectedByLastChildRules : 1;
-    bool m_childrenAffectedByDirectAdjacentRules : 1;
     bool m_childrenAffectedByForwardPositionalRules : 1;
     bool m_childrenAffectedByBackwardPositionalRules : 1;
     bool m_firstChildState : 1;
     bool m_lastChildState : 1;
+    bool m_affectedByDirectAdjacentRules : 1;
     unsigned m_childIndex : 21; // Plenty of bits to cache an index.
 
     // non-inherited attributes
@@ -1262,6 +1262,9 @@ public:
     bool affectedByAttributeSelectors() const { return m_affectedByAttributeSelectors; }
     void setAffectedByAttributeSelectors() { m_affectedByAttributeSelectors = true; }
 
+    bool affectedByDirectAdjacentRules() const { return m_affectedByDirectAdjacentRules; }
+    void setAffectedByDirectAdjacentRules() { m_affectedByDirectAdjacentRules = true; }
+
     bool unique() const { return m_unique; }
     void setUnique() { m_unique = true; }
 
@@ -1274,8 +1277,6 @@ public:
     void setChildrenAffectedByFirstChildRules() { m_childrenAffectedByFirstChildRules = true; }
     bool childrenAffectedByLastChildRules() const { return m_childrenAffectedByLastChildRules; }
     void setChildrenAffectedByLastChildRules() { m_childrenAffectedByLastChildRules = true; }
-    bool childrenAffectedByDirectAdjacentRules() const { return m_childrenAffectedByDirectAdjacentRules; }
-    void setChildrenAffectedByDirectAdjacentRules() { m_childrenAffectedByDirectAdjacentRules = true; }
     bool childrenAffectedByForwardPositionalRules() const { return m_childrenAffectedByForwardPositionalRules; }
     void setChildrenAffectedByForwardPositionalRules() { m_childrenAffectedByForwardPositionalRules = true; }
     bool childrenAffectedByBackwardPositionalRules() const { return m_childrenAffectedByBackwardPositionalRules; }

@@ -341,10 +341,10 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(CSSSelector* sel, 
         }
     case CSSSelector::DirectAdjacent:
         {
-            if (!m_isCollectingRulesOnly && e->parentNode() && e->parentNode()->isElementNode()) {
-                RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
-                if (parentStyle)
-                    parentStyle->setChildrenAffectedByDirectAdjacentRules();
+            if (!m_isCollectingRulesOnly) {
+                RenderStyle* currentStyle = elementStyle ? elementStyle : e->renderStyle();
+                if (currentStyle)
+                    currentStyle->setAffectedByDirectAdjacentRules();
             }
             Node* n = e->previousSibling();
             while (n && !n->isElementNode())

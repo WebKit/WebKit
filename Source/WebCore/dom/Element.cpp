@@ -1069,7 +1069,6 @@ void Element::recalcStyle(StyleChange change)
     // Ref currentStyle in case it would otherwise be deleted when setRenderStyle() is called.
     RefPtr<RenderStyle> currentStyle(renderStyle());
     bool hasParentStyle = parentNodeForRenderingAndStyle() ? static_cast<bool>(parentNodeForRenderingAndStyle()->renderStyle()) : false;
-    bool hasDirectAdjacentRules = currentStyle && currentStyle->childrenAffectedByDirectAdjacentRules();
     bool hasIndirectAdjacentRules = currentStyle && currentStyle->childrenAffectedByForwardPositionalRules();
 
     if ((change > NoChange || needsStyleRecalc())) {
@@ -1111,8 +1110,8 @@ void Element::recalcStyle(StyleChange change)
                 newStyle->setChildrenAffectedByFirstChildRules();
             if (currentStyle->childrenAffectedByLastChildRules())
                 newStyle->setChildrenAffectedByLastChildRules();
-            if (currentStyle->childrenAffectedByDirectAdjacentRules())
-                newStyle->setChildrenAffectedByDirectAdjacentRules();
+            if (currentStyle->affectedByDirectAdjacentRules())
+                newStyle->setAffectedByDirectAdjacentRules();
         }
 
         if (ch != NoChange || pseudoStyleCacheIsInvalid(currentStyle.get(), newStyle.get()) || (change == Force && renderer() && renderer()->requiresForcedStyleRecalcPropagation())) {
@@ -1142,7 +1141,7 @@ void Element::recalcStyle(StyleChange change)
     // FIXME: This check is good enough for :hover + foo, but it is not good enough for :hover + foo + bar.
     // For now we will just worry about the common case, since it's a lot trickier to get the second case right
     // without doing way too much re-resolution.
-    bool forceCheckOfNextElementSibling = false;
+    bool previousSiblingHadDirectAdjacentRules = false;
     bool forceCheckOfAnyElementSibling = false;
     for (Node *n = firstChild(); n; n = n->nextSibling()) {
         if (n->isTextNode()) {
@@ -1154,13 +1153,14 @@ void Element::recalcStyle(StyleChange change)
             continue;
         Element* element = static_cast<Element*>(n);
         bool childRulesChanged = element->needsStyleRecalc() && element->styleChangeType() == FullStyleChange;
-        if ((forceCheckOfNextElementSibling || forceCheckOfAnyElementSibling))
+        bool childAffectedByDirectAdjacentRules = element->renderStyle() ? element->renderStyle()->affectedByDirectAdjacentRules() : previousSiblingHadDirectAdjacentRules;
+        if (childAffectedByDirectAdjacentRules || forceCheckOfAnyElementSibling)
             element->setNeedsStyleRecalc();
         if (change >= Inherit || element->childNeedsStyleRecalc() || element->needsStyleRecalc()) {
             parentPusher.push();
             element->recalcStyle(change);
         }
-        forceCheckOfNextElementSibling = childRulesChanged && hasDirectAdjacentRules;
+        previousSiblingHadDirectAdjacentRules = childAffectedByDirectAdjacentRules;
         forceCheckOfAnyElementSibling = forceCheckOfAnyElementSibling || (childRulesChanged && hasIndirectAdjacentRules);
     }
     // FIXME: This does not care about sibling combinators. Will be necessary in XBL2 world.
@@ -1345,17 +1345,6 @@ static void checkForSiblingStyleChanges(Element* e, RenderStyle* style, bool fin
         // to match now.
         if ((childCountDelta < 0 || finishedParsingCallback) && newLastChild == lastElementBeforeInsertion && newLastChild && newLastChild->renderStyle() && !newLastChild->renderStyle()->lastChildState())
             newLastChild->setNeedsStyleRecalc();
-    }
-
-    // The + selector.  We need to invalidate the first element following the insertion point.  It is the only possible element
-    // that could be affected by this DOM change.
-    if (style->childrenAffectedByDirectAdjacentRules() && afterChange) {
-        Node* firstElementAfterInsertion = 0;
-        for (firstElementAfterInsertion = afterChange;
-             firstElementAfterInsertion && !firstElementAfterInsertion->isElementNode();
-             firstElementAfterInsertion = firstElementAfterInsertion->nextSibling()) {};
-        if (firstElementAfterInsertion && firstElementAfterInsertion->attached())
-            firstElementAfterInsertion->setNeedsStyleRecalc();
     }
 
     // Forward positional selectors include the ~ selector, nth-child, nth-of-type, first-of-type and only-of-type.
