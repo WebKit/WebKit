@@ -2419,3 +2419,7 @@ fast/css/line-after-floating-div.html
 # new tests introduced in r94775, but fails on Qt because of missing test font
 css3/unicode-bidi-isolate-aharon.html
 css3/unicode-bidi-isolate-basic.html
+
+# new test introduced in r94828, but fails on Qt.
+# https://bugs.webkit.org/show_bug.cgi?id=66588
+http/tests/security/xssAuditor/script-tag-with-16bit-unicode4.html
