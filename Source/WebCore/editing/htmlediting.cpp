@@ -176,7 +176,7 @@ bool isRichlyEditablePosition(const Position& p)
 
 Element* editableRootForPosition(const Position& p)
 {
-    Node* node = p.deprecatedNode();
+    Node* node = p.containerNode();
     if (!node)
         return 0;
         

@@ -1,3 +1,18 @@
+2011-09-08  Annie Sullivan  <sullivan@chromium.org>
+
+        Crashes in WebCore::InsertNodeBeforeCommand constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=67763
+
+        Reviewed by Ryosuke Niwa.
+
+        Changes editableRootForPosition() to use the position's containerNode instead of deprecatedNode so that
+        positions which are before or after a given node cannot return that node as the editable root.
+
+        Test: editing/inserting/insert-paragraph-selection-outside-contenteditable.html
+
+        * editing/htmlediting.cpp:
+        (WebCore::editableRootForPosition): use containerNode instead of deprecatedNode.
+
 2011-09-08  James Weatherall  <wez@chromium.org>
 
         Release the reference to the HTMLPlugInElement's script object, when the element is removed from the document.  This breaks a cyclical reference that would otherwise cause the element to be retained until the document is torn down.
