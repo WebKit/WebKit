@@ -305,8 +305,12 @@ AccessibilityObject* AccessibilityRenderObject::previousSibling() const
 
     // Case 2: Anonymous block parent of the end of a continuation - skip all the way to before
     // the parent of the start, since everything in between will be linked up via the continuation.
-    else if (m_renderer->isAnonymousBlock() && firstChildIsInlineContinuation(m_renderer))
-        previousSibling = startOfContinuations(m_renderer->firstChild())->parent()->previousSibling();
+    else if (m_renderer->isAnonymousBlock() && firstChildIsInlineContinuation(m_renderer)) {
+        RenderObject* firstParent = startOfContinuations(m_renderer->firstChild())->parent();
+        while (firstChildIsInlineContinuation(firstParent))
+            firstParent = startOfContinuations(firstParent->firstChild())->parent();
+        previousSibling = firstParent->previousSibling();
+    }
 
     // Case 3: The node has an actual previous sibling
     else if (RenderObject* ps = m_renderer->previousSibling())
@@ -343,8 +347,12 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
 
     // Case 2: Anonymous block parent of the start of a continuation - skip all the way to
     // after the parent of the end, since everything in between will be linked up via the continuation.
-    else if (m_renderer->isAnonymousBlock() && lastChildHasContinuation(m_renderer))
-        nextSibling = endOfContinuations(m_renderer->lastChild())->parent()->nextSibling();
+    else if (m_renderer->isAnonymousBlock() && lastChildHasContinuation(m_renderer)) {
+        RenderObject* lastParent = endOfContinuations(m_renderer->lastChild())->parent();
+        while (lastChildHasContinuation(lastParent))
+            lastParent = endOfContinuations(lastParent->lastChild())->parent();
+        nextSibling = lastParent->nextSibling();
+    }
 
     // Case 3: node has an actual next sibling
     else if (RenderObject* ns = m_renderer->nextSibling())

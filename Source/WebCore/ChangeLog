@@ -1,3 +1,20 @@
+2011-09-09  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Assert being hit in AccessibilityRenderObject::addChildren()
+        https://bugs.webkit.org/show_bug.cgi?id=61805
+
+        Reviewed by Chris Fleizach.
+
+        Fix nextSibling and previousSibling to handle adjacent continuations
+        properly, otherwise nodes end up appearing in the accessibility
+        tree twice (or a debug assertion could be raised).
+
+        Test: accessibility/adjacent-continuations-cause-assertion-failure.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::previousSibling):
+        (WebCore::AccessibilityRenderObject::nextSibling):
+
 2011-09-08  Kentaro Hara  <haraken@google.com>
 
         Implement a WebKitAnimationEvent constructor.
