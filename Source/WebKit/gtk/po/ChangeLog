@@ -1,3 +1,12 @@
+2011-09-09  Tiffany Antopolski  <tiffany@antopolski.com>
+
+        Canadian English translation.
+        https://bugzilla.gnome.org/show_bug.cgi?id=610152
+
+        Reviewed by Gustavo Noronha.
+
+        * en_CA.po: Added.
+
 2011-08-11  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] create pot files in builddir, not (read only) srcdir
