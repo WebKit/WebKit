@@ -227,7 +227,7 @@ class ManagerTest(unittest.TestCase):
         def get_manager_with_tests(test_names):
             port = Mock()
             port.TEST_PATH_SEPARATOR = '/'
-            manager = Manager(port, options=MockOptions(), printer=Mock())
+            manager = Manager(port, options=MockOptions(http=True), printer=Mock())
             manager._test_files = set(test_names)
             manager._test_files_list = test_names
             return manager
@@ -241,7 +241,7 @@ class ManagerTest(unittest.TestCase):
     def integration_test_needs_servers(self):
         def get_manager_with_tests(test_names):
             port = layout_tests.port.get()
-            manager = Manager(port, options=MockOptions(test_list=None), printer=Mock())
+            manager = Manager(port, options=MockOptions(test_list=None, http=True), printer=Mock())
             manager.collect_tests(test_names)
             return manager
 
