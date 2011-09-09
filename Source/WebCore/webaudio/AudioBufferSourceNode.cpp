@@ -324,7 +324,7 @@ void AudioBufferSourceNode::finish()
     }
 }
 
-void AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
+bool AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
 {
     ASSERT(isMainThread());
     
@@ -337,11 +337,17 @@ void AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
     if (buffer) {
         // Do any necesssary re-configuration to the buffer's number of channels.
         unsigned numberOfChannels = buffer->numberOfChannels();
+        if (!numberOfChannels || numberOfChannels > 2) {
+            // FIXME: implement multi-channel greater than stereo.
+            return false;
+        }
         output(0)->setNumberOfChannels(numberOfChannels);
     }
 
     m_virtualReadIndex = 0;
     m_buffer = buffer;
+    
+    return true;
 }
 
 unsigned AudioBufferSourceNode::numberOfChannels()

@@ -52,7 +52,8 @@ public:
     virtual void reset();
     
     // setBuffer() is called on the main thread.  This is the buffer we use for playback.
-    void setBuffer(AudioBuffer*);
+    // returns true on success.
+    bool setBuffer(AudioBuffer*);
     AudioBuffer* buffer() { return m_buffer.get(); }
                     
     // numberOfChannels() returns the number of output channels.  This value equals the number of channels from the buffer.

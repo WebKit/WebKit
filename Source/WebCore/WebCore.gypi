@@ -2117,6 +2117,7 @@
             'bindings/v8/WrapperTypeInfo.h',
             'bindings/v8/custom/V8ArrayBufferCustom.cpp',
             'bindings/v8/custom/V8ArrayBufferViewCustom.h',
+            'bindings/v8/custom/V8AudioBufferSourceNodeCustom.cpp',
             'bindings/v8/custom/V8AudioContextCustom.cpp',
             'bindings/v8/custom/V8AudioNodeCustom.cpp',
             'bindings/v8/custom/V8BindingMacros.h',

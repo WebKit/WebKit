@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests that AudioBufferSourceNode validates AudioBuffer in .buffer attribute setter.");
+
+var context;
+var source;
+
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+    
+    context = new webkitAudioContext();
+    source = context.createBufferSource();
+
+    // Make sure we can't set to something which isn't an AudioBuffer.
+    shouldThrow("source.buffer = 57");
+
+    // Check that mono buffer can be set.
+    try {
+        var monoBuffer = context.createBuffer(1, 1024, context.sampleRate);
+        source.buffer = monoBuffer;
+        testPassed("Mono buffer can be set.");
+    } catch(e) {
+        testFailed("Mono buffer can not be set.");
+    }
+
+    // Check that stereo buffer can be set.
+    try {
+        var stereoBuffer = context.createBuffer(2, 1024, context.sampleRate);
+        source.buffer = stereoBuffer;
+        testPassed("Stereo buffer can be set.");
+    } catch(e) {
+        testFailed("Stereo buffer can not be set.");
+    }
+    
+    // Check a few buffers with more than two channels and check for failure.
+    // (for now the implementation will only work with mono and stereo buffers)
+    for (var i = 3; i < 10; ++i) {
+        try {
+            var buffer = context.createBuffer(i, 1024, context.sampleRate);
+            source.buffer = buffer;
+            var message = i + " channel buffer should not be settable.";
+            testFailed(message);
+        } catch(e) {
+            var message = i + " channel buffer is not settable.";
+            testPassed(message);
+        }
+    }
+        
+    finishJSTest();
+}
+
+runTest();
+successfullyParsed = true;
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

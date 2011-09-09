@@ -1,0 +1,18 @@
+Tests that AudioBufferSourceNode validates AudioBuffer in .buffer attribute setter.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS source.buffer = 57 threw exception TypeError: Value is not of type AudioBuffer.
+PASS Mono buffer can be set.
+PASS Stereo buffer can be set.
+PASS 3 channel buffer is not settable.
+PASS 4 channel buffer is not settable.
+PASS 5 channel buffer is not settable.
+PASS 6 channel buffer is not settable.
+PASS 7 channel buffer is not settable.
+PASS 8 channel buffer is not settable.
+PASS 9 channel buffer is not settable.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2011, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,28 +26,36 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "JSAudioBufferSourceNode.h"
+#include "V8AudioBufferSourceNode.h"
 
 #include "AudioBuffer.h"
 #include "AudioBufferSourceNode.h"
-#include "JSAudioBuffer.h"
-#include <runtime/Error.h>
-
-using namespace JSC;
+#include "ExceptionCode.h"
+#include "V8AudioBuffer.h"
+#include "V8Binding.h"
+#include "V8Proxy.h"
 
 namespace WebCore {
 
-void JSAudioBufferSourceNode::setBuffer(ExecState* exec, JSValue value)
+void V8AudioBufferSourceNode::bufferAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    AudioBufferSourceNode* imp = static_cast<AudioBufferSourceNode*>(impl());
-    AudioBuffer* buffer = toAudioBuffer(value);
-    if (!buffer) {
-        throwError(exec, createSyntaxError(exec, "Value is not of type AudioBuffer"));
-        return;
+    INC_STATS("DOM.AudioBufferSourceNode.buffer._set");
+    v8::Handle<v8::Object> holder = info.Holder();
+    AudioBufferSourceNode* imp = V8AudioBufferSourceNode::toNative(holder);
+
+    AudioBuffer* buffer = 0;
+    if (V8AudioBuffer::HasInstance(value)) {
+        buffer = V8AudioBuffer::toNative(value->ToObject());
+        if (buffer && !imp->setBuffer(buffer)) {
+            throwError("AudioBuffer unsupported number of channels");
+            return;
+        }
     }
     
-    if (!imp->setBuffer(buffer))
-        throwError(exec, createSyntaxError(exec, "AudioBuffer unsupported number of channels"));
+    if (!buffer) {
+        throwError("Value is not of type AudioBuffer");
+        return;
+    }
 }
 
 } // namespace WebCore
