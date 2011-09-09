@@ -16,7 +16,10 @@ if ($cgi->param('crazy-header')) {
 if ($cgi->param('custom-header')) {
     print $cgi->param('custom-header') . "\n";
 }
-print "Content-Type: text/html; charset=UTF-8\n\n";
+
+print "Content-Type: text/html; charset=";
+print $cgi->param('charset') ? $cgi->param('charset') : "UTF-8";
+print "\n\n";
 
 print "<!DOCTYPE html>\n";
 print "<html>\n";
