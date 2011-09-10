@@ -2417,7 +2417,6 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, const LayoutPoint&
 void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, LayoutRect resizerCornerRect)
 {
     float deviceScaleFactor = Page::deviceScaleFactor(renderer()->frame());
-    printf("RenderLayer deviceScaleFactor=%f\n", deviceScaleFactor);
 
     RefPtr<Image> resizeCornerImage;
     IntSize cornerResizerSize;
