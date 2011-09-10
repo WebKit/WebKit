@@ -67,7 +67,8 @@ static CGContextRef CGContextWithHDC(HDC hdc, bool hasAlpha)
 }
 
 GraphicsContext::GraphicsContext(HDC hdc, bool hasAlpha)
-    : m_updatingControlTints(false)
+    : m_updatingControlTints(false),
+      m_transparencyCount(0)
 {
     platformInit(hdc, hasAlpha);
 }
@@ -89,7 +90,7 @@ void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
 // suitable for all clients?
 void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
-    bool createdBitmap = mayCreateBitmap && (!m_data->m_hdc || inTransparencyLayer());
+    bool createdBitmap = mayCreateBitmap && (!m_data->m_hdc || isInTransparencyLayer());
     if (!createdBitmap) {
         m_data->restore();
         return;

@@ -1,3 +1,78 @@
+2011-09-09  Tim Horton  <timothy_horton@apple.com>
+
+        Text rendered with a simple (i.e. 0px blur) shadow inside a transparency layer has a double shadow
+        https://bugs.webkit.org/show_bug.cgi?id=67543
+        <rdar://problem/10070536>
+
+        Reviewed by Darin Adler.
+
+        Generalize (begin|end)TransparencyLayer, which now forward
+        through to (begin|end)PlatformTransparencyLayer, so that
+        isInTransparencyLayer can exist on every platform.
+
+        Make use of isInTransparencyLayer in FontMac to disable
+        "simple" shadow drawing when the text is being rendered
+        into a transparency layer.
+
+        Test: svg/custom/simple-text-double-shadow.svg
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::isInTransparencyLayer):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::supportsTransparencyLayers):
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::supportsTransparencyLayers):
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::supportsTransparencyLayers):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::supportsTransparencyLayers):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::isInTransparencyLayer):
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::supportsTransparencyLayers):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::supportsTransparencyLayers):
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::drawGDIGlyphs):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::getWindowsContext):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::supportsTransparencyLayers):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::supportsTransparencyLayers):
+        * platform/win/ScrollbarThemeWin.cpp:
+        * plugins/win/PluginViewWin.cpp:
+        * rendering/RenderThemeWin.cpp:
+
 2011-09-09  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [V8] V8WebKitPoint::constructorCallback leaks

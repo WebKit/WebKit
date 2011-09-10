@@ -262,7 +262,7 @@ void GraphicsContext::restorePlatformState()
     platformContext()->restore();
 }
 
-void GraphicsContext::beginTransparencyLayer(float opacity)
+void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
 {
     if (paintingDisabled())
         return;
@@ -283,11 +283,16 @@ void GraphicsContext::beginTransparencyLayer(float opacity)
                                          SkCanvas::kFullColorLayer_SaveFlag));
 }
 
-void GraphicsContext::endTransparencyLayer()
+void GraphicsContext::endPlatformTransparencyLayer()
 {
     if (paintingDisabled())
         return;
     platformContext()->canvas()->restore();
+}
+
+bool GraphicsContext::supportsTransparencyLayers()
+{
+    return true;
 }
 
 // Graphics primitives ---------------------------------------------------------
