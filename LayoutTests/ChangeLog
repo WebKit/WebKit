@@ -1,3 +1,10 @@
+2011-09-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening after r94897.
+
+        * platform/qt/svg/custom/simple-text-double-shadow-expected.png: Added.
+        * platform/qt/svg/custom/simple-text-double-shadow-expected.txt: Added.
+
 2011-09-10  Ken Buchanan <kenrb@chromium.org>
 
         Crash due to bad data in SVGDocumentExtensions m_pendingResources.
