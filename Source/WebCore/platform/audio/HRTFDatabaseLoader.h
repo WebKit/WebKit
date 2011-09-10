@@ -55,8 +55,7 @@ public:
     // Returns true once the default database has been completely loaded.
     bool isLoaded() const;
 
-    // May not be called on the main thread.
-    // This is so a different background thread may synchronize with the loader thread.
+    // waitForLoaderThreadCompletion() may be called more than once and is thread-safe.
     void waitForLoaderThreadCompletion();
     
     HRTFDatabase* database() { return m_hrtfDatabase.get(); }
@@ -81,11 +80,13 @@ private:
 
     static HRTFDatabaseLoader* s_loader; // singleton
     OwnPtr<HRTFDatabase> m_hrtfDatabase;
+
+    // Holding a m_threadLock is required when accessing m_databaseLoaderThread.
+    Mutex m_threadLock;
     ThreadIdentifier m_databaseLoaderThread;
-    bool m_startedLoadingDatabase;
+
     double m_databaseSampleRate;    
 };
-
 
 } // namespace WebCore
 

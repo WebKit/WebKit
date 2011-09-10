@@ -61,7 +61,6 @@ PassRefPtr<HRTFDatabaseLoader> HRTFDatabaseLoader::createAndLoadAsynchronouslyIf
 
 HRTFDatabaseLoader::HRTFDatabaseLoader(double sampleRate)
     : m_databaseLoaderThread(0)
-    , m_startedLoadingDatabase(false)
     , m_databaseSampleRate(sampleRate)
 {
     ASSERT(isMainThread());
@@ -71,12 +70,7 @@ HRTFDatabaseLoader::~HRTFDatabaseLoader()
 {
     ASSERT(isMainThread());
 
-    if (m_startedLoadingDatabase)
-        waitForThreadCompletion(m_databaseLoaderThread, 0);
-    
-    m_startedLoadingDatabase = false;
-    m_databaseLoaderThread = 0;
-    
+    waitForLoaderThreadCompletion();
     m_hrtfDatabase.clear();
     
     // Clear out singleton.
@@ -107,10 +101,11 @@ void HRTFDatabaseLoader::load()
 void HRTFDatabaseLoader::loadAsynchronously()
 {
     ASSERT(isMainThread());
+
+    MutexLocker locker(m_threadLock);
     
-    if (!m_hrtfDatabase.get() && !m_startedLoadingDatabase) {
+    if (!m_hrtfDatabase.get() && !m_databaseLoaderThread) {
         // Start the asynchronous database loading process.
-        m_startedLoadingDatabase = true;
         m_databaseLoaderThread = createThread(databaseLoaderEntry, this, "HRTF database loader");
     }
 }
@@ -120,12 +115,14 @@ bool HRTFDatabaseLoader::isLoaded() const
     return m_hrtfDatabase.get();
 }
 
-
 void HRTFDatabaseLoader::waitForLoaderThreadCompletion()
 {
-    ASSERT(!isMainThread());
-    ASSERT(m_databaseLoaderThread);
-    waitForThreadCompletion(m_databaseLoaderThread, 0);    
+    MutexLocker locker(m_threadLock);
+    
+    // waitForThreadCompletion() should not be called twice for the same thread.
+    if (m_databaseLoaderThread)
+        waitForThreadCompletion(m_databaseLoaderThread, 0);
+    m_databaseLoaderThread = 0;
 }
 
 HRTFDatabase* HRTFDatabaseLoader::defaultHRTFDatabase()
