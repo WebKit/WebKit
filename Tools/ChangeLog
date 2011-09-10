@@ -1,3 +1,13 @@
+2011-09-10  Andreas Kling  <kling@webkit.org>
+
+        Crash beneath WKURLIsEqual() when reloading in MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=59328
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController updateProvisionalURLForFrame:]): Add missing null check.
+
 2011-09-10  Adam Barth  <abarth@webkit.org>
 
         Build fix for Android.  DumpRenderTree is a client of the WebKit API

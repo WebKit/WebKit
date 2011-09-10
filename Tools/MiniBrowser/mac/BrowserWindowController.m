@@ -684,6 +684,10 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         emptyURL = WKURLCreateWithUTF8CString("");
 
     WKURLRef url = WKFrameCopyProvisionalURL(frame);
+
+    if (!url)
+        return;
+
     if (WKURLIsEqual(url, emptyURL)) {
         WKRelease(url);
         return;
