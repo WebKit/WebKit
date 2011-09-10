@@ -1,3 +1,11 @@
+2011-09-10  Adam Barth  <abarth@webkit.org>
+
+        Build fix for Android.  DumpRenderTree is a client of the WebKit API
+        and does not have access to notImplemented().
+
+        * DumpRenderTree/chromium/TestShellAndroid.cpp:
+        (openStartupDialog):
+
 2011-09-09  Alexey Proskuryakov  <ap@apple.com>
 
         Add a script to create a monolithic script-test

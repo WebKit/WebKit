@@ -80,7 +80,7 @@ void platformInit(int* argc, char*** argv)
 
 void openStartupDialog()
 {
-    notImplemented();
+    // FIXME: Not implemented.
 }
 
 bool checkLayoutTestSystemDependencies()
