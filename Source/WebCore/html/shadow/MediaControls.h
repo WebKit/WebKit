@@ -86,7 +86,7 @@ inline MediaControls* toMediaControls(Node* node)
 }
 
 // This will catch anyone doing an unneccessary cast.
-void toMediaControls(const Node*);
+void toMediaControls(const MediaControls*);
 
 }
 

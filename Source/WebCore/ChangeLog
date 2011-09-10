@@ -1,3 +1,11 @@
+2011-09-10  Dan Bernstein  <mitz@apple.com>
+
+        Actually prevent unnecessary casts to MediaControls*.
+
+        Reviewed by Oliver Hunt.
+
+        * html/shadow/MediaControls.h:
+
 2011-09-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove printf added by r94900.
