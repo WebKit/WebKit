@@ -412,15 +412,25 @@ void Settings::setSessionStorageQuota(unsigned sessionStorageQuota)
 
 void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {
-    if (m_privateBrowsingEnabled == privateBrowsingEnabled)
-        return;
-
+    // FIXME http://webkit.org/b/67870: The private browsing storage session and cookie private
+    // browsing mode (which is used if storage sessions are not available) are global settings, so
+    // it is misleading to have them as per-page settings.
+    // In addition, if they are treated as a per Page settings, the global values can get out of
+    // sync with the per Page value in the following situation:
+    // 1. The global values get set to true when setPrivateBrowsingEnabled(true) is called.
+    // 2. All Pages are closed, so all Settings objects go away.
+    // 3. A new Page is created, and a corresponding new Settings object is created - with
+    //    m_privateBrowsingEnabled starting out as false in the constructor.
+    // 4. The WebPage settings get applied to the new Page and setPrivateBrowsingEnabled(false)
+    //    is called, but an if (m_privateBrowsingEnabled == privateBrowsingEnabled) early return
+    //    prevents the global values from getting changed from true to false.
 #if USE(CFURLSTORAGESESSIONS)
     ResourceHandle::setPrivateBrowsingEnabled(privateBrowsingEnabled);
 #endif
-
-    // FIXME: We can only enable cookie private browsing mode globally, so it's misleading to have it as a per-page setting.
     setCookieStoragePrivateBrowsingEnabled(privateBrowsingEnabled);
+
+    if (m_privateBrowsingEnabled == privateBrowsingEnabled)
+        return;
 
     m_privateBrowsingEnabled = privateBrowsingEnabled;
     m_page->privateBrowsingStateChanged();

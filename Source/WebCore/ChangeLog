@@ -1,3 +1,29 @@
+2011-09-09  Jessie Berlin  <jberlin@apple.com>
+
+        Cookies are not available after turning off Private Browsing after the last window has been
+        closed.
+        https://bugs.webkit.org/show_bug.cgi?id=67874
+
+        Reviewed by Darin Adler.
+
+        The private browsing storage session is a global setting that is being incorrectly set on a
+        per-page basis (see http://webkit.org/b/67870).
+
+        In this case, the global value was getting out of sync with the per-page setting:
+        1. The global value was getting set to true when setPrivateBrowsingEnabled(true) was called.
+        2. All Pages were then closed, destroying their Settings objects.
+        3. When a new Page was created, a new Settings object was created and its
+           m_privateBrowsingEnabled value was getting set to false.
+        4. The WebPage settings were then applied to the new Settings object, resulting in
+           setPrivateBrowsingEnabled(false) to be called.
+        5. An if (m_privateBrowsingEnabled == privateBrowsingEnabled) early return prevented the
+           global value for the storage session from being destroyed.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setPrivateBrowsingEnabled):
+        Move the early return to be after setting the global private browsing values, and add a
+        clearer comment + FIXME.
+
 2011-09-09  Kentaro Hara  <haraken@google.com>
 
         Generate a WebKitCSSMatrix constructor of V8 using the IDL 'Constructor' extended attribute
