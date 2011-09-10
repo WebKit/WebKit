@@ -1,3 +1,29 @@
+2011-09-09  Chris Marrin  <cmarrin@apple.com>
+
+        requestAnimationFrame doesn't throttle on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=67171
+
+        Reviewed by Simon Fraser.
+
+        Changed requestAnimationFrame to use a Timer in ScriptedAnimationController
+        on Mac, rather than runLoopObservers. The Timer is throttled to fire no
+        faster than every 15ms. It is behind a WTF_USE_REQUEST_ANIMATION_FRAME_TIMER
+        flag and can be used by any implementation, but currently it is only enabled
+        by PLATFORM(MAC).
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::ScriptedAnimationController):
+        (WebCore::ScriptedAnimationController::resume):
+        (WebCore::ScriptedAnimationController::registerCallback):
+        (WebCore::ScriptedAnimationController::serviceScriptedAnimations):
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        (WebCore::ScriptedAnimationController::animationTimerFired):
+        * dom/ScriptedAnimationController.h:
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::scheduleAnimation):
+        * page/ChromeClient.h:
+
 2011-09-10  Jarred Nicholls  <jarred@sencha.com>
 
         [Qt] QWebSettings::setUserStyleSheetUrl() does not work with windows paths that contain drive letters

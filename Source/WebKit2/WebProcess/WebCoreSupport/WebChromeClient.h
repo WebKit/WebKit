@@ -172,10 +172,6 @@ private:
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    virtual void scheduleAnimation();
-#endif
-
     // Notification that the given form element has changed. This function
     // will be called frequently, so handling should be very fast.
     virtual void formStateDidChange(const WebCore::Node*);

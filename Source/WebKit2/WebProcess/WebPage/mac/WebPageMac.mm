@@ -30,7 +30,6 @@
 #import "AttributedString.h"
 #import "DataReference.h"
 #import "EditorState.h"
-#import "LayerTreeHostCAMac.h"
 #import "PluginView.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebEvent.h"
@@ -583,45 +582,6 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector)
 
     return true;
 }
-
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-void WebPage::requestAnimationFrameRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
-{
-    WebPage* webPage = static_cast<WebPage*>(context);
-    webPage->unscheduleAnimation();
-    
-    // This gets called outside of the normal event loop so wrap in an autorelease pool
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    if (webPage->corePage()->mainFrame() && webPage->corePage()->mainFrame()->view())
-        webPage->corePage()->mainFrame()->view()->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(currentTime()));
-    [pool drain];
-}
-
-void WebPage::scheduleAnimation()
-{
-    if (!m_requestAnimationFrameRunLoopObserver) {
-        CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
-    
-        // Make sure we wake up the loop or the observer could be delayed until some other source fires.
-        CFRunLoopWakeUp(currentRunLoop);
-
-        // Run before the flushPendingLayerChangesRunLoopObserver, which has order CoreAnimationRunLoopOrder - 1.
-        const CFIndex runLoopOrder = CoreAnimationRunLoopOrder - 2;
-        CFRunLoopObserverContext context = { 0, this, 0, 0, 0 };
-        m_requestAnimationFrameRunLoopObserver.adoptCF(CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, false, runLoopOrder, requestAnimationFrameRunLoopObserverCallback, &context));
-
-        CFRunLoopAddObserver(currentRunLoop, m_requestAnimationFrameRunLoopObserver.get(), kCFRunLoopCommonModes);
-    }
-}
-
-void WebPage::unscheduleAnimation()
-{
-    if (m_requestAnimationFrameRunLoopObserver) {
-        CFRunLoopObserverInvalidate(m_requestAnimationFrameRunLoopObserver.get());
-        m_requestAnimationFrameRunLoopObserver = nullptr;
-    }
-}
-#endif
 
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
 {

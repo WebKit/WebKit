@@ -1159,4 +1159,8 @@
 #define WTF_USE_AVFOUNDATION 1
 #endif
 
+#if PLATFORM(MAC)
+#define WTF_USE_REQUEST_ANIMATION_FRAME_TIMER 1
+#endif
+
 #endif /* WTF_Platform_h */

@@ -395,9 +395,6 @@ FindOptions coreOptions(WebFindOptions options)
 #if USE(ACCELERATED_COMPOSITING)
 - (void)_clearLayerSyncLoopObserver;
 #endif
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-- (void)_unscheduleAnimation;
-#endif
 #if ENABLE(GLIB_SUPPORT)
 - (void)_clearGlibLoopObserver;
 #endif
@@ -1226,10 +1223,6 @@ static bool fastDocumentTeardownEnabled()
     [self _clearLayerSyncLoopObserver];
 #endif
     
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    [self _unscheduleAnimation];
-#endif
-
 #if ENABLE(GLIB_SUPPORT)
     [self _clearGlibLoopObserver];
 #endif
@@ -5921,18 +5914,6 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 }
 #endif
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-- (void)_unscheduleAnimation
-{
-    if (!_private->requestAnimationFrameRunLoopObserver)
-        return;
-
-    CFRunLoopObserverInvalidate(_private->requestAnimationFrameRunLoopObserver);
-    CFRelease(_private->requestAnimationFrameRunLoopObserver);
-    _private->requestAnimationFrameRunLoopObserver = 0;
-}
-#endif
-
 #if ENABLE(GLIB_SUPPORT)
 - (void)_clearGlibLoopObserver
 {
@@ -6210,34 +6191,6 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
     CFRunLoopAddObserver(currentRunLoop, _private->layerSyncRunLoopObserver, kCFRunLoopCommonModes);
 }
 
-#endif
-
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-static void requestAnimationFrameRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* info)
-{
-    WebView *webView = reinterpret_cast<WebView*>(info);
-    [webView _unscheduleAnimation];
-    
-    if (Frame* frame = [webView _mainCoreFrame])
-        if (FrameView* frameView = frame->view())
-            frameView->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(currentTime()));
-}
-
-- (void)_scheduleAnimation
-{
-    if (!_private->requestAnimationFrameRunLoopObserver) {
-        CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
-    
-        // Make sure we wake up the loop or the observer could be delayed until some other source fires.
-        CFRunLoopWakeUp(currentRunLoop);
-
-        // Run before the layerSyncRunLoopObserver, which has order NSDisplayWindowRunLoopOrdering + 2.
-        const CFIndex runLoopOrder = NSDisplayWindowRunLoopOrdering + 1;
-        CFRunLoopObserverContext context = { 0, self, 0, 0, 0 };
-        _private->requestAnimationFrameRunLoopObserver = CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, NO, runLoopOrder, requestAnimationFrameRunLoopObserverCallback, &context);
-        CFRunLoopAddObserver(currentRunLoop, _private->requestAnimationFrameRunLoopObserver, kCFRunLoopCommonModes);
-    }
-}
 #endif
 
 #if ENABLE(VIDEO)

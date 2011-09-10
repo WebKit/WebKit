@@ -351,10 +351,6 @@ public:
     void acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&, bool& result);
     bool performNonEditingBehaviorForSelector(const String&);
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    void scheduleAnimation();
-    void unscheduleAnimation();
-#endif
 #elif PLATFORM(WIN)
     void confirmComposition(const String& compositionString);
     void setComposition(const WTF::String& compositionString, const WTF::Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition);
@@ -611,11 +607,6 @@ private:
     RetainPtr<AccessibilityWebPageObject> m_mockAccessibilityElement;
 
     WebCore::KeyboardEvent* m_keyboardEventBeingInterpreted;
-
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    static void requestAnimationFrameRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
-    RetainPtr<CFRunLoopObserverRef> m_requestAnimationFrameRunLoopObserver;
-#endif
 
 #elif PLATFORM(WIN)
     // Our view's window (in the UI process).

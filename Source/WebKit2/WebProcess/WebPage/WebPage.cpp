@@ -262,12 +262,6 @@ WebPage::~WebPage()
 
 #if PLATFORM(MAC)
     ASSERT(m_pluginViews.isEmpty());
-
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    unscheduleAnimation();
-    ASSERT(!m_requestAnimationFrameRunLoopObserver);
-#endif
-
 #endif
 
 #ifndef NDEBUG

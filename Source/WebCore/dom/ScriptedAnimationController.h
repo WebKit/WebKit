@@ -28,6 +28,9 @@
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 #include "DOMTimeStamp.h"
+#if USE(REQUEST_ANIMATION_FRAME_TIMER)
+#include "Timer.h"
+#endif
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -58,12 +61,21 @@ public:
 
 private:
     explicit ScriptedAnimationController(Document*);
+    
     typedef Vector<RefPtr<RequestAnimationFrameCallback> > CallbackList;
     CallbackList m_callbacks;
 
     Document* m_document;
     CallbackId m_nextCallbackId;
     int m_suspendCount;
+
+    void scheduleAnimation();
+
+#if USE(REQUEST_ANIMATION_FRAME_TIMER)
+    void animationTimerFired(Timer<ScriptedAnimationController>*);
+    Timer<ScriptedAnimationController> m_animationTimer;
+    double m_lastAnimationFrameTime;
+#endif
 };
 
 }

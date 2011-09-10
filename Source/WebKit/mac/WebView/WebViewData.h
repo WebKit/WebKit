@@ -155,10 +155,6 @@ extern int pluginDatabaseClientCount;
     CFRunLoopObserverRef layerSyncRunLoopObserver;
 #endif
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    CFRunLoopObserverRef requestAnimationFrameRunLoopObserver;
-#endif
-
     NSPasteboard *insertionPasteboard;
             
     NSSize lastLayoutSize;
