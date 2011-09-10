@@ -1,3 +1,12 @@
+2011-09-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a script to create a monolithic script-test
+        https://bugs.webkit.org/show_bug.cgi?id=67747
+
+        Reviewed by Darin Adler.
+
+        * Scripts/make-new-script-test: Added.
+
 2011-09-09  Luiz Agostini  <luiz@webkit.org>
 
         Adding myself to the reviewers list.
