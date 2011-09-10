@@ -386,6 +386,9 @@ namespace WebCore {
 
         bool prepareBase()
         {
+            if (m_v8Object.IsEmpty())
+                return true;
+
             if (LIKELY(m_v8Object->IsString()))
                 return true;
 
@@ -402,15 +405,6 @@ namespace WebCore {
                 block.ReThrow();
                 return false;
             }
-
-            // This path is unexpected.  However there is hypothesis that it
-            // might be combination of v8 and v8 bindings bugs.  For now
-            // just bailout as we'll crash if attempt to convert empty handle into a string.
-            if (m_v8Object.IsEmpty()) {
-                ASSERT_NOT_REACHED();
-                return false;
-            }
-
             return true;
         }
 
@@ -460,7 +454,7 @@ namespace WebCore {
 
     template<> inline bool V8Parameter<WithNullCheck>::prepare()
     {
-        if (object()->IsNull()) {
+        if (object().IsEmpty() || object()->IsNull()) {
             setString(String());
             return true;
         }
@@ -470,13 +464,18 @@ namespace WebCore {
 
     template<> inline bool V8Parameter<WithUndefinedOrNullCheck>::prepare()
     {
-        if (object()->IsNull() || object()->IsUndefined()) {
+        if (object().IsEmpty() || object()->IsNull() || object()->IsUndefined()) {
             setString(String());
             return true;
         }
 
         return V8ParameterBase::prepareBase();
     }
+
+    enum ParameterMissingPolicy {
+        MissingIsUndefined,
+        MissingIsEmpty
+    };
 
 } // namespace WebCore
 

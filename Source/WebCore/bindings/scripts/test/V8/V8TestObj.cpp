@@ -662,9 +662,9 @@ static v8::Handle<v8::Value> voidMethodWithArgsCallback(const v8::Arguments& arg
 {
     INC_STATS("DOM.TestObj.voidMethodWithArgs");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(args[0]));
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, args[1]);
-    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(args[2]) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(args[2])) : 0);
+    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined));
+    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, MissingIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, MissingIsUndefined))) : 0);
     imp->voidMethodWithArgs(intArg, strArg, objArg);
     return v8::Handle<v8::Value>();
 }
@@ -680,9 +680,9 @@ static v8::Handle<v8::Value> intMethodWithArgsCallback(const v8::Arguments& args
 {
     INC_STATS("DOM.TestObj.intMethodWithArgs");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(args[0]));
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, args[1]);
-    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(args[2]) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(args[2])) : 0);
+    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined));
+    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, MissingIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, MissingIsUndefined))) : 0);
     return v8::Integer::New(imp->intMethodWithArgs(intArg, strArg, objArg));
 }
 
@@ -697,9 +697,9 @@ static v8::Handle<v8::Value> objMethodWithArgsCallback(const v8::Arguments& args
 {
     INC_STATS("DOM.TestObj.objMethodWithArgs");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(args[0]));
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, args[1]);
-    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(args[2]) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(args[2])) : 0);
+    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined));
+    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, MissingIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, MissingIsUndefined))) : 0);
     return toV8(imp->objMethodWithArgs(intArg, strArg, objArg));
 }
 
@@ -709,8 +709,8 @@ static v8::Handle<v8::Value> methodThatRequiresAllArgsCallback(const v8::Argumen
     if (args.Length() < 2)
         return v8::Handle<v8::Value>();
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, args[0]);
-    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(args[1]) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
+    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined))) : 0);
     return toV8(imp->methodThatRequiresAllArgs(strArg, objArg));
 }
 
@@ -722,8 +722,8 @@ static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, args[0]);
-    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(args[1]) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
+    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined))) : 0);
     RefPtr<TestObj> result = imp->methodThatRequiresAllArgsAndThrows(strArg, objArg, ec);
     if (UNLIKELY(ec))
         goto fail;
@@ -769,12 +769,12 @@ static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.optionsObject");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(OptionsObject, oo, args[0]);
+    EXCEPTION_BLOCK(OptionsObject, oo, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
     if (args.Length() <= 1) {
         imp->optionsObject(oo);
         return v8::Handle<v8::Value>();
     }
-    EXCEPTION_BLOCK(OptionsObject, ooo, args[1]);
+    EXCEPTION_BLOCK(OptionsObject, ooo, MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined));
     imp->optionsObject(oo, ooo);
     return v8::Handle<v8::Value>();
 }
@@ -806,7 +806,7 @@ static v8::Handle<v8::Value> customArgsAndExceptionCallback(const v8::Arguments&
     RefPtr<ScriptCallStack> callStack(createScriptCallStack(maxStackSize));
     if (!callStack)
         return v8::Undefined();
-    EXCEPTION_BLOCK(log*, intArg, V8log::HasInstance(args[0]) ? V8log::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
+    EXCEPTION_BLOCK(log*, intArg, V8log::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8log::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
     imp->customArgsAndException(intArg, scriptArguments, callStack, ec);
     if (UNLIKELY(ec))
         goto fail;
@@ -854,7 +854,7 @@ static v8::Handle<v8::Value> withDynamicFrameAndArgCallback(const v8::Arguments&
 {
     INC_STATS("DOM.TestObj.withDynamicFrameAndArg");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(args[0]));
+    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
     if (!enteredFrame)
         return v8::Undefined();
@@ -866,7 +866,7 @@ static v8::Handle<v8::Value> withDynamicFrameAndOptionalArgCallback(const v8::Ar
 {
     INC_STATS("DOM.TestObj.withDynamicFrameAndOptionalArg");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(args[0]));
+    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     if (args.Length() <= 1) {
         Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
         if (!enteredFrame)
@@ -874,7 +874,7 @@ static v8::Handle<v8::Value> withDynamicFrameAndOptionalArgCallback(const v8::Ar
         imp->withDynamicFrameAndOptionalArg(enteredFrame, intArg);
         return v8::Handle<v8::Value>();
     }
-    EXCEPTION_BLOCK(int, optionalArg, toInt32(args[1]));
+    EXCEPTION_BLOCK(int, optionalArg, toInt32(MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined)));
     Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
     if (!enteredFrame)
         return v8::Undefined();
@@ -886,7 +886,7 @@ static v8::Handle<v8::Value> withDynamicFrameAndUserGestureCallback(const v8::Ar
 {
     INC_STATS("DOM.TestObj.withDynamicFrameAndUserGesture");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(args[0]));
+    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
     if (!enteredFrame)
         return v8::Undefined();
@@ -898,7 +898,7 @@ static v8::Handle<v8::Value> withDynamicFrameAndUserGestureASADCallback(const v8
 {
     INC_STATS("DOM.TestObj.withDynamicFrameAndUserGestureASAD");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(args[0]));
+    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     if (args.Length() <= 1) {
         Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
         if (!enteredFrame)
@@ -906,7 +906,7 @@ static v8::Handle<v8::Value> withDynamicFrameAndUserGestureASADCallback(const v8
         imp->withDynamicFrameAndUserGestureASAD(enteredFrame, intArg, ScriptController::processingUserGesture());
         return v8::Handle<v8::Value>();
     }
-    EXCEPTION_BLOCK(int, optionalArg, toInt32(args[1]));
+    EXCEPTION_BLOCK(int, optionalArg, toInt32(MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined)));
     Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
     if (!enteredFrame)
         return v8::Undefined();
@@ -993,7 +993,7 @@ static v8::Handle<v8::Value> methodWithOptionalArgCallback(const v8::Arguments& 
         imp->methodWithOptionalArg();
         return v8::Handle<v8::Value>();
     }
-    EXCEPTION_BLOCK(int, opt, toInt32(args[0]));
+    EXCEPTION_BLOCK(int, opt, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     imp->methodWithOptionalArg(opt);
     return v8::Handle<v8::Value>();
 }
@@ -1002,12 +1002,12 @@ static v8::Handle<v8::Value> methodWithNonOptionalArgAndOptionalArgCallback(cons
 {
     INC_STATS("DOM.TestObj.methodWithNonOptionalArgAndOptionalArg");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, nonOpt, toInt32(args[0]));
+    EXCEPTION_BLOCK(int, nonOpt, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     if (args.Length() <= 1) {
         imp->methodWithNonOptionalArgAndOptionalArg(nonOpt);
         return v8::Handle<v8::Value>();
     }
-    EXCEPTION_BLOCK(int, opt, toInt32(args[1]));
+    EXCEPTION_BLOCK(int, opt, toInt32(MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined)));
     imp->methodWithNonOptionalArgAndOptionalArg(nonOpt, opt);
     return v8::Handle<v8::Value>();
 }
@@ -1016,13 +1016,13 @@ static v8::Handle<v8::Value> methodWithNonOptionalArgAndTwoOptionalArgsCallback(
 {
     INC_STATS("DOM.TestObj.methodWithNonOptionalArgAndTwoOptionalArgs");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, nonOpt, toInt32(args[0]));
+    EXCEPTION_BLOCK(int, nonOpt, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     if (args.Length() <= 1) {
         imp->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt);
         return v8::Handle<v8::Value>();
     }
-    EXCEPTION_BLOCK(int, opt1, toInt32(args[1]));
-    EXCEPTION_BLOCK(int, opt2, toInt32(args[2]));
+    EXCEPTION_BLOCK(int, opt1, toInt32(MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined)));
+    EXCEPTION_BLOCK(int, opt2, toInt32(MAYBE_MISSING_PARAMETER(args, 2, MissingIsUndefined)));
     imp->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1, opt2);
     return v8::Handle<v8::Value>();
 }
@@ -1042,7 +1042,7 @@ static v8::Handle<v8::Value> methodWithNonCallbackArgAndCallbackArgCallback(cons
 {
     INC_STATS("DOM.TestObj.methodWithNonCallbackArgAndCallbackArg");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, nonCallback, toInt32(args[0]));
+    EXCEPTION_BLOCK(int, nonCallback, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     if (args.Length() <= 1 || !args[1]->IsObject())
         return throwError(TYPE_MISMATCH_ERR);
     RefPtr<TestCallback> callback = V8TestCallback::create(args[1], getScriptExecutionContext());
@@ -1091,8 +1091,8 @@ static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args
 {
     INC_STATS("DOM.TestObj.overloadedMethod1");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(args[0]) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, args[1]);
+    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined));
     imp->overloadedMethod(objArg, strArg);
     return v8::Handle<v8::Value>();
 }
@@ -1101,12 +1101,12 @@ static v8::Handle<v8::Value> overloadedMethod2Callback(const v8::Arguments& args
 {
     INC_STATS("DOM.TestObj.overloadedMethod2");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(args[0]) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
+    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
     if (args.Length() <= 1) {
         imp->overloadedMethod(objArg);
         return v8::Handle<v8::Value>();
     }
-    EXCEPTION_BLOCK(int, intArg, toInt32(args[1]));
+    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined)));
     imp->overloadedMethod(objArg, intArg);
     return v8::Handle<v8::Value>();
 }
@@ -1115,7 +1115,7 @@ static v8::Handle<v8::Value> overloadedMethod3Callback(const v8::Arguments& args
 {
     INC_STATS("DOM.TestObj.overloadedMethod3");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, args[0]);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
     imp->overloadedMethod(strArg);
     return v8::Handle<v8::Value>();
 }
@@ -1124,7 +1124,7 @@ static v8::Handle<v8::Value> overloadedMethod4Callback(const v8::Arguments& args
 {
     INC_STATS("DOM.TestObj.overloadedMethod4");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(args[0]));
+    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     imp->overloadedMethod(intArg);
     return v8::Handle<v8::Value>();
 }
@@ -1170,7 +1170,7 @@ static v8::Handle<v8::Value> classMethodWithOptionalCallback(const v8::Arguments
     if (args.Length() <= 0) {
         return v8::Integer::New(TestObj::classMethodWithOptional());
     }
-    EXCEPTION_BLOCK(int, arg, toInt32(args[0]));
+    EXCEPTION_BLOCK(int, arg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
     return v8::Integer::New(TestObj::classMethodWithOptional(arg));
 }
 
@@ -1178,7 +1178,7 @@ static v8::Handle<v8::Value> enabledAtRuntimeMethod1Callback(const v8::Arguments
 {
     INC_STATS("DOM.TestObj.enabledAtRuntimeMethod1");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(args[0]) ? V8int::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
+    EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8int::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
     imp->enabledAtRuntimeMethod1(intArg);
     return v8::Handle<v8::Value>();
 }
@@ -1187,7 +1187,7 @@ static v8::Handle<v8::Value> enabledAtRuntimeMethod2Callback(const v8::Arguments
 {
     INC_STATS("DOM.TestObj.enabledAtRuntimeMethod2");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(args[0]) ? V8int::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
+    EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)) ? V8int::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined))) : 0);
     imp->enabledAtRuntimeMethod2(intArg);
     return v8::Handle<v8::Value>();
 }

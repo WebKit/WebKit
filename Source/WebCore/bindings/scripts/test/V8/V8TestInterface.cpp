@@ -54,8 +54,8 @@ v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& 
         return throwError("Not enough arguments", V8Proxy::TypeError);
 
     ExceptionCode ec = 0;
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str1, args[0]);
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str2, args[1]);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str1, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str2, MAYBE_MISSING_PARAMETER(args, 1, MissingIsUndefined));
 
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)

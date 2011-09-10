@@ -208,7 +208,6 @@ v8 {
         bindings/v8/custom/V8StyleSheetCustom.cpp \
         bindings/v8/custom/V8StyleSheetListCustom.cpp \
         bindings/v8/custom/V8WebKitAnimationCustom.cpp \
-        bindings/v8/custom/V8WebKitCSSMatrixConstructor.cpp \
         bindings/v8/custom/V8WebKitPointConstructor.cpp \
         bindings/v8/custom/V8WorkerContextCustom.cpp \
         bindings/v8/custom/V8WorkerCustom.cpp \

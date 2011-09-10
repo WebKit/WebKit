@@ -1,3 +1,15 @@
+2011-09-09  Kentaro Hara  <haraken@google.com>
+
+        Generate a WebKitCSSMatrix constructor of V8 using the IDL 'Constructor' extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=67458
+
+        Reviewed by Adam Barth.
+
+        Added a test case for "new WebKitCSSMatrix(null)" and "new WebKitCSSMatrix(undefined)".
+
+        * fast/dom/Window/custom-constructors-expected.txt:
+        * fast/dom/Window/custom-constructors.html:
+
 2011-09-09  Dominic Mazzoni  <dmazzoni@google.com>
 
         Add a test to catch a case where an assertion failure or

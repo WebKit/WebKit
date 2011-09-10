@@ -17,6 +17,9 @@
     shouldBe("Option.prototype.toString.call(new Option)", "'[object HTMLOptionElement]'");
     shouldBe("WebKitPoint.prototype.toString.call(new WebKitPoint)", "'[object WebKitPoint]'");
     shouldBe("WebKitCSSMatrix.prototype.toString.call(new WebKitCSSMatrix)", "'matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)'");
+    shouldBe("WebKitCSSMatrix.prototype.toString.call(new WebKitCSSMatrix())", "'matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)'");
+    shouldThrow("new WebKitCSSMatrix(null)");
+    shouldThrow("new WebKitCSSMatrix(undefined)");
     shouldBe("XMLHttpRequest.prototype.toString.call(new XMLHttpRequest)", "'[object XMLHttpRequest]'");
     shouldBe("XSLTProcessor.prototype.toString.call(new XSLTProcessor)", "'[object XSLTProcessor]'");
 

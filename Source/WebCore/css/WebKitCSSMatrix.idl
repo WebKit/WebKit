@@ -30,7 +30,8 @@ module css {
         CanBeConstructed,
         CustomConstructFunction,
         ConstructorParameters=1,
-        V8CustomConstructor
+        Constructor(in [Optional=CallWithNullValue] DOMString cssValue),
+        ConstructorRaisesException,
     ] WebKitCSSMatrix {
 
         // These attributes are simple aliases for certain elements of the 4x4 matrix

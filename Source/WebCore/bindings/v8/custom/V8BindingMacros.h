@@ -46,3 +46,6 @@
     type var(value);                                                 \
     if (!var.prepare())                                              \
         return;
+
+#define MAYBE_MISSING_PARAMETER(args, index, policy) \
+    (((policy) == MissingIsEmpty && (index) >= (args).Length()) ? (v8::Local<v8::Value>()) : ((args)[(index)]))

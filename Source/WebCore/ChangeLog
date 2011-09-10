@@ -1,3 +1,60 @@
+2011-09-09  Kentaro Hara  <haraken@google.com>
+
+        Generate a WebKitCSSMatrix constructor of V8 using the IDL 'Constructor' extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=67458
+
+        Reviewed by Adam Barth.
+
+        Added a 'CallWithNullValue' extended attribute.
+        If a parameter is optional and missing, 'CallWithDefaultValue'
+        handles it as a string "undefined". On the other hand,
+        'CallWithNullValue' handles it as a null string
+        (Note: not a string "null", but a null string).
+
+        Tests: fast/dom/Window/custom-constructors.html
+               transforms/svg-vs-css.xhtml
+               transforms/cssmatrix-2d-interface.xhtml
+               transforms/cssmatrix-3d-interface.xhtmlGenerate a WebKitCSSMatrix constructor
+
+        * WebCore.gypi: Removed V8WebKitCSSMatrixConstructor.cpp.
+        * WebCore.pro: Removed V8WebKitCSSMatrixConstructor.cpp.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateParametersCheck): If the 'CallWithNullValue' extended attribute is set, we call MAYBE_MISSING_PARAMETER() with MissingIsEmpty mode to obtain a maybe missing parameter. Otherwise, we call MAYBE_MISSING_PARAMETER() with MissingIsUndefined mode.
+        (RequiresCustomSignature):
+        * bindings/scripts/test/V8/V8TestInterface.cpp: Updated test results.
+        (WebCore::V8TestInterface::constructorCallback):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp: Ditto.
+        (WebCore::TestMediaQueryListListenerInternal::methodCallback):
+        * bindings/scripts/test/V8/V8TestObj.cpp: Ditto.
+        (WebCore::TestObjInternal::voidMethodWithArgsCallback):
+        (WebCore::TestObjInternal::intMethodWithArgsCallback):
+        (WebCore::TestObjInternal::objMethodWithArgsCallback):
+        (WebCore::TestObjInternal::methodThatRequiresAllArgsCallback):
+        (WebCore::TestObjInternal::methodThatRequiresAllArgsAndThrowsCallback):
+        (WebCore::TestObjInternal::optionsObjectCallback):
+        (WebCore::TestObjInternal::customArgsAndExceptionCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndArgCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndOptionalArgCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndUserGestureCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndUserGestureASADCallback):
+        (WebCore::TestObjInternal::methodWithOptionalArgCallback):
+        (WebCore::TestObjInternal::methodWithNonOptionalArgAndOptionalArgCallback):
+        (WebCore::TestObjInternal::methodWithNonOptionalArgAndTwoOptionalArgsCallback):
+        (WebCore::TestObjInternal::methodWithNonCallbackArgAndCallbackArgCallback):
+        (WebCore::TestObjInternal::overloadedMethod1Callback):
+        (WebCore::TestObjInternal::overloadedMethod2Callback):
+        (WebCore::TestObjInternal::overloadedMethod3Callback):
+        (WebCore::TestObjInternal::overloadedMethod4Callback):
+        (WebCore::TestObjInternal::classMethodWithOptionalCallback):
+        (WebCore::TestObjInternal::enabledAtRuntimeMethod1Callback):
+        (WebCore::TestObjInternal::enabledAtRuntimeMethod2Callback):
+        * bindings/v8/V8Binding.h:
+        (WebCore::V8ParameterBase::prepareBase): The fact that V8ParameterBase does not have any object means that we do not need to prepare anything, i.e. we should just return true in this case.
+        (WebCore::::prepare): If V8ParameterBase does not have any object, then we set a null string.
+        * bindings/v8/custom/V8BindingMacros.h: MAYBE_MISSING_PARAMETER() returns the parameter of a given index if the parameter exists. If the parameter does not exist and MissingIsUndefined is set, this macro returns an object that represents undefined. If the parameter does not exist and MissingIsEmpty is set, this macro returns an empty object.
+        * bindings/v8/custom/V8WebKitCSSMatrixConstructor.cpp: Removed.
+        * css/WebKitCSSMatrix.idl: Added the 'Constructor' extended attribute.
+
 2011-09-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Dan Bernstein.

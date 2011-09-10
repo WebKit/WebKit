@@ -1416,14 +1416,19 @@ sub GenerateParametersCheck
 
         # Optional callbacks should be treated differently, because they always have a default value (0),
         # and we can reduce the number of overloaded functions that take a different number of parameters.
-        # Optional arguments with default values [Optional=CallWithDefaultValue] should not generate an early call.
+        # Optional arguments with default values [Optional=CallWithDefaultValue] or [Optional=CallWithNullValue] should not generate an early call.
         my $optional = $parameter->extendedAttributes->{"Optional"};        
-        if ($optional && $optional ne "CallWithDefaultValue" && !$parameter->extendedAttributes->{"Callback"}) {
+        if ($optional && $optional ne "CallWithDefaultValue" && $optional ne "CallWithNullValue" && !$parameter->extendedAttributes->{"Callback"}) {
             # Generate early call if there are not enough parameters.
             $parameterCheckString .= "    if (args.Length() <= $paramIndex) {\n";
             my $functionCall = GenerateFunctionCallString($function, $paramIndex, "    " x 2, $implClassName);
             $parameterCheckString .= $functionCall;
             $parameterCheckString .= "    }\n";
+        }
+
+        my $parameterMissingPolicy = "MissingIsUndefined";
+        if ($optional && $optional eq "CallWithNullValue") {
+            $parameterMissingPolicy = "MissingIsEmpty";
         }
 
         AddToImplIncludes("ExceptionCode.h");
@@ -1457,7 +1462,7 @@ sub GenerateParametersCheck
             $parameterCheckString .= "        goto fail;\n";
             $parameterCheckString .= "    }\n";
         } elsif ($nativeType =~ /^V8Parameter/) {
-            my $value = JSValueToNative($parameter, "args[$paramIndex]");
+            my $value = JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterMissingPolicy)");
             $parameterCheckString .= "    " . ConvertToV8Parameter($parameter, $nativeType, $parameterName, $value) . "\n";
         } else {
             AddToImplIncludes("V8BindingMacros.h");
@@ -1478,7 +1483,7 @@ sub GenerateParametersCheck
                 }
             }
             $parameterCheckString .= "    EXCEPTION_BLOCK($nativeType, $parameterName, " .
-                 JSValueToNative($parameter, "args[$paramIndex]") . ");\n";
+                 JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterMissingPolicy)") . ");\n";
         }
 
         if ($parameter->extendedAttributes->{"IsIndex"}) {
@@ -3268,7 +3273,7 @@ sub RequiresCustomSignature
     }
     foreach my $parameter (@{$function->parameters}) {
         my $optional = $parameter->extendedAttributes->{"Optional"};
-        if (($optional && ($optional ne "CallWithDefaultValue")) || $parameter->extendedAttributes->{"Callback"}) {
+        if (($optional && $optional ne "CallWithDefaultValue" && $optional ne "CallWithNullValue") || $parameter->extendedAttributes->{"Callback"}) {
             return 0;
         }
     }
