@@ -1,3 +1,52 @@
+2011-09-10  Adam Barth  <abarth@webkit.org>
+
+        Remove DocumentWriter::deprecatedFrameEncoding()
+        https://bugs.webkit.org/show_bug.cgi?id=67882
+
+        Reviewed by Eric Seidel.
+
+        Three years ago, in http://trac.webkit.org/changeset/39026, Alexey
+        Proskuryakov added ContentDispositionEncodingFallbackArray to work
+        around a web site compatibility issue with a non-ASCII file name
+        becoming garbled when received in the Content-Disposition header.
+
+        Since that time, there has been copious discussion of this topic among
+        browser vendors, in the IETF, and in the broader web community.  For
+        example, here is a Stack Overflow thread about this topic:
+
+        http://stackoverflow.com/questions/93551/how-to-encode-the-filename-parameter-of-content-disposition-header-in-http
+
+        Eric Lawrence has written a blog post that summarizes IE's perspective
+        on this issue:
+
+        http://blogs.msdn.com/b/ieinternals/archive/2010/06/07/content-disposition-attachment-and-international-unicode-characters.aspx
+
+        The current consensus is that browsers should implement RFC 6266,
+        which is a new RFC that updates the definition of the
+        Content-Disposition header.  Chrome and Firefox have both implemented
+        RFC 6266 and have encountered only one issue, which was then fixed by
+        the web site operator.  IE has also implemented RFC 6266, but I don't
+        have detailed information about their compatibility experience.
+
+        This patch add explicit PLATFORM #ifdefs around the quirky
+        implementation previously used in Apple's Mac and Windows ports.  This
+        code is already only used on Apple's ports, so this patch introduces no
+        functional changes.  It does, however, discourage other ports from
+        adopting this quirk.  IMHO, Apple should remove this quirk as soon as
+        compatibility allows and converge behavior with the other major browser
+        vendors.
+
+        See bug for manual test (the bug manifests in Safari download UI).
+
+        * loader/DocumentWriter.cpp:
+        * loader/DocumentWriter.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::adopt):
+        (WebCore::ResourceRequestBase::copyData):
+        * platform/network/ResourceRequestBase.h:
+
 2011-09-09  Beth Dakin  <bdakin@apple.com>
 
         Attempted Leopard build fix.

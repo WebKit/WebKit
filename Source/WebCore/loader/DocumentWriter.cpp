@@ -243,6 +243,7 @@ void DocumentWriter::setEncoding(const String& name, bool userChosen)
     m_encodingWasChosenByUser = userChosen;
 }
 
+#if PLATFORM(MAC) || PLATFORM(WIN)
 String DocumentWriter::deprecatedFrameEncoding() const
 {
     if (m_frame->document()->url().isEmpty())
@@ -256,6 +257,7 @@ String DocumentWriter::deprecatedFrameEncoding() const
 
     return String();
 }
+#endif
 
 void DocumentWriter::setDocumentWasLoadedAsPartOfNavigation()
 {
