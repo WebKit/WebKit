@@ -1,3 +1,9 @@
+2011-09-09  Luiz Agostini  <luiz@webkit.org>
+
+        Adding myself to the reviewers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Buildbot may use RunWebKitTest's evaluateCommand on bots that run nrwt
