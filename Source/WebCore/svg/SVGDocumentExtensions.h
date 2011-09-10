@@ -81,6 +81,7 @@ public:
     // For instance, dynamically build gradients / patterns / clippers...
     void addPendingResource(const AtomicString& id, SVGStyledElement*);
     bool hasPendingResources(const AtomicString& id) const;
+    bool isElementInPendingResources(SVGStyledElement*) const;
     void removeElementFromPendingResources(SVGStyledElement*);
     PassOwnPtr<SVGPendingElements> removePendingResource(const AtomicString& id);
 };

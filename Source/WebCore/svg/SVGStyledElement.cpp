@@ -389,7 +389,7 @@ void SVGStyledElement::buildPendingResourcesIfNeeded()
     for (SVGDocumentExtensions::SVGPendingElements::const_iterator it = clients->begin(); it != end; ++it) {
         ASSERT((*it)->hasPendingResources());
         (*it)->buildPendingResource();
-        (*it)->setHasPendingResources(false);
+        (*it)->clearHasPendingResourcesIfPossible();
     }
 }
 
@@ -456,9 +456,15 @@ bool SVGStyledElement::hasPendingResources() const
     return hasRareSVGData() && rareSVGData()->hasPendingResources();
 }
 
-void SVGStyledElement::setHasPendingResources(bool value)
+void SVGStyledElement::setHasPendingResources()
 {
-    ensureRareSVGData()->setHasPendingResources(value);
+    ensureRareSVGData()->setHasPendingResources(true);
+}
+
+void SVGStyledElement::clearHasPendingResourcesIfPossible()
+{
+    if (!document()->accessSVGExtensions()->isElementInPendingResources(this))
+        ensureRareSVGData()->setHasPendingResources(false);
 }
 
 AffineTransform SVGStyledElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope) const

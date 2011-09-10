@@ -1,3 +1,30 @@
+2011-09-10  Ken Buchanan <kenrb@chromium.org>
+
+        Crash due to bad data in SVGDocumentExtensions m_pendingResources
+        https://bugs.webkit.org/show_bug.cgi?id=67488
+
+        Reviewed by Nikolas Zimmermann.
+
+        Resolving a crash condition caused by the deletion of
+        elements while pending resource entries for those elements are still
+        recorded.
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::registerResource)
+        * svg/SVGDocumentExtensions.h:
+        (WebCore::SVGDocumentExtensions::isElementInPendingResources)
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::addPendingResource)
+        (WebCore::SVGDocumentExtensions::isElementInPendingResources)
+        (WebCore::SVGDocumentExtensions::removeElementFromPendingResources)
+        * svg/SVGStyledElement.h:
+        (WebCore::SVGStyledElement::clearHasPendingResourcesIfPossible)
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::buildPendingResourcesIfNeeded)
+        (WebCore::SVGStyledElement::clearHasPendingResourcesIfPossible)
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged)
+
 2011-09-10  Adam Barth  <abarth@webkit.org>
 
         Remove DocumentWriter::deprecatedFrameEncoding()
