@@ -1,3 +1,17 @@
+2011-09-09  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [V8] V8WebKitPoint::constructorCallback leaks
+        https://bugs.webkit.org/show_bug.cgi?id=67865
+
+        Reviewed by Adam Barth.
+
+        Covered by fast/js/instanceof-XMLHttpRequest.html under Valgrind.
+
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp:
+        (WebCore::V8WebKitPoint::constructorCallback): Changed the code
+        to use a RefPtr (per our usual style). Also use toV8 that will
+        take care of properly wrapping the object.
+
 2011-09-09  Chris Rogers  <crogers@google.com>
 
         HRTFDatabaseLoader should not call WTF::waitForThreadCompletion() more than once

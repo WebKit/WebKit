@@ -61,10 +61,9 @@ v8::Handle<v8::Value> V8WebKitPoint::constructorCallback(const v8::Arguments& ar
                 y = 0;
         }
     }
-    PassRefPtr<WebKitPoint> point = WebKitPoint::create(x, y);
-    point->ref();
+    RefPtr<WebKitPoint> point = WebKitPoint::create(x, y);
     V8DOMWrapper::setDOMWrapper(args.Holder(), &info, point.get());
-    return args.Holder();
+    return toV8(point.release(), args.Holder());
 }
 
 } // namespace WebCore
