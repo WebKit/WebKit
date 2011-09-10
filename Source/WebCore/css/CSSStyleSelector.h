@@ -301,7 +301,7 @@ private:
 
     void mapNinePieceImage(CSSPropertyID, CSSValue*, NinePieceImage&);
     void mapNinePieceImageSlice(CSSValue*, NinePieceImage&);
-    void mapNinePieceImageWidth(CSSValue*, NinePieceImage&);
+    LengthBox mapNinePieceImageQuad(CSSValue*);
     void mapNinePieceImageRepeat(CSSValue*, NinePieceImage&);
 
     bool canShareStyleWithControl(StyledElement*) const;

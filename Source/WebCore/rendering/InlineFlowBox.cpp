@@ -152,7 +152,8 @@ void InlineFlowBox::addToLine(InlineBox* child)
             if (box->hasRenderOverflow() || box->hasSelfPaintingLayer())
                 child->clearKnownToHaveNoOverflow();
         } else if (!child->renderer()->isBR() && (child->renderer()->style(m_firstLine)->boxShadow() || child->boxModelObject()->hasSelfPaintingLayer()
-                   || (child->renderer()->isListMarker() && !toRenderListMarker(child->renderer())->isInside())))
+                   || (child->renderer()->isListMarker() && !toRenderListMarker(child->renderer())->isInside())
+                   || child->renderer()->style(m_firstLine)->hasBorderImageOutsets()))
             child->clearKnownToHaveNoOverflow();
         
         if (knownToHaveNoOverflow() && child->isInlineFlowBox() && !toInlineFlowBox(child)->knownToHaveNoOverflow())
@@ -721,22 +722,68 @@ void InlineFlowBox::flipLinesInBlockDirection(LayoutUnit lineTop, LayoutUnit lin
 
 inline void InlineFlowBox::addBoxShadowVisualOverflow(LayoutRect& logicalVisualOverflow)
 {
+    // box-shadow on root line boxes is applying to the block and not to the lines.
     if (!parent())
-        return; // Box-shadow doesn't apply to root line boxes.
+        return;
+
+    RenderStyle* style = renderer()->style(m_firstLine);
+    if (!style->boxShadow())
+        return;
 
     LayoutUnit boxShadowLogicalTop;
     LayoutUnit boxShadowLogicalBottom;
-    renderer()->style(m_firstLine)->getBoxShadowBlockDirectionExtent(boxShadowLogicalTop, boxShadowLogicalBottom);
+    style->getBoxShadowBlockDirectionExtent(boxShadowLogicalTop, boxShadowLogicalBottom);
     
-    LayoutUnit logicalTopVisualOverflow = min(logicalTop() + boxShadowLogicalTop, logicalVisualOverflow.y());
-    LayoutUnit logicalBottomVisualOverflow = max(logicalBottom() + boxShadowLogicalBottom, logicalVisualOverflow.maxY());
+    // Similar to how glyph overflow works, if our lines are flipped, then it's actually the opposite shadow that applies, since
+    // the line is "upside down" in terms of block coordinates.
+    LayoutUnit shadowLogicalTop = style->isFlippedLinesWritingMode() ? -boxShadowLogicalBottom : boxShadowLogicalTop;
+    LayoutUnit shadowLogicalBottom = style->isFlippedLinesWritingMode() ? -boxShadowLogicalTop : boxShadowLogicalBottom;
+    
+    LayoutUnit logicalTopVisualOverflow = min(logicalTop() + shadowLogicalTop, logicalVisualOverflow.y());
+    LayoutUnit logicalBottomVisualOverflow = max(logicalBottom() + shadowLogicalBottom, logicalVisualOverflow.maxY());
     
     LayoutUnit boxShadowLogicalLeft;
     LayoutUnit boxShadowLogicalRight;
-    renderer()->style(m_firstLine)->getBoxShadowInlineDirectionExtent(boxShadowLogicalLeft, boxShadowLogicalRight);
+    style->getBoxShadowInlineDirectionExtent(boxShadowLogicalLeft, boxShadowLogicalRight);
 
     LayoutUnit logicalLeftVisualOverflow = min(pixelSnappedLogicalLeft() + boxShadowLogicalLeft, logicalVisualOverflow.x());
     LayoutUnit logicalRightVisualOverflow = max(pixelSnappedLogicalRight() + boxShadowLogicalRight, logicalVisualOverflow.maxX());
+    
+    logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
+                                       logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
+}
+
+inline void InlineFlowBox::addBorderOutsetVisualOverflow(LayoutRect& logicalVisualOverflow)
+{
+    // border-image-outset on root line boxes is applying to the block and not to the lines.
+    if (!parent())
+        return;
+    
+    RenderStyle* style = renderer()->style(m_firstLine);
+    if (!style->hasBorderImageOutsets())
+        return;
+    
+    LayoutUnit borderOutsetLogicalTop;
+    LayoutUnit borderOutsetLogicalBottom;
+    style->getBorderImageBlockDirectionOutsets(borderOutsetLogicalTop, borderOutsetLogicalBottom);
+
+    // Similar to how glyph overflow works, if our lines are flipped, then it's actually the opposite border that applies, since
+    // the line is "upside down" in terms of block coordinates. vertical-rl and horizontal-bt are the flipped line modes.
+    LayoutUnit outsetLogicalTop = style->isFlippedLinesWritingMode() ? borderOutsetLogicalBottom : borderOutsetLogicalTop;
+    LayoutUnit outsetLogicalBottom = style->isFlippedLinesWritingMode() ? borderOutsetLogicalTop : borderOutsetLogicalBottom;
+
+    LayoutUnit logicalTopVisualOverflow = min(logicalTop() - outsetLogicalTop, logicalVisualOverflow.y());
+    LayoutUnit logicalBottomVisualOverflow = max(logicalBottom() + outsetLogicalBottom, logicalVisualOverflow.maxY());
+    
+    LayoutUnit borderOutsetLogicalLeft;
+    LayoutUnit borderOutsetLogicalRight;
+    style->getBorderImageInlineDirectionOutsets(borderOutsetLogicalLeft, borderOutsetLogicalRight);
+
+    LayoutUnit outsetLogicalLeft = includeLogicalLeftEdge() ? borderOutsetLogicalLeft : 0;
+    LayoutUnit outsetLogicalRight = includeLogicalRightEdge() ? borderOutsetLogicalRight : 0;
+
+    LayoutUnit logicalLeftVisualOverflow = min(pixelSnappedLogicalLeft() - outsetLogicalLeft, logicalVisualOverflow.x());
+    LayoutUnit logicalRightVisualOverflow = max(pixelSnappedLogicalRight() + outsetLogicalRight, logicalVisualOverflow.maxX());
     
     logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
                                        logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
@@ -835,8 +882,8 @@ void InlineFlowBox::computeOverflow(LayoutUnit lineTop, LayoutUnit lineBottom, G
     LayoutRect logicalLayoutOverflow(enclosingLayoutRect(logicalFrameRectIncludingLineHeight(lineTop, lineBottom)));
     LayoutRect logicalVisualOverflow(logicalLayoutOverflow);
   
-    // box-shadow on root line boxes is applying to the block and not to the lines.
     addBoxShadowVisualOverflow(logicalVisualOverflow);
+    addBorderOutsetVisualOverflow(logicalVisualOverflow);
 
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->renderer()->isPositioned())
@@ -1094,6 +1141,37 @@ void InlineFlowBox::constrainToLineTopAndBottomIfNeeded(LayoutRect& rect) const
     }
 }
 
+static LayoutRect clipRectForNinePieceImageStrip(InlineFlowBox* box, const NinePieceImage& image, const LayoutRect& paintRect)
+{
+    LayoutRect clipRect(paintRect);
+    RenderStyle* style = box->renderer()->style();
+    LayoutUnit topOutset;
+    LayoutUnit rightOutset;
+    LayoutUnit bottomOutset;
+    LayoutUnit leftOutset;
+    style->getImageOutsets(image, topOutset, rightOutset, bottomOutset, leftOutset);
+    if (box->isHorizontal()) {
+        clipRect.setY(paintRect.y() - topOutset);
+        clipRect.setHeight(paintRect.height() + topOutset + bottomOutset);
+        if (box->includeLogicalLeftEdge()) {
+            clipRect.setX(paintRect.x() - leftOutset);
+            clipRect.setWidth(paintRect.width() + leftOutset);
+        }
+        if (box->includeLogicalRightEdge())
+            clipRect.setWidth(clipRect.width() + rightOutset);
+    } else {
+        clipRect.setX(paintRect.x() - leftOutset);
+        clipRect.setWidth(paintRect.width() + leftOutset + rightOutset);
+        if (box->includeLogicalLeftEdge()) {
+            clipRect.setY(paintRect.y() - topOutset);
+            clipRect.setHeight(paintRect.height() + topOutset);
+        }
+        if (box->includeLogicalRightEdge())
+            clipRect.setHeight(clipRect.height() + bottomOutset);
+    }
+    return clipRect;
+}
+
 void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
@@ -1126,9 +1204,10 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
         // :first-line cannot be used to put borders on a line. Always paint borders with our
         // non-first-line style.
         if (parent() && renderer()->style()->hasBorder()) {
-            StyleImage* borderImage = renderer()->style()->borderImage().image();
-            bool hasBorderImage = borderImage && borderImage->canRender(styleToUse->effectiveZoom());
-            if (hasBorderImage && !borderImage->isLoaded())
+            const NinePieceImage& borderImage = renderer()->style()->borderImage();
+            StyleImage* borderImageSource = borderImage.image();
+            bool hasBorderImage = borderImageSource && borderImageSource->canRender(styleToUse->effectiveZoom());
+            if (hasBorderImage && !borderImageSource->isLoaded())
                 return; // Don't paint anything while we wait for the image to load.
 
             // The simple case is where we either have no border image or we are the only box for this object.  In those
@@ -1155,8 +1234,9 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
                 LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
                 LayoutUnit stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
 
+                LayoutRect clipRect = clipRectForNinePieceImageStrip(this, borderImage, paintRect);
                 GraphicsContextStateSaver stateSaver(*context);
-                context->clip(paintRect);
+                context->clip(clipRect);
                 boxModelObject()->paintBorder(paintInfo, LayoutRect(stripX, stripY, stripWidth, stripHeight), renderer()->style());
             }
         }
@@ -1222,8 +1302,9 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
         LayoutUnit stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
 
+        LayoutRect clipRect = clipRectForNinePieceImageStrip(this, maskNinePieceImage, paintRect);
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
-        paintInfo.context->clip(paintRect);
+        paintInfo.context->clip(clipRect);
         boxModelObject()->paintNinePieceImage(paintInfo.context, LayoutRect(stripX, stripY, stripWidth, stripHeight), renderer()->style(), maskNinePieceImage, compositeOp);
     }
     

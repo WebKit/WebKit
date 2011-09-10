@@ -58,6 +58,7 @@ border-bottom-style
 border-bottom-width
 border-collapse
 border-color
+border-image-outset
 border-image-repeat
 border-image-slice
 border-image-source
@@ -283,6 +284,7 @@ z-index
 -webkit-mask
 -webkit-mask-attachment
 -webkit-mask-box-image
+-webkit-mask-box-image-outset
 -webkit-mask-box-image-repeat
 -webkit-mask-box-image-slice
 -webkit-mask-box-image-source

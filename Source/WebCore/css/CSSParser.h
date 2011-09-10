@@ -169,7 +169,8 @@ public:
     bool parseBorderImage(int propId, RefPtr<CSSValue>&);
     bool parseBorderImageRepeat(RefPtr<CSSValue>&);
     bool parseBorderImageSlice(int propId, RefPtr<CSSBorderImageSliceValue>&);
-    bool parseBorderImageWidth(int propId, RefPtr<CSSPrimitiveValue>&);
+    bool parseBorderImageWidth(RefPtr<CSSPrimitiveValue>&);
+    bool parseBorderImageOutset(RefPtr<CSSPrimitiveValue>&);
     bool parseBorderRadius(int propId, bool important);
 
     bool parseReflect(int propId, bool important);
@@ -373,6 +374,8 @@ private:
 
     static bool validUnit(CSSParserValue*, Units, bool strict);
 
+    bool parseBorderImageQuad(Units, RefPtr<CSSPrimitiveValue>&);
+    
     PassRefPtr<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue*);
     PassRefPtr<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue*);
 

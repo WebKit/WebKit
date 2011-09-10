@@ -1,3 +1,43 @@
+2011-09-09  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67861
+        
+        Implement border-image-outset (and the mask equivalents).
+
+        Reviewed by Beth Dakin.
+
+        * fast/borders/block-mask-overlay-image-outset.html: Added.
+        * fast/borders/block-mask-overlay-image.html~: Added.
+        * fast/borders/border-image-outset-in-shorthand.html: Added.
+        * fast/borders/border-image-outset-split-inline-vertical-lr.html: Added.
+        * fast/borders/border-image-outset-split-inline.html: Added.
+        * fast/borders/border-image-outset.html: Added.
+        * fast/borders/inline-mask-overlay-image-outset-vertical-rl.html: Added.
+        * fast/borders/inline-mask-overlay-image-outset.html: Added.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-with-zoom-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-border-image-expected.txt:
+        * fast/reflections/reflection-computed-style-expected.txt:
+        * fast/reflections/reflection-masks-outset.html: Added.
+        * platform/mac/fast/borders/block-mask-overlay-image-outset-expected.png: Added.
+        * platform/mac/fast/borders/block-mask-overlay-image-outset-expected.txt: Added.
+        * platform/mac/fast/borders/border-image-outset-expected.png: Added.
+        * platform/mac/fast/borders/border-image-outset-expected.txt: Added.
+        * platform/mac/fast/borders/border-image-outset-in-shorthand-expected.png: Added.
+        * platform/mac/fast/borders/border-image-outset-in-shorthand-expected.txt: Added.
+        * platform/mac/fast/borders/border-image-outset-split-inline-expected.png: Added.
+        * platform/mac/fast/borders/border-image-outset-split-inline-expected.txt: Added.
+        * platform/mac/fast/borders/border-image-outset-split-inline-vertical-lr-expected.png: Added.
+        * platform/mac/fast/borders/border-image-outset-split-inline-vertical-lr-expected.txt: Added.
+        * platform/mac/fast/borders/inline-mask-overlay-image-outset-expected.png: Added.
+        * platform/mac/fast/borders/inline-mask-overlay-image-outset-expected.txt: Added.
+        * platform/mac/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.png: Added.
+        * platform/mac/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.txt: Added.
+        * platform/mac/fast/reflections/reflection-masks-outset-expected.png: Added.
+        * platform/mac/fast/reflections/reflection-masks-outset-expected.txt: Added.
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2011-09-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening after r94897.

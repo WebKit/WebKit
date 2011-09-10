@@ -74,6 +74,7 @@ static const int computedProperties[] = {
     CSSPropertyBorderBottomStyle,
     CSSPropertyBorderBottomWidth,
     CSSPropertyBorderCollapse,
+    CSSPropertyBorderImageOutset,
     CSSPropertyBorderImageRepeat,
     CSSPropertyBorderImageSlice,
     CSSPropertyBorderImageSource,
@@ -229,6 +230,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitMarqueeStyle,
     CSSPropertyWebkitMaskAttachment,
     CSSPropertyWebkitMaskBoxImage,
+    CSSPropertyWebkitMaskBoxImageOutset,
     CSSPropertyWebkitMaskBoxImageRepeat,
     CSSPropertyWebkitMaskBoxImageSlice,
     CSSPropertyWebkitMaskBoxImageSource,
@@ -382,7 +384,7 @@ static PassRefPtr<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const Ni
     return CSSBorderImageSliceValue::create(primitiveValueCache->createValue(quad.release()), image.fill());
 }
 
-static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageWidth(const NinePieceImage& image, CSSPrimitiveValueCache* primitiveValueCache)
+static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box, CSSPrimitiveValueCache* primitiveValueCache)
 {
     // Create the slices.
     RefPtr<CSSPrimitiveValue> top;
@@ -390,38 +392,37 @@ static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageWidth(const NinePiece
     RefPtr<CSSPrimitiveValue> bottom;
     RefPtr<CSSPrimitiveValue> left;
 
-    if (image.borderSlices().top().isRelative())
-        top = primitiveValueCache->createValue(image.borderSlices().top().value(), CSSPrimitiveValue::CSS_NUMBER);
+    if (box.top().isRelative())
+        top = primitiveValueCache->createValue(box.top().value(), CSSPrimitiveValue::CSS_NUMBER);
     else
-        top = primitiveValueCache->createValue(image.borderSlices().top());
+        top = primitiveValueCache->createValue(box.top());
 
-    if (image.borderSlices().right() == image.borderSlices().top() && image.borderSlices().bottom() == image.borderSlices().top() 
-        && image.borderSlices().left() == image.borderSlices().top()) {
+    if (box.right() == box.top() && box.bottom() == box.top() && box.left() == box.top()) {
         right = top;
         bottom = top;
         left = top;
     } else {
-        if (image.borderSlices().right().isRelative())
-            right = primitiveValueCache->createValue(image.borderSlices().right().value(), CSSPrimitiveValue::CSS_NUMBER);
+        if (box.right().isRelative())
+            right = primitiveValueCache->createValue(box.right().value(), CSSPrimitiveValue::CSS_NUMBER);
         else
-            right = primitiveValueCache->createValue(image.borderSlices().right());
+            right = primitiveValueCache->createValue(box.right());
         
-        if (image.borderSlices().bottom() == image.borderSlices().top() && image.borderSlices().right() == image.borderSlices().left()) {
+        if (box.bottom() == box.top() && box.right() == box.left()) {
             bottom = top;
             right = left;
         } else {
-            if (image.borderSlices().bottom().isRelative())
-                bottom = primitiveValueCache->createValue(image.borderSlices().bottom().value(), CSSPrimitiveValue::CSS_NUMBER);
+            if (box.bottom().isRelative())
+                bottom = primitiveValueCache->createValue(box.bottom().value(), CSSPrimitiveValue::CSS_NUMBER);
             else
-                bottom = primitiveValueCache->createValue(image.borderSlices().bottom());
+                bottom = primitiveValueCache->createValue(box.bottom());
     
-            if (image.borderSlices().left() == image.borderSlices().right())
+            if (box.left() == box.right())
                 left = right;
             else {
-                if (image.borderSlices().left().isRelative())
-                    left = primitiveValueCache->createValue(image.borderSlices().left().value(), CSSPrimitiveValue::CSS_NUMBER);
+                if (box.left().isRelative())
+                    left = primitiveValueCache->createValue(box.left().value(), CSSPrimitiveValue::CSS_NUMBER);
                 else
-                    left = primitiveValueCache->createValue(image.borderSlices().left());
+                    left = primitiveValueCache->createValue(box.left());
             }
         }
     }
@@ -462,12 +463,15 @@ static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image, 
     RefPtr<CSSBorderImageSliceValue> imageSlices = valueForNinePieceImageSlice(image, primitiveValueCache);
     
     // Create the border area slices.
-    RefPtr<CSSValue> borderSlices = valueForNinePieceImageWidth(image, primitiveValueCache);
+    RefPtr<CSSValue> borderSlices = valueForNinePieceImageQuad(image.borderSlices(), primitiveValueCache);
+
+    // Create the border outset.
+    RefPtr<CSSValue> outset = valueForNinePieceImageQuad(image.outset(), primitiveValueCache);
 
     // Create the repeat rules.
     RefPtr<CSSValue> repeat = valueForNinePieceImageRepeat(image, primitiveValueCache);
 
-    return CSSBorderImageValue::create(imageValue.release(), imageSlices.release(), borderSlices.release(), repeat);
+    return CSSBorderImageValue::create(imageValue.release(), imageSlices.release(), borderSlices.release(), outset.release(), repeat);
 }
 
 inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedPixelValue(int value, const RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
@@ -1699,20 +1703,24 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createIdentifierValue((style->backfaceVisibility() == BackfaceVisibilityHidden) ? CSSValueHidden : CSSValueVisible);
         case CSSPropertyWebkitBorderImage:
             return valueForNinePieceImage(style->borderImage(), primitiveValueCache);
+        case CSSPropertyBorderImageOutset:
+            return valueForNinePieceImageQuad(style->borderImage().outset(), primitiveValueCache);
         case CSSPropertyBorderImageRepeat:
             return valueForNinePieceImageRepeat(style->borderImage(), primitiveValueCache);
         case CSSPropertyBorderImageSlice:
             return valueForNinePieceImageSlice(style->borderImage(), primitiveValueCache);
         case CSSPropertyBorderImageWidth:
-            return valueForNinePieceImageWidth(style->borderImage(), primitiveValueCache);
+            return valueForNinePieceImageQuad(style->borderImage().borderSlices(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImage:
             return valueForNinePieceImage(style->maskBoxImage(), primitiveValueCache);
+        case CSSPropertyWebkitMaskBoxImageOutset:
+            return valueForNinePieceImageQuad(style->maskBoxImage().outset(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImageRepeat:
             return valueForNinePieceImageRepeat(style->maskBoxImage(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImageSlice:
             return valueForNinePieceImageSlice(style->maskBoxImage(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImageWidth:
-            return valueForNinePieceImageWidth(style->maskBoxImage(), primitiveValueCache);
+            return valueForNinePieceImageQuad(style->maskBoxImage().borderSlices(), primitiveValueCache);
         case CSSPropertyWebkitMaskBoxImageSource:
             if (style->maskBoxImageSource())
                 return style->maskBoxImageSource()->cssValue();

@@ -27,10 +27,11 @@
 namespace WebCore {
 
 CSSBorderImageValue::CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue> imageSlice,
-    PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> repeat)
+    PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> outset, PassRefPtr<CSSValue> repeat)
     : m_image(image)
     , m_imageSlice(imageSlice)
     , m_borderSlice(borderSlice)
+    , m_outset(outset)
     , m_repeat(repeat)
 {
 }
@@ -52,6 +53,11 @@ String CSSBorderImageValue::cssText() const
     if (m_borderSlice) {
         text += " / ";
         text += m_borderSlice->cssText();
+    }
+
+    if (m_outset) {
+        text += " / ";
+        text += m_outset->cssText();
     }
 
     if (m_repeat) {

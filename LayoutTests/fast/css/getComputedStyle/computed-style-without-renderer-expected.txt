@@ -13,6 +13,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     border-bottom-style: none
     border-bottom-width: 0px
     border-collapse: separate
+    border-image-outset: 0px
     border-image-repeat: stretch
     border-image-slice: 100%
     border-image-source: none
@@ -158,6 +159,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-marquee-style: scroll
     -webkit-mask-attachment: scroll
     -webkit-mask-box-image: none
+    -webkit-mask-box-image-outset: 0px
     -webkit-mask-box-image-repeat: stretch
     -webkit-mask-box-image-slice: 0
     -webkit-mask-box-image-source: none

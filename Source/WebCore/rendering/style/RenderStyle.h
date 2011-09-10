@@ -359,6 +359,37 @@ public:
             return true;
         return hasBackgroundImage();
     }
+    
+    void getImageOutsets(const NinePieceImage&, LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const;
+    bool hasBorderImageOutsets() const
+    {
+        return borderImage().hasImage() && borderImage().outset().nonZero();
+    }
+    void getBorderImageOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const
+    {
+        return getImageOutsets(borderImage(), top, right, bottom, left);
+    }
+    void getBorderImageHorizontalOutsets(LayoutUnit& left, LayoutUnit& right) const
+    {
+        return getImageHorizontalOutsets(borderImage(), left, right);
+    }
+    void getBorderImageVerticalOutsets(LayoutUnit& top, LayoutUnit& bottom) const
+    {
+        return getImageVerticalOutsets(borderImage(), top, bottom);
+    }
+    void getBorderImageInlineDirectionOutsets(LayoutUnit& logicalLeft, LayoutUnit& logicalRight) const
+    {
+        return getImageInlineDirectionOutsets(borderImage(), logicalLeft, logicalRight);
+    }
+    void getBorderImageBlockDirectionOutsets(LayoutUnit& logicalTop, LayoutUnit& logicalBottom) const
+    {
+        return getImageBlockDirectionOutsets(borderImage(), logicalTop, logicalBottom);
+    }
+    
+    void getMaskBoxImageOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const
+    {
+        return getImageOutsets(maskBoxImage(), top, right, bottom, left);
+    }
 
     Order rtlOrdering() const { return static_cast<Order>(inherited_flags.m_rtlOrdering); }
     void setRTLOrdering(Order o) { inherited_flags.m_rtlOrdering = o; }
@@ -1436,6 +1467,18 @@ private:
     void getShadowBlockDirectionExtent(const ShadowData* shadow, LayoutUnit& logicalTop, LayoutUnit& logicalBottom) const
     {
         return isHorizontalWritingMode() ? getShadowVerticalExtent(shadow, logicalTop, logicalBottom) : getShadowHorizontalExtent(shadow, logicalTop, logicalBottom);
+    }
+
+    // Helpers for obtaining border image outsets for overflow.
+    void getImageHorizontalOutsets(const NinePieceImage&, LayoutUnit& left, LayoutUnit& right) const;
+    void getImageVerticalOutsets(const NinePieceImage&, LayoutUnit& top, LayoutUnit& bottom) const;
+    void getImageInlineDirectionOutsets(const NinePieceImage& image, LayoutUnit& logicalLeft, LayoutUnit& logicalRight) const
+    {
+        return isHorizontalWritingMode() ? getImageHorizontalOutsets(image, logicalLeft, logicalRight) : getImageVerticalOutsets(image, logicalLeft, logicalRight);
+    }
+    void getImageBlockDirectionOutsets(const NinePieceImage& image, LayoutUnit& logicalTop, LayoutUnit& logicalBottom) const
+    {
+        return isHorizontalWritingMode() ? getImageVerticalOutsets(image, logicalTop, logicalBottom) : getImageHorizontalOutsets(image, logicalTop, logicalBottom);
     }
 
     // Color accessors are all private to make sure callers use visitedDependentColor instead to access them.

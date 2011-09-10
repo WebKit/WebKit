@@ -220,7 +220,7 @@ void RenderEmbeddedObject::layout()
     RenderPart::layout();
 
     m_overflow.clear();
-    addShadowOverflow();
+    addBoxShadowAndBorderOverflow();
 
     updateLayerTransform();
 

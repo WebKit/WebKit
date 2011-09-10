@@ -32,9 +32,9 @@ class Rect;
 class CSSBorderImageValue : public CSSValue {
 public:
     static PassRefPtr<CSSBorderImageValue> create(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue> imageSlice,
-        PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> repeat)
+        PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> outset, PassRefPtr<CSSValue> repeat)
     {
-        return adoptRef(new CSSBorderImageValue(image, imageSlice, borderSlice, repeat));
+        return adoptRef(new CSSBorderImageValue(image, imageSlice, borderSlice, outset, repeat));
     }
     virtual ~CSSBorderImageValue();
 
@@ -55,11 +55,15 @@ public:
     // They can be numbers, percentages or lengths.
     RefPtr<CSSValue> m_borderSlice;
 
+    // The outset values are used to inflate the border image drawing area.
+    RefPtr<CSSValue> m_outset;
+
     // Values for how to handle the scaling/stretching/tiling of the image slices.
     RefPtr<CSSValue> m_repeat;
 
 private:
-    CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue>, PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> repeat);
+    CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue>, PassRefPtr<CSSValue> borderSlice,
+        PassRefPtr<CSSValue> outset, PassRefPtr<CSSValue> repeat);
     virtual bool isBorderImageValue() const { return true; }
 };
 

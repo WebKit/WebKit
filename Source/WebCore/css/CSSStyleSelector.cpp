@@ -3182,6 +3182,23 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setMaskBoxImage(image);
         return;
     }
+    case CSSPropertyBorderImageOutset:
+    case CSSPropertyWebkitMaskBoxImageOutset: {
+        bool isBorderImage = id == CSSPropertyBorderImageOutset;
+        NinePieceImage image(isBorderImage ? m_style->borderImage() : m_style->maskBoxImage());
+        if (isInherit)
+            image.copyOutsetFrom(isBorderImage ? m_parentStyle->borderImage() : m_parentStyle->maskBoxImage());
+        else if (isInitial)
+            image.setOutset(LengthBox());
+        else
+            image.setOutset(mapNinePieceImageQuad(value));
+        
+        if (isBorderImage)
+            m_style->setBorderImage(image);
+        else
+            m_style->setMaskBoxImage(image);
+        return;
+    }
     case CSSPropertyBorderImageRepeat:
     case CSSPropertyWebkitMaskBoxImageRepeat: {
         bool isBorderImage = id == CSSPropertyBorderImageRepeat;
@@ -3229,8 +3246,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             // Masks have a different initial value for slices. They use an 'auto' value rather than trying to fit to the border.
             image.setBorderSlices(isBorderImage ? LengthBox(Length(1, Relative), Length(1, Relative), Length(1, Relative), Length(1, Relative)) : LengthBox());
         } else
-            mapNinePieceImageWidth(value, image);
-        
+            image.setBorderSlices(mapNinePieceImageQuad(value));
+
         if (isBorderImage)
             m_style->setBorderImage(image);
         else
@@ -4596,7 +4613,12 @@ void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value
     mapNinePieceImageSlice(borderImage->m_imageSlice.get(), image);
 
     // Map in the border slices.
-    mapNinePieceImageWidth(borderImage->m_borderSlice.get(), image);
+    if (borderImage->m_borderSlice)
+        image.setBorderSlices(mapNinePieceImageQuad(borderImage->m_borderSlice.get()));
+    
+    // Map in the outset.
+    if (borderImage->m_outset)
+        image.setOutset(mapNinePieceImageQuad(borderImage->m_outset.get()));
 
     if (property == CSSPropertyWebkitBorderImage) {
         // We have to preserve the legacy behavior of -webkit-border-image and make the border slices
@@ -4649,10 +4671,10 @@ void CSSStyleSelector::mapNinePieceImageSlice(CSSValue* value, NinePieceImage& i
     image.setFill(borderImageSlice->m_fill);
 }
 
-void CSSStyleSelector::mapNinePieceImageWidth(CSSValue* value, NinePieceImage& image)
+LengthBox CSSStyleSelector::mapNinePieceImageQuad(CSSValue* value)
 {
     if (!value || !value->isPrimitiveValue())
-        return;
+        return LengthBox();
 
     // Get our zoom value.
     float zoom = useSVGZoomRules() ? 1.0f : style()->effectiveZoom();
@@ -4667,31 +4689,31 @@ void CSSStyleSelector::mapNinePieceImageWidth(CSSValue* value, NinePieceImage& i
         box.m_top = Length(slices->top()->getIntValue(), Relative);
     else if (slices->top()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
         box.m_top = Length(slices->top()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
-    else
+    else if (slices->top()->getIdent() != CSSValueAuto)
         box.m_top = slices->top()->computeLength<Length>(style(), rootElementStyle(), zoom);
 
     if (slices->right()->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
         box.m_right = Length(slices->right()->getIntValue(), Relative);
     else if (slices->right()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
         box.m_right = Length(slices->right()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
-    else
+    else if (slices->right()->getIdent() != CSSValueAuto)
         box.m_right = slices->right()->computeLength<Length>(style(), rootElementStyle(), zoom);
 
     if (slices->bottom()->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
         box.m_bottom = Length(slices->bottom()->getIntValue(), Relative);
     else if (slices->bottom()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
         box.m_bottom = Length(slices->bottom()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
-    else
+    else if (slices->bottom()->getIdent() != CSSValueAuto)
         box.m_bottom = slices->bottom()->computeLength<Length>(style(), rootElementStyle(), zoom);
 
     if (slices->left()->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)
         box.m_left = Length(slices->left()->getIntValue(), Relative);
     else if (slices->left()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
         box.m_left = Length(slices->left()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
-    else
+    else if (slices->left()->getIdent() != CSSValueAuto)
         box.m_left = slices->left()->computeLength<Length>(style(), rootElementStyle(), zoom);
 
-    image.setBorderSlices(box);
+    return box;
 }
 
 void CSSStyleSelector::mapNinePieceImageRepeat(CSSValue* value, NinePieceImage& image)
@@ -5420,7 +5442,7 @@ void CSSStyleSelector::loadPendingImages()
                     const NinePieceImage& maskImage = reflection->mask();
                     if (maskImage.image() && maskImage.image()->isPendingImage()) {
                         CSSImageValue* imageValue = static_cast<StylePendingImage*>(maskImage.image())->cssImageValue();
-                        reflection->setMask(NinePieceImage(imageValue->cachedImage(cachedResourceLoader), maskImage.imageSlices(), maskImage.fill(), maskImage.borderSlices(), maskImage.horizontalRule(), maskImage.verticalRule()));
+                        reflection->setMask(NinePieceImage(imageValue->cachedImage(cachedResourceLoader), maskImage.imageSlices(), maskImage.fill(), maskImage.borderSlices(), maskImage.outset(), maskImage.horizontalRule(), maskImage.verticalRule()));
                     }
                 }
                 break;

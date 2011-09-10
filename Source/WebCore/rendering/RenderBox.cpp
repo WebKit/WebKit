@@ -988,15 +988,31 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
 
 LayoutRect RenderBox::maskClipRect()
 {
-    LayoutRect bbox = borderBoxRect();
-    if (style()->maskBoxImage().image())
-        return bbox;
+    const NinePieceImage& maskBoxImage = style()->maskBoxImage();
+    if (maskBoxImage.image()) {
+        LayoutRect borderImageRect = borderBoxRect();
+        
+        // Apply outsets to the border box.
+        LayoutUnit topOutset;
+        LayoutUnit rightOutset;
+        LayoutUnit bottomOutset;
+        LayoutUnit leftOutset;
+        style()->getMaskBoxImageOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
+         
+        borderImageRect.setX(borderImageRect.x() - leftOutset);
+        borderImageRect.setY(borderImageRect.y() - topOutset);
+        borderImageRect.setWidth(borderImageRect.width() + leftOutset + rightOutset);
+        borderImageRect.setHeight(borderImageRect.height() + topOutset + bottomOutset);
+
+        return borderImageRect;
+    }
     
     LayoutRect result;
+    LayoutRect borderBox = borderBoxRect();
     for (const FillLayer* maskLayer = style()->maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
         if (maskLayer->image()) {
             BackgroundImageGeometry geometry;
-            calculateBackgroundImageGeometry(maskLayer, bbox, geometry);
+            calculateBackgroundImageGeometry(maskLayer, borderBox, geometry);
             result.unite(geometry.destRect());
         }
     }
@@ -3246,19 +3262,53 @@ bool RenderBox::avoidsFloats() const
     return isReplaced() || hasOverflowClip() || isHR() || isLegend() || isWritingModeRoot() || isDeprecatedFlexItem();
 }
 
-void RenderBox::addShadowOverflow()
+void RenderBox::addBoxShadowAndBorderOverflow()
 {
-    LayoutUnit shadowLeft;
-    LayoutUnit shadowRight;
-    LayoutUnit shadowTop;
-    LayoutUnit shadowBottom;
-    style()->getBoxShadowExtent(shadowTop, shadowRight, shadowBottom, shadowLeft);
+    if (!style()->boxShadow() && !style()->hasBorderImageOutsets())
+        return;
+
+    bool isFlipped = style()->isFlippedBlocksWritingMode();
+    bool isHorizontal = isHorizontalWritingMode();
+    
     LayoutRect borderBox = borderBoxRect();
-    LayoutUnit overflowLeft = borderBox.x() + shadowLeft;
-    LayoutUnit overflowRight = borderBox.maxX() + shadowRight;
-    LayoutUnit overflowTop = borderBox.y() + shadowTop;
-    LayoutUnit overflowBottom = borderBox.maxY() + shadowBottom;
-    addVisualOverflow(LayoutRect(overflowLeft, overflowTop, overflowRight - overflowLeft, overflowBottom - overflowTop));
+    LayoutUnit overflowMinX = borderBox.x();
+    LayoutUnit overflowMaxX = borderBox.maxX();
+    LayoutUnit overflowMinY = borderBox.y();
+    LayoutUnit overflowMaxY = borderBox.maxY();
+    
+    // Compute box-shadow overflow first.
+    if (style()->boxShadow()) {
+        LayoutUnit shadowLeft;
+        LayoutUnit shadowRight;
+        LayoutUnit shadowTop;
+        LayoutUnit shadowBottom;
+        style()->getBoxShadowExtent(shadowTop, shadowRight, shadowBottom, shadowLeft);
+
+        // In flipped blocks writing modes such as vertical-rl, the physical right shadow value is actually at the lower x-coordinate.
+        overflowMinX = borderBox.x() + ((!isFlipped || isHorizontal) ? shadowLeft : -shadowRight);
+        overflowMaxX = borderBox.maxX() + ((!isFlipped || isHorizontal) ? shadowRight : -shadowLeft);
+        overflowMinY = borderBox.y() + ((!isFlipped || !isHorizontal) ? shadowTop : -shadowBottom);
+        overflowMaxY = borderBox.maxY() + ((!isFlipped || !isHorizontal) ? shadowBottom : -shadowTop);
+    }
+
+    // Now compute border-image-outset overflow.
+    if (style()->hasBorderImageOutsets()) {
+        LayoutUnit borderOutsetLeft;
+        LayoutUnit borderOutsetRight;
+        LayoutUnit borderOutsetTop;
+        LayoutUnit borderOutsetBottom;
+        style()->getBorderImageOutsets(borderOutsetTop, borderOutsetRight, borderOutsetBottom, borderOutsetLeft);
+        
+        // In flipped blocks writing modes, the physical sides are inverted. For example in vertical-rl, the right
+        // border is at the lower x coordinate value.
+        overflowMinX = min(overflowMinX, borderBox.x() - ((!isFlipped || isHorizontal) ? borderOutsetLeft : borderOutsetRight));
+        overflowMaxX = max(overflowMaxX, borderBox.maxX() + ((!isFlipped || isHorizontal) ? borderOutsetRight : borderOutsetLeft));
+        overflowMinY = min(overflowMinY, borderBox.y() - ((!isFlipped || !isHorizontal) ? borderOutsetTop : borderOutsetBottom));
+        overflowMaxY = max(overflowMaxY, borderBox.maxY() + ((!isFlipped || !isHorizontal) ? borderOutsetBottom : borderOutsetTop));
+    }
+
+    // Add in the final overflow with shadows and outsets combined.
+    addVisualOverflow(LayoutRect(overflowMinX, overflowMinY, overflowMaxX - overflowMinX, overflowMaxY - overflowMinY));
 }
 
 void RenderBox::addOverflowFromChild(RenderBox* child, const LayoutSize& delta)

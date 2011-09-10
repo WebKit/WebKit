@@ -1,3 +1,135 @@
+2011-09-09  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67861
+        
+        Implement border-image-outset (and the mask equivalents).
+
+        Reviewed by Beth Dakin.
+
+        Added new tests in fast/borders and fast/reflections.
+
+        * css/CSSBorderImageValue.cpp:
+        (WebCore::CSSBorderImageValue::CSSBorderImageValue):
+        (WebCore::CSSBorderImageValue::cssText):
+        * css/CSSBorderImageValue.h:
+        (WebCore::CSSBorderImageValue::create):
+        Add m_outset field to CSSBorderImageValue and teach it how to dump the field as
+        part of cssText().
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForNinePieceImageQuad):
+        (WebCore::valueForNinePieceImage):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Add support for border-image-outset and -webkit-mask-box-image-outset. Refactor
+        the code so that border-image-width and border-image-outset use a common
+        function.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::BorderImageParseContext::BorderImageParseContext):
+        (WebCore::BorderImageParseContext::allowOutset):
+        (WebCore::BorderImageParseContext::commitSlash):
+        (WebCore::BorderImageParseContext::commitBorderWidth):
+        (WebCore::BorderImageParseContext::commitBorderOutset):
+        (WebCore::BorderImageParseContext::commitRepeat):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (WebCore::CSSParser::parseBorderImage):
+        Teach the border image parsing code about outsets. This code will soon be
+        replaced by true shorthand parsing code, but for now keep it working and add
+        outset support to it.
+
+        (WebCore::BorderImageQuadParseContext::BorderImageQuadParseContext):
+        (WebCore::BorderImageQuadParseContext::commitBorderImageQuad):
+        (WebCore::CSSParser::parseBorderImageQuad):
+        (WebCore::CSSParser::parseBorderImageWidth):
+        (WebCore::CSSParser::parseBorderImageOutset):
+        * css/CSSParser.h:
+        Refactor the border-image-width code so that it can be shared by border-image-outset, since
+        they are extremely similar.
+
+        * css/CSSPropertyNames.in:
+        Add the new properties.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapNinePieceImage):
+        (WebCore::CSSStyleSelector::mapNinePieceImageQuad):
+        (WebCore::CSSStyleSelector::loadPendingImages):
+        * css/CSSStyleSelector.h:
+        Refactor the code so that width/outset share common mapping functions. Add support for outset.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::addBoxShadowVisualOverflow):
+        (WebCore::InlineFlowBox::addBorderOutsetVisualOverflow):
+        (WebCore::InlineFlowBox::computeOverflow):
+        Add new functions for computing the visual overflow caused by border outsets. Fix bugs in
+        the shadow overflow code as well.
+
+        (WebCore::clipRectForNinePieceImageStrip):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/InlineFlowBox.h:
+        Make sure the clip rect pushed when painting one piece of a split inline strip is expanded to
+        include the border and mask outsets. Always include the block direction expansion, and conditionally
+        include the inline direction expansion based off includeLogicalLeftEdge()/includeLogicalRightEdge().
+        clipRectForNinePieceImageStrip is a common function shared by masks and border images that does this
+        work.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeOverflow):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::maskClipRect):
+        (WebCore::RenderBox::addBoxShadowAndBorderOverflow):
+        * rendering/RenderBox.h:
+        Rename addShadowOverflow to addBoxShadowAndBorderOverflow. Have it compute both shadow and border image
+        outset overflow. Fix bugs with shadow overflow computation.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        Change painting to apply the outsets to inflate the border image drawing area.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::layout):
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::layout):
+        Patched to call the renamed addBoxShadowAndBorderOverflow function instead of addShadowOverflow.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateRects):
+        Patched to no longer apply box-shadow to overflow clip areas when inflating the intersection area for the
+        layer bounds. Instead we generically apply all visual overflow so that border image outsets will also be
+        included. This fixes https://bugs.webkit.org/show_bug.cgi?id=37467.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::layout):
+        Patched to call the renamed addBoxShadowAndBorderOverflow function instead of addShadowOverflow.
+
+        * rendering/style/NinePieceImage.cpp:
+        (WebCore::NinePieceImage::operator==):
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImage::NinePieceImage):
+        (WebCore::NinePieceImage::outset):
+        (WebCore::NinePieceImage::setOutset):
+        (WebCore::NinePieceImage::computeOutset):
+        (WebCore::NinePieceImage::copyOutsetFrom):
+        Add the outset field to NinePieceImage along with some helpers for manipulating outsets.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getImageOutsets):
+        (WebCore::RenderStyle::getImageHorizontalOutsets):
+        (WebCore::RenderStyle::getImageVerticalOutsets):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hasBorderImageOutsets):
+        (WebCore::InheritedFlags::getBorderImageOutsets):
+        (WebCore::InheritedFlags::getBorderImageHorizontalOutsets):
+        (WebCore::InheritedFlags::getBorderImageVerticalOutsets):
+        (WebCore::InheritedFlags::getBorderImageInlineDirectionOutsets):
+        (WebCore::InheritedFlags::getBorderImageBlockDirectionOutsets):
+        (WebCore::InheritedFlags::getImageInlineDirectionOutsets):
+        (WebCore::InheritedFlags::getImageBlockDirectionOutsets):
+        Helpers for outset computation used by painting and overflow functions.
+
 2011-09-10  Dan Bernstein  <mitz@apple.com>
 
         Actually prevent unnecessary casts to MediaControls*.
