@@ -275,7 +275,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                 image = m_imageResource->cachedImage()->brokenImage(deviceScaleFactor);
                 IntSize imageSize = image->size();
                 if (deviceScaleFactor >= 2)
-                    imageSize.scale(0.5);
+                    imageSize.scale(0.5f);
                 // Center the error image, accounting for border and padding.
                 LayoutUnit centerX = (usableWidth - imageSize.width()) / 2;
                 if (centerX < 0)
