@@ -118,6 +118,9 @@ module core {
 
         unsigned short     compareDocumentPosition(in [Optional=CallWithDefaultValue] Node other);
 
+        // Introduced in DOM4
+        boolean contains(in [Optional=CallWithDefaultValue] Node other);
+
 #if 0
         DOMObject          getFeature(in DOMString feature, 
                                       in DOMString version);
