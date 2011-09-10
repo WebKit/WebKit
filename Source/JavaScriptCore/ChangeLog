@@ -1,3 +1,24 @@
+2011-09-10  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT completely undoes speculative compilation even in the case of
+        a partial static speculation failure
+        https://bugs.webkit.org/show_bug.cgi?id=67798
+
+        Reviewed by Geoffrey Garen.
+        
+        This is a regression with static speculation, so it is turned off by
+        default.  But it is a necessary prerequisite for further work on
+        dynamic speculation.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::clearGenerationInfo):
+        * dfg/DFGJITCodeGenerator.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+
 2011-09-09  Chris Marrin  <cmarrin@apple.com>
 
         requestAnimationFrame doesn't throttle on Mac

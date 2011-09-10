@@ -217,7 +217,19 @@ private:
     // Called when we statically determine that a speculation will fail.
     void terminateSpeculativeExecution()
     {
+#if DFG_DEBUG_VERBOSE
+        fprintf(stderr, "SpeculativeJIT was terminated.\n");
+#endif
+#if ENABLE(DYNAMIC_TERMINATE_SPECULATION)
+        if (!m_compileOkay)
+            return;
+        speculationCheck(m_jit.jump());
         m_compileOkay = false;
+#else
+        // Under static speculation, it's more profitable to give up entirely at this
+        // point.
+        m_compileOkay = false;
+#endif
     }
 
     template<bool strict>

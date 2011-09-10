@@ -34,6 +34,14 @@
 
 namespace JSC { namespace DFG {
 
+void JITCodeGenerator::clearGenerationInfo()
+{
+    for (unsigned i = 0; i < m_generationInfo.size(); ++i)
+        m_generationInfo[i] = GenerationInfo();
+    m_gprs = RegisterBank<GPRInfo>();
+    m_fprs = RegisterBank<FPRInfo>();
+}
+
 GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnFormat)
 {
     Node& node = m_jit.graph()[nodeIndex];

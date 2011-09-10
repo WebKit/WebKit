@@ -202,6 +202,8 @@ protected:
         , m_blockHeads(jit.graph().m_blocks.size())
     {
     }
+    
+    void clearGenerationInfo();
 
     // These methods are used when generating 'unexpected'
     // calls out from JIT code to C++ helper routines -

@@ -851,10 +851,6 @@ void JITCompiler::compileBody()
         // Link the bail-outs from the speculative path to the corresponding entry points into the non-speculative one.
         linkSpeculationChecks(speculative, nonSpeculative);
     } else {
-#if DFG_DEBUG_VERBOSE
-        fprintf(stderr, "SpeculativeJIT was terminated.\n");
-#endif
-
         // If compilation through the SpeculativeJIT failed, throw away the code we generated.
         m_calls.clear();
         m_propertyAccesses.clear();

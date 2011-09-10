@@ -39,19 +39,21 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
+        if (node.isConstant() && !isInt32Constant(nodeIndex)) {
+            terminateSpeculativeExecution();
+            returnFormat = DataFormatInteger;
+            return allocate();
+        }
+        
         GPRReg gpr = allocate();
 
         if (node.isConstant()) {
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-            if (isInt32Constant(nodeIndex)) {
-                m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
-                info.fillInteger(gpr);
-                returnFormat = DataFormatInteger;
-                return gpr;
-            }
-            terminateSpeculativeExecution();
+            ASSERT(isInt32Constant(nodeIndex));
+            m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
+            info.fillInteger(gpr);
             returnFormat = DataFormatInteger;
-            return allocate();
+            return gpr;
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat & DataFormatJS);
@@ -1374,6 +1376,7 @@ void SpeculativeJIT::compile(Node& node)
 
 void SpeculativeJIT::compile(BasicBlock& block)
 {
+    ASSERT(m_compileOkay);
     ASSERT(m_compileIndex == block.begin);
     m_blockHeads[m_block] = m_jit.label();
 #if DFG_JIT_BREAK_ON_EVERY_BLOCK
@@ -1384,7 +1387,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
         Node& node = m_jit.graph()[m_compileIndex];
         if (!node.shouldGenerate())
             continue;
-
+        
 #if DFG_DEBUG_VERBOSE
         fprintf(stderr, "SpeculativeJIT generating Node @%d at JIT offset 0x%x   ", (int)m_compileIndex, m_jit.debugOffset());
 #endif
@@ -1393,8 +1396,14 @@ void SpeculativeJIT::compile(BasicBlock& block)
 #endif
         checkConsistency();
         compile(node);
-        if (!m_compileOkay)
+        if (!m_compileOkay) {
+#if ENABLE(DYNAMIC_TERMINATE_SPECULATION)
+            m_compileOkay = true;
+            m_compileIndex = block.end;
+            clearGenerationInfo();
+#endif
             return;
+        }
 #if DFG_DEBUG_VERBOSE
         if (node.hasResult())
             fprintf(stderr, "-> %s\n", dataFormatToString(m_generationInfo[node.virtualRegister()].registerFormat()));
@@ -1445,8 +1454,10 @@ bool SpeculativeJIT::compile()
     ASSERT(!m_compileIndex);
     for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block) {
         compile(*m_jit.graph().m_blocks[m_block]);
+#if !ENABLE(DYNAMIC_OPTIMIZATION)
         if (!m_compileOkay)
             return false;
+#endif
     }
     linkBranches();
     return true;
