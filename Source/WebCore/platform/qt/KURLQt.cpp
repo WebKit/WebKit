@@ -46,7 +46,7 @@ String KURL::fileSystemPath() const
     if (!isValid() || !protocolIs("file"))
         return String();
 
-    return String(path());
+    return static_cast<QUrl>(*this).toLocalFile();
 }
 
 }

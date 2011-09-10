@@ -101,6 +101,7 @@ private slots:
     void popupFormSubmission();
     void acceptNavigationRequestWithNewWindow();
     void userStyleSheet();
+    void userStyleSheetFromLocalFileUrl();
     void loadHtml5Video();
     void modified();
     void contextMenuCrash();
@@ -465,10 +466,23 @@ void tst_QWebPage::userStyleSheet()
 {
     TestNetworkManager* networkManager = new TestNetworkManager(m_page);
     m_page->setNetworkAccessManager(networkManager);
-    networkManager->requestedUrls.clear();
 
     m_page->settings()->setUserStyleSheetUrl(QUrl("data:text/css;charset=utf-8;base64,"
             + QByteArray("p { background-image: url('http://does.not/exist.png');}").toBase64()));
+    m_view->setHtml("<p>hello world</p>");
+    QVERIFY(::waitForSignal(m_view, SIGNAL(loadFinished(bool))));
+
+    QVERIFY(networkManager->requestedUrls.count() >= 1);
+    QCOMPARE(networkManager->requestedUrls.at(0), QUrl("http://does.not/exist.png"));
+}
+
+void tst_QWebPage::userStyleSheetFromLocalFileUrl()
+{
+    TestNetworkManager* networkManager = new TestNetworkManager(m_page);
+    m_page->setNetworkAccessManager(networkManager);
+
+    QUrl styleSheetUrl = QUrl::fromLocalFile(TESTS_SOURCE_DIR + QLatin1String("qwebpage/resources/user.css"));
+    m_page->settings()->setUserStyleSheetUrl(styleSheetUrl);
     m_view->setHtml("<p>hello world</p>");
     QVERIFY(::waitForSignal(m_view, SIGNAL(loadFinished(bool))));
 

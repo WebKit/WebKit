@@ -1,3 +1,16 @@
+2011-09-10  Jarred Nicholls  <jarred@sencha.com>
+
+        [Qt] QWebSettings::setUserStyleSheetUrl() does not work with windows paths that contain drive letters
+        https://bugs.webkit.org/show_bug.cgi?id=34884
+        
+        KURL::path() alone does not handle removing the leading slash from a windows file path.
+        Using QUrl::toLocalFile() will turn file:///C:/path into C:/path appropriately.
+
+        Reviewed by Andreas Kling.
+
+        * platform/qt/KURLQt.cpp:
+        (WebCore::KURL::fileSystemPath):
+
 2011-09-10  Ken Buchanan <kenrb@chromium.org>
 
         Crash due to bad data in SVGDocumentExtensions m_pendingResources

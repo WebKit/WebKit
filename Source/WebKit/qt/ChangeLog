@@ -1,3 +1,21 @@
+2011-09-10  Jarred Nicholls  <jarred@sencha.com>
+
+        [Qt] QWebSettings::setUserStyleSheetUrl() does not work with windows paths that contain drive letters
+        https://bugs.webkit.org/show_bug.cgi?id=34884
+        
+        KURL::path() alone does not handle removing the leading slash from a windows file path.
+        Using QUrl::toLocalFile() will turn file:///C:/path into C:/path appropriately.
+        
+        New test case that ensures a user stylesheet from the file system will load correctly
+        on all platforms.
+
+        Reviewed by Andreas Kling.
+
+        * tests/qwebpage/resources/user.css: Added.
+        (p):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::userStyleSheetFromFile):
+
 2011-09-09  Fady Samuel  <fsamuel@chromium.org>
 
         Move pageScaleFactor code from Frame.{h|cpp} to Page.{h|cpp}
