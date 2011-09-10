@@ -1,3 +1,10 @@
+2011-09-10  Adam Barth  <abarth@webkit.org>
+
+        Fix build break.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_encoding):
+
 2011-09-09  Fady Samuel  <fsamuel@chromium.org>
 
         Move pageScaleFactor code from Frame.{h|cpp} to Page.{h|cpp}
