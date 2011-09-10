@@ -84,9 +84,11 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
     ASSERT_ARG(newImage, newImage);
     ASSERT_ARG(newImage, newImage->image());
 
+    Image* brokenImage = newImage->brokenImage(Page::deviceScaleFactor(frame()));
+
     // imageSize() returns 0 for the error image. We need the true size of the
     // error image, so we have to get it by grabbing image() directly.
-    return IntSize(paddingWidth + newImage->image()->width() * style()->effectiveZoom(), paddingHeight + newImage->image()->height() * style()->effectiveZoom());
+    return IntSize(paddingWidth + brokenImage->width() * style()->effectiveZoom(), paddingHeight + brokenImage->height() * style()->effectiveZoom());
 }
 
 // Sets the image height and width to fit the alt text.  Returns true if the
@@ -268,15 +270,21 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             RefPtr<Image> image = m_imageResource->image();
 
             if (m_imageResource->errorOccurred() && !image->isNull() && usableWidth >= image->width() && usableHeight >= image->height()) {
+                float deviceScaleFactor = Page::deviceScaleFactor(frame());
+                // Call brokenImage() explicitly to ensure we get the broken image icon at the appropriate resolution.
+                image = m_imageResource->cachedImage()->brokenImage(deviceScaleFactor);
+                IntSize imageSize = image->size();
+                if (deviceScaleFactor >= 2)
+                    imageSize.scale(0.5);
                 // Center the error image, accounting for border and padding.
-                LayoutUnit centerX = (usableWidth - image->width()) / 2;
+                LayoutUnit centerX = (usableWidth - imageSize.width()) / 2;
                 if (centerX < 0)
                     centerX = 0;
-                LayoutUnit centerY = (usableHeight - image->height()) / 2;
+                LayoutUnit centerY = (usableHeight - imageSize.height()) / 2;
                 if (centerY < 0)
                     centerY = 0;
                 imageOffset = LayoutSize(leftBorder + leftPad + centerX + 1, topBorder + topPad + centerY + 1);
-                context->drawImage(image.get(), style()->colorSpace(), paintOffset + imageOffset);
+                context->drawImage(image.get(), style()->colorSpace(), IntRect(paintOffset + imageOffset, imageSize));
                 errorPictureDrawn = true;
             }
 

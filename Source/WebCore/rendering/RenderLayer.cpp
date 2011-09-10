@@ -2414,6 +2414,28 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, const LayoutPoint&
         context->fillRect(absRect, Color::white, box->style()->colorSpace());
 }
 
+void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, LayoutRect resizerCornerRect)
+{
+    float deviceScaleFactor = Page::deviceScaleFactor(renderer()->frame());
+    printf("RenderLayer deviceScaleFactor=%f\n", deviceScaleFactor);
+
+    RefPtr<Image> resizeCornerImage;
+    IntSize cornerResizerSize;
+    if (deviceScaleFactor >= 2) {
+        DEFINE_STATIC_LOCAL(Image*, resizeCornerImageHiRes, (Image::loadPlatformResource("textAreaResizeCorner@2x").leakRef()));
+        resizeCornerImage = resizeCornerImageHiRes;
+        cornerResizerSize = resizeCornerImage->size();
+        cornerResizerSize.scale(0.5);
+    } else {
+        DEFINE_STATIC_LOCAL(Image*, resizeCornerImageLoRes, (Image::loadPlatformResource("textAreaResizeCorner").leakRef()));
+        resizeCornerImage = resizeCornerImageLoRes;
+        cornerResizerSize = resizeCornerImage->size();
+    }
+
+    IntRect imageRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize);
+    context->drawImage(resizeCornerImage.get(), renderer()->style()->colorSpace(), imageRect);
+}
+
 void RenderLayer::paintResizer(GraphicsContext* context, const LayoutPoint& paintOffset, const LayoutRect& damageRect)
 {
     if (renderer()->style()->resize() == RESIZE_NONE)
@@ -2437,10 +2459,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, const LayoutPoint& pain
         return;
     }
 
-    // Paint the resizer control.
-    DEFINE_STATIC_LOCAL(RefPtr<Image>, resizeCornerImage, (Image::loadPlatformResource("textAreaResizeCorner")));
-    LayoutPoint imagePoint(absRect.maxX() - resizeCornerImage->width(), absRect.maxY() - resizeCornerImage->height());
-    context->drawImage(resizeCornerImage.get(), box->style()->colorSpace(), imagePoint);
+    drawPlatformResizerImage(context, absRect);
 
     // Draw a frame around the resizer (1px grey line) if there are any scrollbars present.
     // Clipping will exclude the right and bottom edges of this frame.

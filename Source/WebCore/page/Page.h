@@ -249,6 +249,7 @@ namespace WebCore {
 
         float deviceScaleFactor() const { return m_deviceScaleFactor; }
         void setDeviceScaleFactor(float);
+        static float deviceScaleFactor(Frame*);
 
         // Notifications when the Page starts and stops being presented via a native window.
         void didMoveOnscreen();

@@ -569,8 +569,6 @@
 		1C11CCC60AA6093700DADB20 /* DOMDocumentFragment.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85089CD30A98C42800A275AA /* DOMDocumentFragment.h */; };
 		1C11CCC70AA6093700DADB20 /* DOMCDATASection.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85089CCF0A98C42700A275AA /* DOMCDATASection.h */; };
 		1C11CCC80AA6093700DADB20 /* DOMHTMLElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85DF2EEB0AA387CB00AD64C5 /* DOMHTMLElement.h */; };
-		1C14E76B0AD8C81C00B6158B /* deleteButtonPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1C14E7690AD8C81C00B6158B /* deleteButtonPressed.tiff */; };
-		1C14E76C0AD8C81C00B6158B /* deleteButton.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 1C14E76A0AD8C81C00B6158B /* deleteButton.tiff */; };
 		1C26497A0D7E248A00BD10F2 /* DocumentLoaderMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */; };
 		1C26497C0D7E24EC00BD10F2 /* PageMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */; };
 		1C4C8F020AD85D87009475CE /* DeleteButtonController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4C8F000AD85D87009475CE /* DeleteButtonController.h */; };
@@ -1699,7 +1697,6 @@
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
 		750D029311D0E7F300BD1B27 /* RenderInputSpeech.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 750D029111D0E7F300BD1B27 /* RenderInputSpeech.cpp */; };
 		750D029411D0E7F300BD1B27 /* RenderInputSpeech.h in Headers */ = {isa = PBXBuildFile; fileRef = 750D029211D0E7F300BD1B27 /* RenderInputSpeech.h */; };
-		750D02C111D0EE7D00BD1B27 /* inputSpeech.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 750D02C011D0EE7D00BD1B27 /* inputSpeech.tiff */; };
 		7535BC9412020CFF0037EC45 /* SpeechInputClientMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7535BC9212020CFF0037EC45 /* SpeechInputClientMock.cpp */; };
 		7535BC9512020CFF0037EC45 /* SpeechInputClientMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 7535BC9312020CFF0037EC45 /* SpeechInputClientMock.h */; };
 		754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 754133A7102E00E800075D00 /* InspectorTimelineAgent.h */; };
@@ -2922,6 +2919,14 @@
 		9307F1D80AF2D59000DBA31A /* HitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 9307F1D60AF2D59000DBA31A /* HitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930908910AF7EDE40081DF01 /* HitTestRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 930908900AF7EDE40081DF01 /* HitTestRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930FC68A1072B9280045293E /* TextRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 930FC6891072B9280045293E /* TextRenderingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93153BCD1417FBBF00FCF5BE /* deleteButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BCC1417FBBF00FCF5BE /* deleteButton@2x.png */; };
+		93153BCF1417FBDB00FCF5BE /* deleteButtonPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BCE1417FBDB00FCF5BE /* deleteButtonPressed@2x.png */; };
+		93153BDA14181F7A00FCF5BE /* missingImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BD914181F7A00FCF5BE /* missingImage@2x.png */; };
+		93153BDC141959BC00FCF5BE /* textAreaResizeCorner.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BDB141959BB00FCF5BE /* textAreaResizeCorner.png */; };
+		93153BDE141959F400FCF5BE /* deleteButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BDD141959F400FCF5BE /* deleteButton.png */; };
+		93153BE014195A2800FCF5BE /* deleteButtonPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BDF14195A2800FCF5BE /* deleteButtonPressed.png */; };
+		93153BE214195A5700FCF5BE /* missingImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BE114195A5700FCF5BE /* missingImage.png */; };
+		93153BE414195B2A00FCF5BE /* inputSpeech.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BE314195B2900FCF5BE /* inputSpeech.png */; };
 		931BCC611124DFCB00BE70DD /* MediaCanStartListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 931BCC601124DFCB00BE70DD /* MediaCanStartListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9326DC0C09DAD5D600AFC847 /* CharsetData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AC09D14EE6000E61D7 /* CharsetData.cpp */; };
 		9327A94209968D1A0068A546 /* HTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */; };
@@ -3040,6 +3045,7 @@
 		9362640B0DE1137D009D5A00 /* CSSReflectionDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9362640A0DE1137D009D5A00 /* CSSReflectionDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9363B62C0F8E8FE000803810 /* HistoryPropertyList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9363B62A0F8E8FE000803810 /* HistoryPropertyList.cpp */; };
 		9363B62D0F8E8FE000803810 /* HistoryPropertyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 9363B62B0F8E8FE000803810 /* HistoryPropertyList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9370918D1416D86B00477333 /* textAreaResizeCorner@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9370918C1416D86B00477333 /* textAreaResizeCorner@2x.png */; };
 		93799EF80BF2743600D0F230 /* RenderWordBreak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93799EF60BF2743600D0F230 /* RenderWordBreak.cpp */; };
 		93799EF90BF2743600D0F230 /* RenderWordBreak.h in Headers */ = {isa = PBXBuildFile; fileRef = 93799EF70BF2743600D0F230 /* RenderWordBreak.h */; };
 		9380F47309A11AB4001FDB34 /* Widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9380F47109A11AB4001FDB34 /* Widget.cpp */; };
@@ -4077,7 +4083,6 @@
 		AB247A6C0AFD6383003FA5FD /* RenderSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */; };
 		AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = AB247A6B0AFD6383003FA5FD /* RenderSlider.h */; };
 		AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */ = {isa = PBXBuildFile; fileRef = AB31C91D10AE1B8E000C7B92 /* LineClampValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AB4261D70A2F6C9700BDD17D /* missingImage.tiff */; };
 		AB4CB4EB0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = AB4CB4EA0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h */; };
 		AB67D1A8097F3AE300F9392E /* RenderTextControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB67D1A6097F3AE300F9392E /* RenderTextControl.cpp */; };
 		AB67D1A9097F3AE300F9392E /* RenderTextControl.h in Headers */ = {isa = PBXBuildFile; fileRef = AB67D1A7097F3AE300F9392E /* RenderTextControl.h */; };
@@ -5683,7 +5688,6 @@
 		E4D687790ED7AE4F006EA978 /* PurgeableBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */; };
 		E4EEFFC80D34550C00469A58 /* JSAudioConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */; };
 		E4EEFFC90D34550C00469A58 /* JSAudioConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E4EEFFC70D34550C00469A58 /* JSAudioConstructor.h */; };
-		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
 		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED501DC50B249F2900AE18D9 /* EditorMac.mm */; };
 		EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE3A4FF0C7A430600956A37 /* ColorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7096,8 +7100,6 @@
 		1AFE118C0CBFFC4E003017FA /* SQLResultSetRowList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLResultSetRowList.idl; sourceTree = "<group>"; };
 		1AFE11970CBFFCC4003017FA /* JSSQLResultSetRowList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLResultSetRowList.cpp; sourceTree = "<group>"; };
 		1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLResultSetRowList.h; sourceTree = "<group>"; };
-		1C14E7690AD8C81C00B6158B /* deleteButtonPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = deleteButtonPressed.tiff; sourceTree = "<group>"; };
-		1C14E76A0AD8C81C00B6158B /* deleteButton.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = deleteButton.tiff; sourceTree = "<group>"; };
 		1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoaderMac.cpp; sourceTree = "<group>"; };
 		1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageMac.cpp; sourceTree = "<group>"; };
 		1C4C8EFF0AD85D87009475CE /* DeleteButtonController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteButtonController.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -8363,7 +8365,6 @@
 		72626E010EF022FE00A07E20 /* FontFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFastPath.cpp; sourceTree = "<group>"; };
 		750D029111D0E7F300BD1B27 /* RenderInputSpeech.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderInputSpeech.cpp; sourceTree = "<group>"; };
 		750D029211D0E7F300BD1B27 /* RenderInputSpeech.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderInputSpeech.h; sourceTree = "<group>"; };
-		750D02C011D0EE7D00BD1B27 /* inputSpeech.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = inputSpeech.tiff; sourceTree = "<group>"; };
 		7535BC9212020CFF0037EC45 /* SpeechInputClientMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpeechInputClientMock.cpp; path = mock/SpeechInputClientMock.cpp; sourceTree = "<group>"; };
 		7535BC9312020CFF0037EC45 /* SpeechInputClientMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpeechInputClientMock.h; path = mock/SpeechInputClientMock.h; sourceTree = "<group>"; };
 		754133A7102E00E800075D00 /* InspectorTimelineAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTimelineAgent.h; sourceTree = "<group>"; };
@@ -9558,6 +9559,14 @@
 		9307F1D60AF2D59000DBA31A /* HitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HitTestResult.h; sourceTree = "<group>"; };
 		930908900AF7EDE40081DF01 /* HitTestRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HitTestRequest.h; sourceTree = "<group>"; };
 		930FC6891072B9280045293E /* TextRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextRenderingMode.h; sourceTree = "<group>"; };
+		93153BCC1417FBBF00FCF5BE /* deleteButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "deleteButton@2x.png"; sourceTree = "<group>"; };
+		93153BCE1417FBDB00FCF5BE /* deleteButtonPressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "deleteButtonPressed@2x.png"; sourceTree = "<group>"; };
+		93153BD914181F7A00FCF5BE /* missingImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "missingImage@2x.png"; sourceTree = "<group>"; };
+		93153BDB141959BB00FCF5BE /* textAreaResizeCorner.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = textAreaResizeCorner.png; sourceTree = "<group>"; };
+		93153BDD141959F400FCF5BE /* deleteButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deleteButton.png; sourceTree = "<group>"; };
+		93153BDF14195A2800FCF5BE /* deleteButtonPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = deleteButtonPressed.png; sourceTree = "<group>"; };
+		93153BE114195A5700FCF5BE /* missingImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = missingImage.png; sourceTree = "<group>"; };
+		93153BE314195B2900FCF5BE /* inputSpeech.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = inputSpeech.png; sourceTree = "<group>"; };
 		931BCC601124DFCB00BE70DD /* MediaCanStartListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaCanStartListener.h; sourceTree = "<group>"; };
 		9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		932871BF0B20DEB70049035A /* PlatformMenuDescription.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformMenuDescription.h; sourceTree = "<group>"; };
@@ -9677,6 +9686,7 @@
 		9363B62A0F8E8FE000803810 /* HistoryPropertyList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryPropertyList.cpp; sourceTree = "<group>"; };
 		9363B62B0F8E8FE000803810 /* HistoryPropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryPropertyList.h; sourceTree = "<group>"; };
 		936DD03A09CEAC270056AE8C /* Range.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Range.idl; sourceTree = "<group>"; };
+		9370918C1416D86B00477333 /* textAreaResizeCorner@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "textAreaResizeCorner@2x.png"; sourceTree = "<group>"; };
 		93799EF60BF2743600D0F230 /* RenderWordBreak.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderWordBreak.cpp; sourceTree = "<group>"; };
 		93799EF70BF2743600D0F230 /* RenderWordBreak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderWordBreak.h; sourceTree = "<group>"; };
 		9380F47109A11AB4001FDB34 /* Widget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Widget.cpp; sourceTree = "<group>"; };
@@ -10629,7 +10639,6 @@
 		AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSlider.cpp; sourceTree = "<group>"; };
 		AB247A6B0AFD6383003FA5FD /* RenderSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSlider.h; sourceTree = "<group>"; };
 		AB31C91D10AE1B8E000C7B92 /* LineClampValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LineClampValue.h; path = style/LineClampValue.h; sourceTree = "<group>"; };
-		AB4261D70A2F6C9700BDD17D /* missingImage.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = missingImage.tiff; sourceTree = "<group>"; };
 		AB4CB4EA0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLSelectElementCustom.h; sourceTree = "<group>"; };
 		AB67D1A6097F3AE300F9392E /* RenderTextControl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControl.cpp; sourceTree = "<group>"; };
 		AB67D1A7097F3AE300F9392E /* RenderTextControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextControl.h; sourceTree = "<group>"; };
@@ -12461,7 +12470,6 @@
 		E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgeableBuffer.h; sourceTree = "<group>"; };
 		E4EEFFC60D34550C00469A58 /* JSAudioConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioConstructor.cpp; sourceTree = "<group>"; };
 		E4EEFFC70D34550C00469A58 /* JSAudioConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioConstructor.h; sourceTree = "<group>"; };
-		ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = textAreaResizeCorner.tiff; sourceTree = "<group>"; };
 		ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarker.h; sourceTree = "<group>"; };
 		ED501DC50B249F2900AE18D9 /* EditorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = EditorMac.mm; path = mac/EditorMac.mm; sourceTree = "<group>"; };
 		EDE3A4FF0C7A430600956A37 /* ColorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorMac.h; sourceTree = "<group>"; };
@@ -13177,15 +13185,18 @@
 				46D4F2460AF97E810035385A /* cellCursor.png */,
 				46D4F2470AF97E810035385A /* contextMenuCursor.png */,
 				4614A1FD0B23A8D600446E1C /* copyCursor.png */,
-				1C14E76A0AD8C81C00B6158B /* deleteButton.tiff */,
-				1C14E7690AD8C81C00B6158B /* deleteButtonPressed.tiff */,
+				93153BDD141959F400FCF5BE /* deleteButton.png */,
+				93153BCC1417FBBF00FCF5BE /* deleteButton@2x.png */,
+				93153BDF14195A2800FCF5BE /* deleteButtonPressed.png */,
+				93153BCE1417FBDB00FCF5BE /* deleteButtonPressed@2x.png */,
 				85136C890AED665800F90A3D /* eastResizeCursor.png */,
 				85136C8A0AED665800F90A3D /* eastWestResizeCursor.png */,
 				85136C8B0AED665800F90A3D /* helpCursor.png */,
-				750D02C011D0EE7D00BD1B27 /* inputSpeech.tiff */,
+				93153BE314195B2900FCF5BE /* inputSpeech.png */,
 				85136C8C0AED665800F90A3D /* linkCursor.png */,
 				BCAD1808131C7A0D00990406 /* Localizable.strings */,
-				AB4261D70A2F6C9700BDD17D /* missingImage.tiff */,
+				93153BE114195A5700FCF5BE /* missingImage.png */,
+				93153BD914181F7A00FCF5BE /* missingImage@2x.png */,
 				85136C8D0AED665800F90A3D /* moveCursor.png */,
 				46F9D5DB0B0D60170028EE36 /* noDropCursor.png */,
 				46BD16E20B279473001F0839 /* noneCursor.png */,
@@ -13199,7 +13210,8 @@
 				85136C940AED665900F90A3D /* southEastResizeCursor.png */,
 				85136C950AED665900F90A3D /* southResizeCursor.png */,
 				85136C960AED665900F90A3D /* southWestResizeCursor.png */,
-				ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */,
+				93153BDB141959BB00FCF5BE /* textAreaResizeCorner.png */,
+				9370918C1416D86B00477333 /* textAreaResizeCorner@2x.png */,
 				46D4F2480AF97E810035385A /* verticalTextCursor.png */,
 				85136C970AED665900F90A3D /* waitCursor.png */,
 				85136C980AED665900F90A3D /* westResizeCursor.png */,
@@ -23592,16 +23604,12 @@
 				46D4F2490AF97E810035385A /* cellCursor.png in Resources */,
 				46D4F24A0AF97E810035385A /* contextMenuCursor.png in Resources */,
 				4614A1FE0B23A8D600446E1C /* copyCursor.png in Resources */,
-				1C14E76C0AD8C81C00B6158B /* deleteButton.tiff in Resources */,
-				1C14E76B0AD8C81C00B6158B /* deleteButtonPressed.tiff in Resources */,
 				85136C990AED665900F90A3D /* eastResizeCursor.png in Resources */,
 				85136C9A0AED665900F90A3D /* eastWestResizeCursor.png in Resources */,
 				85136C9B0AED665900F90A3D /* helpCursor.png in Resources */,
-				750D02C111D0EE7D00BD1B27 /* inputSpeech.tiff in Resources */,
 				85136C9C0AED665900F90A3D /* linkCursor.png in Resources */,
 				BCAD180A131C7A0D00990406 /* Localizable.strings in Resources */,
 				1CDC14050DD3934C006EACD3 /* localizedStrings.js in Resources */,
-				AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */,
 				85136C9D0AED665900F90A3D /* moveCursor.png in Resources */,
 				46F9D5DE0B0D60170028EE36 /* noDropCursor.png in Resources */,
 				46BD16E30B279473001F0839 /* noneCursor.png in Resources */,
@@ -23615,12 +23623,20 @@
 				85136CA40AED665900F90A3D /* southEastResizeCursor.png in Resources */,
 				85136CA50AED665900F90A3D /* southResizeCursor.png in Resources */,
 				85136CA60AED665900F90A3D /* southWestResizeCursor.png in Resources */,
-				ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */,
 				46D4F24B0AF97E810035385A /* verticalTextCursor.png in Resources */,
 				85136CA70AED665900F90A3D /* waitCursor.png in Resources */,
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				9370918D1416D86B00477333 /* textAreaResizeCorner@2x.png in Resources */,
+				93153BCD1417FBBF00FCF5BE /* deleteButton@2x.png in Resources */,
+				93153BCF1417FBDB00FCF5BE /* deleteButtonPressed@2x.png in Resources */,
+				93153BDA14181F7A00FCF5BE /* missingImage@2x.png in Resources */,
+				93153BDC141959BC00FCF5BE /* textAreaResizeCorner.png in Resources */,
+				93153BDE141959F400FCF5BE /* deleteButton.png in Resources */,
+				93153BE014195A2800FCF5BE /* deleteButtonPressed.png in Resources */,
+				93153BE214195A5700FCF5BE /* missingImage.png in Resources */,
+				93153BE414195B2A00FCF5BE /* inputSpeech.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

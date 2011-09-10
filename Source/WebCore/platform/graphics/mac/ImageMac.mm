@@ -55,7 +55,7 @@ void BitmapImage::invalidatePlatformData()
 PassRefPtr<Image> Image::loadPlatformResource(const char *name)
 {
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreBundleFinder class]];
-    NSString *imagePath = [bundle pathForResource:[NSString stringWithUTF8String:name] ofType:@"tiff"];
+    NSString *imagePath = [bundle pathForResource:[NSString stringWithUTF8String:name] ofType:@"png"];
     NSData *namedImageData = [NSData dataWithContentsOfFile:imagePath];
     if (namedImageData) {
         RefPtr<Image> image = BitmapImage::create();

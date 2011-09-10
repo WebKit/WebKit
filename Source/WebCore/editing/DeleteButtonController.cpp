@@ -41,6 +41,7 @@
 #include "HTMLNames.h"
 #include "Image.h"
 #include "Node.h"
+#include "Page.h"
 #include "Range.h"
 #include "RemoveNodeCommand.h"
 #include "RenderBox.h"
@@ -240,7 +241,13 @@ void DeleteButtonController::createDeletionUI()
     style->setProperty(CSSPropertyHeight, String::number(buttonHeight) + "px");
     style->setProperty(CSSPropertyVisibility, CSSValueVisible);
 
-    RefPtr<Image> buttonImage = Image::loadPlatformResource("deleteButton");
+    float deviceScaleFactor = Page::deviceScaleFactor(m_frame);
+    RefPtr<Image> buttonImage;
+    if (deviceScaleFactor >= 2)
+        buttonImage = Image::loadPlatformResource("deleteButton@2x");
+    else
+        buttonImage = Image::loadPlatformResource("deleteButton");
+
     if (buttonImage->isNull())
         return;
 

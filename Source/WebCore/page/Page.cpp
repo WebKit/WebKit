@@ -652,6 +652,16 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     backForward()->markPagesForFullStyleRecalc();
 }
 
+float Page::deviceScaleFactor(Frame* frame)
+{
+    if (!frame)
+        return 1;
+    Page* page = frame->page();
+    if (!page)
+        return 1;
+    return page->deviceScaleFactor();
+}
+
 void Page::didMoveOnscreen()
 {
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
