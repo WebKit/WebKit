@@ -184,7 +184,6 @@ contains(DEFINES, ENABLE_SQLITE=1) {
             INCLUDEPATH += $${SQLITE3SRCDIR}
             DEFINES += SQLITE_CORE SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE
             CONFIG(release, debug|release): DEFINES *= NDEBUG
-            contains(DEFINES, ENABLE_SINGLE_THREADED=1): DEFINES += SQLITE_THREADSAFE=0
     } else {
         # Use sqlite3 from the underlying OS
         CONFIG(QTDIR_build) {

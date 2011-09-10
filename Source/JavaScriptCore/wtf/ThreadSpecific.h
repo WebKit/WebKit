@@ -101,9 +101,6 @@ private:
     };
 #endif
 
-#if ENABLE(SINGLE_THREADED)
-    T* m_value;
-#else
 #if USE(PTHREADS)
     pthread_key_t m_key;
 #elif PLATFORM(QT)
@@ -113,29 +110,8 @@ private:
 #elif OS(WINDOWS)
     int m_index;
 #endif
-#endif
 };
 
-#if ENABLE(SINGLE_THREADED)
-template<typename T>
-inline ThreadSpecific<T>::ThreadSpecific()
-    : m_value(0)
-{
-}
-
-template<typename T>
-inline T* ThreadSpecific<T>::get()
-{
-    return m_value;
-}
-
-template<typename T>
-inline void ThreadSpecific<T>::set(T* ptr)
-{
-    ASSERT(!get());
-    m_value = ptr;
-}
-#else
 #if USE(PTHREADS)
 template<typename T>
 inline ThreadSpecific<T>::ThreadSpecific()
@@ -259,12 +235,10 @@ inline void ThreadSpecific<T>::set(T* ptr)
 #else
 #error ThreadSpecific is not implemented for this platform.
 #endif
-#endif
 
 template<typename T>
 inline void ThreadSpecific<T>::destroy(void* ptr)
 {
-#if !ENABLE(SINGLE_THREADED)
     Data* data = static_cast<Data*>(ptr);
 
 #if USE(PTHREADS)
@@ -297,7 +271,6 @@ inline void ThreadSpecific<T>::destroy(void* ptr)
 
 #if !PLATFORM(QT)
     delete data;
-#endif
 #endif
 }
 

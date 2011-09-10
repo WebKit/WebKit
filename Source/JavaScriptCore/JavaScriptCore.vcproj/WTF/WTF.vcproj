@@ -1081,10 +1081,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\ThreadingNone.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\wtf\ThreadingPrimitives.h"
 			>
 		</File>

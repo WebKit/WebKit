@@ -29,8 +29,6 @@
 #include "config.h"
 #include "Threading.h"
 
-#if !ENABLE(SINGLE_THREADED)
-
 #include "DateMath.h"
 #include "dtoa.h"
 #include "CurrentTime.h"
@@ -296,5 +294,3 @@ void ThreadCondition::broadcast()
 } // namespace WebCore
 
 #include "ThreadingQt.moc"
-
-#endif

@@ -625,7 +625,6 @@
             'wtf/ThreadIdentifierDataPthreads.h',
             'wtf/ThreadSpecificWin.cpp',
             'wtf/Threading.cpp',
-            'wtf/ThreadingNone.cpp',
             'wtf/ThreadingPthreads.cpp',
             'wtf/ThreadingWin.cpp',
             'wtf/TypeTraits.cpp',

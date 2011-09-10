@@ -35,7 +35,6 @@ SOURCES += \
     wtf/SHA1.cpp \
     wtf/StackBounds.cpp \
     wtf/TCSystemAlloc.cpp \
-    wtf/ThreadingNone.cpp \
     wtf/Threading.cpp \
     wtf/TypeTraits.cpp \
     wtf/WTFThreadData.cpp \
