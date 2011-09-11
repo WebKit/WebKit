@@ -87,7 +87,7 @@ namespace JSC {
         // Querying the type.
         bool isString() const;
         bool isObject() const;
-        virtual bool isGetterSetter() const;
+        bool isGetterSetter() const;
         bool inherits(const ClassInfo*) const;
         virtual bool isAPIValueWrapper() const { return false; }
         virtual bool isPropertyNameIterator() const { return false; }

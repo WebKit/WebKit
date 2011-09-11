@@ -117,11 +117,6 @@ JSValue JSCell::getJSNumber()
     return JSValue();
 }
 
-bool JSCell::isGetterSetter() const
-{
-    return false;
-}
-
 JSValue JSCell::toPrimitive(ExecState*, PreferredPrimitiveType) const
 {
     ASSERT_NOT_REACHED();

@@ -42,9 +42,4 @@ void GetterSetter::visitChildren(SlotVisitor& visitor)
         visitor.append(&m_setter);
 }
 
-bool GetterSetter::isGetterSetter() const
-{
-    return true;
-}
-
 } // namespace JSC

@@ -312,6 +312,11 @@ namespace JSC {
         return m_structure->typeInfo().type() == StringType;
     }
 
+    inline bool JSCell::isGetterSetter() const
+    {
+        return m_structure->typeInfo().type() == GetterSetterType;
+    }
+
     inline const ClassInfo* JSCell::classInfo() const
     {
 #if ENABLE(GC_VALIDATION)

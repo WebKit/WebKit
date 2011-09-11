@@ -67,8 +67,6 @@ namespace JSC {
         static const ClassInfo s_info;
 
     private:
-        virtual bool isGetterSetter() const;
-
         WriteBarrier<JSObject> m_getter;
         WriteBarrier<JSObject> m_setter;  
     };
