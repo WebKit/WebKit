@@ -1,5 +1,15 @@
 2011-09-11  Martin Robinson  <mrobinson@igalia.com>
 
+        Remove two platform-specific results for GTK+ that no longer apply and
+        rebaseline one more test.
+
+        * platform/gtk/fast/multicol/inherit-column-values-expected.txt: Removed.
+        * platform/gtk/fast/multicol/initial-column-values-expected.txt: Removed.
+        * svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png: Rebaselined.
+        * svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.txt: Ditto.
+
+2011-09-11  Martin Robinson  <mrobinson@igalia.com>
+
         Unskip two tests that should be passing now that 67383 is resolved.
 
         * platform/gtk/Skipped: Unskip passing tests.
