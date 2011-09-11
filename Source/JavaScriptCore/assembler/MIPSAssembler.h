@@ -645,14 +645,14 @@ public:
         return m_buffer.codeSize();
     }
 
-    void* executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
+    PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData)
     {
-        void *result = m_buffer.executableCopy(globalData, allocator);
+        RefPtr<ExecutableMemoryHandle> result = m_buffer.executableCopy(globalData);
         if (!result)
             return 0;
 
-        relocateJumps(m_buffer.data(), result);
-        return result;
+        relocateJumps(m_buffer.data(), result->start());
+        return result.release();
     }
 
 #ifndef NDEBUG

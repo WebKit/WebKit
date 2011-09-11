@@ -343,14 +343,15 @@ void ARMAssembler::doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID b
     fdtr_u(isLoad, srcDst, ARMRegisters::S0, 0);
 }
 
-void* ARMAssembler::executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
+PassRefPtr<ExecutableMemoryHandle> ARMAssembler::executableCopy(JSGlobalData& globalData)
 {
     // 64-bit alignment is required for next constant pool and JIT code as well
     m_buffer.flushWithoutBarrier(true);
     if (!m_buffer.isAligned(8))
         bkpt(0);
 
-    char* data = reinterpret_cast<char*>(m_buffer.executableCopy(globalData, allocator));
+    RefPtr<ExecutableMemoryHandle> result = m_buffer.executableCopy(globalData);
+    char* data = reinterpret_cast<char*>(result->start());
 
     for (Jumps::Iterator iter = m_jumps.begin(); iter != m_jumps.end(); ++iter) {
         // The last bit is set if the constant must be placed on constant pool.
@@ -370,7 +371,7 @@ void* ARMAssembler::executableCopy(JSGlobalData& globalData, ExecutablePool* all
         }
     }
 
-    return data;
+    return result;
 }
 
 } // namespace JSC
