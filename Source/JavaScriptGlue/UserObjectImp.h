@@ -68,7 +68,7 @@ public:
 
     static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames), AnonymousSlotCount, &s_info);
+        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames), &s_info);
     }
 
 private:

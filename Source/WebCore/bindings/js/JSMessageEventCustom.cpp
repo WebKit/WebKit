@@ -46,7 +46,7 @@ namespace WebCore {
 
 JSValue JSMessageEvent::data(ExecState* exec) const
 {
-    if (JSValue cachedValue = getAnonymousValue(JSMessageEvent::dataSlot))
+    if (JSValue cachedValue = m_data.get())
         return cachedValue;
 
     MessageEvent* event = static_cast<MessageEvent*>(impl());
@@ -73,7 +73,7 @@ JSValue JSMessageEvent::data(ExecState* exec) const
     }
 
     // Save the result so we don't have to deserialize the value again.
-    const_cast<JSMessageEvent*>(this)->putAnonymousValue(exec->globalData(), JSMessageEvent::dataSlot, result);
+    const_cast<JSMessageEvent*>(this)->m_data.set(exec->globalData(), this, result);
     return result;
 }
 
@@ -115,7 +115,7 @@ JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec)
         result = serializedValue->deserialize(exec, globalObject(), NonThrowing);
     else
         result = jsNull();
-    putAnonymousValue(exec->globalData(), JSMessageEvent::dataSlot, result);
+    m_data.set(exec->globalData(), this, result);
     return jsUndefined();
 }
 

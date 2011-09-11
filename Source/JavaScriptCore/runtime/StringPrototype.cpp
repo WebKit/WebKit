@@ -137,12 +137,11 @@ StringPrototype::StringPrototype(ExecState* exec, JSGlobalObject* globalObject, 
     finishCreation(exec, globalObject, nameAndMessage);
 }
 
-void StringPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject, JSString* nameAndMessage)
+void StringPrototype::finishCreation(ExecState* exec, JSGlobalObject*, JSString* nameAndMessage)
 {
     Base::finishCreation(exec->globalData(), nameAndMessage);
     ASSERT(inherits(&s_info));
 
-    putAnonymousValue(exec->globalData(), 0, globalObject);
     // The constructor will be added later, after StringConstructor has been built
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
 }

@@ -1,3 +1,167 @@
+2011-09-09  Oliver Hunt  <oliver@apple.com>
+
+        Remove support for anonymous storage from jsobjects
+        https://bugs.webkit.org/show_bug.cgi?id=67881
+
+        Reviewed by Sam Weinig.
+
+        Remove all use of anonymous slots, essentially a mechanical change
+        in JavaScriptCore
+
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::createStructure):
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::createStructure):
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::createStructure):
+        * JavaScriptCore.exp:
+        * debugger/DebuggerActivation.h:
+        (JSC::DebuggerActivation::createStructure):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStack::validateValue):
+        * heap/MarkStack.h:
+        * runtime/Arguments.h:
+        (JSC::Arguments::createStructure):
+        * runtime/ArrayConstructor.h:
+        (JSC::ArrayConstructor::createStructure):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::createStructure):
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::createStructure):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::BooleanPrototype):
+        * runtime/BooleanPrototype.h:
+        (JSC::BooleanPrototype::createStructure):
+        * runtime/DateConstructor.h:
+        (JSC::DateConstructor::createStructure):
+        * runtime/DateInstance.h:
+        (JSC::DateInstance::createStructure):
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::DatePrototype):
+        * runtime/DatePrototype.h:
+        (JSC::DatePrototype::createStructure):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::createStructure):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::finishCreation):
+        * runtime/ErrorPrototype.h:
+        (JSC::ErrorPrototype::createStructure):
+        * runtime/ExceptionHelpers.h:
+        (JSC::InterruptedExecutionError::createStructure):
+        (JSC::TerminatedExecutionError::createStructure):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::createStructure):
+        (JSC::NativeExecutable::createStructure):
+        (JSC::EvalExecutable::createStructure):
+        (JSC::ProgramExecutable::createStructure):
+        (JSC::FunctionExecutable::createStructure):
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::createStructure):
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::createStructure):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createStructure):
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::createStructure):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::createStructure):
+        * runtime/JSArray.h:
+        (JSC::JSArray::createStructure):
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::createStructure):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::createStructure):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::finishCreation):
+        (JSC::JSGlobalObject::createStructure):
+        * runtime/JSNotAnObject.h:
+        (JSC::JSNotAnObject::createStructure):
+        * runtime/JSONObject.h:
+        (JSC::JSONObject::createStructure):
+        * runtime/JSObject.h:
+        (JSC::JSObject::createStructure):
+        (JSC::JSNonFinalObject::createStructure):
+        (JSC::JSFinalObject::createStructure):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::createStructure):
+        * runtime/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::createStructure):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::createStructure):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::createStructure):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::createStructure):
+        * runtime/MathObject.h:
+        (JSC::MathObject::createStructure):
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructor::createStructure):
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::createStructure):
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::createStructure):
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::NumberPrototype):
+        * runtime/NumberPrototype.h:
+        (JSC::NumberPrototype::createStructure):
+        * runtime/ObjectConstructor.h:
+        (JSC::ObjectConstructor::createStructure):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::finishCreation):
+        * runtime/ObjectPrototype.h:
+        (JSC::ObjectPrototype::createStructure):
+        * runtime/RegExp.h:
+        (JSC::RegExp::createStructure):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::createStructure):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::createStructure):
+        * runtime/RegExpPrototype.h:
+        (JSC::RegExpPrototype::createStructure):
+        * runtime/ScopeChain.h:
+        (JSC::ScopeChainNode::createStructure):
+        * runtime/StrictEvalActivation.h:
+        (JSC::StrictEvalActivation::createStructure):
+        * runtime/StringConstructor.h:
+        (JSC::StringConstructor::createStructure):
+        * runtime/StringObject.h:
+        (JSC::StringObject::createStructure):
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::createStructure):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::StringPrototype):
+        * runtime/StringPrototype.h:
+        (JSC::StringPrototype::createStructure):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::removePropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::getterSetterTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::preventExtensionsTransition):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::addPropertyWithoutTransition):
+        (JSC::Structure::removePropertyWithoutTransition):
+        (JSC::Structure::get):
+        (JSC::Structure::putSpecificValue):
+        (JSC::Structure::remove):
+        (JSC::Structure::checkConsistency):
+        * runtime/Structure.h:
+        (JSC::Structure::create):
+        (JSC::Structure::propertyStorageSize):
+        (JSC::Structure::get):
+        * runtime/StructureChain.h:
+        (JSC::StructureChain::createStructure):
+
 2011-09-11  Jarred Nicholls  <jarred@sencha.com>
 
         [Qt] Win32 build broken due to MachineStackMarker.cpp/.o failing to link against pthreads library

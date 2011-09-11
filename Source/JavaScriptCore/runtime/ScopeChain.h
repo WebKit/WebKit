@@ -86,7 +86,7 @@ namespace JSC {
         void print();
 #endif
         
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info); }
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(CompoundType, StructureFlags), &s_info); }
         virtual void visitChildren(SlotVisitor&);
         static JS_EXPORTDATA const ClassInfo s_info;
 

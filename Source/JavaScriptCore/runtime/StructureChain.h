@@ -54,7 +54,7 @@ namespace JSC {
         WriteBarrier<Structure>* head() { return m_vector.get(); }
         void visitChildren(SlotVisitor&);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) { return Structure::create(globalData, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), 0, &s_info); }
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) { return Structure::create(globalData, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), &s_info); }
         
         static ClassInfo s_info;
 

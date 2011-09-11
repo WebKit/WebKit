@@ -145,7 +145,6 @@ namespace JSC {
 #endif
         
     protected:
-        static const unsigned AnonymousSlotCount = 0;
 
         void finishCreation(JSGlobalData&);
         void finishCreation(JSGlobalData&, Structure*, CreatingEarlyCellTag);

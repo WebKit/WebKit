@@ -116,6 +116,8 @@ static const HashTableValue JSTestObjTableValues[] =
 #if ENABLE(Condition1) || ENABLE(Condition2)
     { "conditionalAttr6", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr6Constructor), (intptr_t)setJSTestObjConditionalAttr6Constructor THUNK_GENERATOR(0) },
 #endif
+    { "cachedAttribute1", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCachedAttribute1), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "cachedAttribute2", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCachedAttribute2), (intptr_t)0 THUNK_GENERATOR(0) },
     { "description", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjDescription), (intptr_t)0 THUNK_GENERATOR(0) },
     { "id", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjId), (intptr_t)setJSTestObjId THUNK_GENERATOR(0) },
     { "hash", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjHash), (intptr_t)0 THUNK_GENERATOR(0) },
@@ -124,7 +126,7 @@ static const HashTableValue JSTestObjTableValues[] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestObjTable = { 134, 127, JSTestObjTableValues, 0 };
+static JSC_CONST_HASHTABLE HashTable JSTestObjTable = { 135, 127, JSTestObjTableValues, 0 };
 /* Hash table for constructor */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator
@@ -179,7 +181,7 @@ public:
     static const JSC::ClassInfo s_info;
     static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
     }
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;
@@ -669,6 +671,32 @@ JSValue jsTestObjConditionalAttr6Constructor(ExecState* exec, JSValue slotBase, 
 }
 
 #endif
+
+JSValue jsTestObjCachedAttribute1(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    if (JSValue cachedValue = m_cachedAttribute1.get())
+        return cachedValue;
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = imp->cachedAttribute1() ? imp->cachedAttribute1()->deserialize(exec, castedThis->globalObject()) : jsNull();
+    m_cachedAttribute1.set(exec->globalData(), this, result);
+    return result;
+}
+
+
+JSValue jsTestObjCachedAttribute2(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    if (JSValue cachedValue = m_cachedAttribute2.get())
+        return cachedValue;
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = imp->cachedAttribute2() ? imp->cachedAttribute2()->deserialize(exec, castedThis->globalObject()) : jsNull();
+    m_cachedAttribute2.set(exec->globalData(), this, result);
+    return result;
+}
+
 
 JSValue jsTestObjDescription(ExecState* exec, JSValue slotBase, const Identifier&)
 {
@@ -1813,6 +1841,18 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithOptional(E
 
     JSC::JSValue result = jsNumber(imp->classMethodWithOptional(arg));
     return JSValue::encode(result);
+}
+
+void JSTestObj::visitChildren(SlotVisitor& visitor)
+{
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(visitor);
+    if (m_cachedAttribute1)
+        visitor.append(&m_cachedAttribute1);
+    if (m_cachedAttribute2)
+        visitor.append(&m_cachedAttribute2);
 }
 
 // Constant getters

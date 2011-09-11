@@ -44,7 +44,7 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
         static const ClassInfo s_info;
@@ -53,8 +53,6 @@ namespace JSC {
         void finishCreation(ExecState*, JSGlobalObject*, JSString*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | StringObject::StructureFlags;
 
-        COMPILE_ASSERT(!StringObject::AnonymousSlotCount, StringPrototype_stomps_on_your_anonymous_slot);
-        static const unsigned AnonymousSlotCount = 1;
     };
 
 } // namespace JSC

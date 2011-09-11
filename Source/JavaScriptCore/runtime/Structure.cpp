@@ -159,7 +159,7 @@ void Structure::dumpStatistics()
 #endif
 }
 
-Structure::Structure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
+Structure::Structure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo)
     : JSCell(globalData, globalData.structureStructure.get())
     , m_typeInfo(typeInfo)
     , m_globalObject(globalData, this, globalObject, WriteBarrier<JSGlobalObject>::MayBeNull)
@@ -173,7 +173,6 @@ Structure::Structure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSV
     , m_hasNonEnumerableProperties(false)
     , m_attributesInPrevious(0)
     , m_specificFunctionThrashCount(0)
-    , m_anonymousSlotCount(anonymousSlotCount)
     , m_preventExtensions(false)
     , m_didTransition(false)
 {
@@ -194,7 +193,6 @@ Structure::Structure(JSGlobalData& globalData)
     , m_hasNonEnumerableProperties(false)
     , m_attributesInPrevious(0)
     , m_specificFunctionThrashCount(0)
-    , m_anonymousSlotCount(0)
     , m_preventExtensions(false)
     , m_didTransition(false)
 {
@@ -213,7 +211,6 @@ Structure::Structure(JSGlobalData& globalData, const Structure* previous)
     , m_hasNonEnumerableProperties(previous->m_hasNonEnumerableProperties)
     , m_attributesInPrevious(0)
     , m_specificFunctionThrashCount(previous->m_specificFunctionThrashCount)
-    , m_anonymousSlotCount(previous->anonymousSlotCount())
     , m_preventExtensions(previous->m_preventExtensions)
     , m_didTransition(true)
 {
@@ -253,7 +250,7 @@ void Structure::materializePropertyMap(JSGlobalData& globalData)
 
     for (ptrdiff_t i = structures.size() - 2; i >= 0; --i) {
         structure = structures[i];
-        PropertyMapEntry entry(globalData, this, structure->m_nameInPrevious.get(), m_anonymousSlotCount + structure->m_offset, structure->m_attributesInPrevious, structure->m_specificValueInPrevious.get());
+        PropertyMapEntry entry(globalData, this, structure->m_nameInPrevious.get(), structure->m_offset, structure->m_attributesInPrevious, structure->m_specificValueInPrevious.get());
         m_propertyTable->add(entry);
     }
 }
@@ -290,9 +287,7 @@ Structure* Structure::addPropertyTransitionToExistingStructure(Structure* struct
         if (specificValueInPrevious && specificValueInPrevious != specificValue)
             return 0;
         ASSERT(existingTransition->m_offset != noOffset);
-        offset = existingTransition->m_offset + existingTransition->m_anonymousSlotCount;
-        ASSERT(offset >= structure->m_anonymousSlotCount);
-        ASSERT(structure->m_anonymousSlotCount == existingTransition->m_anonymousSlotCount);
+        offset = existingTransition->m_offset;
         return existingTransition;
     }
 
@@ -322,8 +317,6 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
         Structure* transition = toCacheableDictionaryTransition(globalData, structure);
         ASSERT(structure != transition);
         offset = transition->putSpecificValue(globalData, propertyName, attributes, specificValue);
-        ASSERT(offset >= structure->m_anonymousSlotCount);
-        ASSERT(structure->m_anonymousSlotCount == transition->m_anonymousSlotCount);
         if (transition->propertyStorageSize() > transition->propertyStorageCapacity())
             transition->growPropertyStorageCapacity();
         return transition;
@@ -350,13 +343,10 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
     }
 
     offset = transition->putSpecificValue(globalData, propertyName, attributes, specificValue);
-    ASSERT(offset >= structure->m_anonymousSlotCount);
-    ASSERT(structure->m_anonymousSlotCount == transition->m_anonymousSlotCount);
     if (transition->propertyStorageSize() > transition->propertyStorageCapacity())
         transition->growPropertyStorageCapacity();
 
-    transition->m_offset = offset - structure->m_anonymousSlotCount;
-    ASSERT(structure->anonymousSlotCount() == transition->anonymousSlotCount());
+    transition->m_offset = offset;
     structure->m_transitionTable.add(globalData, transition);
     return transition;
 }
@@ -368,8 +358,6 @@ Structure* Structure::removePropertyTransition(JSGlobalData& globalData, Structu
     Structure* transition = toUncacheableDictionaryTransition(globalData, structure);
 
     offset = transition->remove(propertyName);
-    ASSERT(offset >= structure->m_anonymousSlotCount);
-    ASSERT(structure->m_anonymousSlotCount == transition->m_anonymousSlotCount);
 
     return transition;
 }
@@ -385,8 +373,7 @@ Structure* Structure::changePrototypeTransition(JSGlobalData& globalData, Struct
     structure->materializePropertyMapIfNecessary(globalData);
     transition->m_propertyTable = structure->copyPropertyTable(globalData, transition);
     transition->m_isPinnedPropertyTable = true;
-    
-    ASSERT(structure->anonymousSlotCount() == transition->anonymousSlotCount());
+
     return transition;
 }
 
@@ -409,8 +396,7 @@ Structure* Structure::despecifyFunctionTransition(JSGlobalData& globalData, Stru
         bool removed = transition->despecifyFunction(globalData, replaceFunction);
         ASSERT_UNUSED(removed, removed);
     }
-    
-    ASSERT(structure->anonymousSlotCount() == transition->anonymousSlotCount());
+
     return transition;
 }
 
@@ -423,8 +409,7 @@ Structure* Structure::getterSetterTransition(JSGlobalData& globalData, Structure
     structure->materializePropertyMapIfNecessary(globalData);
     transition->m_propertyTable = structure->copyPropertyTable(globalData, transition);
     transition->m_isPinnedPropertyTable = true;
-    
-    ASSERT(structure->anonymousSlotCount() == transition->anonymousSlotCount());
+
     return transition;
 }
 
@@ -438,8 +423,7 @@ Structure* Structure::toDictionaryTransition(JSGlobalData& globalData, Structure
     transition->m_propertyTable = structure->copyPropertyTable(globalData, transition);
     transition->m_isPinnedPropertyTable = true;
     transition->m_dictionaryKind = kind;
-    
-    ASSERT(structure->anonymousSlotCount() == transition->anonymousSlotCount());
+
     return transition;
 }
 
@@ -493,7 +477,6 @@ Structure* Structure::preventExtensionsTransition(JSGlobalData& globalData, Stru
     transition->m_isPinnedPropertyTable = true;
     transition->m_preventExtensions = true;
 
-    ASSERT(structure->anonymousSlotCount() == transition->anonymousSlotCount());
     return transition;
 }
 
@@ -539,7 +522,6 @@ Structure* Structure::flattenDictionaryStructure(JSGlobalData& globalData, JSObj
     if (isUncacheableDictionary()) {
         ASSERT(m_propertyTable);
 
-        unsigned anonymousSlotCount = m_anonymousSlotCount;
         size_t propertyCount = m_propertyTable->size();
         Vector<JSValue> values(propertyCount);
 
@@ -548,12 +530,12 @@ Structure* Structure::flattenDictionaryStructure(JSGlobalData& globalData, JSObj
         for (PropertyTable::iterator iter = m_propertyTable->begin(); iter != end; ++iter, ++i) {
             values[i] = object->getDirectOffset(iter->offset);
             // Update property table to have the new property offsets
-            iter->offset = anonymousSlotCount + i;
+            iter->offset = i;
         }
         
         // Copy the original property values into their final locations
         for (unsigned i = 0; i < propertyCount; i++)
-            object->putDirectOffset(globalData, anonymousSlotCount + i, values[i]);
+            object->putDirectOffset(globalData, i, values[i]);
 
         m_propertyTable->clearDeletedOffsets();
     }
@@ -574,7 +556,6 @@ size_t Structure::addPropertyWithoutTransition(JSGlobalData& globalData, const I
     m_isPinnedPropertyTable = true;
 
     size_t offset = putSpecificValue(globalData, propertyName, attributes, specificValue);
-    ASSERT(offset >= m_anonymousSlotCount);
     if (propertyStorageSize() > propertyStorageCapacity())
         growPropertyStorageCapacity();
     return offset;
@@ -589,7 +570,6 @@ size_t Structure::removePropertyWithoutTransition(JSGlobalData& globalData, cons
 
     m_isPinnedPropertyTable = true;
     size_t offset = remove(propertyName);
-    ASSERT(offset >= m_anonymousSlotCount);
     return offset;
 }
 
@@ -637,7 +617,6 @@ size_t Structure::get(JSGlobalData& globalData, StringImpl* propertyName, unsign
 
     attributes = entry->attributes;
     specificValue = entry->specificValue.get();
-    ASSERT(entry->offset >= m_anonymousSlotCount);
     return entry->offset;
 }
 
@@ -687,8 +666,7 @@ size_t Structure::putSpecificValue(JSGlobalData& globalData, const Identifier& p
     if (m_propertyTable->hasDeletedOffset())
         newOffset = m_propertyTable->getDeletedOffset();
     else
-        newOffset = m_propertyTable->size() + m_anonymousSlotCount;
-    ASSERT(newOffset >= m_anonymousSlotCount);
+        newOffset = m_propertyTable->size();
 
     m_propertyTable->add(PropertyMapEntry(globalData, this, rep, newOffset, attributes, specificValue));
 
@@ -712,7 +690,6 @@ size_t Structure::remove(const Identifier& propertyName)
         return notFound;
 
     size_t offset = position.first->offset;
-    ASSERT(offset >= m_anonymousSlotCount);
 
     m_propertyTable->remove(position);
     m_propertyTable->addDeletedOffset(offset);
@@ -844,7 +821,6 @@ void Structure::checkConsistency()
         PropertyTable::iterator end = m_propertyTable->end();
         for (PropertyTable::iterator iter = m_propertyTable->begin(); iter != end; ++iter) {
             ASSERT(!(iter->attributes & DontEnum));
-            ASSERT(iter->offset >= m_anonymousSlotCount);
         }
     }
 

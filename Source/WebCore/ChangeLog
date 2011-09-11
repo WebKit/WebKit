@@ -1,3 +1,90 @@
+2011-09-09  Oliver Hunt  <oliver@apple.com>
+
+        Remove support for anonymous storage from jsobjects
+        https://bugs.webkit.org/show_bug.cgi?id=67881
+
+        Reviewed by Sam Weinig.
+
+        Remove all use of anonymous slots, this required modifying
+        bindings generation to add member variables for cached attributes,
+        and override visitChildren with the necessary logic to mark those
+        new members.
+
+        I added bindings generation tests for these values.
+
+        * bindings/js/JSAudioConstructor.h:
+        (WebCore::JSAudioConstructor::createStructure):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMConstructorObject::createStructure):
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::JSDOMGlobalObject::createStructure):
+        * bindings/js/JSDOMWindowBase.h:
+        (WebCore::JSDOMWindowBase::createStructure):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::createStructure):
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::JSDOMWrapper::createStructure):
+        * bindings/js/JSImageConstructor.h:
+        (WebCore::JSImageConstructor::createStructure):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::data):
+        (WebCore::JSMessageEvent::initMessageEvent):
+        * bindings/js/JSOptionConstructor.h:
+        (WebCore::JSOptionConstructor::createStructure):
+        * bindings/js/JSWorkerContextBase.h:
+        (WebCore::JSWorkerContextBase::createStructure):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateConstructorDeclaration):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (WebCore::JSTestInterface::createStructure):
+        (WebCore::JSTestInterfacePrototype::createStructure):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        (WebCore::JSTestMediaQueryListListener::createStructure):
+        (WebCore::JSTestMediaQueryListListenerPrototype::createStructure):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::createStructure):
+        (WebCore::jsTestObjCachedAttribute1):
+        (WebCore::jsTestObjCachedAttribute2):
+        (WebCore::JSTestObj::visitChildren):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore::JSTestObj::createStructure):
+        (WebCore::JSTestObjPrototype::createStructure):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (WebCore::JSTestSerializedScriptValueInterface::createStructure):
+        (WebCore::JSTestSerializedScriptValueInterfacePrototype::createStructure):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::cachedAttribute1AttrGetter):
+        (WebCore::TestObjInternal::cachedAttribute2AttrGetter):
+        * bridge/c/CRuntimeObject.h:
+        (JSC::Bindings::CRuntimeObject::createStructure):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CRuntimeMethod::createStructure):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaRuntimeMethod::createStructure):
+        * bridge/jni/jsc/JavaRuntimeObject.h:
+        (JSC::Bindings::JavaRuntimeObject::createStructure):
+        * bridge/objc/ObjCRuntimeObject.h:
+        (JSC::Bindings::ObjCRuntimeObject::createStructure):
+        * bridge/objc/objc_instance.mm:
+        (ObjCRuntimeMethod::createStructure):
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::createStructure):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::createStructure):
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::createStructure):
+        * bridge/runtime_object.h:
+        (JSC::Bindings::RuntimeObject::createStructure):
+
 2011-09-01  Filip Pizlo  <fpizlo@apple.com>
 
         The executable allocator makes it difficult to free individual

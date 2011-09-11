@@ -174,6 +174,10 @@ void MarkStack::validateValue(JSValue value)
     if (cell->structure()->structure()->JSCell::classInfo() != cell->structure()->JSCell::classInfo())
         CRASH();
 }
+#else
+void MarkStack::validateValue(JSValue)
+{
+} 
 #endif
 
 } // namespace JSC

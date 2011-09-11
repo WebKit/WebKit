@@ -231,22 +231,6 @@ namespace JSC {
             m_structure->flattenDictionaryStructure(globalData, this);
         }
 
-        void putAnonymousValue(JSGlobalData& globalData, unsigned index, JSValue value)
-        {
-            ASSERT(index < m_structure->anonymousSlotCount());
-            locationForOffset(index)->set(globalData, this, value);
-        }
-        void clearAnonymousValue(unsigned index)
-        {
-            ASSERT(index < m_structure->anonymousSlotCount());
-            locationForOffset(index)->clear();
-        }
-        JSValue getAnonymousValue(unsigned index) const
-        {
-            ASSERT(index < m_structure->anonymousSlotCount());
-            return locationForOffset(index)->get();
-        }
-
         JSGlobalObject* globalObject() const
         {
             ASSERT(structure()->globalObject());
@@ -274,7 +258,7 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
         static const unsigned StructureFlags = 0;
@@ -351,7 +335,7 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
     protected:
@@ -398,7 +382,7 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
     protected:

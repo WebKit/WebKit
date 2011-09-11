@@ -42,7 +42,7 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
     protected:
@@ -50,7 +50,6 @@ namespace JSC {
         void finishCreation(ExecState*, JSGlobalObject*);
 
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ErrorInstance::StructureFlags;
-        static const unsigned AnonymousSlotCount = ErrorInstance::AnonymousSlotCount + 1;
 
     private:
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);

@@ -18,7 +18,7 @@ EXPORTS
     ??0RegExpObject@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@PAVRegExp@1@@Z
     ??0SHA1@WTF@@QAE@XZ
     ??0StringObject@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@@Z
-    ??0Structure@JSC@@AAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@VJSValue@1@ABVTypeInfo@1@IPBUClassInfo@1@@Z
+    ??0Structure@JSC@@AAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@VJSValue@1@ABVTypeInfo@1@PBUClassInfo@1@@Z
     ??0ThreadCondition@WTF@@QAE@XZ
     ??0UString@JSC@@QAE@PBD@Z
     ??0UString@JSC@@QAE@PBDI@Z
@@ -383,6 +383,7 @@ EXPORTS
     ?unprotect@Heap@JSC@@QAE_NVJSValue@2@@Z
     ?unwrappedObject@JSObject@JSC@@UAEPAV12@XZ
     ?utf8@UString@JSC@@QBE?AVCString@WTF@@_N@Z
+    ?validateValue@MarkStack@JSC@@KAXVJSValue@2@@Z
     ?visitChildren@JSGlobalObject@JSC@@UAEXAAVSlotVisitor@2@@Z
     ?visitChildren@JSObject@JSC@@UAEXAAVSlotVisitor@2@@Z
     ?visitChildren@JSWrapperObject@JSC@@EAEXAAVSlotVisitor@2@@Z

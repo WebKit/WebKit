@@ -45,15 +45,12 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
     protected:
         void finishCreation(ExecState*, JSGlobalObject*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | DateInstance::StructureFlags;
-
-        COMPILE_ASSERT(!DateInstance::AnonymousSlotCount, DatePrototype_stomps_on_your_anonymous_slot);
-        static const unsigned AnonymousSlotCount = 1;
     };
 
 } // namespace JSC

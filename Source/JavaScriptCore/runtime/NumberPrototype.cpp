@@ -76,13 +76,12 @@ NumberPrototype::NumberPrototype(ExecState* exec, JSGlobalObject* globalObject, 
     finishCreation(exec, globalObject);
 }
 
-void NumberPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
+void NumberPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
 {
     Base::finishCreation(exec->globalData());
     setInternalValue(exec->globalData(), jsNumber(0));
 
     ASSERT(inherits(&s_info));
-    putAnonymousValue(globalObject->globalData(), 0, globalObject);
 }
 
 bool NumberPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)

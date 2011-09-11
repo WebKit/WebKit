@@ -62,11 +62,11 @@ namespace JSC {
 
         typedef JSCell Base;
 
-        static Structure* create(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
+        static Structure* create(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo)
         {
             ASSERT(globalData.structureStructure);
             ASSERT(classInfo);
-            Structure* structure = new (allocateCell<Structure>(globalData.heap)) Structure(globalData, globalObject, prototype, typeInfo, anonymousSlotCount, classInfo);
+            Structure* structure = new (allocateCell<Structure>(globalData.heap)) Structure(globalData, globalObject, prototype, typeInfo, classInfo);
             structure->finishCreation(globalData);
             return structure;
         }
@@ -133,7 +133,7 @@ namespace JSC {
 
         void growPropertyStorageCapacity();
         unsigned propertyStorageCapacity() const { ASSERT(structure()->classInfo() == &s_info); return m_propertyStorageCapacity; }
-        unsigned propertyStorageSize() const { ASSERT(structure()->classInfo() == &s_info); return m_anonymousSlotCount + (m_propertyTable ? m_propertyTable->propertyStorageSize() : static_cast<unsigned>(m_offset + 1)); }
+        unsigned propertyStorageSize() const { ASSERT(structure()->classInfo() == &s_info); return (m_propertyTable ? m_propertyTable->propertyStorageSize() : static_cast<unsigned>(m_offset + 1)); }
         bool isUsingInlineStorage() const;
 
         size_t get(JSGlobalData&, const Identifier& propertyName);
@@ -150,9 +150,6 @@ namespace JSC {
         void setHasGetterSetterProperties(bool hasGetterSetterProperties) { m_hasGetterSetterProperties = hasGetterSetterProperties; }
 
         bool hasNonEnumerableProperties() const { return m_hasNonEnumerableProperties; }
-
-        bool hasAnonymousSlots() const { return !!m_anonymousSlotCount; }
-        unsigned anonymousSlotCount() const { return m_anonymousSlotCount; }
         
         bool isEmpty() const { return m_propertyTable ? m_propertyTable->isEmpty() : m_offset == noOffset; }
 
@@ -191,7 +188,7 @@ namespace JSC {
         static JS_EXPORTDATA const ClassInfo s_info;
 
     private:
-        Structure(JSGlobalData&, JSGlobalObject*, JSValue prototype, const TypeInfo&, unsigned anonymousSlotCount, const ClassInfo*);
+        Structure(JSGlobalData&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*);
         Structure(JSGlobalData&);
         Structure(JSGlobalData&, const Structure*);
 
@@ -278,10 +275,9 @@ namespace JSC {
         unsigned m_attributesInPrevious : 7;
 #endif
         unsigned m_specificFunctionThrashCount : 2;
-        unsigned m_anonymousSlotCount : 5;
         unsigned m_preventExtensions : 1;
         unsigned m_didTransition : 1;
-        // 3 free bits
+        // 8 free bits
     };
 
     inline size_t Structure::get(JSGlobalData& globalData, const Identifier& propertyName)
@@ -292,7 +288,6 @@ namespace JSC {
             return notFound;
 
         PropertyMapEntry* entry = m_propertyTable->find(propertyName.impl()).first;
-        ASSERT(!entry || entry->offset >= m_anonymousSlotCount);
         return entry ? entry->offset : notFound;
     }
 
@@ -304,7 +299,6 @@ namespace JSC {
             return notFound;
 
         PropertyMapEntry* entry = m_propertyTable->findWithString(name.impl()).first;
-        ASSERT(!entry || entry->offset >= m_anonymousSlotCount);
         return entry ? entry->offset : notFound;
     }
 

@@ -123,7 +123,6 @@ void ArrayPrototype::finishCreation(JSGlobalObject* globalObject)
 {
     Base::finishCreation(globalObject->globalData());
     ASSERT(inherits(&s_info));
-    putAnonymousValue(globalObject->globalData(), 0, globalObject);
 }
 
 bool ArrayPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

@@ -49,7 +49,7 @@ namespace JSC{
         virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
         void putWithAttributes(ExecState*, const Identifier&, JSValue, unsigned attributes);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); }
+        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); }
 
     protected:
         void finishCreation(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes)

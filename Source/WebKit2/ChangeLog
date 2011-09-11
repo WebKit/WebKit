@@ -1,3 +1,17 @@
+2011-09-09  Oliver Hunt  <oliver@apple.com>
+
+        Remove support for anonymous storage from jsobjects
+        https://bugs.webkit.org/show_bug.cgi?id=67881
+
+        Reviewed by Sam Weinig.
+
+        Remove the use of AnonymousSlotCount.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.h:
+        (WebKit::JSNPMethod::createStructure):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+        (WebKit::JSNPObject::createStructure):
+
 2011-09-09  Chris Marrin  <cmarrin@apple.com>
 
         requestAnimationFrame doesn't throttle on Mac

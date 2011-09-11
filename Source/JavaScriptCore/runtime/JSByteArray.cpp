@@ -51,7 +51,7 @@ JSByteArray::~JSByteArray()
 
 Structure* JSByteArray::createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const JSC::ClassInfo* classInfo)
 {
-    return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, classInfo);
+    return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), classInfo);
 }
 
 bool JSByteArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

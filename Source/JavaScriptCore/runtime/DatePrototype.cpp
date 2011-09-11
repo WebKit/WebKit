@@ -436,13 +436,12 @@ DatePrototype::DatePrototype(ExecState* exec, JSGlobalObject* globalObject, Stru
     finishCreation(exec, globalObject);
 }
 
-void DatePrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
+void DatePrototype::finishCreation(ExecState* exec, JSGlobalObject*)
 {
     Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
 
     // The constructor will be added later, after DateConstructor has been built.
-    putAnonymousValue(exec->globalData(), 0, globalObject);
 }
 
 bool DatePrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

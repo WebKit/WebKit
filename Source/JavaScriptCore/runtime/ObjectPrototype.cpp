@@ -69,11 +69,10 @@ ObjectPrototype::ObjectPrototype(ExecState* exec, Structure* stucture)
 {
 }
 
-void ObjectPrototype::finishCreation(JSGlobalData& globalData, JSGlobalObject* globalObject)
+void ObjectPrototype::finishCreation(JSGlobalData& globalData, JSGlobalObject*)
 {
     Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
-    putAnonymousValue(globalObject->globalData(), 0, globalObject);
 }
 
 void ObjectPrototype::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)

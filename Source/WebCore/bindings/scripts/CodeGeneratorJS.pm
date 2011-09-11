@@ -803,14 +803,8 @@ sub GenerateHeader
     push(@headerContent,
         "    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n" .
         "    {\n" .
-        "        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n" .
+        "        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\n" .
         "    }\n\n");
-
-    # visit function
-    if ($needsMarkChildren) {
-        push(@headerContent, "    virtual void visitChildren(JSC::SlotVisitor&);\n\n");
-        $structureFlags{"JSC::OverridesVisitChildren"} = 1;
-    }
 
     # Custom pushEventHandlerScope function
     push(@headerContent, "    virtual JSC::ScopeChainNode* pushEventHandlerScope(JSC::ExecState*, JSC::ScopeChainNode*) const;\n\n") if $dataNode->extendedAttributes->{"CustomPushEventHandlerScope"};
@@ -868,16 +862,19 @@ sub GenerateHeader
             $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"};
             $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"};
             if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
-                push(@headerContent, "    static const unsigned " . $attribute->signature->name . "Slot = $numCachedAttributes + Base::AnonymousSlotCount;\n");
+                push(@headerContent, "    JSC::WriteBarrier<JSC::Unknown> m_" . $attribute->signature->name . ";\n");
                 $numCachedAttributes++;
+                $needsMarkChildren = 1;
             }
         }
     }
 
-    if ($numCachedAttributes > 0) {
-        push(@headerContent, "    using $parentClassName" . "::putAnonymousValue;\n");
-        push(@headerContent, "    using $parentClassName" . "::getAnonymousValue;\n");
+    # visit function
+    if ($needsMarkChildren) {
+        push(@headerContent, "    virtual void visitChildren(JSC::SlotVisitor&);\n\n");
+        $structureFlags{"JSC::OverridesVisitChildren"} = 1;
     }
+
     if ($numCustomAttributes > 0) {
         push(@headerContent, "\n    // Custom attributes\n");
 
@@ -920,12 +917,6 @@ sub GenerateHeader
         push(@headerContent, "    {\n");
         push(@headerContent, "        return static_cast<$implClassName*>(Base::impl());\n");
         push(@headerContent, "    }\n");
-    }
-    
-    # anonymous slots
-    if ($numCachedAttributes) {
-        push(@headerContent, "public:\n");
-        push(@headerContent, "    static const unsigned AnonymousSlotCount = $numCachedAttributes + Base::AnonymousSlotCount;\n");
     }
 
     push(@headerContent, "protected:\n");
@@ -1046,7 +1037,7 @@ sub GenerateHeader
     push(@headerContent,
         "    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n" .
         "    {\n" .
-        "        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n" .
+        "        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\n" .
         "    }\n");
     if ($dataNode->extendedAttributes->{"DelegatingPrototypePutFunction"}) {
         push(@headerContent, "    virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
@@ -1533,22 +1524,7 @@ sub GenerateImplementation
         }
     }
     push(@implContent, "    ASSERT(inherits(&s_info));\n");
-    if ($numCachedAttributes > 0) {
-        push(@implContent, "    for (unsigned i = Base::AnonymousSlotCount; i < AnonymousSlotCount; i++)\n");
-        push(@implContent, "        putAnonymousValue(globalObject->globalData(), i, JSValue());\n");
-    }
     push(@implContent, "}\n\n");
-
-    if ($needsMarkChildren && !$dataNode->extendedAttributes->{"CustomMarkFunction"}) {
-        push(@implContent, "void ${className}::visitChildren(SlotVisitor& visitor)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
-        push(@implContent, "    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);\n");
-        push(@implContent, "    ASSERT(structure()->typeInfo().overridesVisitChildren());\n");
-        push(@implContent, "    Base::visitChildren(visitor);\n");
-        push(@implContent, "    impl()->visitJSEventListeners(visitor);\n");
-        push(@implContent, "}\n\n");
-    }
 
     if (!$dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
         push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec, JSGlobalObject* globalObject)\n");
@@ -1618,6 +1594,10 @@ sub GenerateImplementation
                 push(@implContent, "{\n");
                 push(@implContent, "    ${className}* castedThis = static_cast<$className*>(asObject(slotBase));\n");
 
+                if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
+                    $needsMarkChildren = 1;
+                }
+
                 if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && 
                         !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurity"} &&
                         !$attribute->signature->extendedAttributes->{"DoNotCheckDomainSecurityOnGet"}) {
@@ -1663,7 +1643,7 @@ sub GenerateImplementation
                     if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
                         $cacheIndex = $currentCachedAttribute;
                         $currentCachedAttribute++;
-                        push(@implContent, "    if (JSValue cachedValue = castedThis->getAnonymousValue(" . $className . "::" . $attribute->signature->name . "Slot))\n");
+                        push(@implContent, "    if (JSValue cachedValue = m_" . $attribute->signature->name . ".get())\n");
                         push(@implContent, "        return cachedValue;\n");
                     }
 
@@ -1688,7 +1668,7 @@ sub GenerateImplementation
                         }
                     }
                     
-                    push(@implContent, "    castedThis->putAnonymousValue(exec->globalData(), " . $className . "::" . $attribute->signature->name . "Slot, result);\n") if ($attribute->signature->extendedAttributes->{"CachedAttribute"});
+                    push(@implContent, "    m_" . $attribute->signature->name . ".set(exec->globalData(), this, result);\n") if ($attribute->signature->extendedAttributes->{"CachedAttribute"});
                     push(@implContent, "    return result;\n");
 
                 } else {
@@ -2192,6 +2172,7 @@ sub GenerateImplementation
                     GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    ", $svgPropertyType, $implClassName);
                 }
             }
+
             push(@implContent, "}\n\n");
 
             if ($function->{overloads} && @{$function->{overloads}} > 1 && $function->{overloadIndex} == @{$function->{overloads}}) {
@@ -2203,6 +2184,29 @@ sub GenerateImplementation
                 push(@implContent, "#endif\n\n");
             }
         }
+        
+        if ($needsMarkChildren && !$dataNode->extendedAttributes->{"CustomMarkFunction"}) {
+            push(@implContent, "void ${className}::visitChildren(SlotVisitor& visitor)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
+            push(@implContent, "    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);\n");
+            push(@implContent, "    ASSERT(structure()->typeInfo().overridesVisitChildren());\n");
+            push(@implContent, "    Base::visitChildren(visitor);\n");
+            if ($dataNode->extendedAttributes->{"EventTarget"}) {
+                push(@implContent, "    impl()->visitJSEventListeners(visitor);\n");
+            }
+            if ($numCachedAttributes > 0) {
+                foreach (@{$dataNode->attributes}) {
+                    my $attribute = $_;
+                    if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
+                        push(@implContent, "    if (m_" . $attribute->signature->name . ")\n");
+                        push(@implContent, "        visitor.append(&m_" . $attribute->signature->name . ");\n");
+                    }
+                }
+            }
+            push(@implContent, "}\n\n");
+        }
+        die "Can't generate binding for class with cached attribute and custom mark." if (($numCachedAttributes > 0) and ($dataNode->extendedAttributes->{"CustomMarkFunction"}));
     }
 
     if ($numConstants > 0) {
@@ -3117,7 +3121,7 @@ sub GenerateConstructorDeclaration
 
     push(@$outputArray, "    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n");
     push(@$outputArray, "    {\n");
-    push(@$outputArray, "        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n");
+    push(@$outputArray, "        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\n");
     push(@$outputArray, "    }\n");
 
     push(@$outputArray, "protected:\n");

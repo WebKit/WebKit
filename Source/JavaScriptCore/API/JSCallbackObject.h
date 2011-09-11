@@ -152,7 +152,7 @@ public:
 
     static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) 
     { 
-        return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), Parent::AnonymousSlotCount, &s_info); 
+        return Structure::create(globalData, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); 
     }
     
     JSValue getPrivateProperty(const Identifier& propertyName) const

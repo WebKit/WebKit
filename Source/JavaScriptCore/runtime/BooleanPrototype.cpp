@@ -55,13 +55,12 @@ BooleanPrototype::BooleanPrototype(ExecState* exec, JSGlobalObject* globalObject
     finishCreation(exec, globalObject);
 }
 
-void BooleanPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
+void BooleanPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
 {
     Base::finishCreation(exec->globalData());
     setInternalValue(exec->globalData(), jsBoolean(false));
 
     ASSERT(inherits(&s_info));
-    putAnonymousValue(globalObject->globalData(), 0, globalObject);
 }
 
 bool BooleanPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)

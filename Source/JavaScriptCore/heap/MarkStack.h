@@ -118,8 +118,8 @@ namespace JSC {
     protected:
 #if ENABLE(GC_VALIDATION)
         static void validateSet(JSValue*, size_t);
-        static void validateValue(JSValue);
 #endif
+        static void validateValue(JSValue);
 
         void append(JSValue*);
         void append(JSValue*, size_t count);

@@ -167,7 +167,6 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             structure()->setGlobalObject(globalData, this);
-            COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
             putThisToAnonymousValue(0);
             init(thisValue);
         }
@@ -274,7 +273,7 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(globalData, 0, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+            return Structure::create(globalData, 0, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
         void registerWeakMap(OpaqueJSWeakObjectMap* map)
@@ -294,7 +293,6 @@ namespace JSC {
         double weakRandomNumber() { return m_weakRandom.get(); }
     protected:
 
-        static const unsigned AnonymousSlotCount = JSVariableObject::AnonymousSlotCount + 1;
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
         struct GlobalPropertyInfo {
