@@ -158,12 +158,6 @@ JSObject* JSCell::toObject(ExecState*, JSGlobalObject*) const
     return 0;
 }
 
-bool isZombie(const JSCell* cell)
-{
-    UNUSED_PARAM(cell);
-    return false;
-}
-
 void slowValidateCell(JSCell* cell)
 {
     ASSERT_GC_OBJECT_LOOKS_VALID(cell);
