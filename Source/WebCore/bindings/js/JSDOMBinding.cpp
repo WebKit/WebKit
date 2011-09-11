@@ -171,7 +171,7 @@ double valueToDate(ExecState* exec, JSValue value)
 
 void reportException(ExecState* exec, JSValue exception)
 {
-    if (exception.inherits(&TerminatedExecutionError::s_info))
+    if (isTerminatedExecutionException(exception))
         return;
 
     UString errorMessage = exception.toString(exec);

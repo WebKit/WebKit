@@ -34,7 +34,13 @@
 namespace JSC {
 
 JSObject* createInterruptedExecutionException(JSGlobalData*);
+bool isInterruptedExecutionException(JSObject*);
+bool isInterruptedExecutionException(JSValue);
+
 JSObject* createTerminatedExecutionException(JSGlobalData*);
+bool isTerminatedExecutionException(JSObject*);
+bool isTerminatedExecutionException(JSValue);
+
 JSObject* createStackOverflowError(ExecState*);
 JSObject* createStackOverflowError(JSGlobalObject*);
 JSObject* createOutOfMemoryError(JSGlobalObject*);

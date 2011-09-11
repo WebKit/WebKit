@@ -132,13 +132,14 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode,
 
     ExecState* exec = m_workerContextWrapper->globalExec();
 
-    JSValue evaluationException;
-
     m_workerContextWrapper->globalData().timeoutChecker.start();
+
+    JSValue evaluationException;
     JSValue returnValue = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode.jsSourceCode(), m_workerContextWrapper.get(), &evaluationException);
+
     m_workerContextWrapper->globalData().timeoutChecker.stop();
 
-    if ((evaluationException && evaluationException.inherits(&TerminatedExecutionError::s_info)) ||  m_workerContextWrapper->globalData().terminator.shouldTerminate()) {
+    if ((evaluationException && isTerminatedExecutionException(evaluationException)) ||  m_workerContextWrapper->globalData().terminator.shouldTerminate()) {
         forbidExecution();
         return ScriptValue();
     }

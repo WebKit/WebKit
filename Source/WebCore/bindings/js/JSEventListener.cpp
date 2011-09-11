@@ -134,7 +134,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
 
 #if ENABLE(WORKERS)
         if (scriptExecutionContext->isWorkerContext()) {
-            bool terminatorCausedException = (exec->hadException() && exec->exception().inherits(&TerminatedExecutionError::s_info));
+            bool terminatorCausedException = (exec->hadException() && isTerminatedExecutionException(exec->exception()));
             if (terminatorCausedException || globalData.terminator.shouldTerminate())
                 static_cast<WorkerContext*>(scriptExecutionContext)->script()->forbidExecution();
         }

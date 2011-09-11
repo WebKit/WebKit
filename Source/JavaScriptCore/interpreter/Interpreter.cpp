@@ -708,7 +708,7 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
             addErrorInfo(callFrame, exception, codeBlock->lineNumberForBytecodeOffset(bytecodeOffset), codeBlock->ownerExecutable()->source());
         }
 
-        isInterrupt = (exception->inherits(&InterruptedExecutionError::s_info) || exception->inherits(&TerminatedExecutionError::s_info));
+        isInterrupt = isInterruptedExecutionException(exception) || isTerminatedExecutionException(exception);
     }
 
     if (Debugger* debugger = callFrame->dynamicGlobalObject()->debugger()) {

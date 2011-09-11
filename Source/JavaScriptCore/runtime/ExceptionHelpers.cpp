@@ -48,6 +48,22 @@ UString InterruptedExecutionError::toString(ExecState*) const
     return "JavaScript execution exceeded timeout.";
 }
 
+JSObject* createInterruptedExecutionException(JSGlobalData* globalData)
+{
+    return InterruptedExecutionError::create(*globalData);
+}
+
+bool isInterruptedExecutionException(JSObject* object)
+{
+    return object->inherits(&InterruptedExecutionError::s_info);
+}
+
+bool isInterruptedExecutionException(JSValue value)
+{
+    return value.inherits(&InterruptedExecutionError::s_info);
+}
+
+
 const ClassInfo TerminatedExecutionError::s_info = { "TerminatedExecutionError", &Base::s_info, 0, 0 };
 
 UString TerminatedExecutionError::toString(ExecState*) const
@@ -55,16 +71,21 @@ UString TerminatedExecutionError::toString(ExecState*) const
     return "JavaScript execution terminated.";
 }
 
-
-JSObject* createInterruptedExecutionException(JSGlobalData* globalData)
-{
-    return InterruptedExecutionError::create(*globalData);
-}
-
 JSObject* createTerminatedExecutionException(JSGlobalData* globalData)
 {
     return TerminatedExecutionError::create(*globalData);
 }
+
+bool isTerminatedExecutionException(JSObject* object)
+{
+    return object->inherits(&TerminatedExecutionError::s_info);
+}
+
+bool isTerminatedExecutionException(JSValue value)
+{
+    return value.inherits(&TerminatedExecutionError::s_info);
+}
+
 
 JSObject* createStackOverflowError(ExecState* exec)
 {
