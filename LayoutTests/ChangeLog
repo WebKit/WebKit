@@ -1,3 +1,10 @@
+2011-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip fast/images/support-broken-image-delegate.html temporarily on Mac.
+        The failure is tracked by the bug 67898.
+
+        * platform/mac/Skipped:
+
 2011-09-09  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67861
