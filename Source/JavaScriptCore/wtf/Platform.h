@@ -509,11 +509,15 @@
 #define WTF_USE_PTHREAD_BASED_QT 1
 #endif
 
-#if !defined(ENABLE_JSC_MULTIPLE_THREADS)
+/* FIXME: JSC multithreading currently only supports pthread.
+   Qt-Win cannot do multithreading because it is not pthread-based. */
+#if !defined(ENABLE_JSC_MULTIPLE_THREADS) && (!PLATFORM(QT) || USE(PTHREAD_BASED_QT))
 #define ENABLE_JSC_MULTIPLE_THREADS 1
 #endif
 
-#if !defined(ENABLE_WTF_MULTIPLE_THREADS)
+/* FIXME: JSC multithreading currently only supports pthread.
+   Qt-Win cannot do multithreading because it is not pthread-based. */
+#if !defined(ENABLE_WTF_MULTIPLE_THREADS) && (!PLATFORM(QT) || USE(PTHREAD_BASED_QT))
 #define ENABLE_WTF_MULTIPLE_THREADS 1
 #endif
 

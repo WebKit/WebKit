@@ -1,3 +1,14 @@
+2011-09-11  Jarred Nicholls  <jarred@sencha.com>
+
+        [Qt] Win32 build broken due to MachineStackMarker.cpp/.o failing to link against pthreads library
+        https://bugs.webkit.org/show_bug.cgi?id=67864
+        
+        Qt Win32 is not pthread compatible and cannot participate in multithreaded JSC or it fails to build.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/Platform.h:
+
 2011-09-11  Filip Pizlo  <fpizlo@apple.com>
 
         ARM and MIPS assemblers still refer to executable pools.
