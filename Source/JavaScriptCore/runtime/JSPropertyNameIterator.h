@@ -58,8 +58,6 @@ namespace JSC {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), &s_info);
         }
 
-        virtual bool isPropertyNameIterator() const { return true; }
-
         virtual void visitChildren(SlotVisitor&);
 
         bool getOffset(size_t i, int& offset)
