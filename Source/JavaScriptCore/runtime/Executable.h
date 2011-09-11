@@ -173,7 +173,7 @@ namespace JSC {
         typedef ExecutableBase Base;
 
 #if ENABLE(JIT)
-        static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodePtr callThunk, NativeFunction function, MacroAssemblerCodePtr constructThunk, NativeFunction constructor)
+        static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodeRef callThunk, NativeFunction function, MacroAssemblerCodeRef constructThunk, NativeFunction constructor)
         {
             NativeExecutable* executable;
             if (!callThunk) {

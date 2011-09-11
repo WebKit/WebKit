@@ -837,6 +837,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\MetaAllocator.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\MetaAllocator.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\MetaAllocatorHandle.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\MD5.cpp"
 			>
 		</File>
@@ -974,6 +986,10 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\RandomNumberSeed.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\RedBlackTree.h"
 			>
 		</File>
 		<File

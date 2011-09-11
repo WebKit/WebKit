@@ -193,7 +193,6 @@ namespace JSC {
         
 #if ENABLE(ASSEMBLER)
         ExecutableAllocator executableAllocator;
-        ExecutableAllocator regexAllocator;
 #endif
 
 #if !ENABLE(JIT)
@@ -216,7 +215,7 @@ namespace JSC {
         Interpreter* interpreter;
 #if ENABLE(JIT)
         OwnPtr<JITThunks> jitStubs;
-        MacroAssemblerCodePtr getCTIStub(ThunkGenerator generator)
+        MacroAssemblerCodeRef getCTIStub(ThunkGenerator generator)
         {
             return jitStubs->ctiStub(this, generator);
         }

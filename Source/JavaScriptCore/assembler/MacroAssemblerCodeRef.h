@@ -199,22 +199,59 @@ private:
 // pointer to the code, and a ref pointer to the pool from within which it
 // was allocated.
 class MacroAssemblerCodeRef {
+private:
+    // This is private because it's dangerous enough that we want uses of it
+    // to be easy to find - hence the static create method below.
+    explicit MacroAssemblerCodeRef(MacroAssemblerCodePtr codePtr)
+        : m_codePtr(codePtr)
+    {
+        ASSERT(m_codePtr);
+    }
+
 public:
     MacroAssemblerCodeRef()
-        : m_size(0)
     {
     }
 
-    MacroAssemblerCodeRef(void* code, PassRefPtr<ExecutablePool> executablePool, size_t size)
-        : m_code(code)
-        , m_executablePool(executablePool)
-        , m_size(size)
+    MacroAssemblerCodeRef(PassRefPtr<ExecutableMemoryHandle> executableMemory)
+        : m_codePtr(executableMemory->start())
+        , m_executableMemory(executableMemory)
     {
+        ASSERT(m_executableMemory->isManaged());
+        ASSERT(m_executableMemory->start());
+        ASSERT(m_codePtr);
     }
+    
+    // Use this only when you know that the codePtr refers to code that is
+    // already being kept alive through some other means. Typically this means
+    // that codePtr is immortal.
+    static MacroAssemblerCodeRef createSelfManagedCodeRef(MacroAssemblerCodePtr codePtr)
+    {
+        return MacroAssemblerCodeRef(codePtr);
+    }
+    
+    ExecutableMemoryHandle* executableMemory() const
+    {
+        return m_executableMemory.get();
+    }
+    
+    MacroAssemblerCodePtr code() const
+    {
+        return m_codePtr;
+    }
+    
+    size_t size() const
+    {
+        if (!m_executableMemory)
+            return 0;
+        return m_executableMemory->sizeInBytes();
+    }
+    
+    bool operator!() const { return !m_codePtr; }
 
-    MacroAssemblerCodePtr m_code;
-    RefPtr<ExecutablePool> m_executablePool;
-    size_t m_size;
+private:
+    MacroAssemblerCodePtr m_codePtr;
+    RefPtr<ExecutableMemoryHandle> m_executableMemory;
 };
 
 } // namespace JSC

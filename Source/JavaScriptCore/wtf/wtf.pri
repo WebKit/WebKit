@@ -22,6 +22,7 @@ SOURCES += \
     wtf/HashTable.cpp \
     wtf/MD5.cpp \
     wtf/MainThread.cpp \
+    wtf/MetaAllocator.cpp \
     wtf/NullPtr.cpp \
     wtf/OSRandomSource.cpp \
     wtf/qt/MainThreadQt.cpp \

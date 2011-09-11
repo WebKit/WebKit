@@ -31,20 +31,20 @@ namespace JSC {
     class ExecutablePool;
     class JSGlobalData;
     class NativeExecutable;
-    class MacroAssemblerCodePtr;
+    class MacroAssemblerCodeRef;
 
-    typedef MacroAssemblerCodePtr (*ThunkGenerator)(JSGlobalData*, ExecutablePool*);
-    MacroAssemblerCodePtr charCodeAtThunkGenerator(JSGlobalData*, ExecutablePool*);
-    MacroAssemblerCodePtr charAtThunkGenerator(JSGlobalData*, ExecutablePool*);
-    MacroAssemblerCodePtr fromCharCodeThunkGenerator(JSGlobalData*, ExecutablePool*);
-    MacroAssemblerCodePtr absThunkGenerator(JSGlobalData*, ExecutablePool*);
-    MacroAssemblerCodePtr ceilThunkGenerator(JSGlobalData*, ExecutablePool*);
-    MacroAssemblerCodePtr expThunkGenerator(JSGlobalData*, ExecutablePool*);
-    MacroAssemblerCodePtr floorThunkGenerator(JSGlobalData*, ExecutablePool*);
-    MacroAssemblerCodePtr logThunkGenerator(JSGlobalData*, ExecutablePool*);
-    MacroAssemblerCodePtr roundThunkGenerator(JSGlobalData*, ExecutablePool*);
-    MacroAssemblerCodePtr sqrtThunkGenerator(JSGlobalData*, ExecutablePool*);
-    MacroAssemblerCodePtr powThunkGenerator(JSGlobalData*, ExecutablePool*);
+    typedef MacroAssemblerCodeRef (*ThunkGenerator)(JSGlobalData*);
+    MacroAssemblerCodeRef charCodeAtThunkGenerator(JSGlobalData*);
+    MacroAssemblerCodeRef charAtThunkGenerator(JSGlobalData*);
+    MacroAssemblerCodeRef fromCharCodeThunkGenerator(JSGlobalData*);
+    MacroAssemblerCodeRef absThunkGenerator(JSGlobalData*);
+    MacroAssemblerCodeRef ceilThunkGenerator(JSGlobalData*);
+    MacroAssemblerCodeRef expThunkGenerator(JSGlobalData*);
+    MacroAssemblerCodeRef floorThunkGenerator(JSGlobalData*);
+    MacroAssemblerCodeRef logThunkGenerator(JSGlobalData*);
+    MacroAssemblerCodeRef roundThunkGenerator(JSGlobalData*);
+    MacroAssemblerCodeRef sqrtThunkGenerator(JSGlobalData*);
+    MacroAssemblerCodeRef powThunkGenerator(JSGlobalData*);
 }
 #endif
 

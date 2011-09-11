@@ -93,7 +93,7 @@ static void linkRestoreScratch(LinkBuffer& patchBuffer, bool needToRestoreScratc
     linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone), stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase));
 }
 
-static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stubInfo, StructureChain* chain, size_t count, size_t offset, Structure* structure, CodeLocationLabel successLabel, CodeLocationLabel slowCaseLabel, CodeLocationLabel& stubRoutine)
+static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stubInfo, StructureChain* chain, size_t count, size_t offset, Structure* structure, CodeLocationLabel successLabel, CodeLocationLabel slowCaseLabel, MacroAssemblerCodeRef& stubRoutine)
 {
     JSGlobalData* globalData = &exec->globalData();
 
@@ -133,11 +133,11 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
     
     emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
     
-    LinkBuffer patchBuffer(*globalData, &stubJit, exec->codeBlock()->executablePool());
+    LinkBuffer patchBuffer(*globalData, &stubJit);
     
     linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, successLabel, slowCaseLabel);
     
-    stubRoutine = patchBuffer.finalizeCodeAddendum();
+    stubRoutine = patchBuffer.finalizeCode();
 }
 
 static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
@@ -176,15 +176,14 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         
         emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
         
-        LinkBuffer patchBuffer(*globalData, &stubJit, codeBlock->executablePool());
+        LinkBuffer patchBuffer(*globalData, &stubJit);
         
         linkRestoreScratch(patchBuffer, needToRestoreScratch, stubInfo, success, fail, failureCases);
         
-        CodeLocationLabel entryLabel = patchBuffer.finalizeCodeAddendum();
-        stubInfo.stubRoutine = entryLabel;
+        stubInfo.stubRoutine = patchBuffer.finalizeCode();
         
         RepatchBuffer repatchBuffer(codeBlock);
-        repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), entryLabel);
+        repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), CodeLocationLabel(stubInfo.stubRoutine.code()));
         repatchBuffer.relink(stubInfo.callReturnLocation, operationGetById);
         
         return true;
@@ -231,7 +230,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     generateProtoChainAccessStub(exec, stubInfo, prototypeChain, count, offset, structure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone), stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase), stubInfo.stubRoutine);
     
     RepatchBuffer repatchBuffer(codeBlock);
-    repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), stubInfo.stubRoutine);
+    repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), CodeLocationLabel(stubInfo.stubRoutine.code()));
     repatchBuffer.relink(stubInfo.callReturnLocation, operationGetByIdProtoBuildList);
     
     stubInfo.initGetByIdChain(*globalData, codeBlock->ownerExecutable(), structure, prototypeChain);
@@ -324,7 +323,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
     
     if (stubInfo.accessType == access_get_by_id_self) {
         ASSERT(!stubInfo.stubRoutine);
-        polymorphicStructureList = new PolymorphicAccessStructureList(*globalData, codeBlock->ownerExecutable(), stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase), stubInfo.u.getByIdSelf.baseObjectStructure.get());
+        polymorphicStructureList = new PolymorphicAccessStructureList(*globalData, codeBlock->ownerExecutable(), MacroAssemblerCodeRef::createSelfManagedCodeRef(stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase)), stubInfo.u.getByIdSelf.baseObjectStructure.get());
         stubInfo.initGetByIdSelfList(polymorphicStructureList, 1);
     } else {
         polymorphicStructureList = stubInfo.u.getByIdSelfList.structureList;
@@ -350,21 +349,21 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         
         MacroAssembler::Jump success = stubJit.jump();
         
-        LinkBuffer patchBuffer(*globalData, &stubJit, codeBlock->executablePool());
+        LinkBuffer patchBuffer(*globalData, &stubJit);
         
-        CodeLocationLabel lastProtoBegin = polymorphicStructureList->list[listIndex - 1].stubRoutine;
+        CodeLocationLabel lastProtoBegin = CodeLocationLabel(polymorphicStructureList->list[listIndex - 1].stubRoutine.code());
         ASSERT(!!lastProtoBegin);
         
         patchBuffer.link(wrongStruct, lastProtoBegin);
         patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone));
         
-        CodeLocationLabel entryLabel = patchBuffer.finalizeCodeAddendum();
+        MacroAssemblerCodeRef stubRoutine = patchBuffer.finalizeCode();
         
-        polymorphicStructureList->list[listIndex].set(*globalData, codeBlock->ownerExecutable(), entryLabel, structure);
+        polymorphicStructureList->list[listIndex].set(*globalData, codeBlock->ownerExecutable(), stubRoutine, structure);
         
         CodeLocationJump jumpLocation = stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck);
         RepatchBuffer repatchBuffer(codeBlock);
-        repatchBuffer.relink(jumpLocation, entryLabel);
+        repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine.code()));
         
         if (listIndex < (POLYMORPHIC_LIST_CACHE_SIZE - 1))
             return true;
@@ -408,7 +407,7 @@ static bool tryBuildGetByIDProtoList(ExecState* exec, JSValue baseValue, const I
     if (stubInfo.accessType == access_get_by_id_chain) {
         ASSERT(!!stubInfo.stubRoutine);
         polymorphicStructureList = new PolymorphicAccessStructureList(*globalData, codeBlock->ownerExecutable(), stubInfo.stubRoutine, stubInfo.u.getByIdChain.baseObjectStructure.get(), stubInfo.u.getByIdChain.chain.get());
-        stubInfo.stubRoutine = CodeLocationLabel();
+        stubInfo.stubRoutine = MacroAssemblerCodeRef();
         stubInfo.initGetByIdProtoList(polymorphicStructureList, 1);
     } else {
         ASSERT(stubInfo.accessType = access_get_by_id_proto_list);
@@ -419,18 +418,18 @@ static bool tryBuildGetByIDProtoList(ExecState* exec, JSValue baseValue, const I
     if (listIndex < POLYMORPHIC_LIST_CACHE_SIZE) {
         stubInfo.u.getByIdProtoList.listSize++;
         
-        CodeLocationLabel lastProtoBegin = polymorphicStructureList->list[listIndex - 1].stubRoutine;
+        CodeLocationLabel lastProtoBegin = CodeLocationLabel(polymorphicStructureList->list[listIndex - 1].stubRoutine.code());
         ASSERT(!!lastProtoBegin);
 
-        CodeLocationLabel entryLabel;
+        MacroAssemblerCodeRef stubRoutine;
         
-        generateProtoChainAccessStub(exec, stubInfo, prototypeChain, count, offset, structure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone), lastProtoBegin, entryLabel);
+        generateProtoChainAccessStub(exec, stubInfo, prototypeChain, count, offset, structure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone), lastProtoBegin, stubRoutine);
         
-        polymorphicStructureList->list[listIndex].set(*globalData, codeBlock->ownerExecutable(), entryLabel, structure);
+        polymorphicStructureList->list[listIndex].set(*globalData, codeBlock->ownerExecutable(), stubRoutine, structure);
         
         CodeLocationJump jumpLocation = stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck);
         RepatchBuffer repatchBuffer(codeBlock);
-        repatchBuffer.relink(jumpLocation, entryLabel);
+        repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine.code()));
         
         if (listIndex < (POLYMORPHIC_LIST_CACHE_SIZE - 1))
             return true;
@@ -548,18 +547,17 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             } else
                 success = stubJit.jump();
             
-            LinkBuffer patchBuffer(*globalData, &stubJit, codeBlock->executablePool());
+            LinkBuffer patchBuffer(*globalData, &stubJit);
             patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToDone));
             if (needToRestoreScratch)
                 patchBuffer.link(failure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase));
             else
                 patchBuffer.link(failureCases, stubInfo.callReturnLocation.labelAtOffset(stubInfo.deltaCallToSlowCase));
             
-            CodeLocationLabel entryLabel = patchBuffer.finalizeCodeAddendum();
-            stubInfo.stubRoutine = entryLabel;
+            stubInfo.stubRoutine = patchBuffer.finalizeCode();
             
             RepatchBuffer repatchBuffer(codeBlock);
-            repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), entryLabel);
+            repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.deltaCallToStructCheck), CodeLocationLabel(stubInfo.stubRoutine.code()));
             repatchBuffer.relink(stubInfo.callReturnLocation, appropriatePutByIdFunction(slot, putKind));
             
             stubInfo.initPutByIdTransition(*globalData, codeBlock->ownerExecutable(), oldStructure, structure, prototypeChain);

@@ -50,7 +50,7 @@ namespace JSC {
     class StructureChain;
 
 #if ENABLE(JIT)
-    typedef CodeLocationLabel PolymorphicAccessStructureListStubRoutineType;
+    typedef MacroAssemblerCodeRef PolymorphicAccessStructureListStubRoutineType;
 
     // Structure used by op_get_by_id_self_list and op_get_by_id_proto_list instruction to hold data off the main opcode stream.
     struct PolymorphicAccessStructureList {

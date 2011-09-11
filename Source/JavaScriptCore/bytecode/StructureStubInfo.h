@@ -173,7 +173,7 @@ namespace JSC {
             } putByIdReplace;
         } u;
 
-        CodeLocationLabel stubRoutine;
+        MacroAssemblerCodeRef stubRoutine;
         CodeLocationCall callReturnLocation;
         CodeLocationLabel hotPathBegin;
     };

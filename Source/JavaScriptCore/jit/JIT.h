@@ -221,20 +221,20 @@ namespace JSC {
             jit.privateCompilePutByIdTransition(stubInfo, oldStructure, newStructure, cachedOffset, chain, returnAddress, direct);
         }
 
-        static void compileCTIMachineTrampolines(JSGlobalData* globalData, RefPtr<ExecutablePool>* executablePool, TrampolineStructure *trampolines)
+        static PassRefPtr<ExecutableMemoryHandle> compileCTIMachineTrampolines(JSGlobalData* globalData, TrampolineStructure *trampolines)
         {
             if (!globalData->canUseJIT())
-                return;
+                return 0;
             JIT jit(globalData, 0);
-            jit.privateCompileCTIMachineTrampolines(executablePool, globalData, trampolines);
+            return jit.privateCompileCTIMachineTrampolines(globalData, trampolines);
         }
 
-        static CodePtr compileCTINativeCall(JSGlobalData* globalData, PassRefPtr<ExecutablePool> executablePool, NativeFunction func)
+        static CodeRef compileCTINativeCall(JSGlobalData* globalData, NativeFunction func)
         {
             if (!globalData->canUseJIT())
-                return CodePtr();
+                return CodeRef();
             JIT jit(globalData, 0);
-            return jit.privateCompileCTINativeCall(executablePool, globalData, func);
+            return jit.privateCompileCTINativeCall(globalData, func);
         }
 
         static void patchGetByIdSelf(CodeBlock* codeblock, StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress);
@@ -274,9 +274,9 @@ namespace JSC {
         void privateCompileGetByIdChain(StructureStubInfo*, Structure*, StructureChain*, size_t count, const Identifier&, const PropertySlot&, size_t cachedOffset, ReturnAddressPtr returnAddress, CallFrame* callFrame);
         void privateCompilePutByIdTransition(StructureStubInfo*, Structure*, Structure*, size_t cachedOffset, StructureChain*, ReturnAddressPtr returnAddress, bool direct);
 
-        void privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* data, TrampolineStructure *trampolines);
+        PassRefPtr<ExecutableMemoryHandle> privateCompileCTIMachineTrampolines(JSGlobalData*, TrampolineStructure*);
         Label privateCompileCTINativeCall(JSGlobalData*, bool isConstruct = false);
-        CodePtr privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executablePool, JSGlobalData* data, NativeFunction func);
+        CodeRef privateCompileCTINativeCall(JSGlobalData*, NativeFunction);
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
         void addSlowCase(Jump);
@@ -1050,7 +1050,7 @@ namespace JSC {
 #endif
 #endif
         WeakRandom m_randomGenerator;
-        static CodePtr stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool);
+        static CodeRef stringGetByValStubGenerator(JSGlobalData*);
         
 #if ENABLE(TIERED_COMPILATION)
         bool m_canBeOptimized;

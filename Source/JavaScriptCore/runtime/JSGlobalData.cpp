@@ -186,7 +186,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , emptyList(new MarkedArgumentBuffer)
 #if ENABLE(ASSEMBLER)
     , executableAllocator(*this)
-    , regexAllocator(*this)
 #endif
     , lexer(new Lexer(this))
     , parser(new Parser)
@@ -440,6 +439,9 @@ void JSGlobalData::stopSampling()
 void JSGlobalData::dumpSampleData(ExecState* exec)
 {
     interpreter->dumpSampleData(exec);
+#if ENABLE(ASSEMBLER)
+    ExecutableAllocator::dumpProfile();
+#endif
 }
 
 void JSGlobalData::recompileAllJSFunctions()

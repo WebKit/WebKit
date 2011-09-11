@@ -51,6 +51,10 @@
 		0BF28A2911A33DC300638F84 /* SizeLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BF28A2811A33DC300638F84 /* SizeLimits.cpp */; };
 		0F242DA713F3B1E8007ADD4C /* WeakReferenceHarvester.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7700911402FF280078EB39 /* SamplingCounter.cpp */; };
+		0F963B2713F753BB0002D9B2 /* RedBlackTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B2613F753990002D9B2 /* RedBlackTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F963B2C13F853EC0002D9B2 /* MetaAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F963B2B13F853C70002D9B2 /* MetaAllocator.cpp */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
+		0F963B2D13F854020002D9B2 /* MetaAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B2A13F853BD0002D9B2 /* MetaAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F963B2F13FC66BB0002D9B2 /* MetaAllocatorHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B2E13FC66AE0002D9B2 /* MetaAllocatorHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC8150A14043BF500CFA603 /* WriteBarrierSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC8150B14043C0E00CFA603 /* WriteBarrierSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */; };
@@ -558,7 +562,7 @@
 		BC18C46B0E16F5CD00B34460 /* SymbolTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A396A60CD2933100B5B4FF /* SymbolTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C46C0E16F5CD00B34460 /* TCPackedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA479650CFBCF56009328A0 /* TCPackedCache.h */; };
 		BC18C46D0E16F5CD00B34460 /* TCPageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6E08E80A17002CBEE7 /* TCPageMap.h */; };
-		BC18C46E0E16F5CD00B34460 /* TCSpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */; };
+		BC18C46E0E16F5CD00B34460 /* TCSpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C46F0E16F5CD00B34460 /* TCSystemAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */; };
 		BC18C4700E16F5CD00B34460 /* Threading.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE79220D6C95CD00FEA3BA /* Threading.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4710E16F5CD00B34460 /* ThreadSpecific.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -778,6 +782,10 @@
 		0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakReferenceHarvester.h; sourceTree = "<group>"; };
 		0F77008E1402FDD60078EB39 /* SamplingCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingCounter.h; sourceTree = "<group>"; };
 		0F7700911402FF280078EB39 /* SamplingCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingCounter.cpp; sourceTree = "<group>"; };
+		0F963B2613F753990002D9B2 /* RedBlackTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RedBlackTree.h; sourceTree = "<group>"; };
+		0F963B2A13F853BD0002D9B2 /* MetaAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaAllocator.h; sourceTree = "<group>"; };
+		0F963B2B13F853C70002D9B2 /* MetaAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetaAllocator.cpp; sourceTree = "<group>"; };
+		0F963B2E13FC66AE0002D9B2 /* MetaAllocatorHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaAllocatorHandle.h; sourceTree = "<group>"; };
 		0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueProfile.h; sourceTree = "<group>"; };
 		0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WriteBarrierSupport.cpp; sourceTree = "<group>"; };
 		0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrierSupport.h; sourceTree = "<group>"; };
@@ -1763,6 +1771,10 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
+				0F963B2E13FC66AE0002D9B2 /* MetaAllocatorHandle.h */,
+				0F963B2B13F853C70002D9B2 /* MetaAllocator.cpp */,
+				0F963B2A13F853BD0002D9B2 /* MetaAllocator.h */,
+				0F963B2613F753990002D9B2 /* RedBlackTree.h */,
 				C2EE599D13FC972A009CEAFE /* DecimalNumber.cpp */,
 				C2EE599E13FC972A009CEAFE /* DecimalNumber.h */,
 				C22C524813FAF6EF00B7DC0D /* dtoa */,
@@ -2383,6 +2395,10 @@
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
 				BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */,
+				BC18C46E0E16F5CD00B34460 /* TCSpinLock.h in Headers */,
+				0F963B2F13FC66BB0002D9B2 /* MetaAllocatorHandle.h in Headers */,
+				0F963B2D13F854020002D9B2 /* MetaAllocator.h in Headers */,
+				0F963B2713F753BB0002D9B2 /* RedBlackTree.h in Headers */,
 				0FC815151405119B00CFA603 /* VTableSpectrum.h in Headers */,
 				C22B31B9140577D700DB475A /* SamplingCounter.h in Headers */,
 				0FC8150A14043BF500CFA603 /* WriteBarrierSupport.h in Headers */,
@@ -2686,7 +2702,6 @@
 				A784A26411D16622005776AC /* SyntaxChecker.h in Headers */,
 				BC18C46C0E16F5CD00B34460 /* TCPackedCache.h in Headers */,
 				BC18C46D0E16F5CD00B34460 /* TCPageMap.h in Headers */,
-				BC18C46E0E16F5CD00B34460 /* TCSpinLock.h in Headers */,
 				BC18C46F0E16F5CD00B34460 /* TCSystemAlloc.h in Headers */,
 				971EDEA61169E0D3005E4262 /* Terminator.h in Headers */,
 				F3BD31ED126735770065467F /* TextPosition.h in Headers */,
@@ -3049,6 +3064,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F963B2C13F853EC0002D9B2 /* MetaAllocator.cpp in Sources */,
 				0FD82E2114172CE300179C94 /* DFGCapabilities.cpp in Sources */,
 				0FD3C82514115D4000FD81CB /* DFGPropagator.cpp in Sources */,
 				0FD3C82614115D4000FD81CB /* DFGDriver.cpp in Sources */,

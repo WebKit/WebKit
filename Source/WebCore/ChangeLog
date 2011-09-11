@@ -1,3 +1,25 @@
+2011-09-01  Filip Pizlo  <fpizlo@apple.com>
+
+        The executable allocator makes it difficult to free individual
+        chunks of executable memory
+        https://bugs.webkit.org/show_bug.cgi?id=66363
+
+        Reviewed by Oliver Hunt.
+        
+        Introduced a best-fit, balanced-tree based allocator. The allocator
+        required a balanced tree that does not allocate memory and that
+        permits the removal of individual nodes directly (as opposed to by
+        key); neither AVLTree nor WebCore's PODRedBlackTree supported this.
+        Changed all references to executable code to use a reference counted
+        handle.
+
+        No new layout tests because behavior is not changed.  New API unit
+        tests:
+        Tests/WTF/RedBlackTree.cpp
+        Tests/WTF/MetaAllocator.cpp
+
+        * ForwardingHeaders/wtf/MetaAllocatorHandle.h: Added.
+
 2011-09-10  Sam Weinig  <sam@webkit.org>
 
         Add isInterruptedExecutionException and isTerminatedExecutionException predicates

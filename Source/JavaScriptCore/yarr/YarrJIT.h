@@ -65,11 +65,11 @@ public:
 
     int execute(const UChar* input, unsigned start, unsigned length, int* output)
     {
-        return reinterpret_cast<YarrJITCode>(m_ref.m_code.executableAddress())(input, start, length, output);
+        return reinterpret_cast<YarrJITCode>(m_ref.code().executableAddress())(input, start, length, output);
     }
 
 #if ENABLE(REGEXP_TRACING)
-    void *getAddr() { return m_ref.m_code.executableAddress(); }
+    void *getAddr() { return m_ref.code().executableAddress(); }
 #endif
 
 private:

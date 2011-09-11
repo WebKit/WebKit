@@ -40,7 +40,7 @@
 
 namespace JSC {
 
-void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, TrampolineStructure *trampolines)
+PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGlobalData* globalData, TrampolineStructure *trampolines)
 {
 #if ENABLE(JIT_USE_SOFT_MODULO)
     Label softModBegin = align();
@@ -152,7 +152,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Call string_failureCases3Call = makeTailRecursiveCall(string_failureCases3);
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(*m_globalData, this, m_globalData->executableAllocator);
+    LinkBuffer patchBuffer(*m_globalData, this);
 
     patchBuffer.link(string_failureCases1Call, FunctionPtr(cti_op_get_by_id_string_fail));
     patchBuffer.link(string_failureCases2Call, FunctionPtr(cti_op_get_by_id_string_fail));
@@ -163,7 +163,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     patchBuffer.link(callCompileCconstruct, FunctionPtr(cti_op_construct_jitCompile));
 
     CodeRef finalCode = patchBuffer.finalizeCode();
-    *executablePool = finalCode.m_executablePool;
+    RefPtr<ExecutableMemoryHandle> executableMemory = finalCode.executableMemory();
 
     trampolines->ctiVirtualCall = patchBuffer.trampolineAt(virtualCallBegin);
     trampolines->ctiVirtualConstruct = patchBuffer.trampolineAt(virtualConstructBegin);
@@ -175,6 +175,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 #if ENABLE(JIT_USE_SOFT_MODULO)
     trampolines->ctiSoftModulo = patchBuffer.trampolineAt(softModBegin);
 #endif
+    
+    return executableMemory.release();
 }
 
 JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isConstruct)
@@ -312,10 +314,9 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     return nativeCallThunk;
 }
 
-JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executablePool, JSGlobalData* globalData, NativeFunction func)
+JIT::CodeRef JIT::privateCompileCTINativeCall(JSGlobalData* globalData, NativeFunction func)
 {
     Call nativeCall;
-    Label nativeCallThunk = align();
 
     emitPutImmediateToCallFrameHeader(0, RegisterFile::CodeBlock);
 
@@ -447,12 +448,10 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
     ret();
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(*m_globalData, this, executablePool);
+    LinkBuffer patchBuffer(*m_globalData, this);
 
     patchBuffer.link(nativeCall, FunctionPtr(func));
-    patchBuffer.finalizeCode();
-
-    return patchBuffer.trampolineAt(nativeCallThunk);
+    return patchBuffer.finalizeCode();
 }
 
 void JIT::emit_op_mov(Instruction* currentInstruction)

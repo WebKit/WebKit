@@ -1,3 +1,201 @@
+2011-09-08  Filip Pizlo  <fpizlo@apple.com>
+
+        The executable allocator makes it difficult to free individual
+        chunks of executable memory
+        https://bugs.webkit.org/show_bug.cgi?id=66363
+
+        Reviewed by Oliver Hunt.
+        
+        Introduced a best-fit, balanced-tree based allocator. The allocator
+        required a balanced tree that does not allocate memory and that
+        permits the removal of individual nodes directly (as opposed to by
+        key); neither AVLTree nor WebCore's PODRedBlackTree supported this.
+        Changed all references to executable code to use a reference counted
+        handle.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::executableCopy):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        (JSC::LinkBuffer::finalizeCode):
+        (JSC::LinkBuffer::linkCode):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodeRef::MacroAssemblerCodeRef):
+        (JSC::MacroAssemblerCodeRef::createSelfManagedCodeRef):
+        (JSC::MacroAssemblerCodeRef::executableMemory):
+        (JSC::MacroAssemblerCodeRef::code):
+        (JSC::MacroAssemblerCodeRef::size):
+        (JSC::MacroAssemblerCodeRef::operator!):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::executableCopy):
+        (JSC::X86Assembler::X86InstructionFormatter::executableCopy):
+        * bytecode/CodeBlock.h:
+        * bytecode/Instruction.h:
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::tryBuildGetByIDProtoList):
+        (JSC::DFG::tryCachePutByID):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::initializeAllocator):
+        (JSC::ExecutableAllocator::ExecutableAllocator):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableAllocator::committedByteCount):
+        (JSC::ExecutableAllocator::dumpProfile):
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::dumpProfile):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::ExecutableAllocator::initializeAllocator):
+        (JSC::ExecutableAllocator::ExecutableAllocator):
+        (JSC::ExecutableAllocator::isValid):
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableAllocator::committedByteCount):
+        (JSC::ExecutableAllocator::dumpProfile):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::compileCTIMachineTrampolines):
+        (JSC::JIT::compileCTINativeCall):
+        * jit/JITCode.h:
+        (JSC::JITCode::operator !):
+        (JSC::JITCode::addressForCall):
+        (JSC::JITCode::offsetOf):
+        (JSC::JITCode::execute):
+        (JSC::JITCode::start):
+        (JSC::JITCode::size):
+        (JSC::JITCode::getExecutableMemory):
+        (JSC::JITCode::HostFunction):
+        (JSC::JITCode::JITCode):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::getPolymorphicAccessStructureListSlot):
+        (JSC::JITThunks::ctiStub):
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITStubs.h:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::SpecializedThunkJIT):
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerators.cpp:
+        (JSC::charCodeAtThunkGenerator):
+        (JSC::charAtThunkGenerator):
+        (JSC::fromCharCodeThunkGenerator):
+        (JSC::sqrtThunkGenerator):
+        (JSC::floorThunkGenerator):
+        (JSC::ceilThunkGenerator):
+        (JSC::roundThunkGenerator):
+        (JSC::expThunkGenerator):
+        (JSC::logThunkGenerator):
+        (JSC::absThunkGenerator):
+        (JSC::powThunkGenerator):
+        * jit/ThunkGenerators.h:
+        * runtime/Executable.h:
+        (JSC::NativeExecutable::create):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::dumpSampleData):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::getCTIStub):
+        * wtf/CMakeLists.txt:
+        * wtf/MetaAllocator.cpp: Added.
+        (WTF::MetaAllocatorHandle::MetaAllocatorHandle):
+        (WTF::MetaAllocatorHandle::~MetaAllocatorHandle):
+        (WTF::MetaAllocatorHandle::shrink):
+        (WTF::MetaAllocator::MetaAllocator):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::currentStatistics):
+        (WTF::MetaAllocator::findAndRemoveFreeSpace):
+        (WTF::MetaAllocator::addFreeSpaceFromReleasedHandle):
+        (WTF::MetaAllocator::addFreshFreeSpace):
+        (WTF::MetaAllocator::debugFreeSpaceSize):
+        (WTF::MetaAllocator::addFreeSpace):
+        (WTF::MetaAllocator::incrementPageOccupancy):
+        (WTF::MetaAllocator::decrementPageOccupancy):
+        (WTF::MetaAllocator::roundUp):
+        (WTF::MetaAllocator::allocFreeSpaceNode):
+        (WTF::MetaAllocator::freeFreeSpaceNode):
+        (WTF::MetaAllocator::dumpProfile):
+        * wtf/MetaAllocator.h: Added.
+        (WTF::MetaAllocator::bytesAllocated):
+        (WTF::MetaAllocator::bytesReserved):
+        (WTF::MetaAllocator::bytesCommitted):
+        (WTF::MetaAllocator::dumpProfile):
+        (WTF::MetaAllocator::~MetaAllocator):
+        * wtf/MetaAllocatorHandle.h: Added.
+        * wtf/RedBlackTree.h: Added.
+        (WTF::RedBlackTree::Node::Node):
+        (WTF::RedBlackTree::Node::successor):
+        (WTF::RedBlackTree::Node::predecessor):
+        (WTF::RedBlackTree::Node::reset):
+        (WTF::RedBlackTree::Node::parent):
+        (WTF::RedBlackTree::Node::setParent):
+        (WTF::RedBlackTree::Node::left):
+        (WTF::RedBlackTree::Node::setLeft):
+        (WTF::RedBlackTree::Node::right):
+        (WTF::RedBlackTree::Node::setRight):
+        (WTF::RedBlackTree::Node::color):
+        (WTF::RedBlackTree::Node::setColor):
+        (WTF::RedBlackTree::RedBlackTree):
+        (WTF::RedBlackTree::insert):
+        (WTF::RedBlackTree::remove):
+        (WTF::RedBlackTree::findExact):
+        (WTF::RedBlackTree::findLeastGreaterThanOrEqual):
+        (WTF::RedBlackTree::findGreatestLessThanOrEqual):
+        (WTF::RedBlackTree::first):
+        (WTF::RedBlackTree::last):
+        (WTF::RedBlackTree::size):
+        (WTF::RedBlackTree::isEmpty):
+        (WTF::RedBlackTree::treeMinimum):
+        (WTF::RedBlackTree::treeMaximum):
+        (WTF::RedBlackTree::treeInsert):
+        (WTF::RedBlackTree::leftRotate):
+        (WTF::RedBlackTree::rightRotate):
+        (WTF::RedBlackTree::removeFixup):
+        * wtf/wtf.pri:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::compile):
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::execute):
+        (JSC::Yarr::YarrCodeBlock::getAddr):
+
 2011-09-10  Sam Weinig  <sam@webkit.org>
 
         Remove JSC::isZombie() function, it did nothing and was called by no-one.

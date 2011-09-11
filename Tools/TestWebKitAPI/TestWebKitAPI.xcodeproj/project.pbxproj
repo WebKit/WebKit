@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0FC6C4CC141027E0005B7F0C /* RedBlackTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC6C4CB141027E0005B7F0C /* RedBlackTree.cpp */; };
+		0FC6C4CF141034AD005B7F0C /* MetaAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC6C4CE141034AD005B7F0C /* MetaAllocator.cpp */; };
 		1A02C84F125D4A8400E3F4BD /* Find.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A02C84E125D4A8400E3F4BD /* Find.cpp */; };
 		1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A02C84B125D4A5E00E3F4BD /* find.html */; };
 		1A5FEFDD1270E2A3000E2921 /* EvaluateJavaScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */; };
@@ -130,6 +132,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0FC6C4CB141027E0005B7F0C /* RedBlackTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RedBlackTree.cpp; path = WTF/RedBlackTree.cpp; sourceTree = "<group>"; };
+		0FC6C4CE141034AD005B7F0C /* MetaAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MetaAllocator.cpp; path = WTF/MetaAllocator.cpp; sourceTree = "<group>"; };
 		1A02C84B125D4A5E00E3F4BD /* find.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = find.html; sourceTree = "<group>"; };
 		1A02C84E125D4A8400E3F4BD /* Find.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Find.cpp; sourceTree = "<group>"; };
 		1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EvaluateJavaScript.cpp; sourceTree = "<group>"; };
@@ -367,6 +371,8 @@
 		BC9096461255618900083756 /* WTF */ = {
 			isa = PBXGroup;
 			children = (
+				0FC6C4CE141034AD005B7F0C /* MetaAllocator.cpp */,
+				0FC6C4CB141027E0005B7F0C /* RedBlackTree.cpp */,
 				A7A966DA140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp */,
 				C01363C713C3997300EF3964 /* StringOperators.cpp */,
 				BC90964B125561BF00083756 /* VectorBasic.cpp */,
@@ -577,6 +583,8 @@
 				C08587FC13FEC39B001EF4E5 /* InstanceMethodSwizzler.mm in Sources */,
 				C085880013FEC3A6001EF4E5 /* InstanceMethodSwizzler.mm in Sources */,
 				37DC678D140D7C5000ABCCDB /* DOMRangeOfString.mm in Sources */,
+				0FC6C4CC141027E0005B7F0C /* RedBlackTree.cpp in Sources */,
+				0FC6C4CF141034AD005B7F0C /* MetaAllocator.cpp in Sources */,
 				A7A966DB140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp in Sources */,
 				939BA91714103412001A01BD /* DeviceScaleFactorOnBack.mm in Sources */,
 				3799AD3A14120A43005EB0C6 /* StringByEvaluatingJavaScriptFromString.mm in Sources */,

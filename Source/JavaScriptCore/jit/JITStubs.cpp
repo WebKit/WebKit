@@ -757,8 +757,8 @@ JITThunks::JITThunks(JSGlobalData* globalData)
     if (!globalData->executableAllocator.isValid())
         return;
 
-    JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_trampolineStructure);
-    ASSERT(m_executablePool);
+    m_executableMemory = JIT::compileCTIMachineTrampolines(globalData, &m_trampolineStructure);
+    ASSERT(!!m_executableMemory);
 #if CPU(ARM_THUMB2)
     // Unfortunate the arm compiler does not like the use of offsetof on JITStackFrame (since it contains non POD types),
     // and the OBJECT_OFFSETOF macro does not appear constantish enough for it to be happy with its use in COMPILE_ASSERT
@@ -1608,7 +1608,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
 
         if (stubInfo->accessType == access_get_by_id_self) {
             ASSERT(!stubInfo->stubRoutine);
-            polymorphicStructureList = new PolymorphicAccessStructureList(callFrame->globalData(), codeBlock->ownerExecutable(), CodeLocationLabel(), stubInfo->u.getByIdSelf.baseObjectStructure.get());
+            polymorphicStructureList = new PolymorphicAccessStructureList(callFrame->globalData(), codeBlock->ownerExecutable(), MacroAssemblerCodeRef(), stubInfo->u.getByIdSelf.baseObjectStructure.get());
             stubInfo->initGetByIdSelfList(polymorphicStructureList, 1);
         } else {
             polymorphicStructureList = stubInfo->u.getByIdSelfList.structureList;
@@ -1634,12 +1634,12 @@ static PolymorphicAccessStructureList* getPolymorphicAccessStructureListSlot(JSG
     switch (stubInfo->accessType) {
     case access_get_by_id_proto:
         prototypeStructureList = new PolymorphicAccessStructureList(globalData, owner, stubInfo->stubRoutine, stubInfo->u.getByIdProto.baseObjectStructure.get(), stubInfo->u.getByIdProto.prototypeStructure.get());
-        stubInfo->stubRoutine = CodeLocationLabel();
+        stubInfo->stubRoutine = MacroAssemblerCodeRef();
         stubInfo->initGetByIdProtoList(prototypeStructureList, 2);
         break;
     case access_get_by_id_chain:
         prototypeStructureList = new PolymorphicAccessStructureList(globalData, owner, stubInfo->stubRoutine, stubInfo->u.getByIdChain.baseObjectStructure.get(), stubInfo->u.getByIdChain.chain.get());
-        stubInfo->stubRoutine = CodeLocationLabel();
+        stubInfo->stubRoutine = MacroAssemblerCodeRef();
         stubInfo->initGetByIdProtoList(prototypeStructureList, 2);
         break;
     case access_get_by_id_proto_list:
@@ -3598,11 +3598,11 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, to_object)
     return JSValue::encode(stackFrame.args[0].jsValue().toObject(callFrame));
 }
 
-MacroAssemblerCodePtr JITThunks::ctiStub(JSGlobalData* globalData, ThunkGenerator generator)
+MacroAssemblerCodeRef JITThunks::ctiStub(JSGlobalData* globalData, ThunkGenerator generator)
 {
-    std::pair<CTIStubMap::iterator, bool> entry = m_ctiStubMap.add(generator, MacroAssemblerCodePtr());
+    std::pair<CTIStubMap::iterator, bool> entry = m_ctiStubMap.add(generator, MacroAssemblerCodeRef());
     if (entry.second)
-        entry.first->second = generator(globalData, m_executablePool.get());
+        entry.first->second = generator(globalData);
     return entry.first->second;
 }
 
@@ -3610,7 +3610,7 @@ NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFu
 {
     std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap->add(function, Weak<NativeExecutable>());
     if (!*entry.first->second)
-        entry.first->second.set(*globalData, NativeExecutable::create(*globalData, JIT::compileCTINativeCall(globalData, m_executablePool, function), function, ctiNativeConstruct(), callHostFunctionAsConstructor));
+        entry.first->second.set(*globalData, NativeExecutable::create(*globalData, JIT::compileCTINativeCall(globalData, function), function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), callHostFunctionAsConstructor));
     return entry.first->second.get();
 }
 
@@ -3618,8 +3618,8 @@ NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFu
 {
     std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap->add(function, Weak<NativeExecutable>());
     if (!*entry.first->second) {
-        MacroAssemblerCodePtr code = globalData->canUseJIT() ? generator(globalData, m_executablePool.get()) : MacroAssemblerCodePtr();
-        entry.first->second.set(*globalData, NativeExecutable::create(*globalData, code, function, ctiNativeConstruct(), callHostFunctionAsConstructor));
+        MacroAssemblerCodeRef code = globalData->canUseJIT() ? generator(globalData) : MacroAssemblerCodeRef();
+        entry.first->second.set(*globalData, NativeExecutable::create(*globalData, code, function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), callHostFunctionAsConstructor));
     }
     return entry.first->second.get();
 }

@@ -955,7 +955,7 @@ void JITCompiler::compile(JITCode& entry)
     // Generate the body of the program.
     compileBody();
     // Link
-    LinkBuffer linkBuffer(*m_globalData, this, m_globalData->executableAllocator);
+    LinkBuffer linkBuffer(*m_globalData, this);
     link(linkBuffer);
     entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
 }
@@ -1013,7 +1013,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
 
 
     // === Link ===
-    LinkBuffer linkBuffer(*m_globalData, this, m_globalData->executableAllocator);
+    LinkBuffer linkBuffer(*m_globalData, this);
     link(linkBuffer);
     
     // FIXME: switch the register file check & arity check over to DFGOpertaion style calls, not JIT stubs.

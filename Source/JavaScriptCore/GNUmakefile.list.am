@@ -529,6 +529,9 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/MathExtras.h \
 	Source/JavaScriptCore/wtf/MD5.cpp \
 	Source/JavaScriptCore/wtf/MD5.h \
+	Source/JavaScriptCore/wtf/MetaAllocator.cpp \
+	Source/JavaScriptCore/wtf/MetaAllocator.h \
+	Source/JavaScriptCore/wtf/MetaAllocatorHandle.h \
 	Source/JavaScriptCore/wtf/MessageQueue.h \
 	Source/JavaScriptCore/wtf/NonCopyingSort.h \
 	Source/JavaScriptCore/wtf/Noncopyable.h \
@@ -561,6 +564,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/RandomNumber.cpp \
 	Source/JavaScriptCore/wtf/RandomNumber.h \
 	Source/JavaScriptCore/wtf/RandomNumberSeed.h \
+	Source/JavaScriptCore/wtf/RedBlackTree.h \
 	Source/JavaScriptCore/wtf/RefCounted.h \
 	Source/JavaScriptCore/wtf/RefCountedLeakCounter.cpp \
 	Source/JavaScriptCore/wtf/RefCountedLeakCounter.h \

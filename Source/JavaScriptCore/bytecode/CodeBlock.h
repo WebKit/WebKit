@@ -324,7 +324,7 @@ namespace JSC {
         }
         JITCode& getJITCode() { return m_jitCode; }
         JITCode::JITType getJITType() { return m_jitCode.jitType(); }
-        ExecutablePool* executablePool() { return getJITCode().getExecutablePool(); }
+        ExecutableMemoryHandle* executableMemory() { return getJITCode().getExecutableMemory(); }
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*) = 0;
         virtual CodeBlock* replacement() = 0;
         virtual bool canCompileWithDFG() = 0;

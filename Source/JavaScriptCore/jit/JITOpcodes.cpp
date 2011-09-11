@@ -42,7 +42,7 @@ namespace JSC {
 
 #if USE(JSVALUE64)
 
-void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, TrampolineStructure *trampolines)
+PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGlobalData* globalData, TrampolineStructure *trampolines)
 {
     // (2) The second function provides fast property access for string length
     Label stringLengthBegin = align();
@@ -153,7 +153,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Call string_failureCases3Call = makeTailRecursiveCall(string_failureCases3);
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(*m_globalData, this, m_globalData->executableAllocator);
+    LinkBuffer patchBuffer(*m_globalData, this);
 
     patchBuffer.link(string_failureCases1Call, FunctionPtr(cti_op_get_by_id_string_fail));
     patchBuffer.link(string_failureCases2Call, FunctionPtr(cti_op_get_by_id_string_fail));
@@ -164,7 +164,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     patchBuffer.link(callCompileConstruct, FunctionPtr(cti_op_construct_jitCompile));
 
     CodeRef finalCode = patchBuffer.finalizeCode();
-    *executablePool = finalCode.m_executablePool;
+    RefPtr<ExecutableMemoryHandle> executableMemory = finalCode.executableMemory();
 
     trampolines->ctiVirtualCallLink = patchBuffer.trampolineAt(virtualCallLinkBegin);
     trampolines->ctiVirtualConstructLink = patchBuffer.trampolineAt(virtualConstructLinkBegin);
@@ -173,6 +173,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     trampolines->ctiNativeCall = patchBuffer.trampolineAt(nativeCallThunk);
     trampolines->ctiNativeConstruct = patchBuffer.trampolineAt(nativeConstructThunk);
     trampolines->ctiStringLengthTrampoline = patchBuffer.trampolineAt(stringLengthBegin);
+    
+    return executableMemory.release();
 }
 
 JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isConstruct)
@@ -291,9 +293,9 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     return nativeCallThunk;
 }
 
-JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool>, JSGlobalData* globalData, NativeFunction)
+JIT::CodeRef JIT::privateCompileCTINativeCall(JSGlobalData* globalData, NativeFunction)
 {
-    return globalData->jitStubs->ctiNativeCall();
+    return CodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall());
 }
 
 void JIT::emit_op_mov(Instruction* currentInstruction)

@@ -294,7 +294,7 @@ namespace JSC {
         MacroAssemblerCodePtr ctiNativeConstruct() { return m_trampolineStructure.ctiNativeConstruct; }
         MacroAssemblerCodePtr ctiSoftModulo() { return m_trampolineStructure.ctiSoftModulo; }
 
-        MacroAssemblerCodePtr ctiStub(JSGlobalData* globalData, ThunkGenerator generator);
+        MacroAssemblerCodeRef ctiStub(JSGlobalData*, ThunkGenerator);
 
         NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction);
         NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, ThunkGenerator);
@@ -302,11 +302,11 @@ namespace JSC {
         void clearHostFunctionStubs();
 
     private:
-        typedef HashMap<ThunkGenerator, MacroAssemblerCodePtr> CTIStubMap;
+        typedef HashMap<ThunkGenerator, MacroAssemblerCodeRef> CTIStubMap;
         CTIStubMap m_ctiStubMap;
         typedef HashMap<NativeFunction, Weak<NativeExecutable> > HostFunctionStubMap;
         OwnPtr<HostFunctionStubMap> m_hostFunctionStubMap;
-        RefPtr<ExecutablePool> m_executablePool;
+        RefPtr<ExecutableMemoryHandle> m_executableMemory;
 
         TrampolineStructure m_trampolineStructure;
     };

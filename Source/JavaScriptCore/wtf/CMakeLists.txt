@@ -42,6 +42,9 @@ SET(WTF_HEADERS
     MallocZoneSupport.h
     MathExtras.h
     MessageQueue.h
+    MetaAllocator.cpp
+    MetaAllocator.h
+    MetaAllocatorHandle.h
     NonCopyingSort.h
     ThreadRestrictionVerifier.h
     Noncopyable.h
@@ -69,6 +72,7 @@ SET(WTF_HEADERS
     PossiblyNull.h
     RandomNumber.h
     RandomNumberSeed.h
+    RedBlackTree.h
     RefCounted.h
     RefCountedLeakCounter.h
     RefPtr.h
