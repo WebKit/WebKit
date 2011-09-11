@@ -1,3 +1,24 @@
+2011-09-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Add Qt specific expected results for new passing tests.
+
+        * platform/qt/fast/borders/block-mask-overlay-image-outset-expected.png: Added.
+        * platform/qt/fast/borders/block-mask-overlay-image-outset-expected.txt: Added.
+        * platform/qt/fast/borders/border-image-outset-expected.png: Added.
+        * platform/qt/fast/borders/border-image-outset-expected.txt: Added.
+        * platform/qt/fast/borders/border-image-outset-in-shorthand-expected.png: Added.
+        * platform/qt/fast/borders/border-image-outset-in-shorthand-expected.txt: Added.
+        * platform/qt/fast/borders/border-image-outset-split-inline-expected.png: Added.
+        * platform/qt/fast/borders/border-image-outset-split-inline-expected.txt: Added.
+        * platform/qt/fast/borders/border-image-outset-split-inline-vertical-lr-expected.png: Added.
+        * platform/qt/fast/borders/border-image-outset-split-inline-vertical-lr-expected.txt: Added.
+        * platform/qt/fast/borders/inline-mask-overlay-image-outset-expected.png: Added.
+        * platform/qt/fast/borders/inline-mask-overlay-image-outset-expected.txt: Added.
+        * platform/qt/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.png: Added.
+        * platform/qt/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.txt: Added.
+        * platform/qt/fast/reflections/reflection-masks-outset-expected.png: Added.
+        * platform/qt/fast/reflections/reflection-masks-outset-expected.txt: Added.
+
 2011-09-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip fast/images/support-broken-image-delegate.html temporarily on Mac.
