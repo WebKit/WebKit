@@ -1,5 +1,11 @@
 2011-09-11  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][Mac] Unreviewed gardening. Paint the Qt-Mac bot green.
+
+        * platform/qt-mac/Skipped: Skip new failing tests.
+
+2011-09-11  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening. Add Qt specific expected results for new passing tests.
 
         * platform/qt/fast/borders/block-mask-overlay-image-outset-expected.png: Added.

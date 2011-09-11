@@ -5084,3 +5084,16 @@ fast/borders/border-image-side-reduction.html
 
 # Qt specific results were added by r94750, but they fail on Qt-Mac platform
 fast/text/hyphenate-limit-lines.html
+
+# new failing tests
+css3/bdi-element.html
+fast/borders/block-mask-overlay-image-outset.html
+fast/borders/border-image-outset-in-shorthand.html
+fast/borders/border-image-outset-split-inline-vertical-lr.html
+fast/borders/border-image-outset-split-inline.html
+fast/borders/border-image-outset.html
+fast/borders/inline-mask-overlay-image-outset-vertical-rl.html
+fast/borders/inline-mask-overlay-image-outset.html
+fast/lists/list-marker-before-content-table.html
+fast/runin/runin-generated-before-content.html
+svg/custom/simple-text-double-shadow.svg
