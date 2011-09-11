@@ -37,11 +37,9 @@ namespace JSC {
 
         JSValue value() const { return m_value.get(); }
 
-        virtual bool isAPIValueWrapper() const { return true; }
-
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren | OverridesGetPropertyNames), &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(APIValueWrapper, OverridesVisitChildren | OverridesGetPropertyNames), &s_info);
         }
         
         static const ClassInfo s_info;

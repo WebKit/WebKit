@@ -37,7 +37,8 @@ namespace JSC {
         // The CompoundType value must come before any JSType that may have children
         CompoundType      = 7,
         ObjectType        = 8,
-        GetterSetterType  = 9
+        GetterSetterType  = 9,
+        APIValueWrapper   = 10
     };
 
 } // namespace JSC

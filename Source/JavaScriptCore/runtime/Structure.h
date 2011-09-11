@@ -317,6 +317,11 @@ namespace JSC {
         return m_structure->typeInfo().type() == GetterSetterType;
     }
 
+    inline bool JSCell::isAPIValueWrapper() const
+    {
+        return m_structure->typeInfo().type() == APIValueWrapper;
+    }
+
     inline const ClassInfo* JSCell::classInfo() const
     {
 #if ENABLE(GC_VALIDATION)

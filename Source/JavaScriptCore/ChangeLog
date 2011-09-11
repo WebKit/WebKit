@@ -1,3 +1,25 @@
+2011-09-11  Sam Weinig  <sam@webkit.org>
+
+        De-virtualize JSCell::isAPIValueWrapper
+        https://bugs.webkit.org/show_bug.cgi?id=67909
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::createStructure):
+        Set the correct type on structure creation.
+
+        * runtime/JSCell.h:
+        Remove virtual keyword and default implementation.
+
+        * runtime/JSType.h:
+        Add type for APIValueWrapper. It must come after CompoundType since
+        the APIValueWrapper has children in need of marking.
+
+        * runtime/Structure.h:
+        (JSC::JSCell::isAPIValueWrapper):
+        Implement predicate using type info.
+
 2011-09-10  Sam Weinig  <sam@webkit.org>
 
         De-virtualize JSCell::isGetterSetter, type information is available for it
