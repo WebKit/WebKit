@@ -53,6 +53,13 @@
 
 #endif /* USE(EXPORT_MACROS) */
 
+// On MSW, wx headers need to be included before windows.h is.
+// The only way we can always ensure this is if we include wx here.
+#if PLATFORM(WX)
+#include <wx/defs.h>
+#endif
+
+
 #ifdef __cplusplus
 #undef new
 #undef delete
@@ -69,6 +76,15 @@
 #endif
 #endif // PLATFORM(MAC)
 
+#if OS(WINDOWS)
+// If we don't define these, they get defined in windef.h. 
+// We want to use std::min and std::max
+#undef max
+#define max max
+#undef min
+#define min min
+#endif
+
 #if PLATFORM(WIN)
 #define WTF_USE_CF 1 
 #if PLATFORM(WIN_CAIRO)
@@ -84,13 +100,6 @@
 
 #undef WINVER
 #define WINVER 0x0500
-
-// If we don't define these, they get defined in windef.h. 
-// We want to use std::min and std::max
-#undef max
-#define max max
-#undef min
-#define min min
 
 #undef _WINSOCKAPI_
 #define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
