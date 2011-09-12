@@ -218,7 +218,7 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
         if (!profile)
             continue;
         
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         printf("Argument profile [%lu]: ", arg);
         profile->dump(stdout);
         printf("\n");
@@ -226,7 +226,7 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
         
         m_predictions.predictArgument(arg, makePrediction(globalData, *profile) & ~PredictionTagMask, StrongPrediction);
         
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         printf("    Prediction: %s\n", predictionToString(m_predictions.getArgumentPrediction(arg)));
 #endif
     }

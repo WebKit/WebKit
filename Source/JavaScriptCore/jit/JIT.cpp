@@ -521,7 +521,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 
     Jump registerFileCheck;
     if (m_codeBlock->codeType() == FunctionCode) {
-#if DFG_SUCCESS_STATS
+#if ENABLE(DFG_SUCCESS_STATS)
         static SamplingCounter counter("orignalJIT");
         emitCount(counter);
 #endif

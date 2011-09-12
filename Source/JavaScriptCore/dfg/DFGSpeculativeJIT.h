@@ -217,7 +217,7 @@ private:
     // Called when we statically determine that a speculation will fail.
     void terminateSpeculativeExecution()
     {
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         fprintf(stderr, "SpeculativeJIT was terminated.\n");
 #endif
 #if ENABLE(DYNAMIC_TERMINATE_SPECULATION)

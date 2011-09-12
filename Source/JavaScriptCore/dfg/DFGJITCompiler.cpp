@@ -68,7 +68,7 @@ void JITCompiler::fillInt32ToInteger(NodeIndex nodeIndex, GPRReg gpr)
         ASSERT(isInt32Constant(nodeIndex));
         move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
     } else {
-#if DFG_JIT_ASSERT
+#if ENABLE(DFG_JIT_ASSERT)
         // Redundant load, just so we can check the tag!
         loadPtr(addressFor(node.virtualRegister()), gpr);
         jitAssertIsJSInt32(gpr);
@@ -482,14 +482,14 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
     // Link the jump from the Speculative path to here.
     check.m_check.link(this);
 
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
     fprintf(stderr, "Speculation failure for Node @%d at JIT offset 0x%x\n", (int)check.m_nodeIndex, debugOffset());
 #endif
-#if DFG_JIT_BREAK_ON_SPECULATION_FAILURE
+#if ENABLE(DFG_JIT_BREAK_ON_SPECULATION_FAILURE)
     breakpoint();
 #endif
     
-#if DFG_VERBOSE_SPECULATION_FAILURE
+#if ENABLE(DFG_VERBOSE_SPECULATION_FAILURE)
     SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
     debugInfo->codeBlock = m_codeBlock;
     debugInfo->debugOffset = debugOffset();
@@ -826,7 +826,7 @@ void JITCompiler::compileBody()
     // register values around, rebox values, and ensure spilled, to match the
     // non-speculative path's requirements).
 
-#if DFG_JIT_BREAK_ON_EVERY_FUNCTION
+#if ENABLE(DFG_JIT_BREAK_ON_EVERY_FUNCTION)
     // Handy debug tool!
     breakpoint();
 #endif
@@ -834,7 +834,7 @@ void JITCompiler::compileBody()
     // First generate the speculative path.
     Label speculativePathBegin = label();
     SpeculativeJIT speculative(*this);
-#if !DFG_DEBUG_LOCAL_DISBALE_SPECULATIVE
+#if !ENABLE(DFG_DEBUG_LOCAL_DISBALE_SPECULATIVE)
     bool compiledSpeculative = speculative.compile();
 #else
     bool compiledSpeculative = false;
@@ -892,7 +892,7 @@ void JITCompiler::compileBody()
 void JITCompiler::link(LinkBuffer& linkBuffer)
 {
     // Link the code, populate data in CodeBlock data structures.
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
     fprintf(stderr, "JIT code for %p start at [%p, %p)\n", m_codeBlock, linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize());
 #endif
 
@@ -1024,7 +1024,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
 }
 
-#if DFG_JIT_ASSERT
+#if ENABLE(DFG_JIT_ASSERT)
 void JITCompiler::jitAssertIsInt32(GPRReg gpr)
 {
 #if CPU(X86_64)

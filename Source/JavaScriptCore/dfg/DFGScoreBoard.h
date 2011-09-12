@@ -48,7 +48,7 @@ public:
     {
     }
 
-#if DFG_CONSISTENCY_CHECK
+#if ENABLE(DFG_CONSISTENCY_CHECK)
     ~ScoreBoard()
     {
         // Every VirtualRegister that was allocated should now be free.

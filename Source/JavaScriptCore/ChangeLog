@@ -1,3 +1,43 @@
+2011-09-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFGNode.h has macros that indicate the enabling of a feature, but
+        they do not use the ENABLE() idiom.
+        https://bugs.webkit.org/show_bug.cgi?id=67907
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::stronglyPredict):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGJITCodeGenerator.cpp:
+        * dfg/DFGJITCodeGenerator.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::fillInt32ToInteger):
+        (JSC::DFG::JITCompiler::jumpFromSpeculativeToNonSpeculative):
+        (JSC::DFG::JITCompiler::compileBody):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGNode.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::fixpoint):
+        (JSC::DFG::Propagator::propagateNode):
+        (JSC::DFG::Propagator::propagateForward):
+        (JSC::DFG::Propagator::propagateBackward):
+        (JSC::DFG::propagate):
+        * dfg/DFGScoreBoard.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+
 2011-09-11  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed build fix for chromium/mac & clang.

@@ -1086,7 +1086,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         ASSERT(GPRInfo::regT1 != GPRInfo::returnValueGPR);
         ASSERT(GPRInfo::returnValueGPR != GPRInfo::callFrameRegister);
 
-#if DFG_SUCCESS_STATS
+#if ENABLE(DFG_SUCCESS_STATS)
         static SamplingCounter counter("NonSpeculativeJIT");
         m_jit.emitCount(counter);
 #endif
@@ -1252,7 +1252,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Ba
     ASSERT(m_compileIndex == block.begin);
     m_blockHeads[m_block] = m_jit.label();
 
-#if DFG_JIT_BREAK_ON_EVERY_BLOCK
+#if ENABLE(DFG_JIT_BREAK_ON_EVERY_BLOCK)
     m_jit.breakpoint();
 #endif
 
@@ -1261,16 +1261,16 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Ba
         if (!node.shouldGenerate())
             continue;
 
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         fprintf(stderr, "NonSpeculativeJIT generating Node @%d at code offset 0x%x   ", (int)m_compileIndex, m_jit.debugOffset());
 #endif
-#if DFG_JIT_BREAK_ON_EVERY_NODE
+#if ENABLE(DFG_JIT_BREAK_ON_EVERY_NODE)
         m_jit.breakpoint();
 #endif
 
         checkConsistency();
         compile(checkIterator, node);
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         if (node.hasResult())
             fprintf(stderr, "-> %s\n", dataFormatToString(m_generationInfo[node.virtualRegister()].registerFormat()));
         else

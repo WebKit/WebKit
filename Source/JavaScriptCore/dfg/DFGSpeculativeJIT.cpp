@@ -1142,7 +1142,7 @@ void SpeculativeJIT::compile(Node& node)
         ASSERT(GPRInfo::regT1 != GPRInfo::returnValueGPR);
         ASSERT(GPRInfo::returnValueGPR != GPRInfo::callFrameRegister);
 
-#if DFG_SUCCESS_STATS
+#if ENABLE(DFG_SUCCESS_STATS)
         static SamplingCounter counter("SpeculativeJIT");
         m_jit.emitCount(counter);
 #endif
@@ -1379,7 +1379,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
     ASSERT(m_compileOkay);
     ASSERT(m_compileIndex == block.begin);
     m_blockHeads[m_block] = m_jit.label();
-#if DFG_JIT_BREAK_ON_EVERY_BLOCK
+#if ENABLE(DFG_JIT_BREAK_ON_EVERY_BLOCK)
     m_jit.breakpoint();
 #endif
 
@@ -1388,10 +1388,10 @@ void SpeculativeJIT::compile(BasicBlock& block)
         if (!node.shouldGenerate())
             continue;
         
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         fprintf(stderr, "SpeculativeJIT generating Node @%d at JIT offset 0x%x   ", (int)m_compileIndex, m_jit.debugOffset());
 #endif
-#if DFG_JIT_BREAK_ON_EVERY_NODE
+#if ENABLE(DFG_JIT_BREAK_ON_EVERY_NODE)
         m_jit.breakpoint();
 #endif
         checkConsistency();
@@ -1404,7 +1404,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
 #endif
             return;
         }
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         if (node.hasResult())
             fprintf(stderr, "-> %s\n", dataFormatToString(m_generationInfo[node.virtualRegister()].registerFormat()));
         else

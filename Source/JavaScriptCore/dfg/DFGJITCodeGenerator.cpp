@@ -1208,7 +1208,7 @@ void JITCodeGenerator::dump(const char* label)
 #endif
 
 
-#if DFG_CONSISTENCY_CHECK
+#if ENABLE(DFG_CONSISTENCY_CHECK)
 void JITCodeGenerator::checkConsistency()
 {
     bool failed = false;

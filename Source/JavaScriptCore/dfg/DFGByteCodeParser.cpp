@@ -475,13 +475,13 @@ private:
 #if ENABLE(DYNAMIC_OPTIMIZATION)
         ValueProfile* profile = m_profiledBlock->valueProfileForBytecodeOffset(bytecodeIndex);
         ASSERT(profile);
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         printf("Dynamic profile [%u, %u]: ", nodeIndex, bytecodeIndex);
         profile->dump(stdout);
         printf("\n");
 #endif
         m_graph[nodeIndex].predict(makePrediction(*m_globalData, *profile), StrongPrediction);
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         printf("    Prediction: %s\n", predictionToString(m_graph[nodeIndex].getPrediction()));
 #endif
 #else
@@ -1375,7 +1375,7 @@ bool ByteCodeParser::parse()
 
     allocateVirtualRegisters();
 
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
     m_graph.dump(m_codeBlock);
 #endif
 

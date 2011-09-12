@@ -58,7 +58,7 @@ struct SpeculationCheck;
 typedef void (*V_DFGDebugOperation_EP)(ExecState*, void*);
 #endif
 
-#if DFG_VERBOSE_SPECULATION_FAILURE
+#if ENABLE(DFG_VERBOSE_SPECULATION_FAILURE)
 struct SpeculationFailureDebugInfo {
     CodeBlock* codeBlock;
     unsigned debugOffset;
@@ -258,7 +258,7 @@ public:
     bool valueOfBooleanConstant(NodeIndex nodeIndex) { return graph().valueOfBooleanConstant(codeBlock(), nodeIndex); }
 
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
-#if DFG_JIT_ASSERT
+#if ENABLE(DFG_JIT_ASSERT)
     void jitAssertIsInt32(GPRReg);
     void jitAssertIsJSInt32(GPRReg);
     void jitAssertIsJSNumber(GPRReg);

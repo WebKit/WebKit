@@ -66,7 +66,7 @@ public:
     
     void fixpoint()
     {
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         m_count = 0;
 #endif
         do {
@@ -120,7 +120,7 @@ private:
         
         NodeType op = node.op;
 
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         printf("   %s[%u]: ", Graph::opName(op), m_compileIndex);
 #endif
         
@@ -305,7 +305,7 @@ private:
 #endif
         }
 
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         printf("expect(%s) use(%s) %s\n", predictionToString(m_predictions[m_compileIndex]), predictionToString(m_uses[m_compileIndex]), changed ? "CHANGED" : "");
 #endif
         
@@ -314,7 +314,7 @@ private:
     
     void propagateForward()
     {
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         printf("Propagating forward [%u]\n", ++m_count);
 #endif
         for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex)
@@ -323,7 +323,7 @@ private:
     
     void propagateBackward()
     {
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
         printf("Propagating backward [%u]\n", ++m_count);
 #endif
         for (m_compileIndex = m_graph.size(); m_compileIndex-- > 0;)
@@ -342,7 +342,7 @@ private:
     
     PredictionTracker m_variableUses;
 
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
     unsigned m_count;
 #endif
     
@@ -358,7 +358,7 @@ void propagate(Graph& graph, JSGlobalData* globalData, CodeBlock* codeBlock)
     Propagator propagator(graph, *globalData, codeBlock, profiledBlock);
     propagator.fixpoint();
     
-#if DFG_DEBUG_VERBOSE
+#if ENABLE(DFG_DEBUG_VERBOSE)
     graph.dump(codeBlock);
 #endif
 }

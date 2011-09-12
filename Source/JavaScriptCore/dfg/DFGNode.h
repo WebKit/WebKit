@@ -27,31 +27,31 @@
 #define DFGNode_h
 
 // Emit various logging information for debugging, including dumping the dataflow graphs.
-#define DFG_DEBUG_VERBOSE 0
+#define ENABLE_DFG_DEBUG_VERBOSE 0
 // Enable generation of dynamic checks into the instruction stream.
 #if !ASSERT_DISABLED
-#define DFG_JIT_ASSERT 1
+#define ENABLE_DFG_JIT_ASSERT 1
 #else
-#define DFG_JIT_ASSERT 0
+#define ENABLE_DFG_JIT_ASSERT 0
 #endif
 // Consistency check contents compiler data structures.
-#define DFG_CONSISTENCY_CHECK 0
+#define ENBALE_DFG_CONSISTENCY_CHECK 0
 // Emit a breakpoint into the head of every generated function, to aid debugging in GDB.
-#define DFG_JIT_BREAK_ON_EVERY_FUNCTION 0
+#define ENABLE_DFG_JIT_BREAK_ON_EVERY_FUNCTION 0
 // Emit a breakpoint into the head of every generated node, to aid debugging in GDB.
-#define DFG_JIT_BREAK_ON_EVERY_BLOCK 0
+#define ENABLE_DFG_JIT_BREAK_ON_EVERY_BLOCK 0
 // Emit a breakpoint into the head of every generated node, to aid debugging in GDB.
-#define DFG_JIT_BREAK_ON_EVERY_NODE 0
+#define ENABLE_DFG_JIT_BREAK_ON_EVERY_NODE 0
 // Emit a breakpoint into the speculation failure code.
-#define DFG_JIT_BREAK_ON_SPECULATION_FAILURE 0
+#define ENABLE_DFG_JIT_BREAK_ON_SPECULATION_FAILURE 0
 // Log every speculation failure.
-#define DFG_VERBOSE_SPECULATION_FAILURE 0
+#define ENABLE_DFG_VERBOSE_SPECULATION_FAILURE 0
 // Disable the DFG JIT without having to touch Platform.h!
 #define DFG_DEBUG_LOCAL_DISBALE 0
 // Disable the SpeculativeJIT without having to touch Platform.h!
 #define DFG_DEBUG_LOCAL_DISBALE_SPECULATIVE 0
 // Generate stats on how successful we were in making use of the DFG jit, and remaining on the hot path.
-#define DFG_SUCCESS_STATS 0
+#define ENABLE_DFG_SUCCESS_STATS 0
 
 
 #if ENABLE(DFG_JIT)

@@ -678,7 +678,7 @@ RegisterSizedBoolean dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue 
     return JSValue::decode(encodedOp).toBoolean(exec);
 }
 
-#if DFG_VERBOSE_SPECULATION_FAILURE
+#if ENABLE(DFG_VERBOSE_SPECULATION_FAILURE)
 void debugOperationPrintSpeculationFailure(ExecState*, void* debugInfoRaw)
 {
     SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
