@@ -73,6 +73,7 @@ LIST(APPEND WebKit_SOURCES
     efl/ewk/ewk_main.cpp
     efl/ewk/ewk_network.cpp
     efl/ewk/ewk_settings.cpp
+    efl/ewk/ewk_protocol_handler.cpp
     efl/ewk/ewk_tiled_backing_store.c
     efl/ewk/ewk_tiled_matrix.c
     efl/ewk/ewk_tiled_model.c
@@ -115,6 +116,7 @@ IF (WTF_USE_SOUP)
   LIST(APPEND WebKit_SOURCES
     efl/ewk/ewk_auth.cpp
     efl/ewk/ewk_auth_soup.cpp
+    efl/ewk/ewk_protocol_handler_soup.cpp
   )
 ENDIF ()
 
@@ -235,6 +237,7 @@ SET(EWebKit_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_logging.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_main.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_network.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_protocol_handler.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_settings.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_view.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_window_features.h

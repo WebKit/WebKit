@@ -1,3 +1,26 @@
+2011-09-12  Flavio Ceolin  <flavio.ceolin@profusion.mobi>
+
+        Reviewed by Martin Robinson.
+
+        [EFL] Add custom network resource handler
+        https://bugs.webkit.org/show_bug.cgi?id=44759
+
+        This patch adds support for handling user-specific protocols.
+        It allows browsers to intercept and handle non-standard url schemes (such as preferences://)
+        allowing to load some resource from non-http/file storage, like a tar/zip/eet.
+
+        * CMakeListsEfl.txt:
+        * ewk/ewk_protocol_handler.cpp: Added.
+        * ewk/ewk_protocol_handler.h: Added.
+        * ewk/ewk_protocol_handler_soup.cpp: Added.
+        * ewk/ewk_protocol_handler_soup.h: Added.
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_protocol_handler_set):
+        (ewk_view_protocol_handler_unset):
+        (ewk_view_protocol_handler_resource_get):
+        * ewk/ewk_view.h:
+
 2011-09-04  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Rename ewk_view_(single|tiled).c to ewk_view_(single|tiled).cpp
