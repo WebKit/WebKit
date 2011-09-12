@@ -118,53 +118,36 @@ QtWebPageProxy::QtWebPageProxy(ViewInterface* viewInterface, PolicyInterface* po
 void QtWebPageProxy::init()
 {
     m_webPageProxy->initializeWebPage();
-    WKPageLoaderClient loadClient = {
-        0,      /* version */
-        this,   /* clientInfo */
-        qt_wk_didStartProvisionalLoadForFrame,
-        0, /* didReceiveServerRedirectForProvisionalLoadForFrame */
-        qt_wk_didFailProvisionalLoadWithErrorForFrame,
-        qt_wk_didCommitLoadForFrame,
-        0, /* didFinishDocumentLoadForFrame */
-        qt_wk_didFinishLoadForFrame,
-        qt_wk_didFailLoadWithErrorForFrame,
-        qt_wk_didSameDocumentNavigationForFrame,
-        qt_wk_didReceiveTitleForFrame,
-        0, /* didFirstLayoutForFrame */
-        0, /* didFirstVisuallyNonEmptyLayoutForFrame */
-        0, /* didRemoveFrameFromHierarchy */
-        0, /* didDisplayInsecureContentForFrame */
-        0, /* didRunInsecureContentForFrame */
-        0, /* canAuthenticateAgainstProtectionSpaceInFrame */
-        0, /* didReceiveAuthenticationChallengeInFrame */
-        qt_wk_didStartProgress,
-        qt_wk_didChangeProgress,
-        qt_wk_didFinishProgress,
-        0,  /* processDidBecomeUnresponsive */
-        0,  /* processDidBecomeResponsive */
-        0,  /* processDidCrash */
-        0,  /* didChangeBackForwardList */
-        0,  /* shouldGoToBackForwardListItem */
-        0   /* didFailToInitializePlugin */
-    };
+
+    WKPageLoaderClient loadClient;
+    memset(&loadClient, 0, sizeof(WKPageLoaderClient));
+    loadClient.version = kWKPageLoaderClientCurrentVersion;
+    loadClient.clientInfo = this;
+    loadClient.didStartProvisionalLoadForFrame = qt_wk_didStartProvisionalLoadForFrame;
+    loadClient.didFailProvisionalLoadWithErrorForFrame = qt_wk_didFailProvisionalLoadWithErrorForFrame;
+    loadClient.didCommitLoadForFrame = qt_wk_didCommitLoadForFrame;
+    loadClient.didFinishLoadForFrame = qt_wk_didFinishLoadForFrame;
+    loadClient.didFailLoadWithErrorForFrame = qt_wk_didFailLoadWithErrorForFrame;
+    loadClient.didSameDocumentNavigationForFrame = qt_wk_didSameDocumentNavigationForFrame;
+    loadClient.didReceiveTitleForFrame = qt_wk_didReceiveTitleForFrame;
+    loadClient.didStartProgress = qt_wk_didStartProgress;
+    loadClient.didChangeProgress = qt_wk_didChangeProgress;
+    loadClient.didFinishProgress = qt_wk_didFinishProgress;
     WKPageSetPageLoaderClient(pageRef(), &loadClient);
 
     WKPageUIClient uiClient;
     memset(&uiClient, 0, sizeof(WKPageUIClient));
-    uiClient.version = 0;
+    uiClient.version = kWKPageUIClientCurrentVersion;
     uiClient.clientInfo = m_viewInterface;
     uiClient.setStatusText = qt_wk_setStatusText;
     WKPageSetPageUIClient(toAPI(m_webPageProxy.get()), &uiClient);
 
     if (m_policyInterface) {
-        WKPagePolicyClient policyClient = {
-            0,
-            m_policyInterface,
-            qt_wk_decidePolicyForNavigationAction,
-            0,  /* decidePolicyForNewWindowAction */
-            0,  /* decidePolicyForResponse */
-            0,  /* unableToImplementPolicy */
-        };
+        WKPagePolicyClient policyClient;
+        memset(&policyClient, 0, sizeof(WKPagePolicyClient));
+        policyClient.version = kWKPagePolicyClientCurrentVersion;
+        policyClient.clientInfo = m_policyInterface;
+        policyClient.decidePolicyForNavigationAction = qt_wk_decidePolicyForNavigationAction;
         WKPageSetPagePolicyClient(toAPI(m_webPageProxy.get()), &policyClient);
     }
 }

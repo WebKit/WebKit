@@ -1,3 +1,13 @@
+2011-09-11  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Qt layer should be hardened against C API versioning in the sense of build failures
+        https://bugs.webkit.org/show_bug.cgi?id=67094
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::init):
+
 2011-09-09  Oliver Hunt  <oliver@apple.com>
 
         Remove support for anonymous storage from jsobjects
