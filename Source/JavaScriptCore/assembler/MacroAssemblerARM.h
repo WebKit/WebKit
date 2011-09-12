@@ -426,7 +426,7 @@ public:
         ASSERT(!(right.m_value & 0xFFFF0000));
         right.m_value <<= 16;
         m_assembler.mov_r(ARMRegisters::S1, left);
-        lshift32(16, ARMRegisters::S1)
+        lshift32(16, ARMRegisters::S1);
         return branch32(cond, ARMRegisters::S1, right);
     }
 
