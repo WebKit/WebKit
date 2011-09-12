@@ -1,3 +1,19 @@
+2011-09-12  Shinya Kawanaka  <shinyak@google.com>
+
+        Characters beyond U+10000 should be deleted by one pressing delete key.
+        https://bugs.webkit.org/show_bug.cgi?id=40351
+
+        Reviewed by Kent Tamura.
+
+        If a character is the trail part of unicode surrogate pair, the lead part of it
+        should also be deleted. Also, If in MacOSX, the deletion should honor Mac's behavior.
+
+        Test: editing/deleting/delete-surrogatepair.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::previousOffsetForBackwardDeletion):
+          Added if-macro to support chromium on mac, and added trail part check for unicode character.
+
 2011-09-11  Kentaro Hara  <haraken@google.com>
 
         Implement a ProgressEvent constructor for V8

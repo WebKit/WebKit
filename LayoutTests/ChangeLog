@@ -1,3 +1,15 @@
+2011-09-12  Shinya Kawanaka  <shinyak@google.com>
+
+        Characters beyond U+10000 should be deleted by one pressing delete key.
+        https://bugs.webkit.org/show_bug.cgi?id=40351
+
+        Reviewed by Kent Tamura.
+
+        Added deletion tests.
+
+        * editing/deleting/delete-surrogatepair-expected.txt: Added.
+        * editing/deleting/delete-surrogatepair.html: Added.
+
 2011-09-11  Kentaro Hara  <haraken@google.com>
 
         Implement a ProgressEvent constructor for V8
