@@ -376,48 +376,6 @@ void LayerChromium::drawTexturedQuad(GraphicsContext3D* context, const Transform
     GLC(context, context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0));
 }
 
-String LayerChromium::layerTreeAsText() const
-{
-    TextStream ts;
-    dumpLayer(ts, 0);
-    return ts.release();
-}
-
-static void writeIndent(TextStream& ts, int indent)
-{
-    for (int i = 0; i != indent; ++i)
-        ts << "  ";
-}
-
-void LayerChromium::dumpLayer(TextStream& ts, int indent) const
-{
-    writeIndent(ts, indent);
-    ts << layerTypeAsString() << "(" << m_name << ")\n";
-    dumpLayerProperties(ts, indent+2);
-    if (m_replicaLayer) {
-        writeIndent(ts, indent+2);
-        ts << "Replica:\n";
-        m_replicaLayer->dumpLayer(ts, indent+3);
-    }
-    if (m_maskLayer) {
-        writeIndent(ts, indent+2);
-        ts << "Mask:\n";
-        m_maskLayer->dumpLayer(ts, indent+3);
-    }
-    for (size_t i = 0; i < m_children.size(); ++i)
-        m_children[i]->dumpLayer(ts, indent+1);
-}
-
-void LayerChromium::dumpLayerProperties(TextStream& ts, int indent) const
-{
-    writeIndent(ts, indent);
-    ts << "id: " << id() << " drawsContent: " << drawsContent() << " bounds " << m_bounds.width() << "x" << m_bounds.height() << " usesLayerScissor: " << usesLayerScissor()
-        << " scissorRect: (" << m_scissorRect.x() << ", " << m_scissorRect.y() << ", " << m_scissorRect.width() << ", " << m_scissorRect.height() << ")"
-        << " visibleLayerRect: (" << m_visibleLayerRect.x() << ", " << m_visibleLayerRect.y() << ", " << m_visibleLayerRect.width() << ", " << m_visibleLayerRect.height() << ")"
-        << "\n";
-
-}
-
 PassRefPtr<CCLayerImpl> LayerChromium::createCCLayerImpl()
 {
     return CCLayerImpl::create(m_layerId);

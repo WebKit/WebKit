@@ -58,6 +58,8 @@ public:
 private:
     explicit CCVideoLayerImpl(int);
 
+    virtual const char* layerTypeAsString() const;
+
     struct Texture {
         Platform3DObject id;
         IntSize size;

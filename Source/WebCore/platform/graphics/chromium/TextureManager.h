@@ -45,6 +45,13 @@ public:
         return adoptPtr(new TextureManager(memoryLimitBytes, maxTextureSize));
     }
 
+    // Absolute maximum limit for texture allocations for this instance.
+    static size_t highLimitBytes();
+    // Preferred texture size limit. Can be exceeded if needed.
+    static size_t reclaimLimitBytes();
+    // The maximum texture memory usage when asked to release textures.
+    static size_t lowLimitBytes();
+
     void setMemoryLimitBytes(size_t);
 
     TextureToken getToken();
@@ -61,13 +68,10 @@ public:
     unsigned allocateTexture(GraphicsContext3D*, TextureToken);
     void deleteEvictedTextures(GraphicsContext3D*);
 
+    void evictAndDeleteAllTextures(GraphicsContext3D*);
+
     void reduceMemoryToLimit(size_t);
     size_t currentMemoryUseBytes() const { return m_memoryUseBytes; }
-
-#ifndef NDEBUG
-    void setAssociatedContextDebugOnly(GraphicsContext3D* context) { m_associatedContextDebugOnly = context; }
-    GraphicsContext3D* associatedContextDebugOnly() const { return m_associatedContextDebugOnly; }
-#endif
 
 private:
     TextureManager(size_t memoryLimitBytes, int maxTextureSize);
@@ -77,6 +81,9 @@ private:
         GC3Denum format;
         unsigned textureId;
         bool isProtected;
+#ifndef NDEBUG
+        GraphicsContext3D* allocatingContext;
+#endif
     };
 
     void addTexture(TextureToken, TextureInfo);
@@ -91,11 +98,14 @@ private:
     int m_maxTextureSize;
     TextureToken m_nextToken;
 
+    struct EvictionEntry {
+        unsigned textureId;
 #ifndef NDEBUG
-    GraphicsContext3D* m_associatedContextDebugOnly;
+        GraphicsContext3D* allocatingContext;
 #endif
+    };
 
-    Vector<unsigned> m_evictedTextureIds;
+    Vector<EvictionEntry> m_evictedTextures;
 };
 
 }

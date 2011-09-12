@@ -57,9 +57,6 @@ public:
     void setContext(const GraphicsContext3D* context);
     GraphicsContext3D* context() { return m_context; }
 
-protected:
-    virtual const char* layerTypeAsString() const { return "WebGLLayer"; }
-
 private:
     explicit WebGLLayerChromium(GraphicsLayerChromium* owner);
     friend class WebGLLayerChromiumRateLimitTask;

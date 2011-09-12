@@ -51,6 +51,8 @@ public:
 private:
     explicit CCPluginLayerImpl(int);
 
+    virtual const char* layerTypeAsString() const;
+
     unsigned m_textureId;
 };
 

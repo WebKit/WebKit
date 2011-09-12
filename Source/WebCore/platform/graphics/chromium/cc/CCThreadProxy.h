@@ -45,16 +45,14 @@ public:
     virtual GraphicsContext3D* context();
     virtual void finishAllRendering();
     virtual bool isStarted() const;
-    virtual bool initializeLayerRenderer(CCLayerTreeHost* ownerHack);
+    virtual bool initializeLayerRenderer();
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
     virtual void loseCompositorContext(int numTimes);
+    virtual void setNeedsCommit();
     virtual void setNeedsCommitAndRedraw();
     virtual void setNeedsRedraw();
     virtual void start();
     virtual void stop();
-
-    // Temporary hack while LayerChromiums hold references to LayerRendererChromiums
-    virtual TextureManager* contentsTextureManager();
 
 private:
     explicit CCThreadProxy(CCLayerTreeHost*);
@@ -67,7 +65,8 @@ private:
     void commitOnCCThread(CCCompletionEvent*);
     void drawLayersOnCCThread();
     void initializeImplOnCCThread(CCCompletionEvent*);
-    void initializeLayerRendererOnCCThread(CCLayerTreeHost*, GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*);
+    void initializeLayerRendererOnCCThread(GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*);
+    void setNeedsCommitOnCCThread();
     void setNeedsCommitAndRedrawOnCCThread();
     void setNeedsRedrawOnCCThread();
     void layerTreeHostClosedOnCCThread(CCCompletionEvent*);

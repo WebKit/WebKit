@@ -1,3 +1,51 @@
+2011-09-12  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move contents texture manager from LayerRendererChromium to CCLayerTreeHost
+        https://bugs.webkit.org/show_bug.cgi?id=67440
+
+        Reviewed by Kenneth Russell.
+
+        This moves the contents TextureManager over to the CCLayerTreeHost, where it belongs, and adds in a commit path
+        to make sure that textures are deleted even if the page is not visible.  This move also removed the need for
+        LayerRendererChromium's CCLayerTreeHost pointer, so I removed that as well.  That meant moving the
+        layerTreeAsText() logic over to the CCLayerImpl side, which is where it really belonged anyway.
+
+        Covered by existing compositing/ tests and
+        platform/chromium/compositor/lost-compositor-context-with-rendersurface.html
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::releaseRenderSurfaceTextures):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::setContentsTextureMemoryUseBytes):
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::highLimitBytes):
+        (WebCore::TextureManager::reclaimLimitBytes):
+        (WebCore::TextureManager::lowLimitBytes):
+        * platform/graphics/chromium/TextureManager.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::~CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::deleteContentsTextures):
+        (WebCore::CCLayerTreeHost::commitTo):
+        (WebCore::CCLayerTreeHost::setVisible):
+        (WebCore::CCLayerTreeHost::contentsTextureManager):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::setVisible):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::setNeedsCommit):
+        (WebCore::CCSingleThreadProxy::stop):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::setNeedsCommit):
+        (WebCore::CCThreadProxy::setNeedsCommitOnCCThread):
+        (WebCore::CCThreadProxy::layerTreeHostClosedOnCCThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-09-12  Chris Rogers  <crogers@google.com>
 
         DelayNode delay buffer is not correctly wrapping around

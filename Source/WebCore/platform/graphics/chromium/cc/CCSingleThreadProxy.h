@@ -44,16 +44,14 @@ public:
     virtual GraphicsContext3D* context();
     virtual void finishAllRendering();
     virtual bool isStarted() const;
-    virtual bool initializeLayerRenderer(CCLayerTreeHost* ownerHack);
+    virtual bool initializeLayerRenderer();
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
     virtual void loseCompositorContext(int numTimes);
+    virtual void setNeedsCommit();
     virtual void setNeedsCommitAndRedraw();
     virtual void setNeedsRedraw();
     virtual void start();
     virtual void stop();
-
-    // Temporary hack while LayerChromiums hold references to LayerRendererChromiums
-    virtual TextureManager* contentsTextureManager();
 
     // Special case functions.
 #if !USE(THREADED_COMPOSITING)

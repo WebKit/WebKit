@@ -52,8 +52,6 @@ public:
 protected:
     explicit CanvasLayerChromium(GraphicsLayerChromium* owner);
 
-    virtual const char* layerTypeAsString() const { return "CanvasLayer"; }
-
     bool m_hasAlpha;
     bool m_premultipliedAlpha;
     unsigned m_textureId;

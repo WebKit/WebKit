@@ -69,6 +69,11 @@ CCVideoLayerImpl::~CCVideoLayerImpl()
     cleanupResources();
 }
 
+const char* CCVideoLayerImpl::layerTypeAsString() const
+{
+    return "VideoLayer";
+}
+
 void CCVideoLayerImpl::setTexture(size_t index, Platform3DObject textureId, const IntSize& size, const IntSize& visibleSize)
 {
     ASSERT(index < 3);
