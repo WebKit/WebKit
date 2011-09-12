@@ -58,6 +58,7 @@ border-bottom-style
 border-bottom-width
 border-collapse
 border-color
+border-image
 border-image-outset
 border-image-repeat
 border-image-slice

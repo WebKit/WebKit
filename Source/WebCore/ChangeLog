@@ -1,3 +1,17 @@
+2011-09-12  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67970
+
+        Add unprefixed border-image property.
+
+        Reviewed by Beth Dakin.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+
 2011-09-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: Moving up doesn't work in some cases

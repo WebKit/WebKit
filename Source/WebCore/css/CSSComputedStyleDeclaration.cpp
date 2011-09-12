@@ -1856,6 +1856,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyBorderBottom:
         case CSSPropertyBorderColor:
         case CSSPropertyBorderLeft:
+        case CSSPropertyBorderImage:
         case CSSPropertyBorderRadius:
         case CSSPropertyBorderRight:
         case CSSPropertyBorderStyle:

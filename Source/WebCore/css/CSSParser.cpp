@@ -1442,6 +1442,7 @@ bool CSSParser::parseValue(int propId, bool important)
             validPrimitive = true;
         break;
 
+    case CSSPropertyBorderImage:
     case CSSPropertyWebkitBorderImage:
     case CSSPropertyWebkitMaskBoxImage: {
         RefPtr<CSSValue> result;
