@@ -2,6 +2,12 @@
 
         Unreviewed, update chromium test expectations.
 
+        * platform/chromium/test_expectations.txt: slow perf/show-hide-table-rows.html
+
+2011-09-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
         * platform/chromium/test_expectations.txt: slow perf/document-contains.html
 
 2011-09-11  Ben Wells  <benwells@chromium.org>

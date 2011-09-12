@@ -40,6 +40,7 @@ BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-push-pop.html = PASS
 BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-reverse.html = PASS
 
 BUGWK67919 SLOW DEBUG : perf/document-contains.html = PASS
+BUGWK67921 SLOW DEBUG : perf/show-hide-table-rows.html = PASS
 
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
