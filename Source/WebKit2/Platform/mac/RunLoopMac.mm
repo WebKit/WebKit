@@ -41,9 +41,9 @@ void RunLoop::performWork(void* context)
 }
 
 RunLoop::RunLoop()
+    : m_runLoop(CFRunLoopGetCurrent())
+    , m_nestingLevel(0)
 {
-    m_runLoop = CFRunLoopGetCurrent();
-
     CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, performWork };
     m_runLoopSource = CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context);
     CFRunLoopAddSource(m_runLoop, m_runLoopSource, kCFRunLoopCommonModes);
@@ -58,13 +58,16 @@ RunLoop::~RunLoop()
 
 void RunLoop::run()
 {
-    if (current() == main()) {
+    current()->m_nestingLevel++;
+    if (current() == main() && current()->m_nestingLevel == 1) {
         // Use -[NSApplication run] for the main run loop.
         [NSApp run];
     } else {
-        // Otherwise, use NSRunLoop. We do this because it sets up an autorelease pool for us.
-        [[NSRunLoop currentRunLoop] run];
-    }        
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        CFRunLoopRun();
+        [pool drain];
+    }
+    current()->m_nestingLevel--;
 }
 
 void RunLoop::runForDuration(double duration)
@@ -76,7 +79,7 @@ void RunLoop::stop()
 {
     ASSERT(m_runLoop == CFRunLoopGetCurrent());
     
-    if (m_runLoop == main()->m_runLoop) {
+    if (m_runLoop == main()->m_runLoop && m_nestingLevel == 1) {
         [NSApp stop:nil];
         NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined
                                             location:NSMakePoint(0, 0)

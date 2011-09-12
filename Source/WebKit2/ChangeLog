@@ -1,3 +1,22 @@
+2011-09-11  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/9878268> Pressing caps lock after closing a showModalDialog window results in WebProcess exiting
+
+        It's incorrect to try and use -[NSApplication run] to run nested runloops as it is not possible to
+        interrupt a nested invocation of -run without also causing outer invocations to exit after processing
+        their next event. We can avoid this issue by using -[NSApplication run] for the outermost invocation
+        of the main runloop, while using CFRunLoopRun for any nested invocations.
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/RunLoop.h:
+        * Platform/mac/RunLoopMac.mm:
+        (RunLoop::RunLoop): Initialize the nesting level to 0.
+        (RunLoop::run): Bump the nesting level, and only use -[NSApplication run] for the outermost invocation of the
+        runloop. We also switch from -[NSRunloop run] to CFRunLoopRun as the former will only exit when it has no sources
+        left to process, while CFRunLoopRun will return immediately after CFRunLoopStop is called on it.
+        (RunLoop::stop): Only go down the NSApp path for the outermost invocation of the runloop.
+
 2011-09-11  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Qt layer should be hardened against C API versioning in the sense of build failures

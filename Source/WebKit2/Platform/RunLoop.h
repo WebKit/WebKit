@@ -154,6 +154,7 @@ private:
     static void performWork(void*);
     CFRunLoopRef m_runLoop;
     CFRunLoopSourceRef m_runLoopSource;
+    int m_nestingLevel;
 #elif PLATFORM(QT)
     typedef HashMap<int, TimerBase*> TimerMap;
     TimerMap m_activeTimers;
