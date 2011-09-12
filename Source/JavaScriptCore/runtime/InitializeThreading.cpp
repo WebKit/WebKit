@@ -56,7 +56,9 @@ static void initializeThreadingOnce()
     WriteBarrierCounters::initialize();
 #endif
     JSGlobalData::storeVPtrs();
+#if ENABLE(JIT) && ENABLE(ASSEMBLER)
     ExecutableAllocator::initializeAllocator();
+#endif
 #if ENABLE(JSC_MULTIPLE_THREADS)
     RegisterFile::initializeThreading();
 #endif

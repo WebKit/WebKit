@@ -80,11 +80,11 @@
 #include "Assertions.h"
 #include <limits>
 #if ENABLE(WTF_MULTIPLE_THREADS)
-#if OS(WINDOWS) && PLATFORM(CHROMIUM)
+#if OS(WINDOWS) && PLATFORM(CHROMIUM) || OS(WINCE) && PLATFORM(WIN)
 #include <windows.h>
 #else
 #include <pthread.h>
-#endif // OS(WINDOWS)
+#endif // OS(WINDOWS) && PLATFORM(CHROMIUM) || OS(WINCE) && PLATFORM(WIN)
 #endif
 #include <wtf/StdLibExtras.h>
 
@@ -107,7 +107,12 @@
 namespace WTF {
 
 #if ENABLE(WTF_MULTIPLE_THREADS)
-#if OS(WINDOWS) && PLATFORM(CHROMIUM)
+#if OS(WINDOWS) && PLATFORM(CHROMIUM) || OS(WINCE) && PLATFORM(WIN)
+
+// TLS_OUT_OF_INDEXES is not defined on WinCE.
+#ifndef TLS_OUT_OF_INDEXES
+#define TLS_OUT_OF_INDEXES 0xffffffff
+#endif
 
 static DWORD isForibiddenTlsIndex = TLS_OUT_OF_INDEXES;
 static const LPVOID kTlsAllowValue = reinterpret_cast<LPVOID>(0); // Must be zero.
@@ -165,7 +170,7 @@ void fastMallocAllow()
     pthread_once(&isForbiddenKeyOnce, initializeIsForbiddenKey);
     pthread_setspecific(isForbiddenKey, 0);
 }
-#endif // OS(WINDOWS) && PLATFORM(CHROMIUM)
+#endif // OS(WINDOWS) && PLATFORM(CHROMIUM) || OS(WINCE) && PLATFORM(WIN)
 #else
 
 static bool staticIsForbidden;

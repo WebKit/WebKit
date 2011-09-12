@@ -1,3 +1,12 @@
+2011-09-12  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix after r94871.
+
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * wtf/FastMalloc.cpp:
+        * wtf/RefCountedLeakCounter.h:
+
 2011-09-11  Filip Pizlo  <fpizlo@apple.com>
 
         DFGNode.h has macros that indicate the enabling of a feature, but
