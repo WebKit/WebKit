@@ -207,7 +207,7 @@ public:
     bool descendantDrawsContent();
 
     CCLayerTreeHost* layerTreeHost() const { return m_layerTreeHost.get(); }
-    virtual void cleanupResourcesRecursive();
+    void cleanupResourcesRecursive();
 
 protected:
     GraphicsLayerChromium* m_owner;

@@ -138,7 +138,7 @@ void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
     LayerChromium::setLayerTreeHost(host);
 
-    if (m_tiler)
+    if (m_tiler || !host)
         return;
 
     createTextureUpdater(host);

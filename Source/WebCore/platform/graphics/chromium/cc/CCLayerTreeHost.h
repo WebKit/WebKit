@@ -168,6 +168,8 @@ private:
     void updateCompositorResources(const LayerList&, GraphicsContext3D*);
     void updateCompositorResources(LayerChromium*, GraphicsContext3D*);
 
+    void clearRenderSurfacesRecursive(LayerChromium*);
+
     bool initialize();
 
     PassRefPtr<LayerRendererChromium> createLayerRenderer();

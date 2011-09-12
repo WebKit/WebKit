@@ -1,3 +1,24 @@
+2011-09-12  James Robinson  <jamesr@chromium.org>
+
+        [chromium] REGRESSION(94353): Compositor textures and resources leaked when tab closed that is not last tab in the process
+        https://bugs.webkit.org/show_bug.cgi?id=67816
+
+        Reviewed by Kenneth Russell.
+
+        We lack infrastructure to construct an automated test for this today. To test manually, open up a composited
+        page (like the poster circle), duplicate the tab many times, close all the duplicates, and verify that the
+        memory use returns to the single tab level.
+
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::setLayerTreeHost):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::setLayerTreeHost):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::clearRenderSurfacesRecursive):
+        (WebCore::CCLayerTreeHost::setRootLayer):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+
 2011-09-12  Kentaro Hara  <haraken@google.com>
 
         Implement a HashChangeEvent constructor for JSC

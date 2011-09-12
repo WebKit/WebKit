@@ -214,12 +214,32 @@ void CCLayerTreeHost::setNeedsRedraw()
 #endif
 }
 
+void CCLayerTreeHost::clearRenderSurfacesRecursive(LayerChromium* layer)
+{
+    for (size_t i = 0; i < layer->children().size(); ++i)
+        clearRenderSurfacesRecursive(layer->children()[i].get());
+
+    if (layer->replicaLayer())
+        clearRenderSurfacesRecursive(layer->replicaLayer());
+
+    if (layer->maskLayer())
+        clearRenderSurfacesRecursive(layer->maskLayer());
+
+    layer->clearRenderSurface();
+}
+
+
 void CCLayerTreeHost::setRootLayer(GraphicsLayer* layer)
 {
     m_nonCompositedContentHost->graphicsLayer()->removeAllChildren();
     m_nonCompositedContentHost->invalidateEntireLayer();
     if (layer)
         m_nonCompositedContentHost->graphicsLayer()->addChild(layer);
+    else {
+        clearRenderSurfacesRecursive(rootLayer()->platformLayer());
+        m_nonCompositedContentHost->graphicsLayer()->platformLayer()->setLayerTreeHost(0);
+        m_rootLayer->platformLayer()->setLayerTreeHost(0);
+    }
 }
 
 void CCLayerTreeHost::setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition)

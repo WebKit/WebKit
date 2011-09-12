@@ -148,7 +148,7 @@ void VideoLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 
 void VideoLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
-    if (layerTreeHost() != host) {
+    if (host && layerTreeHost() != host) {
         for (size_t i = 0; i < 3; ++i) {
             m_textures[i].m_visibleSize = IntSize();
             m_textures[i].m_texture = ManagedTexture::create(host->contentsTextureManager());
