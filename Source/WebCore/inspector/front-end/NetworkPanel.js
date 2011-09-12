@@ -627,14 +627,15 @@ WebInspector.NetworkLogView.prototype = {
     _onLoadEventFired: function(event)
     {
         this._mainResourceLoadTime = event.data || -1;
-        // Update the dividers to draw the new line
-        this._updateDividersIfNeeded(true);
+        // Schedule refresh to update boundaries and draw the new line.
+        this._scheduleRefresh(true);
     },
 
     _domContentLoadedEventFired: function(event)
     {
         this._mainResourceDOMContentTime = event.data || -1;
-        this._updateDividersIfNeeded(true);
+        // Schedule refresh to update boundaries and draw the new line.
+        this._scheduleRefresh(true);
     },
 
     wasShown: function()
@@ -661,6 +662,10 @@ WebInspector.NetworkLogView.prototype = {
         var wasScrolledToLastRow = this._dataGrid.isScrolledToLastRow();
         var staleItemsLength = this._staleResources.length;
         var boundariesChanged = false;
+        if (this.calculator.updateBoundariesForEventTime) {
+            boundariesChanged = this.calculator.updateBoundariesForEventTime(this._mainResourceLoadTime) || boundariesChanged;
+            boundariesChanged = this.calculator.updateBoundariesForEventTime(this._mainResourceDOMContentTime) || boundariesChanged;
+        }
 
         for (var i = 0; i < staleItemsLength; ++i) {
             var resource = this._staleResources[i];
@@ -1668,6 +1673,18 @@ WebInspector.NetworkTimeCalculator.prototype = {
             return ((eventTime - this.minimumBoundary) / this.boundarySpan) * 100;
 
         return 0;
+    },
+
+    updateBoundariesForEventTime: function(eventTime)
+    {
+        if (eventTime === -1 || this.startAtZero)
+            return false;
+
+        if (typeof this.maximumBoundary === "undefined" || eventTime > this.maximumBoundary) {
+            this.maximumBoundary = eventTime;
+            return true;
+        }
+        return false;
     },
 
     computeBarGraphLabels: function(resource)
