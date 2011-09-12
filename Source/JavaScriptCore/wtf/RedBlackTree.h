@@ -171,9 +171,6 @@ public:
         treeInsert(x);
         x->setColor(Red);
 
-        // The node from which to start propagating updates upwards.
-        Node* updateStart = x->parent();
-
         while (x != m_root && x->parent()->color() == Red) {
             if (x->parent() == x->parent()->parent()->left()) {
                 Node* y = x->parent()->parent()->right();
@@ -183,7 +180,6 @@ public:
                     y->setColor(Black);
                     x->parent()->parent()->setColor(Red);
                     x = x->parent()->parent();
-                    updateStart = x->parent();
                 } else {
                     if (x == x->parent()->right()) {
                         // Case 2
@@ -193,8 +189,7 @@ public:
                     // Case 3
                     x->parent()->setColor(Black);
                     x->parent()->parent()->setColor(Red);
-                    Node* newSubTreeRoot = rightRotate(x->parent()->parent());
-                    updateStart = newSubTreeRoot->parent();
+                    rightRotate(x->parent()->parent());
                 }
             } else {
                 // Same as "then" clause with "right" and "left" exchanged.
@@ -205,7 +200,6 @@ public:
                     y->setColor(Black);
                     x->parent()->parent()->setColor(Red);
                     x = x->parent()->parent();
-                    updateStart = x->parent();
                 } else {
                     if (x == x->parent()->left()) {
                         // Case 2
@@ -215,8 +209,7 @@ public:
                     // Case 3
                     x->parent()->setColor(Black);
                     x->parent()->parent()->setColor(Red);
-                    Node* newSubTreeRoot = leftRotate(x->parent()->parent());
-                    updateStart = newSubTreeRoot->parent();
+                    leftRotate(x->parent()->parent());
                 }
             }
         }

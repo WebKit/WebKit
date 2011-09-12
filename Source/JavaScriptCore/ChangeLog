@@ -1,3 +1,13 @@
+2011-09-12  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt] Build fails after r94920 with strict compiler
+        https://bugs.webkit.org/show_bug.cgi?id=67928
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/RedBlackTree.h:
+        (WTF::RedBlackTree::insert): Remove dead variables updateStart and newSubTreeRoot.
+
 2011-09-12  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix after r94871.
