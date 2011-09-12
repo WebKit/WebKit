@@ -76,6 +76,8 @@ public:
         return m_impl->characters();
     }
 
+    bool is8Bit() const { return false; }
+
     CString ascii() const;
     CString latin1() const;
     CString utf8(bool strict = false) const;

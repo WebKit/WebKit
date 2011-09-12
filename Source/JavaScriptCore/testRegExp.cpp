@@ -120,6 +120,13 @@ public:
         return new (allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure, arguments);
     }
     virtual UString className() const { return "global"; }
+
+protected:
+    void finishCreation(JSGlobalData& globalData, const Vector<UString>& arguments)
+    {
+        Base::finishCreation(globalData, this);
+        UNUSED_PARAM(arguments);
+    }
 };
 
 COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);
@@ -128,7 +135,7 @@ ASSERT_CLASS_FITS_IN_CELL(GlobalObject);
 GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
     : JSGlobalObject(globalData, structure)
 {
-    UNUSED_PARAM(arguments);
+    finishCreation(globalData, arguments);
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog

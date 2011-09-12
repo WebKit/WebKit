@@ -57,8 +57,13 @@ enum JSRegExpResult {
     JSRegExpErrorInternal = -4
 };
 
+enum YarrCharSize {
+    Char8,
+    Char16
+};
+
 PassOwnPtr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*);
-int interpret(BytecodePattern*, const UChar* input, unsigned start, unsigned length, int* output);
+int interpret(BytecodePattern*, const UString& input, unsigned start, unsigned length, int* output);
 
 } } // namespace JSC::Yarr
 

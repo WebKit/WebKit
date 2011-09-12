@@ -26,6 +26,7 @@
 #include "ExecutableAllocator.h"
 #include "Structure.h"
 #include "RegExpKey.h"
+#include "yarr/Yarr.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -91,13 +92,8 @@ namespace JSC {
             NotCompiled
         } m_state;
 
-        void compile(JSGlobalData*);
-        void compileIfNecessary(JSGlobalData& globalData)
-        {
-            if (m_representation)
-                return;
-            compile(&globalData);
-        }
+        void compile(JSGlobalData*, Yarr::YarrCharSize);
+        void compileIfNecessary(JSGlobalData&, Yarr::YarrCharSize);
 
 #if ENABLE(YARR_JIT_DEBUG)
         void matchCompareWithInterpreter(const UString&, int startOffset, int* offsetVector, int jitResult);

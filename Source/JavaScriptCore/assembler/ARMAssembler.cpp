@@ -288,27 +288,28 @@ void ARMAssembler::dataTransfer32(bool isLoad, RegisterID srcDst, RegisterID bas
     }
 }
 
-void ARMAssembler::baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset)
+void ARMAssembler::baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset, bool bytes)
 {
     ARMWord op2;
+    ARMWord transferFlag = bytes ? DT_BYTE : 0;
 
     ASSERT(scale >= 0 && scale <= 3);
     op2 = lsl(index, scale);
 
     if (offset >= 0 && offset <= 0xfff) {
         add_r(ARMRegisters::S0, base, op2);
-        dtr_u(isLoad, srcDst, ARMRegisters::S0, offset);
+        dtr_u(isLoad, srcDst, ARMRegisters::S0, offset | transferFlag);
         return;
     }
     if (offset <= 0 && offset >= -0xfff) {
         add_r(ARMRegisters::S0, base, op2);
-        dtr_d(isLoad, srcDst, ARMRegisters::S0, -offset);
+        dtr_d(isLoad, srcDst, ARMRegisters::S0, (-offset & 0xfff) | transferFlag);
         return;
     }
 
     ldr_un_imm(ARMRegisters::S0, offset);
     add_r(ARMRegisters::S0, ARMRegisters::S0, op2);
-    dtr_ur(isLoad, srcDst, base, ARMRegisters::S0);
+    dtr_ur(isLoad, srcDst, base, ARMRegisters::S0 | transferFlag);
 }
 
 void ARMAssembler::doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID base, int32_t offset)

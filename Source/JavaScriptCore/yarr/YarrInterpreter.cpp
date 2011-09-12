@@ -27,8 +27,10 @@
 #include "config.h"
 #include "YarrInterpreter.h"
 
+#include "UString.h"
 #include "Yarr.h"
 #include <wtf/BumpPointerAllocator.h>
+#include <wtf/text/CString.h>
 
 #ifndef NDEBUG
 #include <stdio.h>
@@ -166,9 +168,63 @@ public:
         allocatorPool = allocatorPool->dealloc(context);
     }
 
+    // This class is a placeholder for future character iterator, current 
+    // proposed name StringConstCharacterIterator.
+    class CharAccess {
+    public:
+        CharAccess(const UString& s)
+            : m_buffer(0)
+        {
+            if (s.is8Bit()) {
+                m_charSize = Char8;
+                unsigned length = s.length();
+                m_ptr.ptr8 = m_buffer = static_cast<char *>(fastMalloc(length));
+                memcpy(m_buffer, s.latin1().data(), length);
+            } else {
+                m_charSize = Char16;
+                m_ptr.ptr16 = s.characters();
+            }
+        }
+
+        CharAccess(const char* ptr)
+            : m_charSize(Char8)
+            , m_buffer(0)
+        {
+            m_ptr.ptr8 = ptr;
+        }
+
+        CharAccess(const UChar* ptr)
+            : m_charSize(Char16)
+            , m_buffer(0)
+        {
+            m_ptr.ptr16 = ptr;
+        }
+
+        ~CharAccess()
+        {
+            if (m_charSize == Char8)
+                fastFree(m_buffer);
+        }
+
+        inline UChar operator[](unsigned index)
+        {
+            if (m_charSize == Char8)
+                return m_ptr.ptr8[index];
+            return m_ptr.ptr16[index];
+        }
+
+    private:
+        union {
+            const char* ptr8;
+            const UChar* ptr16;
+        } m_ptr;
+        YarrCharSize m_charSize;
+        char* m_buffer;
+    };
+
     class InputStream {
     public:
-        InputStream(const UChar* input, unsigned start, unsigned length)
+        InputStream(const UString& input, unsigned start, unsigned length)
             : input(input)
             , pos(start)
             , length(length)
@@ -278,7 +334,7 @@ public:
         }
 
     private:
-        const UChar* input;
+        CharAccess input;
         unsigned pos;
         unsigned length;
     };
@@ -1420,10 +1476,10 @@ public:
         return output[0];
     }
 
-    Interpreter(BytecodePattern* pattern, int* output, const UChar* inputChar, unsigned start, unsigned length)
+    Interpreter(BytecodePattern* pattern, int* output, const UString input, unsigned start, unsigned length)
         : pattern(pattern)
         , output(output)
-        , input(inputChar, start, length)
+        , input(input, start, length)
         , allocatorPool(0)
         , remainingMatchCount(matchLimit)
     {
@@ -1910,7 +1966,7 @@ PassOwnPtr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAllocat
     return ByteCompiler(pattern).compile(allocator);
 }
 
-int interpret(BytecodePattern* bytecode, const UChar* input, unsigned start, unsigned length, int* output)
+int interpret(BytecodePattern* bytecode, const UString& input, unsigned start, unsigned length, int* output)
 {
     return Interpreter(bytecode, output, input, start, length).interpret();
 }

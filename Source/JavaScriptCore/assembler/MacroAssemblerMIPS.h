@@ -496,6 +496,35 @@ public:
         }
     }
 
+    void load8(BaseIndex address, RegisterID dest)
+    {
+        if (address.offset >= -32768 && address.offset <= 32767
+            && !m_fixedWidth) {
+            /*
+             sll     addrTemp, address.index, address.scale
+             addu    addrTemp, addrTemp, address.base
+             lbu     dest, address.offset(addrTemp)
+             */
+            m_assembler.sll(addrTempRegister, address.index, address.scale);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            m_assembler.lbu(dest, addrTempRegister, address.offset);
+        } else {
+            /*
+             sll     addrTemp, address.index, address.scale
+             addu    addrTemp, addrTemp, address.base
+             lui     immTemp, (address.offset + 0x8000) >> 16
+             addu    addrTemp, addrTemp, immTemp
+             lbu     dest, (address.offset & 0xffff)(at)
+             */
+            m_assembler.sll(addrTempRegister, address.index, address.scale);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            m_assembler.lui(immTempRegister, (address.offset + 0x8000) >> 16);
+            m_assembler.addu(addrTempRegister, addrTempRegister,
+                             immTempRegister);
+            m_assembler.lbu(dest, addrTempRegister, address.offset);
+        }
+    }
+
     void load32(ImplicitAddress address, RegisterID dest)
     {
         if (address.offset >= -32768 && address.offset <= 32767
@@ -932,6 +961,16 @@ public:
         return branch32(cond, dataTempRegister, immTempRegister);
     }
 
+    Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
+    {
+        ASSERT(!(right.m_value & 0xFFFFFF00));
+        load8(left, dataTempRegister);
+        // Be careful that the previous load8() uses immTempRegister.
+        // So, we need to put move() after load8().
+        move(right, immTempRegister);
+        return branch32(cond, dataTempRegister, immTempRegister);
+    }
+
     Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right)
     {
         if (cond == Equal)
@@ -1030,6 +1069,14 @@ public:
         load32(left.m_ptr, dataTempRegister);
         move(right, immTempRegister);
         return branch32(cond, dataTempRegister, immTempRegister);
+    }
+
+    Jump branch16(RelationalCondition cond, RegisterID left, TrustedImm32 right)
+    {
+        // Make sure the immediate value is unsigned 16 bits.
+        ASSERT(!(right.m_value & 0xFFFF0000));
+        m_assembler.andi(immTempRegister, left, 0xffff);
+        return branch32(cond, immTempRegister, right);
     }
 
     Jump branch16(RelationalCondition cond, BaseIndex left, RegisterID right)

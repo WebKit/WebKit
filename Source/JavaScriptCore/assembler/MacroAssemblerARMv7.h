@@ -483,6 +483,11 @@ public:
         load8(setupArmAddress(address), dest);
     }
 
+    void load8(BaseIndex address, RegisterID dest)
+    {
+        load8(setupArmAddress(address), dest);
+    }
+    
     DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
     {
         DataLabel32 label = moveWithPatch(TrustedImm32(address.offset), dataTempRegister);
@@ -963,6 +968,14 @@ public:
         return branch32(cond, dataTempRegister, addressTempRegister);
     }
 
+    Jump branch16(RelationalCondition cond, RegisterID left, TrustedImm32 right)
+    {
+        ASSERT(!(0xffff0000 & right.m_value));
+        // Extract the lower 16 bits into a temp for comparison
+        m_assembler.ubfx(dataTempRegister, left, 0, 16);
+        return branch32(cond, dataTempRegister, right);
+    }
+    
     Jump branch16(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
         // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
@@ -979,11 +992,20 @@ public:
 
     Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
     {
+        ASSERT(!(0xffffff00 & right.m_value));
         // use addressTempRegister incase the branch8 we call uses dataTempRegister. :-/
         load8(left, addressTempRegister);
         return branch8(cond, addressTempRegister, right);
     }
 
+    Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
+    {
+        ASSERT(!(0xffffff00 & right.m_value));
+        // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
+        load8(left, addressTempRegister);
+        return branch32(cond, addressTempRegister, right);
+    }
+    
     Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         m_assembler.tst(reg, mask);

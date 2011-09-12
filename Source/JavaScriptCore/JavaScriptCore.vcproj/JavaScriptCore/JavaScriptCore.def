@@ -22,6 +22,7 @@ EXPORTS
     ??0ThreadCondition@WTF@@QAE@XZ
     ??0UString@JSC@@QAE@PBD@Z
     ??0UString@JSC@@QAE@PBDI@Z
+    ??0UString@JSC@@QAE@PB_W@Z
     ??0UString@JSC@@QAE@PB_WI@Z
     ??0WTFThreadData@WTF@@QAE@XZ
     ??0YarrPattern@Yarr@JSC@@QAE@ABVUString@2@_N1PAPBD@Z
@@ -231,7 +232,7 @@ EXPORTS
     ?initializeMainThread@WTF@@YAXXZ
     ?initializeThreading@JSC@@YAXXZ
     ?initializeThreading@WTF@@YAXXZ
-    ?interpret@Yarr@JSC@@YAHPAUBytecodePattern@12@PB_WIIPAH@Z
+    ?interpret@Yarr@JSC@@YAHPAUBytecodePattern@12@ABVUString@2@IIPAH@Z
     ?isAccessorDescriptor@PropertyDescriptor@JSC@@QBE_NXZ
     ?isBusy@Heap@JSC@@QAE_NXZ
     ?isDataDescriptor@PropertyDescriptor@JSC@@QBE_NXZ

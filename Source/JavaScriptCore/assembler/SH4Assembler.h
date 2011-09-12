@@ -152,6 +152,7 @@ enum {
     TST_OPCODE = 0x2008,
     TSTIMM_OPCODE = 0xc800,
     TSTB_OPCODE = 0xcc00,
+    EXTUB_OPCODE = 0x600c,
     EXTUW_OPCODE = 0x600d,
     XOR_OPCODE = 0x200a,
     XORIMM_OPCODE = 0xca00,
@@ -758,6 +759,12 @@ public:
         oneShortOp(opc);
     }
 
+    void extub(RegisterID src, RegisterID dst)
+    {
+        uint16_t opc = getOpcodeGroup1(EXTUB_OPCODE, dst, src);
+        oneShortOp(opc);
+    }
+    
     void extuw(RegisterID src, RegisterID dst)
     {
         uint16_t opc = getOpcodeGroup1(EXTUW_OPCODE, dst, src);
@@ -1809,6 +1816,9 @@ public:
             break;
         case MOVW_READ_R0RM_OPCODE:
             format = "    MOV.W @(R0, R%d), R%d\n";
+            break;
+        case EXTUB_OPCODE:
+            format = "    EXTU.B R%d, R%d\n";
             break;
         case EXTUW_OPCODE:
             format = "    EXTU.W R%d, R%d\n";

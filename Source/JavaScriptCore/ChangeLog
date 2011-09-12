@@ -1,3 +1,98 @@
+2011-09-12  Michael Saboff  <msaboff@apple.com>
+
+        Update RegExp and related classes to use 8 bit strings when available
+        https://bugs.webkit.org/show_bug.cgi?id=67337
+
+        Modified both the Yarr interpreter and JIT to handle 8 bit subject strings.
+        The code paths are triggered by the UString::is8bit() method which currently
+        returns false.  Implemented JIT changes for all current architectures.
+        Tested X86_64 and ARM v7.
+
+        This includes some code that will likely change as we complete the
+        8 bit string changes.  This includes the way the raw buffer pointers
+        are accessed as well as replacing the CharAccess class with a
+        string interator returned from UString.
+
+        Fixed build breakage in testRegExp.cpp due to globalObject construction
+        changes.
+
+        Reviewed by Gavin Barraclough.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * testRegExp.cpp:
+        (GlobalObject::finishCreation):
+        (GlobalObject::GlobalObject):
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::baseIndexTransfer32):
+        * assembler/ARMAssembler.h:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::ubfx):
+        (JSC::ARMv7Assembler::ARMInstructionFormatter::twoWordOp12Reg40Imm3Reg4Imm20Imm5):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::load8):
+        (JSC::MacroAssemblerARM::branch8):
+        (JSC::MacroAssemblerARM::branch16):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load8):
+        (JSC::MacroAssemblerARMv7::branch16):
+        (JSC::MacroAssemblerARMv7::branch8):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::load8):
+        (JSC::MacroAssemblerMIPS::branch8):
+        (JSC::MacroAssemblerMIPS::branch16):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::load8):
+        (JSC::MacroAssemblerSH4::branch8):
+        (JSC::MacroAssemblerSH4::branch16):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::load8):
+        (JSC::MacroAssemblerX86Common::branch16):
+        (JSC::MacroAssemblerX86Common::branch8):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::extub):
+        (JSC::SH4Assembler::printInstr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cmpw_ir):
+        (JSC::X86Assembler::movzbl_mr):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileIfNecessary):
+        (JSC::RegExp::match):
+        (JSC::RegExp::matchCompareWithInterpreter):
+        * runtime/RegExp.h:
+        * runtime/UString.h:
+        (JSC::UString::is8Bit):
+        * yarr/Yarr.h:
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::CharAccess::CharAccess):
+        (JSC::Yarr::Interpreter::CharAccess::~CharAccess):
+        (JSC::Yarr::Interpreter::CharAccess::operator[]):
+        (JSC::Yarr::Interpreter::InputStream::InputStream):
+        (JSC::Yarr::Interpreter::Interpreter):
+        (JSC::Yarr::interpret):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::jumpIfCharNotEquals):
+        (JSC::Yarr::YarrGenerator::readCharacter):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterOnce):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterFixed):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackPatternCharacterNonGreedy):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassFixed):
+        (JSC::Yarr::YarrGenerator::generateDotStarEnclosure):
+        (JSC::Yarr::YarrGenerator::YarrGenerator):
+        (JSC::Yarr::YarrGenerator::compile):
+        (JSC::Yarr::jitCompile):
+        (JSC::Yarr::execute):
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::has8BitCode):
+        (JSC::Yarr::YarrCodeBlock::has16BitCode):
+        (JSC::Yarr::YarrCodeBlock::set8BitCode):
+        (JSC::Yarr::YarrCodeBlock::set16BitCode):
+        (JSC::Yarr::YarrCodeBlock::execute):
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::Parser):
+
 2011-09-12  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt] Build fails after r94920 with strict compiler

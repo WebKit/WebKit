@@ -600,6 +600,7 @@ private:
         OP_MOV_imm_T3   = 0xF240,
         OP_SUB_imm_T4   = 0xF2A0,
         OP_MOVT         = 0xF2C0,
+        OP_UBFX_T1      = 0xF3C0,
         OP_NOP_T2a      = 0xF3AF,
         OP_LDRB_imm_T3  = 0xF810,
         OP_LDRB_reg_T2  = 0xF810,
@@ -1480,6 +1481,14 @@ public:
             m_formatter.oneWordOp10Reg3Reg3(OP_TST_reg_T1, rm, rn);
     }
 
+    ALWAYS_INLINE void ubfx(RegisterID rd, RegisterID rn, unsigned lsb, unsigned width)
+    {
+        ASSERT(lsb < 32);
+        ASSERT((width >= 1) && (width <= 32));
+        ASSERT((lsb + width) <= 32);
+        m_formatter.twoWordOp12Reg40Imm3Reg4Imm20Imm5(OP_UBFX_T1, rd, rn, (lsb & 0x1c) << 10, (lsb & 0x3) << 6, (width - 1) & 0x1f);
+    }
+
     void vadd_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
         m_formatter.vfpOp(OP_VADD_T2, OP_VADD_T2b, true, rn, rd, rm);
@@ -2245,6 +2254,12 @@ private:
         {
             m_buffer.putShort(op | reg1);
             m_buffer.putShort((reg2 << 12) | imm);
+        }
+
+        ALWAYS_INLINE void twoWordOp12Reg40Imm3Reg4Imm20Imm5(OpcodeID1 op, RegisterID reg1, RegisterID reg2, uint16_t imm1, uint16_t imm2, uint16_t imm3)
+        {
+            m_buffer.putShort(op | reg1);
+            m_buffer.putShort((imm1 << 12) | (reg2 << 8) | (imm2 << 6) | imm3);
         }
 
         // Formats up instructions of the pattern:

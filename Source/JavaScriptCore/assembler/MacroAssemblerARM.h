@@ -253,6 +253,11 @@ public:
         m_assembler.dataTransfer32(true, dest, address.base, address.offset, true);
     }
 
+    void load8(BaseIndex address, RegisterID dest)
+    {
+        m_assembler.baseIndexTransfer32(true, dest, address.base, address.index, static_cast<int>(address.scale), address.offset, true);
+    }
+
     void load32(ImplicitAddress address, RegisterID dest)
     {
         m_assembler.dataTransfer32(true, dest, address.base, address.offset);
@@ -406,6 +411,22 @@ public:
     Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
     {
         load8(left, ARMRegisters::S1);
+        return branch32(cond, ARMRegisters::S1, right);
+    }
+
+    Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
+    {
+        ASSERT(!(right.m_value & 0xFFFFFF00));
+        load8(left, ARMRegisters::S1);
+        return branch32(cond, ARMRegisters::S1, right);
+    }
+
+    Jump branch16(RelationalCondition cond, RegisterID left, TrustedImm32 right)
+    {
+        ASSERT(!(right.m_value & 0xFFFF0000));
+        right.m_value <<= 16;
+        m_assembler.mov_r(ARMRegisters::S1, left);
+        lshift32(16, ARMRegisters::S1)
         return branch32(cond, ARMRegisters::S1, right);
     }
 
