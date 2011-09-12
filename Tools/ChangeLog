@@ -1,3 +1,15 @@
+2011-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94976.
+        http://trac.webkit.org/changeset/94976
+        https://bugs.webkit.org/show_bug.cgi?id=67953
+
+        Broke a bunch of security/load& tests (Requested by rniwa on
+        #webkit).
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::pathToLocalResource):
+
 2011-09-12  Eric Seidel  <eric@webkit.org>
 
         Rubber-stamped by Adam Barth.

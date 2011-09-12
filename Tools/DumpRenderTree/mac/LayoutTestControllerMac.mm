@@ -355,24 +355,9 @@ void LayoutTestController::notifyDone()
     m_waitToDump = false;
 }
 
-JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef localResourcePath)
+JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef url)
 {
-    // Use the absolute path for the test from m_testPathOrURL
-    // to create an absolute path for the requested local resource.
-    // FIXME: This code should work on all *nix platforms and can be moved into LayoutTestController.cpp.
-    size_t maxBufferSize = JSStringGetMaximumUTF8CStringSize(localResourcePath);
-    char* resourcePathAsUTF8 = new char[maxBufferSize];
-    size_t resourcePathAsUTF8BufferSize = JSStringGetUTF8CString(localResourcePath, resourcePathAsUTF8, maxBufferSize);
-
-    std::string resourcePathAsString(resourcePathAsUTF8, resourcePathAsUTF8BufferSize - 1); // Ignore the trailing \0 when creating the string.
-    delete[] resourcePathAsUTF8;
-
-    size_t resourceLayoutTestsIndex = resourcePathAsString.rfind("LayoutTests/");
-    ASSERT(resourceLayoutTestsIndex); // Passed in paths must include "LayoutTests/"
-    size_t testLayoutTestsIndex = m_testPathOrURL.rfind("LayoutTests/");
-    std::string resolvedResourcePath = m_testPathOrURL.substr(0, testLayoutTestsIndex) + resourcePathAsString.substr(resourceLayoutTestsIndex);
-
-    return JSStringCreateWithUTF8CString(resolvedResourcePath.c_str());
+    return JSStringRetain(url); // Do nothing on mac.
 }
 
 void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
