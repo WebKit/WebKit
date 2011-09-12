@@ -1,5 +1,22 @@
 2011-09-12  Eric Seidel  <eric@webkit.org>
 
+        [NRWT] REGRESSION: Local loader tests are failing on machines that lost /tmp/LayoutTests symlink
+        https://bugs.webkit.org/show_bug.cgi?id=65781
+
+        Reviewed by Ryosuke Niwa.
+
+        Instead of making NRWT create the symlink, I just made DumpRenderTree smart enough
+        to resolve the passed in url relative to the absolute url for the test.
+
+        I believe this is a better approach than the on used in the Qt and Chromium DRT's
+        (which resolves the path relative to the built location of the DRT executable)
+        and we should move this new code into a shared location in a follow-up patch.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::pathToLocalResource):
+
+2011-09-12  Eric Seidel  <eric@webkit.org>
+
         Reshuffle some code in WebKitDriver._read_block in preparation for reading stderr/stdout separately
         https://bugs.webkit.org/show_bug.cgi?id=67530
 
