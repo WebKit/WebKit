@@ -75,6 +75,8 @@ private:
     virtual void processDidCrash();
     virtual void didRelaunchProcess();
 
+    virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList&, FileChooserType) { }
+
 private:
     QTouchWebView* const m_viewportView;
     QTouchWebPage* const m_pageView;

@@ -24,6 +24,7 @@
 #include <QtCore/QSharedPointer>
 #include <QtCore/QSize>
 #include <QtGui/QMenu>
+#include <WebKit2/WKBase.h>
 
 class QWebError;
 
@@ -47,6 +48,11 @@ namespace WebKit {
 class ViewInterface
 {
 public:
+    enum FileChooserType {
+        SingleFileSelection,
+        MultipleFilesSelection
+    };
+
     virtual void setViewNeedsDisplay(const QRect&) = 0;
 
     virtual QSize drawingAreaSize() = 0;
@@ -77,6 +83,8 @@ public:
 
     virtual void processDidCrash() = 0;
     virtual void didRelaunchProcess() = 0;
+
+    virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, FileChooserType) = 0;
 };
 
 }

@@ -28,6 +28,7 @@
 #include <QtDeclarative/qsgevent.h>
 #include <QtDeclarative/qsgitem.h>
 #include <QtGui/QCursor>
+#include <QtGui/QFileDialog>
 #include <QtGui/QFocusEvent>
 #include <QtGui/QGraphicsSceneEvent>
 #include <QtGui/QHoverEvent>
@@ -35,6 +36,7 @@
 #include <QtGui/QKeyEvent>
 #include <QtGui/QTouchEvent>
 #include <QtGui/QWheelEvent>
+#include <WKOpenPanelResultListener.h>
 
 QDesktopWebViewPrivate::QDesktopWebViewPrivate(QDesktopWebView* q, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : q(q)
@@ -378,6 +380,44 @@ void QDesktopWebViewPrivate::didRelaunchProcess()
 {
     isCrashed = false;
     q->update();
+}
+
+void QDesktopWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, ViewInterface::FileChooserType type)
+{
+#ifndef QT_NO_FILEDIALOG
+    openPanelResultListener = listenerRef;
+
+    // Qt does not support multiple files suggestion, so we get just the first suggestion.
+    QString selectedFileName;
+    if (!selectedFileNames.isEmpty())
+        selectedFileName = selectedFileNames.at(0);
+
+    QWidget* widget = q->canvas();
+    fileDialog = new QFileDialog(widget, QString(), selectedFileName);
+    fileDialog->open(this, SLOT(onOpenPanelFilesSelected()));
+
+    connect(fileDialog, SIGNAL(finished(int)), this, SLOT(onOpenPanelFinished(int)));
+#endif
+}
+
+void QDesktopWebViewPrivate::onOpenPanelFilesSelected()
+{
+    const QStringList fileList = fileDialog->selectedFiles();
+    Vector<RefPtr<APIObject> > wkFiles(fileList.size());
+
+    for (unsigned i = 0; i < fileList.size(); ++i)
+        wkFiles[i] = WebURL::create(QUrl::fromLocalFile(fileList.at(i)).toString());
+
+    WKOpenPanelResultListenerChooseFiles(openPanelResultListener, toAPI(ImmutableArray::adopt(wkFiles).leakRef()));
+}
+
+void QDesktopWebViewPrivate::onOpenPanelFinished(int result)
+{
+    if (result == QDialog::Rejected)
+        WKOpenPanelResultListenerCancel(openPanelResultListener);
+
+    fileDialog->deleteLater();
+    fileDialog = 0;
 }
 
 static PolicyInterface::PolicyAction toPolicyAction(QDesktopWebView::NavigationPolicy policy)

@@ -29,8 +29,11 @@
 #include <PolicyInterface.h>
 #include <QtWebPageProxy.h>
 #include <ViewInterface.h>
+#include <WKArray.h>
 #include <WKFrame.h>
 #include <WKFramePolicyListener.h>
+#include <WKOpenPanelParameters.h>
+#include <WKOpenPanelResultListener.h>
 #include <WKType.h>
 #include <WKURLRequest.h>
 
@@ -145,6 +148,19 @@ void qt_wk_setStatusText(WKPageRef, WKStringRef text, const void *clientInfo)
 {
     QString qText = WKStringCopyQString(text);
     toViewInterface(clientInfo)->didChangeStatusText(qText);
+}
+
+void qt_wk_runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
+{
+    Vector<String> wkSelectedFileNames = toImpl(parameters)->selectedFileNames();
+
+    QStringList selectedFileNames;
+    if (!wkSelectedFileNames.isEmpty())
+        for (unsigned i = 0; wkSelectedFileNames.size(); ++i)
+            selectedFileNames += wkSelectedFileNames.at(i);
+
+    ViewInterface::FileChooserType allowMultipleFiles = WKOpenPanelParametersGetAllowsMultipleFiles(parameters) ? ViewInterface::MultipleFilesSelection : ViewInterface::SingleFileSelection;
+    toViewInterface(clientInfo)->chooseFiles(listener, selectedFileNames, allowMultipleFiles);
 }
 
 static Qt::MouseButton toQtMouseButton(WKEventMouseButton button)

@@ -1,3 +1,31 @@
+2011-09-12  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [Qt] [WK2] implement support to upload files in Qt WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=67228
+
+        This patch implements support to upload files in the Desktop Qt WebKit2 implementation.
+
+        Reviewed by Andreas Kling.
+
+        * Shared/WebOpenPanelParameters.h:
+        (WebKit::WebOpenPanelParameters::selectedFileNames):
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::chooseFiles):
+        (QDesktopWebViewPrivate::onOpenPanelFilesSelected):
+        (QDesktopWebViewPrivate::onOpenPanelFinished):
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/qt/ClientImpl.cpp:
+
+        qt_wk_runOpenPanel supports single and multiple files selection.
+
+        (qt_wk_runOpenPanel):
+        * UIProcess/qt/ClientImpl.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::init):
+        * UIProcess/qt/TouchViewInterface.h:
+        (WebKit::TouchViewInterface::chooseFiles):
+        * UIProcess/qt/ViewInterface.h:
+
 2011-09-12  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt]Style error fix.

@@ -55,6 +55,7 @@ public:
     ~WebOpenPanelParameters();
 
     bool allowMultipleFiles() const { return m_data.allowMultipleFiles; } 
+    Vector<String> selectedFileNames() const { return m_data.filenames; }
 
 private:
     explicit WebOpenPanelParameters(const Data&);

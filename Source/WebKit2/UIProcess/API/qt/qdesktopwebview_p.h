@@ -25,10 +25,14 @@
 #include "qwebnavigationcontroller.h"
 #include "ViewInterface.h"
 
-class QDesktopWebView;
+#include <QtCore/QObject>
 
-class QDesktopWebViewPrivate : public WebKit::ViewInterface, public WebKit::PolicyInterface
+class QDesktopWebView;
+class QFileDialog;
+
+class QDesktopWebViewPrivate : public QObject, public WebKit::ViewInterface, public WebKit::PolicyInterface
 {
+    Q_OBJECT
 public:
     QDesktopWebViewPrivate(QDesktopWebView*, WKContextRef = 0, WKPageGroupRef = 0);
 
@@ -39,6 +43,10 @@ public:
 
     bool isCrashed;
     QWebNavigationController* navigationController;
+
+private Q_SLOTS:
+    void onOpenPanelFilesSelected();
+    void onOpenPanelFinished(int result);
 
 private:
     /* Implementation of ViewInterface */
@@ -72,10 +80,15 @@ private:
     virtual void processDidCrash();
     virtual void didRelaunchProcess();
 
+    virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, ViewInterface::FileChooserType);
+
     // PolicyInterface.
     virtual PolicyInterface::PolicyAction navigationPolicyForURL(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers);
 
     QSharedPointer<QMenu> activeMenu;
+
+    QFileDialog* fileDialog;
+    WKOpenPanelResultListenerRef openPanelResultListener;
 };
 
 #endif /* qdesktopwebview_p_h */

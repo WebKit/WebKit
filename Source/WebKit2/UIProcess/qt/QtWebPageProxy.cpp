@@ -140,6 +140,7 @@ void QtWebPageProxy::init()
     uiClient.version = kWKPageUIClientCurrentVersion;
     uiClient.clientInfo = m_viewInterface;
     uiClient.setStatusText = qt_wk_setStatusText;
+    uiClient.runOpenPanel = qt_wk_runOpenPanel;
     WKPageSetPageUIClient(toAPI(m_webPageProxy.get()), &uiClient);
 
     if (m_policyInterface) {

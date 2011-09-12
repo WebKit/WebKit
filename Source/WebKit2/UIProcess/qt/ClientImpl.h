@@ -40,6 +40,7 @@ void qt_wk_didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocume
 
 // ui client
 void qt_wk_setStatusText(WKPageRef page, WKStringRef text, const void *clientInfo);
+void qt_wk_runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef, WKOpenPanelResultListenerRef, const void* clientInfo);
 
 // Policy client.
 void qt_wk_decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef userData, const void* clientInfo);
