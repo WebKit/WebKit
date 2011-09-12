@@ -1,3 +1,18 @@
+2011-09-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed build fix for chromium/mac & clang.
+
+        Fix the macro redefinition error by r94927, because chromium set
+        ENABLE_JSC_MULTIPLE_THREADS=0 in WebKit/chromium/features.gypi and
+        it is not PLATFORM(QT).
+         ../../JavaScriptCore/wtf/Platform.h:512:9: error: 'ENABLE_JSC_MULTIPLE_THREADS' macro redefined [-Werror]
+         #define ENABLE_JSC_MULTIPLE_THREADS 1
+         <command line>:43:9: note: previous definition is here
+         #define ENABLE_JSC_MULTIPLE_THREADS 0
+         1 error generated.
+
+        * wtf/Platform.h:
+
 2011-09-11  Sam Weinig  <sam@webkit.org>
 
         Remove JSCell::isPropertyNameIterator(), it is unused
