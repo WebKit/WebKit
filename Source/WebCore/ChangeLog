@@ -1,3 +1,20 @@
+2011-09-11  Kentaro Hara  <haraken@google.com>
+
+        Implement a ProgressEvent constructor for V8
+        https://bugs.webkit.org/show_bug.cgi?id=67800
+
+        Reviewed by Sam Weinig.
+
+        Test: fast/events/constructors/progress-event-constructor.html
+
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue): Replaced UnsignedLongLongMax with std::numeric_limits<unsigned long long>::max().
+        * bindings/v8/OptionsObject.cpp:
+        (WebCore::OptionsObject::getKeyValue): Returns an unsigned long long value corresponding to a given key. Spec: http://www.w3.org/TR/WebIDL/#es-unsigned-long-long
+        * bindings/v8/OptionsObject.h:
+        * bindings/v8/custom/V8EventConstructors.cpp: Added the ProgressEvent constructor.
+        * dom/ProgressEvent.idl: Added a 'V8CustomConstructor' attribute.
+
 2011-09-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         REGRESSION (r87351): toggling display of lots (thousands) of elements with display:none is very slow

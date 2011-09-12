@@ -180,4 +180,21 @@ bool OptionsObject::getKey(const String& key, v8::Local<v8::Value>& value) const
     return true;
 }
 
+bool OptionsObject::getKeyValue(const String& key, unsigned long long& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    v8::Local<v8::Number> v8Number = v8Value->ToNumber();
+    if (v8Number.IsEmpty())
+        return false;
+    double d = v8Number->Value();
+    if (isnan(d) || isinf(d))
+        value = 0;
+    else
+        value = static_cast<unsigned long long>(fmod(trunc(d), std::numeric_limits<unsigned long long>::max() + 1.0));
+    return true;
+}
+
 } // namespace WebCore

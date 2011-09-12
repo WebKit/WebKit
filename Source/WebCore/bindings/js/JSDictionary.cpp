@@ -37,8 +37,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-static const double UnsignedLongLongMax = 18446744073709551616.0; // 2^64
-
 JSDictionary::GetPropertyResult JSDictionary::tryGetProperty(const char* propertyName, JSValue& finalResult)
 {
     Identifier identifier(m_exec, propertyName);
@@ -83,7 +81,7 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned long lo
     if (isnan(d) || isinf(d))
         result = 0;
     else
-        result = static_cast<unsigned long long>(fmod(trunc(d), UnsignedLongLongMax));
+        result = static_cast<unsigned long long>(fmod(trunc(d), std::numeric_limits<unsigned long long>::max() + 1.0));
 }
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, double& result)

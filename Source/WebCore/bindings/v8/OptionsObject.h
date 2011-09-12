@@ -77,6 +77,7 @@ public:
         value = ScriptValue(v8Value);
         return true;
     }
+    bool getKeyValue(const String& key, unsigned long long& value) const;
 
 private:
     bool getKey(const String& key, v8::Local<v8::Value>&) const;

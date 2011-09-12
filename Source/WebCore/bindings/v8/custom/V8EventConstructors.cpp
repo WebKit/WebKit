@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Node.h"
+#include "ProgressEvent.h"
 
 #include "OptionsObject.h"
 #include "V8Binding.h"
@@ -43,6 +44,7 @@
 #include "V8Document.h"
 #include "V8Event.h"
 #include "V8Node.h"
+#include "V8ProgressEvent.h"
 #include "V8Proxy.h"
 
 #include <wtf/RefPtr.h>
@@ -99,6 +101,7 @@ static v8::Handle<v8::Value> constructV8Event(const v8::Arguments& args, bool (*
 
 INSTANTIATE_INITIALIZING_CONSTRUCTOR_FOR_EVENT(DICTIONARY_START, DICTIONARY_END, FILL_PARENT_PROPERTIES, FILL_PROPERTY)
 INSTANTIATE_INITIALIZING_CONSTRUCTOR_FOR_CUSTOM_EVENT(DICTIONARY_START, DICTIONARY_END, FILL_PARENT_PROPERTIES, FILL_PROPERTY)
+INSTANTIATE_INITIALIZING_CONSTRUCTOR_FOR_PROGRESS_EVENT(DICTIONARY_START, DICTIONARY_END, FILL_PARENT_PROPERTIES, FILL_PROPERTY)
 
 
 } // namespace WebCore

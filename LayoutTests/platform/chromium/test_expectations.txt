@@ -514,9 +514,6 @@ BUGCR20519 WIN : fast/text/wide-zero-width-space.html = FAIL
 // There's a missing glyph box in "full-time".
 BUGCR20547 WIN : fast/text/capitalize-boundaries.html = FAIL
 
-// This will soon be fixed after implementing a ProgressEvent constructor for V8.
-BUGWK67537 : fast/events/constructors/progress-event-constructor.html = FAIL
-
 // Different button line-heights, our behavior looks wrong.
 BUGCR20551 LINUX WIN : fast/replaced/table-percent-height.html = FAIL
 BUGCR20551 LINUX WIN : fast/replaced/table-percent-height-text-controls.html = FAIL
