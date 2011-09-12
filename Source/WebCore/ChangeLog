@@ -1,3 +1,15 @@
+2011-09-12  Mike Reed  <reed@google.com>
+
+        [skia] remove dead code, no functionality change
+        https://bugs.webkit.org/show_bug.cgi?id=67844
+
+        Reviewed by Kenneth Russell.
+
+        No new tests. just removing dead-code, existing tests apply
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2011-09-12  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: Runtime.callFunctionOn does not accept arguments that evaluate to false.

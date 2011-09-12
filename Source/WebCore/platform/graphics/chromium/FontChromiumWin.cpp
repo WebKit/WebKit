@@ -39,171 +39,11 @@
 #include "PlatformContextSkia.h"
 #include "SimpleFontData.h"
 #include "SkiaFontWin.h"
-#include "SkiaUtils.h"
-#include "TransparencyWin.h"
 #include "UniscribeHelperTextRun.h"
-
-#include "skia/ext/platform_canvas.h"
-#include "skia/ext/skia_utils_win.h"  // FIXME: remove this dependency.
 
 #include <windows.h>
 
 namespace WebCore {
-
-namespace {
-
-bool canvasHasMultipleLayers(const SkCanvas* canvas)
-{
-    SkCanvas::LayerIter iter(const_cast<SkCanvas*>(canvas), false);
-    iter.next();  // There is always at least one layer.
-    return !iter.done();  // There is > 1 layer if the the iterator can stil advance.
-}
-
-class TransparencyAwareFontPainter {
-public:
-    TransparencyAwareFontPainter(GraphicsContext*, const FloatPoint&);
-
-protected:
-    virtual IntRect estimateTextBounds() = 0;
-
-    // Use the context from the transparency helper when drawing with GDI. It
-    // may point to a temporary one.
-    GraphicsContext* m_graphicsContext;
-    PlatformGraphicsContext* m_platformContext;
-
-    FloatPoint m_point;
-};
-
-TransparencyAwareFontPainter::TransparencyAwareFontPainter(GraphicsContext* context,
-                                                           const FloatPoint& point)
-    : m_graphicsContext(context)
-    , m_platformContext(context->platformContext())
-    , m_point(point)
-{
-}
-
-// Specialization for simple GlyphBuffer painting.
-class TransparencyAwareGlyphPainter : public TransparencyAwareFontPainter {
- public:
-    TransparencyAwareGlyphPainter(GraphicsContext*,
-                                  const SimpleFontData*,
-                                  const GlyphBuffer&,
-                                  int from, int numGlyphs,
-                                  const FloatPoint&);
-
-    // Draws the partial string of glyphs, starting at |startAdvance| to the
-    // left of m_point.
-    void drawGlyphs(int numGlyphs, const WORD* glyphs, const int* advances, float startAdvance) const;
-
- private:
-    virtual IntRect estimateTextBounds();
-
-    const SimpleFontData* m_font;
-    const GlyphBuffer& m_glyphBuffer;
-    int m_from;
-    int m_numGlyphs;
-};
-
-TransparencyAwareGlyphPainter::TransparencyAwareGlyphPainter(
-    GraphicsContext* context,
-    const SimpleFontData* font,
-    const GlyphBuffer& glyphBuffer,
-    int from, int numGlyphs,
-    const FloatPoint& point)
-    : TransparencyAwareFontPainter(context, point)
-    , m_font(font)
-    , m_glyphBuffer(glyphBuffer)
-    , m_from(from)
-    , m_numGlyphs(numGlyphs)
-{
-}
-
-// Estimates the bounding box of the given text. This is copied from
-// FontCGWin.cpp, it is possible, but a lot more work, to get the precide
-// bounds.
-IntRect TransparencyAwareGlyphPainter::estimateTextBounds()
-{
-    int totalWidth = 0;
-    for (int i = 0; i < m_numGlyphs; i++)
-        totalWidth += lroundf(m_glyphBuffer.advanceAt(m_from + i));
-
-    const FontMetrics& fontMetrics = m_font->fontMetrics();
-    return IntRect(m_point.x() - (fontMetrics.ascent() + fontMetrics.descent()) / 2,
-                   m_point.y() - fontMetrics.ascent() - fontMetrics.lineGap(),
-                   totalWidth + fontMetrics.ascent() + fontMetrics.descent(),
-                   fontMetrics.lineSpacing()); 
-}
-
-void TransparencyAwareGlyphPainter::drawGlyphs(int numGlyphs,
-                                               const WORD* glyphs,
-                                               const int* advances,
-                                               float startAdvance) const
-{
-    SkPoint origin = m_point;
-    origin.fX += SkFloatToScalar(startAdvance);
-    paintSkiaText(m_graphicsContext, m_font->platformData().hfont(),
-                  numGlyphs, glyphs, advances, 0, &origin);
-}
-
-class TransparencyAwareUniscribePainter : public TransparencyAwareFontPainter {
- public:
-    TransparencyAwareUniscribePainter(GraphicsContext*,
-                                      const Font*,
-                                      const TextRun&,
-                                      int from, int to,
-                                      const FloatPoint&);
-
- private:
-    virtual IntRect estimateTextBounds();
-
-    const Font* m_font;
-    const TextRun& m_run;
-    int m_from;
-    int m_to;
-};
-
-TransparencyAwareUniscribePainter::TransparencyAwareUniscribePainter(
-    GraphicsContext* context,
-    const Font* font,
-    const TextRun& run,
-    int from, int to,
-    const FloatPoint& point)
-    : TransparencyAwareFontPainter(context, point)
-    , m_font(font)
-    , m_run(run)
-    , m_from(from)
-    , m_to(to)
-{
-}
-
-IntRect TransparencyAwareUniscribePainter::estimateTextBounds()
-{
-    // This case really really sucks. There is no convenient way to estimate
-    // the bounding box. So we run Uniscribe twice. If we find this happens a
-    // lot, the way to fix it is to make the extra layer after the
-    // UniscribeHelper has measured the text.
-    IntPoint intPoint(lroundf(m_point.x()),
-                      lroundf(m_point.y()));
-
-    UniscribeHelperTextRun state(m_run, *m_font);
-    int left = lroundf(m_point.x()) + state.characterToX(m_from);
-    int right = lroundf(m_point.x()) + state.characterToX(m_to);
-    
-    // Adjust for RTL script since we just want to know the text bounds.
-    if (left > right)
-        std::swap(left, right);
-
-    // This algorithm for estimating how much extra space we need (the text may
-    // go outside the selection rect) is based roughly on
-    // TransparencyAwareGlyphPainter::estimateTextBounds above.
-    const FontMetrics& fontMetrics = m_font->fontMetrics();
-    return IntRect(left - (fontMetrics.ascent() + fontMetrics.descent()) / 2,
-                   m_point.y() - fontMetrics.ascent() - fontMetrics.lineGap(),
-                   (right - left) + fontMetrics.ascent() + fontMetrics.descent(),
-                   fontMetrics.lineSpacing());
-}
-
-}  // namespace
 
 bool Font::canReturnFallbackFontsForComplexText()
 {
@@ -215,19 +55,23 @@ bool Font::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-static void drawGlyphsWin(GraphicsContext* graphicsContext,
-                          const SimpleFontData* font,
-                          const GlyphBuffer& glyphBuffer,
-                          int from,
-                          int numGlyphs,
-                          const FloatPoint& point) {
-    TransparencyAwareGlyphPainter painter(graphicsContext, font, glyphBuffer, from, numGlyphs, point);
+void Font::drawGlyphs(GraphicsContext* graphicsContext,
+                      const SimpleFontData* font,
+                      const GlyphBuffer& glyphBuffer,
+                      int from,
+                      int numGlyphs,
+                      const FloatPoint& point) const
+{
+    SkColor color = graphicsContext->platformContext()->effectiveFillColor();
+    unsigned char alpha = SkColorGetA(color);
+    // Skip 100% transparent text; no need to draw anything.
+    if (!alpha && graphicsContext->platformContext()->getStrokeStyle() == NoStroke && !graphicsContext->hasShadow())
+        return;
+
+    HFONT hfont = font->platformData().hfont();
 
     // We draw the glyphs in chunks to avoid having to do a heap allocation for
-    // the arrays of characters and advances. Since ExtTextOut is the
-    // lowest-level text output function on Windows, there should be little
-    // penalty for splitting up the text. On the other hand, the buffer cannot
-    // be bigger than 4094 or the function will fail.
+    // the arrays of characters and advances.
     const int kMaxBufferLength = 256;
     Vector<WORD, kMaxBufferLength> glyphs;
     Vector<int, kMaxBufferLength> advances;
@@ -264,24 +108,10 @@ static void drawGlyphsWin(GraphicsContext* graphicsContext,
                 advances[i] = 0;
         }
 
-        painter.drawGlyphs(curLen, &glyphs[0], &advances[0], horizontalOffset - point.x() - currentWidth);
+        SkPoint origin = point;
+        origin.fX += SkFloatToScalar(horizontalOffset - point.x() - currentWidth);
+        paintSkiaText(graphicsContext, hfont, curLen, &glyphs[0], &advances[0], 0, &origin);
     }
-}
-
-void Font::drawGlyphs(GraphicsContext* graphicsContext,
-                      const SimpleFontData* font,
-                      const GlyphBuffer& glyphBuffer,
-                      int from,
-                      int numGlyphs,
-                      const FloatPoint& point) const
-{
-    SkColor color = graphicsContext->platformContext()->effectiveFillColor();
-    unsigned char alpha = SkColorGetA(color);
-    // Skip 100% transparent text; no need to draw anything.
-    if (!alpha && graphicsContext->platformContext()->getStrokeStyle() == NoStroke && !graphicsContext->hasShadow())
-        return;
-
-    drawGlyphsWin(graphicsContext, font, glyphBuffer, from, numGlyphs, point);
 }
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run,
