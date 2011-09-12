@@ -3723,3 +3723,6 @@ BUGCR96220 WIN LINUX : fast/borders/inline-mask-overlay-image-outset-vertical-rl
 BUGCR96220 MAC : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = IMAGE
 BUGCR96220 WIN LINUX : fast/borders/inline-mask-overlay-image-outset.html = IMAGE+TEXT
 BUGCR96220 MAC : fast/borders/inline-mask-overlay-image-outset.html = IMAGE
+
+// new test at r94897
+BUGWK67917 MAC LEOPARD : svg/custom/simple-text-double-shadow.svg = IMAGE

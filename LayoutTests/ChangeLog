@@ -25,6 +25,12 @@
 
 2011-09-11  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewed, update chromium test expectations.
+
+        * platform/chromium/test_expectations.txt: add svg/custom/simple-text-double-shadow.svg
+
+2011-09-11  Fumitoshi Ukai  <ukai@chromium.org>
+
         Unreviewed, one more rebaseline for r94912
 
         * platform/chromium-cg-mac/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
