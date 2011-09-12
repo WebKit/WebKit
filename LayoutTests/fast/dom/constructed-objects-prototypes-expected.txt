@@ -13,6 +13,8 @@ PASS (new inner.Event()).isInner is true
 PASS (new inner.Event()).constructor.isInner is true
 PASS (new inner.FormData()).isInner is true
 PASS (new inner.FormData()).constructor.isInner is true
+PASS (new inner.HashChangeEvent()).isInner is true
+PASS (new inner.HashChangeEvent()).constructor.isInner is true
 PASS (new inner.Image()).isInner is true
 PASS (new inner.Image()).constructor.isInner is true
 PASS (new inner.MessageChannel()).isInner is true
