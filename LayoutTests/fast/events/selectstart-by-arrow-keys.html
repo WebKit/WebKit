@@ -22,7 +22,10 @@ if (window.layoutTestController) {
     eventSender.keyDown("rightArrow", ["shiftKey"]);
     logResult('Check (Right arrow + Shift)', 1);
 
-    eventSender.keyDown("rightArrow", ["shiftKey"], ["ctrlKey"]);
+    if (navigator.platform.indexOf('Mac') == 0)
+        eventSender.keyDown("rightArrow", ["shiftKey"], ["altKey"]);
+    else
+        eventSender.keyDown("rightArrow", ["shiftKey"], ["ctrlKey"]);
     logResult('Check (Right arrow + Shift + Control)', 1);
 
     eventSender.keyDown("end", ["shiftKey"]);
@@ -34,10 +37,17 @@ if (window.layoutTestController) {
     eventSender.keyDown("end", ["shiftKey"]);
     logResult('Check (End + Shift)', 1);
 
+    // On Mac, home/end doesn't move caret so manually select " World".
+    if (navigator.platform.indexOf('Mac') == 0)
+        window.getSelection().setBaseAndExtent(div.firstChild, div.textContent.indexOf('World'), div.textContent.length);
+
     eventSender.keyDown("leftArrow");
     logResult('Check (Left arrow)', 1);
 
-    eventSender.keyDown("leftArrow", ["shiftKey"], ["ctrlKey"]);
+    if (navigator.platform.indexOf('Mac') == 0)
+        eventSender.keyDown("leftArrow", ["shiftKey"], ["altKey"]);
+    else
+        eventSender.keyDown("leftArrow", ["shiftKey"], ["ctrlKey"]);
     logResult('Check (LeftArrow + Shift + Control)', 2);
 
     eventSender.keyDown("leftArrow", ["shiftKey"]);

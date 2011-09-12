@@ -3727,6 +3727,3 @@ BUGWK67917 MAC LEOPARD : svg/custom/simple-text-double-shadow.svg = IMAGE
 
 // Failing after r94946
 BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
-
-// Failing after r94966.
-BUGJAPHET MAC : fast/events/selectstart-by-arrow-keys.html = TEXT

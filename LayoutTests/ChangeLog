@@ -1,3 +1,10 @@
+2011-09-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a test added by r94966 to work on Mac.
+
+        * fast/events/selectstart-by-arrow-keys.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-09-12  Nate Chapin  <japhet@chromium.org>
 
         Fix up duplicate expectations and add expected failure
