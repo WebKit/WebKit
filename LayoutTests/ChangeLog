@@ -1,3 +1,13 @@
+2011-09-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        REGRESSION (r87351): toggling display of lots (thousands) of elements with display:none is very slow
+        https://bugs.webkit.org/show_bug.cgi?id=67581
+
+        Reviewed by Darin Adler.
+
+        * perf/show-hide-table-rows-expected.txt: Added.
+        * perf/show-hide-table-rows.html: Added.
+
 2011-09-11  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, one more rebaseline for r94912

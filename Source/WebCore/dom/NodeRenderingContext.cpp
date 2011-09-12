@@ -286,29 +286,10 @@ NodeRendererFactory::NodeRendererFactory(Node* node)
 {
 }
 
-RenderObject* NodeRendererFactory::createRendererAndStyle()
+RenderObject* NodeRendererFactory::createRenderer()
 {
     Node* node = m_context.node();
-    Document* document = node->document();
-    ASSERT(!node->renderer());
-    ASSERT(document->shouldCreateRenderers());
-
-    if (!m_context.shouldCreateRenderer())
-        return 0;
-
-    Element* element = node->isElementNode() ? toElement(node) : 0;
-    if (element)
-        m_context.setStyle(element->styleForRenderer());
-    else if (RenderObject* parentRenderer = m_context.parentRenderer())
-        m_context.setStyle(parentRenderer->style());
-
-    if (!node->rendererIsNeeded(m_context)) {
-        if (element && m_context.style()->affectedByEmpty())
-            element->setStyleAffectedByEmpty();
-        return 0;
-    }
-
-    RenderObject* newRenderer = node->createRenderer(document->renderArena(), m_context.style());
+    RenderObject* newRenderer = node->createRenderer(node->document()->renderArena(), m_context.style());
     if (!newRenderer)
         return 0;
 
@@ -345,24 +326,37 @@ void NodeRendererFactory::createRendererIfNeeded()
     if (!document->shouldCreateRenderers())
         return;
 
-    RenderObject* parentRenderer = m_context.parentRenderer();
-    RenderObject* nextRenderer = m_context.nextRenderer();
-    RenderObject* newRenderer = createRendererAndStyle();
+    ASSERT(!node->renderer());
+    ASSERT(document->shouldCreateRenderers());
 
-    if (m_context.hasFlowThreadParent()) {
-        parentRenderer = m_context.parentFlowRenderer();
-        // Do not call m_context.nextRenderer() here, because it expects to have 
-        // the renderer added to its parent already.
-        nextRenderer = m_context.parentFlowRenderer()->nextRendererForNode(node);
+    // FIXME: This side effect should be visible from attach() code.
+    m_context.hostChildrenChanged();
+
+    if (!m_context.shouldCreateRenderer())
+        return;
+
+    Element* element = node->isElementNode() ? toElement(node) : 0;
+    if (element)
+        m_context.setStyle(element->styleForRenderer());
+    else if (RenderObject* parentRenderer = m_context.parentRenderer())
+        m_context.setStyle(parentRenderer->style());
+
+    if (!node->rendererIsNeeded(m_context)) {
+        if (element && m_context.style()->affectedByEmpty())
+            element->setStyleAffectedByEmpty();
+        return;
     }
+
+    RenderObject* parentRenderer = m_context.hasFlowThreadParent() ? m_context.parentFlowRenderer() : m_context.parentRenderer();
+    // Do not call m_context.nextRenderer() here in the first clause, because it expects to have
+    // the renderer added to its parent already.
+    RenderObject* nextRenderer = m_context.hasFlowThreadParent() ? m_context.parentFlowRenderer()->nextRendererForNode(node) : m_context.nextRenderer();
+    RenderObject* newRenderer = createRenderer();
 
 #if ENABLE(FULLSCREEN_API)
     if (document->webkitIsFullScreen() && document->webkitCurrentFullScreenElement() == node)
         newRenderer = wrapWithRenderFullScreen(newRenderer, document);
 #endif
-
-    // FIXME: This side effect should be visible from attach() code.
-    m_context.hostChildrenChanged();
 
     if (!newRenderer)
         return;

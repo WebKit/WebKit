@@ -123,7 +123,7 @@ public:
     void createRendererIfNeeded();
 
 private:
-    RenderObject* createRendererAndStyle();
+    RenderObject* createRenderer();
 
     NodeRenderingContext m_context;
 };
