@@ -1,0 +1,9 @@
+Tests basic functionality of DelayNode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Test signal was correctly delayed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

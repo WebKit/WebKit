@@ -108,7 +108,7 @@ void DelayDSPKernel::process(const float* source, float* destination, size_t fra
         double desiredDelayFrames = m_currentDelayTime * sampleRate;
 
         double readPosition = m_writeIndex + bufferLength - desiredDelayFrames;
-        if (readPosition > bufferLength)
+        if (readPosition >= bufferLength)
             readPosition -= bufferLength;
 
         // Linearly interpolate in-between delay times.

@@ -1,3 +1,15 @@
+2011-09-12  Chris Rogers  <crogers@google.com>
+
+        DelayNode delay buffer is not correctly wrapping around
+        https://bugs.webkit.org/show_bug.cgi?id=67872
+
+        Reviewed by Kenneth Russell.
+
+        Test: webaudio/delaynode.html
+
+        * webaudio/DelayDSPKernel.cpp:
+        (WebCore::DelayDSPKernel::process):
+
 2011-09-12  Arko Saha  <arko@motorola.com>
 
         Selectstart is not fired when selection was created by arrow keys.
