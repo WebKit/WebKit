@@ -1,5 +1,17 @@
 2011-09-12  Michael Saboff  <msaboff@apple.com>
 
+        Broken Build for ARM - lshift32() needs TrustedImm32 arg
+        https://bugs.webkit.org/show_bug.cgi?id=67965
+
+        Change lshift32(16, ARMRegisters::S1); to lshift32(TrustedImm32(16), ARMRegisters::S1);
+
+        Reviewed by Anders Carlsson.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branch16):
+
+2011-09-12  Michael Saboff  <msaboff@apple.com>
+
         Broken ARM build - missing semicolon in JavaScriptCore/assembler/MacroAssemblerARM.h
         https://bugs.webkit.org/show_bug.cgi?id=67961
 
