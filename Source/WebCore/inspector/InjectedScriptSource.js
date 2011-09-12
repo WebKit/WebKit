@@ -275,7 +275,7 @@ InjectedScript.prototype = {
                         return "Could not find object with given id";
 
                     resolvedArgs.push(resolvedArg);
-                } else if (args[i].value)
+                } else if ("value" in args[i])
                     resolvedArgs.push(args[i].value);
                 else
                     resolvedArgs.push(undefined);

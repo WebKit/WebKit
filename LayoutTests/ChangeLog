@@ -1,3 +1,12 @@
+2011-09-12  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: Runtime.callFunctionOn does not accept arguments that evaluate to false.
+        https://bugs.webkit.org/show_bug.cgi?id=67934
+
+        Reviewed by Tony Gentilcore.
+
+        * inspector/runtime/runtime-setPropertyValue.html:
+
 2011-09-12  Kentaro Hara  <haraken@google.com>
 
         Implement a WebKitAnimationEvent constructor for V8
