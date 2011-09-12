@@ -3,6 +3,8 @@
         [Qt][WK2] WebKitTestRunner does not produce crash logs
         https://bugs.webkit.org/show_bug.cgi?id=67714
 
+        Reviewed by Chang Shu.
+
         Added a simple way of generating backtrace on crash
         to the web process. The implementation is similar what
         we have in DRT. It depends on GNU libc functionality
