@@ -1,3 +1,12 @@
+2011-09-12  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67898
+        REGRESSION(r94900): fast/images/support-broken-image-delegate.html fails on Mac
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac/Skipped:
+
 2011-09-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a test added by r94966 to work on Mac.

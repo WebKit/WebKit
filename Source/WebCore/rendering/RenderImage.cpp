@@ -84,7 +84,11 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
     ASSERT_ARG(newImage, newImage);
     ASSERT_ARG(newImage, newImage->image());
 
-    Image* brokenImage = newImage->brokenImage(Page::deviceScaleFactor(frame()));
+    Image* brokenImage;
+    if (newImage->willPaintBrokenImage())
+        brokenImage = newImage->brokenImage(Page::deviceScaleFactor(frame()));
+    else
+        brokenImage = newImage->image();
 
     // imageSize() returns 0 for the error image. We need the true size of the
     // error image, so we have to get it by grabbing image() directly.

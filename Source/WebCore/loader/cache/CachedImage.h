@@ -48,6 +48,7 @@ public:
     bool hasImage() const { return m_image.get(); }
 
     Image* brokenImage(float deviceScaleFactor) const;
+    bool willPaintBrokenImage() const; 
 
     bool canRender(float multiplier) const { return !errorOccurred() && !imageSize(multiplier).isEmpty(); }
 
