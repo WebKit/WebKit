@@ -533,7 +533,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
         while (n) {
             if (highestEditableRoot(firstPositionInOrBeforeNode(n)) != highestRoot)
                 break;
-            Position pos = createLegacyEditingPosition(n, caretMinOffset(n));
+            Position pos = n->hasTagName(brTag) ? positionBeforeNode(n) : createLegacyEditingPosition(n, caretMaxOffset(n));
             if (pos.isCandidate()) {
                 pos.getInlineBoxAndOffset(DOWNSTREAM, box, ignoredCaretOffset);
                 if (box) {

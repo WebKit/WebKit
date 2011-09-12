@@ -1,3 +1,21 @@
+2011-09-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: Moving up doesn't work in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=67522
+
+        Reviewed by Eric Seidel.
+
+        The bug was caused by previousLinePosition's attempting to obtain the last root line box using
+        a position at minCaretOffset (which is, in practice, located at the beginning of wrapped lines).
+
+        Fix the bug by calling maxCaretOffset instead. Because isCandidate returns false at (br, 1),
+        use the positionBeforeNode for br elements.
+
+        Test: editing/selection/move-up-into-wrapped-line.html
+
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition):
+
 2011-09-12  David Levin  <levin@chromium.org>
 
         Make the ThreadSafeRefCounted support in CrossThreadCopier work for T*.
