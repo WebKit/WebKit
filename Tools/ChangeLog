@@ -1,3 +1,17 @@
+2011-09-12  Eric Seidel  <eric@webkit.org>
+
+        Reshuffle some code in WebKitDriver._read_block in preparation for reading stderr/stdout separately
+        https://bugs.webkit.org/show_bug.cgi?id=67530
+
+        Reviewed by Adam Barth.
+
+        I believe I've fixed the bug in the original patch which prompted the rollout.
+        The previous patch was using the wrong deadline for the initial read,
+        subtracting time.time() twice from the deadline value.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+
 2011-09-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] WebKitTestRunner does not produce crash logs
