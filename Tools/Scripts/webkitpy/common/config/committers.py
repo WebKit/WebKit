@@ -51,6 +51,16 @@ class Contributor(object):
     def __str__(self):
         return '"%s" <%s>' % (self.full_name, self.emails[0])
 
+    def contains_string(self, string):
+        if string in self.full_name:
+            return True
+        if self.irc_nickname and string in self.irc_nickname:
+            return True
+        for email in self.emails:
+            if string in email:
+                return True
+        return False
+
 
 class Committer(Contributor):
     def __init__(self, name, email_or_emails, irc_nickname=None):
@@ -449,6 +459,9 @@ class CommitterList(object):
             if contributor.irc_nickname and contributor.irc_nickname == irc_nickname:
                 return contributor
         return None
+
+    def contributors_by_search_string(self, string):
+        return filter(lambda contributor: contributor.contains_string(string), self.contributors())
 
     def contributor_by_email(self, email):
         return self._email_to_contributor_map().get(email)

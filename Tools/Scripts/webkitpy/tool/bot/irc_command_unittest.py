@@ -41,16 +41,18 @@ class IRCCommandTest(unittest.TestCase):
 
     def test_whois(self):
         whois = Whois()
-        self.assertEquals("tom: Usage: whois BUGZILLA_EMAIL",
+        self.assertEquals("tom: Usage: whois SEARCH_STRING",
                           whois.execute("tom", [], None, None))
-        self.assertEquals("tom: Usage: whois BUGZILLA_EMAIL",
+        self.assertEquals("tom: Usage: whois SEARCH_STRING",
                           whois.execute("tom", ["Adam", "Barth"], None, None))
-        self.assertEquals("tom: Sorry, I don't know unknown@example.com. Maybe you could introduce me?",
+        self.assertEquals("tom: Sorry, I don't know any contributors matching 'unknown@example.com'.",
                           whois.execute("tom", ["unknown@example.com"], None, None))
         self.assertEquals("tom: tonyg@chromium.org is tonyg-cr. Why do you ask?",
                           whois.execute("tom", ["tonyg@chromium.org"], None, None))
-        self.assertEquals("tom: vicki@apple.com hasn't told me their nick. Boo hoo :-(",
+        self.assertEquals('tom: "Vicki Murley" <vicki@apple.com> hasn\'t told me their nick. Boo hoo :-(',
                           whois.execute("tom", ["vicki@apple.com"], None, None))
+        self.assertEquals('tom: I\'m not sure who you mean?  ericu, "Eric Carlson" <eric.carlson@apple.com>, or eseidel could be \'eric\'.',
+                          whois.execute("tom", ["eric"], None, None))
 
     def test_create_bug(self):
         create_bug = CreateBug()

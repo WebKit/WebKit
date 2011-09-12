@@ -172,17 +172,29 @@ class Hi(IRCCommand):
 
 
 class Whois(IRCCommand):
+    def _nick_or_full_record(self, contributor):
+        if contributor.irc_nickname:
+            return contributor.irc_nickname
+        return unicode(contributor)
+
     def execute(self, nick, args, tool, sheriff):
         if len(args) != 1:
-            return "%s: Usage: whois BUGZILLA_EMAIL" % nick
-        email = args[0]
+            return "%s: Usage: whois SEARCH_STRING" % nick
+        search_string = args[0]
         # FIXME: We should get the ContributorList off the tool somewhere.
-        committer = CommitterList().contributor_by_email(email)
-        if not committer:
-            return "%s: Sorry, I don't know %s. Maybe you could introduce me?" % (nick, email)
-        if not committer.irc_nickname:
-            return "%s: %s hasn't told me their nick. Boo hoo :-(" % (nick, email)
-        return "%s: %s is %s. Why do you ask?" % (nick, email, committer.irc_nickname)
+        contributors = CommitterList().contributors_by_search_string(search_string)
+        if not contributors:
+            return "%s: Sorry, I don't know any contributors matching '%s'." % (nick, search_string)
+        if len(contributors) > 5:
+            return "More than 5 contributors match '%s', can you be more specific?"
+        if len(contributors) == 1:
+            contributor = contributors[0]
+            if not contributor.irc_nickname:
+                return "%s: %s hasn't told me their nick. Boo hoo :-(" % (nick, contributor)
+            return "%s: %s is %s. Why do you ask?" % (nick, search_string, contributor.irc_nickname)
+        contributor_nicks = map(self._nick_or_full_record, contributors)
+        contributors_string = join_with_separators(contributor_nicks, only_two_separator=" or ", last_separator=', or ')
+        return "%s: I'm not sure who you mean?  %s could be '%s'." % (nick, contributors_string, search_string)
 
 
 class Eliza(IRCCommand):

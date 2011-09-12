@@ -1,3 +1,21 @@
+2011-09-12  Eric Seidel  <eric@webkit.org>
+
+        sheriffbot whois should be smarter
+        https://bugs.webkit.org/show_bug.cgi?id=67971
+
+        Reviewed by Adam Barth.
+
+        This makes sheriffbot whois basically grep the committers list
+        making it much easier to find a contributor by name.
+
+        Unfortunately the current unittests depend on the real committers.py
+        file, so as we add more eric's to the project, this unittest result will
+        change.  I think that's OK for now.  We'll fix it when it breaks.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+
 2011-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94976.
