@@ -2,6 +2,12 @@
 
         Unreviewed, update chromium test expectations.
 
+        * platform/chromium/test_expectations.txt: add fast/events/constructors/progress-event-constructor.html
+
+2011-09-12  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
         * platform/chromium/test_expectations.txt: perf/show-hide-table-rows.html slow to timeout
 
 2011-09-12  Shinya Kawanaka  <shinyak@google.com>

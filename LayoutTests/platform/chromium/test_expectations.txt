@@ -3728,3 +3728,6 @@ BUGCR96220 MAC : fast/borders/inline-mask-overlay-image-outset.html = IMAGE
 
 // new test at r94897
 BUGWK67917 MAC LEOPARD : svg/custom/simple-text-double-shadow.svg = IMAGE
+
+// Failing after r94946
+BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
