@@ -61,9 +61,7 @@ public:
     void setPage(QWebPage* page);
 
     void load(const QUrl& url);
-    void load(const QNetworkRequest& request,
-              QNetworkAccessManager::Operation operation = QNetworkAccessManager::GetOperation,
-              const QByteArray &body = QByteArray());
+    void load(const QNetworkRequest& request, QNetworkAccessManager::Operation operation = QNetworkAccessManager::GetOperation, const QByteArray &body = QByteArray());
     void setHtml(const QString& html, const QUrl& baseUrl = QUrl());
     void setContent(const QByteArray& data, const QString& mimeType = QString(), const QUrl& baseUrl = QUrl());
 

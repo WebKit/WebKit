@@ -1,3 +1,16 @@
+2011-09-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Fix "Unmatched parentheses are deprecated." warnings
+        https://bugs.webkit.org/show_bug.cgi?id=67775
+
+        Reviewed by Zoltan Herczeg.
+
+        Modify function declarations to single line to make qmake happier.
+
+        * Api/qwebframe.h:
+        * Api/qwebpluginfactory.h:
+        * Api/qwebview.h:
+
 2011-09-10  Jarred Nicholls  <jarred@sencha.com>
 
         [Qt] QWebSettings::setUserStyleSheetUrl() does not work with windows paths that contain drive letters

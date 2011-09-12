@@ -54,10 +54,7 @@ public:
     virtual QList<Plugin> plugins() const = 0;
     virtual void refreshPlugins();
 
-    virtual QObject *create(const QString& mimeType,
-                            const QUrl&,
-                            const QStringList& argumentNames,
-                            const QStringList& argumentValues) const = 0;
+    virtual QObject *create(const QString& mimeType, const QUrl&, const QStringList& argumentNames, const QStringList& argumentValues) const = 0;
 
     enum Extension {
     };
