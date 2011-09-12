@@ -27,7 +27,8 @@ module events {
 
     interface [
         CanBeConstructed,
-        CustomConstructFunction
+        CustomConstructFunction,
+        V8CustomConstructor
     ] WebKitAnimationEvent : Event {
      readonly attribute DOMString          animationName;
      readonly attribute double             elapsedTime;
