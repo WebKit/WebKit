@@ -40,7 +40,9 @@ BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-push-pop.html = PASS
 BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-reverse.html = PASS
 
 BUGWK67919 SLOW DEBUG : perf/document-contains.html = PASS
-BUGWK67921 SLOW DEBUG : perf/show-hide-table-rows.html = PASS
+
+// show-hide-table-rows.html on DEBUG takes more than 60s. (as of Sep 12, 2011)
+BUGWK67921 DEBUG : perf/show-hide-table-rows.html = TIMEOUT
 
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
