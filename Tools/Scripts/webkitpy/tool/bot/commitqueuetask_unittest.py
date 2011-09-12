@@ -137,7 +137,7 @@ run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_passed: success_message='Passed tests' patch='197'
-run_webkit_patch: ['land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 197]
+run_webkit_patch: ['land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 197]
 command_passed: success_message='Landed patch' patch='197'
 """
         self._run_through_task(commit_queue, expected_stderr)
@@ -244,7 +244,7 @@ archive_last_layout_test_results: patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_passed: success_message='Passed tests' patch='197'
 report_flaky_tests: patch='197' flaky_tests='[]' archive='mock-archive-197.zip'
-run_webkit_patch: ['land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 197]
+run_webkit_patch: ['land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 197]
 command_passed: success_message='Landed patch' patch='197'
 """
         self._run_through_task(commit_queue, expected_stderr)
@@ -273,7 +273,7 @@ run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--n
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK tests failure' patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_passed: success_message='Passed tests' patch='197'
-run_webkit_patch: ['land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 197]
+run_webkit_patch: ['land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 197]
 command_passed: success_message='Landed patch' patch='197'
 """
         self._run_through_task(commit_queue, expected_stderr)
@@ -375,7 +375,7 @@ command_failed: failure_message='Patch does not pass tests' script_error='MOCK t
 archive_last_layout_test_results: patch='197'
 run_webkit_patch: ['build-and-test', '--force-clean', '--no-update', '--build', '--test', '--non-interactive']
 command_failed: failure_message='Unable to pass tests without patch (tree is red?)' script_error='MOCK clean test failure' patch='197'
-run_webkit_patch: ['land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 197]
+run_webkit_patch: ['land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 197]
 command_passed: success_message='Landed patch' patch='197'
 """
         self._run_through_task(commit_queue, expected_stderr)
@@ -474,7 +474,7 @@ run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_passed: success_message='Passed tests' patch='197'
-run_webkit_patch: ['land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 197]
+run_webkit_patch: ['land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 197]
 command_failed: failure_message='Unable to land patch' script_error='MOCK land failure' patch='197'
 """
         # FIXME: This should really be expect_retry=True for a better user experiance.

@@ -36,6 +36,14 @@ from webkitpy.tool.steps.options import Options
 
 
 class Commit(AbstractStep):
+    # FIXME: This option exists only to make sure we don't break scripts which include --ignore-builders
+    # You can safely delete this option any time after 11/01/11.
+    @classmethod
+    def options(cls):
+        return AbstractStep.options() + [
+            Options.check_builders,
+        ]
+
     def _commit_warning(self, error):
         working_directory_message = "" if error.working_directory_is_clean else " and working copy changes"
         return ('There are %s local commits%s. Everything will be committed as a single commit. '

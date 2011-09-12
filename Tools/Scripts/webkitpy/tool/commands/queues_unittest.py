@@ -298,7 +298,7 @@ MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no
 MOCK: update_status: commit-queue Built patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Passed tests
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 197], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 197], cwd=/mock-checkout
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 197
@@ -323,7 +323,7 @@ MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update'], cwd
 MOCK: update_status: commit-queue Updated working directory
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 106], cwd=/mock-checkout
 MOCK: update_status: commit-queue Applied patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 106], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 106], cwd=/mock-checkout
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 106

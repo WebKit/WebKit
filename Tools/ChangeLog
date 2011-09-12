@@ -1,5 +1,25 @@
 2011-09-12  Eric Seidel  <eric@webkit.org>
 
+        Rubber-stamped by Adam Barth.
+
+        Remove the "the tree is burning!" warning previously shown
+        when landing patches.  It was a dream.  But it's just noise now.
+
+        Some bots will require a restart to notice the removal of the option
+        so I've left the --ignore-builders option in for now.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/commit.py:
+        * Scripts/webkitpy/tool/steps/ensurebuildersaregreen.py: Removed.
+        * Scripts/webkitpy/tool/steps/postdiffforrevert.py:
+
+2011-09-12  Eric Seidel  <eric@webkit.org>
+
         [NRWT] REGRESSION: Local loader tests are failing on machines that lost /tmp/LayoutTests symlink
         https://bugs.webkit.org/show_bug.cgi?id=65781
 

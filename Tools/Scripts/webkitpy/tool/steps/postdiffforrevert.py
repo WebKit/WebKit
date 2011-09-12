@@ -38,7 +38,7 @@ the patch before landing to ensure that the rollout will be \
 successful.  This process takes approximately 15 minutes.\n\n\
 If you would like to land the rollout faster, you can use the \
 following command:\n\n\
-  webkit-patch land-attachment ATTACHMENT_ID --ignore-builders\n\n\
+  webkit-patch land-attachment ATTACHMENT_ID\n\n\
 where ATTACHMENT_ID is the ID of this attachment."
         self._tool.bugs.add_patch_to_bug(
             state["bug_id"],

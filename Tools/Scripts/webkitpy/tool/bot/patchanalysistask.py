@@ -163,7 +163,6 @@ class PatchAnalysisTask(object):
         return self._run_command([
             "land-attachment",
             "--force-clean",
-            "--ignore-builders",
             "--non-interactive",
             "--parent-command=" + self._delegate.parent_command(),
             self._patch.id(),

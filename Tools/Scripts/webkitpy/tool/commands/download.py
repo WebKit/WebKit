@@ -92,7 +92,6 @@ class Land(AbstractSequencedCommand):
     argument_names = "[BUGID]"
     show_in_main_help = True
     steps = [
-        steps.EnsureBuildersAreGreen,
         steps.UpdateChangeLogsWithReviewer,
         steps.ValidateReviewer,
         steps.ValidateChangeLogs, # We do this after UpdateChangeLogsWithReviewer to avoid not having to cache the diff twice.
@@ -252,9 +251,6 @@ class ApplyFromBug(AbstractPatchApplyingCommand, ProcessBugsMixin):
 
 
 class AbstractPatchLandingCommand(AbstractPatchSequencingCommand):
-    prepare_steps = [
-        steps.EnsureBuildersAreGreen,
-    ]
     main_steps = [
         steps.CleanWorkingDirectory,
         steps.Update,

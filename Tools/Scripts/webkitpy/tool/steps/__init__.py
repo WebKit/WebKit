@@ -41,7 +41,6 @@ from webkitpy.tool.steps.commit import Commit
 from webkitpy.tool.steps.confirmdiff import ConfirmDiff
 from webkitpy.tool.steps.createbug import CreateBug
 from webkitpy.tool.steps.editchangelog import EditChangeLog
-from webkitpy.tool.steps.ensurebuildersaregreen import EnsureBuildersAreGreen
 from webkitpy.tool.steps.ensurelocalcommitifneeded import EnsureLocalCommitIfNeeded
 from webkitpy.tool.steps.obsoletepatches import ObsoletePatches
 from webkitpy.tool.steps.options import Options
