@@ -141,6 +141,20 @@ static const char* staticKeyIdentifiers(unsigned short keyCode)
         return "Up";
     case VKEY_DELETE:
         return "U+007F"; // Standard says that DEL becomes U+007F.
+    case VKEY_MEDIA_NEXT_TRACK:
+        return "MediaNextTrack";
+    case VKEY_MEDIA_PREV_TRACK:
+        return "MediaPreviousTrack";
+    case VKEY_MEDIA_STOP:
+        return "MediaStop";
+    case VKEY_MEDIA_PLAY_PAUSE:
+        return "MediaPlayPause";
+    case VKEY_VOLUME_MUTE:
+        return "VolumeMute";
+    case VKEY_VOLUME_DOWN:
+        return "VolumeDown";
+    case VKEY_VOLUME_UP:
+        return "VolumeUp";
     default:
         return 0;
     }
