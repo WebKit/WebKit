@@ -3556,28 +3556,7 @@ BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
 BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = PASS TIMEOUT
 
-// Need new baselines due to border drawing now using the PATH_BASED_BORDER_RADIUS_DRAWING
-// code path.
-BUGWK65583 LINUX WIN : fast/borders/border-radius-wide-border-03.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/border-radius-wide-border-04.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/borderRadiusDashed04.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/borderRadiusDashed05.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/borderRadiusDashed06.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/borderRadiusDotted04.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/borderRadiusDotted05.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/borderRadiusDotted06.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/borderRadiusDouble04.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/borderRadiusDouble05.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/borderRadiusDouble06.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/borderRadiusDouble07.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/borderRadiusDouble08.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/borderRadiusDouble09.html = IMAGE
-BUGWK65583 LINUX WIN : fast/borders/mixed-border-styles-radius.html = IMAGE+TEXT
-BUGWK65583 LINUX WIN : fast/borders/mixed-border-styles-radius2.html = IMAGE+TEXT
-BUGWK65583 LINUX WIN : fast/borders/mixed-border-styles.html = IMAGE+TEXT
-BUGWK65583 LINUX : fast/frames/iframe-scaling-with-scroll.html = IMAGE
-BUGWK65583 LINUX WIN : fast/css/border-radius-non-negative.html = IMAGE
-BUGWK65583 WIN LINUX : fast/forms/validation-message-appearance.html = IMAGE
+BUGWK67915 LINUX WIN : fast/borders/borderRadiusDashed06.html = IMAGE
 
 // Introduced in r92298, which might cause another test crashing.
 BUGZMO SKIP : fast/loader/reload-zero-byte-plugin.html = FAIL
