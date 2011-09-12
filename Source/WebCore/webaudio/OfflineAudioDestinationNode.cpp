@@ -52,6 +52,9 @@ OfflineAudioDestinationNode::OfflineAudioDestinationNode(AudioContext* context, 
 
 OfflineAudioDestinationNode::~OfflineAudioDestinationNode()
 {
+    if (m_renderThread)
+        waitForThreadCompletion(m_renderThread, 0);
+    
     uninitialize();
 }
 
@@ -143,6 +146,8 @@ void OfflineAudioDestinationNode::render()
     }
     
     // Our work is done. Let the AudioContext know.
+    // See corresponding deref() call in notifyCompleteDispatch().
+    ref();
     callOnMainThread(notifyCompleteDispatch, this);
 }
 
@@ -154,6 +159,7 @@ void OfflineAudioDestinationNode::notifyCompleteDispatch(void* userData)
         return;
 
     destinationNode->notifyComplete();
+    destinationNode->deref();
 }
 
 void OfflineAudioDestinationNode::notifyComplete()

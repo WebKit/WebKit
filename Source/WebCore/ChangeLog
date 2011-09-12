@@ -1,3 +1,17 @@
+2011-09-12  Chris Rogers  <crogers@google.com>
+
+        Address lifetime issues in OfflineAudioDestinationNode
+        https://bugs.webkit.org/show_bug.cgi?id=67949
+
+        Reviewed by Kenneth Russell.
+
+        No new tests.  This does not change JavaScript API.
+
+        * webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::~OfflineAudioDestinationNode):
+        (WebCore::OfflineAudioDestinationNode::render):
+        (WebCore::OfflineAudioDestinationNode::notifyCompleteDispatch):
+
 2011-09-12  Jeff Timanus  <twiz@chromium.org>
 
         [chromium]  Prevent a crash when tearing down an ImageBuffer that was not successfully initialized.
