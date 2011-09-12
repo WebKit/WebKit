@@ -1,3 +1,12 @@
+2011-09-12  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt][ARMv5] fast/events/constructors/progress-event-constructor.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=67927
+
+        Skip it.
+
+        * platform/qt-arm/Skipped:
+
 2011-09-12  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, update chromium test expectations.
