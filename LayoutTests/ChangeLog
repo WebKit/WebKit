@@ -1,3 +1,31 @@
+2011-09-12  David Reveman  <reveman@chromium.org>
+
+        Rebaseline for r94703.
+        https://bugs.webkit.org/show_bug.cgi?id=67945
+
+        Reviewed by James Robinson.
+
+        * platform/chromium-gpu-cg-mac/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-gpu-cg-mac/compositing/flat-with-transformed-child-expected.png:
+        * platform/chromium-gpu-cg-mac/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-gpu-cg-mac/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/chromium-gpu-cg-mac/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/chromium-gpu-cg-mac/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-gpu-cg-mac/compositing/scaling/tiled-layer-recursion-expected.png:
+        * platform/chromium-gpu-cg-mac/media/video-layer-crash-expected.png:
+        * platform/chromium-gpu-cg-mac/media/video-transformed-expected.png:
+        * platform/chromium-gpu-win/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-gpu-win/compositing/flat-with-transformed-child-expected.png:
+        * platform/chromium-gpu-win/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/chromium-gpu-win/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/scaling/tiled-layer-recursion-expected.png:
+        * platform/chromium-gpu-win/media/video-layer-crash-expected.png:
+        * platform/chromium-gpu-win/media/video-transformed-expected.png:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-snowleopard/media/video-layer-crash-expected.txt: Removed.
+
 2011-09-12  Eric Seidel  <eric@webkit.org>
 
         Implement a HashChangeEvent constructor for JSC
