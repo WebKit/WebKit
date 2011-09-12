@@ -28,9 +28,11 @@
 
 #include "CustomEvent.h"
 #include "Event.h"
+#include "HashChangeEvent.h"
 #include "JSCustomEvent.h"
 #include "JSDictionary.h"
 #include "JSEvent.h"
+#include "JSHashChangeEvent.h"
 #include "JSProgressEvent.h"
 #include "JSWebKitAnimationEvent.h"
 #include "ProgressEvent.h"
