@@ -132,68 +132,36 @@ PassRefPtr<MemoryActivatedFont> loadFontFromBrowserProcess(NSFont* nsFont)
     if (font)
         return font;
 
-    ATSFontContainerRef container;
+    CGFontRef tmpCGFont;
     uint32_t fontID;
     // Send cross-process request to load font.
-    if (!PlatformSupport::loadFont(nsFont, &container, &fontID))
+    if (!PlatformSupport::loadFont(nsFont, &tmpCGFont, &fontID))
         return 0;
 
+    RetainPtr<CGFontRef> cgFont(tmpCGFont);
     // Now that we have the fontID from the browser process, we can consult
     // the ID cache.
     font = fontCacheByFontID().get(fontID);
-    if (font) {
-        // We can safely discard the new container since we already have the
-        // font in our cache.
+    if (font)
         // FIXME: PlatformSupport::loadFont() should consult the id cache
-        // before activating the font.  Then we can save this activate/deactive
-        // dance altogether.
-        ATSFontDeactivate(container, 0, kATSOptionFlagsDefault);
+        // before activating the font.
         return font;
-    }
 
-    return MemoryActivatedFont::create(fontID, nsFont, container);
+    return MemoryActivatedFont::create(fontID, nsFont, cgFont.get());
 }
 
 } // namespace
 
-PassRefPtr<MemoryActivatedFont> MemoryActivatedFont::create(uint32_t fontID, NSFont* nsFont, ATSFontContainerRef container)
+PassRefPtr<MemoryActivatedFont> MemoryActivatedFont::create(uint32_t fontID, NSFont* nsFont, CGFontRef cgFont)
 {
-  MemoryActivatedFont* font = new MemoryActivatedFont(fontID, nsFont, container);
-  if (!font->cgFont())  // Object construction failed.
-  {
-      delete font;
-      return 0;
-  }
-  return adoptRef(font);
+  return adoptRef(new MemoryActivatedFont(fontID, nsFont, cgFont));
 }
 
-MemoryActivatedFont::MemoryActivatedFont(uint32_t fontID, NSFont* nsFont, ATSFontContainerRef container)
-    : m_fontContainer(container)
-    , m_atsFontRef(kATSFontRefUnspecified)
+MemoryActivatedFont::MemoryActivatedFont(uint32_t fontID, NSFont* nsFont, CGFontRef cgFont)
+    : m_cgFont(cgFont)
     , m_fontID(fontID)
     , m_inSandboxHashKey(hashKeyFromNSFont(nsFont))
 {
-    if (!container)
-        return;
-    
-    // Count the number of fonts in the container.
-    ItemCount fontCount = 0;
-    OSStatus err = ATSFontFindFromContainer(container, kATSOptionFlagsDefault, 0, 0, &fontCount);
-    if (err != noErr || fontCount < 1)
-        return;
-
-    // For now always assume that we want the first font in the container.
-    ATSFontFindFromContainer(container, kATSOptionFlagsDefault, 1, &m_atsFontRef, 0);
-
-    if (!m_atsFontRef)
-        return;
-
-    // Cache CGFont representation of the font.
-    m_cgFont.adoptCF(CGFontCreateWithPlatformFont(&m_atsFontRef));
-    
-    if (!m_cgFont)
-        return;
-    
     // Add ourselves to caches.
     fontCacheByFontID().add(fontID, this);
     fontCacheByFontName().add(m_inSandboxHashKey, this);
@@ -203,20 +171,12 @@ MemoryActivatedFont::MemoryActivatedFont(uint32_t fontID, NSFont* nsFont, ATSFon
 // from cache.
 MemoryActivatedFont::~MemoryActivatedFont()
 {
-    if (m_cgFont) {
-        // First remove ourselves from the caches.
-        ASSERT(fontCacheByFontID().contains(m_fontID));
-        ASSERT(fontCacheByFontName().contains(m_inSandboxHashKey));
-        
-        fontCacheByFontID().remove(m_fontID);
-        fontCacheByFontName().remove(m_inSandboxHashKey);
-        
-        // Make sure the CGFont is destroyed before its font container.
-        m_cgFont.releaseRef();
-    }
-    
-    if (m_fontContainer != kATSFontContainerRefUnspecified)
-        ATSFontDeactivate(m_fontContainer, 0, kATSOptionFlagsDefault);
+    // First remove ourselves from the caches.
+    ASSERT(fontCacheByFontID().contains(m_fontID));
+    ASSERT(fontCacheByFontName().contains(m_inSandboxHashKey));
+
+    fontCacheByFontID().remove(m_fontID);
+    fontCacheByFontName().remove(m_inSandboxHashKey);
 }
 
 // Given an NSFont, try to load a representation of that font into the cgFont

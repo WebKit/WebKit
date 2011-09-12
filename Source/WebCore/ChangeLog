@@ -1,3 +1,22 @@
+2011-09-11  Jeremy Moskovich  <jeremy@chromium.org>
+
+        [Chromium] Change OOP Font loading code to use CGFont*() APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=66935
+
+        This change is necessary due a bug in ATSFontDeactivate() on 10.7.
+        See crbug.com/93191 for details.
+
+        Reviewed by Eric Seidel.
+
+        No new tests - covered by existing tests.
+
+        * platform/chromium/PlatformBridge.h:
+        * platform/graphics/chromium/CrossProcessFontLoading.h:
+        * platform/graphics/chromium/CrossProcessFontLoading.mm:
+        (WebCore::MemoryActivatedFont::create):
+        (WebCore::MemoryActivatedFont::MemoryActivatedFont):
+        (WebCore::MemoryActivatedFont::~MemoryActivatedFont):
+
 2011-09-09  Oliver Hunt  <oliver@apple.com>
 
         Remove support for anonymous storage from jsobjects

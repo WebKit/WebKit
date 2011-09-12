@@ -36,8 +36,6 @@
 #import <wtf/text/WTFString.h>
 
 typedef struct CGFont* CGFontRef;
-typedef UInt32 ATSFontContainerRef;
-typedef UInt32 ATSFontRef;
 
 namespace WebCore {
 
@@ -74,25 +72,20 @@ namespace WebCore {
 class MemoryActivatedFont : public RefCounted<MemoryActivatedFont> {
 public:
     // Use to create a new object, see docs on constructor below.
-    static PassRefPtr<MemoryActivatedFont> create(uint32_t fontID, NSFont*, ATSFontContainerRef);
+    static PassRefPtr<MemoryActivatedFont> create(uint32_t fontID, NSFont*, CGFontRef);
     ~MemoryActivatedFont();
     
     // Get cached CGFontRef corresponding to the in-memory font.
     CGFontRef cgFont() { return m_cgFont.get(); }
-    
-    // Get cached ATSFontRef corresponding to the in-memory font.
-    ATSFontRef atsFontRef() { return m_atsFontRef; }
 
 private:
     // srcFontRef - ATSFontRef belonging to the NSFont object that failed to
     // load in-process.
     // container - a font container corresponding to an identical font that
     // we loaded cross-process.
-    MemoryActivatedFont(uint32_t fontID, NSFont*, ATSFontContainerRef);
+    MemoryActivatedFont(uint32_t fontID, NSFont*, CGFontRef);
 
-    ATSFontContainerRef m_fontContainer;
     WTF::RetainPtr<CGFontRef> m_cgFont;
-    ATSFontRef m_atsFontRef;
     uint32_t m_fontID;
     WTF::String m_inSandboxHashKey;
 };

@@ -1,3 +1,17 @@
+2011-09-11  Jeremy Moskovich  <jeremy@chromium.org>
+
+        [Chromium] Change OOP Font loading code to use CGFont*() APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=66935
+
+        This change is necessary due a bug in ATSFontDeactivate() on 10.7.
+        See crbug.com/93191 for details.
+
+        Reviewed by Eric Seidel.
+
+        * public/mac/WebSandboxSupport.h:
+        * src/PlatformBridge.cpp:
+        (WebCore::PlatformBridge::loadFont):
+
 2011-09-11  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Add more key codes to WebInputEvent for Android
