@@ -39,6 +39,8 @@
 #include "ResourceResponse.h"
 #include "SerializedScriptValue.h"
 
+#include <wtf/Assertions.h>
+
 namespace WebCore {
 
 CrossThreadCopierBase<false, false, KURL>::Type CrossThreadCopierBase<false, false, KURL>::copy(const KURL& url)
@@ -65,5 +67,69 @@ CrossThreadCopierBase<false, false, ResourceResponse>::Type CrossThreadCopierBas
 {
     return response.copyData();
 }
+
+// Test CrossThreadCopier using COMPILE_ASSERT.
+
+// Verify that ThreadSafeRefCounted objects get handled correctly.
+class CopierThreadSafeRefCountedTest : public ThreadSafeRefCounted<CopierThreadSafeRefCountedTest> {
+};
+
+COMPILE_ASSERT((WTF::IsSameType<
+                  PassRefPtr<CopierThreadSafeRefCountedTest>,
+                  CrossThreadCopier<PassRefPtr<CopierThreadSafeRefCountedTest> >::Type
+                  >::value),
+               PassRefPtrTest);
+COMPILE_ASSERT((WTF::IsSameType<
+                  PassRefPtr<CopierThreadSafeRefCountedTest>,
+                  CrossThreadCopier<RefPtr<CopierThreadSafeRefCountedTest> >::Type
+                  >::value),
+               RefPtrTest);
+COMPILE_ASSERT((WTF::IsSameType<
+                  PassRefPtr<CopierThreadSafeRefCountedTest>,
+                  CrossThreadCopier<CopierThreadSafeRefCountedTest*>::Type
+                  >::value),
+               RawPointerTest);
+
+
+// Add a generic specialization which will let's us verify that no other template matches.
+template<typename T> struct CrossThreadCopierBase<false, false, T> {
+    typedef int Type;
+};
+
+// Verify that RefCounted objects only match our generic template which exposes Type as int.
+class CopierRefCountedTest : public RefCounted<CopierRefCountedTest> {
+};
+
+COMPILE_ASSERT((WTF::IsSameType<
+                  int,
+                  CrossThreadCopier<PassRefPtr<CopierRefCountedTest> >::Type
+                  >::value),
+               PassRefPtrRefCountedTest);
+
+COMPILE_ASSERT((WTF::IsSameType<
+                  int,
+                  CrossThreadCopier<RefPtr<CopierRefCountedTest> >::Type
+                  >::value),
+               RefPtrRefCountedTest);
+
+COMPILE_ASSERT((WTF::IsSameType<
+                  int,
+                  CrossThreadCopier<CopierRefCountedTest*>::Type
+                  >::value),
+               RawPointerRefCountedTest);
+
+// Verify that PassOwnPtr gets passed through.
+COMPILE_ASSERT((WTF::IsSameType<
+                  PassOwnPtr<float>,
+                  CrossThreadCopier<PassOwnPtr<float> >::Type
+                  >::value),
+               PassOwnPtrTest);
+
+// Verify that PassOwnPtr does not get passed through.
+COMPILE_ASSERT((WTF::IsSameType<
+                  int,
+                  CrossThreadCopier<OwnPtr<float> >::Type
+                  >::value),
+               OwnPtrTest);
 
 } // namespace WebCore

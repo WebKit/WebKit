@@ -1,3 +1,21 @@
+2011-09-12  David Levin  <levin@chromium.org>
+
+        Make the ThreadSafeRefCounted support in CrossThreadCopier work for T*.
+        https://bugs.webkit.org/show_bug.cgi?id=67947
+
+        Reviewed by Adam Barth.
+
+        The changes are tested by compiling and added compile asserts to do some verification as well.
+
+        * platform/CrossThreadCopier.cpp:
+        Added some compile asserts to verify various match and non-matches for CrossThreadCopier.
+        * platform/CrossThreadCopier.h:
+        Added a typedef to convert T* to T, just like the typedef's to remove RefPtr and PassRefPtr.
+        Added a compile assert to verify that only one of the typedef did anything.
+        (CrossThreadCopierBase<false, true, T>::copy): Remove "get" as it is unnecessary.
+        It shouldn't have been here (PassRefPtr and RefPtr easily and sometimes more efficiently
+        convert to PassRefPtr without get). Also, a raw pointer doesn't have a get() method.
+
 2011-09-12  Chris Rogers  <crogers@google.com>
 
         Address lifetime issues in OfflineAudioDestinationNode
