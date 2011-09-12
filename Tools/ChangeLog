@@ -1,3 +1,18 @@
+2011-09-12  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] WebKitTestRunner does not produce crash logs
+        https://bugs.webkit.org/show_bug.cgi?id=67714
+
+        Added a simple way of generating backtrace on crash
+        to the web process. The implementation is similar what
+        we have in DRT. It depends on GNU libc functionality
+        so it is only enabled where we are running in such an environment.
+
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundleQt.cpp:
+        (WTR::printBacktrace):
+        (WTR::crashHandler):
+        (WTR::InjectedBundle::platformInitialize):
+
 2011-09-11  Filip Pizlo  <fpizlo@apple.com>
 
         Added my IRC nick to the committers file.
