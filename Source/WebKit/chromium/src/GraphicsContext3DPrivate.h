@@ -57,8 +57,20 @@ class GraphicsContext3DPrivate {
 public:
     static PassOwnPtr<GraphicsContext3DPrivate> create(WebKit::WebViewImpl*, PassOwnPtr<WebKit::WebGraphicsContext3D>);
 
+    enum ThreadUsage {
+        ForUseOnThisThread,
+        ForUseOnAnotherThread,
+    };
+
+    // createGraphicsContextForAnotherThread is equivalent to
+    // GraphicsContext3D::create, but will skip making the context
+    // current. Callers must make the context current before using it AND check
+    // that the context was created successfully via ContextLost. Once made
+    // current on a thread, the context cannot be used on any other thread.
+    static PassRefPtr<GraphicsContext3D> createGraphicsContextForAnotherThread(GraphicsContext3D::Attributes, HostWindow*, GraphicsContext3D::RenderStyle);
+
     // Used in tests to create a GraphicsContext3D from a mocked WebGraphicsContext3D.
-    static PassRefPtr<GraphicsContext3D> createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::Attributes, HostWindow*, GraphicsContext3D::RenderStyle);
+    static PassRefPtr<GraphicsContext3D> createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::Attributes, HostWindow*, GraphicsContext3D::RenderStyle, ThreadUsage);
 
     ~GraphicsContext3DPrivate();
 

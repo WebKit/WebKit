@@ -36,7 +36,7 @@ class MockWebGraphicsContext3D : public WebGraphicsContext3D {
 public:
     virtual bool initialize(Attributes, WebView*, bool renderDirectlyToWebView) { return false; }
 
-    virtual bool makeContextCurrent() { return false; }
+    virtual bool makeContextCurrent() { return true; }
 
     virtual int width() { return 0; }
     virtual int height() { return 0; }

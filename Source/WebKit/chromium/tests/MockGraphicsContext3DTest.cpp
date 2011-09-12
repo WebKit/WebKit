@@ -53,10 +53,9 @@ private:
 TEST(MockGraphicsContext3DTest, CanOverrideManually)
 {
     GraphicsContext3D::Attributes attrs;
-    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FrameCountingContext()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow);
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FrameCountingContext()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
     FrameCountingContext& mockContext = *static_cast<FrameCountingContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(context.get()));
 
-    context->makeContextCurrent();
     for (int i = 0; i < 10; i++) {
         context->clearColor(0, 0, 0, 1);
         context->prepareTexture();
@@ -75,7 +74,7 @@ public:
 TEST(MockGraphicsContext3DTest, CanUseGMock)
 {
     GraphicsContext3D::Attributes attrs;
-    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new GMockContext()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow);
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new GMockContext()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
     GMockContext& mockContext = *static_cast<GMockContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(context.get()));
 
     EXPECT_CALL(mockContext, getError())
@@ -87,4 +86,49 @@ TEST(MockGraphicsContext3DTest, CanUseGMock)
     // Check that the mocked method is returning as intended.
     for (int i = 0; i < 10; i++)
         EXPECT_EQ((int)context->getError(), 314);
+}
+
+class ContextThatCountsMakeCurrents : public MockWebGraphicsContext3D {
+public:
+    ContextThatCountsMakeCurrents() : m_makeCurrentCount(0) { }
+    virtual bool makeContextCurrent()
+    {
+        m_makeCurrentCount++;
+        return true;
+    }
+    int makeCurrentCount() { return m_makeCurrentCount; }
+private:
+    int m_makeCurrentCount;
+};
+
+
+TEST(MockGraphicsContext3DTest, ContextForThisThreadShouldMakeCurrent)
+{
+    GraphicsContext3D::Attributes attrs;
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new ContextThatCountsMakeCurrents()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
+    EXPECT_TRUE(context);
+    ContextThatCountsMakeCurrents& mockContext = *static_cast<ContextThatCountsMakeCurrents*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(context.get()));
+    EXPECT_EQ(1, mockContext.makeCurrentCount());
+}
+
+TEST(MockGraphicsContext3DTest, ContextForAnotherThreadShouldNotMakeCurrent)
+{
+    GraphicsContext3D::Attributes attrs;
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new ContextThatCountsMakeCurrents()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnAnotherThread);
+    EXPECT_TRUE(context);
+    ContextThatCountsMakeCurrents& mockContext = *static_cast<ContextThatCountsMakeCurrents*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(context.get()));
+    EXPECT_EQ(0, mockContext.makeCurrentCount());
+}
+
+class ContextWithMakeCurrentThatFails : public MockWebGraphicsContext3D {
+public:
+    ContextWithMakeCurrentThatFails() { }
+    virtual bool makeContextCurrent() { return false; }
+};
+
+TEST(MockGraphicsContext3DTest, ContextForThisThreadFailsWhenMakeCurrentFails)
+{
+    GraphicsContext3D::Attributes attrs;
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new ContextWithMakeCurrentThatFails()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
+    EXPECT_FALSE(context);
 }

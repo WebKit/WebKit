@@ -70,7 +70,12 @@ class WebView;
 // GraphicsContext3D in order to implement WebGL. Nearly all of the
 // methods exposed on this interface map directly to entry points in
 // the OpenGL ES 2.0 API.
-
+//
+// Creating a WebGraphicsContext does not make it current, or guarantee
+// that the context has been created successfully. Use
+// makeContextCurrent() to complete initialization of the context, treating
+// a false return value as indication that the context could not be created
+// successfully.
 class WebGraphicsContext3D : public WebNonCopyable {
 public:
     // Return value from getActiveUniform and getActiveAttrib.

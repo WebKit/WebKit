@@ -119,10 +119,13 @@ PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(WebKit::We
     return adoptPtr(new GraphicsContext3DPrivate(webViewImpl, webContext));
 }
 
-PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D> webContext, GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
+PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D> webContext, GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle, ThreadUsage threadUsage)
 {
     Chrome* chrome = static_cast<Chrome*>(hostWindow);
     WebKit::WebViewImpl* webViewImpl = chrome ? static_cast<WebKit::WebViewImpl*>(chrome->client()->webView()) : 0;
+
+    if (threadUsage == ForUseOnThisThread && !webContext->makeContextCurrent())
+        return 0;
 
     OwnPtr<GraphicsContext3DPrivate> priv = GraphicsContext3DPrivate::create(webViewImpl, webContext);
     if (!priv)
@@ -132,6 +135,41 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextFro
     RefPtr<GraphicsContext3D> result = adoptRef(new GraphicsContext3D(attrs, hostWindow, renderDirectlyToHostWindow));
     result->m_private = priv.release();
     return result.release();
+}
+
+namespace {
+
+PassRefPtr<GraphicsContext3D> createGraphicsContext(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle, GraphicsContext3DPrivate::ThreadUsage threadUsage)
+{
+    bool renderDirectlyToHostWindow = renderStyle == GraphicsContext3D::RenderDirectlyToHostWindow;
+
+    WebKit::WebGraphicsContext3D::Attributes webAttributes;
+    webAttributes.alpha = attrs.alpha;
+    webAttributes.depth = attrs.depth;
+    webAttributes.stencil = attrs.stencil;
+    webAttributes.antialias = attrs.antialias;
+    webAttributes.premultipliedAlpha = attrs.premultipliedAlpha;
+    webAttributes.canRecoverFromContextLoss = attrs.canRecoverFromContextLoss;
+    webAttributes.noExtensions = attrs.noExtensions;
+    webAttributes.shareResources = attrs.shareResources;
+    OwnPtr<WebKit::WebGraphicsContext3D> webContext = adoptPtr(WebKit::webKitPlatformSupport()->createGraphicsContext3D());
+    if (!webContext)
+        return 0;
+
+    Chrome* chrome = static_cast<Chrome*>(hostWindow);
+    WebKit::WebViewImpl* webViewImpl = chrome ? static_cast<WebKit::WebViewImpl*>(chrome->client()->webView()) : 0;
+
+    if (!webContext->initialize(webAttributes, webViewImpl, renderDirectlyToHostWindow))
+        return 0;
+
+    return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), attrs, hostWindow, renderStyle, threadUsage);
+}
+
+} // anonymous namespace
+
+PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextForAnotherThread(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
+{
+    return createGraphicsContext(attrs, hostWindow, renderStyle, ForUseOnAnotherThread);
 }
 
 WebKit::WebGraphicsContext3D* GraphicsContext3DPrivate::extractWebGraphicsContext3D(GraphicsContext3D* context)
@@ -985,28 +1023,7 @@ GraphicsContext3D::~GraphicsContext3D()
 
 PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
 {
-    bool renderDirectlyToHostWindow = renderStyle == RenderDirectlyToHostWindow;
-
-    WebKit::WebGraphicsContext3D::Attributes webAttributes;
-    webAttributes.alpha = attrs.alpha;
-    webAttributes.depth = attrs.depth;
-    webAttributes.stencil = attrs.stencil;
-    webAttributes.antialias = attrs.antialias;
-    webAttributes.premultipliedAlpha = attrs.premultipliedAlpha;
-    webAttributes.canRecoverFromContextLoss = attrs.canRecoverFromContextLoss;
-    webAttributes.noExtensions = attrs.noExtensions;
-    webAttributes.shareResources = attrs.shareResources;
-    OwnPtr<WebKit::WebGraphicsContext3D> webContext = adoptPtr(WebKit::webKitPlatformSupport()->createGraphicsContext3D());
-    if (!webContext)
-        return 0;
-
-    Chrome* chrome = static_cast<Chrome*>(hostWindow);
-    WebKit::WebViewImpl* webViewImpl = chrome ? static_cast<WebKit::WebViewImpl*>(chrome->client()->webView()) : 0;
-
-    if (!webContext->initialize(webAttributes, webViewImpl, renderDirectlyToHostWindow))
-        return 0;
-
-    return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), attrs, hostWindow, renderStyle);
+    return createGraphicsContext(attrs, hostWindow, renderStyle, GraphicsContext3DPrivate::ForUseOnThisThread);
 }
 
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D() const

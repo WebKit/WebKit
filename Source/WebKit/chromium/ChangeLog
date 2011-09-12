@@ -1,3 +1,29 @@
+2011-09-08  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Add GraphicsContext3DPrivate:createGraphicsContextForAnotherThread
+        https://bugs.webkit.org/show_bug.cgi?id=67832
+
+        The compositor thread needs to create a GraphicsContext3D without
+        actually making it current. In previous attempts at doing this, we
+        modified all graphics3D creation to not make the contexts current, but
+        this prove to be shockingly fragile. Since this is a very
+        Chromium-specific behavior, this patch makes creationForAnotherThread a
+        method on the private GraphicsContext3D interface.
+        GraphicsContext3D::create behaves as usual.
+
+        Reviewed by Kenneth Russell.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DPrivate::createGraphicsContextFromWebContext):
+        (WebCore::GraphicsContext3DPrivate::createGraphicsContextForAnotherThread):
+        (WebCore::GraphicsContext3D::create):
+        * src/GraphicsContext3DPrivate.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::createLayerTreeHostContext3D):
+        (WebKit::WebViewImpl::graphicsContext3D):
+        * tests/MockGraphicsContext3DTest.cpp:
+        (TEST):
+
 2011-09-11  Jeremy Moskovich  <jeremy@chromium.org>
 
         [Chromium] Change OOP Font loading code to use CGFont*() APIs.
