@@ -3704,7 +3704,8 @@ BUGCR95972 WIN DEBUG : webaudio/sample-accurate-scheduling.html = CRASH
 
 
 // Failing after r94912.
-BUGWK67913 : media/video-zoom-controls.html = TEXT
+BUGWK67913 WIN LINUX SNOWLEOPARD : media/video-zoom-controls.html = TEXT
+BUGWK67913 LEOPARD CPU CPU-CG : media/video-zoom-controls.html = TEXT
 BUGCR96220 : fast/borders/border-image-outset-split-inline-vertical-lr.html = IMAGE
 BUGCR96220 : fast/borders/border-image-outset-split-inline.html = IMAGE
 BUGCR96220 : fast/reflections/reflection-masks-outset.html = IMAGE
@@ -3726,3 +3727,6 @@ BUGWK67917 MAC LEOPARD : svg/custom/simple-text-double-shadow.svg = IMAGE
 
 // Failing after r94946
 BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
+
+// Failing after r94966.
+BUGJAPHET MAC : fast/events/selectstart-by-arrow-keys.html = TEXT
