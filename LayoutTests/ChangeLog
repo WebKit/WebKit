@@ -1,3 +1,10 @@
+2011-09-12  Nate Chapin  <japhet@chromium.org>
+
+        Add video-zoom-controls.html to chromium expectations
+        for leopard gpu.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-12  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: Runtime.callFunctionOn does not accept arguments that evaluate to false.
