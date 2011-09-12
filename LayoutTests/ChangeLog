@@ -1,5 +1,12 @@
 2011-09-11  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewed, one more rebaseline for r94912
+
+        * platform/chromium-cg-mac/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+
+2011-09-11  Fumitoshi Ukai  <ukai@chromium.org>
+
         Unreviewed, update chromium test expectations and rebaselines for r94912
 
         * platform/chromium-cg-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
