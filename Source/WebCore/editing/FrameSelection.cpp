@@ -824,6 +824,9 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
         bool change = shouldChangeSelection(trialFrameSelection.selection());
         if (!change)
             return false;
+
+        if (trialFrameSelection.selection().isRange() && m_selection.isCaret() && !dispatchSelectStart())
+            return false;
     }
 
     willBeModified(alter, direction);
@@ -1882,6 +1885,15 @@ void FrameSelection::setSelectionFromNone()
 bool FrameSelection::shouldChangeSelection(const VisibleSelection& newSelection) const
 {
     return m_frame->editor()->shouldChangeSelection(selection(), newSelection, newSelection.affinity(), false);
+}
+
+bool FrameSelection::dispatchSelectStart()
+{
+    Node* selectStartTarget = m_selection.extent().containerNode();
+    if (!selectStartTarget)
+        return true;
+
+    return selectStartTarget->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
 }
 
 #ifndef NDEBUG

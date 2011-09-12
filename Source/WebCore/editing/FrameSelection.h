@@ -275,6 +275,8 @@ private:
 
     void setCaretVisibility(CaretVisibility);
 
+    bool dispatchSelectStart();
+
     Frame* m_frame;
 
     LayoutUnit m_xPosForVerticalArrowNavigation;
