@@ -39,6 +39,8 @@ BUGCR24182 SLOW DEBUG : jquery/traversing.html = PASS
 BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-push-pop.html = PASS
 BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-reverse.html = PASS
 
+BUGWK67919 SLOW DEBUG : perf/document-contains.html = PASS
+
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
 // -----------------------------------------------------------------
