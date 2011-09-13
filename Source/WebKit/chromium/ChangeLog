@@ -1,3 +1,26 @@
+2011-09-12  David Levin  <levin@chromium.org>
+
+        [chromium] Remove AllowCrossThreadAccess for WorkerFileWriterCallbacksBridge.
+        https://bugs.webkit.org/show_bug.cgi?id=67943
+
+        Reviewed by Adam Barth.
+
+        * src/WorkerFileWriterCallbacksBridge.cpp: Removed AllowCrossThreadAccess
+        allowing the automatic ref counting to work. This was previous needed when
+        the ref counting wasn't working but that was fixed in r94986. Note that the
+        design was to have ref counting since the methods take PassRefPtr and the
+        class is ThreadSafeRefCounted. (Ideally we have noticed this flaw when
+        adding in AllowCrossThreadAccess.)
+        (WebKit::WorkerFileWriterCallbacksBridge::postWriteToMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::postTruncateToMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::postAbortToMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::didWrite):
+        (WebKit::WorkerFileWriterCallbacksBridge::didFail):
+        (WebKit::WorkerFileWriterCallbacksBridge::didTruncate):
+        (WebKit::WorkerFileWriterCallbacksBridge::postInitToMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::dispatchTaskToMainThread):
+        (WebKit::WorkerFileWriterCallbacksBridge::dispatchTaskToWorkerThread):
+
 2011-09-08  Nat Duca  <nduca@chromium.org>
 
         [chromium] Add GraphicsContext3DPrivate:createGraphicsContextForAnotherThread
