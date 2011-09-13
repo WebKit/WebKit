@@ -51,13 +51,14 @@ class Contributor(object):
     def __str__(self):
         return '"%s" <%s>' % (self.full_name, self.emails[0])
 
-    def contains_string(self, string):
-        if string in self.full_name:
+    def contains_string(self, search_string):
+        string = search_string.lower()
+        if string in self.full_name.lower():
             return True
-        if self.irc_nickname and string in self.irc_nickname:
+        if self.irc_nickname and string in self.irc_nickname.lower():
             return True
         for email in self.emails:
-            if string in email:
+            if string in email.lower():
                 return True
         return False
 

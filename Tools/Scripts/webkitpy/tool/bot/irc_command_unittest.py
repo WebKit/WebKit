@@ -51,8 +51,10 @@ class IRCCommandTest(unittest.TestCase):
                           whois.execute("tom", ["tonyg@chromium.org"], None, None))
         self.assertEquals('tom: "Vicki Murley" <vicki@apple.com> hasn\'t told me their nick. Boo hoo :-(',
                           whois.execute("tom", ["vicki@apple.com"], None, None))
-        self.assertEquals('tom: I\'m not sure who you mean?  ericu, "Eric Carlson" <eric.carlson@apple.com>, or eseidel could be \'eric\'.',
-                          whois.execute("tom", ["eric"], None, None))
+        self.assertEquals('tom: I\'m not sure who you mean?  eroman, ericu, "Eric Carlson" <eric.carlson@apple.com>, or eseidel could be \'Eric\'.',
+                          whois.execute("tom", ["Eric"], None, None))
+        self.assertEquals('tom: More than 5 contributors match \'david\', could you be more specific?',
+                          whois.execute("tom", ["david"], None, None))
 
     def test_create_bug(self):
         create_bug = CreateBug()

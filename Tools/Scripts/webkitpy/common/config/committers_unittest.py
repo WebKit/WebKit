@@ -30,7 +30,6 @@ import unittest
 from webkitpy.common.config.committers import CommitterList, Contributor, Committer, Reviewer
 
 class CommittersTest(unittest.TestCase):
-
     def test_committer_lookup(self):
         committer = Committer('Test One', 'one@test.com', 'one')
         reviewer = Reviewer('Test Two', ['two@test.com', 'two@rad.com', 'so_two@gmail.com'])
@@ -75,3 +74,7 @@ class CommittersTest(unittest.TestCase):
         self.assertEqual(committer_list.contributors(), [contributor, committer, reviewer])
         self.assertEqual(committer_list.committers(), [committer, reviewer])
         self.assertEqual(committer_list.reviewers(), [reviewer])
+
+        self.assertEqual(committer_list.contributors_by_search_string('test'), [contributor, committer, reviewer])
+        self.assertEqual(committer_list.contributors_by_search_string('rad'), [reviewer])
+        self.assertEqual(committer_list.contributors_by_search_string('Two'), [reviewer])

@@ -186,7 +186,7 @@ class Whois(IRCCommand):
         if not contributors:
             return "%s: Sorry, I don't know any contributors matching '%s'." % (nick, search_string)
         if len(contributors) > 5:
-            return "More than 5 contributors match '%s', can you be more specific?"
+            return "%s: More than 5 contributors match '%s', could you be more specific?" % (nick, search_string)
         if len(contributors) == 1:
             contributor = contributors[0]
             if not contributor.irc_nickname:
