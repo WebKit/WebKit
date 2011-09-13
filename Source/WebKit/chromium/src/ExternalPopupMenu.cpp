@@ -173,6 +173,7 @@ void ExternalPopupMenu::getPopupMenuInfo(WebPopupMenuInfo* info)
         else
             popupItem.type = WebMenuItemInfo::Option;
         popupItem.enabled = m_popupMenuClient->itemIsEnabled(i);
+        popupItem.checked = m_popupMenuClient->itemIsSelected(i);
         PopupMenuStyle style = m_popupMenuClient->itemStyle(i);
         if (style.textDirection() == WebCore::RTL)
             popupItem.textDirection = WebTextDirectionRightToLeft;
