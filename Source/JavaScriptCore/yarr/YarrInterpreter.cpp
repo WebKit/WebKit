@@ -176,10 +176,14 @@ public:
             : m_buffer(0)
         {
             if (s.is8Bit()) {
+#if USE(JSC)
                 m_charSize = Char8;
                 unsigned length = s.length();
                 m_ptr.ptr8 = m_buffer = static_cast<char *>(fastMalloc(length));
                 memcpy(m_buffer, s.latin1().data(), length);
+#else
+                ASSERT_NOT_REACHED();
+#endif
             } else {
                 m_charSize = Char16;
                 m_ptr.ptr16 = s.characters();

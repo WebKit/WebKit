@@ -1,3 +1,14 @@
+2011-09-12  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed build fix for chromium.
+
+        Guard access to UString::latin1() with USE(JSC) since it is defined in JavaScriptCore/runtime/UString.cpp, which
+        is currently only compiled in by ports that use JavaScriptCore.  This code is currently unreachable in builds so
+        no change in functionality.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::CharAccess::CharAccess):
+
 2011-09-09  Filip Pizlo  <fpizlo@apple.com>
 
         JavaScriptCore does not have speculative->baseline OSR
