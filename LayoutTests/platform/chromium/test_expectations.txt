@@ -3545,8 +3545,6 @@ BUGWK65219 WIN : webaudio/test-basic.html = PASS CRASH
 BUGWK65219 LINUX WIN : webaudio/gain.html = PASS CRASH
 BUGWK65219 WIN : webaudio/audionode.html = PASS CRASH
 
-BUGWK65366 : fast/js/parseInt.html = TEXT
-
 BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
 BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = PASS TIMEOUT
