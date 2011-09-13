@@ -199,7 +199,7 @@ PassRefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef dic
     }
     
     CFStringRef mimeType = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceMIMETypeKey));
-    if (!mimeType || CFGetTypeID(mimeType) != CFStringGetTypeID()) {
+    if (mimeType && CFGetTypeID(mimeType) != CFStringGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - MIME type is not of type CFString, cannot create invalid resource");
         return 0;
     }
@@ -327,6 +327,11 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
         return false;
     }
     
+    if (mainResource()->mimeType().isNull()) {
+        LOG(Archives, "LegacyWebArchive - Main resource MIME type is required, but was null.");
+        return false;
+    }
+    
     CFArrayRef subresourceArray = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveSubresourcesKey));
     if (subresourceArray && CFGetTypeID(subresourceArray) != CFArrayGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - Subresources is not the expected Array, aborting invalid WebArchive");
@@ -341,7 +346,9 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
                 LOG(Archives, "LegacyWebArchive - Subresource is not expected CFDictionary, aborting invalid WebArchive");
                 return false;
             }
-            addSubresource(createResource(subresourceDict));
+            
+            if (RefPtr<ArchiveResource> subresource = createResource(subresourceDict))
+                addSubresource(subresource.release());
         }
     }
     
