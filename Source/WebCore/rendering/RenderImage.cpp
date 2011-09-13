@@ -84,15 +84,18 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
     ASSERT_ARG(newImage, newImage);
     ASSERT_ARG(newImage, newImage->image());
 
-    Image* brokenImage;
-    if (newImage->willPaintBrokenImage())
-        brokenImage = newImage->brokenImage(Page::deviceScaleFactor(frame()));
-    else
-        brokenImage = newImage->image();
+    IntSize imageSize;
+    if (newImage->willPaintBrokenImage()) {
+        float deviceScaleFactor = Page::deviceScaleFactor(frame());
+        imageSize = newImage->brokenImage(deviceScaleFactor)->size();
+        if (deviceScaleFactor >= 2)
+            imageSize.scale(0.5f);        
+    } else
+        imageSize = newImage->image()->size();
 
     // imageSize() returns 0 for the error image. We need the true size of the
     // error image, so we have to get it by grabbing image() directly.
-    return IntSize(paddingWidth + brokenImage->width() * style()->effectiveZoom(), paddingHeight + brokenImage->height() * style()->effectiveZoom());
+    return IntSize(paddingWidth + imageSize.width() * style()->effectiveZoom(), paddingHeight + imageSize.height() * style()->effectiveZoom());
 }
 
 // Sets the image height and width to fit the alt text.  Returns true if the
