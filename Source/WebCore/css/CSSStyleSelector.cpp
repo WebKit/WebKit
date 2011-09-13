@@ -3157,6 +3157,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitAppearance:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(appearance, Appearance)
         return;
+    case CSSPropertyBorderImage:
     case CSSPropertyWebkitBorderImage:
     case CSSPropertyWebkitMaskBoxImage: {
         if (isInherit) {
