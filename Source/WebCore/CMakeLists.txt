@@ -2093,6 +2093,7 @@ IF (ENABLE_WEBGL)
         ${THIRDPARTY_DIR}/ANGLE/src
         ${THIRDPARTY_DIR}/ANGLE/include
         ${THIRDPARTY_DIR}/ANGLE/include/GLSLANG
+        ${WEBCORE_DIR}/platform/graphics/gpu
     )
     LIST(APPEND WebCore_LIBRARIES
         ${OPENGL_gl_LIBRARY}
@@ -2156,10 +2157,9 @@ IF (ENABLE_WEBGL)
         html/canvas/WebKitLoseContext.cpp
 
         platform/graphics/ANGLEWebKitBridge.cpp
-        platform/graphics/gpu/DrawingBuffer.cpp
         platform/graphics/GraphicsContext3D.cpp
-        platform/graphics/opengl/Extensions3DOpenGL.cpp
-        platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+        
+        platform/graphics/gpu/DrawingBuffer.cpp
     )
 ENDIF ()
 
