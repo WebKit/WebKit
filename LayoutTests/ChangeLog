@@ -1,3 +1,21 @@
+2011-09-13  Kiyoto Tamura  <owenestea@gmail.com>
+
+        For compatibility, execCommand should support deprecated 'useCSS' alias for 'styleWithCSS'
+        https://bugs.webkit.org/show_bug.cgi?id=36683
+
+        Reviewed by Ryosuke Niwa.
+
+        Testing useCSS, the command previously unsupported by WebKit. Also, we are testing
+        styleWithCSS accepts anything that is not the boolean false or the string "false" as true.
+        Furthermore, we test that queryCommandValue/State('useCSS') return boolean false and
+        queryCommandValue/State('useStyleWithCSS') returns booleans (as opposed to 'true'/'false'
+        strings)
+
+        * editing/execCommand/style-with-css-expected.txt: Added.
+        * editing/execCommand/style-with-css.html: Added.
+        * editing/execCommand/use-css-expected.txt: Added.
+        * editing/execCommand/use-css.html: Added.
+
 2011-09-13  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (64275): Shape pattern-image fill turns black
