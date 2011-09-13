@@ -49,6 +49,12 @@ class IRCCommandTest(unittest.TestCase):
                           whois.execute("tom", ["unknown@example.com"], None, None))
         self.assertEquals("tom: tonyg@chromium.org is tonyg-cr. Why do you ask?",
                           whois.execute("tom", ["tonyg@chromium.org"], None, None))
+        self.assertEquals("tom: TonyG@Chromium.org is tonyg-cr. Why do you ask?",
+                          whois.execute("tom", ["TonyG@Chromium.org"], None, None))
+        self.assertEquals("tom: rniwa is rniwa (rniwa@webkit.org). Why do you ask?",
+                          whois.execute("tom", ["rniwa"], None, None))
+        self.assertEquals("tom: lopez is xan (xan.lopez@gmail.com, xan@gnome.org, xan@webkit.org). Why do you ask?",
+                          whois.execute("tom", ["lopez"], None, None))
         self.assertEquals('tom: "Vicki Murley" <vicki@apple.com> hasn\'t told me their nick. Boo hoo :-(',
                           whois.execute("tom", ["vicki@apple.com"], None, None))
         self.assertEquals('tom: I\'m not sure who you mean?  eroman, ericu, "Eric Carlson" <eric.carlson@apple.com>, or eseidel could be \'Eric\'.',

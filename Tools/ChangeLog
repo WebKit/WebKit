@@ -1,3 +1,15 @@
+2011-09-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        sheriffbot whois should also tell us email addresses
+        https://bugs.webkit.org/show_bug.cgi?id=67975
+
+        Reviewed by Eric Seidel and David Levin.
+
+        Taught sheriffbot how to tell us contributor's email addresses.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+
 2011-09-13  Eric Seidel  <eric@webkit.org>
 
         Remove ENABLE_SVG_FOREIGN_OBJECT as it is a required part of HTML5

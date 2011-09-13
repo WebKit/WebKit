@@ -191,7 +191,11 @@ class Whois(IRCCommand):
             contributor = contributors[0]
             if not contributor.irc_nickname:
                 return "%s: %s hasn't told me their nick. Boo hoo :-(" % (nick, contributor)
-            return "%s: %s is %s. Why do you ask?" % (nick, search_string, contributor.irc_nickname)
+            if contributor.emails and search_string.lower() not in map(lambda email: email.lower(), contributor.emails):
+                formattedEmails = ', '.join(contributor.emails)
+                return "%s: %s is %s (%s). Why do you ask?" % (nick, search_string, contributor.irc_nickname, formattedEmails)
+            else:
+                return "%s: %s is %s. Why do you ask?" % (nick, search_string, contributor.irc_nickname)
         contributor_nicks = map(self._nick_or_full_record, contributors)
         contributors_string = join_with_separators(contributor_nicks, only_two_separator=" or ", last_separator=', or ')
         return "%s: I'm not sure who you mean?  %s could be '%s'." % (nick, contributors_string, search_string)
