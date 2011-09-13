@@ -1,3 +1,17 @@
+2011-09-13  Chang Shu  <cshu@webkit.org>
+
+        [WK2] [Mac] Implement KeyDown function for WebKit2 EventSender.
+        https://bugs.webkit.org/show_bug.cgi?id=57515
+
+        Unskip passed tests for Mac.
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/wk2/Skipped:
+
 2011-09-13  Joseph Pecoraro  <joepeck@webkit.org>
 
         CRASH under WebCore::ArchiveResourceCollection::addAllResources loading WebArchive

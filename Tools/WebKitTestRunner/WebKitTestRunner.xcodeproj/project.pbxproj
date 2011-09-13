@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		5322FB4313FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */; };
 		5322FB4613FDA0EA0041ABCC /* PixelDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */; };
+		5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5670B8271386FCA5002EB355 /* EventSenderProxy.mm */; };
 		6510A78211EC643800410867 /* AHEM____.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77711EC643800410867 /* AHEM____.TTF */; };
 		6510A78311EC643800410867 /* ColorBits.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77811EC643800410867 /* ColorBits.ttf */; };
 		6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */; };
@@ -87,6 +88,8 @@
 		5322FB4213FDA0CD0041ABCC /* CyclicRedundancyCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyclicRedundancyCheck.h; sourceTree = "<group>"; };
 		5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PixelDumpSupport.cpp; sourceTree = "<group>"; };
 		5322FB4513FDA0EA0041ABCC /* PixelDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PixelDumpSupport.h; sourceTree = "<group>"; };
+		5670B8261386FC13002EB355 /* EventSenderProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSenderProxy.h; sourceTree = "<group>"; };
+		5670B8271386FCA5002EB355 /* EventSenderProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventSenderProxy.mm; sourceTree = "<group>"; };
 		6510A77711EC643800410867 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "fonts/AHEM____.TTF"; sourceTree = "<group>"; };
 		6510A77811EC643800410867 /* ColorBits.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = ColorBits.ttf; path = fonts/ColorBits.ttf; sourceTree = "<group>"; };
 		6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher100.ttf; path = fonts/WebKitWeightWatcher100.ttf; sourceTree = "<group>"; };
@@ -197,6 +200,7 @@
 				BC7933FE118F7C74005EA8E2 /* mac */,
 				5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */,
 				5322FB4213FDA0CD0041ABCC /* CyclicRedundancyCheck.h */,
+				5670B8261386FC13002EB355 /* EventSenderProxy.h */,
 				5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */,
 				5322FB4513FDA0EA0041ABCC /* PixelDumpSupport.h */,
 				BC7934DD119066EC005EA8E2 /* PlatformWebView.h */,
@@ -292,6 +296,7 @@
 		BC7933FE118F7C74005EA8E2 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				5670B8271386FCA5002EB355 /* EventSenderProxy.mm */,
 				BC7933FF118F7C84005EA8E2 /* main.mm */,
 				BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */,
 				BC8C795B11D2785D004535A1 /* TestControllerMac.mm */,
@@ -470,6 +475,7 @@
 				BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */,
 				BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */,
 				BC9192051333E4F8003011DC /* TestInvocationCG.cpp in Sources */,
+				5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

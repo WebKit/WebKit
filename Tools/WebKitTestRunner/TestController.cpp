@@ -37,6 +37,10 @@
 #include <cstdio>
 #include <wtf/PassOwnPtr.h>
 
+#if PLATFORM(MAC)
+#include "EventSenderProxy.h"
+#endif
+
 namespace WTR {
 
 static const double defaultLongTimeout = 30;
@@ -69,6 +73,9 @@ TestController::TestController(int argc, const char* argv[])
     , m_didPrintWebProcessCrashedMessage(false)
     , m_shouldExitWhenWebProcessCrashes(true)
     , m_beforeUnloadReturnValue(true)
+#if PLATFORM(MAC)
+    , m_eventSenderProxy(new EventSenderProxy(this))
+#endif
 {
     initialize(argc, argv);
     controller = this;
@@ -501,6 +508,34 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
 WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
+#if PLATFORM(MAC)
+    if (WKStringIsEqualToUTF8CString(messageName, "EventSender")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+
+        WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
+        WKStringRef subMessageName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, subMessageKey.get()));
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "KeyDown")) {
+            WKRetainPtr<WKStringRef> keyKey = adoptWK(WKStringCreateWithUTF8CString("Key"));
+            WKStringRef key = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, keyKey.get()));
+
+            WKRetainPtr<WKStringRef> modifiersKey = adoptWK(WKStringCreateWithUTF8CString("Modifiers"));
+            WKEventModifiers modifiers = static_cast<WKEventModifiers>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, modifiersKey.get()))));
+
+            WKRetainPtr<WKStringRef> locationKey = adoptWK(WKStringCreateWithUTF8CString("Location"));
+            unsigned location = static_cast<unsigned>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, locationKey.get()))));
+
+            WKRetainPtr<WKStringRef> timestampKey = adoptWK(WKStringCreateWithUTF8CString("Timestamp"));
+            double timestamp = WKDoubleGetValue(static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, timestampKey.get())));
+
+            // Forward to WebProcess
+            m_eventSenderProxy->keyDown(key, modifiers, location, timestamp);
+            return 0;
+        }
+        ASSERT_NOT_REACHED();
+    }
+#endif
     return m_currentInvocation->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody);
 }
 

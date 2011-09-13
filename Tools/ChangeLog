@@ -1,3 +1,31 @@
+2011-09-13  Chang Shu  <cshu@webkit.org>
+
+        [WK2] [Mac] Implement KeyDown function for WebKit2 EventSender.
+        https://bugs.webkit.org/show_bug.cgi?id=57515
+
+        The code change in WebKitTestRunner first sends keydown event from InjectedBundle to
+        TestController synchronously. The latter then sends simulated event to WebKit2 module,
+        which is synchronous, too.
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/EventSenderProxy.h: Added.
+        (WTR::EventSenderProxy::EventSenderProxy):
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::keyDown):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/PlatformWebView.h:
+        (WTR::PlatformWebView::platformWindow):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/mac/EventSenderProxy.mm: Added.
+        (WTR::buildModifierFlags):
+        (WTR::EventSenderProxy::keyDown):
+
 2011-09-12  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] DRT: Add DumpRenderTreeEfl.h

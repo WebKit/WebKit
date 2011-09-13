@@ -33,6 +33,7 @@ messages -> WebPage {
     ViewWillEndLiveResize()
 
     KeyEvent(WebKit::WebKeyboardEvent event)
+    KeyEventSyncForTesting(WebKit::WebKeyboardEvent event) -> (bool handled)
     MouseEvent(WebKit::WebMouseEvent event)
     WheelEvent(WebKit::WebWheelEvent event)
 #if ENABLE(GESTURE_EVENTS)

@@ -560,7 +560,9 @@ public:
     WebCore::IntRect visibleScrollerThumbRect() const { return m_visibleScrollerThumbRect; }
 
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
- 
+
+    void setShouldSendKeyboardEventSynchronously(bool sync) { m_shouldSendKeyboardEventSynchronously = sync; };
+
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
 
@@ -930,6 +932,8 @@ private:
     uint64_t m_renderTreeSize;
 
     static WKPageDebugPaintFlags s_debugPaintFlags;
+
+    bool m_shouldSendKeyboardEventSynchronously;
 };
 
 } // namespace WebKit

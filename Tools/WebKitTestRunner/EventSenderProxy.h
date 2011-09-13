@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +24,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EventSendingController_h
-#define EventSendingController_h
-
-#include "JSWrappable.h"
-#include <WebKit2/WKEvent.h>
-#include <WebKit2/WKGeometry.h>
-#include <wtf/PassRefPtr.h>
+#ifndef EventSenderProxy_h
+#define EventSenderProxy_h
 
 namespace WTR {
 
-class EventSendingController : public JSWrappable {
+class TestController;
+
+class EventSenderProxy {
 public:
-    static PassRefPtr<EventSendingController> create();
-    virtual ~EventSendingController();
+    EventSenderProxy(TestController* testController) : m_testController(testController) { }
 
-    void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
-
-    // JSWrappable
-    virtual JSClassRef wrapperClass();
-
-    void mouseDown(int button, JSValueRef modifierArray);
-    void mouseUp(int button, JSValueRef modifierArray);
-    void mouseMoveTo(int x, int y);
-    void leapForward(int milliseconds);
-
-    void keyDown(JSStringRef key, JSValueRef modifierArray, int location);
-
-    // Zoom functions.
-    void textZoomIn();
-    void textZoomOut();
-    void zoomPageIn();
-    void zoomPageOut();
-    void scalePageBy(double scale, double x, double y);
+    void keyDown(WKStringRef key, WKEventModifiers, unsigned location, double timestamp);
 
 private:
-    EventSendingController();
-
-    void updateClickCount(WKEventMouseButton);
-
-    double m_time;
-    WKPoint m_position;
-
-    int m_clickCount;
-    double m_clickTime;
-    WKPoint m_clickPosition;
-    WKEventMouseButton m_clickButton;
+    TestController* m_testController;
 };
 
 } // namespace WTR
 
-#endif // EventSendingController_h
+#endif // EventSenderProxy_h

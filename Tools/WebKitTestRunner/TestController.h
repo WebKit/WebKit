@@ -35,6 +35,7 @@ namespace WTR {
 
 class TestInvocation;
 class PlatformWebView;
+class EventSenderProxy;
 
 // FIXME: Rename this TestRunner?
 class TestController {
@@ -126,6 +127,8 @@ private:
     bool m_shouldExitWhenWebProcessCrashes;
     
     bool m_beforeUnloadReturnValue;
+
+    EventSenderProxy* m_eventSenderProxy;
 };
 
 } // namespace WTR

@@ -180,6 +180,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_mainFrameIsPinnedToLeftSide(false)
     , m_mainFrameIsPinnedToRightSide(false)
     , m_renderTreeSize(0)
+    , m_shouldSendKeyboardEventSynchronously(false)
 {
 #ifndef NDEBUG
     webPageProxyCounter.increment();
@@ -860,7 +861,12 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
     m_keyEventQueue.append(event);
 
     process()->responsivenessTimer()->start();
-    process()->send(Messages::WebPage::KeyEvent(event), m_pageID);
+    if (m_shouldSendKeyboardEventSynchronously) {
+        bool handled = false;
+        process()->sendSync(Messages::WebPage::KeyEventSyncForTesting(event), Messages::WebPage::KeyEventSyncForTesting::Reply(handled), m_pageID);
+        didReceiveEvent(event.type(), handled);
+    } else
+        process()->send(Messages::WebPage::KeyEvent(event), m_pageID);
 }
 
 #if ENABLE(GESTURE_EVENTS)

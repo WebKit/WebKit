@@ -31,6 +31,8 @@ module WTR {
         void mouseMoveTo(in long x, in long y);
         void leapForward(in long milliseconds);
 
+        void keyDown(in DOMString key, in object modifierArray, in long location);
+
         // Zoom functions.
         void textZoomIn();
         void textZoomOut();

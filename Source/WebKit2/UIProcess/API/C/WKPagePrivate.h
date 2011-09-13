@@ -69,6 +69,8 @@ WK_EXPORT void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, uint32_t f
 // FIXME https://bugs.webkit.org/show_bug.cgi?id=66979: Remove this sync call.
 WK_EXPORT WKImageRef WKPageCreateSnapshotOfVisibleContent(WKPageRef page);
 
+WK_EXPORT void WKPageSetShouldSendKeyboardEventSynchronously(WKPageRef page, bool sync);
+
 #ifdef __cplusplus
 }
 #endif

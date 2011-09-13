@@ -29,9 +29,13 @@
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
 #include "JSEventSendingController.h"
+#include "StringFunctions.h"
+#include <WebKit2/WKBundle.h>
 #include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKBundlePrivate.h>
+#include <WebKit2/WKMutableDictionary.h>
+#include <WebKit2/WKNumber.h>
 
 namespace WTR {
 
@@ -203,6 +207,38 @@ void EventSendingController::scalePageBy(double scale, double x, double y)
 void EventSendingController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
     setProperty(context, windowObject, "eventSender", this, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
+}
+
+void EventSendingController::keyDown(JSStringRef key, JSValueRef modifierArray, int location)
+{
+    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    WKBundleFrameRef frame = WKBundlePageGetMainFrame(page);
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(frame);
+    WKEventModifiers modifiers = parseModifierArray(context, modifierArray);
+
+    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
+    WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
+    WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("KeyDown"));
+    WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
+
+    WKRetainPtr<WKStringRef> keyKey = adoptWK(WKStringCreateWithUTF8CString("Key"));
+    WKDictionaryAddItem(EventSenderMessageBody.get(), keyKey.get(), toWK(key).get());
+
+    WKRetainPtr<WKStringRef> modifiersKey = adoptWK(WKStringCreateWithUTF8CString("Modifiers"));
+    WKRetainPtr<WKUInt64Ref> modifiersRef = WKUInt64Create(modifiers);
+    WKDictionaryAddItem(EventSenderMessageBody.get(), modifiersKey.get(), modifiersRef.get());
+
+    WKRetainPtr<WKStringRef> locationKey = adoptWK(WKStringCreateWithUTF8CString("Location"));
+    WKRetainPtr<WKUInt64Ref> locationRef = WKUInt64Create(location);
+    WKDictionaryAddItem(EventSenderMessageBody.get(), locationKey.get(), locationRef.get());
+
+    WKRetainPtr<WKStringRef> timestampKey = adoptWK(WKStringCreateWithUTF8CString("Timestamp"));
+    WKRetainPtr<WKDoubleRef> timeRef = WKDoubleCreate(m_time);
+    WKDictionaryAddItem(EventSenderMessageBody.get(), timestampKey.get(), timeRef.get());
+
+    WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
 }
 
 } // namespace WTR

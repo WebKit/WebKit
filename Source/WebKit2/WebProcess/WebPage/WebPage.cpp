@@ -1100,6 +1100,15 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(keyboardEvent.type()), handled));
 }
 
+void WebPage::keyEventSyncForTesting(const WebKeyboardEvent& keyboardEvent, bool& handled)
+{
+    CurrentEvent currentEvent(keyboardEvent);
+
+    handled = handleKeyEvent(keyboardEvent, m_page.get());
+    if (!handled)
+        handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
+}
+
 #if ENABLE(GESTURE_EVENTS)
 static bool handleGestureEvent(const WebGestureEvent& gestureEvent, Page* page)
 {
