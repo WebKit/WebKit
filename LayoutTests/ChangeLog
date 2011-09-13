@@ -1,5 +1,11 @@
 2011-09-12  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewed, update chromium test expectations.
+
+        * platform/chromium/test_expectations.txt: fast/borders/border-image-omit-right-slice.html crash on debug
+
+2011-09-12  Fumitoshi Ukai  <ukai@chromium.org>
+
         Unreviewred, update chromium test expectations.
 
         * platform/chromium/test_expectations.txt: fast/events/constructors/progress-event-constructor.html on mac
