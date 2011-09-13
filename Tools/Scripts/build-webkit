@@ -282,9 +282,6 @@ my @features = (
     { option => "svg-fonts", desc => "Toggle SVG fonts support (imples SVG support)",
       define => "ENABLE_SVG_FONTS", default => 1, value => \$svgFontsSupport },
 
-    { option => "svg-foreign-object", desc => "Toggle SVG foreign object support (implies SVG support)",
-      define => "ENABLE_SVG_FOREIGN_OBJECT", default => 1, value => \$svgForeignObjectSupport },
-
     { option => "svg-use", desc => "Toggle SVG use element support (implies SVG support)",
       define => "ENABLE_SVG_USE", default => 1, value => \$svgUseSupport },
 

@@ -20,7 +20,7 @@
 #ifndef SVGForeignObjectElement_h
 #define SVGForeignObjectElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
+#if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
@@ -68,5 +68,5 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
+#endif // ENABLE(SVG)
 #endif

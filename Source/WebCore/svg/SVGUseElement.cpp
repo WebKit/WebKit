@@ -430,11 +430,9 @@ void dumpInstanceTree(unsigned int& depth, String& text, SVGElementInstance* tar
 
 static bool isDisallowedElement(Node* element)
 {
-#if ENABLE(SVG_FOREIGN_OBJECT)
     // <foreignObject> should never be contained in a <use> tree. Too dangerous side effects possible.
     if (element->hasTagName(SVGNames::foreignObjectTag))
         return true;
-#endif
 #if ENABLE(SVG_ANIMATION)
     if (SVGSMILElement::isSMILElement(element))
         return true;
@@ -984,7 +982,7 @@ void SVGUseElement::associateInstancesWithShadowTreeElements(Node* target, SVGEl
 #endif
     } else if (originalElement->hasTagName(SVGNames::symbolTag)) {
         // <symbol> gets replaced by <svg>
-#if ENABLE(SVG) && ENABLE(SVG_USE) && ENABLE(SVG_FOREIGN_OBJECT)
+#if ENABLE(SVG) && ENABLE(SVG_USE)
         ASSERT(target->nodeName() == SVGNames::svgTag);
 #endif
     } else

@@ -703,7 +703,6 @@ AC_MSG_RESULT([$enable_quota])
 if test "$enable_svg" = "no"; then
    enable_svg_animation=no
    enable_svg_fonts=no
-   enable_svg_foreign_object=no
    enable_svg_as_image=no
    enable_svg_use=no
 fi
@@ -732,14 +731,6 @@ AC_ARG_ENABLE(svg_fonts,
               [],[enable_svg_fonts="yes"])
 AC_MSG_RESULT([$enable_svg_fonts])
 
-# check whether to enable foreign objects support for SVG
-AC_MSG_CHECKING([whether to enable support for SVG foreign objects])
-AC_ARG_ENABLE(svg_foreign_object,
-              AC_HELP_STRING([--enable-svg-foreign-object],
-                             [enable support for SVG foreign objects (experimental) [default=yes]]),
-              [],[enable_svg_foreign_object="yes"])
-AC_MSG_RESULT([$enable_svg_foreign_object])
-
 # check whether to enable SVG As Image support
 AC_MSG_CHECKING([whether to enable SVG as Image support])
 AC_ARG_ENABLE(svg_as_image,
@@ -759,7 +750,6 @@ AC_MSG_RESULT([$enable_svg_use])
 # check for SVG features, enabling SVG if necessary
 if test "$enable_svg_animation" = "yes" || \
    test "$enable_svg_fonts" = "yes" || \
-   test "$enable_svg_foreign_object" = "yes" || \
    test "$enable_svg_as_image" = "yes" || \
    test "$enable_svg_use" = "yes"; then
    svg_flags=yes
@@ -1203,7 +1193,6 @@ AM_CONDITIONAL([ENABLE_ORIENTATION_EVENTS],[test "$enable_orientation_events" = 
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_ANIMATION],[test "$enable_svg_animation" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
-AM_CONDITIONAL([ENABLE_SVG_FOREIGN_OBJECT],[test "$enable_svg_foreign_object" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_AS_IMAGE],[test "$enable_svg_as_image" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_USE],[test "$enable_svg_use" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
@@ -1304,7 +1293,6 @@ Features:
  SVG support                                              : $enable_svg
  SVG animation support                                    : $enable_svg_animation
  SVG fonts support                                        : $enable_svg_fonts
- SVG foreign object support                               : $enable_svg_foreign_object
  SVG as image support                                     : $enable_svg_as_image
  SVG use element support                                  : $enable_svg_use
  WCSS support                                             : $enable_wcss

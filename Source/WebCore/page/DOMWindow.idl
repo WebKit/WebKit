@@ -665,6 +665,7 @@ module window {
         attribute SVGElementInstanceConstructor SVGElementInstance;
         attribute SVGElementInstanceListConstructor SVGElementInstanceList;
         attribute SVGEllipseElementConstructor SVGEllipseElement;
+        attribute SVGForeignObjectElementConstructor SVGForeignObjectElement;
         attribute SVGExceptionConstructor SVGException;
         attribute SVGGElementConstructor SVGGElement;
         attribute SVGGradientElementConstructor SVGGradientElement;
@@ -758,10 +759,6 @@ module window {
         attribute SVGHKernElementConstructor SVGHKernElement;
         attribute SVGMissingGlyphElementConstructor SVGMissingGlyphElement;
         attribute SVGVKernElementConstructor SVGVKernElement;
-#endif
-
-#if defined(ENABLE_SVG_FOREIGN_OBJECT) && ENABLE_SVG_FOREIGN_OBJECT
-        attribute SVGForeignObjectElementConstructor SVGForeignObjectElement;
 #endif
 
 #if defined(ENABLE_FILTERS) && ENABLE_FILTERS

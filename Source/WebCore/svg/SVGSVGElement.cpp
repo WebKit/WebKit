@@ -563,11 +563,9 @@ bool SVGSVGElement::isOutermostSVG() const
     if (!parentNode())
         return true;
 
-#if ENABLE(SVG_FOREIGN_OBJECT)
     // We act like an outermost SVG element, if we're a direct child of a <foreignObject> element.
     if (parentNode()->hasTagName(SVGNames::foreignObjectTag))
         return true;
-#endif
 
     // This is true whenever this is the outermost SVG, even if there are HTML elements outside it
     return !parentNode()->isSVGElement();

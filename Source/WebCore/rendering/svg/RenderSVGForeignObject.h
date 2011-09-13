@@ -21,7 +21,7 @@
 #ifndef RenderSVGForeignObject_h
 #define RenderSVGForeignObject_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
+#if ENABLE(SVG)
 #include "AffineTransform.h"
 #include "FloatPoint.h"
 #include "RenderSVGBlock.h"

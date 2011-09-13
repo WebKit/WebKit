@@ -36,9 +36,7 @@ static bool isViewportElement(Node* node)
 {
     return (node->hasTagName(SVGNames::svgTag)
         || node->hasTagName(SVGNames::symbolTag)
-#if ENABLE(SVG_FOREIGN_OBJECT)
         || node->hasTagName(SVGNames::foreignObjectTag)
-#endif
         || node->hasTagName(SVGNames::imageTag));
 }
 

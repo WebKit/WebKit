@@ -1,3 +1,13 @@
+2011-09-13  Eric Seidel  <eric@webkit.org>
+
+        Remove ENABLE_SVG_FOREIGN_OBJECT as it is a required part of HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=68018
+
+        Reviewed by Ryosuke Niwa.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2011-09-01  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION: Rendering artifacts on a rotated, pattern filled shape

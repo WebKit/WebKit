@@ -847,10 +847,6 @@ ifeq ($(findstring ENABLE_SVG_ANIMATION,$(FEATURE_DEFINES)), ENABLE_SVG_ANIMATIO
     SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_ANIMATION=1
 endif
 
-ifeq ($(findstring ENABLE_SVG_FOREIGN_OBJECT,$(FEATURE_DEFINES)), ENABLE_SVG_FOREIGN_OBJECT)
-    SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_FOREIGN_OBJECT=1
-endif
-
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
 
 ifdef SVG_FLAGS

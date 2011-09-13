@@ -81,9 +81,7 @@ bool SVGAnimateMotionElement::hasValidAttributeType()
         || targetElement->hasTagName(clipPathTag)
         || targetElement->hasTagName(maskTag)
         || targetElement->hasTagName(aTag)
-#if ENABLE(SVG_FOREIGN_OBJECT)
         || targetElement->hasTagName(foreignObjectTag)
-#endif
         )
         return true;
     return false;

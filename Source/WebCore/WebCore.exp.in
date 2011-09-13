@@ -1713,6 +1713,7 @@ __ZN7WebCore8createCFERKNS_15ProtectionSpaceE
 .objc_class_name_DOMSVGElementInstance
 .objc_class_name_DOMSVGElementInstanceList
 .objc_class_name_DOMSVGEllipseElement
+.objc_class_name_DOMSVGForeignObjectElement
 .objc_class_name_DOMSVGGElement
 .objc_class_name_DOMSVGGlyphRefElement
 .objc_class_name_DOMSVGGradientElement
@@ -1811,11 +1812,6 @@ __ZN7WebCore8createCFERKNS_15ProtectionSpaceE
 .objc_class_name_DOMSVGFETurbulenceElement
 .objc_class_name_DOMSVGFilterElement
 #endif
-
-#if ENABLE(SVG_FOREIGN_OBJECT) && ENABLE(SVG_DOM_OBJC_BINDINGS)
-.objc_class_name_DOMSVGForeignObjectElement
-#endif
-
 
 #if ENABLE(VIDEO)
 __ZN7WebCore16HTMLMediaElement12endScrubbingEv
