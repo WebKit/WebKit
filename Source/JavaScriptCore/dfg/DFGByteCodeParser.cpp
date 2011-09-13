@@ -594,6 +594,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
     Interpreter* interpreter = m_globalData->interpreter;
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
+    unsigned blockBegin = m_currentIndex;
     while (true) {
         // Don't extend over jump destinations.
         if (m_currentIndex == limit) {
@@ -1210,6 +1211,17 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             aliases.recordResolve(resolve);
 
             NEXT_OPCODE(op_resolve_base);
+        }
+            
+        case op_loop_hint: {
+            // Baseline->DFG OSR jumps between loop hints. The DFG assumes that Baseline->DFG
+            // OSR can only happen at basic block boundaries. Assert that these two statements
+            // are compatible.
+            ASSERT_UNUSED(blockBegin, m_currentIndex == blockBegin);
+            
+            m_currentBlock->isOSRTarget = true;
+            
+            NEXT_OPCODE(op_loop_hint);
         }
 
         default:

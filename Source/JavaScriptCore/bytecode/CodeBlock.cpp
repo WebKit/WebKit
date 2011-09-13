@@ -1076,6 +1076,10 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] loop_if_greatereq\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
             break;
         }
+        case op_loop_hint: {
+            printf("[%4d] loop_hint\n", location);
+            break;
+        }
         case op_switch_imm: {
             int tableIndex = (++it)->u.operand;
             int defaultTarget = (++it)->u.operand;
@@ -1405,7 +1409,6 @@ void CodeBlock::dumpStatistics()
 CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject *globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, SymbolTable* symTab, bool isConstructor, PassOwnPtr<CodeBlock> alternative)
     : m_globalObject(globalObject->globalData(), ownerExecutable, globalObject)
     , m_heap(&m_globalObject->globalData().heap)
-    , m_executeCounter(-1000) // trigger optimization when sign bit clears
     , m_numCalleeRegisters(0)
     , m_numVars(0)
     , m_numParameters(0)
@@ -1427,6 +1430,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
     , m_alternative(alternative)
 {
     ASSERT(m_source);
+    
+    optimizeAfterWarmUp();
 
 #if DUMP_CODE_BLOCK_STATISTICS
     liveCodeBlockSet.add(this);
@@ -1901,33 +1906,24 @@ CodeBlock* FunctionCodeBlock::replacement()
 
 JSObject* ProgramCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
-    if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType())) {
-        // No OSR yet, so make sure we don't hit this again anytime soon.
-        dontOptimizeAnytimeSoon();
+    if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType()))
         return 0;
-    }
     JSObject* error = static_cast<ProgramExecutable*>(ownerExecutable())->compileOptimized(exec, scopeChainNode);
     return error;
 }
 
 JSObject* EvalCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
-    if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType())) {
-        // No OSR yet, so make sure we don't hit this again anytime soon.
-        dontOptimizeAnytimeSoon();
+    if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType()))
         return 0;
-    }
     JSObject* error = static_cast<EvalExecutable*>(ownerExecutable())->compileOptimized(exec, scopeChainNode);
     return error;
 }
 
 JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode)
 {
-    if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType())) {
-        // No OSR yet, so make sure we don't hit this again anytime soon.
-        dontOptimizeAnytimeSoon();
+    if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType()))
         return 0;
-    }
     JSObject* error = static_cast<FunctionExecutable*>(ownerExecutable())->compileOptimizedFor(exec, scopeChainNode, m_isConstructor ? CodeForConstruct : CodeForCall);
     return error;
 }

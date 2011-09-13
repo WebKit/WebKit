@@ -387,17 +387,48 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
         }
     }
     
-    // 11) Load the result of the last bytecode operation into regT0.
+    // 11) Adjust the old JIT's execute counter. Since we are exiting OSR, we know
+    //     that all new calls into this code will go to the new JIT, so the execute
+    //     counter only affects call frames that performed OSR exit and call frames
+    //     that were still executing the old JIT at the time of another call frame's
+    //     OSR exit. We want to ensure that the following is true:
+    //
+    //     (a) Code the performs an OSR exit gets a chance to reenter optimized
+    //         code eventually, since optimized code is faster. But we don't
+    //         want to do such reentery too aggressively (see (c) below).
+    //
+    //     (b) If there is code on the call stack that is still running the old
+    //         JIT's code and has never OSR'd, then it should get a chance to
+    //         perform OSR entry despite the fact that we've exited.
+    //
+    //     (c) Code the performs an OSR exit should not immediately retry OSR
+    //         entry, since both forms of OSR are expensive. OSR entry is
+    //         particularly expensive.
+    //
+    //     To ensure (c), we'd like to set the execute counter to
+    //     counterValueForOptimizeAfterWarmUp(). This seems like it would endanger
+    //     (a) and (b), since then every OSR exit would delay the opportunity for
+    //     every call frame to perform OSR entry. Essentially, if OSR exit happens
+    //     frequently and the function has few loops, then the counter will never
+    //     become non-negative and OSR entry will never be triggered. OSR entry
+    //     will only happen if a loop gets hot in the old JIT, which does a pretty
+    //     good job of ensuring (a) and (b). This heuristic may need to be
+    //     rethought in the future, particularly if we support reoptimizing code
+    //     with new value profiles gathered from code that did OSR exit.
+    
+    store32(Imm32(codeBlock()->alternative()->counterValueForOptimizeAfterWarmUp()), codeBlock()->alternative()->addressOfExecuteCounter());
+    
+    // 12) Load the result of the last bytecode operation into regT0.
     
     if (exit.m_lastSetOperand != std::numeric_limits<int>::max())
         loadPtr(addressFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
     
-    // 12) Fix call frame.
+    // 13) Fix call frame.
     
     ASSERT(codeBlock()->alternative()->getJITType() == JITCode::BaselineJIT);
     storePtr(TrustedImmPtr(codeBlock()->alternative()), addressFor((VirtualRegister)RegisterFile::CodeBlock));
     
-    // 13) Jump into the corresponding baseline JIT code.
+    // 14) Jump into the corresponding baseline JIT code.
     
     BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned, BytecodeAndMachineOffset::getBytecodeIndex>(decodedCodeMap.begin(), decodedCodeMap.size(), exit.m_bytecodeIndex);
     
@@ -1141,6 +1172,8 @@ void JITCompiler::linkSpeculationChecks(SpeculativeJIT& speculative, NonSpeculat
 
 void JITCompiler::compileEntry()
 {
+    m_startOfCode = label();
+    
     // This code currently matches the old JIT. In the function header we need to
     // pop the return address (since we do not allow any recursion on the machine
     // stack), and perform a fast register file check.
@@ -1179,6 +1212,10 @@ void JITCompiler::compileBody()
     // to allow it to check which nodes in the graph may bail out, and may need to reenter the
     // non-speculative path.
     if (compiledSpeculative) {
+#if ENABLE(DFG_OSR_ENTRY)
+        m_codeBlock->setJITCodeMap(m_jitCodeMapEncoder.finish());
+#endif
+        
 #if ENABLE(DFG_OSR_EXIT)
         linkOSRExits(speculative);
 #else

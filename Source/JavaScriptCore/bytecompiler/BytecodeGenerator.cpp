@@ -658,6 +658,13 @@ void BytecodeGenerator::emitOpcode(OpcodeID opcodeID)
     m_lastOpcodeID = opcodeID;
 }
 
+void BytecodeGenerator::emitLoopHint()
+{
+#if ENABLE(TIERED_COMPILATION)
+    emitOpcode(op_loop_hint);
+#endif
+}
+
 void BytecodeGenerator::retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index)
 {
     ASSERT(instructions().size() >= 4);

@@ -1,3 +1,115 @@
+2011-09-12  Filip Pizlo  <fpizlo@apple.com>
+
+        JavaScriptCore does not have baseline->speculative OSR
+        https://bugs.webkit.org/show_bug.cgi?id=67920
+
+        Reviewed by Oliver Hunt.
+        
+        This adds the ability to on-stack-replace (OSR) from code that is
+        running hot in the old JIT to code compiled by the new JIT.  This
+        ensures that long-running loops benefit from DFG optimization.
+        It also ensures that if code experiences a speculation failure
+        in DFG code, it has an opportunity to reenter the DFG once every
+        1,000 loop iterations or so.
+        
+        This results in a 2.88x speed-up on Kraken/imaging-desaturate,
+        and is a pure win on the main three benchmark suites (SunSpider,
+        V8, Kraken), when tiered compilation is enabled.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::ProgramCodeBlock::compileOptimized):
+        (JSC::EvalCodeBlock::compileOptimized):
+        (JSC::FunctionCodeBlock::compileOptimized):
+        * bytecode/CodeBlock.h:
+        * bytecode/Opcode.h:
+        * bytecode/PredictedType.h: Added.
+        (JSC::isCellPrediction):
+        (JSC::isArrayPrediction):
+        (JSC::isInt32Prediction):
+        (JSC::isDoublePrediction):
+        (JSC::isNumberPrediction):
+        (JSC::isBooleanPrediction):
+        (JSC::isStrongPrediction):
+        (JSC::predictionToString):
+        (JSC::mergePredictions):
+        (JSC::mergePrediction):
+        (JSC::makePrediction):
+        * bytecode/PredictionTracker.h: Added.
+        (JSC::operandIsArgument):
+        (JSC::PredictionSlot::PredictionSlot):
+        (JSC::PredictionTracker::PredictionTracker):
+        (JSC::PredictionTracker::initializeSimilarTo):
+        (JSC::PredictionTracker::copyLocalsFrom):
+        (JSC::PredictionTracker::numberOfArguments):
+        (JSC::PredictionTracker::numberOfVariables):
+        (JSC::PredictionTracker::argumentIndexForOperand):
+        (JSC::PredictionTracker::predictArgument):
+        (JSC::PredictionTracker::predict):
+        (JSC::PredictionTracker::predictGlobalVar):
+        (JSC::PredictionTracker::getArgumentPrediction):
+        (JSC::PredictionTracker::getPrediction):
+        (JSC::PredictionTracker::getGlobalVarPrediction):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoopHint):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::DoWhileNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::BasicBlock::BasicBlock):
+        (JSC::DFG::Graph::predict):
+        (JSC::DFG::Graph::getPrediction):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        (JSC::DFG::JITCompiler::compileEntry):
+        (JSC::DFG::JITCompiler::compileBody):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        * dfg/DFGNode.h:
+        * dfg/DFGOSREntry.cpp: Added.
+        (JSC::DFG::predictionIsValid):
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSREntry.h: Added.
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGPredictionTracker.h: Removed.
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::mergeUse):
+        (JSC::DFG::Propagator::mergePrediction):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/CompactJITCodeMap.h:
+        (JSC::CompactJITCodeMap::numberOfEntries):
+        (JSC::CompactJITCodeMap::decode):
+        (JSC::CompactJITCodeMap::Decoder::Decoder):
+        (JSC::CompactJITCodeMap::Decoder::numberOfEntriesRemaining):
+        (JSC::CompactJITCodeMap::Decoder::read):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitOptimizationCheck):
+        (JSC::JIT::emitTimeoutCheck):
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        (JSC::JIT::emit_op_loop_hint):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+
 2011-09-12  Sam Weinig  <sam@webkit.org>
 
         Don't allow setting __proto__ to be a getter or setter

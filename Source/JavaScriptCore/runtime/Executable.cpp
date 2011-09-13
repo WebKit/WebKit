@@ -171,7 +171,6 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
                 // There is already an alternative piece of code compiled with a different
                 // JIT, so we can silently fail.
                 m_evalCodeBlock = static_pointer_cast<EvalCodeBlock>(m_evalCodeBlock->releaseAlternative());
-                m_evalCodeBlock->dontOptimizeAnytimeSoon();
                 return 0;
             }
             m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_evalCodeBlock.get());
@@ -291,7 +290,6 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
         } else {
             if (m_programCodeBlock->alternative()) {
                 m_programCodeBlock = static_pointer_cast<ProgramCodeBlock>(m_programCodeBlock->releaseAlternative());
-                m_programCodeBlock->dontOptimizeAnytimeSoon();
                 return 0;
             }
             m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_programCodeBlock.get());
@@ -417,7 +415,6 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
         } else {
             if (m_codeBlockForCall->alternative()) {
                 m_codeBlockForCall = static_pointer_cast<FunctionCodeBlock>(m_codeBlockForCall->releaseAlternative());
-                m_codeBlockForCall->dontOptimizeAnytimeSoon();
                 m_symbolTable = m_codeBlockForCall->sharedSymbolTable();
                 return 0;
             }
@@ -494,7 +491,6 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
         } else {
             if (m_codeBlockForConstruct->alternative()) {
                 m_codeBlockForConstruct = static_pointer_cast<FunctionCodeBlock>(m_codeBlockForConstruct->releaseAlternative());
-                m_codeBlockForConstruct->dontOptimizeAnytimeSoon();
                 m_symbolTable = m_codeBlockForConstruct->sharedSymbolTable();
                 return 0;
             }

@@ -28,6 +28,9 @@
 
 #if ENABLE(JIT)
 
+// Verbose logging for OSR-related code.
+#define ENABLE_JIT_VERBOSE_OSR 0
+
 // We've run into some problems where changing the size of the class JIT leads to
 // performance fluctuations.  Try forcing alignment in an attempt to stabalize this.
 #if COMPILER(GCC)
@@ -793,6 +796,7 @@ namespace JSC {
         void emit_op_jtrue(Instruction*);
         void emit_op_load_varargs(Instruction*);
         void emit_op_loop(Instruction*);
+        void emit_op_loop_hint(Instruction*);
         void emit_op_loop_if_less(Instruction*);
         void emit_op_loop_if_lesseq(Instruction*);
         void emit_op_loop_if_greater(Instruction*);
@@ -1064,6 +1068,11 @@ namespace JSC {
     {
         emitTimeoutCheck();
         emit_op_jmp(currentInstruction);
+    }
+
+    inline void JIT::emit_op_loop_hint(Instruction*)
+    {
+        emitOptimizationCheck(LoopOptimizationCheck);
     }
 
     inline void JIT::emit_op_loop_if_true(Instruction* currentInstruction)

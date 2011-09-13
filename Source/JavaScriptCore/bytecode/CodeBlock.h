@@ -38,6 +38,7 @@
 #include "JSGlobalObject.h"
 #include "JumpTable.h"
 #include "Nodes.h"
+#include "PredictionTracker.h"
 #include "RegExpObject.h"
 #include "UString.h"
 #include "WeakReferenceHarvester.h"
@@ -226,6 +227,9 @@ namespace JSC {
         
         CodeBlock* alternative() { return m_alternative.get(); }
         PassOwnPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
+        
+        void setPredictions(PassOwnPtr<PredictionTracker> predictions) { m_predictions = predictions; }
+        PredictionTracker* predictions() const { return m_predictions.get(); }
 
         void visitAggregate(SlotVisitor&);
         void visitWeakReferences(SlotVisitor&);
@@ -589,14 +593,86 @@ namespace JSC {
         
         void copyDataFromAlternative();
         
+        // Functions for controlling when tiered compilation kicks in. This
+        // controls both when the optimizing compiler is invoked and when OSR
+        // entry happens. Two triggers exist: the loop trigger and the return
+        // trigger. In either case, when an addition to m_executeCounter
+        // causes it to become non-negative, the optimizing compiler is
+        // invoked. This includes a fast check to see if this CodeBlock has
+        // already been optimized (i.e. replacement() returns a CodeBlock
+        // that was optimized with a higher tier JIT than this one). In the
+        // case of the loop trigger, if the optimized compilation succeeds
+        // (or has already succeeded in the past) then OSR is attempted to
+        // redirect program flow into the optimized code.
+        
+        // These functions are called from within the optimization triggers,
+        // and are used as a single point at which we define the heuristics
+        // for how much warm-up is mandated before the next optimization
+        // trigger files. All CodeBlocks start out with optimizeAfterWarmUp(),
+        // as this is called from the CodeBlock constructor.
+        
+        // These functions are provided to support calling
+        // optimizeAfterWarmUp() from JIT-generated code.
+        int32_t counterValueForOptimizeAfterWarmUp()
+        {
+            return -1000;
+        }
+        
+        int32_t* addressOfExecuteCounter()
+        {
+            return &m_executeCounter;
+        }
+        
+        // Call this to force the next optimization trigger to fire. This is
+        // rarely wise, since optimization triggers are typically more
+        // expensive than executing baseline code.
         void optimizeNextInvocation()
         {
             m_executeCounter = 0;
         }
         
+        // Call this to prevent optimization from happening again. Note that
+        // optimization will still happen after roughly 2^29 invocations,
+        // so this is really meant to delay that as much as possible. This
+        // is called if optimization failed, and we expect it to fail in
+        // the future as well.
         void dontOptimizeAnytimeSoon()
         {
             m_executeCounter = std::numeric_limits<int32_t>::min();
+        }
+        
+        // Call this to reinitialize the counter to its starting state,
+        // forcing a warm-up to happen before the next optimization trigger
+        // fires. This is called in the CodeBlock constructor. It also
+        // makes sense to call this if an OSR exit occurred. Note that
+        // OSR exit code is code generated, so the value of the execute
+        // counter that this corresponds to is also available directly.
+        void optimizeAfterWarmUp()
+        {
+            m_executeCounter = counterValueForOptimizeAfterWarmUp();
+        }
+        
+        // Call this to cause an optimization trigger to fire soon, but
+        // not necessarily the next one. This makes sense if optimization
+        // succeeds. Successfuly optimization means that all calls are
+        // relinked to the optimized code, so this only affects call
+        // frames that are still executing this CodeBlock. The value here
+        // is tuned to strike a balance between the cost of OSR entry
+        // (which is too high to warrant making every loop back edge to
+        // trigger OSR immediately) and the cost of executing baseline
+        // code (which is high enough that we don't necessarily want to
+        // have a full warm-up). The intuition for calling this instead of
+        // optimizeNextInvocation() is for the case of recursive functions
+        // with loops. Consider that there may be N call frames of some
+        // recursive function, for a reasonably large value of N. The top
+        // one triggers optimization, and then returns, and then all of
+        // the others return. We don't want optimization to be triggered on
+        // each return, as that would be superfluous. It only makes sense
+        // to trigger optimization if one of those functions becomes hot
+        // in the baseline code.
+        void optimizeSoon()
+        {
+            m_executeCounter = -100;
         }
         
         int32_t m_executeCounter;
@@ -671,6 +747,7 @@ namespace JSC {
 #endif
 
         Vector<unsigned> m_jumpTargets;
+        Vector<unsigned> m_loopTargets;
 
         // Constant Pool
         Vector<Identifier> m_identifiers;
@@ -682,6 +759,8 @@ namespace JSC {
         SymbolTable* m_symbolTable;
 
         OwnPtr<CodeBlock> m_alternative;
+        
+        OwnPtr<PredictionTracker> m_predictions;
 
         struct RareData {
            WTF_MAKE_FAST_ALLOCATED;

@@ -47,6 +47,17 @@ inline bool compile(CompileMode compileMode, ExecState* exec, ExecState* calleeA
     
     propagate(dfg, globalData, codeBlock);
     
+#if ENABLE(DYNAMIC_OPTIMIZATION)
+    // Save the predictions we've made, so that OSR entry can verify them. Predictions
+    // are saved in the CodeBlock from which we will be doing OSR entry, since the
+    // CodeBlock to which we are OSRing may be replaced at any time.
+    OwnPtr<PredictionTracker> predictions = adoptPtr(new PredictionTracker());
+    *predictions = dfg.predictions();
+    ASSERT(codeBlock->alternative());
+    ASSERT(codeBlock->alternative()->getJITType() == JITCode::BaselineJIT);
+    codeBlock->alternative()->setPredictions(predictions.release());
+#endif
+    
     JITCompiler dataFlowJIT(globalData, dfg, codeBlock);
     if (compileMode == CompileFunction) {
         ASSERT(jitCodeWithArityCheck);

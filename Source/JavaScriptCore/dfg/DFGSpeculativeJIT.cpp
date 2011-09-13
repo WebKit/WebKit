@@ -1494,6 +1494,10 @@ void SpeculativeJIT::compile(BasicBlock& block)
 {
     ASSERT(m_compileOkay);
     ASSERT(m_compileIndex == block.begin);
+    
+    if (block.isOSRTarget)
+        m_jit.noticeOSREntry(block);
+    
     m_blockHeads[m_block] = m_jit.label();
 #if ENABLE(DFG_JIT_BREAK_ON_EVERY_BLOCK)
     m_jit.breakpoint();

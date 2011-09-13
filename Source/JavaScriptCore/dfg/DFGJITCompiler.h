@@ -316,6 +316,11 @@ public:
     {
         m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, isCall, codeOrigin));
     }
+    
+    void noticeOSREntry(BasicBlock& basicBlock)
+    {
+        m_jitCodeMapEncoder.append(basicBlock.bytecodeBegin, differenceBetween(m_startOfCode, label()));
+    }
 
 private:
     // Internal implementation to compile.
@@ -349,6 +354,10 @@ private:
     // Count of the number of CallRecords with exception handlers.
     Vector<CallRecord> m_calls;
     unsigned m_exceptionCheckCount;
+    
+    // JIT code map for OSR entrypoints.
+    Label m_startOfCode;
+    CompactJITCodeMap::Encoder m_jitCodeMapEncoder;
 
     struct PropertyAccessRecord {
         PropertyAccessRecord(Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)

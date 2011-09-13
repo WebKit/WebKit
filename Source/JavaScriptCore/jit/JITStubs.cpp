@@ -36,11 +36,11 @@
 #include "Arguments.h"
 #include "CallFrame.h"
 #include "CodeBlock.h"
-#include "Heap.h"
+#include "DFGOSREntry.h"
 #include "Debugger.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
-#include "Strong.h"
+#include "Heap.h"
 #include "JIT.h"
 #include "JSActivation.h"
 #include "JSArray.h"
@@ -59,6 +59,7 @@
 #include "RegExpPrototype.h"
 #include "Register.h"
 #include "SamplingTool.h"
+#include "Strong.h"
 #include <wtf/StdLibExtras.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -1823,10 +1824,42 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
     ScopeChainNode* scopeChain = callFrame->scopeChain();
-
+    unsigned bytecodeIndex = stackFrame.args[0].int32();
+    
     JSObject* error = codeBlock->compileOptimized(callFrame, scopeChain);
     if (error)
         fprintf(stderr, "WARNING: optimized compilation from loop failed.\n");
+    
+    if (codeBlock->replacement() == codeBlock) {
+#if ENABLE(JIT_VERBOSE_OSR)
+        printf("Optimizing %p from loop failed.\n", codeBlock);
+#endif
+
+        ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
+        codeBlock->dontOptimizeAnytimeSoon();
+        return;
+    }
+    
+    CodeBlock* optimizedCodeBlock = codeBlock->replacement();
+    ASSERT(optimizedCodeBlock->getJITType() == JITCode::DFGJIT);
+    
+    if (void* address = DFG::prepareOSREntry(callFrame, optimizedCodeBlock, bytecodeIndex)) {
+#if ENABLE(JIT_VERBOSE_OSR)
+        printf("Optimizing %p from loop succeeded, performing OSR.\n", codeBlock);
+#endif
+
+        codeBlock->optimizeSoon();
+        STUB_SET_RETURN_ADDRESS(address);
+        return;
+    }
+    
+#if ENABLE(JIT_VERBOSE_OSR)
+    printf("Optimizing %p from loop succeeded, OSR failed.\n", codeBlock);
+#endif
+
+    // OSR failed this time, but it might succeed next time! Let the code run a bit
+    // longer and then try again.
+    codeBlock->optimizeAfterWarmUp();
 }
 
 DEFINE_STUB_FUNCTION(void, optimize_from_ret)
@@ -1840,6 +1873,24 @@ DEFINE_STUB_FUNCTION(void, optimize_from_ret)
     JSObject* error = codeBlock->compileOptimized(callFrame, scopeChain);
     if (error)
         fprintf(stderr, "WARNING: optimized compilation from ret failed.\n");
+    
+    if (codeBlock->replacement() == codeBlock) {
+#if ENABLE(JIT_VERBOSE_OSR)
+        printf("Optimizing %p from return failed.\n", codeBlock);
+#endif
+
+        ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
+        codeBlock->dontOptimizeAnytimeSoon();
+        return;
+    }
+    
+    ASSERT(codeBlock->replacement()->getJITType() == JITCode::DFGJIT);
+
+#if ENABLE(JIT_VERBOSE_OSR)
+    printf("Optimizing %p from return succeeded.\n", codeBlock);
+#endif
+    
+    codeBlock->optimizeSoon();
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_instanceof)

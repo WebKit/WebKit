@@ -30,7 +30,7 @@
 
 #include "CodeBlock.h"
 #include "DFGNode.h"
-#include "DFGPredictionTracker.h"
+#include "PredictionTracker.h"
 #include "RegisterFile.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -64,6 +64,7 @@ struct BasicBlock {
         : bytecodeBegin(bytecodeBegin)
         , begin(begin)
         , end(NoNode)
+        , isOSRTarget(false)
         , m_arguments(numArguments)
         , m_locals(numLocals)
     {
@@ -77,6 +78,7 @@ struct BasicBlock {
     unsigned bytecodeBegin;
     NodeIndex begin;
     NodeIndex end;
+    bool isOSRTarget;
 
     PredecessorList m_predecessors;
     Vector <VariableRecord, 8> m_arguments;
@@ -141,7 +143,22 @@ public:
     
     bool predict(Node& node, PredictedType prediction, PredictionSource source)
     {
-        return m_predictions.predict(node, prediction, source);
+        switch (node.op) {
+        case GetLocal:
+            return predict(node.local(), prediction, source);
+            break;
+        case GetGlobalVar:
+            return predictGlobalVar(node.varNumber(), prediction, source);
+            break;
+        case GetById:
+        case GetMethod:
+        case GetByVal:
+        case Call:
+        case Construct:
+            return node.predict(prediction, source);
+        default:
+            return false;
+        }
     }
 
     PredictedType getPrediction(int operand)
@@ -164,7 +181,20 @@ public:
         if (nodePtr->op == ValueToInt32)
             nodePtr = &(*this)[nodePtr->child1()];
         
-        return m_predictions.getPrediction(*nodePtr);
+        switch (nodePtr->op) {
+        case GetLocal:
+            return getPrediction(nodePtr->local());
+        case GetGlobalVar:
+            return getGlobalVarPrediction(nodePtr->varNumber());
+        case GetById:
+        case GetMethod:
+        case GetByVal:
+        case Call:
+        case Construct:
+            return nodePtr->getPrediction();
+        default:
+            return PredictNone;
+        }
     }
     
     // Helper methods to check nodes for constants.

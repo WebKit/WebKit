@@ -103,14 +103,14 @@ private:
     {
         ASSERT(m_graph[nodeIndex].hasResult());
         
-        return DFG::mergePrediction(m_uses[nodeIndex], prediction);
+        return JSC::mergePrediction(m_uses[nodeIndex], prediction);
     }
     
     bool mergePrediction(PredictedType prediction)
     {
         ASSERT(m_graph[m_compileIndex].hasResult());
         
-        return DFG::mergePrediction(m_predictions[m_compileIndex], prediction);
+        return JSC::mergePrediction(m_predictions[m_compileIndex], prediction);
     }
     
     void propagateNode(Node& node)

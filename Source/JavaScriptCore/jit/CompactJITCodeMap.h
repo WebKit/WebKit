@@ -87,21 +87,12 @@ public:
             fastFree(m_buffer);
     }
     
-    void decode(Vector<BytecodeAndMachineOffset>& result) const
+    unsigned numberOfEntries() const
     {
-        unsigned previousBytecodeIndex = 0;
-        unsigned previousMachineCodeOffset = 0;
-        
-        result.resize(m_numberOfEntries);
-        unsigned j = 0;
-        for (unsigned i = 0; i < m_numberOfEntries; ++i) {
-            previousBytecodeIndex += decodeNumber(j);
-            previousMachineCodeOffset += decodeNumber(j);
-            result[i].m_bytecodeIndex = previousBytecodeIndex;
-            result[i].m_machineCodeOffset = previousMachineCodeOffset;
-        }
-        ASSERT(j == m_size);
+        return m_numberOfEntries;
     }
+    
+    void decode(Vector<BytecodeAndMachineOffset>& result) const;
     
 private:
     CompactJITCodeMap(uint8_t* buffer, unsigned size, unsigned numberOfEntries)
@@ -162,10 +153,37 @@ public:
         unsigned m_previousBytecodeIndex;
         unsigned m_previousMachineCodeOffset;
     };
+    
+    class Decoder {
+        WTF_MAKE_NONCOPYABLE(Decoder);
+    public:
+        Decoder(const CompactJITCodeMap*);
+        
+        unsigned numberOfEntriesRemaining() const;
+        void read(unsigned& bytecodeIndex, unsigned& machineCodeOffset);
+        
+    private:
+        const CompactJITCodeMap* m_jitCodeMap;
+        unsigned m_previousBytecodeIndex;
+        unsigned m_previousMachineCodeOffset;
+        unsigned m_numberOfEntriesRemaining;
+        unsigned m_bufferIndex;
+    };
 
 private:
     friend class Encoder;
+    friend class Decoder;
 };
+
+inline void CompactJITCodeMap::decode(Vector<BytecodeAndMachineOffset>& result) const
+{
+    Decoder decoder(this);
+    result.resize(decoder.numberOfEntriesRemaining());
+    for (unsigned i = 0; i < result.size(); ++i)
+        decoder.read(result[i].m_bytecodeIndex, result[i].m_machineCodeOffset);
+    
+    ASSERT(!decoder.numberOfEntriesRemaining());
+}
 
 inline CompactJITCodeMap::Encoder::Encoder()
     : m_buffer(0)
@@ -247,6 +265,32 @@ inline void CompactJITCodeMap::Encoder::ensureCapacityFor(unsigned numberOfEntri
         m_capacity = capacityNeeded * 2;
         m_buffer = static_cast<uint8_t*>(fastRealloc(m_buffer, m_capacity));
     }
+}
+
+inline CompactJITCodeMap::Decoder::Decoder(const CompactJITCodeMap* jitCodeMap)
+    : m_jitCodeMap(jitCodeMap)
+    , m_previousBytecodeIndex(0)
+    , m_previousMachineCodeOffset(0)
+    , m_numberOfEntriesRemaining(jitCodeMap->m_numberOfEntries)
+    , m_bufferIndex(0)
+{
+}
+
+inline unsigned CompactJITCodeMap::Decoder::numberOfEntriesRemaining() const
+{
+    ASSERT(m_numberOfEntriesRemaining || m_bufferIndex == m_jitCodeMap->m_size);
+    return m_numberOfEntriesRemaining;
+}
+
+inline void CompactJITCodeMap::Decoder::read(unsigned& bytecodeIndex, unsigned& machineCodeOffset)
+{
+    ASSERT(numberOfEntriesRemaining());
+    
+    m_previousBytecodeIndex += m_jitCodeMap->decodeNumber(m_bufferIndex);
+    m_previousMachineCodeOffset += m_jitCodeMap->decodeNumber(m_bufferIndex);
+    bytecodeIndex = m_previousBytecodeIndex;
+    machineCodeOffset = m_previousMachineCodeOffset;
+    m_numberOfEntriesRemaining--;
 }
 
 } // namespace JSC

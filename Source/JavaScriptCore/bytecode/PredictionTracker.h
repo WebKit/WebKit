@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGPredictionTracker_h
-#define DFGPredictionTracker_h
+#ifndef PredictionTracker_h
+#define PredictionTracker_h
 
-#if ENABLE(DFG_JIT)
+#include "PredictedType.h"
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
-#include "DFGNode.h"
-
-namespace JSC { namespace DFG {
+namespace JSC {
 
 // helper function to distinguish vars & temporaries from arguments.
 inline bool operandIsArgument(int operand) { return operand < 0; }
@@ -60,6 +60,12 @@ public:
     {
         m_arguments.resize(other.numberOfArguments());
         m_variables.resize(other.numberOfVariables());
+    }
+    
+    void copyLocalsFrom(const PredictionTracker& other)
+    {
+        m_arguments = other.m_arguments;
+        m_variables = other.m_variables;
     }
     
     size_t numberOfArguments() const { return m_arguments.size(); }
@@ -96,26 +102,6 @@ public:
         return mergePrediction(iter->second.m_value, makePrediction(prediction, source));
     }
     
-    bool predict(Node& node, PredictedType prediction, PredictionSource source)
-    {
-        switch (node.op) {
-        case GetLocal:
-            return predict(node.local(), prediction, source);
-            break;
-        case GetGlobalVar:
-            return predictGlobalVar(node.varNumber(), prediction, source);
-            break;
-        case GetById:
-        case GetMethod:
-        case GetByVal:
-        case Call:
-        case Construct:
-            return node.predict(prediction, source);
-        default:
-            return false;
-        }
-    }
-    
     PredictedType getArgumentPrediction(unsigned argument)
     {
         return m_arguments[argument].m_value;
@@ -138,33 +124,13 @@ public:
         return iter->second.m_value;
     }
     
-    PredictedType getPrediction(Node& node)
-    {
-        switch (node.op) {
-        case GetLocal:
-            return getPrediction(node.local());
-        case GetGlobalVar:
-            return getGlobalVarPrediction(node.varNumber());
-        case GetById:
-        case GetMethod:
-        case GetByVal:
-        case Call:
-        case Construct:
-            return node.getPrediction();
-        default:
-            return PredictNone;
-        }
-    }
-    
 private:
     Vector<PredictionSlot, 16> m_arguments;
     Vector<PredictionSlot, 16> m_variables;
     HashMap<unsigned, PredictionSlot> m_globalVars;
 };
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
-#endif // ENABLE(DFG_JIT)
-
-#endif // DFGPredictionTracker_h
+#endif // PredictionTracker_h
 

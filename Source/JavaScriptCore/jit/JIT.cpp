@@ -101,6 +101,8 @@ void JIT::emitOptimizationCheck(OptimizationCheckKind kind)
     
     Jump skipOptimize = branchAdd32(Signed, TrustedImm32(kind == LoopOptimizationCheck ? 1 : 30), AbsoluteAddress(&m_codeBlock->m_executeCounter));
     JITStubCall stubCall(this, kind == LoopOptimizationCheck ? cti_optimize_from_loop : cti_optimize_from_ret);
+    if (kind == LoopOptimizationCheck)
+        stubCall.addArgument(Imm32(m_bytecodeOffset));
     stubCall.call();
     skipOptimize.link(this);
 }
@@ -115,8 +117,6 @@ void JIT::emitTimeoutCheck()
     stubCall.call(timeoutCheckRegister);
     stubCall.getArgument(0, regT1, regT0); // reload last result registers.
     skipTimeout.link(this);
-    
-    emitOptimizationCheck(LoopOptimizationCheck);
 }
 #else
 void JIT::emitTimeoutCheck()
@@ -126,8 +126,6 @@ void JIT::emitTimeoutCheck()
     skipTimeout.link(this);
 
     killLastResultRegister();
-    
-    emitOptimizationCheck(LoopOptimizationCheck);
 }
 #endif
 
@@ -283,6 +281,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_jtrue)
         DEFINE_OP(op_load_varargs)
         DEFINE_OP(op_loop)
+        DEFINE_OP(op_loop_hint)
         DEFINE_OP(op_loop_if_less)
         DEFINE_OP(op_loop_if_lesseq)
         DEFINE_OP(op_loop_if_greater)

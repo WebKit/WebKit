@@ -100,6 +100,7 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     case op_jnlesseq:
     case op_jngreater:
     case op_jngreatereq:
+    case op_loop_hint:
     case op_loop_if_less:
     case op_loop_if_lesseq:
     case op_loop_if_greater:
