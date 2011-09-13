@@ -1,3 +1,14 @@
+2011-09-12  Sam Weinig  <sam@webkit.org>
+
+        Object.getPrototypeOf should use JSValue::get()
+        https://bugs.webkit.org/show_bug.cgi?id=67973
+
+        Reviewed by Darin Adler.
+
+        * http/tests/security/cross-frame-access-object-getPrototypeOf-expected.txt: Added.
+        * http/tests/security/cross-frame-access-object-getPrototypeOf.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-for-object-getPrototypeOf-test.html: Added.
+
 2011-09-13  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, update chromium test expectations

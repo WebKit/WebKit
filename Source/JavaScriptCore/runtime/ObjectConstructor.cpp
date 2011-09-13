@@ -137,7 +137,11 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
         return throwVMError(exec, createTypeError(exec, "Requested prototype of a value that is not an object."));
-    return JSValue::encode(asObject(exec->argument(0))->prototype());
+        
+    // This uses JSValue::get() instead of directly accessing the prototype from the object
+    // (using JSObject::prototype()) in order to allow objects to override the behavior, such
+    // as returning jsUndefined() for cross-origin access.
+    return JSValue::encode(exec->argument(0).get(exec, exec->propertyNames().underscoreProto));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState* exec)
