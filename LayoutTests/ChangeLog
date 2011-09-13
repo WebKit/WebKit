@@ -1,3 +1,18 @@
+2011-09-13  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (64275): Shape pattern-image fill turns black
+        https://bugs.webkit.org/show_bug.cgi?id=51061
+        <rdar://problem/8504705>
+
+        Reviewed by Simon Fraser.
+
+        Add a test ensuring that replacing a SVG pattern without changing
+        the id causes the clients to be updated properly.
+
+        * svg/custom/pending-resource-after-removal-expected.png: Added.
+        * svg/custom/pending-resource-after-removal-expected.txt: Added.
+        * svg/custom/pending-resource-after-removal.xhtml: Added.
+
 2011-09-13  Cary Clark  <caryclark@google.com>
 
         Unreviewed; new baselines (Skia on Mac)

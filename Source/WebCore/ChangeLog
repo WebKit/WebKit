@@ -1,3 +1,22 @@
+2011-09-13  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (64275): Shape pattern-image fill turns black
+        https://bugs.webkit.org/show_bug.cgi?id=51061
+        <rdar://problem/8504705>
+
+        Reviewed by Simon Fraser.
+
+        When destroying a resource, register clients who are losing their
+        resource as having pending resources, so they can be resolved in the case a
+        resource with that id is re-registered.
+
+        Test: svg/custom/pending-resource-after-removal.xhtml
+
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::resourceDestroyed):
+        * svg/SVGStyledElement.h:
+        (WebCore::toSVGStyledElement): Added.
+
 2011-09-13  Eric Seidel  <eric@webkit.org>
 
         Remove ENABLE_SVG_FOREIGN_OBJECT as it is a required part of HTML5
