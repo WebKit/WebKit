@@ -1063,6 +1063,12 @@
 #endif
 #endif
 
+#if !defined(ENABLE_LAZY_BLOCK_FREEING)
+#if ENABLE(JSC_MULTIPLE_THREADS)
+#define ENABLE_LAZY_BLOCK_FREEING 1
+#endif
+#endif
+
 #ifndef ENABLE_LARGE_HEAP
 #if CPU(X86) || CPU(X86_64)
 #define ENABLE_LARGE_HEAP 1
