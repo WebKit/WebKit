@@ -1,4 +1,0 @@
-This tests for a bug where expansion for smart delete would not consider editable boundaries.  Only 'foo' should be deleted.  You should see ' bar'.
-| <span>
-|   contenteditable="false"
-|   " bar"

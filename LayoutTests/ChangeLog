@@ -1,3 +1,32 @@
+2011-09-12  Wyatt Carss  <wcarss@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        convert editing/deleting/5390681-2.html to dump-as-markup
+        https://bugs.webkit.org/show_bug.cgi?id=63293
+
+        Renamed editing/deleting/5390681* to editing/deleting/smart-delete-across-editable-boundaries,
+        Added doctype/html/body to both tests, and converted smart-delete-across-editable-boundaries-2
+        to dump-as-markup test in the same style as the first. Also updated results.
+
+        * editing/deleting/5390681.html: Removed.
+        * editing/deleting/5390681-expected.txt: Removed.
+        * editing/deleting/5390681-2.html: Removed.
+        * editing/deleting/smart-delete-across-editable-boundaries.html: Added.
+        * editing/deleting/smart-delete-across-editable-boundaries-expected.txt: Added.
+        * editing/deleting/smart-delete-across-editable-boundaries-2.html: Added.
+        * editing/deleting/smart-delete-across-editable-boundaries-2-expected.txt: Added.
+        * platform/chromium-linux/editing/deleting/5390681-2-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5390681-2-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5390681-2-expected.txt: Removed.
+        * platform/gtk/editing/deleting/5390681-2-expected.txt: Removed.
+        * platform/mac-leopard/editing/deleting/5390681-2-expected.png: Removed.
+        * platform/mac/editing/deleting/5390681-2-expected.png: Removed.
+        * platform/mac/editing/deleting/5390681-2-expected.txt: Removed.
+        * platform/qt/editing/deleting/5390681-2-expected.png: Removed.
+        * platform/qt/editing/deleting/5390681-2-expected.txt: Removed.
+        * platform/qt/editing/deleting/5390681-expected.png: Removed.
+
 2011-09-12  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, update chromium test expectations.
