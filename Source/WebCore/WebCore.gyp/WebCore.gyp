@@ -131,10 +131,6 @@
     # binary and increasing the speed of gdb.
     'enable_svg%': 1,
 
-    # Use v8 as default JavaScript engine. This makes sure that javascript_engine variable
-    # is set for both inside_chromium_build 0 and 1 cases.
-    'javascript_engine%': 'v8',
-
     'webcore_include_dirs': [
       '../',
       '../..',
@@ -956,6 +952,7 @@
         '<(chromium_src_dir)/third_party/libwebp/libwebp.gyp:libwebp',
         '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
         '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
+        '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
         '<(libjpeg_gyp_path):libjpeg',
       ],
       'include_dirs': [
@@ -1010,16 +1007,9 @@
         '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendDispatcher.cpp',
       ],
       'conditions': [
-        ['javascript_engine=="v8"', {
-          'dependencies': [
-            '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
-          ],
-          'conditions': [
-            ['inside_chromium_build==1 and OS=="win" and component=="shared_library"', {
-              'defines': [
-                'USING_V8_SHARED',
-              ],
-            }],
+        ['inside_chromium_build==1 and OS=="win" and component=="shared_library"', {
+          'defines': [
+            'USING_V8_SHARED',
           ],
         }],
         # TODO(maruel): Move it in its own project or generate it anyway?
@@ -1080,6 +1070,7 @@
         '<(chromium_src_dir)/third_party/ots/ots.gyp:ots',
         '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
         '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:translator_common',
+        '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
         '<(libjpeg_gyp_path):libjpeg',
       ],
       'export_dependent_settings': [
@@ -1096,6 +1087,7 @@
         '<(chromium_src_dir)/third_party/ots/ots.gyp:ots',
         '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
         '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:translator_common',
+        '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
         '<(libjpeg_gyp_path):libjpeg',
       ],
       # This is needed for mac because of webkit_system_interface. It'd be nice
@@ -1128,22 +1120,12 @@
         },
       },
       'conditions': [
-        ['javascript_engine=="v8"', {
-          'dependencies': [
-            '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
-          ],
-          'export_dependent_settings': [
-            '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
-          ],
-          'conditions': [
-            ['inside_chromium_build==1 and OS=="win" and component=="shared_library"', {
-              'direct_dependent_settings': {
-                'defines': [
-                  'USING_V8_SHARED',
-                ],
-              },
-            }],
-          ],
+        ['inside_chromium_build==1 and OS=="win" and component=="shared_library"', {
+          'direct_dependent_settings': {
+            'defines': [
+               'USING_V8_SHARED',
+            ],
+          },
         }],
         ['use_accelerated_compositing==1', {
           'dependencies': [
@@ -1655,6 +1637,7 @@
       'type': 'static_library',
       'dependencies': [
         'webcore_prerequisites',
+        '<(chromium_src_dir)/third_party/v8-i18n/build/all.gyp:v8-i18n',
       ],
       # This is needed for mac because of webkit_system_interface. It'd be nice
       # if this hard dependency could be split off the rest.
@@ -1779,11 +1762,6 @@
             ['exclude', '/(Windows|Uniscribe)[^/]*\\.cpp$']
           ],
         }],
-        ['javascript_engine=="v8"', {
-          'dependencies': [
-            '<(chromium_src_dir)/third_party/v8-i18n/build/all.gyp:v8-i18n',
-          ],
-        }],
       ],
     },
     {
@@ -1802,6 +1780,7 @@
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
+        '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
       ],
       'export_dependent_settings': [
         'webcore_bindings',
@@ -1809,6 +1788,7 @@
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
+        '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
       ],
       'direct_dependent_settings': {
         'include_dirs': [
@@ -1826,14 +1806,6 @@
         ],
       },
       'conditions': [
-        ['javascript_engine=="v8"', {
-          'dependencies': [
-            '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
-          ],
-          'export_dependent_settings': [
-            '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
-          ],
-        }],
         ['OS=="mac"', {
           'direct_dependent_settings': {
             'include_dirs': [
