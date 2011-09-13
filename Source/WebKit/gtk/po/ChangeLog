@@ -1,3 +1,10 @@
+2011-09-12  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. Rename Greek translation file, the correct code is el
+        (http://www.science.co.il/language/Locale-Codes.asp?s=decimal).
+
+        * el.po: Renamed from Source/WebKit/gtk/po/gr.po.
+
 2011-09-09  Tiffany Antopolski  <tiffany@antopolski.com>
 
         Canadian English translation.
