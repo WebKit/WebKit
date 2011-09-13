@@ -1,3 +1,17 @@
+2011-09-13  Cary Clark  <caryclark@google.com>
+
+        Unreviewed; new baselines (Skia on Mac)
+        Updated reference images, text.
+
+        * platform/chromium-mac/http/tests/eventsource/existent-eventsource-status-error-iframe-crash-expected.txt: Removed.
+        * platform/chromium-mac/platform/chromium/fast/repaint: Added.
+        * platform/chromium-mac/platform/chromium/fast/repaint/fixed-layout-360x240-expected.png: Added.
+        * platform/chromium-mac/fast/lists/list-marker-before-content-table-expected.png: Added.
+        * platform/chromium-mac/fast/runin/runin-generated-before-content-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug85016-expected.png: Added.
+        * platform/chromium-mac/css3/unicode-bidi-isolate-aharon-expected.png: Added.
+        * platform/chromium-mac/css3/unicode-bidi-isolate-basic-expected.png: Added.
+
 2011-09-13  Chang Shu  <cshu@webkit.org>
 
         [WK2] [Mac] Implement KeyDown function for WebKit2 EventSender.
