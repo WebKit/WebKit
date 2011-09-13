@@ -82,11 +82,13 @@ class Reviewer(Committer):
 
 contributors_who_are_not_committers = [
     Contributor("Alexey Marinichev", ["amarinichev@chromium.org", "amarinichev@google.com"], "amarinichev"),
+    Contributor("Alice Boxhall", "aboxhall@chromium.org", "aboxhall"),
     Contributor("Ami Fischman", "fischman@chromium.org", "amifischman0"),
     Contributor("Andras Piroska", "pandras@inf.u-szeged.hu", "andris88"),
     Contributor("Anna Cavender", "annacc@chromium.org", "annacc"),
     Contributor("Anne van Kesteren", "annevankesteren+webkit@gmail.com", "annevk"),
     Contributor("Annie Sullivan", "sullivan@chromium.org", "annie"),
+    Contributor("Aryeh Gregor", "ayg@aryeh.name", "AryehGregor"),
     Contributor("David Dorwin", "ddorwin@chromium.org", "ddorwin"),
     Contributor("David Grogan", "dgrogan@chromium.org", "dgrogan"),
     Contributor("Douglas Davidson", "ddavidso@apple.com"),
