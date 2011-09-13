@@ -93,7 +93,7 @@ protected:
     WebSocketChannelClient* m_client;
     bool m_syncMethodDone;
     bool m_useHixie76Protocol;
-    Vector<UChar> m_subprotocol;
+    String m_subprotocol;
     bool m_sendRequestResult;
     unsigned long m_bufferedAmount;
     bool m_suspended;

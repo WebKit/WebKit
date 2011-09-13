@@ -1,3 +1,18 @@
+2011-09-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95025.
+        http://trac.webkit.org/changeset/95025
+        https://bugs.webkit.org/show_bug.cgi?id=68005
+
+        Test failed on Snow Leopard bots. (Requested by yutak_home on
+        #webkit).
+
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::subprotocol):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::setSubprotocol):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+
 2011-09-13  Yuta Kitamura  <yutak@chromium.org>
 
         ThreadableWebSocketChannelClientWrapper shouldn't have a String in it.
