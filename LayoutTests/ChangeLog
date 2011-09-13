@@ -1,3 +1,16 @@
+2011-09-13  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Webkit wraps between hyphen-minus and numeric characters
+        https://bugs.webkit.org/show_bug.cgi?id=20677
+
+        Disallow wrapping between a hyphen-minus and a digit if the hyphen-minus
+        is not directly after a digit or a letter.
+
+        * fast/text/line-breaks-after-hyphen-before-number-expected.txt: Added.
+        * fast/text/line-breaks-after-hyphen-before-number.html: Added.
+
 2011-09-12  Sam Weinig  <sam@webkit.org>
 
         Object.getPrototypeOf should use JSValue::get()

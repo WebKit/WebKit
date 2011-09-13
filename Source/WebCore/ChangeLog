@@ -1,3 +1,20 @@
+2011-09-13  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Webkit wraps between hyphen-minus and numeric characters 
+        https://bugs.webkit.org/show_bug.cgi?id=20677
+
+        Disallow wrapping between a hyphen-minus and a digit if the hyphen-minus
+        is not directly after a digit or a letter.
+
+        Test: fast/text/line-breaks-after-hyphen-before-number.html
+
+        * rendering/break_lines.cpp:
+        (WebCore::asciiLineBreakTable): Disabled line-breaking after '-' and before '.', '0'-'9'. Note: the change for '0'-'9' doesn't really matter because the case is handled hard-coded in shouldBreakAfter().
+        (WebCore::shouldBreakAfter): Changed line-breaking behavior after '-'.
+        (WebCore::nextBreakablePosition): Passes lastLastCh to shouldBreakAfter. 
+
 2011-09-13  Erik Wright  <erikwright@chromium.org>
 
         platform/graphics/gtk/FontGtk.cpp was renamed to platform/graphics/pango/FontPango.cpp . Reflect this change in WebCore.gypi to fix a Chromium build breakage.

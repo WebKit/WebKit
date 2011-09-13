@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
 #include "break_lines.h"
 
 #include "TextBreakIterator.h"
+#include <wtf/ASCIICType.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -66,7 +68,7 @@ static const UChar asciiLineBreakTableLastChar = 127;
 #define F 0xFF
 
 // Line breaking table for printable ASCII characters. Line breaking opportunities in this table are as below:
-// - before openning punctuations such as '(', '<', '[', '{' after certain characters (compatible with Firefox 3.6);
+// - before opening punctuations such as '(', '<', '[', '{' after certain characters (compatible with Firefox 3.6);
 // - after '-' and '?' (backward-compatible, and compatible with Internet Explorer).
 // Please refer to <https://bugs.webkit.org/show_bug.cgi?id=37698> for line breaking matrixes of different browsers
 // and the ICU standard.
@@ -84,7 +86,7 @@ static const unsigned char asciiLineBreakTable[][(asciiLineBreakTableLastChar - 
     { B(0, 0, 0, 0, 0, 0, 0, 1), B(0, 0, 0, 0, 0, 0, 0, 0), 0, B(0, 0, 0, 1, 0, 0, 0, 0), 0, 0, 0, B(0, 0, 1, 0, 0, 0, 0, 0), 0, 0, 0, B(0, 0, 1, 0, 0, 0, 0, 0) }, // *
     { B(0, 0, 0, 0, 0, 0, 0, 1), B(0, 0, 0, 0, 0, 0, 0, 0), 0, B(0, 0, 0, 1, 0, 0, 0, 0), 0, 0, 0, B(0, 0, 1, 0, 0, 0, 0, 0), 0, 0, 0, B(0, 0, 1, 0, 0, 0, 0, 0) }, // +
     { B(0, 0, 0, 0, 0, 0, 0, 1), B(0, 0, 0, 0, 0, 0, 0, 0), 0, B(0, 0, 0, 1, 0, 0, 0, 0), 0, 0, 0, B(0, 0, 1, 0, 0, 0, 0, 0), 0, 0, 0, B(0, 0, 1, 0, 0, 0, 0, 0) }, // ,
-    { B(1, 1, 1, 1, 1, 1, 1, 1), B(1, 1, 1, 1, 1, 1, 1, 1), F, B(1, 1, 1, 1, 1, 1, 1, 1), F, F, F, B(1, 1, 1, 1, 1, 1, 1, 1), F, F, F, B(1, 1, 1, 1, 1, 1, 1, 1) }, // -
+    { B(1, 1, 1, 1, 1, 1, 1, 1), B(1, 1, 1, 1, 1, 0, 1, 0), 0, B(0, 1, 1, 1, 1, 1, 1, 1), F, F, F, B(1, 1, 1, 1, 1, 1, 1, 1), F, F, F, B(1, 1, 1, 1, 1, 1, 1, 1) }, // - Note: breaking before '0'-'9' is handled hard-coded in shouldBreakAfter().
     { B(0, 0, 0, 0, 0, 0, 0, 1), B(0, 0, 0, 0, 0, 0, 0, 0), 0, B(0, 0, 0, 1, 0, 0, 0, 0), 0, 0, 0, B(0, 0, 1, 0, 0, 0, 0, 0), 0, 0, 0, B(0, 0, 1, 0, 0, 0, 0, 0) }, // .
     { B(0, 0, 0, 0, 0, 0, 0, 0), B(0, 0, 0, 0, 0, 0, 0, 0), 0, B(0, 0, 0, 0, 0, 0, 0, 0), 0, 0, 0, B(0, 0, 0, 0, 0, 0, 0, 0), 0, 0, 0, B(0, 0, 0, 0, 0, 0, 0, 0) }, // /
     DI,  DI,  DI,  DI,  DI,  DI,  DI,  DI,  DI,  DI, // 0-9
@@ -117,7 +119,7 @@ static const unsigned char asciiLineBreakTable[][(asciiLineBreakTableLastChar - 
 
 COMPILE_ASSERT(WTF_ARRAY_LENGTH(asciiLineBreakTable) == asciiLineBreakTableLastChar - asciiLineBreakTableFirstChar + 1, TestLineBreakTableConsistency);
 
-static inline bool shouldBreakAfter(UChar ch, UChar nextCh)
+static inline bool shouldBreakAfter(UChar lastCh, UChar ch, UChar nextCh)
 {
     switch (ch) {
     case ideographicComma:
@@ -126,6 +128,13 @@ static inline bool shouldBreakAfter(UChar ch, UChar nextCh)
         // which is likely to be resolved in Unicode 5.1 <http://bugs.webkit.org/show_bug.cgi?id=17411>.
         // We may want to remove or conditionalize this workaround at some point.
         return true;
+    case '-':
+        if (isASCIIDigit(nextCh)) {
+            // Don't allow line breaking between '-' and a digit if the '-' may mean a minus sign in the context,
+            // while allow breaking in 'ABCD-1234' and '1234-5678' which may be in long URLs.
+            return isASCIIAlphanumeric(lastCh);
+        }
+        // Fall through
     default:
         // If both ch and nextCh are ASCII characters, use a lookup table for enhanced speed and for compatibility
         // with other browsers (see comments for asciiLineBreakTable for details).
@@ -151,11 +160,12 @@ int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos, boo
     int len = lazyBreakIterator.length();
     int nextBreak = -1;
 
+    UChar lastLastCh = pos > 1 ? str[pos - 2] : 0;
     UChar lastCh = pos > 0 ? str[pos - 1] : 0;
     for (int i = pos; i < len; i++) {
         UChar ch = str[i];
 
-        if (isBreakableSpace(ch, treatNoBreakSpaceAsBreak) || shouldBreakAfter(lastCh, ch))
+        if (isBreakableSpace(ch, treatNoBreakSpaceAsBreak) || shouldBreakAfter(lastLastCh, lastCh, ch))
             return i;
 
         if (needsLineBreakIterator(ch) || needsLineBreakIterator(lastCh)) {
@@ -168,6 +178,7 @@ int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos, boo
                 return i;
         }
 
+        lastLastCh = lastCh;
         lastCh = ch;
     }
 
