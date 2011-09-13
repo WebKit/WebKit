@@ -684,6 +684,9 @@ String FrameLoaderClientQt::generatedMIMETypeForURLScheme(const String&) const
 void FrameLoaderClientQt::frameLoadCompleted()
 {
     // Note that this can be called multiple times.
+    if (!m_webFrame)
+        return;
+    m_webFrame->page()->d->updateNavigationActions();
 }
 
 

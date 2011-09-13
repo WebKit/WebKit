@@ -1,3 +1,23 @@
+2011-09-13  Zeno Albisser  <zeno.albisser@nokia.com>
+
+        [Qt] Fix state of stop/reload actions in QWebPage
+        https://bugs.webkit.org/show_bug.cgi?id=65977
+
+        FrameLoader does ask its DocumentLoader to stop loading subresources before
+        setting the state to FrameStateCommittedPage. But it does
+        not check if the the DocumentLoader actually stopped loading before
+        it changes the state.
+        Therefore a subresourceLoader can still be active, when we receive the
+        call to dispatchDidFinishLoad(). This leads to an inconsistent behavior
+        of the stop/reload actions in QWebPage.
+        This changeset fixes the inconsistent state by updating the action states
+        also when frameLoadCompleted() is called.
+
+        Reviewed by Chang Shu.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::frameLoadCompleted):
+
 2011-09-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Fix "Unmatched parentheses are deprecated." warnings

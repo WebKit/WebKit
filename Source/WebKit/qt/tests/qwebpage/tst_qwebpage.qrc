@@ -8,6 +8,7 @@
     <file>resources/iframe3.html</file>
     <file>resources/framedindex.html</file>
     <file>resources/content.html</file>
+    <file>resources/script.html</file>
 </qresource>
 </RCC>
 

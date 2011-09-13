@@ -98,6 +98,7 @@ private slots:
     void acceptNavigationRequest();
     void geolocationRequestJS();
     void loadFinished();
+    void actionStates();
     void popupFormSubmission();
     void acceptNavigationRequestWithNewWindow();
     void userStyleSheet();
@@ -342,6 +343,19 @@ void tst_QWebPage::loadFinished()
                                            "foo \"><frame src=\"data:text/html,bar\"></frameset>"));
     QTRY_COMPARE(spyLoadFinished.count(), 1);
     QCOMPARE(spyLoadFinished.count(), 1);
+}
+
+void tst_QWebPage::actionStates()
+{
+    QWebPage* page = m_view->page();
+
+    page->mainFrame()->load(QUrl("qrc:///resources/script.html"));
+
+    QAction* reloadAction = page->action(QWebPage::Reload);
+    QAction* stopAction = page->action(QWebPage::Stop);
+
+    QTRY_VERIFY(reloadAction->isEnabled());
+    QTRY_VERIFY(!stopAction->isEnabled());
 }
 
 class ConsolePage : public QWebPage
