@@ -206,6 +206,7 @@ function testPlatformAndBuildType()
     runPlatformAndBuildTypeTest('GPU Win7 Tests (dbg)(2) - GPU', 'WIN7', 'DEBUG');
     runPlatformAndBuildTypeTest('GPU Linux Tests x64 - GPU', 'LUCID', 'RELEASE');
     runPlatformAndBuildTypeTest('XP Tests', 'XP', 'RELEASE');
+    runPlatformAndBuildTypeTest('Interactive Tests (dbg)', 'XP', 'DEBUG');
     
     g_currentState.group = '@ToT - webkit.org';
     runPlatformAndBuildTypeTest('Chromium Win Release (Tests)', 'XP', 'RELEASE');

@@ -539,6 +539,9 @@ function chromiumPlatform(builderNameUpperCase)
         return 'XP';
     if (stringContains(builderNameUpperCase, 'LINUX'))
         return 'LUCID';
+    // The interactive bot is XP, but doesn't have an OS in it's name.
+    if (stringContains(builderNameUpperCase, 'INTERACTIVE'))
+        return 'XP';
 }
 
 

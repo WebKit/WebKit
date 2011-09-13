@@ -1,3 +1,13 @@
+2011-09-13  Ojan Vafai  <ojan@chromium.org>
+
+        [chromium] fix flakiness dashboard for chromium interactive tests
+        https://bugs.webkit.org/show_bug.cgi?id=68029
+
+        Reviewed by Tony Chang.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+
 2011-09-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Alice and Aryeh to the list of contributors.
