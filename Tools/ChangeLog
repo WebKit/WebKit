@@ -1,3 +1,20 @@
+2011-09-12  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Send the right key names for PageUp and PageDown.
+        https://bugs.webkit.org/show_bug.cgi?id=67044
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        PlatformKeyboardEventEfl uses "Prior" and "Next" to refer to PageUp and
+        PageDown (which is close to the defines in WindowsKeyboardCodes.h).
+        However, EventSender was sending "Page_Up" and "Page_Down", so tests
+        such as editing/input/page-up-down-scrolls.html were timing out due to
+        the right key down events not being sent.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (keyPadNameFromJSValue):
+        (keyNameFromJSValue):
+
 2011-09-12  Eric Seidel  <eric@webkit.org>
 
         sheriffbot whois is case sensitive

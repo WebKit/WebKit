@@ -315,9 +315,9 @@ static const char* keyPadNameFromJSValue(JSStringRef character)
     if (equals(character, "downArrow"))
         return "KP_Down";
     if (equals(character, "pageUp"))
-        return "KP_Page_Up";
+        return "KP_Prior";
     if (equals(character, "pageDown"))
-        return "KP_Page_Down";
+        return "KP_Next";
     if (equals(character, "home"))
         return "KP_Home";
     if (equals(character, "end"))
@@ -344,9 +344,9 @@ static const char* keyNameFromJSValue(JSStringRef character)
     if (equals(character, "downArrow"))
         return "Down";
     if (equals(character, "pageUp"))
-        return "Page_Up";
+        return "Prior";
     if (equals(character, "pageDown"))
-        return "Page_Down";
+        return "Next";
     if (equals(character, "home"))
         return "Home";
     if (equals(character, "end"))
