@@ -1,3 +1,17 @@
+2011-09-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [CSS3 Backgrounds and Borders] Add unprefixed border-image shorthand.
+        https://bugs.webkit.org/show_bug.cgi?id=67970
+
+        Reviewed by David Hyatt.
+
+        Also update CSSStyleSelector.cpp to support border-image to suppress assertion in
+        fast/borders/border-image-omit-right-slice.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapNinePieceImage):
+
 2011-09-13  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Reviewed by Darin Adler.

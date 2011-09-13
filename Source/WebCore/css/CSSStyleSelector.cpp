@@ -3161,10 +3161,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitBorderImage:
     case CSSPropertyWebkitMaskBoxImage: {
         if (isInherit) {
+            HANDLE_INHERIT_COND(CSSPropertyBorderImage, borderImage, BorderImage)
             HANDLE_INHERIT_COND(CSSPropertyWebkitBorderImage, borderImage, BorderImage)
             HANDLE_INHERIT_COND(CSSPropertyWebkitMaskBoxImage, maskBoxImage, MaskBoxImage)
             return;
         } else if (isInitial) {
+            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderImage, BorderImage, NinePieceImage)
             HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWebkitBorderImage, BorderImage, NinePieceImage)
             HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyWebkitMaskBoxImage, MaskBoxImage, NinePieceImage)
             return;
@@ -3176,8 +3178,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             image.setBorderSlices(LengthBox()); // The slices default to auto.
         }
         mapNinePieceImage(property, value, image);
-        
-        if (id == CSSPropertyWebkitBorderImage)
+
+        if (id != CSSPropertyWebkitMaskBoxImage)
             m_style->setBorderImage(image);
         else
             m_style->setMaskBoxImage(image);
@@ -4602,7 +4604,7 @@ void CSSStyleSelector::mapNinePieceImage(CSSPropertyID property, CSSValue* value
     
     // Set the image (this kicks off the load).
     CSSPropertyID imageProperty;
-    if (property == CSSPropertyWebkitBorderImage)
+    if (property == CSSPropertyWebkitBorderImage || property == CSSPropertyBorderImage)
         imageProperty = CSSPropertyBorderImageSource;
     else if (property == CSSPropertyWebkitMaskBoxImage)
         imageProperty = CSSPropertyWebkitMaskBoxImageSource;
