@@ -88,8 +88,15 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
     if (newImage->willPaintBrokenImage()) {
         float deviceScaleFactor = Page::deviceScaleFactor(frame());
         imageSize = newImage->brokenImage(deviceScaleFactor)->size();
-        if (deviceScaleFactor >= 2)
-            imageSize.scale(0.5f);        
+        if (deviceScaleFactor >= 2) {
+            // It is important to scale by 0.5 instead of the deviceScaleFactor because the
+            // high resolution broken image artwork is actually a 2x image. We should 
+            // consider adding functionality to Image to ask about the image's resolution,
+            // and then we could scale by 1 / resolution. This is a solution that would
+            // scale better since this hardcoded number will have to change if we ever get
+            // artwork at other, higher resolutions. 
+            imageSize.scale(0.5f);
+        }
     } else
         imageSize = newImage->image()->size();
 
