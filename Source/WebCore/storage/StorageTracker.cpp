@@ -51,7 +51,7 @@ static StorageTracker* storageTracker = 0;
 void StorageTracker::initializeTracker(const String& storagePath, StorageTrackerClient* client)
 {
     ASSERT(isMainThread());
-    ASSERT(!storageTracker);
+    ASSERT(!storageTracker || !storageTracker->m_client);
     
     if (!storageTracker)
         storageTracker = new StorageTracker(storagePath);
