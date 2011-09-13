@@ -1,3 +1,13 @@
+2011-09-12  Jacky Jiang  <zhajiang@rim.com>
+
+        Setting document.title doesn't affect contents of title tag of XHTML documents
+        https://bugs.webkit.org/show_bug.cgi?id=57537
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/dom/title-content-set-innerText-get-expected.txt: Added.
+        * fast/dom/title-content-set-innerText-get.xhtml: Added.
+
 2011-09-12  Dominic Mazzoni  <dmazzoni@google.com>
 
         Add GTK & Win expectations for two recently added

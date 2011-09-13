@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title id='t'>Original Title</title>
+<link rel="stylesheet" href="../js/resources/js-test-style.css" />
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div> 
+<script>
+description("This test ensures that we can update the contents of the title tag of the XHTML document when setting document.title");
+
+document.title = 'This is the new title';
+shouldBe("document.getElementById('t').innerText", "'This is the new title'");
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body> 
+</html> 

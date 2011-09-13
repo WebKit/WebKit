@@ -1329,7 +1329,7 @@ void Document::setTitle(const String& title)
 {
     // Title set by JavaScript -- overrides any title elements.
     m_titleSetExplicitly = true;
-    if (!isHTMLDocument())
+    if (!isHTMLDocument() && !isXHTMLDocument())
         m_titleElement = 0;
     else if (!m_titleElement) {
         if (HTMLElement* headElement = head()) {
