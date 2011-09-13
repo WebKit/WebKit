@@ -238,7 +238,10 @@ void CounterNode::insertAfter(CounterNode* newChild, CounterNode* refChild, cons
     ASSERT(!newChild->m_parent);
     ASSERT(!newChild->m_previousSibling);
     ASSERT(!newChild->m_nextSibling);
-    ASSERT(!refChild || refChild->m_parent == this);
+    // If the refChild is not our child we can not complete the request. This hardens against bugs in RenderCounter.
+    // When renderers are reparented it may request that we insert counter nodes improperly.
+    if (refChild && refChild->m_parent != this)
+        return;
 
     if (newChild->m_hasResetType) {
         while (m_lastChild != refChild)
@@ -274,32 +277,43 @@ void CounterNode::insertAfter(CounterNode* newChild, CounterNode* refChild, cons
             next->recount();
         return;
     }
+    // If the new child is the last in the sibling list we must set the parent's lastChild.
+    if (!newChild->m_nextSibling)
+        m_lastChild = newChild;
 
     // The code below handles the case when a formerly root increment counter is loosing its root position
     // and therefore its children become next siblings.
     CounterNode* last = newChild->m_lastChild;
     CounterNode* first = newChild->m_firstChild;
 
-    newChild->m_nextSibling = first;
-    first->m_previousSibling = newChild;
-    // The case when the original next sibling of the inserted node becomes a child of
-    // one of the former children of the inserted node is not handled as it is believed
-    // to be impossible since:
-    // 1. if the increment counter node lost it's root position as a result of another
-    //    counter node being created, it will be inserted as the last child so next is null.
-    // 2. if the increment counter node lost it's root position as a result of a renderer being
-    //    inserted into the document's render tree, all its former children counters are attached
-    //    to children of the inserted renderer and hence cannot be in scope for counter nodes
-    //    attached to renderers that were already in the document's render tree.
-    last->m_nextSibling = next;
-    if (next)
-        next->m_previousSibling = last;
-    else
-        m_lastChild = last;
-    for (next = first; ; next = next->m_nextSibling) {
-        next->m_parent = this;
-        if (last == next)
-            break;
+    if (first) {
+        ASSERT(last);
+        newChild->m_nextSibling = first;
+        if (m_lastChild == newChild)
+            m_lastChild = last;
+
+        first->m_previousSibling = newChild;
+    
+        // The case when the original next sibling of the inserted node becomes a child of
+        // one of the former children of the inserted node is not handled as it is believed
+        // to be impossible since:
+        // 1. if the increment counter node lost it's root position as a result of another
+        //    counter node being created, it will be inserted as the last child so next is null.
+        // 2. if the increment counter node lost it's root position as a result of a renderer being
+        //    inserted into the document's render tree, all its former children counters are attached
+        //    to children of the inserted renderer and hence cannot be in scope for counter nodes
+        //    attached to renderers that were already in the document's render tree.
+        last->m_nextSibling = next;
+        if (next) {
+            ASSERT(next->m_previousSibling == newChild);
+            next->m_previousSibling = last;
+        } else
+            m_lastChild = last;
+        for (next = first; ; next = next->m_nextSibling) {
+            next->m_parent = this;
+            if (last == next)
+                break;
+        }
     }
     newChild->m_firstChild = 0;
     newChild->m_lastChild = 0;

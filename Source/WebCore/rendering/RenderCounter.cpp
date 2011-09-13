@@ -323,7 +323,11 @@ static bool findPlaceForCounter(RenderObject* counterOwner, const AtomicString& 
                         // We are not a reset node or the previous reset must be on an ancestor of our owner renderer
                         // hence we must be a child of that reset counter.
                         parent = currentCounter;
-                        ASSERT(previousSibling->parent() == currentCounter);
+                        // In some cases renders can be reparented (ex. nodes inside a table but not in a column or row).
+                        // In these cases the identified previousSibling will be invalid as its parent is different from
+                        // our identified parent.
+                        if (previousSibling->parent() != currentCounter)
+                            previousSibling = 0;
                         return true;
                     }
                     // CurrentCounter, the counter at the EndSearchRenderer, is not reset.
@@ -439,10 +443,8 @@ static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& id
         if (!currentCounter)
             continue;
         skipDescendants = true;
-        if (currentCounter->parent()) {
-            ASSERT(newNode->firstChild());
+        if (currentCounter->parent())
             continue;
-        }
         if (stayWithin == parentElement(currentRenderer) && currentCounter->hasResetType())
             break;
         newNode->insertAfter(currentCounter, newNode->lastChild(), identifier);
