@@ -191,6 +191,9 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , parser(new Parser)
     , interpreter(0)
     , heap(this, heapSize)
+#if ENABLE(TIERED_COMPILATION)
+    , sizeOfLastOSRScratchBuffer(0)
+#endif
     , dynamicGlobalObject(0)
     , cachedUTCOffset(std::numeric_limits<double>::quiet_NaN())
     , maxReentryDepth(threadStackType == ThreadStackTypeSmall ? MaxSmallThreadReentryDepth : MaxLargeThreadReentryDepth)
@@ -355,6 +358,11 @@ JSGlobalData::~JSGlobalData()
     delete m_regExpCache;
 #if ENABLE(REGEXP_TRACING)
     delete m_rtTraceList;
+#endif
+
+#if ENABLE(TIERED_COMPILATION)
+    for (unsigned i = 0; i < osrScratchBuffers.size(); ++i)
+        fastFree(osrScratchBuffers[i]);
 #endif
 }
 

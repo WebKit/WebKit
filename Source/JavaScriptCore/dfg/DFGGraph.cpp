@@ -52,13 +52,12 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     NodeType op = node.op;
 
     unsigned refCount = node.refCount();
-    if (!refCount) {
-        printf("% 4d:\tskipped %s\n", (int)nodeIndex, opName(op));
-        return;
-    }
+    bool skipped = !refCount;
     bool mustGenerate = node.mustGenerate();
-    if (mustGenerate)
+    if (mustGenerate) {
+        ASSERT(refCount);
         --refCount;
+    }
 
     // Example/explanation of dataflow dump output
     //
@@ -77,8 +76,8 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     //         $#   - the index in the CodeBlock of a constant { for numeric constants the value is displayed | for integers, in both decimal and hex }.
     //         id#  - the index in the CodeBlock of an identifier { if codeBlock is passed to dump(), the string representation is displayed }.
     //         var# - the index of a var on the global object, used by GetGlobalVar/PutGlobalVar operations.
-    printf("% 4d:\t<%c%u:", (int)nodeIndex, mustGenerate ? '!' : ' ', refCount);
-    if (node.hasResult())
+    printf("% 4d:%s<%c%u:", (int)nodeIndex, skipped ? "  skipped  " : "           ", mustGenerate ? '!' : ' ', refCount);
+    if (node.hasResult() && !skipped)
         printf("%u", node.virtualRegister());
     else
         printf("-");

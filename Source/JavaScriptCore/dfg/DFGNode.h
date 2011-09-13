@@ -26,8 +26,13 @@
 #ifndef DFGNode_h
 #define DFGNode_h
 
+#include <wtf/Platform.h>
+
 // Emit various logging information for debugging, including dumping the dataflow graphs.
 #define ENABLE_DFG_DEBUG_VERBOSE 0
+// Emit logging for OSR exit value recoveries at every node, not just nodes that
+// actually has speculation checks.
+#define ENABLE_DFG_VERBOSE_VALUE_RECOVERIES 0
 // Enable generation of dynamic checks into the instruction stream.
 #if !ASSERT_DISABLED
 #define ENABLE_DFG_JIT_ASSERT 1
@@ -50,6 +55,8 @@
 #define DFG_DEBUG_LOCAL_DISBALE 0
 // Disable the SpeculativeJIT without having to touch Platform.h!
 #define DFG_DEBUG_LOCAL_DISBALE_SPECULATIVE 0
+// Disable the non-speculative JIT and use OSR instead.
+#define ENABLE_DFG_OSR_EXIT ENABLE_TIERED_COMPILATION
 // Generate stats on how successful we were in making use of the DFG jit, and remaining on the hot path.
 #define ENABLE_DFG_SUCCESS_STATS 0
 
@@ -72,9 +79,32 @@ COMPILE_ASSERT(sizeof(VirtualRegister) == sizeof(int), VirtualRegister_is_32bit)
 typedef uint32_t NodeIndex;
 static const NodeIndex NoNode = UINT_MAX;
 
-// Information used to map back from an exception to any handler/source information.
+// Information used to map back from an exception to any handler/source information,
+// and to implement OSR.
 // (Presently implemented as a bytecode index).
-typedef uint32_t ExceptionInfo;
+class CodeOrigin {
+public:
+    CodeOrigin()
+        : m_bytecodeIndex(std::numeric_limits<uint32_t>::max())
+    {
+    }
+    
+    explicit CodeOrigin(uint32_t bytecodeIndex)
+        : m_bytecodeIndex(bytecodeIndex)
+    {
+    }
+    
+    bool isSet() const { return m_bytecodeIndex != std::numeric_limits<uint32_t>::max(); }
+    
+    uint32_t bytecodeIndex() const
+    {
+        ASSERT(isSet());
+        return m_bytecodeIndex;
+    }
+    
+private:
+    uint32_t m_bytecodeIndex;
+};
 
 // Entries in the NodeType enum (below) are composed of an id, a result type (possibly none)
 // and some additional informative flags (must generate, is constant, etc).
@@ -357,9 +387,9 @@ struct Node {
     enum VarArgTag { VarArg };
 
     // Construct a node with up to 3 children, no immediate value.
-    Node(NodeType op, ExceptionInfo exceptionInfo, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
+    Node(NodeType op, CodeOrigin codeOrigin, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : op(op)
-        , exceptionInfo(exceptionInfo)
+        , codeOrigin(codeOrigin)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
     {
@@ -370,9 +400,9 @@ struct Node {
     }
 
     // Construct a node with up to 3 children and an immediate value.
-    Node(NodeType op, ExceptionInfo exceptionInfo, OpInfo imm, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
+    Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : op(op)
-        , exceptionInfo(exceptionInfo)
+        , codeOrigin(codeOrigin)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm.m_value)
@@ -384,9 +414,9 @@ struct Node {
     }
 
     // Construct a node with up to 3 children and two immediate values.
-    Node(NodeType op, ExceptionInfo exceptionInfo, OpInfo imm1, OpInfo imm2, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
+    Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm1, OpInfo imm2, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : op(op)
-        , exceptionInfo(exceptionInfo)
+        , codeOrigin(codeOrigin)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm1.m_value)
@@ -399,9 +429,9 @@ struct Node {
     }
     
     // Construct a node with a variable number of children and two immediate values.
-    Node(VarArgTag, NodeType op, ExceptionInfo exceptionInfo, OpInfo imm1, OpInfo imm2, unsigned firstChild, unsigned numChildren)
+    Node(VarArgTag, NodeType op, CodeOrigin codeOrigin, OpInfo imm1, OpInfo imm2, unsigned firstChild, unsigned numChildren)
         : op(op)
-        , exceptionInfo(exceptionInfo)
+        , codeOrigin(codeOrigin)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm1.m_value)
@@ -643,6 +673,14 @@ struct Node {
         ASSERT(!(op & NodeHasVarArgs));
         return children.fixed.child1;
     }
+    
+    // This is useful if you want to do a fast check on the first child
+    // before also doing a check on the opcode. Use this with care and
+    // avoid it if possible.
+    NodeIndex child1Unchecked()
+    {
+        return children.fixed.child1;
+    }
 
     NodeIndex child2()
     {
@@ -671,7 +709,7 @@ struct Node {
     // This enum value describes the type of the node.
     NodeType op;
     // Used to look up exception handling information (currently implemented as a bytecode index).
-    ExceptionInfo exceptionInfo;
+    CodeOrigin codeOrigin;
     // References to up to 3 children (0 for no child).
     union {
         struct {

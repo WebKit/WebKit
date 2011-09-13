@@ -209,6 +209,11 @@ void JIT::privateCompileMainPass()
 
         m_labels[m_bytecodeOffset] = label();
 
+#if ENABLE(TIERED_COMPILATION)
+        if (m_canBeOptimized)
+            m_jitCodeMapEncoder.append(m_bytecodeOffset, differenceBetween(m_startOfCode, label()));
+#endif
+
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
         DEFINE_BINARY_OP(op_del_by_val)
         DEFINE_BINARY_OP(op_in)
@@ -373,7 +378,6 @@ void JIT::privateCompileMainPass()
 #endif
 }
 
-
 void JIT::privateCompileLinkPass()
 {
     unsigned jmpTableCount = m_jmpTable.size();
@@ -502,6 +506,8 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 {
 #if ENABLE(TIERED_COMPILATION)
     m_canBeOptimized = m_codeBlock->canCompileWithDFG();
+    if (m_canBeOptimized)
+        m_startOfCode = label();
 #endif
     
     // Just add a little bit of randomness to the codegen
@@ -641,6 +647,11 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
         info.cachedStructure.setLocation(patchBuffer.locationOf(m_methodCallCompilationInfo[i].structureToCompare));
         info.callReturnLocation = m_codeBlock->structureStubInfo(m_methodCallCompilationInfo[i].propertyAccessIndex).callReturnLocation;
     }
+
+#if ENABLE(TIERED_COMPILATION)
+    if (m_canBeOptimized)
+        m_codeBlock->setJITCodeMap(m_jitCodeMapEncoder.finish());
+#endif
 
     if (m_codeBlock->codeType() == FunctionCode && functionEntryArityCheck)
         *functionEntryArityCheck = patchBuffer.locationOf(arityCheck);

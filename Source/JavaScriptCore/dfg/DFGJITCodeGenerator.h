@@ -32,6 +32,7 @@
 #include <dfg/DFGGenerationInfo.h>
 #include <dfg/DFGGraph.h>
 #include <dfg/DFGJITCompiler.h>
+#include <dfg/DFGNode.h>
 #include <dfg/DFGOperations.h>
 #include <dfg/DFGRegisterBank.h>
 
@@ -907,7 +908,7 @@ protected:
 
     JITCompiler::Call appendCallWithExceptionCheck(const FunctionPtr& function)
     {
-        return m_jit.appendCallWithExceptionCheck(function, m_jit.graph()[m_compileIndex].exceptionInfo);
+        return m_jit.appendCallWithExceptionCheck(function, m_jit.graph()[m_compileIndex].codeOrigin);
     }
 
     void addBranch(const MacroAssembler::Jump& jump, BlockIndex destination)

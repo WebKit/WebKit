@@ -100,6 +100,340 @@ void JITCompiler::fillToJS(NodeIndex nodeIndex, GPRReg gpr)
     loadPtr(addressFor(node.virtualRegister()), gpr);
 }
 
+#if ENABLE(DFG_OSR_EXIT)
+void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecovery* recovery, Vector<BytecodeAndMachineOffset>& decodedCodeMap)
+{
+    // 1) Pro-forma stuff.
+    exit.m_check.link(this);
+
+#if ENABLE(DFG_DEBUG_VERBOSE)
+    fprintf(stderr, "OSR exit for Node @%d (bc#%u) at JIT offset 0x%x   ", (int)exit.m_nodeIndex, exit.m_bytecodeIndex, debugOffset());
+    exit.dump(stderr);
+#endif
+#if ENABLE(DFG_JIT_BREAK_ON_SPECULATION_FAILURE)
+    breakpoint();
+#endif
+    
+#if ENABLE(DFG_VERBOSE_SPECULATION_FAILURE)
+    SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
+    debugInfo->codeBlock = m_codeBlock;
+    debugInfo->debugOffset = debugOffset();
+    
+    debugCall(debugOperationPrintSpeculationFailure, debugInfo);
+#endif
+    
+    // 2) Perform speculation recovery. This only comes into play when an operation
+    //    starts mutating state before verifying the speculation it has already made.
+    
+    GPRReg alreadyBoxed = InvalidGPRReg;
+    
+    if (recovery) {
+        switch (recovery->type()) {
+        case SpeculativeAdd:
+            sub32(recovery->src(), recovery->dest());
+            orPtr(GPRInfo::tagTypeNumberRegister, recovery->dest());
+            alreadyBoxed = recovery->dest();
+            break;
+            
+        case BooleanSpeculationCheck:
+            xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), recovery->dest());
+            break;
+            
+        default:
+            break;
+        }
+    }
+
+    // 3) Figure out how many scratch slots we'll need. We need one for every GPR/FPR
+    //    whose destination is now occupied by a DFG virtual register, and we need
+    //    one for every displaced virtual register if there are more than
+    //    GPRInfo::numberOfRegisters of them. Also see if there are any constants,
+    //    any undefined slots, any FPR slots, and any unboxed ints.
+            
+    Vector<bool> poisonedVirtualRegisters(exit.m_variables.size());
+    for (unsigned i = 0; i < poisonedVirtualRegisters.size(); ++i)
+        poisonedVirtualRegisters[i] = false;
+
+    unsigned numberOfPoisonedVirtualRegisters = 0;
+    unsigned numberOfDisplacedVirtualRegisters = 0;
+    
+    // Booleans for fast checks. We expect that most OSR exits do not have to rebox
+    // Int32s, have no FPRs, and have no constants. If there are constants, we
+    // expect most of them to be jsUndefined(); if that's true then we handle that
+    // specially to minimize code size and execution time.
+    bool haveUnboxedInt32s = false;
+    bool haveFPRs = false;
+    bool haveConstants = false;
+    bool haveUndefined = false;
+    
+    for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
+        const ValueRecovery& recovery = exit.valueRecovery(index);
+        switch (recovery.technique()) {
+        case DisplacedInRegisterFile:
+            numberOfDisplacedVirtualRegisters++;
+            ASSERT((int)recovery.virtualRegister() >= 0);
+            
+            // See if we might like to store to this virtual register before doing
+            // virtual register shuffling. If so, we say that the virtual register
+            // is poisoned: it cannot be stored to until after displaced virtual
+            // registers are handled. We track poisoned virtual register carefully
+            // to ensure this happens efficiently. Note that we expect this case
+            // to be rare, so the handling of it is optimized for the cases in
+            // which it does not happen.
+            if (recovery.virtualRegister() < (int)exit.m_variables.size()) {
+                switch (exit.m_variables[recovery.virtualRegister()].technique()) {
+                case InGPR:
+                case UnboxedInt32InGPR:
+                case InFPR:
+                    if (!poisonedVirtualRegisters[recovery.virtualRegister()]) {
+                        poisonedVirtualRegisters[recovery.virtualRegister()] = true;
+                        numberOfPoisonedVirtualRegisters++;
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+            break;
+            
+        case UnboxedInt32InGPR:
+            haveUnboxedInt32s = true;
+            break;
+            
+        case InFPR:
+            haveFPRs = true;
+            break;
+            
+        case Constant:
+            haveConstants = true;
+            if (recovery.constant().isUndefined())
+                haveUndefined = true;
+            break;
+            
+        default:
+            break;
+        }
+    }
+    
+    EncodedJSValue* scratchBuffer = static_cast<EncodedJSValue*>(globalData()->osrScratchBufferForSize(sizeof(EncodedJSValue) * (numberOfPoisonedVirtualRegisters + (numberOfDisplacedVirtualRegisters <= GPRInfo::numberOfRegisters ? 0 : numberOfDisplacedVirtualRegisters))));
+
+    // From here on, the code assumes that it is profitable to maximize the distance
+    // between when something is computed and when it is stored.
+    
+    // 4) Perform all reboxing of integers.
+    
+    if (haveUnboxedInt32s) {
+        for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
+            const ValueRecovery& recovery = exit.valueRecovery(index);
+            if (recovery.technique() == UnboxedInt32InGPR && recovery.gpr() != alreadyBoxed)
+                orPtr(GPRInfo::tagTypeNumberRegister, recovery.gpr());
+        }
+    }
+    
+    // 5) Dump all non-poisoned GPRs. For poisoned GPRs, save them into the scratch storage.
+    //    Note that GPRs do not have a fast change (like haveFPRs) because we expect that
+    //    most OSR failure points will have at least one GPR that needs to be dumped.
+    
+    unsigned scratchIndex = 0;
+    for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
+        const ValueRecovery& recovery = exit.valueRecovery(index);
+        int operand = exit.operandForIndex(index);
+        switch (recovery.technique()) {
+        case InGPR:
+        case UnboxedInt32InGPR:
+            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)])
+                storePtr(recovery.gpr(), scratchBuffer + scratchIndex++);
+            else
+                storePtr(recovery.gpr(), addressFor((VirtualRegister)operand));
+            break;
+        default:
+            break;
+        }
+    }
+    
+    // At this point all GPRs are available for scratch use.
+    
+    if (haveFPRs) {
+        // 6) Box all doubles (relies on there being more GPRs than FPRs)
+        
+        for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
+            const ValueRecovery& recovery = exit.valueRecovery(index);
+            if (recovery.technique() != InFPR)
+                continue;
+            FPRReg fpr = recovery.fpr();
+            GPRReg gpr = GPRInfo::toRegister(FPRInfo::toIndex(fpr));
+            boxDouble(fpr, gpr);
+        }
+        
+        // 7) Dump all doubles into the register file, or to the scratch storage if
+        //    the destination virtual register is poisoned.
+        
+        for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
+            const ValueRecovery& recovery = exit.valueRecovery(index);
+            if (recovery.technique() != InFPR)
+                continue;
+            GPRReg gpr = GPRInfo::toRegister(FPRInfo::toIndex(recovery.fpr()));
+            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)])
+                storePtr(gpr, scratchBuffer + scratchIndex++);
+            else
+                storePtr(gpr, addressFor((VirtualRegister)exit.operandForIndex(index)));
+        }
+    }
+    
+    ASSERT(scratchIndex == numberOfPoisonedVirtualRegisters);
+    
+    // 8) Reshuffle displaced virtual registers. Optimize for the case that
+    //    the number of displaced virtual registers is not more than the number
+    //    of available physical registers.
+    
+    if (numberOfDisplacedVirtualRegisters) {
+        if (numberOfDisplacedVirtualRegisters <= GPRInfo::numberOfRegisters) {
+            // So far this appears to be the case that triggers all the time, but
+            // that is far from guaranteed.
+        
+            unsigned displacementIndex = 0;
+            for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
+                const ValueRecovery& recovery = exit.valueRecovery(index);
+                if (recovery.technique() != DisplacedInRegisterFile)
+                    continue;
+                loadPtr(addressFor(recovery.virtualRegister()), GPRInfo::toRegister(displacementIndex++));
+            }
+        
+            displacementIndex = 0;
+            for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
+                const ValueRecovery& recovery = exit.valueRecovery(index);
+                if (recovery.technique() != DisplacedInRegisterFile)
+                    continue;
+                storePtr(GPRInfo::toRegister(displacementIndex++), addressFor((VirtualRegister)exit.operandForIndex(index)));
+            }
+        } else {
+            // FIXME: This should use the shuffling algorithm that we use
+            // for speculative->non-speculative jumps, if we ever discover that
+            // some hot code with lots of live values that get displaced and
+            // spilled really enjoys frequently failing speculation.
+        
+            // For now this code is engineered to be correct but probably not
+            // super. In particular, it correctly handles cases where for example
+            // the displacements are a permutation of the destination values, like
+            //
+            // 1 -> 2
+            // 2 -> 1
+            //
+            // It accomplishes this by simply lifting all of the virtual registers
+            // from their old (DFG JIT) locations and dropping them in a scratch
+            // location in memory, and then transferring from that scratch location
+            // to their new (old JIT) locations.
+        
+            for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
+                const ValueRecovery& recovery = exit.valueRecovery(index);
+                if (recovery.technique() != DisplacedInRegisterFile)
+                    continue;
+                loadPtr(addressFor(recovery.virtualRegister()), GPRInfo::regT0);
+                storePtr(GPRInfo::regT0, scratchBuffer + scratchIndex++);
+            }
+        
+            scratchIndex = numberOfPoisonedVirtualRegisters;
+            for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
+                const ValueRecovery& recovery = exit.valueRecovery(index);
+                if (recovery.technique() != DisplacedInRegisterFile)
+                    continue;
+                loadPtr(scratchBuffer + scratchIndex++, GPRInfo::regT0);
+                storePtr(GPRInfo::regT0, addressFor((VirtualRegister)exit.operandForIndex(index)));
+            }
+        
+            ASSERT(scratchIndex == numberOfPoisonedVirtualRegisters + numberOfDisplacedVirtualRegisters);
+        }
+    }
+    
+    // 9) Dump all poisoned virtual registers.
+    
+    scratchIndex = 0;
+    if (numberOfPoisonedVirtualRegisters) {
+        for (int virtualRegister = 0; virtualRegister < (int)exit.m_variables.size(); ++virtualRegister) {
+            if (!poisonedVirtualRegisters[virtualRegister])
+                continue;
+            
+            const ValueRecovery& recovery = exit.m_variables[virtualRegister];
+            switch (recovery.technique()) {
+            case InGPR:
+            case UnboxedInt32InGPR:
+            case InFPR:
+                loadPtr(scratchBuffer + scratchIndex++, GPRInfo::regT0);
+                storePtr(GPRInfo::regT0, addressFor((VirtualRegister)virtualRegister));
+                break;
+                
+            default:
+                break;
+            }
+        }
+    }
+    ASSERT(scratchIndex == numberOfPoisonedVirtualRegisters);
+    
+    // 10) Dump all constants. Optimize for Undefined, since that's a constant we see
+    //     often.
+
+    if (haveConstants) {
+        if (haveUndefined)
+            move(TrustedImmPtr(JSValue::encode(jsUndefined())), GPRInfo::regT0);
+        
+        for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
+            const ValueRecovery& recovery = exit.valueRecovery(index);
+            if (recovery.technique() != Constant)
+                continue;
+            if (recovery.constant().isUndefined())
+                storePtr(GPRInfo::regT0, addressFor((VirtualRegister)exit.operandForIndex(index)));
+            else
+                storePtr(TrustedImmPtr(JSValue::encode(recovery.constant())), addressFor((VirtualRegister)exit.operandForIndex(index)));
+        }
+    }
+    
+    // 11) Load the result of the last bytecode operation into regT0.
+    
+    if (exit.m_lastSetOperand != std::numeric_limits<int>::max())
+        loadPtr(addressFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
+    
+    // 12) Fix call frame.
+    
+    ASSERT(codeBlock()->alternative()->getJITType() == JITCode::BaselineJIT);
+    storePtr(TrustedImmPtr(codeBlock()->alternative()), addressFor((VirtualRegister)RegisterFile::CodeBlock));
+    
+    // 13) Jump into the corresponding baseline JIT code.
+    
+    BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned, BytecodeAndMachineOffset::getBytecodeIndex>(decodedCodeMap.begin(), decodedCodeMap.size(), exit.m_bytecodeIndex);
+    
+    ASSERT(mapping);
+    ASSERT(mapping->m_bytecodeIndex == exit.m_bytecodeIndex);
+    
+    void* jumpTarget = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(codeBlock()->alternative()->getJITCode().start()) + mapping->m_machineCodeOffset);
+    
+    ASSERT(GPRInfo::regT1 != GPRInfo::cachedResultRegister);
+    
+    move(TrustedImmPtr(jumpTarget), GPRInfo::regT1);
+    jump(GPRInfo::regT1);
+
+#if ENABLE(DFG_DEBUG_VERBOSE)
+    fprintf(stderr, "   -> %p\n", jumpTarget);
+#endif
+}
+
+void JITCompiler::linkOSRExits(SpeculativeJIT& speculative)
+{
+    Vector<BytecodeAndMachineOffset> decodedCodeMap;
+    ASSERT(codeBlock()->alternative());
+    ASSERT(codeBlock()->alternative()->getJITType() == JITCode::BaselineJIT);
+    ASSERT(codeBlock()->alternative()->jitCodeMap());
+    codeBlock()->alternative()->jitCodeMap()->decode(decodedCodeMap);
+    
+    OSRExitVector::Iterator exitsIter = speculative.osrExits().begin();
+    OSRExitVector::Iterator exitsEnd = speculative.osrExits().end();
+    
+    while (exitsIter != exitsEnd) {
+        const OSRExit& exit = *exitsIter;
+        exitSpeculativeWithOSR(exit, speculative.speculationRecovery(exit.m_recoveryIndex), decodedCodeMap);
+        ++exitsIter;
+    }
+}
+#else // ENABLE(DFG_OSR_EXIT)
 class GeneralizedRegister {
 public:
     GeneralizedRegister() { }
@@ -803,6 +1137,7 @@ void JITCompiler::linkSpeculationChecks(SpeculativeJIT& speculative, NonSpeculat
     ASSERT(!(checksIter != checksEnd));
     ASSERT(!(entriesIter != entriesEnd));
 }
+#endif // ENABLE(DFG_OSR_EXIT)
 
 void JITCompiler::compileEntry()
 {
@@ -844,12 +1179,16 @@ void JITCompiler::compileBody()
     // to allow it to check which nodes in the graph may bail out, and may need to reenter the
     // non-speculative path.
     if (compiledSpeculative) {
+#if ENABLE(DFG_OSR_EXIT)
+        linkOSRExits(speculative);
+#else
         SpeculationCheckIndexIterator checkIterator(speculative.speculationChecks());
         NonSpeculativeJIT nonSpeculative(*this);
         nonSpeculative.compile(checkIterator);
 
         // Link the bail-outs from the speculative path to the corresponding entry points into the non-speculative one.
         linkSpeculationChecks(speculative, nonSpeculative);
+#endif
     } else {
         // If compilation through the SpeculativeJIT failed, throw away the code we generated.
         m_calls.clear();
@@ -858,8 +1197,12 @@ void JITCompiler::compileBody()
         m_methodGets.clear();
         rewindToLabel(speculativePathBegin);
 
+#if ENABLE(DFG_OSR_EXIT)
+        SpeculationCheckIndexIterator checkIterator;
+#else
         SpeculationCheckVector noChecks;
         SpeculationCheckIndexIterator checkIterator(noChecks);
+#endif
         NonSpeculativeJIT nonSpeculative(*this);
         nonSpeculative.compile(checkIterator);
     }
@@ -907,7 +1250,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         for (unsigned i = 0; i < m_calls.size(); ++i) {
             if (m_calls[i].m_handlesExceptions) {
                 unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_calls[i].m_call);
-                unsigned exceptionInfo = m_calls[i].m_exceptionInfo;
+                unsigned exceptionInfo = m_calls[i].m_codeOrigin.bytecodeIndex();
                 m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(returnAddressOffset, exceptionInfo));
             }
         }

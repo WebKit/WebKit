@@ -65,6 +65,7 @@
 		0FD3C82714115D4F00FD81CB /* DFGPropagator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3C82414115D2200FD81CB /* DFGPropagator.h */; };
 		0FD3C82814115D4F00FD81CB /* DFGDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3C82214115D0E00FD81CB /* DFGDriver.h */; };
 		0FD82E2114172CE300179C94 /* DFGCapabilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E1E14172C2F00179C94 /* DFGCapabilities.cpp */; };
+		0FD82E39141AB14D00179C94 /* CompactJITCodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E37141AB14200179C94 /* CompactJITCodeMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400067712A6F7830064D123 /* OSAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400067612A6F7830064D123 /* OSAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400069312A6F9E10064D123 /* OSAllocatorPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */; };
 		140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */; };
@@ -797,6 +798,7 @@
 		0FD3C82414115D2200FD81CB /* DFGPropagator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPropagator.h; path = dfg/DFGPropagator.h; sourceTree = "<group>"; };
 		0FD82E1E14172C2F00179C94 /* DFGCapabilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCapabilities.cpp; path = dfg/DFGCapabilities.cpp; sourceTree = "<group>"; };
 		0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCapabilities.h; path = dfg/DFGCapabilities.h; sourceTree = "<group>"; };
+		0FD82E37141AB14200179C94 /* CompactJITCodeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactJITCodeMap.h; sourceTree = "<group>"; };
 		1400067612A6F7830064D123 /* OSAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSAllocator.h; sourceTree = "<group>"; };
 		1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSAllocatorPosix.cpp; sourceTree = "<group>"; };
 		140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasePrivate.h; sourceTree = "<group>"; };
@@ -1576,6 +1578,7 @@
 		1429D92C0ED22D7000B89619 /* jit */ = {
 			isa = PBXGroup;
 			children = (
+				0FD82E37141AB14200179C94 /* CompactJITCodeMap.h */,
 				A7B48DB60EE74CFC00DCBDB6 /* ExecutableAllocator.cpp */,
 				A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */,
 				86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */,
@@ -2394,6 +2397,7 @@
 				BC257DE80E1F51C50016B6C9 /* Arguments.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
+				0FD82E39141AB14D00179C94 /* CompactJITCodeMap.h in Headers */,
 				BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */,
 				BC18C46E0E16F5CD00B34460 /* TCSpinLock.h in Headers */,
 				0F963B2F13FC66BB0002D9B2 /* MetaAllocatorHandle.h in Headers */,

@@ -234,6 +234,28 @@ namespace JSC {
 #ifndef NDEBUG
         int64_t debugDataBuffer[64];
 #endif
+#if ENABLE(TIERED_COMPILATION)
+        Vector<void*> osrScratchBuffers;
+        size_t sizeOfLastOSRScratchBuffer;
+        
+        void* osrScratchBufferForSize(size_t size)
+        {
+            if (!size)
+                return 0;
+            
+            if (size > sizeOfLastOSRScratchBuffer) {
+                // Protect against a N^2 memory usage pathology by ensuring
+                // that at worst, we get a geometric series, meaning that the
+                // total memory usage is somewhere around
+                // max(scratch buffer size) * 4.
+                sizeOfLastOSRScratchBuffer = size * 2;
+                
+                osrScratchBuffers.append(fastMalloc(sizeOfLastOSRScratchBuffer));
+            }
+            
+            return osrScratchBuffers.last();
+        }
+#endif
 #endif
 
         HashMap<OpaqueJSClass*, OpaqueJSClassContextData*> opaqueJSClassData;

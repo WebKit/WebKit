@@ -367,14 +367,18 @@ private:
         ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constant1).asInt32() == 1);
         return getJSConstant(m_constant1);
     }
-
+    
+    CodeOrigin currentCodeOrigin()
+    {
+        return CodeOrigin(m_currentIndex);
+    }
 
     // These methods create a node and add it to the graph. If nodes of this type are
     // 'mustGenerate' then the node  will implicitly be ref'ed to ensure generation.
     NodeIndex addToGraph(NodeType op, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
-        m_graph.append(Node(op, m_currentIndex, child1, child2, child3));
+        m_graph.append(Node(op, currentCodeOrigin(), child1, child2, child3));
 
         if (op & NodeMustGenerate)
             m_graph.ref(resultIndex);
@@ -383,7 +387,7 @@ private:
     NodeIndex addToGraph(NodeType op, OpInfo info, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
-        m_graph.append(Node(op, m_currentIndex, info, child1, child2, child3));
+        m_graph.append(Node(op, currentCodeOrigin(), info, child1, child2, child3));
 
         if (op & NodeMustGenerate)
             m_graph.ref(resultIndex);
@@ -392,7 +396,7 @@ private:
     NodeIndex addToGraph(NodeType op, OpInfo info1, OpInfo info2, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
-        m_graph.append(Node(op, m_currentIndex, info1, info2, child1, child2, child3));
+        m_graph.append(Node(op, currentCodeOrigin(), info1, info2, child1, child2, child3));
 
         if (op & NodeMustGenerate)
             m_graph.ref(resultIndex);
@@ -402,7 +406,7 @@ private:
     NodeIndex addToGraph(Node::VarArgTag, NodeType op, OpInfo info1, OpInfo info2)
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
-        m_graph.append(Node(Node::VarArg, op, m_currentIndex, info1, info2, m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs));
+        m_graph.append(Node(Node::VarArg, op, currentCodeOrigin(), info1, info2, m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs));
         
         m_numPassedVarArgs = 0;
         

@@ -53,6 +53,7 @@ class SpeculationRecovery;
 
 struct EntryLocation;
 struct SpeculationCheck;
+struct OSRExit;
 
 #ifndef NDEBUG
 typedef void (*V_DFGDebugOperation_EP)(ExecState*, void*);
@@ -82,21 +83,21 @@ struct CallRecord {
     }
 
     // Constructor for a call with an exception handler.
-    CallRecord(MacroAssembler::Call call, FunctionPtr function, MacroAssembler::Jump exceptionCheck, ExceptionInfo exceptionInfo)
+    CallRecord(MacroAssembler::Call call, FunctionPtr function, MacroAssembler::Jump exceptionCheck, CodeOrigin codeOrigin)
         : m_call(call)
         , m_function(function)
         , m_exceptionCheck(exceptionCheck)
-        , m_exceptionInfo(exceptionInfo)
+        , m_codeOrigin(codeOrigin)
         , m_handlesExceptions(true)
     {
     }
 
     // Constructor for a call that may cause exceptions, but which are handled
     // through some mechanism other than the in-line exception handler.
-    CallRecord(MacroAssembler::Call call, FunctionPtr function, ExceptionInfo exceptionInfo)
+    CallRecord(MacroAssembler::Call call, FunctionPtr function, CodeOrigin codeOrigin)
         : m_call(call)
         , m_function(function)
-        , m_exceptionInfo(exceptionInfo)
+        , m_codeOrigin(codeOrigin)
         , m_handlesExceptions(true)
     {
     }
@@ -104,7 +105,7 @@ struct CallRecord {
     MacroAssembler::Call m_call;
     FunctionPtr m_function;
     MacroAssembler::Jump m_exceptionCheck;
-    ExceptionInfo m_exceptionInfo;
+    CodeOrigin m_codeOrigin;
     bool m_handlesExceptions;
 };
 
@@ -192,9 +193,9 @@ public:
     }
 
     // Notify the JIT of a call that does not require linking.
-    void notifyCall(Call call, unsigned exceptionInfo)
+    void notifyCall(Call call, CodeOrigin codeOrigin)
     {
-        m_calls.append(CallRecord(call, FunctionPtr(), exceptionInfo));
+        m_calls.append(CallRecord(call, FunctionPtr(), codeOrigin));
     }
 
     // Add a call out from JIT code, without an exception check.
@@ -205,20 +206,20 @@ public:
     }
 
     // Add a call out from JIT code, with an exception check.
-    Call appendCallWithExceptionCheck(const FunctionPtr& function, unsigned exceptionInfo)
+    Call appendCallWithExceptionCheck(const FunctionPtr& function, CodeOrigin codeOrigin)
     {
         Call functionCall = call();
         Jump exceptionCheck = branchTestPtr(NonZero, AbsoluteAddress(&globalData()->exception));
-        m_calls.append(CallRecord(functionCall, function, exceptionCheck, exceptionInfo));
+        m_calls.append(CallRecord(functionCall, function, exceptionCheck, codeOrigin));
         return functionCall;
     }
     
     // Add a call out from JIT code, with a fast exception check that tests if the return value is zero.
-    Call appendCallWithFastExceptionCheck(const FunctionPtr& function, unsigned exceptionInfo)
+    Call appendCallWithFastExceptionCheck(const FunctionPtr& function, CodeOrigin codeOrigin)
     {
         Call functionCall = call();
         Jump exceptionCheck = branchTestPtr(Zero, GPRInfo::returnValueGPR);
-        m_calls.append(CallRecord(functionCall, function, exceptionCheck, exceptionInfo));
+        m_calls.append(CallRecord(functionCall, function, exceptionCheck, codeOrigin));
         return functionCall;
     }
     
@@ -311,9 +312,9 @@ public:
         m_methodGets.append(MethodGetRecord(slowCall, structToCompare, protoObj, protoStructToCompare, putFunction));
     }
     
-    void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, unsigned exceptionInfo)
+    void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, CodeOrigin codeOrigin)
     {
-        m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, isCall, exceptionInfo));
+        m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, isCall, codeOrigin));
     }
 
 private:
@@ -326,8 +327,14 @@ private:
     void fillNumericToDouble(NodeIndex, FPRReg, GPRReg temporary);
     void fillInt32ToInteger(NodeIndex, GPRReg);
     void fillToJS(NodeIndex, GPRReg);
+    
+#if ENABLE(DFG_OSR_EXIT)
+    void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*, Vector<BytecodeAndMachineOffset>& decodedCodeMap);
+    void linkOSRExits(SpeculativeJIT&);
+#else
     void jumpFromSpeculativeToNonSpeculative(const SpeculationCheck&, const EntryLocation&, SpeculationRecovery*, NodeToRegisterMap& checkNodeToRegisterMap, NodeToRegisterMap& entryNodeToRegisterMap);
     void linkSpeculationChecks(SpeculativeJIT&, NonSpeculativeJIT&);
+#endif
 
     // The globalData, used to access constants such as the vPtrs.
     JSGlobalData* m_globalData;
@@ -386,12 +393,12 @@ private:
     };
     
     struct JSCallRecord {
-        JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, unsigned exceptionInfo)
+        JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, CodeOrigin codeOrigin)
             : m_fastCall(fastCall)
             , m_slowCall(slowCall)
             , m_targetToCheck(targetToCheck)
             , m_isCall(isCall)
-            , m_exceptionInfo(exceptionInfo)
+            , m_codeOrigin(codeOrigin)
         {
         }
         
@@ -399,7 +406,7 @@ private:
         Call m_slowCall;
         DataLabelPtr m_targetToCheck;
         bool m_isCall;
-        unsigned m_exceptionInfo;
+        CodeOrigin m_codeOrigin;
     };
 
     Vector<PropertyAccessRecord, 4> m_propertyAccesses;

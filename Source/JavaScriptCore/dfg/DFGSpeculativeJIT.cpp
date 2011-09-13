@@ -144,6 +144,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
     return InvalidGPRReg;
 }
 
+#if !ENABLE(DFG_OSR_EXIT)
 SpeculationCheck::SpeculationCheck(MacroAssembler::Jump check, SpeculativeJIT* jit, unsigned recoveryIndex)
     : m_check(check)
     , m_nodeIndex(jit->m_compileIndex)
@@ -170,6 +171,73 @@ SpeculationCheck::SpeculationCheck(MacroAssembler::Jump check, SpeculativeJIT* j
             m_fprInfo[iter.index()].nodeIndex = NoNode;
     }
 }
+#endif
+
+#ifndef NDEBUG
+void ValueSource::dump(FILE* out) const
+{
+    fprintf(out, "Node(%d)", m_nodeIndex);
+}
+
+void ValueRecovery::dump(FILE* out) const
+{
+    switch (technique()) {
+    case AlreadyInRegisterFile:
+        fprintf(out, "-");
+        break;
+    case InGPR:
+        fprintf(out, "%%%s", GPRInfo::debugName(gpr()));
+        break;
+    case UnboxedInt32InGPR:
+        fprintf(out, "int32(%%%s)", GPRInfo::debugName(gpr()));
+        break;
+    case InFPR:
+        fprintf(out, "%%%s", FPRInfo::debugName(fpr()));
+        break;
+    case DisplacedInRegisterFile:
+        fprintf(out, "*%d", virtualRegister());
+        break;
+    case Constant:
+        fprintf(out, "[%s]", constant().description());
+        break;
+    case DontKnow:
+        fprintf(out, "!");
+        break;
+    default:
+        fprintf(out, "?%d", technique());
+        break;
+    }
+}
+#endif
+
+#if ENABLE(DFG_OSR_EXIT)
+OSRExit::OSRExit(MacroAssembler::Jump check, SpeculativeJIT* jit, unsigned recoveryIndex)
+    : m_check(check)
+    , m_nodeIndex(jit->m_compileIndex)
+    , m_bytecodeIndex(jit->m_bytecodeIndexForOSR)
+    , m_recoveryIndex(recoveryIndex)
+    , m_arguments(jit->m_arguments.size())
+    , m_variables(jit->m_variables.size())
+    , m_lastSetOperand(jit->m_lastSetOperand)
+{
+    ASSERT(m_bytecodeIndex != std::numeric_limits<uint32_t>::max());
+    for (unsigned argument = 0; argument < m_arguments.size(); ++argument)
+        m_arguments[argument] = jit->computeValueRecoveryFor(jit->m_arguments[argument]);
+    for (unsigned variable = 0; variable < m_variables.size(); ++variable)
+        m_variables[variable] = jit->computeValueRecoveryFor(jit->m_variables[variable]);
+}
+
+#ifndef NDEBUG
+void OSRExit::dump(FILE* out) const
+{
+    for (unsigned argument = 0; argument < m_arguments.size(); ++argument)
+        m_arguments[argument].dump(out);
+    fprintf(out, " : ");
+    for (unsigned variable = 0; variable < m_variables.size(); ++variable)
+        m_variables[variable].dump(out);
+}
+#endif
+#endif
 
 GPRReg SpeculativeJIT::fillSpeculateInt(NodeIndex nodeIndex, DataFormat& returnFormat)
 {
@@ -650,6 +718,42 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case SetLocal: {
+        // SetLocal doubles as a hint as to where a node will be stored and
+        // as a speculation point. So before we speculate make sure that we
+        // know where the child of this node needs to go in the virtual
+        // register file.
+        compileMovHint(node);
+        
+        // As far as OSR is concerned, we're on the bytecode index corresponding
+        // to the *next* instruction, since we've already "executed" the
+        // SetLocal and whatever other DFG Nodes are associated with the same
+        // bytecode index as the SetLocal.
+        ASSERT(m_bytecodeIndexForOSR == node.codeOrigin.bytecodeIndex());
+        Node& nextNode = m_jit.graph()[m_compileIndex+1];
+        
+        // This assertion will fail if we ever emit multiple SetLocal's for
+        // a single bytecode instruction. That's unlikely to happen. But if
+        // it does, the solution is to to have this perform a search until
+        // it finds a Node with a different bytecode index from the one we've
+        // got, and to abstractly execute the SetLocal's along the way. Or,
+        // better yet, handle all of the SetLocal's at once: abstract interpret
+        // all of them, then emit code for all of them, with OSR exiting to
+        // the next non-SetLocal instruction. Note the special case for when
+        // both this SetLocal and the next op have a bytecode index of 0; this
+        // occurs for SetLocal's generated at the top of the code block to
+        // initialize locals to undefined. Ideally, we'd have a way of marking
+        // in the CodeOrigin that a SetLocal is synthetic. This will make the
+        // assertion more sensible-looking. We should then also assert that
+        // synthetic SetLocal's don't have speculation checks, since they
+        // should only be dropping values that we statically know we are
+        // allowed to drop into the variables. DFGPropagator will guarantee
+        // this, since it should have at least an approximation (if not
+        // exact knowledge) of the type of the SetLocal's child node, and
+        // should merge that information into the local that is being set.
+        ASSERT(m_bytecodeIndexForOSR != nextNode.codeOrigin.bytecodeIndex()
+               || (!m_bytecodeIndexForOSR && !nextNode.codeOrigin.bytecodeIndex()));
+        m_bytecodeIndexForOSR = nextNode.codeOrigin.bytecodeIndex();
+        
         PredictedType predictedType = m_jit.graph().getPrediction(node.local());
         if (isInt32Prediction(predictedType)) {
             SpeculateIntegerOperand value(this, node.child1());
@@ -670,6 +774,10 @@ void SpeculativeJIT::compile(Node& node)
             m_jit.storePtr(value.gpr(), JITCompiler::addressFor(node.local()));
             noResult(m_compileIndex);
         }
+        
+        // Indicate that it's no longer necessary to retrieve the value of
+        // this bytecode variable from registers or other locations in the register file.
+        valueSourceReferenceForOperand(node.local()) = ValueSource();
         break;
     }
 
@@ -1369,9 +1477,17 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
     }
-
+    
     if (node.hasResult() && node.mustGenerate())
         use(m_compileIndex);
+}
+
+void SpeculativeJIT::compileMovHint(Node& node)
+{
+    ASSERT(node.op == SetLocal);
+    
+    setNodeIndexForOperand(node.child1(), node.local());
+    m_lastSetOperand = node.local();
 }
 
 void SpeculativeJIT::compile(BasicBlock& block)
@@ -1382,35 +1498,74 @@ void SpeculativeJIT::compile(BasicBlock& block)
 #if ENABLE(DFG_JIT_BREAK_ON_EVERY_BLOCK)
     m_jit.breakpoint();
 #endif
+    
+    for (size_t i = 0; i < m_arguments.size(); ++i)
+        m_arguments[i] = ValueSource();
+    for (size_t i = 0; i < m_variables.size(); ++i)
+        m_variables[i] = ValueSource();
+    m_lastSetOperand = std::numeric_limits<int>::max();
+    m_bytecodeIndexForOSR = std::numeric_limits<uint32_t>::max();
 
     for (; m_compileIndex < block.end; ++m_compileIndex) {
         Node& node = m_jit.graph()[m_compileIndex];
-        if (!node.shouldGenerate())
-            continue;
-        
+        m_bytecodeIndexForOSR = node.codeOrigin.bytecodeIndex();
+        if (!node.shouldGenerate()) {
 #if ENABLE(DFG_DEBUG_VERBOSE)
-        fprintf(stderr, "SpeculativeJIT generating Node @%d at JIT offset 0x%x   ", (int)m_compileIndex, m_jit.debugOffset());
+            fprintf(stderr, "SpeculativeJIT skipping Node @%d (bc#%u) at JIT offset 0x%x     ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex(), m_jit.debugOffset());
+#endif
+            if (node.op == SetLocal)
+                compileMovHint(node);
+        } else {
+            
+#if ENABLE(DFG_DEBUG_VERBOSE)
+            fprintf(stderr, "SpeculativeJIT generating Node @%d (bc#%u) at JIT offset 0x%x   ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex(), m_jit.debugOffset());
 #endif
 #if ENABLE(DFG_JIT_BREAK_ON_EVERY_NODE)
-        m_jit.breakpoint();
+            m_jit.breakpoint();
 #endif
-        checkConsistency();
-        compile(node);
-        if (!m_compileOkay) {
+            checkConsistency();
+            compile(node);
+            if (!m_compileOkay) {
 #if ENABLE(DYNAMIC_TERMINATE_SPECULATION)
-            m_compileOkay = true;
-            m_compileIndex = block.end;
-            clearGenerationInfo();
+                m_compileOkay = true;
+                m_compileIndex = block.end;
+                clearGenerationInfo();
 #endif
-            return;
-        }
+                return;
+            }
+            
 #if ENABLE(DFG_DEBUG_VERBOSE)
-        if (node.hasResult())
-            fprintf(stderr, "-> %s\n", dataFormatToString(m_generationInfo[node.virtualRegister()].registerFormat()));
-        else
-            fprintf(stderr, "\n");
+            if (node.hasResult()) {
+                GenerationInfo& info = m_generationInfo[node.virtualRegister()];
+                fprintf(stderr, "-> %s, vr#%d", dataFormatToString(info.registerFormat()), (int)node.virtualRegister());
+                if (info.registerFormat() != DataFormatNone) {
+                    if (info.registerFormat() == DataFormatDouble)
+                        fprintf(stderr, ", %s", FPRInfo::debugName(info.fpr()));
+                    else
+                        fprintf(stderr, ", %s", GPRInfo::debugName(info.gpr()));
+                }
+                fprintf(stderr, "    ");
+            } else
+                fprintf(stderr, "    ");
 #endif
-        checkConsistency();
+        }
+        
+#if ENABLE(DFG_VERBOSE_VALUE_RECOVERIES)
+        for (int operand = -m_arguments.size() - RegisterFile::CallFrameHeaderSize; operand < -RegisterFile::CallFrameHeaderSize; ++operand)
+            computeValueRecoveryFor(operand).dump(stderr);
+        
+        fprintf(stderr, " : ");
+        
+        for (int operand = 0; operand < (int)m_variables.size(); ++operand)
+            computeValueRecoveryFor(operand).dump(stderr);
+#endif
+      
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        fprintf(stderr, "\n");
+#endif
+        
+        if (node.shouldGenerate())
+            checkConsistency();
     }
 }
 
@@ -1419,6 +1574,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
 void SpeculativeJIT::checkArgumentTypes()
 {
     ASSERT(!m_compileIndex);
+    m_bytecodeIndexForOSR = 0;
     for (int i = 0; i < m_jit.codeBlock()->m_numParameters; ++i) {
         VirtualRegister virtualRegister = (VirtualRegister)(m_jit.codeBlock()->thisRegister() + i);
         PredictedType predictedType = m_jit.graph().getPrediction(virtualRegister);
@@ -1454,13 +1610,126 @@ bool SpeculativeJIT::compile()
     ASSERT(!m_compileIndex);
     for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block) {
         compile(*m_jit.graph().m_blocks[m_block]);
-#if !ENABLE(DYNAMIC_OPTIMIZATION)
+#if !ENABLE(DYNAMIC_TERMINATE_SPECULATION)
         if (!m_compileOkay)
             return false;
 #endif
     }
     linkBranches();
     return true;
+}
+
+ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSource)
+{
+    if (!valueSource.isSet())
+        return ValueRecovery::alreadyInRegisterFile();
+
+    if (m_jit.isConstant(valueSource.nodeIndex()))
+        return ValueRecovery::constant(m_jit.valueOfJSConstant(valueSource.nodeIndex()));
+    
+    Node* nodePtr = &m_jit.graph()[valueSource.nodeIndex()];
+    if (!nodePtr->shouldGenerate()) {
+        // It's legitimately dead. As in, nobody will ever use this node, or operand,
+        // ever. Set it to Undefined to make the GC happy after the OSR.
+        return ValueRecovery::constant(jsUndefined());
+    }
+    
+    GenerationInfo* infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
+    if (!infoPtr->alive() || infoPtr->nodeIndex() != valueSource.nodeIndex()) {
+        // Try to see if there is an alternate node that would contain the value we want.
+        // There are four possibilities:
+        //
+        // ValueToNumber: If the only live version of the value is a ValueToNumber node
+        //    then it means that all remaining uses of the value would have performed a
+        //    ValueToNumber conversion anyway. Thus, we can substitute ValueToNumber.
+        //
+        // ValueToInt32: Likewise, if the only remaining live version of the value is
+        //    ValueToInt32, then we can use it. But if there is both a ValueToInt32
+        //    and a ValueToNumber, then we better go with ValueToNumber because it
+        //    means that some remaining uses would have converted to number while
+        //    others would have converted to Int32.
+        //
+        // UInt32ToNumber: If the only live version of the value is a UInt32ToNumber
+        //    then the only remaining uses are ones that want a properly formed number
+        //    rather than a UInt32 intermediate.
+        //
+        // The reverse of the above: This node could be a UInt32ToNumber, but its
+        //    alternative is still alive. This means that the only remaining uses of
+        //    the number would be fine with a UInt32 intermediate.
+        
+        bool found = false;
+        
+        if (nodePtr->op == UInt32ToNumber) {
+            NodeIndex nodeIndex = nodePtr->child1();
+            nodePtr = &m_jit.graph()[nodeIndex];
+            infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
+            if (infoPtr->alive() && infoPtr->nodeIndex() == nodeIndex)
+                found = true;
+        }
+        
+        if (!found) {
+            NodeIndex valueToNumberIndex = NoNode;
+            NodeIndex valueToInt32Index = NoNode;
+            NodeIndex uint32ToNumberIndex = NoNode;
+            
+            for (unsigned virtualRegister = 0; virtualRegister < m_generationInfo.size(); ++virtualRegister) {
+                GenerationInfo& info = m_generationInfo[virtualRegister];
+                if (!info.alive())
+                    continue;
+                if (info.nodeIndex() == NoNode)
+                    continue;
+                Node& node = m_jit.graph()[info.nodeIndex()];
+                if (node.child1Unchecked() != valueSource.nodeIndex())
+                    continue;
+                switch (node.op) {
+                case ValueToNumber:
+                    valueToNumberIndex = info.nodeIndex();
+                    break;
+                case ValueToInt32:
+                    valueToInt32Index = info.nodeIndex();
+                    break;
+                case UInt32ToNumber:
+                    uint32ToNumberIndex = info.nodeIndex();
+                    break;
+                default:
+                    break;
+                }
+            }
+            
+            NodeIndex nodeIndexToUse;
+            if (valueToNumberIndex != NoNode)
+                nodeIndexToUse = valueToNumberIndex;
+            else if (valueToInt32Index != NoNode)
+                nodeIndexToUse = valueToInt32Index;
+            else if (uint32ToNumberIndex != NoNode)
+                nodeIndexToUse = uint32ToNumberIndex;
+            else
+                nodeIndexToUse = NoNode;
+            
+            if (nodeIndexToUse != NoNode) {
+                nodePtr = &m_jit.graph()[nodeIndexToUse];
+                infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
+                ASSERT(infoPtr->alive() && infoPtr->nodeIndex() == nodeIndexToUse);
+                found = true;
+            }
+        }
+        
+        if (!found)
+            return ValueRecovery::constant(jsUndefined());
+    }
+    
+    ASSERT(infoPtr->alive());
+
+    if (infoPtr->registerFormat() != DataFormatNone) {
+        if (infoPtr->registerFormat() == DataFormatDouble)
+            return ValueRecovery::inFPR(infoPtr->fpr());
+        return ValueRecovery::inGPR(infoPtr->gpr(), infoPtr->registerFormat());
+    }
+    if (infoPtr->spillFormat() != DataFormatNone)
+        return ValueRecovery::displacedInRegisterFile(static_cast<VirtualRegister>(nodePtr->virtualRegister()));
+    
+    ASSERT_NOT_REACHED();
+    return ValueRecovery();
 }
 
 } } // namespace JSC::DFG

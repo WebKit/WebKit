@@ -30,6 +30,7 @@
 #ifndef CodeBlock_h
 #define CodeBlock_h
 
+#include "CompactJITCodeMap.h"
 #include "EvalCodeCache.h"
 #include "Instruction.h"
 #include "JITCode.h"
@@ -296,6 +297,17 @@ namespace JSC {
         }
         
         void unlinkIncomingCalls();
+#endif
+
+#if ENABLE(TIERED_COMPILATION)
+        void setJITCodeMap(PassOwnPtr<CompactJITCodeMap> jitCodeMap)
+        {
+            m_jitCodeMap = jitCodeMap;
+        }
+        CompactJITCodeMap* jitCodeMap()
+        {
+            return m_jitCodeMap.get();
+        }
 #endif
 
 #if ENABLE(INTERPRETER)
@@ -651,6 +663,9 @@ namespace JSC {
         MacroAssemblerCodePtr m_jitCodeWithArityCheck;
         SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo> > m_incomingCalls;
 #endif
+#if ENABLE(TIERED_COMPILATION)
+        OwnPtr<CompactJITCodeMap> m_jitCodeMap;
+#endif
 #if ENABLE(VALUE_PROFILER)
         SegmentedVector<ValueProfile, 8> m_valueProfiles;
 #endif
@@ -666,7 +681,7 @@ namespace JSC {
 
         SymbolTable* m_symbolTable;
 
-        OwnPtr<CodeBlock> m_alternative; // FIXME make this do something
+        OwnPtr<CodeBlock> m_alternative;
 
         struct RareData {
            WTF_MAKE_FAST_ALLOCATED;

@@ -40,6 +40,7 @@
 #define ASSERT_JIT_OFFSET(actual, expected) ASSERT_WITH_MESSAGE(actual == expected, "JIT Offset \"%s\" should be %d, not %d.\n", #expected, static_cast<int>(expected), static_cast<int>(actual));
 
 #include "CodeBlock.h"
+#include "CompactJITCodeMap.h"
 #include "Interpreter.h"
 #include "JSInterfaceJIT.h"
 #include "Opcode.h"
@@ -1054,6 +1055,8 @@ namespace JSC {
         
 #if ENABLE(TIERED_COMPILATION)
         bool m_canBeOptimized;
+        Label m_startOfCode;
+        CompactJITCodeMap::Encoder m_jitCodeMapEncoder;
 #endif
     } JIT_CLASS_ALIGNMENT;
 

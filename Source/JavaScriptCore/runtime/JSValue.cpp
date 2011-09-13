@@ -119,7 +119,7 @@ JSObject* JSValue::synthesizePrototype(ExecState* exec) const
 #ifndef NDEBUG
 char* JSValue::description()
 {
-    static const size_t size = 32;
+    static const size_t size = 64;
     static char description[size];
 
     if (!*this)

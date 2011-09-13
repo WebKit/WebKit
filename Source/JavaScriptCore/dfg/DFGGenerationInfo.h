@@ -274,12 +274,10 @@ public:
         u.fpr = fpr;
     }
 
-#ifndef NDEBUG
     bool alive()
     {
         return m_useCount;
     }
-#endif
 
 private:
     // The index of the node whose result is stored in this virtual register.

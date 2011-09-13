@@ -66,6 +66,7 @@ private:
     GPRReg m_src;
 };
 
+#if !ENABLE(DFG_OSR_EXIT)
 // === SpeculationCheck ===
 //
 // This structure records a bail-out from the speculative path,
@@ -91,7 +92,196 @@ struct SpeculationCheck {
     RegisterInfo m_fprInfo[FPRInfo::numberOfRegisters];
 };
 typedef SegmentedVector<SpeculationCheck, 16> SpeculationCheckVector;
+#endif // !ENABLE(DFG_OSR_EXIT)
 
+class ValueSource {
+public:
+    ValueSource()
+        : m_nodeIndex(NoNode)
+    {
+    }
+    
+    explicit ValueSource(NodeIndex nodeIndex)
+        : m_nodeIndex(nodeIndex)
+    {
+    }
+    
+    bool isSet() const
+    {
+        return m_nodeIndex != NoNode;
+    }
+    
+    NodeIndex nodeIndex() const
+    {
+        ASSERT(isSet());
+        return m_nodeIndex;
+    }
+    
+#ifndef NDEBUG
+    void dump(FILE* out) const;
+#endif
+    
+private:
+    NodeIndex m_nodeIndex;
+};
+    
+// Describes how to recover a given bytecode virtual register at a given
+// code point.
+enum ValueRecoveryTechnique {
+    // It's already in the register file at the right location.
+    AlreadyInRegisterFile,
+    // It's in a register.
+    InGPR,
+    UnboxedInt32InGPR,
+    InFPR,
+    // It's in the register file, but at a different location.
+    DisplacedInRegisterFile,
+    // It's a constant.
+    Constant,
+    // Don't know how to recover it.
+    DontKnow
+};
+
+class ValueRecovery {
+public:
+    ValueRecovery()
+        : m_technique(DontKnow)
+    {
+    }
+    
+    static ValueRecovery alreadyInRegisterFile()
+    {
+        ValueRecovery result;
+        result.m_technique = AlreadyInRegisterFile;
+        return result;
+    }
+    
+    static ValueRecovery inGPR(GPRReg gpr, DataFormat dataFormat)
+    {
+        ASSERT(dataFormat != DataFormatNone);
+        ValueRecovery result;
+        if (dataFormat == DataFormatInteger)
+            result.m_technique = UnboxedInt32InGPR;
+        else
+            result.m_technique = InGPR;
+        result.m_source.gpr = gpr;
+        return result;
+    }
+    
+    static ValueRecovery inFPR(FPRReg fpr)
+    {
+        ValueRecovery result;
+        result.m_technique = InFPR;
+        result.m_source.fpr = fpr;
+        return result;
+    }
+    
+    static ValueRecovery displacedInRegisterFile(VirtualRegister virtualReg)
+    {
+        ValueRecovery result;
+        result.m_technique = DisplacedInRegisterFile;
+        result.m_source.virtualReg = virtualReg;
+        return result;
+    }
+    
+    static ValueRecovery constant(JSValue value)
+    {
+        ValueRecovery result;
+        result.m_technique = Constant;
+        result.m_source.constant = JSValue::encode(value);
+        return result;
+    }
+    
+    ValueRecoveryTechnique technique() const { return m_technique; }
+    
+    GPRReg gpr() const
+    {
+        ASSERT(m_technique == InGPR || m_technique == UnboxedInt32InGPR);
+        return m_source.gpr;
+    }
+    
+    FPRReg fpr() const
+    {
+        ASSERT(m_technique == InFPR);
+        return m_source.fpr;
+    }
+    
+    VirtualRegister virtualRegister() const
+    {
+        ASSERT(m_technique == DisplacedInRegisterFile);
+        return m_source.virtualReg;
+    }
+    
+    JSValue constant() const
+    {
+        ASSERT(m_technique == Constant);
+        return JSValue::decode(m_source.constant);
+    }
+    
+#ifndef NDEBUG
+    void dump(FILE* out) const;
+#endif
+    
+private:
+    ValueRecoveryTechnique m_technique;
+    union {
+        GPRReg gpr;
+        FPRReg fpr;
+        VirtualRegister virtualReg;
+        EncodedJSValue constant;
+    } m_source;
+};
+
+#if ENABLE(DFG_OSR_EXIT)
+// === OSRExit ===
+//
+// This structure describes how to exit the speculative path by
+// going into baseline code.
+struct OSRExit {
+    OSRExit(MacroAssembler::Jump, SpeculativeJIT*, unsigned recoveryIndex = 0);
+    
+    MacroAssembler::Jump m_check;
+    NodeIndex m_nodeIndex;
+    unsigned m_bytecodeIndex;
+    
+    unsigned m_recoveryIndex;
+    
+    // Convenient way of iterating over ValueRecoveries while being
+    // generic over argument versus variable.
+    int numberOfRecoveries() const { return m_arguments.size() + m_variables.size(); }
+    const ValueRecovery& valueRecovery(int index) const
+    {
+        if (index < (int)m_arguments.size())
+            return m_arguments[index];
+        return m_variables[index - m_arguments.size()];
+    }
+    bool isArgument(int index) const { return index < (int)m_arguments.size(); }
+    bool isVariable(int index) const { return !isArgument(index); }
+    int argumentForIndex(int index) const
+    {
+        return index;
+    }
+    int variableForIndex(int index) const
+    {
+        return index - m_arguments.size();
+    }
+    int operandForIndex(int index) const
+    {
+        if (index < (int)m_arguments.size())
+            return index - m_arguments.size() - RegisterFile::CallFrameHeaderSize;
+        return index - m_arguments.size();
+    }
+    
+#ifndef NDEBUG
+    void dump(FILE* out) const;
+#endif
+    
+    Vector<ValueRecovery, 0> m_arguments;
+    Vector<ValueRecovery, 0> m_variables;
+    int m_lastSetOperand;
+};
+typedef SegmentedVector<OSRExit, 16> OSRExitVector;
+#endif // ENABLE(DFG_OSR_EXIT)
 
 // === SpeculativeJIT ===
 //
@@ -105,21 +295,25 @@ typedef SegmentedVector<SpeculationCheck, 16> SpeculationCheckVector;
 // only speculatively been asserted) through the dataflow.
 class SpeculativeJIT : public JITCodeGenerator {
     friend struct SpeculationCheck;
+    friend struct OSRExit;
 public:
-    SpeculativeJIT(JITCompiler& jit)
-        : JITCodeGenerator(jit, true)
-        , m_compileOkay(true)
-    {
-    }
+    SpeculativeJIT(JITCompiler&);
 
     bool compile();
 
     // Retrieve the list of bail-outs from the speculative path,
     // and additional recovery information.
+#if !ENABLE(DFG_OSR_EXIT)
     SpeculationCheckVector& speculationChecks()
     {
         return m_speculationChecks;
     }
+#else
+    OSRExitVector& osrExits()
+    {
+        return m_osrExits;
+    }
+#endif
     SpeculationRecovery* speculationRecovery(size_t index)
     {
         // SpeculationCheck::m_recoveryIndex is offset by 1,
@@ -139,6 +333,7 @@ private:
     friend class JITCodeGenerator;
     
     void compile(Node&);
+    void compileMovHint(Node&);
     void compile(BasicBlock&);
 
     void checkArgumentTypes();
@@ -203,7 +398,11 @@ private:
     {
         if (!m_compileOkay)
             return;
+#if !ENABLE(DFG_OSR_EXIT)
         m_speculationChecks.append(SpeculationCheck(jumpToFail, this));
+#else
+        m_osrExits.append(OSRExit(jumpToFail, this));
+#endif
     }
     // Add a speculation check with additional recovery.
     void speculationCheck(MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
@@ -211,7 +410,11 @@ private:
         if (!m_compileOkay)
             return;
         m_speculationRecoveryList.append(recovery);
+#if !ENABLE(DFG_OSR_EXIT)
         m_speculationChecks.append(SpeculationCheck(jumpToFail, this, m_speculationRecoveryList.size()));
+#else
+        m_osrExits.append(OSRExit(jumpToFail, this, m_speculationRecoveryList.size()));
+#endif
     }
 
     // Called when we statically determine that a speculation will fail.
@@ -234,18 +437,65 @@ private:
 
     template<bool strict>
     GPRReg fillSpeculateIntInternal(NodeIndex, DataFormat& returnFormat);
-
+    
     // It is possible, during speculative generation, to reach a situation in which we
     // can statically determine a speculation will fail (for example, when two nodes
     // will make conflicting speculations about the same operand). In such cases this
     // flag is cleared, indicating no further code generation should take place.
     bool m_compileOkay;
+#if !ENABLE(DFG_OSR_EXIT)
     // This vector tracks bail-outs from the speculative path to the non-speculative one.
     SpeculationCheckVector m_speculationChecks;
+#else
+    // This vector tracks bail-outs from the speculative path to the old JIT.
+    OSRExitVector m_osrExits;
+#endif
     // Some bail-outs need to record additional information recording specific recovery
     // to be performed (for example, on detected overflow from an add, we may need to
     // reverse the addition if an operand is being overwritten).
     Vector<SpeculationRecovery, 16> m_speculationRecoveryList;
+    
+    // Tracking for which nodes are currently holding the values of arguments and bytecode
+    // operand-indexed variables.
+
+    ValueSource valueSourceForOperand(int operand)
+    {
+        return valueSourceReferenceForOperand(operand);
+    }
+    
+    void setNodeIndexForOperand(NodeIndex nodeIndex, int operand)
+    {
+        valueSourceReferenceForOperand(operand) = ValueSource(nodeIndex);
+    }
+    
+    // Call this with care, since it both returns a reference into an array
+    // and potentially resizes the array. So it would not be right to call this
+    // twice and then perform operands on both references, since the one from
+    // the first call may no longer be valid.
+    ValueSource& valueSourceReferenceForOperand(int operand)
+    {
+        if (operandIsArgument(operand)) {
+            int argument = operand + m_arguments.size() + RegisterFile::CallFrameHeaderSize;
+            return m_arguments[argument];
+        }
+        
+        if ((unsigned)operand >= m_variables.size())
+            m_variables.resize(operand + 1);
+        
+        return m_variables[operand];
+    }
+    
+    Vector<ValueSource, 0> m_arguments;
+    Vector<ValueSource, 0> m_variables;
+    int m_lastSetOperand;
+    uint32_t m_bytecodeIndexForOSR;
+    
+    ValueRecovery computeValueRecoveryFor(const ValueSource&);
+
+    ValueRecovery computeValueRecoveryFor(int operand)
+    {
+        return computeValueRecoveryFor(valueSourceForOperand(operand));
+    }
 };
 
 
@@ -465,11 +715,17 @@ private:
     GPRReg m_gprOrInvalid;
 };
 
-
 // === SpeculationCheckIndexIterator ===
 //
 // This class is used by the non-speculative JIT to check which
 // nodes require entry points from the speculative path.
+#if ENABLE(DFG_OSR_EXIT)
+// This becomes a stub if OSR is enabled.
+class SpeculationCheckIndexIterator {
+public:
+    SpeculationCheckIndexIterator() { }
+};
+#else
 class SpeculationCheckIndexIterator {
 public:
     SpeculationCheckIndexIterator(SpeculationCheckVector& speculationChecks)
@@ -495,7 +751,17 @@ private:
     SpeculationCheckVector::Iterator m_iter;
     SpeculationCheckVector::Iterator m_end;
 };
+#endif
 
+inline SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
+    : JITCodeGenerator(jit, true)
+    , m_compileOkay(true)
+    , m_arguments(jit.codeBlock()->m_numParameters)
+    , m_variables(jit.codeBlock()->m_numVars)
+    , m_lastSetOperand(std::numeric_limits<int>::max())
+    , m_bytecodeIndexForOSR(std::numeric_limits<uint32_t>::max())
+{
+}
 
 } } // namespace JSC::DFG
 

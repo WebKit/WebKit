@@ -434,6 +434,9 @@ void NonSpeculativeJIT::basicArithOp(NodeType op, Node &node)
 
 void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Node& node)
 {
+#if ENABLE(DFG_OSR_EXIT)
+    UNUSED_PARAM(checkIterator);
+#else
     // Check for speculation checks from the corresponding instruction in the
     // speculative path. Do not check for NodeIndex 0, since this is checked
     // in the outermost compile layer, at the head of the non-speculative path
@@ -442,6 +445,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     // as speculation checks at this index).
     if (m_compileIndex && checkIterator.hasCheckAtIndex(m_compileIndex))
         trackEntry(m_jit.label());
+#endif
 
     NodeType op = node.op;
 
@@ -1283,8 +1287,10 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Ba
 void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator)
 {
     // Check for speculation checks added at function entry (checking argument types).
+#if !ENABLE(DFG_OSR_EXIT)
     if (checkIterator.hasCheckAtIndex(m_compileIndex))
         trackEntry(m_jit.label());
+#endif
 
     ASSERT(!m_compileIndex);
     for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block)
