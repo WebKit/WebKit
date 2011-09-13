@@ -666,7 +666,7 @@ Node* enclosingListChild(Node *node)
     
     // FIXME: This function is inappropriately named if it starts with node instead of node->parentNode()
     for (Node* n = node; n && n->parentNode(); n = n->parentNode()) {
-        if (n->hasTagName(liTag) || isListElement(n->parentNode()))
+        if (n->hasTagName(liTag) || (isListElement(n->parentNode()) && n != root))
             return n;
         if (n == root || isTableCell(n))
             return 0;

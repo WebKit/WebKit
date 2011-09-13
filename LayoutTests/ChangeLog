@@ -1,3 +1,15 @@
+2011-09-12  Shinya Kawanaka  <shinyak@google.com>
+
+        Crashes in WebCore::InsertListCommand::unlistifyParagraph.
+        https://bugs.webkit.org/show_bug.cgi?id=67918
+
+        Reviewed by Ryosuke Niwa.
+
+        Added tests.
+
+        * editing/execCommand/insert-list-in-noneditable-list-parent-expected.txt: Added.
+        * editing/execCommand/insert-list-in-noneditable-list-parent.html: Added.
+
 2011-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r94975.
