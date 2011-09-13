@@ -1,3 +1,19 @@
+2011-09-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Do not always return the cached frame name.
+        https://bugs.webkit.org/show_bug.cgi?id=66856
+
+        Reviewed by Antonio Gomes.
+
+        When a frame has its parent changed (via adoptNode and appendChild,
+        for example), the frame name will change, so we need to account for
+        that case and change the cached name when needed.
+
+        This should make fast/frames/iframe-reparenting-unique-name.html pass.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_name_get):
+
 2011-09-12  Flavio Ceolin  <flavio.ceolin@profusion.mobi>
 
         Reviewed by Martin Robinson.
