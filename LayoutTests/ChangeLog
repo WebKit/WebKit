@@ -1,6 +1,14 @@
 2011-09-13  Cary Clark  <caryclark@google.com>
 
         Unreviewed; new baselines (Skia on Mac)
+        Updated reference images.
+
+        * platform/chromium-gpu-mac/platform/chromium/compositing/zoom-animator-scale-test-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-positioning-expected.png: Added.
+
+2011-09-13  Cary Clark  <caryclark@google.com>
+
+        Unreviewed; new baselines (Skia on Mac)
         Updated reference images, text.
 
         * platform/chromium-mac/http/tests/eventsource/existent-eventsource-status-error-iframe-crash-expected.txt: Removed.
