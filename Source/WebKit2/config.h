@@ -28,6 +28,10 @@
 #include "autotoolsconfig.h"
 #endif /* defined (BUILDING_GTK__) */
 
+#if defined (BUILDING_WITH_CMAKE)
+#include "cmakeconfig.h"
+#endif
+
 #include <wtf/DisallowCType.h>
 #include <wtf/Platform.h>
 
@@ -51,7 +55,14 @@ static const type& name() \
     return name##Value; \
 }
 
-#if defined(BUILDING_QT__) || defined(BUILDING_GTK__)
+#if defined (BUILDING_WITH_CMAKE)
+
+#define JS_EXPORTDATA
+#define JS_EXPORTCLASS
+#define WTF_EXPORT_PRIVATE
+#define JS_EXPORT_PRIVATE
+
+#elif defined(BUILDING_QT__) || defined(BUILDING_GTK__)
 
 #define WTF_USE_JSC 1
 #define WTF_USE_V8 0

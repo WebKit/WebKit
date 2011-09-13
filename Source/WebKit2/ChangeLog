@@ -1,3 +1,13 @@
+2011-09-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [CMAKE][WK2] include cmakeconfig.h in WebKit2/config.h
+        https://bugs.webkit.org/show_bug.cgi?id=62692
+
+        * CMakeLists.txt: define WTF_USE_JSC=1.
+        * config.h: add cmakeconfig.h and define necessary macros for CMake build.
+
 2011-09-12  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [Qt] [WK2] implement support to upload files in Qt WebKit2
