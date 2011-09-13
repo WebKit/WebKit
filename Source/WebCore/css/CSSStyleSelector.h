@@ -27,7 +27,6 @@
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
 #include "SelectorChecker.h"
-#include <wtf/BloomFilter.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -95,9 +94,8 @@ public:
     ~CSSStyleSelector();
     
     // Using these during tree walk will allow style selector to optimize child and descendant selector lookups.
-    void pushParent(Element* parent);
-    void popParent(Element* parent);
-
+    void pushParent(Element* parent) { m_checker.pushParent(parent); }
+    void popParent(Element* parent) { m_checker.popParent(parent); }
 
     PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false, bool matchVisitedPseudoClass = false);
     
@@ -128,9 +126,6 @@ private:
     Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
     Node* findSiblingForStyleSharing(Node*, unsigned& count) const;
     bool canShareStyleWithElement(Node*) const;
-    
-    void pushParentStackFrame(Element* parent);
-    void popParentStackFrame();
 
     PassRefPtr<RenderStyle> styleForKeyframe(const RenderStyle*, const WebKitCSSKeyframeRule*, KeyframeValue&);
 
@@ -244,18 +239,6 @@ private:
     OwnPtr<RuleSet> m_userStyle;
 
     Features m_features;
-
-    struct ParentStackFrame {
-        ParentStackFrame() { }
-        ParentStackFrame(Element* element) : element(element) { }
-        Element* element;
-        Vector<unsigned, 4> identifierHashes;
-    };
-    Vector<ParentStackFrame> m_parentStack;
-    
-    // With 100 unique strings in the filter, 2^12 slot table has false positive rate of ~0.2%.
-    static const unsigned bloomFilterKeyBits = 12;
-    OwnPtr<BloomFilter<bloomFilterKeyBits> > m_ancestorIdentifierFilter;
 
     bool m_hasUAAppearance;
     BorderData m_borderData;

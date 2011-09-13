@@ -31,6 +31,7 @@
 #include "Element.h"
 #include "LinkHash.h"
 #include "RenderStyleConstants.h"
+#include <wtf/BloomFilter.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -51,6 +52,14 @@ public:
     SelectorMatch checkSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
     static bool isFastCheckableSelector(const CSSSelector*);
     static bool fastCheckSelector(const CSSSelector*, const Element*);
+
+    template <unsigned maximumIdentifierCount>
+    inline bool fastRejectSelector(const unsigned* identifierHashes) const;
+    static void collectIdentifierHashes(const CSSSelector*, unsigned* identifierHashes, unsigned maximumIdentifierCount);
+
+    void pushParent(Element* parent);
+    void popParent(Element* parent);
+    bool parentStackIsConsistent(ContainerNode* parentNode) const { return !m_parentStack.isEmpty() && m_parentStack.last().element == parentNode; }
 
     EInsideLink determineLinkState(Element*) const;
     void allVisitedStateChanged();
@@ -77,6 +86,9 @@ private:
 
     EInsideLink determineLinkStateSlowCase(Element*) const;
 
+    void pushParentStackFrame(Element* parent);
+    void popParentStackFrame();
+
     Document* m_document;
     bool m_strictParsing;
     bool m_documentIsHTML;
@@ -85,6 +97,18 @@ private:
     mutable bool m_hasUnknownPseudoElements;
     mutable bool m_isMatchingVisitedPseudoClass;
     mutable HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;
+
+    struct ParentStackFrame {
+        ParentStackFrame() { }
+        ParentStackFrame(Element* element) : element(element) { }
+        Element* element;
+        Vector<unsigned, 4> identifierHashes;
+    };
+    Vector<ParentStackFrame> m_parentStack;
+
+    // With 100 unique strings in the filter, 2^12 slot table has false positive rate of ~0.2%.
+    static const unsigned bloomFilterKeyBits = 12;
+    OwnPtr<BloomFilter<bloomFilterKeyBits> > m_ancestorIdentifierFilter;
 };
 
 inline EInsideLink SelectorChecker::determineLinkState(Element* element) const
@@ -92,6 +116,17 @@ inline EInsideLink SelectorChecker::determineLinkState(Element* element) const
     if (!element || !element->isLink())
         return NotInsideLink;
     return determineLinkStateSlowCase(element);
+}
+    
+template <unsigned maximumIdentifierCount>
+inline bool SelectorChecker::fastRejectSelector(const unsigned* identifierHashes) const
+{
+    ASSERT(m_ancestorIdentifierFilter);
+    for (unsigned n = 0; n < maximumIdentifierCount && identifierHashes[n]; ++n) {
+        if (!m_ancestorIdentifierFilter->mayContain(identifierHashes[n]))
+            return true;
+    }
+    return false;
 }
 
 }
