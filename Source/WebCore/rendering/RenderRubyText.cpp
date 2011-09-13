@@ -81,4 +81,9 @@ void RenderRubyText::adjustInlineDirectionLineBounds(int expansionOpportunityCou
     logicalWidth -= inset;
 }
 
+bool RenderRubyText::avoidsFloats() const
+{
+    return true;
+}
+
 } // namespace WebCore

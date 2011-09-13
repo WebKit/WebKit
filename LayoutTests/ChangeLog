@@ -1,3 +1,13 @@
+2011-09-12  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10054615> Floats in ruby text intrude into the base
+
+        Reviewed by Darin Adler.
+
+        * fast/ruby/float-overhang-from-ruby-text-expected.png: Added.
+        * fast/ruby/float-overhang-from-ruby-text-expected.txt: Added.
+        * fast/ruby/float-overhang-from-ruby-text.html: Added.
+
 2011-09-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: Moving up doesn't work in some cases

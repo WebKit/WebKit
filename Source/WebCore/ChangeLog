@@ -1,3 +1,16 @@
+2011-09-12  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10054615> Floats in ruby text intrude into the base
+
+        Reviewed by Darin Adler.
+
+        Test: fast/ruby/float-overhang-from-ruby-text.html
+
+        * rendering/RenderRubyText.cpp:
+        (WebCore::RenderRubyText::avoidsFloats): Added. Returns true. This ensures that
+        RenderBlock::clearFloats() will not consider ruby text as having intruding floats.
+        * rendering/RenderRubyText.h:
+
 2011-09-12  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67970
