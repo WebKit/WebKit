@@ -77,6 +77,8 @@ editing/selection/hit-test-anonymous.html
 editing/selection/mixed-editability-1.html
 fast/block/float/float-in-float-hit-testing.html
 fast/events/updateLayoutForHitTest.html
+fast/events/selectstart-by-arrow-keys-prevent-default.html
+fast/events/selectstart-by-arrow-keys.html
 fast/files
 fast/forms/input-number-events.html
 fast/forms/input-spinbutton-capturing.html
