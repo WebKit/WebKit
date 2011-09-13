@@ -322,6 +322,11 @@ const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, const Identifi
 
 void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction, unsigned attributes)
 {
+    if (propertyName == exec->propertyNames().underscoreProto) {
+        // Defining a getter for __proto__ is silently ignored.
+        return;
+    }
+
     JSValue object = getDirect(exec->globalData(), propertyName);
     if (object && object.isGetterSetter()) {
         ASSERT(m_structure->hasGetterSetterProperties());
@@ -348,6 +353,11 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
 
 void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction, unsigned attributes)
 {
+    if (propertyName == exec->propertyNames().underscoreProto) {
+        // Defining a setter for __proto__ is silently ignored.
+        return;
+    }
+
     JSValue object = getDirect(exec->globalData(), propertyName);
     if (object && object.isGetterSetter()) {
         ASSERT(m_structure->hasGetterSetterProperties());

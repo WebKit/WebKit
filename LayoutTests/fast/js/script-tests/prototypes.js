@@ -55,4 +55,7 @@ shouldBeTrue("Object.__proto__.isPrototypeOf(Date)");
 shouldBeTrue("Object.__proto__.isPrototypeOf(Number)");
 shouldBeTrue("Object.__proto__.isPrototypeOf(String)");
 
+shouldBeFalse("var wasSet = false; var o = { }; o.__defineGetter__(\"__proto__\", function() { wasSet = true }); o.__proto__; wasSet;");
+shouldBeFalse("var wasSet = false; var o = { }; o.__defineSetter__(\"__proto__\", function() { wasSet = true }); o.__proto__ = {}; wasSet;");
+
 var successfullyParsed = true;

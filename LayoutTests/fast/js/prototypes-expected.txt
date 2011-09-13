@@ -53,6 +53,8 @@ PASS Object.__proto__.isPrototypeOf(Array) is true
 PASS Object.__proto__.isPrototypeOf(Date) is true
 PASS Object.__proto__.isPrototypeOf(Number) is true
 PASS Object.__proto__.isPrototypeOf(String) is true
+PASS var wasSet = false; var o = { }; o.__defineGetter__("__proto__", function() { wasSet = true }); o.__proto__; wasSet; is false
+PASS var wasSet = false; var o = { }; o.__defineSetter__("__proto__", function() { wasSet = true }); o.__proto__ = {}; wasSet; is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,14 @@
+2011-09-12  Sam Weinig  <sam@webkit.org>
+
+        Don't allow setting __proto__ to be a getter or setter
+        https://bugs.webkit.org/show_bug.cgi?id=67982
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/prototypes-expected.txt:
+        * fast/js/script-tests/prototypes.js:
+        Add test that we disallow setting a getter or setter on __proto__.
+
 2011-09-12  Jacky Jiang  <zhajiang@rim.com>
 
         Setting document.title doesn't affect contents of title tag of XHTML documents
