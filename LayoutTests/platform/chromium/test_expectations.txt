@@ -3728,3 +3728,7 @@ BUGWK67980 MAC : fast/events/constructors/progress-event-constructor.html = TEXT
 
 // Failing after r94989
 BUGWK67981 DEBUG : fast/borders/border-image-omit-right-slice.html = CRASH
+
+// Failing after r95023
+BUGWK67999 WIN RELEASE : fast/borders/border-image-omit-right-slice.html = IMAGE+TEXT
+BUGWK67999 LINUX MAC RELEASE : fast/borders/border-image-omit-right-slice.html = TEXT
