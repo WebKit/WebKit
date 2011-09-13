@@ -46,6 +46,9 @@ public:
 
     virtual void pushPropertiesTo(CCLayerImpl*);
 
+protected:
+    virtual const char* layerTypeAsString() const { return "PluginLayer"; }
+
 private:
     explicit PluginLayerChromium(GraphicsLayerChromium* owner);
     unsigned m_textureId;

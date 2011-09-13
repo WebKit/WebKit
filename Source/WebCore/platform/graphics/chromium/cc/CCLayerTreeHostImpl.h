@@ -56,7 +56,7 @@ public:
     void finishAllRendering();
     int frameNumber() const { return m_frameNumber; }
 
-    bool initializeLayerRenderer(PassRefPtr<GraphicsContext3D>);
+    bool initializeLayerRenderer(CCLayerTreeHost* ownerHack, PassRefPtr<GraphicsContext3D>);
     bool isContextLost();
     LayerRendererChromium* layerRenderer() { return m_layerRenderer.get(); }
     const LayerRendererCapabilities& layerRendererCapabilities() const;
@@ -77,7 +77,6 @@ public:
     const IntSize& viewportSize() const { return m_viewportSize; }
     void setZoomAnimatorScale(double);
 
-    const CCSettings& settings() const { return m_settings; }
 protected:
     explicit CCLayerTreeHostImpl(const CCSettings&);
     int m_sourceFrameNumber;

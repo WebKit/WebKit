@@ -67,8 +67,6 @@ public:
 private:
     explicit CCTiledLayerImpl(int id);
 
-    virtual const char* layerTypeAsString() const;
-
     // Draw all tiles that intersect with the content rect.
     void draw(LayerRendererChromium*, const IntRect& contentRect, const TransformationMatrix&, float opacity);
 

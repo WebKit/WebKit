@@ -54,6 +54,8 @@ public:
 private:
     explicit ContentLayerChromium(GraphicsLayerChromium* owner);
 
+    virtual const char* layerTypeAsString() const { return "ContentLayer"; }
+
     virtual void cleanupResources();
     virtual bool drawsContent() const;
     virtual void createTextureUpdater(const CCLayerTreeHost*);

@@ -48,11 +48,6 @@ CCCanvasLayerImpl::~CCCanvasLayerImpl()
 {
 }
 
-const char* CCCanvasLayerImpl::layerTypeAsString() const
-{
-    return "CanvasLayer";
-}
-
 void CCCanvasLayerImpl::draw()
 {
     ASSERT(CCProxy::isImplThread());

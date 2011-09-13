@@ -60,11 +60,6 @@ CCTiledLayerImpl::~CCTiledLayerImpl()
 {
 }
 
-const char* CCTiledLayerImpl::layerTypeAsString() const
-{
-    return "TiledLayer";
-}
-
 void CCTiledLayerImpl::bindContentsTexture()
 {
     // This function is only valid for single texture layers, e.g. masks.
@@ -80,9 +75,8 @@ void CCTiledLayerImpl::bindContentsTexture()
 
 void CCTiledLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
 {
-    CCLayerImpl::dumpLayerProperties(ts, indent);
     writeIndent(ts, indent);
-    ts << "skipsDraw: " << (!m_tiler || m_skipsDraw) << "\n";
+    CCLayerImpl::dumpLayerProperties(ts, indent);
 }
 
 DrawableTile* CCTiledLayerImpl::tileAt(int i, int j) const

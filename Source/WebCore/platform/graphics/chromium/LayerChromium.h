@@ -172,6 +172,7 @@ public:
     void setBorderColor(const Color&);
 
     void drawDebugBorder();
+    String layerTreeAsText() const;
 
     void setBorderWidth(float);
 
@@ -218,6 +219,11 @@ protected:
     virtual void cleanupResources();
 
     static void toGLMatrix(float*, const TransformationMatrix&);
+
+    void dumpLayer(TextStream&, int indent) const;
+
+    virtual const char* layerTypeAsString() const { return "LayerChromium"; }
+    virtual void dumpLayerProperties(TextStream&, int indent) const;
 
     FloatRect m_dirtyRect;
     bool m_contentsDirty;

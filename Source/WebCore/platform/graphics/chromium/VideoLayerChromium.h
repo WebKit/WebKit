@@ -63,6 +63,7 @@ public:
 
 protected:
     virtual void cleanupResources();
+    virtual const char* layerTypeAsString() const { return "VideoLayer"; }
 
 private:
     struct Texture {

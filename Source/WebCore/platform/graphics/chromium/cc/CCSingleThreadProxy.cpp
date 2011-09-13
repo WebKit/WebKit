@@ -121,9 +121,8 @@ bool CCSingleThreadProxy::isStarted() const
     return m_layerTreeHostImpl;
 }
 
-bool CCSingleThreadProxy::initializeLayerRenderer()
+bool CCSingleThreadProxy::initializeLayerRenderer(CCLayerTreeHost* ownerHack)
 {
-    ASSERT(isMainThread());
     RefPtr<GraphicsContext3D> context = m_layerTreeHost->createLayerTreeHostContext3D();
     if (!context)
         return false;
@@ -131,7 +130,7 @@ bool CCSingleThreadProxy::initializeLayerRenderer()
 
     {
         ScopedSetImplThread impl;
-        return m_layerTreeHostImpl->initializeLayerRenderer(context);
+        return m_layerTreeHostImpl->initializeLayerRenderer(ownerHack, context);
     }
 }
 
@@ -145,18 +144,6 @@ void CCSingleThreadProxy::loseCompositorContext(int numTimes)
 {
     m_graphicsContextLost = true;
     m_timesRecreateShouldFail = numTimes - 1;
-}
-
-void CCSingleThreadProxy::setNeedsCommit()
-{
-    ASSERT(isMainThread());
-    // Commit immediately
-    {
-        ScopedSetImplThread impl;
-        m_layerTreeHostImpl->beginCommit();
-        m_layerTreeHost->commitTo(m_layerTreeHostImpl.get());
-        m_layerTreeHostImpl->commitComplete();
-    }
 }
 
 void CCSingleThreadProxy::setNeedsCommitAndRedraw()
@@ -183,10 +170,14 @@ void CCSingleThreadProxy::stop()
     ASSERT(isMainThread());
     {
         ScopedSetImplThread impl;
-        m_layerTreeHost->deleteContentsTextures(m_layerTreeHostImpl->context());
         m_layerTreeHostImpl.clear();
     }
     m_layerTreeHost = 0;
+}
+
+TextureManager* CCSingleThreadProxy::contentsTextureManager()
+{
+    return m_layerTreeHostImpl->layerRenderer()->contentsTextureManager();
 }
 
 #if !USE(THREADED_COMPOSITING)
@@ -206,7 +197,6 @@ void CCSingleThreadProxy::compositeImmediately()
 
 bool CCSingleThreadProxy::recreateContextIfNeeded()
 {
-    ASSERT(isMainThread());
     if (!m_graphicsContextLost)
         return true;
     RefPtr<GraphicsContext3D> context;
@@ -217,7 +207,7 @@ bool CCSingleThreadProxy::recreateContextIfNeeded()
 
     if (context) {
         ASSERT(context->hasOneRef());
-        if (m_layerTreeHostImpl->initializeLayerRenderer(context)) {
+        if (m_layerTreeHostImpl->initializeLayerRenderer(0, context)) {
             m_layerTreeHost->didRecreateGraphicsContext(true);
             m_graphicsContextLost = false;
             return true;

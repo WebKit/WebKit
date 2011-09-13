@@ -157,8 +157,6 @@ public:
 
     void updateLayers();
 
-    void deleteContentsTextures(GraphicsContext3D*);
-
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, const CCSettings&);
 
@@ -186,7 +184,6 @@ private:
 
     OwnPtr<GraphicsLayer> m_rootLayer;
     OwnPtr<NonCompositedContentHost> m_nonCompositedContentHost;
-    OwnPtr<TextureManager> m_contentsTextureManager;
 
     LayerList m_updateList;
 

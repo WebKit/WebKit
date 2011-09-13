@@ -52,8 +52,6 @@ public:
 private:
     explicit CCCanvasLayerImpl(int);
 
-    virtual const char* layerTypeAsString() const;
-
     unsigned m_textureId;
     bool m_hasAlpha;
     bool m_premultipliedAlpha;

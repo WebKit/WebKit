@@ -74,7 +74,7 @@ void CCLayerTreeHostImpl::drawLayers()
 {
     TRACE_EVENT("CCLayerTreeHostImpl::drawLayers", this, 0);
     ASSERT(m_layerRenderer);
-    if (m_layerRenderer->rootLayer())
+    if (m_layerRenderer->owner()->rootLayer())
         m_layerRenderer->drawLayers();
 
     ++m_frameNumber;
@@ -116,27 +116,31 @@ void CCLayerTreeHostImpl::setRootLayer(PassRefPtr<CCLayerImpl> layer)
 void CCLayerTreeHostImpl::setVisible(bool visible)
 {
     if (m_layerRenderer && !visible)
-        m_layerRenderer->releaseRenderSurfaceTextures();
+        m_layerRenderer->releaseTextures();
 }
 
-bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> context)
+bool CCLayerTreeHostImpl::initializeLayerRenderer(CCLayerTreeHost* implHack, PassRefPtr<GraphicsContext3D> context)
 {
+    // If m_layerRenderer exists, then we are recovering from a lost context
+    bool recreatingRenderer = m_layerRenderer;
+
+    // First time layerRenderer creation
     RefPtr<LayerRendererChromium> layerRenderer;
-    layerRenderer = LayerRendererChromium::create(this, context);
+    if (!recreatingRenderer)
+        layerRenderer = LayerRendererChromium::create(implHack, this, context);
+    else
+        layerRenderer = LayerRendererChromium::create(m_layerRenderer->owner(), this, context);
+
 
     // If creation failed, and we had asked for accelerated painting, disable accelerated painting
     // and try creating the renderer again.
     if (!layerRenderer && m_settings.acceleratePainting) {
         m_settings.acceleratePainting = false;
 
-        layerRenderer = LayerRendererChromium::create(this, context);
-    }
-
-    // If we had a previous layer renderer, then its context must have been lost along with all of its resources.
-    // Let the old layer renderer known its resources are gone.
-    if (m_layerRenderer) {
-        m_layerRenderer->setContentsTextureMemoryUseBytes(0);
-        m_layerRenderer->close();
+        if (!recreatingRenderer)
+            layerRenderer = LayerRendererChromium::create(implHack, this, context);
+        else
+            layerRenderer = LayerRendererChromium::create(m_layerRenderer->owner(), this, context);
     }
 
     m_layerRenderer = layerRenderer;

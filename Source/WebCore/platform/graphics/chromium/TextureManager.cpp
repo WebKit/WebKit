@@ -44,21 +44,6 @@ static size_t memoryUseBytes(IntSize size, GC3Denum textureFormat)
     return size.width() * size.height() * componentsPerPixel * bytesPerComponent;
 }
 
-size_t TextureManager::highLimitBytes()
-{
-    return 128 * 1024 * 1024;
-}
-
-size_t TextureManager::reclaimLimitBytes()
-{
-    return 64 * 1024 * 1024;
-}
-
-size_t TextureManager::lowLimitBytes()
-{
-    return 3 * 1024 * 1024;
-}
-
 TextureManager::TextureManager(size_t memoryLimitBytes, int maxTextureSize)
     : m_memoryLimitBytes(memoryLimitBytes)
     , m_memoryUseBytes(0)
@@ -154,24 +139,12 @@ void TextureManager::addTexture(TextureToken token, TextureInfo info)
 
 void TextureManager::deleteEvictedTextures(GraphicsContext3D* context)
 {
-    if (context) {
-        for (size_t i = 0; i < m_evictedTextures.size(); ++i) {
-            if (m_evictedTextures[i].textureId) {
-#ifndef NDEBUG
-                ASSERT(m_evictedTextures[i].allocatingContext == context);
-#endif
-                GLC(context, context->deleteTexture(m_evictedTextures[i].textureId));
-            }
-        }
+    ASSERT(context == m_associatedContextDebugOnly);
+    for (size_t i = 0; i < m_evictedTextureIds.size(); ++i) {
+        if (m_evictedTextureIds[i])
+            GLC(context, context->deleteTexture(m_evictedTextureIds[i]));
     }
-    m_evictedTextures.clear();
-}
-
-void TextureManager::evictAndDeleteAllTextures(GraphicsContext3D* context)
-{
-    unprotectAllTextures();
-    reduceMemoryToLimit(0);
-    deleteEvictedTextures(context);
+    m_evictedTextureIds.clear();
 }
 
 void TextureManager::removeTexture(TextureToken token, TextureInfo info)
@@ -182,16 +155,12 @@ void TextureManager::removeTexture(TextureToken token, TextureInfo info)
     m_textures.remove(token);
     ASSERT(m_textureLRUSet.contains(token));
     m_textureLRUSet.remove(token);
-    EvictionEntry entry;
-    entry.textureId = info.textureId;
-#ifndef NDEBUG
-    entry.allocatingContext = info.allocatingContext;
-#endif
-    m_evictedTextures.append(entry);
+    m_evictedTextureIds.append(info.textureId);
 }
 
 unsigned TextureManager::allocateTexture(GraphicsContext3D* context, TextureToken token)
 {
+    ASSERT(context == m_associatedContextDebugOnly);
     TextureMap::iterator it = m_textures.find(token);
     ASSERT(it != m_textures.end());
     TextureInfo* info = &it.get()->second;
@@ -208,9 +177,6 @@ unsigned TextureManager::allocateTexture(GraphicsContext3D* context, TextureToke
     GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
     GLC(context, context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, info->format, info->size.width(), info->size.height(), 0, info->format, GraphicsContext3D::UNSIGNED_BYTE));
     info->textureId = textureId;
-#ifndef NDEBUG
-    info->allocatingContext = context;
-#endif
     return textureId;
 }
 
@@ -238,9 +204,6 @@ bool TextureManager::requestTexture(TextureToken token, IntSize size, unsigned f
     info.format = format;
     info.textureId = 0;
     info.isProtected = true;
-#ifndef NDEBUG
-    info.allocatingContext = 0;
-#endif
     addTexture(token, info);
     return true;
 }

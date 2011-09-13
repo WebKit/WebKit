@@ -1,3 +1,108 @@
+2011-09-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94975.
+        http://trac.webkit.org/changeset/94975
+        https://bugs.webkit.org/show_bug.cgi?id=67984
+
+        crash in PrerenderBrowserTest.PrerenderHTML5VideoJs (Requested
+        by ukai on #webkit).
+
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        (WebCore::CanvasLayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (WebCore::ContentLayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        (WebCore::ImageLayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::layerTreeAsText):
+        (WebCore::writeIndent):
+        (WebCore::LayerChromium::dumpLayer):
+        (WebCore::LayerChromium::dumpLayerProperties):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::textureMemoryReclaimLimit):
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::close):
+        (WebCore::LayerRendererChromium::releaseTextures):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        (WebCore::LayerRendererChromium::getOffscreenLayerTexture):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        (WebCore::LayerRendererChromium::layerTreeAsText):
+        (WebCore::LayerRendererChromium::dumpRenderSurfaces):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::owner):
+        (WebCore::LayerRendererChromium::rootLayer):
+        (WebCore::LayerRendererChromium::rootLayerImpl):
+        (WebCore::LayerRendererChromium::viewportSize):
+        (WebCore::LayerRendererChromium::contentsTextureManager):
+        * platform/graphics/chromium/ManagedTexture.cpp:
+        (WebCore::ManagedTexture::bindTexture):
+        (WebCore::ManagedTexture::framebufferTexture2D):
+        * platform/graphics/chromium/PluginLayerChromium.h:
+        (WebCore::PluginLayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::name):
+        (WebCore::writeIndent):
+        (WebCore::RenderSurfaceChromium::dumpSurface):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::deleteEvictedTextures):
+        (WebCore::TextureManager::removeTexture):
+        (WebCore::TextureManager::allocateTexture):
+        (WebCore::TextureManager::requestTexture):
+        * platform/graphics/chromium/TextureManager.h:
+        (WebCore::TextureManager::setAssociatedContextDebugOnly):
+        (WebCore::TextureManager::associatedContextDebugOnly):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::writeIndent):
+        (WebCore::TiledLayerChromium::dumpLayerProperties):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        (WebCore::VideoLayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+        (WebCore::WebGLLayerChromium::layerTypeAsString):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::~CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::commitTo):
+        (WebCore::CCLayerTreeHost::didRecreateGraphicsContext):
+        (WebCore::CCLayerTreeHost::setVisible):
+        (WebCore::CCLayerTreeHost::contentsTextureManager):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        (WebCore::CCLayerTreeHostImpl::setVisible):
+        (WebCore::CCLayerTreeHostImpl::initializeLayerRenderer):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h:
+        * platform/graphics/chromium/cc/CCProxy.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::initializeLayerRenderer):
+        (WebCore::CCSingleThreadProxy::stop):
+        (WebCore::CCSingleThreadProxy::contentsTextureManager):
+        (WebCore::CCSingleThreadProxy::recreateContextIfNeeded):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::initializeLayerRenderer):
+        (WebCore::CCThreadProxy::contentsTextureManager):
+        (WebCore::CCThreadProxy::initializeLayerRendererOnCCThread):
+        (WebCore::CCThreadProxy::layerTreeHostClosedOnCCThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::dumpLayerProperties):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+
 2011-09-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         Possible ASSERT(!storageTracker) in Lazily Initialized StorageTracker

@@ -265,6 +265,19 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     }
 }
 
+static void writeIndent(TextStream& ts, int indent)
+{
+    for (int i = 0; i != indent; ++i)
+        ts << "  ";
+}
+
+void TiledLayerChromium::dumpLayerProperties(TextStream& ts, int indent) const
+{
+    LayerChromium::dumpLayerProperties(ts, indent);
+    writeIndent(ts, indent);
+    ts << "skipsDraw: " << (!m_tiler || m_skipsDraw) << "\n";
+}
+
 TextureManager* TiledLayerChromium::textureManager() const
 {
     if (!layerTreeHost())

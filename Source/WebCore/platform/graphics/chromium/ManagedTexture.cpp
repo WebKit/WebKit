@@ -83,6 +83,7 @@ void ManagedTexture::unreserve()
 void ManagedTexture::bindTexture(GraphicsContext3D* context)
 {
     ASSERT(m_textureManager->hasTexture(m_token));
+    ASSERT(context == m_textureManager->associatedContextDebugOnly());
     if (!m_textureId)
         m_textureId = m_textureManager->allocateTexture(context, m_token);
     context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
@@ -91,6 +92,7 @@ void ManagedTexture::bindTexture(GraphicsContext3D* context)
 void ManagedTexture::framebufferTexture2D(GraphicsContext3D* context)
 {
     ASSERT(m_textureManager->hasTexture(m_token));
+    ASSERT(context == m_textureManager->associatedContextDebugOnly());
     if (!m_textureId)
         m_textureId = m_textureManager->allocateTexture(context, m_token);
     context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_textureId, 0);

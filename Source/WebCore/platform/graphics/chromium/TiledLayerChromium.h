@@ -74,6 +74,8 @@ protected:
 private:
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
 
+    virtual void dumpLayerProperties(TextStream&, int indent) const;
+
     virtual void setLayerTreeHost(CCLayerTreeHost*);
 
     void createTilerIfNeeded();

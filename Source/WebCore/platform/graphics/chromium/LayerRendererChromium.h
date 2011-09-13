@@ -74,7 +74,7 @@ class NonCompositedContentHost;
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public RefCounted<LayerRendererChromium> {
 public:
-    static PassRefPtr<LayerRendererChromium> create(CCLayerTreeHostImpl*, PassRefPtr<GraphicsContext3D>);
+    static PassRefPtr<LayerRendererChromium> create(CCLayerTreeHost*, CCLayerTreeHostImpl*, PassRefPtr<GraphicsContext3D>);
 
     // Must be called in order to allow the LayerRendererChromium to destruct
     void close();
@@ -84,13 +84,19 @@ public:
     const CCSettings& settings() const { return m_owner->settings(); }
     const LayerRendererCapabilities& capabilities() const { return m_capabilities; }
 
-    CCLayerImpl* rootLayer() { return m_owner->rootLayer(); }
-    const CCLayerImpl* rootLayer() const { return m_owner->rootLayer(); }
+    CCLayerTreeHost* owner() { return m_owner; }
+    const CCLayerTreeHost* owner() const { return m_owner; }
+
+    GraphicsLayer* rootLayer() { return m_owner->rootLayer(); }
+    const GraphicsLayer* rootLayer() const { return m_owner->rootLayer(); }
+
+    CCLayerImpl* rootLayerImpl() { return m_ownerImpl->rootLayer(); }
+    const CCLayerImpl* rootLayerImpl() const { return m_ownerImpl->rootLayer(); }
 
     GraphicsContext3D* context();
     bool contextSupportsMapSub() const { return m_capabilities.usingMapSub; }
 
-    const IntSize& viewportSize() { return m_owner->viewportSize(); }
+    const IntSize& viewportSize() { return m_ownerImpl->viewportSize(); }
     int viewportWidth() { return viewportSize().width(); }
     int viewportHeight() { return viewportSize().height(); }
 
@@ -133,6 +139,7 @@ public:
 
     void getFramebufferPixels(void *pixels, const IntRect& rect);
 
+    TextureManager* contentsTextureManager() const { return m_contentsTextureManager.get(); }
     TextureManager* renderSurfaceTextureManager() const { return m_renderSurfaceTextureManager.get(); }
 
     CCHeadsUpDisplay* headsUpDisplay() { return m_headsUpDisplay.get(); }
@@ -143,16 +150,17 @@ public:
 
     bool isContextLost();
 
-    void releaseRenderSurfaceTextures();
+    void releaseTextures();
 
     GC3Denum bestTextureFormat();
 
     typedef Vector<RefPtr<CCLayerImpl> > CCLayerList;
 
-    void setContentsTextureMemoryUseBytes(size_t contentsTextureMemoryUseBytes) { m_contentsTextureMemoryUseBytes = contentsTextureMemoryUseBytes; }
+    // FIXME: Remove this when the contents texture manager has moved to CCLayerTreeHost.
+    static size_t textureMemoryReclaimLimit();
 
 private:
-    LayerRendererChromium(CCLayerTreeHostImpl*, PassRefPtr<GraphicsContext3D>);
+    LayerRendererChromium(CCLayerTreeHost*, CCLayerTreeHostImpl*, PassRefPtr<GraphicsContext3D>);
     bool initialize();
 
     void drawLayersInternal();
@@ -171,14 +179,17 @@ private:
 
     static bool compareLayerZ(const RefPtr<CCLayerImpl>&, const RefPtr<CCLayerImpl>&);
 
-    void dumpRenderSurfaces(TextStream&, int indent, const CCLayerImpl*) const;
+    void dumpRenderSurfaces(TextStream&, int indent, const LayerChromium*) const;
 
     bool initializeSharedObjects();
     void cleanupSharedObjects();
 
     void clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl*);
 
-    CCLayerTreeHostImpl* m_owner;
+    // FIXME: Remove CCLayerTreeHost field
+    CCLayerTreeHost* m_owner;
+
+    CCLayerTreeHostImpl* m_ownerImpl;
 
     LayerRendererCapabilities m_capabilities;
 
@@ -209,7 +220,7 @@ private:
     OwnPtr<CCVideoLayerImpl::RGBAProgram> m_videoLayerRGBAProgram;
     OwnPtr<CCVideoLayerImpl::YUVProgram> m_videoLayerYUVProgram;
 
-    size_t m_contentsTextureMemoryUseBytes;
+    OwnPtr<TextureManager> m_contentsTextureManager;
     OwnPtr<TextureManager> m_renderSurfaceTextureManager;
 
     OwnPtr<CCHeadsUpDisplay> m_headsUpDisplay;

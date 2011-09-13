@@ -57,6 +57,9 @@ public:
 
     void setContents(Image* image);
 
+protected:
+    virtual const char* layerTypeAsString() const { return "ImageLayer"; }
+
 private:
     ImageLayerChromium(GraphicsLayerChromium* owner);
 

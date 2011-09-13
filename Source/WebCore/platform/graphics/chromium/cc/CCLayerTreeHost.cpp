@@ -69,7 +69,7 @@ bool CCLayerTreeHost::initialize()
         m_proxy = CCSingleThreadProxy::create(this);
     m_proxy->start();
 
-    if (!m_proxy->initializeLayerRenderer())
+    if (!m_proxy->initializeLayerRenderer(this))
         return false;
 
     // Update m_settings based on capabilities that we got back from the renderer.
@@ -86,25 +86,14 @@ bool CCLayerTreeHost::initialize()
     // We changed the root layer. Tell the proxy a commit is needed.
     m_proxy->setNeedsCommitAndRedraw();
 
-    m_contentsTextureManager = TextureManager::create(TextureManager::highLimitBytes(), m_proxy->layerRendererCapabilities().maxTextureSize);
     return true;
 }
 
 CCLayerTreeHost::~CCLayerTreeHost()
 {
-    ASSERT(CCProxy::isMainThread());
     TRACE_EVENT("CCLayerTreeHost::~CCLayerTreeHost", this, 0);
     m_proxy->stop();
     m_proxy.clear();
-    m_updateList.clear();
-    ASSERT(!m_contentsTextureManager->currentMemoryUseBytes());
-    m_contentsTextureManager.clear();
-}
-
-void CCLayerTreeHost::deleteContentsTextures(GraphicsContext3D* context)
-{
-    ASSERT(CCProxy::isImplThread());
-    m_contentsTextureManager->evictAndDeleteAllTextures(context);
 }
 
 void CCLayerTreeHost::animateAndLayout(double frameBeginTime)
@@ -120,7 +109,7 @@ void CCLayerTreeHost::commitTo(CCLayerTreeHostImpl* hostImpl)
     TRACE_EVENT("CCLayerTreeHost::commitTo", this, 0);
     hostImpl->setSourceFrameNumber(frameNumber());
 
-    contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes());
+    contentsTextureManager()->reduceMemoryToLimit(hostImpl->layerRenderer()->textureMemoryReclaimLimit());
     contentsTextureManager()->deleteEvictedTextures(hostImpl->context());
 
     updateCompositorResources(m_updateList, hostImpl->context());
@@ -129,9 +118,6 @@ void CCLayerTreeHost::commitTo(CCLayerTreeHostImpl* hostImpl)
     hostImpl->setVisible(m_visible);
     hostImpl->setZoomAnimatorScale(m_zoomAnimatorScale);
     hostImpl->setViewport(viewportSize());
-
-    hostImpl->layerRenderer()->setContentsTextureMemoryUseBytes(m_contentsTextureManager->currentMemoryUseBytes());
-    m_contentsTextureManager->unprotectAllTextures();
 
     // Synchronize trees, if one exists at all...
     if (rootLayer())
@@ -159,8 +145,6 @@ PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl()
 
 void CCLayerTreeHost::didRecreateGraphicsContext(bool success)
 {
-    m_contentsTextureManager->evictAndDeleteAllTextures(0);
-
     if (rootLayer())
         rootLayer()->platformLayer()->cleanupResourcesRecursive();
     m_client->didRecreateGraphicsContext(success);
@@ -275,14 +259,7 @@ void CCLayerTreeHost::setViewport(const IntSize& viewportSize, const IntSize& co
 void CCLayerTreeHost::setVisible(bool visible)
 {
     m_visible = visible;
-    if (visible)
-        m_proxy->setNeedsCommitAndRedraw();
-    else {
-        m_nonCompositedContentHost->protectVisibleTileTextures();
-        m_contentsTextureManager->reduceMemoryToLimit(TextureManager::lowLimitBytes());
-        m_contentsTextureManager->unprotectAllTextures();
-        m_proxy->setNeedsCommit();
-    }
+    m_proxy->setNeedsCommitAndRedraw();
 }
 
 void CCLayerTreeHost::loseCompositorContext(int numTimes)
@@ -292,7 +269,7 @@ void CCLayerTreeHost::loseCompositorContext(int numTimes)
 
 TextureManager* CCLayerTreeHost::contentsTextureManager() const
 {
-    return m_contentsTextureManager.get();
+    return m_proxy->contentsTextureManager();
 }
 
 #if !USE(THREADED_COMPOSITING)

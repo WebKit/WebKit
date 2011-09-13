@@ -46,11 +46,6 @@ CCPluginLayerImpl::~CCPluginLayerImpl()
 {
 }
 
-const char* CCPluginLayerImpl::layerTypeAsString() const
-{
-    return "PluginLayer";
-}
-
 void CCPluginLayerImpl::draw()
 {
     ASSERT(CCProxy::isImplThread());
