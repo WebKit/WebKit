@@ -1,0 +1,39 @@
+End of test
+Before:
+client 
+    link 
+    grouping 
+        editable text 
+    grouping 
+        editable text 
+    grouping 
+        editable text 
+    grouping 
+        editable text 
+        editable text 
+        editable text 
+        editable text 
+        editable text 
+After:
+client 
+    grouping 
+        editable text 
+    grouping 
+        editable text 
+    grouping 
+        editable text 
+    grouping 
+        editable text 
+        editable text 
+        editable text 
+        editable text 
+        editable text 
+This can cause a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

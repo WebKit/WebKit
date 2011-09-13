@@ -1,0 +1,23 @@
+End of test
+Before:
+AXRole: document frame 
+    AXRole: link 
+    AXRole: section 
+    AXRole: panel 
+    AXRole: paragraph 
+    AXRole: paragraph 
+After:
+AXRole: document frame 
+    AXRole: section 
+    AXRole: panel 
+    AXRole: paragraph 
+    AXRole: paragraph 
+This can cause a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
