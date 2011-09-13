@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+    var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<em><code ><h4 ></em>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("Child nodes should not be duplicated in the accessibility tree.");
+
+    if (window.accessibilityController) {
+        document.body.focus();
+        var webArea = accessibilityController.focusedElement;
+        if (webArea.childrenCount > 1)
+            shouldBe("webArea.childAtIndex(0).isEqual(webArea.childAtIndex(1))", "false");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

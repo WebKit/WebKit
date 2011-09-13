@@ -1,3 +1,18 @@
+2011-09-12  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Add a test that ensures that the accessibility tree
+        does not contain duplicate child nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=58930
+
+        This test failed when the bug was originally filed, but was
+        fixed in: https://bugs.webkit.org/show_bug.cgi?id=61805
+        so no code changes are accompanying this new layout test.
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/duplicate-child-nodes-expected.txt: Added.
+        * accessibility/duplicate-child-nodes.html: Added.
+
 2011-09-12  Shinya Kawanaka  <shinyak@google.com>
 
         Crashes in WebCore::InsertListCommand::unlistifyParagraph.
