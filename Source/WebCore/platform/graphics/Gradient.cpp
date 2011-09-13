@@ -124,10 +124,6 @@ void Gradient::sortStopsIfNecessary()
     if (!m_stops.size())
         return;
 
-    // Shortcut for the ideal case (ordered 2-stop gradient)
-    if (m_stops.size() == 2 && compareStops(*m_stops.begin(), *m_stops.end()))
-        return;
-
     std::stable_sort(m_stops.begin(), m_stops.end(), compareStops);
 }
 
