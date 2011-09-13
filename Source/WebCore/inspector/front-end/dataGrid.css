@@ -73,6 +73,7 @@
     border-top: 0 none transparent;
     background-image: -webkit-gradient(linear, left top, left bottom, from(white), color-stop(0.5, white), color-stop(0.5, rgb(234, 243, 255)), to(rgb(234, 243, 255)));
     -webkit-background-size: 1px 32px;
+    table-layout: fixed;
 }
 
 .data-grid.inline table.data {
@@ -93,6 +94,7 @@
     line-height: 12px;
     padding: 2px 4px;
     white-space: nowrap;
+    overflow: hidden;
     border-right: 1px solid #aaa;
     -webkit-user-select: text;
 }
