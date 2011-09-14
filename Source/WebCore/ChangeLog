@@ -1,3 +1,21 @@
+2011-09-14  Anders Carlsson  <andersca@apple.com>
+
+        Remove DocTypeStrings.gperf
+        https://bugs.webkit.org/show_bug.cgi?id=68119
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/DocTypeStrings.gperf: Removed.
+        * make-hash-tools.pl:
+        * platform/HashTools.h:
+
 2011-09-14  Chris Rogers  <crogers@google.com>
 
         Address lifetime issues in OfflineAudioDestinationNode (take 2)

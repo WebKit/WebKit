@@ -466,7 +466,6 @@
         '../xml/XPathGrammar.y',
 
         # gperf rule
-        '../html/DocTypeStrings.gperf',
         '../platform/ColorData.gperf',
 
         # idl rules
@@ -977,7 +976,6 @@
         '<@(derived_sources_aggregate_files)',
 
         # Additional .cpp files for HashTools.h
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/DocTypeStrings.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/ColorData.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSPropertyNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSValueKeywords.cpp',

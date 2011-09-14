@@ -624,11 +624,6 @@ DerivedSources/WebCore/CSSValueKeywords.h: $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCo
 	$(PERL) -I$(WebCore)/bindings/scripts "$(WebCore)/css/makevalues.pl" --defines "$(FEATURE_DEFINES)"
 	mv CSSValueKeywords* $(GENSOURCES_WEBCORE)
 
-# DOCTYPE strings
-DerivedSources/WebCore/HashTools.h: DerivedSources/WebCore/DocTypeStrings.cpp
-DerivedSources/WebCore/DocTypeStrings.cpp: $(WebCore)/html/DocTypeStrings.gperf $(WebCore)/make-hash-tools.pl
-	$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES_WEBCORE) $(WebCore)/html/DocTypeStrings.gperf
-
 # XML Viewer CSS
 DerivedSources/WebCore/XMLViewerCSS.h: $(WebCore)/xml/XMLViewer.css
 	$(PERL) $(WebCore)/inspector/xxd.pl XMLViewer_css $(WebCore)/xml/XMLViewer.css $(GENSOURCES_WEBCORE)/XMLViewerCSS.h
@@ -907,7 +902,6 @@ EXTRA_DIST += \
 	Source/WebCore/css/view-source.css \
 	Source/WebCore/css/WebKitFontFamilyNames.in \
 	Source/WebCore/dom/make_names.pl \
-	Source/WebCore/html/DocTypeStrings.gperf \
 	Source/WebCore/html/HTMLAttributeNames.in \
 	Source/WebCore/html/HTMLTagNames.in \
 	Source/WebCore/html/parser/create-html-entity-table \

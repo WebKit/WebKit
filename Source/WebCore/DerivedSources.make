@@ -591,7 +591,6 @@ all : \
     CSSPropertyNames.h \
     CSSValueKeywords.h \
     ColorData.cpp \
-    DocTypeStrings.cpp \
     HTMLElementFactory.cpp \
     HTMLEntityTable.cpp \
     HTMLNames.cpp \
@@ -669,13 +668,6 @@ CSSPropertyNames.h : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl
 CSSValueKeywords.h : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl
 	cat $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
 	perl -I$(WebCore)/bindings/scripts "$(WebCore)/css/makevalues.pl" --defines "$(FEATURE_DEFINES)"
-
-# --------
-
-# DOCTYPE strings
-
-DocTypeStrings.cpp : html/DocTypeStrings.gperf $(WebCore)/make-hash-tools.pl
-	perl $(WebCore)/make-hash-tools.pl . $(WebCore)/html/DocTypeStrings.gperf
 
 # --------
 

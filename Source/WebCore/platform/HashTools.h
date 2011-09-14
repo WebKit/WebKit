@@ -22,18 +22,6 @@
 
 namespace WebCore {
 
-struct PubIDInfo {
-    enum eMode {
-        eQuirks,
-        eQuirks3,
-        eAlmostStandards
-    };
-
-    const char* name;
-    eMode mode_if_no_sysid;
-    eMode mode_if_sysid;
-};
-
 struct NamedColor {
     const char* name;
     unsigned ARGBValue;
@@ -49,7 +37,6 @@ struct Value {
     int id;
 };
 
-const PubIDInfo* findDoctypeEntry(register const char* str, register unsigned int len);
 const NamedColor* findColor(register const char* str, register unsigned int len);
 const Property* findProperty(register const char* str, register unsigned int len);
 const Value* findValue(register const char* str, register unsigned int len);

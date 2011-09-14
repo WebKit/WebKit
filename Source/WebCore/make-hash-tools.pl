@@ -27,15 +27,7 @@ shift;
 my $option = basename($ARGV[0],".gperf");
 
 
-if ($option eq "DocTypeStrings") {
-
-    my $docTypeStringsGenerated    = "$outdir/DocTypeStrings.cpp";
-    my $docTypeStringsGperf        = $ARGV[0];
-    shift;
-
-    system("gperf --key-positions=\"*\" -s 2 $docTypeStringsGperf > $docTypeStringsGenerated") == 0 || die "calling gperf failed: $?";
-
-} elsif ($option eq "ColorData") {
+if ($option eq "ColorData") {
 
     my $colorDataGenerated         = "$outdir/ColorData.cpp";
     my $colorDataGperf             = $ARGV[0];

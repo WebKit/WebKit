@@ -486,10 +486,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\DocTypeStrings.cpp"
-				>
-			</File>
-			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\HashTools.h"
 				>
 			</File>
