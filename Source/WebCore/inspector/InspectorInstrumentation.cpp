@@ -660,12 +660,6 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
         pageAgent->frameNavigated(loader);
 }
 
-void InspectorInstrumentation::frameDestroyedImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
-{
-    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents->inspectorPageAgent())
-        inspectorPageAgent->frameDestroyed(frame);
-}
-
 void InspectorInstrumentation::loaderDetachedFromFrameImpl(InstrumentingAgents* instrumentingAgents, DocumentLoader* loader)
 {
     if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents->inspectorPageAgent())
