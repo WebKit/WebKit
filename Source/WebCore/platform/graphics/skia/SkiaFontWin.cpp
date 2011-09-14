@@ -99,6 +99,29 @@ static bool disableTextLCD(PlatformContextSkia* skiaContext)
            || skiaContext->isDrawingToImageBuffer();
 }
 
+// Lookup the current system settings for font smoothing.
+// We cache these values for performance, but if the browser has away to be
+// notified when these change, we could re-query them at that time.
+static uint32_t getDefaultGDITextFlags()
+{
+    static bool gInited;
+    static uint32_t gFlags;
+    if (!gInited) {
+        BOOL enabled;
+        if (SystemParametersInfo(SPI_GETFONTSMOOTHING, 0, &enabled, 0) && enabled) {
+            gFlags |= SkPaint::kAntiAlias_Flag;
+
+            UINT smoothType;
+            if (SystemParametersInfo(SPI_GETFONTSMOOTHINGTYPE, 0, &smoothType, 0)) {
+                if (FE_FONTSMOOTHINGCLEARTYPE == smoothType)
+                    gFlags |= SkPaint::kLCDRenderText_Flag;
+            }
+        }
+        gInited = true;
+    }
+    return gFlags;
+}
+
 static void setupPaintForFont(HFONT hfont, SkPaint* paint, PlatformContextSkia* pcs)
 {
     //  FIXME:
@@ -118,24 +141,30 @@ static void setupPaintForFont(HFONT hfont, SkPaint* paint, PlatformContextSkia* 
     SkSafeUnref(face);
 
     uint32_t flags = paint->getFlags();
-    // our defaults
-    flags |= SkPaint::kAntiAlias_Flag;
-    if (disableTextLCD(pcs))
-        flags &= ~SkPaint::kLCDRenderText_Flag;
-    else
-        flags |= SkPaint::kLCDRenderText_Flag;
+    // clear our flags initially, and then selectively set them
+    // based on the LOGFONT quality
+    flags &= SkPaint::kAntiAlias_Flag;
+    flags &= SkPaint::kLCDRenderText_Flag;
 
     switch (info.lfQuality) {
     case NONANTIALIASED_QUALITY:
-        flags &= ~SkPaint::kAntiAlias_Flag;
-        flags &= ~SkPaint::kLCDRenderText_Flag;
         break;
     case ANTIALIASED_QUALITY:
-        flags &= ~SkPaint::kLCDRenderText_Flag;
+        flags |= SkPaint::kAntiAlias_Flag;
+        break;
+    case CLEARTYPE_QUALITY:
+        flags |= SkPaint::kAntiAlias_Flag;
+        flags |= SkPaint::kLCDRenderText_Flag;
         break;
     default:
+        flags |= getDefaultGDITextFlags();
         break;
     }
+
+    // do this check after our switch on lfQuality
+    if (disableTextLCD(pcs))
+        flags &= ~SkPaint::kLCDRenderText_Flag;
+
     paint->setFlags(flags);
 }
 
