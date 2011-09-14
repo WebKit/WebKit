@@ -38,7 +38,6 @@ JSGlueGlobalObject::JSGlueGlobalObject(JSGlobalData& globalData, Structure* stru
     , m_flags(flags)
     , m_userObjectStructure(globalData, userObjectStructure)
 {
-    finishCreation(globalData, this);
 }
 
 JSRun::JSRun(CFStringRef source, JSFlags inFlags)

@@ -1,3 +1,105 @@
+2011-09-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Unzip initialization lists and constructors in JSCell hierarchy (6/7)
+        https://bugs.webkit.org/show_bug.cgi?id=67692
+
+        Reviewed by Geoffrey Garen.
+
+        Completed the sixth level of the refactoring to add finishCreation() 
+        methods to all classes within the JSCell hierarchy with non-trivial 
+        constructor bodies.
+
+        This primarily consists of pushing the calls to finishCreation() down 
+        into the constructors of the subclasses of the fifth level of the hierarchy 
+        as well as pulling the finishCreation() calls out into the class's corresponding
+        create() method if it has one.  Doing both simultaneously allows us to 
+        maintain the invariant that the finishCreation() method chain is called exactly 
+        once during the creation of an object, since calling it any other number of 
+        times (0, 2, or more) will cause an assertion failure.
+
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::JSCallbackFunction):
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::create):
+        * jsc.cpp:
+        (GlobalObject::create):
+        (GlobalObject::GlobalObject):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::ArrayConstructor):
+        * runtime/ArrayConstructor.h:
+        (JSC::ArrayConstructor::create):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::BooleanConstructor):
+        * runtime/BooleanConstructor.h:
+        (JSC::BooleanConstructor::create):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::BooleanPrototype):
+        * runtime/BooleanPrototype.h:
+        (JSC::BooleanPrototype::create):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::DateConstructor):
+        * runtime/DateConstructor.h:
+        (JSC::DateConstructor::create):
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::DatePrototype):
+        * runtime/DatePrototype.h:
+        (JSC::DatePrototype::create):
+        * runtime/Error.cpp:
+        (JSC::StrictModeTypeErrorFunction::StrictModeTypeErrorFunction):
+        (JSC::StrictModeTypeErrorFunction::create):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::ErrorConstructor):
+        * runtime/ErrorConstructor.h:
+        (JSC::ErrorConstructor::create):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::FunctionConstructor):
+        * runtime/FunctionConstructor.h:
+        (JSC::FunctionConstructor::create):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::FunctionPrototype):
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::create):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructor::create):
+        * runtime/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::NativeErrorPrototype):
+        (JSC::NativeErrorPrototype::finishCreation):
+        * runtime/NativeErrorPrototype.h:
+        (JSC::NativeErrorPrototype::create):
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::NumberConstructor):
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::create):
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::NumberPrototype):
+        * runtime/NumberPrototype.h:
+        (JSC::NumberPrototype::create):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        * runtime/ObjectConstructor.h:
+        (JSC::ObjectConstructor::create):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::RegExpConstructor):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::create):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::RegExpPrototype):
+        * runtime/RegExpPrototype.h:
+        (JSC::RegExpPrototype::create):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+        * runtime/StringConstructor.h:
+        (JSC::StringConstructor::create):
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::create):
+        (JSC::StringObjectThatMasqueradesAsUndefined::StringObjectThatMasqueradesAsUndefined):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::StringPrototype):
+        * runtime/StringPrototype.h:
+        (JSC::StringPrototype::create):
+
 2011-09-13  Eric Seidel  <eric@webkit.org>
 
         Remove ENABLE_SVG_USE as <use> is required by HTML5

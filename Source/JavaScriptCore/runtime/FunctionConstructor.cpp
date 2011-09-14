@@ -37,10 +37,9 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(FunctionConstructor);
 
-FunctionConstructor::FunctionConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, FunctionPrototype* functionPrototype)
+FunctionConstructor::FunctionConstructor(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure)
 {
-    finishCreation(exec, functionPrototype);
 }
 
 void FunctionConstructor::finishCreation(ExecState* exec, FunctionPrototype* functionPrototype)

@@ -31,7 +31,9 @@ namespace JSC {
 
         static FunctionPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            return new (allocateCell<FunctionPrototype>(*exec->heap())) FunctionPrototype(exec, globalObject, structure);
+            FunctionPrototype* prototype = new (allocateCell<FunctionPrototype>(*exec->heap())) FunctionPrototype(globalObject, structure);
+            prototype->finishCreation(exec, exec->propertyNames().nullIdentifier);
+            return prototype;
         }
         
         void addFunctionProperties(ExecState*, JSGlobalObject*, Structure* functionStructure, JSFunction** callFunction, JSFunction** applyFunction);
@@ -45,7 +47,7 @@ namespace JSC {
         void finishCreation(ExecState*, const Identifier& name);
 
     private:
-        FunctionPrototype(ExecState*, JSGlobalObject*, Structure*);
+        FunctionPrototype(JSGlobalObject*, Structure*);
         virtual CallType getCallData(CallData&);
     };
 

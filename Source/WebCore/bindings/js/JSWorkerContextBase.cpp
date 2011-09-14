@@ -49,9 +49,15 @@ ASSERT_CLASS_FITS_IN_CELL(JSWorkerContextBase);
 const ClassInfo JSWorkerContextBase::s_info = { "WorkerContext", &JSDOMGlobalObject::s_info, 0, 0 };
 
 JSWorkerContextBase::JSWorkerContextBase(JSC::JSGlobalData& globalData, JSC::Structure* structure, PassRefPtr<WorkerContext> impl)
-    : JSDOMGlobalObject(globalData, structure, normalWorld(globalData), this)
+    : JSDOMGlobalObject(globalData, structure, normalWorld(globalData))
     , m_impl(impl)
 {
+    finishCreation(globalData, this);
+}
+
+void JSWorkerContextBase::finishCreation(JSGlobalData& globalData, JSWorkerContextBase* thisValue)
+{
+    Base::finishCreation(globalData, thisValue);
     ASSERT(inherits(&s_info));
 }
 

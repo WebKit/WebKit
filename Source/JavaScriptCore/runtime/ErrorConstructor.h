@@ -32,16 +32,18 @@ namespace JSC {
     public:
         typedef InternalFunction Base;
 
-        static ErrorConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ErrorPrototype* errPrototype)
+        static ErrorConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ErrorPrototype* errorPrototype)
         {
-            return new (allocateCell<ErrorConstructor>(*exec->heap())) ErrorConstructor(exec, globalObject, structure, errPrototype);
+            ErrorConstructor* constructor = new (allocateCell<ErrorConstructor>(*exec->heap())) ErrorConstructor(globalObject, structure);
+            constructor->finishCreation(exec, errorPrototype);
+            return constructor;
         }
 
     protected:
         void finishCreation(ExecState*, ErrorPrototype*);
         
     private:
-        ErrorConstructor(ExecState*, JSGlobalObject*, Structure*, ErrorPrototype*);
+        ErrorConstructor(JSGlobalObject*, Structure*);
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
     };

@@ -44,6 +44,7 @@ namespace WebCore {
 
     // Base class for all constructor objects in the JSC bindings.
     class DOMConstructorObject : public JSDOMWrapper {
+        typedef JSDOMWrapper Base;
     public:
         static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
         {
@@ -55,13 +56,13 @@ namespace WebCore {
         DOMConstructorObject(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
             : JSDOMWrapper(structure, globalObject)
         {
-            finishCreation(globalObject->globalData());
         }
     };
 
     // Constructors using this base class depend on being in a Document and
     // can never be used from a WorkerContext.
     class DOMConstructorWithDocument : public DOMConstructorObject {
+        typedef DOMConstructorObject Base;
     public:
         Document* document() const
         {
@@ -72,6 +73,12 @@ namespace WebCore {
         DOMConstructorWithDocument(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
             : DOMConstructorObject(structure, globalObject)
         {
+            finishCreation(globalObject);
+        }
+
+        void finishCreation(JSDOMGlobalObject* globalObject)
+        {
+            Base::finishCreation(globalObject->globalData());
             ASSERT(globalObject->scriptExecutionContext()->isDocument());
         }
     };

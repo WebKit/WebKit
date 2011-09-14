@@ -33,7 +33,9 @@ namespace JSC {
 
         static DateConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, DatePrototype* datePrototype)
         {
-            return new (allocateCell<DateConstructor>(*exec->heap())) DateConstructor(exec, globalObject, structure, datePrototype);
+            DateConstructor* constructor = new (allocateCell<DateConstructor>(*exec->heap())) DateConstructor(globalObject, structure);
+            constructor->finishCreation(exec, datePrototype);
+            return constructor;
         }
 
         static const ClassInfo s_info;
@@ -48,7 +50,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
     private:
-        DateConstructor(ExecState*, JSGlobalObject*, Structure*, DatePrototype*);
+        DateConstructor(JSGlobalObject*, Structure*);
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
 

@@ -145,14 +145,16 @@ long StopWatch::getElapsedMS()
 
 class GlobalObject : public JSGlobalObject {
 private:
-    GlobalObject(JSGlobalData&, Structure*, const Vector<UString>& arguments);
+    GlobalObject(JSGlobalData&, Structure*);
 
 public:
     typedef JSGlobalObject Base;
 
     static GlobalObject* create(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
     {
-        return new (allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure, arguments);
+        GlobalObject* object = new (allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure);
+        object->finishCreation(globalData, arguments);
+        return object;
     }
     virtual UString className() const { return "global"; }
 
@@ -188,10 +190,9 @@ protected:
 COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);
 ASSERT_CLASS_FITS_IN_CELL(GlobalObject);
 
-GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
+GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure)
     : JSGlobalObject(globalData, structure)
 {
-    finishCreation(globalData, arguments);
 }
 
 EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)

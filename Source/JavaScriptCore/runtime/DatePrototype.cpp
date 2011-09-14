@@ -430,10 +430,9 @@ const ClassInfo DatePrototype::s_info = {"Date", &DateInstance::s_info, 0, ExecS
 
 // ECMA 15.9.4
 
-DatePrototype::DatePrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+DatePrototype::DatePrototype(ExecState* exec, Structure* structure)
     : DateInstance(exec, structure)
 {
-    finishCreation(exec, globalObject);
 }
 
 void DatePrototype::finishCreation(ExecState* exec, JSGlobalObject*)

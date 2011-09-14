@@ -38,6 +38,7 @@ namespace WebCore {
         typedef JSDOMGlobalObject Base;
     protected:
         JSDOMWindowBase(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<DOMWindow>, JSDOMWindowShell*);
+        void finishCreation(JSC::JSGlobalData&, JSDOMWindowShell*);
 
     public:
         void updateDocument();

@@ -33,7 +33,7 @@ namespace JSC {
 
 class JSCallbackFunction : public InternalFunction {
 protected:
-    JSCallbackFunction(ExecState*, JSGlobalObject*, JSObjectCallAsFunctionCallback, const Identifier& name);
+    JSCallbackFunction(JSGlobalObject*, JSObjectCallAsFunctionCallback);
     void finishCreation(JSGlobalData&, const Identifier& name);
 
 public:
@@ -41,7 +41,9 @@ public:
 
     static JSCallbackFunction* create(ExecState* exec, JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, const Identifier& name)
     {
-        return new (allocateCell<JSCallbackFunction>(*exec->heap())) JSCallbackFunction(exec, globalObject, callback, name);
+        JSCallbackFunction* function = new (allocateCell<JSCallbackFunction>(*exec->heap())) JSCallbackFunction(globalObject, callback);
+        function->finishCreation(exec->globalData(), name);
+        return function;
     }
 
     static const ClassInfo s_info;

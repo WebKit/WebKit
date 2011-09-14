@@ -36,14 +36,15 @@ namespace JSC {
         {
             JSString* newString = jsString(exec, string);
             Structure* structure = createStructure(exec->globalData(), exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->stringPrototype());
-            return new (allocateCell<StringObjectThatMasqueradesAsUndefined>(*exec->heap())) StringObjectThatMasqueradesAsUndefined(exec, structure, newString);
+            StringObjectThatMasqueradesAsUndefined* object = new (allocateCell<StringObjectThatMasqueradesAsUndefined>(*exec->heap())) StringObjectThatMasqueradesAsUndefined(exec, structure);
+            object->finishCreation(exec->globalData(), newString);
+            return object;
         }
 
     private:
-        StringObjectThatMasqueradesAsUndefined(ExecState* exec, Structure* structure, JSString* string)
+        StringObjectThatMasqueradesAsUndefined(ExecState* exec, Structure* structure)
             : StringObject(exec->globalData(), structure)
         {
-            finishCreation(exec->globalData(), string);
         }
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) 

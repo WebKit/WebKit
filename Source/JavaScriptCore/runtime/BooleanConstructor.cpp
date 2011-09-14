@@ -28,10 +28,9 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(BooleanConstructor);
 
-BooleanConstructor::BooleanConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, BooleanPrototype* booleanPrototype)
+BooleanConstructor::BooleanConstructor(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure)
 {
-    finishCreation(exec, booleanPrototype);
 }
 
 void BooleanConstructor::finishCreation(ExecState* exec, BooleanPrototype* booleanPrototype)

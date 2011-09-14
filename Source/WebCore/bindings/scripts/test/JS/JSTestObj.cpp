@@ -167,13 +167,16 @@ COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWro
 
 class JSTestObjConstructor : public DOMConstructorObject {
 private:
-    JSTestObjConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
+    JSTestObjConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
 
 public:
     typedef DOMConstructorObject Base;
     static JSTestObjConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
-        return new (JSC::allocateCell<JSTestObjConstructor>(*exec->heap())) JSTestObjConstructor(exec, structure, globalObject);
+        JSTestObjConstructor* ptr = new (JSC::allocateCell<JSTestObjConstructor>(*exec->heap())) JSTestObjConstructor(structure, globalObject);
+        ptr->finishCreation(exec, globalObject);
+        return ptr;
     }
 
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
@@ -189,9 +192,14 @@ protected:
 
 const ClassInfo JSTestObjConstructor::s_info = { "TestObjConstructor", &DOMConstructorObject::s_info, &JSTestObjConstructorTable, 0 };
 
-JSTestObjConstructor::JSTestObjConstructor(ExecState* exec, Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestObjConstructor::JSTestObjConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
 {
+}
+
+void JSTestObjConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
+{
+    Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestObjPrototype::self(exec, globalObject), DontDelete | ReadOnly);
 }
@@ -299,7 +307,11 @@ JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject* globalObject, Pass
     : JSDOMWrapper(structure, globalObject)
     , m_impl(impl)
 {
-    finishCreation(globalObject->globalData());
+}
+
+void JSTestObj::finishCreation(JSGlobalData& globalData)
+{
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 }
 

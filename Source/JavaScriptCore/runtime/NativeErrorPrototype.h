@@ -28,14 +28,16 @@ namespace JSC {
 
     class NativeErrorPrototype : public ErrorPrototype {
     private:
-        NativeErrorPrototype(ExecState*, JSGlobalObject*, Structure*, const UString&, NativeErrorConstructor*);
+        NativeErrorPrototype(ExecState*, Structure*);
     
     public:
         typedef ErrorPrototype Base;
 
         static NativeErrorPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& name, NativeErrorConstructor* constructor)
         {
-            return new (allocateCell<NativeErrorPrototype>(*exec->heap())) NativeErrorPrototype(exec, globalObject, structure, name, constructor);
+            NativeErrorPrototype* prototype = new (allocateCell<NativeErrorPrototype>(*exec->heap())) NativeErrorPrototype(exec, structure);
+            prototype->finishCreation(exec, globalObject, name, constructor);
+            return prototype;
         }
 
     protected:

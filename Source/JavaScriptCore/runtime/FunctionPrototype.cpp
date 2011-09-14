@@ -37,10 +37,9 @@ static EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncCall(ExecState*);
 
-FunctionPrototype::FunctionPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+FunctionPrototype::FunctionPrototype(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure)
 {
-    finishCreation(exec, exec->propertyNames().nullIdentifier);
 }
 
 void FunctionPrototype::finishCreation(ExecState* exec, const Identifier& name)

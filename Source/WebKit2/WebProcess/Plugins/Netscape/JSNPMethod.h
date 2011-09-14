@@ -39,10 +39,12 @@ class JSNPMethod : public JSC::InternalFunction {
 public:
     typedef JSC::InternalFunction Base;
 
-    static JSNPMethod* create(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, const JSC::Identifier& ident, NPIdentifier npIdent)
+    static JSNPMethod* create(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, const JSC::Identifier& name, NPIdentifier npIdent)
     {
         JSC::Structure* structure = createStructure(exec->globalData(), globalObject, globalObject->functionPrototype());
-        return new (JSC::allocateCell<JSNPMethod>(*exec->heap())) JSNPMethod(exec, globalObject, structure, ident, npIdent);
+        JSNPMethod* method = new (JSC::allocateCell<JSNPMethod>(*exec->heap())) JSNPMethod(globalObject, structure, npIdent);
+        method->finishCreation(exec->globalData(), name);
+        return method;
     }
 
     static const JSC::ClassInfo s_info;
@@ -53,7 +55,7 @@ protected:
     void finishCreation(JSC::JSGlobalData&, const JSC::Identifier& name);
 
 private:    
-    JSNPMethod(JSC::ExecState*, JSC::JSGlobalObject*, JSC::Structure*, const JSC::Identifier&, NPIdentifier);
+    JSNPMethod(JSC::JSGlobalObject*, JSC::Structure*, NPIdentifier);
 
     static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {

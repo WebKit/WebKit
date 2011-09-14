@@ -64,13 +64,16 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 static JSC_CONST_HASHTABLE HashTable JSTestInterfaceConstructorTable = { 1, 0, JSTestInterfaceConstructorTableValues, 0 };
 class JSTestInterfaceConstructor : public DOMConstructorObject {
 private:
-    JSTestInterfaceConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
+    JSTestInterfaceConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
 
 public:
     typedef DOMConstructorObject Base;
     static JSTestInterfaceConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
-        return new (JSC::allocateCell<JSTestInterfaceConstructor>(*exec->heap())) JSTestInterfaceConstructor(exec, structure, globalObject);
+        JSTestInterfaceConstructor* ptr = new (JSC::allocateCell<JSTestInterfaceConstructor>(*exec->heap())) JSTestInterfaceConstructor(structure, globalObject);
+        ptr->finishCreation(exec, globalObject);
+        return ptr;
     }
 
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
@@ -88,9 +91,14 @@ protected:
 
 const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", &DOMConstructorObject::s_info, &JSTestInterfaceConstructorTable, 0 };
 
-JSTestInterfaceConstructor::JSTestInterfaceConstructor(ExecState* exec, Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestInterfaceConstructor::JSTestInterfaceConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
 {
+}
+
+void JSTestInterfaceConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
+{
+    Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestInterfacePrototype::self(exec, globalObject), DontDelete | ReadOnly);
 }
@@ -146,7 +154,11 @@ JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject* global
     : JSDOMWrapper(structure, globalObject)
     , m_impl(impl)
 {
-    finishCreation(globalObject->globalData());
+}
+
+void JSTestInterface::finishCreation(JSGlobalData& globalData)
+{
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 }
 

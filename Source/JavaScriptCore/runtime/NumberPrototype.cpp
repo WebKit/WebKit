@@ -70,10 +70,9 @@ const ClassInfo NumberPrototype::s_info = { "Number", &NumberObject::s_info, 0, 
 
 ASSERT_CLASS_FITS_IN_CELL(NumberPrototype);
 
-NumberPrototype::NumberPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+NumberPrototype::NumberPrototype(ExecState* exec, Structure* structure)
     : NumberObject(exec->globalData(), structure)
 {
-    finishCreation(exec, globalObject);
 }
 
 void NumberPrototype::finishCreation(ExecState* exec, JSGlobalObject*)

@@ -41,7 +41,6 @@ namespace WebCore {
     class JSWorkerContextBase : public JSDOMGlobalObject {
         typedef JSDOMGlobalObject Base;
     public:
-        JSWorkerContextBase(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<WorkerContext>);
         virtual ~JSWorkerContextBase();
 
         static const JSC::ClassInfo s_info;
@@ -53,6 +52,10 @@ namespace WebCore {
         {
             return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
         }
+
+    protected:
+        JSWorkerContextBase(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<WorkerContext>);
+        void finishCreation(JSC::JSGlobalData&, JSWorkerContextBase*);
 
     private:
         RefPtr<WorkerContext> m_impl;

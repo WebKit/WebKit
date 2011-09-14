@@ -32,7 +32,9 @@ namespace JSC {
 
         static RegExpPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
         {
-            return new (allocateCell<RegExpPrototype>(*exec->heap())) RegExpPrototype(exec, globalObject, structure, regExp);
+            RegExpPrototype* prototype = new (allocateCell<RegExpPrototype>(*exec->heap())) RegExpPrototype(globalObject, structure, regExp);
+            prototype->finishCreation(globalObject);
+            return prototype;
         }
         
         static const ClassInfo s_info;
@@ -43,7 +45,7 @@ namespace JSC {
         }
 
     protected:
-        RegExpPrototype(ExecState*, JSGlobalObject*, Structure*, RegExp*);
+        RegExpPrototype(JSGlobalObject*, Structure*, RegExp*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | RegExpObject::StructureFlags;
 
     private:

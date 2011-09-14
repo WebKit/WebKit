@@ -167,11 +167,10 @@ JSObject* throwSyntaxError(ExecState* exec)
 
 class StrictModeTypeErrorFunction : public InternalFunction {
 private:
-    StrictModeTypeErrorFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& message)
+    StrictModeTypeErrorFunction(JSGlobalObject* globalObject, Structure* structure, const UString& message)
         : InternalFunction(globalObject, structure)
         , m_message(message)
     {
-        finishCreation(exec->globalData(), exec->globalData().propertyNames->emptyIdentifier);
     }
 
 public:
@@ -179,7 +178,9 @@ public:
 
     static StrictModeTypeErrorFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& message)
     {
-        return new (allocateCell<StrictModeTypeErrorFunction>(*exec->heap())) StrictModeTypeErrorFunction(exec, globalObject, structure, message);
+        StrictModeTypeErrorFunction* function = new (allocateCell<StrictModeTypeErrorFunction>(*exec->heap())) StrictModeTypeErrorFunction(globalObject, structure, message);
+        function->finishCreation(exec->globalData(), exec->globalData().propertyNames->emptyIdentifier);
+        return function;
     }
     
     static EncodedJSValue JSC_HOST_CALL constructThrowTypeError(ExecState* exec)

@@ -73,10 +73,9 @@ const ClassInfo DateConstructor::s_info = { "Function", &InternalFunction::s_inf
 
 ASSERT_CLASS_FITS_IN_CELL(DateConstructor);
 
-DateConstructor::DateConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, DatePrototype* datePrototype)
+DateConstructor::DateConstructor(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure) 
 {
-    finishCreation(exec, datePrototype);
 }
 
 void DateConstructor::finishCreation(ExecState* exec, DatePrototype* datePrototype)

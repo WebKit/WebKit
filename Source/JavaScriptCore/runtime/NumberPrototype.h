@@ -31,7 +31,9 @@ namespace JSC {
 
         static NumberPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            return new (allocateCell<NumberPrototype>(*exec->heap())) NumberPrototype(exec, globalObject, structure);
+            NumberPrototype* prototype = new (allocateCell<NumberPrototype>(*exec->heap())) NumberPrototype(exec, structure);
+            prototype->finishCreation(exec, globalObject);
+            return prototype;
         }
         
         static const ClassInfo s_info;
@@ -46,7 +48,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NumberObject::StructureFlags;
 
     private:
-        NumberPrototype(ExecState*, JSGlobalObject*, Structure*);
+        NumberPrototype(ExecState*, Structure*);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     };

@@ -34,7 +34,9 @@ public:
     typedef JSDOMWrapper Base;
     static JSTestMediaQueryListListener* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestMediaQueryListListener> impl)
     {
-        return new (JSC::allocateCell<JSTestMediaQueryListListener>(globalObject->globalData().heap)) JSTestMediaQueryListListener(structure, globalObject, impl);
+        JSTestMediaQueryListListener* ptr = new (JSC::allocateCell<JSTestMediaQueryListListener>(globalObject->globalData().heap)) JSTestMediaQueryListListener(structure, globalObject, impl);
+        ptr->finishCreation(globalObject->globalData());
+        return ptr;
     }
 
     static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
@@ -54,6 +56,7 @@ private:
     RefPtr<TestMediaQueryListListener> m_impl;
 protected:
     JSTestMediaQueryListListener(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestMediaQueryListListener>);
+    void finishCreation(JSC::JSGlobalData&);
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
@@ -66,7 +69,9 @@ public:
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     static JSTestMediaQueryListListenerPrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
-        return new (JSC::allocateCell<JSTestMediaQueryListListenerPrototype>(globalData.heap)) JSTestMediaQueryListListenerPrototype(globalData, globalObject, structure);
+        JSTestMediaQueryListListenerPrototype* ptr = new (JSC::allocateCell<JSTestMediaQueryListListenerPrototype>(globalData.heap)) JSTestMediaQueryListListenerPrototype(globalData, globalObject, structure);
+        ptr->finishCreation(globalData);
+        return ptr;
     }
 
     static const JSC::ClassInfo s_info;
@@ -78,7 +83,7 @@ public:
     }
 
 private:
-    JSTestMediaQueryListListenerPrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { finishCreation(globalData); }
+    JSTestMediaQueryListListenerPrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { }
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };

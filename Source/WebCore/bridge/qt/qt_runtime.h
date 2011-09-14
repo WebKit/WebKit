@@ -159,7 +159,8 @@ public:
     static QtRuntimeMetaMethod* create(ExecState* exec, const Identifier& n, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature, bool allowPrivate)
     {
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<QtRuntimeMethod>(exec);
-        return new (allocateCell<QtRuntimeMetaMethod>(*exec->heap())) QtRuntimeMetaMethod(exec, domStructure, n, inst, index, signature, allowPrivate);
+        QtRuntimeMetaMethod* method = new (allocateCell<QtRuntimeMetaMethod>(*exec->heap())) QtRuntimeMetaMethod(exec, domStructure, n, inst, index, signature, allowPrivate);
+        return method;
     }
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
@@ -173,6 +174,7 @@ protected:
 
 private:
     QtRuntimeMetaMethod(ExecState*, Structure*, const Identifier&, PassRefPtr<QtInstance>, int index, const QByteArray&, bool allowPrivate);
+    void finishCreation(ExecState*, const Identifier&, PassRefPtr<QtInstance>, int index, const QByteArray& signature, bool allowPrivate);
 
     virtual CallType getCallData(CallData&);
     static EncodedJSValue JSC_HOST_CALL call(ExecState* exec);
@@ -201,6 +203,7 @@ protected:
 
 private:
     QtRuntimeConnectionMethod(ExecState*, Structure*, const Identifier&, bool isConnect, PassRefPtr<QtInstance>, int index, const QByteArray&);
+    void finishCreation(ExecState*, const Identifier&, bool isConnect, PassRefPtr<QtInstance>, int index, const QByteArray& signature);
 
     virtual CallType getCallData(CallData&);
     static EncodedJSValue JSC_HOST_CALL call(ExecState* exec);

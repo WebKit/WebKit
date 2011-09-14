@@ -51,10 +51,9 @@ const ClassInfo ArrayConstructor::s_info = { "Function", &InternalFunction::s_in
 
 ASSERT_CLASS_FITS_IN_CELL(ArrayConstructor);
 
-ArrayConstructor::ArrayConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ArrayPrototype* arrayPrototype)
+ArrayConstructor::ArrayConstructor(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure)
 {
-    finishCreation(exec, arrayPrototype);
 }
 
 void ArrayConstructor::finishCreation(ExecState* exec, ArrayPrototype* arrayPrototype)

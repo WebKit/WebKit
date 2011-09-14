@@ -46,7 +46,7 @@ namespace WebCore {
     protected:
         struct JSDOMGlobalObjectData;
 
-        JSDOMGlobalObject(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<DOMWrapperWorld>, JSC::JSObject* thisValue);
+        JSDOMGlobalObject(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<DOMWrapperWorld>);
         void finishCreation(JSC::JSGlobalData&, JSC::JSObject* thisValue);
 
     public:

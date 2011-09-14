@@ -31,16 +31,18 @@ namespace JSC {
     public:
         typedef InternalFunction Base;
 
-        static BooleanConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, BooleanPrototype* boolPrototype)
+        static BooleanConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, BooleanPrototype* booleanPrototype)
         {
-            return new (allocateCell<BooleanConstructor>(*exec->heap())) BooleanConstructor(exec, globalObject, structure, boolPrototype);
+            BooleanConstructor* constructor = new (allocateCell<BooleanConstructor>(*exec->heap())) BooleanConstructor(globalObject, structure);
+            constructor->finishCreation(exec, booleanPrototype);
+            return constructor;
         }
 
     protected:
         void finishCreation(ExecState*, BooleanPrototype*);
 
     private:
-        BooleanConstructor(ExecState*, JSGlobalObject*, Structure*, BooleanPrototype*);
+        BooleanConstructor(JSGlobalObject*, Structure*);
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
     };

@@ -34,7 +34,9 @@ public:
     typedef JSDOMWrapper Base;
     static JSTestObj* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestObj> impl)
     {
-        return new (JSC::allocateCell<JSTestObj>(globalObject->globalData().heap)) JSTestObj(structure, globalObject, impl);
+        JSTestObj* ptr = new (JSC::allocateCell<JSTestObj>(globalObject->globalData().heap)) JSTestObj(structure, globalObject, impl);
+        ptr->finishCreation(globalObject->globalData());
+        return ptr;
     }
 
     static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
@@ -67,6 +69,7 @@ private:
     RefPtr<TestObj> m_impl;
 protected:
     JSTestObj(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestObj>);
+    void finishCreation(JSC::JSGlobalData&);
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | Base::StructureFlags;
 };
 
@@ -79,7 +82,9 @@ public:
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     static JSTestObjPrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
-        return new (JSC::allocateCell<JSTestObjPrototype>(globalData.heap)) JSTestObjPrototype(globalData, globalObject, structure);
+        JSTestObjPrototype* ptr = new (JSC::allocateCell<JSTestObjPrototype>(globalData.heap)) JSTestObjPrototype(globalData, globalObject, structure);
+        ptr->finishCreation(globalData);
+        return ptr;
     }
 
     static const JSC::ClassInfo s_info;
@@ -91,7 +96,7 @@ public:
     }
 
 private:
-    JSTestObjPrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { finishCreation(globalData); }
+    JSTestObjPrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { }
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::OverridesVisitChildren | Base::StructureFlags;
 };

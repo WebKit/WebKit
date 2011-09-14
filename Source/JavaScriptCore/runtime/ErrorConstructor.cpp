@@ -29,10 +29,9 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ErrorConstructor);
 
-ErrorConstructor::ErrorConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ErrorPrototype* errorPrototype)
+ErrorConstructor::ErrorConstructor(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure)
 {
-    finishCreation(exec, errorPrototype);
 }
 
 void ErrorConstructor::finishCreation(ExecState* exec, ErrorPrototype* errorPrototype)

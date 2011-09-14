@@ -75,10 +75,9 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
 @end
 */
 
-ObjectConstructor::ObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ObjectPrototype* objectPrototype)
+ObjectConstructor::ObjectConstructor(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure)
 {
-    finishCreation(exec, objectPrototype);
 }
 
 void ObjectConstructor::finishCreation(ExecState* exec, ObjectPrototype* objectPrototype)

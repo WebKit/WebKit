@@ -66,13 +66,16 @@ static const HashTableValue JSTestSerializedScriptValueInterfaceConstructorTable
 static JSC_CONST_HASHTABLE HashTable JSTestSerializedScriptValueInterfaceConstructorTable = { 1, 0, JSTestSerializedScriptValueInterfaceConstructorTableValues, 0 };
 class JSTestSerializedScriptValueInterfaceConstructor : public DOMConstructorObject {
 private:
-    JSTestSerializedScriptValueInterfaceConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
+    JSTestSerializedScriptValueInterfaceConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
 
 public:
     typedef DOMConstructorObject Base;
     static JSTestSerializedScriptValueInterfaceConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
-        return new (JSC::allocateCell<JSTestSerializedScriptValueInterfaceConstructor>(*exec->heap())) JSTestSerializedScriptValueInterfaceConstructor(exec, structure, globalObject);
+        JSTestSerializedScriptValueInterfaceConstructor* ptr = new (JSC::allocateCell<JSTestSerializedScriptValueInterfaceConstructor>(*exec->heap())) JSTestSerializedScriptValueInterfaceConstructor(structure, globalObject);
+        ptr->finishCreation(exec, globalObject);
+        return ptr;
     }
 
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
@@ -88,9 +91,14 @@ protected:
 
 const ClassInfo JSTestSerializedScriptValueInterfaceConstructor::s_info = { "TestSerializedScriptValueInterfaceConstructor", &DOMConstructorObject::s_info, &JSTestSerializedScriptValueInterfaceConstructorTable, 0 };
 
-JSTestSerializedScriptValueInterfaceConstructor::JSTestSerializedScriptValueInterfaceConstructor(ExecState* exec, Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestSerializedScriptValueInterfaceConstructor::JSTestSerializedScriptValueInterfaceConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
 {
+}
+
+void JSTestSerializedScriptValueInterfaceConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
+{
+    Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestSerializedScriptValueInterfacePrototype::self(exec, globalObject), DontDelete | ReadOnly);
 }
@@ -132,7 +140,11 @@ JSTestSerializedScriptValueInterface::JSTestSerializedScriptValueInterface(Struc
     : JSDOMWrapper(structure, globalObject)
     , m_impl(impl)
 {
-    finishCreation(globalObject->globalData());
+}
+
+void JSTestSerializedScriptValueInterface::finishCreation(JSGlobalData& globalData)
+{
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 }
 

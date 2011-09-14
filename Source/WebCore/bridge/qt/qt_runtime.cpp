@@ -1010,7 +1010,6 @@ QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, Struc
     : InternalFunction(exec->lexicalGlobalObject(), structure)
     , d_ptr(dd)
 {
-    finishCreation(exec, identifier, instance);
 }
 
 void QtRuntimeMethod::finishCreation(ExecState* exec, const Identifier& identifier, PassRefPtr<QtInstance> instance)
@@ -1426,9 +1425,15 @@ static int findSignalIndex(const QMetaObject* meta, int initialIndex, QByteArray
     return index;
 }
 
-QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, Structure* structure, const Identifier& ident, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature, bool allowPrivate)
-    : QtRuntimeMethod (new QtRuntimeMetaMethodData(), exec, structure, ident, inst)
+QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, Structure* structure, const Identifier& identifier, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature, bool allowPrivate)
+    : QtRuntimeMethod (new QtRuntimeMetaMethodData(), exec, structure, identifier, instance)
 {
+    finishCreation(exec, identifier, instance, index, signature, allowPrivate);
+}
+
+void QtRuntimeMetaMethod::finishCreation(ExecState* exec, const Identifier& identifier, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature, bool allowPrivate)
+{
+    Base::finishCreation(exec, identifier, instance);
     QW_D(QtRuntimeMetaMethod);
     d->m_signature = signature;
     d->m_index = index;
@@ -1570,9 +1575,15 @@ JSValue QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, JSValue slotBase,
 
 QMultiMap<QObject*, QtConnectionObject*> QtRuntimeConnectionMethod::connections;
 
-QtRuntimeConnectionMethod::QtRuntimeConnectionMethod(ExecState* exec, Structure* structure, const Identifier& ident, bool isConnect, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature)
-    : QtRuntimeMethod (new QtRuntimeConnectionMethodData(), exec, structure, ident, inst)
+QtRuntimeConnectionMethod::QtRuntimeConnectionMethod(ExecState* exec, Structure* structure, const Identifier& identifier, bool isConnect, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature)
+    : QtRuntimeMethod (new QtRuntimeConnectionMethodData(), exec, structure, identifier, instance)
 {
+    finishCreation(exec, identifier, isConnect, instance, index, signature);
+}
+
+void QtRuntimeConnectionMethod::finishCreation(ExecState* exec, const Identifier& identifier, bool isConnect, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature)
+{
+    Base::finishCreation(exec, identifier, instance);
     QW_D(QtRuntimeConnectionMethod);
 
     d->m_signature = signature;

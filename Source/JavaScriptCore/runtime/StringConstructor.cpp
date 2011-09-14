@@ -47,10 +47,9 @@ const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_i
 
 ASSERT_CLASS_FITS_IN_CELL(StringConstructor);
 
-StringConstructor::StringConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, StringPrototype* stringPrototype)
+StringConstructor::StringConstructor(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure)
 {
-    finishCreation(exec, stringPrototype);
 }
 
 void StringConstructor::finishCreation(ExecState* exec, StringPrototype* stringPrototype)

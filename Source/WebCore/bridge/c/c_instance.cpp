@@ -130,8 +130,14 @@ public:
 
 private:
     CRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& name, Bindings::MethodList& list)
-        : RuntimeMethod(exec, globalObject, structure, name, list)
+        : RuntimeMethod(globalObject, structure, list)
     {
+        finishCreation(exec->globalData(), name);
+    }
+
+    void finishCreation(JSGlobalData& globalData, const Identifier& name)
+    {
+        Base::finishCreation(globalData, name);
         ASSERT(inherits(&s_info));
     }
 

@@ -36,7 +36,9 @@ public:
     typedef JSDOMWrapper Base;
     static JSTestSerializedScriptValueInterface* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestSerializedScriptValueInterface> impl)
     {
-        return new (JSC::allocateCell<JSTestSerializedScriptValueInterface>(globalObject->globalData().heap)) JSTestSerializedScriptValueInterface(structure, globalObject, impl);
+        JSTestSerializedScriptValueInterface* ptr = new (JSC::allocateCell<JSTestSerializedScriptValueInterface>(globalObject->globalData().heap)) JSTestSerializedScriptValueInterface(structure, globalObject, impl);
+        ptr->finishCreation(globalObject->globalData());
+        return ptr;
     }
 
     static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
@@ -56,6 +58,7 @@ private:
     RefPtr<TestSerializedScriptValueInterface> m_impl;
 protected:
     JSTestSerializedScriptValueInterface(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestSerializedScriptValueInterface>);
+    void finishCreation(JSC::JSGlobalData&);
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
@@ -68,7 +71,9 @@ public:
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     static JSTestSerializedScriptValueInterfacePrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
-        return new (JSC::allocateCell<JSTestSerializedScriptValueInterfacePrototype>(globalData.heap)) JSTestSerializedScriptValueInterfacePrototype(globalData, globalObject, structure);
+        JSTestSerializedScriptValueInterfacePrototype* ptr = new (JSC::allocateCell<JSTestSerializedScriptValueInterfacePrototype>(globalData.heap)) JSTestSerializedScriptValueInterfacePrototype(globalData, globalObject, structure);
+        ptr->finishCreation(globalData);
+        return ptr;
     }
 
     static const JSC::ClassInfo s_info;
@@ -78,7 +83,7 @@ public:
     }
 
 private:
-    JSTestSerializedScriptValueInterfacePrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { finishCreation(globalData); }
+    JSTestSerializedScriptValueInterfacePrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { }
 protected:
     static const unsigned StructureFlags = Base::StructureFlags;
 };

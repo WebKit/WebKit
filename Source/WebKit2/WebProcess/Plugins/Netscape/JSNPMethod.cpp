@@ -42,11 +42,10 @@ namespace WebKit {
 
 const ClassInfo JSNPMethod::s_info = { "NPMethod", &InternalFunction::s_info, 0, 0 };
 
-JSNPMethod::JSNPMethod(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& name, NPIdentifier npIdentifier)
+JSNPMethod::JSNPMethod(JSGlobalObject* globalObject, Structure* structure, NPIdentifier npIdentifier)
     : InternalFunction(globalObject, structure)
     , m_npIdentifier(npIdentifier)
 {
-    finishCreation(exec->globalData(), name);
 }
 
 void JSNPMethod::finishCreation(JSGlobalData& globalData, const Identifier& name)

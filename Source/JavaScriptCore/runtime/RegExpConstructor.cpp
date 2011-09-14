@@ -95,11 +95,10 @@ const ClassInfo RegExpConstructor::s_info = { "Function", &InternalFunction::s_i
 @end
 */
 
-RegExpConstructor::RegExpConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExpPrototype* regExpPrototype)
+RegExpConstructor::RegExpConstructor(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure)
     , d(adoptPtr(new RegExpConstructorPrivate))
 {
-    finishCreation(exec, regExpPrototype);
 }
 
 void RegExpConstructor::finishCreation(ExecState* exec, RegExpPrototype* regExpPrototype)

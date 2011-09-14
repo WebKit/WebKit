@@ -131,10 +131,9 @@ const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, 
 */
 
 // ECMA 15.5.4
-StringPrototype::StringPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSString* nameAndMessage)
+StringPrototype::StringPrototype(ExecState* exec, Structure* structure)
     : StringObject(exec->globalData(), structure)
 {
-    finishCreation(exec, globalObject, nameAndMessage);
 }
 
 void StringPrototype::finishCreation(ExecState* exec, JSGlobalObject*, JSString* nameAndMessage)

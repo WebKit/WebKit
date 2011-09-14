@@ -135,11 +135,16 @@ public:
 
 private:
     JavaRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& name, Bindings::MethodList& list)
-        : RuntimeMethod(exec, globalObject, structure, name, list)
+        : RuntimeMethod(globalObject, structure, list)
     {
-        ASSERT(inherits(&s_info));
+        finishCreation(exec->globalData(), name);
     }
 
+    void finishCreation(JSGlobalData& globalData, const Identifier& name)
+    {
+        Base::finishCreation(globalData, name);
+        ASSERT(inherits(&s_info));
+    }
 };
 
 const ClassInfo JavaRuntimeMethod::s_info = { "JavaRuntimeMethod", &RuntimeMethod::s_info, 0, 0 };

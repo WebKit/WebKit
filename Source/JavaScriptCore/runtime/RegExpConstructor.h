@@ -61,7 +61,9 @@ namespace JSC {
 
         static RegExpConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExpPrototype* regExpPrototype)
         {
-            return new (allocateCell<RegExpConstructor>(*exec->heap())) RegExpConstructor(exec, globalObject, structure, regExpPrototype);
+            RegExpConstructor* constructor = new (allocateCell<RegExpConstructor>(*exec->heap())) RegExpConstructor(globalObject, structure);
+            constructor->finishCreation(exec, regExpPrototype);
+            return constructor;
         }
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
@@ -94,7 +96,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | InternalFunction::StructureFlags;
 
     private:
-        RegExpConstructor(ExecState*, JSGlobalObject*, Structure*, RegExpPrototype*);
+        RegExpConstructor(JSGlobalObject*, Structure*);
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
 

@@ -31,7 +31,9 @@ namespace JSC {
 
         static BooleanPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            return new (allocateCell<BooleanPrototype>(*exec->heap())) BooleanPrototype(exec, globalObject, structure);
+            BooleanPrototype* prototype = new (allocateCell<BooleanPrototype>(*exec->heap())) BooleanPrototype(exec, structure);
+            prototype->finishCreation(exec, globalObject);
+            return prototype;
         }
         
         static const ClassInfo s_info;
@@ -46,7 +48,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | BooleanObject::StructureFlags;
 
     private:
-        BooleanPrototype(ExecState*, JSGlobalObject*, Structure*);
+        BooleanPrototype(ExecState*, Structure*);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     };

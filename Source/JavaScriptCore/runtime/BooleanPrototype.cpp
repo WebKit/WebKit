@@ -49,10 +49,9 @@ const ClassInfo BooleanPrototype::s_info = { "Boolean", &BooleanObject::s_info, 
 
 ASSERT_CLASS_FITS_IN_CELL(BooleanPrototype);
 
-BooleanPrototype::BooleanPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+BooleanPrototype::BooleanPrototype(ExecState* exec, Structure* structure)
     : BooleanObject(exec->globalData(), structure)
 {
-    finishCreation(exec, globalObject);
 }
 
 void BooleanPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
