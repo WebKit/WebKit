@@ -60,7 +60,7 @@ Canvas2DLayerChromium::~Canvas2DLayerChromium()
 
 bool Canvas2DLayerChromium::drawsContent() const
 {
-    return (m_context
+    return m_textureId && (m_context
             && (m_context->getExtensions()->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR));
 }
 

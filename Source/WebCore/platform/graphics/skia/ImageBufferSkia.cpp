@@ -116,6 +116,10 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderin
 
 ImageBuffer::~ImageBuffer()
 {
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_data.m_platformLayer)
+        m_data.m_platformLayer->setTextureId(0);
+#endif
     if (m_context && m_context->platformContext()) {
         // This is so that the SkGpuDevice destructor has the correct context.
         m_context->platformContext()->makeGrContextCurrent();

@@ -1,3 +1,21 @@
+2011-09-14  James Robinson  <jamesr@chromium.org>
+
+        [skia] fast/canvas/setWidthResetAfterForcedRender is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=67955
+
+        Reviewed by Stephen White.
+
+        When destroying an ImageBuffer due to a canvas resize, we weren't clearing the texture ID on the layer,
+        resulting in future compositor draw calls binding an invalid texture.  This results in the test failing and
+        possibly drawing from a bad texture.
+
+        Covered by fast/canvas/setWidthResetAfterForcedRender.html in the GPU configuration.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::drawsContent)
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::~ImageBuffer):
+
 2011-09-14  Eric Seidel  <eric@webkit.org>
 
         Remove ENABLE_SVG_USE as <use> is required by HTML5
