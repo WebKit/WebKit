@@ -105,11 +105,15 @@ void ewk_window_features_int_property_get(const Ewk_Window_Features *window_feat
  *
  * @param core if not @c 0 a new WebCore::WindowFeatures is allocated copying core features and
  * it is embedded inside the Ewk_Window_Features whose ref count is initialized, if core is @c 0 a new one is created with the default features.
- * @returns a new allocated the Ewk_Window_Features object
+ * @return a new allocated the Ewk_Window_Features object on sucess or @c 0 on failure
  */
 Ewk_Window_Features *ewk_window_features_new_from_core(const WebCore::WindowFeatures *core)
 {
     Ewk_Window_Features *window_features = static_cast<Ewk_Window_Features*>(malloc(sizeof(*window_features)));
+    if (!window_features) {
+        CRITICAL("Could not allocate Ewk_Window_Features.");
+        return 0;
+    }
 
     if (core)
         window_features->core = new WebCore::WindowFeatures(*core);

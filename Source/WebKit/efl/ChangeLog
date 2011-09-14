@@ -1,3 +1,17 @@
+2011-09-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Add NULL checks to ewk_window_features_new_from_core and ewk_view_window_create.
+        https://bugs.webkit.org/show_bug.cgi?id=64932
+
+        Reviewed by Eric Seidel.
+
+        It prevents the crash while allocating memory for the new window.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_window_create):
+        * ewk/ewk_window_features.cpp:
+        (ewk_window_features_new_from_core):
+
 2011-09-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Do not always return the cached frame name.
