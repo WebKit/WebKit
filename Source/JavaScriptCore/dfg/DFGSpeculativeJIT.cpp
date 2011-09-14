@@ -272,9 +272,9 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
                 info.fillDouble(fpr);
                 return fpr;
             }
-            if (isDoubleConstant(nodeIndex)) {
+            if (isNumberConstant(nodeIndex)) {
                 FPRReg fpr = fprAllocate();
-                m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(nodeIndex)))), gpr);
+                m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfNumberConstant(nodeIndex)))), gpr);
                 m_jit.movePtrToDouble(gpr, fpr);
                 unlock(gpr);
 

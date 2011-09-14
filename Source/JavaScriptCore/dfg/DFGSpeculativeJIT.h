@@ -351,8 +351,7 @@ private:
         VirtualRegister virtualRegister = node.virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
         
-        return (info.registerFormat() | DataFormatJS) == DataFormatJSInteger
-            || (info.spillFormat() | DataFormatJS) == DataFormatJSInteger;
+        return info.isJSInteger();
     }
     
     bool shouldSpeculateInteger(NodeIndex nodeIndex)
@@ -365,15 +364,18 @@ private:
         
         return false;
     }
-
+    
     bool shouldSpeculateDouble(NodeIndex nodeIndex)
     {
+        if (isDoubleConstant(nodeIndex))
+            return true;
+
         Node& node = m_jit.graph()[nodeIndex];
+
         VirtualRegister virtualRegister = node.virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
 
-        if ((info.registerFormat() | DataFormatJS) == DataFormatJSDouble
-            || (info.spillFormat() | DataFormatJS) == DataFormatJSDouble)
+        if (info.isJSDouble())
             return true;
         
         if (isDoublePrediction(m_jit.graph().getPrediction(node)))
@@ -382,9 +384,28 @@ private:
         return false;
     }
     
+    bool shouldNotSpeculateInteger(NodeIndex nodeIndex)
+    {
+        if (isDoubleConstant(nodeIndex))
+            return true;
+
+        Node& node = m_jit.graph()[nodeIndex];
+
+        VirtualRegister virtualRegister = node.virtualRegister();
+        GenerationInfo& info = m_generationInfo[virtualRegister];
+
+        if (info.isJSDouble())
+            return true;
+        
+        if (m_jit.graph().getPrediction(node) & PredictDouble)
+            return true;
+        
+        return false;
+    }
+    
     bool shouldSpeculateInteger(NodeIndex op1, NodeIndex op2)
     {
-        return !(shouldSpeculateDouble(op1) || shouldSpeculateDouble(op2)) && (shouldSpeculateInteger(op1) || shouldSpeculateInteger(op2));
+        return !(shouldNotSpeculateInteger(op1) || shouldNotSpeculateInteger(op2)) && (shouldSpeculateInteger(op1) || shouldSpeculateInteger(op2));
     }
 
     bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);

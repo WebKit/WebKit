@@ -214,6 +214,10 @@ public:
     {
         return at(nodeIndex).isDoubleConstant(codeBlock);
     }
+    bool isNumberConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return at(nodeIndex).isNumberConstant(codeBlock);
+    }
     bool isBooleanConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
         return at(nodeIndex).isBooleanConstant(codeBlock);
@@ -227,9 +231,9 @@ public:
     {
         return at(nodeIndex).valueOfInt32Constant(codeBlock);
     }
-    double valueOfDoubleConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    double valueOfNumberConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
-        return at(nodeIndex).valueOfDoubleConstant(codeBlock);
+        return at(nodeIndex).valueOfNumberConstant(codeBlock);
     }
     bool valueOfBooleanConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {

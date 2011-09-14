@@ -288,8 +288,8 @@ protected:
         ASSERT(info.registerFormat() == DataFormatDouble);
 
         if (node.isConstant()) {
-            ASSERT(isDoubleConstant(nodeIndex));
-            m_jit.move(JITCompiler::ImmPtr(bitwise_cast<void*>(valueOfDoubleConstant(nodeIndex))), canTrample);
+            ASSERT(isNumberConstant(nodeIndex));
+            m_jit.move(JITCompiler::ImmPtr(bitwise_cast<void*>(valueOfNumberConstant(nodeIndex))), canTrample);
             m_jit.movePtrToDouble(canTrample, info.fpr());
             return;
         }
@@ -407,7 +407,7 @@ protected:
         m_jit.storePtr(reg, JITCompiler::addressFor(spillMe));
         info.spill((DataFormat)(spillFormat | DataFormatJS));
     }
-
+    
     bool isKnownInteger(NodeIndex);
     bool isKnownNumeric(NodeIndex);
     bool isKnownCell(NodeIndex);
@@ -421,9 +421,10 @@ protected:
     bool isJSConstant(NodeIndex nodeIndex) { return m_jit.isJSConstant(nodeIndex); }
     bool isInt32Constant(NodeIndex nodeIndex) { return m_jit.isInt32Constant(nodeIndex); }
     bool isDoubleConstant(NodeIndex nodeIndex) { return m_jit.isDoubleConstant(nodeIndex); }
+    bool isNumberConstant(NodeIndex nodeIndex) { return m_jit.isNumberConstant(nodeIndex); }
     bool isBooleanConstant(NodeIndex nodeIndex) { return m_jit.isBooleanConstant(nodeIndex); }
     int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return m_jit.valueOfInt32Constant(nodeIndex); }
-    double valueOfDoubleConstant(NodeIndex nodeIndex) { return m_jit.valueOfDoubleConstant(nodeIndex); }
+    double valueOfNumberConstant(NodeIndex nodeIndex) { return m_jit.valueOfNumberConstant(nodeIndex); }
     JSValue valueOfJSConstant(NodeIndex nodeIndex) { return m_jit.valueOfJSConstant(nodeIndex); }
     bool valueOfBooleanConstant(NodeIndex nodeIndex) { return m_jit.valueOfBooleanConstant(nodeIndex); }
     bool isNullConstant(NodeIndex nodeIndex)
@@ -667,7 +668,7 @@ protected:
     }
     void initConstantInfo(NodeIndex nodeIndex)
     {
-        ASSERT(isInt32Constant(nodeIndex) || isDoubleConstant(nodeIndex) || isJSConstant(nodeIndex));
+        ASSERT(isInt32Constant(nodeIndex) || isNumberConstant(nodeIndex) || isJSConstant(nodeIndex));
         Node& node = m_jit.graph()[nodeIndex];
         m_generationInfo[node.virtualRegister()].initConstant(nodeIndex, node.refCount());
     }

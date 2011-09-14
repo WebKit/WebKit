@@ -216,7 +216,7 @@ private:
     {
         Node& node = m_graph[index];
 
-        if (node.hasDoubleResult() || node.hasInt32Result())
+        if (node.hasNumberResult())
             return index;
 
         if (node.op == JSConstant) {
@@ -759,7 +759,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 weaklyPredictInt32(op1);
                 weaklyPredictInt32(op2);
             }
-            if (m_graph[op1].hasNumericResult() && m_graph[op2].hasNumericResult())
+            if (m_graph[op1].hasNumberResult() && m_graph[op2].hasNumberResult())
                 set(currentInstruction[1].u.operand, addToGraph(ArithAdd, toNumber(op1), toNumber(op2)));
             else
                 set(currentInstruction[1].u.operand, addToGraph(ValueAdd, op1, op2));

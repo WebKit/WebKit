@@ -251,11 +251,12 @@ public:
     bool isJSConstant(NodeIndex nodeIndex) { return graph().isJSConstant(nodeIndex); }
     bool isInt32Constant(NodeIndex nodeIndex) { return graph().isInt32Constant(codeBlock(), nodeIndex); }
     bool isDoubleConstant(NodeIndex nodeIndex) { return graph().isDoubleConstant(codeBlock(), nodeIndex); }
+    bool isNumberConstant(NodeIndex nodeIndex) { return graph().isNumberConstant(codeBlock(), nodeIndex); }
     bool isBooleanConstant(NodeIndex nodeIndex) { return graph().isBooleanConstant(codeBlock(), nodeIndex); }
     // Helper methods get constant values from nodes.
     JSValue valueOfJSConstant(NodeIndex nodeIndex) { return graph().valueOfJSConstant(codeBlock(), nodeIndex); }
     int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return graph().valueOfInt32Constant(codeBlock(), nodeIndex); }
-    double valueOfDoubleConstant(NodeIndex nodeIndex) { return graph().valueOfDoubleConstant(codeBlock(), nodeIndex); }
+    double valueOfNumberConstant(NodeIndex nodeIndex) { return graph().valueOfNumberConstant(codeBlock(), nodeIndex); }
     bool valueOfBooleanConstant(NodeIndex nodeIndex) { return graph().valueOfBooleanConstant(codeBlock(), nodeIndex); }
 
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.

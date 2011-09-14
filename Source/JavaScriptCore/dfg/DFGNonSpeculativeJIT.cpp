@@ -192,7 +192,7 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
         haveValue.link(&m_jit);
     }
     
-    m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(immChild)))), resultGPR);
+    m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfNumberConstant(immChild)))), resultGPR);
     m_jit.movePtrToDouble(resultGPR, tmp1FPR);
     switch (op) {
     case ValueAdd:
@@ -577,7 +577,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         }
 
         GenerationInfo& childInfo = m_generationInfo[m_jit.graph()[node.child1()].virtualRegister()];
-        if ((childInfo.registerFormat() | DataFormatJS) == DataFormatJSDouble) {
+        if (isJSDouble(childInfo.registerFormat())) {
             DoubleOperand op1(this, node.child1());
             GPRTemporary result(this);
             FPRReg fpr = op1.fpr();
@@ -597,7 +597,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
 
     case ValueToNumber: {
         ASSERT(!isInt32Constant(node.child1()));
-        ASSERT(!isDoubleConstant(node.child1()));
+        ASSERT(!isNumberConstant(node.child1()));
 
         if (isKnownNumeric(node.child1())) {
             JSValueOperand op1(this, node.child1());

@@ -117,6 +117,32 @@ inline bool needDataFormatConversion(DataFormat from, DataFormat to)
     return true;
 }
 
+inline bool isJSFormat(DataFormat format, DataFormat expectedFormat)
+{
+    ASSERT(expectedFormat & DataFormatJS);
+    return (format | DataFormatJS) == expectedFormat;
+}
+
+inline bool isJSInteger(DataFormat format)
+{
+    return isJSFormat(format, DataFormatJSInteger);
+}
+
+inline bool isJSDouble(DataFormat format)
+{
+    return isJSFormat(format, DataFormatJSDouble);
+}
+
+inline bool isJSCell(DataFormat format)
+{
+    return isJSFormat(format, DataFormatJSCell);
+}
+
+inline bool isJSBoolean(DataFormat format)
+{
+    return isJSFormat(format, DataFormatJSBoolean);
+}
+
 // === GenerationInfo ===
 //
 // This class is used to track the current status of a live values during code generation.
@@ -208,6 +234,31 @@ public:
     DataFormat registerFormat() { return m_registerFormat; }
     // Get the format of the value as it is spilled in the RegisterFile (or 'none').
     DataFormat spillFormat() { return m_spillFormat; }
+    
+    bool isJSFormat(DataFormat expectedFormat)
+    {
+        return DFG::isJSFormat(registerFormat(), expectedFormat) || DFG::isJSFormat(spillFormat(), expectedFormat);
+    }
+    
+    bool isJSInteger()
+    {
+        return isJSFormat(DataFormatJSInteger);
+    }
+    
+    bool isJSDouble()
+    {
+        return isJSFormat(DataFormatJSDouble);
+    }
+    
+    bool isJSCell()
+    {
+        return isJSFormat(DataFormatJSCell);
+    }
+    
+    bool isJSBoolean()
+    {
+        return isJSFormat(DataFormatJSBoolean);
+    }
 
     // Get the machine resister currently holding the value.
     GPRReg gpr() { ASSERT(m_registerFormat && m_registerFormat != DataFormatDouble); return u.gpr; }

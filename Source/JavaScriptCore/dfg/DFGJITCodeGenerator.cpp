@@ -59,8 +59,8 @@ GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnForm
                 returnFormat = DataFormatInteger;
                 return gpr;
             }
-            if (isDoubleConstant(nodeIndex)) {
-                JSValue jsValue = jsNumber(valueOfDoubleConstant(nodeIndex));
+            if (isNumberConstant(nodeIndex)) {
+                JSValue jsValue = jsNumber(valueOfNumberConstant(nodeIndex));
                 m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
             } else {
                 ASSERT(isJSConstant(nodeIndex));
@@ -130,9 +130,9 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
                 m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
                 info.fillInteger(gpr);
                 unlock(gpr);
-            } else if (isDoubleConstant(nodeIndex)) {
+            } else if (isNumberConstant(nodeIndex)) {
                 FPRReg fpr = fprAllocate();
-                m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(nodeIndex)))), gpr);
+                m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfNumberConstant(nodeIndex)))), gpr);
                 m_jit.movePtrToDouble(gpr, fpr);
                 unlock(gpr);
 
@@ -253,9 +253,9 @@ GPRReg JITCodeGenerator::fillJSValue(NodeIndex nodeIndex)
                 info.fillJSValue(gpr, DataFormatJSInteger);
                 JSValue jsValue = jsNumber(valueOfInt32Constant(nodeIndex));
                 m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
-            } else if (isDoubleConstant(nodeIndex)) {
+            } else if (isNumberConstant(nodeIndex)) {
                 info.fillJSValue(gpr, DataFormatJSDouble);
-                JSValue jsValue(JSValue::EncodeAsDouble, valueOfDoubleConstant(nodeIndex));
+                JSValue jsValue(JSValue::EncodeAsDouble, valueOfNumberConstant(nodeIndex));
                 m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
             } else {
                 ASSERT(isJSConstant(nodeIndex));
@@ -362,57 +362,27 @@ bool JITCodeGenerator::isKnownInteger(NodeIndex nodeIndex)
     
     GenerationInfo& info = m_generationInfo[node.virtualRegister()];
 
-    DataFormat registerFormat = info.registerFormat();
-    if (registerFormat != DataFormatNone)
-        return (registerFormat | DataFormatJS) == DataFormatJSInteger;
-
-    DataFormat spillFormat = info.spillFormat();
-    if (spillFormat != DataFormatNone)
-        return (spillFormat | DataFormatJS) == DataFormatJSInteger;
-
-    ASSERT(isConstant(nodeIndex));
-    return false;
+    return info.isJSInteger();
 }
 
 bool JITCodeGenerator::isKnownNumeric(NodeIndex nodeIndex)
 {
-    if (isInt32Constant(nodeIndex) || isDoubleConstant(nodeIndex))
+    if (isInt32Constant(nodeIndex) || isNumberConstant(nodeIndex))
         return true;
 
     Node& node = m_jit.graph()[nodeIndex];
     
-    if (node.hasNumericResult())
+    if (node.hasNumberResult())
         return true;
     
     GenerationInfo& info = m_generationInfo[node.virtualRegister()];
 
-    DataFormat registerFormat = info.registerFormat();
-    if (registerFormat != DataFormatNone)
-        return (registerFormat | DataFormatJS) == DataFormatJSInteger
-            || (registerFormat | DataFormatJS) == DataFormatJSDouble;
-
-    DataFormat spillFormat = info.spillFormat();
-    if (spillFormat != DataFormatNone)
-        return (spillFormat | DataFormatJS) == DataFormatJSInteger
-            || (spillFormat | DataFormatJS) == DataFormatJSDouble;
-
-    ASSERT(isConstant(nodeIndex));
-    return false;
+    return info.isJSInteger() || info.isJSDouble();
 }
 
 bool JITCodeGenerator::isKnownCell(NodeIndex nodeIndex)
 {
-    GenerationInfo& info = m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister()];
-    
-    DataFormat registerFormat = info.registerFormat();
-    if (registerFormat != DataFormatNone)
-        return (registerFormat | DataFormatJS) == DataFormatJSCell;
-    
-    DataFormat spillFormat = info.spillFormat();
-    if (spillFormat != DataFormatNone)
-        return (spillFormat | DataFormatJS) == DataFormatJSCell;
-    
-    return false;
+    return m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister()].isJSCell();
 }
 
 bool JITCodeGenerator::isKnownNotInteger(NodeIndex nodeIndex)
@@ -421,9 +391,7 @@ bool JITCodeGenerator::isKnownNotInteger(NodeIndex nodeIndex)
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
     
-    return (info.registerFormat() | DataFormatJS) == DataFormatJSDouble
-        || (info.registerFormat() | DataFormatJS) == DataFormatJSCell
-        || (info.registerFormat() | DataFormatJS) == DataFormatJSBoolean
+    return info.isJSDouble() || info.isJSCell() || info.isJSBoolean()
         || (node.isConstant() && !valueOfJSConstant(nodeIndex).isInt32());
 }
 
@@ -439,8 +407,7 @@ bool JITCodeGenerator::isKnownBoolean(NodeIndex nodeIndex)
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
     
-    return (info.registerFormat() | DataFormatJS) == DataFormatJSBoolean
-        || (info.spillFormat() | DataFormatJS) == DataFormatJSBoolean;
+    return info.isJSBoolean();
 }
 
 template<typename To, typename From>

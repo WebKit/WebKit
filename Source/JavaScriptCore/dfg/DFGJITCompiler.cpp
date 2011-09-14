@@ -45,8 +45,8 @@ void JITCompiler::fillNumericToDouble(NodeIndex nodeIndex, FPRReg fpr, GPRReg te
     Node& node = graph()[nodeIndex];
 
     if (node.isConstant()) {
-        ASSERT(isDoubleConstant(nodeIndex));
-        move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(nodeIndex)))), temporary);
+        ASSERT(isNumberConstant(nodeIndex));
+        move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfNumberConstant(nodeIndex)))), temporary);
         movePtrToDouble(temporary, fpr);
     } else {
         loadPtr(addressFor(node.virtualRegister()), temporary);
@@ -86,8 +86,8 @@ void JITCompiler::fillToJS(NodeIndex nodeIndex, GPRReg gpr)
         if (isInt32Constant(nodeIndex)) {
             JSValue jsValue = jsNumber(valueOfInt32Constant(nodeIndex));
             move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
-        } else if (isDoubleConstant(nodeIndex)) {
-            JSValue jsValue(JSValue::EncodeAsDouble, valueOfDoubleConstant(nodeIndex));
+        } else if (isNumberConstant(nodeIndex)) {
+            JSValue jsValue(JSValue::EncodeAsDouble, valueOfNumberConstant(nodeIndex));
             move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), gpr);
         } else {
             ASSERT(isJSConstant(nodeIndex));

@@ -1,3 +1,73 @@
+2011-09-13  Filip Pizlo  <fpizlo@apple.com>
+
+        SpeculativeJIT::shouldSpeculateInteger(NodeIndex, NodeIndex) should
+        return false if either node can be double
+        https://bugs.webkit.org/show_bug.cgi?id=67985
+
+        Reviewed by Geoffrey Garen.
+        
+        This is a 17% speed-up on 3d-cube.
+        
+        This required allowing us to check if a constant is double but not
+        integer, and making the shouldSpeculateInteger() check test for
+        any hints of doubly-ness in its operands. This also required
+        changing some terminology: previously "isDouble" often meant
+        "isDouble or isInt32".  Now "isDouble" means exactly what the name
+        suggests, and "isNumber" means "isDouble or isInt32".
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::toNumber):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::isJSFormat):
+        (JSC::DFG::isJSInteger):
+        (JSC::DFG::isJSDouble):
+        (JSC::DFG::isJSCell):
+        (JSC::DFG::isJSBoolean):
+        (JSC::DFG::GenerationInfo::isJSFormat):
+        (JSC::DFG::GenerationInfo::isJSInteger):
+        (JSC::DFG::GenerationInfo::isJSDouble):
+        (JSC::DFG::GenerationInfo::isJSCell):
+        (JSC::DFG::GenerationInfo::isJSBoolean):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::isNumberConstant):
+        (JSC::DFG::Graph::valueOfNumberConstant):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::fillInteger):
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        (JSC::DFG::JITCodeGenerator::isKnownInteger):
+        (JSC::DFG::JITCodeGenerator::isKnownNumeric):
+        (JSC::DFG::JITCodeGenerator::isKnownCell):
+        (JSC::DFG::JITCodeGenerator::isKnownNotInteger):
+        (JSC::DFG::JITCodeGenerator::isKnownBoolean):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::silentFillFPR):
+        (JSC::DFG::JITCodeGenerator::isNumberConstant):
+        (JSC::DFG::JITCodeGenerator::valueOfNumberConstant):
+        (JSC::DFG::JITCodeGenerator::initConstantInfo):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::fillNumericToDouble):
+        (JSC::DFG::JITCompiler::fillToJS):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::isNumberConstant):
+        (JSC::DFG::JITCompiler::valueOfNumberConstant):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isDoubleConstant):
+        (JSC::DFG::Node::isNumberConstant):
+        (JSC::DFG::Node::valueOfNumberConstant):
+        (JSC::DFG::Node::hasNumberResult):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::knownConstantArithOp):
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::isInteger):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::shouldNotSpeculateInteger):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateInteger):
+
 2011-09-13  Anders Carlsson  <andersca@apple.com>
 
         Disable C++ exceptions when building with clang

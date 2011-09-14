@@ -122,7 +122,7 @@ private:
 
 // These values record the result type of the node (as checked by NodeResultMask, above), 0 for no result.
 #define NodeResultJS      0x1000
-#define NodeResultDouble  0x2000
+#define NodeResultNumber  0x2000
 #define NodeResultInt32   0x3000
 #define NodeResultBoolean 0x4000
 
@@ -147,16 +147,16 @@ private:
     /* Bitwise operators call ToInt32 on their operands. */\
     macro(ValueToInt32, NodeResultInt32 | NodeMustGenerate) \
     /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\
-    macro(UInt32ToNumber, NodeResultDouble) \
+    macro(UInt32ToNumber, NodeResultNumber) \
     \
     /* Nodes for arithmetic operations. */\
-    macro(ArithAdd, NodeResultDouble) \
-    macro(ArithSub, NodeResultDouble) \
-    macro(ArithMul, NodeResultDouble) \
-    macro(ArithDiv, NodeResultDouble) \
-    macro(ArithMod, NodeResultDouble) \
+    macro(ArithAdd, NodeResultNumber) \
+    macro(ArithSub, NodeResultNumber) \
+    macro(ArithMul, NodeResultNumber) \
+    macro(ArithDiv, NodeResultNumber) \
+    macro(ArithMod, NodeResultNumber) \
     /* Arithmetic operators call ToNumber on their operands. */\
-    macro(ValueToNumber, NodeResultDouble | NodeMustGenerate) \
+    macro(ValueToNumber, NodeResultNumber | NodeMustGenerate) \
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
     macro(ValueAdd, NodeResultJS | NodeMustGenerate) \
@@ -317,7 +317,17 @@ struct Node {
     
     bool isDoubleConstant(CodeBlock* codeBlock)
     {
-        return isConstant() && valueOfJSConstant(codeBlock).isNumber();
+        bool result = isConstant() && valueOfJSConstant(codeBlock).isDouble();
+        if (result)
+            ASSERT(!isInt32Constant(codeBlock));
+        return result;
+    }
+    
+    bool isNumberConstant(CodeBlock* codeBlock)
+    {
+        bool result = isConstant() && valueOfJSConstant(codeBlock).isNumber();
+        ASSERT(result == (isInt32Constant(codeBlock) || isDoubleConstant(codeBlock)));
+        return result;
     }
     
     bool isBooleanConstant(CodeBlock* codeBlock)
@@ -330,10 +340,10 @@ struct Node {
         ASSERT(isInt32Constant(codeBlock));
         return valueOfJSConstant(codeBlock).asInt32();
     }
-
-    double valueOfDoubleConstant(CodeBlock* codeBlock)
+    
+    double valueOfNumberConstant(CodeBlock* codeBlock)
     {
-        ASSERT(isDoubleConstant(codeBlock));
+        ASSERT(isNumberConstant(codeBlock));
         return valueOfJSConstant(codeBlock).uncheckedGetNumber();
     }
     
@@ -390,12 +400,12 @@ struct Node {
     {
         return (op & NodeResultMask) == NodeResultInt32;
     }
-
-    bool hasDoubleResult()
+    
+    bool hasNumberResult()
     {
-        return (op & NodeResultMask) == NodeResultDouble;
+        return (op & NodeResultMask) == NodeResultNumber;
     }
-
+    
     bool hasJSResult()
     {
         return (op & NodeResultMask) == NodeResultJS;
@@ -404,12 +414,6 @@ struct Node {
     bool hasBooleanResult()
     {
         return (op & NodeResultMask) == NodeResultBoolean;
-    }
-
-    // Check for integers or doubles.
-    bool hasNumericResult()
-    {
-        return hasInt32Result() || hasDoubleResult();
     }
 
     bool isJump()
