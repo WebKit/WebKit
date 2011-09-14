@@ -122,6 +122,11 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     debugCall(debugOperationPrintSpeculationFailure, debugInfo);
 #endif
     
+#if ENABLE(DFG_SUCCESS_STATS)
+    static SamplingCounter counter("SpeculationFailure");
+    emitCount(counter);
+#endif
+
     // 2) Perform speculation recovery. This only comes into play when an operation
     //    starts mutating state before verifying the speculation it has already made.
     
@@ -860,6 +865,11 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
     debugInfo->debugOffset = debugOffset();
     
     debugCall(debugOperationPrintSpeculationFailure, debugInfo);
+#endif
+
+#if ENABLE(DFG_SUCCESS_STATS)
+    static SamplingCounter counter("SpeculationFailure");
+    emitCount(counter);
 #endif
 
     // Does this speculation check require any additional recovery to be performed,

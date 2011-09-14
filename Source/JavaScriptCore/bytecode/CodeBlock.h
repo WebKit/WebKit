@@ -344,6 +344,20 @@ namespace JSC {
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*) = 0;
         virtual CodeBlock* replacement() = 0;
         virtual bool canCompileWithDFG() = 0;
+        bool hasOptimizedReplacement()
+        {
+            ASSERT(getJITType() == JITCode::BaselineJIT);
+            bool result = replacement()->getJITType() > getJITType();
+#if !ASSERT_DISABLED
+            if (result)
+                ASSERT(replacement()->getJITType() == JITCode::DFGJIT);
+            else {
+                ASSERT(replacement()->getJITType() == JITCode::BaselineJIT);
+                ASSERT(replacement() == this);
+            }
+#endif
+            return result;
+        }
 #else
         JITCode::JITType getJITType() { return JITCode::BaselineJIT; }
 #endif
@@ -449,7 +463,7 @@ namespace JSC {
             if (static_cast<unsigned>(index) >= m_valueProfiles.size())
                 return 0;
             ValueProfile* result = valueProfile(argumentIndex - 1);
-            if (result->bytecodeOffset != -1)
+            if (result->m_bytecodeOffset != -1)
                 return 0;
             return result;
         }
@@ -675,8 +689,20 @@ namespace JSC {
             m_executeCounter = -100;
         }
         
-        int32_t m_executeCounter;
+        // The amount by which the JIT will increment m_executeCounter.
+        static const unsigned executeCounterIncrementForLoop = 1;
+        static const unsigned executeCounterIncrementForReturn = 15;
+        
+#if ENABLE(VALUE_PROFILER)
+        bool shouldOptimizeNow();
+#else
+        bool shouldOptimizeNow() { return false; }
+#endif
 
+#if ENABLE(VERBOSE_VALUE_PROFILE)
+        void dumpValueProfiles();
+#endif
+        
         // FIXME: Make these remaining members private.
 
         int m_numCalleeRegisters;
@@ -761,6 +787,9 @@ namespace JSC {
         OwnPtr<CodeBlock> m_alternative;
         
         OwnPtr<PredictionTracker> m_predictions;
+
+        int32_t m_executeCounter;
+        uint8_t m_optimizationDelayCounter;
 
         struct RareData {
            WTF_MAKE_FAST_ALLOCATED;

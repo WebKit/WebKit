@@ -1,5 +1,65 @@
 2011-09-14  Filip Pizlo  <fpizlo@apple.com>
 
+        Tiered compilation heuristics do not account for value profile fullness
+        https://bugs.webkit.org/show_bug.cgi?id=68116
+
+        Reviewed by Oliver Hunt.
+        
+        Tiered compilation avoids invoking the DFG JIT if it finds that value
+        profiles contain insufficient information. Instead, it produces a
+        prediction from the current value profile, and then clears the value
+        profile. This allows the value profile to heat up from scratch for
+        some number of additional executions. The new profiles will then be
+        merged with the previous prediction. Once the amount of information
+        in predictions is enough according to heuristics in CodeBlock.cpp,
+        DFG optimization is allowed to proceed.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::visitAggregate):
+        (JSC::CodeBlock::visitWeakReferences):
+        (JSC::CodeBlock::shouldOptimizeNow):
+        (JSC::CodeBlock::dumpValueProfiles):
+        * bytecode/CodeBlock.h:
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionToString):
+        * bytecode/PredictedType.h:
+        * bytecode/ValueProfile.cpp: Added.
+        (JSC::ValueProfile::computeStatistics):
+        (JSC::ValueProfile::computeUpdatedPrediction):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfile::ValueProfile):
+        (JSC::ValueProfile::classInfo):
+        (JSC::ValueProfile::numberOfSamples):
+        (JSC::ValueProfile::totalNumberOfSamples):
+        (JSC::ValueProfile::isLive):
+        (JSC::ValueProfile::numberOfInt32s):
+        (JSC::ValueProfile::numberOfDoubles):
+        (JSC::ValueProfile::numberOfBooleans):
+        (JSC::ValueProfile::dump):
+        (JSC::getValueProfileBytecodeOffset):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::stronglyPredict):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        (JSC::DFG::JITCompiler::jumpFromSpeculativeToNonSpeculative):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitOptimizationCheck):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitValueProfilingSite):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
+2011-09-14  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should not speculate that the child of LogicalNot is a boolean if
         predictions tell us otherwise
         https://bugs.webkit.org/show_bug.cgi?id=68118

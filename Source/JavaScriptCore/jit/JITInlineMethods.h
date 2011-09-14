@@ -456,7 +456,7 @@ inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
     else
         add32(Imm32(3), bucketCounterRegister);
     and32(Imm32(ValueProfile::bucketIndexMask), bucketCounterRegister);
-    move(ImmPtr(valueProfile->buckets), scratch);
+    move(ImmPtr(valueProfile->m_buckets), scratch);
     storePtr(value, BaseIndex(scratch, bucketCounterRegister, TimesEight));
 }
 #endif

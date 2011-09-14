@@ -479,14 +479,9 @@ private:
 #if ENABLE(DYNAMIC_OPTIMIZATION)
         ValueProfile* profile = m_profiledBlock->valueProfileForBytecodeOffset(bytecodeIndex);
         ASSERT(profile);
+        m_graph[nodeIndex].predict(profile->computeUpdatedPrediction() & ~PredictionTagMask, StrongPrediction);
 #if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("Dynamic profile [%u, %u]: ", nodeIndex, bytecodeIndex);
-        profile->dump(stdout);
-        printf("\n");
-#endif
-        m_graph[nodeIndex].predict(makePrediction(*profile) & ~PredictionTagMask, StrongPrediction);
-#if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("    Prediction: %s\n", predictionToString(m_graph[nodeIndex].getPrediction()));
+        printf("Dynamic [%u, %u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(m_graph[nodeIndex].getPrediction()));
 #endif
 #else
         UNUSED_PARAM(nodeIndex);

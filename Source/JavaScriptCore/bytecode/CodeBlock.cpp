@@ -1428,6 +1428,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
     , m_sourceOffset(sourceOffset)
     , m_symbolTable(symTab)
     , m_alternative(alternative)
+    , m_optimizationDelayCounter(0)
 {
     ASSERT(m_source);
     
@@ -1441,17 +1442,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
 CodeBlock::~CodeBlock()
 {
 #if ENABLE(VERBOSE_VALUE_PROFILE)
-    fprintf(stderr, "ValueProfile for %p:\n", this);
-    for (unsigned i = 0; i < numberOfValueProfiles(); ++i) {
-        ValueProfile* profile = valueProfile(i);
-        if (profile->bytecodeOffset < 0) {
-            ASSERT(profile->bytecodeOffset == -1);
-            fprintf(stderr, "   arg = %u: ", i + 1);
-        } else
-            fprintf(stderr, "   bc = %d: ", profile->bytecodeOffset);
-        profile->dump(stderr);
-        fprintf(stderr, "\n");
-    }
+    dumpValueProfiles();
 #endif
     
 #if ENABLE(JIT)
@@ -1590,14 +1581,14 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
         ValueProfile* profile = valueProfile(profileIndex);
         
         for (unsigned index = 0; index < ValueProfile::numberOfBuckets; ++index) {
-            if (!profile->buckets[index]) {
-                if (!!profile->weakBuckets[index])
+            if (!profile->m_buckets[index]) {
+                if (!!profile->m_weakBuckets[index])
                     handleWeakReferences = true;
                 continue;
             }
             
-            if (!JSValue::decode(profile->buckets[index]).isCell()) {
-                profile->weakBuckets[index] = ValueProfile::WeakBucket();
+            if (!JSValue::decode(profile->m_buckets[index]).isCell()) {
+                profile->m_weakBuckets[index] = ValueProfile::WeakBucket();
                 continue;
             }
             
@@ -1617,8 +1608,8 @@ void CodeBlock::visitWeakReferences(SlotVisitor&)
         ValueProfile* profile = valueProfile(profileIndex);
         
         for (unsigned index = 0; index < ValueProfile::numberOfBuckets; ++index) {
-            if (!!profile->buckets[index]) {
-                JSValue value = JSValue::decode(profile->buckets[index]);
+            if (!!profile->m_buckets[index]) {
+                JSValue value = JSValue::decode(profile->m_buckets[index]);
                 if (!value.isCell())
                     continue;
                 
@@ -1626,11 +1617,11 @@ void CodeBlock::visitWeakReferences(SlotVisitor&)
                 if (Heap::isMarked(cell))
                     continue;
                 
-                profile->buckets[index] = JSValue::encode(JSValue());
-                profile->weakBuckets[index] = cell->structure();
+                profile->m_buckets[index] = JSValue::encode(JSValue());
+                profile->m_weakBuckets[index] = cell->structure();
             }
             
-            ValueProfile::WeakBucket weak = profile->weakBuckets[index];
+            ValueProfile::WeakBucket weak = profile->m_weakBuckets[index];
             if (!weak || weak.isClassInfo())
                 continue;
             
@@ -1638,7 +1629,7 @@ void CodeBlock::visitWeakReferences(SlotVisitor&)
             if (Heap::isMarked(weak.asStructure()))
                 continue;
             
-            profile->weakBuckets[index] = weak.asStructure()->classInfo();
+            profile->m_weakBuckets[index] = weak.asStructure()->classInfo();
         }
     }
 #endif
@@ -1943,6 +1934,74 @@ bool FunctionCodeBlock::canCompileWithDFG()
     if (m_isConstructor)
         return DFG::canCompileFunctionForConstruct(this);
     return DFG::canCompileFunctionForCall(this);
+}
+#endif
+
+#if ENABLE(VALUE_PROFILER)
+bool CodeBlock::shouldOptimizeNow()
+{
+#if ENABLE(JIT_VERBOSE_OSR)
+    printf("Considering optimizing %p...\n", this);
+#endif
+
+#if ENABLE(VERBOSE_VALUE_PROFILE)
+    dumpValueProfiles();
+#endif
+
+    if (m_optimizationDelayCounter >= 5)
+        return true;
+    
+    unsigned numberOfNonArgumentValueProfiles = 0;
+    unsigned numberOfLiveNonArgumentValueProfiles = 0;
+    unsigned numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
+    for (unsigned i = 0; i < numberOfValueProfiles(); ++i) {
+        ValueProfile* profile = valueProfile(i);
+        unsigned numSamples = profile->totalNumberOfSamples();
+        if (numSamples > ValueProfile::numberOfBuckets)
+            numSamples = ValueProfile::numberOfBuckets; // We don't want profiles that are extremely hot to be given more weight.
+        numberOfSamplesInProfiles += numSamples;
+        if (profile->m_bytecodeOffset < 0) {
+            profile->computeUpdatedPrediction();
+            continue;
+        }
+        numberOfNonArgumentValueProfiles++;
+        if (profile->numberOfSamples() || profile->m_prediction != PredictNone)
+            numberOfLiveNonArgumentValueProfiles++;
+        profile->computeUpdatedPrediction();
+    }
+
+#if ENABLE(JIT_VERBOSE_OSR)
+    printf("Profile hotness: %lf, %lf\n", (double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles, (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles());
+#endif
+
+    if ((double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles >= 0.75
+        && (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles() >= 0.5)
+        return true;
+    
+    m_optimizationDelayCounter++;
+    optimizeAfterWarmUp();
+    return false;
+}
+#endif
+
+#if ENABLE(VERBOSE_VALUE_PROFILE)
+void CodeBlock::dumpValueProfiles()
+{
+    fprintf(stderr, "ValueProfile for %p:\n", this);
+    for (unsigned i = 0; i < numberOfValueProfiles(); ++i) {
+        ValueProfile* profile = valueProfile(i);
+        if (profile->m_bytecodeOffset < 0) {
+            ASSERT(profile->m_bytecodeOffset == -1);
+            fprintf(stderr, "   arg = %u: ", i + 1);
+        } else
+            fprintf(stderr, "   bc = %d: ", profile->m_bytecodeOffset);
+        if (!profile->numberOfSamples() && profile->m_prediction == PredictNone) {
+            fprintf(stderr, "<empty>\n");
+            continue;
+        }
+        profile->dump(stderr);
+        fprintf(stderr, "\n");
+    }
 }
 #endif
 

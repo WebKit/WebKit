@@ -1458,6 +1458,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\bytecode\PredictedType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\PredictedType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\SamplingTool.cpp"
 				>
 			</File>
@@ -1471,6 +1479,14 @@
 			</File>
 			<File
 				RelativePath="..\..\bytecode\StructureStubInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\ValueProfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\ValueProfile.h"
 				>
 			</File>
 		</Filter>

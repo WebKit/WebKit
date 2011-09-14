@@ -37,8 +37,10 @@ SET(JavaScriptCore_SOURCES
     bytecode/CodeBlock.cpp
     bytecode/JumpTable.cpp
     bytecode/Opcode.cpp
+    bytecode/PredictedType.cpp
     bytecode/SamplingTool.cpp
     bytecode/StructureStubInfo.cpp
+    bytecode/ValueProfile.cpp
 
     bytecompiler/BytecodeGenerator.cpp
     bytecompiler/NodesCodegen.cpp

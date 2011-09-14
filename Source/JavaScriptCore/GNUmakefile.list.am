@@ -89,10 +89,14 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/JumpTable.h \
 	Source/JavaScriptCore/bytecode/Opcode.cpp \
 	Source/JavaScriptCore/bytecode/Opcode.h \
+	Source/JavaScriptCore/bytecode/PredictedType.cpp \
+	Source/JavaScriptCore/bytecode/PredictedType.h \
 	Source/JavaScriptCore/bytecode/SamplingTool.cpp \
 	Source/JavaScriptCore/bytecode/SamplingTool.h \
 	Source/JavaScriptCore/bytecode/StructureStubInfo.cpp \
 	Source/JavaScriptCore/bytecode/StructureStubInfo.h \
+	Source/JavaScriptCore/bytecode/ValueProfile.cpp \
+	Source/JavaScriptCore/bytecode/ValueProfile.h \
 	Source/JavaScriptCore/bytecompiler/BytecodeGenerator.cpp \
 	Source/JavaScriptCore/bytecompiler/BytecodeGenerator.h \
 	Source/JavaScriptCore/bytecompiler/Label.h \

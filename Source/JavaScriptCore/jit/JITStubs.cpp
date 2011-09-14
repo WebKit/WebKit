@@ -1823,21 +1823,35 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
     
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
     unsigned bytecodeIndex = stackFrame.args[0].int32();
-    
-    JSObject* error = codeBlock->compileOptimized(callFrame, scopeChain);
-    if (error)
-        fprintf(stderr, "WARNING: optimized compilation from loop failed.\n");
-    
-    if (codeBlock->replacement() == codeBlock) {
-#if ENABLE(JIT_VERBOSE_OSR)
-        printf("Optimizing %p from loop failed.\n", codeBlock);
-#endif
 
-        ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
-        codeBlock->dontOptimizeAnytimeSoon();
-        return;
+    if (!codeBlock->hasOptimizedReplacement()) {
+        if (!codeBlock->shouldOptimizeNow()) {
+#if ENABLE(JIT_VERBOSE_OSR)
+            printf("Delaying optimization for %p (in loop) because of insufficient profiling.\n", codeBlock);
+#endif
+            return;
+        }
+        
+        ScopeChainNode* scopeChain = callFrame->scopeChain();
+        
+        JSObject* error = codeBlock->compileOptimized(callFrame, scopeChain);
+#if ENABLE(JIT_VERBOSE_OSR)
+        if (error)
+            fprintf(stderr, "WARNING: optimized compilation from loop failed.\n");
+#else
+        UNUSED_PARAM(error);
+#endif
+        
+        if (codeBlock->replacement() == codeBlock) {
+#if ENABLE(JIT_VERBOSE_OSR)
+            printf("Optimizing %p from loop failed.\n", codeBlock);
+#endif
+            
+            ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
+            codeBlock->dontOptimizeAnytimeSoon();
+            return;
+        }
     }
     
     CodeBlock* optimizedCodeBlock = codeBlock->replacement();
@@ -1868,6 +1882,17 @@ DEFINE_STUB_FUNCTION(void, optimize_from_ret)
     
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
+    
+    if (codeBlock->hasOptimizedReplacement())
+        return;
+    
+    if (!codeBlock->shouldOptimizeNow()) {
+#if ENABLE(JIT_VERBOSE_OSR)
+        printf("Delaying optimization for %p (in return) because of insufficient profiling.\n", codeBlock);
+#endif
+        return;
+    }
+    
     ScopeChainNode* scopeChain = callFrame->scopeChain();
 
     JSObject* error = codeBlock->compileOptimized(callFrame, scopeChain);

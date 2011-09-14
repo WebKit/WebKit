@@ -29,6 +29,7 @@
 #include "config.h"
 #include "PredictedType.h"
 
+#include "ValueProfile.h"
 #include <wtf/BoundsCheckedPointer.h>
 
 namespace JSC {
@@ -61,7 +62,7 @@ const char* predictionToString(PredictedType value)
         ptr.strcat("Array");
     
     if (value & PredictString)
-        ptr.strcat("Str");
+        ptr.strcat("String");
     
     if (value & PredictInt32)
         ptr.strcat("Int");
@@ -78,46 +79,6 @@ const char* predictionToString(PredictedType value)
     *ptr++ = 0;
     
     return description;
-}
-#endif
-
-#if ENABLE(VALUE_PROFILER)
-PredictedType makePrediction(const ValueProfile& profile)
-{
-    ValueProfile::Statistics statistics;
-    profile.computeStatistics(statistics);
-    
-    if (!statistics.samples)
-        return PredictNone;
-    
-    if (statistics.int32s == statistics.samples)
-        return StrongPredictionTag | PredictInt32;
-    
-    if (statistics.doubles == statistics.samples)
-        return StrongPredictionTag | PredictDouble;
-    
-    if (statistics.int32s + statistics.doubles == statistics.samples)
-        return StrongPredictionTag | PredictNumber;
-    
-    if (statistics.arrays == statistics.samples)
-        return StrongPredictionTag | PredictArray;
-    
-    if (statistics.finalObjects == statistics.samples)
-        return StrongPredictionTag | PredictFinalObject;
-    
-    if (statistics.strings == statistics.samples)
-        return StrongPredictionTag | PredictString;
-    
-    if (statistics.objects == statistics.samples)
-        return StrongPredictionTag | PredictObjectOther;
-    
-    if (statistics.cells == statistics.samples)
-        return StrongPredictionTag | PredictCellOther;
-    
-    if (statistics.booleans == statistics.samples)
-        return StrongPredictionTag | PredictBoolean;
-    
-    return StrongPredictionTag | PredictOther;
 }
 #endif
 

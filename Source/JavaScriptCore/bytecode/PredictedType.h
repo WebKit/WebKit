@@ -29,7 +29,7 @@
 #ifndef PredictedType_h
 #define PredictedType_h
 
-#include "ValueProfile.h"
+#include "JSValue.h"
 
 namespace JSC {
 
@@ -37,7 +37,7 @@ typedef uint16_t PredictedType;
 static const PredictedType PredictNone          = 0x0000; // We don't know anything yet.
 static const PredictedType PredictFinalObject   = 0x0001; // It's definitely a JSFinalObject.
 static const PredictedType PredictArray         = 0x0002; // It's definitely a JSArray.
-static const PredictedType PredictObjectOther   = 0x0010; // It's definitely an object other than JSFinalObject or JSArray.
+static const PredictedType PredictObjectOther   = 0x0010; // It's definitely an object but not JSFinalObject or JSArray.
 static const PredictedType PredictObjectUnknown = 0x0020; // It's definitely an object, but we didn't record enough informatin to know more.
 static const PredictedType PredictObjectMask    = 0x003f; // Bitmask used for testing for any kind of object prediction.
 static const PredictedType PredictString        = 0x0040; // It's definitely a JSString.
@@ -149,10 +149,6 @@ inline PredictedType makePrediction(PredictedType type, PredictionSource source)
         return PredictNone;
     return type | (source == StrongPrediction ? StrongPredictionTag : 0);
 }
-
-#if ENABLE(VALUE_PROFILER)
-PredictedType makePrediction(const ValueProfile&);
-#endif
 
 PredictedType predictionFromValue(JSValue);
 
