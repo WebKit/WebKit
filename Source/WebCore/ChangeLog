@@ -1,3 +1,36 @@
+2011-09-13  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68040
+        
+        Make sure border image sub-properties can be specified in any order.
+
+        Reviewed by Beth Dakin.
+
+        New tests in fast/borders.
+
+        * css/CSSParser.cpp:
+        (WebCore::BorderImageParseContext::BorderImageParseContext):
+        (WebCore::BorderImageParseContext::canAdvance):
+        (WebCore::BorderImageParseContext::setCanAdvance):
+        (WebCore::BorderImageParseContext::allowCommit):
+        (WebCore::BorderImageParseContext::allowImage):
+        (WebCore::BorderImageParseContext::allowImageSlice):
+        (WebCore::BorderImageParseContext::allowSlash):
+        (WebCore::BorderImageParseContext::requireWidth):
+        (WebCore::BorderImageParseContext::requireOutset):
+        (WebCore::BorderImageParseContext::commitImage):
+        (WebCore::BorderImageParseContext::commitImageSlice):
+        (WebCore::BorderImageParseContext::commitSlash):
+        (WebCore::BorderImageParseContext::commitBorderWidth):
+        (WebCore::BorderImageParseContext::commitBorderOutset):
+        (WebCore::BorderImageParseContext::commitRepeat):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::parseBorderImageRepeat):
+        (WebCore::CSSParser::parseBorderImageSlice):
+        (WebCore::CSSParser::parseBorderImageQuad):
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserValueList::previous):
+
 2011-09-13  Jeff Miller  <jeffm@apple.com>
 
         WebCore::Cursor::ensurePlatformCursor() should always set a valid platform cursor on Windows

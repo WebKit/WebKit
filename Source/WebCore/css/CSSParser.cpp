@@ -5158,51 +5158,103 @@ bool CSSParser::parseFlex(int propId, bool important)
 struct BorderImageParseContext {
     BorderImageParseContext(CSSPrimitiveValueCache* primitiveValueCache)
     : m_primitiveValueCache(primitiveValueCache)
-    , m_allowBreak(false)
+    , m_canAdvance(false)
+    , m_allowCommit(true)
+    , m_allowImage(true)
+    , m_allowImageSlice(true)
+    , m_allowRepeat(true)
     , m_allowSlash(false)
-    , m_allowWidth(false)
-    , m_allowOutset(false)
-    , m_allowRepeat(false)
+    , m_requireWidth(false)
+    , m_requireOutset(false)    
     {}
 
-    bool allowBreak() const { return m_allowBreak; }
-    bool allowSlash() const { return m_allowSlash; }
-    bool allowWidth() const { return m_allowWidth; }
-    bool allowOutset() const { return m_allowOutset; }
-    bool allowRepeat() const { return m_allowRepeat; }
+    bool canAdvance() const { return m_canAdvance; }
+    void setCanAdvance(bool canAdvance) { m_canAdvance = canAdvance; }
 
-    void commitImage(PassRefPtr<CSSValue> image) { m_image = image; }
+    bool allowCommit() const { return m_allowCommit; }
+    bool allowImage() const { return m_allowImage; }
+    bool allowImageSlice() const { return m_allowImageSlice; }
+    bool allowRepeat() const { return m_allowRepeat; }
+    bool allowSlash() const { return m_allowSlash; }
+
+    bool requireWidth() const { return m_requireWidth; }
+    bool requireOutset() const { return m_requireOutset; }
+    
+    void commitImage(PassRefPtr<CSSValue> image)
+    {
+        m_image = image;
+        m_canAdvance = true;
+        m_allowCommit = true;
+        m_allowImage = false;
+        m_allowSlash = false;
+        m_requireWidth = false;
+        m_requireOutset = false;
+        m_allowImageSlice = !m_imageSlice;
+        m_allowRepeat = !m_repeat;
+    }
     void commitImageSlice(PassRefPtr<CSSBorderImageSliceValue> slice)
     {
         m_imageSlice = slice;
-        m_allowBreak = m_allowSlash = m_allowRepeat = true;
+        m_canAdvance = true;
+        m_allowCommit = true;
+        m_allowSlash = true;
+        m_allowImageSlice = false;
+        m_requireWidth = false;
+        m_requireOutset = false;
+        m_allowImage = !m_image;
+        m_allowRepeat = !m_repeat;
     }
     void commitSlash()
     {
-        m_allowBreak = m_allowSlash = m_allowRepeat = false;
-        if (!m_borderSlice)
-            m_allowWidth = true;
-        else
-            m_allowOutset = true;
+        m_canAdvance = true;
+        m_allowCommit = false;
+        m_allowImage = false;
+        m_allowImageSlice = false;
+        m_allowRepeat = false;
+        m_allowSlash = false;
+        if (!m_borderSlice) {
+            m_requireWidth = true;
+            m_requireOutset = false;
+        } else {
+            m_requireOutset = true;
+            m_requireWidth = false;
+        }
     }
     void commitBorderWidth(PassRefPtr<CSSPrimitiveValue> slice)
     {
         m_borderSlice = slice;
-        m_allowBreak = m_allowRepeat = true;
-        m_allowWidth = false;
+        m_canAdvance = true;
+        m_allowCommit = true;
         m_allowSlash = true;
+        m_allowImageSlice = false;
+        m_requireWidth = false;
+        m_requireOutset = false;
+        m_allowImage = !m_image;
+        m_allowRepeat = !m_repeat;
     }
     void commitBorderOutset(PassRefPtr<CSSPrimitiveValue> outset)
     {
         m_outset = outset;
-        m_allowBreak = m_allowRepeat = true;
-        m_allowWidth = m_allowOutset = m_allowSlash = false;
+        m_canAdvance = true;
+        m_allowCommit = true;
+        m_allowImageSlice = false;
+        m_allowSlash = false;
+        m_requireWidth = false;
+        m_requireOutset = false;
+        m_allowImage = !m_image;
+        m_allowRepeat = !m_repeat;
     }
     void commitRepeat(PassRefPtr<CSSValue> repeat)
     {
         m_repeat = repeat;
-        m_allowRepeat = m_allowSlash = m_allowWidth = m_allowOutset = false;
-        m_allowBreak = true;
+        m_canAdvance = true;
+        m_allowCommit = true;
+        m_allowRepeat = false;
+        m_allowSlash = false;
+        m_requireWidth = false;
+        m_requireOutset = false;
+        m_allowImageSlice = !m_imageSlice;
+        m_allowImage = !m_image;
     }
 
     PassRefPtr<CSSValue> commitBorderImage()
@@ -5213,11 +5265,16 @@ struct BorderImageParseContext {
     
     CSSPrimitiveValueCache* m_primitiveValueCache;
 
-    bool m_allowBreak;
-    bool m_allowSlash;
-    bool m_allowWidth;
-    bool m_allowOutset;
+    bool m_canAdvance;
+
+    bool m_allowCommit;
+    bool m_allowImage;
+    bool m_allowImageSlice;
     bool m_allowRepeat;
+    bool m_allowSlash;
+    
+    bool m_requireWidth;
+    bool m_requireOutset;
 
     RefPtr<CSSValue> m_image;
     RefPtr<CSSBorderImageSliceValue> m_imageSlice;
@@ -5229,59 +5286,58 @@ struct BorderImageParseContext {
 
 bool CSSParser::parseBorderImage(int propId, RefPtr<CSSValue>& result)
 {
-    // Look for an image initially. If the first value is not a URI or the keyword "none", then we're done.
     ShorthandScope scope(this, propId);
     BorderImageParseContext context(primitiveValueCache());
-    CSSParserValue* val = m_valueList->current();
-    if (val->unit == CSSPrimitiveValue::CSS_URI && m_styleSheet) {
-        // FIXME: The completeURL call should be done when using the CSSImageValue,
-        // not when creating it.
-        context.commitImage(CSSImageValue::create(m_styleSheet->completeURL(val->string)));
-    } else if (isGeneratedImageValue(val)) {
-        RefPtr<CSSValue> value;
-        if (parseGeneratedImage(value))
-            context.commitImage(value);
-        else
-            return false;
-    } else if (val->id == CSSValueNone)
-        context.commitImage(CSSImageValue::create());
-    else
-        return false;
-
-    // Parse the slice next.
-    m_valueList->next();
-    RefPtr<CSSBorderImageSliceValue> imageSlice;
-    if (!parseBorderImageSlice(propId, imageSlice))
-        return false;
-    context.commitImageSlice(imageSlice.release());
-
-    while ((val = m_valueList->current())) {
-        if (context.allowSlash() && val->unit == CSSParserValue::Operator && val->iValue == '/') {
+    while (CSSParserValue* val = m_valueList->current()) {
+        if (!context.canAdvance() && context.allowSlash() && val->unit == CSSParserValue::Operator && val->iValue == '/')
             context.commitSlash();
-        } else if (context.allowWidth()) {
-            RefPtr<CSSPrimitiveValue> borderSlice;
-            if (!parseBorderImageWidth(borderSlice))
-                return false;
-            context.commitBorderWidth(borderSlice.release());
-            continue;
-        } else if (context.allowOutset()) {
-            RefPtr<CSSPrimitiveValue> borderOutset;
-            if (!parseBorderImageOutset(borderOutset))
-                return false;
-            context.commitBorderOutset(borderOutset.release());
-            continue;
-        } else if (context.allowRepeat()) {
+        
+        if (!context.canAdvance() && context.allowImage()) {
+            if (val->unit == CSSPrimitiveValue::CSS_URI && m_styleSheet) {
+                // FIXME: The completeURL call should be done when using the CSSImageValue,
+                // not when creating it.
+                context.commitImage(CSSImageValue::create(m_styleSheet->completeURL(val->string)));
+            } else if (isGeneratedImageValue(val)) {
+                RefPtr<CSSValue> value;
+                if (parseGeneratedImage(value))
+                    context.commitImage(value);
+                else
+                    return false;
+            } else if (val->id == CSSValueNone)
+                context.commitImage(CSSImageValue::create());
+        }
+        
+        if (!context.canAdvance() && context.allowImageSlice()) {
+            RefPtr<CSSBorderImageSliceValue> imageSlice;
+            if (parseBorderImageSlice(propId, imageSlice))
+                context.commitImageSlice(imageSlice.release());
+        } 
+        
+        if (!context.canAdvance() && context.allowRepeat()) {
             RefPtr<CSSValue> repeat;
             if (parseBorderImageRepeat(repeat))
                 context.commitRepeat(repeat);
-        } else {
-            // Something invalid was encountered.
-            return false;
         }
-        m_valueList->next();
+        
+        if (!context.canAdvance() && context.requireWidth()) {
+            RefPtr<CSSPrimitiveValue> borderSlice;
+            if (parseBorderImageWidth(borderSlice))
+                context.commitBorderWidth(borderSlice.release());
+        } 
+        
+        if (!context.canAdvance() && context.requireOutset()) {
+            RefPtr<CSSPrimitiveValue> borderOutset;
+            if (parseBorderImageOutset(borderOutset))
+                context.commitBorderOutset(borderOutset.release());
+        } 
+        
+        if (context.canAdvance()) {
+            m_valueList->next();
+            context.setCanAdvance(false);
+        }
     }
 
-    if (context.allowBreak()) {
+    if (context.allowCommit()) {
         // Need to fully commit as a single value.
         result = context.commitBorderImage();
         return true;
@@ -5309,8 +5365,14 @@ bool CSSParser::parseBorderImageRepeat(RefPtr<CSSValue>& result)
     if (val) {
         if (isBorderImageRepeatKeyword(val->id))
             secondValue = primitiveValueCache()->createIdentifierValue(val->id);
-        else
+        else if (!inShorthand()) {
+            // If we're not parsing a shorthand then we are invalid.
             return false;
+        } else {
+            // We need to rewind the value list, so that when its advanced we'll
+            // end up back at this value.
+            m_valueList->previous();
+        }
     } else
         secondValue = firstValue;
 
@@ -5408,11 +5470,16 @@ bool CSSParser::parseBorderImageSlice(int propId, RefPtr<CSSBorderImageSliceValu
             context.commitNumber(val);
         } else if (context.allowFill() && val->id == CSSValueFill)
             context.commitFill();
-        else if (propId == CSSPropertyBorderImageSlice || propId == CSSPropertyWebkitMaskBoxImageSlice) {
+        else if (!inShorthand()) {
             // If we're not parsing a shorthand then we are invalid.
             return false;
-        } else
+        } else {
+            if (context.allowFinalCommit()) {
+                // We're going to successfully parse, but we don't want to consume this token.
+                m_valueList->previous();
+            }
             break;
+        }
         m_valueList->next();
     }
 
@@ -5523,8 +5590,11 @@ bool CSSParser::parseBorderImageQuad(Units validUnits, RefPtr<CSSPrimitiveValue>
         } else if (!inShorthand()) {
             // If we're not parsing a shorthand then we are invalid.
             return false;
-        } else
+        } else {
+            if (context.allowFinalCommit())
+                m_valueList->previous(); // The shorthand loop will advance back to this point.
             break;
+        }
         m_valueList->next();
     }
 
