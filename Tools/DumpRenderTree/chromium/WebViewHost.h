@@ -171,8 +171,6 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual WebKit::WebWorker* createWorker(WebKit::WebFrame*, WebKit::WebWorkerClient*);
     virtual WebKit::WebMediaPlayer* createMediaPlayer(WebKit::WebFrame*, WebKit::WebMediaPlayerClient*);
     virtual WebKit::WebApplicationCacheHost* createApplicationCacheHost(WebKit::WebFrame*, WebKit::WebApplicationCacheHostClient*);
-     virtual bool allowPlugins(WebKit::WebFrame*, bool enabledPerSettings);
-    virtual bool allowImages(WebKit::WebFrame*, bool enabledPerSettings);
     virtual void loadURLExternally(WebKit::WebFrame*, const WebKit::WebURLRequest&, WebKit::WebNavigationPolicy);
     virtual void loadURLExternally(WebKit::WebFrame*, const WebKit::WebURLRequest&, WebKit::WebNavigationPolicy, const WebKit::WebString& downloadName);
     virtual WebKit::WebNavigationPolicy decidePolicyForNavigation(
@@ -208,7 +206,6 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual void didFailResourceLoad(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLError&);
     virtual void didDisplayInsecureContent(WebKit::WebFrame*);
     virtual void didRunInsecureContent(WebKit::WebFrame*, const WebKit::WebSecurityOrigin&, const WebKit::WebURL&);
-    virtual bool allowScript(WebKit::WebFrame*, bool enabledPerSettings);
     virtual void openFileSystem(WebKit::WebFrame*, WebKit::WebFileSystem::Type, long long size, bool create, WebKit::WebFileSystemCallbacks*);
 
     WebKit::WebDeviceOrientationClientMock* deviceOrientationClientMock();

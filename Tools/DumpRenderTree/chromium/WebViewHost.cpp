@@ -794,16 +794,6 @@ WebApplicationCacheHost* WebViewHost::createApplicationCacheHost(WebFrame* frame
     return webkit_support::CreateApplicationCacheHost(frame, client);
 }
 
-bool WebViewHost::allowPlugins(WebFrame* frame, bool enabledPerSettings)
-{
-    return enabledPerSettings;
-}
-
-bool WebViewHost::allowImages(WebFrame* frame, bool enabledPerSettings)
-{
-    return enabledPerSettings;
-}
-
 void WebViewHost::loadURLExternally(WebFrame* frame, const WebURLRequest& request, WebNavigationPolicy policy)
 {
     loadURLExternally(frame, request, policy, WebString());
@@ -1144,11 +1134,6 @@ void WebViewHost::didRunInsecureContent(WebFrame*, const WebSecurityOrigin& orig
 {
     if (m_shell->shouldDumpFrameLoadCallbacks())
         fputs("didRunInsecureContent\n", stdout);
-}
-
-bool WebViewHost::allowScript(WebFrame*, bool enabledPerSettings)
-{
-    return enabledPerSettings;
 }
 
 void WebViewHost::openFileSystem(WebFrame* frame, WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacks* callbacks)
