@@ -3614,6 +3614,10 @@ skip_id_custom_self:
         vPC += target;
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_loop_hint) {
+        // This is a no-op unless we intend on doing OSR from the interpreter.
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_loop_if_true) {
         /* loop_if_true cond(r) target(offset)
          
