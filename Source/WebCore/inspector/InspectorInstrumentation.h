@@ -142,7 +142,6 @@ public:
     static void loadEventFired(Frame*, const KURL&);
     static void frameDetachedFromParent(Frame*);
     static void didCommitLoad(Frame*, DocumentLoader*);
-    static void frameDestroyed(Frame*);
     static void loaderDetachedFromFrame(Frame*, DocumentLoader*);
 
     static InspectorInstrumentationCookie willWriteHTML(Document*, unsigned int length, unsigned int startLine);
@@ -272,7 +271,6 @@ private:
     static void loadEventFiredImpl(InstrumentingAgents*, Frame*, const KURL&);
     static void frameDetachedFromParentImpl(InstrumentingAgents*, Frame*);
     static void didCommitLoadImpl(InstrumentingAgents*, Page*, DocumentLoader*);
-    static void frameDestroyedImpl(InstrumentingAgents*, Frame*);
     static void loaderDetachedFromFrameImpl(InstrumentingAgents*, DocumentLoader*);
 
     static InspectorInstrumentationCookie willWriteHTMLImpl(InstrumentingAgents*, unsigned int length, unsigned int startLine);
@@ -408,7 +406,10 @@ inline void InspectorInstrumentation::didInvalidateStyleAttr(Document* document,
 inline void InspectorInstrumentation::frameWindowDiscarded(Frame* frame, DOMWindow* domWindow)
 {
 #if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+    Page* page = frame->page();
+    if (!page)
+        return; // Entire page being destroyed.
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         frameWindowDiscardedImpl(instrumentingAgents, domWindow);
 #endif
 }
@@ -863,7 +864,10 @@ inline void InspectorInstrumentation::didReceiveScriptResponse(ScriptExecutionCo
 inline void InspectorInstrumentation::domContentLoadedEventFired(Frame* frame, const KURL& url)
 {
 #if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+    Page* page = frame->page();
+    if (!page)
+        return; // DOMContentLoaded event triggered post frame detach.
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         domContentLoadedEventFiredImpl(instrumentingAgents, frame, url);
 #endif
 }
@@ -871,7 +875,10 @@ inline void InspectorInstrumentation::domContentLoadedEventFired(Frame* frame, c
 inline void InspectorInstrumentation::loadEventFired(Frame* frame, const KURL& url)
 {
 #if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+    Page* page = frame->page();
+    if (!page)
+        return; // Load event triggered post frame detach.
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         loadEventFiredImpl(instrumentingAgents, frame, url);
 #endif
 }
@@ -887,21 +894,11 @@ inline void InspectorInstrumentation::frameDetachedFromParent(Frame* frame)
 inline void InspectorInstrumentation::didCommitLoad(Frame* frame, DocumentLoader* loader)
 {
 #if ENABLE(INSPECTOR)
-    if (!frame)
-        return;
     Page* page = frame->page();
     if (!page)
-        return;
+        return; // Commit load triggered post frame detach.
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         didCommitLoadImpl(instrumentingAgents, page, loader);
-#endif
-}
-
-inline void InspectorInstrumentation::frameDestroyed(Frame* frame)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        frameDestroyedImpl(instrumentingAgents, frame);
 #endif
 }
 

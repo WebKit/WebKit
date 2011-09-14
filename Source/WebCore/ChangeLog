@@ -1,3 +1,38 @@
+2011-09-13  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: InspectorInstrumentation::frameDestroyed is called after m_page has been reset.
+        https://bugs.webkit.org/show_bug.cgi?id=67997
+
+        We should not instrument frameDestroyed event from within Frame's destructor
+        since frame's m_page pointer is likely to be 0 by that time and appropriate
+        instrumenting agent won't be found. As a result, stale frame with its id
+        end up in the inspector.
+
+        This change wipes out frame binding from the inspector upon detach rather
+        than destroy + adds an assertion into the inspector agents lookup with 0 page.
+
+        Reviewed by Tony Gentilcore.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::frameDetachedImpl):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForPage):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::frameWindowDiscarded):
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFired):
+        (WebCore::InspectorInstrumentation::loadEventFired):
+        (WebCore::InspectorInstrumentation::frameDetached):
+        (WebCore::InspectorInstrumentation::didCommitLoad):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::frameDetached):
+        * inspector/InspectorPageAgent.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::detachFromParent):
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::detachFromPage):
+        (WebCore::Frame::transferChildFrameToNewDocument):
+        * page/Frame.h:
+
 2011-09-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95080.

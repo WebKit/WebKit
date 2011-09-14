@@ -660,12 +660,6 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
         pageAgent->frameNavigated(loader);
 }
 
-void InspectorInstrumentation::frameDestroyedImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
-{
-    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents->inspectorPageAgent())
-        inspectorPageAgent->frameDestroyed(frame);
-}
-
 void InspectorInstrumentation::loaderDetachedFromFrameImpl(InstrumentingAgents* instrumentingAgents, DocumentLoader* loader)
 {
     if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents->inspectorPageAgent())
@@ -883,6 +877,8 @@ InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const In
 
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForPage(Page* page)
 {
+    // We should not be getting 0 page here, but we are not quite ready to remove the test below.
+    ASSERT(page);
     if (!page)
         return 0;
     return instrumentationForPage(page);
