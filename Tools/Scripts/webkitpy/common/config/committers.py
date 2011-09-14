@@ -347,7 +347,7 @@ reviewers_list = [
     Reviewer("Don Melton", "gramps@apple.com", "gramps"),
     Reviewer("Dumitru Daniliuc", "dumi@chromium.org", "dumi"),
     Reviewer("Enrica Casucci", "enrica@apple.com", "enrica"),
-    Reviewer("Eric Carlson", "eric.carlson@apple.com"),
+    Reviewer("Eric Carlson", "eric.carlson@apple.com", "eric_carlson"),
     Reviewer("Eric Seidel", "eric@webkit.org", "eseidel"),
     Reviewer("Gavin Barraclough", "barraclough@apple.com", "gbarra"),
     Reviewer("Geoffrey Garen", "ggaren@apple.com", "ggaren"),

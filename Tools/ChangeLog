@@ -1,3 +1,9 @@
+2011-09-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Eric's IRC nick.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-09-13  Anders Carlsson  <andersca@apple.com>
 
         Disable C++ exceptions when building with clang
