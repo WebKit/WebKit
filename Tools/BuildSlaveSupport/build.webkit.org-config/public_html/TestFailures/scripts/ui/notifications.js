@@ -154,6 +154,7 @@ ui.notifications.FailingTests = base.extends(ui.notifications.Failure, {
         this._problem.appendChild(new ui.actions.List([
             new ui.actions.Examine().makeDefault(),
             new ui.actions.Rebaseline(),
+            new ui.actions.UpdateExpectations(),
         ]));
         this._testNameList = [];
     },

@@ -31,7 +31,7 @@ var controllers = controllers || {};
 function rebaselineWithStatusUpdates(failureInfoList)
 {
     var statusView = new ui.MessageBox(
-        'Rebaseline status',
+        'Rebaseline',
         'Performing rebaseline...');
 
     checkout.rebaseline(failureInfoList, function() {
@@ -41,6 +41,21 @@ function rebaselineWithStatusUpdates(failureInfoList)
         $(statusView).bind('close', statusView.close.bind(statusView));
     }, function(failureInfo) {
         statusView.addMessage(failureInfo.testName + ' on ' + ui.displayNameForBuilder(failureInfo.builderName));
+    });
+}
+
+// FIXME: Where should this function go?
+// FIXME: This should share more code with rebaselineWithStatusUpdates.
+function updateExpectationsWithStatusUpdates(failureInfoList)
+{
+    var statusView = new ui.MessageBox(
+        'Expectations Update',
+        'Updating expectations...');
+
+    checkout.updateExpectations(failureInfoList, function() {
+        statusView.addMessage('Expectations update done! Please land with "webkit-patch land-cowboy".');
+        statusView.addActionList(new ui.actions.List([new ui.actions.Close()]));
+        $(statusView).bind('close', statusView.close.bind(statusView));
     });
 }
 
@@ -54,6 +69,7 @@ controllers.ResultsDetails = base.extends(Object, {
         $(this._view).bind('next', this.onNext.bind(this));
         $(this._view).bind('previous', this.onPrevious.bind(this));
         $(this._view).bind('rebaseline', this.onRebaseline.bind(this));
+        $(this._view).bind('updateexpectations', this.onUpdateExpectations.bind(this));
     },
     onNext: function()
     {
@@ -63,16 +79,23 @@ controllers.ResultsDetails = base.extends(Object, {
     {
         this._view.previousResult();
     },
-    onRebaseline: function()
+    _failureInfoList: function()
     {
         var testName = this._view.currentTestName();
-        var failureInfoList = Object.keys(this._resultsByTest[testName]).map(function(builderName) {
+        return Object.keys(this._resultsByTest[testName]).map(function(builderName) {
             return {
                 'testName': testName,
                 'builderName': builderName
-            }
+            };
         });
-        rebaselineWithStatusUpdates(failureInfoList);
+    },
+    onRebaseline: function()
+    {
+        rebaselineWithStatusUpdates(this._failureInfoList());
+    },
+    onUpdateExpectations: function()
+    {
+        updateExpectationsWithStatusUpdates(this._failureInfoList());
     }
 });
 
@@ -98,6 +121,9 @@ var FailureStreamController = base.extends(Object, {
             }.bind(this));
             $(failure).bind('rebaseline', function() {
                 this.onRebaseline(failure);
+            }.bind(this));
+            $(failure).bind('updateexpectations', function() {
+                this.onUpdateExpectations(failure);
             }.bind(this));
         }
         failure.addFailureAnalysis(failureAnalysis);
@@ -130,10 +156,17 @@ var FailureStreamController = base.extends(Object, {
         $(resultsContainer).empty().append(resultsView);
         onebar.select('results');
     },
+    _toFailureInfoList: function(failures)
+    {
+        return base.flattenArray(failures.testNameList().map(model.unexpectedFailureInfoForTestName));
+    },
     onRebaseline: function(failures)
     {
-        var failureInfoList = base.flattenArray(failures.testNameList().map(model.unexpectedFailureInfoForTestName));
-        rebaselineWithStatusUpdates(failureInfoList);
+        rebaselineWithStatusUpdates(this._toFailureInfoList(failures));
+    },
+    onUpdateExpectations: function(failures)
+    {
+        updateExpectationsWithStatusUpdates(this._toFailureInfoList(failures));
     }
 });
 

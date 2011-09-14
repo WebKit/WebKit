@@ -83,6 +83,14 @@ ui.actions.Rebaseline = base.extends(Action, {
     }
 });
 
+// FIXME: Rename all the code to match the user-visible name.
+ui.actions.UpdateExpectations = base.extends(Action, {
+    init: function() {
+        this.textContent = 'Mark as Expected';
+        this._eventName = 'updateexpectations';
+    }
+});
+
 ui.actions.Next = base.extends(Action, {
     init: function() {
         this.innerHTML = '&#9654;';
