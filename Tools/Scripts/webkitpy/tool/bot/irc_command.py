@@ -173,8 +173,8 @@ class Hi(IRCCommand):
 
 class Whois(IRCCommand):
     def _nick_or_full_record(self, contributor):
-        if contributor.irc_nickname:
-            return contributor.irc_nickname
+        if contributor.irc_nicknames:
+            return ', '.join(contributor.irc_nicknames)
         return unicode(contributor)
 
     def execute(self, nick, args, tool, sheriff):
@@ -189,13 +189,13 @@ class Whois(IRCCommand):
             return "%s: More than 5 contributors match '%s', could you be more specific?" % (nick, search_string)
         if len(contributors) == 1:
             contributor = contributors[0]
-            if not contributor.irc_nickname:
+            if not contributor.irc_nicknames:
                 return "%s: %s hasn't told me their nick. Boo hoo :-(" % (nick, contributor)
             if contributor.emails and search_string.lower() not in map(lambda email: email.lower(), contributor.emails):
                 formattedEmails = ', '.join(contributor.emails)
-                return "%s: %s is %s (%s). Why do you ask?" % (nick, search_string, contributor.irc_nickname, formattedEmails)
+                return "%s: %s is %s (%s). Why do you ask?" % (nick, search_string, self._nick_or_full_record(contributor), formattedEmails)
             else:
-                return "%s: %s is %s. Why do you ask?" % (nick, search_string, contributor.irc_nickname)
+                return "%s: %s is %s. Why do you ask?" % (nick, search_string, self._nick_or_full_record(contributor))
         contributor_nicks = map(self._nick_or_full_record, contributors)
         contributors_string = join_with_separators(contributor_nicks, only_two_separator=" or ", last_separator=', or ')
         return "%s: I'm not sure who you mean?  %s could be '%s'." % (nick, contributors_string, search_string)

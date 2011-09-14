@@ -39,7 +39,8 @@ class Sheriff(object):
         self._sheriffbot = sheriffbot
 
     def responsible_nicknames_from_commit_info(self, commit_info):
-        return [party.irc_nickname for party in commit_info.responsible_parties() if party.irc_nickname]
+        nestedList = [party.irc_nicknames for party in commit_info.responsible_parties() if party.irc_nicknames]
+        return reduce(lambda list, childList: list + childList, nestedList)
 
     def post_irc_warning(self, commit_info, builders):
         irc_nicknames = sorted(self.responsible_nicknames_from_commit_info(commit_info))

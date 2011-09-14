@@ -34,7 +34,8 @@ class CommittersTest(unittest.TestCase):
         committer = Committer('Test One', 'one@test.com', 'one')
         reviewer = Reviewer('Test Two', ['two@test.com', 'two@rad.com', 'so_two@gmail.com'])
         contributor = Contributor('Test Three', ['three@test.com'], 'three')
-        committer_list = CommitterList(committers=[committer], reviewers=[reviewer], contributors=[contributor])
+        contributor_with_two_nicknames = Contributor('Other Four', ['otherfour@webkit.org'], ['four', 'otherfour'])
+        committer_list = CommitterList(committers=[committer], reviewers=[reviewer], contributors=[contributor, contributor_with_two_nicknames])
 
         # Test valid committer, reviewer and contributor lookup
         self.assertEqual(committer_list.committer_by_email('one@test.com'), committer)
@@ -66,12 +67,14 @@ class CommittersTest(unittest.TestCase):
         # Test that emails returns a list.
         self.assertEqual(committer.emails, ['one@test.com'])
 
-        self.assertEqual(committer.irc_nickname, 'one')
+        self.assertEqual(committer.irc_nicknames, ['one'])
         self.assertEqual(committer_list.contributor_by_irc_nickname('one'), committer)
         self.assertEqual(committer_list.contributor_by_irc_nickname('three'), contributor)
+        self.assertEqual(committer_list.contributor_by_irc_nickname('four'), contributor_with_two_nicknames)
+        self.assertEqual(committer_list.contributor_by_irc_nickname('otherfour'), contributor_with_two_nicknames)
 
         # Test that the lists returned are are we expect them.
-        self.assertEqual(committer_list.contributors(), [contributor, committer, reviewer])
+        self.assertEqual(committer_list.contributors(), [contributor, contributor_with_two_nicknames, committer, reviewer])
         self.assertEqual(committer_list.committers(), [committer, reviewer])
         self.assertEqual(committer_list.reviewers(), [reviewer])
 

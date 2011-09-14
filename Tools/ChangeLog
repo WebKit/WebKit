@@ -1,3 +1,17 @@
+2011-09-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        committers.py should support multiple IRC nicknames
+        https://bugs.webkit.org/show_bug.cgi?id=68110
+
+        Reviewed by Eric Seidel.
+
+        Add multiple IRC nickname support to committers.py
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+
 2011-09-14  Jon Lee  <jonlee@apple.com>
 
         Implement globalFlag for WebKitTestRunner

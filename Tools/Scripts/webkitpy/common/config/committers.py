@@ -29,9 +29,8 @@
 #
 # WebKit's Python module for committer and reviewer validation.
 
-
 class Contributor(object):
-    def __init__(self, name, email_or_emails, irc_nickname=None):
+    def __init__(self, name, email_or_emails, irc_nickname_or_nicknames=None):
         assert(name)
         assert(email_or_emails)
         self.full_name = name
@@ -39,7 +38,10 @@ class Contributor(object):
             self.emails = [email_or_emails]
         else:
             self.emails = email_or_emails
-        self.irc_nickname = irc_nickname
+        if isinstance(irc_nickname_or_nicknames, str):
+            self.irc_nicknames = [irc_nickname_or_nicknames]
+        else:
+            self.irc_nicknames = irc_nickname_or_nicknames
         self.can_commit = False
         self.can_review = False
 
@@ -55,8 +57,10 @@ class Contributor(object):
         string = search_string.lower()
         if string in self.full_name.lower():
             return True
-        if self.irc_nickname and string in self.irc_nickname.lower():
-            return True
+        if self.irc_nicknames:
+            for nickname in self.irc_nicknames:
+                if string in nickname.lower():
+                    return True
         for email in self.emails:
             if string in email.lower():
                 return True
@@ -339,7 +343,7 @@ reviewers_list = [
     Reviewer("Darin Adler", "darin@apple.com", "darin"),
     Reviewer("Darin Fisher", ["fishd@chromium.org", "darin@chromium.org"], "fishd"),
     Reviewer("David Harrison", "harrison@apple.com", "harrison"),
-    Reviewer("David Hyatt", "hyatt@apple.com", "hyatt"),
+    Reviewer("David Hyatt", "hyatt@apple.com", ["dhyatt", "hyatt"]),
     Reviewer("David Kilzer", ["ddkilzer@webkit.org", "ddkilzer@apple.com"], "ddkilzer"),
     Reviewer("David Levin", "levin@chromium.org", "dave_levin"),
     Reviewer("Dean Jackson", "dino@apple.com", "dino"),
@@ -367,7 +371,7 @@ reviewers_list = [
     Reviewer("Joseph Pecoraro", ["joepeck@webkit.org", "pecoraro@apple.com"], "JoePeck"),
     Reviewer("Justin Garcia", "justin.garcia@apple.com", "justing"),
     Reviewer("Ken Kocienda", "kocienda@apple.com"),
-    Reviewer("Kenneth Rohde Christiansen", ["kenneth@webkit.org", "kenneth.christiansen@openbossa.org", "kenneth.christiansen@gmail.com"], "kenne"),
+    Reviewer("Kenneth Rohde Christiansen", ["kenneth@webkit.org", "kenneth.christiansen@openbossa.org", "kenneth.christiansen@gmail.com"], ["kenne", "kenneth"]),
     Reviewer("Kenneth Russell", "kbr@google.com", "kbr_google"),
     Reviewer("Kent Tamura", "tkent@chromium.org", "tkent"),
     Reviewer("Kevin Decker", "kdecker@apple.com", "superkevin"),
@@ -380,13 +384,13 @@ reviewers_list = [
     Reviewer("Mark Rowe", "mrowe@apple.com", "bdash"),
     Reviewer("Martin Robinson", ["mrobinson@webkit.org", "mrobinson@igalia.com", "martin.james.robinson@gmail.com"], "mrobinson"),
     Reviewer("Mihai Parparita", "mihaip@chromium.org", "mihaip"),
-    Reviewer("Nate Chapin", "japhet@chromium.org", "japhet"),
+    Reviewer("Nate Chapin", "japhet@chromium.org", ["japhet", "natechapin"]),
     Reviewer("Nikolas Zimmermann", ["zimmermann@kde.org", "zimmermann@physik.rwth-aachen.de", "zimmermann@webkit.org"], "wildfox"),
     Reviewer("Noam Rosenthal", "noam.rosenthal@nokia.com", "noamr"),
     Reviewer("Ojan Vafai", "ojan@chromium.org", "ojan"),
     Reviewer("Oliver Hunt", "oliver@apple.com", "olliej"),
     Reviewer("Pavel Feldman", "pfeldman@chromium.org", "pfeldman"),
-    Reviewer("Philippe Normand", ["pnormand@igalia.com", "philn@webkit.org", "philn@igalia.com"], "philn-tp"),
+    Reviewer("Philippe Normand", ["pnormand@igalia.com", "philn@webkit.org", "philn@igalia.com"], ["philn-tp", "pnormand"]),
     Reviewer("Richard Williamson", "rjw@apple.com", "rjw"),
     Reviewer("Rob Buis", ["rwlbuis@gmail.com", "rwlbuis@webkit.org"], "rwlbuis"),
     Reviewer("Ryosuke Niwa", "rniwa@webkit.org", "rniwa"),
@@ -462,7 +466,7 @@ class CommitterList(object):
 
     def contributor_by_irc_nickname(self, irc_nickname):
         for contributor in self.contributors():
-            if contributor.irc_nickname and contributor.irc_nickname == irc_nickname:
+            if contributor.irc_nicknames and irc_nickname in contributor.irc_nicknames:
                 return contributor
         return None
 
