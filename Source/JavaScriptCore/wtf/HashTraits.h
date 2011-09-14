@@ -28,6 +28,8 @@
 
 namespace WTF {
 
+    class String;
+
     using std::pair;
     using std::make_pair;
 
@@ -89,6 +91,7 @@ namespace WTF {
     };
 
     template<typename P> struct HashTraits<RefPtr<P> > : SimpleClassHashTraits<RefPtr<P> > { };
+    template<> struct HashTraits<String> : SimpleClassHashTraits<String> { };
 
     // special traits for pairs, helpful for their use in HashMap implementation
 

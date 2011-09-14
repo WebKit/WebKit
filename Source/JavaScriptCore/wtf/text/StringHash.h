@@ -179,8 +179,6 @@ namespace WTF {
         }
     };
 
-    template<> struct HashTraits<String> : SimpleClassHashTraits<String> { };
-
 }
 
 using WTF::StringHash;
