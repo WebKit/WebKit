@@ -105,7 +105,6 @@ enum MediaPlayerAVFoundationObservationContext {
 -(void)disconnect;
 -(void)playableKnown;
 -(void)metadataLoaded;
--(void)timeChanged:(double)time;
 -(void)seekCompleted:(BOOL)finished;
 -(void)didEnd:(NSNotification *)notification;
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(MediaPlayerAVFoundationObservationContext)context;
@@ -279,14 +278,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 
     m_avPlayer.adoptNS([[AVPlayer alloc] init]);
     [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"rate" options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
-    
-    // Add a time observer, ask to be called infrequently because we don't really want periodic callbacks but
-    // our observer will also be called whenever a seek happens.
-    const double veryLongInterval = 60 * 60 * 24 * 30;
-    WebCoreAVFMovieObserver *observer = m_objcObserver.get();
-    m_timeObserver = [m_avPlayer.get() addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(veryLongInterval, 10) queue:nil usingBlock:^(CMTime time){
-        [observer timeChanged:CMTimeGetSeconds(time)];
-    }];
     
     if (m_avPlayerItem)
         [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
@@ -840,14 +831,6 @@ NSArray* itemKVOProperties()
         return;
 
     m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::AssetPlayabilityKnown);
-}
-
-- (void)timeChanged:(double)time
-{
-    if (!m_callback)
-        return;
-
-    m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::PlayerTimeChanged, time);
 }
 
 - (void)seekCompleted:(BOOL)finished
