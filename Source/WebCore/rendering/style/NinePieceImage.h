@@ -112,6 +112,13 @@ public:
         m_verticalRule = other.m_verticalRule;
     }
 
+    void setMaskDefaults()
+    {
+        m_imageSlices = LengthBox(0);
+        m_fill = true;
+        m_borderSlices = LengthBox();
+    }
+
 private:
     RefPtr<StyleImage> m_image;
     LengthBox m_imageSlices;

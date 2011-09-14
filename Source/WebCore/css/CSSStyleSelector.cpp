@@ -3034,10 +3034,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
 
         NinePieceImage image;
-        if (property == CSSPropertyWebkitMaskBoxImage) {
-            image.setImageSlices(LengthBox(0)); // For backwards compatibility, just make the mask box image slices 0 instead of 100%.
-            image.setBorderSlices(LengthBox()); // The slices default to auto.
-        }
+        if (property == CSSPropertyWebkitMaskBoxImage)
+            image.setMaskDefaults();
         mapNinePieceImage(property, value, image);
 
         if (id != CSSPropertyWebkitMaskBoxImage)
@@ -3177,8 +3175,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 reflection->setOffset(reflectValue->offset()->computeLength<Length>(style(), m_rootElementStyle, zoomFactor));
         }
         NinePieceImage mask;
-        mask.setImageSlices(LengthBox(0)); // For backwards compatibility, just make the mask box image slices 0 instead of 100%.
-        mask.setBorderSlices(LengthBox()); // The slices default to auto.
+        mask.setMaskDefaults();
         mapNinePieceImage(property, reflectValue->mask(), mask);
         reflection->setMask(mask);
         

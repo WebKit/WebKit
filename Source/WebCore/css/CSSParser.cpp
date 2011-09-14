@@ -5416,12 +5416,6 @@ bool CSSParser::parseBorderImageSlice(int propId, RefPtr<CSSBorderImageSliceValu
         m_valueList->next();
     }
 
-    if (context.allowNumber() && !context.top() && (propId == CSSPropertyWebkitMaskBoxImage || propId == CSSPropertyWebkitBoxReflect)) {
-        // Allow the slices to be omitted for images that don't fit to a border.  We just set the slices to be 0.
-        context.setTop(primitiveValueCache()->createValue(0, CSSPrimitiveValue::CSS_NUMBER));
-        context.setAllowFinalCommit();
-    }
-
     if (context.allowFinalCommit()) {
         // FIXME: For backwards compatibility, -webkit-border-image, -webkit-mask-box-image and -webkit-box-reflect have to do a fill by default.
         // FIXME: What do we do with -webkit-box-reflect and -webkit-mask-box-image? Probably just have to leave them filling...

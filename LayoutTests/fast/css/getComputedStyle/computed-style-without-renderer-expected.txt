@@ -161,7 +161,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-mask-box-image: none
     -webkit-mask-box-image-outset: 0px
     -webkit-mask-box-image-repeat: stretch
-    -webkit-mask-box-image-slice: 0
+    -webkit-mask-box-image-slice: 0 fill
     -webkit-mask-box-image-source: none
     -webkit-mask-box-image-width: auto
     -webkit-mask-clip: border-box

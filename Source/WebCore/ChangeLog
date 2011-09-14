@@ -1,3 +1,32 @@
+2011-09-13  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68050
+        
+        Regressions in some layout tests from making border/mask/reflection nine-piece-image
+        parsing match the spec, which allows any of the pieces to be omitted and to also be
+        specifiable in any order.
+        
+        When the higher level code suddenly allowed the image slices to be omitted, the fixup
+        for legacy compatibility for reflections and masks in the parseBorderImageSlice function
+        no longer happened because that function no longer got called.
+        
+        The fix is to properly set the defaults to include the "fill" keyword, so the fixup is
+        applied to the NinePieceImages you create before you ever map anything in from the rules.
+        
+        This also has the side effect of fixing -webkit-max-box-image-slice to actually dump as
+        "0 fill" instead of just "0", which is the correct initial value for this property.
+
+        Reviewed by Adam Roben.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBorderImageSlice):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        * rendering/style/StyleReflection.h:
+        (WebCore::StyleReflection::StyleReflection):
+
 2011-09-13  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: InspectorInstrumentation::frameDestroyed is called after m_page has been reset.
