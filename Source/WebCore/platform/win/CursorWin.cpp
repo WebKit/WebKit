@@ -243,7 +243,6 @@ void Cursor::ensurePlatformCursor() const
         m_platformCursor = loadSharedCursor(0, IDC_APPSTARTING);
         break;
     case Cursor::NoDrop:
-        break;
     case Cursor::NotAllowed:
         m_platformCursor = loadSharedCursor(0, IDC_NO);
         break;
@@ -255,6 +254,10 @@ void Cursor::ensurePlatformCursor() const
         break;
     case Cursor::Custom:
         m_platformCursor = createSharedCursor(m_image.get(), m_hotSpot);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        m_platformCursor = loadSharedCursor(0, IDC_ARROW);
         break;
     }
 }
