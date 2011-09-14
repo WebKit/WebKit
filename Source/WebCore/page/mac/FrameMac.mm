@@ -50,9 +50,7 @@
 #import "RenderTableCell.h"
 #import "Scrollbar.h"
 #import "SimpleFontData.h"
-#import "WebCoreViewFactory.h"
 #import "visible_units.h"
-#import <Carbon/Carbon.h>
 #import <wtf/StdLibExtras.h>
 
 @interface NSView (WebCoreHTMLDocumentView)

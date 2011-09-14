@@ -105,7 +105,6 @@
 .objc_class_name_DOMTreeWalker
 .objc_class_name_DOMUIEvent
 .objc_class_name_DOMWheelEvent
-.objc_class_name_WebCoreViewFactory
 .objc_class_name_WebFontCache
 .objc_class_name_WebHTMLConverter
 .objc_class_name_WebScriptObject

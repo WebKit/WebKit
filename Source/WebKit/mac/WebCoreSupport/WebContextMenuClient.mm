@@ -39,7 +39,6 @@
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
-#import "WebViewFactory.h"
 #import "WebViewInternal.h"
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>

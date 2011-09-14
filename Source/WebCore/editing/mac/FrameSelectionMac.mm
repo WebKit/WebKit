@@ -29,7 +29,6 @@
 #import "AXObjectCache.h"
 #import "Frame.h"
 #import "RenderView.h"
-#import "WebCoreViewFactory.h"
 
 namespace WebCore {
 

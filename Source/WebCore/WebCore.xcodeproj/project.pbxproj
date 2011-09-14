@@ -3121,7 +3121,6 @@
 		93F1996308245E59001E9ABC /* SSLKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */; };
 		93F1998C08245E59001E9ABC /* RenderTreeAsText.h in Headers */ = {isa = PBXBuildFile; fileRef = 93955A4103D72932008635CE /* RenderTreeAsText.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199A808245E59001E9ABC /* WebCoreFrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854C02DE375901EA4122 /* WebCoreFrameView.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199B308245E59001E9ABC /* WebCoreViewFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F587855402DE375901EA4122 /* WebCoreViewFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199B808245E59001E9ABC /* Scrollbar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7B2AF80450824100A8000F /* Scrollbar.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199BB08245E59001E9ABC /* WebCoreKeyboardUIMode.h in Headers */ = {isa = PBXBuildFile; fileRef = BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199BE08245E59001E9ABC /* BlockExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A640F00533BB1F0085E777 /* BlockExceptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3132,7 +3131,6 @@
 		93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */; };
 		93F199F008245E59001E9ABC /* WebCoreView.h in Headers */ = {isa = PBXBuildFile; fileRef = BE855F7F0701E83500239769 /* WebCoreView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784F002DE375901EA4122 /* CursorMac.mm */; };
-		93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F587855502DE375901EA4122 /* WebCoreViewFactory.m */; };
 		93F19A9108245E59001E9ABC /* HTMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23B02DE4396018635CA /* HTMLDocument.cpp */; };
 		93F19A9208245E59001E9ABC /* HTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23E02DE4396018635CA /* HTMLElement.cpp */; };
 		93F19A9D08245E59001E9ABC /* TextResourceDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D27802DE43D7018635CA /* TextResourceDecoder.cpp */; };
@@ -12575,8 +12573,6 @@
 		F55B3DAC1251F12D003EF269 /* WeekInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeekInputType.h; sourceTree = "<group>"; };
 		F58784F002DE375901EA4122 /* CursorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CursorMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854C02DE375901EA4122 /* WebCoreFrameView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587855402DE375901EA4122 /* WebCoreViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreViewFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587855502DE375901EA4122 /* WebCoreViewFactory.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreViewFactory.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587863A02DE3A1401EA4122 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Settings.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587864902DE3A9A01EA4122 /* CachePolicy.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = CachePolicy.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SSLKeyGenerator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -16143,8 +16139,6 @@
 				65BF023C0974819000C43196 /* FrameMac.mm */,
 				1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */,
 				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
-				F587855402DE375901EA4122 /* WebCoreViewFactory.h */,
-				F587855502DE375901EA4122 /* WebCoreViewFactory.m */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -23345,7 +23339,6 @@
 				93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */,
 				37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */,
 				93F199F008245E59001E9ABC /* WebCoreView.h in Headers */,
-				93F199B308245E59001E9ABC /* WebCoreViewFactory.h in Headers */,
 				BC6DADEF0A195FDF00E5CD14 /* WebFontCache.h in Headers */,
 				A7D20F6D107F438B00A80392 /* WebGLActiveInfo.h in Headers */,
 				49C7B9C91042D32F0009D447 /* WebGLBuffer.h in Headers */,
@@ -26186,7 +26179,6 @@
 				93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */,
 				37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
-				93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */,
 				BC6DADFA0A19602B00E5CD14 /* WebFontCache.mm in Sources */,
 				49C7B9C81042D32F0009D447 /* WebGLBuffer.cpp in Sources */,
 				6E4E91AE10F7FB3100A2779C /* WebGLContextAttributes.cpp in Sources */,

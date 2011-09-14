@@ -176,7 +176,6 @@
 		939810390824BF01008DF038 /* WebPluginPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E4AF4B036659440000E506 /* WebPluginPackage.h */; };
 		9398103A0824BF01008DF038 /* WebPluginViewFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 848DFF860365FE6A00CA2ACA /* WebPluginViewFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810420824BF01008DF038 /* WebJavaScriptTextInputPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		939810460824BF01008DF038 /* WebViewFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F7174C02885C5B018635CA /* WebViewFactory.h */; settings = {ATTRIBUTES = (); }; };
 		939810470824BF01008DF038 /* WebKitPrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C283730284676D018635CA /* WebKitPrefix.h */; };
 		939810490824BF01008DF038 /* WebClipView.h in Headers */ = {isa = PBXBuildFile; fileRef = 933D659903413FF2008635CE /* WebClipView.h */; };
 		9398104B0824BF01008DF038 /* WebDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39446070020F50ED0ECA1767 /* WebDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -272,7 +271,6 @@
 		939810DD0824BF01008DF038 /* npapi.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5F717230288493C018635CA /* npapi.mm */; };
 		939810E30824BF01008DF038 /* WebImageRendererFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */; };
 		939810E40824BF01008DF038 /* WebJavaScriptTextInputPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */; };
-		939810E80824BF01008DF038 /* WebViewFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5F7174D02885C5B018635CA /* WebViewFactory.mm */; };
 		939810EB0824BF01008DF038 /* WebClipView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 933D659A03413FF2008635CE /* WebClipView.mm */; };
 		939810ED0824BF01008DF038 /* WebDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39446071020F50ED0ECA1767 /* WebDataSource.mm */; };
 		939810EF0824BF01008DF038 /* WebDefaultContextMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5152FADE033FC50400CA2ACD /* WebDefaultContextMenuDelegate.mm */; };
@@ -738,8 +736,6 @@
 		F5F717200288493C018635CA /* WebPluginDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginDatabase.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5F717210288493C018635CA /* WebPluginDatabase.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebPluginDatabase.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5F717230288493C018635CA /* npapi.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = npapi.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5F7174C02885C5B018635CA /* WebViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebViewFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5F7174D02885C5B018635CA /* WebViewFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewFactory.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5F732D202FF4D4F01A80180 /* WebKit.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; name = WebKit.exp; path = mac/WebKit.exp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		F5F81C3902B67C26018635CA /* WebRenderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebRenderNode.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5F81C3A02B67C26018635CA /* WebRenderNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebRenderNode.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1323,8 +1319,6 @@
 				A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */,
 				93EB178E09F88D510091F8FF /* WebSystemInterface.h */,
 				93EB178C09F88D460091F8FF /* WebSystemInterface.mm */,
-				F5F7174C02885C5B018635CA /* WebViewFactory.h */,
-				F5F7174D02885C5B018635CA /* WebViewFactory.mm */,
 			);
 			name = WebCoreSupport;
 			path = mac/WebCoreSupport;
@@ -1605,7 +1599,6 @@
 				C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */,
 				939810700824BF01008DF038 /* WebView.h in Headers */,
 				BC2E464D0FD8A96800A9D9DE /* WebViewData.h in Headers */,
-				939810460824BF01008DF038 /* WebViewFactory.h in Headers */,
 				9398109B0824BF01008DF038 /* WebViewInternal.h in Headers */,
 				939810710824BF01008DF038 /* WebViewPrivate.h in Headers */,
 				41F4484F10338E8C0030E55E /* WebWorkersPrivate.h in Headers */,
@@ -1982,7 +1975,6 @@
 				939811070824BF01008DF038 /* WebView.mm in Sources */,
 				BC2E464E0FD8A96800A9D9DE /* WebViewData.mm in Sources */,
 				BC97E7E210963D260010D361 /* WebViewEventHandling.mm in Sources */,
-				939810E80824BF01008DF038 /* WebViewFactory.mm in Sources */,
 				41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */,
 				A5DEFC0A11D5331C00885273 /* WebSecurityOrigin.mm in Sources */,
 				A5DEFC1011D5343E00885273 /* WebDatabaseQuotaManager.mm in Sources */,

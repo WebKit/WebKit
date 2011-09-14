@@ -51,7 +51,6 @@
 #import "WebPreferenceKeysPrivate.h"
 #import "WebResourceInternal.h"
 #import "WebSystemInterface.h"
-#import "WebViewFactory.h"
 #import "WebViewInternal.h"
 #import "WebViewPrivate.h"
 #import <Foundation/NSURLRequest.h>
@@ -317,8 +316,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         // Need to tell WebCore what function to call for the "History Item has Changed" notification.
         // Note: We also do this in WebHistoryItem's init method.
         WebCore::notifyHistoryItemChanged = WKNotifyHistoryItemChanged;
-
-        [WebViewFactory createSharedFactory];
 
 // FIXME: Remove the NSAppKitVersionNumberWithDeferredWindowDisplaySupport check once
 // once AppKit's Deferred Window Display support is available.
