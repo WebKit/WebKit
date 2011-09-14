@@ -42,8 +42,6 @@ deps = {
   # build tools
   'build':
     Var('chromium_svn')+'/build@'+Var('chromium_rev'),
-  'tools/data_pack':
-    Var('chromium_svn')+'/tools/data_pack@'+Var('chromium_rev'),
   'tools/gyp':
     From('chromium_deps', 'src/tools/gyp'),
 

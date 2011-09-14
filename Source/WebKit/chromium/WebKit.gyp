@@ -1058,7 +1058,7 @@
                         {
                             'action_name': 'repack_locale',
                             'variables': {
-                                'repack_path': '<(chromium_src_dir)/tools/data_pack/repack.py',
+                                'repack_path': '<(chromium_src_dir)/tools/grit/grit/format/repack.py',
                                 'pak_inputs': [
                                     '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.pak',
                                     '<(SHARED_INTERMEDIATE_DIR)/ui/gfx/gfx_resources.pak',
