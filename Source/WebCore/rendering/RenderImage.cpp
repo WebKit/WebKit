@@ -87,16 +87,9 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
     IntSize imageSize;
     if (newImage->willPaintBrokenImage()) {
         float deviceScaleFactor = Page::deviceScaleFactor(frame());
-        imageSize = newImage->brokenImage(deviceScaleFactor)->size();
-        if (deviceScaleFactor >= 2) {
-            // It is important to scale by 0.5 instead of the deviceScaleFactor because the
-            // high resolution broken image artwork is actually a 2x image. We should 
-            // consider adding functionality to Image to ask about the image's resolution,
-            // and then we could scale by 1 / resolution. This is a solution that would
-            // scale better since this hardcoded number will have to change if we ever get
-            // artwork at other, higher resolutions. 
-            imageSize.scale(0.5f);
-        }
+        pair<Image*, float> brokenImageAndImageScaleFactor = newImage->brokenImage(deviceScaleFactor);
+        imageSize = brokenImageAndImageScaleFactor.first->size();
+        imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
     } else
         imageSize = newImage->image()->size();
 
@@ -286,10 +279,10 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             if (m_imageResource->errorOccurred() && !image->isNull() && usableWidth >= image->width() && usableHeight >= image->height()) {
                 float deviceScaleFactor = Page::deviceScaleFactor(frame());
                 // Call brokenImage() explicitly to ensure we get the broken image icon at the appropriate resolution.
-                image = m_imageResource->cachedImage()->brokenImage(deviceScaleFactor);
+                pair<Image*, float> brokenImageAndImageScaleFactor = m_imageResource->cachedImage()->brokenImage(deviceScaleFactor);
+                image = brokenImageAndImageScaleFactor.first;
                 IntSize imageSize = image->size();
-                if (deviceScaleFactor >= 2)
-                    imageSize.scale(0.5f);
+                imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
                 // Center the error image, accounting for border and padding.
                 LayoutUnit centerX = (usableWidth - imageSize.width()) / 2;
                 if (centerX < 0)
