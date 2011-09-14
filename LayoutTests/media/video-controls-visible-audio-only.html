@@ -38,11 +38,13 @@
                     return;
 
                 // start playback
+                var playCoords
                 try {
-                    var playCoords = mediaControlsButtonCoordinates(video, "play-button");
+                    playCoords = mediaControlsButtonCoordinates(video, "play-button");
                 } catch (exception) {
                     consoleWrite(exception.description);
                     layoutTestController.notifyDone();
+                    return;
                 }
                 var clickX = playCoords[0];
                 var clickY = playCoords[1];

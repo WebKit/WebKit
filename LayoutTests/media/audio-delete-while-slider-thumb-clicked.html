@@ -2,6 +2,8 @@
 <html>
     <head>
         <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script src=media-controls.js></script>
         <script>
             if (window.layoutTestController) {
                 layoutTestController.dumpAsText();
@@ -36,7 +38,6 @@
                 if (!audio)
                     return;
 
-                // delete the search
                 log("<br>deleting audio element");
                 audio.parentNode.removeChild(audio);
 
@@ -52,19 +53,23 @@
                 layoutTestController.waitUntilDone();
 
                 var audio = document.getElementById('audio');
+                var seekCoords;
+                try {
+                    seekCoords = mediaControlsButtonCoordinates(audio, "timeline");
+                } catch (exception) {
+                    failTest(exception.description);
+                    return;
+                }
+                var x = seekCoords[0];
+                var y = seekCoords[1];
 
-                var center = audio.offsetLeft + (audio.offsetWidth / 2);
-                var middle = audio.offsetTop + (audio.offsetHeight / 2);
-                
-                var x = center + 16 + 16 + 8;
-                var y = middle;
-
-                // drag slider, leave the mouse down
+                // Click in the slider to get the thumb under the mouse.
                 log("clicking in controller");
                 eventSender.mouseMoveTo(x, y);
                 eventSender.mouseDown();
                 eventSender.mouseUp();
 
+                // Click slider to scrub, leave the mouse down.
                 log("clicking on thumb");
                 eventSender.mouseDown();
                 eventSender.mouseMoveTo(x, y + 20);

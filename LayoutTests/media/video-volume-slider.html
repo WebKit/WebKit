@@ -20,10 +20,12 @@
             video.volume = 0.7;
 
             if (window.eventSender) {
+                var muteCoords;
                 try {
                     muteCoords = mediaControlsButtonCoordinates(video, "mute-button");
                 } catch (exception) {
                     layoutTestController.notifyDone();
+                    return;
                 }
                 eventSender.mouseMoveTo(muteCoords[0], muteCoords[1]);
             }

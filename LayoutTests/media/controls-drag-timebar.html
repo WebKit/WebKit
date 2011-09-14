@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>drag timebar test</title>
+        <script src=media-controls.js></script>
         <script src=media-file.js></script>
         <script src=video-test.js></script>
         <script>
@@ -19,8 +20,16 @@
                 moveCount = 0;
 
                 if (window.eventSender) {
-                    x = video.offsetLeft + (video.offsetWidth / 2);
-                    y = video.offsetTop + video.offsetHeight - 10;
+
+                    var seekCoords;
+                    try {
+                        seekCoords = mediaControlsButtonCoordinates(video, "timeline");
+                    } catch (exception) {
+                        failTest(exception.description);
+                        return;
+                    }
+                    x = seekCoords[0];
+                    y = seekCoords[1];
 
                     eventSender.dragMode = false;
                     eventSender.mouseMoveTo(x, y);
@@ -42,17 +51,20 @@
                 if (window.eventSender) {
                     x += delta;
                     eventSender.mouseMoveTo(x, y);
-                    window.setTimeout("move()", 100);
                 }
             }
 
             function seeked()
             {
-                if (++seekCount == 6) {
-                    if (window.eventSender)
-                        eventSender.mouseUp();
-                    endTest();
+                ++seekCount;
+                if (seekCount < 6) {
+                    window.setTimeout("move()", 100);
+                    return;
                 }
+
+                if (window.eventSender)
+                    eventSender.mouseUp();
+                endTest();
             }
 
             function start()

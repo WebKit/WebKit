@@ -1,3 +1,21 @@
+2011-09-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Media element tests should look up controller element locations.
+        https://bugs.webkit.org/show_bug.cgi?id=68038
+
+        Get the position of controller elements from the shadow DOM.
+
+        Reviewed by Darin Adler.
+
+        * media/audio-delete-while-slider-thumb-clicked.html:
+        * media/audio-delete-while-step-button-clicked.html:
+        * media/controls-drag-timebar.html:
+        * media/controls-right-click-on-timebar.html:
+        * media/video-controls-transformed.html:
+        * media/video-controls-visible-audio-only.html:
+        * media/video-controls-zoomed.html:
+        * media/video-volume-slider.html:
+
 2011-09-14  David Levin  <levin@chromium.org>
 
         [chromium] Update baselines due to r95070 and r95099.

@@ -20,10 +20,12 @@
         waitForEvent('canplaythrough', function () {
             if (window.eventSender) {
                 // Find the play button and click the middle of its bounding box.
+                var playCoords;
                 try {
-                    var playCoords = mediaControlsButtonCoordinates(video, "play-button");
+                    playCoords = mediaControlsButtonCoordinates(video, "play-button");
                 } catch (exception) {
                     failTest(exception.description);
+                    return;
                 }
                 var clickX = playCoords[0];
                 var clickY = playCoords[1];

@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>right click on timebar test</title>
+        <script src=media-controls.js></script>
         <script src=media-file.js></script>
         <script src=video-test.js></script>
         <script>
@@ -10,8 +11,16 @@
             function click()
             {
                 if (window.eventSender) {
-                    var x = video.offsetLeft + video.offsetWidth / 2;
-                    var y = video.offsetTop + video.offsetHeight - 10;
+                    var seekCoords;
+                    try {
+                        seekCoords = mediaControlsButtonCoordinates(video, "timeline");
+                    } catch (exception) {
+                        failTest(exception.description);
+                        return;
+                    }
+                    var x = seekCoords[0];
+                    var y = seekCoords[1];
+
                     eventSender.mouseMoveTo(x, y);
                     eventSender.contextClick();
                 }
