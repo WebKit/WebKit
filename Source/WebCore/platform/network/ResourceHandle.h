@@ -158,9 +158,6 @@ public:
     static void setClientCertificate(const String& host, CFDataRef);
 #endif
 
-    PassRefPtr<SharedBuffer> bufferedData();
-    static bool supportsBufferedData();
-
     bool shouldContentSniff() const;
     static bool shouldContentSniffURL(const KURL&);
 

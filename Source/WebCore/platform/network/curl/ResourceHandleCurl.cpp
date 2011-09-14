@@ -114,16 +114,6 @@ void ResourceHandle::cancel()
     ResourceHandleManager::sharedInstance()->cancel(this);
 }
 
-PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
-{
-    return 0;
-}
-
-bool ResourceHandle::supportsBufferedData()
-{
-    return false;
-}
-
 #if PLATFORM(WIN) && USE(CF)
 static HashSet<String>& allowsAnyHTTPSCertificateHosts()
 {

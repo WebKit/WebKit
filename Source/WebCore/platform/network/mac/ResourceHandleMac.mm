@@ -71,10 +71,6 @@ using namespace WebCore;
 - (void)setDelegate:(id<NSURLConnectionDelegate>)delegate;
 @end
 
-@interface NSURLConnection (NSURLConnectionTigerPrivate)
-- (NSData *)_bufferedData;
-@end
-
 @interface NSURLConnection (Details)
 -(id)_initWithRequest:(NSURLRequest *)request delegate:(id)delegate usesCache:(BOOL)usesCacheFlag maxContentLength:(long long)maxContentLength startImmediately:(BOOL)startImmediately connectionProperties:(NSDictionary *)connectionProperties;
 @end
@@ -372,20 +368,6 @@ void ResourceHandle::releaseDelegate()
         [d->m_proxy.get() setDelegate:nil];
     [d->m_delegate.get() detachHandle];
     d->m_delegate = nil;
-}
-
-bool ResourceHandle::supportsBufferedData()
-{
-    static bool supportsBufferedData = [NSURLConnection instancesRespondToSelector:@selector(_bufferedData)];
-    return supportsBufferedData;
-}
-
-PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
-{
-    if (ResourceHandle::supportsBufferedData())
-        return SharedBuffer::wrapNSData([d->m_connection.get() _bufferedData]);
-
-    return 0;
 }
 
 id ResourceHandle::releaseProxy()

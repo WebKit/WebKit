@@ -150,17 +150,6 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame* frame)
     return false;
 }
 
-bool ResourceHandle::supportsBufferedData()
-{
-    return false;
-}
-
-PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials /*storedCredentials*/, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     WebCoreSynchronousLoader syncLoader(error, response, data);

@@ -526,17 +526,6 @@ void ResourceHandle::cancel()
     }
 }
 
-PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-bool ResourceHandle::supportsBufferedData()
-{
-    return false;
-}
-
 void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     const KURL& url = request.url();

@@ -685,17 +685,6 @@ void ResourceHandle::cancel()
         g_cancellable_cancel(d->m_cancellable.get());
 }
 
-PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-bool ResourceHandle::supportsBufferedData()
-{
-    return false;
-}
-
 void ResourceHandle::platformSetDefersLoading(bool defersLoading)
 {
     // Initial implementation of this method was required for bug #44157.
