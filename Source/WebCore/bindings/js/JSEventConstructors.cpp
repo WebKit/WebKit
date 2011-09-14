@@ -33,8 +33,10 @@
 #include "JSDictionary.h"
 #include "JSEvent.h"
 #include "JSHashChangeEvent.h"
+#include "JSPageTransitionEvent.h"
 #include "JSProgressEvent.h"
 #include "JSWebKitAnimationEvent.h"
+#include "PageTransitionEvent.h"
 #include "ProgressEvent.h"
 #include "WebKitAnimationEvent.h"
 #include <runtime/Error.h>

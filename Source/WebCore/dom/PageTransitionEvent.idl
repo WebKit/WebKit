@@ -25,7 +25,10 @@
 
 module events {
 
-    interface PageTransitionEvent : Event {
+    interface [
+        CanBeConstructed,
+        CustomConstructFunction
+    ] PageTransitionEvent : Event {
 
         readonly attribute boolean persisted;
 

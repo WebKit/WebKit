@@ -30,34 +30,45 @@
 
 namespace WebCore {
 
-    class PageTransitionEvent : public Event {
-    public:
-        static PassRefPtr<PageTransitionEvent> create()
-        {
-            return adoptRef(new PageTransitionEvent);
-        }
-        static PassRefPtr<PageTransitionEvent> create(const AtomicString& type, bool persisted)
-        {
-            return adoptRef(new PageTransitionEvent(type, persisted));
-        }
+struct PageTransitionEventInit : public EventInit {
+    PageTransitionEventInit();
 
-        virtual ~PageTransitionEvent();
+    bool persisted;
+};
 
-        void initPageTransitionEvent(const AtomicString& type, 
-                                bool canBubbleArg,
-                                bool cancelableArg,
-                                bool persisted);
+class PageTransitionEvent : public Event {
+public:
+    static PassRefPtr<PageTransitionEvent> create()
+    {
+        return adoptRef(new PageTransitionEvent);
+    }
+    static PassRefPtr<PageTransitionEvent> create(const AtomicString& type, bool persisted)
+    {
+        return adoptRef(new PageTransitionEvent(type, persisted));
+    }
+    static PassRefPtr<PageTransitionEvent> create(const AtomicString& type, const PageTransitionEventInit& initializer)
+    {
+        return adoptRef(new PageTransitionEvent(type, initializer));
+    }
 
-        virtual bool isPageTransitionEvent() const { return true; }
+    virtual ~PageTransitionEvent();
 
-        bool persisted() const { return m_persisted; }
+    void initPageTransitionEvent(const AtomicString& type, 
+                                 bool canBubbleArg,
+                                 bool cancelableArg,
+                                 bool persisted);
 
-    private:
-        PageTransitionEvent();
-        PageTransitionEvent(const AtomicString& type, bool persisted);
+    virtual bool isPageTransitionEvent() const { return true; }
 
-        bool m_persisted;
-    };
+    bool persisted() const { return m_persisted; }
+
+private:
+    PageTransitionEvent();
+    PageTransitionEvent(const AtomicString& type, bool persisted);
+    PageTransitionEvent(const AtomicString&, const PageTransitionEventInit&);
+
+    bool m_persisted;
+};
 
 } // namespace WebCore
 
