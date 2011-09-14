@@ -1006,7 +1006,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 
 const ClassInfo QtRuntimeMethod::s_info = { "QtRuntimeMethod", &InternalFunction::s_info, 0, 0 };
 
-QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, Structure* structure, const Identifier& identifier, PassRefPtr<QtInstance> instance)
+QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, Structure* structure, const Identifier& identifier)
     : InternalFunction(exec->lexicalGlobalObject(), structure)
     , d_ptr(dd)
 {
@@ -1426,7 +1426,7 @@ static int findSignalIndex(const QMetaObject* meta, int initialIndex, QByteArray
 }
 
 QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, Structure* structure, const Identifier& identifier, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature, bool allowPrivate)
-    : QtRuntimeMethod (new QtRuntimeMetaMethodData(), exec, structure, identifier, instance)
+    : QtRuntimeMethod (new QtRuntimeMetaMethodData(), exec, structure, identifier)
 {
     finishCreation(exec, identifier, instance, index, signature, allowPrivate);
 }
@@ -1576,7 +1576,7 @@ JSValue QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, JSValue slotBase,
 QMultiMap<QObject*, QtConnectionObject*> QtRuntimeConnectionMethod::connections;
 
 QtRuntimeConnectionMethod::QtRuntimeConnectionMethod(ExecState* exec, Structure* structure, const Identifier& identifier, bool isConnect, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature)
-    : QtRuntimeMethod (new QtRuntimeConnectionMethodData(), exec, structure, identifier, instance)
+    : QtRuntimeMethod (new QtRuntimeConnectionMethodData(), exec, structure, identifier)
 {
     finishCreation(exec, identifier, isConnect, instance, index, signature);
 }

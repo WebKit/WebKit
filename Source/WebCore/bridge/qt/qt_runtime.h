@@ -148,7 +148,7 @@ protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | InternalFunction::StructureFlags | OverridesVisitChildren;
 
     QtRuntimeMethodData *d_func() const {return d_ptr;}
-    QtRuntimeMethod(QtRuntimeMethodData *dd, ExecState *, Structure*, const Identifier &name, PassRefPtr<QtInstance>);
+    QtRuntimeMethod(QtRuntimeMethodData *dd, ExecState *, Structure*, const Identifier &name);
     QtRuntimeMethodData *d_ptr;
 };
 
