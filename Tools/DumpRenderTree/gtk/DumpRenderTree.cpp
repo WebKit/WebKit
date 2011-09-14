@@ -330,12 +330,15 @@ static void dumpHistoryItem(WebKitWebHistoryItem* item, int indent, bool current
     if (webkit_web_history_item_is_target_item(item))
         printf("  **nav target**");
     putchar('\n');
-    GList* kids = webkit_web_history_item_get_children(item);
-    if (kids) {
+
+    if (GList* kids = webkit_web_history_item_get_children(item)) {
         // must sort to eliminate arbitrary result ordering which defeats reproducible testing
-        kids = g_list_sort(kids, (GCompareFunc) compareHistoryItems);
-        for (unsigned i = 0; i < g_list_length(kids); i++)
-            dumpHistoryItem(WEBKIT_WEB_HISTORY_ITEM(g_list_nth_data(kids, i)), indent+4, FALSE);
+        for (GList* kid = g_list_sort(kids, (GCompareFunc) compareHistoryItems); kid; kid = g_list_next(kid)) {
+            WebKitWebHistoryItem* item = WEBKIT_WEB_HISTORY_ITEM(kid->data);
+            dumpHistoryItem(item, indent + 4, FALSE);
+            g_object_unref(item);
+        }
+        g_list_free(kids);
     }
     g_object_unref(item);
 }
@@ -354,29 +357,28 @@ static void dumpBackForwardListForWebView(WebKitWebView* view)
         // something is wrong if the item from the last test is in the forward part of the b/f list
         ASSERT(item != prevTestBFItem);
         g_object_ref(item);
-        itemsToPrint = g_list_append(itemsToPrint, item);
+        itemsToPrint = g_list_prepend(itemsToPrint, item);
     }
 
     WebKitWebHistoryItem* currentItem = webkit_web_back_forward_list_get_current_item(bfList);
-
     g_object_ref(currentItem);
-    itemsToPrint = g_list_append(itemsToPrint, currentItem);
+    itemsToPrint = g_list_prepend(itemsToPrint, currentItem);
 
-    gint currentItemIndex = g_list_length(itemsToPrint) - 1;
     gint backListCount = webkit_web_back_forward_list_get_back_length(bfList);
     for (int i = -1; i >= -(backListCount); i--) {
         WebKitWebHistoryItem* item = webkit_web_back_forward_list_get_nth_item(bfList, i);
         if (item == prevTestBFItem)
             break;
         g_object_ref(item);
-        itemsToPrint = g_list_append(itemsToPrint, item);
+        itemsToPrint = g_list_prepend(itemsToPrint, item);
     }
 
-    for (int i = g_list_length(itemsToPrint) - 1; i >= 0; i--) {
-        WebKitWebHistoryItem* item = WEBKIT_WEB_HISTORY_ITEM(g_list_nth_data(itemsToPrint, i));
-        dumpHistoryItem(item, historyItemIndent, i == currentItemIndex);
+    for (GList* itemToPrint = itemsToPrint; itemToPrint; itemToPrint = g_list_next(itemToPrint)) {
+        WebKitWebHistoryItem* item = WEBKIT_WEB_HISTORY_ITEM(itemToPrint->data);
+        dumpHistoryItem(item, historyItemIndent, item == currentItem);
         g_object_unref(item);
     }
+
     g_list_free(itemsToPrint);
     printf("===============================================\n");
 }
@@ -387,9 +389,8 @@ static void dumpBackForwardListForAllWebViews()
     dumpBackForwardListForWebView(webView);
 
     // The view list is prepended. Reverse the list so we get the order right.
-    GSList* viewList = g_slist_reverse(webViewList);
-    for (unsigned i = 0; i < g_slist_length(viewList); ++i)
-        dumpBackForwardListForWebView(WEBKIT_WEB_VIEW(g_slist_nth_data(viewList, i)));
+    for (GSList* currentView = g_slist_reverse(webViewList); currentView; currentView = g_slist_next(currentView))
+        dumpBackForwardListForWebView(WEBKIT_WEB_VIEW(currentView->data));
 }
 
 static void invalidateAnyPreviousWaitToDumpWatchdog()

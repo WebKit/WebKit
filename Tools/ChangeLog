@@ -1,3 +1,23 @@
+2011-09-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        GTK DumpRenderTree uses inefficient idioms to iterate over G[S]Lists
+        https://bugs.webkit.org/show_bug.cgi?id=68024
+
+        Reviewed by Gustavo Noronha Silva.
+        
+        Using g_list_count() and g_list_nth_data() together on a loop is
+        inneficient since they're both O(n). Iterate over lists in a saner
+        way.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dumpHistoryItem): Reduce the scope for the 'kids' variable, and
+        iterate on it using g_list_next(). Free the list after done with it.
+        (dumpBackForwardListForWebView): Instead of appending (which is
+        expensive in GLists) history items and then iterating from the tail
+        of the itemsToPrint list, prepend items and walk forwards as usual.
+        (dumpBackForwardListForAllWebViews): Walk the list in a saner way,
+        remove the (unneeded) viewList variable.
+
 2011-09-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Eric's IRC nick.
