@@ -3729,4 +3729,4 @@ BUGWK67999 LINUX MAC RELEASE : fast/borders/border-image-omit-right-slice.html =
 
 // Failing after r95070
 BUGWK68065 MAC : fast/writing-mode/broken-ideographic-font.html = IMAGE
-BUGWK68065 MAC : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE
+BUGWK68065 SNOWLEOPARD RELEASE : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE
