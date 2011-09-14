@@ -795,12 +795,22 @@ String CSSPrimitiveValue::cssText() const
             text += m_value.string;
             text += ")";
             break;
-        case CSS_COUNTER:
-            text = "counter(";
-            text += String::number(m_value.num);
+        case CSS_COUNTER: {
+            String separator = m_value.counter->separator();
+            text = separator.isEmpty() ? "counter(" : "counters(";
+            text += m_value.counter->identifier();
+            if (!separator.isEmpty()) {
+                text += ", ";
+                text += quoteCSSStringIfNeeded(separator);
+            }
+            const char* listStyleName = getValueName(m_value.counter->listStyleNumber() + CSSValueDisc);
+            if (listStyleName) {
+                text += ", ";
+                text += listStyleName;
+            }
             text += ")";
-            // FIXME: Add list-style and separator
             break;
+        }
         case CSS_RECT: {
             DEFINE_STATIC_LOCAL(const String, rectParen, ("rect("));
 
