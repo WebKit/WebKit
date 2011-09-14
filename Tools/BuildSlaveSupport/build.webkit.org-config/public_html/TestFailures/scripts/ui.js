@@ -132,4 +132,36 @@ ui.RelativeTime = base.extends('time', {
     }
 });
 
+ui.MessageBox = base.extends('div',  {
+    init: function(title, message)
+    {
+        this._content = document.createElement('div');
+        this.appendChild(this._content);
+        this.addMessage(message);
+        document.body.appendChild(this);
+        $(this).dialog({
+            resizable: false,
+            title: title,
+            width: $(window).width() * 0.80,  // FIXME: We should have CSS do this work for us.
+        });
+        $(this).bind('dialogclose', function() {
+            $(this).detach();
+        }.bind(this));
+    },
+    close: function()
+    {
+        $(this).dialog('close');
+    },
+    addMessage: function(message)
+    {
+        var element = document.createElement('div');
+        $(element).addClass('message').text(message);
+        this._content.appendChild(element);
+    },
+    addActionList: function(actionList)
+    {
+        this.appendChild(actionList);
+    }
+});
+
 })();

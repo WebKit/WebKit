@@ -1,3 +1,22 @@
+2011-09-13  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should tell you about the progress of your rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=67967
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch adds ui.MessageBox, which is a light wrapper around jQuery
+        UI's dialog widget.  We then use ui.MessageBox to show status messages
+        about in-progress rebaselines.  As each baseline is downloaded, the
+        MessageBox updates.  This UI replaces our temporary "alert"-based UI.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/actions.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/results.css:
+
 2011-09-13  Leandro Pereira  <leandro@profusion.mobi>
 
         GTK DumpRenderTree uses inefficient idioms to iterate over G[S]Lists

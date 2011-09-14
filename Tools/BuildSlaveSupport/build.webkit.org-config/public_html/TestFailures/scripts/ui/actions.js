@@ -53,6 +53,13 @@ ui.actions.Blame = base.extends(Action, {
     }
 });
 
+ui.actions.Close = base.extends(Action, {
+    init: function() {
+        this.textContent = 'Close';
+        this._eventName = 'close';
+    }
+});
+
 ui.actions.Rollout = base.extends(Action, {
     init: function() {
         this.textContent = 'Roll out';

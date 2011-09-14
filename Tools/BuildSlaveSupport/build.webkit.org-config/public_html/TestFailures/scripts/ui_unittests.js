@@ -114,4 +114,17 @@ test("time", 6, function() {
     equal(time.date().getTime(), tenMinutesAgo.getTime());
 });
 
+test("MessageBox", 1, function() {
+    var messageBox = new ui.MessageBox('The Title', 'First message');
+    messageBox.addMessage('Second Message');
+    equal(messageBox.outerHTML,
+        '<div class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 132px; height: auto; " scrolltop="0" scrollleft="0">' +
+            '<div>' +
+                '<div class="message">First message</div>' +
+                '<div class="message">Second Message</div>' +
+            '</div>' +
+        '</div>');
+    messageBox.close();
+});
+
 })();

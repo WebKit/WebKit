@@ -27,6 +27,23 @@ var controllers = controllers || {};
 
 (function(){
 
+// FIXME: Where should this function go?
+function rebaselineWithStatusUpdates(failureInfoList)
+{
+    var statusView = new ui.MessageBox(
+        'Rebaseline status',
+        'Performing rebaseline...');
+
+    checkout.rebaseline(failureInfoList, function() {
+        statusView.addMessage('Rebaseline done! Please land with "webkit-patch land-cowboy".');
+
+        statusView.addActionList(new ui.actions.List([new ui.actions.Close()]));
+        $(statusView).bind('close', statusView.close.bind(statusView));
+    }, function(failureInfo) {
+        statusView.addMessage(failureInfo.testName + ' on ' + ui.displayNameForBuilder(failureInfo.builderName));
+    });
+}
+
 controllers.ResultsDetails = base.extends(Object, {
     init: function(view, resultsByTest)
     {
@@ -55,10 +72,7 @@ controllers.ResultsDetails = base.extends(Object, {
                 'builderName': builderName
             }
         });
-        checkout.rebaseline(failureInfoList, function() {
-            // FIXME: We should have a better dialog than this!
-            alert('Rebaseline done! Please land with "webkit-patch land-cowboy".');
-        });
+        rebaselineWithStatusUpdates(failureInfoList);
     }
 });
 
@@ -119,10 +133,7 @@ var FailureStreamController = base.extends(Object, {
     onRebaseline: function(failures)
     {
         var failureInfoList = base.flattenArray(failures.testNameList().map(model.unexpectedFailureInfoForTestName));
-        checkout.rebaseline(failureInfoList, function() {
-            // FIXME: We should have a better dialog than this!
-            alert('Rebaseline done! Please land with "webkit-patch land-cowboy".');
-        });
+        rebaselineWithStatusUpdates(failureInfoList);
     }
 });
 

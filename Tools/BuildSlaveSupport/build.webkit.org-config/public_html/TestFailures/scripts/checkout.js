@@ -104,7 +104,7 @@ checkout.rollout = function(revision, reason, callback)
     });
 };
 
-checkout.rebaseline = function(failureInfoList, callback)
+checkout.rebaseline = function(failureInfoList, callback, progressCallback)
 {
     callIfCheckoutAvailable(function() {
         base.callInSequence(function(failureInfo, callback) {
@@ -112,6 +112,8 @@ checkout.rebaseline = function(failureInfoList, callback)
                 'builder': failureInfo.builderName,
                 'test': failureInfo.testName,
             }), function() {
+                if (progressCallback)
+                    progressCallback(failureInfo);
                 callback();
             });
         }, failureInfoList, function() {
