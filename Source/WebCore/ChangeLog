@@ -1,3 +1,30 @@
+2011-09-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95058.
+        http://trac.webkit.org/changeset/95058
+        https://bugs.webkit.org/show_bug.cgi?id=68058
+
+        It made css3/calc/regression-62276.html crash (Requested by
+        Ossy on #webkit).
+
+        * css/CSSParser.cpp:
+        (WebCore::BorderImageParseContext::BorderImageParseContext):
+        (WebCore::BorderImageParseContext::allowBreak):
+        (WebCore::BorderImageParseContext::allowWidth):
+        (WebCore::BorderImageParseContext::allowOutset):
+        (WebCore::BorderImageParseContext::allowRepeat):
+        (WebCore::BorderImageParseContext::commitImage):
+        (WebCore::BorderImageParseContext::commitImageSlice):
+        (WebCore::BorderImageParseContext::commitSlash):
+        (WebCore::BorderImageParseContext::commitBorderWidth):
+        (WebCore::BorderImageParseContext::commitBorderOutset):
+        (WebCore::BorderImageParseContext::commitRepeat):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::parseBorderImageRepeat):
+        (WebCore::CSSParser::parseBorderImageSlice):
+        (WebCore::CSSParser::parseBorderImageQuad):
+        * css/CSSParserValues.h:
+
 2011-09-13  Abhishek Arya  <inferno@chromium.org>
 
         Crash in RenderScrollbarPart::imageChanged.

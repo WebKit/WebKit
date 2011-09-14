@@ -78,13 +78,6 @@ public:
     unsigned size() const { return m_values.size(); }
     CSSParserValue* current() { return m_current < m_values.size() ? &m_values[m_current] : 0; }
     CSSParserValue* next() { ++m_current; return current(); }
-    CSSParserValue* previous()
-    {
-        if (!m_current)
-            return 0;
-        --m_current;
-        return current();
-    }
 
     CSSParserValue* valueAt(unsigned i) { return i < m_values.size() ? &m_values[i] : 0; }
         
