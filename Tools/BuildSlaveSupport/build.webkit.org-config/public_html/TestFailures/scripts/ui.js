@@ -158,9 +158,12 @@ ui.MessageBox = base.extends('div',  {
         $(element).addClass('message').text(message);
         this._content.appendChild(element);
     },
-    addActionList: function(actionList)
+    // FIXME: It's unclear whether this code could live here or in a controller.
+    addFinalMessage: function(message)
     {
-        this.appendChild(actionList);
+        this.addMessage(message);
+        this.appendChild(new ui.actions.List([new ui.actions.Close()]));
+        $(statusView).bind('close', statusView.close.bind(statusView));
     }
 });
 

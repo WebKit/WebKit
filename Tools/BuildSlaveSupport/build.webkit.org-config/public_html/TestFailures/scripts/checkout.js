@@ -29,10 +29,9 @@ var checkout = checkout || {};
 
 var kWebKitTrunk = 'http://svn.webkit.org/repository/webkit/trunk/';
 
-var g_unavailableCheckoutCallback = null;
 var g_haveSeenCheckoutAvailable = false;
 
-function callIfCheckoutAvailable(callback)
+function callIfCheckoutAvailable(callback, checkoutUnavailable)
 {
     if (g_haveSeenCheckoutAvailable) {
         callback();
@@ -44,15 +43,10 @@ function callIfCheckoutAvailable(callback)
             callback();
             return;
         }
-        if (g_unavailableCheckoutCallback)
-            g_unavailableCheckoutCallback();
+        if (checkoutUnavailable)
+            checkoutUnavailable();
     });
 }
-
-checkout.registerUnavailableCheckoutCallback = function(unavailableCheckoutCallback)
-{
-    g_unavailableCheckoutCallback = unavailableCheckoutCallback;
-};
 
 checkout.subversionURLForTest = function(testName)
 {
@@ -72,16 +66,16 @@ checkout.isAvailable = function(callback)
     });
 };
 
-checkout.updateExpectations = function(failureInfoList, callback)
+checkout.updateExpectations = function(failureInfoList, callback, checkoutUnavailable)
 {
     callIfCheckoutAvailable(function() {
         net.post(config.kLocalServerURL + '/updateexpectations', JSON.stringify(failureInfoList), function() {
             callback();
         });
-    });
+    }, checkoutUnavailable);
 };
 
-checkout.optimizeBaselines = function(testName, callback)
+checkout.optimizeBaselines = function(testName, callback, checkoutUnavailable)
 {
     callIfCheckoutAvailable(function() {
         net.post(config.kLocalServerURL + '/optimizebaselines?' + $.param({
@@ -89,10 +83,10 @@ checkout.optimizeBaselines = function(testName, callback)
         }), function() {
             callback();
         });
-    });
+    }, checkoutUnavailable);
 };
 
-checkout.rollout = function(revision, reason, callback)
+checkout.rollout = function(revision, reason, callback, checkoutUnavailable)
 {
     callIfCheckoutAvailable(function() {
         net.post(config.kLocalServerURL + '/rollout?' + $.param({
@@ -101,10 +95,10 @@ checkout.rollout = function(revision, reason, callback)
         }), function() {
             callback();
         });
-    });
+    }, checkoutUnavailable);
 };
 
-checkout.rebaseline = function(failureInfoList, callback, progressCallback)
+checkout.rebaseline = function(failureInfoList, callback, progressCallback, checkoutUnavailable)
 {
     callIfCheckoutAvailable(function() {
         base.callInSequence(function(failureInfo, callback) {
@@ -120,7 +114,7 @@ checkout.rebaseline = function(failureInfoList, callback, progressCallback)
             var testNameList = base.uniquifyArray(failureInfoList.map(function(failureInfo) { return failureInfo.testName; }));
             base.callInSequence(checkout.optimizeBaselines, testNameList, callback);
         });
-    });
+    }, checkoutUnavailable);
 };
 
 })();

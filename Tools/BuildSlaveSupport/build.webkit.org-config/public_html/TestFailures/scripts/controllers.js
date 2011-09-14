@@ -27,35 +27,31 @@ var controllers = controllers || {};
 
 (function(){
 
+var kCheckoutUnavailableMessage = 'Failed! Garden-o-matic needs a local server to modify your working copy. Please run "webkit-patch garden-o-matic" start the local server.';
+
 // FIXME: Where should this function go?
 function rebaselineWithStatusUpdates(failureInfoList)
 {
-    var statusView = new ui.MessageBox(
-        'Rebaseline',
-        'Performing rebaseline...');
+    var statusView = new ui.MessageBox('Rebaseline', 'Performing rebaseline...');
 
     checkout.rebaseline(failureInfoList, function() {
-        statusView.addMessage('Rebaseline done! Please land with "webkit-patch land-cowboy".');
-
-        statusView.addActionList(new ui.actions.List([new ui.actions.Close()]));
-        $(statusView).bind('close', statusView.close.bind(statusView));
+        statusView.addFinalMessage('Rebaseline done! Please land with "webkit-patch land-cowboy".');
     }, function(failureInfo) {
         statusView.addMessage(failureInfo.testName + ' on ' + ui.displayNameForBuilder(failureInfo.builderName));
+    }, function() {
+        statusView.addFinalMessage(kCheckoutUnavailableMessage);
     });
 }
 
 // FIXME: Where should this function go?
-// FIXME: This should share more code with rebaselineWithStatusUpdates.
 function updateExpectationsWithStatusUpdates(failureInfoList)
 {
-    var statusView = new ui.MessageBox(
-        'Expectations Update',
-        'Updating expectations...');
+    var statusView = new ui.MessageBox('Expectations Update', 'Updating expectations...');
 
     checkout.updateExpectations(failureInfoList, function() {
-        statusView.addMessage('Expectations update done! Please land with "webkit-patch land-cowboy".');
-        statusView.addActionList(new ui.actions.List([new ui.actions.Close()]));
-        $(statusView).bind('close', statusView.close.bind(statusView));
+        statusView.addFinalMessage('Expectations update done! Please land with "webkit-patch land-cowboy".');
+    }, function() {
+        statusView.addFinalMessage(kCheckoutUnavailableMessage);
     });
 }
 
@@ -212,7 +208,10 @@ controllers.UnexpectedFailures = base.extends(FailureStreamController, {
     },
     onRollout: function(revision, testNameList)
     {
-        checkout.rollout(revision, ui.rolloutReasonForTestNameList(testNameList), $.noop);
+        checkout.rollout(revision, ui.rolloutReasonForTestNameList(testNameList), $.noop, function() {
+            // FIXME: We should have a better error UI.
+            alert(kCheckoutUnavailableMessage);
+        });
     }
 });
 

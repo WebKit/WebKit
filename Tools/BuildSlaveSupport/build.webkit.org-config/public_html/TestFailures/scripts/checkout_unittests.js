@@ -50,6 +50,8 @@ test("updateExpectations", 4, function() {
             'testName': 'another/test.svg',
         }], function() {
             ok(true);
+        }, function() {
+            ok(false);
         });
     });
 });
@@ -69,7 +71,7 @@ test("optimizeBaselines", 3, function() {
     });
 });
 
-test("rebaseline", 3, function() {
+test("rebaseline", 7, function() {
     var simulator = new NetworkSimulator();
 
     var requestedURLs = [];
@@ -78,6 +80,17 @@ test("rebaseline", 3, function() {
         requestedURLs.push(url);
         simulator.scheduleCallback(callback);
     };
+    simulator.ajax = function(options)
+    {
+        ok(options.url.indexOf('/ping') != -1);
+        simulator.scheduleCallback(options.success);
+    };
+
+    var kExpectedTestNameProgressStack = [
+        'fast/test.html',
+        'another/test.svg',
+        'another/test.svg', // This is the first one.
+    ];
 
     simulator.runTest(function() {
         checkout.rebaseline([{
@@ -91,6 +104,10 @@ test("rebaseline", 3, function() {
             'testName': 'fast/test.html',
         }], function() {
             ok(true);
+        }, function(failureInfo) {
+            equals(failureInfo.testName, kExpectedTestNameProgressStack.pop());
+        }, function() {
+            ok(false, 'Checkout should be available.');
         });
     });
 
