@@ -3716,9 +3716,6 @@ BUGCR96220 MAC : fast/borders/inline-mask-overlay-image-outset.html = IMAGE
 // NOTE: This is expected to IMAGE fail.
 BUGWK67913 LEOPARD GPU GPU-CG : media/video-zoom-controls.html = IMAGE+TEXT
 
-// new test at r94897
-BUGWK67917 MAC LEOPARD : svg/custom/simple-text-double-shadow.svg = IMAGE
-
 // Failing after r94946
 BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
 BUGWK67980 MAC : fast/events/constructors/progress-event-constructor.html = TEXT
