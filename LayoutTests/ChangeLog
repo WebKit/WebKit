@@ -1,3 +1,21 @@
+2011-09-14  David Levin  <levin@chromium.org>
+
+        [chromium] Update baselines due to r95070 and r95099.
+
+        * platform/chromium-cg-mac-leopard/fast/writing-mode/broken-ideographic-font-expected.png: Added.
+        * platform/chromium-cg-mac/fast/writing-mode/broken-ideographic-font-expected.png: Added.
+        * platform/chromium-cg-mac/fast/writing-mode/japanese-rl-text-with-broken-font-expected.png: Added.
+        * platform/chromium-cg-mac/fast/writing-mode/japanese-rl-text-with-broken-font-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/borders/border-image-scrambled-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/border-image-scrambled-expected.txt: Added.
+        * platform/chromium-linux/fast/borders/border-image-scrambled-expected.png: Added.
+        * platform/chromium-linux/fast/borders/border-image-scrambled-expected.txt: Added.
+        * platform/chromium-win-vista/fast/borders/border-image-scrambled-expected.png: Added.
+        * platform/chromium-win-vista/fast/borders/border-image-scrambled-expected.txt: Added.
+        * platform/chromium-win-xp/fast/borders/border-image-scrambled-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/border-image-scrambled-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-09-14  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=52736

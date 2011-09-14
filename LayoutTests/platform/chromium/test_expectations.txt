@@ -3723,7 +3723,3 @@ BUGWK67980 MAC : fast/events/constructors/progress-event-constructor.html = TEXT
 // Failing after r95023
 BUGWK67999 WIN RELEASE : fast/borders/border-image-omit-right-slice.html = IMAGE+TEXT
 BUGWK67999 LINUX MAC RELEASE : fast/borders/border-image-omit-right-slice.html = TEXT
-
-// Failing after r95070
-BUGWK68065 MAC : fast/writing-mode/broken-ideographic-font.html = IMAGE
-BUGWK68065 SNOWLEOPARD RELEASE : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE
