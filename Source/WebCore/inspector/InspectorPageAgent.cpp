@@ -558,12 +558,7 @@ void InspectorPageAgent::frameNavigated(DocumentLoader* loader)
 
 void InspectorPageAgent::frameDetached(Frame* frame)
 {
-    HashMap<Frame*, String>::iterator iterator = m_frameToIdentifier.find(frame);
-    if (iterator != m_frameToIdentifier.end()) {
-        m_frontend->frameDetached(iterator->second);
-        m_identifierToFrame.remove(iterator->second);
-        m_frameToIdentifier.remove(iterator);
-    }
+    m_frontend->frameDetached(frameId(frame));
 }
 
 Frame* InspectorPageAgent::mainFrame()
@@ -599,6 +594,15 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
         m_loaderToIdentifier.set(loader, identifier);
     }
     return identifier;
+}
+
+void InspectorPageAgent::frameDestroyed(Frame* frame)
+{
+    HashMap<Frame*, String>::iterator iterator = m_frameToIdentifier.find(frame);
+    if (iterator != m_frameToIdentifier.end()) {
+        m_identifierToFrame.remove(iterator->second);
+        m_frameToIdentifier.remove(iterator);
+    }
 }
 
 void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader* loader)

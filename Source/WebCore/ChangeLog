@@ -1,3 +1,23 @@
+2011-09-14  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: rolling out r95089.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::frameDestroyedImpl):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForPage):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::frameWindowDiscarded):
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFired):
+        (WebCore::InspectorInstrumentation::loadEventFired):
+        (WebCore::InspectorInstrumentation::didCommitLoad):
+        (WebCore::InspectorInstrumentation::frameDestroyed):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::frameDetached):
+        (WebCore::InspectorPageAgent::frameDestroyed):
+        * inspector/InspectorPageAgent.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+
 2011-09-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: requestAnimationFrame callbacks don't show up in the timeline panel.

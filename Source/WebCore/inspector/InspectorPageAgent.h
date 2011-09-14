@@ -102,6 +102,7 @@ public:
     void loadEventFired();
     void frameNavigated(DocumentLoader*);
     void frameDetached(Frame*);
+    void frameDestroyed(Frame*);
     void loaderDetachedFromFrame(DocumentLoader*);
 
     // Inspector Controller API
