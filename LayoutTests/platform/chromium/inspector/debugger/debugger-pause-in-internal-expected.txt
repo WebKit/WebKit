@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 2: Uncaught SyntaxError: Unexpected token )
+Tests that pause on exception in internal script does not crash.
+
+Debugger was enabled.
+Script source was shown.
+Script execution paused.
+Call stack:
+    0) Function ((internal script):(line number))
+    1) throwException (debugger-pause-in-internal.html:9)
+    2) handleClick (debugger-pause-in-internal.html:14)
+Script execution resumed.
+Debugger was disabled.
+

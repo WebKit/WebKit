@@ -264,8 +264,8 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
 
     return {
         "sourceID": sourceID,
-        "line": location.line,
-        "column": location.column,
+        "line": location ? location.line : 0,
+        "column": location ? location.column : 0,
         "functionName": functionName,
         "thisObject": thisObject,
         "scopeChain": scopeChain,

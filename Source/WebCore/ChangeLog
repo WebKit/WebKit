@@ -1,3 +1,17 @@
+2011-09-13  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [v8] building call frame info for location-less internal script function crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=67991
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/debugger/debugger-pause-in-internal.html
+
+        * bindings/v8/DebuggerScript.js:
+        ():
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::currentCallFrame):
+
 2011-09-14  Ben Wells  <benwells@chromium.org>
 
         Large canvas fills should not crash or create unnecessarily large image buffers

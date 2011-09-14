@@ -1,3 +1,15 @@
+2011-09-13  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [v8] building call frame info for location-less internal script function crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=67991
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/debugger-pause-in-internal-expected.txt: Added.
+        * inspector/debugger/debugger-pause-in-internal.html: Added.
+        * inspector/debugger/debugger-pause-on-exception-crash-expected.txt: Added.
+        * platform/chromium/inspector/debugger/debugger-pause-in-internal-expected.txt: Added.
+
 2011-09-14  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, update chromium test expecations.
