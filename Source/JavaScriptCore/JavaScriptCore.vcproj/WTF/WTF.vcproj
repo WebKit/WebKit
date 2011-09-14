@@ -629,6 +629,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\BoundsCheckedPointer.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\BumpPointerAllocator.h"
 			>
 		</File>

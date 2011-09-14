@@ -457,6 +457,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/Bitmap.h \
 	Source/JavaScriptCore/wtf/BlockStack.h \
 	Source/JavaScriptCore/wtf/BloomFilter.h \
+	Source/JavaScriptCore/wtf/BoundsCheckedPointer.h \
 	Source/JavaScriptCore/wtf/BumpPointerAllocator.h \
 	Source/JavaScriptCore/wtf/ByteArray.cpp \
 	Source/JavaScriptCore/wtf/ByteArray.h \

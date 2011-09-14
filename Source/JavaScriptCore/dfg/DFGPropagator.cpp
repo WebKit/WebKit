@@ -128,21 +128,7 @@ private:
         
         switch (op) {
         case JSConstant: {
-            JSValue value = node.valueOfJSConstant(m_codeBlock);
-            if (value.isInt32())
-                changed |= setPrediction(makePrediction(PredictInt32, StrongPrediction));
-            else if (value.isDouble())
-                changed |= setPrediction(makePrediction(PredictDouble, StrongPrediction));
-            else if (value.isCell()) {
-                JSCell* cell = value.asCell();
-                if (isJSArray(&m_globalData, cell))
-                    changed |= setPrediction(makePrediction(PredictArray, StrongPrediction));
-                else
-                    changed |= setPrediction(makePrediction(PredictCell, StrongPrediction));
-            } else if (value.isBoolean())
-                changed |= setPrediction(makePrediction(PredictBoolean, StrongPrediction));
-            else
-                changed |= setPrediction(makePrediction(PredictTop, StrongPrediction));
+            changed |= setPrediction(makePrediction(predictionFromValue(node.valueOfJSConstant(m_codeBlock)), StrongPrediction));
             break;
         }
             
@@ -198,8 +184,11 @@ private:
                         changed |= mergePrediction(makePrediction(PredictInt32, StrongPrediction));
                     else
                         changed |= mergePrediction(makePrediction(PredictDouble, StrongPrediction));
+                } else if (!(left & PredictNumber) || !(right & PredictNumber)) {
+                    // left or right is definitely something other than a number.
+                    changed |= mergePrediction(makePrediction(PredictString, StrongPrediction));
                 } else
-                    changed |= mergePrediction(makePrediction(PredictTop, StrongPrediction));
+                    changed |= mergePrediction(makePrediction(PredictString | PredictInt32 | PredictDouble, StrongPrediction));
             }
             break;
         }
@@ -239,16 +228,16 @@ private:
         case GetById:
         case GetMethod:
         case GetByVal: {
-            changed |= mergeUse(node.child1(), PredictCell | StrongPredictionTag);
+            changed |= mergeUse(node.child1(), PredictObjectUnknown | StrongPredictionTag);
             changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
             if (isStrongPrediction(node.getPrediction()))
                 changed |= setPrediction(node.getPrediction());
             break;
         }
-            
+
         case Call:
         case Construct: {
-            changed |= mergeUse(m_graph.m_varArgChildren[node.firstChild()], PredictCell | StrongPredictionTag);
+            changed |= mergeUse(m_graph.m_varArgChildren[node.firstChild()], PredictObjectUnknown | StrongPredictionTag);
             changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
             if (isStrongPrediction(node.getPrediction()))
                 changed |= setPrediction(node.getPrediction());
@@ -256,7 +245,7 @@ private:
         }
             
         case ConvertThis: {
-            changed |= setPrediction(makePrediction(PredictCell, StrongPrediction));
+            changed |= setPrediction(makePrediction(PredictObjectUnknown, StrongPrediction));
             break;
         }
             
@@ -277,9 +266,10 @@ private:
         case PutByVal:
         case PutByValAlias:
         case PutById:
-        case PutByIdDirect:
-            changed |= mergeUse(node.child1(), PredictCell | StrongPredictionTag);
+        case PutByIdDirect: {
+            changed |= mergeUse(node.child1(), PredictObjectUnknown | StrongPredictionTag);
             break;
+        }
 
 #ifndef NDEBUG
         // These get ignored because they don't return anything.
@@ -306,7 +296,8 @@ private:
         }
 
 #if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("expect(%s) use(%s) %s\n", predictionToString(m_predictions[m_compileIndex]), predictionToString(m_uses[m_compileIndex]), changed ? "CHANGED" : "");
+        printf("expect(%s) ", predictionToString(m_predictions[m_compileIndex]));
+        printf("use(%s) %s\n", predictionToString(m_uses[m_compileIndex]), changed ? "CHANGED" : "");
 #endif
         
         m_changed |= changed;

@@ -478,10 +478,7 @@ struct Node {
         
         ASSERT(source == StrongPrediction);
         
-        PredictedType newPrediction = StrongPredictionTag | prediction | m_opInfo2;
-        bool result = m_opInfo2 != newPrediction;
-        m_opInfo2 = newPrediction;
-        return result;
+        return mergePrediction(m_opInfo2, makePrediction(prediction, source));
     }
     
     VirtualRegister virtualRegister()

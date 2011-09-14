@@ -139,13 +139,15 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     (void)hasPrinted;
     
     printf(")");
-    
-    if (node.hasLocal())
-        printf("  predicting %s", predictionToString(getPrediction(node.local())));
-    if (node.hasVarNumber())
-        printf("  predicting %s", predictionToString(getGlobalVarPrediction(node.varNumber())));
-    if (node.hasPrediction())
-        printf("  predicting %s", predictionToString(node.getPrediction()));
+
+    if (!skipped) {
+        if (node.hasLocal())
+            printf("  predicting %s", predictionToString(getPrediction(node.local())));
+        if (node.hasVarNumber())
+            printf("  predicting %s", predictionToString(getGlobalVarPrediction(node.varNumber())));
+        if (node.hasPrediction())
+            printf("  predicting %s", predictionToString(node.getPrediction()));
+    }
     
     printf("\n");
 }
@@ -209,7 +211,6 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
     ASSERT(codeBlock);
     ASSERT(codeBlock->alternative);
 
-    JSGlobalData& globalData = exec->globalData();
     CodeBlock* profiledCodeBlock = codeBlock->alternative();
     ASSERT(codeBlock->m_numParameters >= 1);
     for (size_t arg = 1; arg < static_cast<size_t>(codeBlock->m_numParameters); ++arg) {
@@ -223,7 +224,7 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
         printf("\n");
 #endif
         
-        m_predictions.predictArgument(arg, makePrediction(globalData, *profile) & ~PredictionTagMask, StrongPrediction);
+        m_predictions.predictArgument(arg, makePrediction(*profile) & ~PredictionTagMask, StrongPrediction);
         
 #if ENABLE(DFG_DEBUG_VERBOSE)
         printf("    Prediction: %s\n", predictionToString(m_predictions.getArgumentPrediction(arg)));

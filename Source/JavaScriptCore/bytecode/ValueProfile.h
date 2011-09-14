@@ -108,6 +108,37 @@ struct ValueProfile {
         return result;
     }
     
+    unsigned numberOfObjects() const
+    {
+        unsigned result = 0;
+        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+            const ClassInfo* ci = classInfo(i);
+            if (!!ci && ci->isSubClassOf(&JSObject::s_info))
+                result++;
+        }
+        return result;
+    }
+    
+    unsigned numberOfFinalObjects() const
+    {
+        unsigned result = 0;
+        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+            if (classInfo(i) == &JSFinalObject::s_info)
+                result++;
+        }
+        return result;
+    }
+    
+    unsigned numberOfStrings() const
+    {
+        unsigned result = 0;
+        for (unsigned i = 0; i < numberOfBuckets; ++i) {
+            if (classInfo(i) == &JSString::s_info)
+                result++;
+        }
+        return result;
+    }
+    
     unsigned numberOfArrays() const
     {
         unsigned result = 0;
@@ -148,9 +179,24 @@ struct ValueProfile {
         return computeProbability(numberOfCells(), numberOfSamples());
     }
     
+    unsigned probabilityOfObject() const
+    {
+        return computeProbability(numberOfObjects(), numberOfSamples());
+    }
+    
+    unsigned probabilityOfFinalObject() const
+    {
+        return computeProbability(numberOfFinalObjects(), numberOfSamples());
+    }
+    
     unsigned probabilityOfArray() const
     {
         return computeProbability(numberOfArrays(), numberOfSamples());
+    }
+    
+    unsigned probabilityOfString() const
+    {
+        return computeProbability(numberOfStrings(), numberOfSamples());
     }
     
     unsigned probabilityOfBoolean() const
@@ -162,12 +208,15 @@ struct ValueProfile {
     void dump(FILE* out)
     {
         fprintf(out,
-                "samples = %u, int32 = %u (%u), double = %u (%u), cell = %u (%u), array = %u (%u), boolean = %u (%u)",
+                "samples = %u, int32 = %u (%u), double = %u (%u), cell = %u (%u), object = %u (%u), final object = %u (%u), array = %u (%u), string = %u (%u), boolean = %u (%u)",
                 numberOfSamples(),
                 probabilityOfInt32(), numberOfInt32s(),
                 probabilityOfDouble(), numberOfDoubles(),
                 probabilityOfCell(), numberOfCells(),
+                probabilityOfObject(), numberOfObjects(),
+                probabilityOfFinalObject(), numberOfFinalObjects(),
                 probabilityOfArray(), numberOfArrays(),
+                probabilityOfString(), numberOfStrings(),
                 probabilityOfBoolean(), numberOfBooleans());
         bool first = true;
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
@@ -193,54 +242,72 @@ struct ValueProfile {
         unsigned int32s;
         unsigned doubles;
         unsigned cells;
+        unsigned objects;
+        unsigned finalObjects;
         unsigned arrays;
+        unsigned strings;
         unsigned booleans;
+        
+        Statistics()
+        {
+            bzero(this, sizeof(Statistics));
+        }
     };
+    
+    // Method for incrementing all relevant statistics for a ClassInfo, except for
+    // incrementing the number of samples, which the caller is responsible for
+    // doing.
+    static void computeStatistics(const ClassInfo* classInfo, Statistics& statistics)
+    {
+        statistics.cells++;
+        
+        if (classInfo == &JSFinalObject::s_info) {
+            statistics.finalObjects++;
+            statistics.objects++;
+            return;
+        }
+        
+        if (classInfo == &JSArray::s_info) {
+            statistics.arrays++;
+            statistics.objects++;
+            return;
+        }
+        
+        if (classInfo == &JSString::s_info) {
+            statistics.strings++;
+            return;
+        }
+        
+        if (classInfo->isSubClassOf(&JSObject::s_info))
+            statistics.objects++;
+    }
 
     // Optimized method for getting all counts at once.
-    void computeStatistics(JSGlobalData& globalData, Statistics& statistics) const
+    void computeStatistics(Statistics& statistics) const
     {
-        unsigned samples  = 0;
-        unsigned int32s   = 0;
-        unsigned doubles  = 0;
-        unsigned cells    = 0;
-        unsigned arrays   = 0;
-        unsigned booleans = 0;
-        
         for (unsigned i = 0; i < numberOfBuckets; ++i) {
             if (!buckets[i]) {
                 WeakBucket weakBucket = weakBuckets[i];
                 if (!!weakBucket) {
-                    samples++;
-                    cells++;
-                    if (weakBucket.getClassInfo() == &JSArray::s_info)
-                        arrays++;
+                    statistics.samples++;
+                    computeStatistics(weakBucket.getClassInfo(), statistics);
                 }
                 
                 continue;
             }
             
-            samples++;
+            statistics.samples++;
             
             JSValue value = JSValue::decode(buckets[i]);
             if (value.isInt32())
-                int32s++;
+                statistics.int32s++;
             else if (value.isDouble())
-                doubles++;
-            else if (value.isCell()) {
-                cells++;
-                if (isJSArray(&globalData, value.asCell()))
-                    arrays++;
-            } else if (value.isBoolean())
-                booleans++;
+                statistics.doubles++;
+            else if (value.isCell())
+                computeStatistics(value.asCell()->structure()->classInfo(), statistics);
+            else if (value.isBoolean())
+                statistics.booleans++;
         }
-        
-        statistics.samples  = samples;
-        statistics.int32s   = int32s;
-        statistics.doubles  = doubles;
-        statistics.cells    = cells;
-        statistics.arrays   = arrays;
-        statistics.booleans = booleans;
     }
     
     int bytecodeOffset; // -1 for prologue

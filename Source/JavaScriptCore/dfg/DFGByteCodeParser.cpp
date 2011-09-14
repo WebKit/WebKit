@@ -484,7 +484,7 @@ private:
         profile->dump(stdout);
         printf("\n");
 #endif
-        m_graph[nodeIndex].predict(makePrediction(*m_globalData, *profile), StrongPrediction);
+        m_graph[nodeIndex].predict(makePrediction(*profile) & ~PredictionTagMask, StrongPrediction);
 #if ENABLE(DFG_DEBUG_VERBOSE)
         printf("    Prediction: %s\n", predictionToString(m_graph[nodeIndex].getPrediction()));
 #endif

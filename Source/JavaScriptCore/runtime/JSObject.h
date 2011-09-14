@@ -499,11 +499,7 @@ inline bool Structure::isUsingInlineStorage() const
 
 inline bool JSCell::inherits(const ClassInfo* info) const
 {
-    for (const ClassInfo* ci = classInfo(); ci; ci = ci->parentClass) {
-        if (ci == info)
-            return true;
-    }
-    return false;
+    return classInfo()->isSubClassOf(info);
 }
 
 // this method is here to be after the inline declaration of JSCell::inherits

@@ -70,6 +70,8 @@
 		0FD82E55141DAEEE00179C94 /* PredictionTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E50141DAEA100179C94 /* PredictionTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD82E56141DAF0800179C94 /* DFGOSREntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E52141DAEDE00179C94 /* DFGOSREntry.cpp */; };
 		0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E53141DAEDE00179C94 /* DFGOSREntry.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD82E85141F3FE300179C94 /* BoundsCheckedPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E82141F3FC900179C94 /* BoundsCheckedPointer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD82E86141F3FF100179C94 /* PredictedType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E84141F3FDA00179C94 /* PredictedType.cpp */; };
 		1400067712A6F7830064D123 /* OSAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400067612A6F7830064D123 /* OSAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400069312A6F9E10064D123 /* OSAllocatorPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */; };
 		140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */; };
@@ -807,6 +809,8 @@
 		0FD82E50141DAEA100179C94 /* PredictionTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PredictionTracker.h; sourceTree = "<group>"; };
 		0FD82E52141DAEDE00179C94 /* DFGOSREntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSREntry.cpp; path = dfg/DFGOSREntry.cpp; sourceTree = "<group>"; };
 		0FD82E53141DAEDE00179C94 /* DFGOSREntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSREntry.h; path = dfg/DFGOSREntry.h; sourceTree = "<group>"; };
+		0FD82E82141F3FC900179C94 /* BoundsCheckedPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundsCheckedPointer.h; sourceTree = "<group>"; };
+		0FD82E84141F3FDA00179C94 /* PredictedType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PredictedType.cpp; sourceTree = "<group>"; };
 		1400067612A6F7830064D123 /* OSAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSAllocator.h; sourceTree = "<group>"; };
 		1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSAllocatorPosix.cpp; sourceTree = "<group>"; };
 		140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasePrivate.h; sourceTree = "<group>"; };
@@ -1782,6 +1786,7 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
+				0FD82E82141F3FC900179C94 /* BoundsCheckedPointer.h */,
 				0F963B2E13FC66AE0002D9B2 /* MetaAllocatorHandle.h */,
 				0F963B2B13F853C70002D9B2 /* MetaAllocator.cpp */,
 				0F963B2A13F853BD0002D9B2 /* MetaAllocator.h */,
@@ -2308,6 +2313,7 @@
 		969A078F0ED1D3AE00F1F681 /* bytecode */ = {
 			isa = PBXGroup;
 			children = (
+				0FD82E84141F3FDA00179C94 /* PredictedType.cpp */,
 				0FD82E4F141DAEA100179C94 /* PredictedType.h */,
 				0FD82E50141DAEA100179C94 /* PredictionTracker.h */,
 				0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */,
@@ -2409,6 +2415,7 @@
 				BC257DE80E1F51C50016B6C9 /* Arguments.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
+				0FD82E85141F3FE300179C94 /* BoundsCheckedPointer.h in Headers */,
 				0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */,
 				0FD82E55141DAEEE00179C94 /* PredictionTracker.h in Headers */,
 				0FD82E54141DAEEE00179C94 /* PredictedType.h in Headers */,
@@ -3083,6 +3090,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0FD82E86141F3FF100179C94 /* PredictedType.cpp in Sources */,
 				0FD82E56141DAF0800179C94 /* DFGOSREntry.cpp in Sources */,
 				0F963B2C13F853EC0002D9B2 /* MetaAllocator.cpp in Sources */,
 				0FD82E2114172CE300179C94 /* DFGCapabilities.cpp in Sources */,

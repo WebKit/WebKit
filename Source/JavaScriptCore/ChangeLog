@@ -1,3 +1,90 @@
+2011-09-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Prediction tracking is not precise enough
+        https://bugs.webkit.org/show_bug.cgi?id=67993
+
+        Reviewed by Oliver Hunt.
+        
+        Added a richer set of type predictions, including JSFinalObject, JSString,
+        object that is not a JSFinalObject or JSArray (ObjectOther), some object
+        but we don't or care know what kind (SomeObject), definitely an object,
+        cell that is not an object or JSString, an value that is none of the above
+        (so either Undefined or Null). Made the propagator and value profiler work
+        with the new types.
+        
+        Performance is neutral, because the DFG JIT does not take advantage of this
+        new knowledge yet.
+        
+        In the process of writing predictionToString() (which is now considerably
+        more complex) I decided to finally add a BoundsCheckedPointer, which
+        should come in handy in other places, like at least the OSR scratch buffer
+        and the CompactJITCodeMap. It's great for cases where you want to
+        do pointer arithmetic, you want to have assertions about the
+        pointer not going out of bounds, but you don't want to write those
+        assertions yourself.
+        
+        This also required refactoring inherits(), since the ValueProfiler may
+        want to do the equivalent of inherits() but given two ClassInfo's.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/PredictedType.cpp: Added.
+        (JSC::predictionToString):
+        (JSC::makePrediction):
+        (JSC::predictionFromValue):
+        * bytecode/PredictedType.h:
+        (JSC::isCellPrediction):
+        (JSC::isObjectPrediction):
+        (JSC::isFinalObjectPrediction):
+        (JSC::isStringPrediction):
+        (JSC::mergePredictions):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfile::numberOfObjects):
+        (JSC::ValueProfile::numberOfFinalObjects):
+        (JSC::ValueProfile::numberOfStrings):
+        (JSC::ValueProfile::probabilityOfObject):
+        (JSC::ValueProfile::probabilityOfFinalObject):
+        (JSC::ValueProfile::probabilityOfString):
+        (JSC::ValueProfile::dump):
+        (JSC::ValueProfile::Statistics::Statistics):
+        (JSC::ValueProfile::computeStatistics):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::stronglyPredict):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::predict):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNode):
+        * runtime/ClassInfo.h:
+        (JSC::ClassInfo::isSubClassOf):
+        * runtime/JSObject.h:
+        (JSC::JSCell::inherits):
+        * wtf/BoundsCheckedPointer.h: Added.
+        (WTF::BoundsCheckedPointer::BoundsCheckedPointer):
+        (WTF::BoundsCheckedPointer::operator=):
+        (WTF::BoundsCheckedPointer::operator+=):
+        (WTF::BoundsCheckedPointer::operator-=):
+        (WTF::BoundsCheckedPointer::operator+):
+        (WTF::BoundsCheckedPointer::operator-):
+        (WTF::BoundsCheckedPointer::operator++):
+        (WTF::BoundsCheckedPointer::operator--):
+        (WTF::BoundsCheckedPointer::operator<):
+        (WTF::BoundsCheckedPointer::operator<=):
+        (WTF::BoundsCheckedPointer::operator>):
+        (WTF::BoundsCheckedPointer::operator>=):
+        (WTF::BoundsCheckedPointer::operator==):
+        (WTF::BoundsCheckedPointer::operator!=):
+        (WTF::BoundsCheckedPointer::operator!):
+        (WTF::BoundsCheckedPointer::get):
+        (WTF::BoundsCheckedPointer::operator*):
+        (WTF::BoundsCheckedPointer::operator[]):
+        (WTF::BoundsCheckedPointer::strcat):
+        (WTF::BoundsCheckedPointer::validate):
+        * wtf/CMakeLists.txt:
+
 2011-09-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Win32 builds with threads turned off

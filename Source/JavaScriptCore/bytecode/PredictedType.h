@@ -33,23 +33,45 @@
 
 namespace JSC {
 
-typedef uint8_t PredictedType;
-static const PredictedType PredictNone   = 0;
-static const PredictedType PredictCell   = 0x01;
-static const PredictedType PredictArray  = 0x03;
-static const PredictedType PredictInt32  = 0x04;
-static const PredictedType PredictDouble = 0x08;
-static const PredictedType PredictNumber = 0x0c;
-static const PredictedType PredictBoolean = 0x10;
-static const PredictedType PredictTop    = 0x1f;
-static const PredictedType StrongPredictionTag = 0x80;
-static const PredictedType PredictionTagMask    = 0x80;
+typedef uint16_t PredictedType;
+static const PredictedType PredictNone          = 0x0000; // We don't know anything yet.
+static const PredictedType PredictFinalObject   = 0x0001; // It's definitely a JSFinalObject.
+static const PredictedType PredictArray         = 0x0002; // It's definitely a JSArray.
+static const PredictedType PredictObjectOther   = 0x0010; // It's definitely an object other than JSFinalObject or JSArray.
+static const PredictedType PredictObjectUnknown = 0x0020; // It's definitely an object, but we didn't record enough informatin to know more.
+static const PredictedType PredictObjectMask    = 0x003f; // Bitmask used for testing for any kind of object prediction.
+static const PredictedType PredictString        = 0x0040; // It's definitely a JSString.
+static const PredictedType PredictCellOther     = 0x0080; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString.
+static const PredictedType PredictCell          = 0x00ff; // It's definitely a JSCell.
+static const PredictedType PredictInt32         = 0x0100; // It's definitely an Int32.
+static const PredictedType PredictDouble        = 0x0200; // It's definitely a Double.
+static const PredictedType PredictNumber        = 0x0300; // It's either an Int32 or a Double.
+static const PredictedType PredictBoolean       = 0x0400; // It's definitely a Boolean.
+static const PredictedType PredictOther         = 0x4000; // It's definitely none of the above.
+static const PredictedType PredictTop           = 0x7fff; // It can be any of the above.
+static const PredictedType StrongPredictionTag  = 0x8000; // It's a strong prediction (all strong predictions trump all weak ones).
+static const PredictedType PredictionTagMask    = 0x8000;
 
 enum PredictionSource { WeakPrediction, StrongPrediction };
 
 inline bool isCellPrediction(PredictedType value)
 {
-    return (value & PredictCell) == PredictCell && !(value & ~(PredictArray | PredictionTagMask));
+    return !!(value & PredictCell) && !(value & ~(PredictCell | PredictionTagMask));
+}
+
+inline bool isObjectPrediction(PredictedType value)
+{
+    return !!(value & PredictObjectMask) && !(value & ~(PredictObjectMask | PredictionTagMask));
+}
+
+inline bool isFinalObjectPrediction(PredictedType value)
+{
+    return (value & ~PredictionTagMask) == PredictFinalObject;
+}
+
+inline bool isStringPrediction(PredictedType value)
+{
+    return (value & ~PredictionTagMask) == PredictString;
 }
 
 inline bool isArrayPrediction(PredictedType value)
@@ -84,53 +106,23 @@ inline bool isStrongPrediction(PredictedType value)
 }
 
 #ifndef NDEBUG
-inline const char* predictionToString(PredictedType value)
-{
-    if (isStrongPrediction(value)) {
-        switch (value & ~PredictionTagMask) {
-        case PredictNone:
-            return "p-strong-bottom";
-        case PredictCell:
-            return "p-strong-cell";
-        case PredictArray:
-            return "p-strong-array";
-        case PredictInt32:
-            return "p-strong-int32";
-        case PredictDouble:
-            return "p-strong-double";
-        case PredictNumber:
-            return "p-strong-number";
-        case PredictBoolean:
-            return "p-strong-boolean";
-        default:
-            return "p-strong-top";
-        }
-    }
-    switch (value) {
-    case PredictNone:
-        return "p-weak-bottom";
-    case PredictCell:
-        return "p-weak-cell";
-    case PredictArray:
-        return "p-weak-array";
-    case PredictInt32:
-        return "p-weak-int32";
-    case PredictDouble:
-        return "p-weak-double";
-    case PredictNumber:
-        return "p-weak-number";
-    case PredictBoolean:
-        return "p-weak-boolean";
-    default:
-        return "p-weak-top";
-    }
-}
+const char* predictionToString(PredictedType value);
 #endif
 
 inline PredictedType mergePredictions(PredictedType left, PredictedType right)
 {
-    if (isStrongPrediction(left) == isStrongPrediction(right))
+    if (isStrongPrediction(left) == isStrongPrediction(right)) {
+        if (left & PredictObjectUnknown) {
+            ASSERT(!(left & (PredictObjectMask & ~PredictObjectUnknown)));
+            if (right & PredictObjectMask)
+                return (left & ~PredictObjectUnknown) | right;
+        } else if (right & PredictObjectUnknown) {
+            ASSERT(!(right & (PredictObjectMask & ~PredictObjectUnknown)));
+            if (left & PredictObjectMask)
+                return (right & ~PredictObjectUnknown) | left;
+        }
         return left | right;
+    }
     if (isStrongPrediction(left)) {
         ASSERT(!isStrongPrediction(right));
         return left;
@@ -159,35 +151,10 @@ inline PredictedType makePrediction(PredictedType type, PredictionSource source)
 }
 
 #if ENABLE(VALUE_PROFILER)
-inline PredictedType makePrediction(JSGlobalData& globalData, const ValueProfile& profile)
-{
-    ValueProfile::Statistics statistics;
-    profile.computeStatistics(globalData, statistics);
-    
-    if (!statistics.samples)
-        return PredictNone;
-    
-    if (statistics.int32s == statistics.samples)
-        return StrongPredictionTag | PredictInt32;
-    
-    if (statistics.doubles == statistics.samples)
-        return StrongPredictionTag | PredictDouble;
-    
-    if (statistics.int32s + statistics.doubles == statistics.samples)
-        return StrongPredictionTag | PredictNumber;
-    
-    if (statistics.arrays == statistics.samples)
-        return StrongPredictionTag | PredictArray;
-    
-    if (statistics.cells == statistics.samples)
-        return StrongPredictionTag | PredictCell;
-    
-    if (statistics.booleans == statistics.samples)
-        return StrongPredictionTag | PredictBoolean;
-    
-    return StrongPredictionTag | PredictTop;
-}
+PredictedType makePrediction(const ValueProfile&);
 #endif
+
+PredictedType predictionFromValue(JSValue);
 
 } // namespace JSC
 

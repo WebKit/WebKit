@@ -51,6 +51,15 @@ namespace JSC {
                 return classPropHashTableGetterFunction(exec);
             return staticPropHashTable;
         }
+        
+        bool isSubClassOf(const ClassInfo* other) const
+        {
+            for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
+                if (ci == other)
+                    return true;
+            }
+            return false;
+        }
 
         const HashTable* staticPropHashTable;
         typedef const HashTable* (*ClassPropHashTableGetterFunction)(ExecState*);

@@ -6,6 +6,7 @@ SET(WTF_HEADERS
     Assertions.h
     Atomics.h
     Bitmap.h
+    BoundsCheckedPointer.h
     BumpPointerAllocator.h
     ByteArray.h
     Compiler.h

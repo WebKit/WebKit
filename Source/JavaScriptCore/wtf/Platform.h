@@ -957,7 +957,7 @@
 #endif
 
 #if !defined(ENABLE_TIERED_COMPILATION)
-#define ENABLE_TIERED_COMPILATION 0
+#define ENABLE_TIERED_COMPILATION 1
 #endif
 
 /* Currently only implemented for JSVALUE64, only tested on PLATFORM(MAC) */
