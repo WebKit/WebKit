@@ -567,7 +567,6 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     // This also handles the special cases: <use> on <symbol>, <use> on <svg>.
     buildShadowTree(shadowRoot, target, m_targetElementInstance.get());
 
-#if ENABLE(SVG) && ENABLE(SVG_USE)
     // Expand all <use> elements in the shadow tree.
     // Expand means: replace the actual <use> element by what it references.
     expandUseElementsInShadowTree(shadowRoot);
@@ -575,7 +574,6 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     // Expand all <symbol> elements in the shadow tree.
     // Expand means: replace the actual <symbol> element by the <svg> element.
     expandSymbolElementsInShadowTree(shadowRoot);
-#endif
 
     // Now that the shadow tree is completly expanded, we can associate
     // shadow tree elements <-> instances in the instance tree.
@@ -822,7 +820,6 @@ void SVGUseElement::buildShadowTree(SVGShadowTreeRootElement* shadowRoot, SVGEle
     ASSERT(!ec);
 }
 
-#if ENABLE(SVG) && ENABLE(SVG_USE)
 void SVGUseElement::expandUseElementsInShadowTree(Node* element)
 {
     // Why expand the <use> elements in the shadow tree here, and not just
@@ -936,8 +933,6 @@ void SVGUseElement::expandSymbolElementsInShadowTree(Node* element)
         expandSymbolElementsInShadowTree(child.get());
 }
 
-#endif
-
 void SVGUseElement::transferEventListenersToShadowTree(SVGElementInstance* target)
 {
     if (!target)
@@ -974,17 +969,11 @@ void SVGUseElement::associateInstancesWithShadowTreeElements(Node* target, SVGEl
     SVGElement* originalElement = targetInstance->correspondingElement();
 
     if (originalElement->hasTagName(SVGNames::useTag)) {
-#if ENABLE(SVG) && ENABLE(SVG_USE)
         // <use> gets replaced by <g>
         ASSERT(target->nodeName() == SVGNames::gTag);
-#else 
-        ASSERT(target->nodeName() == SVGNames::gTag || target->nodeName() == SVGNames::useTag);
-#endif
     } else if (originalElement->hasTagName(SVGNames::symbolTag)) {
         // <symbol> gets replaced by <svg>
-#if ENABLE(SVG) && ENABLE(SVG_USE)
         ASSERT(target->nodeName() == SVGNames::svgTag);
-#endif
     } else
         ASSERT(target->nodeName() == originalElement->nodeName());
 

@@ -91,10 +91,8 @@ private:
     // Shadow tree handling
     void buildShadowTree(SVGShadowTreeRootElement*, SVGElement* target, SVGElementInstance* targetInstance);
 
-#if ENABLE(SVG) && ENABLE(SVG_USE)
     void expandUseElementsInShadowTree(Node* element);
     void expandSymbolElementsInShadowTree(Node* element);
-#endif
 
     // "Tree connector" 
     void associateInstancesWithShadowTreeElements(Node* target, SVGElementInstance* targetInstance);
