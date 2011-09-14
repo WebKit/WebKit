@@ -29,6 +29,7 @@
 
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WKData.h"
 #include "WebFrame.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
@@ -239,4 +240,15 @@ bool WKBundleFrameContainsAnyFormElements(WKBundleFrameRef frameRef)
 void WKBundleFrameSetTextDirection(WKBundleFrameRef frameRef, WKStringRef directionRef)
 {
     toImpl(frameRef)->setTextDirection(toImpl(directionRef)->string());
+}
+
+WKDataRef WKBundleFrameCopyWebArchive(WKBundleFrameRef frameRef)
+{
+#if PLATFORM(MAC) || PLATFORM(WIN)
+    RetainPtr<CFDataRef> data = toImpl(frameRef)->webArchiveData();
+    if (data)
+        return WKDataCreate(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
+#endif
+    
+    return 0;
 }

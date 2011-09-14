@@ -389,6 +389,10 @@
 			Name="win"
 			>
 			<File
+				RelativePath=".\InjectedBundleControllerWin.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
 				>
 			</File>
@@ -398,10 +402,6 @@
 			</File>
 			<File
 				RelativePath=".\PlatformWebViewWin.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\InjectedBundleControllerWin.cpp"
 				>
 			</File>
 			<File
@@ -537,6 +537,10 @@
 				</File>
 				<File
 					RelativePath="..\Tests\WebKit2\SpacebarScrolling.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Tests\WebKit2\WebArchive.cpp"
 					>
 				</File>
 				<File

@@ -112,10 +112,6 @@
 #include <WebCore/Range.h>
 #include <WebCore/VisiblePosition.h>
 
-#if PLATFORM(MAC) || PLATFORM(WIN)
-#include <WebCore/LegacyWebArchive.h>
-#endif
-
 #if ENABLE(PLUGIN_PROCESS)
 #if PLATFORM(MAC)
 #include "MachPort.h"
@@ -1497,10 +1493,8 @@ void WebPage::getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
 #if PLATFORM(MAC) || PLATFORM(WIN)
     RetainPtr<CFDataRef> data;
     if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
-        if (RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(frame->coreFrame()->document())) {
-            if ((data = archive->rawDataRepresentation()))
-                dataReference = CoreIPC::DataReference(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
-        }
+        if ((data = frame->webArchiveData()))
+            dataReference = CoreIPC::DataReference(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
     }
 #endif
 

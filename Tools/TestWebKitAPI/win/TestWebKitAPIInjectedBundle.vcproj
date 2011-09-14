@@ -431,6 +431,10 @@
 					RelativePath="..\Tests\WebKit2\ResponsivenessTimerDoesntFireEarly_Bundle.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\Tests\WebKit2\WebArchive_Bundle.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File

@@ -70,6 +70,8 @@ WK_EXPORT bool WKBundleFrameGetDocumentBackgroundColor(WKBundleFrameRef frame, d
 
 WK_EXPORT WKStringRef WKBundleFrameCopySuggestedFilenameForResourceWithURL(WKBundleFrameRef frame, WKURLRef url);
 WK_EXPORT WKStringRef WKBundleFrameCopyMIMETypeForResourceWithURL(WKBundleFrameRef frame, WKURLRef url);
+    
+WK_EXPORT WKDataRef WKBundleFrameCopyWebArchive(WKBundleFrameRef frame);
 
 #ifdef __cplusplus
 }

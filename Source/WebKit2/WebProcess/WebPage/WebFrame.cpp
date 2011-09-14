@@ -57,6 +57,10 @@
 #include <WebCore/TextResourceDecoder.h>
 #include <wtf/text/StringBuilder.h>
 
+#if PLATFORM(MAC) || PLATFORM(WIN)
+#include <WebCore/LegacyWebArchive.h>
+#endif
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -723,4 +727,14 @@ void WebFrame::setTextDirection(const String& direction)
         m_coreFrame->editor()->setBaseWritingDirection(RightToLeftWritingDirection);
 }
 
+#if PLATFORM(MAC) || PLATFORM(WIN)
+RetainPtr<CFDataRef> WebFrame::webArchiveData() const
+{
+    if (RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(coreFrame()->document()))
+        return archive->rawDataRepresentation();
+    
+    return 0;
+}
+#endif
+    
 } // namespace WebKit

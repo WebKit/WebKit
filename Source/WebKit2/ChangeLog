@@ -1,3 +1,19 @@
+2011-09-14  Ada Chan  <adachan@apple.com>
+
+        Implement WKBundleFrameCopyWebArchive().
+        http://bugs.webkit.org/show_bug.cgi?id=67857
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameCopyWebArchive): Call WebFrame::webArchiveData() and create a WKDataRef from the returned CFDataRef.
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::webArchiveData): Add WebFrame::webArchiveData().
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getWebArchiveOfFrame): Move the logic to WebFrame::webArchiveData() and call that method here.
+
 2011-09-14  Alexey Proskuryakov  <ap@apple.com>
 
         Web Process doesn't need a permission to look up WebProcess service any more

@@ -1,3 +1,27 @@
+2011-09-14  Ada Chan  <adachan@apple.com>
+
+        Add test for WKBundleFrameCopyWebArchive().
+        https://bugs.webkit.org/show_bug.cgi?id=67857
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKit2/WebArchive.cpp: Added.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle): Do some basic sanity checks to make sure
+        the returned data is a valid webarchive.
+        (TestWebKitAPI::setInjectedBundleClient):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::TEST): Load simple.html in a WebView.  Wait for it to finish loading, and then ask the
+        injected bundle for the webarchive and check the returned webarchive.
+        * TestWebKitAPI/Tests/WebKit2/WebArchive_Bundle.cpp: Added.
+        (TestWebKitAPI::WebArchiveTest::WebArchiveTest):
+        (TestWebKitAPI::WebArchiveTest::didReceiveMessage): Handle the "GetWebArchive" message and return
+        the web archive.
+
+        Add files to project.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Also let Visual Studio reorder a file.
+        * TestWebKitAPI/win/TestWebKitAPIInjectedBundle.vcproj:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2011-09-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         committers.py should support multiple IRC nicknames
