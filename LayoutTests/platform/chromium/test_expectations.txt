@@ -3667,9 +3667,6 @@ BUGWK67204 : fast/multicol/initial-column-values.html = MISSING FAIL
 // Failing after r93982.
 BUG_LEVIN MAC : canvas/philip/tests/2d.path.stroke.prune.arc.html = TEXT
 
-// Failing after r93988.
-BUGWK67144 GPU WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
-
 // Failing after r94084. This looks like it may be a real regression.
 BUG_LEVIN : css2.1/t090204-display-change-01-b-ao.html = IMAGE+TEXT
 
