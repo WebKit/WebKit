@@ -1,3 +1,9 @@
+2011-09-14  Anders Carlsson  <andersca@apple.com>
+
+        Fix Chromium build.
+
+        * src/ResourceHandle.cpp:
+
 2011-09-13  Eric Seidel  <eric@webkit.org>
 
         Remove ENABLE_SVG_USE as <use> is required by HTML5

@@ -243,20 +243,9 @@ ResourceHandle::~ResourceHandle()
     d->setOwner(0);
 }
 
-PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
-{
-    return 0;
-}
-
 bool ResourceHandle::loadsBlocked()
 {
     return false;  // This seems to be related to sync XMLHttpRequest...
-}
-
-// static
-bool ResourceHandle::supportsBufferedData()
-{
-    return false;  // The loader will buffer manually if it needs to.
 }
 
 // static
