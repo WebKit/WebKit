@@ -3730,4 +3730,5 @@ BUGWK68049 : fast/borders/border-image-scrambled.html = IMAGE+TEXT
 BUGWK68050 : fast/css/transformed-mask.html = IMAGE
 BUGWK68050 : fast/reflections/reflection-masks.html = IMAGE
 BUGWK68050 : fast/css/getComputedStyle/computed-style-with-zoom.html = TEXT
+BUGWK68050 GPU : compositing/reflections/masked-reflection-on-composited.html = IMAGE
 BUGWK68051 : css3/calc/regression-62276.html = CRASH
