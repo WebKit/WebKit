@@ -66,6 +66,9 @@ module WTR {
         DOMString markerTextForListItem(in object element);
         unsigned long windowCount();
 
+        // Special DOM variables.
+        attribute boolean globalFlag;
+
         // Repaint testing.
         void testRepaint();
         void repaintSweepHorizontally();

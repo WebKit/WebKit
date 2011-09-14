@@ -106,6 +106,7 @@ LayoutTestController::LayoutTestController()
     , m_willSendRequestReturnsNull(false)
     , m_policyDelegateEnabled(false)
     , m_policyDelegatePermissive(false)
+    , m_globalFlag(false)
 {
     platformInitialize();
 }

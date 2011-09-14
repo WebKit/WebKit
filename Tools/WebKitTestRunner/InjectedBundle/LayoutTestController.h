@@ -169,6 +169,9 @@ public:
     void setTextDirection(JSStringRef);
 
     void setShouldStayOnPageAfterHandlingBeforeUnload(bool);
+    
+    bool globalFlag() const { return m_globalFlag; }
+    void setGlobalFlag(bool value) { m_globalFlag = value; }
 
 private:
     static const double waitToDumpWatchdogTimerInterval;
@@ -198,6 +201,8 @@ private:
 
     bool m_policyDelegateEnabled;
     bool m_policyDelegatePermissive;
+    
+    bool m_globalFlag;
 
     PlatformTimerRef m_waitToDumpWatchdogTimer;
 };
