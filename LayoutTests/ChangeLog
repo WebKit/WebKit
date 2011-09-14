@@ -1,3 +1,21 @@
+2011-09-13  Tom Sepez  <tsepez@chromium.org>
+
+        Fix XSS auditor bypass when inline handlers contain comments.
+        https://bugs.webkit.org/show_bug.cgi?id=27895
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/xssAuditor/malformed-HTML-expected.txt:
+        * http/tests/security/xssAuditor/open-attribute-body-expected.txt:
+        * http/tests/security/xssAuditor/open-event-handler-iframe-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-comment-expected.txt: Added.
+        * http/tests/security/xssAuditor/property-escape-comment.html: Added.
+        * http/tests/security/xssAuditor/property-escape-entity-expected.txt: Added.
+        * http/tests/security/xssAuditor/property-escape-entity.html: Added.
+        * http/tests/security/xssAuditor/property-escape-quote-expected.txt: Added.
+        * http/tests/security/xssAuditor/property-escape-quote.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-property.pl:
+
 2011-09-13  Fumitoshi Ukai  <ukai@chromium.org>
 
         Update chromium-mac test expectations

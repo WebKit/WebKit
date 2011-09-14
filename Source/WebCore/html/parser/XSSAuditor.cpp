@@ -70,6 +70,16 @@ static bool isRequiredForInjection(UChar c)
     return (c == '\'' || c == '"' || c == '<' || c == '>');
 }
 
+static bool isTerminatingCharacter(UChar c) 
+{
+    return (c == '&' || c == '/' || c == '"' || c == '\'');
+}
+
+static bool isHTMLQuote(UChar c)
+{
+    return (c == '"' || c == '\'');
+}
+
 static bool hasName(const HTMLToken& token, const QualifiedName& name)
 {
     return equalIgnoringNullity(token.name(), static_cast<const String&>(name.localName()));
@@ -468,11 +478,37 @@ String XSSAuditor::snippetForRange(const HTMLToken& token, int start, int end)
 
 String XSSAuditor::snippetForAttribute(const HTMLToken& token, const HTMLToken::Attribute& attribute)
 {
+    // The range doesn't inlcude the character which terminates the value. So,
+    // for an input of |name="value"|, the snippet is |name="value|. For an
+    // unquoted input of |name=value |, the snippet is |name=value|.
     // FIXME: We should grab one character before the name also.
     int start = attribute.m_nameRange.m_start - token.startIndex();
-    // FIXME: We probably want to grab only the first few characters of the attribute value.
     int end = attribute.m_valueRange.m_end - token.startIndex();
-    return snippetForRange(token, start, end);
+    String snippet = snippetForRange(token, start, end);
+
+    // Beware of trailing characters which came from the page itself, not the 
+    // injected vector. Excluding the terminating character covers common cases
+    // where the page immediately ends the attribute, but doesn't cover more
+    // complex cases where there is other page data following the injection. 
+    // Generally, these won't parse as javascript, so the injected vector
+    // typically excludes them from consideration via a single-line comment or
+    // by enclosing them in a string literal terminated later by the page's own
+    // closing punctuation. Since the snippet has not been parsed, the vector
+    // may also try to introduce these via entities. As a result, we'd like to
+    // stop before the first "//", the first entity, or the first quote not
+    // immediately following the first equals sign (taking whitespace into
+    // consideration). To keep things simpler, we don't try to distinguish
+    // between entity-introducing amperands vs. other uses, nor do we bother to
+    // check for a second slash for a comment, stoping instead on any ampersand
+    // or slash.
+    size_t position;
+    if ((position = snippet.find("=")) != notFound
+        && (position = snippet.find(isNotHTMLSpace, position + 1)) != notFound
+        && (position = snippet.find(isTerminatingCharacter, isHTMLQuote(snippet[position]) ? position + 1 : position)) != notFound) {
+        snippet.truncate(position);
+    }
+
+    return snippet;
 }
 
 bool XSSAuditor::isContainedInRequest(const String& snippet)

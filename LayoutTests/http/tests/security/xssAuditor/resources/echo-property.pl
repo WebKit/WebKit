@@ -10,6 +10,9 @@ print "<!DOCTYPE html>\n";
 print "<html>\n";
 print "<body foo=\"";
 print $cgi->param('q');
+if ($cgi->param('clutter')) {
+    print $cgi->param('clutter');
+}
 print "\">\n";
 print "</body>\n";
 print "</html>\n";

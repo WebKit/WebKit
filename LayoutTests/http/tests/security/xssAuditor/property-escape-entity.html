@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.setXSSAuditorEnabled(true);
+}
+</script>
+</head>
+<body>
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-property.pl?clutter=blah&q=%22%20onload=%22alert(/XSS/)%26%23x2f%26%2347">
+</iframe>
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-property.pl?clutter=blah&q=%22%20onload=alert(/XSS/)-%26quot">
+</iframe>
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-property.pl?clutter=blah&q=%22%20onload=%22alert(/XSS/)-%26">
+</iframe>
+</iframe>
+</body>
+</html>
