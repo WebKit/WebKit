@@ -58,10 +58,11 @@ public:
 
     virtual bool isStarted() const = 0;
 
-    virtual bool initializeLayerRenderer(CCLayerTreeHost* ownerHack) = 0;
+    virtual bool initializeLayerRenderer() = 0;
 
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const = 0;
 
+    virtual void setNeedsCommit() = 0;
     virtual void setNeedsCommitAndRedraw() = 0;
     virtual void setNeedsRedraw() = 0;
 
@@ -79,9 +80,6 @@ public:
 
     // Temporary hack while render_widget still does scheduling for CCLayerTreeHostMainThreadI
     virtual GraphicsContext3D* context() = 0;
-
-    // Temporary hack while LayerChromiums hold references to LayerRendererChromiums
-    virtual TextureManager* contentsTextureManager() = 0;
 
 protected:
     CCProxy() { }

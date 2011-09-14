@@ -98,7 +98,7 @@ bool CCThreadProxy::isStarted() const
     return m_layerTreeHostImpl;
 }
 
-bool CCThreadProxy::initializeLayerRenderer(CCLayerTreeHost* ownerHack)
+bool CCThreadProxy::initializeLayerRenderer()
 {
     RefPtr<GraphicsContext3D> context = m_layerTreeHost->createLayerTreeHostContext3D();
     if (!context)
@@ -115,8 +115,7 @@ bool CCThreadProxy::initializeLayerRenderer(CCLayerTreeHost* ownerHack)
     bool initializeSucceeded;
     LayerRendererCapabilities capabilities;
     ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::initializeLayerRendererOnCCThread,
-                                          AllowCrossThreadAccess(ownerHack), AllowCrossThreadAccess(contextPtr),
-                                          AllowCrossThreadAccess(&completion), AllowCrossThreadAccess(&initializeSucceeded), AllowCrossThreadAccess(&capabilities)));
+                                          AllowCrossThreadAccess(contextPtr), AllowCrossThreadAccess(&completion), AllowCrossThreadAccess(&initializeSucceeded), AllowCrossThreadAccess(&capabilities)));
     completion.wait();
 
     if (initializeSucceeded)
@@ -132,6 +131,17 @@ const LayerRendererCapabilities& CCThreadProxy::layerRendererCapabilities() cons
 void CCThreadProxy::loseCompositorContext(int numTimes)
 {
     ASSERT_NOT_REACHED();
+}
+
+void CCThreadProxy::setNeedsCommit()
+{
+    ASSERT(isMainThread());
+    if (m_commitPending)
+        return;
+
+    TRACE_EVENT("CCThreadProxy::setNeedsCommit", this, 0);
+    m_commitPending = true;
+    ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::setNeedsCommitOnCCThread));
 }
 
 void CCThreadProxy::setNeedsCommitAndRedraw()
@@ -170,12 +180,6 @@ void CCThreadProxy::stop()
 
     ASSERT(!m_layerTreeHostImpl); // verify that the impl deleted.
     m_layerTreeHost = 0;
-}
-
-TextureManager* CCThreadProxy::contentsTextureManager()
-{
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 void CCThreadProxy::beginFrameAndCommitOnCCThread()
@@ -229,6 +233,15 @@ void CCThreadProxy::drawLayersOnCCThread()
         m_layerTreeHostImpl->drawLayers();
 }
 
+void CCThreadProxy::setNeedsCommitOnCCThread()
+{
+    TRACE_EVENT("CCThreadProxy::setNeedsCommitOnCCThread", this, 0);
+    ASSERT(isImplThread());
+    ASSERT(m_layerTreeHostImpl);
+    // FIXME: Not yet implemented, see https://bugs.webkit.org/show_bug.cgi?id=67417
+    ASSERT_NOT_REACHED();
+}
+
 void CCThreadProxy::setNeedsCommitAndRedrawOnCCThread()
 {
     TRACE_EVENT("CCThreadProxy::setNeedsCommitAndRedrawOnCCThread", this, 0);
@@ -251,12 +264,12 @@ void CCThreadProxy::initializeImplOnCCThread(CCCompletionEvent* completion)
     completion->signal();
 }
 
-void CCThreadProxy::initializeLayerRendererOnCCThread(CCLayerTreeHost* ownerHack, GraphicsContext3D* contextPtr, CCCompletionEvent* completion, bool* initializeSucceeded, LayerRendererCapabilities* capabilities)
+void CCThreadProxy::initializeLayerRendererOnCCThread(GraphicsContext3D* contextPtr, CCCompletionEvent* completion, bool* initializeSucceeded, LayerRendererCapabilities* capabilities)
 {
     TRACE_EVENT("CCThreadProxy::initializeLayerRendererOnCCThread", this, 0);
     ASSERT(isImplThread());
     RefPtr<GraphicsContext3D> context(adoptRef(contextPtr));
-    *initializeSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(ownerHack, context);
+    *initializeSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(context);
     if (*initializeSucceeded)
         *capabilities = m_layerTreeHostImpl->layerRendererCapabilities();
     completion->signal();
@@ -266,6 +279,7 @@ void CCThreadProxy::layerTreeHostClosedOnCCThread(CCCompletionEvent* completion)
 {
     TRACE_EVENT("CCThreadProxy::layerTreeHostClosedOnCCThread", this, 0);
     ASSERT(isImplThread());
+    m_layerTreeHost->deleteContentsTextures(m_layerTreeHostImpl->context());
     m_layerTreeHostImpl.clear();
     completion->signal();
 }

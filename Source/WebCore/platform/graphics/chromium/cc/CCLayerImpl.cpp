@@ -227,6 +227,33 @@ void sortLayers(Vector<RefPtr<CCLayerImpl> >::iterator first, Vector<RefPtr<CCLa
     layerSorter->sort(first, end);
 }
 
+String CCLayerImpl::layerTreeAsText() const
+{
+    TextStream ts;
+    dumpLayer(ts, 0);
+    return ts.release();
 }
+
+void CCLayerImpl::dumpLayer(TextStream& ts, int indent) const
+{
+    writeIndent(ts, indent);
+    ts << layerTypeAsString() << "(" << m_name << ")\n";
+    dumpLayerProperties(ts, indent+2);
+    if (m_replicaLayer) {
+        writeIndent(ts, indent+2);
+        ts << "Replica:\n";
+        m_replicaLayer->dumpLayer(ts, indent+3);
+    }
+    if (m_maskLayer) {
+        writeIndent(ts, indent+2);
+        ts << "Mask:\n";
+        m_maskLayer->dumpLayer(ts, indent+3);
+    }
+    for (size_t i = 0; i < m_children.size(); ++i)
+        m_children[i]->dumpLayer(ts, indent+1);
+}
+
+}
+
 
 #endif // USE(ACCELERATED_COMPOSITING)

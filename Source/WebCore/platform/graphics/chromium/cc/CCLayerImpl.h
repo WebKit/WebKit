@@ -165,17 +165,22 @@ public:
     const IntRect& drawableContentRect() const { return m_drawableContentRect; }
     void setDrawableContentRect(const IntRect& rect) { m_drawableContentRect = rect; }
 
-    virtual void dumpLayerProperties(TextStream&, int indent) const;
+    String layerTreeAsText() const;
 
 protected:
     explicit CCLayerImpl(int);
 
+    virtual void dumpLayerProperties(TextStream&, int indent) const;
     static void writeIndent(TextStream&, int indent);
 
 private:
     void setParent(CCLayerImpl* parent) { m_parent = parent; }
     friend class TreeSynchronizer;
     void clearChildList(); // Warning: This does not preserve tree structure invariants and so is only exposed to the tree synchronizer.
+
+    virtual const char* layerTypeAsString() const { return "LayerChromium"; }
+
+    void dumpLayer(TextStream&, int indent) const;
 
     // Properties internal to CCLayerImpl
     CCLayerImpl* m_parent;

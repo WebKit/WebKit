@@ -70,20 +70,6 @@ using namespace std;
 
 namespace WebCore {
 
-// FIXME: Make this limit adjustable and give it a useful value.
-
-// Absolute maximum limit for texture allocations for this instance.
-static size_t textureMemoryHighLimitBytes = 128 * 1024 * 1024;
-// Preferred texture size limit. Can be exceeded if needed.
-static size_t textureMemoryReclaimLimitBytes = 64 * 1024 * 1024;
-// The maximum texture memory usage when asked to release textures.
-static size_t textureMemoryLowLimitBytes = 3 * 1024 * 1024;
-
-size_t LayerRendererChromium::textureMemoryReclaimLimit()
-{
-    return textureMemoryReclaimLimitBytes;
-}
-
 namespace {
 
 static TransformationMatrix orthoMatrix(float left, float right, float bottom, float top)
@@ -143,24 +129,22 @@ bool contextSupportsAcceleratedPainting(GraphicsContext3D* context)
 
 } // anonymous namespace
 
-PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHost* owner, CCLayerTreeHostImpl* ownerImpl, PassRefPtr<GraphicsContext3D> context)
+PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHostImpl* owner, PassRefPtr<GraphicsContext3D> context)
 {
 #if USE(SKIA)
     if (owner->settings().acceleratePainting && !contextSupportsAcceleratedPainting(context.get()))
         return 0;
 #endif
-    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(owner, ownerImpl, context)));
+    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(owner, context)));
     if (!layerRenderer->initialize())
         return 0;
 
     return layerRenderer.release();
 }
 
-LayerRendererChromium::LayerRendererChromium(CCLayerTreeHost* owner,
-                                             CCLayerTreeHostImpl* ownerImpl,
+LayerRendererChromium::LayerRendererChromium(CCLayerTreeHostImpl* owner,
                                              PassRefPtr<GraphicsContext3D> context)
     : m_owner(owner)
-    , m_ownerImpl(ownerImpl)
     , m_currentRenderSurface(0)
     , m_offscreenFramebufferId(0)
     , m_zoomAnimatorScale(1)
@@ -210,8 +194,8 @@ void LayerRendererChromium::clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImp
 
 void LayerRendererChromium::close()
 {
-    if (rootLayerImpl())
-        clearRenderSurfacesOnCCLayerImplRecursive(rootLayerImpl());
+    if (rootLayer())
+        clearRenderSurfacesOnCCLayerImplRecursive(rootLayer());
 }
 
 GraphicsContext3D* LayerRendererChromium::context()
@@ -226,18 +210,9 @@ void LayerRendererChromium::debugGLCall(GraphicsContext3D* context, const char* 
         LOG_ERROR("GL command failed: File: %s\n\tLine %d\n\tcommand: %s, error %x\n", file, line, command, static_cast<int>(error));
 }
 
-void LayerRendererChromium::releaseTextures()
+void LayerRendererChromium::releaseRenderSurfaceTextures()
 {
-    // Reduces texture memory usage to textureMemoryLowLimitBytes by deleting non root layer
-    // textures.
-    m_owner->nonCompositedContentHost()->protectVisibleTileTextures();
-    m_contentsTextureManager->reduceMemoryToLimit(textureMemoryLowLimitBytes);
-    m_contentsTextureManager->unprotectAllTextures();
-    m_contentsTextureManager->deleteEvictedTextures(m_context.get());
-    // Evict all RenderSurface textures.
-    m_renderSurfaceTextureManager->unprotectAllTextures();
-    m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
-    m_renderSurfaceTextureManager->deleteEvictedTextures(m_context.get());
+    m_renderSurfaceTextureManager->evictAndDeleteAllTextures(m_context.get());
 }
 
 void LayerRendererChromium::viewportChanged()
@@ -257,18 +232,16 @@ void LayerRendererChromium::drawLayers()
     // RenderWidget.
     m_headsUpDisplay->onFrameBegin(currentTime());
 
-    if (!rootLayerImpl())
+    if (!rootLayer())
         return;
     // FIXME: No need to walk the tree here. This could be passed via draw.
-    rootLayerImpl()->setLayerRendererRecursive(this);
+    rootLayer()->setLayerRendererRecursive(this);
 
-    m_renderSurfaceTextureManager->setMemoryLimitBytes(textureMemoryHighLimitBytes - m_contentsTextureManager->currentMemoryUseBytes());
+    m_renderSurfaceTextureManager->setMemoryLimitBytes(TextureManager::highLimitBytes() - m_contentsTextureMemoryUseBytes);
     drawLayersInternal();
 
-    m_contentsTextureManager->unprotectAllTextures();
-
-    if (textureMemoryReclaimLimitBytes > m_contentsTextureManager->currentMemoryUseBytes())
-        m_renderSurfaceTextureManager->reduceMemoryToLimit(textureMemoryReclaimLimitBytes - m_contentsTextureManager->currentMemoryUseBytes());
+    if (TextureManager::reclaimLimitBytes() > m_contentsTextureMemoryUseBytes)
+        m_renderSurfaceTextureManager->reduceMemoryToLimit(TextureManager::reclaimLimitBytes() - m_contentsTextureMemoryUseBytes);
     else
         m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
     m_renderSurfaceTextureManager->deleteEvictedTextures(m_context.get());
@@ -283,7 +256,7 @@ void LayerRendererChromium::drawLayersInternal()
         return;
 
     TRACE_EVENT("LayerRendererChromium::drawLayers", this, 0);
-    CCLayerImpl* rootDrawLayer = rootLayerImpl();
+    CCLayerImpl* rootDrawLayer = rootLayer();
     makeContextCurrent();
 
     if (!rootDrawLayer->renderSurface())
@@ -447,7 +420,7 @@ bool LayerRendererChromium::isLayerVisible(LayerChromium* layer, const Transform
 
 ManagedTexture* LayerRendererChromium::getOffscreenLayerTexture()
 {
-    return settings().compositeOffscreen && rootLayerImpl() ? rootLayerImpl()->renderSurface()->contentsTexture() : 0;
+    return settings().compositeOffscreen && rootLayer() ? rootLayer()->renderSurface()->contentsTexture() : 0;
 }
 
 void LayerRendererChromium::copyOffscreenTextureToDisplay()
@@ -603,12 +576,7 @@ bool LayerRendererChromium::initializeSharedObjects()
 
     GLC(m_context.get(), m_context->flush());
 
-    m_contentsTextureManager = TextureManager::create(textureMemoryHighLimitBytes, m_capabilities.maxTextureSize);
-    m_renderSurfaceTextureManager = TextureManager::create(textureMemoryHighLimitBytes, m_capabilities.maxTextureSize);
-#ifndef NDEBUG
-    m_contentsTextureManager->setAssociatedContextDebugOnly(m_context.get());
-    m_renderSurfaceTextureManager->setAssociatedContextDebugOnly(m_context.get());
-#endif
+    m_renderSurfaceTextureManager = TextureManager::create(TextureManager::highLimitBytes(), m_capabilities.maxTextureSize);
     return true;
 }
 
@@ -817,29 +785,22 @@ void LayerRendererChromium::cleanupSharedObjects()
     if (m_offscreenFramebufferId)
         GLC(m_context.get(), m_context->deleteFramebuffer(m_offscreenFramebufferId));
 
-    // Clear tilers before the texture manager, as they have references to textures.
-    m_contentsTextureManager->unprotectAllTextures();
-    m_contentsTextureManager->reduceMemoryToLimit(0);
-    m_contentsTextureManager->deleteEvictedTextures(m_context.get());
-    m_contentsTextureManager.clear();
-    m_renderSurfaceTextureManager->unprotectAllTextures();
-    m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
-    m_renderSurfaceTextureManager->deleteEvictedTextures(m_context.get());
-    m_renderSurfaceTextureManager.clear();
+    ASSERT(!m_contentsTextureMemoryUseBytes);
+    releaseRenderSurfaceTextures();
 }
 
 String LayerRendererChromium::layerTreeAsText() const
 {
     TextStream ts;
     if (rootLayer()) {
-        ts << rootLayer()->platformLayer()->layerTreeAsText();
+        ts << rootLayer()->layerTreeAsText();
         ts << "RenderSurfaces:\n";
-        dumpRenderSurfaces(ts, 1, rootLayer()->platformLayer());
+        dumpRenderSurfaces(ts, 1, rootLayer());
     }
     return ts.release();
 }
 
-void LayerRendererChromium::dumpRenderSurfaces(TextStream& ts, int indent, const LayerChromium* layer) const
+void LayerRendererChromium::dumpRenderSurfaces(TextStream& ts, int indent, const CCLayerImpl* layer) const
 {
     if (layer->renderSurface())
         layer->renderSurface()->dumpSurface(ts, indent);
