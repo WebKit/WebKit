@@ -113,8 +113,6 @@ my (
     $svgAsImageSupport,
     $svgDOMObjCBindingsSupport,
     $svgFontsSupport,
-    $svgForeignObjectSupport,
-    $svgUseSupport,
     $systemMallocSupport,
     $tiledBackingStoreSupport,
     $touchEventsSupport,
@@ -282,9 +280,6 @@ my @features = (
     { option => "svg-fonts", desc => "Toggle SVG fonts support (imples SVG support)",
       define => "ENABLE_SVG_FONTS", default => 1, value => \$svgFontsSupport },
 
-    { option => "svg-use", desc => "Toggle SVG use element support (implies SVG support)",
-      define => "ENABLE_SVG_USE", default => 1, value => \$svgUseSupport },
-
     { option => "tiled-backing-store", desc => "Toggle Tiled Backing Store support",
       define => "ENABLE_TILED_BACKING_STORE", default => isQt(), value => \$tiledBackingStoreSupport },
 
@@ -355,8 +350,7 @@ foreach (@features) {
 }
 
 $svgSupport = $svgSupport || $svgAnimationSupport || $svgAsImageSupport
-    || $svgDOMObjCBindingsSupport || $svgFontsSupport
-    || $svgForeignObjectSupport || $svgUseSupport;
+    || $svgDOMObjCBindingsSupport || $svgFontsSupport;
 
 $blobSupport = $blobSupport || $mediaStreamSupport;
 

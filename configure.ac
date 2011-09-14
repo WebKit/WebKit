@@ -704,7 +704,6 @@ if test "$enable_svg" = "no"; then
    enable_svg_animation=no
    enable_svg_fonts=no
    enable_svg_as_image=no
-   enable_svg_use=no
 fi
 
 # check whether to enable support for SVG animation
@@ -739,19 +738,10 @@ AC_ARG_ENABLE(svg_as_image,
               [],[enable_svg_as_image="yes"])
 AC_MSG_RESULT([$enable_svg_as_image])
 
-# check whether to enable SVG USE element support
-AC_MSG_CHECKING([whether to enable support for SVG use element])
-AC_ARG_ENABLE(svg_use,
-              AC_HELP_STRING([--enable-svg-use],
-                             [enable SVG use element support (experimental) [default=yes]]),
-              [],[enable_svg_use="yes"])
-AC_MSG_RESULT([$enable_svg_use])
-
 # check for SVG features, enabling SVG if necessary
 if test "$enable_svg_animation" = "yes" || \
    test "$enable_svg_fonts" = "yes" || \
    test "$enable_svg_as_image" = "yes" || \
-   test "$enable_svg_use" = "yes"; then
    svg_flags=yes
    if test "$enable_svg" = "no"; then
        AC_MSG_WARN([SVG feature(s) requested but SVG is disabled.. Enabling SVG support])
@@ -1194,7 +1184,6 @@ AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_ANIMATION],[test "$enable_svg_animation" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_AS_IMAGE],[test "$enable_svg_as_image" = "yes"])
-AM_CONDITIONAL([ENABLE_SVG_USE],[test "$enable_svg_use" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WCSS],[test "$enable_wcss" = "yes"])
@@ -1294,7 +1283,6 @@ Features:
  SVG animation support                                    : $enable_svg_animation
  SVG fonts support                                        : $enable_svg_fonts
  SVG as image support                                     : $enable_svg_as_image
- SVG use element support                                  : $enable_svg_use
  WCSS support                                             : $enable_wcss
  Web Audio support                                        : $enable_web_audio
  Web Sockets support                                      : $enable_web_sockets

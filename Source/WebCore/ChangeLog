@@ -1,3 +1,15 @@
+2011-09-13  Eric Seidel  <eric@webkit.org>
+
+        Remove ENABLE_SVG_USE as <use> is required by HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=68019
+
+        Reviewed by Ryosuke Niwa.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * features.pri:
+
 2011-09-14  Eric Carlson  <eric.carlson@apple.com>
 
         MediaPlayerPrivateAVFoundationObjC's "periodic time observer" is unnecessary

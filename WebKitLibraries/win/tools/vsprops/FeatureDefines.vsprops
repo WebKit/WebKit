@@ -222,11 +222,6 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-		Name="ENABLE_SVG_USE"
-		Value="ENABLE_SVG_USE"
-		PerformEnvironmentSet="true"
-	/>
-  <UserMacro
 		Name="ENABLE_VIDEO"
 		Value="ENABLE_VIDEO"
 		PerformEnvironmentSet="true"

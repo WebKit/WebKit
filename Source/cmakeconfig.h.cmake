@@ -37,7 +37,6 @@
 #cmakedefine01 ENABLE_SVG
 #cmakedefine01 ENABLE_SVG_ANIMATION
 #cmakedefine01 ENABLE_SVG_FONTS
-#cmakedefine01 ENABLE_SVG_USE
 #cmakedefine01 ENABLE_TOUCH_EVENTS
 #cmakedefine01 ENABLE_TOUCH_ICON_LOADING
 #cmakedefine01 ENABLE_VIDEO

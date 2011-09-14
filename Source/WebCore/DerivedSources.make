@@ -827,10 +827,6 @@ XMLNames.cpp : dom/make_names.pl xml/xmlattrs.in
 
 # SVG tag and attribute names, and element factory
 
-ifeq ($(findstring ENABLE_SVG_USE,$(FEATURE_DEFINES)), ENABLE_SVG_USE)
-    SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_USE=1
-endif
-
 ifeq ($(findstring ENABLE_SVG_FONTS,$(FEATURE_DEFINES)), ENABLE_SVG_FONTS)
     SVG_FLAGS := $(SVG_FLAGS) ENABLE_SVG_FONTS=1
 endif
