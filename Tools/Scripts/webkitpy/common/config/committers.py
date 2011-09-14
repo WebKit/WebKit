@@ -108,6 +108,7 @@ contributors_who_are_not_committers = [
     Contributor("Tab Atkins", ["tabatkins@google.com", "jackalmage@gmail.com"], "tabatkins"),
     Contributor("Tamas Czene", "tczene@inf.u-szeged.hu", "tczene"),
     Contributor("Wyatt Carss", "wcarss@chromium.org", "wcarss"),
+    Contributor("Xianzhu Wang", ["wangxianzhu@chromium.org", "phnixwxz@gmail.com"], "wangxianzhu"),
     Contributor("Zsolt Feher", "feherzs@inf.u-szeged.hu", "Smith"),
 ]
 
