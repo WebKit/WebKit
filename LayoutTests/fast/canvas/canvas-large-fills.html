@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<title>Canvas test: test large width/height values</title>
+<script src="../js/resources/js-test-pre.js"></script>
+<body>
+<p>Tests that using the different composite modes to fill large rects doesn't crash and works as expected.</p>
+<pre id="console"></pre>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<script>
+var canvas = document.getElementById("c");
+var ctx = canvas.getContext("2d");
+var x, y, w=1, h=1;
+var width=canvas.width;
+var height=canvas.height;
+
+function clearContext() {
+    ctx.globalCompositeOperation="source-over";
+    ctx.fillStyle = "rgb(0, 255, 0)";
+    ctx.fillRect(0, 0, width, height);
+}
+
+var compositeTypes = [
+    'source-over','source-in','source-out','source-atop',
+    'destination-over','destination-in','destination-out','destination-atop',
+    'lighter','copy','xor'
+];
+
+var expected = [
+    [0, 0, 255], [0, 0, 255], [0, 0, 0], [0, 0, 255],
+    [0, 255, 0], [0, 255, 0], [0, 0, 0], [0, 255, 0],
+    [0, 255, 255], [0, 0, 255], [0, 0, 0]
+];
+
+function testFills(size) {
+    var msg = "size == "+size;
+    debug(msg);
+    for (var i=0; i < compositeTypes.length; i++) {
+        clearContext(ctx);
+        ctx.fillStyle = "rgb(0, 0, 255)";
+        ctx.globalCompositeOperation = compositeTypes[i];
+        debug(compositeTypes[i]);
+        ctx.fillRect(0, 0, size, size);
+        var data = ctx.getImageData(0, 0, width, height);
+        for (var x = 0; x < 3; x++) {
+            var msg = "Actual: " + data.data[x] + " Expected: " + expected[i][x];
+            if (data.data[x] == expected[i][x])
+                testPassed(msg);
+            else
+                testFailed(msg);
+        }
+    }
+}
+
+testFills(10000);
+testFills(50000);
+testFills(100000);
+
+</script>
+</body>
+</html>

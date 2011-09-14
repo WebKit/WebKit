@@ -1,0 +1,138 @@
+Tests that using the different composite modes to fill large rects doesn't crash and works as expected.
+
+size == 10000
+source-over
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+source-in
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+source-out
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+source-atop
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+destination-over
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+PASS Actual: 0 Expected: 0
+destination-in
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+PASS Actual: 0 Expected: 0
+destination-out
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+destination-atop
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+PASS Actual: 0 Expected: 0
+lighter
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+copy
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+xor
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+size == 50000
+source-over
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+source-in
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+source-out
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+source-atop
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+destination-over
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+PASS Actual: 0 Expected: 0
+destination-in
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+PASS Actual: 0 Expected: 0
+destination-out
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+destination-atop
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+PASS Actual: 0 Expected: 0
+lighter
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+copy
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+xor
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+size == 100000
+source-over
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+source-in
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+source-out
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+source-atop
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+destination-over
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+PASS Actual: 0 Expected: 0
+destination-in
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+PASS Actual: 0 Expected: 0
+destination-out
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+destination-atop
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+PASS Actual: 0 Expected: 0
+lighter
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+PASS Actual: 255 Expected: 255
+copy
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 255 Expected: 255
+xor
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+PASS Actual: 0 Expected: 0
+
