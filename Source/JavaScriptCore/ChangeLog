@@ -1,3 +1,13 @@
+2011-09-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Win32 builds with threads turned off
+        https://bugs.webkit.org/show_bug.cgi?id=67864
+
+        Reviewed by Geoffrey Garen.
+
+        * JavaScriptCore.pri: Link pthread library on Windows platform.
+        * wtf/Platform.h: Enable multiple threads.
+
 2011-09-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Unzip initialization lists and constructors in JSCell hierarchy (6/7)

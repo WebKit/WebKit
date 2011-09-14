@@ -51,6 +51,12 @@ symbian {
     INCLUDEPATH *= $$MW_LAYER_SYSTEMINCLUDE
 }
 
+win32-g++* {
+    LIBS += -lpthreadGC2
+} else:win32-msvc* {
+    LIBS += -lpthreadVC2
+}
+
 win32-*: DEFINES += _HAS_TR1=0
 
 DEFINES += BUILDING_JavaScriptCore BUILDING_WTF
