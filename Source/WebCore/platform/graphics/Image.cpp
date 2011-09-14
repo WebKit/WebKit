@@ -153,10 +153,12 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
     // set for a particular rule).
     float hPhase = tileScaleFactor.width() * srcRect.x();
     float vPhase = tileScaleFactor.height() * srcRect.y();
+    float scaledTileWidth = tileScaleFactor.width() * srcRect.width();
+    float scaledTileHeight = tileScaleFactor.height() * srcRect.height();
     if (hRule == Image::RepeatTile)
-        hPhase -= fmodf(dstRect.width(), tileScaleFactor.width() * srcRect.width()) / 2.0f;
+        hPhase -= (dstRect.width() - scaledTileWidth) / 2;
     if (vRule == Image::RepeatTile)
-        vPhase -= fmodf(dstRect.height(), tileScaleFactor.height() * srcRect.height()) / 2.0f;
+        vPhase -= (dstRect.height() - scaledTileHeight) / 2; 
     FloatPoint patternPhase(dstRect.x() - hPhase, dstRect.y() - vPhase);
     
     drawPattern(ctxt, srcRect, patternTransform, patternPhase, styleColorSpace, op, dstRect);

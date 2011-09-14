@@ -1,3 +1,25 @@
+2011-09-14  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=52736
+
+        Tiles were not being properly centered within border image sides for the "repeat"
+        keyword. This patch fixes the buggy math behind the pattern tiling to actually get
+        the initial phases correct.
+
+        Reviewed by Sam Weinig.
+
+        * fast/borders/border-image-massive-scale.html: Added.
+        * fast/borders/border-image-scaled-gradient.html: Added.
+        * platform/mac/fast/borders/border-image-massive-scale-expected.png: Added.
+        * platform/mac/fast/borders/border-image-massive-scale-expected.txt: Added.
+        * platform/mac/fast/borders/border-image-outset-expected.png:
+        * platform/mac/fast/borders/border-image-outset-in-shorthand-expected.png:
+        * platform/mac/fast/borders/border-image-outset-split-inline-expected.png:
+        * platform/mac/fast/borders/border-image-outset-split-inline-vertical-lr-expected.png:
+        * platform/mac/fast/borders/border-image-scaled-gradient-expected.png: Added.
+        * platform/mac/fast/borders/border-image-scaled-gradient-expected.txt: Added.
+        * platform/mac/fast/borders/border-image-side-reduction-expected.png:
+
 2011-09-14  Jeremy Apthorp  <jeremya@chromium.org>
 
         Change mousedown events to keydown events, since eventSender.mouseDown
