@@ -88,24 +88,6 @@ void Image::fillWithSolidColor(GraphicsContext* ctxt, const FloatRect& dstRect, 
     ctxt->setCompositeOperation(previousOperator);
 }
 
-static inline FloatSize calculatePatternScale(const FloatRect& dstRect, const FloatRect& srcRect, Image::TileRule hRule, Image::TileRule vRule)
-{
-    float scaleX = 1.0f, scaleY = 1.0f;
-    
-    if (hRule == Image::StretchTile)
-        scaleX = dstRect.width() / srcRect.width();
-    if (vRule == Image::StretchTile)
-        scaleY = dstRect.height() / srcRect.height();
-    
-    if (hRule == Image::RepeatTile)
-        scaleX = scaleY;
-    if (vRule == Image::RepeatTile)
-        scaleY = scaleX;
-    
-    return FloatSize(scaleX, scaleY);
-}
-
-
 void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, ColorSpace styleColorSpace, CompositeOperator op)
 {    
     if (mayFillWithSolidColor()) {
@@ -151,7 +133,8 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 }
 
 // FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
-void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, TileRule hRule, TileRule vRule, ColorSpace styleColorSpace, CompositeOperator op)
+void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect,
+    const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ColorSpace styleColorSpace, CompositeOperator op)
 {    
     if (mayFillWithSolidColor()) {
         fillWithSolidColor(ctxt, dstRect, solidColor(), styleColorSpace, op);
@@ -164,17 +147,16 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
     if (vRule == RoundTile || vRule == SpaceTile)
         vRule = RepeatTile;
 
-    FloatSize scale = calculatePatternScale(dstRect, srcRect, hRule, vRule);
-    AffineTransform patternTransform = AffineTransform().scaleNonUniform(scale.width(), scale.height());
+    AffineTransform patternTransform = AffineTransform().scaleNonUniform(tileScaleFactor.width(), tileScaleFactor.height());
 
     // We want to construct the phase such that the pattern is centered (when stretch is not
     // set for a particular rule).
-    float hPhase = scale.width() * srcRect.x();
-    float vPhase = scale.height() * srcRect.y();
+    float hPhase = tileScaleFactor.width() * srcRect.x();
+    float vPhase = tileScaleFactor.height() * srcRect.y();
     if (hRule == Image::RepeatTile)
-        hPhase -= fmodf(dstRect.width(), scale.width() * srcRect.width()) / 2.0f;
+        hPhase -= fmodf(dstRect.width(), tileScaleFactor.width() * srcRect.width()) / 2.0f;
     if (vRule == Image::RepeatTile)
-        vPhase -= fmodf(dstRect.height(), scale.height() * srcRect.height()) / 2.0f;
+        vPhase -= fmodf(dstRect.height(), tileScaleFactor.height() * srcRect.height()) / 2.0f;
     FloatPoint patternPhase(dstRect.x() - hPhase, dstRect.y() - vPhase);
     
     drawPattern(ctxt, srcRect, patternTransform, patternPhase, styleColorSpace, op, dstRect);

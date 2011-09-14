@@ -1,3 +1,102 @@
+2011-09-14  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68103
+        
+        Centered portions of border images don't render correctly. Make the tile scale factor have to be
+        explicitly passed in and modify paintNinePieceImage to compute it for all sides. The attempts to
+        implicitly compute the scale for the pattern based off the source and destination rects just don't
+        work, since the center image rects don't provide the right information to be able to infer the
+        scale factor.
+
+        Reviewed by Sam Weinig.
+
+        Reset all the existing fast/borders pixel results to Lion for these changes.
+
+        * platform/mac/fast/borders/bidi-002-expected.png:
+        * platform/mac/fast/borders/bidi-009a-expected.png:
+        * platform/mac/fast/borders/bidi-012-expected.png:
+        * platform/mac/fast/borders/block-mask-overlay-image-expected.png:
+        * platform/mac/fast/borders/border-antialiasing-expected.png:
+        * platform/mac/fast/borders/border-color-inherit-expected.png:
+        * platform/mac/fast/borders/border-fit-expected.png:
+        * platform/mac/fast/borders/border-image-01-expected.png:
+        * platform/mac/fast/borders/border-image-border-radius-expected.png:
+        * platform/mac/fast/borders/border-image-longhand-expected.png:
+        * platform/mac/fast/borders/border-image-omit-right-slice-expected.png:
+        * platform/mac/fast/borders/border-image-outset-expected.png:
+        * platform/mac/fast/borders/border-image-outset-in-shorthand-expected.png:
+        * platform/mac/fast/borders/border-image-repeat-expected.png:
+        * platform/mac/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/mac/fast/borders/border-image-scale-transform-expected.png:
+        * platform/mac/fast/borders/border-image-scaled-expected.png:
+        * platform/mac/fast/borders/border-image-scrambled-expected.png:
+        * platform/mac/fast/borders/border-image-slices-expected.png:
+        * platform/mac/fast/borders/border-image-source-expected.png:
+        * platform/mac/fast/borders/border-radius-circle-expected.png:
+        * platform/mac/fast/borders/border-radius-constraints-expected.png:
+        * platform/mac/fast/borders/border-radius-different-width-001-expected.png:
+        * platform/mac/fast/borders/border-radius-groove-01-expected.png:
+        * platform/mac/fast/borders/border-radius-groove-02-expected.png:
+        * platform/mac/fast/borders/border-radius-groove-03-expected.png:
+        * platform/mac/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/mac/fast/borders/border-radius-inline-flow-expected.png:
+        * platform/mac/fast/borders/border-radius-inset-outset-expected.png:
+        * platform/mac/fast/borders/border-radius-split-inline-expected.png:
+        * platform/mac/fast/borders/border-radius-wide-border-01-expected.png:
+        * platform/mac/fast/borders/border-radius-wide-border-02-expected.png:
+        * platform/mac/fast/borders/border-radius-wide-border-03-expected.png:
+        * platform/mac/fast/borders/border-radius-wide-border-04-expected.png:
+        * platform/mac/fast/borders/border-styles-split-expected.png:
+        * platform/mac/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/mac/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed01-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed02-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed03-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed04-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed05-expected.png:
+        * platform/mac/fast/borders/borderRadiusDashed06-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted01-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted02-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted03-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted04-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted05-expected.png:
+        * platform/mac/fast/borders/borderRadiusDotted06-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble01-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble02-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble04-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble05-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble06-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble07-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble08-expected.png:
+        * platform/mac/fast/borders/borderRadiusDouble09-expected.png:
+        * platform/mac/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/mac/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/mac/fast/borders/borderRadiusInset01-expected.png:
+        * platform/mac/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/mac/fast/borders/borderRadiusOutset01-expected.png:
+        * platform/mac/fast/borders/borderRadiusRidge01-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid03-expected.png:
+        * platform/mac/fast/borders/borderRadiusSolid04-expected.png:
+        * platform/mac/fast/borders/different-color-borders-expected.png:
+        * platform/mac/fast/borders/fieldsetBorderRadius-expected.png:
+        * platform/mac/fast/borders/inline-mask-overlay-image-expected.png:
+        * platform/mac/fast/borders/mixed-border-styles-expected.png:
+        * platform/mac/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/mac/fast/borders/mixed-border-styles-radius2-expected.png:
+        * platform/mac/fast/borders/outline-alpha-block-expected.png:
+        * platform/mac/fast/borders/outline-alpha-inline-expected.png:
+        * platform/mac/fast/borders/outline-offset-min-assert-expected.png:
+        * platform/mac/fast/borders/rtl-border-01-expected.png:
+        * platform/mac/fast/borders/rtl-border-02-expected.png:
+        * platform/mac/fast/borders/rtl-border-03-expected.png:
+        * platform/mac/fast/borders/rtl-border-04-expected.png:
+        * platform/mac/fast/borders/rtl-border-05-expected.png:
+        * platform/mac/fast/borders/table-borders-expected.png:
+        * platform/mac/fast/borders/webkit-border-radius-expected.png:
+
 2011-09-14  Eric Carlson  <eric.carlson@apple.com>
 
         Update media-controls.js so it can find the timeline slider
