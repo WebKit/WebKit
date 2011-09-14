@@ -1,3 +1,54 @@
+2011-09-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: requestAnimationFrame callbacks don't show up in the timeline panel.
+        https://bugs.webkit.org/show_bug.cgi?id=67986
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/timeline/timeline-animation-frame.html
+
+        * English.lproj/localizedStrings.js:
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::callFunction):
+        (WebCore::V8Proxy::callFunctionWithoutFrame):
+        (WebCore::V8Proxy::instrumentedCallFunction):
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/custom/V8CustomVoidCallback.cpp:
+        (WebCore::invokeCallback):
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::registerCallback):
+        (WebCore::ScriptedAnimationController::cancelCallback):
+        (WebCore::ScriptedAnimationController::serviceScriptedAnimations):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didRegisterAnimationFrameCallbackImpl):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrameCallbackImpl):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrameEventImpl):
+        (WebCore::InspectorInstrumentation::didFireAnimationFrameEventImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willCallFunction):
+        (WebCore::InspectorInstrumentation::didRegisterAnimationFrameCallback):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrameCallback):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrameEvent):
+        (WebCore::InspectorInstrumentation::didFireAnimationFrameEvent):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didRegisterAnimationFrameCallback):
+        (WebCore::InspectorTimelineAgent::didCancelAnimationFrameCallback):
+        (WebCore::InspectorTimelineAgent::willFireAnimationFrameEvent):
+        (WebCore::InspectorTimelineAgent::didFireAnimationFrameEvent):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createAnimationFrameCallbackData):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/front-end/TimelineAgent.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.get _recordStyles):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._clearPanel):
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+
 2011-09-13  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: InspectorInstrumentation::frameDestroyed is called after m_page has been reset.

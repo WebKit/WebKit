@@ -24,5 +24,8 @@ Applications outside of WebKit depend on the stability of the mapping of these t
     ResourceFinish : "ResourceFinish"
     FunctionCall : "FunctionCall"
     GCEvent : "GCEvent"
+    RegisterAnimationFrameCallback : "RegisterAnimationFrameCallback"
+    CancelAnimationFrameCallback : "CancelAnimationFrameCallback"
+    FireAnimationFrameEvent : "FireAnimationFrameEvent"
 }
 

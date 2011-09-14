@@ -82,6 +82,7 @@ WebInspector.TimelinePanel = function()
     this._sendRequestRecords = {};
     this._scheduledResourceRequests = {};
     this._timerRecords = {};
+    this._registeredAnimationCallbackRecords = {};
 
     this._calculator = new WebInspector.TimelineCalculator();
     this._calculator._showShortEvents = false;
@@ -201,6 +202,9 @@ WebInspector.TimelinePanel.prototype = {
             recordStyles[recordTypes.MarkDOMContent] = { title: WebInspector.UIString("DOMContent event"), category: this.categories.scripting };
             recordStyles[recordTypes.MarkLoad] = { title: WebInspector.UIString("Load event"), category: this.categories.scripting };
             recordStyles[recordTypes.ScheduleResourceRequest] = { title: WebInspector.UIString("Schedule Request"), category: this.categories.loading };
+            recordStyles[recordTypes.RegisterAnimationFrameCallback] = { title: WebInspector.UIString("Register Animation Callback"), category: this.categories.scripting };
+            recordStyles[recordTypes.CancelAnimationFrameCallback] = { title: WebInspector.UIString("Cancel Animation Callback"), category: this.categories.scripting };
+            recordStyles[recordTypes.FireAnimationFrameEvent] = { title: WebInspector.UIString("Animation Frame Event"), category: this.categories.scripting };
             this._recordStylesArray = recordStyles;
         }
         return this._recordStylesArray;
@@ -404,6 +408,12 @@ WebInspector.TimelinePanel.prototype = {
     {
         var connectedToOldRecord = false;
         var recordTypes = WebInspector.TimelineAgent.RecordType;
+
+        if (record.type === recordTypes.RegisterAnimationFrameCallback) {
+            this._registeredAnimationCallbackRecords[record.data.id] = record;
+            return;
+        }
+
         if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad)
             parentRecord = null; // No bar entry for load events.
         else if (parentRecord === this._rootRecord ||
@@ -425,7 +435,8 @@ WebInspector.TimelinePanel.prototype = {
                 scriptLine: record.data.scriptLine
             }
         };
-        if (record.type === recordTypes.TimerFire && children && children.length) {
+
+        if ((record.type === recordTypes.TimerFire || record.type === recordTypes.FireAnimationFrameEvent) && children && children.length) {
             var childRecord = children[0];
             if (childRecord.type === recordTypes.FunctionCall) {
                 scriptDetails = {
@@ -508,6 +519,7 @@ WebInspector.TimelinePanel.prototype = {
         this._sendRequestRecords = {};
         this._scheduledResourceRequests = {};
         this._timerRecords = {};
+        this._registeredAnimationCallbackRecords = {};
         this._rootRecord = this._createRootRecord();
         this._boundariesAreValid = false;
         this._overviewPane.reset();
@@ -1000,6 +1012,10 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, pane
             this.timeout = timerInstalledRecord.timeout;
             this.singleShot = timerInstalledRecord.singleShot;
         }
+    } else if (record.type === recordTypes.FireAnimationFrameEvent) {
+        var registerCallbackRecord = panel._registeredAnimationCallbackRecords[record.data.id];
+        if (registerCallbackRecord)
+            this.callSiteStackTrace = registerCallbackRecord.stackTrace;
     }
     this._refreshDetails();
 }
@@ -1058,6 +1074,9 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                     contentHelper._appendTextRow(WebInspector.UIString("Timeout"), Number.secondsToString(this.timeout / 1000));
                     contentHelper._appendTextRow(WebInspector.UIString("Repeats"), !this.singleShot);
                 }
+                break;
+            case recordTypes.FireAnimationFrameEvent:
+                contentHelper._appendTextRow(WebInspector.UIString("Callback ID"), this.data.id);
                 break;
             case recordTypes.FunctionCall:
                 contentHelper._appendLinkRow(WebInspector.UIString("Location"), this.scriptName, this.scriptLine);
@@ -1119,6 +1138,8 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                 return this.scriptName ? this._linkifyLocation(this.scriptName, this.scriptLine, 0) : this.data.timerId;
             case WebInspector.TimelineAgent.RecordType.FunctionCall:
                 return this.scriptName ? this._linkifyLocation(this.scriptName, this.scriptLine, 0) : null;
+            case WebInspector.TimelineAgent.RecordType.FireAnimationFrameEvent:
+                return this.scriptName ? this._linkifyLocation(this.scriptName, this.scriptLine, 0) : this.data.id;
             case WebInspector.TimelineAgent.RecordType.EventDispatch:
                 return this.data ? this.data.type : null;
             case WebInspector.TimelineAgent.RecordType.Paint:
@@ -1126,6 +1147,9 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             case WebInspector.TimelineAgent.RecordType.TimerInstall:
             case WebInspector.TimelineAgent.RecordType.TimerRemove:
                 return this.stackTrace ? this._linkifyCallFrame(this.stackTrace[0]) : this.data.timerId;
+            case WebInspector.TimelineAgent.RecordType.RegisterAnimationFrameCallback:
+            case WebInspector.TimelineAgent.RecordType.CancelAnimationFrameCallback:
+                return this.stackTrace ? this._linkifyCallFrame(this.stackTrace[0]) : this.data.id;
             case WebInspector.TimelineAgent.RecordType.ParseHTML:
             case WebInspector.TimelineAgent.RecordType.RecalculateStyles:
                 return this.stackTrace ? this._linkifyCallFrame(this.stackTrace[0]) : null;
