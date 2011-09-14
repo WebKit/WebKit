@@ -1,3 +1,9 @@
+2011-09-13  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        * platform/chromium/test_expectations.txt: failures starting from r95058
+
 2011-09-13  Adam Klein  <adamk@chromium.org>
 
         Fix cssText property of counter-valued CSSPrimitiveValue and avoid uninitialized read
