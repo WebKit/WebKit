@@ -777,29 +777,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     }
 
     case LogicalNot: {
-        JSValueOperand arg1(this, node.child1());
-        GPRTemporary result(this);
-        
-        GPRReg arg1GPR = arg1.gpr();
-        GPRReg resultGPR = result.gpr();
-        
-        arg1.use();
-
-        m_jit.move(arg1GPR, resultGPR);
-        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), resultGPR);
-        JITCompiler::Jump fastCase = m_jit.branchTestPtr(JITCompiler::Zero, resultGPR, TrustedImm32(static_cast<int32_t>(~1)));
-        
-        silentSpillAllRegisters(resultGPR);
-        m_jit.move(arg1GPR, GPRInfo::argumentGPR1);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(dfgConvertJSValueToBoolean);
-        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
-        silentFillAllRegisters(resultGPR);
-        
-        fastCase.link(&m_jit);
-
-        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueTrue)), resultGPR);
-        jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
+        nonSpeculativeLogicalNot(node);
         break;
     }
 

@@ -1047,16 +1047,23 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
         
-        JSValueOperand value(this, node.child1());
-        GPRTemporary result(this); // FIXME: We could reuse, but on speculation fail would need recovery to restore tag (akin to add).
-
-        m_jit.move(value.gpr(), result.gpr());
-        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), result.gpr());
-        speculationCheck(m_jit.branchTestPtr(JITCompiler::NonZero, result.gpr(), TrustedImm32(static_cast<int32_t>(~1))));
-        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueTrue)), result.gpr());
-
-        // If we add a DataFormatBool, we should use it here.
-        jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
+        PredictedType prediction = m_jit.graph().getPrediction(m_jit.graph()[node.child1()]);
+        if (isBooleanPrediction(prediction) || !isStrongPrediction(prediction)) {
+            JSValueOperand value(this, node.child1());
+            GPRTemporary result(this); // FIXME: We could reuse, but on speculation fail would need recovery to restore tag (akin to add).
+            
+            m_jit.move(value.gpr(), result.gpr());
+            m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), result.gpr());
+            speculationCheck(m_jit.branchTestPtr(JITCompiler::NonZero, result.gpr(), TrustedImm32(static_cast<int32_t>(~1))));
+            m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueTrue)), result.gpr());
+            
+            // If we add a DataFormatBool, we should use it here.
+            jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
+            break;
+        }
+        
+        nonSpeculativeLogicalNot(node);
+        
         break;
     }
 

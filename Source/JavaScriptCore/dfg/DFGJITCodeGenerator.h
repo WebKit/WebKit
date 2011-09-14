@@ -578,6 +578,8 @@ protected:
     
     void emitBranch(Node&);
     
+    void nonSpeculativeLogicalNot(Node&);
+    
     MacroAssembler::Address addressOfCallData(int idx)
     {
         return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + idx) * static_cast<int>(sizeof(Register)));
