@@ -1,5 +1,18 @@
 2011-09-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        committers.py is missing some contributors
+        https://bugs.webkit.org/show_bug.cgi?id=68059
+
+        Reviewed by Adam Barth.
+
+        Add David Barr, Jan Erik Hanssen, and Kim Grönholm.
+
+        Also add nicks of Alejandro G. Castro, Collin Jackson, and Matt Lilek.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2011-09-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix webkit python test after r95061.
 
         * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
