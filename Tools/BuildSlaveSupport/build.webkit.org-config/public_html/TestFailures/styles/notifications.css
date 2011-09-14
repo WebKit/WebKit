@@ -185,20 +185,22 @@ ol.notifications table.failures {
         vertical-align: top;
     }
 
-    ol.notifications table.failures tbody td:nth-child(n+2)>div {
+    ol.notifications table.failures tbody td:nth-child(n+2)>a {
         display: inline-block;
         border: 1px solid Gray;
         margin: 0 0 2px 0;
         padding: 1px;
+        color: Black;
+        text-decoration: none;
     }
 
-        ol.notifications table.failures tbody td:nth-child(n+2)>div>span.version {
+        ol.notifications table.failures tbody td:nth-child(n+2)>a>span.version {
             text-transform: uppercase;
             background-color: #555;
             color: White;
             padding: 0 2px;
         }
 
-        ol.notifications table.failures tbody td:nth-child(n+2)>div>span.architecture {
+        ol.notifications table.failures tbody td:nth-child(n+2)>a>span.architecture {
             padding: 0 3px 0 0;
         }

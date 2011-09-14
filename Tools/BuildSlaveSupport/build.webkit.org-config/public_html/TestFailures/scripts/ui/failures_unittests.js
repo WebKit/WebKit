@@ -35,13 +35,13 @@ test('Configuration', 8, function() {
     var configuration;
     configuration = new ui.failures.Configuration({});
     deepEqual(Object.getOwnPropertyNames(configuration.__proto__), ['init', 'equals', '_addSpan']);
-    equal(configuration.outerHTML, '<div></div>');
+    equal(configuration.outerHTML, '<a target="_blank"></a>');
     configuration = new ui.failures.Configuration({is64bit: true, version: 'lucid'});
-    equal(configuration.outerHTML, '<div><span class="architecture">64-bit</span><span class="version">lucid</span></div>');
+    equal(configuration.outerHTML, '<a target="_blank"><span class="architecture">64-bit</span><span class="version">lucid</span></a>');
     configuration = new ui.failures.Configuration({version: 'xp'});
-    equal(configuration.outerHTML, '<div><span class="version">xp</span></div>');
+    equal(configuration.outerHTML, '<a target="_blank"><span class="version">xp</span></a>');
     configuration._addSpan('foo', 'bar');
-    equal(configuration.outerHTML, '<div><span class="version">xp</span><span class="foo">bar</span></div>');
+    equal(configuration.outerHTML, '<a target="_blank"><span class="version">xp</span><span class="foo">bar</span></a>');
     ok(configuration.equals({version: 'xp'}));
     ok(!configuration.equals({version: 'lucid',is64bit: true}));
 });
@@ -84,7 +84,7 @@ test('FailureGrid', 9, function() {
             '<tr class="TEXT">' +
                 '<td>TEXT</td>' +
                 '<td></td>' +
-                '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
+                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="architecture">64-bit</span><span class="version">lucid</span></a></td>' +
             '</tr>' +
             '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
         '</tbody>' +
@@ -95,13 +95,13 @@ test('FailureGrid', 9, function() {
         '<tbody>' +
             '<tr class="IMAGE+TEXT">' +
                 '<td>IMAGE+TEXT</td>' +
-                '<td><div><span class="version">leopard</span></div></td>' +
+                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5+(CG)"><span class="version">leopard</span></a></td>' +
                 '<td></td>' +
             '</tr>' +
             '<tr class="TEXT">' +
                 '<td>TEXT</td>' +
                 '<td></td>' +
-                '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
+                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="architecture">64-bit</span><span class="version">lucid</span></a></td>' +
             '</tr>' +
             '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
         '</tbody>' +
@@ -112,13 +112,13 @@ test('FailureGrid', 9, function() {
         '<tbody>' +
             '<tr class="IMAGE+TEXT">' +
                 '<td>IMAGE+TEXT</td>' +
-                '<td><div><span class="version">leopard</span></div></td>' +
+                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5+(CG)"><span class="version">leopard</span></a></td>' +
                 '<td></td>' +
             '</tr>' +
             '<tr class="TEXT">' +
                 '<td>TEXT</td>' +
                 '<td></td>' +
-                '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
+                '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="architecture">64-bit</span><span class="version">lucid</span></a></td>' +
             '</tr>' +
             '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
         '</tbody>' +

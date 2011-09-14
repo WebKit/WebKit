@@ -30,7 +30,7 @@ ui.failures = ui.failures || {};
 
 var kBuildingResult = 'BUILDING';
 
-ui.failures.Configuration = base.extends('div', {
+ui.failures.Configuration = base.extends('a', {
     init: function(configuration)
     {
         if (configuration.is64bit)
@@ -38,6 +38,7 @@ ui.failures.Configuration = base.extends('div', {
         if (configuration.version)
             this._addSpan('version', configuration.version);
         this._configuration = configuration;
+        this.target = '_blank';
     },
     _addSpan: function(className, text)
     {
@@ -107,7 +108,7 @@ ui.failures.FailureGrid = base.extends('table', {
             var cell = cellByBuildType(row, configuration);
             if (cellContainsConfiguration(cell, configuration))
                 return;
-            cell.appendChild(new ui.failures.Configuration(configuration));
+            cell.appendChild(new ui.failures.Configuration(configuration)).href = ui.displayURLForBuilder(builderName);
         }, this);
     }
 });

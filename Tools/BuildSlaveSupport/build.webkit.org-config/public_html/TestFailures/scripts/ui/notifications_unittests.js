@@ -217,7 +217,7 @@ test('FailingTestsSummary', 12, function() {
                     '<tr class="TEXT">' +
                         '<td>TEXT</td>' +
                         '<td></td>' +
-                        '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
+                        '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="architecture">64-bit</span><span class="version">lucid</span></a></td>' +
                     '</tr>' +
                     '<tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr>' +
                 '</tbody>' +
@@ -261,11 +261,11 @@ test('FailingTestsSummary', 12, function() {
                     '<tr class="TEXT">' +
                         '<td>TEXT</td>' +
                         '<td></td>' +
-                        '<td><div><span class="architecture">64-bit</span><span class="version">lucid</span></div></td>' +
+                        '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="architecture">64-bit</span><span class="version">lucid</span></a></td>' +
                     '</tr>' +
                     '<tr class="BUILDING" style="">' +
                         '<td>BUILDING</td>' +
-                        '<td><div><span class="version">leopard</span></div></td>' +
+                        '<td><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5+(CG)"><span class="version">leopard</span></a></td>' +
                         '<td></td>' +
                     '</tr>' +
                 '</tbody>' +
