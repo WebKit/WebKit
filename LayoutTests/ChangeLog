@@ -1,3 +1,11 @@
+2011-09-14  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expecations.
+
+        * platform/chromium/test_expectations.txt:
+          - remove failure by r95058, which was reverted by r95077.
+          - add failures by r95070
+
 2011-09-14  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [Qt] Unreviewed, update test expectations for
