@@ -1,3 +1,15 @@
+2011-09-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95080.
+        http://trac.webkit.org/changeset/95080
+        https://bugs.webkit.org/show_bug.cgi?id=68070
+
+        It caused some 2d.composite.uncovered tests fail (Requested by
+        rgabor on #webkit).
+
+        * fast/canvas/canvas-large-fills-expected.txt: Removed.
+        * fast/canvas/canvas-large-fills.html: Removed.
+
 2011-09-13  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [v8] building call frame info for location-less internal script function crashes.
