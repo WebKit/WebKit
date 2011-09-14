@@ -1,3 +1,11 @@
+2011-09-14  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [Qt] Unreviewed, update test expectations for
+        svg/custom/dynamic-svg-document-creation.svg after r95030
+
+        * platform/qt/svg/custom/dynamic-svg-document-creation-expected.png:
+        * platform/qt/svg/custom/dynamic-svg-document-creation-expected.txt:
+
 2011-09-14  Ben Wells  <benwells@chromium.org>
 
         Large canvas fills should not crash or create unnecessarily large image buffers

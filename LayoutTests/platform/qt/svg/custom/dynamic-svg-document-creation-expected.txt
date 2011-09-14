@@ -24,11 +24,11 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 668x22
               text run at (0,0) width 668: "SVGDocument's rootElement first child: [object SVGGElement] should be: [object SVGGElement]"
           RenderBlock {div} at (0,132) size 800x88
-            RenderText {#text} at (0,0) size 798x88
+            RenderText {#text} at (0,0) size 789x88
               text run at (0,0) width 786: "XMLSerializer.serializeToString returned: <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"400\">"
               text run at (0,22) width 675: "<g transform=\"translate(-50, -50)\"><path id=\"path\" onclick=\"mouseHandler(evt)\" fill=\"#FF0000\""
-              text run at (0,44) width 798: "stroke=\"#00C000\" d=\"M 250 130 C 185 130 150 80 150 80 S 115 25 50 25 m 0 105 c 65 0 100 -50 100 -50 s 35 -55 100 -"
-              text run at (0,66) width 112: "55\"/></g></svg>"
+              text run at (0,44) width 789: "stroke=\"#00C000\" d=\"M 250 130 C 185 130 150 80 150 80 S 115 25 50 25 m 0 105 c 65 0 100 -50 100 -50 s 35 -55 100"
+              text run at (0,66) width 117: "-55\"/></g></svg>"
           RenderBlock {div} at (0,220) size 800x22
             RenderText {#text} at (0,0) size 722x22
               text run at (0,0) width 722: "Imported the SVGGElement into our document: [object SVGGElement] should be: [object SVGGElement]"
