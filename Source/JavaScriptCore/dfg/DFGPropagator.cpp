@@ -85,6 +85,8 @@ public:
             m_changed = false;
             propagateBackward();
         } while (m_changed);
+        
+        fixup();
     }
     
 private:
@@ -319,6 +321,80 @@ private:
 #endif
         for (m_compileIndex = m_graph.size(); m_compileIndex-- > 0;)
             propagateNode(m_graph[m_compileIndex]);
+    }
+    
+    void toDouble(NodeIndex nodeIndex)
+    {
+        if (m_graph[nodeIndex].op == ValueToNumber) {
+#if ENABLE(DFG_DEBUG_VERBOSE)
+            printf("  @%u -> ValueToDouble", nodeIndex);
+#endif
+            m_graph[nodeIndex].op = ValueToDouble;
+        }
+    }
+    
+    void fixupNode(Node& node)
+    {
+        if (!node.shouldGenerate())
+            return;
+        
+        NodeType op = node.op;
+
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("   %s[%u]: ", Graph::opName(op), m_compileIndex);
+#endif
+        
+        switch (op) {
+        case ValueAdd: {
+            PredictedType left = m_predictions[node.child1()];
+            PredictedType right = m_predictions[node.child2()];
+            
+            if (isStrongPrediction(left) && isStrongPrediction(right) && isNumberPrediction(left) && isNumberPrediction(right)) {
+                if (left & PredictDouble)
+                    toDouble(node.child2());
+                if (right & PredictDouble)
+                    toDouble(node.child1());
+            }
+            break;
+        }
+            
+        case ArithAdd:
+        case ArithSub:
+        case ArithMul: {
+            PredictedType left = m_predictions[node.child1()];
+            PredictedType right = m_predictions[node.child2()];
+            
+            if (isStrongPrediction(left) && isStrongPrediction(right)) {
+                if (left & PredictDouble)
+                    toDouble(node.child2());
+                if (right & PredictDouble)
+                    toDouble(node.child1());
+            }
+            break;
+        }
+            
+        case ArithDiv: {
+            toDouble(node.child1());
+            toDouble(node.child2());
+            break;
+        }
+            
+        default:
+            break;
+        }
+
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("\n");
+#endif
+    }
+    
+    void fixup()
+    {
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("Performing Fixup\n");
+#endif
+        for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex)
+            fixupNode(m_graph[m_compileIndex]);
     }
     
     Graph& m_graph;

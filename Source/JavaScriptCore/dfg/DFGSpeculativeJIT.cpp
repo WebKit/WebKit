@@ -870,6 +870,14 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
+    case ValueToDouble: {
+        SpeculateDoubleOperand op1(this, node.child1());
+        FPRTemporary result(this, op1);
+        m_jit.moveDouble(op1.fpr(), result.fpr());
+        doubleResult(result.fpr(), m_compileIndex);
+        break;
+    }
+
     case ValueAdd:
     case ArithAdd: {
         if (shouldSpeculateInteger(node.child1(), node.child2())) {
@@ -1694,6 +1702,7 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
                     continue;
                 switch (node.op) {
                 case ValueToNumber:
+                case ValueToDouble:
                     valueToNumberIndex = info.nodeIndex();
                     break;
                 case ValueToInt32:

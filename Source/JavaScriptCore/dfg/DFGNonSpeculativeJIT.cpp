@@ -595,7 +595,8 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         break;
     }
 
-    case ValueToNumber: {
+    case ValueToNumber:
+    case ValueToDouble: {
         ASSERT(!isInt32Constant(node.child1()));
         ASSERT(!isNumberConstant(node.child1()));
 
