@@ -1,17 +1,31 @@
 
-function mediaControlsButtonCoordinates(element, id)
+function mediaControlsElement(first, id)
 {
-    var button;
-    var controlsShadow = internals.shadowRoot(element).firstChild.firstChild;
-    for (child = controlsShadow.firstChild; child; child = child.nextSibling) {
-        if (internals.shadowPseudoId(child) == "-webkit-media-controls-" + id) {
-            button = child;
-            break;
+    var controlID = "-webkit-media-controls-" + id;
+    for (var element = first; element; element = element.nextSibling) {
+
+        // Not every element in the media controls has a shadow pseudo ID, eg. the
+        // text nodes for the time values, so guard against exceptions.
+        try {
+            if (internals.shadowPseudoId(element) == controlID)
+                return element;
+        } catch (exception) { }
+
+        if (element.firstChild) {
+            var childElement = mediaControlsElement(element.firstChild, id);
+            if (childElement)
+                return childElement;
         }
     }
 
+    return null;
+}
+
+function mediaControlsButtonCoordinates(element, id)
+{
+    var button = mediaControlsElement(internals.shadowRoot(element).firstChild, id);
     if (!button)
-        throw "Failed to find button " + id;
+        throw "Failed to find media control element ID '" + id + "'";
 
     var buttonBoundingRect = button.getBoundingClientRect();
     var x = buttonBoundingRect.left + buttonBoundingRect.width / 2;
