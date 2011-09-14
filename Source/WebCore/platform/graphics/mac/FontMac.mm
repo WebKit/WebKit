@@ -208,10 +208,10 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0)); 
     CGContextSetTextMatrix(cgContext, matrix);
 
-    if (drawFont) {
-        wkSetCGFontRenderingMode(cgContext, drawFont);
+    wkSetCGFontRenderingMode(cgContext, drawFont);
+    if (drawFont)
         CGContextSetFontSize(cgContext, 1.0f);
-    } else
+    else
         CGContextSetFontSize(cgContext, platformData.m_size);
 
 
