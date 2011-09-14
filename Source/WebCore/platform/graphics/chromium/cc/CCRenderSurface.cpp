@@ -57,15 +57,7 @@ void CCRenderSurface::cleanupResources()
     if (!m_contentsTexture)
         return;
 
-    ASSERT(layerRenderer());
-
     m_contentsTexture.clear();
-}
-
-LayerRendererChromium* CCRenderSurface::layerRenderer()
-{
-    ASSERT(m_owningLayer);
-    return m_owningLayer->layerRenderer();
 }
 
 FloatRect CCRenderSurface::drawableContentRect() const
@@ -79,10 +71,10 @@ FloatRect CCRenderSurface::drawableContentRect() const
     return drawableContentRect;
 }
 
-bool CCRenderSurface::prepareContentsTexture()
+bool CCRenderSurface::prepareContentsTexture(LayerRendererChromium* layerRenderer)
 {
     IntSize requiredSize(m_contentRect.size());
-    TextureManager* textureManager = layerRenderer()->renderSurfaceTextureManager();
+    TextureManager* textureManager = layerRenderer->renderSurfaceTextureManager();
 
     if (!m_contentsTexture)
         m_contentsTexture = ManagedTexture::create(textureManager);
@@ -106,7 +98,7 @@ void CCRenderSurface::releaseContentsTexture()
     m_contentsTexture->unreserve();
 }
 
-void CCRenderSurface::draw(const IntRect&)
+void CCRenderSurface::draw(LayerRendererChromium* layerRenderer, const IntRect&)
 {
     if (m_skipsDraw || !m_contentsTexture)
         return;
@@ -121,30 +113,30 @@ void CCRenderSurface::draw(const IntRect&)
         replicaMaskLayer = m_owningLayer->replicaLayer()->maskLayer();
 
     if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerScissor())
-        layerRenderer()->setScissorToRect(m_scissorRect);
+        layerRenderer->setScissorToRect(m_scissorRect);
     else
-        GLC(layerRenderer()->context(), layerRenderer()->context()->disable(GraphicsContext3D::SCISSOR_TEST));
+        GLC(layerRenderer->context(), layerRenderer->context()->disable(GraphicsContext3D::SCISSOR_TEST));
 
     // Reflection draws before the layer.
     if (m_owningLayer->replicaLayer())
-        drawLayer(replicaMaskLayer, m_replicaDrawTransform);
+        drawLayer(layerRenderer, replicaMaskLayer, m_replicaDrawTransform);
 
-    drawLayer(m_maskLayer, m_drawTransform);
+    drawLayer(layerRenderer, m_maskLayer, m_drawTransform);
 }
 
-void CCRenderSurface::drawLayer(CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform)
+void CCRenderSurface::drawLayer(LayerRendererChromium* layerRenderer, CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform)
 {
     TransformationMatrix renderMatrix = drawTransform;
     // Apply a scaling factor to size the quad from 1x1 to its intended size.
     renderMatrix.scale3d(m_contentRect.width(), m_contentRect.height(), 1);
 
-    TransformationMatrix deviceMatrix = TransformationMatrix(layerRenderer()->windowMatrix() * layerRenderer()->projectionMatrix() * renderMatrix).to2dTransform();
+    TransformationMatrix deviceMatrix = TransformationMatrix(layerRenderer->windowMatrix() * layerRenderer->projectionMatrix() * renderMatrix).to2dTransform();
 
     // Can only draw surface if device matrix is invertible.
     if (!deviceMatrix.isInvertible())
         return;
 
-    FloatQuad quad = deviceMatrix.mapQuad(layerRenderer()->sharedGeometryQuad());
+    FloatQuad quad = deviceMatrix.mapQuad(layerRenderer->sharedGeometryQuad());
     CCLayerQuad layerQuad = CCLayerQuad(quad);
 
 #if defined(OS_CHROMEOS)
@@ -165,27 +157,27 @@ void CCRenderSurface::drawLayer(CCLayerImpl* maskLayer, const TransformationMatr
 
     if (useMask) {
         if (useAA) {
-            const MaskProgramAA* program = layerRenderer()->renderSurfaceMaskProgramAA();
-            drawSurface(maskLayer, drawTransform, deviceMatrix, layerQuad, program, program->fragmentShader().maskSamplerLocation(), program->vertexShader().pointLocation(), program->fragmentShader().edgeLocation());
+            const MaskProgramAA* program = layerRenderer->renderSurfaceMaskProgramAA();
+            drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, layerQuad, program, program->fragmentShader().maskSamplerLocation(), program->vertexShader().pointLocation(), program->fragmentShader().edgeLocation());
         } else {
-            const MaskProgram* program = layerRenderer()->renderSurfaceMaskProgram();
-            drawSurface(maskLayer, drawTransform, deviceMatrix, layerQuad, program, program->fragmentShader().maskSamplerLocation(), -1, -1);
+            const MaskProgram* program = layerRenderer->renderSurfaceMaskProgram();
+            drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, layerQuad, program, program->fragmentShader().maskSamplerLocation(), -1, -1);
         }
     } else {
         if (useAA) {
-            const ProgramAA* program = layerRenderer()->renderSurfaceProgramAA();
-            drawSurface(maskLayer, drawTransform, deviceMatrix, layerQuad, program, -1, program->vertexShader().pointLocation(), program->fragmentShader().edgeLocation());
+            const ProgramAA* program = layerRenderer->renderSurfaceProgramAA();
+            drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, layerQuad, program, -1, program->vertexShader().pointLocation(), program->fragmentShader().edgeLocation());
         } else {
-            const Program* program = layerRenderer()->renderSurfaceProgram();
-            drawSurface(maskLayer, drawTransform, deviceMatrix, layerQuad, program, -1, -1, -1);
+            const Program* program = layerRenderer->renderSurfaceProgram();
+            drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, layerQuad, program, -1, -1, -1);
         }
     }
 }
 
 template <class T>
-void CCRenderSurface::drawSurface(CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& layerQuad, const T* program, int shaderMaskSamplerLocation, int shaderQuadLocation, int shaderEdgeLocation)
+void CCRenderSurface::drawSurface(LayerRendererChromium* layerRenderer, CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& layerQuad, const T* program, int shaderMaskSamplerLocation, int shaderQuadLocation, int shaderEdgeLocation)
 {
-    GraphicsContext3D* context3D = layerRenderer()->context();
+    GraphicsContext3D* context3D = layerRenderer->context();
 
     context3D->makeContextCurrent();
     GLC(context3D, context3D->useProgram(program->program()));
@@ -197,7 +189,7 @@ void CCRenderSurface::drawSurface(CCLayerImpl* maskLayer, const TransformationMa
     if (shaderMaskSamplerLocation != -1) {
         GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE1));
         GLC(context3D, context3D->uniform1i(shaderMaskSamplerLocation, 1));
-        maskLayer->bindContentsTexture();
+        maskLayer->bindContentsTexture(layerRenderer);
         GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
     }
 
@@ -210,7 +202,7 @@ void CCRenderSurface::drawSurface(CCLayerImpl* maskLayer, const TransformationMa
     // Map device space quad to layer space.
     FloatQuad quad = deviceTransform.inverse().mapQuad(layerQuad.floatQuad());
 
-    LayerChromium::drawTexturedQuad(layerRenderer()->context(), layerRenderer()->projectionMatrix(), drawTransform,
+    LayerChromium::drawTexturedQuad(layerRenderer->context(), layerRenderer->projectionMatrix(), drawTransform,
                                     m_contentRect.width(), m_contentRect.height(), m_drawOpacity, quad,
                                     program->vertexShader().matrixLocation(), program->fragmentShader().alphaLocation(), shaderQuadLocation);
 }

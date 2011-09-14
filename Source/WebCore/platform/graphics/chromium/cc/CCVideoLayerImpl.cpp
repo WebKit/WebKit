@@ -77,26 +77,20 @@ void CCVideoLayerImpl::setTexture(size_t index, Platform3DObject textureId, cons
     m_textures[index].visibleSize = visibleSize;
 }
 
-void CCVideoLayerImpl::draw()
+void CCVideoLayerImpl::draw(LayerRendererChromium* layerRenderer)
 {
     ASSERT(CCProxy::isImplThread());
 
     if (m_skipsDraw)
         return;
 
-    ASSERT(layerRenderer());
-    const RGBAProgram* rgbaProgram = layerRenderer()->videoLayerRGBAProgram();
-    ASSERT(rgbaProgram && rgbaProgram->initialized());
-    const YUVProgram* yuvProgram = layerRenderer()->videoLayerYUVProgram();
-    ASSERT(yuvProgram && yuvProgram->initialized());
-
     switch (m_frameFormat) {
     case VideoFrameChromium::YV12:
     case VideoFrameChromium::YV16:
-        drawYUV(yuvProgram);
+        drawYUV(layerRenderer);
         break;
     case VideoFrameChromium::RGBA:
-        drawRGBA(rgbaProgram);
+        drawRGBA(layerRenderer);
         break;
     default:
         // FIXME: Implement other paths.
@@ -105,9 +99,12 @@ void CCVideoLayerImpl::draw()
     }
 }
 
-void CCVideoLayerImpl::drawYUV(const CCVideoLayerImpl::YUVProgram* program) const
+void CCVideoLayerImpl::drawYUV(LayerRendererChromium* layerRenderer) const
 {
-    GraphicsContext3D* context = layerRenderer()->context();
+    const YUVProgram* program = layerRenderer->videoLayerYUVProgram();
+    ASSERT(program && program->initialized());
+
+    GraphicsContext3D* context = layerRenderer->context();
     CCVideoLayerImpl::Texture yTexture = m_textures[VideoFrameChromium::yPlane];
     CCVideoLayerImpl::Texture uTexture = m_textures[VideoFrameChromium::uPlane];
     CCVideoLayerImpl::Texture vTexture = m_textures[VideoFrameChromium::vPlane];
@@ -134,7 +131,7 @@ void CCVideoLayerImpl::drawYUV(const CCVideoLayerImpl::YUVProgram* program) cons
     GLC(context, context->uniformMatrix3fv(program->fragmentShader().ccMatrixLocation(), 0, const_cast<float*>(yuv2RGB), 1));
     GLC(context, context->uniform3fv(program->fragmentShader().yuvAdjLocation(), const_cast<float*>(yuvAdjust), 1));
 
-    LayerChromium::drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
+    LayerChromium::drawTexturedQuad(context, layerRenderer->projectionMatrix(), drawTransform(),
                                     bounds().width(), bounds().height(), drawOpacity(), FloatQuad(),
                                     program->vertexShader().matrixLocation(),
                                     program->fragmentShader().alphaLocation(),
@@ -144,9 +141,12 @@ void CCVideoLayerImpl::drawYUV(const CCVideoLayerImpl::YUVProgram* program) cons
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
 }
 
-void CCVideoLayerImpl::drawRGBA(const CCVideoLayerImpl::RGBAProgram* program) const
+void CCVideoLayerImpl::drawRGBA(LayerRendererChromium* layerRenderer) const
 {
-    GraphicsContext3D* context = layerRenderer()->context();
+    const RGBAProgram* program = layerRenderer->videoLayerRGBAProgram();
+    ASSERT(program && program->initialized());
+
+    GraphicsContext3D* context = layerRenderer->context();
     CCVideoLayerImpl::Texture texture = m_textures[VideoFrameChromium::rgbPlane];
 
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
@@ -158,8 +158,8 @@ void CCVideoLayerImpl::drawRGBA(const CCVideoLayerImpl::RGBAProgram* program) co
 
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
-    LayerChromium::drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
-                                    bounds().width(), bounds().height(), drawOpacity(), layerRenderer()->sharedGeometryQuad(),
+    LayerChromium::drawTexturedQuad(context, layerRenderer->projectionMatrix(), drawTransform(),
+                                    bounds().width(), bounds().height(), drawOpacity(), layerRenderer->sharedGeometryQuad(),
                                     program->vertexShader().matrixLocation(),
                                     program->fragmentShader().alphaLocation(),
                                     -1);

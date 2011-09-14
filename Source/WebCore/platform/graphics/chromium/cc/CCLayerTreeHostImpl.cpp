@@ -121,7 +121,7 @@ void CCLayerTreeHostImpl::setVisible(bool visible)
 
 bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> context)
 {
-    RefPtr<LayerRendererChromium> layerRenderer;
+    OwnPtr<LayerRendererChromium> layerRenderer;
     layerRenderer = LayerRendererChromium::create(this, context);
 
     // If creation failed, and we had asked for accelerated painting, disable accelerated painting
@@ -139,7 +139,7 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> 
         m_layerRenderer->close();
     }
 
-    m_layerRenderer = layerRenderer;
+    m_layerRenderer = layerRenderer.release();
     return m_layerRenderer;
 }
 

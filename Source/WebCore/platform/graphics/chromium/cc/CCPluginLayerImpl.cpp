@@ -46,13 +46,12 @@ CCPluginLayerImpl::~CCPluginLayerImpl()
 {
 }
 
-void CCPluginLayerImpl::draw()
+void CCPluginLayerImpl::draw(LayerRendererChromium* layerRenderer)
 {
     ASSERT(CCProxy::isImplThread());
-    ASSERT(layerRenderer());
-    const CCPluginLayerImpl::Program* program = layerRenderer()->pluginLayerProgram();
+    const CCPluginLayerImpl::Program* program = layerRenderer->pluginLayerProgram();
     ASSERT(program && program->initialized());
-    GraphicsContext3D* context = layerRenderer()->context();
+    GraphicsContext3D* context = layerRenderer->context();
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
     GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId));
 
@@ -65,8 +64,8 @@ void CCPluginLayerImpl::draw()
 
     GLC(context, context->useProgram(program->program()));
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
-    LayerChromium::drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
-                                    bounds().width(), bounds().height(), drawOpacity(), layerRenderer()->sharedGeometryQuad(),
+    LayerChromium::drawTexturedQuad(context, layerRenderer->projectionMatrix(), drawTransform(),
+                                    bounds().width(), bounds().height(), drawOpacity(), layerRenderer->sharedGeometryQuad(),
                                     program->vertexShader().matrixLocation(),
                                     program->fragmentShader().alphaLocation(),
                                     -1);

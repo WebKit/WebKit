@@ -47,7 +47,7 @@ public:
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> RGBAProgram;
     typedef ProgramBinding<VertexShaderPosTexYUVStretch, FragmentShaderYUVVideo> YUVProgram;
 
-    virtual void draw();
+    virtual void draw(LayerRendererChromium*);
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
@@ -66,8 +66,8 @@ private:
         IntSize visibleSize;
     };
 
-    void drawYUV(const YUVProgram*) const;
-    void drawRGBA(const RGBAProgram*) const;
+    void drawYUV(LayerRendererChromium*) const;
+    void drawRGBA(LayerRendererChromium*) const;
 
     static const float yuv2RGB[9];
     static const float yuvAdjust[3];

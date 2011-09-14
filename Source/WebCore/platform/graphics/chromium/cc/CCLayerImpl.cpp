@@ -77,7 +77,6 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_drawOpacity(0)
     , m_debugBorderColor(0, 0, 0, 0)
     , m_debugBorderWidth(0)
-    , m_layerRenderer(0)
 {
 }
 
@@ -115,24 +114,6 @@ void CCLayerImpl::clearChildList()
     m_children.clear();
 }
 
-void CCLayerImpl::setLayerRenderer(LayerRendererChromium* renderer)
-{
-    m_layerRenderer = renderer;
-}
-
-void CCLayerImpl::setLayerRendererRecursive(LayerRendererChromium* renderer)
-{
-    for (size_t i = 0; i < children().size(); ++i)
-        children()[i]->setLayerRendererRecursive(renderer);
-
-    if (maskLayer())
-        maskLayer()->setLayerRendererRecursive(renderer);
-    if (replicaLayer())
-        replicaLayer()->setLayerRendererRecursive(renderer);
-
-    setLayerRenderer(renderer);
-}
-
 void CCLayerImpl::createRenderSurface()
 {
     ASSERT(!m_renderSurface);
@@ -148,13 +129,14 @@ bool CCLayerImpl::descendantDrawsContent()
     return false;
 }
 
-void CCLayerImpl::draw()
+void CCLayerImpl::draw(LayerRendererChromium*)
 {
     ASSERT_NOT_REACHED();
 }
 
-void CCLayerImpl::bindContentsTexture()
+void CCLayerImpl::bindContentsTexture(LayerRendererChromium*)
 {
+    ASSERT_NOT_REACHED();
 }
 
 void CCLayerImpl::cleanupResources()
@@ -172,21 +154,20 @@ const IntRect CCLayerImpl::getDrawRect() const
     return mappedRect;
 }
 
-void CCLayerImpl::drawDebugBorder()
+void CCLayerImpl::drawDebugBorder(LayerRendererChromium* layerRenderer)
 {
     static float glMatrix[16];
     if (!debugBorderColor().alpha())
         return;
 
-    ASSERT(layerRenderer());
-    GraphicsContext3D* context = layerRenderer()->context();
-    const LayerChromium::BorderProgram* program = layerRenderer()->borderProgram();
+    GraphicsContext3D* context = layerRenderer->context();
+    const LayerChromium::BorderProgram* program = layerRenderer->borderProgram();
     ASSERT(program && program->initialized());
     GLC(context, context->useProgram(program->program()));
 
     TransformationMatrix renderMatrix = drawTransform();
     renderMatrix.scale3d(bounds().width(), bounds().height(), 1);
-    toGLMatrix(&glMatrix[0], layerRenderer()->projectionMatrix() * renderMatrix);
+    toGLMatrix(&glMatrix[0], layerRenderer->projectionMatrix() * renderMatrix);
     GLC(context, context->uniformMatrix4fv(program->vertexShader().matrixLocation(), false, &glMatrix[0], 1));
 
     GLC(context, context->uniform4f(program->fragmentShader().colorLocation(), debugBorderColor().red() / 255.0, debugBorderColor().green() / 255.0, debugBorderColor().blue() / 255.0, 1));

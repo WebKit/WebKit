@@ -42,7 +42,6 @@
 #include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCHeadsUpDisplay.h"
 #include "cc/CCLayerSorter.h"
-#include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCPluginLayerImpl.h"
 #include "cc/CCVideoLayerImpl.h"
@@ -65,16 +64,16 @@ namespace WebCore {
 
 class CCHeadsUpDisplay;
 class CCLayerImpl;
-class CCLayerTreeHost; // FIXME: remove pointers to this.
 class CCLayerTreeHostImpl;
 class GeometryBinding;
 class GraphicsContext3D;
 class NonCompositedContentHost;
 
 // Class that handles drawing of composited render layers using GL.
-class LayerRendererChromium : public RefCounted<LayerRendererChromium> {
+class LayerRendererChromium {
+    WTF_MAKE_NONCOPYABLE(LayerRendererChromium);
 public:
-    static PassRefPtr<LayerRendererChromium> create(CCLayerTreeHostImpl*, PassRefPtr<GraphicsContext3D>);
+    static PassOwnPtr<LayerRendererChromium> create(CCLayerTreeHostImpl*, PassRefPtr<GraphicsContext3D>);
 
     // Must be called in order to allow the LayerRendererChromium to destruct
     void close();

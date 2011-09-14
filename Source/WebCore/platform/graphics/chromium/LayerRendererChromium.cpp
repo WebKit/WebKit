@@ -129,15 +129,15 @@ bool contextSupportsAcceleratedPainting(GraphicsContext3D* context)
 
 } // anonymous namespace
 
-PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHostImpl* owner, PassRefPtr<GraphicsContext3D> context)
+PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHostImpl* owner, PassRefPtr<GraphicsContext3D> context)
 {
 #if USE(SKIA)
     if (owner->settings().acceleratePainting && !contextSupportsAcceleratedPainting(context.get()))
-        return 0;
+        return nullptr;
 #endif
-    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(owner, context)));
+    OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(owner, context)));
     if (!layerRenderer->initialize())
-        return 0;
+        return nullptr;
 
     return layerRenderer.release();
 }
@@ -234,8 +234,6 @@ void LayerRendererChromium::drawLayers()
 
     if (!rootLayer())
         return;
-    // FIXME: No need to walk the tree here. This could be passed via draw.
-    rootLayer()->setLayerRendererRecursive(this);
 
     m_renderSurfaceTextureManager->setMemoryLimitBytes(TextureManager::highLimitBytes() - m_contentsTextureMemoryUseBytes);
     drawLayersInternal();
@@ -433,7 +431,7 @@ void LayerRendererChromium::copyOffscreenTextureToDisplay()
         drawTransform.translate3d(0.5 * m_defaultRenderSurface->contentRect().width(), 0.5 * m_defaultRenderSurface->contentRect().height(), 0);
         m_defaultRenderSurface->setDrawTransform(drawTransform);
         m_defaultRenderSurface->setDrawOpacity(1);
-        m_defaultRenderSurface->draw(m_defaultRenderSurface->contentRect());
+        m_defaultRenderSurface->draw(this, m_defaultRenderSurface->contentRect());
     }
 }
 
@@ -455,7 +453,7 @@ bool LayerRendererChromium::useRenderSurface(CCRenderSurface* renderSurface)
 
     GLC(m_context.get(), m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_offscreenFramebufferId));
 
-    if (!renderSurface->prepareContentsTexture())
+    if (!renderSurface->prepareContentsTexture(this))
         return false;
 
     renderSurface->contentsTexture()->framebufferTexture2D(m_context.get());
@@ -474,7 +472,7 @@ bool LayerRendererChromium::useRenderSurface(CCRenderSurface* renderSurface)
 void LayerRendererChromium::drawLayer(CCLayerImpl* layer, CCRenderSurface* targetSurface)
 {
     if (layer->renderSurface() && layer->renderSurface() != targetSurface) {
-        layer->renderSurface()->draw(layer->getDrawRect());
+        layer->renderSurface()->draw(this, layer->getDrawRect());
         layer->renderSurface()->releaseContentsTexture();
         return;
     }
@@ -512,10 +510,10 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, CCRenderSurface* targe
             return;
     }
 
-    layer->draw();
+    layer->draw(this);
 
     // Draw the debug border if there is one.
-    layer->drawDebugBorder();
+    layer->drawDebugBorder(this);
 }
 
 // Sets the scissor region to the given rectangle. The coordinate system for the

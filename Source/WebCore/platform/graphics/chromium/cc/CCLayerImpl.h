@@ -70,9 +70,9 @@ public:
     int debugID() const { return m_debugID; }
 #endif
 
-    virtual void draw();
+    virtual void draw(LayerRendererChromium*);
     void unreserveContentsTexture();
-    virtual void bindContentsTexture();
+    virtual void bindContentsTexture(LayerRendererChromium*);
 
     // Returns true if this layer has content to draw.
     void setDrawsContent(bool drawsContent) { m_drawsContent = drawsContent; }
@@ -122,11 +122,7 @@ public:
     void setDebugBorderWidth(float width) { m_debugBorderWidth = width; }
     float debugBorderWidth() const { return m_debugBorderWidth; }
 
-    void drawDebugBorder();
-
-    void setLayerRenderer(LayerRendererChromium*);
-    void setLayerRendererRecursive(LayerRendererChromium*);
-    LayerRendererChromium* layerRenderer() const { return m_layerRenderer.get(); }
+    void drawDebugBorder(LayerRendererChromium*);
 
     CCRenderSurface* renderSurface() const { return m_renderSurface.get(); }
     void createRenderSurface();
@@ -248,9 +244,6 @@ private:
 
     // Hierarchical bounding rect containing the layer and its descendants.
     IntRect m_drawableContentRect;
-
-    // Points to the layer renderer that updates and draws this layer.
-    RefPtr<LayerRendererChromium> m_layerRenderer;
 };
 
 void sortLayers(Vector<RefPtr<CCLayerImpl> >::iterator first, Vector<RefPtr<CCLayerImpl> >::iterator end, CCLayerSorter*);

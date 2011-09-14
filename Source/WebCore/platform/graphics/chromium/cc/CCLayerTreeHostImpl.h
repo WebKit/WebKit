@@ -84,7 +84,7 @@ protected:
     int m_frameNumber;
 
 private:
-    RefPtr<LayerRendererChromium> m_layerRenderer;
+    OwnPtr<LayerRendererChromium> m_layerRenderer;
     RefPtr<CCLayerImpl> m_rootLayerImpl;
     CCSettings m_settings;
     IntSize m_viewportSize;

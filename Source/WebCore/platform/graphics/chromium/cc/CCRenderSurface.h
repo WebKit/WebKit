@@ -50,10 +50,10 @@ public:
     explicit CCRenderSurface(CCLayerImpl*);
     ~CCRenderSurface();
 
-    bool prepareContentsTexture();
+    bool prepareContentsTexture(LayerRendererChromium*);
     void releaseContentsTexture();
     void cleanupResources();
-    void draw(const IntRect& targetSurfaceRect);
+    void draw(LayerRendererChromium*, const IntRect& targetSurfaceRect);
 
     String name() const;
     void dumpSurface(TextStream&, int indent) const;
@@ -98,10 +98,9 @@ public:
 
     int owningLayerId() const;
 private:
-    LayerRendererChromium* layerRenderer();
-    void drawLayer(CCLayerImpl*, const TransformationMatrix&);
+    void drawLayer(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix&);
     template <class T>
-    void drawSurface(CCLayerImpl*, const TransformationMatrix& drawTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad&, const T* program, int shaderMaskSamplerLocation, int shaderQuadLocation, int shaderEdgeLocation);
+    void drawSurface(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix& drawTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad&, const T* program, int shaderMaskSamplerLocation, int shaderQuadLocation, int shaderEdgeLocation);
 
     CCLayerImpl* m_owningLayer;
     CCLayerImpl* m_maskLayer;

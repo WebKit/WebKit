@@ -43,8 +43,8 @@ public:
     }
     virtual ~CCTiledLayerImpl();
 
-    virtual void draw();
-    virtual void bindContentsTexture();
+    virtual void draw(LayerRendererChromium*);
+    virtual void bindContentsTexture(LayerRendererChromium*);
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 

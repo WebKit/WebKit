@@ -1,3 +1,57 @@
+2011-09-14  James Robinson  <jamesr@chromium.org>
+
+        [chromium] LayerRendererChromium shouldn't be RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=68121
+
+        Reviewed by Kenneth Russell.
+
+        LayerRendererChromium is owned exclusively by CCLayerTreeHostImpl, so there's no reason to have it be
+        refcounted. Making it an OwnPtr<> makes the lifecycle for these objects much cleaner and reduces the chance of
+        introducing accidental reference cycles.  This also removes the LayerRendererChromium pointers from CCLayerImpls
+        since it only needed at draw time.
+
+        Covered by compositing/ tests.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::copyOffscreenTextureToDisplay):
+        (WebCore::LayerRendererChromium::useRenderSurface):
+        (WebCore::LayerRendererChromium::drawLayer):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        (WebCore::CCCanvasLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        (WebCore::CCLayerImpl::draw):
+        (WebCore::CCLayerImpl::bindContentsTexture):
+        (WebCore::CCLayerImpl::drawDebugBorder):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::initializeLayerRenderer):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h:
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::cleanupResources):
+        (WebCore::CCRenderSurface::prepareContentsTexture):
+        (WebCore::CCRenderSurface::draw):
+        (WebCore::CCRenderSurface::drawLayer):
+        (WebCore::CCRenderSurface::drawSurface):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::bindContentsTexture):
+        (WebCore::CCTiledLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::draw):
+        (WebCore::CCVideoLayerImpl::drawYUV):
+        (WebCore::CCVideoLayerImpl::drawRGBA):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+
 2011-09-14  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WebCoreViewFactory and its WebViewFactory subclass

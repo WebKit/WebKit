@@ -44,7 +44,6 @@ class CCThread;
 class GraphicsContext3D;
 class LayerChromium;
 class LayerPainterChromium;
-class LayerRendererChromium;
 class GraphicsLayer;
 class NonCompositedContentHost;
 class TextureManager;
@@ -173,8 +172,6 @@ private:
     void clearRenderSurfacesRecursive(LayerChromium*);
 
     bool initialize();
-
-    PassRefPtr<LayerRendererChromium> createLayerRenderer();
 
     bool m_animating;
 
