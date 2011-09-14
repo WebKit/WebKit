@@ -741,7 +741,7 @@ AC_MSG_RESULT([$enable_svg_as_image])
 # check for SVG features, enabling SVG if necessary
 if test "$enable_svg_animation" = "yes" || \
    test "$enable_svg_fonts" = "yes" || \
-   test "$enable_svg_as_image" = "yes" || \
+   test "$enable_svg_as_image" = "yes"; then
    svg_flags=yes
    if test "$enable_svg" = "no"; then
        AC_MSG_WARN([SVG feature(s) requested but SVG is disabled.. Enabling SVG support])
