@@ -481,9 +481,9 @@ WONTFIX SKIP : fast/frames/cross-site-this.html = FAIL
 // throw.  V8 follows the spec.
 WONTFIX SKIP : fast/js/reparsing-semicolon-insertion.html = FAIL
 
-// Rubber-banding is currently a Mac only feature.
-WONTFIX WIN LINUX : platform/chromium/rubberbanding = FAIL
-WONTFIX WIN LINUX : platform/chromium-gpu/compositing/rubberbanding = IMAGE
+// Rubber-banding is currently a CG only feature.
+WONTFIX CPU GPU : platform/chromium/rubberbanding = FAIL
+WONTFIX CPU GPU : platform/chromium-gpu/compositing/rubberbanding = IMAGE
 
 // -----------------------------------------------------------------
 // LIGHTTPD
@@ -1888,17 +1888,17 @@ BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.transformation.setTransform.sk
 BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
 
-BUGCR62301 MAC : canvas/philip/tests/2d.gradient.radial.cone.front.html = TEXT
-BUGCR62301 MAC : canvas/philip/tests/2d.gradient.radial.inside2.html = TEXT
-BUGCR62301 MAC : canvas/philip/tests/2d.gradient.radial.inside3.html = TEXT
-BUGCR62301 MAC : canvas/philip/tests/2d.gradient.radial.outside1.html = TEXT
-BUGCR62301 MAC : canvas/philip/tests/2d.line.cap.closed.html = TEXT
-BUGCR62301 MAC : canvas/philip/tests/2d.line.join.parallel.html = TEXT
-BUGCR62301 MAC : canvas/philip/tests/2d.line.miter.lineedge.html = TEXT
-BUGCR62301 MAC : canvas/philip/tests/2d.path.rect.winding.html = TEXT
-BUGCR62301 MAC : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
-BUGCR62301 MAC : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
-BUGCR62301 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
+BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.gradient.radial.cone.front.html = TEXT
+BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.gradient.radial.inside2.html = TEXT
+BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.gradient.radial.inside3.html = TEXT
+BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.gradient.radial.outside1.html = TEXT
+BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.line.cap.closed.html = TEXT
+BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.line.join.parallel.html = TEXT
+BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.line.miter.lineedge.html = TEXT
+BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.path.rect.winding.html = TEXT
+BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
+BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
+BUGCR62301 MAC CPU-CG : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
 
 // These SVG tests have been flaky on Win from quite some time.
 // Hard to pin down which roll introduced the flakiness.
@@ -2654,18 +2654,19 @@ BUGWK47923 GPU GPU-CG : compositing/geometry/limit-layer-bounds-opacity-transiti
 
 // Chromium does not support PDF content in <img> tags.
 WONTFIX GPU WIN LINUX : compositing/color-matching/pdf-image-match.html = IMAGE+TEXT
-WONTFIX GPU GPU-CG MAC : compositing/color-matching/pdf-image-match.html = IMAGE
-WONTFIX GPU GPU-CG : compositing/images/direct-pdf-image.html = IMAGE
+WONTFIX MAC GPU-CG : compositing/color-matching/pdf-image-match.html = IMAGE
+WONTFIX WIN LINUX GPU : compositing/images/direct-pdf-image.html = IMAGE
+WONTFIX MAC GPU-CG : compositing/images/direct-pdf-image.html = IMAGE
 
 // Chromium does not support PDF or plugin content in layers right now.
 BUGWK47925 LINUX WIN GPU : compositing/plugins/composited-plugin.html = IMAGE+TEXT
-BUGWK47925 MAC GPU GPU-CG : compositing/plugins/composited-plugin.html = IMAGE+TEXT
-BUGWK47925 MAC GPU GPU-CG : compositing/plugins/small-to-large-composited-plugin.html = TEXT
+BUGWK47925 MAC GPU-CG : compositing/plugins/composited-plugin.html = IMAGE+TEXT
+BUGWK47925 MAC GPU-CG : compositing/plugins/small-to-large-composited-plugin.html = TEXT
 
 BUGWK47949 LINUX WIN GPU : compositing/reflections/nested-reflection-anchor-point.html = IMAGE+TEXT
-BUGWK47949 MAC GPU GPU-CG : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
+BUGWK47949 MAC GPU-CG : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 BUGWK47949 LINUX WIN GPU : compositing/reflections/reflection-opacity.html = IMAGE+TEXT
-BUGWK47949 MAC GPU GPU-CG : compositing/reflections/reflection-opacity.html = IMAGE
+BUGWK47949 MAC GPU-CG : compositing/reflections/reflection-opacity.html = IMAGE
 
 // Flaky because these are a poorly written tests. Need dino's new animation API
 BUGWK54306 GPU GPU-CG : compositing/reflections/animation-inside-reflection.html = PASS IMAGE IMAGE+TEXT
@@ -2682,13 +2683,13 @@ BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
 BUGCR74979 SKIP MAC GPU GPU-CG : media/video-canvas-alpha.html = IMAGE
 
-BUGWK67116 GPU GPU-CG DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
+BUGWK67116 GPU DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
 
 // Skip test test since this test uses layoutTestController.display()
 // that needs to be implemented for GPU
 BUGCR94918 GPU SKIP : media/media-document-audio-repaint.html = IMAGE+TEXT IMAGE
 
-BUGWK55968 MAC GPU GPU-CG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT
+BUGWK55968 MAC GPU-CG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT
 BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
 // Flaky scrollbar issues
@@ -3577,7 +3578,8 @@ BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-override-size.html =
 BUGWK63186 WIN : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
 BUGWK63186 LINUX : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE
 BUGWK63186 LEOPARD : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE
-BUGWK63186 SNOWLEOPARD : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE
+BUGWK63186 SNOWLEOPARD CPU-CG : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE
+BUGWK63186 SNOWLEOPARD CPU : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE+TEXT
 BUGWK63186 LINUX WIN : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE+TEXT IMAGE
 BUGWK63186 LEOPARD : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE
 BUGWK63186 SNOWLEOPARD : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = PASS IMAGE+TEXT
@@ -3598,8 +3600,8 @@ BUGWK65951 LINUX MAC DEBUG : webaudio/test-basic.html = CRASH PASS
 BUGWK63796 MAC WIN : css3/font-feature-settings-rendering.html = MISSING FAIL
 
 // New test in r93068
-BUGWK66268 WIN MAC : editing/deleting/regional-indicators.html = TEXT
-BUGWK66268 LINUX : editing/deleting/regional-indicators.html = TEXT
+BUGWK66268 MAC CPU-CG : editing/deleting/regional-indicators.html = TEXT
+BUGWK66268 WIN LINUX : editing/deleting/regional-indicators.html = TEXT
 
 BUGWK66310 DEBUG : media/video-source-error.html = PASS TEXT
 BUGWK66310 : media/media-blocked-by-beforeload.html = PASS TEXT
@@ -3670,7 +3672,7 @@ BUGWK67204 : fast/multicol/inherit-column-values.html = MISSING FAIL
 BUGWK67204 : fast/multicol/initial-column-values.html = MISSING FAIL
 
 // Failing after r93982.
-BUG_LEVIN MAC : canvas/philip/tests/2d.path.stroke.prune.arc.html = TEXT
+BUG_LEVIN MAC CPU-CG : canvas/philip/tests/2d.path.stroke.prune.arc.html = TEXT
 
 // Failing after r94084. This looks like it may be a real regression.
 BUG_LEVIN : css2.1/t090204-display-change-01-b-ao.html = IMAGE+TEXT
@@ -3723,8 +3725,9 @@ BUGWK67913 LEOPARD GPU GPU-CG : media/video-zoom-controls.html = IMAGE+TEXT
 
 // Failing after r94946
 BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
-BUGWK67980 MAC : fast/events/constructors/progress-event-constructor.html = TEXT
+BUGWK67980 MAC CPU-CG : fast/events/constructors/progress-event-constructor.html = TEXT
 
 // Failing after r95023
 BUGWK67999 WIN RELEASE : fast/borders/border-image-omit-right-slice.html = IMAGE+TEXT
-BUGWK67999 LINUX MAC RELEASE : fast/borders/border-image-omit-right-slice.html = TEXT
+BUGWK67999 LINUX RELEASE : fast/borders/border-image-omit-right-slice.html = TEXT
+BUGWK67999 MAC CPU-CG RELEASE : fast/borders/border-image-omit-right-slice.html = TEXT

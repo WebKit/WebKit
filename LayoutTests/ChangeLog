@@ -1,4 +1,12 @@
 2011-09-15  Cary Clark  <caryclark@google.com>
+        Unreviewed; new expectations (Skia on Mac)
+        
+        This separates test failures that are specific to CG Mac from failures
+        for Skia on Mac.
+
+        * LayoutTests/platform/chromium/test_expectations.txt:
+
+2011-09-15  Cary Clark  <caryclark@google.com>
 
         Unreviewed; new baselines (Skia on Mac)
         Updated reference images.
