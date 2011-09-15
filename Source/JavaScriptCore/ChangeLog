@@ -1,3 +1,19 @@
+2011-09-15  Gavin Barraclough  <barraclough@apple.com>
+
+        devirtualize preventExtensions
+        https://bugs.webkit.org/show_bug.cgi?id=68176
+
+        Reviewed by Oliver Hunt.
+
+        This is virtual due to problems in JSFunction putting the prototype
+        property, but we can fix this problem a different way, just setting
+        the checkReadOnly flag to false in the put.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSFunction.h:
+        * runtime/JSObject.h:
+
 2011-09-15  Geoffrey Garen  <ggaren@apple.com>
 
         Value chaining for JSValue32_64 bitops.

@@ -211,7 +211,7 @@ namespace JSC {
 
         void seal(JSGlobalData&);
         void freeze(JSGlobalData&);
-        virtual void preventExtensions(JSGlobalData&);
+        void preventExtensions(JSGlobalData&);
         bool isSealed(JSGlobalData& globalData) { return m_structure->isSealed(globalData); }
         bool isFrozen(JSGlobalData& globalData) { return m_structure->isFrozen(globalData); }
         bool isExtensible() { return m_structure->isExtensible(); }
