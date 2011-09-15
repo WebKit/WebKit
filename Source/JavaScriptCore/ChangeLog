@@ -1,3 +1,29 @@
+2011-09-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Value chaining for JSValue32_64 bitops.
+
+        Reviewed by Sam Weinig.
+        
+        SunSpider says 2.3% faster, v8 ~1% faster (mostly due to crypto).
+
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitStoreAndMapInt32): New int32 helper function for stores
+        that can chain their results, which is the common case.
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emitRightShift):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emit_op_bitnot):
+        (JSC::JIT::emit_op_pre_inc):
+        (JSC::JIT::emit_op_pre_dec): Deployed new function.
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emit_op_post_dec): Had to reorder these functions so they
+        computed their result values last, to make them elligible for chaining.
+
 2011-09-15  Adam Roben  <aroben@apple.com>
 
         Clang build fix after r95172

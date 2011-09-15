@@ -333,6 +333,7 @@ namespace JSC {
         void emitStore(unsigned index, const JSValue constant, RegisterID base = callFrameRegister);
         void emitStoreInt32(unsigned index, RegisterID payload, bool indexIsInt32 = false);
         void emitStoreInt32(unsigned index, TrustedImm32 payload, bool indexIsInt32 = false);
+        void emitStoreAndMapInt32(unsigned index, RegisterID tag, RegisterID payload, bool indexIsInt32, size_t opcodeLength);
         void emitStoreCell(unsigned index, RegisterID payload, bool indexIsCell = false);
         void emitStoreBool(unsigned index, RegisterID payload, bool indexIsBool = false);
         void emitStoreDouble(unsigned index, FPRegisterID value);

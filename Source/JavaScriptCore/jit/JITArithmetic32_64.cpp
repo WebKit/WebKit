@@ -175,7 +175,7 @@ void JIT::emit_op_lshift(Instruction* currentInstruction)
         emitLoad(op1, regT1, regT0);
         addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
         lshift32(Imm32(getConstantOperand(op2).asInt32()), regT0);
-        emitStoreInt32(dst, regT0, dst == op1);
+        emitStoreAndMapInt32(dst, regT1, regT0, dst == op1, OPCODE_LENGTH(op_lshift));
         return;
     }
 
@@ -184,7 +184,7 @@ void JIT::emit_op_lshift(Instruction* currentInstruction)
         addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
     lshift32(regT2, regT0);
-    emitStoreInt32(dst, regT0, dst == op1 || dst == op2);
+    emitStoreAndMapInt32(dst, regT1, regT0, dst == op1 || dst == op2, OPCODE_LENGTH(op_lshift));
 }
 
 void JIT::emitSlow_op_lshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -228,7 +228,7 @@ void JIT::emitRightShift(Instruction* currentInstruction, bool isUnsigned)
         } else if (shift) { // signed right shift by zero is simply toInt conversion
             rshift32(Imm32(shift & 0x1f), regT0);
         }
-        emitStoreInt32(dst, regT0, dst == op1);
+        emitStoreAndMapInt32(dst, regT1, regT0, dst == op1, OPCODE_LENGTH(op_rshift));
         return;
     }
 
@@ -241,7 +241,7 @@ void JIT::emitRightShift(Instruction* currentInstruction, bool isUnsigned)
         addSlowCase(branch32(LessThan, regT0, TrustedImm32(0)));
     } else
         rshift32(regT2, regT0);
-    emitStoreInt32(dst, regT0, dst == op1 || dst == op2);
+    emitStoreAndMapInt32(dst, regT1, regT0, dst == op1, OPCODE_LENGTH(op_rshift));
 }
 
 void JIT::emitRightShiftSlowCase(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter, bool isUnsigned)
@@ -342,7 +342,7 @@ void JIT::emit_op_bitand(Instruction* currentInstruction)
         emitLoad(op, regT1, regT0);
         addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
         and32(Imm32(constant), regT0);
-        emitStoreInt32(dst, regT0, (op == dst));
+        emitStoreAndMapInt32(dst, regT1, regT0, dst == op, OPCODE_LENGTH(op_bitand));
         return;
     }
 
@@ -350,7 +350,7 @@ void JIT::emit_op_bitand(Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
     and32(regT2, regT0);
-    emitStoreInt32(dst, regT0, (op1 == dst || op2 == dst));
+    emitStoreAndMapInt32(dst, regT1, regT0, (op1 == dst || op2 == dst), OPCODE_LENGTH(op_bitand));
 }
 
 void JIT::emitSlow_op_bitand(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -383,7 +383,7 @@ void JIT::emit_op_bitor(Instruction* currentInstruction)
         emitLoad(op, regT1, regT0);
         addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
         or32(Imm32(constant), regT0);
-        emitStoreInt32(dst, regT0, (op == dst));
+        emitStoreAndMapInt32(dst, regT1, regT0, op == dst, OPCODE_LENGTH(op_bitor));
         return;
     }
 
@@ -391,7 +391,7 @@ void JIT::emit_op_bitor(Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
     or32(regT2, regT0);
-    emitStoreInt32(dst, regT0, (op1 == dst || op2 == dst));
+    emitStoreAndMapInt32(dst, regT1, regT0, (op1 == dst || op2 == dst), OPCODE_LENGTH(op_bitor));
 }
 
 void JIT::emitSlow_op_bitor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -424,7 +424,7 @@ void JIT::emit_op_bitxor(Instruction* currentInstruction)
         emitLoad(op, regT1, regT0);
         addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
         xor32(Imm32(constant), regT0);
-        emitStoreInt32(dst, regT0, (op == dst));
+        emitStoreAndMapInt32(dst, regT1, regT0, op == dst, OPCODE_LENGTH(op_bitxor));
         return;
     }
 
@@ -432,7 +432,7 @@ void JIT::emit_op_bitxor(Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
     xor32(regT2, regT0);
-    emitStoreInt32(dst, regT0, (op1 == dst || op2 == dst));
+    emitStoreAndMapInt32(dst, regT1, regT0, (op1 == dst || op2 == dst), OPCODE_LENGTH(op_bitxor));
 }
 
 void JIT::emitSlow_op_bitxor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -462,7 +462,7 @@ void JIT::emit_op_bitnot(Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
 
     not32(regT0);
-    emitStoreInt32(dst, regT0, (dst == src));
+    emitStoreAndMapInt32(dst, regT1, regT0, dst == src, OPCODE_LENGTH(op_bitnot));
 }
 
 void JIT::emitSlow_op_bitnot(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -489,10 +489,11 @@ void JIT::emit_op_post_inc(Instruction* currentInstruction)
     if (dst == srcDst) // x = x++ is a noop for ints.
         return;
 
-    emitStoreInt32(dst, regT0);
+    move(regT0, regT2);
+    addSlowCase(branchAdd32(Overflow, TrustedImm32(1), regT2));
+    emitStoreInt32(srcDst, regT2, true);
 
-    addSlowCase(branchAdd32(Overflow, TrustedImm32(1), regT0));
-    emitStoreInt32(srcDst, regT0, true);
+    emitStoreAndMapInt32(dst, regT1, regT0, false, OPCODE_LENGTH(op_post_inc));
 }
 
 void JIT::emitSlow_op_post_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -523,10 +524,11 @@ void JIT::emit_op_post_dec(Instruction* currentInstruction)
     if (dst == srcDst) // x = x-- is a noop for ints.
         return;
 
-    emitStoreInt32(dst, regT0);
+    move(regT0, regT2);
+    addSlowCase(branchSub32(Overflow, TrustedImm32(1), regT2));
+    emitStoreInt32(srcDst, regT2, true);
 
-    addSlowCase(branchSub32(Overflow, TrustedImm32(1), regT0));
-    emitStoreInt32(srcDst, regT0, true);
+    emitStoreAndMapInt32(dst, regT1, regT0, false, OPCODE_LENGTH(op_post_dec));
 }
 
 void JIT::emitSlow_op_post_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -554,7 +556,7 @@ void JIT::emit_op_pre_inc(Instruction* currentInstruction)
 
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
     addSlowCase(branchAdd32(Overflow, TrustedImm32(1), regT0));
-    emitStoreInt32(srcDst, regT0, true);
+    emitStoreAndMapInt32(srcDst, regT1, regT0, true, OPCODE_LENGTH(op_pre_inc));
 }
 
 void JIT::emitSlow_op_pre_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -579,7 +581,7 @@ void JIT::emit_op_pre_dec(Instruction* currentInstruction)
 
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
     addSlowCase(branchSub32(Overflow, TrustedImm32(1), regT0));
-    emitStoreInt32(srcDst, regT0, true);
+    emitStoreAndMapInt32(srcDst, regT1, regT0, true, OPCODE_LENGTH(op_pre_dec));
 }
 
 void JIT::emitSlow_op_pre_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
