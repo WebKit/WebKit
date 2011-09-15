@@ -1,5 +1,26 @@
 2011-09-14  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG does not speculate aggressively enough on comparisons
+        https://bugs.webkit.org/show_bug.cgi?id=68138
+
+        Reviewed by Oliver Hunt.
+        
+        This is a 75% speed-up on Kraken/ai-astar.  It's a 1% win on
+        V8 and an 8.5% win on Kraken.  Neutral on SunSpider.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleDoubleBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compare):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateFinalObject):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateArray):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateObject):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateCell):
+
+2011-09-14  Filip Pizlo  <fpizlo@apple.com>
+
         DFG JIT does not leverage integer speculations on branches
         https://bugs.webkit.org/show_bug.cgi?id=68140
 

@@ -427,6 +427,58 @@ private:
         return false;
     }
     
+    bool shouldSpeculateFinalObject(NodeIndex nodeIndex)
+    {
+        PredictedType prediction;
+        if (isJSConstant(nodeIndex))
+            prediction = predictionFromValue(valueOfJSConstant(nodeIndex));
+        else
+            prediction = m_jit.graph().getPrediction(m_jit.graph()[nodeIndex]);
+        return isFinalObjectPrediction(prediction);
+    }
+    
+    bool shouldSpeculateArray(NodeIndex nodeIndex)
+    {
+        PredictedType prediction;
+        if (isJSConstant(nodeIndex))
+            prediction = predictionFromValue(valueOfJSConstant(nodeIndex));
+        else
+            prediction = m_jit.graph().getPrediction(m_jit.graph()[nodeIndex]);
+        return isArrayPrediction(prediction);
+    }
+    
+    bool shouldSpeculateObject(NodeIndex nodeIndex)
+    {
+        Node& node = m_jit.graph()[nodeIndex];
+        if (node.op == ConvertThis)
+            return true;
+        PredictedType prediction;
+        if (isJSConstant(nodeIndex))
+            prediction = predictionFromValue(valueOfJSConstant(nodeIndex));
+        else
+            prediction = m_jit.graph().getPrediction(m_jit.graph()[nodeIndex]);
+        return isObjectPrediction(prediction);
+    }
+    
+    bool shouldSpeculateCell(NodeIndex nodeIndex)
+    {
+        if (isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isCell())
+            return true;
+        
+        Node& node = m_jit.graph()[nodeIndex];
+
+        if (isCellPrediction(m_jit.graph().getPrediction(node)))
+            return true;
+
+        VirtualRegister virtualRegister = node.virtualRegister();
+        GenerationInfo& info = m_generationInfo[virtualRegister];
+        
+        if (info.isJSCell())
+            return true;
+        
+        return false;
+    }
+    
     bool shouldSpeculateInteger(NodeIndex op1, NodeIndex op2)
     {
         return !(shouldNotSpeculateInteger(op1) || shouldNotSpeculateInteger(op2)) && (shouldSpeculateInteger(op1) || shouldSpeculateInteger(op2));
@@ -436,10 +488,24 @@ private:
     {
         return shouldSpeculateNumber(op1) && shouldSpeculateNumber(op2);
     }
+    
+    bool shouldSpeculateFinalObject(NodeIndex op1, NodeIndex op2)
+    {
+        return shouldSpeculateFinalObject(op1) && shouldSpeculateObject(op2)
+            || shouldSpeculateObject(op1) && shouldSpeculateFinalObject(op2);
+    }
 
+    bool shouldSpeculateArray(NodeIndex op1, NodeIndex op2)
+    {
+        return shouldSpeculateArray(op1) && shouldSpeculateObject(op2)
+            || shouldSpeculateObject(op1) && shouldSpeculateArray(op2);
+    }
+    
     bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);
     void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
-    void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition, Z_DFGOperation_EJJ);
+    void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition);
+    void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, void* vptr);
+    void compileObjectEquality(Node&, void* vptr);
     
     JITCompiler::Jump convertToDouble(GPRReg value, FPRReg result, GPRReg tmp);
 

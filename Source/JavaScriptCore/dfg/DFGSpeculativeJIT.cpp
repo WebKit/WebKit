@@ -33,6 +33,9 @@ namespace JSC { namespace DFG {
 template<bool strict>
 GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat& returnFormat)
 {
+#if ENABLE(DFG_DEBUG_VERBOSE)
+    fprintf(stderr, "SpecInt@%d   ", nodeIndex);
+#endif
     Node& node = m_jit.graph()[nodeIndex];
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -254,6 +257,9 @@ GPRReg SpeculativeJIT::fillSpeculateIntStrict(NodeIndex nodeIndex)
 
 FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
 {
+#if ENABLE(DFG_DEBUG_VERBOSE)
+    fprintf(stderr, "SpecDouble@%d   ", nodeIndex);
+#endif
     Node& node = m_jit.graph()[nodeIndex];
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -374,6 +380,9 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
 
 GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
 {
+#if ENABLE(DFG_DEBUG_VERBOSE)
+    fprintf(stderr, "SpecCell@%d   ", nodeIndex);
+#endif
     Node& node = m_jit.graph()[nodeIndex];
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -436,6 +445,9 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
 
 GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
 {
+#if ENABLE(DFG_DEBUG_VERBOSE)
+    fprintf(stderr, "SpecBool@%d   ", nodeIndex);
+#endif
     Node& node = m_jit.graph()[nodeIndex];
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -555,82 +567,71 @@ JITCompiler::Jump SpeculativeJIT::convertToDouble(GPRReg value, FPRReg result, G
     return notNumber;
 }
 
-void SpeculativeJIT::compilePeepHoleDoubleBranch(Node& node, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition condition, Z_DFGOperation_EJJ operation)
+void SpeculativeJIT::compilePeepHoleDoubleBranch(Node& node, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition condition)
 {
     Node& branchNode = m_jit.graph()[branchNodeIndex];
     BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
     BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
     
-    bool op1Numeric = isKnownNumeric(node.child1());
-    bool op2Numeric = isKnownNumeric(node.child2());
+    SpeculateDoubleOperand op1(this, node.child1());
+    SpeculateDoubleOperand op2(this, node.child2());
     
-    if (op1Numeric && op2Numeric) {
-        SpeculateDoubleOperand op1(this, node.child1());
-        SpeculateDoubleOperand op2(this, node.child2());
-        
-        addBranch(m_jit.branchDouble(condition, op1.fpr(), op2.fpr()), taken);
-    } else if (op1Numeric) {
-        SpeculateDoubleOperand op1(this, node.child1());
-        JSValueOperand op2(this, node.child2());
-        
-        FPRTemporary fprTmp(this);
-        GPRTemporary gprTmp(this);
-        
-        FPRReg op1FPR = op1.fpr();
-        GPRReg op2GPR = op2.gpr();
-        FPRReg op2FPR = fprTmp.fpr();
-        GPRReg gpr = gprTmp.gpr();
-        
-        JITCompiler::Jump slowPath = convertToDouble(op2GPR, op2FPR, gpr);
-        
-        addBranch(m_jit.branchDouble(condition, op1FPR, op2FPR), taken);
-        addBranch(m_jit.jump(), notTaken);
-        
-        slowPath.link(&m_jit);
-        
-        boxDouble(op1FPR, gpr);
-        
-        silentSpillAllRegisters(gpr);
-        setupStubArguments(gpr, op2GPR);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operation);
-        m_jit.move(GPRInfo::returnValueGPR, gpr);
-        silentFillAllRegisters(gpr);
-        
-        addBranch(m_jit.branchTest8(JITCompiler::NonZero, gpr), taken);
-    } else {
-        JSValueOperand op1(this, node.child1());
-        SpeculateDoubleOperand op2(this, node.child2());
-        
-        FPRTemporary fprTmp(this);
-        GPRTemporary gprTmp(this);
-        
-        FPRReg op2FPR = op2.fpr();
-        GPRReg op1GPR = op1.gpr();
-        FPRReg op1FPR = fprTmp.fpr();
-        GPRReg gpr = gprTmp.gpr();
-        
-        JITCompiler::Jump slowPath = convertToDouble(op1GPR, op1FPR, gpr);
-        
-        addBranch(m_jit.branchDouble(condition, op1FPR, op2FPR), taken);
-        addBranch(m_jit.jump(), notTaken);
-        
-        slowPath.link(&m_jit);
-        
-        boxDouble(op2FPR, gpr);
-        
-        silentSpillAllRegisters(gpr);
-        setupStubArguments(op1GPR, gpr);
-        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operation);
-        m_jit.move(GPRInfo::returnValueGPR, gpr);
-        silentFillAllRegisters(gpr);
-        
-        addBranch(m_jit.branchTest8(JITCompiler::NonZero, gpr), taken);
-    }
+    addBranch(m_jit.branchDouble(condition, op1.fpr(), op2.fpr()), taken);
     
     if (notTaken != (m_block + 1))
         addBranch(m_jit.jump(), notTaken);
+}
+
+void SpeculativeJIT::compilePeepHoleObjectEquality(Node& node, NodeIndex branchNodeIndex, void* vptr)
+{
+    Node& branchNode = m_jit.graph()[branchNodeIndex];
+    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
+    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
+
+    MacroAssembler::RelationalCondition condition = MacroAssembler::Equal;
+    
+    if (taken == (m_block + 1)) {
+        condition = MacroAssembler::NotEqual;
+        BlockIndex tmp = taken;
+        taken = notTaken;
+        notTaken = tmp;
+    }
+
+    SpeculateCellOperand op1(this, node.child1());
+    SpeculateCellOperand op2(this, node.child2());
+    
+    GPRReg op1GPR = op1.gpr();
+    GPRReg op2GPR = op2.gpr();
+    
+    speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op1GPR), MacroAssembler::TrustedImmPtr(vptr)));
+    speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op2GPR), MacroAssembler::TrustedImmPtr(vptr)));
+    
+    addBranch(m_jit.branchPtr(condition, op1GPR, op2GPR), taken);
+    if (notTaken != (m_block + 1))
+        addBranch(m_jit.jump(), notTaken);
+}
+
+void SpeculativeJIT::compileObjectEquality(Node& node, void* vptr)
+{
+    SpeculateCellOperand op1(this, node.child1());
+    SpeculateCellOperand op2(this, node.child2());
+    GPRTemporary result(this, op1);
+    
+    GPRReg op1GPR = op1.gpr();
+    GPRReg op2GPR = op2.gpr();
+    GPRReg resultGPR = result.gpr();
+    
+    speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op1GPR), MacroAssembler::TrustedImmPtr(vptr)));
+    speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op2GPR), MacroAssembler::TrustedImmPtr(vptr)));
+    
+    MacroAssembler::Jump falseCase = m_jit.branchPtr(MacroAssembler::NotEqual, op1GPR, op2GPR);
+    m_jit.move(Imm32(ValueTrue), resultGPR);
+    MacroAssembler::Jump done = m_jit.jump();
+    falseCase.link(&m_jit);
+    m_jit.move(Imm32(ValueFalse), resultGPR);
+    done.link(&m_jit);
+
+    jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean);
 }
 
 // Returns true if the compare is fused with a subsequent branch.
@@ -647,8 +648,16 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
             compilePeepHoleIntegerBranch(node, branchNodeIndex, condition);
             use(node.child1());
             use(node.child2());
-        } else if (isKnownNumeric(node.child1()) || isKnownNumeric(node.child2())) {
-            compilePeepHoleDoubleBranch(node, branchNodeIndex, doubleCondition, operation);
+        } else if (shouldSpeculateNumber(node.child1(), node.child2())) {
+            compilePeepHoleDoubleBranch(node, branchNodeIndex, doubleCondition);
+            use(node.child1());
+            use(node.child2());
+        } else if (node.op == CompareEq && shouldSpeculateFinalObject(node.child1(), node.child2())) {
+            compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsFinalObjectVPtr);
+            use(node.child1());
+            use(node.child2());
+        } else if (node.op == CompareEq && shouldSpeculateArray(node.child1(), node.child2())) {
+            compilePeepHoleObjectEquality(node, branchNodeIndex, m_jit.globalData()->jsArrayVPtr);
             use(node.child1());
             use(node.child2());
         } else
@@ -657,10 +666,26 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
         m_compileIndex = branchNodeIndex;
         return true;
     }
-
-    if (isKnownNotInteger(node.child1()) || isKnownNotInteger(node.child2()))
+    
+    if (shouldSpeculateFinalObject(node.child1(), node.child2()))
+        compileObjectEquality(node, m_jit.globalData()->jsFinalObjectVPtr);
+    else if (shouldSpeculateArray(node.child1(), node.child2()))
+        compileObjectEquality(node, m_jit.globalData()->jsArrayVPtr);
+    else if (!shouldSpeculateNumber(node.child1()) && !shouldSpeculateNumber(node.child2()))
         nonSpeculativeNonPeepholeCompare(node, condition, operation);
-    else {
+    else if ((shouldSpeculateNumber(node.child1()) || shouldSpeculateNumber(node.child2())) && !shouldSpeculateInteger(node.child1(), node.child2())) {
+        // Normal case, not fused to branch.
+        SpeculateDoubleOperand op1(this, node.child1());
+        SpeculateDoubleOperand op2(this, node.child2());
+        GPRTemporary result(this);
+        
+        m_jit.move(TrustedImm32(ValueTrue), result.gpr());
+        MacroAssembler::Jump trueCase = m_jit.branchDouble(doubleCondition, op1.fpr(), op2.fpr());
+        m_jit.xorPtr(Imm32(true), result.gpr());
+        trueCase.link(&m_jit);
+
+        jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
+    } else {
         // Normal case, not fused to branch.
         SpeculateIntegerOperand op1(this, node.child1());
         SpeculateIntegerOperand op2(this, node.child2());
