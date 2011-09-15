@@ -1,0 +1,12 @@
+<script>
+    // We need to dump the image to get the crash but we don't care about the layout information.
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText(true);
+</script>
+<style>
+*{
+    -webkit-mask-image:none,none,url(x);
+}
+</style>
+<p style="position:absolute; top: -1000px">https://bugs.webkit.org/show_bug.cgi?id=50151 : Crash in RenderBox::paintMaskImages due to a mask without an associated image<br>
+The test passes if it does not CRASH (normally the output is a white page)</p>

@@ -1,3 +1,21 @@
+2011-09-15  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in RenderBox::paintMaskImages due to a mask without an associated image
+        https://bugs.webkit.org/show_bug.cgi?id=50151
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/css/empty-webkit-mask-crash.html
+
+        The crash stems from the fact that FillLayer::hasImage would walk over the linked list
+        of FillLayers and return true if one had an image. This means that hasImage() is true
+        does not mean that image() is non-NULL on all FillLayers.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintMaskImages): Simplify the logic by doing the hasImage() check up-front
+        and properly check image() for each FillLayers. This has the nice benefit of changing the complexity
+        from O(n^2) to O(n), which was what the code expected anyway.
+
 2011-09-15  Eric Seidel  <eric@webkit.org>
 
         Remove ENABLE(SVG_AS_IMAGE) since all major ports have it on by default
