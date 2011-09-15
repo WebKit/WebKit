@@ -1,5 +1,14 @@
 2011-09-15  Eric Seidel  <eric@webkit.org>
 
+        Remove ENABLE(SVG_AS_IMAGE) since all major ports have it on by default
+        https://bugs.webkit.org/show_bug.cgi?id=68182
+
+        Reviewed by Adam Barth.
+
+        * configure.ac:
+
+2011-09-15  Eric Seidel  <eric@webkit.org>
+
         Remove ENABLE_SVG_ANIMATION as all major ports have it on by default
         https://bugs.webkit.org/show_bug.cgi?id=68022
 

@@ -78,7 +78,6 @@
       'ENABLE_SKIA_GPU=<(use_skia_gpu)',
       'ENABLE_SMOOTH_SCROLLING=1',
       'ENABLE_SVG=<(enable_svg)',
-      'ENABLE_SVG_AS_IMAGE=<(enable_svg)',
       'ENABLE_SVG_FONTS=<(enable_svg)',
       'ENABLE_TOUCH_EVENTS=<(enable_touch_events)',
       'ENABLE_TOUCH_ICON_LOADING=<(enable_touch_icon_loading)',

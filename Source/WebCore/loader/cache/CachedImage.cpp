@@ -44,7 +44,7 @@
 #include "PDFDocumentImage.h"
 #endif
 
-#if ENABLE(SVG_AS_IMAGE)
+#if ENABLE(SVG)
 #include "SVGImage.h"
 #endif
 
@@ -260,7 +260,7 @@ inline void CachedImage::createImage()
         return;
     }
 #endif
-#if ENABLE(SVG_AS_IMAGE)
+#if ENABLE(SVG)
     if (m_response.mimeType() == "image/svg+xml") {
         m_image = SVGImage::create(this);
         return;

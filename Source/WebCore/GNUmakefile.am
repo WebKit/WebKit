@@ -505,12 +505,6 @@ SVG_FEATURES += ENABLE_SVG_FONTS=1
 webcore_cppflags += -DENABLE_SVG_FONTS=1
 endif
 
-if ENABLE_SVG_AS_IMAGE
-FEATURE_DEFINES += ENABLE_SVG_AS_IMAGE=1
-SVG_FEATURES += ENABLE_SVG_AS_IMAGE=1
-webcore_cppflags += -DENABLE_SVG_AS_IMAGE=1
-endif
-
 endif # END ENABLE_SVG
 
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)

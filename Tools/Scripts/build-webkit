@@ -109,7 +109,6 @@ my (
     $registerProtocolHandlerSupport,
     $sharedWorkersSupport,
     $svgSupport,
-    $svgAsImageSupport,
     $svgDOMObjCBindingsSupport,
     $svgFontsSupport,
     $systemMallocSupport,
@@ -267,9 +266,6 @@ my @features = (
     { option => "svg", desc => "Toggle SVG support",
       define => "ENABLE_SVG", default => 1, value => \$svgSupport },
 
-    { option => "svg-as-image", desc => "Toggle SVG as Image support (implies SVG support)",
-      define => "ENABLE_SVG_AS_IMAGE", default => 1, value => \$svgAsImageSupport },
-
     { option => "svg-dom-objc-bindings", desc => "Toggle SVG DOM Objective-C bindings support (implies SVG support)",
       define => "ENABLE_SVG_DOM_OBJC_BINDINGS", default => isAppleMacWebKit(), value => \$svgDOMObjCBindingsSupport },
 
@@ -345,8 +341,7 @@ foreach (@features) {
     ${$_->{value}} = ($_->{default} && !$minimal) || 0;
 }
 
-$svgSupport = $svgSupport || $svgAsImageSupport
-    || $svgDOMObjCBindingsSupport || $svgFontsSupport;
+$svgSupport = $svgSupport || $svgDOMObjCBindingsSupport || $svgFontsSupport;
 
 $blobSupport = $blobSupport || $mediaStreamSupport;
 
