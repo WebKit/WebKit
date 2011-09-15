@@ -1,4 +1,4 @@
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2011 Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
 # Copyright (c) 2010 Research In Motion Limited. All rights reserved.
 #
@@ -47,6 +47,75 @@ import webkitpy.common.config.urls as config_urls
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, BeautifulStoneSoup, SoupStrainer
+
+
+class EditUsersParser(object):
+    def __init__(self):
+        self._group_name_to_group_string_cache = {}
+
+    def _login_and_uid_from_row(self, row):
+        first_cell = row.find("td")
+        # The first row is just headers, we skip it.
+        if not first_cell:
+            return None
+        # When there were no results, we have a fake "<none>" entry in the table.
+        if first_cell.find(text="<none>"):
+            return None
+        # Otherwise the <td> contains a single <a> which contains the login name or a single <i> with the string "<none>".
+        anchor_tag = first_cell.find("a")
+        login = unicode(anchor_tag.string).strip()
+        user_id = int(re.search(r"userid=(\d+)", str(anchor_tag['href'])).group(1))
+        return (login, user_id)
+
+    def login_userid_pairs_from_edit_user_results(self, results_page):
+        soup = BeautifulSoup(results_page, convertEntities=BeautifulStoneSoup.HTML_ENTITIES)
+        results_table = soup.find(id="admin_table")
+        login_userid_pairs = [self._login_and_uid_from_row(row) for row in results_table('tr')]
+        # Filter out None from the logins.
+        return filter(lambda pair: bool(pair), login_userid_pairs)
+
+    def _group_name_and_string_from_row(self, row):
+        label_element = row.find('label')
+        group_string = unicode(label_element['for'])
+        group_name = unicode(label_element.find('strong').string).rstrip(':')
+        return (group_name, group_string)
+
+    def user_dict_from_edit_user_page(self, page):
+        soup = BeautifulSoup(page, convertEntities=BeautifulStoneSoup.HTML_ENTITIES)
+        user_table = soup.find("table", {'class': 'main'})
+        user_dict = {}
+        for row in user_table('tr'):
+            label_element = row.find('label')
+            if not label_element:
+                continue  # This must not be a row we know how to parse.
+            if row.find('table'):
+                continue  # Skip the <tr> holding the groups table.
+
+            key = label_element['for']
+            if "group" in key:
+                key = "groups"
+                value = user_dict.get('groups', set())
+                # We must be parsing a "tr" inside the inner group table.
+                (group_name, _) = self._group_name_and_string_from_row(row)
+                if row.find('input', {'type': 'checkbox', 'checked': 'checked'}):
+                    value.add(group_name)
+            else:
+                value = unicode(row.find('td').string).strip()
+            user_dict[key] = value
+        return user_dict
+
+    def _group_rows_from_edit_user_page(self, edit_user_page):
+        soup = BeautifulSoup(edit_user_page, convertEntities=BeautifulSoup.HTML_ENTITIES)
+        return soup('td', {'class': 'groupname'})
+
+    def group_string_from_name(self, edit_user_page, group_name):
+        # Bugzilla uses "group_NUMBER" strings, which may be different per install
+        # so we just look them up once and cache them.
+        if not self._group_name_to_group_string_cache:
+            rows = self._group_rows_from_edit_user_page(edit_user_page)
+            name_string_pairs = map(self._group_name_and_string_from_row, rows)
+            self._group_name_to_group_string_cache = dict(name_string_pairs)
+        return self._group_name_to_group_string_cache[group_name]
 
 
 def timestamp():
@@ -174,49 +243,50 @@ class BugzillaQueries(object):
         review_queue_url = "request.cgi?action=queue&type=review&group=type"
         return self._fetch_attachment_ids_request_query(review_queue_url)
 
-    def _login_from_row(self, row):
-        first_cell = row.find("td")
-        # The first row is just headers, we skip it.
-        if not first_cell:
-            return None
-        # When there were no results, we have a fake "<none>" entry in the table.
-        if first_cell.find(text="<none>"):
-            return None
-        # Otherwise the <td> contains a single <a> which contains the login name or a single <i> with the string "<none>".
-        return str(first_cell.find("a").string).strip()
-
-    def _parse_logins_from_editusers_results(self, results_page):
-        soup = BeautifulSoup(results_page, convertEntities=BeautifulStoneSoup.HTML_ENTITIES)
-        results_table = soup.find(id="admin_table")
-        logins = [self._login_from_row(row) for row in results_table('tr')]
-        # Filter out None from the logins.
-        return filter(lambda login: bool(login), logins)
-
     # This only works if your account has edituser privileges.
     # We could easily parse https://bugs.webkit.org/userprefs.cgi?tab=permissions to
     # check permissions, but bugzilla will just return an error if we don't have them.
-    def fetch_logins_matching_substring(self, search_string):
+    def fetch_login_userid_pairs_matching_substring(self, search_string):
         review_queue_url = "editusers.cgi?action=list&matchvalue=login_name&matchstr=%s&matchtype=substr" % urllib.quote(search_string)
         results_page = self._load_query(review_queue_url)
-        return self._parse_logins_from_editusers_results(results_page)
+        # We could pull the EditUsersParser off Bugzilla if needed.
+        return EditUsersParser().login_userid_pairs_from_edit_user_results(results_page)
+
+    # FIXME: We should consider adding a BugzillaUser class.
+    def fetch_logins_matching_substring(self, search_string):
+        pairs = self.fetch_login_userid_pairs_matching_substring(search_string)
+        return map(lambda pair: pair[0], pairs)
 
 
 class Bugzilla(object):
-
     def __init__(self, dryrun=False, committers=committers.CommitterList()):
         self.dryrun = dryrun
         self.authenticated = False
         self.queries = BugzillaQueries(self)
         self.committers = committers
         self.cached_quips = []
+        self.edit_user_parser = EditUsersParser()
 
         # FIXME: We should use some sort of Browser mock object when in dryrun
         # mode (to prevent any mistakes).
         from webkitpy.thirdparty.autoinstalled.mechanize import Browser
         self.browser = Browser()
-        # Ignore bugs.webkit.org/robots.txt until we fix it to allow this
-        # script.
+        # Ignore bugs.webkit.org/robots.txt until we fix it to allow this script.
         self.browser.set_handle_robots(False)
+
+    def fetch_user(self, user_id):
+        self.authenticate()
+        edit_user_page = self.browser.open(self.edit_user_url_for_id(user_id))
+        return self.edit_user_parser.user_dict_from_edit_user_page(edit_user_page)
+
+    def add_user_to_groups(self, user_id, group_names):
+        self.authenticate()
+        user_edit_page = self.browser.open(self.edit_user_url_for_id(user_id))
+        self.browser.select_form(nr=1)
+        for group_name in group_names:
+            group_string = self.edit_user_parser.group_string_from_name(user_edit_page, group_name)
+            self.browser.find_control(group_string).items[0].selected = True
+        self.browser.submit()
 
     def quips(self):
         # We only fetch and parse the list of quips once per instantiation
@@ -248,6 +318,9 @@ class Bugzilla(object):
         return "%sattachment.cgi?id=%s%s" % (config_urls.bug_server_url,
                                              attachment_id,
                                              action_param)
+
+    def edit_user_url_for_id(self, user_id):
+        return "%seditusers.cgi?action=edit&userid=%s" % (config_urls.bug_server_url, user_id)
 
     def _parse_attachment_flag(self,
                                element,

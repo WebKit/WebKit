@@ -1,4 +1,4 @@
-# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -30,7 +30,7 @@ import unittest
 import datetime
 import StringIO
 
-from .bugzilla import Bugzilla, BugzillaQueries
+from .bugzilla import Bugzilla, BugzillaQueries, EditUsersParser
 
 from webkitpy.common.checkout.changelog import parse_bug_id
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -392,35 +392,37 @@ class BugzillaQueriesTest(unittest.TestCase):
         queries = BugzillaQueries(Mock())
         queries._load_query("request.cgi?action=queue&type=review&group=type")
 
+
+class EditUsersParserTest(unittest.TestCase):
     _example_user_results = """
-    <div id="bugzilla-body">
-    <p>1 user found.</p>
-    <table id="admin_table" border="1" cellpadding="4" cellspacing="0">
-      <tr bgcolor="#6666FF">
-          <th align="left">Edit user...
-          </th>
-          <th align="left">Real name
-          </th>
-          <th align="left">Account History
-          </th>
-      </tr>
-      <tr>
-          <td >
-              <a href="editusers.cgi?action=edit&amp;userid=1234&amp;matchvalue=login_name&amp;groupid=&amp;grouprestrict=&amp;matchtype=substr&amp;matchstr=abarth%40webkit.org">
-            abarth&#64;webkit.org
-              </a>
-          </td>
-          <td >
-            Adam Barth
-          </td>
-          <td >
-              <a href="editusers.cgi?action=activity&amp;userid=1234&amp;matchvalue=login_name&amp;groupid=&amp;grouprestrict=&amp;matchtype=substr&amp;matchstr=abarth%40webkit.org">
-            View
-              </a>
-          </td>
-      </tr>
-    </table>
-"""
+        <div id="bugzilla-body">
+        <p>1 user found.</p>
+        <table id="admin_table" border="1" cellpadding="4" cellspacing="0">
+          <tr bgcolor="#6666FF">
+              <th align="left">Edit user...
+              </th>
+              <th align="left">Real name
+              </th>
+              <th align="left">Account History
+              </th>
+          </tr>
+          <tr>
+              <td >
+                  <a href="editusers.cgi?action=edit&amp;userid=1234&amp;matchvalue=login_name&amp;groupid=&amp;grouprestrict=&amp;matchtype=substr&amp;matchstr=abarth%40webkit.org">
+                abarth&#64;webkit.org
+                  </a>
+              </td>
+              <td >
+                Adam Barth
+              </td>
+              <td >
+                  <a href="editusers.cgi?action=activity&amp;userid=1234&amp;matchvalue=login_name&amp;groupid=&amp;grouprestrict=&amp;matchtype=substr&amp;matchstr=abarth%40webkit.org">
+                View
+                  </a>
+              </td>
+          </tr>
+        </table>
+    """
 
     _example_empty_user_results = """
     <div id="bugzilla-body">
@@ -438,11 +440,72 @@ class BugzillaQueriesTest(unittest.TestCase):
     </table>
     """
 
-    def _assert_parsed_logins(self, results_page, expected_logins):
-        queries = BugzillaQueries(None)
-        logins = queries._parse_logins_from_editusers_results(results_page)
+    def _assert_login_userid_pairs(self, results_page, expected_logins):
+        parser = EditUsersParser()
+        logins = parser.login_userid_pairs_from_edit_user_results(results_page)
         self.assertEquals(logins, expected_logins)
 
-    def test_parse_logins_from_editusers_results(self):
-        self._assert_parsed_logins(self._example_user_results, ["abarth@webkit.org"])
-        self._assert_parsed_logins(self._example_empty_user_results, [])
+    def test_logins_from_editusers_results(self):
+        self._assert_login_userid_pairs(self._example_user_results, [("abarth@webkit.org", 1234)])
+        self._assert_login_userid_pairs(self._example_empty_user_results, [])
+
+    _example_user_page = """<table class="main"><tr>
+  <th><label for="login">Login name:</label></th>
+  <td>eric&#64;webkit.org
+  </td>
+</tr>
+<tr>
+  <th><label for="name">Real name:</label></th>
+  <td>Eric Seidel
+  </td>
+</tr>
+    <tr>
+      <th>Group access:</th>
+      <td>
+        <table class="groups">
+          <tr>
+          </tr>
+          <tr>
+            <th colspan="2">User is a member of these groups</th>
+          </tr>
+            <tr class="direct">
+              <td class="checkbox"><input type="checkbox"
+                           id="group_7"
+                           name="group_7"
+                           value="1" checked="checked" /></td>
+              <td class="groupname">
+                <label for="group_7">
+                  <strong>canconfirm:</strong>
+                  Can confirm a bug.
+                </label>
+              </td>
+            </tr>
+            <tr class="direct">
+              <td class="checkbox"><input type="checkbox"
+                           id="group_6"
+                           name="group_6"
+                           value="1" /></td>
+              <td class="groupname">
+                <label for="group_6">
+                  <strong>editbugs:</strong>
+                  Can edit all aspects of any bug.
+                /label>
+              </td>
+            </tr>
+        </table>
+      </td>
+    </tr>
+
+  <tr>
+    <th>Product responsibilities:</th>
+    <td>
+        <em>none</em>
+    </td>
+  </tr>
+</table>"""
+
+    def test_user_dict_from_edit_user_page(self):
+        parser = EditUsersParser()
+        user_dict = parser.user_dict_from_edit_user_page(self._example_user_page)
+        expected_user_dict = {u'login': u'eric@webkit.org', u'groups': set(['canconfirm']), u'name': u'Eric Seidel'}
+        self.assertEqual(expected_user_dict, user_dict)
