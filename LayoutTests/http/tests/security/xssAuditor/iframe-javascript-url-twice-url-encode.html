@@ -9,7 +9,7 @@ if (window.layoutTestController) {
 </script>
 </head>
 <body>
-<iframe src='http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=<iframe src="javascript: %250Aalert(/XSS/)"></iframe>'>
+<iframe src='http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=<iframe src="javascript: %250Aalert(String.fromCharCode(0x58,0x53,0x53))"></iframe>'>
 </iframe>
 </body>
 </html>

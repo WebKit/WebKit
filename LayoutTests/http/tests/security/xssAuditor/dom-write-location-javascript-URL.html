@@ -10,7 +10,7 @@ if (window.layoutTestController) {
 </script>
 </head>
 <body>
-<iframe src='http://localhost:8000/security/xssAuditor/resources/anchor-url-dom-write-location-click.html?%3Ca%20id=%22anchorLink%22%20href=%22javascript:alert(/XSS/)%22%3EClick%3C/a%3E'>
+<iframe src='http://localhost:8000/security/xssAuditor/resources/anchor-url-dom-write-location-click.html?%3Ca%20id=%22anchorLink%22%20href=%22javascript:alert(String.fromCharCode(0x58,0x53,0x53))%22%3EClick%3C/a%3E'>
 </iframe>
 </body>
 </html>

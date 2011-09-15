@@ -1,3 +1,73 @@
+2011-09-14  Tom Sepez  <tsepez@chromium.org>
+
+        Fix tests made trivial by the bugfix to 27895, by removing leading punctuation
+        which would cause early truncation of the page snippet.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=27895
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event-null-char.html:
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event.html:
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-javascript-URL.html:
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location.html:
+        * http/tests/security/xssAuditor/dom-write-URL.html:
+        * http/tests/security/xssAuditor/dom-write-innerHTML-expected.txt:
+        * http/tests/security/xssAuditor/dom-write-innerHTML.html:
+        * http/tests/security/xssAuditor/dom-write-location-inline-event.html:
+        * http/tests/security/xssAuditor/dom-write-location-javascript-URL.html:
+        * http/tests/security/xssAuditor/dom-write-location.html:
+        * http/tests/security/xssAuditor/full-block-get-from-iframe.html:
+        * http/tests/security/xssAuditor/full-block-javascript-link.html:
+        * http/tests/security/xssAuditor/full-block-link-onclick.html:
+        * http/tests/security/xssAuditor/full-block-post-from-iframe.html:
+        * http/tests/security/xssAuditor/full-block-script-tag.html:
+        * http/tests/security/xssAuditor/get-from-iframe.html:
+        * http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode.html:
+        * http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode2.html:
+        * http/tests/security/xssAuditor/iframe-javascript-url-twice-url-encode3.html:
+        * http/tests/security/xssAuditor/img-onerror-tricky.html:
+        * http/tests/security/xssAuditor/javascript-link-null-char.html:
+        * http/tests/security/xssAuditor/javascript-link-one-plus-one.html:
+        * http/tests/security/xssAuditor/javascript-link.html:
+        * http/tests/security/xssAuditor/link-onclick-ampersand.html:
+        * http/tests/security/xssAuditor/link-onclick-control-char.html:
+        * http/tests/security/xssAuditor/link-onclick-entities.html:
+        * http/tests/security/xssAuditor/link-onclick-null-char.html:
+        * http/tests/security/xssAuditor/link-onclick.html:
+        * http/tests/security/xssAuditor/link-opens-new-window.html:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header.html:
+        * http/tests/security/xssAuditor/open-attribute-body.html:
+        * http/tests/security/xssAuditor/open-event-handler-iframe.html:
+        * http/tests/security/xssAuditor/post-from-iframe.html:
+        * http/tests/security/xssAuditor/property-escape-comment.html:
+        * http/tests/security/xssAuditor/property-escape-entity.html:
+        * http/tests/security/xssAuditor/property-escape-noquotes-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-noquotes-tab-slash-chars-expected.txt:
+        * http/tests/security/xssAuditor/property-escape-noquotes-tab-slash-chars.html:
+        * http/tests/security/xssAuditor/property-escape-noquotes.html:
+        * http/tests/security/xssAuditor/property-escape-quote.html:
+        * http/tests/security/xssAuditor/property-escape.html:
+        * http/tests/security/xssAuditor/property-inject-expected.txt:
+        * http/tests/security/xssAuditor/property-inject.html:
+        * http/tests/security/xssAuditor/script-tag-addslashes-backslash.html:
+        * http/tests/security/xssAuditor/script-tag-addslashes-double-quote.html:
+        * http/tests/security/xssAuditor/script-tag-addslashes-null-char.html:
+        * http/tests/security/xssAuditor/script-tag-addslashes-single-quote.html:
+        * http/tests/security/xssAuditor/script-tag-control-char.html:
+        * http/tests/security/xssAuditor/script-tag-entities.html:
+        * http/tests/security/xssAuditor/script-tag-null-char.html:
+        * http/tests/security/xssAuditor/script-tag-open-redirect.html:
+        * http/tests/security/xssAuditor/script-tag-post-control-char.html:
+        * http/tests/security/xssAuditor/script-tag-post-null-char.html:
+        * http/tests/security/xssAuditor/script-tag-post.html:
+        * http/tests/security/xssAuditor/script-tag-redirect.html:
+        * http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html:
+        * http/tests/security/xssAuditor/script-tag-with-invalid-url-encoding.html:
+        * http/tests/security/xssAuditor/script-tag-with-three-times-url-encoded-16bit-unicode.html:
+        * http/tests/security/xssAuditor/script-tag.html:
+        * http/tests/security/xssAuditor/xss-protection-parsing-01.html:
+
 2011-09-14  Henrik Grunell  <grunell@google.com>
 
         MediaStream API: Change PeerConnection constructor name to webkitPeerConnection

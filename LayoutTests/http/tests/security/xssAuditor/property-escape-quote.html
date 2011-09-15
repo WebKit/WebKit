@@ -9,11 +9,11 @@ if (window.layoutTestController) {
 </script>
 </head>
 <body>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-property.pl?clutter=5xyzblah&q=%22%20onload=alert(/XSS1/)-%22">
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-property.pl?clutter=5xyzblah&q=%22%20onload=alert(1)-%22">
 </iframe>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-property.pl?clutter=5xyzblah&q=%22%20onload=alert(/XSS2/)-%27">
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-property.pl?clutter=5xyzblah&q=%22%20onload=alert(2)-%27">
 </iframe>
-<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-property.pl?clutter=5xyzblah&q=%22%20onload=alert(/XSS3/)-%27%22%27%22">
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-property.pl?clutter=5xyzblah&q=%22%20onload=alert(3)-%27%22%27%22">
 </iframe>
 </body>
 </html>
