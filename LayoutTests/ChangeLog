@@ -1,3 +1,9 @@
+2011-09-15  David Levin  <levin@chromium.org>
+
+        [chromium] Add expectation for flaky tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-15  Cary Clark  <caryclark@google.com>
         Unreviewed; new expectations (Skia on Mac)
         
