@@ -1,3 +1,28 @@
+2011-09-15  Andy Estes  <aestes@apple.com>
+
+        Having an empty listener to beforeload events changes the behavior of other scripts
+        https://bugs.webkit.org/show_bug.cgi?id=45586
+
+        Reviewed by Darin Adler.
+
+        Test: fast/dom/beforeload/cached-image-before-load.html
+        
+        When loading a cached image after a beforeload handler has been
+        installed on the document, ImageLoader would dispatch both the
+        beforeload and load events asynchronously in such a way that caused
+        load to fire first. Since a side effect of firing the beforeload event
+        is to wire up the CachedImage to its associated RenderImage object,
+        this work was not done by the time load fired, and scripts that queried
+        renderer-dependent attributes of the image in an onload handler would
+        get bogus values in return.
+
+        Fix this by ensuring load fires after beforeload in the cached image case.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement): Call setClient() after
+        dispatching beforeload, since setClient() will dispatch the load event
+        if the image is cached.
+
 2011-09-15  Anders Carlsson  <andersca@apple.com>
 
         Remove ScrollView::platformContentsSize
