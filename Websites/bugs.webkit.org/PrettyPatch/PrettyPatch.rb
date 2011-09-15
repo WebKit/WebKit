@@ -1,6 +1,7 @@
 require 'cgi'
 require 'diff'
 require 'open3'
+require 'open-uri'
 require 'pp'
 require 'set'
 require 'tempfile'
@@ -13,21 +14,23 @@ public
 
     def self.prettify(string)
         $last_prettify_file_count = -1
-        $last_prettify_part_count = { "remove" => 0, "add" => 0, "shared" => 0 }
+        $last_prettify_part_count = { "remove" => 0, "add" => 0, "shared" => 0, "binary" => 0, "extract-error" => 0 }
         string = normalize_line_ending(string)
-        fileDiffs = FileDiff.parse(string)
-
         str = HEADER + "\n"
 
         # Just look at the first line to see if it is an SVN revision number as added
         # by webkit-patch for git checkouts.
+        $svn_revision = 0
         string.each_line do |line|
             match = /^Subversion\ Revision: (\d*)$/.match(line)
             unless match.nil?
-              str += "<span class='revision'>" + match[1] + "</span>\n"
+                str += "<span class='revision'>" + match[1] + "</span>\n"
+                $svn_revision = match[1].to_i;
             end
             break
         end
+
+        fileDiffs = FileDiff.parse(string)
 
         $last_prettify_file_count = fileDiffs.length
         str += fileDiffs.collect{ |diff| diff.to_html }.join
@@ -65,7 +68,11 @@ private
 
     GIT_BINARY_FILE_MARKER_FORMAT = /^GIT binary patch$/
 
+    GIT_BINARY_PATCH_FORMAT = /^(literal|delta) \d+$/
+
     GIT_LITERAL_FORMAT = /^literal \d+$/
+
+    GIT_DELTA_FORMAT = /^delta \d+$/
 
     START_OF_BINARY_DATA_FORMAT = /^[0-9a-zA-Z\+\/=]{20,}/ # Assume 20 chars without a space is base64 binary data.
 
@@ -508,7 +515,7 @@ EOF
                     @git_indexes = [$1, $2]
                 when GIT_BINARY_FILE_MARKER_FORMAT
                     @binary = true
-                    if (GIT_LITERAL_FORMAT.match(lines[i + 1]) and PrettyPatch.has_image_suffix(@filename)) then
+                    if (GIT_BINARY_PATCH_FORMAT.match(lines[i + 1]) and PrettyPatch.has_image_suffix(@filename)) then
                         @git_image = true
                         startOfSections = i + 1
                     end
@@ -534,14 +541,20 @@ EOF
 
                     raise "no binary chunks" unless chunks
 
-                    binary_contents = chunks.zip(@git_indexes).collect do |chunk, git_index|
-                        FileDiff.extract_contents_from_git_binary_chunk(chunk, git_index)
-                    end
+                    from_filepath = FileDiff.extract_contents_of_from_revision(@filename, chunks[0], @git_indexes[0])
+                    to_filepath = FileDiff.extract_contents_of_to_revision(@filename, chunks[1], @git_indexes[1], from_filepath, @git_indexes[0])
+                    filepaths = from_filepath, to_filepath
 
-                    @image_urls = binary_contents.collect { |content| content ? "data:image/png;base64," + [content].pack("m") : nil }
+                    binary_contents = filepaths.collect { |filepath| File.exists?(filepath) ? File.read(filepath) : nil }
+
+                    @image_urls = binary_contents.collect { |content| (content and not content.empty?) ? "data:image/png;base64," + [content].pack("m") : nil }
                     @image_checksums = binary_contents.collect { |content| FileDiff.read_checksum_from_png(content) }
                 rescue
+                    $last_prettify_part_count["extract-error"] += 1
                     @image_error = "Exception raised during decoding git binary patch:<pre>#{CGI.escapeHTML($!.to_s + "\n" + $!.backtrace.join("\n"))}</pre>"
+                ensure
+                    File.unlink(from_filepath) if (from_filepath and File.exists?(from_filepath))
+                    File.unlink(to_filepath) if (to_filepath and File.exists?(to_filepath))
                 end
             end
             nil
@@ -585,6 +598,7 @@ EOF
                     end
                 end
             elsif @binary then
+                $last_prettify_part_count["binary"] += 1
                 str += "<span class='text'>Binary file, nothing to see here</span>"
             else
                 str += @sections.collect{ |section| section.to_html }.join("<br>\n") unless @sections.nil?
@@ -631,37 +645,96 @@ HcmV?d00001
 END
         end
 
-        def self.extract_contents_from_git_binary_chunk(encoded_chunk, git_index)
-            # We use Tempfile we need a unique file among processes.
+        def self.git_changed_file_binary_patch(to_filename, from_filename, encoded_chunk, to_git_index, from_git_index)
+            return <<END
+diff --git a/#{from_filename} b/#{to_filename}
+copy from #{from_filename}
++++ b/#{to_filename}
+index #{from_git_index}..#{to_git_index}
+GIT binary patch
+#{encoded_chunk.join("")}literal 0
+HcmV?d00001
+
+END
+        end
+
+        def self.get_svn_uri(repository_path)
+            "http://svn.webkit.org/repository/webkit/!svn/bc/" + $svn_revision.to_s + "/trunk/" + (repository_path)
+        end
+
+        def self.get_new_temp_filepath_and_name
             tempfile = Tempfile.new("PrettyPatch")
-            # We need a filename which doesn't exist to apply a patch
-            # which creates a new file. Append a suffix so filename
-            # doesn't exist.
             filepath = tempfile.path + '.bin'
             filename = File.basename(filepath)
+            return filepath, filename
+        end
 
-            patch = FileDiff.git_new_file_binary_patch(filename, encoded_chunk, git_index)
+        def self.download_from_revision_from_svn(repository_path)
+            filepath, filename = get_new_temp_filepath_and_name
+            svn_uri = get_svn_uri(repository_path)
+            open(filepath, 'wb') do |to_file|
+                to_file << open(svn_uri) { |from_file| from_file.read }
+            end
+            return filepath
+        end
 
+        def self.run_git_apply_on_patch(output_filepath, patch)
             # Apply the git binary patch using git-apply.
-            cmd = GIT_PATH + " apply --directory=" + File.dirname(filepath)
+            cmd = GIT_PATH + " apply --directory=" + File.dirname(output_filepath)
             stdin, stdout, stderr = *Open3.popen3(cmd)
             begin
                 stdin.puts(patch)
                 stdin.close
 
                 error = stderr.read
+                if error != ""
+                    error = "Error running " + cmd + "\n" + "with patch:\n" + patch[0..500] + "...\n" + error
+                end
                 raise error if error != ""
-
-                contents = File.read(filepath)
             ensure
                 stdin.close unless stdin.closed?
                 stdout.close
                 stderr.close
-                File.unlink(filename) if File.exists?(filename)
             end
+        end
 
-            return nil if contents.empty?
-            return contents
+        def self.extract_contents_from_git_binary_literal_chunk(encoded_chunk, git_index)
+            filepath, filename = get_new_temp_filepath_and_name
+            patch = FileDiff.git_new_file_binary_patch(filename, encoded_chunk, git_index)
+            run_git_apply_on_patch(filepath, patch)
+            return filepath
+        end
+
+        def self.extract_contents_from_git_binary_delta_chunk(from_filepath, from_git_index, encoded_chunk, to_git_index)
+            to_filepath, to_filename = get_new_temp_filepath_and_name
+            from_filename = File.basename(from_filepath)
+            patch = FileDiff.git_changed_file_binary_patch(to_filename, from_filename, encoded_chunk, to_git_index, from_git_index)
+            run_git_apply_on_patch(to_filepath, patch)
+            return to_filepath
+        end
+
+        def self.extract_contents_of_from_revision(repository_path, encoded_chunk, git_index)
+            # For literal encoded, simply reconstruct.
+            if GIT_LITERAL_FORMAT.match(encoded_chunk[0])
+                return extract_contents_from_git_binary_literal_chunk(encoded_chunk, git_index)
+            end
+            #  For delta encoded, download from svn.
+            if GIT_DELTA_FORMAT.match(encoded_chunk[0])
+                return download_from_revision_from_svn(repository_path)
+            end
+            raise "Error: unknown git patch encoding"
+        end
+
+        def self.extract_contents_of_to_revision(repository_path, encoded_chunk, git_index, from_filepath, from_git_index)
+            # For literal encoded, simply reconstruct.
+            if GIT_LITERAL_FORMAT.match(encoded_chunk[0])
+                return extract_contents_from_git_binary_literal_chunk(encoded_chunk, git_index)
+            end
+            # For delta encoded, reconstruct using delta and previously constructed 'from' revision.
+            if GIT_DELTA_FORMAT.match(encoded_chunk[0])
+                return extract_contents_from_git_binary_delta_chunk(from_filepath, from_git_index, encoded_chunk, git_index)
+            end
+            raise "Error: unknown git patch encoding"
         end
     end
 
@@ -804,7 +877,7 @@ END
             str += @blocks.collect{ |block| block.to_html }.join
             str += "</div>\n"
         end
-        
+
         def self.parse(lines)
             linesForSections = lines.inject([[]]) do |sections, line|
                 sections << [] if line =~ /^@@/
