@@ -250,7 +250,7 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(RenderObject* renderer, c
     }
 
     FontDescription fontDescription(style->fontDescription());
-    fontDescription.setComputedSize(fontDescription.computedSize() * scalingFactor);
+    fontDescription.setComputedSize(CSSStyleSelector::getComputedSizeFromSpecifiedSize(document, scalingFactor, fontDescription.isAbsoluteSize(), fontDescription.computedSize(), DoNotUseSmartMinimumForFontSize));
 
     scaledFont = Font(fontDescription, 0, 0);
     scaledFont.update(styleSelector->fontSelector());

@@ -1,5 +1,40 @@
 2011-09-15  Mark Rowe  <mrowe@apple.com>
 
+        Merge r89705.
+
+    2011-06-24  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add clamping for CSSPrimitiveValues and SVGInlineText font size.
+        https://bugs.webkit.org/show_bug.cgi?id=53449        
+
+        Test: svg/text/svg-zoom-large-value.xhtml
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): add asserts to detect if the
+        number created is valid.
+        * css/CSSPrimitiveValue.h: add clamping checks to prevent overflows.
+        (WebCore::CSSPrimitiveValue::getFloatValue):
+        (WebCore::CSSPrimitiveValue::getIntValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize): split into two
+        static functions, one specific to CSSStyleSelector and other generic to help
+        in clamping font size for other callers like svg text, etc.
+        * css/CSSStyleSelector.h:
+        * platform/graphics/FontDescription.h: add asserts to detect if the new font
+        size is valid.
+        (WebCore::FontDescription::setComputedSize):
+        (WebCore::FontDescription::setSpecifiedSize):
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::computeNewScaledFontForStyle): use the new helper
+        from CSSStyleSelector to help in clamping new scaled font size. do not use
+        "smart minimum" since svg allows really small unreadable fonts (tested by existing
+        layout tests). Document's minimum font size clamp (0 in my case) and harmless epsilon
+        check in CSSStyleSelector function should still hold for svg.
+
+2011-09-15  Mark Rowe  <mrowe@apple.com>
+
         Merge r91386.
 
     2011-07-20  Tony Chang  <tony@chromium.org>

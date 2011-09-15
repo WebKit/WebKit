@@ -36,7 +36,6 @@
 #include "RenderStyle.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/DecimalNumber.h>
-#include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuffer.h>
 
@@ -130,6 +129,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(double num, UnitTypes type)
     : m_type(type)
     , m_hasCachedCSSText(false)
 {
+    ASSERT(isfinite(num));
     m_value.num = num;
 }
 
@@ -158,6 +158,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
             break;
         case WebCore::Fixed:
             m_type = CSS_PX;
+            ASSERT(isfinite(length.value()));
             m_value.num = length.value();
             break;
         case Intrinsic:
@@ -170,6 +171,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
             break;
         case Percent:
             m_type = CSS_PERCENTAGE;
+            ASSERT(isfinite(length.percent()));
             m_value.num = length.percent();
             break;
         case Relative:

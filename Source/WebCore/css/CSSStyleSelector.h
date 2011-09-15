@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+enum ESmartMinimumForFontSize { DoNotUseSmartMinimumForFontSize, UseSmartMinimumForFontFize };
+
 class CSSFontSelector;
 class CSSMutableStyleDeclaration;
 class CSSPageRule;
@@ -151,9 +153,12 @@ public:
         void setStyle(PassRefPtr<RenderStyle> s) { m_style = s; } // Used by the document when setting up its root style.
 
         void applyPropertyToStyle(int id, CSSValue*, RenderStyle*);
+        
+        static float getComputedSizeFromSpecifiedSize(Document*, float zoomFactor, bool isAbsoluteSize, float specifiedSize, ESmartMinimumForFontSize = UseSmartMinimumForFontFize);
 
     private:
         void setFontSize(FontDescription&, float size);
+
         static float getComputedSizeFromSpecifiedSize(Document*, RenderStyle*, bool isAbsoluteSize, float specifiedSize, bool useSVGZoomRules);
     public:
         Color getColorFromPrimitiveValue(CSSPrimitiveValue*) const;

@@ -25,6 +25,7 @@
 #include "CSSValue.h"
 #include "Color.h"
 #include <wtf/Forward.h>
+#include <wtf/MathExtras.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -154,13 +155,13 @@ public:
     double getDoubleValue() const { return m_value.num; }
 
     void setFloatValue(unsigned short unitType, double floatValue, ExceptionCode&);
-    float getFloatValue(unsigned short unitType, ExceptionCode& ec) const { return static_cast<float>(getDoubleValue(unitType, ec)); }
-    float getFloatValue(unsigned short unitType) const { return static_cast<float>(getDoubleValue(unitType)); }
-    float getFloatValue() const { return static_cast<float>(m_value.num); }
+    float getFloatValue(unsigned short unitType, ExceptionCode& ec) const { return clampToFloat(getDoubleValue(unitType, ec)); }
+    float getFloatValue(unsigned short unitType) const { return clampToFloat(getDoubleValue(unitType)); }
+    float getFloatValue() const { return clampToFloat(m_value.num); }
 
-    int getIntValue(unsigned short unitType, ExceptionCode& ec) const { return static_cast<int>(getDoubleValue(unitType, ec)); }
-    int getIntValue(unsigned short unitType) const { return static_cast<int>(getDoubleValue(unitType)); }
-    int getIntValue() const { return static_cast<int>(m_value.num); }
+    int getIntValue(unsigned short unitType, ExceptionCode& ec) const { return clampToInteger(getDoubleValue(unitType, ec)); }
+    int getIntValue(unsigned short unitType) const { return clampToInteger(getDoubleValue(unitType)); }
+    int getIntValue() const { return clampToInteger(m_value.num); }
 
     void setStringValue(unsigned short stringType, const String& stringValue, ExceptionCode&);
     String getStringValue(ExceptionCode&) const;

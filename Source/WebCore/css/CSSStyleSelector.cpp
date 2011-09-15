@@ -6247,19 +6247,24 @@ void CSSStyleSelector::setFontSize(FontDescription& fontDescription, float size)
 
 float CSSStyleSelector::getComputedSizeFromSpecifiedSize(Document* document, RenderStyle* style, bool isAbsoluteSize, float specifiedSize, bool useSVGZoomRules)
 {
-    // Text with a 0px font size should not be visible and therefore needs to be
-    // exempt from minimum font size rules. Acid3 relies on this for pixel-perfect
-    // rendering. This is also compatible with other browsers that have minimum
-    // font size settings (e.g. Firefox).
-    if (fabsf(specifiedSize) < std::numeric_limits<float>::epsilon())
-        return 0.0f;
-
     float zoomFactor = 1.0f;
     if (!useSVGZoomRules) {
         zoomFactor = style->effectiveZoom();
         if (Frame* frame = document->frame())
             zoomFactor *= frame->textZoomFactor();
     }
+
+    return CSSStyleSelector::getComputedSizeFromSpecifiedSize(document, zoomFactor, isAbsoluteSize, specifiedSize);
+}
+
+float CSSStyleSelector::getComputedSizeFromSpecifiedSize(Document* document, float zoomFactor, bool isAbsoluteSize, float specifiedSize, ESmartMinimumForFontSize useSmartMinimumForFontSize)
+{
+    // Text with a 0px font size should not be visible and therefore needs to be
+    // exempt from minimum font size rules. Acid3 relies on this for pixel-perfect
+    // rendering. This is also compatible with other browsers that have minimum
+    // font size settings (e.g. Firefox).
+    if (fabsf(specifiedSize) < std::numeric_limits<float>::epsilon())
+        return 0.0f;
 
     // We support two types of minimum font size.  The first is a hard override that applies to
     // all fonts.  This is "minSize."  The second type of minimum font size is a "smart minimum"
@@ -6287,7 +6292,7 @@ float CSSStyleSelector::getComputedSizeFromSpecifiedSize(Document* document, Ren
     // after zooming.  The font size must either be relative to the user default or the original size
     // must have been acceptable.  In other words, we only apply the smart minimum whenever we're positive
     // doing so won't disrupt the layout.
-    if (zoomedSize < minLogicalSize && (specifiedSize >= minLogicalSize || !isAbsoluteSize))
+    if (useSmartMinimumForFontSize && zoomedSize < minLogicalSize && (specifiedSize >= minLogicalSize || !isAbsoluteSize))
         zoomedSize = minLogicalSize;
     
     // Also clamp to a reasonable maximum to prevent insane font sizes from causing crashes on various

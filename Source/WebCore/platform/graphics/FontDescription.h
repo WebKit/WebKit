@@ -33,6 +33,7 @@
 #include "FontWidthVariant.h"
 #include "TextOrientation.h"
 #include "TextRenderingMode.h"
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -115,8 +116,8 @@ public:
     FontWidthVariant widthVariant() const { return m_widthVariant; }
 
     void setFamily(const FontFamily& family) { m_familyList = family; }
-    void setComputedSize(float s) { m_computedSize = s; }
-    void setSpecifiedSize(float s) { m_specifiedSize = s; }
+    void setComputedSize(float s) { ASSERT(isfinite(s)); m_computedSize = s; }
+    void setSpecifiedSize(float s) { ASSERT(isfinite(s)); m_specifiedSize = s; }
     void setItalic(FontItalic i) { m_italic = i; }
     void setItalic(bool i) { setItalic(i ? FontItalicOn : FontItalicOff); }
     void setSmallCaps(FontSmallCaps c) { m_smallCaps = c; }
