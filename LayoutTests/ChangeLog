@@ -1,3 +1,18 @@
+2011-09-14  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] rebaseline expectations due to r95096, r95121, and r95129
+
+        * platform/chromium-cg-mac-leopard/fast/borders/block-mask-overlay-image-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/borders/border-color-inherit-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/borders/inline-mask-overlay-image-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/chromium-cg-mac-leopard/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/chromium-cg-mac-leopard/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/chromium-cg-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Added.
+        * platform/chromium-cg-mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png: Added.
+        * platform/chromium-cg-mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Added.
+
 2011-09-14  Jeffrey Pfau  <jeffrey@endrift.com>
 
         libxml2 fragment parser loses prefix namespaces
