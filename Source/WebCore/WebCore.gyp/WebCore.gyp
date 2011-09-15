@@ -1572,6 +1572,10 @@
         ['include', 'platform/graphics/filters/arm/.*NEON\\.(cpp|h)'],
       ],
       'conditions': [
+        ['OS=="android"', {
+          'cflags!': ['-mthumb'],
+          'cflags': ['-marm'],
+        }],
         ['OS=="linux" and target_arch=="arm"', {
           'cflags': ['-marm'],
         }],
