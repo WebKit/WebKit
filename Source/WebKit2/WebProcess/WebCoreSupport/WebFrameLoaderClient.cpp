@@ -1266,7 +1266,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
         // Currently we don't support transparency and windowed mode.
         // Inject wmode=opaque to make Flash work in these conditions.
         size_t wmodeIndex = parameters.names.find("wmode");
-        if (wmodeIndex == -1) {
+        if (wmodeIndex == notFound) {
             parameters.names.append("wmode");
             parameters.values.append("opaque");
         } else if (equalIgnoringCase(parameters.values[wmodeIndex], "window"))

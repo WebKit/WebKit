@@ -54,7 +54,7 @@ ArgumentEncoder::~ArgumentEncoder()
 #if !USE(UNIX_DOMAIN_SOCKETS)
     // FIXME: We need to dispose of the attachments in cases of failure.
 #else
-    for (int i = 0; i < m_attachments.size(); ++i)
+    for (size_t i = 0; i < m_attachments.size(); ++i)
         m_attachments[i].dispose();
 #endif
 }

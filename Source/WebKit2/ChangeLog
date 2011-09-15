@@ -1,3 +1,17 @@
+2011-09-14  Wajahat Siddiqui  <mdwajahatali.siddiqui@motorola.com>
+
+        Eliminate WebKit2 compilation warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=65025
+
+        Warnings found with gcc on linux.
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::ArgumentEncoder::~ArgumentEncoder):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+
 2011-09-14  Ada Chan  <adachan@apple.com>
 
         Implement WKBundleFrameCopyWebArchive().
