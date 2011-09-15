@@ -105,7 +105,7 @@ namespace JSC {
         // Basic conversions.
         virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue&);
-        bool toBoolean(ExecState*) const;
+        virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
         virtual UString toString(ExecState*) const;
         virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;
@@ -314,6 +314,17 @@ namespace JSC {
         number = std::numeric_limits<double>::quiet_NaN();
         value = *this;
         return true;
+    }
+
+    inline bool JSValue::toBoolean(ExecState* exec) const
+    {
+        if (isInt32())
+            return asInt32() != 0;
+        if (isDouble())
+            return asDouble() > 0.0 || asDouble() < 0.0; // false for NaN
+        if (isCell())
+            return asCell()->toBoolean(exec);
+        return isTrue(); // false, null, and undefined all convert to false.
     }
 
     ALWAYS_INLINE double JSValue::toNumber(ExecState* exec) const
