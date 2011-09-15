@@ -159,7 +159,7 @@ public:
     static bool mediaStreamEnabled() { return isMediaStreamEnabled; }
     static void setMediaStreamEnabled(bool isEnabled) { isMediaStreamEnabled = isEnabled; }
     static bool webkitGetUserMediaEnabled() { return isMediaStreamEnabled; }
-    static bool peerConnectionEnabled() { return isMediaStreamEnabled; }
+    static bool webkitPeerConnectionEnabled() { return isMediaStreamEnabled; }
 #endif
 
 #if ENABLE(QUOTA)
