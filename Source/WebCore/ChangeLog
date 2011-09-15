@@ -1,5 +1,25 @@
 2011-09-15  Mark Rowe  <mrowe@apple.com>
 
+        Merge r91386.
+
+    2011-07-20  Tony Chang  <tony@chromium.org>
+
+        Stale pointer due to floats not removed (flexible box display)
+        https://bugs.webkit.org/show_bug.cgi?id=64603
+
+        Reviewed by David Hyatt.
+
+        Flexbox items should avoid floats.
+
+        Test: fast/flexbox/horizontal-box-float-crash.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::avoidsFloats):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::isDeprecatedFlexItem):
+
+2011-09-15  Mark Rowe  <mrowe@apple.com>
+
         Merge r88139.
 
     2011-06-04  Abhishek Arya  <inferno@chromium.org>
