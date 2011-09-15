@@ -60,6 +60,7 @@ class GraphicsContext3D;
 class HistoryItem;
 class HitTestResult;
 class KeyboardEvent;
+class NonCompositedContentHost;
 class Page;
 class PlatformKeyboardEvent;
 class PopupContainer;
@@ -572,6 +573,7 @@ private:
 
 #if USE(ACCELERATED_COMPOSITING)
     WebCore::IntRect m_rootLayerScrollDamage;
+    OwnPtr<WebCore::NonCompositedContentHost> m_nonCompositedContentHost;
     RefPtr<WebCore::CCLayerTreeHost> m_layerTreeHost;
     WebCore::GraphicsLayer* m_rootGraphicsLayer;
     bool m_isAcceleratedCompositingActive;

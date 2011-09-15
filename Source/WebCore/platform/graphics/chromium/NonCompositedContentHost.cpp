@@ -49,24 +49,36 @@ NonCompositedContentHost::~NonCompositedContentHost()
 {
 }
 
-void NonCompositedContentHost::invalidateRect(const IntRect& rect)
+void NonCompositedContentHost::setRootLayer(GraphicsLayer* layer)
 {
-    m_graphicsLayer->setNeedsDisplayInRect(FloatRect(rect));
-}
-
-void NonCompositedContentHost::invalidateEntireLayer()
-{
+    m_graphicsLayer->removeAllChildren();
     m_graphicsLayer->setNeedsDisplay();
+    if (layer)
+        m_graphicsLayer->addChild(layer);
+    else
+        m_graphicsLayer->platformLayer()->setLayerTreeHost(0);
 }
 
-void NonCompositedContentHost::setScrollPosition(const IntPoint& scrollPosition)
+void NonCompositedContentHost::setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition)
 {
+    bool visibleRectChanged = m_viewportSize != viewportSize;
+
+    m_viewportSize = viewportSize;
     m_graphicsLayer->platformLayer()->setScrollPosition(scrollPosition);
+    m_graphicsLayer->setSize(contentsSize);
+
+    if (visibleRectChanged)
+        m_graphicsLayer->setNeedsDisplay();
 }
 
 void NonCompositedContentHost::protectVisibleTileTextures()
 {
     m_graphicsLayer->platformLayer()->protectVisibleTileTextures();
+}
+
+void NonCompositedContentHost::invalidateRect(const IntRect& rect)
+{
+    m_graphicsLayer->setNeedsDisplayInRect(FloatRect(rect));
 }
 
 void NonCompositedContentHost::notifyAnimationStarted(const GraphicsLayer*, double /* time */)

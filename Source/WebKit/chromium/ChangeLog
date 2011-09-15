@@ -1,3 +1,20 @@
+2011-09-14  Antoine Labour  <piman@chromium.org>
+
+        Remove the dependency on GraphicsLayer from CCLayerTreeHost.
+        Move root layer management into the NonCompositedContentHost.
+        Have WebViewImpl create a NonCompositedContentHost explicitly.
+        https://bugs.webkit.org/show_bug.cgi?id=67883
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+        (WebKit::WebViewImpl::invalidateRootLayerRect):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::updateLayerTreeViewport):
+        (WebKit::WebViewImpl::setVisibilityState):
+        * src/WebViewImpl.h:
+
 2011-09-14  Nebojsa Ciric  <cira@chromium.org>
 
         Changed WebKit.gyp to use the new grit version of the scripts that handle

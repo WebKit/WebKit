@@ -1,3 +1,35 @@
+2011-09-14  Antoine Labour  <piman@chromium.org>
+
+        Remove the dependency on GraphicsLayer from CCLayerTreeHost.
+        Move root layer management into the NonCompositedContentHost.
+        Have WebViewImpl create a NonCompositedContentHost explicitly.
+        https://bugs.webkit.org/show_bug.cgi?id=67883
+
+        Reviewed by James Robinson.
+
+        Covered by compositing/ layout tests.
+
+        * platform/graphics/chromium/NonCompositedContentHost.cpp:
+        (WebCore::NonCompositedContentHost::setRootLayer):
+        (WebCore::NonCompositedContentHost::setViewport):
+        (WebCore::NonCompositedContentHost::setVisible):
+        (WebCore::NonCompositedContentHost::clearRenderSurfacesRecursive):
+        (WebCore::NonCompositedContentHost::invalidateRect):
+        * platform/graphics/chromium/NonCompositedContentHost.h:
+        (WebCore::NonCompositedContentHost::topLevelRootLayer):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::create):
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::commitTo):
+        (WebCore::CCLayerTreeHost::didRecreateGraphicsContext):
+        (WebCore::CCLayerTreeHost::setViewport):
+        (WebCore::CCLayerTreeHost::setVisible):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeHost::rootLayer):
+
 2011-09-14  Henrik Grunell  <grunell@google.com>
 
         MediaStream API: Change PeerConnection constructor name to webkitPeerConnection

@@ -29,7 +29,6 @@
 #include "LayerChromium.h"
 #include "LayerPainterChromium.h"
 #include "LayerRendererChromium.h"
-#include "NonCompositedContentHost.h"
 #include "TraceEvent.h"
 #include "TreeSynchronizer.h"
 #include "cc/CCLayerTreeHostCommon.h"
@@ -40,19 +39,19 @@
 
 namespace WebCore {
 
-PassRefPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* client, const CCSettings& settings)
+PassRefPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
 {
-    RefPtr<CCLayerTreeHost> layerTreeHost = adoptRef(new CCLayerTreeHost(client, settings));
+    RefPtr<CCLayerTreeHost> layerTreeHost = adoptRef(new CCLayerTreeHost(client, rootLayer, settings));
     if (!layerTreeHost->initialize())
         return 0;
     return layerTreeHost;
 }
 
-CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings& settings)
+CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
     : m_animating(false)
     , m_client(client)
     , m_frameNumber(0)
-    , m_nonCompositedContentHost(NonCompositedContentHost::create(m_client->createRootLayerPainter()))
+    , m_rootLayer(rootLayer)
     , m_settings(settings)
     , m_zoomAnimatorScale(1)
     , m_visible(true)
@@ -75,14 +74,6 @@ bool CCLayerTreeHost::initialize()
     // Update m_settings based on capabilities that we got back from the renderer.
     m_settings.acceleratePainting = m_proxy->layerRendererCapabilities().usingAcceleratedPainting;
 
-    m_rootLayer = GraphicsLayer::create(0);
-#ifndef NDEBUG
-    m_rootLayer->setName("root layer");
-#endif
-    m_rootLayer->setDrawsContent(false);
-
-    m_rootLayer->addChild(m_nonCompositedContentHost->graphicsLayer());
-
     // We changed the root layer. Tell the proxy a commit is needed.
     m_proxy->setNeedsCommitAndRedraw();
 
@@ -96,7 +87,7 @@ CCLayerTreeHost::~CCLayerTreeHost()
     TRACE_EVENT("CCLayerTreeHost::~CCLayerTreeHost", this, 0);
     m_proxy->stop();
     m_proxy.clear();
-    m_updateList.clear();
+    clearPendingUpdate();
     ASSERT(!m_contentsTextureManager || !m_contentsTextureManager->currentMemoryUseBytes());
     m_contentsTextureManager.clear();
 }
@@ -125,7 +116,7 @@ void CCLayerTreeHost::commitTo(CCLayerTreeHostImpl* hostImpl)
     contentsTextureManager()->deleteEvictedTextures(hostImpl->context());
 
     updateCompositorResources(m_updateList, hostImpl->context());
-    m_updateList.clear();
+    clearPendingUpdate();
 
     hostImpl->setVisible(m_visible);
     hostImpl->setZoomAnimatorScale(m_zoomAnimatorScale);
@@ -136,7 +127,7 @@ void CCLayerTreeHost::commitTo(CCLayerTreeHostImpl* hostImpl)
 
     // Synchronize trees, if one exists at all...
     if (rootLayer())
-        hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer()->platformLayer(), hostImpl->rootLayer()));
+        hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->rootLayer()));
     else
         hostImpl->setRootLayer(0);
 
@@ -163,7 +154,7 @@ void CCLayerTreeHost::didRecreateGraphicsContext(bool success)
     m_contentsTextureManager->evictAndDeleteAllTextures(0);
 
     if (rootLayer())
-        rootLayer()->platformLayer()->cleanupResourcesRecursive();
+        rootLayer()->cleanupResourcesRecursive();
     m_client->didRecreateGraphicsContext(success);
 }
 
@@ -189,11 +180,6 @@ bool CCLayerTreeHost::compositeAndReadback(void *pixels, const IntRect& rect)
 void CCLayerTreeHost::finishAllRendering()
 {
     m_proxy->finishAllRendering();
-}
-
-void CCLayerTreeHost::invalidateRootLayerRect(const IntRect& dirtyRect)
-{
-    m_nonCompositedContentHost->invalidateRect(dirtyRect);
 }
 
 const LayerRendererCapabilities& CCLayerTreeHost::layerRendererCapabilities() const
@@ -231,45 +217,9 @@ void CCLayerTreeHost::setNeedsRedraw()
 #endif
 }
 
-void CCLayerTreeHost::clearRenderSurfacesRecursive(LayerChromium* layer)
+void CCLayerTreeHost::setViewport(const IntSize& viewportSize)
 {
-    for (size_t i = 0; i < layer->children().size(); ++i)
-        clearRenderSurfacesRecursive(layer->children()[i].get());
-
-    if (layer->replicaLayer())
-        clearRenderSurfacesRecursive(layer->replicaLayer());
-
-    if (layer->maskLayer())
-        clearRenderSurfacesRecursive(layer->maskLayer());
-
-    layer->clearRenderSurface();
-}
-
-
-void CCLayerTreeHost::setRootLayer(GraphicsLayer* layer)
-{
-    m_nonCompositedContentHost->graphicsLayer()->removeAllChildren();
-    m_nonCompositedContentHost->invalidateEntireLayer();
-    if (layer)
-        m_nonCompositedContentHost->graphicsLayer()->addChild(layer);
-    else {
-        clearRenderSurfacesRecursive(rootLayer()->platformLayer());
-        m_nonCompositedContentHost->graphicsLayer()->platformLayer()->setLayerTreeHost(0);
-        m_rootLayer->platformLayer()->setLayerTreeHost(0);
-    }
-}
-
-void CCLayerTreeHost::setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition)
-{
-    bool visibleRectChanged = m_viewportSize != viewportSize;
-
     m_viewportSize = viewportSize;
-    m_nonCompositedContentHost->setScrollPosition(scrollPosition);
-    m_nonCompositedContentHost->graphicsLayer()->setSize(contentsSize);
-
-    if (visibleRectChanged)
-        m_nonCompositedContentHost->invalidateEntireLayer();
-
     setNeedsCommitAndRedraw();
 }
 
@@ -279,7 +229,6 @@ void CCLayerTreeHost::setVisible(bool visible)
     if (visible)
         m_proxy->setNeedsCommitAndRedraw();
     else {
-        m_nonCompositedContentHost->protectVisibleTileTextures();
         m_contentsTextureManager->reduceMemoryToLimit(TextureManager::lowLimitBytes());
         m_contentsTextureManager->unprotectAllTextures();
         m_proxy->setNeedsCommit();
@@ -312,7 +261,7 @@ void CCLayerTreeHost::updateLayers()
     if (viewportSize().isEmpty())
         return;
 
-    updateLayers(rootLayer()->platformLayer());
+    updateLayers(rootLayer());
 }
 
 void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
@@ -395,7 +344,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
             if (layer->bounds().isEmpty())
                 continue;
 
-            IntRect defaultContentRect = IntRect(rootLayer()->platformLayer()->scrollPosition(), viewportSize());
+            IntRect defaultContentRect = IntRect(rootLayer()->scrollPosition(), viewportSize());
 
             IntRect targetSurfaceRect = layer->targetRenderSurface() ? layer->targetRenderSurface()->contentRect() : defaultContentRect;
             if (layer->usesLayerScissor())
@@ -455,6 +404,16 @@ void CCLayerTreeHost::updateCompositorResources(LayerChromium* layer, GraphicsCo
 
     if (layer->drawsContent())
         layer->updateCompositorResources(context);
+}
+
+void CCLayerTreeHost::clearPendingUpdate()
+{
+    for (size_t surfaceIndex = 0; surfaceIndex < m_updateList.size(); ++surfaceIndex) {
+        LayerChromium* layer = m_updateList[surfaceIndex].get();
+        ASSERT(layer->renderSurface());
+        layer->clearRenderSurface();
+    }
+    m_updateList.clear();
 }
 
 }

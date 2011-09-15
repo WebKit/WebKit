@@ -74,9 +74,11 @@
 #include "InspectorController.h"
 #include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
+#include "LayerChromium.h"
 #include "LayerPainterChromium.h"
 #include "MIMETypeRegistry.h"
 #include "NodeRenderStyle.h"
+#include "NonCompositedContentHost.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PageGroupLoadDeferrer.h"
@@ -2549,8 +2551,8 @@ void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
     m_rootGraphicsLayer = layer;
 
     setIsAcceleratedCompositingActive(layer);
-    if (m_layerTreeHost)
-        m_layerTreeHost->setRootLayer(layer);
+    if (m_nonCompositedContentHost)
+        m_nonCompositedContentHost->setRootLayer(layer);
 
     IntRect damagedRect(0, 0, m_size.width, m_size.height);
     if (!m_isAcceleratedCompositingActive)
@@ -2585,7 +2587,7 @@ void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
     FrameView* view = page()->mainFrame()->view();
     IntRect dirtyRect = view->windowToContents(rect);
     updateLayerTreeViewport();
-    m_layerTreeHost->invalidateRootLayerRect(dirtyRect);
+    m_nonCompositedContentHost->invalidateRect(dirtyRect);
     setRootLayerNeedsDisplay();
 }
 
@@ -2654,7 +2656,8 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         ccSettings.showFPSCounter = settings()->showFPSCounter();
         ccSettings.showPlatformLayerTree = settings()->showPlatformLayerTree();
 
-        m_layerTreeHost = CCLayerTreeHost::create(this, ccSettings);
+        m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
+        m_layerTreeHost = CCLayerTreeHost::create(this, m_nonCompositedContentHost->topLevelRootLayer()->platformLayer(), ccSettings);
         if (m_layerTreeHost) {
             updateLayerTreeViewport();
             m_client->didActivateAcceleratedCompositing(true);
@@ -2738,7 +2741,8 @@ void WebViewImpl::updateLayerTreeViewport()
     IntRect visibleRect = view->visibleContentRect(true /* include scrollbars */);
     IntPoint scroll(view->scrollX(), view->scrollY());
 
-    m_layerTreeHost->setViewport(visibleRect.size(), view->contentsSize(), scroll);
+    m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll);
+    m_layerTreeHost->setViewport(visibleRect.size());
 }
 
 WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
@@ -2780,8 +2784,12 @@ void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (isAcceleratedCompositingActive())
-        m_layerTreeHost->setVisible(visibilityState == WebPageVisibilityStateVisible);
+    if (isAcceleratedCompositingActive()) {
+        bool visible = visibilityState == WebPageVisibilityStateVisible;
+        if (!visible)
+            m_nonCompositedContentHost->protectVisibleTileTextures();
+        m_layerTreeHost->setVisible(visible);
+    }
 #endif
 }
 

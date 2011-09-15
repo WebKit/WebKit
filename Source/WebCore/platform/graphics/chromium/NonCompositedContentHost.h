@@ -27,6 +27,7 @@
 #define NonCompositedContentHost_h
 
 #include "GraphicsLayerClient.h"
+#include "IntSize.h"
 
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -36,6 +37,7 @@ namespace WebCore {
 
 class GraphicsLayer;
 class GraphicsContext;
+class IntPoint;
 class IntRect;
 class LayerPainterChromium;
 
@@ -49,11 +51,10 @@ public:
     virtual ~NonCompositedContentHost();
 
     void invalidateRect(const IntRect&);
-    void invalidateEntireLayer();
-    void setScrollPosition(const IntPoint&);
+    void setRootLayer(GraphicsLayer*);
+    void setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition);
     void protectVisibleTileTextures();
-
-    GraphicsLayer* graphicsLayer() const { return m_graphicsLayer.get(); }
+    GraphicsLayer* topLevelRootLayer() const { return m_graphicsLayer.get(); }
 
 private:
     explicit NonCompositedContentHost(PassOwnPtr<LayerPainterChromium> contentPaint);
@@ -67,6 +68,7 @@ private:
 
     OwnPtr<GraphicsLayer> m_graphicsLayer;
     OwnPtr<LayerPainterChromium> m_contentPaint;
+    IntSize m_viewportSize;
 };
 
 } // namespace WebCore

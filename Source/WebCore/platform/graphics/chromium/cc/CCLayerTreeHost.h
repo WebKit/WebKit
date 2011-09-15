@@ -44,8 +44,6 @@ class CCThread;
 class GraphicsContext3D;
 class LayerChromium;
 class LayerPainterChromium;
-class GraphicsLayer;
-class NonCompositedContentHost;
 class TextureManager;
 
 class CCLayerTreeHostClient {
@@ -93,7 +91,7 @@ struct LayerRendererCapabilities {
 
 class CCLayerTreeHost : public RefCounted<CCLayerTreeHost> {
 public:
-    static PassRefPtr<CCLayerTreeHost> create(CCLayerTreeHostClient*, const CCSettings&);
+    static PassRefPtr<CCLayerTreeHost> create(CCLayerTreeHostClient*, PassRefPtr<LayerChromium> rootLayer, const CCSettings&);
     virtual ~CCLayerTreeHost();
 
     // CCLayerTreeHost interface to CCProxy.
@@ -128,7 +126,6 @@ public:
 
     int frameNumber() const { return m_frameNumber; }
 
-    void invalidateRootLayerRect(const IntRect& dirtyRect);
     void setZoomAnimatorScale(double);
 
     const LayerRendererCapabilities& layerRendererCapabilities() const;
@@ -139,27 +136,24 @@ public:
     void setNeedsCommitAndRedraw();
     void setNeedsRedraw();
 
-    void setRootLayer(GraphicsLayer*);
-    GraphicsLayer* rootLayer() { return m_rootLayer.get(); }
-    const GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }
+    LayerChromium* rootLayer() { return m_rootLayer.get(); }
+    const LayerChromium* rootLayer() const { return m_rootLayer.get(); }
 
     const CCSettings& settings() const { return m_settings; }
 
-    void setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition);
+    void setViewport(const IntSize& viewportSize);
 
     const IntSize& viewportSize() const { return m_viewportSize; }
     TextureManager* contentsTextureManager() const;
 
     void setVisible(bool);
 
-    NonCompositedContentHost* nonCompositedContentHost() const { return m_nonCompositedContentHost.get(); }
-
     void updateLayers();
 
     void deleteContentsTextures(GraphicsContext3D*);
 
 protected:
-    CCLayerTreeHost(CCLayerTreeHostClient*, const CCSettings&);
+    CCLayerTreeHost(CCLayerTreeHostClient*, PassRefPtr<LayerChromium> rootLayer, const CCSettings&);
 
 private:
     typedef Vector<RefPtr<LayerChromium> > LayerList;
@@ -168,8 +162,7 @@ private:
     void updateLayers(LayerChromium*);
     void updateCompositorResources(const LayerList&, GraphicsContext3D*);
     void updateCompositorResources(LayerChromium*, GraphicsContext3D*);
-
-    void clearRenderSurfacesRecursive(LayerChromium*);
+    void clearPendingUpdate();
 
     bool initialize();
 
@@ -181,8 +174,7 @@ private:
 
     OwnPtr<CCProxy> m_proxy;
 
-    OwnPtr<GraphicsLayer> m_rootLayer;
-    OwnPtr<NonCompositedContentHost> m_nonCompositedContentHost;
+    RefPtr<LayerChromium> m_rootLayer;
     OwnPtr<TextureManager> m_contentsTextureManager;
 
     LayerList m_updateList;
