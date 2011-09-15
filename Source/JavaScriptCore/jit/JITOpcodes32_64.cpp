@@ -995,20 +995,24 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
     unsigned src1 = currentInstruction[2].u.operand;
     unsigned src2 = currentInstruction[3].u.operand;
 
-    emitLoadTag(src1, regT0);
-    emitLoadTag(src2, regT1);
+    emitLoad2(src1, regT1, regT0, src2, regT3, regT2);
 
-    // Jump to a slow case if either operand is double, or if both operands are
-    // cells and/or Int32s.
-    move(regT0, regT2);
-    and32(regT1, regT2);
-    addSlowCase(branch32(Below, regT2, TrustedImm32(JSValue::LowestTag)));
-    addSlowCase(branch32(AboveOrEqual, regT2, TrustedImm32(JSValue::CellTag)));
+    // Bail if the tags differ, or are double.
+    addSlowCase(branch32(NotEqual, regT1, regT3));
+    addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::LowestTag)));
 
+    // Jump to a slow case if both are strings.
+    Jump notCell = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
+    Jump firstNotString = branchPtr(NotEqual, Address(regT0), TrustedImmPtr(m_globalData->jsStringVPtr));
+    addSlowCase(branchPtr(Equal, Address(regT2), TrustedImmPtr(m_globalData->jsStringVPtr)));
+    notCell.link(this);
+    firstNotString.link(this);
+
+    // Simply compare the payloads.
     if (type == OpStrictEq)
-        compare32(Equal, regT0, regT1, regT0);
+        compare32(Equal, regT0, regT2, regT0);
     else
-        compare32(NotEqual, regT0, regT1, regT0);
+        compare32(NotEqual, regT0, regT2, regT0);
 
     emitStoreBool(dst, regT0);
 }
@@ -1024,6 +1028,7 @@ void JIT::emitSlow_op_stricteq(Instruction* currentInstruction, Vector<SlowCaseE
     unsigned src1 = currentInstruction[2].u.operand;
     unsigned src2 = currentInstruction[3].u.operand;
 
+    linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
 
@@ -1044,6 +1049,7 @@ void JIT::emitSlow_op_nstricteq(Instruction* currentInstruction, Vector<SlowCase
     unsigned src1 = currentInstruction[2].u.operand;
     unsigned src2 = currentInstruction[3].u.operand;
 
+    linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
 

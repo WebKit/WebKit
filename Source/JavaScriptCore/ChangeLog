@@ -1,3 +1,25 @@
+2011-09-14  Gavin Barraclough  <barraclough@apple.com>
+
+        [n]stricteq code is bogus in JSValue32_64 JIT
+        https://bugs.webkit.org/show_bug.cgi?id=68141
+
+        Reviewed by Sam Weinig.
+
+        The code tries to check for both ints or cells, but this check also
+        catches cases where values that are undefined, null, etc (probably
+        was incorrectly assuming cell was the 2nd highest tag?).
+
+        Also, there is no need not to handle int on the fast path.
+        stricteq is just a case of comparing the payloads, if we:
+            * handle cases of differing tags on a slow path
+            * handle doubles a slow path
+            * handle both-are-string on a slow path
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emitSlow_op_stricteq):
+        (JSC::JIT::emitSlow_op_nstricteq):
+
 2011-09-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Make JSCell::toBoolean non-virtual
