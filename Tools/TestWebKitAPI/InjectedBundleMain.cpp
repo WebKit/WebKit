@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "InjectedBundleController.h"
 #include <WebKit2/WKBundleInitialize.h>
 

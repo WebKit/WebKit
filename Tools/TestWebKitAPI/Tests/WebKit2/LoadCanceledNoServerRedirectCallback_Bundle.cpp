@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "InjectedBundleTest.h"
 #include "PlatformUtilities.h"
 #include "Test.h"

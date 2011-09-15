@@ -155,6 +155,8 @@ sub determineBaseProductDir
     } elsif (isSymbian()) {
         # Shadow builds are not supported on Symbian
         $baseProductDir = $sourceDir;
+    } elsif (isChromium()) {
+        $baseProductDir = "$sourceDir/out";
     }
 
     if (!defined($baseProductDir)) { # Port-spesific checks failed, use default

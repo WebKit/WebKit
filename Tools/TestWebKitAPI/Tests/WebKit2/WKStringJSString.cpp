@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include <WebKit2/WKStringPrivate.h>
 #include <JavaScriptCore/JSStringRef.h>
 

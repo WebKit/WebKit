@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKURLResponseCF.h>
 #include <wtf/RetainPtr.h>

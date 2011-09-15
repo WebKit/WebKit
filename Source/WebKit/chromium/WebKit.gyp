@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -32,6 +32,7 @@
     'includes': [
         '../../WebCore/WebCore.gypi',
         '../../../Tools/DumpRenderTree/DumpRenderTree.gypi',
+        '../../../Tools/TestWebKitAPI/TestWebKitAPI.gypi',
         'WebKit.gypi',
         'features.gypi',
     ],
@@ -1246,6 +1247,27 @@
                         'files': ['<(PRODUCT_DIR)/libTestNetscapePlugIn.so'],
                     }],
                 }],
+            ],
+        },
+        {
+            'target_name': 'TestWebKitAPI',
+            'type': 'executable',
+            'dependencies': [
+                'webkit',
+                '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
+                '<(chromium_src_dir)/base/base.gyp:test_support_base',
+                '<(chromium_src_dir)/testing/gtest.gyp:gtest',
+                '<(chromium_src_dir)/testing/gmock.gyp:gmock',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
+            ],
+            'include_dirs+': [
+                '../../../Tools/TestWebKitAPI',
+                'public',
+                'src',
+            ],
+            'sources': [
+                'tests/RunAllTests.cpp',
+                '<@(TestWebKitAPI_files)',
             ],
         },
     ], # targets

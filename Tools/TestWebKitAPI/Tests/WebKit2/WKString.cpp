@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 namespace TestWebKitAPI {
 
 TEST(WebKit2, WKString)

@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include <WebKit2/WKContextPrivate.h>

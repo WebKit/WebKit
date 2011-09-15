@@ -66,6 +66,7 @@ Usage: $programName [options]
   -v|--verbose          Verbose output
   -d|--dump-tests       Dump the names of testcases without running them
   --[no-]build          Build (or do not build) unit tests prior to running (default: $buildDefault)
+  --chromium            Run the Chromium port on Mac/Win/Linux
 EOF
 
 GetOptions(
@@ -92,6 +93,11 @@ if ($dump) {
 
 if (runAllTests()) {
     exit 1;
+}
+
+sub isSupportedPlatform()
+{
+    return isAppleMacWebKit() || isAppleWinWebKit() || isChromium();
 }
 
 sub dumpAllTests()
@@ -145,7 +151,7 @@ sub runTest($$)
     my $result = 0;
     my $timedOut = 0;
 
-    die "run-api-tests is not supported on this platform.\n" unless isAppleMacWebKit() || isAppleWinWebKit();
+    die "run-api-tests is not supported on this platform.\n" unless isSupportedPlatform();
 
     prepareEnvironmentForRunningTestTool();
 
@@ -202,7 +208,7 @@ sub populateTests()
     my @tests;
     my $timedOut;
 
-    die "run-api-tests is not supported on this platform.\n" unless isAppleMacWebKit() || isAppleWinWebKit();
+    die "run-api-tests is not supported on this platform.\n" unless isSupportedPlatform();
 
     prepareEnvironmentForRunningTestTool();
 

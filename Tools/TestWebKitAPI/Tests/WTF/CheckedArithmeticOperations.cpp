@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <JavaScriptCore/CheckedArithmetic.h>
+#include "config.h"
+#include <wtf/CheckedArithmetic.h>
 
 namespace TestWebKitAPI {
 

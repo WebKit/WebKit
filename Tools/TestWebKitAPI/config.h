@@ -41,8 +41,13 @@
 #define JS_EXPORT_PRIVATE
 #define WTF_EXPORT_PRIVATE
 
+#define JS_EXPORTDATA
+
 #include <stdint.h>
+
+#if !PLATFORM(CHROMIUM)
 #include <WebKit2/WebKit2.h>
+#endif
 
 #ifdef __cplusplus
 #include <gtest/gtest.h>
