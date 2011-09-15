@@ -364,7 +364,7 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
 // end OS(DARWIN)
 
 #elif OS(WINDOWS)
-    regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL | CONTEXT_SEGMENTS;
+    regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
     GetThreadContext(platformThread, &regs);
     return sizeof(CONTEXT);
 #elif USE(PTHREADS)
@@ -415,10 +415,20 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 #endif // __DARWIN_UNIX03
 
 // end OS(DARWIN)
-#elif CPU(X86) && OS(WINDOWS)
+#elif OS(WINDOWS)
+
+#if CPU(ARM)
+    return reinterpret_cast<void*>((uintptr_t) regs.Sp);
+#elif CPU(MIPS)
+    return reinterpret_cast<void*>((uintptr_t) regs.IntSp);
+#elif CPU(X86)
     return reinterpret_cast<void*>((uintptr_t) regs.Esp);
-#elif CPU(X86_64) && OS(WINDOWS)
+#elif CPU(X86_64)
     return reinterpret_cast<void*>((uintptr_t) regs.Rsp);
+#else
+#error Unknown Architecture
+#endif
+
 #elif USE(PTHREADS)
     void* stackBase = 0;
     size_t stackSize = 0;
