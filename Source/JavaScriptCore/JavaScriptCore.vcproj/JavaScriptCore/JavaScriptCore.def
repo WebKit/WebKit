@@ -270,7 +270,6 @@ EXPORTS
     ?objectProtoFuncToString@JSC@@YI_JPAVExecState@1@@Z
     ?objectTypeCounts@Heap@JSC@@QAE?AV?$PassOwnPtr@V?$HashCountedSet@PBDU?$PtrHash@PBD@WTF@@U?$HashTraits@PBD@2@@WTF@@@WTF@@XZ
     ?parseDateFromNullTerminatedCharacters@WTF@@YANPBD@Z
-    ?preventExtensions@JSObject@JSC@@UAEXAAVJSGlobalData@2@@Z
     ?profiler@Profiler@JSC@@SAPAV12@XZ
     ?protect@Heap@JSC@@QAEXVJSValue@2@@Z
     ?protectedGlobalObjectCount@Heap@JSC@@QAEIXZ
