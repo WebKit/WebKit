@@ -23,7 +23,7 @@
 
 MAJOR_VERSION = 534;
 MINOR_VERSION = 51;
-TINY_VERSION = 22;
+TINY_VERSION = 23;
 FULL_VERSION = $(MAJOR_VERSION).$(MINOR_VERSION).$(TINY_VERSION);
 
 // The bundle version and short version string are set based on the current build configuration, see below.
