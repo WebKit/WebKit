@@ -1,3 +1,24 @@
+2011-09-15  Jon Lee  <jonlee@apple.com>
+
+        Submitting a form with target=_blank works only once
+        https://bugs.webkit.org/show_bug.cgi?id=28633
+        <rdar://problem/7357787>
+
+        Reviewed by Andy Estes.
+
+        Test: fast/forms/submit-to-blank-multiple-times.html
+
+        The call to reset the multiple form submission bool is pushed down from the mouseDown handler to
+        handleMousePressEvent(), to include WK2 coverage, similar to keyEvent.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::keyEvent): clarified old FIXME comment. Both key events and mouse events
+        may submit a form multiple times, but the call to reset the handler should probably be in another
+        abstraction layer.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::mouseDown):
+
 2011-09-15  Peter Rybin  <peter.rybin@gmail.com>
 
         XMLDocumentParserQt.cpp incorrectly converts 0-based number into 1-based number

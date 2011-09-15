@@ -475,8 +475,6 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
             m_mouseCaptureNode = hitNode;
     }
 
-    mainFrameImpl()->frame()->loader()->resetMultipleFormSubmissionProtection();
-
     mainFrameImpl()->frame()->eventHandler()->handleMousePressEvent(
         PlatformMouseEventBuilder(mainFrameImpl()->frameView(), event));
 

@@ -1,3 +1,15 @@
+2011-09-15  Jon Lee  <jonlee@apple.com>
+
+        Submitting a form with target=_blank works only once
+        https://bugs.webkit.org/show_bug.cgi?id=28633
+        <rdar://problem/7357787>
+
+        Reviewed by Andy Estes.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::mouseDown): Remove call to resetMultipleFormSubmissionProtection() since
+        it will be made in platform-independent function EventHandler::handleMousePressEvent().
+
 2011-09-15  Eric Seidel  <eric@webkit.org>
 
         Remove ENABLE_SVG_ANIMATION as all major ports have it on by default
