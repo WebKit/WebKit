@@ -33,7 +33,7 @@ CONFIG(QTDIR_build) {
 
 # Rules when JIT enabled (not disabled)
 !contains(DEFINES, ENABLE_JIT=0) {
-    linux*-g++*:greaterThan(GCC_MAJOR_VERSION,3):greaterThan(GCC_MINOR_VERSION,0) {
+    linux*-g++*:greaterThan(QT_GCC_MAJOR_VERSION,3):greaterThan(QT_GCC_MINOR_VERSION,0) {
         QMAKE_CXXFLAGS += -fno-stack-protector
         QMAKE_CFLAGS += -fno-stack-protector
     }
@@ -216,15 +216,15 @@ symbian: {
     QMAKE_CXXFLAGS.ARMCC += -OTime -O3
 }
 
-lessThan(GCC_MAJOR_VERSION, 5) {
+lessThan(QT_GCC_MAJOR_VERSION, 5) {
     # GCC 4.5 and before
-    lessThan(GCC_MINOR_VERSION, 6) {
+    lessThan(QT_GCC_MINOR_VERSION, 6) {
         # Disable C++0x mode in JSC for those who enabled it in their Qt's mkspec.
         *-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x
     }
 
     # GCC 4.6 and after.
-    greaterThan(GCC_MINOR_VERSION, 5) {
+    greaterThan(QT_GCC_MINOR_VERSION, 5) {
         if (!contains(QMAKE_CXXFLAGS, -std=c++0x) && !contains(QMAKE_CXXFLAGS, -std=gnu++0x)) {
             # We need to deactivate those warnings because some names conflicts with upcoming c++0x types (e.g.nullptr).
             QMAKE_CFLAGS_WARN_ON += -Wno-c++0x-compat
