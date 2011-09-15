@@ -1,3 +1,9 @@
+2011-09-14  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] Add slow to debug version of styles-source-lines.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-14  Tom Sepez  <tsepez@chromium.org>
 
         Fix tests made trivial by the bugfix to 27895, by removing leading punctuation
