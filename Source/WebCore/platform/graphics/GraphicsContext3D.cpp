@@ -36,6 +36,7 @@
 #include "Extensions3D.h"
 #include "Image.h"
 #include "ImageData.h"
+#include "ImageObserver.h"
 
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
@@ -189,6 +190,8 @@ bool GraphicsContext3D::extractImageData(Image* image,
                        componentsPerPixel * bytesPerComponent,
                        unpackAlignment);
     }
+    if (ImageObserver *observer = image->imageObserver())
+        observer->didDraw(image);
     return true;
 }
 
