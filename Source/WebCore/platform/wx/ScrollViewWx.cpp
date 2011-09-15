@@ -165,17 +165,6 @@ IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
     return IntRect(m_data->viewStart.x, m_data->viewStart.y, width, height);
 }
 
-IntSize ScrollView::platformContentsSize() const
-{
-    int width = 0;
-    int height = 0;
-    if (platformWidget()) {
-        platformWidget()->GetVirtualSize(&width, &height);
-        ASSERT(width >= 0 && height >= 0);
-    }
-    return IntSize(width, height);
-}
-
 void ScrollView::platformSetScrollPosition(const IntPoint& scrollPoint)
 {
     wxWindow* win = platformWidget();

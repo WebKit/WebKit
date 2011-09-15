@@ -384,7 +384,6 @@ private:
     void platformSetCanBlitOnScroll(bool);
     bool platformCanBlitOnScroll() const;
     IntRect platformVisibleContentRect(bool includeScrollbars) const;
-    IntSize platformContentsSize() const;
     void platformSetContentsSize();
     IntRect platformContentsToScreen(const IntRect&) const;
     IntPoint platformScreenToContents(const IntPoint&) const;
