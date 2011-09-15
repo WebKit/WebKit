@@ -50,7 +50,7 @@ public:
     void setTextureId(unsigned textureId) { m_textureId = textureId; }
 
 protected:
-    explicit CanvasLayerChromium(GraphicsLayerChromium* owner);
+    explicit CanvasLayerChromium(CCLayerDelegate*);
 
     bool m_hasAlpha;
     bool m_premultipliedAlpha;

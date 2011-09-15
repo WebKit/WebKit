@@ -45,14 +45,14 @@ class LayerTextureUpdater;
 // A Layer that requires a GraphicsContext to render its contents.
 class ContentLayerChromium : public TiledLayerChromium {
 public:
-    static PassRefPtr<ContentLayerChromium> create(GraphicsLayerChromium* owner = 0);
+    static PassRefPtr<ContentLayerChromium> create(CCLayerDelegate*);
 
     virtual ~ContentLayerChromium();
 
     virtual void paintContentsIfDirty();
 
 private:
-    explicit ContentLayerChromium(GraphicsLayerChromium* owner);
+    explicit ContentLayerChromium(CCLayerDelegate*);
 
     virtual void cleanupResources();
     virtual bool drawsContent() const;

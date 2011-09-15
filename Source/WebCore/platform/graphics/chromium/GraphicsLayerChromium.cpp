@@ -102,15 +102,15 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
 GraphicsLayerChromium::~GraphicsLayerChromium()
 {
     if (m_layer) {
-        m_layer->setOwner(0);
+        m_layer->setDelegate(0);
         m_layer->clearRenderSurface();
     }
     if (m_contentsLayer) {
-        m_contentsLayer->setOwner(0);
+        m_contentsLayer->setDelegate(0);
         m_contentsLayer->clearRenderSurface();
     }
     if (m_transformLayer) {
-        m_transformLayer->setOwner(0);
+        m_transformLayer->setDelegate(0);
         m_transformLayer->clearRenderSurface();
     }
 }
@@ -383,7 +383,7 @@ void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
 {
     bool childrenChanged = false;
     if (platformLayer) {
-        platformLayer->setOwner(this);
+        platformLayer->setDelegate(this);
         if (m_contentsLayer.get() != platformLayer) {
             setupContentsLayer(platformLayer);
             m_contentsLayer = platformLayer;
@@ -415,7 +415,7 @@ void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
             m_contentsLayerPurpose = ContentsLayerForVideo;
             childrenChanged = true;
         }
-        layer->setOwner(this);
+        layer->setDelegate(this);
         layer->setNeedsDisplay();
         updateContentsRect();
     } else {
@@ -684,6 +684,27 @@ void GraphicsLayerChromium::setupContentsLayer(LayerChromium* contentsLayer)
 void GraphicsLayerChromium::updateOpacityOnLayer()
 {
     primaryLayer()->setOpacity(m_opacity);
+}
+
+bool GraphicsLayerChromium::drawsContent() const
+{
+    return GraphicsLayer::drawsContent();
+}
+
+bool GraphicsLayerChromium::preserves3D() const
+{
+    return GraphicsLayer::preserves3D();
+}
+
+void GraphicsLayerChromium::paintContents(GraphicsContext& context, const IntRect& clip)
+{
+    paintGraphicsLayerContents(context, clip);
+}
+
+void GraphicsLayerChromium::notifySyncRequired()
+{
+    if (m_client)
+        m_client->notifySyncRequired(this);
 }
 
 } // namespace WebCore

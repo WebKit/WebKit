@@ -44,7 +44,7 @@ namespace WebCore {
 class VideoLayerChromium : public LayerChromium {
 public:
 
-    static PassRefPtr<VideoLayerChromium> create(GraphicsLayerChromium* owner = 0,
+    static PassRefPtr<VideoLayerChromium> create(CCLayerDelegate* = 0,
                                                  VideoFrameProvider* = 0);
     virtual ~VideoLayerChromium();
 
@@ -70,7 +70,7 @@ private:
         OwnPtr<ManagedTexture> m_texture;
     };
 
-    VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameProvider*);
+    VideoLayerChromium(CCLayerDelegate*, VideoFrameProvider*);
 
     static GC3Denum determineTextureFormat(const VideoFrameChromium*);
     static IntSize computeVisibleSize(const VideoFrameChromium*, unsigned plane);

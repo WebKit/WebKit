@@ -36,13 +36,13 @@
 
 namespace WebCore {
 
-PassRefPtr<PluginLayerChromium> PluginLayerChromium::create(GraphicsLayerChromium* owner)
+PassRefPtr<PluginLayerChromium> PluginLayerChromium::create(CCLayerDelegate* delegate)
 {
-    return adoptRef(new PluginLayerChromium(owner));
+    return adoptRef(new PluginLayerChromium(delegate));
 }
 
-PluginLayerChromium::PluginLayerChromium(GraphicsLayerChromium* owner)
-    : LayerChromium(owner)
+PluginLayerChromium::PluginLayerChromium(CCLayerDelegate* delegate)
+    : LayerChromium(delegate)
     , m_textureId(0)
 {
 }

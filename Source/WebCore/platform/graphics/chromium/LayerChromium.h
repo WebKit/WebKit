@@ -36,7 +36,6 @@
 
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
-#include "GraphicsLayerChromium.h"
 #include "PlatformString.h"
 #include "ProgramBinding.h"
 #include "RenderSurfaceChromium.h"
@@ -56,12 +55,21 @@ class CCLayerImpl;
 class CCLayerTreeHost;
 class GraphicsContext3D;
 
+class CCLayerDelegate {
+public:
+    virtual ~CCLayerDelegate() { }
+    virtual bool drawsContent() const = 0;
+    virtual bool preserves3D() const = 0;
+    virtual void paintContents(GraphicsContext&, const IntRect& clip) = 0;
+    virtual void notifySyncRequired() = 0;
+};
+
 // Base class for composited layers. Special layer types are derived from
 // this class.
 class LayerChromium : public RefCounted<LayerChromium> {
     friend class LayerTilerChromium;
 public:
-    static PassRefPtr<LayerChromium> create(GraphicsLayerChromium* owner = 0);
+    static PassRefPtr<LayerChromium> create(CCLayerDelegate* = 0);
 
     virtual ~LayerChromium();
 
@@ -144,7 +152,7 @@ public:
     void setGeometryFlipped(bool flipped) { m_geometryFlipped = flipped; setNeedsCommit(); }
     bool geometryFlipped() const { return m_geometryFlipped; }
 
-    bool preserves3D() { return m_owner && m_owner->preserves3D(); }
+    bool preserves3D() { return m_delegate && m_delegate->preserves3D(); }
 
     void setUsesLayerScissor(bool usesLayerScissor) { m_usesLayerScissor = usesLayerScissor; }
     bool usesLayerScissor() const { return m_usesLayerScissor; }
@@ -154,7 +162,7 @@ public:
 
     virtual void setLayerTreeHost(CCLayerTreeHost*);
 
-    void setOwner(GraphicsLayerChromium* owner) { m_owner = owner; }
+    void setDelegate(CCLayerDelegate* delegate) { m_delegate = delegate; }
 
     void setReplicaLayer(LayerChromium* layer) { m_replicaLayer = layer; }
     LayerChromium* replicaLayer() { return m_replicaLayer.get(); }
@@ -209,8 +217,8 @@ public:
     void cleanupResourcesRecursive();
 
 protected:
-    GraphicsLayerChromium* m_owner;
-    explicit LayerChromium(GraphicsLayerChromium* owner);
+    CCLayerDelegate* m_delegate;
+    explicit LayerChromium(CCLayerDelegate*);
 
     // This is called to clean up resources being held in the same context as
     // layerRendererContext(). Subclasses should override this method if they

@@ -49,7 +49,7 @@ class ImageLayerTextureUpdater;
 // A Layer that contains only an Image element.
 class ImageLayerChromium : public TiledLayerChromium {
 public:
-    static PassRefPtr<ImageLayerChromium> create(GraphicsLayerChromium* owner = 0);
+    static PassRefPtr<ImageLayerChromium> create(CCLayerDelegate*);
     virtual ~ImageLayerChromium();
 
     virtual bool drawsContent() const;
@@ -58,7 +58,7 @@ public:
     void setContents(Image* image);
 
 private:
-    ImageLayerChromium(GraphicsLayerChromium* owner);
+    explicit ImageLayerChromium(CCLayerDelegate*);
 
     virtual void cleanupResources();
     virtual void createTextureUpdater(const CCLayerTreeHost*);

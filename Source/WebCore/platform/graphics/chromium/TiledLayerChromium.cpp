@@ -63,8 +63,8 @@ private:
     OwnPtr<ManagedTexture> m_tex;
 };
 
-TiledLayerChromium::TiledLayerChromium(GraphicsLayerChromium* owner)
-    : LayerChromium(owner)
+TiledLayerChromium::TiledLayerChromium(CCLayerDelegate* delegate)
+    : LayerChromium(delegate)
     , m_tilingOption(AutoTile)
     , m_textureFormat(GraphicsContext3D::INVALID_ENUM)
     , m_skipsDraw(false)
@@ -122,7 +122,7 @@ void TiledLayerChromium::updateTileSizeAndTilingOption()
 
 bool TiledLayerChromium::drawsContent() const
 {
-    if (!m_owner)
+    if (!m_delegate)
         return false;
 
     if (!m_tiler)

@@ -1,3 +1,63 @@
+2011-09-14  Antoine Labour  <piman@chromium.org>
+
+        Added a pure virtual class CCLayerDelegate which helps to isolate
+        the chromium compositor from the rest of WebCore, and aids unit
+        testing by being easily mockable.  The compositor layers no longer
+        directly see instances of GraphicsLayerChromium, instead they use
+        this interface.
+        https://bugs.webkit.org/show_bug.cgi?id=67750
+
+        Reviewed by James Robinson.
+
+        No new tests: changes already covered by existing compositing layout
+        tests.
+
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::CanvasLayerChromium):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerPainter::create):
+        (WebCore::ContentLayerPainter::paint):
+        (WebCore::ContentLayerPainter::ContentLayerPainter):
+        (WebCore::ContentLayerChromium::create):
+        (WebCore::ContentLayerChromium::ContentLayerChromium):
+        (WebCore::ContentLayerChromium::drawsContent):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::getDrawsContent):
+        (WebCore::GraphicsLayerChromium::getPreserves3D):
+        (WebCore::GraphicsLayerChromium::paintingGoesToWindow):
+        (WebCore::GraphicsLayerChromium::doPaintGraphicsLayerContents):
+        (WebCore::GraphicsLayerChromium::notifySyncRequired):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::create):
+        (WebCore::ImageLayerChromium::ImageLayerChromium):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::create):
+        (WebCore::LayerChromium::LayerChromium):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::CCLayerDelegate::~CCLayerDelegate):
+        (WebCore::LayerChromium::preserves3D):
+        (WebCore::LayerChromium::setOwner):
+        * platform/graphics/chromium/PluginLayerChromium.cpp:
+        (WebCore::PluginLayerChromium::create):
+        (WebCore::PluginLayerChromium::PluginLayerChromium):
+        * platform/graphics/chromium/PluginLayerChromium.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::TiledLayerChromium):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::create):
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::create):
+        (WebCore::WebGLLayerChromium::WebGLLayerChromium):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+
 2011-09-14  Anders Carlsson  <andersca@apple.com>
 
         Try to fix GTK+ build.

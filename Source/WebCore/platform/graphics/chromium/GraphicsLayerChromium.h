@@ -33,6 +33,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "LayerChromium.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 
@@ -40,7 +41,7 @@ namespace WebCore {
 
 class LayerChromium;
 
-class GraphicsLayerChromium : public GraphicsLayer {
+class GraphicsLayerChromium : public GraphicsLayer, public CCLayerDelegate {
 public:
     GraphicsLayerChromium(GraphicsLayerClient*);
     virtual ~GraphicsLayerChromium();
@@ -94,11 +95,11 @@ public:
     virtual void setDebugBackgroundColor(const Color&);
     virtual void setDebugBorder(const Color&, float borderWidth);
 
-    void notifySyncRequired()
-    {
-        if (m_client)
-            m_client->notifySyncRequired(this);
-    }
+    // The following functions implement the CCLayerDelegate interface.
+    virtual bool drawsContent() const;
+    virtual bool preserves3D() const;
+    virtual void paintContents(GraphicsContext&, const IntRect& clip);
+    virtual void notifySyncRequired();
 
 private:
     void updateOpacityOnLayer();

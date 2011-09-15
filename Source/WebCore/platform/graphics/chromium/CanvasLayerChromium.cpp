@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-CanvasLayerChromium::CanvasLayerChromium(GraphicsLayerChromium* owner)
-    : LayerChromium(owner)
+CanvasLayerChromium::CanvasLayerChromium(CCLayerDelegate* delegate)
+    : LayerChromium(delegate)
     , m_hasAlpha(true)
     , m_premultipliedAlpha(true)
     , m_textureId(0)

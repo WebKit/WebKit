@@ -51,13 +51,13 @@ using namespace std;
 
 static int s_nextLayerId = 1;
 
-PassRefPtr<LayerChromium> LayerChromium::create(GraphicsLayerChromium* owner)
+PassRefPtr<LayerChromium> LayerChromium::create(CCLayerDelegate* delegate)
 {
-    return adoptRef(new LayerChromium(owner));
+    return adoptRef(new LayerChromium(delegate));
 }
 
-LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
-    : m_owner(owner)
+LayerChromium::LayerChromium(CCLayerDelegate* delegate)
+    : m_delegate(delegate)
     , m_contentsDirty(false)
     , m_layerId(s_nextLayerId++)
     , m_parent(0)
@@ -127,8 +127,8 @@ void LayerChromium::setNeedsCommit()
     // call setRootLayerNeedsDisplay() on the WebView, which will cause LayerRendererChromium
     // to render a frame.
     // This function has no effect on root layers.
-    if (m_owner)
-        m_owner->notifySyncRequired();
+    if (m_delegate)
+        m_delegate->notifySyncRequired();
 }
 
 void LayerChromium::setParent(LayerChromium* layer)

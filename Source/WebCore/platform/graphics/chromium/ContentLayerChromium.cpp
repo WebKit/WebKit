@@ -46,9 +46,9 @@ namespace WebCore {
 class ContentLayerPainter : public LayerPainterChromium {
     WTF_MAKE_NONCOPYABLE(ContentLayerPainter);
 public:
-    static PassOwnPtr<ContentLayerPainter> create(GraphicsLayerChromium* owner)
+    static PassOwnPtr<ContentLayerPainter> create(CCLayerDelegate* delegate)
     {
-        return adoptPtr(new ContentLayerPainter(owner));
+        return adoptPtr(new ContentLayerPainter(delegate));
     }
 
     virtual void paint(GraphicsContext& context, const IntRect& contentRect)
@@ -56,28 +56,28 @@ public:
         double paintStart = currentTime();
         context.clearRect(contentRect);
         context.clip(contentRect);
-        m_owner->paintGraphicsLayerContents(context, contentRect);
+        m_delegate->paintContents(context, contentRect);
         double paintEnd = currentTime();
         double pixelsPerSec = (contentRect.width() * contentRect.height()) / (paintEnd - paintStart);
         PlatformSupport::histogramCustomCounts("Renderer4.AccelContentPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
         PlatformSupport::histogramCustomCounts("Renderer4.AccelContentPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
     }
 private:
-    explicit ContentLayerPainter(GraphicsLayerChromium* owner)
-        : m_owner(owner)
+    explicit ContentLayerPainter(CCLayerDelegate* delegate)
+        : m_delegate(delegate)
     {
     }
 
-    GraphicsLayerChromium* m_owner;
+    CCLayerDelegate* m_delegate;
 };
 
-PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(GraphicsLayerChromium* owner)
+PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(CCLayerDelegate* delegate)
 {
-    return adoptRef(new ContentLayerChromium(owner));
+    return adoptRef(new ContentLayerChromium(delegate));
 }
 
-ContentLayerChromium::ContentLayerChromium(GraphicsLayerChromium* owner)
-    : TiledLayerChromium(owner)
+ContentLayerChromium::ContentLayerChromium(CCLayerDelegate* delegate)
+    : TiledLayerChromium(delegate)
 {
 }
 
@@ -115,7 +115,7 @@ void ContentLayerChromium::paintContentsIfDirty()
 
 bool ContentLayerChromium::drawsContent() const
 {
-    return m_owner && m_owner->drawsContent() && TiledLayerChromium::drawsContent();
+    return m_delegate && m_delegate->drawsContent() && TiledLayerChromium::drawsContent();
 }
 
 void ContentLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
@@ -125,12 +125,12 @@ void ContentLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
     // mode. This thus depends on CCLayerTreeHost::initialize turning off
     // acceleratePainting to prevent this from crashing.
     if (host->settings().acceleratePainting) {
-        m_textureUpdater = LayerTextureUpdaterSkPicture::create(ContentLayerPainter::create(m_owner));
+        m_textureUpdater = LayerTextureUpdaterSkPicture::create(ContentLayerPainter::create(m_delegate));
         return;
     }
 #endif // SKIA
 
-    m_textureUpdater = LayerTextureUpdaterBitmap::create(ContentLayerPainter::create(m_owner), host->layerRendererCapabilities().usingMapSub);
+    m_textureUpdater = LayerTextureUpdaterBitmap::create(ContentLayerPainter::create(m_delegate), host->layerRendererCapabilities().usingMapSub);
 }
 
 }

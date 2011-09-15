@@ -37,7 +37,6 @@
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "NotImplemented.h"
-#include "RenderLayerBacking.h"
 #include "VideoFrameChromium.h"
 #include "VideoFrameProvider.h"
 #include "cc/CCLayerImpl.h"
@@ -45,14 +44,14 @@
 
 namespace WebCore {
 
-PassRefPtr<VideoLayerChromium> VideoLayerChromium::create(GraphicsLayerChromium* owner,
+PassRefPtr<VideoLayerChromium> VideoLayerChromium::create(CCLayerDelegate* delegate,
                                                           VideoFrameProvider* provider)
 {
-    return adoptRef(new VideoLayerChromium(owner, provider));
+    return adoptRef(new VideoLayerChromium(delegate, provider));
 }
 
-VideoLayerChromium::VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameProvider* provider)
-    : LayerChromium(owner)
+VideoLayerChromium::VideoLayerChromium(CCLayerDelegate* delegate, VideoFrameProvider* provider)
+    : LayerChromium(delegate)
     , m_skipsDraw(true)
     , m_frameFormat(VideoFrameChromium::Invalid)
     , m_provider(provider)
@@ -80,11 +79,7 @@ void VideoLayerChromium::cleanupResources()
 
 void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context)
 {
-    if (!m_contentsDirty || !m_owner)
-        return;
-
-    RenderLayerBacking* backing = static_cast<RenderLayerBacking*>(m_owner->client());
-    if (!backing || backing->paintingGoesToWindow())
+    if (!m_contentsDirty || !m_delegate)
         return;
 
     ASSERT(drawsContent());
