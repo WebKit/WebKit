@@ -1,5 +1,11 @@
 2011-09-15  Keishi Hattori  <keishi@webkit.org>
 
+        [chromium] Add slow to debug version of repeat-cached-vm-reentry.html and sandboxed-iframe-navigation-parent.html.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
         [chromium] rebaseline expectations due to r95096, r95121, and r95129
 
         * platform/chromium-cg-mac-leopard/svg/as-border-image/svg-as-border-image-expected.txt: Removed.
