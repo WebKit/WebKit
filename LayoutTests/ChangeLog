@@ -1,3 +1,44 @@
+2011-09-14  David Levin  <levin@chromium.org>
+
+        [chromium] rebaselines due to r95121, r95070, and r95099.
+
+        * platform/chromium-cg-mac-leopard/fast/borders/border-image-border-radius-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/chromium-cg-mac-leopard/fast/borders/border-image-scaled-expected.png:
+        * platform/chromium-cg-mac-leopard/fast/borders/border-image-side-reduction-expected.png:
+        * platform/chromium-cg-mac/fast/borders/bidi-002-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/bidi-009a-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/bidi-012-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/block-mask-overlay-image-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/border-color-inherit-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/border-image-border-radius-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/border-image-massive-scale-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/chromium-cg-mac/fast/borders/border-image-scale-transform-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/border-image-scaled-expected.png:
+        * platform/chromium-cg-mac/fast/borders/border-image-side-reduction-expected.png:
+        * platform/chromium-cg-mac/fast/borders/inline-mask-overlay-image-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/outline-alpha-block-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/outline-alpha-inline-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/rtl-border-01-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/rtl-border-02-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/rtl-border-03-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/rtl-border-04-expected.png: Added.
+        * platform/chromium-cg-mac/fast/borders/rtl-border-05-expected.png: Added.
+        * platform/chromium-cg-mac/fast/writing-mode/border-image-horizontal-bt-expected.png: Added.
+        * platform/chromium-cg-mac/fast/writing-mode/border-image-vertical-lr-expected.png: Added.
+        * platform/chromium-cg-mac/fast/writing-mode/border-image-vertical-rl-expected.png: Added.
+        * platform/chromium-cg-mac/fast/writing-mode/japanese-rl-text-with-broken-font-expected.txt: Removed.
+        * platform/chromium-linux-x86/fast/borders/border-image-scrambled-expected.png: Removed.
+        * platform/chromium-linux/fast/borders/border-image-scrambled-expected.png: Removed.
+        * platform/chromium-linux/fast/borders/border-image-scrambled-expected.txt: Removed.
+        * platform/chromium-win-vista/fast/borders/border-image-scrambled-expected.png: Removed.
+        * platform/chromium-win-vista/fast/borders/border-image-scrambled-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/borders/border-image-scrambled-expected.png: Removed.
+        * platform/chromium-win-xp/fast/borders/border-image-scrambled-expected.txt: Removed.
+        * platform/chromium-win/fast/borders/border-image-scrambled-expected.png: Added.
+        * platform/chromium-win/fast/borders/border-image-scrambled-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/borders/border-image-scrambled-expected.txt.
+
 2011-09-14  Eric Carlson  <eric.carlson@apple.com>
 
         Media element tests should look up controller element locations.
