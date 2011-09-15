@@ -12,6 +12,17 @@
 
 2011-09-14  David Levin  <levin@chromium.org>
 
+        [chromium] rebaselines due to r95096, and r95121.
+
+        * platform/chromium-cg-mac-leopard/fast/css/getComputedStyle/computed-style-expected.txt: Renamed from LayoutTests/platform/chromium-cg-mac/fast/css/getComputedStyle/computed-style-expected.txt.
+        * platform/chromium-cg-mac-leopard/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Renamed from LayoutTests/platform/chromium-cg-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt.
+        * platform/chromium-cg-mac-leopard/svg/css/getComputedStyle-basic-expected.txt: Renamed from LayoutTests/platform/chromium-cg-mac/svg/css/getComputedStyle-basic-expected.txt.
+        * platform/chromium-cg-mac/svg/as-border-image/svg-as-border-image-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/as-border-image/svg-as-border-image-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/as-border-image/svg-as-border-image-expected.txt.
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-expected.txt:
+
+2011-09-14  David Levin  <levin@chromium.org>
+
         [chromium] rebaselines due to r95096, r95121, and r95129.
 
         * platform/chromium-cg-mac-leopard/fast/borders/border-image-scaled-gradient-expected.png: Added.
