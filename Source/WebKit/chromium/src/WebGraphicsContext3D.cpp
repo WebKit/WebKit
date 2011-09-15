@@ -32,24 +32,20 @@ namespace WebKit {
 
 #if WEBKIT_USING_SKIA
 
-#if GR_GL_PER_GL_FUNC_CALLBACK
 namespace {
     void bindWebGraphicsContext3DGLContextCallback(const GrGLInterface* interface)
     {
         reinterpret_cast<WebGraphicsContext3D*>(interface->fCallbackData)->makeContextCurrent();
     }
 }
-#endif
 
 GrGLInterface* WebGraphicsContext3D::createGrGLInterface()
 {
     GrGLInterface* interface = onCreateGrGLInterface();
-#if GR_GL_PER_GL_FUNC_CALLBACK
     if (interface) {
         interface->fCallback = bindWebGraphicsContext3DGLContextCallback;
         interface->fCallbackData = reinterpret_cast<GrGLInterfaceCallbackData>(this);
     }
-#endif
     return interface;
 }
 

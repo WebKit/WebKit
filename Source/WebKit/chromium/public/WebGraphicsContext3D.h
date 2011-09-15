@@ -366,9 +366,6 @@ public:
     virtual WGC3Denum getGraphicsResetStatusARB() { return 0; /* GL_NO_ERROR */ }
 
 #if WEBKIT_USING_SKIA
-    // FIXME: This function is superceded by onCreateGrGLInterface. It should be removed after subclass implementations are removed from Chromium.
-    virtual GrGLInterface* grGLInterface() { return 0; }
-
     GrGLInterface* createGrGLInterface();
 #endif
 

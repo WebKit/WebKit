@@ -183,9 +183,6 @@ void paintSkiaText(GraphicsContext* context,
     SkCanvas* canvas = platformContext->canvas();
     TextDrawingModeFlags textMode = platformContext->getTextDrawingMode();
 
-    // If platformContext is GPU-backed make its GL context current.
-    platformContext->makeGrContextCurrent();
-
     // Filling (if necessary). This is the common case.
     SkPaint paint;
     platformContext->setupPaintForFilling(&paint);

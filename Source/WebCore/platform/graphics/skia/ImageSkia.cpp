@@ -422,8 +422,6 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect,
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
         return;  // Nothing to draw.
 
-    ctxt->platformContext()->makeGrContextCurrent();
-
     paintSkBitmap(ctxt->platformContext(),
                   *bm,
                   enclosingIntRect(normSrcRect),
@@ -447,8 +445,6 @@ void BitmapImageSingleFrameSkia::draw(GraphicsContext* ctxt,
 
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
         return;  // Nothing to draw.
-
-    ctxt->platformContext()->makeGrContextCurrent();
 
     paintSkBitmap(ctxt->platformContext(),
                   m_nativeImage,

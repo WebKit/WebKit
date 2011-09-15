@@ -86,7 +86,6 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderin
     if (renderingMode == Accelerated) {
         GraphicsContext3D* context3D = SharedGraphicsContext3D::create(0);
         if (context3D) {
-            context3D->makeContextCurrent();
             GrContext* gr = context3D->grContext();
             if (gr) {
                 gr->resetContext();
@@ -118,10 +117,6 @@ ImageBuffer::~ImageBuffer()
     if (m_data.m_platformLayer)
         m_data.m_platformLayer->setTextureId(0);
 #endif
-    if (m_context && m_context->platformContext()) {
-        // This is so that the SkGpuDevice destructor has the correct context.
-        m_context->platformContext()->makeGrContextCurrent();
-    }
 }
 
 GraphicsContext* ImageBuffer::context() const
@@ -137,7 +132,6 @@ size_t ImageBuffer::dataSize() const
 PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior) const
 {
     ASSERT(copyBehavior == CopyBackingStore);
-    m_context->platformContext()->makeGrContextCurrent();
     return BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), true);
 }
 
@@ -154,14 +148,6 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
                        CompositeOperator op, bool useLowQualityScale)
 {
-    // Set both graphics contexts current. This looks a little weird, but is
-    // necessary since we may be drawing from an accelerated to
-    // non-accelerated context (e.g., printing), or vice versa. Note that it
-    // only works because the context is actually the same underlying context
-    // (or null), since we use one context for accelerated drawing. If that
-    // assumption changes, we'll have to revisit this code.
-    context->platformContext()->makeGrContextCurrent();
-    m_context->platformContext()->makeGrContextCurrent();
     RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), context == m_context);
     context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
 }
@@ -169,7 +155,6 @@ void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, con
 void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
                               const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
-    context->platformContext()->makeGrContextCurrent();
     RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), context == m_context);
     image->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
 }
@@ -286,13 +271,11 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, SkDevice& srcDevice,
 
 PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
-    m_context->platformContext()->makeGrContextCurrent();
     return getImageData<Unmultiplied>(rect, *context()->platformContext()->canvas()->getDevice(), m_size);
 }
 
 PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
 {
-    m_context->platformContext()->makeGrContextCurrent();
     return getImageData<Premultiplied>(rect, *context()->platformContext()->canvas()->getDevice(), m_size);
 }
 
@@ -367,13 +350,11 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
 
 void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    m_context->platformContext()->makeGrContextCurrent();
     putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, context()->platformContext()->canvas()->getDevice(), m_size);
 }
 
 void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    m_context->platformContext()->makeGrContextCurrent();
     putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, context()->platformContext()->canvas()->getDevice(), m_size);
 }
 
@@ -403,7 +384,6 @@ static String ImageToDataURL(T& source, const String& mimeType, const double* qu
 
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
 {
-    m_context->platformContext()->makeGrContextCurrent();
     SkDevice* device = context()->platformContext()->canvas()->getDevice();
     return ImageToDataURL(device->accessBitmap(false), mimeType, quality);
 }

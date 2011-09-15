@@ -126,8 +126,6 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         y += SkFloatToScalar(adv[i].height);
     }
 
-    gc->platformContext()->makeGrContextCurrent();
-
     SkCanvas* canvas = gc->platformContext()->canvas();
     TextDrawingModeFlags textMode = gc->platformContext()->getTextDrawingMode();
 

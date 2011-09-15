@@ -202,15 +202,6 @@ GrContext* GraphicsContext3DPrivate::grContext()
 
     if (!m_grContext) {
         SkAutoTUnref<GrGLInterface> interface(m_impl->createGrGLInterface());
-        // FIXME: Remove this block after the WebGraphicsContext3D subclasses in Chromium no longer override grGLInterface().
-        if (!interface.get()) {
-            GrGLInterface* fallbackInterface = m_impl->grGLInterface();
-            if (fallbackInterface) {
-                fallbackInterface->ref(); // balance out the SkAutoTUnref
-                interface.reset(fallbackInterface);
-            }
-        }
-        // This is the end of the block to remove.
         m_grContext = GrContext::Create(kOpenGL_Shaders_GrEngine, reinterpret_cast<GrPlatform3DContext>(interface.get()));
         if (m_grContext)
             m_grContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);

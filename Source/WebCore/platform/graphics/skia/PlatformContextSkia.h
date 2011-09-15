@@ -174,7 +174,6 @@ public:
 
     bool isAccelerated() const { return m_gpuContext; }
     void setGraphicsContext3D(GraphicsContext3D*);
-    void makeGrContextCurrent();
 
 private:
     // Used when restoring and the state has an image clip. Only shows the pixels in

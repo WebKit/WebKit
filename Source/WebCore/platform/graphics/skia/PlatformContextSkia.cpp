@@ -267,7 +267,6 @@ void PlatformContextSkia::beginLayerClippedToImage(const FloatRect& rect,
 
 void PlatformContextSkia::clipPathAntiAliased(const SkPath& clipPath)
 {
-    makeGrContextCurrent();
     if (m_canvas->getTopDevice()->getDeviceCapabilities() & SkDevice::kVector_Capability) {
         // When the output is a vector device, like PDF, we don't need antialiased clips.
         // It's up to the PDF rendering engine to do that. We can simply disable the
@@ -654,12 +653,6 @@ void PlatformContextSkia::applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths)
 void PlatformContextSkia::setGraphicsContext3D(GraphicsContext3D* context)
 {
     m_gpuContext = context;
-}
-
-void PlatformContextSkia::makeGrContextCurrent()
-{
-    if (m_gpuContext)
-        m_gpuContext->makeContextCurrent();
 }
 
 } // namespace WebCore
