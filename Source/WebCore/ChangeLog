@@ -1,3 +1,12 @@
+2011-09-14  Patrick Gansterer  <paroga@webkit.org>
+
+        Replace ENABLE_XHR_RESPONSE_BLOB preprocessor statements in IDL files with Conditional attribute
+        https://bugs.webkit.org/show_bug.cgi?id=64960
+
+        Reviewed by Ryosuke Niwa.
+
+        * xml/XMLHttpRequest.idl:
+
 2011-09-14  Alexei Svitkine  <asvitkine@chromium.org>
 
         Chromium: Add a layer for rubber-band overhang painting to the hardware path.
