@@ -1,3 +1,14 @@
+2011-09-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95145.
+        http://trac.webkit.org/changeset/95145
+        https://bugs.webkit.org/show_bug.cgi?id=68139
+
+        The GTK+ build is working now, so revert this trial build fix.
+        (Requested by mrobinson on #webkit).
+
+        * GNUmakefile.list.am:
+
 2011-09-14  Patrick Gansterer  <paroga@webkit.org>
 
         Port MachineStackMarker to Windows ARM and MIPS

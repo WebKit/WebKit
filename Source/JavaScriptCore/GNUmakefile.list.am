@@ -611,6 +611,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/text/TextPosition.h \
 	Source/JavaScriptCore/wtf/text/WTFString.cpp \
 	Source/JavaScriptCore/wtf/text/WTFString.h \
+	Source/JavaScriptCore/wtf/threads/BinarySemaphore.cpp \
+	Source/JavaScriptCore/wtf/threads/BinarySemaphore.h \
 	Source/JavaScriptCore/wtf/ThreadIdentifierDataPthreads.cpp \
 	Source/JavaScriptCore/wtf/ThreadIdentifierDataPthreads.h \
 	Source/JavaScriptCore/wtf/ThreadRestrictionVerifier.h \
