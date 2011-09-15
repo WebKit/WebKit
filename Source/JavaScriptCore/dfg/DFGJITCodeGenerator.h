@@ -413,6 +413,7 @@ protected:
     bool isKnownCell(NodeIndex);
     
     bool isKnownNotInteger(NodeIndex);
+    bool isKnownNotNumber(NodeIndex);
 
     bool isKnownBoolean(NodeIndex);
     

@@ -124,7 +124,21 @@ EncodedJSValue operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, Enc
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
     
+    return JSValue::encode(jsAdd(exec, op1, op2));
+}
+
+EncodedJSValue operationValueAddNotNumber(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    JSValue op1 = JSValue::decode(encodedOp1);
+    JSValue op2 = JSValue::decode(encodedOp2);
+    
     ASSERT(!op1.isNumber() || !op2.isNumber());
+    
+    if (op1.isString()) {
+        if (op2.isString())
+            return JSValue::encode(jsString(exec, asString(op1), asString(op2)));
+        return JSValue::encode(jsString(exec, asString(op1), op2.toPrimitiveString(exec)));
+    }
 
     return JSValue::encode(jsAddSlowCase(exec, op1, op2));
 }

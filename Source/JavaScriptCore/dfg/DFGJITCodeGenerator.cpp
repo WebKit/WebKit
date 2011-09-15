@@ -395,6 +395,16 @@ bool JITCodeGenerator::isKnownNotInteger(NodeIndex nodeIndex)
         || (node.isConstant() && !valueOfJSConstant(nodeIndex).isInt32());
 }
 
+bool JITCodeGenerator::isKnownNotNumber(NodeIndex nodeIndex)
+{
+    Node& node = m_jit.graph()[nodeIndex];
+    VirtualRegister virtualRegister = node.virtualRegister();
+    GenerationInfo& info = m_generationInfo[virtualRegister];
+    
+    return (!info.isJSDouble() && !info.isJSInteger())
+        || (node.isConstant() && !isNumberConstant(nodeIndex));
+}
+
 bool JITCodeGenerator::isKnownBoolean(NodeIndex nodeIndex)
 {
     Node& node = m_jit.graph()[nodeIndex];

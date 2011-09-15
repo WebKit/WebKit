@@ -384,6 +384,30 @@ private:
         return false;
     }
     
+    bool shouldSpeculateNumber(NodeIndex nodeIndex)
+    {
+        Node& node = m_jit.graph()[nodeIndex];
+        
+        if (node.hasNumberResult())
+            return true;
+        
+        if (isNumberConstant(nodeIndex))
+            return true;
+        
+        VirtualRegister virtualRegister = node.virtualRegister();
+        GenerationInfo& info = m_generationInfo[virtualRegister];
+
+        if (info.isJSInteger() || info.isJSDouble())
+            return true;
+        
+        PredictedType prediction = m_jit.graph().getPrediction(node);
+        
+        if (isNumberPrediction(prediction) || prediction == PredictNone)
+            return true;
+        
+        return false;
+    }
+    
     bool shouldNotSpeculateInteger(NodeIndex nodeIndex)
     {
         if (isDoubleConstant(nodeIndex))
@@ -406,6 +430,11 @@ private:
     bool shouldSpeculateInteger(NodeIndex op1, NodeIndex op2)
     {
         return !(shouldNotSpeculateInteger(op1) || shouldNotSpeculateInteger(op2)) && (shouldSpeculateInteger(op1) || shouldSpeculateInteger(op2));
+    }
+    
+    bool shouldSpeculateNumber(NodeIndex op1, NodeIndex op2)
+    {
+        return shouldSpeculateNumber(op1) && shouldSpeculateNumber(op2);
     }
 
     bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);

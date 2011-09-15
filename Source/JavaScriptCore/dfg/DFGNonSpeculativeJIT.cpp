@@ -240,7 +240,7 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
             m_jit.move(MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm)))), GPRInfo::argumentGPR2);
         }
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operationValueAdd);
+        appendCallWithExceptionCheck(operationValueAddNotNumber);
         m_jit.move(GPRInfo::returnValueGPR, resultGPR);
         silentFillAllRegisters(resultGPR);
             
@@ -418,7 +418,7 @@ void NonSpeculativeJIT::basicArithOp(NodeType op, Node &node)
         silentSpillAllRegisters(resultGPR);
         setupStubArguments(arg1GPR, arg2GPR);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        appendCallWithExceptionCheck(operationValueAdd);
+        appendCallWithExceptionCheck(operationValueAddNotNumber);
         m_jit.move(GPRInfo::returnValueGPR, resultGPR);
         silentFillAllRegisters(resultGPR);
 

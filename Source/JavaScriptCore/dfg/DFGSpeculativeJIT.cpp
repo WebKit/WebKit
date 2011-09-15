@@ -923,15 +923,36 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
 
-        SpeculateDoubleOperand op1(this, node.child1());
-        SpeculateDoubleOperand op2(this, node.child2());
-        FPRTemporary result(this, op1, op2);
-
-        FPRReg reg1 = op1.fpr();
-        FPRReg reg2 = op2.fpr();
-        m_jit.addDouble(reg1, reg2, result.fpr());
-
-        doubleResult(result.fpr(), m_compileIndex);
+        if (shouldSpeculateNumber(node.child1(), node.child2())) {
+            SpeculateDoubleOperand op1(this, node.child1());
+            SpeculateDoubleOperand op2(this, node.child2());
+            FPRTemporary result(this, op1, op2);
+            
+            FPRReg reg1 = op1.fpr();
+            FPRReg reg2 = op2.fpr();
+            m_jit.addDouble(reg1, reg2, result.fpr());
+            
+            doubleResult(result.fpr(), m_compileIndex);
+            break;
+        }
+        
+        ASSERT(op == ValueAdd);
+        
+        JSValueOperand op1(this, node.child1());
+        JSValueOperand op2(this, node.child2());
+        
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+        
+        flushRegisters();
+        
+        GPRResult result(this);
+        if (isKnownNotNumber(node.child1()) || isKnownNotNumber(node.child2()))
+            callOperation(operationValueAddNotNumber, result.gpr(), op1GPR, op2GPR);
+        else
+            callOperation(operationValueAdd, result.gpr(), op1GPR, op2GPR);
+        
+        jsValueResult(result.gpr(), m_compileIndex);
         break;
     }
 

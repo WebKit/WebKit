@@ -57,6 +57,7 @@ typedef void *(*P_DFGOperation_E)(ExecState*);
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
 EncodedJSValue operationConvertThis(ExecState*, EncodedJSValue encodedOp1);
 EncodedJSValue operationValueAdd(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+EncodedJSValue operationValueAddNotNumber(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 EncodedJSValue operationArithAdd(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 EncodedJSValue operationArithSub(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 EncodedJSValue operationArithMul(EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);

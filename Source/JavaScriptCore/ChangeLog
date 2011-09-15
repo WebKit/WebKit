@@ -1,3 +1,23 @@
+2011-09-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT always speculates that ValueAdd is a numeric addition
+        https://bugs.webkit.org/show_bug.cgi?id=67956
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::isKnownNotNumber):
+        * dfg/DFGJITCodeGenerator.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::knownConstantArithOp):
+        (JSC::DFG::NonSpeculativeJIT::basicArithOp):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateNumber):
+
 2011-09-14  Anders Carlsson  <andersca@apple.com>
 
         Stop building BinarySemaphore to see if that's what's breaking the GTK+ build.
