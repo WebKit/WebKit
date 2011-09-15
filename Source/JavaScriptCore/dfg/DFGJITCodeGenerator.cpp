@@ -350,6 +350,17 @@ void JITCodeGenerator::useChildren(Node& node)
     }
 }
 
+bool JITCodeGenerator::isStrictInt32(NodeIndex nodeIndex)
+{
+    if (isInt32Constant(nodeIndex))
+        return true;
+    
+    Node& node = m_jit.graph()[nodeIndex];
+    GenerationInfo& info = m_generationInfo[node.virtualRegister()];
+    
+    return info.registerFormat() == DataFormatInteger;
+}
+
 bool JITCodeGenerator::isKnownInteger(NodeIndex nodeIndex)
 {
     if (isInt32Constant(nodeIndex))

@@ -408,6 +408,8 @@ protected:
         info.spill((DataFormat)(spillFormat | DataFormatJS));
     }
     
+    bool isStrictInt32(NodeIndex);
+    
     bool isKnownInteger(NodeIndex);
     bool isKnownNumeric(NodeIndex);
     bool isKnownCell(NodeIndex);
