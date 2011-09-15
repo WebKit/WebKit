@@ -1,3 +1,20 @@
+2011-09-15  Cary Clark  <caryclark@google.com>
+
+        Unreviewed; new baselines (Skia on Mac)
+        Updated reference images.
+
+        * platform/chromium-mac/fast/borders/border-image-border-radius-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-01-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-slices-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-scrambled-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-repeat-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-scaled-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-source-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-longhand-expected.png:
+        * platform/chromium-mac/fast/writing-mode/japanese-rl-text-with-broken-font-expected.png: Removed.
+
 2011-09-15  Gabor Loki  <loki@webkit.org>
 
         [Qt][ARMv5] Two timeline tests of inspector fail
