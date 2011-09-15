@@ -1,3 +1,17 @@
+2011-09-15  Andreas Kling  <kling@webkit.org>
+
+        Don't bother calculating dirty rect for accelerated 2D canvases.
+        https://bugs.webkit.org/show_bug.cgi?id=68158
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        For accelerated CanvasRenderingContext2D, didDraw() simply calls out
+        to RenderLayer::contentChanged(). Move this to the top of didDraw()
+        so we don't waste time calculating a precise dirty rect.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::didDraw):
+
 2011-09-15  Brian Salomon  <bsalomon@google.com>
 
         [Skia/Chrome] Cleanup unneeded code now that GrGLInterface is used to set GL ctx per GL call.

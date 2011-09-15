@@ -1621,6 +1621,17 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
     if (!state().m_invertibleCTM)
         return;
 
+#if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
+    // If we are drawing to hardware and we have a composited layer, just call contentChanged().
+    if (isAccelerated()) {
+        RenderBox* renderBox = canvas()->renderBox();
+        if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing()) {
+            renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
+            return;
+        }
+    }
+#endif
+
     FloatRect dirtyRect = r;
     if (options & CanvasDidDrawApplyTransform) {
         AffineTransform ctm = state().m_transform;
@@ -1641,14 +1652,7 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
         // we'd have to keep the clip path around.
     }
 
-#if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
-    // If we are drawing to hardware and we have a composited layer, just call contentChanged().
-    RenderBox* renderBox = canvas()->renderBox();
-    if (isAccelerated() && renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
-        renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
-    else
-#endif
-        canvas()->didDraw(dirtyRect);
+    canvas()->didDraw(dirtyRect);
 }
 
 GraphicsContext* CanvasRenderingContext2D::drawingContext() const
