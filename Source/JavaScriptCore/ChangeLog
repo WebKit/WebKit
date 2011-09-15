@@ -1,5 +1,11 @@
 2011-09-14  Anders Carlsson  <andersca@apple.com>
 
+        Yet another build fix attempt.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd:
+
+2011-09-14  Anders Carlsson  <andersca@apple.com>
+
         How I &quot;love&quot; Visual Studio...
 
         Try to fix build again.

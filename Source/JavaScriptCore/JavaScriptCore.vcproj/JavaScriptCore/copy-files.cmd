@@ -49,6 +49,7 @@ for %%d in (
     wtf
     wtf\dtoa
     wtf\text
+    wtf\threads
     wtf\unicode
     wtf\unicode\icu
     yarr
