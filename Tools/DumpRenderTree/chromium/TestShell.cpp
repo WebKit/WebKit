@@ -396,6 +396,21 @@ static bool HistoryItemCompareLess(const WebHistoryItem& item1, const WebHistory
     return target1 < target2;
 }
 
+static string normalizeLayoutTestURLInternal(const string& url)
+{
+    string result = url;
+    size_t pos;
+    if (!url.find(fileUrlPattern) && ((pos = url.find(layoutTestsPattern)) != string::npos)) {
+        // adjust file URLs to match upstream results.
+        result.replace(0, pos + layoutTestsPatternSize, fileTestPrefix);
+    } else if (!url.find(dataUrlPattern)) {
+        // URL-escape data URLs to match results upstream.
+        string path = webkit_support::EscapePath(url.substr(dataUrlPatternSize));
+        result.replace(dataUrlPatternSize, url.length(), path);
+    }
+    return result;
+}
+
 static string dumpHistoryItem(const WebHistoryItem& item, int indent, bool isCurrent)
 {
     string result;
@@ -406,17 +421,7 @@ static string dumpHistoryItem(const WebHistoryItem& item, int indent, bool isCur
     } else
         result.append(indent, ' ');
 
-    string url = item.urlString().utf8();
-    size_t pos;
-    if (!url.find(fileUrlPattern) && ((pos = url.find(layoutTestsPattern)) != string::npos)) {
-        // adjust file URLs to match upstream results.
-        url.replace(0, pos + layoutTestsPatternSize, fileTestPrefix);
-    } else if (!url.find(dataUrlPattern)) {
-        // URL-escape data URLs to match results upstream.
-        string path = webkit_support::EscapePath(url.substr(dataUrlPatternSize));
-        url.replace(dataUrlPatternSize, url.length(), path);
-    }
-
+    string url = normalizeLayoutTestURLInternal(item.urlString().utf8());
     result.append(url);
     if (!item.target().isEmpty()) {
         result.append(" (in frame \"");
@@ -688,4 +693,9 @@ void TestShell::closeRemainingWindows()
 int TestShell::windowCount()
 {
     return m_windowList.size();
+}
+
+string TestShell::normalizeLayoutTestURL(const string& url)
+{
+    return normalizeLayoutTestURLInternal(url);
 }
