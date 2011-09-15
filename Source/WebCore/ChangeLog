@@ -1,3 +1,32 @@
+2011-09-15  Sam Weinig  <sam@webkit.org>
+
+        Experiment with removing ability to call a collection (except document.all)
+        https://bugs.webkit.org/show_bug.cgi?id=67579
+
+        Reviewed by Anders Carlsson.
+
+        At the request of the public-script-coord mailing list (specifically Brendan Eich, see
+        http://lists.w3.org/Archives/Public/public-script-coord/2011JulSep/0360.html), this
+        patch removes the ability to call a collection (either a NodeList or HTMLCollection,
+        but not an HTMLAllCollection) as function, a syntax that we adopted to emulate IE.
+        It is being landed to find out if there are any sites relying on this behavior of WebKit,
+        or, if it is only used in IE only paths.  If we find sites are breaking, it should be rolled
+        out and we should inform the public-script-coord mailing list.
+
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        Update comment.
+
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        * bindings/js/JSNodeListCustom.cpp:
+        Remove custom call code.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        Add support for V8CustomCall.
+
+        * dom/NodeList.idl:
+        * html/HTMLCollection.idl:
+        Remove CustomCall.
+
 2011-09-15  Andreas Kling  <kling@webkit.org>
 
         CanvasRenderingContext2D::State copy ctor should use initializer list.

@@ -46,23 +46,6 @@ bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
     return visitor.containsOpaqueRoot(root(static_cast<DynamicNodeList*>(jsNodeList->impl())->rootNode()));
 }
 
-// Need to support call so that list(0) works.
-static EncodedJSValue JSC_HOST_CALL callNodeList(ExecState* exec)
-{
-    bool ok;
-    unsigned index = Identifier::toUInt32(exec->argument(0).toString(exec), ok);
-    if (!ok)
-        return JSValue::encode(jsUndefined());
-    JSNodeList* thisObj = static_cast<JSNodeList*>(exec->callee());
-    return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl()->item(index)));
-}
-
-CallType JSNodeList::getCallData(CallData& callData)
-{
-    callData.native.function = callNodeList;
-    return CallTypeHost;
-}
-
 bool JSNodeList::canGetItemsForName(ExecState*, NodeList* impl, const Identifier& propertyName)
 {
     return impl->itemWithName(identifierToAtomicString(propertyName));

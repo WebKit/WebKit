@@ -53,55 +53,6 @@ static JSValue getNamedItems(ExecState* exec, JSHTMLCollection* collection, cons
     return toJS(exec, collection->globalObject(), StaticNodeList::adopt(namedItems).get());
 }
 
-// HTMLCollections are strange objects, they support both get and call,
-// so that document.forms.item(0) and document.forms(0) both work.
-static EncodedJSValue JSC_HOST_CALL callHTMLCollection(ExecState* exec)
-{
-    if (exec->argumentCount() < 1)
-        return JSValue::encode(jsUndefined());
-
-    // Do not use thisObj here. It can be the JSHTMLDocument, in the document.forms(i) case.
-    JSHTMLCollection* jsCollection = static_cast<JSHTMLCollection*>(exec->callee());
-    HTMLCollection* collection = jsCollection->impl();
-
-    // Also, do we need the TypeError test here ?
-
-    if (exec->argumentCount() == 1) {
-        // Support for document.all(<index>) etc.
-        bool ok;
-        UString string = exec->argument(0).toString(exec);
-        unsigned index = Identifier::toUInt32(string, ok);
-        if (ok)
-            return JSValue::encode(toJS(exec, jsCollection->globalObject(), collection->item(index)));
-
-        // Support for document.images('<name>') etc.
-        return JSValue::encode(getNamedItems(exec, jsCollection, Identifier(exec, string)));
-    }
-
-    // The second arg, if set, is the index of the item we want
-    bool ok;
-    UString string = exec->argument(0).toString(exec);
-    unsigned index = Identifier::toUInt32(exec->argument(1).toString(exec), ok);
-    if (ok) {
-        AtomicString pstr = ustringToAtomicString(string);
-        Node* node = collection->namedItem(pstr);
-        while (node) {
-            if (!index)
-                return JSValue::encode(toJS(exec, jsCollection->globalObject(), node));
-            node = collection->nextNamedItem(pstr);
-            --index;
-        }
-    }
-
-    return JSValue::encode(jsUndefined());
-}
-
-CallType JSHTMLCollection::getCallData(CallData& callData)
-{
-    callData.native.function = callHTMLCollection;
-    return CallTypeHost;
-}
-
 bool JSHTMLCollection::canGetItemsForName(ExecState*, HTMLCollection* collection, const Identifier& propertyName)
 {
     Vector<RefPtr<Node> > namedItems;

@@ -1,3 +1,24 @@
+2011-09-14  Sam Weinig  <sam@webkit.org>
+
+        Experiment with removing ability to call a collection (except document.all)
+        https://bugs.webkit.org/show_bug.cgi?id=67579
+
+        Reviewed by Anders Carlsson.
+
+        * fast/dom/Element/id-in-formcollection-expected.txt:
+        * fast/dom/Element/id-in-formcollection.html:
+        * fast/dom/HTMLOptionElement/collection-setter-getter-expected.txt:
+        * fast/dom/HTMLOptionElement/collection-setter-getter.html:
+        Don't use call syntax for tests that aren't explicitly testing it.
+
+        * fast/dom/NodeList/nodelist-item-call-as-function-expected.txt:
+        * fast/dom/NodeList/script-tests/nodelist-item-call-as-function.js:
+        Update test to show that we throw on call.
+
+        * fast/profiler/call-nodelist-as-function-expected.txt: Removed.
+        * fast/profiler/call-nodelist-as-function.html: Removed.
+        Remove test of removed feature.
+
 2011-09-15  David Levin  <levin@chromium.org>
 
         [chromium] Add expectation for flaky tests.

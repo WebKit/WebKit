@@ -23,7 +23,7 @@ module html {
     interface [
         HasIndexGetter,
         HasNameGetter,
-        CustomCall,
+        V8CustomCall,
         CustomToJS,
         GenerateIsReachable,
         Polymorphic

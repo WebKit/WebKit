@@ -57,8 +57,7 @@ static JSValue getNamedItems(ExecState* exec, JSHTMLAllCollection* collection, c
     return toJS(exec, collection->globalObject(), StaticNodeList::adopt(namedItems).get());
 }
 
-// HTMLCollections are strange objects, they support both get and call,
-// so that document.forms.item(0) and document.forms(0) both work.
+// HTMLAllCollections are strange objects, they support both get and call.
 static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
