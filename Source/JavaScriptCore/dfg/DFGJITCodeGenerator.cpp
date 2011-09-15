@@ -414,7 +414,7 @@ bool JITCodeGenerator::isKnownNotNumber(NodeIndex nodeIndex)
     VirtualRegister virtualRegister = node.virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
     
-    return (!info.isJSDouble() && !info.isJSInteger())
+    return (!info.isJSDouble() && !info.isJSInteger() && !info.isUnknownJS())
         || (node.isConstant() && !isNumberConstant(nodeIndex));
 }
 

@@ -259,6 +259,12 @@ public:
     {
         return isJSFormat(DataFormatJSBoolean);
     }
+    
+    bool isUnknownJS()
+    {
+        return registerFormat() == DataFormatNone || registerFormat() == DataFormatJS
+            || spillFormat() == DataFormatNone || spillFormat() == DataFormatJS;
+    }
 
     // Get the machine resister currently holding the value.
     GPRReg gpr() { ASSERT(m_registerFormat && m_registerFormat != DataFormatDouble); return u.gpr; }
