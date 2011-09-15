@@ -21,6 +21,7 @@
 #include "config.h"
 #include "QtWebPageProxy.h"
 
+#include "qweberror.h"
 #include "qwkpreferences_p.h"
 
 #include "ClientImpl.h"
@@ -44,6 +45,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
+#include <QJSEngine>
 #include <QStyle>
 #include <QTouchEvent>
 #include <QUndoStack>
@@ -405,7 +407,15 @@ void QtWebPageProxy::loadDidSucceed()
 
 void QtWebPageProxy::loadDidFail(const QWebError& error)
 {
-    m_viewInterface->loadDidFail(error);
+    QJSEngine* engine = m_viewInterface->engine();
+    QJSValue value;
+    if (engine) {
+        value = engine->newObject();
+        value.setProperty(QLatin1String("errorCode"), error.errorCode());
+        value.setProperty(QLatin1String("url"), error.url().toString());
+        value.setProperty(QLatin1String("type"), error.type());
+    }
+    m_viewInterface->loadDidFail(value);
 }
 
 void QtWebPageProxy::didChangeLoadProgress(int newLoadProgress)

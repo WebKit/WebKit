@@ -28,7 +28,6 @@
 #include <WebKit2/WKBase.h>
 
 class QDesktopWebViewPrivate;
-class QWebError;
 class QWebNavigationController;
 
 QT_BEGIN_NAMESPACE
@@ -80,7 +79,8 @@ Q_SIGNALS:
     void statusBarMessageChanged(const QString&);
     void loadStarted();
     void loadSucceeded();
-    void loadFailed(const QWebError&);
+    // The parameter needs to be explicitly named to work in QML.
+    void loadFailed(const QJSValue& error);
     void loadProgressChanged(int progress);
     void urlChanged(const QUrl&);
 

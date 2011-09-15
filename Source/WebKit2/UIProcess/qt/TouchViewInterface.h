@@ -66,7 +66,7 @@ private:
     virtual void loadDidBegin();
     virtual void loadDidCommit();
     virtual void loadDidSucceed();
-    virtual void loadDidFail(const QWebError&);
+    virtual void loadDidFail(const QJSValue&);
     virtual void didChangeLoadProgress(int);
 
     virtual void showContextMenu(QSharedPointer<QMenu>);
@@ -74,6 +74,8 @@ private:
 
     virtual void processDidCrash();
     virtual void didRelaunchProcess();
+
+    virtual QJSEngine* engine();
 
     virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList&, FileChooserType) { }
 

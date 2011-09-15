@@ -22,11 +22,11 @@
 
 #include <QResizeEvent>
 #include <QScopedPointer>
-#include <QtDeclarative/qsgcanvas.h>
+#include <QtDeclarative/qsgview.h>
 #include <QtDeclarative/qsgitem.h>
 
 // TestWindow: Utility class to ignore QGraphicsView details.
-class TestWindow : public QSGCanvas {
+class TestWindow : public QSGView {
 public:
     inline TestWindow(QSGItem* webView);
     QScopedPointer<QSGItem> webView;

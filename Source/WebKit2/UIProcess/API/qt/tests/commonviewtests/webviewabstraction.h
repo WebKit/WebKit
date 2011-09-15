@@ -46,7 +46,7 @@ public:
 Q_SIGNALS:
     void loadStarted();
     void loadSucceeded();
-    void loadFailed(const QWebError&);
+    void loadFailed(const QJSValue&);
     void loadProgressChanged(int);
 
 private Q_SLOTS:
@@ -54,8 +54,8 @@ private Q_SLOTS:
     void desktopViewLoadStarted();
     void touchViewLoadSucceeded();
     void desktopViewLoadSucceeded();
-    void touchViewLoadFailed(const QWebError&);
-    void desktopViewLoadFailed(const QWebError&);
+    void touchViewLoadFailed(const QJSValue&);
+    void desktopViewLoadFailed(const QJSValue&);
     void touchViewLoadProgressChanged(int);
     void desktopViewLoadProgressChanged(int);
 

@@ -43,6 +43,7 @@ QT_BEGIN_NAMESPACE
 class QUndoStack;
 QT_END_NAMESPACE
 
+class QWebError;
 class QWKHistory;
 class QWKPreferences;
 

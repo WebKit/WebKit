@@ -1,3 +1,36 @@
+2011-09-15  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] Make QWebError more friendly to QML.
+        https://bugs.webkit.org/show_bug.cgi?id=67785
+
+        Reviewed by Simon Hausmann.
+
+        Make sure that we can use the loading errors in QML. We send it via a QJSValue which
+        has the properties needed to get the error code, the url and the type of error.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::loadDidFail):
+        (QDesktopWebViewPrivate::engine):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/tests/commonviewtests/tst_commonviewtests.cpp:
+        (tst_CommonViewTests::loadNonexistentFileUrl):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.cpp:
+        (WebViewAbstraction::WebViewAbstraction):
+        (WebViewAbstraction::touchViewLoadFailed):
+        (WebViewAbstraction::desktopViewLoadFailed):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.h:
+        * UIProcess/API/qt/tests/testwindow.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::loadDidFail):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::loadDidFail):
+        (WebKit::TouchViewInterface::engine):
+        * UIProcess/qt/TouchViewInterface.h:
+        * UIProcess/qt/ViewInterface.h:
+
 2011-09-15  Adam Roben  <aroben@apple.com>
 
         Remove WebKit2-specific knowledge from the Message class

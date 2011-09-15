@@ -29,7 +29,6 @@
 
 class QTouchWebPagePrivate;
 class QTouchWebPageProxy;
-class QWebError;
 class QWebNavigationController;
 
 namespace WebKit {
@@ -64,7 +63,8 @@ Q_SIGNALS:
     void titleChanged(const QString&);
     void loadStarted();
     void loadSucceeded();
-    void loadFailed(const QWebError&);
+    // The parameter needs to be explicitly named to work in QML.
+    void loadFailed(const QJSValue& error);
     void loadProgressChanged(int progress);
 
 protected:

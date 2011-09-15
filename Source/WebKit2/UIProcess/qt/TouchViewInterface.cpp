@@ -26,6 +26,9 @@
 #include "qtouchwebview.h"
 #include "qtouchwebview_p.h"
 
+#include <QDeclarativeEngine>
+#include <QSGView>
+
 namespace WebKit {
 
 TouchViewInterface::TouchViewInterface(QTouchWebView* viewportView, QTouchWebPage* pageView)
@@ -128,7 +131,7 @@ void TouchViewInterface::loadDidSucceed()
     emit m_pageView->loadSucceeded();
 }
 
-void TouchViewInterface::loadDidFail(const QWebError& error)
+void TouchViewInterface::loadDidFail(const QJSValue& error)
 {
     emit m_pageView->loadFailed(error);
 }
@@ -156,6 +159,14 @@ void TouchViewInterface::processDidCrash()
 void TouchViewInterface::didRelaunchProcess()
 {
     // FIXME
+}
+
+QJSEngine* TouchViewInterface::engine()
+{
+    QSGView* view = qobject_cast<QSGView*>(m_pageView->canvas());
+    if (view)
+        return view->engine();
+    return 0;
 }
 
 }

@@ -24,9 +24,11 @@
 
 #include <QGraphicsSceneResizeEvent>
 #include <QStyleOptionGraphicsItem>
+#include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qsgcanvas.h>
 #include <QtDeclarative/qsgevent.h>
 #include <QtDeclarative/qsgitem.h>
+#include <QtDeclarative/qsgview.h>
 #include <QtGui/QCursor>
 #include <QtGui/QFileDialog>
 #include <QtGui/QFocusEvent>
@@ -142,7 +144,7 @@ void QDesktopWebViewPrivate::loadDidSucceed()
     emit q->loadSucceeded();
 }
 
-void QDesktopWebViewPrivate::loadDidFail(const QWebError& error)
+void QDesktopWebViewPrivate::loadDidFail(const QJSValue& error)
 {
     emit q->loadFailed(error);
 }
@@ -380,6 +382,14 @@ void QDesktopWebViewPrivate::didRelaunchProcess()
 {
     isCrashed = false;
     q->update();
+}
+
+QJSEngine* QDesktopWebViewPrivate::engine()
+{
+    QSGView* view = qobject_cast<QSGView*>(q->canvas());
+    if (view)
+        return view->engine();
+    return 0;
 }
 
 void QDesktopWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, ViewInterface::FileChooserType type)

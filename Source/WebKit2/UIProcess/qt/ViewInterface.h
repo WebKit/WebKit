@@ -26,12 +26,12 @@
 #include <QtGui/QMenu>
 #include <WebKit2/WKBase.h>
 
-class QWebError;
-
 QT_BEGIN_NAMESPACE
 class QCursor;
 class QGraphicsWidget;
 class QImage;
+class QJSEngine;
+class QJSValue;
 class QMimeData;
 class QPoint;
 class QRect;
@@ -75,7 +75,7 @@ public:
     virtual void loadDidBegin() = 0;
     virtual void loadDidCommit() = 0;
     virtual void loadDidSucceed() = 0;
-    virtual void loadDidFail(const QWebError&) = 0;
+    virtual void loadDidFail(const QJSValue&) = 0;
     virtual void didChangeLoadProgress(int) = 0;
 
     virtual void showContextMenu(QSharedPointer<QMenu>) = 0;
@@ -83,6 +83,8 @@ public:
 
     virtual void processDidCrash() = 0;
     virtual void didRelaunchProcess() = 0;
+
+    virtual QJSEngine* engine() = 0;
 
     virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, FileChooserType) = 0;
 };
