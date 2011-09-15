@@ -27324,6 +27324,10 @@
 					RelativePath="..\platform\win\SoundWin.cpp"
 					>
 				</File>
+                <File
+                RelativePath="..\platform\win\StructuredExceptionHandlerSupressor.h"
+                >
+                </File>
 				<File
 					RelativePath="..\platform\win\SystemInfo.cpp"
 					>
@@ -30173,6 +30177,14 @@
 						<File
 							RelativePath="..\platform\graphics\ca\win\LayerChangesFlusher.cpp"
 							>
+							<FileConfiguration
+                            Name="Debug|Win32"
+                            >
+                            <Tool
+                            Name="VCCLCompilerTool"
+                            DisableSpecificWarnings="4733"
+                            />
+							</FileConfiguration>
 							<FileConfiguration
 								Name="Debug_Cairo_CFLite|Win32"
 								ExcludedFromBuild="true"
