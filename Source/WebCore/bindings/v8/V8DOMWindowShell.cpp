@@ -572,6 +572,23 @@ void V8DOMWindowShell::namedItemAdded(HTMLDocument* doc, const AtomicString& nam
 {
     initContextIfNeeded();
 
+    if (!isContextInitialized()) {
+#if PLATFORM(CHROMIUM)
+        // FIXME: Temporary diagnostics as to why V8 sometimes crashes with a null context below.
+        // See https://bugs.webkit.org/show_bug.cgi?id=68099.
+        PlatformSupport::incrementStatsCounter("V8Bindings.namedItemAdded.initContextFailed");
+        if (m_frame->settings() && !m_frame->settings()->isJavaScriptEnabled())
+            PlatformSupport::incrementStatsCounter("V8Bindings.namedItemAdded.scriptBlockedByWebCoreSettings");
+
+        if (!m_frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+            PlatformSupport::incrementStatsCounter("V8Bindings.namedItemAdded.scriptBlockedByScriptController");
+
+        if (V8Proxy::handleOutOfMemory())
+            PlatformSupport::incrementStatsCounter("V8Bindings.namedItemAdded.outOfMemory");
+#endif
+        return;
+    }
+
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(m_context);
 
