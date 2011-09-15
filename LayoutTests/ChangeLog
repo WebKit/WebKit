@@ -1,3 +1,19 @@
+2011-09-15  Cary Clark  <caryclark@google.com>
+
+        Unreviewed; new baselines (Skia on Mac)
+        Updated reference images.
+
+        * LayoutTests/platform/chromium-mac/fast/borders/border-image-scaled-gradient-expected.png: Added.
+        * LayoutTests/platform/chromium-mac/fast/borders/border-image-rotate-transform-expected.png:
+        * LayoutTests/platform/chromium-mac/fast/borders/border-image-scaled-expected.png:
+        * LayoutTests/platform/chromium-mac/fast/borders/border-image-side-reduction-expected.png:
+        * LayoutTests/platform/chromium-mac/fast/borders/border-image-massive-scale-expected.png: Added.
+        * LayoutTests/platform/chromium-mac/fast/writing-mode/broken-ideographic-font-expected.png: Added.
+        * LayoutTests/platform/chromium-mac/fast/writing-mode/japanese-rl-text-with-broken-font-expected.png: Added.
+        * LayoutTests/platform/chromium-mac/fast/writing-mode/border-image-vertical-rl-expected.png: Added.
+        * LayoutTests/platform/chromium-mac/fast/writing-mode/border-image-vertical-lr-expected.png: Added.
+        * LayoutTests/platform/chromium-mac/fast/writing-mode/border-image-horizontal-bt-expected.png: Added.
+
 2011-09-15  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] rebaseline expectations due to r95180
@@ -5,6 +21,22 @@
         * http/tests/loading/307-after-303-after-post-expected.txt:
         * http/tests/security/mixedContent/insecure-image-in-main-frame-expected.txt:
         * http/tests/security/mixedContent/insecure-script-in-iframe-expected.txt:
+
+2011-09-15  Cary Clark  <caryclark@google.com>
+
+        Unreviewed; new baselines (Skia on Mac)
+        Updated reference images.
+
+        * LayoutTests/platform/chromium-mac/fast/borders/border-image-scaled-gradient-expected.png: Added.
+        * LayoutTests/platform/chromium-mac/fast/borders/border-image-rotate-transform-expected.png:
+        * LayoutTests/platform/chromium-mac/fast/borders/border-image-scaled-expected.png:
+        * LayoutTests/platform/chromium-mac/fast/borders/border-image-side-reduction-expected.png:
+        * LayoutTests/platform/chromium-mac/fast/borders/border-image-massive-scale-expected.png: Added.
+        * LayoutTests/platform/chromium-mac/fast/writing-mode/broken-ideographic-font-expected.png: Added.
+        * LayoutTests/platform/chromium-mac/fast/writing-mode/japanese-rl-text-with-broken-font-expected.png: Added.
+        * LayoutTests/platform/chromium-mac/fast/writing-mode/border-image-vertical-rl-expected.png: Added.
+        * LayoutTests/platform/chromium-mac/fast/writing-mode/border-image-vertical-lr-expected.png: Added.
+        * LayoutTests/platform/chromium-mac/fast/writing-mode/border-image-horizontal-bt-expected.png: Added.
 
 2011-09-15  Cary Clark  <caryclark@google.com>
 
