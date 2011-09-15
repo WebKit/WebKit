@@ -209,7 +209,7 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
     
 #if ENABLE(DYNAMIC_OPTIMIZATION)
     ASSERT(codeBlock);
-    ASSERT(codeBlock->alternative);
+    ASSERT(codeBlock->alternative());
 
     CodeBlock* profiledCodeBlock = codeBlock->alternative();
     ASSERT(codeBlock->m_numParameters >= 1);
