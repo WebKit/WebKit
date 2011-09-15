@@ -32,8 +32,8 @@ from webkitpy.common.config.committers import CommitterList, Contributor, Commit
 class CommittersTest(unittest.TestCase):
     def test_committer_lookup(self):
         committer = Committer('Test One', 'one@test.com', 'one')
-        reviewer = Reviewer('Test Two', ['two@test.com', 'two@rad.com', 'so_two@gmail.com'])
-        contributor = Contributor('Test Three', ['three@test.com'], 'three')
+        reviewer = Reviewer('Test Two', ['two@test.com', 'Two@rad.com', 'so_two@gmail.com'])
+        contributor = Contributor('Test Three', ['Three@test.com'], 'three')
         contributor_with_two_nicknames = Contributor('Other Four', ['otherfour@webkit.org'], ['four', 'otherfour'])
         committer_list = CommitterList(committers=[committer], reviewers=[reviewer], contributors=[contributor, contributor_with_two_nicknames])
 

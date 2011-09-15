@@ -38,6 +38,7 @@ class Contributor(object):
             self.emails = [email_or_emails]
         else:
             self.emails = email_or_emails
+        self.emails = map(lambda email: email.lower(), self.emails)  # Emails are case-insensitive.
         if isinstance(irc_nickname_or_nicknames, str):
             self.irc_nicknames = [irc_nickname_or_nicknames]
         else:
@@ -62,7 +63,7 @@ class Contributor(object):
                 if string in nickname.lower():
                     return True
         for email in self.emails:
-            if string in email.lower():
+            if string in email:
                 return True
         return False
 
@@ -474,7 +475,7 @@ class CommitterList(object):
         return filter(lambda contributor: contributor.contains_string(string), self.contributors())
 
     def contributor_by_email(self, email):
-        return self._email_to_contributor_map().get(email)
+        return self._email_to_contributor_map().get(email.lower())
 
     def committer_by_email(self, email):
         return self._committer_only(self.contributor_by_email(email))
