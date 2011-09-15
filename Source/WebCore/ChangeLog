@@ -1,3 +1,29 @@
+2011-09-15  Yuta Kitamura  <yutak@chromium.org>
+
+        ThreadableWebSocketChannelClientWrapper shouldn't have a String in it.
+        https://bugs.webkit.org/show_bug.cgi?id=67908
+
+        Reviewed by David Levin.
+
+        Replace a String member variable in ThreadableWebSocketChannelClientWrapper with Vector<UChar>.
+
+        ThreadableWebSocketChannelClientWrapper is derived from ThreadSafeRefCounted. It may be
+        destroyed on different threads, which will affect String's refcounting. Therefore, classes
+        derived from ThreadSafeRefCounted must not have a String member variable.
+
+        No change in functionality, thus no new tests. WebSocket worker tests
+        (tests under http/tests/websocket/tests/{hixie76,hybi}/workers/) should keep passing.
+
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::subprotocol):
+        Create a String from Vector<UChar>. Note that String constructor taking an empty vector returns
+        a null string, not an empty string. We want an empty string in that case, so I had to add
+        special-case handling for an empty vector.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::setSubprotocol):
+        Copy the content of the given String into Vector.
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+
 2011-09-14  Matthew Delaney  <mdelaney@apple.com>
 
         Use isAcceleratedContext() on the GraphicsContext instead of flags in ImageBuffer

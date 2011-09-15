@@ -44,7 +44,6 @@ ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper
     : m_client(client)
     , m_syncMethodDone(false)
     , m_useHixie76Protocol(true)
-    , m_subprotocol("")
     , m_sendRequestResult(false)
     , m_bufferedAmount(0)
     , m_suspended(false)
@@ -83,12 +82,17 @@ void ThreadableWebSocketChannelClientWrapper::setUseHixie76Protocol(bool useHixi
 
 String ThreadableWebSocketChannelClientWrapper::subprotocol() const
 {
-    return m_subprotocol;
+    if (m_subprotocol.isEmpty())
+        return String("");
+    return String(m_subprotocol);
 }
 
 void ThreadableWebSocketChannelClientWrapper::setSubprotocol(const String& subprotocol)
 {
-    m_subprotocol = subprotocol;
+    unsigned length = subprotocol.length();
+    m_subprotocol.resize(length);
+    if (length)
+        memcpy(m_subprotocol.data(), subprotocol.characters(), sizeof(UChar) * length);
 }
 
 bool ThreadableWebSocketChannelClientWrapper::sendRequestResult() const

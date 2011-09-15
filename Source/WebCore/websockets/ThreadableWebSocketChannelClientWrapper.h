@@ -93,7 +93,7 @@ protected:
     WebSocketChannelClient* m_client;
     bool m_syncMethodDone;
     bool m_useHixie76Protocol;
-    String m_subprotocol;
+    Vector<UChar> m_subprotocol; // ThreadSafeRefCounted must not have a String member variable.
     bool m_sendRequestResult;
     unsigned long m_bufferedAmount;
     bool m_suspended;
