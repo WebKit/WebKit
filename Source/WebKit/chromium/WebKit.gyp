@@ -992,13 +992,10 @@
             'dependencies': [
                 'ImageDiff',
                 'inspector_resources',
-                'TestNetscapePlugIn',
-                'copy_TestNetscapePlugIn',
                 'webkit',
                 '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
-                '<(chromium_src_dir)/third_party/mesa/mesa.gyp:osmesa',
                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:blob',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
@@ -1137,6 +1134,10 @@
                 ['OS!="android"', {
                     'sources/': [
                         ['exclude', '(Android)\\.cpp$']
+                    ],
+                    'dependencies': [
+                        'copy_TestNetscapePlugIn',
+                        '<(chromium_src_dir)/third_party/mesa/mesa.gyp:osmesa',
                     ],
                 }],
                 ['inside_chromium_build==1 and component=="shared_library"', {
