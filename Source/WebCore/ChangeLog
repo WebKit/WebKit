@@ -1,3 +1,18 @@
+2011-09-15  James Simonsen  <simonjam@chromium.org>
+
+        Ref protect HTMLObjectElement and HTMLEmbedElement while requesting plugins
+        https://bugs.webkit.org/show_bug.cgi?id=68014
+
+        Reviewed by Adam Barth.
+
+        Test: plugins/destroy-during-npp-new.html under valgrind
+              plugins/destroy-during-npp-new-object-with-fallback-content.html under valgrind
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+
 2011-09-15  Sam Weinig  <sam@webkit.org>
 
         Experiment with removing ability to call a collection (except document.all)
