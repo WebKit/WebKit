@@ -1,5 +1,39 @@
 2011-09-14  David Levin  <levin@chromium.org>
 
+        [chromium] rebaselines due to r95096, r95121, and r95129.
+
+        * platform/chromium-cg-mac-leopard/fast/borders/border-image-scaled-gradient-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/svg/as-border-image/svg-as-border-image-expected.png: Added.
+        * platform/chromium-cg-mac/fast/css/getComputedStyle/computed-style-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt.
+        * platform/chromium-cg-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt.
+        * platform/chromium-cg-mac/svg/as-border-image/svg-as-border-image-expected.png: Added.
+        * platform/chromium-cg-mac/svg/as-border-image/svg-as-border-image-expected.txt: Added.
+        * platform/chromium-cg-mac/svg/css/getComputedStyle-basic-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt.
+        * platform/chromium-linux/fast/borders/border-image-border-radius-expected.png:
+        * platform/chromium-linux/fast/borders/border-image-massive-scale-expected.png: Added.
+        * platform/chromium-linux/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium-linux/fast/borders/border-image-scaled-expected.png:
+        * platform/chromium-linux/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/chromium-win/fast/borders/border-image-01-expected.png:
+        * platform/chromium-win/fast/borders/border-image-border-radius-expected.png:
+        * platform/chromium-win/fast/borders/border-image-longhand-expected.png:
+        * platform/chromium-win/fast/borders/border-image-massive-scale-expected.png: Added.
+        * platform/chromium-win/fast/borders/border-image-massive-scale-expected.txt: Added.
+        * platform/chromium-win/fast/borders/border-image-repeat-expected.png:
+        * platform/chromium-win/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium-win/fast/borders/border-image-scaled-expected.png:
+        * platform/chromium-win/fast/borders/border-image-scaled-gradient-expected.png: Added.
+        * platform/chromium-win/fast/borders/border-image-side-reduction-expected.png:
+        * platform/chromium-win/fast/borders/border-image-slices-expected.png:
+        * platform/chromium-win/fast/borders/border-image-source-expected.png:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-expected.txt:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+
+2011-09-14  David Levin  <levin@chromium.org>
+
         [chromium] rebaselines due to r95121, r95070, and r95099.
 
         * platform/chromium-cg-mac-leopard/fast/borders/border-image-border-radius-expected.png: Added.
