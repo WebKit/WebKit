@@ -67,7 +67,6 @@ ImageBufferData::ImageBufferData(const IntSize& size)
 ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderingMode, bool& success)
     : m_data(size)
     , m_size(size)
-    , m_accelerateRendering(false)
 {
     OwnPtr<SkCanvas> canvas = adoptPtr(skia::TryCreateBitmapCanvas(size.width(), size.height(), false));
     if (!canvas) {
@@ -101,7 +100,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderin
                 if (texture.get()) {
                     m_data.m_canvas->setDevice(new SkGpuDevice(gr, texture.get()))->unref();
                     m_context->platformContext()->setGraphicsContext3D(context3D);
-                    m_accelerateRendering = true;
+                    m_context->setIsAcceleratedContext(true);
 #if USE(ACCELERATED_COMPOSITING)
                     m_data.m_platformLayer = Canvas2DLayerChromium::create(context3D);
                     m_data.m_platformLayer->setTextureId(texture.get()->getTextureHandle());

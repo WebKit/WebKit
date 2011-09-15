@@ -106,9 +106,9 @@ static void releaseImageData(void*, const void* data, size_t)
 ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, RenderingMode renderingMode, bool& success)
     : m_data(size)
     , m_size(size)
-    , m_accelerateRendering(renderingMode == Accelerated)
 {
     success = false;  // Make early return mean failure.
+    bool accelerateRendering = renderingMode == Accelerated;
     if (size.width() <= 0 || size.height() <= 0)
         return;
 
@@ -123,7 +123,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     if (width.unsafeGet() >= maxIOSurfaceDimension || height.unsafeGet() >= maxIOSurfaceDimension || (width * height).unsafeGet() < minIOSurfaceArea)
-        m_accelerateRendering = false;
+        accelerateRendering = false;
 #else
     ASSERT(renderingMode == Unaccelerated);
 #endif
@@ -141,16 +141,16 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
     }
 
     RetainPtr<CGContextRef> cgContext;
-    if (m_accelerateRendering) {
+    if (accelerateRendering) {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
         m_data.m_surface = createIOSurface(size);
         cgContext.adoptCF(wkIOSurfaceContextCreate(m_data.m_surface.get(), width.unsafeGet(), height.unsafeGet(), m_data.m_colorSpace));
 #endif
         if (!cgContext)
-            m_accelerateRendering = false; // If allocation fails, fall back to non-accelerated path.
+            accelerateRendering = false; // If allocation fails, fall back to non-accelerated path.
     }
 
-    if (!m_accelerateRendering) {
+    if (!accelerateRendering) {
         if (!tryFastCalloc(height.unsafeGet(), m_data.m_bytesPerRow.unsafeGet()).getValue(m_data.m_data))
             return;
         ASSERT(!(reinterpret_cast<size_t>(m_data.m_data) & 2));
@@ -167,6 +167,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
     m_context= adoptPtr(new GraphicsContext(cgContext.get()));
     m_context->scale(FloatSize(1, -1));
     m_context->translate(0, -height.unsafeGet());
+    m_context->setIsAcceleratedContext(accelerateRendering);
     success = true;
 }
 
@@ -197,7 +198,7 @@ PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior) const
 NativeImagePtr ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
     CGImageRef image = 0;
-    if (!m_accelerateRendering) {
+    if (!m_context->isAcceleratedContext()) {
         switch (copyBehavior) {
         case DontCopyBackingStore:
             image = CGImageCreate(m_size.width(), m_size.height(), 8, 32, m_data.m_bytesPerRow.unsafeGet(), m_data.m_colorSpace, m_data.m_bitmapInfo, m_data.m_dataProvider.get(), 0, true, kCGRenderingIntentDefault);
@@ -234,7 +235,7 @@ void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace,
 
 void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
-    if (!m_accelerateRendering) {
+    if (!m_context->isAcceleratedContext()) {
         if (context == m_context) {
             RefPtr<Image> copy = copyImage(CopyBackingStore); // Drawing into our own buffer, need to deep copy.
             copy->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
@@ -261,30 +262,30 @@ void ImageBuffer::clip(GraphicsContext* contextToClip, const FloatRect& rect) co
 
 PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
-    if (m_accelerateRendering)
+    if (m_context->isAcceleratedContext())
         CGContextFlush(context()->platformContext());
-    return m_data.getData(rect, m_size, m_accelerateRendering, true);
+    return m_data.getData(rect, m_size, m_context->isAcceleratedContext(), true);
 }
 
 PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
 {
-    if (m_accelerateRendering)
+    if (m_context->isAcceleratedContext())
         CGContextFlush(context()->platformContext());
-    return m_data.getData(rect, m_size, m_accelerateRendering, false);
+    return m_data.getData(rect, m_size, m_context->isAcceleratedContext(), false);
 }
 
 void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    if (m_accelerateRendering)
+    if (m_context->isAcceleratedContext())
         CGContextFlush(context()->platformContext());
-    m_data.putData(source, sourceSize, sourceRect, destPoint, m_size, m_accelerateRendering, true);
+    m_data.putData(source, sourceSize, sourceRect, destPoint, m_size, m_context->isAcceleratedContext(), true);
 }
 
 void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    if (m_accelerateRendering)
+    if (m_context->isAcceleratedContext())
         CGContextFlush(context()->platformContext());
-    m_data.putData(source, sourceSize, sourceRect, destPoint, m_size, m_accelerateRendering, false);
+    m_data.putData(source, sourceSize, sourceRect, destPoint, m_size, m_context->isAcceleratedContext(), false);
 }
 
 static inline CFStringRef jpegUTI()

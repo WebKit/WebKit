@@ -90,7 +90,6 @@ namespace WebCore {
         
         GraphicsContext* context() const;
 
-        bool isAccelerated() const { return m_accelerateRendering; }
         PassRefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore) const;
 
         PassRefPtr<ByteArray> getUnmultipliedImageData(const IntRect&) const;
@@ -132,7 +131,6 @@ namespace WebCore {
         ImageBufferData m_data;
 
         IntSize m_size;
-        bool m_accelerateRendering;
         OwnPtr<GraphicsContext> m_context;
 
 #if !USE(CG)

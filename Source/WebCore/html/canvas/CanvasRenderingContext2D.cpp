@@ -150,10 +150,7 @@ CanvasRenderingContext2D::~CanvasRenderingContext2D()
 
 bool CanvasRenderingContext2D::isAccelerated() const
 {
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    ImageBuffer* buffer = canvas()->buffer();
-    return buffer ? buffer->isAccelerated() : false;
-#elif ENABLE(ACCELERATED_2D_CANVAS)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
     return canvas()->hasCreatedImageBuffer() && drawingContext() && drawingContext()->isAcceleratedContext();
 #else
     return false;
@@ -1511,7 +1508,7 @@ template<class T> void CanvasRenderingContext2D::fillAndDisplayTransparencyElsew
     IntRect bufferRect = enclosingIntRect(path.boundingRect());
     path.translate(FloatSize(-bufferRect.x(), -bufferRect.y()));
 
-    RenderingMode renderMode = canvas()->buffer()->isAccelerated() ? Accelerated : Unaccelerated;
+    RenderingMode renderMode = isAccelerated() ? Accelerated : Unaccelerated;
     OwnPtr<ImageBuffer> buffer = ImageBuffer::create(bufferRect.size(), ColorSpaceDeviceRGB, renderMode);
     buffer->context()->setCompositeOperation(CompositeSourceOver);
     state().m_fillStyle->applyFillColor(buffer->context());
