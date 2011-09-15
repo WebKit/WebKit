@@ -1,3 +1,16 @@
+2011-09-15  David Levin  <levin@chromium.org>
+
+        [chromium] Rebaselines due to r95203 and r95207.
+
+        Also misc test_expectations additions.
+
+        * platform/chromium-cg-mac/fast/box-shadow/no-blur-multiple-offsets-expected.png: Added.
+        * platform/chromium-linux/fast/box-shadow/no-blur-multiple-offsets-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/no-blur-multiple-offsets-expected.png: Added.
+        * platform/chromium-win/fast/box-shadow/no-blur-multiple-offsets-expected.png: Added.
+        * platform/chromium/fast/dom/NodeList/nodelist-item-call-as-function-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-09-15  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=50072

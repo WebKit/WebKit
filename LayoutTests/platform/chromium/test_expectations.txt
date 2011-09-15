@@ -41,7 +41,8 @@ BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-reverse.html = PASS
 BUGCR24182 BUGWK62309 SLOW WIN DEBUG : inspector/styles/styles-source-lines.html = PASS TEXT
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
-
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
+BUGCR24182 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS
 
 BUGWK67919 SLOW DEBUG : perf/document-contains.html = PASS
 
@@ -3736,8 +3737,11 @@ BUG_LEVIN SNOWLEOPARD : http/tests/loading/307-after-303-after-post.html = PASS 
 BUG_LEVIN SNOWLEOPARD : http/tests/security/mixedContent/insecure-image-in-main-frame.html = PASS TEXT
 BUG_LEVIN SNOWLEOPARD : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
 
-// Behavior difference due to r95203. Just needs a rebaseline once everything has run it.
-BUG_LEVIN: fast/dom/NodeList/nodelist-item-call-as-function.html = TEXT
+BUG_LEVIN MAC DEBUG : svg/custom/object-no-size-attributes.xhtml = PASS IMAGE+TEXT
 
-// Just need a rebaseline for new test added in r95207.
-BUG_LEVIN : fast/box-shadow/no-blur-multiple-offsets.html = IMAGE IMAGE+TEXT TEXT
+// These all are due to r95239 and just need to wait for all bots to run them so they can get rebaselined.
+BUG_LEVIN : fast/clip/overflow-border-radius-combinations.html = FAIL
+BUG_LEVIN : fast/clip/overflow-border-radius-composited.html = FAIL
+BUG_LEVIN : fast/clip/overflow-border-radius-transformed.html = FAIL
+BUG_LEVIN : fast/css/nested-rounded-corners.html = FAIL
+
