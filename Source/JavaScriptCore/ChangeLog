@@ -1,3 +1,12 @@
+2011-09-15  Adam Roben  <aroben@apple.com>
+
+        Clang build fix after r95172
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateFinalObject):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateArray):
+        Added parentheses to make precendence clear.
+
 2011-09-14  Filip Pizlo  <fpizlo@apple.com>
 
         DFG does not speculate aggressively enough on comparisons

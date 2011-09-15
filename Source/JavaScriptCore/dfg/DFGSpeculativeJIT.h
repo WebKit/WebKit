@@ -491,14 +491,14 @@ private:
     
     bool shouldSpeculateFinalObject(NodeIndex op1, NodeIndex op2)
     {
-        return shouldSpeculateFinalObject(op1) && shouldSpeculateObject(op2)
-            || shouldSpeculateObject(op1) && shouldSpeculateFinalObject(op2);
+        return (shouldSpeculateFinalObject(op1) && shouldSpeculateObject(op2))
+            || (shouldSpeculateObject(op1) && shouldSpeculateFinalObject(op2));
     }
 
     bool shouldSpeculateArray(NodeIndex op1, NodeIndex op2)
     {
-        return shouldSpeculateArray(op1) && shouldSpeculateObject(op2)
-            || shouldSpeculateObject(op1) && shouldSpeculateArray(op2);
+        return (shouldSpeculateArray(op1) && shouldSpeculateObject(op2))
+            || (shouldSpeculateObject(op1) && shouldSpeculateArray(op2));
     }
     
     bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);
