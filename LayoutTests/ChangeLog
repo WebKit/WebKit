@@ -1,3 +1,12 @@
+2011-09-15  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Renaming PeerConnection to webkitPeerConnection affects all ports,
+        not just chromium. Updating layout test after r95151.
+
+        Unreviewed gardening.
+
+        * fast/dom/call-a-constructor-as-a-function-expected.txt:
+
 2011-09-15  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] rebaseline expectations due to r95121
