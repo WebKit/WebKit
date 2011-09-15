@@ -45,6 +45,7 @@ private:
     
     virtual bool accessibilityIsIgnored() const { return false; }
     virtual bool isAccessibilityScrollView() const { return true; }
+    virtual bool isEnabled() const { return true; }
     
     virtual bool isAttachment() const;
     virtual Widget* widgetForAttachmentView() const;
