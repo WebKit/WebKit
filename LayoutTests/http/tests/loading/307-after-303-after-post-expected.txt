@@ -14,6 +14,7 @@ main frame - didReceiveServerRedirectForProvisionalLoadForFrame
 http://127.0.0.1:8000/loading/resources/post-to-303-target.php - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/307-post-output-target.php, http status code 200>
 main frame - didCancelClientRedirectForFrame
 main frame - didCommitLoadForFrame
+http://127.0.0.1:8000/loading/resources/post-to-303-target.php - didFinishLoading
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame

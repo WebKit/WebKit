@@ -1,3 +1,11 @@
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] rebaseline expectations due to r95180
+
+        * http/tests/loading/307-after-303-after-post-expected.txt:
+        * http/tests/security/mixedContent/insecure-image-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/insecure-script-in-iframe-expected.txt:
+
 2011-09-15  Cary Clark  <caryclark@google.com>
 
         Unreviewed; new baselines (Skia on Mac)
