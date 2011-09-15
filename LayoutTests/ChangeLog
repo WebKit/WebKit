@@ -1,5 +1,14 @@
 2011-09-15  Zoltan Herczeg  <zherczeg@webkit.org>
 
+        [Qt] Unreviewed gardening. Adding new test expectations.
+
+        * platform/qt/fast/borders/border-image-massive-scale-expected.txt: Added.
+        * platform/qt/fast/borders/border-image-scaled-gradient-expected.txt: Added.
+        * platform/qt/fast/borders/border-image-scrambled-expected.txt: Added.
+        * platform/qt/fast/parser/innerhtml-with-prefixed-elements-expected.txt: Added.
+
+2011-09-15  Zoltan Herczeg  <zherczeg@webkit.org>
+
         Renaming PeerConnection to webkitPeerConnection affects all ports,
         not just chromium. Updating layout test after r95151.
 

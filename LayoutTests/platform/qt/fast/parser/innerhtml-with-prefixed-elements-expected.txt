@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 11: INVALID_STATE_ERR: DOM Exception 11: An attempt was made to use an object that is not, or is no longer, usable.
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x126
+  RenderBlock {html} at (0,0) size 800x126
+    RenderBody {body} at (8,8) size 784x110
+      RenderBlock {div} at (0,0) size 784x110
+        RenderText {#text} at (0,0) size 108x22
+          text run at (0,0) width 108: "TEST FAILED"
