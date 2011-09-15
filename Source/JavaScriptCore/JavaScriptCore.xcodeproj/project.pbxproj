@@ -351,8 +351,6 @@
 		86EC9DCA1328DF82002B2AD7 /* DFGJITCodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DBA1328DF82002B2AD7 /* DFGJITCodeGenerator.h */; };
 		86EC9DCB1328DF82002B2AD7 /* DFGJITCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DBB1328DF82002B2AD7 /* DFGJITCompiler.cpp */; };
 		86EC9DCC1328DF82002B2AD7 /* DFGJITCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DBC1328DF82002B2AD7 /* DFGJITCompiler.h */; };
-		86EC9DCD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DBD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp */; };
-		86EC9DCE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DBE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h */; };
 		86EC9DCF1328DF82002B2AD7 /* DFGOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DBF1328DF82002B2AD7 /* DFGOperations.cpp */; };
 		86EC9DD01328DF82002B2AD7 /* DFGOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DC01328DF82002B2AD7 /* DFGOperations.h */; };
 		86EC9DD11328DF82002B2AD7 /* DFGRegisterBank.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */; };
@@ -1105,8 +1103,6 @@
 		86EC9DBA1328DF82002B2AD7 /* DFGJITCodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGJITCodeGenerator.h; path = dfg/DFGJITCodeGenerator.h; sourceTree = "<group>"; };
 		86EC9DBB1328DF82002B2AD7 /* DFGJITCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGJITCompiler.cpp; path = dfg/DFGJITCompiler.cpp; sourceTree = "<group>"; };
 		86EC9DBC1328DF82002B2AD7 /* DFGJITCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGJITCompiler.h; path = dfg/DFGJITCompiler.h; sourceTree = "<group>"; };
-		86EC9DBD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNonSpeculativeJIT.cpp; path = dfg/DFGNonSpeculativeJIT.cpp; sourceTree = "<group>"; };
-		86EC9DBE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNonSpeculativeJIT.h; path = dfg/DFGNonSpeculativeJIT.h; sourceTree = "<group>"; };
 		86EC9DBF1328DF82002B2AD7 /* DFGOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOperations.cpp; path = dfg/DFGOperations.cpp; sourceTree = "<group>"; };
 		86EC9DC01328DF82002B2AD7 /* DFGOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOperations.h; path = dfg/DFGOperations.h; sourceTree = "<group>"; };
 		86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGRegisterBank.h; path = dfg/DFGRegisterBank.h; sourceTree = "<group>"; };
@@ -2252,8 +2248,6 @@
 				86EC9DBB1328DF82002B2AD7 /* DFGJITCompiler.cpp */,
 				86EC9DBC1328DF82002B2AD7 /* DFGJITCompiler.h */,
 				86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */,
-				86EC9DBD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp */,
-				86EC9DBE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h */,
 				86EC9DBF1328DF82002B2AD7 /* DFGOperations.cpp */,
 				86EC9DC01328DF82002B2AD7 /* DFGOperations.h */,
 				86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */,
@@ -2505,7 +2499,6 @@
 				86EC9DCA1328DF82002B2AD7 /* DFGJITCodeGenerator.h in Headers */,
 				86EC9DCC1328DF82002B2AD7 /* DFGJITCompiler.h in Headers */,
 				86ECA3EA132DEF1C002B2AD7 /* DFGNode.h in Headers */,
-				86EC9DCE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h in Headers */,
 				142E3136134FF0A600AFADB5 /* HandleHeap.h in Headers */,
 				142E3138134FF0A600AFADB5 /* HandleStack.h in Headers */,
 				86EC9DD01328DF82002B2AD7 /* DFGOperations.h in Headers */,
@@ -3156,7 +3149,6 @@
 				86EC9DC71328DF82002B2AD7 /* DFGGraph.cpp in Sources */,
 				86EC9DC91328DF82002B2AD7 /* DFGJITCodeGenerator.cpp in Sources */,
 				86EC9DCB1328DF82002B2AD7 /* DFGJITCompiler.cpp in Sources */,
-				86EC9DCD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp in Sources */,
 				86EC9DCF1328DF82002B2AD7 /* DFGOperations.cpp in Sources */,
 				86EC9DD21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp in Sources */,
 				14469DD7107EC79E00650446 /* dtoa.cpp in Sources */,

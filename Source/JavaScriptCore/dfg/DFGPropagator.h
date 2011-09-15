@@ -38,11 +38,7 @@ class JSGlobalData;
 namespace DFG {
 
 // Propagate dynamic predictions from value sources to variables.
-#if ENABLE(DYNAMIC_OPTIMIZATION)
 void propagate(Graph&, JSGlobalData*, CodeBlock*);
-#else
-inline void propagate(Graph&, JSGlobalData*, CodeBlock*) { }
-#endif
 
 } } // namespace JSC::DFG
 

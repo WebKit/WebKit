@@ -53,12 +53,8 @@
 #define ENABLE_DFG_VERBOSE_SPECULATION_FAILURE 0
 // Disable the DFG JIT without having to touch Platform.h!
 #define DFG_DEBUG_LOCAL_DISBALE 0
-// Disable the SpeculativeJIT without having to touch Platform.h!
-#define DFG_DEBUG_LOCAL_DISBALE_SPECULATIVE 0
 // Enable OSR entry from baseline JIT.
-#define ENABLE_DFG_OSR_ENTRY ENABLE_TIERED_COMPILATION
-// Disable the non-speculative JIT and use OSR instead.
-#define ENABLE_DFG_OSR_EXIT ENABLE_TIERED_COMPILATION
+#define ENABLE_DFG_OSR_ENTRY ENABLE_DFG_JIT
 // Generate stats on how successful we were in making use of the DFG jit, and remaining on the hot path.
 #define ENABLE_DFG_SUCCESS_STATS 0
 

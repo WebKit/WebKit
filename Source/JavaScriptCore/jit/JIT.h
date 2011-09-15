@@ -980,7 +980,7 @@ namespace JSC {
         void emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures);
         
         enum OptimizationCheckKind { LoopOptimizationCheck, RetOptimizationCheck };
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         void emitOptimizationCheck(OptimizationCheckKind);
 #else
         void emitOptimizationCheck(OptimizationCheckKind) { }
@@ -1010,7 +1010,7 @@ namespace JSC {
         void sampleCodeBlock(CodeBlock*) {}
 #endif
 
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         bool shouldEmitProfiling() { return m_canBeOptimized; }
 #else
         // Enables use of value profiler with tiered compilation turned off,
@@ -1058,7 +1058,7 @@ namespace JSC {
         WeakRandom m_randomGenerator;
         static CodeRef stringGetByValStubGenerator(JSGlobalData*);
         
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         bool m_canBeOptimized;
         Label m_startOfCode;
         CompactJITCodeMap::Encoder m_jitCodeMapEncoder;

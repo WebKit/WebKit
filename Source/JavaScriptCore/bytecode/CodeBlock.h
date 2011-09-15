@@ -303,7 +303,7 @@ namespace JSC {
         void unlinkIncomingCalls();
 #endif
 
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         void setJITCodeMap(PassOwnPtr<CompactJITCodeMap> jitCodeMap)
         {
             m_jitCodeMap = jitCodeMap;
@@ -765,7 +765,7 @@ namespace JSC {
         MacroAssemblerCodePtr m_jitCodeWithArityCheck;
         SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo> > m_incomingCalls;
 #endif
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         OwnPtr<CompactJITCodeMap> m_jitCodeMap;
 #endif
 #if ENABLE(VALUE_PROFILER)

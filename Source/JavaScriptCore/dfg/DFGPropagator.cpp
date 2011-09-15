@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DFGPropagator.h"
 
-#if ENABLE(DFG_JIT) && ENABLE(DYNAMIC_OPTIMIZATION)
+#if ENABLE(DFG_JIT)
 
 #include "DFGGraph.h"
 
@@ -432,5 +432,5 @@ void propagate(Graph& graph, JSGlobalData* globalData, CodeBlock* codeBlock)
 
 } } // namespace JSC::DFG
 
-#endif // ENABLE(DFG_JIT) && ENABLE(DYNAMIC_OPTIMIZATION)
+#endif // ENABLE(DFG_JIT)
 

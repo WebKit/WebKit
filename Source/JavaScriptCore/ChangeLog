@@ -1,3 +1,61 @@
+2011-09-15  Filip Pizlo  <fpizlo@apple.com>
+
+        The DFG non-speculative JIT is no longer used and should be removed.
+        https://bugs.webkit.org/show_bug.cgi?id=68177
+
+        Reviewed by Geoffrey Garen.
+        
+        This removes the non-speculative JIT and everything that relied on it,
+        including the ability to turn on DFG but not tiered compilation the,
+        ability to perform speculation failure into non-speculative JIT code,
+        and the ability to statically terminate speculation.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoopHint):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::getStrongPrediction):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGenerationInfo.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGJITCodeGenerator.cpp:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::compileBody):
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGNode.h:
+        * dfg/DFGNonSpeculativeJIT.cpp: Removed.
+        * dfg/DFGNonSpeculativeJIT.h: Removed.
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGPropagator.cpp:
+        * dfg/DFGPropagator.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::osrExits):
+        (JSC::DFG::SpeculativeJIT::speculationRecovery):
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITCode.h:
+        (JSC::JITCode::bottomTierJIT):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * wtf/Platform.h:
+
 2011-09-15  Eric Seidel  <eric@webkit.org>
 
         Remove ENABLE(SVG_AS_IMAGE) since all major ports have it on by default

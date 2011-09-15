@@ -89,7 +89,6 @@ SOURCES += \
     dfg/DFGGraph.cpp \
     dfg/DFGJITCodeGenerator.cpp \
     dfg/DFGJITCompiler.cpp \
-    dfg/DFGNonSpeculativeJIT.cpp \
     dfg/DFGOperations.cpp \
     dfg/DFGSpeculativeJIT.cpp \
     interpreter/CallFrame.cpp \

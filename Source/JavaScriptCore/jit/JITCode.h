@@ -52,11 +52,7 @@ namespace JSC {
         
         static JITType bottomTierJIT()
         {
-#if ENABLE(TIERED_COMPILATION)
             return BaselineJIT;
-#else
-            return DFGJIT;
-#endif
         }
         
         static JITType topTierJIT()

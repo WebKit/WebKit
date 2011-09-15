@@ -191,7 +191,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , parser(new Parser)
     , interpreter(0)
     , heap(this, heapSize)
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
     , sizeOfLastOSRScratchBuffer(0)
 #endif
     , dynamicGlobalObject(0)
@@ -360,7 +360,7 @@ JSGlobalData::~JSGlobalData()
     delete m_rtTraceList;
 #endif
 
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
     for (unsigned i = 0; i < osrScratchBuffers.size(); ++i)
         fastFree(osrScratchBuffers[i]);
 #endif

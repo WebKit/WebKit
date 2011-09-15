@@ -35,16 +35,6 @@
 
 namespace JSC { namespace DFG {
 
-#if ENABLE(DFG_JIT_RESTRICTIONS)
-// FIXME: Temporarily disable arithmetic, until we fix associated performance regressions.
-// FIXME: temporarily disable property accesses until we fix regressions.
-#define ARITHMETIC_OP() m_parseFailed = true
-#define PROPERTY_ACCESS_OP() m_parseFailed = true
-#else
-#define ARITHMETIC_OP() ((void)0)
-#define PROPERTY_ACCESS_OP() ((void)0)
-#endif
-
 // === ByteCodeParser ===
 //
 // This class is used to compile the dataflow graph from a CodeBlock.
@@ -67,9 +57,7 @@ public:
         , m_parameterSlots(0)
         , m_numPassedVarArgs(0)
     {
-#if ENABLE(DYNAMIC_OPTIMIZATION)
         ASSERT(m_profiledBlock);
-#endif
     }
 
     // Parse a full CodeBlock of bytecode.
@@ -479,7 +467,6 @@ private:
         UNUSED_PARAM(nodeIndex);
         UNUSED_PARAM(bytecodeIndex);
         
-#if ENABLE(DYNAMIC_OPTIMIZATION)
         ValueProfile* profile = m_profiledBlock->valueProfileForBytecodeOffset(bytecodeIndex);
         ASSERT(profile);
         PredictedType prediction = profile->computeUpdatedPrediction();
@@ -487,9 +474,6 @@ private:
         printf("Dynamic [%u, %u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(prediction));
 #endif
         return prediction;
-#else
-        return PredictNone;
-#endif
     }
     
     void stronglyPredict(NodeIndex nodeIndex, unsigned bytecodeIndex)
@@ -753,7 +737,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         // === Arithmetic operations ===
 
         case op_add: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             // If both operands can statically be determined to the numbers, then this is an arithmetic add.
@@ -770,7 +753,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_sub: {
-            ARITHMETIC_OP();
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             if (isSmallInt32Constant(op1) || isSmallInt32Constant(op2)) {
@@ -782,7 +764,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_mul: {
-            ARITHMETIC_OP();
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithMul, op1, op2));
@@ -790,7 +771,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_mod: {
-            ARITHMETIC_OP();
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithMod, op1, op2));
@@ -798,7 +778,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_div: {
-            ARITHMETIC_OP();
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithDiv, op1, op2));
@@ -831,14 +810,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_not: {
-            ARITHMETIC_OP();
             NodeIndex value = get(currentInstruction[2].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, value));
             NEXT_OPCODE(op_not);
         }
 
         case op_less: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareLess, op1, op2));
@@ -846,7 +823,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_lesseq: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareLessEq, op1, op2));
@@ -854,7 +830,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_greater: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareGreater, op1, op2));
@@ -862,7 +837,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_greatereq: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareGreaterEq, op1, op2));
@@ -870,7 +844,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_eq: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareEq, op1, op2));
@@ -878,14 +851,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_eq_null: {
-            ARITHMETIC_OP();
             NodeIndex value = get(currentInstruction[2].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareEq, value, constantNull()));
             NEXT_OPCODE(op_eq_null);
         }
 
         case op_stricteq: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareStrictEq, op1, op2));
@@ -893,7 +864,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_neq: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareEq, op1, op2)));
@@ -901,14 +871,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_neq_null: {
-            ARITHMETIC_OP();
             NodeIndex value = get(currentInstruction[2].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareEq, value, constantNull())));
             NEXT_OPCODE(op_neq_null);
         }
 
         case op_nstricteq: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareStrictEq, op1, op2)));
@@ -963,7 +931,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_get_by_id: {
-            PROPERTY_ACCESS_OP();
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifier = currentInstruction[3].u.operand;
             
@@ -976,7 +943,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_put_by_id: {
-            PROPERTY_ACCESS_OP();
             NodeIndex value = get(currentInstruction[3].u.operand);
             NodeIndex base = get(currentInstruction[1].u.operand);
             unsigned identifier = currentInstruction[2].u.operand;
@@ -1196,7 +1162,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_call_put_result);
 
         case op_resolve: {
-            PROPERTY_ACCESS_OP();
             unsigned identifier = currentInstruction[2].u.operand;
 
             NodeIndex resolve = addToGraph(Resolve, OpInfo(identifier));
@@ -1207,7 +1172,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_resolve_base: {
-            PROPERTY_ACCESS_OP();
             unsigned identifier = currentInstruction[2].u.operand;
 
             NodeIndex resolve = addToGraph(currentInstruction[3].u.operand ? ResolveBaseStrictPut : ResolveBase, OpInfo(identifier));

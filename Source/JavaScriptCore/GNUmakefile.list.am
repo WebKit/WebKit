@@ -118,8 +118,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
 	Source/JavaScriptCore/dfg/DFGNode.h \
-	Source/JavaScriptCore/dfg/DFGNonSpeculativeJIT.cpp \
-	Source/JavaScriptCore/dfg/DFGNonSpeculativeJIT.h \
 	Source/JavaScriptCore/dfg/DFGOperations.cpp \
 	Source/JavaScriptCore/dfg/DFGOperations.h \
 	Source/JavaScriptCore/dfg/DFGPropagator.cpp \

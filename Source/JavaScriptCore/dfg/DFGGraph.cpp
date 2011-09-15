@@ -207,7 +207,6 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
         }
     }
     
-#if ENABLE(DYNAMIC_OPTIMIZATION)
     ASSERT(codeBlock);
     ASSERT(codeBlock->alternative());
 
@@ -224,9 +223,6 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
         printf("Argument [%lu] prediction: %s\n", arg, predictionToString(m_predictions.getArgumentPrediction(arg)));
 #endif
     }
-#else
-    UNUSED_PARAM(codeBlock);
-#endif
 }
 
 } } // namespace JSC::DFG

@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGNonSpeculativeJIT.h"
 #include "DFGSpeculativeJIT.h"
 #include "LinkBuffer.h"
 

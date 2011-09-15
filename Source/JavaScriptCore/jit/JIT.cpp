@@ -93,7 +93,7 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
 {
 }
 
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
 void JIT::emitOptimizationCheck(OptimizationCheckKind kind)
 {
     if (!shouldEmitProfiling())
@@ -207,7 +207,7 @@ void JIT::privateCompileMainPass()
 
         m_labels[m_bytecodeOffset] = label();
 
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         if (m_canBeOptimized)
             m_jitCodeMapEncoder.append(m_bytecodeOffset, differenceBetween(m_startOfCode, label()));
 #endif
@@ -503,7 +503,7 @@ void JIT::privateCompileSlowCases()
 
 JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 {
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
     m_canBeOptimized = m_codeBlock->canCompileWithDFG();
     if (m_canBeOptimized)
         m_startOfCode = label();
@@ -647,7 +647,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
         info.callReturnLocation = m_codeBlock->structureStubInfo(m_methodCallCompilationInfo[i].propertyAccessIndex).callReturnLocation;
     }
 
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
     if (m_canBeOptimized)
         m_codeBlock->setJITCodeMap(m_jitCodeMapEncoder.finish());
 #endif

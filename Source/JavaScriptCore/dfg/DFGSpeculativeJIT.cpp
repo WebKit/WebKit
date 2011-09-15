@@ -147,35 +147,6 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
     return InvalidGPRReg;
 }
 
-#if !ENABLE(DFG_OSR_EXIT)
-SpeculationCheck::SpeculationCheck(MacroAssembler::Jump check, SpeculativeJIT* jit, unsigned recoveryIndex)
-    : m_check(check)
-    , m_nodeIndex(jit->m_compileIndex)
-    , m_recoveryIndex(recoveryIndex)
-{
-    for (gpr_iterator iter = jit->m_gprs.begin(); iter != jit->m_gprs.end(); ++iter) {
-        if (iter.name() != InvalidVirtualRegister) {
-            GenerationInfo& info =  jit->m_generationInfo[iter.name()];
-            m_gprInfo[iter.index()].nodeIndex = info.nodeIndex();
-            m_gprInfo[iter.index()].format = info.registerFormat();
-            ASSERT(m_gprInfo[iter.index()].format != DataFormatNone);
-            m_gprInfo[iter.index()].isSpilled = info.spillFormat() != DataFormatNone;
-        } else
-            m_gprInfo[iter.index()].nodeIndex = NoNode;
-    }
-    for (fpr_iterator iter = jit->m_fprs.begin(); iter != jit->m_fprs.end(); ++iter) {
-        if (iter.name() != InvalidVirtualRegister) {
-            GenerationInfo& info =  jit->m_generationInfo[iter.name()];
-            ASSERT(info.registerFormat() == DataFormatDouble);
-            m_fprInfo[iter.index()].nodeIndex = info.nodeIndex();
-            m_fprInfo[iter.index()].format = DataFormatDouble;
-            m_fprInfo[iter.index()].isSpilled = info.spillFormat() != DataFormatNone;
-        } else
-            m_fprInfo[iter.index()].nodeIndex = NoNode;
-    }
-}
-#endif
-
 #ifndef NDEBUG
 void ValueSource::dump(FILE* out) const
 {
@@ -213,7 +184,6 @@ void ValueRecovery::dump(FILE* out) const
 }
 #endif
 
-#if ENABLE(DFG_OSR_EXIT)
 OSRExit::OSRExit(MacroAssembler::Jump check, SpeculativeJIT* jit, unsigned recoveryIndex)
     : m_check(check)
     , m_nodeIndex(jit->m_compileIndex)
@@ -239,7 +209,6 @@ void OSRExit::dump(FILE* out) const
     for (unsigned variable = 0; variable < m_variables.size(); ++variable)
         m_variables[variable].dump(out);
 }
-#endif
 #endif
 
 GPRReg SpeculativeJIT::fillSpeculateInt(NodeIndex nodeIndex, DataFormat& returnFormat)
@@ -1636,11 +1605,9 @@ void SpeculativeJIT::compile(BasicBlock& block)
             checkConsistency();
             compile(node);
             if (!m_compileOkay) {
-#if ENABLE(DYNAMIC_TERMINATE_SPECULATION)
                 m_compileOkay = true;
                 m_compileIndex = block.end;
                 clearGenerationInfo();
-#endif
                 return;
             }
             
@@ -1718,13 +1685,8 @@ bool SpeculativeJIT::compile()
     initializeVariableTypes();
 
     ASSERT(!m_compileIndex);
-    for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block) {
+    for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block)
         compile(*m_jit.graph().m_blocks[m_block]);
-#if !ENABLE(DYNAMIC_TERMINATE_SPECULATION)
-        if (!m_compileOkay)
-            return false;
-#endif
-    }
     linkBranches();
     return true;
 }

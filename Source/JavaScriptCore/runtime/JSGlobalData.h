@@ -234,7 +234,7 @@ namespace JSC {
 #ifndef NDEBUG
         int64_t debugDataBuffer[64];
 #endif
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         Vector<void*> osrScratchBuffers;
         size_t sizeOfLastOSRScratchBuffer;
         

@@ -47,12 +47,10 @@ namespace DFG {
 
 class JITCodeGenerator;
 class NodeToRegisterMap;
-class NonSpeculativeJIT;
 class SpeculativeJIT;
 class SpeculationRecovery;
 
 struct EntryLocation;
-struct SpeculationCheck;
 struct OSRExit;
 
 #ifndef NDEBUG
@@ -334,13 +332,8 @@ private:
     void fillInt32ToInteger(NodeIndex, GPRReg);
     void fillToJS(NodeIndex, GPRReg);
     
-#if ENABLE(DFG_OSR_EXIT)
     void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*, Vector<BytecodeAndMachineOffset>& decodedCodeMap);
     void linkOSRExits(SpeculativeJIT&);
-#else
-    void jumpFromSpeculativeToNonSpeculative(const SpeculationCheck&, const EntryLocation&, SpeculationRecovery*, NodeToRegisterMap& checkNodeToRegisterMap, NodeToRegisterMap& entryNodeToRegisterMap);
-    void linkSpeculationChecks(SpeculativeJIT&, NonSpeculativeJIT&);
-#endif
 
     // The globalData, used to access constants such as the vPtrs.
     JSGlobalData* m_globalData;

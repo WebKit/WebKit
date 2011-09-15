@@ -66,34 +66,6 @@ private:
     GPRReg m_src;
 };
 
-#if !ENABLE(DFG_OSR_EXIT)
-// === SpeculationCheck ===
-//
-// This structure records a bail-out from the speculative path,
-// which will need to be linked in to the non-speculative one.
-struct SpeculationCheck {
-    SpeculationCheck(MacroAssembler::Jump, SpeculativeJIT*, unsigned recoveryIndex = 0);
-
-    // The location of the jump out from the speculative path, 
-    // and the node we were generating code for.
-    MacroAssembler::Jump m_check;
-    NodeIndex m_nodeIndex;
-    // Used to record any additional recovery to be performed; this
-    // value is an index into the SpeculativeJIT's m_speculationRecoveryList
-    // array, offset by 1. (m_recoveryIndex == 0) means no recovery.
-    unsigned m_recoveryIndex;
-
-    struct RegisterInfo {
-        NodeIndex nodeIndex;
-        DataFormat format;
-        bool isSpilled;
-    };
-    RegisterInfo m_gprInfo[GPRInfo::numberOfRegisters];
-    RegisterInfo m_fprInfo[FPRInfo::numberOfRegisters];
-};
-typedef SegmentedVector<SpeculationCheck, 16> SpeculationCheckVector;
-#endif // !ENABLE(DFG_OSR_EXIT)
-
 class ValueSource {
 public:
     ValueSource()
@@ -232,7 +204,6 @@ private:
     } m_source;
 };
 
-#if ENABLE(DFG_OSR_EXIT)
 // === OSRExit ===
 //
 // This structure describes how to exit the speculative path by
@@ -281,7 +252,6 @@ struct OSRExit {
     int m_lastSetOperand;
 };
 typedef SegmentedVector<OSRExit, 16> OSRExitVector;
-#endif // ENABLE(DFG_OSR_EXIT)
 
 // === SpeculativeJIT ===
 //
@@ -294,7 +264,6 @@ typedef SegmentedVector<OSRExit, 16> OSRExitVector;
 // to propagate type information (including information that has
 // only speculatively been asserted) through the dataflow.
 class SpeculativeJIT : public JITCodeGenerator {
-    friend struct SpeculationCheck;
     friend struct OSRExit;
 public:
     SpeculativeJIT(JITCompiler&);
@@ -303,20 +272,13 @@ public:
 
     // Retrieve the list of bail-outs from the speculative path,
     // and additional recovery information.
-#if !ENABLE(DFG_OSR_EXIT)
-    SpeculationCheckVector& speculationChecks()
-    {
-        return m_speculationChecks;
-    }
-#else
     OSRExitVector& osrExits()
     {
         return m_osrExits;
     }
-#endif
     SpeculationRecovery* speculationRecovery(size_t index)
     {
-        // SpeculationCheck::m_recoveryIndex is offset by 1,
+        // OSRExit::m_recoveryIndex is offset by 1,
         // 0 means no recovery.
         return index ? &m_speculationRecoveryList[index - 1] : 0;
     }
@@ -514,11 +476,7 @@ private:
     {
         if (!m_compileOkay)
             return;
-#if !ENABLE(DFG_OSR_EXIT)
-        m_speculationChecks.append(SpeculationCheck(jumpToFail, this));
-#else
         m_osrExits.append(OSRExit(jumpToFail, this));
-#endif
     }
     // Add a speculation check with additional recovery.
     void speculationCheck(MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
@@ -526,11 +484,7 @@ private:
         if (!m_compileOkay)
             return;
         m_speculationRecoveryList.append(recovery);
-#if !ENABLE(DFG_OSR_EXIT)
-        m_speculationChecks.append(SpeculationCheck(jumpToFail, this, m_speculationRecoveryList.size()));
-#else
         m_osrExits.append(OSRExit(jumpToFail, this, m_speculationRecoveryList.size()));
-#endif
     }
 
     // Called when we statically determine that a speculation will fail.
@@ -539,16 +493,10 @@ private:
 #if ENABLE(DFG_DEBUG_VERBOSE)
         fprintf(stderr, "SpeculativeJIT was terminated.\n");
 #endif
-#if ENABLE(DYNAMIC_TERMINATE_SPECULATION)
         if (!m_compileOkay)
             return;
         speculationCheck(m_jit.jump());
         m_compileOkay = false;
-#else
-        // Under static speculation, it's more profitable to give up entirely at this
-        // point.
-        m_compileOkay = false;
-#endif
     }
 
     template<bool strict>
@@ -559,13 +507,8 @@ private:
     // will make conflicting speculations about the same operand). In such cases this
     // flag is cleared, indicating no further code generation should take place.
     bool m_compileOkay;
-#if !ENABLE(DFG_OSR_EXIT)
-    // This vector tracks bail-outs from the speculative path to the non-speculative one.
-    SpeculationCheckVector m_speculationChecks;
-#else
     // This vector tracks bail-outs from the speculative path to the old JIT.
     OSRExitVector m_osrExits;
-#endif
     // Some bail-outs need to record additional information recording specific recovery
     // to be performed (for example, on detected overflow from an add, we may need to
     // reverse the addition if an operand is being overwritten).
@@ -830,44 +773,6 @@ private:
     NodeIndex m_index;
     GPRReg m_gprOrInvalid;
 };
-
-// === SpeculationCheckIndexIterator ===
-//
-// This class is used by the non-speculative JIT to check which
-// nodes require entry points from the speculative path.
-#if ENABLE(DFG_OSR_EXIT)
-// This becomes a stub if OSR is enabled.
-class SpeculationCheckIndexIterator {
-public:
-    SpeculationCheckIndexIterator() { }
-};
-#else
-class SpeculationCheckIndexIterator {
-public:
-    SpeculationCheckIndexIterator(SpeculationCheckVector& speculationChecks)
-        : m_speculationChecks(speculationChecks)
-        , m_iter(m_speculationChecks.begin())
-        , m_end(m_speculationChecks.end())
-    {
-    }
-
-    bool hasCheckAtIndex(NodeIndex nodeIndex)
-    {
-        while (m_iter != m_end) {
-            NodeIndex current = m_iter->m_nodeIndex;
-            if (current >= nodeIndex)
-                return current == nodeIndex;
-            ++m_iter;
-        }
-        return false;
-    }
-
-private:
-    SpeculationCheckVector& m_speculationChecks;
-    SpeculationCheckVector::Iterator m_iter;
-    SpeculationCheckVector::Iterator m_end;
-};
-#endif
 
 inline SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     : JITCodeGenerator(jit, true)
