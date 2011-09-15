@@ -562,6 +562,43 @@ protected:
         Node& lastNode = m_jit.graph()[lastNodeIndex];
         return lastNode.op == Branch && lastNode.child1() == m_compileIndex ? lastNodeIndex : NoNode;
     }
+    
+    void nonSpeculativeValueToNumber(Node&);
+    void nonSpeculativeValueToInt32(Node&);
+    void nonSpeculativeUInt32ToNumber(Node&);
+
+    void nonSpeculativeKnownConstantArithOp(NodeType op, NodeIndex regChild, NodeIndex immChild, bool commute);
+    void nonSpeculativeBasicArithOp(NodeType op, Node&);
+    
+    // Handles both ValueAdd and ArithAdd.
+    void nonSpeculativeAdd(NodeType op, Node& node)
+    {
+        if (isInt32Constant(node.child1())) {
+            nonSpeculativeKnownConstantArithOp(op, node.child2(), node.child1(), true);
+            return;
+        }
+        
+        if (isInt32Constant(node.child2())) {
+            nonSpeculativeKnownConstantArithOp(op, node.child1(), node.child2(), false);
+            return;
+        }
+        
+        nonSpeculativeBasicArithOp(op, node);
+    }
+    
+    void nonSpeculativeArithSub(Node& node)
+    {
+        if (isInt32Constant(node.child2())) {
+            nonSpeculativeKnownConstantArithOp(ArithSub, node.child1(), node.child2(), false);
+            return;
+        }
+        
+        nonSpeculativeBasicArithOp(ArithSub, node);
+    }
+    
+    void nonSpeculativeArithMod(Node&);
+    void nonSpeculativeCheckHasInstance(Node&);
+    void nonSpeculativeInstanceOf(Node&);
 
     JITCompiler::Call cachedGetById(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), NodeType = GetById);
     void cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
