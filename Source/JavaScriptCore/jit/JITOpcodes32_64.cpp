@@ -750,10 +750,8 @@ void JIT::emit_op_jfalse(Instruction* currentInstruction)
 
     emitLoad(cond, regT1, regT0);
 
-    Jump isBoolean = branch32(Equal, regT1, TrustedImm32(JSValue::BooleanTag));
-    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-    isBoolean.link(this);
-
+    ASSERT((JSValue::BooleanTag + 1 == JSValue::Int32Tag) && !(JSValue::Int32Tag + 1));
+    addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::BooleanTag)));
     addJump(branchTest32(Zero, regT0), target);
 }
 
@@ -788,10 +786,8 @@ void JIT::emit_op_jtrue(Instruction* currentInstruction)
 
     emitLoad(cond, regT1, regT0);
 
-    Jump isBoolean = branch32(Equal, regT1, TrustedImm32(JSValue::BooleanTag));
-    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-    isBoolean.link(this);
-
+    ASSERT((JSValue::BooleanTag + 1 == JSValue::Int32Tag) && !(JSValue::Int32Tag + 1));
+    addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::BooleanTag)));
     addJump(branchTest32(NonZero, regT0), target);
 }
 

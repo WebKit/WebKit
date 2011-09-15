@@ -258,16 +258,15 @@ namespace JSC {
          * cell, integer and bool values the lower 32 bits (the 'payload') contain the pointer
          * integer or boolean value; in the case of all other tags the payload is 0.
          */
-        enum { CellTag =         0xffffffff };
-        enum { Int32Tag =        0xfffffffe };
-        enum { BooleanTag =      0xfffffff4 };
-        enum { NullTag =         0xfffffff3 };
-        enum { UndefinedTag =    0xfffffff2 };
-        enum { EmptyValueTag =   0xfffffff1 };
-        enum { DeletedValueTag = 0xfffffff0 };
+        enum { Int32Tag =        0xffffffff };
+        enum { BooleanTag =      0xfffffffe };
+        enum { NullTag =         0xfffffffd };
+        enum { UndefinedTag =    0xfffffffc };
+        enum { CellTag =         0xfffffffb };
+        enum { EmptyValueTag =   0xfffffffa };
+        enum { DeletedValueTag = 0xfffffff9 };
 
-        enum { LowestTag =            DeletedValueTag };
-        enum { LowestInt32OrCellTag = Int32Tag };
+        enum { LowestTag =  DeletedValueTag };
 
         uint32_t tag() const;
         int32_t payload() const;

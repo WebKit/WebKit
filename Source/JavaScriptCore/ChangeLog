@@ -1,3 +1,13 @@
+2011-09-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Ooops, revert accidentally commited unreviewed changes.
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+        * jit/JSInterfaceJIT.h:
+        * runtime/JSValue.h:
+
 2011-09-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95163.
