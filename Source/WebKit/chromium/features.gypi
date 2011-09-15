@@ -85,7 +85,6 @@
       'ENABLE_TOUCH_ICON_LOADING=<(enable_touch_icon_loading)',
       'ENABLE_V8_SCRIPT_DEBUG_SERVER=1',
       'ENABLE_VIDEO=1',
-      'ENABLE_WEB_AUDIO=1',
       'ENABLE_WEB_SOCKETS=1',
       'ENABLE_WEB_TIMING=1',
       'ENABLE_WEBGL=1',
@@ -118,6 +117,15 @@
     'enable_touch_events%': '<(enable_touch_events)',
     'use_skia%': '<(use_skia)',
     'conditions': [
+      ['OS=="android"', {
+        'feature_defines': [
+          'ENABLE_WEB_AUDIO=0',
+        ],
+      }, {
+        'feature_defines': [
+          'ENABLE_WEB_AUDIO=1',
+        ],
+      }],
       ['use_accelerated_compositing==1', {
         'feature_defines': [
           'WTF_USE_ACCELERATED_COMPOSITING=1',

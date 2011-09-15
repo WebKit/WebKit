@@ -556,11 +556,13 @@ unsigned WebMediaPlayerClientImpl::videoDecodedByteCount() const
 
 WebCore::AudioSourceProvider* WebMediaPlayerClientImpl::audioSourceProvider()
 {
+#if ENABLE(WEB_AUDIO)
     if (m_webMediaPlayer.get()) {
         // Wrap the WebAudioSourceProvider in the form of WebCore::AudioSourceProvider.
         m_audioSourceProvider.initialize(m_webMediaPlayer->audioSourceProvider());
         return &m_audioSourceProvider;
     }
+#endif
     return 0;
 }
 
@@ -663,6 +665,7 @@ WebMediaPlayerClientImpl::WebMediaPlayerClientImpl()
 {
 }
 
+#if ENABLE(WEB_AUDIO)
 void WebMediaPlayerClientImpl::AudioSourceProviderImpl::provideInput(WebCore::AudioBus* bus, size_t framesToProcess)
 {
     ASSERT(bus);
@@ -683,6 +686,7 @@ void WebMediaPlayerClientImpl::AudioSourceProviderImpl::provideInput(WebCore::Au
 
     m_webAudioSourceProvider->provideInput(webAudioData, framesToProcess);
 }
+#endif
 
 } // namespace WebKit
 

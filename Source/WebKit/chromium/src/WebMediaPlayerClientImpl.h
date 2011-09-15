@@ -165,6 +165,7 @@ private:
 #endif
     static bool m_isEnabled;
 
+#if ENABLE(WEB_AUDIO)
     // AudioSourceProviderImpl wraps a WebAudioSourceProvider.
 
     class AudioSourceProviderImpl : public WebCore::AudioSourceProvider {
@@ -184,6 +185,7 @@ private:
     };
 
     AudioSourceProviderImpl m_audioSourceProvider;
+#endif
 };
 
 } // namespace WebKit
