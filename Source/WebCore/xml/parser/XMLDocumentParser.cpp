@@ -75,7 +75,7 @@ void XMLDocumentParser::pushCurrentNode(ContainerNode* n)
     m_currentNodeStack.append(m_currentNode);
     m_currentNode = n;
     if (m_currentNodeStack.size() > maxDOMTreeDepth)
-        handleError(XMLErrors::fatal, "Excessive node nesting.", lineNumber(), columnNumber());
+        handleError(XMLErrors::fatal, "Excessive node nesting.", WTF::toOneBasedTextPosition(textPosition()));
 }
 
 void XMLDocumentParser::popCurrentNode()
@@ -131,11 +131,6 @@ void XMLDocumentParser::append(const SegmentedString& s)
 
     // After parsing, go ahead and dispatch image beforeload events.
     ImageLoader::dispatchPendingBeforeLoadEvents();
-}
-
-void XMLDocumentParser::handleError(XMLErrors::ErrorType type, const char* m, int lineNumber, int columnNumber)
-{
-    handleError(type, m, TextPosition1(WTF::OneBasedNumber::fromOneBasedInt(lineNumber), WTF::OneBasedNumber::fromOneBasedInt(columnNumber)));
 }
 
 void XMLDocumentParser::handleError(XMLErrors::ErrorType type, const char* m, TextPosition1 position)

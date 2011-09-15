@@ -1,3 +1,50 @@
+2011-09-15  Peter Rybin  <peter.rybin@gmail.com>
+
+        XMLDocumentParserQt.cpp incorrectly converts 0-based number into 1-based number
+        https://bugs.webkit.org/show_bug.cgi?id=63540
+
+        ZeroBasedNumber/OneBasedNumber are used in more places, inconsistency
+        in xml parser is fixed.
+
+        Reviewed by Adam Barth.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::eventHandlerLineNumber):
+        * dom/ScriptableDocumentParser.h:
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::StyleElement):
+        * dom/ViewportArguments.cpp:
+        (WebCore::parserLineNumber):
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::lineNumber):
+        * html/parser/HTMLDocumentParser.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::buildInitiatorObject):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::parserLineNumber):
+        * xml/parser/NewXMLDocumentParser.cpp:
+        (WebCore::NewXMLDocumentParser::lineNumber):
+        * xml/parser/NewXMLDocumentParser.h:
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::pushCurrentNode):
+        * xml/parser/XMLDocumentParser.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::PendingCallbacks::appendErrorCallback):
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::XMLDocumentParser::startElementNs):
+        (WebCore::XMLDocumentParser::error):
+        (WebCore::XMLDocumentParser::lineNumber):
+        (WebCore::XMLDocumentParser::columnNumber):
+        (WebCore::XMLDocumentParser::textPosition):
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::XMLDocumentParser::doEnd):
+        (WebCore::XMLDocumentParser::lineNumber):
+        (WebCore::XMLDocumentParser::columnNumber):
+        (WebCore::XMLDocumentParser::textPosition):
+        (WebCore::XMLDocumentParser::parse):
+        (WebCore::XMLDocumentParser::parseStartElement):
+
 2011-09-15  Peter Kasting  <pkasting@google.com>
 
         Fix WebCore.gypi after r95130.

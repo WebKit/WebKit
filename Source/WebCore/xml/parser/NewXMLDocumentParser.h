@@ -62,7 +62,7 @@ public:
     void processScript(ScriptElement*);
 
     virtual TextPosition0 textPosition() const;
-    virtual int lineNumber() const;
+    virtual ZeroBasedNumber lineNumber() const;
 
     // DocumentParser
     virtual bool hasInsertionPoint();

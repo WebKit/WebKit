@@ -446,16 +446,16 @@ String HTMLDocumentParser::sourceForToken(const HTMLToken& token)
     return m_sourceTracker.sourceForToken(token);
 }
 
-int HTMLDocumentParser::lineNumber() const
+ZeroBasedNumber HTMLDocumentParser::lineNumber() const
 {
-    return m_tokenizer->lineNumber();
+    return ZeroBasedNumber::fromZeroBasedInt(m_tokenizer->lineNumber());
 }
 
 TextPosition0 HTMLDocumentParser::textPosition() const
 {
     const SegmentedString& currentString = m_input.current();
-    WTF::ZeroBasedNumber line = currentString.currentLine();
-    WTF::ZeroBasedNumber column = currentString.currentColumn();
+    ZeroBasedNumber line = currentString.currentLine();
+    ZeroBasedNumber column = currentString.currentColumn();
     ASSERT(m_tokenizer->lineNumber() == line.zeroBasedInt());
 
     return TextPosition0(line, column);

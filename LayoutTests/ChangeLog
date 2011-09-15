@@ -1,3 +1,27 @@
+2011-09-15  Peter Rybin  <peter.rybin@gmail.com>
+
+        XMLDocumentParserQt.cpp incorrectly converts 0-based number into 1-based number
+        https://bugs.webkit.org/show_bug.cgi?id=63540
+
+        Bug is fixed, incorrect test expectations are properly fixed (line
+        number '0' is reported no more).
+
+        Reviewed by Adam Barth.
+
+        * fast/parser/changing-attrbutes-crash-expected.txt:
+        * html5lib/runner-expected.txt:
+        * platform/chromium/html5lib/runner-expected.txt:
+        * svg/custom/invalid-length-units-expected.txt:
+        * svg/custom/poly-parsing-error-expected.txt:
+        * svg/custom/svg-parse-overflow-1-expected.txt:
+        * svg/custom/svg-parse-overflow-2-expected.txt:
+        * svg/custom/svg-parse-overflow-3-expected.txt:
+        * svg/custom/svg-parse-overflow-4-expected.txt:
+        * svg/custom/svg-parse-overflow-5-expected.txt:
+        * svg/dom/fuzz-path-parser-expected.txt:
+        * svg/dom/path-parser-expected.txt:
+        * svg/dom/points-parser-expected.txt:
+
 2011-09-15  Matthew Delaney  <mdelaney@apple.com>
 
         REGRESSION (Safari 5.1-r95043): Incorrect box-shadow offset

@@ -44,7 +44,7 @@ public:
     virtual bool isWaitingForScripts() const = 0;
 
     // These are used to expose the current line/column to the scripting system.
-    virtual int lineNumber() const = 0;
+    virtual ZeroBasedNumber lineNumber() const = 0;
     virtual TextPosition0 textPosition() const = 0;
 
     void setWasCreatedByScript(bool wasCreatedByScript) { m_wasCreatedByScript = wasCreatedByScript; }

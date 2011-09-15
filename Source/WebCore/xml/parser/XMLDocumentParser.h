@@ -87,7 +87,6 @@ class Text;
         ~XMLDocumentParser();
 
         // Exposed for callbacks:
-        void handleError(XMLErrors::ErrorType, const char* message, int lineNumber, int columnNumber);
         void handleError(XMLErrors::ErrorType, const char* message, TextPosition1);
 
         void setIsXHTMLDocument(bool isXHTML) { m_isXHTMLDocument = isXHTML; }
@@ -103,7 +102,6 @@ class Text;
         virtual bool wellFormed() const { return !m_sawError; }
 
         TextPosition0 textPosition() const;
-        TextPosition1 textPositionOneBased() const;
 
         static bool supportsXMLVersion(const String&);
 
@@ -119,8 +117,8 @@ class Text;
         virtual bool isWaitingForScripts() const;
         virtual void stopParsing();
         virtual void detach();
-        virtual int lineNumber() const;
-        int columnNumber() const;
+        virtual ZeroBasedNumber lineNumber() const;
+        ZeroBasedNumber columnNumber() const;
 
         // from CachedResourceClient
         virtual void notifyFinished(CachedResource*);

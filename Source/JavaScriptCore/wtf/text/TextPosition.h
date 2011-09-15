@@ -146,4 +146,7 @@ inline OneBasedNumber ZeroBasedNumber::convertToOneBased() const
 using WTF::TextPosition0;
 using WTF::TextPosition1;
 
+using WTF::ZeroBasedNumber;
+using WTF::OneBasedNumber;
+
 #endif // TextPosition_h

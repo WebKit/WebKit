@@ -183,7 +183,7 @@ void XMLDocumentParser::doWrite(const String& parseString)
 
     if (document()->decoder() && document()->decoder()->sawError()) {
         // If the decoder saw an error, report it as fatal (stops parsing)
-        handleError(XMLErrors::fatal, "Encoding error", lineNumber(), columnNumber());
+        handleError(XMLErrors::fatal, "Encoding error", WTF::toOneBasedTextPosition(textPosition()));
         return;
     }
 
@@ -223,29 +223,22 @@ void XMLDocumentParser::doEnd()
 
     if (m_stream.error() == QXmlStreamReader::PrematureEndOfDocumentError
         || (m_wroteText && !m_sawFirstElement && !m_sawXSLTransform && !m_sawError))
-        handleError(XMLErrors::fatal, qPrintable(m_stream.errorString()), lineNumber(), columnNumber());
+        handleError(XMLErrors::fatal, qPrintable(m_stream.errorString()), WTF::toOneBasedTextPosition(textPosition()));
 }
 
-int XMLDocumentParser::lineNumber() const
+ZeroBasedNumber XMLDocumentParser::lineNumber() const
 {
-    return m_stream.lineNumber();
+    return OneBasedNumber::fromOneBasedInt(m_stream.lineNumber()).convertToZeroBased();
 }
 
-int XMLDocumentParser::columnNumber() const
+ZeroBasedNumber XMLDocumentParser::columnNumber() const
 {
-    return m_stream.columnNumber();
+    return OneBasedNumber::fromOneBasedInt(m_stream.columnNumber()).convertToZeroBased();
 }
 
 TextPosition0 XMLDocumentParser::textPosition() const
 {
-    return TextPosition0(WTF::ZeroBasedNumber::fromZeroBasedInt(lineNumber()), WTF::ZeroBasedNumber::fromZeroBasedInt(columnNumber()));
-}
-
-// This method incorrectly reinterprets zero-base lineNumber method as one-based number.
-// FIXME: This error is kept for compatibility. We should fix it eventually. 
-TextPosition1 XMLDocumentParser::textPositionOneBased() const
-{
-    return TextPosition1(WTF::OneBasedNumber::fromOneBasedInt(lineNumber()), WTF::OneBasedNumber::fromOneBasedInt(columnNumber()));
+    return TextPosition0(lineNumber(), columnNumber());
 }
 
 void XMLDocumentParser::stopParsing()
@@ -440,8 +433,7 @@ void XMLDocumentParser::parse()
             if (m_stream.error() != QXmlStreamReader::PrematureEndOfDocumentError) {
                 XMLErrors::ErrorType type = (m_stream.error() == QXmlStreamReader::NotWellFormedError) ?
                                  XMLErrors::fatal : XMLErrors::warning;
-                handleError(type, qPrintable(m_stream.errorString()), lineNumber(),
-                            columnNumber());
+                handleError(type, qPrintable(m_stream.errorString()), WTF::toOneBasedTextPosition(textPosition()));
             }
         }
             break;
@@ -529,7 +521,7 @@ void XMLDocumentParser::parseStartElement()
 
     ScriptElement* scriptElement = toScriptElement(newElement.get());
     if (scriptElement)
-        m_scriptStartPosition = textPositionOneBased();
+        m_scriptStartPosition = WTF::toOneBasedTextPosition(textPosition());
 
     m_currentNode->parserAddChild(newElement.get());
 

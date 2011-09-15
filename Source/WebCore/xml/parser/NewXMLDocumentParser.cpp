@@ -102,13 +102,13 @@ void NewXMLDocumentParser::processScript(ScriptElement* scriptElement)
 
 TextPosition0 NewXMLDocumentParser::textPosition() const
 {
-    return TextPosition0(WTF::ZeroBasedNumber::fromZeroBasedInt(0),
-                         WTF::ZeroBasedNumber::fromZeroBasedInt(0));
+    return TextPosition0(ZeroBasedNumber::fromZeroBasedInt(0),
+                         ZeroBasedNumber::fromZeroBasedInt(0));
 }
 
-int NewXMLDocumentParser::lineNumber() const
+ZeroBasedNumber NewXMLDocumentParser::lineNumber() const
 {
-    return 0;
+    return ZeroBasedNumber::belowBase();
 }
 
 void NewXMLDocumentParser::insert(const SegmentedString&)

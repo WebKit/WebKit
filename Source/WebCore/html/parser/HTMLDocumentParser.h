@@ -79,7 +79,7 @@ public:
     String sourceForToken(const HTMLToken&);
 
     virtual TextPosition0 textPosition() const;
-    virtual int lineNumber() const;
+    virtual ZeroBasedNumber lineNumber() const;
 
     virtual void suspendScheduledTasks();
     virtual void resumeScheduledTasks();

@@ -179,7 +179,7 @@ static int parserLineNumber(Document* document)
     ScriptableDocumentParser* parser = document->scriptableDocumentParser();
     if (!parser)
         return 1;
-    return parser->lineNumber();
+    return parser->lineNumber().convertAsOneBasedInt();
 }
 
 static void reportMessage(Document* document, MessageLevel level, const String& message)
