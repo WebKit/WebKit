@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,12 +32,18 @@
 #define V8ArrayBufferViewCustom_h
 
 #include "ArrayBuffer.h"
+#include "ExceptionCode.h"
 
 #include "V8ArrayBuffer.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
+
+
+// Copy the elements from the source array to the typed destination array by
+// invoking the 'set' method of the destination array in JS.
+void copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray);
 
 // Template function used by the ArrayBufferView*Constructor callbacks.
 template<class ArrayClass, class ElementType>
@@ -147,17 +153,14 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     if (!array.get())
         return throwError("ArrayBufferView size is not a small enough positive integer.", V8Proxy::RangeError);
 
-    if (!srcArray.IsEmpty()) {
-        // Need to copy the incoming array into the newly created ArrayBufferView.
-        for (unsigned i = 0; i < len; i++) {
-            v8::Local<v8::Value> val = srcArray->Get(i);
-            array->set(i, val->NumberValue());
-        }
-    }
 
     // Transform the holder into a wrapper object for the array.
     V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
     args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
+
+    if (!srcArray.IsEmpty())
+        copyElements(args.Holder(), srcArray);
+
     return toV8(array.release(), args.Holder(), MarkIndependent);
 }
 
