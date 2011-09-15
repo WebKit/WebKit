@@ -1,5 +1,35 @@
 2011-09-15  Mark Rowe  <mrowe@apple.com>
 
+        Merge r88139.
+
+    2011-06-04  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Add some asserts for array boundary checks in TextRun. Fix
+        an integer issue in linux text controller code.
+        https://bugs.webkit.org/show_bug.cgi?id=62085
+
+        Testing ComplexTextControllerLinux change requires a testcase
+        > 32 kb which is not feasible. All other changes are tested by
+        existing layouttests.
+
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::operator[]): add assert.
+        (WebCore::TextRun::data): add assert.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance): bail early and prevent access
+        to one byte across the text run boundary.
+        * platform/graphics/chromium/ComplexTextControllerLinux.cpp:
+        (WebCore::ComplexTextController::getNormalizedTextRun): wrong
+        int16 vs int comparison.
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunWalker::walk): bail early when from and to
+        is outside the text run boundary. this hit easily after adding
+        the assert when from = to = end and read in run.data(from). 
+
+2011-09-15  Mark Rowe  <mrowe@apple.com>
+
         Merge r90568.
 
     2011-07-07  Julien Chaffraix  <jchaffraix@webkit.org>

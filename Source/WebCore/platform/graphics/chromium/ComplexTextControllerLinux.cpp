@@ -367,7 +367,7 @@ const TextRun& ComplexTextController::getNormalizedTextRun(const TextRun& origin
     icu::UnicodeString normalizedString;
     UErrorCode error = U_ZERO_ERROR;
 
-    for (int16_t i = 0; i < originalRun.length(); ++i) {
+    for (int i = 0; i < originalRun.length(); ++i) {
         UChar ch = originalRun[i];
         if (::ublock_getCode(ch) == UBLOCK_COMBINING_DIACRITICAL_MARKS) {
             icu::Normalizer::normalize(icu::UnicodeString(originalRun.characters(),

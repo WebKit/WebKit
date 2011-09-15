@@ -90,7 +90,8 @@ struct SVGTextRunWalker {
 
     void walk(const TextRun& run, bool isVerticalText, const String& language, int from, int to)
     {
-        ASSERT(0 <= from && from <= to && to - from <= run.length());
+        if (from < 0 || to < 0 || from > to || from >= run.length() || to > run.length())
+            return;         
 
         const String text = Font::normalizeSpaces(run.data(from), to - from);
         Vector<SVGGlyph::ArabicForm> chars(charactersWithArabicForm(text, run.rtl()));

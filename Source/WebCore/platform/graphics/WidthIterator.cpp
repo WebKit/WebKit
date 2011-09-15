@@ -80,6 +80,9 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
         offset = m_end;
 
     int currentCharacter = m_currentCharacter;
+    if (currentCharacter >= offset)
+        return;
+
     const UChar* cp = m_run.data(currentCharacter);
 
     bool rtl = m_run.rtl();

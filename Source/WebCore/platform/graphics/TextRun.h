@@ -83,8 +83,8 @@ public:
     {
     }
 
-    UChar operator[](int i) const { return m_characters[i]; }
-    const UChar* data(int i) const { return &m_characters[i]; }
+    UChar operator[](int i) const { ASSERT(i >= 0 && i < m_len); return m_characters[i]; }
+    const UChar* data(int i) const { ASSERT(i >= 0 && i < m_len); return &m_characters[i]; }
 
     const UChar* characters() const { return m_characters; }
     int length() const { return m_len; }
