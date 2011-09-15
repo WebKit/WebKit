@@ -1254,6 +1254,7 @@
             'type': 'executable',
             'dependencies': [
                 'webkit',
+                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
                 '<(chromium_src_dir)/base/base.gyp:test_support_base',
                 '<(chromium_src_dir)/testing/gtest.gyp:gtest',
