@@ -1,5 +1,29 @@
 2011-09-15  Mark Rowe  <mrowe@apple.com>
 
+        Merge r90568.
+
+    2011-07-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Partial layout when a flex-box has visibility: collapse
+        https://bugs.webkit.org/show_bug.cgi?id=63776
+
+        Tests: fast/flexbox/crash-button-input-autofocus.html
+               fast/flexbox/crash-button-keygen.html
+               fast/flexbox/crash-button-relayout.html
+
+        The issue is that FlexBoxIterator would skip any child if it has visibility: collapsed.
+        However if one of the child is anonymous, it may wrap some other child that would be skipped.
+        Now FlexBoxIterator is called during the layout phase and thus some nodes would not relayouted
+        as expected.
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::FlexBoxIterator::next): When iterating, don't skip anonymous content as there may
+        be real content hiding below.
+
+2011-09-15  Mark Rowe  <mrowe@apple.com>
+
         Merge r95057.
 
     2011-09-13  Jeff Miller  <jeffm@apple.com>

@@ -90,8 +90,8 @@ public:
                 m_currentChild = m_forward ? m_currentChild->nextSiblingBox() : m_currentChild->previousSiblingBox();
             if (m_currentChild && m_currentChild->style()->boxOrdinalGroup() > m_lastOrdinal)
                 m_lastOrdinal = m_currentChild->style()->boxOrdinalGroup();
-        } while (!m_currentChild || m_currentChild->style()->boxOrdinalGroup() != m_currentOrdinal
-                 || m_currentChild->style()->visibility() == COLLAPSE);
+        } while (!m_currentChild || (!m_currentChild->isAnonymous()
+                 && (m_currentChild->style()->boxOrdinalGroup() != m_currentOrdinal || m_currentChild->style()->visibility() == COLLAPSE)));
         return m_currentChild;
     }
 

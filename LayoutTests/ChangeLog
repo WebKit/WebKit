@@ -1,5 +1,25 @@
 2011-09-15  Mark Rowe  <mrowe@apple.com>
 
+        Merge r90568.
+
+    2011-07-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Partial layout when a flex-box has visibility: collapse
+        https://bugs.webkit.org/show_bug.cgi?id=63776
+
+        Those tests checks some variation of the same underlying issue.
+
+        * fast/flexbox/crash-button-input-autofocus-expected.txt: Added.
+        * fast/flexbox/crash-button-input-autofocus.html: Added.
+        * fast/flexbox/crash-button-keygen-expected.txt: Added.
+        * fast/flexbox/crash-button-keygen.html: Added.
+        * fast/flexbox/crash-button-relayout-expected.txt: Added.
+        * fast/flexbox/crash-button-relayout.html: Added.
+
+2011-09-15  Mark Rowe  <mrowe@apple.com>
+
         Merge r95056.
 
     2011-09-12  Jon Honeycutt  <jhoneycutt@apple.com>
