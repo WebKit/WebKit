@@ -3735,3 +3735,9 @@ BUGWK67999 MAC CPU-CG RELEASE : fast/borders/border-image-omit-right-slice.html 
 BUG_LEVIN SNOWLEOPARD : http/tests/loading/307-after-303-after-post.html = PASS TEXT
 BUG_LEVIN SNOWLEOPARD : http/tests/security/mixedContent/insecure-image-in-main-frame.html = PASS TEXT
 BUG_LEVIN SNOWLEOPARD : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
+
+// Behavior difference due to r95203. Just needs a rebaseline once everything has run it.
+BUG_LEVIN: fast/dom/NodeList/nodelist-item-call-as-function.html = TEXT
+
+// Just need a rebaseline for new test added in r95207.
+BUG_LEVIN : fast/box-shadow/no-blur-multiple-offsets.html = IMAGE IMAGE+TEXT TEXT
