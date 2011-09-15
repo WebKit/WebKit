@@ -956,6 +956,11 @@ void RenderLayerCompositor::frameViewDidChangeSize()
         LayoutPoint scrollPosition = frameView->scrollPosition();
         m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
         updateOverflowControlsLayers();
+
+#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+        if (m_layerForOverhangAreas)
+            m_layerForOverhangAreas->setSize(frameView->frameRect().size());
+#endif
     }
 }
 
@@ -1544,6 +1549,11 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
         transformedClip.moveBy(scrollCorner.location());
         m_renderView->frameView()->paintScrollCorner(&context, transformedClip);
         context.restore();
+#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+    } else if (graphicsLayer == layerForOverhangAreas()) {
+        ScrollView* view = m_renderView->frameView();
+        view->calculateAndPaintOverhangAreas(&context, clip);
+#endif
     }
 }
 
@@ -1609,9 +1619,36 @@ bool RenderLayerCompositor::requiresScrollCornerLayer() const
     return shouldCompositeOverflowControls(view) && view->isScrollCornerVisible();
 }
 
+#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+bool RenderLayerCompositor::requiresOverhangAreasLayer() const
+{
+    // Only if this is a top level frame (not iframe).
+    return !m_renderView->document()->ownerElement();
+}
+#endif
+
 void RenderLayerCompositor::updateOverflowControlsLayers()
 {
     bool layersChanged = false;
+  
+#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+    if (requiresOverhangAreasLayer()) {
+        if (!m_layerForOverhangAreas) {
+            m_layerForOverhangAreas = GraphicsLayer::create(this);
+#ifndef NDEBUG
+            m_layerForOverhangAreas->setName("overhang areas");
+#endif
+            m_layerForOverhangAreas->setDrawsContent(false);
+            m_layerForOverhangAreas->setSize(m_renderView->frameView()->frameRect().size());
+            m_overflowControlsHostLayer->addChild(m_layerForOverhangAreas.get());
+            layersChanged = true;
+        }
+    } else if (m_layerForOverhangAreas) {
+        m_layerForOverhangAreas->removeFromParent();
+        m_layerForOverhangAreas = nullptr;
+        layersChanged = true;
+    }
+#endif
 
     if (requiresHorizontalScrollbarLayer()) {
         m_layerForHorizontalScrollbar = GraphicsLayer::create(this);
@@ -1726,6 +1763,13 @@ void RenderLayerCompositor::destroyRootLayer()
         return;
 
     detachRootLayer();
+
+#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+    if (m_layerForOverhangAreas) {
+        m_layerForOverhangAreas->removeFromParent();
+        m_layerForOverhangAreas = nullptr;
+    }
+#endif
 
     if (m_layerForHorizontalScrollbar) {
         m_layerForHorizontalScrollbar->removeFromParent();

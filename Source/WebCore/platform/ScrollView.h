@@ -286,6 +286,8 @@ public:
     bool containsScrollableAreaWithOverlayScrollbars() const { return m_containsScrollableAreaWithOverlayScrollbars; }
     void setContainsScrollableAreaWithOverlayScrollbars(bool contains) { m_containsScrollableAreaWithOverlayScrollbars = contains; }
 
+    void calculateAndPaintOverhangAreas(GraphicsContext*, const IntRect& dirtyRect);
+
 protected:
     ScrollView();
 

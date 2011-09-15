@@ -184,6 +184,9 @@ protected:
     virtual GraphicsLayer* layerForHorizontalScrollbar() const { return 0; }
     virtual GraphicsLayer* layerForVerticalScrollbar() const { return 0; }
     virtual GraphicsLayer* layerForScrollCorner() const { return 0; }
+#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+    virtual GraphicsLayer* layerForOverhangAreas() const { return 0; }
+#endif
 #endif
     bool hasLayerForHorizontalScrollbar() const;
     bool hasLayerForVerticalScrollbar() const;

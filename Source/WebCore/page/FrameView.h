@@ -349,6 +349,9 @@ private:
     virtual GraphicsLayer* layerForHorizontalScrollbar() const;
     virtual GraphicsLayer* layerForVerticalScrollbar() const;
     virtual GraphicsLayer* layerForScrollCorner() const;
+#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+    virtual GraphicsLayer* layerForOverhangAreas() const;
+#endif
 #endif
 
     virtual void notifyPageThatContentAreaWillPaint() const;

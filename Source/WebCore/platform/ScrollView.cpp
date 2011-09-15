@@ -644,6 +644,12 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
     IntRect horizontalOverhangRect;
     IntRect verticalOverhangRect;
     calculateOverhangAreasForPainting(horizontalOverhangRect, verticalOverhangRect);
+#if USE(ACCELERATED_COMPOSITING) && PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+    if (GraphicsLayer* overhangLayer = layerForOverhangAreas()) {
+        bool hasOverhangArea = !horizontalOverhangRect.isEmpty() || !verticalOverhangRect.isEmpty();
+        overhangLayer->setDrawsContent(hasOverhangArea);
+    }
+#endif
     if (!horizontalOverhangRect.isEmpty())
         hostWindow()->invalidateContentsAndWindow(horizontalOverhangRect, false /*immediate*/);
     if (!verticalOverhangRect.isEmpty())
@@ -1025,12 +1031,12 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
         paintContents(context, documentDirtyRect);
     }
 
-    IntRect horizontalOverhangRect;
-    IntRect verticalOverhangRect;
-    calculateOverhangAreasForPainting(horizontalOverhangRect, verticalOverhangRect);
-
-    if (rect.intersects(horizontalOverhangRect) || rect.intersects(verticalOverhangRect))
-        paintOverhangAreas(context, horizontalOverhangRect, verticalOverhangRect, rect);
+#if USE(ACCELERATED_COMPOSITING) && PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+    if (!layerForOverhangAreas())
+        calculateAndPaintOverhangAreas(context, rect);
+#else
+    calculateAndPaintOverhangAreas(context, rect);
+#endif
 
     // Now paint the scrollbars.
     if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
@@ -1090,6 +1096,16 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
 void ScrollView::paintOverhangAreas(GraphicsContext* context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect& dirtyRect)
 {
     ScrollbarTheme::nativeTheme()->paintOverhangAreas(this, context, horizontalOverhangRect, verticalOverhangRect, dirtyRect);
+}
+
+void ScrollView::calculateAndPaintOverhangAreas(GraphicsContext* context, const IntRect& dirtyRect)
+{
+    IntRect horizontalOverhangRect;
+    IntRect verticalOverhangRect;
+    calculateOverhangAreasForPainting(horizontalOverhangRect, verticalOverhangRect);
+
+    if (dirtyRect.intersects(horizontalOverhangRect) || dirtyRect.intersects(verticalOverhangRect))
+        paintOverhangAreas(context, horizontalOverhangRect, verticalOverhangRect, dirtyRect);
 }
 
 bool ScrollView::isPointInScrollbarCorner(const IntPoint& windowPoint)

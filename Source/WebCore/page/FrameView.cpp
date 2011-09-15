@@ -685,6 +685,16 @@ GraphicsLayer* FrameView::layerForScrollCorner() const
     return view->compositor()->layerForScrollCorner();
 }
 
+#if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
+GraphicsLayer* FrameView::layerForOverhangAreas() const
+{
+    RenderView* view = m_frame->contentRenderer();
+    if (!view)
+        return 0;
+    return view->compositor()->layerForOverhangAreas();
+}
+#endif
+
 bool FrameView::syncCompositingStateForThisFrame(Frame* rootFrameForSync)
 {
     ASSERT(m_frame->view() == this);
