@@ -1,3 +1,61 @@
+2011-09-15  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=50072
+        
+        Make overflow clipping to border-radius work across layers. This patch makes painting
+        work but does not attempt to fix hit testing. It also doesn't work when a composited
+        layer is clipped by a non-composited ancestor.
+
+        Add a new ClipRect class (used by ClipRects and RenderLayer) that is basically just tracking
+        a rect and a border radius taint. At the time we set a clip, if the rectangle is listed
+        as also being clipped by a radius, then we walk up the layer tree and push those inner border
+        rounded rect clips for any overflow areas in the containing block chain.
+
+        Reviewed by Beth Dakin.
+
+        Added new tests in fast/clip.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pushContentsClip):
+        * rendering/RenderLayer.cpp:
+        (WebCore::inContainingBlockChain):
+        (WebCore::RenderLayer::clipToRect):
+        (WebCore::RenderLayer::restoreClip):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::backgroundClipRect):
+        (WebCore::RenderLayer::calculateRects):
+        (WebCore::RenderLayer::childrenClipRect):
+        (WebCore::RenderLayer::selfClipRect):
+        * rendering/RenderLayer.h:
+        (WebCore::ClipRect::ClipRect):
+        (WebCore::ClipRect::rect):
+        (WebCore::ClipRect::setRect):
+        (WebCore::ClipRect::hasRadius):
+        (WebCore::ClipRect::setHasRadius):
+        (WebCore::ClipRect::operator==):
+        (WebCore::ClipRect::intersect):
+        (WebCore::ClipRect::move):
+        (WebCore::ClipRect::isEmpty):
+        (WebCore::ClipRect::intersects):
+        (WebCore::intersection):
+        (WebCore::ClipRects::overflowClipRect):
+        (WebCore::ClipRects::setOverflowClipRect):
+        (WebCore::ClipRects::fixedClipRect):
+        (WebCore::ClipRects::setFixedClipRect):
+        (WebCore::ClipRects::posClipRect):
+        (WebCore::ClipRects::setPosClipRect):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+        (WebCore::RenderLayerCompositor::clippedByAncestor):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+
 2011-09-15  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in RenderBox::paintMaskImages due to a mask without an associated image
