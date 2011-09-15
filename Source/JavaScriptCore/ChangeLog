@@ -1,5 +1,14 @@
 2011-09-15  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed build fix for platforms that expect a linkable symbol
+        for primitive static const's.
+
+        * bytecode/CodeBlock.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::emitOptimizationCheck):
+
+2011-09-15  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed build fix for assertion on existence of alternative
         CodeBlock.
 

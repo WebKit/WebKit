@@ -690,8 +690,8 @@ namespace JSC {
         }
         
         // The amount by which the JIT will increment m_executeCounter.
-        static const unsigned executeCounterIncrementForLoop = 1;
-        static const unsigned executeCounterIncrementForReturn = 15;
+        static unsigned executeCounterIncrementForLoop() { return 1; }
+        static unsigned executeCounterIncrementForReturn() { return 15; }
         
 #if ENABLE(VALUE_PROFILER)
         bool shouldOptimizeNow();
