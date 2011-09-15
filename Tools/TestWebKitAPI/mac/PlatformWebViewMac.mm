@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "PlatformWebView.h"
+#import "config.h"
+#import "PlatformWebView.h"
 
 #import <Carbon/Carbon.h>
 

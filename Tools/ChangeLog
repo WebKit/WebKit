@@ -1,3 +1,24 @@
+2011-09-15  Anders Carlsson  <andersca@apple.com>
+
+        Fix Mac build by including config.h where needed.
+
+        * TestWebKitAPI/Tests/TestWebKitAPI/mac/InstanceMethodSwizzler.mm:
+        * TestWebKitAPI/Tests/WTF/MetaAllocator.cpp:
+        * TestWebKitAPI/Tests/WTF/RedBlackTree.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WebArchive.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WebArchive_Bundle.cpp:
+        * TestWebKitAPI/Tests/mac/DOMRangeOfString.mm:
+        * TestWebKitAPI/Tests/mac/DeviceScaleFactorOnBack.mm:
+        * TestWebKitAPI/Tests/mac/DynamicDeviceScaleFactor.mm:
+        * TestWebKitAPI/Tests/mac/StringByEvaluatingJavaScriptFromString.mm:
+        * TestWebKitAPI/mac/InstanceMethodSwizzler.mm:
+        * TestWebKitAPI/mac/JavaScriptTestMac.mm:
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        * TestWebKitAPI/mac/SyntheticBackingScaleFactorWindow.m:
+        * TestWebKitAPI/mac/WebKitAgnosticTest.mm:
+        * TestWebKitAPI/mac/main.mm:
+
 2011-09-15  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Let TestWebKitAPI work for chromium

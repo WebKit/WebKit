@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "InstanceMethodSwizzler.h"
 
 #import <wtf/RetainPtr.h>

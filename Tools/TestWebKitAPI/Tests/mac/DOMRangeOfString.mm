@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "PlatformUtilities.h"
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/DOM.h>

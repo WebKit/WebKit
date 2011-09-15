@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "WebKitAgnosticTest.h"
 
 #include <WebKit2/WKURLCF.h>
