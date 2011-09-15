@@ -240,7 +240,7 @@ def common_configure(conf):
 
     feature_defines = ['ENABLE_DATABASE', 'ENABLE_XSLT', 'ENABLE_JAVASCRIPT_DEBUGGER',
                     'ENABLE_SVG', 'ENABLE_FILTERS', 'ENABLE_SVG_FONTS',
-                    'ENABLE_SVG_ANIMATION', 'ENABLE_SVG_AS_IMAGE',
+                    'ENABLE_SVG_AS_IMAGE',
                     'ENABLE_DOM_STORAGE', 'BUILDING_%s' % build_port.upper()]
 
     conf.env["FEATURE_DEFINES"] = ' '.join(feature_defines)

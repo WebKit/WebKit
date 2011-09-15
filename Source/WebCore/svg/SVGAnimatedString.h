@@ -36,7 +36,6 @@ DECLARE_ANIMATED_PROPERTY(SVGAnimatedString, String, UpperProperty, LowerPropert
 #define DEFINE_ANIMATED_STRING(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(AnimatedString, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
 
-#if ENABLE(SVG_ANIMATION)
 class SVGAnimationElement;
 
 class SVGAnimatedStringAnimator : public SVGAnimatedTypeAnimator {
@@ -53,7 +52,6 @@ public:
                                         OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue);
     virtual float calculateDistance(const String& fromString, const String& toString);
 };
-#endif // ENABLE(SVG_ANIMATION)
 
 } // namespace WebCore
 

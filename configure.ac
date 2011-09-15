@@ -701,18 +701,9 @@ AC_MSG_RESULT([$enable_quota])
 
 # turn off svg features if --disable-svg is requested
 if test "$enable_svg" = "no"; then
-   enable_svg_animation=no
    enable_svg_fonts=no
    enable_svg_as_image=no
 fi
-
-# check whether to enable support for SVG animation
-AC_MSG_CHECKING([whether to enable support for SVG animation])
-AC_ARG_ENABLE(svg_animation,
-              AC_HELP_STRING([--enable-svg-animation],
-                             [enable support for SVG animation (experimental) [default=yes]]),
-              [],[enable_svg_animation="yes"])
-AC_MSG_RESULT([$enable_svg_animation])
 
 # check whether to enable support for filters
 AC_MSG_CHECKING([whether to enable support for filters])
@@ -739,8 +730,7 @@ AC_ARG_ENABLE(svg_as_image,
 AC_MSG_RESULT([$enable_svg_as_image])
 
 # check for SVG features, enabling SVG if necessary
-if test "$enable_svg_animation" = "yes" || \
-   test "$enable_svg_fonts" = "yes" || \
+if test "$enable_svg_fonts" = "yes" || \
    test "$enable_svg_as_image" = "yes"; then
    svg_flags=yes
    if test "$enable_svg" = "no"; then
@@ -1181,7 +1171,6 @@ AM_CONDITIONAL([ENABLE_MEDIA_STREAM],[test "$enable_media_stream" = "yes"])
 AM_CONDITIONAL([ENABLE_NOTIFICATIONS],[test "$enable_notifications" = "yes"])
 AM_CONDITIONAL([ENABLE_ORIENTATION_EVENTS],[test "$enable_orientation_events" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
-AM_CONDITIONAL([ENABLE_SVG_ANIMATION],[test "$enable_svg_animation" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_AS_IMAGE],[test "$enable_svg_as_image" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
@@ -1280,7 +1269,6 @@ Features:
  Color input support                                      : $enable_input_color
  Speech input support                                     : $enable_input_speech
  SVG support                                              : $enable_svg
- SVG animation support                                    : $enable_svg_animation
  SVG fonts support                                        : $enable_svg_fonts
  SVG as image support                                     : $enable_svg_as_image
  WCSS support                                             : $enable_wcss

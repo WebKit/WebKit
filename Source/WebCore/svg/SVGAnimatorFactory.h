@@ -20,7 +20,7 @@
 #ifndef SVGAnimatorFactory_h
 #define SVGAnimatorFactory_h
 
-#if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 #include "SVGAnimatedAngle.h"
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedColor.h"
@@ -93,5 +93,5 @@ private:
     
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+#endif // ENABLE(SVG)
 #endif // SVGAnimatorFactory_h

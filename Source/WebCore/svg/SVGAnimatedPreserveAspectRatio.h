@@ -36,7 +36,6 @@ DECLARE_ANIMATED_PROPERTY(SVGAnimatedPreserveAspectRatio, SVGPreserveAspectRatio
 #define DEFINE_ANIMATED_PRESERVEASPECTRATIO(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(AnimatedPreserveAspectRatio, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
 
-#if ENABLE(SVG_ANIMATION)
 class SVGAnimationElement;
 
 class SVGAnimatedPreserveAspectRatioAnimator : public SVGAnimatedTypeAnimator {
@@ -53,7 +52,6 @@ public:
                                         OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue);
     virtual float calculateDistance(const String& fromString, const String& toString);
 };
-#endif // ENABLE(SVG_ANIMATION)
 
 } // namespace WebCore
 

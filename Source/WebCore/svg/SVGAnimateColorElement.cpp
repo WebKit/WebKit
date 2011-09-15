@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 #include "SVGAnimateColorElement.h"
 #include "SVGNames.h"
 

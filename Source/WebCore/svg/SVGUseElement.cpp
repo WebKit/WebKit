@@ -433,11 +433,8 @@ static bool isDisallowedElement(Node* element)
     // <foreignObject> should never be contained in a <use> tree. Too dangerous side effects possible.
     if (element->hasTagName(SVGNames::foreignObjectTag))
         return true;
-#if ENABLE(SVG_ANIMATION)
     if (SVGSMILElement::isSMILElement(element))
         return true;
-#endif
-
     return false;
 }
 

@@ -36,7 +36,6 @@ DECLARE_ANIMATED_PROPERTY(SVGAnimatedAngle, SVGAngle, UpperProperty, LowerProper
 #define DEFINE_ANIMATED_ANGLE_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(AnimatedAngle, OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty)
 
-#if ENABLE(SVG_ANIMATION)
 class SVGAnimationElement;
 
 class SVGAnimatedAngleAnimator : public SVGAnimatedTypeAnimator {
@@ -53,7 +52,6 @@ public:
                                         OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue);
     virtual float calculateDistance(const String& fromString, const String& toString);
 };
-#endif // ENABLE(SVG_ANIMATION)
 
 } // namespace WebCore
 

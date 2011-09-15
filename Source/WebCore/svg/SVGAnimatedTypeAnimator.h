@@ -20,7 +20,7 @@
 #ifndef SVGAnimatedTypeAnimator_h
 #define SVGAnimatedTypeAnimator_h
 
-#if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 #include "SVGAnimatedType.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -57,5 +57,5 @@ protected:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+#endif // ENABLE(SVG)
 #endif // SVGAnimatedTypeAnimator_h

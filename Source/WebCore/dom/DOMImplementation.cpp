@@ -106,10 +106,8 @@ static bool isSVG11Feature(const String &feature)
         addString(svgFeatures, "SVG-static");
         addString(svgFeatures, "SVGDOM-static");
 #endif
-#if ENABLE(SVG_ANIMATION)
         addString(svgFeatures, "SVG-animation");
         addString(svgFeatures, "SVGDOM-animation");
-#endif
 //      addString(svgFeatures, "SVG-dynamic);
 //      addString(svgFeatures, "SVGDOM-dynamic);
         addString(svgFeatures, "CoreAttribute");
@@ -148,9 +146,7 @@ static bool isSVG11Feature(const String &feature)
         addString(svgFeatures, "ExternalResourcesRequired");
 //      addString(svgFeatures, "View"); // buggy <view> support, bug 16962
         addString(svgFeatures, "Script");
-#if ENABLE(SVG_ANIMATION)
         addString(svgFeatures, "Animation"); 
-#endif
 #if ENABLE(SVG_FONTS)
         addString(svgFeatures, "Font");
         addString(svgFeatures, "BasicFont");

@@ -1677,12 +1677,9 @@ __ZNK7WebCore15ProtectionSpace20authenticationSchemeEv
 __ZN7WebCore8createCFERKNS_15ProtectionSpaceE
 #endif
 
-#if ENABLE(SVG_ANIMATION) && ENABLE(SVG_DOM_OBJC_BINDINGS)
+#if ENABLE(SVG) && ENABLE(SVG_DOM_OBJC_BINDINGS)
 .objc_class_name_DOMSVGAnimateElement
 .objc_class_name_DOMSVGAnimateTransformElement
-#endif
-
-#if ENABLE(SVG) && ENABLE(SVG_DOM_OBJC_BINDINGS)
 .objc_class_name_DOMSVGAElement
 .objc_class_name_DOMSVGAltGlyphDefElement
 .objc_class_name_DOMSVGAltGlyphElement

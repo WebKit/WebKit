@@ -109,7 +109,6 @@ my (
     $registerProtocolHandlerSupport,
     $sharedWorkersSupport,
     $svgSupport,
-    $svgAnimationSupport,
     $svgAsImageSupport,
     $svgDOMObjCBindingsSupport,
     $svgFontsSupport,
@@ -268,9 +267,6 @@ my @features = (
     { option => "svg", desc => "Toggle SVG support",
       define => "ENABLE_SVG", default => 1, value => \$svgSupport },
 
-    { option => "svg-animation", desc => "Toggle SVG animation support (implies SVG support)",
-      define => "ENABLE_SVG_ANIMATION", default => 1, value => \$svgAnimationSupport },
-
     { option => "svg-as-image", desc => "Toggle SVG as Image support (implies SVG support)",
       define => "ENABLE_SVG_AS_IMAGE", default => 1, value => \$svgAsImageSupport },
 
@@ -349,7 +345,7 @@ foreach (@features) {
     ${$_->{value}} = ($_->{default} && !$minimal) || 0;
 }
 
-$svgSupport = $svgSupport || $svgAnimationSupport || $svgAsImageSupport
+$svgSupport = $svgSupport || $svgAsImageSupport
     || $svgDOMObjCBindingsSupport || $svgFontsSupport;
 
 $blobSupport = $blobSupport || $mediaStreamSupport;

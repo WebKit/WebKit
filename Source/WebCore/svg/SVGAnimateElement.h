@@ -23,7 +23,7 @@
 #ifndef SVGAnimateElement_h
 #define SVGAnimateElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 
 #include "SVGAnimatedType.h"
 #include "SVGAnimatedTypeAnimator.h"

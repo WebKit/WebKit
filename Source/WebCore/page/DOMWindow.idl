@@ -734,14 +734,12 @@ module window {
         attribute SVGViewElementConstructor SVGViewElement;
 //      attribute SVGViewSpecConstructor SVGViewSpec;
 
-#if defined(ENABLE_SVG_ANIMATION) && ENABLE_SVG_ANIMATION
         attribute SVGAnimateColorElementConstructor SVGAnimateColorElement;
         attribute SVGAnimateElementConstructor SVGAnimateElement;
         attribute SVGAnimateMotionElementConstructor SVGAnimateMotionElement;
         attribute SVGAnimateTransformElementConstructor SVGAnimateTransformElement;
         attribute SVGMPathElementConstructor SVGMPathElement;
         attribute SVGSetElementConstructor SVGSetElement;
-#endif
 
 #if defined(ENABLE_SVG_FONTS) && ENABLE_SVG_FONTS
         attribute SVGAltGlyphDefElementConstructor SVGAltGlyphDefElement;

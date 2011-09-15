@@ -22,7 +22,7 @@
 
 #ifndef SVGAnimateTransformElement_h
 #define SVGAnimateTransformElement_h
-#if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 
 #include "SVGAnimationElement.h"
 #include "SVGTransform.h"

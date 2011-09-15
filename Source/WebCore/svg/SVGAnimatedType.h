@@ -20,7 +20,7 @@
 #ifndef SVGAnimatedType_h
 #define SVGAnimatedType_h
 
-#if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 #include "SVGElement.h"
 
 namespace WebCore {
@@ -108,5 +108,5 @@ private:
     
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+#endif // ENABLE(SVG)
 #endif // SVGAnimatedType_h

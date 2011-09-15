@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 #include "SVGSetElement.h"
 #include "SVGNames.h"
 
@@ -39,5 +39,5 @@ PassRefPtr<SVGSetElement> SVGSetElement::create(const QualifiedName& tagName, Do
 }
 
 // vim:ts=4:noet
-#endif // ENABLE(SVG_ANIMATION)
+#endif // ENABLE(SVG)
 

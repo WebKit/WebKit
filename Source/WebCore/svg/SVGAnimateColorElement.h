@@ -21,7 +21,7 @@
 
 #ifndef SVGAnimateColorElement_h
 #define SVGAnimateColorElement_h
-#if ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 
 #include "SVGAnimateElement.h"
 
@@ -38,7 +38,7 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG_ANIMATION)
-#endif // KSVG_SVGAnimateColorElementImpl_H
+#endif // ENABLE(SVG)
+#endif // SVGAnimateColorElement_h
 
 // vim:ts=4:noet

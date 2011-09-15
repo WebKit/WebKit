@@ -36,7 +36,6 @@ DECLARE_ANIMATED_LIST_PROPERTY(SVGAnimatedNumberList, SVGNumberList, UpperProper
 #define DEFINE_ANIMATED_NUMBER_LIST(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(AnimatedNumberList, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
 
-#if ENABLE(SVG_ANIMATION)
 class SVGAnimationElement;
 
 class SVGAnimatedNumberListAnimator : public SVGAnimatedTypeAnimator {
@@ -53,7 +52,6 @@ public:
                                         OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue);
     virtual float calculateDistance(const String& fromString, const String& toString);
 };
-#endif // ENABLE(SVG_ANIMATION)
 
 } // namespace WebCore
 
