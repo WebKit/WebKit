@@ -225,6 +225,8 @@
 		180B9BFE0F16E94D009BDBC5 /* CurrentTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 180B9AEF0F16C569009BDBC5 /* CurrentTime.cpp */; };
 		18BAB55310DAE054000D945B /* ThreadIdentifierDataPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18BAB52710DADFCD000D945B /* ThreadIdentifierDataPthreads.cpp */; };
 		18BAB55410DAE066000D945B /* ThreadIdentifierDataPthreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */; };
+		1A082779142168D70090CCAC /* BinarySemaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A082777142168D70090CCAC /* BinarySemaphore.cpp */; };
+		1A08277A142168D70090CCAC /* BinarySemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A082778142168D70090CCAC /* BinarySemaphore.h */; };
 		1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C61516A0EBAC7A00031376F /* ProfilerServer.mm */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
 		1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C61516B0EBAC7A00031376F /* ProfilerServer.h */; };
 		2CFC5D1E12F45B48004914E2 /* CharacterNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CFC5B7A12F44714004914E2 /* CharacterNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -924,6 +926,8 @@
 		180B9AF00F16C569009BDBC5 /* CurrentTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CurrentTime.h; sourceTree = "<group>"; };
 		18BAB52710DADFCD000D945B /* ThreadIdentifierDataPthreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadIdentifierDataPthreads.cpp; sourceTree = "<group>"; };
 		18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadIdentifierDataPthreads.h; sourceTree = "<group>"; };
+		1A082777142168D70090CCAC /* BinarySemaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinarySemaphore.cpp; sourceTree = "<group>"; };
+		1A082778142168D70090CCAC /* BinarySemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinarySemaphore.h; sourceTree = "<group>"; };
 		1C61516A0EBAC7A00031376F /* ProfilerServer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProfilerServer.mm; path = profiler/ProfilerServer.mm; sourceTree = "<group>"; };
 		1C61516B0EBAC7A00031376F /* ProfilerServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerServer.h; path = profiler/ProfilerServer.h; sourceTree = "<group>"; };
 		1C9051420BA9E8A70081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
@@ -1737,6 +1741,15 @@
 			path = debugger;
 			sourceTree = "<group>";
 		};
+		1A082776142168D60090CCAC /* threads */ = {
+			isa = PBXGroup;
+			children = (
+				1A082777142168D70090CCAC /* BinarySemaphore.cpp */,
+				1A082778142168D70090CCAC /* BinarySemaphore.h */,
+			);
+			path = threads;
+			sourceTree = "<group>";
+		};
 		1C90513E0BA9E8830081E9D0 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
@@ -1788,16 +1801,10 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
-				0FD82E82141F3FC900179C94 /* BoundsCheckedPointer.h */,
-				0F963B2E13FC66AE0002D9B2 /* MetaAllocatorHandle.h */,
-				0F963B2B13F853C70002D9B2 /* MetaAllocator.cpp */,
-				0F963B2A13F853BD0002D9B2 /* MetaAllocator.h */,
-				0F963B2613F753990002D9B2 /* RedBlackTree.h */,
-				C2EE599D13FC972A009CEAFE /* DecimalNumber.cpp */,
-				C2EE599E13FC972A009CEAFE /* DecimalNumber.h */,
 				C22C524813FAF6EF00B7DC0D /* dtoa */,
 				06D358A00DAAD9C4003B174E /* mac */,
 				8656573E115BE35200291F40 /* text */,
+				1A082776142168D60090CCAC /* threads */,
 				E195678D09E7CF1200B89D13 /* unicode */,
 				A1D764511354448B00C5C7C0 /* Alignment.h */,
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
@@ -1809,6 +1816,7 @@
 				DD377CBB12072C18006A2517 /* Bitmap.h */,
 				A7C40C07130B057D00D002A1 /* BlockStack.h */,
 				E4D8CE9B12FC42E100BC9F5A /* BloomFilter.h */,
+				0FD82E82141F3FC900179C94 /* BoundsCheckedPointer.h */,
 				86676D4D11FED55D004B6863 /* BumpPointerAllocator.h */,
 				A7A1F7AA0F252B3C00E184E2 /* ByteArray.cpp */,
 				A7A1F7AB0F252B3C00E184E2 /* ByteArray.h */,
@@ -1822,6 +1830,8 @@
 				180B9AF00F16C569009BDBC5 /* CurrentTime.h */,
 				41359CF40FDD89CB00206180 /* DateMath.cpp */,
 				41359CF50FDD89CB00206180 /* DateMath.h */,
+				C2EE599D13FC972A009CEAFE /* DecimalNumber.cpp */,
+				C2EE599E13FC972A009CEAFE /* DecimalNumber.h */,
 				5135FAD512D26856003C083B /* Decoder.h */,
 				5186111D0CC824830081412B /* Deque.h */,
 				938C4F6B0CA06BCE00D9310A /* DisallowCType.h */,
@@ -1856,6 +1866,9 @@
 				511FC4C7117EE23D00425272 /* MD5.cpp */,
 				511FC4CA117EE2A800425272 /* MD5.h */,
 				E1EE798B0D6CA53D00FEA3BA /* MessageQueue.h */,
+				0F963B2B13F853C70002D9B2 /* MetaAllocator.cpp */,
+				0F963B2A13F853BD0002D9B2 /* MetaAllocator.h */,
+				0F963B2E13FC66AE0002D9B2 /* MetaAllocatorHandle.h */,
 				9303F5690991190000AD71B8 /* Noncopyable.h */,
 				65E1A2F4122B880D00B26097 /* NonCopyingSort.h */,
 				C0A2723F0E509F1E00E96E15 /* NotFound.h */,
@@ -1889,6 +1902,7 @@
 				088FA5B90EF76D4300578E6F /* RandomNumber.cpp */,
 				088FA5BA0EF76D4300578E6F /* RandomNumber.h */,
 				08E279E80EF83B10007DB523 /* RandomNumberSeed.h */,
+				0F963B2613F753990002D9B2 /* RedBlackTree.h */,
 				1419D32C0CEA7CDE00FF507A /* RefCounted.h */,
 				905B02AD0E28640F006DF882 /* RefCountedLeakCounter.cpp */,
 				90D3469B0E285280009492EE /* RefCountedLeakCounter.h */,
@@ -2796,6 +2810,7 @@
 				BC66BAE413F492CC00C23FAE /* Compiler.h in Headers */,
 				A7BC0C82140608B000B1BB71 /* CheckedArithmetic.h in Headers */,
 				A781E359141970C700094D90 /* StorageBarrier.h in Headers */,
+				1A08277A142168D70090CCAC /* BinarySemaphore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3302,6 +3317,7 @@
 				C22C52FC13FAF6EF00B7DC0D /* fast-dtoa.cc in Sources */,
 				C22C52FE13FAF6EF00B7DC0D /* fixed-dtoa.cc in Sources */,
 				C22C531313FAF6EF00B7DC0D /* strtod.cc in Sources */,
+				1A082779142168D70090CCAC /* BinarySemaphore.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -588,6 +588,26 @@
                 >
             </File>
         </Filter>
+		<Filter
+			Name="threads"
+			>
+    		<Filter
+    			Name="win"
+    			>
+    			<File
+    				RelativePath="..\..\wtf\threads\win\BinarySemaphoreWin.cpp"
+    				>
+    			</File>
+    		</Filter>
+			<File
+				RelativePath="..\..\wtf\threads\BinarySemaphore.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtf\threads\BinarySemaphore.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\wtf\Alignment.h"
 			>

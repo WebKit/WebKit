@@ -135,6 +135,8 @@ SET(WTF_HEADERS
     text/StringImplBase.h
     text/WTFString.h
 
+    threads/BinarySemaphore.h
+
     unicode/CharacterNames.h
     unicode/Collator.h
     unicode/UTF8.h
@@ -191,6 +193,8 @@ SET(WTF_SOURCES
     text/StringImpl.cpp
     text/StringStatics.cpp
     text/WTFString.cpp
+
+    threads/BinarySemaphore.cpp
 
     unicode/UTF8.cpp
 )

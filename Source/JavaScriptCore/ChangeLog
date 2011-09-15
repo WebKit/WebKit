@@ -1,3 +1,23 @@
+2011-09-14  Anders Carlsson  <andersca@apple.com>
+
+        Add BinarySemaphore class from WebKit2 to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=68132
+
+        Reviewed by Sam Weinig.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        Update build systems.
+
+        * wtf/threads: Added.
+        * wtf/threads/BinarySemaphore.cpp: Copied from Source/WebKit2/Platform/CoreIPC/BinarySemaphore.cpp.
+        * wtf/threads/BinarySemaphore.h: Copied from Source/WebKit2/Platform/CoreIPC/BinarySemaphore.h.
+        * wtf/threads/win: Added.
+        * wtf/threads/win/BinarySemaphoreWin.cpp: Copied from Source/WebKit2/Platform/CoreIPC/win/BinarySemaphoreWin.cpp.
+
 2011-09-14  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed build fix for Interpreter.
