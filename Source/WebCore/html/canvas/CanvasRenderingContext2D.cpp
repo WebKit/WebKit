@@ -205,28 +205,27 @@ CanvasRenderingContext2D::State::State()
 
 CanvasRenderingContext2D::State::State(const State& other)
     : FontSelectorClient()
+    , m_unparsedStrokeColor(other.m_unparsedStrokeColor)
+    , m_unparsedFillColor(other.m_unparsedFillColor)
+    , m_strokeStyle(other.m_strokeStyle)
+    , m_fillStyle(other.m_fillStyle)
+    , m_lineWidth(other.m_lineWidth)
+    , m_lineCap(other.m_lineCap)
+    , m_lineJoin(other.m_lineJoin)
+    , m_miterLimit(other.m_miterLimit)
+    , m_shadowOffset(other.m_shadowOffset)
+    , m_shadowBlur(other.m_shadowBlur)
+    , m_shadowColor(other.m_shadowColor)
+    , m_globalAlpha(other.m_globalAlpha)
+    , m_globalComposite(other.m_globalComposite)
+    , m_transform(other.m_transform)
+    , m_invertibleCTM(other.m_invertibleCTM)
+    , m_textAlign(other.m_textAlign)
+    , m_textBaseline(other.m_textBaseline)
+    , m_unparsedFont(other.m_unparsedFont)
+    , m_font(other.m_font)
+    , m_realizedFont(other.m_realizedFont)
 {
-    m_unparsedStrokeColor = other.m_unparsedStrokeColor;
-    m_unparsedFillColor = other.m_unparsedFillColor;
-    m_strokeStyle = other.m_strokeStyle;
-    m_fillStyle = other.m_fillStyle;
-    m_lineWidth = other.m_lineWidth;
-    m_lineCap = other.m_lineCap;
-    m_lineJoin = other.m_lineJoin;
-    m_miterLimit = other.m_miterLimit;
-    m_shadowOffset = other.m_shadowOffset;
-    m_shadowBlur = other.m_shadowBlur;
-    m_shadowColor = other.m_shadowColor;
-    m_globalAlpha = other.m_globalAlpha;
-    m_globalComposite = other.m_globalComposite;
-    m_transform = other.m_transform;
-    m_invertibleCTM = other.m_invertibleCTM;
-    m_textAlign = other.m_textAlign;
-    m_textBaseline = other.m_textBaseline;
-    m_unparsedFont = other.m_unparsedFont;
-    m_font = other.m_font;
-    m_realizedFont = other.m_realizedFont;
-
     if (m_realizedFont)
         m_font.fontSelector()->registerForInvalidationCallbacks(this);
 }
