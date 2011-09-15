@@ -84,11 +84,12 @@ namespace WebCore {
 //----------------------------------------------------------------------
 // GraphicsContext3DPrivate
 
-GraphicsContext3DPrivate::GraphicsContext3DPrivate(WebKit::WebViewImpl* webViewImpl, PassOwnPtr<WebKit::WebGraphicsContext3D> webContext)
+GraphicsContext3DPrivate::GraphicsContext3DPrivate(WebKit::WebViewImpl* webViewImpl, PassOwnPtr<WebKit::WebGraphicsContext3D> webContext, GraphicsContext3D::Attributes attrs)
     : m_impl(webContext)
     , m_webViewImpl(webViewImpl)
     , m_initializedAvailableExtensions(false)
     , m_layerComposited(false)
+    , m_preserveDrawingBuffer(attrs.preserveDrawingBuffer)
     , m_resourceSafety(ResourceSafetyUnknown)
 #if USE(SKIA)
     , m_grContext(0)
@@ -114,9 +115,9 @@ GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 }
 
 
-PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(WebKit::WebViewImpl* webViewImpl, PassOwnPtr<WebKit::WebGraphicsContext3D> webContext)
+PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(WebKit::WebViewImpl* webViewImpl, PassOwnPtr<WebKit::WebGraphicsContext3D> webContext, GraphicsContext3D::Attributes attrs)
 {
-    return adoptPtr(new GraphicsContext3DPrivate(webViewImpl, webContext));
+    return adoptPtr(new GraphicsContext3DPrivate(webViewImpl, webContext, attrs));
 }
 
 PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D> webContext, GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle, ThreadUsage threadUsage)
@@ -127,7 +128,7 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextFro
     if (threadUsage == ForUseOnThisThread && !webContext->makeContextCurrent())
         return 0;
 
-    OwnPtr<GraphicsContext3DPrivate> priv = GraphicsContext3DPrivate::create(webViewImpl, webContext);
+    OwnPtr<GraphicsContext3DPrivate> priv = GraphicsContext3DPrivate::create(webViewImpl, webContext, attrs);
     if (!priv)
         return 0;
 
@@ -600,6 +601,7 @@ GraphicsContext3D::Attributes GraphicsContext3DPrivate::getContextAttributes()
     attributes.stencil = webAttributes.stencil;
     attributes.antialias = webAttributes.antialias;
     attributes.premultipliedAlpha = webAttributes.premultipliedAlpha;
+    attributes.preserveDrawingBuffer = m_preserveDrawingBuffer;
     return attributes;
 }
 

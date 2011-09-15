@@ -55,7 +55,7 @@ class SwapBuffersCompleteCallbackAdapter;
 
 class GraphicsContext3DPrivate {
 public:
-    static PassOwnPtr<GraphicsContext3DPrivate> create(WebKit::WebViewImpl*, PassOwnPtr<WebKit::WebGraphicsContext3D>);
+    static PassOwnPtr<GraphicsContext3DPrivate> create(WebKit::WebViewImpl*, PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::Attributes);
 
     enum ThreadUsage {
         ForUseOnThisThread,
@@ -73,8 +73,6 @@ public:
     static PassRefPtr<GraphicsContext3D> createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::Attributes, HostWindow*, GraphicsContext3D::RenderStyle, ThreadUsage);
 
     ~GraphicsContext3DPrivate();
-
-    bool initialize(GraphicsContext3D::Attributes, HostWindow*, bool renderDirectlyToHostWindow);
 
     // Helper function to provide access to the lower-level WebGraphicsContext3D,
     // which is needed for subordinate contexts like WebGL's to share resources
@@ -306,7 +304,7 @@ public:
     GC3Denum getGraphicsResetStatusARB();
 
 private:
-    GraphicsContext3DPrivate(WebKit::WebViewImpl*, PassOwnPtr<WebKit::WebGraphicsContext3D>);
+    GraphicsContext3DPrivate(WebKit::WebViewImpl*, PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::Attributes);
 
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
     OwnPtr<Extensions3DChromium> m_extensions;
@@ -317,6 +315,7 @@ private:
     HashSet<String> m_enabledExtensions;
     HashSet<String> m_requestableExtensions;
     bool m_layerComposited;
+    bool m_preserveDrawingBuffer;
 
     enum ResourceSafety {
         ResourceSafetyUnknown,
