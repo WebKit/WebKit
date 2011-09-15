@@ -25,6 +25,9 @@ import itertools
 import re
 
 
+DELAYED_ATTRIBUTE = 'Delayed'
+DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE = 'DispatchOnConnectionQueue'
+
 _license_header = """/*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
@@ -93,11 +96,8 @@ class MessageReceiver(object):
 
                 if attributes_string:
                     attributes = frozenset(attributes_string.split())
-                    is_delayed = "Delayed" in attributes
-                    dispatch_on_connection_queue = "DispatchOnConnectionQueue" in attributes
                 else:
-                    is_delayed = False
-                    dispatch_on_connection_queue = False
+                    attributes = None
 
                 if reply_parameters_string:
                     reply_parameters = parse_parameter_string(reply_parameters_string)
@@ -108,26 +108,23 @@ class MessageReceiver(object):
                 else:
                     reply_parameters = None
 
-                messages.append(Message(name, parameters, reply_parameters, is_delayed, dispatch_on_connection_queue, condition))
+                messages.append(Message(name, parameters, reply_parameters, attributes, condition))
         return MessageReceiver(destination, messages, master_condition)
 
 
 class Message(object):
-    def __init__(self, name, parameters, reply_parameters, is_delayed, dispatch_on_connection_queue, condition):
+    def __init__(self, name, parameters, reply_parameters, attributes, condition):
         self.name = name
         self.parameters = parameters
         self.reply_parameters = reply_parameters
-        if self.reply_parameters is not None:
-            self.is_delayed = is_delayed
-        self.dispatch_on_connection_queue = dispatch_on_connection_queue
+        self.attributes = frozenset(attributes or [])
         self.condition = condition
-        if len(self.parameters) != 0:
-            self.is_variadic = parameter_type_is_variadic(self.parameters[-1].type)
-        else:
-            self.is_variadic = False
 
     def id(self):
         return '%sID' % self.name
+
+    def has_attribute(self, attribute):
+        return attribute in self.attributes
 
 
 class Parameter(object):
@@ -159,13 +156,13 @@ def messages_to_kind_enum(messages):
     return ''.join(result)
 
 
-def parameter_type_is_variadic(type):
+def message_is_variadic(message):
     variadic_types = frozenset([
         'WebKit::InjectedBundleUserMessageEncoder',
         'WebKit::WebContextUserMessageEncoder',
     ])
 
-    return type in variadic_types
+    return len(message.parameters) and message.parameters[-1].type in variadic_types
 
 def function_parameter_type(type):
     # Don't use references for built-in types.
@@ -209,7 +206,7 @@ def reply_type(message):
 
 
 def decode_type(message):
-    if message.is_variadic:
+    if message_is_variadic(message):
         return arguments_type(message.parameters[:-1], reply_parameter_type)
     return base_class(message)
 
@@ -225,7 +222,7 @@ def message_to_struct_declaration(message):
     result.append(' {\n')
     result.append('    static const Kind messageID = %s;\n' % message.id())
     if message.reply_parameters != None:
-        if message.is_delayed:
+        if message.has_attribute(DELAYED_ATTRIBUTE):
             send_parameters = [(function_parameter_type(x.type), x.name) for x in message.reply_parameters]
             result.append('    struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {\n')
             result.append('        DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::ArgumentEncoder>);\n')
@@ -318,7 +315,7 @@ def forward_declarations_and_headers(receiver):
     ])
 
     for message in receiver.messages:
-        if message.reply_parameters != None and message.is_delayed:
+        if message.reply_parameters != None and message.has_attribute(DELAYED_ATTRIBUTE):
             headers.add('<wtf/ThreadSafeRefCounted.h>')
             types_by_namespace['CoreIPC'].update(['ArgumentEncoder', 'Connection'])
 
@@ -396,7 +393,7 @@ def handler_function(receiver, message):
 
 def async_case_statement(receiver, message, return_value=None):
     dispatch_function = 'handleMessage'
-    if message.is_variadic:
+    if message_is_variadic(message):
         dispatch_function += 'Variadic'
 
     result = []
@@ -411,14 +408,14 @@ def async_case_statement(receiver, message, return_value=None):
 
 def sync_case_statement(receiver, message):
     dispatch_function = 'handleMessage'
-    if message.is_delayed:
+    if message.has_attribute(DELAYED_ATTRIBUTE):
         dispatch_function += 'Delayed'
-    if message.is_variadic:
+    if message_is_variadic(message):
         dispatch_function += 'Variadic'
 
     result = []
     result.append('    case Messages::%s::%s:\n' % (receiver.name, message.id()))
-    result.append('        CoreIPC::%s<Messages::%s::%s>(%sarguments, reply%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if message.is_delayed else '', '' if message.is_delayed else '.get()', handler_function(receiver, message)))
+    result.append('        CoreIPC::%s<Messages::%s::%s>(%sarguments, reply%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if message.has_attribute(DELAYED_ATTRIBUTE) else '', '' if message.has_attribute(DELAYED_ATTRIBUTE) else '.get()', handler_function(receiver, message)))
     result.append('        return;\n')
 
     return surround_in_condition(''.join(result), message.condition)
@@ -556,7 +553,7 @@ def generate_message_handler(file):
 
     sync_delayed_messages = []
     for message in receiver.messages:
-        if message.reply_parameters != None and message.is_delayed:
+        if message.reply_parameters != None and message.has_attribute(DELAYED_ATTRIBUTE):
             sync_delayed_messages.append(message)
 
     if sync_delayed_messages:
@@ -602,12 +599,12 @@ def generate_message_handler(file):
     sync_messages = []
     for message in receiver.messages:
         if message.reply_parameters is not None:
-            if message.dispatch_on_connection_queue:
+            if message.has_attribute(DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE):
                 sync_dispatch_on_connection_queue_messages.append(message)
             else:
                 sync_messages.append(message)
         else:
-            if message.dispatch_on_connection_queue:
+            if message.has_attribute(DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE):
                 async_dispatch_on_connection_queue_messages.append(message)
             else:
                 async_messages.append(message)

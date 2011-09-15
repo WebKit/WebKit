@@ -1,3 +1,32 @@
+2011-09-15  Adam Roben  <aroben@apple.com>
+
+        Remove WebKit2-specific knowledge from the Message class
+
+        This is in preparation for making some of our message-generations scripts usable by other
+        projects.
+
+        Fixes <http://webkit.org/b/68170> Model classes in WebKit2's message-generation scripts know
+        too much about WebKit2 details
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkit2/messages.py: Added constants for the message attributes we support.
+        (MessageReceiver.parse): Instead of recognizing individual attributes, just stick the
+        attributes into a set and pass it to the Message constructor.
+        (Message.__init__): Changed to take a generic set of attributes instead of individual
+        attributes.
+        (Message.has_attribute): Added. Returns true if the message has an attribute.
+        (message_is_variadic): Renamed from parameter_type_is_variadic. Code came from
+        Message.__init__, which set the old message.is_variadic property.
+
+        (decode_type):
+        (message_to_struct_declaration):
+        (forward_declarations_and_headers):
+        (async_case_statement):
+        (sync_case_statement):
+        (generate_message_handler):
+        Updated to use Message.has_attribute and message_is_variadic.
+
 2011-09-14  Wajahat Siddiqui  <mdwajahatali.siddiqui@motorola.com>
 
         Eliminate WebKit2 compilation warnings.
