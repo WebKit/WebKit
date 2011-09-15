@@ -129,12 +129,6 @@ bool JSCell::getPrimitiveNumber(ExecState*, double&, JSValue&)
     return false;
 }
 
-bool JSCell::toBoolean(ExecState*) const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 double JSCell::toNumber(ExecState*) const
 {
     ASSERT_NOT_REACHED();

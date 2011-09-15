@@ -1,3 +1,28 @@
+2011-09-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Make JSCell::toBoolean non-virtual
+        https://bugs.webkit.org/show_bug.cgi?id=67727
+
+        Reviewed by Sam Weinig.
+
+        JSCell::toBoolean now manually performs the toBoolean check for objects and strings (where 
+        before it was simply virtual and would crash if its implementation was called). 
+        Its descendants in JSObject and JSString have also been made non-virtual.  JSCell now
+        explicitly covers all cases of toBoolean, so having a virtual implementation of 
+        JSCell::toBoolean is no longer necessary.  This is part of a larger process of un-virtualizing JSCell.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSNotAnObject.h:
+        * runtime/JSObject.h:
+        * runtime/JSString.h:
+        (JSC::JSCell::toBoolean):
+        (JSC::JSValue::toBoolean):
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+
 2011-09-14  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Replace QT_GCC_X as they don't exist in Qt5 anymore.

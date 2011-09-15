@@ -53,8 +53,6 @@ namespace JSC {
         }
 
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | MasqueradesAsUndefined | OverridesGetPropertyNames | StringObject::StructureFlags;
-
-        virtual bool toBoolean(ExecState*) const { return false; }
     };
  
 } // namespace JSC
