@@ -474,19 +474,27 @@ private:
         } while (!m_reusableNodeStack.isEmpty());
     }
     
-    void stronglyPredict(NodeIndex nodeIndex, unsigned bytecodeIndex)
+    PredictedType getStrongPrediction(NodeIndex nodeIndex, unsigned bytecodeIndex)
     {
+        UNUSED_PARAM(nodeIndex);
+        UNUSED_PARAM(bytecodeIndex);
+        
 #if ENABLE(DYNAMIC_OPTIMIZATION)
         ValueProfile* profile = m_profiledBlock->valueProfileForBytecodeOffset(bytecodeIndex);
         ASSERT(profile);
-        m_graph[nodeIndex].predict(profile->computeUpdatedPrediction() & ~PredictionTagMask, StrongPrediction);
+        PredictedType prediction = profile->computeUpdatedPrediction();
 #if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("Dynamic [%u, %u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(m_graph[nodeIndex].getPrediction()));
+        printf("Dynamic [%u, %u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(prediction));
 #endif
+        return prediction;
 #else
-        UNUSED_PARAM(nodeIndex);
-        UNUSED_PARAM(bytecodeIndex);
+        return PredictNone;
 #endif
+    }
+    
+    void stronglyPredict(NodeIndex nodeIndex, unsigned bytecodeIndex)
+    {
+        m_graph[nodeIndex].predict(getStrongPrediction(nodeIndex, bytecodeIndex) & ~PredictionTagMask, StrongPrediction);
     }
     
     void stronglyPredict(NodeIndex nodeIndex)
@@ -988,6 +996,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_get_global_var: {
             NodeIndex getGlobalVar = addToGraph(GetGlobalVar, OpInfo(currentInstruction[2].u.operand));
             set(currentInstruction[1].u.operand, getGlobalVar);
+            m_graph.predictGlobalVar(currentInstruction[2].u.operand, getStrongPrediction(getGlobalVar, m_currentIndex) & ~PredictionTagMask, StrongPrediction);
             NEXT_OPCODE(op_get_global_var);
         }
 

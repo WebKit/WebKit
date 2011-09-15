@@ -1004,6 +1004,7 @@ void JIT::emit_op_get_global_var(Instruction* currentInstruction)
     JSVariableObject* globalObject = m_codeBlock->globalObject();
     loadPtr(&globalObject->m_registers, regT0);
     loadPtr(Address(regT0, currentInstruction[2].u.operand * sizeof(Register)), regT0);
+    emitValueProfilingSite(FirstProfilingSite);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 

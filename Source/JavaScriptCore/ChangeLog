@@ -1,3 +1,19 @@
+2011-09-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Value profiles collect no information for global variables
+        https://bugs.webkit.org/show_bug.cgi?id=68143
+
+        Reviewed by Geoffrey Garen.
+        
+        17% speed-up on string-fasta.  Neutral elsewhere.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getStrongPrediction):
+        (JSC::DFG::ByteCodeParser::stronglyPredict):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_global_var):
+
 2011-09-15  Eric Seidel  <eric@webkit.org>
 
         Remove ENABLE_SVG_ANIMATION as all major ports have it on by default
