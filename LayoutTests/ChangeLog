@@ -1,3 +1,9 @@
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] skipping tests due to r95188
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-15  Kentaro Hara  <haraken@google.com>
 
         A single line must not be split into two pages.

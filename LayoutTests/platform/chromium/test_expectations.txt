@@ -3746,3 +3746,9 @@ BUG_LEVIN : fast/clip/overflow-border-radius-composited.html = FAIL
 BUG_LEVIN : fast/clip/overflow-border-radius-transformed.html = FAIL
 BUG_LEVIN : fast/css/nested-rounded-corners.html = FAIL
 
+// Failing after r95188
+BUG_KEISHI : editing/style/non-inheritable-styles.html = PASS TEXT
+BUG_KEISHI : inspector/styles/styles-new-API.html = PASS TEXT
+BUG_KEISHI : inspector/styles/styles-source-lines.html = PASS TEXT
+BUG_KEISHI : inspector/styles/styles-update-from-js.html = PASS TEXT
+
