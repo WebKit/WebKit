@@ -27325,8 +27325,56 @@
 					>
 				</File>
                 <File
-                RelativePath="..\platform\win\StructuredExceptionHandlerSupressor.h"
-                >
+                    RelativePath="..\platform\win\StructuredExceptionHandlerSupressor.h"
+                    >
+                    <FileConfiguration
+                        Name="Debug|Win32"
+                        >
+                        <Tool
+                            Name="VCCLCompilerTool"
+                            DisableSpecificWarnings="4733"
+                        />
+                    </FileConfiguration>
+                    <FileConfiguration
+                        Name="Release|Win32"
+                        >
+                        <Tool
+                            Name="VCCLCompilerTool"
+                            DisableSpecificWarnings="4733"
+                        />
+                    </FileConfiguration>
+                    <FileConfiguration
+                        Name="Debug_Cairo_CFLite|Win32"
+                        >
+                        <Tool
+                            Name="VCCLCompilerTool"
+                            DisableSpecificWarnings="4733"
+                        />
+                    </FileConfiguration>
+                    <FileConfiguration
+                        Name="Release_Cairo_CFLite|Win32"
+                        >
+                        <Tool
+                            Name="VCCLCompilerTool"
+                            DisableSpecificWarnings="4733"
+                        />
+                    </FileConfiguration>
+                    <FileConfiguration
+                        Name="Debug_All|Win32"
+                        >
+                        <Tool
+                            Name="VCCLCompilerTool"
+                            DisableSpecificWarnings="4733"
+                        />
+                    </FileConfiguration>
+                    <FileConfiguration
+                        Name="Production|Win32"
+                        >
+                        <Tool
+                            Name="VCCLCompilerTool"
+                            DisableSpecificWarnings="4733"
+                        />
+                    </FileConfiguration>
                 </File>
 				<File
 					RelativePath="..\platform\win\SystemInfo.cpp"
