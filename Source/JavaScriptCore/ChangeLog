@@ -1,3 +1,27 @@
+2011-09-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled back in r95201 with test failure fixed.
+        
+        I missed two cases of jumpSlowToHot in rshift -- these cases need to be
+        sure to initialize regT1 to the int tag, since it will otherwise hold
+        the top 32 bits of a double.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emitRightShift):
+        (JSC::JIT::emitRightShiftSlowCase):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emit_op_bitnot):
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emit_op_post_dec):
+        (JSC::JIT::emit_op_pre_inc):
+        (JSC::JIT::emit_op_pre_dec):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitStoreAndMapInt32):
+
 2011-09-16  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed Windows build fix after 95318.
