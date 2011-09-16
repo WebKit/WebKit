@@ -3740,21 +3740,10 @@ BUG_LEVIN SNOWLEOPARD : http/tests/security/mixedContent/insecure-script-in-ifra
 
 BUG_LEVIN MAC DEBUG : svg/custom/object-no-size-attributes.xhtml = PASS IMAGE+TEXT
 
-// These all are due to r95239 and just need to wait for all bots to run them so they can get rebaselined.
-BUG_LEVIN : fast/clip/overflow-border-radius-combinations.html = FAIL
-BUG_LEVIN : fast/clip/overflow-border-radius-composited.html = FAIL
-BUG_LEVIN : fast/clip/overflow-border-radius-transformed.html = FAIL
-BUG_LEVIN : fast/css/nested-rounded-corners.html = FAIL
-
 // Failing after r95188
 BUG_KEISHI : editing/style/non-inheritable-styles.html = FAIL PASS TEXT
 BUG_KEISHI : inspector/styles/styles-new-API.html = FAIL PASS TEXT TIMEOUT
 BUG_KEISHI : inspector/styles/styles-source-lines.html = FAIL PASS TEXT TIMEOUT
-BUG_KEISHI : inspector/styles/styles-update-from-js.html = FAIL PASS TEXT TIMEOUT
 
 // Crashes or timeouts once in a while but never fails
 BUG_KEISHI LINUX : media/video-controls-visible-audio-only.html = PASS TIMEOUT CRASH
-
-// New test added in r95259 looks like it is failing
-BUG_KEISHI : http/tests/history/back-with-fragment-change.php = FAIL
-

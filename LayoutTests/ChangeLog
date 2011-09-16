@@ -1,3 +1,31 @@
+2011-09-16  David Levin  <levin@chromium.org>
+
+       [chromium] Rebaseline fix up due to r95239.
+
+       Expectation removal due to r95322 and r95325.
+
+        * platform/chromium-cg-mac-leopard/fast/clip/overflow-border-radius-composited-expected.png: Added.
+        * platform/chromium-cg-mac/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/chromium-cg-mac/fast/clip/overflow-border-radius-composited-expected.png: Added.
+        * platform/chromium-cg-mac/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+        * platform/chromium-cg-mac/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium-linux/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/chromium-linux/fast/clip/overflow-border-radius-composited-expected.png: Added.
+        * platform/chromium-linux/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+        * platform/chromium-linux/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium-mac/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/chromium-mac/fast/clip/overflow-border-radius-composited-expected.png: Added.
+        * platform/chromium-mac/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+        * platform/chromium-mac/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium-win/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/chromium-win/fast/clip/overflow-border-radius-combinations-expected.txt: Added.
+        * platform/chromium-win/fast/clip/overflow-border-radius-composited-expected.png: Added.
+        * platform/chromium-win/fast/clip/overflow-border-radius-composited-expected.txt: Added.
+        * platform/chromium-win/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+        * platform/chromium-win/fast/clip/overflow-border-radius-transformed-expected.txt: Added.
+        * platform/chromium-win/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-09-16  Geoffrey Garen  <ggaren@apple.com>
 
         Removed undetectable style.filter.
