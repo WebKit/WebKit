@@ -1123,6 +1123,7 @@ SET(WebCore_SOURCES
     platform/mock/DeviceOrientationClientMock.cpp
     platform/mock/GeolocationClientMock.cpp
     platform/mock/GeolocationServiceMock.cpp
+    platform/mock/ScrollbarThemeMock.cpp
 
     platform/network/AuthenticationChallengeBase.cpp
     platform/network/BlobData.cpp

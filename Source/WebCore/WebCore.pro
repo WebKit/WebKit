@@ -1041,6 +1041,7 @@ SOURCES += \
     platform/mock/GeolocationClientMock.cpp \
     platform/mock/GeolocationServiceMock.cpp \
     platform/mock/SpeechInputClientMock.cpp \
+    platform/mock/ScrollbarThemeMock.cpp \
     platform/network/AuthenticationChallengeBase.cpp \
     platform/network/BlobData.cpp \
     platform/network/BlobRegistryImpl.cpp \
@@ -1962,6 +1963,7 @@ HEADERS += \
     platform/mock/GeolocationClientMock.cpp \
     platform/mock/GeolocationServiceMock.h \
     platform/mock/SpeechInputClientMock.h \
+    platform/mock/ScrollbarThemeMock.h \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
     platform/graphics/filters/FEBlend.h \

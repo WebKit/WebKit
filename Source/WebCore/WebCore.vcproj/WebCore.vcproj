@@ -32681,6 +32681,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\mock\ScrollbarThemeMock.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\mock\ScrollbarThemeMock.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\mock\SpeechInputClientMock.cpp"
 					>
 				</File>
