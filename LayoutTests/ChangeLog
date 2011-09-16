@@ -1,3 +1,23 @@
+2011-09-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: UI performance tests are required.
+        https://bugs.webkit.org/show_bug.cgi?id=68234
+
+        The idea is to create a set of tests which cover frequently used UI actions
+        and print the average time of these actions.
+        There are two pilot tests. The common part was extracted into performance-test helper.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/performance/resources/network-append-30-requests.html: Added.
+        * inspector/performance/resources/performance-test.js: Added.
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype.start):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype.finish):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype.done):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype._runTest):
+        * inspector/performance/resources/show-panel-network.html: Added.
+
 2011-09-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening. Skip a flakey test.
