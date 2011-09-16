@@ -39,11 +39,16 @@ ASSERT_CLASS_FITS_IN_CELL(JSTestInterface);
 #else
 #define THUNK_GENERATOR(generator)
 #endif
+#if ENABLE(DFG_JIT)
+#define INTRINSIC(intrinsic) , intrinsic
+#else
+#define INTRINSIC(intrinsic)
+#endif
 
 static const HashTableValue JSTestInterfaceTableValues[] =
 {
-    { "constructor", DontEnum | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructor), (intptr_t)0 THUNK_GENERATOR(0) },
-    { 0, 0, 0, 0 THUNK_GENERATOR(0) }
+    { "constructor", DontEnum | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructor), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
+    { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }
 };
 
 #undef THUNK_GENERATOR
@@ -54,10 +59,15 @@ static JSC_CONST_HASHTABLE HashTable JSTestInterfaceTable = { 2, 1, JSTestInterf
 #else
 #define THUNK_GENERATOR(generator)
 #endif
+#if ENABLE(DFG_JIT)
+#define INTRINSIC(intrinsic) , intrinsic
+#else
+#define INTRINSIC(intrinsic)
+#endif
 
 static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 {
-    { 0, 0, 0, 0 THUNK_GENERATOR(0) }
+    { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }
 };
 
 #undef THUNK_GENERATOR
@@ -133,10 +143,15 @@ ConstructType JSTestInterfaceConstructor::getConstructData(ConstructData& constr
 #else
 #define THUNK_GENERATOR(generator)
 #endif
+#if ENABLE(DFG_JIT)
+#define INTRINSIC(intrinsic) , intrinsic
+#else
+#define INTRINSIC(intrinsic)
+#endif
 
 static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 {
-    { 0, 0, 0, 0 THUNK_GENERATOR(0) }
+    { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }
 };
 
 #undef THUNK_GENERATOR

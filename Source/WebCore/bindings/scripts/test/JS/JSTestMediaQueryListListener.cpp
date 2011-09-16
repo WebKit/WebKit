@@ -40,11 +40,16 @@ ASSERT_CLASS_FITS_IN_CELL(JSTestMediaQueryListListener);
 #else
 #define THUNK_GENERATOR(generator)
 #endif
+#if ENABLE(DFG_JIT)
+#define INTRINSIC(intrinsic) , intrinsic
+#else
+#define INTRINSIC(intrinsic)
+#endif
 
 static const HashTableValue JSTestMediaQueryListListenerTableValues[] =
 {
-    { "constructor", DontEnum | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMediaQueryListListenerConstructor), (intptr_t)0 THUNK_GENERATOR(0) },
-    { 0, 0, 0, 0 THUNK_GENERATOR(0) }
+    { "constructor", DontEnum | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestMediaQueryListListenerConstructor), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
+    { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }
 };
 
 #undef THUNK_GENERATOR
@@ -55,10 +60,15 @@ static JSC_CONST_HASHTABLE HashTable JSTestMediaQueryListListenerTable = { 2, 1,
 #else
 #define THUNK_GENERATOR(generator)
 #endif
+#if ENABLE(DFG_JIT)
+#define INTRINSIC(intrinsic) , intrinsic
+#else
+#define INTRINSIC(intrinsic)
+#endif
 
 static const HashTableValue JSTestMediaQueryListListenerConstructorTableValues[] =
 {
-    { 0, 0, 0, 0 THUNK_GENERATOR(0) }
+    { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }
 };
 
 #undef THUNK_GENERATOR
@@ -118,11 +128,16 @@ bool JSTestMediaQueryListListenerConstructor::getOwnPropertyDescriptor(ExecState
 #else
 #define THUNK_GENERATOR(generator)
 #endif
+#if ENABLE(DFG_JIT)
+#define INTRINSIC(intrinsic) , intrinsic
+#else
+#define INTRINSIC(intrinsic)
+#endif
 
 static const HashTableValue JSTestMediaQueryListListenerPrototypeTableValues[] =
 {
-    { "method", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestMediaQueryListListenerPrototypeFunctionMethod), (intptr_t)1 THUNK_GENERATOR(0) },
-    { 0, 0, 0, 0 THUNK_GENERATOR(0) }
+    { "method", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsTestMediaQueryListListenerPrototypeFunctionMethod), (intptr_t)1 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
+    { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }
 };
 
 #undef THUNK_GENERATOR
