@@ -217,6 +217,8 @@ namespace JSC {
             m_jitCodeForConstructWithArityCheck = constructThunk.addressForCall();
 #if ENABLE(DFG_JIT)
             m_intrinsic = intrinsic;
+#else
+            UNUSED_PARAM(intrinsic);
 #endif
         }
 #endif
