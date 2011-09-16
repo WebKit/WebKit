@@ -34,9 +34,11 @@
 #include "JSEvent.h"
 #include "JSHashChangeEvent.h"
 #include "JSPageTransitionEvent.h"
+#include "JSPopStateEvent.h"
 #include "JSProgressEvent.h"
 #include "JSWebKitAnimationEvent.h"
 #include "PageTransitionEvent.h"
+#include "PopStateEvent.h"
 #include "ProgressEvent.h"
 #include "WebKitAnimationEvent.h"
 #include <runtime/Error.h>

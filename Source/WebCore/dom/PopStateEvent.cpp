@@ -31,8 +31,19 @@
 
 namespace WebCore {
 
+PopStateEventInit::PopStateEventInit()
+{
+    state = SerializedScriptValue::create();
+}
+
 PopStateEvent::PopStateEvent()
     : Event(eventNames().popstateEvent, false, true)
+{
+}
+
+PopStateEvent::PopStateEvent(const AtomicString& type, const PopStateEventInit& initializer)
+    : Event(type, initializer)
+    , m_stateObject(initializer.state)
 {
 }
 
@@ -54,6 +65,11 @@ PassRefPtr<PopStateEvent> PopStateEvent::create()
 PassRefPtr<PopStateEvent> PopStateEvent::create(PassRefPtr<SerializedScriptValue> stateObject)
 {
     return adoptRef(new PopStateEvent(stateObject));
+}
+
+PassRefPtr<PopStateEvent> PopStateEvent::create(const AtomicString& type, const PopStateEventInit& initializer)
+{
+    return adoptRef(new PopStateEvent(type, initializer));
 }
 
 void PopStateEvent::initPopStateEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> stateObject)

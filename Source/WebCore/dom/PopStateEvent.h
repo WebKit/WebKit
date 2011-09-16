@@ -34,11 +34,18 @@ namespace WebCore {
 
 class SerializedScriptValue;
 
+struct PopStateEventInit : public EventInit {
+    PopStateEventInit();
+
+    RefPtr<SerializedScriptValue> state;
+};
+
 class PopStateEvent : public Event {
 public:
     virtual ~PopStateEvent();
     static PassRefPtr<PopStateEvent> create();
     static PassRefPtr<PopStateEvent> create(PassRefPtr<SerializedScriptValue>);
+    static PassRefPtr<PopStateEvent> create(const AtomicString&, const PopStateEventInit&);
     void initPopStateEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue>);
     bool isPopStateEvent() const { return true; }
 
@@ -46,7 +53,9 @@ public:
 
 private:
     PopStateEvent();
+    PopStateEvent(const AtomicString&, const PopStateEventInit&);
     explicit PopStateEvent(PassRefPtr<SerializedScriptValue>);
+
     RefPtr<SerializedScriptValue> m_stateObject;
 };
 

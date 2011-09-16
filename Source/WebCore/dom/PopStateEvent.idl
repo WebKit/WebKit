@@ -27,7 +27,10 @@
 module events {
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-    interface PopStateEvent : Event {
+    interface [
+        CanBeConstructed,
+        CustomConstructFunction
+    ] PopStateEvent : Event {
         void initPopStateEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
                                in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
                                in [Optional=CallWithDefaultValue] boolean cancelableArg, 

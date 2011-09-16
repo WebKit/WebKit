@@ -1,3 +1,16 @@
+2011-09-15  Kentaro Hara  <haraken@google.com>
+
+        Implement a PopStateEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=67977
+
+        Reviewed by Sam Weinig.
+
+        pop-state-event-constructor.html checks the behavior of the PopStateEvent constructor.
+
+        * fast/events/constructors/pop-state-event-constructor-expected.txt: Added.
+        * fast/events/constructors/pop-state-event-constructor.html: Added.
+        * platform/chromium/test_expectations.txt: Skipped pop-state-event-constructor.html, since V8 does not yet have the PopStateEvent constructor.
+
 2011-09-15  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] remove duplicate entries in test_expectations.txt

@@ -1,3 +1,21 @@
+2011-09-15  Kentaro Hara  <haraken@google.com>
+
+        Implement a PopStateEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=67977
+
+        Reviewed by Sam Weinig.
+
+        Test: fast/events/constructors/pop-state-event-constructor.html
+
+        * bindings/generic/EventConstructors.h: Added a definition for the PopStateEvent constructor.
+        * bindings/js/JSEventConstructors.cpp: Added #includes for PopStateEvent.
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEventInit::PopStateEventInit):
+        (WebCore::PopStateEvent::PopStateEvent):
+        (WebCore::PopStateEvent::create):
+        * dom/PopStateEvent.h: Added a definition for PopStateEventInit.
+        * dom/PopStateEvent.idl: Makes PopStateEvent constructible.
+
 2011-09-15  Mihai Parparita  <mihaip@chromium.org>
 
         Fragment navigations should interrupt a provisional load of a different document
