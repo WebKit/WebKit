@@ -98,6 +98,8 @@ public:
     void repaintRectangleInRegions(const LayoutRect&, bool immediate);
 
     LayoutUnit regionLogicalWidthForLine(LayoutUnit position) const;
+    LayoutUnit regionLogicalHeightForLine(LayoutUnit position) const;
+    LayoutUnit regionRemainingLogicalHeightForLine(LayoutUnit position, bool includeBoundaryPoint = true) const;
 
     bool isRegionFittingEnabled() const { return !m_regionFittingDisableCount; }
     void disableRegionFitting() { m_regionFittingDisableCount++; }

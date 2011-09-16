@@ -811,6 +811,11 @@ private:
 
     int applyBeforeBreak(RenderBox* child, int logicalOffset); // If the child has a before break, then return a new yPos that shifts to the top of the next page/column.
     int applyAfterBreak(RenderBox* child, int logicalOffset, MarginInfo& marginInfo); // If the child has an after break, then return a new offset that shifts to the top of the next page/column.
+
+    LayoutUnit logicalPageOffset() const;
+    LayoutUnit pageLogicalHeightForOffset(LayoutUnit offset) const;
+    LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit offset, bool includeBoundaryPoint = true) const;
+
     LayoutUnit adjustForUnsplittableChild(RenderBox* child, LayoutUnit logicalOffset, bool includeMargins = false); // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.
     void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
 

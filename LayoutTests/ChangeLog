@@ -1,3 +1,37 @@
+2011-09-15  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSSRegions] Regions should not slice line box rendering
+        https://bugs.webkit.org/show_bug.cgi?id=66198
+
+        Also updated the results for some older tests that now work correctly.
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/resources/helper.js:
+        (isDebugEnabled):
+        (assertEqualRects):
+        (testBoundingRects):
+        (assertRectContains):
+        (addPageLevelDebugBox):
+        (testContentToRegionsMapping):
+        * fast/regions/text-region-breaks-expected.txt: Added.
+        * fast/regions/text-region-breaks.html: Added.
+        * fast/regions/text-region-split-expected.txt: Added.
+        * fast/regions/text-region-split-horizontal-bt-expected.txt: Added.
+        * fast/regions/text-region-split-horizontal-bt.html: Added.
+        * fast/regions/text-region-split-vertical-expected.txt: Added.
+        * fast/regions/text-region-split-vertical-rl-expected.txt: Added.
+        * fast/regions/text-region-split-vertical-rl.html: Added.
+        * fast/regions/text-region-split-vertical.html: Added.
+        * fast/regions/text-region-split.html: Added.
+        * fast/regions/webkit-flow-floats-inside-regions-bounds-expected.txt:
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-expected.txt:
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-expected.txt:
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.txt:
+        * fast/repaint/japanese-rl-selection-repaint-in-regions.html:
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt:
+
 2011-09-15  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] rebaseline expectations due to r95239

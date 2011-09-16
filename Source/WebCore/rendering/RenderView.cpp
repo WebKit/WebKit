@@ -127,6 +127,7 @@ void RenderView::layout()
     state.m_clipped = false;
     state.m_pageLogicalHeight = m_pageLogicalHeight;
     state.m_pageLogicalHeightChanged = m_pageLogicalHeightChanged;
+    state.m_isPaginated = state.m_pageLogicalHeight;
     m_pageLogicalHeightChanged = false;
     m_layoutState = &state;
 
@@ -715,6 +716,11 @@ void RenderView::pushLayoutState(RenderObject* root)
     ASSERT(m_layoutState == 0);
 
     m_layoutState = new (renderArena()) LayoutState(root);
+}
+
+void RenderView::pushLayoutState(RenderFlowThread* flowThread)
+{
+    m_layoutState = new (renderArena()) LayoutState(m_layoutState, flowThread);
 }
 
 bool RenderView::shouldDisableLayoutStateForSubtree(RenderObject* renderer) const

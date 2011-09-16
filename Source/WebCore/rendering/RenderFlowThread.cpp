@@ -300,8 +300,6 @@ private:
 
 void RenderFlowThread::layout()
 {
-    CurrentRenderFlowThreadMaintainer currentFlowThreadSetter(this);
-
     if (m_regionsInvalidated) {
         m_regionsInvalidated = false;
         if (hasRegions()) {
@@ -330,7 +328,10 @@ void RenderFlowThread::layout()
         }
     }
 
+    CurrentRenderFlowThreadMaintainer currentFlowThreadSetter(this);
+    LayoutStateMaintainer statePusher(view(), this);
     RenderBlock::layout();
+    statePusher.pop();
 }
 
 void RenderFlowThread::computeLogicalWidth()
@@ -514,6 +515,31 @@ LayoutUnit RenderFlowThread::regionLogicalWidthForLine(LayoutUnit position) cons
     return isHorizontalWritingMode() ? region->regionRect().width() : region->regionRect().height();
 }
 
+LayoutUnit RenderFlowThread::regionLogicalHeightForLine(LayoutUnit position) const
+{
+    RenderRegion* region = renderRegionForLine(position);
+    if (!region)
+        return 0;
+
+    return isHorizontalWritingMode() ? region->regionRect().height() : region->regionRect().width();
+}
+
+LayoutUnit RenderFlowThread::regionRemainingLogicalHeightForLine(LayoutUnit position, bool includeBoundaryPoint) const
+{
+    RenderRegion* region = renderRegionForLine(position);
+    if (!region)
+        return 0;
+
+    LayoutUnit regionLogicalBottom = isHorizontalWritingMode() ? region->regionRect().maxY() : region->regionRect().maxX();
+    LayoutUnit remainingHeight = regionLogicalBottom - position;
+    if (includeBoundaryPoint) {
+        // If includeBoundaryPoint is true the line exactly on the top edge of a
+        // region will act as being part of the previous region.
+        LayoutUnit regionHeight = isHorizontalWritingMode() ? region->regionRect().height() : region->regionRect().width();
+        remainingHeight = layoutMod(remainingHeight, regionHeight);
+    }
+    return remainingHeight;
+}
 
 RenderRegion* RenderFlowThread::mapFromFlowToRegion(TransformState& transformState) const
 {

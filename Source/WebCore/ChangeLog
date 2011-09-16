@@ -1,3 +1,58 @@
+2011-09-15  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSSRegions] Regions should not slice line box rendering
+        https://bugs.webkit.org/show_bug.cgi?id=66198
+
+        Created a new LayoutState constructor for the RenderFlowThread. It will
+        set m_isPaginated to true and force a pageHeight if 1. The actual pageHeight is
+        not used, because pageLogicalHeightForOffset will actually redirect the call
+        to RenderFlowThread.
+
+        Removed some of the duplicate code that calculated the page logical offset.
+        Added new methods like logicalPageOffset, pageLogicalHeightForOffset,
+        pageRemainingLogicalHeightForOffset.
+
+        There are still some issues related to incremental layout and different region widths.
+        Those issues will be addressed in different patches.
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/regions/text-region-breaks.html
+               fast/regions/text-region-split-horizontal-bt.html
+               fast/regions/text-region-split-vertical-rl.html
+               fast/regions/text-region-split-vertical.html
+               fast/regions/text-region-split.html
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::isPaginated):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::adjustForRegionFittingIfNeeded):
+        (WebCore::RenderBlock::nextPageLogicalTopExcludingBoundaryPoint):
+        (WebCore::RenderBlock::nextPageLogicalTopIncludingBoundaryPoint):
+        (WebCore::inNormalFlow):
+        (WebCore::RenderBlock::applyBeforeBreak):
+        (WebCore::RenderBlock::applyAfterBreak):
+        (WebCore::RenderBlock::logicalPageOffset):
+        (WebCore::RenderBlock::pageLogicalHeightForOffset):
+        (WebCore::RenderBlock::pageRemainingLogicalHeightForOffset):
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::regionLogicalHeightForLine):
+        (WebCore::RenderFlowThread::regionRemainingLogicalHeightForLine):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pushLayoutState):
+        * rendering/RenderView.h:
+        (WebCore::LayoutStateMaintainer::LayoutStateMaintainer):
+        (WebCore::LayoutStateMaintainer::push):
+
 2011-09-15  Kentaro Hara  <haraken@google.com>
 
         Implement a PopStateEvent constructor for JSC
