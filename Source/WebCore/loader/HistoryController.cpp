@@ -525,6 +525,11 @@ void HistoryController::recursiveUpdateForSameDocumentNavigation()
     if (!m_provisionalItem)
         return;
 
+    // The provisional item may represent a different pending navigation.
+    // Don't commit it if it isn't a same document navigation.
+    if (m_currentItem && !m_currentItem->shouldDoSameDocumentNavigationTo(m_provisionalItem.get()))
+        return;
+
     // Commit the provisional item.
     m_frameLoadComplete = false;
     m_previousItem = m_currentItem;
