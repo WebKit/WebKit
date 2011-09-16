@@ -3747,7 +3747,7 @@ BUG_LEVIN : fast/css/nested-rounded-corners.html = FAIL
 
 // Failing after r95188
 BUG_KEISHI : editing/style/non-inheritable-styles.html = FAIL PASS TEXT
-BUG_KEISHI : inspector/styles/styles-new-API.html = FAIL PASS TEXT
+BUG_KEISHI : inspector/styles/styles-new-API.html = FAIL PASS TEXT TIMEOUT
 BUG_KEISHI : inspector/styles/styles-source-lines.html = FAIL PASS TEXT
 BUG_KEISHI : inspector/styles/styles-update-from-js.html = FAIL PASS TEXT TIMEOUT
 
