@@ -120,6 +120,9 @@ LayoutState::LayoutState(LayoutState* prev, RenderFlowThread* flowThread)
     , m_renderer(flowThread)
 #endif
 {
+#ifdef NDEBUG
+    UNUSED_PARAM(flowThread);
+#endif
 }
 
 LayoutState::LayoutState(RenderObject* root)
