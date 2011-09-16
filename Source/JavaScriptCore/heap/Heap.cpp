@@ -586,8 +586,6 @@ void Heap::markRoots()
     m_handleStack.visit(heapRootVisitor);
     visitor.drain();
 
-    harvestWeakReferences();
-
     // Weak handles must be marked last, because their owners use the set of
     // opaque roots to determine reachability.
     int lastOpaqueRootCount;
@@ -597,6 +595,10 @@ void Heap::markRoots()
         visitor.drain();
     // If the set of opaque roots has grown, more weak handles may have become reachable.
     } while (lastOpaqueRootCount != visitor.opaqueRootCount());
+
+    // Need to call this here because weak handle processing could add weak
+    // reference harvesters.
+    harvestWeakReferences();
 
     visitor.reset();
 

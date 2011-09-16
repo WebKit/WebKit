@@ -1,3 +1,20 @@
+2011-09-16  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION: Reproducible crash below SlotVisitor::harvestWeakReferences
+        using Domino's online ordering
+        https://bugs.webkit.org/show_bug.cgi?id=68220
+
+        Reviewed by Oliver Hunt.
+        
+        Weak handle processing can result in new objects being marked, which
+        results in new WeakReferencesHarvesters being added. But weak
+        reference harvesters are only processed before weak handle processing,
+        so there's the risk that a weak reference harvester will persist
+        until the next collection, by which time it may have been deleted.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+
 2011-09-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r95201): It made two tests fail
