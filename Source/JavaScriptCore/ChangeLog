@@ -1,5 +1,11 @@
 2011-09-16  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed build fix for Windows.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+2011-09-16  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed build fix for non-DFG builds.
 
         * runtime/Executable.h:

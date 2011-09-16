@@ -1565,6 +1565,10 @@
                                 RelativePath="..\..\dfg\DFGDriver.h"
                                 >
                         </File>
+                        <File
+                                RelativePath="..\..\dfg\DFGIntrinsic.h"
+                                >
+                        </File>
                 </Filter>
 		<Filter
 			Name="yarr"
