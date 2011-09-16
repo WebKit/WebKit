@@ -1,5 +1,11 @@
 2011-09-16  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening. Skip a flakey test.
+
+        * platform/qt/Skipped:
+
+2011-09-16  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening. Add Qt specific expexted results for new tests introduced in r95239.
 
         * platform/qt/fast/clip/overflow-border-radius-combinations-expected.png: Added.

@@ -2437,3 +2437,7 @@ inspector/timeline/timeline-enum-stability.html
 # [Qt] One test failed after r95203
 # https://bugs.webkit.org/show_bug.cgi?id=68233
 editing/pasteboard/paste-noscript.html
+
+# [Qt] inspector/timeline/timeline-event-dispatch.html is flakey
+# https://bugs.webkit.org/show_bug.cgi?id=68248
+inspector/timeline/timeline-event-dispatch.html
