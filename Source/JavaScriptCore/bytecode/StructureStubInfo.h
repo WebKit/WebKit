@@ -126,6 +126,8 @@ namespace JSC {
         {
             seen = true;
         }
+        
+        unsigned bytecodeIndex;
 
         int8_t accessType;
         int8_t seen;

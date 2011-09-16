@@ -146,8 +146,16 @@ namespace JSC {
     };
 
     struct PropertyStubCompilationInfo {
+        unsigned bytecodeIndex;
         MacroAssembler::Call callReturnLocation;
         MacroAssembler::Label hotPathBegin;
+        
+#if !ASSERT_DISABLED
+        PropertyStubCompilationInfo()
+            : bytecodeIndex(std::numeric_limits<unsigned>::max())
+        {
+        }
+#endif
     };
 
     struct StructureStubCompilationInfo {
@@ -158,11 +166,13 @@ namespace JSC {
     };
 
     struct MethodCallCompilationInfo {
-        MethodCallCompilationInfo(unsigned propertyAccessIndex)
-            : propertyAccessIndex(propertyAccessIndex)
+        MethodCallCompilationInfo(unsigned bytecodeIndex, unsigned propertyAccessIndex)
+            : bytecodeIndex(bytecodeIndex)
+            , propertyAccessIndex(propertyAccessIndex)
         {
         }
 
+        unsigned bytecodeIndex;
         MacroAssembler::DataLabelPtr structureToCompare;
         unsigned propertyAccessIndex;
     };

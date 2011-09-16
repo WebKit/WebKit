@@ -138,6 +138,11 @@ namespace JSC {
         {
             return OBJECT_OFFSETOF(JSCell, m_structure);
         }
+        
+        void* structureAddress()
+        {
+            return &m_structure;
+        }
 
 #if ENABLE(GC_VALIDATION)
         Structure* unvalidatedStructure() { return m_structure.unvalidatedGet(); }

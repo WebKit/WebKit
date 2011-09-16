@@ -153,6 +153,7 @@ namespace JSC {
             seen = true;
         }
 
+        unsigned bytecodeIndex;
         CodeLocationCall callReturnLocation;
         JITWriteBarrier<Structure> cachedStructure;
         JITWriteBarrier<Structure> cachedPrototypeStructure;
@@ -197,6 +198,11 @@ namespace JSC {
         return structureStubInfo->callReturnLocation.executableAddress();
     }
 
+    inline unsigned getStructureStubInfoBytecodeIndex(StructureStubInfo* structureStubInfo)
+    {
+        return structureStubInfo->bytecodeIndex;
+    }
+
     inline void* getCallLinkInfoReturnLocation(CallLinkInfo* callLinkInfo)
     {
         return callLinkInfo->callReturnLocation.executableAddress();
@@ -205,6 +211,11 @@ namespace JSC {
     inline void* getMethodCallLinkInfoReturnLocation(MethodCallLinkInfo* methodCallLinkInfo)
     {
         return methodCallLinkInfo->callReturnLocation.executableAddress();
+    }
+
+    inline unsigned getMethodCallLinkInfoBytecodeIndex(MethodCallLinkInfo* methodCallLinkInfo)
+    {
+        return methodCallLinkInfo->bytecodeIndex;
     }
 
     inline unsigned getCallReturnOffset(CallReturnOffsetToBytecodeOffset* pc)
@@ -271,6 +282,11 @@ namespace JSC {
             return *(binarySearch<StructureStubInfo, void*, getStructureStubInfoReturnLocation>(m_structureStubInfos.begin(), m_structureStubInfos.size(), returnAddress.value()));
         }
 
+        StructureStubInfo& getStubInfo(unsigned bytecodeIndex)
+        {
+            return *(binarySearch<StructureStubInfo, unsigned, getStructureStubInfoBytecodeIndex>(m_structureStubInfos.begin(), m_structureStubInfos.size(), bytecodeIndex));
+        }
+
         CallLinkInfo& getCallLinkInfo(ReturnAddressPtr returnAddress)
         {
             return *(binarySearch<CallLinkInfo, void*, getCallLinkInfoReturnLocation>(m_callLinkInfos.begin(), m_callLinkInfos.size(), returnAddress.value()));
@@ -279,6 +295,11 @@ namespace JSC {
         MethodCallLinkInfo& getMethodCallLinkInfo(ReturnAddressPtr returnAddress)
         {
             return *(binarySearch<MethodCallLinkInfo, void*, getMethodCallLinkInfoReturnLocation>(m_methodCallLinkInfos.begin(), m_methodCallLinkInfos.size(), returnAddress.value()));
+        }
+
+        MethodCallLinkInfo& getMethodCallLinkInfo(unsigned bytecodeIndex)
+        {
+            return *(binarySearch<MethodCallLinkInfo, unsigned, getMethodCallLinkInfoBytecodeIndex>(m_methodCallLinkInfos.begin(), m_methodCallLinkInfos.size(), bytecodeIndex));
         }
 
         unsigned bytecodeOffset(ReturnAddressPtr returnAddress)

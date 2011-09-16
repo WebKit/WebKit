@@ -85,7 +85,7 @@ public:
     
     void recordGetMethod(NodeIndex getMethod)
     {
-        ASSERT_UNUSED(getMethod, m_graph[getMethod].op == GetMethod);
+        ASSERT_UNUSED(getMethod, m_graph[getMethod].op == GetMethod || m_graph[getMethod].op == CheckMethod);
         m_candidateAliasGetByVal = NoNode;
     }
 

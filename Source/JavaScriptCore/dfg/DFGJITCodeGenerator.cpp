@@ -52,7 +52,7 @@ GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnForm
     if (info.registerFormat() == DataFormatNone) {
         GPRReg gpr = allocate();
 
-        if (node.isConstant()) {
+        if (node.hasConstant()) {
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             if (isInt32Constant(nodeIndex)) {
                 m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
@@ -124,7 +124,7 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
     if (info.registerFormat() == DataFormatNone) {
         GPRReg gpr = allocate();
 
-        if (node.isConstant()) {
+        if (node.hasConstant()) {
             if (isInt32Constant(nodeIndex)) {
                 // FIXME: should not be reachable?
                 m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
@@ -249,7 +249,7 @@ GPRReg JITCodeGenerator::fillJSValue(NodeIndex nodeIndex)
     case DataFormatNone: {
         GPRReg gpr = allocate();
 
-        if (node.isConstant()) {
+        if (node.hasConstant()) {
             if (isInt32Constant(nodeIndex)) {
                 info.fillJSValue(gpr, DataFormatJSInteger);
                 JSValue jsValue = jsNumber(valueOfInt32Constant(nodeIndex));
@@ -404,7 +404,7 @@ bool JITCodeGenerator::isKnownNotInteger(NodeIndex nodeIndex)
     GenerationInfo& info = m_generationInfo[virtualRegister];
     
     return info.isJSDouble() || info.isJSCell() || info.isJSBoolean()
-        || (node.isConstant() && !valueOfJSConstant(nodeIndex).isInt32());
+        || (node.hasConstant() && !valueOfJSConstant(nodeIndex).isInt32());
 }
 
 bool JITCodeGenerator::isKnownNotNumber(NodeIndex nodeIndex)
@@ -414,7 +414,7 @@ bool JITCodeGenerator::isKnownNotNumber(NodeIndex nodeIndex)
     GenerationInfo& info = m_generationInfo[virtualRegister];
     
     return (!info.isJSDouble() && !info.isJSInteger() && !info.isUnknownJS())
-        || (node.isConstant() && !isNumberConstant(nodeIndex));
+        || (node.hasConstant() && !isNumberConstant(nodeIndex));
 }
 
 bool JITCodeGenerator::isKnownBoolean(NodeIndex nodeIndex)

@@ -920,11 +920,33 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             NodeIndex base = get(getInstruction[2].u.operand);
             unsigned identifier = getInstruction[3].u.operand;
+                
+            // Check if the method_check was monomorphic. If so, emit a CheckXYZMethod
+            // node, which is a lot more efficient.
+            StructureStubInfo& stubInfo = m_profiledBlock->getStubInfo(m_currentIndex);
+            MethodCallLinkInfo& methodCall = m_profiledBlock->getMethodCallLinkInfo(m_currentIndex);
             
-            NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), OpInfo(PredictNone), base);
-            set(getInstruction[1].u.operand, getMethod);
-            stronglyPredict(getMethod);
-            aliases.recordGetMethod(getMethod);
+            if (methodCall.seen && !!methodCall.cachedStructure && !stubInfo.seen) {
+                // It's monomorphic as far as we can tell, since the method_check was linked
+                // but the slow path (i.e. the normal get_by_id) never fired.
+            
+                NodeIndex checkMethod = addToGraph(CheckMethod, OpInfo(identifier), OpInfo(m_graph.m_methodCheckData.size()), base);
+                set(getInstruction[1].u.operand, checkMethod);
+                
+                MethodCheckData methodCheckData;
+                methodCheckData.structure = methodCall.cachedStructure.get();
+                methodCheckData.prototypeStructure = methodCall.cachedPrototypeStructure.get();
+                methodCheckData.function = methodCall.cachedFunction.get();
+                methodCheckData.prototype = methodCall.cachedPrototype.get();
+                m_graph.m_methodCheckData.append(methodCheckData);
+                
+                aliases.recordGetMethod(checkMethod);
+            } else {
+                NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), OpInfo(PredictNone), base);
+                set(getInstruction[1].u.operand, getMethod);
+                stronglyPredict(getMethod);
+                aliases.recordGetMethod(getMethod);
+            }
             
             m_currentIndex += OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id);
             continue;

@@ -171,6 +171,7 @@ private:
     macro(PutById, NodeMustGenerate) \
     macro(PutByIdDirect, NodeMustGenerate) \
     macro(GetMethod, NodeResultJS | NodeMustGenerate) \
+    macro(CheckMethod, NodeResultJS | NodeMustGenerate) \
     macro(GetGlobalVar, NodeResultJS | NodeMustGenerate) \
     macro(PutGlobalVar, NodeMustGenerate) \
     \
@@ -297,16 +298,16 @@ struct Node {
     {
         return op == JSConstant;
     }
+    
+    bool hasConstant()
+    {
+        return isConstant() || hasMethodCheckData();
+    }
 
     unsigned constantNumber()
     {
         ASSERT(isConstant());
         return m_opInfo;
-    }
-    
-    JSValue valueOfJSConstant(CodeBlock* codeBlock)
-    {
-        return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
     }
     
     bool isInt32Constant(CodeBlock* codeBlock)
@@ -334,24 +335,6 @@ struct Node {
         return isConstant() && valueOfJSConstant(codeBlock).isBoolean();
     }
     
-    int32_t valueOfInt32Constant(CodeBlock* codeBlock)
-    {
-        ASSERT(isInt32Constant(codeBlock));
-        return valueOfJSConstant(codeBlock).asInt32();
-    }
-    
-    double valueOfNumberConstant(CodeBlock* codeBlock)
-    {
-        ASSERT(isNumberConstant(codeBlock));
-        return valueOfJSConstant(codeBlock).uncheckedGetNumber();
-    }
-    
-    bool valueOfBooleanConstant(CodeBlock* codeBlock)
-    {
-        ASSERT(isBooleanConstant(codeBlock));
-        return valueOfJSConstant(codeBlock).getBoolean();
-    }
-
     bool hasLocal()
     {
         return op == GetLocal || op == SetLocal;
@@ -364,12 +347,21 @@ struct Node {
     }
 
 #if !ASSERT_DISABLED
-    // If we want to use this in production code, should make it faster -
-    // e.g. make hasIdentifier a flag in the bitfield.
     bool hasIdentifier()
     {
-        return op == GetById || op == PutById || op == PutByIdDirect || op == GetMethod
-            || op == Resolve || op == ResolveBase || op == ResolveBaseStrictPut;
+        switch (op) {
+        case GetById:
+        case PutById:
+        case PutByIdDirect:
+        case GetMethod:
+        case CheckMethod:
+        case Resolve:
+        case ResolveBase:
+        case ResolveBaseStrictPut:
+            return true;
+        default:
+            return false;
+        }
     }
 #endif
 
@@ -378,7 +370,7 @@ struct Node {
         ASSERT(hasIdentifier());
         return m_opInfo;
     }
-
+    
     bool hasVarNumber()
     {
         return op == GetGlobalVar || op == PutGlobalVar;
@@ -480,6 +472,17 @@ struct Node {
         return mergePrediction(m_opInfo2, makePrediction(prediction, source));
     }
     
+    bool hasMethodCheckData()
+    {
+        return op == CheckMethod;
+    }
+    
+    unsigned methodCheckDataIndex()
+    {
+        ASSERT(hasMethodCheckData());
+        return m_opInfo2;
+    }
+    
     VirtualRegister virtualRegister()
     {
         ASSERT(hasResult());
@@ -569,6 +572,14 @@ struct Node {
     } children;
 
 private:
+    // This is private because it only works for the JSConstant op. The DFG is written under the
+    // assumption that "valueOfJSConstant" can correctly return a constant for any DFG node for
+    // which hasConstant() is true.
+    JSValue valueOfJSConstant(CodeBlock* codeBlock)
+    {
+        return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
+    }
+
     // The virtual register number (spill location) associated with this .
     VirtualRegister m_virtualRegister;
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).

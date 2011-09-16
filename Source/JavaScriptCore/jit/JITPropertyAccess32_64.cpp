@@ -108,7 +108,7 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     currentInstruction += OPCODE_LENGTH(op_method_check);
     
     // Do the method check - check the object & its prototype's structure inline (this is the common case).
-    m_methodCallCompilationInfo.append(MethodCallCompilationInfo(m_propertyAccessCompilationInfo.size()));
+    m_methodCallCompilationInfo.append(MethodCallCompilationInfo(m_bytecodeOffset, m_propertyAccessCompilationInfo.size()));
     MethodCallCompilationInfo& info = m_methodCallCompilationInfo.last();
     
     int dst = currentInstruction[1].u.operand;
@@ -325,6 +325,7 @@ void JIT::compileGetByIdHotPath()
     
     Label hotPathBegin(this);
     m_propertyAccessCompilationInfo.append(PropertyStubCompilationInfo());
+    m_propertyAccessCompilationInfo.last().bytecodeIndex = m_bytecodeOffset;
     m_propertyAccessCompilationInfo.last().hotPathBegin = hotPathBegin;
     
     DataLabelPtr structureToCompare;
@@ -401,6 +402,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     
     Label hotPathBegin(this);
     m_propertyAccessCompilationInfo.append(PropertyStubCompilationInfo());
+    m_propertyAccessCompilationInfo.last().bytecodeIndex = m_bytecodeOffset;
     m_propertyAccessCompilationInfo.last().hotPathBegin = hotPathBegin;
     
     // It is important that the following instruction plants a 32bit immediate, in order that it can be patched over.

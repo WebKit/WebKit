@@ -628,6 +628,8 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccessCompilationInfo.size());
     for (unsigned i = 0; i < m_propertyAccessCompilationInfo.size(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
+        ASSERT(m_propertyAccessCompilationInfo[i].bytecodeIndex != std::numeric_limits<unsigned>::max());
+        info.bytecodeIndex = m_propertyAccessCompilationInfo[i].bytecodeIndex;
         info.callReturnLocation = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].hotPathBegin);
     }
@@ -643,6 +645,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     m_codeBlock->addMethodCallLinkInfos(methodCallCount);
     for (unsigned i = 0; i < methodCallCount; ++i) {
         MethodCallLinkInfo& info = m_codeBlock->methodCallLinkInfo(i);
+        info.bytecodeIndex = m_methodCallCompilationInfo[i].bytecodeIndex;
         info.cachedStructure.setLocation(patchBuffer.locationOf(m_methodCallCompilationInfo[i].structureToCompare));
         info.callReturnLocation = m_codeBlock->structureStubInfo(m_methodCallCompilationInfo[i].propertyAccessIndex).callReturnLocation;
     }

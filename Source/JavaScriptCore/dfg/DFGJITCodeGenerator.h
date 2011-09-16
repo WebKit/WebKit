@@ -238,12 +238,12 @@ protected:
             return;
         if (!info.needsSpill()) {
             // it's either a constant or it's already been spilled
-            ASSERT(m_jit.graph()[info.nodeIndex()].isConstant() || info.spillFormat() != DataFormatNone);
+            ASSERT(m_jit.graph()[info.nodeIndex()].hasConstant() || info.spillFormat() != DataFormatNone);
             return;
         }
         
         // it's neither a constant nor has it been spilled.
-        ASSERT(!m_jit.graph()[info.nodeIndex()].isConstant());
+        ASSERT(!m_jit.graph()[info.nodeIndex()].hasConstant());
         ASSERT(info.spillFormat() == DataFormatNone);
 
         m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
@@ -262,7 +262,7 @@ protected:
         DataFormat registerFormat = info.registerFormat();
 
         if (registerFormat == DataFormatInteger) {
-            if (node.isConstant()) {
+            if (node.hasConstant()) {
                 ASSERT(isInt32Constant(nodeIndex));
                 m_jit.move(Imm32(valueOfInt32Constant(nodeIndex)), info.gpr());
             } else
@@ -270,7 +270,7 @@ protected:
             return;
         }
 
-        if (node.isConstant())
+        if (node.hasConstant())
             m_jit.move(valueOfJSConstantAsImmPtr(nodeIndex), info.gpr());
         else {
             ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell);
@@ -287,7 +287,7 @@ protected:
         Node& node = m_jit.graph()[nodeIndex];
         ASSERT(info.registerFormat() == DataFormatDouble);
 
-        if (node.isConstant()) {
+        if (node.hasConstant()) {
             ASSERT(isNumberConstant(nodeIndex));
             m_jit.move(JITCompiler::ImmPtr(bitwise_cast<void*>(valueOfNumberConstant(nodeIndex))), canTrample);
             m_jit.movePtrToDouble(canTrample, info.fpr());

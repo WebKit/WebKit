@@ -130,7 +130,7 @@ private:
         
         switch (op) {
         case JSConstant: {
-            changed |= setPrediction(makePrediction(predictionFromValue(node.valueOfJSConstant(m_codeBlock)), StrongPrediction));
+            changed |= setPrediction(makePrediction(predictionFromValue(m_graph.valueOfJSConstant(m_codeBlock, m_compileIndex)), StrongPrediction));
             break;
         }
             
@@ -234,6 +234,12 @@ private:
             changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
             if (isStrongPrediction(node.getPrediction()))
                 changed |= setPrediction(node.getPrediction());
+            break;
+        }
+            
+        case CheckMethod: {
+            changed |= mergeUse(node.child1(), PredictObjectUnknown | StrongPredictionTag);
+            changed |= setPrediction(m_graph.getMethodCheckPrediction(node));
             break;
         }
 

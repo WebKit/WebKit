@@ -57,6 +57,15 @@ struct VariableRecord {
     NodeIndex value;
 };
 
+struct MethodCheckData {
+    // It is safe to refer to these directly because they are shadowed by
+    // the old JIT's CodeBlock's MethodCallLinkInfo.
+    Structure* structure;
+    Structure* prototypeStructure;
+    JSObject* function;
+    JSObject* prototype;
+};
+
 typedef Vector <BlockIndex, 2> PredecessorList;
 
 struct BasicBlock {
@@ -171,6 +180,11 @@ public:
         return m_predictions.getGlobalVarPrediction(varNumber);
     }
     
+    PredictedType getMethodCheckPrediction(Node& node)
+    {
+        return makePrediction(predictionFromCell(m_methodCheckData[node.methodCheckDataIndex()].function), StrongPrediction);
+    }
+    
     PredictedType getPrediction(Node& node)
     {
         Node* nodePtr = &node;
@@ -192,6 +206,8 @@ public:
         case Call:
         case Construct:
             return nodePtr->getPrediction();
+        case CheckMethod:
+            return getMethodCheckPrediction(*nodePtr);
         default:
             return PredictNone;
         }
@@ -200,11 +216,11 @@ public:
     // Helper methods to check nodes for constants.
     bool isConstant(NodeIndex nodeIndex)
     {
-        return at(nodeIndex).isConstant();
+        return at(nodeIndex).hasConstant();
     }
     bool isJSConstant(NodeIndex nodeIndex)
     {
-        return at(nodeIndex).isConstant();
+        return at(nodeIndex).hasConstant();
     }
     bool isInt32Constant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
@@ -225,19 +241,21 @@ public:
     // Helper methods get constant values from nodes.
     JSValue valueOfJSConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
-        return at(nodeIndex).valueOfJSConstant(codeBlock);
+        if (at(nodeIndex).hasMethodCheckData())
+            return JSValue(m_methodCheckData[at(nodeIndex).methodCheckDataIndex()].function);
+        return valueOfJSConstantNode(codeBlock, nodeIndex);
     }
     int32_t valueOfInt32Constant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
-        return at(nodeIndex).valueOfInt32Constant(codeBlock);
+        return valueOfJSConstantNode(codeBlock, nodeIndex).asInt32();
     }
     double valueOfNumberConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
-        return at(nodeIndex).valueOfNumberConstant(codeBlock);
+        return valueOfJSConstantNode(codeBlock, nodeIndex).uncheckedGetNumber();
     }
     bool valueOfBooleanConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
-        return at(nodeIndex).valueOfBooleanConstant(codeBlock);
+        return valueOfJSConstantNode(codeBlock, nodeIndex).getBoolean();
     }
 
 #ifndef NDEBUG
@@ -248,7 +266,13 @@ public:
 
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;
     Vector<NodeIndex, 16> m_varArgChildren;
+    Vector<MethodCheckData> m_methodCheckData;
 private:
+    
+    JSValue valueOfJSConstantNode(CodeBlock* codeBlock, NodeIndex nodeIndex)
+    {
+        return codeBlock->constantRegister(FirstConstantRegisterIndex + at(nodeIndex).constantNumber()).get();
+    }
 
     // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children, and vice versa.
     void refChildren(NodeIndex);

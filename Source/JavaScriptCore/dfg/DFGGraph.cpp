@@ -123,7 +123,7 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     if (op == JSConstant) {
         printf("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
         if (codeBlock) {
-            JSValue value = node.valueOfJSConstant(codeBlock);
+            JSValue value = valueOfJSConstant(codeBlock, nodeIndex);
             printf(" = %s", value.description());
         }
         hasPrinted = true;
@@ -143,10 +143,14 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     if (!skipped) {
         if (node.hasLocal())
             printf("  predicting %s", predictionToString(getPrediction(node.local())));
-        if (node.hasVarNumber())
+        else if (node.hasVarNumber())
             printf("  predicting %s", predictionToString(getGlobalVarPrediction(node.varNumber())));
-        if (node.hasPrediction())
+        else if (node.hasPrediction())
             printf("  predicting %s", predictionToString(node.getPrediction()));
+        else if (node.hasMethodCheckData()) {
+            MethodCheckData& methodCheckData = m_methodCheckData[node.methodCheckDataIndex()];
+            printf("  predicting function %p", methodCheckData.function);
+        }
     }
     
     printf("\n");

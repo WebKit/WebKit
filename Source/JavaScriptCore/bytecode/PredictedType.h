@@ -150,6 +150,7 @@ inline PredictedType makePrediction(PredictedType type, PredictionSource source)
     return type | (source == StrongPrediction ? StrongPredictionTag : 0);
 }
 
+PredictedType predictionFromCell(JSCell*);
 PredictedType predictionFromValue(JSValue);
 
 } // namespace JSC

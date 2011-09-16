@@ -42,7 +42,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
-        if (node.isConstant() && !isInt32Constant(nodeIndex)) {
+        if (node.hasConstant() && !isInt32Constant(nodeIndex)) {
             terminateSpeculativeExecution();
             returnFormat = DataFormatInteger;
             return allocate();
@@ -50,34 +50,34 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
         
         GPRReg gpr = allocate();
 
-        if (node.isConstant()) {
+        if (node.hasConstant()) {
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             ASSERT(isInt32Constant(nodeIndex));
             m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
             info.fillInteger(gpr);
             returnFormat = DataFormatInteger;
             return gpr;
-        } else {
-            DataFormat spillFormat = info.spillFormat();
-            ASSERT(spillFormat & DataFormatJS);
-
-            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-
-            if (spillFormat == DataFormatJSInteger) {
-                // If we know this was spilled as an integer we can fill without checking.
-                if (strict) {
-                    m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
-                    info.fillInteger(gpr);
-                    returnFormat = DataFormatInteger;
-                    return gpr;
-                }
-                m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
-                info.fillJSValue(gpr, DataFormatJSInteger);
-                returnFormat = DataFormatJSInteger;
+        }
+        
+        DataFormat spillFormat = info.spillFormat();
+        ASSERT(spillFormat & DataFormatJS);
+        
+        m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
+        
+        if (spillFormat == DataFormatJSInteger) {
+            // If we know this was spilled as an integer we can fill without checking.
+            if (strict) {
+                m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
+                info.fillInteger(gpr);
+                returnFormat = DataFormatInteger;
                 return gpr;
             }
             m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
+            info.fillJSValue(gpr, DataFormatJSInteger);
+            returnFormat = DataFormatJSInteger;
+            return gpr;
         }
+        m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
 
         // Fill as JSValue, and fall through.
         info.fillJSValue(gpr, DataFormatJSInteger);
@@ -236,7 +236,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
     if (info.registerFormat() == DataFormatNone) {
         GPRReg gpr = allocate();
 
-        if (node.isConstant()) {
+        if (node.hasConstant()) {
             if (isInt32Constant(nodeIndex)) {
                 FPRReg fpr = fprAllocate();
                 m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(static_cast<double>(valueOfInt32Constant(nodeIndex))))), gpr);
@@ -259,14 +259,14 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
             }
             terminateSpeculativeExecution();
             return fprAllocate();
-        } else {
-            DataFormat spillFormat = info.spillFormat();
-            ASSERT(spillFormat & DataFormatJS);
-            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-            m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
-            info.fillJSValue(gpr, spillFormat);
-            unlock(gpr);
         }
+        
+        DataFormat spillFormat = info.spillFormat();
+        ASSERT(spillFormat & DataFormatJS);
+        m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
+        m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
+        info.fillJSValue(gpr, spillFormat);
+        unlock(gpr);
     }
 
     switch (info.registerFormat()) {
@@ -360,7 +360,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
     case DataFormatNone: {
         GPRReg gpr = allocate();
 
-        if (node.isConstant()) {
+        if (node.hasConstant()) {
             JSValue jsValue = valueOfJSConstant(nodeIndex);
             if (jsValue.isCell()) {
                 m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
@@ -425,7 +425,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
     case DataFormatNone: {
         GPRReg gpr = allocate();
 
-        if (node.isConstant()) {
+        if (node.hasConstant()) {
             JSValue jsValue = valueOfJSConstant(nodeIndex);
             if (jsValue.isBoolean()) {
                 m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
@@ -1394,6 +1394,25 @@ void SpeculativeJIT::compile(Node& node)
         cachedGetMethod(baseGPR, resultGPR, scratchGPR, node.identifierNumber());
 
         jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
+        break;
+    }
+        
+    case CheckMethod: {
+        MethodCheckData& methodCheckData = m_jit.graph().m_methodCheckData[node.methodCheckDataIndex()];
+        
+        SpeculateCellOperand base(this, node.child1());
+        GPRTemporary scratch(this); // this needs to be a separate register, unfortunately.
+        GPRReg baseGPR = base.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+        
+        speculationCheck(m_jit.branchPtr(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), JITCompiler::TrustedImmPtr(methodCheckData.structure)));
+        if (methodCheckData.prototype != m_jit.codeBlock()->globalObject()->methodCallDummy()) {
+            m_jit.move(JITCompiler::TrustedImmPtr(methodCheckData.prototype->structureAddress()), scratchGPR);
+            speculationCheck(m_jit.branchPtr(JITCompiler::NotEqual, JITCompiler::Address(scratchGPR), JITCompiler::TrustedImmPtr(methodCheckData.prototypeStructure)));
+        }
+        
+        useChildren(node);
+        initConstantInfo(m_compileIndex);
         break;
     }
 
