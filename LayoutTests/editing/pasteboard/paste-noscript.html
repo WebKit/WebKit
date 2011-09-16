@@ -32,19 +32,19 @@ s.setPosition(p1, 0);
 document.execCommand("Paste");
 
 log(document.getElementById("button1").outerHTML);
-log(document.getElementById("pastehere").childNodes(0).outerHTML);
+log(document.getElementById("pastehere").childNodes[0].outerHTML);
 
 log(document.getElementById("anchor1").outerHTML);
-log(document.getElementById("pastehere").childNodes(3).outerHTML);
+log(document.getElementById("pastehere").childNodes[3].outerHTML);
 
 log(document.getElementById("anchor2").outerHTML);
-log(document.getElementById("pastehere").childNodes(5).outerHTML);
+log(document.getElementById("pastehere").childNodes[5].outerHTML);
 
 log(document.getElementById("iframe1").outerHTML);
-log(document.getElementById("pastehere").childNodes(7).outerHTML);
+log(document.getElementById("pastehere").childNodes[7].outerHTML);
 
 log(document.getElementById("form1").outerHTML);
-log(document.getElementById("pastehere").childNodes(8).outerHTML);
+log(document.getElementById("pastehere").childNodes[8].outerHTML);
 
 function log(str) {
     var li = document.createElement("li");
