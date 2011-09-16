@@ -48,19 +48,16 @@ def parse(file):
         if match:
             name, parameters_string, reply_parameters_string, attributes_string = match.groups()
             if parameters_string:
-                parameters = parse_parameter_string(parameters_string)
+                parameters = parse_parameters_string(parameters_string)
                 for parameter in parameters:
                     parameter.condition = condition
             else:
                 parameters = []
 
-            if attributes_string:
-                attributes = frozenset(attributes_string.split())
-            else:
-                attributes = None
+            attributes = parse_attributes_string(attributes_string)
 
             if reply_parameters_string:
-                reply_parameters = parse_parameter_string(reply_parameters_string)
+                reply_parameters = parse_parameters_string(reply_parameters_string)
                 for reply_parameter in reply_parameters:
                     reply_parameter.condition = condition
             elif reply_parameters_string == '':
@@ -72,5 +69,17 @@ def parse(file):
     return model.MessageReceiver(destination, messages, master_condition)
 
 
-def parse_parameter_string(parameter_string):
-    return [model.Parameter(*type_and_name.rsplit(' ', 1)) for type_and_name in parameter_string.split(', ')]
+def parse_attributes_string(attributes_string):
+    if not attributes_string:
+        return None
+    return attributes_string.split()
+
+
+def parse_parameters_string(parameters_string):
+    parameters = []
+    for parameter_string in parameters_string.split(', '):
+        match = re.search(r'\s*(?:\[(?P<attributes>.*?)\]\s+)?(?P<type_and_name>.*)', parameter_string)
+        attributes_string, type_and_name_string = match.group('attributes', 'type_and_name')
+        parameter_type, parameter_name = type_and_name_string.rsplit(' ', 1)
+        parameters.append(model.Parameter(type=parameter_type, name=parameter_name, attributes=parse_attributes_string(attributes_string)))
+    return parameters

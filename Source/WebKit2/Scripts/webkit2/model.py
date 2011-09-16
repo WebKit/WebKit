@@ -50,7 +50,11 @@ class Message(object):
 
 
 class Parameter(object):
-    def __init__(self, type, name, condition=None):
+    def __init__(self, type, name, attributes=None, condition=None):
         self.type = type
         self.name = name
+        self.attributes = frozenset(attributes or [])
         self.condition = condition
+
+    def has_attribute(self, attribute):
+        return attribute in self.attributes

@@ -1,5 +1,31 @@
 2011-09-15  Adam Roben  <aroben@apple.com>
 
+        Add support for attributes on message parameters
+
+        Parameter attributes are specified as a space-separated list inside square brackets before
+        the parameter's type. WebKit2 doesn't use this, but other projects that use these scripts
+        would like to.
+
+        Fixes <http://webkit.org/b/68219> Would like a way to specify attributes on message
+        parameters
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkit2/messages_unittest.py: Added tests for parameter attributes.
+
+        * Scripts/webkit2/model.py:
+        (Parameter.__init__): Added a new attributes parameter, which is stored in the self.attributes
+        property.
+        (Parameter.has_attribute): Added. Returns true if this parameter has the given attribute.
+
+        * Scripts/webkit2/parser.py:
+        (parse): Moved attributes-parsing code from here...
+        (parse_attributes_string): ...to here.
+        (parse_parameters_string): Renamed from parse_parameter_string. Now also parses parameter
+        attributes.
+
+2011-09-15  Adam Roben  <aroben@apple.com>
+
         Make WebKit2's message-generation model and parser scripts accessible to other projects
 
         We copy them into the build products directory so other projects can find them.
