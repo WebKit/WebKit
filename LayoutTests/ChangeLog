@@ -1,5 +1,11 @@
 2011-09-15  Keishi Hattori  <keishi@webkit.org>
 
+        [chromium] add timeout to test expectation of styles-source-lines.html
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
         [chromium] add timeout to test expectation of styles-new-API.html
 
         * platform/chromium/test_expectations.txt:
