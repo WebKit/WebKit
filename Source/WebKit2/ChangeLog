@@ -1,3 +1,21 @@
+2011-09-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Give local builds of WebProcess different icon to distinguish them from built-in Safari’s WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=68268
+
+        Reviewed by Darin Adler.
+
+        * Configurations/WebProcess.xcconfig: Add an icon in Debug and Release builds.  The empty
+        value for production resulted in WebKit not adding the key to plist at all, which is what
+        we want (but I don't know if it's a supported feature).
+        Also, don't copy the icon file to built framework in production builds.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added WebKit.icns.
+
+        * WebProcess/Info.plist: Added a key for the icon.
+
+        * WebProcess/mac/WebKit.icns: Copied from Websites/webkit.org/images/surfin-safari.icns.
+
 2011-09-16  Anders Carlsson  <andersca@apple.com>
 
         Temporarily remove the WKHitTestResultRef parameter to avoid breaking the WK2 ABI/API

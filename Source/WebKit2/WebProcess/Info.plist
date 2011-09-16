@@ -6,6 +6,8 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleGetInfoString</key>
 	<string>${BUNDLE_VERSION}, Copyright 2003-2011 Apple Inc.</string>
+	<key>CFBundleIconFile</key>
+	<string>${APP_ICON}</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.apple.${PRODUCT_NAME}</string>
 	<key>CFBundleInfoDictionaryVersion</key>

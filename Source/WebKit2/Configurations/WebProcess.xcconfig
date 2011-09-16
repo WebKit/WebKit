@@ -27,3 +27,11 @@ GCC_ENABLE_OBJC_GC = NO;
 PRODUCT_NAME = WebProcess;
 INFOPLIST_FILE = WebProcess/Info.plist;
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks/WebKit2.framework;
+
+APP_ICON = $(APP_ICON_$(CONFIGURATION));
+APP_ICON_Debug = WebKit.icns;
+APP_ICON_Release = WebKit.icns;
+APP_ICON_Production = ;
+
+EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(CONFIGURATION));
+EXCLUDED_SOURCE_FILE_NAMES_Production = WebKit.icns;
