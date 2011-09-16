@@ -1,5 +1,14 @@
 2011-09-16  Renata Hodovan  <reni@webkit.org>
 
+        [Qt] One test failed after r95203
+        https://bugs.webkit.org/show_bug.cgi?id=68233
+
+        Unreviewed gardening.
+
+        * platform/qt/Skipped: failed test is skipped.
+
+2011-09-16  Renata Hodovan  <reni@webkit.org>
+
         [Qt] One test runs out of time after r95091
         https://bugs.webkit.org/show_bug.cgi?id=68232
 
