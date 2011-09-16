@@ -1,3 +1,9 @@
+2011-09-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed typo fix after r95271.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+
 2011-09-16  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] support extensions for remote inspector front-end

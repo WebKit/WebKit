@@ -232,4 +232,4 @@ WebKitDOMTestCallback* wrapTestCallback(WebCore::TestCallback* coreObject)
                                                "core-object", coreObject, NULL));
 }
 } // namespace WebKit
-#endif // ENABLE(SQL_DATABASE)
+#endif /* ENABLE(SQL_DATABASE) */
