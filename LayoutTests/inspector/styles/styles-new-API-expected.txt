@@ -184,6 +184,7 @@ h1: []
 ['border-bottom-style':'solid'] @[undefined-undefined] style
 ['border-left-style':'solid'] @[undefined-undefined] style
 ['border-color':'initial'] @[undefined-undefined] style
+['border-image':'initial'] @[undefined-undefined] style
 ['border-top-width':'0px'] @[undefined-undefined] style
 ['border-right-width':'0px'] @[undefined-undefined] style
 ['border-bottom-width':'0px'] @[undefined-undefined] style
@@ -420,6 +421,7 @@ raw style
 ['border-bottom-style':'solid'] @[undefined-undefined] style
 ['border-left-style':'solid'] @[undefined-undefined] style
 ['border-color':'initial'] @[undefined-undefined] style
+['border-image':'initial'] @[undefined-undefined] style
 ['border-top-width':'1px'] @[undefined-undefined] style
 ['border-right-width':'1px'] @[undefined-undefined] style
 ['border-bottom-width':'1px'] @[undefined-undefined] style
@@ -443,6 +445,7 @@ raw style
 ['border-bottom-style':'solid'] @[undefined-undefined] style
 ['border-left-style':'solid'] @[undefined-undefined] style
 ['border-color':'initial'] @[undefined-undefined] style
+['border-image':'initial'] @[undefined-undefined] style
 ['border-top-width':'1px'] @[undefined-undefined] style
 ['border-right-width':'1px'] @[undefined-undefined] style
 ['border-bottom-width':'1px'] @[undefined-undefined] style

@@ -1,5 +1,16 @@
 2011-09-16  Renata Hodovan  <reni@webkit.org>
 
+        [Qt] Update expecteds of failing tests after r95260 and r95242.
+
+        Unreviewed gardening.
+
+        * editing/style/non-inheritable-styles-expected.txt: after r95242.
+        * fast/dom/constructed-objects-prototypes-expected.txt: after r95260.
+        * inspector/styles/styles-new-API-expected.txt: after r95242.
+        * inspector/styles/styles-source-lines-expected.txt: after r95242.
+
+2011-09-16  Renata Hodovan  <reni@webkit.org>
+
         [Qt] One test failed after r95203
         https://bugs.webkit.org/show_bug.cgi?id=68233
 

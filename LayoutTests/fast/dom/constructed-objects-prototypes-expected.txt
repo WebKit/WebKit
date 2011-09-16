@@ -23,6 +23,8 @@ PASS (new inner.Option()).isInner is true
 PASS (new inner.Option()).constructor.isInner is true
 PASS (new inner.PageTransitionEvent()).isInner is true
 PASS (new inner.PageTransitionEvent()).constructor.isInner is true
+PASS (new inner.PopStateEvent()).isInner is true
+PASS (new inner.PopStateEvent()).constructor.isInner is true
 PASS (new inner.ProgressEvent()).isInner is true
 PASS (new inner.ProgressEvent()).constructor.isInner is true
 PASS (new inner.WebKitAnimationEvent()).isInner is true
