@@ -1,5 +1,65 @@
 2011-09-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r95312.
+        http://trac.webkit.org/changeset/95312
+        https://bugs.webkit.org/show_bug.cgi?id=68277
+
+        It's innocent, innocent I tell you! (Requested by jamesr_ on
+        #webkit).
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TestHooks::beginCommitOnCCThread):
+        (WTF::TestHooks::commitCompleteOnCCThread):
+        (WTF::TestHooks::drawLayersOnCCThread):
+        (WTF::MockLayerTreeHostImpl::create):
+        (WTF::MockLayerTreeHostImpl::beginCommit):
+        (WTF::MockLayerTreeHostImpl::commitComplete):
+        (WTF::MockLayerTreeHostImpl::drawLayers):
+        (WTF::MockLayerTreeHostImpl::MockLayerTreeHostImpl):
+        (WTF::MockLayerTreeHost::create):
+        (WTF::MockLayerTreeHost::createLayerTreeHostImpl):
+        (WTF::MockLayerTreeHost::MockLayerTreeHost):
+        (WTF::CompositorMockWebGraphicsContext3D::create):
+        (WTF::CompositorMockWebGraphicsContext3D::makeContextCurrent):
+        (WTF::CompositorMockWebGraphicsContext3D::createProgram):
+        (WTF::CompositorMockWebGraphicsContext3D::createShader):
+        (WTF::CompositorMockWebGraphicsContext3D::getShaderiv):
+        (WTF::CompositorMockWebGraphicsContext3D::getProgramiv):
+        (WTF::CompositorMockWebGraphicsContext3D::CompositorMockWebGraphicsContext3D):
+        (WTF::MockLayerTreeHostClient::create):
+        (WTF::MockLayerTreeHostClient::animateAndLayout):
+        (WTF::MockLayerTreeHostClient::createCompositorThread):
+        (WTF::MockLayerTreeHostClient::createLayerTreeHostContext3D):
+        (WTF::MockLayerTreeHostClient::createRootLayerPainter):
+        (WTF::MockLayerTreeHostClient::didRecreateGraphicsContext):
+        (WTF::MockLayerTreeHostClient::MockLayerTreeHostClient):
+        (WTF::CCLayerTreeHostTest::postSetNeedsCommitToMainThread):
+        (WTF::CCLayerTreeHostTest::postSetNeedsRedrawToMainThread):
+        (WTF::CCLayerTreeHostTest::CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::onBeginTest):
+        (WTF::CCLayerTreeHostTest::onEndTest):
+        (WTF::CCLayerTreeHostTest::dispatchSetNeedsCommit):
+        (WTF::CCLayerTreeHostTest::dispatchSetNeedsRedraw):
+        (WTF::CCLayerTreeHostTest::runTest):
+        (WTF::CCLayerTreeHostTest::testTimeout):
+        (WTF::CCLayerTreeHostTest::doBeginTest):
+        (WTF::CCLayerTreeHostTestShortlived2::beginTest):
+        (WTF::CCLayerTreeHostTestShortlived3::beginTest):
+        (WTF::CCLayerTreeHostTestCommitingWithContinuousRedraw::beginTest):
+        (WTF::CCLayerTreeHostTestCommitingWithContinuousRedraw::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestCommitingWithContinuousRedraw::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit1::beginTest):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit1::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit1::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit2::beginTest):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit2::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit2::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsRedraw::beginTest):
+        (WTF::CCLayerTreeHostTestSetNeedsRedraw::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsRedraw::commitCompleteOnCCThread):
+
+2011-09-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r95309.
         http://trac.webkit.org/changeset/95309
         https://bugs.webkit.org/show_bug.cgi?id=68271

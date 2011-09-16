@@ -84,7 +84,6 @@ bool CCThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect)
 
 GraphicsContext3D* CCThreadProxy::context()
 {
-    ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -186,8 +185,8 @@ void CCThreadProxy::beginFrameAndCommitOnCCThread()
 {
     TRACE_EVENT("CCThreadProxy::beginFrameAndCommitOnCCThread", this, 0);
     ASSERT(isImplThread());
-    ASSERT_NOT_REACHED();
-    // FIXME: call beginFrameAndCommit on main thread
+    // TEMP HACK so we can exercise this code in unit tests.
+    CCMainThread::postTask(createMainThreadTask(this, &CCThreadProxy::beginFrameAndCommit, 0.0));
 }
 
 void CCThreadProxy::beginFrameAndCommit(double frameBeginTime)
@@ -247,13 +246,15 @@ void CCThreadProxy::setNeedsCommitAndRedrawOnCCThread()
     TRACE_EVENT("CCThreadProxy::setNeedsCommitAndRedrawOnCCThread", this, 0);
     ASSERT(isImplThread());
     ASSERT(m_layerTreeHostImpl);
-    ASSERT_NOT_REACHED();
+    // TEMP HACK so we can exercise this code in unit tests.
+    CCMainThread::postTask(createMainThreadTask(this, &CCThreadProxy::beginFrameAndCommit, 0.0));
 }
 
 void CCThreadProxy::setNeedsRedrawOnCCThread()
 {
     TRACE_EVENT("CCThreadProxy::setNeedsRedrawOnCCThread", this, 0);
-    ASSERT_NOT_REACHED();
+    // TEMP HACK so we can exercise this code in unit tests.
+    drawLayersOnCCThread();
 }
 
 void CCThreadProxy::initializeImplOnCCThread(CCCompletionEvent* completion)
@@ -284,4 +285,4 @@ void CCThreadProxy::layerTreeHostClosedOnCCThread(CCCompletionEvent* completion)
     completion->signal();
 }
 
-}
+} // namespace WebCore
