@@ -73,7 +73,7 @@ _patch2 = {
     "is_obsolete": False,
     "is_patch": True,
     "review": "+",
-    "reviewer_email": "foo@bar.com",
+    "reviewer_email": "reviewer2@webkit.org",
     "commit-queue": "+",
     "committer_email": "non-committer@example.com",
     "attacher_email": "eric@webkit.org",
@@ -247,7 +247,8 @@ class MockBugzillaQueries(object):
         return [self._bugzilla.fetch_bug(78), self._bugzilla.fetch_bug(77)]
 
 
-_mock_reviewer = Reviewer("Foo Bar", "foo@bar.com")
+_mock_reviewers = [Reviewer("Foo Bar", "foo@bar.com"),
+                   Reviewer("Reviewer2", "reviewer2@webkit.org")]
 
 
 # FIXME: Bugzilla is the wrong Mock-point.  Once we have a BugzillaNetwork
@@ -269,7 +270,7 @@ class MockBugzilla(object):
 
     def __init__(self):
         self.queries = MockBugzillaQueries(self)
-        self.committers = CommitterList(reviewers=[_mock_reviewer])
+        self.committers = CommitterList(reviewers=_mock_reviewers)
         self._override_patch = None
 
     def create_bug(self,
@@ -622,7 +623,7 @@ class MockCheckout(object):
         pass
 
     def suggested_reviewers(self, git_commit, changed_files=None):
-        return [_mock_reviewer]
+        return [_mock_reviewers[0]]
 
 
 class MockUser(object):
