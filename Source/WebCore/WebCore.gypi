@@ -6349,9 +6349,7 @@
             'inspector/front-end/ElementsTreeOutline.js',
             'inspector/front-end/EmptyView.js',
             'inspector/front-end/EventListenersSidebarPane.js',
-            'inspector/front-end/ExtensionAPI.js',
             'inspector/front-end/ExtensionAuditCategory.js',
-            'inspector/front-end/ExtensionCommon.js',
             'inspector/front-end/ExtensionPanel.js',
             'inspector/front-end/ExtensionRegistryStub.js',
             'inspector/front-end/ExtensionServer.js',
@@ -6455,11 +6453,15 @@
             'inspector/front-end/popover.css',
             'inspector/front-end/textViewer.css',
             '<@(webinspector_standalone_css_files)',
+            '<@(webinspector_extension_api_files)',
         ],
         'webinspector_standalone_css_files': [
             'inspector/front-end/dataGrid.css',
             'inspector/front-end/inspectorCommon.css',
             'inspector/front-end/networkLogView.css',
+        ],
+        'webinspector_extension_api_files': [
+            'inspector/front-end/ExtensionAPI.js',
         ],
         'webinspector_uglifyjs_files': [
             'inspector/front-end/UglifyJS/parse-js.js',

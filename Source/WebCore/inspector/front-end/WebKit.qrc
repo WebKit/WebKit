@@ -48,7 +48,6 @@
     <file>EventListenersSidebarPane.js</file>
     <file>ExtensionAPI.js</file>
     <file>ExtensionAuditCategory.js</file>
-    <file>ExtensionCommon.js</file>
     <file>ExtensionPanel.js</file>
     <file>ExtensionRegistryStub.js</file>
     <file>ExtensionServer.js</file>

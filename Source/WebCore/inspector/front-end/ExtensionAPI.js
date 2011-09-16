@@ -28,8 +28,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.injectedExtensionAPI = function(InjectedScriptHost, inspectedWindow, injectedScriptId)
+function defineCommonExtensionSymbols(apiPrivate)
 {
+    if (!apiPrivate.audits)
+        apiPrivate.audits = {};
+
+    apiPrivate.audits.Severity = {
+        Info: "info",
+        Warning: "warning",
+        Severe: "severe"
+    };
+
+    if (!apiPrivate.console)
+        apiPrivate.console = {};
+    apiPrivate.console.Severity = {
+        Tip: "tip",
+        Debug: "debug",
+        Log: "log",
+        Warning: "warning",
+        Error: "error"
+    };
+}
+
+function injectedExtensionAPI(injectedScriptId)
+{
+
+var apiPrivate = {};
+
+defineCommonExtensionSymbols(apiPrivate);
 
 // Here and below, all constructors are private to API implementation.
 // For a public type Foo, if internal fields are present, these are on
@@ -588,4 +614,14 @@ webInspector = new InspectorExtensionAPI();
 experimental = window.experimental || {};
 experimental.webInspector = webInspector;
 
+}
+
+function buildExtensionAPIInjectedScript(platformAPI)
+{
+    return "(function(injectedScriptHost, inspectedWindow, injectedScriptId){ " +
+        defineCommonExtensionSymbols.toString() + ";" +
+        injectedExtensionAPI.toString() + ";" +
+        "injectedExtensionAPI(injectedScriptId);" +
+        (platformAPI || "") +
+        "})";
 }

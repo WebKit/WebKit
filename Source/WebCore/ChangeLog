@@ -1,3 +1,30 @@
+2011-09-16  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] support extensions for remote inspector front-end
+        https://bugs.webkit.org/show_bug.cgi?id=67840
+
+        Reviewed by Pavel Feldman.
+
+        - Merge ExtensionCommon.js into ExtensionAPI.js
+        - refactor building of extension API for better reuse
+        - expose interface for extension registration
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ExtensionAPI.js:
+        (defineCommonExtensionSymbols):
+        (buildExtensionAPIInjectedScript):
+        * inspector/front-end/ExtensionCommon.js:
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._addExtensions):
+        (WebInspector.ExtensionServer.prototype._addExtension):
+        (WebInspector.ExtensionServer.prototype._buildExtensionAPIScript):
+        (WebInspector.ExtensionServer.prototype._onWindowMessage):
+        (WebInspector.ExtensionServer.prototype._registerExtension):
+        (WebInspector.ExtensionServer.prototype._expandResourcePath):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-09-16  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: change WebInspector.currentPanel getter/setter to functions.

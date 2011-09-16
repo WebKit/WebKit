@@ -525,61 +525,54 @@ WebInspector.ExtensionServer.prototype = {
 
     _addExtensions: function(extensions)
     {
-        const urlOriginRegExp = new RegExp("([^:]+:\/\/[^/]*)\/"); // Can't use regexp literal here, MinJS chokes on it.
-
         // See ExtensionAPI.js and ExtensionCommon.js for details.
-        InspectorFrontendHost.setExtensionAPI(this._buildExtensionAPIInjectedScript());
-        for (var i = 0; i < extensions.length; ++i) {
-            var extension = extensions[i];
-            try {
-                if (!extension.startPage)
-                    return;
-                var originMatch = urlOriginRegExp.exec(extension.startPage);
-                if (!originMatch) {
-                    console.error("Skipping extension with invalid URL: " + extension.startPage);
-                    continue;
-                }
-                this._allowedOrigins[originMatch[1]] = true;
-                var iframe = document.createElement("iframe");
-                iframe.src = extension.startPage;
-                iframe.style.display = "none";
-                document.body.appendChild(iframe);
-            } catch (e) {
-                console.error("Failed to initialize extension " + extension.startPage + ":" + e);
-            }
-        }
+        InspectorFrontendHost.setExtensionAPI(this._buildExtensionAPIScript());
+        for (var i = 0; i < extensions.length; ++i)
+            this._addExtension(extensions[i].startPage);
     },
 
-    _buildExtensionAPIInjectedScript: function()
+    _addExtension: function(startPage)
     {
-        var resourceTypes = {};
-        var resourceTypeProperties = Object.getOwnPropertyNames(WebInspector.Resource.Type);
-        for (var i = 0; i < resourceTypeProperties.length; ++i) {
-             var propName = resourceTypeProperties[i];
-             var propValue = WebInspector.Resource.Type[propName];
-             if (typeof propValue === "number")
-                 resourceTypes[propName] = WebInspector.Resource.Type.toString(propValue);
+        const urlOriginRegExp = new RegExp("([^:]+:\/\/[^/]*)\/"); // Can't use regexp literal here, MinJS chokes on it.
+
+        try {
+            var originMatch = urlOriginRegExp.exec(startPage);
+            if (!originMatch) {
+                console.error("Skipping extension with invalid URL: " + startPage);
+                return false;
+            }
+            this._allowedOrigins[originMatch[1]] = true;
+            var iframe = document.createElement("iframe");
+            iframe.src = startPage;
+            iframe.style.display = "none";
+            document.body.appendChild(iframe);
+        } catch (e) {
+            console.error("Failed to initialize extension " + startPage + ":" + e);
+            return false;
         }
+        return true;
+    },
+
+    _buildExtensionAPIScript: function()
+    {
         var platformAPI = WebInspector.buildPlatformExtensionAPI ? WebInspector.buildPlatformExtensionAPI() : "";
-        return "(function(){ " +
-            "var apiPrivate = {};" +
-            "(" + WebInspector.commonExtensionSymbols.toString() + ")(apiPrivate);" +
-            "(" + WebInspector.injectedExtensionAPI.toString() + ").apply(this, arguments);" +
-            platformAPI +
-            "})";
+        return buildExtensionAPIInjectedScript(platformAPI);
     },
 
     _onWindowMessage: function(event)
     {
-        if (event.data !== "registerExtension")
-            return;
-        if (!this._allowedOrigins.hasOwnProperty(event.origin)) {
-            if (event.origin !== location.origin) // Just ignore inspector frames.
-                console.error("Ignoring unauthorized client request from " + event.origin);
+        if (event.data === "registerExtension")
+            this._registerExtension(event.origin, event.ports[0]);
+    },
+
+    _registerExtension: function(origin, port)
+    {
+        if (!this._allowedOrigins.hasOwnProperty(origin)) {
+            if (origin !== location.origin) // Just ignore inspector frames.
+                console.error("Ignoring unauthorized client request from " + origin);
             return;
         }
-        var port = event.ports[0];
-        port._extensionOrigin = event.origin;
+        port._extensionOrigin = origin;
         port.addEventListener("message", this._onmessage.bind(this), false);
         port.start();
     },
@@ -620,7 +613,7 @@ WebInspector.ExtensionServer.prototype = {
     {
         if (!resourcePath)
             return;
-        return extensionPath + escape(this._normalizePath(resourcePath));
+        return extensionPath + this._normalizePath(resourcePath);
     },
 
     _normalizePath: function(path)
@@ -677,3 +670,8 @@ WebInspector.addExtensions = function(extensions)
 }
 
 WebInspector.extensionServer = new WebInspector.ExtensionServer();
+
+WebInspector.extensionAPI = {};
+defineCommonExtensionSymbols(WebInspector.extensionAPI);
+
+window.addExtension = WebInspector.extensionServer._addExtension.bind(WebInspector.extensionServer);
