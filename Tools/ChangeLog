@@ -1,3 +1,9 @@
+2011-09-16  Vincent Scheib  <scheib@chromium.org>
+
+        Add Vincent Scheib to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-09-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95285.
