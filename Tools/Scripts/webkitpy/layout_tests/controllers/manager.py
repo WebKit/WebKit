@@ -147,6 +147,9 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
                 if result_type != retry_result_type:
                     actual.append(keywords[retry_result_type])
                     num_flaky += 1
+                # FIXME: break MISSING results into a different category
+                elif 'MISSING' in actual:
+                    num_flaky += 1
                 else:
                     num_regressions += 1
 
