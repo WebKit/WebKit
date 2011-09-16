@@ -223,7 +223,7 @@ public:
         const WebNode& originatingNode,
         WebNavigationPolicy defaultPolicy, bool isRedirect)
     {
-        EXPECT_EQ(false, isRedirect);
+        EXPECT_FALSE(isRedirect);
         return WebNavigationPolicyCurrentTab;
     }
 
