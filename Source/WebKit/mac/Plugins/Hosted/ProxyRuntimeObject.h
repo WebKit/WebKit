@@ -44,7 +44,9 @@ public:
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object.
         // exec->globalData() is also likely wrong.
         JSC::Structure* structure = WebCore::deprecatedGetDOMStructure<ProxyRuntimeObject>(exec);
-        return new (JSC::allocateCell<ProxyRuntimeObject>(*exec->heap())) ProxyRuntimeObject(exec, globalObject, structure, instance);
+        ProxyRuntimeObject* object = new (JSC::allocateCell<ProxyRuntimeObject>(*exec->heap())) ProxyRuntimeObject(exec, globalObject, structure, instance);
+        object->finishCreation(globalObject);
+        return object;
     }
 
     virtual ~ProxyRuntimeObject();

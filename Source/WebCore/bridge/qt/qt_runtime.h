@@ -156,10 +156,11 @@ class QtRuntimeMetaMethod : public QtRuntimeMethod {
 public:
     typedef QtRuntimeMethod Base;
 
-    static QtRuntimeMetaMethod* create(ExecState* exec, const Identifier& n, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature, bool allowPrivate)
+    static QtRuntimeMetaMethod* create(ExecState* exec, const Identifier& name, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature, bool allowPrivate)
     {
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<QtRuntimeMethod>(exec);
-        QtRuntimeMetaMethod* method = new (allocateCell<QtRuntimeMetaMethod>(*exec->heap())) QtRuntimeMetaMethod(exec, domStructure, n, inst, index, signature, allowPrivate);
+        QtRuntimeMetaMethod* method = new (allocateCell<QtRuntimeMetaMethod>(*exec->heap())) QtRuntimeMetaMethod(exec, domStructure, name);
+        method->finishCreation(exec, name, instance, index, signature, allowPrivate);
         return method;
     }
 
@@ -173,7 +174,7 @@ protected:
     QtRuntimeMetaMethodData* d_func() const {return reinterpret_cast<QtRuntimeMetaMethodData*>(d_ptr);}
 
 private:
-    QtRuntimeMetaMethod(ExecState*, Structure*, const Identifier&, PassRefPtr<QtInstance>, int index, const QByteArray&, bool allowPrivate);
+    QtRuntimeMetaMethod(ExecState*, Structure*, const Identifier&);
     void finishCreation(ExecState*, const Identifier&, PassRefPtr<QtInstance>, int index, const QByteArray& signature, bool allowPrivate);
 
     virtual CallType getCallData(CallData&);
@@ -188,10 +189,12 @@ class QtRuntimeConnectionMethod : public QtRuntimeMethod {
 public:
     typedef QtRuntimeMethod Base;
 
-    static QtRuntimeConnectionMethod* create(ExecState* exec, const Identifier& n, bool isConnect, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature)
+    static QtRuntimeConnectionMethod* create(ExecState* exec, const Identifier& name, bool isConnect, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature)
     {
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<QtRuntimeMethod>(exec);
-        return new (allocateCell<QtRuntimeConnectionMethod>(*exec->heap())) QtRuntimeConnectionMethod(exec, domStructure, n, isConnect, inst, index, signature);
+        QtRuntimeConnectionMethod* method = new (allocateCell<QtRuntimeConnectionMethod>(*exec->heap())) QtRuntimeConnectionMethod(exec, domStructure, name);
+        method->finishCreation(exec, name, isConnect, instance, index, signature);
+        return method;
     }
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
@@ -202,7 +205,7 @@ protected:
     QtRuntimeConnectionMethodData* d_func() const {return reinterpret_cast<QtRuntimeConnectionMethodData*>(d_ptr);}
 
 private:
-    QtRuntimeConnectionMethod(ExecState*, Structure*, const Identifier&, bool isConnect, PassRefPtr<QtInstance>, int index, const QByteArray&);
+    QtRuntimeConnectionMethod(ExecState*, Structure*, const Identifier&);
     void finishCreation(ExecState*, const Identifier&, bool isConnect, PassRefPtr<QtInstance>, int index, const QByteArray& signature);
 
     virtual CallType getCallData(CallData&);

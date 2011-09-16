@@ -134,11 +134,13 @@ public:
     {
         ASSERT_UNUSED(globalObject, !structure->globalObject() || structure->globalObject() == globalObject);
         JSCallbackObject* callbackObject = new (allocateCell<JSCallbackObject>(*exec->heap())) JSCallbackObject(exec, structure, classRef, data);
+        callbackObject->finishCreation(exec);
         return callbackObject;
     }
     static JSCallbackObject* create(JSGlobalData& globalData, JSClassRef classRef, Structure* structure)
     {
         JSCallbackObject* callbackObject = new (allocateCell<JSCallbackObject>(globalData.heap)) JSCallbackObject(globalData, classRef, structure);
+        callbackObject->finishCreation(globalData);
         return callbackObject;
     }
 

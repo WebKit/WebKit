@@ -731,12 +731,14 @@ sub GenerateHeader
         push(@headerContent, "    static $className* create(JSC::JSGlobalData& globalData, JSC::Structure* structure, PassRefPtr<$implType> impl, JSDOMWindowShell* windowShell)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl, windowShell);\n");
+        push(@headerContent, "        ptr->finishCreation(globalData, windowShell);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
         push(@headerContent, "    static $className* create(JSC::JSGlobalData& globalData, JSC::Structure* structure, PassRefPtr<$implType> impl)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl);\n");
+        push(@headerContent, "        ptr->finishCreation(globalData, ptr);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } else {

@@ -52,7 +52,6 @@ JSWorkerContextBase::JSWorkerContextBase(JSC::JSGlobalData& globalData, JSC::Str
     : JSDOMGlobalObject(globalData, structure, normalWorld(globalData))
     , m_impl(impl)
 {
-    finishCreation(globalData, this);
 }
 
 void JSWorkerContextBase::finishCreation(JSGlobalData& globalData, JSWorkerContextBase* thisValue)

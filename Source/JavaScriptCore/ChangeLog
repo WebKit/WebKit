@@ -1,3 +1,23 @@
+2011-09-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Unzip initialization lists and constructors in JSCell hierarchy (7/7)
+        https://bugs.webkit.org/show_bug.cgi?id=68122
+
+        Reviewed by Geoffrey Garen.
+
+        Completed the seventh and final level of the refactoring to add finishCreation() 
+        methods to all classes within the JSCell hierarchy with non-trivial 
+        constructor bodies.
+
+        JSCallbackObject was missed in previous patches due to the fact that 
+        it's non-obvious (at least to my script) that it is in the JSCell hierarchy, so 
+        this is just a bit of retroactive cleanup.
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::create):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::JSCallbackObject):
+
 2011-09-15  Filip Pizlo  <fpizlo@apple.com>
 
         The DFG non-speculative JIT is no longer used and should be removed.

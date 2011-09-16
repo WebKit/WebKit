@@ -54,7 +54,6 @@ JSCallbackObject<Parent>::JSCallbackObject(ExecState* exec, Structure* structure
     : Parent(exec->globalData(), structure)
     , m_callbackObjectData(adoptPtr(new JSCallbackObjectData(data, jsClass)))
 {
-    finishCreation(exec);
 }
 
 // Global object constructor.
@@ -64,7 +63,6 @@ JSCallbackObject<Parent>::JSCallbackObject(JSGlobalData& globalData, JSClassRef 
     : Parent(globalData, structure)
     , m_callbackObjectData(adoptPtr(new JSCallbackObjectData(0, jsClass)))
 {
-    finishCreation(globalData);
 }
 
 template <class Parent>
