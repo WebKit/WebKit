@@ -1,3 +1,11 @@
+2011-09-16  Cary Clark  <caryclark@google.com>
+        Unreviewed; new expectations (Skia on Mac)
+        
+        This separates test failures that are specific to CG Mac from failures
+        for Skia on Mac (Leopard only).
+
+        * LayoutTests/platform/chromium/test_expectations.txt:
+
 2011-09-16  James Simonsen  <simonjam@chromium.org>
 
         Fix HTML5 parser's adoption agency algorithm to reparent correctly
