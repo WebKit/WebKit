@@ -3753,3 +3753,6 @@ BUG_KEISHI : inspector/styles/styles-update-from-js.html = FAIL PASS TEXT TIMEOU
 
 // Crashes or timeouts once in a while but never fails
 BUG_KEISHI LINUX : media/video-controls-visible-audio-only.html = PASS TIMEOUT CRASH
+
+// New test added in r95259 looks like it is failing
+BUG_KEISHI : http/tests/history/back-with-fragment-change.php = FAIL
