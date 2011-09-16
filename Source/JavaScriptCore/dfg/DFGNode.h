@@ -151,6 +151,7 @@ private:
     macro(ArithMul, NodeResultNumber) \
     macro(ArithDiv, NodeResultNumber) \
     macro(ArithMod, NodeResultNumber) \
+    macro(ArithAbs, NodeResultNumber) \
     /* Arithmetic operators call ToNumber on their operands. */\
     macro(ValueToNumber, NodeResultNumber | NodeMustGenerate) \
     \

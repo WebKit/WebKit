@@ -22,6 +22,7 @@
 #define Lookup_h
 
 #include "CallFrame.h"
+#include "DFGIntrinsic.h"
 #include "Identifier.h"
 #include "JSGlobalObject.h"
 #include "PropertySlot.h"
@@ -44,6 +45,9 @@ namespace JSC {
         intptr_t value2;
 #if ENABLE(JIT)
         ThunkGenerator generator;
+#if ENABLE(DFG_JIT)
+        DFG::Intrinsic intrinsic;
+#endif
 #endif
     };
 
@@ -58,6 +62,9 @@ namespace JSC {
         void initialize(StringImpl* key, unsigned char attributes, intptr_t v1, intptr_t v2
 #if ENABLE(JIT)
                         , ThunkGenerator generator = 0
+#if ENABLE(DFG_JIT)
+                        , DFG::Intrinsic intrinsic = DFG::NoIntrinsic
+#endif
 #endif
                         )
         {
@@ -67,6 +74,9 @@ namespace JSC {
             m_u.store.value2 = v2;
 #if ENABLE(JIT)
             m_u.function.generator = generator;
+#if ENABLE(DFG_JIT)
+            m_u.function.intrinsic = intrinsic;
+#endif
 #endif
             m_next = 0;
         }
@@ -78,6 +88,15 @@ namespace JSC {
 
 #if ENABLE(JIT)
         ThunkGenerator generator() const { ASSERT(m_attributes & Function); return m_u.function.generator; }
+        DFG::Intrinsic intrinsic() const
+        {
+            ASSERT(m_attributes & Function);
+#if ENABLE(DFG_JIT)
+            return m_u.function.intrinsic;
+#else
+            return DFG::NoIntrinsic;
+#endif
+        }
 #endif
         NativeFunction function() const { ASSERT(m_attributes & Function); return m_u.function.functionValue; }
         unsigned char functionLength() const { ASSERT(m_attributes & Function); return static_cast<unsigned char>(m_u.function.length); }
@@ -104,6 +123,9 @@ namespace JSC {
                 intptr_t length; // number of arguments for function
 #if ENABLE(JIT)
                 ThunkGenerator generator;
+#if ENABLE(DFG_JIT)
+                DFG::Intrinsic intrinsic;
+#endif
 #endif
             } function;
             struct {

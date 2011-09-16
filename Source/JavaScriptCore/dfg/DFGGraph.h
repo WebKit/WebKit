@@ -238,6 +238,14 @@ public:
     {
         return at(nodeIndex).isBooleanConstant(codeBlock);
     }
+    bool isFunctionConstant(CodeBlock* codeBlock, JSGlobalData& globalData, NodeIndex nodeIndex)
+    {
+        if (!isJSConstant(nodeIndex))
+            return false;
+        if (!getJSFunction(globalData, valueOfJSConstant(codeBlock, nodeIndex)))
+            return false;
+        return true;
+    }
     // Helper methods get constant values from nodes.
     JSValue valueOfJSConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
@@ -256,6 +264,12 @@ public:
     bool valueOfBooleanConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
         return valueOfJSConstantNode(codeBlock, nodeIndex).getBoolean();
+    }
+    JSFunction* valueOfFunctionConstant(CodeBlock* codeBlock, JSGlobalData& globalData, NodeIndex nodeIndex)
+    {
+        JSCell* function = getJSFunction(globalData, valueOfJSConstant(codeBlock, nodeIndex));
+        ASSERT(function);
+        return asFunction(function);
     }
 
 #ifndef NDEBUG

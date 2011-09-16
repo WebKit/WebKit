@@ -156,6 +156,10 @@ namespace JSC {
             return hasJITCodeForConstruct();
         }
 
+#if ENABLE(DFG_JIT)
+        virtual DFG::Intrinsic intrinsic() const;
+#endif
+
     protected:
         JITCode m_jitCodeForCall;
         JITCode m_jitCodeForConstruct;
@@ -173,15 +177,15 @@ namespace JSC {
         typedef ExecutableBase Base;
 
 #if ENABLE(JIT)
-        static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodeRef callThunk, NativeFunction function, MacroAssemblerCodeRef constructThunk, NativeFunction constructor)
+        static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodeRef callThunk, NativeFunction function, MacroAssemblerCodeRef constructThunk, NativeFunction constructor, DFG::Intrinsic intrinsic)
         {
             NativeExecutable* executable;
             if (!callThunk) {
                 executable = new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, function, constructor);
-                executable->finishCreation(globalData, JITCode(), JITCode());
+                executable->finishCreation(globalData, JITCode(), JITCode(), intrinsic);
             } else {
                 executable = new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, function, constructor);
-                executable->finishCreation(globalData, JITCode::HostFunction(callThunk), JITCode::HostFunction(constructThunk));
+                executable->finishCreation(globalData, JITCode::HostFunction(callThunk), JITCode::HostFunction(constructThunk), intrinsic);
             }
             return executable;
         }
@@ -204,14 +208,21 @@ namespace JSC {
 
     protected:
 #if ENABLE(JIT)
-        void finishCreation(JSGlobalData& globalData, JITCode callThunk, JITCode constructThunk)
+        void finishCreation(JSGlobalData& globalData, JITCode callThunk, JITCode constructThunk, DFG::Intrinsic intrinsic)
         {
             Base::finishCreation(globalData);
             m_jitCodeForCall = callThunk;
             m_jitCodeForConstruct = constructThunk;
             m_jitCodeForCallWithArityCheck = callThunk.addressForCall();
             m_jitCodeForConstructWithArityCheck = constructThunk.addressForCall();
+#if ENABLE(DFG_JIT)
+            m_intrinsic = intrinsic;
+#endif
         }
+#endif
+        
+#if ENABLE(DFG_JIT)
+        virtual DFG::Intrinsic intrinsic() const;
 #endif
  
     private:
@@ -235,6 +246,8 @@ namespace JSC {
         // Probably should be a NativeConstructor, but this will currently require rewriting the JIT
         // trampoline. It may be easier to make NativeFunction be passed 'this' as a part of the ArgList.
         NativeFunction m_constructor;
+        
+        DFG::Intrinsic m_intrinsic;
     };
 
     class ScriptExecutable : public ExecutableBase {

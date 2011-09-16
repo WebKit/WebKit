@@ -1,3 +1,14 @@
+2011-09-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT should inline Math.abs
+        https://bugs.webkit.org/show_bug.cgi?id=68227
+
+        Reviewed by Oliver Hunt.
+
+        Added JavaScriptCore/dfg to include path path.
+
+        * CMakeLists.txt:
+
 2011-09-16  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [WK2] mouseDidMoveOverElement needs to send more information about hovered element to UiProcess.

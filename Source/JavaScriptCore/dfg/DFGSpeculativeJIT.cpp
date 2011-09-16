@@ -1057,6 +1057,32 @@ void SpeculativeJIT::compile(Node& node)
         integerResult(edx.gpr(), m_compileIndex);
         break;
     }
+        
+    case ArithAbs: {
+        if (shouldSpeculateInteger(node.child1())) {
+            SpeculateIntegerOperand op1(this, node.child1());
+            GPRTemporary result(this, op1);
+            GPRTemporary scratch(this);
+            
+            m_jit.zeroExtend32ToPtr(op1.gpr(), result.gpr());
+            m_jit.rshift32(result.gpr(), MacroAssembler::TrustedImm32(31), scratch.gpr());
+            m_jit.add32(scratch.gpr(), result.gpr());
+            m_jit.xor32(scratch.gpr(), result.gpr());
+            speculationCheck(m_jit.branch32(MacroAssembler::Equal, result.gpr(), MacroAssembler::TrustedImm32(1 << 31)));
+            integerResult(result.gpr(), m_compileIndex);
+            break;
+        }
+        
+        SpeculateDoubleOperand op1(this, node.child1());
+        FPRTemporary result(this);
+        
+        static const double negativeZeroConstant = -0.0;
+        
+        m_jit.loadDouble(&negativeZeroConstant, result.fpr());
+        m_jit.andnotDouble(op1.fpr(), result.fpr());
+        doubleResult(result.fpr(), m_compileIndex);
+        break;
+    }
 
     case LogicalNot: {
         if (isKnownBoolean(node.child1())) {

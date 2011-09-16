@@ -410,9 +410,9 @@ NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function)
 {
     return jitStubs->hostFunctionStub(this, function);
 }
-NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, ThunkGenerator generator)
+NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, ThunkGenerator generator, DFG::Intrinsic intrinsic)
 {
-    return jitStubs->hostFunctionStub(this, function, generator);
+    return jitStubs->hostFunctionStub(this, function, generator, intrinsic);
 }
 #else
 NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function)

@@ -1,5 +1,67 @@
 2011-09-16  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT should inline Math.abs
+        https://bugs.webkit.org/show_bug.cgi?id=68227
+
+        Reviewed by Oliver Hunt.
+        
+        This adds the ability to track intrinsic functions throughout the
+        host function infrastructure, so that the DFG can easily query
+        whether or not a call's target is intrinsic, and if so, which
+        intrinsic it is.
+        
+        On top of this, it adds Math.abs intrinsics to DFG. Call(Math.abs)
+        is transformed into ValueToNumber<-ArithAbs nodes. These nodes
+        then get optimized using the usual tricks.
+        
+        Also had to make a completely unrelated change to
+        DateInstanceCache.h in order to fix a preexisting alphabetical
+        sorting problem in JSGlobalData.h
+        
+        This results in a big win in imaging-gaussian-blur: 61% faster
+        than before. The net win on Kraken is around 13%.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * create_hash_table:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::isFunctionConstant):
+        (JSC::DFG::Graph::valueOfFunctionConstant):
+        * dfg/DFGIntrinsic.h: Added.
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::isFunctionConstant):
+        (JSC::DFG::JITCodeGenerator::valueOfFunctionConstant):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::isFunctionConstant):
+        (JSC::DFG::JITCompiler::valueOfFunctionConstant):
+        * dfg/DFGNode.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITStubs.h:
+        * runtime/DateInstanceCache.h:
+        * runtime/Executable.cpp:
+        (JSC::ExecutableBase::intrinsic):
+        (JSC::NativeExecutable::intrinsic):
+        * runtime/Executable.h:
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::finishCreation):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::getHostFunction):
+        * runtime/JSGlobalData.h:
+        * runtime/Lookup.cpp:
+        (JSC::HashTable::createTable):
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::HashEntry::initialize):
+        (JSC::HashEntry::intrinsic):
+
+2011-09-16  Filip Pizlo  <fpizlo@apple.com>
+
         REGRESSION: Reproducible crash below SlotVisitor::harvestWeakReferences
         using Domino's online ordering
         https://bugs.webkit.org/show_bug.cgi?id=68220

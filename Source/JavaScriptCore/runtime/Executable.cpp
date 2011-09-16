@@ -50,6 +50,13 @@ void ExecutableBase::clearCode()
     m_numParametersForConstruct = NUM_PARAMETERS_NOT_COMPILED;
 }
 
+#if ENABLE(DFG_JIT)
+DFG::Intrinsic ExecutableBase::intrinsic() const
+{
+    return DFG::NoIntrinsic;
+}
+#endif
+
 class ExecutableFinalizer : public WeakHandleOwner {
     virtual void finalize(Handle<Unknown> handle, void*)
     {
@@ -69,6 +76,13 @@ const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase
 NativeExecutable::~NativeExecutable()
 {
 }
+
+#if ENABLE(DFG_JIT)
+DFG::Intrinsic NativeExecutable::intrinsic() const
+{
+    return m_intrinsic;
+}
+#endif
 
 const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase::s_info, 0, 0 };
 

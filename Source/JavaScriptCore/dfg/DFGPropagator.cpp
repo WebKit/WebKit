@@ -215,6 +215,13 @@ private:
             break;
         }
             
+        case ArithAbs: {
+            PredictedType child = m_predictions[node.child1()];
+            if (isStrongPrediction(child))
+                changed |= mergePrediction(child);
+            break;
+        }
+            
         case LogicalNot:
         case CompareLess:
         case CompareLessEq:

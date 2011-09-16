@@ -32,6 +32,7 @@
 #include "DFGCapabilities.h"
 #include "DFGScoreBoard.h"
 #include "CodeBlock.h"
+#include <wtf/MathExtras.h>
 
 namespace JSC { namespace DFG {
 
@@ -49,6 +50,7 @@ public:
         , m_parseFailed(false)
         , m_constantUndefined(UINT_MAX)
         , m_constantNull(UINT_MAX)
+        , m_constantNaN(UINT_MAX)
         , m_constant1(UINT_MAX)
         , m_constants(codeBlock->numberOfConstantRegisters())
         , m_numArguments(codeBlock->m_numParameters)
@@ -64,6 +66,8 @@ public:
     bool parse();
 
 private:
+    // Handle intrinsic functions.
+    bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int firstArg, int lastArg);
     // Parse a single basic block of bytecode instructions.
     bool parseBlock(unsigned limit);
     // Setup predecessor links in the graph's BasicBlocks.
@@ -356,6 +360,34 @@ private:
         return getJSConstant(m_constant1);
     }
     
+    // This method returns a DoubleConstant with the value NaN.
+    NodeIndex constantNaN()
+    {
+        JSValue nan = jsNaN();
+        
+        // Has m_constantNaN been set up yet?
+        if (m_constantNaN == UINT_MAX) {
+            // Search the constant pool for the value NaN, if we find it, we can just reuse this!
+            unsigned numberOfConstants = m_codeBlock->numberOfConstantRegisters();
+            for (m_constantNaN = 0; m_constantNaN < numberOfConstants; ++m_constantNaN) {
+                JSValue testMe = m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNaN);
+                if (JSValue::encode(testMe) == JSValue::encode(nan))
+                    return getJSConstant(m_constantNaN);
+            }
+
+            // Add the value nan to the CodeBlock's constants, and add a corresponding slot in m_constants.
+            ASSERT(m_constants.size() == numberOfConstants);
+            m_codeBlock->addConstant(nan);
+            m_constants.append(ConstantRecord());
+            ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
+        }
+
+        // m_constantNaN must refer to an entry in the CodeBlock's constant pool that has the value nan.
+        ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNaN).isDouble());
+        ASSERT(isnan(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNaN).asDouble()));
+        return getJSConstant(m_constantNaN);
+    }
+    
     CodeOrigin currentCodeOrigin()
     {
         return CodeOrigin(m_currentIndex);
@@ -506,6 +538,7 @@ private:
     // constant pool, as necessary.
     unsigned m_constantUndefined;
     unsigned m_constantNull;
+    unsigned m_constantNaN;
     unsigned m_constant1;
 
     // A constant in the constant pool may be represented by more than one
@@ -568,6 +601,32 @@ private:
 #define LAST_OPCODE(name) \
     m_currentIndex += OPCODE_LENGTH(name); \
     return !m_parseFailed
+
+bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrinsic intrinsic, int firstArg, int lastArg)
+{
+    switch (intrinsic) {
+    case AbsIntrinsic: {
+        if (!usesResult) {
+            // There is no such thing as executing abs for effect, so this
+            // is dead code.
+            return true;
+        }
+        
+        // We don't care about the this argument. If we don't have a first
+        // argument then make this JSConstant(NaN).
+        int absArg = firstArg + 1;
+        if (absArg > lastArg)
+            set(resultOperand, constantNaN());
+        else
+            set(resultOperand, addToGraph(ArithAbs, getToNumber(absArg)));
+        return true;
+    }
+        
+    default:
+        ASSERT(intrinsic == NoIntrinsic);
+        return false;
+    }
+}
 
 bool ByteCodeParser::parseBlock(unsigned limit)
 {
@@ -1169,6 +1228,30 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_end);
             
         case op_call: {
+            NodeIndex callTarget = get(currentInstruction[1].u.operand);
+            if (m_graph.isFunctionConstant(m_codeBlock, *m_globalData, callTarget)) {
+                int argCount = currentInstruction[2].u.operand;
+                int registerOffset = currentInstruction[3].u.operand;
+                int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
+                int lastArg = firstArg + argCount - 1;
+                
+                // Do we have a result?
+                bool usesResult = false;
+                int resultOperand = 0; // make compiler happy
+                Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
+                if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
+                    resultOperand = putInstruction[1].u.operand;
+                    usesResult = true;
+                }
+                
+                DFG::Intrinsic intrinsic = m_graph.valueOfFunctionConstant(m_codeBlock, *m_globalData, callTarget)->executable()->intrinsic();
+                
+                if (handleIntrinsic(usesResult, resultOperand, intrinsic, firstArg, lastArg)) {
+                    // NEXT_OPCODE() has to be inside braces.
+                    NEXT_OPCODE(op_call);
+                }
+            }
+            
             NodeIndex call = addCall(interpreter, currentInstruction, Call);
             aliases.recordCall(call);
             NEXT_OPCODE(op_call);
