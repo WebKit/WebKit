@@ -1,3 +1,19 @@
+2011-09-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed undetectable style.filter.
+
+        Reviewed by Sam Weinig.
+        
+        This feature was added in http://trac.webkit.org/changeset/15557 to
+        support housingmaps.com. But housingmaps.com no longer needs this hack,
+        we don't know of other websites that need it, and we don't know of
+        any other browsers that have implemented this feature.
+
+        * ForwardingHeaders/runtime/StringObjectThatMasqueradesAsUndefined.h: Removed.
+        * WebCore.order:
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::nameGetter):
+
 2011-09-16  Adam Barth  <abarth@webkit.org>
 
         Update JSC results to account for intrinsics change.

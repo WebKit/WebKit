@@ -1146,10 +1146,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\StringObjectThatMasqueradesAsUndefined.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\StringPrototype.cpp"
 				>
 			</File>

@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-    static const unsigned MasqueradesAsUndefined = 1; // WebCore uses MasqueradesAsUndefined to make document.all and style.filter undetectable.
+    static const unsigned MasqueradesAsUndefined = 1; // WebCore uses MasqueradesAsUndefined to make document.all undetectable.
     static const unsigned ImplementsHasInstance = 1 << 1;
     static const unsigned OverridesHasInstance = 1 << 2;
     static const unsigned ImplementsDefaultHasInstance = 1 << 3;

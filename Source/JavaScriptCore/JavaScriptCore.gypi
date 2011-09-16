@@ -116,7 +116,6 @@
             'runtime/SmallStrings.h',
             'runtime/StorageBarrier.h',
             'runtime/StringObject.h',
-            'runtime/StringObjectThatMasqueradesAsUndefined.h',
             'runtime/StringPrototype.h',
             'runtime/Structure.h',
             'runtime/StructureChain.h',

@@ -566,7 +566,6 @@
 		BC18C4660E16F5CD00B34460 /* StringConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C3C10E16EE3300B34460 /* StringConstructor.h */; };
 		BC18C4670E16F5CD00B34460 /* StringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = E11D51750B2E798D0056C188 /* StringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4680E16F5CD00B34460 /* StringObject.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C3C30E16EE3300B34460 /* StringObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C4690E16F5CD00B34460 /* StringObjectThatMasqueradesAsUndefined.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C3C40E16EE3300B34460 /* StringObjectThatMasqueradesAsUndefined.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C46A0E16F5CD00B34460 /* StringPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C3C60E16EE3300B34460 /* StringPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C46B0E16F5CD00B34460 /* SymbolTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A396A60CD2933100B5B4FF /* SymbolTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C46C0E16F5CD00B34460 /* TCPackedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA479650CFBCF56009328A0 /* TCPackedCache.h */; };
@@ -1267,7 +1266,6 @@
 		BC18C3C10E16EE3300B34460 /* StringConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConstructor.h; sourceTree = "<group>"; };
 		BC18C3C20E16EE3300B34460 /* StringObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringObject.cpp; sourceTree = "<group>"; };
 		BC18C3C30E16EE3300B34460 /* StringObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringObject.h; sourceTree = "<group>"; };
-		BC18C3C40E16EE3300B34460 /* StringObjectThatMasqueradesAsUndefined.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringObjectThatMasqueradesAsUndefined.h; sourceTree = "<group>"; };
 		BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringPrototype.cpp; sourceTree = "<group>"; };
 		BC18C3C60E16EE3300B34460 /* StringPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringPrototype.h; sourceTree = "<group>"; };
 		BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayPrototype.lut.h; sourceTree = "<group>"; };
@@ -2155,7 +2153,6 @@
 				BC18C3C10E16EE3300B34460 /* StringConstructor.h */,
 				BC18C3C20E16EE3300B34460 /* StringObject.cpp */,
 				BC18C3C30E16EE3300B34460 /* StringObject.h */,
-				BC18C3C40E16EE3300B34460 /* StringObjectThatMasqueradesAsUndefined.h */,
 				BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */,
 				BC18C3C60E16EE3300B34460 /* StringPrototype.h */,
 				93345A8712D838C400302BE3 /* StringRecursionChecker.cpp */,
@@ -2730,7 +2727,6 @@
 				86B99AE4117E578100DF5A90 /* StringImplBase.h in Headers */,
 				71DA9D82134F3F3D00B767E7 /* StringOperators.h in Headers */,
 				BC18C4680E16F5CD00B34460 /* StringObject.h in Headers */,
-				BC18C4690E16F5CD00B34460 /* StringObjectThatMasqueradesAsUndefined.h in Headers */,
 				BC18C46A0E16F5CD00B34460 /* StringPrototype.h in Headers */,
 				BC18C5260E16FCA700B34460 /* StringPrototype.lut.h in Headers */,
 				142E313B134FF0A600AFADB5 /* Strong.h in Headers */,

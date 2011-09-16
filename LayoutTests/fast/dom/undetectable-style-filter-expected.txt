@@ -1,5 +1,0 @@
-This page tests whether the CSS 'filter' property is undetectable. If the test passes, you'll see a series of 'PASS' messages below.
-
-PASS: typeof document.body.style.filter should be undefined and is.
-PASS: document.body.style.filter ? true : false should be false and is.
-PASS: document.body.style.filter == undefined should be true and is.
