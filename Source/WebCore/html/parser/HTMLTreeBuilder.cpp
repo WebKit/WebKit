@@ -1665,7 +1665,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
             if (lastNode == furthestBlock)
                 bookmark.moveToAfter(nodeEntry);
             // 6.6
-            if (Element* parent = lastNode->element()->parentElement())
+            if (ContainerNode* parent = lastNode->element()->parentNode())
                 parent->parserRemoveChild(lastNode->element());
             node->element()->parserAddChild(lastNode->element());
             if (lastNode->element()->parentElement()->attached() && !lastNode->element()->attached())
@@ -1675,7 +1675,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
         }
         // 7
         const AtomicString& commonAncestorTag = commonAncestor->localName();
-        if (Element* parent = lastNode->element()->parentElement())
+        if (ContainerNode* parent = lastNode->element()->parentNode())
             parent->parserRemoveChild(lastNode->element());
         // FIXME: If this moves to HTMLConstructionSite, this check should use
         // causesFosterParenting(tagName) instead.
