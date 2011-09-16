@@ -1,3 +1,13 @@
+2011-09-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95285.
+        http://trac.webkit.org/changeset/95285
+        https://bugs.webkit.org/show_bug.cgi?id=68247
+
+        It broke a webkitpy test (Requested by ossy on #webkit).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+
 2011-09-16  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         Buildbot marks a nrwt bot red when tests are missing results
