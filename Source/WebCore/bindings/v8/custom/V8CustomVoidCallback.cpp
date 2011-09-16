@@ -83,9 +83,7 @@ bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8
 
     v8::Handle<v8::Object> thisObject = v8::Context::GetCurrent()->Global();
 
-    Page* page = scriptExecutionContext && scriptExecutionContext->isDocument() ? static_cast<Document*>(scriptExecutionContext)->page() : 0;
-    v8::Handle<v8::Value> result = V8Proxy::instrumentedCallFunction(page, callbackFunction, thisObject, argc, argv);
-
+    v8::Handle<v8::Value> result = callbackFunction->Call(thisObject, argc, argv);
     callbackReturnValue = !result.IsEmpty() && result->BooleanValue();
     return exceptionCatcher.HasCaught();
 }

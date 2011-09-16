@@ -182,13 +182,6 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createParseHTMLData(unsigned 
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createAnimationFrameCallbackData(int callbackId)
-{
-    RefPtr<InspectorObject> data = InspectorObject::create();
-    data->setNumber("id", callbackId);
-    return data.release();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

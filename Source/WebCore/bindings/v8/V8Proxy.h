@@ -57,7 +57,6 @@ namespace WebCore {
     class DOMWindow;
     class Frame;
     class Node;
-    class Page;
     class ScriptExecutionContext;
     class ScriptSourceCode;
     class SecurityOrigin;
@@ -173,9 +172,6 @@ namespace WebCore {
 
         // Call the function with the given receiver and arguments.
         static v8::Local<v8::Value> callFunctionWithoutFrame(v8::Handle<v8::Function>, v8::Handle<v8::Object>, int argc, v8::Handle<v8::Value> argv[]);
-
-        // Call the function with the given receiver and arguments and report times to the "InspectorInstrumentation".
-        static v8::Local<v8::Value> instrumentedCallFunction(Page*, v8::Handle<v8::Function>, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[]);
 
         // Call the function as constructor with the given arguments.
         v8::Local<v8::Value> newInstance(v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);

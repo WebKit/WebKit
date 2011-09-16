@@ -119,12 +119,7 @@ public:
     void didFinishLoadingResource(unsigned long, bool didFail, double finishTime);
     void willReceiveResourceData(unsigned long identifier);
     void didReceiveResourceData();
-
-    void didRegisterAnimationFrameCallback(int callbackId);
-    void didCancelAnimationFrameCallback(int callbackId);
-    void willFireAnimationFrameEvent(int callbackId);
-    void didFireAnimationFrameEvent();
-
+        
     virtual void didGC(double, double, size_t);
 
 private:

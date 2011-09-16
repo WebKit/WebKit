@@ -477,9 +477,23 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
             return result;
         }
 
+        InspectorInstrumentationCookie cookie;
+        if (InspectorInstrumentation::hasFrontends()) {
+            v8::ScriptOrigin origin = function->GetScriptOrigin();
+            String resourceName("undefined");
+            int lineNumber = 1;
+            if (!origin.ResourceName().IsEmpty()) {
+                resourceName = toWebCoreString(origin.ResourceName());
+                lineNumber = function->GetScriptLineNumber() + 1;
+            }
+            cookie = InspectorInstrumentation::willCallFunction(m_frame, resourceName, lineNumber);
+        }
+
         m_recursion++;
-        result = V8Proxy::instrumentedCallFunction(m_frame->page(), function, receiver, argc, args);
+        result = function->Call(receiver, argc, args);
         m_recursion--;
+
+        InspectorInstrumentation::didCallFunction(cookie);
     }
 
     // Release the storage mutex if applicable.
@@ -499,24 +513,6 @@ v8::Local<v8::Value> V8Proxy::callFunctionWithoutFrame(v8::Handle<v8::Function> 
     if (v8::V8::IsDead())
         handleFatalErrorInV8();
 
-    return result;
-}
-
-v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Page* page, v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
-{
-    InspectorInstrumentationCookie cookie;
-    if (InspectorInstrumentation::hasFrontends()) {
-        String resourceName("undefined");
-        int lineNumber = 1;
-        v8::ScriptOrigin origin = function->GetScriptOrigin();
-        if (!origin.ResourceName().IsEmpty()) {
-            resourceName = toWebCoreString(origin.ResourceName());
-            lineNumber = function->GetScriptLineNumber() + 1;
-        }
-        cookie = InspectorInstrumentation::willCallFunction(page, resourceName, lineNumber);
-    }
-    v8::Local<v8::Value> result = function->Call(receiver, argc, args);
-    InspectorInstrumentation::didCallFunction(cookie);
     return result;
 }
 

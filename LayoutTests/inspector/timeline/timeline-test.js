@@ -2,18 +2,17 @@ var initialize_Timeline = function() {
 
 // Scrub values when printing out these properties in the record or data field.
 InspectorTest.timelineNonDeterministicProps = { 
-    children: 1,
-    endTime: 1,
-    height: 1,
-    requestId: 1,
-    startTime: 1,
-    width: 1,
+    children : 1,
+    endTime : 1, 
+    height : 1,
+    requestId : 1,
+    startTime : 1,
+    width : 1,
     stackTrace: 1,
-    url: 1,
+    url : 1,
     usedHeapSize: 1,
     totalHeapSize: 1,
-    mimeType: 1,
-    id: 1
+    mimeType : 1
 };
 
 InspectorTest.startTimeline = function(callback)

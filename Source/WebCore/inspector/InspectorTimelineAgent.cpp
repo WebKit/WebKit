@@ -52,7 +52,6 @@ static const char timelineAgentEnabled[] = "timelineAgentEnabled";
 static const char timelineMaxCallStackDepth[] = "timelineMaxCallStackDepth";
 }
 
-// Must be kept in sync with TimelineAgent.js
 namespace TimelineRecordType {
 static const char EventDispatch[] = "EventDispatch";
 static const char Layout[] = "Layout";
@@ -82,10 +81,6 @@ static const char XHRLoad[] = "XHRLoad";
 
 static const char FunctionCall[] = "FunctionCall";
 static const char GCEvent[] = "GCEvent";
-
-static const char RegisterAnimationFrameCallback[] = "RegisterAnimationFrameCallback";
-static const char CancelAnimationFrameCallback[] = "CancelAnimationFrameCallback";
-static const char FireAnimationFrameEvent[] = "FireAnimationFrameEvent";
 }
 
 void InspectorTimelineAgent::pushGCEventRecords()
@@ -347,26 +342,6 @@ void InspectorTimelineAgent::didMarkLoadEvent()
 void InspectorTimelineAgent::didCommitLoad()
 {
     clearRecordStack();
-}
-
-void InspectorTimelineAgent::didRegisterAnimationFrameCallback(int callbackId)
-{
-    appendRecord(TimelineRecordFactory::createAnimationFrameCallbackData(callbackId), TimelineRecordType::RegisterAnimationFrameCallback);
-}
-
-void InspectorTimelineAgent::didCancelAnimationFrameCallback(int callbackId)
-{
-    appendRecord(TimelineRecordFactory::createAnimationFrameCallbackData(callbackId), TimelineRecordType::CancelAnimationFrameCallback);
-}
-
-void InspectorTimelineAgent::willFireAnimationFrameEvent(int callbackId)
-{
-    pushCurrentRecord(TimelineRecordFactory::createAnimationFrameCallbackData(callbackId), TimelineRecordType::FireAnimationFrameEvent);
-}
-
-void InspectorTimelineAgent::didFireAnimationFrameEvent()
-{
-    didCompleteCurrentRecord(TimelineRecordType::FireAnimationFrameEvent);
 }
 
 void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, const String& type)
