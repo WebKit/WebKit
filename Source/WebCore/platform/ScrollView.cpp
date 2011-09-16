@@ -280,6 +280,8 @@ void ScrollView::setUseFixedLayout(bool enable)
 
 IntSize ScrollView::contentsSize() const
 {
+    if (platformWidget())
+        return platformContentsSize();
     return m_contentsSize;
 }
 
@@ -1322,6 +1324,11 @@ bool ScrollView::platformCanBlitOnScroll() const
 IntRect ScrollView::platformVisibleContentRect(bool) const
 {
     return IntRect();
+}
+
+IntSize ScrollView::platformContentsSize() const
+{
+    return IntSize();
 }
 
 void ScrollView::platformSetContentsSize()

@@ -1,3 +1,20 @@
+2011-09-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95227.
+        http://trac.webkit.org/changeset/95227
+        https://bugs.webkit.org/show_bug.cgi?id=68262
+
+        Broke a bunch of SVG tests (Requested by andersca on #webkit).
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::contentsSize):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformContentsSize):
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::platformContentsSize):
+
 2011-09-16  James Simonsen  <simonjam@chromium.org>
 
         Fix HTML5 parser's adoption agency algorithm to reparent correctly
