@@ -1,3 +1,11 @@
+2011-09-16  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] Rebaselines due to r95203 and r95207.
+
+        * platform/chromium-cg-mac-leopard/fast/box-shadow/no-blur-multiple-offsets-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-09-16  Renata Hodovan  <reni@webkit.org>
 
         [Qt] Update expecteds of failing tests after r95260 and r95242.
