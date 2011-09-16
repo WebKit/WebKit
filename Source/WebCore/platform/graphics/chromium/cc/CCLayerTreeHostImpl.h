@@ -46,12 +46,12 @@ public:
     static PassOwnPtr<CCLayerTreeHostImpl> create(const CCSettings&);
     virtual ~CCLayerTreeHostImpl();
 
-    // Virtual for testing
     virtual void beginCommit();
     virtual void commitComplete();
-    virtual void drawLayers();
 
     GraphicsContext3D* context();
+
+    void drawLayers();
 
     void finishAllRendering();
     int frameNumber() const { return m_frameNumber; }

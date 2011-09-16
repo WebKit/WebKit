@@ -1,3 +1,64 @@
+2011-09-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95309.
+        http://trac.webkit.org/changeset/95309
+        https://bugs.webkit.org/show_bug.cgi?id=68271
+
+        Broke many chromium gpu tests. (Requested by dave_levin on
+        #webkit).
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::animateAndLayout):
+        (WTF::CCLayerTreeHostTest::beginCommitOnCCThread):
+        (WTF::CCLayerTreeHostTest::beginCommitOnMainThread):
+        (WTF::CCLayerTreeHostTest::commitOnCCThread):
+        (WTF::CCLayerTreeHostTest::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTest::commitCompleteOnMainThread):
+        (WTF::CCLayerTreeHostTest::drawLayersAndPresentOnCCThread):
+        (WTF::CCLayerTreeHostTest::updateLayers):
+        (WTF::CCLayerTreeHostTest::onBeginTest):
+        (WTF::CCLayerTreeHostTest::doEndTest):
+        (WTF::CCLayerTreeHostTest::onEndTest):
+        (WTF::CCLayerTreeHostTest::runTest):
+        (WTF::CCLayerTreeHostTest::testTimeout):
+        (WTF::MockLayerTreeHostClient::MockLayerTreeHostClient):
+        (WTF::MockLayerTreeHostClient::createLayerTreeHostContext3D):
+        (WTF::MockLayerTreeHostClient::animateAndLayout):
+        (WTF::MockLayerTreeHostClient::updateLayers):
+        (WTF::MockLayerTreeHostCommitter::create):
+        (WTF::MockLayerTreeHostCommitter::commit):
+        (WTF::MockLayerTreeHostCommitter::MockLayerTreeHostCommitter):
+        (WTF::MockLayerTreeHostImpl::create):
+        (WTF::MockLayerTreeHostImpl::beginCommit):
+        (WTF::MockLayerTreeHostImpl::commitComplete):
+        (WTF::MockLayerTreeHostImpl::drawLayersAndPresent):
+        (WTF::MockLayerTreeHostImpl::MockLayerTreeHostImpl):
+        (WTF::MockLayerTreeHostImplProxy::create):
+        (WTF::MockLayerTreeHostImplProxy::createLayerTreeHostImpl):
+        (WTF::MockLayerTreeHostImplProxy::MockLayerTreeHostImplProxy):
+        (WTF::MockLayerTreeHost::MockLayerTreeHost):
+        (WTF::MockLayerTreeHost::createLayerTreeHostImplProxy):
+        (WTF::MockLayerTreeHost::updateLayers):
+        (WTF::MockLayerTreeHost::createLayerTreeHostCommitter):
+        (WTF::MockLayerTreeHost::beginCommit):
+        (WTF::MockLayerTreeHost::commitComplete):
+        (WTF::CCLayerTreeHostTest::doBeginTest):
+        (WTF::CCLayerTreeHostTestShortlived2::beginTest):
+        (WTF::CCLayerTreeHostTestShortlived3::beginTest):
+        (WTF::CCLayerTreeHostTestCommitingWithContinuousRedraw::beginTest):
+        (WTF::CCLayerTreeHostTestCommitingWithContinuousRedraw::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestCommitingWithContinuousRedraw::drawLayersAndPresentOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit1::beginTest):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit1::drawLayersAndPresentOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit1::commitOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit2::beginTest):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit2::drawLayersAndPresentOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsCommit2::commitOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsRedraw::beginTest):
+        (WTF::CCLayerTreeHostTestSetNeedsRedraw::drawLayersAndPresentOnCCThread):
+        (WTF::CCLayerTreeHostTestSetNeedsRedraw::commitOnCCThread):
+
 2011-09-16  Iain Merrick  <husky@google.com>
 
         [chromium] Fix CCLayerTreeHostTest

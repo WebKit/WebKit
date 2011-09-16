@@ -148,7 +148,6 @@ LayerRendererChromium::LayerRendererChromium(CCLayerTreeHostImpl* owner,
     , m_currentRenderSurface(0)
     , m_offscreenFramebufferId(0)
     , m_zoomAnimatorScale(1)
-    , m_contentsTextureMemoryUseBytes(0)
     , m_context(context)
     , m_defaultRenderSurface(0)
     , m_sharedGeometryQuad(FloatRect(-0.5f, -0.5f, 1.0f, 1.0f))

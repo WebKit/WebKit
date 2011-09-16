@@ -99,7 +99,7 @@ public:
     void commitTo(CCLayerTreeHostImpl*);
     PassOwnPtr<CCThread> createCompositorThread();
     PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D();
-    virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl();
+    PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl();
     void didRecreateGraphicsContext(bool success);
 #if !USE(THREADED_COMPOSITING)
     void scheduleComposite();
@@ -154,7 +154,6 @@ public:
 
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, PassRefPtr<LayerChromium> rootLayer, const CCSettings&);
-    bool initialize();
 
 private:
     typedef Vector<RefPtr<LayerChromium> > LayerList;
@@ -164,6 +163,8 @@ private:
     void updateCompositorResources(const LayerList&, GraphicsContext3D*);
     void updateCompositorResources(LayerChromium*, GraphicsContext3D*);
     void clearPendingUpdate();
+
+    bool initialize();
 
     bool m_animating;
 

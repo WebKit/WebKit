@@ -28,12 +28,7 @@
 
 #include "cc/CCLayerTreeHost.h"
 
-#include "CCThreadImpl.h"
-#include "GraphicsContext3DPrivate.h"
-#include "LayerChromium.h"
-#include "LayerPainterChromium.h"
-#include "MockWebGraphicsContext3D.h"
-#include "TextureManager.h"
+#include "GraphicsContext3D.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCMainThreadTask.h"
 #include "cc/CCThreadTask.h"
@@ -43,138 +38,15 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
+
 using namespace WebCore;
-using namespace WebKit;
 using namespace WTF;
 
 namespace {
 
-// Used by test stubs to notify the test when something interesting happens.
-class TestHooks {
-public:
-    virtual void beginCommitOnCCThread(CCLayerTreeHostImpl*) { }
-    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*) { }
-    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl*) { }
-};
-
-// Adapts CCLayerTreeHostImpl for test. Runs real code, then invokes test hooks.
-class MockLayerTreeHostImpl : public CCLayerTreeHostImpl {
-public:
-    static PassOwnPtr<MockLayerTreeHostImpl> create(TestHooks* testHooks, const CCSettings& settings)
-    {
-        return adoptPtr(new MockLayerTreeHostImpl(testHooks, settings));
-    }
-
-    virtual void beginCommit()
-    {
-        CCLayerTreeHostImpl::beginCommit();
-        m_testHooks->beginCommitOnCCThread(this);
-    }
-
-    virtual void commitComplete()
-    {
-        CCLayerTreeHostImpl::commitComplete();
-        m_testHooks->commitCompleteOnCCThread(this);
-    }
-
-    virtual void drawLayers()
-    {
-        CCLayerTreeHostImpl::drawLayers();
-        m_testHooks->drawLayersOnCCThread(this);
-    }
-
-private:
-    MockLayerTreeHostImpl(TestHooks* testHooks, const CCSettings& settings)
-        : CCLayerTreeHostImpl(settings)
-        , m_testHooks(testHooks)
-    {
-    }
-
-    TestHooks* m_testHooks;
-};
-
-// Adapts CCLayerTreeHost for test. Injects MockLayerTreeHostImpl.
-class MockLayerTreeHost : public CCLayerTreeHost {
-public:
-    static PassRefPtr<MockLayerTreeHost> create(TestHooks* testHooks, CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
-    {
-        return adoptRef(new MockLayerTreeHost(testHooks, client, rootLayer, settings));
-    }
-
-    virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl()
-    {
-        return MockLayerTreeHostImpl::create(m_testHooks, settings());
-    }
-
-private:
-    MockLayerTreeHost(TestHooks* testHooks, CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
-        : CCLayerTreeHost(client, rootLayer, settings)
-        , m_testHooks(testHooks)
-    {
-        bool success = initialize();
-        ASSERT(success);
-    }
-
-    TestHooks* m_testHooks;
-};
-
-// Test stub for WebGraphicsContext3D. Returns canned values needed for compositor initialization.
-class CompositorMockWebGraphicsContext3D : public MockWebGraphicsContext3D {
-public:
-    static PassOwnPtr<CompositorMockWebGraphicsContext3D> create()
-    {
-        return adoptPtr(new CompositorMockWebGraphicsContext3D());
-    }
-
-    virtual bool makeContextCurrent() { return true; }
-    virtual WebGLId createProgram() { return 1; }
-    virtual WebGLId createShader(WGC3Denum) { return 1; }
-    virtual void getShaderiv(WebGLId, WGC3Denum, WGC3Dint* value) { *value = 1; }
-    virtual void getProgramiv(WebGLId, WGC3Denum, WGC3Dint* value) { *value = 1; }
-
-private:
-    CompositorMockWebGraphicsContext3D() { }
-};
-
-// Implementation of CCLayerTreeHost callback interface.
-class MockLayerTreeHostClient : public CCLayerTreeHostClient {
-public:
-    static PassOwnPtr<MockLayerTreeHostClient> create(TestHooks* testHooks)
-    {
-        return adoptPtr(new MockLayerTreeHostClient(testHooks));
-    }
-
-    virtual void animateAndLayout(double frameBeginTime)
-    {
-    }
-
-    virtual PassOwnPtr<CCThread> createCompositorThread()
-    {
-        return CCThreadImpl::create();
-    }
-
-    virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D()
-    {
-        OwnPtr<WebGraphicsContext3D> mock = CompositorMockWebGraphicsContext3D::create();
-        GraphicsContext3D::Attributes attrs;
-        RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(mock.release(), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnAnotherThread);
-        return context;
-    }
-
-    virtual PassOwnPtr<LayerPainterChromium> createRootLayerPainter()
-    {
-        return nullptr;
-    }
-
-    virtual void didRecreateGraphicsContext(bool)
-    {
-    }
-
-private:
-    explicit MockLayerTreeHostClient(TestHooks* testHooks) : m_testHooks(testHooks) { }
-
-    TestHooks* m_testHooks;
-};
+class MockLayerTreeHost;
+class MockLayerTreeHostClient;
+class MockLayerTreeHostImpl;
 
 // The CCLayerTreeHostTest runs with the main loop running. It instantiates a single MockLayerTreeHost and associated
 // MockLayerTreeHostImpl/MockLayerTreeHostClient.
@@ -186,30 +58,29 @@ private:
 //
 // The test continues until someone calls endTest. endTest can be called on any thread, but be aware that
 // ending the test is an asynchronous process.
-class CCLayerTreeHostTest : public testing::Test, TestHooks {
+class CCLayerTreeHostTest : public testing::Test {
 public:
-    virtual void afterTest() = 0;
-    virtual void beginTest() = 0;
-
-    void endTest();
-
-    void postSetNeedsCommitToMainThread()
-    {
-        callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsCommit, this);
-    }
-
-    void postSetNeedsRedrawToMainThread()
-    {
-        callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsRedraw, this);
-    }
-
-protected:
     CCLayerTreeHostTest()
         : m_beginning(false)
         , m_endWhenBeginReturns(false)
         , m_running(false)
         , m_timedOut(false) { }
 
+    virtual void afterTest() = 0;
+
+    virtual void beginTest() = 0;
+    virtual void animateAndLayout(MockLayerTreeHostClient* layerTreeHost, double frameBeginTime) { }
+    virtual void beginCommitOnCCThread(MockLayerTreeHostImpl* layerTreeHostImpl) { }
+    virtual void beginCommitOnMainThread(MockLayerTreeHost* layerTreeHost) { }
+    virtual void commitOnCCThread(MockLayerTreeHost* layerTreeHost, MockLayerTreeHostImpl* layerTreeHostImpl) { }
+    virtual void commitCompleteOnCCThread(MockLayerTreeHostImpl* layerTreeHostImpl) { }
+    virtual void commitCompleteOnMainThread(MockLayerTreeHost* layerTreeHost) { }
+    virtual void drawLayersAndPresentOnCCThread(MockLayerTreeHostImpl* layerTreeHostImpl) { }
+    virtual void updateLayers(MockLayerTreeHost* layerTreeHost) { }
+
+    void endTest();
+
+protected:
     void doBeginTest();
 
     static void onBeginTest(void* self)
@@ -217,31 +88,17 @@ protected:
         static_cast<CCLayerTreeHostTest*>(self)->doBeginTest();
     }
 
+    void doEndTest()
+    {
+    }
+
     static void onEndTest(void* self)
     {
         ASSERT(isMainThread());
-        webkit_support::QuitMessageLoop();
         CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
-        ASSERT(test);
         test->m_layerTreeHost.clear();
-    }
-
-    static void dispatchSetNeedsCommit(void* self)
-    {
-      ASSERT(isMainThread());
-      CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
-      ASSERT(test);
-      if (test->m_layerTreeHost)
-          test->m_layerTreeHost->setNeedsCommitAndRedraw();
-    }
-
-    static void dispatchSetNeedsRedraw(void* self)
-    {
-      ASSERT(isMainThread());
-      CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
-      ASSERT(test);
-      if (test->m_layerTreeHost)
-          test->m_layerTreeHost->setNeedsRedraw();
+        test->m_client.clear();
+        webkit_support::QuitMessageLoop();
     }
 
     void runTest()
@@ -252,9 +109,8 @@ protected:
         m_running = false;
         bool timedOut = m_timedOut; // Save whether we're timed out in case RunAllPendingMessages has the timeout.
         webkit_support::RunAllPendingMessages();
-        ASSERT(!m_layerTreeHost.get());
-        m_client.clear();
         if (timedOut) {
+            printf("Test timed out");
             FAIL() << "Test timed out";
             return;
         }
@@ -270,8 +126,11 @@ protected:
         test->endTest();
     }
 
+    Mutex m_tracesLock;
+    Vector<std::string> m_traces;
+
     OwnPtr<MockLayerTreeHostClient> m_client;
-    RefPtr<CCLayerTreeHost> m_layerTreeHost;
+    RefPtr<MockLayerTreeHost> m_layerTreeHost;
 
 private:
     bool m_beginning;
@@ -280,19 +139,146 @@ private:
     bool m_timedOut;
 };
 
+class MockLayerTreeHostClient : public CCLayerTreeHostClient {
+public:
+    MockLayerTreeHostClient(CCLayerTreeHostTest* test) : m_test(test) { }
+
+    virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D()
+    {
+        return adoptRef<GraphicsContext3D>(0);
+    }
+
+    virtual void animateAndLayout(double frameBeginTime)
+    {
+        m_test->animateAndLayout(this, frameBeginTime);
+    }
+
+    virtual void updateLayers()
+    {
+    }
+
+private:
+    CCLayerTreeHostTest* m_test;
+};
+
+class MockLayerTreeHostCommitter : public CCLayerTreeHostCommitter {
+public:
+    static PassOwnPtr<MockLayerTreeHostCommitter> create(CCLayerTreeHostTest* test)
+    {
+        return adoptPtr(new MockLayerTreeHostCommitter(test));
+    }
+
+    virtual void commit(CCLayerTreeHost* host, CCLayerTreeHostImpl* hostImpl)
+    {
+        CCLayerTreeHostCommitter::commit(host, hostImpl);
+        m_test->commitOnCCThread(reinterpret_cast<MockLayerTreeHost*>(host), reinterpret_cast<MockLayerTreeHostImpl*>(hostImpl));
+    }
+
+private:
+    MockLayerTreeHostCommitter(CCLayerTreeHostTest* test) : m_test(test) { }
+    CCLayerTreeHostTest* m_test;
+};
+
+class MockLayerTreeHostImpl : public CCLayerTreeHostImpl {
+public:
+    static PassOwnPtr<MockLayerTreeHostImpl> create(CCLayerTreeHostImplClient* client, CCLayerTreeHostTest* test)
+    {
+        return adoptPtr(new MockLayerTreeHostImpl(client, test));
+    }
+
+    virtual void beginCommit()
+    {
+        CCLayerTreeHostImpl::beginCommit();
+        m_test->beginCommitOnCCThread(this);
+    }
+
+    virtual void commitComplete()
+    {
+        CCLayerTreeHostImpl::commitComplete();
+        m_test->commitCompleteOnCCThread(this);
+    }
+
+    virtual void drawLayersAndPresent()
+    {
+        m_test->drawLayersAndPresentOnCCThread(this);
+    }
+
+private:
+    MockLayerTreeHostImpl(CCLayerTreeHostImplClient* client, CCLayerTreeHostTest* test)
+            : CCLayerTreeHostImpl(client)
+            , m_test(test)
+    {
+    }
+
+    CCLayerTreeHostTest* m_test;
+};
+
+class MockLayerTreeHostImplProxy : public CCLayerTreeHostImplProxy {
+public:
+    static PassOwnPtr<MockLayerTreeHostImplProxy> create(CCLayerTreeHost* host, CCLayerTreeHostTest* test)
+    {
+        return adoptPtr(new MockLayerTreeHostImplProxy(host, test));
+    }
+
+    PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl()
+    {
+        return MockLayerTreeHostImpl::create(this, m_test);
+    }
+
+private:
+    MockLayerTreeHostImplProxy(CCLayerTreeHost* host, CCLayerTreeHostTest* test)
+        : CCLayerTreeHostImplProxy(host)
+        , m_test(test) { }
+
+    CCLayerTreeHostTest* m_test;
+};
+
+class MockLayerTreeHost : public CCLayerTreeHost {
+public:
+    MockLayerTreeHost(CCLayerTreeHostClient* client, CCLayerTreeHostTest* test)
+        : CCLayerTreeHost(client)
+        , m_test(test) { }
+
+    virtual PassOwnPtr<CCLayerTreeHostImplProxy> createLayerTreeHostImplProxy()
+    {
+        OwnPtr<CCLayerTreeHostImplProxy> proxy = MockLayerTreeHostImplProxy::create(this, m_test);
+        proxy->start();
+        return proxy.release();
+    }
+
+    virtual void updateLayers()
+    {
+        m_test->updateLayers(this);
+    }
+
+    virtual PassOwnPtr<CCLayerTreeHostCommitter> createLayerTreeHostCommitter()
+    {
+        return MockLayerTreeHostCommitter::create(m_test);
+    }
+
+    virtual void beginCommit()
+    {
+        CCLayerTreeHost::beginCommit();
+        m_test->beginCommitOnMainThread(this);
+    }
+
+    virtual void commitComplete()
+    {
+        m_test->commitCompleteOnMainThread(this);
+        CCLayerTreeHost::commitComplete();
+    }
+
+private:
+    CCLayerTreeHostTest* m_test;
+};
+
 void CCLayerTreeHostTest::doBeginTest()
 {
-    ASSERT(isMainThread());
     ASSERT(!m_running);
     m_running = true;
-    m_client = MockLayerTreeHostClient::create(this);
-
-    CCSettings settings;
-    settings.enableCompositorThread = true;
-    RefPtr<LayerChromium> rootLayer;
-    m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, settings);
-    ASSERT(m_layerTreeHost);
-
+    m_client = adoptPtr(new MockLayerTreeHostClient(this));
+    m_layerTreeHost = adoptRef(new MockLayerTreeHost(m_client.get(), this));
+    m_layerTreeHost->init();
     m_beginning = true;
     beginTest();
     m_beginning = false;
@@ -341,7 +327,7 @@ public:
 
     virtual void beginTest()
     {
-        postSetNeedsCommitToMainThread();
+        m_layerTreeHost->setNeedsCommitAndRedraw();
         endTest();
     }
 
@@ -361,7 +347,7 @@ public:
 
     virtual void beginTest()
     {
-        postSetNeedsRedrawToMainThread();
+        m_layerTreeHost->setNeedsRedraw();
         endTest();
     }
 
@@ -385,23 +371,23 @@ public:
 
     virtual void beginTest()
     {
-        postSetNeedsCommitToMainThread();
+        m_layerTreeHost->setNeedsCommitAndRedraw();
         endTest();
     }
 
-    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*)
+    virtual void commitCompleteOnCCThread(MockLayerTreeHostImpl* layerTreeHostImpl)
     {
         m_numCompleteCommits++;
         if (m_numCompleteCommits == 2)
             endTest();
     }
 
-    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl*)
+    virtual void drawLayersAndPresentOnCCThread(MockLayerTreeHostImpl* layerTreeHostImpl)
     {
         if (m_numDraws == 1)
-          postSetNeedsCommitToMainThread();
+            layerTreeHostImpl->setNeedsCommitAndRedraw();
         m_numDraws++;
-        postSetNeedsRedrawToMainThread();
+        layerTreeHostImpl->setNeedsRedraw();
     }
 
     virtual void afterTest()
@@ -429,18 +415,18 @@ public:
 
     virtual void beginTest()
     {
-        postSetNeedsCommitToMainThread();
-        postSetNeedsCommitToMainThread();
+        m_layerTreeHost->setNeedsCommitAndRedraw();
+        m_layerTreeHost->setNeedsCommitAndRedraw();
     }
 
-    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
+    virtual void drawLayersAndPresentOnCCThread(MockLayerTreeHostImpl* layerTreeHostImpl)
     {
         m_numDraws++;
-        if (!impl->sourceFrameNumber())
+        if (!layerTreeHostImpl->sourceFrameNumber())
             endTest();
     }
 
-    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*)
+    virtual void commitOnCCThread(MockLayerTreeHost* layerTreeHost, MockLayerTreeHostImpl* impl)
     {
         m_numCommits++;
     }
@@ -472,18 +458,18 @@ public:
 
     virtual void beginTest()
     {
-        postSetNeedsCommitToMainThread();
+        m_layerTreeHost->setNeedsCommitAndRedraw();
     }
 
-    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
+    virtual void drawLayersAndPresentOnCCThread(MockLayerTreeHostImpl* layerTreeHostImpl)
     {
-        if (!impl->sourceFrameNumber())
-            postSetNeedsCommitToMainThread();
-        else if (impl->sourceFrameNumber() == 1)
+        if (!layerTreeHostImpl->sourceFrameNumber())
+            layerTreeHostImpl->setNeedsCommitAndRedraw();
+        else if (layerTreeHostImpl->sourceFrameNumber() == 1)
             endTest();
     }
 
-    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*)
+    virtual void commitOnCCThread(MockLayerTreeHost* layerTreeHost, MockLayerTreeHostImpl* impl)
     {
         m_numCommits++;
     }
@@ -515,20 +501,19 @@ public:
 
     virtual void beginTest()
     {
-        postSetNeedsCommitToMainThread();
     }
 
-    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
+    virtual void drawLayersAndPresentOnCCThread(MockLayerTreeHostImpl* impl)
     {
         EXPECT_EQ(0, impl->sourceFrameNumber());
         if (!m_numDraws)
-            postSetNeedsRedrawToMainThread(); // Redraw again to verify that the second redraw doesn't commit.
+            impl->setNeedsRedraw(); // redraw again to verify that the second redraw doesnt commit.
         else
             endTest();
         m_numDraws++;
     }
 
-    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*)
+    virtual void commitOnCCThread(MockLayerTreeHost* layerTreeHost, MockLayerTreeHostImpl* impl)
     {
         m_numCommits++;
     }
