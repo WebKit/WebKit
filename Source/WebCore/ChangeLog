@@ -1,3 +1,48 @@
+2011-09-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: change WebInspector.currentPanel getter/setter to functions.
+        https://bugs.webkit.org/show_bug.cgi?id=68242
+
+        This is necessary for the panel switching performance tests.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.show.animationFinished):
+        (WebInspector.Drawer.prototype.show):
+        (WebInspector.Drawer.prototype.hide):
+        (WebInspector.Drawer.prototype._animateDrawerHeight.animationFinished):
+        (WebInspector.Drawer.prototype._animateDrawerHeight):
+        (WebInspector.Drawer.prototype._statusBarDragging):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.switchToAndFocus):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.showAnchorLocation):
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController.prototype.updateSearchMatchesCount):
+        (WebInspector.SearchController.prototype.updateCurrentMatchIndex):
+        (WebInspector.SearchController.prototype.updateSearchLabel):
+        (WebInspector.SearchController.prototype.handleShortcut):
+        (WebInspector.SearchController.prototype._performSearch):
+        * inspector/front-end/Toolbar.js:
+        (WebInspector.Toolbar.createPanelToolbarItem.onToolbarItemClicked):
+        (WebInspector.Toolbar.createPanelToolbarItem):
+        * inspector/front-end/inspector.js:
+        (WebInspector.currentPanel):
+        (WebInspector._updateFocusedNode):
+        (WebInspector.windowResize):
+        (WebInspector.documentKeyDown):
+        (WebInspector.documentCanCopy):
+        (WebInspector.documentCopy):
+        (WebInspector.showPanel):
+        (WebInspector.startUserInitiatedDebugging):
+        (WebInspector.inspect):
+        (WebInspector._showAnchorLocationInPanel):
+        (WebInspector._toolbarItemClicked):
+        (WebInspector.PanelHistory.prototype.goBack):
+        (WebInspector.PanelHistory.prototype.goForward):
+
 2011-09-15  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: rename Console.clearConsoleMessages to Console.clearMessages, brush up console domain doc.

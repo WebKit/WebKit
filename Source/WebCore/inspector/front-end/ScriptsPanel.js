@@ -473,7 +473,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._updateDebuggerButtons();
 
-        WebInspector.currentPanel = this;
+        WebInspector.setCurrentPanel(this);
 
         this.sidebarPanes.callstack.update(callFrames, details);
         this.sidebarPanes.callstack.selectedCallFrame = this._presentationModel.selectedCallFrame;

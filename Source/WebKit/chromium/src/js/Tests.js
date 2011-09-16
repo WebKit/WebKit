@@ -177,7 +177,7 @@ TestSuite.prototype.showPanel = function(panelName)
     var toolbar = document.getElementById("toolbar");
     var button = toolbar.getElementsByClassName(panelName)[0];
     button.click();
-    this.assertEquals(WebInspector.panels[panelName], WebInspector.currentPanel);
+    this.assertEquals(WebInspector.panels[panelName], WebInspector.currentPanel());
 };
 
 
@@ -252,7 +252,7 @@ TestSuite.prototype.testShowScriptsTab = function()
 TestSuite.prototype.testScriptsTabIsPopulatedOnInspectedPageRefresh = function()
 {
     var test = this;
-    this.assertEquals(WebInspector.panels.elements, WebInspector.currentPanel, "Elements panel should be current one.");
+    this.assertEquals(WebInspector.panels.elements, WebInspector.currentPanel(), "Elements panel should be current one.");
 
     this.addSniffer(WebInspector.panels.scripts, "reset", waitUntilScriptIsParsed);
 
@@ -364,8 +364,8 @@ TestSuite.prototype.testPauseWhenLoadingDevTools = function()
 
 
     // Script execution can already be paused.
-    if (WebInspector.currentPanel.paused) {
-        var callFrame = WebInspector.currentPanel._presentationModel.selectedCallFrame;
+    if (WebInspector.currentPanel().paused) {
+        var callFrame = WebInspector.currentPanel()._presentationModel.selectedCallFrame;
         this.assertEquals(expectations.functionsOnStack[0], callFrame.functionName);
         var callbackInvoked = false;
         this._checkSourceFrameWhenLoaded(expectations, function() {
@@ -592,7 +592,7 @@ TestSuite.prototype.showMainPageScriptSource_ = function(scriptName, callback)
         scriptResource = options[pageScriptIndex].representedObject;
 
         // Current panel is "Scripts".
-        WebInspector.currentPanel._showScriptOrResource(scriptResource);
+        WebInspector.currentPanel()._showScriptOrResource(scriptResource);
         test.assertEquals(pageScriptIndex, scriptSelect.selectedIndex, "Unexpected selected option index.");
     }
 
@@ -711,7 +711,7 @@ TestSuite.prototype._checkSourceFrameWhenLoaded = function(expectations, callbac
 {
     var test = this;
 
-    var frame = WebInspector.currentPanel.visibleView;
+    var frame = WebInspector.currentPanel().visibleView;
 
     if (frame._textViewer)
         checkExecLine();

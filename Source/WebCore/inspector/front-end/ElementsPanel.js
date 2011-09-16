@@ -297,7 +297,7 @@ WebInspector.ElementsPanel.prototype = {
     {
         // Reset search restore.
         WebInspector.searchController.cancelSearch();
-        WebInspector.currentPanel = this;
+        WebInspector.setCurrentPanel(this);
         this.selectDOMNode(node, true);
     },
 

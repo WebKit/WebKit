@@ -30,7 +30,7 @@ var test = function()
 
     function step2(callFrames)
     {
-        var sections = WebInspector.currentPanel.sidebarPanes.scopechain._sections;
+        var sections = WebInspector.currentPanel().sidebarPanes.scopechain._sections;
         var localScope = sections[0].propertiesTreeOutline;
         var properties = [
             localScope, ["o", "__proto__", "__proto__"],

@@ -330,7 +330,7 @@ WebInspector.ResourcesPanel.prototype = {
         if (resource.type === WebInspector.Resource.Type.XHR) {
             // Show XHRs in the network panel only.
             if (WebInspector.panels.network && WebInspector.panels.network.canShowAnchorLocation(anchor)) {
-                WebInspector.currentPanel = WebInspector.panels.network;
+                WebInspector.setCurrentPanel(WebInspector.panels.network);
                 WebInspector.panels.network.showAnchorLocation(anchor);
             }
             return;
