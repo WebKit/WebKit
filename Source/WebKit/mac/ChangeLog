@@ -1,3 +1,33 @@
+2011-09-15  Kentaro Hara  <haraken@google.com>
+
+        A single line must not be split into two pages.
+        https://bugs.webkit.org/show_bug.cgi?id=65005
+
+        Reviewed by David Hyatt.
+
+        When the document width of a page is overflowed, the last line of the page can be
+        split into the next page. This is the regression caused by r88737. r88737 tried to
+        fix rounding errors in rendering calculations by expanding and shrinking a page
+        using one common method, resizePageRectsKeepingRatio(), but overlooked the case where
+        a document width gets overflowed.
+
+        Test: printing/single-line-must-not-be-split-into-two-pages.html
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _web_setPrintingModeRecursive]): Passes an original page size to setPrinting().
+        (-[WebHTMLView _web_clearPrintingModeRecursive]): Ditto.
+        (-[WebHTMLView _web_setPrintingModeRecursiveAndAdjustViewSize]): Ditto.
+        (-[WebHTMLView _beginPrintModeWithMinimumPageWidth:height:maximumPageWidth:]): Ditto.
+        (-[WebHTMLView _beginPrintModeWithPageWidth:height:shrinkToFit:]): Ditto.
+        (-[WebHTMLView _endPrintMode]): Ditto.
+        (-[WebHTMLView _beginScreenPaginationModeWithPageSize:shrinkToFit:]): Ditto.
+        (-[WebHTMLView _endScreenPaginationMode]): Ditto.
+        (-[WebHTMLView layoutToMinimumPageWidth:height:originalPageWidth:originalPageHeight:maximumShrinkRatio:adjustingViewSize:]): Ditto.
+        (-[WebHTMLView layout]): Ditto.
+        (-[WebHTMLView _setPrinting:minimumPageLogicalWidth:logicalHeight:originalPageWidth:originalPageHeight:maximumShrinkRatio:adjustViewSize:paginateScreenContent:]): Ditto.
+        (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]): Ditto.
+        (-[WebHTMLView setPageWidthForPrinting:]): Ditto.
+
 2011-09-15  Eric Seidel  <eric@webkit.org>
 
         Remove ENABLE(SVG_AS_IMAGE) since all major ports have it on by default

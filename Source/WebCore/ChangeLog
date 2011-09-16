@@ -1,3 +1,32 @@
+2011-09-15  Kentaro Hara  <haraken@google.com>
+
+        A single line must not be split into two pages.
+        https://bugs.webkit.org/show_bug.cgi?id=65005
+
+        Reviewed by David Hyatt.
+
+        When the document width of a page is overflowed, the last line of the page can be
+        split into the next page. This is the regression caused by r88737. r88737 tried to
+        fix rounding errors in rendering calculations by expanding and shrinking a page
+        using one common method, resizePageRectsKeepingRatio(), but overlooked the case where
+        a document width gets overflowed.
+
+        This patch fixes the problem by also using resizePageRectsKeepingRatio() for the case
+        where the document width gets overflowed.
+
+        Test: printing/single-line-must-not-be-split-into-two-pages.html
+
+        * WebCore.exp.in: Updated the signature of forceLayoutForPagination().
+        * page/Frame.cpp:
+        (WebCore::Frame::setPrinting): Added a new argument |originalPageSize|, which is an original page size before being expanded or shrunk.
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceLayoutForPagination): Uses resizePageRectsKeepingRatio() in the case where the document width gets overflowed.
+        * page/FrameView.h:
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::begin): Passes an original page size to setPrinting().
+        (WebCore::PrintContext::end): Ditto.
+
 2011-09-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95243 and r95246.

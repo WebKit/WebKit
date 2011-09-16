@@ -33,6 +33,7 @@
 
 #include "AccessibleDocument.h"
 
+#include <WebCore/AdjustViewSizeOrNot.h>
 #include <WebCore/FrameWin.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/KURL.h>
@@ -47,6 +48,7 @@ namespace WebCore {
     class AuthenticationChallenge;
     class DocumentLoader;
     class Element;
+    class FloatSize;
     class Frame;
     class GraphicsContext;
     class HTMLFrameOwnerElement;
@@ -391,7 +393,7 @@ protected:
     void loadHTMLString(BSTR string, BSTR baseURL, BSTR unreachableURL);
     void loadData(PassRefPtr<WebCore::SharedBuffer>, BSTR mimeType, BSTR textEncodingName, BSTR baseURL, BSTR failingURL);
     const Vector<WebCore::IntRect>& computePageRects(HDC printDC);
-    void setPrinting(bool printing, float minPageWidth, float minPageHeight, float maximumShrinkRatio, bool adjustViewSize);
+    void setPrinting(bool printing, const WebCore::FloatSize& pageSize, const WebCore::FloatSize& originalPageSize, float maximumShrinkRatio, WebCore::AdjustViewSizeOrNot);
     void headerAndFooterHeights(float*, float*);
     WebCore::IntRect printerMarginRect(HDC);
     void spoolPage (PlatformGraphicsContext* pctx, WebCore::GraphicsContext* spoolCtx, HDC printDC, IWebUIDelegate*, float headerHeight, float footerHeight, UINT page, UINT pageCount);

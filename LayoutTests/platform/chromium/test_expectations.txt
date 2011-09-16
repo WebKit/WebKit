@@ -2103,6 +2103,7 @@ BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
 
 // Need setPrinting.
 BUGWK20011 : printing/setPrinting.html = FAIL
+BUGWK65005 : printing/single-line-must-not-be-split-into-two-pages.html = FAIL
 
 // Needs V8 change.
 BUGCR49343 : fast/js/reserved-words-as-property.html = TEXT

@@ -700,6 +700,7 @@ printing/compositing-layer-printing.html
 printing/media-queries-print.html
 printing/page-rule-in-media-query.html
 printing/setPrinting.html
+printing/single-line-must-not-be-split-into-two-pages.html
 printing/simultaneous-position-float-change.html
 
 # WebKitTestRunner needs layoutTestController.elementDoesAutoCompleteForElementWithId
