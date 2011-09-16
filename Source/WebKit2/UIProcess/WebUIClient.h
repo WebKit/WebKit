@@ -29,6 +29,7 @@
 #include "APIClient.h"
 #include "WKPage.h"
 #include "WebEvent.h"
+#include "WebHitTestResult.h"
 #include "WebOpenPanelParameters.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -67,7 +68,7 @@ public:
     String runJavaScriptPrompt(WebPageProxy*, const String&, const String&, WebFrameProxy*);
 
     void setStatusText(WebPageProxy*, const String&);
-    void mouseDidMoveOverElement(WebPageProxy*, WebEvent::Modifiers, APIObject*);
+    void mouseDidMoveOverElement(WebPageProxy*, const WebHitTestResult::Data&, WebEvent::Modifiers, APIObject*);
     void missingPluginButtonClicked(WebPageProxy*, const String& mimeType, const String& url, const String& pluginsPageURL);
     
     bool implementsDidNotHandleKeyEvent() const;

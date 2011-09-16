@@ -153,6 +153,7 @@ HEADERS += \
     Shared/WebFindOptions.h \
     Shared/WebGeolocationPosition.h \
     Shared/WebGraphicsContext.h \
+    Shared/WebHitTestResult.h \
     Shared/WebImage.h \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
@@ -383,6 +384,7 @@ SOURCES += \
     Shared/WebEventConversion.cpp \
     Shared/WebGeolocationPosition.cpp \
     Shared/WebGraphicsContext.cpp \
+    Shared/WebHitTestResult.cpp \
     Shared/WebKeyboardEvent.cpp \
     Shared/WebImage.cpp \
     Shared/WebMouseEvent.cpp \

@@ -397,6 +397,10 @@
 		6D8A91A611F0EFD100DD01FE /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = 6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */; };
 		6EE849C81368D9390038D481 /* WKInspectorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE849C61368D92D0038D481 /* WKInspectorMac.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		762B748D120BC75C00819339 /* WKPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7801C097142290C400FAF9AF /* WebHitTestResult.cpp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7801C095142290C400FAF9AF /* WebHitTestResult.cpp */; };
+		7801C098142290C400FAF9AF /* WebHitTestResult.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7801C096142290C400FAF9AF /* WebHitTestResult.h */; };
+		7801C099142290C400FAF9AF /* WebHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7801C095142290C400FAF9AF /* WebHitTestResult.cpp */; };
+		7801C09A142290C400FAF9AF /* WebHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 7801C096142290C400FAF9AF /* WebHitTestResult.h */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		909854EC12BC4E17000AD080 /* WebMemorySampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905620E812BC248B000799B6 /* WebMemorySampler.cpp */; };
@@ -911,6 +915,8 @@
 			files = (
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
 				BCDE0ABF13272708001259FB /* PluginProcess.app in CopyFiles */,
+				7801C097142290C400FAF9AF /* WebHitTestResult.cpp in CopyFiles */,
+				7801C098142290C400FAF9AF /* WebHitTestResult.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1339,6 +1345,8 @@
 		6EE849C61368D92D0038D481 /* WKInspectorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKInspectorMac.h; path = mac/WKInspectorMac.h; sourceTree = "<group>"; };
 		762B7481120BBA0100819339 /* FontSmoothingLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSmoothingLevel.h; sourceTree = "<group>"; };
 		762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
+		7801C095142290C400FAF9AF /* WebHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebHitTestResult.cpp; path = Shared/WebHitTestResult.cpp; sourceTree = "<group>"; };
+		7801C096142290C400FAF9AF /* WebHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebHitTestResult.h; path = Shared/WebHitTestResult.h; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* WebKit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		905620E512BC2476000799B6 /* WebMemorySampler.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMemorySampler.mac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1878,6 +1886,8 @@
 		0867D691FE84028FC02AAC07 /* WebKit2 */ = {
 			isa = PBXGroup;
 			children = (
+				7801C095142290C400FAF9AF /* WebHitTestResult.cpp */,
+				7801C096142290C400FAF9AF /* WebHitTestResult.h */,
 				B396EA5512E0ED2D00F4FEB7 /* config.h */,
 				C0CE72DB1247E8F700BC0EC4 /* DerivedSources.make */,
 				BC2E6E74114196F000A63B1E /* Platform */,
@@ -3846,6 +3856,7 @@
 				1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */,
 				5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */,
 				1A2BB6D114117B4D000F35D4 /* PluginProcessConnectionMessages.h in Headers */,
+				7801C09A142290C400FAF9AF /* WebHitTestResult.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4515,6 +4526,7 @@
 				5D51845513BCF9CC00C7FF4A /* APIClientTraits.cpp in Sources */,
 				5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */,
 				1A2BB6D014117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp in Sources */,
+				7801C099142290C400FAF9AF /* WebHitTestResult.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

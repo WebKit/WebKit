@@ -1,3 +1,46 @@
+2011-09-16  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [WK2] mouseDidMoveOverElement needs to send more information about hovered element to UiProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=68125
+
+        This patch implements support for the UiProcess to know what is the link url of a hovered element.
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * Shared/WebHitTestResult.cpp: Added.
+
+        WebHitTestResult has hovered element information.
+
+        (WebKit::WebHitTestResult::create):
+        (WebKit::WebHitTestResult::Data::encode):
+        (WebKit::WebHitTestResult::Data::decode):
+        * Shared/WebHitTestResult.h: Added.
+        (WebKit::WebHitTestResult::absoluteImageURL):
+        (WebKit::WebHitTestResult::absoluteLinkURL):
+        (WebKit::WebHitTestResult::absoluteMediaURL):
+        (WebKit::WebHitTestResult::linkLabel):
+        (WebKit::WebHitTestResult::linkTitle):
+        (WebKit::WebHitTestResult::WebHitTestResult):
+        (WebKit::WebHitTestResult::type):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::mouseDidMoveOverElement):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::mouseDidMoveOverElement):
+        * UIProcess/WebUIClient.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::mouseDidMoveOverElement):
+        * win/WebKit2.vcproj:
+
 2011-09-15  Adam Roben  <aroben@apple.com>
 
         Add support for attributes on message parameters

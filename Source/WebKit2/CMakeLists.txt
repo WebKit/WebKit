@@ -161,6 +161,7 @@ SET(WebKit2_SOURCES
     Shared/WebEvent.cpp
     Shared/WebGeolocationPosition.cpp
     Shared/WebGraphicsContext.cpp
+    Shared/WebHitTestResult.cpp
     Shared/WebImage.cpp
     Shared/WebKeyboardEvent.cpp
     Shared/WebMouseEvent.cpp

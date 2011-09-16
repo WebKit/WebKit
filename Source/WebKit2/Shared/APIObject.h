@@ -75,6 +75,7 @@ public:
         TypeFullScreenManager,
         TypeGeolocationManager,
         TypeGeolocationPermissionRequest,
+        TypeHitTestResult,
         TypeGeolocationPosition,
         TypeIconDatabase,
         TypeInspector,

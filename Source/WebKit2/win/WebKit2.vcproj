@@ -687,6 +687,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebHitTestResult.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebHitTestResult.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebKeyboardEvent.cpp"
 				>
 			</File>

@@ -1997,7 +1997,7 @@ void WebPageProxy::setStatusText(const String& text)
     m_uiClient.setStatusText(this, text);
 }
 
-void WebPageProxy::mouseDidMoveOverElement(uint32_t opaqueModifiers, CoreIPC::ArgumentDecoder* arguments)
+void WebPageProxy::mouseDidMoveOverElement(const WebHitTestResult::Data& hitTestResultData, uint32_t opaqueModifiers, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
     WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
@@ -2006,7 +2006,7 @@ void WebPageProxy::mouseDidMoveOverElement(uint32_t opaqueModifiers, CoreIPC::Ar
 
     WebEvent::Modifiers modifiers = static_cast<WebEvent::Modifiers>(opaqueModifiers);
 
-    m_uiClient.mouseDidMoveOverElement(this, modifiers, userData.get());
+    m_uiClient.mouseDidMoveOverElement(this, hitTestResultData, modifiers, userData.get());
 }
 
 void WebPageProxy::missingPluginButtonClicked(const String& mimeType, const String& url, const String& pluginsPageURL)

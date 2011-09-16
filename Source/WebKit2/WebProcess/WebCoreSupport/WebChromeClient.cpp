@@ -496,8 +496,15 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult
     // Notify the bundle client.
     m_page->injectedBundleUIClient().mouseDidMoveOverElement(m_page, hitTestResult, static_cast<WebEvent::Modifiers>(modifierFlags), userData);
 
+    WebHitTestResult::Data webHitTestResultData;
+    webHitTestResultData.absoluteImageURL = hitTestResult.absoluteImageURL().string();
+    webHitTestResultData.absoluteLinkURL = hitTestResult.absoluteLinkURL().string();
+    webHitTestResultData.absoluteMediaURL = hitTestResult.absoluteMediaURL().string();
+    webHitTestResultData.linkLabel = hitTestResult.textContent();
+    webHitTestResultData.linkTitle = hitTestResult.titleDisplayString();
+
     // Notify the UIProcess.
-    m_page->send(Messages::WebPageProxy::MouseDidMoveOverElement(modifierFlags, InjectedBundleUserMessageEncoder(userData.get())));
+    m_page->send(Messages::WebPageProxy::MouseDidMoveOverElement(webHitTestResultData, modifierFlags, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebChromeClient::setToolTip(const String& toolTip, TextDirection)
