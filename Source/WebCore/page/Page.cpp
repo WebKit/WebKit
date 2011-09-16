@@ -649,6 +649,9 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     m_mainFrame->deviceOrPageScaleFactorChanged();
 #endif
 
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->editor()->deviceScaleFactorChanged();
+
     backForward()->markPagesForFullStyleRecalc();
 }
 

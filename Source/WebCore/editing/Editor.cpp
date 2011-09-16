@@ -3231,4 +3231,9 @@ TextCheckingTypeMask Editor::resolveTextCheckingTypeMask(TextCheckingTypeMask te
     return checkingTypes;
 }
 
+void Editor::deviceScaleFactorChanged()
+{
+    m_deleteButtonController->deviceScaleFactorChanged();
+}
+
 } // namespace WebCore
