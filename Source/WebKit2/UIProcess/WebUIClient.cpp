@@ -160,8 +160,9 @@ void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, const WebHitTestRe
     if (!m_client.mouseDidMoveOverElement)
         return;
 
+    // FIXME: Pass the hit test result to the UI client callback function.
     RefPtr<WebHitTestResult> webHitTestResult = WebHitTestResult::create(data);
-    m_client.mouseDidMoveOverElement(toAPI(page), toAPI(webHitTestResult.get()), toAPI(modifiers), toAPI(userData), m_client.clientInfo);
+    m_client.mouseDidMoveOverElement(toAPI(page), toAPI(modifiers), toAPI(userData), m_client.clientInfo);
 }
 
 void WebUIClient::missingPluginButtonClicked(WebPageProxy* page, const String& mimeType, const String& url, const String& pluginsPageURL)
