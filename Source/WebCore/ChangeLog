@@ -1,3 +1,15 @@
+2011-09-16  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r95052): SelectorChecker identifier filter not working
+        https://bugs.webkit.org/show_bug.cgi?id=68244
+
+        Reviewed by Dan Bernstein.
+
+        Missing &.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::collectDescendantSelectorIdentifierHashes):
+
 2011-09-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed typo fix after r95271.

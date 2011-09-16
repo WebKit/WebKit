@@ -161,7 +161,7 @@ void SelectorChecker::popParent(Element* parent)
     popParentStackFrame();
 }
 
-static inline void collectDescendantSelectorIdentifierHashes(const CSSSelector* selector, unsigned* hash, const unsigned* end)
+static inline void collectDescendantSelectorIdentifierHashes(const CSSSelector* selector, unsigned*& hash, const unsigned* end)
 {
     if ((selector->m_match == CSSSelector::Id || selector->m_match == CSSSelector::Class) && !selector->value().isEmpty())
         (*hash++) = selector->value().impl()->existingHash();
