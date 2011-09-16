@@ -1,3 +1,60 @@
+2011-09-16  Iain Merrick  <husky@google.com>
+
+        [chromium] Fix CCLayerTreeHostTest
+        https://bugs.webkit.org/show_bug.cgi?id=67418
+
+        Fixes needed to compile and link with USE_THREADED_COMPOSITING
+        enabled, and to pass the basic unit test.
+
+        Reviewed by James Robinson.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::platformLayer):
+        * src/GraphicsContext3DPrivate.h:
+        * tests/CCLayerTreeHostTest.cpp:
+        (TestHooks::beginCommitOnCCThread):
+        (TestHooks::commitCompleteOnCCThread):
+        (TestHooks::drawLayersOnCCThread):
+        (MockLayerTreeHostImpl::MockLayerTreeHostImpl):
+        (MockLayerTreeHostImpl::beginCommit):
+        (MockLayerTreeHostImpl::commitComplete):
+        (MockLayerTreeHostImpl::drawLayers):
+        (MockLayerTreeHost::MockLayerTreeHost):
+        (MockLayerTreeHost::createLayerTreeHostImpl):
+        (CompositorMockWebGraphicsContext3D::makeContextCurrent):
+        (CompositorMockWebGraphicsContext3D::createProgram):
+        (CompositorMockWebGraphicsContext3D::createShader):
+        (CompositorMockWebGraphicsContext3D::getShaderiv):
+        (CompositorMockWebGraphicsContext3D::getProgramiv):
+        (MockLayerTreeHostClient::MockLayerTreeHostClient):
+        (MockLayerTreeHostClient::animateAndLayout):
+        (MockLayerTreeHostClient::createCompositorThread):
+        (MockLayerTreeHostClient::createLayerTreeHostContext3D):
+        (MockLayerTreeHostClient::createRootLayerPainter):
+        (MockLayerTreeHostClient::didRecreateGraphicsContext):
+        (CCLayerTreeHostTest::postSetNeedsCommitToMainThread):
+        (CCLayerTreeHostTest::postSetNeedsRedrawToMainThread):
+        (CCLayerTreeHostTest::onEndTest):
+        (CCLayerTreeHostTest::dispatchSetNeedsCommit):
+        (CCLayerTreeHostTest::dispatchSetNeedsRedraw):
+        (CCLayerTreeHostTest::runTest):
+        (CCLayerTreeHostTest::doBeginTest):
+        (CCLayerTreeHostTestShortlived2::beginTest):
+        (CCLayerTreeHostTestShortlived3::beginTest):
+        (CCLayerTreeHostTestCommitingWithContinuousRedraw::beginTest):
+        (CCLayerTreeHostTestCommitingWithContinuousRedraw::commitCompleteOnCCThread):
+        (CCLayerTreeHostTestCommitingWithContinuousRedraw::drawLayersOnCCThread):
+        (CCLayerTreeHostTestSetNeedsCommit1::beginTest):
+        (CCLayerTreeHostTestSetNeedsCommit1::drawLayersOnCCThread):
+        (CCLayerTreeHostTestSetNeedsCommit1::commitCompleteOnCCThread):
+        (CCLayerTreeHostTestSetNeedsCommit2::beginTest):
+        (CCLayerTreeHostTestSetNeedsCommit2::drawLayersOnCCThread):
+        (CCLayerTreeHostTestSetNeedsCommit2::commitCompleteOnCCThread):
+        (CCLayerTreeHostTestSetNeedsRedraw::beginTest):
+        (CCLayerTreeHostTestSetNeedsRedraw::drawLayersOnCCThread):
+        (CCLayerTreeHostTestSetNeedsRedraw::commitCompleteOnCCThread):
+
 2011-09-16  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] support extensions for remote inspector front-end

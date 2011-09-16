@@ -1,3 +1,28 @@
+2011-09-16  Iain Merrick  <husky@google.com>
+
+        [chromium] Fix CCLayerTreeHostTest
+        https://bugs.webkit.org/show_bug.cgi?id=67418
+
+        This is a minimal set of changes to get CCLayerTreeHostTest
+        compiling, running and passing with USE_THREADED_COMPOSITING
+        enabled.
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::createLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::context):
+        (WebCore::CCThreadProxy::beginFrameAndCommitOnCCThread):
+        (WebCore::CCThreadProxy::setNeedsCommitAndRedrawOnCCThread):
+        (WebCore::CCThreadProxy::setNeedsRedrawOnCCThread):
+
 2011-09-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95227.
