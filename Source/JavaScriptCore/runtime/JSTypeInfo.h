@@ -60,7 +60,8 @@ namespace JSC {
                 m_flags |= ImplementsDefaultHasInstance;
         }
 
-        JSType type() const { return (JSType)m_type; }
+        JSType type() const { return static_cast<JSType>(m_type); }
+        bool isObject() const { return type() >= ObjectType; }
 
         bool masqueradesAsUndefined() const { return m_flags & MasqueradesAsUndefined; }
         bool implementsHasInstance() const { return m_flags & ImplementsHasInstance; }
@@ -69,8 +70,9 @@ namespace JSC {
         bool overridesGetOwnPropertySlot() const { return m_flags & OverridesGetOwnPropertySlot; }
         bool overridesVisitChildren() const { return m_flags & OverridesVisitChildren; }
         bool overridesGetPropertyNames() const { return m_flags & OverridesGetPropertyNames; }
-        unsigned isFinal() const { return m_flags2 & (IsJSFinalObject >> 8); }
-        unsigned prohibitsPropertyCaching() const { return m_flags2 & (ProhibitsPropertyCaching >> 8); }
+        bool isFinal() const { return m_flags2 & (IsJSFinalObject >> 8); }
+        bool prohibitsPropertyCaching() const { return m_flags2 & (ProhibitsPropertyCaching >> 8); }
+        
         unsigned flags() const { return m_flags; }
 
         static ptrdiff_t flagsOffset()

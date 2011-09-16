@@ -187,7 +187,7 @@ public:
 
     Jump branchIfNotObject(GPRReg structureReg)
     {
-        return branch8(NotEqual, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+        return branch8(Below, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
     }
 
     // Notify the JIT of a call that does not require linking.

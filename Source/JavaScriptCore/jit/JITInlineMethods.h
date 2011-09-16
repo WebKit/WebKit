@@ -315,7 +315,7 @@ ALWAYS_INLINE void JIT::emitJumpSlowToHot(Jump jump, int relativeOffset)
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotObject(RegisterID structureReg)
 {
-    return branch8(NotEqual, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+    return branch8(Below, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
 }
 
 #if ENABLE(SAMPLING_FLAGS)

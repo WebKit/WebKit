@@ -119,7 +119,10 @@ namespace JSC {
         bool isDictionary() const { return m_dictionaryKind != NoneDictionaryKind; }
         bool isUncacheableDictionary() const { return m_dictionaryKind == UncachedDictionaryKind; }
 
+        // Type accessors.
         const TypeInfo& typeInfo() const { ASSERT(structure()->classInfo() == &s_info); return m_typeInfo; }
+        bool isObject() const { return typeInfo().isObject(); }
+
 
         JSGlobalObject* globalObject() const { return m_globalObject.get(); }
         void setGlobalObject(JSGlobalData& globalData, JSGlobalObject* globalObject) { m_globalObject.set(globalData, this, globalObject); }
@@ -304,7 +307,7 @@ namespace JSC {
 
     inline bool JSCell::isObject() const
     {
-        return m_structure->typeInfo().type() == ObjectType;
+        return m_structure->isObject();
     }
 
     inline bool JSCell::isString() const

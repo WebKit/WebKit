@@ -62,7 +62,7 @@ namespace JSC {
             putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | ReadOnly | DontEnum);
             m_errorStructure.set(exec->globalData(), this, ErrorInstance::createStructure(exec->globalData(), globalObject, prototype));
             ASSERT(m_errorStructure);
-            ASSERT(m_errorStructure->typeInfo().type() == ObjectType);
+            ASSERT(m_errorStructure->isObject());
         }
 
     private:

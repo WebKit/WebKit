@@ -36,9 +36,11 @@ namespace JSC {
         LeafType          = 6,
         // The CompoundType value must come before any JSType that may have children
         CompoundType      = 7,
-        ObjectType        = 8,
-        GetterSetterType  = 9,
-        APIValueWrapper   = 10
+        GetterSetterType  = 8,
+        APIValueWrapper   = 9,
+        // The ObjectType value must come before any JSType that is a subclass of JSObject
+        ObjectType        = 10,
+        FinalObjectType   = 11,
     };
 
 } // namespace JSC

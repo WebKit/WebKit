@@ -280,7 +280,7 @@ void Structure::despecifyDictionaryFunction(JSGlobalData& globalData, const Iden
 Structure* Structure::addPropertyTransitionToExistingStructure(Structure* structure, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
 {
     ASSERT(!structure->isDictionary());
-    ASSERT(structure->typeInfo().type() == ObjectType);
+    ASSERT(structure->isObject());
 
     if (Structure* existingTransition = structure->m_transitionTable.get(propertyName.impl(), attributes)) {
         JSCell* specificValueInPrevious = existingTransition->m_specificValueInPrevious.get();
@@ -307,7 +307,7 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
         specificValue = 0;
 
     ASSERT(!structure->isDictionary());
-    ASSERT(structure->typeInfo().type() == ObjectType);
+    ASSERT(structure->isObject());
     ASSERT(!Structure::addPropertyTransitionToExistingStructure(structure, propertyName, attributes, specificValue, offset));
     
     if (structure->m_specificFunctionThrashCount == maxSpecificFunctionThrashCount)

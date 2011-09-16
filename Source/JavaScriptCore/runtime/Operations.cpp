@@ -88,7 +88,7 @@ bool jsIsObjectType(JSValue v)
     JSType type = v.asCell()->structure()->typeInfo().type();
     if (type == NumberType || type == StringType)
         return false;
-    if (type == ObjectType) {
+    if (type >= ObjectType) {
         if (asObject(v)->structure()->typeInfo().masqueradesAsUndefined())
             return false;
         CallData callData;
