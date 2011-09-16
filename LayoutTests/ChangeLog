@@ -1,3 +1,17 @@
+2011-09-16  Mihai Parparita  <mihaip@chromium.org>
+
+        http/tests/history/back-with-fragment-change.php fails on non-Chromium bots
+        https://bugs.webkit.org/show_bug.cgi?id=68242
+
+        Skip test on ports on which it fails. Move comment to be inside
+        <?php> block so that HTTP headers can be set on all platforms (there
+        must not be any whitespace before the <?php> block).
+
+        * http/tests/history/back-with-fragment-change.php:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
 2011-09-16  Cary Clark  <caryclark@google.com>
         Unreviewed; new expectations (Skia on Mac)
         

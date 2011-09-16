@@ -1,11 +1,8 @@
-<!--
-We intentionally want the page to load slowly (every time, hence no caching), so
-that when back-with-fragment-change-target.html calls history.back(), the load
-is provisional for a while (long enough for the window.location = '#foo' script
-to run and stop that load).
--->
 <?php
-
+// We intentionally want the page to load slowly (every time, hence no caching), 
+// so that when back-with-fragment-change-target.html calls history.back(), the
+// load is provisional for a while (long enough for the window.location = '#foo'
+// script to run and stop that load).
 sleep(2);
 
 header("Cache-control: no-cache, no-store");
