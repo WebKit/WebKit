@@ -1,3 +1,10 @@
+2011-09-16  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r95310
+
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops: Added include\private\JavaScriptCore to the
+        include path so DFGIntrinsic.h can be found.
+
 2011-09-16  Gavin Barraclough  <barraclough@apple.com>
 
         Rationalize JSObject::putDirect* methods
