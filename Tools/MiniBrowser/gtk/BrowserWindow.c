@@ -623,7 +623,7 @@ static void browserWindowUIClientInit(BrowserWindow *window)
         runJavaScriptConfirm,
         runJavaScriptPrompt,
         0,      /* setStatusText */
-        mouseDidMoveOverElement,
+        0,      /* mouseDidMoveOverElement_deprecatedForUseWithV0 */
         0,      /* missingPluginButtonClicked */
         0,      /* didNotHandleKeyEvent */
         0,      /* didNotHandleWheelEvent */
@@ -652,7 +652,8 @@ static void browserWindowUIClientInit(BrowserWindow *window)
         0,      /* didCompleteRubberBandForMainFrame */
         0,      /* saveDataToFileInDownloadsFolder */
         0,      /* shouldInterruptJavaScript */
-        createNewPage
+        createNewPage,
+        mouseDidMoveOverElement
     };
     WKPageSetPageUIClient(WKViewGetPage(window->webView), &uiClient);
 }

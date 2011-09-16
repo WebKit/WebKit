@@ -105,7 +105,7 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
         runJavaScriptConfirm,
         runJavaScriptPrompt,
         setStatusText,
-        mouseDidMoveOverElement,
+        0,          /* mouseDidMoveOverElement_deprecatedForUseWithV0 */
         0,          /* missingPluginButtonClicked */
         0,          /* didNotHandleKeyEvent */
         0,          /* didNotHandleWheelEvent */
@@ -135,6 +135,7 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
         0,          /* saveDataToFileInDownloadsFolder */
         0,          /* shouldInterruptJavaScript */
         createNewPage,
+        mouseDidMoveOverElement,
     };
 
     WKPageSetPageUIClient(WKViewGetPage(m_webView), &uiClient);

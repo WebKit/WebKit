@@ -168,7 +168,7 @@ typedef void (*WKPageTakeFocusCallback)(WKPageRef page, WKFocusDirection directi
 typedef void (*WKPageFocusCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageUnfocusCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageSetStatusTextCallback)(WKPageRef page, WKStringRef text, const void *clientInfo);
-typedef void (*WKPageMouseDidMoveOverElementCallback)(WKPageRef page, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo);
+typedef void (*WKPageMouseDidMoveOverElementCallback)(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageMissingPluginButtonClickedCallback)(WKPageRef page, WKStringRef mimeType, WKStringRef url, WKStringRef pluginsPageURL, const void* clientInfo);
 typedef void (*WKPageDidNotHandleKeyEventCallback)(WKPageRef page, WKNativeEventPtr event, const void *clientInfo);
 typedef void (*WKPageDidNotHandleWheelEventCallback)(WKPageRef page, WKNativeEventPtr event, const void *clientInfo);
@@ -197,7 +197,8 @@ typedef bool (*WKPageShouldInterruptJavaScriptCallback)(WKPageRef page, const vo
 
 // Deprecated    
 typedef WKPageRef (*WKPageCreateNewPageCallback_deprecatedForUseWithV0)(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
-    
+typedef void      (*WKPageMouseDidMoveOverElementCallback_deprecatedForUseWithV0)(WKPageRef page, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo);
+
 struct WKPageUIClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -213,7 +214,7 @@ struct WKPageUIClient {
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
     WKPageSetStatusTextCallback                                         setStatusText;
-    WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
+    WKPageMouseDidMoveOverElementCallback_deprecatedForUseWithV0        mouseDidMoveOverElement_deprecatedForUseWithV0;
     WKPageMissingPluginButtonClickedCallback                            missingPluginButtonClicked;
     WKPageDidNotHandleKeyEventCallback                                  didNotHandleKeyEvent;
     WKPageDidNotHandleWheelEventCallback                                didNotHandleWheelEvent;
@@ -245,6 +246,7 @@ struct WKPageUIClient {
 
     // Version 1
     WKPageCreateNewPageCallback                                         createNewPage;
+    WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
 };
 typedef struct WKPageUIClient WKPageUIClient;
 

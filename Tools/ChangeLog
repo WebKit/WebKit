@@ -1,5 +1,25 @@
 2011-09-16  Anders Carlsson  <andersca@apple.com>
 
+        Add back the WKHitTestResultRef parameter to mouseDidMoveOverElement in an ABI preserving way
+        https://bugs.webkit.org/show_bug.cgi?id=68269
+
+        Reviewed by Geoffrey Garen.
+
+        Update client function signatures.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowUIClientInit):
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (mouseDidMoveOverElement):
+        (-[BrowserWindowController awakeFromNib]):
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::initialize):
+
+2011-09-16  Anders Carlsson  <andersca@apple.com>
+
         Temporarily remove the WKHitTestResultRef parameter to avoid breaking the WK2 ABI/API
         https://bugs.webkit.org/show_bug.cgi?id=68266
 

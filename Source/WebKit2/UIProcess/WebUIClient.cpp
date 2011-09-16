@@ -157,12 +157,19 @@ void WebUIClient::setStatusText(WebPageProxy* page, const String& text)
 
 void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, const WebHitTestResult::Data& data, WebEvent::Modifiers modifiers, APIObject* userData)
 {
-    if (!m_client.mouseDidMoveOverElement)
+    if (!m_client.mouseDidMoveOverElement && !m_client.mouseDidMoveOverElement_deprecatedForUseWithV0)
         return;
 
-    // FIXME: Pass the hit test result to the UI client callback function.
+    if (m_client.version == kWKPageUIClientCurrentVersion && !m_client.mouseDidMoveOverElement)
+        return;
+
+    if (!m_client.version) {
+        m_client.mouseDidMoveOverElement_deprecatedForUseWithV0(toAPI(page), toAPI(modifiers), toAPI(userData), m_client.clientInfo);
+        return;
+    }
+
     RefPtr<WebHitTestResult> webHitTestResult = WebHitTestResult::create(data);
-    m_client.mouseDidMoveOverElement(toAPI(page), toAPI(modifiers), toAPI(userData), m_client.clientInfo);
+    m_client.mouseDidMoveOverElement(toAPI(page), toAPI(webHitTestResult.get()), toAPI(modifiers), toAPI(userData), m_client.clientInfo);
 }
 
 void WebUIClient::missingPluginButtonClicked(WebPageProxy* page, const String& mimeType, const String& url, const String& pluginsPageURL)
