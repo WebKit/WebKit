@@ -122,7 +122,7 @@ void InjectedScriptHost::clearConsoleMessages()
 {
     if (m_consoleAgent) {
         ErrorString error;
-        m_consoleAgent->clearConsoleMessages(&error);
+        m_consoleAgent->clearMessages(&error);
     }
 }
 

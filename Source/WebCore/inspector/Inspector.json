@@ -128,7 +128,7 @@
             {
                 "name": "reload",
                 "parameters": [
-                    { "name": "ignoreCache", "type": "boolean", "optional": true }
+                    { "name": "ignoreCache", "type": "boolean", "optional": true, "description": "If true, browser cache is ignored (as if the user pressed Shift+refresh)." }
                 ],
                 "description": "Reloads given page optionally ignoring the cache."
             },
@@ -332,7 +332,7 @@
     },
     {
         "domain": "Console",
-        "description": "Console domain defines methods and events for interaction with the JavaScript console. One needs to enable this domain using <code>enable</code> function in order to start receiving the console messages.",
+        "description": "Console domain defines methods and events for interaction with the JavaScript console. Console collects messages created by means of the <a href='http://getfirebug.com/wiki/index.php/Console_API'>JavaScript Console API</a>. One needs to enable this domain using <code>enable</code> function in order to start receiving the console messages. Browser will collect messages issued while console domain is not enabled and will report them using <code>messageAdded</code> notification upon enabling.",
         "types": [
             {
                 "id": "ConsoleMessage",
@@ -342,13 +342,13 @@
                     { "name": "source", "type": "string", "enum": ["html", "wml", "xml", "javascript", "css", "other"], "description": "Message source." },
                     { "name": "type", "type": "string", "enum": ["log", "other", "trace", "startGroup", "startGroupCollapsed", "endGroup", "assert", "uncaughtException", "networkError", "result"], "description": "Message type." },
                     { "name": "level", "type": "string", "enum": ["tip", "log", "warning", "error", "debug"], "description": "Message severity." },
-                    { "name": "line", "type": "integer", "description": "JavaScript source line that created console message." },
-                    { "name": "url", "type": "string", "description": "JavaScript source url that created console message." },
-                    { "name": "repeatCount", "type": "integer", "optional": true, "description": "Repeat count for repeated messages." },
+                    { "name": "line", "type": "integer", "description": "Line number in the message origin resource." },
+                    { "name": "url", "type": "string", "description": "URL of the message origin." },
+                    { "name": "repeatCount", "type": "integer", "description": "Repeat count for repeated messages." },
                     { "name": "text", "type": "string", "description": "Message text." },
-                    { "name": "networkRequestId", "$ref": "Network.RequestId", "optional": true, "description": "Identifier of the network request associated with the console message." },
+                    { "name": "networkRequestId", "$ref": "Network.RequestId", "optional": true, "description": "Identifier of the network request associated with this message." },
                     { "name": "parameters", "type": "array", "items": { "$ref": "Runtime.RemoteObject" }, "description": "Message parameters in case of the formatted message." },
-                    { "name": "stackTrace", "$ref": "StackTrace", "description": "Stack trace for assert and error messages." }
+                    { "name": "stackTrace", "$ref": "StackTrace", "description": "JavaScript stack trace for assertions and error messages." }
                 ]
             },
             {
@@ -357,40 +357,41 @@
                 "description": "Stack entry for console errors and assertions.",
                 "properties": [
                     { "name": "functionName", "type": "string", "description": "JavaScript function name." },
-                    { "name": "url", "type": "string", "description": "JavaScript source name / url." },
-                    { "name": "lineNumber", "type": "string", "description": "JavaScript source line number." },
-                    { "name": "columnNumber", "type": "string", "description": "JavaScript source column number." }
+                    { "name": "url", "type": "string", "description": "JavaScript script name or url." },
+                    { "name": "lineNumber", "type": "string", "description": "JavaScript script line number." },
+                    { "name": "columnNumber", "type": "string", "description": "JavaScript script column number." }
                 ]
             },
             {
                 "id": "StackTrace",
                 "type": "array",
                 "items": { "$ref": "CallFrame" },
-                "description": "Call frames for assert and error messages."
+                "description": "Call frames for assertions or error messages."
             }
         ],
         "commands": [
             {
                 "name": "enable",
                 "returns": [
-                    { "name": "expiredMessagesCount", "type": "integer", "description": "Number of messages cleared due to message threashold overflow." }
+                    { "name": "expiredMessagesCount", "type": "integer", "description": "Number of messages collected due to message threashold overflow." }
                 ],
-                "description": "Enables console domain, sends all the messages collected so far to the client." 
+                "description": "Enables console domain, sends the messages collected so far to the client by means of the <code>messageAdded</code> notification." 
             },
             {
                 "name": "disable",
                 "description": "Disables console domain, prevents further console messages from being sent to the client." 
             },
             {
-                "name": "clearConsoleMessages",
-                "description": "Clears collected console messages." 
+                "name": "clearMessages",
+                "description": "Clears console messages collected in the browser." 
             },
             {
                 "name": "setMonitoringXHREnabled",
                 "parameters": [
                     { "name": "enabled", "type": "boolean", "description": "Monitoring enabled state." }
                 ],
-                "description": "Toggles monitoring of XMLHttpRequest. If <code>true</code>, console will receive messages upon each XHR issued." 
+                "description": "Toggles monitoring of XMLHttpRequest. If <code>true</code>, console will receive messages upon each XHR issued.", 
+                "hidden": true
             },
             {
                 "name": "addInspectedNode",
@@ -407,14 +408,14 @@
                 "parameters": [
                     { "name": "messageObj", "$ref": "ConsoleMessage", "description": "Console message that has been added." }
                 ],
-                "description": "Issued for each console message added."
+                "description": "Issued when new console message is added."
             },
             {
                 "name": "messageRepeatCountUpdated",
                 "parameters": [
                     { "name": "count", "type": "integer", "description": "New repeat count value." }
                 ],
-                "description": "In case of subsequent message being equal to the previous one, only repeat count is being updated."
+                "description": "Issued when subsequent message(s) are equal to the previous one."
             },
             {
                 "name": "messagesCleared",

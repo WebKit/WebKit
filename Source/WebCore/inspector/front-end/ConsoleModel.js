@@ -88,7 +88,7 @@ WebInspector.ConsoleModel.prototype = {
 
     requestClearMessages: function()
     {
-        ConsoleAgent.clearConsoleMessages();
+        ConsoleAgent.clearMessages();
         this.clearMessages();
     },
 
