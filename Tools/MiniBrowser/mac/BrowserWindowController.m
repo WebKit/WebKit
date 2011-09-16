@@ -490,7 +490,7 @@ static void setStatusText(WKPageRef page, WKStringRef text, const void* clientIn
     LOG(@"setStatusText");
 }
 
-static void mouseDidMoveOverElement(WKPageRef page, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo)
+static void mouseDidMoveOverElement(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo)
 {
     LOG(@"mouseDidMoveOverElement");
 }
