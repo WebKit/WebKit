@@ -98,7 +98,7 @@ public:
     static bool webSocketEnabled();
 #endif
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     static bool openDatabaseEnabled();
     static bool openDatabaseSyncEnabled();
 #endif

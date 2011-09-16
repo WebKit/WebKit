@@ -1402,7 +1402,7 @@ IF (ENABLE_BLOB)
     )
 ENDIF ()
 
-IF (ENABLE_DATABASE)
+IF (ENABLE_SQL_DATABASE)
     LIST(APPEND WebCore_SOURCES
         platform/sql/SQLValue.cpp
         platform/sql/SQLiteAuthorizer.cpp

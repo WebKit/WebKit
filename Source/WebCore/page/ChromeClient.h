@@ -179,7 +179,7 @@ namespace WebCore {
         virtual void print(Frame*) = 0;
         virtual bool shouldRubberBandInDirection(ScrollDirection) const = 0;
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         virtual void exceededDatabaseQuota(Frame*, const String& databaseName) = 0;
 #endif
 

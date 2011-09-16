@@ -165,7 +165,7 @@ IF (ENABLE_BLOB)
     )
 ENDIF ()
 
-IF (ENABLE_DATABASE)
+IF (ENABLE_SQL_DATABASE)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSCustomSQLStatementErrorCallback.cpp
         bindings/js/JSSQLResultSetRowListCustom.cpp

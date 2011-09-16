@@ -675,7 +675,7 @@ void V8Proxy::setDOMException(int exceptionCode)
         exception = toV8(XPathException::create(description));
         break;
 #endif
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     case SQLExceptionType:
         exception = toV8(SQLException::create(description));
         break;

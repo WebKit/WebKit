@@ -517,7 +517,7 @@ void WebChromeClient::print(Frame* frame)
     m_page->sendSync(Messages::WebPageProxy::PrintFrame(webFrame->frameID()), Messages::WebPageProxy::PrintFrame::Reply());
 }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
     WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();

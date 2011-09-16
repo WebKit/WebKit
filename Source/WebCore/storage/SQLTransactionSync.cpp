@@ -31,7 +31,7 @@
 #include "config.h"
 #include "SQLTransactionSync.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "DatabaseAuthorizer.h"
 #include "DatabaseSync.h"
@@ -220,4 +220,4 @@ void SQLTransactionSync::rollback()
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)

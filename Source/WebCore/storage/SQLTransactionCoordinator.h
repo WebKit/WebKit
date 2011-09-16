@@ -31,7 +31,7 @@
 #ifndef SQLTransactionCoordinator_h
 #define SQLTransactionCoordinator_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -65,6 +65,6 @@ namespace WebCore {
     };
 }
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)
 
 #endif // SQLTransactionCoordinator_h

@@ -1177,7 +1177,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     }
     
     if (Document* document = _private->coreFrame->document()) {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         if (document->hasOpenDatabases())
             [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameUsesDatabases];
 #endif

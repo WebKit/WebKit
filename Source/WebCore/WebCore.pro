@@ -2741,7 +2741,7 @@ contains(DEFINES, ENABLE_SQLITE=1) {
 }
 
 
-contains(DEFINES, ENABLE_DATABASE=1) {
+contains(DEFINES, ENABLE_SQL_DATABASE=1) {
     SOURCES += \
         storage/ChangeVersionWrapper.cpp \
         storage/DatabaseTask.cpp \

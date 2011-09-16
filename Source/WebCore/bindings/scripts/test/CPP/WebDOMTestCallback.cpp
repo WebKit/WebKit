@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "WebDOMTestCallback.h"
 
@@ -135,4 +135,4 @@ WebDOMTestCallback toWebKit(WebCore::TestCallback* value)
     return WebDOMTestCallback(value);
 }
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)

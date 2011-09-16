@@ -247,7 +247,7 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::PrintElementBackgrounds));
         settings->setShouldPrintBackgrounds(value);
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         value = attributes.value(QWebSettings::OfflineStorageDatabaseEnabled,
                                       global->attributes.value(QWebSettings::OfflineStorageDatabaseEnabled));
         WebCore::AbstractDatabase::setIsAvailable(value);
@@ -978,7 +978,7 @@ void QWebSettings::resetAttribute(WebAttribute attr)
 */
 void QWebSettings::setOfflineStoragePath(const QString& path)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(path);
 #endif
 }
@@ -993,7 +993,7 @@ void QWebSettings::setOfflineStoragePath(const QString& path)
 */
 QString QWebSettings::offlineStoragePath()
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     return WebCore::DatabaseTracker::tracker().databaseDirectoryPath();
 #else
     return QString();

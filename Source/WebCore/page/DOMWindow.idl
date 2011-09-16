@@ -166,7 +166,7 @@ module window {
 #if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
         readonly attribute [EnabledAtRuntime] DOMApplicationCache applicationCache;
 #endif    
-#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
+#if defined(ENABLE_SQL_DATABASE) && ENABLE_SQL_DATABASE
         [EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
             raises(DOMException);
 #endif
@@ -790,7 +790,7 @@ module window {
 #endif
 #endif
 
-        attribute [Conditional=DATABASE] SQLExceptionConstructor SQLException;
+        attribute [Conditional=SQL_DATABASE] SQLExceptionConstructor SQLException;
 
 
         attribute DOMFormDataConstructor FormData;

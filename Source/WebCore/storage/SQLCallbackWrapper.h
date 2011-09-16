@@ -28,7 +28,7 @@
 #ifndef SQLCallbackWrapper_h
 #define SQLCallbackWrapper_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "CrossThreadTask.h"
 #include "ScriptExecutionContext.h"
@@ -103,6 +103,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)
 
 #endif // SQLCallbackWrapper_h

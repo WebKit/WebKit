@@ -1584,7 +1584,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setMediaPlaybackRequiresUserGesture(store.getBoolValueForKey(WebPreferencesKey::mediaPlaybackRequiresUserGestureKey()));
     settings->setMediaPlaybackAllowsInline(store.getBoolValueForKey(WebPreferencesKey::mediaPlaybackAllowsInlineKey()));
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     AbstractDatabase::setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));
 #endif
 

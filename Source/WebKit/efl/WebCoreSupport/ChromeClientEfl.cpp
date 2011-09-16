@@ -34,7 +34,8 @@
 #include "config.h"
 #include "ChromeClientEfl.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
+
 #include "DatabaseDetails.h"
 #include "DatabaseTracker.h"
 #endif
@@ -393,7 +394,7 @@ void ChromeClientEfl::needTouchEvents(bool needed)
 }
 #endif
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
     uint64_t quota;

@@ -76,7 +76,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 #include "AbstractDatabase.h"
 #include "DatabaseTracker.h"
 #endif
@@ -415,7 +415,7 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     settings->setStandardFontFamily("Times New Roman");
     settings->setJavaScriptEnabled(true);
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     SetDatabasesEnabled(true);
 #endif
 
@@ -1100,7 +1100,7 @@ bool wxWebView::ShouldClose() const
 /* static */
 void wxWebView::SetDatabaseDirectory(const wxString& databaseDirectory)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(databaseDirectory);
 #endif
 }
@@ -1108,7 +1108,7 @@ void wxWebView::SetDatabaseDirectory(const wxString& databaseDirectory)
 /* static */
 wxString wxWebView::GetDatabaseDirectory()
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     return WebCore::DatabaseTracker::tracker().databaseDirectoryPath();
 #else
     return wxEmptyString;
@@ -1118,7 +1118,7 @@ wxString wxWebView::GetDatabaseDirectory()
 /* static */
 void wxWebView::SetDatabasesEnabled(bool enabled)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     WebCore::AbstractDatabase::setIsAvailable(enabled);
 #endif
 }
@@ -1126,7 +1126,7 @@ void wxWebView::SetDatabasesEnabled(bool enabled)
 /* static */
 bool wxWebView::AreDatabasesEnabled()
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     return WebCore::AbstractDatabase::isAvailable();
 #endif
     return false;

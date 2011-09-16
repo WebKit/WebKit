@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "JSSQLResultSetRowList.h"
 
@@ -83,4 +83,4 @@ JSValue JSSQLResultSetRowList::item(ExecState* exec)
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)

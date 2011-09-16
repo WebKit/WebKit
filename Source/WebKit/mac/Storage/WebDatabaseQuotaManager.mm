@@ -49,7 +49,7 @@ using namespace WebCore;
 
 - (unsigned long long)usage
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     return DatabaseTracker::tracker().usageForOrigin([_origin _core]);
 #else
     return 0;
@@ -58,7 +58,7 @@ using namespace WebCore;
 
 - (unsigned long long)quota
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     return DatabaseTracker::tracker().quotaForOrigin([_origin _core]);
 #else
     return 0;
@@ -70,7 +70,7 @@ using namespace WebCore;
 // prevent new data from being added to databases in that origin.
 - (void)setQuota:(unsigned long long)quota
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     DatabaseTracker::tracker().setQuota([_origin _core], quota);
 #endif
 }

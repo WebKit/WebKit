@@ -32,7 +32,7 @@ module storage {
 
     interface [
         LegacyDefaultOptionalArguments,
-        Conditional=DATABASE,
+        Conditional=SQL_DATABASE,
         OmitConstructor,
         NoStaticTables
     ] SQLTransactionSync {

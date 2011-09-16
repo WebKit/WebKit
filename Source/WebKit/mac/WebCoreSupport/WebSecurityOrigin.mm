@@ -162,7 +162,7 @@ using namespace WebCore;
 
 - (unsigned long long)usage
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     return DatabaseTracker::tracker().usageForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
 #else
     return 0;
@@ -171,7 +171,7 @@ using namespace WebCore;
 
 - (unsigned long long)quota
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     return DatabaseTracker::tracker().quotaForOrigin(reinterpret_cast<SecurityOrigin*>(_private));
 #else
     return 0;
@@ -180,7 +180,7 @@ using namespace WebCore;
 
 - (void)setQuota:(unsigned long long)quota
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     DatabaseTracker::tracker().setQuota(reinterpret_cast<SecurityOrigin*>(_private), quota);
 #endif
 }

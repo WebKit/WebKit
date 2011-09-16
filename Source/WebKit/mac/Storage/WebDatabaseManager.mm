@@ -29,7 +29,7 @@
 #import "WebDatabaseManagerPrivate.h"
 #import "WebDatabaseManagerInternal.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #import "WebDatabaseTrackerClient.h"
 #import "WebSecurityOriginInternal.h"

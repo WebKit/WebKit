@@ -135,7 +135,7 @@ bool RuntimeEnabledFeatures::webSocketEnabled()
 }
 #endif
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 bool RuntimeEnabledFeatures::openDatabaseEnabled()
 {
     return AbstractDatabase::isAvailable();

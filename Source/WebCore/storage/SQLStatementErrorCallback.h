@@ -29,7 +29,7 @@
 #ifndef SQLStatementErrorCallback_h
 #define SQLStatementErrorCallback_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include <wtf/ThreadSafeRefCounted.h>
 

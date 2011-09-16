@@ -74,7 +74,7 @@ my (
     $clientBasedGeolocationSupport,
     $coverageSupport,
     $css3FlexboxSupport,
-    $databaseSupport,
+    $sqlDatabaseSupport,
     $datalistSupport,
     $dataTransferItemsSupport,
     $detailsSupport,
@@ -158,8 +158,8 @@ my @features = (
     { option => "coverage", desc => "Toggle code coverage support",
       define => "", default => 0, value => \$coverageSupport },
 
-    { option => "database", desc => "Toggle Database Support",
-      define => "ENABLE_DATABASE", default => 1, value => \$databaseSupport },
+    { option => "sql-database", desc => "Toggle SQL Database Support",
+      define => "ENABLE_SQL_DATABASE", default => 1, value => \$sqlDatabaseSupport },
 
     { option => "datalist", desc => "Toggle HTML5 datalist support",
       define => "ENABLE_DATALIST", default => 1, value => \$datalistSupport },

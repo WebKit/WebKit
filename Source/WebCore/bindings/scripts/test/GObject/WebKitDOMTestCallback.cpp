@@ -21,7 +21,7 @@
 #include <glib-object.h>
 #include "config.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -232,4 +232,4 @@ WebKitDOMTestCallback* wrapTestCallback(WebCore::TestCallback* coreObject)
                                                "core-object", coreObject, NULL));
 }
 } // namespace WebKit
-#endif /* ENABLE(DATABASE) */
+#endif // ENABLE(SQL_DATABASE)

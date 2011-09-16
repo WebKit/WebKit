@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 inline void InspectorInstrumentation::didOpenDatabase(ScriptExecutionContext* context, PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
 {
 #if ENABLE(INSPECTOR)

@@ -120,7 +120,7 @@ int QWebSecurityOrigin::port() const
 */
 qint64 QWebSecurityOrigin::databaseUsage() const
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     return DatabaseTracker::tracker().usageForOrigin(d->origin.get());
 #else
     return 0;
@@ -132,7 +132,7 @@ qint64 QWebSecurityOrigin::databaseUsage() const
 */
 qint64 QWebSecurityOrigin::databaseQuota() const
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     return DatabaseTracker::tracker().quotaForOrigin(d->origin.get());
 #else
     return 0;
@@ -148,7 +148,7 @@ qint64 QWebSecurityOrigin::databaseQuota() const
 */
 void QWebSecurityOrigin::setDatabaseQuota(qint64 quota)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     DatabaseTracker::tracker().setQuota(d->origin.get(), quota);
 #endif
 }
@@ -181,7 +181,7 @@ QList<QWebSecurityOrigin> QWebSecurityOrigin::allOrigins()
 {
     QList<QWebSecurityOrigin> webOrigins;
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     Vector<RefPtr<SecurityOrigin> > coreOrigins;
     DatabaseTracker::tracker().origins(coreOrigins);
 
@@ -201,7 +201,7 @@ QList<QWebDatabase> QWebSecurityOrigin::databases() const
 {
     QList<QWebDatabase> databases;
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     Vector<String> nameVector;
 
     if (!DatabaseTracker::tracker().databaseNamesForOrigin(d->origin.get(), nameVector))

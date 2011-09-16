@@ -29,7 +29,7 @@
 #ifndef WebDatabaseManager_h
 #define WebDatabaseManager_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "WebKit.h"
 #include <WebCore/DatabaseTrackerClient.h>

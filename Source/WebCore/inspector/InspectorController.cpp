@@ -101,7 +101,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_pageAgent(InspectorPageAgent::create(m_instrumentingAgents.get(), page, m_injectedScriptManager.get()))
     , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), m_pageAgent.get(), inspectorClient, m_state.get(), m_injectedScriptManager.get()))
     , m_cssAgent(adoptPtr(new InspectorCSSAgent(m_instrumentingAgents.get(), m_domAgent.get())))
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     , m_databaseAgent(InspectorDatabaseAgent::create(m_instrumentingAgents.get(), m_state.get()))
 #endif
 #if ENABLE(DOM_STORAGE)
@@ -130,7 +130,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     ASSERT_ARG(inspectorClient, inspectorClient);
     m_injectedScriptManager->injectedScriptHost()->init(m_inspectorAgent.get()
         , m_consoleAgent.get()
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         , m_databaseAgent.get()
 #endif
 #if ENABLE(DOM_STORAGE)
@@ -214,7 +214,7 @@ void InspectorController::connectFrontend()
     m_debuggerAgent->setFrontend(m_inspectorFrontend.get());
     m_profilerAgent->setFrontend(m_inspectorFrontend.get());
 #endif
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     m_databaseAgent->setFrontend(m_inspectorFrontend.get());
 #endif
 #if ENABLE(DOM_STORAGE)
@@ -244,7 +244,7 @@ void InspectorController::connectFrontend()
 #if ENABLE(DOM_STORAGE)
         m_domStorageAgent.get(),
 #endif
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         m_databaseAgent.get(),
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -293,7 +293,7 @@ void InspectorController::disconnectFrontend()
     m_cssAgent->clearFrontend();
     m_timelineAgent->clearFrontend();
     m_resourceAgent->clearFrontend();
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     m_databaseAgent->clearFrontend();
 #endif
 #if ENABLE(DOM_STORAGE)
@@ -346,7 +346,7 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
     m_resourceAgent->restore();
     m_timelineAgent->restore();
     m_consoleAgent->restore();
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     m_databaseAgent->restore();
 #endif
 #if ENABLE(DOM_STORAGE)

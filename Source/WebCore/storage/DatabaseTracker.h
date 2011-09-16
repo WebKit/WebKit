@@ -29,7 +29,7 @@
 #ifndef DatabaseTracker_h
 #define DatabaseTracker_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
@@ -187,5 +187,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)
+
 #endif // DatabaseTracker_h

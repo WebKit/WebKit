@@ -31,7 +31,7 @@
 #ifndef SQLTransactionSync_h
 #define SQLTransactionSync_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "ExceptionCode.h"
 #include "PlatformString.h"

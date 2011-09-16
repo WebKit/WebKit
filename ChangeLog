@@ -1,3 +1,15 @@
+2011-09-15  Adam Barth  <abarth@webkit.org>
+
+        Rename ENABLE(DATABASE) to ENABLE(SQL_DATABASE)
+        https://bugs.webkit.org/show_bug.cgi?id=68205
+
+        Reviewed by Eric Seidel.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsWinCE.cmake:
+        * Source/cmakeconfig.h.cmake:
+        * configure.ac:
+
 2011-09-15  Varun Jain  <varunjain@google.com>
 
         Add method to scroll current node to specific position in Chromium WebKit API

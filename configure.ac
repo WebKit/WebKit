@@ -494,13 +494,13 @@ AC_ARG_ENABLE(input_speech,
               [],[enable_input_speech="no"])
 AC_MSG_RESULT([$enable_input_speech])
 
-# check whether to build with database support
-AC_MSG_CHECKING([whether to enable HTML5 client-side database storage support])
-AC_ARG_ENABLE(database,
-              AC_HELP_STRING([--enable-database],
-                             [enable HTML5 client-side database storage support [default=yes]]),
-              [],[enable_database="yes"])
-AC_MSG_RESULT([$enable_database])
+# check whether to build with SQL database support
+AC_MSG_CHECKING([whether to enable SQL client-side database storage support])
+AC_ARG_ENABLE(sql_database,
+              AC_HELP_STRING([--enable-sql-database],
+                             [enable SQL client-side database storage support [default=yes]]),
+              [],[enable_sql_database="yes"])
+AC_MSG_RESULT([$enable_sql_database])
 
 # check whether to build with server-sent events support
 AC_MSG_CHECKING([whether to enable HTML5 server-sent events support])
@@ -1003,7 +1003,7 @@ AC_SUBST([SQLITE3_CFLAGS])
 AC_SUBST([SQLITE3_LIBS])
 
 if (test "$sqlite3_found" = "no") && (test "$enable_icon_database" = "yes" || \
-   test "$enable_database" = "yes" || \
+   test "$enable_sql_database" = "yes" || \
    test "$enable_offline_web_applications" = "yes" || \
    test "$enable_dom_storage" = "yes"); then
    AC_MSG_ERROR([SQLite3 is required for the Database related features])
@@ -1132,7 +1132,7 @@ AM_CONDITIONAL([ENABLE_DIRECTORY_UPLOAD],[test "$enable_directory_upload" = "yes
 AM_CONDITIONAL([ENABLE_DATAGRID],[test "$enable_datagrid" = "yes"])
 AM_CONDITIONAL([ENABLE_DATA_TRANSFER_ITEMS],[test "$enable_data_transfer_items" = "yes"])
 AM_CONDITIONAL([ENABLE_DOM_STORAGE],[test "$enable_dom_storage" = "yes"])
-AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
+AM_CONDITIONAL([ENABLE_SQL_DATABASE],[test "$enable_sql_database" = "yes"])
 AM_CONDITIONAL([ENABLE_DATALIST],[test "$enable_datalist" = "yes"])
 AM_CONDITIONAL([ENABLE_DETAILS],[test "$enable_details" = "yes"])
 AM_CONDITIONAL([ENABLE_EVENTSOURCE],[test "$enable_eventsource" = "yes"])
@@ -1239,7 +1239,7 @@ Features:
  Page Visibility API support                              : $enable_page_visibility_api
  HTML5 progress element support                           : $enable_progress_tag
  HTML5 client-side session and persistent storage support : $enable_dom_storage
- HTML5 client-side database storage support               : $enable_database
+ SQL client-side database storage support                 : $enable_sql_database
  HTML5 datagrid support                                   : $enable_datagrid
  HTML5 data transfer items support                        : $enable_data_transfer_items
  HTML5 FileSystem API support                             : $enable_file_system

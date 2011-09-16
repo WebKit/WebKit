@@ -1,3 +1,167 @@
+2011-09-15  Adam Barth  <abarth@webkit.org>
+
+        Rename ENABLE(DATABASE) to ENABLE(SQL_DATABASE)
+        https://bugs.webkit.org/show_bug.cgi?id=68205
+
+        Reviewed by Eric Seidel.
+
+        As discussed on webkit-dev.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException):
+        * bindings/js/JSExceptionBase.cpp:
+        (WebCore::toExceptionBase):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::databaseId):
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        * bindings/js/JSSQLTransactionSyncCustom.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestCallback.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestCallback.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        * bindings/scripts/test/JS/JSTestCallback.h:
+        * bindings/scripts/test/ObjC/DOMTestCallback.mm:
+        * bindings/scripts/test/TestCallback.idl:
+        * bindings/scripts/test/V8/V8TestCallback.cpp:
+        * bindings/scripts/test/V8/V8TestCallback.h:
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setDOMException):
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp:
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::databaseIdCallback):
+        * bindings/v8/custom/V8SQLResultSetRowListCustom.cpp:
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        * bindings/v8/custom/V8SQLTransactionSyncCustom.cpp:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/ExceptionCode.cpp:
+        (WebCore::getExceptionCodeDescription):
+        * dom/ExceptionCode.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        * dom/ScriptExecutionContext.h:
+        * features.pri:
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::InjectedScriptHost):
+        (WebCore::InjectedScriptHost::disconnect):
+        * inspector/InjectedScriptHost.h:
+        (WebCore::InjectedScriptHost::init):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::restoreInspectorStateFromCookie):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        * inspector/InspectorDatabaseInstrumentation.h:
+        * inspector/InspectorDatabaseResource.cpp:
+        * inspector/InspectorDatabaseResource.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::connectFrontend):
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * page/ChromeClient.h:
+        * page/DOMWindow.cpp:
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * platform/sql/SQLiteAuthorizer.cpp:
+        * platform/sql/SQLiteDatabase.cpp:
+        * platform/sql/SQLiteFileSystem.cpp:
+        * platform/sql/SQLiteStatement.cpp:
+        * platform/sql/SQLiteTransaction.cpp:
+        * storage/AbstractDatabase.cpp:
+        * storage/AbstractDatabase.h:
+        * storage/ChangeVersionWrapper.cpp:
+        * storage/ChangeVersionWrapper.h:
+        * storage/Database.cpp:
+        * storage/Database.h:
+        * storage/Database.idl:
+        * storage/DatabaseAuthorizer.cpp:
+        * storage/DatabaseCallback.h:
+        * storage/DatabaseCallback.idl:
+        * storage/DatabaseDetails.h:
+        * storage/DatabaseSync.cpp:
+        * storage/DatabaseSync.h:
+        * storage/DatabaseSync.idl:
+        * storage/DatabaseTask.cpp:
+        * storage/DatabaseTask.h:
+        * storage/DatabaseThread.cpp:
+        * storage/DatabaseThread.h:
+        * storage/DatabaseTracker.cpp:
+        * storage/DatabaseTracker.h:
+        * storage/DatabaseTrackerClient.h:
+        * storage/OriginQuotaManager.cpp:
+        * storage/OriginQuotaManager.h:
+        * storage/OriginUsageRecord.cpp:
+        * storage/OriginUsageRecord.h:
+        * storage/SQLCallbackWrapper.h:
+        * storage/SQLError.h:
+        * storage/SQLError.idl:
+        * storage/SQLException.h:
+        * storage/SQLException.idl:
+        * storage/SQLResultSet.cpp:
+        * storage/SQLResultSet.h:
+        * storage/SQLResultSet.idl:
+        * storage/SQLResultSetRowList.cpp:
+        * storage/SQLResultSetRowList.h:
+        * storage/SQLResultSetRowList.idl:
+        * storage/SQLStatement.cpp:
+        * storage/SQLStatement.h:
+        * storage/SQLStatementCallback.h:
+        * storage/SQLStatementCallback.idl:
+        * storage/SQLStatementErrorCallback.h:
+        * storage/SQLStatementErrorCallback.idl:
+        * storage/SQLStatementSync.cpp:
+        * storage/SQLStatementSync.h:
+        * storage/SQLTransaction.cpp:
+        * storage/SQLTransaction.h:
+        * storage/SQLTransaction.idl:
+        * storage/SQLTransactionCallback.h:
+        * storage/SQLTransactionCallback.idl:
+        * storage/SQLTransactionClient.cpp:
+        * storage/SQLTransactionClient.h:
+        * storage/SQLTransactionCoordinator.cpp:
+        * storage/SQLTransactionCoordinator.h:
+        * storage/SQLTransactionErrorCallback.h:
+        * storage/SQLTransactionErrorCallback.idl:
+        * storage/SQLTransactionSync.cpp:
+        * storage/SQLTransactionSync.h:
+        * storage/SQLTransactionSync.idl:
+        * storage/SQLTransactionSyncCallback.h:
+        * storage/SQLTransactionSyncCallback.idl:
+        * storage/chromium/DatabaseObserver.h:
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        * storage/chromium/QuotaTracker.cpp:
+        * storage/chromium/QuotaTracker.h:
+        * storage/chromium/SQLTransactionClientChromium.cpp:
+        * workers/WorkerContext.cpp:
+        * workers/WorkerContext.h:
+        * workers/WorkerContext.idl:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadShutdownStartTask::performTask):
+        (WebCore::WorkerThread::stop):
+
 2011-09-15  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSSRegions] Regions should not slice line box rendering

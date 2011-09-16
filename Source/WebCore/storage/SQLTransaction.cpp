@@ -29,7 +29,7 @@
 #include "config.h"
 #include "SQLTransaction.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "Database.h"
 #include "DatabaseAuthorizer.h"
@@ -610,4 +610,4 @@ void SQLTransaction::cleanupAfterTransactionErrorCallback()
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)

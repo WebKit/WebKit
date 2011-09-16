@@ -30,7 +30,7 @@
 #include "JSEventException.h"
 #include "JSRangeException.h"
 #include "JSXMLHttpRequestException.h"
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 #include "SQLException.h"
 #include "JSSQLException.h"
 #endif
@@ -61,7 +61,7 @@ ExceptionBase* toExceptionBase(JSC::JSValue value)
     if (XPathException* pathException = toXPathException(value))
         return reinterpret_cast<ExceptionBase*>(pathException);
 #endif
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     if (SQLException* pathException = toSQLException(value))
         return reinterpret_cast<ExceptionBase*>(pathException);
 #endif

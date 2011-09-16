@@ -109,7 +109,7 @@ public:
     virtual void setToolTip(const WTF::String&, WebCore::TextDirection);
 
     virtual void print(WebCore::Frame*);
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     virtual void exceededDatabaseQuota(WebCore::Frame*, const WTF::String& databaseName);
 #endif
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)

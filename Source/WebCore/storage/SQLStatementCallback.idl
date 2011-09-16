@@ -29,7 +29,7 @@
 module storage {
     interface [
         LegacyDefaultOptionalArguments,
-        Conditional=DATABASE,
+        Conditional=SQL_DATABASE,
         Callback
     ] SQLStatementCallback {
         boolean handleEvent(in SQLTransaction transaction, in SQLResultSet resultSet);

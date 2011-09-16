@@ -29,7 +29,7 @@
 #ifndef DatabaseDetails_h
 #define DatabaseDetails_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "PlatformString.h"
 

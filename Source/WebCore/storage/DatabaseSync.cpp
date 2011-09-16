@@ -31,7 +31,8 @@
 #include "config.h"
 #include "DatabaseSync.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
+
 #include "DatabaseCallback.h"
 #include "DatabaseTracker.h"
 #include "Logging.h"
@@ -197,4 +198,4 @@ void DatabaseSync::closeImmediately()
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)

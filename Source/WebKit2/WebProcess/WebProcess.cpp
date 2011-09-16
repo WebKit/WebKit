@@ -191,7 +191,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
         }
     }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     // Make sure the WebDatabaseManager is initialized so that the Database directory is set.
     WebDatabaseManager::initialize(parameters.databaseDirectory);
 #endif

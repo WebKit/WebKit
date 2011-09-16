@@ -3233,7 +3233,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings->setHyperlinkAuditingEnabled(settingsPrivate->enableHyperlinkAuditing);
     coreSettings->setDNSPrefetchingEnabled(settingsPrivate->enableDNSPrefetching);
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     AbstractDatabase::setIsAvailable(settingsPrivate->enableHTML5Database);
 #endif
 
@@ -3318,7 +3318,7 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setPrivateBrowsingEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-caret-browsing"))
         settings->setCaretBrowsingEnabled(g_value_get_boolean(&value));
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     else if (name == g_intern_string("enable-html5-database")) {
         AbstractDatabase::setIsAvailable(g_value_get_boolean(&value));
     }

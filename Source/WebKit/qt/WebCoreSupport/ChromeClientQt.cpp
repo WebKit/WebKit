@@ -529,7 +529,7 @@ void ChromeClientQt::print(Frame* frame)
     emit m_webPage->printRequested(QWebFramePrivate::kit(frame));
 }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 void ChromeClientQt::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
     quint64 quota = QWebSettings::offlineStorageDefaultQuota();

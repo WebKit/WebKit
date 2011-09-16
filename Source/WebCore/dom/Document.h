@@ -1008,7 +1008,7 @@ public:
     bool processingLoadEvent() const { return m_processingLoadEvent; }
     bool loadEventFinished() const { return m_loadEventFinished; }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     virtual bool allowDatabaseAccess() const;
     virtual void databaseExceededQuota(const String& name);
 #endif

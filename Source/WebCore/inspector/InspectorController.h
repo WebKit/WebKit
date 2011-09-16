@@ -134,7 +134,7 @@ private:
     OwnPtr<InspectorPageAgent> m_pageAgent;
     OwnPtr<InspectorDOMAgent> m_domAgent;
     OwnPtr<InspectorCSSAgent> m_cssAgent;
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     OwnPtr<InspectorDatabaseAgent> m_databaseAgent;
 #endif
 #if ENABLE(DOM_STORAGE)

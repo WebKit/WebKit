@@ -726,7 +726,7 @@ static NSString *leakSolarWalkQuirksUserScriptContents()
         WebKitInitializeLoggingChannelsIfNecessary();
         WebCore::InitializeLoggingChannelsIfNecessary();
         [WebHistoryItem initWindowWatcherIfNecessary];
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         WebKitInitializeDatabasesIfNecessary();
 #endif
 
@@ -1515,7 +1515,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setMinimumLogicalFontSize([preferences minimumLogicalFontSize]);
     settings->setPictographFontFamily([preferences pictographFontFamily]);
     settings->setPluginsEnabled([preferences arePlugInsEnabled]);
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     AbstractDatabase::setIsAvailable([preferences databasesEnabled]);
 #endif
     settings->setLocalStorageEnabled([preferences localStorageEnabled]);

@@ -349,8 +349,7 @@ namespace WebCore {
         DOMURL* webkitURL() const;
 #endif
 
-#if ENABLE(DATABASE)
-        // HTML 5 client-side database
+#if ENABLE(SQL_DATABASE)
         PassRefPtr<Database> openDatabase(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
 #endif
 

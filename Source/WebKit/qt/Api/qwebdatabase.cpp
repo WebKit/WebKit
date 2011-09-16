@@ -86,7 +86,7 @@ QString QWebDatabase::name() const
 */
 QString QWebDatabase::displayName() const
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(d->name, d->origin.get());
     return details.displayName();
 #else
@@ -99,7 +99,7 @@ QString QWebDatabase::displayName() const
 */
 qint64 QWebDatabase::expectedSize() const
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(d->name, d->origin.get());
     return details.expectedUsage();
 #else
@@ -112,7 +112,7 @@ qint64 QWebDatabase::expectedSize() const
 */
 qint64 QWebDatabase::size() const
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(d->name, d->origin.get());
     return details.currentUsage();
 #else
@@ -147,7 +147,7 @@ QWebDatabase::QWebDatabase(QWebDatabasePrivate* priv)
 */
 QString QWebDatabase::fileName() const
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     return DatabaseTracker::tracker().fullPathForDatabase(d->origin.get(), d->name, false);
 #else
     return QString();
@@ -170,7 +170,7 @@ QWebSecurityOrigin QWebDatabase::origin() const
 */
 void QWebDatabase::removeDatabase(const QWebDatabase& db)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     DatabaseTracker::tracker().deleteDatabase(db.d->origin.get(), db.d->name);
 #endif
 }
@@ -184,7 +184,7 @@ void QWebDatabase::removeDatabase(const QWebDatabase& db)
 */
 void QWebDatabase::removeAllDatabases()
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     DatabaseTracker::tracker().deleteAllDatabases();
 #endif
 }

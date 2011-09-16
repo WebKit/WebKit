@@ -180,7 +180,7 @@ public:
 
     virtual void print(Frame*) { }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     virtual void exceededDatabaseQuota(Frame*, const String&) { }
 #endif
 

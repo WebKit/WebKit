@@ -426,7 +426,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
         // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10537
         doc->setReadyState(Document::Complete);
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         doc->stopDatabases(0);
 #endif
     }

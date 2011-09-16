@@ -28,7 +28,7 @@
 
 module storage {
     interface [
-        Conditional=DATABASE,
+        Conditional=SQL_DATABASE,
         LegacyDefaultOptionalArguments,
         Callback
     ] DatabaseCallback {

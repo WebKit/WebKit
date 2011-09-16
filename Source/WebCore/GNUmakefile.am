@@ -183,12 +183,12 @@ endif # END ENABLE_OFFLINE_WEB_APPLICATIONS
 # ----
 # Database Support
 # ----
-if ENABLE_DATABASE
-FEATURE_DEFINES += ENABLE_DATABASE=1
-webcore_cppflags += -DENABLE_DATABASE=1
+if ENABLE_SQL_DATABASE
+FEATURE_DEFINES += ENABLE_SQL_DATABASE=1
+webcore_cppflags += -DENABLE_SQL_DATABASE=1
 else
-webcore_cppflags += -DENABLE_DATABASE=0
-endif # END ENABLE_DATABASE
+webcore_cppflags += -DENABLE_SQL_DATABASE=0
+endif # END ENABLE_SQL_DATABASE
 
 # ----
 # HTML5 datalist Support

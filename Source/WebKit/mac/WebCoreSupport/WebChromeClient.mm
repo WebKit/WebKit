@@ -657,7 +657,7 @@ void WebChromeClient::print(Frame* frame)
         CallUIDelegate(m_webView, @selector(webView:printFrameView:), [webFrame frameView]);
 }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {

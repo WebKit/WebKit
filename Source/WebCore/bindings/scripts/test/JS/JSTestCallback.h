@@ -21,7 +21,7 @@
 #ifndef JSTestCallback_h
 #define JSTestCallback_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "ActiveDOMCallback.h"
 #include "JSCallbackData.h"
@@ -55,6 +55,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)
 
 #endif

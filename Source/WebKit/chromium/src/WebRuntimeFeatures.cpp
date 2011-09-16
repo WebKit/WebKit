@@ -44,14 +44,14 @@ namespace WebKit {
 
 void WebRuntimeFeatures::enableDatabase(bool enable)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     AbstractDatabase::setIsAvailable(enable);
 #endif
 }
 
 bool WebRuntimeFeatures::isDatabaseEnabled()
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     return AbstractDatabase::isAvailable();
 #else
     return false;

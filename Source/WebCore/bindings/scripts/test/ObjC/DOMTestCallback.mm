@@ -26,7 +26,7 @@
 
 #import "config.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #import "DOMInternal.h"
 
@@ -138,4 +138,4 @@ DOMTestCallback *kit(WebCore::TestCallback* value)
     return [wrapper autorelease];
 }
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)

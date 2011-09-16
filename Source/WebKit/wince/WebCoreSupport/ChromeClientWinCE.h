@@ -113,7 +113,7 @@ public:
 
     virtual void print(WebCore::Frame*);
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     virtual void exceededDatabaseQuota(WebCore::Frame*, const WTF::String& databaseName);
 #endif
 

@@ -33,7 +33,7 @@
 #include <WebCore/BString.h>
 #include <WebCore/DatabaseTracker.h>
 
-#if !ENABLE(DATABASE)
+#if !ENABLE(SQL_DATABASE)
 #include <wtf/UnusedParam.h>
 #endif
 
@@ -130,7 +130,7 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::port(
 HRESULT STDMETHODCALLTYPE WebSecurityOrigin::usage( 
     /* [retval][out] */ unsigned long long* result)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     if (!result)
         return E_POINTER;
 
@@ -146,7 +146,7 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::usage(
 HRESULT STDMETHODCALLTYPE WebSecurityOrigin::quota( 
     /* [retval][out] */ unsigned long long* result)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     if (!result)
         return E_POINTER;
 
@@ -161,7 +161,7 @@ HRESULT STDMETHODCALLTYPE WebSecurityOrigin::quota(
 HRESULT STDMETHODCALLTYPE WebSecurityOrigin::setQuota( 
     /* [in] */ unsigned long long quota) 
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     DatabaseTracker::tracker().setQuota(m_securityOrigin.get(), quota);
 
     return S_OK;

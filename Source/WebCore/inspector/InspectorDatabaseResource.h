@@ -31,7 +31,7 @@
 #ifndef InspectorDatabaseResource_h
 #define InspectorDatabaseResource_h
 
-#if ENABLE(DATABASE) && ENABLE(INSPECTOR)
+#if ENABLE(SQL_DATABASE) && ENABLE(INSPECTOR)
 #include "InspectorFrontend.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
@@ -63,6 +63,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)
 
 #endif // InspectorDatabaseResource_h

@@ -70,7 +70,7 @@ public:
 #if ENABLE(DOM_STORAGE)
         , m_inspectorDOMStorageAgent(0)
 #endif
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         , m_inspectorDatabaseAgent(0)
 #endif
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -115,7 +115,7 @@ public:
     InspectorDOMStorageAgent* inspectorDOMStorageAgent() const { return m_inspectorDOMStorageAgent; }
     void setInspectorDOMStorageAgent(InspectorDOMStorageAgent* agent) { m_inspectorDOMStorageAgent = agent; }
 #endif
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     InspectorDatabaseAgent* inspectorDatabaseAgent() const { return m_inspectorDatabaseAgent; }
     void setInspectorDatabaseAgent(InspectorDatabaseAgent* agent) { m_inspectorDatabaseAgent = agent; }
 #endif
@@ -150,7 +150,7 @@ private:
 #if ENABLE(DOM_STORAGE)
     InspectorDOMStorageAgent* m_inspectorDOMStorageAgent;
 #endif
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     InspectorDatabaseAgent* m_inspectorDatabaseAgent;
 #endif
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)

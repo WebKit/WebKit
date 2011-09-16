@@ -36,7 +36,7 @@
 
 #include "JSInjectedScriptHost.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 #include "Database.h"
 #include "JSDatabase.h"
 #endif
@@ -171,7 +171,7 @@ JSValue JSInjectedScriptHost::databaseId(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     Database* database = toDatabase(exec->argument(0));
     if (database)
         return jsNumber(impl()->databaseIdImpl(database));

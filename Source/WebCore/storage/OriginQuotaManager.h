@@ -29,7 +29,7 @@
 #ifndef OriginQuotaManager_h
 #define OriginQuotaManager_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "SecurityOriginHash.h"
 #include <wtf/HashMap.h>
@@ -71,6 +71,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)
 
 #endif // OriginQuotaManager_h

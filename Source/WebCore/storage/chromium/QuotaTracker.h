@@ -31,7 +31,7 @@
 #ifndef QuotaTracker_h
 #define QuotaTracker_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
@@ -64,6 +64,6 @@ private:
 
 }
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)
 
 #endif // QuotaTracker_h

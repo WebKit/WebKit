@@ -31,7 +31,7 @@
 #ifndef SQLTransactionSyncCallback_h
 #define SQLTransactionSyncCallback_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include <wtf/RefCounted.h>
 

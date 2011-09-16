@@ -2619,7 +2619,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     static bool didOneTimeInitialization;
     if (!didOneTimeInitialization) {
         InitializeLoggingChannelsIfNecessary();
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         WebKitInitializeWebDatabasesIfNecessary();
 #endif
         WebKitSetApplicationCachePathIfNecessary();
@@ -4754,7 +4754,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setOfflineWebApplicationCacheEnabled(enabled);
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     hr = prefsPrivate->databasesEnabled(&enabled);
     if (FAILED(hr))
         return hr;

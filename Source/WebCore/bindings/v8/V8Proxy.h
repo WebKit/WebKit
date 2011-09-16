@@ -302,7 +302,7 @@ namespace WebCore {
         static const char* svgExceptionName(int exceptionCode);
 #endif
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         static const char* sqlExceptionName(int exceptionCode);
 #endif
 

@@ -31,7 +31,7 @@
 #include "config.h"
 #include "DatabaseTracker.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "AbstractDatabase.h"
 #include "DatabaseObserver.h"
@@ -218,4 +218,4 @@ void DatabaseTracker::interruptAllDatabasesForContext(const ScriptExecutionConte
 
 }
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)

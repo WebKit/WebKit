@@ -29,7 +29,8 @@
 #include "config.h"
 #include "Database.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
+
 #include "ChangeVersionWrapper.h"
 #include "DatabaseCallback.h"
 #include "DatabaseTask.h"
@@ -412,4 +413,4 @@ SecurityOrigin* Database::securityOrigin() const
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)

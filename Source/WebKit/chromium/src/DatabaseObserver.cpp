@@ -31,7 +31,7 @@
 #include "config.h"
 #include "DatabaseObserver.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "AbstractDatabase.h"
 #include "CrossThreadCopier.h"
@@ -195,4 +195,4 @@ void DatabaseObserver::databaseClosed(AbstractDatabase* database)
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)

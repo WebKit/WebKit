@@ -38,7 +38,7 @@
 #include "JSOperationNotAllowedException.h"
 #endif
 #include "JSRangeException.h"
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 #include "JSSQLException.h"
 #endif
 #if ENABLE(SVG)
@@ -238,7 +238,7 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
             errorObject = toJS(exec, globalObject, XPathException::create(description));
             break;
 #endif
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         case SQLExceptionType:
             errorObject = toJS(exec, globalObject, SQLException::create(description));
             break;

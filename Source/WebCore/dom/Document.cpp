@@ -4564,7 +4564,7 @@ void Document::setSecurityOrigin(SecurityOrigin* securityOrigin)
     initDNSPrefetch();
 }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 bool Document::allowDatabaseAccess() const
 {

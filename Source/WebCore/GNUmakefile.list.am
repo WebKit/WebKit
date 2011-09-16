@@ -4114,7 +4114,7 @@ endif # END ENABLE_OFFLINE_WEB_APPLICATIONS
 # ----
 # Database Support
 # ----
-if ENABLE_DATABASE
+if ENABLE_SQL_DATABASE
 webcore_built_sources += \
 	DerivedSources/WebCore/JSDatabase.cpp \
 	DerivedSources/WebCore/JSDatabase.h \
@@ -4139,7 +4139,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSQLTransactionSync.cpp \
 	DerivedSources/WebCore/JSSQLTransactionSyncCallback.cpp \
 	DerivedSources/WebCore/JSSQLTransactionSyncCallback.h
-endif # END ENABLE_DATABASE
+endif # END ENABLE_SQL_DATABASE
 
 # ----
 # HTML5 data transfer items support

@@ -31,7 +31,7 @@
 
 #include "ProgIDMacros.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 #define WEB_DATABASE_MANAGER(macro) macro(WebDatabaseManager)
 #else
 #define WEB_DATABASE_MANAGER(macro)

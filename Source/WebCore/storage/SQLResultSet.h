@@ -29,7 +29,7 @@
 #ifndef SQLResultSet_h
 #define SQLResultSet_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "ExceptionCode.h"
 #include "SQLResultSetRowList.h"

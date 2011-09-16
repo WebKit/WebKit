@@ -811,8 +811,8 @@
 #define ENABLE_ICONDATABASE 1
 #endif
 
-#if !defined(ENABLE_DATABASE)
-#define ENABLE_DATABASE 1
+#if !defined(ENABLE_SQL_DATABASE)
+#define ENABLE_SQL_DATABASE 1
 #endif
 
 #if !defined(ENABLE_JAVASCRIPT_DEBUGGER)

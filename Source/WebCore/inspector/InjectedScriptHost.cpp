@@ -47,7 +47,7 @@
 #include "InspectorValues.h"
 #include "Pasteboard.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 #include "Database.h"
 #endif
 
@@ -72,7 +72,7 @@ PassRefPtr<InjectedScriptHost> InjectedScriptHost::create()
 InjectedScriptHost::InjectedScriptHost()
     : m_inspectorAgent(0)
     , m_consoleAgent(0)
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     , m_databaseAgent(0)
 #endif
 #if ENABLE(DOM_STORAGE)
@@ -91,7 +91,7 @@ void InjectedScriptHost::disconnect()
 {
     m_inspectorAgent = 0;
     m_consoleAgent = 0;
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     m_databaseAgent = 0;
 #endif
 #if ENABLE(DOM_STORAGE)
@@ -138,7 +138,7 @@ Node* InjectedScriptHost::inspectedNode(unsigned int num)
     return 0;
 }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 int InjectedScriptHost::databaseIdImpl(Database* database)
 {
     if (m_databaseAgent)
