@@ -1,5 +1,10 @@
 all:
     touch "%ConfigurationBuildDir%\buildfailed"
+
+    -mkdir 2>NUL "%ConfigurationBuildDir%\obj\WebKit2\scripts"
+    xcopy /y /d "..\Scripts\webkit2\model.py" "%ConfigurationBuildDir%\obj\WebKit2\scripts"
+    xcopy /y /d "..\Scripts\webkit2\parser.py" "%ConfigurationBuildDir%\obj\WebKit2\scripts"
+
     -mkdir 2>NUL "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\cairo\WKImageCairo.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\cf\WKErrorCF.h" "%ConfigurationBuildDir%\include\WebKit2"

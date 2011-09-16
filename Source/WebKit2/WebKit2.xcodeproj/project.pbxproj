@@ -786,6 +786,8 @@
 		C0CE72A01247E71D00BC0EC4 /* WebPageMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */; };
 		C0CE72A11247E71D00BC0EC4 /* WebPageMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = C0CE729F1247E71D00BC0EC4 /* WebPageMessages.h */; };
 		C0CE72AD1247E78D00BC0EC4 /* HandleMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */; };
+		C0D04E9013EC759E0041EFD6 /* model.py in Headers */ = {isa = PBXBuildFile; fileRef = C0D04E8313EC74940041EFD6 /* model.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		C0D04E9113EC759E0041EFD6 /* parser.py in Headers */ = {isa = PBXBuildFile; fileRef = C0D04E8413EC74940041EFD6 /* parser.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0D74DDE133BE2D90089CD44 /* LayerTreeHostCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C098A054133BE1C500B199A4 /* LayerTreeHostCA.cpp */; };
 		C0E3AA7A1209E83000A49D01 /* ModuleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0E3AA481209E45000A49D01 /* ModuleMac.mm */; };
 		C0E3AA7B1209E83500A49D01 /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E3AA451209E2BA00A49D01 /* Module.cpp */; };
@@ -3539,6 +3541,8 @@
 				1A2161B011F37664008AD0F5 /* NPRuntimeObjectMap.h in Headers */,
 				1A2162B111F38971008AD0F5 /* NPRuntimeUtilities.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
+				C0D04E9113EC759E0041EFD6 /* parser.py in Headers */,
+				C0D04E9013EC759E0041EFD6 /* model.py in Headers */,
 				E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */,
 				BCF049E611FE20F600F86A58 /* WKBundleFramePrivate.h in Headers */,
 				BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */,

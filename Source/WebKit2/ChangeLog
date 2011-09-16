@@ -1,5 +1,24 @@
 2011-09-15  Adam Roben  <aroben@apple.com>
 
+        Make WebKit2's message-generation model and parser scripts accessible to other projects
+
+        We copy them into the build products directory so other projects can find them.
+
+        Fixes <http://webkit.org/b/68169> Would like to be able to use WebKit2's message-generation
+        scripts in other projects
+
+        Reviewed by Darin Adler.
+
+        * WebKit2.xcodeproj/project.pbxproj: Copy the scripts to PrivateHeaders.
+
+        * win/WebKit2.make: Copy the scripts from obj/WebKit2/scripts to
+        tools/scripts, like WebCore does.
+
+        * win/WebKit2Generated.make: Copy the scripts to obj/WebKit2/scripts, which is similar to what
+        WebCore does for its bindings scripts.
+
+2011-09-15  Adam Roben  <aroben@apple.com>
+
         Split some of the message-generation code into separate modules
 
         This is in preparation for making these modules scripts usable by other projects.
