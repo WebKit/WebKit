@@ -38,7 +38,6 @@ BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
 BUGCR24182 SLOW DEBUG : jquery/traversing.html = PASS
 BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-push-pop.html = PASS
 BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-reverse.html = PASS
-BUGCR24182 BUGWK62309 SLOW WIN DEBUG : inspector/styles/styles-source-lines.html = PASS TEXT
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
@@ -605,8 +604,6 @@ BUGCR89357 SKIP MAC : http/tests/inspector-enabled = PASS
 BUGCR75121 LINUX WIN : inspector/styles/styles-add-blank-property.html = PASS TIMEOUT TEXT
 BUGCR67662 LINUX WIN : http/tests/inspector/console-websocket-error.html = TIMEOUT TEXT
 
-BUGWK54882 WIN DEBUG : inspector/styles/styles-update-from-js.html = PASS TIMEOUT
-
 BUGWK56602 SKIP : http/tests/inspector/network/network-timing.html = FAIL
 BUGWK56602 SKIP : http/tests/inspector/network/network-size.html = FAIL
 BUGWK56602 SKIP : http/tests/inspector/network/network-size-chunked.html = FAIL
@@ -638,7 +635,6 @@ BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = PAS
 BUGWK62309 WIN DEBUG : inspector/styles/styles-disable-then-change.html = PASS TIMEOUT
 BUGCR89372 DEBUG : inspector/styles/styles-iframe.html = PASS TIMEOUT
 BUGWK62309 LINUX WIN DEBUG : inspector/styles/parse-utf8-bom.html = PASS TIMEOUT
-BUGWK62309 RELEASE WIN : inspector/styles/styles-source-lines.html = PASS TEXT
 
 BUGPFELDMAN : inspector/debugger/debugger-activation-crash2.html = PASS TIMEOUT TEXT
 
@@ -3750,5 +3746,5 @@ BUG_LEVIN : fast/css/nested-rounded-corners.html = FAIL
 BUG_KEISHI : editing/style/non-inheritable-styles.html = PASS TEXT
 BUG_KEISHI : inspector/styles/styles-new-API.html = PASS TEXT
 BUG_KEISHI : inspector/styles/styles-source-lines.html = PASS TEXT
-BUG_KEISHI : inspector/styles/styles-update-from-js.html = PASS TEXT
+BUG_KEISHI : inspector/styles/styles-update-from-js.html = PASS TEXT TIMEOUT
 
