@@ -105,6 +105,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
 {
     ASSERT(value);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+    JSGlobalData& globalData = exec->globalData();
 
     if (propertyName == exec->propertyNames().underscoreProto) {
         // Setting __proto__ to a non-object, non-null value is silently ignored to match Mozilla.
@@ -117,7 +118,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
             return;
         }
             
-        if (!setPrototypeWithCycleCheck(exec->globalData(), value))
+        if (!setPrototypeWithCycleCheck(globalData, value))
             throwError(exec, createError(exec, "cyclic __proto__ value"));
         return;
     }
@@ -127,7 +128,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
     for (JSObject* obj = this; !obj->structure()->hasGetterSetterProperties(); obj = asObject(prototype)) {
         prototype = obj->prototype();
         if (prototype.isNull()) {
-            if (!putDirectInternal(exec->globalData(), propertyName, value, 0, true, slot) && slot.isStrictMode())
+            if (!putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(globalData, value)) && slot.isStrictMode())
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return;
         }
@@ -135,14 +136,14 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
     
     unsigned attributes;
     JSCell* specificValue;
-    if ((m_structure->get(exec->globalData(), propertyName, attributes, specificValue) != WTF::notFound) && attributes & ReadOnly) {
+    if ((m_structure->get(globalData, propertyName, attributes, specificValue) != WTF::notFound) && attributes & ReadOnly) {
         if (slot.isStrictMode())
             throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
         return;
     }
 
     for (JSObject* obj = this; ; obj = asObject(prototype)) {
-        if (JSValue gs = obj->getDirect(exec->globalData(), propertyName)) {
+        if (JSValue gs = obj->getDirect(globalData, propertyName)) {
             if (gs.isGetterSetter()) {
                 JSObject* setterFunc = asGetterSetter(gs)->setter();        
                 if (!setterFunc) {
@@ -169,8 +170,8 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
         if (prototype.isNull())
             break;
     }
-
-    if (!putDirectInternal(exec->globalData(), propertyName, value, 0, true, slot) && slot.isStrictMode())
+    
+    if (!putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(globalData, value)) && slot.isStrictMode())
         throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     return;
 }
@@ -183,12 +184,13 @@ void JSObject::put(ExecState* exec, unsigned propertyName, JSValue value)
 
 void JSObject::putWithAttributes(JSGlobalData* globalData, const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot)
 {
-    putDirectInternal(*globalData, propertyName, value, attributes, checkReadOnly, slot);
+    putDirectInternal(*globalData, propertyName, value, attributes, checkReadOnly, slot, getJSFunction(*globalData, value));
 }
 
 void JSObject::putWithAttributes(JSGlobalData* globalData, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    putDirectInternal(*globalData, propertyName, value, attributes);
+    PutPropertySlot slot;
+    putDirectInternal(*globalData, propertyName, value, attributes, true, slot, getJSFunction(*globalData, value));
 }
 
 void JSObject::putWithAttributes(JSGlobalData* globalData, unsigned propertyName, JSValue value, unsigned attributes)
@@ -198,12 +200,15 @@ void JSObject::putWithAttributes(JSGlobalData* globalData, unsigned propertyName
 
 void JSObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot)
 {
-    putDirectInternal(exec->globalData(), propertyName, value, attributes, checkReadOnly, slot);
+    JSGlobalData& globalData = exec->globalData();
+    putDirectInternal(globalData, propertyName, value, attributes, checkReadOnly, slot, getJSFunction(globalData, value));
 }
 
 void JSObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
-    putDirectInternal(exec->globalData(), propertyName, value, attributes);
+    PutPropertySlot slot;
+    JSGlobalData& globalData = exec->globalData();
+    putDirectInternal(globalData, propertyName, value, attributes, true, slot, getJSFunction(globalData, value));
 }
 
 void JSObject::putWithAttributes(ExecState* exec, unsigned propertyName, JSValue value, unsigned attributes)
@@ -337,7 +342,7 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
     JSGlobalData& globalData = exec->globalData();
     PutPropertySlot slot;
     GetterSetter* getterSetter = GetterSetter::create(exec);
-    putDirectInternal(globalData, propertyName, getterSetter, attributes | Getter, true, slot);
+    putDirectInternal(globalData, propertyName, getterSetter, attributes | Getter, true, slot, 0);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
@@ -367,7 +372,7 @@ void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSO
 
     PutPropertySlot slot;
     GetterSetter* getterSetter = GetterSetter::create(exec);
-    putDirectInternal(exec->globalData(), propertyName, getterSetter, attributes | Setter, true, slot);
+    putDirectInternal(exec->globalData(), propertyName, getterSetter, attributes | Setter, true, slot, 0);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
@@ -564,26 +569,6 @@ void JSObject::removeDirect(JSGlobalData& globalData, const Identifier& property
     setStructure(globalData, Structure::removePropertyTransition(globalData, m_structure.get(), propertyName, offset));
     if (offset != WTF::notFound)
         putUndefinedAtDirectOffset(offset);
-}
-
-void JSObject::putDirectFunction(ExecState* exec, InternalFunction* function, unsigned attr)
-{
-    putDirectFunction(exec->globalData(), Identifier(exec, function->name(exec)), function, attr);
-}
-
-void JSObject::putDirectFunction(ExecState* exec, JSFunction* function, unsigned attr)
-{
-    putDirectFunction(exec->globalData(), Identifier(exec, function->name(exec)), function, attr);
-}
-
-void JSObject::putDirectFunctionWithoutTransition(ExecState* exec, InternalFunction* function, unsigned attr)
-{
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, function->name(exec)), function, attr);
-}
-
-void JSObject::putDirectFunctionWithoutTransition(ExecState* exec, JSFunction* function, unsigned attr)
-{
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, function->name(exec)), function, attr);
 }
 
 NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, WriteBarrierBase<Unknown>* location)

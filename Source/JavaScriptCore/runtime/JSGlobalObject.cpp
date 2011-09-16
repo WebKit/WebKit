@@ -254,34 +254,34 @@ void JSGlobalObject::reset(JSValue prototype)
     m_typeErrorConstructor.set(exec->globalData(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "TypeError"));
     m_URIErrorConstructor.set(exec->globalData(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "URIError"));
 
-    m_objectPrototype->putDirectFunctionWithoutTransition(exec->globalData(), exec->propertyNames().constructor, objectConstructor, DontEnum);
-    m_functionPrototype->putDirectFunctionWithoutTransition(exec->globalData(), exec->propertyNames().constructor, functionConstructor, DontEnum);
-    m_arrayPrototype->putDirectFunctionWithoutTransition(exec->globalData(), exec->propertyNames().constructor, arrayConstructor, DontEnum);
-    m_booleanPrototype->putDirectFunctionWithoutTransition(exec->globalData(), exec->propertyNames().constructor, booleanConstructor, DontEnum);
-    m_stringPrototype->putDirectFunctionWithoutTransition(exec->globalData(), exec->propertyNames().constructor, stringConstructor, DontEnum);
-    m_numberPrototype->putDirectFunctionWithoutTransition(exec->globalData(), exec->propertyNames().constructor, numberConstructor, DontEnum);
-    m_datePrototype->putDirectFunctionWithoutTransition(exec->globalData(), exec->propertyNames().constructor, dateConstructor, DontEnum);
-    m_regExpPrototype->putDirectFunctionWithoutTransition(exec->globalData(), exec->propertyNames().constructor, m_regExpConstructor.get(), DontEnum);
-    errorPrototype->putDirectFunctionWithoutTransition(exec->globalData(), exec->propertyNames().constructor, m_errorConstructor.get(), DontEnum);
+    m_objectPrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, objectConstructor, DontEnum);
+    m_functionPrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, functionConstructor, DontEnum);
+    m_arrayPrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, arrayConstructor, DontEnum);
+    m_booleanPrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, booleanConstructor, DontEnum);
+    m_stringPrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, stringConstructor, DontEnum);
+    m_numberPrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, numberConstructor, DontEnum);
+    m_datePrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, dateConstructor, DontEnum);
+    m_regExpPrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, m_regExpConstructor.get(), DontEnum);
+    errorPrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, m_errorConstructor.get(), DontEnum);
 
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "Object"), objectConstructor, DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "Function"), functionConstructor, DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "Array"), arrayConstructor, DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "Boolean"), booleanConstructor, DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "String"), stringConstructor, DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "Number"), numberConstructor, DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "Date"), dateConstructor, DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "RegExp"), m_regExpConstructor.get(), DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "Error"), m_errorConstructor.get(), DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "EvalError"), m_evalErrorConstructor.get(), DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "RangeError"), m_rangeErrorConstructor.get(), DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "ReferenceError"), m_referenceErrorConstructor.get(), DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "SyntaxError"), m_syntaxErrorConstructor.get(), DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "TypeError"), m_typeErrorConstructor.get(), DontEnum);
-    putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "URIError"), m_URIErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Object"), objectConstructor, DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Function"), functionConstructor, DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Array"), arrayConstructor, DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Boolean"), booleanConstructor, DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "String"), stringConstructor, DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Number"), numberConstructor, DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Date"), dateConstructor, DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "RegExp"), m_regExpConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Error"), m_errorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "EvalError"), m_evalErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "RangeError"), m_rangeErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "ReferenceError"), m_referenceErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "SyntaxError"), m_syntaxErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "TypeError"), m_typeErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "URIError"), m_URIErrorConstructor.get(), DontEnum);
 
     m_evalFunction.set(exec->globalData(), this, JSFunction::create(exec, this, m_functionStructure.get(), 1, exec->propertyNames().eval, globalFuncEval));
-    putDirectFunctionWithoutTransition(exec, m_evalFunction.get(), DontEnum);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().eval, m_evalFunction.get(), DontEnum);
 
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(Identifier(exec, "Math"), MathObject::create(exec, this, MathObject::createStructure(exec->globalData(), this, m_objectPrototype.get())), DontEnum | DontDelete),

@@ -1,3 +1,35 @@
+2011-09-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Rationalize JSObject::putDirect* methods
+        https://bugs.webkit.org/show_bug.cgi?id=68274
+
+        Reviewed by Sam Weinig.
+        
+        Delete the *Function variants. These are overall inefficient,
+        in the way they get the name back from the function rather
+        than just passing it in.
+
+        * JavaScriptCore.exp:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (GlobalObject::addFunction):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::putWithAttributes):
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::defineSetter):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::putDirectWithoutTransition):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::lookupPut):
+
 2011-09-16  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed build fix for Windows.

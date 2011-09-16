@@ -87,7 +87,7 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
 #endif
             function = JSFunction::create(exec, globalObject, globalObject->functionStructure(), entry->functionLength(), propertyName, entry->function());
 
-        thisObj->putDirectFunction(exec->globalData(), propertyName, function, entry->attributes());
+        thisObj->putDirect(exec->globalData(), propertyName, function, entry->attributes());
         location = thisObj->getDirectLocation(exec->globalData(), propertyName);
     }
 
