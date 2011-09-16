@@ -1,3 +1,9 @@
+2011-09-16  Alejandro G. Castro  <alex@igalia.com>
+
+        Fix GTK build after r95245.
+
+        * GNUmakefile.list.am:
+
 2011-09-16  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [Qt] Crash when dragging google maps.
