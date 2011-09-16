@@ -571,12 +571,6 @@ inline void JIT::emitStoreInt32(unsigned index, RegisterID payload, bool indexIs
         store32(TrustedImm32(JSValue::Int32Tag), tagFor(index, callFrameRegister));
 }
 
-inline void JIT::emitStoreAndMapInt32(unsigned index, RegisterID tag, RegisterID payload, bool indexIsInt32, size_t opcodeLength)
-{
-    emitStoreInt32(index, payload, indexIsInt32);
-    map(m_bytecodeOffset + opcodeLength, index, tag, payload);
-}
-
 inline void JIT::emitStoreInt32(unsigned index, TrustedImm32 payload, bool indexIsInt32)
 {
     store32(payload, payloadFor(index, callFrameRegister));
