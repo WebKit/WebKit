@@ -1,3 +1,30 @@
+2011-09-15  Adam Roben  <aroben@apple.com>
+
+        Split some of the message-generation code into separate modules
+
+        This is in preparation for making these modules scripts usable by other projects.
+
+        Fixes <http://webkit.org/b/68217> Model and parsing functionality for WebKit2's
+        message-generation scripts is trapped inside a much larger module
+
+        Reviewed by Darin Adler.
+
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * GNUmakefile.am:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.vcproj:
+        Added new files.
+
+        * Scripts/webkit2/messages.py: Moved some code from here...
+
+        * Scripts/webkit2/model.py: Added.
+        * Scripts/webkit2/parser.py: Added.
+        ...to here. MessageReceiver.parse was split out into a function in the new parser module.
+
+        * Scripts/webkit2/messages_unittest.py: Updated for renames.
+
 2011-09-16  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Disable WebKit2 by default in configure.ac, but enable it with build-webkit

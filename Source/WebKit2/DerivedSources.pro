@@ -135,7 +135,9 @@ SCRIPTS = \
     $$PWD/Scripts/generate-message-receiver.py \
     $$PWD/Scripts/generate-messages-header.py \
     $$PWD/Scripts/webkit2/__init__.py \
-    $$PWD/Scripts/webkit2/messages.py
+    $$PWD/Scripts/webkit2/messages.py \
+    $$PWD/Scripts/webkit2/model.py \
+    $$PWD/Scripts/webkit2/parser.py
 
 message_header_generator.commands = $${PYTHON} $${SRC_ROOT_DIR}/Source/WebKit2/Scripts/generate-messages-header.py ${QMAKE_FILE_IN} > ${QMAKE_FILE_OUT}
 message_header_generator.input = MESSAGE_RECEIVERS

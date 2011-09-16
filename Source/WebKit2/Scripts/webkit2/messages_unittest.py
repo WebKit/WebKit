@@ -24,6 +24,7 @@ import unittest
 from StringIO import StringIO
 
 import messages
+import parser
 
 _messages_file_contents = """# Copyright (C) 2010 Apple Inc. All rights reserved.
 #
@@ -239,7 +240,7 @@ _expected_results = {
 
 class MessagesTest(unittest.TestCase):
     def setUp(self):
-        self.receiver = messages.MessageReceiver.parse(StringIO(_messages_file_contents))
+        self.receiver = parser.parse(StringIO(_messages_file_contents))
 
 
 class ParsingTest(MessagesTest):

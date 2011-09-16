@@ -86,6 +86,8 @@ SCRIPTS = \
     $(WebKit2)/Scripts/generate-messages-header.py \
     $(WebKit2)/Scripts/webkit2/__init__.py \
     $(WebKit2)/Scripts/webkit2/messages.py \
+    $(WebKit2)/Scripts/webkit2/model.py \
+    $(WebKit2)/Scripts/webkit2/parser.py \
 #
 
 .PHONY : all
