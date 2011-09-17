@@ -26,7 +26,7 @@ SET(NETWORK_BACKEND "soup" CACHE STRING "choose which network backend to use (on
 SET(ALL_FONT_BACKENDS freetype pango)
 SET(FONT_BACKEND "freetype" CACHE STRING "choose which network backend to use (one of ${ALL_FONT_BACKENDS})")
 
-FIND_PACKAGE(Cairo 1.6 REQUIRED)
+FIND_PACKAGE(Cairo 1.10 REQUIRED)
 FIND_PACKAGE(EFL REQUIRED)
 FIND_PACKAGE(Fontconfig 2.8.0 REQUIRED)
 FIND_PACKAGE(Sqlite REQUIRED)
