@@ -13,5 +13,6 @@ OTHER_FILES += \
     DesktopWebView/tst_navigationPolicyForUrl.qml \
     TouchWebView/tst_properties.qml \
     TouchWebView/tst_loadZeroSizeView.qml \
-    TouchWebView/tst_loadNegativeSizeView.qml
+    TouchWebView/tst_loadNegativeSizeView.qml \
+    TouchWebView/tst_loadProgress.qml
 
