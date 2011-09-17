@@ -1580,7 +1580,7 @@ bool CSSParser::parseValue(int propId, bool important)
         validPrimitive = id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter || id == CSSValueJustify;
         break;
     case CSSPropertyWebkitFlexAlign:
-        validPrimitive = id == CSSValueBefore || id == CSSValueAfter || id == CSSValueMiddle || id == CSSValueBaseline || id == CSSValueStretch;
+        validPrimitive = id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter || id == CSSValueBaseline || id == CSSValueStretch;
         break;
     case CSSPropertyWebkitFlexFlow:
         // FIXME: -webkit-flex-flow takes a second "wrap" value.    

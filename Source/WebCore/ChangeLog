@@ -1,3 +1,18 @@
+2011-09-16  Tony Chang  <tony@chromium.org>
+
+        Rename flex-align values to match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=67741
+
+        Reviewed by Ojan Vafai.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFlexAlign):
+        * css/CSSValueKeywords.in:
+        * rendering/style/RenderStyleConstants.h:
+
 2011-09-16  Kentaro Hara  <haraken@chromium.org>
 
         Implement an ErrorEvent constructor for JSC
