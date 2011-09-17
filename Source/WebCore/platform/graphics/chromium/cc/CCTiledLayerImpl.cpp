@@ -319,7 +319,7 @@ void CCTiledLayerImpl::drawTiles(LayerRendererChromium* layerRenderer, const Int
 
             GLC(context, context->uniform4f(program->vertexShader().vertexTexTransformLocation(), vertexTexTranslateX, vertexTexTranslateY, vertexTexScaleX, vertexTexScaleY));
 
-            LayerChromium::drawTexturedQuad(context, layerRenderer->projectionMatrix(), globalTransform,
+            layerRenderer->drawTexturedQuad(globalTransform,
                                             tileRect.width(), tileRect.height(), opacity, quad,
                                             program->vertexShader().matrixLocation(),
                                             program->fragmentShader().alphaLocation(),

@@ -183,10 +183,6 @@ public:
 
     void setBorderWidth(float);
 
-    static void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
-                                 float width, float height, float opacity, const FloatQuad&,
-                                 int matrixLocation, int alphaLocation, int quadLocation);
-
     virtual void pushPropertiesTo(CCLayerImpl*);
 
     typedef ProgramBinding<VertexShaderPos, FragmentShaderColor> BorderProgram;
@@ -224,8 +220,6 @@ protected:
     // layerRendererContext(). Subclasses should override this method if they
     // hold context-dependent resources such as textures.
     virtual void cleanupResources();
-
-    static void toGLMatrix(float*, const TransformationMatrix&);
 
     FloatRect m_dirtyRect;
     bool m_contentsDirty;

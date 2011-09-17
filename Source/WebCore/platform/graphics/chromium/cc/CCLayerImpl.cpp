@@ -35,29 +35,6 @@
 #include "cc/CCLayerSorter.h"
 #include <wtf/text/WTFString.h>
 
-namespace {
-void toGLMatrix(float* flattened, const WebCore::TransformationMatrix& m)
-{
-    flattened[0] = m.m11();
-    flattened[1] = m.m12();
-    flattened[2] = m.m13();
-    flattened[3] = m.m14();
-    flattened[4] = m.m21();
-    flattened[5] = m.m22();
-    flattened[6] = m.m23();
-    flattened[7] = m.m24();
-    flattened[8] = m.m31();
-    flattened[9] = m.m32();
-    flattened[10] = m.m33();
-    flattened[11] = m.m34();
-    flattened[12] = m.m41();
-    flattened[13] = m.m42();
-    flattened[14] = m.m43();
-    flattened[15] = m.m44();
-}
-}
-
-
 namespace WebCore {
 
 CCLayerImpl::CCLayerImpl(int id)
@@ -167,7 +144,7 @@ void CCLayerImpl::drawDebugBorder(LayerRendererChromium* layerRenderer)
 
     TransformationMatrix renderMatrix = drawTransform();
     renderMatrix.scale3d(bounds().width(), bounds().height(), 1);
-    toGLMatrix(&glMatrix[0], layerRenderer->projectionMatrix() * renderMatrix);
+    LayerRendererChromium::toGLMatrix(&glMatrix[0], layerRenderer->projectionMatrix() * renderMatrix);
     GLC(context, context->uniformMatrix4fv(program->vertexShader().matrixLocation(), false, &glMatrix[0], 1));
 
     GLC(context, context->uniform4f(program->fragmentShader().colorLocation(), debugBorderColor().red() / 255.0, debugBorderColor().green() / 255.0, debugBorderColor().blue() / 255.0, 1));

@@ -131,8 +131,7 @@ void CCVideoLayerImpl::drawYUV(LayerRendererChromium* layerRenderer) const
     GLC(context, context->uniformMatrix3fv(program->fragmentShader().ccMatrixLocation(), 0, const_cast<float*>(yuv2RGB), 1));
     GLC(context, context->uniform3fv(program->fragmentShader().yuvAdjLocation(), const_cast<float*>(yuvAdjust), 1));
 
-    LayerChromium::drawTexturedQuad(context, layerRenderer->projectionMatrix(), drawTransform(),
-                                    bounds().width(), bounds().height(), drawOpacity(), FloatQuad(),
+    layerRenderer->drawTexturedQuad(drawTransform(), bounds().width(), bounds().height(), drawOpacity(), FloatQuad(),
                                     program->vertexShader().matrixLocation(),
                                     program->fragmentShader().alphaLocation(),
                                     -1);
@@ -158,8 +157,7 @@ void CCVideoLayerImpl::drawRGBA(LayerRendererChromium* layerRenderer) const
 
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
-    LayerChromium::drawTexturedQuad(context, layerRenderer->projectionMatrix(), drawTransform(),
-                                    bounds().width(), bounds().height(), drawOpacity(), layerRenderer->sharedGeometryQuad(),
+    layerRenderer->drawTexturedQuad(drawTransform(), bounds().width(), bounds().height(), drawOpacity(), layerRenderer->sharedGeometryQuad(),
                                     program->vertexShader().matrixLocation(),
                                     program->fragmentShader().alphaLocation(),
                                     -1);

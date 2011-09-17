@@ -35,8 +35,8 @@
 #include "LayerChromium.h"
 
 #include "cc/CCLayerImpl.h"
+#include "cc/CCLayerTreeHost.h"
 #include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
 #if USE(SKIA)
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
@@ -294,26 +294,6 @@ void LayerChromium::resetNeedsDisplay()
     m_contentsDirty = false;
 }
 
-void LayerChromium::toGLMatrix(float* flattened, const TransformationMatrix& m)
-{
-    flattened[0] = m.m11();
-    flattened[1] = m.m12();
-    flattened[2] = m.m13();
-    flattened[3] = m.m14();
-    flattened[4] = m.m21();
-    flattened[5] = m.m22();
-    flattened[6] = m.m23();
-    flattened[7] = m.m24();
-    flattened[8] = m.m31();
-    flattened[9] = m.m32();
-    flattened[10] = m.m33();
-    flattened[11] = m.m34();
-    flattened[12] = m.m41();
-    flattened[13] = m.m42();
-    flattened[14] = m.m43();
-    flattened[15] = m.m44();
-}
-
 void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 {
     layer->setAnchorPoint(m_anchorPoint);
@@ -339,41 +319,6 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         maskLayer()->pushPropertiesTo(layer->maskLayer());
     if (replicaLayer())
         replicaLayer()->pushPropertiesTo(layer->replicaLayer());
-}
-
-void LayerChromium::drawTexturedQuad(GraphicsContext3D* context, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
-                                     float width, float height, float opacity, const FloatQuad& quad,
-                                     int matrixLocation, int alphaLocation, int quadLocation)
-{
-    static float glMatrix[16];
-
-    TransformationMatrix renderMatrix = drawMatrix;
-
-    // Apply a scaling factor to size the quad from 1x1 to its intended size.
-    renderMatrix.scale3d(width, height, 1);
-
-    // Apply the projection matrix before sending the transform over to the shader.
-    toGLMatrix(&glMatrix[0], projectionMatrix * renderMatrix);
-
-    GLC(context, context->uniformMatrix4fv(matrixLocation, false, &glMatrix[0], 1));
-
-    if (quadLocation != -1) {
-        float point[8];
-        point[0] = quad.p1().x();
-        point[1] = quad.p1().y();
-        point[2] = quad.p2().x();
-        point[3] = quad.p2().y();
-        point[4] = quad.p3().x();
-        point[5] = quad.p3().y();
-        point[6] = quad.p4().x();
-        point[7] = quad.p4().y();
-        GLC(context, context->uniform2fv(quadLocation, point, 4));
-    }
-
-    if (alphaLocation != -1)
-        GLC(context, context->uniform1f(alphaLocation, opacity));
-
-    GLC(context, context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0));
 }
 
 PassRefPtr<CCLayerImpl> LayerChromium::createCCLayerImpl()

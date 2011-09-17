@@ -202,8 +202,7 @@ void CCRenderSurface::drawSurface(LayerRendererChromium* layerRenderer, CCLayerI
     // Map device space quad to layer space.
     FloatQuad quad = deviceTransform.inverse().mapQuad(layerQuad.floatQuad());
 
-    LayerChromium::drawTexturedQuad(layerRenderer->context(), layerRenderer->projectionMatrix(), drawTransform,
-                                    m_contentRect.width(), m_contentRect.height(), m_drawOpacity, quad,
+    layerRenderer->drawTexturedQuad(drawTransform, m_contentRect.width(), m_contentRect.height(), m_drawOpacity, quad,
                                     program->vertexShader().matrixLocation(), program->fragmentShader().alphaLocation(), shaderQuadLocation);
 }
 
