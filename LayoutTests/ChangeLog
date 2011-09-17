@@ -1,3 +1,32 @@
+2011-09-16  Kentaro Hara  <haraken@google.com>
+
+        Overhangs a ruby by no more than half the width of the neighboring text.
+        https://bugs.webkit.org/show_bug.cgi?id=62684
+
+        Reviewed by Dan Bernstein.
+
+        Assume two rubies between which a narrow text exists, like
+        "<ruby>x<rt>xxxxxx</rt></ruby>l<ruby>y<rt>yyyyyy</rt></ruby>".
+        In order to avoid the two rubies overlapping with each other,
+        this patch overhangs the ruby by no more than half the ruby font
+        size and no more than half the width of the neighboring text.
+
+        * fast/ruby/overhang-horizontal-no-overlap1-expected.png: Added.
+        * fast/ruby/overhang-horizontal-no-overlap1-expected.txt: Added.
+        * fast/ruby/overhang-horizontal-no-overlap1.html: Added. Tests if two rubies do not overlap with each other when a narrow text exists between the two rubies. Split into two test files in order to fit each test result within one page.
+        * fast/ruby/overhang-horizontal-no-overlap2-expected.png: Added.
+        * fast/ruby/overhang-horizontal-no-overlap2-expected.txt: Added.
+        * fast/ruby/overhang-horizontal-no-overlap2.html: Added. Tests if two rubies do not overlap with each other when a narrow text exists between the two rubies. Split into two test files in order to fit each test result within one page.
+        * fast/ruby/overhang-vertical-no-overlap1-expected.png: Added.
+        * fast/ruby/overhang-vertical-no-overlap1-expected.txt: Added.
+        * fast/ruby/overhang-vertical-no-overlap1.html: Added. Tests if two rubies do not overlap with each other when a narrow text exists between the two rubies. Split into two test files in order to fit each test result within one page.
+        * fast/ruby/overhang-vertical-no-overlap2-expected.png: Added.
+        * fast/ruby/overhang-vertical-no-overlap2-expected.txt: Added.
+        * fast/ruby/overhang-vertical-no-overlap2.html: Added. Tests if two rubies do not overlap with each other when a narrow text exists between the two rubies. Split into two test files in order to fit each test result within one page.
+        * platform/chromium-linux/fast/ruby/overhang-vertical-expected.png: Removed.
+        * platform/chromium-win/fast/ruby/overhang-horizontal-expected.png: Removed.
+        * platform/chromium/test_expectations.txt: Skips overhang-horizontal.html.  We will update the result image as a rebase line.
+
 2011-09-16  Ben Wells  <benwells@chromium.org>
 
         Large canvas fills should not crash or create unnecessarily large image buffers

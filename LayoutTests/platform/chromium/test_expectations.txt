@@ -3686,6 +3686,10 @@ BUGWK67433 WIN LINUX : svg/custom/pattern-rotate-gaps.svg = IMAGE
 // Renders differently in 32 vs 64 bit mode and is flaky
 BUGJAMESR LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE PASS
 
+// Temporary failure. This failure is going to be removed as a rebase line
+// after WebKit bug r62684 is landed.
+BUGWK62684 : fast/ruby/overhang-horizontal.html = FAIL
+
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
