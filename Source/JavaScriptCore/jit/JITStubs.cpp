@@ -1930,7 +1930,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_instanceof)
     // At least one of these checks must have failed to get to the slow case.
     ASSERT(!value.isCell() || !baseVal.isCell() || !proto.isCell()
            || !value.isObject() || !baseVal.isObject() || !proto.isObject() 
-           || (asObject(baseVal)->structure()->typeInfo().flags() & (ImplementsHasInstance | OverridesHasInstance)) != ImplementsHasInstance);
+           || !asObject(baseVal)->structure()->typeInfo().implementsDefaultHasInstance());
 
 
     // ECMA-262 15.3.5.3:

@@ -609,8 +609,8 @@ EncodedJSValue operationInstanceOf(ExecState* exec, EncodedJSValue encodedValue,
     // At least one of these checks must have failed to get to the slow case.
     ASSERT(!value.isCell()
         || !prototype.isCell()
-        || !prototype.isObject() 
-        || (base.asCell()->structure()->typeInfo().flags() & (ImplementsHasInstance | OverridesHasInstance)) != ImplementsHasInstance);
+        || !prototype.isObject()
+        || !base.asCell()->structure()->typeInfo().implementsDefaultHasInstance());
 
 
     // ECMA-262 15.3.5.3:
