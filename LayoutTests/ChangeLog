@@ -1,3 +1,15 @@
+2011-09-16  Jeremy Apthorp <jeremya@chromium.org> and James Kozianski  <koz@chromium.org>
+
+        Don't detach elements from the render tree when entering fullscreen mode
+        https://bugs.webkit.org/show_bug.cgi?id=66531
+
+        Test that the plugin is not reloaded when entering fullscreen.
+
+        Reviewed by James Robinson.
+
+        * plugins/fullscreen-plugins-dont-reload-expected.txt: Added.
+        * plugins/fullscreen-plugins-dont-reload.html: Added.
+
 2011-09-16  Jochen Eisinger  <jochen@chromium.org>
 
         Add tests for FrameLoaderClient::allowImage.
