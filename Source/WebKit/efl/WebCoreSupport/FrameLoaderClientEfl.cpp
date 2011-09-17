@@ -169,27 +169,12 @@ void FrameLoaderClientEfl::dispatchDidReplaceStateWithinPage()
     notImplemented();
 }
 
-void FrameLoaderClientEfl::dispatchDidRemoveBackForwardItem(WebCore::HistoryItem*) const
-{
-    notImplemented();
-}
-
 void FrameLoaderClientEfl::dispatchDidPushStateWithinPage()
 {
     notImplemented();
 }
 
 void FrameLoaderClientEfl::dispatchDidPopStateWithinPage()
-{
-    notImplemented();
-}
-
-void FrameLoaderClientEfl::dispatchDidChangeBackForwardIndex() const
-{
-    notImplemented();
-}
-
-void FrameLoaderClientEfl::dispatchDidAddBackForwardItem(WebCore::HistoryItem*) const
 {
     notImplemented();
 }

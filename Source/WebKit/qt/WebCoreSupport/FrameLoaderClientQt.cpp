@@ -854,18 +854,6 @@ bool FrameLoaderClientQt::shouldStopLoadingForHistoryItem(WebCore::HistoryItem*)
     return true;
 }
 
-void FrameLoaderClientQt::dispatchDidAddBackForwardItem(WebCore::HistoryItem*) const
-{
-}
-
-void FrameLoaderClientQt::dispatchDidRemoveBackForwardItem(WebCore::HistoryItem*) const
-{
-}
-
-void FrameLoaderClientQt::dispatchDidChangeBackForwardIndex() const
-{
-}
-
 void FrameLoaderClientQt::didDisplayInsecureContent()
 {
     if (dumpFrameLoaderCallbacks)

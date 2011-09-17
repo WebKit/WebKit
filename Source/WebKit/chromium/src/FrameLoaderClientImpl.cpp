@@ -1183,18 +1183,6 @@ bool FrameLoaderClientImpl::shouldStopLoadingForHistoryItem(HistoryItem* targetI
     return !url.protocolIs(backForwardNavigationScheme);
 }
 
-void FrameLoaderClientImpl::dispatchDidAddBackForwardItem(HistoryItem*) const
-{
-}
-
-void FrameLoaderClientImpl::dispatchDidRemoveBackForwardItem(HistoryItem*) const
-{
-}
-
-void FrameLoaderClientImpl::dispatchDidChangeBackForwardIndex() const
-{
-}
-
 void FrameLoaderClientImpl::didDisplayInsecureContent()
 {
     if (m_webFrame->client())

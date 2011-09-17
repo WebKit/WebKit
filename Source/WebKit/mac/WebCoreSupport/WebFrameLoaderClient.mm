@@ -973,18 +973,6 @@ bool WebFrameLoaderClient::shouldStopLoadingForHistoryItem(HistoryItem* item) co
     return true;
 }
 
-void WebFrameLoaderClient::dispatchDidAddBackForwardItem(HistoryItem*) const
-{
-}
-
-void WebFrameLoaderClient::dispatchDidRemoveBackForwardItem(HistoryItem*) const
-{
-}
-
-void WebFrameLoaderClient::dispatchDidChangeBackForwardIndex() const
-{
-}
-
 void WebFrameLoaderClient::updateGlobalHistoryItemForPage()
 {
     HistoryItem* historyItem = 0;

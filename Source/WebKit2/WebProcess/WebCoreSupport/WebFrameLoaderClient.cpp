@@ -923,21 +923,6 @@ bool WebFrameLoaderClient::shouldStopLoadingForHistoryItem(HistoryItem* item) co
     return true;
 }
 
-void WebFrameLoaderClient::dispatchDidAddBackForwardItem(HistoryItem*) const
-{
-    notImplemented();
-}
-
-void WebFrameLoaderClient::dispatchDidRemoveBackForwardItem(HistoryItem*) const
-{
-    notImplemented();
-}
-
-void WebFrameLoaderClient::dispatchDidChangeBackForwardIndex() const
-{
-    notImplemented();
-}
-
 void WebFrameLoaderClient::didDisplayInsecureContent()
 {
     WebPage* webPage = m_frame->page();

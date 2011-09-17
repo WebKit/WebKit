@@ -738,7 +738,6 @@ __ZN20WebFrameLoaderClient18makeRepresentationEPN7WebCore14DocumentLoaderE
 -[WebDataSource(WebFileInternal) _setRepresentation:]
 -[WebHTMLRepresentation setDataSource:]
 __Z26WKNotifyHistoryItemChangedPN7WebCore11HistoryItemE
-__ZNK20WebFrameLoaderClient29dispatchDidAddBackForwardItemEPN7WebCore11HistoryItemE
 __ZN20WebFrameLoaderClient19updateGlobalHistoryEv
 -[WebView(WebPendingPublic) historyDelegate]
 __ZN20WebFrameLoaderClient32updateGlobalHistoryRedirectLinksEv
@@ -1220,7 +1219,6 @@ _WKCreateAXTextMarkerRange
 -[WebFrame(WebPrivate) _pauseAnimation:onNode:atTime:]
 _WKExecutableWasLinkedOnOrBeforeSnowLeopard
 +[WebCoreStatistics garbageCollectJavaScriptObjects]
-__ZNK20WebFrameLoaderClient32dispatchDidRemoveBackForwardItemEPN7WebCore11HistoryItemE
 __ZNK7WebCore12ChromeClient29dispatchViewportDataDidChangeERKNS_17ViewportArgumentsE
 -[WebView(WebPrivate) setFrameSize:]
 -[WebFrame(WebKitDebug) renderTreeAsExternalRepresentationForPrinting:]
@@ -1756,7 +1754,6 @@ __ZN3WTF9HashTableIjSt4pairIjPN6WebKit23NetscapePluginHostProxyEENS_18PairFirstE
 -[WebView(WebPendingPublic) zoomPageIn:]
 __ZNK20WebFrameLoaderClient21shouldGoToHistoryItemEPN7WebCore11HistoryItemE
 -[WebDefaultPolicyDelegate webView:shouldGoToHistoryItem:]
-__ZNK20WebFrameLoaderClient33dispatchDidChangeBackForwardIndexEv
 -[WebView(WebPendingPublic) zoomPageOut:]
 -[WebView _zoomOut:isTextOnly:]
 -[WebFrame(WebKitDebug) counterValueForElement:]

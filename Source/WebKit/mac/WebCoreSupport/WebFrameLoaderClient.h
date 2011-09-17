@@ -152,9 +152,6 @@ private:
 
     virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const;
     virtual bool shouldStopLoadingForHistoryItem(WebCore::HistoryItem*) const;
-    virtual void dispatchDidAddBackForwardItem(WebCore::HistoryItem*) const;
-    virtual void dispatchDidRemoveBackForwardItem(WebCore::HistoryItem*) const;
-    virtual void dispatchDidChangeBackForwardIndex() const;
     virtual void updateGlobalHistoryItemForPage();
 
     virtual void didDisplayInsecureContent();

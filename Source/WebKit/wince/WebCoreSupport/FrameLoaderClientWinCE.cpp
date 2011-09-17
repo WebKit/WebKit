@@ -264,18 +264,6 @@ bool FrameLoaderClientWinCE::shouldStopLoadingForHistoryItem(HistoryItem* item) 
     return true;
 }
 
-void FrameLoaderClientWinCE::dispatchDidAddBackForwardItem(HistoryItem*) const
-{
-}
-
-void FrameLoaderClientWinCE::dispatchDidRemoveBackForwardItem(HistoryItem*) const
-{
-}
-
-void FrameLoaderClientWinCE::dispatchDidChangeBackForwardIndex() const
-{
-}
-
 void FrameLoaderClientWinCE::didDisplayInsecureContent()
 {
     notImplemented();
