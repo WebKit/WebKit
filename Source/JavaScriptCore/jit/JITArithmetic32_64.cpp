@@ -216,32 +216,27 @@ void JIT::emitRightShift(Instruction* currentInstruction, bool isUnsigned)
     if (isOperandConstantImmediateInt(op2)) {
         emitLoad(op1, regT1, regT0);
         addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-        int shift = getConstantOperand(op2).asInt32();
-        if (isUnsigned) {
-            if (shift)
-                urshift32(Imm32(shift & 0x1f), regT0);
-            // unsigned shift < 0 or shift = k*2^32 may result in (essentially)
-            // a toUint conversion, which can result in a value we can represent
-            // as an immediate int.
-            if (shift < 0 || !(shift & 31))
-                addSlowCase(branch32(LessThan, regT0, TrustedImm32(0)));
-        } else if (shift) { // signed right shift by zero is simply toInt conversion
-            rshift32(Imm32(shift & 0x1f), regT0);
-        }
+        int shift = getConstantOperand(op2).asInt32() & 0x1f;
+        if (shift) {
+            if (isUnsigned)
+                urshift32(Imm32(shift), regT0);
+            else
+                rshift32(Imm32(shift), regT0);
+        } else if (isUnsigned) // signed right shift by zero is simply toInt conversion
+            addSlowCase(branch32(LessThan, regT0, TrustedImm32(0)));
         emitStoreAndMapInt32(dst, regT1, regT0, dst == op1, OPCODE_LENGTH(op_rshift));
-        return;
+    } else {
+        emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
+        if (!isOperandConstantImmediateInt(op1))
+            addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
+        addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
+        if (isUnsigned) {
+            urshift32(regT2, regT0);
+            addSlowCase(branch32(LessThan, regT0, TrustedImm32(0)));
+        } else
+            rshift32(regT2, regT0);
+        emitStoreAndMapInt32(dst, regT1, regT0, dst == op1, OPCODE_LENGTH(op_rshift));
     }
-
-    emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
-    if (!isOperandConstantImmediateInt(op1))
-        addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-    addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
-    if (isUnsigned) {
-        urshift32(regT2, regT0);
-        addSlowCase(branch32(LessThan, regT0, TrustedImm32(0)));
-    } else
-        rshift32(regT2, regT0);
-    emitStoreAndMapInt32(dst, regT1, regT0, dst == op1, OPCODE_LENGTH(op_rshift));
 }
 
 void JIT::emitRightShiftSlowCase(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter, bool isUnsigned)
@@ -250,7 +245,7 @@ void JIT::emitRightShiftSlowCase(Instruction* currentInstruction, Vector<SlowCas
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
     if (isOperandConstantImmediateInt(op2)) {
-        int shift = getConstantOperand(op2).asInt32();
+        int shift = getConstantOperand(op2).asInt32() & 0x1f;
         // op1 = regT1:regT0
         linkSlowCase(iter); // int32 check
         if (supportsFloatingPointTruncate()) {
@@ -258,19 +253,19 @@ void JIT::emitRightShiftSlowCase(Instruction* currentInstruction, Vector<SlowCas
             failures.append(branch32(AboveOrEqual, regT1, TrustedImm32(JSValue::LowestTag)));
             emitLoadDouble(op1, fpRegT0);
             failures.append(branchTruncateDoubleToInt32(fpRegT0, regT0));
-            if (isUnsigned) {
-                if (shift)
-                    urshift32(Imm32(shift & 0x1f), regT0);
-                if (shift < 0 || !(shift & 31))
-                    failures.append(branch32(LessThan, regT0, TrustedImm32(0)));
-            } else if (shift)
-                rshift32(Imm32(shift & 0x1f), regT0);
+            if (shift) {
+                if (isUnsigned)
+                    urshift32(Imm32(shift), regT0);
+                else
+                    rshift32(Imm32(shift), regT0);
+            } else if (isUnsigned) // signed right shift by zero is simply toInt conversion
+                failures.append(branch32(LessThan, regT0, TrustedImm32(0)));
             move(TrustedImm32(JSValue::Int32Tag), regT1);
             emitStoreInt32(dst, regT0, false);
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_rshift));
             failures.link(this);
         }
-        if (isUnsigned && (shift < 0 || !(shift & 31)))
+        if (isUnsigned && !shift)
             linkSlowCase(iter); // failed to box in hot path
     } else {
         // op1 = regT1:regT0
@@ -278,20 +273,20 @@ void JIT::emitRightShiftSlowCase(Instruction* currentInstruction, Vector<SlowCas
         if (!isOperandConstantImmediateInt(op1)) {
             linkSlowCase(iter); // int32 check -- op1 is not an int
             if (supportsFloatingPointTruncate()) {
-                Jump notDouble = branch32(Above, regT1, TrustedImm32(JSValue::LowestTag)); // op1 is not a double
+                JumpList failures;
+                failures.append(branch32(Above, regT1, TrustedImm32(JSValue::LowestTag))); // op1 is not a double
                 emitLoadDouble(op1, fpRegT0);
-                Jump notInt = branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)); // op2 is not an int
-                Jump cantTruncate = branchTruncateDoubleToInt32(fpRegT0, regT0);
-                if (isUnsigned)
+                failures.append(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag))); // op2 is not an int
+                failures.append(branchTruncateDoubleToInt32(fpRegT0, regT0));
+                if (isUnsigned) {
                     urshift32(regT2, regT0);
-                else
+                    failures.append(branch32(LessThan, regT0, TrustedImm32(0)));
+                } else
                     rshift32(regT2, regT0);
                 move(TrustedImm32(JSValue::Int32Tag), regT1);
                 emitStoreInt32(dst, regT0, false);
                 emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_rshift));
-                notDouble.link(this);
-                notInt.link(this);
-                cantTruncate.link(this);
+                failures.link(this);
             }
         }
 

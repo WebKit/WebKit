@@ -1,3 +1,20 @@
+2011-09-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Unsigned bit shift fails under certain conditions in 32 bit builds
+        https://bugs.webkit.org/show_bug.cgi?id=68166
+
+        Reviewed by Geoff Garen.
+
+        The major bug here is that the slow case (which handles shifts of
+        doubles) doesn't check for negative results from an unsigned shift
+        (which should be unsigned, and as such can't be represented by a
+        signed integer immediate).  The implementation is also flawed for
+        shifts by negative shift amounts (treats as shift by zero).
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitRightShift):
+        (JSC::JIT::emitRightShiftSlowCase):
+
 2011-09-16  Geoffrey Garen  <ggaren@apple.com>
 
         Removed undetectable style.filter.
