@@ -1,3 +1,23 @@
+2011-09-16  Ben Wells  <benwells@chromium.org>
+
+        Large canvas fills should not crash or create unnecessarily large image buffers
+        https://bugs.webkit.org/show_bug.cgi?id=67988
+
+        When using source-in, destination-in, source-out, or destination-atop a temporary
+        buffer is created. This buffer only needs to be big enough to cover the intersection
+        of the path and the canvas. If the area of intersection between the fill and the
+        canvas is empty the canvas is completely cleared and a temporary buffer is not used.
+
+        This change also adds some null checks for failures to create contexts or buffers.
+
+        Reviewed by Darin Adler.
+
+        Test: fast/canvas/canvas-large-fills.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::clearCanvas):
+        (WebCore::CanvasRenderingContext2D::fillAndDisplayTransparencyElsewhere):
+
 2011-09-16  Shawn Singh  <shawnsingh@chromium.org>
 
         Remove default NULL argument in LayerChromium::create().
