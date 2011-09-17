@@ -3747,3 +3747,6 @@ BUG_KEISHI : inspector/styles/styles-source-lines.html = FAIL PASS TEXT TIMEOUT
 
 // Crashes or timeouts once in a while but never fails
 BUG_KEISHI LINUX : media/video-controls-visible-audio-only.html = PASS TIMEOUT CRASH
+
+// Needs rebaseline
+BUGRNIWA : editing/deleting/merge-whitespace-pre-expected = PASS FAIL
