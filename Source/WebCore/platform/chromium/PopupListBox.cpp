@@ -47,6 +47,7 @@
 #include "ScrollbarTheme.h"
 #include "StringTruncator.h"
 #include "TextRun.h"
+#include <ctype.h>
 #include <limits>
 #include <wtf/CurrentTime.h>
 

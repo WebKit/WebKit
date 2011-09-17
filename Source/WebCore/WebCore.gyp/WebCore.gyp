@@ -1376,6 +1376,8 @@
             ['include', 'platform/graphics/chromium/FontPlatformDataLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/SimpleFontDataLinux\\.cpp$'],
           ],
+        }],
+        ['toolkit_uses_gtk==1 or OS=="android"', {
           'dependencies': [
             '<(chromium_src_dir)/third_party/harfbuzz/harfbuzz.gyp:harfbuzz',
           ],
