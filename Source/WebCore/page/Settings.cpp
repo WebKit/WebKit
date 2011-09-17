@@ -79,6 +79,8 @@ bool Settings::gShouldPaintNativeControls = true;
 bool Settings::gAVFoundationEnabled(false);
 #endif
 
+bool Settings::gMockScrollbarsEnabled = false;
+
 #if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
 bool Settings::gShouldUseHighResolutionTimers = true;
 #endif
@@ -813,6 +815,16 @@ void Settings::setTiledBackingStoreEnabled(bool enabled)
     if (m_page->mainFrame())
         m_page->mainFrame()->setTiledBackingStoreEnabled(enabled);
 #endif
+}
+
+void Settings::setMockScrollbarsEnabled(bool flag)
+{
+    gMockScrollbarsEnabled = flag;
+}
+
+bool Settings::mockScrollbarsEnabled()
+{
+    return gMockScrollbarsEnabled;
 }
 
 } // namespace WebCore

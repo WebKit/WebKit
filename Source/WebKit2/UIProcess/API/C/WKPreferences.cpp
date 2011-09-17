@@ -611,3 +611,13 @@ bool WKPreferencesGetShowsToolTipOverTruncatedText(WKPreferencesRef preferencesR
 {
     return toImpl(preferencesRef)->showsToolTipOverTruncatedText();
 }
+
+void WKPreferencesSetMockScrollbarsEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setMockScrollbarsEnabled(flag);
+}
+
+bool WKPreferencesGetMockScrollbarsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->mockScrollbarsEnabled();
+}

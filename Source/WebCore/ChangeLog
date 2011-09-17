@@ -1,3 +1,18 @@
+2011-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make custom scrollbar theme for use in DRT, to reduce pixel diffs between platforms
+        https://bugs.webkit.org/show_bug.cgi?id=68134
+
+        Reviewed by Sam Weinig.
+
+        Add a new setting to control whether the mock scrollbar theme is used.
+        This is a global setting, so that it can be set without having to
+        access a specific Settings object.
+
+        * page/Settings.h:
+        (WebCore::Settings::setMockScrollbarsEnabled):
+        (WebCore::Settings::mockScrollbarsEnabled):
+
 2011-09-16  Ben Wells  <benwells@chromium.org>
 
         Large canvas fills should not crash or create unnecessarily large image buffers

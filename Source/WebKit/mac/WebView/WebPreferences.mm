@@ -1531,6 +1531,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitMediaPlaybackAllowsInlinePreferenceKey];
 }
 
+- (BOOL)mockScrollbarsEnabled
+{
+    return [self _boolValueForKey:WebKitMockScrollbarsEnabledPreferenceKey];
+}
+
+- (void)setMockScrollbarsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitMockScrollbarsEnabledPreferenceKey];
+}
+
 - (NSString *)pictographFontFamily
 {
     return [self _stringValueForKey: WebKitPictographFontPreferenceKey];

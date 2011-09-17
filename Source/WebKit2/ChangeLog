@@ -1,3 +1,20 @@
+2011-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make custom scrollbar theme for use in DRT, to reduce pixel diffs between platforms
+        https://bugs.webkit.org/show_bug.cgi?id=68134
+
+        Reviewed by Sam Weinig.
+
+        Hook up a private preference that enables the mock scrollbar theme.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMockScrollbarsEnabled):
+        (WKPreferencesGetMockScrollbarsEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2011-09-16  Mark Rowe  <mrowe@apple.com>
 
         Stop installing source and header files in to WebKit2.framework after r95303.

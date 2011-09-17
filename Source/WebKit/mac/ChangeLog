@@ -1,3 +1,18 @@
+2011-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make custom scrollbar theme for use in DRT, to reduce pixel diffs between platforms
+        https://bugs.webkit.org/show_bug.cgi?id=68134
+
+        Reviewed by Sam Weinig.
+        
+        Hook up a private preference that enables the mock scrollbar theme.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences mockScrollbarsEnabled]):
+        (-[WebPreferences setMockScrollbarsEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+
 2011-09-15  Adam Barth  <abarth@webkit.org>
 
         Rename ENABLE(DATABASE) to ENABLE(SQL_DATABASE)
