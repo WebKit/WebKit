@@ -43,11 +43,17 @@ CSSBorderImageValue::~CSSBorderImageValue()
 String CSSBorderImageValue::cssText() const
 {
     // Image first.
-    String text(m_image->cssText());
-    text += " ";
+    String text;
+    
+    if (m_image)
+        text += m_image->cssText();
 
     // Now the slices.
-    text += m_imageSlice->cssText();
+    if (m_imageSlice) {
+        if (!text.isEmpty())
+            text += " ";
+        text += m_imageSlice->cssText();
+    }
 
     // Now the border widths.
     if (m_borderSlice) {
@@ -62,7 +68,8 @@ String CSSBorderImageValue::cssText() const
 
     if (m_repeat) {
         // Now the keywords.
-        text += " ";
+        if (!text.isEmpty())
+            text += " ";
         text += m_repeat->cssText();
     }
 
