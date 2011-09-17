@@ -1,3 +1,22 @@
+2011-09-16  Ulan Degenbaev  <ulan@chromium.org>
+
+        [V8] REGRESSION(94783): calling the binding script during V8 context creation slows down page loads
+        https://bugs.webkit.org/show_bug.cgi?id=68237
+
+        Reviewed by Kenneth Russell.
+
+        Call the binding script lazily on the first run of the set() method of
+        a typed array.
+
+        * ../../Source/WebCore/WebCore.gypi:
+        * ../../Source/WebCore/bindings/v8/V8BindingScripts.cpp: Removed.
+        * ../../Source/WebCore/bindings/v8/V8BindingScripts.h: Removed.
+        * ../../Source/WebCore/bindings/v8/V8DOMWindowShell.cpp:
+        * ../../Source/WebCore/bindings/v8/WorkerContextExecutionProxy.cpp:
+        * ../../Source/WebCore/bindings/v8/custom/V8ArrayBufferViewCustom.cpp:
+        * ../../Source/WebCore/bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        * ../../Source/WebCore/bindings/v8/custom/V8ArrayBufferViewCustomScript.js:
+
 2011-09-16  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Disable WebKit2 by default in configure.ac, but enable it with build-webkit

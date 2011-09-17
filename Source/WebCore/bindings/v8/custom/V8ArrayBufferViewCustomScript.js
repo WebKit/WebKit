@@ -41,6 +41,7 @@ var optimizeSetMethod = function(type)
             } else
                 return nativeSet.call(this, source, offset);
         }
+        f.name = "set";
         return f;
     })();
 };

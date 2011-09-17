@@ -41,9 +41,18 @@
 namespace WebCore {
 
 
+// Check if the JavaScript 'set' method was already installed
+// on the prototype of the given typed array.
+bool fastSetInstalled(v8::Handle<v8::Object> array);
+
+// Install the JavaScript 'set' method on the prototype of
+// the given typed array.
+void installFastSet(v8::Handle<v8::Object> array);
+
 // Copy the elements from the source array to the typed destination array by
 // invoking the 'set' method of the destination array in JS.
 void copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray);
+
 
 // Template function used by the ArrayBufferView*Constructor callbacks.
 template<class ArrayClass, class ElementType>
@@ -198,10 +207,15 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
             || offset + length < offset)
             // Out of range offset or overflow
             V8Proxy::setDOMException(INDEX_SIZE_ERR);
-        else
-            for (uint32_t i = 0; i < length; i++)
-                impl->set(offset + i, array->Get(i)->NumberValue());
-
+        else {
+            if (!fastSetInstalled(args.Holder())) {
+                installFastSet(args.Holder());
+                copyElements(args.Holder(), array);
+            } else {
+                for (uint32_t i = 0; i < length; i++)
+                    impl->set(offset + i, array->Get(i)->NumberValue());
+            }
+        }
         return v8::Undefined();
     }
 
