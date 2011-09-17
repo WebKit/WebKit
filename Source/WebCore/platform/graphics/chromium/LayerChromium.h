@@ -69,7 +69,7 @@ public:
 class LayerChromium : public RefCounted<LayerChromium> {
     friend class LayerTilerChromium;
 public:
-    static PassRefPtr<LayerChromium> create(CCLayerDelegate* = 0);
+    static PassRefPtr<LayerChromium> create(CCLayerDelegate*);
 
     virtual ~LayerChromium();
 
