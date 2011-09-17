@@ -85,7 +85,7 @@
 #include <wtf/text/CString.h>
 
 #if USE(V8)
-#include "V8IsolatedContext.h"
+#include <v8.h>
 #endif
 
 using namespace WebCore;
@@ -140,23 +140,17 @@ void FrameLoaderClientImpl::documentElementAvailable()
         m_webFrame->client()->didCreateDocumentElement(m_webFrame);
 }
 
-void FrameLoaderClientImpl::didCreateScriptContextForFrame()
-{
-    if (m_webFrame->client())
-        m_webFrame->client()->didCreateScriptContext(m_webFrame);
-}
-
-void FrameLoaderClientImpl::didDestroyScriptContextForFrame()
-{
-    if (m_webFrame->client())
-        m_webFrame->client()->didDestroyScriptContext(m_webFrame);
-}
-
 #if USE(V8)
-void FrameLoaderClientImpl::didCreateIsolatedScriptContext(V8IsolatedContext* isolatedContext)
+void FrameLoaderClientImpl::didCreateScriptContext(v8::Handle<v8::Context> context, int worldId)
 {
     if (m_webFrame->client())
-        m_webFrame->client()->didCreateIsolatedScriptContext(m_webFrame, isolatedContext->world()->id(), isolatedContext->context());
+        m_webFrame->client()->didCreateScriptContext(m_webFrame, context, worldId);
+}
+
+void FrameLoaderClientImpl::willReleaseScriptContext(v8::Handle<v8::Context> context, int worldId)
+{
+    if (m_webFrame->client())
+        m_webFrame->client()->willReleaseScriptContext(m_webFrame, context, worldId);
 }
 #endif
 

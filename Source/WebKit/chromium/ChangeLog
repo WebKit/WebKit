@@ -1,3 +1,19 @@
+2011-09-17  Aaron Boodman  <aa@chromium.org>
+
+        Rework script context creation/release notifications
+        https://bugs.webkit.org/show_bug.cgi?id=67828
+
+        Reviewed by Adam Barth.
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::didCreateScriptContext):
+        (WebKit::WebFrameClient::didDestroyScriptContext):
+        (WebKit::WebFrameClient::willReleaseScriptContext):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::didCreateScriptContext):
+        (WebKit::FrameLoaderClientImpl::willReleaseScriptContext):
+        * src/FrameLoaderClientImpl.h:
+
 2011-09-17  chandra shekar vallala  <chandra.vallala@motorola.com>
 
         [chromium]The focus of an input field inside an Iframe doesn't get cleared even though clearFocusedNode is called.

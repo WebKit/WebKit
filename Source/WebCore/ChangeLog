@@ -1,3 +1,22 @@
+2011-09-17  Aaron Boodman  <aa@chromium.org>
+
+        Rework script context creation/release notifications
+        https://bugs.webkit.org/show_bug.cgi?id=67828
+
+        Reviewed by Adam Barth.
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::disposeContextHandles):
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+        * bindings/v8/V8IsolatedContext.cpp:
+        (WebCore::V8IsolatedContext::V8IsolatedContext):
+        (WebCore::V8IsolatedContext::destroy):
+        * bindings/v8/V8IsolatedContext.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::didCreateScriptContext):
+        (WebCore::EmptyFrameLoaderClient::willReleaseScriptContext):
+        * loader/FrameLoaderClient.h:
+
 2011-09-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: file open dialog appears when user clicks on the timeline bar in timeline panel.

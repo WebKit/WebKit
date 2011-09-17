@@ -47,7 +47,7 @@
 #include "SearchPopupMenu.h"
 
 #if USE(V8)
-#include "V8IsolatedContext.h"
+#include <v8.h>
 #endif
 
 /*
@@ -397,9 +397,8 @@ public:
     virtual void registerForIconNotification(bool) { }
 
 #if USE(V8)
-    virtual void didCreateScriptContextForFrame() { }
-    virtual void didDestroyScriptContextForFrame() { }
-    virtual void didCreateIsolatedScriptContext(V8IsolatedContext*) { }
+    virtual void didCreateScriptContext(v8::Handle<v8::Context>, int worldId) { }
+    virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) { }
     virtual bool allowScriptExtension(const String& extensionName, int extensionGroup) { return false; }
 #endif
 
