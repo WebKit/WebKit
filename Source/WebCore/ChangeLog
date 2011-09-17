@@ -1,3 +1,13 @@
+2011-09-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: file open dialog appears when user clicks on the timeline bar in timeline panel.
+        https://bugs.webkit.org/show_bug.cgi?id=68312
+
+        Reviewed by Pavel Feldman.
+
+       * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._createFileSelector):
+
 2011-09-17  Jeff Miller  <jeffm@apple.com>
 
         Build fix after r95372.
