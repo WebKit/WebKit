@@ -36,34 +36,47 @@
 
 namespace WebCore {
 
-    class ErrorEvent : public Event {
-    public:
-        static PassRefPtr<ErrorEvent> create()
-        {
-            return adoptRef(new ErrorEvent);
-        }
-        static PassRefPtr<ErrorEvent> create(const String& message, const String& fileName, unsigned lineNumber)
-        {
-            return adoptRef(new ErrorEvent(message, fileName, lineNumber));
-        }
-        virtual ~ErrorEvent();
+struct ErrorEventInit : public EventInit {
+    ErrorEventInit();
 
-        void initErrorEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& message, const String& fileName, unsigned lineNumber);
+    String message;
+    String filename;
+    unsigned lineno;
+};
 
-        const String& message() const { return m_message; }
-        const String& filename() const { return m_fileName; }
-        unsigned lineno() const { return m_lineNumber; }
+class ErrorEvent : public Event {
+public:
+    static PassRefPtr<ErrorEvent> create()
+    {
+        return adoptRef(new ErrorEvent);
+    }
+    static PassRefPtr<ErrorEvent> create(const String& message, const String& fileName, unsigned lineNumber)
+    {
+        return adoptRef(new ErrorEvent(message, fileName, lineNumber));
+    }
+    static PassRefPtr<ErrorEvent> create(const AtomicString& type, const ErrorEventInit& initializer)
+    {
+        return adoptRef(new ErrorEvent(type, initializer));
+    }
+    virtual ~ErrorEvent();
 
-        virtual bool isErrorEvent() const;
+    void initErrorEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& message, const String& fileName, unsigned lineNumber);
 
-    private:    
-        ErrorEvent();
-        ErrorEvent(const String& message, const String& fileName, unsigned lineNumber);
+    const String& message() const { return m_message; }
+    const String& filename() const { return m_fileName; }
+    unsigned lineno() const { return m_lineNumber; }
 
-        String m_message;
-        String m_fileName;
-        unsigned m_lineNumber;
-    };
+    virtual bool isErrorEvent() const;
+
+private:
+    ErrorEvent();
+    ErrorEvent(const String& message, const String& fileName, unsigned lineNumber);
+    ErrorEvent(const AtomicString&, const ErrorEventInit&);
+
+    String m_message;
+    String m_fileName;
+    unsigned m_lineNumber;
+};
 
 } // namespace WebCore
 

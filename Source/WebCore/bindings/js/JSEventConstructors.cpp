@@ -27,10 +27,12 @@
 #include "EventConstructors.h"
 
 #include "CustomEvent.h"
+#include "ErrorEvent.h"
 #include "Event.h"
 #include "HashChangeEvent.h"
 #include "JSCustomEvent.h"
 #include "JSDictionary.h"
+#include "JSErrorEvent.h"
 #include "JSEvent.h"
 #include "JSHashChangeEvent.h"
 #include "JSPageTransitionEvent.h"

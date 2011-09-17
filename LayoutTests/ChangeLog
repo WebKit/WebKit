@@ -1,3 +1,17 @@
+2011-09-16  Kentaro Hara  <haraken@chromium.org>
+
+        Implement an ErrorEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=68148
+
+        Reviewed by Sam Weinig.
+
+        error-event-constructor.html checks the behavior of the ErrorEvent constructor.
+
+        * fast/dom/constructed-objects-prototypes-expected.txt: Now window has ErrorEvent.
+        * fast/events/constructors/error-event-constructor-expected.txt: Added.
+        * fast/events/constructors/error-event-constructor.html: Added.
+        * platform/chromium/test_expectations.txt: Skipped error-event-constructor.html, since V8 does not yet have the ErrorEvent constructor.
+
 2011-09-16  Adam Barth  <abarth@webkit.org>
 
         CORS images viewed from different domains fail security checks
