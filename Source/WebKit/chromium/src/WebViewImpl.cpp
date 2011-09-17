@@ -1782,10 +1782,7 @@ void WebViewImpl::setInitialFocus(bool reverse)
 
 void WebViewImpl::clearFocusedNode()
 {
-    if (!m_page.get())
-        return;
-
-    RefPtr<Frame> frame = m_page->mainFrame();
+    RefPtr<Frame> frame = focusedWebCoreFrame();
     if (!frame.get())
         return;
 

@@ -42,7 +42,8 @@
 #include "WebURL.h"
 #include "WebURLRequest.h"
 #include "WebURLResponse.h"
-#include "WebView.h"
+#include "WebViewClient.h"
+#include "WebViewImpl.h"
 #include "v8.h"
 #include <googleurl/src/gurl.h>
 #include <gtest/gtest.h>
@@ -117,6 +118,9 @@ protected:
 };
 
 class TestWebFrameClient : public WebFrameClient {
+};
+
+class TestWebViewClient : public WebViewClient {
 };
 
 TEST_F(WebFrameTest, ContentText)
@@ -253,6 +257,30 @@ TEST_F(WebFrameTest, ReloadDoesntSetRedirect)
     // start reload before request is delivered.
     webView->mainFrame()->reload(true);
     serveRequests();
+}
+
+TEST_F(WebFrameTest, ClearFocusedNodeTest)
+{
+    registerMockedHttpURLLoad("iframe_clear_focused_node_test.html");
+    registerMockedHttpURLLoad("autofocus_input_field_iframe.html");
+
+    // Create and initialize the WebView.
+    TestWebFrameClient webFrameClient;
+    TestWebViewClient webviewClient;
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(WebView::create(&webviewClient));
+    webViewImpl->settings()->setJavaScriptEnabled(true);
+    webViewImpl->initializeMainFrame(&webFrameClient);
+
+    loadHttpFrame(webViewImpl->mainFrame(), "iframe_clear_focused_node_test.html");
+    serveRequests();
+
+    // Clear the focused node.
+    webViewImpl->clearFocusedNode();
+
+    // Now retrieve the FocusedNode and test it should be null.
+    EXPECT_EQ(0, webViewImpl->focusedWebCoreNode());
+
+    webViewImpl->close(); 
 }
 
 } // namespace
