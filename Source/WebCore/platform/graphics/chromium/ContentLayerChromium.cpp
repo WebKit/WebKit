@@ -110,7 +110,7 @@ void ContentLayerChromium::paintContentsIfDirty()
         return;
 
     prepareToUpdate(layerRect);
-    m_dirtyRect = FloatRect();
+    resetNeedsDisplay();
 }
 
 bool ContentLayerChromium::drawsContent() const

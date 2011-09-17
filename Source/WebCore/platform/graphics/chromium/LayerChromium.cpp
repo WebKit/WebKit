@@ -58,7 +58,6 @@ PassRefPtr<LayerChromium> LayerChromium::create(CCLayerDelegate* delegate)
 
 LayerChromium::LayerChromium(CCLayerDelegate* delegate)
     : m_delegate(delegate)
-    , m_contentsDirty(false)
     , m_layerId(s_nextLayerId++)
     , m_parent(0)
     , m_anchorPoint(0.5, 0.5)
@@ -274,8 +273,6 @@ void LayerChromium::setNeedsDisplay(const FloatRect& dirtyRect)
     // Simply mark the contents as dirty. For non-root layers, the call to
     // setNeedsCommit will schedule a fresh compositing pass.
     // For the root layer, setNeedsCommit has no effect.
-    m_contentsDirty = true;
-
     m_dirtyRect.unite(dirtyRect);
     setNeedsCommit();
 }
@@ -284,14 +281,12 @@ void LayerChromium::setNeedsDisplay()
 {
     m_dirtyRect.setLocation(FloatPoint());
     m_dirtyRect.setSize(bounds());
-    m_contentsDirty = true;
     setNeedsCommit();
 }
 
 void LayerChromium::resetNeedsDisplay()
 {
     m_dirtyRect = FloatRect();
-    m_contentsDirty = false;
 }
 
 void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)

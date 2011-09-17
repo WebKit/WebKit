@@ -70,7 +70,7 @@ void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererCo
     if (!drawsContent())
         return;
 
-    if (!m_contentsDirty)
+    if (m_dirtyRect.isEmpty())
         return;
 
     if (m_textureChanged) {
@@ -84,13 +84,13 @@ void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererCo
         m_textureChanged = false;
     }
     // Update the contents of the texture used by the compositor.
-    if (m_contentsDirty && m_textureUpdated) {
+    if (!m_dirtyRect.isEmpty() && m_textureUpdated) {
         // prepareTexture copies the contents of the off-screen render target into the texture
         // used by the compositor.
         //
         m_context->prepareTexture();
         m_context->markLayerComposited();
-        m_contentsDirty = false;
+        resetNeedsDisplay();
         m_textureUpdated = false;
     }
 }

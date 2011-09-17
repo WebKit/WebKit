@@ -222,7 +222,6 @@ protected:
     virtual void cleanupResources();
 
     FloatRect m_dirtyRect;
-    bool m_contentsDirty;
 
     RefPtr<LayerChromium> m_maskLayer;
 

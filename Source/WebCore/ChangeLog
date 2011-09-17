@@ -1,3 +1,29 @@
+2011-09-16  Shawn Singh  <shawnsingh@chromium.org>
+
+        Remove m_contentsDirty from LayerChromium because it
+        is redundant with m_dirtyRect.
+        https://bugs.webkit.org/show_bug.cgi?id=68213
+
+        Reviewed by James Robinson.
+
+        Code cleanup towards unit testing.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::setNeedsDisplay):
+        (WebCore::LayerChromium::resetNeedsDisplay):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::updateCompositorResources):
+
 2011-09-16  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66714

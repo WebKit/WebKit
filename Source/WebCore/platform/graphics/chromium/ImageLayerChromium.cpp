@@ -152,7 +152,7 @@ void ImageLayerChromium::paintContentsIfDirty()
         IntRect paintRect(IntPoint(), contentBounds());
         if (!m_dirtyRect.isEmpty()) {
             invalidateRect(paintRect);
-            m_dirtyRect = IntRect();
+            resetNeedsDisplay();
         }
     }
 
