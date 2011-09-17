@@ -23,25 +23,24 @@
 
 namespace JSC {
 
-    /**
-     * Primitive types
-     */
-    enum JSType {
-        UnspecifiedType   = 0,
-        UndefinedType     = 1,
-        BooleanType       = 2,
-        NumberType        = 3,
-        NullType          = 4,
-        StringType        = 5,
-        LeafType          = 6,
-        // The CompoundType value must come before any JSType that may have children
-        CompoundType      = 7,
-        GetterSetterType  = 8,
-        APIValueWrapper   = 9,
-        // The ObjectType value must come before any JSType that is a subclass of JSObject
-        ObjectType        = 10,
-        FinalObjectType   = 11,
-    };
+enum JSType {
+    UnspecifiedType     = 0,
+    UndefinedType       = 1,
+    BooleanType         = 2,
+    NumberType          = 3,
+    NullType            = 4,
+    StringType          = 5,
+    LeafType            = 6,
+
+    // The CompoundType value must come before any JSType that may have children.
+    CompoundType        = 7,
+    GetterSetterType    = 8,
+    APIValueWrapperType = 9,
+
+    // The ObjectType value must come before any JSType that is a subclass of JSObject.
+    ObjectType          = 10,
+    FinalObjectType     = 11,
+};
 
 } // namespace JSC
 

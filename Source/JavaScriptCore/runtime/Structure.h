@@ -322,7 +322,7 @@ namespace JSC {
 
     inline bool JSCell::isAPIValueWrapper() const
     {
-        return m_structure->typeInfo().type() == APIValueWrapper;
+        return m_structure->typeInfo().type() == APIValueWrapperType;
     }
 
     inline const ClassInfo* JSCell::classInfo() const
