@@ -1,3 +1,12 @@
+2011-09-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix the rebaseline in r95325 and also rebaseline for r95335.
+
+        * inspector/styles/styles-update-from-js-expected.txt:
+        * platform/chromium/test_expectations.txt
+        * platform/chromium-win/editing/deleting/merge-whitespace-pre-expected.txt:
+        * platform/qt/editing/deleting/merge-whitespace-pre-expected.txt:
+
 2011-09-16  Gavin Barraclough  <barraclough@apple.com>
 
         Unsigned bit shift fails under certain conditions in 32 bit builds
