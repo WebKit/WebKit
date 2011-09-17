@@ -1,3 +1,42 @@
+2011-09-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95304.
+        http://trac.webkit.org/changeset/95304
+        https://bugs.webkit.org/show_bug.cgi?id=68299
+
+        Broke GTK+ builds. It pulls derived headers into main.c
+        (Requested by rniwa on #webkit).
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        ():
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallbackPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterfacePrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListenerPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_conditional_method1):
+        (webkit_dom_test_obj_conditional_method2):
+        (webkit_dom_test_obj_conditional_method3):
+        (webkit_dom_test_obj_get_conditional_attr1):
+        (webkit_dom_test_obj_set_conditional_attr1):
+        (webkit_dom_test_obj_get_conditional_attr2):
+        (webkit_dom_test_obj_set_conditional_attr2):
+        (webkit_dom_test_obj_get_conditional_attr3):
+        (webkit_dom_test_obj_set_conditional_attr3):
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObjPrivate.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterfacePrivate.h:
+
 2011-09-16  Shawn Singh  <shawnsingh@chromium.org>
 
         Re-named isRootLayer to isNonCompositedContent because
