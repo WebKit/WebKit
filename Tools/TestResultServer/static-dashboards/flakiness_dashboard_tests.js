@@ -34,6 +34,8 @@
 // arguments.
 
 // FIXME: move this over to using qunit
+// In the meanwhile, you can run these tests by loading
+// flakiness_dashboard.html#useTestData=true in a browser.
 
 // Clears out the global objects modified or used by processExpectations and
 // populateExpectationsData. A bit gross since it's digging into implementation
