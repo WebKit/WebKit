@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LevelDBDatabase.h"
 
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
 
 #include "LevelDBComparator.h"
 #include "LevelDBIterator.h"

@@ -96,7 +96,7 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
 
     // FIXME: Everything from now on should be done on another thread.
 
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
     if (backingStoreType == LevelDBBackingStore) {
         bool hasSQLBackingStore = IDBSQLiteBackingStore::backingStoreExists(securityOrigin.get(), name, dataDir);
 
@@ -119,7 +119,7 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
     else {
         if (backingStoreType == SQLiteBackingStore)
             backingStore = IDBSQLiteBackingStore::open(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
         else if (backingStoreType == LevelDBBackingStore)
             backingStore = IDBLevelDBBackingStore::open(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
 #endif
@@ -134,7 +134,7 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
     m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
 }
 
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
 
 static bool migrateObjectStores(PassRefPtr<IDBBackingStore> fromBackingStore, int64_t fromDatabaseId, PassRefPtr<IDBBackingStore> toBackingStore, int64_t toDatabaseId)
 {
@@ -193,11 +193,11 @@ static bool migrateObjectStores(PassRefPtr<IDBBackingStore> fromBackingStore, in
 
     return true;
 }
-#endif // #if ENABLE(LEVELDB)
+#endif // #if USE(LEVELDB)
 
 bool IDBFactoryBackendImpl::migrateFromSQLiteToLevelDB(const String& name, SecurityOrigin* securityOrigin, const String& dataDir, int64_t maximumSize)
 {
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
     String fromUniqueIdentifier = computeUniqueIdentifier(name, securityOrigin, SQLiteBackingStore);
     String fromFileIdentifier = computeFileIdentifier(securityOrigin, SQLiteBackingStore);
     String toUniqueIdentifier = computeUniqueIdentifier(name, securityOrigin, LevelDBBackingStore);
@@ -253,7 +253,7 @@ bool IDBFactoryBackendImpl::migrateFromSQLiteToLevelDB(const String& name, Secur
 
     return migrateObjectStores(fromBackingStore, fromDatabaseBackend->id(), toBackingStore, toDatabaseId);
 
-#endif // ENABLE(LEVELDB)
+#endif // USE(LEVELDB)
     return false;
 }
 

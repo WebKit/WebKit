@@ -1266,7 +1266,7 @@
             '<(chromium_src_dir)/third_party/ffmpeg/ffmpeg.gyp:ffmpeg',
           ],
         }],
-        ['"ENABLE_LEVELDB=1" in feature_defines', {
+        ['"WTF_USE_LEVELDB=1" in feature_defines', {
           'dependencies': [
             '<(chromium_src_dir)/third_party/leveldatabase/leveldatabase.gyp:leveldatabase',
           ],

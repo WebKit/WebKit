@@ -57,7 +57,6 @@
       'ENABLE_JAVASCRIPT_DEBUGGER=1',
       'ENABLE_JAVASCRIPT_I18N_API=1',
       'ENABLE_JSC_MULTIPLE_THREADS=0',
-      'ENABLE_LEVELDB=1',
       'ENABLE_LINK_PREFETCH=1',
       'ENABLE_MEDIA_STATISTICS=1',
       'ENABLE_MEDIA_STREAM=1',
@@ -90,6 +89,7 @@
       'ENABLE_XHR_RESPONSE_BLOB=1',
       'ENABLE_XPATH=1',
       'ENABLE_XSLT=1',
+      'WTF_USE_LEVELDB=1',
       'WTF_USE_BUILTIN_UTF8_CODEC=1',
       # WTF_USE_DYNAMIC_ANNOTATIONS=1 may be defined in build/common.gypi
       # We can't define it here because it should be present only

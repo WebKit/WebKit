@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LevelDBWriteBatch.h"
 
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
 
 #include "LevelDBSlice.h"
 #include <leveldb/slice.h>

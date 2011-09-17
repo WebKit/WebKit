@@ -1467,7 +1467,7 @@ IF (ENABLE_DOM_STORAGE)
     )
 ENDIF ()
 
-IF (ENABLE_LEVELDB)
+IF (WTF_USE_LEVELDB)
     LIST(APPEND WebCore_SOURCES
         platform/leveldb/LevelDBDatabase.cpp
         platform/leveldb/LevelDBTransaction.cpp

@@ -27,7 +27,7 @@
 #define LevelDBTransaction_h
 
 #if ENABLE(INDEXED_DATABASE)
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
 
 #include "LevelDBComparator.h"
 #include "LevelDBIterator.h"
@@ -169,7 +169,7 @@ private:
 
 }
 
-#endif // ENABLE(LEVELDB)
+#endif // USE(LEVELDB)
 #endif // ENABLE(INDEXED_DATABASE)
 
 #endif // LevelDBTransaction_h

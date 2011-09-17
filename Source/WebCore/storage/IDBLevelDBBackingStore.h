@@ -27,7 +27,7 @@
 #define IDBLevelDBBackingStore_h
 
 #if ENABLE(INDEXED_DATABASE)
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
 
 #include "IDBBackingStore.h"
 #include <wtf/OwnPtr.h>
@@ -103,7 +103,7 @@ private:
 } // namespace WebCore
 
 
-#endif // ENABLE(LEVELDB)
+#endif // USE(LEVELDB)
 #endif // ENABLE(INDEXED_DATABASE)
 
 #endif // IDBLevelDBBackingStore_h

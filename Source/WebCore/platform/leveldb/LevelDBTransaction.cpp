@@ -31,7 +31,7 @@
 #include "LevelDBWriteBatch.h"
 
 #if ENABLE(INDEXED_DATABASE)
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
 
 namespace WebCore {
 
@@ -476,5 +476,5 @@ void LevelDBTransaction::notifyIteratorsOfTreeChange()
 
 } // namespace WebCore
 
-#endif // ENABLE(LEVELDB)
+#endif // USE(LEVELDB)
 #endif // ENABLE(INDEXED_DATABASE)

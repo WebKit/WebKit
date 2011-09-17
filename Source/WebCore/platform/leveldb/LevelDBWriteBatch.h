@@ -26,7 +26,7 @@
 #ifndef LevelDBWriteBatch_h
 #define LevelDBWriteBatch_h
 
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -59,5 +59,6 @@ private:
 
 }
 
-#endif // ENABLE(LEVELDB)
+#endif // USE(LEVELDB)
+
 #endif // LevelDBWriteBatch_h
