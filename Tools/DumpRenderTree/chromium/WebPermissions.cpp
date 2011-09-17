@@ -31,7 +31,13 @@
 #include "config.h"
 #include "WebPermissions.h"
 
-WebPermissions::WebPermissions()
+#include "LayoutTestController.h"
+#include "TestShell.h"
+#include "WebCString.h"
+#include "WebURL.h"
+
+WebPermissions::WebPermissions(TestShell* shell)
+    : m_shell(shell)
 {
     reset();
 }
@@ -40,9 +46,12 @@ WebPermissions::~WebPermissions()
 {
 }
 
-bool WebPermissions::allowImages(WebKit::WebFrame*, bool enabledPerSettings)
+bool WebPermissions::allowImage(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebURL& imageURL)
 {
-    return enabledPerSettings && m_imagesAllowed;
+    bool allowed = enabledPerSettings && m_imagesAllowed;
+    if (layoutTestController()->shouldDumpPermissionClientCallbacks())
+        fprintf(stdout, "PERMISSION CLIENT: allowImage(%s): %s\n", m_shell->normalizeLayoutTestURL(imageURL.spec()).c_str(), allowed ? "true" : "false");
+    return allowed;
 }
 
 bool WebPermissions::allowStorage(WebKit::WebFrame*, bool)
@@ -60,7 +69,7 @@ bool WebPermissions::allowDisplayingInsecureContent(WebKit::WebFrame*, bool enab
 {
     return enabledPerSettings || m_displayingInsecureContentAllowed;
 }
- 
+
 bool WebPermissions::allowRunningInsecureContent(WebKit::WebFrame*, bool enabledPerSettings,
                                                  const WebKit::WebSecurityOrigin&, const WebKit::WebURL&)
 {
@@ -99,4 +108,11 @@ void WebPermissions::reset()
     m_pluginsAllowed = true;
     m_displayingInsecureContentAllowed = false;
     m_runningInsecureContentAllowed = false;
+}
+
+// Private functions ----------------------------------------------------------
+
+LayoutTestController* WebPermissions::layoutTestController() const
+{
+    return m_shell->layoutTestController();
 }

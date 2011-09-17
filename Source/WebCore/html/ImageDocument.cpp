@@ -128,7 +128,7 @@ void ImageDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
 {
     Frame* frame = document()->frame();
     Settings* settings = frame->settings();
-    if (!frame->loader()->client()->allowImages(!settings || settings->areImagesEnabled()))
+    if (!frame->loader()->client()->allowImage(!settings || settings->areImagesEnabled(), document()->url()))
         return;
 
     CachedImage* cachedImage = document()->cachedImage();

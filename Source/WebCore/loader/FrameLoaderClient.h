@@ -302,7 +302,7 @@ namespace WebCore {
 
         virtual bool allowJavaScript(bool enabledPerSettings) { return enabledPerSettings; }
         virtual bool allowPlugins(bool enabledPerSettings) { return enabledPerSettings; }
-        virtual bool allowImages(bool enabledPerSettings) { return enabledPerSettings; }
+        virtual bool allowImage(bool enabledPerSettings, const KURL&) { return enabledPerSettings; }
         virtual bool allowDisplayingInsecureContent(bool enabledPerSettings, SecurityOrigin*, const KURL&) { return enabledPerSettings; }
         virtual bool allowRunningInsecureContent(bool enabledPerSettings, SecurityOrigin*, const KURL&) { return enabledPerSettings; }
         

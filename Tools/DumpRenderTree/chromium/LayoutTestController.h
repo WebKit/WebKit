@@ -391,6 +391,7 @@ public:
     void setImagesAllowed(const CppArgumentList&, CppVariant*);
     void setStorageAllowed(const CppArgumentList&, CppVariant*);
     void setPluginsAllowed(const CppArgumentList&, CppVariant*);
+    void dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant*);
 
     // Enable or disable plugins.
     void setPluginsEnabled(const CppArgumentList&, CppVariant*);
@@ -430,6 +431,7 @@ public:
     bool shouldDumpSelectionRect() { return m_dumpSelectionRect; }
     bool shouldDumpBackForwardList() { return m_dumpBackForwardList; }
     bool shouldDumpTitleChanges() { return m_dumpTitleChanges; }
+    bool shouldDumpPermissionClientCallbacks() { return m_dumpPermissionClientCallbacks; }
     bool shouldDumpChildFrameScrollPositions() { return m_dumpChildFrameScrollPositions; }
     bool shouldDumpChildFramesAsText() { return m_dumpChildFramesAsText; }
     bool shouldGeneratePixelResults() { return m_generatePixelResults; }
@@ -586,6 +588,10 @@ private:
 
     // If true, output a message when the page title is changed.
     bool m_dumpTitleChanges;
+
+    // If true, output a descriptive line each time a permission client
+    // callback is invoked. Currently only implemented for allowImage.
+    bool m_dumpPermissionClientCallbacks;
 
     // If true, the test_shell will generate pixel results in dumpAsText mode
     bool m_generatePixelResults;

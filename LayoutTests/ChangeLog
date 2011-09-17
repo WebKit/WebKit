@@ -1,3 +1,17 @@
+2011-09-16  Jochen Eisinger  <jochen@chromium.org>
+
+        Add tests for FrameLoaderClient::allowImage.
+        https://bugs.webkit.org/show_bug.cgi?id=68071
+
+        Reviewed by Adam Barth.
+
+        * http/tests/permissionclient/resources/bostin.gif:
+        * http/tests/permissionclient/resources/redir.php:
+        * platform/chromium/permissionclient/image-permissions-expected.txt:
+        * platform/chromium/permissionclient/image-permissions.html:
+        * platform/http/tests/permissionclient/image-permissions-expected.txt:
+        * platform/http/tests/permissionclient/image-permissions.html:
+
 2011-09-16  Tom Sepez  <tsepez@chromium.org>
 
         Make XSSAuditor truncate inline snippets at a reasonable length before comparison

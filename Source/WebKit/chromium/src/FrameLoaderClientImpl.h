@@ -207,7 +207,7 @@ public:
     virtual void didChangeScrollOffset();
     virtual bool allowJavaScript(bool enabledPerSettings);
     virtual bool allowPlugins(bool enabledPerSettings);
-    virtual bool allowImages(bool enabledPerSettings);
+    virtual bool allowImage(bool enabledPerSettings, const WebCore::KURL& imageURL);
     virtual bool allowDisplayingInsecureContent(bool enabledPerSettings, WebCore::SecurityOrigin*, const WebCore::KURL&);
     virtual bool allowRunningInsecureContent(bool enabledPerSettings, WebCore::SecurityOrigin*, const WebCore::KURL&);
     virtual void didNotAllowScript();

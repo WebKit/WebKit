@@ -126,10 +126,6 @@ Frame* CachedResourceLoader::frame() const
 CachedImage* CachedResourceLoader::requestImage(ResourceRequest& request)
 {
     if (Frame* f = frame()) {
-        Settings* settings = f->settings();
-        if (!f->loader()->client()->allowImages(!settings || settings->areImagesEnabled()))
-            return 0;
-
         if (f->loader()->pageDismissalEventBeingDispatched() != FrameLoader::NoDismissal) {
             KURL requestURL = request.url();
             if (requestURL.isValid() && canRequest(CachedResource::ImageResource, requestURL))
@@ -295,6 +291,12 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::ImageResource:
         if (!m_document->contentSecurityPolicy()->allowImageFromSource(url))
             return false;
+
+        if (frame()) {
+            Settings* settings = frame()->settings();
+            if (!frame()->loader()->client()->allowImage(!settings || settings->areImagesEnabled(), url))
+                return false;
+        }
         break;
     case CachedResource::FontResource: {
         if (!m_document->contentSecurityPolicy()->allowFontFromSource(url))

@@ -33,13 +33,16 @@
 
 #include "WebPermissionClient.h"
 
+class LayoutTestController;
+class TestShell;
+
 class WebPermissions : public WebKit::WebPermissionClient {
 public:
-    WebPermissions();
+    WebPermissions(TestShell*);
     virtual ~WebPermissions();
 
     // Override WebPermissionClient methods.
-    virtual bool allowImages(WebKit::WebFrame*, bool enabledPerSettings);
+    virtual bool allowImage(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebURL& imageURL);
     virtual bool allowStorage(WebKit::WebFrame*, bool local);
     virtual bool allowPlugins(WebKit::WebFrame*, bool enabledPerSettings);
     virtual bool allowDisplayingInsecureContent(WebKit::WebFrame*, bool enabledPerSettings,
@@ -58,6 +61,11 @@ public:
     void reset();
 
 private:
+    LayoutTestController* layoutTestController() const;
+
+    // Non-owning pointer. The WebPermissions instance is owned by this TestShell instance.
+    TestShell* m_shell;
+
     bool m_imagesAllowed;
     bool m_storageAllowed;
     bool m_pluginsAllowed;
