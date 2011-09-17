@@ -1,3 +1,15 @@
+2011-09-16  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67733
+        [Chromium] Separate WebKit initialization and V8 initialization in chromium port.
+
+        Reviewed by Darin Fisher.
+
+        * public/WebKit.h:
+        * src/WebKit.cpp:
+        (WebKit::initialize):
+        (WebKit::initializeWithoutV8):
+
 2011-09-16  Vincent Scheib  <scheib@chromium.org>
 
         [Chromium] Add movementX/Y members to WebMouseEvent
