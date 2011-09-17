@@ -1,3 +1,32 @@
+2011-09-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deleting line break before h1 converts h1 to span
+        https://bugs.webkit.org/show_bug.cgi?id=45784
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added a bunch of tests to ensure WebKit does not keep block elements' style when merging paragraphs.
+        When removing line breaks between <h1>hello</h1>world and hello<pre>world</pre> for example,
+        we should not be overriding and preserving styles from h1 in the merge paragraph respectively.
+
+        * editing/deleting/merge-paragraph-from-address-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-address.html: Added.
+        * editing/deleting/merge-paragraph-from-h6-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-h6-with-style-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-h6-with-style.html: Added.
+        * editing/deleting/merge-paragraph-from-h6.html: Added.
+        * editing/deleting/merge-paragraph-from-listing-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-listing.html: Added.
+        * editing/deleting/merge-paragraph-into-h1-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-h1-style-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-h1-with-style-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-h1-with-style.html: Added.
+        * editing/deleting/merge-paragraph-into-h1.html: Added.
+        * editing/deleting/merge-paragraph-into-pre-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-pre.html: Added.
+        * platform/mac/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/mac/editing/deleting/merge-whitespace-pre-expected.txt:
+
 2011-09-16  David Levin  <levin@chromium.org>
 
        [chromium] Rebaseline fix up due to r95239.

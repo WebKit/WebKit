@@ -1,3 +1,31 @@
+2011-09-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deleting line break before h1 converts h1 to span
+        https://bugs.webkit.org/show_bug.cgi?id=45784
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fixed the bug by treating h1 and other elements that retain structure like Mail blockquote.
+
+        We already had a logic to overriding styles of merged paragraphs by Mail blockquote so
+        just extend this logic for h1-h6, pre, etc...
+
+        Tests: editing/deleting/merge-paragraph-from-address.html
+               editing/deleting/merge-paragraph-from-h6-with-style.html
+               editing/deleting/merge-paragraph-from-h6.html
+               editing/deleting/merge-paragraph-from-listing.html
+               editing/deleting/merge-paragraph-into-h1-with-style.html
+               editing/deleting/merge-paragraph-into-h1.html
+               editing/deleting/merge-paragraph-into-pre.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        * editing/markup.cpp:
+        (WebCore::isBlockNodeToRetainAppearance): Extracted from ancestorToRetainStructureAndAppearance.
+        (WebCore::StyledMarkupAccumulator::serializeNodes):
+        (WebCore::ancestorToRetainStructureAndAppearance):
+        * editing/markup.h:
+
 2011-09-16  Max Perepelitsyn  <pph34r@gmail.com>
 
         Set but not used variables cleanup (gcc 4.6)
