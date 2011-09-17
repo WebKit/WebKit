@@ -1,3 +1,9 @@
+2011-09-17  Jeff Miller  <jeffm@apple.com>
+
+        Build fix after r95372.
+
+        * dom/DOMAllInOne.cpp: #include "EventListenerMap.cpp"
+
 2011-09-17  Deepak Sherveghar  <bpwv64@motorola.com>
 
         Override supportsFocus() for HTMLMediaElement.
