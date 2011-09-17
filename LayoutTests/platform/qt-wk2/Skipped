@@ -2457,11 +2457,12 @@ fast/dom/Orientation/create-event-orientationchange.html
 fast/dom/Window/window-properties-device-orientation.html
 fast/dom/Window/window-properties-geolocation.html
 
-# New editing tests introduced in r95335 fail on Qt-WK2 platform
+# New editing tests introduced in r95335 and r95337 fail on Qt-WK2 platform
 editing/deleting/merge-paragraph-from-address.html
 editing/deleting/merge-paragraph-from-h6-with-style.html
 editing/deleting/merge-paragraph-from-h6.html
 editing/deleting/merge-paragraph-from-listing.html
+editing/deleting/merge-paragraph-into-blockquote.html
 editing/deleting/merge-paragraph-into-h1-with-style.html
 editing/deleting/merge-paragraph-into-h1.html
 editing/deleting/merge-paragraph-into-pre.html
