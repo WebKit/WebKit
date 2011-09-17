@@ -1,3 +1,9 @@
+2011-09-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Touch Platform.h in the hope to fix SnowLeopard Intel Release (WebKit2 Tests).
+
+        * wtf/Platform.h:
+
 2011-09-16  Sam Weinig  <sam@webkit.org>
 
         Rename APIValueWrapper type to APIValueWrapperType for consistency
