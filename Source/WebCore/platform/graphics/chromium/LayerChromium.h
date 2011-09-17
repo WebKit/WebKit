@@ -157,8 +157,8 @@ public:
     void setUsesLayerScissor(bool usesLayerScissor) { m_usesLayerScissor = usesLayerScissor; }
     bool usesLayerScissor() const { return m_usesLayerScissor; }
 
-    void setIsRootLayer(bool isRootLayer) { m_isRootLayer = isRootLayer; }
-    bool isRootLayer() const { return m_isRootLayer; }
+    void setIsNonCompositedContent(bool isNonCompositedContent) { m_isNonCompositedContent = isNonCompositedContent; }
+    bool isNonCompositedContent() const { return m_isNonCompositedContent; }
 
     virtual void setLayerTreeHost(CCLayerTreeHost*);
 
@@ -274,7 +274,7 @@ private:
     bool m_needsDisplayOnBoundsChange;
     bool m_doubleSided;
     bool m_usesLayerScissor;
-    bool m_isRootLayer;
+    bool m_isNonCompositedContent;
 
     TransformationMatrix m_transform;
     TransformationMatrix m_sublayerTransform;

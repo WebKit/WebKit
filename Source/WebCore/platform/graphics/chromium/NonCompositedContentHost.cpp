@@ -42,7 +42,7 @@ NonCompositedContentHost::NonCompositedContentHost(PassOwnPtr<LayerPainterChromi
     m_graphicsLayer->setName("non-composited content");
 #endif
     m_graphicsLayer->setDrawsContent(true);
-    m_graphicsLayer->platformLayer()->setIsRootLayer(true);
+    m_graphicsLayer->platformLayer()->setIsNonCompositedContent(true);
 }
 
 NonCompositedContentHost::~NonCompositedContentHost()

@@ -148,7 +148,7 @@ void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
     m_sampledTexelFormat = textureUpdater()->sampledTexelFormat(m_textureFormat);
     m_tiler = CCLayerTilingData::create(
         IntSize(defaultTileSize, defaultTileSize),
-        isRootLayer() ? CCLayerTilingData::NoBorderTexels : CCLayerTilingData::HasBorderTexels);
+        isNonCompositedContent() ? CCLayerTilingData::NoBorderTexels : CCLayerTilingData::HasBorderTexels);
 }
 
 void TiledLayerChromium::updateCompositorResources(GraphicsContext3D* context)

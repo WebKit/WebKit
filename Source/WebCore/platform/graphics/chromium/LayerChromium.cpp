@@ -75,7 +75,7 @@ LayerChromium::LayerChromium(CCLayerDelegate* delegate)
     , m_needsDisplayOnBoundsChange(false)
     , m_doubleSided(true)
     , m_usesLayerScissor(false)
-    , m_isRootLayer(false)
+    , m_isNonCompositedContent(false)
     , m_replicaLayer(0)
     , m_drawOpacity(0)
     , m_targetRenderSurface(0)
@@ -304,7 +304,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setDebugBorderWidth(m_debugBorderWidth);
     layer->setDoubleSided(m_doubleSided);
     layer->setDrawsContent(drawsContent());
-    layer->setIsRootLayer(m_isRootLayer);
+    layer->setIsNonCompositedContent(m_isNonCompositedContent);
     layer->setMasksToBounds(m_masksToBounds);
     layer->setName(m_name);
     layer->setOpacity(m_opacity);
