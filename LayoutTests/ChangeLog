@@ -1,3 +1,14 @@
+2011-09-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium pixel test rebaseline for r95335.
+
+        * platform/chromium-cg-mac-leopard/editing/deleting/merge-whitespace-pre-expected.png: Added.
+        * platform/chromium-linux/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/chromium-mac/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/chromium-win-vista/editing: Removed.
+        * platform/chromium-win/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-09-16  Kentaro Hara  <haraken@chromium.org>
 
         Implement an ErrorEvent constructor for JSC
