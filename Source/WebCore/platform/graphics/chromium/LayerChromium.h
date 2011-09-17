@@ -152,7 +152,7 @@ public:
     void setGeometryFlipped(bool flipped) { m_geometryFlipped = flipped; setNeedsCommit(); }
     bool geometryFlipped() const { return m_geometryFlipped; }
 
-    bool preserves3D() { return m_delegate && m_delegate->preserves3D(); }
+    bool preserves3D() const { return m_delegate && m_delegate->preserves3D(); }
 
     void setUsesLayerScissor(bool usesLayerScissor) { m_usesLayerScissor = usesLayerScissor; }
     bool usesLayerScissor() const { return m_usesLayerScissor; }
@@ -165,7 +165,7 @@ public:
     void setDelegate(CCLayerDelegate* delegate) { m_delegate = delegate; }
 
     void setReplicaLayer(LayerChromium* layer) { m_replicaLayer = layer; }
-    LayerChromium* replicaLayer() { return m_replicaLayer.get(); }
+    LayerChromium* replicaLayer() const { return m_replicaLayer.get(); }
 
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return false; }
