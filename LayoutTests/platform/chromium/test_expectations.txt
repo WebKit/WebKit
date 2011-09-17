@@ -3744,6 +3744,7 @@ BUG_LEVIN MAC DEBUG : svg/custom/object-no-size-attributes.xhtml = PASS IMAGE+TE
 BUG_KEISHI : editing/style/non-inheritable-styles.html = FAIL PASS TEXT
 BUG_KEISHI : inspector/styles/styles-new-API.html = FAIL PASS TEXT TIMEOUT
 BUG_KEISHI : inspector/styles/styles-source-lines.html = FAIL PASS TEXT TIMEOUT
+BUG_KEISHI : inspector/styles/styles-update-from-js.html = FAIL PASS TEXT TIMEOUT
 
 // Crashes or timeouts once in a while but never fails
 BUG_KEISHI LINUX : media/video-controls-visible-audio-only.html = PASS TIMEOUT CRASH
