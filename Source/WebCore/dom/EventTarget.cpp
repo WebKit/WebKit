@@ -74,7 +74,6 @@ EventTargetData::EventTargetData()
 
 EventTargetData::~EventTargetData()
 {
-    deleteAllValues(eventListenerMap);
 }
 
 EventTarget::~EventTarget()
@@ -226,21 +225,7 @@ PeerConnection* EventTarget::toPeerConnection()
 bool EventTarget::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     EventTargetData* d = ensureEventTargetData();
-
-    pair<EventListenerMap::iterator, bool> result = d->eventListenerMap.add(eventType, 0);
-    EventListenerVector*& entry = result.first->second;
-    const bool isNewEntry = result.second;
-    if (isNewEntry)
-        entry = new EventListenerVector();
-
-    RegisteredEventListener registeredListener(listener, useCapture);
-    if (!isNewEntry) {
-        if (entry->find(registeredListener) != notFound) // duplicate listener
-            return false;
-    }
-
-    entry->append(registeredListener);
-    return true;
+    return d->eventListenerMap.add(eventType, listener, useCapture);
 }
 
 bool EventTarget::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
@@ -249,21 +234,10 @@ bool EventTarget::removeEventListener(const AtomicString& eventType, EventListen
     if (!d)
         return false;
 
-    EventListenerMap::iterator result = d->eventListenerMap.find(eventType);
-    if (result == d->eventListenerMap.end())
-        return false;
-    EventListenerVector* entry = result->second;
+    size_t indexOfRemovedListener;
 
-    RegisteredEventListener registeredListener(listener, useCapture);
-    size_t index = entry->find(registeredListener);
-    if (index == notFound)
+    if (!d->eventListenerMap.remove(eventType, listener, useCapture, indexOfRemovedListener))
         return false;
-
-    entry->remove(index);
-    if (entry->isEmpty()) {
-        delete entry;
-        d->eventListenerMap.remove(result);
-    }
 
     // Notify firing events planning to invoke the listener at 'index' that
     // they have one less listener to invoke.
@@ -271,11 +245,11 @@ bool EventTarget::removeEventListener(const AtomicString& eventType, EventListen
         if (eventType != d->firingEventIterators[i].eventType)
             continue;
 
-        if (index >= d->firingEventIterators[i].end)
+        if (indexOfRemovedListener >= d->firingEventIterators[i].end)
             continue;
 
         --d->firingEventIterators[i].end;
-        if (index <= d->firingEventIterators[i].iterator)
+        if (indexOfRemovedListener <= d->firingEventIterators[i].iterator)
             --d->firingEventIterators[i].iterator;
     }
 
@@ -349,9 +323,10 @@ bool EventTarget::fireEventListeners(Event* event)
     if (!d)
         return true;
 
-    EventListenerMap::iterator result = d->eventListenerMap.find(event->type());
-    if (result != d->eventListenerMap.end())
-        fireEventListeners(event, d, *result->second);
+    EventListenerVector* listenerVector = d->eventListenerMap.find(event->type());
+
+    if (listenerVector)
+        fireEventListeners(event, d, *listenerVector);
     
     return !event->defaultPrevented();
 }
@@ -394,10 +369,12 @@ const EventListenerVector& EventTarget::getEventListeners(const AtomicString& ev
     EventTargetData* d = eventTargetData();
     if (!d)
         return emptyVector;
-    EventListenerMap::iterator it = d->eventListenerMap.find(eventType);
-    if (it == d->eventListenerMap.end())
+
+    EventListenerVector* listenerVector = d->eventListenerMap.find(eventType);
+    if (!listenerVector)
         return emptyVector;
-    return *it->second;
+
+    return *listenerVector;
 }
 
 void EventTarget::removeAllEventListeners()
@@ -405,7 +382,6 @@ void EventTarget::removeAllEventListeners()
     EventTargetData* d = eventTargetData();
     if (!d)
         return;
-    deleteAllValues(d->eventListenerMap);
     d->eventListenerMap.clear();
 
     // Notify firing events planning to invoke the listener at 'index' that
@@ -414,32 +390,6 @@ void EventTarget::removeAllEventListeners()
         d->firingEventIterators[i].iterator = 0;
         d->firingEventIterators[i].end = 0;
     }
-}
-
-EventListenerIterator::EventListenerIterator()
-    : m_index(0)
-{
-}
-
-EventListenerIterator::EventListenerIterator(EventTarget* target)
-    : m_index(0)
-{
-    EventTargetData* data = target->eventTargetData();
-    if (!data)
-        return;
-    m_mapIterator = data->eventListenerMap.begin();
-    m_mapEnd = data->eventListenerMap.end();
-}
-
-EventListener* EventListenerIterator::nextListener()
-{
-    for (; m_mapIterator != m_mapEnd; ++m_mapIterator) {
-        EventListenerVector& listeners = *m_mapIterator->second;
-        if (m_index < listeners.size())
-            return listeners[m_index++].listener.get();
-        m_index = 0;
-    }
-    return 0;
 }
 
 } // namespace WebCore

@@ -1,3 +1,79 @@
+2011-09-16  Andreas Kling  <kling@webkit.org>
+
+        Reduce EventTarget memory usage by deferring hash map allocation
+        until there are listeners for more than 1 event type.
+
+        http://webkit.org/b/68105
+
+        Reviewed by Darin Adler.
+
+        Introduce an EventListenerMap class which manages a map of event types that have
+        one or more listeners connected.
+
+        When there is only one event type, it's stored directly on the EventListenerMap
+        internally, and when more are added it moves to a hash map. It only goes back
+        from the hash map if all the listeners are removed at once (i.e clear() is called.)
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+            Adding files.
+
+        * WebCore.exp.in:
+
+            Export EventListenerMap::contains() for WebKit/mac.
+
+        * dom/EventListenerMap.cpp: Added.
+        (WebCore::EventListenerMap::EventListenerMap):
+        (WebCore::EventListenerMap::~EventListenerMap):
+        (WebCore::EventListenerMap::isEmpty):
+        (WebCore::EventListenerMap::contains):
+        (WebCore::EventListenerMap::clear):
+        (WebCore::EventListenerMap::eventTypes):
+        (WebCore::addListenerToVector):
+        (WebCore::EventListenerMap::add):
+        (WebCore::removeListenerFromVector):
+        (WebCore::EventListenerMap::remove):
+        (WebCore::EventListenerMap::find):
+        (WebCore::removeFirstListenerCreatedFromMarkup):
+        (WebCore::EventListenerMap::removeFirstEventListenerCreatedFromMarkup):
+        (WebCore::copyListenersNotCreatedFromMarkupToTarget):
+        (WebCore::EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget):
+        (WebCore::EventListenerIterator::EventListenerIterator):
+        (WebCore::EventListenerIterator::nextListener):
+        * dom/EventListenerMap.h: Added.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTargetData::~EventTargetData):
+        (WebCore::EventTarget::addEventListener):
+        (WebCore::EventTarget::removeEventListener):
+        (WebCore::EventTarget::fireEventListeners):
+        (WebCore::EventTarget::getEventListeners):
+        (WebCore::EventTarget::removeAllEventListeners):
+
+        * dom/EventTarget.h:
+        (WebCore::EventTarget::visitJSEventListeners):
+
+            Use EventListenerIterator to visit listeners. (JSC specific.)
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+
+            Call EventListenerMap::eventTypes() go get the list of event types
+            currently listened for.
+
+        * dom/Node.cpp:
+        (WebCore::Node::removeEventListener):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::transferEventListenersToShadowTree):
+
+            Move implementations of SVG-specific hacks into EventListenerMap and
+            call them from here.
+
 2011-09-16  Jeremy Apthorp <jeremya@chromium.org> and James Kozianski  <koz@chromium.org>
 
         Don't detach elements from the render tree when entering fullscreen mode

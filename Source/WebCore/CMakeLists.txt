@@ -529,6 +529,7 @@ SET(WebCore_SOURCES
     dom/EventContext.cpp
     dom/EventDispatchMediator.cpp
     dom/EventDispatcher.cpp
+    dom/EventListenerMap.cpp
     dom/EventNames.cpp
     dom/EventTarget.cpp
     dom/EventQueue.cpp

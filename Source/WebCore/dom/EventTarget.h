@@ -32,8 +32,8 @@
 #ifndef EventTarget_h
 #define EventTarget_h
 
+#include "EventListenerMap.h"
 #include "EventNames.h"
-#include "RegisteredEventListener.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -84,14 +84,6 @@ namespace WebCore {
         size_t& end;
     };
     typedef Vector<FiringEventIterator, 1> FiringEventIteratorVector;
-
-    typedef Vector<RegisteredEventListener, 1> EventListenerVector;
-
-    struct EventListenerMapHashTraits : HashTraits<WTF::AtomicString> {
-        static const int minimumTableSize = 32;
-    };
-
-    typedef HashMap<AtomicString, EventListenerVector*, AtomicStringHash, EventListenerMapHashTraits> EventListenerMap;
 
     struct EventTargetData {
         WTF_MAKE_NONCOPYABLE(EventTargetData); WTF_MAKE_FAST_ALLOCATED;
@@ -202,21 +194,6 @@ namespace WebCore {
         friend class EventListenerIterator;
     };
 
-    class EventListenerIterator {
-    public:
-        EventListenerIterator();
-
-        // EventTarget must not be modified while an iterator is active.
-        EventListenerIterator(EventTarget*);
-
-        EventListener* nextListener();
-
-    private:
-        EventListenerMap::iterator m_mapIterator;
-        EventListenerMap::iterator m_mapEnd;
-        unsigned m_index;
-    };
-
     // FIXME: These macros should be split into separate DEFINE and DECLARE
     // macros to avoid causing so many header includes.
     #define DEFINE_ATTRIBUTE_EVENT_LISTENER(attribute) \
@@ -255,16 +232,9 @@ namespace WebCore {
 #if USE(JSC)
     inline void EventTarget::visitJSEventListeners(JSC::SlotVisitor& visitor)
     {
-        EventTargetData* d = eventTargetData();
-        if (!d)
-            return;
-
-        EventListenerMap::iterator end = d->eventListenerMap.end();
-        for (EventListenerMap::iterator it = d->eventListenerMap.begin(); it != end; ++it) {
-            EventListenerVector& entry = *it->second;
-            for (size_t i = 0; i < entry.size(); ++i)
-                entry[i].listener->visitJSFunction(visitor);
-        }
+        EventListenerIterator iterator(this);
+        while (EventListener* listener = iterator.nextListener())
+            listener->visitJSFunction(visitor);
     }
 #endif
 

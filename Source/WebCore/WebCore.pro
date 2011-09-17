@@ -499,6 +499,7 @@ SOURCES += \
     dom/EventContext.cpp \
     dom/EventDispatchMediator.cpp \
     dom/EventDispatcher.cpp \
+    dom/EventListenerMap.cpp \
     dom/EventNames.cpp \
     dom/EventTarget.cpp \
     dom/EventQueue.cpp \
@@ -1506,6 +1507,7 @@ HEADERS += \
     dom/EntityReference.h \
     dom/Event.h \
     dom/EventDispatchMediator.h \
+    dom/EventListenerMap.h \
     dom/EventNames.h \
     dom/EventTarget.h \
     dom/ExceptionBase.h \
