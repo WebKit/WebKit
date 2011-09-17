@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +57,11 @@ void JSMessagePort::visitChildren(SlotVisitor& visitor)
 }
 
 JSC::JSValue JSMessagePort::postMessage(JSC::ExecState* exec)
+{
+    return handlePostMessage(exec, impl());
+}
+
+JSC::JSValue JSMessagePort::webkitPostMessage(JSC::ExecState* exec)
 {
     return handlePostMessage(exec, impl());
 }

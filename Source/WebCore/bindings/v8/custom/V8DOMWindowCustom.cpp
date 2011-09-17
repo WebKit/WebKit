@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -313,9 +313,8 @@ v8::Handle<v8::Value> V8DOMWindow::removeEventListenerCallback(const v8::Argumen
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DOMWindow.postMessage()");
     DOMWindow* window = V8DOMWindow::toNative(args.Holder());
 
     DOMWindow* source = V8Proxy::retrieveFrameForCallingContext()->domWindow();
@@ -348,6 +347,18 @@ v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args
     ExceptionCode ec = 0;
     window->postMessage(message.release(), &portArray, targetOrigin, source, ec);
     return throwError(ec);
+}
+
+v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.DOMWindow.postMessage()");
+    return handlePostMessageCallback(args);
+}
+
+v8::Handle<v8::Value> V8DOMWindow::webkitPostMessageCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.DOMWindow.webkitPostMessage()");
+    return handlePostMessageCallback(args);
 }
 
 // FIXME(fqian): returning string is cheating, and we should

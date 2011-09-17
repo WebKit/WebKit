@@ -119,4 +119,9 @@ JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec)
     return jsUndefined();
 }
 
+JSC::JSValue JSMessageEvent::webkitInitMessageEvent(JSC::ExecState* exec)
+{
+    return initMessageEvent(exec);
+}
+
 } // namespace WebCore

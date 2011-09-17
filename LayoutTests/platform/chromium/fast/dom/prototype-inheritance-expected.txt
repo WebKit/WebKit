@@ -45,6 +45,8 @@ FAIL inner.toolbar.isInner should be true. Was false.
 FAIL inner.toolbar.constructor.isInner should be true. Was false.
 FAIL inner.webkitIndexedDB.isInner should be true. Was false.
 FAIL inner.webkitIndexedDB.constructor.isInner should be true. Was false.
+FAIL inner.webkitPostMessage.isInner should be true. Was false.
+FAIL inner.webkitPostMessage.constructor.isInner should be true. Was false.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -42,9 +42,8 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8DedicatedWorkerContext::postMessageCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args)
 {
-    INC_STATS(L"DOM.DedicatedWorkerContext.postMessage");
     DedicatedWorkerContext* workerContext = V8DedicatedWorkerContext::toNative(args.Holder());
     bool didThrow = false;
     RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(args[0], didThrow);
@@ -58,6 +57,18 @@ v8::Handle<v8::Value> V8DedicatedWorkerContext::postMessageCallback(const v8::Ar
     ExceptionCode ec = 0;
     workerContext->postMessage(message.release(), &portArray, ec);
     return throwError(ec);
+}
+
+v8::Handle<v8::Value> V8DedicatedWorkerContext::postMessageCallback(const v8::Arguments& args)
+{
+    INC_STATS(L"DOM.DedicatedWorkerContext.postMessage");
+    return handlePostMessageCallback(args);
+}
+
+v8::Handle<v8::Value> V8DedicatedWorkerContext::webkitPostMessageCallback(const v8::Arguments& args)
+{
+    INC_STATS(L"DOM.DedicatedWorkerContext.postMessage");
+    return handlePostMessageCallback(args);
 }
 
 } // namespace WebCore

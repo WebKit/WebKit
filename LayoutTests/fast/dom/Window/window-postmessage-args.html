@@ -23,30 +23,37 @@ function onmessage(evt) {
 
 window.addEventListener('message', onmessage, false);
 
-function tryPostMessage(first, second, third, shouldFail) {
-    try {
+function tryPostMessageFunction(postMessageFunction, first, second, third, shouldFail) {
+   try {
         if (!third)
-            window.postMessage(first, second);
+            postMessageFunction(first, second);
         else
-            window.postMessage(first, second, third);
+            postMessageFunction(first, second, third);
         console.innerHTML += (shouldFail ? "FAIL" : "PASS") + ": Posting message ('" + first + "', " + second + ") did not throw an exception<br>";
    } catch (e) {
         console.innerHTML += (shouldFail ? "PASS" : "FAIL") + ": Posting message ('" + first + "', " + second + "): threw exception " + e + "<br>";
    }
 }
 
+function tryPostMessage(first, second, third, shouldFail) {
+    tryPostMessageFunction(window.postMessage, first, second, third, shouldFail);
+    tryPostMessageFunction(window.webkitPostMessage, first, second, third, shouldFail);
+}
+
 document.getElementById("description").innerHTML = "Test that the second argument of window.postMessage is ignored or triggers an error if it is not a message port. You should see PASS message '1' through '7', followed by 'done', with messages 4-7 received below.<br><br>";
 
-var channel = new MessageChannel;
 tryPostMessage('1', 1, '*', true);
 tryPostMessage('2', "", '*', true);
 tryPostMessage('3', { x: 1 }, '*', true);
 tryPostMessage('4', window, '*');  // Passes because window has a "length" attribute of value '0', so it looks like an array
 tryPostMessage('5', null, '*');
 tryPostMessage('6', void 0, '*');
-tryPostMessage('7', [channel.port1, channel.port2], '*');
+var channel1 = new MessageChannel;
+tryPostMessageFunction(window.postMessage, '7', [channel1.port1, channel1.port2], '*');
+var channel2 = new MessageChannel;
+tryPostMessageFunction(window.webkitPostMessage, '7', [channel2.port1, channel2.port2], '*');
 tryPostMessage(2147483648, null, '*');
-tryPostMessage('done', '*');
+tryPostMessageFunction(window.postMessage, 'done', '*');
 </script>
 </body>
 </html>

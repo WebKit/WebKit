@@ -1,3 +1,50 @@
+2011-09-16  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66714
+        Add webkitPostMessage to allow for adding transferable support.
+        This adds webkitPostMessage, currently identical to postMessage, which 
+        would later be a vehicle for adding transferable support for messaging.
+        
+        Based on patch by Luke Zarko.
+
+        Reviewed by David Levin.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::webkitPostMessage):
+        * bindings/js/JSDedicatedWorkerContextCustom.cpp:
+        (WebCore::JSDedicatedWorkerContext::webkitPostMessage):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::webkitInitMessageEvent):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::webkitPostMessage):
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::JSWorker::postMessage):
+        (WebCore::JSWorker::webkitPostMessage):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        (WebCore::V8DOMWindow::postMessageCallback):
+        (WebCore::V8DOMWindow::webkitPostMessageCallback):
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        (WebCore::V8DedicatedWorkerContext::postMessageCallback):
+        (WebCore::V8DedicatedWorkerContext::webkitPostMessageCallback):
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::initMessageEventCallback):
+        (WebCore::V8MessageEvent::webkitInitMessageEventCallback):
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        (WebCore::V8MessagePort::postMessageCallback):
+        (WebCore::V8MessagePort::webkitPostMessageCallback):
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        (WebCore::V8Worker::postMessageCallback):
+        (WebCore::V8Worker::webkitPostMessageCallback):
+        * dom/MessageEvent.idl:
+        * dom/MessagePort.idl:
+        * page/DOMWindow.idl:
+        * workers/DedicatedWorkerContext.idl:
+        * workers/Worker.idl:
+
 2011-09-16  Alexei Svitkine  <asvitkine@chromium.org>
 
         Chromium: Fix repaint of rubber-band overhang area under composited path

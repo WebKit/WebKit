@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +38,8 @@ module events {
 // but we don't want to actually expose the API while it is in flux.
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [Custom] void postMessage(in DOMString message, in [Optional] Array messagePorts)
+            raises(DOMException);
+        [Custom] void webkitPostMessage(in DOMString message, in [Optional] Array transfer)
             raises(DOMException);
         void start();
         void close();
