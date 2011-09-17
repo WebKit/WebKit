@@ -67,6 +67,7 @@ fast/loader/stop-provisional-loads.html
 
 # ENABLE(FULLSCREEN_API) is disabled.
 fullscreen
+plugins/fullscreen-plugins-dont-reload.html
 
 # ENABLE(INPUT_COLOR) is disabled.
 fast/forms/color

@@ -1,3 +1,13 @@
+2011-09-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped: Skip plugins/fullscreen-plugins-dont-reload.html, because ENABLE(FULLSCREEN_API) is disabled on Qt.
+        * platform/qt/fast/dom/Window/window-properties-expected.png: Updated after r95362.
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: Updated after r95362.
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.png: Updated after r95362.
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt: Updated after r95362.
+
 2011-09-16  Jeremy Apthorp <jeremya@chromium.org> and James Kozianski  <koz@chromium.org>
 
         Don't detach elements from the render tree when entering fullscreen mode
