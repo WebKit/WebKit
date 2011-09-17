@@ -1,3 +1,9 @@
+2011-09-16  Mark Rowe  <mrowe@apple.com>
+
+        Stop installing source and header files in to WebKit2.framework after r95303.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2011-09-16  Anders Carlsson  <andersca@apple.com>
 
         Add back the WKHitTestResultRef parameter to mouseDidMoveOverElement in an ABI preserving way
