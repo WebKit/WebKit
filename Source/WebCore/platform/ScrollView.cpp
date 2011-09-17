@@ -648,6 +648,8 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
     if (GraphicsLayer* overhangLayer = layerForOverhangAreas()) {
         bool hasOverhangArea = !horizontalOverhangRect.isEmpty() || !verticalOverhangRect.isEmpty();
         overhangLayer->setDrawsContent(hasOverhangArea);
+        if (hasOverhangArea)
+            overhangLayer->setNeedsDisplay();
     }
 #endif
     if (!horizontalOverhangRect.isEmpty())

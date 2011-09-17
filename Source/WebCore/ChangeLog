@@ -1,3 +1,17 @@
+2011-09-16  Alexei Svitkine  <asvitkine@chromium.org>
+
+        Chromium: Fix repaint of rubber-band overhang area under composited path
+        https://bugs.webkit.org/show_bug.cgi?id=68246
+
+        I accidently removed these two lines from the last patch on: https://bugs.webkit.org/show_bug.cgi?id=66969
+
+        Reviewed by James Robinson.
+
+        Test: platform/chromium-gpu/compositing/rubberbanding/transform-overhang-size-change.html
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+
 2011-09-16  Peter Beverloo  <peter@chromium.org>
 
         Depend on harfbuzz for OS=Android as well
