@@ -37,7 +37,6 @@
 #include <JavaScriptCore/SourceCode.h>
 #include <JavaScriptCore/Strong.h>
 #include <WebCore/Frame.h>
-#include <WebCore/NotImplemented.h>
 
 using namespace JSC;
 using namespace WebCore;

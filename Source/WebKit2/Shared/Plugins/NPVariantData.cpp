@@ -31,7 +31,6 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "WebCoreArgumentCoders.h"
-#include <WebCore/NotImplemented.h>
 
 namespace WebKit {
 

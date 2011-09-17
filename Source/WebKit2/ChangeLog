@@ -1,3 +1,21 @@
+2011-09-16  Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
+
+        Removed unwanted NotImplemented.h inclusion in WebKit2 GTK port & platform independent files
+        https://bugs.webkit.org/show_bug.cgi?id=68249
+
+        Reviewed by Martin Robinson.
+
+        * Shared/Plugins/NPIdentifierData.cpp: Removed NotImplemented.h inclusion.
+        * Shared/Plugins/NPRemoteObjectMap.cpp: Removed NotImplemented.h inclusion.
+        * Shared/Plugins/NPVariantData.cpp: Removed NotImplemented.h inclusion.
+        * UIProcess/gtk/WebContextGtk.cpp: Removed NotImplemented.h inclusion.
+        * WebProcess/Cookies/WebCookieManager.cpp: Removed NotImplemented.h inclusion.
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp: Removed NotImplemented.h inclusion.
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp: Removed NotImplemented.h inclusion.
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp: Removed NotImplemented.h inclusion.
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp: Removed NotImplemented.h inclusion.
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp: Removed NotImplemented.h inclusion.
+
 2011-09-16  Simon Fraser  <simon.fraser@apple.com>
 
         Make custom scrollbar theme for use in DRT, to reduce pixel diffs between platforms
