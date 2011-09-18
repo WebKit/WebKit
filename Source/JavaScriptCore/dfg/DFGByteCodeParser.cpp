@@ -28,9 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAliasTracker.h"
 #include "DFGCapabilities.h"
-#include "DFGScoreBoard.h"
 #include "CodeBlock.h"
 #include <wtf/MathExtras.h>
 
@@ -636,8 +634,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             m_constants[i] = ConstantRecord();
     }
 
-    AliasTracker aliases(m_graph);
-
     Interpreter* interpreter = m_globalData->interpreter;
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
     unsigned blockBegin = m_currentIndex;
@@ -950,10 +946,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             weaklyPredictArray(base);
             weaklyPredictInt32(property);
 
-            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(PredictNone), base, property, aliases.lookupGetByVal(base, property));
+            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(PredictNone), base, property);
             set(currentInstruction[1].u.operand, getByVal);
             stronglyPredict(getByVal);
-            aliases.recordGetByVal(getByVal);
 
             NEXT_OPCODE(op_get_by_val);
         }
@@ -965,9 +960,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             weaklyPredictArray(base);
             weaklyPredictInt32(property);
 
-            NodeIndex aliasedGet = aliases.lookupGetByVal(base, property);
-            NodeIndex putByVal = addToGraph(aliasedGet != NoNode ? PutByValAlias : PutByVal, base, property, value);
-            aliases.recordPutByVal(putByVal);
+            addToGraph(PutByVal, base, property, value);
 
             NEXT_OPCODE(op_put_by_val);
         }
@@ -998,13 +991,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 methodCheckData.function = methodCall.cachedFunction.get();
                 methodCheckData.prototype = methodCall.cachedPrototype.get();
                 m_graph.m_methodCheckData.append(methodCheckData);
-                
-                aliases.recordGetMethod(checkMethod);
             } else {
                 NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), OpInfo(PredictNone), base);
                 set(getInstruction[1].u.operand, getMethod);
                 stronglyPredict(getMethod);
-                aliases.recordGetMethod(getMethod);
             }
             
             m_currentIndex += OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id);
@@ -1018,7 +1008,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex getById = addToGraph(GetById, OpInfo(identifier), OpInfo(PredictNone), base);
             set(currentInstruction[1].u.operand, getById);
             stronglyPredict(getById);
-            aliases.recordGetById(getById);
 
             NEXT_OPCODE(op_get_by_id);
         }
@@ -1029,13 +1018,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned identifier = currentInstruction[2].u.operand;
             bool direct = currentInstruction[8].u.operand;
 
-            if (direct) {
-                NodeIndex putByIdDirect = addToGraph(PutByIdDirect, OpInfo(identifier), base, value);
-                aliases.recordPutByIdDirect(putByIdDirect);
-            } else {
-                NodeIndex putById = addToGraph(PutById, OpInfo(identifier), base, value);
-                aliases.recordPutById(putById);
-            }
+            if (direct)
+                addToGraph(PutByIdDirect, OpInfo(identifier), base, value);
+            else
+                addToGraph(PutById, OpInfo(identifier), base, value);
 
             NEXT_OPCODE(op_put_by_id);
         }
@@ -1252,14 +1238,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
             }
             
-            NodeIndex call = addCall(interpreter, currentInstruction, Call);
-            aliases.recordCall(call);
+            addCall(interpreter, currentInstruction, Call);
             NEXT_OPCODE(op_call);
         }
             
         case op_construct: {
-            NodeIndex construct = addCall(interpreter, currentInstruction, Construct);
-            aliases.recordConstruct(construct);
+            addCall(interpreter, currentInstruction, Construct);
             NEXT_OPCODE(op_construct);
         }
             
@@ -1271,7 +1255,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             NodeIndex resolve = addToGraph(Resolve, OpInfo(identifier));
             set(currentInstruction[1].u.operand, resolve);
-            aliases.recordResolve(resolve);
 
             NEXT_OPCODE(op_resolve);
         }
@@ -1281,7 +1264,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             NodeIndex resolve = addToGraph(currentInstruction[3].u.operand ? ResolveBaseStrictPut : ResolveBase, OpInfo(identifier));
             set(currentInstruction[1].u.operand, resolve);
-            aliases.recordResolve(resolve);
 
             NEXT_OPCODE(op_resolve_base);
         }
@@ -1385,51 +1367,6 @@ void ByteCodeParser::setupPredecessors()
     }
 }
 
-void ByteCodeParser::allocateVirtualRegisters()
-{
-    ScoreBoard scoreBoard(m_graph, m_preservedVars);
-    unsigned sizeExcludingPhiNodes = m_graph.m_blocks.last()->end;
-    for (size_t i = 0; i < sizeExcludingPhiNodes; ++i) {
-        Node& node = m_graph[i];
-        
-        if (!node.shouldGenerate())
-            continue;
-        
-        // GetLocal nodes are effectively phi nodes in the graph, referencing
-        // results from prior blocks.
-        if (node.op != GetLocal) {
-            // First, call use on all of the current node's children, then
-            // allocate a VirtualRegister for this node. We do so in this
-            // order so that if a child is on its last use, and a
-            // VirtualRegister is freed, then it may be reused for node.
-            if (node.op & NodeHasVarArgs) {
-                for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
-                    scoreBoard.use(m_graph.m_varArgChildren[childIdx]);
-            } else {
-                scoreBoard.use(node.child1());
-                scoreBoard.use(node.child2());
-                scoreBoard.use(node.child3());
-            }
-        }
-
-        if (!node.hasResult())
-            continue;
-
-        node.setVirtualRegister(scoreBoard.allocate());
-        // 'mustGenerate' nodes have their useCount artificially elevated,
-        // call use now to account for this.
-        if (node.mustGenerate())
-            scoreBoard.use(i);
-    }
-
-    // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
-    // for the function (and checked for on entry). Since we perform a new and
-    // different allocation of temporaries, more registers may now be required.
-    unsigned calleeRegisters = scoreBoard.allocatedCount() + m_preservedVars + m_parameterSlots;
-    if ((unsigned)m_codeBlock->m_numCalleeRegisters < calleeRegisters)
-        m_codeBlock->m_numCalleeRegisters = calleeRegisters;
-}
-
 bool ByteCodeParser::parse()
 {
     // Set during construction.
@@ -1461,8 +1398,9 @@ bool ByteCodeParser::parse()
     setupPredecessors();
     processPhiStack<LocalPhiStack>();
     processPhiStack<ArgumentPhiStack>();
-
-    allocateVirtualRegisters();
+    
+    m_graph.m_preservedVars = m_preservedVars;
+    m_graph.m_parameterSlots = m_parameterSlots;
 
 #if ENABLE(DFG_DEBUG_VERBOSE)
     m_graph.dump(m_codeBlock);

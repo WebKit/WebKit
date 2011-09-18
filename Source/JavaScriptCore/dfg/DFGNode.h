@@ -107,14 +107,16 @@ private:
 
 // Entries in the NodeType enum (below) are composed of an id, a result type (possibly none)
 // and some additional informative flags (must generate, is constant, etc).
-#define NodeIdMask          0xFFF
-#define NodeResultMask     0xF000
-#define NodeMustGenerate  0x10000 // set on nodes that have side effects, and may not trivially be removed by DCE.
-#define NodeIsConstant    0x20000
-#define NodeIsJump        0x40000
-#define NodeIsBranch      0x80000
-#define NodeIsTerminal   0x100000
-#define NodeHasVarArgs   0x200000
+#define NodeIdMask           0xFFF
+#define NodeResultMask      0xF000
+#define NodeMustGenerate   0x10000 // set on nodes that have side effects, and may not trivially be removed by DCE.
+#define NodeIsConstant     0x20000
+#define NodeIsJump         0x40000
+#define NodeIsBranch       0x80000
+#define NodeIsTerminal    0x100000
+#define NodeHasVarArgs    0x200000
+#define NodeClobbersWorld 0x400000
+#define NodeMightClobber  0x800000
 
 // These values record the result type of the node (as checked by NodeResultMask, above), 0 for no result.
 #define NodeResultJS      0x1000
@@ -131,6 +133,7 @@ private:
     /* Nodes for local variable access. */\
     macro(GetLocal, NodeResultJS) \
     macro(SetLocal, 0) \
+    macro(Phantom, NodeMustGenerate) \
     macro(Phi, 0) \
     \
     /* Nodes for bitwise operations. */\
@@ -159,45 +162,45 @@ private:
     macro(ValueToDouble, NodeResultNumber | NodeMustGenerate) \
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
-    macro(ValueAdd, NodeResultJS | NodeMustGenerate) \
+    macro(ValueAdd, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
     \
     /* Property access. */\
     /* PutByValAlias indicates a 'put' aliases a prior write to the same property. */\
     /* Since a put to 'length' may invalidate optimizations here, */\
     /* this must be the directly subsequent property put. */\
     macro(GetByVal, NodeResultJS | NodeMustGenerate) \
-    macro(PutByVal, NodeMustGenerate) \
-    macro(PutByValAlias, NodeMustGenerate) \
-    macro(GetById, NodeResultJS | NodeMustGenerate) \
-    macro(PutById, NodeMustGenerate) \
-    macro(PutByIdDirect, NodeMustGenerate) \
+    macro(PutByVal, NodeMustGenerate | NodeClobbersWorld) \
+    macro(PutByValAlias, NodeMustGenerate | NodeClobbersWorld) \
+    macro(GetById, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(PutById, NodeMustGenerate | NodeClobbersWorld) \
+    macro(PutByIdDirect, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetMethod, NodeResultJS | NodeMustGenerate) \
     macro(CheckMethod, NodeResultJS | NodeMustGenerate) \
     macro(GetGlobalVar, NodeResultJS | NodeMustGenerate) \
-    macro(PutGlobalVar, NodeMustGenerate) \
+    macro(PutGlobalVar, NodeMustGenerate | NodeClobbersWorld) \
     \
     /* Nodes for comparison operations. */\
-    macro(CompareLess, NodeResultBoolean | NodeMustGenerate) \
-    macro(CompareLessEq, NodeResultBoolean | NodeMustGenerate) \
-    macro(CompareGreater, NodeResultBoolean | NodeMustGenerate) \
-    macro(CompareGreaterEq, NodeResultBoolean | NodeMustGenerate) \
-    macro(CompareEq, NodeResultBoolean | NodeMustGenerate) \
+    macro(CompareLess, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
+    macro(CompareLessEq, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
+    macro(CompareGreater, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
+    macro(CompareGreaterEq, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
+    macro(CompareEq, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
     macro(CompareStrictEq, NodeResultBoolean) \
     \
     /* Calls. */\
-    macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
-    macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
+    macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     \
     /* Resolve nodes. */\
-    macro(Resolve, NodeResultJS | NodeMustGenerate) \
-    macro(ResolveBase, NodeResultJS | NodeMustGenerate) \
-    macro(ResolveBaseStrictPut, NodeResultJS | NodeMustGenerate) \
+    macro(Resolve, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(ResolveBase, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(ResolveBaseStrictPut, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     \
     /* Nodes for misc operations. */\
-    macro(Breakpoint, NodeMustGenerate) \
+    macro(Breakpoint, NodeMustGenerate | NodeClobbersWorld) \
     macro(CheckHasInstance, NodeMustGenerate) \
     macro(InstanceOf, NodeResultBoolean) \
-    macro(LogicalNot, NodeResultBoolean) \
+    macro(LogicalNot, NodeResultBoolean | NodeMightClobber) \
     \
     /* Block terminals. */\
     macro(Jump, NodeMustGenerate | NodeIsTerminal | NodeIsJump) \
@@ -210,6 +213,7 @@ enum NodeId {
 #define DFG_OP_ENUM(opcode, flags) opcode##_id,
     FOR_EACH_DFG_OP(DFG_OP_ENUM)
 #undef DFG_OP_ENUM
+    LastNodeId
 };
 
 // Entries in this enum describe all Node types.
@@ -484,6 +488,11 @@ struct Node {
         return m_opInfo2;
     }
     
+    bool hasVirtualRegister()
+    {
+        return m_virtualRegister != InvalidVirtualRegister;
+    }
+    
     VirtualRegister virtualRegister()
     {
         ASSERT(hasResult());
@@ -517,6 +526,11 @@ struct Node {
     unsigned adjustedRefCount()
     {
         return mustGenerate() ? m_refCount - 1 : m_refCount;
+    }
+    
+    void setRefCount(unsigned refCount)
+    {
+        m_refCount = refCount;
     }
     
     NodeIndex child1()

@@ -77,7 +77,7 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     //         id#  - the index in the CodeBlock of an identifier { if codeBlock is passed to dump(), the string representation is displayed }.
     //         var# - the index of a var on the global object, used by GetGlobalVar/PutGlobalVar operations.
     printf("% 4d:%s<%c%u:", (int)nodeIndex, skipped ? "  skipped  " : "           ", mustGenerate ? '!' : ' ', refCount);
-    if (node.hasResult() && !skipped)
+    if (node.hasResult() && !skipped && node.hasVirtualRegister())
         printf("%u", node.virtualRegister());
     else
         printf("-");

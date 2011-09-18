@@ -359,7 +359,6 @@
 		86EC9DD31328DF82002B2AD7 /* DFGSpeculativeJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DC31328DF82002B2AD7 /* DFGSpeculativeJIT.h */; };
 		86ECA3EA132DEF1C002B2AD7 /* DFGNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */; };
 		86ECA3FA132DF25A002B2AD7 /* DFGScoreBoard.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */; };
-		86ECA4F1132EAA6D002B2AD7 /* DFGAliasTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ECA4F0132EAA6D002B2AD7 /* DFGAliasTracker.h */; };
 		86F38859121130CA007A7CE3 /* AtomicStringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F38858121130CA007A7CE3 /* AtomicStringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		90213E3D123A40C200D422F3 /* MemoryStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90213E3B123A40C200D422F3 /* MemoryStatistics.cpp */; };
 		90213E3E123A40C200D422F3 /* MemoryStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 90213E3C123A40C200D422F3 /* MemoryStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1111,7 +1110,6 @@
 		86EC9DC31328DF82002B2AD7 /* DFGSpeculativeJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSpeculativeJIT.h; path = dfg/DFGSpeculativeJIT.h; sourceTree = "<group>"; };
 		86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNode.h; path = dfg/DFGNode.h; sourceTree = "<group>"; };
 		86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGScoreBoard.h; path = dfg/DFGScoreBoard.h; sourceTree = "<group>"; };
-		86ECA4F0132EAA6D002B2AD7 /* DFGAliasTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAliasTracker.h; path = dfg/DFGAliasTracker.h; sourceTree = "<group>"; };
 		86F38858121130CA007A7CE3 /* AtomicStringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AtomicStringHash.h; path = text/AtomicStringHash.h; sourceTree = "<group>"; };
 		90213E3B123A40C200D422F3 /* MemoryStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryStatistics.cpp; sourceTree = "<group>"; };
 		90213E3C123A40C200D422F3 /* MemoryStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryStatistics.h; sourceTree = "<group>"; };
@@ -2235,7 +2233,6 @@
 				0FD3C82314115D1A00FD81CB /* DFGPropagator.cpp */,
 				0FD3C82214115D0E00FD81CB /* DFGDriver.h */,
 				0FD3C82014115CF800FD81CB /* DFGDriver.cpp */,
-				86ECA4F0132EAA6D002B2AD7 /* DFGAliasTracker.h */,
 				86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */,
 				86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */,
 				86AE6C4B136A11E400963012 /* DFGFPRInfo.h */,
@@ -2493,7 +2490,6 @@
 				BC18C3FB0E16F5CD00B34460 /* DebuggerCallFrame.h in Headers */,
 				5135FAF212D26ACE003C083B /* Decoder.h in Headers */,
 				BC18C3FC0E16F5CD00B34460 /* Deque.h in Headers */,
-				86ECA4F1132EAA6D002B2AD7 /* DFGAliasTracker.h in Headers */,
 				86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */,
 				86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */,
 				86EC9DC81328DF82002B2AD7 /* DFGGraph.h in Headers */,

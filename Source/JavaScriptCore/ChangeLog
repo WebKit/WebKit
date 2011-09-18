@@ -1,3 +1,56 @@
+2011-09-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT does not have full block-local CSE
+        https://bugs.webkit.org/show_bug.cgi?id=68316
+
+        Reviewed by Oliver Hunt.
+        
+        This adds block-local CSE to the DFG. CSE runs in the propagator just after
+        type propagation. It is part of the propagator itself because it needs to
+        use the propagator's internal data structures to determine which operations
+        may have side effects. Because it changes the live-ranges of nodes, the
+        virtual register allocator had to be moved into the propagator so that it
+        runs after CSE. To ensure that the back-end knows to keep the inputs to
+        any eliminated node alive for OSR, a new node type, Phantom, was introduced.
+        It is a no-op but prolonges the live-range of its inputs.
+        
+        This is an 80% speed-up on imaging-gaussian-blur, and a 10% speed-up on
+        Kraken.
+        
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAliasTracker.h: Removed.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::MethodCheckData::operator==):
+        (JSC::DFG::MethodCheckData::operator!=):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasVirtualRegister):
+        (JSC::DFG::Node::setRefCount):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::Propagator):
+        (JSC::DFG::Propagator::fixpoint):
+        (JSC::DFG::Propagator::propagateNode):
+        (JSC::DFG::Propagator::canonicalize):
+        (JSC::DFG::Propagator::computeStartIndex):
+        (JSC::DFG::Propagator::startIndex):
+        (JSC::DFG::Propagator::pureCSE):
+        (JSC::DFG::Propagator::globalVarLoadElimination):
+        (JSC::DFG::Propagator::getByValLoadElimination):
+        (JSC::DFG::Propagator::getMethodLoadElimination):
+        (JSC::DFG::Propagator::performSubstitution):
+        (JSC::DFG::Propagator::setReplacement):
+        (JSC::DFG::Propagator::performNodeCSE):
+        (JSC::DFG::Propagator::performBlockCSE):
+        (JSC::DFG::Propagator::localCSE):
+        (JSC::DFG::Propagator::allocateVirtualRegisters):
+        (JSC::DFG::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-09-16  Filip Pizlo  <fpizlo@apple.com>
 
         method_check should repatch itself if it finds that the new structure(s)

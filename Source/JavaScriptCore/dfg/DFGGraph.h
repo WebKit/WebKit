@@ -64,6 +64,24 @@ struct MethodCheckData {
     Structure* prototypeStructure;
     JSObject* function;
     JSObject* prototype;
+    
+    bool operator==(const MethodCheckData& other) const
+    {
+        if (structure != other.structure)
+            return false;
+        if (prototypeStructure != other.prototypeStructure)
+            return false;
+        if (function != other.function)
+            return false;
+        if (prototype != other.prototype)
+            return false;
+        return true;
+    }
+    
+    bool operator!=(const MethodCheckData& other) const
+    {
+        return !(*this == other);
+    }
 };
 
 typedef Vector <BlockIndex, 2> PredecessorList;
@@ -281,6 +299,8 @@ public:
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;
     Vector<NodeIndex, 16> m_varArgChildren;
     Vector<MethodCheckData> m_methodCheckData;
+    unsigned m_preservedVars;
+    unsigned m_parameterSlots;
 private:
     
     JSValue valueOfJSConstantNode(CodeBlock* codeBlock, NodeIndex nodeIndex)

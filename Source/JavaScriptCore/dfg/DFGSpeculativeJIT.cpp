@@ -1157,16 +1157,7 @@ void SpeculativeJIT::compile(Node& node)
         break;
 
     case GetByVal: {
-        NodeIndex alias = node.child3();
-        if (alias != NoNode) {
-            // FIXME: result should be able to reuse child1, child2. Should have an 'UnusedOperand' type.
-            JSValueOperand aliasedValue(this, node.child3());
-            GPRTemporary result(this, aliasedValue);
-            m_jit.move(aliasedValue.gpr(), result.gpr());
-            jsValueResult(result.gpr(), m_compileIndex);
-            break;
-        }
-
+        ASSERT(node.child3() == NoNode);
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
         GPRTemporary storage(this);
@@ -1596,6 +1587,11 @@ void SpeculativeJIT::compile(Node& node)
         jsValueResult(result.gpr(), m_compileIndex);
         break;
     }
+        
+    case Phantom:
+        // This is a no-op.
+        noResult(m_compileIndex);
+        break;
     }
     
     if (node.hasResult() && node.mustGenerate())
