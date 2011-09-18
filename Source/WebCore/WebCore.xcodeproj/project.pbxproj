@@ -872,7 +872,7 @@
 		37C236101097EE7700EF9F72 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */; };
 		37C236111097EE7700EF9F72 /* ComplexTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C2360F1097EE7700EF9F72 /* ComplexTextController.h */; };
 		37C238211098C84200EF9F72 /* ComplexTextControllerATSUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2381F1098C84200EF9F72 /* ComplexTextControllerATSUI.cpp */; };
-		37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.cpp */; };
+		37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */; };
 		37C28A6810F659CC008C7813 /* TypesettingFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C28A6710F659CC008C7813 /* TypesettingFeatures.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37C61F0112095C87007A3C67 /* AtomicStringKeyedMRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C61F0012095C87007A3C67 /* AtomicStringKeyedMRUCache.h */; };
 		37DDCD9413844FD50008B793 /* MIMEHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DDCD9213844FD50008B793 /* MIMEHeader.cpp */; };
@@ -7445,7 +7445,7 @@
 		37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
 		37C2360F1097EE7700EF9F72 /* ComplexTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplexTextController.h; sourceTree = "<group>"; };
 		37C2381F1098C84200EF9F72 /* ComplexTextControllerATSUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextControllerATSUI.cpp; sourceTree = "<group>"; };
-		37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ComplexTextControllerCoreText.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ComplexTextControllerCoreText.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		37C28A6710F659CC008C7813 /* TypesettingFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypesettingFeatures.h; sourceTree = "<group>"; };
 		37C61F0012095C87007A3C67 /* AtomicStringKeyedMRUCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicStringKeyedMRUCache.h; sourceTree = "<group>"; };
 		37DDCD9213844FD50008B793 /* MIMEHeader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MIMEHeader.cpp; sourceTree = "<group>"; };
@@ -18210,7 +18210,7 @@
 				37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */,
 				37C2360F1097EE7700EF9F72 /* ComplexTextController.h */,
 				37C2381F1098C84200EF9F72 /* ComplexTextControllerATSUI.cpp */,
-				37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.cpp */,
+				37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */,
 				B275354B0B053814002CE64F /* FloatPointMac.mm */,
 				B275354C0B053814002CE64F /* FloatRectMac.mm */,
 				B275354D0B053814002CE64F /* FloatSizeMac.mm */,
@@ -23976,7 +23976,7 @@
 				6550B6A1099DF0270090D781 /* Comment.cpp in Sources */,
 				37C236101097EE7700EF9F72 /* ComplexTextController.cpp in Sources */,
 				37C238211098C84200EF9F72 /* ComplexTextControllerATSUI.cpp in Sources */,
-				37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.cpp in Sources */,
+				37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.mm in Sources */,
 				316FE1150E6E1DA700BF6088 /* CompositeAnimation.cpp in Sources */,
 				93309DDC099E64920056E581 /* CompositeEditCommand.cpp in Sources */,
 				79F2F5A11091939A000D87CB /* CompositionEvent.cpp in Sources */,

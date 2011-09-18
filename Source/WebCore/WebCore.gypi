@@ -3702,7 +3702,7 @@
             'platform/graphics/mac/ComplexTextController.cpp',
             'platform/graphics/mac/ComplexTextController.h',
             'platform/graphics/mac/ComplexTextControllerATSUI.cpp',
-            'platform/graphics/mac/ComplexTextControllerCoreText.cpp',
+            'platform/graphics/mac/ComplexTextControllerCoreText.mm',
             'platform/graphics/mac/FloatPointMac.mm',
             'platform/graphics/mac/FloatRectMac.mm',
             'platform/graphics/mac/FloatSizeMac.mm',

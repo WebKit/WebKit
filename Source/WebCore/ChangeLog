@@ -1,5 +1,17 @@
 2011-09-18  Dan Bernstein  <mitz@apple.com>
 
+        Try to fix the Chromium Mac build after r95391.
+
+        * WebCore.gypi: Updated for the renaming of ComplexTextController.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/graphics/Font.h: Changed #if directives to include the Chromium Mac port.
+        * platform/graphics/SimpleFontData.h: Ditto.
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp: Changed the filename extension of this
+        Objective-C++ file to .mm.
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm: Copied from Source/WebCore/platform/graphics/mac/ComplexTextControllerCoreText.cpp.
+
+2011-09-18  Dan Bernstein  <mitz@apple.com>
+
         Snow Leopard build fix after r95391.
 
         * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
