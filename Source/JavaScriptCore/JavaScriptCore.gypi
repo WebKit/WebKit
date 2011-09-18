@@ -353,8 +353,6 @@
             'dfg/DFGJITCompiler.cpp',
             'dfg/DFGJITCompiler.h',
             'dfg/DFGNode.h',
-            'dfg/DFGNonSpeculativeJIT.cpp',
-            'dfg/DFGNonSpeculativeJIT.h',
             'dfg/DFGOperations.cpp',
             'dfg/DFGOperations.h',
             'dfg/DFGRegisterBank.h',

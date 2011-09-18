@@ -1,3 +1,12 @@
+2011-09-18  Nico Weber  <thakis@chromium.org>
+
+        Remove two files from JavaScriptCore.gypi that were removed in r95240
+        https://bugs.webkit.org/show_bug.cgi?id=68327
+
+        Unreviewed, build warning fix.
+
+        * JavaScriptCore.gypi:
+
 2011-09-17  Oliver Hunt  <oliver@apple.com>
 
         Remove special case handling of inline storage from the JIT
