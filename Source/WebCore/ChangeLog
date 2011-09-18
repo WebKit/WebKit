@@ -1,5 +1,12 @@
 2011-09-18  Dan Bernstein  <mitz@apple.com>
 
+        Snow Leopard build fix after r95391.
+
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersCoreText):
+
+2011-09-18  Dan Bernstein  <mitz@apple.com>
+
         Leopard build fix after r95391.
 
         * platform/graphics/mac/ComplexTextControllerATSUI.cpp:

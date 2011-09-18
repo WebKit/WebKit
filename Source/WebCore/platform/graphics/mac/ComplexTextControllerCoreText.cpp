@@ -201,7 +201,7 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
         RetainPtr<CFDictionaryRef> attributes(AdoptCF, CFDictionaryCreate(kCFAllocatorDefault, attributeKeys, values, sizeof(attributeKeys) / sizeof(*attributeKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         RetainPtr<CTFontDescriptorRef> fontDescriptor(AdoptCF, CTFontDescriptorCreateWithAttributes(attributes.get()));
         RetainPtr<CTFontRef> fontWithCascadeList(AdoptCF, CTFontCreateCopyWithAttributes(fontData->platformData().ctFont(), m_font.pixelSize(), 0, fontDescriptor.get()));
-        CFDictionarySetValue((CFMutableDictionaryRef)stringAttributes.get(), kCTFontAttributeName, fontWithCascadeList.get());
+        CFDictionarySetValue(const_cast<CFMutableDictionaryRef>(stringAttributes.get()), kCTFontAttributeName, fontWithCascadeList.get());
     } else
         stringAttributes = fontData->getCFStringAttributes(m_font.typesettingFeatures(), fontData->platformData().orientation());
 
