@@ -1436,6 +1436,7 @@
             # the specific exclusions in the "sources!" list below.
             ['include', 'rendering/RenderThemeMac\\.mm$'],
             ['include', 'platform/graphics/mac/ColorMac\\.mm$'],
+            ['include', 'platform/graphics/mac/ComplexTextControllerCoreText\\.mm$'],
             ['include', 'platform/graphics/mac/FloatPointMac\\.mm$'],
             ['include', 'platform/graphics/mac/FloatRectMac\\.mm$'],
             ['include', 'platform/graphics/mac/FloatSizeMac\\.mm$'],
