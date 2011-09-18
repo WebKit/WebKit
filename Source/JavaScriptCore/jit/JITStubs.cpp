@@ -3783,7 +3783,14 @@ NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFu
 {
     std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap->add(function, Weak<NativeExecutable>());
     if (!*entry.first->second) {
-        MacroAssemblerCodeRef code = globalData->canUseJIT() ? generator(globalData) : MacroAssemblerCodeRef();
+        MacroAssemblerCodeRef code;
+        if (generator) {
+            if (globalData->canUseJIT())
+                code = generator(globalData);
+            else
+                code = MacroAssemblerCodeRef();
+        } else
+            code = JIT::compileCTINativeCall(globalData, function);
         entry.first->second.set(*globalData, NativeExecutable::create(*globalData, code, function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), callHostFunctionAsConstructor, intrinsic));
     }
     return entry.first->second.get();

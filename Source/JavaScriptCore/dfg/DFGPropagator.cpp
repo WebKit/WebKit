@@ -225,7 +225,9 @@ private:
             
         case ArithAdd:
         case ArithSub:
-        case ArithMul: {
+        case ArithMul:
+        case ArithMin:
+        case ArithMax: {
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
             
@@ -238,7 +240,8 @@ private:
             break;
         }
             
-        case ArithDiv: {
+        case ArithDiv:
+        case ArithSqrt: {
             changed |= setPrediction(makePrediction(PredictDouble, StrongPrediction));
             break;
         }
@@ -405,7 +408,9 @@ private:
             
         case ArithAdd:
         case ArithSub:
-        case ArithMul: {
+        case ArithMul:
+        case ArithMin:
+        case ArithMax: {
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
             
@@ -421,6 +426,18 @@ private:
         case ArithDiv: {
             toDouble(node.child1());
             toDouble(node.child2());
+            break;
+        }
+            
+        case ArithAbs: {
+            PredictedType prediction = m_predictions[node.child1()];
+            if (isStrongPrediction(prediction) && (prediction & PredictDouble))
+                toDouble(node.child1());
+            break;
+        }
+            
+        case ArithSqrt: {
+            toDouble(node.child1());
             break;
         }
             
@@ -730,6 +747,9 @@ private:
         case ArithMod:
         case ArithDiv:
         case ArithAbs:
+        case ArithMin:
+        case ArithMax:
+        case ArithSqrt:
             setReplacement(pureCSE(node));
             break;
             

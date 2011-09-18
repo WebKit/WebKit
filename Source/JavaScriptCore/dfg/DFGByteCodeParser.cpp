@@ -64,6 +64,9 @@ public:
     bool parse();
 
 private:
+    // Helper for min and max.
+    bool handleMinMax(bool usesResult, int resultOperand, NodeType op, int firstArg, int lastArg);
+    
     // Handle intrinsic functions.
     bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int firstArg, int lastArg);
     // Parse a single basic block of bytecode instructions.
@@ -600,6 +603,30 @@ private:
     m_currentIndex += OPCODE_LENGTH(name); \
     return !m_parseFailed
 
+bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType op, int firstArg, int lastArg)
+{
+    if (!usesResult)
+        return true;
+
+    if (lastArg == firstArg) {
+        set(resultOperand, constantNaN());
+        return true;
+    }
+     
+    if (lastArg == firstArg + 1) {
+        set(resultOperand, getToNumber(firstArg + 1));
+        return true;
+    }
+    
+    if (lastArg == firstArg + 2) {
+        set(resultOperand, addToGraph(op, getToNumber(firstArg + 1), getToNumber(firstArg + 2)));
+        return true;
+    }
+    
+    // Don't handle >=3 arguments for now.
+    return false;
+}
+
 bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrinsic intrinsic, int firstArg, int lastArg)
 {
     switch (intrinsic) {
@@ -617,6 +644,25 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             set(resultOperand, constantNaN());
         else
             set(resultOperand, addToGraph(ArithAbs, getToNumber(absArg)));
+        return true;
+    }
+        
+    case MinIntrinsic:
+        return handleMinMax(usesResult, resultOperand, ArithMin, firstArg, lastArg);
+        
+    case MaxIntrinsic:
+        return handleMinMax(usesResult, resultOperand, ArithMax, firstArg, lastArg);
+        
+    case SqrtIntrinsic: {
+        if (!usesResult)
+            return true;
+        
+        if (firstArg == lastArg) {
+            set(resultOperand, constantNaN());
+            return true;
+        }
+        
+        set(resultOperand, addToGraph(ArithSqrt, getToNumber(firstArg + 1)));
         return true;
     }
         

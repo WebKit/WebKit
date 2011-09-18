@@ -1,3 +1,32 @@
+2011-09-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT should inline Math.min, Math.max, and Math.sqrt
+        https://bugs.webkit.org/show_bug.cgi?id=68318
+
+        Reviewed by Gavin Barraclough.
+        
+        Adds Math.min, Math.max, and Math.sqrt intrinsics. Adds support for
+        a function to have an intrinsic but not a thunk generator. This is
+        a 7% speed-up on access-nbody, and neutral elsewhere, mainly because
+        we're still not DFG compiling the bulk of the hot code in Kraken audio
+        benchmarks.
+
+        * create_hash_table:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGIntrinsic.h:
+        * dfg/DFGNode.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNode):
+        (JSC::DFG::Propagator::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+
 2011-09-18  Nico Weber  <thakis@chromium.org>
 
         Remove two files from JavaScriptCore.gypi that were removed in r95240

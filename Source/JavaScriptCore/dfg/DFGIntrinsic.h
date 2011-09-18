@@ -30,7 +30,10 @@ namespace JSC { namespace DFG {
 
 enum Intrinsic {
     NoIntrinsic,
-    AbsIntrinsic
+    AbsIntrinsic,
+    MinIntrinsic,
+    MaxIntrinsic,
+    SqrtIntrinsic
 };
 
 } } // namespace JSC::DFG

@@ -288,8 +288,15 @@ sub output() {
             $thunkGenerator = "fromCharCodeThunkGenerator";
         }
         if ($name eq "mathTable") {
+            if ($key eq "min") {
+                $intrinsic = "DFG::MinIntrinsic";
+            }
+            if ($key eq "max") {
+                $intrinsic = "DFG::MaxIntrinsic";
+            }
             if ($key eq "sqrt") {
                 $thunkGenerator = "sqrtThunkGenerator";
+                $intrinsic = "DFG::SqrtIntrinsic";
             }
             if ($key eq "pow") {
                 $thunkGenerator = "powThunkGenerator";

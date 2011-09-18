@@ -1083,6 +1083,70 @@ void SpeculativeJIT::compile(Node& node)
         doubleResult(result.fpr(), m_compileIndex);
         break;
     }
+        
+    case ArithMin:
+    case ArithMax: {
+        if (shouldSpeculateInteger(node.child1(), node.child2())) {
+            SpeculateIntegerOperand op1(this, node.child1());
+            SpeculateIntegerOperand op2(this, node.child2());
+            GPRTemporary result(this, op1);
+            
+            MacroAssembler::Jump op1Less = m_jit.branch32(op == ArithMin ? MacroAssembler::LessThan : MacroAssembler::GreaterThan, op1.gpr(), op2.gpr());
+            m_jit.move(op2.gpr(), result.gpr());
+            if (op1.gpr() != result.gpr()) {
+                MacroAssembler::Jump done = m_jit.jump();
+                op1Less.link(&m_jit);
+                m_jit.move(op1.gpr(), result.gpr());
+                done.link(&m_jit);
+            } else
+                op1Less.link(&m_jit);
+            
+            integerResult(result.gpr(), m_compileIndex);
+            break;
+        }
+        
+        SpeculateDoubleOperand op1(this, node.child1());
+        SpeculateDoubleOperand op2(this, node.child2());
+        FPRTemporary result(this, op1);
+        
+        MacroAssembler::JumpList done;
+        
+        MacroAssembler::Jump op1Less = m_jit.branchDouble(op == ArithMin ? MacroAssembler::DoubleLessThan : MacroAssembler::DoubleGreaterThan, op1.fpr(), op2.fpr());
+        
+        // op2 is eather the lesser one or one of then is NaN
+        MacroAssembler::Jump op2Less = m_jit.branchDouble(op == ArithMin ? MacroAssembler::DoubleGreaterThan : MacroAssembler::DoubleLessThan, op1.fpr(), op2.fpr());
+        
+        // Unordered case. We don't know which of op1, op2 is NaN. Manufacture NaN by adding 
+        // op1 + op2 and putting it into result.
+        m_jit.addDouble(op1.fpr(), op2.fpr(), result.fpr());
+        done.append(m_jit.jump());
+        
+        op2Less.link(&m_jit);
+        m_jit.moveDouble(op2.fpr(), result.fpr());
+        
+        if (op1.fpr() != result.fpr()) {
+            done.append(m_jit.jump());
+            
+            op1Less.link(&m_jit);
+            m_jit.moveDouble(op1.fpr(), result.fpr());
+        } else
+            op1Less.link(&m_jit);
+        
+        done.link(&m_jit);
+        
+        doubleResult(result.fpr(), m_compileIndex);
+        break;
+    }
+        
+    case ArithSqrt: {
+        SpeculateDoubleOperand op1(this, node.child1());
+        FPRTemporary result(this, op1);
+        
+        m_jit.sqrtDouble(op1.fpr(), result.fpr());
+        
+        doubleResult(result.fpr(), m_compileIndex);
+        break;
+    }
 
     case LogicalNot: {
         if (isKnownBoolean(node.child1())) {
