@@ -1192,6 +1192,7 @@
               # If this is unhandled, the console will receive log messages
               # such as:
               # com.google.Chrome[] objc[]: Class ScrollbarPrefsObserver is implemented in both .../Google Chrome.app/Contents/Versions/.../Google Chrome Helper.app/Contents/MacOS/../../../Google Chrome Framework.framework/Google Chrome Framework and /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks/WebCore.framework/Versions/A/WebCore. One of the two will be used. Which one is undefined.
+              'CascadeList=ChromiumWebCoreObjCCascadeList',
               'ScrollbarPrefsObserver=ChromiumWebCoreObjCScrollbarPrefsObserver',
               'WebCoreRenderThemeNotificationObserver=ChromiumWebCoreObjCWebCoreRenderThemeNotificationObserver',
               'WebFontCache=ChromiumWebCoreObjCWebFontCache',
