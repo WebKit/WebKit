@@ -482,27 +482,19 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
 
 // Compile a store into an object's property storage.  May overwrite the
 // value in objectReg.
-void JIT::compilePutDirectOffset(RegisterID base, RegisterID value, Structure* structure, size_t cachedOffset)
+void JIT::compilePutDirectOffset(RegisterID base, RegisterID value, size_t cachedOffset)
 {
     int offset = cachedOffset * sizeof(JSValue);
-    if (structure->isUsingInlineStorage())
-        offset += JSObject::offsetOfInlineStorage();
-    else
-        loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), base);
+    loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), base);
     storePtr(value, Address(base, offset));
 }
 
 // Compile a load from an object's property storage.  May overwrite base.
-void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, Structure* structure, size_t cachedOffset)
+void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, size_t cachedOffset)
 {
     int offset = cachedOffset * sizeof(JSValue);
-    if (structure->isUsingInlineStorage()) {
-        offset += JSObject::offsetOfInlineStorage();
-        loadPtr(Address(base, offset), result);
-    } else {
-        loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), result);
-        loadPtr(Address(result, offset), result);
-    }
+    loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), result);
+    loadPtr(Address(result, offset), result);
 }
 
 void JIT::compileGetDirectOffset(JSObject* base, RegisterID result, size_t cachedOffset)
@@ -548,7 +540,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     emitWriteBarrier(regT0, regT2, WriteBarrierForPropertyAccess);
 
     storePtr(TrustedImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
-    compilePutDirectOffset(regT0, regT1, newStructure, cachedOffset);
+    compilePutDirectOffset(regT0, regT1, cachedOffset);
 
     ret();
     
@@ -707,7 +699,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     bool needsStubLink = false;
     if (slot.cachedPropertyType() == PropertySlot::Getter) {
         needsStubLink = true;
-        compileGetDirectOffset(regT0, regT1, structure, cachedOffset);
+        compileGetDirectOffset(regT0, regT1, cachedOffset);
         JITStubCall stubCall(this, cti_op_get_by_id_getter_stub);
         stubCall.addArgument(regT1);
         stubCall.addArgument(regT0);
@@ -722,7 +714,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
         stubCall.addArgument(TrustedImmPtr(stubInfo->callReturnLocation.executableAddress()));
         stubCall.call();
     } else
-        compileGetDirectOffset(regT0, regT0, structure, cachedOffset);
+        compileGetDirectOffset(regT0, regT0, cachedOffset);
     Jump success = jump();
 
     LinkBuffer patchBuffer(*m_globalData, this);

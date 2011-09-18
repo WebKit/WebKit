@@ -440,28 +440,20 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
 }
 
 // Compile a store into an object's property storage.  May overwrite base.
-void JIT::compilePutDirectOffset(RegisterID base, RegisterID valueTag, RegisterID valuePayload, Structure* structure, size_t cachedOffset)
+void JIT::compilePutDirectOffset(RegisterID base, RegisterID valueTag, RegisterID valuePayload, size_t cachedOffset)
 {
     int offset = cachedOffset;
-    if (structure->isUsingInlineStorage())
-        offset += JSObject::offsetOfInlineStorage() /  sizeof(Register);
-    else
-        loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), base);
+    loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), base);
     emitStore(offset, valueTag, valuePayload, base);
 }
 
 // Compile a load from an object's property storage.  May overwrite base.
-void JIT::compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, Structure* structure, size_t cachedOffset)
+void JIT::compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, size_t cachedOffset)
 {
     int offset = cachedOffset;
-    if (structure->isUsingInlineStorage()) {
-        offset += JSObject::offsetOfInlineStorage() / sizeof(Register);
-        emitLoad(offset, resultTag, resultPayload, base);
-    } else {
-        RegisterID temp = resultPayload;
-        loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), temp);
-        emitLoad(offset, resultTag, resultPayload, temp);
-    }
+    RegisterID temp = resultPayload;
+    loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), temp);
+    emitLoad(offset, resultTag, resultPayload, temp);
 }
 
 void JIT::compileGetDirectOffset(JSObject* base, RegisterID resultTag, RegisterID resultPayload, size_t cachedOffset)
@@ -534,7 +526,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT3);
     load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT2);
 #endif
-    compilePutDirectOffset(regT0, regT2, regT3, newStructure, cachedOffset);
+    compilePutDirectOffset(regT0, regT2, regT3, cachedOffset);
     
     ret();
     
@@ -703,7 +695,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     bool needsStubLink = false;
     if (slot.cachedPropertyType() == PropertySlot::Getter) {
         needsStubLink = true;
-        compileGetDirectOffset(regT0, regT2, regT1, structure, cachedOffset);
+        compileGetDirectOffset(regT0, regT2, regT1, cachedOffset);
         JITStubCall stubCall(this, cti_op_get_by_id_getter_stub);
         stubCall.addArgument(regT1);
         stubCall.addArgument(regT0);
@@ -718,7 +710,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
         stubCall.addArgument(TrustedImmPtr(stubInfo->callReturnLocation.executableAddress()));
         stubCall.call();
     } else
-        compileGetDirectOffset(regT0, regT1, regT0, structure, cachedOffset);
+        compileGetDirectOffset(regT0, regT1, regT0, cachedOffset);
 
     Jump success = jump();
     

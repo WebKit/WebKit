@@ -124,10 +124,7 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
         currStructure = it->get();
     }
     
-    if (protoObject->structure()->isUsingInlineStorage())
-        stubJit.loadPtr(MacroAssembler::Address(scratchGPR, JSObject::offsetOfInlineStorage() + offset * sizeof(JSValue)), resultGPR);
-    else
-        stubJit.loadPtr(protoObject->addressOfPropertyAtOffset(offset), resultGPR);
+    stubJit.loadPtr(protoObject->addressOfPropertyAtOffset(offset), resultGPR);
         
     MacroAssembler::Jump success, fail;
     
@@ -339,14 +336,10 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         MacroAssembler stubJit;
         
         MacroAssembler::Jump wrongStruct = stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(structure));
-        
-        if (structure->isUsingInlineStorage())
-            stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + slot.cachedOffset() * sizeof(JSValue)), resultGPR);
-        else {
-            stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
-            stubJit.loadPtr(MacroAssembler::Address(resultGPR, slot.cachedOffset() * sizeof(JSValue)), resultGPR);
-        }
-        
+
+        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
+        stubJit.loadPtr(MacroAssembler::Address(resultGPR, slot.cachedOffset() * sizeof(JSValue)), resultGPR);
+
         MacroAssembler::Jump success = stubJit.jump();
         
         LinkBuffer patchBuffer(*globalData, &stubJit);

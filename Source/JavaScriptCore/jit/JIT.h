@@ -362,10 +362,10 @@ namespace JSC {
 
         void compileGetByIdHotPath();
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck = false);
-        void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, Structure* structure, size_t cachedOffset);
+        void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, size_t cachedOffset);
         void compileGetDirectOffset(JSObject* base, RegisterID resultTag, RegisterID resultPayload, size_t cachedOffset);
         void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, RegisterID offset);
-        void compilePutDirectOffset(RegisterID base, RegisterID valueTag, RegisterID valuePayload, Structure* structure, size_t cachedOffset);
+        void compilePutDirectOffset(RegisterID base, RegisterID valueTag, RegisterID valuePayload, size_t cachedOffset);
 
         // Arithmetic opcode helpers
         void emitAdd32Constant(unsigned dst, unsigned op, int32_t constant, ResultType opType);
@@ -605,10 +605,10 @@ namespace JSC {
 
         void compileGetByIdHotPath(int baseVReg, Identifier*);
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck = false);
-        void compileGetDirectOffset(RegisterID base, RegisterID result, Structure* structure, size_t cachedOffset);
+        void compileGetDirectOffset(RegisterID base, RegisterID result, size_t cachedOffset);
         void compileGetDirectOffset(JSObject* base, RegisterID result, size_t cachedOffset);
         void compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID offset, RegisterID scratch);
-        void compilePutDirectOffset(RegisterID base, RegisterID value, Structure* structure, size_t cachedOffset);
+        void compilePutDirectOffset(RegisterID base, RegisterID value, size_t cachedOffset);
 
 #if CPU(X86_64)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
