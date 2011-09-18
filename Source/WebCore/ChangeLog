@@ -1,5 +1,12 @@
 2011-09-18  Dan Bernstein  <mitz@apple.com>
 
+        Leopard build fix after r95391.
+
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersATSUI):
+
+2011-09-18  Dan Bernstein  <mitz@apple.com>
+
         Allow Core Text to choose the fallback font for rendering a combining character sequence
 
         Fixes <rdar://problem/7860281> Decomposed text is displayed incorrectly when Verdana is specified

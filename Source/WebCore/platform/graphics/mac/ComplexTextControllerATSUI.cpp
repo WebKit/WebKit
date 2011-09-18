@@ -317,7 +317,7 @@ void ComplexTextController::collectComplexTextRunsForCharactersATSUI(const UChar
 {
     ASSERT_ARG(fontData, fontData);
 
-    if (fontData == systemFallbackFont())
+    if (fontData == systemFallbackFontData())
         fontData = m_font.primaryFont();
 
     if (m_fallbackFonts && fontData != m_font.primaryFont())
