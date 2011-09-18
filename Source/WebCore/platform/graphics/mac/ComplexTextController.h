@@ -80,6 +80,8 @@ public:
     float maxGlyphBoundingBoxY() const { return m_maxGlyphBoundingBoxY; }
     
 private:
+    static const SimpleFontData* systemFallbackFontData() { return reinterpret_cast<const SimpleFontData*>(-1); }
+
     class ComplexTextRun : public RefCounted<ComplexTextRun> {
     public:
 #if USE(CORE_TEXT)

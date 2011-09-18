@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "ComplexTextController.h"
 
 #include "Font.h"
+#include "FontCache.h"
 #include "TextRun.h"
 #include "WebCoreSystemInterface.h"
 
@@ -46,6 +47,56 @@ const CGSize* CTRunGetAdvancesPtr(CTRunRef run);
 extern const CFStringRef kCTTypesetterOptionForcedEmbeddingLevel;
 }
 #endif
+
+@interface CascadeList : NSArray {
+    @private
+    const WebCore::Font* _font;
+    UChar32 _character;
+    NSUInteger _count;
+    Vector<RetainPtr<CTFontDescriptorRef>, 16> _fontDescriptors;
+}
+
+- (id)initWithFont:(const WebCore::Font*)font character:(UChar32)character;
+
+@end
+
+@implementation CascadeList
+
+- (id)initWithFont:(const WebCore::Font*)font character:(UChar32)character
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _font = font;
+    _character = character;
+
+    for (const WebCore::FontFamily* family = &font->family(); family; family = family->next())
+        _count++;
+
+    return self;
+}
+
+- (NSUInteger)count
+{
+    return _count;
+}
+
+- (id)objectAtIndex:(NSUInteger)index
+{
+    CTFontDescriptorRef fontDescriptor;
+    if (index < _fontDescriptors.size()) {
+        if ((fontDescriptor = _fontDescriptors[index].get()))
+            return (id)fontDescriptor;
+    } else
+        _fontDescriptors.grow(index + 1);
+
+    const WebCore::SimpleFontData* fontData = _font->fontDataAt(index)->fontDataForCharacter(_character);
+    fontDescriptor = CTFontCopyFontDescriptor(fontData->platformData().ctFont());
+    _fontDescriptors[index] = RetainPtr<CTFontDescriptorRef>(AdoptCF, fontDescriptor);
+    return (id)fontDescriptor;
+}
+
+@end
 
 namespace WebCore {
 
@@ -129,14 +180,30 @@ static const UniChar* provideStringAndAttributes(CFIndex stringIndex, CFIndex* c
 
 void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UChar* cp, unsigned length, unsigned stringLocation, const SimpleFontData* fontData)
 {
-    if (!fontData) {
-        // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation, length, m_run.ltr()));
-        return;
-    }
+    ASSERT_ARG(fontData, fontData);
 
-    if (m_fallbackFonts && fontData != m_font.primaryFont())
-        m_fallbackFonts->add(fontData);
+    bool isSystemFallback = false;
+
+    RetainPtr<CFDictionaryRef> stringAttributes;
+    if (fontData == systemFallbackFontData()) {
+        // FIXME: This code path does not support small caps.
+        isSystemFallback = true;
+
+        UChar32 baseCharacter;
+        U16_GET(cp, 0, 0, length, baseCharacter);
+        fontData = m_font.fontDataAt(0)->fontDataForCharacter(baseCharacter);
+
+        RetainPtr<CascadeList> cascadeList(AdoptNS, [[CascadeList alloc] initWithFont:&m_font character:baseCharacter]);
+
+        stringAttributes.adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, fontData->getCFStringAttributes(m_font.typesettingFeatures(), fontData->platformData().orientation())));
+        static const void* attributeKeys[] = { kCTFontCascadeListAttribute };
+        const void* values[] = { cascadeList.get() };
+        RetainPtr<CFDictionaryRef> attributes(AdoptCF, CFDictionaryCreate(kCFAllocatorDefault, attributeKeys, values, sizeof(attributeKeys) / sizeof(*attributeKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        RetainPtr<CTFontDescriptorRef> fontDescriptor(AdoptCF, CTFontDescriptorCreateWithAttributes(attributes.get()));
+        RetainPtr<CTFontRef> fontWithCascadeList(AdoptCF, CTFontCreateCopyWithAttributes(fontData->platformData().ctFont(), m_font.pixelSize(), 0, fontDescriptor.get()));
+        CFDictionarySetValue((CFMutableDictionaryRef)stringAttributes.get(), kCTFontAttributeName, fontWithCascadeList.get());
+    } else
+        stringAttributes = fontData->getCFStringAttributes(m_font.typesettingFeatures(), fontData->platformData().orientation());
 
     RetainPtr<CTLineRef> line;
 
@@ -150,17 +217,17 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
         static CFDictionaryRef rtlTypesetterOptions = CFDictionaryCreate(kCFAllocatorDefault, optionKeys, rtlOptionValues, WTF_ARRAY_LENGTH(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-        ProviderInfo info = { cp, length, fontData->getCFStringAttributes(m_font.typesettingFeatures(), fontData->platformData().orientation()) };
+        ProviderInfo info = { cp, length, stringAttributes.get() };
         RetainPtr<CTTypesetterRef> typesetter(AdoptCF, wkCreateCTTypesetterWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run.ltr() ? ltrTypesetterOptions : rtlTypesetterOptions));
 #else
         RetainPtr<CFStringRef> string(AdoptCF, CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, cp, length, kCFAllocatorNull));
-        RetainPtr<CFAttributedStringRef> attributedString(AdoptCF, CFAttributedStringCreate(kCFAllocatorDefault, string.get(), fontData->getCFStringAttributes(m_font.typesettingFeatures(), fontData->platformData().orientation())));
+        RetainPtr<CFAttributedStringRef> attributedString(AdoptCF, CFAttributedStringCreate(kCFAllocatorDefault, string.get(), stringAttributes.get()));
         RetainPtr<CTTypesetterRef> typesetter(AdoptCF, CTTypesetterCreateWithAttributedStringAndOptions(attributedString.get(), m_run.ltr() ? ltrTypesetterOptions : rtlTypesetterOptions));
 #endif
 
         line.adoptCF(CTTypesetterCreateLine(typesetter.get(), CFRangeMake(0, 0)));
     } else {
-        ProviderInfo info = { cp, length, fontData->getCFStringAttributes(m_font.typesettingFeatures(), fontData->platformData().orientation()) };
+        ProviderInfo info = { cp, length, stringAttributes.get() };
 
         line.adoptCF(wkCreateCTLineWithUniCharProvider(&provideStringAndAttributes, 0, &info));
     }
@@ -175,7 +242,29 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
         CTRunRef ctRun = static_cast<CTRunRef>(CFArrayGetValueAtIndex(runArray, m_run.ltr() ? r : runCount - 1 - r));
         ASSERT(CFGetTypeID(ctRun) == CTRunGetTypeID());
         CFRange runRange = CTRunGetStringRange(ctRun);
-        m_complexTextRuns.append(ComplexTextRun::create(ctRun, fontData, cp, stringLocation, length, runRange));
+        const SimpleFontData* runFontData = fontData;
+        if (isSystemFallback) {
+            CFDictionaryRef runAttributes = CTRunGetAttributes(ctRun);
+            CTFontRef runFont = static_cast<CTFontRef>(CFDictionaryGetValue(runAttributes, kCTFontAttributeName));
+            ASSERT(CFGetTypeID(runFont) == CTFontGetTypeID());
+            if (!CFEqual(runFont, fontData->platformData().ctFont())) {
+                // Rather than using runFont as an NSFont and wrapping it in a FontPlatformData, go through
+                // the font cache and ultimately through NSFontManager in order to get an NSFont with the right
+                // NSFontRenderingMode.
+                RetainPtr<CFStringRef> fontName(AdoptCF, CTFontCopyPostScriptName(runFont));
+                if (CFEqual(fontName.get(), CFSTR("LastResort"))) {
+                    m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation + runRange.location, runRange.length, m_run.ltr()));
+                    continue;
+                }
+                runFontData = fontCache()->getCachedFontData(m_font.fontDescription(), fontName.get(), false, FontCache::DoNotRetain);
+                if (m_fallbackFonts && runFontData != m_font.primaryFont())
+                    m_fallbackFonts->add(runFontData);
+            }
+        }
+        if (m_fallbackFonts && runFontData != m_font.primaryFont())
+            m_fallbackFonts->add(fontData);
+
+        m_complexTextRuns.append(ComplexTextRun::create(ctRun, runFontData, cp, stringLocation, length, runRange));
     }
 }
 
