@@ -550,6 +550,7 @@ PASS Object.getOwnPropertyDescriptor(window, 'valueOf') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitCancelRequestAnimationFrame') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitConvertPointFromNodeToPage') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitConvertPointFromPageToNode') is undefined.
+PASS Object.getOwnPropertyDescriptor(window, 'webkitPostMessage') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitRequestAnimationFrame') is undefined.
 PASS successfullyParsed is true
 

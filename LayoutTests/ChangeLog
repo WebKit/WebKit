@@ -1,3 +1,10 @@
+2011-09-18  Dan Bernstein  <mitz@apple.com>
+
+        Updated expected results for two tests after r95362.
+
+        * platform/mac/fast/dom/Window/window-properties-expected.txt:
+        * platform/mac/fast/dom/Window/window-property-descriptors-expected.txt:
+
 2011-09-17  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=68307
