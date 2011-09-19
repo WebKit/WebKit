@@ -1,5 +1,16 @@
 2011-09-19  Anders Carlsson  <andersca@apple.com>
 
+        Fix crashes when running WebKit1 tests.
+
+        -[WebView _mustDrawUnionedRect:singleRects:count:] was removed, so just put back the
+        equivalent code directly into -[WebHTMLView drawRect:].
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawRect:]):
+        * WebView/WebViewInternal.h:
+
+2011-09-19  Anders Carlsson  <andersca@apple.com>
+
         Remove the last remains of viewless WebKit1
         https://bugs.webkit.org/show_bug.cgi?id=68388
 

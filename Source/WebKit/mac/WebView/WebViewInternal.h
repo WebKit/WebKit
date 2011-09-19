@@ -170,8 +170,6 @@ WebCore::FindOptions coreOptions(WebFindOptions options);
 - (BOOL)_canResetZoom:(BOOL)isTextOnly;
 - (IBAction)_resetZoom:(id)sender isTextOnly:(BOOL)isTextOnly;
 
-- (BOOL)_mustDrawUnionedRect:(NSRect)rect singleRects:(const NSRect *)rects count:(NSInteger)count;
-
 + (BOOL)_canHandleRequest:(NSURLRequest *)request forMainFrame:(BOOL)forMainFrame;
 
 - (void)_setInsertionPasteboard:(NSPasteboard *)pasteboard;
