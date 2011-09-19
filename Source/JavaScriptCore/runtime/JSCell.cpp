@@ -30,13 +30,6 @@
 
 namespace JSC {
 
-JSValue JSCell::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
-{
-    if (isString())
-        return static_cast<const JSString*>(this)->toPrimitive(exec, preferredType);
-    return static_cast<const JSObject*>(this)->toPrimitive(exec, preferredType);
-}
-
 bool JSCell::getString(ExecState* exec, UString&stringValue) const
 {
     if (!isString())
@@ -121,6 +114,12 @@ JSObject* JSCell::toThisObject(ExecState* exec) const
 
 JSValue JSCell::getJSNumber()
 {
+    return JSValue();
+}
+
+JSValue JSCell::toPrimitive(ExecState*, PreferredPrimitiveType) const
+{
+    ASSERT_NOT_REACHED();
     return JSValue();
 }
 

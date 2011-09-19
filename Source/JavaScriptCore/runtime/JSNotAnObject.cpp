@@ -37,7 +37,7 @@ namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(JSNotAnObject);
 
 // JSValue methods
-JSValue JSNotAnObject::defaultValue(ExecState* exec, PreferredPrimitiveType) const
+JSValue JSNotAnObject::toPrimitive(ExecState* exec, PreferredPrimitiveType) const
 {
     ASSERT_UNUSED(exec, exec->hadException());
     return jsNumber(0);

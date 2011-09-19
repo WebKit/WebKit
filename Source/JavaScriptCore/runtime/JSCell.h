@@ -102,7 +102,7 @@ namespace JSC {
         virtual ConstructType getConstructData(ConstructData&);
 
         // Basic conversions.
-        JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
+        virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue&);
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
@@ -283,6 +283,11 @@ namespace JSC {
             return v == d;
         }
         return false;
+    }
+
+    inline JSValue JSValue::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
+    {
+        return isCell() ? asCell()->toPrimitive(exec, preferredType) : asValue();
     }
 
     inline bool JSValue::getPrimitiveNumber(ExecState* exec, double& number, JSValue& value)
