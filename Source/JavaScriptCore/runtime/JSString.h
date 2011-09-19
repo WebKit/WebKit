@@ -426,6 +426,7 @@ namespace JSC {
         }
         unsigned length() { return m_length; }
 
+        JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
         bool getStringPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         bool getStringPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
         bool getStringPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor&);
@@ -492,7 +493,6 @@ namespace JSC {
             }
         }
 
-        virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue& value);
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
@@ -681,6 +681,13 @@ namespace JSC {
     inline bool isJSString(JSGlobalData* globalData, JSValue v) { return v.isCell() && v.asCell()->vptr() == globalData->jsStringVPtr; }
 
     // --- JSValue inlines ----------------------------
+
+    inline JSValue JSValue::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
+    {
+        if (!isCell())
+            return asValue();
+        return asCell()->toPrimitive(exec, preferredType);
+    }
 
     inline UString JSValue::toString(ExecState* exec) const
     {

@@ -63,7 +63,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
 
         // JSValue methods
-        virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
+        virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue&);
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
