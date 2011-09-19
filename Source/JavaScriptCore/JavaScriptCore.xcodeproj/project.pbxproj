@@ -228,8 +228,6 @@
 		18BAB55410DAE066000D945B /* ThreadIdentifierDataPthreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */; };
 		1A082779142168D70090CCAC /* BinarySemaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A082777142168D70090CCAC /* BinarySemaphore.cpp */; };
 		1A08277A142168D70090CCAC /* BinarySemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A082778142168D70090CCAC /* BinarySemaphore.h */; };
-		1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C61516A0EBAC7A00031376F /* ProfilerServer.mm */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
-		1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C61516B0EBAC7A00031376F /* ProfilerServer.h */; };
 		2CFC5D1E12F45B48004914E2 /* CharacterNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CFC5B7A12F44714004914E2 /* CharacterNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41359CF30FDD89AD00206180 /* DateConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateConversion.h */; };
 		41359CF60FDD89CB00206180 /* DateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41359CF40FDD89CB00206180 /* DateMath.cpp */; };
@@ -926,8 +924,6 @@
 		18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadIdentifierDataPthreads.h; sourceTree = "<group>"; };
 		1A082777142168D70090CCAC /* BinarySemaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinarySemaphore.cpp; sourceTree = "<group>"; };
 		1A082778142168D70090CCAC /* BinarySemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinarySemaphore.h; sourceTree = "<group>"; };
-		1C61516A0EBAC7A00031376F /* ProfilerServer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProfilerServer.mm; path = profiler/ProfilerServer.mm; sourceTree = "<group>"; };
-		1C61516B0EBAC7A00031376F /* ProfilerServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerServer.h; path = profiler/ProfilerServer.h; sourceTree = "<group>"; };
 		1C9051420BA9E8A70081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = JavaScriptCore.xcconfig; sourceTree = "<group>"; };
 		1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -2279,8 +2275,6 @@
 				95AB83550DA43B4400BC83F3 /* ProfileNode.h */,
 				95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */,
 				95AB832F0DA42CAD00BC83F3 /* Profiler.h */,
-				1C61516B0EBAC7A00031376F /* ProfilerServer.h */,
-				1C61516A0EBAC7A00031376F /* ProfilerServer.mm */,
 			);
 			name = profiler;
 			sourceTree = "<group>";
@@ -2656,7 +2650,6 @@
 				95CD45770E1C4FDD0085358E /* ProfileGenerator.h in Headers */,
 				BC18C4510E16F5CD00B34460 /* ProfileNode.h in Headers */,
 				BC18C4520E16F5CD00B34460 /* Profiler.h in Headers */,
-				1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */,
 				A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */,
 				BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */,
 				BC18C4540E16F5CD00B34460 /* PropertyNameArray.h in Headers */,
@@ -3244,7 +3237,6 @@
 				95CD45760E1C4FDD0085358E /* ProfileGenerator.cpp in Sources */,
 				95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */,
 				95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */,
-				1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */,
 				A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */,
 				14469DE7107EC7E700650446 /* PropertyNameArray.cpp in Sources */,
 				14469DE8107EC7E700650446 /* PropertySlot.cpp in Sources */,

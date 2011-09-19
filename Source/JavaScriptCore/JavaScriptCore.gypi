@@ -430,8 +430,6 @@
             'profiler/ProfileGenerator.h',
             'profiler/ProfileNode.cpp',
             'profiler/Profiler.cpp',
-            'profiler/ProfilerServer.h',
-            'profiler/ProfilerServer.mm',
             'qt/api/qscriptconverter_p.h',
             'qt/api/qscriptengine.cpp',
             'qt/api/qscriptengine.h',
