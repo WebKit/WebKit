@@ -76,15 +76,6 @@ server_callback(SoupServer *server, SoupMessage *msg,
         g_assert(!error);
 
         soup_message_body_append(msg->response_body, SOUP_MEMORY_TAKE, contents, length);
-    } else if (g_str_equal(path, "/ogg")) {
-        char* contents;
-        gsize length;
-        GError* error = NULL;
-
-        g_file_get_contents("test.ogg", &contents, &length, &error);
-        g_assert(!error);
-
-        soup_message_body_append(msg->response_body, SOUP_MEMORY_TAKE, contents, length);
     }
 
     soup_message_body_complete(msg->response_body);
@@ -123,9 +114,6 @@ static gboolean mime_type_policy_decision_requested_cb(WebKitWebView* view, WebK
         g_free(disposition);
 
         g_assert_cmpstr(mime_type, ==, "text/plain");
-        g_assert(webkit_web_view_can_show_mime_type(view, mime_type));
-    } else if (g_str_equal(type, "ogg")) {
-        g_assert_cmpstr(mime_type, ==, "audio/x-vorbis+ogg");
         g_assert(webkit_web_view_can_show_mime_type(view, mime_type));
     }
 
@@ -209,11 +197,9 @@ int main(int argc, char** argv)
     g_test_add_data_func("/webkit/mime/remote-PDF", "pdf", testRemoteMimeType);
     g_test_add_data_func("/webkit/mime/remote-HTML", "html", testRemoteMimeType);
     g_test_add_data_func("/webkit/mime/remote-TEXT", "text", testRemoteMimeType);
-    g_test_add_data_func("/webkit/mime/remote-OGG", "ogg", testRemoteMimeType);
     g_test_add_data_func("/webkit/mime/local-PDF", "pdf", testLocalMimeType);
     g_test_add_data_func("/webkit/mime/local-HTML", "html", testLocalMimeType);
     g_test_add_data_func("/webkit/mime/local-TEXT", "text", testLocalMimeType);
-    g_test_add_data_func("/webkit/mime/local-OGG", "ogg", testLocalMimeType);
 
     return g_test_run();
 }

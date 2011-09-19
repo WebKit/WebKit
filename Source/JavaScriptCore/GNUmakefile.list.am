@@ -104,7 +104,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecompiler/LabelScope.h \
 	Source/JavaScriptCore/bytecompiler/NodesCodegen.cpp \
 	Source/JavaScriptCore/bytecompiler/RegisterID.h \
-	Source/JavaScriptCore/dfg/DFGAliasTracker.h \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.cpp \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.h \
 	Source/JavaScriptCore/dfg/DFGCapabilities.cpp \
@@ -116,6 +115,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGGPRInfo.h \
 	Source/JavaScriptCore/dfg/DFGGraph.cpp \
 	Source/JavaScriptCore/dfg/DFGGraph.h \
+	Source/JavaScriptCore/dfg/DFGIntrinsic.h \
 	Source/JavaScriptCore/dfg/DFGJITCodeGenerator.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCodeGenerator.h \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \

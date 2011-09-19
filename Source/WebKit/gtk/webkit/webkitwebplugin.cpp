@@ -219,7 +219,7 @@ const char* webkit_web_plugin_get_path(WebKitWebPlugin* plugin)
  * Returns all the #WebKitWebPluginMIMEType that @plugin is handling
  * at the moment.
  *
- * Returns: (transfer none) (element-type WebKitWebPluginMIMEType): a #GSList of #WebKitWebPluginMIMEType
+ * Returns: (transfer none) (element-type WebKit.WebKitWebPluginMIMEType): a #GSList of #WebKitWebPluginMIMEType
  *
  * Since: 1.3.8
  */
