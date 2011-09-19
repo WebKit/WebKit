@@ -1,5 +1,32 @@
 2011-09-19  Adam Barth  <abarth@webkit.org>
 
+        [V8] document.all gets confused about its prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=68393
+
+        Reviewed by Eric Seidel.
+
+        GetRealNamedPropertyInPrototypeChain doesn't call interceptors, so it's
+        not a good idea to use its return value.  It turns out that all the
+        callers of the API only cared about whether it returns a null handle.
+
+        Test: http/tests/security/document-all.html
+
+        * bindings/v8/V8Collection.h:
+        (WebCore::collectionNamedPropertyGetter):
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp:
+        (WebCore::V8DOMStringMap::namedPropertyDeleter):
+        (WebCore::V8DOMStringMap::namedPropertySetter):
+        * bindings/v8/custom/V8HTMLAllCollectionCustom.cpp:
+        (WebCore::V8HTMLAllCollection::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        (WebCore::V8HTMLCollection::namedPropertyGetter):
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+        (WebCore::V8NamedNodeMap::namedPropertyGetter):
+        * bindings/v8/custom/V8StorageCustom.cpp:
+        (WebCore::storageSetter):
+
+2011-09-19  Adam Barth  <abarth@webkit.org>
+
         Named property confusion with __proto__
         https://bugs.webkit.org/show_bug.cgi?id=68221
 
