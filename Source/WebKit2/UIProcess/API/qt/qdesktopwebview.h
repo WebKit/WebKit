@@ -65,7 +65,7 @@ public:
     enum ErrorType {
         EngineError,
         NetworkError,
-        HttpError,
+        HttpError
     };
 
     QDesktopWebView(QSGItem* parent = 0);

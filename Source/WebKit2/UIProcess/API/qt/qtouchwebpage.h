@@ -46,7 +46,7 @@ public:
     enum ErrorType {
         EngineError,
         NetworkError,
-        HttpError,
+        HttpError
     };
 
     QTouchWebPage(QSGItem* parent = 0);
