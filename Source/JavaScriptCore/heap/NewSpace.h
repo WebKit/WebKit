@@ -32,7 +32,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) < NewSpace::maxCellSize, class_fits_in_cell)
+#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) < MarkedSpace::maxCellSize, class_fits_in_cell)
 
 namespace JSC {
 
@@ -42,8 +42,8 @@ namespace JSC {
     class WeakGCHandle;
     class SlotVisitor;
 
-    class NewSpace {
-        WTF_MAKE_NONCOPYABLE(NewSpace);
+    class MarkedSpace {
+        WTF_MAKE_NONCOPYABLE(MarkedSpace);
     public:
         static const size_t maxCellSize = 1024;
 
@@ -59,7 +59,7 @@ namespace JSC {
             size_t cellSize;
         };
 
-        NewSpace(Heap*);
+        MarkedSpace(Heap*);
 
         SizeClass& sizeClassFor(size_t);
         void* allocate(SizeClass&);
@@ -97,22 +97,22 @@ namespace JSC {
         Heap* m_heap;
     };
 
-    inline size_t NewSpace::waterMark()
+    inline size_t MarkedSpace::waterMark()
     {
         return m_waterMark;
     }
 
-    inline size_t NewSpace::highWaterMark()
+    inline size_t MarkedSpace::highWaterMark()
     {
         return m_highWaterMark;
     }
 
-    inline void NewSpace::setHighWaterMark(size_t highWaterMark)
+    inline void MarkedSpace::setHighWaterMark(size_t highWaterMark)
     {
         m_highWaterMark = highWaterMark;
     }
 
-    inline NewSpace::SizeClass& NewSpace::sizeClassFor(size_t bytes)
+    inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t bytes)
     {
         ASSERT(bytes && bytes < maxCellSize);
         if (bytes <= maximumPreciseAllocationSize)
@@ -120,7 +120,7 @@ namespace JSC {
         return m_impreciseSizeClasses[(bytes - 1) / impreciseStep];
     }
 
-    inline void* NewSpace::allocate(SizeClass& sizeClass)
+    inline void* MarkedSpace::allocate(SizeClass& sizeClass)
     {
         MarkedBlock::FreeCell* firstFreeCell = sizeClass.firstFreeCell;
         if (!firstFreeCell) {
@@ -161,7 +161,7 @@ namespace JSC {
         return firstFreeCell;
     }
     
-    template <typename Functor> inline typename Functor::ReturnType NewSpace::forEachBlock(Functor& functor)
+    template <typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachBlock(Functor& functor)
     {
         for (size_t i = 0; i < preciseCount; ++i) {
             SizeClass& sizeClass = m_preciseSizeClasses[i];
@@ -184,13 +184,13 @@ namespace JSC {
         return functor.returnValue();
     }
 
-    template <typename Functor> inline typename Functor::ReturnType NewSpace::forEachBlock()
+    template <typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachBlock()
     {
         Functor functor;
         return forEachBlock(functor);
     }
 
-    inline NewSpace::SizeClass::SizeClass()
+    inline MarkedSpace::SizeClass::SizeClass()
         : firstFreeCell(0)
         , currentBlock(0)
         , nextBlock(0)
@@ -198,12 +198,12 @@ namespace JSC {
     {
     }
 
-    inline void NewSpace::SizeClass::resetAllocator()
+    inline void MarkedSpace::SizeClass::resetAllocator()
     {
         nextBlock = blockList.head();
     }
     
-    inline void NewSpace::SizeClass::canonicalizeBlock()
+    inline void MarkedSpace::SizeClass::canonicalizeBlock()
     {
         if (currentBlock) {
             currentBlock->canonicalizeBlock(firstFreeCell);

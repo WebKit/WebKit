@@ -31,7 +31,7 @@ namespace JSC {
 
 class Structure;
 
-NewSpace::NewSpace(Heap* heap)
+MarkedSpace::MarkedSpace(Heap* heap)
     : m_waterMark(0)
     , m_highWaterMark(0)
     , m_heap(heap)
@@ -43,7 +43,7 @@ NewSpace::NewSpace(Heap* heap)
         sizeClassFor(cellSize).cellSize = cellSize;
 }
 
-void NewSpace::addBlock(SizeClass& sizeClass, MarkedBlock* block)
+void MarkedSpace::addBlock(SizeClass& sizeClass, MarkedBlock* block)
 {
     block->setInNewSpace(true);
     sizeClass.nextBlock = block;
@@ -54,7 +54,7 @@ void NewSpace::addBlock(SizeClass& sizeClass, MarkedBlock* block)
     sizeClass.firstFreeCell = block->blessNewBlockForFastPath();
 }
 
-void NewSpace::removeBlock(MarkedBlock* block)
+void MarkedSpace::removeBlock(MarkedBlock* block)
 {
     block->setInNewSpace(false);
     SizeClass& sizeClass = sizeClassFor(block->cellSize());
@@ -63,7 +63,7 @@ void NewSpace::removeBlock(MarkedBlock* block)
     sizeClass.blockList.remove(block);
 }
 
-void NewSpace::resetAllocator()
+void MarkedSpace::resetAllocator()
 {
     m_waterMark = 0;
 
@@ -74,7 +74,7 @@ void NewSpace::resetAllocator()
         sizeClassFor(cellSize).resetAllocator();
 }
 
-void NewSpace::canonicalizeBlocks()
+void MarkedSpace::canonicalizeBlocks()
 {
     for (size_t cellSize = preciseStep; cellSize < preciseCutoff; cellSize += preciseStep)
         sizeClassFor(cellSize).canonicalizeBlock();
