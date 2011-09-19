@@ -309,7 +309,13 @@ TEST_F(GestureRecognizerTest, updateValues)
     ASSERT_EQ(0.0, gm.lastTouchTime() - gm.firstTouchTime());
 }
 
-TEST_F(GestureRecognizerTest, doubleTapGestureTest)
+#if OS(WINDOWS)
+#define MAYBE_doubleTapGestureTest DISABLED_doubleTapGestureTest
+#else
+#define MAYBE_doubleTapGestureTest doubleTapGestureTest
+#endif
+
+TEST_F(GestureRecognizerTest, DISABLED_doubleTapGestureTest)
 {
     InspectableGestureRecognizerChromium gm;
     SimulateAndTestFirstClick(gm);
@@ -425,7 +431,13 @@ TEST_F(GestureRecognizerTest, tapDownWithTapGestureTest)
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 }
 
-TEST_F(GestureRecognizerTest, noDoubleTapGestureBecauseOfInterTouchIntervalTest)
+#if OS(WINDOWS)
+#define MAYBE_noDoubleTapGestureBecauseOfInterTouchIntervalTest DISABLED_noDoubleTapGestureBecauseOfInterTouchIntervalTest
+#else
+#define MAYBE_noDoubleTapGestureBecauseOfInterTouchIntervalTest noDoubleTapGestureBecauseOfInterTouchIntervalTest
+#endif
+
+TEST_F(GestureRecognizerTest, MAYBE_noDoubleTapGestureBecauseOfInterTouchIntervalTest)
 {
     InspectableGestureRecognizerChromium gm;
     SimulateAndTestFirstClick(gm);
