@@ -193,6 +193,9 @@ private:
         if (node.op == UInt32ToNumber)
             return node.child1();
 
+        if (node.op == UInt32ToNumberSafe)
+            return node.child1();
+
         // Check for numeric constants boxed as JSValues.
         if (node.op == JSConstant) {
             JSValue v = valueOfJSConstant(index);
@@ -483,7 +486,10 @@ private:
             switch (nodePtr->op) {
             case ArithAdd:
             case ArithSub:
-            case ArithMul:
+            case ArithMulIgnoreZero:
+            case ArithMulSpecNotNegZero:
+            case ArithMulPossiblyNegZero:
+            case ArithMulSafe:
             case ValueAdd:
                 m_reusableNodeStack.append(&m_graph[nodePtr->child1()]);
                 m_reusableNodeStack.append(&m_graph[nodePtr->child2()]);
@@ -517,6 +523,70 @@ private:
     void stronglyPredict(NodeIndex nodeIndex)
     {
         stronglyPredict(nodeIndex, m_currentIndex);
+    }
+    
+    NodeType makeSafe(NodeType op)
+    {
+        if (!m_profiledBlock->likelyToTakeSlowCase(m_currentIndex))
+            return op;
+        
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("Making %s @%lu safe at bc#%u because slow-case counter is at %u\n", Graph::opName(op), m_graph.size(), m_currentIndex, m_profiledBlock->slowCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+#endif
+        
+        switch (op) {
+        case UInt32ToNumber:
+            return UInt32ToNumberSafe;
+        case ArithAdd:
+            return ArithAddSafe;
+        case ArithSub:
+            return ArithSubSafe;
+            
+            // We initialize ArithMul to ArithMulIgnoreZero and push it towards
+            // safer variants as we learn more, unless we already know that it
+            // can overflow. If it doesn't overflow, we first turn it into
+            // PossiblyNegZero if we see that it had been -0 during old JIT
+            // execution.
+        case ArithMulIgnoreZero:
+            if (m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex))
+                return ArithMulSafe;
+            else
+                return ArithMulPossiblyNegZero;
+            
+        case ValueAdd:
+            return ValueAddSafe;
+        default:
+            ASSERT_NOT_REACHED();
+            return Phantom; // Have to return something.
+        }
+    }
+    
+    NodeIndex getTrueResult(NodeIndex nodeIndex)
+    {
+        switch (m_graph[nodeIndex].op) {
+        case ArithMulIgnoreZero:
+            m_graph[nodeIndex].op = ArithMulSpecNotNegZero;
+            break;
+        case ArithMulPossiblyNegZero:
+            m_graph[nodeIndex].op = ArithMulSafe;
+            break;
+        default:
+            break;
+        }
+        return nodeIndex;
+    }
+    
+    bool isMultiply(NodeIndex nodeIndex)
+    {
+        switch (m_graph[nodeIndex].op) {
+        case ArithMulSpecNotNegZero:
+        case ArithMulIgnoreZero:
+        case ArithMulPossiblyNegZero:
+        case ArithMulSafe:
+            return true;
+        default:
+            return false;
+        }
     }
 
     JSGlobalData* m_globalData;
@@ -787,11 +857,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 if (valueOfInt32Constant(op2) & 0x1f)
                     result = addToGraph(BitURShift, op1, op2);
                 else
-                    result = addToGraph(UInt32ToNumber, op1);
+                    result = addToGraph(makeSafe(UInt32ToNumber), op1);
             }  else {
                 // Cannot optimize at this stage; shift & potentially rebox as a double.
                 result = addToGraph(BitURShift, op1, op2);
-                result = addToGraph(UInt32ToNumber, result);
+                result = addToGraph(makeSafe(UInt32ToNumber), result);
             }
             set(currentInstruction[1].u.operand, result, PredictInt32);
             NEXT_OPCODE(op_urshift);
@@ -803,7 +873,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned srcDst = currentInstruction[1].u.operand;
             NodeIndex op = getToNumber(srcDst);
             weaklyPredictInt32(op);
-            set(srcDst, addToGraph(ArithAdd, op, one()));
+            set(srcDst, addToGraph(makeSafe(ArithAdd), op, one()));
             NEXT_OPCODE(op_pre_inc);
         }
 
@@ -813,7 +883,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex op = getToNumber(srcDst);
             weaklyPredictInt32(op);
             set(result, op);
-            set(srcDst, addToGraph(ArithAdd, op, one()));
+            set(srcDst, addToGraph(makeSafe(ArithAdd), op, one()));
             NEXT_OPCODE(op_post_inc);
         }
 
@@ -821,7 +891,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned srcDst = currentInstruction[1].u.operand;
             NodeIndex op = getToNumber(srcDst);
             weaklyPredictInt32(op);
-            set(srcDst, addToGraph(ArithSub, op, one()));
+            set(srcDst, addToGraph(makeSafe(ArithSub), op, one()));
             NEXT_OPCODE(op_pre_dec);
         }
 
@@ -831,7 +901,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex op = getToNumber(srcDst);
             weaklyPredictInt32(op);
             set(result, op);
-            set(srcDst, addToGraph(ArithSub, op, one()));
+            set(srcDst, addToGraph(makeSafe(ArithSub), op, one()));
             NEXT_OPCODE(op_post_dec);
         }
 
@@ -846,10 +916,18 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 weaklyPredictInt32(op1);
                 weaklyPredictInt32(op2);
             }
+            
+            // If both inputs are multiplies, then we need to make sure to play
+            // it safe with -0.
+            if (isMultiply(op1) && isMultiply(op2)) {
+                getTrueResult(op1);
+                getTrueResult(op2);
+            }
+            
             if (m_graph[op1].hasNumberResult() && m_graph[op2].hasNumberResult())
-                set(currentInstruction[1].u.operand, addToGraph(ArithAdd, toNumber(op1), toNumber(op2)));
+                set(currentInstruction[1].u.operand, addToGraph(makeSafe(ArithAdd), toNumber(op1), toNumber(op2)));
             else
-                set(currentInstruction[1].u.operand, addToGraph(ValueAdd, op1, op2));
+                set(currentInstruction[1].u.operand, addToGraph(makeSafe(ValueAdd), op1, op2));
             NEXT_OPCODE(op_add);
         }
 
@@ -860,14 +938,23 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 weaklyPredictInt32(op1);
                 weaklyPredictInt32(op2);
             }
-            set(currentInstruction[1].u.operand, addToGraph(ArithSub, op1, op2));
+            
+            // For the left child we need to be careful about negative zero,
+            // since -0 - 0 is -0.  If the right child is -0 then it doesn't
+            // matter, since 0 - -0 is 0 and 0 - 0 is 0.
+            getTrueResult(op1);
+            
+            set(currentInstruction[1].u.operand, addToGraph(makeSafe(ArithSub), op1, op2));
             NEXT_OPCODE(op_sub);
         }
 
         case op_mul: {
-            NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
-            NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
-            set(currentInstruction[1].u.operand, addToGraph(ArithMul, op1, op2));
+            // We could be fancy here and skip the getTrueResult, instead making
+            // getTrueResult operate transitively. But we do this the simple way, for
+            // now.
+            NodeIndex op1 = getTrueResult(getToNumber(currentInstruction[2].u.operand));
+            NodeIndex op2 = getTrueResult(getToNumber(currentInstruction[3].u.operand));
+            set(currentInstruction[1].u.operand, addToGraph(makeSafe(ArithMulIgnoreZero), op1, op2));
             NEXT_OPCODE(op_mul);
         }
 
@@ -1002,7 +1089,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_put_by_val: {
             NodeIndex base = get(currentInstruction[1].u.operand);
             NodeIndex property = get(currentInstruction[2].u.operand);
-            NodeIndex value = get(currentInstruction[3].u.operand);
+            NodeIndex value = getTrueResult(get(currentInstruction[3].u.operand));
             weaklyPredictArray(base);
             weaklyPredictInt32(property);
 
@@ -1059,7 +1146,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_put_by_id: {
-            NodeIndex value = get(currentInstruction[3].u.operand);
+            NodeIndex value = getTrueResult(get(currentInstruction[3].u.operand));
             NodeIndex base = get(currentInstruction[1].u.operand);
             unsigned identifier = currentInstruction[2].u.operand;
             bool direct = currentInstruction[8].u.operand;
@@ -1080,7 +1167,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_put_global_var: {
-            NodeIndex value = get(currentInstruction[2].u.operand);
+            NodeIndex value = getTrueResult(get(currentInstruction[2].u.operand));
             addToGraph(PutGlobalVar, OpInfo(currentInstruction[1].u.operand), value);
             NEXT_OPCODE(op_put_global_var);
         }
@@ -1362,8 +1449,15 @@ void ByteCodeParser::processPhiStack()
             ASSERT(m_graph[valueInPredecessor].op == SetLocal || m_graph[valueInPredecessor].op == Phi);
 
             Node* phiNode = &m_graph[entry.m_phi];
-            if (phiNode->refCount())
+            if (phiNode->refCount()) {
+                if (m_graph[valueInPredecessor].op == SetLocal) {
+                    // Any live SetLocal should ensure that it gets the true value.
+                    // Currently this means that ArithMuls distinguish between
+                    // negative zero and positive zero.
+                    getTrueResult(m_graph[valueInPredecessor].child1());
+                }
                 m_graph.ref(valueInPredecessor);
+            }
 
             if (phiNode->child1() == NoNode) {
                 phiNode->children.fixed.child1 = valueInPredecessor;

@@ -488,6 +488,45 @@ namespace JSC {
                 return 0;
             return result;
         }
+        
+        RareCaseProfile* addSlowCaseProfile(int bytecodeOffset)
+        {
+            m_slowCaseProfiles.append(RareCaseProfile(bytecodeOffset));
+            return &m_slowCaseProfiles.last();
+        }
+        unsigned numberOfSlowCaseProfiles() { return m_slowCaseProfiles.size(); }
+        RareCaseProfile* slowCaseProfile(int index) { return &m_slowCaseProfiles[index]; }
+        RareCaseProfile* slowCaseProfileForBytecodeOffset(int bytecodeOffset)
+        {
+            return WTF::genericBinarySearch<RareCaseProfile, int, getRareCaseProfileBytecodeOffset>(m_slowCaseProfiles, m_slowCaseProfiles.size(), bytecodeOffset);
+        }
+        
+        static uint32_t slowCaseThreshold() { return 100; }
+        bool likelyToTakeSlowCase(int bytecodeOffset)
+        {
+            return slowCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter >= slowCaseThreshold();
+        }
+        
+        RareCaseProfile* addSpecialFastCaseProfile(int bytecodeOffset)
+        {
+            m_specialFastCaseProfiles.append(RareCaseProfile(bytecodeOffset));
+            return &m_specialFastCaseProfiles.last();
+        }
+        unsigned numberOfSpecialFastCaseProfiles() { return m_specialFastCaseProfiles.size(); }
+        RareCaseProfile* specialFastCaseProfile(int index) { return &m_specialFastCaseProfiles[index]; }
+        RareCaseProfile* specialFastCaseProfileForBytecodeOffset(int bytecodeOffset)
+        {
+            return WTF::genericBinarySearch<RareCaseProfile, int, getRareCaseProfileBytecodeOffset>(m_specialFastCaseProfiles, m_specialFastCaseProfiles.size(), bytecodeOffset);
+        }
+        
+        bool likelyToTakeDeepestSlowCase(int bytecodeOffset)
+        {
+            unsigned slowCaseCount = slowCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
+            unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
+            return (slowCaseCount - specialFastCaseCount) >= slowCaseThreshold();
+        }
+        
+        void resetRareCaseProfiles();
 #endif
 
         unsigned globalResolveInfoCount() const
@@ -791,6 +830,8 @@ namespace JSC {
 #endif
 #if ENABLE(VALUE_PROFILER)
         SegmentedVector<ValueProfile, 8> m_valueProfiles;
+        SegmentedVector<RareCaseProfile, 8> m_slowCaseProfiles;
+        SegmentedVector<RareCaseProfile, 8> m_specialFastCaseProfiles;
 #endif
 
         Vector<unsigned> m_jumpTargets;

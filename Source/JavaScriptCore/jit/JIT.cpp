@@ -413,6 +413,12 @@ void JIT::privateCompileSlowCases()
         unsigned firstTo = m_bytecodeOffset;
 #endif
         Instruction* currentInstruction = instructionsBegin + m_bytecodeOffset;
+        
+#if ENABLE(VALUE_PROFILER)
+        RareCaseProfile* slowCaseProfile = 0;
+        if (m_canBeOptimized)
+            slowCaseProfile = m_codeBlock->addSlowCaseProfile(m_bytecodeOffset);
+#endif
 
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
         DEFINE_SLOWCASE_OP(op_add)
@@ -485,6 +491,11 @@ void JIT::privateCompileSlowCases()
 
         ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo != iter->to,"Not enough jumps linked in slow case codegen.");
         ASSERT_WITH_MESSAGE(firstTo == (iter - 1)->to, "Too many jumps linked in slow case codegen.");
+        
+#if ENABLE(VALUE_PROFILER)
+        if (m_canBeOptimized)
+            add32(Imm32(1), AbsoluteAddress(&slowCaseProfile->m_counter));
+#endif
 
         emitJumpSlowToHot(jump(), 0);
     }

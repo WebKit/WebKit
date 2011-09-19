@@ -68,7 +68,8 @@ protected:
     };
     
     enum UseChildrenMode { CallUseChildren, UseChildrenCalledExplicitly };
-
+    
+    static const double twoToThe32;
 
 public:
     GPRReg fillInteger(NodeIndex, DataFormat& returnFormat);
@@ -1173,6 +1174,7 @@ public:
     GPRTemporary(JITCodeGenerator*, GPRReg specific);
     GPRTemporary(JITCodeGenerator*, SpeculateIntegerOperand&);
     GPRTemporary(JITCodeGenerator*, SpeculateIntegerOperand&, SpeculateIntegerOperand&);
+    GPRTemporary(JITCodeGenerator*, SpeculateStrictInt32Operand&);
     GPRTemporary(JITCodeGenerator*, IntegerOperand&);
     GPRTemporary(JITCodeGenerator*, IntegerOperand&, IntegerOperand&);
     GPRTemporary(JITCodeGenerator*, SpeculateCellOperand&);

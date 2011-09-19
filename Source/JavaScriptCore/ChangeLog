@@ -1,3 +1,66 @@
+2011-09-19  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG speculation failures should act as additional value profiles
+        https://bugs.webkit.org/show_bug.cgi?id=68335
+
+        Reviewed by Oliver Hunt.
+        
+        This adds slow-case counters to the old JIT. It also ensures that
+        negative zero in multiply is handled carefully. The old JIT
+        previously took slow path if the result of a multiply was zero,
+        which, without any changes, would cause the DFG to think that
+        every such multiply produced a double result.
+        
+        This also fixes a bug in the old JIT's handling of decrements. It
+        would take the slow path if the result was zero, but not if it
+        underflowed.
+        
+        By itself, this would be a 1% slow-down on V8 and Kraken. But then
+        I wrote optimizations in the DFG that take advantage of this new
+        information. It's no longer the case that every multiply needs to
+        do a check for negative zero; it only happens if the negative
+        zero is ignored.
+        
+        This results in a 12% speed-up on v8-crypto, for a 1.4% geomean
+        speed-up in V8. It's mostly neutral on Kraken. I can see an
+        0.5% slow-down and it appears to be significant.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resetRareCaseProfiles):
+        (JSC::CodeBlock::dumpValueProfiles):
+        * bytecode/CodeBlock.h:
+        * bytecode/ValueProfile.h:
+        (JSC::RareCaseProfile::RareCaseProfile):
+        (JSC::getRareCaseProfileBytecodeOffset):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::toInt32):
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        * dfg/DFGJITCodeGenerator.h:
+        * dfg/DFGNode.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNode):
+        (JSC::DFG::Propagator::fixupNode):
+        (JSC::DFG::Propagator::clobbersWorld):
+        (JSC::DFG::Propagator::performNodeCSE):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        (JSC::JIT::linkDummySlowCase):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_post_dec):
+        (JSC::JIT::emit_op_pre_dec):
+        (JSC::JIT::compileBinaryArithOp):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::addSlowCase):
+
 2011-09-19  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r94575

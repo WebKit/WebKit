@@ -295,6 +295,7 @@ namespace JSC {
 
         void addSlowCase(Jump);
         void addSlowCase(JumpList);
+        void addSlowCase();
         void addJump(Jump, int);
         void emitJumpSlowToHot(Jump, int);
 
@@ -970,6 +971,11 @@ namespace JSC {
         void linkSlowCase(Vector<SlowCaseEntry>::iterator& iter)
         {
             iter->from.link(this);
+            ++iter;
+        }
+        void linkDummySlowCase(Vector<SlowCaseEntry>::iterator& iter)
+        {
+            ASSERT(!iter->from.isSet());
             ++iter;
         }
         void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, int vReg);

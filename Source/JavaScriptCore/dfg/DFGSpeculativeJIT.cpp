@@ -840,6 +840,26 @@ void SpeculativeJIT::compile(Node& node)
         integerResult(result.gpr(), m_compileIndex, op1.format());
         break;
     }
+        
+    case UInt32ToNumberSafe: {
+        // We know that this sometimes produces doubles. So produce a double every
+        // time. This at least allows subsequent code to not have weird conditionals.
+        
+        IntegerOperand op1(this, node.child1());
+        FPRTemporary result(this);
+        
+        GPRReg inputGPR = op1.gpr();
+        FPRReg outputFPR = result.fpr();
+        
+        m_jit.convertInt32ToDouble(inputGPR, outputFPR);
+        
+        JITCompiler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, inputGPR, TrustedImm32(0));
+        m_jit.addDouble(JITCompiler::AbsoluteAddress(&twoToThe32), outputFPR);
+        positive.link(&m_jit);
+        
+        doubleResult(outputFPR, m_compileIndex);
+        break;
+    }
 
     case ValueToInt32: {
         SpeculateIntegerOperand op1(this, node.child1());
@@ -916,7 +936,12 @@ void SpeculativeJIT::compile(Node& node)
             integerResult(gprResult, m_compileIndex);
             break;
         }
-
+        
+        // Fall through to safe cases.
+    }
+        
+    case ValueAddSafe:
+    case ArithAddSafe: {
         if (shouldSpeculateNumber(node.child1(), node.child2())) {
             SpeculateDoubleOperand op1(this, node.child1());
             SpeculateDoubleOperand op2(this, node.child2());
@@ -930,7 +955,7 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
         
-        ASSERT(op == ValueAdd);
+        ASSERT(op == ValueAdd || op == ValueAddSafe);
         
         JSValueOperand op1(this, node.child1());
         JSValueOperand op2(this, node.child2());
@@ -972,7 +997,11 @@ void SpeculativeJIT::compile(Node& node)
             integerResult(result.gpr(), m_compileIndex);
             break;
         }
-
+        
+        // Fall through to safe case.
+    }
+        
+    case ArithSubSafe: {
         SpeculateDoubleOperand op1(this, node.child1());
         SpeculateDoubleOperand op2(this, node.child2());
         FPRTemporary result(this, op1);
@@ -985,7 +1014,9 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
-    case ArithMul: {
+    case ArithMulSpecNotNegZero:
+    case ArithMulPossiblyNegZero:
+    case ArithMulIgnoreZero: {
         if (shouldSpeculateInteger(node.child1(), node.child2())) {
             SpeculateIntegerOperand op1(this, node.child1());
             SpeculateIntegerOperand op2(this, node.child2());
@@ -995,15 +1026,24 @@ void SpeculativeJIT::compile(Node& node)
             GPRReg reg2 = op2.gpr();
             speculationCheck(m_jit.branchMul32(MacroAssembler::Overflow, reg1, reg2, result.gpr()));
 
-            MacroAssembler::Jump resultNonZero = m_jit.branchTest32(MacroAssembler::NonZero, result.gpr());
-            speculationCheck(m_jit.branch32(MacroAssembler::LessThan, reg1, TrustedImm32(0)));
-            speculationCheck(m_jit.branch32(MacroAssembler::LessThan, reg2, TrustedImm32(0)));
-            resultNonZero.link(&m_jit);
+            // Only the ArithMulSpecNotNegZero opcode requires that we actually turn
+            // negative zero into a double. The other two mean that all users of this
+            // result don't care if it's a positive or negative zero.
+            if (op == ArithMulSpecNotNegZero) {
+                MacroAssembler::Jump resultNonZero = m_jit.branchTest32(MacroAssembler::NonZero, result.gpr());
+                speculationCheck(m_jit.branch32(MacroAssembler::LessThan, reg1, TrustedImm32(0)));
+                speculationCheck(m_jit.branch32(MacroAssembler::LessThan, reg2, TrustedImm32(0)));
+                resultNonZero.link(&m_jit);
+            }
 
             integerResult(result.gpr(), m_compileIndex);
             break;
         }
+        
+        // Fall through to safe case.
+    }
 
+    case ArithMulSafe: {
         SpeculateDoubleOperand op1(this, node.child1());
         SpeculateDoubleOperand op2(this, node.child2());
         FPRTemporary result(this, op1, op2);
@@ -1087,8 +1127,8 @@ void SpeculativeJIT::compile(Node& node)
     case ArithMin:
     case ArithMax: {
         if (shouldSpeculateInteger(node.child1(), node.child2())) {
-            SpeculateIntegerOperand op1(this, node.child1());
-            SpeculateIntegerOperand op2(this, node.child2());
+            SpeculateStrictInt32Operand op1(this, node.child1());
+            SpeculateStrictInt32Operand op2(this, node.child2());
             GPRTemporary result(this, op1);
             
             MacroAssembler::Jump op1Less = m_jit.branch32(op == ArithMin ? MacroAssembler::LessThan : MacroAssembler::GreaterThan, op1.gpr(), op2.gpr());
@@ -1836,7 +1876,7 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
         
         bool found = false;
         
-        if (nodePtr->op == UInt32ToNumber) {
+        if (nodePtr->op == UInt32ToNumber || nodePtr->op == UInt32ToNumberSafe) {
             NodeIndex nodeIndex = nodePtr->child1();
             nodePtr = &m_jit.graph()[nodeIndex];
             infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
@@ -1867,6 +1907,7 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
                     valueToInt32Index = info.nodeIndex();
                     break;
                 case UInt32ToNumber:
+                case UInt32ToNumberSafe:
                     uint32ToNumberIndex = info.nodeIndex();
                     break;
                 default:

@@ -225,7 +225,9 @@ private:
             
         case ArithAdd:
         case ArithSub:
-        case ArithMul:
+        case ArithMulIgnoreZero:
+        case ArithMulPossiblyNegZero:
+        case ArithMulSpecNotNegZero:
         case ArithMin:
         case ArithMax: {
             PredictedType left = m_predictions[node.child1()];
@@ -250,6 +252,30 @@ private:
             PredictedType child = m_predictions[node.child1()];
             if (isStrongPrediction(child))
                 changed |= mergePrediction(child);
+            break;
+        }
+            
+        case ArithAddSafe:
+        case ArithSubSafe:
+        case ArithMulSafe:
+        case UInt32ToNumberSafe: {
+            changed |= setPrediction(makePrediction(PredictDouble, StrongPrediction));
+            break;
+        }
+
+        case ValueAddSafe: {
+            PredictedType left = m_predictions[node.child1()];
+            PredictedType right = m_predictions[node.child2()];
+            
+            if (isStrongPrediction(left) && isStrongPrediction(right)) {
+                if (isNumberPrediction(left) && isNumberPrediction(right))
+                    changed |= mergePrediction(makePrediction(PredictDouble, StrongPrediction));
+                else if (!(left & PredictNumber) || !(right & PredictNumber)) {
+                    // left or right is definitely something other than a number.
+                    changed |= mergePrediction(makePrediction(PredictString, StrongPrediction));
+                } else
+                    changed |= mergePrediction(makePrediction(PredictString | PredictInt32 | PredictDouble, StrongPrediction));
+            }
             break;
         }
             
@@ -408,7 +434,9 @@ private:
             
         case ArithAdd:
         case ArithSub:
-        case ArithMul:
+        case ArithMulIgnoreZero:
+        case ArithMulPossiblyNegZero:
+        case ArithMulSpecNotNegZero:
         case ArithMin:
         case ArithMax: {
             PredictedType left = m_predictions[node.child1()];
@@ -441,6 +469,25 @@ private:
             break;
         }
             
+        case ArithAddSafe:
+        case ArithSubSafe:
+        case ArithMulSafe: {
+            toDouble(node.child1());
+            toDouble(node.child2());
+            break;
+        }
+            
+        case ValueAddSafe: {
+            PredictedType left = m_predictions[node.child1()];
+            PredictedType right = m_predictions[node.child2()];
+            
+            if (isStrongPrediction(left) && isStrongPrediction(right) && isNumberPrediction(left) && isNumberPrediction(right)) {
+                toDouble(node.child2());
+                toDouble(node.child1());
+            }
+            break;
+        }
+        
         default:
             break;
         }
@@ -596,6 +643,7 @@ private:
             return false;
         switch (node.op) {
         case ValueAdd:
+        case ValueAddSafe:
         case CompareLess:
         case CompareLessEq:
         case CompareGreater:
@@ -743,13 +791,18 @@ private:
         case BitURShift:
         case ArithAdd:
         case ArithSub:
-        case ArithMul:
+        case ArithMulIgnoreZero:
+        case ArithMulPossiblyNegZero:
+        case ArithMulSpecNotNegZero:
         case ArithMod:
         case ArithDiv:
         case ArithAbs:
         case ArithMin:
         case ArithMax:
         case ArithSqrt:
+        case ArithAddSafe:
+        case ArithSubSafe:
+        case ArithMulSafe:
             setReplacement(pureCSE(node));
             break;
             

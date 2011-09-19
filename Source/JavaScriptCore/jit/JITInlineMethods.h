@@ -299,6 +299,14 @@ ALWAYS_INLINE void JIT::addSlowCase(JumpList jumpList)
         m_slowCases.append(SlowCaseEntry(jumpVector[i], m_bytecodeOffset));
 }
 
+ALWAYS_INLINE void JIT::addSlowCase()
+{
+    ASSERT(m_bytecodeOffset != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
+    
+    Jump emptyJump; // Doing it this way to make Windows happy.
+    m_slowCases.append(SlowCaseEntry(emptyJump, m_bytecodeOffset));
+}
+
 ALWAYS_INLINE void JIT::addJump(Jump jump, int relativeOffset)
 {
     ASSERT(m_bytecodeOffset != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.

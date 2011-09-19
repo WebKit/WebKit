@@ -147,11 +147,17 @@ private:
     macro(ValueToInt32, NodeResultInt32 | NodeMustGenerate) \
     /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\
     macro(UInt32ToNumber, NodeResultNumber) \
+    macro(UInt32ToNumberSafe, NodeResultNumber) \
     \
     /* Nodes for arithmetic operations. */\
     macro(ArithAdd, NodeResultNumber) \
     macro(ArithSub, NodeResultNumber) \
-    macro(ArithMul, NodeResultNumber) \
+    macro(ArithAddSafe, NodeResultNumber) /* Safe variants are those that are known to take old JIT slow path */\
+    macro(ArithSubSafe, NodeResultNumber) \
+    macro(ArithMulSpecNotNegZero, NodeResultNumber) /* Speculate that the result is not negative zero. */ \
+    macro(ArithMulIgnoreZero, NodeResultNumber) /* If it's negative zero, ignore it. */ \
+    macro(ArithMulPossiblyNegZero, NodeResultNumber) /* It definitely may be negative zero but we haven't decided what to do about it yet. No code generation for this node; it either turns into ArithMulIgnoreZero or ArithMulSafe. */ \
+    macro(ArithMulSafe, NodeResultNumber) /* It may be negative zero, or it may produce other forms of double, so speculate double. */\
     macro(ArithDiv, NodeResultNumber) \
     macro(ArithMod, NodeResultNumber) \
     macro(ArithAbs, NodeResultNumber) \
@@ -166,6 +172,7 @@ private:
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
     macro(ValueAdd, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
+    macro(ValueAddSafe, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
     \
     /* Property access. */\
     /* PutByValAlias indicates a 'put' aliases a prior write to the same property. */\

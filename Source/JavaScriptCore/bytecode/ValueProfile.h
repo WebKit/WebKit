@@ -359,6 +359,24 @@ inline int getValueProfileBytecodeOffset(ValueProfile* valueProfile)
 {
     return valueProfile->m_bytecodeOffset;
 }
+
+// This is a mini value profile to catch pathologies. It is a counter that gets
+// incremented when we take the slow path on any instruction.
+struct RareCaseProfile {
+    RareCaseProfile(int bytecodeOffset)
+        : m_bytecodeOffset(bytecodeOffset)
+        , m_counter(0)
+    {
+    }
+    
+    int m_bytecodeOffset;
+    uint32_t m_counter;
+};
+
+inline int getRareCaseProfileBytecodeOffset(RareCaseProfile* rareCaseProfile)
+{
+    return rareCaseProfile->m_bytecodeOffset;
+}
 #endif
 
 }

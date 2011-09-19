@@ -33,7 +33,7 @@
 
 namespace JSC { namespace DFG {
 
-const double twoToThe32 = (double)0x100000000ull;
+const double JITCodeGenerator::twoToThe32 = (double)0x100000000ull;
 
 void JITCodeGenerator::clearGenerationInfo()
 {
@@ -729,7 +729,10 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         break;
     }
         
-    case ArithMul: {
+    case ArithMulIgnoreZero:
+    case ArithMulPossiblyNegZero:
+    case ArithMulSpecNotNegZero:
+    case ArithMulSafe: {
         overflow.append(m_jit.branchMul32(MacroAssembler::Overflow, arg1GPR, arg2GPR, resultGPR));
         overflow.append(m_jit.branchTest32(MacroAssembler::Zero, resultGPR));
         break;
@@ -820,7 +823,10 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         m_jit.subDouble(tmp2FPR, tmp1FPR);
         break;
             
-    case ArithMul:
+    case ArithMulIgnoreZero:
+    case ArithMulPossiblyNegZero:
+    case ArithMulSpecNotNegZero:
+    case ArithMulSafe:
         m_jit.mulDouble(tmp2FPR, tmp1FPR);
         break;
             
@@ -1985,6 +1991,16 @@ GPRTemporary::GPRTemporary(JITCodeGenerator* jit, SpeculateIntegerOperand& op1, 
         m_gpr = m_jit->reuse(op1.gpr());
     else if (m_jit->canReuse(op2.index()))
         m_gpr = m_jit->reuse(op2.gpr());
+    else
+        m_gpr = m_jit->allocate();
+}
+
+GPRTemporary::GPRTemporary(JITCodeGenerator* jit, SpeculateStrictInt32Operand& op1)
+    : m_jit(jit)
+    , m_gpr(InvalidGPRReg)
+{
+    if (m_jit->canReuse(op1.index()))
+        m_gpr = m_jit->reuse(op1.gpr());
     else
         m_gpr = m_jit->allocate();
 }
