@@ -508,6 +508,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\PrivateBrowsingPushStateNoHistoryCallback.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Tests\WebKit2\push-state.html"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\ResponsivenessTimerDoesntFireEarly.cpp"
 					>
 				</File>
