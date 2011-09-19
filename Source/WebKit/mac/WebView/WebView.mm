@@ -3531,14 +3531,12 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
 
 - (WebFrame *)selectedFrame
 {
-    if (_private->usesDocumentViews) {
-        // If the first responder is a view in our tree, we get the frame containing the first responder.
-        // This is faster than searching the frame hierarchy, and will give us a result even in the case
-        // where the focused frame doesn't actually contain a selection.
-        WebFrame *focusedFrame = [self _focusedFrame];
-        if (focusedFrame)
-            return focusedFrame;
-    }
+    // If the first responder is a view in our tree, we get the frame containing the first responder.
+    // This is faster than searching the frame hierarchy, and will give us a result even in the case
+    // where the focused frame doesn't actually contain a selection.
+    WebFrame *focusedFrame = [self _focusedFrame];
+    if (focusedFrame)
+        return focusedFrame;
     
     // If the first responder is outside of our view tree, we search for a frame containing a selection.
     // There should be at most only one of these.
@@ -3824,20 +3822,16 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
         return;
 
     Frame* coreFrame = [self _mainCoreFrame];
-    if (_private->usesDocumentViews) {
-        for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
-            [[[kit(frame) frameView] documentView] viewWillMoveToHostWindow:hostWindow];
-    }
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+        [[[kit(frame) frameView] documentView] viewWillMoveToHostWindow:hostWindow];
     if (_private->hostWindow && [self window] != _private->hostWindow)
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:_private->hostWindow];
     if (hostWindow)
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:hostWindow];
     [_private->hostWindow release];
     _private->hostWindow = [hostWindow retain];
-    if (_private->usesDocumentViews) {
-        for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
-            [[[kit(frame) frameView] documentView] viewDidMoveToHostWindow];
-    }
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+        [[[kit(frame) frameView] documentView] viewDidMoveToHostWindow];
 }
 
 - (NSWindow *)hostWindow
@@ -3958,80 +3952,68 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
 
 - (BOOL)acceptsFirstResponder
 {
-    if (_private->usesDocumentViews)
-        return [[[self mainFrame] frameView] acceptsFirstResponder];
-
-    // FIXME (Viewless): Need more code from WebHTMLView here.
-    return YES;
+    return [[[self mainFrame] frameView] acceptsFirstResponder];
 }
 
 - (BOOL)becomeFirstResponder
 {
-    if (_private->usesDocumentViews) {
-        if (_private->becomingFirstResponder) {
-            // Fix for unrepro infinite recursion reported in Radar 4448181. If we hit this assert on
-            // a debug build, we should figure out what causes the problem and do a better fix.
-            ASSERT_NOT_REACHED();
-            return NO;
-        }
-        
-        // This works together with setNextKeyView to splice the WebView into
-        // the key loop similar to the way NSScrollView does this. Note that
-        // WebFrameView has very similar code.
-        NSWindow *window = [self window];
-        WebFrameView *mainFrameView = [[self mainFrame] frameView];
+    if (_private->becomingFirstResponder) {
+        // Fix for unrepro infinite recursion reported in Radar 4448181. If we hit this assert on
+        // a debug build, we should figure out what causes the problem and do a better fix.
+        ASSERT_NOT_REACHED();
+        return NO;
+    }
+    
+    // This works together with setNextKeyView to splice the WebView into
+    // the key loop similar to the way NSScrollView does this. Note that
+    // WebFrameView has very similar code.
+    NSWindow *window = [self window];
+    WebFrameView *mainFrameView = [[self mainFrame] frameView];
 
-        NSResponder *previousFirstResponder = [[self window] _oldFirstResponderBeforeBecoming];
-        BOOL fromOutside = ![previousFirstResponder isKindOfClass:[NSView class]] || (![(NSView *)previousFirstResponder isDescendantOf:self] && previousFirstResponder != self);
+    NSResponder *previousFirstResponder = [[self window] _oldFirstResponderBeforeBecoming];
+    BOOL fromOutside = ![previousFirstResponder isKindOfClass:[NSView class]] || (![(NSView *)previousFirstResponder isDescendantOf:self] && previousFirstResponder != self);
 
-        if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
-            NSView *previousValidKeyView = [self previousValidKeyView];
-            if (previousValidKeyView != self && previousValidKeyView != mainFrameView) {
-                _private->becomingFirstResponder = YES;
-                _private->becomingFirstResponderFromOutside = fromOutside;
-                [window makeFirstResponder:previousValidKeyView];
-                _private->becomingFirstResponderFromOutside = NO;
-                _private->becomingFirstResponder = NO;
-                return YES;
-            }
-            return NO;
-        }
-
-        if ([mainFrameView acceptsFirstResponder]) {
+    if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
+        NSView *previousValidKeyView = [self previousValidKeyView];
+        if (previousValidKeyView != self && previousValidKeyView != mainFrameView) {
             _private->becomingFirstResponder = YES;
             _private->becomingFirstResponderFromOutside = fromOutside;
-            [window makeFirstResponder:mainFrameView];
+            [window makeFirstResponder:previousValidKeyView];
             _private->becomingFirstResponderFromOutside = NO;
             _private->becomingFirstResponder = NO;
             return YES;
-        } 
-
+        }
         return NO;
     }
 
-    // FIXME (Viewless): Need more code from WebHTMLView here.
-    return YES;
+    if ([mainFrameView acceptsFirstResponder]) {
+        _private->becomingFirstResponder = YES;
+        _private->becomingFirstResponderFromOutside = fromOutside;
+        [window makeFirstResponder:mainFrameView];
+        _private->becomingFirstResponderFromOutside = NO;
+        _private->becomingFirstResponder = NO;
+        return YES;
+    } 
+
+    return NO;
 }
 
 - (NSView *)_webcore_effectiveFirstResponder
 {
-    if (_private && _private->usesDocumentViews) {
-        if (WebFrameView *frameView = [[self mainFrame] frameView])
-            return [frameView _webcore_effectiveFirstResponder];
-    }
+    if (WebFrameView *frameView = [[self mainFrame] frameView])
+        return [frameView _webcore_effectiveFirstResponder];
+
     return [super _webcore_effectiveFirstResponder];
 }
 
 - (void)setNextKeyView:(NSView *)view
 {
-    if (_private && _private->usesDocumentViews) {
-        // This works together with becomeFirstResponder to splice the WebView into
-        // the key loop similar to the way NSScrollView does this. Note that
-        // WebFrameView has similar code.
-        if (WebFrameView *mainFrameView = [[self mainFrame] frameView]) {
-            [mainFrameView setNextKeyView:view];
-            return;
-        }
+    // This works together with becomeFirstResponder to splice the WebView into
+    // the key loop similar to the way NSScrollView does this. Note that
+    // WebFrameView has similar code.
+    if (WebFrameView *mainFrameView = [[self mainFrame] frameView]) {
+        [mainFrameView setNextKeyView:view];
+        return;
     }
 
     [super setNextKeyView:view];
@@ -4557,20 +4539,15 @@ static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *stri
     
     _private->hoverFeedbackSuspended = newValue;
 
-    if (_private->usesDocumentViews) {
-        id <WebDocumentView> documentView = [[[self mainFrame] frameView] documentView];
-        // FIXME: in a perfect world we'd do this in a general way that worked with any document view,
-        // such as by calling a protocol method or using respondsToSelector or sending a notification.
-        // But until there is any need for these more general solutions, we'll just hardwire it to work
-        // with WebHTMLView.
-        // Note that _hoverFeedbackSuspendedChanged needs to be called only on the main WebHTMLView, not
-        // on each subframe separately.
-        if ([documentView isKindOfClass:[WebHTMLView class]])
-            [(WebHTMLView *)documentView _hoverFeedbackSuspendedChanged];
-        return;
-    }
-
-    [self _updateMouseoverWithFakeEvent];
+    id <WebDocumentView> documentView = [[[self mainFrame] frameView] documentView];
+    // FIXME: in a perfect world we'd do this in a general way that worked with any document view,
+    // such as by calling a protocol method or using respondsToSelector or sending a notification.
+    // But until there is any need for these more general solutions, we'll just hardwire it to work
+    // with WebHTMLView.
+    // Note that _hoverFeedbackSuspendedChanged needs to be called only on the main WebHTMLView, not
+    // on each subframe separately.
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _hoverFeedbackSuspendedChanged];
 }
 
 - (BOOL)isHoverFeedbackSuspended
