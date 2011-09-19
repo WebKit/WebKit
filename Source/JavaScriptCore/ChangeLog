@@ -1,5 +1,12 @@
 2011-09-19  Oliver Hunt  <oliver@apple.com>
 
+        Build fix.
+
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::compileGetDirectOffset):
+
+2011-09-19  Oliver Hunt  <oliver@apple.com>
+
         Rename NewSpace.{h,cpp} to MarkedSpace.{h,cpp}
         https://bugs.webkit.org/show_bug.cgi?id=68376
 

@@ -459,7 +459,7 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID resultTag, Register
 void JIT::compileGetDirectOffset(JSObject* base, RegisterID resultTag, RegisterID resultPayload, size_t cachedOffset)
 {
     loadPtr(base->addressOfPropertyStorage(), resultTag);
-    load32(Address(resultTag, cachedOffset * sizeof(WriteBarrier<Unknown>) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), result);
+    load32(Address(resultTag, cachedOffset * sizeof(WriteBarrier<Unknown>) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), resultPayload);
     load32(Address(resultTag, cachedOffset * sizeof(WriteBarrier<Unknown>) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultTag);
 }
 
