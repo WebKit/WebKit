@@ -1,3 +1,11 @@
+2011-09-19  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed: ScrollbarThemeMock.cpp is already referenced in the
+        global CMakeLists.txt.
+
+        * CMakeListsEfl.txt: Remove reference to platform/mock/ScrollbarThemeMock.cpp.
+        * CMakeListsWinCE.txt: Ditto.
+
 2011-09-19  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
 
         Unreviewed: dos2unix on bindings/js/JSExceptionBase.h
