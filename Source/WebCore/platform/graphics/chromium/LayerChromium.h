@@ -176,12 +176,10 @@ public:
     virtual void bindContentsTexture() { }
     virtual void protectVisibleTileTextures() { }
 
-    // These exists just for debugging (via drawDebugBorder()).
-    void setBorderColor(const Color&);
-
+    // These exist just for debugging (via drawDebugBorder()).
+    void setDebugBorderColor(const Color&);
+    void setDebugBorderWidth(float);
     void drawDebugBorder();
-
-    void setBorderWidth(float);
 
     virtual void pushPropertiesTo(CCLayerImpl*);
 

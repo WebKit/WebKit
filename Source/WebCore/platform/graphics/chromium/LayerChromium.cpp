@@ -321,13 +321,13 @@ PassRefPtr<CCLayerImpl> LayerChromium::createCCLayerImpl()
     return CCLayerImpl::create(m_layerId);
 }
 
-void LayerChromium::setBorderColor(const Color& color)
+void LayerChromium::setDebugBorderColor(const Color& color)
 {
     m_debugBorderColor = color;
     setNeedsCommit();
 }
 
-void LayerChromium::setBorderWidth(float width)
+void LayerChromium::setDebugBorderWidth(float width)
 {
     m_debugBorderWidth = width;
     setNeedsCommit();
