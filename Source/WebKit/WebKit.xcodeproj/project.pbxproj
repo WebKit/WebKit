@@ -353,7 +353,6 @@
 		BC7F889E10C9D30C00D6133D /* WebGeolocationPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F889C10C9D30C00D6133D /* WebGeolocationPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC7F889F10C9D30C00D6133D /* WebGeolocationPosition.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC7F889D10C9D30C00D6133D /* WebGeolocationPosition.mm */; };
 		BC7F88A510C9D88B00D6133D /* WebGeolocationPositionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F88A410C9D88B00D6133D /* WebGeolocationPositionInternal.h */; };
-		BC97E7E210963D260010D361 /* WebViewEventHandling.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC97E7E110963D260010D361 /* WebViewEventHandling.mm */; };
 		C0167BF80D7F5DD00028696E /* WebScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = C0167BF60D7F5DD00028696E /* WebScriptDebugger.h */; };
 		C0167BF90D7F5DD00028696E /* WebScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0167BF70D7F5DD00028696E /* WebScriptDebugger.mm */; };
 		C0B1F7E810AC8E3100C925D9 /* WebScriptWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = C0B1F7E510AC8E3100C925D9 /* WebScriptWorld.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -665,7 +664,6 @@
 		BC7F889C10C9D30C00D6133D /* WebGeolocationPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationPosition.h; sourceTree = "<group>"; };
 		BC7F889D10C9D30C00D6133D /* WebGeolocationPosition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGeolocationPosition.mm; sourceTree = "<group>"; };
 		BC7F88A410C9D88B00D6133D /* WebGeolocationPositionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationPositionInternal.h; sourceTree = "<group>"; };
-		BC97E7E110963D260010D361 /* WebViewEventHandling.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewEventHandling.mm; sourceTree = "<group>"; };
 		BE4FBECB0653DF47005EDE15 /* WebEditingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebEditingDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE6DC39904C62C4E004D0EF6 /* WebNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSURLExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE6DC39A04C62C4E004D0EF6 /* WebNSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSURLExtras.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1238,7 +1236,6 @@
 				51A8B57A042834F700CA2D3A /* WebView.mm */,
 				BC2E464B0FD8A96800A9D9DE /* WebViewData.h */,
 				BC2E464C0FD8A96800A9D9DE /* WebViewData.mm */,
-				BC97E7E110963D260010D361 /* WebViewEventHandling.mm */,
 				930D02BB06275F640076701E /* WebViewInternal.h */,
 				51A8B57D0428353A00CA2D3A /* WebViewPrivate.h */,
 			);
@@ -1974,7 +1971,6 @@
 				C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */,
 				939811070824BF01008DF038 /* WebView.mm in Sources */,
 				BC2E464E0FD8A96800A9D9DE /* WebViewData.mm in Sources */,
-				BC97E7E210963D260010D361 /* WebViewEventHandling.mm in Sources */,
 				41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */,
 				A5DEFC0A11D5331C00885273 /* WebSecurityOrigin.mm in Sources */,
 				A5DEFC1011D5343E00885273 /* WebDatabaseQuotaManager.mm in Sources */,

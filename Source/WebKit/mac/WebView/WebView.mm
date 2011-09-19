@@ -1172,8 +1172,6 @@ static bool fastDocumentTeardownEnabled()
     _private->closed = YES;
     [self _removeFromAllWebViewsSet];
 
-    [self _closingEventHandling];
-
 #ifndef NDEBUG
     WTF::RefCountedLeakCounter::cancelMessageSuppression(webViewIsOpen);
 #endif

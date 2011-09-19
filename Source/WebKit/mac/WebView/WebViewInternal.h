@@ -99,13 +99,6 @@ WebCore::FindOptions coreOptions(WebFindOptions options);
 
 #endif
 
-@interface WebView (WebViewEventHandling)
-- (void)_closingEventHandling;
-- (void)_updateMouseoverWithFakeEvent;
-- (void)_cancelUpdateMouseoverTimer;
-- (void)_stopAutoscrollTimer;
-@end
-
 // FIXME: Temporary way to expose methods that are in the wrong category inside WebView.
 @interface WebView (WebViewOtherInternal)
 
