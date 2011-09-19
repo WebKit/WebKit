@@ -1,3 +1,14 @@
+2011-09-19  Aaron Boodman  <aa@chromium.org>
+
+        r95385 broke Chromium. Fix it.
+        https://bugs.webkit.org/show_bug.cgi?id=68378
+
+        Unreviewed, build fix.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::didCreateScriptContext):
+        (WebKit::FrameLoaderClientImpl::willReleaseScriptContext):
+
 2011-09-19  Jochen Eisinger  <jochen@chromium.org>
 
         Unreviewed, build fix

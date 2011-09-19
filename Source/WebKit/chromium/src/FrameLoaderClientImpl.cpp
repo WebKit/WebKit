@@ -143,14 +143,26 @@ void FrameLoaderClientImpl::documentElementAvailable()
 #if USE(V8)
 void FrameLoaderClientImpl::didCreateScriptContext(v8::Handle<v8::Context> context, int worldId)
 {
-    if (m_webFrame->client())
+    if (m_webFrame->client()) {
+        // FIXME: Remove these once Chromium is updated to use the new version of didCreateScriptContext().
+        if (worldId)
+            m_webFrame->client()->didCreateScriptContext(m_webFrame);
+        else
+            m_webFrame->client()->didCreateIsolatedScriptContext(m_webFrame, worldId, context);
+
         m_webFrame->client()->didCreateScriptContext(m_webFrame, context, worldId);
+    }
 }
 
 void FrameLoaderClientImpl::willReleaseScriptContext(v8::Handle<v8::Context> context, int worldId)
 {
-    if (m_webFrame->client())
+    if (m_webFrame->client()) {
+        // FIXME: Remove this once Chromium is updated to use willReleaseScriptContext().
+        if (worldId)
+            m_webFrame->client()->didDestroyScriptContext(m_webFrame);
+
         m_webFrame->client()->willReleaseScriptContext(m_webFrame, context, worldId);
+    }
 }
 #endif
 
