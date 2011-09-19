@@ -560,12 +560,17 @@ bool V8DOMWindow::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::V
         return false;
 
     if (key->IsString()) {
+        DEFINE_STATIC_LOCAL(AtomicString, nameOfProtoProperty, ("__proto__"));
+
         String name = toWebCoreString(key);
         // Notice that we can't call HasRealNamedProperty for ACCESS_HAS
         // because that would generate infinite recursion.
         if (type == v8::ACCESS_HAS && target->tree()->child(name))
             return true;
-        if (type == v8::ACCESS_GET && target->tree()->child(name) && !host->HasRealNamedProperty(key->ToString()))
+        // We need to explicitly compare against nameOfProtoProperty because
+        // V8's JSObject::LocalLookup finds __proto__ before
+        // interceptors and even when __proto__ isn't a "real named property".
+        if (type == v8::ACCESS_GET && target->tree()->child(name) && !host->HasRealNamedProperty(key->ToString()) && name != nameOfProtoProperty)
             return true;
     }
 

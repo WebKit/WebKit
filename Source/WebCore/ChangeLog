@@ -1,5 +1,22 @@
 2011-09-19  Adam Barth  <abarth@webkit.org>
 
+        Named property confusion with __proto__
+        https://bugs.webkit.org/show_bug.cgi?id=68221
+
+        Reviewed by Eric Seidel.
+
+        The __proto__ property is super magical because it's not a real named
+        property and it has higher precedence than even interceptors.  This
+        confuses this check, which is meant to detech which names will get
+        handled by our interceptor.
+
+        Test: http/tests/security/window-named-proto.html
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::namedSecurityCheck):
+
+2011-09-19  Adam Barth  <abarth@webkit.org>
+
         Rename ENABLE(OPENTYPE_SANITIZER) to USE(OPENTYPE_SANITIZER)
         https://bugs.webkit.org/show_bug.cgi?id=68292
 
