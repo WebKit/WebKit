@@ -70,6 +70,12 @@ public:
 
     bool isNull() const { return m_private.isNull(); }
 
+    // Static methods for enabling accessibility.
+    WEBKIT_EXPORT static void enableAccessibility();
+    WEBKIT_EXPORT static bool accessibilityEnabled();
+
+    WEBKIT_EXPORT int axID() const;
+
     WEBKIT_EXPORT WebString accessibilityDescription() const;
     WEBKIT_EXPORT WebString actionVerb() const;
     WEBKIT_EXPORT bool canSetFocusAttribute() const;

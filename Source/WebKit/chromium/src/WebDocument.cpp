@@ -172,13 +172,6 @@ WebDocumentType WebDocument::doctype() const
     return WebDocumentType(constUnwrap<Document>()->doctype());
 }
 
-WebAccessibilityObject WebDocument::accessibilityObject() const
-{
-    const Document* document = constUnwrap<Document>();
-    return WebAccessibilityObject(
-        document->axObjectCache()->getOrCreate(document->renderer()));
-}
-
 void WebDocument::insertUserStyleSheet(const WebString& sourceCode, UserStyleLevel level)
 {
     RefPtr<Document> document = unwrap<Document>();
@@ -194,6 +187,20 @@ void WebDocument::cancelFullScreen()
 #if ENABLE(FULLSCREEN_API)
     unwrap<Document>()->webkitCancelFullScreen();
 #endif
+}
+
+WebAccessibilityObject WebDocument::accessibilityObject() const
+{
+    const Document* document = constUnwrap<Document>();
+    return WebAccessibilityObject(
+        document->axObjectCache()->getOrCreate(document->renderer()));
+}
+
+WebAccessibilityObject WebDocument::accessibilityObjectFromID(int axID) const
+{
+    const Document* document = constUnwrap<Document>();
+    return WebAccessibilityObject(
+        document->axObjectCache()->objectFromAXID(axID));
 }
 
 WebDocument::WebDocument(const PassRefPtr<Document>& elem)

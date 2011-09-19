@@ -1,3 +1,27 @@
+2011-09-19  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Expose AXObjectCache methods so that WebAccessibilityCache
+        can be deleted.
+        https://bugs.webkit.org/show_bug.cgi?id=68225
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch exposes the functionality needed from AXObjectCache
+        with new methods in WebAccessibilityObject and WebDocument.
+        Next, Chromium will be updated to use only these methods and
+        not WebAccessibilityCache. Then, WebAccessibilityCache can be
+        deleted from WebKit.
+
+        * public/WebAccessibilityObject.h:
+        * public/WebDocument.h:
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::enableAccessibility):
+        (WebKit::WebAccessibilityObject::accessibilityEnabled):
+        (WebKit::WebAccessibilityObject::axID):
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::accessibilityObject):
+        (WebKit::WebDocument::accessibilityObjectFromID):
+
 2011-09-19  Bill Budge  <bbudge@chromium.org>
 
         Perform HTTP method and header validation in AssociatedURLLoader for

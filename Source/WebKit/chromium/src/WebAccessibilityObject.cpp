@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebAccessibilityObject.h"
 
+#include "AXObjectCache.h"
 #include "AccessibilityObject.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableCell.h"
@@ -67,6 +68,27 @@ void WebAccessibilityObject::assign(const WebKit::WebAccessibilityObject& other)
 bool WebAccessibilityObject::equals(const WebAccessibilityObject& n) const
 {
     return (m_private.get() == n.m_private.get());
+}
+
+// static
+void WebAccessibilityObject::enableAccessibility()
+{
+    AXObjectCache::enableAccessibility();
+}
+
+// static
+bool WebAccessibilityObject::accessibilityEnabled()
+{
+    return AXObjectCache::accessibilityEnabled();
+}
+
+int WebAccessibilityObject::axID() const
+{
+    if (m_private.isNull())
+        return -1;
+
+    m_private->updateBackingStore();
+    return m_private->axObjectID();
 }
 
 WebString WebAccessibilityObject::accessibilityDescription() const
