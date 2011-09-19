@@ -1,3 +1,10 @@
+2011-09-19  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r94575
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Relinearized project dependencies. testRegExp
+        now builds just before FindSafari.
+
 2011-09-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95466.
