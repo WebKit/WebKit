@@ -1914,11 +1914,11 @@
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\NewSpace.cpp"
+                                    RelativePath="..\..\heap\MarkedSpace.cpp"
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\NewSpace.h"
+                                    RelativePath="..\..\heap\MarkedSpace.h"
                                     >
                             </File>
                             <File

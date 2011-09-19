@@ -50,7 +50,7 @@ SET(JavaScriptCore_SOURCES
     heap/HandleStack.cpp
     heap/MachineStackMarker.cpp
     heap/MarkedBlock.cpp
-    heap/NewSpace.cpp
+    heap/MarkedSpace.cpp
     heap/ConservativeRoots.cpp
     heap/MarkStack.cpp
 

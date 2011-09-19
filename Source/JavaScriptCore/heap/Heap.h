@@ -26,7 +26,7 @@
 #include "HandleStack.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
-#include "NewSpace.h"
+#include "MarkedSpace.h"
 #include "SlotVisitor.h"
 #include "WriteBarrierSupport.h"
 #include <wtf/Forward.h>

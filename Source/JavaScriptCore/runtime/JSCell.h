@@ -65,7 +65,6 @@ namespace JSC {
         friend class JSValue;
         friend class JSAPIValueWrapper;
         friend class JSGlobalData;
-        friend class NewSpace;
         friend class MarkedBlock;
         friend class ScopeChainNode;
         friend class Structure;

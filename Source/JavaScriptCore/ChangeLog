@@ -1,5 +1,40 @@
 2011-09-19  Oliver Hunt  <oliver@apple.com>
 
+        Rename NewSpace.{h,cpp} to MarkedSpace.{h,cpp}
+        https://bugs.webkit.org/show_bug.cgi?id=68376
+
+        Reviewed by Gavin Barraclough.
+
+        Renamed the the MarkedSpace files to match new name, and
+        updated the relevant references.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.h:
+        * heap/MarkedSpace.cpp: Renamed from Source/JavaScriptCore/heap/NewSpace.cpp.
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::addBlock):
+        (JSC::MarkedSpace::removeBlock):
+        (JSC::MarkedSpace::resetAllocator):
+        (JSC::MarkedSpace::canonicalizeBlocks):
+        * heap/MarkedSpace.h: Renamed from Source/JavaScriptCore/heap/NewSpace.h.
+        (JSC::MarkedSpace::waterMark):
+        (JSC::MarkedSpace::highWaterMark):
+        (JSC::MarkedSpace::setHighWaterMark):
+        (JSC::MarkedSpace::sizeClassFor):
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::forEachBlock):
+        (JSC::MarkedSpace::SizeClass::SizeClass):
+        (JSC::MarkedSpace::SizeClass::resetAllocator):
+        (JSC::MarkedSpace::SizeClass::canonicalizeBlock):
+        * runtime/JSCell.h:
+
+2011-09-19  Oliver Hunt  <oliver@apple.com>
+
         Rename NewSpace to MarkedSpace
         https://bugs.webkit.org/show_bug.cgi?id=68375
 

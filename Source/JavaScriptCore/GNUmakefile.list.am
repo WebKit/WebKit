@@ -155,8 +155,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/MarkedBlock.h \
 	Source/JavaScriptCore/heap/MarkedBlockSet.h \
 	Source/JavaScriptCore/heap/TinyBloomFilter.h \
-	Source/JavaScriptCore/heap/NewSpace.cpp \
-	Source/JavaScriptCore/heap/NewSpace.h \
+	Source/JavaScriptCore/heap/MarkedSpace.cpp \
+	Source/JavaScriptCore/heap/MarkedSpace.h \
 	Source/JavaScriptCore/heap/Strong.h \
 	Source/JavaScriptCore/heap/VTableSpectrum.cpp \
 	Source/JavaScriptCore/heap/VTableSpectrum.h \

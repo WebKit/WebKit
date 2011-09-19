@@ -214,8 +214,8 @@
 		14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */; };
 		14BFCE6910CDB1FC00364CCE /* WeakGCMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C5242B0F5355E900BA3D04 /* JITStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A6581A0F4E36F4000150FD /* JITStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		14D2F3DA139F4BE200491031 /* NewSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D2F3D8139F4BE200491031 /* NewSpace.cpp */; };
-		14D2F3DB139F4BE200491031 /* NewSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D2F3D9139F4BE200491031 /* NewSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14D2F3DA139F4BE200491031 /* MarkedSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D2F3D8139F4BE200491031 /* MarkedSpace.cpp */; };
+		14D2F3DB139F4BE200491031 /* MarkedSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D2F3D9139F4BE200491031 /* MarkedSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14E9D17B107EC469004DDA21 /* JSGlobalObjectFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */; };
 		14F8BA3E107EC886009892DC /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */; };
 		14F8BA43107EC88C009892DC /* TCSystemAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */; };
@@ -907,8 +907,8 @@
 		14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSValueRef.cpp; sourceTree = "<group>"; };
 		14BD5A2D0A3E91F600BAF59C /* testapi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = testapi.c; path = API/tests/testapi.c; sourceTree = "<group>"; };
 		14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCMap.h; sourceTree = "<group>"; };
-		14D2F3D8139F4BE200491031 /* NewSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewSpace.cpp; sourceTree = "<group>"; };
-		14D2F3D9139F4BE200491031 /* NewSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewSpace.h; sourceTree = "<group>"; };
+		14D2F3D8139F4BE200491031 /* MarkedSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedSpace.cpp; sourceTree = "<group>"; };
+		14D2F3D9139F4BE200491031 /* MarkedSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedSpace.h; sourceTree = "<group>"; };
 		14D792640DAA03FB001A9F05 /* RegisterFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterFile.h; sourceTree = "<group>"; };
 		14D857740A4696C80032146C /* testapi.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = testapi.js; path = API/tests/testapi.js; sourceTree = "<group>"; };
 		14DA818E0D99FD2000B0A4FB /* JSActivation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSActivation.h; sourceTree = "<group>"; };
@@ -1642,8 +1642,8 @@
 				141448CA13A176EC00F5BA1A /* MarkedBlockSet.h */,
 				142D6F0E13539A4100B02E86 /* MarkStack.cpp */,
 				142D6F0F13539A4100B02E86 /* MarkStack.h */,
-				14D2F3D8139F4BE200491031 /* NewSpace.cpp */,
-				14D2F3D9139F4BE200491031 /* NewSpace.h */,
+				14D2F3D8139F4BE200491031 /* MarkedSpace.cpp */,
+				14D2F3D9139F4BE200491031 /* MarkedSpace.h */,
 				14BA78F013AAB88F005B7C2C /* SlotVisitor.h */,
 				142E3132134FF0A600AFADB5 /* Strong.h */,
 				141448CC13A1783700F5BA1A /* TinyBloomFilter.h */,
@@ -2781,7 +2781,7 @@
 				14F97447138C853E00DA1C67 /* HeapRootVisitor.h in Headers */,
 				86BB09C1138E381B0056702F /* DFGRepatch.h in Headers */,
 				A72FFD64139985A800E5365A /* KeywordLookup.h in Headers */,
-				14D2F3DB139F4BE200491031 /* NewSpace.h in Headers */,
+				14D2F3DB139F4BE200491031 /* MarkedSpace.h in Headers */,
 				141448CB13A176EC00F5BA1A /* MarkedBlockSet.h in Headers */,
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
 				14BA78F113AAB88F005B7C2C /* SlotVisitor.h in Headers */,
@@ -3287,7 +3287,7 @@
 				86AE64A8135E5E1C00963012 /* MacroAssemblerSH4.cpp in Sources */,
 				7934BB7C1361979400CB99A1 /* ParallelJobsGeneric.cpp in Sources */,
 				86BB09C0138E381B0056702F /* DFGRepatch.cpp in Sources */,
-				14D2F3DA139F4BE200491031 /* NewSpace.cpp in Sources */,
+				14D2F3DA139F4BE200491031 /* MarkedSpace.cpp in Sources */,
 				14BA7A9713AADFF8005B7C2C /* Heap.cpp in Sources */,
 				C22C52F113FAF6EF00B7DC0D /* bignum-dtoa.cc in Sources */,
 				C22C52F313FAF6EF00B7DC0D /* bignum.cc in Sources */,

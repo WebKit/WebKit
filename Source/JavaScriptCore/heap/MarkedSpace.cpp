@@ -19,10 +19,9 @@
  */
 
 #include "config.h"
-#include "NewSpace.h"
+#include "MarkedSpace.h"
 
 #include "JSGlobalObject.h"
-#include "JSCell.h"
 #include "JSLock.h"
 #include "JSObject.h"
 #include "ScopeChain.h"

@@ -79,7 +79,7 @@ SOURCES += \
     heap/MachineStackMarker.cpp \
     heap/MarkStack.cpp \
     heap/MarkedBlock.cpp \
-    heap/NewSpace.cpp \
+    heap/MarkedSpace.cpp \
     heap/VTableSpectrum.cpp \
     heap/WriteBarrierSupport.cpp \
     debugger/DebuggerActivation.cpp \
