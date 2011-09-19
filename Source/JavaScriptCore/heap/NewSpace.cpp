@@ -32,9 +32,7 @@ namespace JSC {
 class Structure;
 
 NewSpace::NewSpace(Heap* heap)
-    : m_propertyStorageNursery(static_cast<char*>(fastMalloc(PropertyStorageNurserySize)))
-    , m_propertyStorageAllocationPoint(m_propertyStorageNursery)
-    , m_waterMark(0)
+    : m_waterMark(0)
     , m_highWaterMark(0)
     , m_heap(heap)
 {

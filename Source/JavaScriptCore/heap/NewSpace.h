@@ -46,7 +46,6 @@ namespace JSC {
         WTF_MAKE_NONCOPYABLE(NewSpace);
     public:
         static const size_t maxCellSize = 1024;
-        static const size_t PropertyStorageNurserySize = 4 * MB;
 
         struct SizeClass {
             SizeClass();
@@ -64,9 +63,6 @@ namespace JSC {
 
         SizeClass& sizeClassFor(size_t);
         void* allocate(SizeClass&);
-        inline void* allocatePropertyStorage(size_t);
-        inline bool inPropertyStorageNursery(void* ptr);
-        inline void resetPropertyStorageNursery();
         
         void resetAllocator();
 
@@ -96,8 +92,6 @@ namespace JSC {
 
         SizeClass m_preciseSizeClasses[preciseCount];
         SizeClass m_impreciseSizeClasses[impreciseCount];
-        char* m_propertyStorageNursery;
-        char* m_propertyStorageAllocationPoint;
         size_t m_waterMark;
         size_t m_highWaterMark;
         Heap* m_heap;
@@ -165,30 +159,6 @@ namespace JSC {
         
         sizeClass.firstFreeCell = firstFreeCell->next;
         return firstFreeCell;
-    }
-
-    inline void NewSpace::resetPropertyStorageNursery()
-    {
-        m_propertyStorageAllocationPoint = m_propertyStorageNursery;
-    }
-    
-    inline void* NewSpace::allocatePropertyStorage(size_t size)
-    {
-        char* result = m_propertyStorageAllocationPoint;
-        if (size > PropertyStorageNurserySize)
-            CRASH();
-        m_propertyStorageAllocationPoint += size;
-        if (static_cast<size_t>(m_propertyStorageAllocationPoint - m_propertyStorageNursery) > PropertyStorageNurserySize) {
-            m_propertyStorageAllocationPoint = result;
-            return 0;
-        }
-        return result;
-    }
-
-    inline bool NewSpace::inPropertyStorageNursery(void* ptr)
-    {
-        char* addr = static_cast<char*>(ptr);
-        return static_cast<size_t>(addr - m_propertyStorageNursery) < PropertyStorageNurserySize;
     }
     
     template <typename Functor> inline typename Functor::ReturnType NewSpace::forEachBlock(Functor& functor)

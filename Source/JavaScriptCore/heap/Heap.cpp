@@ -692,7 +692,6 @@ void Heap::collect(SweepToggle sweepToggle)
     // new bytes allocated) proportion, and seems to work well in benchmarks.
     size_t proportionalBytes = 2 * size();
     m_newSpace.setHighWaterMark(max(proportionalBytes, m_minBytesPerCycle));
-    m_newSpace.resetPropertyStorageNursery();
     JAVASCRIPTCORE_GC_END();
 
     (*m_activityCallback)();

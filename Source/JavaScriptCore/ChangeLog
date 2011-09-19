@@ -1,3 +1,30 @@
+2011-09-19  Oliver Hunt  <oliver@apple.com>
+
+        Remove bump allocator
+        https://bugs.webkit.org/show_bug.cgi?id=68370
+
+        Reviewed by Sam Weinig.
+
+        Can't do anything with this allocator currently, and it's
+        increasing the complexity of the GC code.  Slight progression
+        on SunSpider, slight regression (undoing the original progression)
+        in V8.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        * heap/NewSpace.cpp:
+        (JSC::NewSpace::NewSpace):
+        * heap/NewSpace.h:
+        (JSC::NewSpace::allocate):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::allocatePropertyStorage):
+        * runtime/JSObject.h:
+        (JSC::JSObject::~JSObject):
+        (JSC::JSObject::visitChildrenDirect):
+        * runtime/StorageBarrier.h:
+        (JSC::StorageBarrier::set):
+
 2011-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix distcheck build

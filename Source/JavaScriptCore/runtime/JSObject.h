@@ -438,7 +438,7 @@ inline JSObject::JSObject(JSGlobalData& globalData, Structure* structure, Proper
 
 inline JSObject::~JSObject()
 {
-    if (!isUsingInlineStorage() && !Heap::heap(this)->inPropertyStorageNursery(m_propertyStorage.get()))
+    if (!isUsingInlineStorage())
         delete [] m_propertyStorage.get();
 }
 
@@ -826,12 +826,6 @@ ALWAYS_INLINE void JSObject::visitChildrenDirect(SlotVisitor& visitor)
     JSCell::visitChildren(visitor);
 
     PropertyStorage storage = propertyStorage();
-    if (Heap::heap(this)->inPropertyStorageNursery(storage)) {
-        m_propertyStorage.set(new WriteBarrierBase<Unknown>[structure()->propertyStorageCapacity()], StorageBarrier::Unchecked);
-        if (structure()->propertyStorageCapacity() > m_structure->propertyStorageSize())
-            ASSERT(!storage[m_structure->propertyStorageSize()]);
-        memcpy(m_propertyStorage.get(), storage, m_structure->propertyStorageSize() * sizeof(WriteBarrierBase<Unknown>));
-    }
     size_t storageSize = m_structure->propertyStorageSize();
     visitor.appendValues(storage, storageSize);
     if (m_inheritorID)
