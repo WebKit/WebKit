@@ -144,6 +144,12 @@ _PATH_RULES_SPECIFIER = [
      ([# Qt's MiniBrowser has no config.h
        "Tools/MiniBrowser/qt"],
       ["-build/include"]),
+
+    ([# The Qt APIs use Qt/QML naming style, which includes
+      # naming parameters in h files.
+      "Source/WebKit2/UIProcess/API/qt"],
+     ["-readability/parameter_name"]),
+
     ([# The GTK+ APIs use GTK+ naming style, which includes
       # lower-cased, underscore-separated values, whitespace before
       # parens for function calls, and always having variable names.
