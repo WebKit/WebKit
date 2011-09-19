@@ -123,7 +123,7 @@ void WebDevToolsFrontendImpl::dispatchOnInspectorFrontend(const WebString& messa
     args.append(ToV8String(message));
     v8::TryCatch tryCatch;
     tryCatch.SetVerbose(true);
-    function->Call(inspectorBackend, args.size(), args.data());
+    V8Proxy::instrumentedCallFunction(frame->frame()->page(), function, inspectorBackend, args.size(), args.data());
 }
 
 void WebDevToolsFrontendImpl::frontendLoaded()
