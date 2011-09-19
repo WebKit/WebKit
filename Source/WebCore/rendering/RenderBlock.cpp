@@ -4336,12 +4336,14 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point)
     if (childrenInline())
         return positionForPointWithInlineChildren(pointInLogicalContents);
 
-    if (lastChildBox() && pointInContents.y() > lastChildBox()->logicalTop()) {
-        for (RenderBox* childBox = lastChildBox(); childBox; childBox = childBox->previousSiblingBox()) {
-            if (isChildHitTestCandidate(childBox))
-                return positionForPointRespectingEditingBoundaries(this, childBox, pointInContents);
-        }
-    } else {
+    RenderBox* lastCandidateBox = lastChildBox();
+    while (lastCandidateBox && !isChildHitTestCandidate(lastCandidateBox))
+        lastCandidateBox = lastCandidateBox->previousSiblingBox();
+
+    if (lastCandidateBox) {
+        if (pointInContents.y() > lastCandidateBox->logicalTop())
+            return positionForPointRespectingEditingBoundaries(this, lastCandidateBox, pointInContents);
+
         for (RenderBox* childBox = firstChildBox(); childBox; childBox = childBox->nextSiblingBox()) {
             // We hit child if our click is above the bottom of its padding box (like IE6/7 and FF3).
             if (isChildHitTestCandidate(childBox) && pointInContents.y() < childBox->logicalBottom())

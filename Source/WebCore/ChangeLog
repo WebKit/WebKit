@@ -1,3 +1,21 @@
+2011-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Incorrect selection with absolutely positioned div
+        https://bugs.webkit.org/show_bug.cgi?id=39503
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The bug was caused by a false assumption in RenderBlock::positionForPoint. Because the last child box
+        can be positioned, floated, invisible, etc..., we can't always trust last child's logicalTop to tell us
+        whether a given point is inside or below the last child box.
+
+        Fixed the bug by using the last hit-test candidate instead.
+
+        Test: editing/selection/block-with-positioned-lastchild.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPoint):
+
 2011-09-19  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Crash after magic iframe transfer for Pepper/NaCl plugins.
