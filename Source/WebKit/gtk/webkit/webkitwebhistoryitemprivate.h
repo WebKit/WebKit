@@ -38,7 +38,7 @@ GHashTable* webkit_history_items();
 
 WebKitWebHistoryItem* webkit_web_history_item_new_with_core_item(PassRefPtr<WebCore::HistoryItem>);
 
-WEBKIT_API const gchar* webkit_web_history_item_get_target(WebKitWebHistoryItem*);
+WEBKIT_API gchar* webkit_web_history_item_get_target(WebKitWebHistoryItem*);
 
 WEBKIT_API gboolean webkit_web_history_item_is_target_item(WebKitWebHistoryItem*);
 

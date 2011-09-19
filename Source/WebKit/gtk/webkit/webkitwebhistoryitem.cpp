@@ -459,7 +459,7 @@ WebKitWebHistoryItem* webkit_web_history_item_copy(WebKitWebHistoryItem* self)
 
 /* private methods */
 
-const gchar* webkit_web_history_item_get_target(WebKitWebHistoryItem* webHistoryItem)
+gchar* webkit_web_history_item_get_target(WebKitWebHistoryItem* webHistoryItem)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem), NULL);
 
