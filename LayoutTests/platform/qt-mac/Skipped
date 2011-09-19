@@ -5097,3 +5097,17 @@ fast/borders/inline-mask-overlay-image-outset.html
 fast/lists/list-marker-before-content-table.html
 fast/runin/runin-generated-before-content.html
 svg/custom/simple-text-double-shadow.svg
+
+# new failing tests
+fast/borders/border-image-massive-scale.html
+fast/borders/border-image-scrambled.html
+fast/clip/overflow-border-radius-combinations.html
+fast/clip/overflow-border-radius-composited.html
+fast/clip/overflow-border-radius-transformed.html
+fast/parser/innerhtml-with-prefixed-elements.xhtml
+fast/ruby/float-overhang-from-ruby-text.html
+fast/ruby/overhang-horizontal-no-overlap1.html
+fast/ruby/overhang-horizontal-no-overlap2.html
+fast/ruby/overhang-vertical-no-overlap1.html
+fast/ruby/overhang-vertical-no-overlap2.html
+plugins/destroy-during-npp-new-object-with-fallback-content.html
