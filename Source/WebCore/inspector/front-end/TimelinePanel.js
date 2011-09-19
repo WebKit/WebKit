@@ -1350,7 +1350,8 @@ WebInspector.TimelineModel.prototype = {
             records[records.length - 1] = records[records.length - 1] + "]";
 
         var now= new Date();
-        InspectorFrontendHost.saveAs("TimelineRawData-" + now.toRFC3339() + ".json", records.join(",\n"));
+        var suggestedFileName = "TimelineRawData-" + now.toISO8601Compact() + ".json";
+        InspectorFrontendHost.saveAs(suggestedFileName, records.join(",\n"));
     },
 
     _reset: function()
