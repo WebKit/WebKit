@@ -249,38 +249,4 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
 }
 
-const SimpleFontData* Font::fontDataForCombiningCharacterSequence(const UChar* characters, size_t length, FontDataVariant variant) const
-{
-    UChar32 baseCharacter;
-    size_t baseCharacterLength = 0;
-    U16_NEXT(characters, baseCharacterLength, length, baseCharacter);
-
-    GlyphData baseCharacterGlyphData = glyphDataForCharacter(baseCharacter, false, variant);
-
-    if (length == baseCharacterLength)
-        return baseCharacterGlyphData.glyph ? baseCharacterGlyphData.fontData : 0;
-
-    bool triedBaseCharacterFontData = false;
-
-    unsigned i = 0;
-    for (const FontData* fontData = fontDataAt(0); fontData; fontData = fontDataAt(++i)) {
-        const SimpleFontData* simpleFontData = fontData->fontDataForCharacter(baseCharacter);
-        if (variant != NormalVariant) {
-            if (const SimpleFontData* variantFontData = simpleFontData->variantFontData(m_fontDescription, variant))
-                simpleFontData = variantFontData;
-        }
-
-        if (simpleFontData == baseCharacterGlyphData.fontData)
-            triedBaseCharacterFontData = true;
-
-        if (simpleFontData->canRenderCombiningCharacterSequence(characters, length))
-            return simpleFontData;
-    }
-
-    if (!triedBaseCharacterFontData && baseCharacterGlyphData.fontData && baseCharacterGlyphData.fontData->canRenderCombiningCharacterSequence(characters, length))
-        return baseCharacterGlyphData.fontData;
-
-    return 0;
-}
-
 }
