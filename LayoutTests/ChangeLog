@@ -1,3 +1,13 @@
+2011-09-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed fix for flaky tests.
+
+        * inspector/timeline/timeline-dom-content-loaded-event-expected.txt:
+        * inspector/timeline/timeline-dom-content-loaded-event.html:
+        * inspector/timeline/timeline-load-event-expected.txt:
+        * inspector/timeline/timeline-load-event.html:
+        * platform/qt/Skipped:
+
 2011-09-19  Zsolt Fehér  <feherzs@inf.u-szeged.hu>
 
         Unreviewed Qt gardening.

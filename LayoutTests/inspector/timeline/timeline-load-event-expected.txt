@@ -9,4 +9,5 @@ MarkLoad Properties:
     usedHeapSize : <number>
     totalHeapSize : <number>
 }
+Page reloaded.
 

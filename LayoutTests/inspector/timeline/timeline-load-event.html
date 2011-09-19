@@ -7,13 +7,21 @@
 function test()
 {
     WebInspector.showPanel("timeline");
+    finishCalled = 0;
 
-    InspectorTest.startTimeline(function() { InspectorTest.reloadPage(); });
-    InspectorTest.waitForRecordType("MarkLoad", finish);
-    function finish()
+    InspectorTest.startTimeline(function() { InspectorTest.reloadPage(finish); });
+    InspectorTest.waitForRecordType("MarkLoad", contentEvent);
+
+    function contentEvent()
     {
         InspectorTest.printTimelineRecords("MarkLoad");
-        InspectorTest.completeTest();
+        InspectorTest.stopTimeline(finish);
+    }
+
+    function finish()
+    {
+        if (++finishCalled === 2)
+            InspectorTest.completeTest();
     }
 }
 
