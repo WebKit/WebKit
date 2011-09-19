@@ -632,11 +632,6 @@ static bool shouldEnableLoadDeferring()
     [types release];
 }
 
-- (BOOL)_usesDocumentViews
-{
-    return _private->usesDocumentViews;
-}
-
 static NSString *leakMailQuirksUserScriptContents()
 {
     NSString *scriptPath = [[NSBundle bundleForClass:[WebView class]] pathForResource:@"MailQuirksUserScript" ofType:@"js"];
@@ -693,7 +688,7 @@ static NSString *leakSolarWalkQuirksUserScriptContents()
         solarWalkQuirksScriptContents, KURL(), nullptr, nullptr, InjectAtDocumentEnd, InjectInAllFrames);
 }
 
-- (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews
+- (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     WebCoreThreadViolationCheckRoundTwo();
 
@@ -709,17 +704,13 @@ static NSString *leakSolarWalkQuirksUserScriptContents()
     _private->mainFrameDocumentReady = NO;
     _private->drawsBackground = YES;
     _private->backgroundColor = [[NSColor colorWithDeviceWhite:1 alpha:1] retain];
-    _private->usesDocumentViews = usesDocumentViews;
     _private->includesFlattenedCompositingLayersWhenDrawingToBitmap = YES;
 
-    WebFrameView *frameView = nil;
-    if (_private->usesDocumentViews) {
-        NSRect f = [self frame];
-        frameView = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
-        [frameView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-        [self addSubview:frameView];
-        [frameView release];
-    }
+    NSRect f = [self frame];
+    WebFrameView *frameView = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
+    [frameView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [self addSubview:frameView];
+    [frameView release];
 
     static bool didOneTimeInitialization = false;
     if (!didOneTimeInitialization) {
@@ -827,6 +818,10 @@ static NSString *leakSolarWalkQuirksUserScriptContents()
 
 - (id)_initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews
 {
+    // FIXME: Remove the usesDocumentViews parameter; it's only here for compatibility with WebKit nightly builds
+    // running against Safari 5 on Leopard.
+    ASSERT(usesDocumentViews);
+
     self = [super initWithFrame:f];
     if (!self)
         return nil;
@@ -844,78 +839,9 @@ static NSString *leakSolarWalkQuirksUserScriptContents()
 #endif
 
     _private = [[WebViewPrivate alloc] init];
-    [self _commonInitializationWithFrameName:frameName groupName:groupName usesDocumentViews:usesDocumentViews];
+    [self _commonInitializationWithFrameName:frameName groupName:groupName];
     [self setMaintainsBackForwardList: YES];
     return self;
-}
-
-- (BOOL)_mustDrawUnionedRect:(NSRect)rect singleRects:(const NSRect *)rects count:(NSInteger)count
-{
-    // If count == 0 here, use the rect passed in for drawing. This is a workaround for:
-    // <rdar://problem/3908282> REGRESSION (Mail): No drag image dragging selected text in Blot and Mail
-    // The reason for the workaround is that this method is called explicitly from the code
-    // to generate a drag image, and at that time, getRectsBeingDrawn:count: will return a zero count.
-    const int cRectThreshold = 10;
-    const float cWastedSpaceThreshold = 0.75f;
-    BOOL useUnionedRect = (count <= 1) || (count > cRectThreshold);
-    if (!useUnionedRect) {
-        // Attempt to guess whether or not we should use the unioned rect or the individual rects.
-        // We do this by computing the percentage of "wasted space" in the union.  If that wasted space
-        // is too large, then we will do individual rect painting instead.
-        float unionPixels = (rect.size.width * rect.size.height);
-        float singlePixels = 0;
-        for (int i = 0; i < count; ++i)
-            singlePixels += rects[i].size.width * rects[i].size.height;
-        float wastedSpace = 1 - (singlePixels / unionPixels);
-        if (wastedSpace <= cWastedSpaceThreshold)
-            useUnionedRect = YES;
-    }
-    return useUnionedRect;
-}
-
-- (void)drawSingleRect:(NSRect)rect
-{
-    ASSERT(!_private->usesDocumentViews);
-    
-    [NSGraphicsContext saveGraphicsState];
-    NSRectClip(rect);
-
-    @try {
-        [[self mainFrame] _drawRect:rect contentsOnly:NO];
-
-        [[self _UIDelegateForwarder] webView:self didDrawRect:rect];
-
-        if (WebNodeHighlight *currentHighlight = [self currentNodeHighlight])
-            [currentHighlight setNeedsUpdateInTargetViewRect:rect];
-
-        [NSGraphicsContext restoreGraphicsState];
-    } @catch (NSException *localException) {
-        [NSGraphicsContext restoreGraphicsState];
-        LOG_ERROR("Exception caught while drawing: %@", localException);
-        [localException raise];
-    }
-}
-
-- (BOOL)isFlipped 
-{
-    return _private && !_private->usesDocumentViews;
-}
-
-- (void)setFrameSize:(NSSize)size
-{
-    if (!_private->usesDocumentViews && !NSEqualSizes(_private->lastLayoutSize, size)) {
-        Frame* frame = [self _mainCoreFrame];
-        // FIXME: Viewless WebKit is broken with Safari banners (e.g., the Find banner).  We'll have to figure out a way for
-        // Safari to communicate that this space is being consumed.  For WebKit with document views, there's no
-        // need to do an explicit resize, since WebFrameViews have auto resizing turned on and will handle changing
-        // their bounds automatically. See <rdar://problem/6835573> for details.
-        frame->view()->resize(IntSize(size));
-        frame->view()->setNeedsLayout();
-        [self setNeedsDisplay:YES];
-        _private->lastLayoutSize = size;
-    }
-
-    [super setFrameSize:size];
 }
 
 - (void)_viewWillDrawInternal
@@ -923,34 +849,6 @@ static NSString *leakSolarWalkQuirksUserScriptContents()
     Frame* frame = [self _mainCoreFrame];
     if (frame && frame->view())
         frame->view()->updateLayoutAndStyleIfNeededRecursive();
-}
-
-- (void)viewWillDraw
-{
-    if (!_private->usesDocumentViews)
-        [self _viewWillDrawInternal];
-    [super viewWillDraw];
-}
-
-
-
-- (void)drawRect:(NSRect)rect
-{
-    if (_private->usesDocumentViews)
-        return [super drawRect:rect];
-    
-    ASSERT_MAIN_THREAD();
-
-    const NSRect *rects;
-    NSInteger count;
-    [self getRectsBeingDrawn:&rects count:&count];
-
-    
-    if ([self _mustDrawUnionedRect:rect singleRects:rects count:count])
-        [self drawSingleRect:rect];
-    else
-        for (int i = 0; i < count; ++i)
-            [self drawSingleRect:rects[i]];
 }
 
 + (NSArray *)_supportedMIMETypes
@@ -2482,13 +2380,11 @@ static inline IMP getMethod(id o, SEL s)
 - (BOOL)_isUsingAcceleratedCompositing
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (_private->usesDocumentViews) {
-        Frame* coreFrame = [self _mainCoreFrame];
-        for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
-            NSView *documentView = [[kit(frame) frameView] documentView];
-            if ([documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView *)documentView _isUsingAcceleratedCompositing])
-                return YES;
-        }
+    Frame* coreFrame = [self _mainCoreFrame];
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        NSView *documentView = [[kit(frame) frameView] documentView];
+        if ([documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView *)documentView _isUsingAcceleratedCompositing])
+            return YES;
     }
 #endif
     return NO;
@@ -2517,13 +2413,11 @@ static inline IMP getMethod(id o, SEL s)
 - (BOOL)_isSoftwareRenderable
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (_private->usesDocumentViews) {
-        Frame* coreFrame = [self _mainCoreFrame];
-        for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
-            if (FrameView* view = frame->view()) {
-                if (!view->isSoftwareRenderable())
-                    return NO;
-            }
+    Frame* coreFrame = [self _mainCoreFrame];
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        if (FrameView* view = frame->view()) {
+            if (!view->isSoftwareRenderable())
+                return NO;
         }
     }
 #endif
@@ -3196,7 +3090,7 @@ static bool needsWebViewInitThreadWorkaround()
             preferences = nil;
 
         LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)useBackForwardList);
-        [result _commonInitializationWithFrameName:frameName groupName:groupName usesDocumentViews:YES];
+        [result _commonInitializationWithFrameName:frameName groupName:groupName];
         static_cast<BackForwardListImpl*>([result page]->backForwardList())->setEnabled(useBackForwardList);
         result->_private->allowsUndo = allowsUndo;
         if (preferences)
@@ -5767,7 +5661,6 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 {
     if (_private->closed)
         return nil;
-    ASSERT(_private->usesDocumentViews);
     NSView *view = [self hitTest:[[self superview] convertPoint:point fromView:nil]];
     if (![view isDescendantOf:[[self mainFrame] frameView]])
         return nil;

@@ -247,8 +247,6 @@ void WebFrameLoaderClient::forceLayout()
 void WebFrameLoaderClient::forceLayoutForNonHTML()
 {
     WebFrameView *thisView = m_webFrame->_private->webFrameView;
-    if (!thisView) // Viewless mode.
-        return;
     NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
     ASSERT(thisDocumentView != nil);
     

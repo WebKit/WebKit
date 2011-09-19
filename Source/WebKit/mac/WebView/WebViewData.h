@@ -140,9 +140,6 @@ extern int pluginDatabaseClientCount;
     WebCore::KeyboardUIMode _keyboardUIMode;
 
     BOOL shouldUpdateWhileOffscreen;
-    
-    // When this flag is unset, we will not make any subviews underneath this WebView.  This means no WebFrameViews and no WebHTMLViews.
-    BOOL usesDocumentViews;
 
     BOOL includesFlattenedCompositingLayersWhenDrawingToBitmap;
     

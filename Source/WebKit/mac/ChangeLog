@@ -1,5 +1,44 @@
 2011-09-19  Anders Carlsson  <andersca@apple.com>
 
+        Remove the last remains of viewless WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=68388
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::forceLayoutForNonHTML):
+        Remove null check.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        Remove usesDocumentViews parameter and checks.
+
+        (-[WebView _initWithFrame:frameName:groupName:usesDocumentViews:]):
+        Add an assertion that usesDocumentViews is always true.
+
+        (-[WebView _isUsingAcceleratedCompositing]):
+        Remove usesDocumentViews check.
+
+        (-[WebView _isSoftwareRenderable]):
+        Remove usesDocumentViews check.
+
+        (-[WebView initWithFrame:frameName:groupName:]):
+        Remove usesDocumentViews parameter and always pass YES to the _initWithFrame method.
+        
+        (-[WebView initWithCoder:]):
+        Remove usesDocumentViews parameter.
+
+        (-[WebView _frameViewAtWindowPoint:]):
+        Remove usesDocumentViews check.
+
+        * WebView/WebViewData.h:
+        Remove usesDocumentViews ivar.
+
+        * WebView/WebViewPrivate.h:
+        Remove usesDocumentViews parameters.
+
+2011-09-19  Anders Carlsson  <andersca@apple.com>
+
         Remove WebViewEventHandling.mm
         https://bugs.webkit.org/show_bug.cgi?id=68387
 
