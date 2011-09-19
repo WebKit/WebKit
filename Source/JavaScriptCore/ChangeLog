@@ -1,3 +1,10 @@
+2011-09-19  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r95310
+
+        * JavaScriptCore.vcproj/testRegExp/testRegExpCommon.vsprops: Added
+        include\private\JavaScriptCore to the include path so DFGIntrinsic.h can be found.
+
 2011-09-19  Filip Pizlo  <fpizlo@apple.com>
 
         DFG speculation failures should act as additional value profiles

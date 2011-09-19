@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\include&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;;&quot;$(ConfigurationBuildDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../assembler/;../../API/;../../parser/;../../heap/;../../runtime/;../../VM/;../../bytecode/;../../interpreter/;../../wtf/;../../debugger/;../../bytecompiler/;../../profiler;../../jit/;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
+		AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\include&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;;&quot;$(ConfigurationBuildDir)\include\private\JavaScriptCore&quot;;&quot;$(ConfigurationBuildDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../assembler/;../../API/;../../parser/;../../heap/;../../runtime/;../../VM/;../../bytecode/;../../interpreter/;../../wtf/;../../debugger/;../../bytecompiler/;../../profiler;../../jit/;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
 		PreprocessorDefinitions="__STD_C"
 		ForcedIncludeFiles="ICUVersion.h"
 		ForcedUsingFiles=""
