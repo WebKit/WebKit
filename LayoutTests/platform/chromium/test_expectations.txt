@@ -3756,3 +3756,4 @@ BUG_KEISHI : inspector/styles/styles-update-from-js.html = FAIL PASS TEXT TIMEOU
 // Crashes or timeouts once in a while but never fails
 BUG_KEISHI LINUX : media/video-controls-visible-audio-only.html = PASS TIMEOUT CRASH
 
+BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PASS CRASH 

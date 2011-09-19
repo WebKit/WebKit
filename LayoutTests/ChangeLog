@@ -1,5 +1,11 @@
 2011-09-19  Dmitry Lomov  <dslomov@google.com>
 
+        [Chromium] Rebaseline expectations and file WK68372. 
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-19  Dmitry Lomov  <dslomov@google.com>
+
 	[Chromium] Rebaseline expectations due to r95402.
 
         * platform/chromium-win-vista/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
