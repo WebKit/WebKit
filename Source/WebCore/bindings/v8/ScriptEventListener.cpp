@@ -50,7 +50,7 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, Attribu
         return 0;
 
     // FIXME: Very strange: we initialize zero-based number with '1'.
-    TextPosition0 position(WTF::ZeroBasedNumber::fromZeroBasedInt(1), WTF::ZeroBasedNumber::base());
+    TextPosition position(OrdinalNumber::fromZeroBasedInt(1), OrdinalNumber::first());
     String sourceURL;
 
     if (Frame* frame = node->document()->frame()) {
@@ -78,7 +78,7 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
     if (!scriptController->canExecuteScripts(AboutToExecuteScript))
         return 0;
 
-    TextPosition0 position = scriptController->eventHandlerPosition();
+    TextPosition position = scriptController->eventHandlerPosition();
     String sourceURL = frame->document()->url().string();
     return V8LazyEventListener::create(attr->localName().string(), frame->document()->isSVGDocument(), attr->value(), sourceURL, position, WorldContextHandle(UseMainWorld));
 }

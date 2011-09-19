@@ -42,7 +42,7 @@ using namespace JSC;
 
 namespace WebCore {
     
-JavaScriptCallFrame::JavaScriptCallFrame(const DebuggerCallFrame& debuggerCallFrame, PassRefPtr<JavaScriptCallFrame> caller, intptr_t sourceID, const TextPosition0& textPosition)
+JavaScriptCallFrame::JavaScriptCallFrame(const DebuggerCallFrame& debuggerCallFrame, PassRefPtr<JavaScriptCallFrame> caller, intptr_t sourceID, const TextPosition& textPosition)
     : m_debuggerCallFrame(debuggerCallFrame)
     , m_caller(caller)
     , m_sourceID(sourceID)

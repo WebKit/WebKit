@@ -1,3 +1,26 @@
+2011-09-19  Peter Rybin  <peter.rybin@gmail.com>
+
+        TextPosition refactoring: Merge ZeroBasedNumber and OneBasedNumber classes
+        https://bugs.webkit.org/show_bug.cgi?id=63541
+
+        Reviewed by Adam Barth.
+
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::startPosition):
+        * wtf/text/TextPosition.h:
+        (WTF::OrdinalNumber::fromZeroBasedInt):
+        (WTF::OrdinalNumber::fromOneBasedInt):
+        (WTF::OrdinalNumber::OrdinalNumber):
+        (WTF::OrdinalNumber::zeroBasedInt):
+        (WTF::OrdinalNumber::oneBasedInt):
+        (WTF::OrdinalNumber::operator==):
+        (WTF::OrdinalNumber::operator!=):
+        (WTF::OrdinalNumber::first):
+        (WTF::OrdinalNumber::beforeFirst):
+        (WTF::TextPosition::TextPosition):
+        (WTF::TextPosition::minimumPosition):
+        (WTF::TextPosition::belowRangePosition):
+
 2011-09-19  Dan Bernstein  <mitz@apple.com>
 
         JavaScriptCore part of [mac] WebKit contains Objective-C classes that are not prefixed with its standard prefixes

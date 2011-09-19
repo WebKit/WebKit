@@ -47,17 +47,17 @@ public:
     // Exposed for callbacks:
     enum ErrorType { warning, nonFatal, fatal };
     void handleError(ErrorType, const char* message, int lineNumber, int columnNumber);
-    void handleError(ErrorType, const char* message, TextPosition1);
+    void handleError(ErrorType, const char* message, TextPosition);
 
     void insertErrorMessageBlock();
 
 private:
-    void appendErrorMessage(const String& typeString, TextPosition1, const char* message);
+    void appendErrorMessage(const String& typeString, TextPosition, const char* message);
 
     Document* m_document;
 
     int m_errorCount;
-    TextPosition1 m_lastErrorPosition;
+    TextPosition m_lastErrorPosition;
     StringBuilder m_errorMessages;
 };
 

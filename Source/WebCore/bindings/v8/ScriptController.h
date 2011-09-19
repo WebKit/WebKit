@@ -155,7 +155,7 @@ public:
 
     void finishedWithEvent(Event*);
 
-    TextPosition0 eventHandlerPosition() const;
+    TextPosition eventHandlerPosition() const;
 
     static bool processingUserGesture();
 

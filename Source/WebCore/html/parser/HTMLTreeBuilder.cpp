@@ -58,9 +58,9 @@ using namespace HTMLNames;
 
 static const int uninitializedLineNumberValue = -1;
 
-static TextPosition1 uninitializedPositionValue1()
+static TextPosition uninitializedPositionValue1()
 {
-    return TextPosition1(WTF::OneBasedNumber::fromOneBasedInt(-1), WTF::OneBasedNumber::base());
+    return TextPosition(OrdinalNumber::fromOneBasedInt(-1), OrdinalNumber::first());
 }
 
 namespace {
@@ -351,7 +351,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument* docum
     , m_originalInsertionMode(InitialMode)
     , m_parser(parser)
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
-    , m_lastScriptElementStartPosition(TextPosition0::belowRangePosition())
+    , m_lastScriptElementStartPosition(TextPosition::belowRangePosition())
     , m_usePreHTML5ParserQuirks(usePreHTML5ParserQuirks)
     , m_hasPendingForeignInsertionModeSteps(false)
 {
@@ -370,7 +370,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* f
     , m_originalInsertionMode(InitialMode)
     , m_parser(parser)
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
-    , m_lastScriptElementStartPosition(TextPosition0::belowRangePosition())
+    , m_lastScriptElementStartPosition(TextPosition::belowRangePosition())
     , m_usePreHTML5ParserQuirks(usePreHTML5ParserQuirks)
     , m_hasPendingForeignInsertionModeSteps(false)
 {
@@ -420,7 +420,7 @@ HTMLTreeBuilder::FragmentParsingContext::~FragmentParsingContext()
 {
 }
 
-PassRefPtr<Element> HTMLTreeBuilder::takeScriptToProcess(TextPosition1& scriptStartPosition)
+PassRefPtr<Element> HTMLTreeBuilder::takeScriptToProcess(TextPosition& scriptStartPosition)
 {
     // Unpause ourselves, callers may pause us again when processing the script.
     // The HTML5 spec is written as though scripts are executed inside the tree
@@ -2220,7 +2220,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             m_isPaused = true;
             ASSERT(m_tree.currentElement()->hasTagName(scriptTag));
             m_scriptToProcess = m_tree.currentElement();
-            m_scriptToProcessStartPosition = WTF::toOneBasedTextPosition(m_lastScriptElementStartPosition);
+            m_scriptToProcessStartPosition = m_lastScriptElementStartPosition;
             m_tree.openElements()->pop();
             if (isParsingFragment() && m_fragmentContext.scriptingPermission() == FragmentScriptingNotAllowed)
                 m_scriptToProcess->removeAllChildren();
@@ -2807,9 +2807,9 @@ void HTMLTreeBuilder::processScriptStartTag(AtomicHTMLToken& token)
     m_parser->tokenizer()->setState(HTMLTokenizerState::ScriptDataState);
     m_originalInsertionMode = m_insertionMode;
 
-    TextPosition0 position = m_parser->textPosition();
+    TextPosition position = m_parser->textPosition();
 
-    ASSERT(position.m_line.zeroBasedInt() == m_parser->tokenizer()->lineNumber());
+    ASSERT(position.m_line == m_parser->tokenizer()->lineNumber());
 
     m_lastScriptElementStartPosition = position;
 

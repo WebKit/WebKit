@@ -49,7 +49,7 @@ namespace WebCore {
 
 ScheduledAction::ScheduledAction(v8::Handle<v8::Context> context, v8::Handle<v8::Function> func, int argc, v8::Handle<v8::Value> argv[])
     : m_context(context)
-    , m_code(String(), KURL(), TextPosition1::belowRangePosition())
+    , m_code(String(), KURL(), TextPosition::belowRangePosition())
 {
     m_function = v8::Persistent<v8::Function>::New(func);
 

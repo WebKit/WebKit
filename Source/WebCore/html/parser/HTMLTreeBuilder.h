@@ -78,7 +78,7 @@ public:
     void constructTreeFromAtomicToken(AtomicHTMLToken&);
 
     // Must be called when parser is paused before calling the parser again.
-    PassRefPtr<Element> takeScriptToProcess(TextPosition1& scriptStartPosition);
+    PassRefPtr<Element> takeScriptToProcess(TextPosition& scriptStartPosition);
 
     // Done, close any open tags, etc.
     void finished();
@@ -249,12 +249,12 @@ private:
     HTMLDocumentParser* m_parser;
 
     RefPtr<Element> m_scriptToProcess; // <script> tag which needs processing before resuming the parser.
-    TextPosition1 m_scriptToProcessStartPosition; // Starting line number of the script tag needing processing.
+    TextPosition m_scriptToProcessStartPosition; // Starting line number of the script tag needing processing.
 
     // FIXME: We probably want to remove this member.  Originally, it was
     // created to service the legacy tree builder, but it seems to be used for
     // some other things now.
-    TextPosition0 m_lastScriptElementStartPosition;
+    TextPosition m_lastScriptElementStartPosition;
 
     bool m_usePreHTML5ParserQuirks;
 

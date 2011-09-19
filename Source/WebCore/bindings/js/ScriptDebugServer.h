@@ -96,7 +96,7 @@ protected:
     virtual void didPause(JSC::JSGlobalObject*) = 0;
     virtual void didContinue(JSC::JSGlobalObject*) = 0;
 
-    bool hasBreakpoint(intptr_t sourceID, const TextPosition0&) const;
+    bool hasBreakpoint(intptr_t sourceID, const TextPosition&) const;
 
     void dispatchFunctionToListeners(JavaScriptExecutionCallback, JSC::JSGlobalObject*);
     void dispatchFunctionToListeners(const ListenerSet& listeners, JavaScriptExecutionCallback callback);

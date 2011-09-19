@@ -33,6 +33,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
@@ -44,8 +45,7 @@ class MarkupTokenizerBase {
 public:
     virtual ~MarkupTokenizerBase() { }
 
-    int lineNumber() const { return m_lineNumber; }
-    int columnNumber() const { return 1; } // Matches LegacyHTMLDocumentParser.h behavior.
+    OrdinalNumber lineNumber() const { return OrdinalNumber::fromZeroBasedInt(m_lineNumber); }
 
     typename State::State state() const { return m_state; }
     void setState(typename State::State state) { m_state = state; }

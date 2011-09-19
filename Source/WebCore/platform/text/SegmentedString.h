@@ -225,11 +225,11 @@ public:
     
 
     // The method is moderately slow, comparing to currentLine method.
-    WTF::ZeroBasedNumber currentColumn() const;
-    WTF::ZeroBasedNumber currentLine() const;
+    OrdinalNumber currentColumn() const;
+    OrdinalNumber currentLine() const;
     // Sets value of line/column variables. Column is specified indirectly by a parameter columnAftreProlog
     // which is a value of column that we should get after a prolog (first prologLength characters) has been consumed.
-    void setCurrentPosition(WTF::ZeroBasedNumber line, WTF::ZeroBasedNumber columnAftreProlog, int prologLength);
+    void setCurrentPosition(OrdinalNumber line, OrdinalNumber columnAftreProlog, int prologLength);
 
 private:
     void append(const SegmentedSubstring&);

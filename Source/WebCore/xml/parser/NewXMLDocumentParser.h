@@ -61,8 +61,8 @@ public:
     void resumeParsing();
     void processScript(ScriptElement*);
 
-    virtual TextPosition0 textPosition() const;
-    virtual ZeroBasedNumber lineNumber() const;
+    virtual TextPosition textPosition() const;
+    virtual OrdinalNumber lineNumber() const;
 
     // DocumentParser
     virtual bool hasInsertionPoint();

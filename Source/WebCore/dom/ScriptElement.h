@@ -41,7 +41,7 @@ public:
     Element* element() const { return m_element; }
 
     enum LegacyTypeSupport { DisallowLegacyTypeInTypeAttribute, AllowLegacyTypeInTypeAttribute };
-    bool prepareScript(const TextPosition1& scriptStartPosition = TextPosition1::minimumPosition(), LegacyTypeSupport = DisallowLegacyTypeInTypeAttribute);
+    bool prepareScript(const TextPosition& scriptStartPosition = TextPosition::minimumPosition(), LegacyTypeSupport = DisallowLegacyTypeInTypeAttribute);
 
     String scriptCharset() const { return m_characterEncoding; }
     String scriptContent() const;

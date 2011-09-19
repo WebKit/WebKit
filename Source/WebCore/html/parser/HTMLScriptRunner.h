@@ -53,7 +53,7 @@ public:
     void detach();
 
     // Processes the passed in script and any pending scripts if possible.
-    bool execute(PassRefPtr<Element> scriptToProcess, const TextPosition1& scriptStartPosition);
+    bool execute(PassRefPtr<Element> scriptToProcess, const TextPosition& scriptStartPosition);
 
     bool executeScriptsWaitingForLoad(CachedResource*);
     bool hasScriptsWaitingForStylesheets() const { return m_hasScriptsWaitingForStylesheets; }
@@ -76,7 +76,7 @@ private:
     void requestDeferredScript(Element*);
     bool requestPendingScript(PendingScript&, Element*) const;
 
-    void runScript(Element*, const TextPosition1& scriptStartPosition);
+    void runScript(Element*, const TextPosition& scriptStartPosition);
 
     // Helpers for dealing with HTMLScriptRunnerHost
     void watchForLoad(PendingScript&);

@@ -1,3 +1,131 @@
+2011-09-19  Peter Rybin  <peter.rybin@gmail.com>
+
+        TextPosition refactoring: Merge ZeroBasedNumber and OneBasedNumber classes
+        https://bugs.webkit.org/show_bug.cgi?id=63541
+
+        Reviewed by Adam Barth.
+
+        No new tests because this patch is not changing behavior.
+
+        * bindings/js/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::JavaScriptCallFrame):
+        * bindings/js/JavaScriptCallFrame.h:
+        (WebCore::JavaScriptCallFrame::create):
+        (WebCore::JavaScriptCallFrame::position):
+        (WebCore::JavaScriptCallFrame::update):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::eventHandlerLineNumber):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::hasBreakpoint):
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        (WebCore::ScriptDebugServer::createCallFrameAndPauseIfNeeded):
+        (WebCore::ScriptDebugServer::updateCallFrameAndPauseIfNeeded):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        * bindings/js/StringSourceProvider.h:
+        (WebCore::StringSourceProvider::create):
+        (WebCore::StringSourceProvider::startPosition):
+        (WebCore::StringSourceProvider::StringSourceProvider):
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::eventHandlerPosition):
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * bindings/v8/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        (WebCore::ScriptSourceCode::startPosition):
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::V8LazyEventListener):
+        * bindings/v8/V8LazyEventListener.h:
+        (WebCore::V8LazyEventListener::create):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::compileScript):
+        (WebCore::V8Proxy::evaluate):
+        (WebCore::V8Proxy::runScript):
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::evaluate):
+        (WebCore::WorkerContextExecutionProxy::runScript):
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        * dom/PendingScript.cpp:
+        (WebCore::PendingScript::releaseElementAndClear):
+        * dom/PendingScript.h:
+        (WebCore::PendingScript::PendingScript):
+        (WebCore::PendingScript::startingPosition):
+        (WebCore::PendingScript::setStartingPosition):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::prepareScript):
+        * dom/ScriptElement.h:
+        * dom/ScriptableDocumentParser.h:
+        * dom/ViewportArguments.cpp:
+        (WebCore::parserLineNumber):
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::runScriptsForPausedTreeBuilder):
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        (WebCore::HTMLDocumentParser::lineNumber):
+        (WebCore::HTMLDocumentParser::textPosition):
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/HTMLInputStream.h:
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::execute):
+        (WebCore::HTMLScriptRunner::runScript):
+        * html/parser/HTMLScriptRunner.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::uninitializedPositionValue1):
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::takeScriptToProcess):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processScriptStartTag):
+        * html/parser/HTMLTreeBuilder.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::buildInitiatorObject):
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::currentLine):
+        (WebCore::SegmentedString::currentColumn):
+        (WebCore::SegmentedString::setCurrentPosition):
+        * platform/text/SegmentedString.h:
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::parserLineNumber):
+        * xml/XMLErrors.cpp:
+        (WebCore::XMLErrors::XMLErrors):
+        (WebCore::XMLErrors::handleError):
+        (WebCore::XMLErrors::appendErrorMessage):
+        * xml/XMLErrors.h:
+        * xml/parser/MarkupTokenizerBase.h:
+        (WebCore::MarkupTokenizerBase::lineNumber):
+        * xml/parser/NewXMLDocumentParser.cpp:
+        (WebCore::NewXMLDocumentParser::processScript):
+        (WebCore::NewXMLDocumentParser::textPosition):
+        (WebCore::NewXMLDocumentParser::lineNumber):
+        * xml/parser/NewXMLDocumentParser.h:
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::pushCurrentNode):
+        (WebCore::XMLDocumentParser::handleError):
+        * xml/parser/XMLDocumentParser.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::PendingCallbacks::appendErrorCallback):
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::XMLDocumentParser::startElementNs):
+        (WebCore::XMLDocumentParser::error):
+        (WebCore::XMLDocumentParser::lineNumber):
+        (WebCore::XMLDocumentParser::columnNumber):
+        (WebCore::XMLDocumentParser::textPosition):
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        (WebCore::XMLDocumentParser::doWrite):
+        (WebCore::XMLDocumentParser::doEnd):
+        (WebCore::XMLDocumentParser::lineNumber):
+        (WebCore::XMLDocumentParser::columnNumber):
+        (WebCore::XMLDocumentParser::textPosition):
+        (WebCore::XMLDocumentParser::parse):
+        (WebCore::XMLDocumentParser::parseStartElement):
+
 2011-09-19  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of [mac] WebKit contains Objective-C classes that are not prefixed with its standard prefixes

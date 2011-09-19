@@ -201,7 +201,7 @@ V8Proxy::~V8Proxy()
     windowShell()->destroyGlobal();
 }
 
-v8::Handle<v8::Script> V8Proxy::compileScript(v8::Handle<v8::String> code, const String& fileName, const TextPosition0& scriptStartPosition, v8::ScriptData* scriptData)
+v8::Handle<v8::Script> V8Proxy::compileScript(v8::Handle<v8::String> code, const String& fileName, const TextPosition& scriptStartPosition, v8::ScriptData* scriptData)
 {
     const uint16_t* fileNameString = fromWebCoreString(fileName);
     v8::Handle<v8::String> name = v8::String::New(fileNameString, fileName.length());
@@ -374,7 +374,7 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
 
         // NOTE: For compatibility with WebCore, ScriptSourceCode's line starts at
         // 1, whereas v8 starts at 0.
-        v8::Handle<v8::Script> script = compileScript(code, source.url(), WTF::toZeroBasedTextPosition(source.startPosition()), scriptData.get());
+        v8::Handle<v8::Script> script = compileScript(code, source.url(), source.startPosition(), scriptData.get());
 #if PLATFORM(CHROMIUM)
         PlatformSupport::traceEventEnd("v8.compile", node, "");
 
@@ -406,7 +406,7 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
         // FIXME: Ideally, we should be able to re-use the origin of the
         // script passed to us as the argument instead of using an empty string
         // and 0 baseLine.
-        script = compileScript(code, "", TextPosition0::minimumPosition());
+        script = compileScript(code, "", TextPosition::minimumPosition());
     }
 
     if (handleOutOfMemory())

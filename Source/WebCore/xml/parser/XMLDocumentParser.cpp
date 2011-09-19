@@ -75,7 +75,7 @@ void XMLDocumentParser::pushCurrentNode(ContainerNode* n)
     m_currentNodeStack.append(m_currentNode);
     m_currentNode = n;
     if (m_currentNodeStack.size() > maxDOMTreeDepth)
-        handleError(XMLErrors::fatal, "Excessive node nesting.", WTF::toOneBasedTextPosition(textPosition()));
+        handleError(XMLErrors::fatal, "Excessive node nesting.", textPosition());
 }
 
 void XMLDocumentParser::popCurrentNode()
@@ -133,7 +133,7 @@ void XMLDocumentParser::append(const SegmentedString& s)
     ImageLoader::dispatchPendingBeforeLoadEvents();
 }
 
-void XMLDocumentParser::handleError(XMLErrors::ErrorType type, const char* m, TextPosition1 position)
+void XMLDocumentParser::handleError(XMLErrors::ErrorType type, const char* m, TextPosition position)
 {
     m_xmlErrors.handleError(type, m, position);
     if (type != XMLErrors::warning)

@@ -49,16 +49,16 @@ const int maxErrors = 25;
 XMLErrors::XMLErrors(Document* document)
     : m_document(document)
     , m_errorCount(0)
-    , m_lastErrorPosition(TextPosition1::belowRangePosition())
+    , m_lastErrorPosition(TextPosition::belowRangePosition())
 {
 }
 
 void XMLErrors::handleError(ErrorType type, const char* message, int lineNumber, int columnNumber)
 {
-    handleError(type, message, TextPosition1(WTF::OneBasedNumber::fromOneBasedInt(lineNumber), WTF::OneBasedNumber::fromOneBasedInt(columnNumber)));
+    handleError(type, message, TextPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber::fromOneBasedInt(columnNumber)));
 }
 
-void XMLErrors::handleError(ErrorType type, const char* message, TextPosition1 position)
+void XMLErrors::handleError(ErrorType type, const char* message, TextPosition position)
 {
     if (type == fatal || (m_errorCount < maxErrors && m_lastErrorPosition.m_line != position.m_line && m_lastErrorPosition.m_column != position.m_column)) {
         switch (type) {
@@ -75,7 +75,7 @@ void XMLErrors::handleError(ErrorType type, const char* message, TextPosition1 p
     }
 }
 
-void XMLErrors::appendErrorMessage(const String& typeString, TextPosition1 position, const char* message)
+void XMLErrors::appendErrorMessage(const String& typeString, TextPosition position, const char* message)
 {
     // <typeString> on line <lineNumber> at column <columnNumber>: <message>
     m_errorMessages.append(typeString);

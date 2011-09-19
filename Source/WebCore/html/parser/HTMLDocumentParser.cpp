@@ -199,7 +199,7 @@ bool HTMLDocumentParser::runScriptsForPausedTreeBuilder()
 {
     ASSERT(m_treeBuilder->isPaused());
 
-    TextPosition1 scriptStartPosition = TextPosition1::belowRangePosition();
+    TextPosition scriptStartPosition = TextPosition::belowRangePosition();
     RefPtr<Element> scriptElement = m_treeBuilder->takeScriptToProcess(scriptStartPosition);
     // We will not have a scriptRunner when parsing a DocumentFragment.
     if (!m_scriptRunner)
@@ -258,7 +258,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     // FIXME: m_input.current().length() is only accurate if we
     // end up parsing the whole buffer in this pump.  We should pass how
     // much we parsed as part of didWriteHTML instead of willWriteHTML.
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), m_input.current().length(), m_tokenizer->lineNumber());
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), m_input.current().length(), m_tokenizer->lineNumber().zeroBasedInt());
 
     while (canTakeNextToken(mode, session) && !session.needsYield) {
         if (!isParsingFragment())
@@ -298,7 +298,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         m_preloadScanner->scan();
     }
 
-    InspectorInstrumentation::didWriteHTML(cookie, m_tokenizer->lineNumber());
+    InspectorInstrumentation::didWriteHTML(cookie, m_tokenizer->lineNumber().zeroBasedInt());
 }
 
 bool HTMLDocumentParser::hasInsertionPoint()
@@ -446,19 +446,19 @@ String HTMLDocumentParser::sourceForToken(const HTMLToken& token)
     return m_sourceTracker.sourceForToken(token);
 }
 
-ZeroBasedNumber HTMLDocumentParser::lineNumber() const
+OrdinalNumber HTMLDocumentParser::lineNumber() const
 {
-    return ZeroBasedNumber::fromZeroBasedInt(m_tokenizer->lineNumber());
+    return m_tokenizer->lineNumber();
 }
 
-TextPosition0 HTMLDocumentParser::textPosition() const
+TextPosition HTMLDocumentParser::textPosition() const
 {
     const SegmentedString& currentString = m_input.current();
-    ZeroBasedNumber line = currentString.currentLine();
-    ZeroBasedNumber column = currentString.currentColumn();
-    ASSERT(m_tokenizer->lineNumber() == line.zeroBasedInt());
+    OrdinalNumber line = currentString.currentLine();
+    OrdinalNumber column = currentString.currentColumn();
+    ASSERT(m_tokenizer->lineNumber() == line);
 
-    return TextPosition0(line, column);
+    return TextPosition(line, column);
 }
 
 bool HTMLDocumentParser::isWaitingForScripts() const
