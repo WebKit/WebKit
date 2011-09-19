@@ -43,8 +43,12 @@ void HTMLSourceTracker::start(const HTMLInputStream& input, HTMLToken& token)
 void HTMLSourceTracker::end(const HTMLInputStream& input, HTMLToken& token)
 {
     m_cachedSourceForToken = String();
-    // FIXME: This work should really be done by the HTMLTokenizer.
-    token.end(input.current().numberOfCharactersConsumed());
+
+    // FIXME: This work should really be done by the HTMLTokenizer in all cases,
+    // instead of the few cases where it explicitly steps in to correct values
+    // known to be wrong in face of its internal buffering.
+    if (!token.endIndex())
+        token.end(input.current().numberOfCharactersConsumed());
 }
 
 String HTMLSourceTracker::sourceForToken(const HTMLToken& token)

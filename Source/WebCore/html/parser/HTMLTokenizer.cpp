@@ -297,8 +297,12 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     END_STATE()
 
     HTML_BEGIN_STATE(ScriptDataState) {
-        if (cc == '<')
+        if (cc == '<') {
+            // Token might end here. If not, we'll come through here again
+            // and update the end location again.
+            m_token->end(source.numberOfCharactersConsumed());
             HTML_ADVANCE_TO(ScriptDataLessThanSignState);
+        }
         else if (cc == InputStreamPreprocessor::endOfFileMarker)
             return emitEndOfFile(source);
         else {
