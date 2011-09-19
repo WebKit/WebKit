@@ -20,6 +20,12 @@ QT += declarative
 # Build both debug and release configurations
 mac: CONFIG += build_all
 
+WEBKIT1_HEADERS_SHARED_WITH_WEBKIT2= \
+    $$PWD/../WebKit/qt/WebCoreSupport/QtWebComboBox.h
+
+WEBKIT1_SOURCES_SHARED_WITH_WEBKIT2 = \
+    $$PWD/../WebKit/qt/WebCoreSupport/QtWebComboBox.cpp
+
 WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/AuthenticationManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/DownloadProxyMessages.h \
@@ -259,6 +265,7 @@ HEADERS += \
     UIProcess/qt/WebUndoCommandQt.h \
     UIProcess/qt/WebContextMenuProxyQt.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
+    UIProcess/qt/WebPopupMenuProxyQtDesktop.h \
     WebProcess/ApplicationCache/WebApplicationCacheManager.h \
     WebProcess/Authentication/AuthenticationManager.h \
     WebProcess/Cookies/WebCookieManager.h \
@@ -323,7 +330,8 @@ HEADERS += \
     WebProcess/WebPage/WebPage.h \
     WebProcess/WebPage/WebPageGroupProxy.h \
     WebProcess/WebProcess.h \
-    $$WEBKIT2_GENERATED_HEADERS
+    $$WEBKIT2_GENERATED_HEADERS \
+    $$WEBKIT1_HEADERS_SHARED_WITH_WEBKIT2
 
 SOURCES += \
     Platform/CoreIPC/ArgumentCoders.cpp \
@@ -493,6 +501,7 @@ SOURCES += \
     UIProcess/qt/WebInspectorProxyQt.cpp \
     UIProcess/qt/WebPageProxyQt.cpp \
     UIProcess/qt/WebPopupMenuProxyQt.cpp \
+    UIProcess/qt/WebPopupMenuProxyQtDesktop.cpp \
     UIProcess/qt/WebPreferencesQt.cpp \
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
     WebProcess/Authentication/AuthenticationManager.cpp \
@@ -581,7 +590,8 @@ SOURCES += \
     WebProcess/WebProcess.cpp \
     WebProcess/qt/WebProcessMainQt.cpp \
     WebProcess/qt/WebProcessQt.cpp \
-    $$WEBKIT2_GENERATED_SOURCES
+    $$WEBKIT2_GENERATED_SOURCES \
+    $$WEBKIT1_SOURCES_SHARED_WITH_WEBKIT2
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=0) {
     DEFINES += PLUGIN_ARCHITECTURE_UNSUPPORTED

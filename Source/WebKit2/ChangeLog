@@ -1,3 +1,34 @@
+2011-09-14  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Implement popup menus in QDesktopWebView using QComboBox
+        https://bugs.webkit.org/show_bug.cgi?id=67938
+
+        Reviewed by Andreas Kling.
+
+        Implement a WebPopupMenuProxy that uses QtWebComboBox (a QComboBox subclass we
+        have for WK1). Then use this WebPopupMenuProxy in QDesktopWebView. The implementation
+        explicitly avoids running a nested mainloop.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showPopupMenu):
+        Since we don't run a nested mainloop, we need to keep the client pointer to call
+        valueChangedForPopupMenu().
+
+        * UIProcess/qt/WebPopupMenuProxyQtDesktop.cpp: Added.
+        (WebKit::WebPopupMenuProxyQtDesktop::WebPopupMenuProxyQtDesktop):
+        (WebKit::WebPopupMenuProxyQtDesktop::~WebPopupMenuProxyQtDesktop):
+        (WebKit::WebPopupMenuProxyQtDesktop::showPopupMenu):
+        (WebKit::WebPopupMenuProxyQtDesktop::hidePopupMenu):
+        (WebKit::WebPopupMenuProxyQtDesktop::setSelectedIndex):
+        (WebKit::WebPopupMenuProxyQtDesktop::onPopupMenuHidden):
+        (WebKit::WebPopupMenuProxyQtDesktop::populate):
+        * UIProcess/qt/WebPopupMenuProxyQtDesktop.h: Added.
+        (WebKit::WebPopupMenuProxyQtDesktop::create):
+        * UIProcess/qt/qdesktopwebpageproxy.cpp:
+        (QDesktopWebPageProxy::createPopupMenuProxy):
+        * UIProcess/qt/qdesktopwebpageproxy.h:
+        * WebKit2.pro:
+
 2011-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix distcheck build

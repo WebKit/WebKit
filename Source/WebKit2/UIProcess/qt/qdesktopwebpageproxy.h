@@ -47,6 +47,8 @@ private:
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif
 
+    virtual PassRefPtr<WebKit::WebPopupMenuProxy> createPopupMenuProxy(WebKit::WebPageProxy*);
+
     virtual void timerEvent(QTimerEvent*);
 
     bool handleMouseMoveEvent(QGraphicsSceneMouseEvent*);
