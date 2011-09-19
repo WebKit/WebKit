@@ -1,7 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-  "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
 <title>Test the WebGL premultipledAlpha context creation flag.</title>
 <link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
 <script src="../../js/resources/js-test-pre.js"></script>
@@ -21,7 +21,7 @@ var tests = [
     sentColor: [32, 64, 128, 128],
     expectedColor: [64, 128, 255, 128],
     errorRange: 2,
-    useToDataURL: true,
+    imageFormat: "image/png"
   },
   // If premultipledAlpha is true then
   // [texture]           [canvas]             [texture]
@@ -30,7 +30,6 @@ var tests = [
     sentColor: [32, 64, 128, 128],
     expectedColor: [64, 128, 255, 128],
     errorRange: 2,
-    useToDataURL: false,
   },
   // If premultipledAlpha is false then
   // [texture]           [canvas]            [dataURL]
@@ -39,7 +38,7 @@ var tests = [
     sentColor: [255, 192, 128, 1],
     expectedColor: [255, 192, 128, 1],
     errorRange: 0,
-    useToDataURL: true,
+    imageFormat: "image/png"
   },
   // If premultipledAlpha is false then
   // [texture]           [canvas]            [texture]
@@ -48,7 +47,24 @@ var tests = [
     sentColor: [255, 192, 128, 1],
     expectedColor: [255, 192, 128, 1],
     errorRange: 0,
-    useToDataURL: false,
+  },
+  // If premultipledAlpha is false then
+  // [texture]             [canvas]            [dataURL]
+  // 255, 255, 255, 128 -> 255, 255, 255, 128 -> 128, 128, 128, 255
+  { creationAttributes: {premultipliedAlpha: false},
+    sentColor: [255, 255, 255, 128],
+    expectedColor: [128, 128, 128, 255],
+    errorRange: 2,
+    imageFormat: "image/jpeg"
+  },
+  // If premultipledAlpha is true then
+  // [texture]             [canvas]            [dataURL]
+  // 128, 128, 128, 128 -> 255, 255, 255, 128 -> 128, 128, 128, 255
+  { creationAttributes: {},
+    sentColor: [128, 128, 128, 128],
+    expectedColor: [128, 128, 128, 255],
+    errorRange: 2,
+    imageFormat: "image/jpeg"
   }
 ];
 
@@ -68,12 +84,15 @@ function doNextTest() {
   if (g_count < tests.length) {
      var test = tests[g_count++];
      canvas = document.createElement("canvas");
+     // Need to preserve drawing buffer to load it in a callback
+     test.creationAttributes.preserveDrawingBuffer = true;
      gl = wtu.create3DContext(canvas, test.creationAttributes);
      var premultipliedAlpha = test.creationAttributes.premultipliedAlpha != false;
      debug("")
-     debug("testing: premultipliedAlpha: " + premultipliedAlpha + " toDataURL: " + test.useToDataURL);
+     debug("testing: premultipliedAlpha: " + premultipliedAlpha + " imageFormat: " + test.imageFormat);
 
      shouldBe('gl.getContextAttributes().premultipledAlpha', 'premultipledAlpha');
+     shouldBeTrue('gl.getContextAttributes().preserveDrawingBuffer');
 
      var program = wtu.setupTexturedQuad(gl);
 
@@ -96,7 +115,7 @@ function doNextTest() {
        // gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
        gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, false);
        gl.bindTexture(gl.TEXTURE_2D, pngTex);
-       if (test.useToDataURL) {
+       if (test.imageFormat) {
           // create texture from image
           gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this);
        } else {
@@ -117,13 +136,20 @@ function doNextTest() {
        doNextTest();
      }
 
-     if (test.useToDataURL) {
+     if (test.imageFormat) {
         // Load canvas into string using toDataURL
-        var png = canvas.toDataURL();
-        // Load string into the texture
-        var input = document.createElement("img");
-        input.onload = loadTexture;
-        input.src = png;
+        var imageUrl = canvas.toDataURL(test.imageFormat);
+        if (test.imageFormat != "image/png" &&
+            (imageUrl.indexOf("data:image/png,") == 0 ||
+             imageUrl.indexOf("data:image/png;") == 0)) {
+          debug("Image format " + test.imageFormat + " not supported; skipping");
+          setTimeout(doNextTest, 0);
+        } else {
+          // Load string into the texture
+          var input = document.createElement("img");
+          input.onload = loadTexture;
+          input.src = imageUrl;
+        }
      } else {
         // Load canvas into the texture asynchronously (to prevent unbounded stack consumption)
         setTimeout(loadTexture, 0);
@@ -136,9 +162,6 @@ function doNextTest() {
    }
 }
 
-</script>
-
-<script>
 </script>
 
 </body>

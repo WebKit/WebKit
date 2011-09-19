@@ -92,9 +92,10 @@ static void preMultipliedBGRAtoRGB(const unsigned char* pixels, unsigned int pix
 static void RGBAtoRGB(const unsigned char* pixels, unsigned int pixelCount, unsigned char* output)
 {
     for (; pixelCount-- > 0; pixels += 4) {
-        *output++ = pixels[0];
-        *output++ = pixels[1];
-        *output++ = pixels[2];
+        // Do source-over composition on black.
+        *output++ = pixels[0] * pixels[3] / 255;
+        *output++ = pixels[1] * pixels[3] / 255;
+        *output++ = pixels[2] * pixels[3] / 255;
     }
 }
 
