@@ -91,6 +91,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/Opcode.h \
 	Source/JavaScriptCore/bytecode/PredictedType.cpp \
 	Source/JavaScriptCore/bytecode/PredictedType.h \
+	Source/JavaScriptCore/bytecode/PredictionTracker.h \
 	Source/JavaScriptCore/bytecode/SamplingTool.cpp \
 	Source/JavaScriptCore/bytecode/SamplingTool.h \
 	Source/JavaScriptCore/bytecode/StructureStubInfo.cpp \
@@ -106,6 +107,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGAliasTracker.h \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.cpp \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.h \
+	Source/JavaScriptCore/dfg/DFGCapabilities.cpp \
+	Source/JavaScriptCore/dfg/DFGCapabilities.h \
 	Source/JavaScriptCore/dfg/DFGDriver.cpp \
 	Source/JavaScriptCore/dfg/DFGDriver.h \
 	Source/JavaScriptCore/dfg/DFGFPRInfo.h \
@@ -120,6 +123,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGNode.h \
 	Source/JavaScriptCore/dfg/DFGOperations.cpp \
 	Source/JavaScriptCore/dfg/DFGOperations.h \
+	Source/JavaScriptCore/dfg/DFGOSREntry.cpp \
+	Source/JavaScriptCore/dfg/DFGOSREntry.h \
 	Source/JavaScriptCore/dfg/DFGPropagator.cpp \
 	Source/JavaScriptCore/dfg/DFGPropagator.h \
 	Source/JavaScriptCore/dfg/DFGRegisterBank.h \
@@ -156,6 +161,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/VTableSpectrum.cpp \
 	Source/JavaScriptCore/heap/VTableSpectrum.h \
 	Source/JavaScriptCore/heap/Weak.h \
+	Source/JavaScriptCore/heap/WeakReferenceHarvester.h \
 	Source/JavaScriptCore/heap/WriteBarrierSupport.cpp \
 	Source/JavaScriptCore/heap/WriteBarrierSupport.h \
 	Source/JavaScriptCore/config.h \
@@ -210,6 +216,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/interpreter/RegisterFile.h \
 	Source/JavaScriptCore/interpreter/Register.h \
 	Source/JavaScriptCore/JavaScriptCorePrefix.h \
+	Source/JavaScriptCore/jit/CompactJITCodeMap.h \
 	Source/JavaScriptCore/jit/ExecutableAllocator.cpp \
 	Source/JavaScriptCore/jit/ExecutableAllocator.h \
 	Source/JavaScriptCore/jit/JITArithmetic32_64.cpp \

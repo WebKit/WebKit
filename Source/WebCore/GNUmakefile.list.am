@@ -898,15 +898,12 @@ webcore_sources += \
 	Source/WebCore/bridge/jni/jsc/JavaMethodJSC.h \
 	Source/WebCore/bridge/jsc/BridgeJSC.cpp \
 	Source/WebCore/bridge/jsc/BridgeJSC.h \
-	Source/WebCore/bridge/npapi.h \
 	Source/WebCore/bridge/NP_jsobject.cpp \
 	Source/WebCore/bridge/NP_jsobject.h \
 	Source/WebCore/bridge/npruntime.cpp \
-	Source/WebCore/bridge/npruntime.h \
 	Source/WebCore/bridge/npruntime_impl.h \
 	Source/WebCore/bridge/npruntime_internal.h \
 	Source/WebCore/bridge/npruntime_priv.h \
-	Source/WebCore/bridge/nptypes.h \
 	Source/WebCore/bridge/runtime_array.cpp \
 	Source/WebCore/bridge/runtime_array.h \
 	Source/WebCore/bridge/runtime_method.cpp \
@@ -2892,6 +2889,9 @@ webcore_sources += \
 	Source/WebCore/platform/Widget.cpp \
 	Source/WebCore/platform/Widget.h \
 	Source/WebCore/platform/WindowsKeyboardCodes.h \
+	Source/WebCore/plugins/npapi.h \
+	Source/WebCore/plugins/npruntime.h \
+	Source/WebCore/plugins/nptypes.h \
 	Source/WebCore/plugins/DOMMimeTypeArray.cpp \
 	Source/WebCore/plugins/DOMMimeTypeArray.h \
 	Source/WebCore/plugins/DOMMimeType.cpp \
