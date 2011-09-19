@@ -183,7 +183,8 @@ PassRefPtr<PlatformCAAnimation> PlatformCAAnimation::copy() const
     animation->setRemovedOnCompletion(isRemovedOnCompletion());
     animation->setAdditive(isAdditive());
     animation->copyTimingFunctionFrom(this);
-    animation->setValueFunction(valueFunction());
+    if (valueFunction())
+        animation->setValueFunction(valueFunction());
     
     // Copy the specific Basic or Keyframe values
     if (animationType() == Keyframe) {

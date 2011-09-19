@@ -27324,6 +27324,10 @@
 					RelativePath="..\platform\win\SoundWin.cpp"
 					>
 				</File>
+                <File
+                    RelativePath="..\platform\win\StructuredExceptionHandlerSupressor.h"
+                    >
+                </File>
 				<File
 					RelativePath="..\platform\win\SystemInfo.cpp"
 					>

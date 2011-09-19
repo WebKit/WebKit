@@ -29,6 +29,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "AbstractCACFLayerTreeHost.h"
+#include "StructuredExceptionHandlerSupressor.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -71,6 +72,9 @@ void LayerChangesFlusher::cancelPendingFlush(AbstractCACFLayerTreeHost* host)
 
 LRESULT LayerChangesFlusher::hookCallback(int code, WPARAM wParam, LPARAM lParam)
 {
+    // Supress the exception handler Windows puts around all hook calls so we can 
+    // crash for debugging purposes if an exception is hit. 
+    StructuredExceptionHandlerSupressor supressor; 
     return shared().hookFired(code, wParam, lParam);
 }
 
