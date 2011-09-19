@@ -85,8 +85,6 @@ WebCore::FindOptions coreOptions(WebFindOptions options);
 - (void)_dispatchDidReceiveIconFromWebFrame:(WebFrame *)webFrame;
 #endif
 
-- (void)_selectionChanged;
-
 #if USE(ACCELERATED_COMPOSITING)
 - (BOOL)_needsOneShotDrawingSynchronization;
 - (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
@@ -106,7 +104,6 @@ WebCore::FindOptions coreOptions(WebFindOptions options);
 - (void)_updateMouseoverWithFakeEvent;
 - (void)_cancelUpdateMouseoverTimer;
 - (void)_stopAutoscrollTimer;
-- (void)_setToolTip:(NSString *)toolTip;
 @end
 
 // FIXME: Temporary way to expose methods that are in the wrong category inside WebView.

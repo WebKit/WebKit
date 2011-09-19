@@ -225,16 +225,4 @@ done:
     [timer release];
 }
 
-- (void)_setToolTip:(NSString *)toolTip
-{
-    if (_private->usesDocumentViews) {
-        id documentView = [[[self _selectedOrMainFrame] frameView] documentView];
-        if ([documentView isKindOfClass:[WebHTMLView class]])
-            [documentView _setToolTip:toolTip];
-        return;
-    }
-
-    // FIXME (Viewless): Code to handle tooltips needs to move into WebView.
-}
-
 @end

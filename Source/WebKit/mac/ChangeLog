@@ -1,5 +1,22 @@
 2011-09-19  Anders Carlsson  <andersca@apple.com>
 
+        Remove -[WebView _selectionChanged] and -[WebView _setTooltip:]
+        https://bugs.webkit.org/show_bug.cgi?id=68385
+
+        Reviewed by Adam Roben.
+
+        Move these functions back into the respective clients and remove usesDocumentViews checks.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setToolTip):
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::respondToChangedSelection):
+        * WebView/WebView.mm:
+        * WebView/WebViewEventHandling.mm:
+        * WebView/WebViewInternal.h:
+
+2011-09-19  Anders Carlsson  <andersca@apple.com>
+
         Begin removing -[WebView _usesDocumentCalls] from WebView.mm
         https://bugs.webkit.org/show_bug.cgi?id=68383
 

@@ -6028,18 +6028,6 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     _private->insertionPasteboard = pasteboard;
 }
 
-- (void)_selectionChanged
-{
-    if (_private->usesDocumentViews) {
-        id documentView = [[[self _selectedOrMainFrame] frameView] documentView];
-        if ([documentView isKindOfClass:[WebHTMLView class]])
-            [documentView _selectionChanged];
-        return;
-    }
-
-    // FIXME (Viewless): We'll need code here.
-}
-
 - (Frame*)_mainCoreFrame
 {
     return (_private && _private->page) ? _private->page->mainFrame() : 0;

@@ -622,7 +622,9 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsig
 
 void WebChromeClient::setToolTip(const String& toolTip, TextDirection)
 {
-    [m_webView _setToolTip:toolTip];
+    NSView<WebDocumentView> *documentView = [[[m_webView _selectedOrMainFrame] frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _setToolTip:toolTip];
 }
 
 void WebChromeClient::print(Frame* frame)
