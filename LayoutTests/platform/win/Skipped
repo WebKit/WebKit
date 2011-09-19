@@ -1246,6 +1246,7 @@ http/tests/loading/cross-origin-XHR-willLoadRequest.html
 
 # Request ENABLE(REQUEST_ANIMATION_FRAME) support
 fast/animation
+inspector/timeline/timeline-animation-frame.html
 
 # This port doesn't support v8 i18n extension.
 fast/js/i18n-bindings-locale.html

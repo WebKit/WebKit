@@ -1,5 +1,11 @@
 2011-09-19  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed skip inspector/timeline/timeline-animation-frame.html on win platform.
+
+        * platform/win/Skipped:
+
+2011-09-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed fix for flaky tests.
 
         * inspector/timeline/timeline-dom-content-loaded-event-expected.txt:
