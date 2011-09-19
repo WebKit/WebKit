@@ -97,7 +97,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 {
     ASSERT_ARG(buffer, buffer);
 
-#if ENABLE(OPENTYPE_SANITIZER)
+#if USE(OPENTYPE_SANITIZER)
     OpenTypeSanitizer sanitizer(buffer);
     RefPtr<SharedBuffer> transcodeBuffer = sanitizer.sanitize();
     if (!transcodeBuffer)

@@ -27,7 +27,7 @@
 #include "WOFFFileFormat.h"
 #include <zlib.h>
 
-#if !ENABLE(OPENTYPE_SANITIZER)
+#if !USE(OPENTYPE_SANITIZER)
 
 #include "SharedBuffer.h"
 
@@ -251,4 +251,4 @@ bool convertWOFFToSfnt(SharedBuffer* woff, Vector<char>& sfnt)
     
 } // namespace WebCore
 
-#endif // !ENABLE(OPENTYPE_SANITIZER)
+#endif // !USE(OPENTYPE_SANITIZER)

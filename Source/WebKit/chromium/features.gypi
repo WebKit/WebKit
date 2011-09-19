@@ -64,7 +64,6 @@
       'ENABLE_MHTML=1',
       'ENABLE_NOTIFICATIONS=1',
       'ENABLE_OFFLINE_WEB_APPLICATIONS=1',
-      'ENABLE_OPENTYPE_SANITIZER=1',
       'ENABLE_ORIENTATION_EVENTS=0',
       'ENABLE_PAGE_VISIBILITY_API=1',
       'ENABLE_PROGRESS_TAG=1',
@@ -94,6 +93,7 @@
       # WTF_USE_DYNAMIC_ANNOTATIONS=1 may be defined in build/common.gypi
       # We can't define it here because it should be present only
       # in Debug or release_valgrind_build=1 builds.
+      'WTF_USE_OPENTYPE_SANITIZER=1',
       'WTF_USE_WEBP=1',
       'WTF_USE_WEBKIT_IMAGE_DECODERS=1',
     ],
