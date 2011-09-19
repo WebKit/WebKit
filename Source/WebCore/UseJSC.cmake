@@ -211,12 +211,6 @@ IF (ENABLE_SHARED_WORKERS)
     )
 ENDIF ()
 
-IF (ENABLE_OFFLINE_WEB_APPLICATIONS)
-    LIST(APPEND WebCore_SOURCES
-        bindings/js/JSDOMApplicationCacheCustom.cpp
-    )
-ENDIF ()
-
 IF (ENABLE_XPATH)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSCustomXPathNSResolver.cpp

@@ -1794,7 +1794,6 @@
             'bindings/js/JSCustomXPathNSResolver.cpp',
             'bindings/js/JSCustomXPathNSResolver.h',
             'bindings/js/JSDictionary.cpp',
-            'bindings/js/JSDOMApplicationCacheCustom.cpp',
             'bindings/js/JSDOMBinding.cpp',
             'bindings/js/JSDOMFormDataCustom.cpp',
             'bindings/js/JSDOMGlobalObject.cpp',

@@ -3563,11 +3563,6 @@ SOURCES += \
     loader/appcache/ApplicationCacheResource.cpp \
     loader/appcache/DOMApplicationCache.cpp \
     loader/appcache/ManifestParser.cpp
-
-    !v8 {
-        SOURCES += \
-            bindings/js/JSDOMApplicationCacheCustom.cpp
-    }
 }
 
 contains(DEFINES, ENABLE_WEB_SOCKETS=1) {

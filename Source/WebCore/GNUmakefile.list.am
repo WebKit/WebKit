@@ -685,7 +685,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSCustomXPathNSResolver.h \
 	Source/WebCore/bindings/js/JSDictionary.cpp \
 	Source/WebCore/bindings/js/JSDictionary.h \
-	Source/WebCore/bindings/js/JSDOMApplicationCacheCustom.cpp \
 	Source/WebCore/bindings/js/JSDOMBinding.cpp \
 	Source/WebCore/bindings/js/JSDOMBinding.h \
 	Source/WebCore/bindings/js/JSDOMFormDataCustom.cpp \
