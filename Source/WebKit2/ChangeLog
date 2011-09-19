@@ -1,3 +1,34 @@
+2011-09-19  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] Make loading errors API easier to use.
+        https://bugs.webkit.org/show_bug.cgi?id=68357
+
+        Reviewed by Tor Arne Vestbø.
+
+        Make the API to get loading errors easier to use. 95197 introduced
+        a QJSValue API that is a bit opaque for the client code. Rather than
+        using a dedicated object, we can just pass the needed information as
+        parameters of the slot.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::loadDidFail):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/tests/commonviewtests/tst_commonviewtests.cpp:
+        (tst_CommonViewTests::loadNonexistentFileUrl):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.cpp:
+        (WebViewAbstraction::WebViewAbstraction):
+        (WebViewAbstraction::touchViewLoadFailed):
+        (WebViewAbstraction::desktopViewLoadFailed):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::loadDidFail):
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::loadDidFail):
+        * UIProcess/qt/TouchViewInterface.h:
+        * UIProcess/qt/ViewInterface.h:
+
 2011-09-19  Dan Bernstein  <mitz@apple.com>
 
         WebKit2 part of [mac] WebKit contains Objective-C classes that are not prefixed with its standard prefixes

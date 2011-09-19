@@ -25,6 +25,7 @@
 #include "qtouchwebpage_p.h"
 #include "qtouchwebview.h"
 #include "qtouchwebview_p.h"
+#include "qweberror.h"
 
 #include <QDeclarativeEngine>
 #include <QSGView>
@@ -131,9 +132,9 @@ void TouchViewInterface::loadDidSucceed()
     emit m_pageView->loadSucceeded();
 }
 
-void TouchViewInterface::loadDidFail(const QJSValue& error)
+void TouchViewInterface::loadDidFail(const QWebError& error)
 {
-    emit m_pageView->loadFailed(error);
+    emit m_pageView->loadFailed(static_cast<QTouchWebPage::ErrorType>(error.type()), error.errorCode(), error.url());
 }
 
 void TouchViewInterface::didChangeLoadProgress(int percentageLoaded)

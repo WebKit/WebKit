@@ -97,7 +97,7 @@ void tst_CommonViewTests::loadNonexistentFileUrl()
     QSignalSpy loadFailedSpy(viewAbstraction.data(), SIGNAL(loadStarted()));
 
     viewAbstraction->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/file_that_does_not_exist.html")));
-    QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadFailed(QJSValue))));
+    QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadFailed(QDesktopWebView::ErrorType, int, QUrl))));
 
     QCOMPARE(loadFailedSpy.size(), 1);
 }

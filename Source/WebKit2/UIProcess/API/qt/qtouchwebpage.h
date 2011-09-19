@@ -41,8 +41,14 @@ class QWEBKIT_EXPORT QTouchWebPage : public QSGItem {
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
     Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
     Q_PROPERTY(QWebNavigationController* navigation READ navigationController CONSTANT)
-
+    Q_ENUMS(ErrorType)
 public:
+    enum ErrorType {
+        EngineError,
+        NetworkError,
+        HttpError,
+    };
+
     QTouchWebPage(QSGItem* parent = 0);
 
     virtual ~QTouchWebPage();
@@ -63,8 +69,7 @@ Q_SIGNALS:
     void titleChanged(const QString&);
     void loadStarted();
     void loadSucceeded();
-    // The parameter needs to be explicitly named to work in QML.
-    void loadFailed(const QJSValue& error);
+    void loadFailed(QTouchWebPage::ErrorType errorType, int errorCode, const QUrl& url);
     void loadProgressChanged(int progress);
 
 protected:
