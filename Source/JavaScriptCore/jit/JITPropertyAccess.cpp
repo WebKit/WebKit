@@ -499,7 +499,8 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, size_t cach
 
 void JIT::compileGetDirectOffset(JSObject* base, RegisterID result, size_t cachedOffset)
 {
-    loadPtr(static_cast<void*>(&base->m_propertyStorage[cachedOffset]), result);
+    loadPtr(base->addressOfPropertyStorage(), result);
+    loadPtr(Address(result, cachedOffset * sizeof(WriteBarrier<Unknown>)), result);
 }
 
 void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress, bool direct)

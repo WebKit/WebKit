@@ -124,8 +124,9 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
         currStructure = it->get();
     }
     
-    stubJit.loadPtr(protoObject->addressOfPropertyAtOffset(offset), resultGPR);
-        
+    stubJit.loadPtr(protoObject->addressOfPropertyStorage(), resultGPR);
+    stubJit.loadPtr(MacroAssembler::Address(resultGPR, offset * sizeof(WriteBarrier<Unknown>)), resultGPR);
+
     MacroAssembler::Jump success, fail;
     
     emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);

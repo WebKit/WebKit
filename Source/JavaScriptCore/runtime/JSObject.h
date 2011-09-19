@@ -210,9 +210,9 @@ namespace JSC {
         void allocatePropertyStorage(JSGlobalData&, size_t oldSize, size_t newSize);
         bool isUsingInlineStorage() const { return static_cast<const void*>(m_propertyStorage.get()) == static_cast<const void*>(this + 1); }
 
-        void* addressOfPropertyAtOffset(size_t offset)
+        void* addressOfPropertyStorage()
         {
-            return static_cast<void*>(&m_propertyStorage[offset]);
+            return &m_propertyStorage;
         }
 
         static const unsigned baseExternalStorageCapacity = 16;
