@@ -1,3 +1,16 @@
+2011-09-19  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Crash after magic iframe transfer for Pepper/NaCl plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=68267
+        Make adoptNode() to not enable live iframe transfer when the iframe's subtree contains plugins.
+
+        Reviewed by Adam Barth.
+
+        * fast/frames/iframe-reparenting-embed-elements-expected.txt: Added.
+        * fast/frames/iframe-reparenting-embed-elements.html: Added.
+        * fast/frames/resources/iframe-reparenting-embed-frame1.html: Added.
+        * fast/frames/resources/iframe-reparenting-embed-iframe.html: Added.
+
 2011-09-19  Abhishek Arya  <inferno@chromium.org>
 
         Issues with merging ruby bases.

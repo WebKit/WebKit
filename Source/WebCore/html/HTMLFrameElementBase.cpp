@@ -44,6 +44,33 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+// Helper to check if the Frame's document contains elements that can instantiate plugins.
+// Does a recursive check for nested Frames too.
+static bool hasPluginElements(Frame* frame)
+{
+    if (!frame)
+        return false;
+
+    // Search for a plugin element in this document.
+    Document* document = frame->document();
+    for (Node* node = document->firstChild(); node; node = node->traverseNextNode(document)) {
+        if (!node->isElementNode())
+            continue;
+
+        Element* element = static_cast<Element*>(node);
+        if (element->hasLocalName(embedTag) || element->hasLocalName(objectTag))
+            return true;
+    }
+
+    // Do the same for the nested frames.
+    for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+        if (hasPluginElements(child))
+            return true;
+    }
+
+    return false;
+}
+
 HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Document* document)
     : HTMLFrameOwnerElement(tagName, document)
     , m_scrolling(ScrollbarAuto)
@@ -251,8 +278,18 @@ int HTMLFrameElementBase::height()
     return renderBox()->height();
 }
 
+// Some types of content can restrict the ability to move the iframes between pages.
+// For example, the plugin infrastructure of an embedder may associate the plugin instances
+// with the top-level Frame for tracking various resources and failure to transfer those
+// resources correctly may lead to crashes and other ill effects (https://bugs.webkit.org/show_bug.cgi?id=68267)
+bool HTMLFrameElementBase::canRemainAliveOnRemovalFromTree()
+{
+    return !hasPluginElements(contentFrame());
+}
+
 void HTMLFrameElementBase::setRemainsAliveOnRemovalFromTree(bool value)
 {
+    ASSERT(!value || canRemainAliveOnRemovalFromTree());
     m_remainsAliveOnRemovalFromTree = value;
 
     // There is a possibility that JS will do document.adoptNode() on this element but will not insert it into the tree.

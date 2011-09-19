@@ -944,7 +944,7 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
                 ec = HIERARCHY_REQUEST_ERR;
                 return 0;
             }
-            iframe->setRemainsAliveOnRemovalFromTree(attached() && source->attached());
+            iframe->setRemainsAliveOnRemovalFromTree(attached() && source->attached() && iframe->canRemainAliveOnRemovalFromTree());
         }
 
         if (source->parentNode())
