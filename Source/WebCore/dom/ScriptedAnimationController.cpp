@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "FrameView.h"
+#include "InspectorInstrumentation.h"
 #include "RequestAnimationFrameCallback.h"
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
@@ -75,6 +76,9 @@ ScriptedAnimationController::CallbackId ScriptedAnimationController::registerCal
     callback->m_id = id;
     callback->m_element = animationElement;
     m_callbacks.append(callback);
+
+    InspectorInstrumentation::didRegisterAnimationFrameCallback(m_document, id);
+
     if (!m_suspendCount)
         scheduleAnimation();
     return id;
@@ -85,6 +89,7 @@ void ScriptedAnimationController::cancelCallback(CallbackId id)
     for (size_t i = 0; i < m_callbacks.size(); ++i) {
         if (m_callbacks[i]->m_id == id) {
             m_callbacks[i]->m_firedOrCancelled = true;
+            InspectorInstrumentation::didCancelAnimationFrameCallback(m_document, id);
             m_callbacks.remove(i);
             return;
         }
@@ -119,7 +124,9 @@ void ScriptedAnimationController::serviceScriptedAnimations(DOMTimeStamp time)
             RequestAnimationFrameCallback* callback = callbacks[i].get();
             if (!callback->m_firedOrCancelled && (!callback->m_element || callback->m_element->renderer())) {
                 callback->m_firedOrCancelled = true;
+                InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireAnimationFrameEvent(m_document, callback->m_id);
                 callback->handleEvent(time);
+                InspectorInstrumentation::didFireAnimationFrameEvent(cookie);
                 firedCallback = true;
                 callbacks.remove(i);
                 break;

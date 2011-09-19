@@ -1,3 +1,17 @@
+2011-09-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: requestAnimationFrame callbacks don't show up in the timeline panel.
+        https://bugs.webkit.org/show_bug.cgi?id=67986
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/timeline/timeline-animation-frame-expected.txt: Added.
+        * inspector/timeline/timeline-animation-frame.html: Added.
+        * inspector/timeline/timeline-enum-stability-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-enum-stability-expected.txt:
+        * platform/qt/Skipped: inspector/timeline/timeline-animation-frame.html was added to the skip list.
+        * inspector/timeline/timeline-test.js:
+
 2011-09-18  James Kozianski  <koz@chromium.org>
 
         Rebaseline navigator test for chromium-win-vista.

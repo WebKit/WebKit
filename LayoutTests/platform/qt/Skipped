@@ -86,6 +86,7 @@ storage/indexeddb
 
 # ENABLE(REQUEST_ANIMATION_FRAME) is disabled.
 fast/animation
+inspector/timeline/timeline-animation-frame.html
 
 # ENABLE(ANIMATION_API) is disabled.
 animations/animation-api-1.html

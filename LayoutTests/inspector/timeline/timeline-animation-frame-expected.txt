@@ -1,0 +1,35 @@
+Tests the Timeline events for Animation Frame feature
+
+RegisterAnimationFrameCallback Properties:
+{
+    startTime : <number>
+    data : {
+        id : <number>
+    }
+    type : "RegisterAnimationFrameCallback"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+}
+FireAnimationFrameEvent Properties:
+{
+    startTime : <number>
+    data : {
+        id : <number>
+    }
+    children : <object>
+    endTime : <number>
+    type : "FireAnimationFrameEvent"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+}
+CancelAnimationFrameCallback Properties:
+{
+    startTime : <number>
+    data : {
+        id : <number>
+    }
+    type : "CancelAnimationFrameCallback"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+}
+

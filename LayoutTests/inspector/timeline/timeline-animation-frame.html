@@ -1,0 +1,60 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+    var element = document.getElementById("animation");
+    var requestId = window.webkitRequestAnimationFrame(animationFrameCallback, element);
+    function animationFrameCallback()
+    {
+        window.webkitCancelRequestAnimationFrame(requestId);
+    }
+
+    if (window.layoutTestController)
+        layoutTestController.display();
+}
+
+function test()
+{
+    InspectorTest.startTimeline(function() {
+        InspectorTest.evaluateInPage("performActions()");
+    });
+
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, function(event) {
+        addRecord(event.data);
+    });
+
+    function addRecord(record)
+    {
+        if (record.type !== WebInspector.TimelineAgent.RecordType["CancelAnimationFrameCallback"]) {
+            for (var i = 0; record.children && i < record.children.length; ++i)
+                addRecord(record.children[i]);
+            return ;
+        }
+
+        InspectorTest.printTimelineRecords("RegisterAnimationFrameCallback");
+        InspectorTest.printTimelineRecords("FireAnimationFrameEvent");
+        InspectorTest.printTimelineRecords("CancelAnimationFrameCallback");
+        InspectorTest.completeTest();
+    }
+}
+
+if (!window.layoutTestController)
+    setTimeout(performActions, 2000);
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline events for Animation Frame feature
+</p>
+<div id="animation">
+
+</div>
+
+</body>
+</html>

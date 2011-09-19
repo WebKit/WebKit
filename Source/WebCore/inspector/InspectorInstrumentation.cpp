@@ -865,6 +865,34 @@ void InspectorInstrumentation::cancelPauseOnNativeEvent(InstrumentingAgents* ins
 #endif
 }
 
+void InspectorInstrumentation::didRegisterAnimationFrameCallbackImpl(InstrumentingAgents* instrumentingAgents, int callbackId)
+{
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didRegisterAnimationFrameCallback(callbackId);
+}
+
+void InspectorInstrumentation::didCancelAnimationFrameCallbackImpl(InstrumentingAgents* instrumentingAgents, int callbackId)
+{
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didCancelAnimationFrameCallback(callbackId);
+}
+
+InspectorInstrumentationCookie InspectorInstrumentation::willFireAnimationFrameEventImpl(InstrumentingAgents* instrumentingAgents, int callbackId)
+{
+    int timelineAgentId = 0;
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent()) {
+        timelineAgent->willFireAnimationFrameEvent(callbackId);
+        timelineAgentId = timelineAgent->id();
+    }
+    return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
+}
+
+void InspectorInstrumentation::didFireAnimationFrameEventImpl(const InspectorInstrumentationCookie& cookie)
+{
+    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
+        timelineAgent->didFireAnimationFrameEvent();
+}
+
 InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const InspectorInstrumentationCookie& cookie)
 {
     if (!cookie.first)
