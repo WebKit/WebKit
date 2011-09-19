@@ -27,7 +27,7 @@
  */
 
 #import "config.h"
-#import "AccessibilityObjectWrapper.h"
+#import "WebAccessibilityObjectWrapper.h"
 
 #if HAVE(ACCESSIBILITY)
 
@@ -334,7 +334,7 @@ using namespace std;
 
 @end
 
-@implementation AccessibilityObjectWrapper
+@implementation WebAccessibilityObjectWrapper
 
 - (id)initWithAccessibilityObject:(AccessibilityObject*)axObject
 {
@@ -1347,7 +1347,7 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
     unsigned length = vector.size();
     NSMutableArray* array = [NSMutableArray arrayWithCapacity: length];
     for (unsigned i = 0; i < length; ++i) {
-        AccessibilityObjectWrapper* wrapper = vector[i]->wrapper();
+        WebAccessibilityObjectWrapper* wrapper = vector[i]->wrapper();
         ASSERT(wrapper);
         if (wrapper) {
             // we want to return the attachment view instead of the object representing the attachment.
@@ -2745,8 +2745,8 @@ static RenderObject* rendererForView(NSView* view)
     else if (AXObjectIsTextMarkerRange(parameter))
         textMarkerRange = parameter;
 
-    else if ([parameter isKindOfClass:[AccessibilityObjectWrapper self]])
-        uiElement = [(AccessibilityObjectWrapper*)parameter accessibilityObject];
+    else if ([parameter isKindOfClass:[WebAccessibilityObjectWrapper self]])
+        uiElement = [(WebAccessibilityObjectWrapper*)parameter accessibilityObject];
 
     else if ([parameter isKindOfClass:[NSNumber self]])
         number = parameter;
@@ -2772,8 +2772,8 @@ static RenderObject* rendererForView(NSView* view)
     // dispatch
     if ([attribute isEqualToString:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute]) {
         AccessibilityObject* axStartObject = 0;
-        if ([[dictionary objectForKey:@"AXStartElement"] isKindOfClass:[AccessibilityObjectWrapper self]])
-            axStartObject = [(AccessibilityObjectWrapper*)[dictionary objectForKey:@"AXStartElement"] accessibilityObject];
+        if ([[dictionary objectForKey:@"AXStartElement"] isKindOfClass:[WebAccessibilityObjectWrapper self]])
+            axStartObject = [(WebAccessibilityObjectWrapper*)[dictionary objectForKey:@"AXStartElement"] accessibilityObject];
         
         AccessibilitySearchDirection axSearchDirection = SearchDirectionNext;
         if ([[dictionary objectForKey:@"AXDirection"] isKindOfClass:[NSString self]])
@@ -3080,7 +3080,7 @@ static RenderObject* rendererForView(NSView* view)
     
     unsigned count = children.size();
     for (unsigned k = 0; k < count; ++k) {
-        AccessibilityObjectWrapper* wrapper = children[k]->wrapper();
+        WebAccessibilityObjectWrapper* wrapper = children[k]->wrapper();
         if (wrapper == child || (children[k]->isAttachment() && [wrapper attachmentView] == child)) 
             return k;
     }
@@ -3140,7 +3140,7 @@ static RenderObject* rendererForView(NSView* view)
         
         NSMutableArray *subarray = [NSMutableArray arrayWithCapacity:available];
         for (unsigned added = 0; added < available; ++index, ++added) {
-            AccessibilityObjectWrapper* wrapper = children[index]->wrapper();
+            WebAccessibilityObjectWrapper* wrapper = children[index]->wrapper();
             if (wrapper) {
                 // The attachment view should be returned, otherwise AX palindrome errors occur.
                 if (children[index]->isAttachment() && [wrapper attachmentView])

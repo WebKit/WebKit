@@ -59,7 +59,7 @@ static ScrollbarPainterMap* scrollbarMap()
 
 }
 
-@interface ScrollbarPrefsObserver : NSObject
+@interface WebScrollbarPrefsObserver : NSObject
 {
 }
 
@@ -69,7 +69,7 @@ static ScrollbarPainterMap* scrollbarMap()
 
 @end
 
-@implementation ScrollbarPrefsObserver
+@implementation WebScrollbarPrefsObserver
 
 + (void)appearancePrefsChanged:(NSNotification*)unusedNotification
 {
@@ -192,7 +192,7 @@ ScrollbarThemeMac::ScrollbarThemeMac()
     static bool initialized;
     if (!initialized) {
         initialized = true;
-        [ScrollbarPrefsObserver registerAsObserver];
+        [WebScrollbarPrefsObserver registerAsObserver];
         preferencesChanged();
     }
 }

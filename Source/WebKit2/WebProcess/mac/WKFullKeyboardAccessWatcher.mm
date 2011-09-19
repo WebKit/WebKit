@@ -24,13 +24,13 @@
  */
 
 #import "config.h"
-#import "FullKeyboardAccessWatcher.h"
+#import "WKFullKeyboardAccessWatcher.h"
 
 NSString * const KeyboardUIModeDidChangeNotification = @"com.apple.KeyboardUIModeDidChange";
 const CFStringRef AppleKeyboardUIMode = CFSTR("AppleKeyboardUIMode");
 const CFStringRef UniversalAccessDomain = CFSTR("com.apple.universalaccess");
 
-@implementation FullKeyboardAccessWatcher
+@implementation WKFullKeyboardAccessWatcher
 
 - (void)retrieveKeyboardUIModeFromPreferences:(NSNotification *)notification
 {
@@ -63,7 +63,7 @@ const CFStringRef UniversalAccessDomain = CFSTR("com.apple.universalaccess");
 
 + (BOOL)fullKeyboardAccessEnabled
 {
-    static FullKeyboardAccessWatcher *watcher = [[FullKeyboardAccessWatcher alloc] init];
+    static WKFullKeyboardAccessWatcher *watcher = [[WKFullKeyboardAccessWatcher alloc] init];
     return watcher->fullKeyboardAccessEnabled;
 }
 

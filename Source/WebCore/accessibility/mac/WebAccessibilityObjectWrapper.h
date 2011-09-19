@@ -26,15 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityObjectWrapper_h
-#define AccessibilityObjectWrapper_h
+#ifndef WebAccessibilityObjectWrapper_h
+#define WebAccessibilityObjectWrapper_h
 
 namespace WebCore {
 class AccessibilityObject;
 class VisiblePosition;
 }
 
-@interface AccessibilityObjectWrapper : NSObject {
+@interface WebAccessibilityObjectWrapper : NSObject {
     WebCore::AccessibilityObject* m_object;
 }
  
@@ -49,4 +49,4 @@ class VisiblePosition;
 
 @end
 
-#endif // AccessibilityObjectWrapper_h
+#endif // WebAccessibilityObjectWrapper_h

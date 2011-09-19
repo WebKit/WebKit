@@ -26,11 +26,11 @@
 #import "config.h"
 #import "WebPage.h"
 
-#import "AccessibilityWebPageObject.h"
 #import "AttributedString.h"
 #import "DataReference.h"
 #import "EditorState.h"
 #import "PluginView.h"
+#import "WKAccessibilityWebPageObject.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebEvent.h"
 #import "WebEventConversion.h"
@@ -69,7 +69,7 @@ void WebPage::platformInitialize()
     m_page->addSchedulePair(SchedulePair::create([NSRunLoop currentRunLoop], kCFRunLoopCommonModes));
 #endif
 
-    AccessibilityWebPageObject* mockAccessibilityElement = [[[AccessibilityWebPageObject alloc] init] autorelease];
+    WKAccessibilityWebPageObject* mockAccessibilityElement = [[[WKAccessibilityWebPageObject alloc] init] autorelease];
 
     // Get the pid for the starting process.
     pid_t pid = WebProcess::shared().presenterApplicationPid();    
@@ -621,7 +621,7 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, bool& re
     result = true;
 }
     
-AccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
+WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
 {
     return m_mockAccessibilityElement.get();
 }

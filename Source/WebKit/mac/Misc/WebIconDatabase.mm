@@ -561,14 +561,14 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
 @implementation WebIconDatabasePrivate
 @end
 
-@interface ThreadEnabler : NSObject {
+@interface WebCocoaThreadingEnabler : NSObject {
 }
 + (void)enableThreading;
 
 - (void)threadEnablingSelector:(id)arg;
 @end
 
-@implementation ThreadEnabler
+@implementation WebCocoaThreadingEnabler
 
 - (void)threadEnablingSelector:(id)arg
 {
@@ -577,7 +577,7 @@ static NSData* iconDataFromPathForIconURL(NSString *databasePath, NSString *icon
 
 + (void)enableThreading
 {
-    ThreadEnabler *enabler = [[ThreadEnabler alloc] init];
+    WebCocoaThreadingEnabler *enabler = [[WebCocoaThreadingEnabler alloc] init];
     [NSThread detachNewThreadSelector:@selector(threadEnablingSelector:) toTarget:enabler withObject:nil];
     [enabler release];
 }
@@ -589,7 +589,7 @@ bool importToWebCoreFormat()
     // Since this is running on a secondary POSIX thread and Cocoa cannot be used multithreaded unless an NSThread has been detached,
     // make sure that happens here for all WebKit clients
     if (![NSThread isMultiThreaded])
-        [ThreadEnabler enableThreading];
+        [WebCocoaThreadingEnabler enableThreading];
     ASSERT([NSThread isMultiThreaded]);    
     
     // Get the directory the old icon database *should* be in

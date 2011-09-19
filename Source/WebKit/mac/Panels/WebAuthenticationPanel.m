@@ -269,7 +269,7 @@
 
 @end
 
-@implementation NonBlockingPanel
+@implementation WebNonBlockingPanel
 
 - (BOOL)_blocksActionWhenModal:(SEL)theAction
 {

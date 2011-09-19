@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "AccessibilityWebPageObject.h"
+#import "WKAccessibilityWebPageObject.h"
 
 #import "WebFrame.h"
 #import "WebPage.h"
@@ -39,7 +39,7 @@
 using namespace WebCore;
 using namespace WebKit;
 
-@implementation AccessibilityWebPageObject
+@implementation WKAccessibilityWebPageObject
 
 - (id)accessibilityRootObjectWrapper
 {

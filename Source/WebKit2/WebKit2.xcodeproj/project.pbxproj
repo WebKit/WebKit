@@ -238,8 +238,8 @@
 		1CA8B945127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CA8B943127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp */; };
 		1CA8B946127C882A00576C2B /* WebInspectorProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */; };
 		1CA8B954127C891500576C2B /* WebInspectorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C8E2DAD1278C5B200BC7BD0 /* WebInspectorMac.mm */; };
-		29CD55AA128E294F00133C85 /* AccessibilityWebPageObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29CD55A8128E294F00133C85 /* AccessibilityWebPageObject.h */; };
-		29CD55AB128E294F00133C85 /* AccessibilityWebPageObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29CD55A9128E294F00133C85 /* AccessibilityWebPageObject.mm */; };
+		29CD55AA128E294F00133C85 /* WKAccessibilityWebPageObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29CD55A8128E294F00133C85 /* WKAccessibilityWebPageObject.h */; };
+		29CD55AB128E294F00133C85 /* WKAccessibilityWebPageObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29CD55A9128E294F00133C85 /* WKAccessibilityWebPageObject.mm */; };
 		31EA25D2134F78C0005B1452 /* NativeWebMouseEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */; };
 		330934471315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 330934431315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp */; };
 		330934481315B9220097A7BC /* WebCookieManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 330934441315B9220097A7BC /* WebCookieManagerMessages.h */; };
@@ -823,8 +823,8 @@
 		E18C92F412DB9E7100CF2AEB /* PrintInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */; };
 		E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A31731134CEA6C007C9A4F /* AttributedString.h */; };
 		E1A31735134CEA80007C9A4F /* AttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1A31734134CEA80007C9A4F /* AttributedString.mm */; };
-		E1BB16A413201B9B00F49431 /* FullKeyboardAccessWatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BB1688132018BA00F49431 /* FullKeyboardAccessWatcher.h */; };
-		E1BB16A513201B9B00F49431 /* FullKeyboardAccessWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1BB1689132018BA00F49431 /* FullKeyboardAccessWatcher.mm */; };
+		E1BB16A413201B9B00F49431 /* WKFullKeyboardAccessWatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BB1688132018BA00F49431 /* WKFullKeyboardAccessWatcher.h */; };
+		E1BB16A513201B9B00F49431 /* WKFullKeyboardAccessWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1BB1689132018BA00F49431 /* WKFullKeyboardAccessWatcher.mm */; };
 		E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CC1B8E12D7EADF00625838 /* PrintInfo.h */; };
 		E1CC1B9112D7EADF00625838 /* PrintInfoMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */; };
 		E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */; };
@@ -1166,8 +1166,8 @@
 		1CA8B935127C774E00576C2B /* WebInspectorProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorProxyMac.mm; sourceTree = "<group>"; };
 		1CA8B943127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorProxyMessages.h; sourceTree = "<group>"; };
-		29CD55A8128E294F00133C85 /* AccessibilityWebPageObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityWebPageObject.h; sourceTree = "<group>"; };
-		29CD55A9128E294F00133C85 /* AccessibilityWebPageObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityWebPageObject.mm; sourceTree = "<group>"; };
+		29CD55A8128E294F00133C85 /* WKAccessibilityWebPageObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKAccessibilityWebPageObject.h; sourceTree = "<group>"; };
+		29CD55A9128E294F00133C85 /* WKAccessibilityWebPageObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKAccessibilityWebPageObject.mm; sourceTree = "<group>"; };
 		31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeWebMouseEventMac.mm; sourceTree = "<group>"; };
 		31EA25D3134F78D6005B1452 /* NativeWebMouseEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeWebMouseEvent.h; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* WebKit2Prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2Prefix.h; sourceTree = "<group>"; };
@@ -1796,8 +1796,8 @@
 		E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintInfo.cpp; sourceTree = "<group>"; };
 		E1A31731134CEA6C007C9A4F /* AttributedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributedString.h; sourceTree = "<group>"; };
 		E1A31734134CEA80007C9A4F /* AttributedString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedString.mm; sourceTree = "<group>"; };
-		E1BB1688132018BA00F49431 /* FullKeyboardAccessWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullKeyboardAccessWatcher.h; sourceTree = "<group>"; };
-		E1BB1689132018BA00F49431 /* FullKeyboardAccessWatcher.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = FullKeyboardAccessWatcher.mm; sourceTree = "<group>"; };
+		E1BB1688132018BA00F49431 /* WKFullKeyboardAccessWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFullKeyboardAccessWatcher.h; sourceTree = "<group>"; };
+		E1BB1689132018BA00F49431 /* WKFullKeyboardAccessWatcher.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = WKFullKeyboardAccessWatcher.mm; sourceTree = "<group>"; };
 		E1CC1B8E12D7EADF00625838 /* PrintInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintInfo.h; sourceTree = "<group>"; };
 		E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrintInfoMac.mm; sourceTree = "<group>"; };
 		E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageEditorClient.h; sourceTree = "<group>"; };
@@ -2048,16 +2048,16 @@
 			children = (
 				93C01DAA139AC91700ED51D7 /* CoreIPCClientRunLoop.h */,
 				93C01DAB139AC91700ED51D7 /* CoreIPCClientRunLoop.mm */,
-				E1BB1688132018BA00F49431 /* FullKeyboardAccessWatcher.h */,
-				E1BB1689132018BA00F49431 /* FullKeyboardAccessWatcher.mm */,
 				512DF6D6138C181A00A22FC6 /* KeychainItemShimMethods.h */,
 				512DF6D7138C181A00A22FC6 /* KeychainItemShimMethods.mm */,
 				511F8A7D138B46FE00A95F44 /* SecItemShimMethods.h */,
 				511F8A7E138B46FE00A95F44 /* SecItemShimMethods.mm */,
-				1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */,
 				BC3065C312592F8900E71278 /* WebProcessMac.mm */,
+				1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */,
 				511F8A77138B460900A95F44 /* WebProcessShim.h */,
 				511F8A78138B460900A95F44 /* WebProcessShim.mm */,
+				E1BB1688132018BA00F49431 /* WKFullKeyboardAccessWatcher.h */,
+				E1BB1689132018BA00F49431 /* WKFullKeyboardAccessWatcher.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -3152,10 +3152,10 @@
 		BC963D6C113DD19500574BE2 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				29CD55A8128E294F00133C85 /* AccessibilityWebPageObject.h */,
-				29CD55A9128E294F00133C85 /* AccessibilityWebPageObject.mm */,
 				1C8E2DAD1278C5B200BC7BD0 /* WebInspectorMac.mm */,
 				BC963D6D113DD1A500574BE2 /* WebPageMac.mm */,
+				29CD55A8128E294F00133C85 /* WKAccessibilityWebPageObject.h */,
+				29CD55A9128E294F00133C85 /* WKAccessibilityWebPageObject.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -3698,7 +3698,7 @@
 				BCEE7DC5128B645D009827DA /* InjectedBundleClient.h in Headers */,
 				ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */,
 				1CA8B946127C882A00576C2B /* WebInspectorProxyMessages.h in Headers */,
-				29CD55AA128E294F00133C85 /* AccessibilityWebPageObject.h in Headers */,
+				29CD55AA128E294F00133C85 /* WKAccessibilityWebPageObject.h in Headers */,
 				5153569D1291B1D2000749DC /* WebPageContextMenuClient.h in Headers */,
 				1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */,
 				BC7B6206129A0A6700D174A4 /* WebPageGroup.h in Headers */,
@@ -3813,7 +3813,7 @@
 				BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */,
 				BCE81D99131AE02100241910 /* DictionaryPopupInfo.h in Headers */,
 				37C4E9F6131C6E7E0029BD5A /* config.h in Headers */,
-				E1BB16A413201B9B00F49431 /* FullKeyboardAccessWatcher.h in Headers */,
+				E1BB16A413201B9B00F49431 /* WKFullKeyboardAccessWatcher.h in Headers */,
 				33AA1067131F060000D4A575 /* WebCookieManagerProxyClient.h in Headers */,
 				CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */,
 				BCFD548C132D82680055D816 /* WKErrorCF.h in Headers */,
@@ -4355,7 +4355,7 @@
 				1CA8B945127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp in Sources */,
 				1CA8B954127C891500576C2B /* WebInspectorMac.mm in Sources */,
 				EDCA71B7128DDA8C00201B26 /* WKBundlePageOverlay.cpp in Sources */,
-				29CD55AB128E294F00133C85 /* AccessibilityWebPageObject.mm in Sources */,
+				29CD55AB128E294F00133C85 /* WKAccessibilityWebPageObject.mm in Sources */,
 				5153569C1291B1D2000749DC /* WebPageContextMenuClient.cpp in Sources */,
 				1AAB4AAA1296F1540023952F /* SandboxExtensionMac.mm in Sources */,
 				BC7B6207129A0A6700D174A4 /* WebPageGroup.cpp in Sources */,
@@ -4472,7 +4472,7 @@
 				3309345A1315B9980097A7BC /* WKCookieManager.cpp in Sources */,
 				BCE81D8C1319F7EF00241910 /* FontInfo.cpp in Sources */,
 				BCE81D98131AE02100241910 /* DictionaryPopupInfo.cpp in Sources */,
-				E1BB16A513201B9B00F49431 /* FullKeyboardAccessWatcher.mm in Sources */,
+				E1BB16A513201B9B00F49431 /* WKFullKeyboardAccessWatcher.mm in Sources */,
 				33AA1066131F060000D4A575 /* WebCookieManagerProxyClient.cpp in Sources */,
 				CD73BA47131ACC9A00EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp in Sources */,
 				CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */,

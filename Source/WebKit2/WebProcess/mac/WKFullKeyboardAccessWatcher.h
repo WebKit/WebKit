@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FullKeyboardAccessWatcher_h
-#define FullKeyboardAccessWatcher_h
+#ifndef WKFullKeyboardAccessWatcher_h
+#define WKFullKeyboardAccessWatcher_h
 
 #import <Cocoa/Cocoa.h>
 
-@interface FullKeyboardAccessWatcher : NSObject {
+@interface WKFullKeyboardAccessWatcher : NSObject {
 @private
     BOOL fullKeyboardAccessEnabled;
 }
@@ -37,4 +37,4 @@
 
 @end;
 
-#endif // FullKeyboardAccessWatcher_h
+#endif // WKFullKeyboardAccessWatcher_h

@@ -48,7 +48,7 @@ extern const CFStringRef kCTTypesetterOptionForcedEmbeddingLevel;
 }
 #endif
 
-@interface CascadeList : NSArray {
+@interface WebCascadeList : NSArray {
     @private
     const WebCore::Font* _font;
     UChar32 _character;
@@ -60,7 +60,7 @@ extern const CFStringRef kCTTypesetterOptionForcedEmbeddingLevel;
 
 @end
 
-@implementation CascadeList
+@implementation WebCascadeList
 
 - (id)initWithFont:(const WebCore::Font*)font character:(UChar32)character
 {
@@ -193,7 +193,7 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
         U16_GET(cp, 0, 0, length, baseCharacter);
         fontData = m_font.fontDataAt(0)->fontDataForCharacter(baseCharacter);
 
-        RetainPtr<CascadeList> cascadeList(AdoptNS, [[CascadeList alloc] initWithFont:&m_font character:baseCharacter]);
+        RetainPtr<WebCascadeList> cascadeList(AdoptNS, [[WebCascadeList alloc] initWithFont:&m_font character:baseCharacter]);
 
         stringAttributes.adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, fontData->getCFStringAttributes(m_font.typesettingFeatures(), fontData->platformData().orientation())));
         static const void* attributeKeys[] = { kCTFontCascadeListAttribute };

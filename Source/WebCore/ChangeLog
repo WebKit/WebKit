@@ -1,3 +1,47 @@
+2011-09-19  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of [mac] WebKit contains Objective-C classes that are not prefixed with its standard prefixes
+        https://bugs.webkit.org/show_bug.cgi?id=68323
+
+        Reviewed by Sam Weinig.
+
+        Renamed AccessibilityObjectWrapper to WebAccessibilityObjectWrapper.
+        Renamed CascadeList to WebCascadeList.
+        Renamed CookieStorageObjCAdapter to WebCookieStorageObjCAdapter.
+        Renamed LanguageChangeObserver to WebLanguageChangeObserver.
+        Renamed ScrollAnimationHelperDelegate to WebScrollAnimationHelperDelegate.
+        Renamed ScrollbarPainterControllerDelegate to WebScrollbarPainterControllerDelegate.
+        Renamed ScrollbarPainterDelegate to WebScrollbarPainterDelegate.
+        Renamed ScrollbarPartAnimation to WebScrollbarPartAnimation.
+        Renamed ScrollbarPrefsObserver to WebScrollbarPrefsObserver.
+
+        * WebCore.gyp/WebCore.gyp: Updated for the renaming of CascadeList to WebCascadeList.
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::attachWrapper):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        * accessibility/mac/AccessibilityObjectWrapper.h: Removed.
+        * accessibility/mac/AccessibilityObjectWrapper.mm: Removed.
+        * accessibility/mac/WebAccessibilityObjectWrapper.h: Copied from Source/WebCore/accessibility/mac/AccessibilityObjectWrapper.h.
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm: Copied from Source/WebCore/accessibility/mac/AccessibilityObjectWrapper.mm.
+        (convertToNSArray):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        (-[WebAccessibilityObjectWrapper accessibilityIndexOfChild:]):
+        (-[WebAccessibilityObjectWrapper accessibilityArrayAttributeValues:index:maxCount:]):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersCoreText):
+        * platform/mac/Language.mm:
+        (WebCore::platformDefaultLanguage):
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterDelegate setUpAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::ScrollbarThemeMac):
+        * platform/network/mac/CookieStorageMac.mm:
+        (WebCore::startObservingCookieChanges):
+
 2011-09-19  Cary Clark  <caryclark@google.com>
 
         Move fontDataForCombiningCharacterSequence to fix Skia on Mac build

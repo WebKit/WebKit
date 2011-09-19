@@ -36,15 +36,13 @@
 #include <wtf/RetainPtr.h>
 
 #ifdef __OBJC__
-@class ScrollAnimationHelperDelegate;
-@class ScrollbarPainterDelegate;
-@class ScrollbarPainterControllerDelegate;
-@class ScrollbarPainterDelegate;
+@class WebScrollAnimationHelperDelegate;
+@class WebScrollbarPainterControllerDelegate;
+@class WebScrollbarPainterDelegate;
 #else
-class ScrollAnimationHelperDelegate;
-class ScrollbarPainterDelegate;
-class ScrollbarPainterControllerDelegate;
-class ScrollbarPainterDelegate;
+class WebScrollAnimationHelperDelegate;
+class WebScrollbarPainterControllerDelegate;
+class WebScrollbarPainterDelegate;
 #endif
 
 #if USE(SCROLLBAR_PAINTER)
@@ -97,12 +95,12 @@ public:
 
 private:
     RetainPtr<id> m_scrollAnimationHelper;
-    RetainPtr<ScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
+    RetainPtr<WebScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
 
 #if USE(SCROLLBAR_PAINTER)
     RetainPtr<ScrollbarPainterController> m_scrollbarPainterController;
-    RetainPtr<ScrollbarPainterControllerDelegate> m_scrollbarPainterControllerDelegate;
-    RetainPtr<id> m_scrollbarPainterDelegate;
+    RetainPtr<WebScrollbarPainterControllerDelegate> m_scrollbarPainterControllerDelegate;
+    RetainPtr<WebScrollbarPainterDelegate> m_scrollbarPainterDelegate;
 
     void initialScrollbarPaintTimerFired(Timer<ScrollAnimatorMac>*);
     Timer<ScrollAnimatorMac> m_initialScrollbarPaintTimer;

@@ -98,9 +98,9 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 - (NSSet *)_visiblePDFPages;
 @end;
 
-// PDFPrefUpdatingProxy is a class that forwards everything it gets to a target and updates the PDF viewing prefs
+// WebPDFPrefUpdatingProxy is a class that forwards everything it gets to a target and updates the PDF viewing prefs
 // after each of those messages.  We use it as a way to hook all the places that the PDF viewing attrs change.
-@interface PDFPrefUpdatingProxy : NSProxy {
+@interface WebPDFPrefUpdatingProxy : NSProxy {
     WebPDFView *view;
 }
 - (id)initWithView:(WebPDFView *)view;
@@ -338,7 +338,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         written = NO;
         // Messaging this proxy is the same as messaging PDFSubview, with the side effect that the
         // PDF viewing defaults are updated afterwards
-        PDFSubviewProxy = (PDFView *)[[PDFPrefUpdatingProxy alloc] initWithView:self];
+        PDFSubviewProxy = (PDFView *)[[WebPDFPrefUpdatingProxy alloc] initWithView:self];
     }
     
     return self;
@@ -1439,7 +1439,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 
 - (void)_updatePreferencesSoon
 {   
-    // Consolidate calls; due to the PDFPrefUpdatingProxy method, this can be called multiple times with a single user action
+    // Consolidate calls; due to the WebPDFPrefUpdatingProxy method, this can be called multiple times with a single user action
     // such as showing the context menu.
     if (_willUpdatePreferencesSoon)
         return;
@@ -1488,7 +1488,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 
 @end
 
-@implementation PDFPrefUpdatingProxy
+@implementation WebPDFPrefUpdatingProxy
 
 - (id)initWithView:(WebPDFView *)aView
 {

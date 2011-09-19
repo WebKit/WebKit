@@ -666,8 +666,8 @@
 		29A812420FBB9C1D00510293 /* AccessibilityListBoxOption.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812240FBB9C1D00510293 /* AccessibilityListBoxOption.h */; };
 		29A812430FBB9C1D00510293 /* AccessibilityListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812250FBB9C1D00510293 /* AccessibilityListBox.h */; };
 		29A812480FBB9CA900510293 /* AccessibilityObjectMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812440FBB9CA900510293 /* AccessibilityObjectMac.mm */; };
-		29A812490FBB9CA900510293 /* AccessibilityObjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812450FBB9CA900510293 /* AccessibilityObjectWrapper.h */; };
-		29A8124A0FBB9CA900510293 /* AccessibilityObjectWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812460FBB9CA900510293 /* AccessibilityObjectWrapper.mm */; };
+		29A812490FBB9CA900510293 /* WebAccessibilityObjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812450FBB9CA900510293 /* WebAccessibilityObjectWrapper.h */; };
+		29A8124A0FBB9CA900510293 /* WebAccessibilityObjectWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812460FBB9CA900510293 /* WebAccessibilityObjectWrapper.mm */; };
 		29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */; };
 		2BE8E2C712A589EC00FAD550 /* HTMLMetaCharsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */; };
 		2BE8E2C912A58A0100FAD550 /* HTMLMetaCharsetParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */; };
@@ -7219,8 +7219,8 @@
 		29A812240FBB9C1D00510293 /* AccessibilityListBoxOption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityListBoxOption.h; sourceTree = "<group>"; };
 		29A812250FBB9C1D00510293 /* AccessibilityListBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityListBox.h; sourceTree = "<group>"; };
 		29A812440FBB9CA900510293 /* AccessibilityObjectMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectMac.mm; sourceTree = "<group>"; };
-		29A812450FBB9CA900510293 /* AccessibilityObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityObjectWrapper.h; sourceTree = "<group>"; };
-		29A812460FBB9CA900510293 /* AccessibilityObjectWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectWrapper.mm; sourceTree = "<group>"; };
+		29A812450FBB9CA900510293 /* WebAccessibilityObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAccessibilityObjectWrapper.h; sourceTree = "<group>"; };
+		29A812460FBB9CA900510293 /* WebAccessibilityObjectWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAccessibilityObjectWrapper.mm; sourceTree = "<group>"; };
 		29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AXObjectCacheMac.mm; sourceTree = "<group>"; };
 		2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLMetaCharsetParser.h; path = parser/HTMLMetaCharsetParser.h; sourceTree = "<group>"; };
 		2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLMetaCharsetParser.cpp; path = parser/HTMLMetaCharsetParser.cpp; sourceTree = "<group>"; };
@@ -13770,9 +13770,9 @@
 			isa = PBXGroup;
 			children = (
 				29A812440FBB9CA900510293 /* AccessibilityObjectMac.mm */,
-				29A812450FBB9CA900510293 /* AccessibilityObjectWrapper.h */,
-				29A812460FBB9CA900510293 /* AccessibilityObjectWrapper.mm */,
 				29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */,
+				29A812450FBB9CA900510293 /* WebAccessibilityObjectWrapper.h */,
+				29A812460FBB9CA900510293 /* WebAccessibilityObjectWrapper.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -20479,7 +20479,7 @@
 				76CDD2F71103DA6600680521 /* AccessibilityMenuListOption.h in Headers */,
 				76CDD2F51103DA6600680521 /* AccessibilityMenuListPopup.h in Headers */,
 				29A812360FBB9C1D00510293 /* AccessibilityObject.h in Headers */,
-				29A812490FBB9CA900510293 /* AccessibilityObjectWrapper.h in Headers */,
+				29A812490FBB9CA900510293 /* WebAccessibilityObjectWrapper.h in Headers */,
 				A409C985116D0DDD007197BD /* AccessibilityProgressIndicator.h in Headers */,
 				29A812390FBB9C1D00510293 /* AccessibilityRenderObject.h in Headers */,
 				93C4F6EB1108F9A50099D0DB /* AccessibilityScrollbar.h in Headers */,
@@ -23836,7 +23836,7 @@
 				76CDD2F61103DA6600680521 /* AccessibilityMenuListOption.cpp in Sources */,
 				76CDD2F41103DA6600680521 /* AccessibilityMenuListPopup.cpp in Sources */,
 				29A812480FBB9CA900510293 /* AccessibilityObjectMac.mm in Sources */,
-				29A8124A0FBB9CA900510293 /* AccessibilityObjectWrapper.mm in Sources */,
+				29A8124A0FBB9CA900510293 /* WebAccessibilityObjectWrapper.mm in Sources */,
 				A409C984116D0DDD007197BD /* AccessibilityProgressIndicator.cpp in Sources */,
 				B5D31DFA11CF610B009F22B4 /* ActiveDOMCallback.cpp in Sources */,
 				E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */,

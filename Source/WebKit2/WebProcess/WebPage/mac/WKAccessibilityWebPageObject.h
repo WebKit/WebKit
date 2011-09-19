@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityWebPageObject_h
-#define AccessibilityWebPageObject_h
+#ifndef WKAccessibilityWebPageObject_h
+#define WKAccessibilityWebPageObject_h
 
 namespace WebKit {
 class WebPage;
 }
 
-@interface AccessibilityWebPageObject : NSObject {
+@interface WKAccessibilityWebPageObject : NSObject {
     WebKit::WebPage* m_page;
     
     id m_parent;
@@ -44,4 +44,4 @@ class WebPage;
 
 @end
 
-#endif // AccessibilityWebPageObject_h
+#endif // WKAccessibilityWebPageObject_h

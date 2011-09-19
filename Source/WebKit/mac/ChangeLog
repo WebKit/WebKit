@@ -1,3 +1,29 @@
+2011-09-19  Dan Bernstein  <mitz@apple.com>
+
+        WebKit part of [mac] WebKit contains Objective-C classes that are not prefixed with its standard prefixes
+        https://bugs.webkit.org/show_bug.cgi?id=68323
+
+        Reviewed by Sam Weinig.
+
+        Renamed NonBlockingPanel to WebNonBlockingPanel.
+        Renamed ThreadEnabler to WebCocoaThreadingEnabler.
+        Renamed PDFPrefUpdatingProxy to WebPDFPrefUpdatingProxy.
+
+        * Misc/WebIconDatabase.mm:
+        (+[WebCocoaThreadingEnabler enableThreading]):
+        (importToWebCoreFormat):
+        * Panels/English.lproj/WebAuthenticationPanel.nib/designable.nib:
+        * Panels/English.lproj/WebAuthenticationPanel.nib/keyedobjects.nib:
+        * Panels/WebAuthenticationPanel.h:
+        * Panels/WebAuthenticationPanel.m: Renamed NonBlockingPanel to
+        WebNonBlockingPanel. Because Safari 5.1 uses NonBlockingPanel, this will
+        cause nightly builds to log an error message when showing the Safari
+        HTTP authentication sheet and disable the Quit command while the sheet
+        is disaplyed.
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView initWithFrame:]):
+        (-[WebPDFView _updatePreferencesSoon]):
+
 2011-09-17  Mihai Parparita  <mihaip@chromium.org>
 
         FrameLoaderClient BackForwardList-related methods are unsued

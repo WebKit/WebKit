@@ -40,14 +40,14 @@
 
 using namespace WebCore;
 
-@interface CookieStorageObjCAdapter : NSObject
+@interface WebCookieStorageObjCAdapter : NSObject
 -(void)notifyCookiesChangedOnMainThread;
 -(void)cookiesChangedNotificationHandler:(NSNotification *)notification;
 -(void)startListeningForCookieChangeNotifications;
 -(void)stopListeningForCookieChangeNotifications;
 @end
 
-@implementation CookieStorageObjCAdapter
+@implementation WebCookieStorageObjCAdapter
 
 -(void)notifyCookiesChangedOnMainThread
 {
@@ -96,12 +96,12 @@ void setCookieStoragePrivateBrowsingEnabled(bool enabled)
     wkSetCookieStoragePrivateBrowsingEnabled(enabled);
 }
 
-static CookieStorageObjCAdapter *cookieStorageAdapter;
+static WebCookieStorageObjCAdapter *cookieStorageAdapter;
 
 void startObservingCookieChanges()
 {
     if (!cookieStorageAdapter)
-        cookieStorageAdapter = [[CookieStorageObjCAdapter alloc] init];
+        cookieStorageAdapter = [[WebCookieStorageObjCAdapter alloc] init];
     [cookieStorageAdapter startListeningForCookieChangeNotifications];
 }
 
