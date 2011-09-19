@@ -65,7 +65,7 @@ bool RenderRubyBase::hasOnlyWrappedInlineChildren(RenderObject* beforeChild) con
     return true;
 }
 
-void RenderRubyBase::moveChildren(RenderRubyBase* toBase, RenderObject* fromBeforeChild)
+void RenderRubyBase::moveChildren(RenderRubyBase* toBase, RenderObject* beforeChild)
 {
     // This function removes all children that are before (!) beforeChild
     // and appends them to toBase.
@@ -75,19 +75,19 @@ void RenderRubyBase::moveChildren(RenderRubyBase* toBase, RenderObject* fromBefo
     // Inline children might be wrapped in an anonymous block if there's a continuation.
     // Theoretically, in ruby bases, this can happen with only the first such a child,
     // so it should be OK to just climb the tree.
-    while (fromBeforeChild && fromBeforeChild->parent() != this)
-        fromBeforeChild = fromBeforeChild->parent();
+    while (beforeChild && beforeChild->parent() != this)
+        beforeChild = beforeChild->parent();
 
     if (childrenInline())
-        moveInlineChildren(toBase, fromBeforeChild);
+        moveInlineChildren(toBase, beforeChild);
     else
-        moveBlockChildren(toBase, fromBeforeChild);
+        moveBlockChildren(toBase, beforeChild);
 
     setNeedsLayoutAndPrefWidthsRecalc();
     toBase->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-void RenderRubyBase::moveInlineChildren(RenderRubyBase* toBase, RenderObject* fromBeforeChild)
+void RenderRubyBase::moveInlineChildren(RenderRubyBase* toBase, RenderObject* beforeChild)
 {
     RenderBlock* toBlock;
 
@@ -106,17 +106,17 @@ void RenderRubyBase::moveInlineChildren(RenderRubyBase* toBase, RenderObject* fr
         }
     }
     // Move our inline children into the target block we determined above.
-    moveChildrenTo(toBlock, firstChild(), fromBeforeChild);
+    moveChildrenTo(toBlock, firstChild(), beforeChild);
 }
 
-void RenderRubyBase::moveBlockChildren(RenderRubyBase* toBase, RenderObject* fromBeforeChild)
+void RenderRubyBase::moveBlockChildren(RenderRubyBase* toBase, RenderObject* beforeChild)
 {
     if (toBase->childrenInline()) {
         // First check whether we move only wrapped inline objects.
-        if (hasOnlyWrappedInlineChildren(fromBeforeChild)) {
+        if (hasOnlyWrappedInlineChildren(beforeChild)) {
             // The reason why the base is in block flow must be after beforeChild.
             // We therefore can extract the inline objects and move them to toBase.
-            for (RenderObject* child = firstChild(); child != fromBeforeChild; child = firstChild()) {
+            for (RenderObject* child = firstChild(); child != beforeChild; child = firstChild()) {
                 if (child->isAnonymousBlock()) {
                     RenderBlock* anonBlock = toRenderBlock(child);
                     ASSERT(anonBlock->childrenInline());
@@ -133,7 +133,7 @@ void RenderRubyBase::moveBlockChildren(RenderRubyBase* toBase, RenderObject* fro
             // Moving block children -> have to set toBase as block flow
             toBase->makeChildrenNonInline();
             // Move children, potentially collapsing anonymous block wrappers.
-            mergeBlockChildren(toBase, fromBeforeChild);
+            mergeBlockChildren(toBase, beforeChild);
 
             // Now we need to check if the leftover children are all inline.
             // If so, make this base inline again.
@@ -157,24 +157,24 @@ void RenderRubyBase::moveBlockChildren(RenderRubyBase* toBase, RenderObject* fro
             }
         }
     } else
-        mergeBlockChildren(toBase, fromBeforeChild);
+        mergeBlockChildren(toBase, beforeChild);
 }
 
-void RenderRubyBase::mergeBlockChildren(RenderRubyBase* toBase, RenderObject* fromBeforeChild)
+void RenderRubyBase::mergeBlockChildren(RenderRubyBase* toBase, RenderObject* beforeChild)
 {
-    // This function removes all children that are before fromBeforeChild and appends them to toBase.
+    // This function removes all children that are before beforeChild and appends them to toBase.
     ASSERT(!childrenInline());
     ASSERT(toBase);
     ASSERT(!toBase->childrenInline());
 
     // Quick check whether we have anything to do, to simplify the following code.
-    if (fromBeforeChild != firstChild())
+    if (!firstChild())
         return;
 
     // If an anonymous block would be put next to another such block, then merge those.
     RenderObject* firstChildHere = firstChild();
     RenderObject* lastChildThere = toBase->lastChild();
-    if (firstChildHere && firstChildHere->isAnonymousBlock() && firstChildHere->childrenInline() 
+    if (firstChildHere->isAnonymousBlock() && firstChildHere->childrenInline() 
             && lastChildThere && lastChildThere->isAnonymousBlock() && lastChildThere->childrenInline()) {            
         RenderBlock* anonBlockHere = toRenderBlock(firstChildHere);
         RenderBlock* anonBlockThere = toRenderBlock(lastChildThere);
@@ -183,7 +183,7 @@ void RenderRubyBase::mergeBlockChildren(RenderRubyBase* toBase, RenderObject* fr
         anonBlockHere->destroy();
     }
     // Move all remaining children normally.
-    moveChildrenTo(toBase, firstChild(), fromBeforeChild);
+    moveChildrenTo(toBase, firstChild(), beforeChild);
 }
 
 RenderRubyRun* RenderRubyBase::rubyRun() const

@@ -1,3 +1,15 @@
+2011-09-19  Abhishek Arya  <inferno@chromium.org>
+
+        Issues with merging ruby bases.
+        https://bugs.webkit.org/show_bug.cgi?id=67240        
+
+        Reviewed by James Robinson.
+
+        ASSERTION FAILED: !needsLayout() in RenderRubyRun::getOverhang.
+
+        * fast/ruby/ruby-overhang-crash-expected.txt: Added.
+        * fast/ruby/ruby-overhang-crash.html: Added.
+
 2011-09-16  Abhishek Arya  <inferno@chromium.org>
 
         Child not placed correctly when beforeChild (table part)
