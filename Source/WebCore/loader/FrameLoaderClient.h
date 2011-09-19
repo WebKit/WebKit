@@ -50,13 +50,6 @@ class NSCachedURLResponse;
 class NSView;
 #endif
 
-#if USE(V8)
-namespace v8 {
-class Context;
-template<class T> class Handle;
-}
-#endif
-
 namespace WebCore {
 
     class AuthenticationChallenge;
@@ -93,6 +86,9 @@ namespace WebCore {
     class SharedBuffer;
     class StringWithDirection;
     class SubstituteData;
+#if USE(V8)
+    class V8IsolatedContext;
+#endif
     class Widget;
 
     typedef void (PolicyChecker::*FramePolicyFunction)(PolicyAction);
@@ -274,8 +270,9 @@ namespace WebCore {
         virtual void didPerformFirstNavigation() const = 0; // "Navigation" here means a transition from one page to another that ends up in the back/forward list.
 
 #if USE(V8)
-        virtual void didCreateScriptContext(v8::Handle<v8::Context>, int worldId) = 0;
-        virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) = 0;
+        virtual void didCreateScriptContextForFrame() = 0;
+        virtual void didDestroyScriptContextForFrame() = 0;
+        virtual void didCreateIsolatedScriptContext(V8IsolatedContext*) = 0;
         virtual bool allowScriptExtension(const String& extensionName, int extensionGroup) = 0;
 #endif
 

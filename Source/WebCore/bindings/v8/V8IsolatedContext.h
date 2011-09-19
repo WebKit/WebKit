@@ -114,8 +114,6 @@ private:
     RefPtr<IsolatedWorld> m_world;
 
     RefPtr<SecurityOrigin> m_securityOrigin;
-
-    Frame* m_frame;
 };
 
 } // namespace WebCore

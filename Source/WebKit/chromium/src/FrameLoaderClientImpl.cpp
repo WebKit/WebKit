@@ -85,7 +85,7 @@
 #include <wtf/text/CString.h>
 
 #if USE(V8)
-#include <v8.h>
+#include "V8IsolatedContext.h"
 #endif
 
 using namespace WebCore;
@@ -140,29 +140,23 @@ void FrameLoaderClientImpl::documentElementAvailable()
         m_webFrame->client()->didCreateDocumentElement(m_webFrame);
 }
 
-#if USE(V8)
-void FrameLoaderClientImpl::didCreateScriptContext(v8::Handle<v8::Context> context, int worldId)
+void FrameLoaderClientImpl::didCreateScriptContextForFrame()
 {
-    if (m_webFrame->client()) {
-        // FIXME: Remove these once Chromium is updated to use the new version of didCreateScriptContext().
-        if (worldId)
-            m_webFrame->client()->didCreateScriptContext(m_webFrame);
-        else
-            m_webFrame->client()->didCreateIsolatedScriptContext(m_webFrame, worldId, context);
-
-        m_webFrame->client()->didCreateScriptContext(m_webFrame, context, worldId);
-    }
+    if (m_webFrame->client())
+        m_webFrame->client()->didCreateScriptContext(m_webFrame);
 }
 
-void FrameLoaderClientImpl::willReleaseScriptContext(v8::Handle<v8::Context> context, int worldId)
+void FrameLoaderClientImpl::didDestroyScriptContextForFrame()
 {
-    if (m_webFrame->client()) {
-        // FIXME: Remove this once Chromium is updated to use willReleaseScriptContext().
-        if (worldId)
-            m_webFrame->client()->didDestroyScriptContext(m_webFrame);
+    if (m_webFrame->client())
+        m_webFrame->client()->didDestroyScriptContext(m_webFrame);
+}
 
-        m_webFrame->client()->willReleaseScriptContext(m_webFrame, context, worldId);
-    }
+#if USE(V8)
+void FrameLoaderClientImpl::didCreateIsolatedScriptContext(V8IsolatedContext* isolatedContext)
+{
+    if (m_webFrame->client())
+        m_webFrame->client()->didCreateIsolatedScriptContext(m_webFrame, isolatedContext->world()->id(), isolatedContext->context());
 }
 #endif
 

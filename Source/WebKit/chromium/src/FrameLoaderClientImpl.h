@@ -61,9 +61,15 @@ public:
     virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld*);
     virtual void documentElementAvailable();
 
+    // A frame's V8 context was created or destroyed.
+    virtual void didCreateScriptContextForFrame();
+    virtual void didDestroyScriptContextForFrame();
+
 #if USE(V8)
-    virtual void didCreateScriptContext(v8::Handle<v8::Context>, int worldId);
-    virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId);
+    // A context untied to a frame was created (through evaluateInIsolatedWorld).
+    // This context is not tied to the lifetime of its frame, and is destroyed
+    // in garbage collection.
+    virtual void didCreateIsolatedScriptContext(WebCore::V8IsolatedContext*);
 #endif
 
     // Returns true if we should allow the given V8 extension to be added to

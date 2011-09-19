@@ -173,7 +173,7 @@ bool V8DOMWindowShell::isContextInitialized()
 void V8DOMWindowShell::disposeContextHandles()
 {
     if (!m_context.IsEmpty()) {
-        m_frame->loader()->client()->willReleaseScriptContext(m_context, 0);
+        m_frame->loader()->client()->didDestroyScriptContextForFrame();
         m_context.Dispose();
         m_context.Clear();
 
@@ -339,7 +339,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
 
     setSecurityToken();
 
-    m_frame->loader()->client()->didCreateScriptContext(m_context, 0);
+    m_frame->loader()->client()->didCreateScriptContextForFrame();
 
     // FIXME: This is wrong. We should actually do this for the proper world once
     // we do isolated worlds the WebCore way.
