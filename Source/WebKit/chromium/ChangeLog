@@ -1,3 +1,26 @@
+2011-09-19  Bill Budge  <bbudge@chromium.org>
+
+        Perform HTTP method and header validation in AssociatedURLLoader for
+        requests coming from untrusted code (eg. Native Client in Chrome). Use
+        the same code as XMLHttpRequest to reduce code duplication and have
+        behavior identical to XHR in Javascript. Add an 'untrustedHTTP' option
+        to WebURLLoaderOptions, which AssociatedURLLoader can use to determine
+        if it should check the request method and headers.
+        https://bugs.webkit.org/show_bug.cgi?id=67655
+
+        Reviewed by Darin Fisher.
+
+        * public/WebURLLoaderOptions.h:
+        (WebKit::WebURLLoaderOptions::WebURLLoaderOptions):
+        * src/AssociatedURLLoader.cpp:
+        (WebKit::AssociatedURLLoader::ClientAdapter::setDelayedError):
+        (WebKit::AssociatedURLLoader::loadAsynchronously):
+        * tests/AssociatedURLLoaderTest.cpp:
+        (WebKit::AssociatedURLLoaderTest::CheckMethodFails):
+        (WebKit::AssociatedURLLoaderTest::CheckHeaderFails):
+        (WebKit::AssociatedURLLoaderTest::CheckFails):
+        (WebKit::TEST_F):
+
 2011-09-19  Adam Barth  <abarth@webkit.org>
 
         Rename ENABLE(OPENTYPE_SANITIZER) to USE(OPENTYPE_SANITIZER)

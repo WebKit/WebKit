@@ -41,8 +41,15 @@ struct WebURLLoaderOptions {
         CrossOriginRequestPolicyAllow
     };
 
-    WebURLLoaderOptions() : sniffContent(false), allowCredentials(false), forcePreflight(false), crossOriginRequestPolicy(CrossOriginRequestPolicyDeny) { }
+    WebURLLoaderOptions()
+        : untrustedHTTP(false)
+        , sniffContent(false)
+        , allowCredentials(false)
+        , forcePreflight(false)
+        , crossOriginRequestPolicy(CrossOriginRequestPolicyDeny)
+        { }
 
+    bool untrustedHTTP; // Whether to validate the method and headers as if this was an XMLHttpRequest.
     bool sniffContent; // Whether to sniff content.
     bool allowCredentials; // Whether to send HTTP credentials and cookies with the request.
     bool forcePreflight; // If policy is to use access control, whether to force a preflight for GET, HEAD, and POST requests.
