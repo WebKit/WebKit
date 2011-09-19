@@ -1,3 +1,24 @@
+2011-09-19  Anders Carlsson  <andersca@apple.com>
+
+        Remove calls to -[WebView _usesDocumentViews]
+        https://bugs.webkit.org/show_bug.cgi?id=68377
+
+        Reviewed by Adam Roben.
+
+        Remove checks and begin assuming that -[WebView _usesDocumentViews] always 
+        returns true, since viewless WebKit1 has been abandoned.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::windowResizerRect):
+        (WebChromeClient::invalidateContentsAndWindow):
+        (WebChromeClient::screenToWindow):
+        (WebChromeClient::windowToScreen):
+        (WebChromeClient::platformPageClient):
+        (WebChromeClient::scrollRectIntoView):
+        (WebChromeClient::print):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _receivedData:]):
+
 2011-09-19  Dan Bernstein  <mitz@apple.com>
 
         WebKit part of [mac] WebKit contains Objective-C classes that are not prefixed with its standard prefixes
