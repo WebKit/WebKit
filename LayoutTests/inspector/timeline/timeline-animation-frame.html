@@ -23,18 +23,10 @@ function test()
         InspectorTest.evaluateInPage("performActions()");
     });
 
-    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, function(event) {
-        addRecord(event.data);
-    });
+    InspectorTest.waitForRecordType("CancelAnimationFrameCallback", finish);
 
-    function addRecord(record)
+    function finish()
     {
-        if (record.type !== WebInspector.TimelineAgent.RecordType["CancelAnimationFrameCallback"]) {
-            for (var i = 0; record.children && i < record.children.length; ++i)
-                addRecord(record.children[i]);
-            return ;
-        }
-
         InspectorTest.printTimelineRecords("RegisterAnimationFrameCallback");
         InspectorTest.printTimelineRecords("FireAnimationFrameEvent");
         InspectorTest.printTimelineRecords("CancelAnimationFrameCallback");

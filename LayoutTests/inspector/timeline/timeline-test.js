@@ -32,6 +32,24 @@ InspectorTest.startTimeline = function(callback)
     });
 };
 
+
+InspectorTest.waitForRecordType = function(recordType, callback)
+{
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, function(event) {
+            addRecord(event.data);
+    });
+
+    function addRecord(record)
+    {
+        if (record.type !== WebInspector.TimelineAgent.RecordType[recordType]) {
+            for (var i = 0; record.children && i < record.children.length; ++i)
+                addRecord(record.children[i]);
+            return ;
+        }
+        callback(record);
+    }
+}
+
 InspectorTest.stopTimeline = function(callback)
 {
     function didStop()

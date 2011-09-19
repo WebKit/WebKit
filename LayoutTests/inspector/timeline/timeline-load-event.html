@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("timeline");
+
+    InspectorTest.startTimeline(function() { InspectorTest.reloadPage(); });
+    InspectorTest.waitForRecordType("MarkLoad", finish);
+    function finish()
+    {
+        InspectorTest.printTimelineRecords("MarkLoad");
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the load event.
+</p>
+
+</body>
+</html>
