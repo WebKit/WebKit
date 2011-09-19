@@ -1,5 +1,28 @@
 2011-09-19  Anders Carlsson  <andersca@apple.com>
 
+        Remove calls to -[WebView _usesDocumentViews] from WebFrameLoaderClient.mm
+        https://bugs.webkit.org/show_bug.cgi?id=68379
+
+        Reviewed by Adam Roben.
+
+        Remove checks and begin assuming that -[WebView _usesDocumentViews] always 
+        returns true, since viewless WebKit1 has been abandoned.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::hasHTMLView):
+        (WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        (WebFrameLoaderClient::createFrame):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _updateBackgroundAndUpdatesWhileOffscreen]):
+        (-[WebFrame _hasSelection]):
+        (-[WebFrame _clearSelection]):
+        (-[WebFrame _shouldFlattenCompositingLayers:]):
+        (-[WebFrame _dragSourceEndedAt:operation:]):
+        (-[WebFrame frameView]):
+
+2011-09-19  Anders Carlsson  <andersca@apple.com>
+
         Remove calls to -[WebView _usesDocumentViews]
         https://bugs.webkit.org/show_bug.cgi?id=68377
 
