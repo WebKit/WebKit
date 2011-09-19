@@ -36,6 +36,7 @@ namespace WebCore {
 // FIXME: Make these configurable programmatically.
 static const double maximumTouchDownDurationInSecondsForClick = 0.8;
 static const double minimumTouchDownDurationInSecondsForClick = 0.01;
+static const double maximumSecondsBetweenDoubleClick = 0.7;
 static const int maximumTouchMoveInPixelsForClick = 20;
 
 GestureRecognizerChromium::GestureRecognizerChromium()
@@ -62,12 +63,6 @@ GestureRecognizerChromium::GestureRecognizerChromium()
     addEdgeFunction(Scroll, FirstFinger, Moved, false, &GestureRecognizerChromium::inScroll);
     addEdgeFunction(Scroll, FirstFinger, Released, false, &GestureRecognizerChromium::scrollEnd);
     addEdgeFunction(Scroll, FirstFinger, Cancelled, false, &GestureRecognizerChromium::scrollEnd);
-
-    addEdgeFunction(FirstClickReceived, FirstFinger, Pressed, false, &GestureRecognizerChromium::touchDown);
-    addEdgeFunction(PendingDoubleClick, FirstFinger, Cancelled, false, &GestureRecognizerChromium::noGesture);
-    addEdgeFunction(PendingDoubleClick, FirstFinger, Released, false, &GestureRecognizerChromium::doubleClick);
-    addEdgeFunction(PendingDoubleClick, FirstFinger, Moved, false, &GestureRecognizerChromium::maybeDoubleClick);
-    addEdgeFunction(PendingDoubleClick, FirstFinger, Stationary, false, &GestureRecognizerChromium::maybeDoubleClick);
 }
 
 void GestureRecognizerChromium::reset()
@@ -95,7 +90,7 @@ bool GestureRecognizerChromium::isInClickTimeWindow()
 bool GestureRecognizerChromium::isInSecondClickTimeWindow()
 {
     double duration(m_lastTouchTime - m_lastClickTime);
-    return duration >= minimumTouchDownDurationInSecondsForClick && duration < maximumTouchDownDurationInSecondsForClick;
+    return duration < maximumSecondsBetweenDoubleClick;
 }
 
 bool GestureRecognizerChromium::isInsideManhattanSquare(const PlatformTouchPoint& point)
@@ -159,10 +154,6 @@ void GestureRecognizerChromium::appendScrollGestureUpdate(const PlatformTouchPoi
 
 void GestureRecognizerChromium::updateValues(const double touchTime, const PlatformTouchPoint& touchPoint)
 {
-    if (state() == FirstClickReceived) {
-        m_firstTouchTime = touchTime;
-        m_lastClickTime = m_lastTouchTime;
-    }
     m_lastTouchTime = touchTime;
     if (state() == NoGesture) {
         m_firstTouchTime = touchTime;
@@ -185,12 +176,7 @@ unsigned int GestureRecognizerChromium::signature(State gestureState, unsigned i
 
 bool GestureRecognizerChromium::touchDown(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
-    ASSERT(state() == NoGesture || state() == FirstClickReceived);
     appendTapDownGestureEvent(touchPoint, gestures);
-    if (state() == FirstClickReceived && isInSecondClickTimeWindow() && isInsideManhattanSquare(touchPoint)) {
-        setState(PendingDoubleClick);
-        return false;
-    }
     setState(PendingSyntheticClick);
     return false;
 }
@@ -203,24 +189,6 @@ bool GestureRecognizerChromium::scrollEnd(const PlatformTouchPoint& point, Gestu
     return false;
 }
 
-bool GestureRecognizerChromium::doubleClick(const PlatformTouchPoint& point, Gestures gestures)
-{
-    if (isInClickTimeWindow() && isInsideManhattanSquare(point)) {
-        setState(NoGesture);
-        appendDoubleClickGestureEvent(point, gestures);
-        return true;
-    }
-    return noGesture(point, gestures);
-}
-
-bool GestureRecognizerChromium::maybeDoubleClick(const PlatformTouchPoint& point, Gestures gestures)
-{
-    ASSERT(state() == GestureRecognizerChromium::PendingDoubleClick);
-    if (point.state() == PlatformTouchPoint::TouchMoved && !isInsideManhattanSquare(point))
-        return noGesture(point, gestures);
-    return false;
-}
-
 bool GestureRecognizerChromium::noGesture(const PlatformTouchPoint&, Gestures)
 {
     reset();
@@ -229,12 +197,16 @@ bool GestureRecognizerChromium::noGesture(const PlatformTouchPoint&, Gestures)
 
 bool GestureRecognizerChromium::click(const PlatformTouchPoint& point, Gestures gestures)
 {
+    bool gestureAdded = false;
     if (isInClickTimeWindow() && isInsideManhattanSquare(point)) {
-        setState(FirstClickReceived);
+        gestureAdded = true;
         appendClickGestureEvent(point, gestures);
-        return true;
+        if (isInSecondClickTimeWindow())
+            appendDoubleClickGestureEvent(point, gestures);
+       m_lastClickTime = m_lastTouchTime;
     }
-    return noGesture(point, gestures);
+    reset();
+    return gestureAdded;
 }
 
 bool GestureRecognizerChromium::isClickOrScroll(const PlatformTouchPoint& point, Gestures gestures)
