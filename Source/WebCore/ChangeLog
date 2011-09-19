@@ -1,3 +1,21 @@
+2011-09-19  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Unreviewed: dos2unix on bindings/js/JSExceptionBase.h
+
+        Visual Studio is choking on this file when generating packages for
+        Qt-4.8 on Windows:
+
+        """
+        Source\WebCore\Bindings\js\JSExceptionBase.h:
+        error C4335: Mac file format detected: please convert the source file
+        to either DOS or UNIX format
+        """
+
+        Since from all .cpp or .h files shared by all ports this is the only
+        one with CRLF line terminations, I'm assuming this was a mistake.
+
+        * bindings/js/JSExceptionBase.h:
+
 2011-09-19  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: didMarkDOMContentEvent() should send event of MarkDOMContent type.
