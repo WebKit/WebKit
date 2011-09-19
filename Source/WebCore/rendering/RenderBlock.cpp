@@ -668,26 +668,17 @@ RenderBlock* RenderBlock::columnsBlockForSpanningElement(RenderObject* newChild)
 void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.
-    if (!beforeChild) {
-        RenderObject* lastRenderer = lastChild();
-        while (lastRenderer && lastRenderer->isAnonymous() && !isAfterContent(lastRenderer))
-            lastRenderer = lastRenderer->lastChild();
-        if (lastRenderer && isAfterContent(lastRenderer))
-            beforeChild = lastRenderer;
-    }
+    if (!beforeChild)
+        beforeChild = findAfterContentRenderer();
 
     // If the requested beforeChild is not one of our children, then this is because
     // there is an anonymous container within this object that contains the beforeChild.
     if (beforeChild && beforeChild->parent() != this) {
-        RenderObject* anonymousChild = beforeChild->parent();
-        ASSERT(anonymousChild);
+        RenderObject* beforeChildAnonymousContainer = anonymousContainer(beforeChild);
+        ASSERT(beforeChildAnonymousContainer);
+        ASSERT(beforeChildAnonymousContainer->isAnonymous());
 
-        while (anonymousChild->parent() != this)
-            anonymousChild = anonymousChild->parent();
-
-        ASSERT(anonymousChild->isAnonymous());
-
-        if (anonymousChild->isAnonymousBlock()) {
+        if (beforeChildAnonymousContainer->isAnonymousBlock()) {
             // Insert the child into the anonymous block box instead of here.
             if (newChild->isInline() || beforeChild->parent()->firstChild() != beforeChild)
                 beforeChild->parent()->addChild(newChild, beforeChild);
@@ -696,19 +687,19 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
             return;
         }
 
-        ASSERT(anonymousChild->isTable());
+        ASSERT(beforeChildAnonymousContainer->isTable());
         if ((newChild->isTableCol() && newChild->style()->display() == TABLE_COLUMN_GROUP)
                 || (newChild->isRenderBlock() && newChild->style()->display() == TABLE_CAPTION)
                 || newChild->isTableSection()
                 || newChild->isTableRow()
                 || newChild->isTableCell()) {
             // Insert into the anonymous table.
-            anonymousChild->addChild(newChild, beforeChild);
+            beforeChildAnonymousContainer->addChild(newChild, beforeChild);
             return;
         }
 
         // Go on to insert before the anonymous table.
-        beforeChild = anonymousChild;
+        beforeChild = beforeChildAnonymousContainer;
     }
 
     // Check for a spanning element in columns.

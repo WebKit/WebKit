@@ -1,3 +1,48 @@
+2011-09-16  Abhishek Arya  <inferno@chromium.org>
+
+        Child not placed correctly when beforeChild (table part)
+        has both :before, :after content.
+        https://bugs.webkit.org/show_bug.cgi?id=67656
+
+        Reviewed by James Robinson.
+
+        Tests: fast/table/table-cell-before-after-content-around-table-block.html
+               fast/table/table-cell-before-after-content-around-table-row.html
+               fast/table/table-cell-before-after-content-around-table.html
+               fast/table/table-row-before-after-content-around-block.html
+               fast/table/table-row-before-after-content-around-table.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        1. Use the new helper functions findAfterContentRenderer,
+           anonymousContainer.
+        2. Rename anonymousChild to better name - beforeChildAnonymousContainer.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild):
+        When adding a new child, if beforeChild is a table part(
+        Table/TableSection/TableRow), we need to check if both
+        :before, :after content are shoved in one of the anonymous child.
+        If yes, we need to split the :before, :after content before adding
+        newChild. Easiest approach is to destroy the :before content, then add
+        the newChild and then call updateBeforeAfterContent to recreate the
+        :before content.   
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::findBeforeContentRenderer): same as
+        beforePseudoElementRenderer, but ignores text childs since they are
+        sequentially added.
+        (WebCore::RenderObject::findAfterContentRenderer): same.
+        (WebCore::RenderObject::anonymousContainer):
+        (WebCore::objectIsRelayoutBoundary):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild): use the new helpers and functionally
+        correct functions - findAfterContentRenderer, anonymousContainer. previous
+        implementation was wrong since it would not go inside, if :after content
+        is embedded deeper than one level.
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild): same.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild): same.
+
 2011-09-19  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Gesture recognizer fires taptype only every other touch
