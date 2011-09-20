@@ -1,5 +1,68 @@
 2011-09-20  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK baselines for new tests.
+
+        * platform/gtk/css3/bdi-element-expected.png: Added.
+        * platform/gtk/css3/bdi-element-expected.txt: Added.
+        * platform/gtk/css3/unicode-bidi-isolate-aharon-expected.png: Added.
+        * platform/gtk/css3/unicode-bidi-isolate-aharon-expected.txt: Added.
+        * platform/gtk/css3/unicode-bidi-isolate-basic-expected.png: Added.
+        * platform/gtk/css3/unicode-bidi-isolate-basic-expected.txt: Added.
+        * platform/gtk/fast/borders/block-mask-overlay-image-outset-expected.png: Added.
+        * platform/gtk/fast/borders/block-mask-overlay-image-outset-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-longhand-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-longhand-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-massive-scale-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-massive-scale-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-outset-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-outset-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-outset-in-shorthand-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-outset-in-shorthand-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-outset-split-inline-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-outset-split-inline-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-outset-split-inline-vertical-lr-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-outset-split-inline-vertical-lr-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-repeat-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-repeat-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-scaled-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-scaled-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-scaled-gradient-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-scaled-gradient-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-scrambled-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-scrambled-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-side-reduction-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-side-reduction-expected.txt: Added.
+        * platform/gtk/fast/borders/border-image-slices-expected.png: Added.
+        * platform/gtk/fast/borders/border-image-slices-expected.txt: Added.
+        * platform/gtk/fast/borders/inline-mask-overlay-image-outset-expected.png: Added.
+        * platform/gtk/fast/borders/inline-mask-overlay-image-outset-expected.txt: Added.
+        * platform/gtk/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.png: Added.
+        * platform/gtk/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.txt: Added.
+        * platform/gtk/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/gtk/fast/clip/overflow-border-radius-combinations-expected.txt: Added.
+        * platform/gtk/fast/clip/overflow-border-radius-composited-expected.png: Added.
+        * platform/gtk/fast/clip/overflow-border-radius-composited-expected.txt: Added.
+        * platform/gtk/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+        * platform/gtk/fast/clip/overflow-border-radius-transformed-expected.txt: Added.
+        * platform/gtk/fast/css/focus-ring-multiline-writingmode-vertical-expected.png: Added.
+        * platform/gtk/fast/css/focus-ring-multiline-writingmode-vertical-expected.txt: Added.
+        * platform/gtk/fast/css/line-after-floating-div-expected.png: Added.
+        * platform/gtk/fast/css/line-after-floating-div-expected.txt: Added.
+        * platform/gtk/fast/parser/innerhtml-with-prefixed-elements-expected.png: Added.
+        * platform/gtk/fast/parser/innerhtml-with-prefixed-elements-expected.txt: Added.
+        * platform/gtk/fast/reflections/reflection-masks-outset-expected.png: Added.
+        * platform/gtk/fast/reflections/reflection-masks-outset-expected.txt: Added.
+        * platform/gtk/fast/text/fallback-traits-fixup-expected.png: Added.
+        * platform/gtk/fast/text/fallback-traits-fixup-expected.txt: Added.
+        * platform/gtk/fast/text/hyphenate-limit-lines-expected.png: Added.
+        * platform/gtk/fast/text/hyphenate-limit-lines-expected.txt: Added.
+        * platform/gtk/svg/custom/pattern-rotate-gaps-expected.png: Added.
+        * platform/gtk/svg/custom/pattern-rotate-gaps-expected.txt: Added.
+        * platform/gtk/svg/custom/simple-text-double-shadow-expected.png: Added.
+        * platform/gtk/svg/custom/simple-text-double-shadow-expected.txt: Added.
+
+2011-09-20  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK baselines for tests added in r95489 and r95488.
 
         * platform/gtk/http/tests/security/document-all-expected.txt: Added.
