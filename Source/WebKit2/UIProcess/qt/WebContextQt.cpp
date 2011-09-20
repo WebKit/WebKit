@@ -29,6 +29,7 @@
 
 #include "ApplicationCacheStorage.h"
 #include "WebProcessCreationParameters.h"
+#include <QDesktopServices>
 #include <QProcess>
 
 namespace WebKit {
@@ -42,9 +43,10 @@ String WebContext::applicationCacheDirectory()
 #endif
 }
 
-void WebContext::platformInitializeWebProcess(WebProcessCreationParameters&)
+void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
+    parameters.cookieStorageDirectory = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
 }
 
 void WebContext::platformInvalidateContext()

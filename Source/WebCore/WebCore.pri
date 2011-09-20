@@ -5,7 +5,7 @@ include(features.pri)
 # We enable TextureMapper by default; remove this line to enable GraphicsLayerQt.
 CONFIG += texmap
 
-QT *= network
+QT *= network sql
 
 SOURCE_DIR = $$replace(PWD, /WebCore, "")
 

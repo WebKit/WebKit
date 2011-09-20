@@ -2096,6 +2096,7 @@ HEADERS += \
     platform/PlatformTouchPoint.h \
     platform/PopupMenu.h \
     platform/qt/ClipboardQt.h \
+    platform/qt/CookieJarQt.h \
     platform/qt/QWebPageClient.h \
     platform/qt/QtStyleOptionWebComboBox.h \
     platform/qt/RenderThemeQt.h \

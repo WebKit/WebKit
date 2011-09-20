@@ -29,6 +29,8 @@
 #include "WebProcessCreationParameters.h"
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <QNetworkAccessManager>
+#include <QNetworkCookieJar>
+#include <WebCore/CookieJarQt.h>
 
 namespace WebKit {
 
@@ -44,6 +46,11 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear)
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::ArgumentDecoder* arguments)
 {
     m_networkAccessManager = new QNetworkAccessManager;
+    ASSERT(!parameters.cookieStorageDirectory.isEmpty() && !parameters.cookieStorageDirectory.isNull());
+    WebCore::SharedCookieJarQt* jar = WebCore::SharedCookieJarQt::create(parameters.cookieStorageDirectory);
+    m_networkAccessManager->setCookieJar(jar);
+    // Do not let QNetworkAccessManager delete the jar.
+    jar->setParent(0);
 
     // Disable runtime enabled features that have no WebKit2 implementation yet.
 #if ENABLE(DEVICE_ORIENTATION)
@@ -59,6 +66,7 @@ void WebProcess::platformTerminate()
 {
     delete m_networkAccessManager;
     m_networkAccessManager = 0;
+    WebCore::SharedCookieJarQt::shared()->destroy();
 }
 
 } // namespace WebKit

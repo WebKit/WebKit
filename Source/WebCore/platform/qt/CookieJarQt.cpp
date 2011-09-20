@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 George Staikos <staikos@kde.org>
+ * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
  *
  * All rights reserved.
  *
@@ -26,6 +27,8 @@
  */
 
 #include "config.h"
+#include "CookieJarQt.h"
+
 #include "CookieJar.h"
 
 #include "Cookie.h"
@@ -38,11 +41,16 @@
 #include "qwebframe.h"
 #include "qwebpage.h"
 #include "qwebsettings.h"
+#include <QDateTime>
+#include <QDir>
 #include <QNetworkAccessManager>
 #include <QNetworkCookie>
+#include <QSqlQuery>
 #include <QStringList>
 
 namespace WebCore {
+
+static SharedCookieJarQt* s_sharedCookieJarQt = 0;
 
 static QNetworkCookieJar *cookieJar(const Document *document)
 {
@@ -144,18 +152,136 @@ void deleteCookie(const Document*, const KURL&, const String&)
 
 void getHostnamesWithCookies(HashSet<String>& hostnames)
 {
-    // FIXME: Not yet implemented
+    SharedCookieJarQt* jar = SharedCookieJarQt::shared();
+    if (jar)
+        jar->getHostnamesWithCookies(hostnames);
 }
 
 void deleteCookiesForHostname(const String& hostname)
 {
-    // FIXME: Not yet implemented
+    SharedCookieJarQt* jar = SharedCookieJarQt::shared();
+    if (jar)
+        jar->deleteCookiesForHostname(hostname);
 }
 
 void deleteAllCookies()
 {
-    // FIXME: Not yet implemented
+    SharedCookieJarQt* jar = SharedCookieJarQt::shared();
+    if (jar)
+        jar->deleteAllCookies();
 }
+
+SharedCookieJarQt* SharedCookieJarQt::shared()
+{
+    return s_sharedCookieJarQt;
+}
+
+SharedCookieJarQt* SharedCookieJarQt::create(const String& cookieStorageDirectory)
+{
+    if (!s_sharedCookieJarQt)
+        s_sharedCookieJarQt = new SharedCookieJarQt(cookieStorageDirectory);
+
+    return s_sharedCookieJarQt;
+}
+
+void SharedCookieJarQt::destroy()
+{
+    delete s_sharedCookieJarQt;
+    s_sharedCookieJarQt = 0;
+}
+
+void SharedCookieJarQt::getHostnamesWithCookies(HashSet<String>& hostnames)
+{
+    QList<QNetworkCookie> cookies = allCookies();
+    foreach (const QNetworkCookie& networkCookie, cookies)
+        hostnames.add(networkCookie.domain());
+}
+
+void SharedCookieJarQt::deleteCookiesForHostname(const String& hostname)
+{
+    QList<QNetworkCookie> cookies = allCookies();
+    QList<QNetworkCookie>::Iterator it = cookies.begin();
+    QList<QNetworkCookie>::Iterator end = cookies.end();
+    QSqlQuery sqlQuery(m_database);
+    sqlQuery.prepare(QLatin1String("DELETE FROM cookies WHERE cookieId=:cookieIdvalue"));
+    while (it != end) {
+        if (it->domain() == QString(hostname)) {
+            sqlQuery.bindValue(QLatin1String(":cookieIdvalue"), it->domain().append(QLatin1String(it->name())));
+            sqlQuery.exec();
+            it = cookies.erase(it);
+        } else
+            it++;
+    }
+    setAllCookies(cookies);
+}
+
+void SharedCookieJarQt::deleteAllCookies()
+{
+    QSqlQuery sqlQuery(m_database);
+    sqlQuery.prepare(QLatin1String("DELETE * FROM cookies"));
+    sqlQuery.exec();
+    setAllCookies(QList<QNetworkCookie>());
+}
+
+SharedCookieJarQt::SharedCookieJarQt(const String& cookieStorageDirectory)
+{
+    m_database = QSqlDatabase::addDatabase(QLatin1String("QSQLITE"));
+    const QString cookieStoragePath = cookieStorageDirectory;
+    QDir().mkpath(cookieStoragePath + QLatin1String(".QtWebKit/"));
+    const QString dataBaseName = cookieStoragePath + QLatin1String(".QtWebKit/cookies.db");
+    m_database.setDatabaseName(dataBaseName);
+    ensureDatabaseTable();
+    loadCookies();
+}
+
+SharedCookieJarQt::~SharedCookieJarQt()
+{
+    m_database.close();
+}
+
+bool SharedCookieJarQt::setCookiesFromUrl(const QList<QNetworkCookie>& cookieList, const QUrl& url)
+{
+    if (!QNetworkCookieJar::setCookiesFromUrl(cookieList, url))
+        return false;
+    QSqlQuery sqlQuery(m_database);
+    sqlQuery.prepare(QLatin1String("INSERT OR REPLACE INTO cookies (cookieId, cookie) VALUES (:cookieIdvalue, :cookievalue)"));
+    QVariantList cookiesIds;
+    QVariantList cookiesValues;
+    foreach (const QNetworkCookie &cookie, cookiesForUrl(url)) {
+        if (cookie.isSessionCookie())
+            continue;
+        cookiesIds.append(cookie.domain().append(QLatin1String(cookie.name())));
+        cookiesValues.append(cookie.toRawForm());
+    }
+    sqlQuery.bindValue(QLatin1String(":cookieIdvalue"), cookiesIds);
+    sqlQuery.bindValue(QLatin1String(":cookievalue"), cookiesValues);
+    sqlQuery.execBatch();
+    return true;
+}
+
+void SharedCookieJarQt::ensureDatabaseTable()
+{
+    if (!m_database.open()) {
+        qWarning("Can't open cookie database");
+        return;
+    }
+    QSqlQuery sqlQuery(m_database);
+    sqlQuery.prepare(QLatin1String("CREATE TABLE IF NOT EXISTS cookies (cookieId VARCHAR PRIMARY KEY, cookie BLOB);"));
+    sqlQuery.exec();
+}
+
+void SharedCookieJarQt::loadCookies()
+{
+    QList<QNetworkCookie> cookies;
+    QSqlQuery sqlQuery(m_database);
+    sqlQuery.prepare(QLatin1String("SELECT cookie FROM cookies"));
+    sqlQuery.exec();
+    while (sqlQuery.next())
+        cookies.append(QNetworkCookie::parseCookies(sqlQuery.value(0).toByteArray()));
+    setAllCookies(cookies);
+}
+
+#include "moc_CookieJarQt.cpp"
 
 }
 

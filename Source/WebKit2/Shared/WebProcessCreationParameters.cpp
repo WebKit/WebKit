@@ -91,6 +91,9 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
         CoreIPC::encode(encoder, storageSession);
 #endif // USE(CFURLSTORAGESESSIONS)
 #endif
+#if PLATFORM(QT)
+    encoder->encode(cookieStorageDirectory);
+#endif
 }
 
 bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebProcessCreationParameters& parameters)
@@ -170,6 +173,11 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (hasStorageSession && !CoreIPC::decode(decoder, parameters.serializedDefaultStorageSession))
         return false;
 #endif // USE(CFURLSTORAGESESSIONS)
+#endif
+
+#if PLATFORM(QT)
+    if (!decoder->decode(parameters.cookieStorageDirectory))
+        return false;
 #endif
 
     return true;

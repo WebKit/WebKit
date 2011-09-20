@@ -111,6 +111,9 @@ struct WebProcessCreationParameters {
     RetainPtr<CFDataRef> serializedDefaultStorageSession;
 #endif // USE(CFURLSTORAGESESSIONS)
 #endif // PLATFORM(WIN)
+#if PLATFORM(QT)
+    String cookieStorageDirectory;
+#endif
 };
 
 } // namespace WebKit

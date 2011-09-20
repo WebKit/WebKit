@@ -1,3 +1,39 @@
+2011-09-20  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] [WK2] Implement a persistent cookie storage.
+        https://bugs.webkit.org/show_bug.cgi?id=65309
+
+        Reviewed by Chang Shu.
+
+        Implement a cookie storage for the Qt port on WebKit2.
+        The implementation is using a SQLite database to store the cookies
+        and restore them. It uses a static object as CookieJar is not an
+        object but a set of global functions. The actual saving/restoring is on
+        the WebProcess side where our network stack lives.
+
+        Existing tests cover the new implementation. Unfortunately there is one
+        case that we can't easily simulate : login in a website, make sure that the webprocess
+        is not running and then going back to this website and see that we are logged.
+
+        * WebCore.pri:
+        * WebCore.pro:
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::getHostnamesWithCookies):
+        (WebCore::deleteCookiesForHostname):
+        (WebCore::deleteAllCookies):
+        (WebCore::SharedCookieJarQt::shared):
+        (WebCore::SharedCookieJarQt::create):
+        (WebCore::SharedCookieJarQt::destroy):
+        (WebCore::SharedCookieJarQt::getHostnamesWithCookies):
+        (WebCore::SharedCookieJarQt::deleteCookiesForHostname):
+        (WebCore::SharedCookieJarQt::deleteAllCookies):
+        (WebCore::SharedCookieJarQt::SharedCookieJarQt):
+        (WebCore::SharedCookieJarQt::~SharedCookieJarQt):
+        (WebCore::SharedCookieJarQt::setCookiesFromUrl):
+        (WebCore::SharedCookieJarQt::ensureDatabaseTable):
+        (WebCore::SharedCookieJarQt::loadCookies):
+        * platform/qt/CookieJarQt.h: Added.
+
 2011-09-20  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=68314

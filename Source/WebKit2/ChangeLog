@@ -1,3 +1,24 @@
+2011-09-20  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] [WK2] Implement a persistent cookie storage.
+        https://bugs.webkit.org/show_bug.cgi?id=65309
+
+        Reviewed by Chang Shu.
+
+        Add parameter to the WebProcess creation to specify where cookies should be saved.
+        It also use the new cookie storage implementation and set it to our network stack
+        so cookies are used when using it.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebProcess/qt/WebProcessQt.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::platformTerminate):
+
 2011-09-20  Nayan Kumar K  <nayankk@motorola.com>
 
         Added WKHitTestResult API's.
