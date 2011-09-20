@@ -394,7 +394,7 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(unsigned src)
 
 template <typename ClassType, typename StructureType> inline void JIT::emitAllocateBasicJSObject(StructureType structure, void* vtable, RegisterID result, RegisterID storagePtr)
 {
-    MarkedSpace::SizeClass* sizeClass = &m_globalData->heap.sizeClassForObject(sizeof(ClassType));
+    MarkedSpace::SizeClass* sizeClass = &m_globalData->heap.sizeClassFor(sizeof(ClassType));
     loadPtr(&sizeClass->firstFreeCell, result);
     addSlowCase(branchTestPtr(Zero, result));
 

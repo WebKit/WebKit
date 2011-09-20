@@ -454,7 +454,7 @@ void JSGlobalData::recompileAllJSFunctions()
     // up throwing away code that is live on the stack.
     ASSERT(!dynamicGlobalObject);
     
-    heap.objectSpace().forEachCell<Recompiler>();
+    heap.forEachCell<Recompiler>();
 }
 
 struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {
@@ -495,7 +495,7 @@ void JSGlobalData::releaseExecutableMemory()
                 recompiler.currentlyExecutingFunctions.add(static_cast<FunctionExecutable*>(executable));
                 
         }
-        heap.objectSpace().forEachCell<StackPreservingRecompiler>(recompiler);
+        heap.forEachCell<StackPreservingRecompiler>(recompiler);
     }
     m_regExpCache->invalidateCode();
     heap.collectAllGarbage();

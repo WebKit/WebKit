@@ -1,3 +1,14 @@
+2011-09-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95493 and r95496.
+        http://trac.webkit.org/changeset/95493
+        http://trac.webkit.org/changeset/95496
+        https://bugs.webkit.org/show_bug.cgi?id=68418
+
+        Broke Windows build (Requested by rniwa on #webkit).
+
+        * ForwardingHeaders/heap/AllocationSpace.h: Removed.
+
 2011-09-19  James Robinson  <jamesr@chromium.org>
 
         [chromium] ContentLayer's texture updater deleted during paint when compositing turns off in the middle of paint

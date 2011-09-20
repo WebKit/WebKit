@@ -118,7 +118,7 @@ void Debugger::recompileAllJSFunctions(JSGlobalData* globalData)
         return;
 
     Recompiler recompiler(this);
-    globalData->heap.objectSpace().forEachCell(recompiler);
+    globalData->heap.forEachCell(recompiler);
 }
 
 JSValue evaluateInGlobalCallFrame(const UString& script, JSValue& exception, JSGlobalObject* globalObject)

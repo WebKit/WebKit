@@ -406,8 +406,6 @@
 		A1712B3F11C7B228007A5315 /* RegExpCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B3E11C7B228007A5315 /* RegExpCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B4011C7B235007A5315 /* RegExpKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1D764521354448B00C5C7C0 /* Alignment.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D764511354448B00C5C7C0 /* Alignment.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A70456B01427FB910037DA68 /* AllocationSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = A70456AF1427FB150037DA68 /* AllocationSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A70456B11427FB950037DA68 /* AllocationSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A70456AE1427FB030037DA68 /* AllocationSpace.cpp */; };
 		A71236E51195F33C00BD2174 /* JITOpcodes32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */; };
 		A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72700780DAC605600E548D7 /* JSNotAnObject.cpp */; };
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
@@ -1184,8 +1182,6 @@
 		A1712B3E11C7B228007A5315 /* RegExpCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpCache.h; sourceTree = "<group>"; };
 		A1712B4011C7B235007A5315 /* RegExpKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpKey.h; sourceTree = "<group>"; };
 		A1D764511354448B00C5C7C0 /* Alignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alignment.h; sourceTree = "<group>"; };
-		A70456AE1427FB030037DA68 /* AllocationSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AllocationSpace.cpp; sourceTree = "<group>"; };
-		A70456AF1427FB150037DA68 /* AllocationSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllocationSpace.h; sourceTree = "<group>"; };
 		A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITOpcodes32_64.cpp; sourceTree = "<group>"; };
 		A718F61A11754A21002465A7 /* RegExpJitTables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpJitTables.h; sourceTree = "<group>"; };
 		A718F8211178EB4B002465A7 /* create_regex_tables */ = {isa = PBXFileReference; explicitFileType = text.script.python; fileEncoding = 4; path = create_regex_tables; sourceTree = "<group>"; };
@@ -1621,8 +1617,6 @@
 		142E312A134FF0A600AFADB5 /* heap */ = {
 			isa = PBXGroup;
 			children = (
-				A70456AF1427FB150037DA68 /* AllocationSpace.h */,
-				A70456AE1427FB030037DA68 /* AllocationSpace.cpp */,
 				0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */,
 				0FC815141405118D00CFA603 /* VTableSpectrum.h */,
 				0FC815121405118600CFA603 /* VTableSpectrum.cpp */,
@@ -2799,7 +2793,6 @@
 				A7BC0C82140608B000B1BB71 /* CheckedArithmetic.h in Headers */,
 				A781E359141970C700094D90 /* StorageBarrier.h in Headers */,
 				1A08277A142168D70090CCAC /* BinarySemaphore.h in Headers */,
-				A70456B01427FB910037DA68 /* AllocationSpace.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3305,7 +3298,6 @@
 				C22C52FE13FAF6EF00B7DC0D /* fixed-dtoa.cc in Sources */,
 				C22C531313FAF6EF00B7DC0D /* strtod.cc in Sources */,
 				1A082779142168D70090CCAC /* BinarySemaphore.cpp in Sources */,
-				A70456B11427FB950037DA68 /* AllocationSpace.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
