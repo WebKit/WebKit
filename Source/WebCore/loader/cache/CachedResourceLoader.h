@@ -104,7 +104,7 @@ public:
     void preload(CachedResource::Type, ResourceRequest&, const String& charset, bool referencedFromBody);
     void checkForPendingPreloads();
     void printPreloadStats();
-    bool checkInsecureContent(CachedResource::Type, const KURL&) const;
+    bool canRequest(CachedResource::Type, const KURL&, bool forPreload = false);
     
 private:
     // FIXME: The default value for ResourceLoaderOptions will always be used currently.
@@ -118,7 +118,7 @@ private:
     RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, ResourceRequest&, bool forPreload, CachedResource* existingResource) const;
     
     void notifyLoadedFromMemoryCache(CachedResource*);
-    bool canRequest(CachedResource::Type, const KURL&, bool forPreload = false);
+    bool checkInsecureContent(CachedResource::Type, const KURL&) const;
 
     void garbageCollectDocumentResourcesTimerFired(Timer<CachedResourceLoader>*);
     void performPostLoadActions();

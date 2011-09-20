@@ -1,0 +1,22 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.dumpChildFramesAsText();
+  layoutTestController.waitUntilDone();
+}
+
+function done() {
+  if (window.layoutTestController)
+    layoutTestController.notifyDone();
+}
+</script>
+</head>
+<body>
+<div>This test loads the XML document in an iframe so that it can call
+dumpAsText().  This test passes if the iframe below is blank.</div>
+<iframe name="uses-xsl" onload="done()"
+        src="resources/cross-origin-xsl-redirect.xml"></iframe>
+</body>
+</html>
