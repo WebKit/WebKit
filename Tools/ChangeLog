@@ -1,5 +1,22 @@
 2011-09-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Don't override default QApplication font for DRT and WTR
+
+        Revision 95526 moved the relevant code below the QApplication
+        constructor, to fix a potential crash, and that made the code
+        take effect, breaking 6 tests.
+
+        We should rely on the QWebSettings to set default fonts, and
+        this QApplication::setFont() is a relic from when we didn't
+        have that option, so we remove the code.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * DumpRenderTree/qt/main.cpp:
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+
+2011-09-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         WebKitTestRunner: Provide usage if run without arguments
 
         If WTR is run without either one or more filenames, or
