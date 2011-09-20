@@ -11,6 +11,8 @@ DEFINES += QUICK_TEST_SOURCE_DIR=\"\\\"$$PWD\\\"\"
 OTHER_FILES += \
     DesktopWebView/tst_properties.qml \
     DesktopWebView/tst_navigationPolicyForUrl.qml \
+    DesktopWebView/tst_loadProgress.qml \
+    DesktopWebView/tst_loadProgressSignal.qml \
     TouchWebView/tst_properties.qml \
     TouchWebView/tst_loadZeroSizeView.qml \
     TouchWebView/tst_loadNegativeSizeView.qml \

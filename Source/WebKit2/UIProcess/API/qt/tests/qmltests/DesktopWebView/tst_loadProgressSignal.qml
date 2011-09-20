@@ -1,0 +1,36 @@
+import QtQuick 2.0
+import QtTest 1.0
+import QtWebKit.experimental 5.0
+
+DesktopWebView {
+    id: webView
+
+    SignalSpy {
+        id: spy
+        target: webView
+        signalName: "loadSucceeded"
+    }
+
+    SignalSpy {
+        id: spyProgress
+        target: webView
+        signalName: "loadProgressChanged"
+    }
+
+    TestCase {
+        name: "DesktopWebViewLoadProgressSignal"
+
+        function test_loadProgressSignal() {
+            compare(spyProgress.count, 0)
+            compare(webView.loadProgress, 0)
+            webView.load(Qt.resolvedUrl("../common/test1.html"))
+            spyProgress.wait()
+            compare(true, webView.loadProgress > -1 && webView.loadProgress < 101)
+            if (webView.loadProgress > 0 && webView.loadProgress < 100) {
+                spy.wait()
+                spyProgress.wait()
+                compare(webView.loadProgress, 100)
+            }
+        }
+    }
+}
