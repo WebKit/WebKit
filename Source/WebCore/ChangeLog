@@ -1,3 +1,22 @@
+2011-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Hit testing on margins of body and head elements doesn't recur
+        https://bugs.webkit.org/show_bug.cgi?id=40753
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by positionForPointRespectingEditingBoundaries's comparing the editability
+        of head/body and html elements when hit testing was done inside margins of head and body elements.
+
+        Fixed the bug by special-casing html element (any immediate child of render view with a render layer)
+        since margins of head and body elements are special.
+
+        Tests: editing/selection/click-on-body-margin.html
+               editing/selection/click-on-head-margin.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::positionForPointRespectingEditingBoundaries):
+
 2011-09-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95493 and r95496.
