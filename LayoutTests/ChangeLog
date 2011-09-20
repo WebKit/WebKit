@@ -1,3 +1,23 @@
+2011-09-19  Gavin Barraclough  <barraclough@apple.com>
+
+        String#split is buggy
+        https://bugs.webkit.org/show_bug.cgi?id=68348
+
+        Reviewed by Sam Weinig.
+
+        * fast/js/script-tests/string-split-conformance.js: Added.
+        * fast/js/string-split-conformance-expected.txt: Added.
+        * fast/js/string-split-conformance.html: Added.
+            - Added new Layout test based on:
+                http://stevenlevithan.com/demo/split.cfm
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A1_T6-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A1_T7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A1_T8-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A1_T9-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A2_T7-expected.txt:
+            - Check in failing results for these 5 tests; they are all wrong
+              (see https://bugs.ecmascript.org/show_bug.cgi?id=61).
+
 2011-09-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95482.

@@ -107,11 +107,11 @@ function getTestCases() {
                                     eval("var s = new String( TEST_STRING ); s.split('')["+i+"]") );
     }
 
-    // case where the value of the separator is undefined.  in this case. the value of the separator
-    // should be ToString( separator ), or "undefined".
+    // Case where the value of the separator is undefined.
+    // Per ES5 15.5.4.14 step 10 this returns the input (unless limit is non-zero).
 
     var TEST_STRING = "thisundefinedisundefinedaundefinedstringundefinedobject";
-    var EXPECT_STRING = new Array( "this", "is", "a", "string", "object" );
+    var EXPECT_STRING = new Array( "thisundefinedisundefinedaundefinedstringundefinedobject" );
 
     array[item++] = new TestCase(   SECTION,
                                     "var s = new String( "+ TEST_STRING +" ); s.split(void 0).length",
