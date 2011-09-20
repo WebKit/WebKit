@@ -190,8 +190,9 @@ WebInspector.DebuggerModel.prototype = {
         return this._debuggerPausedDetails;
     },
 
-    _pausedScript: function(details)
+    _pausedScript: function(callFrames, reason, auxData)
     {
+        var details = { callFrames: callFrames, reason: reason, auxData: auxData };
         this._debuggerPausedDetails = details;
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerPaused, details);
     },
@@ -234,9 +235,9 @@ WebInspector.DebuggerDispatcher = function(debuggerModel)
 }
 
 WebInspector.DebuggerDispatcher.prototype = {
-    paused: function(details)
+    paused: function(callFrames, reason, auxData)
     {
-        this._debuggerModel._pausedScript(details);
+        this._debuggerModel._pausedScript(callFrames, reason, auxData);
     },
 
     resumed: function()

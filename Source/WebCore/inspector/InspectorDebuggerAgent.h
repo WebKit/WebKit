@@ -57,12 +57,6 @@ class ScriptValue;
 
 typedef String ErrorString;
 
-enum DebuggerEventType {
-    JavaScriptPauseEventType,
-    JavaScriptBreakpointEventType,
-    NativeBreakpointDebuggerEventType
-};
-
 class InspectorDebuggerAgent : public ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -89,9 +83,9 @@ public:
 
     void setScriptSource(ErrorString*, const String& scriptId, const String& newContent, const bool* const preview, RefPtr<InspectorArray>* newCallFrames, RefPtr<InspectorObject>* result);
     void getScriptSource(ErrorString*, const String& scriptId, String* scriptSource);
-    void schedulePauseOnNextStatement(DebuggerEventType type, PassRefPtr<InspectorValue> data);
+    void schedulePauseOnNextStatement(const String& breakReason, PassRefPtr<InspectorObject> data);
     void cancelPauseOnNextStatement();
-    void breakProgram(DebuggerEventType type, PassRefPtr<InspectorValue> data);
+    void breakProgram(const String& breakReason, PassRefPtr<InspectorObject> data);
     void pause(ErrorString*);
     void resume(ErrorString*);
     void stepOver(ErrorString*);
@@ -137,6 +131,7 @@ private:
     PassRefPtr<InspectorObject> resolveBreakpoint(const String& breakpointId, const String& scriptId, const ScriptBreakpoint&);
     void clear();
     bool assertPaused(ErrorString*);
+    void clearBreakDetails();
 
     typedef HashMap<String, Script> ScriptsMap;
     typedef HashMap<String, Vector<String> > BreakpointIdToDebugServerBreakpointIdsMap;
@@ -150,7 +145,8 @@ private:
     ScriptsMap m_scripts;
     BreakpointIdToDebugServerBreakpointIdsMap m_breakpointIdToDebugServerBreakpointIds;
     String m_continueToLocationBreakpointId;
-    RefPtr<InspectorObject> m_breakProgramDetails;
+    String m_breakReason;
+    RefPtr<InspectorObject> m_breakAuxData;
     bool m_javaScriptPauseScheduled;
     Listener* m_listener;
 };

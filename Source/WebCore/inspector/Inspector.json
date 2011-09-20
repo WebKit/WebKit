@@ -254,12 +254,12 @@
                 "properties": [
                     { "name": "name", "type": "string", "description": "Property name." },
                     { "name": "value", "$ref": "RemoteObject", "optional": true, "description": "The value associated with the property." },
-                    { "name": "writable", "type": "boolean", "description": "True iff the value associated with the property may be changed (data descriptors only)." },
+                    { "name": "writable", "type": "boolean", "description": "True if the value associated with the property may be changed (data descriptors only)." },
                     { "name": "get", "$ref": "RemoteObject", "optional": true, "description": "A function which serves as a getter for the property, or <code>undefined</code> if there is no getter (accessor descriptors only)." },
                     { "name": "set", "$ref": "RemoteObject", "optional": true, "description": "A function which serves as a setter for the property, or <code>undefined</code> if there is no setter (accessor descriptors only)." },
-                    { "name": "configurable", "type": "boolean", "description": "True iff the type of this property descriptor may be changed and if the property may be deleted from the corresponding object." },
-                    { "name": "enumerable", "type": "boolean", "description": "True iff this property shows up during enumeration of the properties on the corresponding object." },
-                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True iff the result was thrown during the evaluation." }
+                    { "name": "configurable", "type": "boolean", "description": "True if the type of this property descriptor may be changed and if the property may be deleted from the corresponding object." },
+                    { "name": "enumerable", "type": "boolean", "description": "True if this property shows up during enumeration of the properties on the corresponding object." },
+                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." }
                 ]
             },
             {
@@ -278,14 +278,14 @@
                 "parameters": [
                     { "name": "expression", "type": "string", "description": "Expression to evaluate." },
                     { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." },
-                    { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Determines whether Command Line API should be available during the evaluation." },
-                    { "name": "doNotPauseOnExceptions", "type": "boolean", "optional": true, "description": "Specifies whether evaluation should stop on exceptions. Overrides setPauseOnException state." },
+                    { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Determines whether Command Line API should be available during the evaluation.", "hidden": true },
+                    { "name": "doNotPauseOnExceptions", "type": "boolean", "optional": true, "description": "Specifies whether evaluation should stop on exceptions. Overrides setPauseOnException state.", "hidden": true },
                     { "name": "frameId", "type": "string", "optional": true, "description": "Specifies in which frame to perform evaluation.", "hidden": true },
                     { "name": "returnByValue", "type": "boolean", "optional": true, "description": "Whether the result is expected to be a JSON object that should be sent by value." }
                 ],
                 "returns": [
                     { "name": "result", "$ref": "RemoteObject", "description": "Evaluation result." },
-                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True iff the result was thrown during the evaluation." }
+                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." }
                 ],
                 "description": "Evaluates expression on global object."
             },
@@ -299,7 +299,7 @@
                 ],
                 "returns": [
                     { "name": "result", "$ref": "RemoteObject", "description": "Call result." },
-                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True iff the result was thrown during the evaluation." }
+                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." }
                 ],
                 "description": "Calls function with given declaration on the given object."
             },
@@ -1519,12 +1519,22 @@
     },
     {
         "domain": "Debugger",
-        "description": "Debugger domain exposes JavaScript debugging functions. It allows setting and removing breakpoints, stepping through execution, exploring stack traces, etc.",
+        "description": "Debugger domain exposes JavaScript debugging capabilities. It allows setting and removing breakpoints, stepping through execution, exploring stack traces, etc.",
         "types": [
+            {
+                "id": "BreakpointId",
+                "type": "string",
+                "description": "Breakpoint identifier."
+            },
             {
                 "id": "ScriptId",
                 "type": "string",
                 "description": "Unique script identifier."
+            },
+            {
+                "id": "CallFrameId",
+                "type": "string",
+                "description": "Call frame identifier."
             },
             {
                 "id": "Location",
@@ -1540,7 +1550,7 @@
                 "id": "CallFrame",
                 "type": "object",
                 "properties": [
-                    { "name": "id", "type": "string", "description": "Call frame identifier. This identifier is only valid while the virtual machine is paused." },
+                    { "name": "callFrameId", "$ref": "CallFrameId", "description": "Call frame identifier. This identifier is only valid while the virtual machine is paused." },
                     { "name": "functionName", "type": "string", "description": "Name of the JavaScript function called on this call frame." },
                     { "name": "location", "$ref": "Location", "description": "Location in the source code." },
                     { "name": "scopeChain", "type": "array", "items": { "$ref": "Scope" }, "description": "Scope chain for this call frame." },
@@ -1584,10 +1594,10 @@
                     { "name": "condition", "type": "string", "optional": true, "description": "Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true." }
                 ],
                 "returns": [
-                    { "name": "breakpointId", "type": "string", "description": "Id of the created breakpoint for further reference." },
+                    { "name": "breakpointId", "$ref": "BreakpointId", "description": "Id of the created breakpoint for further reference." },
                     { "name": "locations", "optional": true, "type": "array", "items": { "$ref": "Location"}, "description": "List of the locations this breakpoint resolved into upon addition." }
                 ],
-                "description": "Sets JavaScript breakpoint at given location specified either by URL or URL regex. Once this command is issued, all existing parsed scripts will have breakpoints resolved and returned in <code>locations</code> property. Further matching script parsing will result in subsequent <code>Debugger.breakpointResolved</code> events issued. This logical breakpoint will survive page reloads."
+                "description": "Sets JavaScript breakpoint at given location specified either by URL or URL regex. Once this command is issued, all existing parsed scripts will have breakpoints resolved and returned in <code>locations</code> property. Further matching script parsing will result in subsequent <code>breakpointResolved</code> events issued. This logical breakpoint will survive page reloads."
             },
             {
                 "name": "setBreakpoint",
@@ -1596,7 +1606,7 @@
                     { "name": "condition", "type": "string", "optional": true, "description": "Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true." }
                 ],
                 "returns": [
-                    { "name": "breakpointId", "type": "string", "description": "Id of the created breakpoint for further manipulations." },
+                    { "name": "breakpointId", "$ref": "BreakpointId", "description": "Id of the created breakpoint for further reference." },
                     { "name": "actualLocation", "$ref": "Location", "description": "Location this breakpoint resolved into." }
                 ],
                 "description": "Sets JavaScript breakpoint at a given location."
@@ -1604,7 +1614,7 @@
             {
                 "name": "removeBreakpoint",
                 "parameters": [
-                    { "name": "breakpointId", "type": "string" }
+                    { "name": "breakpointId", "$ref": "BreakpointId" }
                 ],
                 "description": "Removes JavaScript breakpoint."
             },
@@ -1621,11 +1631,11 @@
             },
             {
                 "name": "stepInto",
-                "description": "Steps into the statement."
+                "description": "Steps into the function call."
             },
             {
                 "name": "stepOut",
-                "description": "Steps out of the function."
+                "description": "Steps out of the function call."
             },
             {
                 "name": "pause",
@@ -1640,11 +1650,11 @@
                 "parameters": [
                     { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to edit." },
                     { "name": "scriptSource", "type": "string", "description": "New content of the script." },
-                    { "name": "preview", "type": "boolean", "optional": true, "description": " If true the change will not actually be applied. Preview mode may be used to get result description without actually modifying the code." }
+                    { "name": "preview", "type": "boolean", "optional": true, "description": " If true the change will not actually be applied. Preview mode may be used to get result description without actually modifying the code.", "hidden": true }
                 ],
                 "returns": [
                     { "name": "callFrames", "type": "array", "optional": true, "items": { "$ref": "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." },
-                    { "name": "result", "type": "object", "optional": true, "description": "VM-specific description of the changes applied." }
+                    { "name": "result", "type": "object", "optional": true, "description": "VM-specific description of the changes applied.", "hidden": true }
                 ],
                 "description": "Edits JavaScript source live."
             },
@@ -1656,27 +1666,27 @@
                 "returns": [
                     { "name": "scriptSource", "type": "string", "description": "Script source." }
                 ],
-                "description": "Returns source for the script with given ID."
+                "description": "Returns source for the script with given id."
             },
             {
                 "name": "setPauseOnExceptions",
                 "parameters": [
                     { "name": "state", "type": "string", "enum": ["none", "uncaught", "all"], "description": "Pause on exceptions mode." }
                 ],
-                "description": "Defines pause on exceptions state. Can be set to stop on all exceptions, uncaught exceptions or no exceptions."
+                "description": "Defines pause on exceptions state. Can be set to stop on all exceptions, uncaught exceptions or no exceptions. Initial pause on exceptions state is <code>none</code>."
             },
             {
                 "name": "evaluateOnCallFrame",
                 "parameters": [
-                    { "name": "callFrameId", "type": "string", "description": "Call frame identifier to evaluate on. This identifier is a part of backtrace reported by the <code>pausedScript</code>." },
+                    { "name": "callFrameId", "$ref": "CallFrameId", "description": "Call frame identifier to evaluate on." },
                     { "name": "expression", "type": "string", "description": "Expression to evaluate." },
                     { "name": "objectGroup", "type": "string", "optional": true, "description": "String object group name to put result into (allows rapid releasing resulting object handles using <code>releaseObjectGroup</code>)." },
-                    { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Specifies whether command line API should be available to the evaluated expression, defaults to false." },
+                    { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Specifies whether command line API should be available to the evaluated expression, defaults to false.", "hidden": true },
                     { "name": "returnByValue", "type": "boolean", "optional": true, "description": "Whether the result is expected to be a JSON object that should be sent by value." }
                 ],
                 "returns": [
                     { "name": "result", "$ref": "Runtime.RemoteObject", "description": "Object wrapper for the evaluation result." },
-                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True iff the result was thrown during the evaluation." }
+                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." }
                 ],
                 "description": "Evaluates expression on a given call frame."
             }
@@ -1684,31 +1694,33 @@
         "events": [
             {
                 "name": "debuggerWasEnabled",
-                "description": "Fired when debugger gets enabled (deprecated)."
+                "description": "Fired when debugger gets enabled (deprecated).",
+                "hidden": true
             },
             {
                 "name": "debuggerWasDisabled",
-                "description": "Fired when debugger gets disabled (deprecated)."
+                "description": "Fired when debugger gets disabled (deprecated).",
+                "hidden": true
             },
             {
                 "name": "scriptParsed",
                 "parameters": [
                     { "name": "scriptId", "$ref": "ScriptId", "description": "Identifier of the script parsed." },
-                    { "name": "url", "type": "string", "description": "URL of the script parsed (if any)." },
+                    { "name": "url", "type": "string", "description": "URL or name of the script parsed (if any)." },
                     { "name": "startLine", "type": "integer", "description": "Line offset of the script within the resource with given URL (for script tags)." },
                     { "name": "startColumn", "type": "integer", "description": "Column offset of the script within the resource with given URL." },
                     { "name": "endLine", "type": "integer", "description": "Last line of the script." },
                     { "name": "endColumn", "type": "integer", "description": "Length of the last line of the script." },
                     { "name": "isContentScript", "type": "boolean", "optional": true, "description": "Determines whether this script is a user extension script." }
                 ],
-                "description": "Fired when virtual machine parses script. This even is also fired for all known scripts upon enabling debugger."
+                "description": "Fired when virtual machine parses script. This event is also fired for all known and uncollected scripts upon enabling debugger."
             },
             {
                 "name": "scriptFailedToParse",
                 "parameters": [
                     { "name": "url", "type": "string", "description": "URL of the script that failed to parse." },
-                    { "name": "data", "type": "string", "description": "Source text of the script that failed to parse." },
-                    { "name": "firstLine", "type": "integer", "description": "Line offset of the script within the resource." },
+                    { "name": "scriptSource", "type": "string", "description": "Source text of the script that failed to parse." },
+                    { "name": "startLine", "type": "integer", "description": "Line offset of the script within the resource." },
                     { "name": "errorLine", "type": "integer", "description": "Line with error." },
                     { "name": "errorMessage", "type": "string", "description": "Parse error message." }
                 ],
@@ -1717,7 +1729,7 @@
             {
                 "name": "breakpointResolved",
                 "parameters": [
-                    { "name": "breakpointId", "type": "string", "description": "Breakpoint unique identifier." },
+                    { "name": "breakpointId", "$ref": "BreakpointId", "description": "Breakpoint unique identifier." },
                     { "name": "location", "$ref": "Location", "description": "Actual breakpoint location." }
                 ],
                 "description": "Fired when breakpoint is resolved to an actual script and location."
@@ -1725,15 +1737,9 @@
             {
                 "name": "paused",
                 "parameters": [
-                    { 
-                        "name": "details",
-                        "type": "object",
-                        "properties": [
-                            { "name": "callFrames", "type": "array", "items": { "$ref": "CallFrame" }, "description": "Call stack the virtual machine stopped on." },
-                            { "name": "exception", "$ref": "Runtime.RemoteObject", "optional": true, "description": "Current exception object if script execution is paused when an exception is being thrown." }
-                        ],
-                        "description": "Call stack information."
-                    }
+                    { "name": "callFrames", "type": "array", "items": { "$ref": "CallFrame" }, "description": "Call stack the virtual machine stopped on." },
+                    { "name": "reason", "type": "string", "enum": [ "XHR", "DOM", "EventListener", "exception", "other" ], "description": "Pause reason." },
+                    { "name": "data", "type": "object", "optional": true, "description": "Object containing break-specific auxiliary properties." }
                 ],
                 "description": "Fired when the virtual machine stopped on breakpoint or exception or any other stop criteria."
             },

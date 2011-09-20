@@ -1,3 +1,59 @@
+2011-09-19  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: document Debugger.paused, introduce types for ids in Debugger domain.
+        https://bugs.webkit.org/show_bug.cgi?id=68363
+
+        Migrates from poorly documented "details" object to explicit parameters
+        containing break type and data.
+
+        Reviewed by Tony Gentilcore.
+
+        * inspector/InjectedScriptSource.js:
+        ():
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::didInvalidateStyleAttr):
+        (WebCore::InspectorDOMDebuggerAgent::willInsertDOMNode):
+        (WebCore::InspectorDOMDebuggerAgent::willRemoveDOMNode):
+        (WebCore::InspectorDOMDebuggerAgent::willModifyDOMAttr):
+        (WebCore::InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorDOMDebuggerAgent::willSendXMLHttpRequest):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::schedulePauseOnNextStatement):
+        (WebCore::InspectorDebuggerAgent::cancelPauseOnNextStatement):
+        (WebCore::InspectorDebuggerAgent::pause):
+        (WebCore::InspectorDebuggerAgent::didPause):
+        (WebCore::InspectorDebuggerAgent::didContinue):
+        (WebCore::InspectorDebuggerAgent::breakProgram):
+        (WebCore::InspectorDebuggerAgent::clear):
+        (WebCore::InspectorDebuggerAgent::clearBreakDetails):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/DOMBreakpointsSidebarPane.js:
+        (WebInspector.DOMBreakpointsSidebarPane.prototype.createBreakpointHitStatusMessage.didPushNodeToFrontend):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype.createBreakpointHitStatusMessage):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype.highlightBreakpoint):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype._pausedScript):
+        (WebInspector.DebuggerDispatcher.prototype.paused):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.PresentationCallFrame.prototype.evaluate):
+        * inspector/front-end/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane.prototype.update):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused.didCreateBreakpointHitStatusMessage):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused.else.didGetSourceLocation):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+
+2011-09-19  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: use strict types for Breakpoint and CallFrame ids in the protocol definition.
+        https://bugs.webkit.org/show_bug.cgi?id=68172
+
+        Reviewed by Tony Gentilcore.
+
+        * inspector/Inspector.json:
+
 2011-09-15  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: refactor ConsoleView, Drawer, ConsolePanel trio. Remove animation

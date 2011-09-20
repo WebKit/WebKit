@@ -75,7 +75,8 @@ WebInspector.ScopeChainSidebarPane.prototype = {
                     if (callFrame.this)
                         extraProperties = [ new WebInspector.RemoteObjectProperty("this", WebInspector.RemoteObject.fromPayload(callFrame.this)) ];
                     if (i == 0) {
-                        var exception = WebInspector.debuggerModel.debuggerPausedDetails.exception;
+                        var details = WebInspector.debuggerModel.debuggerPausedDetails;
+                        var exception = details.reason === WebInspector.ScriptsPanel.BreakReason.Exception ? details.auxData : 0;
                         if (exception) {
                             extraProperties = extraProperties || [];
                             extraProperties.push(new WebInspector.RemoteObjectProperty("<exception>", WebInspector.RemoteObject.fromPayload(exception)));

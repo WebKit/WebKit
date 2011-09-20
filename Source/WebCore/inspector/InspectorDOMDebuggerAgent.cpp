@@ -146,8 +146,7 @@ void InspectorDOMDebuggerAgent::didInvalidateStyleAttr(Node* node)
     if (hasBreakpoint(node, AttributeModified)) {
         RefPtr<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(node, AttributeModified, false, eventData.get());
-        eventData->setString("breakpointType", domNativeBreakpointType);
-        m_debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData.release());
+        m_debuggerAgent->breakProgram(domNativeBreakpointType, eventData.release());
     }
 }
 
@@ -241,8 +240,7 @@ void InspectorDOMDebuggerAgent::willInsertDOMNode(Node*, Node* parent)
     if (hasBreakpoint(parent, SubtreeModified)) {
         RefPtr<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(parent, SubtreeModified, true, eventData.get());
-        eventData->setString("breakpointType", domNativeBreakpointType);
-        m_debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData.release());
+        m_debuggerAgent->breakProgram(domNativeBreakpointType, eventData.release());
     }
 }
 
@@ -252,13 +250,11 @@ void InspectorDOMDebuggerAgent::willRemoveDOMNode(Node* node)
     if (hasBreakpoint(node, NodeRemoved)) {
         RefPtr<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(node, NodeRemoved, false, eventData.get());
-        eventData->setString("breakpointType", domNativeBreakpointType);
-        m_debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData.release());
+        m_debuggerAgent->breakProgram(domNativeBreakpointType, eventData.release());
     } else if (parentNode && hasBreakpoint(parentNode, SubtreeModified)) {
         RefPtr<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(node, SubtreeModified, false, eventData.get());
-        eventData->setString("breakpointType", domNativeBreakpointType);
-        m_debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData.release());
+        m_debuggerAgent->breakProgram(domNativeBreakpointType, eventData.release());
     }
 }
 
@@ -267,8 +263,7 @@ void InspectorDOMDebuggerAgent::willModifyDOMAttr(Element* element)
     if (hasBreakpoint(element, AttributeModified)) {
         RefPtr<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(element, AttributeModified, false, eventData.get());
-        eventData->setString("breakpointType", domNativeBreakpointType);
-        m_debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData.release());
+        m_debuggerAgent->breakProgram(domNativeBreakpointType, eventData.release());
     }
 }
 
@@ -335,12 +330,11 @@ void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(const String& categor
         return;
 
     RefPtr<InspectorObject> eventData = InspectorObject::create();
-    eventData->setString("breakpointType", eventListenerNativeBreakpointType);
     eventData->setString("eventName", fullEventName);
     if (synchronous)
-        m_debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData.release());
+        m_debuggerAgent->breakProgram(eventListenerNativeBreakpointType, eventData.release());
     else
-        m_debuggerAgent->schedulePauseOnNextStatement(NativeBreakpointDebuggerEventType, eventData.release());
+        m_debuggerAgent->schedulePauseOnNextStatement(eventListenerNativeBreakpointType, eventData.release());
 }
 
 void InspectorDOMDebuggerAgent::setXHRBreakpoint(ErrorString*, const String& url)
@@ -386,10 +380,9 @@ void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
         return;
 
     RefPtr<InspectorObject> eventData = InspectorObject::create();
-    eventData->setString("breakpointType", xhrNativeBreakpointType);
     eventData->setString("breakpointURL", breakpointURL);
     eventData->setString("url", url);
-    m_debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData.release());
+    m_debuggerAgent->breakProgram(xhrNativeBreakpointType, eventData.release());
 }
 
 void InspectorDOMDebuggerAgent::clear()

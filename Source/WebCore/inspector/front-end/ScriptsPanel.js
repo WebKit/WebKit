@@ -185,10 +185,11 @@ WebInspector.ScriptsPanel.PauseOnExceptionsState = {
     PauseOnUncaughtExceptions: "uncaught"
 };
 
-WebInspector.ScriptsPanel.BrowserBreakpointTypes = {
+WebInspector.ScriptsPanel.BreakReason = {
     DOM: "DOM",
     EventListener: "EventListener",
-    XHR: "XHR"
+    XHR: "XHR",
+    Exception: "exception"
 }
 
 WebInspector.ScriptsPanel.prototype = {
@@ -478,32 +479,26 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.callstack.update(callFrames, details);
         this.sidebarPanes.callstack.selectedCallFrame = this._presentationModel.selectedCallFrame;
 
-        if (details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint) {
-            if (details.eventData.breakpointType === WebInspector.ScriptsPanel.BrowserBreakpointTypes.DOM) {
-                this.sidebarPanes.domBreakpoints.highlightBreakpoint(details.eventData);
-                function didCreateBreakpointHitStatusMessage(element)
-                {
-                    this.sidebarPanes.callstack.setStatus(element);
-                }
-                this.sidebarPanes.domBreakpoints.createBreakpointHitStatusMessage(details.eventData, didCreateBreakpointHitStatusMessage.bind(this));
-            } else if (details.eventData.breakpointType === WebInspector.ScriptsPanel.BrowserBreakpointTypes.EventListener) {
-                var eventName = details.eventData.eventName;
-                this.sidebarPanes.eventListenerBreakpoints.highlightBreakpoint(details.eventData.eventName);
-                var eventNameForUI = WebInspector.EventListenerBreakpointsSidebarPane.eventNameForUI(eventName);
-                this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a \"%s\" Event Listener.", eventNameForUI));
-            } else if (details.eventData.breakpointType === WebInspector.ScriptsPanel.BrowserBreakpointTypes.XHR) {
-                this.sidebarPanes.xhrBreakpoints.highlightBreakpoint(details.eventData.breakpointURL);
-                this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a XMLHttpRequest."));
+        if (details.reason === WebInspector.ScriptsPanel.BreakReason.DOM) {
+            this.sidebarPanes.domBreakpoints.highlightBreakpoint(details.auxData);
+            function didCreateBreakpointHitStatusMessage(element)
+            {
+                this.sidebarPanes.callstack.setStatus(element);
             }
+            this.sidebarPanes.domBreakpoints.createBreakpointHitStatusMessage(details.auxData, didCreateBreakpointHitStatusMessage.bind(this));
+        } else if (details.reason === WebInspector.ScriptsPanel.BreakReason.EventListener) {
+            var eventName = details.auxData.eventName;
+            this.sidebarPanes.eventListenerBreakpoints.highlightBreakpoint(details.auxData.eventName);
+            var eventNameForUI = WebInspector.EventListenerBreakpointsSidebarPane.eventNameForUI(eventName);
+            this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a \"%s\" Event Listener.", eventNameForUI));
+        } else if (details.reason === WebInspector.ScriptsPanel.BreakReason.XHR) {
+            this.sidebarPanes.xhrBreakpoints.highlightBreakpoint(details.auxData.breakpointURL);
+            this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a XMLHttpRequest."));
+        } else if (details.reason === WebInspector.ScriptsPanel.BreakReason.Exception) {
+            this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on exception: '%s'.", details.auxData.description));
         } else {
             function didGetSourceLocation(uiSourceCode, lineNumber)
             {
-                var exception = WebInspector.debuggerModel.debuggerPausedDetails.exception;
-                if (exception) {
-                    this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on exception: '%s'.", exception.description));
-                    return;
-                }
-
                 if (!uiSourceCode || !this._presentationModel.findBreakpoint(uiSourceCode, lineNumber))
                     return;
                 this.sidebarPanes.jsBreakpoints.highlightBreakpoint(uiSourceCode, lineNumber);

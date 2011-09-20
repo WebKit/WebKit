@@ -489,7 +489,7 @@ WebInspector.PresentationCallFrame.prototype = {
             else
                 callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
         }
-        DebuggerAgent.evaluateOnCallFrame(this._callFrame.id, code, objectGroup, includeCommandLineAPI, returnByValue, didEvaluateOnCallFrame.bind(this));
+        DebuggerAgent.evaluateOnCallFrame(this._callFrame.callFrameId, code, objectGroup, includeCommandLineAPI, returnByValue, didEvaluateOnCallFrame.bind(this));
     },
 
     sourceLine: function(callback)

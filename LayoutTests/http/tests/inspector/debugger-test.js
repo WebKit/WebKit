@@ -131,11 +131,11 @@ InspectorTest.dumpSourceFrameContents = function(sourceFrame)
     InspectorTest.addResult("==Source frame contents end==");
 };
 
-InspectorTest._pausedScript = function(details)
+InspectorTest._pausedScript = function(callFrames, reason, auxData)
 {
     if (!InspectorTest._quiet)
         InspectorTest.addResult("Script execution paused.");
-    InspectorTest._callFrames = details.callFrames;
+    InspectorTest._callFrames = callFrames;
     if (InspectorTest._waitUntilPausedCallback) {
         var callback = InspectorTest._waitUntilPausedCallback;
         delete InspectorTest._waitUntilPausedCallback;

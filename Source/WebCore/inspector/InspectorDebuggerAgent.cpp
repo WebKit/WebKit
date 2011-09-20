@@ -60,6 +60,8 @@ InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentin
     , m_javaScriptPauseScheduled(false)
     , m_listener(0)
 {
+    // FIXME: make breakReason optional so that there was no need to init it with "other".
+    clearBreakDetails();
 }
 
 InspectorDebuggerAgent::~InspectorDebuggerAgent()
@@ -335,13 +337,12 @@ void InspectorDebuggerAgent::getScriptSource(ErrorString*, const String& scriptI
     *scriptSource = m_scripts.get(scriptId).source;
 }
 
-void InspectorDebuggerAgent::schedulePauseOnNextStatement(DebuggerEventType type, PassRefPtr<InspectorValue> data)
+void InspectorDebuggerAgent::schedulePauseOnNextStatement(const String& breakReason, PassRefPtr<InspectorObject> data)
 {
     if (m_javaScriptPauseScheduled)
         return;
-    m_breakProgramDetails = InspectorObject::create();
-    m_breakProgramDetails->setNumber("eventType", type);
-    m_breakProgramDetails->setValue("eventData", data);
+    m_breakReason = breakReason;
+    m_breakAuxData = data;
     scriptDebugServer().setPauseOnNextStatement(true);
 }
 
@@ -349,13 +350,16 @@ void InspectorDebuggerAgent::cancelPauseOnNextStatement()
 {
     if (m_javaScriptPauseScheduled)
         return;
-    m_breakProgramDetails = 0;
+    clearBreakDetails();
     scriptDebugServer().setPauseOnNextStatement(false);
 }
 
 void InspectorDebuggerAgent::pause(ErrorString*)
 {
-    schedulePauseOnNextStatement(JavaScriptPauseEventType, InspectorObject::create());
+    if (m_javaScriptPauseScheduled)
+        return;
+    clearBreakDetails();
+    scriptDebugServer().setPauseOnNextStatement(true);
     m_javaScriptPauseScheduled = true;
 }
 
@@ -470,17 +474,15 @@ void InspectorDebuggerAgent::didPause(ScriptState* scriptState, const ScriptValu
     m_pausedScriptState = scriptState;
     m_currentCallStack = callFrames;
 
-    if (!m_breakProgramDetails)
-        m_breakProgramDetails = InspectorObject::create();
-    m_breakProgramDetails->setValue("callFrames", currentCallFrames());
-
     if (!exception.hasNoValue()) {
         InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
-        if (!injectedScript.hasNoValue())
-            m_breakProgramDetails->setValue("exception", injectedScript.wrapObject(exception, "backtrace"));
+        if (!injectedScript.hasNoValue()) {
+            m_breakReason = "exception";
+            m_breakAuxData = injectedScript.wrapObject(exception, "backtrace");
+        }
     }
 
-    m_frontend->paused(m_breakProgramDetails);
+    m_frontend->paused(currentCallFrames(), m_breakReason, m_breakAuxData);
     m_javaScriptPauseScheduled = false;
 
     if (!m_continueToLocationBreakpointId.isEmpty()) {
@@ -493,15 +495,14 @@ void InspectorDebuggerAgent::didContinue()
 {
     m_pausedScriptState = 0;
     m_currentCallStack = ScriptValue();
-    m_breakProgramDetails = 0;
+    clearBreakDetails();
     m_frontend->resumed();
 }
 
-void InspectorDebuggerAgent::breakProgram(DebuggerEventType type, PassRefPtr<InspectorValue> data)
+void InspectorDebuggerAgent::breakProgram(const String& breakReason, PassRefPtr<InspectorObject> data)
 {
-    m_breakProgramDetails = InspectorObject::create();
-    m_breakProgramDetails->setNumber("eventType", type);
-    m_breakProgramDetails->setValue("eventData", data);
+    m_breakReason = breakReason;
+    m_breakAuxData = data;
     scriptDebugServer().breakProgram();
 }
 
@@ -512,7 +513,7 @@ void InspectorDebuggerAgent::clear()
     m_scripts.clear();
     m_breakpointIdToDebugServerBreakpointIds.clear();
     m_continueToLocationBreakpointId = String();
-    m_breakProgramDetails.clear();
+    clearBreakDetails();
     m_javaScriptPauseScheduled = false;
 }
 
@@ -523,6 +524,12 @@ bool InspectorDebuggerAgent::assertPaused(ErrorString* errorString)
         return false;
     }
     return true;
+}
+
+void InspectorDebuggerAgent::clearBreakDetails()
+{
+    m_breakReason = "other";
+    m_breakAuxData = 0;
 }
 
 } // namespace WebCore
