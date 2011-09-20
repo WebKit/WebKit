@@ -1,0 +1,218 @@
+<?php 
+$title = "WebKit Team";
+include("header.inc");
+?>
+
+<h2>WebKit Team</h2>
+
+<div id="container">
+<h2>Reviewers</h2>
+<ul id="reviewers"></ul>
+
+<h2>Committers</h2>
+<ul id="committers"></ul>
+
+<h2>Contributors</h2>
+<ul id="contributors"></ul>
+</div>
+
+<script>
+
+var svnTrunkUrl = 'http://svn.webkit.org/repository/webkit/trunk/';
+var domainAffiliations = {
+    'apple.com': 'Apple',
+    'collabora.co.uk': 'Collabora',
+    'google.com': 'Google',
+    'igalia.com': 'Igalia',
+    'nokia.com': 'Nokia',
+    'openbossa.org': 'INdT / Nokia',
+    'profusion.mobi': 'ProFUSION',
+    'rim.com': 'Research In Motion',
+    'samsung.com': 'Samsung Electronics',
+    'sencha.com': 'Sencha',
+    'torchmobile.com.cn': 'Torch Mobile (Beijing) Co. Ltd.',
+
+    // Universities
+    'inf.u-szeged.hu': 'University of Szeged',
+
+    // Open source communities
+    'chromium.org': 'Chromium',
+    'gnome.org': 'GNOME',
+    'kde.org': 'KDE'
+};
+
+function parseCommittersPy(text) {
+    var lines = text.split('\n');
+    var contributors = [];
+    for (var i = 0; i < lines.length; i++) {
+        var contributorLine = /^\s+(Reviewer|Committer|Contributor)\((.+)\),?$/;
+        var match = contributorLine.exec(lines[i]);
+        if (!match)
+            continue;
+
+        try {
+            var nameEmailsNicks = JSON.parse('[' + match[2].replace(/^u"/,'"') + ']');
+        } catch (e) {
+            continue;
+        }
+        contributors.push({
+            name: nameEmailsNicks[0],
+            kind: match[1].toLowerCase(),
+            emails: typeof nameEmailsNicks[1] == 'string' ? [nameEmailsNicks[1]] : nameEmailsNicks[1],
+            nicks: typeof nameEmailsNicks[2] == 'string' ? [nameEmailsNicks[2]] : nameEmailsNicks[2],
+            area: nameEmailsNicks[3]
+        });
+    }
+    return contributors;
+}
+
+function formatAffiliation(contributor) {
+    if (contributor.affiliation)
+        return contributor.affiliation;
+
+    if (!contributor.emails || !contributor.emails.length)
+        return null;
+
+    var affiliations = [];
+    for (var domain in domainAffiliations) {
+        for (var i = 0; i < contributor.emails.length; i++) {
+            if (contributor.emails[i].indexOf('@' + domain) > 0 && affiliations.indexOf(domainAffiliations[domain]) < 0)
+                affiliations.push(domainAffiliations[domain]);
+        }
+    }
+    return affiliations ? affiliations.join(' / ') : null;
+}
+
+function addText(container, text) { container.appendChild(document.createTextNode(text)); }
+
+function addWrappedText(container, tagName, attributes, text) {
+    var element = document.createElement(tagName);
+    for (var name in attributes)
+        element.setAttribute(name, attributes[name]);
+    addText(element, text);
+    container.appendChild(element);
+}
+
+function populateContributorListItem(listItem, contributor) {
+    addWrappedText(listItem, 'strong', {'class': 'name'}, contributor.name);
+    if (contributor.nicks) {
+        addText(listItem, ' (');
+        addWrappedText(listItem, 'span', {'class': 'nicks'}, contributor.nicks.join(', '));
+        addText(listItem, ')');
+    }
+
+    var affiliation = formatAffiliation(contributor);
+    if (affiliation) {
+        addText(listItem, ' ');
+        addWrappedText(listItem, 'em', {'class': 'affiliation'}, affiliation);        
+    }
+}
+
+function populateContributorList(contributors, kind) {
+    var contributorsOfKind = contributors.filter(function(contributor) { return contributor.kind == kind; });
+    var listElement = document.getElementById(kind + 's');
+    for (var i = 0; i < contributorsOfKind.length; i++) {
+        var listItem = document.createElement('li');
+        listElement.appendChild(listItem);
+        populateContributorListItem(listItem, contributorsOfKind[i]);
+    }
+}
+
+function nicksInListItem(listItem) {
+    var nicksContainer = listItem.querySelector('.nicks');
+    if (!nicksContainer || !nicksContainer.textContent)
+        return null;
+    return nicksContainer.textContent.split(/,\s*/);
+}
+
+function findListChildForContributor(contributor) {
+    var listChildren = document.getElementsByTagName('li');
+    for (var i = 0; i < listChildren.length; i++) {
+        var nameContainer = listChildren[i].querySelector('.name');
+        if (nameContainer && nameContainer.textContent.toLowerCase().indexOf(contributor.name.toLowerCase()) >= 0)
+            return listChildren[i];
+        var nicksInContainer = nicksInListItem(listChildren[i]);
+        if (nicksInContainer && contributor.nicks) {
+            for (var j = 0; j < contributor.nicks.length; j++) {
+                if (nicksInContainer.indexOf(contributor.nicks[j]) >= 0)
+                    return listChildren[i];
+            }
+        }
+    }
+    return null;
+}
+
+function annotateWithWikiData() {
+    function annotateForContributor(contributor) {
+        var listItem = findListChildForContributor(contributor);
+        if (!listItem) {
+            var listElement = document.getElementById(contributor.kind + 's');
+            var listItem = document.createElement('li');
+            listElement.appendChild(listItem);
+            listItem.style.backgroundColor = 'red';
+            populateContributorListItem(listItem, contributor);
+        } else {
+            var affiliationContainer = listItem.querySelector('.affiliation');
+            var affiliation = formatAffiliation(contributor);
+            if (affiliation && (!affiliationContainer || affiliationContainer.textContent != affiliation)) {
+                addText(listItem, ' ');
+                addWrappedText(listItem, 'em', {'style': 'background-color:red'}, affiliation);
+            }
+        }
+    }
+
+    var webkitTeamWikiUrl = 'http://trac.webkit.org/wiki/WebKit%20Team';
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (this.status !== 200)
+            return this.onerror();
+
+        var lines = this.responseText.split('\n');
+        // Match lines like * '''Ryosuke Niwa''' (rniwa) ''Google''
+        var teamWikiContributorEntryPattern = /^\s+\*\s+'''([^']+)'''\s*(\(([^']+)\)\s*)?(''([^']+)'')?\s*$/;
+        for (var i = 0; i < lines.length; i++) {
+            var match = lines[i].match(/\=\s+(Reviewer|Committer|Contributor)s\s+=/i);
+            if (match) {
+                var currentKind = match[1].toLowerCase();
+                continue;
+            }
+
+            // Strip special HTML characters
+            match = lines[i].replace(/[{}<>"%;&+/]/g, '').match(teamWikiContributorEntryPattern);
+            if (currentKind && match) {
+                annotateForContributor({
+                    kind: currentKind,
+                    name: match[1],
+                    nicks: match[3] ? match[3].split(/,\s*/) : null,
+                    affiliation: match[5]
+                });
+            }
+        }
+    }
+    xhr.onerror = function () { alert('Could not obtain http://trac.webkit.org/wiki/WebKit%20Team'); };
+    xhr.open('GET', webkitTeamWikiUrl + '?format=txt');
+    xhr.send();
+}
+
+var xhr = new XMLHttpRequest();
+xhr.onload = function () {
+    if (this.status !== 200)
+        return this.onerror();
+    var contributors = parseCommittersPy(this.responseText);
+
+    populateContributorList(contributors, 'reviewer');
+    populateContributorList(contributors, 'committer');
+    populateContributorList(contributors, 'contributor');
+
+    if (location.search.indexOf('annotate') >= 0)
+        annotateWithWikiData();
+};
+xhr.onerror = function () { document.getElementById('container').textContent = 'Could not obtain committers.py'; };
+xhr.open('GET', svnTrunkUrl + 'Tools/Scripts/webkitpy/common/config/committers.py');
+xhr.send();
+
+</script>
+
+<?php
+include("footer.inc");
+?>
