@@ -1025,7 +1025,8 @@ WebInspector.toggleSearchingForNode = function()
 
 WebInspector.showConsole = function()
 {
-    this.drawer.showView(this.consoleView);
+    if (WebInspector._toggleConsoleButton && !WebInspector._toggleConsoleButton.toggled)
+        WebInspector._toggleConsoleButtonClicked();
 }
 
 WebInspector.showPanel = function(panel)

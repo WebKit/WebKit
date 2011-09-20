@@ -1,3 +1,10 @@
+2011-09-20  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: inspector sanity test fix.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.showConsole):
+
 2011-09-20  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] Add stubs for FULLSCREEN_API on Qt.
