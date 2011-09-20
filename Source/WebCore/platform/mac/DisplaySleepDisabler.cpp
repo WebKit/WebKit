@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(FULLSCREEN_API)
+#include "config.h"
+#include "DisplaySleepDisabler.h"
 
-#import <wtf/OwnPtr.h>
-#import <wtf/RefPtr.h>
+#include <IOKit/pwr_mgt/IOPMLib.h>
+#include <wtf/RetainPtr.h>
 
-@class WebWindowFadeAnimation;
-@class WebView;
+#ifdef BUILDING_ON_LEOPARD
+#include <wtf/UnusedParam.h>
+#endif
+
 namespace WebCore {
-    class DisplaySleepDisabler;
-    class Element;
-    class RenderBox;
-    class EventListener;
+
+static const double systemActivityInterval = 1;
+
+DisplaySleepDisabler::DisplaySleepDisabler(const char* reason)
+    : m_disableDisplaySleepAssertion(0)
+#ifdef BUILDING_ON_LEOPARD
+    , m_systemActivityTimer(this, &DisplaySleepDisabler::systemActivityTimerFired)
+#endif
+{
+#ifndef BUILDING_ON_LEOPARD
+    RetainPtr<CFStringRef> reasonCF(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
+    IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, reasonCF.get(), &m_disableDisplaySleepAssertion);
+#else
+    UNUSED_PARAM(reason);
+    IOPMAssertionCreate(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, &_idleDisplaySleepAssertion);
+    m_systemActivityTimer.startRepeating(systemActivityInterval);
+#endif
 }
 
-@interface WebFullScreenController : NSWindowController {
-@private
-    RefPtr<WebCore::Element> _element;
-    WebCore::RenderBox* _renderer; // (set)
-    WebView *_webView;
-    NSView* _placeholderView;
-    RefPtr<WebCore::EventListener> _mediaEventListener; 
-
-    BOOL _isAnimating;
-    BOOL _isFullscreen;
-    BOOL _forceDisableAnimation;
-    OwnPtr<WebCore::DisplaySleepDisabler> _displaySleepDisabler;
-    CGRect _initialFrame;
+DisplaySleepDisabler::~DisplaySleepDisabler()
+{
+    IOPMAssertionRelease(m_disableDisplaySleepAssertion);
 }
+    
+#ifdef BUILDING_ON_LEOPARD
+void DisplaySleepDisabler::systemActivityTimerFired(Timer<DisplaySleepDisabler>*)
+{
+    UpdateSystemActivity(OverallAct);
+}
+#endif
 
-- (WebView*)webView;
-- (void)setWebView:(WebView*)webView;
-
-- (void)setElement:(PassRefPtr<WebCore::Element>)element;
-- (WebCore::Element*)element;
-
-- (void)setRenderer:(WebCore::RenderBox*)renderer;
-- (WebCore::RenderBox*)renderer;
-
-- (void)enterFullscreen:(NSScreen *)screen;
-- (void)exitFullscreen;
-
-@end
-
-#endif // ENABLE(FULLSCREEN_API)
+}

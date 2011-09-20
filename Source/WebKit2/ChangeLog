@@ -1,3 +1,21 @@
+2011-09-19  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/68421> Stop calling UpdateSystemActivity in places where we hold power assertions that achieve the same effect
+
+        On SnowLeopard and newer it's not necessary to call UpdateSystemActivity to prevent the screensaver from kicking
+        in as the NoDisplaySleep assertion now has that effect. It's also not necessary to hold both a NoDisplaySleep and
+        a NoIdleSleep assertion as the latter is implied by the former.
+
+        Adopt the DisplaySleepDisabler class that was added to WebCore and remove all of duplicated logic from WKFullScreenWindowController.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController _updatePowerAssertions]): Create a DisplaySleepDisabler instance when transitioning from permitting
+        display sleep to disabling display sleep. Clear out our reference when sleep should be permitted, destroying any
+        disabler that we own. Also adds a FIXME about an error that was noticed while working in this code.
+
 2011-09-19  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(EVENTSOURCE)

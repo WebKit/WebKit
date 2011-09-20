@@ -25,7 +25,7 @@
 
 #if ENABLE(FULLSCREEN_API)
 
-#import <Cocoa/Cocoa.h>
+#import <wtf/OwnPtr.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebKit { 
@@ -33,6 +33,7 @@ class LayerTreeContext;
 }
 
 namespace WebCore {
+class DisplaySleepDisabler;
 class IntRect;
 }
 
@@ -49,9 +50,7 @@ class IntRect;
     BOOL _isFullScreen;
     BOOL _forceDisableAnimation;
     BOOL _isPlaying;
-    uint32_t _idleDisplaySleepAssertion;
-    uint32_t _idleSystemSleepAssertion;
-    NSTimer *_tickleTimer;
+    OwnPtr<WebCore::DisplaySleepDisabler> _displaySleepDisabler;
 }
 
 - (WKView*)webView;

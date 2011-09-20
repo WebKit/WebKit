@@ -35,15 +35,13 @@
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import <Carbon/Carbon.h> // For SetSystemUIMode()
-#import <IOKit/pwr_mgt/IOPMLib.h> // For IOPMAssertionCreate()
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/DisplaySleepDisabler.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntRect.h>
 #import <WebKit/WebNSWindowExtras.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/UnusedParam.h>
-
-static const NSTimeInterval tickleTimerInterval = 1.0;
 
 using namespace WebKit;
 using namespace WebCore;
@@ -471,72 +469,14 @@ using namespace WebCore;
         SetSystemUIMode(_isFullScreen ? kUIModeNormal : kUIModeAllHidden, 0);
 }
 
-- (void)_disableIdleDisplaySleep
-{
-    if (_idleDisplaySleepAssertion == kIOPMNullAssertionID) 
-#if defined(BUILDING_ON_LEOPARD) // IOPMAssertionCreateWithName is not defined in the 10.5 SDK
-        IOPMAssertionCreate(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, &_idleDisplaySleepAssertion);
-#else // IOPMAssertionCreate is depreciated in > 10.5
-    IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, CFSTR("WebKit playing a video fullScreen."), &_idleDisplaySleepAssertion);
-#endif
-}
-
-- (void)_enableIdleDisplaySleep
-{
-    if (_idleDisplaySleepAssertion != kIOPMNullAssertionID) {
-        IOPMAssertionRelease(_idleDisplaySleepAssertion);
-        _idleDisplaySleepAssertion = kIOPMNullAssertionID;
-    }
-}
-
-- (void)_disableIdleSystemSleep
-{
-    if (_idleSystemSleepAssertion == kIOPMNullAssertionID) 
-#if defined(BUILDING_ON_LEOPARD) // IOPMAssertionCreateWithName is not defined in the 10.5 SDK
-        IOPMAssertionCreate(kIOPMAssertionTypeNoIdleSleep, kIOPMAssertionLevelOn, &_idleSystemSleepAssertion);
-#else // IOPMAssertionCreate is depreciated in > 10.5
-    IOPMAssertionCreateWithName(kIOPMAssertionTypeNoIdleSleep, kIOPMAssertionLevelOn, CFSTR("WebKit playing a video fullScreen."), &_idleSystemSleepAssertion);
-#endif
-}
-
-- (void)_enableIdleSystemSleep
-{
-    if (_idleSystemSleepAssertion != kIOPMNullAssertionID) {
-        IOPMAssertionRelease(_idleSystemSleepAssertion);
-        _idleSystemSleepAssertion = kIOPMNullAssertionID;
-    }
-}
-
-- (void)_enableTickleTimer
-{
-    [_tickleTimer invalidate];
-    [_tickleTimer release];
-    _tickleTimer = [[NSTimer scheduledTimerWithTimeInterval:tickleTimerInterval target:self selector:@selector(_tickleTimerFired) userInfo:nil repeats:YES] retain];
-}
-
-- (void)_disableTickleTimer
-{
-    [_tickleTimer invalidate];
-    [_tickleTimer release];
-    _tickleTimer = nil;
-}
-
-- (void)_tickleTimerFired
-{
-    UpdateSystemActivity(OverallAct);
-}
-
 - (void)_updatePowerAssertions
 {
+    // FIXME: _isPlaying is never modified so we never disable display sleep here! (<rdar://problem/10151029>)
     if (_isPlaying && _isFullScreen) {
-        [self _disableIdleSystemSleep];
-        [self _disableIdleDisplaySleep];
-        [self _enableTickleTimer];
-    } else {
-        [self _enableIdleSystemSleep];
-        [self _enableIdleDisplaySleep];
-        [self _disableTickleTimer];
-    }
+        if (!_displaySleepDisabler)
+            _displaySleepDisabler = DisplaySleepDisabler::create("com.apple.WebKit2 - Fullscreen video");
+    } else
+        _displaySleepDisabler = nullptr;
 }
 
 - (WebPageProxy*)_page

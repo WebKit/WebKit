@@ -1551,6 +1551,8 @@
 		5D87BB8311E3ED8600702B6F /* ExportFileGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87BB8211E3ED8600702B6F /* ExportFileGenerator.cpp */; };
 		5D88EE9111407FD300BC3ABC /* DOMSVGFEMorphologyElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 84224189107E786F00766A87 /* DOMSVGFEMorphologyElement.h */; };
 		5D88EE9211407FF400BC3ABC /* DOMSVGFEMorphologyElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8422418B107E786F00766A87 /* DOMSVGFEMorphologyElementInternal.h */; };
+		5D8C4DBF1428222C0026CE72 /* DisplaySleepDisabler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8C4DBD1428222C0026CE72 /* DisplaySleepDisabler.cpp */; };
+		5D8C4DC01428222C0026CE72 /* DisplaySleepDisabler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D8C4DBE1428222C0026CE72 /* DisplaySleepDisabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D925B670F64D4DD00B847F0 /* ScrollBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D925B650F64D4DD00B847F0 /* ScrollBehavior.cpp */; };
 		5D925B680F64D4DD00B847F0 /* ScrollBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DA5E0FC102B953800088CF9 /* JSWebSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */; };
@@ -8209,6 +8211,8 @@
 		5D4B8C5211E52C8B00BBB62F /* WebCore.exp.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCore.exp.in; sourceTree = "<group>"; };
 		5D87BB4F11E3EAEB00702B6F /* WebCoreExportFileGenerator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebCoreExportFileGenerator; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D87BB8211E3ED8600702B6F /* ExportFileGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExportFileGenerator.cpp; path = DerivedSources/WebCore/ExportFileGenerator.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D8C4DBD1428222C0026CE72 /* DisplaySleepDisabler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplaySleepDisabler.cpp; sourceTree = "<group>"; };
+		5D8C4DBE1428222C0026CE72 /* DisplaySleepDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplaySleepDisabler.h; sourceTree = "<group>"; };
 		5D925B650F64D4DD00B847F0 /* ScrollBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollBehavior.cpp; sourceTree = "<group>"; };
 		5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBehavior.h; sourceTree = "<group>"; };
 		5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebSocket.cpp; sourceTree = "<group>"; };
@@ -14528,7 +14532,6 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				93500F3113FDE3BE0099EC24 /* NSScrollerImpDetails.h */,
 				51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */,
 				65A640F00533BB1F0085E777 /* BlockExceptions.h */,
 				65F80697054D9F86008BF776 /* BlockExceptions.mm */,
@@ -14538,6 +14541,8 @@
 				93B6A0E90B0BCA8400F5027A /* ContextMenuMac.mm */,
 				9352087609BD453400F2038D /* CookieJar.mm */,
 				F58784F002DE375901EA4122 /* CursorMac.mm */,
+				5D8C4DBE1428222C0026CE72 /* DisplaySleepDisabler.h */,
+				5D8C4DBD1428222C0026CE72 /* DisplaySleepDisabler.cpp */,
 				A795463D0B5C4C80007B438F /* DragDataMac.mm */,
 				A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */,
 				5DC87EEF11716DF2001C0E6D /* EmptyProtocolDefinitions.h */,
@@ -14556,6 +14561,7 @@
 				1402645D0AFDC19B005919E2 /* LoggingMac.mm */,
 				657EDA0A1385CBD8004E0645 /* MemoryPressureHandlerMac.mm */,
 				BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */,
+				93500F3113FDE3BE0099EC24 /* NSScrollerImpDetails.h */,
 				A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */,
 				4B2709810AF2E5E00065127F /* PasteboardMac.mm */,
 				935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */,
@@ -20462,6 +20468,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D8C4DC01428222C0026CE72 /* DisplaySleepDisabler.h in Headers */,
 				B5B5DC6A119BB3D5002A8790 /* AbstractDatabase.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
@@ -26310,6 +26317,7 @@
 				978AD67414130A8D00C7CAE3 /* HTMLSpanElement.cpp in Sources */,
 				9752D38D1413104B003305BD /* JSHTMLSpanElement.cpp in Sources */,
 				0FE71405142170B800DB33BA /* ScrollbarThemeMock.cpp in Sources */,
+				5D8C4DBF1428222C0026CE72 /* DisplaySleepDisabler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

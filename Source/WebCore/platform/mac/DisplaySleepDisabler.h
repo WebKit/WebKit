@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(FULLSCREEN_API)
+#ifndef DisplaySleepDisabler_h
+#define DisplaySleepDisabler_h
 
-#import <wtf/OwnPtr.h>
-#import <wtf/RefPtr.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
 
-@class WebWindowFadeAnimation;
-@class WebView;
+#ifdef BUILDNG_ON_LEOPARD
+#include "Timer.h"
+#endif
+
 namespace WebCore {
-    class DisplaySleepDisabler;
-    class Element;
-    class RenderBox;
-    class EventListener;
+
+class DisplaySleepDisabler {
+    WTF_MAKE_NONCOPYABLE(DisplaySleepDisabler);
+public:
+    static PassOwnPtr<DisplaySleepDisabler> create(const char* reason) { return adoptPtr(new DisplaySleepDisabler(reason)); }
+    ~DisplaySleepDisabler();
+    
+private:
+    DisplaySleepDisabler(const char* reason);
+
+#ifdef BUILDNG_ON_LEOPARD
+    void systemActivityTimerFired(Timer<DisplaySleepDisabler>*);
+#endif
+    
+    uint32_t m_disableDisplaySleepAssertion;
+#ifdef BUILDNG_ON_LEOPARD
+    Timer<DisplaySleepDisabler> m_systemActivityTimer;
+#endif
+};
+
 }
 
-@interface WebFullScreenController : NSWindowController {
-@private
-    RefPtr<WebCore::Element> _element;
-    WebCore::RenderBox* _renderer; // (set)
-    WebView *_webView;
-    NSView* _placeholderView;
-    RefPtr<WebCore::EventListener> _mediaEventListener; 
-
-    BOOL _isAnimating;
-    BOOL _isFullscreen;
-    BOOL _forceDisableAnimation;
-    OwnPtr<WebCore::DisplaySleepDisabler> _displaySleepDisabler;
-    CGRect _initialFrame;
-}
-
-- (WebView*)webView;
-- (void)setWebView:(WebView*)webView;
-
-- (void)setElement:(PassRefPtr<WebCore::Element>)element;
-- (WebCore::Element*)element;
-
-- (void)setRenderer:(WebCore::RenderBox*)renderer;
-- (WebCore::RenderBox*)renderer;
-
-- (void)enterFullscreen:(NSScreen *)screen;
-- (void)exitFullscreen;
-
-@end
-
-#endif // ENABLE(FULLSCREEN_API)
+#endif // DisplaySleepDisabler_h

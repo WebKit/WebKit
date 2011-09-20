@@ -1,3 +1,39 @@
+2011-09-19  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/68421> Stop calling UpdateSystemActivity in places where we hold power assertions that achieve the same effect
+
+        On SnowLeopard and newer it's not necessary to call UpdateSystemActivity to prevent the screensaver from kicking
+        in as the NoDisplaySleep assertion now has that effect. It's also not necessary to hold both a NoDisplaySleep and
+        a NoIdleSleep assertion as the latter is implied by the former.
+
+        Since there were multiple copies of the same code to disable display sleep spread across WebCore, WebKit and WebKit2
+        this patch takes the approach of moving this functionality to a new DisplaySleepDisabler class that lives in WebCore.
+        A class is used as it makes it easier to reason about the lifetime of the assertions and to ensure that the assertions will
+        always be released when their owning objects go away.
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/DisplaySleepDisabler.cpp:
+        (WebCore::DisplaySleepDisabler::DisplaySleepDisabler): Register for the NoDisplaySleep assertion, and start our
+        system activity timer when on Leopard.
+        (WebCore::DisplaySleepDisabler::~DisplaySleepDisabler): Unregister for the assertion.
+        (WebCore::DisplaySleepDisabler::systemActivityTimerFired): Call UpdateSystemActivity to prevent the screensaver from
+        triggering on Leopard.
+        * platform/mac/DisplaySleepDisabler.h:
+        (WebCore::DisplaySleepDisabler::create):
+        * platform/mac/WebVideoFullscreenController.h:
+        * platform/mac/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController dealloc]):
+        (-[WebVideoFullscreenController setupVideoOverlay:]): Remove the now-unnecessary explicit use of the WebCore namespace.
+        (-[WebVideoFullscreenController mediaElement]): Ditto.
+        (-[WebVideoFullscreenController setMediaElement:]): Ditto.
+        (-[WebVideoFullscreenController windowDidExitFullscreen]): Ditto.
+        (-[WebVideoFullscreenController updatePowerAssertions]): Create a DisplaySleepDisabler instance when transitioning from permitting
+        display sleep to disabling display sleep. Clear out our reference when sleep should be permitted, destroying any
+        disabler that we own.
+
 2011-09-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Hit testing on margins of body and head elements doesn't recur
