@@ -3194,6 +3194,8 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
             name:NSWindowDidResignKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillOrderOnScreen:)
             name:WKWindowWillOrderOnScreenNotification() object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillOrderOffScreen:)
+            name:WKWindowWillOrderOffScreenNotification() object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeResolution:)
             name:windowDidChangeResolutionNotification object:window];
     }
@@ -3209,6 +3211,8 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
             name:NSWindowDidResignKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:WKWindowWillOrderOnScreenNotification() object:window];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:WKWindowWillOrderOffScreenNotification() object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:windowDidChangeResolutionNotification object:window];
     }
@@ -3279,8 +3283,21 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
 
 - (void)_windowWillOrderOnScreen:(NSNotification *)notification
 {
+    // Update the active state here so WebViews in NSPopovers get the active state.
+    // This is needed because the normal NSWindowDidBecomeKeyNotification is not fired
+    // for NSPopover windows since they share key with their parent window.
+    [self _updateActiveState];
+
     if (![self shouldUpdateWhileOffscreen])
         [self setNeedsDisplay:YES];
+}
+
+- (void)_windowWillOrderOffScreen:(NSNotification *)notification
+{
+    // Update the active state here so WebViews in NSPopovers get the inactive state.
+    // This is needed because the normal NSWindowDidResignKeyNotification is not fired
+    // for NSPopover windows since they share key with their parent window.
+    [self _updateActiveState];
 }
 
 - (void)_windowWillClose:(NSNotification *)notification

@@ -1,3 +1,28 @@
+2011-09-19  Timothy Hatcher  <timothy@apple.com>
+
+        Make WebViews in NSPopovers render as they would in active windows.
+
+        The NSWindowDid{Become,Resign}KeyNotifications are not fired when NSPopovers
+        are shown or hidden since they share key with the parent window. So WebView
+        and WebHTMLView need to also observe the will order on/off screen notifications.
+
+        https://webkit.org/b/68402
+        rdar://problem/9754099
+
+        Reviewed by John Sullivan.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _removeWindowObservers]): Remove order on/off screen notification obversers.
+        (-[WebHTMLView addWindowObservers]): Add order on/off screen notification obversers.
+        (-[WebHTMLView windowWillOrderOnScreen:]): Check if the window is already a key window,
+        which can be the case for NSPopovers.
+        (-[WebHTMLView windowWillOrderOffScreen:]): Remove the mouse moved observer.
+        * WebView/WebView.mm:
+        (-[WebView addWindowObserversForWindow:]): Add order off screen notification obverser.
+        (-[WebView removeWindowObservers]): Remove order off screen notification obverser.
+        (-[WebView _windowWillOrderOnScreen:]): Call _updateActiveState.
+        (-[WebView _windowWillOrderOffScreen:]): Ditto.
+
 2011-09-19  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/68421> Stop calling UpdateSystemActivity in places where we hold power assertions that achieve the same effect
