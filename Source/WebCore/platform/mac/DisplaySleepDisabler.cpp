@@ -48,7 +48,7 @@ DisplaySleepDisabler::DisplaySleepDisabler(const char* reason)
     IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, reasonCF.get(), &m_disableDisplaySleepAssertion);
 #else
     UNUSED_PARAM(reason);
-    IOPMAssertionCreate(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, &_idleDisplaySleepAssertion);
+    IOPMAssertionCreate(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, &m_disableDisplaySleepAssertion);
     m_systemActivityTimer.startRepeating(systemActivityInterval);
 #endif
 }

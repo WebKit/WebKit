@@ -1,5 +1,13 @@
 2011-09-19  Mark Rowe  <mrowe@apple.com>
 
+        Attempt to fix the Leopard build.
+        
+        * platform/mac/DisplaySleepDisabler.cpp:
+        (WebCore::DisplaySleepDisabler::DisplaySleepDisabler):
+        * platform/mac/DisplaySleepDisabler.h:
+
+2011-09-19  Mark Rowe  <mrowe@apple.com>
+
         <http://webkit.org/b/68421> Stop calling UpdateSystemActivity in places where we hold power assertions that achieve the same effect
 
         On SnowLeopard and newer it's not necessary to call UpdateSystemActivity to prevent the screensaver from kicking

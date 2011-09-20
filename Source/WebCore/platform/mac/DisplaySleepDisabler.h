@@ -29,7 +29,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
-#ifdef BUILDNG_ON_LEOPARD
+#ifdef BUILDING_ON_LEOPARD
 #include "Timer.h"
 #endif
 
@@ -44,12 +44,12 @@ public:
 private:
     DisplaySleepDisabler(const char* reason);
 
-#ifdef BUILDNG_ON_LEOPARD
+#ifdef BUILDING_ON_LEOPARD
     void systemActivityTimerFired(Timer<DisplaySleepDisabler>*);
 #endif
     
     uint32_t m_disableDisplaySleepAssertion;
-#ifdef BUILDNG_ON_LEOPARD
+#ifdef BUILDING_ON_LEOPARD
     Timer<DisplaySleepDisabler> m_systemActivityTimer;
 #endif
 };
