@@ -1,3 +1,9 @@
+2011-09-20  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: one line inspector's script-formatter.html fix.
+
+        * inspector/debugger/script-formatter.html:
+
 2011-09-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95509.
