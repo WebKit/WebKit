@@ -272,6 +272,7 @@ HEADERS += \
     WebProcess/Downloads/Download.h \
     WebProcess/Downloads/DownloadManager.h \
     WebProcess/FullScreen/WebFullScreenManager.h \
+    WebProcess/FullScreen/qt/WebFullScreenManagerQt.h \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
     WebProcess/Geolocation/WebGeolocationManager.h \
     WebProcess/IconDatabase/WebIconDatabaseProxy.h \
@@ -283,6 +284,7 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundleNavigationAction.h \
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h \
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.h \
+    WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.h \
     WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.h \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.h \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.h \
@@ -498,6 +500,7 @@ SOURCES += \
     UIProcess/qt/ViewportInteractionEngine.cpp \
     UIProcess/qt/WebContextMenuProxyQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
+    UIProcess/qt/WebFullScreenManagerProxyQt.cpp \
     UIProcess/qt/WebInspectorProxyQt.cpp \
     UIProcess/qt/WebPageProxyQt.cpp \
     UIProcess/qt/WebPopupMenuProxyQt.cpp \
@@ -511,6 +514,7 @@ SOURCES += \
     WebProcess/Downloads/DownloadManager.cpp \
     WebProcess/Downloads/qt/DownloadQt.cpp \
     WebProcess/FullScreen/WebFullScreenManager.cpp \
+    WebProcess/FullScreen/qt/WebFullScreenManagerQt.cpp \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \
     WebProcess/Geolocation/WebGeolocationManager.cpp \
     WebProcess/IconDatabase/WebIconDatabaseProxy.cpp \
@@ -525,6 +529,7 @@ SOURCES += \
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp \
+    WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp \

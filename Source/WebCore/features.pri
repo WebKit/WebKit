@@ -194,6 +194,10 @@ symbian|maemo5|maemo6 {
     }
 }
 
+webkit2 {
+    !contains(DEFINES, ENABLE_FULLSCREEN_API=.): DEFINES += ENABLE_FULLSCREEN_API=1
+}
+
 contains(DEFINES, ENABLE_WCSS=1) {
     contains(DEFINES, ENABLE_XHTMLMP=0) {
         DEFINES -= ENABLE_XHTMLMP=0

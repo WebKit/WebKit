@@ -70,6 +70,7 @@ STYLESHEETS_EMBED = \
     $$PWD/css/mathml.css \
     $$PWD/css/svg.css \
     $$PWD/css/view-source.css \
+    $$PWD/css/fullscreen.css \
     $$PWD/css/mediaControls.css \
     $$PWD/css/mediaControlsQt.css \
     $$PWD/css/mediaControlsQtFullscreen.css \

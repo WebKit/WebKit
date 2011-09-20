@@ -3134,6 +3134,13 @@ contains(DEFINES, ENABLE_XPATH=1) {
         xml/XPathVariableReference.cpp
 }
 
+contains(DEFINES, ENABLE_FULLSCREEN_API=1) {
+    SOURCES += \
+        rendering/RenderFullScreen.cpp
+    HEADERS += \
+        rendering/RenderFullScreen.h
+}
+
 contains(DEFINES, ENABLE_XSLT=1) {
     v8 {
         SOURCES += \
