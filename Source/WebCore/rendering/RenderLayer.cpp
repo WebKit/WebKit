@@ -2559,7 +2559,8 @@ static bool inContainingBlockChain(RenderLayer* startLayer, RenderLayer* endLaye
     if (startLayer == endLayer)
         return true;
     
-    for (RenderBlock* currentBlock = startLayer->renderer()->containingBlock(); currentBlock; currentBlock = currentBlock->containingBlock()) {
+    RenderView* view = startLayer->renderer()->view();
+    for (RenderBlock* currentBlock = startLayer->renderer()->containingBlock(); currentBlock && currentBlock != view; currentBlock = currentBlock->containingBlock()) {
         if (currentBlock->layer() == endLayer)
             return true;
     }

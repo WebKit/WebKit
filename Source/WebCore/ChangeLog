@@ -1,3 +1,19 @@
+2011-09-20  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68314
+
+        Make sure that the containing block loop when clipping to border-radius
+        terminates by checking if you hit the RenderView. Null checking isn't sufficient
+        for stupid historical reasons that should be fixed (i.e., the RenderView returns itself
+        as its own containing block, even though this should just be changed).
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        Added new test in fast/clip.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::inContainingBlockChain):
+
 2011-09-20  Dan Bernstein  <mitz@apple.com>
 
         MathML renderers do not override RenderObject::renderName()

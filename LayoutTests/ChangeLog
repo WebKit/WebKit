@@ -1,3 +1,16 @@
+2011-09-20  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68314
+        
+        Added some more clipping tests for overflow to make sure the right things happen
+        when border-radius is specified.
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        * fast/clip/overflow-border-radius-fixed-position.html: Added.
+        * platform/mac/fast/clip/overflow-border-radius-fixed-position-expected.png: Added.
+        * platform/mac/fast/clip/overflow-border-radius-fixed-position-expected.txt: Added.
+
 2011-09-20  Dan Bernstein  <mitz@apple.com>
 
         MathML renderers do not override RenderObject::renderName()
