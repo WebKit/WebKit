@@ -60,11 +60,12 @@ protected:
     // the register allocator.
     enum SpillOrder {
         SpillOrderConstant = 1, // no spill, and cheap fill
-        SpillOrderSpilled = 2,  // no spill
-        SpillOrderJS = 4,       // needs spill
-        SpillOrderCell = 4,     // needs spill
-        SpillOrderInteger = 5,  // needs spill and box
-        SpillOrderDouble = 6,   // needs spill and convert
+        SpillOrderSpilled  = 2, // no spill
+        SpillOrderJS       = 4, // needs spill
+        SpillOrderCell     = 4, // needs spill
+        SpillOrderStorage  = 4, // needs spill
+        SpillOrderInteger  = 5, // needs spill and box
+        SpillOrderDouble   = 6, // needs spill and convert
     };
     
     enum UseChildrenMode { CallUseChildren, UseChildrenCalledExplicitly };
@@ -75,6 +76,7 @@ public:
     GPRReg fillInteger(NodeIndex, DataFormat& returnFormat);
     FPRReg fillDouble(NodeIndex);
     GPRReg fillJSValue(NodeIndex);
+    GPRReg fillStorage(NodeIndex);
 
     // lock and unlock GPR & FPR registers.
     void lock(GPRReg reg)
@@ -223,10 +225,10 @@ protected:
 
         DataFormat registerFormat = info.registerFormat();
 
-        if (registerFormat == DataFormatInteger) {
+        if (registerFormat == DataFormatInteger)
             m_jit.store32(info.gpr(), JITCompiler::addressFor(spillMe));
-        } else {
-            ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell);
+        else {
+            ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell || registerFormat == DataFormatStorage);
             m_jit.storePtr(info.gpr(), JITCompiler::addressFor(spillMe));
         }
     }
@@ -274,7 +276,7 @@ protected:
         if (node.hasConstant())
             m_jit.move(valueOfJSConstantAsImmPtr(nodeIndex), info.gpr());
         else {
-            ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell);
+            ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell || registerFormat == DataFormatStorage);
             m_jit.loadPtr(JITCompiler::addressFor(spillMe), info.gpr());
         }
     }
@@ -386,7 +388,8 @@ protected:
         }
 
         DataFormat spillFormat = info.registerFormat();
-        if (spillFormat == DataFormatDouble) {
+        switch (spillFormat) {
+        case DataFormatDouble: {
             // All values are spilled as JSValues, so box the double via a temporary gpr.
             GPRReg gpr = boxDouble(info.fpr());
             m_jit.storePtr(gpr, JITCompiler::addressFor(spillMe));
@@ -394,19 +397,30 @@ protected:
             info.spill(DataFormatJSDouble);
             return;
         }
+            
+        case DataFormatStorage: {
+            // This is special, since it's not a JS value - as in it's not visible to JS
+            // code.
+            m_jit.storePtr(info.gpr(), JITCompiler::addressFor(spillMe));
+            info.spill(DataFormatStorage);
+            return;
+        }
 
-        // The following code handles JSValues, int32s, and cells.
-        ASSERT(spillFormat == DataFormatInteger || spillFormat == DataFormatCell || spillFormat & DataFormatJS);
-
-        GPRReg reg = info.gpr();
-        // We need to box int32 and cell values ...
-        // but on JSVALUE64 boxing a cell is a no-op!
-        if (spillFormat == DataFormatInteger)
-            m_jit.orPtr(GPRInfo::tagTypeNumberRegister, reg);
-
-        // Spill the value, and record it as spilled in its boxed form.
-        m_jit.storePtr(reg, JITCompiler::addressFor(spillMe));
-        info.spill((DataFormat)(spillFormat | DataFormatJS));
+        default:
+            // The following code handles JSValues, int32s, and cells.
+            ASSERT(spillFormat == DataFormatInteger || spillFormat == DataFormatCell || spillFormat & DataFormatJS);
+            
+            GPRReg reg = info.gpr();
+            // We need to box int32 and cell values ...
+            // but on JSVALUE64 boxing a cell is a no-op!
+            if (spillFormat == DataFormatInteger)
+                m_jit.orPtr(GPRInfo::tagTypeNumberRegister, reg);
+            
+            // Spill the value, and record it as spilled in its boxed form.
+            m_jit.storePtr(reg, JITCompiler::addressFor(spillMe));
+            info.spill((DataFormat)(spillFormat | DataFormatJS));
+            return;
+        }
     }
     
     bool isStrictInt32(NodeIndex);
@@ -699,6 +713,17 @@ protected:
     void jsValueResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode)
     {
         jsValueResult(reg, nodeIndex, DataFormatJS, mode);
+    }
+    void storageResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
+    {
+        Node& node = m_jit.graph()[nodeIndex];
+        if (mode == CallUseChildren)
+            useChildren(node);
+        
+        VirtualRegister virtualRegister = node.virtualRegister();
+        m_gprs.retain(reg, virtualRegister, SpillOrderStorage);
+        GenerationInfo& info = m_generationInfo[virtualRegister];
+        info.initStorage(nodeIndex, node.refCount(), reg);
     }
     void doubleResult(FPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
     {
@@ -1160,6 +1185,47 @@ private:
     GPRReg m_gprOrInvalid;
 };
 
+class StorageOperand {
+public:
+    explicit StorageOperand(JITCodeGenerator* jit, NodeIndex index)
+        : m_jit(jit)
+        , m_index(index)
+        , m_gprOrInvalid(InvalidGPRReg)
+    {
+        ASSERT(m_jit);
+        if (jit->isFilled(index))
+            gpr();
+    }
+    
+    ~StorageOperand()
+    {
+        ASSERT(m_gprOrInvalid != InvalidGPRReg);
+        m_jit->unlock(m_gprOrInvalid);
+    }
+    
+    NodeIndex index() const
+    {
+        return m_index;
+    }
+    
+    GPRReg gpr()
+    {
+        if (m_gprOrInvalid == InvalidGPRReg)
+            m_gprOrInvalid = m_jit->fillStorage(index());
+        return m_gprOrInvalid;
+    }
+    
+    void use()
+    {
+        m_jit->use(m_index);
+    }
+    
+private:
+    JITCodeGenerator* m_jit;
+    NodeIndex m_index;
+    GPRReg m_gprOrInvalid;
+};
+
 
 // === Temporaries ===
 //
@@ -1180,6 +1246,7 @@ public:
     GPRTemporary(JITCodeGenerator*, SpeculateCellOperand&);
     GPRTemporary(JITCodeGenerator*, SpeculateBooleanOperand&);
     GPRTemporary(JITCodeGenerator*, JSValueOperand&);
+    GPRTemporary(JITCodeGenerator*, StorageOperand&);
 
     ~GPRTemporary()
     {

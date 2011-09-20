@@ -82,10 +82,8 @@ const char* predictionToString(PredictedType value)
 }
 #endif
 
-PredictedType predictionFromCell(JSCell* cell)
+PredictedType predictionFromClassInfo(const ClassInfo* classInfo)
 {
-    const ClassInfo* classInfo = cell->structure()->classInfo();
-    
     if (classInfo == &JSFinalObject::s_info)
         return PredictFinalObject;
     
@@ -99,6 +97,16 @@ PredictedType predictionFromCell(JSCell* cell)
         return PredictObjectOther;
     
     return PredictCellOther;
+}
+
+PredictedType predictionFromStructure(Structure* structure)
+{
+    return predictionFromClassInfo(structure->classInfo());
+}
+
+PredictedType predictionFromCell(JSCell* cell)
+{
+    return predictionFromStructure(cell->structure());
 }
 
 PredictedType predictionFromValue(JSValue value)

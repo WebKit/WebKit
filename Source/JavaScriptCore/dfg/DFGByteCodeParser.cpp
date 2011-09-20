@@ -1136,9 +1136,29 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_get_by_id: {
             NodeIndex base = get(currentInstruction[2].u.operand);
-            unsigned identifier = currentInstruction[3].u.operand;
+            unsigned identifierNumber = currentInstruction[3].u.operand;
             
-            NodeIndex getById = addToGraph(GetById, OpInfo(identifier), OpInfo(PredictNone), base);
+            StructureStubInfo& stubInfo = m_profiledBlock->getStubInfo(m_currentIndex);
+            
+            NodeIndex getById = NoNode;
+            if (stubInfo.seen && stubInfo.accessType == access_get_by_id_self) {
+                Structure* structure = stubInfo.u.getByIdSelf.baseObjectStructure.get();
+                Identifier identifier = m_codeBlock->identifier(identifierNumber);
+                size_t offset = structure->get(*m_globalData, identifier);
+                
+                if (offset != notFound) {
+                    getById = addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(PredictNone), addToGraph(CheckStructure, OpInfo(structure), base));
+                    
+                    StorageAccessData storageAccessData;
+                    storageAccessData.offset = offset;
+                    storageAccessData.identifierNumber = identifierNumber;
+                    m_graph.m_storageAccessData.append(storageAccessData);
+                }
+            }
+            
+            if (getById == NoNode)
+                getById = addToGraph(GetById, OpInfo(identifierNumber), OpInfo(PredictNone), base);
+            
             set(currentInstruction[1].u.operand, getById);
             stronglyPredict(getById);
 

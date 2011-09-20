@@ -33,6 +33,8 @@
 
 namespace JSC {
 
+class Structure;
+
 typedef uint16_t PredictedType;
 static const PredictedType PredictNone          = 0x0000; // We don't know anything yet.
 static const PredictedType PredictFinalObject   = 0x0001; // It's definitely a JSFinalObject.
@@ -150,6 +152,8 @@ inline PredictedType makePrediction(PredictedType type, PredictionSource source)
     return type | (source == StrongPrediction ? StrongPredictionTag : 0);
 }
 
+PredictedType predictionFromClassInfo(const ClassInfo*);
+PredictedType predictionFromStructure(Structure*);
 PredictedType predictionFromCell(JSCell*);
 PredictedType predictionFromValue(JSValue);
 

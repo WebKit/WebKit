@@ -141,6 +141,9 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
         returnFormat = DataFormatInteger;
         return allocate();
     }
+        
+    case DataFormatStorage:
+        ASSERT_NOT_REACHED();
     }
 
     ASSERT_NOT_REACHED();
@@ -272,6 +275,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
     switch (info.registerFormat()) {
     case DataFormatNone: // Should have filled, above.
     case DataFormatBoolean: // This type never occurs.
+    case DataFormatStorage:
         ASSERT_NOT_REACHED();
         
     case DataFormatCell:
@@ -406,6 +410,9 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
         terminateSpeculativeExecution();
         return allocate();
     }
+        
+    case DataFormatStorage:
+        ASSERT_NOT_REACHED();
     }
 
     ASSERT_NOT_REACHED();
@@ -476,6 +483,9 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
         terminateSpeculativeExecution();
         return allocate();
     }
+        
+    case DataFormatStorage:
+        ASSERT_NOT_REACHED();
     }
 
     ASSERT_NOT_REACHED();
@@ -1494,6 +1504,36 @@ void SpeculativeJIT::compile(Node& node)
         cachedGetById(baseGPR, resultGPR, scratchGPR, node.identifierNumber());
 
         jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
+        break;
+    }
+
+    case CheckStructure: {
+        SpeculateCellOperand base(this, node.child1());
+        GPRTemporary result(this, base);
+        
+        GPRReg baseGPR = base.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        speculationCheck(m_jit.branchPtr(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), JITCompiler::TrustedImmPtr(node.structure())));
+        
+        m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
+        
+        storageResult(resultGPR, m_compileIndex);
+        break;
+    }
+        
+    case GetByOffset: {
+        StorageOperand storage(this, node.child1());
+        GPRTemporary result(this, storage);
+        
+        GPRReg storageGPR = storage.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        StorageAccessData& storageAccessData = m_jit.graph().m_storageAccessData[node.storageAccessDataIndex()];
+        
+        m_jit.loadPtr(JITCompiler::Address(storageGPR, storageAccessData.offset * sizeof(EncodedJSValue)), resultGPR);
+        
+        jsValueResult(resultGPR, m_compileIndex);
         break;
     }
         

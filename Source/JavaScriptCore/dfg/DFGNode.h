@@ -119,10 +119,11 @@ private:
 #define NodeMightClobber  0x800000
 
 // These values record the result type of the node (as checked by NodeResultMask, above), 0 for no result.
-#define NodeResultJS      0x1000
-#define NodeResultNumber  0x2000
-#define NodeResultInt32   0x3000
-#define NodeResultBoolean 0x4000
+#define NodeResultJS        0x1000
+#define NodeResultNumber    0x2000
+#define NodeResultInt32     0x3000
+#define NodeResultBoolean   0x4000
+#define NodeResultStorage   0x5000
 
 // This macro defines a set of information about all known node types, used to populate NodeId, NodeType below.
 #define FOR_EACH_DFG_OP(macro) \
@@ -184,6 +185,8 @@ private:
     macro(GetById, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(PutById, NodeMustGenerate | NodeClobbersWorld) \
     macro(PutByIdDirect, NodeMustGenerate | NodeClobbersWorld) \
+    macro(CheckStructure, NodeResultStorage | NodeMustGenerate) \
+    macro(GetByOffset, NodeResultJS) \
     macro(GetMethod, NodeResultJS | NodeMustGenerate) \
     macro(CheckMethod, NodeResultJS | NodeMustGenerate) \
     macro(GetGlobalVar, NodeResultJS | NodeMustGenerate) \
@@ -238,8 +241,11 @@ enum NodeType {
 // distinguishes an immediate value (typically an index into a CodeBlock data structure - 
 // a constant index, argument, or identifier) from a NodeIndex.
 struct OpInfo {
-    explicit OpInfo(unsigned value) : m_value(value) {}
-    unsigned m_value;
+    explicit OpInfo(int value) : m_value(value) { }
+    explicit OpInfo(unsigned value) : m_value(value) { }
+    explicit OpInfo(uintptr_t value) : m_value(value) { }
+    explicit OpInfo(void* value) : m_value(reinterpret_cast<uintptr_t>(value)) { }
+    uintptr_t m_value;
 };
 
 // === Node ===
@@ -282,7 +288,7 @@ struct Node {
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm1.m_value)
-        , m_opInfo2(imm2.m_value)
+        , m_opInfo2(safeCast<unsigned>(imm2.m_value))
     {
         ASSERT(!(op & NodeHasVarArgs));
         children.fixed.child1 = child1;
@@ -297,7 +303,7 @@ struct Node {
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm1.m_value)
-        , m_opInfo2(imm2.m_value)
+        , m_opInfo2(safeCast<unsigned>(imm2.m_value))
     {
         ASSERT(op & NodeHasVarArgs);
         children.variable.firstChild = firstChild;
@@ -457,6 +463,7 @@ struct Node {
         case GetByVal:
         case Call:
         case Construct:
+        case GetByOffset:
             return true;
         default:
             return false;
@@ -496,6 +503,26 @@ struct Node {
     {
         ASSERT(hasMethodCheckData());
         return m_opInfo2;
+    }
+    
+    bool hasStructure()
+    {
+        return op == CheckStructure;
+    }
+    
+    Structure* structure()
+    {
+        return reinterpret_cast<Structure*>(m_opInfo);
+    }
+    
+    bool hasStorageAccessData()
+    {
+        return op == GetByOffset;
+    }
+    
+    unsigned storageAccessDataIndex()
+    {
+        return m_opInfo;
     }
     
     bool hasVirtualRegister()
@@ -609,8 +636,10 @@ private:
     VirtualRegister m_virtualRegister;
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).
     unsigned m_refCount;
-    // Immediate values, accesses type-checked via accessors above.
-    unsigned m_opInfo, m_opInfo2;
+    // Immediate values, accesses type-checked via accessors above. The first one is
+    // big enough to store a pointer.
+    uintptr_t m_opInfo;
+    unsigned m_opInfo2;
 };
 
 } } // namespace JSC::DFG

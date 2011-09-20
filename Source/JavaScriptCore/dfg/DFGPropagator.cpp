@@ -301,6 +301,24 @@ private:
             break;
         }
             
+        case CheckStructure: {
+            // We backward propagate what this CheckStructure tells us. Maybe that's the right way
+            // to go; maybe it isn't. I'm not sure. What we'd really want is flow-sensitive
+            // forward propagation of what we learn from having executed CheckStructure. But for
+            // now we preserve the flow-insensitive nature of this analysis, because it's cheap to
+            // run and seems to work well enough.
+            changed |= mergeUse(node.child1(), predictionFromStructure(node.structure()) | StrongPredictionTag);
+            changed |= setPrediction(PredictOther | StrongPredictionTag);
+            break;
+        }
+            
+        case GetByOffset: {
+            changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
+            if (isStrongPrediction(node.getPrediction()))
+                changed |= setPrediction(node.getPrediction());
+            break;
+        }
+            
         case CheckMethod: {
             changed |= mergeUse(node.child1(), PredictObjectUnknown | StrongPredictionTag);
             changed |= setPrediction(m_graph.getMethodCheckPrediction(node));
@@ -660,7 +678,7 @@ private:
     
     NodeIndex globalVarLoadElimination(unsigned varNumber)
     {
-        NodeIndex start = startIndex();
+        NodeIndex start = startIndexForChildren();
         for (NodeIndex index = m_compileIndex; index-- > start;) {
             Node& node = m_graph[index];
             switch (node.op) {
@@ -706,13 +724,43 @@ private:
     
     NodeIndex getMethodLoadElimination(const MethodCheckData& methodCheckData, unsigned identifierNumber, NodeIndex child1)
     {
-        NodeIndex start = startIndex();
+        NodeIndex start = startIndexForChildren(child1);
         for (NodeIndex index = m_compileIndex; index-- > start;) {
             Node& node = m_graph[index];
             if (node.op == CheckMethod
                 && node.child1() == child1
                 && node.identifierNumber() == identifierNumber
                 && m_graph.m_methodCheckData[node.methodCheckDataIndex()] == methodCheckData)
+                return index;
+            if (clobbersWorld(index))
+                break;
+        }
+        return NoNode;
+    }
+    
+    NodeIndex checkStructureLoadElimination(Structure* structure, NodeIndex child1)
+    {
+        NodeIndex start = startIndexForChildren(child1);
+        for (NodeIndex index = m_compileIndex; index-- > start;) {
+            Node& node = m_graph[index];
+            if (node.op == CheckStructure
+                && node.child1() == child1
+                && node.structure() == structure)
+                return index;
+            if (clobbersWorld(index))
+                break;
+        }
+        return NoNode;
+    }
+    
+    NodeIndex getByOffsetLoadElimination(unsigned identifierNumber, NodeIndex child1)
+    {
+        NodeIndex start = startIndexForChildren(child1);
+        for (NodeIndex index = m_compileIndex; index-- > start;) {
+            Node& node = m_graph[index];
+            if (node.op == GetByOffset
+                && node.child1() == child1
+                && m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber == identifierNumber)
                 return index;
             if (clobbersWorld(index))
                 break;
@@ -848,6 +896,14 @@ private:
             
         case CheckMethod:
             setReplacement(getMethodLoadElimination(m_graph.m_methodCheckData[node.methodCheckDataIndex()], node.identifierNumber(), node.child1()));
+            break;
+            
+        case CheckStructure:
+            setReplacement(checkStructureLoadElimination(node.structure(), node.child1()));
+            break;
+            
+        case GetByOffset:
+            setReplacement(getByOffsetLoadElimination(m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber, node.child1()));
             break;
             
         default:

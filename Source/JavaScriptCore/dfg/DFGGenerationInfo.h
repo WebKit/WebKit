@@ -44,6 +44,7 @@ enum DataFormat {
     DataFormatDouble = 2,
     DataFormatBoolean = 3,
     DataFormatCell = 4,
+    DataFormatStorage = 5,
     DataFormatJS = 8,
     DataFormatJSInteger = DataFormatJS | DataFormatInteger,
     DataFormatJSDouble = DataFormatJS | DataFormatDouble,
@@ -65,6 +66,8 @@ inline const char* dataFormatToString(DataFormat dataFormat)
         return "Cell";
     case DataFormatBoolean:
         return "Boolean";
+    case DataFormatStorage:
+        return "Storage";
     case DataFormatJS:
         return "JS";
     case DataFormatJSInteger:
@@ -110,6 +113,9 @@ inline bool needDataFormatConversion(DataFormat from, DataFormat to)
             // This captures DataFormatBoolean, which is currently unused.
             ASSERT_NOT_REACHED();
         }
+    case DataFormatStorage:
+        ASSERT(to == DataFormatStorage);
+        return false;
     default:
         // This captures DataFormatBoolean, which is currently unused.
         ASSERT_NOT_REACHED();
@@ -209,6 +215,15 @@ public:
         m_canFill = false;
         u.fpr = fpr;
     }
+    void initStorage(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr)
+    {
+        m_nodeIndex = nodeIndex;
+        m_useCount = useCount;
+        m_registerFormat = DataFormatStorage;
+        m_spillFormat = DataFormatNone;
+        m_canFill = false;
+        u.gpr = gpr;
+    }
 
     // Get the index of the node that produced this value.
     NodeIndex nodeIndex() { return m_nodeIndex; }
@@ -288,9 +303,12 @@ public:
         ASSERT(m_spillFormat == DataFormatNone);
         // We should only be spilling values that are currently in machine registers.
         ASSERT(m_registerFormat != DataFormatNone);
-        // We only spill values that have been boxed as a JSValue; otherwise the GC
-        // would need a way to distinguish cell pointers from numeric primitives.
-        ASSERT(spillFormat & DataFormatJS);
+        // We only spill values that have been boxed as a JSValue because historically
+        // we assumed that the GC would want to be able to precisely identify heap
+        // pointers. This is not true anymore, but we still assume, in the fill code,
+        // that any spill slot for a JS value is boxed. For storage pointers, there is
+        // nothing we can do to box them, so we allow that to be an exception.
+        ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatStorage);
 
         m_registerFormat = DataFormatNone;
         m_spillFormat = spillFormat;
@@ -329,6 +347,11 @@ public:
     {
         m_registerFormat = DataFormatDouble;
         u.fpr = fpr;
+    }
+    void fillStorage(GPRReg gpr)
+    {
+        m_registerFormat = DataFormatStorage;
+        u.gpr = gpr;
     }
 
     bool alive()

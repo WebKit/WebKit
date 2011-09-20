@@ -84,6 +84,19 @@ struct MethodCheckData {
     }
 };
 
+struct StorageAccessData {
+    size_t offset;
+    unsigned identifierNumber;
+    
+    // NOTE: the offset and identifierNumber do not by themselves
+    // uniquely identify a property. The identifierNumber and a
+    // Structure* do. If those two match, then the offset should
+    // be the same, as well. For any Node that has a StorageAccessData,
+    // it is possible to retrieve the Structure* by looking at the
+    // first child. It should be a CheckStructure, which has the
+    // Structure*.
+};
+
 typedef Vector <BlockIndex, 2> PredecessorList;
 
 struct BasicBlock {
@@ -182,6 +195,7 @@ public:
         case GetByVal:
         case Call:
         case Construct:
+        case GetByOffset:
             return node.predict(prediction, source);
         default:
             return false;
@@ -223,6 +237,7 @@ public:
         case GetByVal:
         case Call:
         case Construct:
+        case GetByOffset:
             return nodePtr->getPrediction();
         case CheckMethod:
             return getMethodCheckPrediction(*nodePtr);
@@ -299,6 +314,7 @@ public:
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;
     Vector<NodeIndex, 16> m_varArgChildren;
     Vector<MethodCheckData> m_methodCheckData;
+    Vector<StorageAccessData> m_storageAccessData;
     unsigned m_preservedVars;
     unsigned m_parameterSlots;
 private:

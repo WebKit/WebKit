@@ -26,7 +26,8 @@
 #ifndef WTF_StdLibExtras_h
 #define WTF_StdLibExtras_h
 
-#include <wtf/Assertions.h>
+#include "CheckedArithmetic.h"
+#include "Assertions.h"
 
 // Use these to declare and define a static local variable (static T;) so that
 //  it is leaked so that its destructors are not called at exit. Using this
@@ -100,6 +101,13 @@ inline TO bitwise_cast(FROM from)
     } u;
     u.from = from;
     return u.to;
+}
+
+template<typename To, typename From>
+inline To safeCast(From value)
+{
+    ASSERT(isInBounds<To>(value));
+    return static_cast<To>(value);
 }
 
 // Returns a count of the number of bits set in 'bits'.
@@ -209,5 +217,6 @@ inline ArrayElementType* genericBinarySearch(ArrayType& array, size_t size, KeyT
 
 using WTF::binarySearch;
 using WTF::bitwise_cast;
+using WTF::safeCast;
 
 #endif // WTF_StdLibExtras_h

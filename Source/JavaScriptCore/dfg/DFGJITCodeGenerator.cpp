@@ -91,6 +91,7 @@ GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnForm
     case DataFormatJSCell:
     case DataFormatBoolean:
     case DataFormatJSBoolean:
+    case DataFormatStorage:
         // Should only be calling this function if we know this operand to be integer.
         ASSERT_NOT_REACHED();
 
@@ -166,6 +167,7 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
     case DataFormatJSCell:
     case DataFormatBoolean:
     case DataFormatJSBoolean:
+    case DataFormatStorage:
         // Should only be calling this function if we know this operand to be numeric.
         ASSERT_NOT_REACHED();
 
@@ -316,11 +318,41 @@ GPRReg JITCodeGenerator::fillJSValue(NodeIndex nodeIndex)
     }
         
     case DataFormatBoolean:
+    case DataFormatStorage:
         // this type currently never occurs
         ASSERT_NOT_REACHED();
     }
 
     ASSERT_NOT_REACHED();
+    return InvalidGPRReg;
+}
+
+GPRReg JITCodeGenerator::fillStorage(NodeIndex nodeIndex)
+{
+    Node& node = m_jit.graph()[nodeIndex];
+    VirtualRegister virtualRegister = node.virtualRegister();
+    GenerationInfo& info = m_generationInfo[virtualRegister];
+    
+    switch (info.registerFormat()) {
+    case DataFormatNone: {
+        GPRReg gpr = allocate();
+        ASSERT(info.spillFormat() == DataFormatStorage);
+        m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
+        m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
+        info.fillStorage(gpr);
+        return gpr;
+    }
+        
+    case DataFormatStorage: {
+        GPRReg gpr = info.gpr();
+        m_gprs.lock(gpr);
+        return gpr;
+    }
+        
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    
     return InvalidGPRReg;
 }
 
@@ -1082,14 +1114,6 @@ void JITCodeGenerator::nonSpeculativeInstanceOf(Node& node)
     wasNotInstance.link(&m_jit);
     wasNotDefaultHasInstance.link(&m_jit);
     jsValueResult(scratchReg, m_compileIndex, UseChildrenCalledExplicitly);
-}
-
-template<typename To, typename From>
-inline To safeCast(From value)
-{
-    To result = static_cast<To>(value);
-    ASSERT(result == value);
-    return result;
 }
 
 JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, NodeType nodeType)
@@ -2048,6 +2072,16 @@ GPRTemporary::GPRTemporary(JITCodeGenerator* jit, SpeculateBooleanOperand& op1)
 }
 
 GPRTemporary::GPRTemporary(JITCodeGenerator* jit, JSValueOperand& op1)
+    : m_jit(jit)
+    , m_gpr(InvalidGPRReg)
+{
+    if (m_jit->canReuse(op1.index()))
+        m_gpr = m_jit->reuse(op1.gpr());
+    else
+        m_gpr = m_jit->allocate();
+}
+
+GPRTemporary::GPRTemporary(JITCodeGenerator* jit, StorageOperand& op1)
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
 {
