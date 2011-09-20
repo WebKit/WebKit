@@ -90,6 +90,12 @@ void activateFonts()
     QApplication::setGraphicsSystem(QLatin1String("raster"));
     QApplication::setStyle(new QWindowsStyle);
 
+    QFont f(QLatin1String("Sans Serif"));
+    f.setPointSize(9);
+    f.setWeight(QFont::Normal);
+    f.setStyle(QFont::StyleNormal);
+    QApplication::setFont(f);
+
 #if defined(Q_WS_X11)
     QX11Info::setAppDpiX(0, 96);
     QX11Info::setAppDpiY(0, 96);
