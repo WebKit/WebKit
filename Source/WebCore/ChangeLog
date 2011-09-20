@@ -1,3 +1,13 @@
+2011-09-20  Marshall Greenblatt  <marshall@chromium.org>
+
+        Use DEFINE_STATIC_LOCAL to intentionally leak the static RefCountedHFONT object returned from
+        FontPlatformData::hashTableDeletedFontValue() to avoid global destructor ordering problems.
+        https://bugs.webkit.org/show_bug.cgi?id=67906
+
+        Reviewed by Adam Barth.
+
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.cpp:
+
 2011-09-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Hit testing on margins of body and head elements doesn't recur

@@ -38,6 +38,7 @@
 
 #include "PlatformSupport.h"
 #include "SkiaFontWin.h"
+#include "StdLibExtras.h"
 
 namespace WebCore {
 
@@ -116,8 +117,8 @@ FontPlatformData::RefCountedHFONT::~RefCountedHFONT()
 
 FontPlatformData::RefCountedHFONT* FontPlatformData::hashTableDeletedFontValue()
 {
-    static RefPtr<RefCountedHFONT> deletedValue =
-        RefCountedHFONT::create(reinterpret_cast<HFONT>(-1));
+    DEFINE_STATIC_LOCAL(RefPtr<RefCountedHFONT>, deletedValue,
+                        (RefCountedHFONT::create(reinterpret_cast<HFONT>(-1))));
     return deletedValue.get();
 }
 
