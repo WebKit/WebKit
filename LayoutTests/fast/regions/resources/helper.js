@@ -4,16 +4,19 @@ function isDebugEnabled()
     return window.location.hash == "#debug";
 }
 
-function rectToArray(rect) {
+function rectToArray(rect)
+{
     return [rect.top, rect.left, rect.bottom, rect.right, rect.width, rect.height];
 }
 
-function areEqualNumbers(actual, expected, tolerance) {
+function areEqualNumbers(actual, expected, tolerance)
+{
     var diff = Math.abs(actual - expected);
     return diff <= tolerance;
 }
 
-function areEqualRects(r1, r2, tolerance) {
+function areEqualRects(r1, r2, tolerance)
+{
     if (r1.length != r2.length)
         return false;
     
@@ -24,7 +27,24 @@ function areEqualRects(r1, r2, tolerance) {
     return true;
 }
 
-function assertEqualRects(results, name, actualRect, expectedRect, tolerance) {
+function assertTopLeftMatch (r1, r2, tolerance)
+{
+    if (sameTopLeft(r1, r2, tolerance))
+        return "PASS";
+    return "FAIL. Expected top left points to match, but got ("+ r1.top + "," + r1.left + ") and ("+ r2.top + "," + r2.left + ")";
+}
+
+function sameTopLeft(r1, r2, tolerance)
+{
+    if (tolerance === undefined)
+        tolerance = 0;
+    if ( areEqualNumbers(r1.top, r2.top, tolerance) && areEqualNumbers(r1.left, r2.left, tolerance) )
+        return true;
+    return false;
+}
+
+function assertEqualRects(results, name, actualRect, expectedRect, tolerance)
+{
     if (areEqualRects(actualRect, expectedRect, tolerance))
         return;
 
@@ -50,7 +70,8 @@ function testBoundingRects(expectedBoundingRects, tolerance)
     return !results.length;
 }
 
-function assertRectContains(results, name, containerRect, insideRect, tolerance) {
+function assertRectContains(results, name, containerRect, insideRect, tolerance)
+{
     // make the container rect bigger with tolerance
     var left = containerRect.left - tolerance;
     var right = containerRect.right + tolerance;
@@ -63,7 +84,8 @@ function assertRectContains(results, name, containerRect, insideRect, tolerance)
     return pass;
 }
 
-function addPageLevelDebugBox(rect, color) {
+function addPageLevelDebugBox(rect, color)
+{
     var el = document.createElement("div");
     el.style.position = "absolute";
     el.style.left = rect.left + "px";
