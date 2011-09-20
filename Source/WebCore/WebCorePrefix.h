@@ -62,7 +62,7 @@
 
 #include <pthread.h>
 
-MachineStackMarker.h#endif // defined(WIN32) || defined(_WIN32)
+#endif // defined(WIN32) || defined(_WIN32)
 
 #include <sys/types.h>
 #include <fcntl.h>

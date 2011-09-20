@@ -1,3 +1,9 @@
+2011-09-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix.
+
+        * WebCorePrefix.h: Removed stray text from accidental paste.
+
 2011-09-19  Geoffrey Garen  <ggaren@apple.com>
 
         Removed BREWMP* platform #ifdefs
