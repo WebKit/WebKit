@@ -242,6 +242,7 @@ static void _ewk_frame_smart_del(Evas_Object *o)
         if (sd->frame) {
             WebCore::FrameLoaderClientEfl *flc = _ewk_frame_loader_efl_get(sd->frame);
             flc->setWebFrame(0);
+            sd->frame->loader()->detachFromParent();
             sd->frame->loader()->cancelAndClear();
             sd->frame = 0;
         }
