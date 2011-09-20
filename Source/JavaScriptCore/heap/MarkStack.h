@@ -248,7 +248,7 @@ namespace JSC {
         ASSERT(isPageAligned(size));
         if (size == m_allocated)
             return;
-#if OS(WINDOWS) || OS(SYMBIAN) || PLATFORM(BREWMP)
+#if OS(WINDOWS) || OS(SYMBIAN)
         // We cannot release a part of a region with VirtualFree.  To get around this,
         // we'll release the entire region and reallocate the size that we want.
         MarkStack::releaseStack(m_data, m_allocated);

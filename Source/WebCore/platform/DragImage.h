@@ -51,8 +51,6 @@ class wxDragImage;
 typedef struct _cairo_surface cairo_surface_t;
 #elif PLATFORM(HAIKU)
 class BBitmap;
-#elif PLATFORM(BREWMP)
-typedef struct IImage IImage;
 #endif
 
 //We need to #define YOffset as it needs to be shared with WebKit
@@ -78,8 +76,6 @@ namespace WebCore {
     typedef cairo_surface_t* DragImageRef;
 #elif PLATFORM(HAIKU)
     typedef BBitmap* DragImageRef;
-#elif PLATFORM(BREWMP)
-    typedef IImage* DragImageRef;
 #elif PLATFORM(EFL)
     typedef void* DragImageRef;
 #endif

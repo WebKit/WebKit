@@ -41,17 +41,12 @@
 #include <CoreFoundation/CFString.h>
 #endif
 
-#if COMPILER(MSVC) && !OS(WINCE) && !PLATFORM(BREWMP)
+#if COMPILER(MSVC) && !OS(WINCE)
 #include <crtdbg.h>
 #endif
 
 #if OS(WINDOWS)
 #include <windows.h>
-#endif
-
-#if PLATFORM(BREWMP)
-#include <AEEdbg.h>
-#include <wtf/Vector.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -61,33 +56,6 @@
 #endif
 
 extern "C" {
-
-#if PLATFORM(BREWMP)
-
-static void printLog(const Vector<char>& buffer)
-{
-    // Each call to DBGPRINTF generates at most 128 bytes of output on the Windows SDK.
-    // On Qualcomm chipset targets, DBGPRINTF() comes out the diag port (though this may change).
-    // The length of each output string is constrained even more than on the Windows SDK.
-#if COMPILER(MSVC)
-    const int printBufferSize = 128;
-#else
-    const int printBufferSize = 32;
-#endif
-
-    char printBuffer[printBufferSize + 1];
-    printBuffer[printBufferSize] = 0; // to guarantee null termination
-
-    const char* p = buffer.data();
-    const char* end = buffer.data() + buffer.size();
-    while (p < end) {
-        strncpy(printBuffer, p, printBufferSize);
-        dbg_Message(printBuffer, DBG_MSG_LEVEL_HIGH, __FILE__, __LINE__);
-        p += printBufferSize;
-    }
-}
-
-#endif
 
 WTF_ATTRIBUTE_PRINTF(1, 0)
 static void vprintf_stderr_common(const char* format, va_list args)
@@ -108,15 +76,6 @@ static void vprintf_stderr_common(const char* format, va_list args)
         CFRelease(str);
         CFRelease(cfFormat);
         return;
-    }
-#elif PLATFORM(BREWMP)
-    // When str is 0, the return value is the number of bytes needed
-    // to accept the result including null termination.
-    int size = vsnprintf(0, 0, format, args);
-    if (size > 0) {
-        Vector<char> buffer(size);
-        vsnprintf(buffer.data(), size, format, args);
-        printLog(buffer);
     }
 
 #elif HAVE(ISDEBUGGERPRESENT)

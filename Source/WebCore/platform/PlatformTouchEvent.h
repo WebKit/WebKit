@@ -31,12 +31,6 @@ class QTouchEvent;
 QT_END_NAMESPACE
 #endif
 
-#if PLATFORM(BREWMP)
-typedef unsigned short    uint16;
-typedef unsigned long int uint32;
-#define AEEEvent uint16
-#endif
-
 #if PLATFORM(EFL)
 typedef struct _Eina_List Eina_List;
 #endif
@@ -62,8 +56,6 @@ public:
     {}
 #if PLATFORM(QT)
     PlatformTouchEvent(QTouchEvent*);
-#elif PLATFORM(BREWMP)
-    PlatformTouchEvent(AEEEvent, uint16 wParam, uint32 dwParam);
 #elif PLATFORM(EFL)
     PlatformTouchEvent(Eina_List*, const IntPoint, TouchEventType, int metaState);
 #endif

@@ -83,10 +83,6 @@ class BView;
 typedef BView* PlatformWidget;
 #endif
 
-#if PLATFORM(BREWMP)
-typedef void* PlatformWidget;
-#endif
-
 #if PLATFORM(EFL)
 typedef struct _Evas_Object Evas_Object;
 typedef struct _Evas Evas;

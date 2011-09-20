@@ -51,9 +51,6 @@
 #if USE(GLIB_UNICODE)
 #include "gtk/TextCodecGtk.h"
 #endif
-#if USE(BREWMP_UNICODE)
-#include "brew/TextCodecBrew.h"
-#endif
 #if OS(WINCE) && !PLATFORM(QT)
 #include "TextCodecWinCE.h"
 #endif

@@ -42,7 +42,7 @@
 #include <stdio.h>  // Needed by jpeglib.h for FILE.
 #include <wtf/PassOwnPtr.h>
 
-#if OS(WINCE) || PLATFORM(BREWMP_SIMULATOR)
+#if OS(WINCE)
 // Remove warning: 'FAR' macro redefinition
 #undef FAR
 

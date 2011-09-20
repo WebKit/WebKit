@@ -33,8 +33,6 @@
 #include <wtf/unicode/glib/UnicodeGLib.h>
 #elif USE(WINCE_UNICODE)
 #include <wtf/unicode/wince/UnicodeWinCE.h>
-#elif USE(BREWMP_UNICODE)
-#include <wtf/unicode/brew/UnicodeBrew.h>
 #else
 #error "Unknown Unicode implementation"
 #endif

@@ -35,14 +35,6 @@
 #include <netinet/in.h>
 #endif
 
-#if PLATFORM(BREWMP)
-#include <AEEstd.h>
-#define htonl(x) std_htonl(x)
-#define htons(x) std_htons(x)
-#define ntohl(x) std_ntohl(x)
-#define ntohs(x) std_ntohs(x)
-#endif
-
 #if OS(WINDOWS)
 #if CPU(BIG_ENDIAN)
 #define ntohs(x) ((uint16_t)(x))

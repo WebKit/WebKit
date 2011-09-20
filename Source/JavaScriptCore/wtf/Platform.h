@@ -430,15 +430,6 @@
 #define WTF_PLATFORM_GTK 1
 #elif defined(BUILDING_HAIKU__)
 #define WTF_PLATFORM_HAIKU 1
-#elif defined(BUILDING_BREWMP__)
-#define WTF_PLATFORM_BREWMP 1
-#if defined(AEE_SIMULATOR)
-#define WTF_PLATFORM_BREWMP_SIMULATOR 1
-#else
-#define WTF_PLATFORM_BREWMP_SIMULATOR 0
-#endif
-#undef WTF_OS_WINDOWS
-#undef WTF_PLATFORM_WIN
 #elif OS(DARWIN)
 #define WTF_PLATFORM_MAC 1
 #elif OS(WINDOWS)
@@ -490,10 +481,6 @@
 #endif
 #endif
 
-#if PLATFORM(BREWMP)
-#define WTF_USE_SKIA 1
-#endif
-
 #if PLATFORM(GTK)
 #define WTF_USE_CAIRO 1
 #endif
@@ -531,8 +518,6 @@
 #endif
 #elif OS(WINCE)
 #define WTF_USE_WINCE_UNICODE 1
-#elif PLATFORM(BREWMP)
-#define WTF_USE_BREWMP_UNICODE 1
 #elif PLATFORM(GTK)
 /* The GTK+ Unicode backend is configurable */
 #else
@@ -650,14 +635,6 @@
 #define ENABLE_NETSCAPE_PLUGIN_API 0
 #endif
 
-#if PLATFORM(BREWMP)
-#define USE_SYSTEM_MALLOC 1
-#endif
-
-#if PLATFORM(BREWMP_SIMULATOR)
-#define ENABLE_JIT 0
-#endif
-
 #if !defined(HAVE_ACCESSIBILITY)
 #if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(CHROMIUM)
 #define HAVE_ACCESSIBILITY 1
@@ -682,7 +659,7 @@
 
 #if !OS(WINDOWS) && !OS(SOLARIS) && !OS(QNX) \
     && !OS(SYMBIAN) && !OS(HAIKU) && !OS(RVCT) \
-    && !OS(ANDROID) && !PLATFORM(BREWMP)
+    && !OS(ANDROID)
 #define HAVE_TM_GMTOFF 1
 #define HAVE_TM_ZONE 1
 #define HAVE_TIMEGM 1
@@ -741,10 +718,6 @@
 #if !COMPILER(RVCT)
 #define HAVE_SYS_PARAM_H 1
 #endif
-
-#elif PLATFORM(BREWMP)
-
-#define HAVE_ERRNO_H 1
 
 #elif OS(QNX)
 

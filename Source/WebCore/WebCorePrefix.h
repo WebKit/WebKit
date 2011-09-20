@@ -59,15 +59,13 @@
 #endif
 
 #else
-#if !defined(BUILDING_BREWMP__)
-#include <pthread.h>
-#endif
-#endif // defined(WIN32) || defined(_WIN32)
 
-#if !defined(BUILDING_BREWMP__)
+#include <pthread.h>
+
+MachineStackMarker.h#endif // defined(WIN32) || defined(_WIN32)
+
 #include <sys/types.h>
 #include <fcntl.h>
-#endif
 #if defined(__APPLE__)
 #include <regex.h>
 #endif
@@ -97,15 +95,11 @@
 
 #endif
 
-#if !defined(BUILDING_BREWMP__)
 #include <sys/types.h>
-#endif
 #if defined(__APPLE__)
 #include <sys/param.h>
 #endif
-#if !defined(BUILDING_BREWMP__)
 #include <sys/stat.h>
-#endif
 #if defined(__APPLE__)
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -113,7 +107,7 @@
 
 #include <time.h>
 
-#if !defined(BUILDING_WX__) && !defined(BUILDING_BREWMP__)
+#if !defined(BUILDING_WX__)
 #include <CoreFoundation/CoreFoundation.h>
 #ifdef WTF_PLATFORM_WIN_CAIRO
 #include <ConditionalMacros.h>
@@ -138,7 +132,7 @@
 #endif
 
 #endif
-#endif // !defined(BUILDING_WX__) && !defined(BUILDING_BREWMP__)
+#endif // !defined(BUILDING_WX__)
 
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
