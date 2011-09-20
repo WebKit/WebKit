@@ -41,6 +41,8 @@ private slots:
     void focusInputTypes();
     void crashOnSetScaleBeforeSetUrl();
     void widgetsRenderingThroughCache();
+    void windowResizeEvent();
+
 #if !(defined(WTF_USE_QT_MOBILE_THEME) && WTF_USE_QT_MOBILE_THEME)
     void setPalette_data();
     void setPalette();
@@ -606,6 +608,53 @@ void tst_QGraphicsWebView::compareCanvasToImage(const QUrl& url, const QImage& r
     QVERIFY(compareImagesFuzzyPixelCount(target, reference, 0.01));
 }
 #endif
+
+class ResizeSpy : public QObject {
+    Q_OBJECT
+public slots:
+    void receiveResize(int width, int height)
+    {
+        m_size = QSize(width, height);
+        emit resized();
+    }
+
+    QSize size() const
+    {
+        return m_size;
+    }
+
+signals:
+    void resized();
+
+private:
+    QSize m_size;
+};
+
+void tst_QGraphicsWebView::windowResizeEvent()
+{
+    QGraphicsWebView webView;
+    ResizeSpy resizeSpy;
+    resizeSpy.setProperty("resizeCount", 0);
+
+    QString html = "<html><body><script>"
+                   "function onResize() { window.resizeSpy.receiveResize(window.innerWidth, window.innerHeight); }"
+                   "window.addEventListener('resize', onResize , false);"
+                   "</script></body></html>";
+
+    webView.page()->mainFrame()->setHtml(html);
+    webView.page()->mainFrame()->addToJavaScriptWindowObject("resizeSpy",
+                                                             &resizeSpy);
+    webView.setGeometry(QRect(0, 0, 50, 50));
+    QVERIFY(::waitForSignal(&resizeSpy, SIGNAL(resized()), 1000));
+    QCOMPARE(resizeSpy.size(), QSize(50, 50));
+
+    webView.page()->setActualVisibleContentRect(QRect(10, 10, 60, 60));
+    webView.setGeometry(QRect(0, 0, 100, 100));
+    waitForSignal(&resizeSpy, SIGNAL(resized()), 1000);
+
+    // This will be triggered without the fix on DOMWindow::innerHeight/Width
+    QCOMPARE(resizeSpy.size(), QSize(60, 60));
+}
 
 QTEST_MAIN(tst_QGraphicsWebView)
 

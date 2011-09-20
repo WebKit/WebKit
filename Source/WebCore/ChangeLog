@@ -1,3 +1,29 @@
+2011-09-20  Adenilson Cavalcanti  <adenilson.silva@openbossa.org>
+
+        [Qt] resizeToContent seems to trigger infinite resize on some pages
+        https://bugs.webkit.org/show_bug.cgi?id=43852
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        InnerHeight and InnerWidth are now calculated using ScrollView::visibleContentRect
+        including the scrollbars (if any) instead of using ScrollView::frameRect as before.
+
+        This makes no behavior change while not using the tiled backing
+        store and is compliant with the W3C definition stated in the CSSOM
+        View Module.
+
+        Plus it will return the correct values for tiled backing store,
+        thus fixing the original bug report by avoiding infinite resize
+        events caused by wrong innerHeight and innerWidth values.
+
+        Test: innerWidth/Height are covered by existing tests. The
+        non-infinite resizing is covered by a new Qt autotest at
+        test_qgraphicswebview::windowResizeEvent()
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::innerHeight): using ScrollView::visibleContentRect.
+        (WebCore::DOMWindow::innerWidth): using ScrollView::visibleContentRect.
+
 2011-09-09  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: implement reverse mapping for compiler source maps.

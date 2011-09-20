@@ -1093,7 +1093,7 @@ int DOMWindow::innerHeight() const
     if (!view)
         return 0;
     
-    return static_cast<int>(view->height() / m_frame->pageZoomFactor());
+    return static_cast<int>(view->visibleContentRect(/* includeScrollbars */ true).height() / m_frame->pageZoomFactor());
 }
 
 int DOMWindow::innerWidth() const
@@ -1105,7 +1105,7 @@ int DOMWindow::innerWidth() const
     if (!view)
         return 0;
 
-    return static_cast<int>(view->width() / m_frame->pageZoomFactor());
+    return static_cast<int>(view->visibleContentRect(/* includeScrollbars */ true).width() / m_frame->pageZoomFactor());
 }
 
 int DOMWindow::screenX() const
