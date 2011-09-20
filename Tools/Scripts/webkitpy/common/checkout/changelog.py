@@ -160,6 +160,28 @@ class ChangeLog(object):
             entry_lines.append(line)
         return None # We never found a date line!
 
+    @staticmethod
+    def parse_entries_from_file(changelog_file):
+        """changelog_file must be a file-like object which returns
+        unicode strings.  Use codecs.open or StringIO(unicode())
+        to pass file objects to this class."""
+        date_line_regexp = re.compile(ChangeLogEntry.date_line_regexp)
+        rolled_over_regexp = re.compile(ChangeLogEntry.rolled_over_regexp)
+        entry_lines = []
+        # The first line should be a date line.
+        first_line = changelog_file.readline()
+        assert(isinstance(first_line, unicode))
+        if not date_line_regexp.match(first_line):
+            raise StopIteration
+        entry_lines.append(first_line)
+
+        for line in changelog_file:
+            if date_line_regexp.match(line) or rolled_over_regexp.match(line):
+                # Remove the extra newline at the end
+                yield ChangeLogEntry(''.join(entry_lines[:-1]))
+                entry_lines = []
+            entry_lines.append(line)
+
     def latest_entry(self):
         # ChangeLog files are always UTF-8, we read them in as such to support Reviewers with unicode in their names.
         changelog_file = codecs.open(self.path, "r", "utf-8")

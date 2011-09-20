@@ -153,6 +153,13 @@ class ChangeLogTest(unittest.TestCase):
 
         self.assertEquals(57354, parse_bug_id_from_changelog(commit_text))
 
+    def test_parse_log_entries_from_changelog(self):
+        parsed_entries = list(ChangeLog.parse_entries_from_changelog(ChangeLogTest._example_changelog))
+        self.assertEquals(len(parsed_entries), 3)
+        self.assertEquals(parsed_entries[0].reviewer(), 'David Levin')
+        self.assertEquals(parsed_entries[1].author_email(), 'ddkilzer@apple.com')
+        self.assertEquals(parsed_entries[2].touched_files(), ['DumpRenderTree/mac/DumpRenderTreeWindow.mm'])
+
     def test_latest_entry_parse(self):
         changelog_contents = u"%s\n%s" % (self._example_entry, self._example_changelog)
         changelog_file = StringIO(changelog_contents)
