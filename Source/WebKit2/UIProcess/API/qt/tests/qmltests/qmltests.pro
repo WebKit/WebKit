@@ -16,5 +16,7 @@ OTHER_FILES += \
     TouchWebView/tst_properties.qml \
     TouchWebView/tst_loadZeroSizeView.qml \
     TouchWebView/tst_loadNegativeSizeView.qml \
-    TouchWebView/tst_loadProgress.qml
+    TouchWebView/tst_loadProgress.qml \
+    TouchWebView/tst_loadProgressSignal.qml
+
 

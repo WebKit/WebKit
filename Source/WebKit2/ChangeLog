@@ -1,3 +1,15 @@
+2011-09-20  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
+
+        [Qt] QTouchWebView missing signal tests for loadProgress
+        https://bugs.webkit.org/show_bug.cgi?id=68442
+
+        Reviewed by Chang Shu.
+
+        Added test case to check load progress signal for QTouchWebView
+
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadProgressSignal.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+
 2011-09-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95565.
