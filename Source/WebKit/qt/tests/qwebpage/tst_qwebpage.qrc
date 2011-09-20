@@ -9,6 +9,7 @@
     <file>resources/framedindex.html</file>
     <file>resources/content.html</file>
     <file>resources/script.html</file>
+    <file>resources/user.css</file>
 </qresource>
 </RCC>
 

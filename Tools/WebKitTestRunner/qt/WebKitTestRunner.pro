@@ -65,3 +65,5 @@ linux-* {
 
 include(../../../Source/JavaScriptCore/JavaScriptCore.pri)
 prependJavaScriptCoreLib(../../JavaScriptCore)
+
+RESOURCES = WebKitTestRunner.qrc

@@ -1,0 +1,3 @@
+This tests that a qrc URL is properly loaded as a user style sheet.
+
+PASS 50px rgb(255, 255, 0)

@@ -1,3 +1,24 @@
+2011-09-20  Jarred Nicholls  <jarred@sencha.com>
+
+        [Qt] Permit qrc resources to load in QWebSettings::setUserStyleSheetUrl()
+        https://bugs.webkit.org/show_bug.cgi?id=51159
+
+        Permit any URL with a local scheme to set a user style sheet. Allow qrc
+        resource URLs as arguments to QWebSettings::setUserStyleSheetUrl().
+        
+        Add DRT/WKTR qrc resource to test loading user style sheets from a qrc URL.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTree.qrc: Added.
+        * DumpRenderTree/qt/resources/user.css: Added.
+        (body):
+        * WebKitTestRunner/qt/WebKitTestRunner.pro:
+        * WebKitTestRunner/qt/WebKitTestRunner.qrc: Added.
+        * WebKitTestRunner/qt/resources/user.css: Added.
+        (body):
+
 2011-09-20  Leandro Pereira  <leandro@profusion.mobi>
 
         ChangeLogEntry class should contain a list of touched files

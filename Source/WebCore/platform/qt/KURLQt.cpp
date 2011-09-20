@@ -43,10 +43,17 @@ KURL::operator QUrl() const
 
 String KURL::fileSystemPath() const
 {
-    if (!isValid() || !protocolIs("file"))
+    if (!isValid())
         return String();
 
-    return static_cast<QUrl>(*this).toLocalFile();
+    if (isLocalFile())
+        return static_cast<QUrl>(*this).toLocalFile();
+
+    // A valid qrc resource path begins with a colon.
+    if (protocolIs("qrc"))
+        return ":" + path();
+
+    return String();
 }
 
 }

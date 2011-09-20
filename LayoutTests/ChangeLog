@@ -1,3 +1,18 @@
+2011-09-20  Jarred Nicholls  <jarred@sencha.com>
+
+        [Qt] Permit qrc resources to load in QWebSettings::setUserStyleSheetUrl()
+        https://bugs.webkit.org/show_bug.cgi?id=51159
+
+        Permit any URL with a local scheme to set a user style sheet. Allow qrc
+        resource URLs as arguments to QWebSettings::setUserStyleSheetUrl().
+
+        New platform layout test since user style sheet is testable from DRT.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/qt/fast/loader/user-stylesheet-qrc-path-expected.txt: Added.
+        * platform/qt/fast/loader/user-stylesheet-qrc-path.html: Added.
+
 2011-09-20  Dmitry Lomov  <dslomov@google.com>
 
         [Chromium] Rebaseline expectationd and file WK68445.

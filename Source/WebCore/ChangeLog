@@ -1,3 +1,18 @@
+2011-09-20  Jarred Nicholls  <jarred@sencha.com>
+
+        [Qt] Permit qrc resources to load in QWebSettings::setUserStyleSheetUrl()
+        https://bugs.webkit.org/show_bug.cgi?id=51159
+        
+        Permit any URL with a local scheme to set a user style sheet. Allow qrc
+        resource URLs as arguments to QWebSettings::setUserStyleSheetUrl().
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+        * platform/qt/KURLQt.cpp:
+        (WebCore::KURL::fileSystemPath):
+
 2011-09-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Buildfix after r95513.

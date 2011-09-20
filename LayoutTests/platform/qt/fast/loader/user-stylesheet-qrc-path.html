@@ -1,0 +1,18 @@
+<p>
+    This tests that a qrc URL is properly loaded as a user style sheet.
+</p>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.setUserStyleSheetEnabled(true);
+        layoutTestController.setUserStyleSheetLocation('qrc:///resources/user.css');
+        
+        var computedStyle = getComputedStyle(document.body),
+            result = computedStyle.fontSize == '50px' && computedStyle.backgroundColor == 'rgb(255, 255, 0)',
+            message = (result ? 'PASS' : 'FAIL') + ' ' + computedStyle.fontSize + ' ' + computedStyle.backgroundColor;
+
+        document.write(message);
+    } else {
+        document.write("This test can only be run in DumpRenderTree.");
+    }
+</script>
