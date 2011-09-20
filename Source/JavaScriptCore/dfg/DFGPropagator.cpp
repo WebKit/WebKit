@@ -75,7 +75,27 @@ public:
     
     void fixpoint()
     {
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+    m_graph.dump(m_codeBlock);
+#endif
+
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        m_count = 0;
+#endif
+        do {
+            m_changed = false;
+            
+            // Up here we start with a backward pass because we suspect that to be
+            // more profitable.
+            propagateArithNodeFlagsBackward();
+            if (!m_changed)
+                break;
+            
+            m_changed = false;
+            propagateArithNodeFlagsForward();
+        } while (m_changed);
+        
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
         m_count = 0;
 #endif
         do {
@@ -83,7 +103,7 @@ public:
             
             // Forward propagation is near-optimal for both topologically-sorted and
             // DFS-sorted code.
-            propagateForward();
+            propagatePredictionsForward();
             if (!m_changed)
                 break;
             
@@ -92,19 +112,19 @@ public:
             // This pass captures two cases: (1) it detects if the forward fixpoint
             // found a sound solution and (2) short-circuits backward flow.
             m_changed = false;
-            propagateBackward();
+            propagatePredictionsBackward();
         } while (m_changed);
         
         fixup();
         
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
         printf("Graph after propagation fixup:\n");
         m_graph.dump(m_codeBlock);
 #endif
 
         localCSE();
 
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
         printf("Graph after CSE:\n");
         m_graph.dump(m_codeBlock);
 #endif
@@ -112,12 +132,168 @@ public:
         allocateVirtualRegisters();
 
 #if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("Graph after virtual register allocation:\n");
+        printf("Graph after propagation:\n");
         m_graph.dump(m_codeBlock);
 #endif
     }
     
 private:
+    bool isNotNegZero(NodeIndex nodeIndex)
+    {
+        if (!m_graph.isNumberConstant(m_codeBlock, nodeIndex))
+            return false;
+        double value = m_graph.valueOfNumberConstant(m_codeBlock, nodeIndex);
+        return !value && 1.0 / value < 0.0;
+    }
+    
+    bool isNotZero(NodeIndex nodeIndex)
+    {
+        if (!m_graph.isNumberConstant(m_codeBlock, nodeIndex))
+            return false;
+        return !!m_graph.valueOfNumberConstant(m_codeBlock, nodeIndex);
+    }
+    
+    void propagateArithNodeFlags(Node& node)
+    {
+        if (!node.shouldGenerate())
+            return;
+        
+        NodeType op = node.op;
+        ArithNodeFlags flags = 0;
+        
+        if (node.hasArithNodeFlags())
+            flags = node.rawArithNodeFlags();
+        
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("   %s @%u: %s ", Graph::opName(op), m_compileIndex, arithNodeFlagsAsString(flags));
+#endif
+        
+        flags &= NodeUsedAsMask;
+        
+        bool changed = false;
+        
+        switch (op) {
+        case ValueToInt32:
+        case BitAnd:
+        case BitOr:
+        case BitXor:
+        case BitLShift:
+        case BitRShift:
+        case BitURShift: {
+            // These operations are perfectly happy with truncated integers,
+            // so we don't want to propagate anything.
+            break;
+        }
+            
+        case ValueToNumber:
+        case ValueToDouble:
+        case UInt32ToNumber: {
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            break;
+        }
+            
+        case ArithAdd:
+        case ValueAdd: {
+            if (isNotNegZero(node.child1()) || isNotNegZero(node.child2()))
+                flags &= ~NodeNeedsNegZero;
+            
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
+            break;
+        }
+            
+        case ArithSub: {
+            if (isNotZero(node.child1()) || isNotZero(node.child2()))
+                flags &= ~NodeNeedsNegZero;
+            
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
+            break;
+        }
+            
+        case ArithMul: {
+            // As soon as a multiply happens, we can easily end up in the part
+            // of the double domain where the point at which you do truncation
+            // can change the outcome. So, ArithMul always checks for overflow
+            // no matter what, and always forces its inputs to check as well.
+            
+            flags |= NodeUsedAsNumber | NodeNeedsNegZero;
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
+            break;
+        }
+            
+        case ArithMin:
+        case ArithMax: {
+            flags |= NodeUsedAsNumber;
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
+            break;
+        }
+            
+        case ArithAbs: {
+            flags &= ~NodeNeedsNegZero;
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            break;
+        }
+            
+        case PutByVal: {
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags | NodeUsedAsNumber);
+            changed |= m_graph[node.child3()].mergeArithNodeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
+            break;
+        }
+            
+        case GetByVal: {
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags | NodeUsedAsNumber);
+            break;
+        }
+            
+        default:
+            flags |= NodeUsedAsNumber | NodeNeedsNegZero;
+            if (op & NodeHasVarArgs) {
+                for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
+                    changed |= m_graph[m_graph.m_varArgChildren[childIdx]].mergeArithNodeFlags(flags);
+            } else {
+                if (node.child1() == NoNode)
+                    break;
+                changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+                if (node.child2() == NoNode)
+                    break;
+                changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+                if (node.child3() == NoNode)
+                    break;
+                changed |= m_graph[node.child3()].mergeArithNodeFlags(flags);
+            }
+            break;
+        }
+
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("%s\n", changed ? "CHANGED" : "");
+#endif
+        
+        m_changed |= changed;
+    }
+    
+    void propagateArithNodeFlagsForward()
+    {
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("Propagating arithmetic node flags forward [%u]\n", ++m_count);
+#endif
+        for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex)
+            propagateArithNodeFlags(m_graph[m_compileIndex]);
+    }
+    
+    void propagateArithNodeFlagsBackward()
+    {
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("Propagating arithmetic node flags backward [%u]\n", ++m_count);
+#endif
+        for (m_compileIndex = m_graph.size(); m_compileIndex-- > 0;)
+            propagateArithNodeFlags(m_graph[m_compileIndex]);
+    }
+    
     bool setPrediction(PredictedType prediction)
     {
         ASSERT(m_graph[m_compileIndex].hasResult());
@@ -143,15 +319,15 @@ private:
         return JSC::mergePrediction(m_predictions[m_compileIndex], prediction);
     }
     
-    void propagateNode(Node& node)
+    void propagateNodePredictions(Node& node)
     {
         if (!node.shouldGenerate())
             return;
         
         NodeType op = node.op;
 
-#if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("   %s[%u]: ", Graph::opName(op), m_compileIndex);
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("   %s @%u: ", Graph::opName(op), m_compileIndex);
 #endif
         
         bool changed = false;
@@ -184,19 +360,26 @@ private:
         case BitRShift:
         case BitLShift:
         case BitURShift:
-        case UInt32ToNumber:
         case ValueToInt32:
         case ArithMod: {
             changed |= setPrediction(makePrediction(PredictInt32, StrongPrediction));
             break;
         }
             
+        case UInt32ToNumber: {
+            if (nodeCanSpeculateInteger(node.arithNodeFlags()))
+                changed |= setPrediction(makePrediction(PredictInt32, StrongPrediction));
+            else
+                changed |= setPrediction(makePrediction(PredictNumber, StrongPrediction));
+            break;
+        }
+
         case ValueToNumber: {
             PredictedType prediction = m_predictions[node.child1()];
             
             if (isStrongPrediction(prediction)) {
-                if (isNumberPrediction(prediction))
-                    changed |= mergePrediction(prediction);
+                if (!(prediction & PredictDouble) && nodeCanSpeculateInteger(node.arithNodeFlags()))
+                    changed |= mergePrediction(makePrediction(PredictInt32, StrongPrediction));
                 else
                     changed |= mergePrediction(makePrediction(PredictNumber, StrongPrediction));
             }
@@ -210,7 +393,7 @@ private:
             
             if (isStrongPrediction(left) && isStrongPrediction(right)) {
                 if (isNumberPrediction(left) && isNumberPrediction(right)) {
-                    if (isInt32Prediction(mergePredictions(left, right)))
+                    if (isInt32Prediction(mergePredictions(left, right)) && nodeCanSpeculateInteger(node.arithNodeFlags()))
                         changed |= mergePrediction(makePrediction(PredictInt32, StrongPrediction));
                     else
                         changed |= mergePrediction(makePrediction(PredictDouble, StrongPrediction));
@@ -225,16 +408,14 @@ private:
             
         case ArithAdd:
         case ArithSub:
-        case ArithMulIgnoreZero:
-        case ArithMulPossiblyNegZero:
-        case ArithMulSpecNotNegZero:
+        case ArithMul:
         case ArithMin:
         case ArithMax: {
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
             
             if (isStrongPrediction(left) && isStrongPrediction(right)) {
-                if (isInt32Prediction(mergePredictions(left, right)))
+                if (isInt32Prediction(mergePredictions(left, right)) && nodeCanSpeculateInteger(node.arithNodeFlags()))
                     changed |= mergePrediction(makePrediction(PredictInt32, StrongPrediction));
                 else
                     changed |= mergePrediction(makePrediction(PredictDouble, StrongPrediction));
@@ -250,31 +431,11 @@ private:
             
         case ArithAbs: {
             PredictedType child = m_predictions[node.child1()];
-            if (isStrongPrediction(child))
-                changed |= mergePrediction(child);
-            break;
-        }
-            
-        case ArithAddSafe:
-        case ArithSubSafe:
-        case ArithMulSafe:
-        case UInt32ToNumberSafe: {
-            changed |= setPrediction(makePrediction(PredictDouble, StrongPrediction));
-            break;
-        }
-
-        case ValueAddSafe: {
-            PredictedType left = m_predictions[node.child1()];
-            PredictedType right = m_predictions[node.child2()];
-            
-            if (isStrongPrediction(left) && isStrongPrediction(right)) {
-                if (isNumberPrediction(left) && isNumberPrediction(right))
-                    changed |= mergePrediction(makePrediction(PredictDouble, StrongPrediction));
-                else if (!(left & PredictNumber) || !(right & PredictNumber)) {
-                    // left or right is definitely something other than a number.
-                    changed |= mergePrediction(makePrediction(PredictString, StrongPrediction));
-                } else
-                    changed |= mergePrediction(makePrediction(PredictString | PredictInt32 | PredictDouble, StrongPrediction));
+            if (isStrongPrediction(child)) {
+                if (nodeCanSpeculateInteger(node.arithNodeFlags()))
+                    changed |= mergePrediction(child);
+                else
+                    changed |= setPrediction(makePrediction(PredictDouble, StrongPrediction));
             }
             break;
         }
@@ -389,7 +550,7 @@ private:
 #endif
         }
 
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
         printf("expect(%s) ", predictionToString(m_predictions[m_compileIndex]));
         printf("use(%s) %s\n", predictionToString(m_uses[m_compileIndex]), changed ? "CHANGED" : "");
 #endif
@@ -397,28 +558,28 @@ private:
         m_changed |= changed;
     }
     
-    void propagateForward()
+    void propagatePredictionsForward()
     {
-#if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("Propagating forward [%u]\n", ++m_count);
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("Propagating predictions forward [%u]\n", ++m_count);
 #endif
         for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex)
-            propagateNode(m_graph[m_compileIndex]);
+            propagateNodePredictions(m_graph[m_compileIndex]);
     }
     
-    void propagateBackward()
+    void propagatePredictionsBackward()
     {
-#if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("Propagating backward [%u]\n", ++m_count);
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("Propagating predictions backward [%u]\n", ++m_count);
 #endif
         for (m_compileIndex = m_graph.size(); m_compileIndex-- > 0;)
-            propagateNode(m_graph[m_compileIndex]);
+            propagateNodePredictions(m_graph[m_compileIndex]);
     }
     
     void toDouble(NodeIndex nodeIndex)
     {
         if (m_graph[nodeIndex].op == ValueToNumber) {
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
             printf("  @%u -> ValueToDouble", nodeIndex);
 #endif
             m_graph[nodeIndex].op = ValueToDouble;
@@ -432,12 +593,18 @@ private:
         
         NodeType op = node.op;
 
-#if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("   %s[%u]: ", Graph::opName(op), m_compileIndex);
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("   %s @%u: ", Graph::opName(op), m_compileIndex);
 #endif
         
         switch (op) {
         case ValueAdd: {
+            if (!nodeCanSpeculateInteger(node.arithNodeFlags())) {
+                toDouble(node.child1());
+                toDouble(node.child2());
+                break;
+            }
+            
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
             
@@ -452,11 +619,15 @@ private:
             
         case ArithAdd:
         case ArithSub:
-        case ArithMulIgnoreZero:
-        case ArithMulPossiblyNegZero:
-        case ArithMulSpecNotNegZero:
+        case ArithMul:
         case ArithMin:
         case ArithMax: {
+            if (!nodeCanSpeculateInteger(node.arithNodeFlags())) {
+                toDouble(node.child1());
+                toDouble(node.child2());
+                break;
+            }
+            
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
             
@@ -476,6 +647,11 @@ private:
         }
             
         case ArithAbs: {
+            if (!nodeCanSpeculateInteger(node.arithNodeFlags())) {
+                toDouble(node.child1());
+                break;
+            }
+            
             PredictedType prediction = m_predictions[node.child1()];
             if (isStrongPrediction(prediction) && (prediction & PredictDouble))
                 toDouble(node.child1());
@@ -487,37 +663,18 @@ private:
             break;
         }
             
-        case ArithAddSafe:
-        case ArithSubSafe:
-        case ArithMulSafe: {
-            toDouble(node.child1());
-            toDouble(node.child2());
-            break;
-        }
-            
-        case ValueAddSafe: {
-            PredictedType left = m_predictions[node.child1()];
-            PredictedType right = m_predictions[node.child2()];
-            
-            if (isStrongPrediction(left) && isStrongPrediction(right) && isNumberPrediction(left) && isNumberPrediction(right)) {
-                toDouble(node.child2());
-                toDouble(node.child1());
-            }
-            break;
-        }
-        
         default:
             break;
         }
 
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
         printf("\n");
 #endif
     }
     
     void fixup()
     {
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
         printf("Performing Fixup\n");
 #endif
         for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex)
@@ -577,7 +734,7 @@ private:
     NodeIndex startIndexForChildren(NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
     {
         NodeIndex result = computeStartIndexForChildren(child1, child2, child3);
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
         printf("  lookback %u: ", result);
 #endif
         return result;
@@ -597,7 +754,7 @@ private:
         else
             result++;
         ASSERT(result <= m_compileIndex);
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
         printf("  limit %u: ", result);
 #endif
         return result;
@@ -613,6 +770,9 @@ private:
         for (NodeIndex index = endIndexForPureCSE(); index-- > start;) {
             Node& otherNode = m_graph[index];
             if (node.op != otherNode.op)
+                continue;
+            
+            if (node.arithNodeFlagsForCompare() != otherNode.arithNodeFlagsForCompare())
                 continue;
             
             NodeIndex otherChild = canonicalize(otherNode.child1());
@@ -661,7 +821,6 @@ private:
             return false;
         switch (node.op) {
         case ValueAdd:
-        case ValueAddSafe:
         case CompareLess:
         case CompareLessEq:
         case CompareGreater:
@@ -798,7 +957,7 @@ private:
         if (m_predictions[m_compileIndex] != m_predictions[replacement])
             return;
         
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
         printf("   Replacing @%u -> @%u", m_compileIndex, replacement);
 #endif
         
@@ -824,8 +983,8 @@ private:
         if (!node.shouldGenerate())
             return;
         
-#if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("   %s[%u]: ", Graph::opName(m_graph[m_compileIndex].op), m_compileIndex);
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+        printf("   %s @%u: ", Graph::opName(m_graph[m_compileIndex].op), m_compileIndex);
 #endif
 
         switch (node.op) {
@@ -839,18 +998,13 @@ private:
         case BitURShift:
         case ArithAdd:
         case ArithSub:
-        case ArithMulIgnoreZero:
-        case ArithMulPossiblyNegZero:
-        case ArithMulSpecNotNegZero:
+        case ArithMul:
         case ArithMod:
         case ArithDiv:
         case ArithAbs:
         case ArithMin:
         case ArithMax:
         case ArithSqrt:
-        case ArithAddSafe:
-        case ArithSubSafe:
-        case ArithMulSafe:
             setReplacement(pureCSE(node));
             break;
             
@@ -912,7 +1066,7 @@ private:
         }
         
         m_lastSeen[node.op & NodeIdMask] = m_compileIndex;
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
         printf("\n");
 #endif
     }
@@ -927,7 +1081,7 @@ private:
     
     void localCSE()
     {
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
         printf("Performing local CSE:");
 #endif
         for (unsigned block = 0; block < m_graph.m_blocks.size(); ++block)
@@ -992,7 +1146,7 @@ private:
     
     PredictionTracker m_variableUses;
 
-#if ENABLE(DFG_DEBUG_VERBOSE)
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
     unsigned m_count;
 #endif
     

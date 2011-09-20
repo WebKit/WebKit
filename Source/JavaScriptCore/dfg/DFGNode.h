@@ -26,10 +26,13 @@
 #ifndef DFGNode_h
 #define DFGNode_h
 
+#include <wtf/BoundsCheckedPointer.h>
 #include <wtf/Platform.h>
 
 // Emit various logging information for debugging, including dumping the dataflow graphs.
 #define ENABLE_DFG_DEBUG_VERBOSE 0
+// Emit dumps during propagation, in addition to just after.
+#define ENABLE_DFG_DEBUG_PROPAGATION_VERBOSE 0
 // Emit logging for OSR exit value recoveries at every node, not just nodes that
 // actually has speculation checks.
 #define ENABLE_DFG_VERBOSE_VALUE_RECOVERIES 0
@@ -105,6 +108,85 @@ private:
     uint32_t m_bytecodeIndex;
 };
 
+typedef unsigned ArithNodeFlags;
+#define NodeUseBottom      0x00
+#define NodeUsedAsNumber   0x01
+#define NodeNeedsNegZero   0x02
+#define NodeUsedAsMask     0x03
+#define NodeMayOverflow    0x04
+#define NodeMayNegZero     0x08
+#define NodeBehaviorMask   0x0c
+
+static inline bool nodeUsedAsNumber(ArithNodeFlags flags)
+{
+    return !!(flags & NodeUsedAsNumber);
+}
+
+static inline bool nodeCanTruncateInteger(ArithNodeFlags flags)
+{
+    return !nodeUsedAsNumber(flags);
+}
+
+static inline bool nodeCanIgnoreNegativeZero(ArithNodeFlags flags)
+{
+    return !(flags & NodeNeedsNegZero);
+}
+
+static inline bool nodeCanSpeculateInteger(ArithNodeFlags flags)
+{
+    if (flags & NodeMayOverflow)
+        return !nodeUsedAsNumber(flags);
+    
+    if (flags & NodeMayNegZero)
+        return nodeCanIgnoreNegativeZero(flags);
+    
+    return true;
+}
+
+#ifndef NDEBUG
+static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
+{
+    if (!flags)
+        return "<empty>";
+
+    static const int size = 64;
+    static char description[size];
+    BoundsCheckedPointer<char> ptr(description, size);
+    
+    bool hasPrinted = false;
+    
+    if (flags & NodeUsedAsNumber) {
+        ptr.strcat("UsedAsNum");
+        hasPrinted = true;
+    }
+    
+    if (flags & NodeNeedsNegZero) {
+        if (hasPrinted)
+            ptr.strcat("|");
+        ptr.strcat("NeedsNegZero");
+        hasPrinted = true;
+    }
+    
+    if (flags & NodeMayOverflow) {
+        if (hasPrinted)
+            ptr.strcat("|");
+        ptr.strcat("MayOverflow");
+        hasPrinted = true;
+    }
+    
+    if (flags & NodeMayNegZero) {
+        if (hasPrinted)
+            ptr.strcat("|");
+        ptr.strcat("MayNegZero");
+        hasPrinted = true;
+    }
+    
+    *ptr++ = 0;
+    
+    return description;
+}
+#endif
+
 // Entries in the NodeType enum (below) are composed of an id, a result type (possibly none)
 // and some additional informative flags (must generate, is constant, etc).
 #define NodeIdMask           0xFFF
@@ -148,17 +230,11 @@ private:
     macro(ValueToInt32, NodeResultInt32 | NodeMustGenerate) \
     /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\
     macro(UInt32ToNumber, NodeResultNumber) \
-    macro(UInt32ToNumberSafe, NodeResultNumber) \
     \
     /* Nodes for arithmetic operations. */\
     macro(ArithAdd, NodeResultNumber) \
     macro(ArithSub, NodeResultNumber) \
-    macro(ArithAddSafe, NodeResultNumber) /* Safe variants are those that are known to take old JIT slow path */\
-    macro(ArithSubSafe, NodeResultNumber) \
-    macro(ArithMulSpecNotNegZero, NodeResultNumber) /* Speculate that the result is not negative zero. */ \
-    macro(ArithMulIgnoreZero, NodeResultNumber) /* If it's negative zero, ignore it. */ \
-    macro(ArithMulPossiblyNegZero, NodeResultNumber) /* It definitely may be negative zero but we haven't decided what to do about it yet. No code generation for this node; it either turns into ArithMulIgnoreZero or ArithMulSafe. */ \
-    macro(ArithMulSafe, NodeResultNumber) /* It may be negative zero, or it may produce other forms of double, so speculate double. */\
+    macro(ArithMul, NodeResultNumber) \
     macro(ArithDiv, NodeResultNumber) \
     macro(ArithMod, NodeResultNumber) \
     macro(ArithAbs, NodeResultNumber) \
@@ -173,7 +249,6 @@ private:
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
     macro(ValueAdd, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
-    macro(ValueAddSafe, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
     \
     /* Property access. */\
     /* PutByValAlias indicates a 'put' aliases a prior write to the same property. */\
@@ -262,6 +337,7 @@ struct Node {
         , m_refCount(0)
     {
         ASSERT(!(op & NodeHasVarArgs));
+        ASSERT(!hasArithNodeFlags());
         children.fixed.child1 = child1;
         children.fixed.child2 = child2;
         children.fixed.child3 = child3;
@@ -390,6 +466,66 @@ struct Node {
     {
         ASSERT(hasIdentifier());
         return m_opInfo;
+    }
+    
+    bool hasArithNodeFlags()
+    {
+        switch (op) {
+        case ValueToNumber:
+        case ValueToDouble:
+        case UInt32ToNumber:
+        case ArithAdd:
+        case ArithSub:
+        case ArithMul:
+        case ArithAbs:
+        case ArithMin:
+        case ArithMax:
+        case ValueAdd:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    ArithNodeFlags rawArithNodeFlags()
+    {
+        ASSERT(hasArithNodeFlags());
+        return m_opInfo;
+    }
+    
+    // This corrects the arithmetic node flags, so that irrelevant bits are
+    // ignored. In particular, anything other than ArithMul does not need
+    // to know if it can speculate on negative zero.
+    ArithNodeFlags arithNodeFlags()
+    {
+        ArithNodeFlags result = rawArithNodeFlags();
+        if (op == ArithMul)
+            return result;
+        return result & ~NodeNeedsNegZero;
+    }
+    
+    ArithNodeFlags arithNodeFlagsForCompare()
+    {
+        if (hasArithNodeFlags())
+            return arithNodeFlags();
+        return 0;
+    }
+    
+    void setArithNodeFlag(ArithNodeFlags flags)
+    {
+        ASSERT(hasArithNodeFlags());
+        m_opInfo = flags;
+    }
+    
+    bool mergeArithNodeFlags(ArithNodeFlags flags)
+    {
+        if (!hasArithNodeFlags())
+            return false;
+        ArithNodeFlags newFlags = m_opInfo | flags;
+        if (newFlags == m_opInfo)
+            return false;
+        m_opInfo = newFlags;
+        return true;
     }
     
     bool hasVarNumber()

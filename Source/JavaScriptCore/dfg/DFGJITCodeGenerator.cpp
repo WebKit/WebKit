@@ -761,10 +761,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         break;
     }
         
-    case ArithMulIgnoreZero:
-    case ArithMulPossiblyNegZero:
-    case ArithMulSpecNotNegZero:
-    case ArithMulSafe: {
+    case ArithMul: {
         overflow.append(m_jit.branchMul32(MacroAssembler::Overflow, arg1GPR, arg2GPR, resultGPR));
         overflow.append(m_jit.branchTest32(MacroAssembler::Zero, resultGPR));
         break;
@@ -855,10 +852,7 @@ void JITCodeGenerator::nonSpeculativeBasicArithOp(NodeType op, Node &node)
         m_jit.subDouble(tmp2FPR, tmp1FPR);
         break;
             
-    case ArithMulIgnoreZero:
-    case ArithMulPossiblyNegZero:
-    case ArithMulSpecNotNegZero:
-    case ArithMulSafe:
+    case ArithMul:
         m_jit.mulDouble(tmp2FPR, tmp1FPR);
         break;
             

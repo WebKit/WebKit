@@ -101,6 +101,10 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
         hasPrinted = node.child1() != NoNode;
     }
 
+    if (node.hasArithNodeFlags()) {
+        printf("%s%s", hasPrinted ? ", " : "", arithNodeFlagsAsString(node.rawArithNodeFlags()));
+        hasPrinted = true;
+    }
     if (node.hasVarNumber()) {
         printf("%svar%u", hasPrinted ? ", " : "", node.varNumber());
         hasPrinted = true;

@@ -1,3 +1,74 @@
+2011-09-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT performs too many negative zero checks, and too many
+        overflow checks
+        https://bugs.webkit.org/show_bug.cgi?id=68430
+
+        Reviewed by Oliver Hunt.
+        
+        This adds comprehensive support for deciding how to perform an
+        arithmetic operations based on a combination of overflow profiling,
+        negative zero profiling, value profiling, and a static analysis of
+        how the results of these operations get used.
+        
+        This is a 72% speed-up on stanford-crypto-sha256-iterative, and a
+        2.5% speed-up on the Kraken average, a 1.4% speed-up on the V8
+        geomean, and neutral on SunSpider. It's also an 8.5% speed-up on
+        V8-crypto, because apparenty everything we do speeds up crypto.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::toInt32):
+        (JSC::DFG::ByteCodeParser::toNumber):
+        (JSC::DFG::ByteCodeParser::isSmallInt32Constant):
+        (JSC::DFG::ByteCodeParser::valueOfInt32Constant):
+        (JSC::DFG::ByteCodeParser::weaklyPredictInt32):
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeBasicArithOp):
+        * dfg/DFGNode.h:
+        (JSC::DFG::nodeUsedAsNumber):
+        (JSC::DFG::nodeCanTruncateInteger):
+        (JSC::DFG::nodeCanIgnoreNegativeZero):
+        (JSC::DFG::nodeCanSpeculateInteger):
+        (JSC::DFG::arithNodeFlagsAsString):
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::hasArithNodeFlags):
+        (JSC::DFG::Node::rawArithNodeFlags):
+        (JSC::DFG::Node::arithNodeFlags):
+        (JSC::DFG::Node::arithNodeFlagsForCompare):
+        (JSC::DFG::Node::setArithNodeFlag):
+        (JSC::DFG::Node::mergeArithNodeFlags):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::fixpoint):
+        (JSC::DFG::Propagator::isNotNegZero):
+        (JSC::DFG::Propagator::isNotZero):
+        (JSC::DFG::Propagator::propagateArithNodeFlags):
+        (JSC::DFG::Propagator::propagateArithNodeFlagsForward):
+        (JSC::DFG::Propagator::propagateArithNodeFlagsBackward):
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::propagatePredictionsForward):
+        (JSC::DFG::Propagator::propagatePredictionsBackward):
+        (JSC::DFG::Propagator::toDouble):
+        (JSC::DFG::Propagator::fixupNode):
+        (JSC::DFG::Propagator::fixup):
+        (JSC::DFG::Propagator::startIndexForChildren):
+        (JSC::DFG::Propagator::endIndexForPureCSE):
+        (JSC::DFG::Propagator::pureCSE):
+        (JSC::DFG::Propagator::clobbersWorld):
+        (JSC::DFG::Propagator::setReplacement):
+        (JSC::DFG::Propagator::performNodeCSE):
+        (JSC::DFG::Propagator::localCSE):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+
 2011-09-19  Oliver Hunt  <oliver@apple.com>
 
         Refactor Heap allocation logic into separate AllocationSpace class

@@ -778,6 +778,9 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned, unsigned op1, unsign
     emitGetVirtualRegisters(op1, regT0, op2, regT1);
     emitJumpSlowCaseIfNotImmediateInteger(regT0);
     emitJumpSlowCaseIfNotImmediateInteger(regT1);
+#if ENABLE(VALUE_PROFILER)
+    RareCaseProfile* profile = m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset);
+#endif
     if (opcodeID == op_add)
         addSlowCase(branchAdd32(Overflow, regT1, regT0));
     else if (opcodeID == op_sub)
@@ -800,7 +803,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned, unsigned op1, unsign
             // We only get here if we have a genuine negative zero. Record this,
             // so that the speculative JIT knows that we failed speculation
             // because of a negative zero.
-            add32(Imm32(1), AbsoluteAddress(&m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset)->m_counter));
+            add32(Imm32(1), AbsoluteAddress(&profile->m_counter));
             addSlowCase(jump());
             done.link(this);
             move(regT2, regT0);
@@ -964,11 +967,19 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
     // For now, only plant a fast int case if the constant operand is greater than zero.
     int32_t value;
     if (isOperandConstantImmediateInt(op1) && ((value = getConstantOperandImmediateInt(op1)) > 0)) {
+#if ENABLE(VALUE_PROFILER)
+        // Add a special fast case profile because the DFG JIT will expect one.
+        m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset);
+#endif
         emitGetVirtualRegister(op2, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
         addSlowCase(branchMul32(Overflow, Imm32(value), regT0, regT0));
         emitFastArithReTagImmediate(regT0, regT0);
     } else if (isOperandConstantImmediateInt(op2) && ((value = getConstantOperandImmediateInt(op2)) > 0)) {
+#if ENABLE(VALUE_PROFILER)
+        // Add a special fast case profile because the DFG JIT will expect one.
+        m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset);
+#endif
         emitGetVirtualRegister(op1, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
         addSlowCase(branchMul32(Overflow, Imm32(value), regT0, regT0));
