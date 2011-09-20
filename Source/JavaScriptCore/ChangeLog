@@ -1,3 +1,30 @@
+2011-09-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove toPrimitive from JSCell
+        https://bugs.webkit.org/show_bug.cgi?id=67875
+
+        Reviewed by Darin Adler.
+
+        Part of the refactoring process to un-virtualize JSCell.  We move 
+        all of the implicit functionality provided by the virtual toPrimitive method 
+        in JSCell to be explicit in JSValue::toPrimitive and JSCell:toPrimitive while 
+        also de-virtualizing JSCell::toPrimitive.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::toPrimitive):
+        * runtime/JSCell.h:
+
+        We replace JSNotAnObject::toPrimitive with defaultValue, which it overrides from 
+        JSObject.  This pushes the virtual method further down, enabling us to get rid 
+        of the virtual call in JSCell.  Eventually we'll probably have to deal with this
+        again, but we'll cross that bridge when we come to it.
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::defaultValue):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSObject.h:
+        * runtime/JSString.h:
+
 2011-09-19  Geoffrey Garen  <ggaren@apple.com>
 
         Removed ENABLE_LAZY_BLOCK_FREEING and related #ifdefs

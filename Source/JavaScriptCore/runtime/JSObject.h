@@ -131,7 +131,7 @@ namespace JSC {
         virtual void getPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 
-        virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
+        JSValue toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue& value);
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;

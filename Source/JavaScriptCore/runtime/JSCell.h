@@ -77,7 +77,7 @@ namespace JSC {
         virtual ConstructType getConstructData(ConstructData&);
 
         // Basic conversions.
-        virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
+        JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue&);
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;

@@ -117,10 +117,11 @@ JSValue JSCell::getJSNumber()
     return JSValue();
 }
 
-JSValue JSCell::toPrimitive(ExecState*, PreferredPrimitiveType) const
+JSValue JSCell::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
 {
-    ASSERT_NOT_REACHED();
-    return JSValue();
+    if (isString())
+        return static_cast<const JSString*>(this)->toPrimitive(exec, preferredType);
+    return static_cast<const JSObject*>(this)->toPrimitive(exec, preferredType);
 }
 
 bool JSCell::getPrimitiveNumber(ExecState*, double&, JSValue&)
