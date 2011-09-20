@@ -30,6 +30,7 @@
 #include "TypeTraits.h"
 
 #include <limits>
+#include <stdint.h>
 
 /* Checked<T>
  *
