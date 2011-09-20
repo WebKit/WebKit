@@ -31,6 +31,12 @@ var testFileList4 = [
     {'path': 'resources/dirupload/path1/subpath1/file1',          'expect-relpath': 'path1/subpath1/file1' },
 ];
 
+var testFileList5 = [
+    {'path': '/foo/baz',                                          'expect-relpath': 'foo/baz'},
+    {'path': '/foo/bar/baz',                                      'expect-relpath': 'foo/bar/baz'},
+    {'path': '/foo2/baz',                                         'expect-relpath': 'foo2/baz'},
+];
+
 function log(message)
 {
     document.getElementById('output').appendChild(document.createTextNode(message + "\n"));
@@ -71,7 +77,8 @@ if (window.eventSender) {
     doTest(testFileList1);
     doTest(testFileList2);
     doTest(testFileList3);
-    doTest(testFileList4, true);
+    doTest(testFileList4);
+    doTest(testFileList5, true);
 }
 </script>
 </body>

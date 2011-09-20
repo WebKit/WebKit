@@ -1,3 +1,18 @@
+2011-09-20  John Gregg  <johnnyg@google.com>
+
+        Directory Upload: parent path can truncate first char of the correct path
+        https://bugs.webkit.org/show_bug.cgi?id=66695
+
+        In some cases, if the parent path we compute ends with a separator
+        character like '/' or 'C:\', by adding one in an attempt to grab the
+        subsequent separator we actually grab a character of the real path,
+        which is incorrect.
+
+        Reviewed by Darin Fisher.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::setFileList):
+
 2011-09-20  Jochen Eisinger  <jochen@chromium.org>
 
         Invoke CachedResourceLoader::canRequest for all URLs in a redirect chain
