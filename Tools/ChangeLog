@@ -1,3 +1,14 @@
+2011-09-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Don't use QFont before initializing QApplication
+
+        Could potentially result in crash.
+
+        Reviewed by Simon Hausmann.
+
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+
 2011-09-19  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(EVENTSOURCE)
