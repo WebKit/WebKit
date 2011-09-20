@@ -61,14 +61,6 @@ double randomNumber()
     // that might not be cryptographically secure. Ideally, most ports would
     // define USE(OS_RANDOMNESS).
 
-#if !ENABLE(WTF_MULTIPLE_THREADS)
-    static bool s_initialized = false;
-    if (!s_initialized) {
-        initializeRandomNumberGenerator();
-        s_initialized = true;
-    }
-#endif
-
 #if USE(MERSENNE_TWISTER_19937)
     return genrand_res53();
 #elif PLATFORM(BREWMP)

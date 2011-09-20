@@ -83,10 +83,8 @@ void initializeThreading()
     initializeRandomNumberGenerator();
     ThreadIdentifierData::initializeOnce();
     wtfThreadData();
-#if ENABLE(WTF_MULTIPLE_THREADS)
     s_dtoaP5Mutex = new Mutex;
     initializeDates();
-#endif
 }
 
 void lockAtomicallyInitializedStaticMutex()

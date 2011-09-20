@@ -508,10 +508,6 @@
 #define WTF_USE_PTHREAD_BASED_QT 1
 #endif
 
-#if !defined(ENABLE_WTF_MULTIPLE_THREADS)
-#define ENABLE_WTF_MULTIPLE_THREADS 1
-#endif
-
 /* On Windows, use QueryPerformanceCounter by default */
 #if OS(WINDOWS)
 #define WTF_USE_QUERY_PERFORMANCE_COUNTER  1
