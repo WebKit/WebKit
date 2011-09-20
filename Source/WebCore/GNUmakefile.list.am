@@ -2619,6 +2619,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/WindRule.h \
 	Source/WebCore/platform/graphics/WOFFFileFormat.cpp \
 	Source/WebCore/platform/graphics/WOFFFileFormat.h \
+	Source/WebCore/platform/gtk/ErrorsGtk.cpp \
+	Source/WebCore/platform/gtk/ErrorsGtk.h \
 	Source/WebCore/platform/gtk/KURLGtk.cpp \
 	Source/WebCore/platform/gtk/LanguageGtk.cpp \
 	Source/WebCore/platform/gtk/LoggingGtk.cpp \

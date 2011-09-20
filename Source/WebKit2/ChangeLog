@@ -1,3 +1,22 @@
+2011-09-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebProcess shouldn't use the GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=68062
+
+        Reviewed by Martin Robinson.
+
+        Use WebCore API to create errors in WebProcess.
+
+        * GNUmakefile.am: Don't use webkit/webkierror.h.
+        * WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp:
+        (WebKit::cancelledError):
+        (WebKit::blockedError):
+        (WebKit::cannotShowURLError):
+        (WebKit::interruptedForPolicyChangeError):
+        (WebKit::cannotShowMIMETypeError):
+        (WebKit::fileDoesNotExistError):
+        (WebKit::pluginWillHandleLoadError):
+
 2011-09-19  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/68421> Stop calling UpdateSystemActivity in places where we hold power assertions that achieve the same effect

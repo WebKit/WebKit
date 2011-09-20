@@ -28,11 +28,10 @@
 #include "config.h"
 #include "WebErrors.h"
 
+#include <WebCore/ErrorsGtk.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
-#include <glib/gi18n-lib.h>
-#include <webkit/webkiterror.h>
 
 using namespace WebCore;
 
@@ -40,44 +39,37 @@ namespace WebKit {
 
 ResourceError cancelledError(const ResourceRequest& request)
 {
-    return ResourceError(g_quark_to_string(WEBKIT_NETWORK_ERROR), WEBKIT_NETWORK_ERROR_CANCELLED,
-                         request.url().string(), _("Load request cancelled"));
+    return WebCore::cancelledError(request);
 }
 
 ResourceError blockedError(const ResourceRequest& request)
 {
-    return ResourceError(g_quark_to_string(WEBKIT_POLICY_ERROR), WEBKIT_POLICY_ERROR_CANNOT_USE_RESTRICTED_PORT,
-                         request.url().string(), _("Not allowed to use restricted network port"));
+    return WebCore::blockedError(request);
 }
 
 ResourceError cannotShowURLError(const ResourceRequest& request)
 {
-    return ResourceError(g_quark_to_string(WEBKIT_POLICY_ERROR), WEBKIT_POLICY_ERROR_CANNOT_SHOW_URL,
-                         request.url().string(), _("URL cannot be shown"));
+    return WebCore::cannotShowURLError(request);
 }
 
 ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
 {
-    return ResourceError(g_quark_to_string(WEBKIT_POLICY_ERROR), WEBKIT_POLICY_ERROR_FRAME_LOAD_INTERRUPTED_BY_POLICY_CHANGE,
-                         request.url().string(), _("Frame load was interrupted"));
+    return WebCore::interruptedForPolicyChangeError(request);
 }
 
 ResourceError cannotShowMIMETypeError(const ResourceResponse& response)
 {
-    return ResourceError(g_quark_to_string(WEBKIT_POLICY_ERROR), WEBKIT_POLICY_ERROR_CANNOT_SHOW_MIME_TYPE,
-                         response.url().string(), _("Content with the specified MIME type cannot be shown"));
+    return WebCore::cannotShowMIMETypeError(response);
 }
 
 ResourceError fileDoesNotExistError(const ResourceResponse& response)
 {
-    return ResourceError(g_quark_to_string(WEBKIT_NETWORK_ERROR), WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST,
-                         response.url().string(), _("File does not exist"));
+    return WebCore::fileDoesNotExistError(response);
 }
 
 ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
 {
-    return ResourceError(g_quark_to_string(WEBKIT_PLUGIN_ERROR), WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD,
-                         response.url().string(), _("Plugin will handle load"));
+    return WebCore::pluginWillHandleLoadError(response);
 }
 
 } // namespace WebKit
