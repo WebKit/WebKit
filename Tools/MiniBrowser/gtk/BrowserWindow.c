@@ -592,18 +592,16 @@ static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKSt
     return returnValue;
 }
 
-static void mouseDidMoveOverElement(WKPageRef page, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo)
+static void mouseDidMoveOverElement(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo)
 {
     BrowserWindow *window = BROWSER_WINDOW(clientInfo);
     gtk_statusbar_pop(GTK_STATUSBAR(window->statusBar), window->statusBarContextId);
 
-    if (!userData)
+    WKURLRef linkUrlRef = WKHitTestResultCopyAbsoluteLinkURL(hitTestResult);
+    if (!linkUrlRef)
         return;
 
-    if (WKGetTypeID(userData) != WKURLGetTypeID())
-        return;
-
-    gchar *link = WKURLGetCString((WKURLRef)userData);
+    gchar *link = WKURLGetCString(linkUrlRef);
     gtk_statusbar_push(GTK_STATUSBAR(window->statusBar), window->statusBarContextId, link);
     g_free(link);
 }
