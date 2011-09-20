@@ -211,6 +211,13 @@ void TestController::initialize(int argc, const char* argv[])
 {
     platformInitialize();
 
+    if (argc < 2) {
+        fputs("Usage: WebKitTestRunner [options] filename [filename2..n]\n", stderr);
+        // FIXME: Refactor option parsing to allow us to print
+        // an auto-generated list of options.
+        exit(1);
+    }
+
     bool printSupportedFeatures = false;
 
     for (int i = 1; i < argc; ++i) {
