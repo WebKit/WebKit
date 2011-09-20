@@ -3757,3 +3757,5 @@ BUG_KEISHI : inspector/styles/styles-update-from-js.html = FAIL PASS TEXT TIMEOU
 BUG_KEISHI LINUX : media/video-controls-visible-audio-only.html = PASS TIMEOUT CRASH
 
 BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PASS CRASH 
+
+BUGWK88444 : fast/js/string-split-conformance.html = FAIL
