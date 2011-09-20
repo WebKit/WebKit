@@ -36,6 +36,9 @@ class RenderMathMLMath : public RenderMathMLRow {
 public:
     RenderMathMLMath(Node* container);
     virtual bool isRenderMathMLMath() const { return true; }
+
+private:
+    virtual const char* renderName() const { return "RenderMathMLMath"; }
 };
     
 }

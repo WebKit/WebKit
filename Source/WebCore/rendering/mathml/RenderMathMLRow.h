@@ -41,6 +41,9 @@ public:
     virtual void stretchToHeight(int) {}
 protected:
     virtual void layout();
+
+private:
+    virtual const char* renderName() const { return isAnonymous() ? "RenderMathMLRow (anonymous)" : "RenderMathMLRow"; }
 };
     
 }

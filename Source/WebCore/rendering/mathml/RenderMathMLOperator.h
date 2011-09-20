@@ -49,6 +49,8 @@ protected:
     virtual RenderBlock* createGlyph(UChar glyph, int size = 0, int charRelative = 0, int topRelative = 0);
     
 private:
+    virtual const char* renderName() const { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
+
     int m_stretchHeight;
     bool m_isStacked;
     UChar m_operator;

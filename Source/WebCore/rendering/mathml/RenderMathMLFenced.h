@@ -39,6 +39,8 @@ public:
     virtual void updateFromElement();
     
 private:
+    virtual const char* renderName() const { return "RenderMathMLFenced"; }
+
     void makeFences();
     RefPtr<RenderStyle> makeOperatorStyle();
     UChar m_open;

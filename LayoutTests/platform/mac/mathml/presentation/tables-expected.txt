@@ -6,13 +6,13 @@ layer at (0,0) size 800x162
       RenderBlock {p} at (0,0) size 784x57
         RenderText {#text} at (0,21) size 49x18
           text run at (0,21) width 49: "simple: "
-        RenderBlock {math} at (49,0) size 80x57
+        RenderMathMLMath {math} at (49,0) size 80x57
           RenderTable {mtable} at (1,0) size 78x57
             RenderTableSection (anonymous) at (0,0) size 78x57
               RenderTableRow {mtr} at (0,0) size 78x19
                 RenderTableCell {mtd} at (0,0) size 26x19 [r=0 c=0 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "a"
@@ -20,8 +20,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 12x12
                         text run at (8,7) width 12: "11"
                 RenderTableCell {mtd} at (26,0) size 26x19 [r=0 c=1 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "a"
@@ -29,8 +29,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 12x12
                         text run at (8,7) width 12: "12"
                 RenderTableCell {mtd} at (52,0) size 26x19 [r=0 c=2 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "a"
@@ -39,8 +39,8 @@ layer at (0,0) size 800x162
                         text run at (8,7) width 12: "13"
               RenderTableRow {mtr} at (0,19) size 78x19
                 RenderTableCell {mtd} at (0,19) size 26x19 [r=1 c=0 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "b"
@@ -48,8 +48,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 12x12
                         text run at (8,7) width 12: "21"
                 RenderTableCell {mtd} at (26,19) size 26x19 [r=1 c=1 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "b"
@@ -57,8 +57,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 12x12
                         text run at (8,7) width 12: "22"
                 RenderTableCell {mtd} at (52,19) size 26x19 [r=1 c=2 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "b"
@@ -67,8 +67,8 @@ layer at (0,0) size 800x162
                         text run at (8,7) width 12: "23"
               RenderTableRow {mtr} at (0,38) size 78x19
                 RenderTableCell {mtd} at (0,38) size 26x19 [r=2 c=0 rs=1 cs=1]
-                  RenderBlock {msub} at (4,0) size 19x19
-                    RenderBlock {msub} at (0,0) size 7x16
+                  RenderMathMLSubSup {msub} at (4,0) size 19x19
+                    RenderMathMLBlock {msub} at (0,0) size 7x16
                       RenderInline {mi} at (0,0) size 7x16
                         RenderText {#text} at (0,0) size 7x16
                           text run at (0,0) width 7: "c"
@@ -76,8 +76,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (7,7) size 12x12
                         text run at (7,7) width 12: "31"
                 RenderTableCell {mtd} at (26,38) size 26x19 [r=2 c=1 rs=1 cs=1]
-                  RenderBlock {msub} at (4,0) size 19x19
-                    RenderBlock {msub} at (0,0) size 7x16
+                  RenderMathMLSubSup {msub} at (4,0) size 19x19
+                    RenderMathMLBlock {msub} at (0,0) size 7x16
                       RenderInline {mi} at (0,0) size 7x16
                         RenderText {#text} at (0,0) size 7x16
                           text run at (0,0) width 7: "c"
@@ -85,8 +85,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (7,7) size 12x12
                         text run at (7,7) width 12: "32"
                 RenderTableCell {mtd} at (52,38) size 26x19 [r=2 c=2 rs=1 cs=1]
-                  RenderBlock {msub} at (4,0) size 19x19
-                    RenderBlock {msub} at (0,0) size 7x16
+                  RenderMathMLSubSup {msub} at (4,0) size 19x19
+                    RenderMathMLBlock {msub} at (0,0) size 7x16
                       RenderInline {mi} at (0,0) size 7x16
                         RenderText {#text} at (0,0) size 7x16
                           text run at (0,0) width 7: "c"
@@ -97,13 +97,13 @@ layer at (0,0) size 800x162
       RenderBlock {p} at (0,73) size 784x57
         RenderText {#text} at (0,21) size 308x18
           text run at (0,21) width 308: "left, default (center) and right column alignment: "
-        RenderBlock {math} at (308,0) size 252x57
+        RenderMathMLMath {math} at (308,0) size 252x57
           RenderTable {mtable} at (1,0) size 78x57
             RenderTableSection (anonymous) at (0,0) size 78x57
               RenderTableRow {mtr} at (0,0) size 78x19
                 RenderTableCell {mtd} at (0,0) size 26x19 [r=0 c=0 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 14x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 14x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "a"
@@ -111,8 +111,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 6x12
                         text run at (8,7) width 6: "1"
                 RenderTableCell {mtd} at (26,0) size 26x19 [r=0 c=1 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "a"
@@ -120,8 +120,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 12x12
                         text run at (8,7) width 12: "12"
                 RenderTableCell {mtd} at (52,0) size 26x19 [r=0 c=2 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "a"
@@ -130,8 +130,8 @@ layer at (0,0) size 800x162
                         text run at (8,7) width 12: "13"
               RenderTableRow {mtr} at (0,19) size 78x19
                 RenderTableCell {mtd} at (0,19) size 26x19 [r=1 c=0 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "b"
@@ -139,8 +139,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 12x12
                         text run at (8,7) width 12: "21"
                 RenderTableCell {mtd} at (26,19) size 26x19 [r=1 c=1 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 14x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 14x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "b"
@@ -148,8 +148,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 6x12
                         text run at (8,7) width 6: "2"
                 RenderTableCell {mtd} at (52,19) size 26x19 [r=1 c=2 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "b"
@@ -158,8 +158,8 @@ layer at (0,0) size 800x162
                         text run at (8,7) width 12: "23"
               RenderTableRow {mtr} at (0,38) size 78x19
                 RenderTableCell {mtd} at (0,38) size 26x19 [r=2 c=0 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 19x19
-                    RenderBlock {msub} at (0,0) size 7x16
+                  RenderMathMLSubSup {msub} at (3,0) size 19x19
+                    RenderMathMLBlock {msub} at (0,0) size 7x16
                       RenderInline {mi} at (0,0) size 7x16
                         RenderText {#text} at (0,0) size 7x16
                           text run at (0,0) width 7: "c"
@@ -167,8 +167,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (7,7) size 12x12
                         text run at (7,7) width 12: "31"
                 RenderTableCell {mtd} at (26,38) size 26x19 [r=2 c=1 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 19x19
-                    RenderBlock {msub} at (0,0) size 7x16
+                  RenderMathMLSubSup {msub} at (3,0) size 19x19
+                    RenderMathMLBlock {msub} at (0,0) size 7x16
                       RenderInline {mi} at (0,0) size 7x16
                         RenderText {#text} at (0,0) size 7x16
                           text run at (0,0) width 7: "c"
@@ -176,8 +176,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (7,7) size 12x12
                         text run at (7,7) width 12: "32"
                 RenderTableCell {mtd} at (52,38) size 26x19 [r=2 c=2 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 13x19
-                    RenderBlock {msub} at (0,0) size 7x16
+                  RenderMathMLSubSup {msub} at (3,0) size 13x19
+                    RenderMathMLBlock {msub} at (0,0) size 7x16
                       RenderInline {mi} at (0,0) size 7x16
                         RenderText {#text} at (0,0) size 7x16
                           text run at (0,0) width 7: "c"
@@ -191,8 +191,8 @@ layer at (0,0) size 800x162
             RenderTableSection (anonymous) at (0,0) size 78x57
               RenderTableRow {mtr} at (0,0) size 78x19
                 RenderTableCell {mtd} at (0,0) size 26x19 [r=0 c=0 rs=1 cs=1]
-                  RenderBlock {msub} at (6,0) size 14x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (6,0) size 14x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "a"
@@ -200,8 +200,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 6x12
                         text run at (8,7) width 6: "1"
                 RenderTableCell {mtd} at (26,0) size 26x19 [r=0 c=1 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "a"
@@ -209,8 +209,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 12x12
                         text run at (8,7) width 12: "12"
                 RenderTableCell {mtd} at (52,0) size 26x19 [r=0 c=2 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "a"
@@ -219,8 +219,8 @@ layer at (0,0) size 800x162
                         text run at (8,7) width 12: "13"
               RenderTableRow {mtr} at (0,19) size 78x19
                 RenderTableCell {mtd} at (0,19) size 26x19 [r=1 c=0 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "b"
@@ -228,8 +228,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 12x12
                         text run at (8,7) width 12: "21"
                 RenderTableCell {mtd} at (26,19) size 26x19 [r=1 c=1 rs=1 cs=1]
-                  RenderBlock {msub} at (6,0) size 14x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (6,0) size 14x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "b"
@@ -237,8 +237,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 6x12
                         text run at (8,7) width 6: "2"
                 RenderTableCell {mtd} at (52,19) size 26x19 [r=1 c=2 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "b"
@@ -247,8 +247,8 @@ layer at (0,0) size 800x162
                         text run at (8,7) width 12: "23"
               RenderTableRow {mtr} at (0,38) size 78x19
                 RenderTableCell {mtd} at (0,38) size 26x19 [r=2 c=0 rs=1 cs=1]
-                  RenderBlock {msub} at (4,0) size 19x19
-                    RenderBlock {msub} at (0,0) size 7x16
+                  RenderMathMLSubSup {msub} at (4,0) size 19x19
+                    RenderMathMLBlock {msub} at (0,0) size 7x16
                       RenderInline {mi} at (0,0) size 7x16
                         RenderText {#text} at (0,0) size 7x16
                           text run at (0,0) width 7: "c"
@@ -256,8 +256,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (7,7) size 12x12
                         text run at (7,7) width 12: "31"
                 RenderTableCell {mtd} at (26,38) size 26x19 [r=2 c=1 rs=1 cs=1]
-                  RenderBlock {msub} at (4,0) size 19x19
-                    RenderBlock {msub} at (0,0) size 7x16
+                  RenderMathMLSubSup {msub} at (4,0) size 19x19
+                    RenderMathMLBlock {msub} at (0,0) size 7x16
                       RenderInline {mi} at (0,0) size 7x16
                         RenderText {#text} at (0,0) size 7x16
                           text run at (0,0) width 7: "c"
@@ -265,8 +265,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (7,7) size 12x12
                         text run at (7,7) width 12: "32"
                 RenderTableCell {mtd} at (52,38) size 26x19 [r=2 c=2 rs=1 cs=1]
-                  RenderBlock {msub} at (7,0) size 13x19
-                    RenderBlock {msub} at (0,0) size 7x16
+                  RenderMathMLSubSup {msub} at (7,0) size 13x19
+                    RenderMathMLBlock {msub} at (0,0) size 7x16
                       RenderInline {mi} at (0,0) size 7x16
                         RenderText {#text} at (0,0) size 7x16
                           text run at (0,0) width 7: "c"
@@ -280,8 +280,8 @@ layer at (0,0) size 800x162
             RenderTableSection (anonymous) at (0,0) size 78x57
               RenderTableRow {mtr} at (0,0) size 78x19
                 RenderTableCell {mtd} at (0,0) size 26x19 [r=0 c=0 rs=1 cs=1]
-                  RenderBlock {msub} at (9,0) size 14x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (9,0) size 14x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "a"
@@ -289,8 +289,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 6x12
                         text run at (8,7) width 6: "1"
                 RenderTableCell {mtd} at (26,0) size 26x19 [r=0 c=1 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "a"
@@ -298,8 +298,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 12x12
                         text run at (8,7) width 12: "12"
                 RenderTableCell {mtd} at (52,0) size 26x19 [r=0 c=2 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "a"
@@ -308,8 +308,8 @@ layer at (0,0) size 800x162
                         text run at (8,7) width 12: "13"
               RenderTableRow {mtr} at (0,19) size 78x19
                 RenderTableCell {mtd} at (0,19) size 26x19 [r=1 c=0 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "b"
@@ -317,8 +317,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 12x12
                         text run at (8,7) width 12: "21"
                 RenderTableCell {mtd} at (26,19) size 26x19 [r=1 c=1 rs=1 cs=1]
-                  RenderBlock {msub} at (9,0) size 14x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (9,0) size 14x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "b"
@@ -326,8 +326,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (8,7) size 6x12
                         text run at (8,7) width 6: "2"
                 RenderTableCell {mtd} at (52,19) size 26x19 [r=1 c=2 rs=1 cs=1]
-                  RenderBlock {msub} at (3,0) size 20x19
-                    RenderBlock {msub} at (0,0) size 8x16
+                  RenderMathMLSubSup {msub} at (3,0) size 20x19
+                    RenderMathMLBlock {msub} at (0,0) size 8x16
                       RenderInline {mi} at (0,0) size 8x16
                         RenderText {#text} at (0,0) size 8x16
                           text run at (0,0) width 8: "b"
@@ -336,8 +336,8 @@ layer at (0,0) size 800x162
                         text run at (8,7) width 12: "23"
               RenderTableRow {mtr} at (0,38) size 78x19
                 RenderTableCell {mtd} at (0,38) size 26x19 [r=2 c=0 rs=1 cs=1]
-                  RenderBlock {msub} at (4,0) size 19x19
-                    RenderBlock {msub} at (0,0) size 7x16
+                  RenderMathMLSubSup {msub} at (4,0) size 19x19
+                    RenderMathMLBlock {msub} at (0,0) size 7x16
                       RenderInline {mi} at (0,0) size 7x16
                         RenderText {#text} at (0,0) size 7x16
                           text run at (0,0) width 7: "c"
@@ -345,8 +345,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (7,7) size 12x12
                         text run at (7,7) width 12: "31"
                 RenderTableCell {mtd} at (26,38) size 26x19 [r=2 c=1 rs=1 cs=1]
-                  RenderBlock {msub} at (4,0) size 19x19
-                    RenderBlock {msub} at (0,0) size 7x16
+                  RenderMathMLSubSup {msub} at (4,0) size 19x19
+                    RenderMathMLBlock {msub} at (0,0) size 7x16
                       RenderInline {mi} at (0,0) size 7x16
                         RenderText {#text} at (0,0) size 7x16
                           text run at (0,0) width 7: "c"
@@ -354,8 +354,8 @@ layer at (0,0) size 800x162
                       RenderText {#text} at (7,7) size 12x12
                         text run at (7,7) width 12: "32"
                 RenderTableCell {mtd} at (52,38) size 26x19 [r=2 c=2 rs=1 cs=1]
-                  RenderBlock {msub} at (10,0) size 13x19
-                    RenderBlock {msub} at (0,0) size 7x16
+                  RenderMathMLSubSup {msub} at (10,0) size 13x19
+                    RenderMathMLBlock {msub} at (0,0) size 7x16
                       RenderInline {mi} at (0,0) size 7x16
                         RenderText {#text} at (0,0) size 7x16
                           text run at (0,0) width 7: "c"

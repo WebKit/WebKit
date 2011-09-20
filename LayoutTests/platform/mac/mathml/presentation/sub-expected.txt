@@ -6,9 +6,9 @@ layer at (0,0) size 800x134
       RenderBlock {p} at (0,0) size 784x22
         RenderText {#text} at (0,0) size 27x18
           text run at (0,0) width 27: "text "
-        RenderBlock {math} at (27,3) size 15x19
-          RenderBlock {msub} at (1,0) size 13x19
-            RenderBlock {msub} at (0,0) size 7x16
+        RenderMathMLMath {math} at (27,3) size 15x19
+          RenderMathMLSubSup {msub} at (1,0) size 13x19
+            RenderMathMLBlock {msub} at (0,0) size 7x16
               RenderInline {mi} at (0,0) size 7x16
                 RenderText {#text} at (0,0) size 7x16
                   text run at (0,0) width 7: "x"
@@ -19,11 +19,11 @@ layer at (0,0) size 800x134
       RenderBlock {p} at (0,38) size 784x22
         RenderText {#text} at (0,0) size 27x18
           text run at (0,0) width 27: "text "
-        RenderBlock {math} at (27,3) size 16x19
-          RenderBlock {msub} at (1,0) size 14x19
-            RenderBlock {msub} at (0,0) size 9x16
-              RenderBlock {mo} at (0,0) size 9x16
-                RenderBlock {mo} at (0,0) size 9x16
+        RenderMathMLMath {math} at (27,3) size 16x19
+          RenderMathMLSubSup {msub} at (1,0) size 14x19
+            RenderMathMLBlock {msub} at (0,0) size 9x16
+              RenderMathMLOperator {mo} at (0,0) size 9x16
+                RenderMathMLBlock {mo} at (0,0) size 9x16
                   RenderText {mo} at (0,0) size 9x16
                     text run at (0,0) width 9: "+"
             RenderInline {mi} at (0,0) size 5x12
@@ -33,11 +33,11 @@ layer at (0,0) size 800x134
       RenderBlock {p} at (0,76) size 784x26
         RenderText {#text} at (0,4) size 27x18
           text run at (0,4) width 27: "text "
-        RenderBlock {math} at (27,0) size 15x26
-          RenderBlock {msub} at (1,0) size 13x26
-            RenderBlock {msub} at (0,0) size 6x23
-              RenderBlock {mo} at (0,0) size 6x23
-                RenderBlock {mo} at (0,0) size 6x22
+        RenderMathMLMath {math} at (27,0) size 15x26
+          RenderMathMLSubSup {msub} at (1,0) size 13x26
+            RenderMathMLBlock {msub} at (0,0) size 6x23
+              RenderMathMLOperator {mo} at (0,0) size 6x23
+                RenderMathMLBlock {mo} at (0,0) size 6x22
                   RenderText {mo} at (0,-2) size 6x26
                     text run at (0,-2) width 6: "\x{222B}"
             RenderInline {mi} at (0,0) size 7x12

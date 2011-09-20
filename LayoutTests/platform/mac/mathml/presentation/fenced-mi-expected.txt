@@ -4,59 +4,59 @@ layer at (0,0) size 800x90
   RenderBlock {html} at (0,0) size 800x90
     RenderBody {body} at (8,16) size 784x58
       RenderBlock {p} at (0,0) size 784x21
-        RenderBlock {math} at (0,0) size 48x21
-          RenderBlock {mfenced} at (1,0) size 46x21
-            RenderBlock {mfenced} at (1,0) size 7x21
-              RenderBlock {mfenced} at (0,0) size 6x19
+        RenderMathMLMath {math} at (0,0) size 48x21
+          RenderMathMLFenced {mfenced} at (1,0) size 46x21
+            RenderMathMLOperator {mfenced} at (1,0) size 7x21
+              RenderMathMLBlock {mfenced} at (0,0) size 6x19
                 RenderText {mfenced} at (0,-1) size 6x22
                   text run at (0,-1) width 6: "("
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (8,5) size 7x16
                 text run at (8,5) width 7: "x"
-            RenderBlock {mfenced} at (15,5) size 5x16
-              RenderBlock {mfenced} at (0,0) size 4x16
+            RenderMathMLOperator {mfenced} at (15,5) size 5x16
+              RenderMathMLBlock {mfenced} at (0,0) size 4x16
                 RenderText {mfenced} at (0,0) size 4x16
                   text run at (0,0) width 4: ","
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (20,5) size 7x16
                 text run at (20,5) width 7: "y"
-            RenderBlock {mfenced} at (27,5) size 5x16
-              RenderBlock {mfenced} at (0,0) size 4x16
+            RenderMathMLOperator {mfenced} at (27,5) size 5x16
+              RenderMathMLBlock {mfenced} at (0,0) size 4x16
                 RenderText {mfenced} at (0,0) size 4x16
                   text run at (0,0) width 4: ","
             RenderInline {mi} at (0,0) size 6x16
               RenderText {#text} at (32,5) size 6x16
                 text run at (32,5) width 6: "z"
-            RenderBlock {mfenced} at (38,0) size 7x21
-              RenderBlock {mfenced} at (0,0) size 6x19
+            RenderMathMLOperator {mfenced} at (38,0) size 7x21
+              RenderMathMLBlock {mfenced} at (0,0) size 6x19
                 RenderText {mfenced} at (0,-1) size 6x22
                   text run at (0,-1) width 6: ")"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,37) size 784x21
-        RenderBlock {math} at (0,0) size 46x21
-          RenderBlock {mo} at (1,0) size 7x21
-            RenderBlock {mo} at (0,0) size 6x19
+        RenderMathMLMath {math} at (0,0) size 46x21
+          RenderMathMLOperator {mo} at (1,0) size 7x21
+            RenderMathMLBlock {mo} at (0,0) size 6x19
               RenderText {mo} at (0,-1) size 6x22
                 text run at (0,-1) width 6: "("
           RenderInline {mi} at (0,0) size 7x16
             RenderText {#text} at (8,5) size 7x16
               text run at (8,5) width 7: "x"
-          RenderBlock {mo} at (15,5) size 5x16
-            RenderBlock {mo} at (0,0) size 4x16
+          RenderMathMLOperator {mo} at (15,5) size 5x16
+            RenderMathMLBlock {mo} at (0,0) size 4x16
               RenderText {mo} at (0,0) size 4x16
                 text run at (0,0) width 4: ","
           RenderInline {mi} at (0,0) size 7x16
             RenderText {#text} at (20,5) size 7x16
               text run at (20,5) width 7: "y"
-          RenderBlock {mo} at (27,5) size 5x16
-            RenderBlock {mo} at (0,0) size 4x16
+          RenderMathMLOperator {mo} at (27,5) size 5x16
+            RenderMathMLBlock {mo} at (0,0) size 4x16
               RenderText {mo} at (0,0) size 4x16
                 text run at (0,0) width 4: ","
           RenderInline {mi} at (0,0) size 6x16
             RenderText {#text} at (32,5) size 6x16
               text run at (32,5) width 6: "z"
-          RenderBlock {mo} at (38,0) size 7x21
-            RenderBlock {mo} at (0,0) size 6x19
+          RenderMathMLOperator {mo} at (38,0) size 7x21
+            RenderMathMLBlock {mo} at (0,0) size 6x19
               RenderText {mo} at (0,-1) size 6x22
                 text run at (0,-1) width 6: ")"
         RenderText {#text} at (0,0) size 0x0

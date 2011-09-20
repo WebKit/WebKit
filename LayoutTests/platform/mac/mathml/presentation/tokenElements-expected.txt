@@ -6,12 +6,12 @@ layer at (0,0) size 800x86
       RenderBlock {p} at (0,0) size 784x19
         RenderText {#text} at (0,0) size 291x18
           text run at (0,0) width 291: "Following elements should use a regular font: "
-        RenderBlock {math} at (291,3) size 57x16
+        RenderMathMLMath {math} at (291,3) size 57x16
           RenderInline {mn} at (0,0) size 8x16
             RenderText {#text} at (1,0) size 8x16
               text run at (1,0) width 8: "1"
-          RenderBlock {mo} at (9,0) size 12x16
-            RenderBlock {mo} at (0,0) size 11x16
+          RenderMathMLOperator {mo} at (9,0) size 12x16
+            RenderMathMLBlock {mo} at (0,0) size 11x16
               RenderText {mo} at (0,0) size 11x16
                 text run at (0,0) width 11: "\x{2207}"
           RenderInline {mtext} at (0,0) size 23x16
@@ -24,7 +24,7 @@ layer at (0,0) size 800x86
       RenderBlock {p} at (0,35) size 784x19
         RenderText {#text} at (0,0) size 241x18
           text run at (0,0) width 241: "Following element should be in italic: "
-        RenderBlock {math} at (241,3) size 9x16
+        RenderMathMLMath {math} at (241,3) size 9x16
           RenderInline {mi} at (0,0) size 7x16
             RenderText {#text} at (1,0) size 7x16
               text run at (1,0) width 7: "x"

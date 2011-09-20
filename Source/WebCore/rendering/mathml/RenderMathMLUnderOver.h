@@ -43,6 +43,8 @@ public:
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;    
     virtual void stretchToHeight(int pixelHeight);
 private:
+    virtual const char* renderName() const { return "RenderMathMLUnderOver"; }
+
     enum UnderOverType { Under, Over, UnderOver };
     UnderOverType m_kind;
 };

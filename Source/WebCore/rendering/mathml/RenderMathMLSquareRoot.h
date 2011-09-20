@@ -38,6 +38,9 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&);
 protected:
     virtual void layout();
+
+private:
+    virtual const char* renderName() const { return "RenderMathMLSquareRoot"; }
 };
     
 }

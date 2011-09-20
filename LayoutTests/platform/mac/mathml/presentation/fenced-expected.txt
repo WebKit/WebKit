@@ -4,62 +4,62 @@ layer at (0,0) size 800x106
   RenderBlock {html} at (0,0) size 800x106
     RenderBody {body} at (8,16) size 784x74
       RenderBlock {p} at (0,0) size 784x74
-        RenderBlock {math} at (0,0) size 170x74
-          RenderBlock {mfenced} at (1,0) size 168x74
-            RenderBlock {mfenced} at (1,16) size 6x58
+        RenderMathMLMath {math} at (0,0) size 170x74
+          RenderMathMLFenced {mfenced} at (1,0) size 168x74
+            RenderMathMLOperator {mfenced} at (1,16) size 6x58
             RenderBlock {div} at (7,22) size 48x48 [bgcolor=#00FF00]
-            RenderBlock {mfenced} at (55,38) size 5x16
-              RenderBlock {mfenced} at (0,0) size 4x16
+            RenderMathMLOperator {mfenced} at (55,38) size 5x16
+              RenderMathMLBlock {mfenced} at (0,0) size 4x16
                 RenderText {mfenced} at (0,0) size 4x16
                   text run at (0,0) width 4: ","
             RenderBlock {div} at (60,22) size 48x48 [bgcolor=#00FF00]
-            RenderBlock {mfenced} at (108,38) size 5x16
-              RenderBlock {mfenced} at (0,0) size 4x16
+            RenderMathMLOperator {mfenced} at (108,38) size 5x16
+              RenderMathMLBlock {mfenced} at (0,0) size 4x16
                 RenderText {mfenced} at (0,0) size 4x16
                   text run at (0,0) width 4: ","
             RenderBlock {div} at (113,22) size 48x48 [bgcolor=#00FF00]
-            RenderBlock {mfenced} at (161,16) size 6x58
+            RenderMathMLOperator {mfenced} at (161,16) size 6x58
         RenderText {#text} at (0,0) size 0x0
 layer at (10,32) size 5x10 scrollHeight 15
-  RenderBlock {mfenced} at (0,0) size 5x10
+  RenderMathMLBlock {mfenced} at (0,0) size 5x10
 layer at (10,42) size 5x10 scrollHeight 14
-  RenderBlock {mfenced} at (0,10) size 5x10
+  RenderMathMLBlock {mfenced} at (0,10) size 5x10
     RenderText {mfenced} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{239C}"
 layer at (10,52) size 5x10 scrollHeight 14
-  RenderBlock {mfenced} at (0,20) size 5x10
+  RenderMathMLBlock {mfenced} at (0,20) size 5x10
     RenderText {mfenced} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{239C}"
 layer at (10,62) size 5x10 scrollHeight 14
-  RenderBlock {mfenced} at (0,30) size 5x10
+  RenderMathMLBlock {mfenced} at (0,30) size 5x10
     RenderText {mfenced} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{239C}"
 layer at (10,72) size 5x7 scrollHeight 14
-  RenderBlock {mfenced} at (0,40) size 5x7
+  RenderMathMLBlock {mfenced} at (0,40) size 5x7
     RenderText {mfenced} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{239C}"
 layer at (10,79) size 5x11 scrollHeight 14
-  RenderBlock {mfenced} at (0,47) size 5x11
+  RenderMathMLBlock {mfenced} at (0,47) size 5x11
 layer at (170,32) size 5x10 scrollHeight 15
-  RenderBlock {mfenced} at (0,0) size 5x10
+  RenderMathMLBlock {mfenced} at (0,0) size 5x10
 layer at (170,42) size 5x10 scrollHeight 14
-  RenderBlock {mfenced} at (0,10) size 5x10
+  RenderMathMLBlock {mfenced} at (0,10) size 5x10
     RenderText {mfenced} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{239F}"
 layer at (170,52) size 5x10 scrollHeight 14
-  RenderBlock {mfenced} at (0,20) size 5x10
+  RenderMathMLBlock {mfenced} at (0,20) size 5x10
     RenderText {mfenced} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{239F}"
 layer at (170,62) size 5x10 scrollHeight 14
-  RenderBlock {mfenced} at (0,30) size 5x10
+  RenderMathMLBlock {mfenced} at (0,30) size 5x10
     RenderText {mfenced} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{239F}"
 layer at (170,72) size 5x7 scrollHeight 14
-  RenderBlock {mfenced} at (0,40) size 5x7
+  RenderMathMLBlock {mfenced} at (0,40) size 5x7
     RenderText {mfenced} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{239F}"
 layer at (170,79) size 5x11 scrollHeight 14
-  RenderBlock {mfenced} at (0,47) size 5x11
+  RenderMathMLBlock {mfenced} at (0,47) size 5x11
 layer at (10,33) size 5x11 backgroundClip at (10,32) size 5x10 clip at (10,32) size 5x10 outlineClip at (10,32) size 5x10
   RenderBlock (relative positioned) {mfenced} at (0,0) size 5x11
     RenderText {mfenced} at (0,-3) size 5x17

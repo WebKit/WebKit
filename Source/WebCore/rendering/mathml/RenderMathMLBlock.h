@@ -89,7 +89,9 @@ protected:
         return 0;
     }
     virtual PassRefPtr<RenderStyle> makeBlockStyle();
-    
+
+private:
+    virtual const char* renderName() const { return isAnonymous() ? "RenderMathMLBlock (anonymous)" : "RenderMathMLBlock"; }
 };
 
 inline RenderMathMLBlock* toRenderMathMLBlock(RenderObject* object)

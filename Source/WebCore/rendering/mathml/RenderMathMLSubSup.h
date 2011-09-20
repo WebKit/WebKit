@@ -47,6 +47,8 @@ protected:
     virtual void layout();
     
 private:
+    virtual const char* renderName() const { return "RenderMathMLSubSup"; }
+
     enum SubSupType { Sub, Sup, SubSup };
     SubSupType m_kind;
     RenderBlock* m_scripts;
