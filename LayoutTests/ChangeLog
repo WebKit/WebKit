@@ -1,3 +1,13 @@
+2011-09-20  Renata Hodovan  <reni@webkit.org>
+
+        [Qt] Rebase and unskip tests introduced in r95489 and r95488.
+
+        Unreviewed gardening.
+
+        * platform/qt/Skipped:
+        * platform/qt/http/tests/security/document-all-expected.txt: Added.
+        * platform/qt/http/tests/security/window-named-proto-expected.txt: Added.
+
 2011-09-20  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip failing fast/files/create-blob-url-crash.html on
