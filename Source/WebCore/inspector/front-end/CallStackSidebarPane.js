@@ -137,7 +137,7 @@ WebInspector.CallStackSidebarPane.prototype = {
     {
         var text = "";
         for (var i = 0; i < this.placards.length; ++i)
-            text += this.placards[i]._text;
+            text += this.placards[i]._text + "\n";
         InspectorFrontendHost.copyText(text);
     },
 

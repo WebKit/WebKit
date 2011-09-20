@@ -1,5 +1,15 @@
 2011-09-20  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: Copy Stack Trace lacks newlines on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=68447
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype._copyStackTrace):
+
+2011-09-20  Pavel Feldman  <pfeldman@google.com>
+
         Not reviewed: inspector sanity test fix.
 
         * inspector/front-end/inspector.js:
