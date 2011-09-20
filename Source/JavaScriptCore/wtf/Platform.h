@@ -1035,10 +1035,6 @@
 #endif
 #endif
 
-#if !defined(ENABLE_LAZY_BLOCK_FREEING)
-#define ENABLE_LAZY_BLOCK_FREEING 1
-#endif
-
 #ifndef ENABLE_LARGE_HEAP
 #if CPU(X86) || CPU(X86_64)
 #define ENABLE_LARGE_HEAP 1

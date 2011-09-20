@@ -261,16 +261,13 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
 {
     m_markedSpace.setHighWaterMark(m_minBytesPerCycle);
     (*m_activityCallback)();
-#if ENABLE(LAZY_BLOCK_FREEING)
     m_numberOfFreeBlocks = 0;
     m_blockFreeingThread = createThread(blockFreeingThreadStartFunc, this, "JavaScriptCore::BlockFree");
     ASSERT(m_blockFreeingThread);
-#endif
 }
 
 Heap::~Heap()
 {
-#if ENABLE(LAZY_BLOCK_FREEING)
     // destroy our thread
     {
         MutexLocker locker(m_freeBlockLock);
@@ -278,7 +275,6 @@ Heap::~Heap()
         m_freeBlockCondition.broadcast();
     }
     waitForThreadCompletion(m_blockFreeingThread, 0);
-#endif
     
     // The destroy function must already have been called, so assert this.
     ASSERT(!m_globalData);
@@ -317,14 +313,11 @@ void Heap::destroy()
     m_destroyedTypeCounts.dump(stderr, "Destroyed Type Counts");
 #endif
     
-#if ENABLE(LAZY_BLOCK_FREEING)
     releaseFreeBlocks();
-#endif
 
     m_globalData = 0;
 }
 
-#if ENABLE(LAZY_BLOCK_FREEING)
 void Heap::waitForRelativeTimeWhileHoldingLock(double relative)
 {
     if (m_blockFreeingThreadShouldQuit)
@@ -386,7 +379,6 @@ void Heap::blockFreeingThreadMain()
         }
     }
 }
-#endif // ENABLE(LAZY_BLOCK_FREEING)
 
 void Heap::reportExtraMemoryCostSlowCase(size_t cost)
 {
@@ -736,12 +728,6 @@ MarkedBlock* Heap::allocateBlock(size_t cellSize, Heap::AllocationEffort allocat
 {
     MarkedBlock* block;
     
-#if !ENABLE(LAZY_BLOCK_FREEING)
-    if (allocationEffort == AllocationCanFail)
-        return 0;
-    
-    block = MarkedBlock::create(this, cellSize);
-#else
     {
         MutexLocker locker(m_freeBlockLock);
         if (m_numberOfFreeBlocks) {
@@ -757,7 +743,6 @@ MarkedBlock* Heap::allocateBlock(size_t cellSize, Heap::AllocationEffort allocat
         return 0;
     else
         block = MarkedBlock::create(this, cellSize);
-#endif
     
     m_blocks.add(block);
 
@@ -772,13 +757,9 @@ void Heap::freeBlocks(MarkedBlock* head)
 
         m_blocks.remove(block);
         block->reset();
-#if !ENABLE(LAZY_BLOCK_FREEING)
-        MarkedBlock::destroy(block);
-#else
         MutexLocker locker(m_freeBlockLock);
         m_freeBlocks.append(block);
         m_numberOfFreeBlocks++;
-#endif
     }
 }
 
@@ -789,7 +770,6 @@ void Heap::shrink()
     freeBlocks(forEachBlock(takeIfEmpty));
 }
 
-#if ENABLE(LAZY_BLOCK_FREEING)
 void Heap::releaseFreeBlocks()
 {
     while (true) {
@@ -811,7 +791,6 @@ void Heap::releaseFreeBlocks()
         MarkedBlock::destroy(block);
     }
 }
-#endif
 
 #if ENABLE(GGC)
 void Heap::writeBarrierSlowCase(const JSCell* owner, JSCell* cell)

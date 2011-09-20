@@ -164,12 +164,10 @@ namespace JSC {
 
         static void writeBarrierSlowCase(const JSCell*, JSCell*);
 
-#if ENABLE(LAZY_BLOCK_FREEING)
         void waitForRelativeTimeWhileHoldingLock(double relative);
         void waitForRelativeTime(double relative);
         void blockFreeingThreadMain();
         static void* blockFreeingThreadStartFunc(void* heap);
-#endif
 
         const HeapSize m_heapSize;
         const size_t m_minBytesPerCycle;
@@ -178,7 +176,6 @@ namespace JSC {
         MarkedSpace m_markedSpace;
         MarkedBlockSet m_blocks;
 
-#if ENABLE(LAZY_BLOCK_FREEING)
         DoublyLinkedList<MarkedBlock> m_freeBlocks;
         size_t m_numberOfFreeBlocks;
         
@@ -186,7 +183,6 @@ namespace JSC {
         Mutex m_freeBlockLock;
         ThreadCondition m_freeBlockCondition;
         bool m_blockFreeingThreadShouldQuit;
-#endif
 
 #if ENABLE(SIMPLE_HEAP_PROFILING)
         VTableSpectrum m_destroyedTypeCounts;
