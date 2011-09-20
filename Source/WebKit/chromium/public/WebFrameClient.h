@@ -298,15 +298,26 @@ public:
     // Notifies that a new script context has been created for this frame.
     // This is similar to didClearWindowObject but only called once per
     // frame context.
+    // FIXME: Remove this when Chromium is updated to use the below version.
     virtual void didCreateScriptContext(WebFrame*) { }
-
-    // Notifies that this frame's script context has been destroyed.
-    virtual void didDestroyScriptContext(WebFrame*) { }
+#if WEBKIT_USING_V8
+    virtual void didCreateScriptContext(WebFrame*, v8::Handle<v8::Context>, int worldId) { }
+#endif
 
     // Notifies that a garbage-collected context was created - content
     // scripts.
+    // FIXME: Remove this when Chromium is updated to use didCreateScriptContext().
 #if WEBKIT_USING_V8
     virtual void didCreateIsolatedScriptContext(WebFrame*, int worldID, v8::Handle<v8::Context>) { }
+#endif
+
+    // Notifies that this frame's script context has been destroyed.
+    // FIXME: Remove this when Chromium is updated to use the below version.
+    virtual void didDestroyScriptContext(WebFrame*) { }
+
+#if WEBKIT_USING_V8
+    // WebKit is about to release its reference to a v8 context for a frame.
+    virtual void willReleaseScriptContext(WebFrame*, v8::Handle<v8::Context>, int worldId) { }
 #endif
 
     // Geometry notifications ----------------------------------------------

@@ -1,3 +1,30 @@
+2011-09-20  Aaron Boodman  <aa@chromium.org>
+
+        Rework script context creation/release notifications
+        https://bugs.webkit.org/show_bug.cgi?id=67828
+
+        Reviewed by Adam Barth.
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::didCreateScriptContext):
+        (WebKit::WebFrameClient::didDestroyScriptContext):
+        (WebKit::WebFrameClient::willReleaseScriptContext):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::didCreateScriptContext):
+        (WebKit::FrameLoaderClientImpl::willReleaseScriptContext):
+        * src/FrameLoaderClientImpl.h:
+        * tests/WebFrameTest.cpp:
+        (WebKit::TEST_F):
+        (WebKit::ContextLifetimeTestWebFrameClient::Notification::Notification):
+        (WebKit::ContextLifetimeTestWebFrameClient::Notification::~Notification):
+        (WebKit::ContextLifetimeTestWebFrameClient::Notification::Equals):
+        (WebKit::ContextLifetimeTestWebFrameClient::~ContextLifetimeTestWebFrameClient):
+        (WebKit::ContextLifetimeTestWebFrameClient::reset):
+        (WebKit::ContextLifetimeTestWebFrameClient::didCreateScriptContext):
+        (WebKit::ContextLifetimeTestWebFrameClient::willReleaseScriptContext):
+        * tests/data/context_notifications_test.html: Added.
+        * tests/data/context_notifications_test_frame.html: Added.
+
 2011-09-19  Geoffrey Garen  <ggaren@apple.com>
 
         Removed ENABLE_JSC_MULTIPLE_THREADS and related #ifdefs.
