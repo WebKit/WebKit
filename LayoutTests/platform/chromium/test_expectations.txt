@@ -689,7 +689,7 @@ BUGCR19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline
 
 // Flaky
 BUGCR31803 LINUX MAC : editing/inserting/12882.html = PASS IMAGE
-BUGCR31803 MAC WIN : editing/pasteboard/copy-standalone-image.html = PASS TEXT
+BUGCR31803 MAC WIN : editing/pasteboard/copy-standalone-image.html = PASS TEXT IMAGE+TEXT
 
 // Tests added in r69269.
 // Apple-Mac port corrects "notationl" to "notational" automatically?
@@ -900,7 +900,7 @@ BUGCR32392 SKIP : svg/batik/text/smallFonts.svg = FAIL
 // The test is flaky and maybe platform-dependent.
 BUGCR32401 LINUX WIN : svg/custom/marker-changes.svg = IMAGE+TEXT IMAGE
 
-BUGCR89369 MAC : svg/hixie/text/003.html = PASS IMAGE+TEXT
+BUGCR89369 MAC : svg/hixie/text/003.html = PASS IMAGE IMAGE+TEXT
 BUGCR32444 LINUX WIN : svg/hixie/text/003.html = FAIL
 
 // SVG masks aren't quite working yet.
@@ -2124,9 +2124,9 @@ BUGCR49970 : platform/chromium/plugins/call-as-function.html = PASS TEXT
 BUGWK42964 LINUX WIN : tables/mozilla_expected_failures/bugs/bug89315.html = PASS FAIL
 
 // Application Cache Quotas are N/A to the chromium port.
-BUGWK43459 WONTFIX : http/tests/appcache/origin-quota.html = MISSING TEXT
-BUGWK43459 WONTFIX : http/tests/appcache/origin-quota-continued-download.html = MISSING TEXT
-BUGWK43459 WONTFIX : http/tests/appcache/origin-quota-continued-download-multiple-manifests.html = MISSING TEXT
+BUGWK43459 WONTFIX : http/tests/appcache/origin-quota.html = MISSING TEXT IMAGE+TEXT
+BUGWK43459 WONTFIX : http/tests/appcache/origin-quota-continued-download.html = MISSING TEXT IMAGE+TEXT
+BUGWK43459 WONTFIX : http/tests/appcache/origin-quota-continued-download-multiple-manifests.html = MISSING TEXT IMAGE+TEXT
 
 // Need to support DeviceMotion.
 BUGCR51416 : fast/dom/DeviceMotion/window-property.html = TEXT
@@ -2288,8 +2288,8 @@ BUGCR58257 WIN : http/tests/misc/last-modified-parsing.html = PASS TIMEOUT TEXT
 
 // Flaky because they snapshot and animation.
 // Started failing on Mac since 69314:69342.
-BUGCR10479 MAC WIN : svg/hixie/perf/001.xml = PASS IMAGE
-BUGCR10479 MAC WIN : svg/hixie/perf/002.xml = PASS IMAGE
+BUGCR10479 MAC WIN : svg/hixie/perf/001.xml = PASS IMAGE IMAGE+TEXT
+BUGCR10479 MAC WIN : svg/hixie/perf/002.xml = PASS IMAGE IMAGE+TEXT
 
 // FileWriter isn't in TestShell yet.
 BUGCR58587 SKIP : fast/filesystem/file-writer-gc-blob.html = FAIL
@@ -2783,7 +2783,7 @@ BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
 
 BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEXT
 
-BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = PASS TEXT
+BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = PASS TEXT IMAGE
 
 BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
 
@@ -2885,8 +2885,8 @@ BUGCR77619 SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
 BUGCR77574 LINUX : fast/writing-mode/fallback-orientation.html = IMAGE
 
 // Regression in r82056.
-BUGWK57302 LEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT
-BUGWK57302 LEOPARD : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
+BUGWK57302 LEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE IMAGE+TEXT
+BUGWK57302 LEOPARD : fast/text/international/text-combine-image-test.html = IMAGE IMAGE+TEXT
 
 // New test added in r82159
 BUGCR77706 : editing/spelling/grammar.html = FAIL
@@ -3419,7 +3419,7 @@ BUGWK62754 LINUX WIN : css2.1/20110323/replaced-elements-001.htm = IMAGE+TEXT
 BUGWK62754 LINUX WIN : css2.1/20110323/replaced-intrinsic-ratio-001.htm = IMAGE+TEXT
 
 // Probably related to the above, but just flaky (esp. in debug)
-BUGWK63937 MAC : css2.1/20110323/replaced-intrinsic-ratio-001.htm = PASS IMAGE+TEXT TEXT
+BUGWK63937 MAC : css2.1/20110323/replaced-intrinsic-ratio-001.htm = PASS IMAGE TEXT IMAGE+TEXT
 
 // Has been timing out since r88913.
 BUGWK62754 LINUX MAC RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TIMEOUT IMAGE+TEXT
@@ -3528,7 +3528,7 @@ BUGWK64920 WIN DEBUG : fast/canvas/webgl/renderbuffer-initialization.html = PASS
 
 BUGWK64940 MAC WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-78-t.svg = PASS CRASH
 
-BUGWK64943 MAC : fast/flexbox/010.html = PASS CRASH
+BUGWK64943 MAC : fast/flexbox/010.html = PASS CRASH IMAGE
 
 BUGWK64946 WIN DEBUG : fast/dom/DeviceOrientation/no-synchronous-events.html = PASS CRASH
 
@@ -3715,7 +3715,7 @@ BUGCR95972 WIN DEBUG : webaudio/sample-accurate-scheduling.html = CRASH
 
 // Failing after r94912.
 BUGWK67913 WIN LINUX SNOWLEOPARD : media/video-zoom-controls.html = TEXT
-BUGWK67913 LEOPARD CPU CPU-CG : media/video-zoom-controls.html = TEXT
+BUGWK67913 LEOPARD : media/video-zoom-controls.html = TEXT IMAGE+TEXT
 BUGCR96220 : fast/borders/border-image-outset-split-inline-vertical-lr.html = IMAGE
 BUGCR96220 : fast/borders/border-image-outset-split-inline.html = IMAGE
 BUGCR96220 : fast/reflections/reflection-masks-outset.html = IMAGE
@@ -3729,8 +3729,6 @@ BUGCR96220 WIN LINUX : fast/borders/inline-mask-overlay-image-outset-vertical-rl
 BUGCR96220 MAC : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = IMAGE
 BUGCR96220 WIN LINUX : fast/borders/inline-mask-overlay-image-outset.html = IMAGE+TEXT
 BUGCR96220 MAC : fast/borders/inline-mask-overlay-image-outset.html = IMAGE
-// NOTE: This is expected to IMAGE fail.
-BUGWK67913 LEOPARD GPU GPU-CG : media/video-zoom-controls.html = IMAGE+TEXT
 
 // Failing after r94946
 BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
@@ -3757,5 +3755,83 @@ BUG_KEISHI : inspector/styles/styles-update-from-js.html = FAIL PASS TEXT TIMEOU
 BUG_KEISHI LINUX : media/video-controls-visible-audio-only.html = PASS TIMEOUT CRASH
 
 BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PASS CRASH 
+
+// Tests that are known to fail on Mac10.6 with CPU-Skia graphics.
+BUGWK68436 SNOWLEOPARD CPU : fast/events/constructors/progress-event-constructor.html = TEXT
+BUGWK68436 SNOWLEOPARD CPU : fast/repaint/text-emphasis-h.html = IMAGE
+BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
+
+// Tests that are known to exhibit TEXT failures on Mac10.5 with Skia (CPU and/or GPU) graphics.
+BUGWK68437 LEOPARD CPU GPU RELEASE : canvas/philip/tests/2d.text.draw.align.center.html = TEXT
+BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.align.end.ltr.html = TEXT
+BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.align.end.rtl.html = TEXT
+BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.align.left.html = TEXT
+BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.align.right.html = TEXT
+BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.align.start.ltr.html = TEXT
+BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.align.start.rtl.html = TEXT
+BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.baseline.alphabetic.html = TEXT
+BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
+BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.fill.maxWidth.bound.html = TEXT
+BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.fontface.html = TEXT
+BUGWK68437 LEOPARD CPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
+BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.fontface.repeat.html = TEXT
+BUGWK68437 LEOPARD CPU GPU : canvas/philip/tests/2d.text.draw.space.basic.html = TEXT
+BUGWK68437 LEOPARD GPU : fast/canvas/2d.fillText.gradient.html = TEXT
+BUGWK68437 LEOPARD GPU : fast/canvas/fillText-shadow.html = TEXT
+BUGWK68437 LEOPARD GPU : fast/canvas/set-colors.html = TEXT
+
+// Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with GPU-Skia graphics.
+BUGWK68437 LEOPARD GPU : fast/canvas/arc360.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/canvas-before-css.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/canvas-composite.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/canvas-resize-reset.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/canvas-size-change-after-layout.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/canvas-transforms-during-path.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/canvas-zoom.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/canvasDrawingIntoSelf.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/drawImage-with-globalAlpha.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/drawImage.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/fillrect_gradient.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/font-update.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/image-pattern-rotate.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/patternfill-repeat.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-1.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-2.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-3.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-4.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-5.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-6.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/shadow-offset-7.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/toDataURL-alpha.html = IMAGE
+BUGWK68437 LEOPARD GPU : fast/canvas/zero-size-fill-rect.html = IMAGE
+
+// Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with CPU-Skia graphics.
+BUGWK68437 LEOPARD CPU : printing/return-from-printing-mode.html = IMAGE
+
+// Tests that are known to exhibit TIMEOUT failures on Mac10.5 with Skia graphics.
+BUGWK68437 LEOPARD GPU : canvas/philip/tests/2d.shadow.blur.low.html = TIMEOUT
+
+// Temporarily allowing many failures for Mac10.5 with Skia graphics.
+// epoger promises to remove these expectations by 10 October 2011.
+BUGWK68270 LEOPARD CPU GPU : animations = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : css1 = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : css2.1 = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : css3 = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : editing = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : fast = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : fonts = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : http = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU : media = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : platform = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : plugins = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : scrollbars = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : svg = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : tables = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : transforms = PASS TEXT IMAGE IMAGE+TEXT
+BUGWK68270 LEOPARD CPU GPU : transitions = PASS TEXT IMAGE IMAGE+TEXT
 
 BUGWK88444 : fast/js/string-split-conformance.html = FAIL
