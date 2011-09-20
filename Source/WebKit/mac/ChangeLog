@@ -1,3 +1,17 @@
+2011-09-20  Anders Carlsson  <andersca@apple.com>
+
+        Remove ScrollView::platformContentsSize
+        https://bugs.webkit.org/show_bug.cgi?id=68188
+
+        Reviewed by Darin Adler.
+
+        When creating the document view, make sure it's zero sized which matches the initial size
+        of the ScrollView. This is fine to do early since DocumentWriter::begin sets the contents
+        size to a zero size anyway.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _makeDocumentViewForDataSource:]):
+
 2011-09-19  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: streamline Console's MessageType and MessageSource semantics.

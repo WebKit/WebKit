@@ -117,15 +117,6 @@ IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
     return IntRect();
 }
 
-IntSize ScrollView::platformContentsSize() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    if (NSView* documentView = this->documentView())
-        return enclosingIntRect([documentView bounds]).size();
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return IntSize();
-}
-
 void ScrollView::platformSetContentsSize()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
