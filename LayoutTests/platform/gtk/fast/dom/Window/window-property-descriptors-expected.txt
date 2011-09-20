@@ -156,7 +156,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'Object') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Option') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'OverflowEvent') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'PageTransitionEvent') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'PeerConnection') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Plugin') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'PluginArray') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'PopStateEvent') is 'object'
@@ -501,6 +500,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'toolbar') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'top') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'undefined') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'unescape') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'webkitPeerConnection') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'window') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'windowPropertyNames') is 'object'
 PASS Object.getOwnPropertyDescriptor(window, '__defineGetter__') is undefined.
@@ -550,6 +550,7 @@ PASS Object.getOwnPropertyDescriptor(window, 'toString') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'valueOf') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitConvertPointFromNodeToPage') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitConvertPointFromPageToNode') is undefined.
+PASS Object.getOwnPropertyDescriptor(window, 'webkitPostMessage') is undefined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

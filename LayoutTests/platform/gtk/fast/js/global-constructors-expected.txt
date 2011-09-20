@@ -144,7 +144,6 @@ PASS Notation.toString() is '[object NotationConstructor]'
 PASS Option.toString() is '[object OptionConstructor]'
 PASS OverflowEvent.toString() is '[object OverflowEventConstructor]'
 PASS PageTransitionEvent.toString() is '[object PageTransitionEventConstructor]'
-PASS PeerConnection.toString() is '[object PeerConnectionConstructor]'
 PASS Plugin.toString() is '[object PluginConstructor]'
 PASS PluginArray.toString() is '[object PluginArrayConstructor]'
 PASS PopStateEvent.toString() is '[object PopStateEventConstructor]'
@@ -325,6 +324,7 @@ PASS XPathEvaluator.toString() is '[object XPathEvaluatorConstructor]'
 PASS XPathException.toString() is '[object XPathExceptionConstructor]'
 PASS XPathResult.toString() is '[object XPathResultConstructor]'
 PASS XSLTProcessor.toString() is '[object XSLTProcessorConstructor]'
+FAIL webkitPeerConnection.toString() should be [object webkitPeerConnectionConstructor]. Was [object PeerConnectionConstructor].
 PASS successfullyParsed is true
 
 TEST COMPLETE

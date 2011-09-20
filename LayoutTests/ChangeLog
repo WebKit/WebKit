@@ -1,3 +1,12 @@
+2011-09-20  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r95178 and r95362.
+
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/call-a-constructor-as-a-function-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
 2011-09-09  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: implement reverse mapping for compiler source maps.
