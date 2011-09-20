@@ -52,11 +52,22 @@ private:
     class FlexibleBoxIterator;
     typedef WTF::HashMap<const RenderBox*, LayoutUnit> InflexibleFlexItemSize;
 
-    void layoutHorizontalBlock(bool relayoutChildren);
+    LayoutUnit logicalBorderWidthForChild(RenderBox* child);
+    LayoutUnit logicalPaddingWidthForChild(RenderBox* child);
+    LayoutUnit logicalScrollbarHeightForChild(RenderBox* child);
+    Length marginStartStyleForChild(RenderBox* child);
+    Length marginEndStyleForChild(RenderBox* child);
+    LayoutUnit preferredLogicalContentWidthForFlexItem(RenderBox* child);
 
-    void computePreferredSizeHorizontal(bool relayoutChildren, FlexibleBoxIterator&, LayoutUnit&, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
-    bool runFreeSpaceAllocationAlgorithmHorizontal(LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
-    void layoutAndPlaceChildrenHorizontal(const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility);
+    void layoutInlineDirection(bool relayoutChildren);
+
+    float logicalPositiveFlexForChild(RenderBox* child);
+    float logicalNegativeFlexForChild(RenderBox* child);
+
+    void computePreferredLogicalWidth(bool relayoutChildren, FlexibleBoxIterator&, LayoutUnit&, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
+    bool runFreeSpaceAllocationAlgorithmInlineDirection(LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
+    void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);
+    void layoutAndPlaceChildrenInlineDirection(const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility);
 };
 
 } // namespace WebCore

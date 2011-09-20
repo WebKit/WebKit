@@ -209,6 +209,8 @@ public:
     LayoutUnit logicalHeightForChild(RenderBox* child) { return isHorizontalWritingMode() ? child->height() : child->width(); }
     LayoutUnit logicalTopForChild(RenderBox* child) { return isHorizontalWritingMode() ? child->y() : child->x(); }
     LayoutUnit logicalLeftForChild(RenderBox* child) { return isHorizontalWritingMode() ? child->x() : child->y(); }
+    // FIXME: Supporting layout deltas.
+    void setLogicalLocationForChild(RenderBox* child, const LayoutPoint&);
     void setLogicalLeftForChild(RenderBox* child, LayoutUnit logicalLeft, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     void setLogicalTopForChild(RenderBox* child, LayoutUnit logicalTop, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     LayoutUnit marginBeforeForChild(RenderBoxModelObject* child) const;

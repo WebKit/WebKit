@@ -1,0 +1,17 @@
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+Expected 580 for offsetLeft, but got 0. Expected 580 for offsetLeft, but got 0. Expected 580 for offsetLeft, but got 0.
+Expected 580 for offsetLeft, but got 0. Expected 180 for offsetTop, but got 0. Expected 580 for offsetLeft, but got 150. Expected 180 for offsetTop, but got 0. Expected 580 for offsetLeft, but got 450. Expected 180 for offsetTop, but got 0.
+
