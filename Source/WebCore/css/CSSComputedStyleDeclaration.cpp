@@ -1395,13 +1395,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createValue(style->userModify());
         case CSSPropertyMaxHeight: {
             const Length& maxHeight = style->maxHeight();
-            if (maxHeight.isFixed() && maxHeight.value() == undefinedLength)
+            if (maxHeight.isUndefined())
                 return primitiveValueCache->createIdentifierValue(CSSValueNone);
             return primitiveValueCache->createValue(maxHeight);
         }
         case CSSPropertyMaxWidth: {
             const Length& maxWidth = style->maxWidth();
-            if (maxWidth.isFixed() && maxWidth.value() == undefinedLength)
+            if (maxWidth.isUndefined())
                 return primitiveValueCache->createIdentifierValue(CSSValueNone);
             return primitiveValueCache->createValue(maxWidth);
         }

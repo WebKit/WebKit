@@ -1,3 +1,52 @@
+2011-09-19  Luke Macpherson   <macpherson@chromium.org>
+
+        Eliminate Length::undefinedLength = -1 and replace with Undefined LengthType.
+        https://bugs.webkit.org/show_bug.cgi?id=68057
+
+        Reviewed by Darin Adler.
+
+        There appear to be many cases where -1 is actually a valid Length.
+        Encoding the validity of Length separately to the value is a natural solution.
+
+        No new tests / no behavioral changes.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyLength::applyValue):
+        * platform/Length.h:
+        (WebCore::Length::Length):
+        (WebCore::Length::value):
+        (WebCore::Length::calcValue):
+        (WebCore::Length::calcMinValue):
+        (WebCore::Length::calcFloatValue):
+        (WebCore::Length::isUndefined):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computePreferredLogicalWidths):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::computePreferredLogicalWidths):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::computePreferredLogicalWidths):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::isLogicalWidthSpecified):
+        (WebCore::RenderImage::isLogicalHeightSpecified):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::computePreferredLogicalWidths):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::computePreferredLogicalWidths):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computePreferredLogicalWidths):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::computePreferredLogicalWidths):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computePreferredLogicalWidths):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::initialMaxSize):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computePreferredLogicalWidths):
+
 2011-09-19  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(EVENTSOURCE)

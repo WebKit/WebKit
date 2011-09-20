@@ -486,8 +486,11 @@ bool RenderImage::isLogicalWidthSpecified() const
         case Intrinsic:
         case MinIntrinsic:
             return false;
+        case Undefined:
+            ASSERT_NOT_REACHED();
+            return false;
     }
-    ASSERT(false);
+    ASSERT_NOT_REACHED();
     return false;
 }
 
@@ -502,8 +505,11 @@ bool RenderImage::isLogicalHeightSpecified() const
         case Intrinsic:
         case MinIntrinsic:
             return false;
+        case Undefined:
+            ASSERT_NOT_REACHED();
+            return false;
     }
-    ASSERT(false);
+    ASSERT_NOT_REACHED();
     return false;
 }
 

@@ -226,6 +226,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
             m_value.num = length.percent();
             break;
         case Relative:
+        case Undefined:
             ASSERT_NOT_REACHED();
             break;
     }
@@ -400,6 +401,7 @@ double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* r
             factor = cssPixelsPerInch * 12.0 / 72.0;
             break;
         default:
+            ASSERT_NOT_REACHED();
             return -1.0;
     }
 
