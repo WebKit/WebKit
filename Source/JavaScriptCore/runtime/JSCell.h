@@ -38,49 +38,23 @@ namespace JSC {
     class JSGlobalObject;
     class Structure;
 
-#if COMPILER(MSVC)
-    // If WTF_MAKE_NONCOPYABLE is applied to JSCell we end up with a bunch of
-    // undefined references to the JSCell copy constructor and assignment operator
-    // when linking JavaScriptCore.
-    class MSVCBugWorkaround {
-        WTF_MAKE_NONCOPYABLE(MSVCBugWorkaround);
-
-    protected:
-        MSVCBugWorkaround() { }
-        ~MSVCBugWorkaround() { }
-    };
-
-    class JSCell : MSVCBugWorkaround {
-#else
     class JSCell {
-        WTF_MAKE_NONCOPYABLE(JSCell);
-#endif
-
-        friend class ExecutableBase;
-        friend class GetterSetter;
-        friend class Heap;
-        friend class JSObject;
-        friend class JSPropertyNameIterator;
-        friend class JSString;
         friend class JSValue;
-        friend class JSAPIValueWrapper;
-        friend class JSGlobalData;
         friend class MarkedBlock;
-        friend class ScopeChainNode;
-        friend class Structure;
-        friend class StructureChain;
-        friend class RegExp;
 
+    public:
         enum CreatingEarlyCellTag { CreatingEarlyCell };
+        JSCell(CreatingEarlyCellTag);
+
+        enum VPtrStealingHackType { VPtrStealingHack };
+        explicit JSCell(VPtrStealingHackType) { }
+
+    public:
+        void* operator new(size_t, void* placementNewDestination) { return placementNewDestination; } // Used for initialization after GC allocation.
 
     protected:
-        enum VPtrStealingHackType { VPtrStealingHack };
-
-    private:
-        explicit JSCell(VPtrStealingHackType) { }
         JSCell(JSGlobalData&, Structure*);
-        JSCell(CreatingEarlyCellTag);
-        virtual ~JSCell();
+        virtual ~JSCell(); // Invoked by GC finalization.
 
     public:
         // Querying the type.
@@ -91,6 +65,7 @@ namespace JSC {
         bool isAPIValueWrapper() const;
 
         Structure* structure() const;
+        void setStructure(JSGlobalData&, Structure*);
 
         // Extracting the value.
         bool getString(ExecState* exec, UString&) const;
@@ -108,9 +83,6 @@ namespace JSC {
         virtual double toNumber(ExecState*) const;
         virtual UString toString(ExecState*) const;
         virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;
-
-        // Garbage collection.
-        void* operator new(size_t, void* placementNewDestination) { return placementNewDestination; }
 
         virtual void visitChildren(SlotVisitor&);
 
@@ -156,11 +128,6 @@ namespace JSC {
         // Base implementation; for non-object classes implements getPropertySlot.
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
-        
-        // Note that the first two declarations of operator new have no corresponding implementation and 
-        // will cause link errors if you use them.
-        void* operator new(size_t, ExecState*);
-        void* operator new(size_t, JSGlobalData*);
         
         WriteBarrier<Structure> m_structure;
     };
@@ -372,7 +339,7 @@ namespace JSC {
 #endif
         return heap.allocate(sizeof(T));
     }
-        
+
 } // namespace JSC
 
 #endif // JSCell_h

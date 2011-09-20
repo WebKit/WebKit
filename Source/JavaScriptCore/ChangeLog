@@ -1,3 +1,53 @@
+2011-09-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed lots of friend declarations from JSCell, so we can more
+        effectively make use of private and protected.
+
+        Reviewed by Sam Weinig.
+
+        * runtime/JSCell.h: Removed MSVCBugWorkaround because it was a lot of
+        confusion for not much safety.
+        (JSC::JSCell::operator new): Made this public because it is used by a
+        few clients, and not really dangerous.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::defineSetter):
+        (JSC::JSObject::getPropertySpecificValue):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::seal):
+        (JSC::JSObject::freeze):
+        (JSC::JSObject::preventExtensions):
+        (JSC::JSObject::removeDirect):
+        (JSC::JSObject::createInheritorID):
+        (JSC::JSObject::allocatePropertyStorage):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirect):
+        (JSC::JSObject::getDirectLocation):
+        (JSC::JSObject::hasCustomProperties):
+        (JSC::JSObject::hasGetterSetterProperties):
+        (JSC::JSObject::isSealed):
+        (JSC::JSObject::isFrozen):
+        (JSC::JSObject::isExtensible):
+        (JSC::JSObject::flattenDictionaryObject):
+        (JSC::JSObject::finishCreation):
+        (JSC::JSObject::prototype):
+        (JSC::JSObject::setPrototype):
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+        (JSC::JSCell::fastGetOwnProperty):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSObject::transitionTo):
+        (JSC::JSObject::visitChildrenDirect): Changed all use of m_structure to
+        structure() / setStructure(), so we don't have to be a friend of JSCell.
+
+        * runtime/Structure.h:
+        (JSC::JSCell::setStructure): Added, to avoid direct access by JSObject
+        to JSCell::m_structure.
+
 2011-09-19  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(EVENTSOURCE)

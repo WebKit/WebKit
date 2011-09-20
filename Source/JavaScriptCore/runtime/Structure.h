@@ -326,6 +326,12 @@ namespace JSC {
         return m_structure->typeInfo().type() == APIValueWrapperType;
     }
 
+    inline void JSCell::setStructure(JSGlobalData& globalData, Structure* structure)
+    {
+        ASSERT(structure->typeInfo().overridesVisitChildren() == this->structure()->typeInfo().overridesVisitChildren());
+        m_structure.set(globalData, this, structure);
+    }
+
     inline const ClassInfo* JSCell::classInfo() const
     {
 #if ENABLE(GC_VALIDATION)
