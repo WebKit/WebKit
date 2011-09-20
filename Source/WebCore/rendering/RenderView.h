@@ -193,8 +193,6 @@ protected:
 
 private:
     bool shouldRepaint(const IntRect& r) const;
-    
-    virtual RenderBlock* containingBlock() const;
 
     // These functions may only be accessed by LayoutStateMaintainer.
     void pushLayoutState(RenderFlowThread*);

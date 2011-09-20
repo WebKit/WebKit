@@ -137,8 +137,6 @@ private:
 
     virtual bool isTableCell() const { return true; }
 
-    virtual RenderBlock* containingBlock() const;
-
     virtual void willBeDestroyed();
 
     virtual void computeLogicalWidth();

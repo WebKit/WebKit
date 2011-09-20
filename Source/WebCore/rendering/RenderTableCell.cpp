@@ -319,13 +319,6 @@ void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* ol
     setHasBoxDecorations(true);
 }
 
-RenderBlock* RenderTableCell::containingBlock() const
-{
-    if (parent() && section())
-        return table();
-    return 0;
-}
-
 // The following rules apply for resolving conflicts and figuring out which border
 // to use.
 // (1) Borders with the 'border-style' of 'hidden' take precedence over all other conflicting 

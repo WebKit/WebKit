@@ -636,9 +636,6 @@ void RenderObject::setLayerNeedsFullRepaint()
 
 RenderBlock* RenderObject::containingBlock() const
 {
-    ASSERT(!isTableCell());
-    ASSERT(!isRenderView());
-
     RenderObject* o = parent();
     if (!isText() && m_style->position() == FixedPosition) {
         while (o && !o->isRenderView() && !(o->hasTransform() && o->isRenderBlock()))

@@ -246,7 +246,8 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         }
     }
     
-    bool adjustForTableCells = o.containingBlock()->isTableCell();
+    RenderBlock* cb = o.containingBlock();
+    bool adjustForTableCells = cb ? cb->isTableCell() : false;
 
     IntRect r;
     if (o.isText()) {

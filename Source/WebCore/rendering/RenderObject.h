@@ -600,7 +600,7 @@ public:
     void setStyleInternal(PassRefPtr<RenderStyle>);
 
     // returns the containing block level element for this element.
-    virtual RenderBlock* containingBlock() const;
+    RenderBlock* containingBlock() const;
 
     // Convert the given local point to absolute coordinates
     // FIXME: Temporary. If useTransforms is true, take transforms into account. Eventually localToAbsolute() will always be transform-aware.
