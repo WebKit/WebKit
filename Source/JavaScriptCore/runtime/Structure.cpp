@@ -34,10 +34,7 @@
 #include "StructureChain.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/RefPtr.h>
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
 #include <wtf/Threading.h>
-#endif
 
 #define DUMP_STRUCTURE_ID_STATISTICS 0
 

@@ -1,3 +1,35 @@
+2011-09-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed ENABLE_JSC_MULTIPLE_THREADS and related #ifdefs.
+        https://bugs.webkit.org/show_bug.cgi?id=68422
+        
+        As discussed on webkit-dev. All ports build with threads enabled in JSC now.
+        
+        This may break WinCE and other ports that have not built and tested with
+        this configuration. I've filed bugs for port maintainers. It's time for
+        WebKit to move forward.
+
+        Reviewed by Sam Weinig.
+
+        * API/APIShims.h:
+        (JSC::APIEntryShimWithoutLock::APIEntryShimWithoutLock):
+        * API/JSContextRef.cpp:
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::MachineThreads):
+        (JSC::MachineThreads::~MachineThreads):
+        (JSC::MachineThreads::gatherConservativeRoots):
+        * heap/MachineStackMarker.h:
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        (JSC::initializeThreading):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::sharedInstance):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::makeUsableFromMultipleThreads):
+        * runtime/JSLock.cpp:
+        * runtime/Structure.cpp:
+        * wtf/Platform.h:
+
 2011-09-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95493 and r95496.

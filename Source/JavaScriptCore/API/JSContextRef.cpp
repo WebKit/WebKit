@@ -92,9 +92,7 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
 
     APIEntryShim entryShim(globalData.get(), false);
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
     globalData->makeUsableFromMultipleThreads();
-#endif
 
     if (!globalObjectClass) {
         JSGlobalObject* globalObject = JSGlobalObject::create(*globalData, JSGlobalObject::createStructure(*globalData, jsNull()));

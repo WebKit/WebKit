@@ -76,7 +76,7 @@
 #include <errno.h>
 #endif
 
-#if ENABLE(JSC_MULTIPLE_THREADS) && USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
 #include <signal.h>
 #endif
 
@@ -97,8 +97,6 @@ UNUSED_PARAM(begin);
 UNUSED_PARAM(end);
 #endif
 }
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
 
 #if OS(DARWIN)
 typedef mach_port_t PlatformThread;
@@ -145,20 +143,15 @@ public:
     void* stackBase;
 };
 
-#endif
-
 MachineThreads::MachineThreads(Heap* heap)
     : m_heap(heap)
-#if ENABLE(JSC_MULTIPLE_THREADS)
     , m_registeredThreads(0)
     , m_threadSpecific(0)
-#endif
 {
 }
 
 MachineThreads::~MachineThreads()
 {
-#if ENABLE(JSC_MULTIPLE_THREADS)
     if (m_threadSpecific) {
         int error = pthread_key_delete(m_threadSpecific);
         ASSERT_UNUSED(error, !error);
@@ -170,10 +163,7 @@ MachineThreads::~MachineThreads()
         delete t;
         t = next;
     }
-#endif
 }
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
 
 static inline PlatformThread getCurrentPlatformThread()
 {
@@ -243,8 +233,6 @@ void MachineThreads::removeCurrentThread()
     }
 }
 
-#endif
-
 #if COMPILER(GCC)
 #define REGISTER_BUFFER_ALIGNMENT __attribute__ ((aligned (sizeof(void*))))
 #else
@@ -274,8 +262,6 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
     swapIfBackwards(stackBegin, stackEnd);
     conservativeRoots.add(stackBegin, stackEnd);
 }
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
 
 static inline void suspendThread(const PlatformThread& platformThread)
 {
@@ -482,13 +468,9 @@ void MachineThreads::gatherFromOtherThread(ConservativeRoots& conservativeRoots,
     freePlatformThreadRegisters(regs);
 }
 
-#endif
-
 void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, void* stackCurrent)
 {
     gatherFromCurrentThread(conservativeRoots, stackCurrent);
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
 
     if (m_threadSpecific) {
 
@@ -510,7 +492,6 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
         fastMallocAllow();
 #endif
     }
-#endif
 }
 
 } // namespace JSC

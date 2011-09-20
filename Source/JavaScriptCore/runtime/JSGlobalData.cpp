@@ -50,19 +50,14 @@
 #include "Lookup.h"
 #include "Nodes.h"
 #include "Parser.h"
-#include "RegExpCache.h"
-#include "RegExpObject.h"
-#include "StrictEvalActivation.h"
-#include <wtf/WTFThreadData.h>
 #if ENABLE(REGEXP_TRACING)
 #include "RegExp.h"
 #endif
-
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
+#include "RegExpCache.h"
+#include "RegExpObject.h"
+#include "StrictEvalActivation.h"
 #include <wtf/Threading.h>
-#endif
-
+#include <wtf/WTFThreadData.h>
 #if PLATFORM(MAC)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
@@ -387,9 +382,7 @@ JSGlobalData& JSGlobalData::sharedInstance()
     JSGlobalData*& instance = sharedInstanceInternal();
     if (!instance) {
         instance = adoptRef(new JSGlobalData(APIShared, ThreadStackTypeSmall, SmallHeap)).leakRef();
-#if ENABLE(JSC_MULTIPLE_THREADS)
         instance->makeUsableFromMultipleThreads();
-#endif
     }
     return *instance;
 }
