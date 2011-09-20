@@ -3403,6 +3403,8 @@ def process_line(filename, file_extension,
     check_for_function_lengths(clean_lines, line, function_state, error)
     if search(r'\bNOLINT\b', raw_lines[line]):  # ignore nolint lines
         return
+    if match(r'\s*\b__asm\b', raw_lines[line]):  # Ignore asm lines as they format differently.
+        return
     check_function_definition(filename, file_extension, clean_lines, line, function_state, error)
     check_pass_ptr_usage(clean_lines, line, function_state, error)
     check_for_multiline_comments_and_strings(clean_lines, line, error)
