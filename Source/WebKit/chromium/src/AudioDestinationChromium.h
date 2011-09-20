@@ -60,6 +60,8 @@ private:
     double m_sampleRate;
     bool m_isPlaying;
     OwnPtr<WebKit::WebAudioDevice> m_audioDevice;
+    size_t m_callbackBufferSize;
+    unsigned m_renderCountPerCallback;
 };
 
 } // namespace WebCore

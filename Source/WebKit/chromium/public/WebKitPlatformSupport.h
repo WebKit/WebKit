@@ -308,6 +308,7 @@ public:
     // Audio --------------------------------------------------------------
 
     virtual double audioHardwareSampleRate() { return 0; }
+    virtual size_t audioHardwareBufferSize() { return 0; }
     virtual WebAudioDevice* createAudioDevice(size_t bufferSize, unsigned numberOfChannels, double sampleRate, WebAudioDevice::RenderCallback*) { return 0; }
 
     // FileSystem ----------------------------------------------------------
