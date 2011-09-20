@@ -64,7 +64,7 @@ foreach (@frameworks) {
 sub collectNeededHeaders {
     my $filePath = $File::Find::name;
     my $file = $_;
-    if ($filePath =~ '\.h$|\.cpp$|\.c$') {
+    if ($filePath =~ '\.h$|\.cpp$|\.c$|\.mm$') {
         open(FILE, "<$file") or die "Could not open $filePath.\n";
         while (<FILE>) {
            if (m/^#.*<$framework\/(.*\.h)/) {

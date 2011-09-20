@@ -3063,6 +3063,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             platform/mac/WebWindowAnimation.h
 
         SOURCES += \
+            platform/mac/DisplaySleepDisabler.cpp \
             platform/graphics/cg/IntRectCG.cpp \
             platform/graphics/cg/FloatSizeCG.cpp \
             platform/cf/SharedBufferCF.cpp \

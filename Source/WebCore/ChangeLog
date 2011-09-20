@@ -1,3 +1,13 @@
+2011-09-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Buildfix after r95513.
+        Forwarding headers for WebCore should be generated based on WebCore sources instead of WebKit2.
+
+        Rubber-stamped by Andras Becsi.
+
+        * DerivedSources.pro:
+        * WebCore.pro: Add platform/mac/DisplaySleepDisabler.cpp to SOURCES.
+
 2011-09-19  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: document Debugger.paused, introduce types for ids in Debugger domain.

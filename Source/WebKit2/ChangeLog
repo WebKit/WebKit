@@ -1,3 +1,11 @@
+2011-09-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Buildfix after r95513.
+
+        Rubber-stamped by Andras Becsi.
+
+        * Scripts/generate-forwarding-headers.pl: Add mm file supporting.
+
 2011-09-20  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
 
         [Qt] QDesktopWebView missing loadProgress tests
