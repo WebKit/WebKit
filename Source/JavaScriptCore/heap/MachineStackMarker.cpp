@@ -78,9 +78,6 @@
 
 #if ENABLE(JSC_MULTIPLE_THREADS) && USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
 #include <signal.h>
-#ifndef SA_RESTART
-#error MachineThreads requires SA_RESTART
-#endif
 #endif
 
 #endif
@@ -127,7 +124,8 @@ public:
         , platformThread(platThread)
         , stackBase(base)
     {
-#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN) && defined(SA_RESTART)
+        // if we have SA_RESTART, enable SIGUSR2 debugging mechanism
         struct sigaction action;
         action.sa_handler = pthreadSignalHandlerSuspendResume;
         sigemptyset(&action.sa_mask);
@@ -325,6 +323,8 @@ typedef arm_thread_state_t PlatformThreadRegisters;
 
 #elif OS(WINDOWS)
 typedef CONTEXT PlatformThreadRegisters;
+#elif OS(QNX)
+typedef struct _debug_thread_info PlatformThreadRegisters;
 #elif USE(PTHREADS)
 typedef pthread_attr_t PlatformThreadRegisters;
 #else
@@ -367,6 +367,16 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
     regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
     GetThreadContext(platformThread, &regs);
     return sizeof(CONTEXT);
+#elif OS(QNX)
+    memset(&regs, 0, sizeof(regs));
+    regs.tid = pthread_self();
+    int fd = open("/proc/self", O_RDONLY);
+    if (fd == -1) {
+        LOG_ERROR("Unable to open /proc/self (errno: %d)", errno);
+        CRASH();
+    }
+    devctl(fd, DCMD_PROC_TIDSTATUS, &regs, sizeof(regs), 0);
+    close(fd);
 #elif USE(PTHREADS)
     pthread_attr_init(&regs);
 #if HAVE(PTHREAD_NP_H) || OS(NETBSD)
@@ -429,6 +439,9 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 #error Unknown Architecture
 #endif
 
+#elif OS(QNX)
+    return reinterpret_cast<void*>((uintptr_t) regs.sp);
+
 #elif USE(PTHREADS)
     void* stackBase = 0;
     size_t stackSize = 0;
@@ -443,7 +456,7 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 
 static void freePlatformThreadRegisters(PlatformThreadRegisters& regs)
 {
-#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN) && !OS(QNX)
     pthread_attr_destroy(&regs);
 #else
     UNUSED_PARAM(regs);

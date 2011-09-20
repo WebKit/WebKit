@@ -762,6 +762,7 @@
 #define HAVE_STRINGS_H 1
 #define HAVE_SYS_PARAM_H 1
 #define HAVE_SYS_TIME_H 1
+#define WTF_USE_PTHREADS 1
 
 #elif OS(ANDROID)
 
