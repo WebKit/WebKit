@@ -38,15 +38,15 @@ from webkitpy.tool.mocktool import MockTool
 class FeedersTest(unittest.TestCase):
     def test_commit_queue_feeder(self):
         feeder = CommitQueueFeeder(MockTool())
-        expected_stderr = u"""Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
-Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
-MOCK setting flag 'commit-queue' to '-' on attachment '128' with comment 'Rejecting attachment 128 from commit-queue.' and additional comment 'non-committer@example.com does not have committer permissions according to http://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/committers.py.
+        expected_stderr = u"""Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
+Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
+MOCK setting flag 'commit-queue' to '-' on attachment '10001' with comment 'Rejecting attachment 10001 from commit-queue.' and additional comment 'non-committer@example.com does not have committer permissions according to http://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/committers.py.
 
 - If you do not have committer rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
 
 - If you have committer rights please correct the error in Tools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your committer rights.'
-MOCK: update_work_items: commit-queue [106, 197]
-Feeding commit-queue items [106, 197]
+MOCK: update_work_items: commit-queue [10005, 10000]
+Feeding commit-queue items [10005, 10000]
 """
         OutputCapture().assert_outputs(self, feeder.feed, expected_stderr=expected_stderr)
 

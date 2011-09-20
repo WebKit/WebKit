@@ -37,27 +37,27 @@ from webkitpy.tool.mocktool import MockTool
 
 class QueryCommandsTest(CommandsTest):
     def test_bugs_to_commit(self):
-        expected_stderr = "Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)\n"
-        self.assert_execute_outputs(BugsToCommit(), None, "42\n77\n", expected_stderr)
+        expected_stderr = "Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)\n"
+        self.assert_execute_outputs(BugsToCommit(), None, "50000\n50003\n", expected_stderr)
 
     def test_patches_in_commit_queue(self):
-        expected_stdout = "http://example.com/197\nhttp://example.com/103\n"
-        expected_stderr = "Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)\nPatches in commit queue:\n"
+        expected_stdout = "http://example.com/10000\nhttp://example.com/10002\n"
+        expected_stderr = "Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)\nPatches in commit queue:\n"
         self.assert_execute_outputs(PatchesInCommitQueue(), None, expected_stdout, expected_stderr)
 
     def test_patches_to_commit_queue(self):
-        expected_stdout = "http://example.com/104&action=edit\n"
-        expected_stderr = "197 already has cq=+\n128 already has cq=+\n105 committer = \"Eric Seidel\" <eric@webkit.org>\n"
+        expected_stdout = "http://example.com/10003&action=edit\n"
+        expected_stderr = "10000 already has cq=+\n10001 already has cq=+\n10004 committer = \"Eric Seidel\" <eric@webkit.org>\n"
         options = Mock()
         options.bugs = False
         self.assert_execute_outputs(PatchesToCommitQueue(), None, expected_stdout, expected_stderr, options=options)
 
-        expected_stdout = "http://example.com/77\n"
+        expected_stdout = "http://example.com/50003\n"
         options.bugs = True
         self.assert_execute_outputs(PatchesToCommitQueue(), None, expected_stdout, expected_stderr, options=options)
 
     def test_patches_to_review(self):
-        expected_stdout = "103\n"
+        expected_stdout = "10002\n"
         expected_stderr = "Patches pending review:\n"
         self.assert_execute_outputs(PatchesToReview(), None, expected_stdout, expected_stderr)
 

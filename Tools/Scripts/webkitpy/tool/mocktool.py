@@ -47,13 +47,11 @@ def _id_to_object_dictionary(*objects):
 
 # Testing
 
-# FIXME: The ids should be 1, 2, 3 instead of crazy numbers.
-
 
 _patch1 = {
-    "id": 197,
-    "bug_id": 42,
-    "url": "http://example.com/197",
+    "id": 10000,
+    "bug_id": 50000,
+    "url": "http://example.com/10000",
     "name": "Patch1",
     "is_obsolete": False,
     "is_patch": True,
@@ -66,9 +64,9 @@ _patch1 = {
 
 
 _patch2 = {
-    "id": 128,
-    "bug_id": 42,
-    "url": "http://example.com/128",
+    "id": 10001,
+    "bug_id": 50000,
+    "url": "http://example.com/10001",
     "name": "Patch2",
     "is_obsolete": False,
     "is_patch": True,
@@ -81,9 +79,9 @@ _patch2 = {
 
 
 _patch3 = {
-    "id": 103,
-    "bug_id": 75,
-    "url": "http://example.com/103",
+    "id": 10002,
+    "bug_id": 50001,
+    "url": "http://example.com/10002",
     "name": "Patch3",
     "is_obsolete": False,
     "is_patch": True,
@@ -93,9 +91,9 @@ _patch3 = {
 
 
 _patch4 = {
-    "id": 104,
-    "bug_id": 77,
-    "url": "http://example.com/103",
+    "id": 10003,
+    "bug_id": 50003,
+    "url": "http://example.com/10002",
     "name": "Patch3",
     "is_obsolete": False,
     "is_patch": True,
@@ -107,9 +105,9 @@ _patch4 = {
 
 
 _patch5 = {
-    "id": 105,
-    "bug_id": 77,
-    "url": "http://example.com/103",
+    "id": 10004,
+    "bug_id": 50003,
+    "url": "http://example.com/10002",
     "name": "Patch5",
     "is_obsolete": False,
     "is_patch": True,
@@ -120,9 +118,9 @@ _patch5 = {
 
 
 _patch6 = { # Valid committer, but no reviewer.
-    "id": 106,
-    "bug_id": 77,
-    "url": "http://example.com/103",
+    "id": 10005,
+    "bug_id": 50003,
+    "url": "http://example.com/10002",
     "name": "ROLLOUT of r3489",
     "is_obsolete": False,
     "is_patch": True,
@@ -133,9 +131,9 @@ _patch6 = { # Valid committer, but no reviewer.
 
 
 _patch7 = { # Valid review, patch is marked obsolete.
-    "id": 107,
-    "bug_id": 76,
-    "url": "http://example.com/103",
+    "id": 10006,
+    "bug_id": 50002,
+    "url": "http://example.com/10002",
     "name": "Patch7",
     "is_obsolete": True,
     "is_patch": True,
@@ -152,11 +150,8 @@ _unassigned_email = "webkit-unassigned@lists.webkit.org"
 _commit_queue_email = "commit-queue@webkit.org"
 
 
-# FIXME: The ids should be 1, 2, 3 instead of crazy numbers.
-
-
 _bug1 = {
-    "id": 42,
+    "id": 50000,
     "title": "Bug with two r+'d and cq+'d patches, one of which has an "
              "invalid commit-queue setter.",
     "reporter_email": "foo@foo.com",
@@ -167,7 +162,7 @@ _bug1 = {
 
 
 _bug2 = {
-    "id": 75,
+    "id": 50001,
     "title": "Bug with a patch needing review.",
     "reporter_email": "foo@foo.com",
     "assigned_to_email": "foo@foo.com",
@@ -177,7 +172,7 @@ _bug2 = {
 
 
 _bug3 = {
-    "id": 76,
+    "id": 50002,
     "title": "The third bug",
     "reporter_email": "foo@foo.com",
     "assigned_to_email": _unassigned_email,
@@ -187,7 +182,7 @@ _bug3 = {
 
 
 _bug4 = {
-    "id": 77,
+    "id": 50003,
     "title": "The fourth bug",
     "reporter_email": "foo@foo.com",
     "assigned_to_email": "foo@foo.com",
@@ -197,13 +192,13 @@ _bug4 = {
 
 
 _bug5 = {
-    "id": 78,
+    "id": 50004,
     "title": "The fifth bug",
     "reporter_email": _commit_queue_email,
     "assigned_to_email": "foo@foo.com",
     "attachments": [],
     "bug_status": "RESOLVED",
-    "dup_id": 76,
+    "dup_id": 50002,
 }
 
 
@@ -238,13 +233,13 @@ class MockBugzillaQueries(object):
         # NOTE: This manual hack here is to allow testing logging in
         # test_assign_to_committer the real pending-commit query on bugzilla
         # will return bugs with patches which have r+, but are also obsolete.
-        return bug_ids + [76]
+        return bug_ids + [50002]
 
     def fetch_patches_from_pending_commit_list(self):
         return sum([bug.reviewed_patches() for bug in self._all_bugs()], [])
 
     def fetch_bugs_matching_search(self, search_string, author_email=None):
-        return [self._bugzilla.fetch_bug(78), self._bugzilla.fetch_bug(77)]
+        return [self._bugzilla.fetch_bug(50004), self._bugzilla.fetch_bug(50003)]
 
 
 _mock_reviewers = [Reviewer("Foo Bar", "foo@bar.com"),
@@ -292,7 +287,7 @@ class MockBugzilla(object):
             log("cc: %s" % cc)
         if blocked:
             log("blocked: %s" % blocked)
-        return 78
+        return 50004
 
     def quips(self):
         return ["Good artists copy. Great artists steal. - Pablo Picasso"]
@@ -538,10 +533,10 @@ class MockSCM(object):
     def commit_message_for_local_commit(self, commit_id):
         if commit_id == "Commitish1":
             return CommitMessage("CommitMessage1\n" \
-                "https://bugs.example.org/show_bug.cgi?id=42\n")
+                "https://bugs.example.org/show_bug.cgi?id=50000\n")
         if commit_id == "Commitish2":
             return CommitMessage("CommitMessage2\n" \
-                "https://bugs.example.org/show_bug.cgi?id=75\n")
+                "https://bugs.example.org/show_bug.cgi?id=50001\n")
         raise Exception("Bogus commit_id in commit_message_for_local_commit.")
 
     def diff_for_file(self, path, log=None):
@@ -584,7 +579,7 @@ class MockCheckout(object):
         if not svn_revision:
             return None
         return CommitInfo(svn_revision, "eric@webkit.org", {
-            "bug_id": 42,
+            "bug_id": 50000,
             "author_name": "Adam Barth",
             "author_email": "abarth@webkit.org",
             "author": self._committer_list.contributor_by_email("abarth@webkit.org"),

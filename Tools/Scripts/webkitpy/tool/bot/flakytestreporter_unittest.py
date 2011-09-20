@@ -94,8 +94,8 @@ blocked: 50856
     def test_follow_duplicate_chain(self):
         tool = MockTool()
         reporter = FlakyTestReporter(tool, 'dummy-queue')
-        bug = tool.bugs.fetch_bug(78)
-        self.assertEqual(reporter._follow_duplicate_chain(bug).id(), 76)
+        bug = tool.bugs.fetch_bug(50004)
+        self.assertEqual(reporter._follow_duplicate_chain(bug).id(), 50002)
 
     def test_report_flaky_tests_creating_bug(self):
         tool = MockTool()
@@ -103,7 +103,7 @@ blocked: 50856
         tool.status_server = MockStatusServer(bot_id="mock-bot-id")
         reporter = FlakyTestReporter(tool, 'dummy-queue')
         reporter._lookup_bug_for_flaky_test = lambda bug_id: None
-        patch = tool.bugs.fetch_attachment(197)
+        patch = tool.bugs.fetch_attachment(10000)
         expected_stderr = """MOCK create_bug
 bug_title: Flaky Test: foo/bar.html
 bug_description: This is an automatically generated bug from the dummy-queue.
@@ -112,7 +112,7 @@ foo/bar.html has been flaky on the dummy-queue.
 foo/bar.html was authored by abarth@webkit.org.
 http://trac.webkit.org/browser/trunk/LayoutTests/foo/bar.html
 
-The dummy-queue just saw foo/bar.html flake (Text diff mismatch) while processing attachment 197 on bug 42.
+The dummy-queue just saw foo/bar.html flake (Text diff mismatch) while processing attachment 10000 on bug 50000.
 Bot: mock-bot-id  Port: MockPort  Platform: MockPlatform 1.0
 
 The bots will update this with information from each new failure.
@@ -124,12 +124,12 @@ If you would like to track this test fix with another bug, please close this bug
 component: Tools / Tests
 cc: abarth@webkit.org
 blocked: 50856
-MOCK add_attachment_to_bug: bug_id=78, description=Failure diff from mock-bot-id filename=failure.diff
-MOCK bug comment: bug_id=42, cc=None
+MOCK add_attachment_to_bug: bug_id=50004, description=Failure diff from mock-bot-id filename=failure.diff
+MOCK bug comment: bug_id=50000, cc=None
 --- Begin comment ---
-The dummy-queue encountered the following flaky tests while processing attachment 197:
+The dummy-queue encountered the following flaky tests while processing attachment 10000:
 
-foo/bar.html bug 78 (author: abarth@webkit.org)
+foo/bar.html bug 50004 (author: abarth@webkit.org)
 The dummy-queue is continuing to process your patch.
 --- End comment ---
 

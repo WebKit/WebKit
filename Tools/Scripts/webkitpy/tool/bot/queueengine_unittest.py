@@ -85,7 +85,7 @@ class LoggingDelegate(QueueEngineDelegate):
     def should_proceed_with_work_item(self, work_item):
         self.record("should_proceed_with_work_item")
         self._test.assertEquals(work_item, "work_item")
-        fake_patch = { 'bug_id' : 42 }
+        fake_patch = {'bug_id': 50000}
         return (True, "waiting_message", fake_patch)
 
     def process_work_item(self, work_item):

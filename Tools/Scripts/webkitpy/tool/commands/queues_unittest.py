@@ -138,17 +138,17 @@ class FeederQueueTest(QueuesTest):
             "begin_work_queue": self._default_begin_work_queue_stderr("feeder-queue"),
             "should_proceed_with_work_item": "",
             "next_work_item": "",
-            "process_work_item": """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
-Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
-MOCK setting flag 'commit-queue' to '-' on attachment '128' with comment 'Rejecting attachment 128 from commit-queue.' and additional comment 'non-committer@example.com does not have committer permissions according to http://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/committers.py.
+            "process_work_item": """Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
+Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
+MOCK setting flag 'commit-queue' to '-' on attachment '10001' with comment 'Rejecting attachment 10001 from commit-queue.' and additional comment 'non-committer@example.com does not have committer permissions according to http://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/committers.py.
 
 - If you do not have committer rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
 
 - If you have committer rights please correct the error in Tools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your committer rights.'
-MOCK: update_work_items: commit-queue [106, 197]
-Feeding commit-queue items [106, 197]
+MOCK: update_work_items: commit-queue [10005, 10000]
+Feeding commit-queue items [10005, 10000]
 Feeding EWS (1 r? patch, 1 new)
-MOCK: submit_to_ews: 103
+MOCK: submit_to_ews: 10002
 """,
             "handle_unexpected_error": "Mock error message\n",
         }
@@ -163,12 +163,12 @@ class AbstractPatchQueueTest(CommandsTest):
         queue._options = Mock()
         queue._options.port = None
         self.assertEquals(queue._next_patch(), None)
-        tool.status_server = MockStatusServer(work_items=[2, 197])
+        tool.status_server = MockStatusServer(work_items=[2, 10000])
         expected_stdout = "MOCK: fetch_attachment: 2 is not a known attachment id\n"  # A mock-only message to prevent us from making mistakes.
         expected_stderr = "MOCK: release_work_item: None 2\n"
         patch_id = OutputCapture().assert_outputs(self, queue._next_patch, expected_stdout=expected_stdout, expected_stderr=expected_stderr)
         self.assertEquals(patch_id, None)  # 2 is an invalid patch id
-        self.assertEquals(queue._next_patch().id(), 197)
+        self.assertEquals(queue._next_patch().id(), 10000)
 
     def test_upload_results_archive_for_patch(self):
         queue = AbstractPatchQueue()
@@ -177,8 +177,8 @@ class AbstractPatchQueueTest(CommandsTest):
         queue.bind_to_tool(tool)
         queue._options = Mock()
         queue._options.port = None
-        patch = queue._tool.bugs.fetch_attachment(128)
-        expected_stderr = """MOCK add_attachment_to_bug: bug_id=42, description=Archive of layout-test-results from bot filename=layout-test-results.zip
+        patch = queue._tool.bugs.fetch_attachment(10001)
+        expected_stderr = """MOCK add_attachment_to_bug: bug_id=50000, description=Archive of layout-test-results from bot filename=layout-test-results.zip
 -- Begin comment --
 The attached test failures were seen while running run-webkit-tests on the mock-queue.
 Port: MockPort  Platform: MockPlatform 1.0
@@ -246,9 +246,9 @@ MOCK: update_status: commit-queue Built patch
 MOCK: update_status: commit-queue Passed tests
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
-MOCK: release_work_item: commit-queue 197
+MOCK: release_work_item: commit-queue 10000
 """,
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting attachment 197 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
         }
         self.assert_queue_outputs(CommitQueue(), expected_stderr=expected_stderr)
@@ -261,11 +261,11 @@ MOCK: release_work_item: commit-queue 197
             "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
 MOCK: update_status: commit-queue Updated working directory
 MOCK: update_status: commit-queue Patch does not apply
-MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting attachment 197 from commit-queue.' and additional comment 'MOCK script error'
+MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'MOCK script error'
 MOCK: update_status: commit-queue Fail
-MOCK: release_work_item: commit-queue 197
+MOCK: release_work_item: commit-queue 10000
 """,
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting attachment 197 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
         }
         queue = CommitQueue()
@@ -292,18 +292,18 @@ MOCK: release_work_item: commit-queue 197
 MOCK: update_status: commit-queue Cleaned working directory
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Updated working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 197], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 10000], cwd=/mock-checkout
 MOCK: update_status: commit-queue Applied patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Built patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Passed tests
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 197], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 10000], cwd=/mock-checkout
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
-MOCK: release_work_item: commit-queue 197
+MOCK: release_work_item: commit-queue 10000
 """,
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting attachment 197 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, expected_stderr=expected_stderr)
@@ -311,7 +311,7 @@ MOCK: release_work_item: commit-queue 197
     def test_rollout_lands(self):
         tool = MockTool(log_executive=True)
         tool.buildbot.light_tree_on_fire()
-        rollout_patch = tool.bugs.fetch_attachment(106)  # _patch6, a rollout patch.
+        rollout_patch = tool.bugs.fetch_attachment(10005)  # _patch6, a rollout patch.
         assert(rollout_patch.is_rollout())
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue"),
@@ -321,14 +321,14 @@ MOCK: release_work_item: commit-queue 197
 MOCK: update_status: commit-queue Cleaned working directory
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Updated working directory
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 106], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 10005], cwd=/mock-checkout
 MOCK: update_status: commit-queue Applied patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 106], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 10005], cwd=/mock-checkout
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
-MOCK: release_work_item: commit-queue 106
+MOCK: release_work_item: commit-queue 10005
 """,
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '106' with comment 'Rejecting attachment 106 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10005' with comment 'Rejecting attachment 10005 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=rollout_patch, expected_stderr=expected_stderr)
@@ -360,32 +360,32 @@ MOCK: update_status: commit-queue Applied patch
 MOCK: update_status: commit-queue Built patch
 MOCK: update_status: commit-queue Passed tests
 MOCK: update_status: commit-queue Retry
-MOCK: release_work_item: commit-queue 197
+MOCK: release_work_item: commit-queue 10000
 """
         OutputCapture().assert_outputs(self, queue.process_work_item, [QueuesTest.mock_work_item], expected_stderr=expected_stderr)
 
     def test_report_flaky_tests(self):
         queue = TestCommitQueue(MockTool())
-        expected_stderr = """MOCK bug comment: bug_id=76, cc=None
+        expected_stderr = """MOCK bug comment: bug_id=50002, cc=None
 --- Begin comment ---
-The commit-queue just saw foo/bar.html flake (Text diff mismatch) while processing attachment 197 on bug 42.
+The commit-queue just saw foo/bar.html flake (Text diff mismatch) while processing attachment 10000 on bug 50000.
 Port: MockPort  Platform: MockPlatform 1.0
 --- End comment ---
 
-MOCK add_attachment_to_bug: bug_id=76, description=Failure diff from bot filename=failure.diff
-MOCK bug comment: bug_id=76, cc=None
+MOCK add_attachment_to_bug: bug_id=50002, description=Failure diff from bot filename=failure.diff
+MOCK bug comment: bug_id=50002, cc=None
 --- Begin comment ---
-The commit-queue just saw bar/baz.html flake (Text diff mismatch) while processing attachment 197 on bug 42.
+The commit-queue just saw bar/baz.html flake (Text diff mismatch) while processing attachment 10000 on bug 50000.
 Port: MockPort  Platform: MockPlatform 1.0
 --- End comment ---
 
-MOCK add_attachment_to_bug: bug_id=76, description=Archive of layout-test-results from bot filename=layout-test-results.zip
-MOCK bug comment: bug_id=42, cc=None
+MOCK add_attachment_to_bug: bug_id=50002, description=Archive of layout-test-results from bot filename=layout-test-results.zip
+MOCK bug comment: bug_id=50000, cc=None
 --- Begin comment ---
-The commit-queue encountered the following flaky tests while processing attachment 197:
+The commit-queue encountered the following flaky tests while processing attachment 10000:
 
-foo/bar.html bug 76 (author: abarth@webkit.org)
-bar/baz.html bug 76 (author: abarth@webkit.org)
+foo/bar.html bug 50002 (author: abarth@webkit.org)
+bar/baz.html bug 50002 (author: abarth@webkit.org)
 The commit-queue is continuing to process your patch.
 --- End comment ---
 
@@ -413,9 +413,9 @@ class StyleQueueTest(QueuesTest):
             "begin_work_queue": self._default_begin_work_queue_stderr("style-queue"),
             "next_work_item": "",
             "should_proceed_with_work_item": "MOCK: update_status: style-queue Checking style\n",
-            "process_work_item": "MOCK: update_status: style-queue Pass\nMOCK: release_work_item: style-queue 197\n",
+            "process_work_item": "MOCK: update_status: style-queue Pass\nMOCK: release_work_item: style-queue 10000\n",
             "handle_unexpected_error": "Mock error message\n",
-            "handle_script_error": "MOCK: update_status: style-queue ScriptError error message\nMOCK bug comment: bug_id=42, cc=[]\n--- Begin comment ---\nAttachment 197 did not pass style-queue:\n\nScriptError error message\n\nIf any of these errors are false positives, please file a bug against check-webkit-style.\n--- End comment ---\n\n",
+            "handle_script_error": "MOCK: update_status: style-queue ScriptError error message\nMOCK bug comment: bug_id=50000, cc=[]\n--- Begin comment ---\nAttachment 10000 did not pass style-queue:\n\nScriptError error message\n\nIf any of these errors are false positives, please file a bug against check-webkit-style.\n--- End comment ---\n\n",
         }
         expected_exceptions = {
             "handle_script_error": SystemExit,

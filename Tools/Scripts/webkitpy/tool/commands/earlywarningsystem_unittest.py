@@ -48,7 +48,7 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
         OutputCapture().assert_outputs(self, ews.begin_work_queue, expected_stderr=self._default_begin_work_queue_stderr(ews.name))
         ews._expected_failures.unexpected_failures_observed = lambda results: set(["foo.html", "bar.html"])
         task = Mock()
-        patch = ews._tool.bugs.fetch_attachment(197)
+        patch = ews._tool.bugs.fetch_attachment(10000)
         self.assertEqual(ews._failing_tests_message(task, patch), "New failing tests:\nbar.html\nfoo.html")
 
 
@@ -62,7 +62,7 @@ class EarlyWarningSytemTest(QueuesTest):
             "begin_work_queue": self._default_begin_work_queue_stderr(ews.name),
             "handle_unexpected_error": "Mock error message\n",
             "next_work_item": "",
-            "process_work_item": "MOCK: update_status: %(name)s Pass\nMOCK: release_work_item: %(name)s 197\n" % string_replacemnts,
+            "process_work_item": "MOCK: update_status: %(name)s Pass\nMOCK: release_work_item: %(name)s 10000\n" % string_replacemnts,
             "handle_script_error": "ScriptError error message\n",
         }
         return expected_stderr
@@ -75,7 +75,7 @@ class EarlyWarningSytemTest(QueuesTest):
         ews.bind_to_tool(MockTool())
         expected_stderr = self._default_expected_stderr(ews)
         string_replacemnts = {"name": ews.name}
-        expected_stderr["process_work_item"] = "MOCK: update_status: %(name)s Error: %(name)s cannot process patches from non-committers :(\nMOCK: release_work_item: %(name)s 197\n" % string_replacemnts
+        expected_stderr["process_work_item"] = "MOCK: update_status: %(name)s Error: %(name)s cannot process patches from non-committers :(\nMOCK: release_work_item: %(name)s 10000\n" % string_replacemnts
         self.assert_queue_outputs(ews, expected_stderr=expected_stderr)
 
     def _test_testing_ews(self, ews):

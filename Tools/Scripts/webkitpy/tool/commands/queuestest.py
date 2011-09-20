@@ -46,7 +46,7 @@ class MockQueueEngine(object):
 
 class QueuesTest(unittest.TestCase):
     # This is _patch1 in mocktool.py
-    mock_work_item = MockTool().bugs.fetch_attachment(197)
+    mock_work_item = MockTool().bugs.fetch_attachment(10000)
 
     def assert_outputs(self, func, func_name, args, expected_stdout, expected_stderr, expected_exceptions):
         exception = None

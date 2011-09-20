@@ -42,19 +42,19 @@ class UploadCommandsTest(CommandsTest):
 
     def test_assign_to_committer(self):
         tool = MockTool()
-        expected_stderr = """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
-MOCK reassign_bug: bug_id=42, assignee=eric@webkit.org
+        expected_stderr = """Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
+MOCK reassign_bug: bug_id=50000, assignee=eric@webkit.org
 -- Begin comment --
-Attachment 128 was posted by a committer and has review+, assigning to Eric Seidel for commit.
+Attachment 10001 was posted by a committer and has review+, assigning to Eric Seidel for commit.
 -- End comment --
-Bug 77 is already assigned to foo@foo.com (None).
-Bug 76 has no non-obsolete patches, ignoring.
+Bug 50003 is already assigned to foo@foo.com (None).
+Bug 50002 has no non-obsolete patches, ignoring.
 """
         self.assert_execute_outputs(AssignToCommitter(), [], expected_stderr=expected_stderr, tool=tool)
 
     def test_obsolete_attachments(self):
-        expected_stderr = "Obsoleting 2 old patches on bug 42\n"
-        self.assert_execute_outputs(ObsoleteAttachments(), [42], expected_stderr=expected_stderr)
+        expected_stderr = "Obsoleting 2 old patches on bug 50000\n"
+        self.assert_execute_outputs(ObsoleteAttachments(), [50000], expected_stderr=expected_stderr)
 
     def test_post(self):
         options = MockOptions()
@@ -67,38 +67,38 @@ Bug 76 has no non-obsolete patches, ignoring.
         options.suggest_reviewers = False
         expected_stderr = """MOCK: user.open_url: file://...
 Was that diff correct?
-Obsoleting 2 old patches on bug 42
-MOCK reassign_bug: bug_id=42, assignee=None
-MOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
-MOCK: user.open_url: http://example.com/42
+Obsoleting 2 old patches on bug 50000
+MOCK reassign_bug: bug_id=50000, assignee=None
+MOCK add_patch_to_bug: bug_id=50000, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
+MOCK: user.open_url: http://example.com/50000
 """
-        self.assert_execute_outputs(Post(), [42], options=options, expected_stderr=expected_stderr)
+        self.assert_execute_outputs(Post(), [50000], options=options, expected_stderr=expected_stderr)
 
     def test_attach_to_bug(self):
         options = MockOptions()
         options.comment = "extra comment"
         options.description = "file description"
-        expected_stderr = """MOCK add_attachment_to_bug: bug_id=42, description=file description filename=None
+        expected_stderr = """MOCK add_attachment_to_bug: bug_id=50000, description=file description filename=None
 -- Begin comment --
 extra comment
 -- End comment --
 """
-        self.assert_execute_outputs(AttachToBug(), [42, "path/to/file.txt", "file description"], options=options, expected_stderr=expected_stderr)
+        self.assert_execute_outputs(AttachToBug(), [50000, "path/to/file.txt", "file description"], options=options, expected_stderr=expected_stderr)
 
     def test_attach_to_bug_no_description_or_comment(self):
         options = MockOptions()
         options.comment = None
         options.description = None
-        expected_stderr = """MOCK add_attachment_to_bug: bug_id=42, description=file.txt filename=None
+        expected_stderr = """MOCK add_attachment_to_bug: bug_id=50000, description=file.txt filename=None
 """
-        self.assert_execute_outputs(AttachToBug(), [42, "path/to/file.txt"], options=options, expected_stderr=expected_stderr)
+        self.assert_execute_outputs(AttachToBug(), [50000, "path/to/file.txt"], options=options, expected_stderr=expected_stderr)
 
     def test_land_safely(self):
-        expected_stderr = "Obsoleting 2 old patches on bug 42\nMOCK add_patch_to_bug: bug_id=42, description=Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True\n"
-        self.assert_execute_outputs(LandSafely(), [42], expected_stderr=expected_stderr)
+        expected_stderr = "Obsoleting 2 old patches on bug 50000\nMOCK add_patch_to_bug: bug_id=50000, description=Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True\n"
+        self.assert_execute_outputs(LandSafely(), [50000], expected_stderr=expected_stderr)
 
     def test_prepare_diff_with_arg(self):
-        self.assert_execute_outputs(Prepare(), [42])
+        self.assert_execute_outputs(Prepare(), [50000])
 
     def test_prepare(self):
         expected_stderr = "MOCK create_bug\nbug_title: Mock user response\nbug_description: Mock user response\ncomponent: MOCK component\ncc: MOCK cc\n"
@@ -115,25 +115,25 @@ extra comment
         options.suggest_reviewers = False
         expected_stderr = """MOCK: user.open_url: file://...
 Was that diff correct?
-Obsoleting 2 old patches on bug 42
-MOCK reassign_bug: bug_id=42, assignee=None
-MOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
-MOCK: user.open_url: http://example.com/42
+Obsoleting 2 old patches on bug 50000
+MOCK reassign_bug: bug_id=50000, assignee=None
+MOCK add_patch_to_bug: bug_id=50000, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
+MOCK: user.open_url: http://example.com/50000
 """
-        self.assert_execute_outputs(Upload(), [42], options=options, expected_stderr=expected_stderr)
+        self.assert_execute_outputs(Upload(), [50000], options=options, expected_stderr=expected_stderr)
 
     def test_mark_bug_fixed(self):
         tool = MockTool()
         tool._scm.last_svn_commit_log = lambda: "r9876 |"
         options = Mock()
-        options.bug_id = 42
+        options.bug_id = 50000
         options.comment = "MOCK comment"
-        expected_stderr = """Bug: <http://example.com/42> Bug with two r+'d and cq+'d patches, one of which has an invalid commit-queue setter.
+        expected_stderr = """Bug: <http://example.com/50000> Bug with two r+'d and cq+'d patches, one of which has an invalid commit-queue setter.
 Revision: 9876
-MOCK: user.open_url: http://example.com/42
+MOCK: user.open_url: http://example.com/50000
 Is this correct?
-Adding comment to Bug 42.
-MOCK bug comment: bug_id=42, cc=None
+Adding comment to Bug 50000.
+MOCK bug comment: bug_id=50000, cc=None
 --- Begin comment ---
 MOCK comment
 

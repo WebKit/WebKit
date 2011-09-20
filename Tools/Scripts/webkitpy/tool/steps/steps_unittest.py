@@ -63,7 +63,7 @@ class StepsTest(unittest.TestCase):
 
     def test_prompt_for_bug_or_title_step(self):
         tool = MockTool()
-        tool.user.prompt = lambda message: 42
+        tool.user.prompt = lambda message: 50000
         self._run_step(PromptForBugOrTitle, tool=tool)
 
     def test_runtests_args(self):

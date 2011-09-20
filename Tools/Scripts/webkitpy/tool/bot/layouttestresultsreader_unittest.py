@@ -60,7 +60,7 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
     def test_archive_last_layout_test_results(self):
         tool = MockTool()
         reader = LayoutTestResultsReader(tool, "/var/logs")
-        patch = tool.bugs.fetch_attachment(128)
+        patch = tool.bugs.fetch_attachment(10001)
         tool.filesystem = MockFileSystem()
         # Should fail because the results_directory does not exist.
         expected_stderr = "/mock-results does not exist, not archiving.\n"

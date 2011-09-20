@@ -71,8 +71,8 @@ class IRCCommandTest(unittest.TestCase):
         tool = MockTool()
 
         # MockBugzilla has a create_bug, but it logs to stderr, this avoids any logging.
-        tool.bugs.create_bug = lambda a, b, cc=None, assignee=None: 78
-        self.assertEquals("tom: Created bug: http://example.com/78",
+        tool.bugs.create_bug = lambda a, b, cc=None, assignee=None: 50004
+        self.assertEquals("tom: Created bug: http://example.com/50004",
                           create_bug.execute("tom", example_args, tool, None))
 
         def mock_create_bug(title, description, cc=None, assignee=None):
