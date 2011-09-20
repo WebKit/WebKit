@@ -67,7 +67,8 @@ WebInspector.RawSourceCode.prototype = {
 
     get uiSourceCode()
     {
-        return this._uiSourceCode;
+        // FIXME: clients should use sourceMapping directly.
+        return this._sourceMapping && this._sourceMapping.uiSourceCode;
     },
 
     setFormatted: function(formatted)
@@ -91,17 +92,14 @@ WebInspector.RawSourceCode.prototype = {
 
     rawLocationToUILocation: function(rawLocation)
     {
-        var location = this._mapping ? this._mapping.originalToFormatted(rawLocation) : rawLocation;
-        return new WebInspector.UILocation(this.uiSourceCode, location.lineNumber, location.columnNumber);
+        // FIXME: clients should use sourceMapping directly.
+        return this._sourceMapping.rawLocationToUILocation(rawLocation);
     },
 
     uiLocationToRawLocation: function(lineNumber, columnNumber)
     {
-        var rawLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
-        if (this._mapping)
-            rawLocation = this._mapping.formattedToOriginal(rawLocation);
-        rawLocation.scriptId = this._scriptForRawLocation(rawLocation.lineNumber, rawLocation.columnNumber).scriptId;
-        return rawLocation;
+        // FIXME: clients should use sourceMapping directly.
+        return this._sourceMapping.uiLocationToRawLocation(lineNumber, columnNumber);
     },
 
     _scriptForRawLocation: function(lineNumber, columnNumber)
@@ -160,7 +158,9 @@ WebInspector.RawSourceCode.prototype = {
     _createSourceMapping: function(originalContentProvider, callback)
     {
         if (!this._formatted) {
-            callback(originalContentProvider, null);
+            var uiSourceCode = new WebInspector.UISourceCode(this.id, this.url, this.isContentScript, this, originalContentProvider);
+            var sourceMapping = new WebInspector.RawSourceCode.PlainSourceMapping(this, uiSourceCode);
+            callback(sourceMapping);
             return;
         }
 
@@ -169,24 +169,85 @@ WebInspector.RawSourceCode.prototype = {
             function didFormatContent(formattedContent, mapping)
             {
                 var contentProvider = new WebInspector.StaticContentProvider(mimeType, formattedContent)
-                callback(contentProvider, mapping);
+                var uiSourceCode = new WebInspector.UISourceCode("deobfuscated:" + this.id, this.url, this.isContentScript, this, contentProvider);
+                var sourceMapping = new WebInspector.RawSourceCode.FormattedSourceMapping(this, uiSourceCode, mapping);
+                callback(sourceMapping);
             }
             this._formatter.formatContent(mimeType, content, didFormatContent.bind(this));
         }
         originalContentProvider.requestContent(didRequestContent.bind(this));
     },
 
-    _saveSourceMapping: function(contentProvider, mapping)
+    _saveSourceMapping: function(sourceMapping)
     {
-        var oldUISourceCode = this._uiSourceCode;
-        var uiSourceCodeId = (this._formatted ? "deobfuscated:" : "") + (this._scripts[0].sourceURL || this._scripts[0].scriptId);
-        this._uiSourceCode = new WebInspector.UISourceCode(uiSourceCodeId, this.url, this.isContentScript, this, contentProvider);
-        this._mapping = mapping;
+        var oldUISourceCode;
+        if (this._sourceMapping)
+            oldUISourceCode = this._sourceMapping.uiSourceCode;
+        this._sourceMapping = sourceMapping;
         this.dispatchEventToListeners(WebInspector.RawSourceCode.Events.SourceMappingUpdated, { oldUISourceCode: oldUISourceCode });
     }
 }
 
 WebInspector.RawSourceCode.prototype.__proto__ = WebInspector.Object.prototype;
+
+
+/**
+ * @constructor
+ */
+WebInspector.RawSourceCode.PlainSourceMapping = function(rawSourceCode, uiSourceCode)
+{
+    this._rawSourceCode = rawSourceCode;
+    this._uiSourceCode = uiSourceCode;
+}
+
+WebInspector.RawSourceCode.PlainSourceMapping.prototype = {
+    rawLocationToUILocation: function(rawLocation)
+    {
+        return new WebInspector.UILocation(this._uiSourceCode, rawLocation.lineNumber, rawLocation.columnNumber);
+    },
+
+    uiLocationToRawLocation: function(lineNumber, columnNumber)
+    {
+        var rawLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
+        rawLocation.scriptId = this._rawSourceCode._scriptForRawLocation(rawLocation.lineNumber, rawLocation.columnNumber).scriptId;
+        return rawLocation;
+    },
+
+    get uiSourceCode()
+    {
+        return this._uiSourceCode;
+    }
+}
+
+/**
+ * @constructor
+ */
+WebInspector.RawSourceCode.FormattedSourceMapping = function(rawSourceCode, uiSourceCode, mapping)
+{
+    this._rawSourceCode = rawSourceCode;
+    this._uiSourceCode = uiSourceCode;
+    this._mapping = mapping;
+}
+
+WebInspector.RawSourceCode.FormattedSourceMapping.prototype = {
+    rawLocationToUILocation: function(rawLocation)
+    {
+        var location = this._mapping.originalToFormatted(rawLocation);
+        return new WebInspector.UILocation(this._uiSourceCode, location.lineNumber, location.columnNumber);
+    },
+
+    uiLocationToRawLocation: function(lineNumber, columnNumber)
+    {
+        var rawLocation = this._mapping.formattedToOriginal({ lineNumber: lineNumber, columnNumber: columnNumber });
+        rawLocation.scriptId = this._rawSourceCode._scriptForRawLocation(rawLocation.lineNumber, rawLocation.columnNumber).scriptId;
+        return rawLocation;
+    },
+
+    get uiSourceCode()
+    {
+        return this._uiSourceCode;
+    }
+}
 
 
 /**
