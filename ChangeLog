@@ -1,3 +1,12 @@
+2011-09-20  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [GTK] requestAnimationFrame support for gtk port
+        https://bugs.webkit.org/show_bug.cgi?id=66280
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: Add an option to enable requestAnimationFrame for gtk port.
+
 2011-09-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Update NEWS and configure.ac for 1.5.90 release

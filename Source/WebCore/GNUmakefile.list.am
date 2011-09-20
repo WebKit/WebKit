@@ -4853,3 +4853,17 @@ webcore_sources += \
 	Source/WebCore/loader/archive/mhtml/MHTMLParser.cpp \
 	Source/WebCore/loader/archive/mhtml/MHTMLParser.h
 endif  # END ENABLE_MHTML
+
+# ---
+# RequestAnimationFrame support
+# ---
+if ENABLE_REQUEST_ANIMATION_FRAME
+webcore_built_sources += \
+    DerivedSources/WebCore/JSRequestAnimationFrameCallback.cpp \
+    DerivedSources/WebCore/JSRequestAnimationFrameCallback.h
+webcore_sources += \
+    Source/WebCore/bindings/js/JSRequestAnimationFrameCallbackCustom.cpp \
+    Source/WebCore/dom/RequestAnimationFrameCallback.h \
+    Source/WebCore/dom/ScriptedAnimationController.cpp \
+    Source/WebCore/dom/ScriptedAnimationController.h
+endif  # END ENABLE_REQUEST_ANIMATION_FRAME

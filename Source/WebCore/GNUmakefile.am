@@ -550,6 +550,14 @@ webcore_cppflags += -DENABLE_ANIMATION_API=1
 endif  # END ENABLE_ANIMATION_API
 
 # ---
+# RequestAnimationFrame support
+# ---
+if ENABLE_REQUEST_ANIMATION_FRAME
+FEATURE_DEFINES += ENABLE_REQUEST_ANIMATION_FRAME=1
+webcore_cppflags += -DENABLE_REQUEST_ANIMATION_FRAME=1
+endif  # END ENABLE_REQUEST_ANIMATION_FRAME
+
+# ---
 # 3D canvas (WebGL) support
 # ---
 if ENABLE_WEBGL

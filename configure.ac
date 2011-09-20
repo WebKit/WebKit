@@ -877,6 +877,14 @@ AC_ARG_ENABLE(animation_api,
               [], [enable_animation_api="no"])
 AC_MSG_RESULT([$enable_animation_api])
 
+# check whether to enable requestAnimationFrame support
+AC_MSG_CHECKING([whether to enable requestAnimationFrame support])
+AC_ARG_ENABLE(request_animation_frame,
+              AC_HELP_STRING([--enable-request-animation-frame],
+                             [enable support for requestAnimationFrame (experimental) [default=no]]),
+              [],[enable_request_animation_frame="no"])
+AC_MSG_RESULT([$enable_request_animation_frame])
+
 # check whether to enable touch icon loading 
 AC_MSG_CHECKING([whether to enable touch icon loading])
 AC_ARG_ENABLE(touch_icon_loading,
@@ -1168,6 +1176,7 @@ AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
 AM_CONDITIONAL([ENABLE_PLUGIN_PROCESS],[test "$enable_plugin_process" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
 AM_CONDITIONAL([ENABLE_ANIMATION_API],[test "$enable_animation_api" = "yes"])
+AM_CONDITIONAL([ENABLE_REQUEST_ANIMATION_FRAME],[test "$enable_request_animation_frame" = "yes"])
 AM_CONDITIONAL([ENABLE_TOUCH_ICON_LOADING],[test "$enable_touch_icon_loading" = "yes"])
 AM_CONDITIONAL([ENABLE_REGISTER_PROTOCOL_HANDLER],[test "$enable_register_protocol_handler" = "yes"])
 AM_CONDITIONAL([ENABLE_DEVICE_ORIENTATION],[test "$enable_device_orientation" = "yes"])
@@ -1268,6 +1277,7 @@ Features:
  XSLT support                                             : $enable_xslt
  Spellcheck support                                       : $enable_spellcheck
  Animation API                                            : $enable_animation_api
+ RequestAnimationFrame support                            : $enable_request_animation_frame
  Touch Icon Loading support                               : $enable_touch_icon_loading
  Register Protocol Handler support                        : $enable_register_protocol_handler
  WebKit2 support                                          : $enable_webkit2
