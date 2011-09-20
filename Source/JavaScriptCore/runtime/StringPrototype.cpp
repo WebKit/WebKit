@@ -830,10 +830,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
 
         // 10. If separator is undefined, then
         if (separatorValue.isUndefined()) {
-            // a.  Call the [[DefineOwnProperty]] internal method of A with arguments "0",
-            //     Property Descriptor {[[Value]]: S, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
+            // a. Call the [[DefineOwnProperty]] internal method of A with arguments "0",
+            //    Property Descriptor {[[Value]]: S, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
             result->put(exec, 0, jsStringWithReuse(exec, thisValue, input));
-            // b.  Return A.
+            // b. Return A.
             return JSValue::encode(result);
         }
 
@@ -937,9 +937,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
             // Zero limt/input length handled in steps 9/11 respectively, above.
             ASSERT(limit);
 
-            do
+            do {
                 result->put(exec, position, jsSingleCharacterSubstring(exec, input, position));
-            while (++position < limit);
+            } while (++position < limit);
 
             return JSValue::encode(result);
         }
