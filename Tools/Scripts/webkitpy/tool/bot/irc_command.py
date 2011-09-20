@@ -66,26 +66,42 @@ class Restart(IRCCommand):
 
 
 class Rollout(IRCCommand):
+    def _extract_revisions(self, arg):
+
+        revision_list = []
+        possible_revisions = arg.split(",")
+        for revision in possible_revisions:
+            revision = revision.strip()
+            if not revision:
+                continue
+            revision = revision.lstrip("r")
+            # If one part of the arg isn't in the correct format,
+            # then none of the arg should be considered a revision.
+            if not revision.isdigit():
+                return None
+            revision_list.append(int(revision))
+        return revision_list
+
     def _parse_args(self, args):
         if not args:
             return (None, None)
 
-        # the first argument must be a revision number
-        first_revision = args[0].lstrip("r")
-        if not first_revision.isdigit():
+        svn_revision_list = []
+        remaining_args = args[:]
+        # First process all revisions.
+        while remaining_args:
+            new_revisions = self._extract_revisions(remaining_args[0])
+            if not new_revisions:
+                break
+            svn_revision_list += new_revisions
+            remaining_args = remaining_args[1:]
+
+        # Was there a revision number?
+        if not len(svn_revision_list):
             return (None, None)
 
-        parsing_revision = True
-        svn_revision_list = [int(first_revision)]
-        rollout_reason = []
-        for arg in args[1:]:
-            if arg.lstrip("r").isdigit() and parsing_revision:
-                svn_revision_list.append(int(arg.lstrip("r")))
-            else:
-                parsing_revision = False
-                rollout_reason.append(arg)
-
-        rollout_reason = " ".join(rollout_reason)
+        # Everything left is the reason.
+        rollout_reason = " ".join(remaining_args)
         return svn_revision_list, rollout_reason
 
     def _responsible_nicknames_from_revisions(self, tool, sheriff, svn_revision_list):
@@ -161,7 +177,7 @@ class RollChromiumDEPS(IRCCommand):
 
 class Help(IRCCommand):
     def execute(self, nick, args, tool, sheriff):
-        return "%s: Available commands: %s" % (nick, ", ".join(sorted(commands.keys())))
+        return "%s: Available commands: %s" % (nick, ", ".join(sorted(visible_commands.keys())))
 
 
 class Hi(IRCCommand):
@@ -235,7 +251,7 @@ class CreateBug(IRCCommand):
 
 
 # FIXME: Lame.  We should have an auto-registering CommandCenter.
-commands = {
+visible_commands = {
     "help": Help,
     "hi": Hi,
     "last-green-revision": LastGreenRevision,
@@ -245,3 +261,10 @@ commands = {
     "create-bug": CreateBug,
     "roll-chromium-deps": RollChromiumDEPS,
 }
+
+# Add revert as an "easter egg" command. Why?
+# revert is the same as rollout and it would be confusing to list both when
+# they do the same thing. However, this command is a very natural thing for
+# people to use and it seems silly to have them hunt around for "rollout" instead.
+commands = visible_commands.copy()
+commands["revert"] = Rollout

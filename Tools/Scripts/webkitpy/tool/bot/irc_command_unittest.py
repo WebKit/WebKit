@@ -98,6 +98,18 @@ class IRCCommandTest(unittest.TestCase):
         self.assertEquals(([1234], "testing foo"),
                           rollout._parse_args(["1234", "testing", "foo"]))
 
+        self.assertEquals(([554], "testing foo"),
+                          rollout._parse_args(["r554", "testing", "foo"]))
+
+        self.assertEquals(([556, 792], "testing foo"),
+                          rollout._parse_args(["r556", "792", "testing", "foo"]))
+
+        self.assertEquals(([128, 256], "testing foo"),
+                          rollout._parse_args(["r128,r256", "testing", "foo"]))
+
+        self.assertEquals(([512, 1024, 2048], "testing foo"),
+                          rollout._parse_args(["512,", "1024,2048", "testing", "foo"]))
+
         # Test invalid argument parsing:
         self.assertEquals((None, None), rollout._parse_args([]))
         self.assertEquals((None, None), rollout._parse_args(["--bar", "1234"]))
