@@ -68,19 +68,28 @@ WebInspector.ClosureCompilerSourceMapping = function(payload)
     }
 
     this._sources = payload.sources;
-    this._mappings = this._parsePayload(payload);
+    this._mappings = [];
+    this._reverseMappingsBySourceURL = {};
+    for (var i = 0; i < this._sources.length; ++i)
+        this._reverseMappingsBySourceURL[this._sources[i]] = [];
+    this._parseMappings(payload.mappings);
 }
 
 WebInspector.ClosureCompilerSourceMapping.prototype = {
     compiledLocationToSourceLocation: function(lineNumber, columnNumber)
     {
         var mapping = this._findMapping(lineNumber, columnNumber);
-        var sourceURL = this._sources[mapping[2]];
-        return { sourceURL: sourceURL, lineNumber: mapping[3], columnNumber: mapping[4] };
+        return { sourceURL: mapping[2], lineNumber: mapping[3], columnNumber: mapping[4] };
     },
 
-    sourceLocationToCompiledLocation: function(sourceURL, lineNumber, columnNumber)
+    sourceLocationToCompiledLocation: function(sourceURL, lineNumber)
     {
+        var mappings = this._reverseMappingsBySourceURL[sourceURL];
+        for ( ; lineNumber < mappings.length; ++lineNumber) {
+            var mapping = mappings[lineNumber];
+            if (mapping)
+                return { lineNumber: mapping[0], columnNumber: mapping[1] };
+        }
     },
 
     sources: function()
@@ -106,10 +115,9 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
         return this._mappings[first];
     },
 
-    _parsePayload: function(payload)
+    _parseMappings: function(mappingsPayload)
     {
-        var mappings = [];
-        var stringCharIterator = new WebInspector.ClosureCompilerSourceMapping.StringCharIterator(payload.mappings);
+        var stringCharIterator = new WebInspector.ClosureCompilerSourceMapping.StringCharIterator(mappingsPayload);
 
         var lineNumber = 0;
         var columnNumber = 0;
@@ -117,25 +125,34 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
         var sourceLineNumber = 0;
         var sourceColumnNumber = 0;
         var nameIndex = 0;
+
+        var sourceURL = this._sources[0];
+        var reverseMappings = this._reverseMappingsBySourceURL[sourceURL];
+
         do {
             columnNumber += this._decodeVLQ(stringCharIterator);
             if (this._isSeparator(stringCharIterator.peek()))
                 continue;
-            sourceIndex += this._decodeVLQ(stringCharIterator);
+            var sourceIndexDelta = this._decodeVLQ(stringCharIterator);
+            if (sourceIndexDelta) {
+                sourceIndex += sourceIndexDelta;
+                sourceURL = this._sources[sourceIndex];
+                reverseMappings = this._reverseMappingsBySourceURL[sourceURL];
+            }
             sourceLineNumber += this._decodeVLQ(stringCharIterator);
             sourceColumnNumber += this._decodeVLQ(stringCharIterator);
-            var mapping = [lineNumber, columnNumber, sourceIndex, sourceLineNumber, sourceColumnNumber];
-            if (!this._isSeparator(stringCharIterator.peek())) {
+            if (!this._isSeparator(stringCharIterator.peek()))
                 nameIndex += this._decodeVLQ(stringCharIterator);
-                mapping.push(nameIndex);
-            }
-            mappings.push(mapping);
+
+            this._mappings.push([lineNumber, columnNumber, sourceURL, sourceLineNumber, sourceColumnNumber]);
+            if (!reverseMappings[sourceLineNumber])
+                reverseMappings[sourceLineNumber] = [lineNumber, columnNumber];
+
             if (stringCharIterator.next() === ";") {
                 lineNumber += 1;
                 columnNumber = 0;
             }
         } while(stringCharIterator.hasNext());
-        return mappings;
     },
 
     _isSeparator: function(char)

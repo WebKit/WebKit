@@ -173,7 +173,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
             return false;
         var rawSourceCode = uiSourceCode.rawSourceCode;
         var script = this._scriptForRawSourceCode(rawSourceCode);
-        return !script.lineOffset && !script.columnOffset;
+        return script && !script.lineOffset && !script.columnOffset;
     },
 
     setScriptSource: function(uiSourceCode, newSource, callback)
