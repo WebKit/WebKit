@@ -1,3 +1,20 @@
+2011-09-20  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] Export QNetworkReply in the QtWebKit QML module.
+        https://bugs.webkit.org/show_bug.cgi?id=68401
+
+        Reviewed by Simon Hausmann.
+
+        Add QNetworkReply in the QtWebKit module. We use the enum QNetworkReply::NetworkError
+        as the error code when the load fails. It is not used in the QtQuick module therefore
+        the QML team thinks it should belong here. Also added some auto-tests to cover the
+        loading errors.
+
+        * UIProcess/API/qt/qmlplugin/plugin.cpp:
+        (WebKit2QmlPlugin::registerTypes):
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_loadFail.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadFail.qml: Added.
+
 2011-09-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Buildfix after r95513.

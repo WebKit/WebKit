@@ -24,6 +24,7 @@
 
 #include <QtDeclarative/qdeclarative.h>
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
+#include <QtNetwork/qnetworkreply.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -37,6 +38,7 @@ public:
         qmlRegisterType<QTouchWebView>(uri, 5, 0, "TouchWebView");
         qmlRegisterUncreatableType<QWebNavigationController>(uri, 5, 0, "NavigationController", QObject::tr("Cannot create separate instance of NavigationController"));
         qmlRegisterUncreatableType<QTouchWebPage>(uri, 5, 0, "TouchWebPage", QObject::tr("Cannot create separate instance of TouchWebPage, use TouchWebView"));
+        qmlRegisterUncreatableType<QNetworkReply>(uri, 5, 0, "NetworkReply", QObject::tr("Cannot create separate instance of NetworkReply"));
     }
 };
 
