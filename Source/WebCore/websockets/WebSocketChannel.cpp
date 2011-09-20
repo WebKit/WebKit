@@ -333,7 +333,7 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle* handle, const Soc
         ASSERT(failingURL.isNull() || m_handshake->url().string() == failingURL);
         if (failingURL.isNull())
             failingURL = m_handshake->url().string();
-        m_context->addMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, 0, failingURL, 0);
+        m_context->addMessage(NetworkMessageSource, LogMessageType, ErrorMessageLevel, message, 0, failingURL, 0);
     }
     m_shouldDiscardReceivedData = true;
     handle->disconnect();

@@ -2356,8 +2356,7 @@ EventTarget* Document::errorEventTarget()
 
 void Document::logExceptionToConsole(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack> callStack)
 {
-    MessageType messageType = callStack ? UncaughtExceptionMessageType : LogMessageType;
-    addMessage(JSMessageSource, messageType, ErrorMessageLevel, errorMessage, lineNumber, sourceURL, callStack);
+    addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, errorMessage, lineNumber, sourceURL, callStack);
 }
 
 void Document::setURL(const KURL& url)

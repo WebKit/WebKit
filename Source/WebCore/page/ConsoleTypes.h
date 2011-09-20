@@ -32,20 +32,22 @@ enum MessageSource {
     HTMLMessageSource,
     XMLMessageSource,
     JSMessageSource,
-    CSSMessageSource,
-    OtherMessageSource
+    NetworkMessageSource,
+    ConsoleAPIMessageSource,
+    OtherMessageSource,
 };
 
+// FIXME: make this enum private to inspector, remove it from client callbacks.
+// https://bugs.webkit.org/show_bug.cgi?id=66371
 enum MessageType {
     LogMessageType,
-    ObjectMessageType,
+    DirMessageType,
+    DirXMLMessageType,
     TraceMessageType,
     StartGroupMessageType,
     StartGroupCollapsedMessageType,
     EndGroupMessageType,
-    AssertMessageType,
-    UncaughtExceptionMessageType,
-    NetworkErrorMessageType
+    AssertMessageType
 };
 
 enum MessageLevel {

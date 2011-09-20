@@ -95,8 +95,11 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
     case JSMessageSource:
         sourceString = "JS";
         break;
-    case CSSMessageSource:
-        sourceString = "CSS";
+    case NetworkMessageSource:
+        sourceString = "NETWORK";
+        break;
+    case ConsoleAPIMessageSource:
+        sourceString = "CONSOLEAPI";
         break;
     case OtherMessageSource:
         sourceString = "OTHER";
@@ -176,7 +179,7 @@ void Console::addMessage(MessageType type, MessageLevel level, PassRefPtr<Script
 
     if (Console::shouldPrintExceptions()) {
         printSourceURLAndLine(lastCaller.sourceURL(), 0);
-        printMessageSourceAndLevelPrefix(JSMessageSource, level);
+        printMessageSourceAndLevelPrefix(ConsoleAPIMessageSource, level);
 
         for (unsigned i = 0; i < arguments->argumentCount(); ++i) {
             String argAsString;
@@ -188,9 +191,9 @@ void Console::addMessage(MessageType type, MessageLevel level, PassRefPtr<Script
 
     String message;
     if (arguments->getFirstArgumentAsString(message))
-        page->chrome()->client()->addMessageToConsole(JSMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.sourceURL());
+        page->chrome()->client()->addMessageToConsole(ConsoleAPIMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.sourceURL());
 
-    InspectorInstrumentation::addMessageToConsole(page, JSMessageSource, type, level, message, arguments, callStack);
+    InspectorInstrumentation::addMessageToConsole(page, ConsoleAPIMessageSource, type, level, message, arguments, callStack);
 }
 
 void Console::debug(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
@@ -216,13 +219,12 @@ void Console::log(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallSt
 
 void Console::dir(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
-    addMessage(ObjectMessageType, LogMessageLevel, arguments, callStack);
+    addMessage(DirMessageType, LogMessageLevel, arguments, callStack);
 }
 
 void Console::dirxml(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
-    // The standard behavior of our console.log will print the DOM tree for nodes.
-    log(arguments, callStack);
+    addMessage(DirXMLMessageType, LogMessageLevel, arguments, callStack);
 }
 
 void Console::trace(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> prpCallStack)
@@ -316,17 +318,17 @@ void Console::timeStamp(PassRefPtr<ScriptArguments> arguments, PassRefPtr<Script
 
 void Console::group(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
-    InspectorInstrumentation::addMessageToConsole(page(), JSMessageSource, StartGroupMessageType, LogMessageLevel, String(), arguments, callStack);
+    InspectorInstrumentation::addMessageToConsole(page(), ConsoleAPIMessageSource, StartGroupMessageType, LogMessageLevel, String(), arguments, callStack);
 }
 
 void Console::groupCollapsed(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
-    InspectorInstrumentation::addMessageToConsole(page(), JSMessageSource, StartGroupCollapsedMessageType, LogMessageLevel, String(), arguments, callStack);
+    InspectorInstrumentation::addMessageToConsole(page(), ConsoleAPIMessageSource, StartGroupCollapsedMessageType, LogMessageLevel, String(), arguments, callStack);
 }
 
 void Console::groupEnd()
 {
-    InspectorInstrumentation::addMessageToConsole(page(), JSMessageSource, EndGroupMessageType, LogMessageLevel, String(), 0, String());
+    InspectorInstrumentation::addMessageToConsole(page(), ConsoleAPIMessageSource, EndGroupMessageType, LogMessageLevel, String(), 0, String());
 }
 
 bool Console::shouldCaptureFullStackTrace() const

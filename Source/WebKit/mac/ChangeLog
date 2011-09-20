@@ -1,3 +1,22 @@
+2011-09-19  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: streamline Console's MessageType and MessageSource semantics.
+        https://bugs.webkit.org/show_bug.cgi?id=68342
+
+        This change fixes semantics of the MessageSource and MessageType:
+        MessageSource is now the source of the message (be it Network, HTML
+        parser or Console API). MessageType is only defined for the Console API
+        messages and contains the name of the API call (log, dir, dirxml, etc.). 
+        Subsequent https://bugs.webkit.org/show_bug.cgi?id=66371 will make MessageType
+        private to the inspector.
+
+        Reviewed by Tony Gentilcore.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (stringForMessageSource):
+        (stringForMessageType):
+        * WebView/WebUIDelegatePrivate.h:
+
 2011-09-19  Timothy Hatcher  <timothy@apple.com>
 
         Make WebViews in NSPopovers render as they would in active windows.

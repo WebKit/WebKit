@@ -73,64 +73,62 @@ WebInspector.ConsoleMessage = function(source, type, level, line, url, repeatCou
 WebInspector.ConsoleMessage.createTextMessage = function(text, level)
 {
     level = level || WebInspector.ConsoleMessage.MessageLevel.Log;
-    return new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Log, level, 0, null, 1, null, [text], null);
+    return new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.ConsoleAPI, WebInspector.ConsoleMessage.MessageType.Log, level, 0, null, 1, null, [text], null);
 }
 
 WebInspector.ConsoleMessage.prototype = {
     _formatMessage: function()
     {
-        var stackTrace = this._stackTrace;
-
         this._formattedMessage = document.createElement("span");
         this._formattedMessage.className = "console-message-text source-code";
 
         var messageText;
-        switch (this.type) {
-            case WebInspector.ConsoleMessage.MessageType.Trace:
-                messageText = document.createTextNode("console.trace()");
-                break;
-            case WebInspector.ConsoleMessage.MessageType.UncaughtException:
-                messageText = document.createTextNode(this._messageText);
-                break;
-            case WebInspector.ConsoleMessage.MessageType.NetworkError:
-                if (this._request) {
-                    stackTrace = this._request.stackTrace;
-
-                    messageText = document.createElement("span");
-                    messageText.appendChild(document.createTextNode(this._request.requestMethod + " "));
-                    var anchor = WebInspector.linkifyURLAsNode(this._request.url);
-                    anchor.setAttribute("request_id", this._request.requestId);
-                    anchor.setAttribute("preferred_panel", "network");
-                    messageText.appendChild(anchor);
-                    if (this._request.failed)
-                        messageText.appendChild(document.createTextNode(" " + this._request.localizedFailDescription));
-                    else
-                        messageText.appendChild(document.createTextNode(" " + this._request.statusCode + " (" + this._request.statusText + ")"));
-                } else {
-                    var isExternal = !WebInspector.resourceForURL(this.url);
-                    var anchor = WebInspector.linkifyURLAsNode(this.url, this.url, "console-message-url", isExternal);
-                    this._formattedMessage.appendChild(anchor);
-                    messageText = this._format([this._messageText]);
-                }
-                break;
-            case WebInspector.ConsoleMessage.MessageType.Assert:
-                var args = [WebInspector.UIString("Assertion failed:")];
-                if (this._parameters)
-                    args = args.concat(this._parameters);
-                messageText = this._format(args);
-                break;
-            case WebInspector.ConsoleMessage.MessageType.Object:
-                var obj = this._parameters ? this._parameters[0] : undefined;
-                var args = ["%O", obj];
-                messageText = this._format(args);
-                break;
-            default:
-                var args = this._parameters || [this._messageText];
-                messageText = this._format(args);
-                break;
+        if (this.source === WebInspector.ConsoleMessage.MessageSource.ConsoleAPI) {
+            switch (this.type) {
+                case WebInspector.ConsoleMessage.MessageType.Trace:
+                    messageText = document.createTextNode("console.trace()");
+                    break;
+                case WebInspector.ConsoleMessage.MessageType.Assert:
+                    var args = [WebInspector.UIString("Assertion failed:")];
+                    if (this._parameters)
+                        args = args.concat(this._parameters);
+                    messageText = this._format(args);
+                    break;
+                case WebInspector.ConsoleMessage.MessageType.Dir:
+                    var obj = this._parameters ? this._parameters[0] : undefined;
+                    var args = ["%O", obj];
+                    messageText = this._format(args);
+                    break;
+                default:
+                    var args = this._parameters || [this._messageText];
+                    messageText = this._format(args);
+            }
+        } else if (this.source === WebInspector.ConsoleMessage.MessageSource.Network) {
+            if (this._request) {
+                this._stackTrace = this._request.stackTrace;
+                messageText = document.createElement("span");
+                messageText.appendChild(document.createTextNode(this._request.requestMethod + " "));
+                var anchor = WebInspector.linkifyURLAsNode(this._request.url);
+                anchor.setAttribute("request_id", this._request.requestId);
+                anchor.setAttribute("preferred_panel", "network");
+                messageText.appendChild(anchor);
+                if (this._request.failed)
+                    messageText.appendChild(document.createTextNode(" " + this._request.localizedFailDescription));
+                else
+                    messageText.appendChild(document.createTextNode(" " + this._request.statusCode + " (" + this._request.statusText + ")"));
+            } else {
+                var isExternal = !WebInspector.resourceForURL(this.url);
+                var anchor = WebInspector.linkifyURLAsNode(this.url, this.url, "console-message-url", isExternal);
+                this._formattedMessage.appendChild(anchor);
+                messageText = this._format([this._messageText]);
+            }
+        } else {
+            var args = this._parameters || [this._messageText];
+            messageText = this._format(args);
         }
 
-        if (this.type !== WebInspector.ConsoleMessage.MessageType.NetworkError) {
+        // FIXME: we should dump network message origins as well.
+        if (this.source !== WebInspector.ConsoleMessage.MessageSource.Network) {
             if (this._stackTrace && this._stackTrace.length && this._stackTrace[0].url) {
                 var urlElement = this._linkifyCallFrame(this._stackTrace[0]);
                 this._formattedMessage.appendChild(urlElement);
@@ -142,27 +140,21 @@ WebInspector.ConsoleMessage.prototype = {
 
         this._formattedMessage.appendChild(messageText);
 
-        if (this._stackTrace) {
-            switch (this.type) {
-                case WebInspector.ConsoleMessage.MessageType.Trace:
-                case WebInspector.ConsoleMessage.MessageType.UncaughtException:
-                case WebInspector.ConsoleMessage.MessageType.NetworkError:
-                case WebInspector.ConsoleMessage.MessageType.Assert: {
-                    var ol = document.createElement("ol");
-                    ol.className = "outline-disclosure";
-                    var treeOutline = new TreeOutline(ol);
+        var dumpStackTrace = !!this._stackTrace && (this.level === WebInspector.ConsoleMessage.MessageLevel.Error || this.type === WebInspector.ConsoleMessage.MessageType.Trace);
+        if (dumpStackTrace) {
+            var ol = document.createElement("ol");
+            ol.className = "outline-disclosure";
+            var treeOutline = new TreeOutline(ol);
 
-                    var content = this._formattedMessage;
-                    var root = new TreeElement(content, null, true);
-                    content.treeElementForTest = root;
-                    treeOutline.appendChild(root);
-                    if (this.type === WebInspector.ConsoleMessage.MessageType.Trace)
-                        root.expand();
+            var content = this._formattedMessage;
+            var root = new TreeElement(content, null, true);
+            content.treeElementForTest = root;
+            treeOutline.appendChild(root);
+            if (this.type === WebInspector.ConsoleMessage.MessageType.Trace)
+                root.expand();
 
-                    this._populateStackTraceTreeElement(root);
-                    this._formattedMessage = ol;
-                }
-            }
+            this._populateStackTraceTreeElement(root);
+            this._formattedMessage = ol;
         }
 
         // This is used for inline message bubbles in SourceFrames, or other plain-text representations.
@@ -386,8 +378,11 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageSource.JS:
                 sourceString = "JS";
                 break;
-            case WebInspector.ConsoleMessage.MessageSource.CSS:
-                sourceString = "CSS";
+            case WebInspector.ConsoleMessage.MessageSource.Network:
+                sourceString = "Network";
+                break;
+            case WebInspector.ConsoleMessage.MessageSource.ConsoleAPI:
+                sourceString = "ConsoleAPI";
                 break;
             case WebInspector.ConsoleMessage.MessageSource.Other:
                 sourceString = "Other";
@@ -397,12 +392,13 @@ WebInspector.ConsoleMessage.prototype = {
         var typeString;
         switch (this.type) {
             case WebInspector.ConsoleMessage.MessageType.Log:
-            case WebInspector.ConsoleMessage.MessageType.UncaughtException:
-            case WebInspector.ConsoleMessage.MessageType.NetworkError:
                 typeString = "Log";
                 break;
-            case WebInspector.ConsoleMessage.MessageType.Object:
-                typeString = "Object";
+            case WebInspector.ConsoleMessage.MessageType.Dir:
+                typeString = "Dir";
+                break;
+            case WebInspector.ConsoleMessage.MessageType.DirXML:
+                typeString = "Dir XML";
                 break;
             case WebInspector.ConsoleMessage.MessageType.Trace:
                 typeString = "Trace";
@@ -488,20 +484,20 @@ WebInspector.ConsoleMessage.MessageSource = {
     HTML: "html",
     XML: "xml",
     JS: "javascript",
-    CSS: "css",
+    Network: "network",
+    ConsoleAPI: "console-api",
     Other: "other"
 }
 
 WebInspector.ConsoleMessage.MessageType = {
     Log: "log",
-    Object: "other",
+    Dir: "dir",
+    DirXML: "dirxml",
     Trace: "trace",
     StartGroup: "startGroup",
     StartGroupCollapsed: "startGroupCollapsed",
     EndGroup: "endGroup",
     Assert: "assert",
-    UncaughtException: "uncaughtException",
-    NetworkError: "networkError",
     Result: "result"
 }
 

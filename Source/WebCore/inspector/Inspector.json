@@ -332,22 +332,22 @@
     },
     {
         "domain": "Console",
-        "description": "Console domain defines methods and events for interaction with the JavaScript console. Console collects messages created by means of the <a href='http://getfirebug.com/wiki/index.php/Console_API'>JavaScript Console API</a>. One needs to enable this domain using <code>enable</code> function in order to start receiving the console messages. Browser will collect messages issued while console domain is not enabled and will report them using <code>messageAdded</code> notification upon enabling.",
+        "description": "Console domain defines methods and events for interaction with the JavaScript console. Console collects messages created by means of the <a href='http://getfirebug.com/wiki/index.php/Console_API'>JavaScript Console API</a>. One needs to enable this domain using <code>enable</code> command in order to start receiving the console messages. Browser collects messages issued while console domain is not enabled as well and reports them using <code>messageAdded</code> notification upon enabling.",
         "types": [
             {
                 "id": "ConsoleMessage",
                 "type": "object",
                 "description": "Console message.",
                 "properties": [
-                    { "name": "source", "type": "string", "enum": ["html", "wml", "xml", "javascript", "css", "other"], "description": "Message source." },
-                    { "name": "type", "type": "string", "enum": ["log", "other", "trace", "startGroup", "startGroupCollapsed", "endGroup", "assert", "uncaughtException", "networkError", "result"], "description": "Message type." },
+                    { "name": "source", "type": "string", "enum": ["html", "wml", "xml", "javascript", "network", "console-api", "other"], "description": "Message source." },
+                    { "name": "type", "type": "string", "enum": ["log", "dir", "dirxml", "trace", "startGroup", "startGroupCollapsed", "endGroup", "assert"], "description": "Console message type." },
                     { "name": "level", "type": "string", "enum": ["tip", "log", "warning", "error", "debug"], "description": "Message severity." },
-                    { "name": "line", "type": "integer", "description": "Line number in the message origin resource." },
+                    { "name": "line", "type": "integer", "description": "Line number in the resource that generated this message." },
                     { "name": "url", "type": "string", "description": "URL of the message origin." },
                     { "name": "repeatCount", "type": "integer", "description": "Repeat count for repeated messages." },
                     { "name": "text", "type": "string", "description": "Message text." },
                     { "name": "networkRequestId", "$ref": "Network.RequestId", "optional": true, "description": "Identifier of the network request associated with this message." },
-                    { "name": "parameters", "type": "array", "items": { "$ref": "Runtime.RemoteObject" }, "description": "Message parameters in case of the formatted message." },
+                    { "name": "parameters", "type": "array", "items": { "$ref": "Runtime.RemoteObject" }, "optional": true, "description": "Message parameters in case of the formatted message." },
                     { "name": "stackTrace", "$ref": "StackTrace", "description": "JavaScript stack trace for assertions and error messages." }
                 ]
             },
@@ -373,13 +373,13 @@
             {
                 "name": "enable",
                 "returns": [
-                    { "name": "expiredMessagesCount", "type": "integer", "description": "Number of messages collected due to message threashold overflow." }
+                    { "name": "expiredMessagesCount", "type": "integer", "description": "Number of messages dropped due to message threashold overflow." }
                 ],
                 "description": "Enables console domain, sends the messages collected so far to the client by means of the <code>messageAdded</code> notification." 
             },
             {
                 "name": "disable",
-                "description": "Disables console domain, prevents further console messages from being sent to the client." 
+                "description": "Disables console domain, prevents further console messages from being reported to the client." 
             },
             {
                 "name": "clearMessages",
@@ -406,7 +406,7 @@
             {
                 "name": "messageAdded",
                 "parameters": [
-                    { "name": "messageObj", "$ref": "ConsoleMessage", "description": "Console message that has been added." }
+                    { "name": "message", "$ref": "ConsoleMessage", "description": "Console message that has been added." }
                 ],
                 "description": "Issued when new console message is added."
             },
@@ -415,11 +415,11 @@
                 "parameters": [
                     { "name": "count", "type": "integer", "description": "New repeat count value." }
                 ],
-                "description": "Issued when subsequent message(s) are equal to the previous one."
+                "description": "Issued when subsequent message(s) are equal to the previous one(s)."
             },
             {
                 "name": "messagesCleared",
-                "description": "Issued when console is cleared."
+                "description": "Issued when console is cleared. This happens either upon <code>clearMessages</code> command or after page navigation."
             }
         ]
     },

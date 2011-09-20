@@ -91,7 +91,8 @@ static String messageSourceValue(MessageSource source)
     case HTMLMessageSource: return "html";
     case XMLMessageSource: return "xml";
     case JSMessageSource: return "javascript";
-    case CSSMessageSource: return "css";
+    case NetworkMessageSource: return "network";
+    case ConsoleAPIMessageSource: return "console-api";
     case OtherMessageSource: return "other";
     }
     return "other";
@@ -101,14 +102,13 @@ static String messageTypeValue(MessageType type)
 {
     switch (type) {
     case LogMessageType: return "log";
-    case ObjectMessageType: return "other";
+    case DirMessageType: return "dir";
+    case DirXMLMessageType: return "dirXML";
     case TraceMessageType: return "trace";
     case StartGroupMessageType: return "startGroup";
     case StartGroupCollapsedMessageType: return "startGroupCollapsed";
     case EndGroupMessageType: return "endGroup";
     case AssertMessageType: return "assert";
-    case UncaughtExceptionMessageType: return "uncaughtException";
-    case NetworkErrorMessageType: return "networkError";
     }
     return "other";
 }
@@ -129,13 +129,14 @@ void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, Injecte
 {
     RefPtr<InspectorObject> jsonObj = InspectorObject::create();
     jsonObj->setString("source", messageSourceValue(m_source));
+    // FIXME: only send out type for ConsoleAPI source messages.
     jsonObj->setString("type", messageTypeValue(m_type));
     jsonObj->setString("level", messageLevelValue(m_level));
     jsonObj->setNumber("line", static_cast<int>(m_line));
     jsonObj->setString("url", m_url);
     jsonObj->setNumber("repeatCount", static_cast<int>(m_repeatCount));
     jsonObj->setString("text", m_message);
-    if (m_type == NetworkErrorMessageType) 
+    if (m_source == NetworkMessageSource && !m_requestId.isEmpty())
         jsonObj->setString("networkRequestId", m_requestId);
     if (m_arguments && m_arguments->argumentCount()) {
         InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(m_arguments->globalState());

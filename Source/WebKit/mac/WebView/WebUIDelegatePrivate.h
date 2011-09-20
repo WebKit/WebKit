@@ -96,19 +96,19 @@ enum {
 extern NSString *WebConsoleMessageHTMLMessageSource;
 extern NSString *WebConsoleMessageXMLMessageSource;
 extern NSString *WebConsoleMessageJSMessageSource;
-extern NSString *WebConsoleMessageCSSMessageSource;
+extern NSString *WebConsoleMessageNetworkMessageSource;
+extern NSString *WebConsoleMessageConsoleAPIMessageSource;
 extern NSString *WebConsoleMessageOtherMessageSource;
 
 // Message Types.
 extern NSString *WebConsoleMessageLogMessageType;
-extern NSString *WebConsoleMessageObjectMessageType;
+extern NSString *WebConsoleMessageDirMessageType;
+extern NSString *WebConsoleMessageDirXMLMessageType;
 extern NSString *WebConsoleMessageTraceMessageType;
 extern NSString *WebConsoleMessageStartGroupMessageType;
 extern NSString *WebConsoleMessageStartGroupCollapsedMessageType;
 extern NSString *WebConsoleMessageEndGroupMessageType;
 extern NSString *WebConsoleMessageAssertMessageType;
-extern NSString *WebConsoleMessageUncaughtExceptionMessageType;
-extern NSString *WebConsoleMessageNetworkErrorMessageType;
 
 // Message Levels.
 extern NSString *WebConsoleMessageTipMessageLevel;

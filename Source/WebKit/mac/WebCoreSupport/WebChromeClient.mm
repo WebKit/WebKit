@@ -88,18 +88,18 @@
 NSString *WebConsoleMessageHTMLMessageSource = @"HTMLMessageSource";
 NSString *WebConsoleMessageXMLMessageSource = @"XMLMessageSource";
 NSString *WebConsoleMessageJSMessageSource = @"JSMessageSource";
-NSString *WebConsoleMessageCSSMessageSource = @"CSSMessageSource";
+NSString *WebConsoleMessageNetworkMessageSource = @"NetworkMessageSource";
+NSString *WebConsoleMessageConsoleAPIMessageSource = @"ConsoleAPIMessageSource";
 NSString *WebConsoleMessageOtherMessageSource = @"OtherMessageSource";
 
 NSString *WebConsoleMessageLogMessageType = @"LogMessageType";
-NSString *WebConsoleMessageObjectMessageType = @"ObjectMessageType";
+NSString *WebConsoleMessageDirMessageType = @"DirMessageType";
+NSString *WebConsoleMessageDirXMLMessageType = @"DirXMLMessageType";
 NSString *WebConsoleMessageTraceMessageType = @"TraceMessageType";
 NSString *WebConsoleMessageStartGroupMessageType = @"StartGroupMessageType";
 NSString *WebConsoleMessageStartGroupCollapsedMessageType = @"StartGroupCollapsedMessageType";
 NSString *WebConsoleMessageEndGroupMessageType = @"EndGroupMessageType";
 NSString *WebConsoleMessageAssertMessageType = @"AssertMessageType";
-NSString *WebConsoleMessageUncaughtExceptionMessageType = @"UncaughtExceptionMessageType";
-NSString *WebConsoleMessageNetworkErrorMessageType = @"NetworkErrorMessageType";
 
 NSString *WebConsoleMessageTipMessageLevel = @"TipMessageLevel";
 NSString *WebConsoleMessageLogMessageLevel = @"LogMessageLevel";
@@ -357,8 +357,10 @@ inline static NSString *stringForMessageSource(MessageSource source)
         return WebConsoleMessageXMLMessageSource;
     case JSMessageSource:
         return WebConsoleMessageJSMessageSource;
-    case CSSMessageSource:
-        return WebConsoleMessageCSSMessageSource;
+    case NetworkMessageSource:
+        return WebConsoleMessageNetworkMessageSource;
+    case ConsoleAPIMessageSource:
+        return WebConsoleMessageConsoleAPIMessageSource;
     case OtherMessageSource:
         return WebConsoleMessageOtherMessageSource;
     }
@@ -371,8 +373,10 @@ inline static NSString *stringForMessageType(MessageType type)
     switch (type) {
     case LogMessageType:
         return WebConsoleMessageLogMessageType;
-    case ObjectMessageType:
-        return WebConsoleMessageObjectMessageType;
+    case DirMessageType:
+        return WebConsoleMessageDirMessageType;
+    case DirXMLMessageType:
+        return WebConsoleMessageDirXMLMessageType;
     case TraceMessageType:
         return WebConsoleMessageTraceMessageType;
     case StartGroupMessageType:
@@ -383,10 +387,6 @@ inline static NSString *stringForMessageType(MessageType type)
         return WebConsoleMessageEndGroupMessageType;
     case AssertMessageType:
         return WebConsoleMessageAssertMessageType;
-    case UncaughtExceptionMessageType:
-        return WebConsoleMessageUncaughtExceptionMessageType;
-    case NetworkErrorMessageType:
-        return WebConsoleMessageNetworkErrorMessageType;
     }
     ASSERT_NOT_REACHED();
     return @"";

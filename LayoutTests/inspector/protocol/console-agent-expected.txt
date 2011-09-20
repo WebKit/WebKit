@@ -53,8 +53,8 @@ event ConsoleAgent.messageAdded
 {
     method : "Console.messageAdded"
     params : {
-        messageObj : {
-            source : "javascript"
+        message : {
+            source : "console-api"
             type : "log"
             level : "log"
             line : 0
