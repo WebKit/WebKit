@@ -161,6 +161,7 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEquals(latest_entry.author_name(), "Peter Kasting")
         self.assertEquals(latest_entry.author_email(), "pkasting@google.com")
         self.assertEquals(latest_entry.reviewer_text(), u"Tor Arne Vestb\xf8")
+        self.assertEquals(latest_entry.touched_files(), ["Scripts/modules/cpp_style.py", "Scripts/modules/cpp_style_unittest.py"])
         self.assertTrue(latest_entry.reviewer())  # Make sure that our UTF8-based lookup of Tor works.
 
     def test_latest_entry_parse_single_entry(self):

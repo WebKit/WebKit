@@ -74,6 +74,9 @@ class ChangeLogEntry(object):
     # e.g. 2009-06-03  Eric Seidel  <eric@webkit.org>
     date_line_regexp = r'^(?P<date>\d{4}-\d{2}-\d{2})\s+(?P<name>.+?)\s+<(?P<email>[^<>]+)>$'
 
+    # e.g. * Source/WebCore/page/EventHandler.cpp: Implement FooBarQuux.
+    touched_files_regexp = r'\s*\*\s*(?P<file>.+)\:'
+
     # e.g. == Rolled over to ChangeLog-2011-02-16 ==
     rolled_over_regexp = r'^== Rolled over to ChangeLog-\d{4}-\d{2}-\d{2} ==$'
 
@@ -97,6 +100,8 @@ class ChangeLogEntry(object):
         self._reviewer = self._committer_list.committer_by_name(self._reviewer_text)
         self._author = self._committer_list.contributor_by_email(self._author_email) or self._committer_list.contributor_by_name(self._author_name)
 
+        self._touched_files = re.findall(self.touched_files_regexp, self._contents, re.MULTILINE)
+
     def author_name(self):
         return self._author_name
 
@@ -119,6 +124,9 @@ class ChangeLogEntry(object):
 
     def bug_id(self):
         return parse_bug_id_from_changelog(self._contents)
+
+    def touched_files(self):
+        return self._touched_files
 
 
 # FIXME: Various methods on ChangeLog should move into ChangeLogEntry instead.
