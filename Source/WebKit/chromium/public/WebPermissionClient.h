@@ -47,9 +47,7 @@ public:
     virtual bool allowFileSystem(WebFrame*) { return true; }
 
     // Controls whether images are allowed for this frame.
-    virtual bool allowImage(WebFrame* frame, bool enabledPerSettings, const WebURL& imageURL) { return allowImages(frame, enabledPerSettings); }
-    // FIXME: remove once chromium side has landed.
-    virtual bool allowImages(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
+    virtual bool allowImage(WebFrame* frame, bool enabledPerSettings, const WebURL& imageURL) { return enabledPerSettings; }
 
     // Controls whether access to Indexed DB are allowed for this frame.
     virtual bool allowIndexedDB(WebFrame*, const WebString& name, const WebSecurityOrigin&) { return true; }
