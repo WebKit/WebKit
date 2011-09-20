@@ -1,3 +1,47 @@
+2011-09-15  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: refactor ConsoleView, Drawer, ConsolePanel trio. Remove animation
+        from drawer -> panel transition.
+        https://bugs.webkit.org/show_bug.cgi?id=68155
+
+        ConsoleView, ConsolePanel and Drawer are all Views with custom show/hide implementations
+        and weird DOM element containment. As a result, we have a number of cases when switching
+        console from full panel to drawer mode and back result in UI glitches.
+        For the sake of code clarity and no glitches, I'd like to sacrifice the "grow into full
+        screen" console animation.
+
+        Reviewed by Tony Gentilcore.
+
+        * inspector/front-end/ConsoleModel.js:
+        (WebInspector.ConsoleModel):
+        * inspector/front-end/ConsolePanel.js:
+        (WebInspector.ConsolePanel):
+        (WebInspector.ConsolePanel.prototype.get statusBarItems):
+        (WebInspector.ConsolePanel.prototype.show):
+        (WebInspector.ConsolePanel.prototype.hide):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView):
+        (WebInspector.ConsoleView.createFilterElement):
+        (WebInspector.ConsoleView.get this):
+        (WebInspector.ConsoleView.prototype.get statusBarItems):
+        (WebInspector.ConsoleView.prototype.wasShown):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer):
+        (WebInspector.Drawer.prototype.get visible):
+        (WebInspector.Drawer.prototype._constrainHeight):
+        (WebInspector.Drawer.prototype.show.animationFinished):
+        (WebInspector.Drawer.prototype.show):
+        (WebInspector.Drawer.prototype.hide):
+        (WebInspector.Drawer.prototype.resize):
+        (WebInspector.Drawer.prototype._animationDuration):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createGlobalStatusBarItems):
+        (WebInspector._toggleConsoleButtonClicked):
+        (WebInspector.set attached):
+        (WebInspector.windowResize):
+        (WebInspector.documentKeyDown):
+
 2011-09-19  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: streamline Console's MessageType and MessageSource semantics.

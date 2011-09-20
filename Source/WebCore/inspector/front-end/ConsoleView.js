@@ -29,27 +29,37 @@
 
 const ExpressionStopCharacters = " =:[({;,!+-*/&|^<>";
 
-WebInspector.ConsoleView = function(drawer)
+WebInspector.ConsoleView = function()
 {
-    WebInspector.View.call(this, document.getElementById("console-view"));
+    WebInspector.View.call(this);
+    this.element.id = "console-view";
 
     this.messages = [];
-    this.drawer = drawer;
 
-    this.clearButton = document.getElementById("clear-console-status-bar-item");
-    this.clearButton.title = WebInspector.UIString("Clear console log.");
-    this.clearButton.addEventListener("click", this._requestClearMessages.bind(this), false);
+    this._clearConsoleButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear console log."), "clear-status-bar-item");
+    this._clearConsoleButton.addEventListener("click", this._requestClearMessages.bind(this), false);
 
-    this._contextSelectElement = document.getElementById("console-context");
+    this._contextSelectElement = document.createElement("select");
+    this._contextSelectElement.id = "console-context";
+    this._contextSelectElement.className = "status-bar-item";
+
     if (WebInspector.WorkerManager.isWorkerFrontend())
         this._contextSelectElement.addStyleClass("hidden");
 
-    this.messagesElement = document.getElementById("console-messages");
+    this.messagesElement = document.createElement("div");
+    this.messagesElement.id = "console-messages";
+    this.messagesElement.className = "monospace";
     this.messagesElement.addEventListener("click", this._messagesClicked.bind(this), true);
+    this.element.appendChild(this.messagesElement);
 
-    this.promptElement = document.getElementById("console-prompt");
+    this.promptElement = document.createElement("div");
+    this.promptElement.id = "console-prompt";
     this.promptElement.className = "source-code";
+    this.promptElement.spellcheck = false;
     this.promptElement.addEventListener("keydown", this._promptKeyDown.bind(this), true);
+    this.messagesElement.appendChild(this.promptElement);
+    this.messagesElement.appendChild(document.createElement("br"));
+
     this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), ExpressionStopCharacters + ".");
     this.prompt.history = WebInspector.settings.consoleHistory.get();
 
@@ -57,16 +67,14 @@ WebInspector.ConsoleView = function(drawer)
     this.messagesElement.insertBefore(this.topGroup.element, this.promptElement);
     this.currentGroup = this.topGroup;
 
-    this.toggleConsoleButton = new WebInspector.StatusBarButton(WebInspector.UIString("Show console."), "console-status-bar-item");
-    this.toggleConsoleButton.addEventListener("click", this._toggleConsoleButtonClicked.bind(this), false);
-
-    // Will hold the list of filter elements
-    this.filterBarElement = document.getElementById("console-filter");
+    this._filterBarElement = document.createElement("div");
+    this._filterBarElement.id = "console-filter";
+    this._filterBarElement.className = "scope-bar status-bar-item";
 
     function createDividerElement() {
         var dividerElement = document.createElement("div");
         dividerElement.addStyleClass("scope-bar-divider");
-        this.filterBarElement.appendChild(dividerElement);
+        this._filterBarElement.appendChild(dividerElement);
     }
 
     var updateFilterHandler = this._updateFilter.bind(this);
@@ -77,7 +85,7 @@ WebInspector.ConsoleView = function(drawer)
         categoryElement.addEventListener("click", updateFilterHandler, false);
         categoryElement.textContent = label;
 
-        this.filterBarElement.appendChild(categoryElement);
+        this._filterBarElement.appendChild(categoryElement);
 
         return categoryElement;
     }
@@ -112,6 +120,11 @@ WebInspector.ConsoleView.Events = {
 }
 
 WebInspector.ConsoleView.prototype = {
+    get statusBarItems()
+    {
+        return [this._clearConsoleButton.element, this._contextSelectElement, this._filterBarElement];
+    },
+
     addContext: function(context)
     {
         var option = document.createElement("option");
@@ -211,21 +224,8 @@ WebInspector.ConsoleView.prototype = {
         }
     },
 
-    _toggleConsoleButtonClicked: function()
+    wasShown: function()
     {
-        this.drawer.visibleView = this;
-    },
-
-    populateStatusBar: function(statusBarElement)
-    {
-        statusBarElement.appendChild(this.clearButton);
-        statusBarElement.appendChild(this.filterBarElement);
-    },
-
-    show: function()
-    {
-        this.toggleConsoleButton.toggled = true;
-        this.toggleConsoleButton.title = WebInspector.UIString("Hide console.");
         if (!this.prompt.isCaretInsidePrompt())
             this.prompt.moveCaretToEndOfPrompt();
     },
@@ -233,12 +233,6 @@ WebInspector.ConsoleView.prototype = {
     afterShow: function()
     {
         WebInspector.currentFocusElement = this.promptElement;
-    },
-
-    hide: function()
-    {
-        this.toggleConsoleButton.toggled = false;
-        this.toggleConsoleButton.title = WebInspector.UIString("Show console.");
     },
 
     _isScrollIntoViewScheduled: function()

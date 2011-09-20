@@ -144,6 +144,8 @@ var WebInspector = {
                 WebInspector.userMetrics.panelShown(panelName);
             }
         }
+
+        this._toggleConsoleButton.disabled = this._currentPanel === WebInspector.panels.console;
     },
 
     _createPanels: function()
@@ -183,10 +185,13 @@ var WebInspector = {
 
         var anchoredStatusBar = document.getElementById("anchored-status-bar-items");
         anchoredStatusBar.appendChild(this._dockToggleButton.element);
-        anchoredStatusBar.appendChild(this.consoleView.toggleConsoleButton.element);
+
+        this._toggleConsoleButton = new WebInspector.StatusBarButton(WebInspector.UIString("Show console."), "console-status-bar-item");
+        this._toggleConsoleButton.addEventListener("click", this._toggleConsoleButtonClicked.bind(this), false);
+        anchoredStatusBar.appendChild(this._toggleConsoleButton.element);
+
         if (this.panels.elements)
             anchoredStatusBar.appendChild(this.panels.elements.nodeSearchButton.element);
-
         anchoredStatusBar.appendChild(this._settingsButton.element);
     },
 
@@ -203,6 +208,22 @@ var WebInspector = {
         } else {
             InspectorFrontendHost.requestDetachWindow();
             WebInspector.userMetrics.WindowUndocked.record();
+        }
+    },
+
+    _toggleConsoleButtonClicked: function()
+    {
+        if (this._toggleConsoleButton.disabled)
+            return;
+
+        this._toggleConsoleButton.toggled = !this._toggleConsoleButton.toggled;
+
+        if (this._toggleConsoleButton.toggled) {
+            this._toggleConsoleButton.title = WebInspector.UIString("Hide console.");
+            this.drawer.show(this.consoleView);
+        } else {
+            this._toggleConsoleButton.title = WebInspector.UIString("Show console.");
+            this.drawer.hide();
         }
     },
 
@@ -286,7 +307,7 @@ var WebInspector = {
             WebInspector.searchController.updateSearchLabel();
 
         if (WebInspector.drawer)
-            WebInspector.drawer.updateHeight();
+            WebInspector.drawer.resize();
     },
 
     _updateErrorAndWarningCounts: function()
@@ -495,8 +516,7 @@ WebInspector.doLoadedDone = function()
     this.console.addEventListener(WebInspector.ConsoleModel.Events.RepeatCountUpdated, this._updateErrorAndWarningCounts, this);
 
     this.drawer = new WebInspector.Drawer();
-    this.consoleView = new WebInspector.ConsoleView(this.drawer);
-    this.drawer.visibleView = this.consoleView;
+    this.consoleView = new WebInspector.ConsoleView();
 
     this.networkManager = new WebInspector.NetworkManager();
     this.resourceTreeModel = new WebInspector.ResourceTreeModel();
@@ -607,7 +627,7 @@ WebInspector.windowResize = function(event)
 {
     if (this.currentPanel())
         this.currentPanel().doResize();
-    this.drawer.doResize();
+    this.drawer.resize();
     this.toolbar.resize();
 }
 
@@ -793,10 +813,7 @@ WebInspector.documentKeyDown = function(event)
 
         case "U+001B": // Escape key
             event.preventDefault();
-            if (this.drawer.fullPanel)
-                return;
-
-            this.drawer.visible = !this.drawer.visible;
+            this._toggleConsoleButtonClicked();
             break;
 
         // Windows and Mac have two different definitions of [, so accept both.

@@ -31,7 +31,7 @@
 /**
  * @constructor
  */
-WebInspector.ConsoleModel = function(drawer)
+WebInspector.ConsoleModel = function()
 {
     this.messages = [];
     this.warnings = 0;

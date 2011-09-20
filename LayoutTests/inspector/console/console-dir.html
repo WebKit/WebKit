@@ -32,7 +32,7 @@ function test()
 
     function dumpConsoleMessages()
     {
-        InspectorTest.addResult(InspectorTest.textContentWithLineBreaks(document.getElementById("console-messages")));
+        InspectorTest.addResult(InspectorTest.textContentWithLineBreaks(WebInspector.consoleView.messagesElement));
         InspectorTest.completeTest();
     }
 }

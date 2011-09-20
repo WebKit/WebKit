@@ -29,79 +29,55 @@
 
 WebInspector.Drawer = function()
 {
-    WebInspector.View.call(this, document.getElementById("drawer"));
-
+    this.element = document.getElementById("drawer");
     this._savedHeight = 200; // Default.
-    this.state = WebInspector.Drawer.State.Hidden;
-    this.fullPanel = false;
-
     this._mainElement = document.getElementById("main");
     this._toolbarElement = document.getElementById("toolbar");
     this._mainStatusBar = document.getElementById("main-status-bar");
     this._mainStatusBar.addEventListener("mousedown", this._startStatusBarDragging.bind(this), true);
-    this._viewStatusBar = document.getElementById("other-drawer-status-bar-items");
     this._counters = document.getElementById("counters");
-    this._drawerStatusBar = document.getElementById("drawer-status-bar");
+    this._drawerStatusBar = document.createElement("div");
+    this._drawerStatusBar.id = "drawer-status-bar";
+    this._drawerStatusBar.className = "status-bar";
+    this.element.appendChild(this._drawerStatusBar);
+
+    this._viewStatusBar = document.createElement("div");
+    this._drawerStatusBar.appendChild(this._viewStatusBar);
 }
 
 WebInspector.Drawer.prototype = {
-    get visibleView()
+    get visible()
     {
-        return this._visibleView;
+        return !!this._view;
     },
 
-    set visibleView(x)
+    _constrainHeight: function(height)
     {
-        if (this._visibleView === x) {
-            if (this.visible && this.fullPanel)
-                return;
-            this.visible = !this.visible;
-            return;
-        }
-
-        var firstTime = !this._visibleView;
-        if (this._visibleView)
-            this.removeChildView(this._visibleView);
-        this._visibleView = x;
-        this.addChildView(x);
-
-        if (x && !firstTime) {
-            this._safelyRemoveChildren();
-            this._viewStatusBar.removeChildren(); // optimize this? call old.detach()
-            x.populateStatusBar(this._viewStatusBar);
-            x.show();
-            this.visible = true;
-        }
-    },
-
-    get savedHeight()
-    {
-        var height = this._savedHeight || this.element.offsetHeight;
         return Number.constrain(height, Preferences.minConsoleHeight, window.innerHeight - this._mainElement.totalOffsetTop() - Preferences.minConsoleHeight);
     },
 
-    showView: function(view)
+    show: function(view, immediately)
     {
-        if (!this.visible || this.visibleView !== view)
-            this.visibleView = view;
-    },
+        var drawerWasVisible = this.visible;
 
-    show: function()
-    {
-        if (this._animating || this.visible)
+        this.immediatelyFinishAnimation();
+        if (this._view)
+            this.element.removeChild(this._view.element);
+
+        this._view = view;
+        this._view.show(this.element);
+
+        var statusBarItems = this._view.statusBarItems || [];
+        for (var i = 0; i < statusBarItems.length; ++i)
+            this._viewStatusBar.appendChild(statusBarItems[i]);
+
+        if (drawerWasVisible)
             return;
-
-        if (this.visibleView)
-            this.visibleView.show();
-
-        WebInspector.View.prototype.show.call(this);
-
-        this._animating = true;
 
         document.body.addStyleClass("drawer-visible");
 
         var anchoredItems = document.getElementById("anchored-status-bar-items");
-        var height = (this.fullPanel ? window.innerHeight - this._toolbarElement.offsetHeight : this.savedHeight);
+        var height = this._constrainHeight(this._savedHeight || this.element.offsetHeight);
         var animations = [
             {element: this.element, end: {height: height}},
             {element: this._mainElement, end: {bottom: height}},
@@ -124,32 +100,28 @@ WebInspector.Drawer.prototype = {
         {
             if ("updateStatusBarItems" in WebInspector.currentPanel())
                 WebInspector.currentPanel().updateStatusBarItems();
-            if (this.visibleView.afterShow)
-                this.visibleView.afterShow();
-            delete this._animating;
+            if (this._view && this._view.afterShow)
+                this._view.afterShow();
             delete this._currentAnimation;
-            this.state = (this.fullPanel ? WebInspector.Drawer.State.Full : WebInspector.Drawer.State.Variable);
             if (this._currentPanelCounters)
                 this._currentPanelCounters.removeAttribute("style");
         }
 
         this._currentAnimation = WebInspector.animateStyle(animations, this._animationDuration(), animationFinished.bind(this));
+        if (immediately)
+            this._currentAnimation.forceComplete();
     },
 
-    hide: function()
+    hide: function(immediately)
     {
-        if (this._animating || !this.visible)
+        this.immediatelyFinishAnimation();
+        if (!this.visible)
             return;
 
-        WebInspector.View.prototype.hide.call(this);
+        this._savedHeight = this.element.offsetHeight;
 
-        if (this.visibleView)
-            this.visibleView.hide();
-
-        this._animating = true;
-
-        if (!this.fullPanel)
-            this._savedHeight = this.element.offsetHeight;
+        this.element.removeChild(this._view.element);
+        delete this._view;
 
         if (this.element === WebInspector.currentFocusElement || this.element.isAncestor(WebInspector.currentFocusElement))
             WebInspector.currentFocusElement = WebInspector.previousFocusElement;
@@ -190,65 +162,23 @@ WebInspector.Drawer.prototype = {
             }
 
             document.body.removeStyleClass("drawer-visible");
-            delete this._animating;
             delete this._currentAnimation;
-            this.state = WebInspector.Drawer.State.Hidden;
         }
 
         this._currentAnimation = WebInspector.animateStyle(animations, this._animationDuration(), animationFinished.bind(this));
+        if (immediately)
+            this._currentAnimation.forceComplete();
     },
 
-    onResize: function()
+    resize: function()
     {
-        if (this.state === WebInspector.Drawer.State.Hidden)
+        if (!this.visible)
             return;
 
-        var height;
-        if (this.state === WebInspector.Drawer.State.Variable) {
-            height = parseInt(this.element.style.height);
-            height = Number.constrain(height, Preferences.minConsoleHeight, window.innerHeight - this._mainElement.totalOffsetTop() - Preferences.minConsoleHeight);
-        } else
-            height = window.innerHeight - this._toolbarElement.offsetHeight;
-
+        var height = this._constrainHeight(parseInt(this.element.style.height));
         this._mainElement.style.bottom = height + "px";
         this.element.style.height = height + "px";
-    },
-
-    enterPanelMode: function()
-    {
-        this._cancelAnimationIfNeeded();
-        this.fullPanel = true;
-        this.updateHeight();
-    },
-
-    exitPanelMode: function()
-    {
-        this._cancelAnimationIfNeeded();
-        this.fullPanel = false;
-        this.updateHeight();
-    },
-
-    updateHeight: function()
-    {
-        if (this.visible) {
-            if (this.fullPanel) {
-                this._savedHeight = this.element.offsetHeight;
-                var height = window.innerHeight - this._toolbarElement.offsetHeight;
-                this._animateDrawerHeight(height, WebInspector.Drawer.State.Full);
-            } else {
-                // If this animation gets cancelled, we want the state of the drawer to be Variable,
-                // so that the new animation can't do an immediate transition between Hidden/Full states.
-                this.state = WebInspector.Drawer.State.Variable;
-                var height = this.savedHeight;
-                this._animateDrawerHeight(height, WebInspector.Drawer.State.Variable);
-            }
-        }
-    },
-
-    immediatelyExitPanelMode: function()
-    {
-        this.visible = false;
-        this.fullPanel = false;
+        this._view.doResize();
     },
 
     immediatelyFinishAnimation: function()
@@ -273,41 +203,8 @@ WebInspector.Drawer.prototype = {
             this._counters.insertBefore(x, this._counters.firstChild);
     },
 
-    _cancelAnimationIfNeeded: function()
-    {
-        if (this._animating) {
-            if (this._currentAnimation)
-                this._currentAnimation.cancel();
-            delete this._animating;
-            delete this._currentAnimation;
-        }
-    },
-
-    _animateDrawerHeight: function(height, finalState)
-    {
-        this._animating = true;
-        var animations = [
-            {element: this.element, end: {height: height}},
-            {element: this._mainElement, end: {bottom: height}}
-        ];
-
-        function animationFinished()
-        {
-            WebInspector.currentPanel().doResize();
-            delete this._animating;
-            delete this._currentAnimation;
-            this.state = finalState;
-        }
-
-        this._currentAnimation = WebInspector.animateStyle(animations, this._animationDuration(), animationFinished.bind(this));
-    },
-
     _animationDuration: function()
     {
-        // Immediate if going between Hidden and Full in full panel mode
-        if (this.fullPanel && (this.state === WebInspector.Drawer.State.Hidden || this.state === WebInspector.Drawer.State.Full))
-            return 0;
-
         return (window.event && window.event.shiftKey ? 2000 : 250);
     },
 
@@ -360,11 +257,3 @@ WebInspector.Drawer.prototype = {
         event.stopPropagation();
     }
 }
-
-WebInspector.Drawer.prototype.__proto__ = WebInspector.View.prototype;
-
-WebInspector.Drawer.State = {
-    Hidden: 0,
-    Variable: 1,
-    Full: 2
-};

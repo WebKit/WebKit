@@ -31,6 +31,7 @@ WebInspector.ConsolePanel = function()
     WebInspector.Panel.call(this, "console");
     WebInspector.consoleView.addEventListener(WebInspector.ConsoleView.Events.EntryAdded, this._consoleMessageAdded, this);
     WebInspector.consoleView.addEventListener(WebInspector.ConsoleView.Events.ConsoleCleared, this._consoleCleared, this);
+    this._view = WebInspector.consoleView;
 }
 
 WebInspector.ConsolePanel.prototype = {
@@ -39,49 +40,31 @@ WebInspector.ConsolePanel.prototype = {
         return WebInspector.UIString("Console");
     },
 
+    get statusBarItems()
+    {
+        return this._view.statusBarItems;
+    },
+
     show: function()
     {
+        if (WebInspector.drawer.visible) {
+            WebInspector.drawer.hide(true);
+            this._drawerWasVisible = true;
+        }
         WebInspector.Panel.prototype.show.call(this);
 
-        this._previousConsoleState = WebInspector.drawer.state;
-        WebInspector.drawer.enterPanelMode();
-        WebInspector.showConsole();
-
-        // Move the scope bar to the top of the messages, like the resources filter.
-        var scopeBar = document.getElementById("console-filter");
-        var consoleMessages = document.getElementById("console-messages");
-
-        scopeBar.parentNode.removeChild(scopeBar);
-        document.getElementById("console-view").insertBefore(scopeBar, consoleMessages);
-
-        // Update styles, and give console-messages a top margin so it doesn't overwrite the scope bar.
-        scopeBar.addStyleClass("console-filter-top");
-        scopeBar.removeStyleClass("status-bar-item");
-
-        consoleMessages.addStyleClass("console-filter-top");
+        this.addChildView(this._view);
+        this._view.show();
     },
 
     hide: function()
     {
         WebInspector.Panel.prototype.hide.call(this);
-
-        if (this._previousConsoleState === WebInspector.Drawer.State.Hidden)
-            WebInspector.drawer.immediatelyExitPanelMode();
-        else
-            WebInspector.drawer.exitPanelMode();
-        delete this._previousConsoleState;
-
-        // Move the scope bar back to the bottom bar, next to Clear Console.
-        var scopeBar = document.getElementById("console-filter");
-
-        scopeBar.parentNode.removeChild(scopeBar);
-        document.getElementById("other-drawer-status-bar-items").appendChild(scopeBar);
-
-        // Update styles, and remove the top margin on console-messages.
-        scopeBar.removeStyleClass("console-filter-top");
-        scopeBar.addStyleClass("status-bar-item");
-
-        document.getElementById("console-messages").removeStyleClass("console-filter-top");
+        this.removeChildView(this._view);
+        if (this._drawerWasVisible) {
+            WebInspector.drawer.show(this._view, true);
+            delete this._drawerWasVisible;
+        }
     },
 
     searchCanceled: function()
