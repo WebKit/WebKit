@@ -4209,6 +4209,14 @@ Position RenderBlock::positionForBox(InlineBox *box, bool start) const
     return createLegacyEditingPosition(box->renderer()->node(), start ? textBox->start() : textBox->start() + textBox->len());
 }
 
+static inline bool isEditingBoundary(RenderObject* ancestor, RenderObject* child)
+{
+    ASSERT(!ancestor || ancestor->node());
+    ASSERT(child && child->node());
+    return !ancestor || !ancestor->parent() || (ancestor->hasLayer() && ancestor->parent()->isRenderView())
+        || ancestor->node()->rendererIsEditable() == child->node()->rendererIsEditable();
+}
+
 // FIXME: This function should go on RenderObject as an instance method. Then
 // all cases in which positionForPoint recurs could call this instead to
 // prevent crossing editable boundaries. This would require many tests.
@@ -4232,7 +4240,7 @@ static VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock* 
         ancestor = ancestor->parent();
 
     // If we can't find an ancestor to check editability on, or editability is unchanged, we recur like normal
-    if (!ancestor || ancestor->node()->rendererIsEditable() == childNode->rendererIsEditable())
+    if (isEditingBoundary(ancestor, child))
         return child->positionForPoint(pointInChildCoordinates);
 
     // Otherwise return before or after the child, depending on if the click was to the logical left or logical right of the child
