@@ -1,3 +1,25 @@
+2011-09-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] ContentLayer's texture updater deleted during paint when compositing turns off in the middle of paint
+        https://bugs.webkit.org/show_bug.cgi?id=68405
+
+        Reviewed by Kenneth Russell.
+
+        Make TiledLayerChromium's textureUpdater refcounted and hold an explicit reference during paint in case
+        compositing is turned off halfway through a paint.
+
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::create):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::LayerTextureUpdaterBitmap::create):
+        (WebCore::LayerTextureUpdaterSkPicture::create):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+
 2011-09-19  Luke Macpherson   <macpherson@chromium.org>
 
         Eliminate Length::undefinedLength = -1 and replace with Undefined LengthType.

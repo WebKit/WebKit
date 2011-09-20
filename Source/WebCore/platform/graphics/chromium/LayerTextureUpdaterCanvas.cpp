@@ -61,9 +61,9 @@ void LayerTextureUpdaterCanvas::paintContents(GraphicsContext& context, const In
     m_contentRect = contentRect;
 }
 
-PassOwnPtr<LayerTextureUpdaterBitmap> LayerTextureUpdaterBitmap::create(PassOwnPtr<LayerPainterChromium> painter, bool useMapTexSubImage)
+PassRefPtr<LayerTextureUpdaterBitmap> LayerTextureUpdaterBitmap::create(PassOwnPtr<LayerPainterChromium> painter, bool useMapTexSubImage)
 {
-    return adoptPtr(new LayerTextureUpdaterBitmap(painter, useMapTexSubImage));
+    return adoptRef(new LayerTextureUpdaterBitmap(painter, useMapTexSubImage));
 }
 
 LayerTextureUpdaterBitmap::LayerTextureUpdaterBitmap(PassOwnPtr<LayerPainterChromium> painter, bool useMapTexSubImage)
@@ -103,9 +103,9 @@ void LayerTextureUpdaterBitmap::updateTextureRect(GraphicsContext3D* context, Ma
 
 #if !USE(THREADED_COMPOSITING)
 #if USE(SKIA)
-PassOwnPtr<LayerTextureUpdaterSkPicture> LayerTextureUpdaterSkPicture::create(PassOwnPtr<LayerPainterChromium> painter)
+PassRefPtr<LayerTextureUpdaterSkPicture> LayerTextureUpdaterSkPicture::create(PassOwnPtr<LayerPainterChromium> painter)
 {
-    return adoptPtr(new LayerTextureUpdaterSkPicture(painter));
+    return adoptRef(new LayerTextureUpdaterSkPicture(painter));
 }
 
 LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture(PassOwnPtr<LayerPainterChromium> painter)

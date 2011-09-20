@@ -59,7 +59,7 @@ private:
     virtual void createTextureUpdater(const CCLayerTreeHost*);
     virtual LayerTextureUpdater* textureUpdater() const { return m_textureUpdater.get(); }
 
-    OwnPtr<LayerTextureUpdater> m_textureUpdater;
+    RefPtr<LayerTextureUpdater> m_textureUpdater;
 };
 
 }
