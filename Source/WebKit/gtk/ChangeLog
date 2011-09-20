@@ -1,3 +1,11 @@
+2011-09-20  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Update NEWS and configure.ac for 1.5.90 release
+
+        Reviewed by Martin Robinson.
+
+        * NEWS:
+
 2011-09-19  Leandro Pereira  <leandro@profusion.mobi>
 
         GTK DRT leaks memory while comparing history items
