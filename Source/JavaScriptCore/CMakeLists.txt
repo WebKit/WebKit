@@ -45,6 +45,7 @@ SET(JavaScriptCore_SOURCES
     bytecompiler/BytecodeGenerator.cpp
     bytecompiler/NodesCodegen.cpp
 
+    heap/AllocationSpace.cpp
     heap/Heap.cpp
     heap/HandleHeap.cpp
     heap/HandleStack.cpp

@@ -72,6 +72,7 @@ SOURCES += \
     bytecode/ValueProfile.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     bytecompiler/NodesCodegen.cpp \
+    heap/AllocationSpace.cpp \
     heap/ConservativeRoots.cpp \
     heap/HandleHeap.cpp \
     heap/HandleStack.cpp \

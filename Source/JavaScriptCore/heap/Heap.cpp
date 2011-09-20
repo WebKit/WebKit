@@ -33,7 +33,6 @@
 #include "Tracing.h"
 #include <algorithm>
 
-#define COLLECT_ON_EVERY_ALLOCATION 0
 
 using namespace std;
 using namespace JSC;
@@ -175,38 +174,6 @@ inline void CountIfGlobalObject::operator()(JSCell* cell)
     count(1);
 }
 
-class TakeIfEmpty {
-public:
-    typedef MarkedBlock* ReturnType;
-
-    TakeIfEmpty(MarkedSpace*);
-    void operator()(MarkedBlock*);
-    ReturnType returnValue();
-
-private:
-    MarkedSpace* m_markedSpace;
-    DoublyLinkedList<MarkedBlock> m_empties;
-};
-
-inline TakeIfEmpty::TakeIfEmpty(MarkedSpace* newSpace)
-    : m_markedSpace(newSpace)
-{
-}
-
-inline void TakeIfEmpty::operator()(MarkedBlock* block)
-{
-    if (!block->isEmpty())
-        return;
-
-    m_markedSpace->removeBlock(block);
-    m_empties.append(block);
-}
-
-inline TakeIfEmpty::ReturnType TakeIfEmpty::returnValue()
-{
-    return m_empties.head();
-}
-
 class RecordType {
 public:
     typedef PassOwnPtr<TypeCountSet> ReturnType;
@@ -249,7 +216,7 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     : m_heapSize(heapSize)
     , m_minBytesPerCycle(heapSizeForHint(heapSize))
     , m_operationInProgress(NoOperation)
-    , m_markedSpace(this)
+    , m_objectSpace(this)
     , m_extraCost(0)
     , m_markListSet(0)
     , m_activityCallback(DefaultGCActivityCallback::create(this))
@@ -259,7 +226,7 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     , m_isSafeToCollect(false)
     , m_globalData(globalData)
 {
-    m_markedSpace.setHighWaterMark(m_minBytesPerCycle);
+    m_objectSpace.setHighWaterMark(m_minBytesPerCycle);
     (*m_activityCallback)();
     m_numberOfFreeBlocks = 0;
     m_blockFreeingThread = createThread(blockFreeingThreadStartFunc, this, "JavaScriptCore::BlockFree");
@@ -393,60 +360,9 @@ void Heap::reportExtraMemoryCostSlowCase(size_t cost)
     // if a large value survives one garbage collection, there is not much point to
     // collecting more frequently as long as it stays alive.
 
-    if (m_extraCost > maxExtraCost && m_extraCost > m_markedSpace.highWaterMark() / 2)
+    if (m_extraCost > maxExtraCost && m_extraCost > m_objectSpace.highWaterMark() / 2)
         collectAllGarbage();
     m_extraCost += cost;
-}
-
-inline void* Heap::tryAllocate(MarkedSpace::SizeClass& sizeClass)
-{
-    m_operationInProgress = Allocation;
-    void* result = m_markedSpace.allocate(sizeClass);
-    m_operationInProgress = NoOperation;
-    return result;
-}
-
-void* Heap::allocateSlowCase(MarkedSpace::SizeClass& sizeClass)
-{
-#if COLLECT_ON_EVERY_ALLOCATION
-    collectAllGarbage();
-    ASSERT(m_operationInProgress == NoOperation);
-#endif
-
-    void* result = tryAllocate(sizeClass);
-
-    if (LIKELY(result != 0))
-        return result;
-
-    AllocationEffort allocationEffort;
-    
-    if (m_markedSpace.waterMark() < m_markedSpace.highWaterMark() || !m_isSafeToCollect)
-        allocationEffort = AllocationMustSucceed;
-    else
-        allocationEffort = AllocationCanFail;
-    
-    MarkedBlock* block = allocateBlock(sizeClass.cellSize, allocationEffort);
-    if (block) {
-        m_markedSpace.addBlock(sizeClass, block);
-        void* result = tryAllocate(sizeClass);
-        ASSERT(result);
-        return result;
-    }
-
-    collect(DoNotSweep);
-    
-    result = tryAllocate(sizeClass);
-    
-    if (result)
-        return result;
-    
-    ASSERT(m_markedSpace.waterMark() < m_markedSpace.highWaterMark());
-    
-    m_markedSpace.addBlock(sizeClass, allocateBlock(sizeClass.cellSize, AllocationMustSucceed));
-    
-    result = tryAllocate(sizeClass);
-    ASSERT(result);
-    return result;
 }
 
 void Heap::protect(JSValue k)
@@ -521,7 +437,7 @@ void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
     if (m_operationInProgress != NoOperation)
         CRASH();
     m_operationInProgress = Collection;
-    ConservativeRoots registerFileRoots(&m_blocks);
+    ConservativeRoots registerFileRoots(&m_objectSpace.blocks());
     registerFile().gatherConservativeRoots(registerFileRoots);
     size_t registerFileRootCount = registerFileRoots.size();
     JSCell** registerRoots = registerFileRoots.roots();
@@ -543,10 +459,10 @@ void Heap::markRoots()
 
     // We gather conservative roots before clearing mark bits because conservative
     // gathering uses the mark bits to determine whether a reference is valid.
-    ConservativeRoots machineThreadRoots(&m_blocks);
+    ConservativeRoots machineThreadRoots(&m_objectSpace.blocks());
     m_machineThreads.gatherConservativeRoots(machineThreadRoots, &dummy);
 
-    ConservativeRoots registerFileRoots(&m_blocks);
+    ConservativeRoots registerFileRoots(&m_objectSpace.blocks());
     registerFile().gatherConservativeRoots(registerFileRoots);
 
     clearMarks();
@@ -599,27 +515,27 @@ void Heap::markRoots()
 
 void Heap::clearMarks()
 {
-    forEachBlock<ClearMarks>();
+    m_objectSpace.forEachBlock<ClearMarks>();
 }
 
 void Heap::sweep()
 {
-    forEachBlock<Sweep>();
+    m_objectSpace.forEachBlock<Sweep>();
 }
 
 size_t Heap::objectCount()
 {
-    return forEachBlock<MarkCount>();
+    return m_objectSpace.forEachBlock<MarkCount>();
 }
 
 size_t Heap::size()
 {
-    return forEachBlock<Size>();
+    return m_objectSpace.forEachBlock<Size>();
 }
 
 size_t Heap::capacity()
 {
-    return forEachBlock<Capacity>();
+    return m_objectSpace.forEachBlock<Capacity>();
 }
 
 size_t Heap::protectedGlobalObjectCount()
@@ -629,7 +545,7 @@ size_t Heap::protectedGlobalObjectCount()
 
 size_t Heap::globalObjectCount()
 {
-    return forEachCell<CountIfGlobalObject>();
+    return m_objectSpace.forEachCell<CountIfGlobalObject>();
 }
 
 size_t Heap::protectedObjectCount()
@@ -644,7 +560,7 @@ PassOwnPtr<TypeCountSet> Heap::protectedObjectTypeCounts()
 
 PassOwnPtr<TypeCountSet> Heap::objectTypeCounts()
 {
-    return forEachCell<RecordType>();
+    return m_objectSpace.forEachCell<RecordType>();
 }
 
 void Heap::collectAllGarbage()
@@ -683,7 +599,7 @@ void Heap::collect(SweepToggle sweepToggle)
     // proportion is a bit arbitrary. A 2X multiplier gives a 1:1 (heap size :
     // new bytes allocated) proportion, and seems to work well in benchmarks.
     size_t proportionalBytes = 2 * size();
-    m_markedSpace.setHighWaterMark(max(proportionalBytes, m_minBytesPerCycle));
+    m_objectSpace.setHighWaterMark(max(proportionalBytes, m_minBytesPerCycle));
     JAVASCRIPTCORE_GC_END();
 
     (*m_activityCallback)();
@@ -691,13 +607,13 @@ void Heap::collect(SweepToggle sweepToggle)
 
 void Heap::canonicalizeBlocks()
 {
-    m_markedSpace.canonicalizeBlocks();
+    m_objectSpace.canonicalizeBlocks();
 }
 
 void Heap::resetAllocator()
 {
     m_extraCost = 0;
-    m_markedSpace.resetAllocator();
+    m_objectSpace.resetAllocator();
 }
 
 void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
@@ -724,50 +640,14 @@ bool Heap::isValidAllocation(size_t bytes)
     return true;
 }
 
-MarkedBlock* Heap::allocateBlock(size_t cellSize, Heap::AllocationEffort allocationEffort)
-{
-    MarkedBlock* block;
-    
-    {
-        MutexLocker locker(m_freeBlockLock);
-        if (m_numberOfFreeBlocks) {
-            block = m_freeBlocks.removeHead();
-            ASSERT(block);
-            m_numberOfFreeBlocks--;
-        } else
-            block = 0;
-    }
-    if (block)
-        block->initForCellSize(cellSize);
-    else if (allocationEffort == AllocationCanFail)
-        return 0;
-    else
-        block = MarkedBlock::create(this, cellSize);
-    
-    m_blocks.add(block);
-
-    return block;
-}
-
 void Heap::freeBlocks(MarkedBlock* head)
 {
-    MarkedBlock* next;
-    for (MarkedBlock* block = head; block; block = next) {
-        next = block->next();
-
-        m_blocks.remove(block);
-        block->reset();
-        MutexLocker locker(m_freeBlockLock);
-        m_freeBlocks.append(block);
-        m_numberOfFreeBlocks++;
-    }
+    m_objectSpace.freeBlocks(head);
 }
 
 void Heap::shrink()
 {
-    // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
-    TakeIfEmpty takeIfEmpty(&m_markedSpace);
-    freeBlocks(forEachBlock(takeIfEmpty));
+    m_objectSpace.shrink();
 }
 
 void Heap::releaseFreeBlocks()

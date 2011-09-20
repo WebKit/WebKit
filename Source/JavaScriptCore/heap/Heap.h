@@ -22,6 +22,7 @@
 #ifndef Heap_h
 #define Heap_h
 
+#include "AllocationSpace.h"
 #include "HandleHeap.h"
 #include "HandleStack.h"
 #include "MarkedBlock.h"
@@ -37,6 +38,7 @@ namespace JSC {
 
     class GCActivityCallback;
     class GlobalCodeBlock;
+    class Heap;
     class HeapRootVisitor;
     class JSCell;
     class JSGlobalData;
@@ -56,10 +58,11 @@ namespace JSC {
     
     // Heap size hint.
     enum HeapSize { SmallHeap, LargeHeap };
-    
+
     class Heap {
         WTF_MAKE_NONCOPYABLE(Heap);
     public:
+        friend class JIT;
         static Heap* heap(JSValue); // 0 for immediate values
         static Heap* heap(JSCell*);
 
@@ -76,7 +79,7 @@ namespace JSC {
         void destroy(); // JSGlobalData must call destroy() before ~Heap().
 
         JSGlobalData* globalData() const { return m_globalData; }
-        MarkedSpace& markedSpace() { return m_markedSpace; }
+        AllocationSpace& objectSpace() { return m_objectSpace; }
         MachineThreads& machineThreads() { return m_machineThreads; }
 
         GCActivityCallback* activityCallback();
@@ -84,10 +87,10 @@ namespace JSC {
 
         // true if an allocation or collection is in progress
         inline bool isBusy();
-
+        
+        MarkedSpace::SizeClass& sizeClassForObject(size_t bytes) { return m_objectSpace.sizeClassFor(bytes); }
         void* allocate(size_t);
-        MarkedSpace::SizeClass& sizeClassFor(size_t);
-        void* allocate(MarkedSpace::SizeClass&);
+
         void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
         void collectAllGarbage();
 
@@ -112,10 +115,6 @@ namespace JSC {
         
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell(Functor&);
         template<typename Functor> typename Functor::ReturnType forEachProtectedCell();
-        template<typename Functor> typename Functor::ReturnType forEachCell(Functor&);
-        template<typename Functor> typename Functor::ReturnType forEachCell();
-        template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&);
-        template<typename Functor> typename Functor::ReturnType forEachBlock();
         
         HandleSlot allocateGlobalHandle() { return m_handleHeap.allocate(); }
         HandleSlot allocateLocalHandle() { return m_handleStack.push(); }
@@ -125,13 +124,10 @@ namespace JSC {
 
     private:
         friend class MarkedBlock;
-        
-        typedef HashSet<MarkedBlock*>::iterator BlockIterator;
+        friend class AllocationSpace;
 
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
-        
-        enum AllocationEffort { AllocationMustSucceed, AllocationCanFail };
         
 #if ENABLE(GGC)
         static void writeBarrierFastCase(const JSCell* owner, JSCell*);
@@ -142,7 +138,6 @@ namespace JSC {
         void canonicalizeBlocks();
         void resetAllocator();
 
-        MarkedBlock* allocateBlock(size_t cellSize, AllocationEffort);
         void freeBlocks(MarkedBlock*);
 
         void clearMarks();
@@ -150,9 +145,6 @@ namespace JSC {
         void markProtectedObjects(HeapRootVisitor&);
         void markTempSortVectors(HeapRootVisitor&);
         void harvestWeakReferences();
-
-        void* tryAllocate(MarkedSpace::SizeClass&);
-        void* allocateSlowCase(MarkedSpace::SizeClass&);
         
         enum SweepToggle { DoNotSweep, DoSweep };
         void collect(SweepToggle);
@@ -173,8 +165,7 @@ namespace JSC {
         const size_t m_minBytesPerCycle;
         
         OperationInProgress m_operationInProgress;
-        MarkedSpace m_markedSpace;
-        MarkedBlockSet m_blocks;
+        AllocationSpace m_objectSpace;
 
         DoublyLinkedList<MarkedBlock> m_freeBlocks;
         size_t m_numberOfFreeBlocks;
@@ -302,57 +293,10 @@ namespace JSC {
         return forEachProtectedCell(functor);
     }
 
-    template<typename Functor> inline typename Functor::ReturnType Heap::forEachCell(Functor& functor)
-    {
-        canonicalizeBlocks();
-        BlockIterator end = m_blocks.set().end();
-        for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
-            (*it)->forEachCell(functor);
-        return functor.returnValue();
-    }
-
-    template<typename Functor> inline typename Functor::ReturnType Heap::forEachCell()
-    {
-        Functor functor;
-        return forEachCell(functor);
-    }
-
-    template<typename Functor> inline typename Functor::ReturnType Heap::forEachBlock(Functor& functor)
-    {
-        canonicalizeBlocks();
-        BlockIterator end = m_blocks.set().end();
-        for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
-            functor(*it);
-        return functor.returnValue();
-    }
-
-    template<typename Functor> inline typename Functor::ReturnType Heap::forEachBlock()
-    {
-        Functor functor;
-        return forEachBlock(functor);
-    }
-    
-    inline MarkedSpace::SizeClass& Heap::sizeClassFor(size_t bytes)
-    {
-        return m_markedSpace.sizeClassFor(bytes);
-    }
-    
-    inline void* Heap::allocate(MarkedSpace::SizeClass& sizeClass)
-    {
-        // This is a light-weight fast path to cover the most common case.
-        MarkedBlock::FreeCell* firstFreeCell = sizeClass.firstFreeCell;
-        if (UNLIKELY(!firstFreeCell))
-            return allocateSlowCase(sizeClass);
-        
-        sizeClass.firstFreeCell = firstFreeCell->next;
-        return firstFreeCell;
-    }
-
     inline void* Heap::allocate(size_t bytes)
     {
         ASSERT(isValidAllocation(bytes));
-        MarkedSpace::SizeClass& sizeClass = sizeClassFor(bytes);
-        return allocate(sizeClass);
+        return m_objectSpace.allocate(bytes);
     }
 
 } // namespace JSC
