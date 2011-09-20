@@ -80,7 +80,7 @@ function formatAffiliation(contributor) {
                 affiliations.push(domainAffiliations[domain]);
         }
     }
-    return affiliations ? affiliations.join(' / ') : null;
+    return affiliations.join(' / ');
 }
 
 function addText(container, text) { container.appendChild(document.createTextNode(text)); }
