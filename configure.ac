@@ -502,14 +502,6 @@ AC_ARG_ENABLE(sql_database,
               [],[enable_sql_database="yes"])
 AC_MSG_RESULT([$enable_sql_database])
 
-# check whether to build with server-sent events support
-AC_MSG_CHECKING([whether to enable HTML5 server-sent events support])
-AC_ARG_ENABLE(eventsource,
-              AC_HELP_STRING([--enable-eventsource],
-                             [enable HTML5 server-sent events support [default=yes]]),
-              [],[enable_eventsource="yes"])
-AC_MSG_RESULT([$enable_eventsource])
-
 # check whether to build with icon database support
 AC_MSG_CHECKING([whether to enable icon database support])
 AC_ARG_ENABLE(icon_database,
@@ -1135,7 +1127,6 @@ AM_CONDITIONAL([ENABLE_DOM_STORAGE],[test "$enable_dom_storage" = "yes"])
 AM_CONDITIONAL([ENABLE_SQL_DATABASE],[test "$enable_sql_database" = "yes"])
 AM_CONDITIONAL([ENABLE_DATALIST],[test "$enable_datalist" = "yes"])
 AM_CONDITIONAL([ENABLE_DETAILS],[test "$enable_details" = "yes"])
-AM_CONDITIONAL([ENABLE_EVENTSOURCE],[test "$enable_eventsource" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MOBILE_SCROLLING],[test "$enable_fast_mobile_scrolling" = "yes"])
 AM_CONDITIONAL([ENABLE_FILE_SYSTEM],[test "$enable_file_system" = "yes"])
 AM_CONDITIONAL([ENABLE_QUOTA],[test "$enable_quota" = "yes"])
@@ -1254,7 +1245,6 @@ Features:
  HTML5 FileSystem API support                             : $enable_file_system
  Quota API support                                        : $enable_quota
  HTML5 sandboxed iframe support                           : $enable_sandbox
- HTML5 server-sent events support                         : $enable_eventsource
  HTML5 video element support                              : $enable_video
  HTML5 track element support                              : $enable_video_track
  Fullscreen API support                                   : $enable_fullscreen_api

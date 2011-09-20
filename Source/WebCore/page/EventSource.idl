@@ -32,7 +32,6 @@
 module window {
 
     interface [
-        Conditional=EVENTSOURCE,
         ActiveDOMObject,
         CanBeConstructed,
         CustomConstructFunction,

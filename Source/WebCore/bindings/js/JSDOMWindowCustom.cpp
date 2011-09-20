@@ -482,12 +482,10 @@ JSValue JSDOMWindow::event(ExecState* exec) const
     return toJS(exec, const_cast<JSDOMWindow*>(this), event);
 }
 
-#if ENABLE(EVENTSOURCE)
 JSValue JSDOMWindow::eventSource(ExecState* exec) const
 {
     return getDOMConstructor<JSEventSourceConstructor>(exec, this);
 }
-#endif
 
 JSValue JSDOMWindow::image(ExecState* exec) const
 {

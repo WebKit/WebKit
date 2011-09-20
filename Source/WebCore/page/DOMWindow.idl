@@ -571,9 +571,7 @@ module window {
         attribute RangeConstructor Range;
         attribute RangeExceptionConstructor RangeException;
 
-#if ENABLE_EVENTSOURCE
         attribute [JSCCustomGetter] EventSourceConstructor EventSource; // Usable with new the operator
-#endif
 
         // Mozilla has a separate XMLDocument object for XML documents. 
         // We just use Document for this.

@@ -81,7 +81,6 @@ my (
     $deviceOrientationSupport,
     $directoryUploadSupport,
     $domStorageSupport,
-    $eventsourceSupport,
     $fileSystemSupport,
     $filtersSupport,
     $fullscreenAPISupport,
@@ -178,9 +177,6 @@ my @features = (
 
     { option => "dom-storage", desc => "Toggle DOM Storage Support",
       define => "ENABLE_DOM_STORAGE", default => 1, value => \$domStorageSupport },
-
-    { option => "eventsource", desc => "Toggle server-sent events support",
-      define => "ENABLE_EVENTSOURCE", default => 1, value => \$eventsourceSupport },
 
     { option => "file-system", desc => "Toggle FileSystem support",
       define => "ENABLE_FILE_SYSTEM", default => 0, value => \$fileSystemSupport },

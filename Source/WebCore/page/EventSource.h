@@ -33,8 +33,6 @@
 #ifndef EventSource_h
 #define EventSource_h
 
-#if ENABLE(EVENTSOURCE)
-
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "KURL.h"
@@ -124,7 +122,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(EVENTSOURCE)
 
 #endif // EventSource_h

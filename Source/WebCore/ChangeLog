@@ -1,3 +1,34 @@
+2011-09-19  Adam Barth  <abarth@webkit.org>
+
+        Always enable ENABLE(EVENTSOURCE)
+        https://bugs.webkit.org/show_bug.cgi?id=68414
+
+        Reviewed by Eric Seidel.
+
+        EventSource seems to be here to stay.  This patch makes WebKit more
+        hackable by removing this ENABLE macro, as discussed on webkit-dev.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * bindings/cpp/WebDOMEventTarget.cpp:
+        (toWebKit):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::eventSource):
+        * bindings/js/JSEventSourceCustom.cpp:
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        (WebCore::toEventTarget):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::eventSource):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * features.pri:
+        * page/DOMWindow.idl:
+        * page/EventSource.cpp:
+        * page/EventSource.h:
+        * page/EventSource.idl:
+        * workers/WorkerContext.idl:
+
 2011-09-19  Jeremy Apthorp  <jeremya@chromium.org>
 
         Fix a use-after-free: clear the fullscreen change event target queue at

@@ -208,16 +208,6 @@ webcore_cppflags += -DENABLE_DATA_TRANSFER_ITEMS=1
 endif # END ENABLE_DATA_TRANSFER_ITEMS
 
 # ----
-# HTML5 server-sent events
-# ----
-if !ENABLE_EVENTSOURCE
-global_cppflags += -DENABLE_EVENTSOURCE=0
-else
-FEATURE_DEFINES += ENABLE_EVENTSOURCE=1
-webcore_cppflags += -DENABLE_EVENTSOURCE=1
-endif # ENABLE_EVENTSOURCE
-
-# ----
 # Indexed Database API support
 # ----
 if ENABLE_INDEXED_DATABASE
