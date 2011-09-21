@@ -463,6 +463,7 @@ void InspectorResourceAgent::disable(ErrorString*)
 {
     m_state->setBoolean(ResourceAgentState::resourceAgentEnabled, false);
     m_instrumentingAgents->setInspectorResourceAgent(0);
+    m_resourcesData->clear();
 }
 
 void InspectorResourceAgent::setUserAgentOverride(ErrorString*, const String& userAgent)

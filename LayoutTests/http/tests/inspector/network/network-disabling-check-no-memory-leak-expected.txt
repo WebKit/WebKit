@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 13: Done.
+Tests that after disabling network domain, content saved on backend is removed. Bug 67995
+
+resource.content after disabling network domain: null
+

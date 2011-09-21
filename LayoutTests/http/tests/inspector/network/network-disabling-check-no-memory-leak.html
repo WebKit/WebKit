@@ -1,0 +1,59 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+function loadData()
+{
+    doXHR("GET", "resources/resource.php", true, resourceLoaded);
+}
+
+function resourceLoaded()
+{
+    console.log("Done.");
+}
+
+function test()
+{
+    // Since this test could be run together with other inspector backend cache
+    // tests, we need to reset size limits to default ones.
+    InspectorTest.resetInspectorResourcesData(step1);
+
+    function step1()
+    {
+        InspectorTest.addConsoleSniffer(step2);
+        InspectorTest.evaluateInPage("loadData()");
+    }
+
+    function step2()
+    {
+        NetworkAgent.disable(step3);
+    }
+
+    function step3()
+    {
+        var resource1 = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
+        resource1.requestContent(step4);
+    }
+
+    function step4()
+    {
+        var resource1 = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
+        InspectorTest.addResult("resource.content after disabling network domain: " + resource1.content);
+        NetworkAgent.enable(step5);
+    }
+
+    function step5()
+    {
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+ <p>
+ Tests that after disabling network domain, content saved on backend is removed.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=67995">Bug 67995</a>
+</p>
+</body>
+</html>
