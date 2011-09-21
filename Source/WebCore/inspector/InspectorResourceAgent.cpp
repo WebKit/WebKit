@@ -226,7 +226,7 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
 
 void InspectorResourceAgent::markResourceAsCached(unsigned long identifier)
 {
-    m_frontend->resourceMarkedAsCached(IdentifiersFactory::requestId(identifier));
+    m_frontend->requestServedFromCache(IdentifiersFactory::requestId(identifier));
 }
 
 void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response)
@@ -312,7 +312,7 @@ void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* load
     m_resourcesData->addCachedResource(requestId, resource);
     RefPtr<InspectorObject> initiatorObject = buildInitiatorObject(loader->frame() ? loader->frame()->document() : 0);
 
-    m_frontend->resourceLoadedFromMemoryCache(requestId, frameId, loaderId, loader->url().string(), currentTime(), initiatorObject, buildObjectForCachedResource(*resource));
+    m_frontend->requestServedFromMemoryCache(requestId, frameId, loaderId, loader->url().string(), currentTime(), initiatorObject, buildObjectForCachedResource(*resource));
 }
 
 void InspectorResourceAgent::setInitialScriptContent(unsigned long identifier, const String& sourceString)
@@ -470,12 +470,12 @@ void InspectorResourceAgent::setUserAgentOverride(ErrorString*, const String& us
     m_userAgentOverride = userAgent;
 }
 
-void InspectorResourceAgent::setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject> headers)
+void InspectorResourceAgent::setExtraHTTPHeaders(ErrorString*, PassRefPtr<InspectorObject> headers)
 {
     m_state->setObject(ResourceAgentState::extraRequestHeaders, headers);
 }
 
-void InspectorResourceAgent::getResourceContent(ErrorString* errorString, const String& requestId, String* content, bool* base64Encoded)
+void InspectorResourceAgent::getResponseBody(ErrorString* errorString, const String& requestId, String* content, bool* base64Encoded)
 {
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
     if (!resourceData) {

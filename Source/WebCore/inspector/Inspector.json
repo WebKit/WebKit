@@ -73,7 +73,7 @@
                 "properties": [
                     { "name": "id", "type": "string", "description": "Frame unique identifier." },
                     { "name": "parentId", "type": "string", "optional": true, "description": "Parent frame identifier." },
-                    { "name": "loaderId", "type": "string", "description": "Identifier of the loader associated with this frame." },
+                    { "name": "loaderId", "$ref": "Network.LoaderId", "description": "Identifier of the loader associated with this frame." },
                     { "name": "name", "type": "string", "optional": true, "description": "Frame's name as specified in the tag." },
                     { "name": "url", "type": "string", "description": "Frame document's URL." },
                     { "name": "mimeType", "type": "string", "description": "Frame document's mimeType as determined by the browser." }
@@ -211,7 +211,7 @@
                 "description": "Fired once navigation of the frame has completed. Frame is now associated with the new loader.",
                 "parameters": [
                     { "name": "frame", "$ref": "Frame", "description": "Frame object." },
-                    { "name": "loaderId", "type": "string", "description": "Loader identifier." }
+                    { "name": "loaderId", "$ref": "Network.LoaderId", "description": "Loader identifier." }
                 ],
                 "hidden": true
             },
@@ -348,7 +348,7 @@
                     { "name": "text", "type": "string", "description": "Message text." },
                     { "name": "networkRequestId", "$ref": "Network.RequestId", "optional": true, "description": "Identifier of the network request associated with this message." },
                     { "name": "parameters", "type": "array", "items": { "$ref": "Runtime.RemoteObject" }, "optional": true, "description": "Message parameters in case of the formatted message." },
-                    { "name": "stackTrace", "$ref": "StackTrace", "description": "JavaScript stack trace for assertions and error messages." }
+                    { "name": "stackTrace", "$ref": "StackTrace", "optional": true, "description": "JavaScript stack trace for assertions and error messages." }
                 ]
             },
             {
@@ -425,8 +425,13 @@
     },
     {
         "domain": "Network",
-        "description": "Network domain allows tracking network activities of the page. It exposes information about HTTP and WebSocket requests and responses, their headers, bodies, timing, etc. It also allows getting the tree of the Frames on the page along with information about their resources.",
+        "description": "Network domain allows tracking network activities of the page. It exposes information about http, file, data and other requests and responses, their headers, bodies, timing, etc.",
         "types": [
+            {
+                "id": "LoaderId",
+                "type": "string",
+                "description": "Unique loader identifier."
+            },
             {
                 "id": "RequestId",
                 "type": "string",
@@ -452,7 +457,7 @@
                 ]
             },
             {
-                "id": "ResourceRequest",
+                "id": "Request",
                 "type": "object",
                 "description": "HTTP request data.",
                 "properties": [
@@ -463,7 +468,7 @@
                 ]
             },
             {
-                "id": "ResourceResponse",
+                "id": "Response",
                 "type": "object",
                 "description": "HTTP response data.",
                 "properties": [
@@ -477,7 +482,7 @@
                     { "name": "requestHeadersText", "type": "string", "optional": true, "description": "HTTP request headers text." },
                     { "name": "connectionReused", "type": "boolean", "description": "Specifies whether physical connection was actually reused for this request." },
                     { "name": "connectionId", "type": "number", "description": "Physical connection id that was actually used for this request." },
-                    { "name": "fromDiskCache", "type": "boolean", "optional": true, "description": "Specifies that the resource was loaded from the disk cache." },
+                    { "name": "fromDiskCache", "type": "boolean", "optional": true, "description": "Specifies that the request was served from the disk cache." },
                     { "name": "timing", "$ref": "ResourceTiming", "optional": true, "description": "Timing information for the given request." }
                 ]
             },
@@ -488,14 +493,14 @@
                 "properties": [
                     { "name": "url", "type": "string", "description": "Resource URL." },
                     { "name": "type", "$ref": "Page.ResourceType", "description": "Type of this resource." },
-                    { "name": "response", "$ref": "ResourceResponse", "description": "Cached response data." },
+                    { "name": "response", "$ref": "Response", "description": "Cached response data." },
                     { "name": "bodySize", "type": "number", "description": "Cached response body size." }
                 ]
             },
             {
                 "id": "Initiator",
                 "type": "object",
-                "description": "Information about the resource load initiator.",
+                "description": "Information about the request initiator.",
                 "properties": [
                     { "name": "type", "type": "string", "enum": ["parser", "script", "other"], "description": "Type of this initiator." },
                     { "name": "stackTrace", "$ref": "Console.StackTrace", "optional": true, "description": "Initiator JavaScript stack trace, set for Script only." },
@@ -521,20 +526,20 @@
                 ]
             },
             {
-                "name": "setExtraHeaders",
+                "name": "setExtraHTTPHeaders",
                 "description": "Allows sending extra HTTP headers with the requests from this page.",
                 "parameters": [
                     { "name": "headers", "type": "object", "description": "Map with extra HTTP headers." }
                 ]
             },
             {
-                "name": "getResourceContent",
-                "description": "Returns content of the given resource.",
+                "name": "getResponseBody",
+                "description": "Returns content served for the given request.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Identifier of the network request to get content for." }
                 ],
                 "returns": [
-                    { "name": "content", "type": "string", "description": "Resource content." },
+                    { "name": "body", "type": "string", "description": "Response body." },
                     { "name": "base64Encoded", "type": "boolean", "description": "True, if content was served as base64." }
                 ]
             },
@@ -561,18 +566,18 @@
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "frameId", "type": "string", "description": "Frame identifier.", "hidden": true },
-                    { "name": "loaderId", "type": "string", "description": "Loader identifier." },
-                    { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
-                    { "name": "request", "$ref": "ResourceRequest", "description": "Request data." },
+                    { "name": "loaderId", "$ref": "LoaderId", "description": "Loader identifier." },
+                    { "name": "documentURL", "type": "string", "description": "URL of the document this request is loaded for." },
+                    { "name": "request", "$ref": "Request", "description": "Request data." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "initiator", "$ref": "Initiator", "description": "Request initiator." },
-                    { "name": "stackTrace", "$ref": "Console.StackTrace", "description": "JavaScript stack trace upon issuing this request." },
-                    { "name": "redirectResponse", "optional": true, "$ref": "ResourceResponse", "description": "Redirect response data." }
+                    { "name": "stackTrace", "$ref": "Console.StackTrace", "optional": true, "description": "JavaScript stack trace upon issuing this request." },
+                    { "name": "redirectResponse", "optional": true, "$ref": "Response", "description": "Redirect response data." }
                 ]
             },
             {
-                "name": "resourceMarkedAsCached",
-                "description": "Fired when request is known to be served from disk cache.",
+                "name": "requestServedFromCache",
+                "description": "Fired if request ended up loading from cache.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." }
                 ]
@@ -584,7 +589,7 @@
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "type", "$ref": "Page.ResourceType", "description": "Resource type." },
-                    { "name": "response", "$ref": "ResourceResponse", "description": "Response data." }
+                    { "name": "response", "$ref": "Response", "description": "Response data." }
                 ]
             },
             {
@@ -616,13 +621,13 @@
                 ]
             },
             {
-                "name": "resourceLoadedFromMemoryCache",
+                "name": "requestServedFromMemoryCache",
                 "description": "Fired when HTTP request has been served from memory cache.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "frameId", "type": "string", "description": "Frame identifier.", "hidden": true },
-                    { "name": "loaderId", "type": "string", "description": "Loader identifier." },
-                    { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
+                    { "name": "loaderId", "$ref": "LoaderId", "description": "Loader identifier." },
+                    { "name": "documentURL", "type": "string", "description": "URL of the document this request is loaded for." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "initiator", "$ref": "Initiator", "description": "Request initiator." },
                     { "name": "resource", "$ref": "CachedResource", "description": "Cached resource data." }
@@ -851,11 +856,11 @@
                     { "name": "children", "type": "array", "optional": true, "items": { "$ref": "Node" }, "description": "Child nodes of this node when requested with children." },
                     { "name": "attributes", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Attributes of the <code>Element</code> node in the form of flat array <code>[name1, value1, name2, value2]</code>." },
                     { "name": "documentURL", "type": "string", "optional": true, "description": "Document URL that <code>Document</code> or <code>FrameOwner</code> node points to." },
-                    { "name": "publicId", "type": "string", "optional": true, "description": "<code>DocumentType</code>'s publicId. // FIXME" },
-                    { "name": "systemId", "type": "string", "optional": true, "description": "<code>DocumentType</code>'s systemId. // FIXME" },
-                    { "name": "internalSubset", "type": "string", "optional": true, "description": "<code>DocumentType</code>'s internalSubset. // FIXME" },
-                    { "name": "name", "type": "string", "optional": true, "description": "<code>Attr</code>'s name. // FIXME" },
-                    { "name": "value", "type": "string", "optional": true, "description": "<code>Attr</code>'s value. // FIXME" }
+                    { "name": "publicId", "type": "string", "optional": true, "description": "<code>DocumentType</code>'s publicId." },
+                    { "name": "systemId", "type": "string", "optional": true, "description": "<code>DocumentType</code>'s systemId." },
+                    { "name": "internalSubset", "type": "string", "optional": true, "description": "<code>DocumentType</code>'s internalSubset." },
+                    { "name": "name", "type": "string", "optional": true, "description": "<code>Attr</code>'s name." },
+                    { "name": "value", "type": "string", "optional": true, "description": "<code>Attr</code>'s value." }
                 ],
                 "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
             },

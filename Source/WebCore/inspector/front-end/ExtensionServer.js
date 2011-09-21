@@ -178,7 +178,7 @@ WebInspector.ExtensionServer.prototype = {
                     allHeaders[name] = headers[name];
             }
         }
-        NetworkAgent.setExtraHeaders(allHeaders);
+        NetworkAgent.setExtraHTTPHeaders(allHeaders);
     },
 
     _onCreatePanel: function(message, port)

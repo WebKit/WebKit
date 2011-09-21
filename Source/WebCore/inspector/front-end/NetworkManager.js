@@ -62,7 +62,7 @@ WebInspector.NetworkManager.prototype = {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=61363 We should separate NetworkResource (NetworkPanel resource)
         // from ResourceRevision (ResourcesPanel/ScriptsPanel resource) and request content accordingly.
         if (resource.requestId)
-            NetworkAgent.getResourceContent(resource.requestId, callbackWrapper);
+            NetworkAgent.getResponseBody(resource.requestId, callbackWrapper);
         else
             PageAgent.getResourceContent(resource.frameId, resource.url, callbackWrapper);
     },
@@ -193,7 +193,7 @@ WebInspector.NetworkDispatcher.prototype = {
         this._startResource(resource);
     },
 
-    resourceMarkedAsCached: function(requestId)
+    requestServedFromCache: function(requestId)
     {
         var resource = this._inflightResourcesById[requestId];
         if (!resource)
@@ -256,7 +256,7 @@ WebInspector.NetworkDispatcher.prototype = {
         this._finishResource(resource, time);
     },
 
-    resourceLoadedFromMemoryCache: function(requestId, frameId, loaderId, documentURL, time, initiator, cachedResource)
+    requestServedFromMemoryCache: function(requestId, frameId, loaderId, documentURL, time, initiator, cachedResource)
     {
         var resource = this._createResource(requestId, frameId, loaderId, cachedResource.url, documentURL, initiator);
         this._updateResourceWithCachedResource(resource, cachedResource);
