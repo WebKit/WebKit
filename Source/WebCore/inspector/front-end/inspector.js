@@ -547,7 +547,6 @@ WebInspector.doLoadedDone = function()
     this.extensionServer.initExtensions();
 
     this.console.enableAgent();
-
     DatabaseAgent.enable();
     DOMStorageAgent.enable();
 

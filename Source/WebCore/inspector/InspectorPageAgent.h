@@ -50,6 +50,7 @@ class Frontend;
 class InjectedScriptManager;
 class InspectorArray;
 class InspectorObject;
+class InspectorState;
 class InstrumentingAgents;
 class KURL;
 class Page;
@@ -73,7 +74,7 @@ public:
         OtherResource
     };
 
-    static PassOwnPtr<InspectorPageAgent> create(InstrumentingAgents*, Page*, InjectedScriptManager*);
+    static PassOwnPtr<InspectorPageAgent> create(InstrumentingAgents*, Page*, InspectorState*, InjectedScriptManager*);
 
     static bool cachedResourceContent(CachedResource*, String* result, bool* base64Encoded);
     static bool sharedBufferContent(PassRefPtr<SharedBuffer>, const String& textEncodingName, bool withBase64Encode, String* result);
@@ -86,6 +87,8 @@ public:
     static String cachedResourceTypeString(const CachedResource&);
 
     // Page API for InspectorFrontend
+    void enable(ErrorString*);
+    void disable(ErrorString*);
     void addScriptToEvaluateOnLoad(ErrorString*, const String& source);
     void removeAllScriptsToEvaluateOnLoad(ErrorString*);
     void reload(ErrorString*, const bool* const optionalIgnoreCache);
@@ -107,6 +110,7 @@ public:
     // Inspector Controller API
     void setFrontend(InspectorFrontend*);
     void clearFrontend();
+    void restore();
 
     // Cross-agents API
     Frame* mainFrame();
@@ -116,7 +120,7 @@ public:
     String loaderId(DocumentLoader*);
 
 private:
-    InspectorPageAgent(InstrumentingAgents*, Page*, InjectedScriptManager*);
+    InspectorPageAgent(InstrumentingAgents*, Page*, InspectorState*, InjectedScriptManager*);
 
     PassRefPtr<InspectorObject> buildObjectForFrame(Frame*);
     PassRefPtr<InspectorObject> buildObjectForFrameTree(Frame*);
@@ -124,6 +128,7 @@ private:
     InstrumentingAgents* m_instrumentingAgents;
     Page* m_page;
     InjectedScriptManager* m_injectedScriptManager;
+    InspectorState* m_state;
     InspectorFrontend::Page* m_frontend;
     Vector<String> m_scriptsToEvaluateOnLoad;
     HashMap<Frame*, String> m_frameToIdentifier;

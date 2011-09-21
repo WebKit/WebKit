@@ -50,6 +50,7 @@
 #include "IdentifiersFactory.h"
 #include "InjectedScriptManager.h"
 #include "InspectorFrontend.h"
+#include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "MemoryCache.h"
@@ -70,6 +71,10 @@ namespace WebCore {
 namespace {
 // This should be kept the same as the one in front-end/utilities.js
 static const char regexSpecialCharacters[] = "[](){}+-*.,?\\^$|";
+}
+
+namespace PageAgentState {
+static const char pageAgentEnabled[] = "resourceAgentEnabled";
 }
 
 static bool decodeSharedBuffer(PassRefPtr<SharedBuffer> buffer, const String& textEncodingName, String* result)
@@ -170,9 +175,9 @@ bool InspectorPageAgent::sharedBufferContent(PassRefPtr<SharedBuffer> buffer, co
     return decodeSharedBuffer(buffer, textEncodingName, result);
 }
 
-PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InjectedScriptManager* injectedScriptManager)
+PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* state, InjectedScriptManager* injectedScriptManager)
 {
-    return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, injectedScriptManager));
+    return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, state, injectedScriptManager));
 }
 
 // static
@@ -262,10 +267,11 @@ String InspectorPageAgent::cachedResourceTypeString(const CachedResource& cached
     return resourceTypeString(cachedResourceType(cachedResource));
 }
 
-InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InjectedScriptManager* injectedScriptManager)
+InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* state, InjectedScriptManager* injectedScriptManager)
     : m_instrumentingAgents(instrumentingAgents)
     , m_page(page)
     , m_injectedScriptManager(injectedScriptManager)
+    , m_state(state)
     , m_frontend(0)
 {
 }
@@ -273,13 +279,33 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
 void InspectorPageAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend->page();
-    m_instrumentingAgents->setInspectorPageAgent(this);
 }
 
 void InspectorPageAgent::clearFrontend()
 {
-    m_instrumentingAgents->setInspectorPageAgent(0);
+    ErrorString error;
+    disable(&error);
     m_frontend = 0;
+}
+
+void InspectorPageAgent::restore()
+{
+    if (m_state->getBoolean(PageAgentState::pageAgentEnabled)) {
+        ErrorString error;
+        enable(&error);
+    }
+}
+
+void InspectorPageAgent::enable(ErrorString*)
+{
+    m_state->setBoolean(PageAgentState::pageAgentEnabled, true);
+    m_instrumentingAgents->setInspectorPageAgent(this);
+}
+
+void InspectorPageAgent::disable(ErrorString*)
+{
+    m_state->setBoolean(PageAgentState::pageAgentEnabled, false);
+    m_instrumentingAgents->setInspectorPageAgent(0);
 }
 
 void InspectorPageAgent::addScriptToEvaluateOnLoad(ErrorString*, const String& source)

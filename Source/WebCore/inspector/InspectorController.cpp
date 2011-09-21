@@ -98,7 +98,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_injectedScriptManager(InjectedScriptManager::createForPage())
     , m_state(adoptPtr(new InspectorState(inspectorClient)))
     , m_inspectorAgent(adoptPtr(new InspectorAgent(page, m_injectedScriptManager.get(), m_instrumentingAgents.get())))
-    , m_pageAgent(InspectorPageAgent::create(m_instrumentingAgents.get(), page, m_injectedScriptManager.get()))
+    , m_pageAgent(InspectorPageAgent::create(m_instrumentingAgents.get(), page, m_state.get(), m_injectedScriptManager.get()))
     , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), m_pageAgent.get(), inspectorClient, m_state.get(), m_injectedScriptManager.get()))
     , m_cssAgent(adoptPtr(new InspectorCSSAgent(m_instrumentingAgents.get(), m_domAgent.get())))
 #if ENABLE(SQL_DATABASE)
@@ -342,6 +342,7 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
     connectFrontend();
     m_state->loadFromCookie(inspectorStateCookie);
 
+    m_pageAgent->restore();
     m_domAgent->restore();
     m_resourceAgent->restore();
     m_timelineAgent->restore();

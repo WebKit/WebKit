@@ -42,6 +42,8 @@ WebInspector.ResourceTreeModel = function(networkManager)
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.RepeatCountUpdated, this._consoleMessageAdded, this);
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._consoleCleared, this);
 
+    PageAgent.enable();
+
     this.frontendReused();
     InspectorBackend.registerPageDispatcher(new WebInspector.PageDispatcher(this));
 

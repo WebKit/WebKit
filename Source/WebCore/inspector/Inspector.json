@@ -115,6 +115,14 @@
         ],
         "commands": [
             {
+                "name": "enable",
+                "description": "Enables page domain notifications."
+            },
+            {
+                "name": "disable",
+                "description": "Disables page domain notifications."
+            },
+            {
                 "name": "addScriptToEvaluateOnLoad",
                 "parameters": [
                     { "name": "scriptSource", "type": "string" }
@@ -136,9 +144,10 @@
                 "name": "open",
                 "parameters": [
                     { "name": "url", "type": "string", "description": "URL to open." },
-                    { "name": "newWindow", "optional": true, "type": "boolean", "description": "If True, opens given URL in a new window or tab." }
+                    { "name": "newWindow", "optional": true, "type": "boolean", "description": "If true, opens given URL in a new window or tab." }
                 ],
-                "description": "Opens given URL either in the inspected page or in a new tab / window."
+                "description": "Opens given URL either in the inspected page or in a new tab / window.",
+                "hidden": true
             },
             {
                 "name": "getCookies",
@@ -227,7 +236,7 @@
     },
     {
         "domain": "Runtime",
-        "description": "Runtime domain exposes JavaScript runtime by means of remote evaluation and mirror objects. Evaluation results are returned as mirror object that expose type, string representation and unique identifier that can be used for further object interaction. Original objects are maintained in memory unless they are either explicitly released or are released along with the other objects in their object group.",
+        "description": "Runtime domain exposes JavaScript runtime by means of remote evaluation and mirror objects. Evaluation results are returned as mirror object that expose object type, string representation and unique identifier that can be used for further object reference. Original objects are maintained in memory unless they are either explicitly released or are released along with the other objects in their object group.",
         "types": [
             {
                 "id": "RemoteObjectId",
@@ -301,7 +310,7 @@
                     { "name": "result", "$ref": "RemoteObject", "description": "Call result." },
                     { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." }
                 ],
-                "description": "Calls function with given declaration on the given object."
+                "description": "Calls function with given declaration on the given object. Object group of the result is inherited from the target object."
             },
             {
                 "name": "getProperties",
@@ -312,7 +321,7 @@
                 "returns": [
                     { "name": "result", "type": "array", "items": { "$ref": "PropertyDescriptor"}, "description": "Object properties." }
                 ],
-                "description": "Returns properties of a given object."
+                "description": "Returns properties of a given object. Object group of the result is inherited from the target object."
             },
             {
                 "name": "releaseObject",
@@ -438,6 +447,16 @@
                 "description": "Unique request identifier."
             },
             {
+                "id": "Timestamp",
+                "type": "number",
+                "description": "Number of seconds since epoch."
+            },
+            {
+                "id": "Headers",
+                "type": "object",
+                "description": "Request / response headers as keys / values of JSON object."
+            },
+            {
                 "id": "ResourceTiming",
                 "type": "object",
                 "description": "Timing information for the request.",
@@ -463,7 +482,7 @@
                 "properties": [
                     { "name": "url", "type": "string", "description": "Request URL." },
                     { "name": "method", "type": "string", "description": "HTTP request method." },
-                    { "name": "headers", "type": "object", "description": "HTTP request headers." },
+                    { "name": "headers", "$ref": "Headers", "description": "HTTP request headers." },
                     { "name": "postData", "type": "string", "optional": true, "description": "HTTP POST request data." }
                 ]
             },
@@ -475,10 +494,10 @@
                     { "name": "url", "type": "string", "description": "Response URL." },
                     { "name": "status", "type": "number", "description": "HTTP response status code." },
                     { "name": "statusText", "type": "string", "description": "HTTP response status text." },
-                    { "name": "headers", "type": "object", "description": "HTTP response headers." },
+                    { "name": "headers", "$ref": "Headers", "description": "HTTP response headers." },
                     { "name": "headersText", "type": "string", "optional": true, "description": "HTTP response headers text." },
                     { "name": "mimeType", "type": "string", "description": "Resource mimeType as determined by the browser." },
-                    { "name": "requestHeaders", "type": "object", "optional": true, "description": "Refined HTTP request headers that were actually transmitted over the network." },
+                    { "name": "requestHeaders", "$ref": "Headers", "optional": true, "description": "Refined HTTP request headers that were actually transmitted over the network." },
                     { "name": "requestHeadersText", "type": "string", "optional": true, "description": "HTTP request headers text." },
                     { "name": "connectionReused", "type": "boolean", "description": "Specifies whether physical connection was actually reused for this request." },
                     { "name": "connectionId", "type": "number", "description": "Physical connection id that was actually used for this request." },
@@ -527,9 +546,9 @@
             },
             {
                 "name": "setExtraHTTPHeaders",
-                "description": "Allows sending extra HTTP headers with the requests from this page.",
+                "description": "Specifies whether to always send extra HTTP headers with the requests from this page.",
                 "parameters": [
-                    { "name": "headers", "type": "object", "description": "Map with extra HTTP headers." }
+                    { "name": "headers", "$ref": "Headers", "description": "Map with extra HTTP headers." }
                 ]
             },
             {
@@ -540,7 +559,7 @@
                 ],
                 "returns": [
                     { "name": "body", "type": "string", "description": "Response body." },
-                    { "name": "base64Encoded", "type": "boolean", "description": "True, if content was served as base64." }
+                    { "name": "base64Encoded", "type": "boolean", "description": "True, if content was sent as base64." }
                 ]
             },
             {
@@ -569,7 +588,7 @@
                     { "name": "loaderId", "$ref": "LoaderId", "description": "Loader identifier." },
                     { "name": "documentURL", "type": "string", "description": "URL of the document this request is loaded for." },
                     { "name": "request", "$ref": "Request", "description": "Request data." },
-                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                     { "name": "initiator", "$ref": "Initiator", "description": "Request initiator." },
                     { "name": "stackTrace", "$ref": "Console.StackTrace", "optional": true, "description": "JavaScript stack trace upon issuing this request." },
                     { "name": "redirectResponse", "optional": true, "$ref": "Response", "description": "Redirect response data." }
@@ -587,7 +606,7 @@
                 "description": "Fired when HTTP response is available.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                     { "name": "type", "$ref": "Page.ResourceType", "description": "Resource type." },
                     { "name": "response", "$ref": "Response", "description": "Response data." }
                 ]
@@ -597,7 +616,7 @@
                 "description": "Fired when data chunk was received over the network.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                     { "name": "dataLength", "type": "integer", "description": "Data chunk length." },
                     { "name": "encodedDataLength", "type": "integer", "description": "Actual bytes received (might be less than dataLength for compressed encodings)." }
                 ]
@@ -607,7 +626,7 @@
                 "description": "Fired when HTTP request has finished loading.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                    { "name": "timestamp", "type": "number", "description": "Timestamp." }
+                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." }
                 ]
             },
             {
@@ -615,7 +634,7 @@
                 "description": "Fired when HTTP request has failed to load.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                     { "name": "errorText", "type": "string", "description": "User friendly error message." },
                     { "name": "canceled", "type": "boolean", "optional": true, "description": "True if loading was canceled." }
                 ]
@@ -628,7 +647,7 @@
                     { "name": "frameId", "type": "string", "description": "Frame identifier.", "hidden": true },
                     { "name": "loaderId", "$ref": "LoaderId", "description": "Loader identifier." },
                     { "name": "documentURL", "type": "string", "description": "URL of the document this request is loaded for." },
-                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                     { "name": "initiator", "$ref": "Initiator", "description": "Request initiator." },
                     { "name": "resource", "$ref": "CachedResource", "description": "Cached resource data." }
                 ]
@@ -638,7 +657,7 @@
                 "description": "Fired when WebSocket is about to initiate handshake.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                     { "name": "request", "type": "object", "description": "WebSocket request data." }
                 ],
                 "hidden": true
@@ -648,7 +667,7 @@
                 "description": "Fired when WebSocket handshake response becomes available.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
                     { "name": "response", "type": "object", "description": "WebSocket response data." }
                 ],
                 "hidden": true
@@ -667,7 +686,7 @@
                 "description": "Fired when WebSocket is closed.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                    { "name": "timestamp", "type": "number", "description": "Timestamp." }
+                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." }
                 ],
                 "hidden": true
             }
@@ -897,7 +916,7 @@
                     { "name": "contentColor", "$ref": "RGBA", "optional": true, "description": "The content box highlight fill color (default: transparent)." },
                     { "name": "paddingColor", "$ref": "RGBA", "optional": true, "description": "The padding highlight fill color (default: transparent)." },
                     { "name": "borderColor", "$ref": "RGBA", "optional": true, "description": "The border highlight fill color (default: transparent)." },
-                    { "name": "marginColor", "$ref": "RGBA", "optional": true, "description": "The margin highlight fill color (default: transparent)." },
+                    { "name": "marginColor", "$ref": "RGBA", "optional": true, "description": "The margin highlight fill color (default: transparent)." }
                 ],
                 "description": "Configuration data for the highlighting of page elements."
             }
@@ -1503,11 +1522,13 @@
         "events": [
             {
                 "name": "started",
-                "description": "Fired when timeline has been started."
+                "description": "Fired when timeline has been started.",
+                "hidden": true
             },
             {
                 "name": "stopped",
-                "description": "Fired when timeline has been stopped."
+                "description": "Fired when timeline has been stopped.",
+                "hidden": true
             },
             {
                 "name": "eventRecorded",
