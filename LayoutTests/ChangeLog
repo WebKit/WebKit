@@ -1,3 +1,14 @@
+2011-09-20  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] rebaseline caused by r95567
+
+        * platform/chromium-cg-mac/fast/clip/overflow-border-radius-fixed-position-expected.png: Added.
+        * platform/chromium-linux-x86/fast/clip: Removed.
+        * platform/chromium-linux/fast/clip/overflow-border-radius-fixed-position-expected.png: Added.
+        * platform/chromium-mac/fast/clip/overflow-border-radius-fixed-position-expected.png: Added.
+        * platform/chromium-win/fast/clip/overflow-border-radius-fixed-position-expected.png: Added.
+        * platform/chromium-win/fast/clip/overflow-border-radius-fixed-position-expected.txt: Added.
+
 2011-09-20  John Gregg  <johnnyg@google.com>
 
         Directory Upload: parent path can truncate first char of the correct path
