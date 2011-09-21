@@ -21,6 +21,9 @@ h3:before {
 h3:after {
     content: counters(section, ",", upper-roman);
 }
+h4:before {
+    content: counter(section, none);
+}
 </style>
 </head>
 <p id=description></p>
@@ -32,6 +35,7 @@ shouldBeEqualToString("rules[2].style.cssText", "content: counter(section, decim
 shouldBeEqualToString("rules[3].style.cssText", "content: counters(section, ':', decimal); ");
 shouldBeEqualToString("rules[4].style.cssText", "content: counter(section, lower-roman); ");
 shouldBeEqualToString("rules[5].style.cssText", "content: counters(section, ',', upper-roman); ");
+shouldBeEqualToString("rules[6].style.cssText", "content: counter(section, none); ");
 window.successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

@@ -2697,8 +2697,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             }
             case CSSPrimitiveValue::CSS_COUNTER: {
                 Counter* counterValue = contentValue->getCounterValue();
-                OwnPtr<CounterContent> counter = adoptPtr(new CounterContent(counterValue->identifier(),
-                    (EListStyleType)counterValue->listStyleNumber(), counterValue->separator()));
+                EListStyleType listStyleType = NoneListStyle;
+                int listStyleIdent = counterValue->listStyleIdent();
+                if (listStyleIdent != CSSValueNone)
+                    listStyleType = static_cast<EListStyleType>(listStyleIdent - CSSValueDisc);
+                OwnPtr<CounterContent> counter = adoptPtr(new CounterContent(counterValue->identifier(), listStyleType, counterValue->separator()));
                 m_style->setContent(counter.release(), didSet);
                 didSet = true;
                 break;

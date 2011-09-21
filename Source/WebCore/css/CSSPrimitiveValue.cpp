@@ -798,19 +798,27 @@ String CSSPrimitiveValue::cssText() const
             text += ")";
             break;
         case CSS_COUNTER: {
+            DEFINE_STATIC_LOCAL(const String, counterParen, ("counter("));
+            DEFINE_STATIC_LOCAL(const String, countersParen, ("counters("));
+            DEFINE_STATIC_LOCAL(const String, commaSpace, (", "));
+
+            StringBuilder result;
             String separator = m_value.counter->separator();
-            text = separator.isEmpty() ? "counter(" : "counters(";
-            text += m_value.counter->identifier();
+            result.append(separator.isEmpty() ? counterParen : countersParen);
+
+            result.append(m_value.counter->identifier());
             if (!separator.isEmpty()) {
-                text += ", ";
-                text += quoteCSSStringIfNeeded(separator);
+                result.append(commaSpace);
+                result.append(quoteCSSStringIfNeeded(separator));
             }
-            const char* listStyleName = getValueName(m_value.counter->listStyleNumber() + CSSValueDisc);
-            if (listStyleName) {
-                text += ", ";
-                text += listStyleName;
+            String listStyle = m_value.counter->listStyle();
+            if (!listStyle.isEmpty()) {
+                result.append(commaSpace);
+                result.append(listStyle);
             }
-            text += ")";
+            result.append(')');
+
+            text = result.toString();
             break;
         }
         case CSS_RECT: {

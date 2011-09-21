@@ -3663,7 +3663,7 @@ PassRefPtr<CSSValue> CSSParser::parseCounterContent(CSSParserValueList* args, bo
     RefPtr<CSSPrimitiveValue> listStyle;
     i = args->next();
     if (!i) // Make the list style default decimal
-        listStyle = primitiveValueCache()->createValue(CSSValueDecimal - CSSValueDisc, CSSPrimitiveValue::CSS_NUMBER);
+        listStyle = primitiveValueCache()->createIdentifierValue(CSSValueDecimal);
     else {
         if (i->unit != CSSParserValue::Operator || i->iValue != ',')
             return 0;
@@ -3672,15 +3672,13 @@ PassRefPtr<CSSValue> CSSParser::parseCounterContent(CSSParserValueList* args, bo
         if (i->unit != CSSPrimitiveValue::CSS_IDENT)
             return 0;
 
-        short ls = 0;
-        if (i->id == CSSValueNone)
-            ls = CSSValueKatakanaIroha - CSSValueDisc + 1;
-        else if (i->id >= CSSValueDisc && i->id <= CSSValueKatakanaIroha)
-            ls = i->id - CSSValueDisc;
+        int listStyleID = 0;
+        if (i->id == CSSValueNone || (i->id >= CSSValueDisc && i->id <= CSSValueKatakanaIroha))
+            listStyleID = i->id;
         else
             return 0;
 
-        listStyle = primitiveValueCache()->createValue(ls, (CSSPrimitiveValue::UnitTypes) i->unit);
+        listStyle = primitiveValueCache()->createIdentifierValue(listStyleID);
     }
 
     return primitiveValueCache()->createValue(Counter::create(identifier.release(), listStyle.release(), separator.release()));
