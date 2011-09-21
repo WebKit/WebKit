@@ -4169,7 +4169,7 @@ skip_id_custom_self:
         ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsFullScopeChain() || callFrame->r(codeBlock->activationRegister()).jsValue());
         JSValue funcVal = callFrame->r(func).jsValue();
 
-        if (isHostFunction(callFrame->globalData(), funcVal, globalFuncEval)) {
+        if (isHostFunction(funcVal, globalFuncEval)) {
             Register* newCallFrame = callFrame->registers() + registerOffset;
             Register* argv = newCallFrame - RegisterFile::CallFrameHeaderSize - argCount;
 

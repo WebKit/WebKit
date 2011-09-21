@@ -75,7 +75,7 @@ void JIT::compileOpCallVarargs(Instruction* instruction)
 
     // Check for JSFunctions.
     emitJumpSlowCaseIfNotJSCell(regT0);
-    addSlowCase(branchPtr(NotEqual, Address(regT0), TrustedImmPtr(m_globalData->jsFunctionVPtr)));
+    addSlowCase(emitJumpIfNotType(regT0, regT3, JSFunctionType));
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
     mul32(TrustedImm32(sizeof(Register)), regT2, regT2);
@@ -171,7 +171,7 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     // Fast check for JS function.
     Jump callLinkFailNotObject = emitJumpIfNotJSCell(regT0);
-    Jump callLinkFailNotJSFunction = branchPtr(NotEqual, Address(regT0), TrustedImmPtr(m_globalData->jsFunctionVPtr));
+    Jump callLinkFailNotJSFunction = emitJumpIfNotType(regT0, regT3, JSFunctionType);
 
     // Speculatively roll the callframe, assuming argCount will match the arity.
     storePtr(callFrameRegister, Address(callFrameRegister, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register))));

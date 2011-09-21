@@ -271,11 +271,11 @@ public:
     {
         return at(nodeIndex).isBooleanConstant(codeBlock);
     }
-    bool isFunctionConstant(CodeBlock* codeBlock, JSGlobalData& globalData, NodeIndex nodeIndex)
+    bool isFunctionConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
         if (!isJSConstant(nodeIndex))
             return false;
-        if (!getJSFunction(globalData, valueOfJSConstant(codeBlock, nodeIndex)))
+        if (!getJSFunction(valueOfJSConstant(codeBlock, nodeIndex)))
             return false;
         return true;
     }
@@ -298,9 +298,9 @@ public:
     {
         return valueOfJSConstantNode(codeBlock, nodeIndex).getBoolean();
     }
-    JSFunction* valueOfFunctionConstant(CodeBlock* codeBlock, JSGlobalData& globalData, NodeIndex nodeIndex)
+    JSFunction* valueOfFunctionConstant(CodeBlock* codeBlock, NodeIndex nodeIndex)
     {
-        JSCell* function = getJSFunction(globalData, valueOfJSConstant(codeBlock, nodeIndex));
+        JSCell* function = getJSFunction(valueOfJSConstant(codeBlock, nodeIndex));
         ASSERT(function);
         return asFunction(function);
     }

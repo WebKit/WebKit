@@ -312,6 +312,7 @@ namespace JSC {
         void emitLoadDouble(unsigned index, FPRegisterID value);
         void emitLoadInt32ToDouble(unsigned index, FPRegisterID value);
         Jump emitJumpIfNotObject(RegisterID structureReg);
+        Jump emitJumpIfNotType(RegisterID baseReg, RegisterID scratchReg, JSType);
 
         void testPrototype(JSValue, JumpList& failureCases);
 

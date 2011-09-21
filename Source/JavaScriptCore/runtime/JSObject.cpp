@@ -128,7 +128,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
     for (JSObject* obj = this; !obj->structure()->hasGetterSetterProperties(); obj = asObject(prototype)) {
         prototype = obj->prototype();
         if (prototype.isNull()) {
-            if (!putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(globalData, value)) && slot.isStrictMode())
+            if (!putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(value)) && slot.isStrictMode())
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return;
         }
@@ -171,7 +171,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
             break;
     }
     
-    if (!putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(globalData, value)) && slot.isStrictMode())
+    if (!putDirectInternal(globalData, propertyName, value, 0, true, slot, getJSFunction(value)) && slot.isStrictMode())
         throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     return;
 }
@@ -184,13 +184,13 @@ void JSObject::put(ExecState* exec, unsigned propertyName, JSValue value)
 
 void JSObject::putWithAttributes(JSGlobalData* globalData, const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot)
 {
-    putDirectInternal(*globalData, propertyName, value, attributes, checkReadOnly, slot, getJSFunction(*globalData, value));
+    putDirectInternal(*globalData, propertyName, value, attributes, checkReadOnly, slot, getJSFunction(value));
 }
 
 void JSObject::putWithAttributes(JSGlobalData* globalData, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     PutPropertySlot slot;
-    putDirectInternal(*globalData, propertyName, value, attributes, true, slot, getJSFunction(*globalData, value));
+    putDirectInternal(*globalData, propertyName, value, attributes, true, slot, getJSFunction(value));
 }
 
 void JSObject::putWithAttributes(JSGlobalData* globalData, unsigned propertyName, JSValue value, unsigned attributes)
@@ -201,14 +201,14 @@ void JSObject::putWithAttributes(JSGlobalData* globalData, unsigned propertyName
 void JSObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes, bool checkReadOnly, PutPropertySlot& slot)
 {
     JSGlobalData& globalData = exec->globalData();
-    putDirectInternal(globalData, propertyName, value, attributes, checkReadOnly, slot, getJSFunction(globalData, value));
+    putDirectInternal(globalData, propertyName, value, attributes, checkReadOnly, slot, getJSFunction(value));
 }
 
 void JSObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     PutPropertySlot slot;
     JSGlobalData& globalData = exec->globalData();
-    putDirectInternal(globalData, propertyName, value, attributes, true, slot, getJSFunction(globalData, value));
+    putDirectInternal(globalData, propertyName, value, attributes, true, slot, getJSFunction(value));
 }
 
 void JSObject::putWithAttributes(ExecState* exec, unsigned propertyName, JSValue value, unsigned attributes)

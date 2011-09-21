@@ -1305,7 +1305,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
         case op_call: {
             NodeIndex callTarget = get(currentInstruction[1].u.operand);
-            if (m_graph.isFunctionConstant(m_codeBlock, *m_globalData, callTarget)) {
+            if (m_graph.isFunctionConstant(m_codeBlock, callTarget)) {
                 int argCount = currentInstruction[2].u.operand;
                 int registerOffset = currentInstruction[3].u.operand;
                 int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
@@ -1320,7 +1320,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     usesResult = true;
                 }
                 
-                DFG::Intrinsic intrinsic = m_graph.valueOfFunctionConstant(m_codeBlock, *m_globalData, callTarget)->executable()->intrinsic();
+                DFG::Intrinsic intrinsic = m_graph.valueOfFunctionConstant(m_codeBlock, callTarget)->executable()->intrinsic();
                 
                 if (handleIntrinsic(usesResult, resultOperand, intrinsic, firstArg, lastArg)) {
                     // NEXT_OPCODE() has to be inside braces.

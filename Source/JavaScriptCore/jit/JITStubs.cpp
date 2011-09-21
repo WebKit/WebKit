@@ -3389,7 +3389,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_call_eval)
     int registerOffset = stackFrame.args[1].int32();
     int argCount = stackFrame.args[2].int32();
 
-    if (!isHostFunction(callFrame->globalData(), funcVal, globalFuncEval))
+    if (!isHostFunction(funcVal, globalFuncEval))
         return JSValue::encode(JSValue());
 
     Register* newCallFrame = callFrame->registers() + registerOffset;

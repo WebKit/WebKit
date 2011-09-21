@@ -39,9 +39,9 @@
 
 namespace JSC {
 
-    inline JSCell* getJSFunction(JSGlobalData& globalData, JSValue value)
+    inline JSCell* getJSFunction(JSValue value)
     {
-        if (value.isCell() && (value.asCell()->vptr() == globalData.jsFunctionVPtr))
+        if (value.isCell() && (value.asCell()->structure()->typeInfo().type() == JSFunctionType))
             return value.asCell();
         return 0;
     }
@@ -702,24 +702,24 @@ inline bool JSObject::putDirect(JSGlobalData& globalData, const Identifier& prop
     ASSERT(value);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 
-    return putDirectInternal(globalData, propertyName, value, attributes, checkReadOnly, slot, getJSFunction(globalData, value));
+    return putDirectInternal(globalData, propertyName, value, attributes, checkReadOnly, slot, getJSFunction(value));
 }
 
 inline void JSObject::putDirect(JSGlobalData& globalData, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     PutPropertySlot slot;
-    putDirectInternal(globalData, propertyName, value, attributes, false, slot, getJSFunction(globalData, value));
+    putDirectInternal(globalData, propertyName, value, attributes, false, slot, getJSFunction(value));
 }
 
 inline bool JSObject::putDirect(JSGlobalData& globalData, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    return putDirectInternal(globalData, propertyName, value, 0, false, slot, getJSFunction(globalData, value));
+    return putDirectInternal(globalData, propertyName, value, 0, false, slot, getJSFunction(value));
 }
 
 inline void JSObject::putDirectWithoutTransition(JSGlobalData& globalData, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     size_t currentCapacity = structure()->propertyStorageCapacity();
-    size_t offset = structure()->addPropertyWithoutTransition(globalData, propertyName, attributes, getJSFunction(globalData, value));
+    size_t offset = structure()->addPropertyWithoutTransition(globalData, propertyName, attributes, getJSFunction(value));
     if (currentCapacity != structure()->propertyStorageCapacity())
         allocatePropertyStorage(globalData, currentCapacity, structure()->propertyStorageCapacity());
     putDirectOffset(globalData, offset, value);

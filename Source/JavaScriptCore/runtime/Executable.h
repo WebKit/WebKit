@@ -620,9 +620,9 @@ namespace JSC {
         return static_cast<NativeExecutable*>(m_executable.get())->function();
     }
 
-    inline bool isHostFunction(JSGlobalData& globalData, JSValue value, NativeFunction nativeFunction)
+    inline bool isHostFunction(JSValue value, NativeFunction nativeFunction)
     {
-        JSFunction* function = static_cast<JSFunction*>(getJSFunction(globalData, value));
+        JSFunction* function = static_cast<JSFunction*>(getJSFunction(value));
         if (!function || !function->isHostFunction())
             return false;
         return function->nativeFunction() == nativeFunction;

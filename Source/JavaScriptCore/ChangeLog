@@ -1,3 +1,50 @@
+2011-09-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Replace jsFunctionVPtr compares with a type check on the Structure.
+        https://bugs.webkit.org/show_bug.cgi?id=68557
+
+        Reviewed by Oliver Hunt.
+
+        This will permit calls to still optimize to subclasses of JSFunction
+        that have the correct type (but a different C++ vptr).
+
+        This patch stops passing the globalData into numerous functions.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::isFunctionConstant):
+        (JSC::DFG::Graph::valueOfFunctionConstant):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::isFunctionConstant):
+        (JSC::DFG::JITCompiler::valueOfFunctionConstant):
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitJumpIfNotType):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Executable.h:
+        (JSC::isHostFunction):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::createStructure):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::putWithAttributes):
+        * runtime/JSObject.h:
+        (JSC::getJSFunction):
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::putDirectWithoutTransition):
+        * runtime/JSType.h:
+
 2011-09-21  Geoffrey Garen  <ggaren@apple.com>
 
         Removed WTFTHREADDATA_MULTITHREADED, making it always true

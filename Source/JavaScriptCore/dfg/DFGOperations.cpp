@@ -519,7 +519,7 @@ inline void* linkFor(ExecState* execCallee, ReturnAddressPtr returnAddress, Code
     ExecState* exec = execCallee->callerFrame();
     JSGlobalData* globalData = &exec->globalData();
     JSValue calleeAsValue = execCallee->calleeAsValue();
-    JSCell* calleeAsFunctionCell = getJSFunction(*globalData, calleeAsValue);
+    JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell)
         return handleHostCall(execCallee, calleeAsValue, kind);
     JSFunction* callee = asFunction(calleeAsFunctionCell);
@@ -568,9 +568,8 @@ void* operationLinkConstructWithReturnAddress(ExecState* execCallee, ReturnAddre
 inline void* virtualFor(ExecState* execCallee, CodeSpecializationKind kind)
 {
     ExecState* exec = execCallee->callerFrame();
-    JSGlobalData* globalData = &exec->globalData();
     JSValue calleeAsValue = execCallee->calleeAsValue();
-    JSCell* calleeAsFunctionCell = getJSFunction(*globalData, calleeAsValue);
+    JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (UNLIKELY(!calleeAsFunctionCell))
         return handleHostCall(execCallee, calleeAsValue, kind);
     
