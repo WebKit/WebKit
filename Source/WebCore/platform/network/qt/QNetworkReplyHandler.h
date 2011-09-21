@@ -36,6 +36,7 @@ QT_END_NAMESPACE
 namespace WebCore {
 
 class FormDataIODevice;
+class ResourceError;
 class ResourceHandle;
 class ResourceRequest;
 class ResourceResponse;
@@ -132,6 +133,8 @@ public:
     void finish();
     void forwardData();
     void sendResponseIfNeeded();
+
+    static ResourceError errorForReply(QNetworkReply*);
 
 private slots:
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);

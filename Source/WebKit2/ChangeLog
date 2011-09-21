@@ -1,3 +1,47 @@
+2011-09-21  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] Implement Download support in WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=68153
+
+        Reviewed by Andreas Kling.
+
+        We implement the necessary functions of Download.h, and our QtFileDownloader
+        to handle all network communication and call the necessary functions of Download.
+
+        We use the download policy for any MIME type not supported by WebKit. This
+        behaves like Qt non-WebKit2 except that we don't force download when
+        we encounter Content-Disposition: attachment. We still use the "filename="
+        field for file name suggestion though.
+
+        Based on original patches by: Kimmo Kinnunen <kimmo.t.kinnunen@nokia.com>,
+        Jocelyn Turcotte <jocelyn.turcotte@nokia.com>, Simon Hausmann <simon.hausmann@nokia.com>
+        and Zalan Bujtas <zalan.bujtas@nokia.com>.
+
+        * UIProcess/API/qt/qweberror.cpp: Adding DownloadError
+        (QWebError::type):
+        * UIProcess/API/qt/qweberror.h: Adding DownloadError
+        * WebKit2.pro:
+        * WebProcess/Downloads/Download.cpp: Adding QtFileDownloader, Qt platform specific
+        (WebKit::Download::Download):
+        * WebProcess/Downloads/Download.h: Adding QtFileDownloader, Qt platform specific
+        * WebProcess/Downloads/qt/DownloadQt.cpp:
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        (WebKit::Download::cancel):
+        (WebKit::Download::platformInvalidate):
+        (WebKit::Download::didDecideDestination):
+        * WebProcess/Downloads/qt/QtFileDownloader.cpp: Added.
+        (WebKit::QtFileDownloader::QtFileDownloader):
+        (WebKit::QtFileDownloader::~QtFileDownloader):
+        (WebKit::QtFileDownloader::determineFilename):
+        (WebKit::QtFileDownloader::decidedDestination):
+        (WebKit::QtFileDownloader::abortDownloadWritingAndEmitError):
+        (WebKit::QtFileDownloader::onReadyRead):
+        (WebKit::QtFileDownloader::onFinished):
+        (WebKit::QtFileDownloader::onError):
+        (WebKit::QtFileDownloader::cancel):
+        * WebProcess/Downloads/qt/QtFileDownloader.h: Added.
+
 2011-09-21  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/9890932> "Open PDF in Preview" on two PDFs of the same name does nothing the second time

@@ -59,7 +59,7 @@ namespace WebCore {
         {
         }
 
-        QNetworkRequest toNetworkRequest(QObject* originatingObject) const;
+        QNetworkRequest toNetworkRequest(QObject* originatingObject = 0) const;
 
     private:
         friend class ResourceRequestBase;

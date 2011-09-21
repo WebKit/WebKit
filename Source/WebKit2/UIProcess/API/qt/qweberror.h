@@ -36,7 +36,8 @@ public:
     enum Type {
         EngineError,
         NetworkError,
-        HttpError
+        HttpError,
+        DownloadError
     };
 
     Type type() const;

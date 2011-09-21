@@ -60,6 +60,10 @@ class DownloadAuthenticationClient;
 class SandboxExtension;
 class WebPage;
 
+#if PLATFORM(QT)
+class QtFileDownloader;
+#endif
+
 class Download : public CoreIPC::MessageSender<Download> {
     WTF_MAKE_NONCOPYABLE(Download);
 public:
@@ -125,6 +129,9 @@ private:
 #if USE(CFNETWORK)
     RetainPtr<CFURLDownloadRef> m_download;
     RefPtr<DownloadAuthenticationClient> m_authenticationClient;
+#endif
+#if PLATFORM(QT)
+    QtFileDownloader* m_qtDownloader;
 #endif
 };
 

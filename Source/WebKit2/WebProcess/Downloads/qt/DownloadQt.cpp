@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +27,13 @@
 #include "config.h"
 #include "Download.h"
 
+#include "QtFileDownloader.h"
+#include "WebProcess.h"
 #include <WebCore/NotImplemented.h>
+#include <WebCore/QNetworkReplyHandler.h>
+#include <WebCore/ResourceHandle.h>
+#include <WebCore/ResourceHandleInternal.h>
+#include <WebCore/ResourceResponse.h>
 
 using namespace WebCore;
 
@@ -34,27 +41,35 @@ namespace WebKit {
 
 void Download::start(WebPage* initiatingWebPage)
 {
-    notImplemented();
+    QNetworkAccessManager* manager = WebProcess::shared().networkAccessManager();
+    ASSERT(manager);
+    ASSERT(!m_qtDownloader);
+
+    m_qtDownloader = new QtFileDownloader(this, adoptPtr(manager->get(m_request.toNetworkRequest())));
 }
 
-void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle*, const ResourceRequest& initialRequest, const ResourceResponse&)
+void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* handle, const ResourceRequest& initialRequest, const ResourceResponse& resp)
 {
-    notImplemented();
+    ASSERT(!m_qtDownloader);
+    m_qtDownloader = new QtFileDownloader(this, adoptPtr(handle->getInternal()->m_job->release()));
 }
 
 void Download::cancel()
 {
-    notImplemented();
+    ASSERT(m_qtDownloader);
+    m_qtDownloader->cancel();
 }
 
 void Download::platformInvalidate()
 {
-    notImplemented();
+    ASSERT(m_qtDownloader);
+    m_qtDownloader->deleteLater();
+    m_qtDownloader = 0;
 }
 
 void Download::didDecideDestination(const String& destination, bool allowOverwrite)
 {
-    notImplemented();
+    m_qtDownloader->decidedDestination(destination, allowOverwrite);
 }
 
 void Download::platformDidFinish()

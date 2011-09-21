@@ -271,6 +271,7 @@ HEADERS += \
     WebProcess/Cookies/WebCookieManager.h \
     WebProcess/Downloads/Download.h \
     WebProcess/Downloads/DownloadManager.h \
+    WebProcess/Downloads/qt/QtFileDownloader.h \
     WebProcess/FullScreen/WebFullScreenManager.h \
     WebProcess/FullScreen/qt/WebFullScreenManagerQt.h \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
@@ -513,6 +514,7 @@ SOURCES += \
     WebProcess/Downloads/Download.cpp \
     WebProcess/Downloads/DownloadManager.cpp \
     WebProcess/Downloads/qt/DownloadQt.cpp \
+    WebProcess/Downloads/qt/QtFileDownloader.cpp \
     WebProcess/FullScreen/WebFullScreenManager.cpp \
     WebProcess/FullScreen/qt/WebFullScreenManagerQt.cpp \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \
@@ -524,7 +526,7 @@ SOURCES += \
     WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp \
     WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.cpp \
     WebProcess/InjectedBundle/InjectedBundleClient.cpp \
-    WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp \    
+    WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp \
     WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp \
