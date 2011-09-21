@@ -1,5 +1,14 @@
 2011-09-21  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK rebaseline and skip and a11y failing test.
+
+        * platform/gtk/Skipped: Skip accessibility/aria-hidden-updates-alldescendants.html
+        * platform/gtk/editing/deleting/merge-whitespace-pre-expected.txt:
+        Rebaseline after r95335.
+        * platform/gtk/http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.txt: Added.
+
+2011-09-21  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK rebaseline after r95566.
 
         * platform/gtk/mathml/xHeight-expected.txt:
