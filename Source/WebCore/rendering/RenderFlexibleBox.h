@@ -52,8 +52,7 @@ private:
     class FlexibleBoxIterator;
     typedef WTF::HashMap<const RenderBox*, LayoutUnit> InflexibleFlexItemSize;
 
-    LayoutUnit logicalBorderWidthForChild(RenderBox* child);
-    LayoutUnit logicalPaddingWidthForChild(RenderBox* child);
+    LayoutUnit logicalBorderAndPaddingWidthForChild(RenderBox* child);
     LayoutUnit logicalScrollbarHeightForChild(RenderBox* child);
     Length marginStartStyleForChild(RenderBox* child);
     Length marginEndStyleForChild(RenderBox* child);

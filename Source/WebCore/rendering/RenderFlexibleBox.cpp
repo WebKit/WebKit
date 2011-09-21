@@ -113,25 +113,14 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
     setNeedsLayout(false);
 }
 
-LayoutUnit RenderFlexibleBox::logicalBorderWidthForChild(RenderBox* child)
+LayoutUnit RenderFlexibleBox::logicalBorderAndPaddingWidthForChild(RenderBox* child)
 {
-    if (isHorizontalWritingMode())
-        return child->borderLeft() + child->borderRight();
-    return child->borderTop() + child->borderBottom();
-}
-
-LayoutUnit RenderFlexibleBox::logicalPaddingWidthForChild(RenderBox* child)
-{
-    if (isHorizontalWritingMode())
-        return child->paddingLeft() + child->paddingRight();
-    return child->paddingTop() + child->paddingBottom();
+    return isHorizontalWritingMode() ? child->borderAndPaddingWidth() : child->borderAndPaddingHeight();
 }
 
 LayoutUnit RenderFlexibleBox::logicalScrollbarHeightForChild(RenderBox* child)
 {
-    if (isHorizontalWritingMode())
-        return child->horizontalScrollbarHeight();
-    return child->verticalScrollbarWidth();
+    return isHorizontalWritingMode() ? child->verticalScrollbarWidth() : child->horizontalScrollbarHeight();
 }
 
 Length RenderFlexibleBox::marginStartStyleForChild(RenderBox* child)
@@ -153,7 +142,7 @@ LayoutUnit RenderFlexibleBox::preferredLogicalContentWidthForFlexItem(RenderBox*
     Length width = isHorizontalWritingMode() ? child->style()->width() : child->style()->height();
     if (width.isAuto()) {
         LayoutUnit logicalWidth = isHorizontalWritingMode() == child->isHorizontalWritingMode() ? child->maxPreferredLogicalWidth() : child->logicalHeight();
-        return logicalWidth - logicalBorderWidthForChild(child) - logicalScrollbarHeightForChild(child) - logicalPaddingWidthForChild(child);
+        return logicalWidth - logicalBorderAndPaddingWidthForChild(child) - logicalScrollbarHeightForChild(child);
     }
     return isHorizontalWritingMode() ? child->contentWidth() : child->contentHeight();
 }
@@ -204,16 +193,13 @@ void RenderFlexibleBox::computePreferredLogicalWidth(bool relayoutChildren, Flex
             child->setChildNeedsLayout(true);
         child->layoutIfNeeded();
 
+        // We can't just use marginStartForChild, et. al. because "auto" needs to be treated as 0.
         if (isHorizontalWritingMode()) {
             preferredLogicalWidth += child->style()->marginLeft().calcMinValue(flexboxAvailableLogicalWidth);
             preferredLogicalWidth += child->style()->marginRight().calcMinValue(flexboxAvailableLogicalWidth);
-            preferredLogicalWidth += child->style()->paddingLeft().calcMinValue(flexboxAvailableLogicalWidth);
-            preferredLogicalWidth += child->style()->paddingRight().calcMinValue(flexboxAvailableLogicalWidth);
         } else {
             preferredLogicalWidth += child->style()->marginTop().calcMinValue(flexboxAvailableLogicalWidth);
             preferredLogicalWidth += child->style()->marginBottom().calcMinValue(flexboxAvailableLogicalWidth);
-            preferredLogicalWidth += child->style()->paddingTop().calcMinValue(flexboxAvailableLogicalWidth);
-            preferredLogicalWidth += child->style()->paddingBottom().calcMinValue(flexboxAvailableLogicalWidth);
         }
 
         if (marginStartStyleForChild(child).isAuto())
@@ -221,7 +207,7 @@ void RenderFlexibleBox::computePreferredLogicalWidth(bool relayoutChildren, Flex
         if (marginEndStyleForChild(child).isAuto())
             totalPositiveFlexibility += 1;
 
-        preferredLogicalWidth += logicalBorderWidthForChild(child);
+        preferredLogicalWidth += logicalBorderAndPaddingWidthForChild(child);
         preferredLogicalWidth += preferredLogicalContentWidthForFlexItem(child);
 
         totalPositiveFlexibility += logicalPositiveFlexForChild(child);
@@ -305,7 +291,7 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(const WTF::Vector<
     size_t i = 0;
     for (RenderBox* child = iterator.first(); child; child = iterator.next(), ++i) {
         // FIXME: Does this need to take the scrollbar width into account?
-        LayoutUnit childPreferredSize = childSizes[i] + logicalBorderWidthForChild(child) + logicalPaddingWidthForChild(child);
+        LayoutUnit childPreferredSize = childSizes[i] + logicalBorderAndPaddingWidthForChild(child);
         setLogicalOverrideSize(child, childPreferredSize);
         child->setChildNeedsLayout(true);
         child->layoutIfNeeded();

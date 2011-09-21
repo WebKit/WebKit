@@ -1,3 +1,20 @@
+2011-09-20  Ojan Vafai  <ojan@chromium.org>
+
+        [css3-flexbox] cleanup padding width calculations
+        https://bugs.webkit.org/show_bug.cgi?id=68490
+
+        Reviewed by Tony Chang.
+
+        No new tests. Existing tests cover the refactor.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::logicalBorderAndPaddingWidthForChild):
+        (WebCore::RenderFlexibleBox::logicalScrollbarHeightForChild):
+        (WebCore::RenderFlexibleBox::preferredLogicalContentWidthForFlexItem):
+        (WebCore::RenderFlexibleBox::computePreferredLogicalWidth):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection):
+        * rendering/RenderFlexibleBox.h:
+
 2011-09-19  Jer Noble  <jer.noble@apple.com>
 
         Fix clang compile errors in Web Audio
