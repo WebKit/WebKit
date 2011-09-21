@@ -77,7 +77,7 @@ public:
         sub32(imm, Address(scratchRegister));
     }
 
-    void load32(void* address, RegisterID dest)
+    void load32(const void* address, RegisterID dest)
     {
         if (dest == X86Registers::eax)
             m_assembler.movl_mEAX(address);

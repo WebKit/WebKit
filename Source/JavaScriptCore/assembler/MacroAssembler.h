@@ -214,6 +214,11 @@ public:
         or32(src, dest);
     }
 
+    void orPtr(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        or32(op1, op2, dest);
+    }
+
     void orPtr(TrustedImmPtr imm, RegisterID dest)
     {
         or32(TrustedImm32(imm), dest);
@@ -260,7 +265,7 @@ public:
         load32(address, dest);
     }
 
-    void loadPtr(void* address, RegisterID dest)
+    void loadPtr(const void* address, RegisterID dest)
     {
         load32(address, dest);
     }

@@ -301,6 +301,11 @@ public:
         m_assembler.orInsn(dest, dest, src);
     }
 
+    void or32(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        m_assembler.orInsn(dest, op1, op2);
+    }
+
     void or32(TrustedImm32 imm, RegisterID dest)
     {
         if (!imm.m_isPointer && !imm.m_value && !m_fixedWidth)

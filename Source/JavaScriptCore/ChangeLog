@@ -1,3 +1,29 @@
+2011-09-20  Gavin Barraclough  <barraclough@apple.com>
+
+        MacroAssembler fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=68494
+
+        Reviewed by Sam Weinig.
+
+        Add X86-64's 3 operand or32 to other MacroAssembler, fix load32's [const] void* mismatch
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::orPtr):
+        (JSC::MacroAssembler::loadPtr):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::or32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::or32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::or32):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::or32):
+        (JSC::MacroAssemblerSH4::load32):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::load32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::load32):
+
 2011-09-20  Geoffrey Garen  <ggaren@apple.com>
 
         Some Heap cleanup.

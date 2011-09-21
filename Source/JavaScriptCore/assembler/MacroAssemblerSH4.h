@@ -221,6 +221,18 @@ public:
         releaseScratch(scr);
     }
 
+    void or32(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        if (op1 == op2)
+            move(op1, dest);
+        else if (op1 == dest)
+            or32(op2, dest);
+        else {
+            move(op2, dest);
+            or32(op1, dest);
+        }
+    }
+
     void rshift32(RegisterID shiftamount, RegisterID dest)
     {
         compare32(32, shiftamount, Equal);
@@ -529,9 +541,9 @@ public:
         releaseScratch(scr);
     }
 
-    void load32(void* address, RegisterID dest)
+    void load32(const void* address, RegisterID dest)
     {
-        m_assembler.loadConstant(reinterpret_cast<uint32_t>(address), dest);
+        m_assembler.loadConstant(reinterpret_cast<uint32_t>(const_cast<void*>(address)), dest);
         m_assembler.movlMemReg(dest, dest);
     }
 

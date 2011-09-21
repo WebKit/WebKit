@@ -83,7 +83,7 @@ public:
         m_assembler.subl_im(imm.m_value, address.m_ptr);
     }
 
-    void load32(void* address, RegisterID dest)
+    void load32(const void* address, RegisterID dest)
     {
         m_assembler.movl_mr(address, dest);
     }

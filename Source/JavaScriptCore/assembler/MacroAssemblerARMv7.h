@@ -284,6 +284,11 @@ public:
         }
     }
 
+    void or32(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        m_assembler.orr(dest, op1, op2);
+    }
+
     void rshift32(RegisterID shift_amount, RegisterID dest)
     {
         // Clamp the shift to the range 0..31
