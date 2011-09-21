@@ -2477,3 +2477,7 @@ fast/events/media-element-focus-tab.html
 
 # Missing layoutTestController.setUserStyleSheetEnabled() implementation
 platform/qt/fast/loader/user-stylesheet-qrc-path.html
+
+# [Qt][WK2] http/tests/security/cross-origin-xsl-redirect-BLOCKED.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=68515
+http/tests/security/cross-origin-xsl-redirect-BLOCKED.html
