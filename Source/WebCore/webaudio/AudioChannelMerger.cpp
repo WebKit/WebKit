@@ -89,7 +89,7 @@ void AudioChannelMerger::reset()
 
 // Any time a connection or disconnection happens on any of our inputs, we potentially need to change the
 // number of channels of our output.
-void AudioChannelMerger::checkNumberOfChannelsForInput(AudioNodeInput* input)
+void AudioChannelMerger::checkNumberOfChannelsForInput(AudioNodeInput*)
 {
     ASSERT(context()->isAudioThread() && context()->isGraphOwner());
 

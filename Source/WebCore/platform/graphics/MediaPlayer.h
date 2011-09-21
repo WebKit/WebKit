@@ -41,10 +41,6 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringHash.h>
 
-#if ENABLE(WEB_AUDIO)
-#include "AudioSourceProvider.h"
-#endif
-
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayer.h"
 #endif
@@ -62,6 +58,7 @@ class QTMovieVisualContext;
 
 namespace WebCore {
 
+class AudioSourceProvider;
 class GStreamerGWorld;
 class MediaPlayerPrivateInterface;
 

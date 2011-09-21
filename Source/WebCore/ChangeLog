@@ -1,3 +1,17 @@
+2011-09-19  Jer Noble  <jer.noble@apple.com>
+
+        Fix clang compile errors in Web Audio
+        https://bugs.webkit.org/show_bug.cgi?id=68384
+
+        Reviewed by David Levin.
+
+        No new tests; no net change in functionality.
+
+        * platform/graphics/MediaPlayer.h: Forward declare (instead of including directly)
+            AudioSourceProvider.
+        * webaudio/AudioChannelMerger.cpp:
+        (WebCore::AudioChannelMerger::checkNumberOfChannelsForInput): Remove unused parameter name.
+
 2011-09-20  John Gregg  <johnnyg@google.com>
 
         Directory Upload: parent path can truncate first char of the correct path
