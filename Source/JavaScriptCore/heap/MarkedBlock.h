@@ -65,9 +65,7 @@ namespace JSC {
         // object the heap will commonly allocate is four words.
         static const size_t atomSize = 4 * sizeof(void*);
         static const size_t blockSize = 16 * KB;
-
-        static const size_t atomsPerBlock = blockSize / atomSize; // ~1.5% overhead
-        static const size_t ownerSetsPerBlock = 8; // ~2% overhead.
+        static const size_t atomsPerBlock = blockSize / atomSize; // ~0.4% overhead for mark bits.
 
         struct FreeCell {
             FreeCell* next;
@@ -112,8 +110,7 @@ namespace JSC {
         // These should be called immediately after a block is created.
         // Blessing for fast path creates a linked list, while blessing for
         // slow path creates dummy cells.
-        FreeCell* blessNewBlockForFastPath();
-        void blessNewBlockForSlowPath();
+        FreeCell* blessNewBlock();
         
         void reset();
         
@@ -150,7 +147,6 @@ namespace JSC {
         Atom* atoms();
 
         size_t atomNumber(const void*);
-        size_t ownerSetNumber(const JSCell*);
         
         template<DestructorState destructorState>
         void callDestructor(JSCell*, void* jsFinalObjectVPtr);
@@ -176,7 +172,7 @@ namespace JSC {
         
         size_t m_endAtom; // This is a fuzzy end. Always test for < m_endAtom.
         size_t m_atomsPerCell;
-        WTF::Bitmap<blockSize / atomSize> m_marks;
+        WTF::Bitmap<atomsPerBlock> m_marks;
         bool m_inNewSpace;
         int8_t m_destructorState; // use getters/setters for this, particularly since we may want to compact this (effectively log(3)/log(2)-bit) field into other fields
         PageAllocationAligned m_allocation;
@@ -305,11 +301,6 @@ namespace JSC {
         }
     }
     
-    inline size_t MarkedBlock::ownerSetNumber(const JSCell* cell)
-    {
-        return (reinterpret_cast<Bits>(cell) - reinterpret_cast<Bits>(this)) * ownerSetsPerBlock / blockSize;
-    }
-
 } // namespace JSC
 
 namespace WTF {

@@ -1,3 +1,21 @@
+2011-09-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Some Heap cleanup.
+
+        Reviewed by Beth Dakin.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::blessNewBlock): Removed blessNewBlockForSlowPath()
+        because it was unused; renamed blessNewBlockForFastPath() to blessNewBlock()
+        since there is only one now.
+
+        * heap/MarkedBlock.h: Removed ownerSet-related stuff since it was unused.
+        Updated mark bit overhead calculation. Deployed atomsPerBlock in one
+        place where we were recalculating it.
+
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::addBlock): Updated for rename.
+
 2011-09-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT always speculates integer on modulo

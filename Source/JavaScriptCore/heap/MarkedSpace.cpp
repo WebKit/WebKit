@@ -50,7 +50,7 @@ void MarkedSpace::addBlock(SizeClass& sizeClass, MarkedBlock* block)
     ASSERT(!sizeClass.currentBlock);
     ASSERT(!sizeClass.firstFreeCell);
     sizeClass.currentBlock = block;
-    sizeClass.firstFreeCell = block->blessNewBlockForFastPath();
+    sizeClass.firstFreeCell = block->blessNewBlock();
 }
 
 void MarkedSpace::removeBlock(MarkedBlock* block)

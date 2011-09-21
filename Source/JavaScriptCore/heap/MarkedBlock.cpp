@@ -187,7 +187,7 @@ MarkedBlock::FreeCell* MarkedBlock::lazySweep()
     }
 }
 
-MarkedBlock::FreeCell* MarkedBlock::blessNewBlockForFastPath()
+MarkedBlock::FreeCell* MarkedBlock::blessNewBlock()
 {
     // This returns a free list that is ordered in reverse through the block,
     // as in lazySweep() above.
@@ -208,17 +208,6 @@ MarkedBlock::FreeCell* MarkedBlock::blessNewBlockForFastPath()
     setDestructorState(AllFreeCellsHaveObjects);
 
     return result;
-}
-
-void MarkedBlock::blessNewBlockForSlowPath()
-{
-    HEAP_DEBUG_BLOCK(this);
-
-    m_marks.clearAll();
-    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell)
-        reinterpret_cast<FreeCell*>(&atoms()[i])->setNoObject();
-    
-    setDestructorState(FreeCellsDontHaveObjects);
 }
 
 void MarkedBlock::canonicalizeBlock(FreeCell* firstFreeCell)
