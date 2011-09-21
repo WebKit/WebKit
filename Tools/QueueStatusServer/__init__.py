@@ -6,6 +6,9 @@
 # Make sure that this module will load in that case by including paths to
 # the default Google AppEngine install.
 
+# Request a modern Django
+from google.appengine.dist import use_library
+use_library('django', '1.2')  # Must agree with main.py!
 
 def fix_sys_path():
     import sys

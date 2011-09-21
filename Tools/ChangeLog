@@ -1,5 +1,15 @@
 2011-09-20  Tom Zakrajsek  <tomz@codeaurora.org>
 
+        Need to specify a django version, instead of using default
+        https://bugs.webkit.org/show_bug.cgi?id=68398
+
+        Reviewed by Eric Seidel.
+
+        * QueueStatusServer/__init__.py:
+        * QueueStatusServer/main.py:
+
+2011-09-20  Tom Zakrajsek  <tomz@codeaurora.org>
+
         Update committers.py with a few more contributor contacts
         https://bugs.webkit.org/show_bug.cgi?id=68487
 
