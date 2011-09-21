@@ -4,24 +4,24 @@
 body {
     margin: 0;
 }
-.horizontal-box {
+.flexbox {
     width: 600px;
     display: -webkit-flexbox;
     background-color: #aaa;
     position: relative;
 }
-.horizontal-box div {
+.flexbox div {
     height: 20px;
     border: 0;
 }
 
-.horizontal-box :nth-child(1) {
+.flexbox :nth-child(1) {
     background-color: blue;
 }
-.horizontal-box :nth-child(2) {
+.flexbox :nth-child(2) {
     background-color: green;
 }
-.horizontal-box :nth-child(3) {
+.flexbox :nth-child(3) {
     background-color: red;
 }
 </style>
@@ -30,59 +30,59 @@ if (window.layoutTestController)
     layoutTestController.dumpAsText();
 </script>
 <script src="resources/flexbox.js"></script>
-<body onload="checkHorizontalBoxen()">
-<div class="horizontal-box">
+<body onload="checkFlexBoxen()">
+<div class="flexbox">
   <div data-expected-width="200" style="width: -webkit-flex(1 0 0);"></div>
   <div data-expected-width="100" data-offset-x="250" style="width: 100px; margin: 0 50px;"></div>
   <div data-expected-width="200" data-offset-x="400" style="width: -webkit-flex(1 0 0)"></div>
 </div>
 
 <!-- Margins set to auto have a positive flex of 1.  In this example, the left and right margin should each be 100px. -->
-<div class="horizontal-box">
+<div class="flexbox">
   <div data-expected-width="100" style="width: -webkit-flex(1 0 0);"></div>
   <div data-expected-width="200" data-offset-x="200" style="width: 200px; margin: 0 auto;"></div>
   <div data-expected-width="100" data-offset-x="500" style="width: -webkit-flex(1 0 0)"></div>
 </div>
 
-<div class="horizontal-box">
+<div class="flexbox">
   <div data-expected-width="100" style="width: -webkit-flex(1 0 0);"></div>
   <div data-expected-width="200" data-offset-x="200" style="width: -webkit-flex(1 0 100px); margin-left: auto;"></div>
   <div data-expected-width="100" data-offset-x="400" style="width: -webkit-flex(1 0 0); margin-right: 100px"></div>
 </div>
 
 <!-- margin: auto has a negative flex of 0 -->
-<div class="horizontal-box">
+<div class="flexbox">
   <div data-expected-width="150" style="width: -webkit-flex(1 1 300px);"></div>
   <div data-expected-width="300" data-offset-x="150" style="width: -webkit-flex(1 0 300px); margin: 0 auto;"></div>
   <div data-expected-width="150" data-offset-x="450" style="width: -webkit-flex(1 1 300px);"></div>
 </div>
 
 <!-- The centering use case. -->
-<div class="horizontal-box">
+<div class="flexbox">
   <div data-expected-width="300px" data-offset-x="150" style="width: -webkit-flex(0 0 300px); margin: 0 auto;"></div>
 </div>
 
-<div class="horizontal-box">
+<div class="flexbox">
   <div data-expected-width="400px" data-offset-x="100" style="width: -webkit-flex(1 0 300px); margin: 0 auto;"></div>
 </div>
 
-<div class="horizontal-box">
+<div class="flexbox">
   <div data-expected-width="400" data-offset-x="100" style="width: -webkit-flex(4); margin: 0 auto;">
       <div style="width: 100px; height: 100%;"></div>
   </div>
 </div>
 
-<div class="horizontal-box" style="margin: 100px;">
+<div class="flexbox" style="margin: 100px;">
   <div data-expected-width="100" data-offset-x="100" style="width: -webkit-flex(1); margin: 0 auto;"></div>
   <div data-expected-width="100" data-offset-x="400" style="width: -webkit-flex(1); margin: 0 auto;"></div>
 </div>
 
-<div class="horizontal-box" style="padding: 100px;">
+<div class="flexbox" style="padding: 100px;">
   <div data-expected-width="100" data-offset-x="200" style="width: -webkit-flex(1 0 0px); margin: 0 auto;"></div>
   <div data-expected-width="100" data-offset-x="500" style="width: -webkit-flex(1 0 0em); margin: 0 auto;"></div>
 </div>
 
-<div class="horizontal-box">
+<div class="flexbox">
   <div data-expected-width="50" data-offset-x="50" style="width: -webkit-flex(1 0 0); margin: 0 auto;"></div>
   <div data-expected-width="300" data-offset-x="150" style="width: -webkit-flex(2 0 0); padding: 0 100px;"></div>
   <div data-expected-width="50" data-offset-x="550" style="width: -webkit-flex(1 0 0); margin-left: 100px;"></div>

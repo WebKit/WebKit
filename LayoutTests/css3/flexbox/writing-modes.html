@@ -4,12 +4,11 @@
 body {
     margin: 0;
 }
-/* FIXME: flexbox.js iterates over horizontal-box elements. Rename this to flexbox. */
-.horizontal-box {
+.flexbox {
     width: 600px;
     display: -webkit-flexbox;
 }
-.horizontal-box div {
+.flexbox div {
     height: 20px;
     border: 0;
 }
@@ -38,13 +37,13 @@ body {
     -webkit-writing-mode: vertical-lr;
 }
 
-.horizontal-box > :nth-child(1) {
+.flexbox > :nth-child(1) {
     background-color: blue;
 }
-.horizontal-box > :nth-child(2) {
+.flexbox > :nth-child(2) {
     background-color: green;
 }
-.horizontal-box > :nth-child(3) {
+.flexbox > :nth-child(3) {
     background-color: red;
 }
 </style>
@@ -53,28 +52,28 @@ if (window.layoutTestController)
     layoutTestController.dumpAsText();
 </script>
 <script src="resources/flexbox.js"></script>
-<body onload="checkHorizontalBoxen()">
+<body onload="checkFlexBoxen()">
 
-<div class="horizontal-box rtl">
+<div class="flexbox rtl">
   <div data-expected-width="50" data-offset-x="500" style="width: -webkit-flex(1 0 0); margin: 0 auto;"></div>
   <div data-expected-width="300" data-offset-x="150" style="width: -webkit-flex(2 0 0); padding: 0 100px;"></div>
   <div data-expected-width="50" data-offset-x="100" style="width: -webkit-flex(1 0 0); margin-left: 100px;"></div>
 </div>
 
-<div class="horizontal-box rtl">
+<div class="flexbox rtl">
   <div data-expected-width="50" data-offset-x="500" style="width: -webkit-flex(1 0 0); margin: 0 auto;"></div>
   <div data-expected-width="300" data-offset-x="150" style="width: -webkit-flex(2 0 0); padding: 0 100px;"></div>
   <div data-expected-width="50" data-offset-x="0" style="width: -webkit-flex(1 0 0); -webkit-margin-start: 100px;"></div>
 </div>
 
-<div class="horizontal-box rtl" style="-webkit-margin-start: 20px;-webkit-margin-end: 50px;">
+<div class="flexbox rtl" style="-webkit-margin-start: 20px;-webkit-margin-end: 50px;">
   <div data-expected-width="50" data-offset-x="550" style="width: -webkit-flex(1 0 0); margin: 0 auto;"></div>
   <div data-expected-width="300" data-offset-x="200" style="width: -webkit-flex(2 0 0); padding: 0 100px;"></div>
   <div data-expected-width="50" data-offset-x="50" style="width: -webkit-flex(1 0 0); -webkit-margin-start: 100px;"></div>
 </div>
 
 <div style="position:relative">
-<div class="horizontal-box vertical-lr">
+<div class="flexbox vertical-lr">
   <div data-expected-height="150" data-offset-y="0" style="height: -webkit-flex(1 0 0);"></div>
   <div data-expected-height="300" data-offset-y="150" style="height: -webkit-flex(2 0 0);"></div>
   <div data-expected-height="150" data-offset-y="450" style="height: -webkit-flex(1 0 0);"></div>
@@ -82,7 +81,7 @@ if (window.layoutTestController)
 </div>
 
 <div style="position:relative">
-<div class="horizontal-box vertical-lr">
+<div class="flexbox vertical-lr">
   <div data-expected-height="150" data-offset-y="0" style="height: -webkit-flex(1 0 0);"></div>
   <div data-expected-height="300" data-offset-y="150" class="bt" style="height: -webkit-flex(2 0 0);"></div>
   <div data-expected-height="150" data-offset-y="450" style="height: -webkit-flex(1 0 0);"></div>
@@ -90,7 +89,7 @@ if (window.layoutTestController)
 </div>
 
 <div style="position:relative">
-<div class="horizontal-box vertical-lr">
+<div class="flexbox vertical-lr">
   <div data-expected-height="450" data-offset-y="0" style="height: -webkit-flex(1 0 0);-webkit-padding-start:200px;-webkit-padding-end:200px;-webkit-padding-before:100px;-webkit-padding-after:100px;"></div>
   <div data-expected-height="100" data-offset-y="450" style="height: -webkit-flex(2 0 0);"></div>
   <div data-expected-height="50" data-offset-y="550" style="height: -webkit-flex(1 0 0);"></div>
@@ -98,7 +97,7 @@ if (window.layoutTestController)
 </div>
 
 <div style="position:relative">
-<div class="horizontal-box vertical-lr">
+<div class="flexbox vertical-lr">
   <div data-expected-height="300" data-offset-y="0" class="bt" style="height: -webkit-flex(1 0 0);-webkit-padding-start:200px;-webkit-padding-end:200px;-webkit-padding-before:100px;-webkit-padding-after:100px;"></div>
   <div data-expected-height="200" data-offset-y="300" style="height: -webkit-flex(2 0 0);"></div>
   <div data-expected-height="100" data-offset-y="500" style="height: -webkit-flex(1 0 0);"></div>
@@ -107,7 +106,7 @@ if (window.layoutTestController)
 
 
 <div style="position:relative">
-<div class="horizontal-box vertical-lr">
+<div class="flexbox vertical-lr">
   <div data-expected-height="100" data-offset-y="100" style="height: -webkit-flex(1 0 0); margin: auto 0;"></div>
   <div data-expected-height="200" data-offset-y="300" style="height: -webkit-flex(2 0 0);"></div>
   <div data-expected-height="100" data-offset-y="500" style="height: -webkit-flex(1 0 0);"></div>
@@ -115,7 +114,7 @@ if (window.layoutTestController)
 </div>
 
 <div style="position:relative">
-<div class="horizontal-box vertical-lr">
+<div class="flexbox vertical-lr">
   <div data-expected-height="50" data-offset-y="50" style="height: -webkit-flex(1 0 0);margin: auto 0;"></div>
   <div data-expected-height="400" data-offset-y="150" style="height: -webkit-flex(2 0 auto);"><div style="width:200px;height:300px;background-color:orange;"></div></div>
   <div data-expected-height="50" data-offset-y="550" style="height: -webkit-flex(1 0 0);"></div>
@@ -123,7 +122,7 @@ if (window.layoutTestController)
 </div>
 
 <div style="position:relative">
-<div class="horizontal-box vertical-lr">
+<div class="flexbox vertical-lr">
   <div data-expected-height="50" data-offset-y="50" style="height: -webkit-flex(1 0 0);margin: auto 0;"></div>
   <div data-expected-height="400" data-offset-y="150" class="bt" style="height: -webkit-flex(2 0 auto);"><div style="width:200px;height:300px;background-color:orange;"></div></div>
   <div data-expected-height="50" data-offset-y="550" style="height: -webkit-flex(1 0 0);"></div>
@@ -131,7 +130,7 @@ if (window.layoutTestController)
 </div>
 
 <div style="position:relative">
-<div class="horizontal-box vertical-lr">
+<div class="flexbox vertical-lr">
   <div data-expected-height="100" data-offset-y="100" style="height: -webkit-flex(1 0 0);-webkit-margin-start:auto;-webkit-margin-end:auto;-webkit-margin-before:0;-webkit-margin-after:0;;"></div>
   <div data-expected-height="200" data-offset-y="300" style="height: -webkit-flex(2 0 0);"></div>
   <div data-expected-height="100" data-offset-y="500" style="height: -webkit-flex(1 0 0);"></div>
@@ -139,7 +138,7 @@ if (window.layoutTestController)
 </div>
 
 <div style="position:relative">
-<div class="horizontal-box vertical-lr">
+<div class="flexbox vertical-lr">
   <div data-expected-height="150" data-offset-y="0" class="bt" style="height: -webkit-flex(1 0 0);-webkit-margin-start:auto;-webkit-margin-end:auto;-webkit-margin-before:0;-webkit-margin-after:0;;"></div>
   <div data-expected-height="300" data-offset-y="150" style="height: -webkit-flex(2 0 0);"></div>
   <div data-expected-height="150" data-offset-y="450" style="height: -webkit-flex(1 0 0);"></div>
@@ -147,21 +146,21 @@ if (window.layoutTestController)
 </div>
 
 <div style="position:relative">
-<div class="horizontal-box vertical-lr rtl">
+<div class="flexbox vertical-lr rtl">
   <div data-expected-height="50" data-offset-y="500" style="height: -webkit-flex(1 0 0); margin: auto 0;"></div>
   <div data-expected-height="300" data-offset-y="150" class="bt" style="height: -webkit-flex(2 0 0); padding: 100px 0;"></div>
   <div data-expected-height="50" data-offset-y="0" style="height: -webkit-flex(1 0 0); -webkit-margin-start: 100px;"></div>
 </div>
 </div>
 
-<div class="horizontal-box vertical-lr">
+<div class="flexbox vertical-lr">
   <div data-expected-height="350" style="height: -webkit-flex(1 1 400px); min-height: 350px;"></div>
   <div data-expected-height="250" style="height: -webkit-flex(1 1 400px);"></div>
 </div>
 
 <!-- FIXME: There's a bug where offsetLeft reports the wrong value in vertical-rl writing-mode.-->
 <div style="position:relative">
-<div class="horizontal-box vertical-rl">
+<div class="flexbox vertical-rl">
   <div data-expected-height="150" data-offset-y="0" data-offset-x="580" style="height: -webkit-flex(1 0 0);"></div>
   <div data-expected-height="300" data-offset-y="150" data-offset-x="580" style="height: -webkit-flex(2 0 0);"></div>
   <div data-expected-height="150" data-offset-y="450" data-offset-x="580" style="height: -webkit-flex(1 0 0);"></div>
@@ -170,7 +169,7 @@ if (window.layoutTestController)
 
 <!-- FIXME: There's a bug where offsetTop reports the wrong value in horizontal-bt writing-mode.-->
 <div style="position:relative">
-<div class="horizontal-box bt" style="height:200px">
+<div class="flexbox bt" style="height:200px">
   <div data-offset-y="180" data-offset-x="580" style="width: -webkit-flex(1 0 0);"></div>
   <div data-offset-y="180" data-offset-x="580" style="width: -webkit-flex(2 0 0);"></div>
   <div data-offset-y="180" data-offset-x="580" style="width: -webkit-flex(1 0 0);"></div>

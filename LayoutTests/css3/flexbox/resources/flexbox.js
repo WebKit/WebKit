@@ -33,9 +33,9 @@ function checkExpectedValues(node, failures)
     }
 }
 
-function checkHorizontalBoxen()
+function checkFlexBoxen()
 {
-    var flexboxen = document.getElementsByClassName("horizontal-box");
+    var flexboxen = document.getElementsByClassName("flexbox");
     Array.prototype.forEach.call(flexboxen, function(flexbox) {
       var failures = [];
       checkExpectedValues(flexbox, failures);
