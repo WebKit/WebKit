@@ -625,18 +625,31 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     font-family: dejavu sans mono, monospace;
 }
 
+#console-view {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+}
+
 #console-messages {
     position: absolute;
     z-index: 0;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 23px;
+    bottom: 0;
     padding: 2px 0;
     overflow-y: overlay;
     word-wrap: break-word;
     -webkit-user-select: text;
     -webkit-text-size-adjust: auto;
+}
+
+#drawer #console-messages {
+    bottom: 23px;
 }
 
 #console-prompt {
