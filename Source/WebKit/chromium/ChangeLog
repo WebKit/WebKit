@@ -1,3 +1,14 @@
+2011-09-20  Jay Civelli  <jcivelli@chromium.org>
+
+        This CL makes it possible to create a blob from Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=68286
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebBlob.h: Added.
+        * src/WebBlob.cpp: Added.
+
 2011-09-20  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] remove obsolete WebPermissionClient::allowImages method
