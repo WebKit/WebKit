@@ -29,11 +29,7 @@
 
 namespace WTF {
 
-#if WTFTHREADDATA_MULTITHREADED
 ThreadSpecific<WTFThreadData>* WTFThreadData::staticData;
-#else
-WTFThreadData* WTFThreadData::staticData;
-#endif
 
 WTFThreadData::WTFThreadData()
     : m_atomicStringTable(0)
