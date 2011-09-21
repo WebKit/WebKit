@@ -1,5 +1,12 @@
 2011-09-21  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK baselines for
+        cross-origin-xsl-redirect-BLOCKED.html which were removed by mistake.
+
+        * platform/gtk/http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.txt: Added.
+
+2011-09-21  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skip flaky media test on GTK.
 
         * platform/gtk/Skipped: Skip media/media-blocked-by-beforeload.html
