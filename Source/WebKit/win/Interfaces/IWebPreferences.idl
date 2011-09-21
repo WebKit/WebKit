@@ -200,9 +200,9 @@ interface IWebPreferences : IUnknown
     HRESULT editingBehavior([out, retval] WebKitEditingBehavior* editingBehavior);
     HRESULT setEditingBehavior([in] WebKitEditingBehavior behavior);
 
-    HRESULT pictographFontFamily([out, retval] BSTR* family);
-    HRESULT setPictographFontFamily([in] BSTR family);
-
     HRESULT setAVFoundationEnabled(BOOL avFoundationEnabled);
     HRESULT avFoundationEnabled(BOOL *avFoundationEnabled);
+
+    HRESULT pictographFontFamily([out, retval] BSTR* family);
+    HRESULT setPictographFontFamily([in] BSTR family);
 }
