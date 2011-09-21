@@ -330,7 +330,7 @@ base.UpdateTracker.prototype = {
         if (!callback)
             return;
 
-        Object.keys(this._items).forEach(function(key) {
+        Object.keys(this._items).sort().forEach(function(key) {
             var item = this._items[key];
             callback.call(thisObject || item, item, key, !!this._updated[key]);
         }, this);

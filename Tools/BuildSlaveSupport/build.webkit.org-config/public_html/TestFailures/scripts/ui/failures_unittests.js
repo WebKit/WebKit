@@ -34,7 +34,11 @@ test('Configuration', 8, function() {
 
     var configuration;
     configuration = new ui.failures.Configuration({});
-    deepEqual(Object.getOwnPropertyNames(configuration.__proto__), ['init', 'equals', '_addSpan']);
+    deepEqual(Object.getOwnPropertyNames(configuration.__proto__).sort(), [
+        '_addSpan',
+        'equals',
+        'init',
+    ]);
     equal(configuration.outerHTML, '<a target="_blank"></a>');
     configuration = new ui.failures.Configuration({is64bit: true, version: 'lucid'});
     equal(configuration.outerHTML, '<a target="_blank"><span class="architecture">64-bit</span><span class="version">lucid</span></a>');
@@ -48,7 +52,12 @@ test('Configuration', 8, function() {
 
 test('FailureGrid', 9, function() {
     var grid = new ui.failures.FailureGrid();
-    deepEqual(Object.getOwnPropertyNames(grid.__proto__), ["init", "_rowByResult", "add", "removeResultRows"]);
+    deepEqual(Object.getOwnPropertyNames(grid.__proto__).sort(), [
+        "_rowByResult",
+        "add",
+        "init",
+        "removeResultRows",
+    ]);
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody><tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr></tbody>' +

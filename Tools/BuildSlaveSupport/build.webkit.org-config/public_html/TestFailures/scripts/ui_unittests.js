@@ -105,7 +105,12 @@ test("time", 6, function() {
     var time = new ui.RelativeTime();
     equal(time.tagName, 'TIME');
     equal(time.className, 'relative');
-    deepEqual(Object.getOwnPropertyNames(time.__proto__), ['init', 'date', 'setDate', 'update']);
+    deepEqual(Object.getOwnPropertyNames(time.__proto__).sort(), [
+        'date',
+        'init',
+        'setDate',
+        'update',
+    ]);
     equal(time.outerHTML, '<time class="relative">Just now</time>');
     var tenMinutesAgo = new Date();
     tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 10);

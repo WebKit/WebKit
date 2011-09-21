@@ -1,5 +1,23 @@
 2011-09-20  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic unit test fail because Safari 5.1 doesn't enumerate dictionaries in the same order as V8
+        https://bugs.webkit.org/show_bug.cgi?id=68496
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch adds a bunch of sorting to make sure things happen in a
+        predictable order in both JavaScriptCore and V8.  We've talked before
+        about whether these two JavaScript engines should enumerate
+        dictionaries in the same order, but the consensus has been that they
+        shouldn't.  Personally, I disagree with that consensus, but such is life.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui_unittests.js:
+
+2011-09-20  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic doesn't work in Safari 5.1 because Safari 5.1 lacks Function.prototype.bind
         https://bugs.webkit.org/show_bug.cgi?id=68495
 
