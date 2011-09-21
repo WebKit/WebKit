@@ -1009,19 +1009,6 @@ http/tests/websocket/tests/hixie76/frame-lengths.html
 http/tests/misc/object-image-error.html
 http/tests/security/contentSecurityPolicy/media-src-allowed.html
 
-# Cookie handling problems
-http/tests/security/cookies/document-open.html
-http/tests/security/cookies/base-about-blank.html
-http/tests/security/aboutBlank/security-context-grandchildren-lexical.html
-http/tests/security/aboutBlank/security-context-writeln.html
-http/tests/security/aboutBlank/security-context.html
-http/tests/security/aboutBlank/security-context-grandchildren-write-lexical.html
-http/tests/security/aboutBlank/security-context-grandchildren.html
-http/tests/security/aboutBlank/security-context-with-base-tag.html
-http/tests/security/aboutBlank/security-context-window-open.html
-http/tests/security/aboutBlank/security-context-write.html
-http/tests/security/aboutBlank/security-context-grandchildren-writeln-lexical.html
-
 # These tests always fail (with and without --singly). It needs investigation.
 animations/animation-controller-drt-api.html
 editing/execCommand/format-block-multiple-paragraphs-in-pre.html
