@@ -1,3 +1,30 @@
+2011-09-21  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Optimize ImageBuffer constructor when accelerated
+        https://bugs.webkit.org/show_bug.cgi?id=68501
+
+        If the accelerated rendering mode is passed in to ImageBuffer, instead
+        of creating a bitmap PlatformCanvas and subsequently replacing its
+        device with an SkGpuDevice, create an SkCanvas and SkGpuDevice first,
+        and fall back to raster creation only failure.  This saves on system
+        RAM for the backing store (and possibly GDI resources).
+
+        Reviewed by James Robinson.
+
+        Covered by existing tests.
+
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::get):
+        * platform/graphics/gpu/SharedGraphicsContext3D.h:
+        Rename "SharedGraphicsContext3D::create()" to "get()" to more
+        accurately reflect its function.
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::createAcceleratedCanvas):
+        Refactor creation of accelerated ImageBuffer.
+        (WebCore::ImageBuffer::ImageBuffer):
+        Attempt creation of accelerated ImageBuffer first, and only fall back
+        to bitmap-backed canvas creation if it fails.
+
 2011-09-21  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of: Prevent the WebKit frameworks from defining inappropriately-named Objective-C classes

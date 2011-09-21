@@ -64,11 +64,46 @@ ImageBufferData::ImageBufferData(const IntSize& size)
 {
 }
 
+static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* data)
+{
+    GraphicsContext3D* context3D = SharedGraphicsContext3D::get();
+    if (!context3D)
+        return 0;
+    GrContext* gr = context3D->grContext();
+    if (!gr)
+        return 0;
+    gr->resetContext();
+    GrTextureDesc desc;
+    desc.fFlags = kRenderTarget_GrTextureFlagBit;
+    desc.fAALevel = kNone_GrAALevel;
+    desc.fWidth = size.width();
+    desc.fHeight = size.height();
+    desc.fFormat = kRGBA_8888_GrPixelConfig;
+    SkAutoTUnref<GrTexture> texture(gr->createUncachedTexture(desc, 0, 0));
+    if (!texture.get())
+        return 0;
+    SkCanvas* canvas = new SkCanvas();
+    canvas->setDevice(new SkGpuDevice(gr, texture.get()))->unref();
+    data->m_platformContext.setGraphicsContext3D(context3D);
+#if USE(ACCELERATED_COMPOSITING)
+    data->m_platformLayer = Canvas2DLayerChromium::create(context3D);
+    data->m_platformLayer->setTextureId(texture.get()->getTextureHandle());
+#endif
+    return canvas;
+}
+
 ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderingMode, bool& success)
     : m_data(size)
     , m_size(size)
 {
-    OwnPtr<SkCanvas> canvas = adoptPtr(skia::TryCreateBitmapCanvas(size.width(), size.height(), false));
+    OwnPtr<SkCanvas> canvas;
+
+    if (renderingMode == Accelerated)
+        canvas = adoptPtr(createAcceleratedCanvas(size, &m_data));
+
+    if (!canvas)
+        canvas = adoptPtr(skia::TryCreateBitmapCanvas(size.width(), size.height(), false));
+
     if (!canvas) {
         success = false;
         return;
@@ -83,30 +118,6 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderin
     // required, but the canvas is currently filled with the magic transparency
     // color. Can we have another way to manage this?
     m_data.m_canvas->drawARGB(0, 0, 0, 0, SkXfermode::kClear_Mode);
-    if (renderingMode == Accelerated) {
-        GraphicsContext3D* context3D = SharedGraphicsContext3D::create(0);
-        if (context3D) {
-            GrContext* gr = context3D->grContext();
-            if (gr) {
-                gr->resetContext();
-                GrTextureDesc desc;
-                desc.fFlags = kRenderTarget_GrTextureFlagBit;
-                desc.fAALevel = kNone_GrAALevel;
-                desc.fWidth = size.width();
-                desc.fHeight = size.height();
-                desc.fFormat = kRGBA_8888_GrPixelConfig;
-                SkAutoTUnref<GrTexture> texture(gr->createUncachedTexture(desc, 0, 0));
-                if (texture.get()) {
-                    m_data.m_canvas->setDevice(new SkGpuDevice(gr, texture.get()))->unref();
-                    m_context->platformContext()->setGraphicsContext3D(context3D);
-#if USE(ACCELERATED_COMPOSITING)
-                    m_data.m_platformLayer = Canvas2DLayerChromium::create(context3D);
-                    m_data.m_platformLayer->setTextureId(texture.get()->getTextureHandle());
-#endif
-                }
-            }
-        }
-    }
 
     success = true;
 }

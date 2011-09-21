@@ -34,7 +34,7 @@ namespace WebCore {
 
 class SharedGraphicsContext3D {
 public:
-    static GraphicsContext3D* create(HostWindow*);
+    static GraphicsContext3D* get();
 };
 
 }
