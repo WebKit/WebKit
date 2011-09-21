@@ -30,8 +30,8 @@
 
 #define EINA_MAGIC_CHECK_OR_RETURN(o, ...) \
     if (!EINA_MAGIC_CHECK(obj, EWK_JS_OBJECT_MAGIC)) { \
-       EINA_MAGIC_FAIL(obj, EWK_JS_OBJECT_MAGIC); \
-       return __VA_ARGS__; \
+        EINA_MAGIC_FAIL(obj, EWK_JS_OBJECT_MAGIC); \
+        return __VA_ARGS__; \
     }
 
 struct _Ewk_JS_Class {

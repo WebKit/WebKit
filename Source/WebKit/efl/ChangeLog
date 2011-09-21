@@ -1,5 +1,34 @@
 2011-09-21  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
+        [EFL] Revert pointer operator coding style in ewk
+        https://bugs.webkit.org/show_bug.cgi?id=68231
+
+        Reviewed by Antonio Gomes.
+
+        The WebKit coding style mandates that "(...) in C++ code - Both pointer
+        types and reference types should be written with no space between the
+        type name and the * or &.". Until now EFL port was using the
+        coding-style of the library for platform  code instead of WebKit's.
+
+        We are now trying to be more compliant with WebKit coding-style so it's
+        easier for other reviewers to review EFL code. The first step in this
+        direction is to move the '*' and '&' of pointers and references to the
+        right place.
+
+        This patch was generated with 'uncrustify' with the configure file
+        attached to the respective but report. There was one fix that had to be
+        manually made in order to keep the 'check-webkit-style' happy: a
+        function definition with a meaningless name. Other functions like this
+        exist but they will be fixed by a later patch.
+
+        Some nice side-effects of using uncrustify:
+
+        - Whitespace cleanup on comments
+        - Function parameters are aligned to the open parenthesis
+        - Remove tab characters
+
+2011-09-21  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
         [EFL] Don't try to free user-provided list
         https://bugs.webkit.org/show_bug.cgi?id=68356
 

@@ -42,7 +42,7 @@ typedef struct _EwkProtocolHandlerPrivate EwkProtocolHandlerPrivate;
 
 typedef struct {
     SoupRequest parent;
-    EwkProtocolHandlerPrivate *priv;
+    EwkProtocolHandlerPrivate* priv;
 } EwkCustomProtocolHandler;
 
 typedef struct {

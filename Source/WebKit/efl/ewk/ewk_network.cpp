@@ -30,10 +30,10 @@
 #include <libsoup/soup.h>
 #endif
 
-void ewk_network_proxy_uri_set(const char *proxy)
+void ewk_network_proxy_uri_set(const char* proxy)
 {
 #if USE(SOUP)
-    SoupSession *session = WebCore::ResourceHandle::defaultSession();
+    SoupSession* session = WebCore::ResourceHandle::defaultSession();
 
     if (!proxy) {
         ERR("no proxy uri. remove proxy feature in soup.");
@@ -41,7 +41,7 @@ void ewk_network_proxy_uri_set(const char *proxy)
         return;
     }
 
-    SoupURI *uri = soup_uri_new(proxy);
+    SoupURI* uri = soup_uri_new(proxy);
     EINA_SAFETY_ON_NULL_RETURN(uri);
 
     g_object_set(session, SOUP_SESSION_PROXY_URI, uri, NULL);
@@ -51,11 +51,11 @@ void ewk_network_proxy_uri_set(const char *proxy)
 #endif
 }
 
-const char *ewk_network_proxy_uri_get(void)
+const char* ewk_network_proxy_uri_get(void)
 {
 #if USE(SOUP)
-    SoupURI *uri;
-    SoupSession *session = WebCore::ResourceHandle::defaultSession();
+    SoupURI* uri;
+    SoupSession* session = WebCore::ResourceHandle::defaultSession();
     g_object_get(session, SOUP_SESSION_PROXY_URI, &uri, NULL);
 
     if (!uri) {

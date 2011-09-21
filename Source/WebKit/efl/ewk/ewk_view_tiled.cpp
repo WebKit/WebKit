@@ -30,24 +30,24 @@
 
 static Ewk_View_Smart_Class _parent_sc = EWK_VIEW_SMART_CLASS_INIT_NULL;
 
-static Eina_Bool _ewk_view_tiled_render_cb(void *data, Ewk_Tile *t, const Eina_Rectangle *area)
+static Eina_Bool _ewk_view_tiled_render_cb(void* data, Ewk_Tile* t, const Eina_Rectangle* area)
 {
-    Ewk_View_Private_Data *priv = (Ewk_View_Private_Data*)data;
+    Ewk_View_Private_Data* priv = (Ewk_View_Private_Data*)data;
     Eina_Rectangle r = {area->x + t->x, area->y + t->y, area->w, area->h};
 
     return ewk_view_paint_contents(priv, t->cairo, &r);
 }
 
-static void *_ewk_view_tiled_updates_process_pre(void *data, Evas_Object *o)
+static void* _ewk_view_tiled_updates_process_pre(void* data, Evas_Object* o)
 {
-    Ewk_View_Private_Data *priv = (Ewk_View_Private_Data*)data;
+    Ewk_View_Private_Data* priv = (Ewk_View_Private_Data*)data;
     ewk_view_layout_if_needed_recursive(priv);
     return 0;
 }
 
-static Evas_Object *_ewk_view_tiled_smart_backing_store_add(Ewk_View_Smart_Data *sd)
+static Evas_Object* _ewk_view_tiled_smart_backing_store_add(Ewk_View_Smart_Data* sd)
 {
-    Evas_Object *bs = ewk_tiled_backing_store_add(sd->base.evas);
+    Evas_Object* bs = ewk_tiled_backing_store_add(sd->base.evas);
     ewk_tiled_backing_store_render_cb_set
         (bs, _ewk_view_tiled_render_cb, sd->_priv);
     ewk_tiled_backing_store_updates_process_pre_set
@@ -56,18 +56,18 @@ static Evas_Object *_ewk_view_tiled_smart_backing_store_add(Ewk_View_Smart_Data 
 }
 
 static void
-_ewk_view_tiled_contents_size_changed_cb(void *data, Evas_Object *o, void *event_info)
+_ewk_view_tiled_contents_size_changed_cb(void* data, Evas_Object* o, void* event_info)
 {
-    Evas_Coord *size = (Evas_Coord*)event_info;
-    Ewk_View_Smart_Data *sd = (Ewk_View_Smart_Data*)data;
+    Evas_Coord* size = (Evas_Coord*)event_info;
+    Ewk_View_Smart_Data* sd = (Ewk_View_Smart_Data*)data;
 
     ewk_tiled_backing_store_contents_resize
         (sd->backing_store, size[0], size[1]);
 }
 
-static void _ewk_view_tiled_smart_add(Evas_Object *o)
+static void _ewk_view_tiled_smart_add(Evas_Object* o)
 {
-    Ewk_View_Smart_Data *sd;
+    Ewk_View_Smart_Data* sd;
 
     _parent_sc.sc.add(o);
 
@@ -81,10 +81,10 @@ static void _ewk_view_tiled_smart_add(Evas_Object *o)
     ewk_frame_paint_full_set(sd->main_frame, EINA_TRUE);
 }
 
-static Eina_Bool _ewk_view_tiled_smart_scrolls_process(Ewk_View_Smart_Data *sd)
+static Eina_Bool _ewk_view_tiled_smart_scrolls_process(Ewk_View_Smart_Data* sd)
 {
-    const Ewk_Scroll_Request *sr;
-    const Ewk_Scroll_Request *sr_end;
+    const Ewk_Scroll_Request* sr;
+    const Ewk_Scroll_Request* sr_end;
     size_t count;
     Evas_Coord vw, vh;
 
@@ -137,9 +137,9 @@ static Eina_Bool _ewk_view_tiled_smart_scrolls_process(Ewk_View_Smart_Data *sd)
     return EINA_TRUE;
 }
 
-static Eina_Bool _ewk_view_tiled_smart_repaints_process(Ewk_View_Smart_Data *sd)
+static Eina_Bool _ewk_view_tiled_smart_repaints_process(Ewk_View_Smart_Data* sd)
 {
-    const Eina_Rectangle *pr, *pr_end;
+    const Eina_Rectangle* pr, * pr_end;
     size_t count;
     int sx, sy;
 
@@ -160,13 +160,13 @@ static Eina_Bool _ewk_view_tiled_smart_repaints_process(Ewk_View_Smart_Data *sd)
     return EINA_TRUE;
 }
 
-static Eina_Bool _ewk_view_tiled_smart_contents_resize(Ewk_View_Smart_Data *sd, int w, int h)
+static Eina_Bool _ewk_view_tiled_smart_contents_resize(Ewk_View_Smart_Data* sd, int w, int h)
 {
     ewk_tiled_backing_store_contents_resize(sd->backing_store, w, h);
     return EINA_TRUE;
 }
 
-static Eina_Bool _ewk_view_tiled_smart_zoom_set(Ewk_View_Smart_Data *sd, float zoom, Evas_Coord cx, Evas_Coord cy)
+static Eina_Bool _ewk_view_tiled_smart_zoom_set(Ewk_View_Smart_Data* sd, float zoom, Evas_Coord cx, Evas_Coord cy)
 {
     Evas_Coord x, y, w, h;
     Eina_Bool r;
@@ -186,50 +186,50 @@ static Eina_Bool _ewk_view_tiled_smart_zoom_set(Ewk_View_Smart_Data *sd, float z
     return r;
 }
 
-static Eina_Bool _ewk_view_tiled_smart_zoom_weak_set(Ewk_View_Smart_Data *sd, float zoom, Evas_Coord cx, Evas_Coord cy)
+static Eina_Bool _ewk_view_tiled_smart_zoom_weak_set(Ewk_View_Smart_Data* sd, float zoom, Evas_Coord cx, Evas_Coord cy)
 {
     return ewk_tiled_backing_store_zoom_weak_set(sd->backing_store, zoom, cx, cy);
 }
 
-static void _ewk_view_tiled_smart_zoom_weak_smooth_scale_set(Ewk_View_Smart_Data *sd, Eina_Bool smooth_scale)
+static void _ewk_view_tiled_smart_zoom_weak_smooth_scale_set(Ewk_View_Smart_Data* sd, Eina_Bool smooth_scale)
 {
     ewk_tiled_backing_store_zoom_weak_smooth_scale_set(sd->backing_store, smooth_scale);
 }
 
-static void _ewk_view_tiled_smart_flush(Ewk_View_Smart_Data *sd)
+static void _ewk_view_tiled_smart_flush(Ewk_View_Smart_Data* sd)
 {
     ewk_tiled_backing_store_flush(sd->backing_store);
     _parent_sc.flush(sd);
 }
 
-static Eina_Bool _ewk_view_tiled_smart_pre_render_region(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom)
+static Eina_Bool _ewk_view_tiled_smart_pre_render_region(Ewk_View_Smart_Data* sd, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom)
 {
     return ewk_tiled_backing_store_pre_render_region
-        (sd->backing_store, x, y, w, h, zoom);
+               (sd->backing_store, x, y, w, h, zoom);
 }
 
-static Eina_Bool _ewk_view_tiled_smart_pre_render_relative_radius(Ewk_View_Smart_Data *sd, unsigned int n, float zoom)
+static Eina_Bool _ewk_view_tiled_smart_pre_render_relative_radius(Ewk_View_Smart_Data* sd, unsigned int n, float zoom)
 {
     return ewk_tiled_backing_store_pre_render_relative_radius
-        (sd->backing_store, n, zoom);
+               (sd->backing_store, n, zoom);
 }
 
-static void _ewk_view_tiled_smart_pre_render_cancel(Ewk_View_Smart_Data *sd)
+static void _ewk_view_tiled_smart_pre_render_cancel(Ewk_View_Smart_Data* sd)
 {
     ewk_tiled_backing_store_pre_render_cancel(sd->backing_store);
 }
 
-static Eina_Bool _ewk_view_tiled_smart_disable_render(Ewk_View_Smart_Data *sd)
+static Eina_Bool _ewk_view_tiled_smart_disable_render(Ewk_View_Smart_Data* sd)
 {
     return ewk_tiled_backing_store_disable_render(sd->backing_store);
 }
 
-static Eina_Bool _ewk_view_tiled_smart_enable_render(Ewk_View_Smart_Data *sd)
+static Eina_Bool _ewk_view_tiled_smart_enable_render(Ewk_View_Smart_Data* sd)
 {
     return ewk_tiled_backing_store_enable_render(sd->backing_store);
 }
 
-Eina_Bool ewk_view_tiled_smart_set(Ewk_View_Smart_Class *api)
+Eina_Bool ewk_view_tiled_smart_set(Ewk_View_Smart_Class* api)
 {
     if (!ewk_view_base_smart_set(api))
         return EINA_FALSE;
@@ -255,10 +255,10 @@ Eina_Bool ewk_view_tiled_smart_set(Ewk_View_Smart_Class *api)
     return EINA_TRUE;
 }
 
-static inline Evas_Smart *_ewk_view_tiled_smart_class_new(void)
+static inline Evas_Smart* _ewk_view_tiled_smart_class_new(void)
 {
     static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("EWK_View_Tiled");
-    static Evas_Smart *smart = 0;
+    static Evas_Smart* smart = 0;
 
     if (EINA_UNLIKELY(!smart)) {
         ewk_view_tiled_smart_set(&api);
@@ -268,21 +268,21 @@ static inline Evas_Smart *_ewk_view_tiled_smart_class_new(void)
     return smart;
 }
 
-Evas_Object *ewk_view_tiled_add(Evas *e)
+Evas_Object* ewk_view_tiled_add(Evas* e)
 {
     return evas_object_smart_add(e, _ewk_view_tiled_smart_class_new());
 }
 
-Ewk_Tile_Unused_Cache *ewk_view_tiled_unused_cache_get(const Evas_Object *o)
+Ewk_Tile_Unused_Cache* ewk_view_tiled_unused_cache_get(const Evas_Object* o)
 {
-    Ewk_View_Smart_Data *sd = ewk_view_smart_data_get(o);
+    Ewk_View_Smart_Data* sd = ewk_view_smart_data_get(o);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd, 0);
     return ewk_tiled_backing_store_tile_unused_cache_get(sd->backing_store);
 }
 
-void ewk_view_tiled_unused_cache_set(Evas_Object *o, Ewk_Tile_Unused_Cache *cache)
+void ewk_view_tiled_unused_cache_set(Evas_Object* o, Ewk_Tile_Unused_Cache* cache)
 {
-    Ewk_View_Smart_Data *sd = ewk_view_smart_data_get(o);
+    Ewk_View_Smart_Data* sd = ewk_view_smart_data_get(o);
     EINA_SAFETY_ON_NULL_RETURN(sd);
     ewk_tiled_backing_store_tile_unused_cache_set(sd->backing_store, cache);
 }

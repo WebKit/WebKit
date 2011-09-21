@@ -31,23 +31,23 @@
 
 static Ewk_View_Smart_Class _parent_sc = EWK_VIEW_SMART_CLASS_INIT_NULL;
 
-static void _ewk_view_single_on_del(void *data, Evas *e, Evas_Object *o, void *event_info)
+static void _ewk_view_single_on_del(void* data, Evas* e, Evas_Object* o, void* event_info)
 {
-    Evas_Object *clip = (Evas_Object*)data;
+    Evas_Object* clip = (Evas_Object*)data;
     evas_object_del(clip);
 }
 
-static void _ewk_view_single_smart_add(Evas_Object *o)
+static void _ewk_view_single_smart_add(Evas_Object* o)
 {
-    Ewk_View_Smart_Data *sd;
+    Ewk_View_Smart_Data* sd;
 
     _parent_sc.sc.add(o);
 
-    sd = (Ewk_View_Smart_Data *)evas_object_smart_data_get(o);
+    sd = (Ewk_View_Smart_Data*)evas_object_smart_data_get(o);
     if (!sd)
         return;
 
-    Evas_Object *clip = evas_object_rectangle_add(sd->base.evas);
+    Evas_Object* clip = evas_object_rectangle_add(sd->base.evas);
     evas_object_clip_set(sd->backing_store, clip);
     evas_object_smart_member_add(clip, o);
     evas_object_show(clip);
@@ -56,18 +56,18 @@ static void _ewk_view_single_smart_add(Evas_Object *o)
         (sd->backing_store, EVAS_CALLBACK_DEL, _ewk_view_single_on_del, clip);
 }
 
-static Evas_Object *_ewk_view_single_smart_backing_store_add(Ewk_View_Smart_Data *sd)
+static Evas_Object* _ewk_view_single_smart_backing_store_add(Ewk_View_Smart_Data* sd)
 {
-    Evas_Object *bs = evas_object_image_add(sd->base.evas);
+    Evas_Object* bs = evas_object_image_add(sd->base.evas);
     evas_object_image_alpha_set(bs, EINA_FALSE);
     evas_object_image_smooth_scale_set(bs, sd->zoom_weak_smooth_scale);
 
     return bs;
 }
 
-static void _ewk_view_single_smart_resize(Evas_Object *o, Evas_Coord w, Evas_Coord h)
+static void _ewk_view_single_smart_resize(Evas_Object* o, Evas_Coord w, Evas_Coord h)
 {
-    Ewk_View_Smart_Data *sd = (Ewk_View_Smart_Data*)evas_object_smart_data_get(o);
+    Ewk_View_Smart_Data* sd = (Ewk_View_Smart_Data*)evas_object_smart_data_get(o);
     _parent_sc.sc.resize(o, w, h);
 
     if (!sd)
@@ -76,7 +76,7 @@ static void _ewk_view_single_smart_resize(Evas_Object *o, Evas_Coord w, Evas_Coo
     // these should be queued and processed in calculate as well!
     evas_object_image_size_set(sd->backing_store, w, h);
     if (sd->animated_zoom.zoom.current < 0.00001) {
-        Evas_Object *clip = evas_object_clip_get(sd->backing_store);
+        Evas_Object* clip = evas_object_clip_get(sd->backing_store);
         Evas_Coord x, y, cw, ch;
         evas_object_image_fill_set(sd->backing_store, 0, 0, w, h);
         evas_object_geometry_get(sd->backing_store, &x, &y, 0, 0);
@@ -90,10 +90,10 @@ static void _ewk_view_single_smart_resize(Evas_Object *o, Evas_Coord w, Evas_Coo
     }
 }
 
-static inline void _ewk_view_4b_move_region_up(uint32_t *image, size_t rows, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
+static inline void _ewk_view_4b_move_region_up(uint32_t* image, size_t rows, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
 {
-    uint32_t *src;
-    uint32_t *dst;
+    uint32_t* src;
+    uint32_t* dst;
 
     dst = image + x + y * rowsize;
     src = dst + rows * rowsize;
@@ -103,10 +103,10 @@ static inline void _ewk_view_4b_move_region_up(uint32_t *image, size_t rows, siz
         memcpy(dst, src, w * 4);
 }
 
-static inline void _ewk_view_4b_move_region_down(uint32_t *image, size_t rows, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
+static inline void _ewk_view_4b_move_region_down(uint32_t* image, size_t rows, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
 {
-    uint32_t *src;
-    uint32_t *dst;
+    uint32_t* src;
+    uint32_t* dst;
 
     h -= rows;
     src = image + x + (y + h - 1) * rowsize;
@@ -116,9 +116,9 @@ static inline void _ewk_view_4b_move_region_down(uint32_t *image, size_t rows, s
         memcpy(dst, src, w * 4);
 }
 
-static inline void _ewk_view_4b_move_line_left(uint32_t *dst, const uint32_t *src, size_t count)
+static inline void _ewk_view_4b_move_line_left(uint32_t* dst, const uint32_t* src, size_t count)
 {
-    uint32_t *dst_end = dst + count;
+    uint32_t* dst_end = dst + count;
     /* no memcpy() as it does not allow overlapping regions */
     /* no memmove() as it will copy to a temporary buffer */
     /* TODO: loop unrolling, copying up to quad-words would help */
@@ -126,9 +126,9 @@ static inline void _ewk_view_4b_move_line_left(uint32_t *dst, const uint32_t *sr
         *dst = *src;
 }
 
-static inline void _ewk_view_4b_move_line_right(uint32_t *dst, uint32_t *src, size_t count)
+static inline void _ewk_view_4b_move_line_right(uint32_t* dst, uint32_t* src, size_t count)
 {
-    uint32_t *dst_end = dst - count;
+    uint32_t* dst_end = dst - count;
     /* no memcpy() as it does not allow overlapping regions */
     /* no memmove() as it will copy to a temporary buffer */
     /* TODO: loop unrolling, copying up to quad-words would help */
@@ -136,10 +136,10 @@ static inline void _ewk_view_4b_move_line_right(uint32_t *dst, uint32_t *src, si
         *dst = *src;
 }
 
-static inline void _ewk_view_4b_move_region_left(uint32_t *image, size_t cols, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
+static inline void _ewk_view_4b_move_region_left(uint32_t* image, size_t cols, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
 {
-    uint32_t *src;
-    uint32_t *dst;
+    uint32_t* src;
+    uint32_t* dst;
 
     dst = image + x + y * rowsize;
     src = dst + cols;
@@ -149,10 +149,10 @@ static inline void _ewk_view_4b_move_region_left(uint32_t *image, size_t cols, s
         _ewk_view_4b_move_line_left(dst, src, w);
 }
 
-static inline void _ewk_view_4b_move_region_right(uint32_t *image, size_t cols, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
+static inline void _ewk_view_4b_move_region_right(uint32_t* image, size_t cols, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
 {
-    uint32_t *src;
-    uint32_t *dst;
+    uint32_t* src;
+    uint32_t* dst;
 
     w -= cols;
     src = image + (x + w - 1) + y * rowsize;
@@ -163,10 +163,10 @@ static inline void _ewk_view_4b_move_region_right(uint32_t *image, size_t cols, 
 }
 
 /* catch-all function, not as optimized as the others, but does the work. */
-static inline void _ewk_view_4b_move_region(uint32_t *image, int dx, int dy, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
+static inline void _ewk_view_4b_move_region(uint32_t* image, int dx, int dy, size_t x, size_t y, size_t w, size_t h, size_t rowsize)
 {
-    uint32_t *src;
-    uint32_t *dst;
+    uint32_t* src;
+    uint32_t* dst;
 
     if (dy < 0) {
         h += dy;
@@ -203,7 +203,7 @@ static inline void _ewk_view_4b_move_region(uint32_t *image, int dx, int dy, siz
     }
 }
 
-static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data *sd, void *pixels, Evas_Coord ow, Evas_Coord oh, const Ewk_Scroll_Request *sr)
+static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* sd, void* pixels, Evas_Coord ow, Evas_Coord oh, const Ewk_Scroll_Request* sr)
 {
     Evas_Coord sx, sy, sw, sh;
 
@@ -340,13 +340,13 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data *s
     }
 }
 
-static Eina_Bool _ewk_view_single_smart_scrolls_process(Ewk_View_Smart_Data *sd)
+static Eina_Bool _ewk_view_single_smart_scrolls_process(Ewk_View_Smart_Data* sd)
 {
-    const Ewk_Scroll_Request *sr;
-    const Ewk_Scroll_Request *sr_end;
+    const Ewk_Scroll_Request* sr;
+    const Ewk_Scroll_Request* sr_end;
     Evas_Coord ow, oh;
     size_t count;
-    void *pixels = evas_object_image_data_get(sd->backing_store, 1);
+    void* pixels = evas_object_image_data_get(sd->backing_store, 1);
     evas_object_image_size_get(sd->backing_store, &ow, &oh);
 
     sr = ewk_view_scroll_requests_get(sd->_priv, &count);
@@ -359,25 +359,25 @@ static Eina_Bool _ewk_view_single_smart_scrolls_process(Ewk_View_Smart_Data *sd)
     return EINA_TRUE;
 }
 
-static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data *sd)
+static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sd)
 {
-    Ewk_View_Paint_Context *ctxt;
+    Ewk_View_Paint_Context* ctxt;
     Evas_Coord ow, oh;
-    void *pixels;
-    Eina_Rectangle *r;
-    const Eina_Rectangle *pr;
-    const Eina_Rectangle *pr_end;
-    Eina_Tiler *tiler;
-    Eina_Iterator *itr;
+    void* pixels;
+    Eina_Rectangle* r;
+    const Eina_Rectangle* pr;
+    const Eina_Rectangle* pr_end;
+    Eina_Tiler* tiler;
+    Eina_Iterator* itr;
     cairo_status_t status;
-    cairo_surface_t *surface;
+    cairo_surface_t* surface;
     cairo_format_t format;
-    cairo_t *cairo;
+    cairo_t* cairo;
     size_t count;
     Eina_Bool ret = EINA_TRUE;
 
     if (sd->animated_zoom.zoom.current < 0.00001) {
-        Evas_Object *clip = evas_object_clip_get(sd->backing_store);
+        Evas_Object* clip = evas_object_clip_get(sd->backing_store);
         Evas_Coord w, h, cw, ch;
         // reset effects of zoom_weak_set()
         evas_object_image_fill_set
@@ -400,7 +400,7 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data *sd
     format = CAIRO_FORMAT_ARGB32;
 
     surface = cairo_image_surface_create_for_data
-        ((unsigned char*)pixels, format, ow, oh, ow * 4);
+                  ((unsigned char*)pixels, format, ow, oh, ow * 4);
     status = cairo_surface_status(surface);
     if (status != CAIRO_STATUS_SUCCESS) {
         ERR("could not create surface from data %dx%d: %s",
@@ -482,14 +482,14 @@ error_cairo_surface:
     return ret;
 }
 
-static Eina_Bool _ewk_view_single_smart_zoom_weak_set(Ewk_View_Smart_Data *sd, float zoom, Evas_Coord cx, Evas_Coord cy)
+static Eina_Bool _ewk_view_single_smart_zoom_weak_set(Ewk_View_Smart_Data* sd, float zoom, Evas_Coord cx, Evas_Coord cy)
 {
     // TODO: review
     float scale = zoom / sd->animated_zoom.zoom.start;
     Evas_Coord w = sd->view.w * scale;
     Evas_Coord h = sd->view.h * scale;
     Evas_Coord dx, dy, cw, ch;
-    Evas_Object *clip = evas_object_clip_get(sd->backing_store);
+    Evas_Object* clip = evas_object_clip_get(sd->backing_store);
 
     ewk_frame_contents_size_get(sd->main_frame, &cw, &ch);
     if (sd->view.w > 0 && sd->view.h > 0) {
@@ -519,17 +519,17 @@ static Eina_Bool _ewk_view_single_smart_zoom_weak_set(Ewk_View_Smart_Data *sd, f
     return EINA_TRUE;
 }
 
-static void _ewk_view_single_smart_zoom_weak_smooth_scale_set(Ewk_View_Smart_Data *sd, Eina_Bool smooth_scale)
+static void _ewk_view_single_smart_zoom_weak_smooth_scale_set(Ewk_View_Smart_Data* sd, Eina_Bool smooth_scale)
 {
     evas_object_image_smooth_scale_set(sd->backing_store, smooth_scale);
 }
 
-static void _ewk_view_single_smart_bg_color_set(Ewk_View_Smart_Data *sd, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+static void _ewk_view_single_smart_bg_color_set(Ewk_View_Smart_Data* sd, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     evas_object_image_alpha_set(sd->backing_store, a < 255);
 }
 
-Eina_Bool ewk_view_single_smart_set(Ewk_View_Smart_Class *api)
+Eina_Bool ewk_view_single_smart_set(Ewk_View_Smart_Class* api)
 {
     if (!ewk_view_base_smart_set(api))
         return EINA_FALSE;
@@ -550,10 +550,10 @@ Eina_Bool ewk_view_single_smart_set(Ewk_View_Smart_Class *api)
     return EINA_TRUE;
 }
 
-static inline Evas_Smart *_ewk_view_single_smart_class_new(void)
+static inline Evas_Smart* _ewk_view_single_smart_class_new(void)
 {
     static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("Ewk_View_Single");
-    static Evas_Smart *smart = 0;
+    static Evas_Smart* smart = 0;
 
     if (EINA_UNLIKELY(!smart)) {
         ewk_view_single_smart_set(&api);
@@ -563,7 +563,7 @@ static inline Evas_Smart *_ewk_view_single_smart_class_new(void)
     return smart;
 }
 
-Evas_Object *ewk_view_single_add(Evas *e)
+Evas_Object* ewk_view_single_add(Evas* e)
 {
     return evas_object_smart_add(e, _ewk_view_single_smart_class_new());
 }

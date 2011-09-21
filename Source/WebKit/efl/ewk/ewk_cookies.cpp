@@ -36,10 +36,10 @@
 #include <wtf/text/CString.h>
 
 
-Eina_Bool ewk_cookies_file_set(const char *filename)
+Eina_Bool ewk_cookies_file_set(const char* filename)
 {
 #if USE(SOUP)
-    SoupCookieJar *cookieJar = 0;
+    SoupCookieJar* cookieJar = 0;
     if (filename)
         cookieJar = soup_cookie_jar_text_new(filename, FALSE);
     else
@@ -50,8 +50,8 @@ Eina_Bool ewk_cookies_file_set(const char *filename)
 
     soup_cookie_jar_set_accept_policy(cookieJar, SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY);
 
-    SoupSession *session = WebCore::ResourceHandle::defaultSession();
-    SoupSessionFeature *oldjar = soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR);
+    SoupSession* session = WebCore::ResourceHandle::defaultSession();
+    SoupSessionFeature* oldjar = soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR);
     if (oldjar)
         soup_session_remove_feature(session, oldjar);
 
@@ -67,30 +67,30 @@ Eina_Bool ewk_cookies_file_set(const char *filename)
 void ewk_cookies_clear(void)
 {
 #if USE(SOUP)
-    GSList *l;
-    GSList *p;
-    SoupCookieJar *cookieJar = WebCore::defaultCookieJar();
+    GSList* l;
+    GSList* p;
+    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
 
     l = soup_cookie_jar_all_cookies(cookieJar);
     for (p = l; p; p = p->next)
-        soup_cookie_jar_delete_cookie(cookieJar, (SoupCookie *)p->data);
+        soup_cookie_jar_delete_cookie(cookieJar, (SoupCookie*)p->data);
 
     soup_cookies_free(l);
 #endif
 }
 
-Eina_List *ewk_cookies_get_all(void)
+Eina_List* ewk_cookies_get_all(void)
 {
-    Eina_List *el = 0;
+    Eina_List* el = 0;
 #if USE(SOUP)
-    GSList *l;
-    GSList *p;
-    SoupCookieJar *cookieJar = WebCore::defaultCookieJar();
+    GSList* l;
+    GSList* p;
+    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
 
     l = soup_cookie_jar_all_cookies(cookieJar);
     for (p = l; p; p = p->next) {
-        SoupCookie *cookie = static_cast<SoupCookie*>(p->data);
-        Ewk_Cookie *c = static_cast<Ewk_Cookie*>(malloc(sizeof(*c)));
+        SoupCookie* cookie = static_cast<SoupCookie*>(p->data);
+        Ewk_Cookie* c = static_cast<Ewk_Cookie*>(malloc(sizeof(*c)));
         c->name = strdup(cookie->name);
         c->value = strdup(cookie->value);
         c->domain = strdup(cookie->domain);
@@ -106,19 +106,19 @@ Eina_List *ewk_cookies_get_all(void)
     return el;
 }
 
-void ewk_cookies_cookie_del(Ewk_Cookie *cookie)
+void ewk_cookies_cookie_del(Ewk_Cookie* cookie)
 {
 #if USE(SOUP)
     EINA_SAFETY_ON_NULL_RETURN(cookie);
     GSList* l;
     GSList* p;
-    SoupCookieJar *cookieJar = WebCore::defaultCookieJar();
-    SoupCookie *c1 = soup_cookie_new(
+    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
+    SoupCookie* c1 = soup_cookie_new(
         cookie->name, cookie->value, cookie->domain, cookie->path, -1);
 
     l = soup_cookie_jar_all_cookies(cookieJar);
     for (p = l; p; p = p->next) {
-        SoupCookie *c2 = static_cast<SoupCookie*>(p->data);
+        SoupCookie* c2 = static_cast<SoupCookie*>(p->data);
         if (soup_cookie_equal(c1, c2)) {
             soup_cookie_jar_delete_cookie(cookieJar, c2);
             break;
@@ -130,7 +130,7 @@ void ewk_cookies_cookie_del(Ewk_Cookie *cookie)
 #endif
 }
 
-void ewk_cookies_cookie_free(Ewk_Cookie *cookie)
+void ewk_cookies_cookie_free(Ewk_Cookie* cookie)
 {
 #if USE(SOUP)
     EINA_SAFETY_ON_NULL_RETURN(cookie);
@@ -145,7 +145,7 @@ void ewk_cookies_cookie_free(Ewk_Cookie *cookie)
 void ewk_cookies_policy_set(Ewk_Cookie_Policy p)
 {
 #if USE(SOUP)
-    SoupCookieJar *cookieJar = WebCore::defaultCookieJar();
+    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
     SoupCookieJarAcceptPolicy policy;
 
     policy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
@@ -169,7 +169,7 @@ Ewk_Cookie_Policy ewk_cookies_policy_get(void)
 {
     Ewk_Cookie_Policy ewk_policy = EWK_COOKIE_JAR_ACCEPT_ALWAYS;
 #if USE(SOUP)
-    SoupCookieJar *cookieJar = WebCore::defaultCookieJar();
+    SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
     SoupCookieJarAcceptPolicy policy;
 
     policy = soup_cookie_jar_get_accept_policy(cookieJar);

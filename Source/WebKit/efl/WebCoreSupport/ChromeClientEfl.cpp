@@ -402,8 +402,8 @@ void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& database
 
     DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(databaseName, origin);
     quota = ewk_view_exceeded_database_quota(m_view,
-            kit(frame), databaseName.utf8().data(),
-            details.currentUsage(), details.expectedUsage());
+                                             kit(frame), databaseName.utf8().data(),
+                                             details.currentUsage(), details.expectedUsage());
 
     /* if client did not set quota, and database is being created now, the
      * default quota is applied
@@ -438,7 +438,7 @@ void ChromeClientEfl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFile
         return;
 
     EINA_LIST_FREE(selectedFilenames, filename) {
-        filenames.append((char *)filename);
+        filenames.append((char*)filename);
         free(filename);
     }
 

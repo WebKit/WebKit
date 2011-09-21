@@ -50,7 +50,7 @@ extern int _ewk_tiled_log_dom;
 
 #define REALLOC_OR_OOM_RET(ptr, size, ...)      \
     do {                                        \
-        void *__tmp_ptr;                        \
+        void* __tmp_ptr;                        \
         __tmp_ptr = realloc(ptr, size);         \
         if (!__tmp_ptr && (size) > 0) {         \
             OOM("realloc", (size));             \

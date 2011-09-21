@@ -68,7 +68,7 @@ using namespace WebCore;
 
 namespace WebCore {
 
-FrameLoaderClientEfl::FrameLoaderClientEfl(Evas_Object *view)
+FrameLoaderClientEfl::FrameLoaderClientEfl(Evas_Object* view)
     : m_view(view)
     , m_frame(0)
     , m_userAgent("")
@@ -107,7 +107,7 @@ static String composeUserAgent()
     return makeString("Mozilla/5.0 (", agentOS(), ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) Safari/", webKitVersion);
 }
 
-void FrameLoaderClientEfl::setCustomUserAgent(const String &agent)
+void FrameLoaderClientEfl::setCustomUserAgent(const String& agent)
 {
     m_customUserAgent = agent;
 }
@@ -377,7 +377,7 @@ void FrameLoaderClientEfl::redirectDataToPlugin(Widget* pluginWidget)
 }
 
 PassRefPtr<Widget> FrameLoaderClientEfl::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL,
-                                                  const Vector<String>& paramNames, const Vector<String>& paramValues)
+                                                                const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     notImplemented();
     return 0;
@@ -678,7 +678,7 @@ void FrameLoaderClientEfl::willChangeTitle(DocumentLoader*)
     // no need for, dispatchDidReceiveTitle is the right callback
 }
 
-void FrameLoaderClientEfl::didChangeTitle(DocumentLoader *l)
+void FrameLoaderClientEfl::didChangeTitle(DocumentLoader*)
 {
     // no need for, dispatchDidReceiveTitle is the right callback
 }

@@ -191,7 +191,7 @@ Eina_Bool _ewk_init_body(void)
     // TODO: this should move to WebCore, already reported to webkit-gtk folks:
 #if USE(SOUP)
     if (1) {
-        SoupSession *session = WebCore::ResourceHandle::defaultSession();
+        SoupSession* session = WebCore::ResourceHandle::defaultSession();
         soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_SNIFFER);
         soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
 

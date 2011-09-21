@@ -34,7 +34,7 @@
 #include <wtf/text/CString.h>
 
 struct _Ewk_History {
-    WebCore::BackForwardListImpl *core;
+    WebCore::BackForwardListImpl* core;
 };
 
 #define EWK_HISTORY_CORE_GET_OR_RETURN(history, core_, ...)      \
@@ -50,16 +50,16 @@ struct _Ewk_History {
         ERR("history->core is disabled!.");                      \
         return __VA_ARGS__;                                      \
     }                                                            \
-    WebCore::BackForwardListImpl *core_ = (history)->core
+    WebCore::BackForwardListImpl* core_ = (history)->core
 
 
 struct _Ewk_History_Item {
-    WebCore::HistoryItem *core;
+    WebCore::HistoryItem* core;
 
-    const char *title;
-    const char *alternate_title;
-    const char *uri;
-    const char *original_uri;
+    const char* title;
+    const char* alternate_title;
+    const char* uri;
+    const char* original_uri;
 };
 
 #define EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core_, ...) \
@@ -71,10 +71,10 @@ struct _Ewk_History_Item {
         CRITICAL("item->core is NULL.");                      \
         return __VA_ARGS__;                                   \
     }                                                         \
-    WebCore::HistoryItem *core_ = (item)->core
+    WebCore::HistoryItem* core_ = (item)->core
 
 
-static inline Ewk_History_Item *_ewk_history_item_new(WebCore::HistoryItem *core)
+static inline Ewk_History_Item* _ewk_history_item_new(WebCore::HistoryItem* core)
 {
     Ewk_History_Item* item;
 
@@ -83,7 +83,7 @@ static inline Ewk_History_Item *_ewk_history_item_new(WebCore::HistoryItem *core
         return 0;
     }
 
-    item = (Ewk_History_Item *)calloc(1, sizeof(Ewk_History_Item));
+    item = (Ewk_History_Item*)calloc(1, sizeof(Ewk_History_Item));
     if (!item) {
         CRITICAL("Could not allocate item memory.");
         return 0;
@@ -95,7 +95,7 @@ static inline Ewk_History_Item *_ewk_history_item_new(WebCore::HistoryItem *core
     return item;
 }
 
-static inline Eina_List *_ewk_history_item_list_get(const WebCore::HistoryItemVector &core_items)
+static inline Eina_List* _ewk_history_item_list_get(const WebCore::HistoryItemVector& core_items)
 {
     Eina_List* ret = 0;
     unsigned int i, size;
@@ -153,7 +153,7 @@ Ewk_History_Item* ewk_history_history_item_back_get(const Ewk_History* history)
 Ewk_History_Item* ewk_history_history_item_current_get(const Ewk_History* history)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
-    WebCore::HistoryItem *currentItem = core->currentItem();
+    WebCore::HistoryItem* currentItem = core->currentItem();
     if (currentItem)
         return _ewk_history_item_new(currentItem);
     return 0;
@@ -322,7 +322,7 @@ double ewk_history_item_time_last_visited_get(const Ewk_History_Item* item)
 cairo_surface_t* ewk_history_item_icon_surface_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
-    
+
     WebCore::Image* icon = WebCore::iconDatabase().synchronousIconForPageURL(core->url(), WebCore::IntSize(16, 16));
     if (!icon) {
         ERR("icon is NULL.");
