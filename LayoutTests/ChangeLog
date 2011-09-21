@@ -1,3 +1,9 @@
+2011-09-21  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [Qt][Mac] Unreviewed gardening after r95601.
+
+        * platform/qt-mac/Skipped: Paint the Qt-Mac bot green.
+
 2011-09-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95608.
