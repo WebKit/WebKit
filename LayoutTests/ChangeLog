@@ -1,3 +1,11 @@
+2011-09-21  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip 2 GTK flaky tests.
+
+        * platform/gtk/Skipped: Skip
+        http/tests/websocket/tests/hixie76/error-detect.html and
+        svg/zoom/page/zoom-svg-through-object-with-auto-size.html
+
 2011-09-21  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] Unskip some cookies related layout tests.
