@@ -1,3 +1,14 @@
+2011-09-20  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic doesn't work in Safari 5.1 because Safari 5.1 lacks Function.prototype.bind
+        https://bugs.webkit.org/show_bug.cgi?id=68495
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch adds an implementation of Function.prototype.bind if the browser lacks one.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js:
+
 2011-09-20  Eric Seidel  <eric@webkit.org>
 
         [NRWT] REGRESSION: Local loader tests are failing on machines that lost /tmp/LayoutTests symlink
