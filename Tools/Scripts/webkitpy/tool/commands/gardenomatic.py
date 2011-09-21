@@ -33,6 +33,10 @@ class GardenOMatic(AbstractDeclarativeCommand):
     url = "http://build.webkit.org/TestFailures/garden-o-matic.html"
 
     def execute(self, options, args, tool):
-        self._tool.user.open_url(self.url)
+        print "This command runs a local HTTP server that changes your working copy"
+        print "based on the actions you take in the web-based UI."
+        if tool.user.confirm("Open the web-based UI before starting the local server?"):
+            self._tool.user.open_url(self.url)
         httpd = GardeningHTTPServer(httpd_port=8127, config={'tool': tool})
+        print "Local HTTP server started."
         httpd.serve_forever()

@@ -1,3 +1,18 @@
+2011-09-21  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic command should explain that it is starting a local server
+        https://bugs.webkit.org/show_bug.cgi?id=68486
+
+        Reviewed by Dimitri Glazkov.
+
+        In the user study, both participants didn't understand why the
+        garden-o-matic command appeared to hang.  This patch adds an
+        explaination of what's going on.  It also adds a confirmation prompt
+        before launching the browser to give the user a chance to read the
+        text.  If that's too much of a speed bump, we can iterate.
+
+        * Scripts/webkitpy/tool/commands/gardenomatic.py:
+
 2011-09-21  Chang Shu  <cshu@webkit.org>
 
         [Qt] Implement KeyDown function for WebKit2 EventSender.
