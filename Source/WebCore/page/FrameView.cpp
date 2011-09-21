@@ -2599,17 +2599,21 @@ void FrameView::updateControlTints()
     if (!m_frame || m_frame->document()->url().isEmpty())
         return;
 
-    if ((m_frame->contentRenderer() && m_frame->contentRenderer()->theme()->supportsControlTints()) || hasCustomScrollbars())  {
-        if (needsLayout())
-            layout();
-        PlatformGraphicsContext* const noContext = 0;
-        GraphicsContext context(noContext);
-        context.setUpdatingControlTints(true);
-        if (platformWidget())
-            paintContents(&context, visibleContentRect());
-        else
-            paint(&context, frameRect());
-    }
+    if ((m_frame->contentRenderer() && m_frame->contentRenderer()->theme()->supportsControlTints()) || hasCustomScrollbars())
+        paintControlTints();
+}
+
+void FrameView::paintControlTints()
+{
+    if (needsLayout())
+        layout();
+    PlatformGraphicsContext* const noContext = 0;
+    GraphicsContext context(noContext);
+    context.setUpdatingControlTints(true);
+    if (platformWidget())
+        paintContents(&context, visibleContentRect());
+    else
+        paint(&context, frameRect());
 }
 
 bool FrameView::wasScrolledByUser() const

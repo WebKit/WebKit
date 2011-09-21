@@ -1250,6 +1250,9 @@ void GraphicsContext::setCTM(const AffineTransform& transform)
 
 AffineTransform GraphicsContext::getCTM() const
 {
+    if (paintingDisabled())
+        return AffineTransform();
+
     CGAffineTransform t = CGContextGetCTM(platformContext());
     return AffineTransform(t.a, t.b, t.c, t.d, t.tx, t.ty);
 }

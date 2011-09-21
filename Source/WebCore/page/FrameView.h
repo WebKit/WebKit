@@ -54,6 +54,7 @@ typedef unsigned long long DOMTimeStamp;
 class FrameView : public ScrollView {
 public:
     friend class RenderView;
+    friend class Internals;
 
     static PassRefPtr<FrameView> create(Frame*);
     static PassRefPtr<FrameView> create(Frame*, const IntSize& initialSize);
@@ -317,6 +318,8 @@ private:
     void applyOverflowToViewport(RenderObject*, ScrollbarMode& hMode, ScrollbarMode& vMode);
 
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
+
+    void paintControlTints();
 
     void forceLayoutParentViewIfNeeded();
     void performPostLayoutTasks();

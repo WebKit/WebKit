@@ -90,6 +90,8 @@ public:
 
     static const char* internalsId;
 
+    void paintControlTints(Document*, ExceptionCode&);
+
 private:
     Internals();
 

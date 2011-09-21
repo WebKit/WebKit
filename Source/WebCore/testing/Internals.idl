@@ -61,6 +61,8 @@ module window {
         boolean wasLastChangeUserEdit(in Element textField) raises (DOMException);
         DOMString suggestedValue(in Element inputElement) raises (DOMException);
         void setSuggestedValue(in Element inputElement, in DOMString value) raises (DOMException);
+
+        void paintControlTints(in Document document) raises (DOMException);
     };
 }
 

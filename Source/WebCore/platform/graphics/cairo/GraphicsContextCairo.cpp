@@ -196,6 +196,9 @@ void GraphicsContext::platformDestroy()
 
 AffineTransform GraphicsContext::getCTM() const
 {
+    if (paintingDisabled())
+        return AffineTransform();
+
     cairo_t* cr = platformContext()->cr();
     cairo_matrix_t m;
     cairo_get_matrix(cr, &m);

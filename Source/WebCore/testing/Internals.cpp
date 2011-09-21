@@ -365,4 +365,15 @@ void Internals::setSuggestedValue(Element* element, const String& value, Excepti
     inputElement->setSuggestedValue(value);
 }
 
+void Internals::paintControlTints(Document* document, ExceptionCode& ec)
+{
+    if (!document || !document->view()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    FrameView* frameView = document->view();
+    frameView->paintControlTints();
+}
+
 }

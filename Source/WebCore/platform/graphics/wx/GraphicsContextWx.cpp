@@ -477,6 +477,9 @@ void GraphicsContext::canvasClip(const Path& path)
 
 AffineTransform GraphicsContext::getCTM() const
 { 
+    if (paintingDisabled())
+        return AffineTransform();
+
 #if USE(WXGC)
     wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
     if (gc) {

@@ -1494,6 +1494,9 @@ void GraphicsContext::fillRect(const FloatRect& r, const Gradient* gradient)
 
 AffineTransform GraphicsContext::getCTM() const
 {
+    if (paintingDisabled())
+        return AffineTransform();
+
     return m_data->m_transform;
 }
 
