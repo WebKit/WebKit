@@ -32,10 +32,11 @@ namespace WebCore {
 
 typedef uint64_t LinkHash;
 class Page;
+class KURL;
 
 class VisitedLinkStrategy {
 public:
-    virtual bool isLinkVisited(Page*, LinkHash) = 0;
+    virtual bool isLinkVisited(Page*, LinkHash, const KURL& baseURL, const AtomicString& attributeURL) = 0;
     virtual void addVisitedLink(Page*, LinkHash) = 0;
 
 protected:

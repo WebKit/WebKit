@@ -1,3 +1,16 @@
+2011-09-21  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt] Remove Qt specific code from css/SelectorChecker.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=67702
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests needed.
+
+        * css/SelectorChecker.cpp: Move Qt-specific code to the Qt-specific WebPlatformStrategies.
+        (WebCore::SelectorChecker::determineLinkStateSlowCase):
+        * platform/VisitedLinkStrategy.h:
+
 2011-09-16  MORITA Hajime  <morrita@google.com>
 
         Style changes on forwarded shadow children should trigger shadow renderer reconstruction.

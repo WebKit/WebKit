@@ -115,12 +115,12 @@ void WebPlatformStrategies::populatePluginCache()
 
 // VisitedLinkStrategy
 
-bool WebPlatformStrategies::isLinkVisited(Page* page, LinkHash linkHash)
+bool WebPlatformStrategies::isLinkVisited(Page*, LinkHash linkHash, const KURL&, const AtomicString&)
 {
     return WebProcess::shared().isLinkVisited(linkHash);
 }
 
-void WebPlatformStrategies::addVisitedLink(Page* page, LinkHash linkHash)
+void WebPlatformStrategies::addVisitedLink(Page*, LinkHash linkHash)
 {
     WebProcess::shared().addVisitedLink(linkHash);
 }

@@ -1,3 +1,14 @@
+2011-09-21  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt] Remove Qt specific code from css/SelectorChecker.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=67702
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::isLinkVisited):
+
 2011-09-20  Anders Carlsson  <andersca@apple.com>
 
         Remove ScrollView::platformContentsSize

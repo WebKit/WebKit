@@ -81,7 +81,7 @@ void WebPlatformStrategies::getPluginInfo(const WebCore::Page*, Vector<WebCore::
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-bool WebPlatformStrategies::isLinkVisited(Page* page, LinkHash hash)
+bool WebPlatformStrategies::isLinkVisited(Page* page, LinkHash hash, const KURL&, const AtomicString&)
 {
     return page->group().isLinkVisited(hash);
 }

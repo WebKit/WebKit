@@ -39,6 +39,7 @@
 #include <PluginDatabase.h>
 #include <QCoreApplication>
 #include <QLocale>
+#include <qwebhistoryinterface.h>
 #include <qwebpage.h>
 #include <qwebpluginfactory.h>
 #include <wtf/MathExtras.h>
@@ -743,8 +744,19 @@ String WebPlatformStrategies::validationMessageStepMismatchText()
 
 // VisitedLinkStrategy
 
-bool WebPlatformStrategies::isLinkVisited(Page* page, LinkHash hash)
+bool WebPlatformStrategies::isLinkVisited(Page* page, LinkHash hash, const KURL& baseURL, const AtomicString& attributeURL)
 {
+    ASSERT(hash);
+
+    Vector<UChar, 512> url;
+    visitedURL(baseURL, attributeURL, url);
+
+    // If the Qt4.4 interface for the history is used, we will have to fallback
+    // to the old global history.
+    QWebHistoryInterface* iface = QWebHistoryInterface::defaultInterface();
+    if (iface)
+        return iface->historyContains(QString(reinterpret_cast<QChar*>(url.data()), url.size()));
+
     return page->group().isLinkVisited(hash);
 }
 

@@ -59,11 +59,6 @@
 #include "XLinkNames.h"
 #endif
 
-#if PLATFORM(QT)
-//FIXME: Remove this Qt specific code from a platform neutral file.
-#include <qwebhistoryinterface.h>
-#endif
-
 namespace WebCore {
     
 using namespace HTMLNames;
@@ -230,29 +225,11 @@ EInsideLink SelectorChecker::determineLinkStateSlowCase(Element* element) const
     const AtomicString* attr = linkAttribute(element);
     if (!attr || attr->isNull())
         return NotInsideLink;
-    
-#if PLATFORM(QT)
-    //FIXME: Remove this Qt specific code from a platform neutral file.
-    Vector<UChar, 512> url;
-    visitedURL(m_document->baseURL(), *attr, url);
-    if (url.isEmpty())
-        return InsideUnvisitedLink;
-    
-    // If the Qt4.4 interface for the history is used, we will have to fallback
-    // to the old global history.
-    QWebHistoryInterface* iface = QWebHistoryInterface::defaultInterface();
-    if (iface)
-        return iface->historyContains(QString(reinterpret_cast<QChar*>(url.data()), url.size())) ? InsideVisitedLink : InsideUnvisitedLink;
-    
-    LinkHash hash = visitedLinkHash(url.data(), url.size());
-    if (!hash)
-        return InsideUnvisitedLink;
-#else
+
     LinkHash hash = visitedLinkHash(m_document->baseURL(), *attr);
     if (!hash)
         return InsideUnvisitedLink;
-#endif
-    
+
     Frame* frame = m_document->frame();
     if (!frame)
         return InsideUnvisitedLink;
@@ -264,7 +241,7 @@ EInsideLink SelectorChecker::determineLinkStateSlowCase(Element* element) const
     m_linksCheckedForVisitedState.add(hash);
     
 #if USE(PLATFORM_STRATEGIES)
-    return platformStrategies()->visitedLinkStrategy()->isLinkVisited(page, hash) ? InsideVisitedLink : InsideUnvisitedLink;
+    return platformStrategies()->visitedLinkStrategy()->isLinkVisited(page, hash, m_document->baseURL(), *attr) ? InsideVisitedLink : InsideUnvisitedLink;
 #else
     return page->group().isLinkVisited(hash) ? InsideVisitedLink : InsideUnvisitedLink;
 #endif

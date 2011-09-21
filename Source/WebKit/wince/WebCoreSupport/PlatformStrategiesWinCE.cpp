@@ -676,7 +676,7 @@ bool PlatformStrategiesWinCE::isLinkVisited(Page* page, LinkHash hash)
     return page->group().isLinkVisited(hash);
 }
 
-void PlatformStrategiesWinCE::addVisitedLink(Page* page, LinkHash hash)
+void PlatformStrategiesWinCE::addVisitedLink(Page* page, LinkHash hash, const KURL&, const AtomicString&)
 {
     page->group().addVisitedLinkHash(hash);
 }

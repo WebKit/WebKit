@@ -153,7 +153,7 @@ private:
     virtual WTF::String validationMessageStepMismatchText();
 
     // WebCore::VisitedLinkStrategy
-    virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash);
+    virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash, const WebCore::KURL& baseURL, const WTF::AtomicString& attributeURL);
     virtual void addVisitedLink(WebCore::Page*, WebCore::LinkHash);
 };
 
