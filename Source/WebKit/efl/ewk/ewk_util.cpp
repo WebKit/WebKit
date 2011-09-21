@@ -22,9 +22,8 @@
 #include "ewk_util.h"
 
 #include "bindings/js/GCController.h"
-#include "workers/WorkerThread.h"
-
 #include "ewk_private.h"
+#include "workers/WorkerThread.h"
 #include <eina_safety_checks.h>
 
 #ifdef HAVE_ECORE_X
