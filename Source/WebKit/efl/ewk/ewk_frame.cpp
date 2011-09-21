@@ -931,11 +931,8 @@ Eina_Bool ewk_frame_feed_touch_event(Evas_Object *o, Ewk_Touch_Event_Type action
     EINA_SAFETY_ON_NULL_RETURN_VAL(points, EINA_FALSE);
     EWK_FRAME_SD_GET(o, sd);
 
-    if (!sd || !sd->frame || !ewk_view_need_touch_events_get(sd->view)) {
-        void *point;
-        EINA_LIST_FREE(points, point);
+    if (!sd || !sd->frame || !ewk_view_need_touch_events_get(sd->view))
         return EINA_FALSE;
-    }
 
     Evas_Coord x, y;
     evas_object_geometry_get(sd->view, &x, &y, 0, 0);

@@ -1,3 +1,19 @@
+2011-09-21  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        [EFL] Don't try to free user-provided list
+        https://bugs.webkit.org/show_bug.cgi?id=68356
+
+        Reviewed by Antonio Gomes.
+
+        A coding-style cleanup revealed that we were using EINA_LIST_FREE in a
+        wrong manner. If we intended to free the data, we should call free()
+        (or whatever function is required to destroy it). However not only did
+        it use the wrong EFL api but it also introduced a change in behavior,
+        freeing user-provided data.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_feed_touch_event): do not free user-provided data.
+
 2011-09-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Fix alphabetical sorting problem 
