@@ -415,9 +415,9 @@ void JIT::privateCompileSlowCases()
         Instruction* currentInstruction = instructionsBegin + m_bytecodeOffset;
         
 #if ENABLE(VALUE_PROFILER)
-        RareCaseProfile* slowCaseProfile = 0;
+        RareCaseProfile* rareCaseProfile = 0;
         if (m_canBeOptimized)
-            slowCaseProfile = m_codeBlock->addSlowCaseProfile(m_bytecodeOffset);
+            rareCaseProfile = m_codeBlock->addRareCaseProfile(m_bytecodeOffset);
 #endif
 
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
@@ -494,7 +494,7 @@ void JIT::privateCompileSlowCases()
         
 #if ENABLE(VALUE_PROFILER)
         if (m_canBeOptimized)
-            add32(Imm32(1), AbsoluteAddress(&slowCaseProfile->m_counter));
+            add32(Imm32(1), AbsoluteAddress(&rareCaseProfile->m_counter));
 #endif
 
         emitJumpSlowToHot(jump(), 0);
@@ -514,8 +514,10 @@ void JIT::privateCompileSlowCases()
 
 JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 {
-#if ENABLE(DFG_JIT)
+#if ENABLE(VALUE_PROFILER)
     m_canBeOptimized = m_codeBlock->canCompileWithDFG();
+#endif
+#if ENABLE(DFG_JIT)
     if (m_canBeOptimized)
         m_startOfCode = label();
 #endif

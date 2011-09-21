@@ -446,6 +446,10 @@ inline void JIT::emitAllocateJSFunction(FunctionExecutable* executable, Register
 #endif
 }
 
+#if CPU(X86)
+static int bucketCounter;
+#endif
+
 #if ENABLE(VALUE_PROFILER)
 inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
 {
@@ -465,6 +469,17 @@ inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
     
     ASSERT(valueProfile);
     
+#if CPU(X86)
+    if (m_randomGenerator.getUint32() & 1)
+        add32(Imm32(1), AbsoluteAddress(&bucketCounter));
+    else
+        add32(Imm32(3), AbsoluteAddress(&bucketCounter));
+    and32(Imm32(ValueProfile::bucketIndexMask), AbsoluteAddress(&bucketCounter));
+    load32(&bucketCounter, scratch);
+    lshift32(TrustedImm32(3), scratch);
+    addPtr(ImmPtr(valueProfile->m_buckets), scratch);
+    storePtr(value, scratch);
+#else
     if (m_randomGenerator.getUint32() & 1)
         add32(Imm32(1), bucketCounterRegister);
     else
@@ -472,6 +487,7 @@ inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
     and32(Imm32(ValueProfile::bucketIndexMask), bucketCounterRegister);
     move(ImmPtr(valueProfile->m_buckets), scratch);
     storePtr(value, BaseIndex(scratch, bucketCounterRegister, TimesEight));
+#endif
 }
 #endif
 

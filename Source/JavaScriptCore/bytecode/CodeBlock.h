@@ -489,22 +489,22 @@ namespace JSC {
             return result;
         }
         
-        RareCaseProfile* addSlowCaseProfile(int bytecodeOffset)
+        RareCaseProfile* addRareCaseProfile(int bytecodeOffset)
         {
-            m_slowCaseProfiles.append(RareCaseProfile(bytecodeOffset));
-            return &m_slowCaseProfiles.last();
+            m_rareCaseProfiles.append(RareCaseProfile(bytecodeOffset));
+            return &m_rareCaseProfiles.last();
         }
-        unsigned numberOfSlowCaseProfiles() { return m_slowCaseProfiles.size(); }
-        RareCaseProfile* slowCaseProfile(int index) { return &m_slowCaseProfiles[index]; }
-        RareCaseProfile* slowCaseProfileForBytecodeOffset(int bytecodeOffset)
+        unsigned numberOfRareCaseProfiles() { return m_rareCaseProfiles.size(); }
+        RareCaseProfile* rareCaseProfile(int index) { return &m_rareCaseProfiles[index]; }
+        RareCaseProfile* rareCaseProfileForBytecodeOffset(int bytecodeOffset)
         {
-            return WTF::genericBinarySearch<RareCaseProfile, int, getRareCaseProfileBytecodeOffset>(m_slowCaseProfiles, m_slowCaseProfiles.size(), bytecodeOffset);
+            return WTF::genericBinarySearch<RareCaseProfile, int, getRareCaseProfileBytecodeOffset>(m_rareCaseProfiles, m_rareCaseProfiles.size(), bytecodeOffset);
         }
         
         static uint32_t slowCaseThreshold() { return 100; }
         bool likelyToTakeSlowCase(int bytecodeOffset)
         {
-            return slowCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter >= slowCaseThreshold();
+            return rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter >= slowCaseThreshold();
         }
         
         RareCaseProfile* addSpecialFastCaseProfile(int bytecodeOffset)
@@ -521,7 +521,7 @@ namespace JSC {
         
         bool likelyToTakeDeepestSlowCase(int bytecodeOffset)
         {
-            unsigned slowCaseCount = slowCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
+            unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             return (slowCaseCount - specialFastCaseCount) >= slowCaseThreshold();
         }
@@ -830,7 +830,7 @@ namespace JSC {
 #endif
 #if ENABLE(VALUE_PROFILER)
         SegmentedVector<ValueProfile, 8> m_valueProfiles;
-        SegmentedVector<RareCaseProfile, 8> m_slowCaseProfiles;
+        SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
         SegmentedVector<RareCaseProfile, 8> m_specialFastCaseProfiles;
 #endif
 

@@ -513,7 +513,7 @@ private:
             return nodeIndex;
         
 #if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("Making %s @%u safe at bc#%u because slow-case counter is at %u\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_profiledBlock->slowCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+        printf("Making %s @%u safe at bc#%u because slow-case counter is at %u\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
 #endif
         
         switch (m_graph[nodeIndex].op) {

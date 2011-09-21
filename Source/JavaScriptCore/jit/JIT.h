@@ -1074,9 +1074,11 @@ namespace JSC {
 #endif
         WeakRandom m_randomGenerator;
         static CodeRef stringGetByValStubGenerator(JSGlobalData*);
-        
-#if ENABLE(DFG_JIT)
+
+#if ENABLE(VALUE_PROFILER)
         bool m_canBeOptimized;
+#endif
+#if ENABLE(DFG_JIT)
         Label m_startOfCode;
         CompactJITCodeMap::Encoder m_jitCodeMapEncoder;
 #endif
