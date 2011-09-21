@@ -66,8 +66,6 @@ public:
     {
     }
 
-    bool mustStayInWindow;
-    bool removeFromSuperviewSoon;
     NSRect previousVisibleRect;
 };
 
@@ -91,8 +89,6 @@ Widget::Widget(NSView *view)
     : m_data(new WidgetPrivate)
 {
     init(view);
-    m_data->mustStayInWindow = false;
-    m_data->removeFromSuperviewSoon = false;
 }
 
 Widget::~Widget()
@@ -324,37 +320,9 @@ void Widget::setIsSelected(bool isSelected)
 
 void Widget::removeFromSuperview()
 {
-    if (m_data->mustStayInWindow)
-        m_data->removeFromSuperviewSoon = true;
-    else {
-        m_data->removeFromSuperviewSoon = false;
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        safeRemoveFromSuperview(getOuterView());
-        END_BLOCK_OBJC_EXCEPTIONS;
-    }
-}
-
-void Widget::beforeMouseDown(NSView *unusedView, Widget* widget)
-{
-    if (widget) {
-        ASSERT_UNUSED(unusedView, unusedView == widget->getOuterView());
-        ASSERT(!widget->m_data->mustStayInWindow);
-        widget->m_data->mustStayInWindow = true;
-    }
-}
-
-void Widget::afterMouseDown(NSView *view, Widget* widget)
-{
-    if (!widget) {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        safeRemoveFromSuperview(view);
-        END_BLOCK_OBJC_EXCEPTIONS;
-    } else {
-        ASSERT(widget->m_data->mustStayInWindow);
-        widget->m_data->mustStayInWindow = false;
-        if (widget->m_data->removeFromSuperviewSoon)
-            widget->removeFromSuperview();
-    }
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    safeRemoveFromSuperview(getOuterView());
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 // These are here to deal with flipped coords on Mac.
