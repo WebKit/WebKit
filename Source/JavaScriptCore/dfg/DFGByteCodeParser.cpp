@@ -521,6 +521,7 @@ private:
         case ArithAdd:
         case ArithSub:
         case ValueAdd:
+        case ArithMod: // for ArithMode "MayOverflow" means we tried to divide by zero, or we saw double.
             m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow);
             break;
             
@@ -897,7 +898,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_mod: {
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
-            set(currentInstruction[1].u.operand, addToGraph(ArithMod, op1, op2));
+            set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithMod, OpInfo(NodeUseBottom), op1, op2)));
             NEXT_OPCODE(op_mod);
         }
 

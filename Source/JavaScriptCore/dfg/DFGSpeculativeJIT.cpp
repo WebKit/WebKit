@@ -1105,6 +1105,24 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithMod: {
+        if (shouldNotSpeculateInteger(node.child1()) || shouldNotSpeculateInteger(node.child2())
+            || !nodeCanSpeculateInteger(node.arithNodeFlags())) {
+            SpeculateDoubleOperand op1(this, node.child1());
+            SpeculateDoubleOperand op2(this, node.child2());
+            
+            FPRReg op1FPR = op1.fpr();
+            FPRReg op2FPR = op2.fpr();
+            
+            flushRegisters();
+            
+            FPRResult result(this);
+
+            callOperation(fmod, result.fpr(), op1FPR, op2FPR);
+            
+            doubleResult(result.fpr(), m_compileIndex);
+            break;
+        }
+        
         SpeculateIntegerOperand op1(this, node.child1());
         SpeculateIntegerOperand op2(this, node.child2());
         GPRTemporary eax(this, X86Registers::eax);

@@ -1,3 +1,28 @@
+2011-09-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT always speculates integer on modulo
+        https://bugs.webkit.org/show_bug.cgi?id=68485
+
+        Reviewed by Oliver Hunt.
+        
+        Added support for double modulo, which is a call to fmod().
+        Also added support for recording the old JIT's statistics
+        on op_mod and propagating them along the graph. Finally,
+        fixed a goof in the ArithNodeFlags propagation logic that
+        was made obvious when I started testing ArithMod.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasArithNodeFlags):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateArithNodeFlags):
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-09-20  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK] requestAnimationFrame support for gtk port

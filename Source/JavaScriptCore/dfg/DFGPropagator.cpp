@@ -261,7 +261,7 @@ private:
                 changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
                 if (node.child2() == NoNode)
                     break;
-                changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+                changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
                 if (node.child3() == NoNode)
                     break;
                 changed |= m_graph[node.child3()].mergeArithNodeFlags(flags);
@@ -360,9 +360,21 @@ private:
         case BitRShift:
         case BitLShift:
         case BitURShift:
-        case ValueToInt32:
-        case ArithMod: {
+        case ValueToInt32: {
             changed |= setPrediction(makePrediction(PredictInt32, StrongPrediction));
+            break;
+        }
+
+        case ArithMod: {
+            PredictedType left = m_predictions[node.child1()];
+            PredictedType right = m_predictions[node.child2()];
+            
+            if (isStrongPrediction(left) && isStrongPrediction(right)) {
+                if (isInt32Prediction(mergePredictions(left, right)) && nodeCanSpeculateInteger(node.arithNodeFlags()))
+                    changed |= mergePrediction(makePrediction(PredictInt32, StrongPrediction));
+                else
+                    changed |= mergePrediction(makePrediction(PredictDouble, StrongPrediction));
+            }
             break;
         }
             
@@ -621,7 +633,8 @@ private:
         case ArithSub:
         case ArithMul:
         case ArithMin:
-        case ArithMax: {
+        case ArithMax:
+        case ArithMod: {
             if (!nodeCanSpeculateInteger(node.arithNodeFlags())) {
                 toDouble(node.child1());
                 toDouble(node.child2());
