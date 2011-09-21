@@ -601,21 +601,30 @@ JSValue JSDOMWindow::sharedWorker(ExecState* exec) const
 }
 #endif
 
+#if ENABLE(WEB_AUDIO) || ENABLE(WEB_SOCKETS)
+static Settings* settingsForWindow(const JSDOMWindow* window)
+{
+    ASSERT(window);
+    if (Frame* frame = window->impl()->frame())
+        return frame->settings();
+    return 0;
+}
+#endif
+
 #if ENABLE(WEB_AUDIO)
 JSValue JSDOMWindow::webkitAudioContext(ExecState* exec) const
 {
-    return getDOMConstructor<JSAudioContextConstructor>(exec, this);
+    Settings* settings = settingsForWindow(this);
+    if (settings && settings->webAudioEnabled())
+        return getDOMConstructor<JSAudioContextConstructor>(exec, this);
+    return jsUndefined();
 }
 #endif
 
 #if ENABLE(WEB_SOCKETS)
 JSValue JSDOMWindow::webSocket(ExecState* exec) const
 {
-    Frame* frame = impl()->frame();
-    if (!frame)
-        return jsUndefined();
-    Settings* settings = frame->settings();
-    if (!settings)
+    if (!settingsForWindow(this))
         return jsUndefined();
     return getDOMConstructor<JSWebSocketConstructor>(exec, this);
 }

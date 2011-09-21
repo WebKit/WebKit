@@ -1624,6 +1624,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setUseHixie76WebSocketProtocol(store.getBoolValueForKey(WebPreferencesKey::hixie76WebSocketProtocolEnabledKey()));
 #endif
 
+#if ENABLE(WEB_AUDIO)
+    settings->setWebAudioEnabled(store.getBoolValueForKey(WebPreferencesKey::webAudioEnabledKey()));
+#endif
+
     platformPreferencesDidChange(store);
 }
 

@@ -621,3 +621,13 @@ bool WKPreferencesGetMockScrollbarsEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->mockScrollbarsEnabled();
 }
+
+void WKPreferencesSetWebAudioEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setWebAudioEnabled(enabled);
+}
+
+bool WKPreferencesGetWebAudioEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->webAudioEnabled();
+}
