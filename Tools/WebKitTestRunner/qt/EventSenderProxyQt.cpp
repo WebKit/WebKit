@@ -29,6 +29,7 @@
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <QKeyEvent>
+#include <WebCore/NotImplemented.h>
 #include <WebKit2/WKPagePrivate.h>
 #include <WebKit2/WKStringQt.h>
 
@@ -57,10 +58,8 @@ Qt::KeyboardModifiers getModifiers(WKEventModifiers modifiersRef)
     return modifiers;
 }
 
-void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers modifiersRef, unsigned location, double timestamp)
+void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers modifiersRef, unsigned location)
 {
-    WKPageSetShouldSendKeyboardEventSynchronously(m_testController->mainWebView()->page(), true);
-
     const QString key = WKStringCopyQString(keyRef);
     QString keyText = key;
 
@@ -190,8 +189,21 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers modifiersRef
     m_testController->mainWebView()->sendEvent(&event);
     QKeyEvent event2(QEvent::KeyRelease, code, modifiers, keyText);
     m_testController->mainWebView()->sendEvent(&event2);
+}
 
-    WKPageSetShouldSendKeyboardEventSynchronously(m_testController->mainWebView()->page(), false);
+void EventSenderProxy::mouseDown(unsigned, WKEventModifiers)
+{
+    notImplemented();
+}
+
+void EventSenderProxy::mouseUp(unsigned, WKEventModifiers)
+{
+    notImplemented();
+}
+
+void EventSenderProxy::mouseMoveTo(double, double)
+{
+    notImplemented();
 }
 
 } // namespace WTR

@@ -563,7 +563,7 @@ public:
 
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
 
-    void setShouldSendKeyboardEventSynchronously(bool sync) { m_shouldSendKeyboardEventSynchronously = sync; };
+    void setShouldSendEventsSynchronously(bool sync) { m_shouldSendEventsSynchronously = sync; };
 
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
@@ -935,7 +935,7 @@ private:
 
     static WKPageDebugPaintFlags s_debugPaintFlags;
 
-    bool m_shouldSendKeyboardEventSynchronously;
+    bool m_shouldSendEventsSynchronously;
 };
 
 } // namespace WebKit

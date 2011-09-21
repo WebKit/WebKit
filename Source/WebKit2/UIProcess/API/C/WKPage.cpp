@@ -581,7 +581,7 @@ WKImageRef WKPageCreateSnapshotOfVisibleContent(WKPageRef)
     return 0;
 }
 
-void WKPageSetShouldSendKeyboardEventSynchronously(WKPageRef page, bool sync)
+void WKPageSetShouldSendEventsSynchronously(WKPageRef page, bool sync)
 {
-    toImpl(page)->setShouldSendKeyboardEventSynchronously(sync);
+    toImpl(page)->setShouldSendEventsSynchronously(sync);
 }

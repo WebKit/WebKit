@@ -180,7 +180,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_mainFrameIsPinnedToLeftSide(false)
     , m_mainFrameIsPinnedToRightSide(false)
     , m_renderTreeSize(0)
-    , m_shouldSendKeyboardEventSynchronously(false)
+    , m_shouldSendEventsSynchronously(false)
 {
 #ifndef NDEBUG
     webPageProxyCounter.increment();
@@ -832,7 +832,12 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
     if (event.type() == WebEvent::MouseDown)
         m_currentlyProcessedMouseDownEvent = adoptPtr(new NativeWebMouseEvent(event));
 
-    process()->send(Messages::WebPage::MouseEvent(event), m_pageID);
+    if (m_shouldSendEventsSynchronously) {
+        bool handled = false;
+        process()->sendSync(Messages::WebPage::MouseEventSyncForTesting(event), Messages::WebPage::MouseEventSyncForTesting::Reply(handled), m_pageID);
+        didReceiveEvent(event.type(), handled);
+    } else
+        process()->send(Messages::WebPage::MouseEvent(event), m_pageID);
 }
 
 void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
@@ -861,7 +866,7 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
     m_keyEventQueue.append(event);
 
     process()->responsivenessTimer()->start();
-    if (m_shouldSendKeyboardEventSynchronously) {
+    if (m_shouldSendEventsSynchronously) {
         bool handled = false;
         process()->sendSync(Messages::WebPage::KeyEventSyncForTesting(event), Messages::WebPage::KeyEventSyncForTesting::Reply(handled), m_pageID);
         didReceiveEvent(event.type(), handled);

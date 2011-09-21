@@ -35,6 +35,7 @@ messages -> WebPage {
     KeyEvent(WebKit::WebKeyboardEvent event)
     KeyEventSyncForTesting(WebKit::WebKeyboardEvent event) -> (bool handled)
     MouseEvent(WebKit::WebMouseEvent event)
+    MouseEventSyncForTesting(WebKit::WebMouseEvent event) -> (bool handled)
     WheelEvent(WebKit::WebWheelEvent event)
 #if ENABLE(GESTURE_EVENTS)
     GestureEvent(WebKit::WebGestureEvent event)

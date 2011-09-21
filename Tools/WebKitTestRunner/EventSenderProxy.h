@@ -33,12 +33,40 @@ class TestController;
 
 class EventSenderProxy {
 public:
-    EventSenderProxy(TestController* testController) : m_testController(testController) { }
+    EventSenderProxy(TestController* testController)
+        : m_testController(testController)
+        , m_time(0)
+        , m_position()
+        , m_leftMouseButtonDown(false)
+        , m_clickCount(0)
+        , m_clickTime(0)
+        , m_clickPosition()
+        , m_clickButton(kWKEventMouseButtonNoButton)
+        , eventNumber(0)
+    {
+    }
 
-    void keyDown(WKStringRef key, WKEventModifiers, unsigned location, double timestamp);
+    void mouseDown(unsigned button, WKEventModifiers);
+    void mouseUp(unsigned button, WKEventModifiers);
+    void mouseMoveTo(double x, double y);
+    void leapForward(int milliseconds) { m_time += milliseconds / 1000.0; }
+
+    void keyDown(WKStringRef key, WKEventModifiers, unsigned location);
 
 private:
     TestController* m_testController;
+
+    double currentEventTime() { return m_time; }
+    void updateClickCountForButton(int button);
+
+    double m_time;
+    WKPoint m_position;
+    bool m_leftMouseButtonDown;
+    int m_clickCount;
+    double m_clickTime;
+    WKPoint m_clickPosition;
+    WKEventMouseButton m_clickButton;
+    int eventNumber;
 };
 
 } // namespace WTR

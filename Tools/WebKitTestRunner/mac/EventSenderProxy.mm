@@ -30,10 +30,58 @@
 #import "StringFunctions.h"
 #import "PlatformWebView.h"
 #import "TestController.h"
-#import <WebKit2/WKPagePrivate.h>
 #import <WebKit2/WKString.h>
 
 namespace WTR {
+
+enum MouseAction {
+    MouseDown,
+    MouseUp,
+    MouseDragged
+};
+
+// Match the DOM spec (sadly the DOM spec does not provide an enum)
+enum MouseButton {
+    LeftMouseButton = 0,
+    MiddleMouseButton = 1,
+    RightMouseButton = 2,
+    NoMouseButton = -1
+};
+
+static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction action)
+{
+    switch (button) {
+        case LeftMouseButton:
+            switch (action) {
+                case MouseDown:
+                    return NSLeftMouseDown;
+                case MouseUp:
+                    return NSLeftMouseUp;
+                case MouseDragged:
+                    return NSLeftMouseDragged;
+            }
+        case RightMouseButton:
+            switch (action) {
+                case MouseDown:
+                    return NSRightMouseDown;
+                case MouseUp:
+                    return NSRightMouseUp;
+                case MouseDragged:
+                    return NSRightMouseDragged;
+            }
+        default:
+            switch (action) {
+                case MouseDown:
+                    return NSOtherMouseDown;
+                case MouseUp:
+                    return NSOtherMouseUp;
+                case MouseDragged:
+                    return NSOtherMouseDragged;
+            }
+    }
+    assert(0);
+    return static_cast<NSEventType>(0);
+}
 
 static int buildModifierFlags(WKEventModifiers modifiers)
 {
@@ -49,9 +97,95 @@ static int buildModifierFlags(WKEventModifiers modifiers)
     return flags;
 }
 
-void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers modifiersRef, unsigned int keyLocation, double timestamp)
+static bool operator==(const WKPoint& a, const WKPoint& b)
 {
-    NSString* character = [NSString stringWithCString:toSTD(keyRef).c_str() 
+    return a.x == b.x && a.y == b.y;
+}
+
+void EventSenderProxy::updateClickCountForButton(int button)
+{
+    if (m_time - m_clickTime < 1 && m_position == m_clickPosition && button == m_clickButton) {
+        ++m_clickCount;
+        m_clickTime = m_time;
+        return;
+    }
+
+    m_clickCount = 1;
+    m_clickTime = m_time;
+    m_clickPosition = m_position;
+    m_clickButton = button;
+}
+
+void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifiers)
+{
+    updateClickCountForButton(buttonNumber);
+
+    NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseDown);
+    NSEvent *event = [NSEvent mouseEventWithType:eventType
+                                        location:NSMakePoint(m_position.x, m_position.y)
+                                   modifierFlags:buildModifierFlags(modifiers)
+                                       timestamp:currentEventTime()
+                                    windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
+                                         context:[NSGraphicsContext currentContext] 
+                                     eventNumber:++eventNumber 
+                                      clickCount:m_clickCount 
+                                        pressure:0.0];
+
+    NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
+    if (targetView) {
+        [targetView mouseDown:event];
+        if (buttonNumber == LeftMouseButton)
+            m_leftMouseButtonDown = true;
+    }
+}
+
+void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers)
+{
+    NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseUp);
+    NSEvent *event = [NSEvent mouseEventWithType:eventType
+                                        location:NSMakePoint(m_position.x, m_position.y)
+                                   modifierFlags:buildModifierFlags(modifiers)
+                                       timestamp:currentEventTime()
+                                    windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
+                                         context:[NSGraphicsContext currentContext] 
+                                     eventNumber:++eventNumber 
+                                      clickCount:m_clickCount 
+                                        pressure:0.0];
+
+    NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
+    targetView = targetView ? targetView : m_testController->mainWebView()->platformView();
+    assert(targetView);
+    [targetView mouseDown:event];
+    if (buttonNumber == LeftMouseButton)
+        m_leftMouseButtonDown = false;
+    m_clickTime = [event timestamp];
+    m_clickPosition = m_position;
+}
+
+void EventSenderProxy::mouseMoveTo(double x, double y)
+{
+    NSView *view = m_testController->mainWebView()->platformView();
+    NSPoint position = [view convertPoint:NSMakePoint(x, y) toView:nil];
+    m_position.x = position.x;
+    m_position.y = position.y;
+    NSEvent *event = [NSEvent mouseEventWithType:(m_leftMouseButtonDown ? NSLeftMouseDragged : NSMouseMoved)
+                                        location:position
+                                   modifierFlags:0 
+                                       timestamp:currentEventTime()
+                                    windowNumber:[[view window] windowNumber] 
+                                         context:[NSGraphicsContext currentContext] 
+                                     eventNumber:++eventNumber 
+                                      clickCount:(m_leftMouseButtonDown ? m_clickCount : 0) 
+                                        pressure:0.0];
+
+    NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
+    if (targetView)
+        [targetView mouseMoved:event];
+}
+
+void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
+{
+    NSString* character = [NSString stringWithCString:toSTD(key).c_str() 
                                    encoding:[NSString defaultCStringEncoding]];
 
     NSString *eventCharacter = character;
@@ -170,19 +304,17 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers modifiersRef
         charactersIgnoringModifiers = [character lowercaseString];
     }
 
-    modifierFlags |= buildModifierFlags(modifiersRef);
+    modifierFlags |= buildModifierFlags(modifiers);
 
     if (keyLocation == 0x03 /*DOM_KEY_LOCATION_NUMPAD*/)
         modifierFlags |= NSNumericPadKeyMask;
 
     // FIXME: [[[mainFrame frameView] documentView] layout];
 
-    WKPageSetShouldSendKeyboardEventSynchronously([m_testController->mainWebView()->platformView() pageRef], true);
-
     NSEvent *event = [NSEvent keyEventWithType:NSKeyDown
                         location:NSMakePoint(5, 5)
                         modifierFlags:modifierFlags
-                        timestamp:timestamp//[self currentEventTime]
+                        timestamp:currentEventTime()
                         windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
                         context:[NSGraphicsContext currentContext]
                         characters:eventCharacter
@@ -195,7 +327,7 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers modifiersRef
     event = [NSEvent keyEventWithType:NSKeyUp
                         location:NSMakePoint(5, 5)
                         modifierFlags:modifierFlags
-                        timestamp:timestamp//[self currentEventTime]
+                        timestamp:currentEventTime()
                         windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
                         context:[NSGraphicsContext currentContext]
                         characters:eventCharacter
@@ -204,8 +336,6 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers modifiersRef
                         keyCode:keyCode];
 
     [[m_testController->mainWebView()->platformWindow() firstResponder] keyUp:event];
-
-    WKPageSetShouldSendKeyboardEventSynchronously([m_testController->mainWebView()->platformView() pageRef], false);
 }
 
 } // namespace WTR

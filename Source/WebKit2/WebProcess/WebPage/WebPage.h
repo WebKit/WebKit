@@ -475,6 +475,7 @@ private:
     void executeEditCommand(const String&);
 
     void mouseEvent(const WebMouseEvent&);
+    void mouseEventSyncForTesting(const WebMouseEvent&, bool&);
     void wheelEvent(const WebWheelEvent&);
     void keyEvent(const WebKeyboardEvent&);
     void keyEventSyncForTesting(const WebKeyboardEvent&, bool&);

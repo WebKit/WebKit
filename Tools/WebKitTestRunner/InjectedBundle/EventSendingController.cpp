@@ -41,10 +41,12 @@ namespace WTR {
 
 static const float ZoomMultiplierRatio = 1.2f;
 
+#ifdef USE_WEBPROCESS_EVENT_SIMULATION
 static bool operator==(const WKPoint& a, const WKPoint& b)
 {
     return a.x == b.x && a.y == b.y;
 }
+#endif
 
 static WKEventModifiers parseModifier(JSStringRef modifier)
 {
@@ -96,12 +98,14 @@ PassRefPtr<EventSendingController> EventSendingController::create()
 }
 
 EventSendingController::EventSendingController()
+#ifdef USE_WEBPROCESS_EVENT_SIMULATION
     : m_time(0)
     , m_position()
     , m_clickCount(0)
     , m_clickTime(0)
     , m_clickPosition()
     , m_clickButton(kWKEventMouseButtonNoButton)
+#endif
 {
 }
 
@@ -120,8 +124,28 @@ void EventSendingController::mouseDown(int button, JSValueRef modifierArray)
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(page);
     JSContextRef context = WKBundleFrameGetJavaScriptContext(frame);
     WKEventModifiers modifiers = parseModifierArray(context, modifierArray);
+
+#ifdef USE_WEBPROCESS_EVENT_SIMULATION
     updateClickCount(button);
     WKBundlePageSimulateMouseDown(page, button, m_position, m_clickCount, modifiers, m_time);
+#else
+    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
+    WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
+    WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("MouseDown"));
+    WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
+
+    WKRetainPtr<WKStringRef> buttonKey = adoptWK(WKStringCreateWithUTF8CString("Button"));
+    WKRetainPtr<WKUInt64Ref> buttonRef = WKUInt64Create(button);
+    WKDictionaryAddItem(EventSenderMessageBody.get(), buttonKey.get(), buttonRef.get());
+
+    WKRetainPtr<WKStringRef> modifiersKey = adoptWK(WKStringCreateWithUTF8CString("Modifiers"));
+    WKRetainPtr<WKUInt64Ref> modifiersRef = WKUInt64Create(modifiers);
+    WKDictionaryAddItem(EventSenderMessageBody.get(), modifiersKey.get(), modifiersRef.get());
+
+    WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
+#endif
 }
 
 void EventSendingController::mouseUp(int button, JSValueRef modifierArray)
@@ -130,22 +154,78 @@ void EventSendingController::mouseUp(int button, JSValueRef modifierArray)
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(page);
     JSContextRef context = WKBundleFrameGetJavaScriptContext(frame);
     WKEventModifiers modifiers = parseModifierArray(context, modifierArray);
+
+#ifdef USE_WEBPROCESS_EVENT_SIMULATION
     updateClickCount(button);
     WKBundlePageSimulateMouseUp(page, button, m_position, m_clickCount, modifiers, m_time);
+#else
+    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
+    WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
+    WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("MouseUp"));
+    WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
+
+    WKRetainPtr<WKStringRef> buttonKey = adoptWK(WKStringCreateWithUTF8CString("Button"));
+    WKRetainPtr<WKUInt64Ref> buttonRef = WKUInt64Create(button);
+    WKDictionaryAddItem(EventSenderMessageBody.get(), buttonKey.get(), buttonRef.get());
+
+    WKRetainPtr<WKStringRef> modifiersKey = adoptWK(WKStringCreateWithUTF8CString("Modifiers"));
+    WKRetainPtr<WKUInt64Ref> modifiersRef = WKUInt64Create(modifiers);
+    WKDictionaryAddItem(EventSenderMessageBody.get(), modifiersKey.get(), modifiersRef.get());
+
+    WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
+#endif
 }
 
 void EventSendingController::mouseMoveTo(int x, int y)
 {
+#ifdef USE_WEBPROCESS_EVENT_SIMULATION
     m_position.x = x;
     m_position.y = y;
     WKBundlePageSimulateMouseMotion(InjectedBundle::shared().page()->page(), m_position, m_time);
+#else
+    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
+    WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
+    WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("MouseMoveTo"));
+    WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
+
+    WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("X"));
+    WKRetainPtr<WKDoubleRef> xRef = WKDoubleCreate(x);
+    WKDictionaryAddItem(EventSenderMessageBody.get(), xKey.get(), xRef.get());
+
+    WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("Y"));
+    WKRetainPtr<WKDoubleRef> yRef = WKDoubleCreate(y);
+    WKDictionaryAddItem(EventSenderMessageBody.get(), yKey.get(), yRef.get());
+
+    WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
+#endif
 }
 
 void EventSendingController::leapForward(int milliseconds)
 {
+#ifdef USE_WEBPROCESS_EVENT_SIMULATION
     m_time += milliseconds / 1000.0;
+#else
+    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
+    WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
+    WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("LeapForward"));
+    WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
+
+    WKRetainPtr<WKStringRef> timeKey = adoptWK(WKStringCreateWithUTF8CString("TimeInMilliseconds"));
+    WKRetainPtr<WKUInt64Ref> timeRef = WKUInt64Create(milliseconds);
+    WKDictionaryAddItem(EventSenderMessageBody.get(), timeKey.get(), timeRef.get());
+
+    WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
+#endif
 }
 
+
+#ifdef USE_WEBPROCESS_EVENT_SIMULATION
 void EventSendingController::updateClickCount(WKEventMouseButton button)
 {
     if (m_time - m_clickTime < 1 && m_position == m_clickPosition && button == m_clickButton) {
@@ -159,6 +239,7 @@ void EventSendingController::updateClickCount(WKEventMouseButton button)
     m_clickPosition = m_position;
     m_clickButton = button;
 }
+#endif
 
 void EventSendingController::textZoomIn()
 {
@@ -233,10 +314,6 @@ void EventSendingController::keyDown(JSStringRef key, JSValueRef modifierArray, 
     WKRetainPtr<WKStringRef> locationKey = adoptWK(WKStringCreateWithUTF8CString("Location"));
     WKRetainPtr<WKUInt64Ref> locationRef = WKUInt64Create(location);
     WKDictionaryAddItem(EventSenderMessageBody.get(), locationKey.get(), locationRef.get());
-
-    WKRetainPtr<WKStringRef> timestampKey = adoptWK(WKStringCreateWithUTF8CString("Timestamp"));
-    WKRetainPtr<WKDoubleRef> timeRef = WKDoubleCreate(m_time);
-    WKDictionaryAddItem(EventSenderMessageBody.get(), timestampKey.get(), timeRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
 }

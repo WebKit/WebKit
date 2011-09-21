@@ -673,11 +673,15 @@ plugins/netscape-plugin-setwindow-size-2.html
 
 # WebKitTestRunner needs layoutTestController.setEditingBehavior
 # <https://bugs.webkit.org/show_bug.cgi?id=42689>
+editing/deleting/delete-ligature-003.html
+editing/deleting/paragraph-in-preserveNewline.html
+editing/deleting/whitespace-pre-1.html
 editing/selection/after-line-break.html
 editing/selection/rtl-move-selection-right-left.html
 editing/selection/5195166-1.html
 editing/selection/context-menu-text-selection.html
 editing/selection/directionality-after-undo-replace.html
+editing/selection/programmatic-selection-on-mac-is-directionless.html
 editing/execCommand/query-command-state.html
 editing/execCommand/query-text-alignment.html
 editing/execCommand/toggle-compound-styles.html
@@ -686,9 +690,6 @@ editing/style/iframe-onload-crash-unix.html
 editing/style/iframe-onload-crash-win.html
 fast/events/backspace-navigates-back.html
 fast/forms/selection-direction.html
-editing/deleting/paragraph-in-preserveNewline.html
-editing/deleting/whitespace-pre-1.html
-editing/selection/programmatic-selection-on-mac-is-directionless.html
 
 # WebKitTestRunner needs layoutTestController.setStopProvisionalFrameLoads
 # <https://bugs.webkit.org/show_bug.cgi?id=42691>

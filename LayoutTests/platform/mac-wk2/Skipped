@@ -40,13 +40,6 @@
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
-editing/deleting/delete-ligature-003.html
-editing/deleting/smart-delete-001.html
-editing/deleting/smart-delete-002.html
-editing/deleting/smart-delete-003.html
-editing/deleting/smart-delete-004.html
-editing/execCommand/findString-2.html
-editing/pasteboard/4944770-2.html
 editing/pasteboard/4947130.html
 editing/pasteboard/copy-standalone-image-crash.html
 editing/pasteboard/drag-and-drop-image-contenteditable.html
@@ -66,19 +59,12 @@ editing/pasteboard/drop-link.html
 editing/pasteboard/drop-text-events.html
 editing/pasteboard/drop-text-without-selection.html
 editing/pasteboard/emacs-cntl-y-001.html
-editing/pasteboard/emacs-ctrl-a-k-y.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
 editing/pasteboard/file-input-files-access.html
 editing/pasteboard/files-during-page-drags.html
 editing/pasteboard/get-data-text-plain-drop.html
 editing/pasteboard/smart-drag-drop.html
-editing/pasteboard/smart-paste-001.html
-editing/pasteboard/smart-paste-002.html
-editing/pasteboard/smart-paste-003.html
 editing/pasteboard/smart-paste-004.html
-editing/pasteboard/smart-paste-005.html
-editing/pasteboard/smart-paste-007.html
-editing/pasteboard/smart-paste-008.html
 editing/pasteboard/subframe-dragndrop-1.html
 editing/selection/14971.html
 editing/selection/4895428-1.html
@@ -91,13 +77,11 @@ editing/selection/5354455-2.html
 editing/selection/anchor-focus2.html
 editing/selection/anchor-focus3.html
 editing/selection/button-right-click.html
-editing/selection/click-in-focusable-link-should-not-clear-selection.html
 editing/selection/click-in-margins-inside-editable-div.html
 editing/selection/click-in-padding-with-multiple-line-boxes.html
 editing/selection/contains-boundaries.html
 editing/selection/context-menu-on-text.html
 editing/selection/doubleclick-beside-cr-span.html
-editing/selection/doubleclick-crash.html
 editing/selection/doubleclick-whitespace-crash.html
 editing/selection/doubleclick-whitespace-img-crash.html
 editing/selection/doubleclick-whitespace.html
@@ -106,11 +90,8 @@ editing/selection/drag-select-rapidly.html
 editing/selection/drag-start-event-client-x-y.html
 editing/selection/drag-to-contenteditable-iframe.html
 editing/selection/empty-cell-right-click.html
-editing/selection/expanding-selections.html
-editing/selection/expanding-selections2.html
 editing/selection/extend-after-mouse-selection.html
 editing/selection/extend-selection-after-double-click.html
-editing/selection/fake-doubleclick.html
 editing/selection/fake-drag.html
 editing/selection/inline-closest-leaf-child.html
 editing/selection/last-empty-inline.html
@@ -127,14 +108,11 @@ editing/selection/user-drag-element-and-user-select-none.html
 editing/selection/word-granularity.html
 editing/spelling/context-menu-suggestions.html
 editing/spelling/spellcheck-paste.html
-editing/undo/undo-deleteWord.html
 editing/undo/undo-smart-delete-reversed-selection.html
-editing/undo/undo-smart-delete-word.html
 fast/block/positioning/hittest-on-relative-positioned-children.html
 fast/css/user-drag-none.html
 fast/dom/Window/window-postmessage-clone-frames.html
 fast/dom/Window/window-postmessage-clone.html
-fast/dom/horizontal-scrollbar-in-rtl.html
 fast/dom/vertical-scrollbar-in-rtl.html
 fast/dynamic/layer-hit-test-crash.html
 fast/encoding/mailto-always-utf-8.html
@@ -177,14 +155,11 @@ fast/events/remove-child-onscroll.html
 fast/events/right-click-focus.html
 fast/events/scroll-after-click-on-tab-index.html
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
-fast/events/scrollbar-double-click.html
-fast/events/selectstart-by-double-triple-clicks.html
 fast/events/selectstart-by-drag.html
 fast/events/selectstart-prevent-selection-on-right-click.html
 fast/events/standalone-image-drag-to-editable.html
 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
-fast/events/zoom-dblclick.html
 fast/files/apply-blob-url-to-xhr.html
 fast/files/file-reader-abort.html
 fast/files/read-blob-async.html
@@ -194,14 +169,9 @@ fast/forms/drag-out-of-textarea.html
 fast/forms/get-file-upload.html
 fast/forms/input-file-re-render.html
 fast/forms/input-readonly-autoscroll.html
-fast/forms/input-text-double-click.html
 fast/forms/input-text-drag-down.html
 fast/forms/listbox-typeahead-cyrillic.html
 fast/forms/listbox-typeahead-greek.html
-fast/forms/onselect-textarea.html
-fast/forms/onselect-textfield.html
-fast/forms/option-mouseevents.html
-fast/forms/range/slider-delete-while-dragging-thumb.html
 fast/forms/range/slider-mouse-events.html
 fast/forms/range/slider-onchange-event.html
 fast/forms/select-type-ahead-non-latin.html
@@ -211,15 +181,6 @@ fast/loader/policy-delegate-action-hit-test-zoomed.html
 fast/repaint/japanese-rl-selection-repaint.html
 fast/repaint/repaint-across-writing-mode-boundary.html
 fast/repaint/selection-rl.html
-fast/text/atsui-rtl-override-selection.html
-fast/text/international/khmer-selection.html
-fast/text/offsetForPosition-complex-fallback.html
-fast/text/reset-drag-on-mouse-down.html
-fast/writing-mode/horizontal-bt-replaced-selection.html
-fast/writing-mode/japanese-lr-selection.html
-fast/writing-mode/japanese-rl-selection.html
-fast/writing-mode/vertical-lr-replaced-selection.html
-fast/writing-mode/vertical-rl-replaced-selection.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi/file-last-modified.html
@@ -238,19 +199,11 @@ http/tests/security/drag-over-remote-content-iframe.html
 media/controls-right-click-on-timebar.html
 platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html
 platform/mac/editing/pasteboard/drag-selections-to-contenteditable.html
-platform/mac/editing/selection/doubleclick-should-not-expand-across-lines.html
-platform/mac/editing/selection/word-thai.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
-platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
 plugins/clicking-missing-plugin-fires-delegate.html
 scrollbars/scrollbar-iframe-click-does-not-blur-content.html
 scrollbars/scrollevent-iframe-no-scrolling-wheel.html
-
 svg/custom/foreignObject-crash-on-hover.xml
-svg/custom/mouse-move-on-svg-container-standalone.svg
-svg/custom/mouse-move-on-svg-container.xhtml
-svg/custom/mouse-move-on-svg-root-standalone.svg
-svg/custom/mouse-move-on-svg-root.xhtml
 svg/custom/use-events-crash.svg
 
 ### END OF (1) Classified failures with bug reports

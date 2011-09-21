@@ -1049,6 +1049,25 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), handled));
 }
 
+void WebPage::mouseEventSyncForTesting(const WebMouseEvent& mouseEvent, bool& handled)
+{
+    // Don't try to handle any pending mouse events if a context menu is showing.
+    if (m_isShowingContextMenu) {
+        handled = true;
+        return;
+    }
+    
+    if (m_pageOverlay) {
+        // Let the page overlay handle the event.
+        handled = m_pageOverlay->mouseEvent(mouseEvent);
+    }
+
+    if (!handled) {
+        CurrentEvent currentEvent(mouseEvent);
+        handled = handleMouseEvent(mouseEvent, m_page.get());
+    }
+}
+
 static bool handleWheelEvent(const WebWheelEvent& wheelEvent, Page* page)
 {
     Frame* frame = page->mainFrame();
