@@ -179,7 +179,7 @@ void HTMLLinkElement::process()
 
     String type = m_type.lower();
 
-    if (!m_linkLoader.loadLink(m_relAttribute, type, m_url, document()))
+    if (!m_linkLoader.loadLink(m_relAttribute, type, m_sizes->toString(), m_url, document()))
         return;
 
     bool acceptIfTypeContainsTextCSS = document()->page() && document()->page()->settings() && document()->page()->settings()->treatsAnyTextCSSLinkAsStylesheet();

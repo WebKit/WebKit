@@ -49,9 +49,7 @@ public:
 
     KURL url();
     IconURLs urlsForTypes(int iconTypes);
-
-    // FIXME: We should inline this function into its one caller!
-    void setURL(const IconURL&);
+    IconURL iconURL(IconType) const;
 
     void startLoader();
     void stopLoader();

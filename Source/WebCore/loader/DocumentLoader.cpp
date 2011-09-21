@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -679,22 +680,6 @@ void DocumentLoader::setTitle(const StringWithDirection& title)
         frameLoader()->willChangeTitle(this);
         m_pageTitle = title;
         frameLoader()->didChangeTitle(this);
-    }
-}
-
-IconURL DocumentLoader::iconURL(IconType iconType) const
-{
-    return m_iconURLs[toIconIndex(iconType)];
-}
-
-void DocumentLoader::setIconURL(const IconURL& url)
-{
-    if (url.m_iconURL.isEmpty())
-        return;
-
-    if (iconURL(url.m_iconType).m_iconURL != url.m_iconURL) {
-        m_iconURLs[toIconIndex(url.m_iconType)] = url;
-        frameLoader()->didChangeIcons(this, url.m_iconType);
     }
 }
 

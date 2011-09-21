@@ -5,7 +5,7 @@
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
- * Copyright (C) 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2011 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -4430,26 +4430,25 @@ unsigned FormElementKeyHash::hash(const FormElementKey& key)
     return StringHasher::hashMemory<sizeof(FormElementKey)>(&key);
 }
 
-IconURL Document::iconURL(IconType iconType) const
+const Vector<IconURL>& Document::iconURLs() const
 {
-    return m_iconURLs[toIconIndex(iconType)];
+    return m_iconURLs;
 }
 
-void Document::setIconURL(const String& url, const String& mimeType, IconType iconType)
+void Document::addIconURL(const String& url, const String& mimeType, const String& sizes, IconType iconType)
 {
+    if (url.isEmpty())
+        return;
+
     // FIXME - <rdar://problem/4727645> - At some point in the future, we might actually honor the "mimeType"
-    IconURL newURL(KURL(ParsedURLString, url), iconType);
-    if (iconURL(iconType).m_iconURL.isEmpty())
-        setIconURL(newURL);
-    else if (!mimeType.isEmpty())
-        setIconURL(newURL);
-    if (Frame* f = frame())
-        f->loader()->icon()->setURL(newURL);
-}
+    IconURL newURL(KURL(ParsedURLString, url), sizes, mimeType, iconType);
+    m_iconURLs.append(newURL);
 
-void Document::setIconURL(const IconURL& iconURL)
-{
-    m_iconURLs[toIconIndex(iconURL.m_iconType)] = iconURL;
+    if (Frame* f = frame()) {
+        IconURL iconURL = f->loader()->icon()->iconURL(iconType);
+        if (iconURL == newURL)
+            f->loader()->didChangeIcons(iconType);
+    }
 }
 
 void Document::registerFormElementWithFormAttribute(FormAssociatedElement* element)

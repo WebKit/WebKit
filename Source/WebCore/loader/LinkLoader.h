@@ -50,7 +50,7 @@ public:
     // from CachedResourceClient
     virtual void notifyFinished(CachedResource*);
     
-    bool loadLink(const LinkRelAttribute&, const String& type, const KURL&, Document*);
+    bool loadLink(const LinkRelAttribute&, const String& type, const String& sizes, const KURL&, Document*);
 
 private:
     void linkLoadTimerFired(Timer<LinkLoader>*);

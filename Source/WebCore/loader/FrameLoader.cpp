@@ -5,6 +5,7 @@
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  * Copyright (C) 2011 Kris Jordan <krisjordan@gmail.com>
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3228,10 +3229,9 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
     }
 }
 
-void FrameLoader::didChangeIcons(DocumentLoader* loader, IconType type)
+void FrameLoader::didChangeIcons(IconType type)
 {
-    if (loader == m_documentLoader)
-        m_client->dispatchDidChangeIcons(type);
+    m_client->dispatchDidChangeIcons(type);
 }
 
 void FrameLoader::dispatchDidCommitLoad()

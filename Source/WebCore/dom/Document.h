@@ -6,6 +6,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -917,9 +918,8 @@ public:
     
     void setHasNodesWithPlaceholderStyle() { m_hasNodesWithPlaceholderStyle = true; }
 
-    IconURL iconURL(IconType) const;
-    void setIconURL(const String&, const String&, IconType);
-    void setIconURL(const IconURL&);
+    const Vector<IconURL>& iconURLs() const;
+    void addIconURL(const String& url, const String& mimeType, const String& size, IconType);
 
     void setUseSecureKeyboardEntryWhenActive(bool);
     bool useSecureKeyboardEntryWhenActive() const;
@@ -1349,7 +1349,7 @@ private:
 
     bool m_createRenderers;
     bool m_inPageCache;
-    IconURL m_iconURLs[ICON_COUNT];
+    Vector<IconURL> m_iconURLs;
 
     HashSet<Element*> m_documentActivationCallbackElements;
     HashSet<Element*> m_mediaVolumeCallbackElements;

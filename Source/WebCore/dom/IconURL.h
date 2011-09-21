@@ -45,24 +45,35 @@ enum IconType {
     InvalidIcon = 0,
     Favicon = 1,
     TouchIcon = 1 << 1,
-    TouchPrecomposedIcon = 1 << 2
+    TouchPrecomposedIcon = 1 << 2,
 };
 
 struct IconURL {
     IconType m_iconType;
+    String m_sizes;
+    String m_mimeType;
     KURL m_iconURL;
+    bool m_isDefaultIcon;
 
     IconURL()
         : m_iconType(InvalidIcon)
+        , m_isDefaultIcon(false)
     {
     }
 
-    IconURL(const KURL& url, IconType type)
+    IconURL(const KURL& url, const String& sizes, const String& mimeType, IconType type)
         : m_iconType(type)
+        , m_sizes(sizes)
+        , m_mimeType(mimeType)
         , m_iconURL(url)
+        , m_isDefaultIcon(false)
     {
     }
+    
+    static IconURL defaultIconURL(const KURL&, IconType);
 };
+
+bool operator==(const IconURL&, const IconURL&);
 
 typedef Vector<IconURL, ICON_COUNT> IconURLs;
 

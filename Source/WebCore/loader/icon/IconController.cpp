@@ -5,6 +5,7 @@
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  * Copyright (C) 2011 Kris Jordan <krisjordan@gmail.com>
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,30 +65,61 @@ KURL IconController::url()
     return iconURLs.isEmpty() ? KURL() : iconURLs[0].m_iconURL;
 }
 
+IconURL IconController::iconURL(IconType iconType) const
+{
+    IconURL result;
+    const Vector<IconURL>& iconURLs = m_frame->document()->iconURLs();
+    Vector<IconURL>::const_iterator iter(iconURLs.begin());
+    for (; iter != iconURLs.end(); ++iter) {
+        if (iter->m_iconType == iconType) {
+            if (result.m_iconURL.isEmpty() || !iter->m_mimeType.isEmpty())
+                result = *iter;
+        }
+    }
+
+    return result;
+}
+
 IconURLs IconController::urlsForTypes(int iconTypes)
 {
     IconURLs iconURLs;
     if (m_frame->tree() && m_frame->tree()->parent())
         return iconURLs;
-
+        
     if (iconTypes & Favicon && !appendToIconURLs(Favicon, &iconURLs))
         iconURLs.append(defaultURL(Favicon));
 
 #if ENABLE(TOUCH_ICON_LOADING)
-    bool havePrecomposedIcon = false;
+    int missedIcons = 0;
     if (iconTypes & TouchPrecomposedIcon)
-        havePrecomposedIcon = appendToIconURLs(TouchPrecomposedIcon, &iconURLs);
+        missedIcons += appendToIconURLs(TouchPrecomposedIcon, &iconURLs) ? 0:1;
 
-    bool haveTouchIcon = false;
     if (iconTypes & TouchIcon)
-        haveTouchIcon = appendToIconURLs(TouchIcon, &iconURLs);
+      missedIcons += appendToIconURLs(TouchIcon, &iconURLs) ? 0:1;
 
     // Only return the default touch icons when the both were required and neither was gotten.
-    if (iconTypes & TouchPrecomposedIcon && iconTypes & TouchIcon && !havePrecomposedIcon && !haveTouchIcon) {
+    if (missedIcons == 2) {
         iconURLs.append(defaultURL(TouchPrecomposedIcon));
         iconURLs.append(defaultURL(TouchIcon));
     }
 #endif
+
+    // Finally, append all remaining icons of this type.
+    const Vector<IconURL>& allIconURLs = m_frame->document()->iconURLs();
+    for (Vector<IconURL>::const_iterator iter = allIconURLs.begin(); iter != allIconURLs.end(); ++iter) {
+        if (!(iter->m_iconType & iconTypes))
+            continue;
+
+        int i;
+        int iconCount = iconURLs.size();
+        for (i = 0; i < iconCount; ++i) {
+            if (*iter == iconURLs.at(i))
+                break;
+        }
+        if (i == iconCount)
+            iconURLs.append(*iter);
+    }
+
     return iconURLs;
 }
 
@@ -96,11 +128,6 @@ void IconController::commitToDatabase(const KURL& icon)
     LOG(IconDatabase, "Committing iconURL %s to database for pageURLs %s and %s", icon.string().ascii().data(), m_frame->document()->url().string().ascii().data(), m_frame->loader()->initialRequest().url().string().ascii().data());
     iconDatabase().setIconURLForPageURL(icon.string(), m_frame->document()->url().string());
     iconDatabase().setIconURLForPageURL(icon.string(), m_frame->loader()->initialRequest().url().string());
-}
-
-void IconController::setURL(const IconURL& iconURL)
-{
-    m_frame->loader()->documentLoader()->setIconURL(iconURL);
 }
 
 void IconController::startLoader()
@@ -218,11 +245,11 @@ void IconController::continueLoadWithDecision(IconLoadDecision iconLoadDecision)
 
 bool IconController::appendToIconURLs(IconType iconType, IconURLs* iconURLs)
 {
-    IconURL url = m_frame->document()->iconURL(iconType);
-    if (url.m_iconURL.isEmpty())
+    IconURL faviconURL = iconURL(iconType);
+    if (faviconURL.m_iconURL.isEmpty())
         return false;
 
-    iconURLs->append(url);
+    iconURLs->append(faviconURL);
     return true;
 }
 
@@ -239,18 +266,19 @@ IconURL IconController::defaultURL(IconType iconType)
     url.setHost(documentURL.host());
     if (documentURL.hasPort())
         url.setPort(documentURL.port());
+
     if (iconType == Favicon) {
         url.setPath("/favicon.ico");
-        return IconURL(url, Favicon);
+        return IconURL::defaultIconURL(url, Favicon);
     }
 #if ENABLE(TOUCH_ICON_LOADING)
     if (iconType == TouchPrecomposedIcon) {
         url.setPath("/apple-touch-icon-precomposed.png");
-        return IconURL(url, TouchPrecomposedIcon);
+        return IconURL::defaultIconURL(url, TouchPrecomposedIcon);
     }
     if (iconType == TouchIcon) {
         url.setPath("/apple-touch-icon.png");
-        return IconURL(url, TouchIcon);
+        return IconURL::defaultIconURL(url, TouchIcon);
     }
 #endif
     return IconURL();

@@ -54,5 +54,21 @@ size_t toIconIndex(IconType type)
     return index;
 }
 
+IconURL IconURL::defaultIconURL(const KURL& url, IconType type)
+{
+    IconURL result(url, emptyString(), emptyString(), type);
+    result.m_isDefaultIcon = true;
+    return result;
+}
+
+bool operator==(const IconURL& lhs, const IconURL& rhs)
+{
+    return lhs.m_iconType == rhs.m_iconType
+           && lhs.m_isDefaultIcon == rhs.m_isDefaultIcon
+           && lhs.m_iconURL == rhs.m_iconURL
+           && lhs.m_sizes == rhs.m_sizes
+           && lhs.m_mimeType == rhs.m_mimeType;
+}
+
 }
 

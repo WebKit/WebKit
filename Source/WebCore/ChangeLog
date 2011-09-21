@@ -1,3 +1,30 @@
+2011-09-20  Rachel Blum  <groby@chromium.org>
+
+        Support for multiple <link rel="icon"> favicon elements.
+        https://bugs.webkit.org/show_bug.cgi?id=65564
+
+        Reviewed by Darin Fisher.
+
+        No tests - purely an API change. (And API is not exposed to LayoutTests)
+
+        * dom/Document.cpp:
+        (WebCore::Document::iconURLs):
+        (WebCore::Document::addIconURL):
+        * dom/Document.h:
+        * dom/IconURL.cpp:
+        (WebCore::toIconIndex):
+        * dom/IconURL.h:
+        (WebCore::IconURL::IconURL):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLink):
+        * loader/LinkLoader.h:
+        * loader/icon/IconController.cpp:
+        (WebCore::IconController::urlsForTypes):
+        (WebCore::IconController::appendToIconURLs):
+        (WebCore::IconController::defaultURL):
+
 2011-09-20  Ojan Vafai  <ojan@chromium.org>
 
         [css3-flexbox] cleanup padding width calculations
