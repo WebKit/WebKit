@@ -1,3 +1,11 @@
+2011-09-21  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed. Remove unused ENABLE_AS_IMAGE flag after r95234 from
+        Options{Efl,WinCE}.cmake.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsWinCE.cmake:
+
 2011-09-20  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK] requestAnimationFrame support for gtk port
