@@ -300,6 +300,29 @@ const char* decodeStringWithLength(const char* p, const char* limit, String& fou
     return p;
 }
 
+int compareEncodedStringsWithLength(const char* p, const char* limitP, const char* q, const char* limitQ)
+{
+    ASSERT(limitP >= p);
+    ASSERT(limitQ >= q);
+    int64_t lenP, lenQ;
+    p = decodeVarInt(p, limitP, lenP);
+    q = decodeVarInt(q, limitQ, lenQ);
+    ASSERT(p && q);
+    ASSERT(lenP >= 0);
+    ASSERT(lenQ >= 0);
+    ASSERT(p + lenP * 2 <= limitP);
+    ASSERT(q + lenQ * 2 <= limitQ);
+
+    const size_t lmin = static_cast<size_t>(lenP < lenQ ? lenP : lenQ);
+    if (int x = memcmp(p, q, lmin * 2))
+        return x;
+
+    if (lenP == lenQ)
+        return 0;
+
+    return (lenP > lenQ) ? 1 : -1;
+}
+
 Vector<char> encodeDouble(double x)
 {
     // FIXME: It would be nice if we could be byte order independent.
@@ -441,7 +464,6 @@ int compareEncodedIDBKeys(const Vector<char>& keyA, const Vector<char>& keyB)
     unsigned char typeA = *p++;
     unsigned char typeB = *q++;
 
-    String s, t;
     double d, e;
 
     if (int x = typeB - typeA) // FIXME: Note the subtleness!
@@ -454,11 +476,7 @@ int compareEncodedIDBKeys(const Vector<char>& keyA, const Vector<char>& keyB)
         return 0;
     case kIDBKeyStringTypeByte:
         // String type.
-        p = decodeStringWithLength(p, limitA, s); // FIXME: Compare without actually decoding the String!
-        ASSERT(p);
-        q = decodeStringWithLength(q, limitB, t);
-        ASSERT(q);
-        return codePointCompare(s, t);
+        return compareEncodedStringsWithLength(p, limitA, q, limitB);
     case kIDBKeyDateTypeByte:
     case kIDBKeyNumberTypeByte:
         // Date or number.

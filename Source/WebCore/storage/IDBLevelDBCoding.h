@@ -53,6 +53,7 @@ Vector<char> encodeString(const String&);
 String decodeString(const char* p, const char* end);
 Vector<char> encodeStringWithLength(const String&);
 const char* decodeStringWithLength(const char* p, const char* limit, String& foundString);
+int compareEncodedStringsWithLength(const char* p, const char* limitP, const char* q, const char* limitQ);
 Vector<char> encodeDouble(double);
 const char* decodeDouble(const char* p, const char* limit, double*);
 Vector<char> encodeIDBKey(const IDBKey&);

@@ -230,6 +230,55 @@ TEST(IDBLevelDBCodingTest, DecodeStringWithLength)
     }
 }
 
+TEST(IDBLevelDBCodingTest, CompareEncodedStringsWithLength)
+{
+    const UChar testStringA[] = {0x1000, 0x1000, '\0'};
+    const UChar testStringB[] = {0x1000, 0x1000, 0x1000, '\0'};
+    const UChar testStringC[] = {0x1000, 0x1000, 0x1001, '\0'};
+    const UChar testStringD[] = {0x1001, 0x1000, 0x1000, '\0'};
+    const UChar testStringE[] = {0xd834, 0xdd1e, '\0'};
+    const UChar testStringF[] = {0xfffd, '\0'};
+
+    Vector<String> testCases;
+    testCases.append(String(""));
+    testCases.append(String("a"));
+    testCases.append(String("b"));
+    testCases.append(String("baaa"));
+    testCases.append(String("baab"));
+    testCases.append(String("c"));
+    testCases.append(String(testStringA));
+    testCases.append(String(testStringB));
+    testCases.append(String(testStringC));
+    testCases.append(String(testStringD));
+    testCases.append(String(testStringE));
+    testCases.append(String(testStringF));
+
+    for (size_t i = 0; i < testCases.size() - 1; ++i) {
+        String a = testCases[i];
+        String b = testCases[i + 1];
+
+        EXPECT_LT(codePointCompare(a, b), 0);
+        EXPECT_GT(codePointCompare(b, a), 0);
+        EXPECT_EQ(codePointCompare(a, a), 0);
+        EXPECT_EQ(codePointCompare(b, b), 0);
+
+        Vector<char> encodedA = encodeStringWithLength(a);
+        EXPECT_TRUE(encodedA.size());
+        Vector<char> encodedB = encodeStringWithLength(b);
+        EXPECT_TRUE(encodedA.size());
+
+        const char* p = encodedA.data();
+        const char* limitP = p + encodedA.size();
+        const char* q = encodedB.data();
+        const char* limitQ = q + encodedB.size();
+
+        EXPECT_LT(compareEncodedStringsWithLength(p, limitP, q, limitQ), 0);
+        EXPECT_GT(compareEncodedStringsWithLength(q, limitQ, p, limitP), 0);
+        EXPECT_EQ(compareEncodedStringsWithLength(p, limitP, p, limitP), 0);
+        EXPECT_EQ(compareEncodedStringsWithLength(q, limitQ, q, limitQ), 0);
+    }
+}
+
 TEST(IDBLevelDBCodingTest, EncodeDouble)
 {
     EXPECT_EQ(static_cast<size_t>(8), encodeDouble(0).size());
@@ -302,6 +351,8 @@ TEST(IDBLevelDBCodingTest, ExtractAndCompareIDBKeys)
     keys.append(IDBKey::createString("a"));
     keys.append(IDBKey::createString("b"));
     keys.append(IDBKey::createString("baaa"));
+    keys.append(IDBKey::createString("baab"));
+    keys.append(IDBKey::createString("c"));
 
     for (size_t i = 0; i < keys.size() - 1; ++i) {
         RefPtr<IDBKey> keyA = keys[i];

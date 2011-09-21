@@ -1,4 +1,18 @@
-2011-09-21  Leandro Pereira  <leandro@profusion.mobi>
+2011-09-21  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: compare strings without decoding
+        https://bugs.webkit.org/show_bug.cgi?id=68554
+
+        Reviewed by Tony Chang.
+
+        Resolves a FIXME in IndexedDB that was also identified as a hotspot
+        during profiling. Yields a small performance improvement.
+
+        * Source/WebCore/storage/IDBLevelDBCoding.cpp:
+        * Source/WebCore/storage/IDBLevelDBCoding.h:
+        * Source/WebKit/chromium/tests/IDBLevelDBCodingTest.cpp:
+
+011-09-21  Leandro Pereira  <leandro@profusion.mobi>
 
         Unreviewed. Remove unused ENABLE_AS_IMAGE flag after r95234 from
         Options{Efl,WinCE}.cmake.
