@@ -228,7 +228,9 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
     ASSERT(!m_sendingEventToSubview);
     m_sendingEventToSubview = true;
 
+    RenderWidget::suspendWidgetHierarchyUpdates();
     [view mouseDown:currentNSEvent()];
+    RenderWidget::resumeWidgetHierarchyUpdates();
     
     if (!wasDeferringLoading)
         page->setDefersLoading(false);
