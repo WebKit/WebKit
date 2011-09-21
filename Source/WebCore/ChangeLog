@@ -1,3 +1,17 @@
+2011-09-20  Kent Tamura  <tkent@chromium.org>
+
+        Move RenderObject::markContainingBlocksForLayout() to RenderObject.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=67989
+
+        Reviewed by Ryosuke Niwa.
+
+        No new tests because of no behavior change.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::objectIsRelayoutBoundary): Moved from RenderObject.h.
+        (WebCore::RenderObject::markContainingBlocksForLayout): Moved from RenderObject.h
+        * rendering/RenderObject.h:
+
 2011-09-20  Rachel Blum  <groby@chromium.org>
 
         Support for multiple <link rel="icon"> favicon elements.

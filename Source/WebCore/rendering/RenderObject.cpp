@@ -599,6 +599,69 @@ RenderBlock* RenderObject::firstLineBlock() const
     return 0;
 }
 
+static inline bool objectIsRelayoutBoundary(const RenderObject* object)
+{
+    // FIXME: In future it may be possible to broaden this condition in order to improve performance.
+    // Table cells are excluded because even when their CSS height is fixed, their height()
+    // may depend on their contents.
+    return object->isTextControl()
+#if ENABLE(SVG)
+        || object->isSVGRoot()
+#endif
+        || (object->hasOverflowClip() && !object->style()->width().isIntrinsicOrAuto() && !object->style()->height().isIntrinsicOrAuto() && !object->style()->height().isPercent() && !object->isTableCell());
+}
+
+void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderObject* newRoot)
+{
+    ASSERT(!scheduleRelayout || !newRoot);
+
+    RenderObject* object = container();
+    RenderObject* last = this;
+
+    bool simplifiedNormalFlowLayout = needsSimplifiedNormalFlowLayout() && !selfNeedsLayout() && !normalChildNeedsLayout();
+
+    while (object) {
+        // Don't mark the outermost object of an unrooted subtree. That object will be
+        // marked when the subtree is added to the document.
+        RenderObject* container = object->container();
+        if (!container && !object->isRenderView())
+            return;
+        if (!last->isText() && (last->style()->position() == FixedPosition || last->style()->position() == AbsolutePosition)) {
+            bool willSkipRelativelyPositionedInlines = !object->isRenderBlock();
+            while (object && !object->isRenderBlock()) // Skip relatively positioned inlines and get to the enclosing RenderBlock.
+                object = object->container();
+            if (!object || object->m_posChildNeedsLayout)
+                return;
+            if (willSkipRelativelyPositionedInlines)
+                container = object->container();
+            object->m_posChildNeedsLayout = true;
+            simplifiedNormalFlowLayout = true;
+            ASSERT(!object->isSetNeedsLayoutForbidden());
+        } else if (simplifiedNormalFlowLayout) {
+            if (object->m_needsSimplifiedNormalFlowLayout)
+                return;
+            object->m_needsSimplifiedNormalFlowLayout = true;
+            ASSERT(!object->isSetNeedsLayoutForbidden());
+        } else {
+            if (object->m_normalChildNeedsLayout)
+                return;
+            object->m_normalChildNeedsLayout = true;
+            ASSERT(!object->isSetNeedsLayoutForbidden());
+        }
+
+        if (object == newRoot)
+            return;
+
+        last = object;
+        if (scheduleRelayout && objectIsRelayoutBoundary(last))
+            break;
+        object = container;
+    }
+
+    if (scheduleRelayout)
+        last->scheduleRelayout();
+}
+
 void RenderObject::setPreferredLogicalWidthsDirty(bool b, bool markParents)
 {
     bool alreadyDirty = m_preferredLogicalWidthsDirty;
