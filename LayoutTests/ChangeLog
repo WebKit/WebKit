@@ -1,5 +1,14 @@
 2011-09-21  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK rebaseline, skip some flaky worker tests and 2
+        failing http tests.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/editing/deleting/regional-indicators-expected.txt:
+        * platform/gtk/fast/text/justify-ideograph-complex-expected.txt:
+
+2011-09-21  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK rebaseline and skip and a11y failing test.
 
         * platform/gtk/Skipped: Skip accessibility/aria-hidden-updates-alldescendants.html
