@@ -26,7 +26,6 @@
 #include "OpenGLShims.h"
 #include <GL/glx.h>
 #include <dlfcn.h>
-#include <wtf/PassOwnPtr.h>
 
 // We do not want to call glXMakeContextCurrent using different Display pointers,
 // because it might lead to crashes in some drivers (fglrx). We use a shared display

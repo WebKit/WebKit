@@ -28,7 +28,6 @@
 #include "GraphicsContext3D.h"
 
 #if ENABLE(WEBGL)
-#include <wtf/PassOwnPtr.h>
 #include "Extensions3DOpenGL.h"
 #include "GraphicsContext3DPrivate.h"
 #include "OpenGLShims.h"
