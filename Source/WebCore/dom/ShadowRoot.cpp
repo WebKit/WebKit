@@ -119,6 +119,11 @@ void ShadowRoot::hostChildrenChanged()
     setNeedsStyleRecalc();
 }
 
+bool ShadowRoot::isInclusionSelectorActive() const
+{
+    return m_inclusions && m_inclusions->hasCandidates();
+}
+
 bool ShadowRoot::hasContentElement() const
 {
     for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {

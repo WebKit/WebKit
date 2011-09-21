@@ -64,7 +64,8 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
         m_visualParentShadowRoot = toElement(parent)->shadowRoot();
 
         if (m_visualParentShadowRoot) {
-            if ((m_includer = m_visualParentShadowRoot->includerFor(m_node))) {
+            if ((m_includer = m_visualParentShadowRoot->includerFor(m_node))
+                && m_visualParentShadowRoot->isInclusionSelectorActive()) {
                 m_phase = AttachContentForwarded;
                 m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_includer).parentNodeForRenderingAndStyle();
                 return;

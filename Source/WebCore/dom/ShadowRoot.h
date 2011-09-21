@@ -43,6 +43,7 @@ public:
 
     ShadowContentElement* includerFor(Node*) const;
     void hostChildrenChanged();
+    bool isInclusionSelectorActive() const;
 
     virtual void attach();
 
