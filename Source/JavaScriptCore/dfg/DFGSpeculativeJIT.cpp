@@ -877,6 +877,12 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
         
+        if (shouldNotSpeculateInteger(node.child1())) {
+            // Do it the safe way.
+            nonSpeculativeValueToInt32(node);
+            break;
+        }
+        
         SpeculateIntegerOperand op1(this, node.child1());
         GPRTemporary result(this, op1);
         m_jit.move(op1.gpr(), result.gpr());

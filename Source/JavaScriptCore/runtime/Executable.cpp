@@ -84,6 +84,18 @@ DFG::Intrinsic NativeExecutable::intrinsic() const
 }
 #endif
 
+// Utility method used for jettisoning code blocks.
+template<typename T>
+static void jettisonCodeBlock(JSGlobalData& globalData, OwnPtr<T>& codeBlock)
+{
+    ASSERT(codeBlock->getJITType() != JITCode::BaselineJIT);
+    ASSERT(codeBlock->alternative());
+    OwnPtr<T> codeBlockToJettison = codeBlock.release();
+    codeBlock = static_pointer_cast<T>(codeBlockToJettison->releaseAlternative());
+    codeBlockToJettison->unlinkIncomingCalls();
+    globalData.heap.addJettisonedCodeBlock(static_pointer_cast<CodeBlock>(codeBlockToJettison.release()));
+}
+
 const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase::s_info, 0, 0 };
 
 const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::s_info, 0, 0 };
@@ -211,6 +223,13 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     return 0;
 }
 
+void EvalExecutable::jettisonOptimizedCode(JSGlobalData& globalData)
+{
+    jettisonCodeBlock(globalData, m_evalCodeBlock);
+    m_jitCodeForCall = m_evalCodeBlock->getJITCode();
+    ASSERT(!m_jitCodeForCallWithArityCheck);
+}
+
 void EvalExecutable::visitChildren(SlotVisitor& visitor)
 {
     ASSERT_GC_OBJECT_INHERITS(this, &s_info);
@@ -328,6 +347,13 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
 #endif
 
     return 0;
+}
+
+void ProgramExecutable::jettisonOptimizedCode(JSGlobalData& globalData)
+{
+    jettisonCodeBlock(globalData, m_programCodeBlock);
+    m_jitCodeForCall = m_programCodeBlock->getJITCode();
+    ASSERT(!m_jitCodeForCallWithArityCheck);
 }
 
 void ProgramExecutable::unlinkCalls()
@@ -532,6 +558,20 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
 #endif
 
     return 0;
+}
+
+void FunctionExecutable::jettisonOptimizedCodeForCall(JSGlobalData& globalData)
+{
+    jettisonCodeBlock(globalData, m_codeBlockForCall);
+    m_jitCodeForCall = m_codeBlockForCall->getJITCode();
+    m_jitCodeForCallWithArityCheck = m_codeBlockForCall->getJITCodeWithArityCheck();
+}
+
+void FunctionExecutable::jettisonOptimizedCodeForConstruct(JSGlobalData& globalData)
+{
+    jettisonCodeBlock(globalData, m_codeBlockForConstruct);
+    m_jitCodeForConstruct = m_codeBlockForConstruct->getJITCode();
+    m_jitCodeForConstructWithArityCheck = m_codeBlockForConstruct->getJITCodeWithArityCheck();
 }
 
 void FunctionExecutable::visitChildren(SlotVisitor& visitor)

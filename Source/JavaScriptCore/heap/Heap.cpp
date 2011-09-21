@@ -394,6 +394,11 @@ void Heap::markProtectedObjects(HeapRootVisitor& heapRootVisitor)
         heapRootVisitor.visit(&it->first);
 }
 
+void Heap::addJettisonedCodeBlock(PassOwnPtr<CodeBlock> codeBlock)
+{
+    m_jettisonedCodeBlocks.addCodeBlock(codeBlock);
+}
+
 void Heap::pushTempSortVector(Vector<ValueStringPair>* tempVector)
 {
     m_tempSortingVectors.append(tempVector);
@@ -456,20 +461,22 @@ void Heap::markRoots()
     m_operationInProgress = Collection;
 
     void* dummy;
-
+    
     // We gather conservative roots before clearing mark bits because conservative
     // gathering uses the mark bits to determine whether a reference is valid.
     ConservativeRoots machineThreadRoots(&m_objectSpace.blocks());
     m_machineThreads.gatherConservativeRoots(machineThreadRoots, &dummy);
 
     ConservativeRoots registerFileRoots(&m_objectSpace.blocks());
-    registerFile().gatherConservativeRoots(registerFileRoots);
+    m_jettisonedCodeBlocks.clearMarks();
+    registerFile().gatherConservativeRoots(registerFileRoots, m_jettisonedCodeBlocks);
+    m_jettisonedCodeBlocks.deleteUnmarkedCodeBlocks();
 
     clearMarks();
 
     SlotVisitor& visitor = m_slotVisitor;
     HeapRootVisitor heapRootVisitor(visitor);
-
+    
     visitor.append(machineThreadRoots);
     visitor.drain();
 
@@ -492,6 +499,9 @@ void Heap::markRoots()
     visitor.drain();
 
     m_handleStack.visit(heapRootVisitor);
+    visitor.drain();
+    
+    m_jettisonedCodeBlocks.traceCodeBlocks(visitor);
     visitor.drain();
 
     // Weak handles must be marked last, because their owners use the set of

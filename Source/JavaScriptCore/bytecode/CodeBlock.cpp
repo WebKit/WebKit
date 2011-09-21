@@ -1428,7 +1428,10 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
     , m_sourceOffset(sourceOffset)
     , m_symbolTable(symTab)
     , m_alternative(alternative)
+    , m_speculativeSuccessCounter(0)
+    , m_speculativeFailCounter(0)
     , m_optimizationDelayCounter(0)
+    , m_reoptimizationRetryCounter(0)
 {
     ASSERT(m_source);
     
@@ -1935,6 +1938,27 @@ bool FunctionCodeBlock::canCompileWithDFG()
         return DFG::canCompileFunctionForConstruct(this);
     return DFG::canCompileFunctionForCall(this);
 }
+
+void ProgramCodeBlock::jettison(JSGlobalData& globalData)
+{
+    ASSERT(getJITType() != JITCode::BaselineJIT);
+    ASSERT(this == replacement());
+    static_cast<ProgramExecutable*>(ownerExecutable())->jettisonOptimizedCode(globalData);
+}
+
+void EvalCodeBlock::jettison(JSGlobalData& globalData)
+{
+    ASSERT(getJITType() != JITCode::BaselineJIT);
+    ASSERT(this == replacement());
+    static_cast<EvalExecutable*>(ownerExecutable())->jettisonOptimizedCode(globalData);
+}
+
+void FunctionCodeBlock::jettison(JSGlobalData& globalData)
+{
+    ASSERT(getJITType() != JITCode::BaselineJIT);
+    ASSERT(this == replacement());
+    static_cast<FunctionExecutable*>(ownerExecutable())->jettisonOptimizedCodeFor(globalData, m_isConstructor ? CodeForConstruct : CodeForCall);
+}
 #endif
 
 #if ENABLE(VALUE_PROFILER)
@@ -1974,8 +1998,8 @@ bool CodeBlock::shouldOptimizeNow()
     printf("Profile hotness: %lf, %lf\n", (double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles, (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles());
 #endif
 
-    if ((double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles >= 0.75
-        && (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles() >= 0.5)
+    if ((!numberOfNonArgumentValueProfiles || (double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles >= 0.75)
+        && (!numberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles() >= 0.5))
         return true;
     
     m_optimizationDelayCounter++;
@@ -2015,6 +2039,11 @@ void CodeBlock::dumpValueProfiles()
     fprintf(stderr, "RareCaseProfile for %p:\n", this);
     for (unsigned i = 0; i < numberOfRareCaseProfiles(); ++i) {
         RareCaseProfile* profile = rareCaseProfile(i);
+        fprintf(stderr, "   bc = %d: %u\n", profile->m_bytecodeOffset, profile->m_counter);
+    }
+    fprintf(stderr, "SpecialFastCaseProfile for %p:\n", this);
+    for (unsigned i = 0; i < numberOfSpecialFastCaseProfiles(); ++i) {
+        RareCaseProfile* profile = specialFastCaseProfile(i);
         fprintf(stderr, "   bc = %d: %u\n", profile->m_bytecodeOffset, profile->m_counter);
     }
 }

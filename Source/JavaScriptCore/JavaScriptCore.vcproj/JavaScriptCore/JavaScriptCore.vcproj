@@ -1974,6 +1974,14 @@
                                     >
                             </File>
                             <File
+                                    RelativePath="..\..\heap\JettisonedCodeBlocks.cpp"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\JettisonedCodeBlocks.h"
+                                    >
+                            </File>
+                            <File
                                     RelativePath="..\..\heap\Local.h"
                                     >
                             </File>

@@ -327,6 +327,8 @@ namespace JSC {
         }
         
         JSObject* compileOptimized(ExecState*, ScopeChainNode*);
+        
+        void jettisonOptimizedCode(JSGlobalData&);
 
         EvalCodeBlock& generatedBytecode()
         {
@@ -392,6 +394,8 @@ namespace JSC {
         }
 
         JSObject* compileOptimized(ExecState*, ScopeChainNode*);
+        
+        void jettisonOptimizedCode(JSGlobalData&);
 
         ProgramCodeBlock& generatedBytecode()
         {
@@ -475,6 +479,8 @@ namespace JSC {
         }
 
         JSObject* compileOptimizedForCall(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec = 0);
+        
+        void jettisonOptimizedCodeForCall(JSGlobalData&);
 
         bool isGeneratedForCall() const
         {
@@ -498,6 +504,8 @@ namespace JSC {
         }
 
         JSObject* compileOptimizedForConstruct(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec = 0);
+        
+        void jettisonOptimizedCodeForConstruct(JSGlobalData&);
 
         bool isGeneratedForConstruct() const
         {
@@ -536,6 +544,16 @@ namespace JSC {
                 return compileOptimizedForCall(exec, scopeChainNode, exec);
             ASSERT(kind == CodeForConstruct);
             return compileOptimizedForConstruct(exec, scopeChainNode, exec);
+        }
+        
+        void jettisonOptimizedCodeFor(JSGlobalData& globalData, CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall) 
+                jettisonOptimizedCodeForCall(globalData);
+            else {
+                ASSERT(kind == CodeForConstruct);
+                jettisonOptimizedCodeForConstruct(globalData);
+            }
         }
         
         bool isGeneratedFor(CodeSpecializationKind kind)

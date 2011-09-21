@@ -408,6 +408,9 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     //         entry, since both forms of OSR are expensive. OSR entry is
     //         particularly expensive.
     //
+    //     (d) Frequent OSR failures, even those that do not result in the code
+    //         running in a hot loop, result in recompilation getting triggered.
+    //
     //     To ensure (c), we'd like to set the execute counter to
     //     counterValueForOptimizeAfterWarmUp(). This seems like it would endanger
     //     (a) and (b), since then every OSR exit would delay the opportunity for
@@ -415,11 +418,40 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     //     frequently and the function has few loops, then the counter will never
     //     become non-negative and OSR entry will never be triggered. OSR entry
     //     will only happen if a loop gets hot in the old JIT, which does a pretty
-    //     good job of ensuring (a) and (b). This heuristic may need to be
-    //     rethought in the future, particularly if we support reoptimizing code
-    //     with new value profiles gathered from code that did OSR exit.
+    //     good job of ensuring (a) and (b). But that doesn't take care of (d),
+    //     since each speculation failure would reset the execute counter.
+    //     So we check here if the number of speculation failures is significantly
+    //     larger than the number of successes (we want 90% success rate), and if
+    //     there have been a large enough number of failures. If so, we set the
+    //     counter to 0; otherwise we set the counter to
+    //     counterValueForOptimizeAfterWarmUp().
     
-    store32(Imm32(codeBlock()->alternative()->counterValueForOptimizeAfterWarmUp()), codeBlock()->alternative()->addressOfExecuteCounter());
+    move(TrustedImmPtr(codeBlock()), GPRInfo::regT0);
+    
+    load32(Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeFailCounter()), GPRInfo::regT2);
+    load32(Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeSuccessCounter()), GPRInfo::regT1);
+    add32(Imm32(1), GPRInfo::regT2);
+    add32(Imm32(-1), GPRInfo::regT1);
+    store32(GPRInfo::regT2, Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeFailCounter()));
+    store32(GPRInfo::regT1, Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeSuccessCounter()));
+    
+    move(TrustedImmPtr(codeBlock()->alternative()), GPRInfo::regT0);
+    
+    Jump fewFails = branch32(BelowOrEqual, GPRInfo::regT2, Imm32(codeBlock()->largeFailCountThreshold()));
+    mul32(Imm32(codeBlock()->desiredSuccessFailRatio()), GPRInfo::regT2, GPRInfo::regT2);
+    
+    Jump lowFailRate = branch32(BelowOrEqual, GPRInfo::regT2, GPRInfo::regT1);
+    
+    // Reoptimize as soon as possible.
+    store32(Imm32(CodeBlock::counterValueForOptimizeNextInvocation()), Address(GPRInfo::regT0, CodeBlock::offsetOfExecuteCounter()));
+    Jump doneAdjusting = jump();
+    
+    fewFails.link(this);
+    lowFailRate.link(this);
+    
+    store32(Imm32(codeBlock()->alternative()->counterValueForOptimizeAfterLongWarmUp()), Address(GPRInfo::regT0, CodeBlock::offsetOfExecuteCounter()));
+    
+    doneAdjusting.link(this);
     
     // 12) Load the result of the last bytecode operation into regT0.
     
@@ -481,6 +513,8 @@ void JITCompiler::compileEntry()
     // both normal return code and when jumping to an exception handler).
     preserveReturnAddressAfterCall(GPRInfo::regT2);
     emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
+    
+    addPtr(Imm32(1), AbsoluteAddress(codeBlock()->addressOfSpeculativeSuccessCounter()));
 }
 
 void JITCompiler::compileBody()
@@ -498,10 +532,6 @@ void JITCompiler::compileBody()
     bool compiledSpeculative = speculative.compile();
     ASSERT_UNUSED(compiledSpeculative, compiledSpeculative);
 
-#if ENABLE(DFG_OSR_ENTRY)
-    m_codeBlock->setJITCodeMap(m_jitCodeMapEncoder.finish());
-#endif
-    
     linkOSRExits(speculative);
 
     // Iterate over the m_calls vector, checking for exception checks,

@@ -1914,7 +1914,22 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned bytecodeIndex = stackFrame.args[0].int32();
 
-    if (!codeBlock->hasOptimizedReplacement()) {
+#if ENABLE(JIT_VERBOSE_OSR)
+    printf("Entered optimize_from_loop with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u\n", codeBlock->executeCounter(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
+#endif
+
+    if (codeBlock->hasOptimizedReplacement()) {
+#if ENABLE(JIT_VERBOSE_OSR)
+        printf("Considering loop OSR into %p(%p) with success/fail %u/%u.\n", codeBlock, codeBlock->replacement(), codeBlock->replacement()->speculativeSuccessCounter(), codeBlock->replacement()->speculativeFailCounter());
+#endif
+        if (codeBlock->replacement()->shouldReoptimizeFromLoopNow()) {
+#if ENABLE(JIT_VERBOSE_OSR)
+            printf("Triggering reoptimization of %p(%p) (in loop).\n", codeBlock, codeBlock->replacement());
+#endif
+            codeBlock->reoptimize(callFrame->globalData());
+            return;
+        }
+    } else {
         if (!codeBlock->shouldOptimizeNow()) {
 #if ENABLE(JIT_VERBOSE_OSR)
             printf("Delaying optimization for %p (in loop) because of insufficient profiling.\n", codeBlock);
@@ -1952,6 +1967,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
 #endif
 
         codeBlock->optimizeSoon();
+        optimizedCodeBlock->countSpeculationSuccess();
         STUB_SET_RETURN_ADDRESS(address);
         return;
     }
@@ -1959,6 +1975,30 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
 #if ENABLE(JIT_VERBOSE_OSR)
     printf("Optimizing %p from loop succeeded, OSR failed.\n", codeBlock);
 #endif
+
+    // Count the OSR failure as a speculation failure. If this happens a lot, then
+    // reoptimize.
+    optimizedCodeBlock->countSpeculationFailure();
+    
+#if ENABLE(JIT_VERBOSE_OSR)
+    printf("Encountered loop OSR failure into %p(%p) with success/fail %u/%u.\n", codeBlock, codeBlock->replacement(), codeBlock->replacement()->speculativeSuccessCounter(), codeBlock->replacement()->speculativeFailCounter());
+#endif
+
+    // We are a lot more conservative about triggering reoptimization after OSR failure than
+    // before it. If we enter the optimize_from_loop trigger with a bucket full of fail
+    // already, then we really would like to reoptimize immediately. But this case covers
+    // something else: there weren't many (or any) speculation failures before, but we just
+    // failed to enter the speculative code because some variable had the wrong value or
+    // because the OSR code decided for any spurious reason that it did not want to OSR
+    // right now. So, we only trigger reoptimization only upon the more conservative (non-loop)
+    // reoptimization trigger.
+    if (optimizedCodeBlock->shouldReoptimizeNow()) {
+#if ENABLE(JIT_VERBOSE_OSR)
+        printf("Triggering reoptimization of %p(%p) (in loop after OSR fail).\n", codeBlock, codeBlock->replacement());
+#endif
+        codeBlock->reoptimize(callFrame->globalData());
+        return;
+    }
 
     // OSR failed this time, but it might succeed next time! Let the code run a bit
     // longer and then try again.
@@ -1972,8 +2012,23 @@ DEFINE_STUB_FUNCTION(void, optimize_from_ret)
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
     
-    if (codeBlock->hasOptimizedReplacement())
+#if ENABLE(JIT_VERBOSE_OSR)
+    printf("Entered optimize_from_ret with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u\n", codeBlock->executeCounter(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
+#endif
+
+    if (codeBlock->hasOptimizedReplacement()) {
+#if ENABLE(JIT_VERBOSE_OSR)
+        printf("Returning from old JIT call frame with optimized replacement %p(%p), with success/fail %u/%u.\n", codeBlock, codeBlock->replacement(), codeBlock->replacement()->speculativeSuccessCounter(), codeBlock->replacement()->speculativeFailCounter());
+#endif
+        if (codeBlock->replacement()->shouldReoptimizeNow()) {
+#if ENABLE(JIT_VERBOSE_OSR)
+            printf("Triggering reoptimization of %p(%p) (in return).\n", codeBlock, codeBlock->replacement());
+#endif
+            codeBlock->reoptimize(callFrame->globalData());
+        }
+
         return;
+    }
     
     if (!codeBlock->shouldOptimizeNow()) {
 #if ENABLE(JIT_VERBOSE_OSR)

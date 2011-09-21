@@ -55,6 +55,11 @@ void RegisterFile::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
     conservativeRoots.add(begin(), end());
 }
 
+void RegisterFile::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JettisonedCodeBlocks& jettisonedCodeBlocks)
+{
+    conservativeRoots.add(begin(), end(), jettisonedCodeBlocks);
+}
+
 void RegisterFile::releaseExcessCapacity()
 {
     ptrdiff_t delta = reinterpret_cast<uintptr_t>(m_commitEnd) - reinterpret_cast<uintptr_t>(m_reservation.base());

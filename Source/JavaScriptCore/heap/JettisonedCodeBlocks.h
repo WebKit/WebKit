@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,59 +23,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ConservativeRoots_h
-#define ConservativeRoots_h
+#ifndef JettisonedCodeBlocks_h
+#define JettisonedCodeBlocks_h
 
-#include "Heap.h"
-#include <wtf/OSAllocator.h>
-#include <wtf/Vector.h>
+#include <wtf/FastAllocBase.h>
+#include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 
-class JSCell;
-class JettisonedCodeBlocks;
-class Heap;
+class CodeBlock;
+class SlotVisitor;
 
-class ConservativeRoots {
+class JettisonedCodeBlocks {
+    WTF_MAKE_FAST_ALLOCATED; // Only malloc'd in ConservativeRoots
 public:
-    ConservativeRoots(const MarkedBlockSet*);
-    ~ConservativeRoots();
-
-    void add(void* begin, void* end);
-    void add(void* begin, void* end, JettisonedCodeBlocks&);
+    JettisonedCodeBlocks();
     
-    size_t size();
-    JSCell** roots();
+    ~JettisonedCodeBlocks();
+    
+    void addCodeBlock(PassOwnPtr<CodeBlock>);
+    
+    void clearMarks();
+    
+    void mark(void* candidateCodeBlock)
+    {
+        // We have to check for 0 and -1 because those are used by the HashMap as markers.
+        uintptr_t value = reinterpret_cast<uintptr_t>(candidateCodeBlock);
+        
+        // This checks for both of those nasty cases in one go.
+        // 0 + 1 = 1
+        // -1 + 1 = 0
+        if (value + 1 <= 1)
+            return;
+        
+        HashMap<CodeBlock*, bool>::iterator iter = m_map.find(static_cast<CodeBlock*>(candidateCodeBlock));
+        if (iter == m_map.end())
+            return;
+        iter->second = true;
+    }
+    
+    void deleteUnmarkedCodeBlocks();
+    
+    void traceCodeBlocks(SlotVisitor&);
 
 private:
-    static const size_t inlineCapacity = 128;
-    static const size_t nonInlineCapacity = 8192 / sizeof(JSCell*);
-    
-    template<typename MarkHook>
-    void genericAddPointer(void*, TinyBloomFilter, MarkHook&);
-
-    template<typename MarkHook>
-    void genericAddSpan(void*, void* end, MarkHook&);
-    
-    void grow();
-
-    JSCell** m_roots;
-    size_t m_size;
-    size_t m_capacity;
-    const MarkedBlockSet* m_blocks;
-    JSCell* m_inlineRoots[inlineCapacity];
+    // It would be great to use an OwnPtr<CodeBlock> here but that would
+    // almost certainly not work.
+    HashMap<CodeBlock*, bool> m_map;
 };
-
-inline size_t ConservativeRoots::size()
-{
-    return m_size;
-}
-
-inline JSCell** ConservativeRoots::roots()
-{
-    return m_roots;
-}
 
 } // namespace JSC
 
-#endif // ConservativeRoots_h
+#endif // JettisonedCodeBlocks_h
+

@@ -140,6 +140,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/Handle.h \
 	Source/JavaScriptCore/heap/HandleHeap.cpp \
 	Source/JavaScriptCore/heap/HandleHeap.h \
+	Source/JavaScriptCore/heap/JettisonedCodeBlocks.cpp \
+	Source/JavaScriptCore/heap/JettisonedCodeBlocks.h \
 	Source/JavaScriptCore/heap/SlotVisitor.h \
 	Source/JavaScriptCore/heap/HandleStack.cpp \
 	Source/JavaScriptCore/heap/HandleStack.h \
@@ -464,6 +466,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/Assertions.h \
 	Source/JavaScriptCore/wtf/Atomics.h \
 	Source/JavaScriptCore/wtf/AVLTree.h \
+	Source/JavaScriptCore/wtf/BitVector.h \
 	Source/JavaScriptCore/wtf/Bitmap.h \
 	Source/JavaScriptCore/wtf/BlockStack.h \
 	Source/JavaScriptCore/wtf/BloomFilter.h \

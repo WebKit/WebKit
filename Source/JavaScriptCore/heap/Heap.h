@@ -25,6 +25,7 @@
 #include "AllocationSpace.h"
 #include "HandleHeap.h"
 #include "HandleStack.h"
+#include "JettisonedCodeBlocks.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include "MarkedSpace.h"
@@ -98,6 +99,8 @@ namespace JSC {
 
         void protect(JSValue);
         bool unprotect(JSValue); // True when the protect count drops to 0.
+        
+        void addJettisonedCodeBlock(PassOwnPtr<CodeBlock>);
 
         size_t size();
         size_t capacity();
@@ -191,6 +194,7 @@ namespace JSC {
         SlotVisitor m_slotVisitor;
         HandleHeap m_handleHeap;
         HandleStack m_handleStack;
+        JettisonedCodeBlocks m_jettisonedCodeBlocks;
         
         bool m_isSafeToCollect;
 

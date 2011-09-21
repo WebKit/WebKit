@@ -77,6 +77,7 @@ SOURCES += \
     heap/HandleHeap.cpp \
     heap/HandleStack.cpp \
     heap/Heap.cpp \
+    heap/JettisonedCodeBlocks.cpp \
     heap/MachineStackMarker.cpp \
     heap/MarkStack.cpp \
     heap/MarkedBlock.cpp \

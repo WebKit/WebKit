@@ -31,6 +31,7 @@
 #define CodeBlock_h
 
 #include "CompactJITCodeMap.h"
+#include "DFGOSREntry.h"
 #include "EvalCodeCache.h"
 #include "Instruction.h"
 #include "JITCode.h"
@@ -333,6 +334,21 @@ namespace JSC {
         {
             return m_jitCodeMap.get();
         }
+        
+        DFG::OSREntryData* appendDFGOSREntryData(unsigned bytecodeIndex, unsigned machineCodeOffset)
+        {
+            DFG::OSREntryData entry;
+            entry.m_bytecodeIndex = bytecodeIndex;
+            entry.m_machineCodeOffset = machineCodeOffset;
+            m_dfgOSREntry.append(entry);
+            return &m_dfgOSREntry.last();
+        }
+        unsigned numberOfDFGOSREntries() const { return m_dfgOSREntry.size(); }
+        DFG::OSREntryData* dfgOSREntryData(unsigned i) { return &m_dfgOSREntry[i]; }
+        DFG::OSREntryData* dfgOSREntryDataForBytecodeIndex(unsigned bytecodeIndex)
+        {
+            return binarySearch<DFG::OSREntryData, unsigned, DFG::getOSREntryDataBytecodeIndex>(m_dfgOSREntry.begin(), m_dfgOSREntry.size(), bytecodeIndex);
+        }
 #endif
 
 #if ENABLE(INTERPRETER)
@@ -360,9 +376,11 @@ namespace JSC {
             m_jitCodeWithArityCheck = codeWithArityCheck;
         }
         JITCode& getJITCode() { return m_jitCode; }
+        MacroAssemblerCodePtr getJITCodeWithArityCheck() { return m_jitCodeWithArityCheck; }
         JITCode::JITType getJITType() { return m_jitCode.jitType(); }
         ExecutableMemoryHandle* executableMemory() { return getJITCode().getExecutableMemory(); }
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*) = 0;
+        virtual void jettison(JSGlobalData&) = 0;
         virtual CodeBlock* replacement() = 0;
         virtual bool canCompileWithDFG() = 0;
         bool hasOptimizedReplacement()
@@ -685,11 +703,37 @@ namespace JSC {
         // trigger files. All CodeBlocks start out with optimizeAfterWarmUp(),
         // as this is called from the CodeBlock constructor.
         
+        // When we observe a lot of speculation failures, we trigger a
+        // reoptimization. But each time, we increase the optimization trigger
+        // to avoid thrashing.
+        unsigned reoptimizationRetryCounter() const
+        {
+            ASSERT(m_reoptimizationRetryCounter <= 18);
+            return m_reoptimizationRetryCounter;
+        }
+        
+        void countReoptimization()
+        {
+            m_reoptimizationRetryCounter++;
+            if (m_reoptimizationRetryCounter > 18)
+                m_reoptimizationRetryCounter = 18;
+        }
+        
         // These functions are provided to support calling
-        // optimizeAfterWarmUp() from JIT-generated code.
+        // optimizeXYZ() methods from JIT-generated code.
+        static int32_t counterValueForOptimizeNextInvocation()
+        {
+            return 0;
+        }
+        
         int32_t counterValueForOptimizeAfterWarmUp()
         {
-            return -1000;
+            return -1000 << reoptimizationRetryCounter();
+        }
+        
+        int32_t counterValueForOptimizeAfterLongWarmUp()
+        {
+            return -5000 << reoptimizationRetryCounter();
         }
         
         int32_t* addressOfExecuteCounter()
@@ -697,12 +741,18 @@ namespace JSC {
             return &m_executeCounter;
         }
         
+        static ptrdiff_t offsetOfExecuteCounter() { return OBJECT_OFFSETOF(CodeBlock, m_executeCounter); }
+
+        int32_t executeCounter() const { return m_executeCounter; }
+        
+        unsigned optimizationDelayCounter() const { return m_optimizationDelayCounter; }
+        
         // Call this to force the next optimization trigger to fire. This is
         // rarely wise, since optimization triggers are typically more
         // expensive than executing baseline code.
         void optimizeNextInvocation()
         {
-            m_executeCounter = 0;
+            m_executeCounter = counterValueForOptimizeNextInvocation();
         }
         
         // Call this to prevent optimization from happening again. Note that
@@ -726,6 +776,13 @@ namespace JSC {
             m_executeCounter = counterValueForOptimizeAfterWarmUp();
         }
         
+        // Call this to force an optimization trigger to fire only after
+        // a lot of warm-up.
+        void optimizeAfterLongWarmUp()
+        {
+            m_executeCounter = counterValueForOptimizeAfterLongWarmUp();
+        }
+        
         // Call this to cause an optimization trigger to fire soon, but
         // not necessarily the next one. This makes sense if optimization
         // succeeds. Successfuly optimization means that all calls are
@@ -746,18 +803,72 @@ namespace JSC {
         // in the baseline code.
         void optimizeSoon()
         {
-            m_executeCounter = -100;
+            m_executeCounter = -100 << reoptimizationRetryCounter();
         }
+        
+        // The speculative JIT tracks its success rate, so that we can
+        // decide when to reoptimize. It's interesting to note that these
+        // counters may overflow without any protection. The success
+        // counter will overflow before the fail one does, becuase the
+        // fail one is used as a trigger to reoptimize. So the worst case
+        // is that the success counter overflows and we reoptimize without
+        // needing to. But this is harmless. If a method really did
+        // execute 2^32 times then compiling it again probably won't hurt
+        // anyone.
+        
+        void countSpeculationSuccess()
+        {
+            m_speculativeSuccessCounter++;
+        }
+        
+        void countSpeculationFailure()
+        {
+            m_speculativeFailCounter++;
+        }
+        
+        uint32_t speculativeSuccessCounter() const { return m_speculativeSuccessCounter; }
+        uint32_t speculativeFailCounter() const { return m_speculativeFailCounter; }
+        
+        uint32_t* addressOfSpeculativeSuccessCounter() { return &m_speculativeSuccessCounter; }
+        uint32_t* addressOfSpeculativeFailCounter() { return &m_speculativeFailCounter; }
+        
+        static ptrdiff_t offsetOfSpeculativeSuccessCounter() { return OBJECT_OFFSETOF(CodeBlock, m_speculativeSuccessCounter); }
+        static ptrdiff_t offsetOfSpeculativeFailCounter() { return OBJECT_OFFSETOF(CodeBlock, m_speculativeFailCounter); }
         
         // The amount by which the JIT will increment m_executeCounter.
         static unsigned executeCounterIncrementForLoop() { return 1; }
         static unsigned executeCounterIncrementForReturn() { return 15; }
+
+        // The success/failure ratio we want.
+        unsigned desiredSuccessFailRatio() { return 6; }
+        
+        // The number of failures that triggers the use of the ratio.
+        unsigned largeFailCountThreshold() { return 20 << alternative()->reoptimizationRetryCounter(); }
+        unsigned largeFailCountThresholdForLoop() { return 1 << alternative()->reoptimizationRetryCounter(); }
+        
+        bool shouldReoptimizeNow()
+        {
+            return desiredSuccessFailRatio() * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThreshold();
+        }
+        
+        bool shouldReoptimizeFromLoopNow()
+        {
+            return desiredSuccessFailRatio() * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThresholdForLoop();
+        }
         
 #if ENABLE(VALUE_PROFILER)
         bool shouldOptimizeNow();
 #else
         bool shouldOptimizeNow() { return false; }
 #endif
+        
+        void reoptimize(JSGlobalData& globalData)
+        {
+            ASSERT(replacement() != this);
+            replacement()->jettison(globalData);
+            countReoptimization();
+            optimizeAfterWarmUp();
+        }
 
 #if ENABLE(VERBOSE_VALUE_PROFILE)
         void dumpValueProfiles();
@@ -827,6 +938,7 @@ namespace JSC {
 #endif
 #if ENABLE(DFG_JIT)
         OwnPtr<CompactJITCodeMap> m_jitCodeMap;
+        Vector<DFG::OSREntryData> m_dfgOSREntry;
 #endif
 #if ENABLE(VALUE_PROFILER)
         SegmentedVector<ValueProfile, 8> m_valueProfiles;
@@ -851,7 +963,10 @@ namespace JSC {
         OwnPtr<PredictionTracker> m_predictions;
 
         int32_t m_executeCounter;
+        uint32_t m_speculativeSuccessCounter;
+        uint32_t m_speculativeFailCounter;
         uint8_t m_optimizationDelayCounter;
+        uint8_t m_reoptimizationRetryCounter;
 
         struct RareData {
            WTF_MAKE_FAST_ALLOCATED;
@@ -909,6 +1024,7 @@ namespace JSC {
 #if ENABLE(JIT)
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
+        virtual void jettison(JSGlobalData&);
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFG();
 #endif
@@ -935,6 +1051,7 @@ namespace JSC {
 #if ENABLE(JIT)
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
+        virtual void jettison(JSGlobalData&);
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFG();
 #endif
@@ -962,6 +1079,7 @@ namespace JSC {
 #if ENABLE(JIT)
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
+        virtual void jettison(JSGlobalData&);
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFG();
 #endif

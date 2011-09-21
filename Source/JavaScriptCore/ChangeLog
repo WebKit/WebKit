@@ -1,3 +1,102 @@
+2011-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should support continuous optimization
+        https://bugs.webkit.org/show_bug.cgi?id=68329
+
+        Reviewed by Geoffrey Garen.
+        
+        This adds the ability to reoptimize a code block if speculation
+        failures happen frequently. 6% speed-up on Kraken, 1% slow-down
+        on V8, neutral on SunSpider.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::ProgramCodeBlock::jettison):
+        (JSC::EvalCodeBlock::jettison):
+        (JSC::FunctionCodeBlock::jettison):
+        (JSC::CodeBlock::shouldOptimizeNow):
+        (JSC::CodeBlock::dumpValueProfiles):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getStrongPrediction):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        (JSC::DFG::JITCompiler::compileEntry):
+        (JSC::DFG::JITCompiler::compileBody):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSREntry.h:
+        (JSC::DFG::getOSREntryDataBytecodeIndex):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::ConservativeRoots):
+        (JSC::ConservativeRoots::~ConservativeRoots):
+        (JSC::DummyMarkHook::mark):
+        (JSC::ConservativeRoots::genericAddPointer):
+        (JSC::ConservativeRoots::genericAddSpan):
+        (JSC::ConservativeRoots::add):
+        * heap/ConservativeRoots.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::addJettisonCodeBlock):
+        (JSC::Heap::markRoots):
+        * heap/Heap.h:
+        * heap/JettisonedCodeBlocks.cpp: Added.
+        (JSC::JettisonedCodeBlocks::JettisonedCodeBlocks):
+        (JSC::JettisonedCodeBlocks::~JettisonedCodeBlocks):
+        (JSC::JettisonedCodeBlocks::addCodeBlock):
+        (JSC::JettisonedCodeBlocks::clearMarks):
+        (JSC::JettisonedCodeBlocks::deleteUnmarkedCodeBlocks):
+        (JSC::JettisonedCodeBlocks::traceCodeBlocks):
+        * heap/JettisonedCodeBlocks.h: Added.
+        (JSC::JettisonedCodeBlocks::mark):
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::gatherConservativeRoots):
+        * interpreter/RegisterFile.h:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Executable.cpp:
+        (JSC::jettisonCodeBlock):
+        (JSC::EvalExecutable::jettisonOptimizedCode):
+        (JSC::ProgramExecutable::jettisonOptimizedCode):
+        (JSC::FunctionExecutable::jettisonOptimizedCodeForCall):
+        (JSC::FunctionExecutable::jettisonOptimizedCodeForConstruct):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::jettisonOptimizedCodeFor):
+        * wtf/BitVector.h: Added.
+        (WTF::BitVector::BitVector):
+        (WTF::BitVector::~BitVector):
+        (WTF::BitVector::operator=):
+        (WTF::BitVector::size):
+        (WTF::BitVector::ensureSize):
+        (WTF::BitVector::resize):
+        (WTF::BitVector::clearAll):
+        (WTF::BitVector::get):
+        (WTF::BitVector::set):
+        (WTF::BitVector::clear):
+        (WTF::BitVector::bitsInPointer):
+        (WTF::BitVector::maxInlineBits):
+        (WTF::BitVector::byteCount):
+        (WTF::BitVector::makeInlineBits):
+        (WTF::BitVector::OutOfLineBits::numBits):
+        (WTF::BitVector::OutOfLineBits::numWords):
+        (WTF::BitVector::OutOfLineBits::bits):
+        (WTF::BitVector::OutOfLineBits::create):
+        (WTF::BitVector::OutOfLineBits::destroy):
+        (WTF::BitVector::OutOfLineBits::OutOfLineBits):
+        (WTF::BitVector::isInline):
+        (WTF::BitVector::outOfLineBits):
+        (WTF::BitVector::resizeOutOfLine):
+        (WTF::BitVector::bits):
+
 2011-09-21  Gavin Barraclough  <barraclough@apple.com>
 
         Should support value profiling on CPU(X86)

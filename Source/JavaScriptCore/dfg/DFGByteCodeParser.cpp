@@ -492,7 +492,7 @@ private:
         ASSERT(profile);
         PredictedType prediction = profile->computeUpdatedPrediction();
 #if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("Dynamic [%u, %u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(prediction));
+        printf("Dynamic [@%u, bc#%u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(prediction));
 #endif
         return prediction;
     }

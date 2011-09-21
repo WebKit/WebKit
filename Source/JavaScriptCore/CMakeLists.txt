@@ -49,6 +49,7 @@ SET(JavaScriptCore_SOURCES
     heap/Heap.cpp
     heap/HandleHeap.cpp
     heap/HandleStack.cpp
+    heap/JettisonedCodeBlocks.cpp
     heap/MachineStackMarker.cpp
     heap/MarkedBlock.cpp
     heap/MarkedSpace.cpp

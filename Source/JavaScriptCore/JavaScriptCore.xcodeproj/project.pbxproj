@@ -74,6 +74,9 @@
 		0FD82E86141F3FF100179C94 /* PredictedType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E84141F3FDA00179C94 /* PredictedType.cpp */; };
 		0FD82E9014207A5F00179C94 /* ValueProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E8E14207A5100179C94 /* ValueProfile.cpp */; };
 		0FD82EF51423075B00179C94 /* DFGIntrinsic.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82EF31423073900179C94 /* DFGIntrinsic.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD82F2B1426CA6D00179C94 /* JettisonedCodeBlocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82F291426CA5A00179C94 /* JettisonedCodeBlocks.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD82F2C1426CA7400179C94 /* JettisonedCodeBlocks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82F281426CA5A00179C94 /* JettisonedCodeBlocks.cpp */; };
+		0FD82F4B142806A100179C94 /* BitVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82F491428069200179C94 /* BitVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400067712A6F7830064D123 /* OSAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400067612A6F7830064D123 /* OSAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400069312A6F9E10064D123 /* OSAllocatorPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */; };
 		140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */; };
@@ -813,6 +816,9 @@
 		0FD82E84141F3FDA00179C94 /* PredictedType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PredictedType.cpp; sourceTree = "<group>"; };
 		0FD82E8E14207A5100179C94 /* ValueProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueProfile.cpp; sourceTree = "<group>"; };
 		0FD82EF31423073900179C94 /* DFGIntrinsic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGIntrinsic.h; path = dfg/DFGIntrinsic.h; sourceTree = "<group>"; };
+		0FD82F281426CA5A00179C94 /* JettisonedCodeBlocks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JettisonedCodeBlocks.cpp; sourceTree = "<group>"; };
+		0FD82F291426CA5A00179C94 /* JettisonedCodeBlocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JettisonedCodeBlocks.h; sourceTree = "<group>"; };
+		0FD82F491428069200179C94 /* BitVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitVector.h; sourceTree = "<group>"; };
 		1400067612A6F7830064D123 /* OSAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSAllocator.h; sourceTree = "<group>"; };
 		1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSAllocatorPosix.cpp; sourceTree = "<group>"; };
 		140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasePrivate.h; sourceTree = "<group>"; };
@@ -1621,6 +1627,8 @@
 		142E312A134FF0A600AFADB5 /* heap */ = {
 			isa = PBXGroup;
 			children = (
+				0FD82F281426CA5A00179C94 /* JettisonedCodeBlocks.cpp */,
+				0FD82F291426CA5A00179C94 /* JettisonedCodeBlocks.h */,
 				A70456AF1427FB150037DA68 /* AllocationSpace.h */,
 				A70456AE1427FB030037DA68 /* AllocationSpace.cpp */,
 				0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */,
@@ -1797,6 +1805,7 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
+				0FD82F491428069200179C94 /* BitVector.h */,
 				C22C524813FAF6EF00B7DC0D /* dtoa */,
 				06D358A00DAAD9C4003B174E /* mac */,
 				8656573E115BE35200291F40 /* text */,
@@ -2423,6 +2432,8 @@
 				BC257DE80E1F51C50016B6C9 /* Arguments.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
+				0FD82F4B142806A100179C94 /* BitVector.h in Headers */,
+				0FD82F2B1426CA6D00179C94 /* JettisonedCodeBlocks.h in Headers */,
 				0FD82EF51423075B00179C94 /* DFGIntrinsic.h in Headers */,
 				0FD82E85141F3FE300179C94 /* BoundsCheckedPointer.h in Headers */,
 				0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */,
@@ -3113,6 +3124,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0FD82F2C1426CA7400179C94 /* JettisonedCodeBlocks.cpp in Sources */,
 				0FD82E9014207A5F00179C94 /* ValueProfile.cpp in Sources */,
 				0FD82E86141F3FF100179C94 /* PredictedType.cpp in Sources */,
 				0FD82E56141DAF0800179C94 /* DFGOSREntry.cpp in Sources */,

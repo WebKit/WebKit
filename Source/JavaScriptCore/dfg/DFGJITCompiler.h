@@ -320,7 +320,46 @@ public:
     
     void noticeOSREntry(BasicBlock& basicBlock)
     {
-        m_jitCodeMapEncoder.append(basicBlock.bytecodeBegin, differenceBetween(m_startOfCode, label()));
+#if ENABLE(DFG_OSR_ENTRY)
+        OSREntryData* entry = codeBlock()->appendDFGOSREntryData(basicBlock.bytecodeBegin, differenceBetween(m_startOfCode, label()));
+        
+        unsigned lastLiveArgument = 0;
+        unsigned lastLiveLocal = 0;
+        
+        for (unsigned i = 0; i < basicBlock.m_arguments.size(); ++i) {
+            if (basicBlock.m_arguments[i].value != NoNode)
+                lastLiveArgument = i;
+        }
+        
+        for (unsigned i = 0; i < basicBlock.m_locals.size(); ++i) {
+            if (basicBlock.m_locals[i].value != NoNode)
+                lastLiveLocal = i;
+        }
+        
+        if (lastLiveArgument) {
+            entry->m_liveArguments.resize(lastLiveArgument + 1);
+            entry->m_liveArguments.clearAll();
+            
+            for (unsigned i = 0; i <= lastLiveArgument; ++i) {
+                if (basicBlock.m_arguments[i].value != NoNode)
+                    entry->m_liveArguments.set(i);
+            }
+        } else
+            entry->m_liveArguments.clearAll();
+        
+        if (lastLiveLocal) {
+            entry->m_liveVariables.resize(lastLiveLocal + 1);
+            entry->m_liveVariables.clearAll();
+            
+            for (unsigned i = 0; i <= lastLiveLocal; ++i) {
+                if (basicBlock.m_locals[i].value != NoNode)
+                    entry->m_liveVariables.set(i);
+            }
+        } else
+            entry->m_liveVariables.clearAll();
+#else
+        UNUSED_PARAM(basicBlock);
+#endif
     }
 
 private:
@@ -353,7 +392,6 @@ private:
     
     // JIT code map for OSR entrypoints.
     Label m_startOfCode;
-    CompactJITCodeMap::Encoder m_jitCodeMapEncoder;
 
     struct PropertyAccessRecord {
         PropertyAccessRecord(Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
