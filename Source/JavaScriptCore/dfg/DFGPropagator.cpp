@@ -533,6 +533,17 @@ private:
             changed |= mergeUse(node.child1(), PredictObjectUnknown | StrongPredictionTag);
             break;
         }
+            
+        case GetCallee: {
+            changed |= setPrediction(makePrediction(PredictObjectOther, StrongPrediction));
+            break;
+        }
+            
+        case CreateThis: {
+            changed |= mergeUse(node.child1(), PredictObjectUnknown | StrongPredictionTag);
+            changed |= setPrediction(makePrediction(PredictFinalObject, StrongPrediction));
+            break;
+        }
 
 #ifndef NDEBUG
         // These get ignored because they don't return anything.
@@ -1018,6 +1029,7 @@ private:
         case ArithMin:
         case ArithMax:
         case ArithSqrt:
+        case GetCallee:
             setReplacement(pureCSE(node));
             break;
             

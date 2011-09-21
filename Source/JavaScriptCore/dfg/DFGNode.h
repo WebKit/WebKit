@@ -211,7 +211,11 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
 #define FOR_EACH_DFG_OP(macro) \
     /* Nodes for constants. */\
     macro(JSConstant, NodeResultJS) \
+    \
+    /* Nodes for handling functions (both as call and as construct). */\
     macro(ConvertThis, NodeResultJS) \
+    macro(CreateThis, NodeResultJS) /* Note this is not MustGenerate since we're returning it anyway. */ \
+    macro(GetCallee, NodeResultJS) \
     \
     /* Nodes for local variable access. */\
     macro(GetLocal, NodeResultJS) \

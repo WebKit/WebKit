@@ -730,6 +730,17 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_convert_this);
         }
 
+        case op_create_this: {
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(CreateThis, op1));
+            NEXT_OPCODE(op_create_this);
+        }
+            
+        case op_get_callee: {
+            set(currentInstruction[1].u.operand, addToGraph(GetCallee));
+            NEXT_OPCODE(op_get_callee);
+        }
+
         // === Bitwise operations ===
 
         case op_bitand: {

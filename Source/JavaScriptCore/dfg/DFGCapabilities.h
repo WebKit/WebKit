@@ -37,7 +37,7 @@ namespace JSC { namespace DFG {
 inline bool mightCompileEval(CodeBlock*) { return true; }
 inline bool mightCompileProgram(CodeBlock*) { return true; }
 inline bool mightCompileFunctionForCall(CodeBlock*) { return true; }
-inline bool mightCompileFunctionForConstruct(CodeBlock*) { return false; }
+inline bool mightCompileFunctionForConstruct(CodeBlock*) { return true; }
 
 // Opcode checking.
 inline bool canCompileOpcode(OpcodeID opcodeID)
@@ -45,6 +45,8 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     switch (opcodeID) {
     case op_enter:
     case op_convert_this:
+    case op_create_this:
+    case op_get_callee:
     case op_bitand:
     case op_bitor:
     case op_bitxor:

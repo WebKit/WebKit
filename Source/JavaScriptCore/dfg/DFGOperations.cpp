@@ -119,6 +119,27 @@ EncodedJSValue operationConvertThis(ExecState* exec, EncodedJSValue encodedOp)
     return JSValue::encode(JSValue::decode(encodedOp).toThisObject(exec));
 }
 
+EncodedJSValue operationCreateThis(ExecState* exec, EncodedJSValue encodedOp)
+{
+    JSFunction* constructor = asFunction(exec->callee());
+    
+#if !ASSERT_DISABLED
+    ConstructData constructData;
+    ASSERT(constructor->getConstructData(constructData) == ConstructTypeJS);
+#endif
+    
+    JSGlobalData& globalData = exec->globalData();
+    
+    Structure* structure;
+    JSValue proto = JSValue::decode(encodedOp);
+    if (proto.isObject())
+        structure = asObject(proto)->inheritorID(globalData);
+    else
+        structure = constructor->scope()->globalObject->emptyObjectStructure();
+    
+    return JSValue::encode(constructEmptyObject(exec, structure));
+}
+
 EncodedJSValue operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     JSValue op1 = JSValue::decode(encodedOp1);

@@ -1527,6 +1527,90 @@ void SpeculativeJIT::compile(Node& node)
         cellResult(thisValue.gpr(), m_compileIndex);
         break;
     }
+        
+    case CreateThis: {
+        // Note that there is not so much profit to speculate here. The only things we
+        // speculate on are (1) that it's a cell, since that eliminates cell checks
+        // later if the proto is reused, and (2) if we have a FinalObject prediction
+        // then we speculate because we want to get recompiled if it isn't (since
+        // otherwise we'd start taking slow path a lot).
+        
+        SpeculateCellOperand proto(this, node.child1());
+        GPRTemporary result(this);
+        GPRTemporary scratch(this);
+        
+        GPRReg protoGPR = proto.gpr();
+        GPRReg resultGPR = result.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+        
+        proto.use();
+        
+        MacroAssembler::JumpList slowPath;
+        
+        // Need to verify that the prototype is an object. If we have reason to believe
+        // that it's a FinalObject then we speculate on that directly. Otherwise we
+        // do the slow (structure-based) check.
+        if (shouldSpeculateFinalObject(node.child1()))
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(protoGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsFinalObjectVPtr)));
+        else {
+            m_jit.loadPtr(MacroAssembler::Address(protoGPR, JSCell::structureOffset()), scratchGPR);
+            slowPath.append(m_jit.branch8(MacroAssembler::Below, MacroAssembler::Address(scratchGPR, Structure::typeInfoTypeOffset()), MacroAssembler::TrustedImm32(ObjectType)));
+        }
+        
+        // Load the inheritorID (the Structure that objects who have protoGPR as the prototype
+        // use to refer to that prototype). If the inheritorID is not set, go to slow path.
+        m_jit.loadPtr(MacroAssembler::Address(protoGPR, JSObject::offsetOfInheritorID()), scratchGPR);
+        slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, scratchGPR));
+        
+        MarkedSpace::SizeClass* sizeClass = &m_jit.globalData()->heap.sizeClassForObject(sizeof(JSFinalObject));
+        
+        m_jit.loadPtr(&sizeClass->firstFreeCell, resultGPR);
+        slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, resultGPR));
+        
+        // The object is half-allocated: we have what we know is a fresh object, but
+        // it's still on the GC's free list.
+        
+        // Ditch the inheritorID by placing it into the structure, so that we can reuse
+        // scratchGPR.
+        m_jit.storePtr(scratchGPR, MacroAssembler::Address(resultGPR, JSObject::structureOffset()));
+        
+        // Now that we have scratchGPR back, remove the object from the free list
+        m_jit.loadPtr(MacroAssembler::Address(resultGPR), scratchGPR);
+        m_jit.storePtr(scratchGPR, &sizeClass->firstFreeCell);
+        
+        // Initialize the object's vtable
+        m_jit.storePtr(MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsFinalObjectVPtr), MacroAssembler::Address(resultGPR));
+        
+        // Initialize the object's inheritorID.
+        m_jit.storePtr(MacroAssembler::TrustedImmPtr(0), MacroAssembler::Address(resultGPR, JSObject::offsetOfInheritorID()));
+        
+        // Initialize the object's property storage pointer.
+        m_jit.addPtr(MacroAssembler::TrustedImm32(sizeof(JSObject)), resultGPR, scratchGPR);
+        m_jit.storePtr(scratchGPR, MacroAssembler::Address(resultGPR, JSFinalObject::offsetOfPropertyStorage()));
+        
+        MacroAssembler::Jump done = m_jit.jump();
+        
+        slowPath.link(&m_jit);
+        
+        silentSpillAllRegisters(resultGPR);
+        m_jit.move(protoGPR, GPRInfo::argumentGPR1);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        appendCallWithExceptionCheck(operationCreateThis);
+        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        silentFillAllRegisters(resultGPR);
+        
+        done.link(&m_jit);
+        
+        cellResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
+        break;
+    }
+        
+    case GetCallee: {
+        GPRTemporary result(this);
+        m_jit.loadPtr(JITCompiler::addressFor(static_cast<VirtualRegister>(RegisterFile::Callee)), result.gpr());
+        cellResult(result.gpr(), m_compileIndex);
+        break;
+    }
 
     case GetById: {
         SpeculateCellOperand base(this, node.child1());

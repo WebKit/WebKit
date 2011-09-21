@@ -370,13 +370,13 @@ JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, ScopeChai
     return error;
 }
 
-JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode)
+JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec)
 {
     ASSERT(exec->globalData().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForConstruct);
     JSObject* error = 0;
     if (m_codeBlockForConstruct->getJITType() != JITCode::topTierJIT())
-        error = compileForConstructInternal(exec, scopeChainNode, JITCode::nextTierJIT(m_codeBlockForConstruct->getJITType()));
+        error = compileForConstructInternal(exec, scopeChainNode, calleeArgsExec, JITCode::nextTierJIT(m_codeBlockForConstruct->getJITType()));
     ASSERT(!!m_codeBlockForConstruct);
     return error;
 }
@@ -459,7 +459,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     return 0;
 }
 
-JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, ScopeChainNode* scopeChainNode, JITCode::JITType jitType)
+JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec, JITCode::JITType jitType)
 {
     UNUSED_PARAM(jitType);
     
@@ -498,7 +498,8 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
 #if ENABLE(JIT)
     if (exec->globalData().canUseJIT()) {
         bool dfgCompiled = false;
-        // FIXME: Make it possible to compile constructors with DFG.
+        if (jitType == JITCode::DFGJIT)
+            dfgCompiled = DFG::tryCompileFunction(exec, calleeArgsExec, m_codeBlockForConstruct.get(), m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck);
         if (dfgCompiled) {
             if (m_codeBlockForConstruct->alternative())
                 m_codeBlockForConstruct->alternative()->unlinkIncomingCalls();
