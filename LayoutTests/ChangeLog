@@ -1,5 +1,11 @@
 2011-09-20  Keishi Hattori  <keishi@webkit.org>
 
+        [chromium] changed test expectations for zoom-svg-through-object-with-auto-size.html:wq
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-20  Keishi Hattori  <keishi@webkit.org>
+
         [chromium] rebaseline caused by r95567
 
         * platform/chromium-cg-mac/fast/clip/overflow-border-radius-fixed-position-expected.png: Added.

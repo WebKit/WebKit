@@ -3574,7 +3574,7 @@ BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtm
 BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT
 BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = PASS IMAGE+TEXT IMAGE
 BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT
-BUGWK63186 SNOWLEOPARD DEBUG : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = PASS IMAGE+TEXT
+BUGWK63186 SNOWLEOPARD : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = PASS IMAGE+TEXT
 BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT
 BUGWK63186 LEOPARD : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = PASS IMAGE+TEXT IMAGE
 BUGWK63186 SNOWLEOPARD : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = PASS IMAGE+TEXT
