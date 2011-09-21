@@ -1524,6 +1524,14 @@ void SpeculativeJIT::compile(Node& node)
         noResult(m_compileIndex);
         break;
     }
+        
+    case Throw:
+    case ThrowReferenceError: {
+        // We expect that throw statements are rare and are intended to exit the code block
+        // anyway, so we just OSR back to the old JIT for now.
+        terminateSpeculativeExecution();
+        break;
+    }
 
     case ConvertThis: {
         SpeculateCellOperand thisValue(this, node.child1());

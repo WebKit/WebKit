@@ -1314,6 +1314,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(Return, get(currentInstruction[1].u.operand));
             LAST_OPCODE(op_end);
             
+        case op_throw:
+            addToGraph(Throw, get(currentInstruction[1].u.operand));
+            LAST_OPCODE(op_throw);
+            
+        case op_throw_reference_error:
+            addToGraph(ThrowReferenceError);
+            LAST_OPCODE(op_throw_reference_error);
+            
         case op_call: {
             NodeIndex callTarget = get(currentInstruction[1].u.operand);
             if (m_graph.isFunctionConstant(m_codeBlock, callTarget)) {

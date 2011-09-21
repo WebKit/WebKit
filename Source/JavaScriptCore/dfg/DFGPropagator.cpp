@@ -552,6 +552,8 @@ private:
         case Return:
         case CheckHasInstance:
         case Phi:
+        case Throw:
+        case ThrowReferenceError:
             break;
             
         // These get ignored because we don't have profiling for them, yet.

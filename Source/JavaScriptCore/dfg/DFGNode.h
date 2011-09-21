@@ -297,7 +297,9 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     /* Block terminals. */\
     macro(Jump, NodeMustGenerate | NodeIsTerminal | NodeIsJump) \
     macro(Branch, NodeMustGenerate | NodeIsTerminal | NodeIsBranch) \
-    macro(Return, NodeMustGenerate | NodeIsTerminal)
+    macro(Return, NodeMustGenerate | NodeIsTerminal) \
+    macro(Throw, NodeMustGenerate | NodeIsTerminal) \
+    macro(ThrowReferenceError, NodeMustGenerate | NodeIsTerminal)
 
 // This enum generates a monotonically increasing id for all Node types,
 // and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).

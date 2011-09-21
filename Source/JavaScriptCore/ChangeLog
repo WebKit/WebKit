@@ -1,5 +1,28 @@
 2011-09-21  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT should be able to compile op_throw
+        https://bugs.webkit.org/show_bug.cgi?id=68571
+
+        Reviewed by Geoffrey Garen.
+        
+        This compiles op_throw in the simplest way possible: it's an OSR
+        point back to the old JIT. This is a good step towards increasing
+        coverage, particularly on Kraken, but it's neutral because the
+        same functions that do throw also use some other unsupported
+        opcodes.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * dfg/DFGNode.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-09-21  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should support continuous optimization
         https://bugs.webkit.org/show_bug.cgi?id=68329
 
