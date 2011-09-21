@@ -1641,6 +1641,7 @@
 				939D054F09DA02D500984996 /* Check For Global Initializers */,
 				9337D6540EBFE54D00DA3CB5 /* Check For Exit Time Destructors */,
 				5D0D54210E98631D0029E223 /* Check For Weak VTables and Externals */,
+				3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */,
 				5D88EE6C11407DE800BC3ABC /* Check For Framework Include Consistency */,
 				5DE6D18C0FCF231B002DE28C /* Symlink WebKitPluginHost in to place */,
 			);
@@ -1730,6 +1731,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p \"${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}\"\nmkdir -p \"${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit\"\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make -C mac -f \"MigrateHeaders.make\" -j `/usr/sbin/sysctl -n hw.availcpu`\nfi\n";
+		};
+		3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "Check For Inappropriate Objective-C Class Names";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names Web _Web || exit $?\nfi";
 		};
 		5D0D54210E98631D0029E223 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;

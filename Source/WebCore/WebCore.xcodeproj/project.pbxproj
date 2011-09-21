@@ -23557,6 +23557,7 @@
 				939D050109D9FF6B00984996 /* Check For Global Initializers */,
 				933457E60EBFDF6B00B80894 /* Check For Exit Time Destructors */,
 				5D0D540D0E9862F60029E223 /* Check For Weak VTables and Externals */,
+				37A1EAA3142699BC0087F425 /* Check For Inappropriate Objective-C Class Names */,
 				5DF50887116F3077005202AB /* Check For Inappropriate Files In Framework */,
 			);
 			buildRules = (
@@ -23687,6 +23688,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Copy all the Inspector front-end resources.\nditto \"${SRCROOT}/inspector/front-end\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\"\nditto \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/InspectorBackendStub.js\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\"\n\n# Remove the WebKit.qrc file since it is not used on the Mac (this file is for Qt).\nrm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/WebKit.qrc\"\n\n# Remove *.re2js files, they are only used to generate some .js files.\nrm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/\"*.re2js\n\n# Remove any .svn directories that may have been copied over.\nfind \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\" -name \".svn\" -type d | xargs rm -rf\n";
+		};
+		37A1EAA3142699BC0087F425 /* Check For Inappropriate Objective-C Class Names */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "Check For Inappropriate Objective-C Class Names";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names DOM Web || exit $?\nfi";
 		};
 		5D0D540D0E9862F60029E223 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
