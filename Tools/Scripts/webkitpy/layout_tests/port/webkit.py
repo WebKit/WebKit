@@ -446,6 +446,7 @@ class WebKitDriver(Driver):
         environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
         # FIXME: We're assuming that WebKitTestRunner checks this DumpRenderTree-named environment variable.
         environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
+        environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
         self._server_process = server_process.ServerProcess(self._port, server_name, self.cmd_line(), environment)
 
     def poll(self):

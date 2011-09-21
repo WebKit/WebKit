@@ -1,3 +1,29 @@
+2011-09-20  Eric Seidel  <eric@webkit.org>
+
+        [NRWT] REGRESSION: Local loader tests are failing on machines that lost /tmp/LayoutTests symlink
+        https://bugs.webkit.org/show_bug.cgi?id=65781
+
+        Reviewed by Ryosuke Niwa.
+
+        Instead of making NRWT create the symlink, I made DumpRenderTree smart enough
+        to resolve the passed in url relative to the absolute url for the test.
+        For http tests, since the test url is an http url, we can't resolve relative
+        to the test path, and thus use a new LOCAL_RESOURCE_ROOT environment variable
+        for resolving.
+
+        I believe this is a better approach than the on used in the Qt and Chromium DRT's
+        (which resolves the path relative to the built location of the DRT executable)
+        and we should move this new code into a shared location in a follow-up patch.
+
+        It turns out that there was a second use for pathToLocalResource, used by one
+        test (http/tests/plugins/post-url-file.html) used for getting a path to /tmp.
+        To support this test I made the new pathToLocalResource smart enough to map
+        /tmp to DUMPRENDERTREE_TEMP (which is already defined for all ports).
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::pathToLocalResource):
+        * Scripts/webkitpy/layout_tests/port/webkit.py: Set LOCAL_RESOURCE_ROOT for use by DRT.
+
 2011-09-20  Tom Zakrajsek  <tomz@codeaurora.org>
 
         Need to specify a django version, instead of using default

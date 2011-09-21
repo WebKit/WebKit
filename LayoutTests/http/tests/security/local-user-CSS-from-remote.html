@@ -8,7 +8,8 @@
         // This won't work outside of DRT!
         if (window.location.hash == '') {
             layoutTestController.waitUntilDone();
-            layoutTestController.setUserStyleSheetLocation("file:///tmp/LayoutTests/http/tests/security/resources/cssStyle.css");
+            var stylesheetLocation = layoutTestController.pathToLocalResource("file:///tmp/LayoutTests/http/tests/security/resources/cssStyle.css");
+            layoutTestController.setUserStyleSheetLocation(stylesheetLocation);
             layoutTestController.setUserStyleSheetEnabled(true);
             location += '?#done';
         }
