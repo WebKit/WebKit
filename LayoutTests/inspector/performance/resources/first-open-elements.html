@@ -1,0 +1,42 @@
+<html>
+<head>
+<script src="../../../http/tests/inspector/inspector-test.js"></script>
+<script src="performance-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("audits");
+
+
+    function test(timer)
+    {
+        WebInspector.showPanel("audits");
+        WebInspector.domAgent._setDocument(null);
+
+        var showPanelTimerCookie = timer.start("elements-panel-show");
+        InspectorTest.addBackendResponseSniffer(DOMAgent, "requestChildNodes", function() {
+            timer.finish(showPanelTimerCookie);
+            timer.done();
+        });
+        WebInspector.showPanel("elements");
+    }
+
+    InspectorTest.runPerformanceTest(test, 5000);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+
+</body>
+</body>
+</html>

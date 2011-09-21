@@ -70,4 +70,20 @@ InspectorTest.runPerformanceTest = function(perfTest, executeTime, callback)
     timer._runTest();
 }
 
+InspectorTest.addBackendResponseSniffer = function(object, methodName, override, opt_sticky)
+{
+    var originalMethod = InspectorTest.override(object, methodName, backendCall, opt_sticky);
+    function backendCall()
+    {
+        var args = Array.prototype.slice.call(arguments);
+        var callback = (args.length && typeof args[args.length - 1] === "function") ? args.pop() : 0;
+        args.push(function() {
+            callback.apply(null, arguments);
+            override.apply(null, arguments);
+        });
+        originalMethod.apply(object, args);
+    }
+}
+
+
 }
