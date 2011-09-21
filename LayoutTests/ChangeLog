@@ -1,3 +1,19 @@
+2011-09-21  Jochen Eisinger  <jochen@chromium.org>
+
+        Unreviewed, fix baselines for cross-origin-xsl-redirect-BLOCKED
+
+        * http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.txt:
+        * platform/chromium-cg-mac/http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.txt:
+        * platform/chromium-mac/http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.txt:
+        * platform/chromium-win/http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.txt:
+        * platform/gtk/http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.txt: Removed
+        * platform/mac-wk2/http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.txt:
+        * platform/qt-wk2/Skipped:
+        * platform/qt-wk2/http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.txt:
+        * platform/qt/http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.png: Removed
+        * platform/qt/http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.txt: Removed
+        * platform/win-wk2/http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.txt:
+
 2011-09-21  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] rebaseline caused by r95567
