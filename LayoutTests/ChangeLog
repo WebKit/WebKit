@@ -1,3 +1,16 @@
+2011-09-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-mac/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt/fast/clip/overflow-border-radius-fixed-position-expected.png: Added.
+        * platform/qt/fast/clip/overflow-border-radius-fixed-position-expected.txt: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.png: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Added.
+        * platform/qt/http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.png: Added.
+        * platform/qt/http/tests/security/cross-origin-xsl-redirect-BLOCKED-expected.txt: Added.
+
 2011-09-20  MORITA Hajime  <morrita@google.com>
 
         <meter> doesn't update rendering when its value is changed.

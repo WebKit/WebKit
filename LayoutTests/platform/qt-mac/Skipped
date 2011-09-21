@@ -5111,3 +5111,10 @@ fast/ruby/overhang-horizontal-no-overlap2.html
 fast/ruby/overhang-vertical-no-overlap1.html
 fast/ruby/overhang-vertical-no-overlap2.html
 plugins/destroy-during-npp-new-object-with-fallback-content.html
+
+# Qt specific results were added by r95520, but they fail on Qt-Mac platform
+fast/table/table-cell-before-after-content-around-table-block.html
+fast/table/table-cell-before-after-content-around-table-row.html
+fast/table/table-cell-before-after-content-around-table.html
+fast/table/table-row-before-after-content-around-block.html
+fast/table/table-row-before-after-content-around-table.html
