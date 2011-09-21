@@ -118,7 +118,7 @@ public:
     void getDocument(ErrorString*, RefPtr<InspectorObject>* root);
     void requestChildNodes(ErrorString*, int nodeId);
     void setAttributeValue(ErrorString*, int elementId, const String& name, const String& value);
-    void setAttributesText(ErrorString*, int elementId, const String& text, const String* const name);
+    void setAttributesAsText(ErrorString*, int elementId, const String& text, const String* const name);
     void removeAttribute(ErrorString*, int elementId, const String& name);
     void removeNode(ErrorString*, int nodeId);
     void setNodeName(ErrorString*, int nodeId, const String& name, int* newId);

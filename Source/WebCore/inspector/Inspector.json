@@ -836,7 +836,7 @@
     },
     {
         "domain": "DOM",
-        "description": "This domain exposes DOM read/write operations. Each DOM Node is represented with its mirror object that has an <code>id</code>. This <code>id</code> can be used to get additional information on the Node, convert it into the JavaScript object, etc. It is important that client receives DOM events only for the nodes that are known to the client. Backend keeps track of the nodes that were sent to the client and never sends the same node twice. It is client's responsibility to collect information about the nodes that were sent to the client.",
+        "description": "This domain exposes DOM read/write operations. Each DOM Node is represented with its mirror object that has an <code>id</code>. This <code>id</code> can be used to get additional information on the Node, resolve it into the JavaScript object wrapper, etc. It is important that client receives DOM events only for the nodes that are known to the client. Backend keeps track of the nodes that were sent to the client and never sends the same node twice. It is client's responsibility to collect information about the nodes that were sent to the client.<p>Note that <code>iframe</code> owner elements will return corresponding document elements as their child nodes.</p>",
         "types": [
             {
                 "id": "NodeId",
@@ -950,7 +950,7 @@
                     { "name": "name", "type": "string", "description": "New node's name." }
                 ],
                 "returns": [
-                    { "name": "outNodeId", "$ref": "NodeId", "description": "New node's id." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "New node's id." }
                 ],
                 "description": "Sets node name for a node with given id."
             },
@@ -979,7 +979,7 @@
                 "description": "Sets attribute for an element with given id."
             },
             {
-                "name": "setAttributesText",
+                "name": "setAttributesAsText",
                 "parameters": [
                     { "name": "nodeId", "$ref": "NodeId", "description": "Id of the element to set attributes for." },
                     { "name": "text", "type": "string", "description": "Text with a number of attributes. Will parse this text using HTML parser." },
@@ -1031,7 +1031,7 @@
                     { "name": "outerHTML", "type": "string", "description": "Outer HTML markup to set." }
                 ],
                 "returns": [
-                    { "name": "newNodeId", "$ref": "NodeId", "description": "Setting outer HTML can change node's id." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Setting outer HTML can change node's id." }
                 ],
                 "description": "Sets node HTML markup, returns new node id."
             },
@@ -1057,7 +1057,7 @@
                 "returns": [
                     { "name": "nodeId", "$ref": "NodeId", "description": "Node id for given object." }
                 ],
-                "description": "Requests that the node is sent to the caller given the JavaScript node object reference."
+                "description": "Requests that the node is sent to the caller given the JavaScript node object reference. All nodes that form the path from the node to the root are also sent to the client as a series of <code>setChildNodes</code> notifications."
             },
             {
                 "name": "setInspectModeEnabled",
@@ -1132,14 +1132,14 @@
                 "returns": [
                     { "name": "attributes", "type": "array", "items": { "type": "string" }, "description": "An interleaved array of node attribute names and values." }
                 ],
-                "description": "Returns attributes for the specified nodes."
+                "description": "Returns attributes for the specified node."
             },
             {
                 "name": "moveTo",
                 "parameters": [
                     { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to drop." },
                     { "name": "targetNodeId", "$ref": "NodeId", "description": "Id of the element to drop into." },
-                    { "name": "anchorNodeId", "$ref": "NodeId", "optional": true, "description": "Drop node before given one." }
+                    { "name": "insertBeforeNodeId", "$ref": "NodeId", "optional": true, "description": "Drop node before given one." }
                 ],
                 "returns": [
                     { "name": "nodeId", "$ref": "NodeId", "description": "New id of the moved node." }
@@ -1178,7 +1178,7 @@
                 "name": "characterDataModified",
                 "parameters": [
                     { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has changed." },
-                    { "name": "newValue", "type": "string", "description": "New text value." }
+                    { "name": "characterData", "type": "string", "description": "New text value." }
                 ],
                 "description": "Mirrors <code>DOMCharacterDataModified</code> event."
             },
@@ -1186,7 +1186,7 @@
                 "name": "childNodeCountUpdated",
                 "parameters": [
                     { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has changed." },
-                    { "name": "newValue", "type": "integer", "description": "New node count." }
+                    { "name": "childNodeCount", "type": "integer", "description": "New node count." }
                 ],
                 "description": "Fired when <code>Container</code>'s child node count has changed."
             },
