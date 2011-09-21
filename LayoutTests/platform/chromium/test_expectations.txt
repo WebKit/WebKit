@@ -3712,9 +3712,6 @@ BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 
 BUGCR95972 WIN DEBUG : webaudio/sample-accurate-scheduling.html = CRASH
 
-// Needs expectation.
-BUGWK67614 : fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html = MISSING 
-
 // Failing after r94912.
 BUGWK67913 WIN LINUX SNOWLEOPARD : media/video-zoom-controls.html = TEXT
 BUGWK67913 LEOPARD : media/video-zoom-controls.html = TEXT IMAGE+TEXT
