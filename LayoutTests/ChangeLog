@@ -1,3 +1,11 @@
+2011-09-21  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, move today's skipped flaky tests to test_expectations
+        as suggested by mrobinson.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/test_expectations.txt:
+
 2011-09-21  Alice Boxhall  <aboxhall@chromium.org>
 
         Report AXValueChanged when value changes in element with role=textbox.
