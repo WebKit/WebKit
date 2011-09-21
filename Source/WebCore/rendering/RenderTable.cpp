@@ -107,10 +107,8 @@ static inline void resetSectionPointerIfNotBefore(RenderTableSection*& ptr, Rend
 void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.
-    if (!beforeChild) {
-        if (RenderObject* afterContentRenderer = findAfterContentRenderer())
-            beforeChild = anonymousContainer(afterContentRenderer);
-    }
+    if (!beforeChild)
+        beforeChild = findAfterContentRenderer();
 
     bool wrapInAnonymousSection = !child->isPositioned();
 

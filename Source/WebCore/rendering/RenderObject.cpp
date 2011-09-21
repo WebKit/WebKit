@@ -1888,17 +1888,26 @@ void RenderObject::propagateStyleToAnonymousChildren(bool blockChildrenOnly)
 {
     // FIXME: We could save this call when the change only affected non-inherited properties.
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (blockChildrenOnly ? child->isAnonymousBlock() : child->isAnonymous() && !child->isBeforeOrAfterContent()) {
-            RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
-            if (style()->specifiesColumns()) {
-                if (child->style()->specifiesColumns())
-                    newStyle->inheritColumnPropertiesFrom(style());
-                if (child->style()->columnSpan())
-                    newStyle->setColumnSpan(true);
-            }
-            newStyle->setDisplay(blockChildrenOnly ? BLOCK : child->style()->display());
-            child->setStyle(newStyle.release());
+        if (!child->isAnonymous() || child->style()->styleType() != NOPSEUDO)
+            continue;
+
+        if (blockChildrenOnly && !child->isRenderBlock())
+            continue;
+
+#if ENABLE(FULLSCREEN_API)
+        if (child->isRenderFullScreen() || child->isRenderFullScreenPlaceholder())
+            continue;
+#endif
+
+        RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
+        if (style()->specifiesColumns()) {
+            if (child->style()->specifiesColumns())
+                newStyle->inheritColumnPropertiesFrom(style());
+            if (child->style()->columnSpan())
+                newStyle->setColumnSpan(true);
         }
+        newStyle->setDisplay(child->style()->display());
+        child->setStyle(newStyle.release());
     }
 }
 
