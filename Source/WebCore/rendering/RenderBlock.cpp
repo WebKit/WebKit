@@ -1758,7 +1758,7 @@ LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& margin
     return yPos + heightIncrease;
 }
 
-LayoutUnit RenderBlock::estimateLogicalTopPosition(RenderBox* child, const MarginInfo& marginInfo)
+LayoutUnit RenderBlock::estimateLogicalTopPosition(RenderBox* child, const MarginInfo& marginInfo, LayoutUnit& estimateWithoutPagination)
 {
     // FIXME: We need to eliminate the estimation of vertical position, because when it's wrong we sometimes trigger a pathological
     // relayout if there are intruding floats.
@@ -1776,6 +1776,8 @@ LayoutUnit RenderBlock::estimateLogicalTopPosition(RenderBox* child, const Margi
 
     logicalTopEstimate += getClearDelta(child, logicalTopEstimate);
     
+    estimateWithoutPagination = logicalTopEstimate;
+
     if (layoutState->isPaginated()) {
         // If the object has a page or column break value of "before", then we should shift to the top of the next page.
         logicalTopEstimate = applyBeforeBreak(child, logicalTopEstimate);
@@ -1980,7 +1982,8 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
     // Try to guess our correct logical top position.  In most cases this guess will
     // be correct.  Only if we're wrong (when we compute the real logical top position)
     // will we have to potentially relayout.
-    LayoutUnit logicalTopEstimate = estimateLogicalTopPosition(child, marginInfo);
+    LayoutUnit estimateWithoutPagination;
+    LayoutUnit logicalTopEstimate = estimateLogicalTopPosition(child, marginInfo, estimateWithoutPagination);
 
     // Cache our old rect so that we can dirty the proper repaint rects if the child moves.
     LayoutRect oldRect(child->x(), child->y() , child->width(), child->height());
@@ -2030,40 +2033,9 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
     LayoutUnit logicalTopAfterClear = clearFloatsIfNeeded(child, marginInfo, oldPosMarginBefore, oldNegMarginBefore, logicalTopBeforeClear);
     
     bool paginated = view()->layoutState()->isPaginated();
-    if (paginated) {
-        LayoutUnit oldTop = logicalTopAfterClear;
-        
-        // If the object has a page or column break value of "before", then we should shift to the top of the next page.
-        logicalTopAfterClear = applyBeforeBreak(child, logicalTopAfterClear);
-    
-        // For replaced elements and scrolled elements, we want to shift them to the next page if they don't fit on the current one.
-        LayoutUnit logicalTopBeforeUnsplittableAdjustment = logicalTopAfterClear;
-        LayoutUnit logicalTopAfterUnsplittableAdjustment = adjustForUnsplittableChild(child, logicalTopAfterClear);
-        
-        LayoutUnit paginationStrut = 0;
-        LayoutUnit unsplittableAdjustmentDelta = logicalTopAfterUnsplittableAdjustment - logicalTopBeforeUnsplittableAdjustment;
-        if (unsplittableAdjustmentDelta)
-            paginationStrut = unsplittableAdjustmentDelta;
-        else if (childRenderBlock && childRenderBlock->paginationStrut())
-            paginationStrut = childRenderBlock->paginationStrut();
-
-        if (paginationStrut) {
-            // We are willing to propagate out to our parent block as long as we were at the top of the block prior
-            // to collapsing our margins, and as long as we didn't clear or move as a result of other pagination.
-            if (atBeforeSideOfBlock && oldTop == logicalTopBeforeClear && !isPositioned() && !isTableCell()) {
-                // FIXME: Should really check if we're exceeding the page height before propagating the strut, but we don't
-                // have all the information to do so (the strut only has the remaining amount to push).  Gecko gets this wrong too
-                // and pushes to the next page anyway, so not too concerned about it.
-                setPaginationStrut(logicalTopAfterClear + paginationStrut);
-                if (childRenderBlock)
-                    childRenderBlock->setPaginationStrut(0);
-            } else
-                logicalTopAfterClear += paginationStrut;
-        }
-
-        // Similar to how we apply clearance.  Go ahead and boost height() to be the place where we're going to position the child.
-        setLogicalHeight(logicalHeight() + (logicalTopAfterClear - oldTop));
-    }
+    if (paginated)
+        logicalTopAfterClear = adjustBlockChildForPagination(logicalTopAfterClear, estimateWithoutPagination, child,
+            atBeforeSideOfBlock && logicalTopBeforeClear == logicalTopAfterClear);
 
     setLogicalTopForChild(child, logicalTopAfterClear, ApplyLayoutDelta);
 
@@ -2076,6 +2048,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
             // So go ahead and mark the item as dirty.
             child->setChildNeedsLayout(true, false);
         }
+        
         if (childRenderBlock) {
             if (!child->avoidsFloats() && childRenderBlock->containsFloats())
                 childRenderBlock->markAllDescendantsWithFloatsForLayout();
@@ -6282,6 +6255,72 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
             lineBox->setPaginationStrut(remainingLogicalHeight);
         }
     }  
+}
+
+LayoutUnit RenderBlock::adjustBlockChildForPagination(LayoutUnit logicalTopAfterClear, LayoutUnit estimateWithoutPagination, RenderBox* child, bool atBeforeSideOfBlock)
+{
+    RenderBlock* childRenderBlock = child->isRenderBlock() ? toRenderBlock(child) : 0;
+
+    if (estimateWithoutPagination != logicalTopAfterClear) {
+        // Our guess prior to pagination movement was wrong. Before we attempt to paginate, let's try again at the new
+        // position.
+        setLogicalHeight(logicalTopAfterClear);
+        setLogicalTopForChild(child, logicalTopAfterClear, ApplyLayoutDelta);
+
+        if (child->shrinkToAvoidFloats()) {
+            // The child's width depends on the line width.
+            // When the child shifts to clear an item, its width can
+            // change (because it has more available line width).
+            // So go ahead and mark the item as dirty.
+            child->setChildNeedsLayout(true, false);
+        }
+        
+        if (childRenderBlock) {
+            if (!child->avoidsFloats() && childRenderBlock->containsFloats())
+                childRenderBlock->markAllDescendantsWithFloatsForLayout();
+            if (!child->needsLayout())
+                child->markForPaginationRelayoutIfNeeded();
+        }
+
+        // Our guess was wrong. Make the child lay itself out again.
+        child->layoutIfNeeded();
+    }
+
+    LayoutUnit oldTop = logicalTopAfterClear;
+
+    // If the object has a page or column break value of "before", then we should shift to the top of the next page.
+    LayoutUnit result = applyBeforeBreak(child, logicalTopAfterClear);
+
+    // For replaced elements and scrolled elements, we want to shift them to the next page if they don't fit on the current one.
+    LayoutUnit logicalTopBeforeUnsplittableAdjustment = result;
+    LayoutUnit logicalTopAfterUnsplittableAdjustment = adjustForUnsplittableChild(child, result);
+    
+    LayoutUnit paginationStrut = 0;
+    LayoutUnit unsplittableAdjustmentDelta = logicalTopAfterUnsplittableAdjustment - logicalTopBeforeUnsplittableAdjustment;
+    if (unsplittableAdjustmentDelta)
+        paginationStrut = unsplittableAdjustmentDelta;
+    else if (childRenderBlock && childRenderBlock->paginationStrut())
+        paginationStrut = childRenderBlock->paginationStrut();
+
+    if (paginationStrut) {
+        // We are willing to propagate out to our parent block as long as we were at the top of the block prior
+        // to collapsing our margins, and as long as we didn't clear or move as a result of other pagination.
+        if (atBeforeSideOfBlock && oldTop == result && !isPositioned() && !isTableCell()) {
+            // FIXME: Should really check if we're exceeding the page height before propagating the strut, but we don't
+            // have all the information to do so (the strut only has the remaining amount to push). Gecko gets this wrong too
+            // and pushes to the next page anyway, so not too concerned about it.
+            setPaginationStrut(result + paginationStrut);
+            if (childRenderBlock)
+                childRenderBlock->setPaginationStrut(0);
+        } else
+            result += paginationStrut;
+    }
+
+    // Similar to how we apply clearance. Go ahead and boost height() to be the place where we're going to position the child.
+    setLogicalHeight(logicalHeight() + (result - oldTop));
+    
+    // Return the final adjusted logical top.
+    return result;
 }
 
 LayoutUnit RenderBlock::collapsedMarginBeforeForChild(RenderBox* child) const

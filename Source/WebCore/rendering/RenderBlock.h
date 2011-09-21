@@ -788,7 +788,7 @@ private:
     bool handleRunInChild(RenderBox* child);
     LayoutUnit collapseMargins(RenderBox* child, MarginInfo&);
     LayoutUnit clearFloatsIfNeeded(RenderBox* child, MarginInfo&, int oldTopPosMargin, int oldTopNegMargin, int yPos);
-    LayoutUnit estimateLogicalTopPosition(RenderBox* child, const MarginInfo&);
+    LayoutUnit estimateLogicalTopPosition(RenderBox* child, const MarginInfo&, LayoutUnit& estimateWithoutPagination);
     void determineLogicalLeftPositionForChild(RenderBox* child);
     void handleAfterSideOfBlock(LayoutUnit top, LayoutUnit bottom, MarginInfo&);
     void setCollapsedBottomMargin(const MarginInfo&);
@@ -820,6 +820,7 @@ private:
 
     LayoutUnit adjustForUnsplittableChild(RenderBox* child, LayoutUnit logicalOffset, bool includeMargins = false); // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.
     void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
+    LayoutUnit adjustBlockChildForPagination(LayoutUnit logicalTopAfterClear, LayoutUnit estimateWithoutPagination, RenderBox* child, bool atBeforeSideOfBlock);
 
     struct FloatingObjectHashFunctions {
         static unsigned hash(FloatingObject* key) { return DefaultHash<RenderBox*>::Hash::hash(key->m_renderer); }
