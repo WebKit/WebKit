@@ -109,11 +109,11 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
     // FIXME: <http://bugs.webkit.org/show_bug.cgi?id=13443> Apply control clip if present.
 }
 
-LayoutState::LayoutState(LayoutState* prev, RenderFlowThread* flowThread)
+LayoutState::LayoutState(LayoutState* prev, RenderFlowThread* flowThread, bool regionsChanged)
     : m_clipped(false)
     , m_isPaginated(true)
     , m_pageLogicalHeight(1) // Use a fake height here. That value is not important, just needs to be non-zero.
-    , m_pageLogicalHeightChanged(false)
+    , m_pageLogicalHeightChanged(regionsChanged)
     , m_columnInfo(0)
     , m_next(prev)
 #ifndef NDEBUG

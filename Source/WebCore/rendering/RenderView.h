@@ -195,7 +195,7 @@ private:
     bool shouldRepaint(const IntRect& r) const;
 
     // These functions may only be accessed by LayoutStateMaintainer.
-    void pushLayoutState(RenderFlowThread*);
+    void pushLayoutState(RenderFlowThread*, bool regionsChanged);
     bool pushLayoutState(RenderBox* renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = 0)
     {
         // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
@@ -312,14 +312,14 @@ public:
     {
     }
     
-    LayoutStateMaintainer(RenderView* view, RenderFlowThread* flowThread)
+    LayoutStateMaintainer(RenderView* view, RenderFlowThread* flowThread, bool regionsChanged)
         : m_view(view)
         , m_disabled(false)
         , m_didStart(false)
         , m_didEnd(false)
         , m_didCreateLayoutState(false)
     {
-        push(flowThread);
+        push(flowThread, regionsChanged);
     }
     
     ~LayoutStateMaintainer()
@@ -337,10 +337,10 @@ public:
         m_didStart = true;
     }
     
-    void push(RenderFlowThread* flowThread)
+    void push(RenderFlowThread* flowThread, bool regionsChanged)
     {
         ASSERT(!m_didStart);
-        m_view->pushLayoutState(flowThread);
+        m_view->pushLayoutState(flowThread, regionsChanged);
         m_didCreateLayoutState = true;
         m_didStart = true;
     }

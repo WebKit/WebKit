@@ -85,8 +85,10 @@ bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
 void RenderRegion::layout()
 {
     RenderReplaced::layout();
-    if (m_flowThread && isValid())
-        m_flowThread->invalidateRegions();
+    if (m_flowThread && isValid()) {
+        if (regionRect().width() != contentWidth() || regionRect().height() != contentHeight())
+            m_flowThread->invalidateRegions();
+    }
 }
 
 void RenderRegion::attachRegion()

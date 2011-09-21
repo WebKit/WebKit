@@ -300,6 +300,7 @@ private:
 
 void RenderFlowThread::layout()
 {
+    bool regionsChanged = m_regionsInvalidated && m_everHadLayout;
     if (m_regionsInvalidated) {
         m_regionsInvalidated = false;
         if (hasRegions()) {
@@ -329,7 +330,7 @@ void RenderFlowThread::layout()
     }
 
     CurrentRenderFlowThreadMaintainer currentFlowThreadSetter(this);
-    LayoutStateMaintainer statePusher(view(), this);
+    LayoutStateMaintainer statePusher(view(), this, regionsChanged);
     RenderBlock::layout();
     statePusher.pop();
 }
@@ -489,15 +490,10 @@ RenderRegion* RenderFlowThread::renderRegionForLine(LayoutUnit position, bool ex
 
         LayoutRect regionRect = region->regionRect();
 
-        if (useHorizontalWritingMode) {
-            if (regionRect.y() <= position && position < regionRect.maxY())
-                return region;
-            continue;
-        }
-
-        if (regionRect.x() <= position && position < regionRect.maxX())
+        if ((useHorizontalWritingMode && regionRect.y() <= position && position < regionRect.maxY())
+            || (!useHorizontalWritingMode && regionRect.x() <= position && position < regionRect.maxX()))
             return region;
-        
+
         if (extendLastRegion)
             lastValidRegion = region;
     }
@@ -510,7 +506,7 @@ LayoutUnit RenderFlowThread::regionLogicalWidthForLine(LayoutUnit position) cons
     const bool extendLastRegion = true;
     RenderRegion* region = renderRegionForLine(position, extendLastRegion);
     if (!region)
-        return 0;
+        return contentLogicalWidth();
 
     return isHorizontalWritingMode() ? region->regionRect().width() : region->regionRect().height();
 }
