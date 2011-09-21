@@ -525,9 +525,9 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
     // use the root element.
 
     // To combat the inability to scroll on a page with overflow:hidden on the root when scaled, disregard hidden when
-    // there is a pageScaleFactor that is greater than one on the main frame.
+    // there is a frameScaleFactor that is greater than one on the main frame.
 
-    bool overrideHidden = m_frame->page() && m_frame->page()->mainFrame() == m_frame && m_frame->pageScaleFactor() > 1;
+    bool overrideHidden = m_frame->page() && m_frame->frameScaleFactor() > 1;
 
     switch (o->style()->overflowX()) {
         case OHIDDEN:
@@ -1349,14 +1349,14 @@ LayoutUnit FrameView::scrollXForFixedPosition() const
     if (!m_frame)
         return x;
 
-    float pageScaleFactor = m_frame->pageScaleFactor();
+    float frameScaleFactor = m_frame->frameScaleFactor();
 
     // When the page is scaled, the scaled "viewport" with respect to which fixed object are positioned
     // doesn't move as fast as the content view, so that when the content is scrolled all the way to the
     // end, the bottom of the scaled "viewport" touches the bottom of the real viewport.
-    float dragFactor = (contentsWidth() - visibleContentWidth * pageScaleFactor) / maxX;
+    float dragFactor = (contentsWidth() - visibleContentWidth * frameScaleFactor) / maxX;
 
-    return x * dragFactor / pageScaleFactor;
+    return x * dragFactor / frameScaleFactor;
 }
 
 LayoutUnit FrameView::scrollYForFixedPosition() const
@@ -1384,10 +1384,10 @@ LayoutUnit FrameView::scrollYForFixedPosition() const
     if (!m_frame)
         return y;
 
-    float pageScaleFactor = m_frame->pageScaleFactor();
-    float dragFactor = (contentsHeight() - visibleContentHeight * pageScaleFactor) / maxY;
+    float frameScaleFactor = m_frame->frameScaleFactor();
+    float dragFactor = (contentsHeight() - visibleContentHeight * frameScaleFactor) / maxY;
 
-    return y * dragFactor / pageScaleFactor;
+    return y * dragFactor / frameScaleFactor;
 }
 
 LayoutSize FrameView::scrollOffsetForFixedPosition() const

@@ -161,8 +161,8 @@ namespace WebCore {
         float textZoomFactor() const { return m_textZoomFactor; }
         void setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor);
 
-        // Convenience helper method that grabs the pageScaleFactor from Page.
-        float pageScaleFactor() const;
+        // Scale factor of this frame with respect to the container.
+        float frameScaleFactor() const;
 
 #if USE(ACCELERATED_COMPOSITING)
         void deviceOrPageScaleFactorChanged();

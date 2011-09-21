@@ -1,3 +1,29 @@
+2011-09-20  Alpha Lam  <hclam@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68081
+        Add layout test for page scale and scrolling.
+
+        Reviewed by Simon Fraser.
+
+        Add tests to cover the following cases:
+        1. Scale and scroll window
+        2. Scale and scroll document.body
+        3. Scale and scroll iframe's contentWindow
+        4. Scale and scroll iframe's contentDocument.body
+
+        * fast/events/scale-and-scroll-body-expected.png: Added.
+        * fast/events/scale-and-scroll-body-expected.txt: Added.
+        * fast/events/scale-and-scroll-body.html: Added.
+        * fast/events/scale-and-scroll-iframe-body-expected.png: Added.
+        * fast/events/scale-and-scroll-iframe-body-expected.txt: Added.
+        * fast/events/scale-and-scroll-iframe-body.html: Added.
+        * fast/events/scale-and-scroll-iframe-window-expected.png: Added.
+        * fast/events/scale-and-scroll-iframe-window-expected.txt: Added.
+        * fast/events/scale-and-scroll-iframe-window.html: Added.
+        * fast/events/scale-and-scroll-window-expected.png: Added.
+        * fast/events/scale-and-scroll-window-expected.txt: Added.
+        * fast/events/scale-and-scroll-window.html: Added.
+
 2011-09-21  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline, skip some flaky worker tests and 2
