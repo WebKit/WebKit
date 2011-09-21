@@ -42,17 +42,6 @@ static inline id WebCFAutorelease(CFTypeRef obj)
     return (id)obj;
 }
 
-#if !(defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0)
-
-static inline IMP method_setImplementation(Method m, IMP i)
-{
-    IMP oi = m->method_imp;
-    m->method_imp = i;
-    return oi;
-}
-
-#endif
-
 @interface NSObject (WebNSObjectExtras)
 + (id)_webkit_invokeOnMainThread;
 - (id)_webkit_invokeOnMainThread;

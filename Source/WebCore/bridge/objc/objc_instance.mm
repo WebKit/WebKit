@@ -130,13 +130,12 @@ ObjcInstance::~ObjcInstance()
 
 static NSAutoreleasePool* allocateAutoReleasePool()
 {
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
     // If GC is enabled an autorelease pool is unnecessary, and the
     // pool cannot be protected from GC so may be collected leading
     // to a crash when we try to drain the release pool.
     if (objc_collectingEnabled())
         return nil;
-#endif
+
     return [[NSAutoreleasePool alloc] init];
 }
 

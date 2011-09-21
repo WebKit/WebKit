@@ -96,51 +96,34 @@ MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) cons
 
     ClassStructPtr thisClass = _isa;
     while (thisClass && methodList.isEmpty()) {
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
         unsigned numMethodsInClass = 0;
         MethodStructPtr* objcMethodList = class_copyMethodList(thisClass, &numMethodsInClass);
-#else
-        void* iterator = 0;
-        struct objc_method_list* objcMethodList;
-        while ((objcMethodList = class_nextMethodList(thisClass, &iterator))) {
-            unsigned numMethodsInClass = objcMethodList->method_count;
-#endif
-            for (unsigned i = 0; i < numMethodsInClass; i++) {
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
-                MethodStructPtr objcMethod = objcMethodList[i];
-                SEL objcMethodSelector = method_getName(objcMethod);
-#else
-                struct objc_method* objcMethod = &objcMethodList->method_list[i];
-                SEL objcMethodSelector = objcMethod->method_name;
-#endif
-                const char* objcMethodSelectorName = sel_getName(objcMethodSelector);
-                NSString* mappedName = nil;
+        for (unsigned i = 0; i < numMethodsInClass; i++) {
+            MethodStructPtr objcMethod = objcMethodList[i];
+            SEL objcMethodSelector = method_getName(objcMethod);
+            const char* objcMethodSelectorName = sel_getName(objcMethodSelector);
+            NSString* mappedName = nil;
 
-                // See if the class wants to exclude the selector from visibility in JavaScript.
-                if ([thisClass respondsToSelector:@selector(isSelectorExcludedFromWebScript:)])
-                    if ([thisClass isSelectorExcludedFromWebScript:objcMethodSelector])
-                        continue;
+            // See if the class wants to exclude the selector from visibility in JavaScript.
+            if ([thisClass respondsToSelector:@selector(isSelectorExcludedFromWebScript:)])
+                if ([thisClass isSelectorExcludedFromWebScript:objcMethodSelector])
+                    continue;
 
-                // See if the class want to provide a different name for the selector in JavaScript.
-                // Note that we do not do any checks to guarantee uniqueness. That's the responsiblity
-                // of the class.
-                if ([thisClass respondsToSelector:@selector(webScriptNameForSelector:)])
-                    mappedName = [thisClass webScriptNameForSelector:objcMethodSelector];
+            // See if the class want to provide a different name for the selector in JavaScript.
+            // Note that we do not do any checks to guarantee uniqueness. That's the responsiblity
+            // of the class.
+            if ([thisClass respondsToSelector:@selector(webScriptNameForSelector:)])
+                mappedName = [thisClass webScriptNameForSelector:objcMethodSelector];
 
-                if ((mappedName && [mappedName isEqual:(NSString*)methodName.get()]) || strcmp(objcMethodSelectorName, buffer) == 0) {
-                    Method* aMethod = new ObjcMethod(thisClass, objcMethodSelector); // deleted when the dictionary is destroyed
-                    CFDictionaryAddValue(_methods.get(), methodName.get(), aMethod);
-                    methodList.append(aMethod);
-                    break;
-                }
+            if ((mappedName && [mappedName isEqual:(NSString*)methodName.get()]) || strcmp(objcMethodSelectorName, buffer) == 0) {
+                Method* aMethod = new ObjcMethod(thisClass, objcMethodSelector); // deleted when the dictionary is destroyed
+                CFDictionaryAddValue(_methods.get(), methodName.get(), aMethod);
+                methodList.append(aMethod);
+                break;
             }
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
-            thisClass = class_getSuperclass(thisClass);
-            free(objcMethodList);
-#else
         }
-        thisClass = thisClass->super_class;
-#endif
+        thisClass = class_getSuperclass(thisClass);
+        free(objcMethodList);
     }
 
     if (buffer != fixedSizeBuffer)
@@ -191,48 +174,34 @@ Field* ObjcClass::fieldNamed(const Identifier& identifier, Instance* instance) c
         // introspection.
 
         while (thisClass) {
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
             unsigned numFieldsInClass = 0;
             IvarStructPtr* ivarsInClass = class_copyIvarList(thisClass, &numFieldsInClass);
-#else
-            struct objc_ivar_list* fieldsInClass = thisClass->ivars;
-            if (fieldsInClass) {
-                unsigned numFieldsInClass = fieldsInClass->ivar_count;
-#endif
-                for (unsigned i = 0; i < numFieldsInClass; i++) {
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
-                    IvarStructPtr objcIVar = ivarsInClass[i];
-                    const char* objcIvarName = ivar_getName(objcIVar);
-#else
-                    IvarStructPtr objcIVar = &fieldsInClass->ivar_list[i];
-                    const char* objcIvarName = objcIVar->ivar_name;
-#endif
-                    NSString* mappedName = 0;
 
-                    // See if the class wants to exclude the selector from visibility in JavaScript.
-                    if ([thisClass respondsToSelector:@selector(isKeyExcludedFromWebScript:)])
-                        if ([thisClass isKeyExcludedFromWebScript:objcIvarName])
-                            continue;
+            for (unsigned i = 0; i < numFieldsInClass; i++) {
+                IvarStructPtr objcIVar = ivarsInClass[i];
+                const char* objcIvarName = ivar_getName(objcIVar);
+                NSString* mappedName = 0;
 
-                    // See if the class want to provide a different name for the selector in JavaScript.
-                    // Note that we do not do any checks to guarantee uniqueness. That's the responsiblity
-                    // of the class.
-                    if ([thisClass respondsToSelector:@selector(webScriptNameForKey:)])
-                        mappedName = [thisClass webScriptNameForKey:objcIvarName];
+                // See if the class wants to exclude the selector from visibility in JavaScript.
+                if ([thisClass respondsToSelector:@selector(isKeyExcludedFromWebScript:)])
+                    if ([thisClass isKeyExcludedFromWebScript:objcIvarName])
+                        continue;
 
-                    if ((mappedName && [mappedName isEqual:(NSString*)fieldName.get()]) || strcmp(objcIvarName, jsName.data()) == 0) {
-                        aField = new ObjcField(objcIVar); // deleted when the dictionary is destroyed
-                        CFDictionaryAddValue(_fields.get(), fieldName.get(), aField);
-                        break;
-                    }
+                // See if the class want to provide a different name for the selector in JavaScript.
+                // Note that we do not do any checks to guarantee uniqueness. That's the responsiblity
+                // of the class.
+                if ([thisClass respondsToSelector:@selector(webScriptNameForKey:)])
+                    mappedName = [thisClass webScriptNameForKey:objcIvarName];
+
+                if ((mappedName && [mappedName isEqual:(NSString*)fieldName.get()]) || strcmp(objcIvarName, jsName.data()) == 0) {
+                    aField = new ObjcField(objcIVar); // deleted when the dictionary is destroyed
+                    CFDictionaryAddValue(_fields.get(), fieldName.get(), aField);
+                    break;
                 }
-#if defined(OBJC_API_VERSION) && OBJC_API_VERSION >= 2
+            }
+
             thisClass = class_getSuperclass(thisClass);
             free(ivarsInClass);
-#else
-            }
-            thisClass = thisClass->super_class;
-#endif
         }
     }
 

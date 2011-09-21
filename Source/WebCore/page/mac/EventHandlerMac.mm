@@ -52,15 +52,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
-#if !(defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0)
-static inline IMP method_setImplementation(Method m, IMP i)
-{
-    IMP oi = m->method_imp;
-    m->method_imp = i;
-    return oi;
-}
-#endif
-
 namespace WebCore {
 
 #if ENABLE(DRAG_SUPPORT)
