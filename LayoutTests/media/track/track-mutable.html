@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+            
+            function startTest()
+            {
+                findMediaElement();
+
+                consoleWrite("<br>*** Testing addTrack()");
+                
+                run("track = video.addTrack(\"captions\", \"Mutable Captions Tract\", \"en\")");
+                testExpected("video.textTracks.length", 1);
+                consoleWrite("");
+                run("video.addTrack(\"subtitles\")");
+                testExpected("video.textTracks.length", 2);
+                
+                consoleWrite("<br>*** Testing addCue()");
+
+                testExpected("track.cues.length", 0);
+                run("track.addCue(\"junk\")");
+                testExpected("track.cues.length", 0);
+                consoleWrite("");
+                run("track.addCue(new TextTrackCue(\"1\", 1.2, 3.4, \"Cue #1\"))");
+                testExpected("track.cues.length", 1);
+                consoleWrite("");
+                run("track.addCue(new TextTrackCue(\"2\", 5.6, 7.8, \"Cue #2\", \"A:middle T:50%\", true))");
+                testExpected("track.cues.length", 2);
+                testExpected("track.cues[0].getCueAsSource()", "Cue #1");
+                testExpected("track.cues[1].getCueAsSource()", "Cue #2");
+                testExpected("track.cues[1].pauseOnExit", true);
+                
+                consoleWrite("<br>*** Testing removeCue()");
+
+                run("track.removeCue(track.cues[1])");
+                testExpected("track.cues.length", 1);
+                testExpected("track.cues[0].getCueAsSource()", "Cue #1");
+                consoleWrite("");
+                run("track.removeCue(new TextTrackCue())");
+                testExpected("track.cues.length", 1);
+                consoleWrite("");
+                run("track.removeCue(track.cues[0])");
+                testExpected("track.cues.length", 0);                
+                
+                endTest();
+            }
+            
+        </script>
+    </head>
+    <body onload="startTest()">
+        <p>Tests MutableTextTrack functionality: addTrack(), addCue(), and removeCue().</p>
+        <video></video>
+    </body>
+</html>
