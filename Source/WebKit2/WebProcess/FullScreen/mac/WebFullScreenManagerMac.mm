@@ -62,7 +62,7 @@ typedef void (WebKit::WebFullScreenManager::*AnimationFinishedFunction)(bool);
 @end
 #endif
 
-@interface WebFullScreenManagerAnimationListener : NSObject {
+@interface WKFullScreenManagerAnimationListener : NSObject {
     WebKit::WebFullScreenManager* _manager;
     AnimationBeganFunction _began;
     AnimationFinishedFunction _finished;
@@ -73,7 +73,7 @@ typedef void (WebKit::WebFullScreenManager::*AnimationFinishedFunction)(bool);
 - (void)invalidate;
 @end
 
-@implementation WebFullScreenManagerAnimationListener
+@implementation WKFullScreenManagerAnimationListener
 - (id)initWithManager:(WebKit::WebFullScreenManager*)manager began:(AnimationBeganFunction)began finished:(AnimationFinishedFunction)finished
 {
     self = [super init];
@@ -121,8 +121,8 @@ PassRefPtr<WebFullScreenManagerMac> WebFullScreenManagerMac::create(WebPage* pag
 WebFullScreenManagerMac::WebFullScreenManagerMac(WebPage* page)
     : WebFullScreenManager(page)
 {
-    m_enterFullScreenListener.adoptNS([[WebFullScreenManagerAnimationListener alloc] initWithManager:this began:&WebFullScreenManagerMac::beganEnterFullScreenAnimation finished:&WebFullScreenManagerMac::finishedEnterFullScreenAnimation]);
-    m_exitFullScreenListener.adoptNS([[WebFullScreenManagerAnimationListener alloc] initWithManager:this began:&WebFullScreenManagerMac::beganExitFullScreenAnimation finished:&WebFullScreenManagerMac::finishedExitFullScreenAnimation]);
+    m_enterFullScreenListener.adoptNS([[WKFullScreenManagerAnimationListener alloc] initWithManager:this began:&WebFullScreenManagerMac::beganEnterFullScreenAnimation finished:&WebFullScreenManagerMac::finishedEnterFullScreenAnimation]);
+    m_exitFullScreenListener.adoptNS([[WKFullScreenManagerAnimationListener alloc] initWithManager:this began:&WebFullScreenManagerMac::beganExitFullScreenAnimation finished:&WebFullScreenManagerMac::finishedExitFullScreenAnimation]);
 }
 
 WebFullScreenManagerMac::~WebFullScreenManagerMac()

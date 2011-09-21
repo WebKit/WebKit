@@ -38,8 +38,8 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSWindow;
-OBJC_CLASS WebInspectorProxyObjCAdapter;
-OBJC_CLASS WebInspectorWKView;
+OBJC_CLASS WKWebInspectorProxyObjCAdapter;
+OBJC_CLASS WKWebInspectorWKView;
 #endif
 
 #if PLATFORM(WIN)
@@ -168,9 +168,9 @@ private:
     bool m_isProfilingPage;
 
 #if PLATFORM(MAC)
-    RetainPtr<WebInspectorWKView> m_inspectorView;
+    RetainPtr<WKWebInspectorWKView> m_inspectorView;
     RetainPtr<NSWindow> m_inspectorWindow;
-    RetainPtr<WebInspectorProxyObjCAdapter> m_inspectorProxyObjCAdapter;
+    RetainPtr<WKWebInspectorProxyObjCAdapter> m_inspectorProxyObjCAdapter;
 #elif PLATFORM(WIN)
     HWND m_inspectorWindow;
     RefPtr<WebView> m_inspectorView;

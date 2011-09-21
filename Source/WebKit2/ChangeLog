@@ -1,3 +1,33 @@
+2011-09-21  Dan Bernstein  <mitz@apple.com>
+
+        Use the prefix "WK" instead of "Web" for Objective-C classes defined in WebKit2.
+
+        Reviewed by Anders Carlsson.
+
+        Renamed WebInspectorProxyObjCAdapter to WKWebInspectorProxyObjCAdapter.
+        Renamed WebInspectorWKView to WKWebInspectorWKView.
+        Renamed WebFindIndicatorWindowAnimation to WKFindIndicatorWindowAnimation.
+        Renamed WebFindIndicatorView to WKFindIndicatorView.
+        Renamed WebUserDataWrapper to WKUserDataWrapper.
+
+        Updated the build phase checking for inappropriate Objective-C class names to disallow the prefix
+        "Web" and only allow "WK".
+
+        * UIProcess/API/mac/FindIndicatorWindow.h:
+        * UIProcess/API/mac/FindIndicatorWindow.mm:
+        (WebKit::FindIndicatorWindow::setFindIndicator):
+        (WebKit::FindIndicatorWindow::startFadeOutTimerFired):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WKMenuTarget forwardContextMenuAction:]):
+        (WebKit::nsMenuItemVector):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformOpen):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::WebFullScreenManagerMac):
+
 2011-09-21  Chang Shu  <cshu@webkit.org>
 
         [WK2] [Mac] Implement a more-complete MouseDown/MouseUp/MouseMoveTo functions for WebKit2 EventSender

@@ -35,14 +35,14 @@
 
 using namespace WebCore;
 
-@interface WebUserDataWrapper : NSObject {
+@interface WKUserDataWrapper : NSObject {
     RefPtr<WebKit::APIObject> _webUserData;
 }
 - (id)initWithUserData:(WebKit::APIObject*)userData;
 - (WebKit::APIObject*)userData;
 @end
 
-@implementation WebUserDataWrapper
+@implementation WKUserDataWrapper
 
 - (id)initWithUserData:(WebKit::APIObject*)userData
 {
@@ -93,8 +93,8 @@ using namespace WebCore;
     WebKit::WebContextMenuItemData item(ActionType, static_cast<ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [sender state] == NSOnState);
     
     if (id representedObject = [sender representedObject]) {
-        ASSERT([representedObject isKindOfClass:[WebUserDataWrapper class]]);
-        item.setUserData([static_cast<WebUserDataWrapper *>(representedObject) userData]);
+        ASSERT([representedObject isKindOfClass:[WKUserDataWrapper class]]);
+        item.setUserData([static_cast<WKUserDataWrapper *>(representedObject) userData]);
     }
             
     _menuProxy->contextMenuItemSelected(item);
@@ -146,7 +146,7 @@ static Vector<RetainPtr<NSMenuItem> > nsMenuItemVector(const Vector<WebContextMe
             [menuItem setState:items[i].checked() ? NSOnState : NSOffState];
                         
             if (items[i].userData()) {
-                WebUserDataWrapper *wrapper = [[WebUserDataWrapper alloc] initWithUserData:items[i].userData()];
+                WKUserDataWrapper *wrapper = [[WKUserDataWrapper alloc] initWithUserData:items[i].userData()];
                 [menuItem setRepresentedObject:wrapper];
                 [wrapper release];
             }
