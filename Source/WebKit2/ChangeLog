@@ -1,3 +1,65 @@
+2011-09-21  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] UIProcess should check that WebProcess isn't sending unexpected file: URLs to it
+        https://bugs.webkit.org/show_bug.cgi?id=68573
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (maybeCreateSandboxExtensionFromPasteboard): Return a boolean, telling the caller whether
+        an extension actually needed to be created
+        (-[WKView performDragOperation:]): Tell process proxy when the process is going to get
+        universal file read sandbox extension.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didPerformClientRedirect): Check the URLs.
+        (WebKit::WebContext::didPerformServerRedirect): Ditto.
+        (WebKit::WebContext::didUpdateHistoryTitle): Ditto.
+        (WebKit::WebContext::getPluginPath): Ditto. Also, properly parse the URL - we can never
+        assume that a string coming from WebProcess is a ParsedURLString.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem): Tell process proxy when the process
+        is going to get universal file read sandbox extension.
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle): Changed to return a boolean,
+        telling the caller whether an extension actually needed to be created.
+        (WebKit::WebPageProxy::loadURL): Tell process proxy about extension.
+        (WebKit::WebPageProxy::loadURLRequest): Ditto.
+        (WebKit::WebPageProxy::loadHTMLString): Tell process proxy if a file URL was used as a base
+        one for a string. In this case, WebKit2 assumes that WebProcess has access to a subdirectory,
+        (typically, one where error page resources live), and can load from it.
+        (WebKit::WebPageProxy::loadAlternateHTMLString): Ditto.
+        (WebKit::WebPageProxy::goForward): Tell process proxy about extension.
+        (WebKit::WebPageProxy::goBack): Tell process proxy about extension.
+        (WebKit::WebPageProxy::goToBackForwardItem): Tell process proxy about extension.
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame): Check the URL.
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame): Ditto.
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame): Ditto.
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction): Ditto.
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction): Ditto.
+        (WebKit::WebPageProxy::decidePolicyForResponse): Ditto.
+        (WebKit::WebPageProxy::didInitiateLoadForResource): Ditto.
+        (WebKit::WebPageProxy::didSendRequestForResource): Ditto.
+        (WebKit::WebPageProxy::didReceiveResponseForResource): Ditto.
+        (WebKit::WebPageProxy::missingPluginButtonClicked): Ditto.
+
+        * UIProcess/WebPageProxy.h: Changed initializeSandboxExtensionHandle() to return a bool,
+        and renamed to maybeInitializeSandboxExtensionHandle (matching WKView counterpart).
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy): Initialize m_mayHaveUniversalFileReadSandboxExtension.
+        It's going to be true if we ever granted an extension for "/".
+        (WebKit::WebProcessProxy::willLoadHTMLStringWithBaseURL): Remember the path, we should expect
+        that WebProcess will load subresources from it.
+        (WebKit::WebProcessProxy::checkURLReceivedFromWebProcess): Check that it's reasonable to expect
+        WebProcess send us a URL like this.
+        (WebKit::WebProcessProxy::addBackForwardItem): Check the URLs.
+
+        * UIProcess/WebProcessProxy.h: Added data members remembering what to expect from this process.
+
+        * UIProcess/cf/WebPageProxyCF.cpp: (WebKit::WebPageProxy::restoreFromSessionStateData):
+        Tell process proxy when the process is going to get universal file read sandbox extension.
+
 2011-09-19  Jer Noble  <jer.noble@apple.com>
 
         Add settings to control the availability of the Web Audio API to WebKit and WebKit2.

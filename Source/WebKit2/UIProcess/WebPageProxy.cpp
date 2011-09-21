@@ -90,7 +90,8 @@
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process()->connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_process->connection())
+#define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(m_process->checkURLReceivedFromWebProcess(url), m_process->connection())
 
 using namespace WebCore;
 
@@ -296,7 +297,9 @@ void WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
         return;
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    initializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
+    bool createdExtension = maybeInitializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
+    if (createdExtension)
+        process()->willAcquireUniversalFileReadSandboxExtension();
     process()->send(Messages::WebPage::GoToBackForwardItem(item->itemID(), sandboxExtensionHandle), m_pageID);
     process()->responsivenessTimer()->start();
 }
@@ -396,16 +399,17 @@ bool WebPageProxy::tryClose()
     return false;
 }
 
-void WebPageProxy::initializeSandboxExtensionHandle(const KURL& url, SandboxExtension::Handle& sandboxExtensionHandle)
+bool WebPageProxy::maybeInitializeSandboxExtensionHandle(const KURL& url, SandboxExtension::Handle& sandboxExtensionHandle)
 {
     if (!url.isLocalFile())
-        return;
+        return false;
 
     // Don't give the inspector full access to the file system.
     if (WebInspectorProxy::isInspectorPage(this))
-        return;
+        return false;
 
     SandboxExtension::createHandle("/", SandboxExtension::ReadOnly, sandboxExtensionHandle);
+    return true;
 }
 
 void WebPageProxy::loadURL(const String& url)
@@ -416,7 +420,9 @@ void WebPageProxy::loadURL(const String& url)
         reattachToWebProcess();
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    initializeSandboxExtensionHandle(KURL(KURL(), url), sandboxExtensionHandle);
+    bool createdExtension = maybeInitializeSandboxExtensionHandle(KURL(KURL(), url), sandboxExtensionHandle);
+    if (createdExtension)
+        process()->willAcquireUniversalFileReadSandboxExtension();
     process()->send(Messages::WebPage::LoadURL(url, sandboxExtensionHandle), m_pageID);
     process()->responsivenessTimer()->start();
 }
@@ -429,7 +435,9 @@ void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest)
         reattachToWebProcess();
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    initializeSandboxExtensionHandle(urlRequest->resourceRequest().url(), sandboxExtensionHandle);
+    bool createdExtension = maybeInitializeSandboxExtensionHandle(urlRequest->resourceRequest().url(), sandboxExtensionHandle);
+    if (createdExtension)
+        process()->willAcquireUniversalFileReadSandboxExtension();
     process()->send(Messages::WebPage::LoadURLRequest(urlRequest->resourceRequest(), sandboxExtensionHandle), m_pageID);
     process()->responsivenessTimer()->start();
 }
@@ -439,6 +447,7 @@ void WebPageProxy::loadHTMLString(const String& htmlString, const String& baseUR
     if (!isValid())
         reattachToWebProcess();
 
+    process()->willLoadHTMLStringWithBaseURL(baseURL);
     process()->send(Messages::WebPage::LoadHTMLString(htmlString, baseURL), m_pageID);
     process()->responsivenessTimer()->start();
 }
@@ -451,6 +460,7 @@ void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const Strin
     if (m_mainFrame)
         m_mainFrame->setUnreachableURL(unreachableURL);
 
+    process()->willLoadHTMLStringWithBaseURL(baseURL);
     process()->send(Messages::WebPage::LoadAlternateHTMLString(htmlString, baseURL, unreachableURL), m_pageID);
     process()->responsivenessTimer()->start();
 }
@@ -502,7 +512,9 @@ void WebPageProxy::goForward()
     }
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    initializeSandboxExtensionHandle(KURL(KURL(), forwardItem->url()), sandboxExtensionHandle);
+    bool createdExtension = maybeInitializeSandboxExtensionHandle(KURL(KURL(), forwardItem->url()), sandboxExtensionHandle);
+    if (createdExtension)
+        process()->willAcquireUniversalFileReadSandboxExtension();
     process()->send(Messages::WebPage::GoForward(forwardItem->itemID(), sandboxExtensionHandle), m_pageID);
     process()->responsivenessTimer()->start();
 }
@@ -527,7 +539,9 @@ void WebPageProxy::goBack()
     }
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    initializeSandboxExtensionHandle(KURL(KURL(), backItem->url()), sandboxExtensionHandle);
+    bool createdExtension = maybeInitializeSandboxExtensionHandle(KURL(KURL(), backItem->url()), sandboxExtensionHandle);
+    if (createdExtension)
+        process()->willAcquireUniversalFileReadSandboxExtension();
     process()->send(Messages::WebPage::GoBack(backItem->itemID(), sandboxExtensionHandle), m_pageID);
     process()->responsivenessTimer()->start();
 }
@@ -547,7 +561,9 @@ void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
     setPendingAPIRequestURL(item->url());
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    initializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
+    bool createdExtension = maybeInitializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
+    if (createdExtension)
+        process()->willAcquireUniversalFileReadSandboxExtension();
     process()->send(Messages::WebPage::GoToBackForwardItem(item->itemID(), sandboxExtensionHandle), m_pageID);
     process()->responsivenessTimer()->start();
 }
@@ -1524,6 +1540,7 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const Strin
 
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
+    MESSAGE_CHECK_URL(url);
 
     frame->setUnreachableURL(unreachableURL);
 
@@ -1540,6 +1557,7 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t f
 
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
+    MESSAGE_CHECK_URL(url);
 
     frame->didReceiveServerRedirectForProvisionalLoad(url);
 
@@ -1661,6 +1679,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint32_t 
 
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
+    MESSAGE_CHECK_URL(url);
 
     clearPendingAPIRequestURL();
     frame->didSameDocumentNavigation(url);
@@ -1773,6 +1792,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t op
 
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
+    MESSAGE_CHECK_URL(request.url());
 
     NavigationType navigationType = static_cast<NavigationType>(opaqueNavigationType);
     WebEvent::Modifiers modifiers = static_cast<WebEvent::Modifiers>(opaqueModifiers);
@@ -1807,6 +1827,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, uint32_t opa
 
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
+    MESSAGE_CHECK_URL(request.url());
 
     NavigationType navigationType = static_cast<NavigationType>(opaqueNavigationType);
     WebEvent::Modifiers modifiers = static_cast<WebEvent::Modifiers>(opaqueModifiers);
@@ -1826,7 +1847,9 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceRespo
 
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
-
+    MESSAGE_CHECK_URL(request.url());
+    MESSAGE_CHECK_URL(response.url());
+    
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
 
     ASSERT(!m_inDecidePolicyForMIMEType);
@@ -1886,6 +1909,7 @@ void WebPageProxy::didInitiateLoadForResource(uint64_t frameID, uint64_t resourc
 {
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
+    MESSAGE_CHECK_URL(request.url());
 
     m_resourceLoadClient.didInitiateLoadForResource(this, frame, resourceIdentifier, request, pageIsProvisionallyLoading);
 }
@@ -1894,6 +1918,7 @@ void WebPageProxy::didSendRequestForResource(uint64_t frameID, uint64_t resource
 {
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
+    MESSAGE_CHECK_URL(request.url());
 
     m_resourceLoadClient.didSendRequestForResource(this, frame, resourceIdentifier, request, redirectResponse);
 }
@@ -1902,6 +1927,7 @@ void WebPageProxy::didReceiveResponseForResource(uint64_t frameID, uint64_t reso
 {
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
+    MESSAGE_CHECK_URL(response.url());
 
     m_resourceLoadClient.didReceiveResponseForResource(this, frame, resourceIdentifier, response);
 }
@@ -2016,6 +2042,9 @@ void WebPageProxy::mouseDidMoveOverElement(const WebHitTestResult::Data& hitTest
 
 void WebPageProxy::missingPluginButtonClicked(const String& mimeType, const String& url, const String& pluginsPageURL)
 {
+    MESSAGE_CHECK_URL(url);
+    MESSAGE_CHECK_URL(pluginsPageURL);
+
     m_uiClient.missingPluginButtonClicked(this, mimeType, url, pluginsPageURL);
 }
 

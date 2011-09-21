@@ -774,7 +774,7 @@ private:
     void clearPendingAPIRequestURL() { m_pendingAPIRequestURL = String(); }
     void setPendingAPIRequestURL(const String& pendingAPIRequestURL) { m_pendingAPIRequestURL = pendingAPIRequestURL; }
 
-    void initializeSandboxExtensionHandle(const WebCore::KURL&, SandboxExtension::Handle&);
+    bool maybeInitializeSandboxExtensionHandle(const WebCore::KURL&, SandboxExtension::Handle&);
 
 #if PLATFORM(MAC)
     void substitutionsPanelIsShowing(bool&);
