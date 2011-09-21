@@ -1,3 +1,26 @@
+2011-09-21  Andreas Kling  <kling@webkit.org>
+
+        Protect against misuse of EventListenerIterator.
+        https://bugs.webkit.org/show_bug.cgi?id=68364
+
+        Reviewed by Darin Adler.
+
+        In debug mode, keep track of the number of active EventListenerIterators
+        on an EventListenerMap, and assert that there are no iterators when the
+        map is being modified.
+
+        * dom/EventListenerMap.cpp:
+        (WebCore::EventListenerMap::EventListenerMap):
+        (WebCore::EventListenerMap::clear):
+        (WebCore::EventListenerMap::add):
+        (WebCore::EventListenerMap::remove):
+        (WebCore::EventListenerMap::find):
+        (WebCore::EventListenerMap::removeFirstEventListenerCreatedFromMarkup):
+        (WebCore::EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget):
+        (WebCore::EventListenerIterator::EventListenerIterator):
+        (WebCore::EventListenerIterator::~EventListenerIterator):
+        * dom/EventListenerMap.h:
+
 2011-09-21  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: minor fixes in the DOM domain of the protocol.

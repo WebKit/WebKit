@@ -75,15 +75,20 @@ private:
 
     AtomicString m_singleEventListenerType;
     OwnPtr<EventListenerVector> m_singleEventListenerVector;
+
+#ifndef NDEBUG
+    int m_activeIteratorCount;
+#endif
 };
 
 class EventListenerIterator {
     WTF_MAKE_NONCOPYABLE(EventListenerIterator);
 public:
     EventListenerIterator();
-
-    // EventTarget must not be modified while an iterator is active.
     EventListenerIterator(EventTarget*);
+#ifndef NDEBUG
+    ~EventListenerIterator();
+#endif
 
     EventListener* nextListener();
 
