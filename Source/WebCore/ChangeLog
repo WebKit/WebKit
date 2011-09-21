@@ -1,3 +1,11 @@
+2011-09-21  Chris Marrin  <cmarrin@apple.com>
+
+        Check in WebCore.vcproj file unchanged but written like MSDev likes it
+
+        Unreviewed.
+
+        * WebCode.vcproj/WebCore.vcproj:
+
 2011-09-21  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Optimize ImageBuffer constructor when accelerated
