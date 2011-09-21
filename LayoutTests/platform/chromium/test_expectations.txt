@@ -3849,7 +3849,7 @@ BUGWK68270 LEOPARD CPU DEBUG : fast/css/last-of-type-pseudo-class.html = IMAGE
 BUGWK68270 LEOPARD CPU DEBUG : fast/css/only-child-pseudo-class.html = IMAGE
 BUGWK68270 LEOPARD CPU DEBUG : fast/css/only-of-type-pseudo-class.html = IMAGE
 
-BUGWK88444 : fast/js/string-split-conformance.html = FAIL
+BUGWK68445 : fast/js/string-split-conformance.html = FAIL
 
 // Tests that have become flaky (causing regressions, but only sometimes)
 BUG_EPOGER SNOWLEOPARD CPU-CG CPU DEBUG : fast/js/try-catch-crash.html = PASS TIMEOUT
