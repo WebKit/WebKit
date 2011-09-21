@@ -132,9 +132,9 @@ v8::Handle<v8::Value> V8HTMLDocument::openCallback(const v8::Arguments& args)
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
 
     if (args.Length() > 2) {
-        if (Frame* frame = htmlDocument->frame()) {
+        if (RefPtr<Frame> frame = htmlDocument->frame()) {
             // Fetch the global object for the frame.
-            v8::Local<v8::Context> context = V8Proxy::context(frame);
+            v8::Local<v8::Context> context = V8Proxy::context(frame.get());
             // Bail out if we cannot get the context.
             if (context.IsEmpty())
                 return v8::Undefined();
@@ -151,8 +151,9 @@ v8::Handle<v8::Value> V8HTMLDocument::openCallback(const v8::Arguments& args)
             for (int i = 0; i < args.Length(); i++)
                 params[i] = args[i];
 
-            V8Proxy* proxy = V8Proxy::retrieve(frame);
-            ASSERT(proxy);
+            V8Proxy* proxy = V8Proxy::retrieve(frame.get());
+            if (!proxy)
+                return v8::Undefined();
 
             v8::Local<v8::Value> result = proxy->callFunction(v8::Local<v8::Function>::Cast(function), global, args.Length(), params);
             delete[] params;
