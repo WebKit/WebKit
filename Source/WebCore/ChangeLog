@@ -1,3 +1,16 @@
+2011-09-21  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: add minimal error handling to the DOM breakpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=68537
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::domTypeForName):
+        (WebCore::InspectorDOMDebuggerAgent::setDOMBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeDOMBreakpoint):
+
 2011-09-21  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: make WebInspector a bit more timeline friendly.

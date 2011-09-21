@@ -178,7 +178,7 @@ void InspectorDOMDebuggerAgent::didRemoveDOMNode(Node* node)
     }
 }
 
-static int domTypeForName(const String& typeString)
+static int domTypeForName(ErrorString* errorString, const String& typeString)
 {
     if (typeString == "subtree-modified")
         return SubtreeModified;
@@ -186,7 +186,8 @@ static int domTypeForName(const String& typeString)
         return AttributeModified;
     if (typeString == "node-removed")
         return NodeRemoved;
-    return SubtreeModified;
+    *errorString = makeString("Unknown DOM breakpoint type: ", typeString);
+    return -1;
 }
 
 static String domTypeName(int type)
@@ -200,12 +201,15 @@ static String domTypeName(int type)
     return "";
 }
 
-void InspectorDOMDebuggerAgent::setDOMBreakpoint(ErrorString*, int nodeId, const String& typeString)
+void InspectorDOMDebuggerAgent::setDOMBreakpoint(ErrorString* errorString, int nodeId, const String& typeString)
 {
-    Node* node = m_domAgent->nodeForId(nodeId);
+    Node* node = m_domAgent->assertNode(errorString, nodeId);
     if (!node)
         return;
-    int type = domTypeForName(typeString);
+
+    int type = domTypeForName(errorString, typeString);
+    if (type == -1)
+        return;
 
     uint32_t rootBit = 1 << type;
     m_domBreakpoints.set(node, m_domBreakpoints.get(node) | rootBit);
@@ -215,12 +219,14 @@ void InspectorDOMDebuggerAgent::setDOMBreakpoint(ErrorString*, int nodeId, const
     }
 }
 
-void InspectorDOMDebuggerAgent::removeDOMBreakpoint(ErrorString*, int nodeId, const String& typeString)
+void InspectorDOMDebuggerAgent::removeDOMBreakpoint(ErrorString* errorString, int nodeId, const String& typeString)
 {
-    Node* node = m_domAgent->nodeForId(nodeId);
+    Node* node = m_domAgent->assertNode(errorString, nodeId);
     if (!node)
         return;
-    int type = domTypeForName(typeString);
+    int type = domTypeForName(errorString, typeString);
+    if (type == -1)
+        return;
 
     uint32_t rootBit = 1 << type;
     uint32_t mask = m_domBreakpoints.get(node) & ~rootBit;

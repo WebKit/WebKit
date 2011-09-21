@@ -180,6 +180,8 @@ public:
     static Node* innerParentNode(Node*);
     static bool isWhitespace(Node*);
 
+    Node* assertNode(ErrorString*, int nodeId);
+
 private:
     InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*, InspectorState*, InjectedScriptManager*);
 
@@ -191,7 +193,6 @@ private:
     typedef HashMap<RefPtr<Node>, int> NodeToIdMap;
     int bind(Node*, NodeToIdMap*);
     void unbind(Node*, NodeToIdMap*);
-    Node* assertNode(ErrorString*, int nodeId);
     Element* assertElement(ErrorString*, int nodeId);
     HTMLElement* assertHTMLElement(ErrorString*, int nodeId);
 
