@@ -349,6 +349,7 @@ bool isBlockNodeToRetainAppearance(const Node* node)
         names.add(h5Tag.impl());
         names.add(h6Tag.impl());
         names.add(listingTag.impl());
+        names.add(pTag.impl());
         names.add(preTag.impl());
     }
     return node->isElementNode() && names.contains(toElement(node)->tagQName().impl());
@@ -368,7 +369,7 @@ Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
         // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote,
         // to help us differentiate those styles from ones that the user has applied.
         // This helps us get the color of content pasted into blockquotes right.
-        m_wrappingStyle->removeStyleAddedByNode(enclosingNodeOfType(firstPositionInOrBeforeNode(parentOfHighestNode), isBlockNodeToRetainAppearance, CanCrossEditingBoundary));
+        m_wrappingStyle->removeStyleFromRules(enclosingNodeOfType(firstPositionInOrBeforeNode(parentOfHighestNode), isBlockNodeToRetainAppearance, CanCrossEditingBoundary));
 
         // Call collapseTextDecorationProperties first or otherwise it'll copy the value over from in-effect to text-decorations.
         m_wrappingStyle->collapseTextDecorationProperties();

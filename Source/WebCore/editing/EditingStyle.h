@@ -102,7 +102,7 @@ public:
     PassRefPtr<EditingStyle> extractAndRemoveBlockProperties();
     PassRefPtr<EditingStyle> extractAndRemoveTextDirection();
     void removeBlockProperties();
-    void removeStyleAddedByNode(Node*);
+    void removeStyleFromRules(Node*);
     void removeStyleConflictingWithStyleOfNode(Node*);
     void removeNonEditingProperties();
     void collapseTextDecorationProperties();
