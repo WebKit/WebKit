@@ -525,13 +525,6 @@ void PluginView::setFrameRect(const WebCore::IntRect& rect)
     viewGeometryDidChange();
 }
 
-void PluginView::setBoundsSize(const WebCore::IntSize& size)
-{
-    Widget::setBoundsSize(size);
-    m_boundsSize = size;
-    viewGeometryDidChange();
-}
-
 void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
 {
     if (context->paintingDisabled() || !m_plugin || !m_isInitialized)
