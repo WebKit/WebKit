@@ -245,6 +245,12 @@ bool AccessibilityObject::isBlockquote() const
     return node() && node()->hasTagName(blockquoteTag);
 }
 
+
+bool AccessibilityObject::isARIATextControl() const
+{
+    return ariaRoleAttribute() == TextAreaRole || ariaRoleAttribute() == TextFieldRole;
+}
+
 bool AccessibilityObject::isLandmark() const
 {
     AccessibilityRole role = roleValue();

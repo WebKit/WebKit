@@ -767,7 +767,7 @@ bool AccessibilityRenderObject::isGroup() const
 {
     return roleValue() == GroupRole;
 }
-    
+
 AccessibilityObject* AccessibilityRenderObject::selectedRadioButton()
 {
     if (!isRadioGroup())
@@ -3354,19 +3354,19 @@ bool AccessibilityRenderObject::canSetTextRangeAttributes() const
 
 void AccessibilityRenderObject::contentChanged()
 {
-    // If this element supports ARIA live regions, then notify the AT of changes.
+    // If this element supports ARIA live regions, or is part of a region with an ARIA editable role,
+    // then notify the AT of changes.
     AXObjectCache* cache = axObjectCache();
     for (RenderObject* renderParent = m_renderer; renderParent; renderParent = renderParent->parent()) {
         AccessibilityObject* parent = cache->get(renderParent);
         if (!parent)
             continue;
         
-        // If we find a parent that has ARIA live region on, send the notification and stop processing.
-        // The spec does not talk about nested live regions.
-        if (parent->supportsARIALiveRegion()) {
-            axObjectCache()->postNotification(renderParent, AXObjectCache::AXLiveRegionChanged, true);
-            break;
-        }
+        if (parent->supportsARIALiveRegion())
+            cache->postNotification(renderParent, AXObjectCache::AXLiveRegionChanged, true);
+
+        if (parent->isARIATextControl() && !parent->isNativeTextControl() && !parent->node()->isContentEditable())
+            cache->postNotification(renderParent, AXObjectCache::AXValueChanged, true);
     }
 }
     
@@ -3375,7 +3375,7 @@ void AccessibilityRenderObject::childrenChanged()
     // This method is meant as a quick way of marking a portion of the accessibility tree dirty.
     if (!m_renderer)
         return;
-    
+
     bool sentChildrenChanged = false;
     
     // Go up the accessibility parent chain, but only if the element already exists. This method is
@@ -3403,6 +3403,10 @@ void AccessibilityRenderObject::childrenChanged()
             // If this element supports ARIA live regions, then notify the AT of changes.
             if (axParent->supportsARIALiveRegion())
                 axObjectCache()->postNotification(axParent->renderer(), AXObjectCache::AXLiveRegionChanged, true);
+
+            // If this element is an ARIA text control, notify the AT of changes.
+            if (axParent->isARIATextControl() && !axParent->isNativeTextControl() && !axParent->node()->isContentEditable())
+                axObjectCache()->postNotification(axParent->renderer(), AXObjectCache::AXValueChanged, true);
         }
     }
 }

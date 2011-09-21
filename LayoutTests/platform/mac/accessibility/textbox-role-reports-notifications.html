@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC>
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+This tests that the AXValueChanged notification is correctly reported for non-native text boxes when content is changed.<br>
+<div role="textbox" id="ariaTextBox" aria-multiline="false" tabindex="0">Some text in a textbox.</div>
+<div id="console"></div>
+<script>
+    if (window.layoutTestController && window.accessibilityController) {
+        window.layoutTestController.waitUntilDone();
+
+        accessibilityController.logAccessibilityEvents();
+        window.layoutTestController.dumpAsText();
+
+        var ariaTextBox = document.getElementById("ariaTextBox");
+        ariaTextBox.focus();
+        var textboxAxElement = accessibilityController.focusedElement;
+        textboxAxElement.addNotificationListener(logNotification);
+        pendingNotifications = 3;
+        ariaTextBox.firstChild.deleteData(0, 5);
+        ariaTextBox.textContent = "changed textContent";
+        ariaTextBox.innerText = "changed innerText";
+    }
+
+    function logNotification(notification) {
+        if (notification == "AXValueChanged") {
+            alert("Successfully received AXValueChanged.");
+            pendingNotifications--;
+            if (pendingNotifications == 0) {
+                textboxAxElement.removeNotificationListener();
+                window.layoutTestController.notifyDone();
+            }
+        }
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

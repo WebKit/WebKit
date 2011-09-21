@@ -1,0 +1,6 @@
+ALERT: Successfully received AXValueChanged.
+ALERT: Successfully received AXValueChanged.
+ALERT: Successfully received AXValueChanged.
+This tests that the AXValueChanged notification is correctly reported for non-native text boxes when content is changed.
+changed innerText
+
