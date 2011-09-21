@@ -1869,17 +1869,11 @@ body.platform-windows .sidebar-pane-subtitle {
 
 .metrics .label {
     position: absolute;
-    margin-top: -10px;
-    font-size: 9px;
-    color: grey;
-    background-color: white;
+    font-size: 10px;
+    color: black;
     margin-left: 3px;
     padding-left: 2px;
     padding-right: 2px;
-}
-
-.metrics .hovered > .label {
-    border: 1px solid black;
 }
 
 .metrics .position {

@@ -1057,11 +1057,8 @@ bool InspectorDOMAgent::setHighlightDataFromConfig(InspectorObject* highlightCon
     m_highlightData->content = parseConfigColor("contentColor", highlightConfig);
     m_highlightData->contentOutline = parseConfigColor("contentOutlineColor", highlightConfig);
     m_highlightData->padding = parseConfigColor("paddingColor", highlightConfig);
-    m_highlightData->paddingOutline = parseConfigColor("paddingOutlineColor", highlightConfig);
     m_highlightData->border = parseConfigColor("borderColor", highlightConfig);
-    m_highlightData->borderOutline = parseConfigColor("borderOutlineColor", highlightConfig);
     m_highlightData->margin = parseConfigColor("marginColor", highlightConfig);
-    m_highlightData->marginOutline = parseConfigColor("marginOutlineColor", highlightConfig);
     return true;
 }
 

@@ -46,11 +46,8 @@ struct HighlightData {
     Color content;
     Color contentOutline;
     Color padding;
-    Color paddingOutline;
     Color border;
-    Color borderOutline;
     Color margin;
-    Color marginOutline;
     bool showInfo;
 
     // Either of these must be 0.

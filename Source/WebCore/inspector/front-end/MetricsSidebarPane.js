@@ -101,74 +101,25 @@ WebInspector.MetricsSidebarPane.prototype = {
 
     _highlightDOMNode: function(showHighlight, mode, event)
     {
-        function enclosingOrSelfWithClassInArray(element, classNames)
-        {
-            for (var node = element; node && node !== element.ownerDocument; node = node.parentNode) {
-                if (node.nodeType === Node.ELEMENT_NODE) {
-                    for (var i = 0; i < classNames.length; ++i) {
-                        if (node.hasStyleClass(classNames[i]))
-                            return node;
-                    }
-                }
-            }
-            return null;
-        }
-
-        function getBoxRectangleElement(element)
-        {
-            if (!element)
-                return null;
-            return enclosingOrSelfWithClassInArray(element, ["metrics", "margin", "border", "padding", "content"]);
-        }
-
         event.stopPropagation();
-        var fromElement = getBoxRectangleElement(event.fromElement);
-        var toElement = getBoxRectangleElement(event.toElement);
-
-        if (fromElement === toElement)
-            return;
-
-        function handleMouseOver(element)
-        {
-            element.addStyleClass("hovered");
-
-            var bgColor;
-            if (element.hasStyleClass("margin"))
-                bgColor = WebInspector.Color.PageHighlight.Margin.toString("original");
-            else if (element.hasStyleClass("border"))
-                bgColor = WebInspector.Color.PageHighlight.Border.toString("original");
-            else if (element.hasStyleClass("padding"))
-                bgColor = WebInspector.Color.PageHighlight.Padding.toString("original");
-            else if (element.hasStyleClass("content"))
-                bgColor = WebInspector.Color.PageHighlight.Content.toString("original");
-            if (bgColor)
-                element.style.backgroundColor = bgColor;
-        }
-
-        function handleMouseOut(element)
-        {
-            element.style.backgroundColor = "";
-            element.removeStyleClass("hovered");
-        }
-
-        if (showHighlight) {
-            // Into element.
-            if (this.node && toElement)
-                handleMouseOver(toElement);
-            var nodeId = this.node ? this.node.id : 0;
-        } else {
-            // Out of element.
-            if (fromElement)
-                handleMouseOut(fromElement);
-            var nodeId = 0;
-        }
+        var nodeId = showHighlight && this.node ? this.node.id : 0;
         if (nodeId) {
             if (this._highlightMode === mode)
                 return;
             this._highlightMode = mode;
-        } else
+            WebInspector.highlightDOMNode(nodeId, mode);
+        } else {
             delete this._highlightMode;
-        WebInspector.highlightDOMNode(nodeId, mode);
+            WebInspector.highlightDOMNode(0, "");
+        }
+
+        for (var i = 0; this._boxElements && i < this._boxElements.length; ++i) {
+            var element = this._boxElements[i];
+            if (!nodeId || mode === "all" || element._name === mode)
+                element.style.backgroundColor = element._backgroundColor;
+            else
+                element.style.backgroundColor = "";
+        }
     },
 
     _updateMetrics: function(style)
@@ -248,8 +199,16 @@ WebInspector.MetricsSidebarPane.prototype = {
         };
 
         var boxes = ["content", "padding", "border", "margin", "position"];
+        var boxColors = [
+            WebInspector.Color.PageHighlight.Content,
+            WebInspector.Color.PageHighlight.Padding,
+            WebInspector.Color.PageHighlight.Border,
+            WebInspector.Color.PageHighlight.Margin,
+            WebInspector.Color.fromRGBA(0, 0, 0, 0)
+        ];
         var boxLabels = [WebInspector.UIString("content"), WebInspector.UIString("padding"), WebInspector.UIString("border"), WebInspector.UIString("margin"), WebInspector.UIString("position")];
         var previousBox;
+        this._boxElements = [];
         for (var i = 0; i < boxes.length; ++i) {
             var name = boxes[i];
 
@@ -262,8 +221,11 @@ WebInspector.MetricsSidebarPane.prototype = {
 
             var boxElement = document.createElement("div");
             boxElement.className = name;
+            boxElement._backgroundColor = boxColors[i].toString("original");
+            boxElement._name = name;
+            boxElement.style.backgroundColor = boxElement._backgroundColor;
             boxElement.addEventListener("mouseover", this._highlightDOMNode.bind(this, true, name === "position" ? "all" : name), false);
-            boxElement.addEventListener("mouseout", this._highlightDOMNode.bind(this, false, ""), false);
+            this._boxElements.push(boxElement);
 
             if (name === "content") {
                 var widthElement = document.createElement("span");
@@ -301,8 +263,7 @@ WebInspector.MetricsSidebarPane.prototype = {
         }
 
         metricsElement.appendChild(previousBox);
-        metricsElement.addEventListener("mouseover", this._highlightDOMNode.bind(this, true, ""), false);
-        metricsElement.addEventListener("mouseout", this._highlightDOMNode.bind(this, false, ""), false);
+        metricsElement.addEventListener("mouseover", this._highlightDOMNode.bind(this, false, ""), false);
         this.bodyElement.removeChildren();
         this.bodyElement.appendChild(metricsElement);
     },
@@ -455,10 +416,12 @@ WebInspector.MetricsSidebarPane.prototype = {
             self.inlineStyle = style;
             if (!("originalPropertyData" in self))
                 self.originalPropertyData = self.previousPropertyDataCandidate;
-            if ("_highlightMode" in self) {
+
+            if (typeof self._highlightMode !== "undefined") {
                 WebInspector.highlightDOMNode(0, "");
                 WebInspector.highlightDOMNode(self.node.id, self._highlightMode);
             }
+
             if (commitEditor) {
                 self.dispatchEventToListeners("metrics edited");
                 self.update();

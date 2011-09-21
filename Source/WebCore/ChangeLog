@@ -1,3 +1,29 @@
+2011-09-21  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: paint box model colors in Metrics sidebar at all times, do not draw box outlines.
+        https://bugs.webkit.org/show_bug.cgi?id=68240
+
+        Today we paint backgrounds in Metrics box model on hover only - should be painted at all
+        times for the reference. Outlining boxes is highlight is wrong since outlines are outside
+        the corresponding box regions. We've seen few reports on that + Firebug does not do borders
+        for that reason.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/DOMNodeHighlighter.cpp:
+        * inspector/DOMNodeHighlighter.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setHighlightDataFromConfig):
+        * inspector/front-end/Color.js:
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype._highlightDOMNode):
+        (WebInspector.MetricsSidebarPane.prototype._updateMetrics):
+        * inspector/front-end/inspector.css:
+        (.metrics .label):
+        * inspector/front-end/inspector.js:
+        (WebInspector.buildHighlightConfig):
+
 2011-09-21  Andreas Kling  <kling@webkit.org>
 
         Protect against misuse of EventListenerIterator.

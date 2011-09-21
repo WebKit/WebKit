@@ -684,11 +684,12 @@ WebInspector.Color.AdvancedNickNames = {
 
 WebInspector.Color.PageHighlight = {
     Content: WebInspector.Color.fromRGBA(111, 168, 220, .66),
+    ContentLight: WebInspector.Color.fromRGBA(111, 168, 220, .5),
     ContentOutline: WebInspector.Color.fromRGBA(9, 83, 148),
     Padding: WebInspector.Color.fromRGBA(147, 196, 125, .55),
-    PaddingOutline: WebInspector.Color.fromRGBA(55, 118, 28),
+    PaddingLight: WebInspector.Color.fromRGBA(147, 196, 125, .4),
     Border: WebInspector.Color.fromRGBA(255, 229, 153, .66),
-    BorderOutline: WebInspector.Color.fromRGBA(127, 96, 0),
+    BorderLight: WebInspector.Color.fromRGBA(255, 229, 153, .5),
     Margin: WebInspector.Color.fromRGBA(246, 178, 107, .66),
-    MarginOutline: WebInspector.Color.fromRGBA(180, 95, 4)
+    MarginLight: WebInspector.Color.fromRGBA(246, 178, 107, .5)
 }

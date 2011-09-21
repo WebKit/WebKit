@@ -890,18 +890,14 @@
                 "description": "A structure holding an RGBA color."
             },
             {
-                "id": "BoxHighlightConfig",
+                "id": "HighlightConfig",
                 "type": "object",
                 "properties": [
                     { "name": "showInfo", "type": "boolean", "optional": true, "description": "Whether the node info tooltip should be shown (default: false)." },
                     { "name": "contentColor", "$ref": "RGBA", "optional": true, "description": "The content box highlight fill color (default: transparent)." },
-                    { "name": "contentOutlineColor", "$ref": "RGBA", "optional": true, "description": "The content box highlight outline color (default: transparent)." },
                     { "name": "paddingColor", "$ref": "RGBA", "optional": true, "description": "The padding highlight fill color (default: transparent)." },
-                    { "name": "paddingOutlineColor", "$ref": "RGBA", "optional": true, "description": "The padding highlight outline color (default: transparent)." },
                     { "name": "borderColor", "$ref": "RGBA", "optional": true, "description": "The border highlight fill color (default: transparent)." },
-                    { "name": "borderOutlineColor", "$ref": "RGBA", "optional": true, "description": "The border highlight outline color (default: transparent)." },
                     { "name": "marginColor", "$ref": "RGBA", "optional": true, "description": "The margin highlight fill color (default: transparent)." },
-                    { "name": "marginOutlineColor", "$ref": "RGBA", "optional": true, "description": "The margin highlight outline color (default: transparent)." }
                 ],
                 "description": "Configuration data for the highlighting of page elements."
             }
@@ -930,7 +926,7 @@
                 "returns": [
                     { "name": "nodeId", "$ref": "NodeId", "description": "Query selector result." }
                 ],
-                "description": "Executes <code>querySelector</code> on a given node. Setting <code>documentWide</code> to true starts selecting from the document node."
+                "description": "Executes <code>querySelector</code> on a given node."
             },
             {
                 "name": "querySelectorAll",
@@ -941,7 +937,7 @@
                 "returns": [
                     { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Query selector result." }
                 ],
-                "description": "Executes <code>querySelectorAll</code> on a given node. Setting <code>documentWide</code> to true starts selecting from the document node."
+                "description": "Executes <code>querySelectorAll</code> on a given node."
             },
             {
                 "name": "setNodeName",
@@ -1064,7 +1060,7 @@
                 "hidden": true,
                 "parameters": [
                     { "name": "enabled", "type": "boolean", "description": "True to enable inspection mode, false to disable it." },
-                    { "name": "highlightConfig", "$ref": "BoxHighlightConfig", "optional": true, "description": "A descriptor for the highlight appearance of hovered-over nodes. May be omitted if <code>enabled == false</code>." }
+                    { "name": "highlightConfig", "$ref": "HighlightConfig", "optional": true, "description": "A descriptor for the highlight appearance of hovered-over nodes. May be omitted if <code>enabled == false</code>." }
                 ],
                 "description": "Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspect' command upon element selection."
             },
@@ -1084,7 +1080,7 @@
                 "name": "highlightNode",
                 "parameters": [
                     { "name": "nodeId", "$ref": "NodeId", "description": "Identifier of the node to highlight." },
-                    { "name": "highlightConfig", "$ref": "BoxHighlightConfig", "description": "A descriptor for the highlight appearance." }
+                    { "name": "highlightConfig", "$ref": "HighlightConfig", "description": "A descriptor for the highlight appearance." }
                 ],
                 "description": "Highlights DOM node with given id."
             },

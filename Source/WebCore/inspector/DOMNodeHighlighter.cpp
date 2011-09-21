@@ -99,51 +99,44 @@ void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, const Col
     context.fillPath(quadPath);
 }
 
-void drawOutlinedQuadWithClip(GraphicsContext& context, const FloatQuad& quad, const FloatQuad& clipQuad, const Color& fillColor, const Color& outlineColor)
+void drawOutlinedQuadWithClip(GraphicsContext& context, const FloatQuad& quad, const FloatQuad& clipQuad, const Color& fillColor)
 {
     context.save();
     Path clipQuadPath = quadToPath(clipQuad);
     context.clipOut(clipQuadPath);
-    drawOutlinedQuad(context, quad, fillColor, outlineColor);
+    drawOutlinedQuad(context, quad, fillColor, Color::transparent);
     context.restore();
 }
 
 void drawHighlightForBox(GraphicsContext& context, const FloatQuad& contentQuad, const FloatQuad& paddingQuad, const FloatQuad& borderQuad, const FloatQuad& marginQuad, HighlightData* highlightData)
 {
-    bool hasMargin = highlightData->margin != Color::transparent || highlightData->marginOutline != Color::transparent;
-    bool hasBorder = highlightData->border != Color::transparent || highlightData->borderOutline != Color::transparent;
-    bool hasPadding = highlightData->padding != Color::transparent || highlightData->paddingOutline != Color::transparent;
+    bool hasMargin = highlightData->margin != Color::transparent;
+    bool hasBorder = highlightData->border != Color::transparent;
+    bool hasPadding = highlightData->padding != Color::transparent;
     bool hasContent = highlightData->content != Color::transparent || highlightData->contentOutline != Color::transparent;
 
     FloatQuad clipQuad;
     Color clipColor;
     if (hasMargin && (!hasBorder || marginQuad != borderQuad)) {
-        drawOutlinedQuadWithClip(context, marginQuad, borderQuad, highlightData->margin, highlightData->marginOutline);
+        drawOutlinedQuadWithClip(context, marginQuad, borderQuad, highlightData->margin);
         clipQuad = borderQuad;
-        clipColor = highlightData->marginOutline;
     }
     if (hasBorder && (!hasPadding || borderQuad != paddingQuad)) {
-        drawOutlinedQuadWithClip(context, borderQuad, paddingQuad, highlightData->border, highlightData->borderOutline);
+        drawOutlinedQuadWithClip(context, borderQuad, paddingQuad, highlightData->border);
         clipQuad = paddingQuad;
-        clipColor = highlightData->borderOutline;
     }
     if (hasPadding && (!hasContent || paddingQuad != contentQuad)) {
-        drawOutlinedQuadWithClip(context, paddingQuad, contentQuad, highlightData->padding, highlightData->paddingOutline);
+        drawOutlinedQuadWithClip(context, paddingQuad, contentQuad, highlightData->padding);
         clipQuad = contentQuad;
-        clipColor = highlightData->paddingOutline;
     }
     if (hasContent)
         drawOutlinedQuad(context, contentQuad, highlightData->content, highlightData->contentOutline);
-    else {
-        if (clipColor.isValid())
-            drawOutlinedQuadWithClip(context, clipQuad, clipQuad, clipColor, clipColor);
-    }
 }
 
 void drawHighlightForLineBoxesOrSVGRenderer(GraphicsContext& context, const Vector<FloatQuad>& lineBoxQuads, HighlightData* highlightData)
 {
     for (size_t i = 0; i < lineBoxQuads.size(); ++i)
-        drawOutlinedQuad(context, lineBoxQuads[i], highlightData->content, highlightData->contentOutline);
+        drawOutlinedQuad(context, lineBoxQuads[i], highlightData->content, Color::transparent);
 }
 
 inline LayoutSize frameToMainFrameOffset(Frame* frame)
