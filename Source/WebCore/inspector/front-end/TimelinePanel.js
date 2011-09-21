@@ -347,7 +347,7 @@ WebInspector.TimelinePanel.prototype = {
             WebInspector.timelineManager.stop();
         else {
             this._clearPanel();
-            WebInspector.timelineManager.start();
+            WebInspector.timelineManager.start(30);
             WebInspector.userMetrics.TimelineStarted.record();
         }
         this.toggleTimelineButton.toggled = !this.toggleTimelineButton.toggled;

@@ -1,3 +1,18 @@
+2011-09-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: make WebInspector a bit more timeline friendly.
+        https://bugs.webkit.org/show_bug.cgi?id=68534
+
+        I found that the maximum captured stack frame depth tracked by timeline is not
+        very convenient because the average depth of call stack considerably more than five.
+        Another useful trick is console.timeStamp for all backend calls.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._toggleTimelineButtonClicked):
+
 2011-09-21  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] Implement Download support in WebProcess
