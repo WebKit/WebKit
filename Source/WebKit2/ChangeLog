@@ -1,3 +1,19 @@
+2011-09-21  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/9890932> "Open PDF in Preview" on two PDFs of the same name does nothing the second time
+
+        The logic in PDFViewController::pathToPDFOnDisk that deals with constructing a unique
+        file name if a file of the suggested name already exists was incorrect. It was appending
+        the template used by mkstemps to the directory name component of the path rather than
+        using it as a prefix on the filename portion of the path. This resulted in a template path
+        like WebKitPDFs-ABCDEFXXXXXX-/foo.pdf where WebKitPDFs-ABCDEF/XXXXXX-foo.pdf was expected.
+
+        Reviewed by Jon Honeycutt.
+
+        * UIProcess/API/mac/PDFViewController.mm:
+        (WebKit::PDFViewController::pathToPDFOnDisk): Append the template as a new path component,
+        then append the suggested file name to that component.
+
 2011-09-21  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt] Remove Qt specific code from css/SelectorChecker.cpp

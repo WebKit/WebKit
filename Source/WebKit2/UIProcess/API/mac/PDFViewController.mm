@@ -567,8 +567,8 @@ NSString *PDFViewController::pathToPDFOnDisk()
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if ([fileManager fileExistsAtPath:path]) {
-        NSString *pathTemplatePrefix = [pdfDirectoryPath stringByAppendingString:@"XXXXXX-"];
-        NSString *pathTemplate = [pathTemplatePrefix stringByAppendingPathComponent:m_suggestedFilename.get()];
+        NSString *pathTemplatePrefix = [pdfDirectoryPath stringByAppendingPathComponent:@"XXXXXX-"];
+        NSString *pathTemplate = [pathTemplatePrefix stringByAppendingString:m_suggestedFilename.get()];
         CString pathTemplateRepresentation = [pathTemplate fileSystemRepresentation];
 
         int fd = mkstemps(pathTemplateRepresentation.mutableData(), pathTemplateRepresentation.length() - strlen([pathTemplatePrefix fileSystemRepresentation]) + 1);
