@@ -1,3 +1,13 @@
+2011-09-21  Cary Clark  <caryclark@google.com>
+
+        Unreviewed; new baselines (Skia on Mac)
+
+        This separates test failures that are specific to CG Mac from failures
+        for Skia on Mac. Most of these changes are specific to Leopard, but a
+        handful add new fail flavors for all Mac variations.
+
+        * LayoutTests/platform/chromium/test_expectations.txt:
+
 2011-09-21  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK baselines for

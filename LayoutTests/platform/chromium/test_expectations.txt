@@ -960,7 +960,7 @@ BUGCR10322 SKIP : platform/win/accessibility = PASS FAIL
 // -----------------------------------------------------------------
 
 // This test is slow due to Mesa slowness.
-WONTFIX GPU WIN LINUX : canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
+WONTFIX GPU : canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
 
 // This test is overly-finicky about pixel values.
 BUGWK64876 LINUX WIN GPU : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
@@ -1345,8 +1345,8 @@ BUGCR10418 WIN DEBUG : animations/change-keyframes-name.html = PASS FAIL
 
 // We could fix this test for us and upstream it if the test shell user agent
 // would let us differentiate test_shell and WebKit DumpTreeNode.
-BUGCR7482 LINUX MAC : http/tests/misc/timer-vs-loading.html = PASS TIMEOUT
-BUGCR7482 WIN : http/tests/misc/timer-vs-loading.html = PASS TIMEOUT
+BUGCR7482 MAC : http/tests/misc/timer-vs-loading.html = PASS TIMEOUT TEXT
+BUGCR7482 LINUX WIN : http/tests/misc/timer-vs-loading.html = PASS TIMEOUT
 
 // Selection highlight colors are wrong.
 BUGCR10426 LINUX : fast/lists/drag-into-marker.html = FAIL
@@ -1589,7 +1589,7 @@ BUGCR27850 : fast/history/back-forward-reset-after-error-handling.html = TEXT
 // in isolated worlds are cleared.
 BUGCR27849 : http/tests/security/isolatedWorld/didClearWindowObject.html = TEXT
 
-BUGCR28040 MAC WIN DEBUG : fast/body-propagation/overflow/003-xhtml.xhtml = PASS IMAGE+TEXT
+BUGCR28040 MAC WIN DEBUG : fast/body-propagation/overflow/003-xhtml.xhtml = PASS IMAGE IMAGE+TEXT
 
 BUGCR28092 WIN : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS FAIL
 
@@ -1716,10 +1716,11 @@ BUGCR36966 : fast/loader/about-blank-hash-kept.html = FAIL
 // New test, added http://trac.webkit.org/changeset/55546
 BUGCR37896 LINUX WIN : fast/multicol/hit-test-above-or-below.html = TEXT
 BUGCR37896 WIN DEBUG : fast/text/firstline/001.html = PASS CRASH
-BUGCR37896 LINUX MAC DEBUG : fast/text/firstline/001.html = PASS CRASH TIMEOUT
+BUGCR37896 LINUX DEBUG : fast/text/firstline/001.html = PASS CRASH TIMEOUT
+BUGCR37896 MAC DEBUG : fast/text/firstline/001.html = PASS CRASH TIMEOUT IMAGE
 // Added in http://trac.webkit.org/changeset/55587
 // Three flaky tests noticed during a sheriff rotation.
-BUGCR37962 MAC DEBUG : fast/dom/HTMLElement/bdo.html = PASS CRASH
+BUGCR37962 MAC DEBUG : fast/dom/HTMLElement/bdo.html = PASS CRASH IMAGE
 BUGCR37962 LINUX DEBUG : fast/forms/multiple-form-submission-protection-mouse.html = PASS CRASH
 
 // WebKit roll r55853 -> 55940
@@ -2244,7 +2245,8 @@ BUG_AUTO DEBUG : animations/suspend-resume-animation.html = PASS TEXT
 BUG_AUTO WIN DEBUG : animations/multiple-keyframes.html = PASS TEXT
 
 // Seems to have been crashing intermittently for as long as we have test history.
-BUGCR62741 DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = PASS CRASH
+BUGCR62741 WIN LINUX SNOWLEOPARD DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = PASS CRASH
+BUGWK68270 LEOPARD CPU DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = IMAGE
 
 // nodesFromRect() removed from Document.idl and test skipped on other platforms at r68345.
 BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
@@ -2694,7 +2696,7 @@ BUGWK67116 GPU GPU-CG DEBUG : compositing/layer-creation/overflow-scroll-overlap
 // that needs to be implemented for GPU
 BUGCR94918 GPU SKIP : media/media-document-audio-repaint.html = IMAGE+TEXT IMAGE
 
-BUGWK55968 MAC GPU-CG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT
+BUGWK55968 MAC GPU GPU-CG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE IMAGE+TEXT
 BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
 // Flaky scrollbar issues
@@ -2783,7 +2785,7 @@ BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
 
 BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEXT
 
-BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = PASS TEXT IMAGE
+BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = PASS TEXT IMAGE IMAGE+TEXT
 
 BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
 
@@ -2821,7 +2823,7 @@ BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS
 // Flaky
 BUGCR76609 DEBUG : animations/play-state.html = PASS TEXT
 BUGCR76610 MAC WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
-BUGCR76716 DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
+BUGCR76716 LINUX WIN SNOWLEOPARD DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
 BUGCR76979 WIN : inspector/console/console-dirxml.html = PASS TEXT
 BUGCR76979 LINUX DEBUG : inspector/console/console-dirxml.html = PASS TIMEOUT TEXT
 
@@ -2829,6 +2831,8 @@ BUGCR76979 LINUX DEBUG : inspector/console/console-dirxml.html = PASS TIMEOUT TE
 BUGCR76616 LINUX WIN : fast/text/emphasis-combined-text.html = IMAGE+TEXT
 // Needs leopard baseline.
 BUGCR76616 LEOPARD : fast/text/emphasis-combined-text.html = IMAGE
+// Flaky on snowleopard.
+BUGCR76616 SNOWLEOPARD CPU : fast/text/emphasis-combined-text.html = PASS IMAGE
 
 // New CSS3 feature in r81684. Some tests fail outside Mac.
 BUGCR77095 LINUX WIN : fast/block/lineboxcontain/block-glyphs-replaced.html = IMAGE+TEXT
@@ -2938,7 +2942,7 @@ BUGCR780807 : http/tests/misc/webtiming-origins.html = PASS TEXT
 
 BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = TEXT
 BUGCR78988 LINUX : svg/zoom/text/absolute-sized-document-no-scrollbars.svg = PASS CRASH
-BUGCR78996 DEBUG : fast/css/first-of-type-pseudo-class.html = PASS TEXT
+BUGCR78996 LINUX WIN SNOWLEOPARD DEBUG : fast/css/first-of-type-pseudo-class.html = PASS TEXT
 // http://trac.webkit.org/changeset/83411/ merged some frame tests into one.
 // The merged test is flaky on Chromium since then.
 BUGCR78998 DEBUG : fast/frames/frame-element-name.html = PASS TEXT
@@ -2972,7 +2976,7 @@ BUGCR79853 : animations/combo-transform-translate+scale.html = PASS TEXT
 BUGCR79854 : editing/execCommand/delete-empty-container.html = PASS TEXT
 
 // Flaky on debug
-BUGCR79855 DEBUG : fast/css/only-child-pseudo-class.html = PASS TEXT
+BUGCR79855 LINUX WIN SNOWLEOPARD DEBUG : fast/css/only-child-pseudo-class.html = PASS TEXT
 
 // Flaky on debug
 BUGCR79857 DEBUG : fast/events/popup-blocking-timers.html = PASS TEXT
@@ -3098,7 +3102,7 @@ BUGCR79917 LINUX WIN : transforms/svg-vs-css.xhtml = IMAGE
 BUGWK58924 MAC : plugins/mouse-click-iframe-to-plugin.html = PASS TIMEOUT
 
 BUGWK60099 DEBUG : fast/dom/Attr/access-after-element-destruction.html = PASS CRASH
-BUGWK60096 DEBUG : fast/css/last-child-pseudo-class.html = PASS TEXT
+BUGWK60096 LINUX WIN SNOWLEOPARD DEBUG : fast/css/last-child-pseudo-class.html = PASS TEXT
 BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = PASS TEXT
 
 // Looks like some uninitialized memory at the bottom.
@@ -3127,7 +3131,7 @@ BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = PASS CRASH
 BUGDPRANKE DEBUG : http/tests/navigation/forward-to-fragment-fires-onload.html = PASS TIMEOUT
 BUGDPRANKE LINUX RELEASE : http/tests/navigation/forward-to-fragment-fires-onload.html = PASS TIMEOUT
 BUGDPRANKE DEBUG : fast/notifications/notifications-display-close-events.html = PASS TIMEOUT
-BUGDPRANKE DEBUG : fast/css-generated-content/table-row-group-to-inline.html = PASS IMAGE+TEXT
+BUGDPRANKE DEBUG : fast/css-generated-content/table-row-group-to-inline.html = PASS IMAGE IMAGE+TEXT
 
 BUGDPRANKE : http/tests/navigation/lockedhistory-iframe.html = PASS TIMEOUT TEXT
 BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = PASS TEXT
@@ -3135,7 +3139,7 @@ BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = PASS TEXT
 
 BUGDPRANKE WIN DEBUG : http/tests/misc/empty-file-formdata.html = PASS TIMEOUT
 BUGDPRANKE WIN DEBUG : http/tests/xmlhttprequest/access-control-preflight-headers-async.html = PASS TIMEOUT
-BUGDPRANKE DEBUG : fast/css/only-of-type-pseudo-class.html = PASS TEXT
+BUGDPRANKE LINUX WIN SNOWLEOPARD DEBUG : fast/css/only-of-type-pseudo-class.html = PASS TEXT
 
 // Introduced in r84443
 BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
@@ -3219,7 +3223,7 @@ BUGDPRANKE DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
 BUGDPRANKE WIN DEBUG : fast/css/getComputedStyle/counterIncrement-without-counter.html = PASS CRASH
 
 // flakiness on the deps bots (noted r~83476)
-BUGWK60105 DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
+BUGWK60105 LINUX WIN SNOWLEOPARD DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
 
 BUGWK59782 LINUX WIN : fast/box-shadow/single-pixel-shadow.html = IMAGE
 
@@ -3374,7 +3378,7 @@ BUGWK61624 WIN : editing/pasteboard/smart-paste-004.html = TEXT
 BUGADAMK DEBUG : svg/custom/object-sizing-explicit-height.xhtml = PASS IMAGE+TEXT
 BUGADAMK DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE+TEXT
 BUGWK66320 SNOWLEOPARD RELEASE : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE+TEXT
-BUGWK66320 DEBUG : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE+TEXT
+BUGWK66320 DEBUG : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE IMAGE+TEXT
 
 // After r87526, these all have extra scrollbars where the platform/mac expectations do not.
 BUGWK61664 LINUX : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
@@ -3423,7 +3427,7 @@ BUGWK63937 MAC : css2.1/20110323/replaced-intrinsic-ratio-001.htm = PASS IMAGE T
 
 // Has been timing out since r88913.
 BUGWK62754 LINUX MAC RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TIMEOUT IMAGE+TEXT
-BUGWK62754 SLOW LEOPARD LINUX DEBUG : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
+BUGWK62754 SLOW LINUX MAC DEBUG : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
 
 BUGWK59921 SLOW LINUX WIN : inspector/debugger/debugger-scripts.html = PASS TEXT
 
@@ -3471,7 +3475,7 @@ BUGCR88232 WIN DEBUG : fast/dom/non-numeric-values-numeric-parameters.html = PAS
 // Quota enforcement not yet implemented for LevelDB back-end.
 BUGCR83652 : storage/indexeddb/database-quota.html = TEXT
 
-BUGCR88311 DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
+BUGCR88311 LINUX WIN SNOWLEOPARD DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
 
 BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = PASS TEXT
 
@@ -3526,7 +3530,8 @@ BUGRNIWA DEBUG : jquery/css.html = PASS TIMEOUT
 
 BUGWK64920 WIN DEBUG : fast/canvas/webgl/renderbuffer-initialization.html = PASS CRASH
 
-BUGWK64940 MAC WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-78-t.svg = PASS CRASH
+BUGWK64940 WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-78-t.svg = PASS CRASH
+BUGWK64940 MAC DEBUG : svg/W3C-SVG-1.1/animate-elem-78-t.svg = PASS CRASH IMAGE
 
 BUGWK64943 MAC : fast/flexbox/010.html = PASS CRASH IMAGE
 
@@ -3757,6 +3762,7 @@ BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PAS
 
 // Tests that are known to fail on Mac10.6 with CPU-Skia graphics.
 BUGWK68436 SNOWLEOPARD CPU : fast/events/constructors/progress-event-constructor.html = TEXT
+BUGWK68436 SNOWLEOPARD CPU DEBUG : fast/repaint/background-clip-text.html = TIMEOUT
 BUGWK68436 SNOWLEOPARD CPU : fast/repaint/text-emphasis-h.html = IMAGE
 BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
 
@@ -3811,9 +3817,6 @@ BUGWK68437 LEOPARD GPU : fast/canvas/zero-size-fill-rect.html = IMAGE
 // Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with CPU-Skia graphics.
 BUGWK68437 LEOPARD CPU : printing/return-from-printing-mode.html = IMAGE
 
-// Tests that are known to exhibit TIMEOUT failures on Mac10.5 with Skia graphics.
-BUGWK68437 LEOPARD GPU : canvas/philip/tests/2d.shadow.blur.low.html = TIMEOUT
-
 // Temporarily allowing many failures for Mac10.5 with Skia graphics.
 // epoger promises to remove these expectations by 10 October 2011.
 BUGWK68270 LEOPARD CPU GPU : animations = PASS TEXT IMAGE IMAGE+TEXT
@@ -3833,4 +3836,21 @@ BUGWK68270 LEOPARD CPU GPU : tables = PASS TEXT IMAGE IMAGE+TEXT
 BUGWK68270 LEOPARD CPU GPU : transforms = PASS TEXT IMAGE IMAGE+TEXT
 BUGWK68270 LEOPARD CPU GPU : transitions = PASS TEXT IMAGE IMAGE+TEXT
 
+// The *-pseudo-class tests are already marked flaky (for TEXT failure) on all platforms,
+// but reliably fail with IMAGE on Mac10.5 with Skia graphics.
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/empty-pseudo-class.html = IMAGE
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/first-child-pseudo-class.html = IMAGE
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/first-of-type-pseudo-class.html = IMAGE
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/last-child-pseudo-class.html = IMAGE
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/last-of-type-pseudo-class.html = IMAGE
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/only-child-pseudo-class.html = IMAGE
+BUGWK68270 LEOPARD CPU DEBUG : fast/css/only-of-type-pseudo-class.html = IMAGE
+
 BUGWK88444 : fast/js/string-split-conformance.html = FAIL
+
+// Tests that have become flaky (causing regressions, but only sometimes)
+BUG_EPOGER SNOWLEOPARD CPU-CG CPU DEBUG : fast/js/try-catch-crash.html = PASS TIMEOUT
+
+// Consistently failing as of about r95590
+BUG_EPOGER LEOPARD CPU-CG : fast/clip/overflow-border-radius-fixed-position.html = IMAGE
+BUG_EPOGER MAC CPU : fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html = IMAGE
