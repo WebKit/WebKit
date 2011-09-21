@@ -102,4 +102,9 @@ void PlatformWebView::setWindowFrame(WKRect wkRect)
     m_window->setGeometry(wkRect.origin.x, wkRect.origin.y, wkRect.size.width, wkRect.size.height);
 }
 
+bool PlatformWebView::sendEvent(QEvent* event)
+{
+    return QCoreApplication::sendEvent(m_view->wkView(), event);
+}
+
 } // namespace WTR

@@ -37,7 +37,7 @@
 #include <cstdio>
 #include <wtf/PassOwnPtr.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(QT)
 #include "EventSenderProxy.h"
 #endif
 
@@ -73,7 +73,7 @@ TestController::TestController(int argc, const char* argv[])
     , m_didPrintWebProcessCrashedMessage(false)
     , m_shouldExitWhenWebProcessCrashes(true)
     , m_beforeUnloadReturnValue(true)
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(QT)
     , m_eventSenderProxy(new EventSenderProxy(this))
 #endif
 {
@@ -517,7 +517,7 @@ void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
 WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(QT)
     if (WKStringIsEqualToUTF8CString(messageName, "EventSender")) {
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);

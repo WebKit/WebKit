@@ -65,6 +65,10 @@ public:
     void resizeTo(unsigned width, unsigned height);
     void focus();
 
+#if PLATFORM(QT)
+    bool sendEvent(QEvent*);
+#endif
+
     WKRect windowFrame();
     void setWindowFrame(WKRect);
 

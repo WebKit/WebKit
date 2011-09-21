@@ -34,6 +34,7 @@ unix:!mac:!symbian:!embedded {
 QT = core gui network declarative
 
 HEADERS = \
+    $$BASEDIR/EventSenderProxy.h \
     $$BASEDIR/PlatformWebView.h \
     $$BASEDIR/StringFunctions.h \
     $$BASEDIR/TestController.h \
@@ -41,6 +42,7 @@ HEADERS = \
 
 SOURCES = \
     main.cpp \
+    EventSenderProxyQt.cpp \
     PlatformWebViewQt.cpp \
     TestControllerQt.cpp \
     TestInvocationQt.cpp \
