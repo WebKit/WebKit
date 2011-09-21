@@ -27,8 +27,8 @@
  */
 
 #include "config.h"
-#include <JavaScriptCore/RedBlackTree.h>
-#include <JavaScriptCore/Vector.h>
+#include <wtf/RedBlackTree.h>
+#include <wtf/Vector.h>
 
 using namespace WTF;
 

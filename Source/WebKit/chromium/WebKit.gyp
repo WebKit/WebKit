@@ -32,6 +32,7 @@
     'includes': [
         '../../WebCore/WebCore.gypi',
         '../../../Tools/DumpRenderTree/DumpRenderTree.gypi',
+        '../../../Tools/TestWebKitAPI/TestWebKitAPI.gypi',
         'WebKit.gypi',
         'features.gypi',
     ],
@@ -1178,7 +1179,7 @@
                         '<(chromium_src_dir)/webkit/support/setup_third_party.gyp:third_party_headers',
                     ]
                 }],
-                ['component!="shared_library"', {
+                ['inside_chromium_build==0 or component!="shared_library"', {
                     'dependencies': [
                         '../../WebCore/WebCore.gyp/WebCore.gyp:webcore_test_support',
                     ],
@@ -1266,6 +1267,39 @@
                         'destination': '<(PRODUCT_DIR)/plugins',
                         'files': ['<(PRODUCT_DIR)/libTestNetscapePlugIn.so'],
                     }],
+                }],
+            ],
+        },
+        {
+            'target_name': 'TestWebKitAPI',
+            'type': 'executable',
+            'dependencies': [
+                'webkit',
+                '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
+                '<(chromium_src_dir)/base/base.gyp:test_support_base',
+                '<(chromium_src_dir)/testing/gtest.gyp:gtest',
+                '<(chromium_src_dir)/testing/gmock.gyp:gmock',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
+            ],
+            'include_dirs': [
+                '../../../Tools/TestWebKitAPI',
+                # Needed by tests/RunAllTests.cpp, as well as ChromiumCurrentTime.cpp and
+                # ChromiumThreading.cpp in chromium shared library configuration.
+                'public',
+            ],
+            'sources': [
+                # Reuse the same testing driver of Chromium's webkit_unit_tests.
+                'tests/RunAllTests.cpp',
+                '<@(TestWebKitAPI_files)',
+            ],
+            'conditions': [
+                ['inside_chromium_build==1 and component=="shared_library"', {
+                    'sources': [
+                        # To satisfy linking of WTF::currentTime() etc. in shared library configuration,
+                        # as the symbols are not exported from the DLLs.
+                        'src/ChromiumCurrentTime.cpp',
+                        'src/ChromiumThreading.cpp',
+                    ],
                 }],
             ],
         },

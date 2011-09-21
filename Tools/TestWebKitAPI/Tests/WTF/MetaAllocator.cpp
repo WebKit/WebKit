@@ -27,8 +27,9 @@
  */
 
 #include "config.h"
-#include <JavaScriptCore/MetaAllocator.h>
-#include <JavaScriptCore/Vector.h>
+#include <stdarg.h>
+#include <wtf/MetaAllocator.h>
+#include <wtf/Vector.h>
 
 using namespace WTF;
 

@@ -1,3 +1,17 @@
+2011-09-21  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Ensure TestWebKitAPI works on mac, win, chromium-mac and chromium-linux
+        https://bugs.webkit.org/show_bug.cgi?id=68206
+
+        Reviewed by Tony Chang.
+
+        Added two new wtf headers into ForwardingHeaders/wtf to make
+        #include <wtf/...h> cross-platform.
+        No new tests needed.
+
+        * ForwardingHeaders/wtf/MetaAllocator.h: Added.
+        * ForwardingHeaders/wtf/RedBlackTree.h: Added.
+
 2011-09-21  David Delaune  <david.delaune@googlemail.com>
 
         [WinCairo] IconDatabase::defaultIcon always fails for non-CAN_THEME_URL_ICON builds.

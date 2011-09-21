@@ -1,3 +1,12 @@
+2011-09-21  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Ensure TestWebKitAPI works on mac, win, chromium-mac and chromium-linux
+        https://bugs.webkit.org/show_bug.cgi?id=68206
+
+        Reviewed by Tony Chang.
+
+        * WebKit.gyp:
+
 2011-09-21  chandra shekar vallala  <chandra.vallala@gmail.com>
 
         [chromium]ClearFocusedNode doesn't clear the cursor or selection in editable div element.

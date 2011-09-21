@@ -156,7 +156,13 @@ sub determineBaseProductDir
         # Shadow builds are not supported on Symbian
         $baseProductDir = $sourceDir;
     } elsif (isChromium()) {
-        $baseProductDir = "$sourceDir/out";
+        if (isLinux() || isChromiumAndroid()) {
+            $baseProductDir = "$sourceDir/out";
+        } elsif (isDarwin()) {
+            $baseProductDir = "$sourceDir/Source/WebKit/chromium/xcodebuild";
+        } elsif (isWindows() || isCygwin()) {
+            # FIXME: set the correct baseProductDir for chromium-win.
+        }
     }
 
     if (!defined($baseProductDir)) { # Port-spesific checks failed, use default
