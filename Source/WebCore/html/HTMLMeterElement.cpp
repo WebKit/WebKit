@@ -228,6 +228,8 @@ double HTMLMeterElement::valueRatio() const
 void HTMLMeterElement::didElementStateChange()
 {
     m_value->setWidthPercentage(valueRatio()*100);
+    if (RenderObject* render = renderer())
+        render->updateFromElement();
 }
 
 void HTMLMeterElement::createShadowSubtree()

@@ -88,6 +88,7 @@ void RenderProgress::updateAnimationState()
     if (animating == m_animating)
         return;
 
+    repaint();
     m_animating = animating;
     if (m_animating) {
         m_animationStartTime = currentTime();

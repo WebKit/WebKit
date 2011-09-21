@@ -43,6 +43,7 @@ private:
     virtual bool isMeter() const { return true; }
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
     virtual bool canHaveChildren() const { return false; }
+    virtual void updateFromElement();
 
     double valueRatio() const;
 };

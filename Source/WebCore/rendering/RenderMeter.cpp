@@ -60,6 +60,11 @@ double RenderMeter::valueRatio() const
     return static_cast<HTMLMeterElement*>(node())->valueRatio();
 }
 
+void RenderMeter::updateFromElement()
+{
+    repaint();
+}
+
 } // namespace WebCore
 
 #endif
