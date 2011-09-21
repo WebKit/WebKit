@@ -1802,9 +1802,9 @@ void WebViewImpl::clearFocusedNode()
     // knows to remove selection from it. Otherwise, the text field is still
     // processing keyboard events even though focus has been moved to the page and
     // keystrokes get eaten as a result.
-    if (oldFocusedNode->hasTagName(HTMLNames::textareaTag)
-        || (oldFocusedNode->hasTagName(HTMLNames::inputTag)
-            && static_cast<HTMLInputElement*>(oldFocusedNode.get())->isTextField())) {
+    if (oldFocusedNode->isContentEditable()
+        || (oldFocusedNode->isElementNode()
+            && static_cast<Element*>(oldFocusedNode.get())->isTextFormControl())) {
         frame->selection()->clear();
     }
 }
