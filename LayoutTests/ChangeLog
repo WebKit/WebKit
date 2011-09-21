@@ -1,5 +1,15 @@
 2011-09-21  Keishi Hattori  <keishi@webkit.org>
 
+        [chromium] rebaseline caused by r95567
+
+        * platform/chromium-cg-mac-leopard/fast/clip/overflow-border-radius-fixed-position-expected.png: Added.
+        * platform/chromium-mac-leopard: Added.
+        * platform/chromium-mac-leopard/fast: Added.
+        * platform/chromium-mac-leopard/fast/clip: Added.
+        * platform/chromium-mac-leopard/fast/clip/overflow-border-radius-fixed-position-expected.png: Added.
+
+2011-09-21  Keishi Hattori  <keishi@webkit.org>
+
         [chromium] rebaseline caused by r95599
 
         * fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Added.
