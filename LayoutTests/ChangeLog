@@ -1,3 +1,13 @@
+2011-09-21  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baseslines for 2 new tests and skip a flaky svg test.
+
+        * platform/gtk/Skipped: Skip svg/W3C-SVG-1.1-SE/filters-image-05-f.svg
+        * platform/gtk/fast/clip/overflow-border-radius-fixed-position-expected.png: Added.
+        * platform/gtk/fast/clip/overflow-border-radius-fixed-position-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.png: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Added.
+
 2011-09-21  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [Qt][WK2] http/tests/security/cross-origin-xsl-redirect-BLOCKED.html fails
