@@ -1023,12 +1023,10 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
         page->backForward()->markPagesForFullStyleRecalc();
 }
 
-float Frame::frameScaleFactor() const
+float Frame::pageScaleFactor() const
 {
     Page* page = this->page();
-
-    // Main frame is scaled with respect to he container but inner frames are not scaled with respect to the main frame.
-    if (!page || page->mainFrame() != this)
+    if (!page)
         return 1;
     return page->pageScaleFactor();
 }

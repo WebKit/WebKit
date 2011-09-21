@@ -86,7 +86,7 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
     else
         item->setScrollPoint(m_frame->view()->scrollPosition());
 
-    item->setPageScaleFactor(m_frame->frameScaleFactor());
+    item->setPageScaleFactor(m_frame->pageScaleFactor());
     
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling through to the client.
     m_frame->loader()->client()->saveViewStateToItem(item);
