@@ -1,3 +1,13 @@
+2011-09-21  Sameer Patil  <mkrp87@motorola.com>
+
+        :hover selector fails when hovering over a child select element with size attribute
+        https://bugs.webkit.org/show_bug.cgi?id=67594
+
+        Reviewed by Darin Adler.
+
+        * fast/css/hover-affects-ancestor-expected.txt: Added.
+        * fast/css/hover-affects-ancestor.html: Added.
+
 2011-09-21  Ben Wells  <benwells@chromium.org>
 
         Rebaseline for bug 65583 (path based border radius drawing on skia) part 4

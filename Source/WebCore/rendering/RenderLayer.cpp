@@ -3859,6 +3859,8 @@ void RenderLayer::updateHoverActiveState(const HitTestRequest& request, HitTestR
     // do anything.  
     RefPtr<Node> oldHoverNode = doc->hoverNode();
     Node* newHoverNode = result.innerNode();
+    if (newHoverNode && !newHoverNode->renderer())
+        newHoverNode = result.innerNonSharedNode();
 
     // Update our current hover node.
     doc->setHoverNode(newHoverNode);
