@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x122
+  RenderBlock {html} at (0,0) size 800x122 [color=#00FF00]
+    RenderBody {body} at (8,16) size 784x98
+      RenderBlock {p} at (0,0) size 784x22 [color=#FF0000]
+        RenderInline {span} at (0,0) size 503x22 [color=#00FF00]
+          RenderText {#text} at (0,0) size 503x22
+            text run at (0,0) width 392: "This paragraph, and all textual contents in the document, "
+            text run at (392,0) width 111: "should be green."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {ul} at (0,38) size 784x22 [color=#FF0000]
+        RenderListItem {li} at (40,0) size 744x22 [color=#00FF00]
+          RenderListMarker at (-18,0) size 7x22: bullet
+          RenderText {#text} at (0,0) size 178x22
+            text run at (0,0) width 178: "This item should be green."
+      RenderBlock (anonymous) at (0,76) size 784x22
+        RenderInline {foo} at (0,0) size 482x22
+          RenderText {#text} at (0,0) size 482x22
+            text run at (0,0) width 350: "And this element, part of a non-HTML namespace, "
+            text run at (350,0) width 132: "should be green too"
+        RenderText {#text} at (0,0) size 0x0

@@ -1622,7 +1622,6 @@ http/tests/websocket/tests/hybi/
 # ============================================================================= #
 editing/selection/transformed-selection-rects.html
 svg/W3C-SVG-1.1/filters-light-04-f.svg
-css3/selectors3
 
 # Needs new baseline http://webkit.org/b/66671
 fast/block/float/fit_line_below_floats.html

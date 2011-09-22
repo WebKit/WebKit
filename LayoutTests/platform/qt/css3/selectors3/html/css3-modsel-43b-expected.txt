@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x182
+  RenderBlock {HTML} at (0,0) size 800x182
+    RenderBody {BODY} at (8,16) size 784x158
+      RenderBlock {DIV} at (0,0) size 784x98
+        RenderBlock {P} at (0,0) size 784x22
+          RenderText {#text} at (0,0) size 237x22
+            text run at (0,0) width 237: "This paragraph should be unstyled"
+        RenderTable {TABLE} at (0,38) size 243x60
+          RenderTableSection {TBODY} at (0,0) size 243x60
+            RenderTableRow {TR} at (0,2) size 243x56
+              RenderTableCell {TD} at (2,2) size 239x56 [r=0 c=0 rs=1 cs=1]
+                RenderBlock {P} at (1,17) size 237x22
+                  RenderText {#text} at (0,0) size 237x22
+                    text run at (0,0) width 237: "This paragraph should be unstyled"
+      RenderTable {TABLE} at (0,98) size 339x60
+        RenderTableSection {TBODY} at (0,0) size 339x60
+          RenderTableRow {TR} at (0,2) size 339x56
+            RenderTableCell {TD} at (2,2) size 335x56 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (1,17) size 333x22 [bgcolor=#00FF00]
+                RenderText {#text} at (0,0) size 333x22
+                  text run at (0,0) width 333: "This paragraph should have a green background"

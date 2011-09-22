@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x54
+  RenderBlock {HTML} at (0,0) size 800x54
+    RenderBody {BODY} at (8,16) size 784x22
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 302x22
+          text run at (0,0) width 302: "When you select this text, it shouldn't go red."

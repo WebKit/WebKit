@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x54
+  RenderBlock {test} at (0,0) size 800x54
+    RenderBlock {p} at (0,16) size 800x22
+      RenderInline {a} at (0,0) size 278x22 [color=#0000EE] [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 278x22
+          text run at (0,0) width 278: "This link should have green background."
+      RenderText {#text} at (278,0) size 159x22
+        text run at (278,0) width 159: " (Don't follow this link.)"

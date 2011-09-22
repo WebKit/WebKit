@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x114
+  RenderBlock {test} at (0,0) size 800x114
+    RenderBlock {ul} at (0,16) size 800x44
+      RenderListItem {li} at (40,0) size 760x22 [bgcolor=#00FF00]
+        RenderListMarker at (-18,0) size 7x22: bullet
+        RenderText {#text} at (0,0) size 326x22
+          text run at (0,0) width 326: "The background of this list item should be green"
+      RenderListItem {li} at (40,22) size 760x22 [bgcolor=#00FF00]
+        RenderListMarker at (-18,0) size 7x22: bullet
+        RenderText {#text} at (0,0) size 406x22
+          text run at (0,0) width 406: "The background of this second list item should be also green"
+    RenderBlock {p} at (0,76) size 800x22 [bgcolor=#00FF00]
+      RenderText {#text} at (0,0) size 351x22
+        text run at (0,0) width 351: "The background of this paragraph should be green."

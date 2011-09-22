@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x168
+  RenderBlock {html} at (0,0) size 800x168
+    RenderBody {body} at (8,16) size 784x136
+      RenderBlock {div} at (0,0) size 784x136
+        RenderBlock {p} at (0,0) size 784x22 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 333x22
+            text run at (0,0) width 333: "This paragraph should have a green background"
+        RenderBlock {p} at (0,38) size 784x22 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 333x22
+            text run at (0,0) width 333: "This paragraph should have a green background"
+        RenderBlock {l} at (0,76) size 784x22 [bgcolor=#00FF00]
+          RenderInline {p} at (0,0) size 333x22
+            RenderText {#text} at (0,0) size 333x22
+              text run at (0,0) width 208: "This paragraph should have a "
+              text run at (208,0) width 125: "green background"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {p} at (0,114) size 784x22 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 333x22
+            text run at (0,0) width 333: "This paragraph should have a green background"

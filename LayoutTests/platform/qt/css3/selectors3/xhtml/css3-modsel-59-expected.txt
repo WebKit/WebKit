@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x130
+  RenderBlock {html} at (0,0) size 800x130
+    RenderBody {body} at (8,16) size 784x98
+      RenderBlock {div} at (0,0) size 784x98
+        RenderBlock {p} at (0,0) size 784x22 [color=#00FF00]
+          RenderText {#text} at (0,0) size 314x22
+            text run at (0,0) width 314: "This paragraph should be in green characters."
+        RenderBlock {p} at (0,38) size 784x22 [color=#00FF00]
+          RenderText {#text} at (0,0) size 314x22
+            text run at (0,0) width 314: "This paragraph should be in green characters."
+        RenderBlock {p} at (0,76) size 784x22 [color=#FF0000]
+          RenderInline {span} at (0,0) size 314x22 [color=#00FF00]
+            RenderText {#text} at (0,0) size 314x22
+              text run at (0,0) width 314: "This paragraph should be in green characters."
+          RenderText {#text} at (0,0) size 0x0

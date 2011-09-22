@@ -1,3 +1,11 @@
+2011-09-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed. Add Qt specific expected results for css3/selectors3 tests.
+        All of them pass, they are compared to mac png results manually.
+
+        * platform/qt/Skipped:
+        * platform/qt/css3/selectors3/ [...]: Added.
+
 2011-09-22  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Testing text events triggered by speech input.

@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x84
+  RenderBlock {html} at (0,0) size 800x84
+    RenderBody {body} at (8,8) size 784x60
+      RenderBlock {div} at (0,0) size 784x60
+        RenderBlock {q} at (0,0) size 784x22 [color=#FF0000]
+          RenderBlock {r} at (0,0) size 784x22 [color=#00FF00]
+            RenderText {#text} at (0,0) size 262x22
+              text run at (0,0) width 262: "This text should be in green characters"
+        RenderBlock {s} at (0,38) size 784x22 [color=#00FF00]
+          RenderText {#text} at (0,0) size 262x22
+            text run at (0,0) width 262: "This text should be in green characters"
