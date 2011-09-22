@@ -61,7 +61,7 @@ void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* g
     *callFunction = JSFunction::create(exec, globalObject, 1, exec->propertyNames().call, functionProtoFuncCall);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().call, *callFunction, DontEnum);
 
-    JSFunction* bindFunction = JSFunction::create(exec, globalObject, 0, exec->propertyNames().bind, functionProtoFuncBind);
+    JSFunction* bindFunction = JSFunction::create(exec, globalObject, 1, exec->propertyNames().bind, functionProtoFuncBind);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().bind, bindFunction, DontEnum);
 }
 

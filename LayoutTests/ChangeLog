@@ -1,3 +1,12 @@
+2011-09-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Function.prototype.bind.length shoudl be 1.
+
+        Rubber stamped by Olier Hunt.
+
+        * fast/js/function-bind-expected.txt:
+        * fast/js/script-tests/function-bind.js:
+
 2011-09-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac]Unreviewed gardening.
