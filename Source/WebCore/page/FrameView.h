@@ -63,8 +63,9 @@ public:
 
     virtual HostWindow* hostWindow() const;
     
-    virtual void invalidateRect(const LayoutRect&);
-    virtual void setFrameRect(const LayoutRect&);
+    virtual void invalidateRect(const IntRect&);
+    virtual void setFrameRect(const IntRect&);
+
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     void scheduleAnimation();
 #endif

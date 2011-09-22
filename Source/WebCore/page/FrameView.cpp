@@ -365,7 +365,7 @@ bool FrameView::didFirstLayout() const
     return !m_firstLayout;
 }
 
-void FrameView::invalidateRect(const LayoutRect& rect)
+void FrameView::invalidateRect(const IntRect& rect)
 {
     if (!parent()) {
         if (hostWindow())
@@ -386,9 +386,9 @@ void FrameView::invalidateRect(const LayoutRect& rect)
     renderer->repaintRectangle(repaintRect);
 }
 
-void FrameView::setFrameRect(const LayoutRect& newRect)
+void FrameView::setFrameRect(const IntRect& newRect)
 {
-    LayoutRect oldRect = frameRect();
+    IntRect oldRect = frameRect();
     if (newRect == oldRect)
         return;
 
