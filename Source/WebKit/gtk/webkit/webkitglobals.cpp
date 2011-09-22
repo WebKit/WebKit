@@ -344,8 +344,3 @@ void webkitInit()
 
     atexit(webkitExit);
 }
-
-namespace WebKit {
-
-} /** end namespace WebKit */
-
