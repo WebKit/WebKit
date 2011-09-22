@@ -31,6 +31,7 @@
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCMainThreadTask.h"
 #include "cc/CCThreadTask.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
 using namespace WTF;
@@ -48,8 +49,14 @@ PassOwnPtr<CCProxy> CCThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 }
 
 CCThreadProxy::CCThreadProxy(CCLayerTreeHost* layerTreeHost)
-    : m_commitPending(false)
+    : m_commitRequested(false)
     , m_layerTreeHost(layerTreeHost)
+    , m_started(false)
+    , m_lastExecutedBeginFrameAndCommitSequenceNumber(-1)
+    , m_numBeginFrameAndCommitsIssuedOnCCThread(0)
+    , m_beginFrameAndCommitPendingOnCCThread(false)
+    , m_drawTaskPostedOnCCThread(false)
+    , m_redrawRequestedOnCCThread(false)
 {
     TRACE_EVENT("CCThreadProxy::CCThreadProxy", this, 0);
     ASSERT(isMainThread());
@@ -66,8 +73,7 @@ CCThreadProxy::~CCThreadProxy()
 {
     TRACE_EVENT("CCThreadProxy::~CCThreadProxy", this, 0);
     ASSERT(isMainThread());
-    ASSERT(!m_layerTreeHostImpl); // Make sure stop() got called.
-    ASSERT(!m_layerTreeHost); // Make sure stop() got called.
+    ASSERT(!m_started);
 
     numProxies--;
     if (!numProxies) {
@@ -78,8 +84,29 @@ CCThreadProxy::~CCThreadProxy()
 
 bool CCThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect)
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    ASSERT(isMainThread());
+    ASSERT(m_layerTreeHost);
+
+    finishAllRendering();
+    bool success = false;
+    CCCompletionEvent completion;
+    ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::drawLayersAndReadbackOnCCThread, AllowCrossThreadAccess(&completion), AllowCrossThreadAccess(&success), AllowCrossThreadAccess(pixels), rect));
+    completion.wait();
+    return success;
+}
+
+void CCThreadProxy::drawLayersAndReadbackOnCCThread(CCCompletionEvent* completion, bool* success, void* pixels, const IntRect& rect)
+{
+    ASSERT(CCProxy::isImplThread());
+    if (!m_layerTreeHostImpl) {
+        *success = false;
+        completion->signal();
+        return;
+    }
+    drawLayersOnCCThread();
+    m_layerTreeHostImpl->readback(pixels, rect);
+    *success = m_layerTreeHostImpl->isContextLost();
+    completion->signal();
 }
 
 GraphicsContext3D* CCThreadProxy::context()
@@ -89,12 +116,34 @@ GraphicsContext3D* CCThreadProxy::context()
 
 void CCThreadProxy::finishAllRendering()
 {
-    ASSERT_NOT_REACHED();
+    ASSERT(CCProxy::isMainThread());
+    // If a commit is pending, perform the commit first.
+    if (m_commitRequested)  {
+        // This bit of code is uglier than it should be because returning
+        // pointers via the CCThread task model is really messy. Effectively, we
+        // are making a blocking call to createBeginFrameAndCommitTaskOnCCThread,
+        // and trying to get the CCMainThread::Task it returns so we can run it.
+        OwnPtr<CCMainThread::Task> beginFrameAndCommitTask;
+        {
+            CCMainThread::Task* taskPtr = 0;
+            CCCompletionEvent completion;
+            ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::createBeginFrameAndCommitTaskOnCCThread, AllowCrossThreadAccess(&completion), AllowCrossThreadAccess(&taskPtr)));
+            completion.wait();
+            beginFrameAndCommitTask = adoptPtr(taskPtr);
+        }
+
+        beginFrameAndCommitTask->performTask();
+    }
+    // Make sure all GL drawing is finished on the impl thread.
+    CCCompletionEvent completion;
+    ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::finishAllRenderingOnCCThread, AllowCrossThreadAccess(&completion)));
+    completion.wait();
 }
 
 bool CCThreadProxy::isStarted() const
 {
-    return m_layerTreeHostImpl;
+    ASSERT(CCProxy::isMainThread());
+    return m_started;
 }
 
 bool CCThreadProxy::initializeLayerRenderer()
@@ -111,7 +160,7 @@ bool CCThreadProxy::initializeLayerRenderer()
     // Make a blocking call to initializeLayerRendererOnCCThread. The results of that call
     // are pushed into the initializeSucceeded and capabilities local variables.
     CCCompletionEvent completion;
-    bool initializeSucceeded;
+    bool initializeSucceeded = false;
     LayerRendererCapabilities capabilities;
     ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::initializeLayerRendererOnCCThread,
                                           AllowCrossThreadAccess(contextPtr), AllowCrossThreadAccess(&completion), AllowCrossThreadAccess(&initializeSucceeded), AllowCrossThreadAccess(&capabilities)));
@@ -135,43 +184,57 @@ void CCThreadProxy::loseCompositorContext(int numTimes)
 void CCThreadProxy::setNeedsCommit()
 {
     ASSERT(isMainThread());
-    if (m_commitPending)
+    if (m_commitRequested)
         return;
 
     TRACE_EVENT("CCThreadProxy::setNeedsCommit", this, 0);
-    m_commitPending = true;
-    ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::setNeedsCommitOnCCThread));
+    m_commitRequested = true;
+    ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::updateSchedulerStateOnCCThread, m_commitRequested, true));
 }
 
 void CCThreadProxy::setNeedsCommitAndRedraw()
 {
     ASSERT(isMainThread());
-    if (m_commitPending)
+    if (m_commitRequested)
         return;
+    m_commitRequested = true;
 
     TRACE_EVENT("CCThreadProxy::setNeedsCommitAndRedraw", this, 0);
-    m_commitPending = true;
-    ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::setNeedsCommitAndRedrawOnCCThread));
+    ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::updateSchedulerStateOnCCThread, m_commitRequested, true));
 }
 
 void CCThreadProxy::setNeedsRedraw()
 {
     ASSERT(isMainThread());
-    ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::setNeedsRedrawOnCCThread));
+    if (m_commitRequested) // Implies that a commit is in flight.
+        return;
+    // Unlike setNeedsCommit that tracks whether a commit message has been sent,
+    // setNeedsRedraw always sends a message to the compositor thread. This is
+    // because the compositor thread can draw without telling the main
+    // thread. This should not be much of a problem because calls to
+    // setNeedsRedraw messages are uncommon (only triggered by WM_PAINT/etc),
+    // compared to setNeedsCommitAndRedraw messages.
+    TRACE_EVENT("CCThreadProxy::setNeedsRedraw", this, 0);
+    ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::updateSchedulerStateOnCCThread, false, true));
 }
 
 void CCThreadProxy::start()
 {
+    ASSERT(isMainThread());
     // Create LayerTreeHostImpl.
     CCCompletionEvent completion;
     ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::initializeImplOnCCThread, AllowCrossThreadAccess(&completion)));
     completion.wait();
+
+    m_started = true;
 }
 
 void CCThreadProxy::stop()
 {
     TRACE_EVENT("CCThreadProxy::stop", this, 0);
     ASSERT(isMainThread());
+    ASSERT(m_started);
+
     // Synchronously deletes the impl.
     CCCompletionEvent completion;
     ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::layerTreeHostClosedOnCCThread, AllowCrossThreadAccess(&completion)));
@@ -179,82 +242,166 @@ void CCThreadProxy::stop()
 
     ASSERT(!m_layerTreeHostImpl); // verify that the impl deleted.
     m_layerTreeHost = 0;
+    m_started = false;
 }
 
-void CCThreadProxy::beginFrameAndCommitOnCCThread()
+void CCThreadProxy::finishAllRenderingOnCCThread(CCCompletionEvent* completion)
 {
-    TRACE_EVENT("CCThreadProxy::beginFrameAndCommitOnCCThread", this, 0);
+    TRACE_EVENT("CCThreadProxy::finishAllRenderingOnCCThread", this, 0);
     ASSERT(isImplThread());
-    // TEMP HACK so we can exercise this code in unit tests.
-    CCMainThread::postTask(createMainThreadTask(this, &CCThreadProxy::beginFrameAndCommit, 0.0));
+    ASSERT(!m_beginFrameAndCommitPendingOnCCThread);
+    if (m_redrawRequestedOnCCThread) {
+        drawLayersOnCCThread();
+        m_layerTreeHostImpl->present();
+        m_redrawRequestedOnCCThread = false;
+    }
+    m_layerTreeHostImpl->finishAllRendering();
+    completion->signal();
 }
 
-void CCThreadProxy::beginFrameAndCommit(double frameBeginTime)
+void CCThreadProxy::createBeginFrameAndCommitTaskOnCCThread(CCCompletionEvent* completion, CCMainThread::Task** taskPtr)
 {
+    OwnPtr<CCMainThread::Task> task = createBeginFrameAndCommitTaskOnCCThread();
+    *taskPtr = task.leakPtr();
+    completion->signal();
+}
+
+PassOwnPtr<CCMainThread::Task> CCThreadProxy::createBeginFrameAndCommitTaskOnCCThread()
+{
+    TRACE_EVENT("CCThreadProxy::createBeginFrameAndCommitTaskOnCCThread", this, 0);
+    ASSERT(isImplThread());
+    double frameBeginTime = currentTime();
+    m_beginFrameAndCommitPendingOnCCThread = true;
+
+    // NOTE, it is possible to receieve a request for a
+    // beginFrameAndCommitOnCCThread from finishAllRendering while a
+    // beginFrameAndCommitOnCCThread is enqueued. Since it CCMainThread doesn't
+    // provide a threadsafe way to cancel tasks, it is important that
+    // beginFrameAndCommit be structured to understand that it may get called at
+    // a point that it shouldn't. We do this by assigning a sequence number to
+    // every new beginFrameAndCommit task. Then, beginFrameAndCommit tracks the
+    // last executed sequence number, dropping beginFrameAndCommit with sequence
+    // numbers below the last executed one.
+    int thisTaskSequenceNumber = m_numBeginFrameAndCommitsIssuedOnCCThread;
+    m_numBeginFrameAndCommitsIssuedOnCCThread++;
+    return createMainThreadTask(this, &CCThreadProxy::beginFrameAndCommit, thisTaskSequenceNumber, frameBeginTime);
+}
+
+void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTime)
+{
+    TRACE_EVENT("CCThreadProxy::beginFrameAndCommit", this, 0);
     ASSERT(isMainThread());
     if (!m_layerTreeHost)
         return;
 
-    TRACE_EVENT("CCThreadProxy::requestFrameAndCommit", this, 0);
+    // Drop beginFrameAndCommit calls that occur out of sequence. See createBeginFrameAndCommitTaskOnCCThread for
+    // an explanation of how out-of-sequence beginFrameAndCommit tasks can occur.
+    if (sequenceNumber < m_lastExecutedBeginFrameAndCommitSequenceNumber) {
+        TRACE_EVENT("EarlyOut_StaleBeginFrameAndCommit", this, 0);
+        return;
+    }
+    m_lastExecutedBeginFrameAndCommitSequenceNumber = sequenceNumber;
+
+    ASSERT(m_commitRequested);
+
+    // FIXME: recreate the context if it was requested by the impl thread
     {
         TRACE_EVENT("CCLayerTreeHost::animateAndLayout", this, 0);
         m_layerTreeHost->animateAndLayout(frameBeginTime);
     }
 
-    m_commitPending = false;
+    ASSERT(m_lastExecutedBeginFrameAndCommitSequenceNumber == sequenceNumber);
 
-    // Blocking call to CCThreadProxy::performCommit
-    CCCompletionEvent completion;
-    ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::commitOnCCThread, AllowCrossThreadAccess(&completion)));
-    completion.wait();
+    // Clear the commit flag after animateAndLayout here --- objects that only
+    // layout when painted will trigger another setNeedsCommit inside
+    // updateLayers.
+    m_commitRequested = false;
+
+    m_layerTreeHost->updateLayers();
+
+    {
+        // Blocking call to CCThreadProxy::commitOnCCThread
+        TRACE_EVENT("commit", this, 0);
+        CCCompletionEvent completion;
+        ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::commitOnCCThread, AllowCrossThreadAccess(&completion)));
+        completion.wait();
+    }
+
+    m_layerTreeHost->commitComplete();
+
+    ASSERT(m_lastExecutedBeginFrameAndCommitSequenceNumber == sequenceNumber);
 }
 
 void CCThreadProxy::commitOnCCThread(CCCompletionEvent* completion)
 {
+    TRACE_EVENT("CCThreadProxy::beginFrameAndCommitOnCCThread", this, 0);
     ASSERT(isImplThread());
-    TRACE_EVENT("CCThreadProxy::commitOnCCThread", this, 0);
-    m_layerTreeHostImpl->beginCommit();
-    {
-        TRACE_EVENT("CCLayerTreeHost::commit", this, 0);
-        m_layerTreeHost->commitTo(m_layerTreeHostImpl.get());
+    ASSERT(m_beginFrameAndCommitPendingOnCCThread);
+    m_beginFrameAndCommitPendingOnCCThread = false;
+    if (!m_layerTreeHostImpl) {
+        completion->signal();
+        return;
     }
+    m_layerTreeHostImpl->beginCommit();
+    m_layerTreeHost->commitTo(m_layerTreeHostImpl.get());
+    m_layerTreeHostImpl->commitComplete();
+
     completion->signal();
 
-    m_layerTreeHostImpl->commitComplete();
-    setNeedsRedrawOnCCThread();
+    if (m_redrawRequestedOnCCThread)
+        scheduleDrawTaskOnCCThread();
+}
+
+void CCThreadProxy::scheduleDrawTaskOnCCThread()
+{
+    ASSERT(isImplThread());
+    if (m_drawTaskPostedOnCCThread)
+        return;
+    TRACE_EVENT("CCThreadProxy::scheduleDrawTaskOnCCThread", this, 0);
+    ASSERT(m_layerTreeHostImpl);
+    m_drawTaskPostedOnCCThread = true;
+    ccThread->postTask(createCCThreadTask(this, &CCThreadProxy::drawLayersAndPresentOnCCThread));
+}
+
+void CCThreadProxy::drawLayersAndPresentOnCCThread()
+{
+    TRACE_EVENT("CCThreadProxy::drawLayersOnCCThread", this, 0);
+    ASSERT(isImplThread());
+    if (!m_layerTreeHostImpl)
+        return;
+
+    drawLayersOnCCThread();
+    m_layerTreeHostImpl->present();
+    m_redrawRequestedOnCCThread = false;
+    m_drawTaskPostedOnCCThread = false;
 }
 
 void CCThreadProxy::drawLayersOnCCThread()
 {
     TRACE_EVENT("CCThreadProxy::drawLayersOnCCThread", this, 0);
     ASSERT(isImplThread());
-    if (m_layerTreeHostImpl)
-        m_layerTreeHostImpl->drawLayers();
+    ASSERT(m_layerTreeHostImpl);
+
+    m_layerTreeHostImpl->drawLayers();
+    ASSERT(!m_layerTreeHostImpl->isContextLost());
 }
 
-void CCThreadProxy::setNeedsCommitOnCCThread()
+void CCThreadProxy::updateSchedulerStateOnCCThread(bool commitRequested, bool redrawRequested)
 {
-    TRACE_EVENT("CCThreadProxy::setNeedsCommitOnCCThread", this, 0);
+    TRACE_EVENT("CCThreadProxy::updateSchedulerStateOnCCThread", this, 0);
     ASSERT(isImplThread());
     ASSERT(m_layerTreeHostImpl);
-    // FIXME: Not yet implemented, see https://bugs.webkit.org/show_bug.cgi?id=67417
-    ASSERT_NOT_REACHED();
-}
 
-void CCThreadProxy::setNeedsCommitAndRedrawOnCCThread()
-{
-    TRACE_EVENT("CCThreadProxy::setNeedsCommitAndRedrawOnCCThread", this, 0);
-    ASSERT(isImplThread());
-    ASSERT(m_layerTreeHostImpl);
-    // TEMP HACK so we can exercise this code in unit tests.
-    CCMainThread::postTask(createMainThreadTask(this, &CCThreadProxy::beginFrameAndCommit, 0.0));
-}
+    // FIXME: use CCScheduler to decide when to manage the conversion of this
+    // commit request into an actual createBeginFrameAndCommitTaskOnCCThread call.
+    m_redrawRequestedOnCCThread |= redrawRequested;
+    if (!m_beginFrameAndCommitPendingOnCCThread)
+        CCMainThread::postTask(createBeginFrameAndCommitTaskOnCCThread());
 
-void CCThreadProxy::setNeedsRedrawOnCCThread()
-{
-    TRACE_EVENT("CCThreadProxy::setNeedsRedrawOnCCThread", this, 0);
-    // TEMP HACK so we can exercise this code in unit tests.
-    drawLayersOnCCThread();
+    // If no commit is pending, but a redraw is requested, then post a redraw right away
+    if (!m_beginFrameAndCommitPendingOnCCThread && m_redrawRequestedOnCCThread)
+        scheduleDrawTaskOnCCThread();
+
 }
 
 void CCThreadProxy::initializeImplOnCCThread(CCCompletionEvent* completion)

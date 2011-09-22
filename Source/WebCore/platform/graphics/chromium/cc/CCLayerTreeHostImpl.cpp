@@ -48,10 +48,12 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings)
     , m_frameNumber(0)
     , m_settings(settings)
 {
+    ASSERT(CCProxy::isImplThread());
 }
 
 CCLayerTreeHostImpl::~CCLayerTreeHostImpl()
 {
+    ASSERT(CCProxy::isImplThread());
     TRACE_EVENT("CCLayerTreeHostImpl::~CCLayerTreeHostImpl()", this, 0);
     if (m_layerRenderer)
         m_layerRenderer->close();

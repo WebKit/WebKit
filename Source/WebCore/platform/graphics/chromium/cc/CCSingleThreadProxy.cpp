@@ -111,8 +111,15 @@ GraphicsContext3D* CCSingleThreadProxy::context()
 void CCSingleThreadProxy::finishAllRendering()
 {
     ASSERT(isMainThread());
-    ScopedSetImplThread impl;
-    m_layerTreeHostImpl->finishAllRendering();
+    if (!recreateContextIfNeeded())
+        return;
+
+    commitIfNeeded();
+
+    {
+        ScopedSetImplThread impl;
+        m_layerTreeHostImpl->finishAllRendering();
+    }
 }
 
 bool CCSingleThreadProxy::isStarted() const
@@ -157,6 +164,7 @@ void CCSingleThreadProxy::setNeedsCommit()
         m_layerTreeHost->commitTo(m_layerTreeHostImpl.get());
         m_layerTreeHostImpl->commitComplete();
     }
+    m_layerTreeHost->commitComplete();
 }
 
 void CCSingleThreadProxy::setNeedsCommitAndRedraw()
@@ -250,6 +258,7 @@ void CCSingleThreadProxy::commitIfNeeded()
         m_layerTreeHost->commitTo(m_layerTreeHostImpl.get());
         m_layerTreeHostImpl->commitComplete();
     }
+    m_layerTreeHost->commitComplete();
 }
 
 bool CCSingleThreadProxy::doComposite()

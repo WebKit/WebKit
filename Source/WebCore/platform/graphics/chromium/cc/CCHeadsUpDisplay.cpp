@@ -89,6 +89,9 @@ void CCHeadsUpDisplay::onPresent()
 
 bool CCHeadsUpDisplay::enabled() const
 {
+    // FIXME: HUD does not work in compositor thread mode.
+    if (settings().enableCompositorThread)
+        return false;
     return settings().showPlatformLayerTree || settings().showFPSCounter;
 }
 

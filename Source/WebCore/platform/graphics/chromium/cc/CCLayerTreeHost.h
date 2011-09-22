@@ -67,6 +67,12 @@ struct CCSettings {
             , enableCompositorThread(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false) { }
+    CCSettings(bool acceleratePainting, bool compositeOffscreen, bool enableCompositorThread, bool showFPSCounter, bool showPlatformLayerTree)
+            : acceleratePainting(acceleratePainting)
+            , compositeOffscreen(compositeOffscreen)
+            , enableCompositorThread(enableCompositorThread)
+            , showFPSCounter(showFPSCounter)
+            , showPlatformLayerTree(showPlatformLayerTree) { }
 
     bool acceleratePainting;
     bool compositeOffscreen;
@@ -96,6 +102,7 @@ public:
 
     // CCLayerTreeHost interface to CCProxy.
     void animateAndLayout(double frameBeginTime);
+    void commitComplete();
     void commitTo(CCLayerTreeHostImpl*);
     PassOwnPtr<CCThread> createCompositorThread();
     PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D();

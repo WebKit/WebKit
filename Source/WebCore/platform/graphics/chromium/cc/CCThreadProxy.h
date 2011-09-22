@@ -27,6 +27,7 @@
 
 #include "cc/CCCompletionEvent.h"
 #include "cc/CCLayerTreeHostImpl.h"
+#include "cc/CCMainThread.h"
 #include "cc/CCProxy.h"
 #include <wtf/OwnPtr.h>
 
@@ -58,28 +59,36 @@ private:
     explicit CCThreadProxy(CCLayerTreeHost*);
 
     // Called on CCMainThread
-    void beginFrameAndCommit(double frameBeginTime);
+    void beginFrameAndCommit(int sequenceNumber, double frameBeginTime);
 
     // Called on CCThread
-    void beginFrameAndCommitOnCCThread();
+    PassOwnPtr<CCMainThread::Task> createBeginFrameAndCommitTaskOnCCThread();
+    void createBeginFrameAndCommitTaskOnCCThread(CCCompletionEvent*, CCMainThread::Task**);
     void commitOnCCThread(CCCompletionEvent*);
+    void drawLayersAndPresentOnCCThread();
     void drawLayersOnCCThread();
+    void drawLayersAndReadbackOnCCThread(CCCompletionEvent*, bool* success, void* pixels, const IntRect&);
+    void finishAllRenderingOnCCThread(CCCompletionEvent*);
     void initializeImplOnCCThread(CCCompletionEvent*);
     void initializeLayerRendererOnCCThread(GraphicsContext3D*, CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*);
     void setNeedsCommitOnCCThread();
-    void setNeedsCommitAndRedrawOnCCThread();
-    void setNeedsRedrawOnCCThread();
+    void updateSchedulerStateOnCCThread(bool commitRequested, bool redrawRequested);
     void layerTreeHostClosedOnCCThread(CCCompletionEvent*);
-
-    // Used on main-thread only.
-    bool m_commitPending;
+    void scheduleDrawTaskOnCCThread();
 
     // Accessed on main thread only.
+    bool m_commitRequested;
     CCLayerTreeHost* m_layerTreeHost;
     LayerRendererCapabilities m_layerRendererCapabilitiesMainThreadCopy;
+    bool m_started;
+    int m_lastExecutedBeginFrameAndCommitSequenceNumber;
 
-    // Used on the CCThread, but checked on main thread during initialization/shutdown.
+    // Used on the CCThread only
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;
+    int m_numBeginFrameAndCommitsIssuedOnCCThread;
+    bool m_beginFrameAndCommitPendingOnCCThread;
+    bool m_drawTaskPostedOnCCThread;
+    bool m_redrawRequestedOnCCThread;
 };
 
 }
