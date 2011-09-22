@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+description('Tests for the ontextInput event with &lt;input type="text" speech>.');
+
+function onTextInput() {
+    shouldBeEqualToString('document.getElementById("speechInput").value', '');
+    shouldBeEqualToString('window.event.data', 'Green eggs and ham');
+
+    // Set to undefined to make this test fail if it's implemented, so it can be properly set to the correct value once it's available.
+    shouldBe('window.event.inputMethod', 'undefined');
+
+    finishJSTest();
+}
+
+function run() {
+    if (window.layoutTestController && window.eventSender) {
+        layoutTestController.addMockSpeechInputResult('Green eggs and ham', 0.8, '');
+        layoutTestController.addMockSpeechInputResult('Green x and ham', 0.5, '');
+
+        // Clicking the speech button should fill in mock speech-recognized text.
+        var input = document.getElementById('speechInput');
+        input.addEventListener("textInput", onTextInput, false);
+
+        var x = input.offsetLeft + input.offsetWidth - 4;
+        var y = input.offsetTop + input.offsetHeight / 2;
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+<input id='speechInput' x-webkit-speech>
+</body>
+</html>

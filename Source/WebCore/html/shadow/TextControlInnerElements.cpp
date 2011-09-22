@@ -43,6 +43,8 @@
 #include "ScrollbarTheme.h"
 #include "SpeechInput.h"
 #include "SpeechInputEvent.h"
+#include "TextEvent.h"
+#include "TextEventInputType.h"
 
 namespace WebCore {
 
@@ -488,7 +490,11 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
         return;
 
     RefPtr<InputFieldSpeechButtonElement> holdRefButton(this);
-    input->setValue(results.isEmpty() ? "" : results[0]->utterance());
+    if (document() && document()->domWindow())
+        input->dispatchEvent(TextEvent::create(document()->domWindow(), results.isEmpty() ? "" : results[0]->utterance(), TextEventInputOther));
+
+    // This event is sent after the text event so the website can perform actions using the input field content immediately.
+    // It provides alternative recognition hypotheses and notifies that the results come from speech input.
     input->dispatchEvent(SpeechInputEvent::create(eventNames().webkitspeechchangeEvent, results));
 
     // Check before accessing the renderer as the above event could have potentially turned off

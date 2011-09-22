@@ -13,8 +13,10 @@ description('Tests for triggering speech directly in a &lt;input type="text" spe
 function startSpeechInput(id) {
     // Test that we can trigger speech with a method call to the input
     // element, so the user agent could toggle speech via a keypress,
-    // for example.
+    // for example. Select is required in order to ensure that the result
+    // will be set in input during the generated TextInput event.
     var input = document.getElementById(id);
+    input.select();
     layoutTestController.startSpeechInput(input);
 }
 
