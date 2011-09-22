@@ -155,7 +155,7 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
     NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
     targetView = targetView ? targetView : m_testController->mainWebView()->platformView();
     assert(targetView);
-    [targetView mouseDown:event];
+    [targetView mouseUp:event];
     if (buttonNumber == LeftMouseButton)
         m_leftMouseButtonDown = false;
     m_clickTime = [event timestamp];
