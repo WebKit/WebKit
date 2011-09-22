@@ -1,5 +1,17 @@
 2011-09-22  Adam Roben  <aroben@apple.com>
 
+        Remove FindSafari
+
+        It isn't used or built anymore.
+
+        Fixes <http://webkit.org/b/68628>
+
+        Reviewed by Darin Adler.
+
+        * FindSafari: Removed this directory and its contents.
+
+2011-09-22  Adam Roben  <aroben@apple.com>
+
         Remove FindSafari from all our .sln files
 
         It isn't used anymore, so there's no point in building it.
