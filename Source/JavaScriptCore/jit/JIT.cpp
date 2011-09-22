@@ -699,6 +699,10 @@ void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* cal
     repatchBuffer.relink(CodeLocationNearCall(callLinkInfo->callReturnLocation), globalData->jitStubs->ctiVirtualConstruct());
 }
 
+#if CPU(X86) && ENABLE(VALUE_PROFILER)
+int bucketCounter = 0;
+#endif
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

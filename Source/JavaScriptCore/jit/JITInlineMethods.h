@@ -446,8 +446,8 @@ inline void JIT::emitAllocateJSFunction(FunctionExecutable* executable, Register
 #endif
 }
 
-#if CPU(X86)
-static int bucketCounter;
+#if CPU(X86) && ENABLE(VALUE_PROFILER)
+extern int bucketCounter;
 #endif
 
 #if ENABLE(VALUE_PROFILER)
