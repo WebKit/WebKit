@@ -93,7 +93,10 @@ void JIT::compileOpCallVarargsSlowCase(Instruction* instruction, Vector<SlowCase
     int callee = instruction[1].u.operand;
 
     linkSlowCaseIfNotJSCell(iter, callee);
+    Jump notCell = jump();
     linkSlowCase(iter);
+    move(TrustedImm32(JSValue::CellTag), regT1); // Need to restore cell tag in regT1 because it was clobbered.
+    notCell.link(this);
 
     JITStubCall stubCall(this, cti_op_call_NotJSFunction);
     stubCall.addArgument(regT1, regT0);
@@ -272,8 +275,9 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
     emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_call));
 
     // This handles host functions
-    callLinkFailNotObject.link(this);
     callLinkFailNotJSFunction.link(this);
+    move(TrustedImm32(JSValue::CellTag), regT1); // Restore cell tag since it was clobbered.
+    callLinkFailNotObject.link(this);
 
     JITStubCall stubCall(this, opcodeID == op_construct ? cti_op_construct_NotJSConstruct : cti_op_call_NotJSFunction);
     stubCall.addArgument(callee);
