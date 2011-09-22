@@ -47,7 +47,7 @@ static HashMap<const Widget*, RenderWidget*>& widgetRendererMap()
     return *staticWidgetRendererMap;
 }
 
-static size_t widgetHierarchyUpdateSuspendCount;
+static unsigned widgetHierarchyUpdateSuspendCount;
 
 typedef HashMap<RefPtr<Widget>, FrameView*> WidgetToParentMap;
 
