@@ -208,6 +208,9 @@ public:
 #if PLATFORM(MAC)
     NSView* getOuterView() const;
 
+    static void beforeMouseDown(NSView*, Widget*);
+    static void afterMouseDown(NSView*, Widget*);
+
     void removeFromSuperview();
 #endif
 
