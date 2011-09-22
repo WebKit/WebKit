@@ -216,6 +216,9 @@ void WebProcessProxy::willLoadHTMLStringWithBaseURL(const String& urlString)
 
 bool WebProcessProxy::checkURLReceivedFromWebProcess(const String& urlString)
 {
+    if (urlString.isEmpty())
+        return true;
+
     return checkURLReceivedFromWebProcess(KURL(KURL(), urlString));
 }
 
