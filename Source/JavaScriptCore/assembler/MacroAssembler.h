@@ -199,6 +199,11 @@ public:
         add32(imm, src, dest);
     }
 
+    void addPtr(TrustedImm32 imm, AbsoluteAddress address)
+    {
+        add32(imm, address);
+    }
+    
     void andPtr(RegisterID src, RegisterID dest)
     {
         and32(src, dest);

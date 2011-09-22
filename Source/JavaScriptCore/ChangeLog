@@ -1,5 +1,14 @@
 2011-09-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Add missing addPtr->add32 mapping for X86.
+
+        Rubber stamped by Sam Weinig.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::addPtr):
+
+2011-09-21  Gavin Barraclough  <barraclough@apple.com>
+
         Add missing addDouble for AbsoluteAddress to X86
 
         Rubber stamped by Geoff Garen.
