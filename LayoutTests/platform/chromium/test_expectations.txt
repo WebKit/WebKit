@@ -2950,7 +2950,7 @@ BUGCR78996 LINUX WIN SNOWLEOPARD DEBUG : fast/css/first-of-type-pseudo-class.htm
 BUGCR78998 DEBUG : fast/frames/frame-element-name.html = PASS TEXT
 
 // Temporarily ignore fails until we generate a new baseline.
-BUGWK57785 WIN MAC : fast/frames/iframe-scaling-with-scroll.html = MISSING
+BUGWK57785 WIN MAC : fast/frames/iframe-scaling-with-scroll.html = IMAGE MISSING
 
 BUGWK58193 WIN7 : http/tests/local/fileapi/send-sliced-dragged-file.html = PASS TIMEOUT TEXT
 
