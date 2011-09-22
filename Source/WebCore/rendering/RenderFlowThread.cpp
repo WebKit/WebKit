@@ -47,6 +47,7 @@ RenderFlowThread::RenderFlowThread(Node* node, const AtomicString& flowThread)
     , m_flowThread(flowThread)
     , m_hasValidRegions(false)
     , m_regionsInvalidated(false)
+    , m_regionsHaveUniformLogicalWidth(true)
     , m_regionFittingDisableCount(0)
 {
     setIsAnonymous(false);
@@ -303,6 +304,9 @@ void RenderFlowThread::layout()
     bool regionsChanged = m_regionsInvalidated && m_everHadLayout;
     if (m_regionsInvalidated) {
         m_regionsInvalidated = false;
+        m_hasValidRegions = false;
+        m_regionsHaveUniformLogicalWidth = true;
+        LayoutUnit previousRegionLogicalWidth = 0;
         if (hasRegions()) {
             int logicalHeight = 0;
             for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
@@ -313,16 +317,25 @@ void RenderFlowThread::layout()
 
                 ASSERT(!region->needsLayout());
                 
-                m_hasValidRegions = true;
+                LayoutUnit regionLogicalWidth;
 
                 IntRect regionRect;
                 if (isHorizontalWritingMode()) {
                     regionRect = IntRect(0, logicalHeight, region->contentWidth(), region->contentHeight());
                     logicalHeight += regionRect.height();
+                    regionLogicalWidth = region->contentWidth();
                 } else {
                     regionRect = IntRect(logicalHeight, 0, region->contentWidth(), region->contentHeight());
                     logicalHeight += regionRect.width();
+                    regionLogicalWidth = region->contentHeight();
                 }
+
+                if (!m_hasValidRegions)
+                    m_hasValidRegions = true;
+                else if (m_regionsHaveUniformLogicalWidth && previousRegionLogicalWidth != regionLogicalWidth)
+                    m_regionsHaveUniformLogicalWidth = false;
+
+                previousRegionLogicalWidth = regionLogicalWidth;
 
                 region->setRegionRect(regionRect);
             }

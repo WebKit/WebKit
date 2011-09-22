@@ -105,6 +105,8 @@ public:
     void disableRegionFitting() { m_regionFittingDisableCount++; }
     void enableRegionFitting() { ASSERT(m_regionFittingDisableCount > 0); m_regionFittingDisableCount--; }
 
+    bool regionsHaveUniformLogicalWidth() const { return m_regionsHaveUniformLogicalWidth; }
+    
     RenderRegion* mapFromFlowToRegion(TransformState&) const;
 
 private:
@@ -137,6 +139,7 @@ private:
 
     bool m_hasValidRegions;
     bool m_regionsInvalidated;
+    bool m_regionsHaveUniformLogicalWidth;
     unsigned m_regionFittingDisableCount;
 };
 
