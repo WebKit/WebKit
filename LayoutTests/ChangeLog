@@ -1,3 +1,40 @@
+2011-09-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Use same DPI for application font as rest of app in DRT and WTR
+
+        QApplication will initialize the default application font based
+        on the application DPI at construction time, but we then override
+        the application DPI using QX11Info (hard-coding it to 96 for
+        consistency). This hard-coding is not reflected in the application
+        font, so we explicitly have update the font ourselves.
+
+        The 6 test results that are updated were originally produced with
+        a DPI of 75, as this is the default fallback DPI when a QFont is
+        constructed before QApplication. This was wrong, and the results
+        are updated to match a DPI of 96.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt-4.8/css1/text_properties/letter_spacing-expected.png:
+        * platform/qt-4.8/css1/text_properties/letter_spacing-expected.txt:
+        * platform/qt-4.8/fast/css/word-space-extra-expected.png:
+        * platform/qt-4.8/fast/css/word-space-extra-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textPosition-expected.png:
+        * platform/qt-4.8/svg/batik/text/textPosition-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textPosition2-expected.png:
+        * platform/qt-4.8/svg/batik/text/textPosition2-expected.txt:
+        * platform/qt/css1/text_properties/letter_spacing-expected.txt:
+        * platform/qt/fast/css/word-space-extra-expected.png:
+        * platform/qt/fast/css/word-space-extra-expected.txt:
+        * platform/qt/fast/inline/absolute-positioned-inline-in-centred-block-expected.png:
+        * platform/qt/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt:
+        * platform/qt/fast/text/text-letter-spacing-expected.png:
+        * platform/qt/fast/text/text-letter-spacing-expected.txt:
+        * platform/qt/svg/batik/text/textPosition-expected.png:
+        * platform/qt/svg/batik/text/textPosition-expected.txt:
+        * platform/qt/svg/batik/text/textPosition2-expected.png:
+        * platform/qt/svg/batik/text/textPosition2-expected.txt:
+
 2011-09-22  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Ref protect shaders in V8WebGLRenderingContext::getAttachedShadersCallback

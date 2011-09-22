@@ -1,3 +1,23 @@
+2011-09-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Use same DPI for application font as rest of app in DRT and WTR
+
+        QApplication will initialize the default application font based
+        on the application DPI at construction time, but we then override
+        the application DPI using QX11Info (hard-coding it to 96 for
+        consistency). This hard-coding is not reflected in the application
+        font, so we explicitly have update the font ourselves.
+
+        The 6 test results that are updated were originally produced with
+        a DPI of 75, as this is the default fallback DPI when a QFont is
+        constructed before QApplication. This was wrong, and the results
+        are updated to match a DPI of 96.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * DumpRenderTree/qt/main.cpp:
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+
 2011-09-21  Anna Cavender  <annacc@chromium.org>
 
         Update committers.py with a new contributor contact        

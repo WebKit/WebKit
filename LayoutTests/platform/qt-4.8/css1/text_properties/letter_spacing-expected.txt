@@ -1,8 +1,8 @@
-layer at (0,0) size 784x1188
+layer at (0,0) size 784x1584
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1188
-  RenderBlock {HTML} at (0,0) size 784x1188
-    RenderBody {BODY} at (8,8) size 768x1172 [bgcolor=#CCCCCC]
+layer at (0,0) size 784x1584
+  RenderBlock {HTML} at (0,0) size 784x1584
+    RenderBody {BODY} at (8,8) size 768x1568 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 768x22
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "The style declarations which apply to the text below are:"
@@ -31,90 +31,109 @@ layer at (0,0) size 784x1188
           text run at (0,170) width 202: ".eleven {letter-spacing: -0.1em;}"
           text run at (202,170) width 0: " "
       RenderBlock {HR} at (0,238) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,256) size 768x22
-        RenderText {#text} at (0,0) size 448x22
-          text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-      RenderBlock {P} at (0,294) size 768x22
-        RenderText {#text} at (0,0) size 448x22
-          text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-      RenderBlock {P} at (0,332) size 768x22
-        RenderText {#text} at (0,0) size 448x22
-          text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-      RenderBlock {P} at (0,370) size 768x22
-        RenderText {#text} at (0,0) size 448x22
-          text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-      RenderBlock {P} at (0,408) size 768x22
-        RenderText {#text} at (0,0) size 448x22
-          text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-      RenderBlock {P} at (0,446) size 768x22
-        RenderText {#text} at (0,0) size 448x22
-          text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-      RenderBlock {P} at (0,484) size 768x22
-        RenderText {#text} at (0,0) size 448x22
-          text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-      RenderBlock {P} at (0,522) size 768x44
-        RenderText {#text} at (0,0) size 708x22
-          text run at (0,0) width 708: "This letters in this sentence should have extra space between them, but the last few words in the sentence "
-        RenderInline {SPAN} at (0,0) size 753x44
-          RenderText {#text} at (708,0) size 753x44
-            text run at (708,0) width 45: "should"
-            text run at (0,22) width 143: "show normal spacing"
-        RenderText {#text} at (143,22) size 4x22
-          text run at (143,22) width 4: "."
-      RenderBlock {P} at (0,582) size 768x44
+      RenderBlock {P} at (0,256) size 768x88
+        RenderText {#text} at (0,0) size 702x88
+          text run at (0,0) width 680: "This letters in this"
+          text run at (0,22) width 702: "sentence should have"
+          text run at (0,44) width 668: "extra space between"
+          text run at (0,66) width 178: "them."
+      RenderBlock {P} at (0,360) size 768x66
+        RenderText {#text} at (0,0) size 703x66
+          text run at (0,0) width 703: "This letters in this sentence"
+          text run at (0,22) width 575: "should have extra space"
+          text run at (0,44) width 332: "between them."
+      RenderBlock {P} at (0,442) size 768x66
+        RenderText {#text} at (0,0) size 703x66
+          text run at (0,0) width 703: "This letters in this sentence"
+          text run at (0,22) width 575: "should have extra space"
+          text run at (0,44) width 332: "between them."
+      RenderBlock {P} at (0,524) size 768x22
+        RenderText {#text} at (0,0) size 716x22
+          text run at (0,0) width 716: "This letters in this sentence should have extra space between them."
+      RenderBlock {P} at (0,562) size 768x22
+        RenderText {#text} at (0,0) size 716x22
+          text run at (0,0) width 716: "This letters in this sentence should have extra space between them."
+      RenderBlock {P} at (0,600) size 768x66
+        RenderText {#text} at (0,0) size 717x66
+          text run at (0,0) width 645: "This letters in this sentence"
+          text run at (0,22) width 717: "should have extra space between"
+          text run at (0,44) width 118: "them."
+      RenderBlock {P} at (0,682) size 768x44
+        RenderText {#text} at (0,0) size 717x44
+          text run at (0,0) width 717: "This letters in this sentence should have extra space"
+          text run at (0,22) width 189: "between them."
+      RenderBlock {P} at (0,742) size 768x44
+        RenderText {#text} at (0,0) size 711x44
+          text run at (0,0) width 711: "This letters in this sentence should have extra space between"
+          text run at (0,22) width 523: "them, but the last few words in the sentence "
+        RenderInline {SPAN} at (0,0) size 192x22
+          RenderText {#text} at (523,22) size 192x22
+            text run at (523,22) width 192: "should show normal spacing"
+        RenderText {#text} at (715,22) size 9x22
+          text run at (715,22) width 9: "."
+      RenderBlock {P} at (0,802) size 768x44
         RenderText {#text} at (0,0) size 752x44
           text run at (0,0) width 752: "This letters in this sentence should have normal space between them, since percentage values are not allowed on"
           text run at (0,22) width 92: "this property."
-      RenderBlock {P} at (0,642) size 768x44
-        RenderText {#text} at (0,0) size 742x44
-          text run at (0,0) width 742: "This letters in this sentence should have reduced space between them, since negative values are allowed on this"
-          text run at (0,22) width 64: "property."
-      RenderTable {TABLE} at (0,702) size 768x470 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 766x468
+      RenderBlock {P} at (0,862) size 768x22
+        RenderText {#text} at (0,0) size 689x22
+          text run at (0,0) width 689: "This letters in this sentence should have reduced space between them, since negative values are allowed on this property."
+      RenderTable {TABLE} at (0,900) size 768x668 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x666
           RenderTableRow {TR} at (0,0) size 766x30
             RenderTableCell {TD} at (0,0) size 766x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x22
                 RenderText {#text} at (4,4) size 163x22
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,30) size 766x438
-            RenderTableCell {TD} at (0,234) size 12x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,30) size 766x636
+            RenderTableCell {TD} at (0,333) size 12x30 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x22
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,30) size 754x438 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 746x22
-                RenderText {#text} at (0,0) size 448x22
-                  text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-              RenderBlock {P} at (4,42) size 746x22
-                RenderText {#text} at (0,0) size 448x22
-                  text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-              RenderBlock {P} at (4,80) size 746x22
-                RenderText {#text} at (0,0) size 448x22
-                  text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-              RenderBlock {P} at (4,118) size 746x22
-                RenderText {#text} at (0,0) size 448x22
-                  text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-              RenderBlock {P} at (4,156) size 746x22
-                RenderText {#text} at (0,0) size 448x22
-                  text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-              RenderBlock {P} at (4,194) size 746x22
-                RenderText {#text} at (0,0) size 448x22
-                  text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-              RenderBlock {P} at (4,232) size 746x22
-                RenderText {#text} at (0,0) size 448x22
-                  text run at (0,0) width 448: "This letters in this sentence should have extra space between them."
-              RenderBlock {P} at (4,270) size 746x44
-                RenderText {#text} at (0,0) size 704x22
-                  text run at (0,0) width 704: "This letters in this sentence should have extra space between them, but the last few words in the sentence"
+            RenderTableCell {TD} at (12,30) size 754x636 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 746x88
+                RenderText {#text} at (0,0) size 702x88
+                  text run at (0,0) width 680: "This letters in this"
+                  text run at (0,22) width 702: "sentence should have"
+                  text run at (0,44) width 668: "extra space between"
+                  text run at (0,66) width 178: "them."
+              RenderBlock {P} at (4,108) size 746x66
+                RenderText {#text} at (0,0) size 703x66
+                  text run at (0,0) width 703: "This letters in this sentence"
+                  text run at (0,22) width 575: "should have extra space"
+                  text run at (0,44) width 332: "between them."
+              RenderBlock {P} at (4,190) size 746x66
+                RenderText {#text} at (0,0) size 703x66
+                  text run at (0,0) width 703: "This letters in this sentence"
+                  text run at (0,22) width 575: "should have extra space"
+                  text run at (0,44) width 332: "between them."
+              RenderBlock {P} at (4,272) size 746x22
+                RenderText {#text} at (0,0) size 716x22
+                  text run at (0,0) width 716: "This letters in this sentence should have extra space between them."
+              RenderBlock {P} at (4,310) size 746x22
+                RenderText {#text} at (0,0) size 716x22
+                  text run at (0,0) width 716: "This letters in this sentence should have extra space between them."
+              RenderBlock {P} at (4,348) size 746x66
+                RenderText {#text} at (0,0) size 717x66
+                  text run at (0,0) width 645: "This letters in this sentence"
+                  text run at (0,22) width 717: "should have extra space between"
+                  text run at (0,44) width 118: "them."
+              RenderBlock {P} at (4,430) size 746x44
+                RenderText {#text} at (0,0) size 717x44
+                  text run at (0,0) width 717: "This letters in this sentence should have extra space"
+                  text run at (0,22) width 189: "between them."
+              RenderBlock {P} at (4,490) size 746x44
+                RenderText {#text} at (0,0) size 711x44
+                  text run at (0,0) width 711: "This letters in this sentence should have extra space between"
+                  text run at (0,22) width 523: "them, but the last few words in the sentence "
                 RenderInline {SPAN} at (0,0) size 192x22
-                  RenderText {#text} at (0,22) size 192x22
-                    text run at (0,22) width 192: "should show normal spacing"
-                RenderText {#text} at (192,22) size 4x22
-                  text run at (192,22) width 4: "."
-              RenderBlock {P} at (4,330) size 746x44
+                  RenderText {#text} at (523,22) size 192x22
+                    text run at (523,22) width 192: "should show normal spacing"
+                RenderText {#text} at (715,22) size 9x22
+                  text run at (715,22) width 9: "."
+              RenderBlock {P} at (4,550) size 746x44
                 RenderText {#text} at (0,0) size 731x44
                   text run at (0,0) width 731: "This letters in this sentence should have normal space between them, since percentage values are not allowed"
                   text run at (0,22) width 113: "on this property."
-              RenderBlock {P} at (4,390) size 746x44
-                RenderText {#text} at (0,0) size 742x44
-                  text run at (0,0) width 742: "This letters in this sentence should have reduced space between them, since negative values are allowed on this"
-                  text run at (0,22) width 64: "property."
+              RenderBlock {P} at (4,610) size 746x22
+                RenderText {#text} at (0,0) size 689x22
+                  text run at (0,0) width 689: "This letters in this sentence should have reduced space between them, since negative values are allowed on this property."
