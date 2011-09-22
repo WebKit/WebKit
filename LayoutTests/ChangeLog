@@ -1,5 +1,11 @@
 2011-09-22  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][WK2] Unreivewed gardening.
+
+        * platform/qt-wk2/Skipped: Skip new failing test introduced in r95645.
+
+2011-09-22  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] 69 tests failing after http://trac.webkit.org/changeset/92375
         https://bugs.webkit.org/show_bug.cgi?id=65721
 
