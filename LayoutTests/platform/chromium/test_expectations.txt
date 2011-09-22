@@ -2995,26 +2995,6 @@ BUGCR79910 SNOWLEOPARD : fast/text/international/bidi-linebreak-003.html = IMAGE
 
 // The following are failures due to Skia bugs on Win/Linux
 // http://code.google.com/p/chromium/issues/detail?id=79917
-BUGCR79917 LINUX WIN : fast/writing-mode/border-styles-vertical-lr.html = IMAGE+TEXT
-BUGCR79917 LINUX WIN : fast/writing-mode/border-styles-vertical-rl.html = IMAGE+TEXT
-BUGCR79917 LINUX WIN : fast/borders/border-radius-inset-outset.html = IMAGE+TEXT
-BUGCR79917 LINUX WIN : fast/borders/border-styles-split.html = IMAGE+TEXT
-BUGCR79917 LINUX WIN : css1/box_properties/border_style.html = IMAGE
-BUGCR79917 LINUX WIN : css1/box_properties/border_style_inline.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t0805-c5517-ibrdr-s-00-a.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-03-d.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-04-d.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-13-d.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-14-d.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-23-d.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-24-d.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-33-d.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-34-d.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-41-d.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-42-d.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-43-d.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-44-d.html = IMAGE
-BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-45-d.html = IMAGE
 BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-46-d.html = IMAGE
 BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-47-d.html = IMAGE
 BUGCR79917 LINUX WIN : css2.1/t170602-bdr-conflct-w-48-d.html = IMAGE

@@ -1,3 +1,30 @@
+2011-09-21  Ben Wells  <benwells@chromium.org>
+
+        Rebaseline for bug 65583 (path based border radius drawing on skia) part 4
+        https://bugs.webkit.org/show_bug.cgi?id=68339
+
+        Reviewed by James Robinson.
+
+        * platform/chromium-linux/css1/box_properties/border_style-expected.png:
+        * platform/chromium-linux/css1/box_properties/border_style_inline-expected.png:
+        * platform/chromium-linux/css2.1/: 14 changes
+        * platform/chromium-linux/fast/borders/border-radius-inset-outset-expected.png: Added.
+        * platform/chromium-linux/fast/borders/border-styles-split-expected.png: Added.
+        * platform/chromium-linux/fast/writing-mode/border-styles-vertical-lr-expected.png: Added.
+        * platform/chromium-linux/fast/writing-mode/border-styles-vertical-rl-expected.png: Added.
+        * platform/chromium-win/css1/box_properties/border_style-expected.png:
+        * platform/chromium-win/css1/box_properties/border_style_inline-expected.png:
+        * platform/chromium-win/css2.1/: 14 changes
+        * platform/chromium-win/fast/borders/border-radius-inset-outset-expected.png: Added.
+        * platform/chromium-win/fast/borders/border-radius-inset-outset-expected.txt: Added.
+        * platform/chromium-win/fast/borders/border-styles-split-expected.png: Added.
+        * platform/chromium-win/fast/borders/border-styles-split-expected.txt: Added.
+        * platform/chromium-win/fast/writing-mode/border-styles-vertical-lr-expected.png: Added.
+        * platform/chromium-win/fast/writing-mode/border-styles-vertical-lr-expected.txt: Added.
+        * platform/chromium-win/fast/writing-mode/border-styles-vertical-rl-expected.png: Added.
+        * platform/chromium-win/fast/writing-mode/border-styles-vertical-rl-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-09-21  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         [Chromium] Protect message ports from being deleted in V8MessageEvent::portsAccessorGetter
