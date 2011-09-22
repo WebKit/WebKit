@@ -1081,7 +1081,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             m_currentIndex += OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id);
             continue;
         }
-
+        case op_get_scoped_var: {
+            int dst = currentInstruction[1].u.operand;
+            int slot = currentInstruction[2].u.operand;
+            int depth = currentInstruction[3].u.operand;
+            NodeIndex getScopedVar = addToGraph(GetScopedVar, OpInfo(slot), OpInfo(depth));
+            set(dst, getScopedVar);
+            NEXT_OPCODE(op_get_scoped_var);
+        }
         case op_get_by_id: {
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifierNumber = currentInstruction[3].u.operand;

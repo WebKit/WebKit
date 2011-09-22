@@ -560,6 +560,7 @@ private:
         case Resolve:
         case ResolveBase:
         case ResolveBaseStrictPut:
+        case GetScopedVar:
             break;
             
         // This gets ignored because it doesn't do anything.

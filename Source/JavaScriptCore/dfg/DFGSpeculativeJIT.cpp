@@ -1625,7 +1625,30 @@ void SpeculativeJIT::compile(Node& node)
         cellResult(result.gpr(), m_compileIndex);
         break;
     }
+    case GetScopedVar: {
+        GPRTemporary result(this);
+        GPRReg resultGPR = result.gpr();
 
+        m_jit.loadPtr(JITCompiler::addressFor(static_cast<VirtualRegister>(RegisterFile::ScopeChain)), resultGPR);
+        bool checkTopLevel = m_jit.codeBlock()->codeType() == FunctionCode && m_jit.codeBlock()->needsFullScopeChain();
+        int skip = node.scopeChainDepth();
+        ASSERT(skip || !checkTopLevel);
+        if (checkTopLevel && skip--) {
+            JITCompiler::Jump activationNotCreated;
+            if (checkTopLevel)
+                activationNotCreated = m_jit.branchTestPtr(JITCompiler::Zero, JITCompiler::addressFor(static_cast<VirtualRegister>(m_jit.codeBlock()->activationRegister())));
+            m_jit.loadPtr(JITCompiler::Address(resultGPR, OBJECT_OFFSETOF(ScopeChainNode, next)), resultGPR);
+            activationNotCreated.link(&m_jit);
+        }
+        while (skip--)
+            m_jit.loadPtr(JITCompiler::Address(resultGPR, OBJECT_OFFSETOF(ScopeChainNode, next)), resultGPR);
+        
+        m_jit.loadPtr(JITCompiler::Address(resultGPR, OBJECT_OFFSETOF(ScopeChainNode, object)), resultGPR);
+        m_jit.loadPtr(JITCompiler::Address(resultGPR, JSVariableObject::offsetOfRegisters()), resultGPR);
+        m_jit.loadPtr(JITCompiler::Address(resultGPR, node.varNumber() * sizeof(Register)), resultGPR);
+        jsValueResult(resultGPR, m_compileIndex);
+        break;
+    }
     case GetById: {
         SpeculateCellOperand base(this, node.child1());
         GPRTemporary result(this, base);
