@@ -3,7 +3,7 @@
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-FAIL ES5Harness.preconditionPassed should be true (of type boolean). Was undefined (of type undefined).
+PASS ES5Harness.preconditionPassed is true
 FAIL ES5Harness.testPassed should be true (of type boolean). Was undefined (of type undefined).
 PASS successfullyParsed is true
 

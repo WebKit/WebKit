@@ -43,7 +43,7 @@ PASS getSortedOwnPropertyNames(encodeURIComponent) is ['length', 'name']
 PASS getSortedOwnPropertyNames(Object) is ['create', 'defineProperties', 'defineProperty', 'freeze', 'getOwnPropertyDescriptor', 'getOwnPropertyNames', 'getPrototypeOf', 'isExtensible', 'isFrozen', 'isSealed', 'keys', 'length', 'name', 'preventExtensions', 'prototype', 'seal']
 PASS getSortedOwnPropertyNames(Object.prototype) is ['__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__', 'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString', 'toString', 'valueOf']
 PASS getSortedOwnPropertyNames(Function) is ['length', 'name', 'prototype']
-PASS getSortedOwnPropertyNames(Function.prototype) is ['apply', 'call', 'constructor', 'length', 'name', 'toString']
+FAIL getSortedOwnPropertyNames(Function.prototype) should be apply,call,constructor,length,name,toString. Was apply,bind,call,constructor,length,name,toString.
 PASS getSortedOwnPropertyNames(Array) is ['isArray', 'length', 'name', 'prototype']
 PASS getSortedOwnPropertyNames(Array.prototype) is ['concat', 'constructor', 'every', 'filter', 'forEach', 'indexOf', 'join', 'lastIndexOf', 'length', 'map', 'pop', 'push', 'reduce', 'reduceRight', 'reverse', 'shift', 'slice', 'some', 'sort', 'splice', 'toLocaleString', 'toString', 'unshift']
 PASS getSortedOwnPropertyNames(String) is ['fromCharCode', 'length', 'name', 'prototype']

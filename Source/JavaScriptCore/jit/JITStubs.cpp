@@ -2086,15 +2086,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_instanceof)
     }
     ASSERT(typeInfo.type() != UnspecifiedType);
 
-    if (!typeInfo.overridesHasInstance()) {
-        if (!value.isObject())
-            return JSValue::encode(jsBoolean(false));
-
-        if (!proto.isObject()) {
-            throwError(callFrame, createTypeError(callFrame, "instanceof called on an object with an invalid prototype property."));
-            VM_THROW_EXCEPTION();
-        }
-    }
+    if (!typeInfo.overridesHasInstance() && !value.isObject())
+        return JSValue::encode(jsBoolean(false));
 
     JSValue result = jsBoolean(asObject(baseVal)->hasInstance(callFrame, value, proto));
     CHECK_FOR_EXCEPTION_AT_END();
@@ -3826,11 +3819,11 @@ MacroAssemblerCodeRef JITThunks::ctiStub(JSGlobalData* globalData, ThunkGenerato
     return entry.first->second;
 }
 
-NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function)
+NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function, NativeFunction constructor)
 {
     std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap->add(function, Weak<NativeExecutable>());
     if (!*entry.first->second)
-        entry.first->second.set(*globalData, NativeExecutable::create(*globalData, JIT::compileCTINativeCall(globalData, function), function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), callHostFunctionAsConstructor, DFG::NoIntrinsic));
+        entry.first->second.set(*globalData, NativeExecutable::create(*globalData, JIT::compileCTINativeCall(globalData, function), function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct()), constructor, DFG::NoIntrinsic));
     return entry.first->second.get();
 }
 

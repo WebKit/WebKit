@@ -46,6 +46,7 @@
 #include "ErrorPrototype.h"
 #include "FunctionConstructor.h"
 #include "FunctionPrototype.h"
+#include "JSBoundFunction.h"
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLock.h"
@@ -187,11 +188,12 @@ void JSGlobalObject::reset(JSValue prototype)
 
     m_functionPrototype.set(exec->globalData(), this, FunctionPrototype::create(exec, this, FunctionPrototype::createStructure(exec->globalData(), this, jsNull()))); // The real prototype will be set once ObjectPrototype is created.
     m_functionStructure.set(exec->globalData(), this, JSFunction::createStructure(exec->globalData(), this, m_functionPrototype.get()));
+    m_boundFunctionStructure.set(exec->globalData(), this, JSBoundFunction::createStructure(exec->globalData(), this, m_functionPrototype.get()));
     m_namedFunctionStructure.set(exec->globalData(), this, Structure::addPropertyTransition(exec->globalData(), m_functionStructure.get(), exec->globalData().propertyNames->name, DontDelete | ReadOnly | DontEnum, 0, m_functionNameOffset));
     m_internalFunctionStructure.set(exec->globalData(), this, InternalFunction::createStructure(exec->globalData(), this, m_functionPrototype.get()));
     JSFunction* callFunction = 0;
     JSFunction* applyFunction = 0;
-    m_functionPrototype->addFunctionProperties(exec, this, m_functionStructure.get(), &callFunction, &applyFunction);
+    m_functionPrototype->addFunctionProperties(exec, this, &callFunction, &applyFunction);
     m_callFunction.set(exec->globalData(), this, callFunction);
     m_applyFunction.set(exec->globalData(), this, applyFunction);
     m_objectPrototype.set(exec->globalData(), this, ObjectPrototype::create(exec, this, ObjectPrototype::createStructure(exec->globalData(), this, jsNull())));
@@ -280,7 +282,7 @@ void JSGlobalObject::reset(JSValue prototype)
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "TypeError"), m_typeErrorConstructor.get(), DontEnum);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "URIError"), m_URIErrorConstructor.get(), DontEnum);
 
-    m_evalFunction.set(exec->globalData(), this, JSFunction::create(exec, this, m_functionStructure.get(), 1, exec->propertyNames().eval, globalFuncEval));
+    m_evalFunction.set(exec->globalData(), this, JSFunction::create(exec, this, 1, exec->propertyNames().eval, globalFuncEval));
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().eval, m_evalFunction.get(), DontEnum);
 
     GlobalPropertyInfo staticGlobals[] = {
@@ -349,6 +351,7 @@ void JSGlobalObject::visitChildren(SlotVisitor& visitor)
     visitIfNeeded(visitor, &m_nullPrototypeObjectStructure);
     visitIfNeeded(visitor, &m_errorStructure);
     visitIfNeeded(visitor, &m_functionStructure);
+    visitIfNeeded(visitor, &m_boundFunctionStructure);
     visitIfNeeded(visitor, &m_namedFunctionStructure);
     visitIfNeeded(visitor, &m_numberObjectStructure);
     visitIfNeeded(visitor, &m_regExpMatchesArrayStructure);

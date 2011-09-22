@@ -33,6 +33,7 @@
     macro(__lookupSetter__) \
     macro(apply) \
     macro(arguments) \
+    macro(bind) \
     macro(call) \
     macro(callee) \
     macro(caller) \

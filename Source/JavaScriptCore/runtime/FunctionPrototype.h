@@ -36,7 +36,7 @@ namespace JSC {
             return prototype;
         }
         
-        void addFunctionProperties(ExecState*, JSGlobalObject*, Structure* functionStructure, JSFunction** callFunction, JSFunction** applyFunction);
+        void addFunctionProperties(ExecState*, JSGlobalObject*, JSFunction** callFunction, JSFunction** applyFunction);
         
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {

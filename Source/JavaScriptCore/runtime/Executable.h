@@ -201,6 +201,7 @@ namespace JSC {
         ~NativeExecutable();
 
         NativeFunction function() { return m_function; }
+        NativeFunction constructor() { return m_constructor; }
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(LeafType, StructureFlags), &s_info); }
         
@@ -228,25 +229,14 @@ namespace JSC {
 #endif
  
     private:
-#if ENABLE(JIT)
         NativeExecutable(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
             : ExecutableBase(globalData, globalData.nativeExecutableStructure.get(), NUM_PARAMETERS_IS_HOST)
             , m_function(function)
             , m_constructor(constructor)
         {
         }
-#else
-        NativeExecutable(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
-            : ExecutableBase(globalData, globalData.nativeExecutableStructure.get(), NUM_PARAMETERS_IS_HOST)
-            , m_function(function)
-            , m_constructor(constructor)
-        {
-        }
-#endif
 
         NativeFunction m_function;
-        // Probably should be a NativeConstructor, but this will currently require rewriting the JIT
-        // trampoline. It may be easier to make NativeFunction be passed 'this' as a part of the ArgList.
         NativeFunction m_constructor;
         
         DFG::Intrinsic m_intrinsic;
@@ -636,6 +626,12 @@ namespace JSC {
     {
         ASSERT(isHostFunction());
         return static_cast<NativeExecutable*>(m_executable.get())->function();
+    }
+
+    inline NativeFunction JSFunction::nativeConstructor()
+    {
+        ASSERT(isHostFunction());
+        return static_cast<NativeExecutable*>(m_executable.get())->constructor();
     }
 
     inline bool isHostFunction(JSValue value, NativeFunction nativeFunction)

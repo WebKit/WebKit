@@ -297,7 +297,7 @@ namespace JSC {
 
         MacroAssemblerCodeRef ctiStub(JSGlobalData*, ThunkGenerator);
 
-        NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction);
+        NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, NativeFunction constructor);
         NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, ThunkGenerator, DFG::Intrinsic);
 
         void clearHostFunctionStubs();

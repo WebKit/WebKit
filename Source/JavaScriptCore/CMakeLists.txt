@@ -123,6 +123,7 @@ SET(JavaScriptCore_SOURCES
     runtime/JSByteArray.cpp
     runtime/JSCell.cpp
     runtime/JSFunction.cpp
+    runtime/JSBoundFunction.cpp
     runtime/JSGlobalData.cpp
     runtime/JSGlobalObject.cpp
     runtime/JSGlobalObjectFunctions.cpp

@@ -30,6 +30,7 @@
 #include "CallFrame.h"
 #include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
+#include "JSArray.h"
 #include "JSGlobalObject.h"
 #include "JSNotAnObject.h"
 #include "Interpreter.h"
@@ -56,6 +57,22 @@ bool JSFunction::isHostFunctionNonInline() const
     return isHostFunction();
 }
 
+JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, int length, const Identifier& name, NativeFunction nativeFunction, NativeFunction nativeConstructor)
+{
+    NativeExecutable* executable = exec->globalData().getHostFunction(nativeFunction, nativeConstructor);
+    JSFunction* function = new (allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, globalObject, globalObject->functionStructure());
+    // Can't do this during initialization because getHostFunction might do a GC allocation.
+    function->finishCreation(exec, executable, length, name);
+    return function;
+}
+
+JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, int length, const Identifier& name, NativeExecutable* nativeExecutable)
+{
+    JSFunction* function = new (allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, globalObject, globalObject->functionStructure());
+    function->finishCreation(exec, nativeExecutable, length, name);
+    return function;
+}
+
 JSFunction::JSFunction(VPtrStealingHackType)
     : Base(VPtrStealingHack)
 {
@@ -75,7 +92,7 @@ JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, ScopeCha
 {
 }
 
-void JSFunction::finishCreation(ExecState* exec, int length, const Identifier& name, ExecutableBase* executable)
+void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, int length, const Identifier& name)
 {
     Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
@@ -88,6 +105,9 @@ void JSFunction::finishCreation(ExecState* exec, FunctionExecutable* executable,
 {
     Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
+
+    // Switching the structure here is only safe if we currently have the function structure!
+    ASSERT(structure() == scopeChainNode->globalObject->functionStructure());
     setStructure(exec->globalData(), scopeChainNode->globalObject->namedFunctionStructure());
     putDirectOffset(exec->globalData(), scopeChainNode->globalObject->functionNameOffset(), executable->nameValue());
 }
@@ -97,10 +117,10 @@ JSFunction::~JSFunction()
     ASSERT(vptr() == JSGlobalData::jsFunctionVPtr);
 }
 
-static const char* StrictModeCallerAccessError = "Cannot access caller property of a strict mode function";
-static const char* StrictModeArgumentsAccessError = "Cannot access arguments property of a strict mode function";
+const char* StrictModeCallerAccessError = "Cannot access caller property of a strict mode function";
+const char* StrictModeArgumentsAccessError = "Cannot access arguments property of a strict mode function";
 
-static void createDescriptorForThrowingProperty(ExecState* exec, PropertyDescriptor& descriptor, const char* message)
+void createDescriptorForThrowingProperty(ExecState* exec, PropertyDescriptor& descriptor, const char* message)
 {
     JSValue thrower = createTypeErrorFunction(exec, message);
     descriptor.setAccessorDescriptor(thrower, thrower, DontEnum | DontDelete | Getter | Setter);
@@ -196,7 +216,7 @@ bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
 
     if (propertyName == exec->propertyNames().arguments) {
         if (jsExecutable()->isStrictMode()) {
-            throwTypeError(exec, "Can't access arguments object of a strict mode function");
+            throwTypeError(exec, StrictModeArgumentsAccessError);
             slot.setValue(jsNull());
             return true;
         }
@@ -311,8 +331,10 @@ bool JSFunction::deleteProperty(ExecState* exec, const Identifier& propertyName)
 // ECMA 13.2.2 [[Construct]]
 ConstructType JSFunction::getConstructData(ConstructData& constructData)
 {
-    if (isHostFunction())
-        return ConstructTypeNone;
+    if (isHostFunction()) {
+        constructData.native.function = nativeConstructor();
+        return ConstructTypeHost;
+    }
     constructData.js.functionExecutable = jsExecutable();
     constructData.js.scopeChain = scope();
     return ConstructTypeJS;

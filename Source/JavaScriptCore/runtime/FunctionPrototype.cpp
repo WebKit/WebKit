@@ -23,6 +23,7 @@
 
 #include "Arguments.h"
 #include "JSArray.h"
+#include "JSBoundFunction.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
@@ -36,6 +37,7 @@ ASSERT_CLASS_FITS_IN_CELL(FunctionPrototype);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncCall(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState*);
 
 FunctionPrototype::FunctionPrototype(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure)
@@ -48,16 +50,19 @@ void FunctionPrototype::finishCreation(ExecState* exec, const Identifier& name)
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
 }
 
-void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* globalObject, Structure* functionStructure, JSFunction** callFunction, JSFunction** applyFunction)
+void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* globalObject, JSFunction** callFunction, JSFunction** applyFunction)
 {
-    JSFunction* toStringFunction = JSFunction::create(exec, globalObject, functionStructure, 0, exec->propertyNames().toString, functionProtoFuncToString);
+    JSFunction* toStringFunction = JSFunction::create(exec, globalObject, 0, exec->propertyNames().toString, functionProtoFuncToString);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().toString, toStringFunction, DontEnum);
 
-    *applyFunction = JSFunction::create(exec, globalObject, functionStructure, 2, exec->propertyNames().apply, functionProtoFuncApply);
+    *applyFunction = JSFunction::create(exec, globalObject, 2, exec->propertyNames().apply, functionProtoFuncApply);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().apply, *applyFunction, DontEnum);
 
-    *callFunction = JSFunction::create(exec, globalObject, functionStructure, 1, exec->propertyNames().call, functionProtoFuncCall);
+    *callFunction = JSFunction::create(exec, globalObject, 1, exec->propertyNames().call, functionProtoFuncCall);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().call, *callFunction, DontEnum);
+
+    JSFunction* bindFunction = JSFunction::create(exec, globalObject, 0, exec->propertyNames().bind, functionProtoFuncBind);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().bind, bindFunction, DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL callFunctionPrototype(ExecState*)
@@ -151,6 +156,47 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncCall(ExecState* exec)
     ArgList callArgs;
     args.getSlice(1, callArgs);
     return JSValue::encode(call(exec, thisValue, callType, callData, exec->argument(0), callArgs));
+}
+
+// 15.3.4.5 Function.prototype.bind (thisArg [, arg1 [, arg2, ...]])
+EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
+{
+    JSGlobalObject* globalObject = exec->callee()->globalObject();
+
+    // Let Target be the this value.
+    JSValue target = exec->hostThisValue();
+
+    // If IsCallable(Target) is false, throw a TypeError exception.
+    CallData callData;
+    CallType callType = getCallData(target, callData);
+    if (callType == CallTypeNone)
+        return throwVMTypeError(exec);
+    // Primitive values are not callable.
+    ASSERT(target.isObject());
+    JSObject* targetObject = asObject(target);
+
+    // Let A be a new (possibly empty) internal list of all of the argument values provided after thisArg (arg1, arg2 etc), in order.
+    size_t numBoundArgs = exec->argumentCount() > 1 ? exec->argumentCount() - 1 : 0;
+    JSArray* boundArgs = JSArray::create(exec->globalData(), globalObject->arrayStructure(), numBoundArgs, CreateCompact);
+    for (size_t i = 0; i < numBoundArgs; ++i)
+        boundArgs->uncheckedSetIndex(exec->globalData(), i, exec->argument(i + 1));
+    boundArgs->setLength(numBoundArgs);
+
+    // If the [[Class]] internal property of Target is "Function", then ...
+    // Else set the length own property of F to 0.
+    unsigned length = 0;
+    if (targetObject->inherits(&JSFunction::s_info)) {
+        ASSERT(target.get(exec, exec->propertyNames().length).isNumber());
+        // a. Let L be the length property of Target minus the length of A.
+        // b. Set the length own property of F to either 0 or L, whichever is larger.
+        unsigned targetLength = (unsigned)target.get(exec, exec->propertyNames().length).uncheckedGetNumber();
+        if (targetLength > numBoundArgs)
+            length = targetLength - numBoundArgs;
+    }
+
+    Identifier name(exec, target.get(exec, exec->propertyNames().name).toString(exec));
+
+    return JSValue::encode(JSBoundFunction::create(exec, globalObject, targetObject, exec->argument(0), boundArgs, length, name));
 }
 
 } // namespace JSC

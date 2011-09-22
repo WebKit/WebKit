@@ -1,3 +1,66 @@
+2011-09-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Implement Function.prototype.bind
+        https://bugs.webkit.org/show_bug.cgi?id=26382
+
+        Reviewed by Sam Weinig.
+
+        This patch provides a basic functional implementation
+        for Function.bind. It should (hopefully!) be fully
+        functionally correct, and the bound functions can be
+        called to quickly (since they are a subclass of
+        JSFunction, not InternalFunction), but we'll probably
+        want to follow up with some optimization work to keep
+        bound calls in JIT code.
+
+        * JavaScriptCore.JSVALUE32_64only.exp:
+        * JavaScriptCore.JSVALUE64only.exp:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITStubs.h:
+        * jsc.cpp:
+        (GlobalObject::addFunction):
+        * runtime/CommonIdentifiers.h:
+        * runtime/ConstructData.h:
+        * runtime/Executable.h:
+        (JSC::NativeExecutable::NativeExecutable):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        (JSC::functionProtoFuncBind):
+        * runtime/FunctionPrototype.h:
+        * runtime/JSBoundFunction.cpp: Added.
+        (JSC::boundFunctionCall):
+        (JSC::boundFunctionConstruct):
+        (JSC::JSBoundFunction::create):
+        (JSC::JSBoundFunction::hasInstance):
+        (JSC::JSBoundFunction::getOwnPropertySlot):
+        (JSC::JSBoundFunction::getOwnPropertyDescriptor):
+        (JSC::JSBoundFunction::JSBoundFunction):
+        (JSC::JSBoundFunction::finishCreation):
+        * runtime/JSBoundFunction.h: Added.
+        (JSC::JSBoundFunction::targetFunction):
+        (JSC::JSBoundFunction::boundThis):
+        (JSC::JSBoundFunction::boundArgs):
+        (JSC::JSBoundFunction::createStructure):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        (JSC::JSFunction::finishCreation):
+        (JSC::createDescriptorForThrowingProperty):
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::getHostFunction):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::boundFunctionStructure):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+
 2011-09-22  Oliver Hunt  <oliver@apple.com>
 
         Implement get_scoped_var in the DFG

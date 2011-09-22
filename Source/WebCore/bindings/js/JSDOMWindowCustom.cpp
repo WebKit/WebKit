@@ -92,7 +92,7 @@ void JSDOMWindow::visitChildren(SlotVisitor& visitor)
 template<NativeFunction nativeFunction, int length>
 JSValue nonCachingStaticFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->functionStructure(), length, propertyName, nativeFunction);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), length, propertyName, nativeFunction);
 }
 
 static JSValue childFrameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)

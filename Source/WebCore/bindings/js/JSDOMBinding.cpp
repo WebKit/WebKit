@@ -308,7 +308,7 @@ Frame* toDynamicFrame(ExecState* exec)
 
 JSValue objectToStringFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->functionStructure(), 0, propertyName, objectProtoFuncToString);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName, objectProtoFuncToString);
 }
 
 Structure* getCachedDOMStructure(JSDOMGlobalObject* globalObject, const ClassInfo* classInfo)

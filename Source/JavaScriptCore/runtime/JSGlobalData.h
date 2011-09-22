@@ -219,7 +219,7 @@ namespace JSC {
         }
         NativeExecutable* getHostFunction(NativeFunction, ThunkGenerator, DFG::Intrinsic);
 #endif
-        NativeExecutable* getHostFunction(NativeFunction);
+        NativeExecutable* getHostFunction(NativeFunction, NativeFunction constructor);
 
         TimeoutChecker timeoutChecker;
         Terminator terminator;

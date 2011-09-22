@@ -798,6 +798,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\JSBoundFunction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSBoundFunction.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\JSGlobalData.cpp"
 				>
 			</File>

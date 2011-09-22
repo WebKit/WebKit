@@ -29,6 +29,7 @@
 #ifndef ConstructData_h
 #define ConstructData_h
 
+#include "CallData.h"
 #include "JSValue.h"
 
 namespace JSC {
@@ -45,11 +46,9 @@ namespace JSC {
         ConstructTypeJS
     };
 
-    typedef EncodedJSValue (JSC_HOST_CALL *NativeConstructor)(ExecState*);
-
     union ConstructData {
         struct {
-            NativeConstructor function;
+            NativeFunction function;
         } native;
         struct {
             FunctionExecutable* functionExecutable;

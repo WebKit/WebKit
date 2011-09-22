@@ -347,6 +347,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSCell.h \
 	Source/JavaScriptCore/runtime/JSFunction.cpp \
 	Source/JavaScriptCore/runtime/JSFunction.h \
+	Source/JavaScriptCore/runtime/JSBoundFunction.cpp \
+	Source/JavaScriptCore/runtime/JSBoundFunction.h \
 	Source/JavaScriptCore/runtime/JSGlobalData.cpp \
 	Source/JavaScriptCore/runtime/JSGlobalData.h \
 	Source/JavaScriptCore/runtime/JSGlobalObject.cpp \
