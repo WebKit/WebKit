@@ -555,6 +555,9 @@ private:
             return child->y() + child->renderer()->marginTop();
     }
 
+    LayoutPoint computeLogicalLocationForFloat(const FloatingObject*, LayoutUnit logicalTopOffset, LayoutUnit logicalLeftOffset,
+        LayoutUnit logicalRightOffset, LayoutUnit floatLogicalWidth) const;
+
     // The following functions' implementations are in RenderBlockLineLayout.cpp.
     typedef std::pair<RenderText*, LazyLineBreakIterator> LineBreakIteratorInfo;
     class LineBreaker {

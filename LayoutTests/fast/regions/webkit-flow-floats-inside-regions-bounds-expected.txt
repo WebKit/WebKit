@@ -11,42 +11,39 @@ Flow Threads
   Thread with flow-name 'flow1'
     layer at (0,0) size 300x400
       RenderFlowThread at (0,0) size 300x400
-        RenderBlock {DIV} at (0,0) size 300x505
-          RenderBlock {DIV} at (5,5) size 290x495 [border: (1px solid #0000FF)]
-            RenderBlock {DIV} at (11,11) size 268x473 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (0,0) size 300x469
+          RenderBlock {DIV} at (5,5) size 290x459 [border: (1px solid #0000FF)]
+            RenderBlock {DIV} at (11,11) size 268x437 [border: (1px solid #008000)]
               RenderBlock {P} at (1,17) size 266x36
                 RenderText {#text} at (0,0) size 166x36
                   text run at (0,0) width 166: "This line of text should"
                   text run at (0,18) width 155: "not get out of the region."
-              RenderBlock (floating) {DIV} at (95,84) size 72x37 [border: (1px solid #FF0000)]
+              RenderBlock (floating) {DIV} at (195,84) size 72x37 [border: (1px solid #FF0000)]
                 RenderText {#text} at (1,1) size 44x18
                   text run at (1,1) width 44: "Float 1"
-              RenderBlock (anonymous) at (1,84) size 266x108
-                RenderText {#text} at (0,0) size 266x108
+              RenderBlock (anonymous) at (1,84) size 266x90
+                RenderText {#text} at (0,0) size 266x90
                   text run at (0,0) width 166: "This line of text should"
-                  text run at (0,18) width 94: "not get out of"
-                  text run at (0,36) width 94: "the region."
-                  text run at (0,54) width 266: "This line of text should not get out of the"
-                  text run at (0,72) width 266: "region. This line of text should not get out"
-                  text run at (0,90) width 84: "of the region."
-              RenderBlock {P} at (1,208) size 266x0
-              RenderBlock {P} at (1,208) size 266x164
-                RenderText {#text} at (0,0) size 266x164
+                  text run at (0,18) width 194: "not get out of the region. This"
+                  text run at (0,36) width 194: "line of text should not get out"
+                  text run at (0,54) width 266: "of the region. This line of text should not"
+                  text run at (0,72) width 131: "get out of the region."
+              RenderBlock {P} at (1,190) size 266x0
+              RenderBlock {P} at (1,190) size 266x128
+                RenderText {#text} at (0,0) size 266x128
                   text run at (0,0) width 266: "This line of text should not get out of the"
                   text run at (0,18) width 266: "region. This line of text should not get out"
                   text run at (0,36) width 266: "of the region. This line of text should not"
-                  text run at (0,56) width 86: "get out of the"
-                  text run at (0,74) width 86: "region. This"
-                  text run at (0,92) width 86: "line of text"
-                  text run at (0,110) width 86: "should not"
-                  text run at (0,128) width 86: "get out of the"
-                  text run at (0,146) width 44: "region."
-              RenderBlock {P} at (1,384) size 266x72
-                RenderText {#text} at (0,0) size 86x72
+                  text run at (0,54) width 266: "get out of the region. This line of text"
+                  text run at (0,74) width 86: "should not"
+                  text run at (0,92) width 86: "get out of the"
+                  text run at (0,110) width 44: "region."
+              RenderBlock {P} at (1,334) size 266x86
+                RenderText {#text} at (0,0) size 86x86
                   text run at (0,0) width 86: "This line of"
                   text run at (0,18) width 86: "text should"
-                  text run at (0,36) width 86: "not get out of"
-                  text run at (0,54) width 67: "the region."
+                  text run at (0,50) width 86: "not get out of"
+                  text run at (0,68) width 67: "the region."
   Regions for flow 'flow1'
     RenderRegion {DIV} #region1 with index 0
     RenderRegion {DIV} #region2 with index 0

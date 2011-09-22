@@ -3269,6 +3269,38 @@ void RenderBlock::removeFloatingObjectsBelow(FloatingObject* lastFloat, int logi
     }
 }
 
+LayoutPoint RenderBlock::computeLogicalLocationForFloat(const FloatingObject* floatingObject, LayoutUnit logicalTopOffset,
+    LayoutUnit logicalLeftOffset, LayoutUnit logicalRightOffset, LayoutUnit floatLogicalWidth) const
+{
+    RenderBox* childBox = floatingObject->renderer();
+
+    LayoutUnit floatLogicalLeft;
+
+    if (childBox->style()->floating() == LeftFloat) {
+        LayoutUnit heightRemainingLeft = 1;
+        LayoutUnit heightRemainingRight = 1;
+        floatLogicalLeft = logicalLeftOffsetForLine(logicalTopOffset, logicalLeftOffset, false, &heightRemainingLeft);
+        while (logicalRightOffsetForLine(logicalTopOffset, logicalRightOffset, false, &heightRemainingRight) - floatLogicalLeft < floatLogicalWidth) {
+            logicalTopOffset += min(heightRemainingLeft, heightRemainingRight);
+            floatLogicalLeft = logicalLeftOffsetForLine(logicalTopOffset, logicalLeftOffset, false, &heightRemainingLeft);
+        }
+        floatLogicalLeft = max<LayoutUnit>(0, floatLogicalLeft);
+    } else {
+        LayoutUnit heightRemainingLeft = 1;
+        LayoutUnit heightRemainingRight = 1;
+        floatLogicalLeft = logicalRightOffsetForLine(logicalTopOffset, logicalRightOffset, false, &heightRemainingRight);
+        while (floatLogicalLeft - logicalLeftOffsetForLine(logicalTopOffset, logicalLeftOffset, false, &heightRemainingLeft) < floatLogicalWidth) {
+            logicalTopOffset += min(heightRemainingLeft, heightRemainingRight);
+            floatLogicalLeft = logicalRightOffsetForLine(logicalTopOffset, logicalRightOffset, false, &heightRemainingRight);
+        }
+        floatLogicalLeft -= logicalWidthForFloat(floatingObject); // Use the original width of the float here, since the local variable
+                                                                  // |floatLogicalWidth| was capped to the available line width.
+                                                                  // See fast/block/float/clamped-right-float.html.
+    }
+    
+    return LayoutPoint(floatLogicalLeft, logicalTopOffset);
+}
+
 bool RenderBlock::positionNewFloats()
 {
     if (!m_floatingObjects)
@@ -3307,7 +3339,7 @@ bool RenderBlock::positionNewFloats()
     FloatingObjectSetIterator end = floatingObjectSet.end();
     // Now walk through the set of unpositioned floats and place them.
     for (; it != end; ++it) {
-         FloatingObject* floatingObject = *it;
+        FloatingObject* floatingObject = *it;
         // The containing block is responsible for positioning floats, so if we have floats in our
         // list that come from somewhere else, do not attempt to position them. Also don't attempt to handle
         // positioned floats, since the positioning layout code handles those.
@@ -3330,32 +3362,11 @@ bool RenderBlock::positionNewFloats()
         if (childBox->style()->clear() & CRIGHT)
             logicalTop = max(lowestFloatLogicalBottom(FloatingObject::FloatRight), logicalTop);
 
-        LayoutUnit floatLogicalLeft;
-        if (childBox->style()->floating() == LeftFloat) {
-            LayoutUnit heightRemainingLeft = 1;
-            LayoutUnit heightRemainingRight = 1;
-            floatLogicalLeft = logicalLeftOffsetForLine(logicalTop, leftOffset, false, &heightRemainingLeft);
-            while (logicalRightOffsetForLine(logicalTop, rightOffset, false, &heightRemainingRight) - floatLogicalLeft < floatLogicalWidth) {
-                logicalTop += min(heightRemainingLeft, heightRemainingRight);
-                floatLogicalLeft = logicalLeftOffsetForLine(logicalTop, leftOffset, false, &heightRemainingLeft);
-            }
-            floatLogicalLeft = max<LayoutUnit>(0, floatLogicalLeft);
-        } else {
-            LayoutUnit heightRemainingLeft = 1;
-            LayoutUnit heightRemainingRight = 1;
-            floatLogicalLeft = logicalRightOffsetForLine(logicalTop, rightOffset, false, &heightRemainingRight);
-            while (floatLogicalLeft - logicalLeftOffsetForLine(logicalTop, leftOffset, false, &heightRemainingLeft) < floatLogicalWidth) {
-                logicalTop += min(heightRemainingLeft, heightRemainingRight);
-                floatLogicalLeft = logicalRightOffsetForLine(logicalTop, rightOffset, false, &heightRemainingRight);
-            }
-            floatLogicalLeft -= logicalWidthForFloat(floatingObject); // Use the original width of the float here, since the local variable
-                                                                      // |floatLogicalWidth| was capped to the available line width.
-                                                                      // See fast/block/float/clamped-right-float.html.
-        }
-        
-        setLogicalLeftForFloat(floatingObject, floatLogicalLeft);
-        setLogicalLeftForChild(childBox, floatLogicalLeft + childLogicalLeftMargin);
-        setLogicalTopForChild(childBox, logicalTop + marginBeforeForChild(childBox));
+        LayoutPoint floatLogicalLocation = computeLogicalLocationForFloat(floatingObject, logicalTop, leftOffset, rightOffset, floatLogicalWidth);
+
+        setLogicalLeftForFloat(floatingObject, floatLogicalLocation.x());
+        setLogicalLeftForChild(childBox, floatLogicalLocation.x() + childLogicalLeftMargin);
+        setLogicalTopForChild(childBox, floatLogicalLocation.y() + marginBeforeForChild(childBox));
 
         if (view()->layoutState()->isPaginated()) {
             RenderBlock* childBlock = childBox->isRenderBlock() ? toRenderBlock(childBox) : 0;
@@ -3366,7 +3377,7 @@ bool RenderBlock::positionNewFloats()
 
             // If we are unsplittable and don't fit, then we need to move down.
             // We include our margins as part of the unsplittable area.
-            LayoutUnit newLogicalTop = adjustForUnsplittableChild(childBox, logicalTop, true);
+            LayoutUnit newLogicalTop = adjustForUnsplittableChild(childBox, floatLogicalLocation.y(), true);
             
             // See if we have a pagination strut that is making us move down further.
             // Note that an unsplittable child can't also have a pagination strut, so this is
@@ -3376,17 +3387,21 @@ bool RenderBlock::positionNewFloats()
                 childBlock->setPaginationStrut(0);
             }
             
-            if (newLogicalTop != logicalTop) {
-                floatingObject->m_paginationStrut = newLogicalTop - logicalTop;
-                logicalTop = newLogicalTop;
-                setLogicalTopForChild(childBox, logicalTop + marginBeforeForChild(childBox));
+            if (newLogicalTop != floatLogicalLocation.y()) {
+                floatingObject->m_paginationStrut = newLogicalTop - floatLogicalLocation.y();
+
+                floatLogicalLocation = computeLogicalLocationForFloat(floatingObject, newLogicalTop, leftOffset, rightOffset, floatLogicalWidth);
+                setLogicalLeftForFloat(floatingObject, floatLogicalLocation.x());
+                setLogicalLeftForChild(childBox, floatLogicalLocation.x() + childLogicalLeftMargin);
+                setLogicalTopForChild(childBox, floatLogicalLocation.y() + marginBeforeForChild(childBox));
+        
                 if (childBlock)
                     childBlock->setChildNeedsLayout(true, false);
                 childBox->layoutIfNeeded();
             }
         }
 
-        setLogicalTopForFloat(floatingObject, logicalTop);
+        setLogicalTopForFloat(floatingObject, floatLogicalLocation.y());
         setLogicalHeightForFloat(floatingObject, logicalHeightForChild(childBox) + marginBeforeForChild(childBox) + marginAfterForChild(childBox));
 
         m_floatingObjects->addPlacedObject(floatingObject);
