@@ -5122,3 +5122,6 @@ fast/table/table-row-before-after-content-around-table.html
 # Qt specific results were added by r95601, but they fail on Qt-Mac platform
 fast/clip/overflow-border-radius-fixed-position.html
 fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html
+
+# Qt specific results were added by r95723, but they fail on Qt-Mac platform
+css3/selectors3
