@@ -74,6 +74,7 @@ EXPORTS
     ?calculateUTCOffset@WTF@@YAHXZ
     ?calculatedFunctionName@DebuggerCallFrame@JSC@@QBE?AVUString@2@XZ
     ?call@JSC@@YA?AVJSValue@1@PAVExecState@1@V21@W4CallType@1@ABTCallData@1@1ABVArgList@1@@Z
+    ?callHostFunctionAsConstructor@JSC@@YI_JPAVExecState@1@@Z
     ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
     ?callOnMainThreadAndWait@WTF@@YAXP6AXPAX@Z0@Z
     ?cancelCallOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
@@ -100,6 +101,7 @@ EXPORTS
     ?create@ByteArray@WTF@@SA?AV?$PassRefPtr@VByteArray@WTF@@@2@I@Z
     ?create@JSArray@JSC@@SAPAV12@AAVJSGlobalData@2@PAVStructure@2@@Z
     ?create@JSArray@JSC@@SAPAV12@AAVJSGlobalData@2@PAVStructure@2@ABVArgList@2@@Z
+    ?create@JSFunction@JSC@@SAPAV12@PAVExecState@2@PAVJSGlobalObject@2@HABVIdentifier@2@P6I_J0@Z3@Z
     ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@W4HeapSize@2@@Z
     ?create@OpaqueJSString@@SA?AV?$PassRefPtr@UOpaqueJSString@@@WTF@@ABVUString@JSC@@@Z
     ?create@RegExp@JSC@@SAPAV12@AAVJSGlobalData@2@ABVUString@2@W4RegExpFlags@2@@Z
