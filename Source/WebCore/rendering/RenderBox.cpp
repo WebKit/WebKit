@@ -2951,7 +2951,7 @@ void RenderBox::computePositionedLogicalWidthReplaced()
         logicalRightValue = logicalRight.calcValue(containerLogicalWidth);
         logicalLeftValue = logicalLeft.calcValue(containerLogicalWidth);
         // If the containing block is right-to-left, then push the left position as far to the right as possible
-        if ((containerDirection == RTL)) {
+        if (containerDirection == RTL) {
             int totalLogicalWidth = logicalWidth() + logicalLeftValue + logicalRightValue +  marginLogicalLeftAlias + marginLogicalRightAlias;
             logicalLeftValue = containerLogicalWidth - (totalLogicalWidth - logicalLeftValue);
         }
