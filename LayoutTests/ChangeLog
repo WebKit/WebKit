@@ -1,3 +1,20 @@
+2011-09-22  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r95671.
+
+        * platform/gtk/fast/css-generated-content/table-cell-before-content-expected.txt:
+        * platform/gtk/fast/table/quote-text-around-iframe-expected.png: Added.
+        * platform/gtk/fast/table/quote-text-around-iframe-expected.txt: Added.
+        * platform/gtk/fast/table/table-cell-after-child-in-block-expected.txt:
+        * platform/gtk/fast/table/table-cell-before-after-content-around-table-block-expected.txt:
+        * platform/gtk/fast/table/table-cell-before-after-content-around-table-expected.txt:
+        * platform/gtk/fast/table/table-cell-before-child-in-block-expected.txt:
+        * platform/gtk/fast/table/table-row-after-child-in-block-expected.txt:
+        * platform/gtk/fast/table/table-row-before-after-content-around-block-expected.txt:
+        * platform/gtk/fast/table/table-row-before-after-content-around-table-expected.txt:
+        * platform/gtk/fast/table/table-row-before-child-in-block-expected.txt:
+        * platform/gtk/fast/table/table-row-style-not-updated-with-after-content-expected.txt:
+
 2011-09-22  Oliver Varga  <voliver@inf.u-szeged.hu>
 
         [Qt] 11 tests failed after r95671.
