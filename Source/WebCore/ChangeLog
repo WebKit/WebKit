@@ -1,3 +1,12 @@
+2011-09-22  Alpha Lam  <hclam@chromium.org>
+
+        Define export symbol correctly due to rename of pageScaleFactor to
+        frameScaleFactor.
+
+        Not reviewed. Build fix.
+
+        * WebCore.exp.in:
+
 2011-09-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Console is always scrolled to the top
