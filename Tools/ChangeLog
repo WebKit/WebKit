@@ -1,3 +1,15 @@
+2011-09-22  Adam Roben  <aroben@apple.com>
+
+        Quote the WEBKITLIBRARIESDIR path before passing it to the shell/cygpath
+
+        Fixes <http://webkit.org/b/68621> build-webkit goes totally haywire on Windows if there are
+        spaces in the path to the WebKit source tree
+
+        Reviewed by John Sullivan.
+
+        * Scripts/webkitdirs.pm:
+        (setupCygwinEnv):
+
 2011-09-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Use same DPI for application font as rest of app in DRT and WTR

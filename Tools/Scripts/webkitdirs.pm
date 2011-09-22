@@ -1248,7 +1248,7 @@ sub setupCygwinEnv()
     
     unless ($ENV{WEBKITLIBRARIESDIR}) {
         $ENV{'WEBKITLIBRARIESDIR'} = File::Spec->catdir($sourceDir, "WebKitLibraries", "win");
-        chomp($ENV{WEBKITLIBRARIESDIR} = `cygpath -wa $ENV{WEBKITLIBRARIESDIR}`) if isCygwin();
+        chomp($ENV{WEBKITLIBRARIESDIR} = `cygpath -wa '$ENV{WEBKITLIBRARIESDIR}'`) if isCygwin();
     }
 
     print "Building results into: ", baseProductDir(), "\n";
