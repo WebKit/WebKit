@@ -1,3 +1,19 @@
+2011-09-21  Tim Horton  <timothy_horton@apple.com>
+
+        [CG] ImageBufferData::getData has an invariant comparison in the inner part of a loop which doesn't get optimized out
+        https://bugs.webkit.org/show_bug.cgi?id=68588
+        <rdar://problem/10164955>
+
+        Reviewed by Simon Fraser.
+
+        Factor the unmultiplied check out of the inner loop, resulting in a
+        speed bump in ImageBufferData::getData.
+
+        No new tests, performance improvement.
+
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::ImageBufferData::getData):
+
 2011-09-21  Sameer Patil  <mkrp87@motorola.com>
 
         :hover selector fails when hovering over a child select element with size attribute

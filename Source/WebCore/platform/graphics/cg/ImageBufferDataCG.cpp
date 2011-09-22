@@ -173,20 +173,29 @@ PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSiz
             return result.release();
         }
 #endif
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; x++) {
-                int basex = x * 4;
-                unsigned char alpha = srcRows[basex + 3];
-                if (unmultiplied && alpha) {
-                    destRows[basex] = (srcRows[basex] * 255) / alpha;
-                    destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
-                    destRows[basex + 2] = (srcRows[basex + 2] * 255) / alpha;
-                    destRows[basex + 3] = alpha;
-                } else
-                    reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
+        if (unmultiplied) {
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; x++) {
+                    int basex = x * 4;
+                    unsigned char alpha = srcRows[basex + 3];
+                    if (alpha) {
+                        destRows[basex] = (srcRows[basex] * 255) / alpha;
+                        destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
+                        destRows[basex + 2] = (srcRows[basex + 2] * 255) / alpha;
+                        destRows[basex + 3] = alpha;
+                    } else
+                        reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
+                }
+                srcRows += srcBytesPerRow;
+                destRows += destBytesPerRow;
             }
-            srcRows += srcBytesPerRow;
-            destRows += destBytesPerRow;
+        } else {
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width * 4; x += 4)
+                    reinterpret_cast<uint32_t*>(destRows + x)[0] = reinterpret_cast<uint32_t*>(srcRows + x)[0];
+                srcRows += srcBytesPerRow;
+                destRows += destBytesPerRow;
+            }
         }
     } else {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
@@ -223,24 +232,38 @@ PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSiz
             vImagePermuteChannels_ARGB8888(&src, &dest, map, kvImageNoFlags);
         }
 #else
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; x++) {
-                int basex = x * 4;
-                unsigned char alpha = srcRows[basex + 3];
-                if (unmultiplied && alpha) {
-                    destRows[basex] = (srcRows[basex + 2] * 255) / alpha;
-                    destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
-                    destRows[basex + 2] = (srcRows[basex] * 255) / alpha;
-                    destRows[basex + 3] = alpha;
-                } else {
+        if (unmultiplied) {
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; x++) {
+                    int basex = x * 4;
+                    unsigned char alpha = srcRows[basex + 3];
+                    if (alpha) {
+                        destRows[basex] = (srcRows[basex + 2] * 255) / alpha;
+                        destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
+                        destRows[basex + 2] = (srcRows[basex] * 255) / alpha;
+                        destRows[basex + 3] = alpha;
+                    } else {
+                        destRows[basex] = srcRows[basex + 2];
+                        destRows[basex + 1] = srcRows[basex + 1];
+                        destRows[basex + 2] = srcRows[basex];
+                        destRows[basex + 3] = srcRows[basex + 3];
+                    }
+                }
+                srcRows += srcBytesPerRow;
+                destRows += destBytesPerRow;
+            }
+        } else {
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; x++) {
+                    int basex = x * 4;
                     destRows[basex] = srcRows[basex + 2];
                     destRows[basex + 1] = srcRows[basex + 1];
                     destRows[basex + 2] = srcRows[basex];
-                    destRows[basex + 3] = alpha;
+                    destRows[basex + 3] = srcRows[basex + 3];
                 }
+                srcRows += srcBytesPerRow;
+                destRows += destBytesPerRow;
             }
-            srcRows += srcBytesPerRow;
-            destRows += destBytesPerRow;
         }
 #endif // USE(ACCELERATE)
         IOSurfaceUnlock(surface, kIOSurfaceLockReadOnly, 0);
