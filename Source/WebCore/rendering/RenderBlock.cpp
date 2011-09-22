@@ -6349,12 +6349,12 @@ LayoutUnit RenderBlock::adjustBlockChildForPagination(LayoutUnit logicalTopAfter
     return result;
 }
 
-bool RenderBlock::lineWidthForPaginatedLineChanged(RootInlineBox* rootBox) const
+bool RenderBlock::lineWidthForPaginatedLineChanged(RootInlineBox* rootBox, LayoutUnit lineDelta) const
 {
     if (!view()->hasRenderFlowThread() || view()->currentRenderFlowThread()->regionsHaveUniformLogicalWidth())
         return false;
 
-    return rootBox->paginatedLineWidth() != availableLogicalWidthForContent(rootBox->lineTopWithLeading());
+    return rootBox->paginatedLineWidth() != availableLogicalWidthForContent(rootBox->lineTopWithLeading() + lineDelta);
 }
 
 LayoutUnit RenderBlock::collapsedMarginBeforeForChild(RenderBox* child) const

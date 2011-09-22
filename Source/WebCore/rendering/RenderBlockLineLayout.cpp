@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "RenderArena.h"
 #include "RenderCombineText.h"
+#include "RenderFlowThread.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListMarker.h"
@@ -1547,75 +1548,81 @@ void RenderBlock::determineEndPosition(LineLayoutState& layoutState, RootInlineB
     layoutState.setEndLine(last);
 }
 
+bool RenderBlock::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutState)
+{
+    LayoutUnit lineDelta = logicalHeight() - layoutState.endLineLogicalTop();
+
+    bool paginated = view()->layoutState() && view()->layoutState()->isPaginated();
+    if (paginated && view()->hasRenderFlowThread() && !view()->currentRenderFlowThread()->regionsHaveUniformLogicalWidth()) {
+        // Check all lines from here to the end, and see if the hypothetical new position for the lines will result
+        // in a different available line width.
+        for (RootInlineBox* lineBox = layoutState.endLine(); lineBox; lineBox = lineBox->nextRootBox()) {
+            if (paginated) {
+                // This isn't the real move we're going to do, so don't update the line box's pagination
+                // strut yet.
+                LayoutUnit oldPaginationStrut = lineBox->paginationStrut();
+                lineDelta -= oldPaginationStrut;
+                adjustLinePositionForPagination(lineBox, lineDelta);
+                lineBox->setPaginationStrut(oldPaginationStrut);
+            }
+            if (lineWidthForPaginatedLineChanged(lineBox, lineDelta))
+                return false;
+        }
+    }
+    
+    if (!lineDelta || !m_floatingObjects)
+        return true;
+    
+    // See if any floats end in the range along which we want to shift the lines vertically.
+    int logicalTop = min(logicalHeight(), layoutState.endLineLogicalTop());
+
+    RootInlineBox* lastLine = layoutState.endLine();
+    while (RootInlineBox* nextLine = lastLine->nextRootBox())
+        lastLine = nextLine;
+
+    int logicalBottom = lastLine->lineBottomWithLeading() + abs(lineDelta);
+
+    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    FloatingObjectSetIterator end = floatingObjectSet.end();
+    for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
+        FloatingObject* f = *it;
+        if (logicalBottomForFloat(f) >= logicalTop && logicalBottomForFloat(f) < logicalBottom)
+            return false;
+    }
+
+    return true;
+}
+
 bool RenderBlock::matchedEndLine(LineLayoutState& layoutState, const InlineBidiResolver& resolver, const InlineIterator& endLineStart, const BidiStatus& endLineStatus)
 {
     if (resolver.position() == endLineStart) {
         if (resolver.status() != endLineStatus)
             return false;
-
-        int delta = logicalHeight() - layoutState.endLineLogicalTop();
-        if (!delta || !m_floatingObjects)
-            return true;
-
-        // See if any floats end in the range along which we want to shift the lines vertically.
-        int logicalTop = min(logicalHeight(), layoutState.endLineLogicalTop());
-
-        RootInlineBox* lastLine = layoutState.endLine();
-        while (RootInlineBox* nextLine = lastLine->nextRootBox())
-            lastLine = nextLine;
-
-        int logicalBottom = lastLine->lineBottomWithLeading() + abs(delta);
-
-        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        FloatingObjectSetIterator end = floatingObjectSet.end();
-        for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
-            FloatingObject* f = *it;
-            if (logicalBottomForFloat(f) >= logicalTop && logicalBottomForFloat(f) < logicalBottom)
-                return false;
-        }
-
-        return true;
+        return checkPaginationAndFloatsAtEndLine(layoutState);
     }
 
     // The first clean line doesn't match, but we can check a handful of following lines to try
     // to match back up.
     static int numLines = 8; // The # of lines we're willing to match against.
-    RootInlineBox* line = layoutState.endLine();
+    RootInlineBox* originalEndLine = layoutState.endLine();
+    RootInlineBox* line = originalEndLine;
     for (int i = 0; i < numLines && line; i++, line = line->nextRootBox()) {
         if (line->lineBreakObj() == resolver.position().m_obj && line->lineBreakPos() == resolver.position().m_pos) {
             // We have a match.
             if (line->lineBreakBidiStatus() != resolver.status())
                 return false; // ...but the bidi state doesn't match.
+            
+            bool matched = false;
             RootInlineBox* result = line->nextRootBox();
-
-            // Set our logical top to be the block height of endLine.
-            if (result)
+            if (result) {
                 layoutState.setEndLineLogicalTop(line->lineBottomWithLeading());
-
-            int delta = logicalHeight() - layoutState.endLineLogicalTop();
-            if (delta && m_floatingObjects) {
-                // See if any floats end in the range along which we want to shift the lines vertically.
-                int logicalTop = min(logicalHeight(), layoutState.endLineLogicalTop());
-
-                RootInlineBox* lastLine = layoutState.endLine();
-                while (RootInlineBox* nextLine = lastLine->nextRootBox())
-                    lastLine = nextLine;
-
-                int logicalBottom = lastLine->lineBottomWithLeading() + abs(delta);
-
-                const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-                FloatingObjectSetIterator end = floatingObjectSet.end();
-                for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
-                    FloatingObject* f = *it;
-                    if (logicalBottomForFloat(f) >= logicalTop && logicalBottomForFloat(f) < logicalBottom)
-                        return false;
-                }
+                layoutState.setEndLine(result);
+                matched = checkPaginationAndFloatsAtEndLine(layoutState);
             }
 
             // Now delete the lines that we failed to sync.
-            deleteLineRange(layoutState, renderArena(), layoutState.endLine(), result);
-            layoutState.setEndLine(result);
-            return result;
+            deleteLineRange(layoutState, renderArena(), originalEndLine, result);
+            return matched;
         }
     }
 
