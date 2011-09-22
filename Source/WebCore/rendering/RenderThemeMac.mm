@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -909,7 +909,28 @@ NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter* rende
 #endif
 
 #if ENABLE(PROGRESS_TAG)
+const IntSize* RenderThemeMac::progressBarSizes() const
+{
+    static const IntSize sizes[3] = { IntSize(0, 20), IntSize(0, 12), IntSize(0, 12) };
+    return sizes;
+}
 
+const int* RenderThemeMac::progressBarMargins(NSControlSize controlSize) const
+{
+    static const int margins[3][4] =
+    {
+        { 0, 0, 1, 0 },
+        { 0, 0, 1, 0 },
+        { 0, 0, 1, 0 },
+    };
+    return margins[controlSize];
+}
+
+int RenderThemeMac::minimumProgressBarHeight(RenderStyle* style) const
+{
+    return sizeForSystemFont(style, progressBarSizes()).height();
+}
+    
 double RenderThemeMac::animationRepeatIntervalForProgressBar(RenderProgress*) const
 {
     return progressAnimationFrameRate;
@@ -929,11 +950,26 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
     if (!renderObject->isProgress())
         return true;
 
+    float zoomLevel = renderObject->style()->effectiveZoom();
+    int controlSize = controlSizeForFont(renderObject->style());
+    IntSize size = progressBarSizes()[controlSize];
+    size.setHeight(size.height() * zoomLevel);
+    size.setWidth(rect.width());
+    
+    // Now inflate it to account for the shadow.
+    IntRect inflatedRect = rect;
+    if (rect.height() <= minimumProgressBarHeight(renderObject->style()))
+        inflatedRect = inflateRect(inflatedRect, size, progressBarMargins(controlSize), zoomLevel);
+    
     RenderProgress* renderProgress = toRenderProgress(renderObject);
     HIThemeTrackDrawInfo trackInfo;
     trackInfo.version = 0;
-    trackInfo.kind = renderProgress->position() < 0 ? kThemeLargeIndeterminateBar : kThemeLargeProgressBar;
-    trackInfo.bounds = IntRect(IntPoint(), rect.size());
+    if (controlSize == NSRegularControlSize)
+        trackInfo.kind = renderProgress->position() < 0 ? kThemeLargeIndeterminateBar : kThemeLargeProgressBar;
+    else
+        trackInfo.kind = renderProgress->position() < 0 ? kThemeMediumIndeterminateBar : kThemeMediumProgressBar;
+    
+    trackInfo.bounds = IntRect(IntPoint(), inflatedRect.size());
     trackInfo.min = 0;
     trackInfo.max = numeric_limits<SInt32>::max();
     trackInfo.value = lround(renderProgress->position() * nextafter(trackInfo.max, 0));
@@ -943,7 +979,7 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
     trackInfo.reserved = 0;
     trackInfo.filler1 = 0;
 
-    OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(rect.size());
+    OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(inflatedRect.size());
     if (!imageBuffer)
         return true;
 
@@ -954,11 +990,11 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
     if (!renderProgress->style()->isLeftToRightDirection()) {
-        paintInfo.context->translate(2 * rect.x() + rect.width(), 0);
+        paintInfo.context->translate(2 * inflatedRect.x() + inflatedRect.width(), 0);
         paintInfo.context->scale(FloatSize(-1, 1));
     }
     
-    paintInfo.context->drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, rect.location());
+    paintInfo.context->drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, inflatedRect.location());
     return false;
 }    
 #endif

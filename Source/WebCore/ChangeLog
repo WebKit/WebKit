@@ -1,3 +1,23 @@
+2011-09-22  Jon Lee  <jonlee@apple.com>
+
+        Progress control gets cropped on the bottom
+        https://bugs.webkit.org/show_bug.cgi?id=68302
+        <rdar://problem/10069915>
+
+        Reviewed by Kent Tamura.
+
+        As it turns out the smaller control type does not get rendered either, so this patch
+        fixes both.
+
+        * manual-tests/dom/progressbar.html: Altered to show both sizes of controls
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm: Added methods to inflate the drawing rect
+        (WebCore::RenderThemeMac::progressBarSizes):
+        (WebCore::RenderThemeMac::progressBarMargins):
+        (WebCore::RenderThemeMac::minimumProgressBarHeight):
+        (WebCore::RenderThemeMac::paintProgressBar): Inflate the rect based on minimum desired
+        control height and glow margin.
+
 2011-09-22  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=68658
