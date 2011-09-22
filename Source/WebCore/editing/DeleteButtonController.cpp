@@ -255,7 +255,7 @@ void DeleteButtonController::createDeletionUI()
     style->setProperty(CSSPropertyHeight, String::number(buttonHeight) + "px");
     style->setProperty(CSSPropertyVisibility, CSSValueVisible);
 
-    float deviceScaleFactor = Page::deviceScaleFactor(m_frame);
+    float deviceScaleFactor = WebCore::deviceScaleFactor(m_frame);
     RefPtr<Image> buttonImage;
     if (deviceScaleFactor >= 2)
         buttonImage = Image::loadPlatformResource("deleteButton@2x");

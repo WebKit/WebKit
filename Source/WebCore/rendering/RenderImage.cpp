@@ -86,7 +86,7 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
 
     IntSize imageSize;
     if (newImage->willPaintBrokenImage()) {
-        float deviceScaleFactor = Page::deviceScaleFactor(frame());
+        float deviceScaleFactor = WebCore::deviceScaleFactor(frame());
         pair<Image*, float> brokenImageAndImageScaleFactor = newImage->brokenImage(deviceScaleFactor);
         imageSize = brokenImageAndImageScaleFactor.first->size();
         imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
@@ -277,7 +277,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             RefPtr<Image> image = m_imageResource->image();
 
             if (m_imageResource->errorOccurred() && !image->isNull() && usableWidth >= image->width() && usableHeight >= image->height()) {
-                float deviceScaleFactor = Page::deviceScaleFactor(frame());
+                float deviceScaleFactor = WebCore::deviceScaleFactor(frame());
                 // Call brokenImage() explicitly to ensure we get the broken image icon at the appropriate resolution.
                 pair<Image*, float> brokenImageAndImageScaleFactor = m_imageResource->cachedImage()->brokenImage(deviceScaleFactor);
                 image = brokenImageAndImageScaleFactor.first;

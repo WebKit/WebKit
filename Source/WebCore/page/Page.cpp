@@ -109,6 +109,16 @@ static void networkStateChanged()
         frames[i]->document()->dispatchWindowEvent(Event::create(eventName, false, false));
 }
 
+float deviceScaleFactor(Frame* frame)
+{
+    if (!frame)
+        return 1;
+    Page* page = frame->page();
+    if (!page)
+        return 1;
+    return page->deviceScaleFactor();
+}
+
 Page::Page(PageClients& pageClients)
     : m_chrome(adoptPtr(new Chrome(this, pageClients.chromeClient)))
     , m_dragCaretController(adoptPtr(new DragCaretController))
@@ -654,16 +664,6 @@ void Page::setDeviceScaleFactor(float scaleFactor)
         frame->editor()->deviceScaleFactorChanged();
 
     backForward()->markPagesForFullStyleRecalc();
-}
-
-float Page::deviceScaleFactor(Frame* frame)
-{
-    if (!frame)
-        return 1;
-    Page* page = frame->page();
-    if (!page)
-        return 1;
-    return page->deviceScaleFactor();
 }
 
 void Page::didMoveOnscreen()

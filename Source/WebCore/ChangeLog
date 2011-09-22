@@ -1,3 +1,37 @@
+2011-09-21  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67415
+        Text drawn via -webkit-background-clip:text is blurry at device scale factors >1.0
+        -and corresponding-
+        <rdar://problem/10060379>
+
+        Reviewed by Darin Adler.
+
+        New helper function RenderBoxModelObject scales the mask image by the 
+        deviceScaleFactor to get an image of the appropriate resolution. It also scales 
+        the image's GraphicsContext so that the clip is set up on the same scale. Back in 
+        paintFillLayerExtended() we still clip the image to the original maskRect to get 
+        everything scaled back to the appropriate size.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::createDeviceScaledImageBuffer):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+
+        Make the deviceScaleFactor convenience function just a namespace-level function in 
+        Page rather than a static member or Page.
+        * page/Page.cpp:
+        (WebCore::deviceScaleFactor):
+        * page/Page.h:
+        
+        Pre-existing callers of Page::deviceScaleFactor(Frame*) must now use 
+        WebCore::deviceScaleFactor(Frame*)
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageSizeForError):
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::drawPlatformResizerImage):
+
 2011-09-21  Tim Horton  <timothy_horton@apple.com>
 
         [CG] ImageBufferData::getData has an invariant comparison in the inner part of a loop which doesn't get optimized out

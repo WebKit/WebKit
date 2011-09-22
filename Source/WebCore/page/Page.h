@@ -94,6 +94,8 @@ namespace WebCore {
 
     enum FindDirection { FindDirectionForward, FindDirectionBackward };
 
+    float deviceScaleFactor(Frame*);
+
     class Page {
         WTF_MAKE_NONCOPYABLE(Page);
         friend class Settings;
@@ -249,7 +251,6 @@ namespace WebCore {
 
         float deviceScaleFactor() const { return m_deviceScaleFactor; }
         void setDeviceScaleFactor(float);
-        static float deviceScaleFactor(Frame*);
 
         // Notifications when the Page starts and stops being presented via a native window.
         void didMoveOnscreen();
