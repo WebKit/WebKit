@@ -1,3 +1,15 @@
+2011-09-22  Marcus Bulach  <bulach@chromium.org>
+
+        [chromium] Rebaseline following r95715
+        https://bugs.webkit.org/show_bug.cgi?id=68619
+
+        Unreviewed, rebaseline.
+
+        * platform/chromium-cg-mac/fast/events/scale-and-scroll-iframe-body-expected.png: Added.
+        * platform/chromium-cg-mac/fast/events/scale-and-scroll-iframe-window-expected.png: Added.
+        * platform/chromium-mac/fast/events/scale-and-scroll-iframe-body-expected.png: Added.
+        * platform/chromium-mac/fast/events/scale-and-scroll-iframe-window-expected.png: Added.
+
 2011-09-22  Alpha Lam  <hclam@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=68081
