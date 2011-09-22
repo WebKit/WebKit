@@ -540,6 +540,24 @@ private:
         return nodeIndex;
     }
     
+    NodeIndex makeDivSafe(NodeIndex nodeIndex)
+    {
+        ASSERT(m_graph[nodeIndex].op == ArithDiv);
+        
+        // The main slow case counter for op_div in the old JIT counts only when
+        // the operands are not numbers. We don't care about that since we already
+        // have speculations in place that take care of that separately. We only
+        // care about when the outcome of the division is not an integer, which
+        // is what the special fast case counter tells us.
+        
+        if (!m_profiledBlock->likelyToTakeSpecialFastCase(m_currentIndex))
+            return nodeIndex;
+        
+        m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow | NodeMayNegZero);
+        
+        return nodeIndex;
+    }
+    
     JSGlobalData* m_globalData;
     CodeBlock* m_codeBlock;
     CodeBlock* m_profiledBlock;
@@ -916,7 +934,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_div: {
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
-            set(currentInstruction[1].u.operand, addToGraph(ArithDiv, op1, op2));
+            set(currentInstruction[1].u.operand, makeDivSafe(addToGraph(ArithDiv, OpInfo(NodeUseBottom), op1, op2)));
             NEXT_OPCODE(op_div);
         }
 

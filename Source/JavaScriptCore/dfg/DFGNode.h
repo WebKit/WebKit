@@ -490,6 +490,7 @@ struct Node {
         case ArithMin:
         case ArithMax:
         case ArithMod:
+        case ArithDiv:
         case ValueAdd:
             return true;
         default:

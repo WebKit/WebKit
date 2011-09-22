@@ -537,11 +537,24 @@ namespace JSC {
             return WTF::genericBinarySearch<RareCaseProfile, int, getRareCaseProfileBytecodeOffset>(m_specialFastCaseProfiles, m_specialFastCaseProfiles.size(), bytecodeOffset);
         }
         
+        bool likelyToTakeSpecialFastCase(int bytecodeOffset)
+        {
+            unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
+            return specialFastCaseCount >= slowCaseThreshold();
+        }
+        
         bool likelyToTakeDeepestSlowCase(int bytecodeOffset)
         {
             unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             return (slowCaseCount - specialFastCaseCount) >= slowCaseThreshold();
+        }
+        
+        bool likelyToTakeAnySlowCase(int bytecodeOffset)
+        {
+            unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
+            unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
+            return (slowCaseCount + specialFastCaseCount) >= slowCaseThreshold();
         }
         
         void resetRareCaseProfiles();

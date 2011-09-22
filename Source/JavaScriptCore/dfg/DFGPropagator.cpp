@@ -211,7 +211,8 @@ private:
             break;
         }
             
-        case ArithMul: {
+        case ArithMul:
+        case ArithDiv: {
             // As soon as a multiply happens, we can easily end up in the part
             // of the double domain where the point at which you do truncation
             // can change the outcome. So, ArithMul always checks for overflow
@@ -422,7 +423,8 @@ private:
         case ArithSub:
         case ArithMul:
         case ArithMin:
-        case ArithMax: {
+        case ArithMax:
+        case ArithDiv: {
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
             
@@ -435,7 +437,6 @@ private:
             break;
         }
             
-        case ArithDiv:
         case ArithSqrt: {
             changed |= setPrediction(makePrediction(PredictDouble, StrongPrediction));
             break;
@@ -649,7 +650,8 @@ private:
         case ArithMul:
         case ArithMin:
         case ArithMax:
-        case ArithMod: {
+        case ArithMod:
+        case ArithDiv: {
             if (!nodeCanSpeculateInteger(node.arithNodeFlags())) {
                 toDouble(node.child1());
                 toDouble(node.child2());
@@ -665,12 +667,6 @@ private:
                 if (right & PredictDouble)
                     toDouble(node.child1());
             }
-            break;
-        }
-            
-        case ArithDiv: {
-            toDouble(node.child1());
-            toDouble(node.child2());
             break;
         }
             

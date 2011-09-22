@@ -1098,6 +1098,43 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithDiv: {
+        if (shouldSpeculateInteger(node.child1(), node.child2()) && nodeCanSpeculateInteger(node.arithNodeFlags())) {
+            SpeculateIntegerOperand op1(this, node.child1());
+            SpeculateIntegerOperand op2(this, node.child2());
+            GPRTemporary eax(this, X86Registers::eax);
+            GPRTemporary edx(this, X86Registers::edx);
+            GPRReg op1GPR = op1.gpr();
+            GPRReg op2GPR = op2.gpr();
+            
+            speculationCheck(m_jit.branchTest32(JITCompiler::Zero, op2GPR));
+            
+            // If the user cares about negative zero, then speculate that we're not about
+            // to produce negative zero.
+            if (!nodeCanIgnoreNegativeZero(node.arithNodeFlags())) {
+                MacroAssembler::Jump numeratorNonZero = m_jit.branchTest32(MacroAssembler::NonZero, op1GPR);
+                speculationCheck(m_jit.branch32(MacroAssembler::LessThan, op2GPR, TrustedImm32(0)));
+                numeratorNonZero.link(&m_jit);
+            }
+            
+            GPRReg temp2 = InvalidGPRReg;
+            if (op2GPR == X86Registers::eax || op2GPR == X86Registers::edx) {
+                temp2 = allocate();
+                m_jit.move(op2GPR, temp2);
+                op2GPR = temp2;
+            }
+            
+            m_jit.move(op1GPR, eax.gpr());
+            m_jit.assembler().cdq();
+            m_jit.assembler().idivl_r(op2GPR);
+            
+            // Check that there was no remainder. If there had been, then we'd be obligated to
+            // produce a double result instead.
+            speculationCheck(m_jit.branchTest32(JITCompiler::NonZero, edx.gpr()));
+            
+            integerResult(eax.gpr(), m_compileIndex);
+            break;
+        }
+        
         SpeculateDoubleOperand op1(this, node.child1());
         SpeculateDoubleOperand op2(this, node.child2());
         FPRTemporary result(this, op1);
