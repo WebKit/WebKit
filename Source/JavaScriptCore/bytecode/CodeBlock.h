@@ -875,6 +875,7 @@ namespace JSC {
         bool shouldOptimizeNow() { return false; }
 #endif
         
+#if ENABLE(JIT)
         void reoptimize(JSGlobalData& globalData)
         {
             ASSERT(replacement() != this);
@@ -882,6 +883,7 @@ namespace JSC {
             countReoptimization();
             optimizeAfterWarmUp();
         }
+#endif
 
 #if ENABLE(VERBOSE_VALUE_PROFILE)
         void dumpValueProfiles();
