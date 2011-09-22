@@ -1,5 +1,17 @@
 2011-09-22  Adam Roben  <aroben@apple.com>
 
+        Remove FindSafari from all our .sln files
+
+        It isn't used anymore, so there's no point in building it.
+
+        Part of <http://webkit.org/b/68628> Remove FindSafari
+
+        Reviewed by Steve Falkenburg.
+
+        * WebKit.vcproj/WebKit.sln: Also relinearized the build order while I was at it.
+
+2011-09-22  Adam Roben  <aroben@apple.com>
+
         Add testRegExp.vcproj to WebKit.sln
 
         Fixes <http://webkit.org/b/68403> Windows bots don't build testRegExp.vcproj

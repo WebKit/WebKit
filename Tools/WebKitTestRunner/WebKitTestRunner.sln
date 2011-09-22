@@ -11,12 +11,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InjectedBundleGenerated", "
 		{C0737398-3565-439E-A2B8-AB2BE4D5430C} = {C0737398-3565-439E-A2B8-AB2BE4D5430C}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FindSafari", "..\FindSafari\FindSafari.vcproj", "{DA31DA52-6675-48D4-89E0-333A7144397C}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageDiff", "..\DumpRenderTree\win\ImageDiff.vcproj", "{59CC0547-70AC-499C-9B19-EC01C6F61137}"
-	ProjectSection(ProjectDependencies) = postProject
-		{DA31DA52-6675-48D4-89E0-333A7144397C} = {DA31DA52-6675-48D4-89E0-333A7144397C}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InjectedBundle", "win\InjectedBundle.vcproj", "{CBC3391C-F060-4BF5-A66E-81404168816B}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -52,14 +47,6 @@ Global
 		{4343BC0B-A2E0-4B48-8277-F33CFBFA83CD}.Production|Win32.Build.0 = Production|Win32
 		{4343BC0B-A2E0-4B48-8277-F33CFBFA83CD}.Release|Win32.ActiveCfg = Release|Win32
 		{4343BC0B-A2E0-4B48-8277-F33CFBFA83CD}.Release|Win32.Build.0 = Release|Win32
-		{DA31DA52-6675-48D4-89E0-333A7144397C}.Debug_All|Win32.ActiveCfg = Debug_All|Win32
-		{DA31DA52-6675-48D4-89E0-333A7144397C}.Debug_All|Win32.Build.0 = Debug_All|Win32
-		{DA31DA52-6675-48D4-89E0-333A7144397C}.Debug|Win32.ActiveCfg = Debug|Win32
-		{DA31DA52-6675-48D4-89E0-333A7144397C}.Debug|Win32.Build.0 = Debug|Win32
-		{DA31DA52-6675-48D4-89E0-333A7144397C}.Production|Win32.ActiveCfg = Production|Win32
-		{DA31DA52-6675-48D4-89E0-333A7144397C}.Production|Win32.Build.0 = Production|Win32
-		{DA31DA52-6675-48D4-89E0-333A7144397C}.Release|Win32.ActiveCfg = Release|Win32
-		{DA31DA52-6675-48D4-89E0-333A7144397C}.Release|Win32.Build.0 = Release|Win32
 		{59CC0547-70AC-499C-9B19-EC01C6F61137}.Debug_All|Win32.ActiveCfg = Debug_All|Win32
 		{59CC0547-70AC-499C-9B19-EC01C6F61137}.Debug_All|Win32.Build.0 = Debug_All|Win32
 		{59CC0547-70AC-499C-9B19-EC01C6F61137}.Debug|Win32.ActiveCfg = Debug|Win32
