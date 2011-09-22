@@ -917,6 +917,9 @@ WebInspector.animateStyle = function(animations, duration, callback)
 
     function animateLoop()
     {
+        if (hasCompleted)
+            return;
+        
         // Advance forward.
         complete += intervalDuration;
         var next = complete + intervalDuration;
@@ -953,10 +956,11 @@ WebInspector.animateStyle = function(animations, duration, callback)
 
     function forceComplete()
     {
-        if (!hasCompleted) {
-            complete = duration;
-            animateLoop();
-        }
+        if (hasCompleted)
+            return;
+
+        complete = duration;
+        animateLoop();
     }
 
     function cancel()

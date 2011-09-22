@@ -58,14 +58,14 @@ WebInspector.Drawer.prototype = {
 
     show: function(view, immediately)
     {
-        var drawerWasVisible = this.visible;
-
         this.immediatelyFinishAnimation();
+
+        var drawerWasVisible = this.visible;
+        
         if (this._view)
             this.element.removeChild(this._view.element);
 
         this._view = view;
-        this._view.show(this.element);
 
         var statusBarItems = this._view.statusBarItems || [];
         for (var i = 0; i < statusBarItems.length; ++i)
@@ -75,6 +75,8 @@ WebInspector.Drawer.prototype = {
             return;
 
         document.body.addStyleClass("drawer-visible");
+
+        this._view.show(this.element);
 
         var anchoredItems = document.getElementById("anchored-status-bar-items");
         var height = this._constrainHeight(this._savedHeight || this.element.offsetHeight);
@@ -120,9 +122,6 @@ WebInspector.Drawer.prototype = {
 
         this._savedHeight = this.element.offsetHeight;
 
-        this.element.removeChild(this._view.element);
-        delete this._view;
-
         if (this.element === WebInspector.currentFocusElement || this.element.isAncestor(WebInspector.currentFocusElement))
             WebInspector.currentFocusElement = WebInspector.previousFocusElement;
 
@@ -161,6 +160,9 @@ WebInspector.Drawer.prototype = {
                 this._counters.insertBefore(this._currentPanelCounters, this._counters.firstChild);
             }
 
+            this._view.hide();
+            this.element.removeChild(this._view.element);
+            delete this._view;
             document.body.removeStyleClass("drawer-visible");
             delete this._currentAnimation;
         }
@@ -175,6 +177,7 @@ WebInspector.Drawer.prototype = {
         if (!this.visible)
             return;
 
+        this._view.storeScrollPositions();
         var height = this._constrainHeight(parseInt(this.element.style.height));
         this._mainElement.style.bottom = height + "px";
         this.element.style.height = height + "px";
@@ -226,6 +229,7 @@ WebInspector.Drawer.prototype = {
         if (!this.visible || event.target !== this._mainStatusBar)
             return;
 
+        this._view.storeScrollPositions();
         WebInspector.elementDragStart(this._mainStatusBar, this._statusBarDragging.bind(this), this._endStatusBarDragging.bind(this), event, "row-resize");
 
         this._statusBarDragOffset = event.pageY - this.element.totalOffsetTop();
@@ -242,6 +246,7 @@ WebInspector.Drawer.prototype = {
         this.element.style.height = height + "px";
         if (WebInspector.currentPanel())
             WebInspector.currentPanel().doResize();
+        this._view.doResize();
 
         event.preventDefault();
         event.stopPropagation();

@@ -226,6 +226,7 @@ WebInspector.ConsoleView.prototype = {
 
     wasShown: function()
     {
+        WebInspector.View.prototype.wasShown.call(this);
         if (!this.prompt.isCaretInsidePrompt())
             this.prompt.moveCaretToEndOfPrompt();
     },
@@ -233,6 +234,25 @@ WebInspector.ConsoleView.prototype = {
     afterShow: function()
     {
         WebInspector.currentFocusElement = this.promptElement;
+    },
+
+    storeScrollPositions: function()
+    {
+        WebInspector.View.prototype.storeScrollPositions.call(this);
+        this._scrolledToBottom = this.messagesElement.isScrolledToBottom();
+    },
+
+    restoreScrollPositions: function()
+    {
+        if (this._scrolledToBottom)
+            this._immediatelyScrollIntoView();
+        else
+            WebInspector.View.prototype.restoreScrollPositions.call(this);
+    },
+
+    onResize: function()
+    {
+        this.restoreScrollPositions();
     },
 
     _isScrollIntoViewScheduled: function()
@@ -251,6 +271,21 @@ WebInspector.ConsoleView.prototype = {
             delete this._scrollIntoViewTimer;
         }
         this._scrollIntoViewTimer = setTimeout(scrollIntoView.bind(this), 20);
+    },
+
+    _immediatelyScrollIntoView: function()
+    {
+        this.promptElement.scrollIntoView(true);
+        this._cancelScheduledScrollIntoView();
+    },
+
+    _cancelScheduledScrollIntoView: function()
+    {
+        if (!this._isScrollIntoViewScheduled())
+            return;
+
+        clearTimeout(this._scrollIntoViewTimer);
+        delete this._scrollIntoViewTimer;
     },
 
     _consoleMessageAdded: function(event)
@@ -286,6 +321,7 @@ WebInspector.ConsoleView.prototype = {
 
     _consoleCleared: function()
     {
+        this._scrolledToBottom = true;
         this.messages = [];
 
         this.currentGroup = this.topGroup;

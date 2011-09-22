@@ -1,3 +1,27 @@
+2011-09-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Console is always scrolled to the top
+        https://bugs.webkit.org/show_bug.cgi?id=67483
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.wasShown):
+        (WebInspector.ConsoleView.prototype.storeScrollPositions):
+        (WebInspector.ConsoleView.prototype.restoreScrollPositions):
+        (WebInspector.ConsoleView.prototype.onResize):
+        (WebInspector.ConsoleView.prototype._immediatelyScrollIntoView):
+        (WebInspector.ConsoleView.prototype._cancelScheduledScrollIntoView):
+        (WebInspector.ConsoleView.prototype._consoleCleared):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.hide):
+        (WebInspector.Drawer.prototype.resize):
+        (WebInspector.Drawer.prototype._startStatusBarDragging):
+        (WebInspector.Drawer.prototype._statusBarDragging):
+        * inspector/front-end/inspector.js:
+        (WebInspector.animateStyle):
+        (WebInspector.animateStyle.forceComplete):
+
 2011-09-22  Alpha Lam  <hclam@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=68081
