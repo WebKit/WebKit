@@ -565,7 +565,7 @@ sub installedSafariPath
     if (isAppleMacWebKit()) {
         $safariBundle = "/Applications/Safari.app";
     } elsif (isAppleWinWebKit()) {
-        $safariBundle = `"$configurationProductDir/FindSafari.exe"`;
+        $safariBundle = readRegistryString("/HKLM/SOFTWARE/Apple Computer, Inc./Safari/InstallDir");
         $safariBundle =~ s/[\r\n]+$//;
         $safariBundle = `cygpath -u '$safariBundle'` if isCygwin();
         $safariBundle =~ s/[\r\n]+$//;
@@ -2139,6 +2139,25 @@ sub runTestWebKitAPI
     }
 
     return 1;
+}
+
+sub readRegistryString
+{
+    my ($valueName) = @_;
+    chomp(my $string = `regtool --wow32 get "$valueName"`);
+    return $string;
+}
+
+sub writeRegistryString
+{
+    my ($valueName, $string) = @_;
+
+    my $error = system "regtool", "--wow32", "set", "-s", $valueName, $string;
+
+    # On Windows Vista/7 with UAC enabled, regtool will fail to modify the registry, but will still
+    # return a successful exit code. So we double-check here that the value we tried to write to the
+    # registry was really written.
+    return !$error && readRegistryString($valueName) eq $string;
 }
 
 1;

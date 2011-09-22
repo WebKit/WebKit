@@ -1,5 +1,28 @@
 2011-09-22  Adam Roben  <aroben@apple.com>
 
+        Remove all uses of FindSafari
+
+        It isn't really needed anymore.
+
+        Fixes <http://webkit.org/b/68626>.
+
+        Reviewed by Darin Adler.
+
+        * Scripts/old-run-webkit-tests: Moved read/writeRegistryString from here to webkitdirs.pm.
+
+        * Scripts/run-webkit-nightly.cmd: Removed. This used to be used to launch nightly builds of
+        WebKit, but now we use WebKit.exe for that.
+
+        * Scripts/webkitdirs.pm:
+        (installedSafariPath): Changed to use readRegistryString instead of invoking FindSafari to
+        do the same thing.
+
+        (readRegistryString):
+        (writeRegistryString):
+        Moved here from old-run-webkit-tests.
+
+2011-09-22  Adam Roben  <aroben@apple.com>
+
         Use the "direct object" form of system() to run WebKit.exe
 
         This prevents the shell from parsing (and possibly splitting, if it contains spaces) the
