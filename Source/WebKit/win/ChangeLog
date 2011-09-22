@@ -1,3 +1,14 @@
+2011-09-22  Adam Roben  <aroben@apple.com>
+
+        Add testRegExp.vcproj to WebKit.sln
+
+        Fixes <http://webkit.org/b/68403> Windows bots don't build testRegExp.vcproj
+
+        Reviewed by Brian Weinstein.
+
+        * WebKit.vcproj/WebKit.sln: Added testRegExp. Made it build just after jsc, just like it
+        does when built as part of JavaScriptCore.sln.
+
 2011-09-21  Steve Falkenburg  <sfalken@apple.com>
 
         Branch builds don't launch on Windows when run against trunk WebKit
