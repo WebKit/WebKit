@@ -2683,6 +2683,9 @@ LayoutUnit RenderBlock::startAlignedOffsetForLine(RenderBox* child, LayoutUnit p
     availableLogicalWidth = logicalRightOffsetForLine(logicalHeight(), false) - logicalLeft;
     float totalLogicalWidth = logicalWidthForChild(child);
     updateLogicalWidthForAlignment(textAlign, 0l, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
+
+    if (!style()->isLeftToRightDirection())
+        return width() - (logicalLeft + totalLogicalWidth);
     return logicalLeft;
 }
 

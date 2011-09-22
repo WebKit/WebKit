@@ -1,3 +1,46 @@
+2011-09-05  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: abspos-non-replaced-width-margin-000, abspos-replaced-width-margin-000
+        https://bugs.webkit.org/show_bug.cgi?id=47148
+
+        Reviewed by David Hyatt.
+
+        * platform/chromium-linux/css2.1/20110323/abspos-non-replaced-width-margin-000-expected.png:
+        * platform/chromium-linux/css2.1/20110323/abspos-replaced-width-margin-000-expected.png:
+          New results for CSS 2.1 reference tests. These match exactly the reference test results.
+
+        * fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html: Added.
+        * platform/chromium-linux/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.png: Added.
+        * platform/chromium-linux/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt: Added.
+          New test for left,right and center alignment of inline LTR and RTL blocks. FF and Opera don't pass this test.
+
+        * fast/block/positioning/absolute-position-direction-strict.html: Removed.
+        * fast/block/positioning/absolute-position-direction.html: Renamed from LayoutTests/fast/block/positioning/absolute-position-direction-quirk.html.
+        * platform/chromium-linux/fast/block/positioning/absolute-position-direction-expected.png: Renamed from LayoutTests/platform/chromium-linux/fast/block/positioning/absolute-position-direction-quirk-expected.png.
+        * platform/chromium-linux/fast/block/positioning/absolute-position-direction-strict-expected.png: Removed.
+        * platform/chromium-win/fast/block/positioning/absolute-position-direction-expected.png: Renamed from LayoutTests/platform/chromium-win/fast/block/positioning/absolute-position-direction-quirk-expected.png.
+        * platform/chromium-win/fast/block/positioning/absolute-position-direction-expected.txt: Renamed from LayoutTests/platform/chromium-win/fast/block/positioning/absolute-position-direction-quirk-expected.txt.
+        * platform/chromium-win/fast/block/positioning/absolute-position-direction-strict-expected.png: Removed.
+        * platform/chromium-win/fast/block/positioning/absolute-position-direction-strict-expected.txt: Removed.
+        * platform/gtk/fast/block/positioning/absolute-position-direction-expected.png: Renamed from LayoutTests/platform/gtk/fast/block/positioning/absolute-position-direction-quirk-expected.png.
+        * platform/gtk/fast/block/positioning/absolute-position-direction-expected.txt: Renamed from LayoutTests/platform/gtk/fast/block/positioning/absolute-position-direction-quirk-expected.txt.
+        * platform/gtk/fast/block/positioning/absolute-position-direction-strict-expected.png: Removed.
+        * platform/gtk/fast/block/positioning/absolute-position-direction-strict-expected.txt: Removed.
+        * platform/mac-leopard/fast/block/positioning/absolute-position-direction-expected.png: Renamed from LayoutTests/platform/mac-leopard/fast/block/positioning/absolute-position-direction-quirk-expected.png.
+        * platform/mac-leopard/fast/block/positioning/absolute-position-direction-strict-expected.png: Removed.
+        * platform/mac/css2.1/20110323/abspos-non-replaced-width-margin-000-expected.txt:
+        * platform/mac/css2.1/20110323/abspos-replaced-width-margin-000-expected.txt:
+        * platform/mac/fast/block/positioning/absolute-position-direction-expected.png: Renamed from LayoutTests/platform/mac/fast/block/positioning/absolute-position-direction-quirk-expected.png.
+        * platform/mac/fast/block/positioning/absolute-position-direction-expected.txt: Renamed from LayoutTests/platform/mac/fast/block/positioning/absolute-position-direction-quirk-expected.txt.
+        * platform/mac/fast/block/positioning/absolute-position-direction-strict-expected.png: Removed.
+        * platform/mac/fast/block/positioning/absolute-position-direction-strict-expected.txt: Removed.
+        * platform/qt/fast/block/positioning/absolute-position-direction-expected.png: Renamed from LayoutTests/platform/qt/fast/block/positioning/absolute-position-direction-quirk-expected.png.
+        * platform/qt/fast/block/positioning/absolute-position-direction-expected.txt: Renamed from LayoutTests/platform/qt/fast/block/positioning/absolute-position-direction-quirk-expected.txt.
+        * platform/qt/fast/block/positioning/absolute-position-direction-strict-expected.png: Removed.
+        * platform/qt/fast/block/positioning/absolute-position-direction-strict-expected.txt: Removed.
+          These tests are superseded by abspos-non-replaced-width-margin-000.htm. Using the parent() block's
+          direction to compute static distance is now a strict requirement for CSS 2.1, rather than an IE quirk.
+
 2011-09-21  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=68590

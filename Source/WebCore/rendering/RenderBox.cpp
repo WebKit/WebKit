@@ -2214,14 +2214,13 @@ int RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxModelObj
     return heightResult;
 }
 
-static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRight, const RenderBox* child, const RenderBoxModelObject* containerBlock, int containerLogicalWidth,
-                                        TextDirection containerDirection)
+static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRight, const RenderBox* child, const RenderBoxModelObject* containerBlock, int containerLogicalWidth)
 {
     if (!logicalLeft.isAuto() || !logicalRight.isAuto())
         return;
 
     // FIXME: The static distance computation has not been patched for mixed writing modes yet.
-    if (containerDirection == LTR) {
+    if (child->parent()->style()->direction() == LTR) {
         LayoutUnit staticPosition = child->layer()->staticInlinePosition() - containerBlock->borderLogicalLeft();
         for (RenderObject* curr = child->parent(); curr && curr != containerBlock; curr = curr->container()) {
             if (curr->isBox())
@@ -2230,7 +2229,7 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
         logicalLeft.setValue(Fixed, staticPosition);
     } else {
         RenderBox* enclosingBox = child->parent()->enclosingBox();
-        LayoutUnit staticPosition = child->layer()->staticInlinePosition() + containerLogicalWidth + containerBlock->borderLogicalRight();
+        LayoutUnit staticPosition = child->layer()->staticInlinePosition() + containerLogicalWidth + containerBlock->borderLogicalLeft();
         staticPosition -= enclosingBox->logicalWidth();
         for (RenderObject* curr = enclosingBox; curr && curr != containerBlock; curr = curr->container()) {
             if (curr->isBox())
@@ -2248,20 +2247,11 @@ void RenderBox::computePositionedLogicalWidth()
     }
 
     // QUESTIONS
-    // FIXME 1: Which RenderObject's 'direction' property should used: the
-    // containing block (cb) as the spec seems to imply, the parent (parent()) as
-    // was previously done in calculating the static distances, or ourself, which
-    // was also previously done for deciding what to override when you had
-    // over-constrained margins?  Also note that the container block is used
-    // in similar situations in other parts of the RenderBox class (see computeLogicalWidth()
-    // and computeMarginsInContainingBlockInlineDirection()). For now we are using the parent for quirks
-    // mode and the containing block for strict mode.
-
-    // FIXME 2: Should we still deal with these the cases of 'left' or 'right' having
+    // FIXME 1: Should we still deal with these the cases of 'left' or 'right' having
     // the type 'static' in determining whether to calculate the static distance?
     // NOTE: 'static' is not a legal value for 'left' or 'right' as of CSS 2.1.
 
-    // FIXME 3: Can perhaps optimize out cases when max-width/min-width are greater
+    // FIXME 2: Can perhaps optimize out cases when max-width/min-width are greater
     // than or less than the computed width().  Be careful of box-sizing and
     // percentage issues.
 
@@ -2278,9 +2268,10 @@ void RenderBox::computePositionedLogicalWidth()
     
     const LayoutUnit containerLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock);
 
-    // To match WinIE, in quirks mode use the parent's 'direction' property
-    // instead of the the container block's.
-    TextDirection containerDirection = (document()->inQuirksMode()) ? parent()->style()->direction() : containerBlock->style()->direction();
+    // Use the container block's direction except when calculating the static distance
+    // This conforms with the reference results for abspos-replaced-width-margin-000.htm
+    // of the CSS 2.1 test suite
+    TextDirection containerDirection = containerBlock->style()->direction();
 
     bool isHorizontal = isHorizontalWritingMode();
     const LayoutUnit bordersPlusPadding = borderAndPaddingLogicalWidth();
@@ -2316,9 +2307,9 @@ void RenderBox::computePositionedLogicalWidth()
      * origin.
     \*---------------------------------------------------------------------------*/
 
-    // see FIXME 2
+    // see FIXME 1
     // Calculate the static distance if needed.
-    computeInlineStaticDistance(logicalLeft, logicalRight, this, containerBlock, containerLogicalWidth, containerDirection);
+    computeInlineStaticDistance(logicalLeft, logicalRight, this, containerBlock, containerLogicalWidth);
     
     // Calculate constraint equation values for 'width' case.
     LayoutUnit logicalWidthResult;
@@ -2437,7 +2428,8 @@ void RenderBox::computePositionedLogicalWidthUsing(Length logicalWidth, const Re
                 marginLogicalLeftValue = availableSpace / 2; // split the difference
                 marginLogicalRightValue = availableSpace - marginLogicalLeftValue; // account for odd valued differences
             } else {
-                // see FIXME 1
+                // Use the containing block's direction rather than the parent block's
+                // per CSS 2.1 reference test abspos-non-replaced-width-margin-000.
                 if (containerDirection == LTR) {
                     marginLogicalLeftValue = 0;
                     marginLogicalRightValue = availableSpace; // will be negative
@@ -2459,7 +2451,8 @@ void RenderBox::computePositionedLogicalWidthUsing(Length logicalWidth, const Re
             marginLogicalLeftValue = marginLogicalLeft.calcValue(containerLogicalWidth);
             marginLogicalRightValue = marginLogicalRight.calcValue(containerLogicalWidth);
 
-            // see FIXME 1 -- used to be "this->style()->direction()"
+            // Use the containing block's direction rather than the parent block's
+            // per CSS 2.1 reference test abspos-non-replaced-width-margin-000.
             if (containerDirection == RTL)
                 logicalLeftValue = (availableSpace + logicalLeftValue) - marginLogicalLeftValue - marginLogicalRightValue;
         }
@@ -2628,7 +2621,7 @@ void RenderBox::computePositionedLogicalHeight()
      * the viewport.
     \*---------------------------------------------------------------------------*/
 
-    // see FIXME 2
+    // see FIXME 1
     // Calculate the static distance if needed.
     computeBlockStaticDistance(logicalTop, logicalBottom, this, containerBlock);
 
@@ -2642,7 +2635,7 @@ void RenderBox::computePositionedLogicalHeight()
     setLogicalTop(logicalTopPos);
 
     // Avoid doing any work in the common case (where the values of min-height and max-height are their defaults).
-    // see FIXME 3
+    // see FIXME 2
 
     // Calculate constraint equation values for 'max-height' case.
     if (!style()->logicalMaxHeight().isUndefined()) {
@@ -2844,7 +2837,7 @@ void RenderBox::computePositionedLogicalWidthReplaced()
 
     // To match WinIE, in quirks mode use the parent's 'direction' property
     // instead of the the container block's.
-    TextDirection containerDirection = (document()->inQuirksMode()) ? parent()->style()->direction() : containerBlock->style()->direction();
+    TextDirection containerDirection = containerBlock->style()->direction();
 
     // Variables to solve.
     bool isHorizontal = isHorizontalWritingMode();
@@ -2863,6 +2856,7 @@ void RenderBox::computePositionedLogicalWidthReplaced()
     // are dealt with in computeReplacedWidth().  This means that the steps to produce
     // correct max/min in the non-replaced version, are not necessary.
     setLogicalWidth(computeReplacedLogicalWidth() + borderAndPaddingLogicalWidth());
+
     const LayoutUnit availableSpace = containerLogicalWidth - logicalWidth();
 
     /*-----------------------------------------------------------------------*\
@@ -2870,8 +2864,8 @@ void RenderBox::computePositionedLogicalWidthReplaced()
      *    of the containing block is 'ltr', set 'left' to the static position;
      *    else if 'direction' is 'rtl', set 'right' to the static position.
     \*-----------------------------------------------------------------------*/
-    // see FIXME 2
-    computeInlineStaticDistance(logicalLeft, logicalRight, this, containerBlock, containerLogicalWidth, containerDirection);
+    // see FIXME 1
+    computeInlineStaticDistance(logicalLeft, logicalRight, this, containerBlock, containerLogicalWidth);
 
     /*-----------------------------------------------------------------------*\
      * 3. If 'left' or 'right' are 'auto', replace any 'auto' on 'margin-left'
@@ -2907,7 +2901,8 @@ void RenderBox::computePositionedLogicalWidthReplaced()
             marginLogicalLeftAlias = difference / 2; // split the difference
             marginLogicalRightAlias = difference - marginLogicalLeftAlias; // account for odd valued differences
         } else {
-            // see FIXME 1
+            // Use the containing block's direction rather than the parent block's
+            // per CSS 2.1 reference test abspos-replaced-width-margin-000.
             if (containerDirection == LTR) {
                 marginLogicalLeftAlias = 0;
                 marginLogicalRightAlias = difference; // will be negative
@@ -2955,6 +2950,11 @@ void RenderBox::computePositionedLogicalWidthReplaced()
         marginLogicalRightAlias = marginLogicalRight.calcValue(containerLogicalWidth);
         logicalRightValue = logicalRight.calcValue(containerLogicalWidth);
         logicalLeftValue = logicalLeft.calcValue(containerLogicalWidth);
+        // If the containing block is right-to-left, then push the left position as far to the right as possible
+        if ((containerDirection == RTL)) {
+            int totalLogicalWidth = logicalWidth() + logicalLeftValue + logicalRightValue +  marginLogicalLeftAlias + marginLogicalRightAlias;
+            logicalLeftValue = containerLogicalWidth - (totalLogicalWidth - logicalLeftValue);
+        }
     }
 
     /*-----------------------------------------------------------------------*\
@@ -2963,15 +2963,11 @@ void RenderBox::computePositionedLogicalWidthReplaced()
      *    containing block is 'rtl') or 'right' (in case 'direction' is
      *    'ltr') and solve for that value.
     \*-----------------------------------------------------------------------*/
-    // NOTE:  It is not necessary to solve for 'right' when the direction is
-    // LTR because the value is not used.
-    LayoutUnit totalLogicalWidth = logicalWidth() + logicalLeftValue + logicalRightValue +  marginLogicalLeftAlias + marginLogicalRightAlias;
-    if (totalLogicalWidth > containerLogicalWidth && (containerDirection == RTL))
-        logicalLeftValue = containerLogicalWidth - (totalLogicalWidth - logicalLeftValue);
+    // NOTE: Constraints imposed by the width of the containing block and its content have already been accounted for above.
 
     // FIXME: Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space, so that
     // can make the result here rather complicated to compute.
-    
+
     // Use computed values to calculate the horizontal position.
 
     // FIXME: This hack is needed to calculate the logical left position for a 'rtl' relatively
@@ -2989,7 +2985,7 @@ void RenderBox::computePositionedLogicalWidthReplaced()
     }
 
     LayoutUnit logicalLeftPos = logicalLeftValue + marginLogicalLeftAlias;
-    computeLogicalLeftPositionedOffset(logicalLeftPos, this, logicalWidth(), containerBlock, containerLogicalWidth);    
+    computeLogicalLeftPositionedOffset(logicalLeftPos, this, logicalWidth(), containerBlock, containerLogicalWidth);
     setLogicalLeft(logicalLeftPos);
 }
 
@@ -3031,7 +3027,7 @@ void RenderBox::computePositionedLogicalHeightReplaced()
      * 2. If both 'top' and 'bottom' have the value 'auto', replace 'top'
      *    with the element's static position.
     \*-----------------------------------------------------------------------*/
-    // see FIXME 2
+    // see FIXME 1
     computeBlockStaticDistance(logicalTop, logicalBottom, this, containerBlock);
 
     /*-----------------------------------------------------------------------*\

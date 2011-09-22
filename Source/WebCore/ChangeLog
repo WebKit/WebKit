@@ -1,3 +1,41 @@
+2011-09-05  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: abspos-non-replaced-width-margin-000, abspos-replaced-width-margin-000
+        https://bugs.webkit.org/show_bug.cgi?id=47148
+
+        Reviewed by David Hyatt.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::startOffsetForLine): Return offset from right, rather than offset from left + logicalwidth
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::startAlignedOffsetForLine): 
+              Return the correct alignment for RTL blocks too. Looks like neither FF or Opera do this correctly.
+              Covered by new test left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html
+        * rendering/RenderBox.cpp:
+        (WebCore::computeInlineStaticDistance):
+            - The CSS 2.1 tests now require UAs to use the parent block's direction (rather than the
+              containing block's direction) when computing static distance. The container block's direction
+              is still used in the other width and offset related calculations.
+            - In the context of this function, the logicalRight value is just an element that will be used later to calculate 
+              the correct logicalLeft position for the RTL block. So whereas an LTR block can substract containerBlock->borderLogicalLeft() 
+              in this function directly, an RTL block has to add it here so that will be later subtracted from availableSpace to get 
+              logicalLeft in computePositionedLogicalWidthUsing().
+
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+           - Update comments and use the container block's direction except when calculating the static distance.
+           - Remove the notion of a quirks mode in this function and for calculating the position of replaced and non-replaced
+             blocks generally. This is in line with both FF4 and Opera - neither of which have a quirks mode for them.
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing):
+           - Update comments and use the container block's direction except when calculating the static distance.
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+           - Update comments.
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+           - Update comments and use the container block's direction except when calculating the static distance.
+           - If the containing block is RTL, always assume that values are over-constrained.
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced):
+           - Update comments.
+
 2011-09-22  Anders Carlsson  <andersca@apple.com>
 
         Get rid of Widget::setBoundsSize
