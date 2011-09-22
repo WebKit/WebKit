@@ -88,10 +88,12 @@ v8::Handle<v8::Value> V8MessageEvent::portsAccessorGetter(v8::Local<v8::String> 
     MessagePortArray* ports = event->ports();
     if (!ports)
         return v8::Array::New(0);
+    
+    MessagePortArray portsCopy(*ports);
 
-    v8::Local<v8::Array> portArray = v8::Array::New(ports->size());
-    for (size_t i = 0; i < ports->size(); ++i)
-        portArray->Set(v8::Integer::New(i), toV8((*ports)[i].get()));
+    v8::Local<v8::Array> portArray = v8::Array::New(portsCopy.size());
+    for (size_t i = 0; i < portsCopy.size(); ++i)
+        portArray->Set(v8::Integer::New(i), toV8(portsCopy[i].get()));
 
     return portArray;
 }
