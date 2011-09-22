@@ -2028,7 +2028,8 @@ sub runSafari
             chomp($safariPath = `cygpath -wa "$safariPath"`);
             $result = system $vcBuildPath, "/debugexe", "\"$safariPath\"", @ARGV;
         } else {
-            $result = system File::Spec->catfile(productDir(), "WebKit.exe"), @ARGV;
+            my $webKitLauncherPath = File::Spec->catfile(productDir(), "WebKit.exe");
+            $result = system { $webKitLauncherPath } $webKitLauncherPath, @ARGV;
         }
         return $result if $result;
     }
