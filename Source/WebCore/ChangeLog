@@ -1,3 +1,40 @@
+2011-09-22  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of Widget::setBoundsSize
+        https://bugs.webkit.org/show_bug.cgi?id=68491
+
+        Reviewed by Sam Weinig.
+
+        This basically reverts http://trac.webkit.org/changeset/79167 and http://trac.webkit.org/changeset/75897
+        which were added to make zoom gestures work with WebKit1, but since we don't support zoom gestures in WebKit1
+        anymore, it's better for code cleanliness to get rid of Widget::setBoundsSize and the associated code. While this
+        will unfortunately break transformed iframes in WebKit1, but Simon says that it's an acceptable tradeoff.
+
+        * WebCore.exp.in:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::create):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        * platform/Widget.cpp:
+        * platform/Widget.h:
+        (WebCore::Widget::resize):
+        * platform/chromium/PopupContainer.cpp:
+        (WebCore::PopupContainer::refresh):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry):
+        (WebCore::RenderWidget::setWidget):
+        (WebCore::RenderWidget::updateWidgetPosition):
+        * rendering/RenderWidget.h:
+
 2011-09-21  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=68590

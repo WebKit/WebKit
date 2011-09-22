@@ -215,23 +215,6 @@ extern "C" {
     _previousSize = boundsInWindow.size;
     
     _proxy->resize(boundsInWindow, visibleRectInWindow);
-
-    CGRect bounds = NSRectToCGRect([self bounds]);
-    CGRect frame = NSRectToCGRect([self frame]);
-    
-    // We're not scaled, or in a subframe
-    CATransform3D scaleTransform = CATransform3DIdentity;
-    if (CGSizeEqualToSize(bounds.size, frame.size)) {
-        // We're in a subframe. Backing store is boundsInWindow.size.
-        if (boundsInWindow.size.width && boundsInWindow.size.height)
-            scaleTransform = CATransform3DMakeScale(frame.size.width / boundsInWindow.size.width, frame.size.height / boundsInWindow.size.height, 1);
-    } else {
-        // We're in the main frame with scaling. Need to mimic the frame/bounds scaling on Widgets.
-        if (frame.size.width && frame.size.height)
-            scaleTransform = CATransform3DMakeScale(bounds.size.width / frame.size.width, bounds.size.height / frame.size.height, 1);
-    }
-
-    _pluginLayer.get().sublayerTransform = scaleTransform;
 }
 
 - (void)windowFocusChanged:(BOOL)hasFocus

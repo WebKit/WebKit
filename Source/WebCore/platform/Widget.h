@@ -149,12 +149,11 @@ public:
     IntPoint location() const { return frameRect().location(); }
 
     virtual void setFrameRect(const IntRect&);
-    virtual void setBoundsSize(const IntSize&);
     virtual IntRect frameRect() const;
     IntRect boundsRect() const { return IntRect(0, 0, width(),  height()); }
 
-    void resize(int w, int h) { setFrameRect(IntRect(x(), y(), w, h)); setBoundsSize(IntSize(w, h)); }
-    void resize(const IntSize& s) { setFrameRect(IntRect(location(), s)); setBoundsSize(s); }
+    void resize(int w, int h) { setFrameRect(IntRect(x(), y(), w, h)); }
+    void resize(const IntSize& s) { setFrameRect(IntRect(location(), s)); }
     void move(int x, int y) { setFrameRect(IntRect(x, y, width(), height())); }
     void move(const IntPoint& p) { setFrameRect(IntRect(p, size())); }
 

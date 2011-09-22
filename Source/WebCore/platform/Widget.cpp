@@ -106,10 +106,6 @@ IntPoint Widget::convertToContainingWindow(const IntPoint& localPoint) const
 }
 
 #if !PLATFORM(MAC)
-void Widget::setBoundsSize(const IntSize&)
-{
-}
-
 IntRect Widget::convertFromRootToContainingWindow(const Widget*, const IntRect& rect)
 {
     return rect;

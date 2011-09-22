@@ -409,7 +409,6 @@ void PopupContainer::refresh(const IntRect& targetControlRect)
     location.move(0, targetControlRect.height());
 
     listBox()->setBaseWidth(max(m_originalFrameRect.width() - kBorderSize * 2, 0));
-    setBoundsSize(m_originalFrameRect.size());
 
     listBox()->updateFromElement();
     // Store the original size to check if we need to request the location.

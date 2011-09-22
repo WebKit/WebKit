@@ -2061,11 +2061,8 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     view->setWasScrolledByUser(false);
 
     // Use the current ScrollView's frame rect.
-    if (m_frame->view()) {
-        IntRect rect = m_frame->view()->frameRect();
-        view->setFrameRect(rect);
-        view->setBoundsSize(rect.size());
-    }
+    if (m_frame->view())
+        view->setFrameRect(m_frame->view()->frameRect());
     m_frame->setView(view);
     
     m_frame->setDocument(document);
