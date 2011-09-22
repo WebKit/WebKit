@@ -1,3 +1,14 @@
+2011-09-21  David Levin  <levin@chromium.org>
+
+        [chromium] Rebaselines for passing tests and expectation updates/narrowing.
+
+        * platform/chromium-cg-mac-leopard/editing/inserting/editable-inline-element-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/t090204-display-change-01-b-ao-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/inserting/editable-inline-element-expected.png: Added.
+        * platform/chromium-mac/css2.1/t090204-display-change-01-b-ao-expected.png:
+        * platform/chromium-mac/css2.1/t090204-display-change-01-b-ao-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-09-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in RenderBox::paintMaskImages when GraphicsContext's painting is disabled

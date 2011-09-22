@@ -2940,7 +2940,6 @@ BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-mirror-he-ar.html = IMAGE+
 BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-neutral-run.html = IMAGE+TEXT
 
 BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = PASS CRASH
-BUGWK58005 LEOPARD : editing/inserting/editable-inline-element.html = IMAGE
 BUGCR780807 : http/tests/misc/webtiming-origins.html = PASS TEXT
 
 BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = TEXT
@@ -3684,11 +3683,7 @@ BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.htm
 BUGWK67204 : fast/multicol/inherit-column-values.html = MISSING FAIL
 BUGWK67204 : fast/multicol/initial-column-values.html = MISSING FAIL
 
-// Failing after r93982.
-BUG_LEVIN MAC CPU-CG : canvas/philip/tests/2d.path.stroke.prune.arc.html = TEXT
-
 // Failing after r94084. This looks like it may be a real regression.
-BUG_LEVIN : css2.1/t090204-display-change-01-b-ao.html = IMAGE+TEXT
 
 BUGWK67352 : fast/canvas/webgl/WebGLContextEvent.html = TEXT
 
@@ -3746,9 +3741,9 @@ BUGWK67999 WIN RELEASE : fast/borders/border-image-omit-right-slice.html = IMAGE
 BUGWK67999 LINUX RELEASE : fast/borders/border-image-omit-right-slice.html = TEXT
 BUGWK67999 MAC CPU-CG RELEASE : fast/borders/border-image-omit-right-slice.html = TEXT
 
-BUG_LEVIN SNOWLEOPARD : http/tests/loading/307-after-303-after-post.html = PASS TEXT
-BUG_LEVIN SNOWLEOPARD : http/tests/security/mixedContent/insecure-image-in-main-frame.html = PASS TEXT
-BUG_LEVIN SNOWLEOPARD : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
+BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/loading/307-after-303-after-post.html = PASS TEXT
+BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/security/mixedContent/insecure-image-in-main-frame.html = PASS TEXT
+BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
 
 BUG_LEVIN MAC DEBUG : svg/custom/object-no-size-attributes.xhtml = PASS IMAGE+TEXT
 
@@ -3761,7 +3756,7 @@ BUG_KEISHI : inspector/styles/styles-update-from-js.html = FAIL PASS TEXT TIMEOU
 // Crashes or timeouts once in a while but never fails
 BUG_KEISHI LINUX : media/video-controls-visible-audio-only.html = PASS TIMEOUT CRASH
 
-BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PASS CRASH 
+BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PASS CRASH
 
 // Tests that are known to fail on Mac10.6 with CPU-Skia graphics.
 BUGWK68436 SNOWLEOPARD CPU : fast/events/constructors/progress-event-constructor.html = TEXT
