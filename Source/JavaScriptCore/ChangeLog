@@ -1,3 +1,28 @@
+2011-09-22  Oliver Hunt  <oliver@apple.com>
+
+        Implement put_scoped_var in the DFG jit
+        https://bugs.webkit.org/show_bug.cgi?id=68653
+
+        Reviewed by Gavin Barraclough.
+
+        Naive implementation of put_scoped_var.  Same story as the
+        get_scoped_var implementation, although I've hoisted scope
+        object acquisition into a separate dfg node.  Ideally in the
+        future we would reuse the resolved scope chain object, but
+        for now we don't.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasScopeChainDepth):
+        (JSC::DFG::Node::scopeChainDepth):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-09-22  Gavin Barraclough  <barraclough@apple.com>
 
         Implement Function.prototype.bind

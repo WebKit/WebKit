@@ -1625,7 +1625,8 @@ void SpeculativeJIT::compile(Node& node)
         cellResult(result.gpr(), m_compileIndex);
         break;
     }
-    case GetScopedVar: {
+
+    case GetScopeChain: {
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
 
@@ -1644,9 +1645,27 @@ void SpeculativeJIT::compile(Node& node)
             m_jit.loadPtr(JITCompiler::Address(resultGPR, OBJECT_OFFSETOF(ScopeChainNode, next)), resultGPR);
         
         m_jit.loadPtr(JITCompiler::Address(resultGPR, OBJECT_OFFSETOF(ScopeChainNode, object)), resultGPR);
-        m_jit.loadPtr(JITCompiler::Address(resultGPR, JSVariableObject::offsetOfRegisters()), resultGPR);
+
+        cellResult(resultGPR, m_compileIndex);
+        break;
+    }
+    case GetScopedVar: {
+        SpeculateCellOperand scopeChain(this, node.child1());
+        GPRTemporary result(this);
+        GPRReg resultGPR = result.gpr();
+        m_jit.loadPtr(JITCompiler::Address(scopeChain.gpr(), JSVariableObject::offsetOfRegisters()), resultGPR);
         m_jit.loadPtr(JITCompiler::Address(resultGPR, node.varNumber() * sizeof(Register)), resultGPR);
         jsValueResult(resultGPR, m_compileIndex);
+        break;
+    }
+    case PutScopedVar: {
+        SpeculateCellOperand scopeChain(this, node.child1());
+        GPRTemporary scratchRegister(this);
+        GPRReg scratchGPR = scratchRegister.gpr();
+        m_jit.loadPtr(JITCompiler::Address(scopeChain.gpr(), JSVariableObject::offsetOfRegisters()), scratchGPR);
+        JSValueOperand value(this, node.child2());
+        m_jit.storePtr(value.gpr(), JITCompiler::Address(scratchGPR, node.varNumber() * sizeof(Register)));
+        writeBarrier(m_jit, scopeChain.gpr(), scratchGPR, WriteBarrierForVariableAccess);
         break;
     }
     case GetById: {

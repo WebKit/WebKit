@@ -83,6 +83,7 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     case op_put_by_val:
     case op_method_check:
     case op_get_scoped_var:
+    case op_put_scoped_var:
     case op_get_by_id:
     case op_put_by_id:
     case op_get_global_var:

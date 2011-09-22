@@ -533,7 +533,8 @@ private:
             changed |= mergeUse(node.child1(), PredictObjectUnknown | StrongPredictionTag);
             break;
         }
-            
+
+        case GetScopeChain:
         case GetCallee: {
             changed |= setPrediction(makePrediction(PredictObjectOther, StrongPrediction));
             break;
@@ -566,7 +567,7 @@ private:
         // This gets ignored because it doesn't do anything.
         case Phantom:
             break;
-            
+
         default:
             ASSERT_NOT_REACHED();
             break;

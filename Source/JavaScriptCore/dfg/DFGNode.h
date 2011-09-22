@@ -268,7 +268,9 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(GetByOffset, NodeResultJS) \
     macro(GetMethod, NodeResultJS | NodeMustGenerate) \
     macro(CheckMethod, NodeResultJS | NodeMustGenerate) \
+    macro(GetScopeChain, NodeResultJS) \
     macro(GetScopedVar, NodeResultJS | NodeMustGenerate) \
+    macro(PutScopedVar, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetGlobalVar, NodeResultJS | NodeMustGenerate) \
     macro(PutGlobalVar, NodeMustGenerate | NodeClobbersWorld) \
     \
@@ -549,13 +551,13 @@ struct Node {
 
     bool hasScopeChainDepth()
     {
-        return op == GetScopedVar;
+        return op == GetScopeChain;
     }
     
     unsigned scopeChainDepth()
     {
         ASSERT(hasScopeChainDepth());
-        return m_opInfo2;
+        return m_opInfo;
     }
 
     bool hasResult()
