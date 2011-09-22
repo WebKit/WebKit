@@ -6,6 +6,7 @@
  * Copyright (C) 2008 Collabora Ltd.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2010-2011 Igalia S.L.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -144,7 +145,7 @@ void GtkPopupMenu::menuPositionFunction(GtkMenu*, gint* x, gint* y, gboolean* pu
 {
     *x = popupMenu->m_menuPosition.x();
     *y = popupMenu->m_menuPosition.y();
-    *pushIn = true;
+    *pushIn = false;
 }
 
 void GtkPopupMenu::resetTypeAheadFindState()
