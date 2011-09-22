@@ -1,3 +1,32 @@
+2011-09-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95335 and r95645.
+        http://trac.webkit.org/changeset/95335
+        http://trac.webkit.org/changeset/95645
+        https://bugs.webkit.org/show_bug.cgi?id=68649
+
+        Wrong fix (Requested by rniwa on #webkit).
+
+        * editing/deleting/merge-paragraph-from-address-expected.txt: Removed.
+        * editing/deleting/merge-paragraph-from-address.html: Removed.
+        * editing/deleting/merge-paragraph-from-h6-expected.txt: Removed.
+        * editing/deleting/merge-paragraph-from-h6-with-style-expected.txt: Removed.
+        * editing/deleting/merge-paragraph-from-h6-with-style.html: Removed.
+        * editing/deleting/merge-paragraph-from-h6.html: Removed.
+        * editing/deleting/merge-paragraph-from-listing-expected.txt: Removed.
+        * editing/deleting/merge-paragraph-from-listing.html: Removed.
+        * editing/deleting/merge-paragraph-from-p-with-style-expected.txt: Removed.
+        * editing/deleting/merge-paragraph-from-p-with-style.html: Removed.
+        * editing/deleting/merge-paragraph-into-h1-expected.txt: Removed.
+        * editing/deleting/merge-paragraph-into-h1-style-expected.txt: Removed.
+        * editing/deleting/merge-paragraph-into-h1-with-style-expected.txt: Removed.
+        * editing/deleting/merge-paragraph-into-h1-with-style.html: Removed.
+        * editing/deleting/merge-paragraph-into-h1.html: Removed.
+        * editing/deleting/merge-paragraph-into-pre-expected.txt: Removed.
+        * editing/deleting/merge-paragraph-into-pre.html: Removed.
+        * platform/mac/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/mac/editing/deleting/merge-whitespace-pre-expected.txt:
+
 2011-09-22  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, update expected results after r95726

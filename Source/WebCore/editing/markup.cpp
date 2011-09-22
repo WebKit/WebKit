@@ -336,25 +336,6 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, Element* element
     appendCloseTag(out, element);
 }
 
-bool isBlockNodeToRetainAppearance(const Node* node)
-{
-    DEFINE_STATIC_LOCAL(HashSet<QualifiedName::QualifiedNameImpl*>, names, ());
-    if (!names.size()) {
-        names.add(addressTag.impl());
-        names.add(blockquoteTag.impl());
-        names.add(h1Tag.impl());
-        names.add(h2Tag.impl());
-        names.add(h3Tag.impl());
-        names.add(h4Tag.impl());
-        names.add(h5Tag.impl());
-        names.add(h6Tag.impl());
-        names.add(listingTag.impl());
-        names.add(pTag.impl());
-        names.add(preTag.impl());
-    }
-    return node->isElementNode() && names.contains(toElement(node)->tagQName().impl());
-}
-
 Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
 {
     if (!m_highestNodeToBeSerialized) {
@@ -369,7 +350,7 @@ Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
         // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote,
         // to help us differentiate those styles from ones that the user has applied.
         // This helps us get the color of content pasted into blockquotes right.
-        m_wrappingStyle->removeStyleFromRules(enclosingNodeOfType(firstPositionInOrBeforeNode(parentOfHighestNode), isBlockNodeToRetainAppearance, CanCrossEditingBoundary));
+        m_wrappingStyle->removeStyleAddedByNode(enclosingNodeOfType(firstPositionInOrBeforeNode(parentOfHighestNode), isMailBlockquote, CanCrossEditingBoundary));
 
         // Call collapseTextDecorationProperties first or otherwise it'll copy the value over from in-effect to text-decorations.
         m_wrappingStyle->collapseTextDecorationProperties();
@@ -472,11 +453,17 @@ static Node* ancestorToRetainStructureAndAppearance(Node* commonAncestor)
         return table;
     }
 
-    if (isBlockNodeToRetainAppearance(commonAncestorBlock)
+    if (commonAncestorBlock->hasTagName(listingTag)
         || commonAncestorBlock->hasTagName(olTag)
+        || commonAncestorBlock->hasTagName(preTag)
         || commonAncestorBlock->hasTagName(tableTag)
         || commonAncestorBlock->hasTagName(ulTag)
-        || commonAncestorBlock->hasTagName(xmpTag))
+        || commonAncestorBlock->hasTagName(xmpTag)
+        || commonAncestorBlock->hasTagName(h1Tag)
+        || commonAncestorBlock->hasTagName(h2Tag)
+        || commonAncestorBlock->hasTagName(h3Tag)
+        || commonAncestorBlock->hasTagName(h4Tag)
+        || commonAncestorBlock->hasTagName(h5Tag))
         return commonAncestorBlock;
 
     return 0;

@@ -519,17 +519,13 @@ void EditingStyle::removeBlockProperties()
     m_mutableStyle->removeBlockProperties();
 }
 
-void EditingStyle::removeStyleFromRules(Node* node)
+void EditingStyle::removeStyleAddedByNode(Node* node)
 {
-    // FIXME: This should share code with removeStyleFromRulesAndContext
-    // but it's hard to do until we figure out how to compare font-size property without computed style.
     if (!node || !node->parentNode())
         return;
     RefPtr<CSSMutableStyleDeclaration> parentStyle = editingStyleFromComputedStyle(computedStyle(node->parentNode()));
     RefPtr<CSSMutableStyleDeclaration> nodeStyle = editingStyleFromComputedStyle(computedStyle(node));
     parentStyle->diff(nodeStyle.get());
-    if (node->isStyledElement() && static_cast<StyledElement*>(node)->inlineStyleDecl())
-        nodeStyle = getPropertiesNotIn(nodeStyle.get(), static_cast<StyledElement*>(node)->inlineStyleDecl());
     nodeStyle->diff(m_mutableStyle.get());
 }
 
