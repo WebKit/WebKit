@@ -45,8 +45,6 @@
 using namespace WebCore;
 using namespace std;
 
-#define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
-
 namespace WebKit {
 
 template<typename HashMap>
@@ -69,7 +67,6 @@ PassRefPtr<WebProcessProxy> WebProcessProxy::create(PassRefPtr<WebContext> conte
 WebProcessProxy::WebProcessProxy(PassRefPtr<WebContext> context)
     : m_responsivenessTimer(this)
     , m_context(context)
-    , m_mayHaveUniversalFileReadSandboxExtension(false)
 {
     connect();
 }
@@ -203,59 +200,8 @@ void WebProcessProxy::registerNewWebBackForwardListItem(WebBackForwardListItem* 
     m_backForwardListItemMap.set(item->itemID(), item);
 }
 
-void WebProcessProxy::willLoadHTMLStringWithBaseURL(const String& urlString)
-{
-    KURL url(KURL(), urlString);
-    if (!url.isLocalFile())
-        return;
-
-    // Client loads an alternate string. This doesn't grant universal file read, but the web process is assumed
-    // to have read access to this directory already.
-    m_localPathsWithAssumedReadAccess.add(url.fileSystemPath());
-}
-
-bool WebProcessProxy::checkURLReceivedFromWebProcess(const String& urlString)
-{
-    if (urlString.isEmpty())
-        return true;
-
-    return checkURLReceivedFromWebProcess(KURL(KURL(), urlString));
-}
-
-bool WebProcessProxy::checkURLReceivedFromWebProcess(const KURL& url)
-{
-    if (url.isNull())
-        return true;
-
-    // Web process should not be sending us invalid URLs.
-    if (!url.isValid())
-        return false;
-
-    // Any other non-file URL is OK.
-    if (!url.isLocalFile())
-        return true;
-
-    // Any file URL is also OK if we've loaded a file URL through API before, granting universal read access.
-    if (m_mayHaveUniversalFileReadSandboxExtension)
-        return true;
-
-    // If we loaded a string with a file base URL before, loading resources from that subdirectory is fine.
-    // There are no ".." components, because all URLs received from WebProcess are parsed with KURL, which removes those.
-    String path = url.fileSystemPath();
-    for (HashSet<String>::const_iterator iter = m_localPathsWithAssumedReadAccess.begin(); iter != m_localPathsWithAssumedReadAccess.end(); ++iter) {
-        if (path.startsWith(*iter))
-            return true;
-    }
-
-    // A Web process that was never asked to load a file URL should not ever ask us to do anything with a file URL.
-    return false;
-}
-
 void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& originalURL, const String& url, const String& title, const CoreIPC::DataReference& backForwardData)
 {
-    MESSAGE_CHECK_URL(originalURL);
-    MESSAGE_CHECK_URL(url);
-
     std::pair<WebBackForwardListItemMap::iterator, bool> result = m_backForwardListItemMap.add(itemID, 0);
     if (result.second) {
         // New item.

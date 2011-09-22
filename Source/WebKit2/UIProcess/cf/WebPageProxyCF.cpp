@@ -166,9 +166,7 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
                 else {
                     SandboxExtension::Handle sandboxExtensionHandle;
                     if (WebBackForwardListItem* item = m_backForwardList->currentItem()) {
-                        bool createdExtension = maybeInitializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
-                        if (createdExtension)
-                            process()->willAcquireUniversalFileReadSandboxExtension();
+                        initializeSandboxExtensionHandle(KURL(KURL(), item->url()), sandboxExtensionHandle);
                         setPendingAPIRequestURL(item->url());
                     }
 
