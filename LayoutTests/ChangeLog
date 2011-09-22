@@ -1,3 +1,48 @@
+2011-09-22  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68645
+        
+        Fix the layout test fast/regions directory. Remove platform-specific results that were
+        incorrectly checked in to cross-platform locations and add missing pixel test results.
+
+        Reviewed by Beth Dakin.
+
+        * fast/regions/content-flowed-into-regions-dynamically-inserted-expected.txt: Removed.
+        * fast/regions/flows-dependency-dynamic-remove-expected.txt: Removed.
+        * fast/regions/flows-dependency-same-flow-expected.txt: Removed.
+        * fast/regions/render-region-renderer-expected.txt: Removed.
+        * fast/regions/webkit-flow-floats-inside-regions-bounds-expected.txt: Removed.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-expected.txt: Removed.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-expected.txt: Removed.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.txt: Removed.
+        * fast/regions/webkit-flow-renderer-expected.txt: Removed.
+        * fast/regions/webkit-flow-renderer-layer-expected.txt: Removed.
+        * fast/regions/webkit-flow-renderer-nested-expected.txt: Removed.
+        * platform/mac/fast/regions/content-flowed-into-regions-dynamically-added-expected.png: Added.
+        * platform/mac/fast/regions/content-flowed-into-regions-dynamically-inserted-expected.txt: Added.
+        * platform/mac/fast/regions/content-flowed-into-regions-dynamically-removed-expected.png: Added.
+        * platform/mac/fast/regions/content-flowed-into-regions-expected.png: Added.
+        * platform/mac/fast/regions/content-flowed-into-regions-with-dyn-index-expected.png: Added.
+        * platform/mac/fast/regions/content-flowed-into-regions-with-index-dom-expected.png: Added.
+        * platform/mac/fast/regions/content-flowed-into-regions-with-index-expected.png: Added.
+        * platform/mac/fast/regions/flows-dependency-dynamic-remove-expected.png: Added.
+        * platform/mac/fast/regions/flows-dependency-dynamic-remove-expected.txt: Added.
+        * platform/mac/fast/regions/flows-dependency-same-flow-expected.png: Added.
+        * platform/mac/fast/regions/flows-dependency-same-flow-expected.txt: Added.
+        * platform/mac/fast/regions/no-split-line-box-expected.png: Added.
+        * platform/mac/fast/regions/render-region-renderer-expected.txt: Added.
+        * platform/mac/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.png: Added.
+        * platform/mac/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.txt: Added.
+        * platform/mac/fast/regions/webkit-flow-inlines-inside-regions-bounds-expected.png: Added.
+        * platform/mac/fast/regions/webkit-flow-inlines-inside-regions-bounds-expected.txt: Added.
+        * platform/mac/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-expected.png: Added.
+        * platform/mac/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-expected.txt: Added.
+        * platform/mac/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.png: Added.
+        * platform/mac/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.txt: Added.
+        * platform/mac/fast/regions/webkit-flow-renderer-expected.txt: Added.
+        * platform/mac/fast/regions/webkit-flow-renderer-layer-expected.txt: Added.
+        * platform/mac/fast/regions/webkit-flow-renderer-nested-expected.txt: Added.
+
 2011-09-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Use same DPI for application font as rest of app in DRT and WTR
