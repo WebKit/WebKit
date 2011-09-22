@@ -1,3 +1,20 @@
+2011-09-22  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Ref protect shaders in V8WebGLRenderingContext::getAttachedShadersCallback
+        https://bugs.webkit.org/show_bug.cgi?id=68630
+
+        Reviewed by Adam Barth.
+
+        Test: fast/canvas/webgl/shader-deleted-by-accessor.html
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::getAttachedShaders):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::V8WebGLRenderingContext::getAttachedShadersCallback):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getAttachedShaders):
+        * html/canvas/WebGLRenderingContext.h:
+
 2011-09-05  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: abspos-non-replaced-width-margin-000, abspos-replaced-width-margin-000

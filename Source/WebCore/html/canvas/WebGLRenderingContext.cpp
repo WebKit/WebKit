@@ -1900,7 +1900,7 @@ PassRefPtr<WebGLActiveInfo> WebGLRenderingContext::getActiveUniform(WebGLProgram
     return WebGLActiveInfo::create(info.name, info.type, info.size);
 }
 
-bool WebGLRenderingContext::getAttachedShaders(WebGLProgram* program, Vector<WebGLShader*>& shaderObjects, ExceptionCode& ec)
+bool WebGLRenderingContext::getAttachedShaders(WebGLProgram* program, Vector<RefPtr<WebGLShader> >& shaderObjects, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     shaderObjects.clear();

@@ -143,7 +143,7 @@ public:
 
     PassRefPtr<WebGLActiveInfo> getActiveAttrib(WebGLProgram*, GC3Duint index, ExceptionCode&);
     PassRefPtr<WebGLActiveInfo> getActiveUniform(WebGLProgram*, GC3Duint index, ExceptionCode&);
-    bool getAttachedShaders(WebGLProgram*, Vector<WebGLShader*>&, ExceptionCode&);
+    bool getAttachedShaders(WebGLProgram*, Vector<RefPtr<WebGLShader> >&, ExceptionCode&);
     GC3Dint getAttribLocation(WebGLProgram*, const String& name);
     WebGLGetInfo getBufferParameter(GC3Denum target, GC3Denum pname, ExceptionCode&);
     PassRefPtr<WebGLContextAttributes> getContextAttributes();
