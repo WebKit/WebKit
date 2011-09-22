@@ -23,11 +23,11 @@ Flow Threads
                   text run at (1,1) width 44: "Float 1"
               RenderBlock (anonymous) at (1,84) size 266x90
                 RenderText {#text} at (0,0) size 266x90
-                  text run at (0,0) width 166: "This line of text should"
-                  text run at (0,18) width 194: "not get out of the region. This"
-                  text run at (0,36) width 194: "line of text should not get out"
-                  text run at (0,54) width 266: "of the region. This line of text should not"
-                  text run at (0,72) width 131: "get out of the region."
+                  text run at (0,0) width 194: "This line of text should not get"
+                  text run at (0,18) width 194: "out of the region. This line of"
+                  text run at (0,36) width 194: "text should not get out of the"
+                  text run at (0,54) width 266: "region. This line of text should not get out"
+                  text run at (0,72) width 84: "of the region."
               RenderBlock {P} at (1,190) size 266x0
               RenderBlock {P} at (1,190) size 266x128
                 RenderText {#text} at (0,0) size 266x128

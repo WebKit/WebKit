@@ -1,3 +1,75 @@
+2011-09-22  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68650
+        
+        Make determineStartPosition smart enough to not skip over clean lines that have moved to a new
+        region with a different available content logical width. When this happens, we go ahead and treat
+        the line as dirty.
+
+        Reviewed by Sam Weinig.
+
+        Covered by existing fast/regions tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        Disable region fitting if we detect that the regions all have uniform widths. In this case we know
+        the content width can't vary, so there's no reason to waste time worrying about it.
+
+        (WebCore::RenderBlock::computeLogicalLocationForFloat):
+        Pull the content width checking code into computeLogicalLocationForFloat, since we've incorporated
+        region fitting into the fixed offsets now rather than the line functions.
+
+        (WebCore::RenderBlock::positionNewFloats):
+        Changed because more code moved from here into computeLogicalLocationForFloat.
+        
+        (WebCore::RenderBlock::adjustForRegionFittingIfNeeded):
+        No changes. Just moved the function above the left offset function.
+
+        (WebCore::RenderBlock::logicalLeftOffsetForContent):
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        Added. These new functions give the fixed left and right offsets for lines in a particular region.
+        When no regions are present or when all the regions have a uniform width, they are identical
+        to the versions of the functions that take no arguments.
+
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        Changed to no longer do region fitting, since that's built into logicalRightOffsetForContent now.
+
+        (WebCore::RenderBlock::lineWidthForPaginatedLineChanged):
+        New function that takes a root line box and compares its cached old content width with the width
+        available at the line's new location.
+    
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        Modified to call the logicalXXXOffsetForContent functions that take a block direction position.
+
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        (WebCore::RenderBlock::logicalLeftOffsetForContent):
+        Added the new functions that take a position so that they can fit to the correct region.
+
+        (WebCore::RenderBlock::availableLogicalWidthForContent):
+        New helper function that calls right - left (similar to the corresponding line function that includes
+        floats).
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::determineStartPosition):
+        Patched to check if a line has moved to a place with a different available content width. If so, the line
+        is dirtied so that line layout can re-run.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+        Sets the paginated line width from the current block logical height.
+
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::paginationStrut):
+        (WebCore::RootInlineBox::setPaginationStrut):
+        Fixed paginationStrut to be LayoutUnit instead of int.
+
+        (WebCore::RootInlineBox::paginatedLineWidth):
+        (WebCore::RootInlineBox::setPaginatedLineWidth):
+        Added paginatedLineWidth getter/setter for caching the content width for a given root line.
+
 2011-09-21  Anders Carlsson  <andersca@apple.com>
 
         Remove Widget::beforeMouseDown and Widget::afterMouseDown

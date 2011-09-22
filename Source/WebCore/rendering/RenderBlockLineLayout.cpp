@@ -1235,6 +1235,7 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
             int blockLogicalHeight = logicalHeight();
             trailingFloatsLineBox->alignBoxesInBlockDirection(blockLogicalHeight, textBoxDataMap, verticalPositionCache);
             trailingFloatsLineBox->setLineTopBottomPositions(blockLogicalHeight, blockLogicalHeight, blockLogicalHeight, blockLogicalHeight);
+            trailingFloatsLineBox->setPaginatedLineWidth(availableLogicalWidthForContent(blockLogicalHeight));
             IntRect logicalLayoutOverflow(0, blockLogicalHeight, 1, bottomLayoutOverflow - blockLogicalHeight);
             IntRect logicalVisualOverflow(0, blockLogicalHeight, 1, bottomVisualOverflow - blockLogicalHeight);
             trailingFloatsLineBox->setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow, trailingFloatsLineBox->lineTop(), trailingFloatsLineBox->lineBottom());
@@ -1401,6 +1402,10 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
         size_t floatIndex = 0;
         for (curr = firstRootBox(); curr && !curr->isDirty(); curr = curr->nextRootBox()) {
             if (paginated) {
+                if (lineWidthForPaginatedLineChanged(curr)) {
+                    curr->markDirty();
+                    break;
+                }
                 paginationDelta -= curr->paginationStrut();
                 adjustLinePositionForPagination(curr, paginationDelta);
                 if (paginationDelta) {

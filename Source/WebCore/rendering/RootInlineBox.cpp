@@ -51,6 +51,7 @@ RootInlineBox::RootInlineBox(RenderBlock* block)
     , m_lineTopWithLeading(0)
     , m_lineBottomWithLeading(0)
     , m_paginationStrut(0)
+    , m_paginatedLineWidth(0)
     , m_baselineType(AlphabeticBaseline)
     , m_hasAnnotationsBefore(false)
     , m_hasAnnotationsAfter(false)
@@ -276,6 +277,7 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
     maxHeight = max<LayoutUnit>(0, maxHeight); // FIXME: Is this really necessary?
 
     setLineTopBottomPositions(lineTop, lineBottom, heightOfBlock, heightOfBlock + maxHeight);
+    setPaginatedLineWidth(block()->availableLogicalWidthForContent(heightOfBlock));
 
     int annotationsAdjustment = beforeAnnotationsAdjustment();
     if (annotationsAdjustment) {

@@ -126,8 +126,8 @@ public:
     bool containsFloat(RenderBox*);
 
     LayoutUnit availableLogicalWidthForLine(LayoutUnit position, bool firstLine) const;
-    LayoutUnit logicalRightOffsetForLine(LayoutUnit position, bool firstLine) const { return logicalRightOffsetForLine(position, logicalRightOffsetForContent(), firstLine); }
-    LayoutUnit logicalLeftOffsetForLine(LayoutUnit position, bool firstLine) const { return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(), firstLine); }
+    LayoutUnit logicalRightOffsetForLine(LayoutUnit position, bool firstLine) const { return logicalRightOffsetForLine(position, logicalRightOffsetForContent(position), firstLine); }
+    LayoutUnit logicalLeftOffsetForLine(LayoutUnit position, bool firstLine) const { return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(position), firstLine); }
     LayoutUnit startOffsetForLine(LayoutUnit position, bool firstLine) const { return style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(position, firstLine) : width() - logicalRightOffsetForLine(position, firstLine); }
     LayoutUnit startAlignedOffsetForLine(RenderBox* child, LayoutUnit position, bool firstLine);
     LayoutUnit textIndentOffset() const;
@@ -259,8 +259,12 @@ public:
 
     virtual void scrollbarsChanged(bool /*horizontalScrollbarChanged*/, bool /*verticalScrollbarChanged*/) { };
 
-    int logicalRightOffsetForContent() const { return isHorizontalWritingMode() ? borderLeft() + paddingLeft() + availableLogicalWidth() : borderTop() + paddingTop() + availableLogicalWidth(); }
-    int logicalLeftOffsetForContent() const { return isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
+    LayoutUnit logicalRightOffsetForContent() const { return isHorizontalWritingMode() ? borderLeft() + paddingLeft() + availableLogicalWidth() : borderTop() + paddingTop() + availableLogicalWidth(); }
+    LayoutUnit logicalLeftOffsetForContent() const { return isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
+
+    LayoutUnit logicalLeftOffsetForContent(LayoutUnit position) const;
+    LayoutUnit logicalRightOffsetForContent(LayoutUnit position) const;
+    LayoutUnit availableLogicalWidthForContent(LayoutUnit position) const { return max(0, logicalRightOffsetForContent(position) - logicalLeftOffsetForContent(position)); }
 
 #ifndef NDEBUG
     void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0) const;
@@ -555,8 +559,7 @@ private:
             return child->y() + child->renderer()->marginTop();
     }
 
-    LayoutPoint computeLogicalLocationForFloat(const FloatingObject*, LayoutUnit logicalTopOffset, LayoutUnit logicalLeftOffset,
-        LayoutUnit logicalRightOffset, LayoutUnit floatLogicalWidth) const;
+    LayoutPoint computeLogicalLocationForFloat(const FloatingObject*, LayoutUnit logicalTopOffset) const;
 
     // The following functions' implementations are in RenderBlockLineLayout.cpp.
     typedef std::pair<RenderText*, LazyLineBreakIterator> LineBreakIteratorInfo;
@@ -824,6 +827,11 @@ private:
     LayoutUnit adjustForUnsplittableChild(RenderBox* child, LayoutUnit logicalOffset, bool includeMargins = false); // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.
     void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
     LayoutUnit adjustBlockChildForPagination(LayoutUnit logicalTopAfterClear, LayoutUnit estimateWithoutPagination, RenderBox* child, bool atBeforeSideOfBlock);
+
+    // This function is called to test a line box that has moved in the block direction to see if it has ended up in a new
+    // region/page/column that has a different available line width than the old one. Used to know when you have to dirty a
+    // line, i.e., that it can't be re-used.
+    bool lineWidthForPaginatedLineChanged(RootInlineBox*) const;
 
     struct FloatingObjectHashFunctions {
         static unsigned hash(FloatingObject* key) { return DefaultHash<RenderBox*>::Hash::hash(key->m_renderer); }

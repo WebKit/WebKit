@@ -11,9 +11,9 @@ Flow Threads
   Thread with flow-name 'flow1'
     layer at (0,0) size 300x400
       RenderFlowThread at (0,0) size 300x400
-        RenderBlock {DIV} at (0,0) size 300x349
-          RenderBlock {DIV} at (5,5) size 290x339 [border: (1px solid #0000FF)]
-            RenderBlock {DIV} at (11,11) size 268x317 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (0,0) size 300x385
+          RenderBlock {DIV} at (5,5) size 290x375 [border: (1px solid #0000FF)]
+            RenderBlock {DIV} at (11,11) size 268x353 [border: (1px solid #008000)]
               RenderBlock {P} at (1,17) size 266x121
                 RenderText {#text} at (0,0) size 266x121
                   text run at (0,0) width 166: "This line of text should"
@@ -29,10 +29,12 @@ Flow Threads
                   text run at (0,36) width 266: "of the region. This line of text should not"
                   text run at (0,54) width 266: "get out of the region. This line of text"
                   text run at (0,72) width 201: "should not get out of the region."
-              RenderBlock {P} at (1,264) size 266x36
-                RenderText {#text} at (0,0) size 266x36
-                  text run at (0,0) width 266: "This line of text should not get out of the"
-                  text run at (0,18) width 44: "region."
+              RenderBlock {P} at (1,264) size 266x72
+                RenderText {#text} at (0,0) size 86x72
+                  text run at (0,0) width 86: "This line of"
+                  text run at (0,18) width 86: "text should"
+                  text run at (0,36) width 86: "not get out of"
+                  text run at (0,54) width 67: "the region."
   Regions for flow 'flow1'
     RenderRegion {DIV} #region1 with index 0
     RenderRegion {DIV} #region2 with index 0

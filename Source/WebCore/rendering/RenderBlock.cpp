@@ -1218,7 +1218,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     RenderView* renderView = view();
     LayoutStateMaintainer statePusher(renderView, this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, colInfo);
 
-    bool disableRegionFitting = renderView->hasRenderFlowThread() && (hasColumns() || (isPositioned() && !isRenderFlowThread()) || isFloating());
+    bool disableRegionFitting = renderView->hasRenderFlowThread() && (renderView->currentRenderFlowThread()->regionsHaveUniformLogicalWidth()
+        || hasColumns() || (isPositioned() && !isRenderFlowThread()) || isFloating());
     RegionFittingDisabler regionFittingDisabler(renderView->currentRenderFlowThread(), disableRegionFitting);
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
@@ -3269,11 +3270,15 @@ void RenderBlock::removeFloatingObjectsBelow(FloatingObject* lastFloat, int logi
     }
 }
 
-LayoutPoint RenderBlock::computeLogicalLocationForFloat(const FloatingObject* floatingObject, LayoutUnit logicalTopOffset,
-    LayoutUnit logicalLeftOffset, LayoutUnit logicalRightOffset, LayoutUnit floatLogicalWidth) const
+LayoutPoint RenderBlock::computeLogicalLocationForFloat(const FloatingObject* floatingObject, LayoutUnit logicalTopOffset) const
 {
     RenderBox* childBox = floatingObject->renderer();
-
+    LayoutUnit logicalRightOffset = logicalRightOffsetForContent(logicalTopOffset); // Constant part of right offset.
+    LayoutUnit logicalLeftOffset = logicalLeftOffsetForContent(logicalTopOffset); // Constant part of left offset.
+    LayoutUnit floatLogicalWidth = logicalWidthForFloat(floatingObject); // The width we look for.
+    if (logicalRightOffset - logicalLeftOffset < floatLogicalWidth)
+        floatLogicalWidth = logicalRightOffset - logicalLeftOffset; // Never look for more than what will be available.
+       
     LayoutUnit floatLogicalLeft;
 
     if (childBox->style()->floating() == LeftFloat) {
@@ -3349,12 +3354,6 @@ bool RenderBlock::positionNewFloats()
         RenderBox* childBox = floatingObject->renderer();
         LayoutUnit childLogicalLeftMargin = style()->isLeftToRightDirection() ? marginStartForChild(childBox) : marginEndForChild(childBox);
 
-        LayoutUnit rightOffset = logicalRightOffsetForContent(); // Constant part of right offset.
-        LayoutUnit leftOffset = logicalLeftOffsetForContent(); // Constant part of left offset.
-        LayoutUnit floatLogicalWidth = logicalWidthForFloat(floatingObject); // The width we look for.
-        if (rightOffset - leftOffset < floatLogicalWidth)
-            floatLogicalWidth = rightOffset - leftOffset; // Never look for more than what will be available.
-        
         LayoutRect oldRect(childBox->x(), childBox->y() , childBox->width(), childBox->height());
 
         if (childBox->style()->clear() & CLEFT)
@@ -3362,7 +3361,7 @@ bool RenderBlock::positionNewFloats()
         if (childBox->style()->clear() & CRIGHT)
             logicalTop = max(lowestFloatLogicalBottom(FloatingObject::FloatRight), logicalTop);
 
-        LayoutPoint floatLogicalLocation = computeLogicalLocationForFloat(floatingObject, logicalTop, leftOffset, rightOffset, floatLogicalWidth);
+        LayoutPoint floatLogicalLocation = computeLogicalLocationForFloat(floatingObject, logicalTop);
 
         setLogicalLeftForFloat(floatingObject, floatLogicalLocation.x());
         setLogicalLeftForChild(childBox, floatLogicalLocation.x() + childLogicalLeftMargin);
@@ -3390,7 +3389,7 @@ bool RenderBlock::positionNewFloats()
             if (newLogicalTop != floatLogicalLocation.y()) {
                 floatingObject->m_paginationStrut = newLogicalTop - floatLogicalLocation.y();
 
-                floatLogicalLocation = computeLogicalLocationForFloat(floatingObject, newLogicalTop, leftOffset, rightOffset, floatLogicalWidth);
+                floatLogicalLocation = computeLogicalLocationForFloat(floatingObject, newLogicalTop);
                 setLogicalLeftForFloat(floatingObject, floatLogicalLocation.x());
                 setLogicalLeftForChild(childBox, floatLogicalLocation.x() + childLogicalLeftMargin);
                 setLogicalTopForChild(childBox, floatLogicalLocation.y() + marginBeforeForChild(childBox));
@@ -3538,6 +3537,34 @@ LayoutUnit RenderBlock::textIndentOffset() const
     return style()->textIndent().calcMinValue(cw);
 }
 
+void RenderBlock::adjustForRegionFittingIfNeeded(LayoutUnit logicalTop, LayoutUnit& rightOffset) const
+{
+    RenderView* renderView = view();
+    if (!renderView->hasRenderFlowThread())
+        return;
+    
+    RenderFlowThread* flowThread = renderView->currentRenderFlowThread();
+    if (!flowThread->isRegionFittingEnabled() || !flowThread->hasValidRegions())
+        return;
+
+    LayoutUnit regionWidth = flowThread->regionLogicalWidthForLine(logicalPageOffset() + logicalTop);
+    rightOffset -= flowThread->logicalWidth() - regionWidth;
+}
+
+LayoutUnit RenderBlock::logicalLeftOffsetForContent(LayoutUnit) const
+{
+    // FIXME: For now we don't adjust this at all. Eventually when we have RTL blocks or centered blocks, where the left offset
+    // can shift, then we will have to make an adjustment.
+    return logicalLeftOffsetForContent();
+}
+
+LayoutUnit RenderBlock::logicalRightOffsetForContent(LayoutUnit position) const
+{
+    LayoutUnit logicalRightOffset = logicalRightOffsetForContent();
+    adjustForRegionFittingIfNeeded(position, logicalRightOffset);
+    return logicalRightOffset;
+}
+
 LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining) const
 {
     LayoutUnit left = fixedOffset;
@@ -3555,25 +3582,9 @@ LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUn
     return left;
 }
 
-void RenderBlock::adjustForRegionFittingIfNeeded(LayoutUnit logicalTop, LayoutUnit& rightOffset) const
-{
-    RenderView* renderView = view();
-    if (!renderView->hasRenderFlowThread())
-        return;
-    
-    RenderFlowThread* flowThread = renderView->currentRenderFlowThread();
-    if (!flowThread->isRegionFittingEnabled() || !flowThread->hasValidRegions())
-        return;
-
-    LayoutUnit regionWidth = flowThread->regionLogicalWidthForLine(logicalPageOffset() + logicalTop);
-    rightOffset -= flowThread->logicalWidth() - regionWidth;
-}
-
 LayoutUnit RenderBlock::logicalRightOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining) const
 {
     LayoutUnit right = fixedOffset;
-    adjustForRegionFittingIfNeeded(logicalTop, right);
-
     if (m_floatingObjects && m_floatingObjects->hasRightObjects()) {
         if (heightRemaining)
             *heightRemaining = 1;
@@ -6336,6 +6347,14 @@ LayoutUnit RenderBlock::adjustBlockChildForPagination(LayoutUnit logicalTopAfter
     
     // Return the final adjusted logical top.
     return result;
+}
+
+bool RenderBlock::lineWidthForPaginatedLineChanged(RootInlineBox* rootBox) const
+{
+    if (!view()->hasRenderFlowThread() || view()->currentRenderFlowThread()->regionsHaveUniformLogicalWidth())
+        return false;
+
+    return rootBox->paginatedLineWidth() != availableLogicalWidthForContent(rootBox->lineTopWithLeading());
 }
 
 LayoutUnit RenderBlock::collapsedMarginBeforeForChild(RenderBox* child) const
