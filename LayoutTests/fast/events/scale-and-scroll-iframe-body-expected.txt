@@ -1,0 +1,6 @@
+
+PASS frame.contentDocument.body.scrollTop is 100
+PASS frame.contentDocument.body.scrollLeft is 100
+PASS frame.contentWindow.scrollX is 100
+PASS frame.contentWindow.scrollY is 100
+

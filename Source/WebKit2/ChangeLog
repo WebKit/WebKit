@@ -1,3 +1,15 @@
+2011-09-22  Alpha Lam  <hclam@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68081
+        Fix scroll in page scaling mode.
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/Plugins/PluginView.cpp: Rename pageScaleFactor to frameScaleFactor.
+        (WebKit::PluginView::handleEvent):
+        (WebKit::PluginView::viewGeometryDidChange):
+        (WebKit::PluginView::clipRectInWindowCoordinates):
+
 2011-09-22  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt] Redirection overflow errors have wrong error domain

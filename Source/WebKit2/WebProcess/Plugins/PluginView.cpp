@@ -582,8 +582,8 @@ void PluginView::handleEvent(Event* event)
         if (currentEvent->type() == WebEvent::MouseDown)
             focusPluginElement();
         
-        // Adjust mouse coordinates to account for pageScaleFactor
-        WebMouseEvent eventWithScaledCoordinates(*static_cast<const WebMouseEvent*>(currentEvent), frame()->pageScaleFactor());
+        // Adjust mouse coordinates to account for frameScaleFactor
+        WebMouseEvent eventWithScaledCoordinates(*static_cast<const WebMouseEvent*>(currentEvent), frame()->frameScaleFactor());
         didHandleEvent = m_plugin->handleMouseEvent(eventWithScaledCoordinates);
     } else if (event->type() == eventNames().mousewheelEvent && currentEvent->type() == WebEvent::Wheel) {
         // We have a wheel event.
@@ -649,8 +649,8 @@ void PluginView::viewGeometryDidChange()
     // Get the frame rect in window coordinates.
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
     
-    // Adjust bounds to account for pageScaleFactor
-    frameRectInWindowCoordinates.scale(1 / frame()->pageScaleFactor());
+    // Adjust bounds to account for frameScaleFactor
+    frameRectInWindowCoordinates.scale(1 / frame()->frameScaleFactor());
     m_plugin->geometryDidChange(frameRectInWindowCoordinates, clipRectInWindowCoordinates());
 }
 
@@ -676,7 +676,7 @@ IntRect PluginView::clipRectInWindowCoordinates() const
     // Intersect the two rects to get the view clip rect in window coordinates.
     frameRectInWindowCoordinates.intersect(windowClipRect);
 
-    frameRectInWindowCoordinates.scale(1 / frame->pageScaleFactor());
+    frameRectInWindowCoordinates.scale(1 / frame->frameScaleFactor());
     return frameRectInWindowCoordinates;
 }
 
