@@ -28,28 +28,11 @@
 
 #include "LayerChromium.h"
 #include "cc/CCLayerImpl.h"
-#include "cc/CCProxy.h"
 #include <gtest/gtest.h>
 
 using namespace WebCore;
 
 namespace {
-
-class ScopedSetImplThread {
-public:
-    ScopedSetImplThread()
-    {
-#ifndef NDEBUG
-        CCProxy::setImplThread(true);
-#endif
-    }
-    ~ScopedSetImplThread()
-    {
-#ifndef NDEBUG
-        CCProxy::setImplThread(false);
-#endif
-    }
-};
 
 class MockCCLayerImpl : public CCLayerImpl {
 public:
@@ -133,7 +116,6 @@ void expectTreesAreIdentical(LayerChromium* layer, CCLayerImpl* ccLayer)
 // Constructs a very simple tree and synchronizes it without trying to reuse any preexisting layers.
 TEST(TreeSynchronizerTest, syncSimpleTreeFromEmpty)
 {
-    ScopedSetImplThread impl;
     RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create(0);
     layerTreeRoot->addChild(LayerChromium::create(0));
     layerTreeRoot->addChild(LayerChromium::create(0));
@@ -146,7 +128,6 @@ TEST(TreeSynchronizerTest, syncSimpleTreeFromEmpty)
 // Constructs a very simple tree and synchronizes it attempting to reuse some layers
 TEST(TreeSynchronizerTest, syncSimpleTreeReusingLayers)
 {
-    ScopedSetImplThread impl;
     Vector<int> ccLayerDestructionList;
 
     RefPtr<LayerChromium> layerTreeRoot = MockLayerChromium::create(&ccLayerDestructionList);
@@ -172,7 +153,6 @@ TEST(TreeSynchronizerTest, syncSimpleTreeReusingLayers)
 
 TEST(TreeSynchronizerTest, syncSimpleTreeAndProperties)
 {
-    ScopedSetImplThread impl;
     RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create(0);
     layerTreeRoot->addChild(LayerChromium::create(0));
     layerTreeRoot->addChild(LayerChromium::create(0));
@@ -204,7 +184,6 @@ TEST(TreeSynchronizerTest, syncSimpleTreeAndProperties)
 
 TEST(TreeSynchronizerTest, reuseCCLayersAfterStructuralChange)
 {
-    ScopedSetImplThread impl;
     Vector<int> ccLayerDestructionList;
 
     // Set up a tree with this sort of structure:
@@ -251,7 +230,6 @@ TEST(TreeSynchronizerTest, reuseCCLayersAfterStructuralChange)
 // Constructs a very simple tree, synchronizes it, then synchronizes to a totally new tree. All layers from the old tree should be deleted.
 TEST(TreeSynchronizerTest, syncSimpleTreeThenDestroy)
 {
-    ScopedSetImplThread impl;
     Vector<int> ccLayerDestructionList;
 
     RefPtr<LayerChromium> oldLayerTreeRoot = MockLayerChromium::create(&ccLayerDestructionList);
@@ -282,7 +260,6 @@ TEST(TreeSynchronizerTest, syncSimpleTreeThenDestroy)
 // Constructs+syncs a tree with mask, replica, and replica mask layers.
 TEST(TreeSynchronizerTest, syncMaskReplicaAndReplicaMaskLayers)
 {
-    ScopedSetImplThread impl;
     RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create(0);
     layerTreeRoot->addChild(LayerChromium::create(0));
     layerTreeRoot->addChild(LayerChromium::create(0));

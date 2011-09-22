@@ -1,3 +1,54 @@
+2011-09-22  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r95699.
+        http://trac.webkit.org/changeset/95699
+        https://bugs.webkit.org/show_bug.cgi?id=67417
+
+        Makes many chromium compositor tests crash
+
+        * platform/CrossThreadCopier.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::~LayerRendererChromium):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::enabled):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        (WebCore::CCLayerImpl::~CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::commitTo):
+        (WebCore::CCLayerTreeHost::setNeedsRedraw):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::~CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::finishAllRendering):
+        (WebCore::CCSingleThreadProxy::setNeedsCommit):
+        (WebCore::CCSingleThreadProxy::commitIfNeeded):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::~CCThreadProxy):
+        (WebCore::CCThreadProxy::compositeAndReadback):
+        (WebCore::CCThreadProxy::finishAllRendering):
+        (WebCore::CCThreadProxy::isStarted):
+        (WebCore::CCThreadProxy::initializeLayerRenderer):
+        (WebCore::CCThreadProxy::setNeedsCommit):
+        (WebCore::CCThreadProxy::setNeedsCommitAndRedraw):
+        (WebCore::CCThreadProxy::setNeedsRedraw):
+        (WebCore::CCThreadProxy::start):
+        (WebCore::CCThreadProxy::stop):
+        (WebCore::CCThreadProxy::beginFrameAndCommitOnCCThread):
+        (WebCore::CCThreadProxy::beginFrameAndCommit):
+        (WebCore::CCThreadProxy::commitOnCCThread):
+        (WebCore::CCThreadProxy::drawLayersOnCCThread):
+        (WebCore::CCThreadProxy::setNeedsCommitOnCCThread):
+        (WebCore::CCThreadProxy::setNeedsCommitAndRedrawOnCCThread):
+        (WebCore::CCThreadProxy::setNeedsRedrawOnCCThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-09-22  Nat Duca  <nduca@chromium.org>
 
         [chromium] Make CCThreadProxy draw

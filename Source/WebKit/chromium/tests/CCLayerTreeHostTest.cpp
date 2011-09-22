@@ -170,10 +170,6 @@ public:
     {
     }
 
-#if !USE(THREADED_COMPOSITING)
-    virtual void scheduleComposite() { }
-#endif
-
 private:
     explicit MockLayerTreeHostClient(TestHooks* testHooks) : m_testHooks(testHooks) { }
 
@@ -190,11 +186,8 @@ private:
 //
 // The test continues until someone calls endTest. endTest can be called on any thread, but be aware that
 // ending the test is an asynchronous process.
-class CCLayerTreeHostTest : public testing::TestWithParam<CCSettings>, TestHooks {
+class CCLayerTreeHostTest : public testing::Test, TestHooks {
 public:
-    virtual void SetUp()
-    {
-    }
     virtual void afterTest() = 0;
     virtual void beginTest() = 0;
 
@@ -294,8 +287,10 @@ void CCLayerTreeHostTest::doBeginTest()
     m_running = true;
     m_client = MockLayerTreeHostClient::create(this);
 
+    CCSettings settings;
+    settings.enableCompositorThread = true;
     RefPtr<LayerChromium> rootLayer;
-    m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, GetParam());
+    m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, settings);
     ASSERT(m_layerTreeHost);
 
     m_beginning = true;
@@ -304,11 +299,6 @@ void CCLayerTreeHostTest::doBeginTest()
     if (m_endWhenBeginReturns)
         onEndTest(static_cast<void*>(this));
 }
-INSTANTIATE_TEST_CASE_P(
-    ProxyTests, CCLayerTreeHostTest,
-    testing::Values(
-        CCSettings(false, false, false, false, false),
-        CCSettings(false, false, true, false, false)));
 
 void CCLayerTreeHostTest::endTest()
 {
@@ -555,10 +545,9 @@ private:
 };
 TEST_F(CCLayerTreeHostTestSetNeedsRedraw, run)
 {
-    CCSettings setings;
     runTest();
 }
 
 } // namespace
 
-#endif
+#endif // USE(THREADED_COMPOSITING)

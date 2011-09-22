@@ -75,20 +75,19 @@ public:
     static bool isImplThread();
 #endif
 
-    // Temporary hack while render_widget still does scheduling for CCLayerTreeHostMainThreadI
-    virtual GraphicsContext3D* context() = 0;
-
     // Testing hooks
     virtual void loseCompositorContext(int numTimes) = 0;
 
-#ifndef NDEBUG
-    static void setImplThread(bool);
-    static void setImplThread(WTF::ThreadIdentifier);
-#endif
+    // Temporary hack while render_widget still does scheduling for CCLayerTreeHostMainThreadI
+    virtual GraphicsContext3D* context() = 0;
 
 protected:
     CCProxy() { }
     friend class ScopedSetImplThread;
+#ifndef NDEBUG
+    static void setImplThread(bool);
+    static void setImplThread(WTF::ThreadIdentifier);
+#endif
 };
 
 }

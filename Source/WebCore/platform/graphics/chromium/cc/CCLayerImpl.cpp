@@ -55,12 +55,10 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_debugBorderColor(0, 0, 0, 0)
     , m_debugBorderWidth(0)
 {
-    ASSERT(CCProxy::isImplThread());
 }
 
 CCLayerImpl::~CCLayerImpl()
 {
-    ASSERT(CCProxy::isImplThread());
 }
 
 void CCLayerImpl::addChild(PassRefPtr<CCLayerImpl> child)
