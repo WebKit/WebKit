@@ -14,9 +14,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 66x24 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 63x22
                 text run at (1,1) width 63: "First row"
-      RenderBlock {FORM} at (0,56) size 784x37
-        RenderButton {INPUT} at (2,2) size 57x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 45x21
-            RenderText at (0,0) size 45x21
-              text run at (0,0) width 45: "insert"
+      RenderBlock {FORM} at (0,56) size 784x38
+        RenderButton {INPUT} at (2,2) size 50x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 38x22
+            RenderText at (0,0) size 38x22
+              text run at (0,0) width 38: "insert"
         RenderText {#text} at (0,0) size 0x0

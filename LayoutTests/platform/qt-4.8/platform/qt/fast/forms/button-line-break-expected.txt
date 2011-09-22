@@ -12,37 +12,37 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,38) size 784x22
         RenderText {#text} at (0,0) size 380x22
           text run at (0,0) width 380: "All of the buttons below should show the same two lines:"
-      RenderBlock {DIV} at (0,60) size 784x58
-        RenderButton {BUTTON} at (2,2) size 65x54 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 53x42
-            RenderText {#text} at (10,0) size 33x21
-              text run at (10,0) width 33: "Test"
-            RenderBR {BR} at (42,16) size 1x0
-            RenderText {#text} at (0,21) size 53x21
-              text run at (0,21) width 53: "button"
-      RenderBlock {DIV} at (0,118) size 784x58
-        RenderButton {BUTTON} at (2,2) size 65x54 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 53x42
-            RenderText {#text} at (10,0) size 33x21
-              text run at (10,0) width 33: "Test"
-            RenderBR {BR} at (42,16) size 1x0
-            RenderText {#text} at (0,21) size 53x21
-              text run at (0,21) width 53: "button"
-      RenderBlock {DIV} at (0,176) size 784x58
-        RenderButton {BUTTON} at (2,2) size 70x54 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 58x42
-            RenderInline {B} at (0,0) size 58x42
-              RenderText {#text} at (11,0) size 36x21
-                text run at (11,0) width 36: "Test"
-              RenderBR {BR} at (46,16) size 1x0
-              RenderText {#text} at (0,21) size 58x21
-                text run at (0,21) width 58: "Button"
-      RenderBlock {DIV} at (0,234) size 784x58
-        RenderButton {BUTTON} at (2,2) size 70x54 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 58x42
-            RenderInline {B} at (0,0) size 58x42
-              RenderText {#text} at (11,0) size 36x21
-                text run at (11,0) width 36: "Test"
-              RenderBR {BR} at (46,16) size 1x0
-              RenderText {#text} at (0,21) size 58x21
-                text run at (0,21) width 58: "Button"
+      RenderBlock {DIV} at (0,60) size 784x60
+        RenderButton {BUTTON} at (2,2) size 57x56 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 45x44
+            RenderText {#text} at (8,0) size 29x22
+              text run at (8,0) width 29: "Test"
+            RenderBR {BR} at (37,16) size 0x0
+            RenderText {#text} at (0,22) size 45x22
+              text run at (0,22) width 45: "button"
+      RenderBlock {DIV} at (0,120) size 784x60
+        RenderButton {BUTTON} at (2,2) size 57x56 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 45x44
+            RenderText {#text} at (8,0) size 29x22
+              text run at (8,0) width 29: "Test"
+            RenderBR {BR} at (37,16) size 0x0
+            RenderText {#text} at (0,22) size 45x22
+              text run at (0,22) width 45: "button"
+      RenderBlock {DIV} at (0,180) size 784x60
+        RenderButton {BUTTON} at (2,2) size 59x56 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 47x44
+            RenderInline {B} at (0,0) size 47x44
+              RenderText {#text} at (9,0) size 29x22
+                text run at (9,0) width 29: "Test"
+              RenderBR {BR} at (38,16) size 0x0
+              RenderText {#text} at (0,22) size 47x22
+                text run at (0,22) width 47: "Button"
+      RenderBlock {DIV} at (0,240) size 784x60
+        RenderButton {BUTTON} at (2,2) size 59x56 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 47x44
+            RenderInline {B} at (0,0) size 47x44
+              RenderText {#text} at (9,0) size 29x22
+                text run at (9,0) width 29: "Test"
+              RenderBR {BR} at (38,16) size 0x0
+              RenderText {#text} at (0,22) size 47x22
+                text run at (0,22) width 47: "Button"

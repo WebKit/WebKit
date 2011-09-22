@@ -31,23 +31,23 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 289: "This status update contains information on"
                 text run at (2,24) width 240: "MailNews, XML/DOM, XPToolkit,"
                 text run at (2,46) width 306: "Architecture, Bidi, Necko/Imglib, and more..."
-      RenderBlock (anonymous) at (0,128) size 784x59
+      RenderBlock (anonymous) at (0,128) size 784x60
         RenderBR {BR} at (0,0) size 0x22
-        RenderButton {INPUT} at (2,24) size 65x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 53x21
-            RenderText at (0,0) size 53x21
-              text run at (0,0) width 53: "Reload"
-        RenderText {#text} at (69,30) size 8x22
-          text run at (69,30) width 8: "  "
-        RenderButton {INPUT} at (79,24) size 113x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 101x21
-            RenderText at (0,0) size 101x21
-              text run at (0,0) width 101: "Change Font"
-        RenderText {#text} at (194,30) size 8x22
-          text run at (194,30) width 8: "  "
-        RenderTextControl {INPUT} at (204,28) size 166x26
+        RenderButton {INPUT} at (2,24) size 60x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 48x22
+            RenderText at (0,0) size 48x22
+              text run at (0,0) width 48: "Reload"
+        RenderText {#text} at (64,30) size 8x22
+          text run at (64,30) width 8: "  "
+        RenderButton {INPUT} at (74,24) size 101x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 89x22
+            RenderText at (0,0) size 89x22
+              text run at (0,0) width 89: "Change Font"
+        RenderText {#text} at (177,30) size 8x22
+          text run at (177,30) width 8: "  "
+        RenderTextControl {INPUT} at (187,28) size 166x26
         RenderText {#text} at (0,0) size 0x0
-layer at (214,166) size 162x22
+layer at (197,166) size 162x22
   RenderBlock {DIV} at (2,2) size 162x22
     RenderText {#text} at (1,0) size 8x22
       text run at (1,0) width 8: "6"

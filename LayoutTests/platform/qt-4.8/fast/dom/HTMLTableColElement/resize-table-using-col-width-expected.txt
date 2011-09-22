@@ -29,10 +29,10 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (584,30) size 78x26 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 74x22
                 text run at (2,2) width 74: "col 3 row 3"
-      RenderBlock (anonymous) at (0,60) size 784x37
-        RenderButton {BUTTON} at (2,2) size 531x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 519x21
-            RenderText {#text} at (0,0) size 519x21
-              text run at (0,0) width 519: "Click me to test manually. The first column should grow to 500px."
+      RenderBlock (anonymous) at (0,60) size 784x38
+        RenderButton {BUTTON} at (2,2) size 457x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 445x22
+            RenderText {#text} at (0,0) size 445x22
+              text run at (0,0) width 445: "Click me to test manually. The first column should grow to 500px."
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

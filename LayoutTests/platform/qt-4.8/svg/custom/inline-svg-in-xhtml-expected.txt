@@ -12,8 +12,8 @@ layer at (49,39) size 720x540
     RenderSVGPath {circle} at (193,93) size 432x432 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [cx=50.00] [cy=50.00] [r=30.00]
 layer at (48,38) size 722x542 layerType: foreground only
   RenderBody {body} at (48,38) size 722x542 [border: (1px solid #000000)]
-    RenderBlock {form} at (1,1) size 720x154
-      RenderFieldSet {fieldset} at (2,0) size 716x154 [border: (2px groove #C0C0C0)]
+    RenderBlock {form} at (1,1) size 720x155
+      RenderFieldSet {fieldset} at (2,0) size 716x155 [border: (2px groove #C0C0C0)]
         RenderBlock {legend} at (14,0) size 95x22
           RenderText {#text} at (2,0) size 91x22
             text run at (2,0) width 91: "HTML Form"
@@ -25,10 +25,10 @@ layer at (48,38) size 722x542 layerType: foreground only
             text run at (117,4) width 4: " "
           RenderTextControl {input} at (123,2) size 166x26
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {p} at (14,89) size 688x37
-          RenderButton {button} at (2,2) size 78x33 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (6,6) size 66x21
-              RenderText {#text} at (0,0) size 66x21
-                text run at (0,0) width 66: "Activate!"
+        RenderBlock {p} at (14,89) size 688x38
+          RenderButton {button} at (2,2) size 73x34 [bgcolor=#C0C0C0]
+            RenderBlock (anonymous) at (6,6) size 61x22
+              RenderText {#text} at (0,0) size 61x22
+                text run at (0,0) width 61: "Activate!"
 layer at (190,86) size 162x22
   RenderBlock {div} at (2,2) size 162x22
