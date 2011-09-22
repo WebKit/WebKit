@@ -1,3 +1,28 @@
+2011-09-22  Andreas Kling  <kling@webkit.org>
+
+        CSS: Implement 'font' property in CSSComputedStyle.
+        https://bugs.webkit.org/show_bug.cgi?id=66666
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/css/getComputedStyle/computed-style-font.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::fontFamilyFromStyle): Factored out of getPropertyCSSValue().
+        This function will always return a CSSValueList, as opposed to the previous
+        implementation which would return a CSSPrimitiveValue if there was only one family.
+        getCSSPropertyValue() will return the first element of the list for 1-element lists
+        to preserve the current behavior of getPropertyCSSValue('font-family').
+
+        (WebCore::lineHeightFromStyle): Factored out of getPropertyCSSValue().
+        (WebCore::fontSizeFromStyle): Ditto.
+        (WebCore::fontStyleFromStyle): Ditto.
+        (WebCore::fontVariantFromStyle): Ditto.
+        (WebCore::fontWeightFromStyle): Ditto.
+
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Added
+        implementation of the computed 'font' property (CSSPropertyFont.)
+
 2011-09-22  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt] Redirection overflow errors have wrong error domain

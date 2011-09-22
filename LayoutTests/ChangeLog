@@ -1,3 +1,16 @@
+2011-09-22  Andreas Kling  <kling@webkit.org>
+
+        CSS: Implement 'font' property in CSSComputedStyle.
+        https://bugs.webkit.org/show_bug.cgi?id=66666
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/getComputedStyle/computed-style-font-expected.txt: Added.
+        * fast/css/getComputedStyle/computed-style-font.html: Added.
+        * fast/css/getComputedStyle/script-tests/computed-style-font.js: Added.
+        (computedFont):
+        (computedFontCSSValue):
+
 2011-09-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreivewed gardening.

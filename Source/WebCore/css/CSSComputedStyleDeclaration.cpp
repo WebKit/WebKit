@@ -44,6 +44,7 @@
 #include "ExceptionCode.h"
 #include "FontFeatureSettings.h"
 #include "FontFeatureValue.h"
+#include "FontValue.h"
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderBox.h"
@@ -921,6 +922,74 @@ static void logUnimplementedPropertyID(int propertyID)
     LOG_ERROR("WebKit does not yet implement getComputedStyle for '%s'.", getPropertyName(static_cast<CSSPropertyID>(propertyID)));
 } 
 
+static PassRefPtr<CSSValueList> fontFamilyFromStyle(RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+{
+    const FontFamily& firstFamily = style->fontDescription().family();
+    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+    for (const FontFamily* family = &firstFamily; family; family = family->next())
+        list->append(valueForFamily(family->family(), primitiveValueCache));
+    return list.release();
+}
+
+static PassRefPtr<CSSPrimitiveValue> lineHeightFromStyle(RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+{
+    Length length = style->lineHeight();
+    if (length.isNegative())
+        return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+    if (length.isPercent())
+        // This is imperfect, because it doesn't include the zoom factor and the real computation
+        // for how high to be in pixels does include things like minimum font size and the zoom factor.
+        // On the other hand, since font-size doesn't include the zoom factor, we really can't do
+        // that here either.
+        return zoomAdjustedPixelValue(static_cast<int>(length.percent() * style->fontDescription().specifiedSize()) / 100, style, primitiveValueCache);
+    return zoomAdjustedPixelValue(length.value(), style, primitiveValueCache);
+}
+
+static PassRefPtr<CSSPrimitiveValue> fontSizeFromStyle(RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+{
+    return zoomAdjustedPixelValue(style->fontDescription().computedPixelSize(), style, primitiveValueCache);
+}
+
+static PassRefPtr<CSSPrimitiveValue> fontStyleFromStyle(RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+{
+    if (style->fontDescription().italic())
+        return primitiveValueCache->createIdentifierValue(CSSValueItalic);
+    return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+}
+
+static PassRefPtr<CSSPrimitiveValue> fontVariantFromStyle(RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+{
+    if (style->fontDescription().smallCaps())
+        return primitiveValueCache->createIdentifierValue(CSSValueSmallCaps);
+    return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+}
+
+static PassRefPtr<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style, CSSPrimitiveValueCache* primitiveValueCache)
+{
+    switch (style->fontDescription().weight()) {
+    case FontWeight100:
+        return primitiveValueCache->createIdentifierValue(CSSValue100);
+    case FontWeight200:
+        return primitiveValueCache->createIdentifierValue(CSSValue200);
+    case FontWeight300:
+        return primitiveValueCache->createIdentifierValue(CSSValue300);
+    case FontWeightNormal:
+        return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+    case FontWeight500:
+        return primitiveValueCache->createIdentifierValue(CSSValue500);
+    case FontWeight600:
+        return primitiveValueCache->createIdentifierValue(CSSValue600);
+    case FontWeightBold:
+        return primitiveValueCache->createIdentifierValue(CSSValueBold);
+    case FontWeight800:
+        return primitiveValueCache->createIdentifierValue(CSSValue800);
+    case FontWeight900:
+        return primitiveValueCache->createIdentifierValue(CSSValue900);
+    }
+    ASSERT_NOT_REACHED();
+    return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+}
+
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const
 {
     Node* node = m_node.get();
@@ -1237,48 +1306,32 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
 #endif
         case CSSPropertyFloat:
             return primitiveValueCache->createValue(style->floating());
+        case CSSPropertyFont: {
+            RefPtr<FontValue> computedFont = FontValue::create();
+            computedFont->style = fontStyleFromStyle(style.get(), primitiveValueCache);
+            computedFont->variant = fontVariantFromStyle(style.get(), primitiveValueCache);
+            computedFont->weight = fontWeightFromStyle(style.get(), primitiveValueCache);
+            computedFont->size = fontSizeFromStyle(style.get(), primitiveValueCache);
+            computedFont->lineHeight = lineHeightFromStyle(style.get(), primitiveValueCache);
+            computedFont->family = fontFamilyFromStyle(style.get(), primitiveValueCache);
+            return computedFont.release();
+        }
         case CSSPropertyFontFamily: {
-            const FontFamily& firstFamily = style->fontDescription().family();
-            if (!firstFamily.next())
-                return valueForFamily(firstFamily.family(), primitiveValueCache);
-            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-            for (const FontFamily* family = &firstFamily; family; family = family->next())
-                list->append(valueForFamily(family->family(), primitiveValueCache));
-            return list.release();
+            RefPtr<CSSValueList> fontFamilyList = fontFamilyFromStyle(style.get(), primitiveValueCache);
+            // If there's only a single family, return that as a CSSPrimitiveValue.
+            // NOTE: Gecko always returns this as a comma-separated CSSPrimitiveValue string.
+            if (fontFamilyList->length() == 1)
+                return fontFamilyList->item(0);
+            return fontFamilyList.release();
         }
         case CSSPropertyFontSize:
-            return zoomAdjustedPixelValue(style->fontDescription().computedPixelSize(), style.get(), primitiveValueCache);
+            return fontSizeFromStyle(style.get(), primitiveValueCache);
         case CSSPropertyFontStyle:
-            if (style->fontDescription().italic())
-                return primitiveValueCache->createIdentifierValue(CSSValueItalic);
-            return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+            return fontStyleFromStyle(style.get(), primitiveValueCache);
         case CSSPropertyFontVariant:
-            if (style->fontDescription().smallCaps())
-                return primitiveValueCache->createIdentifierValue(CSSValueSmallCaps);
-            return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+            return fontVariantFromStyle(style.get(), primitiveValueCache);
         case CSSPropertyFontWeight:
-            switch (style->fontDescription().weight()) {
-                case FontWeight100:
-                    return primitiveValueCache->createIdentifierValue(CSSValue100);
-                case FontWeight200:
-                    return primitiveValueCache->createIdentifierValue(CSSValue200);
-                case FontWeight300:
-                    return primitiveValueCache->createIdentifierValue(CSSValue300);
-                case FontWeightNormal:
-                    return primitiveValueCache->createIdentifierValue(CSSValueNormal);
-                case FontWeight500:
-                    return primitiveValueCache->createIdentifierValue(CSSValue500);
-                case FontWeight600:
-                    return primitiveValueCache->createIdentifierValue(CSSValue600);
-                case FontWeightBold:
-                    return primitiveValueCache->createIdentifierValue(CSSValueBold);
-                case FontWeight800:
-                    return primitiveValueCache->createIdentifierValue(CSSValue800);
-                case FontWeight900:
-                    return primitiveValueCache->createIdentifierValue(CSSValue900);
-            }
-            ASSERT_NOT_REACHED();
-            return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+            return fontWeightFromStyle(style.get(), primitiveValueCache);
         case CSSPropertyWebkitFontFeatureSettings: {
             const FontFeatureSettings* featureSettings = style->fontDescription().featureSettings();
             if (!featureSettings || !featureSettings->size())
@@ -1333,18 +1386,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->lineClamp().isNone())
                 return primitiveValueCache->createIdentifierValue(CSSValueNone);
             return primitiveValueCache->createValue(style->lineClamp().value(), style->lineClamp().isPercentage() ? CSSPrimitiveValue::CSS_PERCENTAGE : CSSPrimitiveValue::CSS_NUMBER);
-        case CSSPropertyLineHeight: {
-            Length length = style->lineHeight();
-            if (length.isNegative())
-                return primitiveValueCache->createIdentifierValue(CSSValueNormal);
-            if (length.isPercent())
-                // This is imperfect, because it doesn't include the zoom factor and the real computation
-                // for how high to be in pixels does include things like minimum font size and the zoom factor.
-                // On the other hand, since font-size doesn't include the zoom factor, we really can't do
-                // that here either.
-                return zoomAdjustedPixelValue(static_cast<int>(length.percent() * style->fontDescription().specifiedSize()) / 100, style.get(), primitiveValueCache);
-            return zoomAdjustedPixelValue(length.value(), style.get(), primitiveValueCache);
-        }
+        case CSSPropertyLineHeight:
+            return lineHeightFromStyle(style.get(), primitiveValueCache);
         case CSSPropertyListStyleImage:
             if (style->listStyleImage())
                 return style->listStyleImage()->cssValue();
@@ -1862,7 +1905,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyBorderStyle:
         case CSSPropertyBorderTop:
         case CSSPropertyBorderWidth:
-        case CSSPropertyFont:
         case CSSPropertyListStyle:
         case CSSPropertyMargin:
         case CSSPropertyOutline:
