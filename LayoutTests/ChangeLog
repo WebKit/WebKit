@@ -1,3 +1,12 @@
+2011-09-22  Oliver Varga  <voliver@inf.u-szeged.hu>
+
+        [Qt] 11 tests failed after r95671 because the tests are updated.
+        https://bugs.webkit.org/show_bug.cgi?id=68596
+
+        Unreviewed gardening. Typo fixes.
+
+        * platform/qt/Skipped:
+
 2011-09-22  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r95671.
