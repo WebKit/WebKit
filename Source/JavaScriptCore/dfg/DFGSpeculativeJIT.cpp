@@ -1569,6 +1569,99 @@ void SpeculativeJIT::compile(Node& node)
         terminateSpeculativeExecution();
         break;
     }
+        
+    case ToPrimitive: {
+        if (shouldSpeculateInteger(node.child1())) {
+            // It's really profitable to speculate integer, since it's really cheap,
+            // it means we don't have to do any real work, and we emit a lot less code.
+            
+            SpeculateIntegerOperand op1(this, node.child1());
+            GPRTemporary result(this, op1);
+            
+            m_jit.move(op1.gpr(), result.gpr());
+            if (op1.format() == DataFormatInteger)
+                m_jit.orPtr(GPRInfo::tagTypeNumberRegister, result.gpr());
+            
+            jsValueResult(result.gpr(), m_compileIndex);
+            break;
+        }
+        
+        // FIXME: Add string speculation here.
+        
+        bool wasPrimitive = isKnownNumeric(node.child1()) || isKnownBoolean(node.child1());
+        
+        JSValueOperand op1(this, node.child1());
+        GPRTemporary result(this, op1);
+        
+        GPRReg op1GPR = op1.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        op1.use();
+        
+        if (wasPrimitive)
+            m_jit.move(op1GPR, resultGPR);
+        else {
+            MacroAssembler::JumpList alreadyPrimitive;
+            
+            alreadyPrimitive.append(m_jit.branchTestPtr(MacroAssembler::NonZero, op1GPR, GPRInfo::tagMaskRegister));
+            alreadyPrimitive.append(m_jit.branchPtr(MacroAssembler::Equal, MacroAssembler::Address(op1GPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsStringVPtr)));
+            
+            silentSpillAllRegisters(resultGPR);
+            m_jit.move(op1GPR, GPRInfo::argumentGPR1);
+            m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+            appendCallWithExceptionCheck(operationToPrimitive);
+            m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+            silentFillAllRegisters(resultGPR);
+            
+            MacroAssembler::Jump done = m_jit.jump();
+            
+            alreadyPrimitive.link(&m_jit);
+            m_jit.move(op1GPR, resultGPR);
+            
+            done.link(&m_jit);
+        }
+        
+        jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
+        break;
+    }
+        
+    case StrCat: {
+        // We really don't want to grow the register file just to do a StrCat. Say we
+        // have 50 functions on the stack that all have a StrCat in them that has
+        // upwards of 10 operands. In the DFG this would mean that each one gets
+        // some random virtual register, and then to do the StrCat we'd need a second
+        // span of 10 operands just to have somewhere to copy the 10 operands to, where
+        // they'd be contiguous and we could easily tell the C code how to find them.
+        // Ugly! So instead we use the scratchBuffer infrastructure in JSGlobalData. That
+        // way, those 50 functions will share the same scratchBuffer for offloading their
+        // StrCat operands. It's about as good as we can do, unless we start doing
+        // virtual register coalescing to ensure that operands to StrCat get spilled
+        // in exactly the place where StrCat wants them, or else have the StrCat
+        // refer to those operands' SetLocal instructions to force them to spill in
+        // the right place. Basically, any way you cut it, the current approach
+        // probably has the best balance of performance and sensibility in the sense
+        // that it does not increase the complexity of the DFG JIT just to make StrCat
+        // fast and pretty.
+        
+        EncodedJSValue* buffer = static_cast<EncodedJSValue*>(m_jit.globalData()->scratchBufferForSize(sizeof(EncodedJSValue) * node.numChildren()));
+        
+        for (unsigned operandIdx = 0; operandIdx < node.numChildren(); ++operandIdx) {
+            JSValueOperand operand(this, m_jit.graph().m_varArgChildren[node.firstChild() + operandIdx]);
+            GPRReg opGPR = operand.gpr();
+            operand.use();
+            
+            m_jit.storePtr(opGPR, buffer + operandIdx);
+        }
+        
+        flushRegisters();
+        
+        GPRResult result(this);
+        
+        callOperation(operationStrCat, result.gpr(), buffer, node.numChildren());
+        
+        jsValueResult(result.gpr(), m_compileIndex, UseChildrenCalledExplicitly);
+        break;
+    }
 
     case ConvertThis: {
         SpeculateCellOperand thisValue(this, node.child1());

@@ -116,6 +116,8 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     case op_call_put_result:
     case op_resolve:
     case op_resolve_base:
+    case op_strcat:
+    case op_to_primitive:
     case op_throw:
     case op_throw_reference_error:
         return true;

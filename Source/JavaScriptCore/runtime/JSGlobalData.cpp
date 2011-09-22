@@ -186,7 +186,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , interpreter(0)
     , heap(this, heapSize)
 #if ENABLE(DFG_JIT)
-    , sizeOfLastOSRScratchBuffer(0)
+    , sizeOfLastScratchBuffer(0)
 #endif
     , dynamicGlobalObject(0)
     , cachedUTCOffset(std::numeric_limits<double>::quiet_NaN())
@@ -352,8 +352,8 @@ JSGlobalData::~JSGlobalData()
 #endif
 
 #if ENABLE(DFG_JIT)
-    for (unsigned i = 0; i < osrScratchBuffers.size(); ++i)
-        fastFree(osrScratchBuffers[i]);
+    for (unsigned i = 0; i < scratchBuffers.size(); ++i)
+        fastFree(scratchBuffers[i]);
 #endif
 }
 

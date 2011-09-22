@@ -45,6 +45,7 @@ typedef EncodedJSValue (*J_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef EncodedJSValue (*J_DFGOperation_EJP)(ExecState*, EncodedJSValue, void*);
 typedef EncodedJSValue (*J_DFGOperation_EJI)(ExecState*, EncodedJSValue, Identifier*);
 typedef EncodedJSValue (*J_DFGOperation_EP)(ExecState*, void*);
+typedef EncodedJSValue (*J_DFGOperation_EPS)(ExecState*, void*, size_t);
 typedef EncodedJSValue (*J_DFGOperation_EI)(ExecState*, Identifier*);
 typedef RegisterSizedBoolean (*Z_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef RegisterSizedBoolean (*Z_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
@@ -74,6 +75,8 @@ EncodedJSValue operationInstanceOf(ExecState*, EncodedJSValue value, EncodedJSVa
 EncodedJSValue operationResolve(ExecState*, Identifier*);
 EncodedJSValue operationResolveBase(ExecState*, Identifier*);
 EncodedJSValue operationResolveBaseStrictPut(ExecState*, Identifier*);
+EncodedJSValue operationToPrimitive(ExecState*, EncodedJSValue);
+EncodedJSValue operationStrCat(ExecState*, void* start, size_t);
 void operationThrowHasInstanceError(ExecState*, EncodedJSValue base);
 void operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
 void operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);

@@ -233,25 +233,25 @@ namespace JSC {
         int64_t debugDataBuffer[64];
 #endif
 #if ENABLE(DFG_JIT)
-        Vector<void*> osrScratchBuffers;
-        size_t sizeOfLastOSRScratchBuffer;
+        Vector<void*> scratchBuffers;
+        size_t sizeOfLastScratchBuffer;
         
-        void* osrScratchBufferForSize(size_t size)
+        void* scratchBufferForSize(size_t size)
         {
             if (!size)
                 return 0;
             
-            if (size > sizeOfLastOSRScratchBuffer) {
+            if (size > sizeOfLastScratchBuffer) {
                 // Protect against a N^2 memory usage pathology by ensuring
                 // that at worst, we get a geometric series, meaning that the
                 // total memory usage is somewhere around
                 // max(scratch buffer size) * 4.
-                sizeOfLastOSRScratchBuffer = size * 2;
+                sizeOfLastScratchBuffer = size * 2;
                 
-                osrScratchBuffers.append(fastMalloc(sizeOfLastOSRScratchBuffer));
+                scratchBuffers.append(fastMalloc(sizeOfLastScratchBuffer));
             }
             
-            return osrScratchBuffers.last();
+            return scratchBuffers.last();
         }
 #endif
 #endif

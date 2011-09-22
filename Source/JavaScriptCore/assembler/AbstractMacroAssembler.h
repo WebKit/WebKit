@@ -161,6 +161,19 @@ public:
             : m_value(value)
         {
         }
+        
+        // This is only here so that TrustedImmPtr(0) does not confuse the C++
+        // overload handling rules.
+        explicit TrustedImmPtr(int value)
+            : m_value(0)
+        {
+            ASSERT_UNUSED(value, !value);
+        }
+
+        explicit TrustedImmPtr(size_t value)
+            : m_value(reinterpret_cast<void*>(value))
+        {
+        }
 
         intptr_t asIntptr()
         {

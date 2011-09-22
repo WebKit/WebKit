@@ -296,6 +296,8 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(CheckHasInstance, NodeMustGenerate) \
     macro(InstanceOf, NodeResultBoolean) \
     macro(LogicalNot, NodeResultBoolean | NodeMightClobber) \
+    macro(ToPrimitive, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(StrCat, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     \
     /* Block terminals. */\
     macro(Jump, NodeMustGenerate | NodeIsTerminal | NodeIsJump) \

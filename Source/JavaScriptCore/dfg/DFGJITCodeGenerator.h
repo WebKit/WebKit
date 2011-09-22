@@ -889,6 +889,17 @@ protected:
     {
         callOperation((J_DFGOperation_EP)operation, result, identifier);
     }
+    void callOperation(J_DFGOperation_EPS operation, GPRReg result, void* pointer, size_t size)
+    {
+        ASSERT(isFlushed());
+
+        m_jit.move(JITCompiler::TrustedImmPtr(size), GPRInfo::argumentGPR2);
+        m_jit.move(JITCompiler::TrustedImmPtr(pointer), GPRInfo::argumentGPR1);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+        appendCallWithExceptionCheck(operation);
+        m_jit.move(GPRInfo::returnValueGPR, result);
+    }
     void callOperation(J_DFGOperation_EJP operation, GPRReg result, GPRReg arg1, void* pointer)
     {
         ASSERT(isFlushed());

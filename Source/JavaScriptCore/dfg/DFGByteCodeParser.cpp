@@ -968,6 +968,21 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, value));
             NEXT_OPCODE(op_not);
         }
+            
+        case op_to_primitive: {
+            NodeIndex value = get(currentInstruction[2].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(ToPrimitive, value));
+            NEXT_OPCODE(op_to_primitive);
+        }
+            
+        case op_strcat: {
+            int startOperand = currentInstruction[2].u.operand;
+            int numOperands = currentInstruction[3].u.operand;
+            for (int operandIdx = startOperand; operandIdx < startOperand + numOperands; ++operandIdx)
+                addVarArgChild(get(operandIdx));
+            set(currentInstruction[1].u.operand, addToGraph(Node::VarArg, StrCat, OpInfo(0), OpInfo(0)));
+            NEXT_OPCODE(op_strcat);
+        }
 
         case op_less: {
             NodeIndex op1 = get(currentInstruction[2].u.operand);

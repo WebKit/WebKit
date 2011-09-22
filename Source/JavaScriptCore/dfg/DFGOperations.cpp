@@ -674,6 +674,16 @@ EncodedJSValue operationResolveBaseStrictPut(ExecState* exec, Identifier* proper
     return JSValue::encode(base);
 }
 
+EncodedJSValue operationToPrimitive(ExecState* exec, EncodedJSValue value)
+{
+    return JSValue::encode(JSValue::decode(value).toPrimitive(exec));
+}
+
+EncodedJSValue operationStrCat(ExecState* exec, void* start, size_t size)
+{
+    return JSValue::encode(jsString(exec, static_cast<Register*>(start), size));
+}
+
 void operationThrowHasInstanceError(ExecState* exec, EncodedJSValue encodedBase)
 {
     JSValue base = JSValue::decode(encodedBase);

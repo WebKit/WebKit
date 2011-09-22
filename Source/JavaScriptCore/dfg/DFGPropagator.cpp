@@ -546,6 +546,31 @@ private:
             changed |= setPrediction(makePrediction(PredictFinalObject, StrongPrediction));
             break;
         }
+            
+        case StrCat: {
+            changed |= setPrediction(makePrediction(PredictString, StrongPrediction));
+            break;
+        }
+            
+        case ToPrimitive: {
+            PredictedType child = m_predictions[node.child1()];
+            if (isStrongPrediction(child)) {
+                if (isObjectPrediction(child)) {
+                    // I'd love to fold this case into the case below, but I can't, because
+                    // removing PredictObjectMask from something that only has an object
+                    // prediction and nothing else means we have an ill-formed PredictedType
+                    // (strong predict-none). This should be killed once we remove all traces
+                    // of static (aka weak) predictions.
+                    changed |= mergePrediction(makePrediction(PredictString, StrongPrediction));
+                } else if (child & PredictObjectMask) {
+                    // Objects get turned into strings. So if the input has hints of objectness,
+                    // the output will have hinsts of stringiness.
+                    changed |= mergePrediction(mergePredictions(child & ~PredictObjectMask, makePrediction(PredictString, StrongPrediction)));
+                } else
+                    changed |= mergePrediction(child);
+            }
+            break;
+        }
 
 #ifndef NDEBUG
         // These get ignored because they don't return anything.
@@ -1010,7 +1035,16 @@ private:
 #if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
         printf("   %s @%u: ", Graph::opName(m_graph[m_compileIndex].op), m_compileIndex);
 #endif
-
+        
+        // NOTE: there are some nodes that we deliberately don't CSE even though we
+        // probably could, like StrCat and ToPrimitive. That's because there is no
+        // evidence that doing CSE on these nodes would result in a performance
+        // progression. Hence considering these nodes in CSE would just mean that this
+        // code does more work with no win. Of course, we may want to reconsider this,
+        // since StrCat is trivially CSE-able. It's not trivially doable for
+        // ToPrimitive, but we could change that with some speculations if we really
+        // needed to.
+        
         switch (node.op) {
         
         // Handle the pure nodes. These nodes never have any side-effects.
