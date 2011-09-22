@@ -1,3 +1,18 @@
+2011-09-22  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt] Redirection overflow errors have wrong error domain
+        https://bugs.webkit.org/show_bug.cgi?id=68612
+
+        Reviewed by Andreas Kling.
+
+        Redirection overflow currently puts the URL hostname in the errorDomain field
+        and therefore are treated as a QWebError::EngineError. From now on they
+        will be treated as QWebError::HttpError, since their error domain was modified
+        to "HTTP" in QNetworkReplyHandler::redirect().
+
+        * UIProcess/API/qt/qweberror.cpp:
+        (QWebError::type):
+
 2011-09-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r95679): It broke everything.

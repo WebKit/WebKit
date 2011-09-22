@@ -528,7 +528,7 @@ void QNetworkReplyHandler::redirect(ResourceResponse& response, const QUrl& redi
 
     m_redirectionTries--;
     if (!m_redirectionTries) {
-        ResourceError error(newUrl.host(), 400 /*bad request*/,
+        ResourceError error("HTTP", 400 /*bad request*/,
                             newUrl.toString(),
                             QCoreApplication::translate("QWebPage", "Redirection limit reached"));
         client->didFail(m_resourceHandle, error);
