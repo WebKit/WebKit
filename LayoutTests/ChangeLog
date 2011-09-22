@@ -1,3 +1,19 @@
+2011-09-20  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        Reviewed by Simon Fraser.
+
+        CSS outline property on a narrow element has rabbit ear artifacts
+        https://bugs.webkit.org/show_bug.cgi?id=36793
+
+        Patch by Jason Liu  <jason.liu@torchmobile.com.cn>
+        Patch updated by Robert Hogan <robert@webkit.org>
+
+        * fast/css/outline-narrowLine.html: Added.
+        * platform/qt/fast/css/outline-narrowLine-expected.txt: Added.
+        * platform/qt/fast/css/outline-narrowLine-expected.png: Added.
+        * platform/chromium-linux/fast/css/outline-narrowLine-expected.txt: Added.
+        * platform/chromium-linux/fast/css/outline-narrowLine-expected.png: Added.
+
 2011-09-22  Marcus Bulach  <bulach@chromium.org>
 
         [chromium] Rebaseline following r95715

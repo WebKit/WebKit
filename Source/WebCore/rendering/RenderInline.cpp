@@ -1475,7 +1475,18 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const L
             BSTop, outlineColor, outlineStyle,
             (!lastline.isEmpty() && left - outlineWidth < paintOffset.x() + lastline.maxX()) ? -outlineWidth : outlineWidth,
             outlineWidth, antialias);
-    
+
+    if (thisline.x() == thisline.maxX())
+          drawLineForBoxSide(graphicsContext,
+            left - outlineWidth,
+            top - outlineWidth,
+            right + outlineWidth,
+            top,
+            BSTop, outlineColor, outlineStyle,
+            outlineWidth,
+            outlineWidth,
+            antialias);
+
     // lower edge
     if (thisline.x() < nextline.x())
         drawLineForBoxSide(graphicsContext,
@@ -1497,6 +1508,17 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const L
             BSBottom, outlineColor, outlineStyle,
             (!nextline.isEmpty() && left - outlineWidth < paintOffset.x() + nextline.maxX()) ? -outlineWidth : outlineWidth,
             outlineWidth, antialias);
+
+    if (thisline.x() == thisline.maxX())
+          drawLineForBoxSide(graphicsContext,
+            left - outlineWidth,
+            bottom,
+            right + outlineWidth,
+            bottom + outlineWidth,
+            BSBottom, outlineColor, outlineStyle,
+            outlineWidth,
+            outlineWidth,
+            antialias);
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)
