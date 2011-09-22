@@ -50,6 +50,7 @@ public:
     using MacroAssemblerX86Common::store32;
     using MacroAssemblerX86Common::branch32;
     using MacroAssemblerX86Common::call;
+    using MacroAssemblerX86Common::addDouble;
     using MacroAssemblerX86Common::loadDouble;
     using MacroAssemblerX86Common::convertInt32ToDouble;
 
@@ -86,6 +87,11 @@ public:
     void load32(const void* address, RegisterID dest)
     {
         m_assembler.movl_mr(address, dest);
+    }
+
+    void addDouble(AbsoluteAddress address, FPRegisterID dest)
+    {
+        m_assembler.addsd_mr(address.m_ptr, dest);
     }
 
     void loadDouble(const void* address, FPRegisterID dest)

@@ -1,5 +1,18 @@
 2011-09-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Add missing addDouble for AbsoluteAddress to X86
+
+        Rubber stamped by Geoff Garen.
+
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::addDouble):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::addsd_mr):
+        (JSC::X86Assembler::cvtsi2sd_rr):
+        (JSC::X86Assembler::cvtsi2sd_mr):
+
+2011-09-21  Gavin Barraclough  <barraclough@apple.com>
+
         Build fix following fix for bug #68586.
 
         * jit/JIT.cpp:
