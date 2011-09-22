@@ -60,6 +60,11 @@ public:
         TypeDouble,
         TypeUInt64,
         
+        // Geometry types
+        TypePoint,
+        TypeSize,
+        TypeRect,
+        
         // UIProcess types
         TypeApplicationCacheManager,
         TypeBackForwardList,

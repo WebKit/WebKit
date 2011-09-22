@@ -38,17 +38,56 @@ struct WKPoint {
 };
 typedef struct WKPoint WKPoint;
 
+WK_INLINE WKPoint WKPointMake(double x, double y)
+{
+    WKPoint point;
+    point.x = x;
+    point.y = y;
+    return point;
+}
+
 struct WKSize {
     double width;
     double height;
 };
 typedef struct WKSize WKSize;
 
+WK_INLINE WKSize WKSizeMake(double width, double height)
+{
+    WKSize size;
+    size.width = width;
+    size.height = height;
+    return size;
+}
+
 struct WKRect {
     WKPoint origin;
     WKSize size;
 };
 typedef struct WKRect WKRect;
+
+WK_INLINE WKRect WKRectMake(double x, double y, double width, double height)
+{
+    WKRect rect;
+    rect.origin.x = x;
+    rect.origin.y = y;
+    rect.size.width = width;
+    rect.size.height = height;
+    return rect;
+}
+
+WK_EXPORT WKTypeID WKSizeGetTypeID();
+WK_EXPORT WKTypeID WKPointGetTypeID();
+WK_EXPORT WKTypeID WKRectGetTypeID();
+
+WK_EXPORT WKPointRef WKPointCreate(WKPoint point);
+WK_EXPORT WKSizeRef WKSizeCreate(WKSize size);
+WK_EXPORT WKRectRef WKRectCreate(WKRect rect);
+
+WK_EXPORT WKSize WKSizeGetValue(WKSizeRef size);
+WK_EXPORT WKPoint WKPointGetValue(WKPointRef point);
+WK_EXPORT WKRect WKRectGetValue(WKRectRef rect);
+
 
 #ifdef __cplusplus
 }

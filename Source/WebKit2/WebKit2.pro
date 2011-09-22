@@ -158,6 +158,7 @@ HEADERS += \
     Shared/WebEventConversion.h \
     Shared/WebFindOptions.h \
     Shared/WebGeolocationPosition.h \
+    Shared/WebGeometry.h \
     Shared/WebGraphicsContext.h \
     Shared/WebHitTestResult.h \
     Shared/WebImage.h \

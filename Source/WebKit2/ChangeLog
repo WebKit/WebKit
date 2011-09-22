@@ -1,3 +1,55 @@
+2011-09-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Add APIObjects for Size, Point, Rect
+        https://bugs.webkit.org/show_bug.cgi?id=68644
+
+        Reviewed by Sam Weinig.
+        
+        Make APIObjects for size, point and rect so that they can be
+        used in WKArrayRefs.
+        
+        Make some inline helper methods to create WKSize, WKPoint and WKRect
+        types.
+
+        * GNUmakefile.am:
+        * Shared/API/c/WKBase.h:
+        * Shared/API/c/WKGeometry.cpp: Copied from Source/WebKit2/Shared/API/c/WKGeometry.h.
+        (WKSizeGetTypeID):
+        (WKPointGetTypeID):
+        (WKRectGetTypeID):
+        (WKPointCreate):
+        (WKSizeCreate):
+        (WKRectCreate):
+        (WKSizeGetValue):
+        (WKPointGetValue):
+        (WKRectGetValue):
+        * Shared/API/c/WKGeometry.h:
+        (WKPoint::WKPointMake):
+        (WKPoint::WKSizeMake):
+        (WKPoint::WKRectMake):
+        * Shared/API/c/WKSharedAPICast.h:
+        * Shared/APIObject.h:
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebGeometry.h: Added.
+        (WebKit::WebSize::create):
+        (WebKit::WebSize::size):
+        (WebKit::WebSize::WebSize):
+        (WebKit::WebSize::type):
+        (WebKit::WebPoint::create):
+        (WebKit::WebPoint::point):
+        (WebKit::WebPoint::WebPoint):
+        (WebKit::WebPoint::type):
+        (WebKit::WebRect::create):
+        (WebKit::WebRect::rect):
+        (WebKit::WebRect::WebRect):
+        (WebKit::WebRect::type):
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebKit2API.pri:
+        * win/WebKit2.vcproj:
+
 2011-09-22  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] UIProcess should check that WebProcess isn't sending unexpected file: URLs to it

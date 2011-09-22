@@ -671,6 +671,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebGeometry.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebGraphicsContext.cpp"
 				>
 			</File>
@@ -887,6 +891,10 @@
 				</File>
 				<File
 					RelativePath="..\Shared\API\c\WKGeometry.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKGeometry.cpp"
 					>
 				</File>
 				<File

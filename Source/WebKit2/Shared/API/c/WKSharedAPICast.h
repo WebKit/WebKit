@@ -60,6 +60,9 @@ class WebContextMenuItem;
 class WebData;
 class WebGraphicsContext;
 class WebImage;
+class WebPoint;
+class WebRect;
+class WebSize;
 class WebSecurityOrigin;
 class WebSerializedScriptValue;
 class WebURLRequest;
@@ -85,8 +88,11 @@ WK_ADD_API_MAPPING(WKGraphicsContextRef, WebGraphicsContext)
 WK_ADD_API_MAPPING(WKImageRef, WebImage)
 WK_ADD_API_MAPPING(WKMutableArrayRef, MutableArray)
 WK_ADD_API_MAPPING(WKMutableDictionaryRef, MutableDictionary)
+WK_ADD_API_MAPPING(WKPointRef, WebPoint)
+WK_ADD_API_MAPPING(WKRectRef, WebRect)
 WK_ADD_API_MAPPING(WKSecurityOriginRef, WebSecurityOrigin)
 WK_ADD_API_MAPPING(WKSerializedScriptValueRef, WebSerializedScriptValue)
+WK_ADD_API_MAPPING(WKSizeRef, WebSize)
 WK_ADD_API_MAPPING(WKStringRef, WebString)
 WK_ADD_API_MAPPING(WKTypeRef, APIObject)
 WK_ADD_API_MAPPING(WKUInt64Ref, WebUInt64)

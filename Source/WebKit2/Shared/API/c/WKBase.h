@@ -60,6 +60,9 @@ typedef const struct OpaqueWKSecurityOrigin* WKSecurityOriginRef;
 typedef const struct OpaqueWKSerializedScriptValue* WKSerializedScriptValueRef;
 typedef const struct OpaqueWKString* WKStringRef;
 typedef const struct OpaqueWKUInt64* WKUInt64Ref;
+typedef const struct OpaqueWKSizeRef* WKSizeRef;
+typedef const struct OpaqueWKPointRef* WKPointRef;
+typedef const struct OpaqueWKRectRef* WKRectRef;
 typedef const struct OpaqueWKURL* WKURLRef;
 typedef const struct OpaqueWKURLRequest* WKURLRequestRef;
 typedef const struct OpaqueWKURLResponse* WKURLResponseRef;
@@ -129,5 +132,17 @@ typedef const struct OpaqueWKBundleScriptWorld* WKBundleScriptWorldRef;
 #else /* !defined(WK_NO_EXPORT) */
 #define WK_EXPORT
 #endif /* defined(WK_NO_EXPORT) */
+
+#if !defined(WK_INLINE)
+#if defined(__cplusplus)
+#define WK_INLINE static inline
+#elif defined(__GNUC__)
+#define WK_INLINE static __inline__
+#elif defined(__WIN32__)
+#define WK_INLINE static __inline
+#else
+#define WK_INLINE static    
+#endif
+#endif /* !defined(WK_INLINE) */
 
 #endif /* WKBase_h */

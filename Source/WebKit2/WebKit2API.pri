@@ -7,6 +7,7 @@ WEBKIT2_API_SOURCES = \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKContextMenuItem.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKDictionary.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKError.cpp \
+    $$SOURCE_DIR/WebKit2/Shared/API/c/WKGeometry.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKGraphicsContext.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKImage.cpp \
     $$SOURCE_DIR/WebKit2/Shared/API/c/WKMutableDictionary.cpp \

@@ -35,6 +35,7 @@
 #include "WebCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebData.h"
+#include "WebGeometry.h"
 #include "WebImage.h"
 #include "WebNumber.h"
 #include "WebSerializedScriptValue.h"
@@ -101,6 +102,11 @@ public:
             encoder->encodeVariableLengthByteArray(scriptValue->dataReference());
             return true;
         }
+        case APIObject::TypeBoolean: {
+            WebBoolean* booleanObject = static_cast<WebBoolean*>(m_root);
+            encoder->encode(booleanObject->value());
+            return true;
+        }
         case APIObject::TypeDouble: {
             WebDouble* doubleObject = static_cast<WebDouble*>(m_root);
             encoder->encode(doubleObject->value());
@@ -111,9 +117,24 @@ public:
             encoder->encode(uint64Object->value());
             return true;
         }
-        case APIObject::TypeBoolean: {
-            WebBoolean* booleanObject = static_cast<WebBoolean*>(m_root);
-            encoder->encode(booleanObject->value());
+        case APIObject::TypePoint: {
+            WebPoint* pointObject = static_cast<WebPoint*>(m_root);
+            encoder->encode(pointObject->point().x);
+            encoder->encode(pointObject->point().y);
+            return true;
+        }
+        case APIObject::TypeSize: {
+            WebSize* sizeObject = static_cast<WebSize*>(m_root);
+            encoder->encode(sizeObject->size().width);
+            encoder->encode(sizeObject->size().height);
+            return true;
+        }
+        case APIObject::TypeRect: {
+            WebRect* rectObject = static_cast<WebRect*>(m_root);
+            encoder->encode(rectObject->rect().origin.x);
+            encoder->encode(rectObject->rect().origin.y);
+            encoder->encode(rectObject->rect().size.width);
+            encoder->encode(rectObject->rect().size.height);
             return true;
         }
         case APIObject::TypeURL: {
@@ -271,6 +292,42 @@ public:
             if (!decoder->decode(value))
                 return false;
             coder.m_root = WebBoolean::create(value);
+            break;
+        }
+        case APIObject::TypeSize: {
+            double width;
+            double height;
+            if (!decoder->decode(width))
+                return false;
+            if (!decoder->decode(height))
+                return false;
+            coder.m_root = WebSize::create(WKSizeMake(width, height));
+            break;
+        }
+        case APIObject::TypePoint: {
+            double x;
+            double y;
+            if (!decoder->decode(x))
+                return false;
+            if (!decoder->decode(y))
+                return false;
+            coder.m_root = WebPoint::create(WKPointMake(x, y));
+            break;
+        }
+        case APIObject::TypeRect: {
+            double x;
+            double y;
+            double width;
+            double height;
+            if (!decoder->decode(x))
+                return false;
+            if (!decoder->decode(y))
+                return false;
+            if (!decoder->decode(width))
+                return false;
+            if (!decoder->decode(height))
+                return false;
+            coder.m_root = WebRect::create(WKRectMake(x, y, width, height));
             break;
         }
         case APIObject::TypeURL: {
