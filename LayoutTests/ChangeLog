@@ -1,3 +1,11 @@
+2011-09-22  Robert Hogan  <robert@webkit.org>
+
+        Platform-specific results for test introduced by r95726
+
+        * platform/gtk/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt: Added.
+        * platform/mac/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt: Added.
+        * platform/qt/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt: Added.
+
 2011-09-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95335 and r95645.
