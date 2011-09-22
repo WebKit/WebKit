@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (19,19) size 746x22
           RenderText {#text} at (0,0) size 81x22
             text run at (0,0) width 81: "CONTENT"
-        RenderTable at (19,41) size 94x60 [color=#000000]
+        RenderTable at (19,41) size 94x60
           RenderTableSection (anonymous) at (0,0) size 94x60
             RenderTableRow (anonymous) at (0,0) size 94x60
-              RenderTableCell (anonymous) at (0,0) size 94x60 [color=#FF0000] [border: (3px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell (anonymous) at (0,0) size 94x60 [border: (3px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
                 RenderText at (19,19) size 56x22
                   text run at (19,19) width 56: "AFTER"
