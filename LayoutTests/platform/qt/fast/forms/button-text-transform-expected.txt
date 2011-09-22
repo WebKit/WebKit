@@ -16,39 +16,39 @@ layer at (0,0) size 800x600
             text run at (0,22) width 107: "button) elements"
         RenderText {#text} at (107,22) size 4x22
           text run at (107,22) width 4: "."
-      RenderBlock {P} at (0,60) size 784x37
-        RenderButton {BUTTON} at (2,2) size 114x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 102x21
-            RenderText {#text} at (0,0) size 102x21
-              text run at (0,0) width 102: "UPPERCASE"
-        RenderText {#text} at (118,8) size 4x22
-          text run at (118,8) width 4: " "
-        RenderButton {BUTTON} at (124,2) size 85x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 73x21
-            RenderText {#text} at (0,0) size 73x21
-              text run at (0,0) width 73: "lowercase"
-        RenderText {#text} at (211,8) size 4x22
-          text run at (211,8) width 4: " "
-        RenderButton {BUTTON} at (217,2) size 84x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 72x21
-            RenderText {#text} at (0,0) size 72x21
-              text run at (0,0) width 72: "Capitalize"
+      RenderBlock {P} at (0,60) size 784x38
+        RenderButton {BUTTON} at (2,2) size 111x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 99x22
+            RenderText {#text} at (0,0) size 99x22
+              text run at (0,0) width 99: "UPPERCASE"
+        RenderText {#text} at (115,8) size 4x22
+          text run at (115,8) width 4: " "
+        RenderButton {BUTTON} at (121,2) size 78x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 66x22
+            RenderText {#text} at (0,0) size 66x22
+              text run at (0,0) width 66: "lowercase"
+        RenderText {#text} at (201,8) size 4x22
+          text run at (201,8) width 4: " "
+        RenderButton {BUTTON} at (207,2) size 80x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 68x22
+            RenderText {#text} at (0,0) size 68x22
+              text run at (0,0) width 68: "Capitalize"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,113) size 784x37
-        RenderButton {INPUT} at (2,2) size 114x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 102x21
-            RenderText at (0,0) size 102x21
-              text run at (0,0) width 102: "UPPERCASE"
-        RenderText {#text} at (118,8) size 4x22
-          text run at (118,8) width 4: " "
-        RenderButton {INPUT} at (124,2) size 85x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 73x21
-            RenderText at (0,0) size 73x21
-              text run at (0,0) width 73: "lowercase"
-        RenderText {#text} at (211,8) size 4x22
-          text run at (211,8) width 4: " "
-        RenderButton {INPUT} at (217,2) size 84x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 72x21
-            RenderText at (0,0) size 72x21
-              text run at (0,0) width 72: "Capitalize"
+      RenderBlock {P} at (0,114) size 784x38
+        RenderButton {INPUT} at (2,2) size 111x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 99x22
+            RenderText at (0,0) size 99x22
+              text run at (0,0) width 99: "UPPERCASE"
+        RenderText {#text} at (115,8) size 4x22
+          text run at (115,8) width 4: " "
+        RenderButton {INPUT} at (121,2) size 78x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 66x22
+            RenderText at (0,0) size 66x22
+              text run at (0,0) width 66: "lowercase"
+        RenderText {#text} at (201,8) size 4x22
+          text run at (201,8) width 4: " "
+        RenderButton {INPUT} at (207,2) size 80x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 68x22
+            RenderText at (0,0) size 68x22
+              text run at (0,0) width 68: "Capitalize"
         RenderText {#text} at (0,0) size 0x0

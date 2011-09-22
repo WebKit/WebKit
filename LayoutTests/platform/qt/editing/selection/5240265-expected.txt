@@ -9,13 +9,13 @@ layer at (0,0) size 800x600
           text run at (0,22) width 526: "the selection from the editable region. To run it manually, click on the button. "
           text run at (526,22) width 226: "The editable region should not be"
           text run at (0,44) width 338: "focused, but the text inside of it should be selected."
-      RenderBlock (anonymous) at (0,82) size 784x37
-        RenderButton {INPUT} at (2,2) size 96x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 84x21
-            RenderText at (0,0) size 84x21
-              text run at (0,0) width 84: "Click on me"
+      RenderBlock (anonymous) at (0,82) size 784x38
+        RenderButton {INPUT} at (2,2) size 93x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 81x22
+            RenderText at (0,0) size 81x22
+              text run at (0,0) width 81: "Click on me"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,119) size 784x22
+      RenderBlock {DIV} at (0,120) size 784x22
         RenderText {#text} at (0,0) size 188x22
           text run at (0,0) width 188: "This text should be selected."
 selection start: position 0 of child 0 {#text} of child 4 {DIV} of body

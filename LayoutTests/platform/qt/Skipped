@@ -2262,75 +2262,8 @@ fast/loader/reload-zero-byte-plugin.html
 
 # Failing after http://trac.webkit.org/changeset/92375
 # https://bugs.webkit.org/show_bug.cgi?id=65721
-http/tests/navigation/javascriptlink-frames.html
-tables/mozilla/bugs/bug28928.html
-fast/forms/button-sizes.html
-fast/forms/control-restrict-line-height.html
-fast/forms/select-baseline.html
-tables/mozilla/bugs/bug2479-3.html
-tables/mozilla/bugs/bug1318.html
 fast/replaced/table-percent-height.html
-tables/mozilla/bugs/bug26178.html
-svg/custom/inline-svg-in-xhtml.xml
-fast/forms/button-text-transform.html
-fast/forms/button-style-color.html
-tables/mozilla/bugs/bug46368-2.html
-editing/selection/4397952.html
-editing/selection/3690719.html
-fast/replaced/replaced-breaking.html
-fast/block/positioning/inline-block-relposition.html
-fast/forms/formmove3.html
-fast/html/details-replace-text.html
 fast/forms/basic-buttons.html
-fast/forms/input-button-sizes.html
-fast/forms/button-cannot-be-nested.html
-tables/mozilla/bugs/bug51037.html
-fast/forms/control-clip-overflow.html
-tables/mozilla/bugs/bug39209.html
-fast/css/margin-top-bottom-dynamic.html
-tables/mozilla_expected_failures/bugs/bug58402-2.html
-fast/forms/button-table-styles.html
-tables/mozilla/bugs/bug1188.html
-tables/mozilla_expected_failures/bugs/bug1725.html
-tables/mozilla/collapsing_borders/bug41262-4.html
-fast/html/details-replace-summary-child.html
-svg/custom/foreign-object-skew.svg
-tables/mozilla/bugs/bug68912.html
-fast/text/textIteratorNilRenderer.html
-tables/mozilla/bugs/bug138725.html
-fast/forms/targeted-frame-submission.html
-editing/selection/3690703-2.html
-fast/block/float/float-avoidance.html
-fast/forms/button-generated-content.html
-tables/mozilla/bugs/bug44505.html
-tables/mozilla/bugs/bug92647-2.html
-tables/mozilla/bugs/bug60749.html
-fast/dom/HTMLTableColElement/resize-table-using-col-width.html
-tables/mozilla/other/move_row.html
-fast/replaced/width100percent-button.html
-fast/table/remove-td-display-none.html
-tables/mozilla/bugs/bug33855.html
-tables/mozilla/bugs/bug7342.html
-fast/dynamic/positioned-movement-with-positioned-children.html
-fast/selectors/064.html
-fast/forms/button-inner-block-reuse.html
-tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html
-fast/forms/blankbuttons.html
-tables/mozilla/dom/tableDom.html
-fast/forms/button-positioned.html
-editing/selection/3690703.html
-fast/forms/button-align.html
-tables/mozilla/bugs/bug51727.html
-tables/mozilla/bugs/bug52506.html
-fast/table/append-cells2.html
-platform/qt/fast/forms/button-line-break.html
-editing/selection/5240265.html
-fast/css/continuationCrash.html
-tables/mozilla/bugs/bug18359.html
-tables/mozilla/bugs/bug46368-1.html
-tables/mozilla/bugs/bug4429.html
-tables/mozilla/bugs/bug52505.html
-tables/mozilla_expected_failures/collapsing_borders/bug41262-6.html
 
 # [Qt] move-selection-back-line-strict.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=65801

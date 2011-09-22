@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {FORM} at (0,0) size 784x37
+      RenderBlock {FORM} at (0,0) size 784x38
         RenderMenuList {SELECT} at (2,6) size 110x27 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (4,2) size 82x22
             RenderText at (0,0) size 77x22
@@ -25,14 +25,14 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (599,6) size 46x26
         RenderText {#text} at (647,8) size 20x22
           text run at (647,8) width 20: "     "
-        RenderButton {INPUT} at (669,2) size 45x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 33x21
-            RenderText at (0,0) size 33x21
-              text run at (0,0) width 33: "Do It"
+        RenderButton {INPUT} at (669,2) size 47x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 35x22
+            RenderText at (0,0) size 35x22
+              text run at (0,0) width 35: "Do It"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,53) size 784x22
+      RenderBlock (anonymous) at (0,54) size 784x22
         RenderBR {BR} at (0,0) size 0x22
-      RenderTable {TABLE} at (0,75) size 62x60 [bgcolor=#FFA500] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,76) size 62x60 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 60x58
           RenderTableRow {TR} at (0,2) size 60x26
             RenderTableCell {TD} at (2,2) size 27x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (31,30) size 27x26 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x22
                 text run at (2,2) width 23: "c22"
-      RenderBlock (anonymous) at (0,135) size 784x22
+      RenderBlock (anonymous) at (0,136) size 784x22
         RenderBR {BR} at (0,0) size 0x22
 layer at (181,16) size 42x22
   RenderBlock {DIV} at (2,2) size 42x22

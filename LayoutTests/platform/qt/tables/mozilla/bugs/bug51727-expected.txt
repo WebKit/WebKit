@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x120
-  RenderBlock {HTML} at (0,0) size 800x120
-    RenderBody {BODY} at (8,8) size 784x104
-      RenderBlock {FORM} at (0,0) size 784x74
-        RenderButton {INPUT} at (2,2) size 197x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 185x21
-            RenderText at (0,0) size 185x21
-              text run at (0,0) width 185: "(1) Fill cell with long string"
-        RenderBR {BR} at (201,8) size 0x22
-        RenderButton {INPUT} at (2,39) size 201x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 189x21
-            RenderText at (0,0) size 189x21
-              text run at (0,0) width 189: "(2) Fill cell with short string"
-        RenderBR {BR} at (205,45) size 0x22
-      RenderTable {TABLE} at (0,74) size 83x30
+layer at (0,0) size 800x122
+  RenderBlock {HTML} at (0,0) size 800x122
+    RenderBody {BODY} at (8,8) size 784x106
+      RenderBlock {FORM} at (0,0) size 784x76
+        RenderButton {INPUT} at (2,2) size 192x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 180x22
+            RenderText at (0,0) size 180x22
+              text run at (0,0) width 180: "(1) Fill cell with long string"
+        RenderBR {BR} at (196,8) size 0x22
+        RenderButton {INPUT} at (2,40) size 198x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 186x22
+            RenderText at (0,0) size 186x22
+              text run at (0,0) width 186: "(2) Fill cell with short string"
+        RenderBR {BR} at (202,46) size 0x22
+      RenderTable {TABLE} at (0,76) size 83x30
         RenderTableSection {TBODY} at (0,0) size 83x30
           RenderTableRow {TR} at (0,2) size 83x26
             RenderTableCell {TD} at (2,2) size 79x26 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]

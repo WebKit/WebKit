@@ -29,17 +29,17 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,132) size 46x24 [r=5 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 44x22
                 text run at (1,1) width 44: "Row 5"
-      RenderBlock (anonymous) at (0,158) size 784x37
+      RenderBlock (anonymous) at (0,158) size 784x38
         RenderTextControl {INPUT} at (2,6) size 14x26
         RenderText {#text} at (18,8) size 4x22
           text run at (18,8) width 4: " "
         RenderTextControl {INPUT} at (24,6) size 14x26
         RenderText {#text} at (40,8) size 4x22
           text run at (40,8) width 4: " "
-        RenderButton {INPUT} at (46,2) size 30x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 18x21
-            RenderText at (0,0) size 18x21
-              text run at (0,0) width 18: "go"
+        RenderButton {INPUT} at (46,2) size 28x34 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 16x22
+            RenderText at (0,0) size 16x22
+              text run at (0,0) width 16: "go"
         RenderText {#text} at (0,0) size 0x0
 layer at (12,174) size 10x22
   RenderBlock {DIV} at (2,2) size 10x22
