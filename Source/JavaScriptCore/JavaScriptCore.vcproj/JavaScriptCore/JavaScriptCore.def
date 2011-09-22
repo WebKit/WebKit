@@ -10,7 +10,6 @@ EXPORTS
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@@Z
     ??0JSArray@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@@Z
     ??0JSByteArray@JSC@@AAE@PAVExecState@1@PAVStructure@1@PAVByteArray@WTF@@@Z
-    ??0JSFunction@JSC@@AAE@PAVExecState@1@PAVJSGlobalObject@1@PAVStructure@1@@Z
     ??0JSLock@JSC@@QAE@PAVExecState@1@@Z
     ??0MD5@WTF@@QAE@XZ
     ??0Mutex@WTF@@QAE@XZ
@@ -101,7 +100,6 @@ EXPORTS
     ?create@ByteArray@WTF@@SA?AV?$PassRefPtr@VByteArray@WTF@@@2@I@Z
     ?create@JSArray@JSC@@SAPAV12@AAVJSGlobalData@2@PAVStructure@2@@Z
     ?create@JSArray@JSC@@SAPAV12@AAVJSGlobalData@2@PAVStructure@2@ABVArgList@2@@Z
-    ?create@JSFunction@JSC@@SAPAV12@PAVExecState@2@PAVJSGlobalObject@2@PAVStructure@2@HABVIdentifier@2@P6I_J0@Z@Z
     ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@W4HeapSize@2@@Z
     ?create@OpaqueJSString@@SA?AV?$PassRefPtr@UOpaqueJSString@@@WTF@@ABVUString@JSC@@@Z
     ?create@RegExp@JSC@@SAPAV12@AAVJSGlobalData@2@ABVUString@2@W4RegExpFlags@2@@Z
@@ -174,10 +172,9 @@ EXPORTS
     ?fillGetterPropertySlot@JSObject@JSC@@QAEXAAVPropertySlot@2@PAV?$WriteBarrierBase@W4Unknown@JSC@@@2@@Z
     ?finalize@WeakHandleOwner@JSC@@UAEXV?$Handle@W4Unknown@JSC@@@2@PAX@Z
     ?finishCreation@DateInstance@JSC@@IAEXAAVJSGlobalData@2@N@Z
-   ?finishCreation@InternalFunction@JSC@@IAEXAAVJSGlobalData@2@ABVIdentifier@2@@Z
+    ?finishCreation@InternalFunction@JSC@@IAEXAAVJSGlobalData@2@ABVIdentifier@2@@Z
     ?finishCreation@JSArray@JSC@@IAEXAAVJSGlobalData@2@@Z
     ?finishCreation@JSArray@JSC@@IAEXAAVJSGlobalData@2@ABVArgList@2@@Z
-   ?finishCreation@JSFunction@JSC@@IAEXPAVExecState@2@HABVIdentifier@2@PAVExecutableBase@2@@Z
     ?finishCreation@RegExpObject@JSC@@IAEXPAVJSGlobalObject@2@@Z
     ?finishCreation@StringObject@JSC@@IAEXAAVJSGlobalData@2@PAVJSString@2@@Z
     ?focus@Profile@JSC@@QAEXPBVProfileNode@2@@Z
@@ -189,7 +186,6 @@ EXPORTS
     ?get@Structure@JSC@@QAEIAAVJSGlobalData@2@PAVStringImpl@WTF@@AAIAAPAVJSCell@2@@Z
     ?getCallData@JSCell@JSC@@UAE?AW4CallType@2@AATCallData@2@@Z
     ?getConstructData@JSCell@JSC@@UAE?AW4ConstructType@2@AATConstructData@2@@Z
-    ?getHostFunction@JSGlobalData@JSC@@QAEPAVNativeExecutable@2@P6I_JPAVExecState@2@@Z@Z
     ?getJSNumber@JSCell@JSC@@UAE?AVJSValue@2@XZ
     ?getObject@JSCell@JSC@@QAEPAVJSObject@2@XZ
     ?getOwnPropertyDescriptor@JSGlobalObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
