@@ -23,6 +23,7 @@
 #include "WorkQueueItem.h"
 
 #include "DumpRenderTree.h"
+#include "DumpRenderTreeChrome.h"
 
 #include <EWebKit.h>
 #include <JavaScriptCore/JSStringRef.h>
@@ -67,16 +68,12 @@ bool ScriptItem::invoke() const
 
 bool BackForwardItem::invoke() const
 {
-    Ewk_History* history = ewk_view_history_get(browser);
-
     if (m_howFar == 1)
-        ewk_history_forward(history);
+        ewk_view_forward(browser->mainView());
     else if (m_howFar == -1)
-        ewk_history_back(history);
-    else {
-        const Ewk_History_Item* item = ewk_history_history_item_nth_get(history, m_howFar);
-        ewk_history_history_item_set(history, item);
-    }
+        ewk_view_back(browser->mainView());
+    else
+        ewk_view_navigate(browser->mainView(), m_howFar);
 
     return true;
 }
