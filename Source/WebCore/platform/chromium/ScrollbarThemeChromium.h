@@ -40,6 +40,13 @@ namespace WebCore {
     // This class contains the scrollbar code which is shared between Chromium
     // Windows and Linux.
     class ScrollbarThemeChromium : public ScrollbarThemeComposite {
+#if ENABLE(RUBBER_BANDING)
+    public:
+        ScrollbarThemeChromium();
+        virtual ~ScrollbarThemeChromium();
+        virtual void paintOverhangAreas(ScrollView*, GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
+#endif
+
     protected:
         virtual bool hasButtons(Scrollbar*) { return true; }
         virtual bool hasThumb(Scrollbar*);
@@ -52,6 +59,11 @@ namespace WebCore {
         virtual void paintTickmarks(GraphicsContext*, Scrollbar*, const IntRect&);
 
         virtual IntSize buttonSize(Scrollbar*) = 0;
+
+#if ENABLE(RUBBER_BANDING)
+    private:
+        RefPtr<Pattern> m_overhangPattern;
+#endif
     };
 } // namespace WebCore
 

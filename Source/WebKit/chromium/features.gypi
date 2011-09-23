@@ -140,6 +140,9 @@
       }],
       ['touchui==1', {
         'enable_touch_icon_loading': 1,
+        'feature_defines': [
+          'ENABLE_RUBBER_BANDING=1',
+        ],
       }],
       # Mac OS X uses Accelerate.framework FFT by default instead of FFmpeg.
       ['OS!="mac"', {
