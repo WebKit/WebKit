@@ -1,5 +1,12 @@
 2011-09-22  Filip Pizlo  <fpizlo@apple.com>
 
+        PPC build fix, part 3.
+
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::compileForConstructInternal):
+
+2011-09-22  Filip Pizlo  <fpizlo@apple.com>
+
         Another PPC build fix.
 
         * runtime/Executable.cpp:

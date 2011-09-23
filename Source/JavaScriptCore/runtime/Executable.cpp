@@ -550,6 +550,8 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
         
         m_codeBlockForConstruct->setJITCode(m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck);
     }
+#else
+    UNUSED_PARAM(calleeArgsExec);
 #endif
 
 #if ENABLE(JIT)
