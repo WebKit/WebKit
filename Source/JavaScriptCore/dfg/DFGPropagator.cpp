@@ -471,7 +471,7 @@ private:
             changed |= mergeUse(node.child1(), PredictObjectUnknown | StrongPredictionTag);
             changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
             if (isStrongPrediction(node.getPrediction()))
-                changed |= setPrediction(node.getPrediction());
+                changed |= mergePrediction(node.getPrediction());
             break;
         }
             
@@ -489,7 +489,7 @@ private:
         case GetByOffset: {
             changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
             if (isStrongPrediction(node.getPrediction()))
-                changed |= setPrediction(node.getPrediction());
+                changed |= mergePrediction(node.getPrediction());
             break;
         }
             
@@ -504,7 +504,7 @@ private:
             changed |= mergeUse(m_graph.m_varArgChildren[node.firstChild()], PredictObjectUnknown | StrongPredictionTag);
             changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
             if (isStrongPrediction(node.getPrediction()))
-                changed |= setPrediction(node.getPrediction());
+                changed |= mergePrediction(node.getPrediction());
             break;
         }
             
@@ -527,6 +527,19 @@ private:
             break;
         }
             
+        case GetScopedVar: {
+            changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
+            PredictedType prediction = node.getPrediction();
+            if (isStrongPrediction(prediction))
+                changed |= mergePrediction(prediction);
+            break;
+        }
+            
+        case GetScopeChain: {
+            changed |= setPrediction(makePrediction(PredictCellOther, StrongPrediction));
+            break;
+        }
+            
         case PutByVal:
         case PutByValAlias:
         case PutById:
@@ -535,7 +548,6 @@ private:
             break;
         }
 
-        case GetScopeChain:
         case GetCallee: {
             changed |= setPrediction(makePrediction(PredictObjectOther, StrongPrediction));
             break;
@@ -587,7 +599,6 @@ private:
         case Resolve:
         case ResolveBase:
         case ResolveBaseStrictPut:
-        case GetScopedVar:
             break;
             
         // This gets ignored because it doesn't do anything.
@@ -976,6 +987,18 @@ private:
         return NoNode;
     }
     
+    NodeIndex getScopeChainLoadElimination(unsigned depth)
+    {
+        NodeIndex start = startIndexForChildren();
+        for (NodeIndex index = endIndexForPureCSE(); index-- > start;) {
+            Node& node = m_graph[index];
+            if (node.op == GetScopeChain
+                && node.scopeChainDepth() == depth)
+                return index;
+        }
+        return NoNode;
+    }
+    
     void performSubstitution(NodeIndex& child)
     {
         // Check if this operand is actually unused.
@@ -1067,6 +1090,10 @@ private:
             setReplacement(pureCSE(node));
             break;
             
+        case GetScopeChain:
+            setReplacement(getScopeChainLoadElimination(node.scopeChainDepth()));
+            break;
+
         // Handle nodes that are conditionally pure: these are pure, and can
         // be CSE'd, so long as the prediction is the one we want.
         case ValueAdd:

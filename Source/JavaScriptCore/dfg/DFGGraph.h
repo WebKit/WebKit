@@ -196,6 +196,7 @@ public:
         case Call:
         case Construct:
         case GetByOffset:
+        case GetScopedVar:
             return node.predict(prediction, source);
         default:
             return false;

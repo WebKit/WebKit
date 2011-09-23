@@ -624,6 +624,7 @@ struct Node {
         case Call:
         case Construct:
         case GetByOffset:
+        case GetScopedVar:
             return true;
         default:
             return false;

@@ -1119,8 +1119,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             int slot = currentInstruction[2].u.operand;
             int depth = currentInstruction[3].u.operand;
             NodeIndex getScopeChain = addToGraph(GetScopeChain, OpInfo(depth));
-            NodeIndex getScopedVar = addToGraph(GetScopedVar, OpInfo(slot), getScopeChain);
+            NodeIndex getScopedVar = addToGraph(GetScopedVar, OpInfo(slot), OpInfo(PredictNone), getScopeChain);
             set(dst, getScopedVar);
+            stronglyPredict(getScopedVar);
             NEXT_OPCODE(op_get_scoped_var);
         }
         case op_put_scoped_var: {
