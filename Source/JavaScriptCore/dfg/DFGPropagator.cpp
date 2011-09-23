@@ -399,7 +399,12 @@ private:
             
             break;
         }
-            
+
+        case ValueToDouble: {
+            // FIXME: should we predict double or number here?
+            break;
+        }
+        
         case ValueAdd: {
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
@@ -588,6 +593,7 @@ private:
         // These get ignored because they don't return anything.
         case DFG::Jump:
         case Branch:
+        case Breakpoint:
         case Return:
         case CheckHasInstance:
         case Phi:
@@ -599,6 +605,7 @@ private:
         case Resolve:
         case ResolveBase:
         case ResolveBaseStrictPut:
+        case ResolveGlobal:
         case PutScopedVar:
             break;
             
@@ -606,9 +613,7 @@ private:
         case Phantom:
             break;
 
-        default:
-            ASSERT_NOT_REACHED();
-            break;
+
 #else
         default:
             break;
