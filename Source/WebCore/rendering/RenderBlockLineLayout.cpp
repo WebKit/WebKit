@@ -1614,9 +1614,9 @@ bool RenderBlock::matchedEndLine(LineLayoutState& layoutState, const InlineBidiR
             
             bool matched = false;
             RootInlineBox* result = line->nextRootBox();
+            layoutState.setEndLine(result);
             if (result) {
                 layoutState.setEndLineLogicalTop(line->lineBottomWithLeading());
-                layoutState.setEndLine(result);
                 matched = checkPaginationAndFloatsAtEndLine(layoutState);
             }
 

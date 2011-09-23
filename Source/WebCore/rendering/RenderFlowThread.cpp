@@ -48,6 +48,7 @@ RenderFlowThread::RenderFlowThread(Node* node, const AtomicString& flowThread)
     , m_hasValidRegions(false)
     , m_regionsInvalidated(false)
     , m_regionsHaveUniformLogicalWidth(true)
+    , m_regionsHaveUniformLogicalHeight(true)
     , m_regionFittingDisableCount(0)
 {
     setIsAnonymous(false);
@@ -306,7 +307,9 @@ void RenderFlowThread::layout()
         m_regionsInvalidated = false;
         m_hasValidRegions = false;
         m_regionsHaveUniformLogicalWidth = true;
+        m_regionsHaveUniformLogicalHeight = true;
         LayoutUnit previousRegionLogicalWidth = 0;
+        LayoutUnit previousRegionLogicalHeight = 0;
         if (hasRegions()) {
             int logicalHeight = 0;
             for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
@@ -318,22 +321,29 @@ void RenderFlowThread::layout()
                 ASSERT(!region->needsLayout());
                 
                 LayoutUnit regionLogicalWidth;
+                LayoutUnit regionLogicalHeight;
 
                 IntRect regionRect;
                 if (isHorizontalWritingMode()) {
                     regionRect = IntRect(0, logicalHeight, region->contentWidth(), region->contentHeight());
                     logicalHeight += regionRect.height();
                     regionLogicalWidth = region->contentWidth();
+                    regionLogicalHeight = region->contentHeight();
                 } else {
                     regionRect = IntRect(logicalHeight, 0, region->contentWidth(), region->contentHeight());
                     logicalHeight += regionRect.width();
                     regionLogicalWidth = region->contentHeight();
+                    regionLogicalHeight = region->contentWidth();
                 }
 
                 if (!m_hasValidRegions)
                     m_hasValidRegions = true;
-                else if (m_regionsHaveUniformLogicalWidth && previousRegionLogicalWidth != regionLogicalWidth)
-                    m_regionsHaveUniformLogicalWidth = false;
+                else {
+                    if (m_regionsHaveUniformLogicalWidth && previousRegionLogicalWidth != regionLogicalWidth)
+                        m_regionsHaveUniformLogicalWidth = false;
+                    if (m_regionsHaveUniformLogicalHeight && previousRegionLogicalHeight != regionLogicalHeight)
+                        m_regionsHaveUniformLogicalHeight = false;
+                }
 
                 previousRegionLogicalWidth = regionLogicalWidth;
 

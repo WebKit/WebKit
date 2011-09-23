@@ -6228,12 +6228,29 @@ LayoutUnit RenderBlock::adjustForUnsplittableChild(RenderBox* child, LayoutUnit 
     if (layoutState->m_columnInfo)
         layoutState->m_columnInfo->updateMinimumColumnHeight(childLogicalHeight);
     LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
-    if (!pageLogicalHeight || (childLogicalHeight > pageLogicalHeight && !view()->hasRenderFlowThread()))
+    bool hasUniformPageLogicalHeight = !view()->hasRenderFlowThread() || view()->currentRenderFlowThread()->regionsHaveUniformLogicalHeight();
+    if (!pageLogicalHeight || (hasUniformPageLogicalHeight && childLogicalHeight > pageLogicalHeight))
         return logicalOffset;
     LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset);
-    if (remainingLogicalHeight < childLogicalHeight)
+    if (remainingLogicalHeight < childLogicalHeight) {
+        if (!hasUniformPageLogicalHeight && !pushToNextPageWithMinimumLogicalHeight(remainingLogicalHeight, logicalOffset, childLogicalHeight))
+            return logicalOffset;
         return logicalOffset + remainingLogicalHeight;
+    }
     return logicalOffset;
+}
+
+bool RenderBlock::pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment, LayoutUnit logicalOffset, LayoutUnit minimumLogicalHeight) const
+{
+    bool checkedRegion = false;
+    for (LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment); pageLogicalHeight;
+         pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment)) {
+         if (minimumLogicalHeight <= pageLogicalHeight)
+            return true;
+         adjustment += pageLogicalHeight;
+         checkedRegion = true;
+    }
+    return !checkedRegion;
 }
 
 void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, LayoutUnit& delta)
@@ -6267,13 +6284,18 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
     logicalOffset += delta;
     lineBox->setPaginationStrut(0);
     LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
-    if (!pageLogicalHeight || (lineHeight > pageLogicalHeight && !renderView->hasRenderFlowThread()))
+    bool hasUniformPageLogicalHeight = !view()->hasRenderFlowThread() || view()->currentRenderFlowThread()->regionsHaveUniformLogicalHeight();
+    if (!pageLogicalHeight || (hasUniformPageLogicalHeight && lineHeight > pageLogicalHeight))
         return;
     const bool includeBoundaryPoint = false;
     LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset, includeBoundaryPoint);
     if (remainingLogicalHeight < lineHeight) {
+        // If we have a non-uniform page height, then we have to shift further possibly.
+        if (!hasUniformPageLogicalHeight && !pushToNextPageWithMinimumLogicalHeight(remainingLogicalHeight, logicalOffset, lineHeight))
+            return;
         LayoutUnit totalLogicalHeight = lineHeight + max<LayoutUnit>(0, logicalOffset);
-        if (lineBox == firstRootBox() && totalLogicalHeight < pageLogicalHeight && !isPositioned() && !isTableCell())
+        LayoutUnit pageLogicalHeightAtNewOffset = hasUniformPageLogicalHeight ? pageLogicalHeight : pageLogicalHeightForOffset(logicalOffset + remainingLogicalHeight);
+        if (lineBox == firstRootBox() && totalLogicalHeight < pageLogicalHeightAtNewOffset && !isPositioned() && !isTableCell())
             setPaginationStrut(remainingLogicalHeight + max<LayoutUnit>(0, logicalOffset));
         else {
             delta += remainingLogicalHeight;
