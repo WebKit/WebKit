@@ -63,22 +63,28 @@ JSActivation::~JSActivation()
     static_cast<SharedSymbolTable*>(m_symbolTable)->deref();
 }
 
-void JSActivation::visitChildren(SlotVisitor& visitor)
+void JSActivation::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSActivation* thisObject = static_cast<JSActivation*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
 
     // No need to mark our registers if they're still in the RegisterFile.
-    WriteBarrier<Unknown>* registerArray = m_registerArray.get();
+    WriteBarrier<Unknown>* registerArray = thisObject->m_registerArray.get();
     if (!registerArray)
         return;
 
-    visitor.appendValues(registerArray, m_numParametersMinusThis);
+    visitor.appendValues(registerArray, thisObject->m_numParametersMinusThis);
 
     // Skip the call frame, which sits between the parameters and vars.
-    visitor.appendValues(registerArray + m_numParametersMinusThis + RegisterFile::CallFrameHeaderSize, m_numCapturedVars);
+    visitor.appendValues(registerArray + thisObject->m_numParametersMinusThis + RegisterFile::CallFrameHeaderSize, thisObject->m_numCapturedVars);
 }
 
 inline bool JSActivation::symbolTableGet(const Identifier& propertyName, PropertySlot& slot)

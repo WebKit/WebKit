@@ -356,7 +356,8 @@ namespace JSC {
         EvalExecutable(ExecState*, const SourceCode&, bool);
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*, JITCode::JITType);
-        virtual void visitChildren(SlotVisitor&);
+        virtual void visitChildrenVirtual(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
         void unlinkCalls();
 
         OwnPtr<EvalCodeBlock> m_evalCodeBlock;
@@ -421,7 +422,8 @@ namespace JSC {
         ProgramExecutable(ExecState*, const SourceCode&);
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*, JITCode::JITType);
-        virtual void visitChildren(SlotVisitor&);
+        virtual void visitChildrenVirtual(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
         void unlinkCalls();
 
         OwnPtr<ProgramCodeBlock> m_programCodeBlock;
@@ -580,7 +582,8 @@ namespace JSC {
         SharedSymbolTable* symbolTable() const { return m_symbolTable; }
 
         void discardCode();
-        void visitChildren(SlotVisitor&);
+        void visitChildrenVirtual(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
         static FunctionExecutable* fromGlobalCode(const Identifier&, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {

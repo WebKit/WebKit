@@ -168,7 +168,8 @@ public:
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 
-    virtual void visitChildren(SlotVisitor&);
+    virtual void visitChildrenVirtual(SlotVisitor&);
+    static void visitChildren(JSCell*, SlotVisitor&);
 
 protected:
     QtRuntimeMetaMethodData* d_func() const {return reinterpret_cast<QtRuntimeMetaMethodData*>(d_ptr);}

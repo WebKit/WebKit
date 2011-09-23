@@ -43,13 +43,19 @@ using namespace WTF;
 
 namespace WebCore {
 
-void JSCSSStyleDeclaration::visitChildren(SlotVisitor& visitor)
+void JSCSSStyleDeclaration::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void JSCSSStyleDeclaration::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSCSSStyleDeclaration* thisObject = static_cast<JSCSSStyleDeclaration*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
-    visitor.addOpaqueRoot(root(impl()));
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+    visitor.addOpaqueRoot(root(thisObject->impl()));
 }
 
 // Check for a CSS prefix.

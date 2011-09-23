@@ -140,16 +140,22 @@ void JSBoundFunction::finishCreation(ExecState* exec, NativeExecutable* executab
     ASSERT(inherits(&s_info));
 }
 
-void JSBoundFunction::visitChildren(SlotVisitor& visitor)
+void JSBoundFunction::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
+    visitChildren(this, visitor);
+}
 
-    visitor.append(&m_targetFunction);
-    visitor.append(&m_boundThis);
-    visitor.append(&m_boundArgs);
+void JSBoundFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSBoundFunction* thisObject = static_cast<JSBoundFunction*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+
+    visitor.append(&thisObject->m_targetFunction);
+    visitor.append(&thisObject->m_boundThis);
+    visitor.append(&thisObject->m_boundArgs);
 }
 
 } // namespace JSC

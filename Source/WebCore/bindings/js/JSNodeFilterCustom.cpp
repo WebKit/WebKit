@@ -36,13 +36,19 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSNodeFilter::visitChildren(SlotVisitor& visitor)
+void JSNodeFilter::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void JSNodeFilter::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSNodeFilter* thisObject = static_cast<JSNodeFilter*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
-    visitor.addOpaqueRoot(impl());
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+    visitor.addOpaqueRoot(thisObject->impl());
 }
 
 PassRefPtr<NodeFilter> toNodeFilter(JSGlobalData& globalData, JSValue value)

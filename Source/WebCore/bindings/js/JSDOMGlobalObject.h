@@ -64,7 +64,8 @@ namespace WebCore {
         void setInjectedScript(JSObject*);
         JSObject* injectedScript() const;
 
-        virtual void visitChildren(JSC::SlotVisitor&);
+        virtual void visitChildrenVirtual(JSC::SlotVisitor&);
+        static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
 
         DOMWrapperWorld* world() { return m_world.get(); }
 

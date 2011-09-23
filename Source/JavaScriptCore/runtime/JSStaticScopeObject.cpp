@@ -32,13 +32,19 @@
 namespace JSC {
 ASSERT_CLASS_FITS_IN_CELL(JSStaticScopeObject);
 
-void JSStaticScopeObject::visitChildren(SlotVisitor& visitor)
+void JSStaticScopeObject::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void JSStaticScopeObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSStaticScopeObject* thisObject = static_cast<JSStaticScopeObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    JSVariableObject::visitChildren(visitor);
-    visitor.append(&m_registerStore);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    JSVariableObject::visitChildren(thisObject, visitor);
+    visitor.append(&thisObject->m_registerStore);
 }
 
 JSObject* JSStaticScopeObject::toThisObject(ExecState* exec) const

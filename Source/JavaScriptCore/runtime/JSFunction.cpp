@@ -151,16 +151,22 @@ const UString JSFunction::calculatedDisplayName(ExecState* exec)
     return name(exec);
 }
 
-void JSFunction::visitChildren(SlotVisitor& visitor)
+void JSFunction::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
+    visitChildren(this, visitor);
+}
 
-    visitor.append(&m_scopeChain);
-    if (m_executable)
-        visitor.append(&m_executable);
+void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSFunction* thisObject = static_cast<JSFunction*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+
+    visitor.append(&thisObject->m_scopeChain);
+    if (thisObject->m_executable)
+        visitor.append(&thisObject->m_executable);
 }
 
 CallType JSFunction::getCallData(CallData& callData)

@@ -37,14 +37,20 @@ NativeErrorConstructor::NativeErrorConstructor(JSGlobalObject* globalObject, Str
 {
 }
 
-void NativeErrorConstructor::visitChildren(SlotVisitor& visitor)
+void NativeErrorConstructor::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void NativeErrorConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    NativeErrorConstructor* thisObject = static_cast<NativeErrorConstructor*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    InternalFunction::visitChildren(visitor);
-    if (m_errorStructure)
-        visitor.append(&m_errorStructure);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    InternalFunction::visitChildren(thisObject, visitor);
+    if (thisObject->m_errorStructure)
+        visitor.append(&thisObject->m_errorStructure);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithNativeErrorConstructor(ExecState* exec)

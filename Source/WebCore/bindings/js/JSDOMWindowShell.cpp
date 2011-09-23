@@ -83,14 +83,20 @@ void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
 // JSObject methods
 // ----
 
-void JSDOMWindowShell::visitChildren(SlotVisitor& visitor)
+void JSDOMWindowShell::visitChildrenVirtual(JSC::SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void JSDOMWindowShell::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSDOMWindowShell* thisObject = static_cast<JSDOMWindowShell*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
-    if (m_window)
-        visitor.append(&m_window);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+    if (thisObject->m_window)
+        visitor.append(&thisObject->m_window);
 }
 
 UString JSDOMWindowShell::className() const

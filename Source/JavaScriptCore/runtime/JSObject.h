@@ -79,8 +79,9 @@ namespace JSC {
     public:
         typedef JSCell Base;
 
-        virtual void visitChildren(SlotVisitor&);
+        virtual void visitChildrenVirtual(SlotVisitor&);
         ALWAYS_INLINE void visitChildrenDirect(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
 
         // The inline virtual destructor cannot be the first virtual function declared
         // in the class as it results in the vtable being generated as a weak symbol
@@ -816,7 +817,7 @@ inline void JSValue::put(ExecState* exec, unsigned propertyName, JSValue value)
 
 ALWAYS_INLINE void JSObject::visitChildrenDirect(SlotVisitor& visitor)
 {
-    JSCell::visitChildren(visitor);
+    JSCell::visitChildren(this, visitor);
 
     PropertyStorage storage = propertyStorage();
     size_t storageSize = structure()->propertyStorageSize();

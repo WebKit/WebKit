@@ -84,7 +84,8 @@ namespace JSC {
         virtual UString toString(ExecState*) const;
         virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
-        virtual void visitChildren(SlotVisitor&);
+        virtual void visitChildrenVirtual(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
 
         // Object operations, with the toObject operation included.
         const ClassInfo* classInfo() const;
@@ -176,9 +177,15 @@ namespace JSC {
         return m_structure.get();
     }
 
-    inline void JSCell::visitChildren(SlotVisitor& visitor)
+    inline void JSCell::visitChildrenVirtual(SlotVisitor& visitor)
     {
-        visitor.append(&m_structure);
+        visitChildren(this, visitor);
+    }
+
+    inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
+    {
+        JSCell* thisObject = static_cast<JSCell*>(cell);
+        visitor.append(&thisObject->m_structure);
     }
 
     // --- JSValue inlines ----------------------------

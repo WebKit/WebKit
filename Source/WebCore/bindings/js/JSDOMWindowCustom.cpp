@@ -77,15 +77,21 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSDOMWindow::visitChildren(SlotVisitor& visitor)
+void JSDOMWindow::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
+    visitChildren(this, visitor);
+}
 
-    impl()->visitJSEventListeners(visitor);
-    if (Frame* frame = impl()->frame())
+void JSDOMWindow::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSDOMWindow* thisObject = static_cast<JSDOMWindow*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+
+    thisObject->impl()->visitJSEventListeners(visitor);
+    if (Frame* frame = thisObject->impl()->frame())
         visitor.addOpaqueRoot(frame);
 }
 

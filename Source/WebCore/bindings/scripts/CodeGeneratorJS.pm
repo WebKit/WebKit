@@ -877,7 +877,8 @@ sub GenerateHeader
 
     # visit function
     if ($needsMarkChildren) {
-        push(@headerContent, "    virtual void visitChildren(JSC::SlotVisitor&);\n\n");
+        push(@headerContent, "    virtual void visitChildrenVirtual(JSC::SlotVisitor&);\n");
+        push(@headerContent, "    static void visitChildren(JSCell*, JSC::SlotVisitor&);\n\n");
         $structureFlags{"JSC::OverridesVisitChildren"} = 1;
     }
 
@@ -2200,21 +2201,27 @@ sub GenerateImplementation
         }
         
         if ($needsMarkChildren && !$dataNode->extendedAttributes->{"CustomMarkFunction"}) {
-            push(@implContent, "void ${className}::visitChildren(SlotVisitor& visitor)\n");
+            push(@implContent, "void ${className}::visitChildrenVirtual(SlotVisitor& visitor)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
+            push(@implContent, "    visitChildren(this, visitor);\n");
+            push(@implContent, "}\n\n");
+
+            push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    ${className}* thisObject = static_cast<${className}*>(cell);\n");
+            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
             push(@implContent, "    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);\n");
-            push(@implContent, "    ASSERT(structure()->typeInfo().overridesVisitChildren());\n");
-            push(@implContent, "    Base::visitChildren(visitor);\n");
+            push(@implContent, "    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());\n");
+            push(@implContent, "    Base::visitChildren(thisObject, visitor);\n");
             if ($dataNode->extendedAttributes->{"EventTarget"}) {
-                push(@implContent, "    impl()->visitJSEventListeners(visitor);\n");
+                push(@implContent, "    thisObject->impl()->visitJSEventListeners(visitor);\n");
             }
             if ($numCachedAttributes > 0) {
                 foreach (@{$dataNode->attributes}) {
                     my $attribute = $_;
                     if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
-                        push(@implContent, "    if (m_" . $attribute->signature->name . ")\n");
-                        push(@implContent, "        visitor.append(&m_" . $attribute->signature->name . ");\n");
+                        push(@implContent, "    if (thisObject->m_" . $attribute->signature->name . ")\n");
+                        push(@implContent, "        visitor.append(&thisObject->m_" . $attribute->signature->name . ");\n");
                     }
                 }
             }

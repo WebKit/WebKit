@@ -68,15 +68,21 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
     }
 }
 
-void JSObject::visitChildren(SlotVisitor& visitor)
+void JSObject::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSObject* thisObject = static_cast<JSObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
 #ifndef NDEBUG
     bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
     visitor.m_isCheckingForDefaultMarkViolation = false;
 #endif
 
-    visitChildrenDirect(visitor);
+    thisObject->visitChildrenDirect(visitor);
 
 #ifndef NDEBUG
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;

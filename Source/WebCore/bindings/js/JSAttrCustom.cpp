@@ -39,14 +39,20 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void JSAttr::visitChildren(SlotVisitor& visitor)
+void JSAttr::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
+    visitChildren(this, visitor);
+}
 
-    Element* element = impl()->ownerElement();
+void JSAttr::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSAttr* thisObject = static_cast<JSAttr*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+
+    Element* element = thisObject->impl()->ownerElement();
     if (!element)
         return;
     visitor.addOpaqueRoot(root(element));

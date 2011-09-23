@@ -134,7 +134,8 @@ namespace JSC {
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode = ExcludeDontEnumProperties);
 
-        virtual void visitChildren(SlotVisitor&);
+        virtual void visitChildrenVirtual(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
 
     private:
         explicit JSFunction(VPtrStealingHackType);

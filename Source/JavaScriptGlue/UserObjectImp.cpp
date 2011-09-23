@@ -404,9 +404,15 @@ UString UserObjectImp::toString(ExecState *exec) const
     return result;
 }
 
-void UserObjectImp::visitChildren(SlotVisitor& visitor)
+void UserObjectImp::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    JSObject::visitChildren(visitor);
-    if (fJSUserObject)
-        fJSUserObject->Mark();
+    visitChildren(this, visitor);
+}
+
+void UserObjectImp::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    UserObjectImp* thisObject = static_cast<UserObjectImp*>(cell);
+    JSObject::visitChildren(thisObject, visitor);
+    if (thisObject->fJSUserObject)
+        thisObject->fJSUserObject->Mark();
 }

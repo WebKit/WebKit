@@ -62,10 +62,16 @@ public:
     
     static const ClassInfo s_info;
 
-    virtual void visitChildren(SlotVisitor& visitor)
+    virtual void visitChildrenVirtual(SlotVisitor& visitor)
     {
-        RuntimeObject::visitChildren(visitor);
-        QtInstance* instance = static_cast<QtInstance*>(getInternalInstance());
+        visitChildren(this, visitor);
+    }
+
+    static void visitChildren(JSCell* cell, SlotVisitor& visitor)
+    {
+        QtRuntimeObject* thisObject = static_cast<QtRuntimeObject*>(cell);
+        RuntimeObject::visitChildren(thisObject, visitor);
+        QtInstance* instance = static_cast<QtInstance*>(thisObject->getInternalInstance());
         if (instance)
             instance->visitAggregate(visitor);
     }

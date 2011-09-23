@@ -724,26 +724,32 @@ void Structure::getPropertyNames(JSGlobalData& globalData, PropertyNameArray& pr
     }
 }
 
-void Structure::visitChildren(SlotVisitor& visitor)
+void Structure::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    JSCell::visitChildren(visitor);
-    if (m_globalObject)
-        visitor.append(&m_globalObject);
-    if (m_prototype)
-        visitor.append(&m_prototype);
-    if (m_cachedPrototypeChain)
-        visitor.append(&m_cachedPrototypeChain);
-    if (m_previous)
-        visitor.append(&m_previous);
-    if (m_specificValueInPrevious)
-        visitor.append(&m_specificValueInPrevious);
-    if (m_enumerationCache)
-        visitor.append(&m_enumerationCache);
-    if (m_propertyTable) {
-        PropertyTable::iterator end = m_propertyTable->end();
-        for (PropertyTable::iterator ptr = m_propertyTable->begin(); ptr != end; ++ptr) {
+    visitChildren(this, visitor);
+}
+
+void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    Structure* thisObject = static_cast<Structure*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    JSCell::visitChildren(thisObject, visitor);
+    if (thisObject->m_globalObject)
+        visitor.append(&thisObject->m_globalObject);
+    if (thisObject->m_prototype)
+        visitor.append(&thisObject->m_prototype);
+    if (thisObject->m_cachedPrototypeChain)
+        visitor.append(&thisObject->m_cachedPrototypeChain);
+    if (thisObject->m_previous)
+        visitor.append(&thisObject->m_previous);
+    if (thisObject->m_specificValueInPrevious)
+        visitor.append(&thisObject->m_specificValueInPrevious);
+    if (thisObject->m_enumerationCache)
+        visitor.append(&thisObject->m_enumerationCache);
+    if (thisObject->m_propertyTable) {
+        PropertyTable::iterator end = thisObject->m_propertyTable->end();
+        for (PropertyTable::iterator ptr = thisObject->m_propertyTable->begin(); ptr != end; ++ptr) {
             if (ptr->specificValue)
                 visitor.append(&ptr->specificValue);
         }

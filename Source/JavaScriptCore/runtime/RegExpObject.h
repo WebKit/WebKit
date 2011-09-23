@@ -82,7 +82,8 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | Base::StructureFlags;
 
     private:
-        virtual void visitChildren(SlotVisitor&);
+        virtual void visitChildrenVirtual(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
 
         bool match(ExecState*);
 

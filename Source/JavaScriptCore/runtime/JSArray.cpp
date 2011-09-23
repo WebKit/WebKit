@@ -871,12 +871,18 @@ void JSArray::unshiftCount(ExecState* exec, int count)
         vector[i].clear();
 }
 
-void JSArray::visitChildren(SlotVisitor& visitor)
+void JSArray::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void JSArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSArray* thisObject = static_cast<JSArray*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    visitChildrenDirect(visitor);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    thisObject->visitChildrenDirect(visitor);
 }
 
 static int compareNumbersForQSort(const void* a, const void* b)

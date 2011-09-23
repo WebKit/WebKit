@@ -59,7 +59,7 @@ inline void SlotVisitor::visitChildren(JSCell* cell)
 
     ASSERT(Heap::isMarked(cell));
     if (cell->structure()->typeInfo().type() < CompoundType) {
-        cell->JSCell::visitChildren(*this);
+        JSCell::visitChildren(cell, *this);
         return;
     }
 
@@ -70,7 +70,7 @@ inline void SlotVisitor::visitChildren(JSCell* cell)
 #else
         ASSERT(!m_isCheckingForDefaultMarkViolation);
         m_isCheckingForDefaultMarkViolation = true;
-        cell->visitChildren(*this);
+        cell->visitChildrenVirtual(*this);
         ASSERT(m_isCheckingForDefaultMarkViolation);
         m_isCheckingForDefaultMarkViolation = false;
 #endif
@@ -80,7 +80,7 @@ inline void SlotVisitor::visitChildren(JSCell* cell)
         asArray(cell)->visitChildrenDirect(*this);
         return;
     }
-    cell->visitChildren(*this);
+    cell->visitChildrenVirtual(*this);
 }
 
 void SlotVisitor::drain()
@@ -115,7 +115,7 @@ void SlotVisitor::drain()
 #if ENABLE(SIMPLE_HEAP_PROFILING)
                 m_visitedTypeCounts.count(cell);
 #endif
-                cell->JSCell::visitChildren(*this);
+                JSCell::visitChildren(cell, *this);
                 if (current.m_values == end) {
                     m_markSets.removeLast();
                     continue;

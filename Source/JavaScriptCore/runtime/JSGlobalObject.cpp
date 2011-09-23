@@ -308,66 +308,72 @@ void JSGlobalObject::resetPrototype(JSGlobalData& globalData, JSValue prototype)
         oldLastInPrototypeChain->setPrototype(globalData, objectPrototype);
 }
 
-void JSGlobalObject::visitChildren(SlotVisitor& visitor)
+void JSGlobalObject::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{ 
+    JSGlobalObject* thisObject = static_cast<JSGlobalObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    JSVariableObject::visitChildren(visitor);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    JSVariableObject::visitChildren(thisObject, visitor);
 
-    visitIfNeeded(visitor, &m_globalScopeChain);
-    visitIfNeeded(visitor, &m_methodCallDummy);
+    visitIfNeeded(visitor, &thisObject->m_globalScopeChain);
+    visitIfNeeded(visitor, &thisObject->m_methodCallDummy);
 
-    visitIfNeeded(visitor, &m_regExpConstructor);
-    visitIfNeeded(visitor, &m_errorConstructor);
-    visitIfNeeded(visitor, &m_evalErrorConstructor);
-    visitIfNeeded(visitor, &m_rangeErrorConstructor);
-    visitIfNeeded(visitor, &m_referenceErrorConstructor);
-    visitIfNeeded(visitor, &m_syntaxErrorConstructor);
-    visitIfNeeded(visitor, &m_typeErrorConstructor);
-    visitIfNeeded(visitor, &m_URIErrorConstructor);
+    visitIfNeeded(visitor, &thisObject->m_regExpConstructor);
+    visitIfNeeded(visitor, &thisObject->m_errorConstructor);
+    visitIfNeeded(visitor, &thisObject->m_evalErrorConstructor);
+    visitIfNeeded(visitor, &thisObject->m_rangeErrorConstructor);
+    visitIfNeeded(visitor, &thisObject->m_referenceErrorConstructor);
+    visitIfNeeded(visitor, &thisObject->m_syntaxErrorConstructor);
+    visitIfNeeded(visitor, &thisObject->m_typeErrorConstructor);
+    visitIfNeeded(visitor, &thisObject->m_URIErrorConstructor);
 
-    visitIfNeeded(visitor, &m_evalFunction);
-    visitIfNeeded(visitor, &m_callFunction);
-    visitIfNeeded(visitor, &m_applyFunction);
+    visitIfNeeded(visitor, &thisObject->m_evalFunction);
+    visitIfNeeded(visitor, &thisObject->m_callFunction);
+    visitIfNeeded(visitor, &thisObject->m_applyFunction);
 
-    visitIfNeeded(visitor, &m_objectPrototype);
-    visitIfNeeded(visitor, &m_functionPrototype);
-    visitIfNeeded(visitor, &m_arrayPrototype);
-    visitIfNeeded(visitor, &m_booleanPrototype);
-    visitIfNeeded(visitor, &m_stringPrototype);
-    visitIfNeeded(visitor, &m_numberPrototype);
-    visitIfNeeded(visitor, &m_datePrototype);
-    visitIfNeeded(visitor, &m_regExpPrototype);
+    visitIfNeeded(visitor, &thisObject->m_objectPrototype);
+    visitIfNeeded(visitor, &thisObject->m_functionPrototype);
+    visitIfNeeded(visitor, &thisObject->m_arrayPrototype);
+    visitIfNeeded(visitor, &thisObject->m_booleanPrototype);
+    visitIfNeeded(visitor, &thisObject->m_stringPrototype);
+    visitIfNeeded(visitor, &thisObject->m_numberPrototype);
+    visitIfNeeded(visitor, &thisObject->m_datePrototype);
+    visitIfNeeded(visitor, &thisObject->m_regExpPrototype);
 
-    visitIfNeeded(visitor, &m_argumentsStructure);
-    visitIfNeeded(visitor, &m_arrayStructure);
-    visitIfNeeded(visitor, &m_booleanObjectStructure);
-    visitIfNeeded(visitor, &m_callbackConstructorStructure);
-    visitIfNeeded(visitor, &m_callbackFunctionStructure);
-    visitIfNeeded(visitor, &m_callbackObjectStructure);
-    visitIfNeeded(visitor, &m_dateStructure);
-    visitIfNeeded(visitor, &m_emptyObjectStructure);
-    visitIfNeeded(visitor, &m_nullPrototypeObjectStructure);
-    visitIfNeeded(visitor, &m_errorStructure);
-    visitIfNeeded(visitor, &m_functionStructure);
-    visitIfNeeded(visitor, &m_boundFunctionStructure);
-    visitIfNeeded(visitor, &m_namedFunctionStructure);
-    visitIfNeeded(visitor, &m_numberObjectStructure);
-    visitIfNeeded(visitor, &m_regExpMatchesArrayStructure);
-    visitIfNeeded(visitor, &m_regExpStructure);
-    visitIfNeeded(visitor, &m_stringObjectStructure);
-    visitIfNeeded(visitor, &m_internalFunctionStructure);
+    visitIfNeeded(visitor, &thisObject->m_argumentsStructure);
+    visitIfNeeded(visitor, &thisObject->m_arrayStructure);
+    visitIfNeeded(visitor, &thisObject->m_booleanObjectStructure);
+    visitIfNeeded(visitor, &thisObject->m_callbackConstructorStructure);
+    visitIfNeeded(visitor, &thisObject->m_callbackFunctionStructure);
+    visitIfNeeded(visitor, &thisObject->m_callbackObjectStructure);
+    visitIfNeeded(visitor, &thisObject->m_dateStructure);
+    visitIfNeeded(visitor, &thisObject->m_emptyObjectStructure);
+    visitIfNeeded(visitor, &thisObject->m_nullPrototypeObjectStructure);
+    visitIfNeeded(visitor, &thisObject->m_errorStructure);
+    visitIfNeeded(visitor, &thisObject->m_functionStructure);
+    visitIfNeeded(visitor, &thisObject->m_boundFunctionStructure);
+    visitIfNeeded(visitor, &thisObject->m_namedFunctionStructure);
+    visitIfNeeded(visitor, &thisObject->m_numberObjectStructure);
+    visitIfNeeded(visitor, &thisObject->m_regExpMatchesArrayStructure);
+    visitIfNeeded(visitor, &thisObject->m_regExpStructure);
+    visitIfNeeded(visitor, &thisObject->m_stringObjectStructure);
+    visitIfNeeded(visitor, &thisObject->m_internalFunctionStructure);
 
-    if (m_registerArray) {
+    if (thisObject->m_registerArray) {
         // Outside the execution of global code, when our variables are torn off,
         // we can mark the torn-off array.
-        visitor.appendValues(m_registerArray.get(), m_registerArraySize);
-    } else if (m_registers) {
+        visitor.appendValues(thisObject->m_registerArray.get(), thisObject->m_registerArraySize);
+    } else if (thisObject->m_registers) {
         // During execution of global code, when our variables are in the register file,
         // the symbol table tells us how many variables there are, and registers
         // points to where they end, and the registers used for execution begin.
-        visitor.appendValues(m_registers - symbolTable().size(), symbolTable().size());
+        visitor.appendValues(thisObject->m_registers - thisObject->symbolTable().size(), thisObject->symbolTable().size());
     }
 }
 

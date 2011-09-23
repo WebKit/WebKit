@@ -192,13 +192,19 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
     return jsNull();
 }
 
-void JSWebGLRenderingContext::visitChildren(SlotVisitor& visitor)
+void JSWebGLRenderingContext::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void JSWebGLRenderingContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSWebGLRenderingContext* thisObject = static_cast<JSWebGLRenderingContext*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
-    visitor.addOpaqueRoot(impl());
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+    visitor.addOpaqueRoot(thisObject->impl());
 }
 
 JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)

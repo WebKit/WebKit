@@ -1,3 +1,109 @@
+2011-09-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add static version of JSCell::visitChildren
+        https://bugs.webkit.org/show_bug.cgi?id=68404
+
+        Reviewed by Darin Adler.
+
+        No new tests.
+
+        In this patch we just extract the bodies of the virtual visitChildren methods
+        throughout the JSCell inheritance hierarchy out into static methods, which are 
+        now called from the virtual methods.  This is an intermediate step in trying to 
+        move the virtual-ness of visitChildren into our own custom vtable stored in 
+        ClassInfo.  We need to convert the methods to static methods in order to be 
+        able to more easily store and refer to them in our custom vtable since normal 
+        member methods store some implicit information in their types, making it 
+        impossible to store them generically in ClassInfo.
+
+        * WebCore.exp.in:
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::visitChildrenVirtual):
+        (WebCore::JSAttr::visitChildren):
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContext::visitChildrenVirtual):
+        (WebCore::JSAudioContext::visitChildren):
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::JSCSSRule::visitChildrenVirtual):
+        (WebCore::JSCSSRule::visitChildren):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::visitChildrenVirtual):
+        (WebCore::JSCSSStyleDeclaration::visitChildren):
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        (WebCore::JSCanvasRenderingContext::visitChildrenVirtual):
+        (WebCore::JSCanvasRenderingContext::visitChildren):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::visitChildrenVirtual):
+        (WebCore::JSDOMGlobalObject::visitChildren):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::visitChildrenVirtual):
+        (WebCore::JSDOMWindow::visitChildren):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::visitChildrenVirtual):
+        (WebCore::JSDOMWindowShell::visitChildren):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSJavaScriptAudioNodeCustom.cpp:
+        (WebCore::JSJavaScriptAudioNode::visitChildrenVirtual):
+        (WebCore::JSJavaScriptAudioNode::visitChildren):
+        * bindings/js/JSMessageChannelCustom.cpp:
+        (WebCore::JSMessageChannel::visitChildrenVirtual):
+        (WebCore::JSMessageChannel::visitChildren):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::visitChildrenVirtual):
+        (WebCore::JSMessagePort::visitChildren):
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        (WebCore::JSNamedNodeMap::visitChildrenVirtual):
+        (WebCore::JSNamedNodeMap::visitChildren):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::visitChildrenVirtual):
+        (WebCore::JSNode::visitChildren):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::visitChildrenVirtual):
+        (WebCore::JSNodeFilter::visitChildren):
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        (WebCore::JSNodeIterator::visitChildrenVirtual):
+        (WebCore::JSNodeIterator::visitChildren):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::visitChildrenVirtual):
+        (WebCore::JSSVGElementInstance::visitChildren):
+        * bindings/js/JSSharedWorkerCustom.cpp:
+        (WebCore::JSSharedWorker::visitChildrenVirtual):
+        (WebCore::JSSharedWorker::visitChildren):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::JSStyleSheet::visitChildrenVirtual):
+        (WebCore::JSStyleSheet::visitChildren):
+        * bindings/js/JSTreeWalkerCustom.cpp:
+        (WebCore::JSTreeWalker::visitChildrenVirtual):
+        (WebCore::JSTreeWalker::visitChildren):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::visitChildrenVirtual):
+        (WebCore::JSWebGLRenderingContext::visitChildren):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::visitChildrenVirtual):
+        (WebCore::JSWorkerContext::visitChildren):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::visitChildrenVirtual):
+        (WebCore::JSXMLHttpRequest::visitChildren):
+        * bindings/js/JSXPathResultCustom.cpp:
+        (WebCore::JSXPathResult::visitChildrenVirtual):
+        (WebCore::JSXPathResult::visitChildren):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::visitChildrenVirtual):
+        (WebCore::JSTestObj::visitChildren):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtRuntimeObject::visitChildrenVirtual):
+        (JSC::Bindings::QtRuntimeObject::visitChildren):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMetaMethod::visitChildrenVirtual):
+        (JSC::Bindings::QtRuntimeMetaMethod::visitChildren):
+        * bridge/qt/qt_runtime.h:
+        * workers/WorkerContext.h:
+
 2011-09-23  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Remove extra space at the beginning of the last line.

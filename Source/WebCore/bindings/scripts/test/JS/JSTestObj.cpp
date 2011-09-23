@@ -1870,16 +1870,22 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithOptional(E
     return JSValue::encode(result);
 }
 
-void JSTestObj::visitChildren(SlotVisitor& visitor)
+void JSTestObj::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void JSTestObj::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSTestObj* thisObject = static_cast<JSTestObj*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
-    if (m_cachedAttribute1)
-        visitor.append(&m_cachedAttribute1);
-    if (m_cachedAttribute2)
-        visitor.append(&m_cachedAttribute2);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+    if (thisObject->m_cachedAttribute1)
+        visitor.append(&thisObject->m_cachedAttribute1);
+    if (thisObject->m_cachedAttribute2)
+        visitor.append(&thisObject->m_cachedAttribute2);
 }
 
 // Constant getters

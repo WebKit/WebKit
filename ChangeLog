@@ -1,3 +1,21 @@
+2011-09-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add static version of JSCell::visitChildren
+        https://bugs.webkit.org/show_bug.cgi?id=68404
+
+        Reviewed by Darin Adler.
+
+        In this patch we just extract the bodies of the virtual visitChildren methods
+        throughout the JSCell inheritance hierarchy out into static methods, which are 
+        now called from the virtual methods.  This is an intermediate step in trying to 
+        move the virtual-ness of visitChildren into our own custom vtable stored in 
+        ClassInfo.  We need to convert the methods to static methods in order to be 
+        able to more easily store and refer to them in our custom vtable since normal 
+        member methods store some implicit information in their types, making it 
+        impossible to store them generically in ClassInfo.
+
+        * Source/autotools/symbols.filter:
+
 2011-09-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in RenderBox::paintMaskImages when GraphicsContext's painting is disabled

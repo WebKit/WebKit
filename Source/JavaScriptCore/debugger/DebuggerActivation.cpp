@@ -43,15 +43,21 @@ void DebuggerActivation::finishCreation(JSGlobalData& globalData, JSObject* acti
     m_activation.set(globalData, this, static_cast<JSActivation*>(activation));
 }
 
-void DebuggerActivation::visitChildren(SlotVisitor& visitor)
+void DebuggerActivation::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    JSObject::visitChildren(visitor);
+    visitChildren(this, visitor);
+}
 
-    if (m_activation)
-        visitor.append(&m_activation);
+void DebuggerActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    DebuggerActivation* thisObject = static_cast<DebuggerActivation*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    JSObject::visitChildren(thisObject, visitor);
+
+    if (thisObject->m_activation)
+        visitor.append(&thisObject->m_activation);
 }
 
 UString DebuggerActivation::className() const

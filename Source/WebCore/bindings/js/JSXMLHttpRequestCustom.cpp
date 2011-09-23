@@ -54,28 +54,34 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSXMLHttpRequest::visitChildren(SlotVisitor& visitor)
+void JSXMLHttpRequest::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
+    visitChildren(this, visitor);
+}
 
-    if (XMLHttpRequestUpload* upload = m_impl->optionalUpload())
+void JSXMLHttpRequest::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSXMLHttpRequest* thisObject = static_cast<JSXMLHttpRequest*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+
+    if (XMLHttpRequestUpload* upload = thisObject->m_impl->optionalUpload())
         visitor.addOpaqueRoot(upload);
 
-    if (Document* responseDocument = m_impl->optionalResponseXML())
+    if (Document* responseDocument = thisObject->m_impl->optionalResponseXML())
         visitor.addOpaqueRoot(responseDocument);
 
-    if (ArrayBuffer* responseArrayBuffer = m_impl->optionalResponseArrayBuffer())
+    if (ArrayBuffer* responseArrayBuffer = thisObject->m_impl->optionalResponseArrayBuffer())
         visitor.addOpaqueRoot(responseArrayBuffer);
 
 #if ENABLE(XHR_RESPONSE_BLOB)
-    if (Blob* responseBlob = m_impl->optionalResponseBlob())
+    if (Blob* responseBlob = thisObject->m_impl->optionalResponseBlob())
         visitor.addOpaqueRoot(responseBlob);
 #endif
 
-    m_impl->visitJSEventListeners(visitor);
+    thisObject->m_impl->visitJSEventListeners(visitor);
 }
 
 // Custom functions

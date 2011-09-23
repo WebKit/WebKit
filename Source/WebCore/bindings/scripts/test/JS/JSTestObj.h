@@ -53,7 +53,8 @@ public:
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
     JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute1;
     JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute2;
-    virtual void visitChildren(JSC::SlotVisitor&);
+    virtual void visitChildrenVirtual(JSC::SlotVisitor&);
+    static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
 
     // Custom attributes

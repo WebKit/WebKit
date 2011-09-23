@@ -53,19 +53,25 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSWorkerContext::visitChildren(SlotVisitor& visitor)
+void JSWorkerContext::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
+    visitChildren(this, visitor);
+}
 
-    if (WorkerLocation* location = impl()->optionalLocation())
+void JSWorkerContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSWorkerContext* thisObject = static_cast<JSWorkerContext*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+
+    if (WorkerLocation* location = thisObject->impl()->optionalLocation())
         visitor.addOpaqueRoot(location);
-    if (WorkerNavigator* navigator = impl()->optionalNavigator())
+    if (WorkerNavigator* navigator = thisObject->impl()->optionalNavigator())
         visitor.addOpaqueRoot(navigator);
 
-    impl()->visitJSEventListeners(visitor);
+    thisObject->impl()->visitJSEventListeners(visitor);
 }
 
 bool JSWorkerContext::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

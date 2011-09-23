@@ -55,23 +55,29 @@ void JSDOMGlobalObject::finishCreation(JSGlobalData& globalData, JSObject* thisV
     ASSERT(inherits(&s_info));
 }
 
-void JSDOMGlobalObject::visitChildren(SlotVisitor& visitor)
+void JSDOMGlobalObject::visitChildrenVirtual(JSC::SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
+    visitChildren(this, visitor);
+}
 
-    JSDOMStructureMap::iterator end = structures().end();
-    for (JSDOMStructureMap::iterator it = structures().begin(); it != end; ++it)
+void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSDOMGlobalObject* thisObject = static_cast<JSDOMGlobalObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+
+    JSDOMStructureMap::iterator end = thisObject->structures().end();
+    for (JSDOMStructureMap::iterator it = thisObject->structures().begin(); it != end; ++it)
         visitor.append(&it->second);
 
-    JSDOMConstructorMap::iterator end2 = constructors().end();
-    for (JSDOMConstructorMap::iterator it2 = constructors().begin(); it2 != end2; ++it2)
+    JSDOMConstructorMap::iterator end2 = thisObject->constructors().end();
+    for (JSDOMConstructorMap::iterator it2 = thisObject->constructors().begin(); it2 != end2; ++it2)
         visitor.append(&it2->second);
 
-    if (m_injectedScript)
-        visitor.append(&m_injectedScript);
+    if (thisObject->m_injectedScript)
+        visitor.append(&thisObject->m_injectedScript);
 }
 
 void JSDOMGlobalObject::setCurrentEvent(Event* currentEvent)

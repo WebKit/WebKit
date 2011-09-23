@@ -43,25 +43,31 @@ Arguments::~Arguments()
         delete [] d->extraArguments;
 }
 
-void Arguments::visitChildren(SlotVisitor& visitor)
+void Arguments::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    Arguments* thisObject = static_cast<Arguments*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    JSObject::visitChildren(visitor);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    JSObject::visitChildren(thisObject, visitor);
 
-    if (d->registerArray)
-        visitor.appendValues(d->registerArray.get(), d->numParameters);
+    if (thisObject->d->registerArray)
+        visitor.appendValues(thisObject->d->registerArray.get(), thisObject->d->numParameters);
 
-    if (d->extraArguments) {
-        unsigned numExtraArguments = d->numArguments - d->numParameters;
-        visitor.appendValues(d->extraArguments, numExtraArguments);
+    if (thisObject->d->extraArguments) {
+        unsigned numExtraArguments = thisObject->d->numArguments - thisObject->d->numParameters;
+        visitor.appendValues(thisObject->d->extraArguments, numExtraArguments);
     }
 
-    visitor.append(&d->callee);
+    visitor.append(&thisObject->d->callee);
 
-    if (d->activation)
-        visitor.append(&d->activation);
+    if (thisObject->d->activation)
+        visitor.append(&thisObject->d->activation);
 }
 
 void Arguments::copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxSize)

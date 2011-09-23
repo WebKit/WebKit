@@ -175,7 +175,8 @@ namespace JSC {
     public:
         virtual ~JSGlobalObject();
 
-        virtual void visitChildren(SlotVisitor&);
+        virtual void visitChildrenVirtual(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);

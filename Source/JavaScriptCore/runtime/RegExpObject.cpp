@@ -78,16 +78,22 @@ RegExpObject::~RegExpObject()
 {
 }
 
-void RegExpObject::visitChildren(SlotVisitor& visitor)
+void RegExpObject::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    RegExpObject* thisObject = static_cast<RegExpObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
-    if (d->regExp)
-        visitor.append(&d->regExp);
-    if (UNLIKELY(!d->lastIndex.get().isInt32()))
-        visitor.append(&d->lastIndex);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+    if (thisObject->d->regExp)
+        visitor.append(&thisObject->d->regExp);
+    if (UNLIKELY(!thisObject->d->lastIndex.get().isInt32()))
+        visitor.append(&thisObject->d->lastIndex);
 }
 
 bool RegExpObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

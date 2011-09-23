@@ -28,15 +28,21 @@
 using namespace JSC;
 
 namespace WebCore {
-    
-void JSTreeWalker::visitChildren(SlotVisitor& visitor)
-{
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
 
-    if (NodeFilter* filter = m_impl->filter())
+void JSTreeWalker::visitChildrenVirtual(SlotVisitor& visitor)
+{
+    visitChildren(this, visitor);
+}
+
+void JSTreeWalker::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSTreeWalker* thisObject = static_cast<JSTreeWalker*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+
+    if (NodeFilter* filter = thisObject->m_impl->filter())
         visitor.addOpaqueRoot(filter);
 }
 

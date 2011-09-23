@@ -1,3 +1,108 @@
+2011-09-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add static version of JSCell::visitChildren
+        https://bugs.webkit.org/show_bug.cgi?id=68404
+
+        Reviewed by Darin Adler.
+
+        In this patch we just extract the bodies of the virtual visitChildren methods
+        throughout the JSCell inheritance hierarchy out into static methods, which are 
+        now called from the virtual methods.  This is an intermediate step in trying to 
+        move the virtual-ness of visitChildren into our own custom vtable stored in 
+        ClassInfo.  We need to convert the methods to static methods in order to be 
+        able to more easily store and refer to them in our custom vtable since normal 
+        member methods store some implicit information in their types, making it 
+        impossible to store them generically in ClassInfo.
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::visitChildrenVirtual):
+        (JSC::JSCallbackObject::visitChildren):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::visitChildrenVirtual):
+        (JSC::DebuggerActivation::visitChildren):
+        * debugger/DebuggerActivation.h:
+        * heap/MarkStack.cpp:
+        (JSC::SlotVisitor::visitChildren):
+        (JSC::SlotVisitor::drain):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::visitChildrenVirtual):
+        (JSC::Arguments::visitChildren):
+        * runtime/Arguments.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::visitChildrenVirtual):
+        (JSC::EvalExecutable::visitChildren):
+        (JSC::ProgramExecutable::visitChildrenVirtual):
+        (JSC::ProgramExecutable::visitChildren):
+        (JSC::FunctionExecutable::visitChildrenVirtual):
+        (JSC::FunctionExecutable::visitChildren):
+        * runtime/Executable.h:
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::visitChildrenVirtual):
+        (JSC::GetterSetter::visitChildren):
+        * runtime/GetterSetter.h:
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::visitChildrenVirtual):
+        (JSC::JSActivation::visitChildren):
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::visitChildrenVirtual):
+        (JSC::JSArray::visitChildren):
+        * runtime/JSArray.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::visitChildrenVirtual):
+        (JSC::JSBoundFunction::visitChildren):
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCell.h:
+        (JSC::JSCell::visitChildrenVirtual):
+        (JSC::JSCell::visitChildren):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::visitChildrenVirtual):
+        (JSC::JSFunction::visitChildren):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::visitChildrenVirtual):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildrenVirtual):
+        (JSC::JSObject::visitChildren):
+        * runtime/JSObject.h:
+        (JSC::JSObject::visitChildrenDirect):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::visitChildrenVirtual):
+        (JSC::JSPropertyNameIterator::visitChildren):
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::visitChildrenVirtual):
+        (JSC::JSStaticScopeObject::visitChildren):
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSWrapperObject.cpp:
+        (JSC::JSWrapperObject::visitChildrenVirtual):
+        (JSC::JSWrapperObject::visitChildren):
+        * runtime/JSWrapperObject.h:
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::visitChildrenVirtual):
+        (JSC::NativeErrorConstructor::visitChildren):
+        * runtime/NativeErrorConstructor.h:
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::visitChildrenVirtual):
+        (JSC::RegExpObject::visitChildren):
+        * runtime/RegExpObject.h:
+        * runtime/ScopeChain.cpp:
+        (JSC::ScopeChainNode::visitChildrenVirtual):
+        (JSC::ScopeChainNode::visitChildren):
+        * runtime/ScopeChain.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::visitChildrenVirtual):
+        (JSC::Structure::visitChildren):
+        * runtime/Structure.h:
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::visitChildrenVirtual):
+        (JSC::StructureChain::visitChildren):
+        * runtime/StructureChain.h:
+
 2011-09-23  Oliver Hunt  <oliver@apple.com>
 
         Node propagation doesn't handle PutScopedVar

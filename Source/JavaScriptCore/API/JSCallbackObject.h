@@ -196,13 +196,19 @@ private:
     virtual ConstructType getConstructData(ConstructData&);
     virtual CallType getCallData(CallData&);
 
-    virtual void visitChildren(SlotVisitor& visitor)
+    virtual void visitChildrenVirtual(SlotVisitor& visitor)
     {
-        ASSERT_GC_OBJECT_INHERITS((static_cast<Parent*>(this)), &JSCallbackObject<Parent>::s_info);
+        visitChildren(this, visitor);
+    }
+
+    static void visitChildren(JSCell* cell, SlotVisitor& visitor)
+    {
+        JSCallbackObject* thisObject = static_cast<JSCallbackObject*>(cell);
+        ASSERT_GC_OBJECT_INHERITS((static_cast<Parent*>(thisObject)), &JSCallbackObject<Parent>::s_info);
         COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-        ASSERT(Parent::structure()->typeInfo().overridesVisitChildren());
-        Parent::visitChildren(visitor);
-        m_callbackObjectData->visitChildren(visitor);
+        ASSERT(thisObject->Parent::structure()->typeInfo().overridesVisitChildren());
+        Parent::visitChildren(thisObject, visitor);
+        thisObject->m_callbackObjectData->visitChildren(visitor);
     }
 
     void init(ExecState*);

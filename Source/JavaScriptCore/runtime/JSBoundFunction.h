@@ -57,7 +57,8 @@ public:
 protected:
     const static unsigned StructureFlags = OverridesHasInstance | Base::StructureFlags;
 
-    virtual void visitChildren(SlotVisitor&);
+    virtual void visitChildrenVirtual(SlotVisitor&);
+    static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
     JSBoundFunction(ExecState*, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs);

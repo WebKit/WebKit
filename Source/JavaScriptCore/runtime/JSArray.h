@@ -172,7 +172,8 @@ namespace JSC {
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
         virtual bool deleteProperty(ExecState*, unsigned propertyName);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
-        virtual void visitChildren(SlotVisitor&);
+        virtual void visitChildrenVirtual(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
 
         void* subclassData() const;
         void setSubclassData(void*);

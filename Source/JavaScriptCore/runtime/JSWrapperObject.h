@@ -45,7 +45,8 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesVisitChildren | JSNonFinalObject::StructureFlags;
 
     private:
-        virtual void visitChildren(SlotVisitor&);
+        virtual void visitChildrenVirtual(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
         
         WriteBarrier<Unknown> m_internalValue;
     };

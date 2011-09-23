@@ -41,7 +41,8 @@ namespace JSC {
             return activation;
         }
 
-        virtual void visitChildren(SlotVisitor&);
+        virtual void visitChildrenVirtual(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
         virtual UString className() const;
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);

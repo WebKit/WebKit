@@ -90,7 +90,8 @@ namespace JSC {
 
         static const ClassInfo s_info;
 
-        virtual void visitChildren(SlotVisitor&);
+        virtual void visitChildrenVirtual(SlotVisitor&);
+        static void visitChildren(JSCell*, SlotVisitor&);
 
         void fillArgList(ExecState*, MarkedArgumentBuffer&);
 

@@ -29,14 +29,20 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSNodeIterator::visitChildren(SlotVisitor& visitor)
+void JSNodeIterator::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
+    visitChildren(this, visitor);
+}
 
-    if (NodeFilter* filter = m_impl->filter())
+void JSNodeIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSNodeIterator* thisObject = static_cast<JSNodeIterator*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+
+    if (NodeFilter* filter = thisObject->m_impl->filter())
         visitor.addOpaqueRoot(filter);
 }
 

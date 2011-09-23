@@ -37,14 +37,20 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSXPathResult::visitChildren(SlotVisitor& visitor)
+void JSXPathResult::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
+    visitChildren(this, visitor);
+}
 
-    const XPath::Value& xpathValue = impl()->value();
+void JSXPathResult::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSXPathResult* thisObject = static_cast<JSXPathResult*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+
+    const XPath::Value& xpathValue = thisObject->impl()->value();
     if (xpathValue.isNodeSet()) {
         const XPath::NodeSet& nodesToMark = xpathValue.toNodeSet();
         for (size_t i = 0; i < nodesToMark.size(); ++i) {

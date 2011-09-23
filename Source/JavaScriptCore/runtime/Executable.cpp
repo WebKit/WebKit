@@ -234,14 +234,20 @@ void EvalExecutable::jettisonOptimizedCode(JSGlobalData& globalData)
 }
 #endif
 
-void EvalExecutable::visitChildren(SlotVisitor& visitor)
+void EvalExecutable::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void EvalExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    EvalExecutable* thisObject = static_cast<EvalExecutable*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    ScriptExecutable::visitChildren(visitor);
-    if (m_evalCodeBlock)
-        m_evalCodeBlock->visitAggregate(visitor);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    ScriptExecutable::visitChildren(thisObject, visitor);
+    if (thisObject->m_evalCodeBlock)
+        thisObject->m_evalCodeBlock->visitAggregate(visitor);
 }
 
 void EvalExecutable::unlinkCalls()
@@ -372,14 +378,20 @@ void ProgramExecutable::unlinkCalls()
 #endif
 }
 
-void ProgramExecutable::visitChildren(SlotVisitor& visitor)
+void ProgramExecutable::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void ProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    ProgramExecutable* thisObject = static_cast<ProgramExecutable*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    ScriptExecutable::visitChildren(visitor);
-    if (m_programCodeBlock)
-        m_programCodeBlock->visitAggregate(visitor);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    ScriptExecutable::visitChildren(thisObject, visitor);
+    if (thisObject->m_programCodeBlock)
+        thisObject->m_programCodeBlock->visitAggregate(visitor);
 }
 
 void ProgramExecutable::clearCode()
@@ -584,18 +596,24 @@ void FunctionExecutable::jettisonOptimizedCodeForConstruct(JSGlobalData& globalD
 }
 #endif
 
-void FunctionExecutable::visitChildren(SlotVisitor& visitor)
+void FunctionExecutable::visitChildrenVirtual(SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    FunctionExecutable* thisObject = static_cast<FunctionExecutable*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    ScriptExecutable::visitChildren(visitor);
-    if (m_nameValue)
-        visitor.append(&m_nameValue);
-    if (m_codeBlockForCall)
-        m_codeBlockForCall->visitAggregate(visitor);
-    if (m_codeBlockForConstruct)
-        m_codeBlockForConstruct->visitAggregate(visitor);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    ScriptExecutable::visitChildren(thisObject, visitor);
+    if (thisObject->m_nameValue)
+        visitor.append(&thisObject->m_nameValue);
+    if (thisObject->m_codeBlockForCall)
+        thisObject->m_codeBlockForCall->visitAggregate(visitor);
+    if (thisObject->m_codeBlockForConstruct)
+        thisObject->m_codeBlockForConstruct->visitAggregate(visitor);
 }
 
 void FunctionExecutable::discardCode()

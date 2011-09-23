@@ -35,13 +35,19 @@
 
 namespace WebCore {
 
-void JSSVGElementInstance::visitChildren(JSC::SlotVisitor& visitor)
+void JSSVGElementInstance::visitChildrenVirtual(JSC::SlotVisitor& visitor)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+    visitChildren(this, visitor);
+}
+
+void JSSVGElementInstance::visitChildren(JSC::JSCell* cell, JSC::SlotVisitor& visitor)
+{
+    JSSVGElementInstance* thisObject = static_cast<JSSVGElementInstance*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & JSC::OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(visitor);
-    visitor.addOpaqueRoot(root(impl()->correspondingElement()));
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+    visitor.addOpaqueRoot(root(thisObject->impl()->correspondingElement()));
 }
 
 } // namespace WebCore
