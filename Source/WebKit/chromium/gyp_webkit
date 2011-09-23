@@ -104,6 +104,10 @@ if __name__ == '__main__':
                '-Dv8_use_snapshot=false',
                '-Dmsvs_use_common_release=0',
 
+               # Temporarily disable clang plugins. http://crbug.com/97043
+               '-Dclang=0',
+               '-Dclang_use_chrome_plugins=0',
+
                # gyp hack: otherwise gyp assumes its in chromium's src/ dir.
                '--depth=./',
 

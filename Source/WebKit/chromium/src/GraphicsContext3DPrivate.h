@@ -104,7 +104,7 @@ public:
     void prepareTexture();
 
 #if USE(ACCELERATED_COMPOSITING)
-    WebGLLayerChromium* platformLayer() const;
+    WebGLLayerChromium* platformLayer();
 #endif
     bool isGLES2Compliant() const;
 

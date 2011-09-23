@@ -74,7 +74,7 @@ namespace WebCore {
 #if ENABLE(SVG)
         , SVGExceptionType
 #endif
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         , SQLExceptionType
 #endif
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)

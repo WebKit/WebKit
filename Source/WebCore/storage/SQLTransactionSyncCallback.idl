@@ -31,7 +31,7 @@
 module storage {
     interface [
         LegacyDefaultOptionalArguments,
-        Conditional=DATABASE,
+        Conditional=SQL_DATABASE,
         Callback
     ] SQLTransactionSyncCallback {
         boolean handleEvent(in SQLTransactionSync transaction);

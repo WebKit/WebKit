@@ -26,9 +26,11 @@
 #include "config.h"
 #include "DFGPropagator.h"
 
-#if ENABLE(DFG_JIT) && ENABLE(DYNAMIC_OPTIMIZATION)
+#if ENABLE(DFG_JIT)
 
 #include "DFGGraph.h"
+#include "DFGScoreBoard.h"
+#include <wtf/FixedArray.h>
 
 namespace JSC { namespace DFG {
 
@@ -58,10 +60,17 @@ public:
         m_uses.resize(m_graph.size());
         m_variableUses.initializeSimilarTo(m_graph.predictions());
         
+        // Replacements are used to implement local common subexpression elimination.
+        m_replacements.resize(m_graph.size());
+        
         for (unsigned i = 0; i < m_graph.size(); ++i) {
             m_predictions[i] = PredictNone;
             m_uses[i] = PredictNone;
+            m_replacements[i] = NoNode;
         }
+        
+        for (unsigned i = 0; i < LastNodeId; ++i)
+            m_lastSeen[i] = NoNode;
     }
     
     void fixpoint()
@@ -87,6 +96,25 @@ public:
         } while (m_changed);
         
         fixup();
+        
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("Graph after propagation fixup:\n");
+        m_graph.dump(m_codeBlock);
+#endif
+
+        localCSE();
+
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("Graph after CSE:\n");
+        m_graph.dump(m_codeBlock);
+#endif
+
+        allocateVirtualRegisters();
+
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("Graph after virtual register allocation:\n");
+        m_graph.dump(m_codeBlock);
+#endif
     }
     
 private:
@@ -130,7 +158,7 @@ private:
         
         switch (op) {
         case JSConstant: {
-            changed |= setPrediction(makePrediction(predictionFromValue(node.valueOfJSConstant(m_codeBlock)), StrongPrediction));
+            changed |= setPrediction(makePrediction(predictionFromValue(m_graph.valueOfJSConstant(m_codeBlock, m_compileIndex)), StrongPrediction));
             break;
         }
             
@@ -197,7 +225,11 @@ private:
             
         case ArithAdd:
         case ArithSub:
-        case ArithMul: {
+        case ArithMulIgnoreZero:
+        case ArithMulPossiblyNegZero:
+        case ArithMulSpecNotNegZero:
+        case ArithMin:
+        case ArithMax: {
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
             
@@ -210,8 +242,40 @@ private:
             break;
         }
             
-        case ArithDiv: {
+        case ArithDiv:
+        case ArithSqrt: {
             changed |= setPrediction(makePrediction(PredictDouble, StrongPrediction));
+            break;
+        }
+            
+        case ArithAbs: {
+            PredictedType child = m_predictions[node.child1()];
+            if (isStrongPrediction(child))
+                changed |= mergePrediction(child);
+            break;
+        }
+            
+        case ArithAddSafe:
+        case ArithSubSafe:
+        case ArithMulSafe:
+        case UInt32ToNumberSafe: {
+            changed |= setPrediction(makePrediction(PredictDouble, StrongPrediction));
+            break;
+        }
+
+        case ValueAddSafe: {
+            PredictedType left = m_predictions[node.child1()];
+            PredictedType right = m_predictions[node.child2()];
+            
+            if (isStrongPrediction(left) && isStrongPrediction(right)) {
+                if (isNumberPrediction(left) && isNumberPrediction(right))
+                    changed |= mergePrediction(makePrediction(PredictDouble, StrongPrediction));
+                else if (!(left & PredictNumber) || !(right & PredictNumber)) {
+                    // left or right is definitely something other than a number.
+                    changed |= mergePrediction(makePrediction(PredictString, StrongPrediction));
+                } else
+                    changed |= mergePrediction(makePrediction(PredictString | PredictInt32 | PredictDouble, StrongPrediction));
+            }
             break;
         }
             
@@ -234,6 +298,12 @@ private:
             changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
             if (isStrongPrediction(node.getPrediction()))
                 changed |= setPrediction(node.getPrediction());
+            break;
+        }
+            
+        case CheckMethod: {
+            changed |= mergeUse(node.child1(), PredictObjectUnknown | StrongPredictionTag);
+            changed |= setPrediction(m_graph.getMethodCheckPrediction(node));
             break;
         }
 
@@ -286,6 +356,10 @@ private:
         case Resolve:
         case ResolveBase:
         case ResolveBaseStrictPut:
+            break;
+            
+        // This gets ignored because it doesn't do anything.
+        case Phantom:
             break;
             
         default:
@@ -360,7 +434,11 @@ private:
             
         case ArithAdd:
         case ArithSub:
-        case ArithMul: {
+        case ArithMulIgnoreZero:
+        case ArithMulPossiblyNegZero:
+        case ArithMulSpecNotNegZero:
+        case ArithMin:
+        case ArithMax: {
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
             
@@ -379,6 +457,37 @@ private:
             break;
         }
             
+        case ArithAbs: {
+            PredictedType prediction = m_predictions[node.child1()];
+            if (isStrongPrediction(prediction) && (prediction & PredictDouble))
+                toDouble(node.child1());
+            break;
+        }
+            
+        case ArithSqrt: {
+            toDouble(node.child1());
+            break;
+        }
+            
+        case ArithAddSafe:
+        case ArithSubSafe:
+        case ArithMulSafe: {
+            toDouble(node.child1());
+            toDouble(node.child2());
+            break;
+        }
+            
+        case ValueAddSafe: {
+            PredictedType left = m_predictions[node.child1()];
+            PredictedType right = m_predictions[node.child2()];
+            
+            if (isStrongPrediction(left) && isStrongPrediction(right) && isNumberPrediction(left) && isNumberPrediction(right)) {
+                toDouble(node.child2());
+                toDouble(node.child1());
+            }
+            break;
+        }
+        
         default:
             break;
         }
@@ -397,11 +506,429 @@ private:
             fixupNode(m_graph[m_compileIndex]);
     }
     
+    NodeIndex canonicalize(NodeIndex nodeIndex)
+    {
+        if (nodeIndex == NoNode)
+            return NoNode;
+        
+        if (m_graph[nodeIndex].op == ValueToNumber)
+            nodeIndex = m_graph[nodeIndex].child1();
+        
+        if (m_graph[nodeIndex].op == ValueToInt32)
+            nodeIndex = m_graph[nodeIndex].child1();
+        
+        return nodeIndex;
+    }
+    
+    // Computes where the search for a candidate for CSE should start. Don't call
+    // this directly; call startIndex() instead as it does logging in debug mode.
+    NodeIndex computeStartIndexForChildren(NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
+    {
+        const unsigned limit = 300;
+        
+        NodeIndex start = m_start;
+        if (m_compileIndex - start > limit)
+            start = m_compileIndex - limit;
+        
+        ASSERT(start >= m_start);
+        
+        NodeIndex child = canonicalize(child1);
+        if (child == NoNode)
+            return start;
+        
+        if (start < child)
+            start = child;
+        
+        child = canonicalize(child2);
+        if (child == NoNode)
+            return start;
+        
+        if (start < child)
+            start = child;
+        
+        child = canonicalize(child3);
+        if (child == NoNode)
+            return start;
+        
+        if (start < child)
+            start = child;
+        
+        return start;
+    }
+    
+    NodeIndex startIndexForChildren(NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
+    {
+        NodeIndex result = computeStartIndexForChildren(child1, child2, child3);
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("  lookback %u: ", result);
+#endif
+        return result;
+    }
+    
+    NodeIndex startIndex()
+    {
+        Node& node = m_graph[m_compileIndex];
+        return startIndexForChildren(node.child1(), node.child2(), node.child3());
+    }
+    
+    NodeIndex endIndexForPureCSE()
+    {
+        NodeIndex result = m_lastSeen[m_graph[m_compileIndex].op & NodeIdMask];
+        if (result == NoNode)
+            result = 0;
+        else
+            result++;
+        ASSERT(result <= m_compileIndex);
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("  limit %u: ", result);
+#endif
+        return result;
+    }
+    
+    NodeIndex pureCSE(Node& node)
+    {
+        NodeIndex child1 = canonicalize(node.child1());
+        NodeIndex child2 = canonicalize(node.child2());
+        NodeIndex child3 = canonicalize(node.child3());
+        
+        NodeIndex start = startIndex();
+        for (NodeIndex index = endIndexForPureCSE(); index-- > start;) {
+            Node& otherNode = m_graph[index];
+            if (node.op != otherNode.op)
+                continue;
+            
+            NodeIndex otherChild = canonicalize(otherNode.child1());
+            if (otherChild == NoNode)
+                return index;
+            if (otherChild != child1)
+                continue;
+            
+            otherChild = canonicalize(otherNode.child2());
+            if (otherChild == NoNode)
+                return index;
+            if (otherChild != child2)
+                continue;
+            
+            otherChild = canonicalize(otherNode.child3());
+            if (otherChild == NoNode)
+                return index;
+            if (otherChild != child3)
+                continue;
+            
+            return index;
+        }
+        return NoNode;
+    }
+    
+    bool isPredictedNumerical(Node& node)
+    {
+        PredictedType left = m_predictions[node.child1()];
+        PredictedType right = m_predictions[node.child2()];
+        return isStrongPrediction(left) && isStrongPrediction(right)
+            && isNumberPrediction(left) && isNumberPrediction(right);
+    }
+    
+    bool logicalNotIsPure(Node& node)
+    {
+        PredictedType prediction = m_predictions[node.child1()];
+        return isBooleanPrediction(prediction) || !isStrongPrediction(prediction);
+    }
+    
+    bool clobbersWorld(NodeIndex nodeIndex)
+    {
+        Node& node = m_graph[nodeIndex];
+        if (node.op & NodeClobbersWorld)
+            return true;
+        if (!(node.op & NodeMightClobber))
+            return false;
+        switch (node.op) {
+        case ValueAdd:
+        case ValueAddSafe:
+        case CompareLess:
+        case CompareLessEq:
+        case CompareGreater:
+        case CompareGreaterEq:
+        case CompareEq:
+            return !isPredictedNumerical(node);
+        case LogicalNot:
+            return !logicalNotIsPure(node);
+        default:
+            ASSERT_NOT_REACHED();
+            return true; // If by some oddity we hit this case in release build it's safer to have CSE assume the worst.
+        }
+    }
+    
+    NodeIndex globalVarLoadElimination(unsigned varNumber)
+    {
+        NodeIndex start = startIndex();
+        for (NodeIndex index = m_compileIndex; index-- > start;) {
+            Node& node = m_graph[index];
+            switch (node.op) {
+            case GetGlobalVar:
+                if (node.varNumber() == varNumber)
+                    return index;
+                break;
+            case PutGlobalVar:
+                if (node.varNumber() == varNumber)
+                    return node.child1();
+                break;
+            default:
+                break;
+            }
+            if (clobbersWorld(index))
+                break;
+        }
+        return NoNode;
+    }
+    
+    NodeIndex getByValLoadElimination(NodeIndex child1, NodeIndex child2)
+    {
+        NodeIndex start = startIndexForChildren(child1, child2);
+        for (NodeIndex index = m_compileIndex; index-- > start;) {
+            Node& node = m_graph[index];
+            switch (node.op) {
+            case GetByVal:
+                if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))
+                    return index;
+                break;
+            case PutByVal:
+                if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))
+                    return node.child3();
+                break;
+            default:
+                break;
+            }
+            if (clobbersWorld(index))
+                break;
+        }
+        return NoNode;
+    }
+    
+    NodeIndex getMethodLoadElimination(const MethodCheckData& methodCheckData, unsigned identifierNumber, NodeIndex child1)
+    {
+        NodeIndex start = startIndex();
+        for (NodeIndex index = m_compileIndex; index-- > start;) {
+            Node& node = m_graph[index];
+            if (node.op == CheckMethod
+                && node.child1() == child1
+                && node.identifierNumber() == identifierNumber
+                && m_graph.m_methodCheckData[node.methodCheckDataIndex()] == methodCheckData)
+                return index;
+            if (clobbersWorld(index))
+                break;
+        }
+        return NoNode;
+    }
+    
+    void performSubstitution(NodeIndex& child)
+    {
+        // Check if this operand is actually unused.
+        if (child == NoNode)
+            return;
+        
+        // Check if there is any replacement.
+        NodeIndex replacement = m_replacements[child];
+        if (replacement == NoNode)
+            return;
+        
+        child = replacement;
+        
+        // There is definitely a replacement. Assert that the replacement does not
+        // have a replacement.
+        ASSERT(m_replacements[child] == NoNode);
+        
+        m_graph[child].ref();
+    }
+    
+    void setReplacement(NodeIndex replacement)
+    {
+        if (replacement == NoNode)
+            return;
+        
+        // Be safe. Don't try to perform replacements if the predictions don't
+        // agree.
+        if (m_predictions[m_compileIndex] != m_predictions[replacement])
+            return;
+        
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("   Replacing @%u -> @%u", m_compileIndex, replacement);
+#endif
+        
+        Node& node = m_graph[m_compileIndex];
+        node.op = Phantom;
+        node.setRefCount(1);
+        
+        // At this point we will eliminate all references to this node.
+        m_replacements[m_compileIndex] = replacement;
+    }
+    
+    void performNodeCSE(Node& node)
+    {
+        if (node.op & NodeHasVarArgs) {
+            for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
+                performSubstitution(m_graph.m_varArgChildren[childIdx]);
+        } else {
+            performSubstitution(node.children.fixed.child1);
+            performSubstitution(node.children.fixed.child2);
+            performSubstitution(node.children.fixed.child3);
+        }
+        
+        if (!node.shouldGenerate())
+            return;
+        
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("   %s[%u]: ", Graph::opName(m_graph[m_compileIndex].op), m_compileIndex);
+#endif
+
+        switch (node.op) {
+        
+        // Handle the pure nodes. These nodes never have any side-effects.
+        case BitAnd:
+        case BitOr:
+        case BitXor:
+        case BitRShift:
+        case BitLShift:
+        case BitURShift:
+        case ArithAdd:
+        case ArithSub:
+        case ArithMulIgnoreZero:
+        case ArithMulPossiblyNegZero:
+        case ArithMulSpecNotNegZero:
+        case ArithMod:
+        case ArithDiv:
+        case ArithAbs:
+        case ArithMin:
+        case ArithMax:
+        case ArithSqrt:
+        case ArithAddSafe:
+        case ArithSubSafe:
+        case ArithMulSafe:
+            setReplacement(pureCSE(node));
+            break;
+            
+        // Handle nodes that are conditionally pure: these are pure, and can
+        // be CSE'd, so long as the prediction is the one we want.
+        case ValueAdd:
+        case CompareLess:
+        case CompareLessEq:
+        case CompareGreater:
+        case CompareGreaterEq:
+        case CompareEq: {
+            if (isPredictedNumerical(node)) {
+                NodeIndex replacementIndex = pureCSE(node);
+                if (replacementIndex != NoNode && isPredictedNumerical(m_graph[replacementIndex]))
+                    setReplacement(replacementIndex);
+            }
+            break;
+        }
+            
+        case LogicalNot: {
+            if (logicalNotIsPure(node)) {
+                NodeIndex replacementIndex = pureCSE(node);
+                if (replacementIndex != NoNode && logicalNotIsPure(m_graph[replacementIndex]))
+                    setReplacement(replacementIndex);
+            }
+            break;
+        }
+            
+        // Finally handle heap accesses. These are not quite pure, but we can still
+        // optimize them provided that some subtle conditions are met.
+        case GetGlobalVar:
+            setReplacement(globalVarLoadElimination(node.varNumber()));
+            break;
+            
+        case GetByVal:
+            setReplacement(getByValLoadElimination(node.child1(), node.child2()));
+            break;
+            
+        case PutByVal:
+            if (getByValLoadElimination(node.child1(), node.child2()) != NoNode)
+                node.op = PutByValAlias;
+            break;
+            
+        case CheckMethod:
+            setReplacement(getMethodLoadElimination(m_graph.m_methodCheckData[node.methodCheckDataIndex()], node.identifierNumber(), node.child1()));
+            break;
+            
+        default:
+            // do nothing.
+            break;
+        }
+        
+        m_lastSeen[node.op & NodeIdMask] = m_compileIndex;
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("\n");
+#endif
+    }
+    
+    void performBlockCSE(BasicBlock& block)
+    {
+        m_start = block.begin;
+        NodeIndex end = block.end;
+        for (m_compileIndex = m_start; m_compileIndex < end; ++m_compileIndex)
+            performNodeCSE(m_graph[m_compileIndex]);
+    }
+    
+    void localCSE()
+    {
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("Performing local CSE:");
+#endif
+        for (unsigned block = 0; block < m_graph.m_blocks.size(); ++block)
+            performBlockCSE(*m_graph.m_blocks[block]);
+    }
+    
+    void allocateVirtualRegisters()
+    {
+        ScoreBoard scoreBoard(m_graph, m_graph.m_preservedVars);
+        unsigned sizeExcludingPhiNodes = m_graph.m_blocks.last()->end;
+        for (size_t i = 0; i < sizeExcludingPhiNodes; ++i) {
+            Node& node = m_graph[i];
+        
+            if (!node.shouldGenerate())
+                continue;
+        
+            // GetLocal nodes are effectively phi nodes in the graph, referencing
+            // results from prior blocks.
+            if (node.op != GetLocal) {
+                // First, call use on all of the current node's children, then
+                // allocate a VirtualRegister for this node. We do so in this
+                // order so that if a child is on its last use, and a
+                // VirtualRegister is freed, then it may be reused for node.
+                if (node.op & NodeHasVarArgs) {
+                    for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
+                        scoreBoard.use(m_graph.m_varArgChildren[childIdx]);
+                } else {
+                    scoreBoard.use(node.child1());
+                    scoreBoard.use(node.child2());
+                    scoreBoard.use(node.child3());
+                }
+            }
+
+            if (!node.hasResult())
+                continue;
+
+            node.setVirtualRegister(scoreBoard.allocate());
+            // 'mustGenerate' nodes have their useCount artificially elevated,
+            // call use now to account for this.
+            if (node.mustGenerate())
+                scoreBoard.use(i);
+        }
+
+        // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
+        // for the function (and checked for on entry). Since we perform a new and
+        // different allocation of temporaries, more registers may now be required.
+        unsigned calleeRegisters = scoreBoard.allocatedCount() + m_graph.m_preservedVars + m_graph.m_parameterSlots;
+        if ((unsigned)m_codeBlock->m_numCalleeRegisters < calleeRegisters)
+            m_codeBlock->m_numCalleeRegisters = calleeRegisters;
+    }
+    
     Graph& m_graph;
     JSGlobalData& m_globalData;
     CodeBlock* m_codeBlock;
     CodeBlock* m_profiledBlock;
     
+    NodeIndex m_start;
     NodeIndex m_compileIndex;
     
     Vector<PredictedType, 16> m_predictions;
@@ -414,6 +941,9 @@ private:
 #endif
     
     bool m_changed;
+
+    Vector<NodeIndex, 16> m_replacements;
+    FixedArray<NodeIndex, LastNodeId> m_lastSeen;
 };
 
 void propagate(Graph& graph, JSGlobalData* globalData, CodeBlock* codeBlock)
@@ -425,12 +955,9 @@ void propagate(Graph& graph, JSGlobalData* globalData, CodeBlock* codeBlock)
     Propagator propagator(graph, *globalData, codeBlock, profiledBlock);
     propagator.fixpoint();
     
-#if ENABLE(DFG_DEBUG_VERBOSE)
-    graph.dump(codeBlock);
-#endif
 }
 
 } } // namespace JSC::DFG
 
-#endif // ENABLE(DFG_JIT) && ENABLE(DYNAMIC_OPTIMIZATION)
+#endif // ENABLE(DFG_JIT)
 

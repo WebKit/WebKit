@@ -63,26 +63,6 @@ using namespace std;
 
 namespace WebCore {
 
-static void setLayerBorderColor(LayerChromium& layer, const Color& color)
-{
-    layer.setBorderColor(color);
-}
-
-static void clearBorderColor(LayerChromium& layer)
-{
-    layer.setBorderColor(static_cast<RGBA32>(0));
-}
-
-static void setLayerBackgroundColor(LayerChromium& layer, const Color& color)
-{
-    layer.setBackgroundColor(color);
-}
-
-static void clearLayerBackgroundColor(LayerChromium& layer)
-{
-    layer.setBackgroundColor(static_cast<RGBA32>(0));
-}
-
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
     return adoptPtr(new GraphicsLayerChromium(client));
@@ -271,7 +251,7 @@ void GraphicsLayerChromium::clearBackgroundColor()
         return;
 
     GraphicsLayer::clearBackgroundColor();
-    clearLayerBackgroundColor(*m_contentsLayer);
+    m_contentsLayer->setBackgroundColor(static_cast<RGBA32>(0));
 }
 
 void GraphicsLayerChromium::setContentsOpaque(bool opaque)
@@ -449,19 +429,19 @@ PlatformLayer* GraphicsLayerChromium::platformLayer() const
 void GraphicsLayerChromium::setDebugBackgroundColor(const Color& color)
 {
     if (color.isValid())
-        setLayerBackgroundColor(*m_layer, color);
+        m_layer->setBackgroundColor(color);
     else
-        clearLayerBackgroundColor(*m_layer);
+        m_layer->setBackgroundColor(static_cast<RGBA32>(0));
 }
 
 void GraphicsLayerChromium::setDebugBorder(const Color& color, float borderWidth)
 {
     if (color.isValid()) {
-        setLayerBorderColor(*m_layer, color);
-        m_layer->setBorderWidth(borderWidth);
+        m_layer->setDebugBorderColor(color);
+        m_layer->setDebugBorderWidth(borderWidth);
     } else {
-        clearBorderColor(*m_layer);
-        m_layer->setBorderWidth(0);
+        m_layer->setDebugBorderColor(static_cast<RGBA32>(0));
+        m_layer->setDebugBorderWidth(0);
     }
 }
 
@@ -631,9 +611,9 @@ void GraphicsLayerChromium::updateLayerBackgroundColor()
 
     // We never create the contents layer just for background color yet.
     if (m_backgroundColorSet)
-        setLayerBackgroundColor(*m_contentsLayer, m_backgroundColor);
+        m_contentsLayer->setBackgroundColor(m_backgroundColor);
     else
-        clearLayerBackgroundColor(*m_contentsLayer);
+        m_contentsLayer->setBackgroundColor(static_cast<RGBA32>(0));
 }
 
 void GraphicsLayerChromium::updateContentsVideo()
@@ -672,8 +652,8 @@ void GraphicsLayerChromium::setupContentsLayer(LayerChromium* contentsLayer)
         updateContentsRect();
 
         if (showDebugBorders()) {
-            setLayerBorderColor(*m_contentsLayer, Color(0, 0, 128, 180));
-            m_contentsLayer->setBorderWidth(1);
+            m_contentsLayer->setDebugBorderColor(Color(0, 0, 128, 180));
+            m_contentsLayer->setDebugBorderWidth(1);
         }
     }
     updateDebugIndicators();

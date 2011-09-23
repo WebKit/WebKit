@@ -70,7 +70,7 @@ private:
     NativeImagePtr m_imageForCurrentFrame;
     RefPtr<Image> m_contents;
 
-    OwnPtr<ImageLayerTextureUpdater> m_textureUpdater;
+    RefPtr<ImageLayerTextureUpdater> m_textureUpdater;
 };
 
 }

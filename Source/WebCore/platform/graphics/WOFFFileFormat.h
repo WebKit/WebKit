@@ -26,7 +26,7 @@
 #ifndef WOFFFileFormat_h
 #define WOFFFileFormat_h
 
-#if !ENABLE(OPENTYPE_SANITIZER)
+#if !USE(OPENTYPE_SANITIZER)
 
 #include <wtf/Vector.h>
 
@@ -43,6 +43,6 @@ bool convertWOFFToSfnt(SharedBuffer* woff, Vector<char>& sfnt);
 
 } // namespace WebCore
 
-#endif // !ENABLE(OPENTYPE_SANITIZER)
+#endif // !USE(OPENTYPE_SANITIZER)
 
 #endif // WOFFFileFormat_h

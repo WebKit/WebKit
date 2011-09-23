@@ -49,8 +49,6 @@ public:
         NoGesture,
         PendingSyntheticClick,
         Scroll,
-        FirstClickReceived,
-        PendingDoubleClick,
     };
 
     typedef Vector<PlatformGestureEvent>* Gestures;
@@ -86,9 +84,6 @@ private:
     bool noGesture(const PlatformTouchPoint&, Gestures);
     bool touchDown(const PlatformTouchPoint&, Gestures);
     bool scrollEnd(const PlatformTouchPoint&, Gestures);
-
-    bool doubleClick(const PlatformTouchPoint&, Gestures);
-    bool maybeDoubleClick(const PlatformTouchPoint&, Gestures);
 
     WTF::HashMap<int, GestureTransitionFunction> m_edgeFunctions;
     IntPoint m_firstTouchPosition;

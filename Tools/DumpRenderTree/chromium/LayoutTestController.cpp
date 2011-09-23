@@ -111,6 +111,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("dumpSelectionRect", &LayoutTestController::dumpSelectionRect);
     bindMethod("dumpStatusCallbacks", &LayoutTestController::dumpWindowStatusChanges);
     bindMethod("dumpTitleChanges", &LayoutTestController::dumpTitleChanges);
+    bindMethod("dumpPermissionClientCallbacks", &LayoutTestController::dumpPermissionClientCallbacks);
     bindMethod("elementDoesAutoCompleteForElementWithId", &LayoutTestController::elementDoesAutoCompleteForElementWithId);
     bindMethod("evaluateInWebInspector", &LayoutTestController::evaluateInWebInspector);
     bindMethod("evaluateScriptInIsolatedWorld", &LayoutTestController::evaluateScriptInIsolatedWorld);
@@ -377,6 +378,12 @@ void LayoutTestController::dumpTitleChanges(const CppArgumentList&, CppVariant* 
     result->setNull();
 }
 
+void LayoutTestController::dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpPermissionClientCallbacks = true;
+    result->setNull();
+}
+
 void LayoutTestController::setAcceptsEditing(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
@@ -599,6 +606,7 @@ void LayoutTestController::reset()
     m_dumpWindowStatusChanges = false;
     m_dumpSelectionRect = false;
     m_dumpTitleChanges = false;
+    m_dumpPermissionClientCallbacks = false;
     m_generatePixelResults = true;
     m_acceptsEditing = true;
     m_waitUntilDone = false;

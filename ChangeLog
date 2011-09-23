@@ -1,3 +1,117 @@
+2011-09-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Update NEWS and configure.ac for 1.5.90 release
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac:
+
+2011-09-19  Adam Barth  <abarth@webkit.org>
+
+        Always enable ENABLE(EVENTSOURCE)
+        https://bugs.webkit.org/show_bug.cgi?id=68414
+
+        Reviewed by Eric Seidel.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsWinCE.cmake:
+        * Source/cmakeconfig.h.cmake:
+        * configure.ac:
+
+2011-09-17  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Bump minimum requirement for cairo to 1.10.
+        https://bugs.webkit.org/show_bug.cgi?id=68226
+
+        Reviewed by Adam Barth.
+
+        * Source/cmake/FindCairo.cmake: Check required version.
+        * Source/cmake/OptionsEfl.cmake:
+
+2011-09-16  Ulan Degenbaev  <ulan@chromium.org>
+
+        [V8] REGRESSION(94783): calling the binding script during V8 context creation slows down page loads
+        https://bugs.webkit.org/show_bug.cgi?id=68237
+
+        Reviewed by Kenneth Russell.
+
+        Call the binding script lazily on the first run of the set() method of
+        a typed array.
+
+        * ../../Source/WebCore/WebCore.gypi:
+        * ../../Source/WebCore/bindings/v8/V8BindingScripts.cpp: Removed.
+        * ../../Source/WebCore/bindings/v8/V8BindingScripts.h: Removed.
+        * ../../Source/WebCore/bindings/v8/V8DOMWindowShell.cpp:
+        * ../../Source/WebCore/bindings/v8/WorkerContextExecutionProxy.cpp:
+        * ../../Source/WebCore/bindings/v8/custom/V8ArrayBufferViewCustom.cpp:
+        * ../../Source/WebCore/bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        * ../../Source/WebCore/bindings/v8/custom/V8ArrayBufferViewCustomScript.js:
+
+2011-09-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Disable WebKit2 by default in configure.ac, but enable it with build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=68178
+
+        Reviewed by Xan Lopez.
+
+        * configure.ac: Do not build WebKit2 by default. Re-add pkgconfig support
+        for WebKit2.
+
+2011-09-15  Adam Barth  <abarth@webkit.org>
+
+        Rename ENABLE(DATABASE) to ENABLE(SQL_DATABASE)
+        https://bugs.webkit.org/show_bug.cgi?id=68205
+
+        Reviewed by Eric Seidel.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsWinCE.cmake:
+        * Source/cmakeconfig.h.cmake:
+        * configure.ac:
+
+2011-09-15  Varun Jain  <varunjain@google.com>
+
+        Add method to scroll current node to specific position in Chromium WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=68192
+
+        Reviewed by Dimitri Glazkov.
+
+        *  Source/WebKit/chromium/public/WebView.h:
+        *  Source/WebKit/chromium/src/WebViewImpl.cpp:
+        *  Source/WebKit/chromium/src/WebViewImpl.h:
+
+2011-09-15  Eric Seidel  <eric@webkit.org>
+
+        Remove ENABLE(SVG_AS_IMAGE) since all major ports have it on by default
+        https://bugs.webkit.org/show_bug.cgi?id=68182
+
+        Reviewed by Adam Barth.
+
+        * configure.ac:
+
+2011-09-15  Eric Seidel  <eric@webkit.org>
+
+        Remove ENABLE_SVG_ANIMATION as all major ports have it on by default
+        https://bugs.webkit.org/show_bug.cgi?id=68022
+
+        Reviewed by Ryosuke Niwa.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsWinCE.cmake:
+        * Source/cmakeconfig.h.cmake:
+        * configure.ac:
+
+2011-09-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95163.
+        http://trac.webkit.org/changeset/95163
+        https://bugs.webkit.org/show_bug.cgi?id=68180
+
+        [Qt] The QT_GCC_X variables were removed in Qt5 by accident.
+        (Requested by darktears on #webkit).
+
+        * Source/WebKit.pri:
+
 2011-09-14  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Replace QT_GCC_X as they don't exist in Qt5 anymore.

@@ -122,8 +122,8 @@ WebInspector.Drawer.prototype = {
 
         function animationFinished()
         {
-            if ("updateStatusBarItems" in WebInspector.currentPanel)
-                WebInspector.currentPanel.updateStatusBarItems();
+            if ("updateStatusBarItems" in WebInspector.currentPanel())
+                WebInspector.currentPanel().updateStatusBarItems();
             if (this.visibleView.afterShow)
                 this.visibleView.afterShow();
             delete this._animating;
@@ -160,8 +160,8 @@ WebInspector.Drawer.prototype = {
         // like Elements in their updateStatusBarItems call will size things to fit the final location.
         this._mainStatusBar.style.setProperty("padding-left", (anchoredItems.offsetWidth - 1) + "px");
         document.body.removeStyleClass("drawer-visible");
-        if ("updateStatusBarItems" in WebInspector.currentPanel)
-            WebInspector.currentPanel.updateStatusBarItems();
+        if ("updateStatusBarItems" in WebInspector.currentPanel())
+            WebInspector.currentPanel().updateStatusBarItems();
         document.body.addStyleClass("drawer-visible");
 
         var animations = [
@@ -179,7 +179,7 @@ WebInspector.Drawer.prototype = {
 
         function animationFinished()
         {
-            WebInspector.currentPanel.doResize();
+            WebInspector.currentPanel().doResize();
             this._mainStatusBar.insertBefore(anchoredItems, this._mainStatusBar.firstChild);
             this._mainStatusBar.style.removeProperty("padding-left");
 
@@ -293,7 +293,7 @@ WebInspector.Drawer.prototype = {
 
         function animationFinished()
         {
-            WebInspector.currentPanel.doResize();
+            WebInspector.currentPanel().doResize();
             delete this._animating;
             delete this._currentAnimation;
             this.state = finalState;
@@ -343,8 +343,8 @@ WebInspector.Drawer.prototype = {
 
         this._mainElement.style.bottom = height + "px";
         this.element.style.height = height + "px";
-        if (WebInspector.currentPanel)
-            WebInspector.currentPanel.doResize();
+        if (WebInspector.currentPanel())
+            WebInspector.currentPanel().doResize();
 
         event.preventDefault();
         event.stopPropagation();

@@ -165,7 +165,7 @@ IF (ENABLE_BLOB)
     )
 ENDIF ()
 
-IF (ENABLE_DATABASE)
+IF (ENABLE_SQL_DATABASE)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSCustomSQLStatementErrorCallback.cpp
         bindings/js/JSSQLResultSetRowListCustom.cpp
@@ -208,12 +208,6 @@ ENDIF ()
 IF (ENABLE_SHARED_WORKERS)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSSharedWorkerCustom.cpp
-    )
-ENDIF ()
-
-IF (ENABLE_OFFLINE_WEB_APPLICATIONS)
-    LIST(APPEND WebCore_SOURCES
-        bindings/js/JSDOMApplicationCacheCustom.cpp
     )
 ENDIF ()
 

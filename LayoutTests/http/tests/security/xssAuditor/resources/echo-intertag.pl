@@ -32,6 +32,9 @@ if ($cgi->param('relay-target-ids-for-event')) {
 }
 print "<body>\n";
 print $cgi->param('q');
+if ($cgi->param('clutter')) {
+    print $cgi->param('clutter');
+}
 if ($cgi->param('notifyDone')) {
     print "<script>\n";
     print "if (window.layoutTestController)\n";

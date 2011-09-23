@@ -185,6 +185,20 @@ void DeleteButtonController::respondToChangedSelection(const VisibleSelection& o
         hide();
 }
 
+void DeleteButtonController::deviceScaleFactorChanged()
+{
+    if (!enabled())
+        return;
+    
+    HTMLElement* currentTarget = m_target.get();
+    hide();
+
+    // Setting m_containerElement to 0 will force the deletionUI to be re-created with
+    // artwork of the appropriate resolution in show().
+    m_containerElement = 0;
+    show(currentTarget);
+}
+
 void DeleteButtonController::createDeletionUI()
 {
     RefPtr<HTMLDivElement> container = HTMLDivElement::create(m_target->document());

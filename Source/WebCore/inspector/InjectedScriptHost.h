@@ -59,7 +59,7 @@ public:
 
     void init(InspectorAgent* inspectorAgent
             , InspectorConsoleAgent* consoleAgent
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
             , InspectorDatabaseAgent* databaseAgent
 #endif
 #if ENABLE(DOM_STORAGE)
@@ -69,7 +69,7 @@ public:
     {
         m_inspectorAgent = inspectorAgent;
         m_consoleAgent = consoleAgent;
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         m_databaseAgent = databaseAgent;
 #endif
 #if ENABLE(DOM_STORAGE)
@@ -91,7 +91,7 @@ public:
     void clearConsoleMessages();
     void copyText(const String& text);
     Node* inspectedNode(unsigned int num);
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     int databaseIdImpl(Database*);
 #endif
 #if ENABLE(DOM_STORAGE)
@@ -108,7 +108,7 @@ private:
 
     InspectorAgent* m_inspectorAgent;
     InspectorConsoleAgent* m_consoleAgent;
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     InspectorDatabaseAgent* m_databaseAgent;
 #endif
 #if ENABLE(DOM_STORAGE)

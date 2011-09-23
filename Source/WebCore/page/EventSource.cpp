@@ -32,9 +32,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(EVENTSOURCE)
-
 #include "EventSource.h"
 
 #include "MemoryCache.h"
@@ -376,5 +373,3 @@ EventTargetData* EventSource::ensureEventTargetData()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(EVENTSOURCE)

@@ -1468,6 +1468,8 @@ void CanvasRenderingContext2D::clearCanvas()
 {
     FloatRect canvasRect(0, 0, canvas()->width(), canvas()->height());
     GraphicsContext* c = drawingContext();
+    if (!c)
+        return;
 
     c->save();
     c->setCTM(canvas()->baseTransform());
@@ -1503,20 +1505,32 @@ template<class T> void CanvasRenderingContext2D::fillAndDisplayTransparencyElsew
 {
     ASSERT(shouldDisplayTransparencyElsewhere());
 
+    IntRect canvasRect(0, 0, canvas()->width(), canvas()->height());
+    canvasRect = canvas()->baseTransform().mapRect(canvasRect);
     Path path = transformAreaToDevice(area);
     IntRect bufferRect = enclosingIntRect(path.boundingRect());
+    bufferRect.intersect(canvasRect);
+
+    if (bufferRect.isEmpty()) {
+        clearCanvas();
+        return;
+    }
+
     path.translate(FloatSize(-bufferRect.x(), -bufferRect.y()));
 
     RenderingMode renderMode = isAccelerated() ? Accelerated : Unaccelerated;
     OwnPtr<ImageBuffer> buffer = ImageBuffer::create(bufferRect.size(), ColorSpaceDeviceRGB, renderMode);
+    if (!buffer)
+        return;
+
     buffer->context()->setCompositeOperation(CompositeSourceOver);
     state().m_fillStyle->applyFillColor(buffer->context());
     buffer->context()->fillPath(path);
 
-    FloatRect canvasRect(0, 0, canvas()->width(), canvas()->height());
-    canvasRect = canvas()->baseTransform().mapRect(canvasRect);
-
     GraphicsContext* c = drawingContext();
+    if (!c)
+        return;
+
     c->save();
     c->setCTM(AffineTransform());
 

@@ -69,7 +69,7 @@ public:
 class LayerChromium : public RefCounted<LayerChromium> {
     friend class LayerTilerChromium;
 public:
-    static PassRefPtr<LayerChromium> create(CCLayerDelegate* = 0);
+    static PassRefPtr<LayerChromium> create(CCLayerDelegate*);
 
     virtual ~LayerChromium();
 
@@ -152,20 +152,20 @@ public:
     void setGeometryFlipped(bool flipped) { m_geometryFlipped = flipped; setNeedsCommit(); }
     bool geometryFlipped() const { return m_geometryFlipped; }
 
-    bool preserves3D() { return m_delegate && m_delegate->preserves3D(); }
+    bool preserves3D() const { return m_delegate && m_delegate->preserves3D(); }
 
     void setUsesLayerScissor(bool usesLayerScissor) { m_usesLayerScissor = usesLayerScissor; }
     bool usesLayerScissor() const { return m_usesLayerScissor; }
 
-    void setIsRootLayer(bool isRootLayer) { m_isRootLayer = isRootLayer; }
-    bool isRootLayer() const { return m_isRootLayer; }
+    void setIsNonCompositedContent(bool isNonCompositedContent) { m_isNonCompositedContent = isNonCompositedContent; }
+    bool isNonCompositedContent() const { return m_isNonCompositedContent; }
 
     virtual void setLayerTreeHost(CCLayerTreeHost*);
 
     void setDelegate(CCLayerDelegate* delegate) { m_delegate = delegate; }
 
     void setReplicaLayer(LayerChromium* layer) { m_replicaLayer = layer; }
-    LayerChromium* replicaLayer() { return m_replicaLayer.get(); }
+    LayerChromium* replicaLayer() const { return m_replicaLayer.get(); }
 
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return false; }
@@ -176,16 +176,10 @@ public:
     virtual void bindContentsTexture() { }
     virtual void protectVisibleTileTextures() { }
 
-    // These exists just for debugging (via drawDebugBorder()).
-    void setBorderColor(const Color&);
-
+    // These exist just for debugging (via drawDebugBorder()).
+    void setDebugBorderColor(const Color&);
+    void setDebugBorderWidth(float);
     void drawDebugBorder();
-
-    void setBorderWidth(float);
-
-    static void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
-                                 float width, float height, float opacity, const FloatQuad&,
-                                 int matrixLocation, int alphaLocation, int quadLocation);
 
     virtual void pushPropertiesTo(CCLayerImpl*);
 
@@ -225,10 +219,7 @@ protected:
     // hold context-dependent resources such as textures.
     virtual void cleanupResources();
 
-    static void toGLMatrix(float*, const TransformationMatrix&);
-
     FloatRect m_dirtyRect;
-    bool m_contentsDirty;
 
     RefPtr<LayerChromium> m_maskLayer;
 
@@ -280,7 +271,7 @@ private:
     bool m_needsDisplayOnBoundsChange;
     bool m_doubleSided;
     bool m_usesLayerScissor;
-    bool m_isRootLayer;
+    bool m_isNonCompositedContent;
 
     TransformationMatrix m_transform;
     TransformationMatrix m_sublayerTransform;

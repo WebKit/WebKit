@@ -29,7 +29,7 @@
 #include "config.h"
 #include "DatabaseAuthorizer.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>

@@ -29,7 +29,7 @@
 module storage {
 
     interface [
-        Conditional=DATABASE,
+        Conditional=SQL_DATABASE,
         OmitConstructor,
         NoStaticTables
     ] SQLError {

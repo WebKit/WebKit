@@ -29,7 +29,7 @@
 #include "config.h"
 #include "SQLResultSet.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 namespace WebCore {
 

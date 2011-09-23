@@ -140,9 +140,6 @@ extern int pluginDatabaseClientCount;
     WebCore::KeyboardUIMode _keyboardUIMode;
 
     BOOL shouldUpdateWhileOffscreen;
-    
-    // When this flag is unset, we will not make any subviews underneath this WebView.  This means no WebFrameViews and no WebHTMLViews.
-    BOOL usesDocumentViews;
 
     BOOL includesFlattenedCompositingLayersWhenDrawingToBitmap;
     
@@ -159,18 +156,6 @@ extern int pluginDatabaseClientCount;
             
     NSSize lastLayoutSize;
 
-    BOOL ignoringMouseDraggedEvents;
-
-    NSEvent *mouseDownEvent; // Kept after handling the event.
-    BOOL handlingMouseDownEvent;
-    NSEvent *keyDownEvent; // Kept after handling the event.
-
-    WebTextCompletionController *completionController;
-
-    NSTimer *autoscrollTimer;
-    NSEvent *autoscrollTriggerEvent;
-
-    CFRunLoopTimerRef updateMouseoverTimer;
 #if ENABLE(VIDEO)
     WebVideoFullscreenController *fullscreenController;
 #endif

@@ -159,7 +159,7 @@ void HTMLScriptRunner::stopWatchingForLoad(PendingScript& pendingScript)
 
 // This function should match 10.2.5.11 "An end tag whose tag name is 'script'"
 // Script handling lives outside the tree builder to keep the each class simple.
-bool HTMLScriptRunner::execute(PassRefPtr<Element> scriptElement, const TextPosition1& scriptStartPosition)
+bool HTMLScriptRunner::execute(PassRefPtr<Element> scriptElement, const TextPosition& scriptStartPosition)
 {
     ASSERT(scriptElement);
     // FIXME: If scripting is disabled, always just return true;
@@ -275,7 +275,7 @@ bool HTMLScriptRunner::requestPendingScript(PendingScript& pendingScript, Elemen
 
 // This method is meant to match the HTML5 definition of "running a script"
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#running-a-script
-void HTMLScriptRunner::runScript(Element* script, const TextPosition1& scriptStartPosition)
+void HTMLScriptRunner::runScript(Element* script, const TextPosition& scriptStartPosition)
 {
     ASSERT(m_document);
     ASSERT(!haveParsingBlockingScript());

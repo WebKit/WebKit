@@ -28,7 +28,7 @@
 #ifndef SQLStatement_h
 #define SQLStatement_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "PlatformString.h"
 #include "SQLCallbackWrapper.h"
@@ -80,6 +80,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)
 
 #endif // SQLStatement_h

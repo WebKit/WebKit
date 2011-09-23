@@ -122,8 +122,6 @@ void ReverbConvolverStage::process(float* source, size_t framesToProcess)
     if (!isTemporaryBufferSafe)
         return;
 
-    int writeIndex = 0;
-
     if (m_framesProcessed < m_preDelayLength) {
         // For the first m_preDelayLength frames don't process the convolver, instead simply buffer in the pre-delay.
         // But while buffering the pre-delay, we still need to update our index.
@@ -135,7 +133,7 @@ void ReverbConvolverStage::process(float* source, size_t framesToProcess)
         m_convolver->process(&m_fftKernel, preDelayedSource, temporaryBuffer, framesToProcess);
 
         // Now accumulate into reverb's accumulation buffer.
-        writeIndex = m_accumulationBuffer->accumulate(temporaryBuffer, framesToProcess, &m_accumulationReadIndex, m_postDelayLength);
+        m_accumulationBuffer->accumulate(temporaryBuffer, framesToProcess, &m_accumulationReadIndex, m_postDelayLength);
     }
 
     // Finally copy input to pre-delay.

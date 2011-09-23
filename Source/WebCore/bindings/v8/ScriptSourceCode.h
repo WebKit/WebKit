@@ -41,7 +41,7 @@ namespace WebCore {
 
 class ScriptSourceCode {
 public:
-    ScriptSourceCode(const String& source, const KURL& url = KURL(), const TextPosition1& startPosition = TextPosition1::minimumPosition())
+    ScriptSourceCode(const String& source, const KURL& url = KURL(), const TextPosition& startPosition = TextPosition::minimumPosition())
         : m_source(source)
         , m_cachedScript(0)
         , m_url(url)
@@ -55,7 +55,7 @@ public:
         : m_source(cs->script())
         , m_cachedScript(cs)
         , m_url(ParsedURLString, cs->url())
-        , m_startPosition(TextPosition1::minimumPosition())
+        , m_startPosition(TextPosition::minimumPosition())
     {
     }
 
@@ -70,13 +70,13 @@ public:
         return m_url;
     }
     int startLine() const { return m_startPosition.m_line.oneBasedInt(); }
-    const TextPosition1& startPosition() const { return m_startPosition; }
+    const TextPosition& startPosition() const { return m_startPosition; }
 
 private:
     String m_source;
     CachedResourceHandle<CachedScript> m_cachedScript;
     KURL m_url;
-    TextPosition1 m_startPosition;
+    TextPosition m_startPosition;
 };
 
 } // namespace WebCore

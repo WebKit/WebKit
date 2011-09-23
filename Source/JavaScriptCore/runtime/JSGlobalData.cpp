@@ -50,21 +50,15 @@
 #include "Lookup.h"
 #include "Nodes.h"
 #include "Parser.h"
-#include "RegExpCache.h"
-#include "RegExpObject.h"
-#include "StrictEvalActivation.h"
-#include <wtf/WTFThreadData.h>
 #if ENABLE(REGEXP_TRACING)
 #include "RegExp.h"
 #endif
-
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
+#include "RegExpCache.h"
+#include "RegExpObject.h"
+#include "StrictEvalActivation.h"
 #include <wtf/Threading.h>
-#endif
-
+#include <wtf/WTFThreadData.h>
 #if PLATFORM(MAC)
-#include "ProfilerServer.h"
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
@@ -191,7 +185,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , parser(new Parser)
     , interpreter(0)
     , heap(this, heapSize)
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
     , sizeOfLastOSRScratchBuffer(0)
 #endif
     , dynamicGlobalObject(0)
@@ -238,9 +232,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 
     wtfThreadData().setCurrentIdentifierTable(existingEntryIdentifierTable);
 
-#if PLATFORM(MAC)
-    startProfilerServerIfNeeded();
-#endif
 #if ENABLE(JIT) && ENABLE(INTERPRETER)
 #if USE(CF)
     CFStringRef canUseJITKey = CFStringCreateWithCString(0 , "JavaScriptCoreUseJIT", kCFStringEncodingMacRoman);
@@ -360,7 +351,7 @@ JSGlobalData::~JSGlobalData()
     delete m_rtTraceList;
 #endif
 
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
     for (unsigned i = 0; i < osrScratchBuffers.size(); ++i)
         fastFree(osrScratchBuffers[i]);
 #endif
@@ -391,9 +382,7 @@ JSGlobalData& JSGlobalData::sharedInstance()
     JSGlobalData*& instance = sharedInstanceInternal();
     if (!instance) {
         instance = adoptRef(new JSGlobalData(APIShared, ThreadStackTypeSmall, SmallHeap)).leakRef();
-#if ENABLE(JSC_MULTIPLE_THREADS)
         instance->makeUsableFromMultipleThreads();
-#endif
     }
     return *instance;
 }
@@ -410,9 +399,9 @@ NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function)
 {
     return jitStubs->hostFunctionStub(this, function);
 }
-NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, ThunkGenerator generator)
+NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, ThunkGenerator generator, DFG::Intrinsic intrinsic)
 {
-    return jitStubs->hostFunctionStub(this, function, generator);
+    return jitStubs->hostFunctionStub(this, function, generator, intrinsic);
 }
 #else
 NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function)

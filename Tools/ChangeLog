@@ -1,3 +1,299 @@
+2011-09-19  Adam Barth  <abarth@webkit.org>
+
+        Always enable ENABLE(EVENTSOURCE)
+        https://bugs.webkit.org/show_bug.cgi?id=68414
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/build-webkit:
+
+2011-09-19  David Levin  <levin@chromium.org>
+
+        Sheriffbot rollout should be more intuitive.
+        https://bugs.webkit.org/show_bug.cgi?id=68415
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py: Add support for revert and comma separated args.
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py: Add parsing tests for comma separated args
+          and a few others cases.
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py: Verify that revert works.
+
+2011-09-19  David Levin  <levin@chromium.org>
+
+        check-webkit-style generates bogus warning for StructuredExceptionHandlerSupressor.h
+        https://bugs.webkit.org/show_bug.cgi?id=68391
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Skip __asm lines when doing style checks on a line.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Added a test for this.
+
+2011-09-19  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Style checker should not check public Qt WK2 API for parameter_name.
+        https://bugs.webkit.org/show_bug.cgi?id=68359
+
+        Reviewed by Andreas Kling.
+
+        The public Qt WK2 APIs have different rules than WebKit for parameters of methods in h files.
+        Add an exception in the style checker to disable the check. Also added the test for it.
+
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+
+2011-09-19  Leandro Pereira  <leandro@profusion.mobi>
+
+        GTK DRT leaks memory while comparing history items
+        https://bugs.webkit.org/show_bug.cgi?id=68086
+
+        Reviewed by Martin Robinson.
+        
+        webkit_web_history_item_get_target() returns a g_strdup()'d string,
+        so memory must be freed before compareHistoryItems() returns.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (compareHistoryItems): Use GOwnPtr to manage memory automatically.
+
+2011-09-19  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        Buildbot marks a nrwt bot red when tests are missing results
+        https://bugs.webkit.org/show_bug.cgi?id=64812
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
+2011-09-19  Jessie Berlin  <jberlin@apple.com>
+
+        Sites that use history pushState or replaceState are recorded in history in Private Browsing
+        mode.
+        https://bugs.webkit.org/show_bug.cgi?id=68208
+
+        Reviewed by Brady Eidson.
+
+        Add a test that the WKContextDidNavigateWithNavigationDataCallback (which is invoked by
+        updateGlobalHistory) is not called in Private Browsing when the page does history.pushState.
+
+        * TestWebKitAPI/Tests/WebKit2/PrivateBrowsingPushStateNoHistoryCallback.cpp: Added.
+        (TestWebKitAPI::didNavigateWithNavigationData):
+        This is a context history client callback, so it should not be called when in Private
+        Browsing. Add a call to FAIL().
+        (TestWebKitAPI::didSameDocumentNavigationForFrame):
+        This is a page load client callback that happens after the didNavigateWithNavigationData
+        callback. End the test.
+        (TestWebKitAPI::TEST):
+        Enable Private Browsing and load a page that uses history.pushState.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add PrivateBrowsingPushStateNoHistoryCallback.cpp and push-state.html.
+        * TestWebKitAPI/Tests/WebKit2/push-state.html: Added.
+        Ditto.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        Ditto.
+        * TestWebKitAPI/win/copy-resources.cmd:
+        Ditto.
+
+2011-09-16  Elliot Poger  <epoger@google.com>
+
+        add non-CG Webkit-Mac builds to flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=68265
+
+        Reviewed by Adam Barth.
+
+        As Chromium-on-Mac approaches the switchover from Core Graphics to
+        Skia, we need to add the Skia version to the flakiness dashboard.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        * TestResultServer/static-dashboards/builders.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+
+2011-09-16  Jochen Eisinger  <jochen@chromium.org>
+
+        Rename FrameLoaderClient::allowImages to FrameLoaderClient::allowImage and include the image URL as parameter
+        https://bugs.webkit.org/show_bug.cgi?id=68071
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/WebPermissions.cpp:
+        (WebPermissions::allowImage):
+        * DumpRenderTree/chromium/WebPermissions.h:
+
+2011-09-16  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        update-webkit-chromium should retry the gclient call if it fails once
+        https://bugs.webkit.org/show_bug.cgi?id=68252
+
+        Reviewed by Adam Barth.
+
+        * Scripts/update-webkit-chromium:
+
+2011-09-16  Rob Buis  <rbuis@rim.com>
+
+        Add Eli's rim address and change the nick.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2011-09-16  Anders Carlsson  <andersca@apple.com>
+
+        Add back the WKHitTestResultRef parameter to mouseDidMoveOverElement in an ABI preserving way
+        https://bugs.webkit.org/show_bug.cgi?id=68269
+
+        Reviewed by Geoffrey Garen.
+
+        Update client function signatures.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowUIClientInit):
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (mouseDidMoveOverElement):
+        (-[BrowserWindowController awakeFromNib]):
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::initialize):
+
+2011-09-16  Anders Carlsson  <andersca@apple.com>
+
+        Temporarily remove the WKHitTestResultRef parameter to avoid breaking the WK2 ABI/API
+        https://bugs.webkit.org/show_bug.cgi?id=68266
+
+        Reviewed by John Sullivan.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (mouseDidMoveOverElement):
+
+2011-09-16  Vincent Scheib  <scheib@chromium.org>
+
+        Add Vincent Scheib to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2011-09-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95285.
+        http://trac.webkit.org/changeset/95285
+        https://bugs.webkit.org/show_bug.cgi?id=68247
+
+        It broke a webkitpy test (Requested by ossy on #webkit).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+
+2011-09-16  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        Buildbot marks a nrwt bot red when tests are missing results
+        https://bugs.webkit.org/show_bug.cgi?id=64812
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+
+2011-09-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Disable WebKit2 by default in configure.ac, but enable it with build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=68178
+
+        Reviewed by Xan Lopez.
+
+        Add a work-around to enable WebKit2 when using build-webkit.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject): 
+
+2011-09-15  James Robinson  <jamesr@chromium.org>
+
+        Add Antoine Labour and Shawn Singh to the contributors-but-not-committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2011-09-15  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        UpdateChangeLogsWithReviewer should be able to determine reviewer of latest reviewed patch in a bug
+        https://bugs.webkit.org/show_bug.cgi?id=68003
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreview_unittest.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+
+2011-09-15  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        Python version check is confusing in test-webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=68004
+
+        Reviewed by Adam Barth.
+
+        * Scripts/test-webkitpy:
+
+2011-09-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch should be able to find users and add them to bugzilla groups
+        https://bugs.webkit.org/show_bug.cgi?id=63351
+
+        These are both very basic commands.  But it's now possible to find
+        all users matching a regexp, as well as add all users matching a regexp
+        to a set of groups.
+
+        bugzilla.py already knew how to find users (for validate-committer-lists)
+        but now it has the ability to modify the user records.
+
+        I split some of the logic out into a new EditUsersParser class
+        to try and reduce the amount of code in Bugzilla/BugzillaQueries.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/adduserstogroups.py: Added.
+        * Scripts/webkitpy/tool/commands/findusers.py: Added.
+
+2011-09-15  Eric Seidel  <eric@webkit.org>
+
+        Remove ENABLE(SVG_AS_IMAGE) since all major ports have it on by default
+        https://bugs.webkit.org/show_bug.cgi?id=68182
+
+        Reviewed by Adam Barth.
+
+        * Scripts/build-webkit:
+        * waf/build/settings.py:
+
+2011-09-15  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Make contributor email look-up case-insensitive.
+
+        validate-committer-list was incorrectly reporting that "chang.shu@nokia.com"
+        was missing from committers.py due to case sensitivity.
+
+        This also includes a test expectations update to committers_unittest.py
+        after my previous change.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+
+2011-09-15  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Updated this based on webkit-patch suggest-nominations and validate-committer-list output.
+
+        Add a bunch of email aliases to committers.py for regular contributors
+        who are committing using other email addresses than they have listed in the file.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2011-09-15  Eric Seidel  <eric@webkit.org>
+
+        Remove ENABLE_SVG_ANIMATION as all major ports have it on by default
+        https://bugs.webkit.org/show_bug.cgi?id=68022
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/build-webkit:
+        * waf/build/settings.py:
+
 2011-09-15  Anders Carlsson  <andersca@apple.com>
 
         Fix Mac build by including config.h where needed.

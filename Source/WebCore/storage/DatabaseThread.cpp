@@ -29,7 +29,7 @@
 #include "config.h"
 #include "DatabaseThread.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "AutodrainedPool.h"
 #include "Database.h"

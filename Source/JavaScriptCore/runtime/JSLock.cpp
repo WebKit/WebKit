@@ -35,7 +35,7 @@ namespace JSC {
 // JSLock is only needed to support an obsolete execution model where JavaScriptCore
 // automatically protected against concurrent access from multiple threads.
 // So it's safe to disable it on non-mac platforms where we don't have native pthreads.
-#if ENABLE(JSC_MULTIPLE_THREADS) && (OS(DARWIN) || USE(PTHREADS))
+#if (OS(DARWIN) || USE(PTHREADS))
 
 // Acquire this mutex before accessing lock-related data.
 static pthread_mutex_t JSMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -213,7 +213,7 @@ JSLock::DropAllLocks::~DropAllLocks()
     --lockDropDepth;
 }
 
-#else // ENABLE(JSC_MULTIPLE_THREADS) && (OS(DARWIN) || USE(PTHREADS))
+#else // (OS(DARWIN) || USE(PTHREADS))
 
 JSLock::JSLock(ExecState*)
     : m_lockBehavior(SilenceAssertionsOnly)
@@ -260,6 +260,6 @@ JSLock::DropAllLocks::~DropAllLocks()
 {
 }
 
-#endif // ENABLE(JSC_MULTIPLE_THREADS) && (OS(DARWIN) || USE(PTHREADS))
+#endif // (OS(DARWIN) || USE(PTHREADS))
 
 } // namespace JSC

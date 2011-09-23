@@ -36,11 +36,11 @@ using namespace WebCore;
 
 static NSString *preferredLanguageCode;
 
-@interface LanguageChangeObserver : NSObject {
+@interface WebLanguageChangeObserver : NSObject {
 }
 @end
 
-@implementation LanguageChangeObserver
+@implementation WebLanguageChangeObserver
 
 + (void)_webkit_languagePreferencesDidChange
 {
@@ -104,7 +104,7 @@ String platformDefaultLanguage()
 
     static bool languageChangeObserverAdded;
     if (!languageChangeObserverAdded) {
-        [[NSDistributedNotificationCenter defaultCenter] addObserver:[LanguageChangeObserver self]
+        [[NSDistributedNotificationCenter defaultCenter] addObserver:[WebLanguageChangeObserver self]
                                                             selector:@selector(_webkit_languagePreferencesDidChange)
                                                                 name:@"AppleLanguagePreferencesChangedNotification"
                                                               object:nil];

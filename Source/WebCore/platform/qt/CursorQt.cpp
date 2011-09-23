@@ -75,6 +75,8 @@ Cursor& Cursor::operator=(const Cursor& other)
 #ifndef QT_NO_CURSOR
 static QCursor* createCustomCursor(Image* image, const IntPoint& hotSpot)
 {
+    if (!image->nativeImageForCurrentFrame())
+        return 0;
     IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
     return new QCursor(*(image->nativeImageForCurrentFrame()), effectiveHotSpot.x(), effectiveHotSpot.y());
 }
@@ -197,6 +199,8 @@ void Cursor::ensurePlatformCursor() const
         break;
     case Custom:
         m_platformCursor = createCustomCursor(m_image.get(), m_hotSpot);
+        if (!m_platformCursor)
+            m_platformCursor = new QCursor(Qt::ArrowCursor);
         break;
     default:
         ASSERT_NOT_REACHED();

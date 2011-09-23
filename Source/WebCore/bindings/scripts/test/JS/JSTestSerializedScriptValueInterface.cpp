@@ -40,12 +40,17 @@ ASSERT_CLASS_FITS_IN_CELL(JSTestSerializedScriptValueInterface);
 #else
 #define THUNK_GENERATOR(generator)
 #endif
+#if ENABLE(DFG_JIT)
+#define INTRINSIC(intrinsic) , intrinsic
+#else
+#define INTRINSIC(intrinsic)
+#endif
 
 static const HashTableValue JSTestSerializedScriptValueInterfaceTableValues[] =
 {
-    { "value", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceValue), (intptr_t)0 THUNK_GENERATOR(0) },
-    { "constructor", DontEnum | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceConstructor), (intptr_t)0 THUNK_GENERATOR(0) },
-    { 0, 0, 0, 0 THUNK_GENERATOR(0) }
+    { "value", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceValue), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
+    { "constructor", DontEnum | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializedScriptValueInterfaceConstructor), (intptr_t)0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },
+    { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }
 };
 
 #undef THUNK_GENERATOR
@@ -56,10 +61,15 @@ static JSC_CONST_HASHTABLE HashTable JSTestSerializedScriptValueInterfaceTable =
 #else
 #define THUNK_GENERATOR(generator)
 #endif
+#if ENABLE(DFG_JIT)
+#define INTRINSIC(intrinsic) , intrinsic
+#else
+#define INTRINSIC(intrinsic)
+#endif
 
 static const HashTableValue JSTestSerializedScriptValueInterfaceConstructorTableValues[] =
 {
-    { 0, 0, 0, 0 THUNK_GENERATOR(0) }
+    { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }
 };
 
 #undef THUNK_GENERATOR
@@ -119,10 +129,15 @@ bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertyDescriptor(E
 #else
 #define THUNK_GENERATOR(generator)
 #endif
+#if ENABLE(DFG_JIT)
+#define INTRINSIC(intrinsic) , intrinsic
+#else
+#define INTRINSIC(intrinsic)
+#endif
 
 static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableValues[] =
 {
-    { 0, 0, 0, 0 THUNK_GENERATOR(0) }
+    { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }
 };
 
 #undef THUNK_GENERATOR

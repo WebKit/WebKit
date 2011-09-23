@@ -67,9 +67,9 @@
 #if PLATFORM(MAC)
 #include "DictionaryPopupInfo.h"
 #include <wtf/RetainPtr.h>
-OBJC_CLASS AccessibilityWebPageObject;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSObject;
+OBJC_CLASS WKAccessibilityWebPageObject;
 #endif
 
 namespace CoreIPC {
@@ -330,7 +330,7 @@ public:
 
 #if PLATFORM(MAC)
     void registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elemenToken, const CoreIPC::DataReference& windowToken);
-    AccessibilityWebPageObject* accessibilityRemoteObject();
+    WKAccessibilityWebPageObject* accessibilityRemoteObject();
     WebCore::IntPoint accessibilityPosition() const { return m_accessibilityPosition; }    
     
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
@@ -605,7 +605,7 @@ private:
     // All plug-in views on this web page.
     HashSet<PluginView*> m_pluginViews;
 
-    RetainPtr<AccessibilityWebPageObject> m_mockAccessibilityElement;
+    RetainPtr<WKAccessibilityWebPageObject> m_mockAccessibilityElement;
 
     WebCore::KeyboardEvent* m_keyboardEventBeingInterpreted;
 

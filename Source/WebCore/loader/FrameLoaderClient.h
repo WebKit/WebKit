@@ -31,7 +31,6 @@
 
 #include "FrameLoaderTypes.h"
 #include "IconURL.h"
-#include "ScrollTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -195,9 +194,6 @@ namespace WebCore {
 
         virtual bool shouldGoToHistoryItem(HistoryItem*) const = 0;
         virtual bool shouldStopLoadingForHistoryItem(HistoryItem*) const = 0;
-        virtual void dispatchDidAddBackForwardItem(HistoryItem*) const = 0;
-        virtual void dispatchDidRemoveBackForwardItem(HistoryItem*) const = 0;
-        virtual void dispatchDidChangeBackForwardIndex() const = 0;
         virtual void updateGlobalHistoryItemForPage() { }
 
         // This frame has displayed inactive content (such as an image) from an
@@ -302,7 +298,7 @@ namespace WebCore {
 
         virtual bool allowJavaScript(bool enabledPerSettings) { return enabledPerSettings; }
         virtual bool allowPlugins(bool enabledPerSettings) { return enabledPerSettings; }
-        virtual bool allowImages(bool enabledPerSettings) { return enabledPerSettings; }
+        virtual bool allowImage(bool enabledPerSettings, const KURL&) { return enabledPerSettings; }
         virtual bool allowDisplayingInsecureContent(bool enabledPerSettings, SecurityOrigin*, const KURL&) { return enabledPerSettings; }
         virtual bool allowRunningInsecureContent(bool enabledPerSettings, SecurityOrigin*, const KURL&) { return enabledPerSettings; }
         

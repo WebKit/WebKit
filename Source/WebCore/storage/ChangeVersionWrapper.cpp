@@ -28,7 +28,8 @@
 #include "config.h"
 #include "ChangeVersionWrapper.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
+
 #include "Database.h"
 #include "SQLError.h"
 #include <wtf/PassRefPtr.h>
@@ -85,4 +86,4 @@ void ChangeVersionWrapper::handleCommitFailedAfterPostflight(SQLTransaction* tra
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)

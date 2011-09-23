@@ -53,12 +53,8 @@
 #define ENABLE_DFG_VERBOSE_SPECULATION_FAILURE 0
 // Disable the DFG JIT without having to touch Platform.h!
 #define DFG_DEBUG_LOCAL_DISBALE 0
-// Disable the SpeculativeJIT without having to touch Platform.h!
-#define DFG_DEBUG_LOCAL_DISBALE_SPECULATIVE 0
 // Enable OSR entry from baseline JIT.
-#define ENABLE_DFG_OSR_ENTRY ENABLE_TIERED_COMPILATION
-// Disable the non-speculative JIT and use OSR instead.
-#define ENABLE_DFG_OSR_EXIT ENABLE_TIERED_COMPILATION
+#define ENABLE_DFG_OSR_ENTRY ENABLE_DFG_JIT
 // Generate stats on how successful we were in making use of the DFG jit, and remaining on the hot path.
 #define ENABLE_DFG_SUCCESS_STATS 0
 
@@ -111,14 +107,16 @@ private:
 
 // Entries in the NodeType enum (below) are composed of an id, a result type (possibly none)
 // and some additional informative flags (must generate, is constant, etc).
-#define NodeIdMask          0xFFF
-#define NodeResultMask     0xF000
-#define NodeMustGenerate  0x10000 // set on nodes that have side effects, and may not trivially be removed by DCE.
-#define NodeIsConstant    0x20000
-#define NodeIsJump        0x40000
-#define NodeIsBranch      0x80000
-#define NodeIsTerminal   0x100000
-#define NodeHasVarArgs   0x200000
+#define NodeIdMask           0xFFF
+#define NodeResultMask      0xF000
+#define NodeMustGenerate   0x10000 // set on nodes that have side effects, and may not trivially be removed by DCE.
+#define NodeIsConstant     0x20000
+#define NodeIsJump         0x40000
+#define NodeIsBranch       0x80000
+#define NodeIsTerminal    0x100000
+#define NodeHasVarArgs    0x200000
+#define NodeClobbersWorld 0x400000
+#define NodeMightClobber  0x800000
 
 // These values record the result type of the node (as checked by NodeResultMask, above), 0 for no result.
 #define NodeResultJS      0x1000
@@ -135,6 +133,7 @@ private:
     /* Nodes for local variable access. */\
     macro(GetLocal, NodeResultJS) \
     macro(SetLocal, 0) \
+    macro(Phantom, NodeMustGenerate) \
     macro(Phi, 0) \
     \
     /* Nodes for bitwise operations. */\
@@ -148,13 +147,23 @@ private:
     macro(ValueToInt32, NodeResultInt32 | NodeMustGenerate) \
     /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\
     macro(UInt32ToNumber, NodeResultNumber) \
+    macro(UInt32ToNumberSafe, NodeResultNumber) \
     \
     /* Nodes for arithmetic operations. */\
     macro(ArithAdd, NodeResultNumber) \
     macro(ArithSub, NodeResultNumber) \
-    macro(ArithMul, NodeResultNumber) \
+    macro(ArithAddSafe, NodeResultNumber) /* Safe variants are those that are known to take old JIT slow path */\
+    macro(ArithSubSafe, NodeResultNumber) \
+    macro(ArithMulSpecNotNegZero, NodeResultNumber) /* Speculate that the result is not negative zero. */ \
+    macro(ArithMulIgnoreZero, NodeResultNumber) /* If it's negative zero, ignore it. */ \
+    macro(ArithMulPossiblyNegZero, NodeResultNumber) /* It definitely may be negative zero but we haven't decided what to do about it yet. No code generation for this node; it either turns into ArithMulIgnoreZero or ArithMulSafe. */ \
+    macro(ArithMulSafe, NodeResultNumber) /* It may be negative zero, or it may produce other forms of double, so speculate double. */\
     macro(ArithDiv, NodeResultNumber) \
     macro(ArithMod, NodeResultNumber) \
+    macro(ArithAbs, NodeResultNumber) \
+    macro(ArithMin, NodeResultNumber) \
+    macro(ArithMax, NodeResultNumber) \
+    macro(ArithSqrt, NodeResultNumber) \
     /* Arithmetic operators call ToNumber on their operands. */\
     macro(ValueToNumber, NodeResultNumber | NodeMustGenerate) \
     \
@@ -162,44 +171,46 @@ private:
     macro(ValueToDouble, NodeResultNumber | NodeMustGenerate) \
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
-    macro(ValueAdd, NodeResultJS | NodeMustGenerate) \
+    macro(ValueAdd, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
+    macro(ValueAddSafe, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
     \
     /* Property access. */\
     /* PutByValAlias indicates a 'put' aliases a prior write to the same property. */\
     /* Since a put to 'length' may invalidate optimizations here, */\
     /* this must be the directly subsequent property put. */\
     macro(GetByVal, NodeResultJS | NodeMustGenerate) \
-    macro(PutByVal, NodeMustGenerate) \
-    macro(PutByValAlias, NodeMustGenerate) \
-    macro(GetById, NodeResultJS | NodeMustGenerate) \
-    macro(PutById, NodeMustGenerate) \
-    macro(PutByIdDirect, NodeMustGenerate) \
+    macro(PutByVal, NodeMustGenerate | NodeClobbersWorld) \
+    macro(PutByValAlias, NodeMustGenerate | NodeClobbersWorld) \
+    macro(GetById, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(PutById, NodeMustGenerate | NodeClobbersWorld) \
+    macro(PutByIdDirect, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetMethod, NodeResultJS | NodeMustGenerate) \
+    macro(CheckMethod, NodeResultJS | NodeMustGenerate) \
     macro(GetGlobalVar, NodeResultJS | NodeMustGenerate) \
-    macro(PutGlobalVar, NodeMustGenerate) \
+    macro(PutGlobalVar, NodeMustGenerate | NodeClobbersWorld) \
     \
     /* Nodes for comparison operations. */\
-    macro(CompareLess, NodeResultBoolean | NodeMustGenerate) \
-    macro(CompareLessEq, NodeResultBoolean | NodeMustGenerate) \
-    macro(CompareGreater, NodeResultBoolean | NodeMustGenerate) \
-    macro(CompareGreaterEq, NodeResultBoolean | NodeMustGenerate) \
-    macro(CompareEq, NodeResultBoolean | NodeMustGenerate) \
+    macro(CompareLess, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
+    macro(CompareLessEq, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
+    macro(CompareGreater, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
+    macro(CompareGreaterEq, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
+    macro(CompareEq, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
     macro(CompareStrictEq, NodeResultBoolean) \
     \
     /* Calls. */\
-    macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
-    macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
+    macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     \
     /* Resolve nodes. */\
-    macro(Resolve, NodeResultJS | NodeMustGenerate) \
-    macro(ResolveBase, NodeResultJS | NodeMustGenerate) \
-    macro(ResolveBaseStrictPut, NodeResultJS | NodeMustGenerate) \
+    macro(Resolve, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(ResolveBase, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(ResolveBaseStrictPut, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     \
     /* Nodes for misc operations. */\
-    macro(Breakpoint, NodeMustGenerate) \
+    macro(Breakpoint, NodeMustGenerate | NodeClobbersWorld) \
     macro(CheckHasInstance, NodeMustGenerate) \
     macro(InstanceOf, NodeResultBoolean) \
-    macro(LogicalNot, NodeResultBoolean) \
+    macro(LogicalNot, NodeResultBoolean | NodeMightClobber) \
     \
     /* Block terminals. */\
     macro(Jump, NodeMustGenerate | NodeIsTerminal | NodeIsJump) \
@@ -212,6 +223,7 @@ enum NodeId {
 #define DFG_OP_ENUM(opcode, flags) opcode##_id,
     FOR_EACH_DFG_OP(DFG_OP_ENUM)
 #undef DFG_OP_ENUM
+    LastNodeId
 };
 
 // Entries in this enum describe all Node types.
@@ -301,16 +313,16 @@ struct Node {
     {
         return op == JSConstant;
     }
+    
+    bool hasConstant()
+    {
+        return isConstant() || hasMethodCheckData();
+    }
 
     unsigned constantNumber()
     {
         ASSERT(isConstant());
         return m_opInfo;
-    }
-    
-    JSValue valueOfJSConstant(CodeBlock* codeBlock)
-    {
-        return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
     }
     
     bool isInt32Constant(CodeBlock* codeBlock)
@@ -338,24 +350,6 @@ struct Node {
         return isConstant() && valueOfJSConstant(codeBlock).isBoolean();
     }
     
-    int32_t valueOfInt32Constant(CodeBlock* codeBlock)
-    {
-        ASSERT(isInt32Constant(codeBlock));
-        return valueOfJSConstant(codeBlock).asInt32();
-    }
-    
-    double valueOfNumberConstant(CodeBlock* codeBlock)
-    {
-        ASSERT(isNumberConstant(codeBlock));
-        return valueOfJSConstant(codeBlock).uncheckedGetNumber();
-    }
-    
-    bool valueOfBooleanConstant(CodeBlock* codeBlock)
-    {
-        ASSERT(isBooleanConstant(codeBlock));
-        return valueOfJSConstant(codeBlock).getBoolean();
-    }
-
     bool hasLocal()
     {
         return op == GetLocal || op == SetLocal;
@@ -368,12 +362,21 @@ struct Node {
     }
 
 #if !ASSERT_DISABLED
-    // If we want to use this in production code, should make it faster -
-    // e.g. make hasIdentifier a flag in the bitfield.
     bool hasIdentifier()
     {
-        return op == GetById || op == PutById || op == PutByIdDirect || op == GetMethod
-            || op == Resolve || op == ResolveBase || op == ResolveBaseStrictPut;
+        switch (op) {
+        case GetById:
+        case PutById:
+        case PutByIdDirect:
+        case GetMethod:
+        case CheckMethod:
+        case Resolve:
+        case ResolveBase:
+        case ResolveBaseStrictPut:
+            return true;
+        default:
+            return false;
+        }
     }
 #endif
 
@@ -382,7 +385,7 @@ struct Node {
         ASSERT(hasIdentifier());
         return m_opInfo;
     }
-
+    
     bool hasVarNumber()
     {
         return op == GetGlobalVar || op == PutGlobalVar;
@@ -484,6 +487,22 @@ struct Node {
         return mergePrediction(m_opInfo2, makePrediction(prediction, source));
     }
     
+    bool hasMethodCheckData()
+    {
+        return op == CheckMethod;
+    }
+    
+    unsigned methodCheckDataIndex()
+    {
+        ASSERT(hasMethodCheckData());
+        return m_opInfo2;
+    }
+    
+    bool hasVirtualRegister()
+    {
+        return m_virtualRegister != InvalidVirtualRegister;
+    }
+    
     VirtualRegister virtualRegister()
     {
         ASSERT(hasResult());
@@ -517,6 +536,11 @@ struct Node {
     unsigned adjustedRefCount()
     {
         return mustGenerate() ? m_refCount - 1 : m_refCount;
+    }
+    
+    void setRefCount(unsigned refCount)
+    {
+        m_refCount = refCount;
     }
     
     NodeIndex child1()
@@ -573,6 +597,14 @@ struct Node {
     } children;
 
 private:
+    // This is private because it only works for the JSConstant op. The DFG is written under the
+    // assumption that "valueOfJSConstant" can correctly return a constant for any DFG node for
+    // which hasConstant() is true.
+    JSValue valueOfJSConstant(CodeBlock* codeBlock)
+    {
+        return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
+    }
+
     // The virtual register number (spill location) associated with this .
     VirtualRegister m_virtualRegister;
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).

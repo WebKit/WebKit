@@ -525,6 +525,11 @@ void HistoryController::recursiveUpdateForSameDocumentNavigation()
     if (!m_provisionalItem)
         return;
 
+    // The provisional item may represent a different pending navigation.
+    // Don't commit it if it isn't a same document navigation.
+    if (m_currentItem && !m_currentItem->shouldDoSameDocumentNavigationTo(m_provisionalItem.get()))
+        return;
+
     // Commit the provisional item.
     m_frameLoadComplete = false;
     m_previousItem = m_currentItem;
@@ -825,6 +830,10 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
 
     page->backForward()->addItem(topItem.release());
 
+    Settings* settings = m_frame->settings();
+    if (!settings || settings->privateBrowsingEnabled())
+        return;
+
     addVisitedLink(page, KURL(ParsedURLString, urlString));
     m_frame->loader()->client()->updateGlobalHistory();
 
@@ -839,6 +848,10 @@ void HistoryController::replaceState(PassRefPtr<SerializedScriptValue> stateObje
         m_currentItem->setURLString(urlString);
     m_currentItem->setTitle(title);
     m_currentItem->setStateObject(stateObject);
+
+    Settings* settings = m_frame->settings();
+    if (!settings || settings->privateBrowsingEnabled())
+        return;
 
     ASSERT(m_frame->page());
     addVisitedLink(m_frame->page(), KURL(ParsedURLString, urlString));

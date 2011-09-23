@@ -28,7 +28,7 @@
 
 #if HAVE(ACCESSIBILITY)
 
-#import "AccessibilityObjectWrapper.h"
+#import "WebAccessibilityObjectWrapper.h"
 #import "Widget.h"
 
 namespace WebCore {

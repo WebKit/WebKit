@@ -66,7 +66,7 @@ private:
     virtual void loadDidBegin();
     virtual void loadDidCommit();
     virtual void loadDidSucceed();
-    virtual void loadDidFail(const QJSValue&);
+    virtual void loadDidFail(const QWebError&);
     virtual void didChangeLoadProgress(int);
 
     virtual void showContextMenu(QSharedPointer<QMenu>);

@@ -77,18 +77,12 @@ static v8::Handle<v8::Value> getItem(HTMLCollection* collection, v8::Handle<v8::
 v8::Handle<v8::Value> V8HTMLCollection::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLCollection.NamedPropertyGetter");
-    // Search the prototype chain first.
-    v8::Handle<v8::Value> value = info.Holder()->GetRealNamedPropertyInPrototypeChain(name);
 
-    if (!value.IsEmpty())
-        return value;
-
-    // Search local callback properties next to find IDL defined
-    // properties.
+    if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
+        return notHandledByInterceptor();
     if (info.Holder()->HasRealNamedCallbackProperty(name))
-        return v8::Handle<v8::Value>();
+        return notHandledByInterceptor();
 
-    // Finally, search the DOM structure.
     HTMLCollection* imp = V8HTMLCollection::toNative(info.Holder());
     return getNamedItems(imp, v8StringToAtomicWebCoreString(name));
 }

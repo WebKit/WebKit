@@ -174,6 +174,46 @@ public:
         webkit_support::QuitMessageLoop();
     }
 
+    void CheckMethodFails(const char* unsafeMethod)
+    {
+        WebURLRequest request;
+        request.initialize();
+        request.setURL(GURL("http://www.test.com/success.html"));
+        request.setHTTPMethod(WebString::fromUTF8(unsafeMethod));
+        WebURLLoaderOptions options;
+        options.untrustedHTTP = true;
+        CheckFails(request, options);
+    }
+
+    void CheckHeaderFails(const char* headerField)
+    {
+        CheckHeaderFails(headerField, "foo");
+    }
+
+    void CheckHeaderFails(const char* headerField, const char* headerValue)
+    {
+        WebURLRequest request;
+        request.initialize();
+        request.setURL(GURL("http://www.test.com/success.html"));
+        request.setHTTPHeaderField(WebString::fromUTF8(headerField), WebString::fromUTF8(headerValue));
+        WebURLLoaderOptions options;
+        options.untrustedHTTP = true;
+        CheckFails(request, options);
+    }
+
+    void CheckFails(const WebURLRequest& request, WebURLLoaderOptions options = WebURLLoaderOptions())
+    {
+        m_expectedLoader = createAssociatedURLLoader(options);
+        EXPECT_TRUE(m_expectedLoader);
+        m_didFail = false;
+        m_expectedLoader->loadAsynchronously(request, this);
+        // Failure should not be reported synchronously.
+        EXPECT_FALSE(m_didFail);
+        // Allow the loader to return the error.
+        webkit_support::RunMessageLoop();
+        EXPECT_TRUE(m_didFail);
+    }
+
 protected:
     WebString m_frameFilePath;
     TestWebFrameClient m_webFrameClient;
@@ -223,15 +263,7 @@ TEST_F(AssociatedURLLoaderTest, SameOriginRestriction)
     WebURLRequest request;
     request.initialize();
     request.setURL(url);
-
-    m_expectedLoader = createAssociatedURLLoader();
-    EXPECT_TRUE(m_expectedLoader);
-    m_expectedLoader->loadAsynchronously(request, this);
-    // Failure should not be reported synchronously.
-    EXPECT_FALSE(m_didFail);
-    // Allow the loader to return the error.
-    webkit_support::RunMessageLoop();
-    EXPECT_TRUE(m_didFail);
+    CheckFails(request);
 }
 
 // Test a successful cross-origin load.
@@ -257,6 +289,59 @@ TEST_F(AssociatedURLLoaderTest, CrossOriginSuccess)
     EXPECT_TRUE(m_didReceiveResponse);
     EXPECT_TRUE(m_didReceiveData);
     EXPECT_TRUE(m_didFinishLoading);
+}
+
+// Test that untrusted loads can't use a forbidden method.
+TEST_F(AssociatedURLLoaderTest, UntrustedCheckMethods)
+{
+    // Check non-token method fails.
+    CheckMethodFails("GET()");
+    CheckMethodFails("POST\x0d\x0ax-csrf-token:\x20test1234");
+
+    // Forbidden methods should fail regardless of casing.
+    CheckMethodFails("CoNneCt");
+    CheckMethodFails("TrAcK");
+    CheckMethodFails("TrAcE");
+}
+
+// Test that untrusted loads can't use a forbidden header field.
+TEST_F(AssociatedURLLoaderTest, UntrustedCheckHeaders)
+{
+    // Check non-token header fails.
+    CheckHeaderFails("foo()");
+
+    // Check forbidden headers fail.
+    CheckHeaderFails("accept-charset");
+    CheckHeaderFails("accept-encoding");
+    CheckHeaderFails("connection");
+    CheckHeaderFails("content-length");
+    CheckHeaderFails("cookie");
+    CheckHeaderFails("cookie2");
+    CheckHeaderFails("content-transfer-encoding");
+    CheckHeaderFails("date");
+    CheckHeaderFails("expect");
+    CheckHeaderFails("host");
+    CheckHeaderFails("keep-alive");
+    CheckHeaderFails("origin");
+    CheckHeaderFails("referer");
+    CheckHeaderFails("te");
+    CheckHeaderFails("trailer");
+    CheckHeaderFails("transfer-encoding");
+    CheckHeaderFails("upgrade");
+    CheckHeaderFails("user-agent");
+    CheckHeaderFails("via");
+
+    CheckHeaderFails("proxy-");
+    CheckHeaderFails("proxy-foo");
+    CheckHeaderFails("sec-");
+    CheckHeaderFails("sec-foo");
+
+    // Check that validation is case-insensitive.
+    CheckHeaderFails("AcCePt-ChArSeT");
+    CheckHeaderFails("ProXy-FoO");
+
+    // Check invalid header values.
+    CheckHeaderFails("foo", "bar\x0d\x0ax-csrf-token:\x20test1234");
 }
 
 }

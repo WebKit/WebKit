@@ -33,7 +33,6 @@
 #include <JavaScriptCore/JSObject.h>
 #include <WebCore/JSHTMLElement.h>
 #include <WebCore/JSPluginElementFunctions.h>
-#include <WebCore/NotImplemented.h>
 
 using namespace JSC;
 using namespace WebCore;

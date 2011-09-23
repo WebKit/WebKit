@@ -140,10 +140,18 @@ BuildablePlatformTouchPoint::BuildablePlatformTouchPoint(int x, int y, PlatformT
 
 class BuildablePlatformTouchEvent : public WebCore::PlatformTouchEvent {
 public:
+    BuildablePlatformTouchEvent(WebCore::TouchEventType type, PlatformTouchPoint& point, double time)
+    {
+        m_type = type;
+        m_touchPoints.append(point);
+        m_timestamp = time;
+    }
+
     BuildablePlatformTouchEvent(WebCore::TouchEventType type, PlatformTouchPoint& point)
     {
         m_type = type;
         m_touchPoints.append(point);
+        m_timestamp = 100.;
     }
 };
 
@@ -161,15 +169,14 @@ void SimulateAndTestFirstClick(InspectableGestureRecognizerChromium& gm)
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 
     BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
-    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press);
+    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press, 1000.);
     OwnPtr<Vector<WebCore::PlatformGestureEvent> > gestureStart(gm.processTouchEventForGestures(pressEvent, false));
     ASSERT_EQ((unsigned int)1, gestureStart->size());
     ASSERT_EQ(PlatformGestureEvent::TapDownType, (*gestureStart)[0].type());
     ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint release(10, 16, PlatformTouchPoint::TouchReleased);
-    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release);
-    gm.setFirstTouchTime(gm.firstTouchTime() - 0.01);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release, 1000. + 0.7);
     OwnPtr<Vector<WebCore::PlatformGestureEvent> > gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
     ASSERT_EQ((unsigned int)1, gestureEnd->size());
     ASSERT_EQ(PlatformGestureEvent::TapType, (*gestureEnd)[0].type());
@@ -302,32 +309,37 @@ TEST_F(GestureRecognizerTest, updateValues)
     ASSERT_EQ(0.0, gm.lastTouchTime() - gm.firstTouchTime());
 }
 
-TEST_F(GestureRecognizerTest, doubleTapGestureTest)
+#if OS(WINDOWS)
+#define MAYBE_doubleTapGestureTest DISABLED_doubleTapGestureTest
+#else
+#define MAYBE_doubleTapGestureTest doubleTapGestureTest
+#endif
+
+TEST_F(GestureRecognizerTest, DISABLED_doubleTapGestureTest)
 {
     InspectableGestureRecognizerChromium gm;
     SimulateAndTestFirstClick(gm);
-    ASSERT_EQ(GestureRecognizerChromium::FirstClickReceived, gm.state());
+    ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 
     BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
-    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press);
-    gm.setLastTouchTime(gm.lastTouchTime() - 0.01);
+    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press, 1000 + .5);
     Gestures gestureStart(gm.processTouchEventForGestures(pressEvent, false));
     ASSERT_EQ((unsigned int)1, gestureStart->size());
     ASSERT_EQ(PlatformGestureEvent::TapDownType, (*gestureStart)[0].type());
-    ASSERT_EQ(GestureRecognizerChromium::PendingDoubleClick, gm.state());
+    ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint move(10, 16, PlatformTouchPoint::TouchMoved);
-    BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move);
+    BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move, 1000 + .5 + .01);
     Gestures gestureMove(gm.processTouchEventForGestures(moveEvent, false));
     ASSERT_EQ((unsigned int)0, gestureMove->size());
-    ASSERT_EQ(GestureRecognizerChromium::PendingDoubleClick, gm.state());
+    ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint release(10, 16, PlatformTouchPoint::TouchReleased);
-    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release);
-    gm.setFirstTouchTime(gm.firstTouchTime() - 0.01);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release, 1000 + .5 + .02);
     Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
-    ASSERT_EQ((unsigned int)1, gestureEnd->size());
-    ASSERT_EQ(PlatformGestureEvent::DoubleTapType, (*gestureEnd)[0].type());
+    ASSERT_EQ((unsigned int)2, gestureEnd->size());
+    ASSERT_EQ(PlatformGestureEvent::TapType, (*gestureEnd)[0].type());
+    ASSERT_EQ(PlatformGestureEvent::DoubleTapType, (*gestureEnd)[1].type());
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 }
 
@@ -335,7 +347,7 @@ TEST_F(GestureRecognizerTest, doubleTapGestureIncompleteTest)
 {
     InspectableGestureRecognizerChromium gm;
     SimulateAndTestFirstClick(gm);
-    ASSERT_EQ(GestureRecognizerChromium::FirstClickReceived, gm.state());
+    ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 
     BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
     BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press);
@@ -343,19 +355,22 @@ TEST_F(GestureRecognizerTest, doubleTapGestureIncompleteTest)
     Gestures gestureStart(gm.processTouchEventForGestures(pressEvent, false));
     ASSERT_EQ((unsigned int)1, gestureStart->size());
     ASSERT_EQ(PlatformGestureEvent::TapDownType, (*gestureStart)[0].type());
-    ASSERT_EQ(GestureRecognizerChromium::PendingDoubleClick, gm.state());
+    ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint move(10, 50, PlatformTouchPoint::TouchMoved);
     BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move);
     Gestures gestureMove(gm.processTouchEventForGestures(moveEvent, false));
-    ASSERT_EQ((unsigned int)0, gestureMove->size());
-    ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
+    ASSERT_EQ((unsigned int)2, gestureMove->size());
+    ASSERT_EQ(PlatformGestureEvent::ScrollBeginType, (*gestureMove)[0].type());
+    ASSERT_EQ(PlatformGestureEvent::ScrollUpdateType, (*gestureMove)[1].type());
+    ASSERT_EQ(GestureRecognizerChromium::Scroll, gm.state());
 
     BuildablePlatformTouchPoint release(10, 50, PlatformTouchPoint::TouchReleased);
     BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release);
     gm.setFirstTouchTime(gm.firstTouchTime() - 0.01);
     Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
-    ASSERT_EQ((unsigned int)0, gestureEnd->size());
+    ASSERT_EQ((unsigned int)1, gestureEnd->size());
+    ASSERT_EQ(PlatformGestureEvent::ScrollEndType, (*gestureEnd)[0].type());
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 }
 
@@ -413,8 +428,44 @@ TEST_F(GestureRecognizerTest, tapDownWithTapGestureTest)
     Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
     ASSERT_EQ((unsigned int)1, gestureEnd->size());
     ASSERT_EQ(PlatformGestureEvent::TapType, (*gestureEnd)[0].type());
-    ASSERT_EQ(GestureRecognizerChromium::FirstClickReceived, gm.state());
+    ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 }
+
+#if OS(WINDOWS)
+#define MAYBE_noDoubleTapGestureBecauseOfInterTouchIntervalTest DISABLED_noDoubleTapGestureBecauseOfInterTouchIntervalTest
+#else
+#define MAYBE_noDoubleTapGestureBecauseOfInterTouchIntervalTest noDoubleTapGestureBecauseOfInterTouchIntervalTest
+#endif
+
+TEST_F(GestureRecognizerTest, MAYBE_noDoubleTapGestureBecauseOfInterTouchIntervalTest)
+{
+    InspectableGestureRecognizerChromium gm;
+    SimulateAndTestFirstClick(gm);
+    ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
+
+    BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
+    // Values are from GestureRecognizerChromium.cpp
+    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press, 1000 + .8 + 10 + .1);
+    Gestures gestureStart(gm.processTouchEventForGestures(pressEvent, false));
+    ASSERT_EQ((unsigned int)1, gestureStart->size());
+    ASSERT_EQ(PlatformGestureEvent::TapDownType, (*gestureStart)[0].type());
+    ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
+
+    BuildablePlatformTouchPoint move(10, 16, PlatformTouchPoint::TouchMoved);
+    BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move, 1000 + .8 + 10 + .1 + .05);
+    Gestures gestureMove(gm.processTouchEventForGestures(moveEvent, false));
+    ASSERT_EQ((unsigned int)0, gestureMove->size());
+    ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
+
+    BuildablePlatformTouchPoint release(11, 17, PlatformTouchPoint::TouchReleased);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release, 1000 + .8 + 10 + .1 + .02);
+    Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
+    ASSERT_EQ((unsigned int)1, gestureEnd->size());
+    ASSERT_EQ(PlatformGestureEvent::TapType, (*gestureEnd)[0].type());
+    ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
+}
+
+
 
 TEST_F(GestureRecognizerTest, gestureScrollEvents)
 {

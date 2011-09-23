@@ -11,7 +11,12 @@ include(LibFindMacros)
 libfind_package(Cairo Freetype)
 
 # Use pkg-config to get hints about paths
-libfind_pkg_check_modules(Cairo_PKGCONF cairo)
+set (Module cairo)
+if (Cairo_FIND_VERSION)
+  set (Module "${Module}>=${Cairo_FIND_VERSION}")
+endif ()
+
+libfind_pkg_check_modules(Cairo_PKGCONF ${Module})
 
 # Include dir
 find_path(Cairo_INCLUDE_DIR

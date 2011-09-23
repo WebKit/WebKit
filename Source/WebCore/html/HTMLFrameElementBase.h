@@ -42,6 +42,7 @@ public:
     int width();
     int height();
 
+    bool canRemainAliveOnRemovalFromTree();
     void setRemainsAliveOnRemovalFromTree(bool);
 #if ENABLE(FULLSCREEN_API)
     virtual bool allowFullScreen() const;

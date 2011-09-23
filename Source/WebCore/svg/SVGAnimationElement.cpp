@@ -24,7 +24,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 #include "SVGAnimationElement.h"
 
 #include "Attribute.h"
@@ -619,5 +619,5 @@ void SVGAnimationElement::endedActiveInterval()
 }
 
 }
-#endif // ENABLE(SVG_ANIMATION)
+#endif // ENABLE(SVG)
 

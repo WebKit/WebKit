@@ -282,6 +282,17 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
     if (!children)
         return;
 
+    RenderObject* beforeContent = 0;
+    bool beforeChildHasBeforeAndAfterContent = false;
+    if (beforeChild && (beforeChild->isTable() || beforeChild->isTableSection() || beforeChild->isTableRow())) {
+        beforeContent = beforeChild->findBeforeContentRenderer();
+        RenderObject* afterContent = beforeChild->findAfterContentRenderer();
+        if (beforeContent && afterContent) {
+            beforeChildHasBeforeAndAfterContent = true;
+            beforeContent->destroy();
+        }
+    }
+
     bool needsTable = false;
 
     if (newChild->isTableCol() && newChild->style()->display() == TABLE_COLUMN_GROUP)
@@ -320,11 +331,15 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
         // Just add it...
         children->insertChildNode(this, newChild, beforeChild);
     }
+
     if (newChild->isText() && newChild->style()->textTransform() == CAPITALIZE) {
         RefPtr<StringImpl> textToTransform = toRenderText(newChild)->originalText();
         if (textToTransform)
             toRenderText(newChild)->setText(textToTransform.release(), true);
     }
+
+    if (beforeChildHasBeforeAndAfterContent)
+        children->updateBeforeAfterContent(this, BEFORE);
 }
 
 void RenderObject::removeChild(RenderObject* oldChild)

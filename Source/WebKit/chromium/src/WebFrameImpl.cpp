@@ -750,7 +750,7 @@ void WebFrameImpl::bindToWindowObject(const WebString& name, NPObject* object)
 
 void WebFrameImpl::executeScript(const WebScriptSource& source)
 {
-    TextPosition1 position(WTF::OneBasedNumber::fromOneBasedInt(source.startLine), WTF::OneBasedNumber::base());
+    TextPosition position(OrdinalNumber::fromOneBasedInt(source.startLine), OrdinalNumber::first());
     m_frame->script()->executeScript(
         ScriptSourceCode(source.code, source.url, position));
 }
@@ -762,7 +762,7 @@ void WebFrameImpl::executeScriptInIsolatedWorld(
     Vector<ScriptSourceCode> sources;
 
     for (unsigned i = 0; i < numSources; ++i) {
-        TextPosition1 position(WTF::OneBasedNumber::fromOneBasedInt(sourcesIn[i].startLine), WTF::OneBasedNumber::base());
+        TextPosition position(OrdinalNumber::fromOneBasedInt(sourcesIn[i].startLine), OrdinalNumber::first());
         sources.append(ScriptSourceCode(
             sourcesIn[i].code, sourcesIn[i].url, position));
     }
@@ -832,7 +832,7 @@ v8::Handle<v8::Value> WebFrameImpl::executeScriptAndReturnValue(const WebScriptS
     // http://code.google.com/p/chromium/issues/detail?id=86397
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
-    TextPosition1 position(WTF::OneBasedNumber::fromOneBasedInt(source.startLine), WTF::OneBasedNumber::base());
+    TextPosition position(OrdinalNumber::fromOneBasedInt(source.startLine), OrdinalNumber::first());
     return m_frame->script()->executeScript(ScriptSourceCode(source.code, source.url, position)).v8Value();
 }
 

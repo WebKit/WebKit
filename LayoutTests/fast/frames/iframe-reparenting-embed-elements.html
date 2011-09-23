@@ -1,0 +1,69 @@
+<html>
+<script>
+function log(message) {
+  document.getElementById("log").innerText += message + "\n";
+}
+
+function verifyResult(message, actualToken, expectedToReload) {
+  var success = (expectedToReload != (actualToken == "modified"));
+  log((success ? "PASS" : "FAIL") + ": " + message);
+}
+
+function transferIframe(testStepDescription, expectedToReload, nextTest)
+{
+  var iframe = frame1.contentDocument.getElementsByTagName("iframe")[0];
+  if (iframe.contentWindow.token != "loaded")
+    log("FAIL: invalid initial state of test iframe");
+
+  iframe.contentWindow.token = "modified";
+
+  frame1.contentDocument.adoptNode(iframe);
+  frame2.contentDocument.body.appendChild(iframe);
+  verifyResult(testStepDescription, iframe.contentWindow.token, expectedToReload);
+
+  frame1.onload = nextTest;
+  frame1.contentWindow.location.reload();
+}
+
+function finish()
+{
+  log("Test Finished.");
+  if (window.layoutTestController)
+      layoutTestController.notifyDone();
+}
+
+function test() {
+  if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+  }
+
+  frame1 = document.getElementById("frame1");
+  frame2 = document.getElementById("frame2");
+
+  transferIframe("Test without plugins", false, test1);
+}
+
+function test1() {
+  var iframe = frame1.contentDocument.getElementsByTagName("iframe")[0];
+  iframe.contentDocument.body.appendChild(iframe.contentDocument.createElement("embed"));
+  transferIframe("Test with <embed>", true, test2);
+}
+
+function test2() {
+  var iframe = frame1.contentDocument.getElementsByTagName("iframe")[0];
+  iframe.contentDocument.body.appendChild(iframe.contentDocument.createElement("object"));
+  transferIframe("Test with <object>", true, finish);
+}
+
+</script>
+<body onload=test()>
+<p>This test moves an iframe between two documents 3 times: without plugins, with &lt;embed&gt; tag and then with &lt;object&gt; tag.</p>
+<p>Only the attempt without plugin elements should succeed. The presence of plugin elements should prevent the document.adoptNode() method from 
+triggering live transfer - in which case the iframe will be reloaded.</p>
+<p>Test succeeds if there are 'PASS' messages below and no 'FAIL' messages.</p>
+<iframe id=frame1 src="resources/iframe-reparenting-embed-frame1.html"></iframe>
+<iframe id=frame2 src="resources/iframe-reparenting-frame2.html"></iframe>
+<pre id=log></pre>
+</body>
+</html>

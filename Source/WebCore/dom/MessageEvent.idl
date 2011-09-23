@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Henry Mason <hmason@mac.com>
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +45,15 @@ module events {
                                        in [Optional=CallWithDefaultValue] DOMString lastEventIdArg, 
                                        in [Optional=CallWithDefaultValue] DOMWindow sourceArg, 
                                        in [Optional=CallWithDefaultValue] Array messagePorts);
+
+        [Custom] void webkitInitMessageEvent(in [Optional=CallWithDefaultValue] DOMString typeArg,
+                                             in [Optional=CallWithDefaultValue] boolean canBubbleArg,
+                                             in [Optional=CallWithDefaultValue] boolean cancelableArg,
+                                             in [Optional=CallWithDefaultValue] SerializedScriptValue dataArg,
+                                             in [Optional=CallWithDefaultValue] DOMString originArg,
+                                             in [Optional=CallWithDefaultValue] DOMString lastEventIdArg,
+                                             in [Optional=CallWithDefaultValue] DOMWindow sourceArg,
+                                             in [Optional=CallWithDefaultValue] Array transferables);
 #else
         // Code generator for ObjC bindings does not support custom bindings, thus there is no good way to
         // return a variant value. As workaround, expose the data attribute as SerializedScriptValue.

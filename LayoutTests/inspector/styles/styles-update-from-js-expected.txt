@@ -20,6 +20,7 @@ border: 1px solid black;
     border-right-color: black;
     border-bottom-color: black;
     border-left-color: black;
+border-image: initial;
 
 
 
@@ -31,7 +32,7 @@ color: #C0FFEE;
 
 
 Running: testSetViaParsedAttributes
-<div id="container" style="color: rgb(192, 255, 238); border-top-style: dashed; border-right-style: dashed; border-bottom-style: dashed; border-left-style: dashed; border-top-color: green; border-right-color: green; border-bottom-color: green; border-left-color: green; border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; "></div>
+<div id="container" style="color: rgb(192, 255, 238); border-top-style: dashed; border-right-style: dashed; border-bottom-style: dashed; border-left-style: dashed; border-top-color: green; border-right-color: green; border-bottom-color: green; border-left-color: green; border-image: initial; border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; "></div>
 [expanded] element.style { ()
 color: #C0FFEE;
 border: 3px dashed green;
@@ -43,6 +44,7 @@ border: 3px dashed green;
     border-right-color: green;
     border-bottom-color: green;
     border-left-color: green;
+border-image: initial;
 border-width: 3px;
     border-top-width: 3px;
     border-right-width: 3px;

@@ -499,6 +499,7 @@ SOURCES += \
     dom/EventContext.cpp \
     dom/EventDispatchMediator.cpp \
     dom/EventDispatcher.cpp \
+    dom/EventListenerMap.cpp \
     dom/EventNames.cpp \
     dom/EventTarget.cpp \
     dom/EventQueue.cpp \
@@ -1041,6 +1042,7 @@ SOURCES += \
     platform/mock/GeolocationClientMock.cpp \
     platform/mock/GeolocationServiceMock.cpp \
     platform/mock/SpeechInputClientMock.cpp \
+    platform/mock/ScrollbarThemeMock.cpp \
     platform/network/AuthenticationChallengeBase.cpp \
     platform/network/BlobData.cpp \
     platform/network/BlobRegistryImpl.cpp \
@@ -1505,6 +1507,7 @@ HEADERS += \
     dom/EntityReference.h \
     dom/Event.h \
     dom/EventDispatchMediator.h \
+    dom/EventListenerMap.h \
     dom/EventNames.h \
     dom/EventTarget.h \
     dom/ExceptionBase.h \
@@ -1962,6 +1965,7 @@ HEADERS += \
     platform/mock/GeolocationClientMock.cpp \
     platform/mock/GeolocationServiceMock.h \
     platform/mock/SpeechInputClientMock.h \
+    platform/mock/ScrollbarThemeMock.h \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
     platform/graphics/filters/FEBlend.h \
@@ -2739,7 +2743,7 @@ contains(DEFINES, ENABLE_SQLITE=1) {
 }
 
 
-contains(DEFINES, ENABLE_DATABASE=1) {
+contains(DEFINES, ENABLE_SQL_DATABASE=1) {
     SOURCES += \
         storage/ChangeVersionWrapper.cpp \
         storage/DatabaseTask.cpp \
@@ -3559,11 +3563,6 @@ SOURCES += \
     loader/appcache/ApplicationCacheResource.cpp \
     loader/appcache/DOMApplicationCache.cpp \
     loader/appcache/ManifestParser.cpp
-
-    !v8 {
-        SOURCES += \
-            bindings/js/JSDOMApplicationCacheCustom.cpp
-    }
 }
 
 contains(DEFINES, ENABLE_WEB_SOCKETS=1) {

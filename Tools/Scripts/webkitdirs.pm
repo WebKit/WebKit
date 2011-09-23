@@ -1521,6 +1521,12 @@ sub buildAutotoolsProject($@)
         $makeArgs .= " jsc";
     }
 
+    # This is a temporary work-around to enable building WebKit2 on the bots,
+    # but ensuring that it does not ship until the API is stable.
+    if ($project eq "WebKit" and isGtk()) {
+        push @buildArgs, "--enable-webkit2";
+    }
+
     $prefix = $ENV{"WebKitInstallationPrefix"} if !defined($prefix);
     push @buildArgs, "--prefix=" . $prefix if defined($prefix);
 

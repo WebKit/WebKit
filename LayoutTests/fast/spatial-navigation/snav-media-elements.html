@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script src="resources/spatial-navigation-utils.js"></script>
+    <script type="application/javascript">
+
+    var resultMap = [
+      ["Up", "start"],
+      ["Down", "v1"],
+      ["Down", "i2"],
+      ["Down", "v3"],
+      ["Down", "i4"],
+      ["Down", "v5"],
+      ["Down", "i6"],
+      ["Down", "a7"],
+      ["Down", "i8"],
+      ["Down", "end"],
+      ["Up", "i8"],
+      ["Down", "end"],
+      ["DONE", "DONE"]
+    ];
+
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.setSpatialNavigationEnabled(true);
+      layoutTestController.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+      layoutTestController.waitUntilDone();
+    }
+
+    function runTest()
+    {
+      // starting the test itself: get to a known place.
+      document.getElementById("start").focus();
+
+      initTest(resultMap, testCompleted);
+    }
+
+    function testCompleted()
+    {
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }
+
+    window.onload = runTest;
+
+    </script>
+    <script src="js/resources/js-test-post.js"></script>
+  </head>
+
+  <body id="some-content" xmlns="http://www.w3.org/1999/xhtml">
+
+    <p>This is a link <a id="start" href="a">start of Test</a>.</p>
+    <video id="v1" controls tabindex="0" src="../../media/content/test.mp4"></video>
+
+    <p>This is a link <a id="i2" href="a">i2</a>.</p>
+    <video id="v3" controls src="../../media/content/test.mp4"></video>
+
+    <p>This is a link <a id="i4" href="a">i4</a>.</p>
+    <video id="v5" tabindex="0" src="../../media/content/test.mp4"></video>
+
+    <p>This is a link <a id="i6" href="a">i6</a>.</p>
+    <audio id="a7" controls src="../../media/content/test.wav"></audio>
+
+    <p>This is a link <a id="i8" href="a">i8</a>.</p>
+    <!-- 'a9' is not focussable: no controls attribute as well no tab index.
+    Key down from 'i8' should go to 'end'. -->
+    <audio id="a9" src="../../media/content/test.mp4"></audio> 
+
+    <p>This is a link <a id="end" href="a">End of Test</a>.</p>
+
+    <div id="console"></div>
+    <p>This tests that a media elements ie: <code>&lt;Audio&gt;</code> or <code>&lt;video&gt;</code>, without tabindex are able to be reached through keyboard access</p>
+  </body>
+</html>

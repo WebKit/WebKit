@@ -66,8 +66,7 @@ void CCCanvasLayerImpl::draw(LayerRendererChromium* layerRenderer)
     }
     GLC(context, context->useProgram(program->program()));
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
-    LayerChromium::drawTexturedQuad(context, layerRenderer->projectionMatrix(), drawTransform(),
-                                    bounds().width(), bounds().height(), drawOpacity(), layerRenderer->sharedGeometryQuad(),
+    layerRenderer->drawTexturedQuad(drawTransform(), bounds().width(), bounds().height(), drawOpacity(), layerRenderer->sharedGeometryQuad(),
                                     program->vertexShader().matrixLocation(),
                                     program->fragmentShader().alphaLocation(),
                                     -1);

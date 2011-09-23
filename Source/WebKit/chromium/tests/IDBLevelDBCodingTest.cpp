@@ -27,7 +27,7 @@
 #include "IDBLevelDBCoding.h"
 
 #if ENABLE(INDEXED_DATABASE)
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
 
 #include "IDBKey.h"
 #include "LevelDBSlice.h"
@@ -387,5 +387,5 @@ TEST(IDBLevelDBCodingTest, ComparisonTest)
 
 } // namespace
 
-#endif // ENABLE(LEVELDB)
+#endif // USE(LEVELDB)
 #endif // ENABLE(INDEXED_DATABASE)

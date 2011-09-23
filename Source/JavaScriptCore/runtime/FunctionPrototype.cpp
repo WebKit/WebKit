@@ -50,11 +50,14 @@ void FunctionPrototype::finishCreation(ExecState* exec, const Identifier& name)
 
 void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* globalObject, Structure* functionStructure, JSFunction** callFunction, JSFunction** applyFunction)
 {
-    putDirectFunctionWithoutTransition(exec, JSFunction::create(exec, globalObject, functionStructure, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
+    JSFunction* toStringFunction = JSFunction::create(exec, globalObject, functionStructure, 0, exec->propertyNames().toString, functionProtoFuncToString);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().toString, toStringFunction, DontEnum);
+
     *applyFunction = JSFunction::create(exec, globalObject, functionStructure, 2, exec->propertyNames().apply, functionProtoFuncApply);
-    putDirectFunctionWithoutTransition(exec, *applyFunction, DontEnum);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().apply, *applyFunction, DontEnum);
+
     *callFunction = JSFunction::create(exec, globalObject, functionStructure, 1, exec->propertyNames().call, functionProtoFuncCall);
-    putDirectFunctionWithoutTransition(exec, *callFunction, DontEnum);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().call, *callFunction, DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL callFunctionPrototype(ExecState*)

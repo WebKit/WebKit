@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 #include "V8SQLResultSetRowList.h"
 
 #include "SQLResultSetRowList.h"

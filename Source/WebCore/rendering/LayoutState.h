@@ -35,12 +35,14 @@ class ColumnInfo;
 class RenderArena;
 class RenderBox;
 class RenderObject;
+class RenderFlowThread;
 
 class LayoutState {
     WTF_MAKE_NONCOPYABLE(LayoutState);
 public:
     LayoutState()
         : m_clipped(false)
+        , m_isPaginated(false)
         , m_pageLogicalHeight(0)
         , m_pageLogicalHeightChanged(false)
         , m_columnInfo(0)
@@ -52,6 +54,7 @@ public:
     }
 
     LayoutState(LayoutState*, RenderBox*, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, ColumnInfo*);
+    LayoutState(LayoutState*, RenderFlowThread*);
     LayoutState(RenderObject*);
 
     void destroy(RenderArena*);
@@ -64,7 +67,7 @@ public:
 
     void clearPaginationInformation();
     bool isPaginatingColumns() const { return m_columnInfo; }
-    bool isPaginated() const { return m_pageLogicalHeight || m_columnInfo; }
+    bool isPaginated() const { return m_isPaginated; }
     
     // The page logical offset is the object's offset from the top of the page in the page progression
     // direction (so an x-offset in vertical text and a y-offset for horizontal text).
@@ -81,6 +84,7 @@ private:
 
 public:
     bool m_clipped;
+    bool m_isPaginated;
     LayoutRect m_clipRect;
     
     // x/y offset from container. Includes relative positioning and scroll offsets.

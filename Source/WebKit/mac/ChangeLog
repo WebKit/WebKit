@@ -1,3 +1,327 @@
+2011-09-19  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/68421> Stop calling UpdateSystemActivity in places where we hold power assertions that achieve the same effect
+
+        On SnowLeopard and newer it's not necessary to call UpdateSystemActivity to prevent the screensaver from kicking
+        in as the NoDisplaySleep assertion now has that effect. It's also not necessary to hold both a NoDisplaySleep and
+        a NoIdleSleep assertion as the latter is implied by the former.
+
+        Adopt the DisplaySleepDisabler class that was added to WebCore and remove all of duplicated logic from WebFullScreenController.
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebFullScreenController.h:
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController dealloc]):
+        (-[WebFullScreenController _updatePowerAssertions]): Create a DisplaySleepDisabler instance when transitioning from permitting
+        display sleep to disabling display sleep. Clear out our reference when sleep should be permitted, destroying any
+        disabler that we own.
+
+2011-09-19  Adam Barth  <abarth@webkit.org>
+
+        Always enable ENABLE(EVENTSOURCE)
+        https://bugs.webkit.org/show_bug.cgi?id=68414
+
+        Reviewed by Eric Seidel.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2011-09-19  Anders Carlsson  <andersca@apple.com>
+
+        Fix crashes when running WebKit1 tests.
+
+        -[WebView _mustDrawUnionedRect:singleRects:count:] was removed, so just put back the
+        equivalent code directly into -[WebHTMLView drawRect:].
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawRect:]):
+        * WebView/WebViewInternal.h:
+
+2011-09-19  Anders Carlsson  <andersca@apple.com>
+
+        Remove the last remains of viewless WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=68388
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::forceLayoutForNonHTML):
+        Remove null check.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        Remove usesDocumentViews parameter and checks.
+
+        (-[WebView _initWithFrame:frameName:groupName:usesDocumentViews:]):
+        Add an assertion that usesDocumentViews is always true.
+
+        (-[WebView _isUsingAcceleratedCompositing]):
+        Remove usesDocumentViews check.
+
+        (-[WebView _isSoftwareRenderable]):
+        Remove usesDocumentViews check.
+
+        (-[WebView initWithFrame:frameName:groupName:]):
+        Remove usesDocumentViews parameter and always pass YES to the _initWithFrame method.
+        
+        (-[WebView initWithCoder:]):
+        Remove usesDocumentViews parameter.
+
+        (-[WebView _frameViewAtWindowPoint:]):
+        Remove usesDocumentViews check.
+
+        * WebView/WebViewData.h:
+        Remove usesDocumentViews ivar.
+
+        * WebView/WebViewPrivate.h:
+        Remove usesDocumentViews parameters.
+
+2011-09-19  Anders Carlsson  <andersca@apple.com>
+
+        Remove WebViewEventHandling.mm
+        https://bugs.webkit.org/show_bug.cgi?id=68387
+
+        Reviewed by Adam Roben.
+
+        WebViewEventHandling.mm was all about event handling in viewless WebKit, so rip it out since
+        we're getting rid of viewless WebKit1.
+
+        * WebView/WebView.mm:
+        (-[WebView _close]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewEventHandling.mm: Removed.
+        * WebView/WebViewInternal.h:
+
+2011-09-19  Anders Carlsson  <andersca@apple.com>
+
+        Remove -[WebView _selectionChanged] and -[WebView _setTooltip:]
+        https://bugs.webkit.org/show_bug.cgi?id=68385
+
+        Reviewed by Adam Roben.
+
+        Move these functions back into the respective clients and remove usesDocumentViews checks.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setToolTip):
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::respondToChangedSelection):
+        * WebView/WebView.mm:
+        * WebView/WebViewEventHandling.mm:
+        * WebView/WebViewInternal.h:
+
+2011-09-19  Anders Carlsson  <andersca@apple.com>
+
+        Begin removing -[WebView _usesDocumentCalls] from WebView.mm
+        https://bugs.webkit.org/show_bug.cgi?id=68383
+
+        Reviewed by Adam Roben.
+
+        Remove checks and begin assuming that -[WebView _usesDocumentViews] always 
+        returns true, since viewless WebKit1 has been abandoned.
+
+        * WebView/WebView.mm:
+        (-[WebView selectedFrame]):
+        (-[WebView setHostWindow:]):
+        (-[WebView acceptsFirstResponder]):
+        (-[WebView becomeFirstResponder]):
+        (-[WebView _webcore_effectiveFirstResponder]):
+        (-[WebView setNextKeyView:]):
+        (-[WebView setHoverFeedbackSuspended:]):
+
+2011-09-19  Anders Carlsson  <andersca@apple.com>
+
+        Remove calls to -[WebView _usesDocumentViews] from WebFrameLoaderClient.mm
+        https://bugs.webkit.org/show_bug.cgi?id=68379
+
+        Reviewed by Adam Roben.
+
+        Remove checks and begin assuming that -[WebView _usesDocumentViews] always 
+        returns true, since viewless WebKit1 has been abandoned.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::hasHTMLView):
+        (WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        (WebFrameLoaderClient::createFrame):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _updateBackgroundAndUpdatesWhileOffscreen]):
+        (-[WebFrame _hasSelection]):
+        (-[WebFrame _clearSelection]):
+        (-[WebFrame _shouldFlattenCompositingLayers:]):
+        (-[WebFrame _dragSourceEndedAt:operation:]):
+        (-[WebFrame frameView]):
+
+2011-09-19  Anders Carlsson  <andersca@apple.com>
+
+        Remove calls to -[WebView _usesDocumentViews]
+        https://bugs.webkit.org/show_bug.cgi?id=68377
+
+        Reviewed by Adam Roben.
+
+        Remove checks and begin assuming that -[WebView _usesDocumentViews] always 
+        returns true, since viewless WebKit1 has been abandoned.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::windowResizerRect):
+        (WebChromeClient::invalidateContentsAndWindow):
+        (WebChromeClient::screenToWindow):
+        (WebChromeClient::windowToScreen):
+        (WebChromeClient::platformPageClient):
+        (WebChromeClient::scrollRectIntoView):
+        (WebChromeClient::print):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _receivedData:]):
+
+2011-09-19  Dan Bernstein  <mitz@apple.com>
+
+        WebKit part of [mac] WebKit contains Objective-C classes that are not prefixed with its standard prefixes
+        https://bugs.webkit.org/show_bug.cgi?id=68323
+
+        Reviewed by Sam Weinig.
+
+        Renamed NonBlockingPanel to WebNonBlockingPanel.
+        Renamed ThreadEnabler to WebCocoaThreadingEnabler.
+        Renamed PDFPrefUpdatingProxy to WebPDFPrefUpdatingProxy.
+
+        * Misc/WebIconDatabase.mm:
+        (+[WebCocoaThreadingEnabler enableThreading]):
+        (importToWebCoreFormat):
+        * Panels/English.lproj/WebAuthenticationPanel.nib/designable.nib:
+        * Panels/English.lproj/WebAuthenticationPanel.nib/keyedobjects.nib:
+        * Panels/WebAuthenticationPanel.h:
+        * Panels/WebAuthenticationPanel.m: Renamed NonBlockingPanel to
+        WebNonBlockingPanel. Because Safari 5.1 uses NonBlockingPanel, this will
+        cause nightly builds to log an error message when showing the Safari
+        HTTP authentication sheet and disable the Quit command while the sheet
+        is disaplyed.
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView initWithFrame:]):
+        (-[WebPDFView _updatePreferencesSoon]):
+
+2011-09-17  Mihai Parparita  <mihaip@chromium.org>
+
+        FrameLoaderClient BackForwardList-related methods are unsued
+        https://bugs.webkit.org/show_bug.cgi?id=68293
+
+        Reviewed by Darin Adler.
+
+        Remove FrameLoaderClient methods that were added by r51629, since only        
+        the old (since-deleted) Android port needed them.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebKit.order:
+
+2011-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make custom scrollbar theme for use in DRT, to reduce pixel diffs between platforms
+        https://bugs.webkit.org/show_bug.cgi?id=68134
+
+        Reviewed by Sam Weinig.
+        
+        Hook up a private preference that enables the mock scrollbar theme.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences mockScrollbarsEnabled]):
+        (-[WebPreferences setMockScrollbarsEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+
+2011-09-15  Adam Barth  <abarth@webkit.org>
+
+        Rename ENABLE(DATABASE) to ENABLE(SQL_DATABASE)
+        https://bugs.webkit.org/show_bug.cgi?id=68205
+
+        Reviewed by Eric Seidel.
+
+        * Storage/WebDatabaseManager.mm:
+        * Storage/WebDatabaseManagerInternal.h:
+        * Storage/WebDatabaseManagerPrivate.h:
+        * Storage/WebDatabaseQuotaManager.mm:
+        (-[WebDatabaseQuotaManager usage]):
+        (-[WebDatabaseQuotaManager quota]):
+        (-[WebDatabaseQuotaManager setQuota:]):
+        * Storage/WebDatabaseTrackerClient.h:
+        * Storage/WebDatabaseTrackerClient.mm:
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin usage]):
+        (-[WebSecurityOrigin quota]):
+        (-[WebSecurityOrigin setQuota:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _cacheabilityDictionary]):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        (-[WebView _preferencesChanged:]):
+
+2011-09-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Unzip initialization lists and constructors in JSCell hierarchy (7/7)
+        https://bugs.webkit.org/show_bug.cgi?id=68122
+
+        Reviewed by Geoffrey Garen.
+
+        Completed the seventh and final level of the refactoring to add finishCreation() 
+        methods to all classes within the JSCell hierarchy with non-trivial 
+        constructor bodies.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyRuntimeMethod::create):
+        (WebKit::ProxyRuntimeMethod::ProxyRuntimeMethod):
+        * Plugins/Hosted/ProxyRuntimeObject.h:
+        (WebKit::ProxyRuntimeObject::create):
+        * Plugins/Hosted/ProxyRuntimeObject.mm:
+        (WebKit::ProxyRuntimeObject::ProxyRuntimeObject):
+
+2011-09-15  Kentaro Hara  <haraken@google.com>
+
+        A single line must not be split into two pages.
+        https://bugs.webkit.org/show_bug.cgi?id=65005
+
+        Reviewed by David Hyatt.
+
+        When the document width of a page is overflowed, the last line of the page can be
+        split into the next page. This is the regression caused by r88737. r88737 tried to
+        fix rounding errors in rendering calculations by expanding and shrinking a page
+        using one common method, resizePageRectsKeepingRatio(), but overlooked the case where
+        a document width gets overflowed.
+
+        Test: printing/single-line-must-not-be-split-into-two-pages.html
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _web_setPrintingModeRecursive]): Passes an original page size to setPrinting().
+        (-[WebHTMLView _web_clearPrintingModeRecursive]): Ditto.
+        (-[WebHTMLView _web_setPrintingModeRecursiveAndAdjustViewSize]): Ditto.
+        (-[WebHTMLView _beginPrintModeWithMinimumPageWidth:height:maximumPageWidth:]): Ditto.
+        (-[WebHTMLView _beginPrintModeWithPageWidth:height:shrinkToFit:]): Ditto.
+        (-[WebHTMLView _endPrintMode]): Ditto.
+        (-[WebHTMLView _beginScreenPaginationModeWithPageSize:shrinkToFit:]): Ditto.
+        (-[WebHTMLView _endScreenPaginationMode]): Ditto.
+        (-[WebHTMLView layoutToMinimumPageWidth:height:originalPageWidth:originalPageHeight:maximumShrinkRatio:adjustingViewSize:]): Ditto.
+        (-[WebHTMLView layout]): Ditto.
+        (-[WebHTMLView _setPrinting:minimumPageLogicalWidth:logicalHeight:originalPageWidth:originalPageHeight:maximumShrinkRatio:adjustViewSize:paginateScreenContent:]): Ditto.
+        (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]): Ditto.
+        (-[WebHTMLView setPageWidthForPrinting:]): Ditto.
+
+2011-09-15  Eric Seidel  <eric@webkit.org>
+
+        Remove ENABLE(SVG_AS_IMAGE) since all major ports have it on by default
+        https://bugs.webkit.org/show_bug.cgi?id=68182
+
+        Reviewed by Adam Barth.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2011-09-15  Eric Seidel  <eric@webkit.org>
+
+        Remove ENABLE_SVG_ANIMATION as all major ports have it on by default
+        https://bugs.webkit.org/show_bug.cgi?id=68022
+
+        Reviewed by Ryosuke Niwa.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-09-14  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WebCoreViewFactory and its WebViewFactory subclass

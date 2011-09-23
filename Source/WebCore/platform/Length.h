@@ -30,11 +30,10 @@
 
 namespace WebCore {
 
-const int undefinedLength = -1;
 const int intMaxForLength = 0x7ffffff; // max value for a 28-bit int
 const int intMinForLength = (-0x7ffffff - 1); // min value for a 28-bit int
 
-enum LengthType { Auto, Relative, Percent, Fixed, Intrinsic, MinIntrinsic };
+enum LengthType { Auto, Relative, Percent, Fixed, Intrinsic, MinIntrinsic, Undefined };
 
 struct Length {
     WTF_MAKE_FAST_ALLOCATED;
@@ -56,17 +55,17 @@ public:
     
     Length(float v, LengthType t, bool q = false)
     : m_floatValue(v), m_quirk(q), m_type(t), m_isFloat(true)
-    {            
+    {
     }
 
     Length(double v, LengthType t, bool q = false)
         : m_quirk(q), m_type(t), m_isFloat(true)
-    {           
+    {
         m_floatValue = static_cast<float>(v);    
     }
 
-    bool operator==(const Length& o) const { return (getFloatValue() == o.getFloatValue()) && (m_type == o.m_type) && (m_quirk == o.m_quirk); }
-    bool operator!=(const Length& o) const { return (getFloatValue() != o.getFloatValue()) || (m_type != o.m_type) || (m_quirk != o.m_quirk); }
+    bool operator==(const Length& o) const { return (m_type == o.m_type) && (m_quirk == o.m_quirk) && (isUndefined() || (getFloatValue() == o.getFloatValue())); }
+    bool operator!=(const Length& o) const { return !(*this == o); }
 
     const Length& operator*=(float v)
     {        
@@ -78,7 +77,8 @@ public:
         return *this;
     }
     
-    int value() const {
+    int value() const
+    {
         return getIntValue();
     }
 
@@ -120,7 +120,8 @@ public:
         *this = Length(value, Fixed);
     }
 
-    // note: works only for certain types, returns undefinedLength otherwise
+    // Note: May only be called for Fixed, Percent and Auto lengths.
+    // Other types will ASSERT in order to catch invalid length calculations.
     int calcValue(int maxValue, bool roundPercentages = false) const
     {
         switch (type()) {
@@ -129,9 +130,15 @@ public:
                 return calcMinValue(maxValue, roundPercentages);
             case Auto:
                 return maxValue;
-            default:
-                return undefinedLength;
+            case Relative:
+            case Intrinsic:
+            case MinIntrinsic:
+            case Undefined:
+                ASSERT_NOT_REACHED();
+                return 0;
         }
+        ASSERT_NOT_REACHED();
+        return 0;
     }
 
     int calcMinValue(int maxValue, bool roundPercentages = false) const
@@ -145,9 +152,16 @@ public:
                 // Don't remove the extra cast to float. It is needed for rounding on 32-bit Intel machines that use the FPU stack.
                 return static_cast<int>(static_cast<float>(maxValue * percent() / 100.0f));
             case Auto:
-            default:
+                return 0;
+            case Relative:
+            case Intrinsic:
+            case MinIntrinsic:
+            case Undefined:
+                ASSERT_NOT_REACHED();
                 return 0;
         }
+        ASSERT_NOT_REACHED();
+        return 0;
     }
 
     float calcFloatValue(int maxValue) const
@@ -159,19 +173,26 @@ public:
                 return static_cast<float>(maxValue * percent() / 100.0f);
             case Auto:
                 return static_cast<float>(maxValue);
-            default:
-                return static_cast<float>(undefinedLength);
+            case Relative:
+            case Intrinsic:
+            case MinIntrinsic:
+            case Undefined:
+                ASSERT_NOT_REACHED();
+                return 0;
         }
+        ASSERT_NOT_REACHED();
+        return 0;
     }
 
-    bool isUndefined() const { return value() == undefinedLength; }
+    bool isUndefined() const { return type() == Undefined; }
     bool isZero() const 
-    { 
+    {
+        ASSERT(!isUndefined());
         return m_isFloat ? !m_floatValue : !m_intValue;
     }
     
-    bool isPositive() const { return getFloatValue() > 0; }
-    bool isNegative() const { return getFloatValue() < 0; }
+    bool isPositive() const { return isUndefined() ? false : getFloatValue() > 0; }
+    bool isNegative() const { return isUndefined() ? false : getFloatValue() < 0; }
 
     bool isAuto() const { return type() == Auto; }
     bool isRelative() const { return type() == Relative; }
@@ -207,11 +228,13 @@ public:
 private:
     int getIntValue() const
     {
+        ASSERT(!isUndefined());
         return m_isFloat ? static_cast<int>(m_floatValue) : m_intValue;
     }
 
     float getFloatValue() const
     {
+        ASSERT(!isUndefined());
         return m_isFloat ? m_floatValue : m_intValue;
     }
 

@@ -34,6 +34,7 @@
 
 #include "RenderRubyBase.h"
 #include "RenderRubyText.h"
+#include "RenderText.h"
 #include "RenderView.h"
 
 using namespace std;
@@ -167,6 +168,7 @@ void RenderRubyRun::removeChild(RenderObject* child)
                 moveChildTo(rightRun, base);
                 rightRun->moveChildTo(this, rightBase);
                 // The now empty ruby base will be removed below.
+                ASSERT(!rubyBase()->firstChild());
             }
         }
     }
@@ -285,11 +287,8 @@ void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, Ren
         return;
 
     int logicalWidth = this->logicalWidth();
-
-    // No more than half a ruby is allowed to overhang.
-    int logicalLeftOverhang = rubyText->style(firstLine)->fontSize() / 2;
-    int logicalRightOverhang = logicalLeftOverhang;
-
+    int logicalLeftOverhang = numeric_limits<int>::max();
+    int logicalRightOverhang = numeric_limits<int>::max();
     for (RootInlineBox* rootInlineBox = rubyBase->firstRootBox(); rootInlineBox; rootInlineBox = rootInlineBox->nextRootBox()) {
         logicalLeftOverhang = min<int>(logicalLeftOverhang, rootInlineBox->logicalLeft());
         logicalRightOverhang = min<int>(logicalRightOverhang, logicalWidth - rootInlineBox->logicalRight());
@@ -303,6 +302,15 @@ void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, Ren
 
     if (!endRenderer || !endRenderer->isText() || endRenderer->style(firstLine)->fontSize() > rubyBase->style(firstLine)->fontSize())
         endOverhang = 0;
+
+    // We overhang a ruby only if the neighboring render object is a text.
+    // We can overhang the ruby by no more than half the width of the neighboring text
+    // and no more than half the font size.
+    int halfWidthOfFontSize = rubyText->style(firstLine)->fontSize() / 2;
+    if (startOverhang)
+        startOverhang = min<int>(startOverhang, min<int>(toRenderText(startRenderer)->minLogicalWidth(), halfWidthOfFontSize));
+    if (endOverhang)
+        endOverhang = min<int>(endOverhang, min<int>(toRenderText(endRenderer)->minLogicalWidth(), halfWidthOfFontSize));
 }
 
 } // namespace WebCore

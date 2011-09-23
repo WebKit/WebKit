@@ -172,7 +172,7 @@ public:
         m_callbacks.append(callback.release());
     }
 
-    void appendErrorCallback(XMLErrors::ErrorType type, const xmlChar* message, int lineNumber, int columnNumber)
+    void appendErrorCallback(XMLErrors::ErrorType type, const xmlChar* message, OrdinalNumber lineNumber, OrdinalNumber columnNumber)
     {
         OwnPtr<PendingErrorCallback> callback = adoptPtr(new PendingErrorCallback);
 
@@ -325,13 +325,13 @@ private:
 
         virtual void call(XMLDocumentParser* parser)
         {
-            parser->handleError(type, reinterpret_cast<char*>(message), lineNumber, columnNumber);
+            parser->handleError(type, reinterpret_cast<char*>(message), TextPosition(lineNumber, columnNumber));
         }
 
         XMLErrors::ErrorType type;
         xmlChar* message;
-        int lineNumber;
-        int columnNumber;
+        OrdinalNumber lineNumber;
+        OrdinalNumber columnNumber;
     };
 
     Deque<OwnPtr<PendingCallback> > m_callbacks;
@@ -564,7 +564,7 @@ XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
     , m_finishCalled(false)
     , m_xmlErrors(document)
     , m_pendingScript(0)
-    , m_scriptStartPosition(TextPosition1::belowRangePosition())
+    , m_scriptStartPosition(TextPosition::belowRangePosition())
     , m_parsingFragment(false)
     , m_scriptingPermission(FragmentScriptingAllowed)
 {
@@ -590,7 +590,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     , m_finishCalled(false)
     , m_xmlErrors(fragment->document())
     , m_pendingScript(0)
-    , m_scriptStartPosition(TextPosition1::belowRangePosition())
+    , m_scriptStartPosition(TextPosition::belowRangePosition())
     , m_parsingFragment(true)
     , m_scriptingPermission(scriptingPermission)
 {
@@ -674,7 +674,8 @@ void XMLDocumentParser::doWrite(const String& parseString)
     // FIXME: Why is this here?  And why is it after we process the passed source?
     if (document()->decoder() && document()->decoder()->sawError()) {
         // If the decoder saw an error, report it as fatal (stops parsing)
-        handleError(XMLErrors::fatal, "Encoding error", context->context()->input->line, context->context()->input->col);
+        TextPosition position(OrdinalNumber::fromOneBasedInt(context->context()->input->line), OrdinalNumber::fromOneBasedInt(context->context()->input->col));
+        handleError(XMLErrors::fatal, "Encoding error", position);
     }
 }
 
@@ -821,7 +822,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
 
     ScriptElement* scriptElement = toScriptElement(newElement.get());
     if (scriptElement)
-        m_scriptStartPosition = textPositionOneBased();
+        m_scriptStartPosition = textPosition();
 
     m_currentNode->parserAddChild(newElement.get());
 
@@ -951,7 +952,7 @@ void XMLDocumentParser::error(XMLErrors::ErrorType type, const char* message, va
     if (m_parserPaused)
         m_pendingCallbacks->appendErrorCallback(type, reinterpret_cast<const xmlChar*>(m), lineNumber(), columnNumber());
     else
-        handleError(type, m, lineNumber(), columnNumber());
+        handleError(type, m, textPosition());
 
 #if HAVE(VASPRINTF)
     free(m);
@@ -1368,39 +1369,23 @@ void* xmlDocPtrForString(CachedResourceLoader* cachedResourceLoader, const Strin
 }
 #endif
 
-int XMLDocumentParser::lineNumber() const
+OrdinalNumber XMLDocumentParser::lineNumber() const
 {
-    // FIXME: The implementation probably returns 1-based int, but method should return 0-based.
-    return context() ? context()->input->line : 1;
+    return OrdinalNumber::fromOneBasedInt(context() ? context()->input->line : 1);
 }
 
-int XMLDocumentParser::columnNumber() const
+OrdinalNumber XMLDocumentParser::columnNumber() const
 {
-    // FIXME: The implementation probably returns 1-based int, but method should return 0-based.
-    return context() ? context()->input->col : 1;
+    return OrdinalNumber::fromOneBasedInt(context() ? context()->input->col : 1);
 }
 
-TextPosition0 XMLDocumentParser::textPosition() const
+TextPosition XMLDocumentParser::textPosition() const
 {
     xmlParserCtxtPtr context = this->context();
     if (!context)
-        return TextPosition0::minimumPosition();
-    // FIXME: The context probably contains 1-based numbers, but we treat them as 0-based,
-    //        to be consistent with fixme's in lineNumber() and columnNumber
-    //        methods.
-    return TextPosition0(WTF::ZeroBasedNumber::fromZeroBasedInt(context->input->line),
-        WTF::ZeroBasedNumber::fromZeroBasedInt(context->input->col));
-}
-
-// This method has a correct implementation, in contrast to textPosition() method.
-// It should replace textPosition().
-TextPosition1 XMLDocumentParser::textPositionOneBased() const
-{
-    xmlParserCtxtPtr context = this->context();
-    if (!context)
-        return TextPosition1::minimumPosition();
-    return TextPosition1(WTF::OneBasedNumber::fromOneBasedInt(context->input->line),
-        WTF::OneBasedNumber::fromOneBasedInt(context->input->col));
+        return TextPosition::minimumPosition();
+    return TextPosition(OrdinalNumber::fromOneBasedInt(context->input->line),
+                        OrdinalNumber::fromOneBasedInt(context->input->col));
 }
 
 void XMLDocumentParser::stopParsing()

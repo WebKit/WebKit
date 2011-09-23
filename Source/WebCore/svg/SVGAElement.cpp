@@ -163,13 +163,11 @@ void SVGAElement::defaultEventHandler(Event* event)
 
             if (url[0] == '#') {
                 Element* targetElement = treeScope()->getElementById(url.substring(1));
-#if ENABLE(SVG_ANIMATION)
                 if (SVGSMILElement::isSMILElement(targetElement)) {
                     static_cast<SVGSMILElement*>(targetElement)->beginByLinkActivation();
                     event->setDefaultHandled();
                     return;
                 }
-#endif
                 // Only allow navigation to internal <view> anchors.
                 if (targetElement && !targetElement->hasTagName(SVGNames::viewTag))
                     return;

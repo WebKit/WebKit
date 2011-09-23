@@ -151,7 +151,7 @@ int ComplexTextController::offsetForPosition(float h, bool includePartialGlyphs)
                 CGFloat clusterWidth;
                 // FIXME: The search stops at the boundaries of complexTextRun. In theory, it should go on into neighboring ComplexTextRuns
                 // derived from the same CTLine. In practice, we do not expect there to be more than one CTRun in a CTLine, as no
-                // reordering and on font fallback should occur within a CTLine.
+                // reordering and no font fallback should occur within a CTLine.
                 if (clusterEnd - clusterStart > 1) {
                     clusterWidth = adjustedAdvance;
                     int firstGlyphBeforeCluster = j - 1;
@@ -184,12 +184,40 @@ int ComplexTextController::offsetForPosition(float h, bool includePartialGlyphs)
     return 0;
 }
 
+static bool advanceByCombiningCharacterSequence(const UChar*& iterator, const UChar* end, UChar32& baseCharacter, unsigned& markCount)
+{
+    ASSERT(iterator < end);
+
+    markCount = 0;
+
+    baseCharacter = *iterator++;
+
+    if (U16_IS_SURROGATE(baseCharacter)) {
+        if (!U16_IS_LEAD(baseCharacter))
+            return false;
+        if (iterator == end)
+            return false;
+        UChar trail = *iterator++;
+        if (!U16_IS_TRAIL(trail))
+            return false;
+        baseCharacter = U16_GET_SUPPLEMENTARY(baseCharacter, trail);
+    }
+
+    // Consume marks.
+    while (iterator < end && ((U_GET_GC_MASK(*iterator) & U_GC_M_MASK) || *iterator == zeroWidthJoiner || *iterator == zeroWidthNonJoiner)) {
+        iterator++;
+        markCount++;
+    }
+
+    return true;
+}
+
 void ComplexTextController::collectComplexTextRuns()
 {
     if (!m_end)
         return;
 
-    // We break up glyph run generation for the string by FontData and (if needed) the use of small caps.
+    // We break up glyph run generation for the string by FontData.
     const UChar* cp = m_run.characters();
 
     if (m_font.isSmallCaps())
@@ -199,53 +227,68 @@ void ComplexTextController::collectComplexTextRuns()
     const UChar* curr = cp;
     const UChar* end = cp + m_end;
 
-    GlyphData glyphData;
-    GlyphData nextGlyphData;
+    const SimpleFontData* fontData;
+    bool isMissingGlyph;
+    const SimpleFontData* nextFontData;
+    bool nextIsMissingGlyph;
 
-    bool isSurrogate = U16_IS_SURROGATE(*curr);
-    if (isSurrogate) {
-        if (!U16_IS_SURROGATE_LEAD(curr[0]) || curr + 1 == end || !U16_IS_TRAIL(curr[1]))
-            return;
-        nextGlyphData = m_font.glyphDataForCharacter(U16_GET_SUPPLEMENTARY(curr[0], curr[1]), false);
-    } else
-        nextGlyphData = m_font.glyphDataForCharacter(*curr, false);
+    unsigned markCount;
+    const UChar* sequenceStart = curr;
+    UChar32 baseCharacter;
+    if (!advanceByCombiningCharacterSequence(curr, end, baseCharacter, markCount))
+        return;
 
-    UChar newC = 0;
+    UChar uppercaseCharacter = 0;
 
     bool isSmallCaps;
-    bool nextIsSmallCaps = !isSurrogate && m_font.isSmallCaps() && !(U_GET_GC_MASK(*curr) & U_GC_M_MASK) && (newC = u_toupper(*curr)) != *curr;
+    bool nextIsSmallCaps = m_font.isSmallCaps() && !(U_GET_GC_MASK(baseCharacter) & U_GC_M_MASK) && (uppercaseCharacter = u_toupper(baseCharacter)) != baseCharacter;
 
-    if (nextIsSmallCaps)
-        m_smallCapsBuffer[curr - cp] = newC;
+    if (nextIsSmallCaps) {
+        m_smallCapsBuffer[sequenceStart - cp] = uppercaseCharacter;
+        for (unsigned i = 0; i < markCount; ++i)
+            m_smallCapsBuffer[sequenceStart - cp + i + 1] = sequenceStart[i + 1];
+    }
 
-    while (true) {
-        curr = curr + (isSurrogate ? 2 : 1);
-        if (curr == end)
-            break;
+    nextIsMissingGlyph = false;
+    nextFontData = m_font.fontDataForCombiningCharacterSequence(sequenceStart, curr - sequenceStart, nextIsSmallCaps ? SmallCapsVariant : NormalVariant);
+    if (!nextFontData) {
+        if (markCount)
+            nextFontData = systemFallbackFontData();
+        else
+            nextIsMissingGlyph = true;
+    }
 
-        glyphData = nextGlyphData;
+    while (curr < end) {
+        fontData = nextFontData;
+        isMissingGlyph = nextIsMissingGlyph;
         isSmallCaps = nextIsSmallCaps;
         int index = curr - cp;
-        isSurrogate = U16_IS_SURROGATE(*curr);
-        UChar c = *curr;
-        bool forceSmallCaps = !isSurrogate && isSmallCaps && (U_GET_GC_MASK(c) & U_GC_M_MASK);
-        if (isSurrogate) {
-            if (!U16_IS_SURROGATE_LEAD(curr[0]) || curr + 1 == end || !U16_IS_TRAIL(curr[1]))
-                return;
-            nextGlyphData = m_font.glyphDataForCharacter(U16_GET_SUPPLEMENTARY(curr[0], curr[1]), false);
-        } else
-            nextGlyphData = m_font.glyphDataForCharacter(*curr, false, forceSmallCaps ? SmallCapsVariant : AutoVariant);
 
-        if (!isSurrogate && m_font.isSmallCaps()) {
-            nextIsSmallCaps = forceSmallCaps || (newC = u_toupper(c)) != c;
-            if (nextIsSmallCaps)
-                m_smallCapsBuffer[index] = forceSmallCaps ? c : newC;
+        if (!advanceByCombiningCharacterSequence(curr, end, baseCharacter, markCount))
+            return;
+
+        if (m_font.isSmallCaps()) {
+            nextIsSmallCaps = (uppercaseCharacter = u_toupper(baseCharacter)) != baseCharacter;
+            if (nextIsSmallCaps) {
+                m_smallCapsBuffer[index] = uppercaseCharacter;
+                for (unsigned i = 0; i < markCount; ++i)
+                    m_smallCapsBuffer[index + i + 1] = cp[index + i + 1];
+            }
         }
 
-        if (nextGlyphData.fontData != glyphData.fontData || nextIsSmallCaps != isSmallCaps || !nextGlyphData.glyph != !glyphData.glyph) {
+        nextIsMissingGlyph = false;
+        nextFontData = m_font.fontDataForCombiningCharacterSequence(cp + index, curr - cp - index, nextIsSmallCaps ? SmallCapsVariant : NormalVariant);
+        if (!nextFontData) {
+            if (markCount)
+                nextFontData = systemFallbackFontData();
+            else
+                nextIsMissingGlyph = true;
+        }
+
+        if (nextFontData != fontData || nextIsMissingGlyph != isMissingGlyph) {
             int itemStart = static_cast<int>(indexOfFontTransition);
             int itemLength = index - indexOfFontTransition;
-            collectComplexTextRunsForCharacters((isSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, glyphData.glyph ? glyphData.fontData : 0);
+            collectComplexTextRunsForCharacters((isSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, !isMissingGlyph ? fontData : 0);
             indexOfFontTransition = index;
         }
     }
@@ -253,7 +296,7 @@ void ComplexTextController::collectComplexTextRuns()
     int itemLength = m_end - indexOfFontTransition;
     if (itemLength) {
         int itemStart = indexOfFontTransition;
-        collectComplexTextRunsForCharacters((nextIsSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, nextGlyphData.glyph ? nextGlyphData.fontData : 0);
+        collectComplexTextRunsForCharacters((nextIsSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, !nextIsMissingGlyph ? nextFontData : 0);
     }
 
     if (!m_run.ltr())
@@ -290,6 +333,12 @@ CFIndex ComplexTextController::ComplexTextRun::indexAt(size_t i) const
 
 void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp, unsigned length, unsigned stringLocation, const SimpleFontData* fontData)
 {
+    if (!fontData) {
+        // Create a run of missing glyphs from the primary font.
+        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation, length, m_run.ltr()));
+        return;
+    }
+
 #if USE(CORE_TEXT) && USE(ATSUI)
     if (shouldUseATSUIAPI())
         return collectComplexTextRunsForCharactersATSUI(cp, length, stringLocation, fontData);

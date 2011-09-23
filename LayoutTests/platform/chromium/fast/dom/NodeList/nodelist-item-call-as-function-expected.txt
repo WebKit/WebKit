@@ -1,0 +1,10 @@
+This tests that items in a NodeList cannot be called indexed using [[Call]].
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL nodeList(0) should throw an exception. Was [object HTMLDivElement].
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

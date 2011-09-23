@@ -31,7 +31,7 @@
 #ifndef SQLException_h
 #define SQLException_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "ExceptionBase.h"
 
@@ -67,6 +67,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)
 
 #endif // SQLException_h

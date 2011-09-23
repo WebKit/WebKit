@@ -660,7 +660,7 @@ void BytecodeGenerator::emitOpcode(OpcodeID opcodeID)
 
 void BytecodeGenerator::emitLoopHint()
 {
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
     emitOpcode(op_loop_hint);
 #endif
 }

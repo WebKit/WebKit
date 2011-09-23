@@ -104,8 +104,8 @@ public:
     void setUsesLayerScissor(bool usesLayerScissor) { m_usesLayerScissor = usesLayerScissor; }
     bool usesLayerScissor() const { return m_usesLayerScissor; }
 
-    void setIsRootLayer(bool isRootLayer) { m_isRootLayer = isRootLayer; }
-    bool isRootLayer() const { return m_isRootLayer; }
+    void setIsNonCompositedContent(bool isNonCompositedContent) { m_isNonCompositedContent = isNonCompositedContent; }
+    bool isNonCompositedContent() const { return m_isNonCompositedContent; }
 
     void setSublayerTransform(const TransformationMatrix& sublayerTransform) { m_sublayerTransform = sublayerTransform; }
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
@@ -203,7 +203,7 @@ private:
     TransformationMatrix m_sublayerTransform;
     TransformationMatrix m_transform;
     bool m_usesLayerScissor;
-    bool m_isRootLayer;
+    bool m_isNonCompositedContent;
 
     bool m_drawsContent;
 

@@ -48,6 +48,8 @@ public:
 
     void respondToChangedSelection(const VisibleSelection& oldSelection);
 
+    void deviceScaleFactorChanged();
+
     void show(HTMLElement*);
     void hide();
 

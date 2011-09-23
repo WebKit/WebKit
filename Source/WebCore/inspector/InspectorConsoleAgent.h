@@ -61,7 +61,7 @@ public:
 
     void enable(ErrorString*, int* consoleMessageExpireCount);
     void disable(ErrorString*);
-    void clearConsoleMessages(ErrorString* error);
+    void clearMessages(ErrorString*);
     void reset();
     void restore();
     void setFrontend(InspectorFrontend*);

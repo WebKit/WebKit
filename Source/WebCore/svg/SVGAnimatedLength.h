@@ -36,7 +36,6 @@ DECLARE_ANIMATED_PROPERTY(SVGAnimatedLength, SVGLength, UpperProperty, LowerProp
 #define DEFINE_ANIMATED_LENGTH(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(AnimatedLength, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
 
-#if ENABLE(SVG_ANIMATION)
 class SVGAnimationElement;
 
 class SVGAnimatedLengthAnimator : public SVGAnimatedTypeAnimator {
@@ -56,7 +55,6 @@ public:
 private:
     SVGLengthMode m_lengthMode;
 };
-#endif // ENABLE(SVG_ANIMATION)
 
 } // namespace WebCore
 

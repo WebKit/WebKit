@@ -102,7 +102,7 @@ void RenderSVGRoot::computePreferredLogicalWidths()
     LayoutUnit borderAndPadding = borderAndPaddingWidth();
     LayoutUnit width = computeReplacedLogicalWidth(false) + borderAndPadding;
 
-    if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength)
+    if (style()->maxWidth().isFixed())
         width = min(width, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : 0));
 
     if (style()->width().isPercent() || (style()->width().isAuto() && style()->height().isPercent())) {

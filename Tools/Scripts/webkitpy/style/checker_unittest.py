@@ -257,6 +257,9 @@ class GlobalVariablesTest(unittest.TestCase):
         assertNoCheck("Tools/MiniBrowser/qt/UrlLoader.cpp",
                     "build/include")
 
+        assertNoCheck("Source/WebKit2/UIProcess/API/qt",
+                    "readability/parameter_name")
+
         assertNoCheck("Source/WebCore/ForwardingHeaders/debugger/Debugger.h",
                       "build/header_guard")
 

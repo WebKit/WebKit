@@ -68,7 +68,8 @@ protected:
     };
     
     enum UseChildrenMode { CallUseChildren, UseChildrenCalledExplicitly };
-
+    
+    static const double twoToThe32;
 
 public:
     GPRReg fillInteger(NodeIndex, DataFormat& returnFormat);
@@ -238,12 +239,12 @@ protected:
             return;
         if (!info.needsSpill()) {
             // it's either a constant or it's already been spilled
-            ASSERT(m_jit.graph()[info.nodeIndex()].isConstant() || info.spillFormat() != DataFormatNone);
+            ASSERT(m_jit.graph()[info.nodeIndex()].hasConstant() || info.spillFormat() != DataFormatNone);
             return;
         }
         
         // it's neither a constant nor has it been spilled.
-        ASSERT(!m_jit.graph()[info.nodeIndex()].isConstant());
+        ASSERT(!m_jit.graph()[info.nodeIndex()].hasConstant());
         ASSERT(info.spillFormat() == DataFormatNone);
 
         m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
@@ -262,7 +263,7 @@ protected:
         DataFormat registerFormat = info.registerFormat();
 
         if (registerFormat == DataFormatInteger) {
-            if (node.isConstant()) {
+            if (node.hasConstant()) {
                 ASSERT(isInt32Constant(nodeIndex));
                 m_jit.move(Imm32(valueOfInt32Constant(nodeIndex)), info.gpr());
             } else
@@ -270,7 +271,7 @@ protected:
             return;
         }
 
-        if (node.isConstant())
+        if (node.hasConstant())
             m_jit.move(valueOfJSConstantAsImmPtr(nodeIndex), info.gpr());
         else {
             ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell);
@@ -287,7 +288,7 @@ protected:
         Node& node = m_jit.graph()[nodeIndex];
         ASSERT(info.registerFormat() == DataFormatDouble);
 
-        if (node.isConstant()) {
+        if (node.hasConstant()) {
             ASSERT(isNumberConstant(nodeIndex));
             m_jit.move(JITCompiler::ImmPtr(bitwise_cast<void*>(valueOfNumberConstant(nodeIndex))), canTrample);
             m_jit.movePtrToDouble(canTrample, info.fpr());
@@ -426,10 +427,12 @@ protected:
     bool isDoubleConstant(NodeIndex nodeIndex) { return m_jit.isDoubleConstant(nodeIndex); }
     bool isNumberConstant(NodeIndex nodeIndex) { return m_jit.isNumberConstant(nodeIndex); }
     bool isBooleanConstant(NodeIndex nodeIndex) { return m_jit.isBooleanConstant(nodeIndex); }
+    bool isFunctionConstant(NodeIndex nodeIndex) { return m_jit.isFunctionConstant(nodeIndex); }
     int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return m_jit.valueOfInt32Constant(nodeIndex); }
     double valueOfNumberConstant(NodeIndex nodeIndex) { return m_jit.valueOfNumberConstant(nodeIndex); }
     JSValue valueOfJSConstant(NodeIndex nodeIndex) { return m_jit.valueOfJSConstant(nodeIndex); }
     bool valueOfBooleanConstant(NodeIndex nodeIndex) { return m_jit.valueOfBooleanConstant(nodeIndex); }
+    JSFunction* valueOfFunctionConstant(NodeIndex nodeIndex) { return m_jit.valueOfFunctionConstant(nodeIndex); }
     bool isNullConstant(NodeIndex nodeIndex)
     {
         if (!isConstant(nodeIndex))
@@ -562,6 +565,43 @@ protected:
         Node& lastNode = m_jit.graph()[lastNodeIndex];
         return lastNode.op == Branch && lastNode.child1() == m_compileIndex ? lastNodeIndex : NoNode;
     }
+    
+    void nonSpeculativeValueToNumber(Node&);
+    void nonSpeculativeValueToInt32(Node&);
+    void nonSpeculativeUInt32ToNumber(Node&);
+
+    void nonSpeculativeKnownConstantArithOp(NodeType op, NodeIndex regChild, NodeIndex immChild, bool commute);
+    void nonSpeculativeBasicArithOp(NodeType op, Node&);
+    
+    // Handles both ValueAdd and ArithAdd.
+    void nonSpeculativeAdd(NodeType op, Node& node)
+    {
+        if (isInt32Constant(node.child1())) {
+            nonSpeculativeKnownConstantArithOp(op, node.child2(), node.child1(), true);
+            return;
+        }
+        
+        if (isInt32Constant(node.child2())) {
+            nonSpeculativeKnownConstantArithOp(op, node.child1(), node.child2(), false);
+            return;
+        }
+        
+        nonSpeculativeBasicArithOp(op, node);
+    }
+    
+    void nonSpeculativeArithSub(Node& node)
+    {
+        if (isInt32Constant(node.child2())) {
+            nonSpeculativeKnownConstantArithOp(ArithSub, node.child1(), node.child2(), false);
+            return;
+        }
+        
+        nonSpeculativeBasicArithOp(ArithSub, node);
+    }
+    
+    void nonSpeculativeArithMod(Node&);
+    void nonSpeculativeCheckHasInstance(Node&);
+    void nonSpeculativeInstanceOf(Node&);
 
     JITCompiler::Call cachedGetById(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), NodeType = GetById);
     void cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
@@ -1134,6 +1174,7 @@ public:
     GPRTemporary(JITCodeGenerator*, GPRReg specific);
     GPRTemporary(JITCodeGenerator*, SpeculateIntegerOperand&);
     GPRTemporary(JITCodeGenerator*, SpeculateIntegerOperand&, SpeculateIntegerOperand&);
+    GPRTemporary(JITCodeGenerator*, SpeculateStrictInt32Operand&);
     GPRTemporary(JITCodeGenerator*, IntegerOperand&);
     GPRTemporary(JITCodeGenerator*, IntegerOperand&, IntegerOperand&);
     GPRTemporary(JITCodeGenerator*, SpeculateCellOperand&);

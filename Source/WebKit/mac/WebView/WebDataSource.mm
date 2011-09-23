@@ -235,9 +235,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     RetainPtr<WebDataSource*> protect(self);
     
     [[self representation] receivedData:data withDataSource:self];
-
-    if ([[self _webView] _usesDocumentViews])
-        [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
+    [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
 }
 
 - (void)_setMainDocumentError:(NSError *)error

@@ -73,7 +73,6 @@ namespace WebCore {
         DOMConstructorWithDocument(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
             : DOMConstructorObject(structure, globalObject)
         {
-            finishCreation(globalObject);
         }
 
         void finishCreation(JSDOMGlobalObject* globalObject)

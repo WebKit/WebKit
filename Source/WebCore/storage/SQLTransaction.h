@@ -28,7 +28,7 @@
 #ifndef SQLTransaction_h
 #define SQLTransaction_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "ExceptionCode.h"
 #include "SQLStatement.h"

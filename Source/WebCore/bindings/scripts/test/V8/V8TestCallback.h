@@ -18,7 +18,7 @@
     Boston, MA 02111-1307, USA.
 */
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #ifndef V8TestCallback_h
 #define V8TestCallback_h
@@ -63,4 +63,4 @@ private:
 
 #endif // V8TestCallback_h
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)

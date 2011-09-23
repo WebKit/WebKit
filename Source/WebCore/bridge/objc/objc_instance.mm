@@ -178,7 +178,9 @@ public:
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "i".
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<ObjCRuntimeMethod>(exec);
-        return new (allocateCell<ObjCRuntimeMethod>(*exec->heap())) ObjCRuntimeMethod(exec, globalObject, domStructure, name, list);
+        ObjCRuntimeMethod* method = new (allocateCell<ObjCRuntimeMethod>(*exec->heap())) ObjCRuntimeMethod(globalObject, domStructure, list);
+        method->finishCreation(exec->globalData(), name);
+        return method;
     }
 
     static Structure* createStructure(JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSValue prototype)
@@ -191,10 +193,9 @@ public:
 private:
     typedef RuntimeMethod Base;
 
-    ObjCRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& name, Bindings::MethodList& list)
+    ObjCRuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Bindings::MethodList& list)
         : RuntimeMethod(globalObject, structure, list)
     {
-        finishCreation(exec->globalData(), name);
     }
 
     void finishCreation(JSGlobalData& globalData, const Identifier& name)

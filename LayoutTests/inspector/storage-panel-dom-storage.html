@@ -30,7 +30,7 @@ function test()
         if (storages) {
             for (var i = 0; i < storages.length; i++) {
                 var storage = storages[i];
-                WebInspector.currentPanel.showDOMStorage(storage);
+                WebInspector.currentPanel().showDOMStorage(storage);
                 InspectorTest.addResult("Did show: " + name(storage));
             }
         } else

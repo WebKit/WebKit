@@ -45,11 +45,10 @@
 namespace WebCore {
 
 class ImageLayerTextureUpdater : public LayerTextureUpdater {
-    WTF_MAKE_NONCOPYABLE(ImageLayerTextureUpdater);
 public:
-    static PassOwnPtr<ImageLayerTextureUpdater> create(bool useMapTexSubImage)
+    static PassRefPtr<ImageLayerTextureUpdater> create(bool useMapTexSubImage)
     {
-        return adoptPtr(new ImageLayerTextureUpdater(useMapTexSubImage));
+        return adoptRef(new ImageLayerTextureUpdater(useMapTexSubImage));
     }
 
     virtual ~ImageLayerTextureUpdater() { }
@@ -152,7 +151,7 @@ void ImageLayerChromium::paintContentsIfDirty()
         IntRect paintRect(IntPoint(), contentBounds());
         if (!m_dirtyRect.isEmpty()) {
             invalidateRect(paintRect);
-            m_dirtyRect = IntRect();
+            resetNeedsDisplay();
         }
     }
 

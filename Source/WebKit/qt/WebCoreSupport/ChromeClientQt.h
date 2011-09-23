@@ -133,7 +133,7 @@ public:
     virtual void setToolTip(const String&, TextDirection);
 
     virtual void print(Frame*);
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     virtual void exceededDatabaseQuota(Frame*, const String&);
 #endif
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)

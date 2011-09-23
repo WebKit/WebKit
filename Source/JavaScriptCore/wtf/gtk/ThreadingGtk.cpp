@@ -70,10 +70,8 @@ void initializeThreading()
         threadMapMutex();
         initializeRandomNumberGenerator();
         wtfThreadData();
-#if ENABLE(WTF_MULTIPLE_THREADS)
         s_dtoaP5Mutex = new Mutex;
         initializeDates();
-#endif
     }
 }
 

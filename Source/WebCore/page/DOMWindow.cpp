@@ -1345,7 +1345,7 @@ double DOMWindow::devicePixelRatio() const
     return page->deviceScaleFactor();
 }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 PassRefPtr<Database> DOMWindow::openDatabase(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
 {
     RefPtr<Database> database = 0;

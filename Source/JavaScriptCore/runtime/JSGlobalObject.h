@@ -348,7 +348,7 @@ namespace JSC {
 
     inline JSValue Structure::prototypeForLookup(ExecState* exec) const
     {
-        if (typeInfo().type() == ObjectType)
+        if (isObject())
             return m_prototype.get();
 
         ASSERT(typeInfo().type() == StringType);

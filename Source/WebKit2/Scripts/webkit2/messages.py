@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,8 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import collections
-import itertools
 import re
+
+import parser
 
 
 DELAYED_ATTRIBUTE = 'Delayed'
@@ -53,89 +54,6 @@ _license_header = """/*
  */
 
 """
-
-class MessageReceiver(object):
-    def __init__(self, name, messages, condition):
-        self.name = name
-        self.messages = messages
-        self.condition = condition
-
-    def iterparameters(self):
-        return itertools.chain((parameter for message in self.messages for parameter in message.parameters),
-            (reply_parameter for message in self.messages if message.reply_parameters for reply_parameter in message.reply_parameters))
-
-    @classmethod
-    def parse(cls, file):
-        destination = None
-        messages = []
-        condition = None
-        master_condition = None
-        for line in file:
-            match = re.search(r'messages -> ([A-Za-z_0-9]+) {', line)
-            if match:
-                if condition:
-                    master_condition = condition
-                    condition = None
-                destination = match.group(1)
-                continue
-            if line.startswith('#'):
-                if line.startswith('#if '):
-                    condition = line.rstrip()[4:]
-                elif line.startswith('#endif'):
-                    condition = None
-                continue
-            match = re.search(r'([A-Za-z_0-9]+)\((.*?)\)(?:(?:\s+->\s+)\((.*?)\))?(?:\s+(.*))?', line)
-            if match:
-                name, parameters_string, reply_parameters_string, attributes_string = match.groups()
-                if parameters_string:
-                    parameters = parse_parameter_string(parameters_string)
-                    for parameter in parameters:
-                        parameter.condition = condition
-                else:
-                    parameters = []
-
-                if attributes_string:
-                    attributes = frozenset(attributes_string.split())
-                else:
-                    attributes = None
-
-                if reply_parameters_string:
-                    reply_parameters = parse_parameter_string(reply_parameters_string)
-                    for reply_parameter in reply_parameters:
-                        reply_parameter.condition = condition
-                elif reply_parameters_string == '':
-                    reply_parameters = []
-                else:
-                    reply_parameters = None
-
-                messages.append(Message(name, parameters, reply_parameters, attributes, condition))
-        return MessageReceiver(destination, messages, master_condition)
-
-
-class Message(object):
-    def __init__(self, name, parameters, reply_parameters, attributes, condition):
-        self.name = name
-        self.parameters = parameters
-        self.reply_parameters = reply_parameters
-        self.attributes = frozenset(attributes or [])
-        self.condition = condition
-
-    def id(self):
-        return '%sID' % self.name
-
-    def has_attribute(self, attribute):
-        return attribute in self.attributes
-
-
-class Parameter(object):
-    def __init__(self, type, name, condition=None):
-        self.type = type
-        self.name = name
-        self.condition = condition
-
-
-def parse_parameter_string(parameter_string):
-    return [Parameter(*type_and_name.rsplit(' ', 1)) for type_and_name in parameter_string.split(', ')]
 
 
 def messages_header_filename(receiver):
@@ -344,7 +262,7 @@ def forward_declarations_and_headers(receiver):
     return (forward_declarations, headers)
 
 def generate_messages_header(file):
-    receiver = MessageReceiver.parse(file)
+    receiver = parser.parse(file)
     header_guard = messages_header_filename(receiver).replace('.', '_')
 
     result = []
@@ -482,7 +400,7 @@ def headers_for_type(type):
 
 
 def generate_message_handler(file):
-    receiver = MessageReceiver.parse(file)
+    receiver = parser.parse(file)
     headers = {
         '"%s"' % messages_header_filename(receiver): [None],
         '"HandleMessage.h"': [None],

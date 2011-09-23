@@ -34,6 +34,7 @@
 #include "LayerTextureUpdater.h"
 #include "PlatformCanvas.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 #if USE(SKIA)
 #include "SkPicture.h"
@@ -50,7 +51,6 @@ class LayerPainterChromium;
 
 // A LayerTextureUpdater with an internal canvas.
 class LayerTextureUpdaterCanvas : public LayerTextureUpdater {
-    WTF_MAKE_NONCOPYABLE(LayerTextureUpdaterCanvas);
 protected:
     explicit LayerTextureUpdaterCanvas(PassOwnPtr<LayerPainterChromium>);
 
@@ -65,9 +65,8 @@ private:
 
 // A LayerTextureUpdater with an internal bitmap canvas.
 class LayerTextureUpdaterBitmap : public LayerTextureUpdaterCanvas {
-    WTF_MAKE_NONCOPYABLE(LayerTextureUpdaterBitmap);
 public:
-    static PassOwnPtr<LayerTextureUpdaterBitmap> create(PassOwnPtr<LayerPainterChromium>, bool useMapTexSubImage);
+    static PassRefPtr<LayerTextureUpdaterBitmap> create(PassOwnPtr<LayerPainterChromium>, bool useMapTexSubImage);
 
     virtual Orientation orientation() { return LayerTextureUpdater::BottomUpOrientation; }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat);
@@ -82,9 +81,8 @@ private:
 
 #if USE(SKIA)
 class LayerTextureUpdaterSkPicture : public LayerTextureUpdaterCanvas {
-    WTF_MAKE_NONCOPYABLE(LayerTextureUpdaterSkPicture);
 public:
-    static PassOwnPtr<LayerTextureUpdaterSkPicture> create(PassOwnPtr<LayerPainterChromium>);
+    static PassRefPtr<LayerTextureUpdaterSkPicture> create(PassOwnPtr<LayerPainterChromium>);
     virtual ~LayerTextureUpdaterSkPicture();
 
     virtual Orientation orientation() { return LayerTextureUpdater::TopDownOrientation; }

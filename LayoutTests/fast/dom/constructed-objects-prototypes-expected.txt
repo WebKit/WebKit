@@ -9,6 +9,8 @@ PASS (new inner.CustomEvent()).isInner is true
 PASS (new inner.CustomEvent()).constructor.isInner is true
 PASS (new inner.DOMParser()).isInner is true
 PASS (new inner.DOMParser()).constructor.isInner is true
+PASS (new inner.ErrorEvent()).isInner is true
+PASS (new inner.ErrorEvent()).constructor.isInner is true
 PASS (new inner.Event()).isInner is true
 PASS (new inner.Event()).constructor.isInner is true
 PASS (new inner.FormData()).isInner is true
@@ -23,6 +25,8 @@ PASS (new inner.Option()).isInner is true
 PASS (new inner.Option()).constructor.isInner is true
 PASS (new inner.PageTransitionEvent()).isInner is true
 PASS (new inner.PageTransitionEvent()).constructor.isInner is true
+PASS (new inner.PopStateEvent()).isInner is true
+PASS (new inner.PopStateEvent()).constructor.isInner is true
 PASS (new inner.ProgressEvent()).isInner is true
 PASS (new inner.ProgressEvent()).constructor.isInner is true
 PASS (new inner.WebKitAnimationEvent()).isInner is true

@@ -153,7 +153,7 @@ WebInspector.Toolbar.createPanelToolbarItem = function(panel)
     function onToolbarItemClicked()
     {
         WebInspector.toolbar._updateDropdownButtonAndHideDropdown();
-        WebInspector.currentPanel = panel;
+        WebInspector.setCurrentPanel(panel);
     }
     toolbarItem.addEventListener("click", onToolbarItemClicked);
 
@@ -162,7 +162,7 @@ WebInspector.Toolbar.createPanelToolbarItem = function(panel)
     if ("toolbarItemLabel" in panel)
         toolbarItem.createChild("div", "toolbar-label").textContent = panel.toolbarItemLabel;
 
-    if (panel === WebInspector.currentPanel)
+    if (panel === WebInspector.currentPanel())
         toolbarItem.addStyleClass("toggled-on");
 
     return toolbarItem;

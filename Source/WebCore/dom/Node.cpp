@@ -2620,33 +2620,7 @@ bool Node::removeEventListener(const AtomicString& eventType, EventListener* lis
         EventTargetData* data = shadowTreeElement->eventTargetData();
         ASSERT(data);
 
-        EventListenerMap::iterator result = data->eventListenerMap.find(eventType);
-        ASSERT(result != data->eventListenerMap.end());
-
-        EventListenerVector* entry = result->second;
-        ASSERT(entry);
-
-        unsigned int index = 0;
-        bool foundListener = false;
-
-        EventListenerVector::iterator end = entry->end();
-        for (EventListenerVector::iterator it = entry->begin(); it != end; ++it) {
-            if (!(*it).listener->wasCreatedFromMarkup()) {
-                ++index;
-                continue;
-            }
-
-            foundListener = true;
-            entry->remove(index);
-            break;
-        }
-
-        ASSERT_UNUSED(foundListener, foundListener);
-
-        if (entry->isEmpty()) {                
-            delete entry;
-            data->eventListenerMap.remove(result);
-        }
+        data->eventListenerMap.removeFirstEventListenerCreatedFromMarkup(eventType);
     }
 
     return true;

@@ -1129,6 +1129,7 @@ fast/forms/input-file-directory-upload.html
 
 # Need setPrinting. See https://bugs.webkit.org/show_bug.cgi?id=20011
 printing/setPrinting.html
+printing/single-line-must-not-be-split-into-two-pages.html
 
 # Need to call Settings::setInteractiveFormValidationEnabled(true).
 fast/forms/interactive-validation-prevented.html
@@ -1245,6 +1246,7 @@ http/tests/loading/cross-origin-XHR-willLoadRequest.html
 
 # Request ENABLE(REQUEST_ANIMATION_FRAME) support
 fast/animation
+inspector/timeline/timeline-animation-frame.html
 
 # This port doesn't support v8 i18n extension.
 fast/js/i18n-bindings-locale.html

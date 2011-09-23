@@ -23,7 +23,7 @@
 #ifndef WebDOMTestCallback_h
 #define WebDOMTestCallback_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include <WebDOMObject.h>
 #include <WebDOMString.h>
@@ -65,5 +65,5 @@ WebCore::TestCallback* toWebCore(const WebDOMTestCallback&);
 WebDOMTestCallback toWebKit(WebCore::TestCallback*);
 
 #endif
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)
 

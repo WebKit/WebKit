@@ -65,9 +65,7 @@ private:
 
     ARC4Stream m_stream;
     int m_count;
-#if ENABLE(WTF_MULTIPLE_THREADS)
     Mutex m_mutex;
-#endif
 };
 
 ARC4Stream::ARC4Stream()
@@ -139,9 +137,7 @@ uint32_t ARC4RandomNumberGenerator::getWord()
 
 uint32_t ARC4RandomNumberGenerator::randomNumber()
 {
-#if ENABLE(WTF_MULTIPLE_THREADS)
     MutexLocker locker(m_mutex);
-#endif
 
     m_count -= 4;
     stirIfNeeded();
@@ -150,9 +146,7 @@ uint32_t ARC4RandomNumberGenerator::randomNumber()
 
 void ARC4RandomNumberGenerator::randomValues(void* buffer, size_t length)
 {
-#if ENABLE(WTF_MULTIPLE_THREADS)
     MutexLocker locker(m_mutex);
-#endif
 
     unsigned char* result = reinterpret_cast<unsigned char*>(buffer);
     stirIfNeeded();

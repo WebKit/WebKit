@@ -34,10 +34,7 @@
 #include "StructureChain.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/RefPtr.h>
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
 #include <wtf/Threading.h>
-#endif
 
 #define DUMP_STRUCTURE_ID_STATISTICS 0
 
@@ -165,7 +162,7 @@ Structure::Structure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSV
     , m_globalObject(globalData, this, globalObject, WriteBarrier<JSGlobalObject>::MayBeNull)
     , m_prototype(globalData, this, prototype)
     , m_classInfo(classInfo)
-    , m_propertyStorageCapacity(typeInfo.isFinal() ? JSFinalObject_inlineStorageCapacity : JSNonFinalObject_inlineStorageCapacity)
+    , m_propertyStorageCapacity(typeInfo.isFinalObject() ? JSFinalObject_inlineStorageCapacity : JSNonFinalObject_inlineStorageCapacity)
     , m_offset(noOffset)
     , m_dictionaryKind(NoneDictionaryKind)
     , m_isPinnedPropertyTable(false)
@@ -280,7 +277,7 @@ void Structure::despecifyDictionaryFunction(JSGlobalData& globalData, const Iden
 Structure* Structure::addPropertyTransitionToExistingStructure(Structure* structure, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
 {
     ASSERT(!structure->isDictionary());
-    ASSERT(structure->typeInfo().type() == ObjectType);
+    ASSERT(structure->isObject());
 
     if (Structure* existingTransition = structure->m_transitionTable.get(propertyName.impl(), attributes)) {
         JSCell* specificValueInPrevious = existingTransition->m_specificValueInPrevious.get();
@@ -307,7 +304,7 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
         specificValue = 0;
 
     ASSERT(!structure->isDictionary());
-    ASSERT(structure->typeInfo().type() == ObjectType);
+    ASSERT(structure->isObject());
     ASSERT(!Structure::addPropertyTransitionToExistingStructure(structure, propertyName, attributes, specificValue, offset));
     
     if (structure->m_specificFunctionThrashCount == maxSpecificFunctionThrashCount)

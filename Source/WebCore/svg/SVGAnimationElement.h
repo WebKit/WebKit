@@ -25,7 +25,7 @@
 #ifndef SVGAnimationElement_h
 #define SVGAnimationElement_h
 
-#if ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 #include "ElementTimeControl.h"
 #include "Path.h"
 #include "SMILTime.h"

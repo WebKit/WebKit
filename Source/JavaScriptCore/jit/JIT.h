@@ -146,8 +146,16 @@ namespace JSC {
     };
 
     struct PropertyStubCompilationInfo {
+        unsigned bytecodeIndex;
         MacroAssembler::Call callReturnLocation;
         MacroAssembler::Label hotPathBegin;
+        
+#if !ASSERT_DISABLED
+        PropertyStubCompilationInfo()
+            : bytecodeIndex(std::numeric_limits<unsigned>::max())
+        {
+        }
+#endif
     };
 
     struct StructureStubCompilationInfo {
@@ -158,11 +166,13 @@ namespace JSC {
     };
 
     struct MethodCallCompilationInfo {
-        MethodCallCompilationInfo(unsigned propertyAccessIndex)
-            : propertyAccessIndex(propertyAccessIndex)
+        MethodCallCompilationInfo(unsigned bytecodeIndex, unsigned propertyAccessIndex)
+            : bytecodeIndex(bytecodeIndex)
+            , propertyAccessIndex(propertyAccessIndex)
         {
         }
 
+        unsigned bytecodeIndex;
         MacroAssembler::DataLabelPtr structureToCompare;
         unsigned propertyAccessIndex;
     };
@@ -285,6 +295,7 @@ namespace JSC {
 
         void addSlowCase(Jump);
         void addSlowCase(JumpList);
+        void addSlowCase();
         void addJump(Jump, int);
         void emitJumpSlowToHot(Jump, int);
 
@@ -333,6 +344,7 @@ namespace JSC {
         void emitStore(unsigned index, const JSValue constant, RegisterID base = callFrameRegister);
         void emitStoreInt32(unsigned index, RegisterID payload, bool indexIsInt32 = false);
         void emitStoreInt32(unsigned index, TrustedImm32 payload, bool indexIsInt32 = false);
+        void emitStoreAndMapInt32(unsigned index, RegisterID tag, RegisterID payload, bool indexIsInt32, size_t opcodeLength);
         void emitStoreCell(unsigned index, RegisterID payload, bool indexIsCell = false);
         void emitStoreBool(unsigned index, RegisterID payload, bool indexIsBool = false);
         void emitStoreDouble(unsigned index, FPRegisterID value);
@@ -351,10 +363,10 @@ namespace JSC {
 
         void compileGetByIdHotPath();
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck = false);
-        void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, Structure* structure, size_t cachedOffset);
+        void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, size_t cachedOffset);
         void compileGetDirectOffset(JSObject* base, RegisterID resultTag, RegisterID resultPayload, size_t cachedOffset);
         void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, RegisterID offset);
-        void compilePutDirectOffset(RegisterID base, RegisterID valueTag, RegisterID valuePayload, Structure* structure, size_t cachedOffset);
+        void compilePutDirectOffset(RegisterID base, RegisterID valueTag, RegisterID valuePayload, size_t cachedOffset);
 
         // Arithmetic opcode helpers
         void emitAdd32Constant(unsigned dst, unsigned op, int32_t constant, ResultType opType);
@@ -594,10 +606,10 @@ namespace JSC {
 
         void compileGetByIdHotPath(int baseVReg, Identifier*);
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck = false);
-        void compileGetDirectOffset(RegisterID base, RegisterID result, Structure* structure, size_t cachedOffset);
+        void compileGetDirectOffset(RegisterID base, RegisterID result, size_t cachedOffset);
         void compileGetDirectOffset(JSObject* base, RegisterID result, size_t cachedOffset);
         void compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID offset, RegisterID scratch);
-        void compilePutDirectOffset(RegisterID base, RegisterID value, Structure* structure, size_t cachedOffset);
+        void compilePutDirectOffset(RegisterID base, RegisterID value, size_t cachedOffset);
 
 #if CPU(X86_64)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
@@ -961,6 +973,11 @@ namespace JSC {
             iter->from.link(this);
             ++iter;
         }
+        void linkDummySlowCase(Vector<SlowCaseEntry>::iterator& iter)
+        {
+            ASSERT(!iter->from.isSet());
+            ++iter;
+        }
         void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, int vReg);
 
         Jump checkStructure(RegisterID reg, Structure* structure);
@@ -979,7 +996,7 @@ namespace JSC {
         void emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures);
         
         enum OptimizationCheckKind { LoopOptimizationCheck, RetOptimizationCheck };
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         void emitOptimizationCheck(OptimizationCheckKind);
 #else
         void emitOptimizationCheck(OptimizationCheckKind) { }
@@ -1009,7 +1026,7 @@ namespace JSC {
         void sampleCodeBlock(CodeBlock*) {}
 #endif
 
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         bool shouldEmitProfiling() { return m_canBeOptimized; }
 #else
         // Enables use of value profiler with tiered compilation turned off,
@@ -1057,7 +1074,7 @@ namespace JSC {
         WeakRandom m_randomGenerator;
         static CodeRef stringGetByValStubGenerator(JSGlobalData*);
         
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         bool m_canBeOptimized;
         Label m_startOfCode;
         CompactJITCodeMap::Encoder m_jitCodeMapEncoder;

@@ -731,12 +731,14 @@ sub GenerateHeader
         push(@headerContent, "    static $className* create(JSC::JSGlobalData& globalData, JSC::Structure* structure, PassRefPtr<$implType> impl, JSDOMWindowShell* windowShell)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl, windowShell);\n");
+        push(@headerContent, "        ptr->finishCreation(globalData, windowShell);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
         push(@headerContent, "    static $className* create(JSC::JSGlobalData& globalData, JSC::Structure* structure, PassRefPtr<$implType> impl)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl);\n");
+        push(@headerContent, "        ptr->finishCreation(globalData, ptr);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } else {
@@ -2934,6 +2936,11 @@ sub GenerateHashTable
     push(@implContent, "#else\n");
     push(@implContent, "#define THUNK_GENERATOR(generator)\n");
     push(@implContent, "#endif\n");
+    push(@implContent, "#if ENABLE(DFG_JIT)\n");
+    push(@implContent, "#define INTRINSIC(intrinsic) , intrinsic\n");
+    push(@implContent, "#else\n");
+    push(@implContent, "#define INTRINSIC(intrinsic)\n");
+    push(@implContent, "#endif\n");
     push(@implContent, "\nstatic const HashTableValue $nameEntries\[\] =\n\{\n");
     $i = 0;
     foreach my $key (@{$keys}) {
@@ -2953,13 +2960,13 @@ sub GenerateHashTable
         } else {
             $targetType = "static_cast<PropertySlot::GetValueFunc>";
         }
-        push(@implContent, "    { \"$key\", @$specials[$i], (intptr_t)" . $targetType . "(@$value1[$i]), (intptr_t)@$value2[$i] THUNK_GENERATOR(0) },\n");
+        push(@implContent, "    { \"$key\", @$specials[$i], (intptr_t)" . $targetType . "(@$value1[$i]), (intptr_t)@$value2[$i] THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) },\n");
         if ($conditional) {
             push(@implContent, "#endif\n");
         }
         ++$i;
     }
-    push(@implContent, "    { 0, 0, 0, 0 THUNK_GENERATOR(0) }\n");
+    push(@implContent, "    { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }\n");
     push(@implContent, "};\n\n");
     push(@implContent, "#undef THUNK_GENERATOR\n");
     my $compactSizeMask = $numEntries - 1;

@@ -93,13 +93,13 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
 {
 }
 
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
 void JIT::emitOptimizationCheck(OptimizationCheckKind kind)
 {
     if (!shouldEmitProfiling())
         return;
     
-    Jump skipOptimize = branchAdd32(Signed, TrustedImm32(kind == LoopOptimizationCheck ? CodeBlock::executeCounterIncrementForLoop : CodeBlock::executeCounterIncrementForReturn), AbsoluteAddress(m_codeBlock->addressOfExecuteCounter()));
+    Jump skipOptimize = branchAdd32(Signed, TrustedImm32(kind == LoopOptimizationCheck ? CodeBlock::executeCounterIncrementForLoop() : CodeBlock::executeCounterIncrementForReturn()), AbsoluteAddress(m_codeBlock->addressOfExecuteCounter()));
     JITStubCall stubCall(this, kind == LoopOptimizationCheck ? cti_optimize_from_loop : cti_optimize_from_ret);
     if (kind == LoopOptimizationCheck)
         stubCall.addArgument(Imm32(m_bytecodeOffset));
@@ -207,7 +207,7 @@ void JIT::privateCompileMainPass()
 
         m_labels[m_bytecodeOffset] = label();
 
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         if (m_canBeOptimized)
             m_jitCodeMapEncoder.append(m_bytecodeOffset, differenceBetween(m_startOfCode, label()));
 #endif
@@ -413,6 +413,12 @@ void JIT::privateCompileSlowCases()
         unsigned firstTo = m_bytecodeOffset;
 #endif
         Instruction* currentInstruction = instructionsBegin + m_bytecodeOffset;
+        
+#if ENABLE(VALUE_PROFILER)
+        RareCaseProfile* slowCaseProfile = 0;
+        if (m_canBeOptimized)
+            slowCaseProfile = m_codeBlock->addSlowCaseProfile(m_bytecodeOffset);
+#endif
 
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
         DEFINE_SLOWCASE_OP(op_add)
@@ -485,6 +491,11 @@ void JIT::privateCompileSlowCases()
 
         ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo != iter->to,"Not enough jumps linked in slow case codegen.");
         ASSERT_WITH_MESSAGE(firstTo == (iter - 1)->to, "Too many jumps linked in slow case codegen.");
+        
+#if ENABLE(VALUE_PROFILER)
+        if (m_canBeOptimized)
+            add32(Imm32(1), AbsoluteAddress(&slowCaseProfile->m_counter));
+#endif
 
         emitJumpSlowToHot(jump(), 0);
     }
@@ -503,7 +514,7 @@ void JIT::privateCompileSlowCases()
 
 JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 {
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
     m_canBeOptimized = m_codeBlock->canCompileWithDFG();
     if (m_canBeOptimized)
         m_startOfCode = label();
@@ -628,6 +639,8 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccessCompilationInfo.size());
     for (unsigned i = 0; i < m_propertyAccessCompilationInfo.size(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
+        ASSERT(m_propertyAccessCompilationInfo[i].bytecodeIndex != std::numeric_limits<unsigned>::max());
+        info.bytecodeIndex = m_propertyAccessCompilationInfo[i].bytecodeIndex;
         info.callReturnLocation = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].hotPathBegin);
     }
@@ -643,11 +656,12 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     m_codeBlock->addMethodCallLinkInfos(methodCallCount);
     for (unsigned i = 0; i < methodCallCount; ++i) {
         MethodCallLinkInfo& info = m_codeBlock->methodCallLinkInfo(i);
+        info.bytecodeIndex = m_methodCallCompilationInfo[i].bytecodeIndex;
         info.cachedStructure.setLocation(patchBuffer.locationOf(m_methodCallCompilationInfo[i].structureToCompare));
         info.callReturnLocation = m_codeBlock->structureStubInfo(m_methodCallCompilationInfo[i].propertyAccessIndex).callReturnLocation;
     }
 
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
     if (m_canBeOptimized)
         m_codeBlock->setJITCodeMap(m_jitCodeMapEncoder.finish());
 #endif

@@ -27,7 +27,7 @@
 #include "IDBLevelDBBackingStore.h"
 
 #if ENABLE(INDEXED_DATABASE)
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
 
 #include "Assertions.h"
 #include "FileSystem.h"
@@ -1310,5 +1310,5 @@ bool IDBLevelDBBackingStore::backingStoreExists(SecurityOrigin* securityOrigin, 
 
 } // namespace WebCore
 
-#endif // ENABLE(LEVELDB)
+#endif // USE(LEVELDB)
 #endif // ENABLE(INDEXED_DATABASE)

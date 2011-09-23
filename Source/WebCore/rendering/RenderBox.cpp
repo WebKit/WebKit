@@ -949,10 +949,11 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
         if (!allMaskImagesLoaded)
             pushTransparencyLayer = true;
 
-        if (maskBoxImage && maskLayers->hasImage()) {
+        bool hasMaskLayerWithImage = maskLayers->hasImage();
+        if (maskBoxImage && hasMaskLayerWithImage) {
             // We have a mask-box-image and mask-image, so need to composite them together before using the result as a mask.
             pushTransparencyLayer = true;
-        } else {
+        } else if (hasMaskLayerWithImage) {
             // We have to use an extra image buffer to hold the mask. Multiple mask images need
             // to composite together using source-over so that they can then combine into a single unified mask that
             // can be composited with the content using destination-in.  SVG images need to be able to set compositing modes
@@ -961,7 +962,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
             // We have to check that the mask images to be rendered contain at least one image that can be actually used in rendering
             // before pushing the transparency layer.
             for (const FillLayer* fillLayer = maskLayers->next(); fillLayer; fillLayer = fillLayer->next()) {
-                if (fillLayer->hasImage() && fillLayer->image()->canRender(style()->effectiveZoom())) {
+                if (fillLayer->image() && fillLayer->image()->canRender(style()->effectiveZoom())) {
                     pushTransparencyLayer = true;
                     // We found one image that can be used in rendering, exit the loop
                     break;
@@ -1159,7 +1160,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
     IntRect clipRect(isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset));
     paintInfo.context->save();
     if (style()->hasBorderRadius())
-        paintInfo.context->addRoundedRectClip(style()->getRoundedBorderFor(LayoutRect(accumulatedOffset, size())));
+        paintInfo.context->addRoundedRectClip(style()->getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size())));
     paintInfo.context->clip(clipRect);
     return true;
 }

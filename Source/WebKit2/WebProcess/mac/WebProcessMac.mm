@@ -26,8 +26,8 @@
 #import "config.h"
 #import "WebProcess.h"
 
-#import "FullKeyboardAccessWatcher.h"
 #import "SandboxExtension.h"
+#import "WKFullKeyboardAccessWatcher.h"
 #import "WebPage.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessProxyMessages.h"
@@ -134,7 +134,7 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
 
 bool WebProcess::fullKeyboardAccessEnabled()
 {
-    return [FullKeyboardAccessWatcher fullKeyboardAccessEnabled];
+    return [WKFullKeyboardAccessWatcher fullKeyboardAccessEnabled];
 }
 
 #if ENABLE(WEB_PROCESS_SANDBOX)

@@ -30,9 +30,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(EVENTSOURCE)
-
 #include "JSEventSource.h"
 
 #include "EventSource.h"
@@ -69,5 +66,3 @@ EncodedJSValue JSC_HOST_CALL JSEventSourceConstructor::constructJSEventSource(Ex
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(EVENTSOURCE)

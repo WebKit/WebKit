@@ -264,6 +264,8 @@ public:
     int windowY;
     int globalX;
     int globalY;
+    int movementX;
+    int movementY;
     int clickCount;
 
     WebMouseEvent(unsigned sizeParam = sizeof(WebMouseEvent))
@@ -275,6 +277,8 @@ public:
         , windowY(0)
         , globalX(0)
         , globalY(0)
+        , movementX(0)
+        , movementY(0)
         , clickCount(0)
     {
     }

@@ -17,7 +17,9 @@ var tagNamesAlwaysFocused = ["A",
                              "INPUT",
                              "ISINDEX",
                              "SELECT",
-                             "TEXTAREA"];
+                             "TEXTAREA",
+                             "AUDIO",
+                             "VIDEO"];
 
 var tagNamesTransferFocused = ["LABEL"]; // labels always transfer focus to the labeled element
 
@@ -52,7 +54,7 @@ function test()
     var homeBase = window.frames[1].document.getElementsByClassName('homebase');
     homeBase[0].focus();
 
-    var resultSummary = focusCount+" focus / "+blurCount+" blur events dispatched, and should be 331 / 331 ";
+    var resultSummary = focusCount+" focus / "+blurCount+" blur events dispatched, and should be 333 / 333 ";
     resultSummary += (focusCount==blurCount) ? "<span style='color:green'>PASSED</span><br>" : "<span style='color:red'>FAILED</span><br>";
     resultSummary += "Total of "+failedTestCount+" focus test(s) failed.";
     if (failedTestCount)

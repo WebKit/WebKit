@@ -73,15 +73,11 @@ template<class Collection, class ItemType> static v8::Handle<v8::Value> getNamed
 // A template of named property accessor of collections.
 template<class Collection, class ItemType> static v8::Handle<v8::Value> collectionNamedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    v8::Handle<v8::Value> value = info.Holder()->GetRealNamedPropertyInPrototypeChain(name);
-
-    if (!value.IsEmpty())
-        return value;
-
-    // Search local callback properties next to find IDL defined
-    // properties.
+    if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
+        return notHandledByInterceptor();
     if (info.Holder()->HasRealNamedCallbackProperty(name))
         return notHandledByInterceptor();
+
     return getNamedPropertyOfCollection<Collection, ItemType>(name, info.Holder());
 }
 

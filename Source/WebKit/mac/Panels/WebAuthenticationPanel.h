@@ -64,6 +64,6 @@
 @end
 
 // This is in the header so it can be used from the nib file
-@interface NonBlockingPanel : NSPanel
+@interface WebNonBlockingPanel : NSPanel
 @end
 

@@ -1,0 +1,46 @@
+<html>
+<head>
+<script src="../../../http/tests/inspector/inspector-test.js"></script>
+<script src="performance-test.js"></script>
+<script>
+
+function makeXHRRequests(count)
+{
+    for (var i = 0; i < count; ++i) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", document.url, true);
+        xhr.send();
+    }
+}
+
+function test()
+{
+    WebInspector.showPanel("network");
+
+    function test(timer)
+    {
+        WebInspector.panels.network._networkLogView._reset();
+        var cookie = timer.start("network-append-30-requests");
+        InspectorTest.evaluateInPage("makeXHRRequests(30)");
+        function finish()
+        {
+            timer.finish(cookie);
+            timer.done();
+        }
+        InspectorTest.addSniffer(WebInspector.panels.network._networkLogView, "refresh", finish);
+    }
+    InspectorTest.runPerformanceTest(test, 15000);
+}
+
+if (!window.layoutTestController) {
+    setTimeout(function() {
+        makeXHRRequests(30);
+    }, 3000);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+</body>
+</html>

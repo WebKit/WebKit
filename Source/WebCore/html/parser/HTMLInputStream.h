@@ -147,8 +147,8 @@ public:
 private:
     HTMLInputStream* m_inputStream;
     SegmentedString m_next;
-    WTF::ZeroBasedNumber m_line;
-    WTF::ZeroBasedNumber m_column;
+    OrdinalNumber m_line;
+    OrdinalNumber m_column;
 };
 
 }

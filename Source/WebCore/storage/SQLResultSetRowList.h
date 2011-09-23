@@ -29,7 +29,7 @@
 #ifndef SQLResultSetRowList_h
 #define SQLResultSetRowList_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include <wtf/PassRefPtr.h>
 #include "SQLValue.h"

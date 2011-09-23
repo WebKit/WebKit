@@ -84,12 +84,10 @@ bool JSWorkerContext::getOwnPropertyDescriptorDelegate(ExecState* exec, const Id
     return false;
 }
 
-#if ENABLE(EVENTSOURCE)
 JSValue JSWorkerContext::eventSource(ExecState* exec) const
 {
     return getDOMConstructor<JSEventSourceConstructor>(exec, this);
 }
-#endif
 
 JSValue JSWorkerContext::xmlHttpRequest(ExecState* exec) const
 {

@@ -118,12 +118,12 @@ var WebInspector = {
             this._previousFocusElement.blur();
     },
 
-    get currentPanel()
+    currentPanel: function()
     {
         return this._currentPanel;
     },
 
-    set currentPanel(x)
+    setCurrentPanel: function(x)
     {
         if (this._currentPanel === x)
             return;
@@ -402,7 +402,7 @@ var WebInspector = {
 
     _updateFocusedNode: function(nodeId)
     {
-        this.currentPanel = this.panels.elements;
+        this.setCurrentPanel(this.panels.elements);
         this.panels.elements.updateFocusedNode(nodeId);
     },
 
@@ -605,8 +605,8 @@ WebInspector.dispatchMessageFromBackend = function(messageObject)
 
 WebInspector.windowResize = function(event)
 {
-    if (this.currentPanel)
-        this.currentPanel.doResize();
+    if (this.currentPanel())
+        this.currentPanel().doResize();
     this.drawer.doResize();
     this.toolbar.resize();
 }
@@ -756,8 +756,8 @@ WebInspector.documentKeyDown = function(event)
         }
     }
 
-    if (this.currentPanel) {
-        this.currentPanel.handleShortcut(event);
+    if (this.currentPanel()) {
+        this.currentPanel().handleShortcut(event);
         if (event.handled) {
             event.preventDefault();
             return;
@@ -808,7 +808,7 @@ WebInspector.documentKeyDown = function(event)
                 var isRotateLeft = event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
 
             if (isRotateLeft) {
-                var index = this.panelOrder.indexOf(this.currentPanel);
+                var index = this.panelOrder.indexOf(this.currentPanel());
                 index = (index === 0) ? this.panelOrder.length - 1 : index - 1;
                 this.panelOrder[index].toolbarItem.click();
                 event.preventDefault();
@@ -825,7 +825,7 @@ WebInspector.documentKeyDown = function(event)
                 var isRotateRight = event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
 
             if (isRotateRight) {
-                var index = this.panelOrder.indexOf(this.currentPanel);
+                var index = this.panelOrder.indexOf(this.currentPanel());
                 index = (index + 1) % this.panelOrder.length;
                 this.panelOrder[index].toolbarItem.click();
                 event.preventDefault();
@@ -850,14 +850,14 @@ WebInspector.documentKeyDown = function(event)
 
 WebInspector.documentCanCopy = function(event)
 {
-    if (this.currentPanel && this.currentPanel.handleCopyEvent)
+    if (this.currentPanel() && this.currentPanel().handleCopyEvent)
         event.preventDefault();
 }
 
 WebInspector.documentCopy = function(event)
 {
-    if (this.currentPanel && this.currentPanel.handleCopyEvent)
-        this.currentPanel.handleCopyEvent(event);
+    if (this.currentPanel() && this.currentPanel().handleCopyEvent)
+        this.currentPanel().handleCopyEvent(event);
 }
 
 WebInspector.contextMenuEventFired = function(event)
@@ -1019,12 +1019,12 @@ WebInspector.showPanel = function(panel)
         else
             panel = "elements";
     }
-    this.currentPanel = this.panels[panel];
+    this.setCurrentPanel(this.panels[panel]);
 }
 
 WebInspector.startUserInitiatedDebugging = function()
 {
-    this.currentPanel = this.panels.scripts;
+    this.setCurrentPanel(this.panels.scripts);
     WebInspector.debuggerModel.enableDebugger();
 }
 
@@ -1160,10 +1160,10 @@ WebInspector.inspect = function(payload, hints)
     }
 
     if (hints.databaseId) {
-        WebInspector.currentPanel = WebInspector.panels.resources;
+        WebInspector.setCurrentPanel(WebInspector.panels.resources);
         WebInspector.panels.resources.selectDatabase(hints.databaseId);
     } else if (hints.domStorageId) {
-        WebInspector.currentPanel = WebInspector.panels.resources;
+        WebInspector.setCurrentPanel(WebInspector.panels.resources);
         WebInspector.panels.resources.selectDOMStorage(hints.domStorageId);
     }
 
@@ -1220,10 +1220,10 @@ WebInspector._showAnchorLocationInPanel = function(anchor, panel)
         anchor.addStyleClass("webkit-html-resource-link");
     }
 
-    this.currentPanel = panel;
+    this.setCurrentPanel(panel);
     if (this.drawer)
         this.drawer.immediatelyFinishAnimation();
-    this.currentPanel.showAnchorLocation(anchor);
+    this.currentPanel().showAnchorLocation(anchor);
     return true;
 }
 
@@ -1606,7 +1606,7 @@ WebInspector.startEditing = function(element, config)
 WebInspector._toolbarItemClicked = function(event)
 {
     var toolbarItem = event.currentTarget;
-    this.currentPanel = toolbarItem.panel;
+    this.setCurrentPanel(toolbarItem.panel);
 }
 
 WebInspector.PanelHistory = function()
@@ -1624,7 +1624,7 @@ WebInspector.PanelHistory.prototype = {
     goBack: function()
     {
         this._inHistory = true;
-        WebInspector.currentPanel = WebInspector.panels[this._history[--this._historyIterator]];
+        WebInspector.setCurrentPanel(WebInspector.panels[this._history[--this._historyIterator]]);
         delete this._inHistory;
     },
 
@@ -1636,7 +1636,7 @@ WebInspector.PanelHistory.prototype = {
     goForward: function()
     {
         this._inHistory = true;
-        WebInspector.currentPanel = WebInspector.panels[this._history[++this._historyIterator]];
+        WebInspector.setCurrentPanel(WebInspector.panels[this._history[++this._historyIterator]]);
         delete this._inHistory;
     },
 

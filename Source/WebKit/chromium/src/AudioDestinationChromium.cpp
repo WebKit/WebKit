@@ -40,21 +40,11 @@ using namespace WebKit;
 
 namespace WebCore {
 
-// Buffer size that the Chromium audio system will call us back with.
-#if OS(DARWIN)
-// For Mac OS X the chromium audio backend uses a low-latency CoreAudio API, so a low buffer size is possible.
-const unsigned callbackBufferSize = 128;
-#else
-// This value may need to be tuned based on the OS.
-// FIXME: It may be possible to reduce this value once real-time threads
-// and other Chromium audio improvements are made.
-const unsigned callbackBufferSize = 2048;
-#endif
-
 // Buffer size at which the web audio engine will render.
 const unsigned renderBufferSize = 128;
 
-const unsigned renderCountPerCallback = callbackBufferSize / renderBufferSize;
+// Maximum allowed buffer size
+const size_t maximumCallbackBufferSize = 16384;
 
 // FIXME: add support for multi-channel.
 const unsigned numberOfChannels = 2;
@@ -71,7 +61,22 @@ AudioDestinationChromium::AudioDestinationChromium(AudioSourceProvider& provider
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
 {
-    m_audioDevice = adoptPtr(webKitPlatformSupport()->createAudioDevice(callbackBufferSize, numberOfChannels, sampleRate, this));
+    // Get the minimum usable buffer size. We'll round this value up
+    // to a multiple of our render size.
+    size_t callbackSize = webKitPlatformSupport()->audioHardwareBufferSize();
+
+    // Figure out how many render calls per call back, rounding up if needed.
+    m_renderCountPerCallback = (callbackSize + renderBufferSize - 1) / renderBufferSize;
+
+    m_callbackBufferSize = m_renderCountPerCallback * renderBufferSize;
+
+    bool isSizeGood = m_callbackBufferSize >= renderBufferSize
+        && m_callbackBufferSize <= maximumCallbackBufferSize;
+    ASSERT(isSizeGood);
+    if (!isSizeGood)
+      return;
+    
+    m_audioDevice = adoptPtr(webKitPlatformSupport()->createAudioDevice(m_callbackBufferSize, numberOfChannels, sampleRate, this));
     ASSERT(m_audioDevice.get());
 }
 
@@ -110,14 +115,14 @@ void AudioDestinationChromium::render(const WebVector<float*>& audioData, size_t
         return;
     }
         
-    bool isBufferSizeGood = numberOfFrames == callbackBufferSize;
+    bool isBufferSizeGood = numberOfFrames == m_callbackBufferSize;
     if (!isBufferSizeGood) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     // Split up the callback buffer into smaller chunks which we'll render one after the other.
-    for (unsigned i = 0; i < renderCountPerCallback; ++i) {
+    for (unsigned i = 0; i < m_renderCountPerCallback; ++i) {
         m_renderBus.setChannelMemory(0, audioData[0] + i * renderBufferSize, renderBufferSize);
         m_renderBus.setChannelMemory(1, audioData[1] + i * renderBufferSize, renderBufferSize);
         m_provider.provideInput(&m_renderBus, renderBufferSize);

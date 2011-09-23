@@ -40,7 +40,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-#if !ENABLE(DATABASE)
+#if !ENABLE(SQL_DATABASE)
 namespace WebCore {
 class AbstractDatabase {
 public:
@@ -50,7 +50,7 @@ public:
     SecurityOrigin* securityOrigin() const { return 0; }
 };
 }
-#endif // !ENABLE(DATABASE)
+#endif // !ENABLE(SQL_DATABASE)
 
 using namespace WebCore;
 
@@ -94,28 +94,28 @@ WebDatabaseObserver* WebDatabase::observer()
 
 void WebDatabase::updateDatabaseSize(const WebString& originIdentifier, const WebString& name, long long size)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     QuotaTracker::instance().updateDatabaseSize(originIdentifier, name, size);
 #endif
 }
 
 void WebDatabase::updateSpaceAvailable(const WebString& originIdentifier, long long spaceAvailable)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     QuotaTracker::instance().updateSpaceAvailableToOrigin(originIdentifier, spaceAvailable);
 #endif
 }
 
 void WebDatabase::resetSpaceAvailable(const WebString& originIdentifier)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     QuotaTracker::instance().resetSpaceAvailableToOrigin(originIdentifier);
 #endif
 }
 
 void WebDatabase::closeDatabaseImmediately(const WebString& originIdentifier, const WebString& databaseName)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     HashSet<RefPtr<AbstractDatabase> > databaseHandles;
     DatabaseTracker::tracker().getOpenDatabases(originIdentifier, databaseName, &databaseHandles);
     for (HashSet<RefPtr<AbstractDatabase> >::iterator it = databaseHandles.begin(); it != databaseHandles.end(); ++it)

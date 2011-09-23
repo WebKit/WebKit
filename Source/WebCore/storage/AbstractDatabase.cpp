@@ -29,7 +29,8 @@
 #include "config.h"
 #include "AbstractDatabase.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
+
 #include "DatabaseAuthorizer.h"
 #include "DatabaseTracker.h"
 #include "Logging.h"
@@ -545,4 +546,4 @@ bool AbstractDatabase::isInterrupted()
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)

@@ -348,6 +348,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/Shared/WebGeolocationPosition.h \
 	Source/WebKit2/Shared/WebGraphicsContext.cpp \
 	Source/WebKit2/Shared/WebGraphicsContext.h \
+	Source/WebKit2/Shared/WebHitTestResult.cpp \
+	Source/WebKit2/Shared/WebHitTestResult.h \
 	Source/WebKit2/Shared/WebImage.cpp \
 	Source/WebKit2/Shared/WebImage.h \
 	Source/WebKit2/Shared/WebKeyboardEvent.cpp \
@@ -507,7 +509,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/TextChecker.h \
 	Source/WebKit2/UIProcess/TiledDrawingAreaProxy.cpp \
 	Source/WebKit2/UIProcess/TiledDrawingAreaProxy.h \
-	Source/WebKit2/UIProcess/TiledDrawingAreaTile.h \
 	Source/WebKit2/UIProcess/VisitedLinkProvider.cpp \
 	Source/WebKit2/UIProcess/VisitedLinkProvider.h \
 	Source/WebKit2/UIProcess/WebApplicationCacheManagerProxy.h \
@@ -913,6 +914,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIB
 	$(XRENDER_LIBS) \
 	$(XT_LIBS)
 
+pkgconfig_DATA += Source/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc
+
 # WebKit2 specific variables
 forwarding_headers := $(GENSOURCES_WEBKIT2)/include
 generate-webkit2-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(libWebKit2_la_SOURCES)
@@ -947,7 +950,9 @@ message_gen_scripts = \
 	$(WebKit2)/Scripts/generate-message-receiver.py \
 	$(WebKit2)/Scripts/generate-messages-header.py \
 	$(WebKit2)/Scripts/webkit2/__init__.py \
-	$(WebKit2)/Scripts/webkit2/messages.py
+	$(WebKit2)/Scripts/webkit2/messages.py \
+	$(WebKit2)/Scripts/webkit2/model.py \
+	$(WebKit2)/Scripts/webkit2/parser.py
 
 # Message header generation
 DerivedSources/WebKit2/%MessageReceiver.cpp: %.messages.in $(message_gen_scripts)
@@ -959,6 +964,9 @@ DerivedSources/WebKit2/%Messages.h: %.messages.in $(message_gen_scripts)
 CLEANFILES += \
 	$(BUILT_SOURCES) \
 	$(top_builddir)/Programs/WebKitWebProcess
+
+DISTCLEANFILES += \
+	$(top_builddir)/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc
 
 # WebKitWebProcess
 libexec_PROGRAMS += \

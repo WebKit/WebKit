@@ -202,11 +202,15 @@ void ImageLoader::updateFromElement()
         m_imageComplete = !newImage;
 
         if (newImage) {
-            newImage->addClient(this);
             if (!m_element->document()->hasListenerType(Document::BEFORELOAD_LISTENER))
                 dispatchPendingBeforeLoadEvent();
             else
                 beforeLoadEventSender().dispatchEventSoon(this);
+
+            // If newImage is cached, addClient() will result in the load event
+            // being queued to fire. Ensure this happens after beforeload is
+            // dispatched.
+            newImage->addClient(this);
         }
         if (oldImage)
             oldImage->removeClient(this);

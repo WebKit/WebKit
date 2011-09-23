@@ -41,7 +41,6 @@
 #include "SharedWorker.h"
 #include "SharedWorkerContext.h"
 #include "V8Binding.h"
-#include "V8BindingScripts.h"
 #include "V8DOMMap.h"
 #include "V8DedicatedWorkerContext.h"
 #include "V8Proxy.h"
@@ -176,8 +175,6 @@ bool WorkerContextExecutionProxy::initContextIfNeeded()
     v8::Handle<v8::Object> globalObject = v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype());
     globalObject->SetPrototype(jsWorkerContext);
 
-    V8BindingScripts::runScripts(context);
-
     return true;
 }
 
@@ -190,7 +187,7 @@ bool WorkerContextExecutionProxy::forgetV8EventObject(Event* event)
     return false;
 }
 
-ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const String& fileName, const TextPosition0& scriptStartPosition, WorkerContextExecutionState* state)
+ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const String& fileName, const TextPosition& scriptStartPosition, WorkerContextExecutionState* state)
 {
     v8::HandleScope hs;
 
@@ -239,7 +236,7 @@ v8::Local<v8::Value> WorkerContextExecutionProxy::runScript(v8::Handle<v8::Scrip
     // Compute the source string and prevent against infinite recursion.
     if (m_recursion >= kMaxRecursionDepth) {
         v8::Local<v8::String> code = v8ExternalString("throw RangeError('Recursion too deep')");
-        script = V8Proxy::compileScript(code, "", TextPosition0::minimumPosition());
+        script = V8Proxy::compileScript(code, "", TextPosition::minimumPosition());
     }
 
     if (V8Proxy::handleOutOfMemory())

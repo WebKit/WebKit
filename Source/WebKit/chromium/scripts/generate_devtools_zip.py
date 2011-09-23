@@ -44,14 +44,16 @@ import zipfile
 import concatenate_css_files
 import concatenate_js_files
 import generate_devtools_html
+import generate_devtools_extension_api
 
 
 class ParsedArgs:
-    def __init__(self, inspector_html, devtools_files, workers_files,
+    def __init__(self, inspector_html, devtools_files, workers_files, extension_api_files,
                  search_dirs, image_search_dirs, output_filename):
         self.inspector_html = inspector_html
         self.devtools_files = devtools_files
         self.workers_files = workers_files
+        self.extension_api_files = extension_api_files
         self.search_dirs = search_dirs
         self.image_search_dirs = image_search_dirs
         self.output_filename = output_filename
@@ -62,16 +64,18 @@ def parse_args(argv):
 
     devtools_files_position = argv.index('--devtools-files')
     workers_files_position = argv.index('--workers-files')
+    extension_api_files_position = argv.index('--extension-api-files')
     search_path_position = argv.index('--search-path')
     image_search_path_position = argv.index('--image-search-path')
     output_position = argv.index('--output')
 
     devtools_files = argv[devtools_files_position + 1:workers_files_position]
-    workers_files = argv[workers_files_position + 1:search_path_position]
+    workers_files = argv[workers_files_position + 1:extension_api_files_position]
+    extension_api_files = argv[extension_api_files_position + 1:search_path_position]
     search_dirs = argv[search_path_position + 1:image_search_path_position]
     image_search_dirs = argv[image_search_path_position + 1:output_position]
 
-    return ParsedArgs(inspector_html, devtools_files, workers_files,
+    return ParsedArgs(inspector_html, devtools_files, workers_files, extension_api_files,
                       search_dirs, image_search_dirs, argv[output_position + 1])
 
 
@@ -85,6 +89,11 @@ def main(argv):
 
     zip = zipfile.ZipFile(parsed_args.output_filename, 'w', zipfile.ZIP_DEFLATED)
     zip.writestr("devtools.html", devtools_html.getvalue())
+
+    devtools_extension_api = StringIO.StringIO()
+    generate_devtools_extension_api.write_devtools_extension_api(
+        devtools_extension_api, parsed_args.extension_api_files)
+    zip.writestr("devtools_extension_api.js", devtools_extension_api.getvalue())
 
     css_extractor = concatenate_css_files.OrderedCSSFilesExtractor(
         devtools_html.getvalue())

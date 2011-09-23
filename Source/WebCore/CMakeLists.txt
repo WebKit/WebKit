@@ -69,6 +69,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/assembler"
     "${JAVASCRIPTCORE_DIR}/bytecode"
     "${JAVASCRIPTCORE_DIR}/bytecompiler"
+    "${JAVASCRIPTCORE_DIR}/dfg"
     "${JAVASCRIPTCORE_DIR}/heap"
     "${JAVASCRIPTCORE_DIR}/debugger"
     "${JAVASCRIPTCORE_DIR}/interpreter"
@@ -528,6 +529,7 @@ SET(WebCore_SOURCES
     dom/EventContext.cpp
     dom/EventDispatchMediator.cpp
     dom/EventDispatcher.cpp
+    dom/EventListenerMap.cpp
     dom/EventNames.cpp
     dom/EventTarget.cpp
     dom/EventQueue.cpp
@@ -1123,6 +1125,7 @@ SET(WebCore_SOURCES
     platform/mock/DeviceOrientationClientMock.cpp
     platform/mock/GeolocationClientMock.cpp
     platform/mock/GeolocationServiceMock.cpp
+    platform/mock/ScrollbarThemeMock.cpp
 
     platform/network/AuthenticationChallengeBase.cpp
     platform/network/BlobData.cpp
@@ -1401,7 +1404,7 @@ IF (ENABLE_BLOB)
     )
 ENDIF ()
 
-IF (ENABLE_DATABASE)
+IF (ENABLE_SQL_DATABASE)
     LIST(APPEND WebCore_SOURCES
         platform/sql/SQLValue.cpp
         platform/sql/SQLiteAuthorizer.cpp
@@ -1464,7 +1467,7 @@ IF (ENABLE_DOM_STORAGE)
     )
 ENDIF ()
 
-IF (ENABLE_LEVELDB)
+IF (WTF_USE_LEVELDB)
     LIST(APPEND WebCore_SOURCES
         platform/leveldb/LevelDBDatabase.cpp
         platform/leveldb/LevelDBTransaction.cpp

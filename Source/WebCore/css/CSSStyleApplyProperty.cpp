@@ -328,7 +328,7 @@ private:
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if (noneEnabled && primitiveValue->getIdent() == CSSValueNone)
             if (noneUndefined)
-                setValue(selector->style(), Length(undefinedLength, Fixed));
+                setValue(selector->style(), Length(Undefined));
             else
                 setValue(selector->style(), Length());
         else if (intrinsicEnabled && primitiveValue->getIdent() == CSSValueIntrinsic)

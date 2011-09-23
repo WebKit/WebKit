@@ -18,11 +18,14 @@
  *
  */
 
-#include "qdesktopwebview_p.h"
 #include "qdesktopwebpageproxy.h"
+
+#include "qdesktopwebview.h"
+#include "qdesktopwebview_p.h"
 #include "DrawingAreaProxyImpl.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
+#include "WebPopupMenuProxyQtDesktop.h"
 #include <QApplication>
 #include <QEvent>
 #include <QGraphicsSceneDragDropEvent>
@@ -77,6 +80,12 @@ void QDesktopWebPageProxy::doneWithTouchEvent(const NativeWebTouchEvent&, bool w
     ASSERT_NOT_REACHED();
 }
 #endif
+
+PassRefPtr<WebPopupMenuProxy> QDesktopWebPageProxy::createPopupMenuProxy(WebPageProxy*)
+{
+    QSGItem* webViewItem = static_cast<QDesktopWebViewPrivate*>(m_viewInterface)->q;
+    return WebPopupMenuProxyQtDesktop::create(m_webPageProxy.get(), webViewItem);
+}
 
 bool QDesktopWebPageProxy::handleEvent(QEvent* ev)
 {

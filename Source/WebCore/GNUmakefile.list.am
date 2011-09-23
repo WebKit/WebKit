@@ -685,7 +685,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSCustomXPathNSResolver.h \
 	Source/WebCore/bindings/js/JSDictionary.cpp \
 	Source/WebCore/bindings/js/JSDictionary.h \
-	Source/WebCore/bindings/js/JSDOMApplicationCacheCustom.cpp \
 	Source/WebCore/bindings/js/JSDOMBinding.cpp \
 	Source/WebCore/bindings/js/JSDOMBinding.h \
 	Source/WebCore/bindings/js/JSDOMFormDataCustom.cpp \
@@ -898,15 +897,12 @@ webcore_sources += \
 	Source/WebCore/bridge/jni/jsc/JavaMethodJSC.h \
 	Source/WebCore/bridge/jsc/BridgeJSC.cpp \
 	Source/WebCore/bridge/jsc/BridgeJSC.h \
-	Source/WebCore/bridge/npapi.h \
 	Source/WebCore/bridge/NP_jsobject.cpp \
 	Source/WebCore/bridge/NP_jsobject.h \
 	Source/WebCore/bridge/npruntime.cpp \
-	Source/WebCore/bridge/npruntime.h \
 	Source/WebCore/bridge/npruntime_impl.h \
 	Source/WebCore/bridge/npruntime_internal.h \
 	Source/WebCore/bridge/npruntime_priv.h \
-	Source/WebCore/bridge/nptypes.h \
 	Source/WebCore/bridge/runtime_array.cpp \
 	Source/WebCore/bridge/runtime_array.h \
 	Source/WebCore/bridge/runtime_method.cpp \
@@ -1177,6 +1173,8 @@ webcore_sources += \
 	Source/WebCore/dom/EventDispatcher.h \
 	Source/WebCore/dom/EventException.h \
 	Source/WebCore/dom/EventListener.h \
+	Source/WebCore/dom/EventListenerMap.cpp \
+	Source/WebCore/dom/EventListenerMap.h \
 	Source/WebCore/dom/EventNames.cpp \
 	Source/WebCore/dom/EventNames.h \
 	Source/WebCore/dom/EventTarget.cpp \
@@ -2684,6 +2682,8 @@ webcore_sources += \
 	Source/WebCore/platform/mock/GeolocationClientMock.h \
 	Source/WebCore/platform/mock/GeolocationServiceMock.cpp \
 	Source/WebCore/platform/mock/GeolocationServiceMock.h \
+	Source/WebCore/platform/mock/ScrollbarThemeMock.cpp \
+	Source/WebCore/platform/mock/ScrollbarThemeMock.h \
 	Source/WebCore/platform/mock/SpeechInputClientMock.cpp \
 	Source/WebCore/platform/mock/SpeechInputClientMock.h \
 	Source/WebCore/platform/network/AuthenticationChallengeBase.cpp \
@@ -2888,6 +2888,9 @@ webcore_sources += \
 	Source/WebCore/platform/Widget.cpp \
 	Source/WebCore/platform/Widget.h \
 	Source/WebCore/platform/WindowsKeyboardCodes.h \
+	Source/WebCore/plugins/npapi.h \
+	Source/WebCore/plugins/npruntime.h \
+	Source/WebCore/plugins/nptypes.h \
 	Source/WebCore/plugins/DOMMimeTypeArray.cpp \
 	Source/WebCore/plugins/DOMMimeTypeArray.h \
 	Source/WebCore/plugins/DOMMimeType.cpp \
@@ -4112,7 +4115,7 @@ endif # END ENABLE_OFFLINE_WEB_APPLICATIONS
 # ----
 # Database Support
 # ----
-if ENABLE_DATABASE
+if ENABLE_SQL_DATABASE
 webcore_built_sources += \
 	DerivedSources/WebCore/JSDatabase.cpp \
 	DerivedSources/WebCore/JSDatabase.h \
@@ -4137,7 +4140,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSQLTransactionSync.cpp \
 	DerivedSources/WebCore/JSSQLTransactionSyncCallback.cpp \
 	DerivedSources/WebCore/JSSQLTransactionSyncCallback.h
-endif # END ENABLE_DATABASE
+endif # END ENABLE_SQL_DATABASE
 
 # ----
 # HTML5 data transfer items support

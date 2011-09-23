@@ -28,7 +28,7 @@
 #ifndef DatabaseTrackerClient_h
 #define DatabaseTrackerClient_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include <wtf/Forward.h>
 

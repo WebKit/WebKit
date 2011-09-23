@@ -73,6 +73,7 @@
 		0FD82E85141F3FE300179C94 /* BoundsCheckedPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E82141F3FC900179C94 /* BoundsCheckedPointer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD82E86141F3FF100179C94 /* PredictedType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E84141F3FDA00179C94 /* PredictedType.cpp */; };
 		0FD82E9014207A5F00179C94 /* ValueProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E8E14207A5100179C94 /* ValueProfile.cpp */; };
+		0FD82EF51423075B00179C94 /* DFGIntrinsic.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82EF31423073900179C94 /* DFGIntrinsic.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400067712A6F7830064D123 /* OSAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400067612A6F7830064D123 /* OSAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400069312A6F9E10064D123 /* OSAllocatorPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */; };
 		140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */; };
@@ -213,8 +214,8 @@
 		14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */; };
 		14BFCE6910CDB1FC00364CCE /* WeakGCMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C5242B0F5355E900BA3D04 /* JITStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A6581A0F4E36F4000150FD /* JITStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		14D2F3DA139F4BE200491031 /* NewSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D2F3D8139F4BE200491031 /* NewSpace.cpp */; };
-		14D2F3DB139F4BE200491031 /* NewSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D2F3D9139F4BE200491031 /* NewSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14D2F3DA139F4BE200491031 /* MarkedSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D2F3D8139F4BE200491031 /* MarkedSpace.cpp */; };
+		14D2F3DB139F4BE200491031 /* MarkedSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D2F3D9139F4BE200491031 /* MarkedSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14E9D17B107EC469004DDA21 /* JSGlobalObjectFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */; };
 		14F8BA3E107EC886009892DC /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */; };
 		14F8BA43107EC88C009892DC /* TCSystemAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */; };
@@ -227,8 +228,6 @@
 		18BAB55410DAE066000D945B /* ThreadIdentifierDataPthreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */; };
 		1A082779142168D70090CCAC /* BinarySemaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A082777142168D70090CCAC /* BinarySemaphore.cpp */; };
 		1A08277A142168D70090CCAC /* BinarySemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A082778142168D70090CCAC /* BinarySemaphore.h */; };
-		1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C61516A0EBAC7A00031376F /* ProfilerServer.mm */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
-		1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C61516B0EBAC7A00031376F /* ProfilerServer.h */; };
 		2CFC5D1E12F45B48004914E2 /* CharacterNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CFC5B7A12F44714004914E2 /* CharacterNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41359CF30FDD89AD00206180 /* DateConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateConversion.h */; };
 		41359CF60FDD89CB00206180 /* DateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41359CF40FDD89CB00206180 /* DateMath.cpp */; };
@@ -351,8 +350,6 @@
 		86EC9DCA1328DF82002B2AD7 /* DFGJITCodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DBA1328DF82002B2AD7 /* DFGJITCodeGenerator.h */; };
 		86EC9DCB1328DF82002B2AD7 /* DFGJITCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DBB1328DF82002B2AD7 /* DFGJITCompiler.cpp */; };
 		86EC9DCC1328DF82002B2AD7 /* DFGJITCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DBC1328DF82002B2AD7 /* DFGJITCompiler.h */; };
-		86EC9DCD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DBD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp */; };
-		86EC9DCE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DBE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h */; };
 		86EC9DCF1328DF82002B2AD7 /* DFGOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DBF1328DF82002B2AD7 /* DFGOperations.cpp */; };
 		86EC9DD01328DF82002B2AD7 /* DFGOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DC01328DF82002B2AD7 /* DFGOperations.h */; };
 		86EC9DD11328DF82002B2AD7 /* DFGRegisterBank.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */; };
@@ -360,7 +357,6 @@
 		86EC9DD31328DF82002B2AD7 /* DFGSpeculativeJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DC31328DF82002B2AD7 /* DFGSpeculativeJIT.h */; };
 		86ECA3EA132DEF1C002B2AD7 /* DFGNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */; };
 		86ECA3FA132DF25A002B2AD7 /* DFGScoreBoard.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */; };
-		86ECA4F1132EAA6D002B2AD7 /* DFGAliasTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ECA4F0132EAA6D002B2AD7 /* DFGAliasTracker.h */; };
 		86F38859121130CA007A7CE3 /* AtomicStringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F38858121130CA007A7CE3 /* AtomicStringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		90213E3D123A40C200D422F3 /* MemoryStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90213E3B123A40C200D422F3 /* MemoryStatistics.cpp */; };
 		90213E3E123A40C200D422F3 /* MemoryStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 90213E3C123A40C200D422F3 /* MemoryStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -567,7 +563,6 @@
 		BC18C4660E16F5CD00B34460 /* StringConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C3C10E16EE3300B34460 /* StringConstructor.h */; };
 		BC18C4670E16F5CD00B34460 /* StringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = E11D51750B2E798D0056C188 /* StringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4680E16F5CD00B34460 /* StringObject.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C3C30E16EE3300B34460 /* StringObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C4690E16F5CD00B34460 /* StringObjectThatMasqueradesAsUndefined.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C3C40E16EE3300B34460 /* StringObjectThatMasqueradesAsUndefined.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C46A0E16F5CD00B34460 /* StringPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C3C60E16EE3300B34460 /* StringPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C46B0E16F5CD00B34460 /* SymbolTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A396A60CD2933100B5B4FF /* SymbolTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C46C0E16F5CD00B34460 /* TCPackedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA479650CFBCF56009328A0 /* TCPackedCache.h */; };
@@ -815,6 +810,7 @@
 		0FD82E82141F3FC900179C94 /* BoundsCheckedPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundsCheckedPointer.h; sourceTree = "<group>"; };
 		0FD82E84141F3FDA00179C94 /* PredictedType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PredictedType.cpp; sourceTree = "<group>"; };
 		0FD82E8E14207A5100179C94 /* ValueProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueProfile.cpp; sourceTree = "<group>"; };
+		0FD82EF31423073900179C94 /* DFGIntrinsic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGIntrinsic.h; path = dfg/DFGIntrinsic.h; sourceTree = "<group>"; };
 		1400067612A6F7830064D123 /* OSAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSAllocator.h; sourceTree = "<group>"; };
 		1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSAllocatorPosix.cpp; sourceTree = "<group>"; };
 		140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasePrivate.h; sourceTree = "<group>"; };
@@ -911,8 +907,8 @@
 		14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSValueRef.cpp; sourceTree = "<group>"; };
 		14BD5A2D0A3E91F600BAF59C /* testapi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = testapi.c; path = API/tests/testapi.c; sourceTree = "<group>"; };
 		14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCMap.h; sourceTree = "<group>"; };
-		14D2F3D8139F4BE200491031 /* NewSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewSpace.cpp; sourceTree = "<group>"; };
-		14D2F3D9139F4BE200491031 /* NewSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewSpace.h; sourceTree = "<group>"; };
+		14D2F3D8139F4BE200491031 /* MarkedSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedSpace.cpp; sourceTree = "<group>"; };
+		14D2F3D9139F4BE200491031 /* MarkedSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedSpace.h; sourceTree = "<group>"; };
 		14D792640DAA03FB001A9F05 /* RegisterFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterFile.h; sourceTree = "<group>"; };
 		14D857740A4696C80032146C /* testapi.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = testapi.js; path = API/tests/testapi.js; sourceTree = "<group>"; };
 		14DA818E0D99FD2000B0A4FB /* JSActivation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSActivation.h; sourceTree = "<group>"; };
@@ -928,8 +924,6 @@
 		18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadIdentifierDataPthreads.h; sourceTree = "<group>"; };
 		1A082777142168D70090CCAC /* BinarySemaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinarySemaphore.cpp; sourceTree = "<group>"; };
 		1A082778142168D70090CCAC /* BinarySemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinarySemaphore.h; sourceTree = "<group>"; };
-		1C61516A0EBAC7A00031376F /* ProfilerServer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProfilerServer.mm; path = profiler/ProfilerServer.mm; sourceTree = "<group>"; };
-		1C61516B0EBAC7A00031376F /* ProfilerServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerServer.h; path = profiler/ProfilerServer.h; sourceTree = "<group>"; };
 		1C9051420BA9E8A70081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = JavaScriptCore.xcconfig; sourceTree = "<group>"; };
 		1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -1105,8 +1099,6 @@
 		86EC9DBA1328DF82002B2AD7 /* DFGJITCodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGJITCodeGenerator.h; path = dfg/DFGJITCodeGenerator.h; sourceTree = "<group>"; };
 		86EC9DBB1328DF82002B2AD7 /* DFGJITCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGJITCompiler.cpp; path = dfg/DFGJITCompiler.cpp; sourceTree = "<group>"; };
 		86EC9DBC1328DF82002B2AD7 /* DFGJITCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGJITCompiler.h; path = dfg/DFGJITCompiler.h; sourceTree = "<group>"; };
-		86EC9DBD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNonSpeculativeJIT.cpp; path = dfg/DFGNonSpeculativeJIT.cpp; sourceTree = "<group>"; };
-		86EC9DBE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNonSpeculativeJIT.h; path = dfg/DFGNonSpeculativeJIT.h; sourceTree = "<group>"; };
 		86EC9DBF1328DF82002B2AD7 /* DFGOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOperations.cpp; path = dfg/DFGOperations.cpp; sourceTree = "<group>"; };
 		86EC9DC01328DF82002B2AD7 /* DFGOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOperations.h; path = dfg/DFGOperations.h; sourceTree = "<group>"; };
 		86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGRegisterBank.h; path = dfg/DFGRegisterBank.h; sourceTree = "<group>"; };
@@ -1114,7 +1106,6 @@
 		86EC9DC31328DF82002B2AD7 /* DFGSpeculativeJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSpeculativeJIT.h; path = dfg/DFGSpeculativeJIT.h; sourceTree = "<group>"; };
 		86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNode.h; path = dfg/DFGNode.h; sourceTree = "<group>"; };
 		86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGScoreBoard.h; path = dfg/DFGScoreBoard.h; sourceTree = "<group>"; };
-		86ECA4F0132EAA6D002B2AD7 /* DFGAliasTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAliasTracker.h; path = dfg/DFGAliasTracker.h; sourceTree = "<group>"; };
 		86F38858121130CA007A7CE3 /* AtomicStringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AtomicStringHash.h; path = text/AtomicStringHash.h; sourceTree = "<group>"; };
 		90213E3B123A40C200D422F3 /* MemoryStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryStatistics.cpp; sourceTree = "<group>"; };
 		90213E3C123A40C200D422F3 /* MemoryStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryStatistics.h; sourceTree = "<group>"; };
@@ -1269,7 +1260,6 @@
 		BC18C3C10E16EE3300B34460 /* StringConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConstructor.h; sourceTree = "<group>"; };
 		BC18C3C20E16EE3300B34460 /* StringObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringObject.cpp; sourceTree = "<group>"; };
 		BC18C3C30E16EE3300B34460 /* StringObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringObject.h; sourceTree = "<group>"; };
-		BC18C3C40E16EE3300B34460 /* StringObjectThatMasqueradesAsUndefined.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringObjectThatMasqueradesAsUndefined.h; sourceTree = "<group>"; };
 		BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringPrototype.cpp; sourceTree = "<group>"; };
 		BC18C3C60E16EE3300B34460 /* StringPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringPrototype.h; sourceTree = "<group>"; };
 		BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayPrototype.lut.h; sourceTree = "<group>"; };
@@ -1652,8 +1642,8 @@
 				141448CA13A176EC00F5BA1A /* MarkedBlockSet.h */,
 				142D6F0E13539A4100B02E86 /* MarkStack.cpp */,
 				142D6F0F13539A4100B02E86 /* MarkStack.h */,
-				14D2F3D8139F4BE200491031 /* NewSpace.cpp */,
-				14D2F3D9139F4BE200491031 /* NewSpace.h */,
+				14D2F3D8139F4BE200491031 /* MarkedSpace.cpp */,
+				14D2F3D9139F4BE200491031 /* MarkedSpace.h */,
 				14BA78F013AAB88F005B7C2C /* SlotVisitor.h */,
 				142E3132134FF0A600AFADB5 /* Strong.h */,
 				141448CC13A1783700F5BA1A /* TinyBloomFilter.h */,
@@ -2157,7 +2147,6 @@
 				BC18C3C10E16EE3300B34460 /* StringConstructor.h */,
 				BC18C3C20E16EE3300B34460 /* StringObject.cpp */,
 				BC18C3C30E16EE3300B34460 /* StringObject.h */,
-				BC18C3C40E16EE3300B34460 /* StringObjectThatMasqueradesAsUndefined.h */,
 				BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */,
 				BC18C3C60E16EE3300B34460 /* StringPrototype.h */,
 				93345A8712D838C400302BE3 /* StringRecursionChecker.cpp */,
@@ -2231,6 +2220,7 @@
 		86EC9DB31328DF44002B2AD7 /* dfg */ = {
 			isa = PBXGroup;
 			children = (
+				0FD82EF31423073900179C94 /* DFGIntrinsic.h */,
 				0FD82E52141DAEDE00179C94 /* DFGOSREntry.cpp */,
 				0FD82E53141DAEDE00179C94 /* DFGOSREntry.h */,
 				0FD82E1E14172C2F00179C94 /* DFGCapabilities.cpp */,
@@ -2239,7 +2229,6 @@
 				0FD3C82314115D1A00FD81CB /* DFGPropagator.cpp */,
 				0FD3C82214115D0E00FD81CB /* DFGDriver.h */,
 				0FD3C82014115CF800FD81CB /* DFGDriver.cpp */,
-				86ECA4F0132EAA6D002B2AD7 /* DFGAliasTracker.h */,
 				86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */,
 				86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */,
 				86AE6C4B136A11E400963012 /* DFGFPRInfo.h */,
@@ -2252,8 +2241,6 @@
 				86EC9DBB1328DF82002B2AD7 /* DFGJITCompiler.cpp */,
 				86EC9DBC1328DF82002B2AD7 /* DFGJITCompiler.h */,
 				86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */,
-				86EC9DBD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp */,
-				86EC9DBE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h */,
 				86EC9DBF1328DF82002B2AD7 /* DFGOperations.cpp */,
 				86EC9DC01328DF82002B2AD7 /* DFGOperations.h */,
 				86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */,
@@ -2288,8 +2275,6 @@
 				95AB83550DA43B4400BC83F3 /* ProfileNode.h */,
 				95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */,
 				95AB832F0DA42CAD00BC83F3 /* Profiler.h */,
-				1C61516B0EBAC7A00031376F /* ProfilerServer.h */,
-				1C61516A0EBAC7A00031376F /* ProfilerServer.mm */,
 			);
 			name = profiler;
 			sourceTree = "<group>";
@@ -2432,6 +2417,7 @@
 				BC257DE80E1F51C50016B6C9 /* Arguments.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
+				0FD82EF51423075B00179C94 /* DFGIntrinsic.h in Headers */,
 				0FD82E85141F3FE300179C94 /* BoundsCheckedPointer.h in Headers */,
 				0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */,
 				0FD82E55141DAEEE00179C94 /* PredictionTracker.h in Headers */,
@@ -2498,14 +2484,12 @@
 				BC18C3FB0E16F5CD00B34460 /* DebuggerCallFrame.h in Headers */,
 				5135FAF212D26ACE003C083B /* Decoder.h in Headers */,
 				BC18C3FC0E16F5CD00B34460 /* Deque.h in Headers */,
-				86ECA4F1132EAA6D002B2AD7 /* DFGAliasTracker.h in Headers */,
 				86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */,
 				86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */,
 				86EC9DC81328DF82002B2AD7 /* DFGGraph.h in Headers */,
 				86EC9DCA1328DF82002B2AD7 /* DFGJITCodeGenerator.h in Headers */,
 				86EC9DCC1328DF82002B2AD7 /* DFGJITCompiler.h in Headers */,
 				86ECA3EA132DEF1C002B2AD7 /* DFGNode.h in Headers */,
-				86EC9DCE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h in Headers */,
 				142E3136134FF0A600AFADB5 /* HandleHeap.h in Headers */,
 				142E3138134FF0A600AFADB5 /* HandleStack.h in Headers */,
 				86EC9DD01328DF82002B2AD7 /* DFGOperations.h in Headers */,
@@ -2666,7 +2650,6 @@
 				95CD45770E1C4FDD0085358E /* ProfileGenerator.h in Headers */,
 				BC18C4510E16F5CD00B34460 /* ProfileNode.h in Headers */,
 				BC18C4520E16F5CD00B34460 /* Profiler.h in Headers */,
-				1C61516D0EBAC7A00031376F /* ProfilerServer.h in Headers */,
 				A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */,
 				BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */,
 				BC18C4540E16F5CD00B34460 /* PropertyNameArray.h in Headers */,
@@ -2733,7 +2716,6 @@
 				86B99AE4117E578100DF5A90 /* StringImplBase.h in Headers */,
 				71DA9D82134F3F3D00B767E7 /* StringOperators.h in Headers */,
 				BC18C4680E16F5CD00B34460 /* StringObject.h in Headers */,
-				BC18C4690E16F5CD00B34460 /* StringObjectThatMasqueradesAsUndefined.h in Headers */,
 				BC18C46A0E16F5CD00B34460 /* StringPrototype.h in Headers */,
 				BC18C5260E16FCA700B34460 /* StringPrototype.lut.h in Headers */,
 				142E313B134FF0A600AFADB5 /* Strong.h in Headers */,
@@ -2799,7 +2781,7 @@
 				14F97447138C853E00DA1C67 /* HeapRootVisitor.h in Headers */,
 				86BB09C1138E381B0056702F /* DFGRepatch.h in Headers */,
 				A72FFD64139985A800E5365A /* KeywordLookup.h in Headers */,
-				14D2F3DB139F4BE200491031 /* NewSpace.h in Headers */,
+				14D2F3DB139F4BE200491031 /* MarkedSpace.h in Headers */,
 				141448CB13A176EC00F5BA1A /* MarkedBlockSet.h in Headers */,
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
 				14BA78F113AAB88F005B7C2C /* SlotVisitor.h in Headers */,
@@ -3156,7 +3138,6 @@
 				86EC9DC71328DF82002B2AD7 /* DFGGraph.cpp in Sources */,
 				86EC9DC91328DF82002B2AD7 /* DFGJITCodeGenerator.cpp in Sources */,
 				86EC9DCB1328DF82002B2AD7 /* DFGJITCompiler.cpp in Sources */,
-				86EC9DCD1328DF82002B2AD7 /* DFGNonSpeculativeJIT.cpp in Sources */,
 				86EC9DCF1328DF82002B2AD7 /* DFGOperations.cpp in Sources */,
 				86EC9DD21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp in Sources */,
 				14469DD7107EC79E00650446 /* dtoa.cpp in Sources */,
@@ -3256,7 +3237,6 @@
 				95CD45760E1C4FDD0085358E /* ProfileGenerator.cpp in Sources */,
 				95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */,
 				95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */,
-				1C61516C0EBAC7A00031376F /* ProfilerServer.mm in Sources */,
 				A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */,
 				14469DE7107EC7E700650446 /* PropertyNameArray.cpp in Sources */,
 				14469DE8107EC7E700650446 /* PropertySlot.cpp in Sources */,
@@ -3307,7 +3287,7 @@
 				86AE64A8135E5E1C00963012 /* MacroAssemblerSH4.cpp in Sources */,
 				7934BB7C1361979400CB99A1 /* ParallelJobsGeneric.cpp in Sources */,
 				86BB09C0138E381B0056702F /* DFGRepatch.cpp in Sources */,
-				14D2F3DA139F4BE200491031 /* NewSpace.cpp in Sources */,
+				14D2F3DA139F4BE200491031 /* MarkedSpace.cpp in Sources */,
 				14BA7A9713AADFF8005B7C2C /* Heap.cpp in Sources */,
 				C22C52F113FAF6EF00B7DC0D /* bignum-dtoa.cc in Sources */,
 				C22C52F313FAF6EF00B7DC0D /* bignum.cc in Sources */,

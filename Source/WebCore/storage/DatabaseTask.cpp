@@ -28,7 +28,7 @@
 #include "config.h"
 #include "DatabaseTask.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "Database.h"
 #include "Logging.h"

@@ -49,7 +49,7 @@ module threads {
         // WorkerUtils
         [Custom] void importScripts(/*[Variadic] in DOMString urls */);
                  attribute [Replaceable] WorkerNavigator navigator;
-#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
+#if defined(ENABLE_SQL_DATABASE) && ENABLE_SQL_DATABASE
         [EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
             raises(DOMException);
         [EnabledAtRuntime] DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
@@ -88,9 +88,7 @@ module threads {
 #if ENABLE_CHANNEL_MESSAGING
         attribute [JSCCustomGetter] MessageChannelConstructor MessageChannel;
 #endif
-#if ENABLE_EVENTSOURCE
         attribute [JSCCustomGetter] EventSourceConstructor EventSource;
-#endif
         attribute [JSCCustomGetter] XMLHttpRequestConstructor XMLHttpRequest;
 #if defined(ENABLE_WEB_SOCKETS) && ENABLE_WEB_SOCKETS
         attribute [JSCCustomGetter,EnabledAtRuntime] WebSocketConstructor WebSocket; // Usable with the new operator

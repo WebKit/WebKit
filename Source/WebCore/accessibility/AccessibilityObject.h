@@ -49,7 +49,6 @@
 typedef struct _NSRange NSRange;
 
 #ifdef __OBJC__
-@class AccessibilityObjectWrapper;
 @class NSArray;
 @class NSAttributedString;
 @class NSData;
@@ -57,6 +56,7 @@ typedef struct _NSRange NSRange;
 @class NSString;
 @class NSValue;
 @class NSView;
+@class WebAccessibilityObjectWrapper;
 #else
 class NSArray;
 class NSAttributedString;
@@ -68,9 +68,15 @@ class NSView;
 #if PLATFORM(GTK)
 typedef struct _AtkObject AtkObject;
 typedef struct _AtkObject AccessibilityObjectWrapper;
+#elif PLATFORM(MAC)
+class WebAccessibilityObjectWrapper;
 #else
 class AccessibilityObjectWrapper;
 #endif
+#endif
+
+#if PLATFORM(MAC)
+typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
 #endif
 
 namespace WebCore {
@@ -683,7 +689,7 @@ protected:
 #endif
 
 #if PLATFORM(MAC)
-    RetainPtr<AccessibilityObjectWrapper> m_wrapper;
+    RetainPtr<WebAccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(WIN) && !OS(WINCE)
     COMPtr<AccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(GTK)

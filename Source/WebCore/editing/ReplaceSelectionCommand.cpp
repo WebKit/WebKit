@@ -496,7 +496,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline()
 
             // If Mail wraps the fragment with a Paste as Quotation blockquote, or if you're pasting into a quoted region,
             // styles from blockquoteNode are allowed to override those from the source document, see <rdar://problem/4930986> and <rdar://problem/5089327>.
-            Node* blockquoteNode = isMailPasteAsQuotationNode(context) ? context : enclosingNodeOfType(firstPositionInNode(context), isMailBlockquote, CanCrossEditingBoundary);
+            Node* blockquoteNode = isMailPasteAsQuotationNode(context) ? context : enclosingNodeOfType(firstPositionInNode(context), isBlockNodeToRetainAppearance, CanCrossEditingBoundary);
             if (blockquoteNode)
                 newInlineStyle->removeStyleFromRulesAndContext(element, document()->documentElement());
 

@@ -30,7 +30,7 @@
 // that has the "Callback" attribute and for tracking changes in its ouput.
 module test {
     interface [
-        Conditional=DATABASE,
+        Conditional=SQL_DATABASE,
         LegacyDefaultOptionalArguments,
         Callback
     ] TestCallback {

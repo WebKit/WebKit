@@ -99,9 +99,6 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(WebKit::WebViewImpl* webViewI
 #error Must port to your platform
 #endif
 {
-#if USE(ACCELERATED_COMPOSITING)
-    m_compositingLayer = WebGLLayerChromium::create(0);
-#endif
 }
 
 GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
@@ -216,8 +213,12 @@ void GraphicsContext3DPrivate::prepareTexture()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-WebGLLayerChromium* GraphicsContext3DPrivate::platformLayer() const
+WebGLLayerChromium* GraphicsContext3DPrivate::platformLayer()
 {
+#if USE(ACCELERATED_COMPOSITING)
+    if (!m_compositingLayer)
+        m_compositingLayer = WebGLLayerChromium::create(0);
+#endif
     return m_compositingLayer.get();
 }
 #endif

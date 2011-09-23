@@ -202,11 +202,11 @@ bool FrameLoaderClientImpl::allowPlugins(bool enabledPerSettings)
     return enabledPerSettings;
 }
 
-bool FrameLoaderClientImpl::allowImages(bool enabledPerSettings)
+bool FrameLoaderClientImpl::allowImage(bool enabledPerSettings, const KURL& imageURL)
 {
     WebViewImpl* webview = m_webFrame->viewImpl();
     if (webview && webview->permissionClient())
-        return webview->permissionClient()->allowImages(m_webFrame, enabledPerSettings);
+        return webview->permissionClient()->allowImage(m_webFrame, enabledPerSettings, imageURL);
 
     return enabledPerSettings;
 }
@@ -1189,18 +1189,6 @@ bool FrameLoaderClientImpl::shouldStopLoadingForHistoryItem(HistoryItem* targetI
     return !url.protocolIs(backForwardNavigationScheme);
 }
 
-void FrameLoaderClientImpl::dispatchDidAddBackForwardItem(HistoryItem*) const
-{
-}
-
-void FrameLoaderClientImpl::dispatchDidRemoveBackForwardItem(HistoryItem*) const
-{
-}
-
-void FrameLoaderClientImpl::dispatchDidChangeBackForwardIndex() const
-{
-}
-
 void FrameLoaderClientImpl::didDisplayInsecureContent()
 {
     if (m_webFrame->client())
@@ -1485,8 +1473,6 @@ PassRefPtr<Widget> FrameLoaderClientImpl::createPlugin(
 {
     if (!m_webFrame->client())
         return 0;
-
-    RefPtr<HTMLPlugInElement> protect(element);
 
     WebPluginParams params;
     params.url = url;

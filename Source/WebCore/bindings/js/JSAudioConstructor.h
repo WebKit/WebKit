@@ -40,7 +40,9 @@ namespace WebCore {
 
         static JSAudioConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
         {
-            return new (JSC::allocateCell<JSAudioConstructor>(*exec->heap())) JSAudioConstructor(exec, structure, globalObject);
+            JSAudioConstructor* constructor = new (JSC::allocateCell<JSAudioConstructor>(*exec->heap())) JSAudioConstructor(structure, globalObject);
+            constructor->finishCreation(exec, globalObject);
+            return constructor;
         }
 
         static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
@@ -51,7 +53,8 @@ namespace WebCore {
         static const JSC::ClassInfo s_info;
 
     private:
-        JSAudioConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
+        JSAudioConstructor(JSC::Structure*, JSDOMGlobalObject*);
+        void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
         virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
     };
 

@@ -75,6 +75,7 @@ SET(WebKit2_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/assembler"
     "${JAVASCRIPTCORE_DIR}/bytecode"
     "${JAVASCRIPTCORE_DIR}/bytecompiler"
+    "${JAVASCRIPTCORE_DIR}/dfg"
     "${JAVASCRIPTCORE_DIR}/collector/handles"
     "${JAVASCRIPTCORE_DIR}/heap"
     "${JAVASCRIPTCORE_DIR}/interpreter"
@@ -161,6 +162,7 @@ SET(WebKit2_SOURCES
     Shared/WebEvent.cpp
     Shared/WebGeolocationPosition.cpp
     Shared/WebGraphicsContext.cpp
+    Shared/WebHitTestResult.cpp
     Shared/WebImage.cpp
     Shared/WebKeyboardEvent.cpp
     Shared/WebMouseEvent.cpp

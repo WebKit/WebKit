@@ -52,7 +52,6 @@
 #include "JSCustomVoidCallback.cpp"
 #include "JSCustomXPathNSResolver.cpp"
 #include "JSDictionary.cpp"
-#include "JSDOMApplicationCacheCustom.cpp"
 #include "JSDOMBinding.cpp"
 #include "JSDOMFormDataCustom.cpp"
 #include "JSDOMGlobalObject.cpp"

@@ -31,7 +31,7 @@
 #ifndef DatabaseObserver_h
 #define DatabaseObserver_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include <wtf/Forward.h>
 
@@ -52,6 +52,6 @@ public:
 
 }
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)
 
 #endif // DatabaseObserver_h

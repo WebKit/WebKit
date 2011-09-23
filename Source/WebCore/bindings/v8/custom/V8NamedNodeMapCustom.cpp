@@ -57,16 +57,12 @@ v8::Handle<v8::Value> V8NamedNodeMap::indexedPropertyGetter(uint32_t index, cons
 v8::Handle<v8::Value> V8NamedNodeMap::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.NamedNodeMap.NamedPropertyGetter");
-    // Search the prototype chain first.
-    v8::Handle<v8::Value> value = info.Holder()->GetRealNamedPropertyInPrototypeChain(name);
-    if (!value.IsEmpty())
-        return value;
 
-    // Then look for IDL defined properties on the object itself.
+    if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
+        return notHandledByInterceptor();
     if (info.Holder()->HasRealNamedCallbackProperty(name))
         return notHandledByInterceptor();
 
-    // Finally, search the DOM.
     NamedNodeMap* imp = V8NamedNodeMap::toNative(info.Holder());
     RefPtr<Node> result = imp->getNamedItem(toWebCoreString(name));
     if (!result)

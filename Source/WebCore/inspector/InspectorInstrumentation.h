@@ -166,7 +166,7 @@ public:
     static bool profilerEnabled(Page*);
 #endif
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     static void didOpenDatabase(ScriptExecutionContext*, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 #endif
 
@@ -300,7 +300,7 @@ private:
     static bool profilerEnabledImpl(InstrumentingAgents*);
 #endif
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     static void didOpenDatabaseImpl(InstrumentingAgents*, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 #endif
 
@@ -499,9 +499,6 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willCallFunction
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
-    if (!page)
-        return InspectorInstrumentationCookie();
-
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         return willCallFunctionImpl(instrumentingAgents, scriptName, scriptLine);
 #endif

@@ -417,3 +417,6 @@ http/tests/loading/progress-finished-callback.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=67716
 media/media-controls-invalid-url.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=68278
+http/tests/history/back-with-fragment-change.php

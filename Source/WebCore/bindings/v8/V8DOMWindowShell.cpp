@@ -46,7 +46,6 @@
 #include "SecurityOrigin.h"
 #include "StorageNamespace.h"
 #include "V8Binding.h"
-#include "V8BindingScripts.h"
 #include "V8BindingState.h"
 #include "V8Collection.h"
 #include "V8DOMMap.h"
@@ -339,8 +338,6 @@ bool V8DOMWindowShell::initContextIfNeeded()
     updateDocument();
 
     setSecurityToken();
-
-    V8BindingScripts::runScripts(v8Context);
 
     m_frame->loader()->client()->didCreateScriptContextForFrame();
 

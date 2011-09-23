@@ -1192,6 +1192,7 @@
               # If this is unhandled, the console will receive log messages
               # such as:
               # com.google.Chrome[] objc[]: Class ScrollbarPrefsObserver is implemented in both .../Google Chrome.app/Contents/Versions/.../Google Chrome Helper.app/Contents/MacOS/../../../Google Chrome Framework.framework/Google Chrome Framework and /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks/WebCore.framework/Versions/A/WebCore. One of the two will be used. Which one is undefined.
+              'WebCascadeList=ChromiumWebCoreObjCWebCascadeList',
               'ScrollbarPrefsObserver=ChromiumWebCoreObjCScrollbarPrefsObserver',
               'WebCoreRenderThemeNotificationObserver=ChromiumWebCoreObjCWebCoreRenderThemeNotificationObserver',
               'WebFontCache=ChromiumWebCoreObjCWebFontCache',
@@ -1266,7 +1267,7 @@
             '<(chromium_src_dir)/third_party/ffmpeg/ffmpeg.gyp:ffmpeg',
           ],
         }],
-        ['"ENABLE_LEVELDB=1" in feature_defines', {
+        ['"WTF_USE_LEVELDB=1" in feature_defines', {
           'dependencies': [
             '<(chromium_src_dir)/third_party/leveldatabase/leveldatabase.gyp:leveldatabase',
           ],
@@ -1376,6 +1377,8 @@
             ['include', 'platform/graphics/chromium/FontPlatformDataLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/SimpleFontDataLinux\\.cpp$'],
           ],
+        }],
+        ['toolkit_uses_gtk==1 or OS=="android"', {
           'dependencies': [
             '<(chromium_src_dir)/third_party/harfbuzz/harfbuzz.gyp:harfbuzz',
           ],
@@ -1434,6 +1437,7 @@
             # the specific exclusions in the "sources!" list below.
             ['include', 'rendering/RenderThemeMac\\.mm$'],
             ['include', 'platform/graphics/mac/ColorMac\\.mm$'],
+            ['include', 'platform/graphics/mac/ComplexTextControllerCoreText\\.mm$'],
             ['include', 'platform/graphics/mac/FloatPointMac\\.mm$'],
             ['include', 'platform/graphics/mac/FloatRectMac\\.mm$'],
             ['include', 'platform/graphics/mac/FloatSizeMac\\.mm$'],

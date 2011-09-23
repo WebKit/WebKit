@@ -259,6 +259,12 @@ public:
     {
         return isJSFormat(DataFormatJSBoolean);
     }
+    
+    bool isUnknownJS()
+    {
+        return registerFormat() == DataFormatNone || registerFormat() == DataFormatJS
+            || spillFormat() == DataFormatNone || spillFormat() == DataFormatJS;
+    }
 
     // Get the machine resister currently holding the value.
     GPRReg gpr() { ASSERT(m_registerFormat && m_registerFormat != DataFormatDouble); return u.gpr; }
@@ -332,10 +338,6 @@ public:
 
 private:
     // The index of the node whose result is stored in this virtual register.
-    // FIXME: Can we remove this? - this is currently only used when collecting
-    // snapshots of the RegisterBank for SpeculationCheck/EntryLocation. Could
-    // investigate storing NodeIndex as the name in RegsiterBank, instead of
-    // VirtualRegister.
     NodeIndex m_nodeIndex;
     uint32_t m_useCount;
     DataFormat m_registerFormat;

@@ -85,8 +85,6 @@ WebCore::FindOptions coreOptions(WebFindOptions options);
 - (void)_dispatchDidReceiveIconFromWebFrame:(WebFrame *)webFrame;
 #endif
 
-- (void)_selectionChanged;
-
 #if USE(ACCELERATED_COMPOSITING)
 - (BOOL)_needsOneShotDrawingSynchronization;
 - (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
@@ -100,14 +98,6 @@ WebCore::FindOptions coreOptions(WebFindOptions options);
 @end
 
 #endif
-
-@interface WebView (WebViewEventHandling)
-- (void)_closingEventHandling;
-- (void)_updateMouseoverWithFakeEvent;
-- (void)_cancelUpdateMouseoverTimer;
-- (void)_stopAutoscrollTimer;
-- (void)_setToolTip:(NSString *)toolTip;
-@end
 
 // FIXME: Temporary way to expose methods that are in the wrong category inside WebView.
 @interface WebView (WebViewOtherInternal)
@@ -179,8 +169,6 @@ WebCore::FindOptions coreOptions(WebFindOptions options);
 - (IBAction)_zoomIn:(id)sender isTextOnly:(BOOL)isTextOnly;
 - (BOOL)_canResetZoom:(BOOL)isTextOnly;
 - (IBAction)_resetZoom:(id)sender isTextOnly:(BOOL)isTextOnly;
-
-- (BOOL)_mustDrawUnionedRect:(NSRect)rect singleRects:(const NSRect *)rects count:(NSInteger)count;
 
 + (BOOL)_canHandleRequest:(NSURLRequest *)request forMainFrame:(BOOL)forMainFrame;
 

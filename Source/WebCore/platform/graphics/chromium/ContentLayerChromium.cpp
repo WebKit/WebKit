@@ -110,7 +110,7 @@ void ContentLayerChromium::paintContentsIfDirty()
         return;
 
     prepareToUpdate(layerRect);
-    m_dirtyRect = FloatRect();
+    resetNeedsDisplay();
 }
 
 bool ContentLayerChromium::drawsContent() const
@@ -120,6 +120,7 @@ bool ContentLayerChromium::drawsContent() const
 
 void ContentLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
 {
+#if !USE(THREADED_COMPOSITING)
 #if USE(SKIA)
     // Note that host->skiaContext() will crash if called while in threaded
     // mode. This thus depends on CCLayerTreeHost::initialize turning off
@@ -129,6 +130,7 @@ void ContentLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
         return;
     }
 #endif // SKIA
+#endif // !THREADED_COMPOSITING
 
     m_textureUpdater = LayerTextureUpdaterBitmap::create(ContentLayerPainter::create(m_delegate), host->layerRendererCapabilities().usingMapSub);
 }

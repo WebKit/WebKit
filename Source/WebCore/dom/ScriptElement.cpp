@@ -162,7 +162,7 @@ bool ScriptElement::isScriptTypeSupported(LegacyTypeSupport supportLegacyTypes) 
 }
 
 // http://dev.w3.org/html5/spec/Overview.html#prepare-a-script
-bool ScriptElement::prepareScript(const TextPosition1& scriptStartPosition, LegacyTypeSupport supportLegacyTypes)
+bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, LegacyTypeSupport supportLegacyTypes)
 {
     if (m_alreadyStarted)
         return false;

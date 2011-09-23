@@ -29,7 +29,7 @@
 #include "config.h"
 #include "DatabaseTracker.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "AbstractDatabase.h"
 #include "Chrome.h"

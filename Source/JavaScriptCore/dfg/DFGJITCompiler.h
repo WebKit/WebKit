@@ -47,12 +47,10 @@ namespace DFG {
 
 class JITCodeGenerator;
 class NodeToRegisterMap;
-class NonSpeculativeJIT;
 class SpeculativeJIT;
 class SpeculationRecovery;
 
 struct EntryLocation;
-struct SpeculationCheck;
 struct OSRExit;
 
 #ifndef NDEBUG
@@ -189,7 +187,7 @@ public:
 
     Jump branchIfNotObject(GPRReg structureReg)
     {
-        return branch8(NotEqual, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+        return branch8(Below, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
     }
 
     // Notify the JIT of a call that does not require linking.
@@ -253,11 +251,13 @@ public:
     bool isDoubleConstant(NodeIndex nodeIndex) { return graph().isDoubleConstant(codeBlock(), nodeIndex); }
     bool isNumberConstant(NodeIndex nodeIndex) { return graph().isNumberConstant(codeBlock(), nodeIndex); }
     bool isBooleanConstant(NodeIndex nodeIndex) { return graph().isBooleanConstant(codeBlock(), nodeIndex); }
+    bool isFunctionConstant(NodeIndex nodeIndex) { return graph().isFunctionConstant(codeBlock(), *globalData(), nodeIndex); }
     // Helper methods get constant values from nodes.
     JSValue valueOfJSConstant(NodeIndex nodeIndex) { return graph().valueOfJSConstant(codeBlock(), nodeIndex); }
     int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return graph().valueOfInt32Constant(codeBlock(), nodeIndex); }
     double valueOfNumberConstant(NodeIndex nodeIndex) { return graph().valueOfNumberConstant(codeBlock(), nodeIndex); }
     bool valueOfBooleanConstant(NodeIndex nodeIndex) { return graph().valueOfBooleanConstant(codeBlock(), nodeIndex); }
+    JSFunction* valueOfFunctionConstant(NodeIndex nodeIndex) { return graph().valueOfFunctionConstant(codeBlock(), *globalData(), nodeIndex); }
 
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
 #if ENABLE(DFG_JIT_ASSERT)
@@ -334,13 +334,8 @@ private:
     void fillInt32ToInteger(NodeIndex, GPRReg);
     void fillToJS(NodeIndex, GPRReg);
     
-#if ENABLE(DFG_OSR_EXIT)
     void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*, Vector<BytecodeAndMachineOffset>& decodedCodeMap);
     void linkOSRExits(SpeculativeJIT&);
-#else
-    void jumpFromSpeculativeToNonSpeculative(const SpeculationCheck&, const EntryLocation&, SpeculationRecovery*, NodeToRegisterMap& checkNodeToRegisterMap, NodeToRegisterMap& entryNodeToRegisterMap);
-    void linkSpeculationChecks(SpeculativeJIT&, NonSpeculativeJIT&);
-#endif
 
     // The globalData, used to access constants such as the vPtrs.
     JSGlobalData* m_globalData;

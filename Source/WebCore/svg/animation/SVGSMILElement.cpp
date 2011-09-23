@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 #include "SVGSMILElement.h"
 
 #include "Attribute.h"

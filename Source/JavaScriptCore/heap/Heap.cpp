@@ -179,17 +179,17 @@ class TakeIfEmpty {
 public:
     typedef MarkedBlock* ReturnType;
 
-    TakeIfEmpty(NewSpace*);
+    TakeIfEmpty(MarkedSpace*);
     void operator()(MarkedBlock*);
     ReturnType returnValue();
 
 private:
-    NewSpace* m_newSpace;
+    MarkedSpace* m_markedSpace;
     DoublyLinkedList<MarkedBlock> m_empties;
 };
 
-inline TakeIfEmpty::TakeIfEmpty(NewSpace* newSpace)
-    : m_newSpace(newSpace)
+inline TakeIfEmpty::TakeIfEmpty(MarkedSpace* newSpace)
+    : m_markedSpace(newSpace)
 {
 }
 
@@ -198,7 +198,7 @@ inline void TakeIfEmpty::operator()(MarkedBlock* block)
     if (!block->isEmpty())
         return;
 
-    m_newSpace->removeBlock(block);
+    m_markedSpace->removeBlock(block);
     m_empties.append(block);
 }
 
@@ -249,7 +249,7 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     : m_heapSize(heapSize)
     , m_minBytesPerCycle(heapSizeForHint(heapSize))
     , m_operationInProgress(NoOperation)
-    , m_newSpace(this)
+    , m_markedSpace(this)
     , m_extraCost(0)
     , m_markListSet(0)
     , m_activityCallback(DefaultGCActivityCallback::create(this))
@@ -259,18 +259,15 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     , m_isSafeToCollect(false)
     , m_globalData(globalData)
 {
-    m_newSpace.setHighWaterMark(m_minBytesPerCycle);
+    m_markedSpace.setHighWaterMark(m_minBytesPerCycle);
     (*m_activityCallback)();
-#if ENABLE(LAZY_BLOCK_FREEING)
     m_numberOfFreeBlocks = 0;
     m_blockFreeingThread = createThread(blockFreeingThreadStartFunc, this, "JavaScriptCore::BlockFree");
     ASSERT(m_blockFreeingThread);
-#endif
 }
 
 Heap::~Heap()
 {
-#if ENABLE(LAZY_BLOCK_FREEING)
     // destroy our thread
     {
         MutexLocker locker(m_freeBlockLock);
@@ -278,7 +275,6 @@ Heap::~Heap()
         m_freeBlockCondition.broadcast();
     }
     waitForThreadCompletion(m_blockFreeingThread, 0);
-#endif
     
     // The destroy function must already have been called, so assert this.
     ASSERT(!m_globalData);
@@ -317,14 +313,11 @@ void Heap::destroy()
     m_destroyedTypeCounts.dump(stderr, "Destroyed Type Counts");
 #endif
     
-#if ENABLE(LAZY_BLOCK_FREEING)
     releaseFreeBlocks();
-#endif
 
     m_globalData = 0;
 }
 
-#if ENABLE(LAZY_BLOCK_FREEING)
 void Heap::waitForRelativeTimeWhileHoldingLock(double relative)
 {
     if (m_blockFreeingThreadShouldQuit)
@@ -386,7 +379,6 @@ void Heap::blockFreeingThreadMain()
         }
     }
 }
-#endif // ENABLE(LAZY_BLOCK_FREEING)
 
 void Heap::reportExtraMemoryCostSlowCase(size_t cost)
 {
@@ -401,20 +393,20 @@ void Heap::reportExtraMemoryCostSlowCase(size_t cost)
     // if a large value survives one garbage collection, there is not much point to
     // collecting more frequently as long as it stays alive.
 
-    if (m_extraCost > maxExtraCost && m_extraCost > m_newSpace.highWaterMark() / 2)
+    if (m_extraCost > maxExtraCost && m_extraCost > m_markedSpace.highWaterMark() / 2)
         collectAllGarbage();
     m_extraCost += cost;
 }
 
-inline void* Heap::tryAllocate(NewSpace::SizeClass& sizeClass)
+inline void* Heap::tryAllocate(MarkedSpace::SizeClass& sizeClass)
 {
     m_operationInProgress = Allocation;
-    void* result = m_newSpace.allocate(sizeClass);
+    void* result = m_markedSpace.allocate(sizeClass);
     m_operationInProgress = NoOperation;
     return result;
 }
 
-void* Heap::allocateSlowCase(NewSpace::SizeClass& sizeClass)
+void* Heap::allocateSlowCase(MarkedSpace::SizeClass& sizeClass)
 {
 #if COLLECT_ON_EVERY_ALLOCATION
     collectAllGarbage();
@@ -428,14 +420,14 @@ void* Heap::allocateSlowCase(NewSpace::SizeClass& sizeClass)
 
     AllocationEffort allocationEffort;
     
-    if (m_newSpace.waterMark() < m_newSpace.highWaterMark() || !m_isSafeToCollect)
+    if (m_markedSpace.waterMark() < m_markedSpace.highWaterMark() || !m_isSafeToCollect)
         allocationEffort = AllocationMustSucceed;
     else
         allocationEffort = AllocationCanFail;
     
     MarkedBlock* block = allocateBlock(sizeClass.cellSize, allocationEffort);
     if (block) {
-        m_newSpace.addBlock(sizeClass, block);
+        m_markedSpace.addBlock(sizeClass, block);
         void* result = tryAllocate(sizeClass);
         ASSERT(result);
         return result;
@@ -448,9 +440,9 @@ void* Heap::allocateSlowCase(NewSpace::SizeClass& sizeClass)
     if (result)
         return result;
     
-    ASSERT(m_newSpace.waterMark() < m_newSpace.highWaterMark());
+    ASSERT(m_markedSpace.waterMark() < m_markedSpace.highWaterMark());
     
-    m_newSpace.addBlock(sizeClass, allocateBlock(sizeClass.cellSize, AllocationMustSucceed));
+    m_markedSpace.addBlock(sizeClass, allocateBlock(sizeClass.cellSize, AllocationMustSucceed));
     
     result = tryAllocate(sizeClass);
     ASSERT(result);
@@ -586,8 +578,6 @@ void Heap::markRoots()
     m_handleStack.visit(heapRootVisitor);
     visitor.drain();
 
-    harvestWeakReferences();
-
     // Weak handles must be marked last, because their owners use the set of
     // opaque roots to determine reachability.
     int lastOpaqueRootCount;
@@ -597,6 +587,10 @@ void Heap::markRoots()
         visitor.drain();
     // If the set of opaque roots has grown, more weak handles may have become reachable.
     } while (lastOpaqueRootCount != visitor.opaqueRootCount());
+
+    // Need to call this here because weak handle processing could add weak
+    // reference harvesters.
+    harvestWeakReferences();
 
     visitor.reset();
 
@@ -689,8 +683,7 @@ void Heap::collect(SweepToggle sweepToggle)
     // proportion is a bit arbitrary. A 2X multiplier gives a 1:1 (heap size :
     // new bytes allocated) proportion, and seems to work well in benchmarks.
     size_t proportionalBytes = 2 * size();
-    m_newSpace.setHighWaterMark(max(proportionalBytes, m_minBytesPerCycle));
-    m_newSpace.resetPropertyStorageNursery();
+    m_markedSpace.setHighWaterMark(max(proportionalBytes, m_minBytesPerCycle));
     JAVASCRIPTCORE_GC_END();
 
     (*m_activityCallback)();
@@ -698,13 +691,13 @@ void Heap::collect(SweepToggle sweepToggle)
 
 void Heap::canonicalizeBlocks()
 {
-    m_newSpace.canonicalizeBlocks();
+    m_markedSpace.canonicalizeBlocks();
 }
 
 void Heap::resetAllocator()
 {
     m_extraCost = 0;
-    m_newSpace.resetAllocator();
+    m_markedSpace.resetAllocator();
 }
 
 void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
@@ -722,7 +715,7 @@ bool Heap::isValidAllocation(size_t bytes)
     if (!isValidThreadState(m_globalData))
         return false;
 
-    if (bytes > NewSpace::maxCellSize)
+    if (bytes > MarkedSpace::maxCellSize)
         return false;
 
     if (m_operationInProgress != NoOperation)
@@ -735,12 +728,6 @@ MarkedBlock* Heap::allocateBlock(size_t cellSize, Heap::AllocationEffort allocat
 {
     MarkedBlock* block;
     
-#if !ENABLE(LAZY_BLOCK_FREEING)
-    if (allocationEffort == AllocationCanFail)
-        return 0;
-    
-    block = MarkedBlock::create(this, cellSize);
-#else
     {
         MutexLocker locker(m_freeBlockLock);
         if (m_numberOfFreeBlocks) {
@@ -756,7 +743,6 @@ MarkedBlock* Heap::allocateBlock(size_t cellSize, Heap::AllocationEffort allocat
         return 0;
     else
         block = MarkedBlock::create(this, cellSize);
-#endif
     
     m_blocks.add(block);
 
@@ -771,24 +757,19 @@ void Heap::freeBlocks(MarkedBlock* head)
 
         m_blocks.remove(block);
         block->reset();
-#if !ENABLE(LAZY_BLOCK_FREEING)
-        MarkedBlock::destroy(block);
-#else
         MutexLocker locker(m_freeBlockLock);
         m_freeBlocks.append(block);
         m_numberOfFreeBlocks++;
-#endif
     }
 }
 
 void Heap::shrink()
 {
     // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
-    TakeIfEmpty takeIfEmpty(&m_newSpace);
+    TakeIfEmpty takeIfEmpty(&m_markedSpace);
     freeBlocks(forEachBlock(takeIfEmpty));
 }
 
-#if ENABLE(LAZY_BLOCK_FREEING)
 void Heap::releaseFreeBlocks()
 {
     while (true) {
@@ -810,7 +791,6 @@ void Heap::releaseFreeBlocks()
         MarkedBlock::destroy(block);
     }
 }
-#endif
 
 #if ENABLE(GGC)
 void Heap::writeBarrierSlowCase(const JSCell* owner, JSCell* cell)

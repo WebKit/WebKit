@@ -32,7 +32,6 @@
 #include "JSCSSValue.h"
 #include "JSNode.h"
 #include "PlatformString.h"
-#include <runtime/StringObjectThatMasqueradesAsUndefined.h>
 #include <runtime/StringPrototype.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/AtomicString.h>
@@ -161,10 +160,6 @@ JSValue JSCSSStyleDeclaration::nameGetter(ExecState* exec, JSValue slotBase, con
 
     // If the property is a shorthand property (such as "padding"), 
     // it can only be accessed using getPropertyValue.
-
-    // Make the SVG 'filter' attribute undetectable, to avoid confusion with the IE 'filter' attribute.
-    if (propertyName == "filter")
-        return StringObjectThatMasqueradesAsUndefined::create(exec, stringToUString(thisObj->impl()->getPropertyValue(prop)));
 
     return jsString(exec, thisObj->impl()->getPropertyValue(prop));
 }

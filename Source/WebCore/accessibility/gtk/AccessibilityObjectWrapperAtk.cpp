@@ -1423,8 +1423,8 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
         result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_RISE), buffer.get());
     }
 
-    int indentation = style->textIndent().calcValue(object->size().width());
-    if (indentation != undefinedLength) {
+    if (!style->textIndent().isUndefined()) {
+        int indentation = style->textIndent().calcValue(object->size().width());
         buffer.set(g_strdup_printf("%i", indentation));
         result = addAttributeToSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_INDENT), buffer.get());
     }

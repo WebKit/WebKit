@@ -68,6 +68,51 @@ class RenderLayerBacking;
 class RenderLayerCompositor;
 #endif
 
+enum BorderRadiusClippingRule { IncludeSelfForBorderRadius, DoNotIncludeSelfForBorderRadius };
+
+class ClipRect {
+public:
+    ClipRect()
+    : m_hasRadius(false)
+    { }
+    
+    ClipRect(const LayoutRect& rect)
+    : m_rect(rect)
+    , m_hasRadius(false)
+    { }
+    
+    const LayoutRect& rect() const { return m_rect; }
+    void setRect(const LayoutRect& rect) { m_rect = rect; }
+
+    bool hasRadius() const { return m_hasRadius; }
+    void setHasRadius(bool hasRadius) { m_hasRadius = hasRadius; }
+
+    bool operator==(const ClipRect& other) const { return rect() == other.rect() && hasRadius() == other.hasRadius(); }
+
+    void intersect(const LayoutRect& other) { m_rect.intersect(other); }
+    void intersect(const ClipRect& other)
+    {
+        m_rect.intersect(other.rect());
+        if (other.hasRadius())
+            m_hasRadius = true;
+    }
+    void move(LayoutUnit x, LayoutUnit y) { m_rect.move(x, y); }
+
+    bool isEmpty() const { return m_rect.isEmpty(); }
+    bool intersects(const LayoutRect& rect) { return m_rect.intersects(rect); }
+
+private:
+    LayoutRect m_rect;
+    bool m_hasRadius;
+};
+
+inline ClipRect intersection(const ClipRect& a, const ClipRect& b)
+{
+    ClipRect c = a;
+    c.intersect(b);
+    return c;
+}
+
 class ClipRects {
 public:
     ClipRects()
@@ -102,14 +147,14 @@ public:
         m_fixed = false;
     }
     
-    const LayoutRect& overflowClipRect() const { return m_overflowClipRect; }
-    void setOverflowClipRect(const LayoutRect& r) { m_overflowClipRect = r; }
+    const ClipRect& overflowClipRect() const { return m_overflowClipRect; }
+    void setOverflowClipRect(const ClipRect& r) { m_overflowClipRect = r; }
 
-    const LayoutRect& fixedClipRect() const { return m_fixedClipRect; }
-    void setFixedClipRect(const LayoutRect&r) { m_fixedClipRect = r; }
+    const ClipRect& fixedClipRect() const { return m_fixedClipRect; }
+    void setFixedClipRect(const ClipRect&r) { m_fixedClipRect = r; }
 
-    const LayoutRect& posClipRect() const { return m_posClipRect; }
-    void setPosClipRect(const LayoutRect& r) { m_posClipRect = r; }
+    const ClipRect& posClipRect() const { return m_posClipRect; }
+    void setPosClipRect(const ClipRect& r) { m_posClipRect = r; }
 
     bool fixed() const { return m_fixed; }
     void setFixed(bool fixed) { m_fixed = fixed; }
@@ -147,9 +192,9 @@ private:
     void* operator new(size_t) throw();
 
 private:
-    LayoutRect m_overflowClipRect;
-    LayoutRect m_fixedClipRect;
-    LayoutRect m_posClipRect;
+    ClipRect m_overflowClipRect;
+    ClipRect m_fixedClipRect;
+    ClipRect m_posClipRect;
     unsigned m_refCnt : 31;
     bool m_fixed : 1;
 };
@@ -380,8 +425,8 @@ public:
     // |rootLayer}.  It also computes our background and foreground clip rects
     // for painting/event handling.
     void calculateRects(const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
-                        LayoutRect& backgroundRect, LayoutRect& foregroundRect, LayoutRect& outlineRect, bool temporaryClipRects = false,
-                        OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
+                        ClipRect& backgroundRect, ClipRect& foregroundRect, ClipRect& outlineRect,
+                        bool temporaryClipRects = false, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
 
     // Compute and cache clip rects computed with the given layer as the root
     void updateClipRects(const RenderLayer* rootLayer, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize);
@@ -469,6 +514,10 @@ public:
 private:
     void computeRepaintRects(IntPoint* offsetFromRoot = 0);
     void clearRepaintRects();
+
+    void clipToRect(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect, const ClipRect&,
+                    BorderRadiusClippingRule = IncludeSelfForBorderRadius);
+    void restoreClip(GraphicsContext*, const LayoutRect& paintDirtyRect, const ClipRect&);
 
     // The normal operator new is disallowed on all render objects.
     void* operator new(size_t) throw();
@@ -600,7 +649,7 @@ private:
     void setPaintingInsideReflection(bool b) { m_paintingInsideReflection = b; }
     
     void parentClipRects(const RenderLayer* rootLayer, ClipRects&, bool temporaryClipRects = false, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
-    LayoutRect backgroundClipRect(const RenderLayer* rootLayer, bool temporaryClipRects, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
+    ClipRect backgroundClipRect(const RenderLayer* rootLayer, bool temporaryClipRects, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
 
     RenderLayer* enclosingTransformedAncestor() const;
 

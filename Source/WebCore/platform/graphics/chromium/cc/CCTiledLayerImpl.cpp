@@ -120,7 +120,7 @@ void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
         layerQuad.inflateAntiAliasingDistance();
 
     GraphicsContext3D* context = layerRenderer->context();
-    if (isRootLayer()) {
+    if (isNonCompositedContent()) {
         context->colorMask(true, true, true, false);
         GLC(context, context->disable(GraphicsContext3D::BLEND));
     }
@@ -148,7 +148,7 @@ void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
         ASSERT_NOT_REACHED();
     }
 
-    if (isRootLayer()) {
+    if (isNonCompositedContent()) {
         context->colorMask(true, true, true, true);
         GLC(context, context->enable(GraphicsContext3D::BLEND));
     }
@@ -319,7 +319,7 @@ void CCTiledLayerImpl::drawTiles(LayerRendererChromium* layerRenderer, const Int
 
             GLC(context, context->uniform4f(program->vertexShader().vertexTexTransformLocation(), vertexTexTranslateX, vertexTexTranslateY, vertexTexScaleX, vertexTexScaleY));
 
-            LayerChromium::drawTexturedQuad(context, layerRenderer->projectionMatrix(), globalTransform,
+            layerRenderer->drawTexturedQuad(globalTransform,
                                             tileRect.width(), tileRect.height(), opacity, quad,
                                             program->vertexShader().matrixLocation(),
                                             program->fragmentShader().alphaLocation(),

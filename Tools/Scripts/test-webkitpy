@@ -216,16 +216,15 @@ def init(command_args, external_package_paths):
 
     versioning.check_version(log=_log)
 
-    (comparison, current_version, minimum_version) = \
+    (comparison, current_version, expected_version) = \
         versioning.compare_version()
 
-    if comparison > 0:
-        # Then the current version is later than the minimum version.
-        message = ("You are testing webkitpy with a Python version (%s) "
-                   "higher than the minimum version (%s) it was meant "
-                   "to support." % (current_version, minimum_version))
+    if comparison != 0:
+        # Then the current version is not what we expect.
+        message = ("You are testing webkitpy with Python version (%s) "
+                   "instead of version (%s) which we support.  Please verify "
+                   "changes against version (%s)" % (current_version, expected_version, expected_version))
         _log.warn(message)
-
 
 def _path_from_webkit_root(*components):
     webkit_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))

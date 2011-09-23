@@ -1,0 +1,23 @@
+<html>
+<body>
+Test passes if it does not crash.
+<ruby><svg><table><span><div><tr></tr><rt id="test"></rt></ruby>
+<script>
+function runTest()
+{
+    var child = document.getElementById('test');
+    child.parentNode.removeChild(child);
+    
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+setTimeout("runTest()", 0);
+</script>
+</body>
+</html>

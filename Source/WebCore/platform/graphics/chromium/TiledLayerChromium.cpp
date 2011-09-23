@@ -148,7 +148,7 @@ void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
     m_sampledTexelFormat = textureUpdater()->sampledTexelFormat(m_textureFormat);
     m_tiler = CCLayerTilingData::create(
         IntSize(defaultTileSize, defaultTileSize),
-        isRootLayer() ? CCLayerTilingData::NoBorderTexels : CCLayerTilingData::HasBorderTexels);
+        isNonCompositedContent() ? CCLayerTilingData::NoBorderTexels : CCLayerTilingData::HasBorderTexels);
 }
 
 void TiledLayerChromium::updateCompositorResources(GraphicsContext3D* context)
@@ -415,6 +415,11 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
     if (dirtyLayerRect.isEmpty())
         return;
 
+    // Calling prepareToUpdate() calls into WebKit to paint, which may have the side
+    // effect of disabling compositing, which causes our reference to the texture updater to be deleted.
+    // However, we can't free the memory backing the GraphicsContext until the paint finishes,
+    // so we grab a local reference here to hold the updater alive until the paint completes.
+    RefPtr<LayerTextureUpdater> protector(textureUpdater());
     textureUpdater()->prepareToUpdate(m_paintRect, m_tiler->tileSize(), m_tiler->hasBorderTexels());
 }
 

@@ -27,7 +27,7 @@
 #define JSExceptionBase_h
 
 namespace JSC {
-    
+
 class JSValue;
 
 }   // namespace JSC

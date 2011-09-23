@@ -35,23 +35,23 @@
 #import <wtf/Assertions.h>
 #import <wtf/Threading.h>
 
-@interface WTFMainThreadCaller : NSObject {
+@interface JSWTFMainThreadCaller : NSObject {
 }
 - (void)call;
 @end
 
-@implementation WTFMainThreadCaller
+@implementation JSWTFMainThreadCaller
 
 - (void)call
 {
     WTF::dispatchFunctionsFromMainThread();
 }
 
-@end // implementation WTFMainThreadCaller
+@end // implementation JSWTFMainThreadCaller
 
 namespace WTF {
 
-static WTFMainThreadCaller* staticMainThreadCaller;
+static JSWTFMainThreadCaller* staticMainThreadCaller;
 static bool isTimerPosted; // This is only accessed on the 'main' thread.
 static bool mainThreadEstablishedAsPthreadMain;
 static pthread_t mainThreadPthread;
@@ -60,7 +60,7 @@ static NSThread* mainThreadNSThread;
 void initializeMainThreadPlatform()
 {
     ASSERT(!staticMainThreadCaller);
-    staticMainThreadCaller = [[WTFMainThreadCaller alloc] init];
+    staticMainThreadCaller = [[JSWTFMainThreadCaller alloc] init];
 
     mainThreadEstablishedAsPthreadMain = false;
     mainThreadPthread = pthread_self();
@@ -73,7 +73,7 @@ void initializeMainThreadToProcessMainThreadPlatform()
         NSLog(@"WebKit Threading Violation - initial use of WebKit from a secondary thread.");
 
     ASSERT(!staticMainThreadCaller);
-    staticMainThreadCaller = [[WTFMainThreadCaller alloc] init];
+    staticMainThreadCaller = [[JSWTFMainThreadCaller alloc] init];
 
     mainThreadEstablishedAsPthreadMain = true;
     mainThreadPthread = 0;

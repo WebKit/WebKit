@@ -79,7 +79,7 @@ void VideoLayerChromium::cleanupResources()
 
 void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context)
 {
-    if (!m_contentsDirty || !m_delegate)
+    if (m_dirtyRect.isEmpty() || !m_delegate)
         return;
 
     ASSERT(drawsContent());
@@ -119,8 +119,7 @@ void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context)
         updateTexture(context, texture, frame->data(plane));
     }
 
-    m_dirtyRect.setSize(FloatSize());
-    m_contentsDirty = false;
+    resetNeedsDisplay();
 
     m_provider->putCurrentFrame(frame);
 }

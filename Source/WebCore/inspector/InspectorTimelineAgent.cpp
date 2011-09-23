@@ -336,7 +336,7 @@ void InspectorTimelineAgent::didTimeStamp(const String& message)
 
 void InspectorTimelineAgent::didMarkDOMContentEvent()
 {
-    appendRecord(InspectorObject::create(), TimelineRecordType::TimeStamp);
+    appendRecord(InspectorObject::create(), TimelineRecordType::MarkDOMContent);
 }
 
 void InspectorTimelineAgent::didMarkLoadEvent()

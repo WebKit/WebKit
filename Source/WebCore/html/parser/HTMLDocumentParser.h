@@ -78,8 +78,8 @@ public:
     HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
     String sourceForToken(const HTMLToken&);
 
-    virtual TextPosition0 textPosition() const;
-    virtual int lineNumber() const;
+    virtual TextPosition textPosition() const;
+    virtual OrdinalNumber lineNumber() const;
 
     virtual void suspendScheduledTasks();
     virtual void resumeScheduledTasks();

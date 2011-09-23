@@ -28,11 +28,10 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "WebInspectorFrontendClient.h"
 #include "WebInspector.h"
+#include "WebInspectorFrontendClient.h"
 #include "WebPage.h"
 #include <WebCore/InspectorController.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 
 using namespace WebCore;

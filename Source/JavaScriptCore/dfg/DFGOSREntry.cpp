@@ -58,6 +58,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     ASSERT(codeBlock->getJITType() == JITCode::DFGJIT);
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->getJITType() == JITCode::BaselineJIT);
+    ASSERT(codeBlock->jitCodeMap());
 
 #if ENABLE(JIT_VERBOSE_OSR)
     printf("OSR in %p(%p) from bc#%u\n", codeBlock, codeBlock->alternative(), bytecodeIndex);
@@ -74,25 +75,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     // should almost certainly include calling either codeBlock->optimizeAfterWarmUp()
     // or codeBlock->dontOptimizeAnytimeSoon().
     
-    // 1) Check if the DFG code set a code map. If it didn't, it means that it
-    //    cannot handle OSR entry. This currently only happens if we disable
-    //    dynamic speculation termination and end up with a DFG code block that
-    //    was compiled entirely with the non-speculative JIT. The non-speculative
-    //    JIT does not support OSR entry and probably never will, since it is
-    //    kind of a deprecated compiler right now.
-    
-#if ENABLE(DYNAMIC_TERMINATE_SPECULATION)
-    ASSERT(codeBlock->jitCodeMap());
-#else
-    if (!codeBlock->jitCodeMap()) {
-#if ENABLE(JIT_VERBOSE_OSR)
-        printf("    OSR failed because of a missing JIT code map.\n");
-#endif
-        return 0;
-    }
-#endif
-    
-    // 2) Verify predictions. If the predictions are inconsistent with the actual
+    // 1) Verify predictions. If the predictions are inconsistent with the actual
     //    values, then OSR entry is not possible at this time. It's tempting to
     //    assume that we could somehow avoid this case. We can certainly avoid it
     //    for first-time loop OSR - that is, OSR into a CodeBlock that we have just
@@ -134,7 +117,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         }
     }
     
-    // 3) Check the stack height. The DFG JIT may require a taller stack than the
+    // 2) Check the stack height. The DFG JIT may require a taller stack than the
     //    baseline JIT, in some cases. If we can't grow the stack, then don't do
     //    OSR right now. That's the only option we have unless we want basic block
     //    boundaries to start throwing RangeErrors. Although that would be possible,
@@ -152,11 +135,11 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     printf("    OSR should succeed.\n");
 #endif
     
-    // 4) Fix the call frame.
+    // 3) Fix the call frame.
     
     exec->setCodeBlock(codeBlock);
     
-    // 5) Find and return the destination machine code address. The DFG stores
+    // 4) Find and return the destination machine code address. The DFG stores
     //    the machine code offsets of OSR targets in a CompactJITCodeMap.
     //    Decoding it is not super efficient, but we expect that OSR entry
     //    happens sufficiently rarely, and that OSR entrypoints are sufficiently

@@ -91,7 +91,7 @@ ScriptExecutionContext::ScriptExecutionContext()
     : m_iteratingActiveDOMObjects(false)
     , m_inDestructor(false)
     , m_inDispatchErrorEvent(false)
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     , m_hasOpenDatabases(false)
 #endif
 {
@@ -112,7 +112,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
         ASSERT((*iter)->scriptExecutionContext() == this);
         (*iter)->contextDestroyed();
     }
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     if (m_databaseThread) {
         ASSERT(m_databaseThread->terminationRequested());
         m_databaseThread = 0;
@@ -144,7 +144,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
 #endif
 }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 DatabaseThread* ScriptExecutionContext::databaseThread()
 {

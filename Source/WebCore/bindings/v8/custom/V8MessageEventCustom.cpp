@@ -125,6 +125,13 @@ v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallback(const v8::Argumen
     v8::PropertyAttribute dataAttr = static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly);
     SerializedScriptValue::deserializeAndSetProperty(args.Holder(), "data", dataAttr, event->dataAsSerializedScriptValue());
     return v8::Undefined();
-  }
+}
+
+v8::Handle<v8::Value> V8MessageEvent::webkitInitMessageEventCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.MessageEvent.webkitInitMessageEvent");
+    return initMessageEventCallback(args);
+}
+
 
 } // namespace WebCore

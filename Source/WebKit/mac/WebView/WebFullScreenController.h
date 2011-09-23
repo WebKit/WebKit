@@ -25,11 +25,13 @@
 
 #if ENABLE(FULLSCREEN_API)
 
+#import <wtf/OwnPtr.h>
 #import <wtf/RefPtr.h>
 
 @class WebWindowFadeAnimation;
 @class WebView;
 namespace WebCore {
+    class DisplaySleepDisabler;
     class Element;
     class RenderBox;
     class EventListener;
@@ -46,9 +48,7 @@ namespace WebCore {
     BOOL _isAnimating;
     BOOL _isFullscreen;
     BOOL _forceDisableAnimation;
-    uint32_t _idleDisplaySleepAssertion;
-    uint32_t _idleSystemSleepAssertion;
-    NSTimer *_tickleTimer;
+    OwnPtr<WebCore::DisplaySleepDisabler> _displaySleepDisabler;
     CGRect _initialFrame;
 }
 

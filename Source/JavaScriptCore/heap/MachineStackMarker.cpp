@@ -76,11 +76,8 @@
 #include <errno.h>
 #endif
 
-#if ENABLE(JSC_MULTIPLE_THREADS) && USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
 #include <signal.h>
-#ifndef SA_RESTART
-#error MachineThreads requires SA_RESTART
-#endif
 #endif
 
 #endif
@@ -100,8 +97,6 @@ UNUSED_PARAM(begin);
 UNUSED_PARAM(end);
 #endif
 }
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
 
 #if OS(DARWIN)
 typedef mach_port_t PlatformThread;
@@ -127,7 +122,8 @@ public:
         , platformThread(platThread)
         , stackBase(base)
     {
-#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN) && defined(SA_RESTART)
+        // if we have SA_RESTART, enable SIGUSR2 debugging mechanism
         struct sigaction action;
         action.sa_handler = pthreadSignalHandlerSuspendResume;
         sigemptyset(&action.sa_mask);
@@ -147,20 +143,15 @@ public:
     void* stackBase;
 };
 
-#endif
-
 MachineThreads::MachineThreads(Heap* heap)
     : m_heap(heap)
-#if ENABLE(JSC_MULTIPLE_THREADS)
     , m_registeredThreads(0)
     , m_threadSpecific(0)
-#endif
 {
 }
 
 MachineThreads::~MachineThreads()
 {
-#if ENABLE(JSC_MULTIPLE_THREADS)
     if (m_threadSpecific) {
         int error = pthread_key_delete(m_threadSpecific);
         ASSERT_UNUSED(error, !error);
@@ -172,10 +163,7 @@ MachineThreads::~MachineThreads()
         delete t;
         t = next;
     }
-#endif
 }
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
 
 static inline PlatformThread getCurrentPlatformThread()
 {
@@ -245,8 +233,6 @@ void MachineThreads::removeCurrentThread()
     }
 }
 
-#endif
-
 #if COMPILER(GCC)
 #define REGISTER_BUFFER_ALIGNMENT __attribute__ ((aligned (sizeof(void*))))
 #else
@@ -276,8 +262,6 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
     swapIfBackwards(stackBegin, stackEnd);
     conservativeRoots.add(stackBegin, stackEnd);
 }
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
 
 static inline void suspendThread(const PlatformThread& platformThread)
 {
@@ -325,6 +309,8 @@ typedef arm_thread_state_t PlatformThreadRegisters;
 
 #elif OS(WINDOWS)
 typedef CONTEXT PlatformThreadRegisters;
+#elif OS(QNX)
+typedef struct _debug_thread_info PlatformThreadRegisters;
 #elif USE(PTHREADS)
 typedef pthread_attr_t PlatformThreadRegisters;
 #else
@@ -367,6 +353,16 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
     regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
     GetThreadContext(platformThread, &regs);
     return sizeof(CONTEXT);
+#elif OS(QNX)
+    memset(&regs, 0, sizeof(regs));
+    regs.tid = pthread_self();
+    int fd = open("/proc/self", O_RDONLY);
+    if (fd == -1) {
+        LOG_ERROR("Unable to open /proc/self (errno: %d)", errno);
+        CRASH();
+    }
+    devctl(fd, DCMD_PROC_TIDSTATUS, &regs, sizeof(regs), 0);
+    close(fd);
 #elif USE(PTHREADS)
     pthread_attr_init(&regs);
 #if HAVE(PTHREAD_NP_H) || OS(NETBSD)
@@ -429,6 +425,9 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 #error Unknown Architecture
 #endif
 
+#elif OS(QNX)
+    return reinterpret_cast<void*>((uintptr_t) regs.sp);
+
 #elif USE(PTHREADS)
     void* stackBase = 0;
     size_t stackSize = 0;
@@ -443,7 +442,7 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 
 static void freePlatformThreadRegisters(PlatformThreadRegisters& regs)
 {
-#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN) && !OS(QNX)
     pthread_attr_destroy(&regs);
 #else
     UNUSED_PARAM(regs);
@@ -469,13 +468,9 @@ void MachineThreads::gatherFromOtherThread(ConservativeRoots& conservativeRoots,
     freePlatformThreadRegisters(regs);
 }
 
-#endif
-
 void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, void* stackCurrent)
 {
     gatherFromCurrentThread(conservativeRoots, stackCurrent);
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
 
     if (m_threadSpecific) {
 
@@ -497,7 +492,6 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
         fastMallocAllow();
 #endif
     }
-#endif
 }
 
 } // namespace JSC

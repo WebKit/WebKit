@@ -229,7 +229,7 @@ int ScriptController::eventHandlerLineNumber() const
     // JSC expects 1-based line numbers, so we must add one here to get it right.
     ScriptableDocumentParser* parser = m_frame->document()->scriptableDocumentParser();
     if (parser)
-        return parser->lineNumber() + 1;
+        return parser->lineNumber().oneBasedInt();
     return 0;
 }
 

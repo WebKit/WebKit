@@ -44,23 +44,23 @@ WebInspector.SearchController.prototype = {
     updateSearchMatchesCount: function(matches, panel)
     {
         if (!panel)
-            panel = WebInspector.currentPanel;
+            panel = WebInspector.currentPanel();
 
         panel.currentSearchMatches = matches;
 
-        if (panel === WebInspector.currentPanel)
-            this._updateSearchMatchesCountAndCurrentMatchIndex(WebInspector.currentPanel.currentQuery && matches);
+        if (panel === WebInspector.currentPanel())
+            this._updateSearchMatchesCountAndCurrentMatchIndex(WebInspector.currentPanel().currentQuery && matches);
     },
 
     updateCurrentMatchIndex: function(currentMatchIndex, panel)
     {
-        if (panel === WebInspector.currentPanel)
+        if (panel === WebInspector.currentPanel())
             this._updateSearchMatchesCountAndCurrentMatchIndex(panel.currentSearchMatches, currentMatchIndex);
     },
 
     updateSearchLabel: function()
     {
-        var panelName = WebInspector.currentPanel && WebInspector.currentPanel.toolbarItemLabel;
+        var panelName = WebInspector.currentPanel() && WebInspector.currentPanel().toolbarItemLabel;
         if (!panelName)
             return;
         var newLabel = WebInspector.UIString("Search %s", panelName);
@@ -104,7 +104,7 @@ WebInspector.SearchController.prototype = {
                 break;
 
             case "U+0047": // G key
-                var currentPanel = WebInspector.currentPanel;
+                var currentPanel = WebInspector.currentPanel();
 
                 if (isMac && event.metaKey && !event.ctrlKey && !event.altKey) {
                     if (event.shiftKey) {
@@ -125,7 +125,7 @@ WebInspector.SearchController.prototype = {
         if (!this._currentQuery)
             return;
 
-        panel = WebInspector.currentPanel;
+        panel = WebInspector.currentPanel();
         if (panel.performSearch) {
             function performPanelSearch()
             {
@@ -256,7 +256,7 @@ WebInspector.SearchController.prototype = {
             return;
         }
 
-        var currentPanel = WebInspector.currentPanel;
+        var currentPanel = WebInspector.currentPanel();
         if (!repeatSearch && query === currentPanel.currentQuery && currentPanel.currentQuery === this._currentQuery) {
             // When this is the same query and a forced search, jump to the next
             // search result for a good user experience.

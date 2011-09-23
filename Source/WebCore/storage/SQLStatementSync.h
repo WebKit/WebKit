@@ -31,7 +31,7 @@
 #ifndef SQLStatementSync_h
 #define SQLStatementSync_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "ExceptionCode.h"
 #include "PlatformString.h"
@@ -58,6 +58,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)
 
 #endif // SQLStatementSync_h

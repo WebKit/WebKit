@@ -32,7 +32,6 @@
     'includes': [
         '../../WebCore/WebCore.gypi',
         '../../../Tools/DumpRenderTree/DumpRenderTree.gypi',
-        '../../../Tools/TestWebKitAPI/TestWebKitAPI.gypi',
         'WebKit.gypi',
         'features.gypi',
     ],
@@ -824,10 +823,25 @@
             }],
         },
         {
+            'target_name': 'devtools_extension_api',
+            'type': 'none',
+            'actions': [{
+                'action_name': 'devtools_html',
+                'script_name': 'scripts/generate_devtools_extension_api.py',
+                'inputs': [
+                    '<@(_script_name)',
+                    '<@(webinspector_extension_api_files)',
+                ],
+                'outputs': ['<(PRODUCT_DIR)/resources/inspector/devtools_extension_api.js'],
+                'action': ['python', '<@(_script_name)', '<@(_outputs)', '<@(webinspector_extension_api_files)'],
+            }],
+        },
+        {
             'target_name': 'generate_devtools_grd',
             'type': 'none',
             'dependencies': [
                 'devtools_html',
+                'devtools_extension_api'
             ],
             'conditions': [
                 ['debug_devtools==0', {
@@ -851,6 +865,7 @@
                     '<(PRODUCT_DIR)/resources/inspector/HeapSnapshotWorker.js',
                     '<(PRODUCT_DIR)/resources/inspector/ScriptFormatterWorker.js',
                     '<(PRODUCT_DIR)/resources/inspector/devTools.css',
+                    '<(PRODUCT_DIR)/resources/inspector/devtools_extension_api.js',
                     '<@(webinspector_standalone_css_files)',
                 ],
                 'images': [
@@ -889,6 +904,7 @@
                 'inputs': [
                     '<@(_script_name)',
                     'scripts/generate_devtools_html.py',
+                    'scripts/generate_devtools_extension_api.py',
                     '<@(_inspector_html)',
                     '<@(devtools_files)',
                     '<@(webinspector_files)',
@@ -896,6 +912,7 @@
                     '<@(_workers_files)',
                     '<@(webinspector_image_files)',
                     '<@(devtools_image_files)',
+                    '<@(webinspector_extension_api_files)',
                 ],
                 'search_path': [
                     '../../WebCore/inspector/front-end',
@@ -910,6 +927,7 @@
                 'action': ['python', '<@(_script_name)', '<@(_inspector_html)',
                                      '--devtools-files', '<@(devtools_files)',
                                      '--workers-files', '<@(_workers_files)',
+                                     '--extension-api-files', '<@(webinspector_extension_api_files)',
                                      '--search-path', '<@(_search_path)',
                                      '--image-search-path', '<@(_image_search_path)',
                                      '--output', '<@(_outputs)'],
@@ -1247,27 +1265,6 @@
                         'files': ['<(PRODUCT_DIR)/libTestNetscapePlugIn.so'],
                     }],
                 }],
-            ],
-        },
-        {
-            'target_name': 'TestWebKitAPI',
-            'type': 'executable',
-            'dependencies': [
-                'webkit',
-                '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
-                '<(chromium_src_dir)/base/base.gyp:test_support_base',
-                '<(chromium_src_dir)/testing/gtest.gyp:gtest',
-                '<(chromium_src_dir)/testing/gmock.gyp:gmock',
-                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
-            ],
-            'include_dirs+': [
-                '../../../Tools/TestWebKitAPI',
-                'public',
-                'src',
-            ],
-            'sources': [
-                'tests/RunAllTests.cpp',
-                '<@(TestWebKitAPI_files)',
             ],
         },
     ], # targets

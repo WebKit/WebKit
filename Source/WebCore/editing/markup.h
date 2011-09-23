@@ -49,10 +49,11 @@ namespace WebCore {
 
     bool isPlainTextMarkup(Node *node);
 
+    bool isBlockNodeToRetainAppearance(const Node*);
     String createMarkup(const Range*,
         Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false, EAbsoluteURLs = DoNotResolveURLs);
     String createMarkup(const Node*, EChildrenOnly = IncludeNode, Vector<Node*>* = 0, EAbsoluteURLs = DoNotResolveURLs);
-    
+
     String createFullMarkup(const Node*);
     String createFullMarkup(const Range*);
 

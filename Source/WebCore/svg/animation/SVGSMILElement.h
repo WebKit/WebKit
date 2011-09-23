@@ -25,7 +25,7 @@
 
 #ifndef SVGSMILElement_h
 #define SVGSMILElement_h
-#if ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 #include "SMILTime.h"
 #include "SVGElement.h"
 

@@ -1984,6 +1984,16 @@ bool CodeBlock::shouldOptimizeNow()
 }
 #endif
 
+#if ENABLE(VALUE_PROFILER)
+void CodeBlock::resetRareCaseProfiles()
+{
+    for (unsigned i = 0; i < numberOfSlowCaseProfiles(); ++i)
+        slowCaseProfile(i)->m_counter = 0;
+    for (unsigned i = 0; i < numberOfSpecialFastCaseProfiles(); ++i)
+        specialFastCaseProfile(i)->m_counter = 0;
+}
+#endif
+
 #if ENABLE(VERBOSE_VALUE_PROFILE)
 void CodeBlock::dumpValueProfiles()
 {
@@ -2001,6 +2011,11 @@ void CodeBlock::dumpValueProfiles()
         }
         profile->dump(stderr);
         fprintf(stderr, "\n");
+    }
+    fprintf(stderr, "SlowCaseProfile for %p:\n", this);
+    for (unsigned i = 0; i < numberOfSlowCaseProfiles(); ++i) {
+        SlowCaseProfile* profile = slowCaseProfile(i);
+        fprintf(stderr, "   bc = %d: %u\n", profile->m_bytecodeOffset, profile->m_counter);
     }
 }
 #endif

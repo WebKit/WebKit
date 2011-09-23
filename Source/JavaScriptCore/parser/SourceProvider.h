@@ -59,7 +59,7 @@ namespace JSC {
         virtual int length() const = 0;
         
         const UString& url() { return m_url; }
-        virtual TextPosition1 startPosition() const { return TextPosition1::minimumPosition(); }
+        virtual TextPosition startPosition() const { return TextPosition::minimumPosition(); }
         intptr_t asID() { return reinterpret_cast<intptr_t>(this); }
 
         bool isValid() const { return m_validated; }

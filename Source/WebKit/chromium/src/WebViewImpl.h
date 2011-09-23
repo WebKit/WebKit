@@ -153,6 +153,7 @@ public:
     virtual void setInitialFocus(bool reverse);
     virtual void clearFocusedNode();
     virtual void scrollFocusedNodeIntoView();
+    virtual void scrollFocusedNodeIntoRect(const WebRect&);
     virtual double zoomLevel();
     virtual double setZoomLevel(bool textOnly, double zoomLevel);
     virtual void zoomLimitsChanged(double minimumZoomLevel,

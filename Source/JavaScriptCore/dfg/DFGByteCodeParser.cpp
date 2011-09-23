@@ -28,22 +28,11 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAliasTracker.h"
 #include "DFGCapabilities.h"
-#include "DFGScoreBoard.h"
 #include "CodeBlock.h"
+#include <wtf/MathExtras.h>
 
 namespace JSC { namespace DFG {
-
-#if ENABLE(DFG_JIT_RESTRICTIONS)
-// FIXME: Temporarily disable arithmetic, until we fix associated performance regressions.
-// FIXME: temporarily disable property accesses until we fix regressions.
-#define ARITHMETIC_OP() m_parseFailed = true
-#define PROPERTY_ACCESS_OP() m_parseFailed = true
-#else
-#define ARITHMETIC_OP() ((void)0)
-#define PROPERTY_ACCESS_OP() ((void)0)
-#endif
 
 // === ByteCodeParser ===
 //
@@ -59,6 +48,7 @@ public:
         , m_parseFailed(false)
         , m_constantUndefined(UINT_MAX)
         , m_constantNull(UINT_MAX)
+        , m_constantNaN(UINT_MAX)
         , m_constant1(UINT_MAX)
         , m_constants(codeBlock->numberOfConstantRegisters())
         , m_numArguments(codeBlock->m_numParameters)
@@ -67,15 +57,18 @@ public:
         , m_parameterSlots(0)
         , m_numPassedVarArgs(0)
     {
-#if ENABLE(DYNAMIC_OPTIMIZATION)
         ASSERT(m_profiledBlock);
-#endif
     }
 
     // Parse a full CodeBlock of bytecode.
     bool parse();
 
 private:
+    // Helper for min and max.
+    bool handleMinMax(bool usesResult, int resultOperand, NodeType op, int firstArg, int lastArg);
+    
+    // Handle intrinsic functions.
+    bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int firstArg, int lastArg);
     // Parse a single basic block of bytecode instructions.
     bool parseBlock(unsigned limit);
     // Setup predecessor links in the graph's BasicBlocks.
@@ -198,6 +191,9 @@ private:
             return index;
 
         if (node.op == UInt32ToNumber)
+            return node.child1();
+
+        if (node.op == UInt32ToNumberSafe)
             return node.child1();
 
         // Check for numeric constants boxed as JSValues.
@@ -368,6 +364,34 @@ private:
         return getJSConstant(m_constant1);
     }
     
+    // This method returns a DoubleConstant with the value NaN.
+    NodeIndex constantNaN()
+    {
+        JSValue nan = jsNaN();
+        
+        // Has m_constantNaN been set up yet?
+        if (m_constantNaN == UINT_MAX) {
+            // Search the constant pool for the value NaN, if we find it, we can just reuse this!
+            unsigned numberOfConstants = m_codeBlock->numberOfConstantRegisters();
+            for (m_constantNaN = 0; m_constantNaN < numberOfConstants; ++m_constantNaN) {
+                JSValue testMe = m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNaN);
+                if (JSValue::encode(testMe) == JSValue::encode(nan))
+                    return getJSConstant(m_constantNaN);
+            }
+
+            // Add the value nan to the CodeBlock's constants, and add a corresponding slot in m_constants.
+            ASSERT(m_constants.size() == numberOfConstants);
+            m_codeBlock->addConstant(nan);
+            m_constants.append(ConstantRecord());
+            ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
+        }
+
+        // m_constantNaN must refer to an entry in the CodeBlock's constant pool that has the value nan.
+        ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNaN).isDouble());
+        ASSERT(isnan(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNaN).asDouble()));
+        return getJSConstant(m_constantNaN);
+    }
+    
     CodeOrigin currentCodeOrigin()
     {
         return CodeOrigin(m_currentIndex);
@@ -462,7 +486,10 @@ private:
             switch (nodePtr->op) {
             case ArithAdd:
             case ArithSub:
-            case ArithMul:
+            case ArithMulIgnoreZero:
+            case ArithMulSpecNotNegZero:
+            case ArithMulPossiblyNegZero:
+            case ArithMulSafe:
             case ValueAdd:
                 m_reusableNodeStack.append(&m_graph[nodePtr->child1()]);
                 m_reusableNodeStack.append(&m_graph[nodePtr->child2()]);
@@ -474,24 +501,92 @@ private:
         } while (!m_reusableNodeStack.isEmpty());
     }
     
-    void stronglyPredict(NodeIndex nodeIndex, unsigned bytecodeIndex)
+    PredictedType getStrongPrediction(NodeIndex nodeIndex, unsigned bytecodeIndex)
     {
-#if ENABLE(DYNAMIC_OPTIMIZATION)
-        ValueProfile* profile = m_profiledBlock->valueProfileForBytecodeOffset(bytecodeIndex);
-        ASSERT(profile);
-        m_graph[nodeIndex].predict(profile->computeUpdatedPrediction() & ~PredictionTagMask, StrongPrediction);
-#if ENABLE(DFG_DEBUG_VERBOSE)
-        printf("Dynamic [%u, %u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(m_graph[nodeIndex].getPrediction()));
-#endif
-#else
         UNUSED_PARAM(nodeIndex);
         UNUSED_PARAM(bytecodeIndex);
+        
+        ValueProfile* profile = m_profiledBlock->valueProfileForBytecodeOffset(bytecodeIndex);
+        ASSERT(profile);
+        PredictedType prediction = profile->computeUpdatedPrediction();
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("Dynamic [%u, %u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(prediction));
 #endif
+        return prediction;
+    }
+    
+    void stronglyPredict(NodeIndex nodeIndex, unsigned bytecodeIndex)
+    {
+        m_graph[nodeIndex].predict(getStrongPrediction(nodeIndex, bytecodeIndex) & ~PredictionTagMask, StrongPrediction);
     }
     
     void stronglyPredict(NodeIndex nodeIndex)
     {
         stronglyPredict(nodeIndex, m_currentIndex);
+    }
+    
+    NodeType makeSafe(NodeType op)
+    {
+        if (!m_profiledBlock->likelyToTakeSlowCase(m_currentIndex))
+            return op;
+        
+#if ENABLE(DFG_DEBUG_VERBOSE)
+        printf("Making %s @%lu safe at bc#%u because slow-case counter is at %u\n", Graph::opName(op), m_graph.size(), m_currentIndex, m_profiledBlock->slowCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+#endif
+        
+        switch (op) {
+        case UInt32ToNumber:
+            return UInt32ToNumberSafe;
+        case ArithAdd:
+            return ArithAddSafe;
+        case ArithSub:
+            return ArithSubSafe;
+            
+            // We initialize ArithMul to ArithMulIgnoreZero and push it towards
+            // safer variants as we learn more, unless we already know that it
+            // can overflow. If it doesn't overflow, we first turn it into
+            // PossiblyNegZero if we see that it had been -0 during old JIT
+            // execution.
+        case ArithMulIgnoreZero:
+            if (m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex))
+                return ArithMulSafe;
+            else
+                return ArithMulPossiblyNegZero;
+            
+        case ValueAdd:
+            return ValueAddSafe;
+        default:
+            ASSERT_NOT_REACHED();
+            return Phantom; // Have to return something.
+        }
+    }
+    
+    NodeIndex getTrueResult(NodeIndex nodeIndex)
+    {
+        switch (m_graph[nodeIndex].op) {
+        case ArithMulIgnoreZero:
+            m_graph[nodeIndex].op = ArithMulSpecNotNegZero;
+            break;
+        case ArithMulPossiblyNegZero:
+            m_graph[nodeIndex].op = ArithMulSafe;
+            break;
+        default:
+            break;
+        }
+        return nodeIndex;
+    }
+    
+    bool isMultiply(NodeIndex nodeIndex)
+    {
+        switch (m_graph[nodeIndex].op) {
+        case ArithMulSpecNotNegZero:
+        case ArithMulIgnoreZero:
+        case ArithMulPossiblyNegZero:
+        case ArithMulSafe:
+            return true;
+        default:
+            return false;
+        }
     }
 
     JSGlobalData* m_globalData;
@@ -514,6 +609,7 @@ private:
     // constant pool, as necessary.
     unsigned m_constantUndefined;
     unsigned m_constantNull;
+    unsigned m_constantNaN;
     unsigned m_constant1;
 
     // A constant in the constant pool may be represented by more than one
@@ -577,6 +673,75 @@ private:
     m_currentIndex += OPCODE_LENGTH(name); \
     return !m_parseFailed
 
+bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType op, int firstArg, int lastArg)
+{
+    if (!usesResult)
+        return true;
+
+    if (lastArg == firstArg) {
+        set(resultOperand, constantNaN());
+        return true;
+    }
+     
+    if (lastArg == firstArg + 1) {
+        set(resultOperand, getToNumber(firstArg + 1));
+        return true;
+    }
+    
+    if (lastArg == firstArg + 2) {
+        set(resultOperand, addToGraph(op, getToNumber(firstArg + 1), getToNumber(firstArg + 2)));
+        return true;
+    }
+    
+    // Don't handle >=3 arguments for now.
+    return false;
+}
+
+bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrinsic intrinsic, int firstArg, int lastArg)
+{
+    switch (intrinsic) {
+    case AbsIntrinsic: {
+        if (!usesResult) {
+            // There is no such thing as executing abs for effect, so this
+            // is dead code.
+            return true;
+        }
+        
+        // We don't care about the this argument. If we don't have a first
+        // argument then make this JSConstant(NaN).
+        int absArg = firstArg + 1;
+        if (absArg > lastArg)
+            set(resultOperand, constantNaN());
+        else
+            set(resultOperand, addToGraph(ArithAbs, getToNumber(absArg)));
+        return true;
+    }
+        
+    case MinIntrinsic:
+        return handleMinMax(usesResult, resultOperand, ArithMin, firstArg, lastArg);
+        
+    case MaxIntrinsic:
+        return handleMinMax(usesResult, resultOperand, ArithMax, firstArg, lastArg);
+        
+    case SqrtIntrinsic: {
+        if (!usesResult)
+            return true;
+        
+        if (firstArg == lastArg) {
+            set(resultOperand, constantNaN());
+            return true;
+        }
+        
+        set(resultOperand, addToGraph(ArithSqrt, getToNumber(firstArg + 1)));
+        return true;
+    }
+        
+    default:
+        ASSERT(intrinsic == NoIntrinsic);
+        return false;
+    }
+}
+
 bool ByteCodeParser::parseBlock(unsigned limit)
 {
     // No need to reset state initially, since it has been set by the constructor.
@@ -584,8 +749,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         for (unsigned i = 0; i < m_constants.size(); ++i)
             m_constants[i] = ConstantRecord();
     }
-
-    AliasTracker aliases(m_graph);
 
     Interpreter* interpreter = m_globalData->interpreter;
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
@@ -694,11 +857,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 if (valueOfInt32Constant(op2) & 0x1f)
                     result = addToGraph(BitURShift, op1, op2);
                 else
-                    result = addToGraph(UInt32ToNumber, op1);
+                    result = addToGraph(makeSafe(UInt32ToNumber), op1);
             }  else {
                 // Cannot optimize at this stage; shift & potentially rebox as a double.
                 result = addToGraph(BitURShift, op1, op2);
-                result = addToGraph(UInt32ToNumber, result);
+                result = addToGraph(makeSafe(UInt32ToNumber), result);
             }
             set(currentInstruction[1].u.operand, result, PredictInt32);
             NEXT_OPCODE(op_urshift);
@@ -710,7 +873,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned srcDst = currentInstruction[1].u.operand;
             NodeIndex op = getToNumber(srcDst);
             weaklyPredictInt32(op);
-            set(srcDst, addToGraph(ArithAdd, op, one()));
+            set(srcDst, addToGraph(makeSafe(ArithAdd), op, one()));
             NEXT_OPCODE(op_pre_inc);
         }
 
@@ -720,7 +883,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex op = getToNumber(srcDst);
             weaklyPredictInt32(op);
             set(result, op);
-            set(srcDst, addToGraph(ArithAdd, op, one()));
+            set(srcDst, addToGraph(makeSafe(ArithAdd), op, one()));
             NEXT_OPCODE(op_post_inc);
         }
 
@@ -728,7 +891,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned srcDst = currentInstruction[1].u.operand;
             NodeIndex op = getToNumber(srcDst);
             weaklyPredictInt32(op);
-            set(srcDst, addToGraph(ArithSub, op, one()));
+            set(srcDst, addToGraph(makeSafe(ArithSub), op, one()));
             NEXT_OPCODE(op_pre_dec);
         }
 
@@ -738,14 +901,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex op = getToNumber(srcDst);
             weaklyPredictInt32(op);
             set(result, op);
-            set(srcDst, addToGraph(ArithSub, op, one()));
+            set(srcDst, addToGraph(makeSafe(ArithSub), op, one()));
             NEXT_OPCODE(op_post_dec);
         }
 
         // === Arithmetic operations ===
 
         case op_add: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             // If both operands can statically be determined to the numbers, then this is an arithmetic add.
@@ -754,35 +916,49 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 weaklyPredictInt32(op1);
                 weaklyPredictInt32(op2);
             }
+            
+            // If both inputs are multiplies, then we need to make sure to play
+            // it safe with -0.
+            if (isMultiply(op1) && isMultiply(op2)) {
+                getTrueResult(op1);
+                getTrueResult(op2);
+            }
+            
             if (m_graph[op1].hasNumberResult() && m_graph[op2].hasNumberResult())
-                set(currentInstruction[1].u.operand, addToGraph(ArithAdd, toNumber(op1), toNumber(op2)));
+                set(currentInstruction[1].u.operand, addToGraph(makeSafe(ArithAdd), toNumber(op1), toNumber(op2)));
             else
-                set(currentInstruction[1].u.operand, addToGraph(ValueAdd, op1, op2));
+                set(currentInstruction[1].u.operand, addToGraph(makeSafe(ValueAdd), op1, op2));
             NEXT_OPCODE(op_add);
         }
 
         case op_sub: {
-            ARITHMETIC_OP();
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             if (isSmallInt32Constant(op1) || isSmallInt32Constant(op2)) {
                 weaklyPredictInt32(op1);
                 weaklyPredictInt32(op2);
             }
-            set(currentInstruction[1].u.operand, addToGraph(ArithSub, op1, op2));
+            
+            // For the left child we need to be careful about negative zero,
+            // since -0 - 0 is -0.  If the right child is -0 then it doesn't
+            // matter, since 0 - -0 is 0 and 0 - 0 is 0.
+            getTrueResult(op1);
+            
+            set(currentInstruction[1].u.operand, addToGraph(makeSafe(ArithSub), op1, op2));
             NEXT_OPCODE(op_sub);
         }
 
         case op_mul: {
-            ARITHMETIC_OP();
-            NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
-            NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
-            set(currentInstruction[1].u.operand, addToGraph(ArithMul, op1, op2));
+            // We could be fancy here and skip the getTrueResult, instead making
+            // getTrueResult operate transitively. But we do this the simple way, for
+            // now.
+            NodeIndex op1 = getTrueResult(getToNumber(currentInstruction[2].u.operand));
+            NodeIndex op2 = getTrueResult(getToNumber(currentInstruction[3].u.operand));
+            set(currentInstruction[1].u.operand, addToGraph(makeSafe(ArithMulIgnoreZero), op1, op2));
             NEXT_OPCODE(op_mul);
         }
 
         case op_mod: {
-            ARITHMETIC_OP();
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithMod, op1, op2));
@@ -790,7 +966,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_div: {
-            ARITHMETIC_OP();
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithDiv, op1, op2));
@@ -823,14 +998,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_not: {
-            ARITHMETIC_OP();
             NodeIndex value = get(currentInstruction[2].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, value));
             NEXT_OPCODE(op_not);
         }
 
         case op_less: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareLess, op1, op2));
@@ -838,7 +1011,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_lesseq: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareLessEq, op1, op2));
@@ -846,7 +1018,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_greater: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareGreater, op1, op2));
@@ -854,7 +1025,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_greatereq: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareGreaterEq, op1, op2));
@@ -862,7 +1032,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_eq: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareEq, op1, op2));
@@ -870,14 +1039,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_eq_null: {
-            ARITHMETIC_OP();
             NodeIndex value = get(currentInstruction[2].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareEq, value, constantNull()));
             NEXT_OPCODE(op_eq_null);
         }
 
         case op_stricteq: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareStrictEq, op1, op2));
@@ -885,7 +1052,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_neq: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareEq, op1, op2)));
@@ -893,14 +1059,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_neq_null: {
-            ARITHMETIC_OP();
             NodeIndex value = get(currentInstruction[2].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareEq, value, constantNull())));
             NEXT_OPCODE(op_neq_null);
         }
 
         case op_nstricteq: {
-            ARITHMETIC_OP();
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareStrictEq, op1, op2)));
@@ -915,10 +1079,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             weaklyPredictArray(base);
             weaklyPredictInt32(property);
 
-            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(PredictNone), base, property, aliases.lookupGetByVal(base, property));
+            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(PredictNone), base, property);
             set(currentInstruction[1].u.operand, getByVal);
             stronglyPredict(getByVal);
-            aliases.recordGetByVal(getByVal);
 
             NEXT_OPCODE(op_get_by_val);
         }
@@ -926,13 +1089,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_put_by_val: {
             NodeIndex base = get(currentInstruction[1].u.operand);
             NodeIndex property = get(currentInstruction[2].u.operand);
-            NodeIndex value = get(currentInstruction[3].u.operand);
+            NodeIndex value = getTrueResult(get(currentInstruction[3].u.operand));
             weaklyPredictArray(base);
             weaklyPredictInt32(property);
 
-            NodeIndex aliasedGet = aliases.lookupGetByVal(base, property);
-            NodeIndex putByVal = addToGraph(aliasedGet != NoNode ? PutByValAlias : PutByVal, base, property, value);
-            aliases.recordPutByVal(putByVal);
+            addToGraph(PutByVal, base, property, value);
 
             NEXT_OPCODE(op_put_by_val);
         }
@@ -944,43 +1105,56 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             NodeIndex base = get(getInstruction[2].u.operand);
             unsigned identifier = getInstruction[3].u.operand;
+                
+            // Check if the method_check was monomorphic. If so, emit a CheckXYZMethod
+            // node, which is a lot more efficient.
+            StructureStubInfo& stubInfo = m_profiledBlock->getStubInfo(m_currentIndex);
+            MethodCallLinkInfo& methodCall = m_profiledBlock->getMethodCallLinkInfo(m_currentIndex);
             
-            NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), OpInfo(PredictNone), base);
-            set(getInstruction[1].u.operand, getMethod);
-            stronglyPredict(getMethod);
-            aliases.recordGetMethod(getMethod);
+            if (methodCall.seen && !!methodCall.cachedStructure && !stubInfo.seen) {
+                // It's monomorphic as far as we can tell, since the method_check was linked
+                // but the slow path (i.e. the normal get_by_id) never fired.
+            
+                NodeIndex checkMethod = addToGraph(CheckMethod, OpInfo(identifier), OpInfo(m_graph.m_methodCheckData.size()), base);
+                set(getInstruction[1].u.operand, checkMethod);
+                
+                MethodCheckData methodCheckData;
+                methodCheckData.structure = methodCall.cachedStructure.get();
+                methodCheckData.prototypeStructure = methodCall.cachedPrototypeStructure.get();
+                methodCheckData.function = methodCall.cachedFunction.get();
+                methodCheckData.prototype = methodCall.cachedPrototype.get();
+                m_graph.m_methodCheckData.append(methodCheckData);
+            } else {
+                NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), OpInfo(PredictNone), base);
+                set(getInstruction[1].u.operand, getMethod);
+                stronglyPredict(getMethod);
+            }
             
             m_currentIndex += OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id);
             continue;
         }
 
         case op_get_by_id: {
-            PROPERTY_ACCESS_OP();
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifier = currentInstruction[3].u.operand;
             
             NodeIndex getById = addToGraph(GetById, OpInfo(identifier), OpInfo(PredictNone), base);
             set(currentInstruction[1].u.operand, getById);
             stronglyPredict(getById);
-            aliases.recordGetById(getById);
 
             NEXT_OPCODE(op_get_by_id);
         }
 
         case op_put_by_id: {
-            PROPERTY_ACCESS_OP();
-            NodeIndex value = get(currentInstruction[3].u.operand);
+            NodeIndex value = getTrueResult(get(currentInstruction[3].u.operand));
             NodeIndex base = get(currentInstruction[1].u.operand);
             unsigned identifier = currentInstruction[2].u.operand;
             bool direct = currentInstruction[8].u.operand;
 
-            if (direct) {
-                NodeIndex putByIdDirect = addToGraph(PutByIdDirect, OpInfo(identifier), base, value);
-                aliases.recordPutByIdDirect(putByIdDirect);
-            } else {
-                NodeIndex putById = addToGraph(PutById, OpInfo(identifier), base, value);
-                aliases.recordPutById(putById);
-            }
+            if (direct)
+                addToGraph(PutByIdDirect, OpInfo(identifier), base, value);
+            else
+                addToGraph(PutById, OpInfo(identifier), base, value);
 
             NEXT_OPCODE(op_put_by_id);
         }
@@ -988,11 +1162,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_get_global_var: {
             NodeIndex getGlobalVar = addToGraph(GetGlobalVar, OpInfo(currentInstruction[2].u.operand));
             set(currentInstruction[1].u.operand, getGlobalVar);
+            m_graph.predictGlobalVar(currentInstruction[2].u.operand, getStrongPrediction(getGlobalVar, m_currentIndex) & ~PredictionTagMask, StrongPrediction);
             NEXT_OPCODE(op_get_global_var);
         }
 
         case op_put_global_var: {
-            NodeIndex value = get(currentInstruction[2].u.operand);
+            NodeIndex value = getTrueResult(get(currentInstruction[2].u.operand));
             addToGraph(PutGlobalVar, OpInfo(currentInstruction[1].u.operand), value);
             NEXT_OPCODE(op_put_global_var);
         }
@@ -1172,14 +1347,36 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_end);
             
         case op_call: {
-            NodeIndex call = addCall(interpreter, currentInstruction, Call);
-            aliases.recordCall(call);
+            NodeIndex callTarget = get(currentInstruction[1].u.operand);
+            if (m_graph.isFunctionConstant(m_codeBlock, *m_globalData, callTarget)) {
+                int argCount = currentInstruction[2].u.operand;
+                int registerOffset = currentInstruction[3].u.operand;
+                int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
+                int lastArg = firstArg + argCount - 1;
+                
+                // Do we have a result?
+                bool usesResult = false;
+                int resultOperand = 0; // make compiler happy
+                Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
+                if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
+                    resultOperand = putInstruction[1].u.operand;
+                    usesResult = true;
+                }
+                
+                DFG::Intrinsic intrinsic = m_graph.valueOfFunctionConstant(m_codeBlock, *m_globalData, callTarget)->executable()->intrinsic();
+                
+                if (handleIntrinsic(usesResult, resultOperand, intrinsic, firstArg, lastArg)) {
+                    // NEXT_OPCODE() has to be inside braces.
+                    NEXT_OPCODE(op_call);
+                }
+            }
+            
+            addCall(interpreter, currentInstruction, Call);
             NEXT_OPCODE(op_call);
         }
             
         case op_construct: {
-            NodeIndex construct = addCall(interpreter, currentInstruction, Construct);
-            aliases.recordConstruct(construct);
+            addCall(interpreter, currentInstruction, Construct);
             NEXT_OPCODE(op_construct);
         }
             
@@ -1187,23 +1384,19 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_call_put_result);
 
         case op_resolve: {
-            PROPERTY_ACCESS_OP();
             unsigned identifier = currentInstruction[2].u.operand;
 
             NodeIndex resolve = addToGraph(Resolve, OpInfo(identifier));
             set(currentInstruction[1].u.operand, resolve);
-            aliases.recordResolve(resolve);
 
             NEXT_OPCODE(op_resolve);
         }
 
         case op_resolve_base: {
-            PROPERTY_ACCESS_OP();
             unsigned identifier = currentInstruction[2].u.operand;
 
             NodeIndex resolve = addToGraph(currentInstruction[3].u.operand ? ResolveBaseStrictPut : ResolveBase, OpInfo(identifier));
             set(currentInstruction[1].u.operand, resolve);
-            aliases.recordResolve(resolve);
 
             NEXT_OPCODE(op_resolve_base);
         }
@@ -1256,8 +1449,15 @@ void ByteCodeParser::processPhiStack()
             ASSERT(m_graph[valueInPredecessor].op == SetLocal || m_graph[valueInPredecessor].op == Phi);
 
             Node* phiNode = &m_graph[entry.m_phi];
-            if (phiNode->refCount())
+            if (phiNode->refCount()) {
+                if (m_graph[valueInPredecessor].op == SetLocal) {
+                    // Any live SetLocal should ensure that it gets the true value.
+                    // Currently this means that ArithMuls distinguish between
+                    // negative zero and positive zero.
+                    getTrueResult(m_graph[valueInPredecessor].child1());
+                }
                 m_graph.ref(valueInPredecessor);
+            }
 
             if (phiNode->child1() == NoNode) {
                 phiNode->children.fixed.child1 = valueInPredecessor;
@@ -1307,51 +1507,6 @@ void ByteCodeParser::setupPredecessors()
     }
 }
 
-void ByteCodeParser::allocateVirtualRegisters()
-{
-    ScoreBoard scoreBoard(m_graph, m_preservedVars);
-    unsigned sizeExcludingPhiNodes = m_graph.m_blocks.last()->end;
-    for (size_t i = 0; i < sizeExcludingPhiNodes; ++i) {
-        Node& node = m_graph[i];
-        
-        if (!node.shouldGenerate())
-            continue;
-        
-        // GetLocal nodes are effectively phi nodes in the graph, referencing
-        // results from prior blocks.
-        if (node.op != GetLocal) {
-            // First, call use on all of the current node's children, then
-            // allocate a VirtualRegister for this node. We do so in this
-            // order so that if a child is on its last use, and a
-            // VirtualRegister is freed, then it may be reused for node.
-            if (node.op & NodeHasVarArgs) {
-                for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
-                    scoreBoard.use(m_graph.m_varArgChildren[childIdx]);
-            } else {
-                scoreBoard.use(node.child1());
-                scoreBoard.use(node.child2());
-                scoreBoard.use(node.child3());
-            }
-        }
-
-        if (!node.hasResult())
-            continue;
-
-        node.setVirtualRegister(scoreBoard.allocate());
-        // 'mustGenerate' nodes have their useCount artificially elevated,
-        // call use now to account for this.
-        if (node.mustGenerate())
-            scoreBoard.use(i);
-    }
-
-    // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
-    // for the function (and checked for on entry). Since we perform a new and
-    // different allocation of temporaries, more registers may now be required.
-    unsigned calleeRegisters = scoreBoard.allocatedCount() + m_preservedVars + m_parameterSlots;
-    if ((unsigned)m_codeBlock->m_numCalleeRegisters < calleeRegisters)
-        m_codeBlock->m_numCalleeRegisters = calleeRegisters;
-}
-
 bool ByteCodeParser::parse()
 {
     // Set during construction.
@@ -1383,8 +1538,9 @@ bool ByteCodeParser::parse()
     setupPredecessors();
     processPhiStack<LocalPhiStack>();
     processPhiStack<ArgumentPhiStack>();
-
-    allocateVirtualRegisters();
+    
+    m_graph.m_preservedVars = m_preservedVars;
+    m_graph.m_parameterSlots = m_parameterSlots;
 
 #if ENABLE(DFG_DEBUG_VERBOSE)
     m_graph.dump(m_codeBlock);

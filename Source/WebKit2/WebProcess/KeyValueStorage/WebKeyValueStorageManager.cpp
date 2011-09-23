@@ -31,7 +31,6 @@
 #include "WebKeyValueStorageManagerProxyMessages.h"
 #include "WebProcess.h"
 
-#include <WebCore/NotImplemented.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageTracker.h>

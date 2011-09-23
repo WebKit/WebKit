@@ -1,0 +1,32 @@
+<html>
+<head>
+</head>
+<body>
+<p>
+A single line must not be split into two pages.
+This test checks if a single line is not split into two pages.
+To run this test manually, print this page.
+If no lines are split into two pages, the test passes.
+</p>
+<p>Non-overflowed lines:</p>
+<div id="nonOverflowedLines"></div>
+<p>Overflowed lines:</p>
+<div id="overflowedLines"></div>
+<script>
+var str = "";
+for (var i = 0; i < 400; i++) {
+  str += "WWWWWW<br />";
+}
+document.getElementById("nonOverflowedLines").innerHTML = str;
+str = "";
+for (var i = 0; i < 400; i++) {
+  str += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW<br />";
+}
+document.getElementById("overflowedLines").innerHTML = str;
+
+if (window.layoutTestController) {
+    layoutTestController.setPrinting();
+}
+</script>
+</body>
+</html>

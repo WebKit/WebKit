@@ -35,9 +35,14 @@ ASSERT_CLASS_FITS_IN_CELL(JSOptionConstructor);
 
 const ClassInfo JSOptionConstructor::s_info = { "OptionConstructor", &DOMConstructorWithDocument::s_info, 0, 0 };
 
-JSOptionConstructor::JSOptionConstructor(ExecState* exec, Structure* structure, JSDOMGlobalObject* globalObject)
+JSOptionConstructor::JSOptionConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorWithDocument(structure, globalObject)
 {
+}
+
+void JSOptionConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
+{
+    Base::finishCreation(globalObject);
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSHTMLOptionElementPrototype::self(exec, globalObject), None);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(4), ReadOnly | DontDelete | DontEnum);

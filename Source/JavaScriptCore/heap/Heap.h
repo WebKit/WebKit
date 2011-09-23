@@ -26,7 +26,7 @@
 #include "HandleStack.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
-#include "NewSpace.h"
+#include "MarkedSpace.h"
 #include "SlotVisitor.h"
 #include "WriteBarrierSupport.h"
 #include <wtf/Forward.h>
@@ -76,7 +76,7 @@ namespace JSC {
         void destroy(); // JSGlobalData must call destroy() before ~Heap().
 
         JSGlobalData* globalData() const { return m_globalData; }
-        NewSpace& markedSpace() { return m_newSpace; }
+        MarkedSpace& markedSpace() { return m_markedSpace; }
         MachineThreads& machineThreads() { return m_machineThreads; }
 
         GCActivityCallback* activityCallback();
@@ -86,13 +86,10 @@ namespace JSC {
         inline bool isBusy();
 
         void* allocate(size_t);
-        NewSpace::SizeClass& sizeClassFor(size_t);
-        void* allocate(NewSpace::SizeClass&);
+        MarkedSpace::SizeClass& sizeClassFor(size_t);
+        void* allocate(MarkedSpace::SizeClass&);
         void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
         void collectAllGarbage();
-
-        inline void* allocatePropertyStorage(size_t);
-        inline bool inPropertyStorageNursery(void*);
 
         void reportExtraMemoryCost(size_t cost);
 
@@ -154,8 +151,8 @@ namespace JSC {
         void markTempSortVectors(HeapRootVisitor&);
         void harvestWeakReferences();
 
-        void* tryAllocate(NewSpace::SizeClass&);
-        void* allocateSlowCase(NewSpace::SizeClass&);
+        void* tryAllocate(MarkedSpace::SizeClass&);
+        void* allocateSlowCase(MarkedSpace::SizeClass&);
         
         enum SweepToggle { DoNotSweep, DoSweep };
         void collect(SweepToggle);
@@ -167,21 +164,18 @@ namespace JSC {
 
         static void writeBarrierSlowCase(const JSCell*, JSCell*);
 
-#if ENABLE(LAZY_BLOCK_FREEING)
         void waitForRelativeTimeWhileHoldingLock(double relative);
         void waitForRelativeTime(double relative);
         void blockFreeingThreadMain();
         static void* blockFreeingThreadStartFunc(void* heap);
-#endif
 
         const HeapSize m_heapSize;
         const size_t m_minBytesPerCycle;
         
         OperationInProgress m_operationInProgress;
-        NewSpace m_newSpace;
+        MarkedSpace m_markedSpace;
         MarkedBlockSet m_blocks;
 
-#if ENABLE(LAZY_BLOCK_FREEING)
         DoublyLinkedList<MarkedBlock> m_freeBlocks;
         size_t m_numberOfFreeBlocks;
         
@@ -189,7 +183,6 @@ namespace JSC {
         Mutex m_freeBlockLock;
         ThreadCondition m_freeBlockCondition;
         bool m_blockFreeingThreadShouldQuit;
-#endif
 
 #if ENABLE(SIMPLE_HEAP_PROFILING)
         VTableSpectrum m_destroyedTypeCounts;
@@ -339,12 +332,12 @@ namespace JSC {
         return forEachBlock(functor);
     }
     
-    inline NewSpace::SizeClass& Heap::sizeClassFor(size_t bytes)
+    inline MarkedSpace::SizeClass& Heap::sizeClassFor(size_t bytes)
     {
-        return m_newSpace.sizeClassFor(bytes);
+        return m_markedSpace.sizeClassFor(bytes);
     }
     
-    inline void* Heap::allocate(NewSpace::SizeClass& sizeClass)
+    inline void* Heap::allocate(MarkedSpace::SizeClass& sizeClass)
     {
         // This is a light-weight fast path to cover the most common case.
         MarkedBlock::FreeCell* firstFreeCell = sizeClass.firstFreeCell;
@@ -358,24 +351,8 @@ namespace JSC {
     inline void* Heap::allocate(size_t bytes)
     {
         ASSERT(isValidAllocation(bytes));
-        NewSpace::SizeClass& sizeClass = sizeClassFor(bytes);
+        MarkedSpace::SizeClass& sizeClass = sizeClassFor(bytes);
         return allocate(sizeClass);
-    }
-
-    inline void* Heap::allocatePropertyStorage(size_t bytes)
-    {
-        ASSERT(!(bytes % sizeof(JSValue)));
-        if (bytes >= NewSpace::PropertyStorageNurserySize)
-            return 0;
-        if (void* result = m_newSpace.allocatePropertyStorage(bytes))
-            return result;
-        collect(DoNotSweep);
-        return m_newSpace.allocatePropertyStorage(bytes);
-    }
-    
-    inline bool Heap::inPropertyStorageNursery(void* ptr)
-    {
-        return m_newSpace.inPropertyStorageNursery(ptr);
     }
 
 } // namespace JSC

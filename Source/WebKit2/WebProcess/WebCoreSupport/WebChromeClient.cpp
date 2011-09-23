@@ -496,8 +496,15 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult
     // Notify the bundle client.
     m_page->injectedBundleUIClient().mouseDidMoveOverElement(m_page, hitTestResult, static_cast<WebEvent::Modifiers>(modifierFlags), userData);
 
+    WebHitTestResult::Data webHitTestResultData;
+    webHitTestResultData.absoluteImageURL = hitTestResult.absoluteImageURL().string();
+    webHitTestResultData.absoluteLinkURL = hitTestResult.absoluteLinkURL().string();
+    webHitTestResultData.absoluteMediaURL = hitTestResult.absoluteMediaURL().string();
+    webHitTestResultData.linkLabel = hitTestResult.textContent();
+    webHitTestResultData.linkTitle = hitTestResult.titleDisplayString();
+
     // Notify the UIProcess.
-    m_page->send(Messages::WebPageProxy::MouseDidMoveOverElement(modifierFlags, InjectedBundleUserMessageEncoder(userData.get())));
+    m_page->send(Messages::WebPageProxy::MouseDidMoveOverElement(webHitTestResultData, modifierFlags, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebChromeClient::setToolTip(const String& toolTip, TextDirection)
@@ -517,7 +524,7 @@ void WebChromeClient::print(Frame* frame)
     m_page->sendSync(Messages::WebPageProxy::PrintFrame(webFrame->frameID()), Messages::WebPageProxy::PrintFrame::Reply());
 }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
     WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();

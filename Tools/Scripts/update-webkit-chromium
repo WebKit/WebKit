@@ -77,4 +77,19 @@ my @gclientArgs = ($gclientPath, "sync");
 push @gclientArgs, "--force" if $force;
 push @gclientArgs, "--delete_unversioned_trees" if $force;
 push @gclientArgs, "--deps=unix,android" if isChromiumAndroid();
-system(@gclientArgs) == 0 or die $!;
+
+my $cmd = join(" ",@gclientArgs);
+my $max_attempts = 3;
+my $rc = -1;
+
+# The following will call glient up to $max_attempts times before
+# it gives up and fails.  We need this because glcient can fail
+# for several reasons, some of which are transient (flakiness).
+
+for (1 .. $max_attempts) {
+    $rc = system($cmd);
+    print "Re-trying '" . $cmd . "'\n" if $rc != 0;
+    last if $rc == 0;
+}
+
+die "Error: '$cmd' failed $max_attempts tries and returned " . $rc if ($rc);

@@ -30,7 +30,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "GraphicsTypes3D.h"
-#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -39,10 +39,8 @@ class IntRect;
 class IntSize;
 class ManagedTexture;
 
-class LayerTextureUpdater {
-    WTF_MAKE_NONCOPYABLE(LayerTextureUpdater);
+class LayerTextureUpdater : public RefCounted<LayerTextureUpdater> {
 public:
-    LayerTextureUpdater() { }
     virtual ~LayerTextureUpdater() { }
 
     enum Orientation {

@@ -26,7 +26,7 @@
 #ifndef LevelDBDatabase_h
 #define LevelDBDatabase_h
 
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

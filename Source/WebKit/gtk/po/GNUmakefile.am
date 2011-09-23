@@ -99,10 +99,8 @@ update-po-files: $(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot
 	@for pofile in $(POFILES); do \
 	  lang=`echo $$pofile | sed -e 's,.*/,,' -e 's/\.po$$//'`; \
 	  if test -f "$(srcdir)/Source/WebKit/gtk/po/$${lang}.po"; then \
-	    test "$(srcdir)" = . && cdcmd="" || cdcmd="cd $(srcdir)/Source/WebKit/gtk/po && "; \
-	    echo "$${cdcmd}$(MSGMERGE_UPDATE) $${lang}.po $(DOMAIN).pot"; \
-	    pushd $(srcdir)/Source/WebKit/gtk/po && $(MSGMERGE_UPDATE) $${lang}.po $(DOMAIN).pot; \
-	    popd; \
+	    echo "$${cdcmd}$(MSGMERGE_UPDATE) $(top_srcdir)/Source/WebKit/gtk/po/$${lang}.po $(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot"; \
+	    $(MSGMERGE_UPDATE) $(top_srcdir)/Source/WebKit/gtk/po/$${lang}.po $(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot; \
 	  else \
 	    $(MAKE) $${lang}.po-create; \
 	  fi; \

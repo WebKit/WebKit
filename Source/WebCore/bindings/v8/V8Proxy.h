@@ -174,7 +174,7 @@ namespace WebCore {
         // Call the function with the given receiver and arguments.
         static v8::Local<v8::Value> callFunctionWithoutFrame(v8::Handle<v8::Function>, v8::Handle<v8::Object>, int argc, v8::Handle<v8::Value> argv[]);
 
-        // Call the function with the given receiver and arguments and report times to the "InspectorInstrumentation".
+        // call the function with the given receiver and arguments and report times to DevTools.
         static v8::Local<v8::Value> instrumentedCallFunction(Page*, v8::Handle<v8::Function>, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[]);
 
         // Call the function as constructor with the given arguments.
@@ -238,7 +238,7 @@ namespace WebCore {
 
         static v8::Handle<v8::Value> checkNewLegal(const v8::Arguments&);
 
-        static v8::Handle<v8::Script> compileScript(v8::Handle<v8::String> code, const String& fileName, const TextPosition0& scriptStartPosition, v8::ScriptData* = 0);
+        static v8::Handle<v8::Script> compileScript(v8::Handle<v8::String> code, const String& fileName, const TextPosition& scriptStartPosition, v8::ScriptData* = 0);
 
         // If the exception code is different from zero, a DOM exception is
         // schedule to be thrown.
@@ -302,7 +302,7 @@ namespace WebCore {
         static const char* svgExceptionName(int exceptionCode);
 #endif
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         static const char* sqlExceptionName(int exceptionCode);
 #endif
 

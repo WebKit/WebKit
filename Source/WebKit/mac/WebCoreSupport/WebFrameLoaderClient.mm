@@ -233,11 +233,6 @@ void WebFrameLoaderClient::makeRepresentation(DocumentLoader* loader)
 
 bool WebFrameLoaderClient::hasHTMLView() const
 {
-    if (![getWebView(m_webFrame.get()) _usesDocumentViews]) {
-        // FIXME (Viewless): For now we just assume that all frames have an HTML view
-        return true;
-    }
-    
     NSView <WebDocumentView> *view = [m_webFrame->_private->webFrameView documentView];
     return [view isKindOfClass:[WebHTMLView class]];
 }
@@ -252,8 +247,6 @@ void WebFrameLoaderClient::forceLayout()
 void WebFrameLoaderClient::forceLayoutForNonHTML()
 {
     WebFrameView *thisView = m_webFrame->_private->webFrameView;
-    if (!thisView) // Viewless mode.
-        return;
     NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
     ASSERT(thisDocumentView != nil);
     
@@ -658,7 +651,7 @@ void WebFrameLoaderClient::dispatchDidChangeIcons(WebCore::IconType)
 void WebFrameLoaderClient::dispatchDidCommitLoad()
 {
     // Tell the client we've committed this URL.
-    ASSERT([m_webFrame->_private->webFrameView documentView] != nil || ![getWebView(m_webFrame.get()) _usesDocumentViews]);
+    ASSERT([m_webFrame->_private->webFrameView documentView] != nil);
     
     WebView *webView = getWebView(m_webFrame.get());   
     [webView _didCommitLoadForFrame:m_webFrame.get()];
@@ -973,18 +966,6 @@ bool WebFrameLoaderClient::shouldStopLoadingForHistoryItem(HistoryItem* item) co
     return true;
 }
 
-void WebFrameLoaderClient::dispatchDidAddBackForwardItem(HistoryItem*) const
-{
-}
-
-void WebFrameLoaderClient::dispatchDidRemoveBackForwardItem(HistoryItem*) const
-{
-}
-
-void WebFrameLoaderClient::dispatchDidChangeBackForwardIndex() const
-{
-}
-
 void WebFrameLoaderClient::updateGlobalHistoryItemForPage()
 {
     HistoryItem* historyItem = 0;
@@ -1245,31 +1226,24 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebDataSource *dataSource = [m_webFrame.get() _dataSource];
-    bool usesDocumentViews = [webView _usesDocumentViews];
 
-    if (usesDocumentViews) {
-        // FIXME (Viewless): I assume we want the equivalent of this optimization for viewless mode too.
-        bool willProduceHTMLView = [m_webFrame->_private->webFrameView _viewClassForMIMEType:[dataSource _responseMIMEType]] == [WebHTMLView class];
-        bool canSkipCreation = core(m_webFrame.get())->loader()->stateMachine()->committingFirstRealLoad() && willProduceHTMLView;
-        if (canSkipCreation) {
-            [[m_webFrame->_private->webFrameView documentView] setDataSource:dataSource];
-            return;
-        }
-
-        // Don't suppress scrollbars before the view creation if we're making the view for a non-HTML view.
-        if (!willProduceHTMLView)
-            [[m_webFrame->_private->webFrameView _scrollView] setScrollBarsSuppressed:NO repaintOnUnsuppress:NO];
+    bool willProduceHTMLView = [m_webFrame->_private->webFrameView _viewClassForMIMEType:[dataSource _responseMIMEType]] == [WebHTMLView class];
+    bool canSkipCreation = core(m_webFrame.get())->loader()->stateMachine()->committingFirstRealLoad() && willProduceHTMLView;
+    if (canSkipCreation) {
+        [[m_webFrame->_private->webFrameView documentView] setDataSource:dataSource];
+        return;
     }
+
+    // Don't suppress scrollbars before the view creation if we're making the view for a non-HTML view.
+    if (!willProduceHTMLView)
+        [[m_webFrame->_private->webFrameView _scrollView] setScrollBarsSuppressed:NO repaintOnUnsuppress:NO];
     
     // clean up webkit plugin instances before WebHTMLView gets freed.
     [webView removePluginInstanceViewsFor:(m_webFrame.get())];
     
-    NSView <WebDocumentView> *documentView = nil;
-    if (usesDocumentViews) {
-        documentView = [m_webFrame->_private->webFrameView _makeDocumentViewForDataSource:dataSource];
-        if (!documentView)
-            return;
-    }
+    NSView <WebDocumentView> *documentView = [m_webFrame->_private->webFrameView _makeDocumentViewForDataSource:dataSource];
+    if (!documentView)
+        return;
 
     // FIXME: Could we skip some of this work for a top-level view that is not a WebHTMLView?
 
@@ -1280,38 +1254,30 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     if (isMainFrame && coreFrame->view())
         coreFrame->view()->setParentVisible(false);
     coreFrame->setView(0);
-    RefPtr<FrameView> coreView;
-    if (usesDocumentViews)
-        coreView = FrameView::create(coreFrame);
-    else
-        coreView = FrameView::create(coreFrame, IntSize([webView bounds].size));
+    RefPtr<FrameView> coreView = FrameView::create(coreFrame);
     coreFrame->setView(coreView);
 
     [m_webFrame.get() _updateBackgroundAndUpdatesWhileOffscreen];
-
-    if (usesDocumentViews)
-        [m_webFrame->_private->webFrameView _install];
+    [m_webFrame->_private->webFrameView _install];
 
     if (isMainFrame)
         coreView->setParentVisible(true);
 
-    if (usesDocumentViews) {
-        // Call setDataSource on the document view after it has been placed in the view hierarchy.
-        // This what we for the top-level view, so should do this for views in subframes as well.
-        [documentView setDataSource:dataSource];
+    // Call setDataSource on the document view after it has been placed in the view hierarchy.
+    // This what we for the top-level view, so should do this for views in subframes as well.
+    [documentView setDataSource:dataSource];
 
-        // The following is a no-op for WebHTMLRepresentation, but for custom document types
-        // like the ones that Safari uses for bookmarks it is the only way the DocumentLoader
-        // will get the proper title.
-        if (DocumentLoader* documentLoader = [dataSource _documentLoader])
-            documentLoader->setTitle(StringWithDirection([dataSource pageTitle], LTR));
-    }
+    // The following is a no-op for WebHTMLRepresentation, but for custom document types
+    // like the ones that Safari uses for bookmarks it is the only way the DocumentLoader
+    // will get the proper title.
+    if (DocumentLoader* documentLoader = [dataSource _documentLoader])
+        documentLoader->setTitle(StringWithDirection([dataSource pageTitle], LTR));
 
     if (HTMLFrameOwnerElement* owner = coreFrame->ownerElement())
         coreFrame->view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
         
     // If the document view implicitly became first responder, make sure to set the focused frame properly.
-    if (usesDocumentViews && [[documentView window] firstResponder] == documentView) {
+    if ([[documentView window] firstResponder] == documentView) {
         page->focusController()->setFocusedFrame(coreFrame);
         page->focusController()->setFocused(true);
     }
@@ -1432,7 +1398,7 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
     
     ASSERT(m_webFrame);
     
-    WebFrameView *childView = [getWebView(m_webFrame.get()) _usesDocumentViews] ? [[WebFrameView alloc] init] : nil;
+    WebFrameView *childView = [[WebFrameView alloc] init];
     
     RefPtr<Frame> result = [WebFrame _createSubframeWithOwnerElement:ownerElement frameName:name frameView:childView];
     [childView release];

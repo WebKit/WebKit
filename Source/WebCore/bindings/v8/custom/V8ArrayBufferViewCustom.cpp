@@ -26,9 +26,38 @@
 #include "config.h"
 #include "V8ArrayBufferViewCustom.h"
 
+#include "V8ArrayBufferViewCustomScript.h"
 #include <v8.h>
 
+
 namespace WebCore {
+
+const char fastSetFlagName[] = "webgl::FastSetFlag";
+
+bool fastSetInstalled(v8::Handle<v8::Object> array)
+{
+    // Use a hidden flag in the common prototype (ArrayBufferView) of all typed
+    // arrays as an indicator of whether the fast 'set' is installed or not.
+    v8::Handle<v8::Object> prototype = array->GetPrototype().As<v8::Object>();
+    v8::Handle<v8::Object> arrayBufferView = prototype->GetPrototype().As<v8::Object>();
+    v8::Handle<v8::String> key = v8::String::New(fastSetFlagName);
+    v8::Handle<v8::Value> fastSetFlag = arrayBufferView->GetHiddenValue(key);
+    return !fastSetFlag.IsEmpty();
+}
+
+void installFastSet(v8::Handle<v8::Object> array)
+{
+    v8::Handle<v8::Object> prototype = array->GetPrototype().As<v8::Object>();
+    v8::Handle<v8::Object> arrayBufferView = prototype->GetPrototype().As<v8::Object>();
+    v8::Handle<v8::String> key = v8::String::New(fastSetFlagName);
+    arrayBufferView->SetHiddenValue(key, v8::Boolean::New(true));
+
+    String source(reinterpret_cast<const char*>(V8ArrayBufferViewCustomScript_js),
+                  sizeof(V8ArrayBufferViewCustomScript_js));
+    v8::Handle<v8::Script> script = v8::Script::Compile(v8String(source));
+    script->Run();
+}
+
 
 void copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray)
 {

@@ -54,12 +54,18 @@ class QWEBKIT_EXPORT QDesktopWebView : public QSGPaintedItem {
     Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
     Q_PROPERTY(QWebNavigationController* navigation READ navigationController CONSTANT)
     Q_ENUMS(NavigationPolicy)
-
+    Q_ENUMS(ErrorType)
 public:
     enum NavigationPolicy {
         UsePolicy,
         DownloadPolicy,
         IgnorePolicy
+    };
+
+    enum ErrorType {
+        EngineError,
+        NetworkError,
+        HttpError
     };
 
     QDesktopWebView(QSGItem* parent = 0);
@@ -79,8 +85,7 @@ Q_SIGNALS:
     void statusBarMessageChanged(const QString&);
     void loadStarted();
     void loadSucceeded();
-    // The parameter needs to be explicitly named to work in QML.
-    void loadFailed(const QJSValue& error);
+    void loadFailed(QDesktopWebView::ErrorType errorType, int errorCode, const QUrl& url);
     void loadProgressChanged(int progress);
     void urlChanged(const QUrl&);
 

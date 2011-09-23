@@ -1,0 +1,25 @@
+This is a link start of Test.
+
+This is a link i2.
+
+This is a link i4.
+
+This is a link i6.
+
+This is a link i8.
+
+This is a link End of Test.
+
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "v1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "i2"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "v3"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "i4"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "v5"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "i6"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "a7"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "i8"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "i8"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+This tests that a media elements ie: <Audio> or <video>, without tabindex are able to be reached through keyboard access

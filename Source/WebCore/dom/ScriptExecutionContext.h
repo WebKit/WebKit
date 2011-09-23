@@ -56,7 +56,7 @@ namespace WebCore {
     class ScriptCallStack;
     class SecurityOrigin;
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     class Database;
     class DatabaseTaskSynchronizer;
     class DatabaseThread;
@@ -78,7 +78,7 @@ namespace WebCore {
         virtual bool isDocument() const { return false; }
         virtual bool isWorkerContext() const { return false; }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         virtual bool allowDatabaseAccess() const = 0;
         virtual void databaseExceededQuota(const String& name) = 0;
         DatabaseThread* databaseThread();
@@ -208,7 +208,7 @@ namespace WebCore {
         class PendingException;
         OwnPtr<Vector<OwnPtr<PendingException> > > m_pendingExceptions;
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         RefPtr<DatabaseThread> m_databaseThread;
         bool m_hasOpenDatabases; // This never changes back to false, even after the database thread is closed.
 #endif

@@ -715,7 +715,7 @@ class RebaselineTest(unittest.TestCase):
                      tests_included=True, filesystem=fs, new_results=True)
         file_list = fs.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
-        self.assertEquals(res, 2)
+        self.assertEquals(res, 0)
         self.assertFalse(out.empty())
         self.assertEqual(len(file_list), 4)
         self.assertBaselines(file_list, "/failures/unexpected/missing_text", [".txt"], err)

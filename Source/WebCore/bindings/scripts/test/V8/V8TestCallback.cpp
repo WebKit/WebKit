@@ -21,7 +21,7 @@
 #include "config.h"
 #include "V8TestCallback.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "ScriptExecutionContext.h"
 #include "V8Binding.h"
@@ -161,4 +161,4 @@ bool V8TestCallback::callbackWithStringList(RefPtr<DOMStringList> listParam)
 
 } // namespace WebCore
 
-#endif // ENABLE(DATABASE)
+#endif // ENABLE(SQL_DATABASE)

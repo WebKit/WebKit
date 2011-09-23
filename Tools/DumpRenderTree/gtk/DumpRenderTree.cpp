@@ -64,7 +64,7 @@ using namespace std;
 
 extern "C" {
 // This API is not yet public.
-extern const gchar* webkit_web_history_item_get_target(WebKitWebHistoryItem*);
+extern gchar* webkit_web_history_item_get_target(WebKitWebHistoryItem*);
 extern gboolean webkit_web_history_item_is_target_item(WebKitWebHistoryItem*);
 extern GList* webkit_web_history_item_get_children(WebKitWebHistoryItem*);
 extern void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* view, const gchar* directory);
@@ -290,8 +290,9 @@ static gchar* dumpFramesAsText(WebKitWebFrame* frame)
 
 static gint compareHistoryItems(gpointer* item1, gpointer* item2)
 {
-    return g_ascii_strcasecmp(webkit_web_history_item_get_target(WEBKIT_WEB_HISTORY_ITEM(item1)),
-                              webkit_web_history_item_get_target(WEBKIT_WEB_HISTORY_ITEM(item2)));
+    GOwnPtr<gchar> firstItemTarget(webkit_web_history_item_get_target(WEBKIT_WEB_HISTORY_ITEM(item1)));
+    GOwnPtr<gchar> secondItemTarget(webkit_web_history_item_get_target(WEBKIT_WEB_HISTORY_ITEM(item2)));
+    return g_ascii_strcasecmp(firstItemTarget.get(), secondItemTarget.get());
 }
 
 static void dumpHistoryItem(WebKitWebHistoryItem* item, int indent, bool current)

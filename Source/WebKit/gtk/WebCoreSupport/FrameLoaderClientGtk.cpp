@@ -713,18 +713,6 @@ bool FrameLoaderClient::shouldStopLoadingForHistoryItem(HistoryItem* item) const
     return true;
 }
 
-void FrameLoaderClient::dispatchDidAddBackForwardItem(HistoryItem*) const
-{
-}
-
-void FrameLoaderClient::dispatchDidRemoveBackForwardItem(HistoryItem*) const
-{
-}
-
-void FrameLoaderClient::dispatchDidChangeBackForwardIndex() const
-{
-}
-
 void FrameLoaderClient::didDisplayInsecureContent()
 {
     notImplemented();

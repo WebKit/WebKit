@@ -31,7 +31,9 @@
 module events {
 
     interface [
-        NoStaticTables
+        NoStaticTables,
+        CanBeConstructed,
+        CustomConstructFunction
     ] ErrorEvent : Event {
 
         readonly attribute DOMString message;

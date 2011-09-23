@@ -150,12 +150,10 @@ static void createElementClassMap()
     addElementClass(SVGNames::altGlyphDefTag, [DOMSVGAltGlyphDefElement class]);
     addElementClass(SVGNames::altGlyphTag, [DOMSVGAltGlyphElement class]);
     addElementClass(SVGNames::altGlyphItemTag, [DOMSVGAltGlyphItemElement class]);
-#if ENABLE(SVG_ANIMATION)
     addElementClass(SVGNames::animateTag, [DOMSVGAnimateElement class]);
     addElementClass(SVGNames::animateColorTag, [DOMSVGAnimateColorElement class]);
     addElementClass(SVGNames::animateTransformTag, [DOMSVGAnimateTransformElement class]);
     addElementClass(SVGNames::setTag, [DOMSVGSetElement class]);
-#endif
     addElementClass(SVGNames::circleTag, [DOMSVGCircleElement class]);
     addElementClass(SVGNames::clipPathTag, [DOMSVGClipPathElement class]);
     addElementClass(SVGNames::cursorTag, [DOMSVGCursorElement class]);

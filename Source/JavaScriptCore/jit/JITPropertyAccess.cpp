@@ -289,7 +289,7 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     emitGetVirtualRegister(baseVReg, regT0);
 
     // Do the method check - check the object & its prototype's structure inline (this is the common case).
-    m_methodCallCompilationInfo.append(MethodCallCompilationInfo(m_propertyAccessCompilationInfo.size()));
+    m_methodCallCompilationInfo.append(MethodCallCompilationInfo(m_bytecodeOffset, m_propertyAccessCompilationInfo.size()));
     MethodCallCompilationInfo& info = m_methodCallCompilationInfo.last();
 
     Jump notCell = emitJumpIfNotJSCell(regT0);
@@ -366,6 +366,7 @@ void JIT::compileGetByIdHotPath(int baseVReg, Identifier*)
 
     Label hotPathBegin(this);
     m_propertyAccessCompilationInfo.append(PropertyStubCompilationInfo());
+    m_propertyAccessCompilationInfo.last().bytecodeIndex = m_bytecodeOffset;
     m_propertyAccessCompilationInfo.last().hotPathBegin = hotPathBegin;
 
     DataLabelPtr structureToCompare;
@@ -444,6 +445,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
 
     Label hotPathBegin(this);
     m_propertyAccessCompilationInfo.append(PropertyStubCompilationInfo());
+    m_propertyAccessCompilationInfo.last().bytecodeIndex = m_bytecodeOffset;
     m_propertyAccessCompilationInfo.last().hotPathBegin = hotPathBegin;
 
     // It is important that the following instruction plants a 32bit immediate, in order that it can be patched over.
@@ -480,32 +482,25 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
 
 // Compile a store into an object's property storage.  May overwrite the
 // value in objectReg.
-void JIT::compilePutDirectOffset(RegisterID base, RegisterID value, Structure* structure, size_t cachedOffset)
+void JIT::compilePutDirectOffset(RegisterID base, RegisterID value, size_t cachedOffset)
 {
     int offset = cachedOffset * sizeof(JSValue);
-    if (structure->isUsingInlineStorage())
-        offset += JSObject::offsetOfInlineStorage();
-    else
-        loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), base);
+    loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), base);
     storePtr(value, Address(base, offset));
 }
 
 // Compile a load from an object's property storage.  May overwrite base.
-void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, Structure* structure, size_t cachedOffset)
+void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, size_t cachedOffset)
 {
     int offset = cachedOffset * sizeof(JSValue);
-    if (structure->isUsingInlineStorage()) {
-        offset += JSObject::offsetOfInlineStorage();
-        loadPtr(Address(base, offset), result);
-    } else {
-        loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), result);
-        loadPtr(Address(result, offset), result);
-    }
+    loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), result);
+    loadPtr(Address(result, offset), result);
 }
 
 void JIT::compileGetDirectOffset(JSObject* base, RegisterID result, size_t cachedOffset)
 {
-    loadPtr(static_cast<void*>(&base->m_propertyStorage[cachedOffset]), result);
+    loadPtr(base->addressOfPropertyStorage(), result);
+    loadPtr(Address(result, cachedOffset * sizeof(WriteBarrier<Unknown>)), result);
 }
 
 void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress, bool direct)
@@ -546,7 +541,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     emitWriteBarrier(regT0, regT2, WriteBarrierForPropertyAccess);
 
     storePtr(TrustedImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
-    compilePutDirectOffset(regT0, regT1, newStructure, cachedOffset);
+    compilePutDirectOffset(regT0, regT1, cachedOffset);
 
     ret();
     
@@ -705,7 +700,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     bool needsStubLink = false;
     if (slot.cachedPropertyType() == PropertySlot::Getter) {
         needsStubLink = true;
-        compileGetDirectOffset(regT0, regT1, structure, cachedOffset);
+        compileGetDirectOffset(regT0, regT1, cachedOffset);
         JITStubCall stubCall(this, cti_op_get_by_id_getter_stub);
         stubCall.addArgument(regT1);
         stubCall.addArgument(regT0);
@@ -720,7 +715,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
         stubCall.addArgument(TrustedImmPtr(stubInfo->callReturnLocation.executableAddress()));
         stubCall.call();
     } else
-        compileGetDirectOffset(regT0, regT0, structure, cachedOffset);
+        compileGetDirectOffset(regT0, regT0, cachedOffset);
     Jump success = jump();
 
     LinkBuffer patchBuffer(*m_globalData, this);
@@ -1004,6 +999,7 @@ void JIT::emit_op_get_global_var(Instruction* currentInstruction)
     JSVariableObject* globalObject = m_codeBlock->globalObject();
     loadPtr(&globalObject->m_registers, regT0);
     loadPtr(Address(regT0, currentInstruction[2].u.operand * sizeof(Register)), regT0);
+    emitValueProfilingSite(FirstProfilingSite);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
@@ -1048,7 +1044,6 @@ void JIT::patchMethodCallProto(JSGlobalData& globalData, CodeBlock* codeBlock, M
 {
     RepatchBuffer repatchBuffer(codeBlock);
     
-    ASSERT(!methodCallLinkInfo.cachedStructure);
     CodeLocationDataLabelPtr structureLocation = methodCallLinkInfo.cachedStructure.location();
     methodCallLinkInfo.cachedStructure.set(globalData, structureLocation, codeBlock->ownerExecutable(), structure);
     
@@ -1056,7 +1051,7 @@ void JIT::patchMethodCallProto(JSGlobalData& globalData, CodeBlock* codeBlock, M
     methodCallLinkInfo.cachedPrototypeStructure.set(globalData, structureLocation.dataLabelPtrAtOffset(patchOffsetMethodCheckProtoStruct), codeBlock->ownerExecutable(), prototypeStructure);
     methodCallLinkInfo.cachedPrototype.set(globalData, structureLocation.dataLabelPtrAtOffset(patchOffsetMethodCheckProtoObj), codeBlock->ownerExecutable(), proto);
     methodCallLinkInfo.cachedFunction.set(globalData, structureLocation.dataLabelPtrAtOffset(patchOffsetMethodCheckPutFunction), codeBlock->ownerExecutable(), callee);
-    repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id));
+    repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_method_check_update));
 }
 
 } // namespace JSC

@@ -26,7 +26,7 @@
 module svg {
 
     interface [
-        Conditional=SVG_ANIMATION
+        Conditional=SVG
     ] SVGAnimateColorElement : SVGAnimationElement {
     }
 

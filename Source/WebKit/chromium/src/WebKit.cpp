@@ -68,6 +68,15 @@ static bool generateEntropy(unsigned char* buffer, size_t length)
 
 void initialize(WebKitPlatformSupport* webKitPlatformSupport)
 {
+    initializeWithoutV8(webKitPlatformSupport);
+
+    v8::V8::SetEntropySource(&generateEntropy);
+    v8::V8::Initialize();
+    WebCore::V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
+}
+
+void initializeWithoutV8(WebKitPlatformSupport* webKitPlatformSupport)
+{
     ASSERT(!s_webKitInitialized);
     s_webKitInitialized = true;
 
@@ -88,10 +97,9 @@ void initialize(WebKitPlatformSupport* webKitPlatformSupport)
     // this, initializing this lazily probably doesn't buy us much.
     WebCore::UTF8Encoding();
 
-    v8::V8::SetEntropySource(&generateEntropy);
-    v8::V8::Initialize();
-    WebCore::V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
+ 
 }
+
 
 void shutdown()
 {

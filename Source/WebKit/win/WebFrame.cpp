@@ -2010,11 +2010,11 @@ static IntRect printerRect(HDC printDC)
                    GetDeviceCaps(printDC, PHYSICALHEIGHT) - 2 * GetDeviceCaps(printDC, PHYSICALOFFSETY));
 }
 
-void WebFrame::setPrinting(bool printing, float minPageWidth, float minPageHeight, float maximumShrinkRatio, bool adjustViewSize)
+void WebFrame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkRatio, AdjustViewSizeOrNot adjustViewSize)
 {
     Frame* coreFrame = core(this);
     ASSERT(coreFrame);
-    coreFrame->setPrinting(printing, FloatSize(minPageWidth, minPageHeight), maximumShrinkRatio, adjustViewSize ? AdjustViewSize : DoNotAdjustViewSize);
+    coreFrame->setPrinting(printing, pageSize, originalPageSize, maximumShrinkRatio, adjustViewSize ? AdjustViewSize : DoNotAdjustViewSize);
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::setInPrintingMode( 
@@ -2033,6 +2033,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::setInPrintingMode(
     // If we are a frameset just print with the layout we have onscreen, otherwise relayout
     // according to the paper size
     FloatSize minLayoutSize(0.0, 0.0);
+    FloatSize originalPageSize(0.0, 0.0);
     if (m_inPrintingMode && !coreFrame->document()->isFrameSet()) {
         if (!printDC) {
             ASSERT_NOT_REACHED();
@@ -2042,14 +2043,15 @@ HRESULT STDMETHODCALLTYPE WebFrame::setInPrintingMode(
         const int desiredPixelsPerInch = 72;
         IntRect printRect = printerRect(printDC);
         int paperHorizontalPixelsPerInch = ::GetDeviceCaps(printDC, LOGPIXELSX);
-        int paperWidth = printRect.width() * desiredPixelsPerInch / paperHorizontalPixelsPerInch;
         int paperVerticalPixelsPerInch = ::GetDeviceCaps(printDC, LOGPIXELSY);
+        int paperWidth = printRect.width() * desiredPixelsPerInch / paperHorizontalPixelsPerInch;
         int paperHeight = printRect.height() * desiredPixelsPerInch / paperVerticalPixelsPerInch;
+        originalPageSize = FloatSize(paperWidth, paperHeight);
         Frame* coreFrame = core(this);
-        minLayoutSize = coreFrame->resizePageRectsKeepingRatio(FloatSize(paperWidth, paperHeight), FloatSize(paperWidth * PrintingMinimumShrinkFactor, paperHeight * PrintingMinimumShrinkFactor));
+        minLayoutSize = coreFrame->resizePageRectsKeepingRatio(originalPageSize, FloatSize(paperWidth * PrintingMinimumShrinkFactor, paperHeight * PrintingMinimumShrinkFactor));
     }
 
-    setPrinting(m_inPrintingMode, minLayoutSize.width(), minLayoutSize.height(), PrintingMaximumShrinkFactor / PrintingMinimumShrinkFactor, true);
+    setPrinting(m_inPrintingMode, minLayoutSize, originalPageSize, PrintingMaximumShrinkFactor / PrintingMinimumShrinkFactor, AdjustViewSize);
 
     if (!m_inPrintingMode)
         m_pageRects.clear();

@@ -82,29 +82,33 @@ const char* predictionToString(PredictedType value)
 }
 #endif
 
+PredictedType predictionFromCell(JSCell* cell)
+{
+    const ClassInfo* classInfo = cell->structure()->classInfo();
+    
+    if (classInfo == &JSFinalObject::s_info)
+        return PredictFinalObject;
+    
+    if (classInfo == &JSArray::s_info)
+        return PredictArray;
+    
+    if (classInfo == &JSString::s_info)
+        return PredictString;
+    
+    if (classInfo->isSubClassOf(&JSObject::s_info))
+        return PredictObjectOther;
+    
+    return PredictCellOther;
+}
+
 PredictedType predictionFromValue(JSValue value)
 {
     if (value.isInt32())
         return PredictInt32;
     if (value.isDouble())
         return PredictDouble;
-    if (value.isCell()) {
-        const ClassInfo* classInfo = value.asCell()->structure()->classInfo();
-        
-        if (classInfo == &JSFinalObject::s_info)
-            return PredictFinalObject;
-        
-        if (classInfo == &JSArray::s_info)
-            return PredictArray;
-        
-        if (classInfo == &JSString::s_info)
-            return PredictString;
-        
-        if (classInfo->isSubClassOf(&JSObject::s_info))
-            return PredictObjectOther;
-        
-        return PredictCellOther;
-    }
+    if (value.isCell())
+        return predictionFromCell(value.asCell());
     if (value.isBoolean())
         return PredictBoolean;
     return PredictOther;

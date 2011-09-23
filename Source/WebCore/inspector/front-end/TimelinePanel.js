@@ -255,7 +255,7 @@ WebInspector.TimelinePanel.prototype = {
 
         var fileSelectorElement = document.createElement("input");
         fileSelectorElement.type = "file";
-        fileSelectorElement.style.opacity = 0;
+        fileSelectorElement.style.display = "none";
         fileSelectorElement.onchange = this._loadFromFile.bind(this);
         this.element.appendChild(fileSelectorElement);
         this._fileSelectorElement = fileSelectorElement;
@@ -1374,7 +1374,8 @@ WebInspector.TimelineModel.prototype = {
             records[records.length - 1] = records[records.length - 1] + "]";
 
         var now= new Date();
-        InspectorFrontendHost.saveAs("TimelineRawData-" + now.toRFC3339() + ".json", records.join(",\n"));
+        var suggestedFileName = "TimelineRawData-" + now.toISO8601Compact() + ".json";
+        InspectorFrontendHost.saveAs(suggestedFileName, records.join(",\n"));
     },
 
     _reset: function()

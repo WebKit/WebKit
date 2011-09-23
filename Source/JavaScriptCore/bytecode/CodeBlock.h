@@ -153,6 +153,7 @@ namespace JSC {
             seen = true;
         }
 
+        unsigned bytecodeIndex;
         CodeLocationCall callReturnLocation;
         JITWriteBarrier<Structure> cachedStructure;
         JITWriteBarrier<Structure> cachedPrototypeStructure;
@@ -197,6 +198,11 @@ namespace JSC {
         return structureStubInfo->callReturnLocation.executableAddress();
     }
 
+    inline unsigned getStructureStubInfoBytecodeIndex(StructureStubInfo* structureStubInfo)
+    {
+        return structureStubInfo->bytecodeIndex;
+    }
+
     inline void* getCallLinkInfoReturnLocation(CallLinkInfo* callLinkInfo)
     {
         return callLinkInfo->callReturnLocation.executableAddress();
@@ -205,6 +211,11 @@ namespace JSC {
     inline void* getMethodCallLinkInfoReturnLocation(MethodCallLinkInfo* methodCallLinkInfo)
     {
         return methodCallLinkInfo->callReturnLocation.executableAddress();
+    }
+
+    inline unsigned getMethodCallLinkInfoBytecodeIndex(MethodCallLinkInfo* methodCallLinkInfo)
+    {
+        return methodCallLinkInfo->bytecodeIndex;
     }
 
     inline unsigned getCallReturnOffset(CallReturnOffsetToBytecodeOffset* pc)
@@ -271,6 +282,11 @@ namespace JSC {
             return *(binarySearch<StructureStubInfo, void*, getStructureStubInfoReturnLocation>(m_structureStubInfos.begin(), m_structureStubInfos.size(), returnAddress.value()));
         }
 
+        StructureStubInfo& getStubInfo(unsigned bytecodeIndex)
+        {
+            return *(binarySearch<StructureStubInfo, unsigned, getStructureStubInfoBytecodeIndex>(m_structureStubInfos.begin(), m_structureStubInfos.size(), bytecodeIndex));
+        }
+
         CallLinkInfo& getCallLinkInfo(ReturnAddressPtr returnAddress)
         {
             return *(binarySearch<CallLinkInfo, void*, getCallLinkInfoReturnLocation>(m_callLinkInfos.begin(), m_callLinkInfos.size(), returnAddress.value()));
@@ -279,6 +295,11 @@ namespace JSC {
         MethodCallLinkInfo& getMethodCallLinkInfo(ReturnAddressPtr returnAddress)
         {
             return *(binarySearch<MethodCallLinkInfo, void*, getMethodCallLinkInfoReturnLocation>(m_methodCallLinkInfos.begin(), m_methodCallLinkInfos.size(), returnAddress.value()));
+        }
+
+        MethodCallLinkInfo& getMethodCallLinkInfo(unsigned bytecodeIndex)
+        {
+            return *(binarySearch<MethodCallLinkInfo, unsigned, getMethodCallLinkInfoBytecodeIndex>(m_methodCallLinkInfos.begin(), m_methodCallLinkInfos.size(), bytecodeIndex));
         }
 
         unsigned bytecodeOffset(ReturnAddressPtr returnAddress)
@@ -303,7 +324,7 @@ namespace JSC {
         void unlinkIncomingCalls();
 #endif
 
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         void setJITCodeMap(PassOwnPtr<CompactJITCodeMap> jitCodeMap)
         {
             m_jitCodeMap = jitCodeMap;
@@ -467,6 +488,45 @@ namespace JSC {
                 return 0;
             return result;
         }
+        
+        RareCaseProfile* addSlowCaseProfile(int bytecodeOffset)
+        {
+            m_slowCaseProfiles.append(RareCaseProfile(bytecodeOffset));
+            return &m_slowCaseProfiles.last();
+        }
+        unsigned numberOfSlowCaseProfiles() { return m_slowCaseProfiles.size(); }
+        RareCaseProfile* slowCaseProfile(int index) { return &m_slowCaseProfiles[index]; }
+        RareCaseProfile* slowCaseProfileForBytecodeOffset(int bytecodeOffset)
+        {
+            return WTF::genericBinarySearch<RareCaseProfile, int, getRareCaseProfileBytecodeOffset>(m_slowCaseProfiles, m_slowCaseProfiles.size(), bytecodeOffset);
+        }
+        
+        static uint32_t slowCaseThreshold() { return 100; }
+        bool likelyToTakeSlowCase(int bytecodeOffset)
+        {
+            return slowCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter >= slowCaseThreshold();
+        }
+        
+        RareCaseProfile* addSpecialFastCaseProfile(int bytecodeOffset)
+        {
+            m_specialFastCaseProfiles.append(RareCaseProfile(bytecodeOffset));
+            return &m_specialFastCaseProfiles.last();
+        }
+        unsigned numberOfSpecialFastCaseProfiles() { return m_specialFastCaseProfiles.size(); }
+        RareCaseProfile* specialFastCaseProfile(int index) { return &m_specialFastCaseProfiles[index]; }
+        RareCaseProfile* specialFastCaseProfileForBytecodeOffset(int bytecodeOffset)
+        {
+            return WTF::genericBinarySearch<RareCaseProfile, int, getRareCaseProfileBytecodeOffset>(m_specialFastCaseProfiles, m_specialFastCaseProfiles.size(), bytecodeOffset);
+        }
+        
+        bool likelyToTakeDeepestSlowCase(int bytecodeOffset)
+        {
+            unsigned slowCaseCount = slowCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
+            unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
+            return (slowCaseCount - specialFastCaseCount) >= slowCaseThreshold();
+        }
+        
+        void resetRareCaseProfiles();
 #endif
 
         unsigned globalResolveInfoCount() const
@@ -690,8 +750,8 @@ namespace JSC {
         }
         
         // The amount by which the JIT will increment m_executeCounter.
-        static const unsigned executeCounterIncrementForLoop = 1;
-        static const unsigned executeCounterIncrementForReturn = 15;
+        static unsigned executeCounterIncrementForLoop() { return 1; }
+        static unsigned executeCounterIncrementForReturn() { return 15; }
         
 #if ENABLE(VALUE_PROFILER)
         bool shouldOptimizeNow();
@@ -765,11 +825,13 @@ namespace JSC {
         MacroAssemblerCodePtr m_jitCodeWithArityCheck;
         SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo> > m_incomingCalls;
 #endif
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         OwnPtr<CompactJITCodeMap> m_jitCodeMap;
 #endif
 #if ENABLE(VALUE_PROFILER)
         SegmentedVector<ValueProfile, 8> m_valueProfiles;
+        SegmentedVector<RareCaseProfile, 8> m_slowCaseProfiles;
+        SegmentedVector<RareCaseProfile, 8> m_specialFastCaseProfiles;
 #endif
 
         Vector<unsigned> m_jumpTargets;

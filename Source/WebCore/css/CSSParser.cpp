@@ -1580,7 +1580,7 @@ bool CSSParser::parseValue(int propId, bool important)
         validPrimitive = id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter || id == CSSValueJustify;
         break;
     case CSSPropertyWebkitFlexAlign:
-        validPrimitive = id == CSSValueBefore || id == CSSValueAfter || id == CSSValueMiddle || id == CSSValueBaseline || id == CSSValueStretch;
+        validPrimitive = id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter || id == CSSValueBaseline || id == CSSValueStretch;
         break;
     case CSSPropertyWebkitFlexFlow:
         // FIXME: -webkit-flex-flow takes a second "wrap" value.    
@@ -1965,7 +1965,13 @@ bool CSSParser::parseValue(int propId, bool important)
     {
         const int properties[3] = { CSSPropertyBorderWidth, CSSPropertyBorderStyle,
                                     CSSPropertyBorderColor };
-        return parseShorthand(propId, properties, 3, important);
+        if (parseShorthand(propId, properties, 3, important)) {
+            // The CSS3 Borders and Backgrounds specification says that border also resets border-image. It's as
+            // though a value of none was specified for the image.
+            addProperty(CSSPropertyBorderImage, CSSInitialValue::createImplicit(), important);
+            return true;
+        }
+        return false;
     }
     case CSSPropertyBorderTop:
         // [ 'border-top-width' || 'border-style' || <color> ] | inherit

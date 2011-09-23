@@ -97,6 +97,10 @@ class SheriffIRCBotTest(unittest.TestCase):
         expected_stderr = "MOCK: irc.post: mock_nick, abarth, darin, eseidel: Preparing rollout for http://trac.webkit.org/changeset/21654...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"
         OutputCapture().assert_outputs(self, run, args=["rollout 21654 This patch broke the world"], expected_stderr=expected_stderr)
 
+    def test_revert(self):
+        expected_stderr = "MOCK: irc.post: mock_nick, abarth, darin, eseidel: Preparing rollout for http://trac.webkit.org/changeset/21654...\nMOCK: irc.post: mock_nick, abarth, darin, eseidel: Created rollout: http://example.com/36936\n"
+        OutputCapture().assert_outputs(self, run, args=["revert 21654 This patch broke the world"], expected_stderr=expected_stderr)
+
     def test_roll_chromium_deps(self):
         expected_stderr = "MOCK: irc.post: mock_nick: Rolling Chromium DEPS to r21654\nMOCK: irc.post: mock_nick: Created DEPS roll: http://example.com/36936\n"
         OutputCapture().assert_outputs(self, run, args=["roll-chromium-deps 21654"], expected_stderr=expected_stderr)

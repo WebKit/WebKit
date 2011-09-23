@@ -433,11 +433,8 @@ static bool isDisallowedElement(Node* element)
     // <foreignObject> should never be contained in a <use> tree. Too dangerous side effects possible.
     if (element->hasTagName(SVGNames::foreignObjectTag))
         return true;
-#if ENABLE(SVG_ANIMATION)
     if (SVGSMILElement::isSMILElement(element))
         return true;
-#endif
-
     return false;
 }
 
@@ -942,19 +939,8 @@ void SVGUseElement::transferEventListenersToShadowTree(SVGElementInstance* targe
     ASSERT(originalElement);
 
     if (SVGElement* shadowTreeElement = target->shadowTreeElement()) {
-        if (EventTargetData* d = originalElement->eventTargetData()) {
-            EventListenerMap& map = d->eventListenerMap;
-            EventListenerMap::iterator end = map.end();
-            for (EventListenerMap::iterator it = map.begin(); it != end; ++it) {
-                EventListenerVector& entry = *it->second;
-                for (size_t i = 0; i < entry.size(); ++i) {
-                    // Event listeners created from markup have already been transfered to the shadow tree during cloning.
-                    if (entry[i].listener->wasCreatedFromMarkup())
-                        continue;
-                    shadowTreeElement->addEventListener(it->first, entry[i].listener, entry[i].useCapture);
-                }
-            }
-        }
+        if (EventTargetData* data = originalElement->eventTargetData())
+            data->eventListenerMap.copyEventListenersNotCreatedFromMarkupToTarget(shadowTreeElement);
     }
 
     for (SVGElementInstance* instance = target->firstChild(); instance; instance = instance->nextSibling())

@@ -296,7 +296,7 @@ guint64 webkit_security_origin_get_web_database_usage(WebKitSecurityOrigin* secu
 {
     g_return_val_if_fail(WEBKIT_IS_SECURITY_ORIGIN(securityOrigin), 0);
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     WebCore::SecurityOrigin* coreOrigin = core(securityOrigin);
     return WebCore::DatabaseTracker::tracker().usageForOrigin(coreOrigin);
 #else
@@ -319,7 +319,7 @@ guint64 webkit_security_origin_get_web_database_quota(WebKitSecurityOrigin* secu
 {
     g_return_val_if_fail(WEBKIT_IS_SECURITY_ORIGIN(securityOrigin), 0);
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     WebCore::SecurityOrigin* coreOrigin = core(securityOrigin);
     return WebCore::DatabaseTracker::tracker().quotaForOrigin(coreOrigin);
 #else
@@ -340,7 +340,7 @@ void webkit_security_origin_set_web_database_quota(WebKitSecurityOrigin* securit
 {
     g_return_if_fail(WEBKIT_IS_SECURITY_ORIGIN(securityOrigin));
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     WebCore::SecurityOrigin* coreOrigin = core(securityOrigin);
     WebCore::DatabaseTracker::tracker().setQuota(coreOrigin, quota);
 #endif
@@ -362,7 +362,7 @@ GList* webkit_security_origin_get_all_web_databases(WebKitSecurityOrigin* securi
     g_return_val_if_fail(WEBKIT_IS_SECURITY_ORIGIN(securityOrigin), NULL);
     GList* databases = NULL;
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     WebCore::SecurityOrigin* coreOrigin = core(securityOrigin);
     Vector<WTF::String> databaseNames;
 

@@ -47,10 +47,8 @@ public:
         set(storage, Unchecked);
     }
     
-    void set(JSGlobalData& globalData, JSCell* owner, PropertyStorage newStorage)
+    void set(JSGlobalData&, JSCell*, PropertyStorage newStorage)
     {
-        if (!globalData.heap.inPropertyStorageNursery(m_storage))
-            globalData.heap.writeBarrier(owner, JSValue());
         m_storage = newStorage;
     }
     

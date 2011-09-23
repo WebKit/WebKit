@@ -186,7 +186,9 @@ public:
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // exec-globalData() is also likely wrong.
         Structure* domStructure = deprecatedGetDOMStructure<ProxyRuntimeMethod>(exec);
-        return new (allocateCell<ProxyRuntimeMethod>(*exec->heap())) ProxyRuntimeMethod(exec, globalObject, domStructure, name, list);
+        ProxyRuntimeMethod* method = new (allocateCell<ProxyRuntimeMethod>(*exec->heap())) ProxyRuntimeMethod(globalObject, domStructure, list);
+        method->finishCreation(exec->globalData(), name);
+        return method;
     }
 
     static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
@@ -197,10 +199,9 @@ public:
     static const ClassInfo s_info;
 
 private:
-    ProxyRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& name, Bindings::MethodList& list)
+    ProxyRuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Bindings::MethodList& list)
         : RuntimeMethod(globalObject, structure, list)
     {
-        finishCreation(exec->globalData(), name);
     }
 
     void finishCreation(JSGlobalData& globalData, const Identifier& name)

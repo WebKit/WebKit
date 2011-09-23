@@ -1,3 +1,411 @@
+2011-09-19  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/68421> Stop calling UpdateSystemActivity in places where we hold power assertions that achieve the same effect
+
+        On SnowLeopard and newer it's not necessary to call UpdateSystemActivity to prevent the screensaver from kicking
+        in as the NoDisplaySleep assertion now has that effect. It's also not necessary to hold both a NoDisplaySleep and
+        a NoIdleSleep assertion as the latter is implied by the former.
+
+        Adopt the DisplaySleepDisabler class that was added to WebCore and remove all of duplicated logic from WKFullScreenWindowController.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController _updatePowerAssertions]): Create a DisplaySleepDisabler instance when transitioning from permitting
+        display sleep to disabling display sleep. Clear out our reference when sleep should be permitted, destroying any
+        disabler that we own. Also adds a FIXME about an error that was noticed while working in this code.
+
+2011-09-19  Adam Barth  <abarth@webkit.org>
+
+        Always enable ENABLE(EVENTSOURCE)
+        https://bugs.webkit.org/show_bug.cgi?id=68414
+
+        Reviewed by Eric Seidel.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2011-09-19  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Unreviewed coding style fix.
+
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qweberror.h:
+
+2011-09-19  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] Make loading errors API easier to use.
+        https://bugs.webkit.org/show_bug.cgi?id=68357
+
+        Reviewed by Tor Arne Vestbø.
+
+        Make the API to get loading errors easier to use. 95197 introduced
+        a QJSValue API that is a bit opaque for the client code. Rather than
+        using a dedicated object, we can just pass the needed information as
+        parameters of the slot.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::loadDidFail):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/tests/commonviewtests/tst_commonviewtests.cpp:
+        (tst_CommonViewTests::loadNonexistentFileUrl):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.cpp:
+        (WebViewAbstraction::WebViewAbstraction):
+        (WebViewAbstraction::touchViewLoadFailed):
+        (WebViewAbstraction::desktopViewLoadFailed):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::loadDidFail):
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::loadDidFail):
+        * UIProcess/qt/TouchViewInterface.h:
+        * UIProcess/qt/ViewInterface.h:
+
+2011-09-19  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 part of [mac] WebKit contains Objective-C classes that are not prefixed with its standard prefixes
+        https://bugs.webkit.org/show_bug.cgi?id=68323
+
+        Reviewed by Sam Weinig.
+
+        Renamed FullKeyboardAccessWatcher to WKFullKeyboardAccessWatcher.
+        Renamed AccessibilityWebPageObject to WKAccessibilityWebPageObject.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/AccessibilityWebPageObject.h: Removed.
+        * WebProcess/WebPage/mac/AccessibilityWebPageObject.mm: Removed.
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.h: Copied from Source/WebKit2/WebProcess/WebPage/mac/AccessibilityWebPageObject.h.
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm: Copied from Source/WebKit2/WebProcess/WebPage/mac/AccessibilityWebPageObject.mm.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformInitialize):
+        (WebKit::WebPage::accessibilityRemoteObject):
+        * WebProcess/mac/FullKeyboardAccessWatcher.h: Removed.
+        * WebProcess/mac/FullKeyboardAccessWatcher.mm: Removed.
+        * WebProcess/mac/WKFullKeyboardAccessWatcher.h: Copied from Source/WebKit2/WebProcess/mac/FullKeyboardAccessWatcher.h.
+        * WebProcess/mac/WKFullKeyboardAccessWatcher.mm: Copied from Source/WebKit2/WebProcess/mac/FullKeyboardAccessWatcher.mm.
+        (+[WKFullKeyboardAccessWatcher fullKeyboardAccessEnabled]):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::fullKeyboardAccessEnabled):
+
+2011-09-14  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Implement popup menus in QDesktopWebView using QComboBox
+        https://bugs.webkit.org/show_bug.cgi?id=67938
+
+        Reviewed by Andreas Kling.
+
+        Implement a WebPopupMenuProxy that uses QtWebComboBox (a QComboBox subclass we
+        have for WK1). Then use this WebPopupMenuProxy in QDesktopWebView. The implementation
+        explicitly avoids running a nested mainloop.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showPopupMenu):
+        Since we don't run a nested mainloop, we need to keep the client pointer to call
+        valueChangedForPopupMenu().
+
+        * UIProcess/qt/WebPopupMenuProxyQtDesktop.cpp: Added.
+        (WebKit::WebPopupMenuProxyQtDesktop::WebPopupMenuProxyQtDesktop):
+        (WebKit::WebPopupMenuProxyQtDesktop::~WebPopupMenuProxyQtDesktop):
+        (WebKit::WebPopupMenuProxyQtDesktop::showPopupMenu):
+        (WebKit::WebPopupMenuProxyQtDesktop::hidePopupMenu):
+        (WebKit::WebPopupMenuProxyQtDesktop::setSelectedIndex):
+        (WebKit::WebPopupMenuProxyQtDesktop::onPopupMenuHidden):
+        (WebKit::WebPopupMenuProxyQtDesktop::populate):
+        * UIProcess/qt/WebPopupMenuProxyQtDesktop.h: Added.
+        (WebKit::WebPopupMenuProxyQtDesktop::create):
+        * UIProcess/qt/qdesktopwebpageproxy.cpp:
+        (QDesktopWebPageProxy::createPopupMenuProxy):
+        * UIProcess/qt/qdesktopwebpageproxy.h:
+        * WebKit2.pro:
+
+2011-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix distcheck build
+        https://bugs.webkit.org/show_bug.cgi?id=68241
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am:
+
+2011-09-17  Mihai Parparita  <mihaip@chromium.org>
+
+        FrameLoaderClient BackForwardList-related methods are unsued
+        https://bugs.webkit.org/show_bug.cgi?id=68293
+
+        Reviewed by Darin Adler.
+
+        Remove FrameLoaderClient methods that were added by r51629, since only        
+        the old (since-deleted) Android port needed them.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2011-09-16  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
+        [Qt] QTouchWebView missing loadProgress tests
+        https://bugs.webkit.org/show_bug.cgi?id=68183
+
+        Reviewed by Chang Shu.
+
+        Added test case to check load progress for QTouchWebView
+
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_loadProgress.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+
+2011-09-16  Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
+
+        Removed unwanted NotImplemented.h inclusion in WebKit2 GTK port & platform independent files
+        https://bugs.webkit.org/show_bug.cgi?id=68249
+
+        Reviewed by Martin Robinson.
+
+        * Shared/Plugins/NPIdentifierData.cpp: Removed NotImplemented.h inclusion.
+        * Shared/Plugins/NPRemoteObjectMap.cpp: Removed NotImplemented.h inclusion.
+        * Shared/Plugins/NPVariantData.cpp: Removed NotImplemented.h inclusion.
+        * UIProcess/gtk/WebContextGtk.cpp: Removed NotImplemented.h inclusion.
+        * WebProcess/Cookies/WebCookieManager.cpp: Removed NotImplemented.h inclusion.
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp: Removed NotImplemented.h inclusion.
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp: Removed NotImplemented.h inclusion.
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp: Removed NotImplemented.h inclusion.
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp: Removed NotImplemented.h inclusion.
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp: Removed NotImplemented.h inclusion.
+
+2011-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make custom scrollbar theme for use in DRT, to reduce pixel diffs between platforms
+        https://bugs.webkit.org/show_bug.cgi?id=68134
+
+        Reviewed by Sam Weinig.
+
+        Hook up a private preference that enables the mock scrollbar theme.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMockScrollbarsEnabled):
+        (WKPreferencesGetMockScrollbarsEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
+2011-09-16  Mark Rowe  <mrowe@apple.com>
+
+        Stop installing source and header files in to WebKit2.framework after r95303.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2011-09-16  Anders Carlsson  <andersca@apple.com>
+
+        Add back the WKHitTestResultRef parameter to mouseDidMoveOverElement in an ABI preserving way
+        https://bugs.webkit.org/show_bug.cgi?id=68269
+
+        Reviewed by Geoffrey Garen.
+
+        Add back WKPageMouseDidMoveOverElementCallback last and deprecate the current callback.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::mouseDidMoveOverElement):
+
+2011-09-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Give local builds of WebProcess different icon to distinguish them from built-in Safari’s WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=68268
+
+        Reviewed by Darin Adler.
+
+        * Configurations/WebProcess.xcconfig: Add an icon in Debug and Release builds.  The empty
+        value for production resulted in WebKit not adding the key to plist at all, which is what
+        we want (but I don't know if it's a supported feature).
+        Also, don't copy the icon file to built framework in production builds.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added WebKit.icns.
+
+        * WebProcess/Info.plist: Added a key for the icon.
+
+        * WebProcess/mac/WebKit.icns: Copied from Websites/webkit.org/images/surfin-safari.icns.
+
+2011-09-16  Anders Carlsson  <andersca@apple.com>
+
+        Temporarily remove the WKHitTestResultRef parameter to avoid breaking the WK2 ABI/API
+        https://bugs.webkit.org/show_bug.cgi?id=68266
+
+        Reviewed by John Sullivan.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::mouseDidMoveOverElement):
+
+2011-09-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT should inline Math.abs
+        https://bugs.webkit.org/show_bug.cgi?id=68227
+
+        Reviewed by Oliver Hunt.
+
+        Added JavaScriptCore/dfg to include path path.
+
+        * CMakeLists.txt:
+
+2011-09-16  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [WK2] mouseDidMoveOverElement needs to send more information about hovered element to UiProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=68125
+
+        This patch implements support for the UiProcess to know what is the link url of a hovered element.
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * Shared/WebHitTestResult.cpp: Added.
+
+        WebHitTestResult has hovered element information.
+
+        (WebKit::WebHitTestResult::create):
+        (WebKit::WebHitTestResult::Data::encode):
+        (WebKit::WebHitTestResult::Data::decode):
+        * Shared/WebHitTestResult.h: Added.
+        (WebKit::WebHitTestResult::absoluteImageURL):
+        (WebKit::WebHitTestResult::absoluteLinkURL):
+        (WebKit::WebHitTestResult::absoluteMediaURL):
+        (WebKit::WebHitTestResult::linkLabel):
+        (WebKit::WebHitTestResult::linkTitle):
+        (WebKit::WebHitTestResult::WebHitTestResult):
+        (WebKit::WebHitTestResult::type):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::mouseDidMoveOverElement):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::mouseDidMoveOverElement):
+        * UIProcess/WebUIClient.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::mouseDidMoveOverElement):
+        * win/WebKit2.vcproj:
+
+2011-09-15  Adam Roben  <aroben@apple.com>
+
+        Add support for attributes on message parameters
+
+        Parameter attributes are specified as a space-separated list inside square brackets before
+        the parameter's type. WebKit2 doesn't use this, but other projects that use these scripts
+        would like to.
+
+        Fixes <http://webkit.org/b/68219> Would like a way to specify attributes on message
+        parameters
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkit2/messages_unittest.py: Added tests for parameter attributes.
+
+        * Scripts/webkit2/model.py:
+        (Parameter.__init__): Added a new attributes parameter, which is stored in the self.attributes
+        property.
+        (Parameter.has_attribute): Added. Returns true if this parameter has the given attribute.
+
+        * Scripts/webkit2/parser.py:
+        (parse): Moved attributes-parsing code from here...
+        (parse_attributes_string): ...to here.
+        (parse_parameters_string): Renamed from parse_parameter_string. Now also parses parameter
+        attributes.
+
+2011-09-15  Adam Roben  <aroben@apple.com>
+
+        Make WebKit2's message-generation model and parser scripts accessible to other projects
+
+        We copy them into the build products directory so other projects can find them.
+
+        Fixes <http://webkit.org/b/68169> Would like to be able to use WebKit2's message-generation
+        scripts in other projects
+
+        Reviewed by Darin Adler.
+
+        * WebKit2.xcodeproj/project.pbxproj: Copy the scripts to PrivateHeaders.
+
+        * win/WebKit2.make: Copy the scripts from obj/WebKit2/scripts to
+        tools/scripts, like WebCore does.
+
+        * win/WebKit2Generated.make: Copy the scripts to obj/WebKit2/scripts, which is similar to what
+        WebCore does for its bindings scripts.
+
+2011-09-15  Adam Roben  <aroben@apple.com>
+
+        Split some of the message-generation code into separate modules
+
+        This is in preparation for making these modules scripts usable by other projects.
+
+        Fixes <http://webkit.org/b/68217> Model and parsing functionality for WebKit2's
+        message-generation scripts is trapped inside a much larger module
+
+        Reviewed by Darin Adler.
+
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * GNUmakefile.am:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.vcproj:
+        Added new files.
+
+        * Scripts/webkit2/messages.py: Moved some code from here...
+
+        * Scripts/webkit2/model.py: Added.
+        * Scripts/webkit2/parser.py: Added.
+        ...to here. MessageReceiver.parse was split out into a function in the new parser module.
+
+        * Scripts/webkit2/messages_unittest.py: Updated for renames.
+
+2011-09-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Disable WebKit2 by default in configure.ac, but enable it with build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=68178
+
+        Reviewed by Xan Lopez.
+
+        * GNUmakefile.am: Do not build WebKit2 by default. Re-add pkgconfig support
+        for WebKit2.
+
+2011-09-15  Adam Barth  <abarth@webkit.org>
+
+        Rename ENABLE(DATABASE) to ENABLE(SQL_DATABASE)
+        https://bugs.webkit.org/show_bug.cgi?id=68205
+
+        Reviewed by Eric Seidel.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
+2011-09-15  Eric Seidel  <eric@webkit.org>
+
+        Remove ENABLE(SVG_AS_IMAGE) since all major ports have it on by default
+        https://bugs.webkit.org/show_bug.cgi?id=68182
+
+        Reviewed by Adam Barth.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2011-09-15  Eric Seidel  <eric@webkit.org>
+
+        Remove ENABLE_SVG_ANIMATION as all major ports have it on by default
+        https://bugs.webkit.org/show_bug.cgi?id=68022
+
+        Reviewed by Ryosuke Niwa.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-09-15  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] Make QWebError more friendly to QML.

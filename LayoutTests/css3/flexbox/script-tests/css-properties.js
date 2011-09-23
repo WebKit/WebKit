@@ -76,17 +76,17 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 
 flexbox.style.webkitFlexAlign = 'foo';
 shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
 
-flexbox.style.webkitFlexAlign = 'before';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'before');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'before');
+flexbox.style.webkitFlexAlign = 'start';
+shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'start');
 
-flexbox.style.webkitFlexAlign = 'after';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'after');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'after');
+flexbox.style.webkitFlexAlign = 'end';
+shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'end');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'end');
 
-flexbox.style.webkitFlexAlign = 'middle';
-shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'middle');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'middle');
+flexbox.style.webkitFlexAlign = 'center';
+shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'center');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'center');
 
 flexbox.style.webkitFlexAlign = 'stretch';
 shouldBeEqualToString('flexbox.style.webkitFlexAlign', 'stretch');

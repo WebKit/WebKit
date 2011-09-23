@@ -592,18 +592,6 @@ bool FrameLoaderClientWx::shouldStopLoadingForHistoryItem(WebCore::HistoryItem*)
     return true;
 }
 
-void FrameLoaderClientWx::dispatchDidAddBackForwardItem(WebCore::HistoryItem*) const
-{
-}
-
-void FrameLoaderClientWx::dispatchDidRemoveBackForwardItem(WebCore::HistoryItem*) const
-{
-}
-
-void FrameLoaderClientWx::dispatchDidChangeBackForwardIndex() const
-{
-}
-
 void FrameLoaderClientWx::didDisplayInsecureContent()
 {
     notImplemented();

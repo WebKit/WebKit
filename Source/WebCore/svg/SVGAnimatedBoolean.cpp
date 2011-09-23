@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 
 #include "SVGAnimateElement.h"
@@ -81,4 +81,4 @@ float SVGAnimatedBooleanAnimator::calculateDistance(const String&, const String&
 
 }
 
-#endif // ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+#endif // ENABLE(SVG)

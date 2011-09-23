@@ -38,10 +38,11 @@ BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
 BUGCR24182 SLOW DEBUG : jquery/traversing.html = PASS
 BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-push-pop.html = PASS
 BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-reverse.html = PASS
-BUGCR24182 BUGWK62309 SLOW WIN DEBUG : inspector/styles/styles-source-lines.html = PASS TEXT
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
-
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
+BUGCR24182 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 
 BUGWK67919 SLOW DEBUG : perf/document-contains.html = PASS
 
@@ -58,6 +59,9 @@ BUGCR24189 SKIP : fast/dom/open-and-close-by-DOM.html = FAIL
 
 // Implement java testing harness.
 BUGCR36681 SKIP : java = TEXT
+
+// This will soon be fixed after implementing an ErrorEvent constructor for V8.
+BUGWK68148 : fast/events/constructors/error-event-constructor.html = FAIL
 
 // Quota API is not supported in DRT yet.
 BUGCR84572 SKIP : storage/storageinfo-query-usage.html = FAIL
@@ -77,6 +81,9 @@ BUGWK60877 SKIP : loader/load-defer-resume-crash.html = FAIL
 
 // CSS3 Selectors3 test suite
 BUGCR89468 : css3/selectors3 = PASS FAIL
+
+// This will soon be fixed after implementing a PopStateEvent constructor for V8.
+BUGWK67977 : fast/events/constructors/pop-state-event-constructor.html = FAIL
 
 // Tests for WebVTT parser for <track>.  Feature is not yet functional.
 BUGWK43668 SKIP : media/track/ = TIMEOUT
@@ -604,8 +611,6 @@ BUGCR89357 SKIP MAC : http/tests/inspector-enabled = PASS
 BUGCR75121 LINUX WIN : inspector/styles/styles-add-blank-property.html = PASS TIMEOUT TEXT
 BUGCR67662 LINUX WIN : http/tests/inspector/console-websocket-error.html = TIMEOUT TEXT
 
-BUGWK54882 WIN DEBUG : inspector/styles/styles-update-from-js.html = PASS TIMEOUT
-
 BUGWK56602 SKIP : http/tests/inspector/network/network-timing.html = FAIL
 BUGWK56602 SKIP : http/tests/inspector/network/network-size.html = FAIL
 BUGWK56602 SKIP : http/tests/inspector/network/network-size-chunked.html = FAIL
@@ -637,7 +642,6 @@ BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = PAS
 BUGWK62309 WIN DEBUG : inspector/styles/styles-disable-then-change.html = PASS TIMEOUT
 BUGCR89372 DEBUG : inspector/styles/styles-iframe.html = PASS TIMEOUT
 BUGWK62309 LINUX WIN DEBUG : inspector/styles/parse-utf8-bom.html = PASS TIMEOUT
-BUGWK62309 RELEASE WIN : inspector/styles/styles-source-lines.html = PASS TEXT
 
 BUGPFELDMAN : inspector/debugger/debugger-activation-crash2.html = PASS TIMEOUT TEXT
 
@@ -2102,6 +2106,7 @@ BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
 
 // Need setPrinting.
 BUGWK20011 : printing/setPrinting.html = FAIL
+BUGWK65005 : printing/single-line-must-not-be-split-into-two-pages.html = FAIL
 
 // Needs V8 change.
 BUGCR49343 : fast/js/reserved-words-as-property.html = TEXT
@@ -2683,7 +2688,7 @@ BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
 BUGCR74979 SKIP MAC GPU GPU-CG : media/video-canvas-alpha.html = IMAGE
 
-BUGWK67116 GPU DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
+BUGWK67116 GPU GPU-CG DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
 
 // Skip test test since this test uses layoutTestController.display()
 // that needs to be implemented for GPU
@@ -3576,7 +3581,7 @@ BUGWK63186 SNOWLEOPARD : svg/zoom/page/zoom-svg-through-object-with-huge-size.xh
 BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT
 BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-override-size.html = PASS IMAGE+TEXT IMAGE
 BUGWK63186 WIN : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
-BUGWK63186 LINUX : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE
+BUGWK63186 LINUX : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
 BUGWK63186 LEOPARD : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE
 BUGWK63186 SNOWLEOPARD CPU-CG : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE
 BUGWK63186 SNOWLEOPARD CPU : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE+TEXT
@@ -3684,6 +3689,10 @@ BUGWK67433 WIN LINUX : svg/custom/pattern-rotate-gaps.svg = IMAGE
 // Renders differently in 32 vs 64 bit mode and is flaky
 BUGJAMESR LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE PASS
 
+// Temporary failure. This failure is going to be removed as a rebase line
+// after WebKit bug r62684 is landed.
+BUGWK62684 : fast/ruby/overhang-horizontal.html = FAIL
+
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
@@ -3735,3 +3744,16 @@ BUGWK67999 MAC CPU-CG RELEASE : fast/borders/border-image-omit-right-slice.html 
 BUG_LEVIN SNOWLEOPARD : http/tests/loading/307-after-303-after-post.html = PASS TEXT
 BUG_LEVIN SNOWLEOPARD : http/tests/security/mixedContent/insecure-image-in-main-frame.html = PASS TEXT
 BUG_LEVIN SNOWLEOPARD : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
+
+BUG_LEVIN MAC DEBUG : svg/custom/object-no-size-attributes.xhtml = PASS IMAGE+TEXT
+
+// Failing after r95188
+BUG_KEISHI : editing/style/non-inheritable-styles.html = FAIL PASS TEXT
+BUG_KEISHI : inspector/styles/styles-new-API.html = FAIL PASS TEXT TIMEOUT
+BUG_KEISHI : inspector/styles/styles-source-lines.html = FAIL PASS TEXT TIMEOUT
+BUG_KEISHI : inspector/styles/styles-update-from-js.html = FAIL PASS TEXT TIMEOUT
+
+// Crashes or timeouts once in a while but never fails
+BUG_KEISHI LINUX : media/video-controls-visible-audio-only.html = PASS TIMEOUT CRASH
+
+BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PASS CRASH 

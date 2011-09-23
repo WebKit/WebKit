@@ -369,7 +369,7 @@ static int parserLineNumber(Document* document)
     ScriptableDocumentParser* parser = document->scriptableDocumentParser();
     if (!parser)
         return 0;
-    return parser->lineNumber() + 1;
+    return parser->lineNumber().oneBasedInt();
 }
 
 void reportViewportWarning(Document* document, ViewportErrorCode errorCode, const String& replacement1, const String& replacement2)

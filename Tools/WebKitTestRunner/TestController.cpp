@@ -157,7 +157,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
         0, // setStatusText
-        0, // mouseDidMoveOverElement
+        0, // mouseDidMoveOverElement_deprecatedForUseWithV0
         0, // missingPluginButtonClicked
         0, // didNotHandleKeyEvent
         0, // didNotHandleWheelEvent
@@ -187,6 +187,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
         createOtherPage,
+        0, // mouseDidMoveOverElement
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -301,7 +302,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
         0, // setStatusText
-        0, // mouseDidMoveOverElement
+        0, // mouseDidMoveOverElement_deprecatedForUseWithV0
         0, // missingPluginButtonClicked
         0, // didNotHandleKeyEvent
         0, // didNotHandleWheelEvent
@@ -331,6 +332,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
         createOtherPage,
+        0, // mouseDidMoveOverElement
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 

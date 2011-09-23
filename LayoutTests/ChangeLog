@@ -1,3 +1,1396 @@
+2011-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Hit testing on margins of body and head elements doesn't recur
+        https://bugs.webkit.org/show_bug.cgi?id=40753
+
+        Reviewed by Darin Adler.
+
+        Add tests to click on margins of head and body elements. WebKit should not
+        (attempt to) place the caret after or before head and body elements.
+
+        * editing/selection/click-on-body-margin-expected.txt: Added.
+        * editing/selection/click-on-body-margin.html: Added.
+        * editing/selection/click-on-head-margin-expected.txt: Added.
+        * editing/selection/click-on-head-margin.html: Added.
+
+2011-09-19  Gavin Barraclough  <barraclough@apple.com>
+
+        String#split is buggy
+        https://bugs.webkit.org/show_bug.cgi?id=68348
+
+        Reviewed by Sam Weinig.
+
+        * fast/js/script-tests/string-split-conformance.js: Added.
+        * fast/js/string-split-conformance-expected.txt: Added.
+        * fast/js/string-split-conformance.html: Added.
+            - Added new Layout test based on:
+                http://stevenlevithan.com/demo/split.cfm
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A1_T6-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A1_T7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A1_T8-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A1_T9-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.14_String.prototype.split/S15.5.4.14_A2_T7-expected.txt:
+            - Check in failing results for these 5 tests; they are all wrong
+              (see https://bugs.ecmascript.org/show_bug.cgi?id=61).
+
+2011-09-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95482.
+        http://trac.webkit.org/changeset/95482
+        https://bugs.webkit.org/show_bug.cgi?id=68410
+
+        Broke chromium webkit-tests (Requested by dslomov on #webkit).
+
+        * fast/canvas/webgl/premultiplyalpha-test-expected.txt:
+        * fast/canvas/webgl/premultiplyalpha-test.html:
+
+2011-09-19  Adam Barth  <abarth@webkit.org>
+
+        [V8] document.all gets confused about its prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=68393
+
+        Reviewed by Eric Seidel.
+
+        Test how document.all behaves when you change its prototype chain.
+
+        * http/tests/security/document-all-expected.txt: Added.
+        * http/tests/security/document-all.html: Added.
+
+2011-09-19  Adam Barth  <abarth@webkit.org>
+
+        Named property confusion with __proto__
+        https://bugs.webkit.org/show_bug.cgi?id=68221
+
+        Reviewed by Eric Seidel.
+
+        * http/tests/security/resources/innocent-victim-with-iframe.html: Added.
+        * http/tests/security/window-named-proto-expected.txt: Added.
+        * http/tests/security/window-named-proto.html: Added.
+
+2011-09-19  John Bauman  <jbauman@chromium.org>
+
+        Fix nonpremultiplied webgl toDataURL to jpeg
+        https://bugs.webkit.org/show_bug.cgi?id=68366
+
+        Update the premultiplyalpha-test from the WebGL conformance tests.
+
+        Reviewed by Kenneth Russell.
+
+        * fast/canvas/webgl/premultiplyalpha-test-expected.txt:
+        * fast/canvas/webgl/premultiplyalpha-test.html:
+
+2011-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Incorrect selection with absolutely positioned div
+        https://bugs.webkit.org/show_bug.cgi?id=39503
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added a regression test for placing the caret inside a block with multiple logical lines
+        with an absolutely positioned last child. WebKit should place the caret on the left of the first line
+        (instead of after the last line) when the user clicks on the left of the first line.
+
+        * editing/selection/block-with-positioned-lastchild-expected.txt: Added.
+        * editing/selection/block-with-positioned-lastchild.html: Added.
+
+2011-09-19  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. Chromium Rebaselines for r95461.
+
+        * platform/chromium-linux/fast/table/table-cell-before-after-content-around-table-block-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-cell-before-after-content-around-table-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-cell-before-after-content-around-table-row-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-before-after-content-around-block-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-before-after-content-around-table-expected.png: Added.
+        * platform/chromium-mac/fast/table/table-cell-before-after-content-around-table-block-expected.png: Added.
+        * platform/chromium-mac/fast/table/table-cell-before-after-content-around-table-expected.png: Added.
+        * platform/chromium-mac/fast/table/table-cell-before-after-content-around-table-row-expected.png: Added.
+        * platform/chromium-mac/fast/table/table-row-before-after-content-around-block-expected.png: Added.
+        * platform/chromium-mac/fast/table/table-row-before-after-content-around-table-expected.png: Added.
+        * platform/chromium-win/fast/table/table-cell-before-after-content-around-table-block-expected.png: Added.
+        * platform/chromium-win/fast/table/table-cell-before-after-content-around-table-expected.png: Added.
+        * platform/chromium-win/fast/table/table-cell-before-after-content-around-table-row-expected.png: Added.
+        * platform/chromium-win/fast/table/table-row-before-after-content-around-block-expected.png: Added.
+        * platform/chromium-win/fast/table/table-row-before-after-content-around-table-expected.png: Added.
+
+2011-09-19  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Crash after magic iframe transfer for Pepper/NaCl plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=68267
+        Make adoptNode() to not enable live iframe transfer when the iframe's subtree contains plugins.
+
+        Reviewed by Adam Barth.
+
+        * fast/frames/iframe-reparenting-embed-elements-expected.txt: Added.
+        * fast/frames/iframe-reparenting-embed-elements.html: Added.
+        * fast/frames/resources/iframe-reparenting-embed-frame1.html: Added.
+        * fast/frames/resources/iframe-reparenting-embed-iframe.html: Added.
+
+2011-09-19  Abhishek Arya  <inferno@chromium.org>
+
+        Issues with merging ruby bases.
+        https://bugs.webkit.org/show_bug.cgi?id=67240        
+
+        Reviewed by James Robinson.
+
+        ASSERTION FAILED: !needsLayout() in RenderRubyRun::getOverhang.
+
+        * fast/ruby/ruby-overhang-crash-expected.txt: Added.
+        * fast/ruby/ruby-overhang-crash.html: Added.
+
+2011-09-16  Abhishek Arya  <inferno@chromium.org>
+
+        Child not placed correctly when beforeChild (table part)
+        has both :before, :after content.
+        https://bugs.webkit.org/show_bug.cgi?id=67656
+
+        Reviewed by James Robinson.
+
+        * fast/table/table-cell-before-after-content-around-table-block-expected.png: Added.
+        * fast/table/table-cell-before-after-content-around-table-block-expected.txt: Added.
+        * fast/table/table-cell-before-after-content-around-table-block.html: Added.
+        * fast/table/table-cell-before-after-content-around-table-expected.png: Added.
+        * fast/table/table-cell-before-after-content-around-table-expected.txt: Added.
+        * fast/table/table-cell-before-after-content-around-table-row-expected.png: Added.
+        * fast/table/table-cell-before-after-content-around-table-row-expected.txt: Added.
+        * fast/table/table-cell-before-after-content-around-table-row.html: Added.
+        * fast/table/table-cell-before-after-content-around-table.html: Added.
+        * fast/table/table-row-before-after-content-around-block-expected.png: Added.
+        * fast/table/table-row-before-after-content-around-block-expected.txt: Added.
+        * fast/table/table-row-before-after-content-around-block.html: Added.
+        * fast/table/table-row-before-after-content-around-table-expected.png: Added.
+        * fast/table/table-row-before-after-content-around-table-expected.txt: Added.
+        * fast/table/table-row-before-after-content-around-table.html: Added.
+
+2011-09-19  Tom Sepez  <tsepez@chromium.org>
+
+        Fix xssauditor bypass with unterminated closing tag by making the HTMLSourceTracker
+        and the HTMLParser interact more closely with each other.  HTMLParser should be
+        setting the end range for the token itself to account for buffering that the
+        HTMLSourceTracker can't know about, but there are a lot of paths that would need
+        updating. First step is to cover this one path.
+        https://bugs.webkit.org/show_bug.cgi?id=68281
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+        * http/tests/security/xssAuditor/script-tag-with-invalid-closing-tag-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-invalid-closing-tag.html: Added.
+
+2011-09-19  Dmitry Lomov  <dslomov@google.com>
+
+        [Chromium] Rebaseline expectations and file WK68372. 
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-19  Dmitry Lomov  <dslomov@google.com>
+
+	[Chromium] Rebaseline expectations due to r95402.
+
+        * platform/chromium-win-vista/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
+
+2011-09-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed skip inspector/timeline/timeline-animation-frame.html on win platform.
+
+        * platform/win/Skipped:
+
+2011-09-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed fix for flaky tests.
+
+        * inspector/timeline/timeline-dom-content-loaded-event-expected.txt:
+        * inspector/timeline/timeline-dom-content-loaded-event.html:
+        * inspector/timeline/timeline-load-event-expected.txt:
+        * inspector/timeline/timeline-load-event.html:
+        * platform/qt/Skipped:
+
+2011-09-19  Zsolt Fehér  <feherzs@inf.u-szeged.hu>
+
+        Unreviewed Qt gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=68360
+
+        * platform/qt/Skipped:
+
+2011-09-19  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Add some pixel baselines.
+
+        Unreviewed expectation update.
+
+        These baselines was produced in the same environment where the
+        Szeged WK2 bot runs. The validity of the results had been checked manually.
+
+        * platform/qt-wk2/css1/box_properties/float_on_text_elements-expected.png: Added.
+        * platform/qt-wk2/css2.1/t051202-c24-first-lttr-00-b-expected.png: Added.
+        * platform/qt-wk2/css2.1/t051202-c26-psudo-nest-00-c-expected.png: Added.
+        * platform/qt-wk2/css2.1/t060401-c32-cascading-00-b-expected.png: Added.
+        * platform/qt-wk2/css2.1/t080301-c411-vt-mrgn-00-b-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5512-brdr-rw-00-b-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5514-brdr-lw-00-b-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5515-brdr-w-00-a-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5516-brdr-c-00-a-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5516-ibrdr-c-00-a-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5517-brdr-s-00-c-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5518-brdr-t-01-e-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5518-ibrdr-t-00-a-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5519-brdr-r-00-a-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5519-brdr-r-02-e-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5519-ibrdr-r-00-a-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5520-brdr-b-01-e-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5520-ibrdr-b-00-a-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5521-brdr-l-00-a-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5521-brdr-l-02-e-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5521-ibrdr-l-00-a-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5522-brdr-00-b-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0805-c5522-ibrdr-00-a-expected.png: Added.
+        * platform/qt-wk2/css2.1/t090402-c42-ibx-pad-00-d-ag-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0905-c5525-fltmult-00-d-g-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png: Added.
+        * platform/qt-wk2/css2.1/t0905-c5525-fltwrap-00-b-expected.png: Added.
+        * platform/qt-wk2/css2.1/t090501-c414-flt-00-d-expected.png: Added.
+        * platform/qt-wk2/css2.1/t090501-c414-flt-01-b-expected.png: Added.
+        * platform/qt-wk2/css2.1/t090501-c414-flt-ln-00-d-expected.png: Added.
+        * platform/qt-wk2/css2.1/t090501-c414-flt-ln-01-d-g-expected.png: Added.
+        * platform/qt-wk2/css2.1/t090501-c414-flt-ln-02-d-expected.png: Added.
+        * platform/qt-wk2/css2.1/t090501-c414-flt-ln-03-d-expected.png: Added.
+        * platform/qt-wk2/css2.1/t090501-c5525-flt-l-00-b-g-expected.png: Added.
+        * platform/qt-wk2/css2.1/t090501-c5525-flt-r-00-b-g-expected.png: Added.
+        * platform/qt-wk2/css2.1/t1002-c5523-width-02-b-g-expected.png: Added.
+        * platform/qt-wk2/css2.1/t100801-c544-valgn-00-a-ag-expected.png: Added.
+        * platform/qt-wk2/css2.1/t100801-c544-valgn-02-d-agi-expected.png: Added.
+        * platform/qt-wk2/css2.1/t100801-c544-valgn-03-d-agi-expected.png: Added.
+        * platform/qt-wk2/css2.1/t100801-c544-valgn-04-d-agi-expected.png: Added.
+        * platform/qt-wk2/css2.1/t1202-counter-08-b-expected.png: Added.
+        * platform/qt-wk2/css2.1/t1202-counters-08-b-expected.png: Added.
+        * platform/qt-wk2/css2.1/t1601-c547-indent-01-d-expected.png: Added.
+        * platform/qt-wk2/css2.1/t1602-c546-txt-align-00-b-expected.png: Added.
+        * platform/qt-wk2/css3/css3-modsel-33-expected.png: Added.
+        * platform/qt-wk2/css3/css3-modsel-35-expected.png: Added.
+        * platform/qt-wk2/fast/backgrounds/size/backgroundSize15-expected.png: Added.
+        * platform/qt-wk2/fast/backgrounds/size/backgroundSize16-expected.png: Added.
+        * platform/qt-wk2/fast/block/basic/014-expected.png: Added.
+        * platform/qt-wk2/fast/block/basic/016-expected.png: Added.
+        * platform/qt-wk2/fast/block/basic/white-space-pre-wraps-expected.png: Added.
+        * platform/qt-wk2/fast/block/float/003-expected.png: Added.
+        * platform/qt-wk2/fast/block/float/020-expected.png: Added.
+        * platform/qt-wk2/fast/block/float/021-expected.png: Added.
+        * platform/qt-wk2/fast/block/float/avoidance-percent-width-strict-expected.png: Added.
+        * platform/qt-wk2/fast/block/float/nopaint-after-layer-destruction2-expected.png: Added.
+        * platform/qt-wk2/fast/block/float/width-update-after-clear-expected.png: Added.
+        * platform/qt-wk2/fast/block/margin-collapse/empty-clear-blocks-expected.png: Added.
+        * platform/qt-wk2/fast/block/positioning/auto-height-with-top-and-bottom-expected.png: Added.
+        * platform/qt-wk2/fast/block/positioning/auto/005-expected.png: Added.
+        * platform/qt-wk2/fast/borders/block-mask-overlay-image-expected.png: Added.
+        * platform/qt-wk2/fast/borders/border-fit-expected.png: Added.
+        * platform/qt-wk2/fast/borders/border-image-scale-transform-expected.png: Added.
+        * platform/qt-wk2/fast/borders/border-radius-inline-flow-expected.png: Added.
+        * platform/qt-wk2/fast/borders/rtl-border-01-expected.png: Added.
+        * platform/qt-wk2/fast/borders/rtl-border-02-expected.png: Added.
+        * platform/qt-wk2/fast/borders/rtl-border-03-expected.png: Added.
+        * platform/qt-wk2/fast/box-shadow/basic-shadows-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/arc360-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/canvas-before-css-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/canvas-text-alignment-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/canvas-zoom-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/canvasDrawingIntoSelf-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/drawImage-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/drawImage-with-globalAlpha-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/fillrect-gradient-zero-stops-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/fillrect_gradient-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/image-object-in-canvas-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/patternfill-repeat-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/setWidthResetAfterForcedRender-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/shadow-offset-1-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/shadow-offset-2-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/shadow-offset-3-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/shadow-offset-4-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/shadow-offset-5-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/shadow-offset-6-expected.png: Added.
+        * platform/qt-wk2/fast/canvas/shadow-offset-7-expected.png: Added.
+        * platform/qt-wk2/fast/css-generated-content/012-expected.png: Added.
+        * platform/qt-wk2/fast/css-generated-content/013-expected.png: Added.
+        * platform/qt-wk2/fast/css-generated-content/after-duplicated-after-split-expected.png: Added.
+        * platform/qt-wk2/fast/css-generated-content/after-order-expected.png: Added.
+        * platform/qt-wk2/fast/css-generated-content/hover-style-change-expected.png: Added.
+        * platform/qt-wk2/fast/css/004-expected.png: Added.
+        * platform/qt-wk2/fast/css/005-expected.png: Added.
+        * platform/qt-wk2/fast/css/MarqueeLayoutTest-expected.png: Added.
+        * platform/qt-wk2/fast/css/ZeroOpacityLayers-expected.png: Added.
+        * platform/qt-wk2/fast/css/ZeroOpacityLayers2-expected.png: Added.
+        * platform/qt-wk2/fast/css/absolute-poition-in-rtl-parent-expected.png: Added.
+        * platform/qt-wk2/fast/css/begin-end-contain-selector-empty-value-expected.png: Added.
+        * platform/qt-wk2/fast/css/css1_forward_compatible_parsing-expected.png: Added.
+        * platform/qt-wk2/fast/css/css3-modsel-22-expected.png: Added.
+        * platform/qt-wk2/fast/css/css3-nth-child-expected.png: Added.
+        * platform/qt-wk2/fast/css/first-letter-detach-expected.png: Added.
+        * platform/qt-wk2/fast/css/first-letter-hover-expected.png: Added.
+        * platform/qt-wk2/fast/css/font-face-implicit-local-font-expected.png: Added.
+        * platform/qt-wk2/fast/css/hsl-color-expected.png: Added.
+        * platform/qt-wk2/fast/css/inline-properties-important-expected.png: Added.
+        * platform/qt-wk2/fast/css/invalidation-errors-2-expected.png: Added.
+        * platform/qt-wk2/fast/css/invalidation-errors-expected.png: Added.
+        * platform/qt-wk2/fast/css/non-standard-checkbox-size-expected.png: Added.
+        * platform/qt-wk2/fast/css/outline-auto-location-expected.png: Added.
+        * platform/qt-wk2/fast/css/selector-set-attribute-expected.png: Added.
+        * platform/qt-wk2/fast/css/text-align-expected.png: Added.
+        * platform/qt-wk2/fast/css/textCapitalizeEdgeCases-expected.png: Added.
+        * platform/qt-wk2/fast/css/zoom-font-size-expected.png: Added.
+        * platform/qt-wk2/fast/dom/HTMLHeadElement/head-link-style-href-check-expected.png: Added.
+        * platform/qt-wk2/fast/dom/HTMLTableElement/colSpan-expected.png: Added.
+        * platform/qt-wk2/fast/dom/HTMLTableElement/createCaption-expected.png: Added.
+        * platform/qt-wk2/fast/dom/children-nodes-expected.png: Added.
+        * platform/qt-wk2/fast/dom/clone-node-dynamic-style-expected.png: Added.
+        * platform/qt-wk2/fast/dom/css-rule-functions-expected.png: Added.
+        * platform/qt-wk2/fast/dynamic/insert-before-table-part-in-continuation-expected.png: Added.
+        * platform/qt-wk2/fast/dynamic/selection-highlight-adjust-expected.png: Added.
+        * platform/qt-wk2/fast/dynamic/staticY-marking-parents-regression-expected.png: Added.
+        * platform/qt-wk2/fast/forms/basic-selects-expected.png: Added.
+        * platform/qt-wk2/fast/forms/basic-textareas-quirks-expected.png: Added.
+        * platform/qt-wk2/fast/forms/input-placeholder-text-indent-expected.png: Added.
+        * platform/qt-wk2/fast/forms/minWidthPercent-expected.png: Added.
+        * platform/qt-wk2/fast/frames/frame-scrolling-attribute-expected.png: Added.
+        * platform/qt-wk2/fast/gradients/radial-centered-expected.png: Added.
+        * platform/qt-wk2/fast/html/details-writing-mode-expected.png: Added.
+        * platform/qt-wk2/fast/inline/continuation-outlines-expected.png: Added.
+        * platform/qt-wk2/fast/inline/continuation-outlines-with-layers-expected.png: Added.
+        * platform/qt-wk2/fast/lists/001-vertical-expected.png: Added.
+        * platform/qt-wk2/fast/lists/007-vertical-expected.png: Added.
+        * platform/qt-wk2/fast/lists/008-vertical-expected.png: Added.
+        * platform/qt-wk2/fast/media/mq-relative-constraints-08-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/client-rects-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/column-break-with-balancing-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/float-multicol-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/float-paginate-complex-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/float-paginate-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/layers-split-across-columns-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/margin-collapse-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/max-height-columns-block-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/nested-columns-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/paginate-block-replaced-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/positioned-with-constrained-height-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/scrolling-overflow-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/span/anonymous-before-child-parent-crash-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/span/anonymous-style-inheritance-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/span/span-as-immediate-child-generated-content-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/span/span-as-immediate-child-property-removal-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/span/span-as-immediate-columns-child-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/span/span-as-nested-columns-child-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/span/span-margin-collapsing-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/table-margin-collapse-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/table-vertical-align-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/unsplittable-inline-block-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-lr/column-break-with-balancing-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-lr/column-rules-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-lr/float-avoidance-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-lr/float-multicol-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-lr/float-paginate-complex-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-lr/float-paginate-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-lr/nested-columns-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-lr/unsplittable-inline-block-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-rl/column-break-with-balancing-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-rl/column-rules-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-rl/float-avoidance-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-rl/float-multicol-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-rl/float-paginate-complex-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-rl/float-paginate-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-rl/nested-columns-expected.png: Added.
+        * platform/qt-wk2/fast/multicol/vertical-rl/unsplittable-inline-block-expected.png: Added.
+        * platform/qt-wk2/fast/overflow/line-clamp-expected.png: Added.
+        * platform/qt-wk2/fast/overflow/overflow-rtl-vertical-expected.png: Added.
+        * platform/qt-wk2/fast/overflow/table-overflow-float-expected.png: Added.
+        * platform/qt-wk2/fast/reflections/opacity-reflection-transform-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/bugzilla-6278-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/line-flow-with-floats-1-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/line-flow-with-floats-10-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/line-flow-with-floats-2-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/line-flow-with-floats-3-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/line-flow-with-floats-4-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/line-flow-with-floats-5-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/line-flow-with-floats-6-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/line-flow-with-floats-7-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/line-flow-with-floats-8-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/line-flow-with-floats-9-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/multicol-repaint-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/outline-repaint-glitch-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/selected-replaced-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/selection-gap-overflow-scroll-2-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/stacked-diacritics-expected.png: Added.
+        * platform/qt-wk2/fast/repaint/text-append-dirty-lines-expected.png: Added.
+        * platform/qt-wk2/fast/replaced/001-expected.png: Added.
+        * platform/qt-wk2/fast/replaced/002-expected.png: Added.
+        * platform/qt-wk2/fast/replaced/003-expected.png: Added.
+        * platform/qt-wk2/fast/replaced/005-expected.png: Added.
+        * platform/qt-wk2/fast/replaced/absolute-image-sizing-expected.png: Added.
+
+2011-09-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: extend UI perf tests coverage. Elements Panel.
+        https://bugs.webkit.org/show_bug.cgi?id=68263
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/performance/resources/show-panel-elements.html: Added.
+
+2011-09-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: didMarkDOMContentEvent() should send event of MarkDOMContent type.
+        https://bugs.webkit.org/show_bug.cgi?id=67528
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/timeline/timeline-animation-frame.html:
+        * inspector/timeline/timeline-dom-content-loaded-event-expected.txt: Added.
+        * inspector/timeline/timeline-dom-content-loaded-event.html: Added.
+        * inspector/timeline/timeline-load-event-expected.txt: Added.
+        * inspector/timeline/timeline-load-event.html: Added.
+        * inspector/timeline/timeline-test.js:
+        (initialize_Timeline.InspectorTest.waitForRecordType.addRecord):
+        (initialize_Timeline.InspectorTest.waitForRecordType):
+
+2011-09-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-arm/fast/dom/Window/window-property-descriptors-expected.txt: Updated.
+        * platform/qt-mac/Skipped: Skip new failing tests to paint the bot green.
+
+2011-09-19  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] [ARMv5] fast/events/media-element-focus-tab.html fast/spatial-navigation/snav-media-elements.html fail
+        https://bugs.webkit.org/show_bug.cgi?id=68341
+
+        * platform/qt-arm/Skipped: Skip the failing tests
+
+2011-09-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: requestAnimationFrame callbacks don't show up in the timeline panel.
+        https://bugs.webkit.org/show_bug.cgi?id=67986
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/timeline/timeline-animation-frame-expected.txt: Added.
+        * inspector/timeline/timeline-animation-frame.html: Added.
+        * inspector/timeline/timeline-enum-stability-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-enum-stability-expected.txt:
+        * platform/qt/Skipped: inspector/timeline/timeline-animation-frame.html was added to the skip list.
+        * inspector/timeline/timeline-test.js:
+
+2011-09-18  James Kozianski  <koz@chromium.org>
+
+        Rebaseline navigator test for chromium-win-vista.
+        https://bugs.webkit.org/show_bug.cgi?id=68334
+
+        Unreviewed. Rebaseline for navigator-detached-no-crash.
+
+        * platform/chromium-win-vista/fast/dom/navigator-detached-no-crash-expected.txt: Added.
+
+2011-09-18  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/7860281> Decomposed text is displayed incorrectly when Verdana is specified
+        https://bugs.webkit.org/show_bug.cgi?id=68287
+
+        Reviewed by Dave Hyatt.
+
+        * platform/mac/fast/text/combining-character-sequence-fallback.html: Added.
+        * platform/mac/platform/mac/fast/text/combining-character-sequence-fallback-expected.png: Added.
+        * platform/mac/platform/mac/fast/text/combining-character-sequence-fallback-expected.txt: Added.
+
+2011-09-18  Dan Bernstein  <mitz@apple.com>
+
+        Updated expected results for two tests after r95362.
+
+        * platform/mac/fast/dom/Window/window-properties-expected.txt:
+        * platform/mac/fast/dom/Window/window-property-descriptors-expected.txt:
+
+2011-09-17  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68307
+        
+        Crash in border image cssText. Make sure to null check all the components, since they're all
+        optional now.
+
+        Reviewed by Sam Weinig.
+
+        * fast/borders/border-image-slice-omission.html: Added.
+
+2011-09-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] fast/events/media-element-focus-tab.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=68315
+
+        * platform/qt-wk2/Skipped: Skip fast/events/media-element-focus-tab.html until fix.
+
+2011-09-17  Deepak Sherveghar  <bpwv64@motorola.com>
+
+        Override supportsFocus() for HTMLMediaElement.
+        https://bugs.webkit.org/show_bug.cgi?id=67190
+
+        Reviewed by Antonio Gomes.
+
+        For media elements be able to receive focus without tabindex if
+        control attribute is present, hence changed
+        tabindex-focus-blur-all.js and tabindex-focus-blur-all-expected.txt.
+
+        * fast/events/media-element-focus-tab-expected.txt: Added.
+        * fast/events/media-element-focus-tab.html: Added.
+        * fast/events/resources/tabindex-focus-blur-all.js:
+        (test):
+        * fast/events/tabindex-focus-blur-all-expected.txt:
+        * fast/spatial-navigation/snav-media-elements-expected.txt: Added.
+        * fast/spatial-navigation/snav-media-elements.html: Added.
+
+2011-09-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-4.8/editing/deleting/merge-whitespace-pre-expected.txt: Update after r95335.
+
+2011-09-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed gardening after r95337.
+
+        * platform/qt-wk2/Skipped: Skip one more test.
+
+2011-09-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] fast/forms/submit-to-blank-multiple-times.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=68309
+
+        * platform/qt-wk2/Skipped: Skip fast/forms/submit-to-blank-multiple-times.html.
+
+2011-09-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed gardening after r95335.
+
+        * platform/qt-wk2/Skipped: Skip new failing tests.
+
+2011-09-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped: Skip plugins/fullscreen-plugins-dont-reload.html, because ENABLE(FULLSCREEN_API) is disabled on Qt.
+        * platform/qt/fast/dom/Window/window-properties-expected.png: Updated after r95362.
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: Updated after r95362.
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.png: Updated after r95362.
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt: Updated after r95362.
+
+2011-09-16  Jeremy Apthorp <jeremya@chromium.org> and James Kozianski  <koz@chromium.org>
+
+        Don't detach elements from the render tree when entering fullscreen mode
+        https://bugs.webkit.org/show_bug.cgi?id=66531
+
+        Test that the plugin is not reloaded when entering fullscreen.
+
+        Reviewed by James Robinson.
+
+        * plugins/fullscreen-plugins-dont-reload-expected.txt: Added.
+        * plugins/fullscreen-plugins-dont-reload.html: Added.
+
+2011-09-16  Jochen Eisinger  <jochen@chromium.org>
+
+        Add tests for FrameLoaderClient::allowImage.
+        https://bugs.webkit.org/show_bug.cgi?id=68071
+
+        Reviewed by Adam Barth.
+
+        * http/tests/permissionclient/resources/bostin.gif:
+        * http/tests/permissionclient/resources/redir.php:
+        * platform/chromium/permissionclient/image-permissions-expected.txt:
+        * platform/chromium/permissionclient/image-permissions.html:
+        * platform/http/tests/permissionclient/image-permissions-expected.txt:
+        * platform/http/tests/permissionclient/image-permissions.html:
+
+2011-09-16  Tom Sepez  <tsepez@chromium.org>
+
+        Make XSSAuditor truncate inline snippets at a reasonable length before comparison
+        respecting boundaries of multiply urlencoded sequences.
+        https://bugs.webkit.org/show_bug.cgi?id=68092
+        
+        Reviewed by Adam Barth.
+
+        * http/tests/security/xssAuditor/property-escape-long-expected.txt: Added.
+        * http/tests/security/xssAuditor/property-escape-long.html: Added.
+
+2011-09-16  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66714
+        Add webkitPostMessage to allow for adding transferable support.
+        This adds webkitPostMessage, currently identical to postMessage, which 
+        would later be a vehicle for adding transferable support for messaging.
+        The tests ensure that webkitPostMessage and postMessage behave identically.
+
+        Based on patch by Luke Zarko.
+
+        Reviewed by David Levin.
+
+        * fast/dom/Window/window-postmessage-args-expected.txt:
+        * fast/dom/Window/window-postmessage-args.html:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/events/message-port-expected.txt:
+        * fast/events/message-port.html:
+        * fast/workers/resources/worker-call.js:
+        * fast/workers/worker-call-expected.txt:
+        * platform/chromium/fast/dom/Window/window-postmessage-args-expected.txt:
+
+2011-09-16  Alexei Svitkine  <asvitkine@chromium.org>
+
+        Chromium: Fix repaint of rubber-band overhang area under composited path
+        https://bugs.webkit.org/show_bug.cgi?id=68246
+
+        I accidently removed these two lines from the last patch on: https://bugs.webkit.org/show_bug.cgi?id=66969
+
+        Reviewed by James Robinson.
+
+        Test: platform/chromium-gpu/compositing/rubberbanding/transform-overhang-size-change.html
+
+        * platform/chromium-gpu/compositing/rubberbanding/transform-overhang-size-change-expected.png: Added.
+        * platform/chromium-gpu/compositing/rubberbanding/transform-overhang-size-change-expected.txt: Added.
+        * platform/chromium-gpu/compositing/rubberbanding/transform-overhang-size-change.html: Added.
+
+2011-09-16  Tony Chang  <tony@chromium.org>
+
+        Rename flex-align values to match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=67741
+
+        Reviewed by Ojan Vafai.
+
+        * css3/flexbox/css-properties-expected.txt:
+        * css3/flexbox/script-tests/css-properties.js:
+
+2011-09-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium pixel test rebaseline for r95335.
+
+        * platform/chromium-cg-mac-leopard/editing/deleting/merge-whitespace-pre-expected.png: Added.
+        * platform/chromium-linux/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/chromium-mac/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/chromium-win-vista/editing: Removed.
+        * platform/chromium-win/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-09-16  Kentaro Hara  <haraken@chromium.org>
+
+        Implement an ErrorEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=68148
+
+        Reviewed by Sam Weinig.
+
+        error-event-constructor.html checks the behavior of the ErrorEvent constructor.
+
+        * fast/dom/constructed-objects-prototypes-expected.txt: Now window has ErrorEvent.
+        * fast/events/constructors/error-event-constructor-expected.txt: Added.
+        * fast/events/constructors/error-event-constructor.html: Added.
+        * platform/chromium/test_expectations.txt: Skipped error-event-constructor.html, since V8 does not yet have the ErrorEvent constructor.
+
+2011-09-16  Adam Barth  <abarth@webkit.org>
+
+        CORS images viewed from different domains fail security checks
+        https://bugs.webkit.org/show_bug.cgi?id=68011
+
+        Reviewed by Darin Adler.
+
+        I am unable to reproduce the bug, but the test I wrote in the process
+        might be worth having anyway.
+
+        * http/tests/security/canvas-cors-with-two-hosts-expected.txt: Added.
+        * http/tests/security/canvas-cors-with-two-hosts.html: Added.
+        * http/tests/security/resources/canvas-cors-subtest.html: Added.
+
+2011-09-16  Kentaro Hara  <haraken@google.com>
+
+        Overhangs a ruby by no more than half the width of the neighboring text.
+        https://bugs.webkit.org/show_bug.cgi?id=62684
+
+        Reviewed by Dan Bernstein.
+
+        Assume two rubies between which a narrow text exists, like
+        "<ruby>x<rt>xxxxxx</rt></ruby>l<ruby>y<rt>yyyyyy</rt></ruby>".
+        In order to avoid the two rubies overlapping with each other,
+        this patch overhangs the ruby by no more than half the ruby font
+        size and no more than half the width of the neighboring text.
+
+        * fast/ruby/overhang-horizontal-no-overlap1-expected.png: Added.
+        * fast/ruby/overhang-horizontal-no-overlap1-expected.txt: Added.
+        * fast/ruby/overhang-horizontal-no-overlap1.html: Added. Tests if two rubies do not overlap with each other when a narrow text exists between the two rubies. Split into two test files in order to fit each test result within one page.
+        * fast/ruby/overhang-horizontal-no-overlap2-expected.png: Added.
+        * fast/ruby/overhang-horizontal-no-overlap2-expected.txt: Added.
+        * fast/ruby/overhang-horizontal-no-overlap2.html: Added. Tests if two rubies do not overlap with each other when a narrow text exists between the two rubies. Split into two test files in order to fit each test result within one page.
+        * fast/ruby/overhang-vertical-no-overlap1-expected.png: Added.
+        * fast/ruby/overhang-vertical-no-overlap1-expected.txt: Added.
+        * fast/ruby/overhang-vertical-no-overlap1.html: Added. Tests if two rubies do not overlap with each other when a narrow text exists between the two rubies. Split into two test files in order to fit each test result within one page.
+        * fast/ruby/overhang-vertical-no-overlap2-expected.png: Added.
+        * fast/ruby/overhang-vertical-no-overlap2-expected.txt: Added.
+        * fast/ruby/overhang-vertical-no-overlap2.html: Added. Tests if two rubies do not overlap with each other when a narrow text exists between the two rubies. Split into two test files in order to fit each test result within one page.
+        * platform/chromium-linux/fast/ruby/overhang-vertical-expected.png: Removed.
+        * platform/chromium-win/fast/ruby/overhang-horizontal-expected.png: Removed.
+        * platform/chromium/test_expectations.txt: Skips overhang-horizontal.html.  We will update the result image as a rebase line.
+
+2011-09-16  Ben Wells  <benwells@chromium.org>
+
+        Large canvas fills should not crash or create unnecessarily large image buffers
+        https://bugs.webkit.org/show_bug.cgi?id=67988
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/canvas-large-fills-expected.txt: Added.
+        * fast/canvas/canvas-large-fills.html: Added.
+
+2011-09-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix the rebaseline in r95325 and also rebaseline for r95335.
+
+        * inspector/styles/styles-update-from-js-expected.txt:
+        * platform/chromium/test_expectations.txt
+        * platform/chromium-win/editing/deleting/merge-whitespace-pre-expected.txt:
+        * platform/qt/editing/deleting/merge-whitespace-pre-expected.txt:
+
+2011-09-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Unsigned bit shift fails under certain conditions in 32 bit builds
+        https://bugs.webkit.org/show_bug.cgi?id=68166
+
+        Reviewed by Geoff Garen.
+
+        Added layout test.
+
+        * fast/js/floating-point-truncate-rshift-expected.txt:
+        * fast/js/floating-point-truncate-rshift.html:
+
+2011-09-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the forgotten test, also suppress a test in Chromium as it needs a rebaseline.
+
+        * platform/chromium/test_expectations.txt:
+        * editing/deleting/merge-paragraph-into-blockquote-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-blockquote.html: Added.
+
+2011-09-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deleting line break before h1 converts h1 to span
+        https://bugs.webkit.org/show_bug.cgi?id=45784
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added a bunch of tests to ensure WebKit does not keep block elements' style when merging paragraphs.
+        When removing line breaks between <h1>hello</h1>world and hello<pre>world</pre> for example,
+        we should not be overriding and preserving styles from h1 in the merge paragraph respectively.
+
+        * editing/deleting/merge-paragraph-from-address-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-address.html: Added.
+        * editing/deleting/merge-paragraph-from-h6-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-h6-with-style-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-h6-with-style.html: Added.
+        * editing/deleting/merge-paragraph-from-h6.html: Added.
+        * editing/deleting/merge-paragraph-from-listing-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-listing.html: Added.
+        * editing/deleting/merge-paragraph-into-h1-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-h1-style-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-h1-with-style-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-h1-with-style.html: Added.
+        * editing/deleting/merge-paragraph-into-h1.html: Added.
+        * editing/deleting/merge-paragraph-into-pre-expected.txt: Added.
+        * editing/deleting/merge-paragraph-into-pre.html: Added.
+        * platform/mac/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/mac/editing/deleting/merge-whitespace-pre-expected.txt:
+
+2011-09-16  David Levin  <levin@chromium.org>
+
+       [chromium] Rebaseline fix up due to r95239.
+
+        Add back in a baseline that was removed in my last change.
+
+        * platform/chromium-cg-mac-leopard/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-09-16  David Levin  <levin@chromium.org>
+
+       [chromium] Rebaseline fix up due to r95239.
+
+       Expectation removal due to r95322 and r95325.
+
+        * platform/chromium-cg-mac-leopard/fast/clip/overflow-border-radius-composited-expected.png: Added.
+        * platform/chromium-cg-mac/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/chromium-cg-mac/fast/clip/overflow-border-radius-composited-expected.png: Added.
+        * platform/chromium-cg-mac/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+        * platform/chromium-cg-mac/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium-linux/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/chromium-linux/fast/clip/overflow-border-radius-composited-expected.png: Added.
+        * platform/chromium-linux/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+        * platform/chromium-linux/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium-mac/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/chromium-mac/fast/clip/overflow-border-radius-composited-expected.png: Added.
+        * platform/chromium-mac/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+        * platform/chromium-mac/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium-win/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/chromium-win/fast/clip/overflow-border-radius-combinations-expected.txt: Added.
+        * platform/chromium-win/fast/clip/overflow-border-radius-composited-expected.png: Added.
+        * platform/chromium-win/fast/clip/overflow-border-radius-composited-expected.txt: Added.
+        * platform/chromium-win/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+        * platform/chromium-win/fast/clip/overflow-border-radius-transformed-expected.txt: Added.
+        * platform/chromium-win/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-09-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed undetectable style.filter.
+
+        Reviewed by Sam Weinig.
+        
+        This feature was added in http://trac.webkit.org/changeset/15557 to
+        support housingmaps.com. But housingmaps.com no longer needs this hack,
+        we don't know of other websites that need it, and we don't know of
+        any other browsers that have implemented this feature.
+
+        * fast/dom/undetectable-style-filter-expected.txt: Removed.
+        * fast/dom/undetectable-style-filter.html: Removed.
+
+2011-09-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r95317.
+        http://trac.webkit.org/changeset/95317
+        https://bugs.webkit.org/show_bug.cgi?id=68282
+
+        Remove newly added overlapping test expectations. (Requested
+        by dave_levin on #webkit).
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rebaseline after r95242.
+
+        * inspector/styles/styles-update-from-js-expected.txt:
+
+2011-09-16  Sam Weinig  <sam@webkit.org>
+
+        Replace use of access to nodeList using call, with array style notation.
+
+        * editing/pasteboard/paste-noscript.html:
+
+2011-09-16  Mihai Parparita  <mihaip@chromium.org>
+
+        http/tests/history/back-with-fragment-change.php fails on non-Chromium bots
+        https://bugs.webkit.org/show_bug.cgi?id=68242
+
+        Skip test on ports on which it fails. Move comment to be inside
+        <?php> block so that HTTP headers can be set on all platforms (there
+        must not be any whitespace before the <?php> block).
+
+        * http/tests/history/back-with-fragment-change.php:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
+2011-09-16  Cary Clark  <caryclark@google.com>
+        Unreviewed; new expectations (Skia on Mac)
+        
+        This separates test failures that are specific to CG Mac from failures
+        for Skia on Mac (Leopard only).
+
+        * LayoutTests/platform/chromium/test_expectations.txt:
+
+2011-09-16  James Simonsen  <simonjam@chromium.org>
+
+        Fix HTML5 parser's adoption agency algorithm to reparent correctly
+        https://bugs.webkit.org/show_bug.cgi?id=68147
+
+        Reviewed by Eric Seidel.
+
+        * html5lib/resources/webkit02.dat:
+
+2011-09-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] REGRESSION(r95091) It made many tests flakey
+        https://bugs.webkit.org/show_bug.cgi?id=68232
+
+        Unreviewed rolling out r95091 and followup patches.
+
+        * inspector/timeline/timeline-animation-frame-expected.txt: Removed.
+        * inspector/timeline/timeline-animation-frame.html: Removed.
+        * inspector/timeline/timeline-enum-stability-expected.txt:
+        * inspector/timeline/timeline-test.js:
+        * platform/chromium/inspector/timeline/timeline-animation-frame-expected.txt: Removed.
+        * platform/qt/Skipped:
+        * platform/qt/test_expectations.txt:
+
+2011-09-16  Abhishek Arya  <inferno@chromium.org>
+
+        cachedFont not getting updated for inline SVG text.
+        https://bugs.webkit.org/show_bug.cgi?id=68060
+
+        Reviewed by Nikolas Zimmermann.
+
+        * svg/text/text-style-recalc-crash-expected.txt: Added.
+        * svg/text/text-style-recalc-crash.html: Added.
+
+2011-09-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed rolling out r95277.
+
+        * platform/qt/Skipped:
+
+2011-09-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: UI performance tests are required.
+        https://bugs.webkit.org/show_bug.cgi?id=68234
+
+        The idea is to create a set of tests which cover frequently used UI actions
+        and print the average time of these actions.
+        There are two pilot tests. The common part was extracted into performance-test helper.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/performance/resources/network-append-30-requests.html: Added.
+        * inspector/performance/resources/performance-test.js: Added.
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype.start):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype.finish):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype.done):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype._runTest):
+        * inspector/performance/resources/show-panel-network.html: Added.
+
+2011-09-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Skip a flakey test.
+
+        * platform/qt/Skipped:
+
+2011-09-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Add Qt specific expexted results for new tests introduced in r95239.
+
+        * platform/qt/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/qt/fast/clip/overflow-border-radius-combinations-expected.txt: Added.
+        * platform/qt/fast/clip/overflow-border-radius-composited-expected.png: Added.
+        * platform/qt/fast/clip/overflow-border-radius-composited-expected.txt: Added.
+        * platform/qt/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+        * platform/qt/fast/clip/overflow-border-radius-transformed-expected.txt: Added.
+
+2011-09-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed test fix for r95287.
+
+        * inspector/debugger/debugger-expand-scope.html:
+
+2011-09-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: change WebInspector.currentPanel getter/setter to functions.
+        https://bugs.webkit.org/show_bug.cgi?id=68242
+
+        This is necessary for the panel switching performance tests.
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/resource-tree/resource-tree-test.js:
+        (initialize_ResourceTreeTest.InspectorTest.dumpResourcesTree):
+        * inspector/debugger/debugger-expand-scope.html:
+        * inspector/debugger/debugger-proto-property.html:
+        * inspector/storage-panel-dom-storage.html:
+
+2011-09-16  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] bot lucks mobility
+        https://bugs.webkit.org/show_bug.cgi?id=68243
+
+        Unreviwed test skipping.
+
+        * platform/qt-wk2/Skipped:
+
+2011-09-15  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: rename Console.clearConsoleMessages to Console.clearMessages, brush up console domain doc.
+        https://bugs.webkit.org/show_bug.cgi?id=68165
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/protocol/console-agent-expected.txt:
+        * inspector/protocol/console-agent.html:
+
+2011-09-16  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] Rebaselines due to r95203 and r95207.
+
+        * platform/chromium-cg-mac-leopard/fast/box-shadow/no-blur-multiple-offsets-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-09-16  Renata Hodovan  <reni@webkit.org>
+
+        [Qt] Update expecteds of failing tests after r95260 and r95242.
+
+        Unreviewed gardening.
+
+        * editing/style/non-inheritable-styles-expected.txt: after r95242.
+        * fast/dom/constructed-objects-prototypes-expected.txt: after r95260.
+        * inspector/styles/styles-new-API-expected.txt: after r95242.
+        * inspector/styles/styles-source-lines-expected.txt: after r95242.
+
+2011-09-16  Renata Hodovan  <reni@webkit.org>
+
+        [Qt] One test failed after r95203
+        https://bugs.webkit.org/show_bug.cgi?id=68233
+
+        Unreviewed gardening.
+
+        * platform/qt/Skipped: failed test is skipped.
+
+2011-09-16  Renata Hodovan  <reni@webkit.org>
+
+        [Qt] One test runs out of time after r95091
+        https://bugs.webkit.org/show_bug.cgi?id=68232
+
+        Unreviewed gardening.
+
+        * platform/qt/Skipped:
+
+2011-09-16  Renata Hodovan  <reni@webkit.org>
+
+        [Qt] Two tests fail after r95201
+        https://bugs.webkit.org/show_bug.cgi?id=68230
+
+        Unreviewed gardening.
+
+        * platform/qt/Skipped:
+
+2011-09-16  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [Qt] Crash when dragging google maps.
+        https://bugs.webkit.org/show_bug.cgi?id=68223
+
+        Test case to use an unready custom cursor.
+
+        Reviewed by Adam Barth.
+
+        * fast/css/crash-on-custom-cursor-when-loading-expected.txt: Added.
+        * fast/css/crash-on-custom-cursor-when-loading.html: Added.
+
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] Add slow to calculate-percentage.html
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] add timeout to test expectation of styles-source-lines.html
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] add timeout to test expectation of styles-new-API.html
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] rebaseline expectations due to r95264
+
+        * platform/chromium-cg-mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/chromium-mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] added fail expectation for back-with-fragment-change.php
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] adding text_expectation for zoom-svg-through-object-with-percentage-size.xhtml
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] adding fail to test_expectations due to r95188
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] add crash to test_expectations.txt
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-15  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSSRegions] Regions should not slice line box rendering
+        https://bugs.webkit.org/show_bug.cgi?id=66198
+
+        Also updated the results for some older tests that now work correctly.
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/resources/helper.js:
+        (isDebugEnabled):
+        (assertEqualRects):
+        (testBoundingRects):
+        (assertRectContains):
+        (addPageLevelDebugBox):
+        (testContentToRegionsMapping):
+        * fast/regions/text-region-breaks-expected.txt: Added.
+        * fast/regions/text-region-breaks.html: Added.
+        * fast/regions/text-region-split-expected.txt: Added.
+        * fast/regions/text-region-split-horizontal-bt-expected.txt: Added.
+        * fast/regions/text-region-split-horizontal-bt.html: Added.
+        * fast/regions/text-region-split-vertical-expected.txt: Added.
+        * fast/regions/text-region-split-vertical-rl-expected.txt: Added.
+        * fast/regions/text-region-split-vertical-rl.html: Added.
+        * fast/regions/text-region-split-vertical.html: Added.
+        * fast/regions/text-region-split.html: Added.
+        * fast/regions/webkit-flow-floats-inside-regions-bounds-expected.txt:
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-expected.txt:
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-expected.txt:
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.txt:
+        * fast/repaint/japanese-rl-selection-repaint-in-regions.html:
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt:
+
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] rebaseline expectations due to r95239
+
+        * platform/chromium-cg-mac-leopard/fast/forms/menulist-option-wrap-expected.png:
+        * platform/chromium-cg-mac/fast/forms/menulist-option-wrap-expected.png:
+        * platform/chromium-mac/fast/forms/menulist-option-wrap-expected.png:
+
+2011-09-15  Kentaro Hara  <haraken@google.com>
+
+        Implement a PopStateEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=67977
+
+        Reviewed by Sam Weinig.
+
+        pop-state-event-constructor.html checks the behavior of the PopStateEvent constructor.
+
+        * fast/events/constructors/pop-state-event-constructor-expected.txt: Added.
+        * fast/events/constructors/pop-state-event-constructor.html: Added.
+        * platform/chromium/test_expectations.txt: Skipped pop-state-event-constructor.html, since V8 does not yet have the PopStateEvent constructor.
+
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] remove duplicate entries in test_expectations.txt
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-15  Mihai Parparita  <mihaip@chromium.org>
+
+        Fragment navigations should interrupt a provisional load of a different document
+        https://bugs.webkit.org/show_bug.cgi?id=64556
+
+        Reviewed by Adam Barth.
+
+        Required page-dismissal-modal-dialogs-iframe.html to be updated since
+        the dummy <a href="#"> link was clicked after the provisional load was
+        kicked off, thus causing it to to be aborted.
+
+        * fast/loader/page-dismissal-modal-dialogs.html:
+        * fast/loader/resources/page-dismissal-modal-dialogs-iframe.html:
+        * http/tests/history/back-with-fragment-change-expected.txt: Added.
+        * http/tests/history/back-with-fragment-change.php: Added.
+        * http/tests/history/resources/back-with-fragment-change-target.html: Added.
+        * http/tests/navigation/navigation-interrupted-by-fragment-expected.txt: Added.
+        * http/tests/navigation/navigation-interrupted-by-fragment.html: Added.
+
+2011-09-15  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] skipping tests due to r95188
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-15  Kentaro Hara  <haraken@google.com>
+
+        A single line must not be split into two pages.
+        https://bugs.webkit.org/show_bug.cgi?id=65005
+
+        Reviewed by David Hyatt.
+
+        When the document width of a page is overflowed, the last line of the page can be
+        split into the next page. This is the regression caused by r88737. r88737 tried to
+        fix rounding errors in rendering calculations by expanding and shrinking a page
+        using one common method, resizePageRectsKeepingRatio(), but overlooked the case where
+        a document width gets overflowed.
+
+        The added test checks if the last line does not split across pages.
+
+        * platform/chromium/test_expectations.txt: Skipped the added test since setPrinting() is not yet implemented.
+        * platform/gtk/Skipped: Ditto.
+        * platform/mac/printing/single-line-must-not-be-split-into-two-pages-expected.txt: Added.
+        * platform/qt/Skipped: Ditto.
+        * platform/win/Skipped: Ditto.
+        * platform/wk2/Skipped: Ditto.
+        * printing/single-line-must-not-be-split-into-two-pages.html: Added.
+
+2011-09-15  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=27579
+        
+        Make sure that the border shorthand also resets border-image.
+
+        Reviewed by Beth Dakin.
+
+        * fast/borders/border-image-reset-by-border-shorthand-expected.txt: Added.
+        * fast/borders/border-image-reset-by-border-shorthand.html: Added.
+        * fast/borders/border-image-scaled-gradient.html:
+
+2011-09-15  David Levin  <levin@chromium.org>
+
+        [chromium] Rebaselines due to r95203 and r95207.
+
+        Also misc test_expectations additions.
+
+        * platform/chromium-cg-mac/fast/box-shadow/no-blur-multiple-offsets-expected.png: Added.
+        * platform/chromium-linux/fast/box-shadow/no-blur-multiple-offsets-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/no-blur-multiple-offsets-expected.png: Added.
+        * platform/chromium-win/fast/box-shadow/no-blur-multiple-offsets-expected.png: Added.
+        * platform/chromium/fast/dom/NodeList/nodelist-item-call-as-function-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-09-15  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=50072
+        
+        Make overflow clipping to border-radius work across layers. This patch makes painting
+        work but does not attempt to fix hit testing. It also doesn't work when a composited
+        layer is clipped by a non-composited ancestor.
+
+        Add a new ClipRect class (used by ClipRects and RenderLayer) that is basically just tracking
+        a rect and a border radius taint. At the time we set a clip, if the rectangle is listed
+        as also being clipped by a radius, then we walk up the layer tree and push those inner border
+        rounded rect clips for any overflow areas in the containing block chain.
+
+        Reviewed by Beth Dakin.
+
+        * fast/clip/overflow-border-radius-combinations.html: Added.
+        * fast/clip/overflow-border-radius-composited.html: Added.
+        * fast/clip/overflow-border-radius-transformed.html: Added.
+        * platform/mac/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/mac/fast/clip/overflow-border-radius-combinations-expected.txt: Added.
+        * platform/mac/fast/clip/overflow-border-radius-composited-expected.png: Added.
+        * platform/mac/fast/clip/overflow-border-radius-composited-expected.txt: Added.
+        * platform/mac/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+        * platform/mac/fast/clip/overflow-border-radius-transformed-expected.txt: Added.
+
+2011-09-15  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Test for: Crash in RenderBox::paintMaskImages due to a mask without an associated image
+        https://bugs.webkit.org/show_bug.cgi?id=50151
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/empty-webkit-mask-crash-expected.png: Added.
+        * fast/css/empty-webkit-mask-crash-expected.txt: Added.
+        * fast/css/empty-webkit-mask-crash.html: Added.
+
+2011-09-15  Andy Estes  <aestes@apple.com>
+
+        Having an empty listener to beforeload events changes the behavior of other scripts
+        https://bugs.webkit.org/show_bug.cgi?id=45586
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/beforeload/cached-image-before-load-expected.txt: Added.
+        * fast/dom/beforeload/cached-image-before-load.html: Added.
+
+2011-09-15  Jon Lee  <jonlee@apple.com>
+
+        Submitting a form with target=_blank works only once
+        https://bugs.webkit.org/show_bug.cgi?id=28633
+        <rdar://problem/7357787>
+
+        Reviewed by Andy Estes.
+
+        New test that simulates mouse clicking submit button twice (which didn't work), as well as using the keyboard twice (which did work).
+
+        * fast/forms/resources/submit-to-blank-multiple-times-form-action.html: Added.
+        * fast/forms/submit-to-blank-multiple-times-expected.txt: Added.
+        * fast/forms/submit-to-blank-multiple-times.html: Added.
+
+2011-09-15  David Levin  <levin@chromium.org>
+
+        [chromium] Add missing GPU-CG to one of the expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-15  Peter Rybin  <peter.rybin@gmail.com>
+
+        XMLDocumentParserQt.cpp incorrectly converts 0-based number into 1-based number
+        https://bugs.webkit.org/show_bug.cgi?id=63540
+
+        Bug is fixed, incorrect test expectations are properly fixed (line
+        number '0' is reported no more).
+
+        Reviewed by Adam Barth.
+
+        * fast/parser/changing-attrbutes-crash-expected.txt:
+        * html5lib/runner-expected.txt:
+        * platform/chromium/html5lib/runner-expected.txt:
+        * svg/custom/invalid-length-units-expected.txt:
+        * svg/custom/poly-parsing-error-expected.txt:
+        * svg/custom/svg-parse-overflow-1-expected.txt:
+        * svg/custom/svg-parse-overflow-2-expected.txt:
+        * svg/custom/svg-parse-overflow-3-expected.txt:
+        * svg/custom/svg-parse-overflow-4-expected.txt:
+        * svg/custom/svg-parse-overflow-5-expected.txt:
+        * svg/dom/fuzz-path-parser-expected.txt:
+        * svg/dom/path-parser-expected.txt:
+        * svg/dom/points-parser-expected.txt:
+
+2011-09-15  Matthew Delaney  <mdelaney@apple.com>
+
+        REGRESSION (Safari 5.1-r95043): Incorrect box-shadow offset
+        https://bugs.webkit.org/show_bug.cgi?id=68041
+
+        Reviewed by Dan Bernstein.
+
+        * fast/box-shadow/no-blur-multiple-offsets-expected.txt: Added.
+        * fast/box-shadow/no-blur-multiple-offsets.html: Added.
+        * platform/mac/fast/box-shadow/no-blur-multiple-offsets-expected.png: Added.
+
+2011-09-15  James Simonsen  <simonjam@chromium.org>
+
+        Ref protect HTMLObjectElement and HTMLEmbedElement while requesting plugins
+        https://bugs.webkit.org/show_bug.cgi?id=68014
+
+        Reviewed by Adam Barth.
+
+        * plugins/destroy-during-npp-new-object-with-fallback-content-expected.txt: Added.
+        * plugins/destroy-during-npp-new-object-with-fallback-content.html: Added. Derivative of destroy-during-npp-new.html.
+
+2011-09-14  Sam Weinig  <sam@webkit.org>
+
+        Experiment with removing ability to call a collection (except document.all)
+        https://bugs.webkit.org/show_bug.cgi?id=67579
+
+        Reviewed by Anders Carlsson.
+
+        * fast/dom/Element/id-in-formcollection-expected.txt:
+        * fast/dom/Element/id-in-formcollection.html:
+        * fast/dom/HTMLOptionElement/collection-setter-getter-expected.txt:
+        * fast/dom/HTMLOptionElement/collection-setter-getter.html:
+        Don't use call syntax for tests that aren't explicitly testing it.
+
+        * fast/dom/NodeList/nodelist-item-call-as-function-expected.txt:
+        * fast/dom/NodeList/script-tests/nodelist-item-call-as-function.js:
+        Update test to show that we throw on call.
+
+        * fast/profiler/call-nodelist-as-function-expected.txt: Removed.
+        * fast/profiler/call-nodelist-as-function.html: Removed.
+        Remove test of removed feature.
+
+2011-09-15  David Levin  <levin@chromium.org>
+
+        [chromium] Add temporary exception while bots catch up to r95203.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-15  David Levin  <levin@chromium.org>
 
         [chromium] Add expectation for flaky tests.

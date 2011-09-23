@@ -148,7 +148,6 @@ namespace JSC {
 
         bool isHostFunctionNonInline() const;
 
-        virtual void preventExtensions(JSGlobalData&);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);

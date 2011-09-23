@@ -1,8 +1,8 @@
 CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
 CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
-CONSOLE MESSAGE: line 0: Warning: Problem parsing viewBox=""
-CONSOLE MESSAGE: line 0: Warning: Problem parsing viewBox=""
-CONSOLE MESSAGE: line 0: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 1: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 1: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 1: Warning: Problem parsing viewBox=""
 CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
 CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
 CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <

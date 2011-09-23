@@ -643,7 +643,7 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
 #endif
         if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
             cssAgent->reset();
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         if (InspectorDatabaseAgent* databaseAgent = instrumentingAgents->inspectorDatabaseAgent())
             databaseAgent->clearResources();
 #endif
@@ -751,7 +751,7 @@ bool InspectorInstrumentation::profilerEnabledImpl(InstrumentingAgents* instrume
 }
 #endif
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 void InspectorInstrumentation::didOpenDatabaseImpl(InstrumentingAgents* instrumentingAgents, PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
 {
     InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent();

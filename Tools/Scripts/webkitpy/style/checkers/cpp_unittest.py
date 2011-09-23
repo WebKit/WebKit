@@ -615,6 +615,11 @@ class FunctionDetectionTest(CppStyleTestBase):
 
 class CppStyleTest(CppStyleTestBase):
 
+    def test_asm_lines_ignored(self):
+        self.assert_lint(
+            '__asm mov [registration], eax',
+            '')
+
     # Test get line width.
     def test_get_line_width(self):
         self.assertEquals(0, cpp_style.get_line_width(''))

@@ -29,7 +29,7 @@
 #include "config.h"
 #include "ChromeClientWx.h"
 #include "Console.h"
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 #include "DatabaseTracker.h"
 #endif
 #include "FileChooser.h"
@@ -420,7 +420,7 @@ void ChromeClientWx::print(Frame* frame)
     }
 }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 void ChromeClientWx::exceededDatabaseQuota(Frame*, const String&)
 {
     unsigned long long quota = 5 * 1024 * 1024;

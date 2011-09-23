@@ -472,11 +472,11 @@ single
 multiple
 
 // CSS_PROP_FLEX_ALIGN
-before
-after
-// middle
-// stretch
+// start
+// end
+// center
 // baseline
+// stretch
 
 // CSS_PROP_FLEX_FLOW
 // FIXME: Add the wrap values.

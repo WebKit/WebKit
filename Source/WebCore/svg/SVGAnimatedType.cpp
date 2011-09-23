@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+#if ENABLE(SVG)
 #include "SVGAnimatedType.h"
 
 #include "FloatRect.h"
@@ -430,4 +430,4 @@ void SVGAnimatedType::setPreserveAspectRatioBaseValue(const SVGPreserveAspectRat
     
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+#endif // ENABLE(SVG)

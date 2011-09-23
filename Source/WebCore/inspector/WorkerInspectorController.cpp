@@ -101,7 +101,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
 {
     m_injectedScriptManager->injectedScriptHost()->init(0
         , 0
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         , 0
 #endif
 #if ENABLE(DOM_STORAGE)
@@ -138,7 +138,7 @@ void WorkerInspectorController::connectFrontend()
 #if ENABLE(DOM_STORAGE)
         0, // InspectorDOMStorageAgent
 #endif
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         0, // InspectorDatabaseAgent
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)

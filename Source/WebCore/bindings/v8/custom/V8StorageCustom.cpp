@@ -102,8 +102,7 @@ static v8::Handle<v8::Value> storageSetter(v8::Local<v8::String> v8Name, v8::Loc
     if (name == "length")
         return v8Value;
 
-    v8::Handle<v8::Value> prototypeValue = info.Holder()->GetRealNamedPropertyInPrototypeChain(v8Name);
-    if (!prototypeValue.IsEmpty())
+    if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(v8Name).IsEmpty())
         return notHandledByInterceptor();
 
     ExceptionCode ec = 0;

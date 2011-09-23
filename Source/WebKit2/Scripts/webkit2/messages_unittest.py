@@ -24,6 +24,7 @@ import unittest
 from StringIO import StringIO
 
 import messages
+import parser
 
 _messages_file_contents = """# Copyright (C) 2010 Apple Inc. All rights reserved.
 #
@@ -70,6 +71,8 @@ messages -> WebPage {
 
     TestMultipleAttributes() -> () DispatchOnConnectionQueue Delayed
     TestConnectionQueue(uint64_t pluginID) DispatchOnConnectionQueue
+
+    TestParameterAttributes([AttributeOne AttributeTwo] uint64_t foo, double bar, [AttributeThree] double baz)
 
 #if PLATFORM(MAC)
     DidCreateWebProcessConnection(CoreIPC::MachPort connectionIdentifier)
@@ -203,6 +206,15 @@ _expected_results = {
             'conditions': (None),
         },
         {
+            'name': 'TestParameterAttributes',
+            'parameters': (
+                ('uint64_t', 'foo', ('AttributeOne', 'AttributeTwo')),
+                ('double', 'bar'),
+                ('double', 'baz', ('AttributeThree',)),
+            ),
+            'conditions': (None),
+        },
+        {
             'name': 'DidCreateWebProcessConnection',
             'parameters': (
                 ('CoreIPC::MachPort', 'connectionIdentifier'),
@@ -239,7 +251,7 @@ _expected_results = {
 
 class MessagesTest(unittest.TestCase):
     def setUp(self):
-        self.receiver = messages.MessageReceiver.parse(StringIO(_messages_file_contents))
+        self.receiver = parser.parse(StringIO(_messages_file_contents))
 
 
 class ParsingTest(MessagesTest):
@@ -247,8 +259,15 @@ class ParsingTest(MessagesTest):
         self.assertEquals(message.name, expected_message['name'])
         self.assertEquals(len(message.parameters), len(expected_message['parameters']))
         for index, parameter in enumerate(message.parameters):
-            self.assertEquals(parameter.type, expected_message['parameters'][index][0])
-            self.assertEquals(parameter.name, expected_message['parameters'][index][1])
+            expected_parameter = expected_message['parameters'][index]
+            self.assertEquals(parameter.type, expected_parameter[0])
+            self.assertEquals(parameter.name, expected_parameter[1])
+            if len(expected_parameter) > 2:
+                self.assertEquals(parameter.attributes, frozenset(expected_parameter[2]))
+                for attribute in expected_parameter[2]:
+                    self.assertTrue(parameter.has_attribute(attribute))
+            else:
+                self.assertEquals(parameter.attributes, frozenset())
         if message.reply_parameters != None:
             for index, parameter in enumerate(message.reply_parameters):
                 self.assertEquals(parameter.type, expected_message['reply_parameters'][index][0])
@@ -339,6 +358,7 @@ enum Kind {
     GetPluginProcessConnectionID,
     TestMultipleAttributesID,
     TestConnectionQueueID,
+    TestParameterAttributesID,
 #if PLATFORM(MAC)
     DidCreateWebProcessConnectionID,
 #endif
@@ -487,6 +507,15 @@ struct TestConnectionQueue : CoreIPC::Arguments1<uint64_t> {
     typedef CoreIPC::Arguments1<uint64_t> DecodeType;
     explicit TestConnectionQueue(uint64_t pluginID)
         : CoreIPC::Arguments1<uint64_t>(pluginID)
+    {
+    }
+};
+
+struct TestParameterAttributes : CoreIPC::Arguments3<uint64_t, double, double> {
+    static const Kind messageID = TestParameterAttributesID;
+    typedef CoreIPC::Arguments3<uint64_t, double, double> DecodeType;
+    TestParameterAttributes(uint64_t foo, double bar, double baz)
+        : CoreIPC::Arguments3<uint64_t, double, double>(foo, bar, baz)
     {
     }
 };
@@ -699,6 +728,9 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID 
         return;
     case Messages::WebPage::SendIntsID:
         CoreIPC::handleMessage<Messages::WebPage::SendInts>(arguments, this, &WebPage::sendInts);
+        return;
+    case Messages::WebPage::TestParameterAttributesID:
+        CoreIPC::handleMessage<Messages::WebPage::TestParameterAttributes>(arguments, this, &WebPage::testParameterAttributes);
         return;
 #if PLATFORM(MAC)
     case Messages::WebPage::DidCreateWebProcessConnectionID:

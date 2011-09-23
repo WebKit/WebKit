@@ -67,6 +67,7 @@ fast/loader/stop-provisional-loads.html
 
 # ENABLE(FULLSCREEN_API) is disabled.
 fullscreen
+plugins/fullscreen-plugins-dont-reload.html
 
 # ENABLE(INPUT_COLOR) is disabled.
 fast/forms/color
@@ -85,6 +86,7 @@ storage/indexeddb
 
 # ENABLE(REQUEST_ANIMATION_FRAME) is disabled.
 fast/animation
+inspector/timeline/timeline-animation-frame.html
 
 # ENABLE(ANIMATION_API) is disabled.
 animations/animation-api-1.html
@@ -1683,6 +1685,7 @@ fast/dom/beforeload/remove-video-in-beforeload-listener.html
 
 # Need setPrinting. See https://bugs.webkit.org/show_bug.cgi?id=20011
 printing/setPrinting.html
+printing/single-line-must-not-be-split-into-two-pages.html
 
 # Web Timing related bugs
 # https://bugs.webkit.org/show_bug.cgi?id=51245
@@ -2423,3 +2426,11 @@ css3/unicode-bidi-isolate-basic.html
 # new test introduced in r94828, but fails on Qt.
 # https://bugs.webkit.org/show_bug.cgi?id=66588
 http/tests/security/xssAuditor/script-tag-with-16bit-unicode4.html
+
+# [Qt] One test failed after r95203
+# https://bugs.webkit.org/show_bug.cgi?id=68233
+editing/pasteboard/paste-noscript.html
+
+# Fails on non-Chromium bots
+# https://bugs.webkit.org/show_bug.cgi?id=68278
+http/tests/history/back-with-fragment-change.php

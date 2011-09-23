@@ -150,6 +150,11 @@ public:
 
     void setContentsTextureMemoryUseBytes(size_t contentsTextureMemoryUseBytes) { m_contentsTextureMemoryUseBytes = contentsTextureMemoryUseBytes; }
 
+    static void toGLMatrix(float*, const TransformationMatrix&);
+    void drawTexturedQuad(const TransformationMatrix& layerMatrix,
+                          float width, float height, float opacity, const FloatQuad&,
+                          int matrixLocation, int alphaLocation, int quadLocation);
+
 private:
     LayerRendererChromium(CCLayerTreeHostImpl*, PassRefPtr<GraphicsContext3D>);
     bool initialize();

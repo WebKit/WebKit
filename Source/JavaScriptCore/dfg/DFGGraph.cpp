@@ -77,7 +77,7 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     //         id#  - the index in the CodeBlock of an identifier { if codeBlock is passed to dump(), the string representation is displayed }.
     //         var# - the index of a var on the global object, used by GetGlobalVar/PutGlobalVar operations.
     printf("% 4d:%s<%c%u:", (int)nodeIndex, skipped ? "  skipped  " : "           ", mustGenerate ? '!' : ' ', refCount);
-    if (node.hasResult() && !skipped)
+    if (node.hasResult() && !skipped && node.hasVirtualRegister())
         printf("%u", node.virtualRegister());
     else
         printf("-");
@@ -123,7 +123,7 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     if (op == JSConstant) {
         printf("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
         if (codeBlock) {
-            JSValue value = node.valueOfJSConstant(codeBlock);
+            JSValue value = valueOfJSConstant(codeBlock, nodeIndex);
             printf(" = %s", value.description());
         }
         hasPrinted = true;
@@ -143,10 +143,14 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     if (!skipped) {
         if (node.hasLocal())
             printf("  predicting %s", predictionToString(getPrediction(node.local())));
-        if (node.hasVarNumber())
+        else if (node.hasVarNumber())
             printf("  predicting %s", predictionToString(getGlobalVarPrediction(node.varNumber())));
-        if (node.hasPrediction())
+        else if (node.hasPrediction())
             printf("  predicting %s", predictionToString(node.getPrediction()));
+        else if (node.hasMethodCheckData()) {
+            MethodCheckData& methodCheckData = m_methodCheckData[node.methodCheckDataIndex()];
+            printf("  predicting function %p", methodCheckData.function);
+        }
     }
     
     printf("\n");
@@ -207,9 +211,8 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
         }
     }
     
-#if ENABLE(DYNAMIC_OPTIMIZATION)
     ASSERT(codeBlock);
-    ASSERT(codeBlock->alternative);
+    ASSERT(codeBlock->alternative());
 
     CodeBlock* profiledCodeBlock = codeBlock->alternative();
     ASSERT(codeBlock->m_numParameters >= 1);
@@ -224,9 +227,6 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
         printf("Argument [%lu] prediction: %s\n", arg, predictionToString(m_predictions.getArgumentPrediction(arg)));
 #endif
     }
-#else
-    UNUSED_PARAM(codeBlock);
-#endif
 }
 
 } } // namespace JSC::DFG

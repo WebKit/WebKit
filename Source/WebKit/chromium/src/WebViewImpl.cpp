@@ -475,8 +475,6 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
             m_mouseCaptureNode = hitNode;
     }
 
-    mainFrameImpl()->frame()->loader()->resetMultipleFormSubmissionProtection();
-
     mainFrameImpl()->frame()->eventHandler()->handleMousePressEvent(
         PlatformMouseEventBuilder(mainFrameImpl()->frameView(), event));
 
@@ -1172,6 +1170,10 @@ void WebViewImpl::composite(bool)
     if (m_pageOverlay)
         m_pageOverlay->update();
 
+    // FIXME: Temporary diagnostic for crbug 96719. This shouldn't happen.
+    if (!m_layerTreeHost)
+        CRASH();
+
     m_layerTreeHost->composite();
 #endif
 #endif
@@ -1780,10 +1782,7 @@ void WebViewImpl::setInitialFocus(bool reverse)
 
 void WebViewImpl::clearFocusedNode()
 {
-    if (!m_page.get())
-        return;
-
-    RefPtr<Frame> frame = m_page->mainFrame();
+    RefPtr<Frame> frame = focusedWebCoreFrame();
     if (!frame.get())
         return;
 
@@ -1817,6 +1816,21 @@ void WebViewImpl::scrollFocusedNodeIntoView()
         Element* elementNode = static_cast<Element*>(focusedNode);
         elementNode->scrollIntoViewIfNeeded(true);
     }
+}
+
+void WebViewImpl::scrollFocusedNodeIntoRect(const WebRect& rect)
+{
+    Node* focusedNode = focusedWebCoreNode();
+    if (!focusedNode || !focusedNode->isElementNode())
+        return;
+    Element* elementNode = static_cast<Element*>(focusedNode);
+    LayoutRect bounds = elementNode->boundsInWindowSpace();
+    int centeringOffsetX = (rect.width - bounds.width()) / 2;
+    int centeringOffsetY = (rect.height - bounds.height()) / 2;
+    IntSize scrollOffset(bounds.x() - centeringOffsetX, bounds.y() - centeringOffsetY);
+    Frame* frame = mainFrameImpl()->frame();
+    if (frame && frame->view())
+        frame->view()->scrollBy(scrollOffset);
 }
 
 double WebViewImpl::zoomLevel()

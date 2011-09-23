@@ -382,7 +382,7 @@ PassRefPtr<InspectorObject> InspectorResourceAgent::buildInitiatorObject(Documen
         RefPtr<InspectorObject> initiatorObject = InspectorObject::create();
         initiatorObject->setString("type", "parser");
         initiatorObject->setString("url", document->url().string());
-        initiatorObject->setNumber("lineNumber", document->scriptableDocumentParser()->lineNumber() + 1);
+        initiatorObject->setNumber("lineNumber", document->scriptableDocumentParser()->lineNumber().oneBasedInt());
         return initiatorObject;
     }
 

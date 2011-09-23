@@ -63,7 +63,7 @@
 #include <gtk/gtk.h>
 #include <wtf/text/CString.h>
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 #include "DatabaseTracker.h"
 #endif
 
@@ -576,7 +576,7 @@ void ChromeClient::print(Frame* frame)
     webkit_web_frame_print(webFrame);
 }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 void ChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {
     guint64 defaultQuota = webkit_get_default_web_database_quota();

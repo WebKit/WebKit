@@ -30,7 +30,7 @@
 #include "WebDatabaseManager.h"
 #include "WebKitDLL.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "CFDictionaryPropertyBag.h"
 #include "COMEnumVariant.h"

@@ -28,7 +28,7 @@
 #include "config.h"
 #include "OriginUsageRecord.h"
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "SQLiteFileSystem.h"
 

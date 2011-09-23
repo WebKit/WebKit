@@ -37,26 +37,26 @@ namespace WebCore {
 
     class StringSourceProvider : public ScriptSourceProvider {
     public:
-        static PassRefPtr<StringSourceProvider> create(const String& source, const String& url, const TextPosition1& startPosition = TextPosition1::minimumPosition())
+        static PassRefPtr<StringSourceProvider> create(const String& source, const String& url, const TextPosition& startPosition = TextPosition::minimumPosition())
         {
             return adoptRef(new StringSourceProvider(source, url, startPosition));
         }
 
-        virtual TextPosition1 startPosition() const { return m_startPosition; }
+        virtual TextPosition startPosition() const { return m_startPosition; }
         JSC::UString getRange(int start, int end) const { return JSC::UString(m_source.characters() + start, end - start); }
         const UChar* data() const { return m_source.characters(); }
         int length() const { return m_source.length(); }
         const String& source() const { return m_source; }
 
     private:
-        StringSourceProvider(const String& source, const String& url, const TextPosition1& startPosition)
+        StringSourceProvider(const String& source, const String& url, const TextPosition& startPosition)
             : ScriptSourceProvider(stringToUString(url))
             , m_startPosition(startPosition)
             , m_source(source)
         {
         }
         
-        TextPosition1 m_startPosition;
+        TextPosition m_startPosition;
         String m_source;
     };
 

@@ -327,6 +327,7 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
     if (!renderer())
         return;
 
+    RefPtr<HTMLObjectElement> protect(this); // Loading the plugin might remove us from the document.
     SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
     bool success = beforeLoadAllowedLoad && hasValidClassId() && loader->requestObject(this, url, getAttribute(nameAttr), serviceType, paramNames, paramValues);
 

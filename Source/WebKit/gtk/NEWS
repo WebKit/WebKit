@@ -1,3 +1,16 @@
+=================
+WebKitGTK+ 1.5.90
+=================
+
+What's new in WebKitGTK+ 1.5.90?
+
+  - Bumped GStreamer requirement to 0.10.30.
+  - Switch to GTK+3 by default. GTK+2 is still required for the
+    WebKit2 plugin process though.
+  - Create pot files in builddir.
+  - Improvements in the WebKit2GTK+ port.
+  - Lots of bugfixes.
+
 ================
 WebKitGTK+ 1.5.2
 ================

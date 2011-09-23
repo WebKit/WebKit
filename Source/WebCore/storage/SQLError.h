@@ -29,7 +29,7 @@
 #ifndef SQLError_h
 #define SQLError_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 #include "PlatformString.h"
 #include <wtf/ThreadSafeRefCounted.h>

@@ -37,7 +37,6 @@ DECLARE_ANIMATED_PROPERTY(SVGAnimatedRect, FloatRect, UpperProperty, LowerProper
 #define DEFINE_ANIMATED_RECT(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(AnimatedRect, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
 
-#if ENABLE(SVG_ANIMATION)
 class SVGAnimationElement;
 
 class SVGAnimatedRectAnimator : public SVGAnimatedTypeAnimator {
@@ -56,7 +55,6 @@ public:
 
     static bool parseSVGRect(const String&, FloatRect&);
 };
-#endif // ENABLE(SVG_ANIMATION)
 
 } // namespace WebCore
 

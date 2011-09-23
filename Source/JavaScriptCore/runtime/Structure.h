@@ -119,7 +119,10 @@ namespace JSC {
         bool isDictionary() const { return m_dictionaryKind != NoneDictionaryKind; }
         bool isUncacheableDictionary() const { return m_dictionaryKind == UncachedDictionaryKind; }
 
+        // Type accessors.
         const TypeInfo& typeInfo() const { ASSERT(structure()->classInfo() == &s_info); return m_typeInfo; }
+        bool isObject() const { return typeInfo().isObject(); }
+
 
         JSGlobalObject* globalObject() const { return m_globalObject.get(); }
         void setGlobalObject(JSGlobalData& globalData, JSGlobalObject* globalObject) { m_globalObject.set(globalData, this, globalObject); }
@@ -130,6 +133,7 @@ namespace JSC {
         void visitChildren(SlotVisitor&);
 
         Structure* previousID() const { ASSERT(structure()->classInfo() == &s_info); return m_previous.get(); }
+        bool transitivelyTransitionedFrom(Structure* structureToFind);
 
         void growPropertyStorageCapacity();
         unsigned propertyStorageCapacity() const { ASSERT(structure()->classInfo() == &s_info); return m_propertyStorageCapacity; }
@@ -304,7 +308,7 @@ namespace JSC {
 
     inline bool JSCell::isObject() const
     {
-        return m_structure->typeInfo().type() == ObjectType;
+        return m_structure->isObject();
     }
 
     inline bool JSCell::isString() const
@@ -319,7 +323,13 @@ namespace JSC {
 
     inline bool JSCell::isAPIValueWrapper() const
     {
-        return m_structure->typeInfo().type() == APIValueWrapper;
+        return m_structure->typeInfo().type() == APIValueWrapperType;
+    }
+
+    inline void JSCell::setStructure(JSGlobalData& globalData, Structure* structure)
+    {
+        ASSERT(structure->typeInfo().overridesVisitChildren() == this->structure()->typeInfo().overridesVisitChildren());
+        m_structure.set(globalData, this, structure);
     }
 
     inline const ClassInfo* JSCell::classInfo() const
@@ -347,6 +357,15 @@ namespace JSC {
         // When either of the parameters are bitfields, the C++ compiler will try to bind them as lvalues, which is invalid. To work around this, use unary "+" to make the parameter an rvalue.
         // See https://bugs.webkit.org/show_bug.cgi?id=59261 for more details.
         return Hash::Key(structure->m_nameInPrevious.get(), +structure->m_attributesInPrevious);
+    }
+
+    inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
+    {
+        for (Structure* current = this; current; current = current->previousID()) {
+            if (current == structureToFind)
+                return true;
+        }
+        return false;
     }
 
 } // namespace JSC

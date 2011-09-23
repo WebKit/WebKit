@@ -174,6 +174,10 @@ public:
     // Scrolls the node currently in focus into view.
     virtual void scrollFocusedNodeIntoView() = 0;
 
+    // Scrolls the node currently in focus into |rect|, where |rect| is in
+    // screen space.
+    virtual void scrollFocusedNodeIntoRect(const WebRect& rect) { }
+
 
     // Zoom ----------------------------------------------------------------
 

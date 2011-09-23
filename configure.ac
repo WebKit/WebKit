@@ -2,14 +2,14 @@ AC_PREREQ(2.59)
 
 m4_define([webkit_major_version], [1])
 m4_define([webkit_minor_version], [5])
-m4_define([webkit_micro_version], [2])
+m4_define([webkit_micro_version], [90])
 
 # This is the version we'll be using as part of our User-Agent string
 # e.g., AppleWebKit/$(webkit_user_agent_version) ...
 #
 # Sourced from Source/WebCore/Configurations/Version.xcconfig
-m4_define([webkit_user_agent_major_version], [534])
-m4_define([webkit_user_agent_minor_version], [26])
+m4_define([webkit_user_agent_major_version], [535])
+m4_define([webkit_user_agent_minor_version], [4])
 
 AC_INIT([WebKit],[webkit_major_version.webkit_minor_version.webkit_micro_version],[http://bugs.webkit.org/])
 
@@ -35,7 +35,7 @@ AC_CONFIG_SRCDIR([Source/WebCore/config.h])
 
 dnl # Libtool library version, not to confuse with API version
 dnl # see http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html
-LIBWEBKITGTK_VERSION=9:0:9
+LIBWEBKITGTK_VERSION=9:1:9
 AC_SUBST([LIBWEBKITGTK_VERSION])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects tar-ustar])
@@ -494,21 +494,13 @@ AC_ARG_ENABLE(input_speech,
               [],[enable_input_speech="no"])
 AC_MSG_RESULT([$enable_input_speech])
 
-# check whether to build with database support
-AC_MSG_CHECKING([whether to enable HTML5 client-side database storage support])
-AC_ARG_ENABLE(database,
-              AC_HELP_STRING([--enable-database],
-                             [enable HTML5 client-side database storage support [default=yes]]),
-              [],[enable_database="yes"])
-AC_MSG_RESULT([$enable_database])
-
-# check whether to build with server-sent events support
-AC_MSG_CHECKING([whether to enable HTML5 server-sent events support])
-AC_ARG_ENABLE(eventsource,
-              AC_HELP_STRING([--enable-eventsource],
-                             [enable HTML5 server-sent events support [default=yes]]),
-              [],[enable_eventsource="yes"])
-AC_MSG_RESULT([$enable_eventsource])
+# check whether to build with SQL database support
+AC_MSG_CHECKING([whether to enable SQL client-side database storage support])
+AC_ARG_ENABLE(sql_database,
+              AC_HELP_STRING([--enable-sql-database],
+                             [enable SQL client-side database storage support [default=yes]]),
+              [],[enable_sql_database="yes"])
+AC_MSG_RESULT([$enable_sql_database])
 
 # check whether to build with icon database support
 AC_MSG_CHECKING([whether to enable icon database support])
@@ -701,18 +693,8 @@ AC_MSG_RESULT([$enable_quota])
 
 # turn off svg features if --disable-svg is requested
 if test "$enable_svg" = "no"; then
-   enable_svg_animation=no
    enable_svg_fonts=no
-   enable_svg_as_image=no
 fi
-
-# check whether to enable support for SVG animation
-AC_MSG_CHECKING([whether to enable support for SVG animation])
-AC_ARG_ENABLE(svg_animation,
-              AC_HELP_STRING([--enable-svg-animation],
-                             [enable support for SVG animation (experimental) [default=yes]]),
-              [],[enable_svg_animation="yes"])
-AC_MSG_RESULT([$enable_svg_animation])
 
 # check whether to enable support for filters
 AC_MSG_CHECKING([whether to enable support for filters])
@@ -730,18 +712,8 @@ AC_ARG_ENABLE(svg_fonts,
               [],[enable_svg_fonts="yes"])
 AC_MSG_RESULT([$enable_svg_fonts])
 
-# check whether to enable SVG As Image support
-AC_MSG_CHECKING([whether to enable SVG as Image support])
-AC_ARG_ENABLE(svg_as_image,
-              AC_HELP_STRING([--enable-svg-as-image],
-                             [enable SVG as Image support (experimental) [default=yes]]),
-              [],[enable_svg_as_image="yes"])
-AC_MSG_RESULT([$enable_svg_as_image])
-
 # check for SVG features, enabling SVG if necessary
-if test "$enable_svg_animation" = "yes" || \
-   test "$enable_svg_fonts" = "yes" || \
-   test "$enable_svg_as_image" = "yes"; then
+if test "$enable_svg_fonts" = "yes"; then
    svg_flags=yes
    if test "$enable_svg" = "no"; then
        AC_MSG_WARN([SVG feature(s) requested but SVG is disabled.. Enabling SVG support])
@@ -1023,7 +995,7 @@ AC_SUBST([SQLITE3_CFLAGS])
 AC_SUBST([SQLITE3_LIBS])
 
 if (test "$sqlite3_found" = "no") && (test "$enable_icon_database" = "yes" || \
-   test "$enable_database" = "yes" || \
+   test "$enable_sql_database" = "yes" || \
    test "$enable_offline_web_applications" = "yes" || \
    test "$enable_dom_storage" = "yes"); then
    AC_MSG_ERROR([SQLite3 is required for the Database related features])
@@ -1083,8 +1055,8 @@ fi
 # WebKit2
 AC_MSG_CHECKING([whether to build Webkit2])
 AC_ARG_ENABLE(webkit2,
-    AC_HELP_STRING([--enable-webkit2], [build webkit2 [default=yes]]),
-    [], [enable_webkit2="yes"])
+    AC_HELP_STRING([--enable-webkit2], [build webkit2 [default=no]]),
+    [], [enable_webkit2="no"])
 AC_MSG_RESULT([$enable_webkit2])
 if test "$enable_webkit2" = "yes"; then
    if test "$GTK_API_VERSION" = "2.0"; then
@@ -1152,10 +1124,9 @@ AM_CONDITIONAL([ENABLE_DIRECTORY_UPLOAD],[test "$enable_directory_upload" = "yes
 AM_CONDITIONAL([ENABLE_DATAGRID],[test "$enable_datagrid" = "yes"])
 AM_CONDITIONAL([ENABLE_DATA_TRANSFER_ITEMS],[test "$enable_data_transfer_items" = "yes"])
 AM_CONDITIONAL([ENABLE_DOM_STORAGE],[test "$enable_dom_storage" = "yes"])
-AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
+AM_CONDITIONAL([ENABLE_SQL_DATABASE],[test "$enable_sql_database" = "yes"])
 AM_CONDITIONAL([ENABLE_DATALIST],[test "$enable_datalist" = "yes"])
 AM_CONDITIONAL([ENABLE_DETAILS],[test "$enable_details" = "yes"])
-AM_CONDITIONAL([ENABLE_EVENTSOURCE],[test "$enable_eventsource" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MOBILE_SCROLLING],[test "$enable_fast_mobile_scrolling" = "yes"])
 AM_CONDITIONAL([ENABLE_FILE_SYSTEM],[test "$enable_file_system" = "yes"])
 AM_CONDITIONAL([ENABLE_QUOTA],[test "$enable_quota" = "yes"])
@@ -1181,9 +1152,7 @@ AM_CONDITIONAL([ENABLE_MEDIA_STREAM],[test "$enable_media_stream" = "yes"])
 AM_CONDITIONAL([ENABLE_NOTIFICATIONS],[test "$enable_notifications" = "yes"])
 AM_CONDITIONAL([ENABLE_ORIENTATION_EVENTS],[test "$enable_orientation_events" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
-AM_CONDITIONAL([ENABLE_SVG_ANIMATION],[test "$enable_svg_animation" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
-AM_CONDITIONAL([ENABLE_SVG_AS_IMAGE],[test "$enable_svg_as_image" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WCSS],[test "$enable_wcss" = "yes"])
@@ -1226,6 +1195,15 @@ Source/JavaScriptCore/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc:Source/JavaS
 ,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
 )
 
+
+if test "$enable_webkit2" = "yes"; then
+    AC_CONFIG_FILES([
+    Source/WebKit2/webkit2gtk-${WEBKITGTK_API_VERSION}.pc:Source/WebKit2/webkit2gtk.pc.in
+    ]
+    ,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
+    )
+fi
+
 AC_OUTPUT
 
 echo "
@@ -1261,13 +1239,12 @@ Features:
  Page Visibility API support                              : $enable_page_visibility_api
  HTML5 progress element support                           : $enable_progress_tag
  HTML5 client-side session and persistent storage support : $enable_dom_storage
- HTML5 client-side database storage support               : $enable_database
+ SQL client-side database storage support                 : $enable_sql_database
  HTML5 datagrid support                                   : $enable_datagrid
  HTML5 data transfer items support                        : $enable_data_transfer_items
  HTML5 FileSystem API support                             : $enable_file_system
  Quota API support                                        : $enable_quota
  HTML5 sandboxed iframe support                           : $enable_sandbox
- HTML5 server-sent events support                         : $enable_eventsource
  HTML5 video element support                              : $enable_video
  HTML5 track element support                              : $enable_video_track
  Fullscreen API support                                   : $enable_fullscreen_api
@@ -1280,9 +1257,7 @@ Features:
  Color input support                                      : $enable_input_color
  Speech input support                                     : $enable_input_speech
  SVG support                                              : $enable_svg
- SVG animation support                                    : $enable_svg_animation
  SVG fonts support                                        : $enable_svg_fonts
- SVG as image support                                     : $enable_svg_as_image
  WCSS support                                             : $enable_wcss
  Web Audio support                                        : $enable_web_audio
  Web Sockets support                                      : $enable_web_sockets

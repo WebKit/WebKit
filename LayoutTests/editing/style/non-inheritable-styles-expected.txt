@@ -3,6 +3,6 @@ This tests copy.  Non-inheritable styles should be brought down from stylesheets
 | <div>
 |   class="class"
 |   id="id"
-|   style="border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid; border-top-color: blue; border-right-color: blue; border-bottom-color: blue; border-left-color: blue; "
+|   style="border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid; border-top-color: blue; border-right-color: blue; border-bottom-color: blue; border-left-color: blue; border-image: initial; "
 |   "This should have blue border when its pasted."
 | "This shouldn't have a border.<#selection-caret>"

@@ -45,7 +45,7 @@ class PendingScript : public CachedResourceClient {
 public:
     PendingScript()
         : m_watchingForLoad(false)
-        , m_startingPosition(TextPosition1::belowRangePosition())
+        , m_startingPosition(TextPosition::belowRangePosition())
     {
     }
 
@@ -80,8 +80,8 @@ public:
         return *this;
     }
 
-    TextPosition1 startingPosition() const { return m_startingPosition; }
-    void setStartingPosition(const TextPosition1& position) { m_startingPosition = position; }
+    TextPosition startingPosition() const { return m_startingPosition; }
+    void setStartingPosition(const TextPosition& position) { m_startingPosition = position; }
 
     bool watchingForLoad() const { return m_watchingForLoad; }
     void setWatchingForLoad(bool b) { m_watchingForLoad = b; }
@@ -98,7 +98,7 @@ public:
 private:
     bool m_watchingForLoad;
     RefPtr<Element> m_element;
-    TextPosition1 m_startingPosition; // Only used for inline script tags.
+    TextPosition m_startingPosition; // Only used for inline script tags.
     CachedResourceHandle<CachedScript> m_cachedScript; 
 };
 

@@ -48,7 +48,6 @@ JSDOMWindowBase::JSDOMWindowBase(JSGlobalData& globalData, Structure* structure,
     , m_impl(window)
     , m_shell(shell)
 {
-    finishCreation(globalData, shell);
 }
 
 void JSDOMWindowBase::finishCreation(JSGlobalData& globalData, JSDOMWindowShell* shell)

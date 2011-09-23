@@ -39,7 +39,7 @@ namespace WebCore {
 
 class JavaScriptCallFrame : public RefCounted<JavaScriptCallFrame> {
 public:
-    static PassRefPtr<JavaScriptCallFrame> create(const JSC::DebuggerCallFrame& debuggerCallFrame, PassRefPtr<JavaScriptCallFrame> caller, intptr_t sourceID, const TextPosition0& textPosition)
+    static PassRefPtr<JavaScriptCallFrame> create(const JSC::DebuggerCallFrame& debuggerCallFrame, PassRefPtr<JavaScriptCallFrame> caller, intptr_t sourceID, const TextPosition& textPosition)
     {
         return adoptRef(new JavaScriptCallFrame(debuggerCallFrame, caller, sourceID, textPosition));
     }
@@ -55,11 +55,11 @@ public:
     JavaScriptCallFrame* caller();
 
     intptr_t sourceID() const { return m_sourceID; }
-    const TextPosition0& position() const { return m_textPosition; }
+    const TextPosition& position() const { return m_textPosition; }
     int line() const { return m_textPosition.m_line.zeroBasedInt(); }
     int column() const { return m_textPosition.m_column.zeroBasedInt(); }
 
-    void update(const JSC::DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, const TextPosition0& textPosition)
+    void update(const JSC::DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, const TextPosition& textPosition)
     {
         m_debuggerCallFrame = debuggerCallFrame;
         m_textPosition = textPosition;
@@ -76,12 +76,12 @@ public:
     JSC::JSValue evaluate(const JSC::UString& script, JSC::JSValue& exception) const;
     
 private:
-    JavaScriptCallFrame(const JSC::DebuggerCallFrame&, PassRefPtr<JavaScriptCallFrame> caller, intptr_t sourceID, const TextPosition0&);
+    JavaScriptCallFrame(const JSC::DebuggerCallFrame&, PassRefPtr<JavaScriptCallFrame> caller, intptr_t sourceID, const TextPosition&);
 
     JSC::DebuggerCallFrame m_debuggerCallFrame;
     RefPtr<JavaScriptCallFrame> m_caller;
     intptr_t m_sourceID;
-    TextPosition0 m_textPosition;
+    TextPosition m_textPosition;
     bool m_isValid;
 };
 

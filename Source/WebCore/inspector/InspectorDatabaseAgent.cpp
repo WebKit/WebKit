@@ -30,7 +30,7 @@
 
 #include "InspectorDatabaseAgent.h"
 
-#if ENABLE(INSPECTOR) && ENABLE(DATABASE)
+#if ENABLE(INSPECTOR) && ENABLE(SQL_DATABASE)
 
 #include "Database.h"
 #include "ExceptionCode.h"
@@ -357,4 +357,4 @@ Database* InspectorDatabaseAgent::databaseForId(int databaseId)
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR) && ENABLE(DATABASE)
+#endif // ENABLE(INSPECTOR) && ENABLE(SQL_DATABASE)

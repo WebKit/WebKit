@@ -95,11 +95,8 @@ CONFIG -= warn_on
 # Treat warnings as errors on x86/Linux/GCC
 linux-g++* {
     isEqual(QT_ARCH,x86_64)|isEqual(QT_ARCH,i386): QMAKE_CXXFLAGS += -Werror
-    GCC_VERSION = $$system(gcc -dumpversion)
-    GCC_VERSION = $$split(GCC_VERSION, ".")
-    GCC_MAJOR_VERSION = $$first(GCC_VERSION)
-    GCC_MINOR_VERSION = $$member(GCC_VERSION, 1)
-    greaterThan(GCC_MAJOR_VERSION, 3):greaterThan(GCC_MINOR_VERSION, 5) {
+
+    greaterThan(QT_GCC_MAJOR_VERSION, 3):greaterThan(QT_GCC_MINOR_VERSION, 5) {
         if (!contains(QMAKE_CXXFLAGS, -std=c++0x) && !contains(QMAKE_CXXFLAGS, -std=gnu++0x)) {
             # We need to deactivate those warnings because some names conflicts with upcoming c++0x types (e.g.nullptr).
             QMAKE_CFLAGS_WARN_ON += -Wno-c++0x-compat

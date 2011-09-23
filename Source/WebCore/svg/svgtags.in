@@ -9,13 +9,11 @@ altGlyph
 altGlyphDef
 altGlyphItem
 #endif
-#if ENABLE_SVG_ANIMATION
 animate
 animateColor
 animateMotion JSInterfaceName=SVGElement
 animateTransform
 set
-#endif
 circle
 clipPath
 #if 0

@@ -112,6 +112,10 @@ void CCLayerTreeHost::commitTo(CCLayerTreeHostImpl* hostImpl)
     TRACE_EVENT("CCLayerTreeHost::commitTo", this, 0);
     hostImpl->setSourceFrameNumber(frameNumber());
 
+    // FIXME: Temporary diagnostic for crbug 96719. This shouldn't happen.
+    if (!contentsTextureManager())
+        CRASH();
+
     contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes());
     contentsTextureManager()->deleteEvictedTextures(hostImpl->context());
 

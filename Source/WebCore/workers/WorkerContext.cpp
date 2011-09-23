@@ -299,7 +299,7 @@ NotificationCenter* WorkerContext::webkitNotifications() const
 }
 #endif
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 PassRefPtr<Database> WorkerContext::openDatabase(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
 {
     if (!securityOrigin()->canAccessDatabase() || !AbstractDatabase::isAvailable()) {

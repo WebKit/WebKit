@@ -84,9 +84,9 @@ void NewXMLDocumentParser::resumeParsing()
 
 void NewXMLDocumentParser::processScript(ScriptElement* scriptElement)
 {
-    if (scriptElement->prepareScript(TextPosition1(), ScriptElement::AllowLegacyTypeInTypeAttribute)) {
+    if (scriptElement->prepareScript(TextPosition(), ScriptElement::AllowLegacyTypeInTypeAttribute)) {
         if (scriptElement->readyToBeParserExecuted())
-            scriptElement->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), TextPosition1()));
+            scriptElement->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), TextPosition()));
         else if (scriptElement->willBeParserExecuted()) {
             m_pendingScript = scriptElement->cachedScript();
             m_scriptElement = scriptElement->element();
@@ -100,15 +100,14 @@ void NewXMLDocumentParser::processScript(ScriptElement* scriptElement)
     }
 }
 
-TextPosition0 NewXMLDocumentParser::textPosition() const
+TextPosition NewXMLDocumentParser::textPosition() const
 {
-    return TextPosition0(WTF::ZeroBasedNumber::fromZeroBasedInt(0),
-                         WTF::ZeroBasedNumber::fromZeroBasedInt(0));
+    return TextPosition::minimumPosition();
 }
 
-int NewXMLDocumentParser::lineNumber() const
+OrdinalNumber NewXMLDocumentParser::lineNumber() const
 {
-    return 0;
+    return OrdinalNumber::first();
 }
 
 void NewXMLDocumentParser::insert(const SegmentedString&)

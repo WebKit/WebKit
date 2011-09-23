@@ -1146,10 +1146,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\StringObjectThatMasqueradesAsUndefined.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\StringPrototype.cpp"
 				>
 			</File>
@@ -1565,6 +1561,10 @@
                                 RelativePath="..\..\dfg\DFGDriver.h"
                                 >
                         </File>
+                        <File
+                                RelativePath="..\..\dfg\DFGIntrinsic.h"
+                                >
+                        </File>
                 </Filter>
 		<Filter
 			Name="yarr"
@@ -1914,11 +1914,11 @@
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\NewSpace.cpp"
+                                    RelativePath="..\..\heap\MarkedSpace.cpp"
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\NewSpace.h"
+                                    RelativePath="..\..\heap\MarkedSpace.h"
                                     >
                             </File>
                             <File

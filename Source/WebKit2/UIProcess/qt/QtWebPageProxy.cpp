@@ -407,15 +407,7 @@ void QtWebPageProxy::loadDidSucceed()
 
 void QtWebPageProxy::loadDidFail(const QWebError& error)
 {
-    QJSEngine* engine = m_viewInterface->engine();
-    QJSValue value;
-    if (engine) {
-        value = engine->newObject();
-        value.setProperty(QLatin1String("errorCode"), error.errorCode());
-        value.setProperty(QLatin1String("url"), error.url().toString());
-        value.setProperty(QLatin1String("type"), error.type());
-    }
-    m_viewInterface->loadDidFail(value);
+    m_viewInterface->loadDidFail(error);
 }
 
 void QtWebPageProxy::didChangeLoadProgress(int newLoadProgress)

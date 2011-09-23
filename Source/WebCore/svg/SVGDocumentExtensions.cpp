@@ -93,7 +93,6 @@ void SVGDocumentExtensions::startAnimations()
 {
     // FIXME: Eventually every "Time Container" will need a way to latch on to some global timer
     // starting animations for a document will do this "latching"
-#if ENABLE(SVG_ANIMATION)    
     // FIXME: We hold a ref pointers to prevent a shadow tree from getting removed out from underneath us.
     // In the future we should refactor the use-element to avoid this. See https://webkit.org/b/53704
     Vector<RefPtr<SVGSVGElement> > timeContainers;
@@ -101,7 +100,6 @@ void SVGDocumentExtensions::startAnimations()
     Vector<RefPtr<SVGSVGElement> >::iterator end = timeContainers.end();
     for (Vector<RefPtr<SVGSVGElement> >::iterator itr = timeContainers.begin(); itr != end; ++itr)
         (*itr)->timeContainer()->begin();
-#endif
 }
     
 void SVGDocumentExtensions::pauseAnimations()
@@ -120,12 +118,6 @@ void SVGDocumentExtensions::unpauseAnimations()
 
 bool SVGDocumentExtensions::sampleAnimationAtTime(const String& elementId, SVGSMILElement* element, double time)
 {
-#if !ENABLE(SVG_ANIMATION)
-    UNUSED_PARAM(elementId);
-    UNUSED_PARAM(element);
-    UNUSED_PARAM(time);
-    return false;
-#else
     ASSERT(element);
     SMILTimeContainer* container = element->timeContainer();
     if (!container || container->isPaused())
@@ -133,7 +125,6 @@ bool SVGDocumentExtensions::sampleAnimationAtTime(const String& elementId, SVGSM
 
     container->sampleAnimationAtTime(elementId, time);
     return true;
-#endif
 }
 
 void SVGDocumentExtensions::addAnimationElementToTarget(SVGSMILElement* animationElement, SVGElement* targetElement)
@@ -175,15 +166,11 @@ void SVGDocumentExtensions::removeAllAnimationElementsFromTarget(SVGElement* tar
     HashSet<SVGSMILElement*>* animationElementsForTarget = m_animatedElements.take(targetElement);
     if (!animationElementsForTarget)
         return;
-#if ENABLE(SVG_ANIMATION)
     HashSet<SVGSMILElement*>::iterator it = animationElementsForTarget->begin();
     HashSet<SVGSMILElement*>::iterator end = animationElementsForTarget->end();
     for (; it != end; ++it)
         (*it)->resetTargetElement();
     delete animationElementsForTarget;
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 // FIXME: Callers should probably use ScriptController::eventHandlerLineNumber()
@@ -192,7 +179,7 @@ static int parserLineNumber(Document* document)
     ScriptableDocumentParser* parser = document->scriptableDocumentParser();
     if (!parser)
         return 1;
-    return parser->lineNumber();
+    return parser->lineNumber().oneBasedInt();
 }
 
 static void reportMessage(Document* document, MessageLevel level, const String& message)

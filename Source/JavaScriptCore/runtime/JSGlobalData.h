@@ -30,9 +30,10 @@
 #define JSGlobalData_h
 
 #include "CachedTranscendentalFunction.h"
-#include "Heap.h"
+#include "DFGIntrinsic.h"
 #include "DateInstanceCache.h"
 #include "ExecutableAllocator.h"
+#include "Heap.h"
 #include "Strong.h"
 #include "JITStubs.h"
 #include "JSValue.h"
@@ -128,10 +129,7 @@ namespace JSC {
         static PassRefPtr<JSGlobalData> createContextGroup(ThreadStackType, HeapSize = SmallHeap);
         ~JSGlobalData();
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
-        // Will start tracking threads that use the heap, which is resource-heavy.
         void makeUsableFromMultipleThreads() { heap.machineThreads().makeUsableFromMultipleThreads(); }
-#endif
 
         GlobalDataType globalDataType;
         ClientData* clientData;
@@ -219,7 +217,7 @@ namespace JSC {
         {
             return jitStubs->ctiStub(this, generator);
         }
-        NativeExecutable* getHostFunction(NativeFunction, ThunkGenerator);
+        NativeExecutable* getHostFunction(NativeFunction, ThunkGenerator, DFG::Intrinsic);
 #endif
         NativeExecutable* getHostFunction(NativeFunction);
 
@@ -234,7 +232,7 @@ namespace JSC {
 #ifndef NDEBUG
         int64_t debugDataBuffer[64];
 #endif
-#if ENABLE(TIERED_COMPILATION)
+#if ENABLE(DFG_JIT)
         Vector<void*> osrScratchBuffers;
         size_t sizeOfLastOSRScratchBuffer;
         

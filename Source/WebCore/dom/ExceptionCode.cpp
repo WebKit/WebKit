@@ -39,7 +39,7 @@
 #include "XPathException.h"
 #endif
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 #include "SQLException.h"
 #endif
 
@@ -163,7 +163,7 @@ static const char* const svgExceptionDescriptions[] = {
 };
 #endif
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 static const char* const sqlExceptionNames[] = {
     "UNKNOWN_ERR",
     "DATABASE_ERR",
@@ -319,7 +319,7 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
         nameTableSize = WTF_ARRAY_LENGTH(svgExceptionNames);
         nameTableOffset = SVGException::SVG_WRONG_TYPE_ERR;
 #endif
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     } else if (code >= SQLException::SQLExceptionOffset && code <= SQLException::SQLExceptionMax) {
         type = SQLExceptionType;
         typeName = "DOM SQL";

@@ -197,6 +197,7 @@ private:
     virtual RenderBlock* containingBlock() const;
 
     // These functions may only be accessed by LayoutStateMaintainer.
+    void pushLayoutState(RenderFlowThread*);
     bool pushLayoutState(RenderBox* renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = 0)
     {
         // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
@@ -313,6 +314,16 @@ public:
     {
     }
     
+    LayoutStateMaintainer(RenderView* view, RenderFlowThread* flowThread)
+        : m_view(view)
+        , m_disabled(false)
+        , m_didStart(false)
+        , m_didEnd(false)
+        , m_didCreateLayoutState(false)
+    {
+        push(flowThread);
+    }
+    
     ~LayoutStateMaintainer()
     {
         ASSERT(m_didStart == m_didEnd);   // if this fires, it means that someone did a push(), but forgot to pop().
@@ -325,6 +336,14 @@ public:
         m_didCreateLayoutState = m_view->pushLayoutState(root, offset, pageHeight, pageHeightChanged, colInfo);
         if (m_disabled && m_didCreateLayoutState)
             m_view->disableLayoutState();
+        m_didStart = true;
+    }
+    
+    void push(RenderFlowThread* flowThread)
+    {
+        ASSERT(!m_didStart);
+        m_view->pushLayoutState(flowThread);
+        m_didCreateLayoutState = true;
         m_didStart = true;
     }
 

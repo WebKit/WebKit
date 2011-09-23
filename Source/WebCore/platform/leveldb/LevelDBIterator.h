@@ -26,7 +26,7 @@
 #ifndef LevelDBIterator_h
 #define LevelDBIterator_h
 
-#if ENABLE(LEVELDB)
+#if USE(LEVELDB)
 
 #include "LevelDBSlice.h"
 
@@ -46,5 +46,6 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(LEVELDB)
+#endif // USE(LEVELDB)
+
 #endif // LevelDBIterator_h

@@ -22,7 +22,7 @@
 #include "ewk_settings.h"
 
 #include "EWebKit.h"
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 #include "DatabaseTracker.h"
 #endif
 #include "FrameView.h"
@@ -51,7 +51,7 @@ static const char* _ewk_cache_directory_path = 0;
 #endif
 
 static const char* _ewk_icon_database_path = 0;
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 static const char* _ewk_default_web_database_path = 0;
 static uint64_t _ewk_default_web_database_quota = 1 * 1024 * 1024;
 #endif
@@ -82,7 +82,7 @@ static WTF::String _ewk_settings_webkit_os_version_get()
 
 uint64_t ewk_settings_web_database_default_quota_get(void)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     return _ewk_default_web_database_quota;
 #else
     return 0;
@@ -91,7 +91,7 @@ uint64_t ewk_settings_web_database_default_quota_get(void)
 
 void ewk_settings_web_database_path_set(const char *path)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     WTF::String corePath = WTF::String::fromUTF8(path);
     WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(corePath);
     if (!_ewk_default_web_database_path)
@@ -104,7 +104,7 @@ void ewk_settings_web_database_path_set(const char *path)
 
 const char *ewk_settings_web_database_path_get(void)
 {
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
     return _ewk_default_web_database_path;
 #else
     return 0;

@@ -1068,14 +1068,14 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexAlign e)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
-    case AlignBefore:
-        m_value.ident = CSSValueBefore;
+    case AlignStart:
+        m_value.ident = CSSValueStart;
         break;
-    case AlignAfter:
-        m_value.ident = CSSValueAfter;
+    case AlignEnd:
+        m_value.ident = CSSValueEnd;
         break;
-    case AlignMiddle:
-        m_value.ident = CSSValueMiddle;
+    case AlignCenter:
+        m_value.ident = CSSValueCenter;
         break;
     case AlignStretch:
         m_value.ident = CSSValueStretch;
@@ -1089,19 +1089,19 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexAlign e)
 template<> inline CSSPrimitiveValue::operator EFlexAlign() const
 {
     switch (m_value.ident) {
-    case CSSValueBefore:
-        return AlignBefore;
-    case CSSValueAfter:
-        return AlignAfter;
-    case CSSValueMiddle:
-        return AlignMiddle;
+    case CSSValueStart:
+        return AlignStart;
+    case CSSValueEnd:
+        return AlignEnd;
+    case CSSValueCenter:
+        return AlignCenter;
     case CSSValueStretch:
         return AlignStretch;
     case CSSValueBaseline:
         return AlignBaseline;
     default:
         ASSERT_NOT_REACHED();
-        return AlignBefore;
+        return AlignStart;
     }
 }
 

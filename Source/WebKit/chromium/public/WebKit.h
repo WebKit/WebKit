@@ -42,6 +42,13 @@ class WebKitPlatformSupport;
 // non-null and must remain valid until the current thread calls shutdown.
 WEBKIT_EXPORT void initialize(WebKitPlatformSupport*);
 
+// Must be called on the thread that will be the main WebKit thread before
+// using any other WebKit APIs. The provided WebKitPlatformSupport; must be
+// non-null and must remain valid until the current thread calls shutdown.
+//
+// This is a special variant of initialize that does not intitialize V8.
+WEBKIT_EXPORT void initializeWithoutV8(WebKitPlatformSupport*);
+
 // Once shutdown, the WebKitPlatformSupport passed to initialize will no longer
 // be accessed. No other WebKit objects should be in use when this function is
 // called. Any background threads created by WebKit are promised to be

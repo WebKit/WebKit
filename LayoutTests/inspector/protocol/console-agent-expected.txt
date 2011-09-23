@@ -91,11 +91,11 @@ response:
 }
 
 -----------------------------------------------------------
-ConsoleAgent.clearConsoleMessages()
+ConsoleAgent.clearMessages()
 
 request:
 {
-    method : "Console.clearConsoleMessages"
+    method : "Console.clearMessages"
     id : <number>
 }
 
@@ -173,7 +173,7 @@ Coverage for ConsoleAgent
 {
     enable : "checked"
     disable : "checked"
-    clearConsoleMessages : "checked"
+    clearMessages : "checked"
     setMonitoringXHREnabled : "checked"
     addInspectedNode : "checked"
     messageAdded : "checked"

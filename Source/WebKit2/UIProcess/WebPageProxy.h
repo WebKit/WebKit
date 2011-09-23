@@ -46,6 +46,7 @@
 #include "WebFormClient.h"
 #include "WebFrameProxy.h"
 #include "WebHistoryClient.h"
+#include "WebHitTestResult.h"
 #include "WebLoaderClient.h"
 #include "WebPageContextMenuClient.h"
 #include "WebPolicyClient.h"
@@ -53,6 +54,7 @@
 #include "WebResourceLoadClient.h"
 #include "WebUIClient.h"
 #include <WebCore/DragActions.h>
+#include <WebCore/HitTestResult.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/TextChecking.h>
 #include <wtf/HashMap.h>
@@ -625,7 +627,7 @@ private:
     void runJavaScriptPrompt(uint64_t frameID, const String&, const String&, String& result);
     void shouldInterruptJavaScript(bool& result);
     void setStatusText(const String&);
-    void mouseDidMoveOverElement(uint32_t modifiers, CoreIPC::ArgumentDecoder*);
+    void mouseDidMoveOverElement(const WebHitTestResult::Data& hitTestResultData, uint32_t modifiers, CoreIPC::ArgumentDecoder*);
     void missingPluginButtonClicked(const String& mimeType, const String& url, const String& pluginsPageURL);
     void setToolbarsAreVisible(bool toolbarsAreVisible);
     void getToolbarsAreVisible(bool& toolbarsAreVisible);

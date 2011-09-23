@@ -32,8 +32,8 @@
 #import "WebVideoFullscreenHUDWindowController.h"
 #import "WebWindowAnimation.h"
 #import <Carbon/Carbon.h>
-#import <IOKit/pwr_mgt/IOPMLib.h>
 #import <QTKit/QTKit.h>
+#import <WebCore/DisplaySleepDisabler.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/SoftLinking.h>
 #import <objc/objc-runtime.h>
@@ -43,13 +43,14 @@
 #import <WebCore/GStreamerGWorld.h>
 #endif
 
+using namespace WebCore;
+
 SOFT_LINK_FRAMEWORK(QTKit)
 SOFT_LINK_CLASS(QTKit, QTMovieLayer)
 
 SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 
 #define QTMovieRateDidChangeNotification getQTMovieRateDidChangeNotification()
-static const NSTimeInterval tickleTimerInterval = 1.0;
 
 @interface WebVideoFullscreenWindow : NSWindow
 #ifndef BUILDING_ON_LEOPARD
@@ -89,9 +90,6 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
 {
     ASSERT(!_backgroundFullscreenWindow);
     ASSERT(!_fadeAnimation);
-    [_tickleTimer invalidate];
-    [_tickleTimer release];
-    _tickleTimer = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
 }
@@ -105,15 +103,15 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
 {
     WebVideoFullscreenWindow *window = [self fullscreenWindow];
 #if USE(GSTREAMER)
-    if (_mediaElement && _mediaElement->platformMedia().type == WebCore::PlatformMedia::GStreamerGWorldType) {
-        WebCore::GStreamerGWorld* gstGworld = _mediaElement->platformMedia().media.gstreamerGWorld;
+    if (_mediaElement && _mediaElement->platformMedia().type == PlatformMedia::GStreamerGWorldType) {
+        GStreamerGWorld* gstGworld = _mediaElement->platformMedia().media.gstreamerGWorld;
         if (gstGworld->enterFullscreen())
             [window setContentView:gstGworld->platformVideoWindow()->window()];
     }
 #else
     [[window contentView] setLayer:layer];
     [[window contentView] setWantsLayer:YES];
-    if (_mediaElement && _mediaElement->platformMedia().type == WebCore::PlatformMedia::QTMovieType)
+    if (_mediaElement && _mediaElement->platformMedia().type == PlatformMedia::QTMovieType)
         [layer setMovie:_mediaElement->platformMedia().media.qtMovie];
 #endif
 }
@@ -134,12 +132,12 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
 #endif
 }
 
-- (WebCore::HTMLMediaElement*)mediaElement
+- (HTMLMediaElement*)mediaElement
 {
     return _mediaElement.get();
 }
 
-- (void)setMediaElement:(WebCore::HTMLMediaElement*)mediaElement
+- (void)setMediaElement:(HTMLMediaElement*)mediaElement
 {
     _mediaElement = mediaElement;
     if ([self isWindowLoaded]) {
@@ -180,7 +178,7 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
 - (void)windowDidExitFullscreen
 {
 #if USE(GSTREAMER)
-    if (_mediaElement && _mediaElement->platformMedia().type == WebCore::PlatformMedia::GStreamerGWorldType)
+    if (_mediaElement && _mediaElement->platformMedia().type == PlatformMedia::GStreamerGWorldType)
         _mediaElement->platformMedia().media.gstreamerGWorld->exitFullscreen();
 #endif
     [self clearFadeAnimation];
@@ -365,76 +363,17 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
         SetSystemUIMode(_isEndingFullscreen ? kUIModeNormal : kUIModeAllHidden, 0);
 }
 
-- (void)_disableIdleDisplaySleep
-{
-    if (_idleDisplaySleepAssertion == kIOPMNullAssertionID) 
-#if defined(BUILDING_ON_LEOPARD) // IOPMAssertionCreateWithName is not defined in the 10.5 SDK
-        IOPMAssertionCreate(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, &_idleDisplaySleepAssertion);
-#else // IOPMAssertionCreate is depreciated in > 10.5
-        IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, CFSTR("WebKit playing a video fullscreen."), &_idleDisplaySleepAssertion);
-#endif
-}
-
-- (void)_enableIdleDisplaySleep
-{
-    if (_idleDisplaySleepAssertion != kIOPMNullAssertionID) {
-        IOPMAssertionRelease(_idleDisplaySleepAssertion);
-        _idleDisplaySleepAssertion = kIOPMNullAssertionID;
-    }
-}
-
-- (void)_disableIdleSystemSleep
-{
-    if (_idleSystemSleepAssertion == kIOPMNullAssertionID) 
-#if defined(BUILDING_ON_LEOPARD) // IOPMAssertionCreateWithName is not defined in the 10.5 SDK
-        IOPMAssertionCreate(kIOPMAssertionTypeNoIdleSleep, kIOPMAssertionLevelOn, &_idleSystemSleepAssertion);
-#else // IOPMAssertionCreate is depreciated in > 10.5
-    IOPMAssertionCreateWithName(kIOPMAssertionTypeNoIdleSleep, kIOPMAssertionLevelOn, CFSTR("WebKit playing a video fullscreen."), &_idleSystemSleepAssertion);
-#endif
-}
-
-- (void)_enableIdleSystemSleep
-{
-    if (_idleSystemSleepAssertion != kIOPMNullAssertionID) {
-        IOPMAssertionRelease(_idleSystemSleepAssertion);
-        _idleSystemSleepAssertion = kIOPMNullAssertionID;
-    }
-}
-
-- (void)_enableTickleTimer
-{
-    [_tickleTimer invalidate];
-    [_tickleTimer release];
-    _tickleTimer = [[NSTimer scheduledTimerWithTimeInterval:tickleTimerInterval target:self selector:@selector(_tickleTimerFired) userInfo:nil repeats:YES] retain];
-}
-
-- (void)_disableTickleTimer
-{
-    [_tickleTimer invalidate];
-    [_tickleTimer release];
-    _tickleTimer = nil;
-}
-
-- (void)_tickleTimerFired
-{
-    UpdateSystemActivity(OverallAct);
-}
-
 - (void)updatePowerAssertions
 {
     float rate = 0;
-    if (_mediaElement && _mediaElement->platformMedia().type == WebCore::PlatformMedia::QTMovieType)
+    if (_mediaElement && _mediaElement->platformMedia().type == PlatformMedia::QTMovieType)
         rate = [_mediaElement->platformMedia().media.qtMovie rate];
     
     if (rate && !_isEndingFullscreen) {
-        [self _disableIdleSystemSleep];
-        [self _disableIdleDisplaySleep];
-        [self _enableTickleTimer];
-    } else {
-        [self _enableIdleSystemSleep];
-        [self _enableIdleDisplaySleep];
-        [self _disableTickleTimer];
-    }
+        if (!_displaySleepDisabler)
+            _displaySleepDisabler = DisplaySleepDisabler::create("com.apple.WebCore - Fullscreen video");
+    } else
+        _displaySleepDisabler = nullptr;
 }
 
 // MARK: -

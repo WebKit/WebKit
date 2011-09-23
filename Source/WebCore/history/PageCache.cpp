@@ -119,7 +119,7 @@ static bool logCanCacheFrameDecision(Frame* frame, int indentLevel)
             PCLOG("   -Frame has an unload event listener");
             cannotCache = true;
         }
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         if (frame->document()->hasOpenDatabases()) {
             PCLOG("   -Frame has open database handles");
             cannotCache = true;
@@ -265,7 +265,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
         && !frame->loader()->subframeLoader()->containsPlugins()
         && !frame->document()->url().protocolIs("https")
         && (!frame->domWindow() || !frame->domWindow()->hasEventListeners(eventNames().unloadEvent))
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         && !frame->document()->hasOpenDatabases()
 #endif
 #if ENABLE(SHARED_WORKERS)

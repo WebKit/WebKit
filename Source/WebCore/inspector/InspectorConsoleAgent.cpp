@@ -97,7 +97,7 @@ void InspectorConsoleAgent::disable(ErrorString*)
     m_inspectorState->setBoolean(ConsoleAgentState::consoleMessagesEnabled, false);
 }
 
-void InspectorConsoleAgent::clearConsoleMessages(ErrorString*)
+void InspectorConsoleAgent::clearMessages(ErrorString*)
 {
     m_consoleMessages.clear();
     m_expiredConsoleMessageCount = 0;
@@ -111,7 +111,7 @@ void InspectorConsoleAgent::clearConsoleMessages(ErrorString*)
 void InspectorConsoleAgent::reset()
 {
     ErrorString error;
-    clearConsoleMessages(&error);
+    clearMessages(&error);
     m_times.clear();
     m_counts.clear();
 }

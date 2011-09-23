@@ -252,6 +252,11 @@ sub output() {
     print "#else\n";
     print "#define THUNK_GENERATOR(generator)\n";
     print "#endif\n";
+    print "#if ENABLE(DFG_JIT)\n";
+    print "#define INTRINSIC(intrinsic) , intrinsic\n";
+    print "#else\n";
+    print "#define INTRINSIC(intrinsic)\n";
+    print "#endif\n";
     print "\nstatic const struct HashTableValue ${nameEntries}\[$count\] = {\n";
     my $i = 0;
     foreach my $key (@keys) {
@@ -272,6 +277,7 @@ sub output() {
             $secondValue = "0";
         }
         my $thunkGenerator = "0";
+        my $intrinsic = "DFG::NoIntrinsic";
         if ($key eq "charCodeAt") {
             $thunkGenerator = "charCodeAtThunkGenerator";
         }
@@ -282,14 +288,22 @@ sub output() {
             $thunkGenerator = "fromCharCodeThunkGenerator";
         }
         if ($name eq "mathTable") {
+            if ($key eq "min") {
+                $intrinsic = "DFG::MinIntrinsic";
+            }
+            if ($key eq "max") {
+                $intrinsic = "DFG::MaxIntrinsic";
+            }
             if ($key eq "sqrt") {
                 $thunkGenerator = "sqrtThunkGenerator";
+                $intrinsic = "DFG::SqrtIntrinsic";
             }
             if ($key eq "pow") {
                 $thunkGenerator = "powThunkGenerator";
             }
             if ($key eq "abs") {
                 $thunkGenerator = "absThunkGenerator";
+                $intrinsic = "DFG::AbsIntrinsic";
             }
             if ($key eq "floor") {
                 $thunkGenerator = "floorThunkGenerator";
@@ -307,10 +321,10 @@ sub output() {
                 $thunkGenerator = "logThunkGenerator";
             }
         }
-        print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue THUNK_GENERATOR($thunkGenerator) },\n";
+        print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue THUNK_GENERATOR($thunkGenerator) INTRINSIC($intrinsic) },\n";
         $i++;
     }
-    print "   { 0, 0, 0, 0 THUNK_GENERATOR(0) }\n";
+    print "   { 0, 0, 0, 0 THUNK_GENERATOR(0) INTRINSIC(DFG::NoIntrinsic) }\n";
     print "};\n\n";
     print "#undef THUNK_GENERATOR\n";
     print "extern JSC_CONST_HASHTABLE HashTable $name =\n";

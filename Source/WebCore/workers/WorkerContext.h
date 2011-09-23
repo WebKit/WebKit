@@ -113,7 +113,7 @@ namespace WebCore {
         NotificationCenter* webkitNotifications() const;
 #endif
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         // HTML 5 client-side database
         PassRefPtr<Database> openDatabase(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
         PassRefPtr<DatabaseSync> openDatabaseSync(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);

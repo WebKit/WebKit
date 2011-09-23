@@ -66,22 +66,20 @@ bool Canvas2DLayerChromium::drawsContent() const
 
 void Canvas2DLayerChromium::updateCompositorResources(GraphicsContext3D*)
 {
-    if (!m_contentsDirty || !drawsContent())
+    if (m_dirtyRect.isEmpty() || !drawsContent())
         return;
 
-    if (m_contentsDirty) {
-        if (m_context) {
+    if (m_context) {
 #if USE(SKIA)
-            GrContext* grContext = m_context->grContext();
-            if (grContext) {
-                m_context->makeContextCurrent();
-                grContext->flush();
-            }
-#endif
-            m_context->flush();
+        GrContext* grContext = m_context->grContext();
+        if (grContext) {
+            m_context->makeContextCurrent();
+            grContext->flush();
         }
-        m_contentsDirty = false;
+#endif
+        m_context->flush();
     }
+    resetNeedsDisplay();
 }
 
 }

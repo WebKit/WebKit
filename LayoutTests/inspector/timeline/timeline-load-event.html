@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("timeline");
+    finishCalled = 0;
+
+    InspectorTest.startTimeline(function() { InspectorTest.reloadPage(finish); });
+    InspectorTest.waitForRecordType("MarkLoad", contentEvent);
+
+    function contentEvent()
+    {
+        InspectorTest.printTimelineRecords("MarkLoad");
+        InspectorTest.stopTimeline(finish);
+    }
+
+    function finish()
+    {
+        if (++finishCalled === 2)
+            InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the load event.
+</p>
+
+</body>
+</html>

@@ -52,7 +52,7 @@ using namespace std;
 - (CGFloat)_progress;
 @end
 
-@interface ScrollAnimationHelperDelegate : NSObject
+@interface WebScrollAnimationHelperDelegate : NSObject
 {
     WebCore::ScrollAnimatorMac* _animator;
 }
@@ -69,7 +69,7 @@ static NSSize abs(NSSize size)
     return finalSize;    
 }
 
-@implementation ScrollAnimationHelperDelegate
+@implementation WebScrollAnimationHelperDelegate
 
 - (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator
 {
@@ -150,14 +150,14 @@ static NSSize abs(NSSize size)
 
 #if USE(SCROLLBAR_PAINTER)
 
-@interface ScrollbarPainterControllerDelegate : NSObject
+@interface WebScrollbarPainterControllerDelegate : NSObject
 {
     WebCore::ScrollAnimatorMac* _animator;
 }
 - (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator;
 @end
 
-@implementation ScrollbarPainterControllerDelegate
+@implementation WebScrollbarPainterControllerDelegate
 
 - (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator
 {
@@ -242,7 +242,7 @@ static NSSize abs(NSSize size)
 
 @end
 
-@interface ScrollbarPartAnimation : NSAnimation
+@interface WebScrollbarPartAnimation : NSAnimation
 {
     RetainPtr<ScrollbarPainter> _scrollerPainter;
     WebCore::ScrollbarPart _part;
@@ -253,7 +253,7 @@ static NSSize abs(NSSize size)
 - (id)initWithScrollbarPainter:(ScrollbarPainter)scrollerPainter part:(WebCore::ScrollbarPart)part scrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration;
 @end
 
-@implementation ScrollbarPartAnimation
+@implementation WebScrollbarPartAnimation
 
 - (id)initWithScrollbarPainter:(ScrollbarPainter)scrollerPainter part:(WebCore::ScrollbarPart)part scrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
 {
@@ -303,21 +303,21 @@ static NSSize abs(NSSize size)
 
 @end
 
-@interface ScrollbarPainterDelegate : NSObject<NSAnimationDelegate>
+@interface WebScrollbarPainterDelegate : NSObject<NSAnimationDelegate>
 {
     WebCore::ScrollAnimatorMac* _animator;
 
-    RetainPtr<ScrollbarPartAnimation> _verticalKnobAnimation;
-    RetainPtr<ScrollbarPartAnimation> _horizontalKnobAnimation;
+    RetainPtr<WebScrollbarPartAnimation> _verticalKnobAnimation;
+    RetainPtr<WebScrollbarPartAnimation> _horizontalKnobAnimation;
 
-    RetainPtr<ScrollbarPartAnimation> _verticalTrackAnimation;
-    RetainPtr<ScrollbarPartAnimation> _horizontalTrackAnimation;
+    RetainPtr<WebScrollbarPartAnimation> _verticalTrackAnimation;
+    RetainPtr<WebScrollbarPartAnimation> _horizontalTrackAnimation;
 }
 - (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator;
 - (void)cancelAnimations;
 @end
 
-@implementation ScrollbarPainterDelegate
+@implementation WebScrollbarPainterDelegate
 
 - (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator
 {
@@ -359,7 +359,7 @@ static NSSize abs(NSSize size)
     return dummyLayer;
 }
 
-- (void)setUpAnimation:(RetainPtr<ScrollbarPartAnimation>&)scrollbarPartAnimation scrollerPainter:(ScrollbarPainter)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
+- (void)setUpAnimation:(RetainPtr<WebScrollbarPartAnimation>&)scrollbarPartAnimation scrollerPainter:(ScrollbarPainter)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
 {
     // If the user has scrolled the page, then the scrollbars must be animated here. 
     // This overrides the early returns.
@@ -392,7 +392,7 @@ static NSSize abs(NSSize size)
 
     [NSAnimationContext beginGrouping];
     [[NSAnimationContext currentContext] setDuration:duration];
-    scrollbarPartAnimation.adoptNS([[ScrollbarPartAnimation alloc] initWithScrollbarPainter:scrollerPainter 
+    scrollbarPartAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbarPainter:scrollerPainter 
                                                                     part:part
                                                                     scrollAnimator:_animator 
                                                                     animateAlphaTo:newAlpha 
@@ -469,16 +469,16 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     , m_haveScrolledSincePageLoad(false)
     , m_needsScrollerStyleUpdate(false)
 {
-    m_scrollAnimationHelperDelegate.adoptNS([[ScrollAnimationHelperDelegate alloc] initWithScrollAnimator:this]);
+    m_scrollAnimationHelperDelegate.adoptNS([[WebScrollAnimationHelperDelegate alloc] initWithScrollAnimator:this]);
     m_scrollAnimationHelper.adoptNS([[NSClassFromString(@"NSScrollAnimationHelper") alloc] initWithDelegate:m_scrollAnimationHelperDelegate.get()]);
 
 #if USE(SCROLLBAR_PAINTER)
-    m_scrollbarPainterControllerDelegate.adoptNS([[ScrollbarPainterControllerDelegate alloc] initWithScrollAnimator:this]);
+    m_scrollbarPainterControllerDelegate.adoptNS([[WebScrollbarPainterControllerDelegate alloc] initWithScrollAnimator:this]);
     m_scrollbarPainterController = [[[NSClassFromString(@"NSScrollerImpPair") alloc] init] autorelease];
     [m_scrollbarPainterController.get() setDelegate:m_scrollbarPainterControllerDelegate.get()];
     [m_scrollbarPainterController.get() setScrollerStyle:wkRecommendedScrollerStyle()];
 
-    m_scrollbarPainterDelegate.adoptNS([[ScrollbarPainterDelegate alloc] initWithScrollAnimator:this]);
+    m_scrollbarPainterDelegate.adoptNS([[WebScrollbarPainterDelegate alloc] initWithScrollAnimator:this]);
 #endif
 }
 

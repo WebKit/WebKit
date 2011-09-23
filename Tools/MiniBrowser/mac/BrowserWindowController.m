@@ -490,7 +490,7 @@ static void setStatusText(WKPageRef page, WKStringRef text, const void* clientIn
     LOG(@"setStatusText");
 }
 
-static void mouseDidMoveOverElement(WKPageRef page, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo)
+static void mouseDidMoveOverElement(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo)
 {
     LOG(@"mouseDidMoveOverElement");
 }
@@ -626,7 +626,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         runJavaScriptConfirm,
         runJavaScriptPrompt,
         setStatusText,
-        mouseDidMoveOverElement,
+        0,          /* mouseDidMoveOverElement_deprecatedForUseWithV0 */
         0,          /* missingPluginButtonClicked */
         0,          /* didNotHandleKeyEvent */
         0,          /* didNotHandleWheelEvent */
@@ -656,6 +656,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
         createNewPage,
+        mouseDidMoveOverElement,
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }

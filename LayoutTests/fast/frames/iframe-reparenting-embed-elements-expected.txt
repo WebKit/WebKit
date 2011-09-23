@@ -1,0 +1,12 @@
+This test moves an iframe between two documents 3 times: without plugins, with <embed> tag and then with <object> tag.
+
+Only the attempt without plugin elements should succeed. The presence of plugin elements should prevent the document.adoptNode() method from triggering live transfer - in which case the iframe will be reloaded.
+
+Test succeeds if there are 'PASS' messages below and no 'FAIL' messages.
+
+ 
+PASS: Test without plugins
+PASS: Test with <embed>
+PASS: Test with <object>
+Test Finished.
+

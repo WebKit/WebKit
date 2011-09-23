@@ -53,7 +53,7 @@ class IRCCommandTest(unittest.TestCase):
                           whois.execute("tom", ["TonyG@Chromium.org"], None, None))
         self.assertEquals("tom: rniwa is rniwa (rniwa@webkit.org). Why do you ask?",
                           whois.execute("tom", ["rniwa"], None, None))
-        self.assertEquals("tom: lopez is xan (xan.lopez@gmail.com, xan@gnome.org, xan@webkit.org). Why do you ask?",
+        self.assertEquals("tom: lopez is xan (xan.lopez@gmail.com, xan@gnome.org, xan@webkit.org, xlopez@igalia.com). Why do you ask?",
                           whois.execute("tom", ["lopez"], None, None))
         self.assertEquals('tom: "Vicki Murley" <vicki@apple.com> hasn\'t told me their nick. Boo hoo :-(',
                           whois.execute("tom", ["vicki@apple.com"], None, None))
@@ -97,6 +97,18 @@ class IRCCommandTest(unittest.TestCase):
         rollout = Rollout()
         self.assertEquals(([1234], "testing foo"),
                           rollout._parse_args(["1234", "testing", "foo"]))
+
+        self.assertEquals(([554], "testing foo"),
+                          rollout._parse_args(["r554", "testing", "foo"]))
+
+        self.assertEquals(([556, 792], "testing foo"),
+                          rollout._parse_args(["r556", "792", "testing", "foo"]))
+
+        self.assertEquals(([128, 256], "testing foo"),
+                          rollout._parse_args(["r128,r256", "testing", "foo"]))
+
+        self.assertEquals(([512, 1024, 2048], "testing foo"),
+                          rollout._parse_args(["512,", "1024,2048", "testing", "foo"]))
 
         # Test invalid argument parsing:
         self.assertEquals((None, None), rollout._parse_args([]))

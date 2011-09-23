@@ -62,9 +62,7 @@ namespace JSC {
     class JS_EXPORTCLASS JSString : public JSCell {
     public:
         friend class JIT;
-        friend class JSCell;
         friend class JSGlobalData;
-        friend class JSValue;
         friend class SpecializedThunkJIT;
         friend struct ThunkHelpers;
 
@@ -428,6 +426,7 @@ namespace JSC {
         }
         unsigned length() { return m_length; }
 
+        JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
         bool getStringPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         bool getStringPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
         bool getStringPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor&);
@@ -494,9 +493,8 @@ namespace JSC {
             }
         }
 
-        virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue& value);
-        bool toBoolean(ExecState*) const;
+        virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
         virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;
         virtual UString toString(ExecState*) const;
@@ -682,25 +680,7 @@ namespace JSC {
 
     inline bool isJSString(JSGlobalData* globalData, JSValue v) { return v.isCell() && v.asCell()->vptr() == globalData->jsStringVPtr; }
 
-    inline bool JSCell::toBoolean(ExecState* exec) const
-    {
-        if (isString()) 
-            return static_cast<const JSString*>(this)->toBoolean(exec);
-        return !structure()->typeInfo().masqueradesAsUndefined();
-    }
-
     // --- JSValue inlines ----------------------------
-    
-    inline bool JSValue::toBoolean(ExecState* exec) const
-    {
-        if (isInt32())
-            return asInt32();
-        if (isDouble())
-            return asDouble() > 0.0 || asDouble() < 0.0; // false for NaN
-        if (isCell())
-            return asCell()->toBoolean(exec);
-        return isTrue(); // false, null, and undefined all convert to false.
-    }
 
     inline UString JSValue::toString(ExecState* exec) const
     {

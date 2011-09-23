@@ -315,11 +315,10 @@ static ATSUStyle initializeATSUStyle(const SimpleFontData* fontData, Typesetting
 
 void ComplexTextController::collectComplexTextRunsForCharactersATSUI(const UChar* cp, unsigned length, unsigned stringLocation, const SimpleFontData* fontData)
 {
-    if (!fontData) {
-        // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation, length, m_run.ltr()));
-        return;
-    }
+    ASSERT_ARG(fontData, fontData);
+
+    if (fontData == systemFallbackFontData())
+        fontData = m_font.primaryFont();
 
     if (m_fallbackFonts && fontData != m_font.primaryFont())
         m_fallbackFonts->add(fontData);

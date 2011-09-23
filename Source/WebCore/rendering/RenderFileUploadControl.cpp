@@ -188,7 +188,7 @@ void RenderFileUploadControl::computePreferredLogicalWidths()
     else
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
 
-    if (style->maxWidth().isFixed() && style->maxWidth().value() != undefinedLength) {
+    if (style->maxWidth().isFixed()) {
         m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(style->maxWidth().value()));
         m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(style->maxWidth().value()));
     }

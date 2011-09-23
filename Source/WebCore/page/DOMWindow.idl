@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -166,7 +167,7 @@ module window {
 #if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
         readonly attribute [EnabledAtRuntime] DOMApplicationCache applicationCache;
 #endif    
-#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
+#if defined(ENABLE_SQL_DATABASE) && ENABLE_SQL_DATABASE
         [EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
             raises(DOMException);
 #endif
@@ -214,6 +215,8 @@ module window {
         // cross-document messaging
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [DoNotCheckDomainSecurity, Custom] void postMessage(in SerializedScriptValue message, in [Optional] Array messagePorts, in DOMString targetOrigin)
+            raises(DOMException);
+        [DoNotCheckDomainSecurity, Custom] void webkitPostMessage(in SerializedScriptValue message, in [Optional] Array transferList, in DOMString targetOrigin)
             raises(DOMException);
 #else
         // There's no good way to expose an array via the ObjC bindings, so for now just allow passing in a single port.
@@ -568,9 +571,7 @@ module window {
         attribute RangeConstructor Range;
         attribute RangeExceptionConstructor RangeException;
 
-#if ENABLE_EVENTSOURCE
         attribute [JSCCustomGetter] EventSourceConstructor EventSource; // Usable with new the operator
-#endif
 
         // Mozilla has a separate XMLDocument object for XML documents. 
         // We just use Document for this.
@@ -734,14 +735,12 @@ module window {
         attribute SVGViewElementConstructor SVGViewElement;
 //      attribute SVGViewSpecConstructor SVGViewSpec;
 
-#if defined(ENABLE_SVG_ANIMATION) && ENABLE_SVG_ANIMATION
         attribute SVGAnimateColorElementConstructor SVGAnimateColorElement;
         attribute SVGAnimateElementConstructor SVGAnimateElement;
         attribute SVGAnimateMotionElementConstructor SVGAnimateMotionElement;
         attribute SVGAnimateTransformElementConstructor SVGAnimateTransformElement;
         attribute SVGMPathElementConstructor SVGMPathElement;
         attribute SVGSetElementConstructor SVGSetElement;
-#endif
 
 #if defined(ENABLE_SVG_FONTS) && ENABLE_SVG_FONTS
         attribute SVGAltGlyphDefElementConstructor SVGAltGlyphDefElement;
@@ -792,7 +791,7 @@ module window {
 #endif
 #endif
 
-        attribute [Conditional=DATABASE] SQLExceptionConstructor SQLException;
+        attribute [Conditional=SQL_DATABASE] SQLExceptionConstructor SQLException;
 
 
         attribute DOMFormDataConstructor FormData;

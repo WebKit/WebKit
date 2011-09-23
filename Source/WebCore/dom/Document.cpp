@@ -574,10 +574,6 @@ Document::~Document()
             (*m_userSheets)[i]->clearOwnerNode();
     }
 
-#if ENABLE(FULLSCREEN_API)
-    m_fullScreenChangeEventTargetQueue.clear();
-#endif
-
     deleteRetiredCustomFonts();
 
     m_weakReference->clear();
@@ -944,7 +940,7 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
                 ec = HIERARCHY_REQUEST_ERR;
                 return 0;
             }
-            iframe->setRemainsAliveOnRemovalFromTree(attached() && source->attached());
+            iframe->setRemainsAliveOnRemovalFromTree(attached() && source->attached() && iframe->canRemainAliveOnRemovalFromTree());
         }
 
         if (source->parentNode())
@@ -1828,6 +1824,9 @@ void Document::detach()
     clearAXObjectCache();
     stopActiveDOMObjects();
     m_eventQueue->close();
+#if ENABLE(FULLSCREEN_API)
+    m_fullScreenChangeEventTargetQueue.clear();
+#endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     // FIXME: consider using ActiveDOMObject.
@@ -4564,7 +4563,7 @@ void Document::setSecurityOrigin(SecurityOrigin* securityOrigin)
     initDNSPrefetch();
 }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 bool Document::allowDatabaseAccess() const
 {
@@ -4877,6 +4876,9 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     ASSERT(element);
     ASSERT(page() && page()->settings()->fullScreenEnabled());
 
+    if (m_fullScreenRenderer)
+        m_fullScreenRenderer->unwrapRenderer();
+
     m_fullScreenElement = element;
 
     // Create a placeholder block for a the full-screen element, to keep the page from reflowing
@@ -4891,7 +4893,7 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     }
 
     if (m_fullScreenElement != documentElement())
-        m_fullScreenElement->detach();
+        RenderFullScreen::wrapRenderer(renderer, this);
 
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
     
@@ -4942,15 +4944,11 @@ void Document::webkitDidExitFullScreenForElement(Element*)
 {
     m_areKeysEnabledInFullScreen = false;
     setAnimatingFullScreen(false);
-
-    if (m_fullScreenRenderer)
-        m_fullScreenRenderer->remove();
     
-    if (m_fullScreenElement != documentElement())
-        m_fullScreenElement->detach();
+    if (m_fullScreenRenderer)
+        m_fullScreenRenderer->unwrapRenderer();
 
     m_fullScreenChangeEventTargetQueue.append(m_fullScreenElement.release());
-    setFullScreenRenderer(0);
 #if USE(ACCELERATED_COMPOSITING)
     page()->chrome()->client()->setRootFullScreenLayer(0);
 #endif

@@ -27,10 +27,11 @@
 
 #import <AppKit/NSWindowController.h>
 #import <AppKit/NSScreen.h>
-#import <Foundation/NSTimer.h>
+#import <wtf/OwnPtr.h>
 #import <wtf/RefPtr.h>
 
 namespace WebCore {
+    class DisplaySleepDisabler;
     class HTMLMediaElement;
 }
 
@@ -51,9 +52,8 @@ namespace WebCore {
 
     BOOL _isEndingFullscreen;
     BOOL _forceDisableAnimation;
-    uint32_t _idleDisplaySleepAssertion;
-    uint32_t _idleSystemSleepAssertion;
-    NSTimer *_tickleTimer;
+
+    OwnPtr<WebCore::DisplaySleepDisabler> _displaySleepDisabler;
 }
 
 - (id <WebVideoFullscreenControllerDelegate>)delegate;

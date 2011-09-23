@@ -40,7 +40,7 @@
 #include <utility>
 #include <wtf/Noncopyable.h>
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 #include "DatabaseTask.h"
 #include "DatabaseTracker.h"
 #endif
@@ -197,7 +197,7 @@ public:
         ASSERT(context->isWorkerContext());
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         DatabaseTaskSynchronizer cleanupSync;
         workerContext->stopDatabases(&cleanupSync);
 #endif
@@ -210,7 +210,7 @@ public:
         // which become dangling once Heap is destroyed.
         workerContext->removeAllEventListeners();
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         // We wait for the database thread to clean up all its stuff so that we
         // can do more stringent leak checks as we exit.
         cleanupSync.waitForTaskCompletion();
@@ -233,7 +233,7 @@ void WorkerThread::stop()
     if (m_workerContext) {
         m_workerContext->script()->scheduleExecutionTermination();
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
         DatabaseTracker::tracker().interruptAllDatabasesForContext(m_workerContext.get());
 #endif
 

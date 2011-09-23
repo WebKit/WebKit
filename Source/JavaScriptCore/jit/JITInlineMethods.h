@@ -299,6 +299,14 @@ ALWAYS_INLINE void JIT::addSlowCase(JumpList jumpList)
         m_slowCases.append(SlowCaseEntry(jumpVector[i], m_bytecodeOffset));
 }
 
+ALWAYS_INLINE void JIT::addSlowCase()
+{
+    ASSERT(m_bytecodeOffset != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
+    
+    Jump emptyJump; // Doing it this way to make Windows happy.
+    m_slowCases.append(SlowCaseEntry(emptyJump, m_bytecodeOffset));
+}
+
 ALWAYS_INLINE void JIT::addJump(Jump jump, int relativeOffset)
 {
     ASSERT(m_bytecodeOffset != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
@@ -315,7 +323,7 @@ ALWAYS_INLINE void JIT::emitJumpSlowToHot(Jump jump, int relativeOffset)
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotObject(RegisterID structureReg)
 {
-    return branch8(NotEqual, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+    return branch8(Below, Address(structureReg, Structure::typeInfoTypeOffset()), TrustedImm32(ObjectType));
 }
 
 #if ENABLE(SAMPLING_FLAGS)
@@ -386,7 +394,7 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(unsigned src)
 
 template <typename ClassType, typename StructureType> inline void JIT::emitAllocateBasicJSObject(StructureType structure, void* vtable, RegisterID result, RegisterID storagePtr)
 {
-    NewSpace::SizeClass* sizeClass = &m_globalData->heap.sizeClassFor(sizeof(ClassType));
+    MarkedSpace::SizeClass* sizeClass = &m_globalData->heap.sizeClassFor(sizeof(ClassType));
     loadPtr(&sizeClass->firstFreeCell, result);
     addSlowCase(branchTestPtr(Zero, result));
 
@@ -569,6 +577,12 @@ inline void JIT::emitStoreInt32(unsigned index, RegisterID payload, bool indexIs
     store32(payload, payloadFor(index, callFrameRegister));
     if (!indexIsInt32)
         store32(TrustedImm32(JSValue::Int32Tag), tagFor(index, callFrameRegister));
+}
+
+inline void JIT::emitStoreAndMapInt32(unsigned index, RegisterID tag, RegisterID payload, bool indexIsInt32, size_t opcodeLength)
+{
+    emitStoreInt32(index, payload, indexIsInt32);
+    map(m_bytecodeOffset + opcodeLength, index, tag, payload);
 }
 
 inline void JIT::emitStoreInt32(unsigned index, TrustedImm32 payload, bool indexIsInt32)

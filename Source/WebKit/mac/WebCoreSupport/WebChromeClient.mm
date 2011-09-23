@@ -543,10 +543,7 @@ void WebChromeClient::setStatusbarText(const String& status)
 
 IntRect WebChromeClient::windowResizerRect() const
 {
-    NSRect rect = [[m_webView window] _growBoxRect];
-    if ([m_webView _usesDocumentViews])
-        return enclosingIntRect(rect);
-    return enclosingIntRect([m_webView convertRect:rect fromView:nil]);
+    return enclosingIntRect([[m_webView window] _growBoxRect]);
 }
 
 void WebChromeClient::invalidateWindow(const IntRect&, bool immediate)
@@ -559,15 +556,6 @@ void WebChromeClient::invalidateWindow(const IntRect&, bool immediate)
 
 void WebChromeClient::invalidateContentsAndWindow(const IntRect& rect, bool immediate)
 {
-    if ([m_webView _usesDocumentViews])
-        return;
-
-    [m_webView setNeedsDisplayInRect:rect];
-
-    if (immediate) {
-        [[m_webView window] displayIfNeeded];
-        [[m_webView window] flushWindowIfNeeded];
-    }
 }
 
 void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect, bool immediate)
@@ -581,27 +569,17 @@ void WebChromeClient::scroll(const IntSize&, const IntRect&, const IntRect&)
 
 IntPoint WebChromeClient::screenToWindow(const IntPoint& p) const
 {
-    if ([m_webView _usesDocumentViews])
-        return p;
-    NSPoint windowCoord = [[m_webView window] convertScreenToBase:p];
-    return IntPoint([m_webView convertPoint:windowCoord fromView:nil]);
+    return p;
 }
 
 IntRect WebChromeClient::windowToScreen(const IntRect& r) const
 {
-    if ([m_webView _usesDocumentViews])
-        return r;
-    NSRect tempRect = r;
-    tempRect = [m_webView convertRect:tempRect toView:nil];
-    tempRect.origin = [[m_webView window] convertBaseToScreen:tempRect.origin];
-    return enclosingIntRect(tempRect);
+    return r;
 }
 
 PlatformPageClient WebChromeClient::platformPageClient() const
 {
-    if ([m_webView _usesDocumentViews])
-        return 0;
-    return m_webView;
+    return 0;
 }
 
 void WebChromeClient::contentsSizeChanged(Frame*, const IntSize&) const
@@ -612,8 +590,7 @@ void WebChromeClient::scrollRectIntoView(const IntRect& r) const
 {
     // FIXME: This scrolling behavior should be under the control of the embedding client,
     // perhaps in a delegate method, rather than something WebKit does unconditionally.
-    NSView *coordinateView = [m_webView _usesDocumentViews]
-        ? (NSView *)[[[m_webView mainFrame] frameView] documentView] : m_webView;
+    NSView *coordinateView = [[[m_webView mainFrame] frameView] documentView];
     NSRect rect = r;
     for (NSView *view = m_webView; view; view = [view superview]) {
         if ([view isKindOfClass:[NSClipView class]]) {
@@ -645,7 +622,9 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsig
 
 void WebChromeClient::setToolTip(const String& toolTip, TextDirection)
 {
-    [m_webView _setToolTip:toolTip];
+    NSView<WebDocumentView> *documentView = [[[m_webView _selectedOrMainFrame] frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _setToolTip:toolTip];
 }
 
 void WebChromeClient::print(Frame* frame)
@@ -653,11 +632,11 @@ void WebChromeClient::print(Frame* frame)
     WebFrame *webFrame = kit(frame);
     if ([[m_webView UIDelegate] respondsToSelector:@selector(webView:printFrame:)])
         CallUIDelegate(m_webView, @selector(webView:printFrame:), webFrame);
-    else if ([m_webView _usesDocumentViews])
+    else
         CallUIDelegate(m_webView, @selector(webView:printFrameView:), [webFrame frameView]);
 }
 
-#if ENABLE(DATABASE)
+#if ENABLE(SQL_DATABASE)
 
 void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName)
 {

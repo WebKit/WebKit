@@ -687,6 +687,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebHitTestResult.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebHitTestResult.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebKeyboardEvent.cpp"
 				>
 			</File>
@@ -4235,6 +4243,14 @@
 				</File>
 				<File
 					RelativePath="..\Scripts\webkit2\messages_unittest.py"
+					>
+				</File>
+				<File
+					RelativePath="..\Scripts\webkit2\model.py"
+					>
+				</File>
+				<File
+					RelativePath="..\Scripts\webkit2\parser.py"
 					>
 				</File>
 			</Filter>
