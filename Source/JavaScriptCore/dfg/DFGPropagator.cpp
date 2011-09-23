@@ -599,6 +599,7 @@ private:
         case Resolve:
         case ResolveBase:
         case ResolveBaseStrictPut:
+        case PutScopedVar:
             break;
             
         // This gets ignored because it doesn't do anything.
