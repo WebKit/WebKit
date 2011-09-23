@@ -1386,7 +1386,7 @@ public:
             add32(TrustedImm32(left.offset), scr);
         add32(left.base, scr);
         load8(scr, scr);
-        extub(scr, scr);
+        m_assembler.extub(scr, scr);
         RegisterID scr1 = claimScratch();
         m_assembler.loadConstant(right.m_value, scr1);
         releaseScratch(scr);

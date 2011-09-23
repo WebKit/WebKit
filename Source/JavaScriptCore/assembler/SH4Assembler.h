@@ -1506,9 +1506,9 @@ public:
         return readPCrelativeAddress((*(reinterpret_cast<uint16_t*>(code)) & 0xff), reinterpret_cast<uint16_t*>(code));
     }
 
-    void* executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
+    PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData)
     {
-        return m_buffer.executableCopy(globalData, allocator);
+        return m_buffer.executableCopy(globalData);
     }
 
     void prefix(uint16_t pre)

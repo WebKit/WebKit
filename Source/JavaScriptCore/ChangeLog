@@ -1,3 +1,15 @@
+2011-09-23  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68077
+        SH4 assemblers doesn't refer to executable memory handle.
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::branch8):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::executableCopy):
+
 2011-09-23  Oliver Hunt  <oliver@apple.com>
 
         PutScopedVar nodes should report that it has a var number
