@@ -356,7 +356,7 @@ void ShadowBlur::adjustBlurRadius(GraphicsContext* context)
         return;
 
     AffineTransform transform = context->getCTM();
-    m_blurRadius.scale(1 / transform.xScale(), 1 / transform.yScale());
+    m_blurRadius.scale(1 / static_cast<float>(transform.xScale()), 1 / static_cast<float>(transform.yScale()));
 }
 
 IntSize ShadowBlur::blurredEdgeSize() const
