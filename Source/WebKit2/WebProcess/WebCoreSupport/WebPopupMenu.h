@@ -49,10 +49,10 @@ public:
     void didChangeSelectedIndex(int newIndex);
     void setTextForIndex(int newIndex);
 
-    virtual void show(const WebCore::IntRect&, WebCore::FrameView*, int index);
-    virtual void hide();
-    virtual void updateFromElement();
-    virtual void disconnectClient();
+    virtual void show(const WebCore::IntRect&, WebCore::FrameView*, int index) OVERRIDE;
+    virtual void hide() OVERRIDE;
+    virtual void updateFromElement() OVERRIDE;
+    virtual void disconnectClient() OVERRIDE;
 
 private:
     WebPopupMenu(WebPage*, WebCore::PopupMenuClient*);

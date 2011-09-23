@@ -50,21 +50,21 @@ public:
     }
 
 private:
-    virtual void inspectorDestroyed();
+    virtual void inspectorDestroyed() OVERRIDE;
 
-    virtual void openInspectorFrontend(WebCore::InspectorController*);
+    virtual void openInspectorFrontend(WebCore::InspectorController*) OVERRIDE;
 
-    virtual void highlight();
-    virtual void hideHighlight();
+    virtual void highlight() OVERRIDE;
+    virtual void hideHighlight() OVERRIDE;
 
-    virtual bool sendMessageToFrontend(const String&);
+    virtual bool sendMessageToFrontend(const String&) OVERRIDE;
 
     // PageOverlay::Client
-    virtual void pageOverlayDestroyed(PageOverlay*);
-    virtual void willMoveToWebPage(PageOverlay*, WebPage*);
-    virtual void didMoveToWebPage(PageOverlay*, WebPage*);
-    virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect&);
-    virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&);
+    virtual void pageOverlayDestroyed(PageOverlay*) OVERRIDE;
+    virtual void willMoveToWebPage(PageOverlay*, WebPage*) OVERRIDE;
+    virtual void didMoveToWebPage(PageOverlay*, WebPage*) OVERRIDE;
+    virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect&) OVERRIDE;
+    virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) OVERRIDE;
 
     WebPage* m_page;
     PageOverlay* m_highlightOverlay;

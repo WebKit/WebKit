@@ -666,16 +666,6 @@ void WebChromeClient::formStateDidChange(const Node*)
     notImplemented();
 }
 
-void WebChromeClient::formDidFocus(const Node*)
-{ 
-    notImplemented();
-}
-
-void WebChromeClient::formDidBlur(const Node*)
-{
-    notImplemented();
-}
-
 bool WebChromeClient::selectItemWritingDirectionIsNatural()
 {
 #if PLATFORM(WIN)

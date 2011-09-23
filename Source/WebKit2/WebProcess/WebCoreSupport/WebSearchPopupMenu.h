@@ -30,10 +30,10 @@ class WebSearchPopupMenu : public WebCore::SearchPopupMenu {
 public:
     static PassRefPtr<WebSearchPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
 
-    virtual WebCore::PopupMenu* popupMenu();
-    virtual void saveRecentSearches(const WTF::AtomicString& name, const Vector<String>& searchItems);
-    virtual void loadRecentSearches(const WTF::AtomicString& name, Vector<String>& searchItems);
-    virtual bool enabled();
+    virtual WebCore::PopupMenu* popupMenu() OVERRIDE;
+    virtual void saveRecentSearches(const WTF::AtomicString& name, const Vector<String>& searchItems) OVERRIDE;
+    virtual void loadRecentSearches(const WTF::AtomicString& name, Vector<String>& searchItems) OVERRIDE;
+    virtual bool enabled() OVERRIDE;
 
 private:
     WebSearchPopupMenu(WebPage*, WebCore::PopupMenuClient*);

@@ -64,8 +64,8 @@ private:
     void deleteDatabasesForOrigin(const String& originIdentifier) const;
 
     // WebCore::DatabaseTrackerClient
-    virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*);
-    virtual void dispatchDidModifyDatabase(WebCore::SecurityOrigin*, const String& databaseIdentifier);
+    virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*) OVERRIDE;
+    virtual void dispatchDidModifyDatabase(WebCore::SecurityOrigin*, const String& databaseIdentifier) OVERRIDE;
 };
 
 } // namespace WebKit

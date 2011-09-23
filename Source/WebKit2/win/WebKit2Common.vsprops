@@ -10,7 +10,7 @@
 		PreprocessorDefinitions="_USRDLL;WEBKIT_EXPORTS;FRAMEWORK_NAME=WebKit;BUILDING_WEBKIT"
 		UsePrecompiledHeader="2"
 		PrecompiledHeaderThrough="WebKit2Prefix.h"
-		DisableSpecificWarnings="4819"
+		DisableSpecificWarnings="4481;4819"
 		ForcedIncludeFiles="WebKit2Prefix.h;ICUVersion.h"
 	/>
 	<Tool

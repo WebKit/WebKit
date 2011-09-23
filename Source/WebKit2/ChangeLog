@@ -1,3 +1,33 @@
+2011-09-23  Anders Carlsson  <andersca@apple.com>
+
+        Add OVERRIDE to overrides of virtual member functions in client classes
+        https://bugs.webkit.org/show_bug.cgi?id=68702
+
+        Reviewed by Darin Adler.
+
+        Disable the warning in Xcode and VS2005 for using override and final when compiling as C++98,
+        and remove WebEditorClient::isEditable, WebChromeClient::formDidFocus,
+        WebChromeClient::formDidBlur and WebFrameLoaderClient::dispatchDidLoadResourceByXMLHttpRequest since
+        they have been removed from their respective base classes.
+        
+        * Configurations/Base.xcconfig:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+        * WebProcess/WebCoreSupport/WebDragClient.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebGeolocationClient.h:
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/WebPopupMenu.h:
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.h:
+        * win/WebKit2Common.vsprops:
+
 2011-09-23  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] QtFileDownloader ctor shouldn't call QtFileDownloader::onReadyRead()

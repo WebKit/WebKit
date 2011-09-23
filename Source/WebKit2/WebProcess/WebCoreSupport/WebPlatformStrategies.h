@@ -43,21 +43,21 @@ private:
     WebPlatformStrategies();
     
     // WebCore::PlatformStrategies
-    virtual WebCore::CookiesStrategy* createCookiesStrategy();
-    virtual WebCore::PluginStrategy* createPluginStrategy();
-    virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy();
+    virtual WebCore::CookiesStrategy* createCookiesStrategy() OVERRIDE;
+    virtual WebCore::PluginStrategy* createPluginStrategy() OVERRIDE;
+    virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy() OVERRIDE;
 
     // WebCore::CookiesStrategy
-    virtual void notifyCookiesChanged();
+    virtual void notifyCookiesChanged() OVERRIDE;
 
     // WebCore::PluginStrategy
-    virtual void refreshPlugins();
-    virtual void getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&);
+    virtual void refreshPlugins() OVERRIDE;
+    virtual void getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&) OVERRIDE;
     void populatePluginCache();
 
     // WebCore::VisitedLinkStrategy
-    virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash, const WebCore::KURL& baseURL, const WTF::AtomicString& attributeURL);
-    virtual void addVisitedLink(WebCore::Page*, WebCore::LinkHash);
+    virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash, const WebCore::KURL& baseURL, const WTF::AtomicString& attributeURL) OVERRIDE;
+    virtual void addVisitedLink(WebCore::Page*, WebCore::LinkHash) OVERRIDE;
 
     bool m_pluginCacheIsPopulated;
     bool m_shouldRefreshPlugins;

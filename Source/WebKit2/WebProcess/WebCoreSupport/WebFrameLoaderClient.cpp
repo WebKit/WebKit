@@ -258,11 +258,6 @@ bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader
     return false;
 }
 
-void WebFrameLoaderClient::dispatchDidLoadResourceByXMLHttpRequest(unsigned long identifier, const String&)
-{
-    notImplemented();
-}
-
 void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
 {
     WebPage* webPage = m_frame->page();

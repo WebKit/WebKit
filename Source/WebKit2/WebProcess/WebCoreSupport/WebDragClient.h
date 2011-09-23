@@ -50,20 +50,20 @@ public:
     }
 
 private:
-    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData*);
-    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard*);
-    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData*);
-    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint);
+    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData*) OVERRIDE;
+    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard*) OVERRIDE;
+    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData*) OVERRIDE;
+    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) OVERRIDE;
 
-    virtual void startDrag(WebCore::DragImageRef dragImage, const WebCore::IntPoint& dragImageOrigin, const WebCore::IntPoint& eventPos, WebCore::Clipboard*, WebCore::Frame*, bool linkDrag = false);
+    virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragImageOrigin, const WebCore::IntPoint& eventPos, WebCore::Clipboard*, WebCore::Frame*, bool linkDrag = false) OVERRIDE;
 
 #if PLATFORM(MAC)
-    virtual void declareAndWriteDragImage(NSPasteboard*, DOMElement*, NSURL*, NSString*, WebCore::Frame*);
+    virtual void declareAndWriteDragImage(NSPasteboard*, DOMElement*, NSURL*, NSString*, WebCore::Frame*) OVERRIDE;
 #endif
 
-    virtual void dragEnded();
+    virtual void dragEnded() OVERRIDE;
 
-    virtual void dragControllerDestroyed();
+    virtual void dragControllerDestroyed() OVERRIDE;
 
     WebPage* m_page;
     

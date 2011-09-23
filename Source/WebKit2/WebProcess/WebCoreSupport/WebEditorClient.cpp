@@ -111,14 +111,6 @@ int WebEditorClient::spellCheckerDocumentTag()
     return false;
 }
 
-    
-bool WebEditorClient::isEditable()
-{
-    notImplemented();
-    return false;
-}
-
-
 bool WebEditorClient::shouldBeginEditing(Range* range)
 {
     bool result = m_page->injectedBundleEditorClient().shouldBeginEditing(m_page, range);

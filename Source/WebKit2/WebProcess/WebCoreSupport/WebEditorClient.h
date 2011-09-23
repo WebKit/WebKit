@@ -41,113 +41,111 @@ public:
     }
 
 private:
-    virtual void pageDestroyed();
+    virtual void pageDestroyed() OVERRIDE;
 
-    virtual bool shouldDeleteRange(WebCore::Range*);
-    virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*);
-    virtual bool smartInsertDeleteEnabled();
-    virtual bool isSelectTrailingWhitespaceEnabled();
-    virtual bool isContinuousSpellCheckingEnabled();
-    virtual void toggleContinuousSpellChecking();
-    virtual bool isGrammarCheckingEnabled();
-    virtual void toggleGrammarChecking();
-    virtual int spellCheckerDocumentTag();
+    virtual bool shouldDeleteRange(WebCore::Range*) OVERRIDE;
+    virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*) OVERRIDE;
+    virtual bool smartInsertDeleteEnabled() OVERRIDE;
+    virtual bool isSelectTrailingWhitespaceEnabled() OVERRIDE;
+    virtual bool isContinuousSpellCheckingEnabled() OVERRIDE;
+    virtual void toggleContinuousSpellChecking() OVERRIDE;
+    virtual bool isGrammarCheckingEnabled() OVERRIDE;
+    virtual void toggleGrammarChecking() OVERRIDE;
+    virtual int spellCheckerDocumentTag() OVERRIDE;
     
-    virtual bool isEditable();
+    virtual bool shouldBeginEditing(WebCore::Range*) OVERRIDE;
+    virtual bool shouldEndEditing(WebCore::Range*) OVERRIDE;
+    virtual bool shouldInsertNode(WebCore::Node*, WebCore::Range*, WebCore::EditorInsertAction) OVERRIDE;
+    virtual bool shouldInsertText(const String&, WebCore::Range*, WebCore::EditorInsertAction) OVERRIDE;
+    virtual bool shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting) OVERRIDE;
+    
+    virtual bool shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*) OVERRIDE;
+    virtual bool shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*) OVERRIDE;
 
-    virtual bool shouldBeginEditing(WebCore::Range*);
-    virtual bool shouldEndEditing(WebCore::Range*);
-    virtual bool shouldInsertNode(WebCore::Node*, WebCore::Range*, WebCore::EditorInsertAction);
-    virtual bool shouldInsertText(const String&, WebCore::Range*, WebCore::EditorInsertAction);
-    virtual bool shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting);
+    virtual void didBeginEditing() OVERRIDE;
+    virtual void respondToChangedContents() OVERRIDE;
+    virtual void respondToChangedSelection() OVERRIDE;
+    virtual void didEndEditing() OVERRIDE;
+    virtual void didWriteSelectionToPasteboard() OVERRIDE;
+    virtual void didSetSelectionTypesForPasteboard() OVERRIDE;
     
-    virtual bool shouldApplyStyle(WebCore::CSSStyleDeclaration*, WebCore::Range*);
-    virtual bool shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*);
+    virtual void registerCommandForUndo(PassRefPtr<WebCore::EditCommand>) OVERRIDE;
+    virtual void registerCommandForRedo(PassRefPtr<WebCore::EditCommand>) OVERRIDE;
+    virtual void clearUndoRedoOperations() OVERRIDE;
 
-    virtual void didBeginEditing();
-    virtual void respondToChangedContents();
-    virtual void respondToChangedSelection();
-    virtual void didEndEditing();
-    virtual void didWriteSelectionToPasteboard();
-    virtual void didSetSelectionTypesForPasteboard();
+    virtual bool canCopyCut(WebCore::Frame*, bool defaultValue) const OVERRIDE;
+    virtual bool canPaste(WebCore::Frame*, bool defaultValue) const OVERRIDE;
+    virtual bool canUndo() const OVERRIDE;
+    virtual bool canRedo() const OVERRIDE;
     
-    virtual void registerCommandForUndo(PassRefPtr<WebCore::EditCommand>);
-    virtual void registerCommandForRedo(PassRefPtr<WebCore::EditCommand>);
-    virtual void clearUndoRedoOperations();
+    virtual void undo() OVERRIDE;
+    virtual void redo() OVERRIDE;
 
-    virtual bool canCopyCut(WebCore::Frame*, bool defaultValue) const;
-    virtual bool canPaste(WebCore::Frame*, bool defaultValue) const;
-    virtual bool canUndo() const;
-    virtual bool canRedo() const;
+    virtual void handleKeyboardEvent(WebCore::KeyboardEvent*) OVERRIDE;
+    virtual void handleInputMethodKeydown(WebCore::KeyboardEvent*) OVERRIDE;
     
-    virtual void undo();
-    virtual void redo();
-
-    virtual void handleKeyboardEvent(WebCore::KeyboardEvent*);
-    virtual void handleInputMethodKeydown(WebCore::KeyboardEvent*);
-    
-    virtual void textFieldDidBeginEditing(WebCore::Element*);
-    virtual void textFieldDidEndEditing(WebCore::Element*);
-    virtual void textDidChangeInTextField(WebCore::Element*);
-    virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*);
-    virtual void textWillBeDeletedInTextField(WebCore::Element*);
-    virtual void textDidChangeInTextArea(WebCore::Element*);
+    virtual void textFieldDidBeginEditing(WebCore::Element*) OVERRIDE;
+    virtual void textFieldDidEndEditing(WebCore::Element*) OVERRIDE;
+    virtual void textDidChangeInTextField(WebCore::Element*) OVERRIDE;
+    virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*) OVERRIDE;
+    virtual void textWillBeDeletedInTextField(WebCore::Element*) OVERRIDE;
+    virtual void textDidChangeInTextArea(WebCore::Element*) OVERRIDE;
 
 #if PLATFORM(MAC)
-    virtual NSString *userVisibleString(NSURL *);
-    virtual WebCore::DocumentFragment* documentFragmentFromAttributedString(NSAttributedString *, Vector< RefPtr<WebCore::ArchiveResource> >&);
-    virtual void setInsertionPasteboard(NSPasteboard *);
-    virtual NSURL* canonicalizeURL(NSURL*);
-    virtual NSURL* canonicalizeURLString(NSString*);
+    virtual NSString *userVisibleString(NSURL *) OVERRIDE;
+    virtual WebCore::DocumentFragment* documentFragmentFromAttributedString(NSAttributedString *, Vector< RefPtr<WebCore::ArchiveResource> >&) OVERRIDE;
+    virtual void setInsertionPasteboard(NSPasteboard *) OVERRIDE;
+    virtual NSURL* canonicalizeURL(NSURL*) OVERRIDE;
+    virtual NSURL* canonicalizeURLString(NSString*) OVERRIDE;
 #endif
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
-    virtual void uppercaseWord();
-    virtual void lowercaseWord();
-    virtual void capitalizeWord();
-    virtual void showSubstitutionsPanel(bool show);
-    virtual bool substitutionsPanelIsShowing();
-    virtual void toggleSmartInsertDelete();
-    virtual bool isAutomaticQuoteSubstitutionEnabled();
-    virtual void toggleAutomaticQuoteSubstitution();
-    virtual bool isAutomaticLinkDetectionEnabled();
-    virtual void toggleAutomaticLinkDetection();
-    virtual bool isAutomaticDashSubstitutionEnabled();
-    virtual void toggleAutomaticDashSubstitution();
-    virtual bool isAutomaticTextReplacementEnabled();
-    virtual void toggleAutomaticTextReplacement();
-    virtual bool isAutomaticSpellingCorrectionEnabled();
-    virtual void toggleAutomaticSpellingCorrection();
+    virtual void uppercaseWord() OVERRIDE;
+    virtual void lowercaseWord() OVERRIDE;
+    virtual void capitalizeWord() OVERRIDE;
+    virtual void showSubstitutionsPanel(bool show) OVERRIDE;
+    virtual bool substitutionsPanelIsShowing() OVERRIDE;
+    virtual void toggleSmartInsertDelete() OVERRIDE;
+    virtual bool isAutomaticQuoteSubstitutionEnabled() OVERRIDE;
+    virtual void toggleAutomaticQuoteSubstitution() OVERRIDE;
+    virtual bool isAutomaticLinkDetectionEnabled() OVERRIDE;
+    virtual void toggleAutomaticLinkDetection() OVERRIDE;
+    virtual bool isAutomaticDashSubstitutionEnabled() OVERRIDE;
+    virtual void toggleAutomaticDashSubstitution() OVERRIDE;
+    virtual bool isAutomaticTextReplacementEnabled() OVERRIDE;
+    virtual void toggleAutomaticTextReplacement() OVERRIDE;
+    virtual bool isAutomaticSpellingCorrectionEnabled() OVERRIDE;
+    virtual void toggleAutomaticSpellingCorrection() OVERRIDE;
 #endif
 
 #if PLATFORM(GTK)
-    bool executePendingEditorCommands(WebCore::Frame*, Vector<WTF::String>, bool);
-    void getEditorCommandsForKeyEvent(const WebCore::KeyboardEvent*, Vector<WTF::String>&);
+    bool executePendingEditorCommands(WebCore::Frame*, Vector<WTF::String>, bool) OVERRIDE;
+    void getEditorCommandsForKeyEvent(const WebCore::KeyboardEvent*, Vector<WTF::String>&) OVERRIDE;
 #endif
 
-    TextCheckerClient* textChecker() { return this; }
+    TextCheckerClient* textChecker()  OVERRIDE { return this; }
 
-    virtual void ignoreWordInSpellDocument(const String&);
-    virtual void learnWord(const String&);
-    virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);
-    virtual String getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord);
-    virtual void checkGrammarOfString(const UChar*, int length, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength);
+    virtual void ignoreWordInSpellDocument(const String&) OVERRIDE;
+    virtual void learnWord(const String&) OVERRIDE;
+    virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength) OVERRIDE;
+    virtual String getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord) OVERRIDE;
+    virtual void checkGrammarOfString(const UChar*, int length, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) OVERRIDE;
 #if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
-    virtual void checkTextOfParagraph(const UChar* text, int length, WebCore::TextCheckingTypeMask checkingTypes, Vector<WebCore::TextCheckingResult>& results);
+    virtual void checkTextOfParagraph(const UChar* text, int length, WebCore::TextCheckingTypeMask checkingTypes, Vector<WebCore::TextCheckingResult>& results) OVERRIDE;
 #endif
-    virtual void updateSpellingUIWithGrammarString(const String&, const WebCore::GrammarDetail& detail);
-    virtual void updateSpellingUIWithMisspelledWord(const String&);
-    virtual void showSpellingUI(bool show);
-    virtual bool spellingUIIsShowing();
-    virtual void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses);
-    virtual void willSetInputMethodState();
-    virtual void setInputMethodState(bool enabled);
-    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&);
+    virtual void updateSpellingUIWithGrammarString(const String&, const WebCore::GrammarDetail&) OVERRIDE;
+    virtual void updateSpellingUIWithMisspelledWord(const String&) OVERRIDE;
+    virtual void showSpellingUI(bool show) OVERRIDE;
+    virtual bool spellingUIIsShowing() OVERRIDE;
+    virtual void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses) OVERRIDE;
+    virtual void willSetInputMethodState() OVERRIDE;
+    virtual void setInputMethodState(bool enabled) OVERRIDE;
+    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&) OVERRIDE;
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
-    virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel);
-    virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel);
-    virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String& replacedString, const String& replacementString);
+    virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) OVERRIDE;
+    virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel) OVERRIDE;
+    virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel) OVERRIDE;
+    virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String& replacedString, const String& replacementString) OVERRIDE;
 #endif
     WebPage* m_page;
 };

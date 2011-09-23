@@ -43,21 +43,21 @@ private:
     virtual void contextMenuDestroyed();
     
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-    virtual PassOwnPtr<WebCore::ContextMenu> customizeMenu(PassOwnPtr<WebCore::ContextMenu>);
+    virtual PassOwnPtr<WebCore::ContextMenu> customizeMenu(PassOwnPtr<WebCore::ContextMenu>) OVERRIDE;
 #else
-    virtual WebCore::PlatformMenuDescription getCustomMenuFromDefaultItems(WebCore::ContextMenu*);
+    virtual WebCore::PlatformMenuDescription getCustomMenuFromDefaultItems(WebCore::ContextMenu*) OVERRIDE;
 #endif
-    virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*);
+    virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*) OVERRIDE;
     
-    virtual void downloadURL(const WebCore::KURL& url);
-    virtual void searchWithGoogle(const WebCore::Frame*);
-    virtual void lookUpInDictionary(WebCore::Frame*);
-    virtual bool isSpeaking();
-    virtual void speak(const String&);
-    virtual void stopSpeaking();
+    virtual void downloadURL(const WebCore::KURL&) OVERRIDE;
+    virtual void searchWithGoogle(const WebCore::Frame*) OVERRIDE;
+    virtual void lookUpInDictionary(WebCore::Frame*) OVERRIDE;
+    virtual bool isSpeaking() OVERRIDE;
+    virtual void speak(const String&) OVERRIDE;
+    virtual void stopSpeaking() OVERRIDE;
     
 #if PLATFORM(MAC)
-    virtual void searchWithSpotlight();
+    virtual void searchWithSpotlight() OVERRIDE;
 #endif
     
     WebPage* m_page;

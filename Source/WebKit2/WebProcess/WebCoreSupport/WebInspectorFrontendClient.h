@@ -39,20 +39,20 @@ public:
     WebInspectorFrontendClient(WebPage* page, WebPage* inspectorPage);
 
 private:
-    virtual void frontendLoaded();
+    virtual void frontendLoaded() OVERRIDE;
 
-    virtual String localizedStringsURL();
-    virtual String hiddenPanels();
+    virtual String localizedStringsURL() OVERRIDE;
+    virtual String hiddenPanels() OVERRIDE;
 
-    virtual void bringToFront();
-    virtual void closeWindow();
-    virtual void disconnectFromBackend();
+    virtual void bringToFront() OVERRIDE;
+    virtual void closeWindow() OVERRIDE;
+    virtual void disconnectFromBackend() OVERRIDE;
 
-    virtual void attachWindow();
-    virtual void detachWindow();
-    virtual void setAttachedWindowHeight(unsigned);
+    virtual void attachWindow() OVERRIDE;
+    virtual void detachWindow() OVERRIDE;
+    virtual void setAttachedWindowHeight(unsigned) OVERRIDE;
 
-    virtual void inspectedURLChanged(const String&);
+    virtual void inspectedURLChanged(const String&) OVERRIDE;
 
     WebPage* m_page;
 };
