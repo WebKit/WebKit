@@ -5,6 +5,7 @@ var console = null;
 var printFullTestDetails = true; // This is optionaly switched of by test whose tested values can differ. (see disableFullTestDetailsPrinting())
 var Failed = false;
 
+var track = null; // Current TextTrack being tested.
 var cues = null; // Current TextTrackCueList being tested.
 var numberOfTrackTests = 0;
 var numberOfTracksLoaded = 0;
@@ -238,6 +239,22 @@ function isInTimeRanges(ranges, time)
         }
     }
     return false;
+}
+
+function testTracks(expected)
+{
+    tracks = video.textTracks;
+    testExpected("tracks.length", expected.length);
+
+    for (i = 0; i < tracks.length; i++) {
+        consoleWrite("<br>*** Testing text track " + i);
+
+        track = tracks[i];
+        for (j = 0; j < expected.tests.length; j++) {
+            var test = expected.tests[j];
+            testExpected("track." + test.property, test.values[i]);
+        }
+    }
 }
 
 function testCues(index, expected)
