@@ -193,9 +193,11 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
             return;
         }
         updateReferencedText();
-        m_eventListener = SubtreeModificationEventListener::create(this, id);
-        ASSERT(target->parentNode());
-        target->parentNode()->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
+        if (inDocument()) {
+            m_eventListener = SubtreeModificationEventListener::create(this, id);
+            ASSERT(target->parentNode());
+            target->parentNode()->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
+        }
         if (RenderObject* renderer = this->renderer())
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         return;
@@ -238,6 +240,21 @@ void SVGTRefElement::buildPendingResource()
         ASSERT(target->parentNode());
         target->parentNode()->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
     }
+}
+
+void SVGTRefElement::insertedIntoDocument()
+{
+    SVGStyledElement::insertedIntoDocument();
+    String id;
+    Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
+    if (!target) {
+        document()->accessSVGExtensions()->addPendingResource(id, this);
+        return;
+    }
+    updateReferencedText();
+    m_eventListener = SubtreeModificationEventListener::create(this, id);
+    ASSERT(target->parentNode());
+    target->parentNode()->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
 }
 
 void SVGTRefElement::removedFromDocument()

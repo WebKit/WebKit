@@ -1,3 +1,21 @@
+2011-09-23  Rob Buis  <rbuis@rim.com>
+
+        use after free in WebCore::SVGTRefElement::updateReferencedText
+        https://bugs.webkit.org/show_bug.cgi?id=67555
+
+        Reviewed by Nikolas Zimmermann.
+
+        Event listeners can outlive the tref element that created them when
+        the tref is cloned and then garbage collected, causing a dangling pointer to the
+        tref. To fix this do not install event listener until the tref is inserted into the document.
+
+        Test: svg/custom/tref-clone-crash.html
+
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::svgAttributeChanged):
+        (WebCore::SVGTRefElement::insertedIntoDocument):
+        * svg/SVGTRefElement.h:
+
 2011-09-23  Vsevolod Vlasov  <vsevik@chromium.org>
 
         ASSERTION FAILED: documentLoader in WebKit/Source/WebCore/inspector/InspectorInstrumentation.cpp(597)

@@ -1,0 +1,33 @@
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" onload="runTest()">
+  <defs>
+    <style id="style"/>
+    <text id="ref"></text>
+  </defs>
+  <g><use xlink:href="#ref"/></g>
+  <g><text><tref id="tref" xlink:href="#ref"/></text></g>
+  <script>
+    function gc() {
+      if (window.GCController)
+        GCController.collect();
+      else {
+        for (var i = 0; i < 10000; ++i)
+          new Object;
+      }
+    }
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.waitUntilDone();
+    }
+    function runTest() {
+      var tref = document.getElementById("tref");
+      tref.cloneNode(true);
+      gc();
+      var elem = document.getElementById("style");
+      var parent = elem.parentNode;
+      parent.insertBefore(document.createElement("source"), elem);
+      document.body.innerHTML = "PASS";
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }
+  </script>
+</svg>

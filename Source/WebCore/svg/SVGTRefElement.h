@@ -47,6 +47,7 @@ private:
     virtual bool childShouldCreateRenderer(Node*) const;
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
 
+    virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 
     void updateReferencedText();
