@@ -30,7 +30,11 @@
 
 #include <dfg/DFGJITCompiler.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+struct GlobalResolveInfo;
+
+namespace DFG {
 
 enum PutKind { Direct, NotDirect };
 
@@ -75,6 +79,7 @@ EncodedJSValue operationInstanceOf(ExecState*, EncodedJSValue value, EncodedJSVa
 EncodedJSValue operationResolve(ExecState*, Identifier*);
 EncodedJSValue operationResolveBase(ExecState*, Identifier*);
 EncodedJSValue operationResolveBaseStrictPut(ExecState*, Identifier*);
+EncodedJSValue operationResolveGlobal(ExecState*, GlobalResolveInfo*, Identifier*);
 EncodedJSValue operationToPrimitive(ExecState*, EncodedJSValue);
 EncodedJSValue operationStrCat(ExecState*, void* start, size_t);
 void operationThrowHasInstanceError(ExecState*, EncodedJSValue base);

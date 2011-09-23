@@ -56,6 +56,7 @@ public:
         , m_preservedVars(codeBlock->m_numVars)
         , m_parameterSlots(0)
         , m_numPassedVarArgs(0)
+        , m_globalResolveNumber(0)
     {
         ASSERT(m_profiledBlock);
     }
@@ -615,6 +616,8 @@ private:
     unsigned m_parameterSlots;
     // The number of var args passed to the next var arg node.
     unsigned m_numPassedVarArgs;
+    // The index in the global resolve info.
+    unsigned m_globalResolveNumber;
 
     struct PhiStackEntry {
         PhiStackEntry(BasicBlock* block, NodeIndex phi, unsigned varNo)
@@ -1427,6 +1430,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_resolve_base);
         }
             
+        case op_resolve_global: {
+            unsigned identifier = currentInstruction[2].u.operand;
+
+            NodeIndex resolve = addToGraph(ResolveGlobal, OpInfo(identifier), OpInfo(m_globalResolveNumber++));
+            set(currentInstruction[1].u.operand, resolve);
+
+            NEXT_OPCODE(op_resolve_global);
+        }
+
         case op_loop_hint: {
             // Baseline->DFG OSR jumps between loop hints. The DFG assumes that Baseline->DFG
             // OSR can only happen at basic block boundaries. Assert that these two statements

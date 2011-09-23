@@ -290,6 +290,7 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(Resolve, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(ResolveBase, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(ResolveBaseStrictPut, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(ResolveGlobal, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     \
     /* Nodes for misc operations. */\
     macro(Breakpoint, NodeMustGenerate | NodeClobbersWorld) \
@@ -466,6 +467,7 @@ struct Node {
         case Resolve:
         case ResolveBase:
         case ResolveBaseStrictPut:
+        case ResolveGlobal:
             return true;
         default:
             return false;
@@ -479,6 +481,12 @@ struct Node {
         return m_opInfo;
     }
     
+    unsigned resolveInfoIndex()
+    {
+        ASSERT(op == ResolveGlobal);
+        return m_opInfo2;
+    }
+
     bool hasArithNodeFlags()
     {
         switch (op) {

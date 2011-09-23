@@ -674,6 +674,25 @@ EncodedJSValue operationResolveBaseStrictPut(ExecState* exec, Identifier* proper
     return JSValue::encode(base);
 }
 
+EncodedJSValue operationResolveGlobal(ExecState* exec, GlobalResolveInfo* resolveInfo, Identifier* propertyName)
+{
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+
+    PropertySlot slot(globalObject);
+    if (globalObject->getPropertySlot(exec, *propertyName, slot)) {
+        JSValue result = slot.getValue(exec, *propertyName);
+
+        if (slot.isCacheableValue() && !globalObject->structure()->isUncacheableDictionary() && slot.slotBase() == globalObject) {
+            resolveInfo->structure.set(exec->globalData(), exec->codeBlock()->ownerExecutable(), globalObject->structure());
+            resolveInfo->offset = slot.cachedOffset();
+        }
+
+        return JSValue::encode(result);
+    }
+
+    return throwVMError(exec, createUndefinedVariableError(exec, *propertyName));
+}
+
 EncodedJSValue operationToPrimitive(ExecState* exec, EncodedJSValue value)
 {
     return JSValue::encode(JSValue::decode(value).toPrimitive(exec));

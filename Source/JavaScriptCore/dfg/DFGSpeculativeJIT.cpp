@@ -2043,7 +2043,46 @@ void SpeculativeJIT::compile(Node& node)
         jsValueResult(result.gpr(), m_compileIndex);
         break;
     }
-        
+
+    case ResolveGlobal: {
+        GPRTemporary globalObject(this);
+        GPRTemporary resolveInfo(this);
+        GPRTemporary result(this);
+
+        GPRReg globalObjectGPR = globalObject.gpr();
+        GPRReg resolveInfoGPR = resolveInfo.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        GlobalResolveInfo* resolveInfoAddress = &(m_jit.codeBlock()->globalResolveInfo(node.resolveInfoIndex()));
+
+        // Check Structure of global object
+        m_jit.move(JITCompiler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), globalObjectGPR);
+        m_jit.move(JITCompiler::TrustedImmPtr(resolveInfoAddress), resolveInfoGPR);
+        m_jit.loadPtr(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(GlobalResolveInfo, structure)), resultGPR);
+        JITCompiler::Jump structuresMatch = m_jit.branchPtr(JITCompiler::Equal, resultGPR, JITCompiler::Address(globalObjectGPR, JSCell::structureOffset()));
+
+        silentSpillAllRegisters(resultGPR);
+        m_jit.move(resolveInfoGPR, GPRInfo::argumentGPR1);
+        m_jit.move(JITCompiler::TrustedImmPtr(&m_jit.codeBlock()->identifier(node.identifierNumber())), GPRInfo::argumentGPR2);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        JITCompiler::Call functionCall = appendCallWithExceptionCheck(operationResolveGlobal);
+        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        silentFillAllRegisters(resultGPR);
+
+        JITCompiler::Jump wasSlow = m_jit.jump();
+
+        // Fast case
+        structuresMatch.link(&m_jit);
+        m_jit.loadPtr(JITCompiler::Address(globalObjectGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
+        m_jit.load32(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), resolveInfoGPR);
+        m_jit.loadPtr(JITCompiler::BaseIndex(resultGPR, resolveInfoGPR, JITCompiler::ScalePtr), resultGPR);
+
+        wasSlow.link(&m_jit);
+
+        jsValueResult(resultGPR, m_compileIndex);
+        break;
+    }
+
     case Phantom:
         // This is a no-op.
         noResult(m_compileIndex);
