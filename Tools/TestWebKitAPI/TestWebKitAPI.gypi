@@ -33,6 +33,7 @@
         'TestWebKitAPI_files': [
             'Tests/WTF/CheckedArithmeticOperations.cpp',
             'Tests/WTF/RedBlackTree.cpp',
+            'Tests/WTF/StringBuilder.cpp',
             'Tests/WTF/StringOperators.cpp',
             'Tests/WTF/VectorBasic.cpp',
             'Tests/WTF/VectorReverse.cpp',

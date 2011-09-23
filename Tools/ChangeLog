@@ -1,3 +1,18 @@
+2011-09-22  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Add unit test for existing StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=67080
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.gypi:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp: Added.
+        (operator<<):
+        (TestWebKitAPI::expectBuilderContent):
+        (TestWebKitAPI::expectEmpty):
+        (TestWebKitAPI::TEST):
+
 2011-09-22  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Use ewk_view to navigate in history instead of ewk_history.
