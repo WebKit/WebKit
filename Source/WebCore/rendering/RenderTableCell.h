@@ -86,9 +86,8 @@ public:
     CollapsedBorderValue collapsedTopBorder() const;
     CollapsedBorderValue collapsedBottomBorder() const;
 
-    typedef Vector<CollapsedBorderValue, 100> CollapsedBorderStyles;
-    void collectBorderStyles(CollapsedBorderStyles&) const;
-    static void sortBorderStyles(CollapsedBorderStyles&);
+    void collectBorderValues(RenderTable::CollapsedBorderValues&) const;
+    static void sortBorderValues(RenderTable::CollapsedBorderValues&);
 
     virtual void updateFromElement();
 

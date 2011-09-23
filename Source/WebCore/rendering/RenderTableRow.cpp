@@ -78,6 +78,13 @@ void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* old
 
     if (parent())
         updateBeforeAndAfterContent();
+
+    // If border was changed, notify table.
+    if (parent()) {
+        RenderTable* table = this->table();
+        if (table && !table->selfNeedsLayout() && !table->normalChildNeedsLayout() && oldStyle && oldStyle->border() != style()->border())
+            table->invalidateCollapsedBorders();
+    }
 }
 
 void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)

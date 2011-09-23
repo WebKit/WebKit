@@ -44,6 +44,18 @@ RenderTableCol::RenderTableCol(Node* node)
     updateFromElement();
 }
 
+void RenderTableCol::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBox::styleDidChange(diff, oldStyle);
+
+    // If border was changed, notify table.
+    if (parent()) {
+        RenderTable* table = this->table();
+        if (table && !table->selfNeedsLayout() && !table->normalChildNeedsLayout() && oldStyle && oldStyle->border() != style()->border())
+            table->invalidateCollapsedBorders();
+    }
+}
+
 void RenderTableCol::updateFromElement()
 {
     int oldSpan = m_span;

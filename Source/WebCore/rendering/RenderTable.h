@@ -26,12 +26,12 @@
 #define RenderTable_h
 
 #include "CSSPropertyNames.h"
+#include "CollapsedBorderValue.h"
 #include "RenderBlock.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class CollapsedBorderValue;
 class RenderTableCol;
 class RenderTableCell;
 class RenderTableSection;
@@ -200,7 +200,13 @@ public:
     RenderTableCell* cellBefore(const RenderTableCell*) const;
     RenderTableCell* cellAfter(const RenderTableCell*) const;
  
-    const CollapsedBorderValue* currentBorderStyle() const { return m_currentBorder; }
+    typedef Vector<CollapsedBorderValue> CollapsedBorderValues;
+    void invalidateCollapsedBorders()
+    {
+        m_collapsedBordersValid = false;
+        m_collapsedBorders.clear();
+    }
+    const CollapsedBorderValue* currentBorderValue() const { return m_currentBorder; }
     
     bool hasSections() const { return m_head || m_foot || m_firstBody; }
 
@@ -245,6 +251,7 @@ private:
 
     void subtractCaptionRect(LayoutRect&) const;
 
+    void recalcCollapsedBorders();
     void recalcCaption(RenderBlock*) const;
     void recalcSections() const;
     void adjustLogicalHeightForCaption();
@@ -259,7 +266,9 @@ private:
 
     OwnPtr<TableLayout> m_tableLayout;
 
+    CollapsedBorderValues m_collapsedBorders;
     const CollapsedBorderValue* m_currentBorder;
+    bool m_collapsedBordersValid : 1;
     
     mutable bool m_hasColElements : 1;
     mutable bool m_needsSectionRecalc : 1;

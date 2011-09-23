@@ -317,6 +317,13 @@ void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* ol
 {
     RenderBlock::styleDidChange(diff, oldStyle);
     setHasBoxDecorations(true);
+
+    // If border was changed, notify table.
+    if (parent()) {
+        RenderTable* table = this->table();
+        if (table && !table->selfNeedsLayout() && !table->normalChildNeedsLayout()&& oldStyle && oldStyle->border() != style()->border())
+            table->invalidateCollapsedBorders();
+    }
 }
 
 // The following rules apply for resolving conflicts and figuring out which border
@@ -871,26 +878,27 @@ public:
     int m_count;
 };
 
-static void addBorderStyle(RenderTableCell::CollapsedBorderStyles& borderStyles, CollapsedBorderValue borderValue)
+static void addBorderStyle(RenderTable::CollapsedBorderValues& borderValues,
+                           CollapsedBorderValue borderValue)
 {
     if (!borderValue.exists())
         return;
-    size_t count = borderStyles.size();
+    size_t count = borderValues.size();
     for (size_t i = 0; i < count; ++i)
-        if (borderStyles[i] == borderValue)
+        if (borderValues[i] == borderValue)
             return;
-    borderStyles.append(borderValue);
+    borderValues.append(borderValue);
 }
 
-void RenderTableCell::collectBorderStyles(CollapsedBorderStyles& borderStyles) const
+void RenderTableCell::collectBorderValues(RenderTable::CollapsedBorderValues& borderValues) const
 {
-    addBorderStyle(borderStyles, collapsedStartBorder());
-    addBorderStyle(borderStyles, collapsedEndBorder());
-    addBorderStyle(borderStyles, collapsedBeforeBorder());
-    addBorderStyle(borderStyles, collapsedAfterBorder());
+    addBorderStyle(borderValues, collapsedStartBorder());
+    addBorderStyle(borderValues, collapsedEndBorder());
+    addBorderStyle(borderValues, collapsedBeforeBorder());
+    addBorderStyle(borderValues, collapsedAfterBorder());
 }
 
-static int compareBorderStylesForQSort(const void* pa, const void* pb)
+static int compareBorderValuesForQSort(const void* pa, const void* pb)
 {
     const CollapsedBorderValue* a = static_cast<const CollapsedBorderValue*>(pa);
     const CollapsedBorderValue* b = static_cast<const CollapsedBorderValue*>(pb);
@@ -899,15 +907,15 @@ static int compareBorderStylesForQSort(const void* pa, const void* pb)
     return compareBorders(*a, *b);
 }
 
-void RenderTableCell::sortBorderStyles(CollapsedBorderStyles& borderStyles)
+void RenderTableCell::sortBorderValues(RenderTable::CollapsedBorderValues& borderValues)
 {
-    qsort(borderStyles.data(), borderStyles.size(), sizeof(CollapsedBorderValue),
-        compareBorderStylesForQSort);
+    qsort(borderValues.data(), borderValues.size(), sizeof(CollapsedBorderValue),
+        compareBorderValuesForQSort);
 }
 
 void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, const LayoutRect& paintRect)
 {
-    if (!table()->currentBorderStyle() || graphicsContext->paintingDisabled())
+    if (!table()->currentBorderValue() || graphicsContext->paintingDisabled())
         return;
     
     CollapsedBorderValue leftVal = collapsedLeftBorder();
@@ -947,7 +955,7 @@ void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, con
     bool antialias = shouldAntialiasLines(graphicsContext);
     
     for (CollapsedBorder* border = borders.nextBorder(); border; border = borders.nextBorder()) {
-        if (border->borderValue == *table()->currentBorderStyle())
+        if (border->borderValue == *table()->currentBorderValue())
             drawLineForBoxSide(graphicsContext, border->x1, border->y1, border->x2, border->y2, border->side, 
                                border->borderValue.color(), border->style, 0, 0, antialias);
     }

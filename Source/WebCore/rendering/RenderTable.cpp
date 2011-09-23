@@ -54,8 +54,9 @@ RenderTable::RenderTable(Node* node)
     , m_foot(0)
     , m_firstBody(0)
     , m_currentBorder(0)
+    , m_collapsedBordersValid(false)
     , m_hasColElements(false)
-    , m_needsSectionRecalc(0)
+    , m_needsSectionRecalc(false)
     , m_hSpacing(0)
     , m_vSpacing(0)
     , m_borderStart(0)
@@ -91,6 +92,10 @@ void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         else
             m_tableLayout = adoptPtr(new AutoTableLayout(this));
     }
+
+    // If border was changed, invalidate collapsed borders cache.
+    if (!needsLayout() && oldStyle && oldStyle->border() != style()->border())
+        invalidateCollapsedBorders();
 }
 
 static inline void resetSectionPointerIfNotBefore(RenderTableSection*& ptr, RenderObject* before)
@@ -396,6 +401,9 @@ void RenderTable::layout()
 
     updateLayerTransform();
 
+    // Layout was changed, so probably borders too.
+    invalidateCollapsedBorders();
+
     computeOverflow(clientLogicalBottom());
 
     statePusher.pop();
@@ -414,6 +422,22 @@ void RenderTable::layout()
 
     setNeedsLayout(false);
 }
+
+// Collect all the unique border values that we want to paint in a sorted list.
+void RenderTable::recalcCollapsedBorders()
+{
+    if (m_collapsedBordersValid)
+        return;
+    m_collapsedBordersValid = true;
+    m_collapsedBorders.clear();
+    RenderObject* stop = nextInPreOrderAfterChildren();
+    for (RenderObject* o = firstChild(); o && o != stop; o = o->nextInPreOrder()) {
+        if (o->isTableCell())
+            toRenderTableCell(o)->collectBorderValues(m_collapsedBorders);
+    }
+    RenderTableCell::sortBorderValues(m_collapsedBorders);
+}
+
 
 void RenderTable::addOverflowFromChildren()
 {
@@ -505,20 +529,13 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     }
     
     if (collapseBorders() && paintPhase == PaintPhaseChildBlockBackground && style()->visibility() == VISIBLE) {
-        // Collect all the unique border styles that we want to paint in a sorted list.  Once we
-        // have all the styles sorted, we then do individual passes, painting each style of border
-        // from lowest precedence to highest precedence.
+        recalcCollapsedBorders();
+        // Using our cached sorted styles, we then do individual passes,
+        // painting each style of border from lowest precedence to highest precedence.
         info.phase = PaintPhaseCollapsedTableBorders;
-        RenderTableCell::CollapsedBorderStyles borderStyles;
-        RenderObject* stop = nextInPreOrderAfterChildren();
-        for (RenderObject* o = firstChild(); o && o != stop; o = o->nextInPreOrder()) {
-            if (o->isTableCell())
-                toRenderTableCell(o)->collectBorderStyles(borderStyles);
-        }
-        RenderTableCell::sortBorderStyles(borderStyles);
-        size_t count = borderStyles.size();
+        size_t count = m_collapsedBorders.size();
         for (size_t i = 0; i < count; ++i) {
-            m_currentBorder = &borderStyles[i];
+            m_currentBorder = &m_collapsedBorders[i];
             for (RenderObject* child = firstChild(); child; child = child->nextSibling())
                 if (child->isTableSection()) {
                     LayoutPoint childPoint = flipForWritingMode(toRenderTableSection(child), paintOffset, ParentToChildFlippingAdjustment);

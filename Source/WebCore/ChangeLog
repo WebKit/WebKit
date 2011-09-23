@@ -1,3 +1,58 @@
+2011-09-23  Konstantin Scheglov  <scheglov@google.com>
+
+        Redrawing dirty parts of a large table is very slow
+        https://bugs.webkit.org/show_bug.cgi?id=64546
+
+        Reviewed by David Hyatt.
+
+        Move CollapsedBorderValues into RenderTable.h.
+        Calculate collapsed borders only once and re-use during paintObject().
+        Invalidate cache when cell, row, row group, col, col group or table border is changed.
+
+        Tests: fast/table/border-collapsing/cached-cell-append.html
+               fast/table/border-collapsing/cached-cell-remove.html
+               fast/table/border-collapsing/cached-change-cell-border-color.html
+               fast/table/border-collapsing/cached-change-cell-border-width.html
+               fast/table/border-collapsing/cached-change-col-border-color.html
+               fast/table/border-collapsing/cached-change-col-border-width.html
+               fast/table/border-collapsing/cached-change-colgroup-border-color.html
+               fast/table/border-collapsing/cached-change-colgroup-border-width.html
+               fast/table/border-collapsing/cached-change-row-border-color.html
+               fast/table/border-collapsing/cached-change-row-border-width.html
+               fast/table/border-collapsing/cached-change-table-border-color.html
+               fast/table/border-collapsing/cached-change-table-border-width.html
+               fast/table/border-collapsing/cached-change-tbody-border-color.html
+               fast/table/border-collapsing/cached-change-tbody-border-width.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable):
+        (WebCore::RenderTable::styleDidChange): Invalidate cache on border change.
+        (WebCore::RenderTable::layout): Invalidate cache if layout changed.
+        (WebCore::RenderTable::recalcCollapsedBorders): Ensures that cache is valid.
+        (WebCore::RenderTable::paintObject): Use cached collapsed borders.
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::invalidateCollapsedBorders): Accessor to mark cache invalid.
+        (WebCore::RenderTable::currentBorderValue): Rename to use word "value".
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::styleDidChange): If border changed, invalidate cache.
+
+        Rename to use word "value".
+        (WebCore::addBorderStyle):
+        (WebCore::RenderTableCell::collectBorderValues):
+        (WebCore::compareBorderValuesForQSort):
+        (WebCore::RenderTableCell::sortBorderValues):
+        (WebCore::RenderTableCell::paintCollapsedBorder):
+        * rendering/RenderTableCell.h:
+        
+        If border changed, invalidate cache.
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::styleDidChange):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleDidChange):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::styleDidChange):
+
 2011-09-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add static version of JSCell::visitChildren

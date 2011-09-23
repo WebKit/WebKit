@@ -1,3 +1,55 @@
+2011-09-23  Konstantin Scheglov  <scheglov@google.com>
+
+        Redrawing dirty parts of a large table is very slow
+        https://bugs.webkit.org/show_bug.cgi?id=64546
+
+        Reviewed by David Hyatt.
+
+        Tests for invalidating collapsed borders cache.
+
+        * fast/table/border-collapsing/cached-cell-append-expected.png: Added.
+        * fast/table/border-collapsing/cached-cell-append-expected.txt: Added.
+        * fast/table/border-collapsing/cached-cell-append.html: Added.
+        * fast/table/border-collapsing/cached-cell-remove-expected.png: Added.
+        * fast/table/border-collapsing/cached-cell-remove-expected.txt: Added.
+        * fast/table/border-collapsing/cached-cell-remove.html: Added.
+        * fast/table/border-collapsing/cached-change-cell-border-color-expected.png: Added.
+        * fast/table/border-collapsing/cached-change-cell-border-color-expected.txt: Added.
+        * fast/table/border-collapsing/cached-change-cell-border-color.html: Added.
+        * fast/table/border-collapsing/cached-change-cell-border-width-expected.png: Added.
+        * fast/table/border-collapsing/cached-change-cell-border-width-expected.txt: Added.
+        * fast/table/border-collapsing/cached-change-cell-border-width.html: Added.
+        * fast/table/border-collapsing/cached-change-col-border-color-expected.png: Added.
+        * fast/table/border-collapsing/cached-change-col-border-color-expected.txt: Added.
+        * fast/table/border-collapsing/cached-change-col-border-color.html: Added.
+        * fast/table/border-collapsing/cached-change-col-border-width-expected.png: Added.
+        * fast/table/border-collapsing/cached-change-col-border-width-expected.txt: Added.
+        * fast/table/border-collapsing/cached-change-col-border-width.html: Added.
+        * fast/table/border-collapsing/cached-change-colgroup-border-color-expected.png: Added.
+        * fast/table/border-collapsing/cached-change-colgroup-border-color-expected.txt: Added.
+        * fast/table/border-collapsing/cached-change-colgroup-border-color.html: Added.
+        * fast/table/border-collapsing/cached-change-colgroup-border-width-expected.png: Added.
+        * fast/table/border-collapsing/cached-change-colgroup-border-width-expected.txt: Added.
+        * fast/table/border-collapsing/cached-change-colgroup-border-width.html: Added.
+        * fast/table/border-collapsing/cached-change-row-border-color-expected.png: Added.
+        * fast/table/border-collapsing/cached-change-row-border-color-expected.txt: Added.
+        * fast/table/border-collapsing/cached-change-row-border-color.html: Added.
+        * fast/table/border-collapsing/cached-change-row-border-width-expected.png: Added.
+        * fast/table/border-collapsing/cached-change-row-border-width-expected.txt: Added.
+        * fast/table/border-collapsing/cached-change-row-border-width.html: Added.
+        * fast/table/border-collapsing/cached-change-table-border-color-expected.png: Added.
+        * fast/table/border-collapsing/cached-change-table-border-color-expected.txt: Added.
+        * fast/table/border-collapsing/cached-change-table-border-color.html: Added.
+        * fast/table/border-collapsing/cached-change-table-border-width-expected.png: Added.
+        * fast/table/border-collapsing/cached-change-table-border-width-expected.txt: Added.
+        * fast/table/border-collapsing/cached-change-table-border-width.html: Added.
+        * fast/table/border-collapsing/cached-change-tbody-border-color-expected.png: Added.
+        * fast/table/border-collapsing/cached-change-tbody-border-color-expected.txt: Added.
+        * fast/table/border-collapsing/cached-change-tbody-border-color.html: Added.
+        * fast/table/border-collapsing/cached-change-tbody-border-width-expected.png: Added.
+        * fast/table/border-collapsing/cached-change-tbody-border-width-expected.txt: Added.
+        * fast/table/border-collapsing/cached-change-tbody-border-width.html: Added.
+
 2011-09-23  Jochen Eisinger  <jochen@chromium.org>
 
         Clarify wording in cross origin XSL tests and enable on all platforms

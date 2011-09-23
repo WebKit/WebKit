@@ -59,6 +59,8 @@ private:
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
     RenderTable* table() const;
 
     RenderObjectChildList m_children;

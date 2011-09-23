@@ -81,6 +81,11 @@ void RenderTableSection::styleDidChange(StyleDifference diff, const RenderStyle*
 {
     RenderBox::styleDidChange(diff, oldStyle);
     propagateStyleToAnonymousChildren();
+
+    // If border was changed, notify table.
+    RenderTable* table = this->table();
+    if (table && !table->selfNeedsLayout() && !table->normalChildNeedsLayout() && oldStyle && oldStyle->border() != style()->border())
+        table->invalidateCollapsedBorders();
 }
 
 void RenderTableSection::willBeDestroyed()
