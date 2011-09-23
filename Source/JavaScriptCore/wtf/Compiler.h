@@ -203,9 +203,11 @@
 #endif
 #elif COMPILER(MSVC)
 #define OVERRIDE override
-#else
-#define OVERRIDE
 #endif
+#endif
+
+#ifndef OVERRIDE
+#define OVERRIDE
 #endif
 
 /* FINAL */
@@ -217,9 +219,11 @@
 #endif
 #elif COMPILER(MSVC)
 #define FINAL sealed
-#else
-#define FINAL
 #endif
+#endif
+
+#ifndef FINAL
+#define FINAL
 #endif
 
 #endif /* WTF_Compiler_h */

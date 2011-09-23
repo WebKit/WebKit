@@ -1,3 +1,9 @@
+2011-09-23  Anders Carlsson  <andersca@apple.com>
+
+        Make sure to define OVERRIDE and FINAL for older builds of clang.
+
+        * wtf/Compiler.h:
+
 2011-09-23  Gavin Barraclough  <barraclough@apple.com>
 
         Implement op_resolve_global in the DFG JIT
