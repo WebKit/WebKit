@@ -3789,3 +3789,20 @@ BUGWK68693 LEOPARD : editing/deleting/merge-whitespace-pre.html = IMAGE PASS
 BUGWK68705 MAC WIN : fast/loader/document-destruction-within-unload.html = PASS CRASH
 BUGWK68705 MAC WIN : http/tests/security/contentSecurityPolicy/javascript-url-allowed.html = PASS CRASH
 BUGWK68705 MAC WIN : http/tests/security/contentSecurityPolicy/javascript-url-blocked.html = PASS CRASH
+
+// Alpha channel differences
+BUGWK68736 MAC : fast/table/border-collapsing/cached-cell-append.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-cell-remove.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-change-cell-border-color.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-change-cell-border-width.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-change-cell-sl-border-color.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-change-col-border-color.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-change-col-border-width.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-change-colgroup-border-color.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-change-colgroup-border-width.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-change-row-border-color.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-change-row-border-width.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-change-table-border-color.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-change-table-border-width.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-change-tbody-border-color.html = IMAGE
+BUGWK68736 MAC : fast/table/border-collapsing/cached-change-tbody-border-width.html = IMAGE
