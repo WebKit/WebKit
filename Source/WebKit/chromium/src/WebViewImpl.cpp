@@ -654,7 +654,7 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
         if (WebInputEvent::RawKeyDown == event.type) {
             // Suppress the next keypress event unless the focused node is a plug-in node.
             // (Flash needs these keypress events to handle non-US keyboards.)
-            Node* node = frame->document()->focusedNode();
+            Node* node = focusedWebCoreNode();
             if (!node || !node->renderer() || !node->renderer()->isEmbeddedObject())
                 m_suppressNextKeypressEvent = true;
         }
