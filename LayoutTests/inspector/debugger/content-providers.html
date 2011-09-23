@@ -12,7 +12,6 @@ function test()
         return {
             requestSource: function(callback)
             {
-                InspectorTest.addResult("Request " + id + " source.");
                 callback(source);
             },
             get lineOffset() { return range[0]; },
@@ -38,9 +37,10 @@ function test()
         function testConcatenatedScriptsContentProvider(next)
         {
             var scripts = [];
-            scripts.push(createMockScript("baz.js", "\nfunction baz()\n{\n  return 0;\n}\n", [3, 20]));
-            scripts.push(createMockScript("foo.js", "function foo() { return 0; }", [1, 10]));
-            scripts.push(createMockScript("bar.js", "function bar() { return 0; }", [1, 70]));
+            scripts.push(createMockScript("1", "\nfunction baz()\n{\n  return 0;\n}\n", [3, 20]));
+            scripts.push(createMockScript("2", "function foo() { return 0; }", [0, 10]));
+            scripts.push(createMockScript("3", "function bar() { return 0; }", [1, 70]));
+            scripts.push(createMockScript("4", "this should not appear in displayed content", [0, 20]));
             var contentProvider = new WebInspector.ConcatenatedScriptsContentProvider(scripts);
             function didRequestContent(mimeType, content)
             {

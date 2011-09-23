@@ -2,14 +2,10 @@ Tests ContentProvider implementations.
 
 
 Running: testScriptContentProvider
-Request foo.js source.
 
 Running: testConcatenatedScriptsContentProvider
-Request foo.js source.
-Request bar.js source.
-Request baz.js source.
-
-  <script>function foo() { return 0; }</script>               <script>function bar() { return 0; }</script>
+  <script>function foo() { return 0; }</script>
+                                                              <script>function bar() { return 0; }</script>
 
             <script>
 function baz()

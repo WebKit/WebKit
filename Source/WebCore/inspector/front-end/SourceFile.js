@@ -318,7 +318,6 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
 
        function appendChunk(chunk)
        {
-           var start = { lineNumber: lineNumber, columnNumber: columnNumber };
            content += chunk;
            var lineEndings = chunk.lineEndings();
            var lineCount = lineEndings.length;
@@ -328,12 +327,14 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
                lineNumber += lineCount - 1;
                columnNumber = lineEndings[lineCount - 1] - lineEndings[lineCount - 2] - 1;
            }
-           var end = { lineNumber: lineNumber, columnNumber: columnNumber };
        }
 
        var scriptOpenTag = "<script>";
        var scriptCloseTag = "</script>";
        for (var i = 0; i < scripts.length; ++i) {
+           if (lineNumber > scripts[i].lineOffset || (lineNumber === scripts[i].lineOffset && columnNumber > scripts[i].columnOffset - scriptOpenTag.length))
+               continue;
+
            // Fill the gap with whitespace characters.
            while (lineNumber < scripts[i].lineOffset)
                appendChunk("\n");
