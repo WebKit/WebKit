@@ -34,6 +34,11 @@
 /* COMPILER(CLANG) - Clang  */
 #if defined(__clang__)
 #define WTF_COMPILER_CLANG 1
+
+#ifndef __has_extension
+#define __has_extension __has_feature /* Compatibility with older versions of clang */
+#endif
+
 #endif
 
 /* COMPILER(MSVC) - Microsoft Visual C++ */
@@ -189,5 +194,32 @@
 #define WARN_UNUSED_RETURN
 #endif
 
+/* OVERRIDE */
+
+#ifndef OVERRIDE
+#if COMPILER(CLANG)
+#if __has_extension(cxx_override_control)
+#define OVERRIDE override
+#endif
+#elif COMPILER(MSVC)
+#define OVERRIDE override
+#else
+#define OVERRIDE
+#endif
+#endif
+
+/* FINAL */
+
+#ifndef FINAL
+#if COMPILER(CLANG)
+#if __has_extension(cxx_override_control)
+#define FINAL final
+#endif
+#elif COMPILER(MSVC)
+#define FINAL sealed
+#else
+#define FINAL
+#endif
+#endif
 
 #endif /* WTF_Compiler_h */
