@@ -534,7 +534,11 @@ private:
             break;
         }
             
-        case GetScopedVar: {
+        case GetScopedVar:
+        case Resolve:
+        case ResolveBase:
+        case ResolveBaseStrictPut:
+        case ResolveGlobal: {
             changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
             PredictedType prediction = node.getPrediction();
             if (isStrongPrediction(prediction))
@@ -593,6 +597,7 @@ private:
 
 #ifndef NDEBUG
         // These get ignored because they don't return anything.
+        case PutScopedVar:
         case DFG::Jump:
         case Branch:
         case Breakpoint:
@@ -603,19 +608,9 @@ private:
         case ThrowReferenceError:
             break;
             
-        // These get ignored because we don't have profiling for them, yet.
-        case Resolve:
-        case ResolveBase:
-        case ResolveBaseStrictPut:
-        case ResolveGlobal:
-        case PutScopedVar:
-            break;
-            
         // This gets ignored because it doesn't do anything.
         case Phantom:
             break;
-
-
 #else
         default:
             break;

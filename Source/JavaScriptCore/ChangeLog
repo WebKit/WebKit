@@ -1,3 +1,38 @@
+2011-09-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Resolve opcodes should have value profiling.
+        https://bugs.webkit.org/show_bug.cgi?id=68723
+
+        Reviewed by Oliver Hunt.
+        
+        This adds value profiling to all forms of op_resolve in the
+        old JIT, and patches that information into the DFG along with
+        performing the appropriate type propagation.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::predict):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasIdentifier):
+        (JSC::DFG::Node::resolveGlobalDataIndex):
+        (JSC::DFG::Node::hasPrediction):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_resolve):
+        (JSC::JIT::emit_op_resolve_base):
+        (JSC::JIT::emit_op_resolve_skip):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        (JSC::JIT::emit_op_resolve_with_base):
+        (JSC::JIT::emit_op_resolve_with_this):
+        (JSC::JIT::emitSlow_op_resolve_global_dynamic):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::callWithValueProfiling):
+
 2011-09-23  Oliver Hunt  <oliver@apple.com>
 
         Fix windows build.

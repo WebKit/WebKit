@@ -200,11 +200,26 @@ namespace JSC {
                 m_jit->emitStoreCell(dst, JIT::returnValueRegister);
             return call;
         }
+        
+        JIT::Call callWithValueProfiling(unsigned dst, JIT::ValueProfilingSiteKind)
+        {
+            return call(dst);
+        }
 #else
         JIT::Call call(unsigned dst) // dst is a virtual register.
         {
             ASSERT(m_returnType == VoidPtr || m_returnType == Cell);
             JIT::Call call = this->call();
+            m_jit->emitPutVirtualRegister(dst);
+            return call;
+        }
+        
+        JIT::Call callWithValueProfiling(unsigned dst, JIT::ValueProfilingSiteKind kind)
+        {
+            ASSERT(m_returnType == VoidPtr || m_returnType == Cell);
+            JIT::Call call = this->call();
+            ASSERT(JIT::returnValueRegister == JIT::regT0);
+            m_jit->emitValueProfilingSite(kind);
             m_jit->emitPutVirtualRegister(dst);
             return call;
         }

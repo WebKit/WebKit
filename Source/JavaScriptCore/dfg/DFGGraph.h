@@ -97,6 +97,11 @@ struct StorageAccessData {
     // Structure*.
 };
 
+struct ResolveGlobalData {
+    unsigned identifierNumber;
+    unsigned resolveInfoIndex;
+};
+
 typedef Vector <BlockIndex, 2> PredecessorList;
 
 struct BasicBlock {
@@ -197,6 +202,10 @@ public:
         case Construct:
         case GetByOffset:
         case GetScopedVar:
+        case Resolve:
+        case ResolveBase:
+        case ResolveBaseStrictPut:
+        case ResolveGlobal:
             return node.predict(prediction, source);
         default:
             return false;
@@ -316,6 +325,7 @@ public:
     Vector<NodeIndex, 16> m_varArgChildren;
     Vector<MethodCheckData> m_methodCheckData;
     Vector<StorageAccessData> m_storageAccessData;
+    Vector<ResolveGlobalData> m_resolveGlobalData;
     unsigned m_preservedVars;
     unsigned m_parameterSlots;
 private:

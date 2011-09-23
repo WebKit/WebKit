@@ -1415,8 +1415,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_resolve: {
             unsigned identifier = currentInstruction[2].u.operand;
 
-            NodeIndex resolve = addToGraph(Resolve, OpInfo(identifier));
+            NodeIndex resolve = addToGraph(Resolve, OpInfo(identifier), OpInfo(PredictNone));
             set(currentInstruction[1].u.operand, resolve);
+            stronglyPredict(resolve);
 
             NEXT_OPCODE(op_resolve);
         }
@@ -1424,17 +1425,21 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_resolve_base: {
             unsigned identifier = currentInstruction[2].u.operand;
 
-            NodeIndex resolve = addToGraph(currentInstruction[3].u.operand ? ResolveBaseStrictPut : ResolveBase, OpInfo(identifier));
+            NodeIndex resolve = addToGraph(currentInstruction[3].u.operand ? ResolveBaseStrictPut : ResolveBase, OpInfo(identifier), OpInfo(PredictNone));
             set(currentInstruction[1].u.operand, resolve);
+            stronglyPredict(resolve);
 
             NEXT_OPCODE(op_resolve_base);
         }
             
         case op_resolve_global: {
-            unsigned identifier = currentInstruction[2].u.operand;
-
-            NodeIndex resolve = addToGraph(ResolveGlobal, OpInfo(identifier), OpInfo(m_globalResolveNumber++));
+            NodeIndex resolve = addToGraph(ResolveGlobal, OpInfo(m_graph.m_resolveGlobalData.size()), OpInfo(PredictNone));
+            m_graph.m_resolveGlobalData.append(ResolveGlobalData());
+            ResolveGlobalData& data = m_graph.m_resolveGlobalData.last();
+            data.identifierNumber = currentInstruction[2].u.operand;
+            data.resolveInfoIndex = m_globalResolveNumber++;
             set(currentInstruction[1].u.operand, resolve);
+            stronglyPredict(resolve);
 
             NEXT_OPCODE(op_resolve_global);
         }

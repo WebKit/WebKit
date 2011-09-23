@@ -467,7 +467,6 @@ struct Node {
         case Resolve:
         case ResolveBase:
         case ResolveBaseStrictPut:
-        case ResolveGlobal:
             return true;
         default:
             return false;
@@ -481,10 +480,10 @@ struct Node {
         return m_opInfo;
     }
     
-    unsigned resolveInfoIndex()
+    unsigned resolveGlobalDataIndex()
     {
         ASSERT(op == ResolveGlobal);
-        return m_opInfo2;
+        return m_opInfo;
     }
 
     bool hasArithNodeFlags()
@@ -633,6 +632,10 @@ struct Node {
         case Construct:
         case GetByOffset:
         case GetScopedVar:
+        case Resolve:
+        case ResolveBase:
+        case ResolveBaseStrictPut:
+        case ResolveGlobal:
             return true;
         default:
             return false;

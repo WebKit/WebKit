@@ -2055,7 +2055,8 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg resolveInfoGPR = resolveInfo.gpr();
         GPRReg resultGPR = result.gpr();
 
-        GlobalResolveInfo* resolveInfoAddress = &(m_jit.codeBlock()->globalResolveInfo(node.resolveInfoIndex()));
+        ResolveGlobalData& data = m_jit.graph().m_resolveGlobalData[node.resolveGlobalDataIndex()];
+        GlobalResolveInfo* resolveInfoAddress = &(m_jit.codeBlock()->globalResolveInfo(data.resolveInfoIndex));
 
         // Check Structure of global object
         m_jit.move(JITCompiler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), globalObjectGPR);
@@ -2065,7 +2066,7 @@ void SpeculativeJIT::compile(Node& node)
 
         silentSpillAllRegisters(resultGPR);
         m_jit.move(resolveInfoGPR, GPRInfo::argumentGPR1);
-        m_jit.move(JITCompiler::TrustedImmPtr(&m_jit.codeBlock()->identifier(node.identifierNumber())), GPRInfo::argumentGPR2);
+        m_jit.move(JITCompiler::TrustedImmPtr(&m_jit.codeBlock()->identifier(data.identifierNumber)), GPRInfo::argumentGPR2);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         JITCompiler::Call functionCall = appendCallWithExceptionCheck(operationResolveGlobal);
         m_jit.move(GPRInfo::returnValueGPR, resultGPR);
