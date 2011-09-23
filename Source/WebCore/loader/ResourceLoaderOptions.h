@@ -49,14 +49,27 @@ enum DataBufferingPolicy {
     BufferData,
     DoNotBufferData
 };
+    
+enum ClientCrossOriginCredentialPolicy {
+    AskClientForCrossOriginCredentials,
+    DoNotAskClientForCrossOriginCredentials
+};
 
 struct ResourceLoaderOptions {
-    ResourceLoaderOptions() : sendLoadCallbacks(DoNotSendCallbacks), sniffContent(DoNotSniffContent), shouldBufferData(BufferData), allowCredentials(DoNotAllowStoredCredentials) { }
-    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacksArg, ContentSniffingPolicy sniffContentArg, DataBufferingPolicy shouldBufferDataArg, StoredCredentials allowCredentialsArg) : sendLoadCallbacks(sendLoadCallbacksArg), sniffContent(sniffContentArg), shouldBufferData(shouldBufferDataArg), allowCredentials(allowCredentialsArg) { }
+    ResourceLoaderOptions() : sendLoadCallbacks(DoNotSendCallbacks), sniffContent(DoNotSniffContent), shouldBufferData(BufferData), allowCredentials(DoNotAllowStoredCredentials), crossOriginCredentialPolicy(DoNotAskClientForCrossOriginCredentials) { }
+    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy shouldBufferData, StoredCredentials allowCredentials, ClientCrossOriginCredentialPolicy crossOriginCredentialPolicy)
+        : sendLoadCallbacks(sendLoadCallbacks)
+        , sniffContent(sniffContent)
+        , shouldBufferData(shouldBufferData)
+        , allowCredentials(allowCredentials)
+        , crossOriginCredentialPolicy(crossOriginCredentialPolicy)
+    {
+    }
     SendCallbackPolicy sendLoadCallbacks;
     ContentSniffingPolicy sniffContent;
     DataBufferingPolicy shouldBufferData;
     StoredCredentials allowCredentials; // Whether HTTP credentials and cookies are sent with the request.
+    ClientCrossOriginCredentialPolicy crossOriginCredentialPolicy; // Whether we will ask the client for credentials (if we allow credentials at all).
 };
 
 } // namespace WebCore    

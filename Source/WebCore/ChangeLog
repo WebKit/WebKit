@@ -1,3 +1,45 @@
+2011-09-22  Nate Chapin  <japhet@chromium.org>
+
+        Remove didReceiveAuthenticationChallenge() from SubresourceLoaderClient.
+        Instead, add a load-specific policy for showing the user authentication
+        challenge down to ResourceLoaderOptions and enforce it in ResourceLoader.
+        https://bugs.webkit.org/show_bug.cgi?id=65330
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, refactor only.
+
+        * loader/DocumentThreadableLoader.cpp:
+        * loader/DocumentThreadableLoader.h:
+        * loader/MainResourceLoader.cpp:
+        * loader/NetscapePlugInStreamLoader.cpp:
+        * loader/ResourceLoadScheduler.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+           For resource types that always send a challenge to the embedder,
+           this patch doesn't change anything. For those that don't, we will
+           always try to continue without credentials when they are forbidden
+           and the platform supports it.
+           When continuing without credentials was initially implemented in
+           DocumentThreadableLoader, we sent the ThreadableLoaderClient a didFail(),
+           then canceled the SubresourceLoader. This was necessary because of the
+           quirks of ThreadableLoader cancellation (we sever the client/loader connections
+           before the load actually cancels), but a simple didFail() should suffice at
+           the ResourceLoader layer.
+        * loader/ResourceLoaderOptions.h:
+        * loader/SubresourceLoader.cpp:
+        * loader/SubresourceLoader.h:
+        * loader/SubresourceLoaderClient.h:
+        * loader/cache/CachedResource.cpp:
+        * loader/cache/CachedResourceLoader.cpp:
+        * loader/cache/CachedResourceLoader.h:
+        * loader/icon/IconLoader.cpp: The ResourceLoader implementation of
+            didReceiveAuthenticationChallege means that IconLoader will now
+            try to continue with credentials on platforms that support it,
+            rather than just canceling outright. We still will never prompt
+            for authentication for icons.
+        * loader/icon/IconLoader.h:
+
 2011-09-22  Dean Jackson  <dino@apple.com>
 
         Add ENABLE_CSS_FILTERS

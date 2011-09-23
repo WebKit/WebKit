@@ -72,7 +72,7 @@ void IconLoader::startLoading()
     ResourceRequest resourceRequest(m_frame->loader()->icon()->url());
     resourceRequest.setPriority(ResourceLoadPriorityLow);
 
-    RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(m_frame, this, resourceRequest);
+    RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(m_frame, this, resourceRequest, ResourceLoadPriorityLow, DoSecurityCheck, ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials));
     if (!loader)
         LOG_ERROR("Failed to start load for icon at url %s", m_frame->loader()->icon()->url().string().ascii().data());
 
@@ -122,13 +122,6 @@ void IconLoader::didFail(SubresourceLoader* resourceLoader, const ResourceError&
         ResourceHandle* handle = resourceLoader->handle();
         finishLoading(handle ? handle->firstRequest().url() : KURL(), 0);
     }
-}
-
-void IconLoader::didReceiveAuthenticationChallenge(SubresourceLoader*, const AuthenticationChallenge&)
-{
-    // We don't ever want to prompt for authentication just for a site icon, so
-    // implement this method to cancel the resource load
-    m_resourceLoader->cancel();
 }
 
 void IconLoader::didFinishLoading(SubresourceLoader* resourceLoader, double)

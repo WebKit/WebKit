@@ -288,23 +288,6 @@ void DocumentThreadableLoader::didFail(SubresourceLoader* loader, const Resource
     m_client->didFail(error);
 }
 
-void DocumentThreadableLoader::didReceiveAuthenticationChallenge(SubresourceLoader* loader, const AuthenticationChallenge& challenge)
-{
-    ASSERT(loader == m_loader);
-    // Users are not prompted for credentials for cross-origin requests.
-    if (!m_sameOriginRequest) {
-#if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL)
-        loader->handle()->receivedRequestToContinueWithoutCredential(challenge);
-#else
-        // These platforms don't provide a way to continue without credentials, cancel the load altogether.
-        UNUSED_PARAM(challenge);
-        RefPtr<DocumentThreadableLoader> protect(this);
-        m_client->didFail(loader->blockedError());
-        cancel();
-#endif
-    }
-}
-
 void DocumentThreadableLoader::preflightSuccess()
 {
     OwnPtr<ResourceRequest> actualRequest;
@@ -331,6 +314,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 
     if (m_async) {
         ThreadableLoaderOptions options = m_options;
+        options.crossOriginCredentialPolicy = DoNotAskClientForCrossOriginCredentials;
         if (m_actualRequest) {
             // Don't sniff content or send load callbacks for the preflight request.
             options.sendLoadCallbacks = DoNotSendCallbacks;

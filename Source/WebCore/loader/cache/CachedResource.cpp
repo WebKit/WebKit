@@ -96,7 +96,7 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type)
     , m_loading(false)
     , m_type(type)
     , m_status(Pending)
-    , m_options(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials)
+    , m_options(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForCrossOriginCredentials)
 #ifndef NDEBUG
     , m_deleted(false)
     , m_lruIndex(0)

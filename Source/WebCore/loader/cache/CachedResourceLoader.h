@@ -109,7 +109,7 @@ public:
 private:
     // FIXME: The default value for ResourceLoaderOptions will always be used currently.
     // It is plumbed for http://bugs.webkit.org/show_bug.cgi?id=61225 .
-    CachedResource* requestResource(CachedResource::Type, ResourceRequest&, const String& charset, ResourceLoadPriority = ResourceLoadPriorityUnresolved, bool isPreload = false, const ResourceLoaderOptions& = ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials));
+    CachedResource* requestResource(CachedResource::Type, ResourceRequest&, const String& charset, ResourceLoadPriority = ResourceLoadPriorityUnresolved, bool isPreload = false, const ResourceLoaderOptions& = ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForCrossOriginCredentials));
     CachedResource* revalidateResource(CachedResource*, ResourceLoadPriority);
     CachedResource* loadResource(CachedResource::Type, ResourceRequest&, const String& charset, ResourceLoadPriority, const ResourceLoaderOptions&);
     void requestPreload(CachedResource::Type, ResourceRequest&, const String& charset);

@@ -234,25 +234,4 @@ void SubresourceLoader::didCancel(const ResourceError&)
     m_documentLoader->removeSubresourceLoader(this);
 }
 
-void SubresourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
-{
-    RefPtr<SubresourceLoader> protect(this);
-
-    ASSERT(handle()->hasAuthenticationChallenge());
-
-    if (m_client)
-        m_client->didReceiveAuthenticationChallenge(this, challenge);
-    
-    // The SubResourceLoaderClient may have cancelled this ResourceLoader in response to the challenge.  
-    // If that's the case, don't call didReceiveAuthenticationChallenge.
-    if (reachedTerminalState())
-        return;
-
-    // It may have also handled authentication on its own.
-    if (!handle()->hasAuthenticationChallenge())
-        return;
-
-    ResourceLoader::didReceiveAuthenticationChallenge(challenge);
-}
-
 }

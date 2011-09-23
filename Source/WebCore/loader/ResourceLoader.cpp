@@ -42,6 +42,7 @@
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 
@@ -515,10 +516,25 @@ bool ResourceLoader::shouldUseCredentialStorage()
 
 void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
+    ASSERT(handle()->hasAuthenticationChallenge());
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
-    frameLoader()->notifier()->didReceiveAuthenticationChallenge(this, challenge);
+
+    if (m_options.allowCredentials == AllowStoredCredentials) {
+        if (m_options.crossOriginCredentialPolicy == AskClientForCrossOriginCredentials || m_frame->document()->securityOrigin()->canRequest(originalRequest().url())) {
+            frameLoader()->notifier()->didReceiveAuthenticationChallenge(this, challenge);
+            return;
+        }
+    }
+    // Only these platforms provide a way to continue without credentials.
+    // If we can't continue with credentials, we need to cancel the load altogether.
+#if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL)
+    handle()->receivedRequestToContinueWithoutCredential(challenge);
+    ASSERT(!handle()->hasAuthenticationChallenge());
+#else
+    didFail(blockedError());
+#endif
 }
 
 void ResourceLoader::didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge)

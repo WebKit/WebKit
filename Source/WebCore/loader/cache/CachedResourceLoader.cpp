@@ -167,7 +167,7 @@ CachedCSSStyleSheet* CachedResourceLoader::requestUserCSSStyleSheet(ResourceRequ
     if (!inCache)
         userSheet->setInCache(true);
 
-    userSheet->setResourceLoaderOptions(ResourceLoaderOptions(DoNotSendCallbacks, SniffContent, BufferData, AllowStoredCredentials));
+    userSheet->setResourceLoaderOptions(ResourceLoaderOptions(DoNotSendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForCrossOriginCredentials));
     userSheet->load(this, /*incremental*/ false, SkipSecurityCheck);
 
     if (!inCache)
