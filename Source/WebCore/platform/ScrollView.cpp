@@ -825,6 +825,8 @@ void ScrollView::setFrameRect(const IntRect& newRect)
     Widget::setFrameRect(newRect);
 
     frameRectsChanged();
+
+    updateScrollbars(scrollOffset());
 }
 
 void ScrollView::frameRectsChanged()
