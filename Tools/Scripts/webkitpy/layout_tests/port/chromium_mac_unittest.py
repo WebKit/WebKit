@@ -51,44 +51,44 @@ class ChromiumMacPortTest(port_testcase.PortTestCase):
 
     def test_versions(self):
         port = chromium_mac.ChromiumMacPort()
-        self.assertTrue(port.name() in ('chromium-cg-mac-leopard', 'chromium-cg-mac-snowleopard', 'chromium-cg-mac-future'))
+        self.assertTrue(port.name() in ('chromium-mac-leopard', 'chromium-mac-snowleopard', 'chromium-mac-future'))
 
-        self.assert_name(None, '10.5.3', 'chromium-cg-mac-leopard')
-        self.assert_name('chromium-cg-mac', '10.5.3', 'chromium-cg-mac-leopard')
-        self.assert_name('chromium-cg-mac-leopard', '10.5.3', 'chromium-cg-mac-leopard')
-        self.assert_name('chromium-cg-mac-leopard', '10.6.3', 'chromium-cg-mac-leopard')
+        self.assert_name(None, '10.5.3', 'chromium-mac-leopard')
+        self.assert_name('chromium-mac', '10.5.3', 'chromium-mac-leopard')
+        self.assert_name('chromium-mac-leopard', '10.5.3', 'chromium-mac-leopard')
+        self.assert_name('chromium-mac-leopard', '10.6.3', 'chromium-mac-leopard')
 
-        self.assert_name(None, '10.6.3', 'chromium-cg-mac-snowleopard')
-        self.assert_name('chromium-cg-mac', '10.6.3', 'chromium-cg-mac-snowleopard')
-        self.assert_name('chromium-cg-mac-snowleopard', '10.5.3', 'chromium-cg-mac-snowleopard')
-        self.assert_name('chromium-cg-mac-snowleopard', '10.6.3', 'chromium-cg-mac-snowleopard')
+        self.assert_name(None, '10.6.3', 'chromium-mac-snowleopard')
+        self.assert_name('chromium-mac', '10.6.3', 'chromium-mac-snowleopard')
+        self.assert_name('chromium-mac-snowleopard', '10.5.3', 'chromium-mac-snowleopard')
+        self.assert_name('chromium-mac-snowleopard', '10.6.3', 'chromium-mac-snowleopard')
 
-        self.assert_name(None, '10.7', 'chromium-cg-mac-lion')
-        self.assert_name(None, '10.7.3', 'chromium-cg-mac-lion')
-        self.assert_name(None, '10.8', 'chromium-cg-mac-future')
-        self.assert_name('chromium-cg-mac', '10.7.3', 'chromium-cg-mac-lion')
-        self.assert_name('chromium-cg-mac-future', '10.4.3', 'chromium-cg-mac-future')
-        self.assert_name('chromium-cg-mac-future', '10.5.3', 'chromium-cg-mac-future')
-        self.assert_name('chromium-cg-mac-future', '10.6.3', 'chromium-cg-mac-future')
-        self.assert_name('chromium-cg-mac-future', '10.7.3', 'chromium-cg-mac-future')
+        self.assert_name(None, '10.7', 'chromium-mac-lion')
+        self.assert_name(None, '10.7.3', 'chromium-mac-lion')
+        self.assert_name(None, '10.8', 'chromium-mac-future')
+        self.assert_name('chromium-mac', '10.7.3', 'chromium-mac-lion')
+        self.assert_name('chromium-mac-future', '10.4.3', 'chromium-mac-future')
+        self.assert_name('chromium-mac-future', '10.5.3', 'chromium-mac-future')
+        self.assert_name('chromium-mac-future', '10.6.3', 'chromium-mac-future')
+        self.assert_name('chromium-mac-future', '10.7.3', 'chromium-mac-future')
 
         self.assertRaises(AssertionError, self.assert_name, None, '10.4.1', 'should-raise-assertion-so-this-value-does-not-matter')
 
     def test_baseline_path(self):
-        port = chromium_mac.ChromiumMacPort(port_name='chromium-cg-mac-leopard')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-cg-mac-leopard'))
+        port = chromium_mac.ChromiumMacPort(port_name='chromium-mac-leopard')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac-leopard'))
 
-        port = chromium_mac.ChromiumMacPort(port_name='chromium-cg-mac-snowleopard')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-cg-mac'))
+        port = chromium_mac.ChromiumMacPort(port_name='chromium-mac-snowleopard')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac'))
 
     def test_graphics_type(self):
         port = chromium_mac.ChromiumMacPort(port_name='chromium-cg-mac')
         self.assertEquals('cpu-cg', port.graphics_type())
         port = chromium_mac.ChromiumMacPort(port_name='chromium-mac')
         self.assertEquals('cpu', port.graphics_type())
-        # For now, Mac defaults to cpu-cg graphics type.
+        # For now, Mac defaults to cpu graphics type.
         port = chromium_mac.ChromiumMacPort()
-        self.assertEquals('cpu-cg', port.graphics_type())
+        self.assertEquals('cpu', port.graphics_type())
 
 
 if __name__ == '__main__':

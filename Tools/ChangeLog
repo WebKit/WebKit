@@ -1,3 +1,20 @@
+2011-09-23  Elliot Poger  <epoger@google.com>
+
+        update layout_tests to account for new default of use_skia=1
+        https://bugs.webkit.org/show_bug.cgi?id=68698
+
+        Rolls Source/WebKit/chromium/DEPS to pick up new default use_skia=1
+        from http://src.chromium.org/viewvc/chrome?view=rev&revision=102532
+        (Chromium-on-Mac now uses the Skia graphics library instead of
+        Core Graphics).
+
+        Also updates layout_test code to work with that change.
+
+        Reviewed by Mihai Parparita.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+
 2011-09-23  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.
