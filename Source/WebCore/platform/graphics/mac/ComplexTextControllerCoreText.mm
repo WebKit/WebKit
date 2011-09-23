@@ -70,7 +70,9 @@ extern const CFStringRef kCTTypesetterOptionForcedEmbeddingLevel;
     _font = font;
     _character = character;
 
-    for (const WebCore::FontFamily* family = &font->family(); family; family = family->next())
+    // By the time a WebCascadeList is used, the Font has already been asked to realize all of its
+    // FontData, so this loop does not hit the FontCache.
+    while (_font->fontDataAt(_count))
         _count++;
 
     return self;
