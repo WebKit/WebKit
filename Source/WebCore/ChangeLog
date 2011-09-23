@@ -1,5 +1,17 @@
 2011-09-23  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Clicking on error doesn't point on the correct line if user searched something
+        https://bugs.webkit.org/show_bug.cgi?id=68627
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController.prototype.disableSearchUntilExplicitAction):
+        * inspector/front-end/inspector.js:
+        (WebInspector._showAnchorLocationInPanel):
+
+2011-09-23  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: InspectorStyleSheet should use stylesheet's original url, not final one.
         https://bugs.webkit.org/show_bug.cgi?id=68631
 

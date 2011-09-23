@@ -78,6 +78,11 @@ WebInspector.SearchController.prototype = {
         this._performSearch("");
     },
 
+    disableSearchUntilExplicitAction: function(event)
+    {
+        this._performSearch("");
+    },
+
     handleShortcut: function(event)
     {
         var isMac = WebInspector.isMac();

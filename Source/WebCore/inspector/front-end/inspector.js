@@ -1241,6 +1241,7 @@ WebInspector._showAnchorLocationInPanel = function(anchor, panel)
         anchor.addStyleClass("webkit-html-resource-link");
     }
 
+    WebInspector.searchController.disableSearchUntilExplicitAction();
     this.setCurrentPanel(panel);
     if (this.drawer)
         this.drawer.immediatelyFinishAnimation();
