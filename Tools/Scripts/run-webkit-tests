@@ -90,7 +90,7 @@ sub useNewRunWebKitTests()
         return (!isDarwin() and !isARM() and (getQtVersion() ne "4.8"));
     }
 
-    return ((isLeopard() or isSnowLeopard() or isGtk()) and !usingWebKit2() and !usingLeaks());
+    return ((isLeopard() or isSnowLeopard() or isLion() or isGtk()) and !usingWebKit2() and !usingLeaks());
 }
 
 my $harnessName = "old-run-webkit-tests";
