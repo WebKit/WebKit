@@ -401,7 +401,9 @@ private:
         }
 
         case ValueToDouble: {
-            // FIXME: should we predict double or number here?
+            // This node should never be visible at this stage of compilation. It is
+            // inserted by fixup(), which follows this phase.
+            ASSERT_NOT_REACHED();
             break;
         }
         
