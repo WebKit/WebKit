@@ -43,12 +43,6 @@ QtFileDownloader::QtFileDownloader(Download* download, PassOwnPtr<QNetworkReply>
     , m_error(QNetworkReply::NoError)
     , m_headersRead(false)
 {
-    connect(m_reply.get(), SIGNAL(readyRead()), SLOT(onReadyRead()));
-    connect(m_reply.get(), SIGNAL(finished()), SLOT(onFinished()));
-    connect(m_reply.get(), SIGNAL(error(QNetworkReply::NetworkError)), SLOT(onError(QNetworkReply::NetworkError)));
-
-    // Call onReadyRead just in case some data is already waiting.
-    onReadyRead();
 }
 
 QtFileDownloader::~QtFileDownloader()
@@ -57,6 +51,16 @@ QtFileDownloader::~QtFileDownloader()
         return;
 
     abortDownloadWritingAndEmitError(QtFileDownloader::DownloadErrorAborted);
+}
+
+void QtFileDownloader::start()
+{
+    connect(m_reply.get(), SIGNAL(readyRead()), SLOT(onReadyRead()));
+    connect(m_reply.get(), SIGNAL(finished()), SLOT(onFinished()));
+    connect(m_reply.get(), SIGNAL(error(QNetworkReply::NetworkError)), SLOT(onError(QNetworkReply::NetworkError)));
+
+    // Call onReadyRead just in case some data is already waiting.
+    onReadyRead();
 }
 
 void QtFileDownloader::determineFilename()

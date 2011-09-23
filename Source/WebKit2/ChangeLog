@@ -1,3 +1,20 @@
+2011-09-23  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] QtFileDownloader ctor shouldn't call QtFileDownloader::onReadyRead()
+        https://bugs.webkit.org/show_bug.cgi?id=68696
+
+        Reviewed by Andreas Kling.
+
+        Instead of connecting signals and calling QtFileDownloader::onReadyRead()
+        on its constructor, QtFileDownloader will now handle this in start().
+
+        * WebProcess/Downloads/qt/DownloadQt.cpp:
+        (WebKit::Download::start):
+        * WebProcess/Downloads/qt/QtFileDownloader.cpp:
+        (WebKit::QtFileDownloader::QtFileDownloader):
+        (WebKit::QtFileDownloader::start):
+        * WebProcess/Downloads/qt/QtFileDownloader.h:
+
 2011-09-22  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
 
         [Qt] TouchWebView load test not running

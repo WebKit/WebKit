@@ -46,6 +46,7 @@ public:
     virtual ~QtFileDownloader();
     void decidedDestination(const QString& decidedFilePath, bool allowOverwrite);
     void cancel();
+    void start();
 
     enum DownloadError {
         DownloadErrorAborted = 0,

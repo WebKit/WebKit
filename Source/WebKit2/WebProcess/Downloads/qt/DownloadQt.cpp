@@ -46,6 +46,7 @@ void Download::start(WebPage* initiatingWebPage)
     ASSERT(!m_qtDownloader);
 
     m_qtDownloader = new QtFileDownloader(this, adoptPtr(manager->get(m_request.toNetworkRequest())));
+    m_qtDownloader->start();
 }
 
 void Download::startWithHandle(WebPage* initiatingPage, ResourceHandle* handle, const ResourceRequest& initialRequest, const ResourceResponse& resp)
