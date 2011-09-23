@@ -455,7 +455,9 @@ void MediaPlayerPrivateGStreamer::seek(float time)
 
 bool MediaPlayerPrivateGStreamer::paused() const
 {
-    return m_paused;
+    GstState state;
+    gst_element_get_state(m_playBin, &state, 0, 0);
+    return state == GST_STATE_PAUSED;
 }
 
 bool MediaPlayerPrivateGStreamer::seeking() const
