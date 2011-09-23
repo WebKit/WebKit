@@ -436,6 +436,11 @@ var WebInspector = {
         return WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open link in new tab" : "Open Link in New Tab");
     },
 
+    openInNetworkPanelLabel: function()
+    {
+        return WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open in network panel" : "Open in Network Panel");
+    },
+
     copyLinkAddressLabel: function()
     {
         return WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy link address" : "Copy Link Address");
@@ -717,6 +722,12 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
         WebInspector.showPanel("resources");
     } else
         PageAgent.open(resourceURL, true);
+}
+
+WebInspector.openRequestInNetworkPanel = function(resource)
+{
+    WebInspector.showPanel("network");
+    WebInspector.panels.network.revealAndHighlightResource(resource);
 }
 
 WebInspector._registerShortcuts = function()

@@ -1385,7 +1385,11 @@ WebInspector.NetworkPanel.prototype = {
     showAnchorLocation: function(anchor)
     {
         var resource = this._resourceByAnchor(anchor);
+        this.revealAndHighlightResource(resource)
+    },
 
+    revealAndHighlightResource: function(resource)
+    {
         this._toggleGridMode();
         if (resource)
             this._networkLogView.revealAndHighlightResource(resource);

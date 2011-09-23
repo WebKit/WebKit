@@ -1235,8 +1235,17 @@ WebInspector.FrameResourceTreeElement.prototype = {
     {
         var contextMenu = new WebInspector.ContextMenu();
         contextMenu.appendItem(WebInspector.openLinkExternallyLabel(), WebInspector.openResource.bind(WebInspector, this._resource.url, false));
+        this._appendOpenInNetworkPanelAction(contextMenu, event);
         this._appendSaveAsAction(contextMenu, event);
         contextMenu.show(event);
+    },
+
+    _appendOpenInNetworkPanelAction: function(contextMenu, event)
+    {
+        if (!this._resource.requestId)
+            return;
+
+        contextMenu.appendItem(WebInspector.openInNetworkPanelLabel(), WebInspector.openRequestInNetworkPanel.bind(WebInspector, this._resource));
     },
 
     _appendSaveAsAction: function(contextMenu, event)
