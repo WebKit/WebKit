@@ -1589,9 +1589,7 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
     case CSSPropertyWebkitFlexFlow:
         // FIXME: -webkit-flex-flow takes a second "wrap" value.    
-        validPrimitive = id == CSSValueRow || id == CSSValueRowReverse || id == CSSValueColumn || id == CSSValueColumnReverse
-            || id == CSSValueHorizontal || id == CSSValueHorizontalReverse || id == CSSValueHorizontalLtr || id == CSSValueHorizontalRtl
-            || id == CSSValueVertical || id == CSSValueVerticalReverse || id == CSSValueVerticalTtb || id == CSSValueVerticalBtt;
+        validPrimitive = id == CSSValueRow || id == CSSValueRowReverse || id == CSSValueColumn || id == CSSValueColumnReverse;
         break;
 #endif
     case CSSPropertyWebkitMarquee: {

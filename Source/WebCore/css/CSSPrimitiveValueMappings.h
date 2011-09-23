@@ -1159,30 +1159,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexFlow e)
     case FlowColumnReverse:
         m_value.ident = CSSValueColumnReverse;
         break;
-    case FlowHorizontal:
-        m_value.ident = CSSValueHorizontal;
-        break;
-    case FlowHorizontalReverse:
-        m_value.ident = CSSValueHorizontalReverse;
-        break;
-    case FlowHorizontalLeftToRight:
-        m_value.ident = CSSValueHorizontalLtr;
-        break;
-    case FlowHorizontalRightToLeft:
-        m_value.ident = CSSValueHorizontalRtl;
-        break;
-    case FlowVertical:
-        m_value.ident = CSSValueVertical;
-        break;
-    case FlowVerticalReverse:
-        m_value.ident = CSSValueVerticalReverse;
-        break;
-    case FlowVerticalTopToBottom:
-        m_value.ident = CSSValueVerticalTtb;
-        break;
-    case FlowVerticalBottomToTop:
-        m_value.ident = CSSValueVerticalBtt;
-        break;
     }
 }
 
@@ -1197,22 +1173,6 @@ template<> inline CSSPrimitiveValue::operator EFlexFlow() const
         return FlowColumn;
     case CSSValueColumnReverse:
         return FlowColumnReverse;
-    case CSSValueHorizontal:
-        return FlowHorizontal;
-    case CSSValueHorizontalReverse:
-        return FlowHorizontalReverse;
-    case CSSValueHorizontalLtr:
-        return FlowHorizontalLeftToRight;
-    case CSSValueHorizontalRtl:
-        return FlowHorizontalRightToLeft;
-    case CSSValueVertical:
-        return FlowVertical;
-    case CSSValueVerticalReverse:
-        return FlowVerticalReverse;
-    case CSSValueVerticalTtb:
-        return FlowVerticalTopToBottom;
-    case CSSValueVerticalBtt:
-        return FlowVerticalBottomToTop;
     default:
         ASSERT_NOT_REACHED();
         return FlowRow;

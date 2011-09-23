@@ -170,9 +170,7 @@ enum EBoxDirection { BNORMAL, BREVERSE };
 
 enum EFlexPack { PackStart, PackEnd, PackCenter, PackJustify };
 enum EFlexAlign { AlignStart, AlignEnd, AlignCenter, AlignStretch, AlignBaseline };
-enum EFlexFlow { FlowRow, FlowRowReverse, FlowColumn, FlowColumnReverse,
-    FlowHorizontal, FlowHorizontalReverse, FlowHorizontalLeftToRight, FlowHorizontalRightToLeft,
-    FlowVertical, FlowVerticalReverse, FlowVerticalTopToBottom, FlowVerticalBottomToTop};
+enum EFlexFlow { FlowRow, FlowRowReverse, FlowColumn, FlowColumnReverse};
 
 enum ETextSecurity {
     TSNONE, TSDISC, TSCIRCLE, TSSQUARE
