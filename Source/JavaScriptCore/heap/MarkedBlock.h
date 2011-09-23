@@ -22,6 +22,8 @@
 #ifndef MarkedBlock_h
 #define MarkedBlock_h
 
+#include "CardSet.h"
+
 #include <wtf/Bitmap.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/HashFunctions.h>
@@ -65,7 +67,11 @@ namespace JSC {
         // object the heap will commonly allocate is four words.
         static const size_t atomSize = 4 * sizeof(void*);
         static const size_t blockSize = 16 * KB;
-        static const size_t atomsPerBlock = blockSize / atomSize; // ~0.4% overhead for mark bits.
+        static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
+
+        static const size_t atomsPerBlock = blockSize / atomSize; // ~0.4% overhead
+        static const size_t bytesPerCard = 512; // 1.6% overhead
+        static const int log2CardSize = 9;
 
         struct FreeCell {
             FreeCell* next;
@@ -132,11 +138,27 @@ namespace JSC {
         bool testAndSetMarked(const void*);
         bool testAndClearMarked(const void*);
         void setMarked(const void*);
+        
+#if ENABLE(GGC)
+        void setDirtyObject(const void* atom)
+        {
+            m_cards.markCardForAtom(atom);
+        }
+
+        uint8_t* addressOfCardFor(const void* atom)
+        {
+            return &m_cards.cardForAtom(atom);
+        }
+
+        static inline size_t offsetOfCards()
+        {
+            return OBJECT_OFFSETOF(MarkedBlock, m_cards);
+        }
+#endif
 
         template <typename Functor> void forEachCell(Functor&);
 
     private:
-        static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
         static const size_t atomMask = ~(atomSize - 1); // atomSize must be a power of two.
         
         enum DestructorState { FreeCellsDontHaveObjects, SomeFreeCellsStillHaveObjects, AllFreeCellsHaveObjects };
@@ -169,7 +191,11 @@ namespace JSC {
         {
             return static_cast<DestructorState>(m_destructorState);
         }
-        
+
+#if ENABLE(GGC)
+        CardSet<bytesPerCard, blockSize> m_cards;
+#endif
+
         size_t m_endAtom; // This is a fuzzy end. Always test for < m_endAtom.
         size_t m_atomsPerCell;
         WTF::Bitmap<atomsPerBlock> m_marks;
@@ -300,7 +326,7 @@ namespace JSC {
             functor(reinterpret_cast<JSCell*>(&atoms()[i]));
         }
     }
-    
+
 } // namespace JSC
 
 namespace WTF {

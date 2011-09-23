@@ -145,6 +145,7 @@ private:
         OP_MOV_EAXIv                    = 0xB8,
         OP_GROUP2_EvIb                  = 0xC1,
         OP_RET                          = 0xC3,
+        OP_GROUP11_EvIb                 = 0xC6,
         OP_GROUP11_EvIz                 = 0xC7,
         OP_INT3                         = 0xCC,
         OP_GROUP2_Ev1                   = 0xD1,
@@ -1055,6 +1056,20 @@ public:
     {
         m_formatter.oneByteOp(OP_GROUP11_EvIz, GROUP11_MOV, base, offset);
         m_formatter.immediate32(imm);
+    }
+    
+    void movb_i8m(int imm, int offset, RegisterID base)
+    {
+        ASSERT(-128 <= imm && imm < 128);
+        m_formatter.oneByteOp(OP_GROUP11_EvIb, GROUP11_MOV, base, offset);
+        m_formatter.immediate8(imm);
+    }
+
+    void movb_i8m(int imm, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        ASSERT(-128 <= imm && imm < 128);
+        m_formatter.oneByteOp(OP_GROUP11_EvIb, GROUP11_MOV, base, index, scale, offset);
+        m_formatter.immediate8(imm);
     }
 
     void movl_EAXm(const void* addr)

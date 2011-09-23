@@ -510,6 +510,18 @@ public:
     {
         m_assembler.movl_i32m(imm.m_value, address.offset, address.base);
     }
+    
+    void store8(TrustedImm32 imm, Address address)
+    {
+        ASSERT(-128 <= imm.m_value && imm.m_value < 128);
+        m_assembler.movb_i8m(imm.m_value, address.offset, address.base);
+    }
+
+    void store8(TrustedImm32 imm, BaseIndex address)
+    {
+        ASSERT(-128 <= imm.m_value && imm.m_value < 128);
+        m_assembler.movb_i8m(imm.m_value, address.offset, address.base, address.index, address.scale);
+    }
 
 
     // Floating-point operation:

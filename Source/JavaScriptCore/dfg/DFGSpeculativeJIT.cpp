@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+
 #include "DFGSpeculativeJIT.h"
 
 #if ENABLE(DFG_JIT)
@@ -1404,8 +1405,8 @@ void SpeculativeJIT::compile(Node& node)
         
         if (!m_compileOkay)
             return;
-        
-        writeBarrier(m_jit, baseReg, scratchReg, WriteBarrierForPropertyAccess);
+
+        writeBarrier(baseReg, value.gpr(), node.child3(), WriteBarrierForPropertyAccess, scratchReg);
 
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
         // If we have predicted the base to be type array, we can skip the check.
@@ -1464,7 +1465,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg baseReg = base.gpr();
         GPRReg scratchReg = scratch.gpr();
 
-        writeBarrier(m_jit, baseReg, scratchReg, WriteBarrierForPropertyAccess);
+        writeBarrier(base.gpr(), value.gpr(), node.child3(), WriteBarrierForPropertyAccess, scratchReg);
 
         // Get the array storage.
         GPRReg storageReg = scratchReg;
@@ -1795,7 +1796,7 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.loadPtr(JITCompiler::Address(scopeChain.gpr(), JSVariableObject::offsetOfRegisters()), scratchGPR);
         JSValueOperand value(this, node.child2());
         m_jit.storePtr(value.gpr(), JITCompiler::Address(scratchGPR, node.varNumber() * sizeof(Register)));
-        writeBarrier(m_jit, scopeChain.gpr(), scratchGPR, WriteBarrierForVariableAccess);
+        writeBarrier(scopeChain.gpr(), value.gpr(), node.child2(), WriteBarrierForVariableAccess, scratchGPR);
         break;
     }
     case GetById: {
@@ -1901,7 +1902,7 @@ void SpeculativeJIT::compile(Node& node)
         base.use();
         value.use();
 
-        cachedPutById(baseGPR, valueGPR, scratchGPR, node.identifierNumber(), NotDirect);
+        cachedPutById(baseGPR, valueGPR, node.child2(), scratchGPR, node.identifierNumber(), NotDirect);
         
         noResult(m_compileIndex, UseChildrenCalledExplicitly);
         break;
@@ -1919,7 +1920,7 @@ void SpeculativeJIT::compile(Node& node)
         base.use();
         value.use();
 
-        cachedPutById(baseGPR, valueGPR, scratchGPR, node.identifierNumber(), Direct);
+        cachedPutById(baseGPR, valueGPR, node.child2(), scratchGPR, node.identifierNumber(), Direct);
 
         noResult(m_compileIndex, UseChildrenCalledExplicitly);
         break;
@@ -1946,7 +1947,7 @@ void SpeculativeJIT::compile(Node& node)
 
         m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), globalObjectReg);
 
-        writeBarrier(m_jit, globalObjectReg, scratchReg, WriteBarrierForVariableAccess);
+        writeBarrier(m_jit.codeBlock()->globalObject(), value.gpr(), node.child1(), WriteBarrierForVariableAccess, scratchReg);
 
         m_jit.loadPtr(MacroAssembler::Address(globalObjectReg, JSVariableObject::offsetOfRegisters()), scratchReg);
         m_jit.storePtr(value.gpr(), JITCompiler::addressForGlobalVar(scratchReg, node.varNumber()));

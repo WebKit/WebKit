@@ -429,6 +429,16 @@ bool JITCodeGenerator::isKnownCell(NodeIndex nodeIndex)
     return m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister()].isJSCell();
 }
 
+bool JITCodeGenerator::isKnownNotCell(NodeIndex nodeIndex)
+{
+    Node& node = m_jit.graph()[nodeIndex];
+    VirtualRegister virtualRegister = node.virtualRegister();
+    GenerationInfo& info = m_generationInfo[virtualRegister];
+    if (node.hasConstant() && !valueOfJSConstant(nodeIndex).isCell())
+        return true;
+    return !(info.isJSCell() || info.isUnknownJS());
+}
+
 bool JITCodeGenerator::isKnownNotInteger(NodeIndex nodeIndex)
 {
     Node& node = m_jit.graph()[nodeIndex];
@@ -1166,25 +1176,127 @@ JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultG
     return functionCall;
 }
 
-void JITCodeGenerator::writeBarrier(MacroAssembler& jit, GPRReg owner, GPRReg scratch, WriteBarrierUseKind useKind)
+void JITCodeGenerator::writeBarrier(MacroAssembler& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2, WriteBarrierUseKind useKind)
 {
     UNUSED_PARAM(jit);
     UNUSED_PARAM(owner);
-    UNUSED_PARAM(scratch);
+    UNUSED_PARAM(scratch1);
+    UNUSED_PARAM(scratch2);
     UNUSED_PARAM(useKind);
-    ASSERT(owner != scratch);
+    ASSERT(owner != scratch1);
+    ASSERT(owner != scratch2);
+    ASSERT(scratch1 != scratch2);
 
 #if ENABLE(WRITE_BARRIER_PROFILING)
     JITCompiler::emitCount(jit, WriteBarrierCounters::jitCounterFor(useKind));
 #endif
+    markCellCard(jit, owner, scratch1, scratch2);
 }
 
-void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
+void JITCodeGenerator::markCellCard(MacroAssembler& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2)
 {
+    UNUSED_PARAM(jit);
+    UNUSED_PARAM(owner);
+    UNUSED_PARAM(scratch1);
+    UNUSED_PARAM(scratch2);
+    
+#if ENABLE(GGC)
+    jit.move(owner, scratch1);
+    jit.andPtr(TrustedImm32(static_cast<int32_t>(MarkedBlock::blockMask)), scratch1);
+    jit.move(owner, scratch2);
+    jit.andPtr(TrustedImm32(static_cast<int32_t>(~MarkedBlock::blockMask)), scratch2);
+    jit.rshift32(TrustedImm32(MarkedBlock::log2CardSize), scratch2);
+    jit.store8(TrustedImm32(1), MacroAssembler::BaseIndex(scratch1, scratch2, MacroAssembler::TimesOne, MarkedBlock::offsetOfCards()));
+#endif
+}
+
+void JITCodeGenerator::writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, NodeIndex valueIndex, WriteBarrierUseKind useKind, GPRReg scratch1, GPRReg scratch2)
+{
+    UNUSED_PARAM(ownerGPR);
+    UNUSED_PARAM(valueGPR);
+    UNUSED_PARAM(scratch1);
+    UNUSED_PARAM(scratch2);
+    UNUSED_PARAM(useKind);
+
+    if (isKnownNotCell(valueIndex))
+        return;
+
+#if ENABLE(WRITE_BARRIER_PROFILING)
+    JITCompiler::emitCount(jit, WriteBarrierCounters::jitCounterFor(useKind));
+#endif
+
+#if ENABLE(GGC)
+    JITCompiler::Jump rhsNotCell;
+    bool hadCellCheck = false;
+    if (!isKnownCell(valueIndex) && !isCellPrediction(m_jit.graph().getPrediction(m_jit.graph()[valueIndex]))) {
+        hadCellCheck = true;
+        rhsNotCell = m_jit.branchTestPtr(MacroAssembler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
+    }
+
+    GPRTemporary temp1;
+    GPRTemporary temp2;
+    if (scratch1 == InvalidGPRReg) {
+        GPRTemporary scratchGPR(this);
+        temp1.adopt(scratchGPR);
+        scratch1 = temp1.gpr();
+    }
+    if (scratch2 == InvalidGPRReg) {
+        GPRTemporary scratchGPR(this);
+        temp2.adopt(scratchGPR);
+        scratch2 = temp2.gpr();
+    }
+
+    markCellCard(m_jit, ownerGPR, scratch1, scratch2);
+    if (hadCellCheck)
+        rhsNotCell.link(&m_jit);
+#endif
+}
+
+void JITCodeGenerator::writeBarrier(JSCell* owner, GPRReg valueGPR, NodeIndex valueIndex, WriteBarrierUseKind useKind, GPRReg scratch)
+{
+    UNUSED_PARAM(owner);
+    UNUSED_PARAM(valueGPR);
+    UNUSED_PARAM(scratch);
+    UNUSED_PARAM(useKind);
+
+    if (isKnownNotCell(valueIndex))
+        return;
+
+#if ENABLE(WRITE_BARRIER_PROFILING)
+    JITCompiler::emitCount(jit, WriteBarrierCounters::jitCounterFor(useKind));
+#endif
+
+#if ENABLE(GGC)
+    JITCompiler::Jump rhsNotCell;
+    bool hadCellCheck = false;
+    if (!isKnownCell(valueIndex) && !isCellPrediction(m_jit.graph().getPrediction(m_jit.graph()[valueIndex]))) {
+        hadCellCheck = true;
+        rhsNotCell = m_jit.branchTestPtr(MacroAssembler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
+    }
+    
+    GPRTemporary temp;
+    if (scratch == InvalidGPRReg) {
+        GPRTemporary scratchGPR(this);
+        temp.adopt(scratchGPR);
+        scratch = temp.gpr();
+    }
+
+    uint8_t* cardAddress = Heap::addressOfCardFor(owner);
+    m_jit.move(JITCompiler::TrustedImmPtr(cardAddress), scratch);
+    m_jit.store8(JITCompiler::TrustedImm32(1), JITCompiler::Address(scratch));
+
+    if (hadCellCheck)
+        rhsNotCell.link(&m_jit);
+#endif
+}
+
+void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, NodeIndex valueIndex, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
+{
+    
     JITCompiler::DataLabelPtr structureToCompare;
     JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
-    
-    writeBarrier(m_jit, baseGPR, scratchGPR, WriteBarrierForPropertyAccess);
+
+    writeBarrier(baseGPR, valueGPR, valueIndex, WriteBarrierForPropertyAccess, scratchGPR);
 
     m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
     JITCompiler::DataLabel32 storeWithPatch = m_jit.storePtrWithAddressOffsetPatch(valueGPR, JITCompiler::Address(scratchGPR, 0));
@@ -1977,6 +2089,12 @@ void JITCodeGenerator::checkConsistency()
 }
 #endif
 
+GPRTemporary::GPRTemporary()
+    : m_jit(0)
+    , m_gpr(InvalidGPRReg)
+{
+}
+
 GPRTemporary::GPRTemporary(JITCodeGenerator* jit)
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
@@ -2083,6 +2201,18 @@ GPRTemporary::GPRTemporary(JITCodeGenerator* jit, StorageOperand& op1)
         m_gpr = m_jit->reuse(op1.gpr());
     else
         m_gpr = m_jit->allocate();
+}
+
+void GPRTemporary::adopt(GPRTemporary& other)
+{
+    ASSERT(!m_jit);
+    ASSERT(m_gpr == InvalidGPRReg);
+    ASSERT(other.m_jit);
+    ASSERT(other.m_gpr != InvalidGPRReg);
+    m_jit = other.m_jit;
+    m_gpr = other.m_gpr;
+    other.m_jit = 0;
+    other.m_gpr = InvalidGPRReg;
 }
 
 FPRTemporary::FPRTemporary(JITCodeGenerator* jit)

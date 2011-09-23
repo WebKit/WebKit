@@ -1,3 +1,62 @@
+2011-09-23  Oliver Hunt  <oliver@apple.com>
+
+        Make write barriers actually do something when enabled
+        https://bugs.webkit.org/show_bug.cgi?id=68717
+
+        Reviewed by Geoffrey Garen.
+
+        Add a basic card marking style write barrier to JSC (currently
+        turned off).  This requires two scratch registers in the JIT
+        so there was some register re-arranging to satisfy that requirement.
+        Happily this produced a minor perf bump in sunspider (~0.5%).
+
+        Turning the barriers on causes an overall regression of around 1.5%
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::store8):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movb_i8m):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::isKnownNotCell):
+        (JSC::DFG::JITCodeGenerator::writeBarrier):
+        (JSC::DFG::JITCodeGenerator::markCellCard):
+        (JSC::DFG::JITCodeGenerator::cachedPutById):
+        * dfg/DFGJITCodeGenerator.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCachePutByID):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * heap/CardSet.h: Added.
+        (JSC::CardSet::CardSet):
+        (JSC::::cardForAtom):
+        (JSC::::cardMarkedForAtom):
+        (JSC::::markCardForAtom):
+        * heap/Heap.cpp:
+        * heap/Heap.h:
+        (JSC::Heap::addressOfCardFor):
+        (JSC::Heap::writeBarrierFastCase):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::setDirtyObject):
+        (JSC::MarkedBlock::addressOfCardFor):
+        (JSC::MarkedBlock::offsetOfCards):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_put_global_var):
+        (JSC::JIT::emitWriteBarrier):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_put_global_var):
+
 2011-09-23  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=68077

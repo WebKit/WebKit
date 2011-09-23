@@ -181,7 +181,11 @@ public:
             m_gprs.release(info.gpr());
     }
 
-    static void writeBarrier(MacroAssembler&, GPRReg ownerGPR, GPRReg scratchGPR, WriteBarrierUseKind);
+    static void markCellCard(MacroAssembler&, GPRReg ownerGPR, GPRReg scratchGPR1, GPRReg scratchGPR2);
+    static void writeBarrier(MacroAssembler&, GPRReg ownerGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, WriteBarrierUseKind);
+
+    void writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, NodeIndex valueIndex, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg, GPRReg scratchGPR2 = InvalidGPRReg);
+    void writeBarrier(JSCell* owner, GPRReg valueGPR, NodeIndex valueIndex, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg);
 
     static GPRReg selectScratchGPR(GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg)
     {
@@ -433,6 +437,8 @@ protected:
     bool isKnownNotNumber(NodeIndex);
 
     bool isKnownBoolean(NodeIndex);
+
+    bool isKnownNotCell(NodeIndex);
     
     // Checks/accessors for constant values.
     bool isConstant(NodeIndex nodeIndex) { return m_jit.isConstant(nodeIndex); }
@@ -618,7 +624,7 @@ protected:
     void nonSpeculativeInstanceOf(Node&);
 
     JITCompiler::Call cachedGetById(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), NodeType = GetById);
-    void cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    void cachedPutById(GPRReg base, GPRReg value, NodeIndex valueIndex, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
     void cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
     
     void nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, bool invert = false);
@@ -1247,6 +1253,7 @@ private:
 
 class GPRTemporary {
 public:
+    GPRTemporary();
     GPRTemporary(JITCodeGenerator*);
     GPRTemporary(JITCodeGenerator*, GPRReg specific);
     GPRTemporary(JITCodeGenerator*, SpeculateIntegerOperand&);
@@ -1259,9 +1266,12 @@ public:
     GPRTemporary(JITCodeGenerator*, JSValueOperand&);
     GPRTemporary(JITCodeGenerator*, StorageOperand&);
 
+    void adopt(GPRTemporary&);
+
     ~GPRTemporary()
     {
-        m_jit->unlock(gpr());
+        if (m_jit)
+            m_jit->unlock(gpr());
     }
 
     GPRReg gpr()

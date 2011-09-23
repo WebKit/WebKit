@@ -74,6 +74,7 @@ namespace JSC {
 
         static void writeBarrier(const JSCell*, JSValue);
         static void writeBarrier(const JSCell*, JSCell*);
+        static uint8_t* addressOfCardFor(JSCell*);
 
         Heap(JSGlobalData*, HeapSize);
         ~Heap();
@@ -131,10 +132,6 @@ namespace JSC {
 
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
-        
-#if ENABLE(GGC)
-        static void writeBarrierFastCase(const JSCell* owner, JSCell*);
-#endif
 
         bool isValidAllocation(size_t);
         void reportExtraMemoryCostSlowCase(size_t);
@@ -156,8 +153,6 @@ namespace JSC {
         void sweep();
 
         RegisterFile& registerFile();
-
-        static void writeBarrierSlowCase(const JSCell*, JSCell*);
 
         void waitForRelativeTimeWhileHoldingLock(double relative);
         void waitForRelativeTime(double relative);
@@ -239,27 +234,24 @@ namespace JSC {
     }
 
 #if ENABLE(GGC)
-    inline void Heap::writeBarrierFastCase(const JSCell* owner, JSCell* cell)
+    inline uint8_t* Heap::addressOfCardFor(JSCell* cell)
     {
-        if (MarkedBlock::blockFor(owner)->inNewSpace())
-            return;
-        writeBarrierSlowCase(owner, cell);
+        return MarkedBlock::blockFor(cell)->addressOfCardFor(cell);
     }
 
-    inline void Heap::writeBarrier(const JSCell* owner, JSCell* cell)
+    inline void Heap::writeBarrier(const JSCell* owner, JSCell*)
     {
         WriteBarrierCounters::countWriteBarrier();
-        writeBarrierFastCase(owner, cell);
+        MarkedBlock::blockFor(owner)->setDirtyObject(owner);
     }
 
     inline void Heap::writeBarrier(const JSCell* owner, JSValue value)
     {
-        WriteBarrierCounters::countWriteBarrier();
         if (!value)
             return;
         if (!value.isCell())
             return;
-        writeBarrierFastCase(owner, value.asCell());
+        writeBarrier(owner, value.asCell());
     }
 #else
 

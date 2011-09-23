@@ -207,20 +207,20 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     Jump empty = branchTestPtr(Zero, BaseIndex(regT2, regT1, ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
 
     Label storeResult(this);
-    emitGetVirtualRegister(value, regT0);
-    storePtr(regT0, BaseIndex(regT2, regT1, ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
+    emitGetVirtualRegister(value, regT3);
+    storePtr(regT3, BaseIndex(regT2, regT1, ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
     Jump end = jump();
     
     empty.link(this);
     add32(TrustedImm32(1), Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
     branch32(Below, regT1, Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_length))).linkTo(storeResult, this);
 
-    move(regT1, regT0);
-    add32(TrustedImm32(1), regT0);
-    store32(regT0, Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_length)));
+    add32(TrustedImm32(1), Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_length)));
     jump().linkTo(storeResult, this);
 
     end.link(this);
+
+    emitWriteBarrier(regT0, regT3, regT1, regT3, ShouldFilterImmediates, WriteBarrierForPropertyAccess);
 }
 
 void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -439,8 +439,6 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     // Jump to a slow case if either the base object is an immediate, or if the Structure does not match.
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
-    emitWriteBarrier(regT0, regT2, WriteBarrierForPropertyAccess);
-
     BEGIN_UNINTERRUPTED_SEQUENCE(sequencePutById);
 
     Label hotPathBegin(this);
@@ -453,10 +451,12 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     addSlowCase(branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure))));
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureToCompare), patchOffsetPutByIdStructure);
 
-    loadPtr(Address(regT0, JSObject::offsetOfPropertyStorage()), regT0);
-    DataLabel32 displacementLabel = storePtrWithAddressOffsetPatch(regT1, Address(regT0, patchPutByIdDefaultOffset));
+    loadPtr(Address(regT0, JSObject::offsetOfPropertyStorage()), regT2);
+    DataLabel32 displacementLabel = storePtrWithAddressOffsetPatch(regT1, Address(regT2, patchPutByIdDefaultOffset));
 
     END_UNINTERRUPTED_SEQUENCE(sequencePutById);
+
+    emitWriteBarrier(regT0, regT1, regT2, regT3, ShouldFilterImmediates, WriteBarrierForPropertyAccess);
 
     ASSERT_JIT_OFFSET_UNUSED(displacementLabel, differenceBetween(hotPathBegin, displacementLabel), patchOffsetPutByIdPropertyMapOffset);
 }
@@ -537,8 +537,10 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
 
         restoreReturnAddressBeforeReturn(regT3);
     }
-    
-    emitWriteBarrier(regT0, regT2, WriteBarrierForPropertyAccess);
+
+    // Planting the new structure triggers the write barrier so we need
+    // an unconditional barrier here.
+    emitWriteBarrier(regT0, regT1, regT2, regT3, UnconditionalWriteBarrier, WriteBarrierForPropertyAccess);
 
     storePtr(TrustedImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
     compilePutDirectOffset(regT0, regT1, cachedOffset);
@@ -989,7 +991,7 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
         loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, next)), regT1);
     loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, object)), regT1);
 
-    emitWriteBarrier(regT1, regT2, WriteBarrierForVariableAccess);
+    emitWriteBarrier(regT1, regT0, regT2, regT3, ShouldFilterImmediates, WriteBarrierForVariableAccess);
 
     loadPtr(Address(regT1, JSVariableObject::offsetOfRegisters()), regT1);
     storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
@@ -1009,27 +1011,68 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
     JSGlobalObject* globalObject = m_codeBlock->globalObject();
 
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-    move(TrustedImmPtr(globalObject), regT1);
-    
-    emitWriteBarrier(regT1, regT2, WriteBarrierForVariableAccess);
 
+    move(TrustedImmPtr(globalObject), regT1);
     loadPtr(Address(regT1, JSVariableObject::offsetOfRegisters()), regT1);
     storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
+    emitWriteBarrier(globalObject, regT0, regT2, ShouldFilterImmediates, WriteBarrierForVariableAccess);
 }
 
-void JIT::emitWriteBarrier(RegisterID owner, RegisterID scratch, WriteBarrierUseKind useKind)
+#endif // USE(JSVALUE64)
+
+void JIT::emitWriteBarrier(RegisterID owner, RegisterID value, RegisterID scratch, RegisterID scratch2, WriteBarrierMode mode, WriteBarrierUseKind useKind)
 {
     UNUSED_PARAM(owner);
     UNUSED_PARAM(scratch);
+    UNUSED_PARAM(scratch2);
     UNUSED_PARAM(useKind);
+    UNUSED_PARAM(value);
+    UNUSED_PARAM(mode);
     ASSERT(owner != scratch);
+    ASSERT(owner != scratch2);
     
 #if ENABLE(WRITE_BARRIER_PROFILING)
     emitCount(WriteBarrierCounters::jitCounterFor(useKind));
 #endif
+    
+#if ENABLE(GGC)
+    Jump filterCells;
+    if (mode == ShouldFilterImmediates)
+        filterCells = emitJumpIfNotJSCell(value);
+    move(owner, scratch);
+    andPtr(TrustedImm32(static_cast<int32_t>(MarkedBlock::blockMask)), scratch);
+    move(owner, scratch2);
+    andPtr(TrustedImm32(static_cast<int32_t>(~MarkedBlock::blockMask)), scratch2);
+    rshift32(TrustedImm32(MarkedBlock::log2CardSize), scratch2);
+    store8(TrustedImm32(1), BaseIndex(scratch, scratch2, TimesOne, MarkedBlock::offsetOfCards()));
+    if (mode == ShouldFilterImmediates)
+        filterCells.link(this);
+#endif
 }
 
-#endif // USE(JSVALUE64)
+void JIT::emitWriteBarrier(JSCell* owner, RegisterID value, RegisterID scratch, WriteBarrierMode mode, WriteBarrierUseKind useKind)
+{
+    UNUSED_PARAM(owner);
+    UNUSED_PARAM(scratch);
+    UNUSED_PARAM(useKind);
+    UNUSED_PARAM(value);
+    UNUSED_PARAM(mode);
+    
+#if ENABLE(WRITE_BARRIER_PROFILING)
+    emitCount(WriteBarrierCounters::jitCounterFor(useKind));
+#endif
+    
+#if ENABLE(GGC)
+    Jump filterCells;
+    if (mode == ShouldFilterImmediates)
+        filterCells = emitJumpIfNotJSCell(value);
+    uint8_t* cardAddress = Heap::addressOfCardFor(owner);
+    move(TrustedImmPtr(cardAddress), scratch);
+    store8(TrustedImm32(1), Address(scratch));
+    if (mode == ShouldFilterImmediates)
+        filterCells.link(this);
+#endif
+}
 
 void JIT::testPrototype(JSValue prototype, JumpList& failureCases)
 {

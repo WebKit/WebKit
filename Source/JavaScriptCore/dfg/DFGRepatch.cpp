@@ -517,9 +517,15 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
                 for (WriteBarrier<Structure>* it = prototypeChain->head(); *it; ++it)
                     testPrototype(stubJit, scratchGPR, (*it)->storedPrototype(), failureCases);
             }
-            
-            JITCodeGenerator::writeBarrier(stubJit, baseGPR, scratchGPR, WriteBarrierForPropertyAccess);
-            
+
+#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+            // Must always emit this write barrier as the structure transition itself requires it
+            GPRReg scratch2 = JITCodeGenerator::selectScratchGPR(baseGPR, valueGPR, scratchGPR);
+            stubJit.push(scratch2);
+            JITCodeGenerator::writeBarrier(stubJit, baseGPR, scratchGPR, scratch2, WriteBarrierForPropertyAccess);
+            stubJit.pop(scratch2);
+#endif
+
             stubJit.storePtr(MacroAssembler::TrustedImmPtr(structure), MacroAssembler::Address(baseGPR, JSCell::structureOffset()));
             if (structure->isUsingInlineStorage())
                 stubJit.storePtr(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + slot.cachedOffset() * sizeof(JSValue)));

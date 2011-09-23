@@ -682,16 +682,4 @@ void Heap::releaseFreeBlocks()
     }
 }
 
-#if ENABLE(GGC)
-void Heap::writeBarrierSlowCase(const JSCell* owner, JSCell* cell)
-{
-}
-
-#else
-
-void Heap::writeBarrierSlowCase(const JSCell*, JSCell*)
-{
-}
-#endif
-
 } // namespace JSC

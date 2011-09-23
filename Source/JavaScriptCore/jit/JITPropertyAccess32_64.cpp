@@ -258,11 +258,12 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
     
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
-    emitJumpSlowCaseIfNotJSCell(base, regT1);
-    emitWriteBarrier(regT0, regT1, WriteBarrierForPropertyAccess);
     addSlowCase(branchPtr(NotEqual, Address(regT0), TrustedImmPtr(m_globalData->jsArrayVPtr)));
     addSlowCase(branch32(AboveOrEqual, regT2, Address(regT0, JSArray::vectorLengthOffset())));
     
+    emitJumpSlowCaseIfNotJSCell(base, regT1);
+    emitWriteBarrier(regT0, regT1, regT1, regT3, UnconditionalWriteBarrier, WriteBarrierForPropertyAccess);
+
     loadPtr(Address(regT0, JSArray::storageOffset()), regT3);
     
     Jump empty = branch32(Equal, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
@@ -396,8 +397,6 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     
     emitJumpSlowCaseIfNotJSCell(base, regT1);
     
-    emitWriteBarrier(regT0, regT1, WriteBarrierForPropertyAccess);
-    
     BEGIN_UNINTERRUPTED_SEQUENCE(sequencePutById);
     
     Label hotPathBegin(this);
@@ -410,11 +409,13 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     addSlowCase(branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure))));
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureToCompare), patchOffsetPutByIdStructure);
     
-    loadPtr(Address(regT0, JSObject::offsetOfPropertyStorage()), regT0);
-    DataLabel32 displacementLabel1 = storePtrWithAddressOffsetPatch(regT2, Address(regT0, patchPutByIdDefaultOffset)); // payload
-    DataLabel32 displacementLabel2 = storePtrWithAddressOffsetPatch(regT3, Address(regT0, patchPutByIdDefaultOffset)); // tag
+    loadPtr(Address(regT0, JSObject::offsetOfPropertyStorage()), regT1);
+    DataLabel32 displacementLabel1 = storePtrWithAddressOffsetPatch(regT2, Address(regT1, patchPutByIdDefaultOffset)); // payload
+    DataLabel32 displacementLabel2 = storePtrWithAddressOffsetPatch(regT3, Address(regT1, patchPutByIdDefaultOffset)); // tag
     
     END_UNINTERRUPTED_SEQUENCE(sequencePutById);
+
+    emitWriteBarrier(regT0, regT2, regT1, regT2, ShouldFilterImmediates, WriteBarrierForPropertyAccess);
     
     ASSERT_JIT_OFFSET_UNUSED(displacementLabel1, differenceBetween(hotPathBegin, displacementLabel1), patchOffsetPutByIdPropertyMapOffset1);
     ASSERT_JIT_OFFSET_UNUSED(displacementLabel2, differenceBetween(hotPathBegin, displacementLabel2), patchOffsetPutByIdPropertyMapOffset2);
@@ -430,7 +431,7 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
     linkSlowCase(iter);
     
     JITStubCall stubCall(this, direct ? cti_op_put_by_id_direct : cti_op_put_by_id);
-    stubCall.addArgument(regT1, regT0);
+    stubCall.addArgument(base);
     stubCall.addArgument(TrustedImmPtr(&(m_codeBlock->identifier(ident))));
     stubCall.addArgument(regT3, regT2); 
     Call call = stubCall.call();
@@ -516,7 +517,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
 #endif
     }
 
-    emitWriteBarrier(regT0, regT1, WriteBarrierForPropertyAccess);
+    emitWriteBarrier(regT0, regT1, regT1, regT3, UnconditionalWriteBarrier, WriteBarrierForPropertyAccess);
 
     storePtr(TrustedImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
 #if CPU(MIPS) || CPU(SH4) || CPU(ARM)
@@ -1043,11 +1044,9 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
         loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, next)), regT2);
     loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, object)), regT2);
 
-    emitWriteBarrier(regT2, regT3, WriteBarrierForVariableAccess);
-
-    loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT2);
-    emitStore(index, regT1, regT0, regT2);
-    map(m_bytecodeOffset + OPCODE_LENGTH(op_put_scoped_var), value, regT1, regT0);
+    loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT3);
+    emitStore(index, regT1, regT0, regT3);
+    emitWriteBarrier(regT2, regT1, regT0, regT1, ShouldFilterImmediates, WriteBarrierForVariableAccess);
 }
 
 void JIT::emit_op_get_global_var(Instruction* currentInstruction)
@@ -1074,23 +1073,11 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
     emitLoad(value, regT1, regT0);
     move(TrustedImmPtr(globalObject), regT2);
 
-    emitWriteBarrier(regT2, regT3, WriteBarrierForVariableAccess);
+    emitWriteBarrier(globalObject, regT1, regT3, ShouldFilterImmediates, WriteBarrierForVariableAccess);
 
     loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT2);
     emitStore(index, regT1, regT0, regT2);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_put_global_var), value, regT1, regT0);
-}
-
-void JIT::emitWriteBarrier(RegisterID owner, RegisterID scratch, WriteBarrierUseKind useKind)
-{
-    UNUSED_PARAM(owner);
-    UNUSED_PARAM(scratch);
-    UNUSED_PARAM(useKind);
-    ASSERT(owner != scratch);
-    
-#if ENABLE(WRITE_BARRIER_PROFILING)
-    emitCount(WriteBarrierCounters::jitCounterFor(useKind));
-#endif
 }
 
 } // namespace JSC
