@@ -1,5 +1,14 @@
 2011-09-23  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        [GTK] Remove extra space at the beginning of the last line.
+        https://bugs.webkit.org/show_bug.cgi?id=68710
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * platform/network/soup/SocketStreamHandleSoup.cpp:
+
+2011-09-23  Mario Sanchez Prada  <msanchez@igalia.com>
+
         [GTK] Fix coding style issues in ResourceRequestSoup.cpp
         https://bugs.webkit.org/show_bug.cgi?id=68707
 

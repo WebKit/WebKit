@@ -274,4 +274,4 @@ static gboolean writeReadyCallback(GPollableOutputStream*, void* id)
     return TRUE;
 }
 
-}  // namespace WebCore
+} // namespace WebCore
