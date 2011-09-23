@@ -91,6 +91,11 @@ WK_EXPORT WKRect WKRectGetValue(WKRectRef rect);
 
 #ifdef __cplusplus
 }
+
+inline bool operator==(const WKPoint& a, const WKPoint& b)
+{
+    return a.x == b.x && a.y == b.y;
+}
 #endif
 
 #endif /* WKGeometry_h */

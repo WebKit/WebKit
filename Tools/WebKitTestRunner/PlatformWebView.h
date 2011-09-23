@@ -67,6 +67,7 @@ public:
 
 #if PLATFORM(QT)
     bool sendEvent(QEvent*);
+    void postEvent(QEvent*);
 #endif
 
     WKRect windowFrame();

@@ -97,9 +97,17 @@ static int buildModifierFlags(WKEventModifiers modifiers)
     return flags;
 }
 
-static bool operator==(const WKPoint& a, const WKPoint& b)
+EventSenderProxy::EventSenderProxy(TestController* testController)
+    : m_testController(testController)
+    , m_time(0)
+    , m_position()
+    , m_leftMouseButtonDown(false)
+    , m_clickCount(0)
+    , m_clickTime(0)
+    , m_clickPosition()
+    , m_clickButton(kWKEventMouseButtonNoButton)
+    , eventNumber(0)
 {
-    return a.x == b.x && a.y == b.y;
 }
 
 void EventSenderProxy::updateClickCountForButton(int button)
@@ -181,6 +189,11 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
     NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
     if (targetView)
         [targetView mouseMoved:event];
+}
+
+void EventSenderProxy::leapForward(int milliseconds)
+{
+    m_time += milliseconds / 1000.0;
 }
 
 void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)

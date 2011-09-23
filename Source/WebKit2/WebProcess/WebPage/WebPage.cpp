@@ -1056,11 +1056,8 @@ void WebPage::mouseEventSyncForTesting(const WebMouseEvent& mouseEvent, bool& ha
         handled = true;
         return;
     }
-    
-    if (m_pageOverlay) {
-        // Let the page overlay handle the event.
-        handled = m_pageOverlay->mouseEvent(mouseEvent);
-    }
+
+    handled = m_pageOverlay && m_pageOverlay->mouseEvent(mouseEvent);
 
     if (!handled) {
         CurrentEvent currentEvent(mouseEvent);

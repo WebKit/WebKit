@@ -29,7 +29,7 @@
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <QKeyEvent>
-#include <WebCore/NotImplemented.h>
+#include <QtTest/QtTest>
 #include <WebKit2/WKPagePrivate.h>
 #include <WebKit2/WKStringQt.h>
 
@@ -42,7 +42,56 @@ namespace WTR {
 #define KEYCODE_UPARROW     0xf700
 #define KEYCODE_DOWNARROW   0xf701
 
-Qt::KeyboardModifiers getModifiers(WKEventModifiers modifiersRef)
+struct WTREventQueue {
+    QEvent* m_event;
+    int m_delay;
+};
+
+static WTREventQueue eventQueue[1024];
+static unsigned endOfQueue;
+static unsigned startOfQueue;
+
+EventSenderProxy::EventSenderProxy(TestController* testController)
+    : m_testController(testController)
+    , m_time(0)
+    , m_position()
+    , m_leftMouseButtonDown(false)
+    , m_clickCount(0)
+    , m_clickTime(0)
+    , m_clickPosition()
+    , m_clickButton(kWKEventMouseButtonNoButton)
+    , m_mouseButtons(0)
+{
+    memset(eventQueue, 0, sizeof(eventQueue));
+    endOfQueue = 0;
+    startOfQueue = 0;
+}
+
+static Qt::MouseButton getMouseButton(unsigned button)
+{
+    Qt::MouseButton mouseButton;
+    switch (button) {
+    case 0:
+        mouseButton = Qt::LeftButton;
+        break;
+    case 1:
+        mouseButton = Qt::MidButton;
+        break;
+    case 2:
+        mouseButton = Qt::RightButton;
+        break;
+    case 3:
+        // fast/events/mouse-click-events expects the 4th button to be treated as the middle button
+        mouseButton = Qt::MidButton;
+        break;
+    default:
+        mouseButton = Qt::LeftButton;
+        break;
+    }
+    return mouseButton;
+}
+
+static Qt::KeyboardModifiers getModifiers(WKEventModifiers modifiersRef)
 {
     Qt::KeyboardModifiers modifiers = 0;
 
@@ -191,19 +240,106 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers modifiersRef
     m_testController->mainWebView()->sendEvent(&event2);
 }
 
-void EventSenderProxy::mouseDown(unsigned, WKEventModifiers)
+void EventSenderProxy::updateClickCountForButton(int button)
 {
-    notImplemented();
+    if (m_time - m_clickTime < QApplication::doubleClickInterval() / 1000.0 && m_position == m_clickPosition && button == m_clickButton) {
+        ++m_clickCount;
+        m_clickTime = m_time;
+        return;
+    }
+
+    m_clickCount = 1;
+    m_clickTime = m_time;
+    m_clickPosition = m_position;
+    m_clickButton = button;
 }
 
-void EventSenderProxy::mouseUp(unsigned, WKEventModifiers)
+QGraphicsSceneMouseEvent* EventSenderProxy::createGraphicsSceneMouseEvent(QEvent::Type type, const QPoint& pos, const QPoint& screenPos, Qt::MouseButton button, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
 {
-    notImplemented();
+    QGraphicsSceneMouseEvent* event;
+    event = new QGraphicsSceneMouseEvent(type);
+    event->setPos(pos);
+    event->setScreenPos(screenPos);
+    event->setButton(button);
+    event->setButtons(buttons);
+    event->setModifiers(modifiers);
+
+    return event;
 }
 
-void EventSenderProxy::mouseMoveTo(double, double)
+void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
 {
-    notImplemented();
+    Qt::KeyboardModifiers modifiers = getModifiers(wkModifiers);
+    Qt::MouseButton mouseButton = getMouseButton(button);
+
+    updateClickCountForButton(button);
+
+    m_mouseButtons |= mouseButton;
+
+    QPoint mousePos(m_position.x, m_position.y);
+    QGraphicsSceneMouseEvent* event = createGraphicsSceneMouseEvent((m_clickCount == 2) ? QEvent::GraphicsSceneMouseDoubleClick : QEvent::GraphicsSceneMousePress,
+        mousePos, mousePos, mouseButton, m_mouseButtons, modifiers);
+
+    sendOrQueueEvent(event);
+}
+
+void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers)
+{
+    Qt::MouseButton mouseButton = getMouseButton(button);
+    m_mouseButtons &= ~mouseButton;
+
+    QPoint mousePos(m_position.x, m_position.y);
+    QGraphicsSceneMouseEvent* event = createGraphicsSceneMouseEvent(QEvent::GraphicsSceneMouseRelease,
+        mousePos, mousePos, mouseButton, m_mouseButtons, Qt::NoModifier);
+
+    sendOrQueueEvent(event);
+}
+
+void EventSenderProxy::mouseMoveTo(double x, double y)
+{
+    m_position.x = x;
+    m_position.y = y;
+
+    QPoint mousePos(m_position.x, m_position.y);
+    QGraphicsSceneMouseEvent* event = createGraphicsSceneMouseEvent(QEvent::GraphicsSceneMouseMove,
+        mousePos, mousePos, Qt::NoButton, m_mouseButtons, Qt::NoModifier);
+
+    sendOrQueueEvent(event);
+}
+
+void EventSenderProxy::leapForward(int ms)
+{
+    eventQueue[endOfQueue].m_delay = ms;
+}
+
+void EventSenderProxy::sendOrQueueEvent(QEvent* event)
+{
+    if (endOfQueue == startOfQueue && !eventQueue[endOfQueue].m_delay) {
+        m_testController->mainWebView()->sendEvent(event);
+        delete event;
+        return;
+    }
+
+    eventQueue[endOfQueue++].m_event = event;
+    eventQueue[endOfQueue].m_delay = 0;
+    replaySavedEvents();
+}
+
+void EventSenderProxy::replaySavedEvents()
+{
+    if (startOfQueue < endOfQueue) {
+        while (!eventQueue[startOfQueue].m_delay && startOfQueue < endOfQueue) {
+            QEvent* ev = eventQueue[startOfQueue++].m_event;
+            m_testController->mainWebView()->postEvent(ev);
+        }
+        if (startOfQueue == endOfQueue) {
+            startOfQueue = 0;
+            endOfQueue = 0;
+        } else {
+            QTest::qWait(eventQueue[startOfQueue].m_delay);
+            eventQueue[startOfQueue].m_delay = 0;
+        }
+    }
 }
 
 } // namespace WTR

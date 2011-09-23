@@ -33,23 +33,12 @@ class TestController;
 
 class EventSenderProxy {
 public:
-    EventSenderProxy(TestController* testController)
-        : m_testController(testController)
-        , m_time(0)
-        , m_position()
-        , m_leftMouseButtonDown(false)
-        , m_clickCount(0)
-        , m_clickTime(0)
-        , m_clickPosition()
-        , m_clickButton(kWKEventMouseButtonNoButton)
-        , eventNumber(0)
-    {
-    }
+    EventSenderProxy(TestController*);
 
     void mouseDown(unsigned button, WKEventModifiers);
     void mouseUp(unsigned button, WKEventModifiers);
     void mouseMoveTo(double x, double y);
-    void leapForward(int milliseconds) { m_time += milliseconds / 1000.0; }
+    void leapForward(int milliseconds);
 
     void keyDown(WKStringRef key, WKEventModifiers, unsigned location);
 
@@ -59,6 +48,12 @@ private:
     double currentEventTime() { return m_time; }
     void updateClickCountForButton(int button);
 
+#if PLATFORM(QT)
+    void sendOrQueueEvent(QEvent*);
+    void replaySavedEvents();
+    QGraphicsSceneMouseEvent* createGraphicsSceneMouseEvent(QEvent::Type, const QPoint& pos, const QPoint& screenPos, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers);
+#endif
+
     double m_time;
     WKPoint m_position;
     bool m_leftMouseButtonDown;
@@ -66,7 +61,11 @@ private:
     double m_clickTime;
     WKPoint m_clickPosition;
     WKEventMouseButton m_clickButton;
+#if PLATFORM(MAC)
     int eventNumber;
+#elif PLATFORM(QT)
+    Qt::MouseButtons m_mouseButtons;
+#endif
 };
 
 } // namespace WTR

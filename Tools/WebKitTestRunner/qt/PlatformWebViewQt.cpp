@@ -107,4 +107,9 @@ bool PlatformWebView::sendEvent(QEvent* event)
     return QCoreApplication::sendEvent(m_view->wkView(), event);
 }
 
+void PlatformWebView::postEvent(QEvent* event)
+{
+    QCoreApplication::postEvent(m_view->wkView(), event);
+}
+
 } // namespace WTR
