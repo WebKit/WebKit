@@ -247,14 +247,14 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
 
             m_resourcesData->addCachedResource(requestId, cachedResource);
         }
-        if (equalIgnoringFragmentIdentifier(response.url(), loader->frameLoader()->icon()->url()))
-            type = InspectorPageAgent::ImageResource;
-        else if (equalIgnoringFragmentIdentifier(response.url(), loader->url()) && type == InspectorPageAgent::OtherResource)
-            type = InspectorPageAgent::DocumentResource;
-        else if (m_loadingXHRSynchronously || m_resourcesData->resourceType(requestId) == InspectorPageAgent::XHRResource)
+        if (m_loadingXHRSynchronously || m_resourcesData->resourceType(requestId) == InspectorPageAgent::XHRResource)
             type = InspectorPageAgent::XHRResource;
         else if (m_resourcesData->resourceType(requestId) == InspectorPageAgent::ScriptResource)
             type = InspectorPageAgent::ScriptResource;
+        else if (equalIgnoringFragmentIdentifier(response.url(), loader->frameLoader()->icon()->url()))
+            type = InspectorPageAgent::ImageResource;
+        else if (equalIgnoringFragmentIdentifier(response.url(), loader->url()) && type == InspectorPageAgent::OtherResource)
+            type = InspectorPageAgent::DocumentResource;
 
         m_resourcesData->responseReceived(requestId, m_pageAgent->frameId(loader->frame()), response);
     }

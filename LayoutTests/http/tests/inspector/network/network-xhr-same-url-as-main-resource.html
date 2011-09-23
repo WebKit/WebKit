@@ -1,0 +1,34 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+function loadData()
+{
+    doXHR("GET", "network-xhr-same-url-as-main-resource.html", true, resourceLoaded);
+}
+
+function resourceLoaded()
+{
+    console.log("Done.");
+}
+
+function test()
+{
+    InspectorTest.addConsoleSniffer(step2);
+    InspectorTest.evaluateInPage("loadData()");
+
+    function step2()
+    {
+        var resource1 = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
+        InspectorTest.addResult(resource1.category.name);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that XHRs with the same url as a main resource have correct category.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=68648">Bug 68648</a>
+</body>
+</html>

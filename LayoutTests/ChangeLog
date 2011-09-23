@@ -1,3 +1,13 @@
+2011-09-23  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: XHRs requests with the same url as main resource should have correct category.
+        https://bugs.webkit.org/show_bug.cgi?id=68646
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/network/network-xhr-same-url-as-main-resource-expected.txt: Added.
+        * http/tests/inspector/network/network-xhr-same-url-as-main-resource.html: Added.
+
 2011-09-23  Marcus Bulach  <bulach@chromium.org>
 
         [chromium] Update expectation for pservers-grad-14-b.svg on snowleopard
