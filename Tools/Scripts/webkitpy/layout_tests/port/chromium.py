@@ -394,8 +394,6 @@ class ChromiumPort(Port):
 
 # FIXME: This should inherit from WebKitDriver now that Chromium has a DumpRenderTree process like the rest of WebKit.
 class ChromiumDriver(Driver):
-    KILL_TIMEOUT = 3.0
-
     def __init__(self, port, worker_number):
         Driver.__init__(self, port, worker_number)
         self._proc = None
@@ -595,12 +593,21 @@ class ChromiumDriver(Driver):
         self._proc.stdout.close()
         if self._proc.stderr:
             self._proc.stderr.close()
+        # The kill timeout was hard coded to 3 seconds given a default
+        # --time-out-ms of 35 seconds. We divide by 12 to get a close
+        # approximation.
+        time_out_ms = self._port.get_option('time_out_ms')
+        if time_out_ms:
+          kill_timeout_seconds = int(time_out_ms) / 12000
+        else:
+          kill_timeout_seconds = 3.0
+
         # Closing stdin/stdout/stderr hangs sometimes on OS X,
         # (see __init__(), above), and anyway we don't want to hang
         # the harness if DRT is buggy, so we wait a couple
         # seconds to give DRT a chance to clean up, but then
         # force-kill the process if necessary.
-        timeout = time.time() + self.KILL_TIMEOUT
+        timeout = time.time() + kill_timeout_seconds
         while self._proc.poll() is None and time.time() < timeout:
             time.sleep(0.1)
         if self._proc.poll() is None:
