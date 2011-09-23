@@ -47,9 +47,6 @@ class WebString;
 struct WebPoint;
 template <typename T> class WebVector;
 
-// FIXME: remove this define once render_widget has been changed to issue threaded compositor calls
-#define WEBWIDGET_HAS_ANIMATE_CHANGES 1
-
 class WebWidget {
 public:
     // This method closes and deletes the WebWidget.
