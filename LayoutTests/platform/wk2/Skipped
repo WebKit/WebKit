@@ -1139,7 +1139,6 @@ editing/style/style-boundary-005.html
 
 # Unexplained failures that were formerly in the dumpChildFramesAsText list.
 http/tests/security/cross-frame-access-private-browsing.html
-http/tests/security/cross-origin-xsl-BLOCKED.html
 http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame.html
 http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change.html

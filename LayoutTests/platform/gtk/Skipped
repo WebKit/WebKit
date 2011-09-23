@@ -164,8 +164,7 @@ svg/wicd/test-scalable-background-image1.xhtml
 # This test is crashing when run along with other tests on the release build.
 fast/dynamic/layer-hit-test-crash.html
 
-# Two anonymous crashers with no bug.
-http/tests/security/cross-origin-xsl-BLOCKED.html
+# One anonymous crashers with no bug.
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=50155
