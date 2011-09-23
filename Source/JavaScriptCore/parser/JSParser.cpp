@@ -752,6 +752,8 @@ private:
         {
             ASSERT(m_isFunction);
             info->usesEval = m_usesEval;
+            info->strictMode = m_strictMode;
+            info->needsFullActivation = m_needsFullActivation;
             copyCapturedVariablesToVector(m_writtenVariables, info->writtenVariables);
             copyCapturedVariablesToVector(m_usedVariables, info->usedVariables);
         }
@@ -760,6 +762,8 @@ private:
         {
             ASSERT(m_isFunction);
             m_usesEval = info->usesEval;
+            m_strictMode = info->strictMode;
+            m_needsFullActivation = info->needsFullActivation;
             unsigned size = info->usedVariables.size();
             for (unsigned i = 0; i < size; ++i)
                 m_usedVariables.add(info->usedVariables[i]);
@@ -1608,9 +1612,11 @@ template <JSParser::FunctionRequirements requirements, bool nameIsInContainingSc
     openBracePos = m_token.m_data.intValue;
     bodyStartLine = tokenLine();
 
+    // If we know about this function already, we can use the cached info and skip the parser to the end of the function.
     if (const SourceProviderCacheItem* cachedInfo = TreeBuilder::CanUseFunctionCache ? findCachedFunctionInfo(openBracePos) : 0) {
-        // If we know about this function already, we can use the cached info and skip the parser to the end of the function.
-        body = context.createFunctionBody(strictMode());
+        // If we're in a strict context, the cached function info must say it was strict too.
+        ASSERT(!strictMode() || cachedInfo->strictMode);
+        body = context.createFunctionBody(cachedInfo->strictMode);
 
         functionScope->restoreFunctionInfo(cachedInfo);
         failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo));

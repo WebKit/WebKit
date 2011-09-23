@@ -59,6 +59,8 @@ public:
     int closeBraceLine;
     int closeBracePos;
     bool usesEval;
+    bool strictMode;
+    bool needsFullActivation;
     Vector<RefPtr<StringImpl> > usedVariables;
     Vector<RefPtr<StringImpl> > writtenVariables;
 };
