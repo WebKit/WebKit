@@ -73,6 +73,7 @@ my (
     $channelMessagingSupport,
     $clientBasedGeolocationSupport,
     $coverageSupport,
+    $cssFiltersSupport,
     $css3FlexboxSupport,
     $sqlDatabaseSupport,
     $datalistSupport,
@@ -151,6 +152,9 @@ my @features = (
     { option => "client-based-geolocation", desc => "Toggle client-based Geolocation support",
       define => "ENABLE_CLIENT_BASED_GEOLOCATION", default => isAppleWebKit(), value => \$clientBasedGeolocationSupport },
 
+    { option => "css-filters", desc => "Toggle CSS Filters support",
+      define => "ENABLE_CSS_FILTERS", default => isAppleWebKit(), value => \$cssFiltersSupport },
+
     { option => "css3-flexbox", desc => "Toggle CSS3 Flexbox support",
       define => "ENABLE_CSS3_FLEXBOX", default => 0, value => \$css3FlexboxSupport },
 
@@ -181,7 +185,7 @@ my @features = (
     { option => "file-system", desc => "Toggle FileSystem support",
       define => "ENABLE_FILE_SYSTEM", default => 0, value => \$fileSystemSupport },
 
-    { option => "filters", desc => "Toggle Filters support",
+    { option => "filters", desc => "Toggle SVG Filters support",
       define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl()), value => \$filtersSupport },
 
     { option => "fullscreen-api", desc => "Toggle Fullscreen API support",
