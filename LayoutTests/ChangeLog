@@ -1,5 +1,12 @@
 2011-09-22  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening, update expected file after r95745.
+
+        * platform/qt/editing/deleting/merge-whitespace-pre-expected.png:
+        * platform/qt/editing/deleting/merge-whitespace-pre-expected.txt:
+
+2011-09-22  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed fix after r95764, update expected fail to expected pass.
 
         * ietestcenter/Javascript/15.3.4.5-0-2-expected.txt:
