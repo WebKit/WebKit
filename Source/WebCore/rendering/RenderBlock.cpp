@@ -1863,14 +1863,6 @@ void RenderBlock::handleAfterSideOfBlock(LayoutUnit beforeSide, LayoutUnit after
     setCollapsedBottomMargin(marginInfo);
 }
 
-void RenderBlock::setLogicalLocationForChild(RenderBox* child, const LayoutPoint& location)
-{
-    if (style()->isHorizontalWritingMode())
-        child->setLocation(location);
-    else
-        child->setLocation(location.transposedPoint());
-}
-
 void RenderBlock::setLogicalLeftForChild(RenderBox* child, LayoutUnit logicalLeft, ApplyLayoutDeltaMode applyDelta)
 {
     if (isHorizontalWritingMode()) {

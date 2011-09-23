@@ -187,38 +187,153 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
     setNeedsLayout(false);
 }
 
-LayoutUnit RenderFlexibleBox::logicalBorderAndPaddingWidthForChild(RenderBox* child)
+bool RenderFlexibleBox::hasOrthogonalFlow(RenderBox* child) const
 {
-    return isHorizontalWritingMode() ? child->borderAndPaddingWidth() : child->borderAndPaddingHeight();
+    // FIXME: Is the child->isHorizontalWritingMode() check correct if the child is a flexbox?
+    // Should it be using child->isHorizontalFlow in that case?
+    // Or do we only care about the parent's writing mode?
+    return isHorizontalFlow() != child->isHorizontalWritingMode();
 }
 
-LayoutUnit RenderFlexibleBox::logicalScrollbarHeightForChild(RenderBox* child)
+bool RenderFlexibleBox::isHorizontalFlow() const
 {
-    return isHorizontalWritingMode() ? child->verticalScrollbarWidth() : child->horizontalScrollbarHeight();
+    // FIXME: Take flex-flow value into account.
+    return isHorizontalWritingMode();
 }
 
-Length RenderFlexibleBox::marginStartStyleForChild(RenderBox* child)
+bool RenderFlexibleBox::isLeftToRightFlow() const
 {
-    if (isHorizontalWritingMode())
-        return style()->isLeftToRightDirection() ? child->style()->marginLeft() : child->style()->marginRight();
-    return style()->isLeftToRightDirection() ? child->style()->marginTop() : child->style()->marginBottom();
+    // FIXME: Take flex-flow value into account.
+    return style()->isLeftToRightDirection();
 }
 
-Length RenderFlexibleBox::marginEndStyleForChild(RenderBox* child)
+// FIXME: Make all these flow aware methods actually be flow aware.
+
+void RenderFlexibleBox::setFlowAwareLogicalHeight(LayoutUnit size)
 {
-    if (isHorizontalWritingMode())
-        return style()->isLeftToRightDirection() ? child->style()->marginRight() : child->style()->marginLeft();
-    return style()->isLeftToRightDirection() ? child->style()->marginBottom() : child->style()->marginTop();
+    setLogicalHeight(size);
 }
 
-LayoutUnit RenderFlexibleBox::preferredLogicalContentWidthForFlexItem(RenderBox* child)
+LayoutUnit RenderFlexibleBox::flowAwareLogicalHeightForChild(RenderBox* child)
 {
-    Length width = isHorizontalWritingMode() ? child->style()->width() : child->style()->height();
+    return logicalHeightForChild(child);
+}
+
+LayoutUnit RenderFlexibleBox::flowAwareLogicalWidthForChild(RenderBox* child)
+{
+    return logicalWidthForChild(child);
+}
+
+LayoutUnit RenderFlexibleBox::flowAwareLogicalHeight() const
+{
+    return logicalHeight();
+}
+
+LayoutUnit RenderFlexibleBox::flowAwareContentLogicalWidth() const
+{
+    return contentLogicalWidth();
+}
+
+LayoutUnit RenderFlexibleBox::flowAwareAvailableLogicalWidth() const
+{
+    return availableLogicalWidth();
+}
+
+LayoutUnit RenderFlexibleBox::flowAwareBorderStart() const
+{
+    return borderStart();
+}
+
+LayoutUnit RenderFlexibleBox::flowAwareBorderBefore() const
+{
+    return borderBefore();
+}
+
+LayoutUnit RenderFlexibleBox::flowAwareBorderAfter() const
+{
+    return borderAfter();
+}
+
+LayoutUnit RenderFlexibleBox::flowAwarePaddingStart() const
+{
+    return paddingStart();
+}
+
+LayoutUnit RenderFlexibleBox::flowAwarePaddingBefore() const
+{
+    return paddingBefore();
+}
+
+LayoutUnit RenderFlexibleBox::flowAwarePaddingAfter() const
+{
+    return paddingAfter();
+}
+
+LayoutUnit RenderFlexibleBox::flowAwareMarginStartForChild(RenderBox* child) const
+{
+    return marginStartForChild(child);
+}
+
+LayoutUnit RenderFlexibleBox::flowAwareMarginBeforeForChild(RenderBox* child) const
+{
+    return marginBeforeForChild(child);
+}
+
+LayoutUnit RenderFlexibleBox::flowAwareMarginAfterForChild(RenderBox* child) const
+{
+    return marginAfterForChild(child);
+}
+
+void RenderFlexibleBox::setFlowAwareMarginStartForChild(RenderBox* child, LayoutUnit margin)
+{
+    setMarginStartForChild(child, margin);
+}
+
+void RenderFlexibleBox::setFlowAwareMarginEndForChild(RenderBox* child, LayoutUnit margin)
+{
+    setMarginEndForChild(child, margin);
+}
+
+void RenderFlexibleBox::setFlowAwareLogicalLocationForChild(RenderBox* child, const LayoutPoint& location)
+{
+    if (isHorizontalFlow())
+        child->setLocation(location);
+    else
+        child->setLocation(location.transposedPoint());
+}
+
+LayoutUnit RenderFlexibleBox::logicalBorderAndPaddingWidthForChild(RenderBox* child) const
+{
+    return isHorizontalFlow() ? child->borderAndPaddingWidth() : child->borderAndPaddingHeight();
+}
+
+LayoutUnit RenderFlexibleBox::logicalScrollbarHeightForChild(RenderBox* child) const
+{
+    return isHorizontalFlow() ? child->verticalScrollbarWidth() : child->horizontalScrollbarHeight();
+}
+
+Length RenderFlexibleBox::marginStartStyleForChild(RenderBox* child) const
+{
+    if (isHorizontalFlow())
+        return isLeftToRightFlow() ? child->style()->marginLeft() : child->style()->marginRight();
+    return isLeftToRightFlow() ? child->style()->marginTop() : child->style()->marginBottom();
+}
+
+Length RenderFlexibleBox::marginEndStyleForChild(RenderBox* child) const
+{
+    if (isHorizontalFlow())
+        return isLeftToRightFlow() ? child->style()->marginRight() : child->style()->marginLeft();
+    return isLeftToRightFlow() ? child->style()->marginBottom() : child->style()->marginTop();
+}
+
+LayoutUnit RenderFlexibleBox::preferredLogicalContentWidthForFlexItem(RenderBox* child) const
+{
+    Length width = isHorizontalFlow() ? child->style()->width() : child->style()->height();
     if (width.isAuto()) {
-        LayoutUnit logicalWidth = isHorizontalWritingMode() == child->isHorizontalWritingMode() ? child->maxPreferredLogicalWidth() : child->logicalHeight();
+        LayoutUnit logicalWidth = hasOrthogonalFlow(child) ? child->logicalHeight() : child->maxPreferredLogicalWidth();
         return logicalWidth - logicalBorderAndPaddingWidthForChild(child) - logicalScrollbarHeightForChild(child);
     }
-    return isHorizontalWritingMode() ? child->contentWidth() : child->contentHeight();
+    return isHorizontalFlow() ? child->contentWidth() : child->contentHeight();
 }
 
 void RenderFlexibleBox::layoutInlineDirection(bool relayoutChildren)
@@ -229,7 +344,7 @@ void RenderFlexibleBox::layoutInlineDirection(bool relayoutChildren)
     TreeOrderIterator treeIterator(this);
 
     computePreferredLogicalWidth(relayoutChildren, treeIterator, preferredLogicalWidth, totalPositiveFlexibility, totalNegativeFlexibility);
-    LayoutUnit availableFreeSpace = contentLogicalWidth() - preferredLogicalWidth;
+    LayoutUnit availableFreeSpace = flowAwareContentLogicalWidth() - preferredLogicalWidth;
 
     FlexOrderIterator flexIterator(this, treeIterator.flexOrderValues());
     InflexibleFlexItemSize inflexibleItems;
@@ -244,14 +359,14 @@ void RenderFlexibleBox::layoutInlineDirection(bool relayoutChildren)
     // FIXME: Handle distribution of cross-axis space (third distribution round).
 }
 
-float RenderFlexibleBox::logicalPositiveFlexForChild(RenderBox* child)
+float RenderFlexibleBox::logicalPositiveFlexForChild(RenderBox* child) const
 {
-    return isHorizontalWritingMode() ? child->style()->flexboxWidthPositiveFlex() : child->style()->flexboxHeightPositiveFlex();
+    return isHorizontalFlow() ? child->style()->flexboxWidthPositiveFlex() : child->style()->flexboxHeightPositiveFlex();
 }
 
-float RenderFlexibleBox::logicalNegativeFlexForChild(RenderBox* child)
+float RenderFlexibleBox::logicalNegativeFlexForChild(RenderBox* child) const
 {
-    return isHorizontalWritingMode() ? child->style()->flexboxWidthNegativeFlex() : child->style()->flexboxHeightNegativeFlex();
+    return isHorizontalFlow() ? child->style()->flexboxWidthNegativeFlex() : child->style()->flexboxHeightNegativeFlex();
 }
 
 void RenderFlexibleBox::computePreferredLogicalWidth(bool relayoutChildren, TreeOrderIterator& iterator, LayoutUnit& preferredLogicalWidth, float& totalPositiveFlexibility, float& totalNegativeFlexibility)
@@ -259,7 +374,7 @@ void RenderFlexibleBox::computePreferredLogicalWidth(bool relayoutChildren, Tree
     preferredLogicalWidth = 0;
     totalPositiveFlexibility = totalNegativeFlexibility = 0;
 
-    LayoutUnit flexboxAvailableLogicalWidth = availableLogicalWidth();
+    LayoutUnit flexboxAvailableLogicalWidth = flowAwareAvailableLogicalWidth();
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
         // We always have to lay out flexible objects again, since the flex distribution
         // may have changed, and we need to reallocate space.
@@ -269,7 +384,7 @@ void RenderFlexibleBox::computePreferredLogicalWidth(bool relayoutChildren, Tree
         child->layoutIfNeeded();
 
         // We can't just use marginStartForChild, et. al. because "auto" needs to be treated as 0.
-        if (isHorizontalWritingMode()) {
+        if (isHorizontalFlow()) {
             preferredLogicalWidth += child->style()->marginLeft().calcMinValue(flexboxAvailableLogicalWidth);
             preferredLogicalWidth += child->style()->marginRight().calcMinValue(flexboxAvailableLogicalWidth);
         } else {
@@ -295,7 +410,7 @@ bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithmInlineDirection(FlexOrder
 {
     childSizes.clear();
 
-    LayoutUnit flexboxAvailableLogicalWidth = availableLogicalWidth();
+    LayoutUnit flexboxAvailableLogicalWidth = flowAwareAvailableLogicalWidth();
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
         LayoutUnit childPreferredSize;
         if (inflexibleItems.contains(child))
@@ -305,7 +420,7 @@ bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithmInlineDirection(FlexOrder
             if (availableFreeSpace > 0 && totalPositiveFlexibility > 0) {
                 childPreferredSize += lroundf(availableFreeSpace * logicalPositiveFlexForChild(child) / totalPositiveFlexibility);
 
-                Length childLogicalMaxWidth = isHorizontalWritingMode() ? child->style()->maxWidth() : child->style()->maxHeight();
+                Length childLogicalMaxWidth = isHorizontalFlow() ? child->style()->maxWidth() : child->style()->maxHeight();
                 if (!childLogicalMaxWidth.isUndefined() && childLogicalMaxWidth.isSpecified() && childPreferredSize > childLogicalMaxWidth.calcValue(flexboxAvailableLogicalWidth)) {
                     childPreferredSize = childLogicalMaxWidth.calcValue(flexboxAvailableLogicalWidth);
                     availableFreeSpace -= childPreferredSize - preferredLogicalContentWidthForFlexItem(child);
@@ -317,7 +432,7 @@ bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithmInlineDirection(FlexOrder
             } else if (availableFreeSpace < 0 && totalNegativeFlexibility > 0) {
                 childPreferredSize += lroundf(availableFreeSpace * logicalNegativeFlexForChild(child) / totalNegativeFlexibility);
 
-                Length childLogicalMinWidth = isHorizontalWritingMode() ? child->style()->minWidth() : child->style()->minHeight();
+                Length childLogicalMinWidth = isHorizontalFlow() ? child->style()->minWidth() : child->style()->minHeight();
                 if (!childLogicalMinWidth.isUndefined() && childLogicalMinWidth.isSpecified() && childPreferredSize < childLogicalMinWidth.calcValue(flexboxAvailableLogicalWidth)) {
                     childPreferredSize = childLogicalMinWidth.calcValue(flexboxAvailableLogicalWidth);
                     availableFreeSpace += preferredLogicalContentWidthForFlexItem(child) - childPreferredSize;
@@ -341,15 +456,15 @@ static bool hasPackingSpace(LayoutUnit availableFreeSpace, float totalPositiveFl
 void RenderFlexibleBox::setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize)
 {
     // FIXME: Rename setOverrideWidth/setOverrideHeight to setOverrideLogicalWidth/setOverrideLogicalHeight.
-    if (isHorizontalWritingMode())
-        child->isHorizontalWritingMode() ? child->setOverrideWidth(childPreferredSize) : child->setOverrideHeight(childPreferredSize);
+    if (hasOrthogonalFlow(child))
+        child->setOverrideHeight(childPreferredSize);
     else
-        child->isHorizontalWritingMode() ? child->setOverrideHeight(childPreferredSize) : child->setOverrideWidth(childPreferredSize);
+        child->setOverrideWidth(childPreferredSize);
 }
 
 void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator& iterator, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
 {
-    LayoutUnit startEdge = borderStart() + paddingStart();
+    LayoutUnit startEdge = flowAwareBorderStart() + flowAwarePaddingStart();
 
     if (hasPackingSpace(availableFreeSpace, totalPositiveFlexibility)) {
         if (style()->flexPack() == PackEnd)
@@ -358,9 +473,9 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
             startEdge += availableFreeSpace / 2;
     }
 
-    LayoutUnit logicalTop = borderBefore() + paddingBefore();
-    LayoutUnit totalAvailableLogicalWidth = availableLogicalWidth();
-    setLogicalHeight(0);
+    LayoutUnit logicalTop = flowAwareBorderBefore() + flowAwarePaddingBefore();
+    LayoutUnit totalAvailableLogicalWidth = flowAwareAvailableLogicalWidth();
+    setFlowAwareLogicalHeight(0);
     size_t i = 0;
     for (RenderBox* child = iterator.first(); child; child = iterator.next(), ++i) {
         // FIXME: Does this need to take the scrollbar width into account?
@@ -369,20 +484,20 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
         child->setChildNeedsLayout(true);
         child->layoutIfNeeded();
 
-        setLogicalHeight(std::max(logicalHeight(), borderBefore() + paddingBefore() + marginBeforeForChild(child) + logicalHeightForChild(child) + marginAfterForChild(child) + paddingAfter() + borderAfter() + scrollbarLogicalHeight()));
+        setFlowAwareLogicalHeight(std::max(flowAwareLogicalHeight(), flowAwareBorderBefore() + flowAwarePaddingBefore() + flowAwareMarginBeforeForChild(child) + flowAwareLogicalHeightForChild(child) + flowAwareMarginAfterForChild(child) + flowAwarePaddingAfter() + flowAwareBorderAfter() + scrollbarLogicalHeight()));
 
         if (marginStartStyleForChild(child).isAuto())
-            setMarginStartForChild(child, availableFreeSpace > 0 ? lroundf(availableFreeSpace / totalPositiveFlexibility) : 0);
+            setFlowAwareMarginStartForChild(child, availableFreeSpace > 0 ? lroundf(availableFreeSpace / totalPositiveFlexibility) : 0);
         if (marginEndStyleForChild(child).isAuto())
-            setMarginEndForChild(child, availableFreeSpace > 0 ? lroundf(availableFreeSpace / totalPositiveFlexibility) : 0);
+            setFlowAwareMarginEndForChild(child, availableFreeSpace > 0 ? lroundf(availableFreeSpace / totalPositiveFlexibility) : 0);
 
-        startEdge += marginStartForChild(child);
+        startEdge += flowAwareMarginStartForChild(child);
 
-        LayoutUnit childLogicalWidth = logicalWidthForChild(child);
-        LayoutUnit logicalLeft = style()->isLeftToRightDirection() ? startEdge : totalAvailableLogicalWidth - startEdge - childLogicalWidth;
+        LayoutUnit childLogicalWidth = flowAwareLogicalWidthForChild(child);
+        LayoutUnit logicalLeft = isLeftToRightFlow() ? startEdge : totalAvailableLogicalWidth - startEdge - childLogicalWidth;
         // FIXME: Do repaintDuringLayoutIfMoved.
         // FIXME: Supporting layout deltas.
-        setLogicalLocationForChild(child, IntPoint(logicalLeft, logicalTop));
+        setFlowAwareLogicalLocationForChild(child, IntPoint(logicalLeft, logicalTop));
         startEdge += childLogicalWidth + marginEndForChild(child);
 
         if (hasPackingSpace(availableFreeSpace, totalPositiveFlexibility) && style()->flexPack() == PackJustify && childSizes.size() > 1)

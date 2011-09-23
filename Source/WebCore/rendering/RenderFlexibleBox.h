@@ -53,16 +53,38 @@ private:
     class FlexOrderIterator;
     typedef WTF::HashMap<const RenderBox*, LayoutUnit> InflexibleFlexItemSize;
 
-    LayoutUnit logicalBorderAndPaddingWidthForChild(RenderBox* child);
-    LayoutUnit logicalScrollbarHeightForChild(RenderBox* child);
-    Length marginStartStyleForChild(RenderBox* child);
-    Length marginEndStyleForChild(RenderBox* child);
-    LayoutUnit preferredLogicalContentWidthForFlexItem(RenderBox* child);
+    bool hasOrthogonalFlow(RenderBox* child) const;
+    bool isHorizontalFlow() const;
+    bool isLeftToRightFlow() const;
+    void setFlowAwareLogicalHeight(LayoutUnit);
+    LayoutUnit flowAwareLogicalHeightForChild(RenderBox* child);
+    LayoutUnit flowAwareLogicalWidthForChild(RenderBox* child);
+    LayoutUnit flowAwareLogicalHeight() const;
+    LayoutUnit flowAwareContentLogicalWidth() const;
+    LayoutUnit flowAwareAvailableLogicalWidth() const;
+    LayoutUnit flowAwareBorderStart() const;
+    LayoutUnit flowAwareBorderBefore() const;
+    LayoutUnit flowAwareBorderAfter() const;
+    LayoutUnit flowAwarePaddingStart() const;
+    LayoutUnit flowAwarePaddingBefore() const;
+    LayoutUnit flowAwarePaddingAfter() const;
+    LayoutUnit flowAwareMarginStartForChild(RenderBox* child) const;
+    LayoutUnit flowAwareMarginBeforeForChild(RenderBox* child) const;
+    LayoutUnit flowAwareMarginAfterForChild(RenderBox* child) const;
+    void setFlowAwareMarginStartForChild(RenderBox* child, LayoutUnit);
+    void setFlowAwareMarginEndForChild(RenderBox* child, LayoutUnit);
+    // FIXME: Supporting layout deltas.
+    void setFlowAwareLogicalLocationForChild(RenderBox* child, const LayoutPoint&);
+    LayoutUnit logicalBorderAndPaddingWidthForChild(RenderBox* child) const;
+    LayoutUnit logicalScrollbarHeightForChild(RenderBox* child) const;
+    Length marginStartStyleForChild(RenderBox* child) const;
+    Length marginEndStyleForChild(RenderBox* child) const;
+    LayoutUnit preferredLogicalContentWidthForFlexItem(RenderBox* child) const;
 
     void layoutInlineDirection(bool relayoutChildren);
 
-    float logicalPositiveFlexForChild(RenderBox* child);
-    float logicalNegativeFlexForChild(RenderBox* child);
+    float logicalPositiveFlexForChild(RenderBox* child) const;
+    float logicalNegativeFlexForChild(RenderBox* child) const;
 
     void computePreferredLogicalWidth(bool relayoutChildren, TreeOrderIterator&, LayoutUnit&, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
     bool runFreeSpaceAllocationAlgorithmInlineDirection(FlexOrderIterator&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
