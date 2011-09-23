@@ -106,6 +106,7 @@ void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
         return;
 
     FloatQuad quad = deviceMatrix.mapQuad(FloatQuad(layerRect));
+    CCLayerQuad deviceRect = CCLayerQuad(FloatQuad(quad.boundingBox()));
     CCLayerQuad layerQuad = CCLayerQuad(quad);
 
 #if defined(OS_CHROMEOS)
@@ -116,8 +117,10 @@ void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
     bool useAA = (m_tiler->hasBorderTexels() && (!quad.isRectilinear() || !quad.boundingBox().isExpressibleAsIntRect()));
 #endif
 
-    if (useAA)
+    if (useAA) {
+        deviceRect.inflateAntiAliasingDistance();
         layerQuad.inflateAntiAliasingDistance();
+    }
 
     GraphicsContext3D* context = layerRenderer->context();
     if (isNonCompositedContent()) {
@@ -129,19 +132,19 @@ void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
     case LayerTextureUpdater::SampledTexelFormatRGBA:
         if (useAA) {
             const ProgramAA* program = layerRenderer->tilerProgramAA();
-            drawTiles(layerRenderer, layerRect, m_tilingTransform, deviceMatrix, layerQuad, drawOpacity(), program, program->fragmentShader().fragmentTexTransformLocation(), program->fragmentShader().edgeLocation());
+            drawTiles(layerRenderer, layerRect, m_tilingTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, program->fragmentShader().fragmentTexTransformLocation(), program->fragmentShader().edgeLocation());
         } else {
             const Program* program = layerRenderer->tilerProgram();
-            drawTiles(layerRenderer, layerRect, m_tilingTransform, deviceMatrix, layerQuad, drawOpacity(), program, -1, -1);
+            drawTiles(layerRenderer, layerRect, m_tilingTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
         }
         break;
     case LayerTextureUpdater::SampledTexelFormatBGRA:
         if (useAA) {
             const ProgramSwizzleAA* program = layerRenderer->tilerProgramSwizzleAA();
-            drawTiles(layerRenderer, layerRect, m_tilingTransform, deviceMatrix, layerQuad, drawOpacity(), program, program->fragmentShader().fragmentTexTransformLocation(), program->fragmentShader().edgeLocation());
+            drawTiles(layerRenderer, layerRect, m_tilingTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, program->fragmentShader().fragmentTexTransformLocation(), program->fragmentShader().edgeLocation());
         } else {
             const ProgramSwizzle* program = layerRenderer->tilerProgramSwizzle();
-            drawTiles(layerRenderer, layerRect, m_tilingTransform, deviceMatrix, layerQuad, drawOpacity(), program, -1, -1);
+            drawTiles(layerRenderer, layerRect, m_tilingTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
         }
         break;
     default:
@@ -172,7 +175,7 @@ void CCTiledLayerImpl::syncTextureId(int i, int j, Platform3DObject textureId)
 }
 
 template <class T>
-void CCTiledLayerImpl::drawTiles(LayerRendererChromium* layerRenderer, const IntRect& contentRect, const TransformationMatrix& globalTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& contentQuad, float opacity, const T* program, int fragmentTexTransformLocation, int edgeLocation)
+void CCTiledLayerImpl::drawTiles(LayerRendererChromium* layerRenderer, const IntRect& contentRect, const TransformationMatrix& globalTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& deviceRect, const CCLayerQuad& contentQuad, float opacity, const T* program, int fragmentTexTransformLocation, int edgeLocation)
 {
     GraphicsContext3D* context = layerRenderer->context();
     GLC(context, context->useProgram(program->program()));
@@ -182,9 +185,10 @@ void CCTiledLayerImpl::drawTiles(LayerRendererChromium* layerRenderer, const Int
     TransformationMatrix quadTransform = deviceTransform.inverse();
 
     if (edgeLocation != -1) {
-        float edge[12];
+        float edge[24];
         contentQuad.toFloatArray(edge);
-        GLC(context, context->uniform3fv(edgeLocation, edge, 4));
+        deviceRect.toFloatArray(&edge[12]);
+        GLC(context, context->uniform3fv(edgeLocation, edge, 8));
     }
 
     CCLayerQuad::Edge prevEdgeY = contentQuad.top();

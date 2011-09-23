@@ -77,7 +77,7 @@ private:
 
     // Draw all tiles that intersect with contentRect.
     template <class T>
-    void drawTiles(LayerRendererChromium*, const IntRect& contentRect, const TransformationMatrix& globalTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad&, float opacity, const T* program, int fragmentTexTransformLocation, int edgeLocation);
+    void drawTiles(LayerRendererChromium*, const IntRect& contentRect, const TransformationMatrix& globalTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& deviceRect, const CCLayerQuad& contentQuad, float opacity, const T* program, int fragmentTexTransformLocation, int edgeLocation);
 
     TransformationMatrix m_tilingTransform;
     bool m_skipsDraw;

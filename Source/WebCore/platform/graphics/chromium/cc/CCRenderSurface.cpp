@@ -137,6 +137,7 @@ void CCRenderSurface::drawLayer(LayerRendererChromium* layerRenderer, CCLayerImp
         return;
 
     FloatQuad quad = deviceMatrix.mapQuad(layerRenderer->sharedGeometryQuad());
+    CCLayerQuad deviceRect = CCLayerQuad(FloatQuad(quad.boundingBox()));
     CCLayerQuad layerQuad = CCLayerQuad(quad);
 
 #if defined(OS_CHROMEOS)
@@ -147,8 +148,10 @@ void CCRenderSurface::drawLayer(LayerRendererChromium* layerRenderer, CCLayerImp
     bool useAA = (!quad.isRectilinear() || !quad.boundingBox().isExpressibleAsIntRect());
 #endif
 
-    if (useAA)
+    if (useAA) {
+        deviceRect.inflateAntiAliasingDistance();
         layerQuad.inflateAntiAliasingDistance();
+    }
 
     bool useMask = false;
     if (maskLayer && maskLayer->drawsContent())
@@ -158,24 +161,24 @@ void CCRenderSurface::drawLayer(LayerRendererChromium* layerRenderer, CCLayerImp
     if (useMask) {
         if (useAA) {
             const MaskProgramAA* program = layerRenderer->renderSurfaceMaskProgramAA();
-            drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, layerQuad, program, program->fragmentShader().maskSamplerLocation(), program->vertexShader().pointLocation(), program->fragmentShader().edgeLocation());
+            drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, deviceRect, layerQuad, program, program->fragmentShader().maskSamplerLocation(), program->vertexShader().pointLocation(), program->fragmentShader().edgeLocation());
         } else {
             const MaskProgram* program = layerRenderer->renderSurfaceMaskProgram();
-            drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, layerQuad, program, program->fragmentShader().maskSamplerLocation(), -1, -1);
+            drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, deviceRect, layerQuad, program, program->fragmentShader().maskSamplerLocation(), -1, -1);
         }
     } else {
         if (useAA) {
             const ProgramAA* program = layerRenderer->renderSurfaceProgramAA();
-            drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, layerQuad, program, -1, program->vertexShader().pointLocation(), program->fragmentShader().edgeLocation());
+            drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, deviceRect, layerQuad, program, -1, program->vertexShader().pointLocation(), program->fragmentShader().edgeLocation());
         } else {
             const Program* program = layerRenderer->renderSurfaceProgram();
-            drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, layerQuad, program, -1, -1, -1);
+            drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, deviceRect, layerQuad, program, -1, -1, -1);
         }
     }
 }
 
 template <class T>
-void CCRenderSurface::drawSurface(LayerRendererChromium* layerRenderer, CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& layerQuad, const T* program, int shaderMaskSamplerLocation, int shaderQuadLocation, int shaderEdgeLocation)
+void CCRenderSurface::drawSurface(LayerRendererChromium* layerRenderer, CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& deviceRect, const CCLayerQuad& layerQuad, const T* program, int shaderMaskSamplerLocation, int shaderQuadLocation, int shaderEdgeLocation)
 {
     GraphicsContext3D* context3D = layerRenderer->context();
 
@@ -194,9 +197,10 @@ void CCRenderSurface::drawSurface(LayerRendererChromium* layerRenderer, CCLayerI
     }
 
     if (shaderEdgeLocation != -1) {
-        float edge[12];
+        float edge[24];
         layerQuad.toFloatArray(edge);
-        GLC(context3D, context3D->uniform3fv(shaderEdgeLocation, edge, 4));
+        deviceRect.toFloatArray(&edge[12]);
+        GLC(context3D, context3D->uniform3fv(shaderEdgeLocation, edge, 8));
     }
 
     // Map device space quad to layer space.

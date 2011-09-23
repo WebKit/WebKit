@@ -305,7 +305,7 @@ String FragmentShaderRGBATexAlphaAA::getShaderString() const
         varying vec2 v_texCoord;
         uniform sampler2D s_texture;
         uniform float alpha;
-        uniform vec3 edge[4];
+        uniform vec3 edge[8];
         void main()
         {
             vec4 texColor = texture2D(s_texture, v_texCoord);
@@ -314,7 +314,11 @@ String FragmentShaderRGBATexAlphaAA::getShaderString() const
             float a1 = clamp(dot(edge[1], pos), 0.0, 1.0);
             float a2 = clamp(dot(edge[2], pos), 0.0, 1.0);
             float a3 = clamp(dot(edge[3], pos), 0.0, 1.0);
-            gl_FragColor = texColor * alpha * min(a0, a2) * min(a1, a3);
+            float a4 = clamp(dot(edge[4], pos), 0.0, 1.0);
+            float a5 = clamp(dot(edge[5], pos), 0.0, 1.0);
+            float a6 = clamp(dot(edge[6], pos), 0.0, 1.0);
+            float a7 = clamp(dot(edge[7], pos), 0.0, 1.0);
+            gl_FragColor = texColor * alpha * min(min(a0, a2) * min(a1, a3), min(a4, a6) * min(a5, a7));
         }
     );
 }
@@ -345,7 +349,7 @@ String FragmentShaderRGBATexClampAlphaAA::getShaderString() const
         uniform sampler2D s_texture;
         uniform float alpha;
         uniform vec4 fragmentTexTransform;
-        uniform vec3 edge[4];
+        uniform vec3 edge[8];
         void main()
         {
             vec2 texCoord = clamp(v_texCoord, 0.0, 1.0) * fragmentTexTransform.zw + fragmentTexTransform.xy;
@@ -355,7 +359,11 @@ String FragmentShaderRGBATexClampAlphaAA::getShaderString() const
             float a1 = clamp(dot(edge[1], pos), 0.0, 1.0);
             float a2 = clamp(dot(edge[2], pos), 0.0, 1.0);
             float a3 = clamp(dot(edge[3], pos), 0.0, 1.0);
-            gl_FragColor = texColor * alpha * min(a0, a2) * min(a1, a3);
+            float a4 = clamp(dot(edge[4], pos), 0.0, 1.0);
+            float a5 = clamp(dot(edge[5], pos), 0.0, 1.0);
+            float a6 = clamp(dot(edge[6], pos), 0.0, 1.0);
+            float a7 = clamp(dot(edge[7], pos), 0.0, 1.0);
+            gl_FragColor = texColor * alpha * min(min(a0, a2) * min(a1, a3), min(a4, a6) * min(a5, a7));
         }
     );
 }
@@ -368,7 +376,7 @@ String FragmentShaderRGBATexClampSwizzleAlphaAA::getShaderString() const
         uniform sampler2D s_texture;
         uniform float alpha;
         uniform vec4 fragmentTexTransform;
-        uniform vec3 edge[4];
+        uniform vec3 edge[8];
         void main()
         {
             vec2 texCoord = clamp(v_texCoord, 0.0, 1.0) * fragmentTexTransform.zw + fragmentTexTransform.xy;
@@ -378,7 +386,11 @@ String FragmentShaderRGBATexClampSwizzleAlphaAA::getShaderString() const
             float a1 = clamp(dot(edge[1], pos), 0.0, 1.0);
             float a2 = clamp(dot(edge[2], pos), 0.0, 1.0);
             float a3 = clamp(dot(edge[3], pos), 0.0, 1.0);
-            gl_FragColor = vec4(texColor.z, texColor.y, texColor.x, texColor.w) * alpha * min(a0, a2) * min(a1, a3);
+            float a4 = clamp(dot(edge[4], pos), 0.0, 1.0);
+            float a5 = clamp(dot(edge[5], pos), 0.0, 1.0);
+            float a6 = clamp(dot(edge[6], pos), 0.0, 1.0);
+            float a7 = clamp(dot(edge[7], pos), 0.0, 1.0);
+            gl_FragColor = vec4(texColor.z, texColor.y, texColor.x, texColor.w) * alpha * min(min(a0, a2) * min(a1, a3), min(a4, a6) * min(a5, a7));
         }
     );
 }
@@ -440,7 +452,7 @@ String FragmentShaderRGBATexAlphaMaskAA::getShaderString() const
         uniform sampler2D s_texture;
         uniform sampler2D s_mask;
         uniform float alpha;
-        uniform vec3 edge[4];
+        uniform vec3 edge[8];
         void main()
         {
             vec4 texColor = texture2D(s_texture, v_texCoord);
@@ -450,7 +462,11 @@ String FragmentShaderRGBATexAlphaMaskAA::getShaderString() const
             float a1 = clamp(dot(edge[1], pos), 0.0, 1.0);
             float a2 = clamp(dot(edge[2], pos), 0.0, 1.0);
             float a3 = clamp(dot(edge[3], pos), 0.0, 1.0);
-            gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha * maskColor.w * min(a0, a2) * min(a1, a3);
+            float a4 = clamp(dot(edge[4], pos), 0.0, 1.0);
+            float a5 = clamp(dot(edge[5], pos), 0.0, 1.0);
+            float a6 = clamp(dot(edge[6], pos), 0.0, 1.0);
+            float a7 = clamp(dot(edge[7], pos), 0.0, 1.0);
+            gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha * maskColor.w * min(min(a0, a2) * min(a1, a3), min(a4, a6) * min(a5, a7));
         }
     );
 }
