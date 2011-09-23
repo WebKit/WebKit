@@ -64,14 +64,9 @@ LayerChromium::LayerChromium(CCLayerDelegate* delegate)
     , m_backgroundColor(0, 0, 0, 0)
     , m_debugBorderWidth(0)
     , m_opacity(1.0)
-    , m_zPosition(0.0)
     , m_anchorPointZ(0)
-    , m_clearsContext(false)
-    , m_hidden(false)
     , m_masksToBounds(false)
     , m_opaque(true)
-    , m_geometryFlipped(false)
-    , m_needsDisplayOnBoundsChange(false)
     , m_doubleSided(true)
     , m_usesLayerScissor(false)
     , m_isNonCompositedContent(false)
@@ -220,15 +215,6 @@ void LayerChromium::setBounds(const IntSize& size)
         setNeedsDisplay(FloatRect(0, 0, bounds().width(), bounds().height()));
     else
         setNeedsCommit();
-}
-
-void LayerChromium::setFrame(const FloatRect& rect)
-{
-    if (rect == m_frame)
-      return;
-
-    m_frame = rect;
-    setNeedsDisplay(FloatRect(0, 0, bounds().width(), bounds().height()));
 }
 
 const LayerChromium* LayerChromium::rootLayer() const

@@ -96,15 +96,6 @@ public:
     const IntSize& bounds() const { return m_bounds; }
     virtual IntSize contentBounds() const { return bounds(); }
 
-    void setClearsContext(bool clears) { m_clearsContext = clears; setNeedsCommit(); }
-    bool clearsContext() const { return m_clearsContext; }
-
-    void setFrame(const FloatRect&);
-    FloatRect frame() const { return m_frame; }
-
-    void setHidden(bool hidden) { m_hidden = hidden; setNeedsCommit(); }
-    bool isHidden() const { return m_hidden; }
-
     void setMasksToBounds(bool masksToBounds) { m_masksToBounds = masksToBounds; }
     bool masksToBounds() const { return m_masksToBounds; }
 
@@ -119,8 +110,6 @@ public:
     const FloatRect& dirtyRect() const { return m_dirtyRect; }
     void resetNeedsDisplay();
 
-    void setNeedsDisplayOnBoundsChange(bool needsDisplay) { m_needsDisplayOnBoundsChange = needsDisplay; }
-
     void setOpacity(float opacity) { m_opacity = opacity; setNeedsCommit(); }
     float opacity() const { return m_opacity; }
 
@@ -129,9 +118,6 @@ public:
 
     void setPosition(const FloatPoint& position) { m_position = position;  setNeedsCommit(); }
     FloatPoint position() const { return m_position; }
-
-    void setZPosition(float zPosition) { m_zPosition = zPosition; setNeedsCommit(); }
-    float zPosition() const {  return m_zPosition; }
 
     void setSublayerTransform(const TransformationMatrix& transform) { m_sublayerTransform = transform; setNeedsCommit(); }
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
@@ -147,10 +133,6 @@ public:
 
     bool doubleSided() const { return m_doubleSided; }
     void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
-
-    // FIXME: This setting is currently ignored.
-    void setGeometryFlipped(bool flipped) { m_geometryFlipped = flipped; setNeedsCommit(); }
-    bool geometryFlipped() const { return m_geometryFlipped; }
 
     bool preserves3D() const { return m_delegate && m_delegate->preserves3D(); }
 
@@ -261,22 +243,15 @@ private:
     Color m_debugBorderColor;
     float m_debugBorderWidth;
     float m_opacity;
-    float m_zPosition;
     float m_anchorPointZ;
-    bool m_clearsContext;
-    bool m_hidden;
     bool m_masksToBounds;
     bool m_opaque;
-    bool m_geometryFlipped;
-    bool m_needsDisplayOnBoundsChange;
     bool m_doubleSided;
     bool m_usesLayerScissor;
     bool m_isNonCompositedContent;
 
     TransformationMatrix m_transform;
     TransformationMatrix m_sublayerTransform;
-
-    FloatRect m_frame;
 
     // Replica layer used for reflections.
     RefPtr<LayerChromium> m_replicaLayer;
