@@ -1,3 +1,9 @@
+2011-09-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r95764, update expected fail to expected pass.
+
+        * ietestcenter/Javascript/15.3.4.5-0-2-expected.txt:
+
 2011-09-22  Tony Chang  <tony@chromium.org>
 
         implement -webkit-flex-order
