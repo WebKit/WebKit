@@ -3314,7 +3314,7 @@ BUGWK66320 DEBUG : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE IMAGE+TEXT
 // After r87526, these all have extra scrollbars where the platform/mac expectations do not.
 BUGWK61664 LINUX : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
 
-BUGCR84317 DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
+BUGCR84317 : svg/wicd/test-scalable-background-image1.xhtml = CRASH IMAGE
 
 BUGWK61767 WIN DEBUG : http/tests/websocket/tests/hixie76/client-close.html = PASS TEXT
 BUGWK61767 WIN DEBUG : http/tests/websocket/tests/hybi/client-close.html = PASS TEXT
@@ -3783,3 +3783,5 @@ BUG_EPOGER LEOPARD CPU-CG : fast/clip/overflow-border-radius-fixed-position.html
 BUG_EPOGER MAC CPU : fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html = IMAGE
 
 BUGWK68674 : fast/js/function-bind.html = TEXT
+
+BUGWK68693 LEOPARD : editing/deleting/merge-whitespace-pre.html = IMAGE PASS
