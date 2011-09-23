@@ -256,6 +256,9 @@ fast/loader/reload-zero-byte-plugin.html
 # https://bugs.webkit.org/show_bug.cgi?id=65702
 editing/undo/replace-text-in-node-preserving-markers-crash.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=68686
+editing/pasteboard/drag-drop-input-in-svg.svg
+
 ###############################################################################
 # EXPECTED FAILURES
 ###############################################################################
