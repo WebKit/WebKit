@@ -944,8 +944,7 @@ void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, con
     borders.addBorder(leftVal, BSLeft, renderLeft, x, y, x + leftWidth, y + h, leftStyle);
     borders.addBorder(rightVal, BSRight, renderRight, x + w - rightWidth, y, x + w, y + h, rightStyle);
 
-    const AffineTransform& currentCTM = graphicsContext->getCTM();
-    bool antialias = !currentCTM.isIdentityOrTranslationOrFlipped();
+    bool antialias = shouldAntialiasLines(graphicsContext);
     
     for (CollapsedBorder* border = borders.nextBorder(); border; border = borders.nextBorder()) {
         if (border->borderValue == *table()->currentBorderStyle())

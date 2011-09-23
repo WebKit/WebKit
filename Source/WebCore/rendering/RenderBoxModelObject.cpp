@@ -1537,10 +1537,6 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     RoundedRect outerBorder = style->getRoundedBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect innerBorder = style->getRoundedInnerBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
 
-    const AffineTransform& currentCTM = graphicsContext->getCTM();
-    // FIXME: this isn't quite correct. We may want to antialias when scaled by a non-integral value, or when the translation is non-integral.
-    bool antialias = !currentCTM.isIdentityOrTranslationOrFlipped();
-    
     bool haveAlphaColor = false;
     bool haveAllSolidEdges = true;
     bool allEdgesVisible = true;
@@ -1626,6 +1622,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
         graphicsContext->clipOutRoundedRect(innerBorder);
     }
 
+    bool antialias = shouldAntialiasLines(graphicsContext);    
     if (haveAlphaColor)
         paintTranslucentBorderSides(graphicsContext, style, outerBorder, innerBorder, edges, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias);
     else
@@ -2473,6 +2470,13 @@ void RenderBoxModelObject::setContinuation(RenderBoxModelObject* continuation)
         if (continuationMap)
             continuationMap->remove(this);
     }
+}
+
+bool RenderBoxModelObject::shouldAntialiasLines(GraphicsContext* context)
+{
+    // FIXME: We may want to not antialias when scaled by an integral value,
+    // and we may want to antialias when translated by a non-integral value.
+    return !context->getCTM().isIdentityOrTranslationOrFlipped();
 }
 
 } // namespace WebCore

@@ -1421,8 +1421,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const L
     LayoutUnit outlineWidth = styleToUse->outlineWidth();
     EBorderStyle outlineStyle = styleToUse->outlineStyle();
 
-    const AffineTransform& currentCTM = graphicsContext->getCTM();
-    bool antialias = !currentCTM.isIdentityOrTranslationOrFlipped();
+    bool antialias = shouldAntialiasLines(graphicsContext);
 
     LayoutUnit offset = style()->outlineOffset();
 

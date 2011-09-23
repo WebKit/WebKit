@@ -190,6 +190,8 @@ protected:
     RenderBoxModelObject* continuation() const;
     void setContinuation(RenderBoxModelObject*);
 
+    static bool shouldAntialiasLines(GraphicsContext*);
+
 private:
     virtual bool isBoxModelObject() const { return true; }
 

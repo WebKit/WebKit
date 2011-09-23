@@ -2342,8 +2342,7 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& pain
     LayoutUnit ruleAdd = logicalLeftOffsetForContent();
     LayoutUnit ruleLogicalLeft = style()->isLeftToRightDirection() ? 0 : contentLogicalWidth();
 
-    const AffineTransform& currentCTM = paintInfo.context->getCTM();
-    bool antialias = !currentCTM.isIdentityOrTranslationOrFlipped();
+    bool antialias = shouldAntialiasLines(paintInfo.context);
 
     for (unsigned i = 0; i < colCount; i++) {
         LayoutRect colRect = columnRectAt(colInfo, i);
