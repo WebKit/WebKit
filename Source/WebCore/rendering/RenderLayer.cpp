@@ -2722,7 +2722,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     LayoutPoint paintOffset = toPoint(layerBounds.location() - renderBoxLocation());
                              
     // Ensure our lists are up-to-date.
-    updateCompositingAndLayerListsIfNeeded();
+    updateLayerListsIfNeeded();
 
     bool forceBlackText = paintBehavior & PaintBehaviorForceBlackText;
     bool selectionOnly  = paintBehavior & PaintBehaviorSelectionOnly;
@@ -4016,7 +4016,7 @@ void RenderLayer::updateCompositingAndLayerListsIfNeeded()
 #if USE(ACCELERATED_COMPOSITING)
     if (compositor()->inCompositingMode()) {
         if ((isStackingContext() && m_zOrderListsDirty) || m_normalFlowListDirty)
-            compositor()->updateCompositingLayers(CompositingUpdateOnPaitingOrHitTest, this);
+            compositor()->updateCompositingLayers(CompositingUpdateOnHitTest, this);
         return;
     }
 #endif

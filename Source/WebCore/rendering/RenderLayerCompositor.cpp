@@ -256,7 +256,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     switch (updateType) {
     case CompositingUpdateAfterLayoutOrStyleChange:
-    case CompositingUpdateOnPaitingOrHitTest:
+    case CompositingUpdateOnHitTest:
         checkForHierarchyUpdate = true;
         break;
     case CompositingUpdateOnScroll:
