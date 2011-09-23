@@ -1,3 +1,12 @@
+2011-09-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Updating now-passing Layout test.
+
+        Rubber stamped by geoff garen
+
+        * fast/js/Object-getOwnPropertyNames-expected.txt:
+        * fast/js/script-tests/Object-getOwnPropertyNames.js:
+
 2011-09-23  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Chromium rebaselines for r95857.

@@ -51,7 +51,7 @@ var expectedPropertyNamesSet = {
     "Object": "['create', 'defineProperties', 'defineProperty', 'freeze', 'getOwnPropertyDescriptor', 'getOwnPropertyNames', 'getPrototypeOf', 'isExtensible', 'isFrozen', 'isSealed', 'keys', 'length', 'name', 'preventExtensions', 'prototype', 'seal']",
     "Object.prototype": "['__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__', 'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString', 'toString', 'valueOf']",
     "Function": "['length', 'name', 'prototype']",
-    "Function.prototype": "['apply', 'call', 'constructor', 'length', 'name', 'toString']",
+    "Function.prototype": "['apply', 'bind', 'call', 'constructor', 'length', 'name', 'toString']",
     "Array": "['isArray', 'length', 'name', 'prototype']",
     "Array.prototype": "['concat', 'constructor', 'every', 'filter', 'forEach', 'indexOf', 'join', 'lastIndexOf', 'length', 'map', 'pop', 'push', 'reduce', 'reduceRight', 'reverse', 'shift', 'slice', 'some', 'sort', 'splice', 'toLocaleString', 'toString', 'unshift']",
     "String": "['fromCharCode', 'length', 'name', 'prototype']",
