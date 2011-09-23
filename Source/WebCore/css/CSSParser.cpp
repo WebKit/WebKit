@@ -1572,6 +1572,20 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitColorCorrection:
         validPrimitive = id == CSSValueSrgb || id == CSSValueDefault;
         break;
+#if ENABLE(CSS_FILTERS)
+    case CSSPropertyWebkitFilter:
+        if (id == CSSValueNone)
+            validPrimitive = true;
+        else {
+            RefPtr<CSSValue> val = parseFilter();
+            if (val) {
+                addProperty(propId, val, important);
+                return true;
+            }
+            return false;
+        }
+        break;
+#endif
 #if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitFlexOrder:
         if (validUnit(value, FInteger, true)) {
@@ -6333,6 +6347,21 @@ private:
     bool m_allowSingleArgument;
     CSSParser::Units m_unit;
 };
+
+#if ENABLE(CSS_FILTERS)
+PassRefPtr<CSSValueList> CSSParser::parseFilter()
+{
+    if (!m_valueList)
+        return 0;
+    
+    // The filter is a list of functional primitives that specify individual operations.
+    // Eventually, we will collect a list of WebKitCSSFilterValues, where each value specifies
+    // a single operation. For now, just use the generic CSSValueList constructor to
+    // parse the input.
+    RefPtr<CSSValueList> list = CSSValueList::createFromParserValueList(m_valueList);
+    return list.release();
+}
+#endif
 
 PassRefPtr<CSSValueList> CSSParser::parseTransform()
 {

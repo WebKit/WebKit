@@ -3338,6 +3338,9 @@ BUGWK57312 SKIP : fast/regions = PASS
 // CSS Exclusions support not yet enabled.
 BUGWK57311 SKIP : fast/exclusions = PASS
 
+// CSS Filters support not yet enabled
+BUGWK68469 SKIP : css3/filters = PASS
+
 BUGWK68087 WIN MAC GPU GPU-CG : compositing/flat-with-transformed-child.html = IMAGE
 BUGWK68087 WIN MAC GPU GPU-CG : platform/chromium/compositing/3d-corners.html = IMAGE
 BUGWK68087 WIN MAC GPU GPU-CG : platform/chromium/compositing/backface-visibility-transformed.html  = IMAGE

@@ -248,6 +248,9 @@ z-index
 -webkit-column-span
 -webkit-column-width
 -webkit-columns
+#if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
+-webkit-filter
+#endif
 #if defined(ENABLE_CSS3_FLEXBOX) && ENABLE_CSS3_FLEXBOX
 -webkit-flex-align
 -webkit-flex-flow

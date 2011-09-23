@@ -1,3 +1,26 @@
+2011-09-23  Dean Jackson  <dino@apple.com>
+
+        Add -webkit-filter to CSSPropertyNames
+        https://bugs.webkit.org/show_bug.cgi?id=68675
+
+        Reviewed by Simon Fraser.
+
+        Add property and rudimentary parsing for -webkit-filter. The
+        property value isn't preserved anywhere yet. Add
+        stub definition for computed style.
+
+        Test: css3/filters/filter-property.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFilter):
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-09-23  Antoine Labour  <piman@chromium.org>
 
         Remove preserves3D() from CCLayerDelegate, replacing it by setting the

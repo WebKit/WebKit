@@ -185,6 +185,10 @@ public:
     bool parseRadialGradient(RefPtr<CSSValue>&, CSSGradientRepeat repeating);
     bool parseGradientColorStops(CSSParserValueList*, CSSGradientValue*, bool expectComma);
 
+#if ENABLE(CSS_FILTERS)
+    PassRefPtr<CSSValueList> parseFilter();
+#endif
+
     PassRefPtr<CSSValueList> parseTransform();
     bool parseTransformOrigin(int propId, int& propId1, int& propId2, int& propId3, RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
     bool parsePerspectiveOrigin(int propId, int& propId1, int& propId2,  RefPtr<CSSValue>&, RefPtr<CSSValue>&);

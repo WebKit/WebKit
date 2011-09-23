@@ -210,6 +210,9 @@ http/tests/media/media-source/
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html
 
+# CSS Filters is disabled
+css3/filters
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

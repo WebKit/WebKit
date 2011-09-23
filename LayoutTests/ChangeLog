@@ -1,3 +1,23 @@
+2011-09-23  Dean Jackson  <dino@apple.com>
+
+        Add -webkit-filter to CSSPropertyNames
+        https://bugs.webkit.org/show_bug.cgi?id=68675
+
+        Reviewed by Simon Fraser.
+
+        New test for rudimentary parsing of -webkit-filter.
+        Since currently only the Apple port enables the
+        feature, add this new test to the platform skip lists
+        for GTK, QT and Chromium.
+
+        * css3/filters/filter-property-expected.txt: Added.
+        * css3/filters/filter-property.html: Added.
+        * css3/filters/script-tests/TEMPLATE.html: Added.
+        * css3/filters/script-tests/filter-property.js: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2011-09-23  Jay Soffian  <jaysoffian@gmail.com>
 
         chrome.dll!WebCore::ApplyStyleCommand::applyBlockStyle ReadAV@NULL (64db547804532a84be2e53721e499e9e)

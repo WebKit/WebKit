@@ -449,6 +449,9 @@ fast/exclusions
 # For now, Web Audio API is disabled
 webaudio
 
+# CSS Filters is disabled
+css3/filters
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################

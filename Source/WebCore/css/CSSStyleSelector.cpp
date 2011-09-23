@@ -3733,6 +3733,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
+#if ENABLE(CSS_FILTERS)
+    case CSSPropertyWebkitFilter:
+        return;
+#endif
+
     // These properties are implemented in the CSSStyleApplyProperty lookup table.
     case CSSPropertyColor:
     case CSSPropertyDirection:

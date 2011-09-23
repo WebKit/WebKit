@@ -1986,6 +1986,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitBorderRadius:
         case CSSPropertyWebkitColumns:
         case CSSPropertyWebkitColumnRule:
+#if ENABLE(CSS_FILTERS)
+        case CSSPropertyWebkitFilter:
+#endif
         case CSSPropertyWebkitMarginCollapse:
         case CSSPropertyWebkitMarquee:
         case CSSPropertyWebkitMarqueeSpeed:
