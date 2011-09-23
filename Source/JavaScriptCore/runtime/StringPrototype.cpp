@@ -448,7 +448,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
                 cachedCall.setArgument(i++, jsNumber(completeMatchStart));
                 cachedCall.setArgument(i++, sourceVal);
 
-                cachedCall.setThis(exec->globalThisValue());
+                cachedCall.setThis(jsUndefined());
                 JSValue result = cachedCall.call();
                 if (LIKELY(result.isString()))
                     replacements.append(asString(result)->value(exec));
@@ -495,7 +495,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
                     args.append(jsNumber(completeMatchStart));
                     args.append(sourceVal);
 
-                    replacements.append(call(exec, replacement, callType, callData, exec->globalThisValue(), args).toString(exec));
+                    replacements.append(call(exec, replacement, callType, callData, jsUndefined(), args).toString(exec));
                     if (exec->hadException())
                         break;
                 } else {
@@ -551,7 +551,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
         args.append(jsNumber(matchPos));
         args.append(sourceVal);
 
-        replacementString = call(exec, replacement, callType, callData, exec->globalThisValue(), args).toString(exec);
+        replacementString = call(exec, replacement, callType, callData, jsUndefined(), args).toString(exec);
     }
     
     size_t matchEnd = matchPos + matchLen;

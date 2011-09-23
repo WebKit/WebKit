@@ -543,7 +543,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
                 MarkedArgumentBuffer l;
                 l.append(jObj);
                 l.append(minObj);
-                compareResult = call(exec, function, callType, callData, exec->globalThisValue(), l).toNumber(exec);
+                compareResult = call(exec, function, callType, callData, jsUndefined(), l).toNumber(exec);
             } else
                 compareResult = (jObj.toString(exec) < minObj.toString(exec)) ? -1 : 1;
 
@@ -671,7 +671,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncFilter(ExecState* exec)
     if (callType == CallTypeNone)
         return throwVMTypeError(exec);
 
-    JSObject* applyThis = exec->argument(1).isUndefinedOrNull() ? exec->globalThisValue() : exec->argument(1).toObject(exec);
+    JSValue applyThis = exec->argument(1);
     JSArray* resultArray = constructEmptyArray(exec);
 
     unsigned filterIndex = 0;
@@ -730,7 +730,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncMap(ExecState* exec)
     if (callType == CallTypeNone)
         return throwVMTypeError(exec);
 
-    JSObject* applyThis = exec->argument(1).isUndefinedOrNull() ? exec->globalThisValue() : exec->argument(1).toObject(exec);
+    JSValue applyThis = exec->argument(1);
 
     JSArray* resultArray = constructEmptyArray(exec, length);
     unsigned k = 0;
@@ -792,7 +792,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncEvery(ExecState* exec)
     if (callType == CallTypeNone)
         return throwVMTypeError(exec);
 
-    JSObject* applyThis = exec->argument(1).isUndefinedOrNull() ? exec->globalThisValue() : exec->argument(1).toObject(exec);
+    JSValue applyThis = exec->argument(1);
 
     JSValue result = jsBoolean(true);
 
@@ -850,7 +850,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncForEach(ExecState* exec)
     if (callType == CallTypeNone)
         return throwVMTypeError(exec);
 
-    JSObject* applyThis = exec->argument(1).isUndefinedOrNull() ? exec->globalThisValue() : exec->argument(1).toObject(exec);
+    JSValue applyThis = exec->argument(1);
 
     unsigned k = 0;
     if (callType == CallTypeJS && isJSArray(&exec->globalData(), thisObj)) {
@@ -900,7 +900,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSome(ExecState* exec)
     if (callType == CallTypeNone)
         return throwVMTypeError(exec);
 
-    JSObject* applyThis = exec->argument(1).isUndefinedOrNull() ? exec->globalThisValue() : exec->argument(1).toObject(exec);
+    JSValue applyThis = exec->argument(1);
 
     JSValue result = jsBoolean(false);
 

@@ -1016,7 +1016,6 @@ struct AVLTreeAbstractorForArrayCompare {
     JSValue m_compareFunction;
     CallType m_compareCallType;
     const CallData* m_compareCallData;
-    JSValue m_globalThisValue;
     OwnPtr<CachedCall> m_cachedCall;
 
     handle get_less(handle h) { return m_nodes[h].lt & 0x7FFFFFFF; }
@@ -1055,7 +1054,7 @@ struct AVLTreeAbstractorForArrayCompare {
 
         double compareResult;
         if (m_cachedCall) {
-            m_cachedCall->setThis(m_globalThisValue);
+            m_cachedCall->setThis(jsUndefined());
             m_cachedCall->setArgument(0, va);
             m_cachedCall->setArgument(1, vb);
             compareResult = m_cachedCall->call().toNumber(m_cachedCall->newCallFrame(m_exec));
@@ -1063,7 +1062,7 @@ struct AVLTreeAbstractorForArrayCompare {
             MarkedArgumentBuffer arguments;
             arguments.append(va);
             arguments.append(vb);
-            compareResult = call(m_exec, m_compareFunction, m_compareCallType, *m_compareCallData, m_globalThisValue, arguments).toNumber(m_exec);
+            compareResult = call(m_exec, m_compareFunction, m_compareCallType, *m_compareCallData, jsUndefined(), arguments).toNumber(m_exec);
         }
         return (compareResult < 0) ? -1 : 1; // Not passing equality through, because we need to store all values, even if equivalent.
     }
@@ -1099,7 +1098,6 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
     tree.abstractor().m_compareFunction = compareFunction;
     tree.abstractor().m_compareCallType = callType;
     tree.abstractor().m_compareCallData = &callData;
-    tree.abstractor().m_globalThisValue = exec->globalThisValue();
     tree.abstractor().m_nodes.grow(nodeCount);
 
     if (callType == CallTypeJS)

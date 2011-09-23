@@ -23,7 +23,7 @@ PASS Array.prototype.indlastIndexOfexOf.call(undefined, 0) threw exception TypeE
 FAIL Array.prototype.filter.call(undefined, toString) should throw an exception. Was [object Object].
 FAIL Array.prototype.reduce.call(undefined, toString) should throw an exception. Was [object Object].
 FAIL Array.prototype.reduceRight.call(undefined, toString) should throw an exception. Was [object Object].
-FAIL Array.prototype.map.call(undefined, toString) should throw an exception. Was [object DOMWindow].
+FAIL Array.prototype.map.call(undefined, toString) should throw an exception. Was [object Undefined].
 PASS successfullyParsed is true
 
 TEST COMPLETE
