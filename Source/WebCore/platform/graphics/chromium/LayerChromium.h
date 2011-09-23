@@ -59,7 +59,6 @@ class CCLayerDelegate {
 public:
     virtual ~CCLayerDelegate() { }
     virtual bool drawsContent() const = 0;
-    virtual bool preserves3D() const = 0;
     virtual void paintContents(GraphicsContext&, const IntRect& clip) = 0;
     virtual void notifySyncRequired() = 0;
 };
@@ -134,7 +133,8 @@ public:
     bool doubleSided() const { return m_doubleSided; }
     void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
 
-    bool preserves3D() const { return m_delegate && m_delegate->preserves3D(); }
+    void setPreserves3D(bool preserve3D) { m_preserves3D = preserve3D; }
+    bool preserves3D() const { return m_preserves3D; }
 
     void setUsesLayerScissor(bool usesLayerScissor) { m_usesLayerScissor = usesLayerScissor; }
     bool usesLayerScissor() const { return m_usesLayerScissor; }
@@ -249,6 +249,7 @@ private:
     bool m_doubleSided;
     bool m_usesLayerScissor;
     bool m_isNonCompositedContent;
+    bool m_preserves3D;
 
     TransformationMatrix m_transform;
     TransformationMatrix m_sublayerTransform;

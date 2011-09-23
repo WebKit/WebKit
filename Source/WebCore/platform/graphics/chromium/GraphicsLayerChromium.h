@@ -97,7 +97,6 @@ public:
 
     // The following functions implement the CCLayerDelegate interface.
     virtual bool drawsContent() const;
-    virtual bool preserves3D() const;
     virtual void paintContents(GraphicsContext&, const IntRect& clip);
     virtual void notifySyncRequired();
 

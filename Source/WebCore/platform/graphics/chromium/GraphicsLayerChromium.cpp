@@ -551,6 +551,7 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
     if (m_preserves3D && !m_transformLayer) {
         // Create the transform layer.
         m_transformLayer = LayerChromium::create(this);
+        m_transformLayer->setPreserves3D(true);
 
         // Copy the position from this layer.
         updateLayerPosition();
@@ -592,6 +593,7 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         updateChildList();
     }
 
+    m_layer->setPreserves3D(m_preserves3D);
     updateOpacityOnLayer();
     updateNames();
 }
@@ -669,11 +671,6 @@ void GraphicsLayerChromium::updateOpacityOnLayer()
 bool GraphicsLayerChromium::drawsContent() const
 {
     return GraphicsLayer::drawsContent();
-}
-
-bool GraphicsLayerChromium::preserves3D() const
-{
-    return GraphicsLayer::preserves3D();
 }
 
 void GraphicsLayerChromium::paintContents(GraphicsContext& context, const IntRect& clip)
