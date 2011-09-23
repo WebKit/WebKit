@@ -318,7 +318,9 @@ namespace JSC {
         
         JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         
+#if ENABLE(JIT)
         void jettisonOptimizedCode(JSGlobalData&);
+#endif
 
         EvalCodeBlock& generatedBytecode()
         {
@@ -385,7 +387,9 @@ namespace JSC {
 
         JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         
+#if ENABLE(JIT)
         void jettisonOptimizedCode(JSGlobalData&);
+#endif
 
         ProgramCodeBlock& generatedBytecode()
         {
@@ -470,7 +474,9 @@ namespace JSC {
 
         JSObject* compileOptimizedForCall(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec = 0);
         
+#if ENABLE(JIT)
         void jettisonOptimizedCodeForCall(JSGlobalData&);
+#endif
 
         bool isGeneratedForCall() const
         {
@@ -495,7 +501,9 @@ namespace JSC {
 
         JSObject* compileOptimizedForConstruct(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec = 0);
         
+#if ENABLE(JIT)
         void jettisonOptimizedCodeForConstruct(JSGlobalData&);
+#endif
 
         bool isGeneratedForConstruct() const
         {
@@ -536,6 +544,7 @@ namespace JSC {
             return compileOptimizedForConstruct(exec, scopeChainNode, exec);
         }
         
+#if ENABLE(JIT)
         void jettisonOptimizedCodeFor(JSGlobalData& globalData, CodeSpecializationKind kind)
         {
             if (kind == CodeForCall) 
@@ -545,6 +554,7 @@ namespace JSC {
                 jettisonOptimizedCodeForConstruct(globalData);
             }
         }
+#endif
         
         bool isGeneratedFor(CodeSpecializationKind kind)
         {

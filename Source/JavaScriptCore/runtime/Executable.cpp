@@ -84,6 +84,7 @@ DFG::Intrinsic NativeExecutable::intrinsic() const
 }
 #endif
 
+#if ENABLE(JIT)
 // Utility method used for jettisoning code blocks.
 template<typename T>
 static void jettisonCodeBlock(JSGlobalData& globalData, OwnPtr<T>& codeBlock)
@@ -95,6 +96,7 @@ static void jettisonCodeBlock(JSGlobalData& globalData, OwnPtr<T>& codeBlock)
     codeBlockToJettison->unlinkIncomingCalls();
     globalData.heap.addJettisonedCodeBlock(static_pointer_cast<CodeBlock>(codeBlockToJettison.release()));
 }
+#endif
 
 const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase::s_info, 0, 0 };
 
@@ -223,12 +225,14 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     return 0;
 }
 
+#if ENABLE(JIT)
 void EvalExecutable::jettisonOptimizedCode(JSGlobalData& globalData)
 {
     jettisonCodeBlock(globalData, m_evalCodeBlock);
     m_jitCodeForCall = m_evalCodeBlock->getJITCode();
     ASSERT(!m_jitCodeForCallWithArityCheck);
 }
+#endif
 
 void EvalExecutable::visitChildren(SlotVisitor& visitor)
 {
@@ -349,12 +353,14 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     return 0;
 }
 
+#if ENABLE(JIT)
 void ProgramExecutable::jettisonOptimizedCode(JSGlobalData& globalData)
 {
     jettisonCodeBlock(globalData, m_programCodeBlock);
     m_jitCodeForCall = m_programCodeBlock->getJITCode();
     ASSERT(!m_jitCodeForCallWithArityCheck);
 }
+#endif
 
 void ProgramExecutable::unlinkCalls()
 {
@@ -560,6 +566,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     return 0;
 }
 
+#if ENABLE(JIT)
 void FunctionExecutable::jettisonOptimizedCodeForCall(JSGlobalData& globalData)
 {
     jettisonCodeBlock(globalData, m_codeBlockForCall);
@@ -573,6 +580,7 @@ void FunctionExecutable::jettisonOptimizedCodeForConstruct(JSGlobalData& globalD
     m_jitCodeForConstruct = m_codeBlockForConstruct->getJITCode();
     m_jitCodeForConstructWithArityCheck = m_codeBlockForConstruct->getJITCodeWithArityCheck();
 }
+#endif
 
 void FunctionExecutable::visitChildren(SlotVisitor& visitor)
 {

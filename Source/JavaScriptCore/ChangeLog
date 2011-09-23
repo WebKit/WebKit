@@ -1,3 +1,10 @@
+2011-09-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Another PPC build fix.
+
+        * runtime/Executable.cpp:
+        * runtime/Executable.h:
+
 2011-09-22  Dean Jackson  <dino@apple.com>
 
         Add ENABLE_CSS_FILTERS
