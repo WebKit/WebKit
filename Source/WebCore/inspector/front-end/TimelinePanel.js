@@ -255,7 +255,8 @@ WebInspector.TimelinePanel.prototype = {
 
         var fileSelectorElement = document.createElement("input");
         fileSelectorElement.type = "file";
-        fileSelectorElement.style.opacity = 0;
+        fileSelectorElement.style.zIndex = -1;
+        fileSelectorElement.style.position = "absolute";
         fileSelectorElement.onchange = this._loadFromFile.bind(this);
         this.element.appendChild(fileSelectorElement);
         this._fileSelectorElement = fileSelectorElement;
