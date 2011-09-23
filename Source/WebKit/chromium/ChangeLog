@@ -1,3 +1,19 @@
+2011-09-23  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Crash in WebCore::DatabaseObserver
+        https://bugs.webkit.org/show_bug.cgi?id=67805
+
+        Reviewed by David Levin.
+
+        * src/DatabaseObserver.cpp:
+        (WebCore::DatabaseObserver::canEstablishDatabase): Added a check for a
+        null frame or page, and return false if null. Investigated
+        changing the fall-through return value to false but decided against
+        it given the way the code is used and existing default values for
+        related code. Reproduction and testing depends on having a document
+        with no frame or no page, which sometimes happens in practice but is
+        hard to construct explicitly.
+
 2011-09-23  Scott Graham  <scottmg@chromium.org>
 
         occasional crash in Chromium in dispatching keyEvent

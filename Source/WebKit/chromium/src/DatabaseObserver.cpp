@@ -158,7 +158,11 @@ bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecut
     if (scriptExecutionContext->isDocument()) {
         Document* document = static_cast<Document*>(scriptExecutionContext);
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
+        if (!webFrame)
+            return false;
         WebViewImpl* webView = webFrame->viewImpl();
+        if (!webView)
+            return false;
         if (webView->permissionClient())
             return webView->permissionClient()->allowDatabase(webFrame, name, displayName, estimatedSize);
     } else {
