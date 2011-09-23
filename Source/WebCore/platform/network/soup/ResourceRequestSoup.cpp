@@ -26,9 +26,9 @@
 #include "MIMETypeRegistry.h"
 #include "PlatformString.h"
 #include "SoupURIUtils.h"
-#include <wtf/text/CString.h>
 
 #include <libsoup/soup.h>
+#include <wtf/text/CString.h>
 
 using namespace std;
 
@@ -94,9 +94,8 @@ void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
     const char* headerName;
     const char* headerValue;
     soup_message_headers_iter_init(&headersIter, soupMessage->request_headers);
-    while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue)) {
+    while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
         m_httpHeaderFields.set(String::fromUTF8(headerName), String::fromUTF8(headerValue));
-    }
 
     if (soupMessage->request_body->data)
         m_httpBody = FormData::create(soupMessage->request_body->data, soupMessage->request_body->length);
