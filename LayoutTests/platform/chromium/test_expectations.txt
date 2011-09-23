@@ -3787,3 +3787,5 @@ BUGWK68674 : fast/js/function-bind.html = TEXT
 BUGWK68693 LEOPARD : editing/deleting/merge-whitespace-pre.html = IMAGE PASS
 
 BUGWK68705 MAC WIN : fast/loader/document-destruction-within-unload.html = PASS CRASH
+BUGWK68705 MAC WIN : http/tests/security/contentSecurityPolicy/javascript-url-allowed.html = PASS CRASH
+BUGWK68705 MAC WIN : http/tests/security/contentSecurityPolicy/javascript-url-blocked.html = PASS CRASH
