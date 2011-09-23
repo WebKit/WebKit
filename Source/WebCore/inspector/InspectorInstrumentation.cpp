@@ -570,12 +570,9 @@ void InspectorInstrumentation::didReceiveScriptResponseImpl(InstrumentingAgents*
         resourceAgent->didReceiveScriptResponse(identifier);
 }
 
-void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgents* instrumentingAgents, Frame* frame, const KURL& url)
+void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
 {
-    DocumentLoader* documentLoader = frame->loader()->documentLoader();
-    ASSERT(documentLoader);
-
-    if (frame->page()->mainFrame() != frame || url != documentLoader->requestURL())
+    if (frame->page()->mainFrame() != frame)
         return;
 
     if (InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent())
@@ -591,15 +588,12 @@ void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgent
         pageAgent->domContentEventFired();
 }
 
-void InspectorInstrumentation::loadEventFiredImpl(InstrumentingAgents* instrumentingAgents, Frame* frame, const KURL& url)
+void InspectorInstrumentation::loadEventFiredImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
 {
-    DocumentLoader* documentLoader = frame->loader()->documentLoader();
-    ASSERT(documentLoader);
-
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
-        domAgent->loadEventFired(documentLoader->frame()->document());
+        domAgent->loadEventFired(frame->document());
 
-    if (frame->page()->mainFrame() != frame || url != documentLoader->requestURL())
+    if (frame->page()->mainFrame() != frame)
         return;
 
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())

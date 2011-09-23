@@ -138,8 +138,8 @@ public:
     static void didLoadXHRSynchronously(ScriptExecutionContext*);
     static void scriptImported(ScriptExecutionContext*, unsigned long identifier, const String& sourceString);
     static void didReceiveScriptResponse(ScriptExecutionContext*, unsigned long identifier);
-    static void domContentLoadedEventFired(Frame*, const KURL&);
-    static void loadEventFired(Frame*, const KURL&);
+    static void domContentLoadedEventFired(Frame*);
+    static void loadEventFired(Frame*);
     static void frameDetachedFromParent(Frame*);
     static void didCommitLoad(Frame*, DocumentLoader*);
     static void loaderDetachedFromFrame(Frame*, DocumentLoader*);
@@ -272,8 +272,8 @@ private:
     static void didLoadXHRSynchronouslyImpl(InstrumentingAgents*);
     static void scriptImportedImpl(InstrumentingAgents*, unsigned long identifier, const String& sourceString);
     static void didReceiveScriptResponseImpl(InstrumentingAgents*, unsigned long identifier);
-    static void domContentLoadedEventFiredImpl(InstrumentingAgents*, Frame*, const KURL&);
-    static void loadEventFiredImpl(InstrumentingAgents*, Frame*, const KURL&);
+    static void domContentLoadedEventFiredImpl(InstrumentingAgents*, Frame*);
+    static void loadEventFiredImpl(InstrumentingAgents*, Frame*);
     static void frameDetachedFromParentImpl(InstrumentingAgents*, Frame*);
     static void didCommitLoadImpl(InstrumentingAgents*, Page*, DocumentLoader*);
     static void loaderDetachedFromFrameImpl(InstrumentingAgents*, DocumentLoader*);
@@ -867,19 +867,19 @@ inline void InspectorInstrumentation::didReceiveScriptResponse(ScriptExecutionCo
 #endif
 }
 
-inline void InspectorInstrumentation::domContentLoadedEventFired(Frame* frame, const KURL& url)
+inline void InspectorInstrumentation::domContentLoadedEventFired(Frame* frame)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        domContentLoadedEventFiredImpl(instrumentingAgents, frame, url);
+        domContentLoadedEventFiredImpl(instrumentingAgents, frame);
 #endif
 }
 
-inline void InspectorInstrumentation::loadEventFired(Frame* frame, const KURL& url)
+inline void InspectorInstrumentation::loadEventFired(Frame* frame)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        loadEventFiredImpl(instrumentingAgents, frame, url);
+        loadEventFiredImpl(instrumentingAgents, frame);
 #endif
 }
 

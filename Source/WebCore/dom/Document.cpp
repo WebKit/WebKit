@@ -4284,7 +4284,7 @@ void Document::finishedParsing()
 
         f->loader()->finishedParsing();
 
-        InspectorInstrumentation::domContentLoadedEventFired(f.get(), url());
+        InspectorInstrumentation::domContentLoadedEventFired(f.get());
     }
 }
 

@@ -1580,7 +1580,7 @@ void DOMWindow::dispatchLoadEvent()
     if (ownerElement)
         ownerElement->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
 
-    InspectorInstrumentation::loadEventFired(frame(), url());
+    InspectorInstrumentation::loadEventFired(frame());
 }
 
 bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget)
