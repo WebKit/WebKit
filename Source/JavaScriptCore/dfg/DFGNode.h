@@ -551,7 +551,7 @@ struct Node {
     
     bool hasVarNumber()
     {
-        return op == GetGlobalVar || op == PutGlobalVar || op == GetScopedVar;
+        return op == GetGlobalVar || op == PutGlobalVar || op == GetScopedVar || op == PutScopedVar;
     }
 
     unsigned varNumber()
