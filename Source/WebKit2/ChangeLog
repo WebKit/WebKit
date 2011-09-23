@@ -1,3 +1,14 @@
+2011-09-22  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
+
+        [Qt] TouchWebView load test not running
+        https://bugs.webkit.org/show_bug.cgi?id=68620
+
+        Reviewed by Chang Shu.
+
+        Load test was not executed since it was missing in pro file. Added tst_load.qml to qmltests.pro
+
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+
 2011-09-22  Dean Jackson  <dino@apple.com>
 
         Add ENABLE_CSS_FILTERS
