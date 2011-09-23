@@ -67,6 +67,7 @@ private:
     bool eraseAttributeIfInjected(HTMLToken&, const QualifiedName&, const String& replacementValue = String());
 
     String snippetForRange(const HTMLToken&, int start, int end);
+    String snippetForJavaScript(const String&);
     String decodedSnippetForAttribute(const HTMLToken&, const HTMLToken::Attribute&);
 
     bool isContainedInRequest(const String&);

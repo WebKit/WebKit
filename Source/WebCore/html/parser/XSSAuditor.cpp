@@ -80,6 +80,26 @@ static bool isHTMLQuote(UChar c)
     return (c == '"' || c == '\'');
 }
 
+static bool isHTMLNewline(UChar c)
+{
+    return (c == '\n' || c == '\r');
+}
+
+static bool startsHTMLCommentAt(const String& string, size_t start)
+{
+    return (start + 3 < string.length() && string[start] == '<' && string[start+1] == '!' && string[start+2] == '-' && string[start+3] == '-');
+}    
+
+static bool startsSingleLineCommentAt(const String& string, size_t start)
+{
+    return (start + 1 < string.length() && string[start] == '/' && string[start+1] == '/');
+}    
+
+static bool startsMultiLineCommentAt(const String& string, size_t start)
+{
+    return (start + 1 < string.length() && string[start] == '/' && string[start+1] == '*');
+}
+
 static bool hasName(const HTMLToken& token, const QualifiedName& name)
 {
     return equalIgnoringNullity(token.name(), static_cast<const String&>(name.localName()));
@@ -305,15 +325,16 @@ bool XSSAuditor::filterTokenAfterScriptStartTag(HTMLToken& token)
         return false;
     }
 
-    int start = 0;
-    // FIXME: We probably want to grab only the first few characters of the
-    //        contents of the script element.
-    int end = token.endIndex() - token.startIndex();
-    String snippet = m_cachedSnippet + snippetForRange(token, start, end);
-    if (isContainedInRequest(fullyDecodeString(snippet, m_parser->document()->decoder()))) {
-        token.eraseCharacters();
-        token.appendToCharacter(' '); // Technically, character tokens can't be empty.
-        return true;
+    TextResourceDecoder* decoder = m_parser->document()->decoder();
+    if (isContainedInRequest(fullyDecodeString(m_cachedSnippet, decoder))) {
+        int start = 0;
+        int end = token.endIndex() - token.startIndex();
+        String snippet = snippetForJavaScript(snippetForRange(token, start, end));
+        if (isContainedInRequest(fullyDecodeString(snippet, decoder))) {
+            token.eraseCharacters();
+            token.appendToCharacter(' '); // Technically, character tokens can't be empty.
+            return true;
+        }
     }
     return false;
 }
@@ -537,4 +558,50 @@ bool XSSAuditor::isSameOriginResource(const String& url)
     return (m_parser->document()->url().host() == resourceURL.host() && resourceURL.query().isEmpty());
 }
 
+
+String XSSAuditor::snippetForJavaScript(const String& string)
+{
+    const size_t kMaximumFragmentLengthTarget = 100;
+
+    size_t startPosition = 0;
+    size_t endPosition = string.length();
+    size_t foundPosition = notFound;
+
+    // Skip over initial comments to find start of code.
+    while (startPosition < endPosition) {
+        while (startPosition < endPosition && isHTMLSpace(string[startPosition]))
+            startPosition++;
+        if (startsHTMLCommentAt(string, startPosition) || startsSingleLineCommentAt(string, startPosition)) {
+            while (startPosition < endPosition && !isHTMLNewline(string[startPosition]))
+                startPosition++;
+        } else if (startsMultiLineCommentAt(string, startPosition)) {
+            if ((foundPosition = string.find("*/", startPosition)) != notFound)
+                startPosition = foundPosition + 2;
+            else
+                startPosition = endPosition;
+        } else
+            break;
+    }
+
+    // Stop at next comment or when we exceed the maximum length target. After hitting the
+    // length target, we can only stop at a point where we know we are not in the middle of
+    // a %-escape sequence. A simple way to do this is to break on whitespace only.                
+    for (foundPosition = startPosition; foundPosition < endPosition; foundPosition++) {
+        if (startsSingleLineCommentAt(string, foundPosition) || startsMultiLineCommentAt(string, foundPosition)) {
+            endPosition = foundPosition + 2;
+            break;
+        }
+        if (startsHTMLCommentAt(string, foundPosition)) {
+            endPosition = foundPosition + 4;
+            break;
+        }
+        if (foundPosition > startPosition + kMaximumFragmentLengthTarget && isHTMLSpace(string[foundPosition])) {
+            endPosition = foundPosition;
+            break;
+        }
+    }
+    
+    return string.substring(startPosition, endPosition - startPosition);
 }
+
+} // namespace WebCore
