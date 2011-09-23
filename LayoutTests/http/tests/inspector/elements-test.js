@@ -222,7 +222,24 @@ InspectorTest.getElementStylePropertyTreeItem = function(propertyName)
 {
     var styleSections = WebInspector.panels.elements.sidebarPanes.styles.sections[0];
     var elementStyleSection = styleSections[1];
-    var outline = elementStyleSection.propertiesTreeOutline;
+    return InspectorTest.getFirstPropertyTreeItemForSection(elementStyleSection, propertyName);
+};
+
+// FIXME: this returns the first tree item found (may fail for same-named properties in a style).
+InspectorTest.getMatchedStylePropertyTreeItem = function(propertyName)
+{
+    var styleSections = WebInspector.panels.elements.sidebarPanes.styles.sections[0];
+    for (var i = 1; i < styleSections.length; ++i) {
+        var treeItem = InspectorTest.getFirstPropertyTreeItemForSection(styleSections[i], propertyName);
+        if (treeItem)
+            return treeItem;
+    }
+    return null;
+};
+
+InspectorTest.getFirstPropertyTreeItemForSection = function(section, propertyName)
+{
+    var outline = section.propertiesTreeOutline;
     for (var i = 0; i < outline.children.length; ++i) {
         var treeItem = outline.children[i];
         if (treeItem.name === propertyName)
