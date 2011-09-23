@@ -1,3 +1,11 @@
+2011-09-23  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Rebaseline following r95745, r95725
+
+        Unreviewed rebaseline.
+
+        * platform/gtk/editing/deleting/merge-whitespace-pre-expected.txt:
+
 2011-09-23  Marcus Bulach  <bulach@chromium.org>
 
         [chromium] Rebaseline following r95745, r95725
