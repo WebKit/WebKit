@@ -31,10 +31,10 @@
 
 class WebIconDatabaseClient : public WebCore::IconDatabaseClient {
 public:
-    virtual bool performImport();
-    virtual void didRemoveAllIcons();
-    virtual void didImportIconURLForPageURL(const String&);
-    virtual void didImportIconDataForPageURL(const String&);
-    virtual void didChangeIconForPageURL(const String&);
-    virtual void didFinishURLImport();
+    virtual bool performImport() OVERRIDE;
+    virtual void didRemoveAllIcons() OVERRIDE;
+    virtual void didImportIconURLForPageURL(const String&) OVERRIDE;
+    virtual void didImportIconDataForPageURL(const String&) OVERRIDE;
+    virtual void didChangeIconForPageURL(const String&) OVERRIDE;
+    virtual void didFinishURLImport() OVERRIDE;
 };

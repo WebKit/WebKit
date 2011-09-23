@@ -55,14 +55,14 @@ class WebInspectorClient : public WebCore::InspectorClient {
 public:
     WebInspectorClient(WebView *);
 
-    virtual void inspectorDestroyed();
+    virtual void inspectorDestroyed() OVERRIDE;
 
-    virtual void openInspectorFrontend(WebCore::InspectorController*);
+    virtual void openInspectorFrontend(WebCore::InspectorController*) OVERRIDE;
 
-    virtual void highlight();
-    virtual void hideHighlight();
+    virtual void highlight() OVERRIDE;
+    virtual void hideHighlight() OVERRIDE;
 
-    virtual bool sendMessageToFrontend(const WTF::String&);
+    virtual bool sendMessageToFrontend(const WTF::String&) OVERRIDE;
 
     bool inspectorStartsAttached();
     void setInspectorStartsAttached(bool);

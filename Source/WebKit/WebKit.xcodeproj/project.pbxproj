@@ -1278,8 +1278,8 @@
 			children = (
 				B82958D1132707D0000D0E79 /* CorrectionPanel.h */,
 				B82958D2132707D0000D0E79 /* CorrectionPanel.mm */,
-				598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */,
 				598AD9191201CEC900ABAE4E /* WebDeviceOrientationClient.h */,
+				598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */,
 				B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */,
 				B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */,
 				A5DEFC1111D5344B00885273 /* WebApplicationCacheQuotaManager.h */,

@@ -32,8 +32,8 @@ private:
     {
     }
 
-    virtual bool needsSiteSpecificQuirks() const;
-    virtual bool localFileContentSniffingEnabled() const;
-    virtual WebCore::SchedulePairHashSet* scheduledRunLoopPairs() const;
-    virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const;
+    virtual bool needsSiteSpecificQuirks() const OVERRIDE;
+    virtual bool localFileContentSniffingEnabled() const OVERRIDE;
+    virtual WebCore::SchedulePairHashSet* scheduledRunLoopPairs() const OVERRIDE;
+    virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const OVERRIDE;
 };
