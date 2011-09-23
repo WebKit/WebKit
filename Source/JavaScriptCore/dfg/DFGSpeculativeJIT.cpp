@@ -1797,6 +1797,7 @@ void SpeculativeJIT::compile(Node& node)
         JSValueOperand value(this, node.child2());
         m_jit.storePtr(value.gpr(), JITCompiler::Address(scratchGPR, node.varNumber() * sizeof(Register)));
         writeBarrier(scopeChain.gpr(), value.gpr(), node.child2(), WriteBarrierForVariableAccess, scratchGPR);
+        noResult(m_compileIndex);
         break;
     }
     case GetById: {
