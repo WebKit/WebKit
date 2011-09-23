@@ -54,7 +54,7 @@ PopupMenuGtk::~PopupMenuGtk()
 GtkAction* PopupMenuGtk::createGtkActionForMenuItem(int itemIndex)
 {
     GOwnPtr<char> actionName(g_strdup_printf("popup-menu-action-%d", itemIndex));
-    GtkAction* action = gtk_action_new(actionName.get(), client()->itemText(itemIndex).utf8().data(), 0, 0);
+    GtkAction* action = gtk_action_new(actionName.get(), client()->itemText(itemIndex).utf8().data(), client()->itemToolTip(itemIndex).utf8().data(), 0);
     g_object_set_data(G_OBJECT(action), "popup-menu-action-index", GINT_TO_POINTER(itemIndex));
     g_signal_connect(action, "activate", G_CALLBACK(menuItemActivated), this);
     // FIXME: Apply the PopupMenuStyle from client()->itemStyle(i)

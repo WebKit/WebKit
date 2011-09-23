@@ -65,6 +65,7 @@ void GtkPopupMenu::appendSeparator()
 void GtkPopupMenu::appendItem(GtkAction* action)
 {
     GtkWidget* menuItem = gtk_action_create_menu_item(action);
+    gtk_widget_set_tooltip_text(menuItem, gtk_action_get_tooltip(action));
     g_signal_connect(menuItem, "select", G_CALLBACK(GtkPopupMenu::selectItemCallback), this);
     gtk_menu_shell_append(GTK_MENU_SHELL(m_popup.get()), menuItem);
     gtk_widget_show(menuItem);

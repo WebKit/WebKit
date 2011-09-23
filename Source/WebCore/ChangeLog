@@ -1,3 +1,19 @@
+2011-09-23  Deepak Sherveghar  <bpwv64@motorola.com>
+
+        [Gtk] Title attribute is not respected on option elements.
+        https://bugs.webkit.org/show_bug.cgi?id=68615
+
+        Reviewed by Martin Robinson.
+
+        Set tooltip on PopupMenuGtk items created from GtkActions.
+
+        * platform/gtk/GtkPopupMenu.cpp:
+        (WebCore::GtkPopupMenu::appendItem): Added a call to gtk_widget_set_tooltip_text()
+            to set the tooltip on menuitem. Tooltip text is retrieved from GtkAction.
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenuGtk::createGtkActionForMenuItem): Pass the tooltip text
+            from client when creating a GtkAction.
+
 2011-09-23  Yael Aharon  <yael.aharon@nokia.com>
 
         [Qt][Gtk] Wrong state when pausing a video in the "playing" event handler
