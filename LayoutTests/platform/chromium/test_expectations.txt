@@ -3832,3 +3832,5 @@ BUG_EPOGER SNOWLEOPARD CPU-CG CPU DEBUG : fast/js/try-catch-crash.html = PASS TI
 // Consistently failing as of about r95590
 BUG_EPOGER LEOPARD CPU-CG : fast/clip/overflow-border-radius-fixed-position.html = IMAGE
 BUG_EPOGER MAC CPU : fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html = IMAGE
+
+BUGWK68674 : fast/js/function-bind.html = TEXT
