@@ -1,3 +1,15 @@
+2011-09-22  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Unreviewed: [Qt] Workaround MSVC2010 problems when linking QtWebKit
+
+        Include MSVC2010 in the list of compilers where incremental
+        build is disabled (INCREMENTAL:NO).
+
+        Change suggested by Simo Falt <simo.falt@nokia.com>, already present
+        in the Qt-4.8 repository where the problem was identified.
+
+        * WebCore.pri:
+
 2011-09-23  Darin Adler  <darin@apple.com>
 
         Try to fix warning seen in some 32-bit builds.
