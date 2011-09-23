@@ -2266,7 +2266,7 @@ BUGWK46951 : fast/url/segments-from-data-url.html = TEXT
 BUGWK46951 : fast/url/segments.html = TEXT
 
 // rebaseline after skia rev. 2295 lands
-BUG_REED LINUX WIN : svg/W3C-SVG-1.1/pservers-grad-14-b.svg = IMAGE
+BUG_REED LINUX WIN SNOWLEOPARD : svg/W3C-SVG-1.1/pservers-grad-14-b.svg = IMAGE
 
 // Unexpected timeout in these tests.
 BUG_HCLAM : http/tests/css/border-image-loading.html = PASS TIMEOUT TEXT
