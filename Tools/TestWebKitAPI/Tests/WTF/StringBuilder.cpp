@@ -34,10 +34,14 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
+namespace WTF {
+
 // For EXPECT_EQ(String, String)
 std::ostream& operator<<(std::ostream& os, const String& string)
 {
     return os << string.utf8().data();
+}
+
 }
 
 namespace TestWebKitAPI {

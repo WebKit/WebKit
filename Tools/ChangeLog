@@ -1,3 +1,10 @@
+2011-09-23  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build.
+        
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp: Define operator<<(std::ostream&, const WTF::String&) inside
+        the WTF namespace.
+
 2011-09-22  Dirk Pranke  <dpranke@chromium.org>
 
         enable NRWT for run-webkit-tests on Lion
