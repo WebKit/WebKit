@@ -589,8 +589,8 @@ static LayoutRect backgroundRectAdjustedForBleedAvoidance(GraphicsContext* conte
     // We shrink the rectangle by one pixel on each side because the bleed is one pixel maximum.
     AffineTransform transform = context->getCTM();
     LayoutRect adjustedRect = borderRect;
-    adjustedRect.inflateX(-ceil(1 / transform.xScale()));
-    adjustedRect.inflateY(-ceil(1 / transform.yScale()));
+    adjustedRect.inflateX(-static_cast<LayoutUnit>(ceil(1 / transform.xScale())));
+    adjustedRect.inflateY(-static_cast<LayoutUnit>(ceil(1 / transform.yScale())));
     return adjustedRect;
 }
 
