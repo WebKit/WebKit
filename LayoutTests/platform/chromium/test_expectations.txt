@@ -1996,7 +1996,7 @@ BUGCR48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TE
 // These should be rebaselined after the patch lands, as we are now drawing
 // all text with skia (instead of gdi) and in these cases, we have differences
 // in antialiasing (drt specific) or in fractional-baselines (gdi rounds in src
-// space, skia rounds in devices space 
+// space, skia rounds in devices space
 BUGWK65203 WIN : fast/borders/border-antialiasing.html = IMAGE
 BUGWK65203 WIN : fast/reflections/reflection-overflow-hidden.html = IMAGE
 BUGWK65203 WIN : fast/repaint/reflection-redraw.html = IMAGE
@@ -3785,3 +3785,5 @@ BUG_EPOGER MAC CPU : fast/dom/HTMLMeterElement/meter-element-repaint-on-update-v
 BUGWK68674 : fast/js/function-bind.html = TEXT
 
 BUGWK68693 LEOPARD : editing/deleting/merge-whitespace-pre.html = IMAGE PASS
+
+BUGWK68705 MAC WIN : fast/loader/document-destruction-within-unload.html = PASS CRASH
