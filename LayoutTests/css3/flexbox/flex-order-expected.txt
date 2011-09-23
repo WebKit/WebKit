@@ -1,0 +1,1 @@
+You should see identical green bars going from light green (left) to dark green (right).

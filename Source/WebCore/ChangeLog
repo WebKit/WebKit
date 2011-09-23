@@ -1,3 +1,42 @@
+2011-09-22  Tony Chang  <tony@chromium.org>
+
+        implement -webkit-flex-order
+        https://bugs.webkit.org/show_bug.cgi?id=67432
+
+        Reviewed by Ojan Vafai.
+
+        flex-order can be an int (including negative), but we disallow the two
+        smallest values so we can put the numbers into a hash set.
+
+        Also, create two iterators: one that goes in render tree order (we use
+        this for the first pass and to collect the possible flex order values)
+        and one that goes in flex order.
+
+        Test: css3/flexbox/flex-order.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::FlexOrderHashTraits::emptyValue):
+        (WebCore::FlexOrderHashTraits::constructDeletedValue):
+        (WebCore::FlexOrderHashTraits::isDeletedValue):
+        (WebCore::RenderFlexibleBox::TreeOrderIterator::TreeOrderIterator): A simple iterator
+            that goes in render tree order.
+        (WebCore::RenderFlexibleBox::TreeOrderIterator::next):
+        (WebCore::RenderFlexibleBox::TreeOrderIterator::reset):
+        (WebCore::RenderFlexibleBox::TreeOrderIterator::flexOrderValues):
+        (WebCore::RenderFlexibleBox::FlexOrderIterator::FlexOrderIterator): An iterator that
+            goes in flex-order order.  Creating this involves sorting, so only create it once
+            and pass it around.
+        (WebCore::RenderFlexibleBox::FlexOrderIterator::first):
+        (WebCore::RenderFlexibleBox::FlexOrderIterator::next):
+        (WebCore::RenderFlexibleBox::FlexOrderIterator::reset):
+        (WebCore::RenderFlexibleBox::layoutHorizontalBlock):
+        (WebCore::RenderFlexibleBox::computePreferredLogicalWidth):
+        (WebCore::RenderFlexibleBox::runFreeSpaceAllocationAlgorithmInlineDirection):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection):
+        * rendering/RenderFlexibleBox.h:
+
 2011-09-22  Darin Adler  <darin@apple.com>
 
         Use AffineTransform scale functions in ShadowBlur::adjustBlurRadius

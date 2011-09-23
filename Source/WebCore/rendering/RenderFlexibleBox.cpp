@@ -35,9 +35,21 @@
 
 namespace WebCore {
 
-class RenderFlexibleBox::FlexibleBoxIterator {
+// Normally, -1 and 0 are not valid in a HashSet, but these are relatively likely flex-order values. Instead,
+// we make the two smallest int values invalid flex-order values (in the css parser code we clamp them to
+// int min + 2).
+struct FlexOrderHashTraits : WTF::GenericHashTraits<int> {
+    static const bool emptyValueIsZero = false;
+    static int emptyValue() { return std::numeric_limits<int>::min(); }
+    static void constructDeletedValue(int& slot) { slot = std::numeric_limits<int>::min() + 1; }
+    static bool isDeletedValue(int value) { return value == std::numeric_limits<int>::min() + 1; }
+};
+
+typedef HashSet<int, DefaultHash<int>::Hash, FlexOrderHashTraits> FlexOrderHashSet;
+
+class RenderFlexibleBox::TreeOrderIterator {
 public:
-    explicit FlexibleBoxIterator(RenderFlexibleBox* flexibleBox)
+    explicit TreeOrderIterator(RenderFlexibleBox* flexibleBox)
         : m_flexibleBox(flexibleBox)
         , m_currentChild(0)
     {
@@ -56,6 +68,9 @@ public:
         while (child && !child->isBox())
             child = child->nextSibling();
 
+        if (child)
+            m_flexOrderValues.add(child->style()->flexOrder());
+
         m_currentChild = toRenderBox(child);
         return m_currentChild;
     }
@@ -65,9 +80,68 @@ public:
         m_currentChild = 0;
     }
 
+    const FlexOrderHashSet& flexOrderValues()
+    {
+        return m_flexOrderValues;
+    }
+
 private:
     RenderFlexibleBox* m_flexibleBox;
     RenderBox* m_currentChild;
+    FlexOrderHashSet m_flexOrderValues;
+};
+
+class RenderFlexibleBox::FlexOrderIterator {
+public:
+    FlexOrderIterator(RenderFlexibleBox* flexibleBox, const FlexOrderHashSet& flexOrderValues)
+        : m_flexibleBox(flexibleBox)
+        , m_currentChild(0)
+        , m_orderValuesIterator(0)
+    {
+        copyToVector(flexOrderValues, m_orderValues);
+        std::sort(m_orderValues.begin(), m_orderValues.end());
+    }
+
+    RenderBox* first()
+    {
+        reset();
+        return next();
+    }
+
+    RenderBox* next()
+    {
+        RenderObject* child = m_currentChild;
+        do {
+            if (!child) {
+                if (m_orderValuesIterator == m_orderValues.end())
+                    return 0;
+                if (m_orderValuesIterator) {
+                    ++m_orderValuesIterator;
+                    if (m_orderValuesIterator == m_orderValues.end())
+                        return 0;
+                } else
+                    m_orderValuesIterator = m_orderValues.begin();
+
+                child = m_flexibleBox->firstChild();
+            } else
+                child = child->nextSibling();
+        } while (!child || !child->isBox() || child->style()->flexOrder() != *m_orderValuesIterator);
+
+        m_currentChild = toRenderBox(child);
+        return m_currentChild;
+    }
+
+    void reset()
+    {
+        m_currentChild = 0;
+        m_orderValuesIterator = 0;
+    }
+
+private:
+    RenderFlexibleBox* m_flexibleBox;
+    RenderBox* m_currentChild;
+    Vector<int> m_orderValues;
+    Vector<int>::const_iterator m_orderValuesIterator;
 };
 
 
@@ -152,19 +226,20 @@ void RenderFlexibleBox::layoutInlineDirection(bool relayoutChildren)
     LayoutUnit preferredLogicalWidth;
     float totalPositiveFlexibility;
     float totalNegativeFlexibility;
-    FlexibleBoxIterator iterator(this);
+    TreeOrderIterator treeIterator(this);
 
-    computePreferredLogicalWidth(relayoutChildren, iterator, preferredLogicalWidth, totalPositiveFlexibility, totalNegativeFlexibility);
+    computePreferredLogicalWidth(relayoutChildren, treeIterator, preferredLogicalWidth, totalPositiveFlexibility, totalNegativeFlexibility);
     LayoutUnit availableFreeSpace = contentLogicalWidth() - preferredLogicalWidth;
 
+    FlexOrderIterator flexIterator(this, treeIterator.flexOrderValues());
     InflexibleFlexItemSize inflexibleItems;
     WTF::Vector<LayoutUnit> childSizes;
-    while (!runFreeSpaceAllocationAlgorithmInlineDirection(availableFreeSpace, totalPositiveFlexibility, totalNegativeFlexibility, inflexibleItems, childSizes)) {
+    while (!runFreeSpaceAllocationAlgorithmInlineDirection(flexIterator, availableFreeSpace, totalPositiveFlexibility, totalNegativeFlexibility, inflexibleItems, childSizes)) {
         ASSERT(totalPositiveFlexibility >= 0 && totalNegativeFlexibility >= 0);
         ASSERT(inflexibleItems.size() > 0);
     }
 
-    layoutAndPlaceChildrenInlineDirection(childSizes, availableFreeSpace, totalPositiveFlexibility);
+    layoutAndPlaceChildrenInlineDirection(flexIterator, childSizes, availableFreeSpace, totalPositiveFlexibility);
 
     // FIXME: Handle distribution of cross-axis space (third distribution round).
 }
@@ -179,7 +254,7 @@ float RenderFlexibleBox::logicalNegativeFlexForChild(RenderBox* child)
     return isHorizontalWritingMode() ? child->style()->flexboxWidthNegativeFlex() : child->style()->flexboxHeightNegativeFlex();
 }
 
-void RenderFlexibleBox::computePreferredLogicalWidth(bool relayoutChildren, FlexibleBoxIterator& iterator, LayoutUnit& preferredLogicalWidth, float& totalPositiveFlexibility, float& totalNegativeFlexibility)
+void RenderFlexibleBox::computePreferredLogicalWidth(bool relayoutChildren, TreeOrderIterator& iterator, LayoutUnit& preferredLogicalWidth, float& totalPositiveFlexibility, float& totalNegativeFlexibility)
 {
     preferredLogicalWidth = 0;
     totalPositiveFlexibility = totalNegativeFlexibility = 0;
@@ -216,9 +291,8 @@ void RenderFlexibleBox::computePreferredLogicalWidth(bool relayoutChildren, Flex
 }
 
 // Returns true if we successfully ran the algorithm and sized the flex items.
-bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithmInlineDirection(LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize& inflexibleItems, WTF::Vector<LayoutUnit>& childSizes)
+bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithmInlineDirection(FlexOrderIterator& iterator, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize& inflexibleItems, WTF::Vector<LayoutUnit>& childSizes)
 {
-    FlexibleBoxIterator iterator(this);
     childSizes.clear();
 
     LayoutUnit flexboxAvailableLogicalWidth = availableLogicalWidth();
@@ -273,9 +347,8 @@ void RenderFlexibleBox::setLogicalOverrideSize(RenderBox* child, LayoutUnit chil
         child->isHorizontalWritingMode() ? child->setOverrideHeight(childPreferredSize) : child->setOverrideWidth(childPreferredSize);
 }
 
-void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
+void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator& iterator, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, float totalPositiveFlexibility)
 {
-    FlexibleBoxIterator iterator(this);
     LayoutUnit startEdge = borderStart() + paddingStart();
 
     if (hasPackingSpace(availableFreeSpace, totalPositiveFlexibility)) {

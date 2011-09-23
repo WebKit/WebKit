@@ -1574,7 +1574,12 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 #if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitFlexOrder:
-        validPrimitive = validUnit(value, FInteger, true);
+        if (validUnit(value, FInteger, true)) {
+            // We restrict the smallest value to int min + 2 because we use int min and int min + 1 as special values in a hash set.
+            parsedValue = primitiveValueCache()->createValue(max(static_cast<double>(std::numeric_limits<int>::min() + 2), value->fValue),
+                                                             static_cast<CSSPrimitiveValue::UnitTypes>(value->unit));
+            m_valueList->next();
+        }
         break;
     case CSSPropertyWebkitFlexPack:
         validPrimitive = id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter || id == CSSValueJustify;
