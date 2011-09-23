@@ -355,30 +355,8 @@ void ShadowBlur::adjustBlurRadius(GraphicsContext* context)
     if (!m_shadowsIgnoreTransforms)
         return;
 
-    const AffineTransform transform = context->getCTM();
-
-    // Adjust blur if we're scaling, since the radius must not be affected by transformations.
-    // FIXME: use AffineTransform::isIdentityOrTranslationOrFlipped()?
-    if (transform.isIdentity())
-        return;
-
-    // Calculate transformed unit vectors.
-    const FloatQuad unitQuad(FloatPoint(0, 0), FloatPoint(1, 0),
-                             FloatPoint(0, 1), FloatPoint(1, 1));
-    const FloatQuad transformedUnitQuad = transform.mapQuad(unitQuad);
-
-    // Calculate X axis scale factor.
-    const FloatSize xUnitChange = transformedUnitQuad.p2() - transformedUnitQuad.p1();
-    const float xAxisScale = sqrtf(xUnitChange.width() * xUnitChange.width()
-                                   + xUnitChange.height() * xUnitChange.height());
-
-    // Calculate Y axis scale factor.
-    const FloatSize yUnitChange = transformedUnitQuad.p3() - transformedUnitQuad.p1();
-    const float yAxisScale = sqrtf(yUnitChange.width() * yUnitChange.width()
-                                   + yUnitChange.height() * yUnitChange.height());
-
-    // Scale blur radius
-    m_blurRadius.scale(1 / xAxisScale, 1 / yAxisScale);
+    AffineTransform transform = context->getCTM();
+    m_blurRadius.scale(1 / transform.xScale(), 1 / transform.yScale());
 }
 
 IntSize ShadowBlur::blurredEdgeSize() const
