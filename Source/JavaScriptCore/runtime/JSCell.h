@@ -98,7 +98,7 @@ namespace JSC {
         JSValue getJSNumber() const;
 
         void* vptr() const { ASSERT(!isZapped()); return *reinterpret_cast<void* const*>(this); }
-        void setVptr(void* vptr) { *reinterpret_cast<void**>(this) = vptr; ASSERT(!isZapped()); }
+        void setVPtr(void* vptr) { *reinterpret_cast<void**>(this) = vptr; ASSERT(!isZapped()); }
         void zap() { *reinterpret_cast<uintptr_t**>(this) = 0; }
         bool isZapped() const { return !*reinterpret_cast<uintptr_t* const*>(this); }
 

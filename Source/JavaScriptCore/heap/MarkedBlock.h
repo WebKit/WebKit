@@ -271,6 +271,9 @@ namespace JSC {
             ASSERT_NOT_REACHED();
             return false;
         }
+
+        ASSERT_NOT_REACHED();
+        return false;
     }
 
     inline bool MarkedBlock::isLiveCell(const void* p)

@@ -1,5 +1,18 @@
 2011-09-24  Geoffrey Garen  <ggaren@apple.com>
 
+        Some Windows build fixage.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweep):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::isLive): Show the compiler that all control paths
+        return a value. There, there, compiler. Everything's going to be OK.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::setVPtr): Oops! Unrename this function.
+
+2011-09-24  Geoffrey Garen  <ggaren@apple.com>
+
         Allocate new objects unmarked
         https://bugs.webkit.org/show_bug.cgi?id=68764
 

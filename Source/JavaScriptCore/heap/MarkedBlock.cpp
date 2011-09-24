@@ -134,6 +134,9 @@ MarkedBlock::FreeCell* MarkedBlock::sweep(SweepMode sweepMode)
             ? specializedSweep<Zapped, SweepToFreeList>()
             : specializedSweep<Zapped, SweepOnly>();
     }
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 void MarkedBlock::zapFreeList(FreeCell* firstFreeCell)
