@@ -1,3 +1,15 @@
+2011-09-23  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Add JSVALUE32_64 support to DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=67460
+
+        Reviewed by Gavin Barraclough.
+
+        Add cmake options to enable DFG JIT compilation for EFL port
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2011-09-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Detect amd64 as a valid 64-bit architecture.

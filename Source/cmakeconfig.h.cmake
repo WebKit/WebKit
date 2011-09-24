@@ -44,5 +44,6 @@
 #cmakedefine01 ENABLE_XHTMLMP
 #cmakedefine01 ENABLE_XPATH
 #cmakedefine01 ENABLE_XSLT
+#cmakedefine01 ENABLE_DFG_JIT
 
 #endif /* CMAKECONFIG_H */
