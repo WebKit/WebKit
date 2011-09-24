@@ -827,6 +827,9 @@ void ScrollView::setFrameRect(const IntRect& newRect)
     frameRectsChanged();
 
     updateScrollbars(scrollOffset());
+    
+    if (!m_useFixedLayout)
+        contentsResized();
 }
 
 void ScrollView::frameRectsChanged()
