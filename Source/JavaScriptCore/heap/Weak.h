@@ -144,7 +144,6 @@ private:
     {
         ASSERT(slot());
         JSValue value = HandleTypes<T>::toJSValue(externalType);
-        ASSERT(!value || !value.isCell() || Heap::isMarked(value.asCell()));
         HandleHeap::heapFor(slot())->writeBarrier(slot(), value);
         *slot() = value;
     }

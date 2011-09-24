@@ -12,22 +12,24 @@ function print(message, color)
     document.getElementById("console").appendChild(paragraph);
 }
 
-var before,after;
 var threshold = 5;
 
 function test()
 {
     if (window.GCController)
     {
+        global = window.frames.myframe.location.reload; // Eagerly construct these properties so they don't influence test outcome.
+
         GCController.collect();
+        var before = GCController.getJSObjectCount();
+
         window.frames.myframe.location.reload(true);
-        before = GCController.getJSObjectCount();
-        
+        window.frames.myframe.location.reload(true);
         window.frames.myframe.location.reload(true);
 
         GCController.collect();
-        after = GCController.getJSObjectCount();
-        
+        var after = GCController.getJSObjectCount();
+
         // Unfortunately we cannot do a strict check here because there is still very minor (3) JS object increase,
         // likely due to temporary JS objects being created during further execution of this test function.
         // However, the iframe document leaking everything has an addition of ~25 objects every

@@ -98,7 +98,7 @@ MarkedBlock* AllocationSpace::allocateBlock(size_t cellSize, AllocationSpace::Al
             block = 0;
     }
     if (block)
-        block->initForCellSize(cellSize);
+        block = MarkedBlock::recycle(block, cellSize);
     else if (allocationEffort == AllocationCanFail)
         return 0;
     else
@@ -116,18 +116,18 @@ void AllocationSpace::freeBlocks(MarkedBlock* head)
         next = block->next();
         
         m_blocks.remove(block);
-        block->reset();
+        block->sweep();
         MutexLocker locker(m_heap->m_freeBlockLock);
         m_heap->m_freeBlocks.append(block);
         m_heap->m_numberOfFreeBlocks++;
     }
 }
 
-class TakeIfEmpty {
+class TakeIfUnmarked {
 public:
     typedef MarkedBlock* ReturnType;
     
-    TakeIfEmpty(MarkedSpace*);
+    TakeIfUnmarked(MarkedSpace*);
     void operator()(MarkedBlock*);
     ReturnType returnValue();
     
@@ -136,21 +136,21 @@ private:
     DoublyLinkedList<MarkedBlock> m_empties;
 };
 
-inline TakeIfEmpty::TakeIfEmpty(MarkedSpace* newSpace)
+inline TakeIfUnmarked::TakeIfUnmarked(MarkedSpace* newSpace)
     : m_markedSpace(newSpace)
 {
 }
 
-inline void TakeIfEmpty::operator()(MarkedBlock* block)
+inline void TakeIfUnmarked::operator()(MarkedBlock* block)
 {
-    if (!block->isEmpty())
+    if (!block->markCountIsZero())
         return;
     
     m_markedSpace->removeBlock(block);
     m_empties.append(block);
 }
 
-inline TakeIfEmpty::ReturnType TakeIfEmpty::returnValue()
+inline TakeIfUnmarked::ReturnType TakeIfUnmarked::returnValue()
 {
     return m_empties.head();
 }
@@ -158,8 +158,8 @@ inline TakeIfEmpty::ReturnType TakeIfEmpty::returnValue()
 void AllocationSpace::shrink()
 {
     // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
-    TakeIfEmpty takeIfEmpty(&m_markedSpace);
-    freeBlocks(forEachBlock(takeIfEmpty));
+    TakeIfUnmarked takeIfUnmarked(&m_markedSpace);
+    freeBlocks(forEachBlock(takeIfUnmarked));
 }
 
 }

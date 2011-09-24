@@ -1,3 +1,148 @@
+2011-09-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Allocate new objects unmarked
+        https://bugs.webkit.org/show_bug.cgi?id=68764
+
+        Reviewed by Oliver Hunt.
+        
+        This is a pre-requisite to using the mark bit to determine object age.
+
+        ~2% v8 speedup, mostly due to a 12% v8-splay speedup.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::isLive):
+        (JSC::MarkedBlock::isLiveCell): These two functions are the reason for
+        this patch. They can now determine object liveness without relying on
+        newly allocated objects having their mark bits set. Each MarkedBlock
+        now has a state variable that tells us how to determine whether its
+        cells are live. (This new state variable supercedes the old one about
+        destructor state. The rest of this patch is just refactoring to support
+        the invariants of this new state variable without introducing a
+        performance regression.)
+
+        (JSC::MarkedBlock::didConsumeFreeList): New function for updating interal
+        state when a block becomes fully allocated.
+
+        (JSC::MarkedBlock::clearMarks): Folded a state change to 'Marked' into
+        this function because, logically, clearing all mark bits is the first
+        step in saying "mark bits now exactly reflect object liveness".
+
+        (JSC::MarkedBlock::markCountIsZero): Renamed from isEmpty() to clarify
+        that this function only tells you about the mark bits, so it's only
+        meaningful if you've put the mark bits into a meaningful state before
+        calling it.
+
+        (JSC::MarkedBlock::forEachCell): Changed to use isLive() helper function
+        instead of testing mark bits, since mark bits are not always the right
+        way to find out if an object is live anymore. (New objects are live, but
+        not marked.)
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::recycle):
+        (JSC::MarkedBlock::MarkedBlock): Folded all initialization -- even
+        initialization when recycling an old block -- into the MarkedBlock
+        constructor, for simplicity.
+
+        (JSC::MarkedBlock::callDestructor): Inlined for speed. Always check for
+        a zapped cell before running a destructor, and always zap after
+        running a destructor. This does not seem to be expensive, and the
+        alternative just creates a too-confusing matrix of possible cell states
+        ((zombie undestructed cell + zombie destructed cell + zapped destructed
+        cell) * 5! permutations for progressing through block states = "Oh my!").
+
+        (JSC::MarkedBlock::specializedSweep):
+        (JSC::MarkedBlock::sweep): Maintained and expanded a pre-existing
+        optimization to use template specialization to constant fold lots of
+        branches and elide certain operations entirely during a sweep. Merged
+        four or five functions that were logically about sweeping into this one
+        function pair, so there's only one way to do things now, it's
+        automatically correct, and it's always fast.
+
+        (JSC::MarkedBlock::zapFreeList): Renamed this function to be more explicit
+        about exactly what it does, and to honor the new block state system.
+
+        * heap/AllocationSpace.cpp:
+        (JSC::AllocationSpace::allocateBlock): Updated for rename.
+
+        (JSC::AllocationSpace::freeBlocks): Updated for changed interface.
+
+        (JSC::TakeIfUnmarked::TakeIfUnmarked):
+        (JSC::TakeIfUnmarked::operator()):
+        (JSC::TakeIfUnmarked::returnValue): Just like isEmpty() above, renamed
+        to clarify that this functor only tests the mark bits, so it's only
+        valid if you've put the mark bits into a meaningful state before
+        calling it.
+        
+        (JSC::AllocationSpace::shrink): Updated for rename.
+
+        * heap/AllocationSpace.h:
+        (JSC::AllocationSpace::canonicalizeCellLivenessData): Renamed to be a
+        little more specific about what we're making canonical.
+
+        (JSC::AllocationSpace::forEachCell): Updated for rename.
+
+        (JSC::AllocationSpace::forEachBlock): No need to canonicalize cell
+        liveness data before iterating blocks -- clients that want iterated
+        blocks to have valid cell lieveness data should make this call for
+        themselves. (And not all clients want it.)
+
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::genericAddPointer): Updated for rename. Removed
+        obsolete comment.
+
+        * heap/Heap.cpp:
+        (JSC::CountFunctor::ClearMarks::operator()): Removed call to notify...()
+        because clearMarks() now does that implicitly.
+
+        (JSC::Heap::destroy): Make sure to canonicalize before tear-down, since
+        tear-down tests cell liveness when running destructors.
+
+        (JSC::Heap::markRoots):
+        (JSC::Heap::collect): Moved weak reference harvesting out of markRoots()
+        and into collect, since it strictly depends on root marking, and does
+        not contribute to root marking.
+
+        (JSC::Heap::canonicalizeCellLivenessData): Renamed to be a little more
+        specific about what we're making canonical.
+
+        * heap/Heap.h:
+        (JSC::Heap::forEachProtectedCell): No need to canonicalize cell liveness
+        data before iterating protected cells, since we know they're all live,
+        and don't need to test for it.
+
+        * heap/Local.h:
+        (JSC::::set): Can't make the same ASSERT we used to because we just don't
+        have the mark bits for it anymore. Perhaps we can bring this ASSERT back
+        in a weaker form in the future.
+
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::addBlock):
+        (JSC::MarkedSpace::removeBlock): Updated for interface change.
+        (JSC::MarkedSpace::canonicalizeCellLivenessData): Renamed to be a little more
+        specific about what we're making canonical.
+
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::SizeClass::SizeClass):
+        (JSC::MarkedSpace::SizeClass::resetAllocator):
+        (JSC::MarkedSpace::SizeClass::zapFreeList): Simplified this allocator
+        functionality a bit. We now track only one block -- "currentBlock" --
+        and rely on its internal state to know whether it has more cells to
+        allocate.
+
+        * heap/Weak.h:
+        (JSC::Weak::set): Can't make the same ASSERT we used to because we just don't
+        have the mark bits for it anymore. Perhaps we can bring this ASSERT back
+        in a weaker form in the future.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::vptr):
+        (JSC::JSCell::zap):
+        (JSC::JSCell::isZapped):
+        (JSC::isZapped): Made zapping a property of JSCell, for a little abstraction.
+        In the future, exactly how a JSCell zaps itself will change, as the
+        internal representation of JSCell changes.
+
 2011-09-24  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT should not eagerly initialize integer tags in the register file

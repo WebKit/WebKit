@@ -1,3 +1,18 @@
+2011-09-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Allocate new objects unmarked
+        https://bugs.webkit.org/show_bug.cgi?id=68764
+
+        Reviewed by Oliver Hunt.
+        
+        Made this flaky test less flaky. (Just enough to make my patch not fail.)
+
+        * fast/dom/gc-10.html: Count objects immediately after GC to get an
+        exact count. Call 'reload' a few times to improve test coverage. Preload
+        properties in case they're lazily instantiated, which would change
+        object count numbers. Also, use the 'var' keyword like a good little
+        JavaScripter.
+
 2011-09-24  Adam Barth  <abarth@webkit.org>
 
         Remove ENABLE(WCSS) and associated code

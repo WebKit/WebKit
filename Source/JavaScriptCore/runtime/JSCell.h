@@ -96,8 +96,11 @@ namespace JSC {
 
         virtual JSObject* toThisObject(ExecState*) const;
         JSValue getJSNumber() const;
-        void* vptr() { return *reinterpret_cast<void**>(this); }
-        void setVPtr(void* vptr) { *reinterpret_cast<void**>(this) = vptr; }
+
+        void* vptr() const { ASSERT(!isZapped()); return *reinterpret_cast<void* const*>(this); }
+        void setVptr(void* vptr) { *reinterpret_cast<void**>(this) = vptr; ASSERT(!isZapped()); }
+        void zap() { *reinterpret_cast<uintptr_t**>(this) = 0; }
+        bool isZapped() const { return !*reinterpret_cast<uintptr_t* const*>(this); }
 
         // FIXME: Rename getOwnPropertySlot to virtualGetOwnPropertySlot, and
         // fastGetOwnPropertySlot to getOwnPropertySlot. Callers should always
@@ -345,6 +348,11 @@ namespace JSC {
         heap.globalData()->setInitializingObject(true);
 #endif
         return heap.allocate(sizeof(T));
+    }
+    
+    inline bool isZapped(const JSCell* cell)
+    {
+        return cell->isZapped();
     }
 
 } // namespace JSC

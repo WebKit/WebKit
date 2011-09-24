@@ -56,7 +56,7 @@ public:
     template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&);
     template<typename Functor> typename Functor::ReturnType forEachBlock();
     
-    void canonicalizeBlocks() { m_markedSpace.canonicalizeBlocks(); }
+    void canonicalizeCellLivenessData() { m_markedSpace.canonicalizeCellLivenessData(); }
     void resetAllocator() { m_markedSpace.resetAllocator(); }
     
     void* allocate(size_t);
@@ -78,7 +78,8 @@ private:
 
 template<typename Functor> inline typename Functor::ReturnType AllocationSpace::forEachCell(Functor& functor)
 {
-    canonicalizeBlocks();
+    canonicalizeCellLivenessData();
+
     BlockIterator end = m_blocks.set().end();
     for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
         (*it)->forEachCell(functor);
@@ -93,7 +94,6 @@ template<typename Functor> inline typename Functor::ReturnType AllocationSpace::
 
 template<typename Functor> inline typename Functor::ReturnType AllocationSpace::forEachBlock(Functor& functor)
 {
-    canonicalizeBlocks();
     BlockIterator end = m_blocks.set().end();
     for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
         functor(*it);

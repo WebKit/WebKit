@@ -26,7 +26,9 @@
 #include "config.h"
 #include "ConservativeRoots.h"
 
+#include "JSCell.h"
 #include "JettisonedCodeBlocks.h"
+#include "Structure.h"
 
 namespace JSC {
 
@@ -82,10 +84,7 @@ inline void ConservativeRoots::genericAddPointer(void* p, TinyBloomFilter filter
     if (!m_blocks->set().contains(candidate))
         return;
 
-    // The conservative set inverts the typical meaning of mark bits: We only
-    // visit marked pointers, and our visit clears the mark bit. This efficiently
-    // sifts out pointers to dead objects and duplicate pointers.
-    if (!candidate->testAndClearMarked(p))
+    if (!candidate->isLiveCell(p))
         return;
 
     if (m_size == m_capacity)

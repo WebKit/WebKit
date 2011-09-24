@@ -44,21 +44,19 @@ MarkedSpace::MarkedSpace(Heap* heap)
 
 void MarkedSpace::addBlock(SizeClass& sizeClass, MarkedBlock* block)
 {
-    block->setInNewSpace(true);
-    sizeClass.nextBlock = block;
-    sizeClass.blockList.append(block);
     ASSERT(!sizeClass.currentBlock);
     ASSERT(!sizeClass.firstFreeCell);
+
+    sizeClass.blockList.append(block);
     sizeClass.currentBlock = block;
-    sizeClass.firstFreeCell = block->blessNewBlock();
+    sizeClass.firstFreeCell = block->sweep(MarkedBlock::SweepToFreeList);
 }
 
 void MarkedSpace::removeBlock(MarkedBlock* block)
 {
-    block->setInNewSpace(false);
     SizeClass& sizeClass = sizeClassFor(block->cellSize());
-    if (sizeClass.nextBlock == block)
-        sizeClass.nextBlock = block->next();
+    if (sizeClass.currentBlock == block)
+        sizeClass.currentBlock = 0;
     sizeClass.blockList.remove(block);
 }
 
@@ -73,13 +71,13 @@ void MarkedSpace::resetAllocator()
         sizeClassFor(cellSize).resetAllocator();
 }
 
-void MarkedSpace::canonicalizeBlocks()
+void MarkedSpace::canonicalizeCellLivenessData()
 {
     for (size_t cellSize = preciseStep; cellSize < preciseCutoff; cellSize += preciseStep)
-        sizeClassFor(cellSize).canonicalizeBlock();
+        sizeClassFor(cellSize).zapFreeList();
 
     for (size_t cellSize = impreciseStep; cellSize < impreciseCutoff; cellSize += impreciseStep)
-        sizeClassFor(cellSize).canonicalizeBlock();
+        sizeClassFor(cellSize).zapFreeList();
 }
 
 } // namespace JSC

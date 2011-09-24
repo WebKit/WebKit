@@ -113,7 +113,6 @@ struct ClearMarks : MarkedBlock::VoidFunctor {
 inline void ClearMarks::operator()(MarkedBlock* block)
 {
     block->clearMarks();
-    block->notifyMayHaveFreshFreeCells();
 }
 
 struct Sweep : MarkedBlock::VoidFunctor {
@@ -268,10 +267,11 @@ void Heap::destroy()
     delete m_markListSet;
     m_markListSet = 0;
 
+    canonicalizeCellLivenessData();
     clearMarks();
+
     m_handleHeap.finalizeWeakHandles();
     m_globalData->smallStrings.finalizeSmallStrings();
-
     shrink();
     ASSERT(!size());
     
@@ -514,10 +514,6 @@ void Heap::markRoots()
     // If the set of opaque roots has grown, more weak handles may have become reachable.
     } while (lastOpaqueRootCount != visitor.opaqueRootCount());
 
-    // Need to call this here because weak handle processing could add weak
-    // reference harvesters.
-    harvestWeakReferences();
-
     visitor.reset();
 
     m_operationInProgress = NoOperation;
@@ -589,9 +585,10 @@ void Heap::collect(SweepToggle sweepToggle)
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
     
-    canonicalizeBlocks();
-    
+    canonicalizeCellLivenessData();
     markRoots();
+
+    harvestWeakReferences();
     m_handleHeap.finalizeWeakHandles();
     m_globalData->smallStrings.finalizeSmallStrings();
 
@@ -615,9 +612,9 @@ void Heap::collect(SweepToggle sweepToggle)
     (*m_activityCallback)();
 }
 
-void Heap::canonicalizeBlocks()
+void Heap::canonicalizeCellLivenessData()
 {
-    m_objectSpace.canonicalizeBlocks();
+    m_objectSpace.canonicalizeCellLivenessData();
 }
 
 void Heap::resetAllocator()

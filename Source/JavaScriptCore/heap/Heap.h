@@ -69,7 +69,6 @@ namespace JSC {
 
         static bool isMarked(const void*);
         static bool testAndSetMarked(const void*);
-        static bool testAndClearMarked(const void*);
         static void setMarked(const void*);
 
         static void writeBarrier(const JSCell*, JSValue);
@@ -135,9 +134,13 @@ namespace JSC {
 
         bool isValidAllocation(size_t);
         void reportExtraMemoryCostSlowCase(size_t);
-        void canonicalizeBlocks();
-        void resetAllocator();
 
+        // Call this function before any operation that needs to know which cells
+        // in the heap are live. (For example, call this function before
+        // conservative marking, eager sweeping, or iterating the cells in a MarkedBlock.)
+        void canonicalizeCellLivenessData();
+
+        void resetAllocator();
         void freeBlocks(MarkedBlock*);
 
         void clearMarks();
@@ -223,11 +226,6 @@ namespace JSC {
         return MarkedBlock::blockFor(cell)->testAndSetMarked(cell);
     }
 
-    inline bool Heap::testAndClearMarked(const void* cell)
-    {
-        return MarkedBlock::blockFor(cell)->testAndClearMarked(cell);
-    }
-
     inline void Heap::setMarked(const void* cell)
     {
         MarkedBlock::blockFor(cell)->setMarked(cell);
@@ -274,7 +272,6 @@ namespace JSC {
 
     template<typename Functor> inline typename Functor::ReturnType Heap::forEachProtectedCell(Functor& functor)
     {
-        canonicalizeBlocks();
         ProtectCountSet::iterator end = m_protectedValues.end();
         for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
             functor(it->first);

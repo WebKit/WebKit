@@ -50,11 +50,10 @@ public:
     struct SizeClass {
         SizeClass();
         void resetAllocator();
-        void canonicalizeBlock();
+        void zapFreeList();
 
         MarkedBlock::FreeCell* firstFreeCell;
         MarkedBlock* currentBlock;
-        MarkedBlock* nextBlock;
         DoublyLinkedList<MarkedBlock> blockList;
         size_t cellSize;
     };
@@ -69,7 +68,7 @@ public:
     void addBlock(SizeClass&, MarkedBlock*);
     void removeBlock(MarkedBlock*);
     
-    void canonicalizeBlocks();
+    void canonicalizeCellLivenessData();
 
     size_t waterMark();
     size_t highWaterMark();
@@ -124,39 +123,21 @@ inline void* MarkedSpace::allocate(SizeClass& sizeClass)
 {
     MarkedBlock::FreeCell* firstFreeCell = sizeClass.firstFreeCell;
     if (!firstFreeCell) {
-        // There are two possibilities for why we got here:
-        // 1) We've exhausted the allocation cache for currentBlock, in which case
-        //    currentBlock == nextBlock, and we know that there is no reason to
-        //    repeat a lazy sweep of nextBlock because we won't find anything.
-        // 2) Allocation caches have been cleared, in which case nextBlock may
-        //    have (and most likely does have) free cells, so we almost certainly
-        //    should do a lazySweep for nextBlock. This also implies that
-        //    currentBlock == 0.
-        
-        if (sizeClass.currentBlock) {
-            ASSERT(sizeClass.currentBlock == sizeClass.nextBlock);
-            m_waterMark += sizeClass.nextBlock->capacity();
-            sizeClass.nextBlock = sizeClass.nextBlock->next();
-            sizeClass.currentBlock = 0;
-        }
-        
-        for (MarkedBlock*& block = sizeClass.nextBlock ; block; block = block->next()) {
-            firstFreeCell = block->lazySweep();
-            if (firstFreeCell) {
-                sizeClass.firstFreeCell = firstFreeCell;
-                sizeClass.currentBlock = block;
+        for (MarkedBlock*& block = sizeClass.currentBlock; block; block = block->next()) {
+            firstFreeCell = block->sweep(MarkedBlock::SweepToFreeList);
+            if (firstFreeCell)
                 break;
-            }
-            
+
             m_waterMark += block->capacity();
+            block->didConsumeFreeList();
         }
-        
+
         if (!firstFreeCell)
             return 0;
     }
-    
+
     ASSERT(firstFreeCell);
-    
+
     sizeClass.firstFreeCell = firstFreeCell->next;
     return firstFreeCell;
 }
@@ -193,26 +174,23 @@ template <typename Functor> inline typename Functor::ReturnType MarkedSpace::for
 inline MarkedSpace::SizeClass::SizeClass()
     : firstFreeCell(0)
     , currentBlock(0)
-    , nextBlock(0)
     , cellSize(0)
 {
 }
 
 inline void MarkedSpace::SizeClass::resetAllocator()
 {
-    nextBlock = blockList.head();
+    currentBlock = blockList.head();
 }
 
-inline void MarkedSpace::SizeClass::canonicalizeBlock()
+inline void MarkedSpace::SizeClass::zapFreeList()
 {
-    if (currentBlock) {
-        currentBlock->canonicalizeBlock(firstFreeCell);
-        firstFreeCell = 0;
+    if (!currentBlock) {
+        ASSERT(!firstFreeCell);
+        return;
     }
-    
-    ASSERT(!firstFreeCell);
-    
-    currentBlock = 0;
+
+    currentBlock->zapFreeList(firstFreeCell);
     firstFreeCell = 0;
 }
 
