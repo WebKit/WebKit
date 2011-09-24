@@ -226,6 +226,14 @@ webcore_cppflags += -DENABLE_DIRECTORY_UPLOAD=0
 endif # END ENABLE_DIRECTORY_UPLOAD
 
 # ----
+# DOM mutation observer support
+# ----
+if ENABLE_MUTATION_OBSERVERS
+FEATURE_DEFINES += ENABLE_MUTATION_OBSERVERS=1
+webcore_cppflags += -DENABLE_MUTATION_OBSERVERS=1
+endif # END ENABLE_MUTATION_OBSERVERS
+
+# ----
 # HTML5 client-side session and persistent storage
 # ----
 if ENABLE_DOM_STORAGE

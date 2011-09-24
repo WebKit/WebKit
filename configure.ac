@@ -462,6 +462,14 @@ AC_ARG_ENABLE(offline_web_applications,
               [],[enable_offline_web_applications="yes"])
 AC_MSG_RESULT([$enable_offline_web_applications])
 
+# check whether to enable DOM mutation observer support
+AC_MSG_CHECKING([whether to enable DOM mutation observer support])
+AC_ARG_ENABLE(mutation_observers,
+              AC_HELP_STRING([--enable-mutation-observers],
+                             [enable DOM mutation observer support [default=no]]),
+              [],[enable_mutation_observers="no"])
+AC_MSG_RESULT([$enable_mutation_observers])
+
 # check whether to enable HTML5 client-side session and persitent storage support
 AC_MSG_CHECKING([whether to enable HTML5 client-side session and persistent storage support])
 AC_ARG_ENABLE(dom_storage,
@@ -1180,6 +1188,7 @@ AM_CONDITIONAL([ENABLE_REQUEST_ANIMATION_FRAME],[test "$enable_request_animation
 AM_CONDITIONAL([ENABLE_TOUCH_ICON_LOADING],[test "$enable_touch_icon_loading" = "yes"])
 AM_CONDITIONAL([ENABLE_REGISTER_PROTOCOL_HANDLER],[test "$enable_register_protocol_handler" = "yes"])
 AM_CONDITIONAL([ENABLE_DEVICE_ORIENTATION],[test "$enable_device_orientation" = "yes"])
+AM_CONDITIONAL([ENABLE_MUTATION_OBSERVERS],[test "$enable_mutation_observers" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1231,6 +1240,7 @@ Features:
  3D Rendering                                             : $enable_3d_rendering
  WebGL                                                    : $enable_webgl
  Blob support                                             : $enable_blob
+ DOM mutation observer support                            : $enable_mutation_observers
  DeviceOrientation support                                : $enable_device_orientation
  Directory upload                                         : $enable_directory_upload
  Fast Mobile Scrolling                                    : $enable_fast_mobile_scrolling

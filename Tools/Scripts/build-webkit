@@ -99,6 +99,7 @@ my (
     $mediaStreamSupport,
     $meterTagSupport,
     $mhtmlSupport,
+    $mutationObserversSupport,
     $netscapePluginSupport,
     $notificationsSupport,
     $offlineWebApplicationSupport,
@@ -178,6 +179,9 @@ my @features = (
 
     { option => "directory-upload", desc => "Toogle Directory upload support",
       define => "ENABLE_DIRECTORY_UPLOAD", default => 0, value => \$directoryUploadSupport },
+
+    { option => "mutation-observers", desc => "Toggle DOM mutation observer support",
+      define => "ENABLE_MUTATION_OBSERVERS", default => 0, value => \$mutationObserversSupport },
 
     { option => "dom-storage", desc => "Toggle DOM Storage Support",
       define => "ENABLE_DOM_STORAGE", default => 1, value => \$domStorageSupport },
