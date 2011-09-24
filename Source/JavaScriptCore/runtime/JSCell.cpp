@@ -26,6 +26,7 @@
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSObject.h"
+#include "NumberObject.h"
 #include <wtf/MathExtras.h>
 
 namespace JSC {
@@ -112,8 +113,10 @@ JSObject* JSCell::toThisObject(ExecState* exec) const
     return toObject(exec, exec->lexicalGlobalObject());
 }
 
-JSValue JSCell::getJSNumber()
+JSValue JSCell::getJSNumber() const
 {
+    if (structure()->typeInfo().isNumberObject())
+        return static_cast<const NumberObject*>(this)->getJSNumber();
     return JSValue();
 }
 

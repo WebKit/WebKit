@@ -95,7 +95,7 @@ namespace JSC {
         virtual bool deleteProperty(ExecState*, unsigned propertyName);
 
         virtual JSObject* toThisObject(ExecState*) const;
-        virtual JSValue getJSNumber();
+        JSValue getJSNumber() const;
         void* vptr() { return *reinterpret_cast<void**>(this); }
         void setVPtr(void* vptr) { *reinterpret_cast<void**>(this) = vptr; }
 
@@ -314,7 +314,7 @@ namespace JSC {
         return toNumberSlowCase(exec);
     }
 
-    inline JSValue JSValue::getJSNumber()
+    inline JSValue JSValue::getJSNumber() const
     {
         if (isInt32() || isDouble())
             return *this;

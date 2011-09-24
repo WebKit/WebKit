@@ -42,7 +42,7 @@ void NumberObject::finishCreation(JSGlobalData& globalData)
     ASSERT(inherits(&s_info));
 }
 
-JSValue NumberObject::getJSNumber()
+JSValue NumberObject::getJSNumber() const
 {
     return internalValue();
 }

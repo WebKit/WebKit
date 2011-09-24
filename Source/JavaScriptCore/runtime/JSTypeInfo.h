@@ -64,6 +64,7 @@ namespace JSC {
         JSType type() const { return static_cast<JSType>(m_type); }
         bool isObject() const { return type() >= ObjectType; }
         bool isFinalObject() const { return type() == FinalObjectType; }
+        bool isNumberObject() const { return type() == NumberObjectType; }
 
         bool masqueradesAsUndefined() const { return isSetOnFlags1(MasqueradesAsUndefined); }
         bool implementsHasInstance() const { return isSetOnFlags1(ImplementsHasInstance); }

@@ -188,7 +188,6 @@ EXPORTS
     ?get@Structure@JSC@@QAEIAAVJSGlobalData@2@PAVStringImpl@WTF@@AAIAAPAVJSCell@2@@Z
     ?getCallData@JSCell@JSC@@UAE?AW4CallType@2@AATCallData@2@@Z
     ?getConstructData@JSCell@JSC@@UAE?AW4ConstructType@2@AATConstructData@2@@Z
-    ?getJSNumber@JSCell@JSC@@UAE?AVJSValue@2@XZ
     ?getObject@JSCell@JSC@@QAEPAVJSObject@2@XZ
     ?getOwnPropertyDescriptor@JSGlobalObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?getOwnPropertyDescriptor@JSObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z

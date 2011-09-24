@@ -44,11 +44,10 @@ namespace JSC {
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(globalData, globalObject, prototype, TypeInfo(NumberObjectType, StructureFlags), &s_info);
         }
 
-    private:
-        virtual JSValue getJSNumber();
+        JSValue getJSNumber() const;
     };
 
     NumberObject* constructNumber(ExecState*, JSGlobalObject*, JSValue);

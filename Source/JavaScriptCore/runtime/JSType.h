@@ -41,6 +41,7 @@ enum JSType {
     ObjectType          = 10,
     FinalObjectType     = 11,
     JSFunctionType      = 12,
+    NumberObjectType    = 13,
 };
 
 } // namespace JSC

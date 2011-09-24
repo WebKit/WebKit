@@ -215,7 +215,7 @@ namespace JSC {
         static bool strictEqualSlowCase(ExecState* exec, JSValue v1, JSValue v2);
         static bool strictEqualSlowCaseInline(ExecState* exec, JSValue v1, JSValue v2);
 
-        JSValue getJSNumber(); // JSValue() if this is not a JSNumber or number object
+        JSValue getJSNumber() const; // JSValue() if this is not a JSNumber or number object
 
         bool isCell() const;
         JSCell* asCell() const;
