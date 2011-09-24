@@ -1,3 +1,9 @@
+2011-09-24  Dan Bernstein  <mitz@apple.com>
+
+        Added Snow Leopard-specific expected results.
+
+        * platform/mac-snowleopard/platform/mac/fast/text/combining-character-sequence-fallback-expected.txt: Added.
+
 2011-09-24  Young Han Lee  <joybro@company100.net>
 
         SVGAnimation does not support 'values' for from-to animations
