@@ -1,3 +1,40 @@
+2011-09-24  Filip Pizlo  <fpizlo@apple.com>
+
+        The DFG should not attempt to guess types in the absence of value
+        profiles
+        https://bugs.webkit.org/show_bug.cgi?id=68677
+
+        Reviewed by Oliver Hunt.
+        
+        This adds the ForceOSRExit node, which is ignored by the propagator
+        and virtual register allocator (and hence ensuring that liveness analysis
+        works correctly), but forces terminateSpeculativeExecution() in the
+        back-end. This appears to be a slight speed-up on benchmark averages,
+        with ~5% swings on individual benchmarks, in both directions. But it's
+        never a regression on any average, and appears to be a ~1% progression
+        in the SunSpider average.
+        
+        This also adds a bit better debugging support in the old JIT and in DFG,
+        as this was necessary to debug the much more frequent OSR transitions
+        that occur with this change.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::getStrongPrediction):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGNode.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+
 2011-09-24  Geoffrey Garen  <ggaren@apple.com>
 
         Some Windows build fixage.

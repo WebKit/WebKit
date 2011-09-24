@@ -432,18 +432,21 @@ private:
     
     NodeIndex addCall(Interpreter* interpreter, Instruction* currentInstruction, NodeType op)
     {
+        Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
+
+        PredictedType prediction = PredictNone;
+        if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
+            prediction = getStrongPrediction(m_graph.size(), m_currentIndex + OPCODE_LENGTH(op_call));
+        
         addVarArgChild(get(currentInstruction[1].u.operand));
         int argCount = currentInstruction[2].u.operand;
         int registerOffset = currentInstruction[3].u.operand;
         int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
         for (int argIdx = firstArg; argIdx < firstArg + argCount; argIdx++)
             addVarArgChild(get(argIdx));
-        NodeIndex call = addToGraph(Node::VarArg, op, OpInfo(0), OpInfo(PredictNone));
-        Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
-        if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
+        NodeIndex call = addToGraph(Node::VarArg, op, OpInfo(0), OpInfo(prediction));
+        if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
             set(putInstruction[1].u.operand, call);
-            stronglyPredict(call, m_currentIndex + OPCODE_LENGTH(op_call));
-        }
         if (RegisterFile::CallFrameHeaderSize + (unsigned)argCount > m_parameterSlots)
             m_parameterSlots = RegisterFile::CallFrameHeaderSize + argCount;
         return call;
@@ -487,7 +490,6 @@ private:
     PredictedType getStrongPrediction(NodeIndex nodeIndex, unsigned bytecodeIndex)
     {
         UNUSED_PARAM(nodeIndex);
-        UNUSED_PARAM(bytecodeIndex);
         
         ValueProfile* profile = m_profiledBlock->valueProfileForBytecodeOffset(bytecodeIndex);
         ASSERT(profile);
@@ -495,19 +497,21 @@ private:
 #if ENABLE(DFG_DEBUG_VERBOSE)
         printf("Dynamic [@%u, bc#%u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(prediction));
 #endif
+        
+        if (prediction == PredictNone) {
+            // We have no information about what values this node generates. Give up
+            // on executing this code, since we're likely to do more damage than good.
+            addToGraph(ForceOSRExit);
+        }
+        
         return prediction;
     }
     
-    void stronglyPredict(NodeIndex nodeIndex, unsigned bytecodeIndex)
+    PredictedType getStrongPrediction()
     {
-        m_graph[nodeIndex].predict(getStrongPrediction(nodeIndex, bytecodeIndex) & ~PredictionTagMask, StrongPrediction);
+        return getStrongPrediction(m_graph.size(), m_currentIndex);
     }
-    
-    void stronglyPredict(NodeIndex nodeIndex)
-    {
-        stronglyPredict(nodeIndex, m_currentIndex);
-    }
-    
+
     NodeIndex makeSafe(NodeIndex nodeIndex)
     {
         if (!m_profiledBlock->likelyToTakeSlowCase(m_currentIndex))
@@ -1058,14 +1062,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         // === Property access operations ===
 
         case op_get_by_val: {
+            PredictedType prediction = getStrongPrediction();
+            
             NodeIndex base = get(currentInstruction[2].u.operand);
             NodeIndex property = get(currentInstruction[3].u.operand);
             weaklyPredictArray(base);
             weaklyPredictInt32(property);
 
-            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(PredictNone), base, property);
+            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(prediction), base, property);
             set(currentInstruction[1].u.operand, getByVal);
-            stronglyPredict(getByVal);
 
             NEXT_OPCODE(op_get_by_val);
         }
@@ -1084,6 +1089,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
         case op_method_check: {
             Instruction* getInstruction = currentInstruction + OPCODE_LENGTH(op_method_check);
+            
+            PredictedType prediction = getStrongPrediction();
             
             ASSERT(interpreter->getOpcodeID(getInstruction->u.opcode) == op_get_by_id);
             
@@ -1109,22 +1116,21 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 methodCheckData.prototype = methodCall.cachedPrototype.get();
                 m_graph.m_methodCheckData.append(methodCheckData);
             } else {
-                NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), OpInfo(PredictNone), base);
+                NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), OpInfo(prediction), base);
                 set(getInstruction[1].u.operand, getMethod);
-                stronglyPredict(getMethod);
             }
             
             m_currentIndex += OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id);
             continue;
         }
         case op_get_scoped_var: {
+            PredictedType prediction = getStrongPrediction();
             int dst = currentInstruction[1].u.operand;
             int slot = currentInstruction[2].u.operand;
             int depth = currentInstruction[3].u.operand;
             NodeIndex getScopeChain = addToGraph(GetScopeChain, OpInfo(depth));
-            NodeIndex getScopedVar = addToGraph(GetScopedVar, OpInfo(slot), OpInfo(PredictNone), getScopeChain);
+            NodeIndex getScopedVar = addToGraph(GetScopedVar, OpInfo(slot), OpInfo(prediction), getScopeChain);
             set(dst, getScopedVar);
-            stronglyPredict(getScopedVar);
             NEXT_OPCODE(op_get_scoped_var);
         }
         case op_put_scoped_var: {
@@ -1136,6 +1142,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_put_scoped_var);
         }
         case op_get_by_id: {
+            PredictedType prediction = getStrongPrediction();
+            
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifierNumber = currentInstruction[3].u.operand;
             
@@ -1148,7 +1156,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 size_t offset = structure->get(*m_globalData, identifier);
                 
                 if (offset != notFound) {
-                    getById = addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(PredictNone), addToGraph(CheckStructure, OpInfo(structure), base));
+                    getById = addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), addToGraph(CheckStructure, OpInfo(structure), base));
                     
                     StorageAccessData storageAccessData;
                     storageAccessData.offset = offset;
@@ -1158,10 +1166,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             }
             
             if (getById == NoNode)
-                getById = addToGraph(GetById, OpInfo(identifierNumber), OpInfo(PredictNone), base);
+                getById = addToGraph(GetById, OpInfo(identifierNumber), OpInfo(prediction), base);
             
             set(currentInstruction[1].u.operand, getById);
-            stronglyPredict(getById);
 
             NEXT_OPCODE(op_get_by_id);
         }
@@ -1181,9 +1188,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_get_global_var: {
+            PredictedType prediction = getStrongPrediction();
+            
             NodeIndex getGlobalVar = addToGraph(GetGlobalVar, OpInfo(currentInstruction[2].u.operand));
             set(currentInstruction[1].u.operand, getGlobalVar);
-            m_graph.predictGlobalVar(currentInstruction[2].u.operand, getStrongPrediction(getGlobalVar, m_currentIndex) & ~PredictionTagMask, StrongPrediction);
+            m_graph.predictGlobalVar(currentInstruction[2].u.operand, prediction & ~PredictionTagMask, StrongPrediction);
             NEXT_OPCODE(op_get_global_var);
         }
 
@@ -1415,33 +1424,36 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_call_put_result);
 
         case op_resolve: {
+            PredictedType prediction = getStrongPrediction();
+            
             unsigned identifier = currentInstruction[2].u.operand;
 
-            NodeIndex resolve = addToGraph(Resolve, OpInfo(identifier), OpInfo(PredictNone));
+            NodeIndex resolve = addToGraph(Resolve, OpInfo(identifier), OpInfo(prediction));
             set(currentInstruction[1].u.operand, resolve);
-            stronglyPredict(resolve);
 
             NEXT_OPCODE(op_resolve);
         }
 
         case op_resolve_base: {
+            PredictedType prediction = getStrongPrediction();
+            
             unsigned identifier = currentInstruction[2].u.operand;
 
-            NodeIndex resolve = addToGraph(currentInstruction[3].u.operand ? ResolveBaseStrictPut : ResolveBase, OpInfo(identifier), OpInfo(PredictNone));
+            NodeIndex resolve = addToGraph(currentInstruction[3].u.operand ? ResolveBaseStrictPut : ResolveBase, OpInfo(identifier), OpInfo(prediction));
             set(currentInstruction[1].u.operand, resolve);
-            stronglyPredict(resolve);
 
             NEXT_OPCODE(op_resolve_base);
         }
             
         case op_resolve_global: {
-            NodeIndex resolve = addToGraph(ResolveGlobal, OpInfo(m_graph.m_resolveGlobalData.size()), OpInfo(PredictNone));
+            PredictedType prediction = getStrongPrediction();
+            
+            NodeIndex resolve = addToGraph(ResolveGlobal, OpInfo(m_graph.m_resolveGlobalData.size()), OpInfo(prediction));
             m_graph.m_resolveGlobalData.append(ResolveGlobalData());
             ResolveGlobalData& data = m_graph.m_resolveGlobalData.last();
             data.identifierNumber = currentInstruction[2].u.operand;
             data.resolveInfoIndex = m_globalResolveNumber++;
             set(currentInstruction[1].u.operand, resolve);
-            stronglyPredict(resolve);
 
             NEXT_OPCODE(op_resolve_global);
         }

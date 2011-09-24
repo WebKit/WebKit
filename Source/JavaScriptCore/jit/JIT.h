@@ -28,6 +28,8 @@
 
 #if ENABLE(JIT)
 
+// Verbose logging of code generation
+#define ENABLE_JIT_VERBOSE 0
 // Verbose logging for OSR-related code.
 #define ENABLE_JIT_VERBOSE_OSR 0
 

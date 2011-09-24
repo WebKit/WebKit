@@ -211,6 +211,10 @@ void JIT::privateCompileMainPass()
         if (m_canBeOptimized)
             m_jitCodeMapEncoder.append(m_bytecodeOffset, differenceBetween(m_startOfCode, label()));
 #endif
+        
+#if ENABLE(JIT_VERBOSE)
+        printf("Old JIT emitting code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, differenceBetween(m_startOfCode, label()));
+#endif
 
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
         DEFINE_BINARY_OP(op_del_by_val)
@@ -418,6 +422,10 @@ void JIT::privateCompileSlowCases()
         RareCaseProfile* rareCaseProfile = 0;
         if (m_canBeOptimized)
             rareCaseProfile = m_codeBlock->addRareCaseProfile(m_bytecodeOffset);
+#endif
+
+#if ENABLE(JIT_VERBOSE)
+        printf("Old JIT emitting slow code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, differenceBetween(m_startOfCode, label()));
 #endif
 
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
@@ -671,7 +679,13 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     if (m_codeBlock->codeType() == FunctionCode && functionEntryArityCheck)
         *functionEntryArityCheck = patchBuffer.locationOf(arityCheck);
     
-    return JITCode(patchBuffer.finalizeCode(), JITCode::BaselineJIT);
+    CodeRef result = patchBuffer.finalizeCode();
+    
+#if ENABLE(JIT_VERBOSE)
+    printf("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());
+#endif
+    
+    return JITCode(result, JITCode::BaselineJIT);
 }
 
 void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData, CodeSpecializationKind kind)

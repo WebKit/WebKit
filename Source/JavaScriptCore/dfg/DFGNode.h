@@ -305,7 +305,12 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(Branch, NodeMustGenerate | NodeIsTerminal | NodeIsBranch) \
     macro(Return, NodeMustGenerate | NodeIsTerminal) \
     macro(Throw, NodeMustGenerate | NodeIsTerminal) \
-    macro(ThrowReferenceError, NodeMustGenerate | NodeIsTerminal)
+    macro(ThrowReferenceError, NodeMustGenerate | NodeIsTerminal) \
+    \
+    /* This is a pseudo-terminal. It means that execution should fall out of DFG at */\
+    /* this point, but execution does continue in the basic block - just in a */\
+    /* different compiler. */\
+    macro(ForceOSRExit, NodeMustGenerate)
 
 // This enum generates a monotonically increasing id for all Node types,
 // and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).

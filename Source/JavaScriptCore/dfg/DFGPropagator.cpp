@@ -606,6 +606,7 @@ private:
         case Phi:
         case Throw:
         case ThrowReferenceError:
+        case ForceOSRExit:
             break;
             
         // This gets ignored because it doesn't do anything.

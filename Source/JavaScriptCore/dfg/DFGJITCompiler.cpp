@@ -109,16 +109,16 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     fprintf(stderr, "OSR exit for Node @%d (bc#%u) at JIT offset 0x%x   ", (int)exit.m_nodeIndex, exit.m_bytecodeIndex, debugOffset());
     exit.dump(stderr);
 #endif
-#if ENABLE(DFG_JIT_BREAK_ON_SPECULATION_FAILURE)
-    breakpoint();
-#endif
-    
 #if ENABLE(DFG_VERBOSE_SPECULATION_FAILURE)
     SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
     debugInfo->codeBlock = m_codeBlock;
     debugInfo->debugOffset = debugOffset();
     
     debugCall(debugOperationPrintSpeculationFailure, debugInfo);
+#endif
+    
+#if ENABLE(DFG_JIT_BREAK_ON_SPECULATION_FAILURE)
+    breakpoint();
 #endif
     
 #if ENABLE(DFG_SUCCESS_STATS)

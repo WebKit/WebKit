@@ -2089,6 +2089,11 @@ void SpeculativeJIT::compile(Node& node)
         jsValueResult(resultGPR, m_compileIndex);
         break;
     }
+        
+    case ForceOSRExit: {
+        terminateSpeculativeExecution();
+        break;
+    }
 
     case Phantom:
         // This is a no-op.
