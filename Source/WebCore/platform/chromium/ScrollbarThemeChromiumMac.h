@@ -62,6 +62,8 @@ public:
 
     void setNewPainterForScrollbar(Scrollbar*, WKScrollbarPainterRef);
     WKScrollbarPainterRef painterForScrollbar(Scrollbar*);
+
+    virtual void paintOverhangAreas(ScrollView*, GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
     
 protected:
     virtual bool hasButtons(Scrollbar*);
@@ -80,6 +82,9 @@ protected:
 
 private:
     void paintGivenTickmarks(GraphicsContext*, Scrollbar*, const IntRect&, const Vector<IntRect>&);
+
+private:
+    RefPtr<Pattern> m_overhangPattern;
 };
 
 }
