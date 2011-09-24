@@ -1,3 +1,16 @@
+2011-09-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [DRT] Include the right config file for EFL's DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=67042
+
+        Reviewed by Martin Robinson.
+
+        Ports which use CMake as their buildsystem (such as the EFL one) also
+        have config.h files, but they are named differently, so include the
+        right one depending on the buildsystem being used.
+
+        * DumpRenderTree/config.h:
+
 2011-09-23  Adam Klein  <adamk@chromium.org>
 
         Add ENABLE_MUTATION_OBSERVERS feature flag
