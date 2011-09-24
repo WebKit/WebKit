@@ -3343,7 +3343,7 @@ BUGWK68469 SKIP : css3/filters = PASS
 
 BUGWK68087 WIN MAC GPU GPU-CG : compositing/flat-with-transformed-child.html = IMAGE
 BUGWK68087 WIN MAC GPU GPU-CG : platform/chromium/compositing/3d-corners.html = IMAGE
-BUGWK68087 WIN MAC GPU GPU-CG : platform/chromium/compositing/backface-visibility-transformed.html  = IMAGE
+BUGWK68087 WIN MAC GPU GPU-CG : platform/chromium/compositing/backface-visibility-transformed.html = IMAGE
 BUGWK68087 WIN MAC GPU GPU-CG : platform/chromium/compositing/perpendicular-layer-sorting.html = IMAGE
 
 BUGCR85755 : fast/js/exception-properties.html = TEXT
@@ -3818,3 +3818,6 @@ BUGWK68736 MAC : fast/table/border-collapsing/cached-change-tbody-border-width.h
 // This test is flaky and causing trouble for the Linux EWS. It is flaky on the
 // main bots too, although not as flaky for some reason.
 BUGABARTH LINUX : svg/custom/svg-fonts-word-spacing.html = PASS FAIL
+
+BUGWK68747 : media/controls-right-click-on-timebar.html = TIMEOUT PASS
+
