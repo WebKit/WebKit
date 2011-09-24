@@ -43,6 +43,7 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
 BUGCR24182 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
+BUGCR24182 SLOW DEBUG : svg/hixie/perf/007.xml = PASS
 
 BUGWK67919 SLOW DEBUG : perf/document-contains.html = PASS
 
@@ -3600,7 +3601,7 @@ BUGWK66873 SLOW WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TE
 BUGWK66882 WIN : svg/W3C-SVG-1.1-SE/text-intro-09-b.svg = PASS IMAGE+TEXT
 BUGWK66882 LINUX MAC : svg/W3C-SVG-1.1-SE/text-intro-09-b.svg = PASS IMAGE
 
-BUGWK66888 DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT
+BUGWK66888 DEBUG : svg/animations/svginteger-animation-1.html = CRASH PASS TEXT
 
 BUGWK66900 LINUX SNOWLEOPARD DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
 
@@ -3825,4 +3826,3 @@ BUGWK68736 MAC : fast/table/border-collapsing/cached-change-tbody-border-width.h
 BUGABARTH LINUX : svg/custom/svg-fonts-word-spacing.html = PASS FAIL
 
 BUGWK68747 : media/controls-right-click-on-timebar.html = TIMEOUT PASS
-
