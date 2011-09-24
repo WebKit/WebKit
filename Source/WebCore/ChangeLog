@@ -1,3 +1,26 @@
+2011-09-24  Young Han Lee  <joybro@company100.net>
+
+        SVGAnimation does not support 'values' for from-to animations
+        https://bugs.webkit.org/show_bug.cgi?id=64859
+
+        Reviewed by Dirk Schulze.
+
+        If from-to animation have discrete calc-mode and have a 'keyTimes' list, values of
+        the keyTimes indicate the begin and the end of the animation respectively.[1][2]
+
+        When keyTimes is given, calculate the progress percentage of the animation with it
+        even for from-to animation.
+
+        [1] http://www.w3.org/TR/SVG/animate.html#ValueAttributes
+        [2] http://www.w3.org/TR/2001/REC-smil-animation-20010904/#AnimFuncValues
+
+        Test: svg/animations/animate-from-to-keyTimes.html
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::calculatePercentForFromTo):
+        (WebCore::SVGAnimationElement::updateAnimation):
+        * svg/SVGAnimationElement.h:
+
 2011-09-23  Chris Fleizach  <cfleizach@apple.com>
 
         WebKit does not expose AXPlaceholder value on password fields

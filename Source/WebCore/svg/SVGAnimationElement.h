@@ -120,6 +120,7 @@ private:
     float calculatePercentFromKeyPoints(float percent) const;
     void currentValuesFromKeyPoints(float percent, float& effectivePercent, String& from, String& to) const;
     float calculatePercentForSpline(float percent, unsigned splineIndex) const;
+    float calculatePercentForFromTo(float percent) const;
     unsigned calculateKeyTimesIndex(float percent) const;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAnimationElement)

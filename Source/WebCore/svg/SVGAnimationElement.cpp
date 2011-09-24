@@ -461,6 +461,14 @@ float SVGAnimationElement::calculatePercentFromKeyPoints(float percent) const
     }
     return (toKeyPoint - fromKeyPoint) * keyPointPercent + fromKeyPoint;
 }
+
+float SVGAnimationElement::calculatePercentForFromTo(float percent) const
+{
+    if (calcMode() == CalcModeDiscrete && m_keyTimes.size() == 2)
+        return percent > m_keyTimes[1] ? 1 : 0;
+
+    return percent;
+}
     
 void SVGAnimationElement::currentValuesFromKeyPoints(float percent, float& effectivePercent, String& from, String& to) const
 {
@@ -608,6 +616,8 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeat, SVGSMI
         effectivePercent = calculatePercentFromKeyPoints(percent);
     else if (m_keyPoints.isEmpty() && mode == CalcModeSpline && m_keyTimes.size() > 1)
         effectivePercent = calculatePercentForSpline(percent, calculateKeyTimesIndex(percent));
+    else if (animationMode() == FromToAnimation || animationMode() == ToAnimation)
+        effectivePercent = calculatePercentForFromTo(percent);
     else
         effectivePercent = percent;
 
