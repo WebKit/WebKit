@@ -136,8 +136,8 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
 
 bool passesAccessControlCheck(const ResourceResponse& response, StoredCredentials includeCredentials, SecurityOrigin* securityOrigin, String& errorDescription)
 {
-    AtomicallyInitializedStatic(AtomicString, accessControlAllowOrigin = "access-control-allow-origin");
-    AtomicallyInitializedStatic(AtomicString, accessControlAllowCredentials = "access-control-allow-credentials");
+    AtomicallyInitializedStatic(AtomicString&, accessControlAllowOrigin = *new AtomicString("access-control-allow-origin"));
+    AtomicallyInitializedStatic(AtomicString&, accessControlAllowCredentials = *new AtomicString("access-control-allow-credentials"));
 
     // A wildcard Access-Control-Allow-Origin can not be used if credentials are to be sent,
     // even with Access-Control-Allow-Credentials set to true.
