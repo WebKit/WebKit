@@ -1,5 +1,12 @@
 2011-09-24  Mihai Parparita  <mihaip@chromium.org>
 
+        Remove Chromium failing expectations for WCSS tests now that they're 
+        been removed with r95911.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-24  Mihai Parparita  <mihaip@chromium.org>
+
         Mark an svg/ test as slow, and remove incorrect baselines for another.
 
         * platform/chromium-cg-mac-leopard/fast/ruby/ruby-text-before-after-content-expected.txt: Removed.

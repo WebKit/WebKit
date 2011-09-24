@@ -1808,10 +1808,6 @@ BUGCR43319 LINUX DEBUG : fast/forms/select-empty-option-height.html = PASS TIMEO
 BUGCR43496 LINUX : svg/custom/repaint-stroke-width-changes.svg = PASS IMAGE
 BUGCR43497 MAC WIN : svg/custom/repaint-stroke-width-changes.svg = PASS IMAGE
 
-// WebKit roll 58855:58878
-BUGCR43419 : fast/wcss/wap-input-format.xhtml = TEXT
-BUGCR43419 : fast/wcss/wap-input-required.xhtml = TEXT
-
 // Flaky tests
 BUGCR43890 WIN : http/tests/loading/basic.html = PASS TEXT
 
