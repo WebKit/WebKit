@@ -102,6 +102,8 @@ private:
 enum ValueRecoveryTechnique {
     // It's already in the register file at the right location.
     AlreadyInRegisterFile,
+    // It's already in the register file but unboxed.
+    AlreadyInRegisterFileAsUnboxedInt32,
     // It's in a register.
     InGPR,
     UnboxedInt32InGPR,
@@ -128,6 +130,13 @@ public:
     {
         ValueRecovery result;
         result.m_technique = AlreadyInRegisterFile;
+        return result;
+    }
+    
+    static ValueRecovery alreadyInRegisterFileAsUnboxedInt32()
+    {
+        ValueRecovery result;
+        result.m_technique = AlreadyInRegisterFileAsUnboxedInt32;
         return result;
     }
     
@@ -273,10 +282,14 @@ struct OSRExit {
     {
         return index - m_arguments.size();
     }
+    int operandForArgument(int argument) const
+    {
+        return argument - m_arguments.size() - RegisterFile::CallFrameHeaderSize;
+    }
     int operandForIndex(int index) const
     {
         if (index < (int)m_arguments.size())
-            return index - m_arguments.size() - RegisterFile::CallFrameHeaderSize;
+            return operandForArgument(index);
         return index - m_arguments.size();
     }
     
@@ -336,7 +349,6 @@ private:
     void compile(BasicBlock&);
 
     void checkArgumentTypes();
-    void initializeVariableTypes();
 
     bool isInteger(NodeIndex nodeIndex)
     {
@@ -590,11 +602,11 @@ private:
     int m_lastSetOperand;
     uint32_t m_bytecodeIndexForOSR;
     
-    ValueRecovery computeValueRecoveryFor(const ValueSource&);
+    ValueRecovery computeValueRecoveryFor(int operand, const ValueSource&);
 
     ValueRecovery computeValueRecoveryFor(int operand)
     {
-        return computeValueRecoveryFor(valueSourceForOperand(operand));
+        return computeValueRecoveryFor(operand, valueSourceForOperand(operand));
     }
 };
 

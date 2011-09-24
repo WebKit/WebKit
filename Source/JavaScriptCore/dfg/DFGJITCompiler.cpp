@@ -201,6 +201,7 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
             break;
             
         case UnboxedInt32InGPR:
+        case AlreadyInRegisterFileAsUnboxedInt32:
             haveUnboxedInt32s = true;
             break;
             
@@ -229,8 +230,19 @@ void JITCompiler::exitSpeculativeWithOSR(const OSRExit& exit, SpeculationRecover
     if (haveUnboxedInt32s) {
         for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
             const ValueRecovery& recovery = exit.valueRecovery(index);
-            if (recovery.technique() == UnboxedInt32InGPR && recovery.gpr() != alreadyBoxed)
-                orPtr(GPRInfo::tagTypeNumberRegister, recovery.gpr());
+            switch (recovery.technique()) {
+            case UnboxedInt32InGPR:
+                if (recovery.gpr() != alreadyBoxed)
+                    orPtr(GPRInfo::tagTypeNumberRegister, recovery.gpr());
+                break;
+                
+            case AlreadyInRegisterFileAsUnboxedInt32:
+                store32(Imm32(static_cast<uint32_t>(TagTypeNumber >> 32)), tagFor(static_cast<VirtualRegister>(exit.operandForIndex(index))));
+                break;
+                
+            default:
+                break;
+            }
         }
     }
     

@@ -1,3 +1,23 @@
+2011-09-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT should not eagerly initialize integer tags in the register file
+        https://bugs.webkit.org/show_bug.cgi?id=68763
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::ValueRecovery::dump):
+        (JSC::DFG::OSRExit::OSRExit):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::ValueRecovery::alreadyInRegisterFileAsUnboxedInt32):
+        (JSC::DFG::OSRExit::operandForArgument):
+        (JSC::DFG::OSRExit::operandForIndex):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+
 2011-09-23  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Add JSVALUE32_64 support to DFG JIT
