@@ -27,6 +27,7 @@
 #include "ConservativeRoots.h"
 
 #include "JSCell.h"
+#include "JSObject.h"
 #include "JettisonedCodeBlocks.h"
 #include "Structure.h"
 
