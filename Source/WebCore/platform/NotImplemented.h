@@ -38,7 +38,7 @@
     #define supressNotImplementedWarning() false
 #endif
 
-#if defined(NDEBUG)
+#if LOG_DISABLED
     #define notImplemented() ((void)0)
 #else
 
