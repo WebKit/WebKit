@@ -1196,6 +1196,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilityInvalidAttribute];
+        [tempArray addObject:NSAccessibilityPlaceholderValueAttribute];
         passwordFieldAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }

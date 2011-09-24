@@ -10,6 +10,8 @@ var successfullyParsed = false;
 <body id="body">
  
     <input placeholder="search" type="text" name="q" size="15" maxlength="255" id="searchterm" />
+
+    <input id="password" class="field" type="password" name="sc1798" value="" placeholder="Password" spellcheck="true" maxlength="5096">
     
     <p id="description"></p>
     <div id="console"></div>
@@ -21,6 +23,10 @@ var successfullyParsed = false;
             var field = document.getElementById("searchterm").focus();
             var fieldElement = accessibilityController.focusedElement;
             shouldBe("fieldElement.stringAttributeValue('AXPlaceholderValue')", "'search'");
+
+            document.getElementById("password").focus();
+            var pass = accessibilityController.focusedElement;
+            shouldBe("pass.stringAttributeValue('AXPlaceholderValue')", "'Password'");
 
         }
         successfullyParsed = true;
