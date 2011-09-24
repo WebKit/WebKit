@@ -136,9 +136,12 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
 
 bool passesAccessControlCheck(const ResourceResponse& response, StoredCredentials includeCredentials, SecurityOrigin* securityOrigin, String& errorDescription)
 {
+    AtomicallyInitializedStatic(AtomicString, accessControlAllowOrigin = "access-control-allow-origin");
+    AtomicallyInitializedStatic(AtomicString, accessControlAllowCredentials = "access-control-allow-credentials");
+
     // A wildcard Access-Control-Allow-Origin can not be used if credentials are to be sent,
     // even with Access-Control-Allow-Credentials set to true.
-    const String& accessControlOriginString = response.httpHeaderField("Access-Control-Allow-Origin");
+    const String& accessControlOriginString = response.httpHeaderField(accessControlAllowOrigin);
     if (accessControlOriginString == "*" && includeCredentials == DoNotAllowStoredCredentials)
         return true;
 
@@ -158,7 +161,7 @@ bool passesAccessControlCheck(const ResourceResponse& response, StoredCredential
     }
 
     if (includeCredentials == AllowStoredCredentials) {
-        const String& accessControlCredentialsString = response.httpHeaderField("Access-Control-Allow-Credentials");
+        const String& accessControlCredentialsString = response.httpHeaderField(accessControlAllowCredentials);
         if (accessControlCredentialsString != "true") {
             errorDescription = "Credentials flag is true, but Access-Control-Allow-Credentials is not \"true\".";
             return false;

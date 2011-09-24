@@ -1,3 +1,24 @@
+2011-09-23  Adam Barth  <abarth@webkit.org>
+
+        Canvas security checks show up on HTML5GamingTest benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=68743
+
+        Reviewed by Oliver Hunt.
+
+        Prior to this patch, the canvas security checks took as much as 4% of
+        the time on the HTML5GamingTest benchmark:
+
+        http://craftymind.com/factory/guimark2/HTML5GamingTest.html
+
+        This patch uses a couple of AtomicStrings and shuffles around the order
+        of the security check to take this down to around 0.1% (which is near
+        the noise floor of what I can measure with my profiler).
+
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::passesAccessControlCheck):
+
 2011-09-23  Justin Novosad  <junov@chromium.org>
 
         Unwarranted DOM Exception when canvas2D drawImage is called with src
