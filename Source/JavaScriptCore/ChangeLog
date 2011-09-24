@@ -1,3 +1,220 @@
+2011-09-23  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Add JSVALUE32_64 support to DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=67460
+
+        Reviewed by Gavin Barraclough.
+
+        This is the initial attempt to add JSVALUE32_64 support to DFG JIT.
+        It's tested on IA32 Linux EFL port currently. It still cannot run
+        all the test cases and benchmarks so should be turned off now.
+        
+        The major work includes:
+        1) dealing with JSVALUE32_64 data format in DFG JIT;
+        2) bindings between 64-bit JS Value and 32-bit registers;
+        3) handling of function calls. Currently for DFG operation function
+        calls we follow the X86 cdecl calling convention on Linux, and the
+        implementation is in a naive way by pushing the arguments into stack
+        one by one.
+        
+        The known issues include:
+        1) some code duplicates unnecessarily, especially in Speculative JIT
+        code generation, where most of the operations on SpeculataInteger /
+        SpeculateDouble should be identical to the JSVALUE64 code. Refactoring
+        is needed in the future;
+        2) lack of op_call and op_construct support, comparing to current
+        JSVALUE64 DFG;
+        3) currently integer speculations assume to be StrictInt32;
+        4) lack of JSBoolean speculations;
+        5) boxing and unboxing doubles could be improved;
+        6) DFG X86 register description is different with the baseline JIT,
+        the timeoutCheckRegister is used for general purpose usage;
+        7) calls to runtime functions with primitive double parameters (e.g.
+        fmod) don't work. Support needs to be added to the assembler to
+        implement the mechanism of passing double parameters for X86 cdecl
+        convention.
+        
+        And there should be many other hidden bugs which should be exposed and
+        resolved in later debugging process.
+
+        * CMakeListsEfl.txt:
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::loadDouble):
+        (JSC::MacroAssemblerX86::storeDouble):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movsd_rm):
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * dfg/DFGFPRInfo.h:
+        (JSC::DFG::FPRInfo::debugName):
+        * dfg/DFGGPRInfo.h:
+        (JSC::DFG::GPRInfo::toRegister):
+        (JSC::DFG::GPRInfo::toIndex):
+        (JSC::DFG::GPRInfo::debugName):
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::needDataFormatConversion):
+        (JSC::DFG::GenerationInfo::initJSValue):
+        (JSC::DFG::GenerationInfo::initDouble):
+        (JSC::DFG::GenerationInfo::gpr):
+        (JSC::DFG::GenerationInfo::tagGPR):
+        (JSC::DFG::GenerationInfo::payloadGPR):
+        (JSC::DFG::GenerationInfo::fpr):
+        (JSC::DFG::GenerationInfo::fillJSValue):
+        (JSC::DFG::GenerationInfo::fillCell):
+        (JSC::DFG::GenerationInfo::fillDouble):
+        * dfg/DFGJITCodeGenerator.cpp:
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::allocate):
+        (JSC::DFG::JITCodeGenerator::use):
+        (JSC::DFG::JITCodeGenerator::registersMatched):
+        (JSC::DFG::JITCodeGenerator::silentSpillGPR):
+        (JSC::DFG::JITCodeGenerator::silentFillGPR):
+        (JSC::DFG::JITCodeGenerator::silentFillFPR):
+        (JSC::DFG::JITCodeGenerator::silentSpillAllRegisters):
+        (JSC::DFG::JITCodeGenerator::silentFillAllRegisters):
+        (JSC::DFG::JITCodeGenerator::boxDouble):
+        (JSC::DFG::JITCodeGenerator::unboxDouble):
+        (JSC::DFG::JITCodeGenerator::spill):
+        (JSC::DFG::addressOfDoubleConstant):
+        (JSC::DFG::integerResult):
+        (JSC::DFG::jsValueResult):
+        (JSC::DFG::setupResults):
+        (JSC::DFG::callOperation):
+        (JSC::JSValueOperand::JSValueOperand):
+        (JSC::JSValueOperand::~JSValueOperand):
+        (JSC::JSValueOperand::isDouble):
+        (JSC::JSValueOperand::fill):
+        (JSC::JSValueOperand::tagGPR):
+        (JSC::JSValueOperand::payloadGPR):
+        (JSC::JSValueOperand::fpr):
+        (JSC::GPRTemporary::~GPRTemporary):
+        (JSC::GPRTemporary::gpr):
+        (JSC::GPRResult2::GPRResult2):
+        * dfg/DFGJITCodeGenerator32_64.cpp: Added.
+        (JSC::DFG::JITCodeGenerator::clearGenerationInfo):
+        (JSC::DFG::JITCodeGenerator::fillInteger):
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        (JSC::DFG::JITCodeGenerator::fillStorage):
+        (JSC::DFG::JITCodeGenerator::useChildren):
+        (JSC::DFG::JITCodeGenerator::isStrictInt32):
+        (JSC::DFG::JITCodeGenerator::isKnownInteger):
+        (JSC::DFG::JITCodeGenerator::isKnownNumeric):
+        (JSC::DFG::JITCodeGenerator::isKnownCell):
+        (JSC::DFG::JITCodeGenerator::isKnownNotInteger):
+        (JSC::DFG::JITCodeGenerator::isKnownNotNumber):
+        (JSC::DFG::JITCodeGenerator::isKnownBoolean):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToNumber):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeValueToInt32):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeUInt32ToNumber):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeKnownConstantArithOp):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeBasicArithOp):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeArithMod):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeCheckHasInstance):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeInstanceOf):
+        (JSC::DFG::JITCodeGenerator::cachedGetById):
+        (JSC::DFG::JITCodeGenerator::writeBarrier):
+        (JSC::DFG::JITCodeGenerator::cachedPutById):
+        (JSC::DFG::JITCodeGenerator::cachedGetMethod):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeCompareNull):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeCompare):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeStrictEq):
+        (JSC::DFG::JITCodeGenerator::emitBranch):
+        (JSC::DFG::JITCodeGenerator::nonSpeculativeLogicalNot):
+        (JSC::DFG::JITCodeGenerator::emitCall):
+        (JSC::DFG::JITCodeGenerator::speculationCheck):
+        (JSC::DFG::dataFormatString):
+        (JSC::DFG::JITCodeGenerator::dump):
+        (JSC::DFG::JITCodeGenerator::checkConsistency):
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        (JSC::DFG::FPRTemporary::FPRTemporary):
+        * dfg/DFGJITCompiler.cpp:
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::tagForGlobalVar):
+        (JSC::DFG::JITCompiler::payloadForGlobalVar):
+        (JSC::DFG::JITCompiler::appendCallWithExceptionCheck):
+        (JSC::DFG::JITCompiler::addressOfDoubleConstant):
+        (JSC::DFG::JITCompiler::boxDouble):
+        (JSC::DFG::JITCompiler::unboxDouble):
+        (JSC::DFG::JITCompiler::addPropertyAccess):
+        (JSC::DFG::JITCompiler::PropertyAccessRecord::PropertyAccessRecord):
+        * dfg/DFGJITCompiler32_64.cpp: Added.
+        (JSC::DFG::JITCompiler::fillNumericToDouble):
+        (JSC::DFG::JITCompiler::fillInt32ToInteger):
+        (JSC::DFG::JITCompiler::fillToJS):
+        (JSC::DFG::JITCompiler::exitSpeculativeWithOSR):
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::compileEntry):
+        (JSC::DFG::JITCompiler::compileBody):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::jitAssertIsInt32):
+        (JSC::DFG::JITCompiler::jitAssertIsJSInt32):
+        (JSC::DFG::JITCompiler::jitAssertIsJSNumber):
+        (JSC::DFG::JITCompiler::jitAssertIsJSDouble):
+        (JSC::DFG::JITCompiler::jitAssertIsCell):
+        (JSC::DFG::JITCompiler::emitCount):
+        (JSC::DFG::JITCompiler::setSamplingFlag):
+        (JSC::DFG::JITCompiler::clearSamplingFlag):
+        * dfg/DFGJITCompilerInlineMethods.h: Added.
+        (JSC::DFG::JITCompiler::emitLoadTag):
+        (JSC::DFG::JITCompiler::emitLoadPayload):
+        (JSC::DFG::JITCompiler::emitLoad):
+        (JSC::DFG::JITCompiler::emitLoad2):
+        (JSC::DFG::JITCompiler::emitLoadDouble):
+        (JSC::DFG::JITCompiler::emitLoadInt32ToDouble):
+        (JSC::DFG::JITCompiler::emitStore):
+        (JSC::DFG::JITCompiler::emitStoreInt32):
+        (JSC::DFG::JITCompiler::emitStoreCell):
+        (JSC::DFG::JITCompiler::emitStoreBool):
+        (JSC::DFG::JITCompiler::emitStoreDouble):
+        * dfg/DFGNode.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::tryCachePutByID):
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::ValueRecovery::inGPR):
+        (JSC::DFG::ValueRecovery::inPair):
+        (JSC::DFG::ValueRecovery::tagGPR):
+        (JSC::DFG::ValueRecovery::payloadGPR):
+        * dfg/DFGSpeculativeJIT32_64.cpp: Added.
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::ValueSource::dump):
+        (JSC::DFG::ValueRecovery::dump):
+        (JSC::DFG::OSRExit::OSRExit):
+        (JSC::DFG::OSRExit::dump):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntStrict):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleIntegerBranch):
+        (JSC::DFG::SpeculativeJIT::convertToDouble):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleDoubleBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileMovHint):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::initializeVariableTypes):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * runtime/JSValue.h:
+
 2011-09-23  Filip Pizlo  <fpizlo@apple.com>
 
         wtf/BitVector.h has a variety of bugs which manifest when the

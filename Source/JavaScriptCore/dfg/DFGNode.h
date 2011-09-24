@@ -329,7 +329,9 @@ enum NodeType {
 // a constant index, argument, or identifier) from a NodeIndex.
 struct OpInfo {
     explicit OpInfo(int value) : m_value(value) { }
+#if USE(JSVALUE64)
     explicit OpInfo(unsigned value) : m_value(value) { }
+#endif
     explicit OpInfo(uintptr_t value) : m_value(value) { }
     explicit OpInfo(void* value) : m_value(reinterpret_cast<uintptr_t>(value)) { }
     uintptr_t m_value;

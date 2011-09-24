@@ -100,6 +100,9 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
     MacroAssembler stubJit;
         
     GPRReg baseGPR = static_cast<GPRReg>(stubInfo.baseGPR);
+#if USE(JSVALUE32_64)
+    GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.valueTagGPR);
+#endif
     GPRReg resultGPR = static_cast<GPRReg>(stubInfo.valueGPR);
     GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.scratchGPR);
     bool needToRestoreScratch = false;
@@ -125,7 +128,12 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
     }
     
     stubJit.loadPtr(protoObject->addressOfPropertyStorage(), resultGPR);
+#if USE(JSVALUE64)
     stubJit.loadPtr(MacroAssembler::Address(resultGPR, offset * sizeof(WriteBarrier<Unknown>)), resultGPR);
+#elif USE(JSVALUE32_64)
+    stubJit.load32(MacroAssembler::Address(resultGPR, offset * sizeof(WriteBarrier<Unknown>) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
+    stubJit.load32(MacroAssembler::Address(resultGPR, offset * sizeof(WriteBarrier<Unknown>) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultGPR);
+#endif
 
     MacroAssembler::Jump success, fail;
     
@@ -148,6 +156,9 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     
     if (isJSArray(globalData, baseValue) && propertyName == exec->propertyNames().length) {
         GPRReg baseGPR = static_cast<GPRReg>(stubInfo.baseGPR);
+#if USE(JSVALUE32_64)
+        GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.valueTagGPR);
+#endif
         GPRReg resultGPR = static_cast<GPRReg>(stubInfo.valueGPR);
         GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.scratchGPR);
         bool needToRestoreScratch = false;
@@ -167,8 +178,13 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSArray::storageOffset()), scratchGPR);
         stubJit.load32(MacroAssembler::Address(scratchGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)), scratchGPR);
         failureCases.append(stubJit.branch32(MacroAssembler::LessThan, scratchGPR, MacroAssembler::TrustedImm32(0)));
-        
+
+#if USE(JSVALUE64)
         stubJit.orPtr(GPRInfo::tagTypeNumberRegister, scratchGPR, resultGPR);
+#elif USE(JSVALUE32_64)
+        stubJit.move(scratchGPR, resultGPR);
+        stubJit.move(JITCompiler::TrustedImm32(0xffffffff), resultTagGPR); // JSValue::Int32Tag
+#endif
 
         MacroAssembler::Jump success, fail;
         
@@ -332,6 +348,9 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         stubInfo.u.getByIdSelfList.listSize++;
         
         GPRReg baseGPR = static_cast<GPRReg>(stubInfo.baseGPR);
+#if USE(JSVALUE32_64)
+        GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.valueTagGPR);
+#endif
         GPRReg resultGPR = static_cast<GPRReg>(stubInfo.valueGPR);
         
         MacroAssembler stubJit;
@@ -339,7 +358,12 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         MacroAssembler::Jump wrongStruct = stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(structure));
 
         stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
+#if USE(JSVALUE64)
         stubJit.loadPtr(MacroAssembler::Address(resultGPR, slot.cachedOffset() * sizeof(JSValue)), resultGPR);
+#elif USE(JSVALUE32_64)
+        stubJit.load32(MacroAssembler::Address(resultGPR, slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
+        stubJit.load32(MacroAssembler::Address(resultGPR, slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultGPR);
+#endif
 
         MacroAssembler::Jump success = stubJit.jump();
         
@@ -493,6 +517,9 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             StructureChain* prototypeChain = structure->prototypeChain(exec);
             
             GPRReg baseGPR = static_cast<GPRReg>(stubInfo.baseGPR);
+#if USE(JSVALUE32_64)
+            GPRReg valueTagGPR = static_cast<GPRReg>(stubInfo.valueTagGPR);
+#endif
             GPRReg valueGPR = static_cast<GPRReg>(stubInfo.valueGPR);
             GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.scratchGPR);
             bool needToRestoreScratch = false;
@@ -527,12 +554,23 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
 #endif
 
             stubJit.storePtr(MacroAssembler::TrustedImmPtr(structure), MacroAssembler::Address(baseGPR, JSCell::structureOffset()));
+#if USE(JSVALUE64)
             if (structure->isUsingInlineStorage())
                 stubJit.storePtr(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + slot.cachedOffset() * sizeof(JSValue)));
             else {
                 stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
                 stubJit.storePtr(valueGPR, MacroAssembler::Address(scratchGPR, slot.cachedOffset() * sizeof(JSValue)));
             }
+#elif USE(JSVALUE32_64)
+            if (structure->isUsingInlineStorage()) {
+                stubJit.store32(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
+                stubJit.store32(valueTagGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+            } else {
+                stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
+                stubJit.store32(valueGPR, MacroAssembler::Address(scratchGPR, slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
+                stubJit.store32(valueTagGPR, MacroAssembler::Address(scratchGPR, slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+            }
+#endif
             
             MacroAssembler::Jump success;
             MacroAssembler::Jump failure;

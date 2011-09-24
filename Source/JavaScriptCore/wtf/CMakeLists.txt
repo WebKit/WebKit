@@ -146,6 +146,7 @@ SET(WTF_HEADERS
 
 SET(WTF_SOURCES
     Assertions.cpp
+    BitVector.cpp
     ByteArray.cpp
     CryptographicallyRandomNumber.cpp
     CurrentTime.cpp

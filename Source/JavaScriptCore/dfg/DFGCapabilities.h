@@ -111,8 +111,10 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     case op_loop_if_greatereq:
     case op_ret:
     case op_end:
+#if USE(JSVALUE64)
     case op_call:
     case op_construct:
+#endif
     case op_call_put_result:
     case op_resolve:
     case op_resolve_base:

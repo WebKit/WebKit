@@ -44,6 +44,13 @@ namespace JSC {
     class PropertySlot;
     class PutPropertySlot;
     class UString;
+#if ENABLE(DFG_JIT)
+    namespace DFG {
+        class JITCompiler;
+        class JITCodeGenerator;
+        class SpeculativeJIT;
+    }
+#endif
 
     struct ClassInfo;
     struct Instruction;
@@ -98,6 +105,11 @@ namespace JSC {
         friend class JITStubCall;
         friend class JSInterfaceJIT;
         friend class SpecializedThunkJIT;
+#if ENABLE(DFG_JIT)
+        friend class DFG::JITCompiler;
+        friend class DFG::JITCodeGenerator;
+        friend class DFG::SpeculativeJIT;
+#endif
 
     public:
         static EncodedJSValue encode(JSValue);

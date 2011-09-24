@@ -134,7 +134,7 @@ public:
     JSGlobalData* globalData() { return m_globalData; }
     AssemblerType_T& assembler() { return m_assembler; }
 
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(X86)
     void preserveReturnAddressAfterCall(GPRReg reg)
     {
         pop(reg);
@@ -168,6 +168,16 @@ public:
     static Address addressForGlobalVar(GPRReg global, int32_t varNumber)
     {
         return Address(global, varNumber * sizeof(Register));
+    }
+
+    static Address tagForGlobalVar(GPRReg global, int32_t varNumber)
+    {
+        return Address(global, varNumber * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+    }
+
+    static Address payloadForGlobalVar(GPRReg global, int32_t varNumber)
+    {
+        return Address(global, varNumber * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 
     static Address addressFor(VirtualRegister virtualRegister)
@@ -207,7 +217,11 @@ public:
     Call appendCallWithExceptionCheck(const FunctionPtr& function, CodeOrigin codeOrigin)
     {
         Call functionCall = call();
+#if USE(JSVALUE64)
         Jump exceptionCheck = branchTestPtr(NonZero, AbsoluteAddress(&globalData()->exception));
+#elif USE(JSVALUE32_64)
+        Jump exceptionCheck = branch32(NotEqual, AbsoluteAddress(reinterpret_cast<char*>(&globalData()->exception) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
+#endif
         m_calls.append(CallRecord(functionCall, function, exceptionCheck, codeOrigin));
         return functionCall;
     }
@@ -259,6 +273,33 @@ public:
     bool valueOfBooleanConstant(NodeIndex nodeIndex) { return graph().valueOfBooleanConstant(codeBlock(), nodeIndex); }
     JSFunction* valueOfFunctionConstant(NodeIndex nodeIndex) { return graph().valueOfFunctionConstant(codeBlock(), nodeIndex); }
 
+#if USE(JSVALUE32_64)
+    void* addressOfDoubleConstant(NodeIndex nodeIndex)
+    {
+        ASSERT(isNumberConstant(nodeIndex));
+        unsigned constantIndex = graph()[nodeIndex].constantNumber();
+        return &(codeBlock()->constantRegister(FirstConstantRegisterIndex + constantIndex));
+    }
+
+    void emitLoadTag(NodeIndex, GPRReg tag);
+    void emitLoadPayload(NodeIndex, GPRReg payload);
+
+    void emitLoad(const JSValue&, GPRReg tag, GPRReg payload);
+    void emitLoad(NodeIndex, GPRReg tag, GPRReg payload);
+    void emitLoad2(NodeIndex index1, GPRReg tag1, GPRReg payload1, NodeIndex index2, GPRReg tag2, GPRReg payload2);
+
+    void emitLoadDouble(NodeIndex, FPRReg value);
+    void emitLoadInt32ToDouble(NodeIndex, FPRReg value);
+
+    void emitStore(NodeIndex, GPRReg tag, GPRReg payload);
+    void emitStore(NodeIndex, const JSValue constant);
+    void emitStoreInt32(NodeIndex, GPRReg payload, bool indexIsInt32 = false);
+    void emitStoreInt32(NodeIndex, TrustedImm32 payload, bool indexIsInt32 = false);
+    void emitStoreCell(NodeIndex, GPRReg payload, bool indexIsCell = false);
+    void emitStoreBool(NodeIndex, GPRReg payload, bool indexIsBool = false);
+    void emitStoreDouble(NodeIndex, FPRReg value);
+#endif
+
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
 #if ENABLE(DFG_JIT_ASSERT)
     void jitAssertIsInt32(GPRReg);
@@ -275,6 +316,7 @@ public:
 #endif
 
     // These methods convert between doubles, and doubles boxed and JSValues.
+#if USE(JSVALUE64)
     GPRReg boxDouble(FPRReg fpr, GPRReg gpr)
     {
         moveDoubleToPtr(fpr, gpr);
@@ -288,6 +330,23 @@ public:
         movePtrToDouble(gpr, fpr);
         return fpr;
     }
+#elif USE(JSVALUE32_64)
+    // FIXME: The box/unbox of doubles could be improved without exchanging data through memory,
+    // for example on x86 some SSE instructions can help do this.
+    void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR, VirtualRegister virtualRegister)
+    {
+        storeDouble(fpr, addressFor(virtualRegister));
+        load32(tagFor(virtualRegister), tagGPR);
+        load32(payloadFor(virtualRegister), payloadGPR);
+    }
+    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, VirtualRegister virtualRegister)
+    {
+        jitAssertIsJSDouble(tagGPR);
+        store32(tagGPR, tagFor(virtualRegister));
+        store32(payloadGPR, payloadFor(virtualRegister));
+        loadDouble(addressFor(virtualRegister), fpr);
+    }
+#endif
 
 #if ENABLE(SAMPLING_COUNTERS)
     // Debug profiling tool.
@@ -303,11 +362,18 @@ public:
     void clearSamplingFlag(int32_t flag);
 #endif
 
+#if USE(JSVALUE64)
     void addPropertyAccess(JITCompiler::Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
     {
         m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckImmToCall, deltaCallToStructCheck, deltaCallToLoadOrStore, deltaCallToSlowCase, deltaCallToDone,  baseGPR, valueGPR, scratchGPR));
     }
-    
+#elif USE(JSVALUE32_64)
+    void addPropertyAccess(JITCompiler::Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR)
+    {
+        m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckImmToCall, deltaCallToStructCheck, deltaCallToLoadOrStore, deltaCallToSlowCase, deltaCallToDone,  baseGPR, valueTagGPR, valueGPR, scratchGPR));
+    }
+#endif
+
     void addMethodGet(Call slowCall, DataLabelPtr structToCompare, DataLabelPtr protoObj, DataLabelPtr protoStructToCompare, DataLabelPtr putFunction)
     {
         m_methodGets.append(MethodGetRecord(slowCall, structToCompare, protoObj, protoStructToCompare, putFunction));
@@ -394,7 +460,11 @@ private:
     Label m_startOfCode;
 
     struct PropertyAccessRecord {
+#if USE(JSVALUE64)
         PropertyAccessRecord(Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
+#elif USE(JSVALUE32_64)
+        PropertyAccessRecord(Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR)
+#endif
             : m_functionCall(functionCall)
             , m_deltaCheckImmToCall(deltaCheckImmToCall)
             , m_deltaCallToStructCheck(deltaCallToStructCheck)
@@ -402,6 +472,9 @@ private:
             , m_deltaCallToSlowCase(deltaCallToSlowCase)
             , m_deltaCallToDone(deltaCallToDone)
             , m_baseGPR(baseGPR)
+#if USE(JSVALUE32_64)
+            , m_valueTagGPR(valueTagGPR)
+#endif
             , m_valueGPR(valueGPR)
             , m_scratchGPR(scratchGPR)
         {
@@ -414,6 +487,9 @@ private:
         int16_t m_deltaCallToSlowCase;
         int16_t m_deltaCallToDone;
         int8_t m_baseGPR;
+#if USE(JSVALUE32_64)
+        int8_t m_valueTagGPR;
+#endif
         int8_t m_valueGPR;
         int8_t m_scratchGPR;
     };

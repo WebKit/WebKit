@@ -134,6 +134,9 @@ namespace JSC {
         
 #if ENABLE(DFG_JIT)
         int8_t baseGPR;
+#if USE(JSVALUE32_64)
+        int8_t valueTagGPR;
+#endif
         int8_t valueGPR;
         int8_t scratchGPR;
         int16_t deltaCallToDone;

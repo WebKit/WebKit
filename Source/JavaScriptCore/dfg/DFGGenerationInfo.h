@@ -84,6 +84,7 @@ inline const char* dataFormatToString(DataFormat dataFormat)
 }
 #endif
 
+#if USE(JSVALUE64)
 inline bool needDataFormatConversion(DataFormat from, DataFormat to)
 {
     ASSERT(from != DataFormatNone);
@@ -122,6 +123,41 @@ inline bool needDataFormatConversion(DataFormat from, DataFormat to)
     }
     return true;
 }
+
+#elif USE(JSVALUE32_64)
+inline bool needDataFormatConversion(DataFormat from, DataFormat to)
+{
+    ASSERT(from != DataFormatNone);
+    ASSERT(to != DataFormatNone);
+    switch (from) {
+    case DataFormatInteger:
+    case DataFormatCell:
+        return to != DataFormatInteger && to != DataFormatCell;
+    case DataFormatDouble:
+    case DataFormatJSDouble:
+        switch (to) {
+        case DataFormatDouble:
+        case DataFormatJS:
+        case DataFormatJSDouble:
+            return false;
+        default:
+            return true;
+        }
+    case DataFormatJS:
+        return !(to & DataFormatJS);
+    case DataFormatJSInteger:
+    case DataFormatJSCell:
+    case DataFormatJSBoolean:
+        return to != DataFormatJS && to != from;
+    case DataFormatStorage:
+        ASSERT(to == DataFormatStorage);
+        return false;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return true;
+}
+#endif
 
 inline bool isJSFormat(DataFormat format, DataFormat expectedFormat)
 {
@@ -186,6 +222,7 @@ public:
         m_canFill = false;
         u.gpr = gpr;
     }
+#if USE(JSVALUE64)
     void initJSValue(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr, DataFormat format = DataFormatJS)
     {
         ASSERT(format & DataFormatJS);
@@ -197,6 +234,20 @@ public:
         m_canFill = false;
         u.gpr = gpr;
     }
+#elif USE(JSVALUE32_64)
+    void initJSValue(NodeIndex nodeIndex, uint32_t useCount, GPRReg tagGPR, GPRReg payloadGPR, DataFormat format = DataFormatJS)
+    {
+        ASSERT(format & DataFormatJS);
+
+        m_nodeIndex = nodeIndex;
+        m_useCount = useCount;
+        m_registerFormat = format;
+        m_spillFormat = DataFormatNone;
+        m_canFill = false;
+        u.v.tagGPR = tagGPR;
+        u.v.payloadGPR = payloadGPR;
+    }
+#endif
     void initCell(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr)
     {
         m_nodeIndex = nodeIndex;
@@ -208,6 +259,7 @@ public:
     }
     void initDouble(NodeIndex nodeIndex, uint32_t useCount, FPRReg fpr)
     {
+        ASSERT(fpr != InvalidFPRReg);
         m_nodeIndex = nodeIndex;
         m_useCount = useCount;
         m_registerFormat = DataFormatDouble;
@@ -282,8 +334,15 @@ public:
     }
 
     // Get the machine resister currently holding the value.
+#if USE(JSVALUE64)
     GPRReg gpr() { ASSERT(m_registerFormat && m_registerFormat != DataFormatDouble); return u.gpr; }
     FPRReg fpr() { ASSERT(m_registerFormat == DataFormatDouble); return u.fpr; }
+#elif USE(JSVALUE32_64)
+    GPRReg gpr() { ASSERT(m_registerFormat == DataFormatInteger || m_registerFormat == DataFormatCell || m_registerFormat == DataFormatStorage); return u.gpr; }
+    GPRReg tagGPR() { ASSERT(m_registerFormat & DataFormatJS); return u.v.tagGPR; }
+    GPRReg payloadGPR() { ASSERT(m_registerFormat & DataFormatJS); return u.v.payloadGPR; }
+    FPRReg fpr() { ASSERT(m_registerFormat == DataFormatDouble || m_registerFormat == DataFormatJSDouble); return u.fpr; }
+#endif
 
     // Check whether a value needs spilling in order to free up any associated machine registers.
     bool needsSpill()
@@ -332,12 +391,27 @@ public:
 
     // Record that this value is filled into machine registers,
     // tracking which registers, and what format the value has.
+#if USE(JSVALUE64)
     void fillJSValue(GPRReg gpr, DataFormat format = DataFormatJS)
     {
         ASSERT(format & DataFormatJS);
         m_registerFormat = format;
         u.gpr = gpr;
     }
+#elif USE(JSVALUE32_64)
+    void fillJSValue(GPRReg tagGPR, GPRReg payloadGPR, DataFormat format = DataFormatJS)
+    {
+        ASSERT(format & DataFormatJS);
+        m_registerFormat = format;
+        u.v.tagGPR = tagGPR; // FIXME: for JSValues with known type (boolean, integer, cell etc.) no tagGPR is needed?
+        u.v.payloadGPR = payloadGPR;
+    }
+    void fillCell(GPRReg gpr)
+    {
+        m_registerFormat = DataFormatCell;
+        u.gpr = gpr;
+    }
+#endif
     void fillInteger(GPRReg gpr)
     {
         m_registerFormat = DataFormatInteger;
@@ -345,6 +419,7 @@ public:
     }
     void fillDouble(FPRReg fpr)
     {
+        ASSERT(fpr != InvalidFPRReg);
         m_registerFormat = DataFormatDouble;
         u.fpr = fpr;
     }
@@ -369,6 +444,12 @@ private:
     union {
         GPRReg gpr;
         FPRReg fpr;
+#if USE(JSVALUE32_64)
+        struct {
+            GPRReg tagGPR;
+            GPRReg payloadGPR;
+        } v;
+#endif
     } u;
 };
 

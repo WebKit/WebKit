@@ -41,17 +41,18 @@ typedef MacroAssembler::RegisterID GPRReg;
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 4;
+    static const unsigned numberOfRegisters = 5;
 
     // These registers match the baseline JIT.
     static const GPRReg cachedResultRegister = X86Registers::eax;
-    static const GPRReg timeoutCheckRegister = X86Registers::esi;
+    static const GPRReg cachedResultRegister2 = X86Registers::edx;
     static const GPRReg callFrameRegister = X86Registers::edi;
     // Temporary registers.
     static const GPRReg regT0 = X86Registers::eax;
     static const GPRReg regT1 = X86Registers::edx;
     static const GPRReg regT2 = X86Registers::ecx;
     static const GPRReg regT3 = X86Registers::ebx;
+    static const GPRReg regT4 = X86Registers::esi;
     // These constants provide the names for the general purpose argument & return value registers.
     static const GPRReg argumentGPR0 = X86Registers::ecx; // regT2
     static const GPRReg argumentGPR1 = X86Registers::edx; // regT1
@@ -61,7 +62,7 @@ public:
     static GPRReg toRegister(unsigned index)
     {
         ASSERT(index < numberOfRegisters);
-        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, };
+        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4 };
         return registerForIndex[index];
     }
 
@@ -69,7 +70,7 @@ public:
     {
         ASSERT(reg != InvalidGPRReg);
         ASSERT(reg < 8);
-        static const unsigned indexForRegister[8] = { 0, 2, 1, 3, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
+        static const unsigned indexForRegister[8] = { 0, 2, 1, 3, InvalidIndex, InvalidIndex, 4, InvalidIndex };
         unsigned result = indexForRegister[reg];
         ASSERT(result != InvalidIndex);
         return result;
@@ -81,8 +82,8 @@ public:
         ASSERT(reg != InvalidGPRReg);
         ASSERT(reg < 8);
         static const char* nameForRegister[8] = {
-            "rax", "rcx", "rdx", "rbx",
-            "rsp", "rbp", "rsi", "rdi",
+            "eax", "ecx", "edx", "ebx",
+            "esp", "ebp", "esi", "edi",
         };
         return nameForRegister[reg];
     }

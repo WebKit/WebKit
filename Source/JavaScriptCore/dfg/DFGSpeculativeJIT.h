@@ -105,6 +105,9 @@ enum ValueRecoveryTechnique {
     // It's in a register.
     InGPR,
     UnboxedInt32InGPR,
+#if USE(JSVALUE32_64)
+    InPair,
+#endif
     InFPR,
     // It's in the register file, but at a different location.
     DisplacedInRegisterFile,
@@ -131,6 +134,9 @@ public:
     static ValueRecovery inGPR(GPRReg gpr, DataFormat dataFormat)
     {
         ASSERT(dataFormat != DataFormatNone);
+#if USE(JSVALUE32_64)
+        ASSERT(dataFormat == DataFormatInteger || dataFormat == DataFormatCell);
+#endif
         ValueRecovery result;
         if (dataFormat == DataFormatInteger)
             result.m_technique = UnboxedInt32InGPR;
@@ -140,6 +146,17 @@ public:
         return result;
     }
     
+#if USE(JSVALUE32_64)
+    static ValueRecovery inPair(GPRReg tagGPR, GPRReg payloadGPR)
+    {
+        ValueRecovery result;
+        result.m_technique = InPair;
+        result.m_source.pair.tagGPR = tagGPR;
+        result.m_source.pair.payloadGPR = payloadGPR;
+        return result;
+    }
+#endif
+
     static ValueRecovery inFPR(FPRReg fpr)
     {
         ValueRecovery result;
@@ -172,6 +189,20 @@ public:
         return m_source.gpr;
     }
     
+#if USE(JSVALUE32_64)
+    GPRReg tagGPR() const
+    {
+        ASSERT(m_technique == InPair);
+        return m_source.pair.tagGPR;
+    }
+    
+    GPRReg payloadGPR() const
+    {
+        ASSERT(m_technique == InPair);
+        return m_source.pair.payloadGPR;
+    }
+#endif
+    
     FPRReg fpr() const
     {
         ASSERT(m_technique == InFPR);
@@ -199,6 +230,12 @@ private:
     union {
         GPRReg gpr;
         FPRReg fpr;
+#if USE(JSVALUE32_64)
+        struct {
+            GPRReg tagGPR;
+            GPRReg payloadGPR;
+        } pair;
+#endif
         VirtualRegister virtualReg;
         EncodedJSValue constant;
     } m_source;
@@ -468,8 +505,12 @@ private:
     void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition);
     void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, void* vptr);
     void compileObjectEquality(Node&, void* vptr);
-    
+   
+#if USE(JSVALUE64) 
     JITCompiler::Jump convertToDouble(GPRReg value, FPRReg result, GPRReg tmp);
+#elif USE(JSVALUE32_64)
+    JITCompiler::Jump convertToDouble(JSValueOperand&, FPRReg result);
+#endif
 
     // Add a speculation check without additional recovery.
     void speculationCheck(MacroAssembler::Jump jumpToFail)
