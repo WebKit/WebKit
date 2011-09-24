@@ -58,7 +58,7 @@ public:
         return *this;
     }
 
-    static WebBlob createFromFile(const WebString& path, long long size);
+    WEBKIT_EXPORT static WebBlob createFromFile(const WebString& path, long long size);
 
     WEBKIT_EXPORT void reset();
     WEBKIT_EXPORT void assign(const WebBlob&);
@@ -66,7 +66,7 @@ public:
     bool isNull() const { return m_private.isNull(); }
 
 #if WEBKIT_USING_V8
-    v8::Handle<v8::Value>  toV8Value();
+    WEBKIT_EXPORT v8::Handle<v8::Value>  toV8Value();
 #endif
 
 #if WEBKIT_IMPLEMENTATION
