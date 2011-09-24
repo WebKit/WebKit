@@ -41,13 +41,6 @@ namespace WTR {
 
 static const float ZoomMultiplierRatio = 1.2f;
 
-#ifdef USE_WEBPROCESS_EVENT_SIMULATION
-static bool operator==(const WKPoint& a, const WKPoint& b)
-{
-    return a.x == b.x && a.y == b.y;
-}
-#endif
-
 static WKEventModifiers parseModifier(JSStringRef modifier)
 {
     if (JSStringIsEqualToUTF8CString(modifier, "ctrlKey"))
