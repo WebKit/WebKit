@@ -301,13 +301,6 @@ static String limitLength(const String& string, int maxLength)
 
 String TextFieldInputType::sanitizeValue(const String& proposedValue)
 {
-#if ENABLE(WCSS)
-    if (!element()->isConformToInputMask(proposedValue)) {
-        if (isConformToInputMask(element()->value()))
-            return element->value();
-        return String();
-    }
-#endif
     return limitLength(proposedValue.removeCharacters(isASCIILineBreak), HTMLInputElement::maximumLength);
 }
 
@@ -334,19 +327,6 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* 
     unsigned appendableLength = maxLength > baseLength ? maxLength - baseLength : 0;
 
     // Truncate the inserted text to avoid violating the maxLength and other constraints.
-#if ENABLE(WCSS)
-    RefPtr<Range> range = element()->document()->frame()->selection()->selection().toNormalizedRange();
-    String candidateString = toRenderTextControlSingleLine(element()->renderer())->text();
-    if (selectionLength)
-        candidateString.replace(range->startOffset(), range->endOffset(), event->text());
-    else
-        candidateString.insert(event->text(), range->startOffset());
-    if (!element()->isConformToInputMask(candidateString)) {
-        event->setText("");
-        return;
-    }
-#endif
-
     String eventText = event->text();
     eventText.replace("\r\n", " ");
     eventText.replace('\r', ' ');

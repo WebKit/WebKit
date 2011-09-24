@@ -266,7 +266,6 @@ class WebKitPort(Port):
             "GraphicsLayer": ["compositing"],
             "WebCoreHas3DRendering": ["animations/3d", "transforms/3d"],
             "WebGLShader": ["fast/canvas/webgl", "compositing/webgl", "http/tests/canvas/webgl"],
-            "parseWCSSInputProperty": ["fast/wcss"],
             "isXHTMLMPDocument": ["fast/xhtmlmp"],
             "MHTMLArchive": ["mhtml"],
         }

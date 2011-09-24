@@ -156,11 +156,7 @@ int RenderMarquee::computePosition(EMarqueeDirection dir, bool stopAtContentEdge
 
 void RenderMarquee::start()
 {
-    if (m_timer.isActive() || m_layer->renderer()->style()->marqueeIncrement().isZero()
-#if ENABLE(WCSS) && ENABLE(XHTMLMP)
-        || (m_layer->renderer()->document()->isXHTMLMPDocument() && !m_layer->renderer()->style()->marqueeLoopCount())
-#endif
-       )
+    if (m_timer.isActive() || m_layer->renderer()->style()->marqueeIncrement().isZero())
         return;
 
     // We may end up propagating a scroll event. It is important that we suspend events until 

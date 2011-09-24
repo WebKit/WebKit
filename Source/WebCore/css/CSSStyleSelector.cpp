@@ -2353,21 +2353,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyDisplay: {
         SVGDisplayPropertyGuard guard(m_element, m_style.get());
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(display, Display)
-#if ENABLE(WCSS)
-        if (primitiveValue && primitiveValue->getIdent() == CSSValueWapMarquee) {
-            // Initialize WAP Marquee style
-            m_style->setOverflowX(OMARQUEE);
-            m_style->setOverflowY(OMARQUEE);
-            m_style->setWhiteSpace(NOWRAP);
-            m_style->setMarqueeDirection(MLEFT);
-            m_style->setMarqueeSpeed(85); // Normal speed
-            m_style->setMarqueeLoopCount(1);
-            m_style->setMarqueeBehavior(MSCROLL);
-
-            if (m_parentStyle)
-                m_style->setDisplay(m_parentStyle->display());
-        }
-#endif
         return;
     }
     case CSSPropertyEmptyCells:
@@ -3276,9 +3261,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setMarqueeLoopCount(m_parentStyle->marqueeLoopCount());
         m_style->setMarqueeBehavior(m_parentStyle->marqueeBehavior());
         return;
-#if ENABLE(WCSS)
-    case CSSPropertyWapMarqueeLoop:
-#endif
     case CSSPropertyWebkitMarqueeRepetition: {
         HANDLE_INHERIT_AND_INITIAL(marqueeLoopCount, MarqueeLoopCount)
         if (!primitiveValue)
@@ -3289,9 +3271,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setMarqueeLoopCount(primitiveValue->getIntValue());
         return;
     }
-#if ENABLE(WCSS)
-    case CSSPropertyWapMarqueeSpeed:
-#endif
     case CSSPropertyWebkitMarqueeSpeed: {
         HANDLE_INHERIT_AND_INITIAL(marqueeSpeed, MarqueeSpeed)      
         if (!primitiveValue)
@@ -3342,31 +3321,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
     }
-#if ENABLE(WCSS)
-    case CSSPropertyWapMarqueeStyle:
-#endif
     case CSSPropertyWebkitMarqueeStyle:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marqueeBehavior, MarqueeBehavior)      
         return;
-#if ENABLE(WCSS)
-    case CSSPropertyWapMarqueeDir:
-        HANDLE_INHERIT_AND_INITIAL(marqueeDirection, MarqueeDirection)
-        if (primitiveValue && primitiveValue->getIdent()) {
-            switch (primitiveValue->getIdent()) {
-            case CSSValueLtr:
-                m_style->setMarqueeDirection(MRIGHT);
-                break;
-            case CSSValueRtl:
-                m_style->setMarqueeDirection(MLEFT);
-                break;
-            default:
-                m_style->setMarqueeDirection(*primitiveValue);
-                break;
-            }
-        }
-        return;
-#endif
-
     case CSSPropertyWebkitFlow:
         if (isInitial)
             HANDLE_INITIAL_COND(CSSPropertyWebkitFlow, FlowThread);
@@ -3652,22 +3609,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitTextStroke:
     case CSSPropertyWebkitTextEmphasis:
         return;
-#if ENABLE(WCSS)
-    case CSSPropertyWapInputFormat:
-        if (primitiveValue && m_element->hasTagName(WebCore::inputTag)) {
-            String mask = primitiveValue->getStringValue();
-            static_cast<HTMLInputElement*>(m_element)->setWapInputFormat(mask);
-        }
-        return;
-
-    case CSSPropertyWapInputRequired:
-        if (primitiveValue && m_element->isFormControlElement()) {
-            HTMLFormControlElement* element = static_cast<HTMLFormControlElement*>(m_element);
-            bool required = primitiveValue->getStringValue() == "true";
-            element->setRequired(required);
-        }
-        return;
-#endif 
 
     // CSS Text Layout Module Level 3: Vertical writing support
     case CSSPropertyWebkitWritingMode: {

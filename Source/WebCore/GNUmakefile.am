@@ -435,14 +435,6 @@ webcore_cppflags += -DENABLE_SHARED_WORKERS=1
 endif
 
 # ----
-# WCSS Support
-# ----
-if ENABLE_WCSS
-FEATURE_DEFINES += ENABLE_WCSS=1
-webcore_cppflags += -DENABLE_WCSS=1
-endif # END ENABLE_WCSS
-
-# ----
 # Filters
 # ----
 if ENABLE_FILTERS

@@ -651,14 +651,6 @@ AC_ARG_ENABLE(svg,
               [],[enable_svg="yes"])
 AC_MSG_RESULT([$enable_svg])
 
-# check whether to enable WCSS support
-AC_MSG_CHECKING([whether to enable WCSS support])
-AC_ARG_ENABLE(wcss,
-              AC_HELP_STRING([--enable-wcss],
-                             [enable support for WCSS [default=no]]),
-              [],[enable_wcss="no"])
-AC_MSG_RESULT([$enable_wcss])
-
 # check whether to enable SharedWorkers support
 AC_MSG_CHECKING([whether to enable SharedWorkers support])
 AC_ARG_ENABLE(shared_workers,
@@ -1171,7 +1163,6 @@ AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
-AM_CONDITIONAL([ENABLE_WCSS],[test "$enable_wcss" = "yes"])
 AM_CONDITIONAL([ENABLE_WORKERS],[test "$enable_workers" = "yes"])
 AM_CONDITIONAL([ENABLE_SHARED_WORKERS],[test "$enable_shared_workers" = "yes"])
 AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
@@ -1277,7 +1268,6 @@ Features:
  Speech input support                                     : $enable_input_speech
  SVG support                                              : $enable_svg
  SVG fonts support                                        : $enable_svg_fonts
- WCSS support                                             : $enable_wcss
  Web Audio support                                        : $enable_web_audio
  Web Sockets support                                      : $enable_web_sockets
  Web Timing support                                       : $enable_web_timing

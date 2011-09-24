@@ -1004,11 +1004,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EDisplay e)
         case TABLE_CAPTION:
             m_value.ident = CSSValueTableCaption;
             break;
-#if ENABLE(WCSS)
-        case WAP_MARQUEE:
-            m_value.ident = CSSValueWapMarquee;
-            break;
-#endif
         case BOX:
             m_value.ident = CSSValueWebkitBox;
             break;

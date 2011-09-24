@@ -160,10 +160,6 @@ public:
     PassRefPtr<CSSValue> parseSVGStrokeDasharray();
 #endif
 
-#if ENABLE(WCSS)
-    PassRefPtr<CSSValue> parseWCSSInputProperty();
-#endif
-
     // CSS3 Parsing Routines (for properties specific to CSS3)
     bool parseShadow(int propId, bool important);
     bool parseBorderImage(int propId, RefPtr<CSSValue>&);

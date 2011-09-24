@@ -159,12 +159,6 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
         case TABLE_CELL:
             return new (arena) RenderTableCell(node);
         case TABLE_CAPTION:
-#if ENABLE(WCSS)
-        // As per the section 17.1 of the spec WAP-239-WCSS-20011026-a.pdf, 
-        // the marquee box inherits and extends the characteristics of the 
-        // principal block box ([CSS2] section 9.2.1).
-        case WAP_MARQUEE:
-#endif
             return new (arena) RenderBlock(node);
         case BOX:
         case INLINE_BOX:

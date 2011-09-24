@@ -117,7 +117,6 @@ my (
     $touchEventsSupport,
     $touchIconLoadingSupport,
     $videoSupport,
-    $wcssSupport,
     $webAudioSupport,
     $webInspectorSupport,
     $webSocketsSupport,
@@ -287,9 +286,6 @@ my @features = (
 
     { option => "video", desc => "Toggle Video support",
       define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk()), value => \$videoSupport },
-
-    { option => "wcss", desc => "Toggle WCSS support",
-      define => "ENABLE_WCSS", default => 0, value => \$wcssSupport },
 
     { option => "web-audio", desc => "Toggle Web Audio support",
       define => "ENABLE_WEB_AUDIO", default => 0, value=> \$webAudioSupport },

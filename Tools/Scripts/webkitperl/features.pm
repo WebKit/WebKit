@@ -71,7 +71,6 @@ sub hasFeature($$)
         "Accelerated Compositing" => "GraphicsLayer",
         "3D Rendering" => "WebCoreHas3DRendering",
         "3D Canvas" => "WebGLShader",
-        "WCSS" => "parseWCSSInputProperty",
         "XHTMLMP" => "isXHTMLMPDocument",
         "MHTML" => "MHTMLArchive"
     );

@@ -976,11 +976,7 @@ bool CSSParser::parseValue(int propId, bool important)
         // inline | block | list-item | run-in | inline-block | table |
         // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
         // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none | inherit
-#if ENABLE(WCSS)
-        if ((id >= CSSValueInline && id <= CSSValueWapMarquee) || id == CSSValueNone)
-#else
         if ((id >= CSSValueInline && id <= CSSValueWebkitInlineBox) || id == CSSValueNone)
-#endif
             validPrimitive = true;
 #if ENABLE(CSS3_FLEXBOX)
         if (id == CSSValueWebkitFlexbox || id == CSSValueWebkitInlineFlexbox)
@@ -1640,29 +1636,6 @@ bool CSSParser::parseValue(int propId, bool important)
         else
             validPrimitive = validUnit(value, FTime | FInteger | FNonNeg, m_strict);
         break;
-#if ENABLE(WCSS)
-    case CSSPropertyWapMarqueeDir:
-        if (id == CSSValueLtr || id == CSSValueRtl)
-            validPrimitive = true;
-        break;
-    case CSSPropertyWapMarqueeStyle:
-        if (id == CSSValueNone || id == CSSValueSlide || id == CSSValueScroll || id == CSSValueAlternate)
-            validPrimitive = true;
-        break;
-    case CSSPropertyWapMarqueeLoop:
-        if (id == CSSValueInfinite)
-            validPrimitive = true;
-        else
-            validPrimitive = validUnit(value, FInteger | FNonNeg, m_strict);
-        break;
-    case CSSPropertyWapMarqueeSpeed:
-        if (id == CSSValueNormal || id == CSSValueSlow || id == CSSValueFast)
-            validPrimitive = true;
-        else
-            validPrimitive = validUnit(value, FTime | FInteger | FNonNeg, m_strict);
-        break;
-#endif
-
     case CSSPropertyWebkitFlow:
         return parseFlowThread(propId, important);
     case CSSPropertyWebkitContentOrder:
@@ -2124,15 +2097,6 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyTextOverline:
     case CSSPropertyTextUnderline:
         return false;
-#if ENABLE(WCSS)
-    case CSSPropertyWapInputFormat:
-        validPrimitive = true;
-        break;
-    case CSSPropertyWapInputRequired:
-        parsedValue = parseWCSSInputProperty();
-        break;
-#endif
-
     // CSS Text Layout Module Level 3: Vertical writing support
     case CSSPropertyWebkitWritingMode:
         if (id >= CSSValueHorizontalTb && id <= CSSValueHorizontalBt)
@@ -2201,27 +2165,6 @@ bool CSSParser::parseValue(int propId, bool important)
     }
     return false;
 }
-
-#if ENABLE(WCSS)
-PassRefPtr<CSSValue> CSSParser::parseWCSSInputProperty()
-{
-    RefPtr<CSSValue> parsedValue = 0;
-    CSSParserValue* value = m_valueList->current();
-    String inputProperty;
-    if (value->unit == CSSPrimitiveValue::CSS_STRING || value->unit == CSSPrimitiveValue::CSS_IDENT)
-        inputProperty = String(value->string);
-
-    if (!inputProperty.isEmpty())
-       parsedValue = primitiveValueCache()->createValue(inputProperty, CSSPrimitiveValue::CSS_STRING);
-
-    while (m_valueList->next()) {
-    // pass all other values, if any. If we don't do this,
-    // the parser will think that it's not done and won't process this property
-    }
-
-    return parsedValue;
-}
-#endif
 
 void CSSParser::addFillValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval)
 {

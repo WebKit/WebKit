@@ -27,11 +27,6 @@ contains(DEFINES, ENABLE_SVG=1) {
     EXTRACSSVALUES += $$PWD/css/SVGCSSValueKeywords.in
 }
 
-contains(DEFINES, ENABLE_WCSS=1) {
-    EXTRACSSPROPERTIES += $$PWD/css/WCSSPropertyNames.in
-    EXTRACSSVALUES += $$PWD/css/WCSSValueKeywords.in
-}
-
 SOURCES += \
     accessibility/AccessibilityImageMapLink.cpp \
     accessibility/AccessibilityMediaControls.cpp \    

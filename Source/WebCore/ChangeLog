@@ -1,3 +1,38 @@
+2011-09-24  Adam Barth  <abarth@webkit.org>
+
+        Remove ENABLE(WCSS) and associated code
+        https://bugs.webkit.org/show_bug.cgi?id=68759
+
+        Reviewed by Darin Adler.
+
+        As discussed on webkit-dev, we are removing this feature from trunk to
+        reduce the number of different configurations.
+
+        * CodeGenerators.pri:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/WCSSPropertyNames.in: Removed.
+        * css/WCSSValueKeywords.in: Removed.
+        * features.pri:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        * html/HTMLInputElement.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::sanitizeValue):
+        (WebCore::TextFieldInputType::handleBeforeTextInsertedEvent):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::start):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/style/RenderStyleConstants.h:
+
 2011-09-24  Young Han Lee  <joybro@company100.net>
 
         SVGAnimation does not support 'values' for from-to animations

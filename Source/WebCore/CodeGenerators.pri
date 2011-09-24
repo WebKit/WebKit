@@ -59,11 +59,6 @@ contains(DEFINES, ENABLE_SVG=1) {
     EXTRACSSVALUES += $$PWD/css/SVGCSSValueKeywords.in
 }
 
-contains(DEFINES, ENABLE_WCSS=1) {
-    EXTRACSSPROPERTIES += $$PWD/css/WCSSPropertyNames.in
-    EXTRACSSVALUES += $$PWD/css/WCSSValueKeywords.in
-}
-
 STYLESHEETS_EMBED = \
     $$PWD/css/html.css \
     $$PWD/css/quirks.css \
