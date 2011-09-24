@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class Color;
+class Element;
 class Event;
 class FloatSize;
 class Frame;
@@ -260,6 +261,7 @@ public:
     bool scrollToFragment(const KURL&);
     bool scrollToAnchor(const String&);
     void maintainScrollPositionAtAnchor(Node*);
+    void scrollElementToRect(Element*, const IntRect&);
 
     // Methods to convert points and rects between the coordinate space of the renderer, and this view.
     virtual LayoutRect convertFromRenderer(const RenderObject*, const LayoutRect&) const;

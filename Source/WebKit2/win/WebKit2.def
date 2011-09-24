@@ -162,6 +162,7 @@ EXPORTS
         ?memoryCache@WebCore@@YAPAVMemoryCache@1@XZ
         ?page@Document@WebCore@@QBEPAVPage@2@XZ
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
+        ?scrollElementToRect@FrameView@WebCore@@QAEXPAVElement@2@ABVIntRect@2@@Z
         ?removeShadowRoot@Element@WebCore@@QAEXXZ
         ?setDisabled@MemoryCache@WebCore@@QAEX_N@Z
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z

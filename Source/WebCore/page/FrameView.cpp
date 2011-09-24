@@ -1622,6 +1622,16 @@ void FrameView::maintainScrollPositionAtAnchor(Node* anchorNode)
         scrollToAnchor();
 }
 
+void FrameView::scrollElementToRect(Element* element, const IntRect& rect)
+{
+    m_frame->document()->updateLayoutIgnorePendingStylesheets();
+
+    LayoutRect bounds = element->boundsInWindowSpace();
+    int centeringOffsetX = (rect.width() - bounds.width()) / 2;
+    int centeringOffsetY = (rect.height() - bounds.height()) / 2;
+    scrollBy(IntSize(bounds.x() - centeringOffsetX - rect.x(), bounds.y() - centeringOffsetY - rect.y()));
+}
+
 void FrameView::setScrollPosition(const LayoutPoint& scrollPoint)
 {
     bool wasInProgrammaticScroll = m_inProgrammaticScroll;

@@ -1820,17 +1820,12 @@ void WebViewImpl::scrollFocusedNodeIntoView()
 
 void WebViewImpl::scrollFocusedNodeIntoRect(const WebRect& rect)
 {
+    Frame* frame = page()->mainFrame();
     Node* focusedNode = focusedWebCoreNode();
-    if (!focusedNode || !focusedNode->isElementNode())
+    if (!frame || !frame->view() || !focusedNode || !focusedNode->isElementNode())
         return;
     Element* elementNode = static_cast<Element*>(focusedNode);
-    LayoutRect bounds = elementNode->boundsInWindowSpace();
-    int centeringOffsetX = (rect.width - bounds.width()) / 2;
-    int centeringOffsetY = (rect.height - bounds.height()) / 2;
-    IntSize scrollOffset(bounds.x() - centeringOffsetX, bounds.y() - centeringOffsetY);
-    Frame* frame = mainFrameImpl()->frame();
-    if (frame && frame->view())
-        frame->view()->scrollBy(scrollOffset);
+    frame->view()->scrollElementToRect(elementNode, IntRect(rect.x, rect.y, rect.width, rect.height));
 }
 
 double WebViewImpl::zoomLevel()

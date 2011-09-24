@@ -77,6 +77,7 @@ _ZNK7WebCore9TreeScope14getElementByIdERKN3WTF12AtomicStringE;
 _ZN7WebCore14ScrollableArea28setScrollOffsetFromInternalsERKNS_8IntPointE;
 _ZN7WebCore10ScrollView23setScrollbarsSuppressedEbb;
 _ZN7WebCore9FrameView17paintControlTintsEv;
+_ZN7WebCore9FrameView19scrollElementToRectEPNS_7ElementERKNS_7IntRectE;
 local:
 _Z*;
 cti*;

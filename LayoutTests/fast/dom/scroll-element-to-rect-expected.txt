@@ -1,0 +1,7 @@
+Scrolled element to rect
+PASS rect.left is computedLeft
+PASS rect.top is computedTop
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

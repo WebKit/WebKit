@@ -63,6 +63,8 @@ module window {
         void setSuggestedValue(in Element inputElement, in DOMString value) raises (DOMException);
 
         void paintControlTints(in Document document) raises (DOMException);
+
+        void scrollElementToRect(in Element element, in long x, in long y, in long w, in long h) raises (DOMException);
     };
 }
 

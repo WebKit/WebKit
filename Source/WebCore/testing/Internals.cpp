@@ -37,6 +37,7 @@
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
 #include "InspectorController.h"
+#include "IntRect.h"
 #include "MemoryCache.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
@@ -374,6 +375,16 @@ void Internals::paintControlTints(Document* document, ExceptionCode& ec)
 
     FrameView* frameView = document->view();
     frameView->paintControlTints();
+}
+
+void Internals::scrollElementToRect(Element* element, long x, long y, long w, long h, ExceptionCode& ec)
+{
+    if (!element || !element->document() || !element->document()->view()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    FrameView* frameView = element->document()->view();
+    frameView->scrollElementToRect(element, IntRect(x, y, w, h));
 }
 
 }
