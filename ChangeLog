@@ -1,3 +1,15 @@
+2011-09-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Detect amd64 as a valid 64-bit architecture.
+        https://bugs.webkit.org/show_bug.cgi?id=67481
+
+        Reviewed by Oliver Hunt.
+
+        Some operating systems (generally the BSDs) use amd64 instead of x86_64
+        to report they're running on 64 bits, so consider it a valid value.
+
+        * Source/CMakeLists.txt:
+
 2011-09-23  Adam Klein  <adamk@chromium.org>
 
         Add ENABLE_MUTATION_OBSERVERS feature flag
