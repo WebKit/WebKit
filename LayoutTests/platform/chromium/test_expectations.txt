@@ -234,6 +234,11 @@ WONTFIX SKIP : storage/private-browsing-noread-nowrite.html = PASS
 // We don't let anyone set status in the browser.
 WONTFIX SKIP : plugins/set-status.html = TEXT
 
+// This test is out of date with respect to the latest version of the HTML5 spec
+// Test had to be decommissioned to fix https://bugs.webkit.org/show_bug.cgi?id=65709
+// We can re-enable the test when it gets changed upstream to become spec-compliant
+WONTFIX : canvas/philip/tests/2d.drawImage.outsidesource.html = TEXT
+
 // We don't care about dashboard compatibility mode.
 WONTFIX SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = FAIL
 WONTFIX SKIP : http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html = FAIL

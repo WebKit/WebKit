@@ -1,3 +1,22 @@
+2011-09-23  Justin Novosad  <junov@chromium.org>
+
+        Unwarranted DOM Exception when canvas2D drawImage is called with src 
+        rect is out of bounds
+        https://bugs.webkit.org/show_bug.cgi?id=65709
+
+        Reviewed by Oliver Hunt.
+
+        * fast/canvas/drawImage-with-invalid-args-expected.txt:
+        * fast/canvas/drawImage-with-invalid-args.html:
+        This test covers (among other things) cases where the source rectangle is
+        _completely_ outside the bounds of the source image.  It was modified to no
+        longer expect DOM exceptions
+        * platform/chromium/test_expectations.txt:
+        Out-dated test canvas/philip/tests/2d.drawImage.outsidesource.html
+        is now expected to fail
+        * platform/mac/Skipped:
+        Skipping canvas/philip/tests/2d.drawImage.outsidesource.html
+
 2011-09-23  Mihai Parparita  <mihaip@chromium.org>
 
         [Chromium] REGRESSION (r95725): Resizing a window doesn't resize the contents

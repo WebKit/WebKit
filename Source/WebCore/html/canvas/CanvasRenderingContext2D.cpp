@@ -1271,10 +1271,12 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     FloatRect normalizedDstRect = normalizeRect(dstRect);
 
     FloatRect imageRect = FloatRect(FloatPoint(), size(image));
-    if (!imageRect.contains(normalizedSrcRect) || !srcRect.width() || !srcRect.height()) {
+    if (!srcRect.width() || !srcRect.height()) {
         ec = INDEX_SIZE_ERR;
         return;
     }
+    if (!imageRect.contains(normalizedSrcRect))
+        return;
 
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1333,14 +1335,14 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
         return;
     }
 
-    if (!srcCanvasRect.contains(normalizeRect(srcRect)) || !srcRect.width() || !srcRect.height()) {
+    if (!srcRect.width() || !srcRect.height()) {
         ec = INDEX_SIZE_ERR;
         return;
     }
 
     ec = 0;
 
-    if (!dstRect.width() || !dstRect.height())
+    if (!srcCanvasRect.contains(normalizeRect(srcRect)) || !dstRect.width() || !dstRect.height())
         return;
 
     GraphicsContext* c = drawingContext();
@@ -1414,12 +1416,12 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
         return;
 
     FloatRect videoRect = FloatRect(FloatPoint(), size(video));
-    if (!videoRect.contains(normalizeRect(srcRect)) || !srcRect.width() || !srcRect.height()) {
+    if (!srcRect.width() || !srcRect.height()) {
         ec = INDEX_SIZE_ERR;
         return;
     }
 
-    if (!dstRect.width() || !dstRect.height())
+    if (!videoRect.contains(normalizeRect(srcRect)) || !dstRect.width() || !dstRect.height())
         return;
 
     GraphicsContext* c = drawingContext();
