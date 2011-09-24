@@ -26,10 +26,7 @@
 #ifndef BitVector_h
 #define BitVector_h
 
-#include <algorithm>
-#include <string.h>
 #include <wtf/Assertions.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -61,11 +58,7 @@ public:
     {
     }
     
-    BitVector(const BitVector& other)
-        : m_bitsOrPointer(makeInlineBits(0))
-    {
-        (*this) = other;
-    }
+    BitVector(const BitVector& other);
     
     ~BitVector()
     {
@@ -74,21 +67,7 @@ public:
         OutOfLineBits::destroy(outOfLineBits());
     }
     
-    BitVector& operator=(const BitVector& other)
-    {
-        uintptr_t newBitsOrPointer;
-        if (other.isInline())
-            newBitsOrPointer = other.m_bitsOrPointer;
-        else {
-            OutOfLineBits* newOutOfLineBits = OutOfLineBits::create(other.size());
-            memcpy(newOutOfLineBits->bits(), other.bits(), byteCount(other.size()));
-            newBitsOrPointer = reinterpret_cast<uintptr_t>(newOutOfLineBits);
-        }
-        if (!isInline())
-            OutOfLineBits::destroy(outOfLineBits());
-        m_bitsOrPointer = newBitsOrPointer;
-        return *this;
-    }
+    BitVector& operator=(const BitVector& other);
 
     size_t size() const
     {
@@ -105,45 +84,26 @@ public:
     }
     
     // Like ensureSize(), but supports reducing the size of the bitvector.
-    void resize(size_t numBits)
-    {
-        if (isInline())
-            return;
-        
-        if (numBits <= maxInlineBits()) {
-            OutOfLineBits* myOutOfLineBits = outOfLineBits();
-            m_bitsOrPointer = makeInlineBits(*myOutOfLineBits->bits());
-            OutOfLineBits::destroy(myOutOfLineBits);
-            return;
-        }
-        
-        resizeOutOfLine(numBits);
-    }
+    void resize(size_t numBits);
     
-    void clearAll()
-    {
-        if (isInline())
-            m_bitsOrPointer = makeInlineBits(0);
-        else
-            memset(outOfLineBits()->bits(), 0, byteCount(size()));
-    }
+    void clearAll();
 
     bool get(size_t bit) const
     {
         ASSERT(bit < size());
-        return !!(bits()[bit >> bitsInPointer()] & (static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1))));
+        return !!(bits()[bit / bitsInPointer()] & (static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1))));
     }
     
     void set(size_t bit)
     {
         ASSERT(bit < size());
-        bits()[bit >> bitsInPointer()] |= (static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1)));
+        bits()[bit / bitsInPointer()] |= (static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1)));
     }
     
     void clear(size_t bit)
     {
         ASSERT(bit < size());
-        bits()[bit >> bitsInPointer()] &= ~(static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1)));
+        bits()[bit / bitsInPointer()] &= ~(static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1)));
     }
     
     void set(size_t bit, bool value)
@@ -165,11 +125,9 @@ private:
         return bitsInPointer() - 1;
     }
     
-    // This function relies on bitCount being a multiple of bitsInPointer()
     static size_t byteCount(size_t bitCount)
     {
-        ASSERT(!(bitCount & (bitsInPointer() - 1)));
-        return bitCount >> 3;
+        return (bitCount + 7) >> 3;
     }
     
     static uintptr_t makeInlineBits(uintptr_t bits)
@@ -181,20 +139,13 @@ private:
     class OutOfLineBits {
     public:
         size_t numBits() const { return m_numBits; }
-        size_t numWords() const { return (m_numBits + bitsInPointer() - 1) >> bitsInPointer(); }
-        uintptr_t* bits() { return reinterpret_cast<uintptr_t*>(this + 1); }
-        const uintptr_t* bits() const { return reinterpret_cast<const uintptr_t*>(this + 1); }
+        size_t numWords() const { return (m_numBits + bitsInPointer() - 1) / bitsInPointer(); }
+        uintptr_t* bits() { return bitwise_cast<uintptr_t*>(this + 1); }
+        const uintptr_t* bits() const { return bitwise_cast<const uintptr_t*>(this + 1); }
         
-        static OutOfLineBits* create(size_t numBits)
-        {
-            numBits = (numBits + bitsInPointer() - 1) & ~bitsInPointer();
-            return new (fastMalloc(sizeof(OutOfLineBits) + (numBits >> bitsInPointer()))) OutOfLineBits(numBits);
-        }
+        static OutOfLineBits* create(size_t numBits);
         
-        static void destroy(OutOfLineBits* outOfLineBits)
-        {
-            fastFree(outOfLineBits);
-        }
+        static void destroy(OutOfLineBits*);
 
     private:
         OutOfLineBits(size_t numBits)
@@ -207,18 +158,10 @@ private:
     
     bool isInline() const { return m_bitsOrPointer >> maxInlineBits(); }
     
-    const OutOfLineBits* outOfLineBits() const { return reinterpret_cast<const OutOfLineBits*>(m_bitsOrPointer); }
-    OutOfLineBits* outOfLineBits() { return reinterpret_cast<OutOfLineBits*>(m_bitsOrPointer); }
+    const OutOfLineBits* outOfLineBits() const { return bitwise_cast<const OutOfLineBits*>(m_bitsOrPointer); }
+    OutOfLineBits* outOfLineBits() { return bitwise_cast<OutOfLineBits*>(m_bitsOrPointer); }
     
-    void resizeOutOfLine(size_t numBits)
-    {
-        ASSERT(numBits > maxInlineBits());
-        OutOfLineBits* newOutOfLineBits = OutOfLineBits::create(numBits);
-        memcpy(newOutOfLineBits->bits(), bits(), byteCount(std::min(size(), numBits)));
-        if (!isInline())
-            OutOfLineBits::destroy(outOfLineBits());
-        m_bitsOrPointer = reinterpret_cast<uintptr_t>(newOutOfLineBits);
-    }
+    void resizeOutOfLine(size_t numBits);
     
     uintptr_t* bits()
     {

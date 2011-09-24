@@ -637,6 +637,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\BitVector.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\BitVector.h"
 			>
 		</File>

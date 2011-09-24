@@ -2,6 +2,7 @@
 
 SOURCES += \
     wtf/Assertions.cpp \
+    wtf/BitVector.cpp \
     wtf/ByteArray.cpp \
     wtf/CryptographicallyRandomNumber.cpp \
     wtf/CurrentTime.cpp \

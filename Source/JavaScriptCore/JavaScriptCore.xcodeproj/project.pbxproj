@@ -50,6 +50,7 @@
 		0BDFFAE10FC6193100D69EF4 /* OwnFastMallocPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BF28A2911A33DC300638F84 /* SizeLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BF28A2811A33DC300638F84 /* SizeLimits.cpp */; };
 		0F242DA713F3B1E8007ADD4C /* WeakReferenceHarvester.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F604E8B142D696D009CEB92 /* BitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F604E8A142D6969009CEB92 /* BitVector.cpp */; };
 		0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7700911402FF280078EB39 /* SamplingCounter.cpp */; };
 		0F963B2713F753BB0002D9B2 /* RedBlackTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B2613F753990002D9B2 /* RedBlackTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F963B2C13F853EC0002D9B2 /* MetaAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F963B2B13F853C70002D9B2 /* MetaAllocator.cpp */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
@@ -793,6 +794,7 @@
 		0BDFFAD40FC6171000D69EF4 /* CrossThreadRefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadRefCounted.h; sourceTree = "<group>"; };
 		0BF28A2811A33DC300638F84 /* SizeLimits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SizeLimits.cpp; sourceTree = "<group>"; };
 		0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakReferenceHarvester.h; sourceTree = "<group>"; };
+		0F604E8A142D6969009CEB92 /* BitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitVector.cpp; sourceTree = "<group>"; };
 		0F77008E1402FDD60078EB39 /* SamplingCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingCounter.h; sourceTree = "<group>"; };
 		0F7700911402FF280078EB39 /* SamplingCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingCounter.cpp; sourceTree = "<group>"; };
 		0F963B2613F753990002D9B2 /* RedBlackTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RedBlackTree.h; sourceTree = "<group>"; };
@@ -1812,6 +1814,7 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
+				0F604E8A142D6969009CEB92 /* BitVector.cpp */,
 				0FD82F491428069200179C94 /* BitVector.h */,
 				C22C524813FAF6EF00B7DC0D /* dtoa */,
 				06D358A00DAAD9C4003B174E /* mac */,
@@ -3346,6 +3349,7 @@
 				1A082779142168D70090CCAC /* BinarySemaphore.cpp in Sources */,
 				A70456B11427FB950037DA68 /* AllocationSpace.cpp in Sources */,
 				86FA9E91142BBB2E001773B7 /* JSBoundFunction.cpp in Sources */,
+				0F604E8B142D696D009CEB92 /* BitVector.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
