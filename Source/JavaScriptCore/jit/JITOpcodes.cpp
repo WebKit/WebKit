@@ -303,19 +303,26 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     int src = currentInstruction[2].u.operand;
 
-    if (m_codeBlock->isConstantRegisterIndex(src)) {
-        storePtr(ImmPtr(JSValue::encode(getConstantOperand(src))), Address(callFrameRegister, dst * sizeof(Register)));
-        if (dst == m_lastResultBytecodeRegister)
-            killLastResultRegister();
-    } else if ((src == m_lastResultBytecodeRegister) || (dst == m_lastResultBytecodeRegister)) {
-        // If either the src or dst is the cached register go though
-        // get/put registers to make sure we track this correctly.
+    if (canBeOptimized()) {
+        // Use simpler approach, since the DFG thinks that the last result register
+        // is always set to the destination on every operation.
         emitGetVirtualRegister(src, regT0);
         emitPutVirtualRegister(dst);
     } else {
-        // Perform the copy via regT1; do not disturb any mapping in regT0.
-        loadPtr(Address(callFrameRegister, src * sizeof(Register)), regT1);
-        storePtr(regT1, Address(callFrameRegister, dst * sizeof(Register)));
+        if (m_codeBlock->isConstantRegisterIndex(src)) {
+            storePtr(ImmPtr(JSValue::encode(getConstantOperand(src))), Address(callFrameRegister, dst * sizeof(Register)));
+            if (dst == m_lastResultBytecodeRegister)
+                killLastResultRegister();
+        } else if ((src == m_lastResultBytecodeRegister) || (dst == m_lastResultBytecodeRegister)) {
+            // If either the src or dst is the cached register go though
+            // get/put registers to make sure we track this correctly.
+            emitGetVirtualRegister(src, regT0);
+            emitPutVirtualRegister(dst);
+        } else {
+            // Perform the copy via regT1; do not disturb any mapping in regT0.
+            loadPtr(Address(callFrameRegister, src * sizeof(Register)), regT1);
+            storePtr(regT1, Address(callFrameRegister, dst * sizeof(Register)));
+        }
     }
 }
 

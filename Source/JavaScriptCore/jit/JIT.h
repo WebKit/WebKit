@@ -1034,8 +1034,10 @@ namespace JSC {
 #endif
 
 #if ENABLE(DFG_JIT)
+        bool canBeOptimized() { return m_canBeOptimized; }
         bool shouldEmitProfiling() { return m_canBeOptimized; }
 #else
+        bool canBeOptimized() { return false; }
         // Enables use of value profiler with tiered compilation turned off,
         // in which case all code gets profiled.
         bool shouldEmitProfiling() { return true; }

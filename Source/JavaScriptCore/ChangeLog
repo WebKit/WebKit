@@ -1,3 +1,19 @@
+2011-09-25  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG tracking of the value in cachedResultRegister does not handle
+        op_mov correctly
+        https://bugs.webkit.org/show_bug.cgi?id=68781
+
+        Reviewed by Oliver Hunt.
+        
+        This takes the simplest approach: it makes the old JIT dumber rather
+        than making the DFG JIT smarter. This is performance-neutral.
+
+        * jit/JIT.h:
+        (JSC::JIT::canBeOptimized):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_mov):
+
 2011-09-25  Adam Barth  <abarth@webkit.org>
 
         Remove PLATFORM(HAIKU) and associated code
