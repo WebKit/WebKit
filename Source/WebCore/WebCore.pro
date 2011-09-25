@@ -856,7 +856,7 @@ SOURCES += \
     loader/appcache/ApplicationCacheStorage.cpp \
     loader/appcache/ApplicationCacheResource.cpp \
     loader/appcache/DOMApplicationCache.cpp \
-    loader/appcache/ManifestParser.cpp
+    loader/appcache/ManifestParser.cpp \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
     loader/cache/MemoryCache.cpp \

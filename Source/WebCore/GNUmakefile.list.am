@@ -111,7 +111,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDocument.h \
 	DerivedSources/WebCore/JSDocumentType.cpp \
 	DerivedSources/WebCore/JSDocumentType.h \
-	DerivedSources/WebCore/JSDOMApplicationCache.cpp
+	DerivedSources/WebCore/JSDOMApplicationCache.cpp \
 	DerivedSources/WebCore/JSDOMApplicationCache.h \
 	DerivedSources/WebCore/JSDOMCoreException.cpp \
 	DerivedSources/WebCore/JSDOMCoreException.h \
