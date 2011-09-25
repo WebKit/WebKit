@@ -52,12 +52,9 @@ private:
     virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
     virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const;
 
-    bool hasOnlyWrappedInlineChildren(RenderObject* beforeChild = 0) const;
-
     void moveChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
     void moveInlineChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
     void moveBlockChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
-    void mergeBlockChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
 
     RenderRubyRun* rubyRun() const;
 

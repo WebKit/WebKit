@@ -1,3 +1,28 @@
+2011-09-24  Abhishek Arya  <inferno@chromium.org>
+
+        Issues with merging block children of a ruby
+        base with another ruby base having inline children. 
+        https://bugs.webkit.org/show_bug.cgi?id=66124
+
+        Reviewed by Dan Bernstein.
+
+        Test: fast/ruby/ruby-base-merge-block-children-crash.html
+
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::moveInlineChildren): add a firstChild()
+        check to prevent empty anonymous block addition, just like
+        moveBlockChildren method.
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::moveBlockChildren): This was incorrectly
+        doing optimizations to see if current ruby base has only inline
+        children before beforeChild and then trying to take out them from 
+        their parent anonymous blocks. The problem is those inlines could
+        be split and have continuations because of encountering a block
+        inside inline flow. In those cases, we cannot take the inline out.
+        So, we should just make children non-inline in the destination
+        block and transfer the children as it-is.
+        * rendering/RenderRubyBase.h: remove unncessary functions.
+
 2011-09-25  Adam Barth  <abarth@webkit.org>
 
         Remove PLATFORM(HAIKU) and associated code
