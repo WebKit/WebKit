@@ -215,7 +215,9 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     add32(TrustedImm32(1), Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
     branch32(Below, regT1, Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_length))).linkTo(storeResult, this);
 
-    add32(TrustedImm32(1), Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_length)));
+    add32(TrustedImm32(1), regT1);
+    store32(regT1, Address(regT2, OBJECT_OFFSETOF(ArrayStorage, m_length)));
+    sub32(TrustedImm32(1), regT1);
     jump().linkTo(storeResult, this);
 
     end.link(this);
