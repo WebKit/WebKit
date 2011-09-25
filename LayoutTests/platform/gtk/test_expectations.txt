@@ -22,7 +22,6 @@ BUGWK68522 : http/tests/websocket/tests/hixie76/error-detect.html = PASS TEXT
 
 BUGWK68516 : fast/workers/shared-worker-lifecycle.html = PASS TEXT
 BUGWK68516 : fast/workers/shared-worker-frame-lifecycle.html = PASS TEXT
-BUGWK68516 : fast/workers/storage/interrupt-database.html = PASS TEXT
 BUGWK68516 : fast/workers/worker-close-more.html = PASS TEXT
 BUGWK68516 : fast/workers/dedicated-worker-lifecycle.html = PASS TEXT
 BUGWK68516 : fast/workers/worker-lifecycle.html = PASS TEXT

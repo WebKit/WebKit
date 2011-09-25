@@ -1,3 +1,10 @@
+2011-09-25  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, remove fast/workers/storage/interrupt-database.html
+        from GTK test_expectations since it's been skipped in r95809.
+
+        * platform/gtk/test_expectations.txt:
+
 2011-09-24  Mihai Parparita  <mihaip@chromium.org>
 
         Remove Chromium failing expectations for WCSS tests now that they're 
