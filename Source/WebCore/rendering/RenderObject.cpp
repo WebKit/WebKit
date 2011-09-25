@@ -2302,10 +2302,12 @@ void RenderObject::scheduleRelayout()
         FrameView* view = toRenderView(this)->frameView();
         if (view)
             view->scheduleRelayout();
-    } else if (parent()) {
-        FrameView* v = view() ? view()->frameView() : 0;
-        if (v)
-            v->scheduleRelayoutOfSubtree(this);
+    } else {
+        RenderView* renderView;
+        if (isRooted(&renderView)) {
+            if (FrameView* frameView = renderView->frameView())
+                frameView->scheduleRelayoutOfSubtree(this);
+        }
     }
 }
 
