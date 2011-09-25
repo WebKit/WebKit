@@ -47,16 +47,10 @@
 #include <windows.h>
 #include <malloc.h>
 
-#elif OS(HAIKU)
-
-#include <OS.h>
-
 #elif OS(UNIX)
 
 #include <stdlib.h>
-#if !OS(HAIKU)
 #include <sys/mman.h>
-#endif
 #include <unistd.h>
 
 #if OS(SOLARIS)

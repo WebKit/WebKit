@@ -58,10 +58,6 @@ QT_END_NAMESPACE
 class wxKeyEvent;
 #endif
 
-#if PLATFORM(HAIKU)
-class BMessage;
-#endif
-
 #if PLATFORM(EFL)
 typedef struct _Evas_Event_Key_Down Evas_Event_Key_Down;
 typedef struct _Evas_Event_Key_Up Evas_Event_Key_Up;
@@ -185,10 +181,6 @@ namespace WebCore {
 
 #if PLATFORM(WX)
         PlatformKeyboardEvent(wxKeyEvent&);
-#endif
-
-#if PLATFORM(HAIKU)
-        PlatformKeyboardEvent(BMessage*);
 #endif
 
 #if PLATFORM(WIN) || PLATFORM(CHROMIUM)

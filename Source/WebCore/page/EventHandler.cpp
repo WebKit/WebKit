@@ -2948,7 +2948,7 @@ bool EventHandler::isKeyboardOptionTab(KeyboardEvent* event)
 
 bool EventHandler::eventInvertsTabsToLinksClientCallResult(KeyboardEvent* event)
 {
-#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(HAIKU) || PLATFORM(EFL)
+#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(EFL)
     return EventHandler::isKeyboardOptionTab(event);
 #else
     return false;

@@ -51,8 +51,6 @@ QT_END_NAMESPACE
 #ifdef GTK_API_VERSION_2
 typedef struct _GdkRectangle GdkRectangle;
 #endif
-#elif PLATFORM(HAIKU)
-class BRect;
 #elif PLATFORM(EFL)
 typedef struct _Eina_Rectangle Eina_Rectangle;
 #endif
@@ -189,9 +187,6 @@ public:
     IntRect(const GdkRectangle&);
     operator GdkRectangle() const;
 #endif
-#elif PLATFORM(HAIKU)
-    explicit IntRect(const BRect&);
-    operator BRect() const;
 #elif PLATFORM(EFL)
     explicit IntRect(const Eina_Rectangle&);
     operator Eina_Rectangle() const;

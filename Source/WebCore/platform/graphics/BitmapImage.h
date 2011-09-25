@@ -45,10 +45,6 @@ class NSImage;
 typedef struct HBITMAP__ *HBITMAP;
 #endif
 
-#if PLATFORM(HAIKU)
-class BBitmap;
-#endif
-
 namespace WebCore {
     struct FrameData;
 }
@@ -186,10 +182,6 @@ protected:
 #if (OS(WINCE) && !PLATFORM(QT))
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
                              const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
-#endif
-
-#if PLATFORM(HAIKU)
-    virtual BBitmap* getBBitmap() const;
 #endif
 
     size_t currentFrame() const { return m_currentFrame; }

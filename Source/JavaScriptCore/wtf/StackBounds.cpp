@@ -31,10 +31,6 @@
 
 #include <windows.h>
 
-#elif OS(HAIKU)
-
-#include <OS.h>
-
 #elif OS(SOLARIS)
 
 #include <thread.h>
@@ -64,10 +60,10 @@ namespace WTF {
 // These platforms should now be working correctly:
 //     DARWIN, QNX, UNIX, SYMBIAN
 // These platforms are not:
-//     WINDOWS, SOLARIS, OPENBSD, HAIKU, WINCE
+//     WINDOWS, SOLARIS, OPENBSD, WINCE
 //
 // FIXME: remove this! - this code unsafely guesses at stack sizes!
-#if OS(WINDOWS) || OS(SOLARIS) || OS(OPENBSD) || OS(HAIKU)
+#if OS(WINDOWS) || OS(SOLARIS) || OS(OPENBSD)
 // Based on the current limit used by the JSC parser, guess the stack size.
 static const ptrdiff_t estimatedStackSize = 128 * sizeof(void*) * 1024;
 // This method assumes the stack is growing downwards.
@@ -141,16 +137,6 @@ void StackBounds::initialize()
     thread.StackInfo(info);
     m_origin = (void*)info.iBase;
     m_bound = (void*)info.iLimit;
-}
-
-#elif OS(HAIKU)
-
-void StackBounds::initialize()
-{
-    thread_info threadInfo;
-    get_thread_info(find_thread(NULL), &threadInfo);
-    m_origin = threadInfo.stack_end;
-    m_bound = estimateStackBound(m_origin);
 }
 
 #elif OS(UNIX)

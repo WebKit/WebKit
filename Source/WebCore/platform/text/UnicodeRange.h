@@ -35,10 +35,6 @@
 #ifndef UnicodeRange_H
 #define UnicodeRange_H
 
-#if PLATFORM(HAIKU)
-#include "stdint.h"
-#endif
-
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {

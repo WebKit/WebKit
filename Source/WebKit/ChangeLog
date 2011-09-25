@@ -1,3 +1,25 @@
+2011-09-25  Adam Barth  <abarth@webkit.org>
+
+        Remove PLATFORM(HAIKU) and associated code
+        https://bugs.webkit.org/show_bug.cgi?id=68774
+
+        Reviewed by Sam Weinig.
+
+        * haiku: Removed.
+        * haiku/WebCoreSupport: Removed.
+        * haiku/WebCoreSupport/ChromeClientHaiku.cpp: Removed.
+        * haiku/WebCoreSupport/ChromeClientHaiku.h: Removed.
+        * haiku/WebCoreSupport/ContextMenuClientHaiku.cpp: Removed.
+        * haiku/WebCoreSupport/ContextMenuClientHaiku.h: Removed.
+        * haiku/WebCoreSupport/DragClientHaiku.cpp: Removed.
+        * haiku/WebCoreSupport/DragClientHaiku.h: Removed.
+        * haiku/WebCoreSupport/EditorClientHaiku.cpp: Removed.
+        * haiku/WebCoreSupport/EditorClientHaiku.h: Removed.
+        * haiku/WebCoreSupport/FrameLoaderClientHaiku.cpp: Removed.
+        * haiku/WebCoreSupport/FrameLoaderClientHaiku.h: Removed.
+        * haiku/WebCoreSupport/InspectorClientHaiku.cpp: Removed.
+        * haiku/WebCoreSupport/InspectorClientHaiku.h: Removed.
+
 2011-09-23  Anders Carlsson  <andersca@apple.com>
 
         Axe WebImageRendererFactory

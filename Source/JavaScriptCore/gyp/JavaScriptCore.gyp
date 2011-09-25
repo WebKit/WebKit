@@ -80,7 +80,7 @@
         ['exclude', '(?<!unicode)/icu/'],
         ['exclude', 'os-win32/'],
         ['exclude', 'qt/'],
-        ['exclude', 'wtf/(brew|efl|gtk|haiku|qt|wince|wx)/'],
+        ['exclude', 'wtf/(brew|efl|gtk|qt|wince|wx)/'],
         ['exclude', 'wtf/unicode/brew/'],
         ['exclude', 'wtf/unicode/glib/'],
         ['exclude', 'wtf/unicode/qt4/'],

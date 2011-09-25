@@ -43,8 +43,6 @@ typedef HICON HCURSOR;
 #include <QCursor>
 #elif PLATFORM(CHROMIUM)
 #include "PlatformCursor.h"
-#elif PLATFORM(HAIKU)
-#include <app/Cursor.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -96,8 +94,6 @@ namespace WebCore {
     typedef wxCursor* PlatformCursor;
 #elif PLATFORM(CHROMIUM)
     // See PlatformCursor.h
-#elif PLATFORM(HAIKU)
-    typedef BCursor* PlatformCursor;
 #else
     typedef void* PlatformCursor;
 #endif

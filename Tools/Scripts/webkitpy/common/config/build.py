@@ -48,7 +48,6 @@ def _should_file_trigger_build(target_platform, file):
         ("Websites", []),
         ("brew", []),
         ("efl", []),
-        ("haiku", []),
         ("iphone", []),
         ("opengl", []),
         ("opentype", []),

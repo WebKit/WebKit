@@ -57,10 +57,6 @@ typedef long LPARAM;
 class wxMouseEvent;
 #endif
 
-#if PLATFORM(HAIKU)
-class BMessage;
-#endif
-
 namespace WebCore {
     
     // These button numbers match the ones used in the DOM API, 0 through 2, except for NoButton which isn't specified.
@@ -161,10 +157,6 @@ namespace WebCore {
 
 #if PLATFORM(WX)
         PlatformMouseEvent(const wxMouseEvent&, const wxPoint& globalPoint, int clickCount);
-#endif
-
-#if PLATFORM(HAIKU)
-        PlatformMouseEvent(const BMessage*);
 #endif
 
     protected:

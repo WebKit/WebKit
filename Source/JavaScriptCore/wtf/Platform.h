@@ -351,11 +351,6 @@
 #define WTF_OS_FREEBSD 1
 #endif
 
-/* OS(HAIKU) - Haiku */
-#ifdef __HAIKU__
-#define WTF_OS_HAIKU 1
-#endif
-
 /* OS(LINUX) - Linux */
 #ifdef __linux__
 #define WTF_OS_LINUX 1
@@ -401,7 +396,6 @@
     || OS(ANDROID)          \
     || OS(DARWIN)           \
     || OS(FREEBSD)          \
-    || OS(HAIKU)            \
     || OS(LINUX)            \
     || OS(NETBSD)           \
     || OS(OPENBSD)          \
@@ -421,7 +415,6 @@
 /* PLATFORM(QT) */
 /* PLATFORM(WX) */
 /* PLATFORM(GTK) */
-/* PLATFORM(HAIKU) */
 /* PLATFORM(MAC) */
 /* PLATFORM(WIN) */
 #if defined(BUILDING_CHROMIUM__)
@@ -432,8 +425,6 @@
 #define WTF_PLATFORM_WX 1
 #elif defined(BUILDING_GTK__)
 #define WTF_PLATFORM_GTK 1
-#elif defined(BUILDING_HAIKU__)
-#define WTF_PLATFORM_HAIKU 1
 #elif OS(DARWIN)
 #define WTF_PLATFORM_MAC 1
 #elif OS(WINDOWS)
@@ -630,15 +621,6 @@
 #endif
 #endif
 
-#if PLATFORM(HAIKU)
-#define HAVE_POSIX_MEMALIGN 1
-#define WTF_USE_CURL 1
-#define WTF_USE_PTHREADS 1
-#define HAVE_PTHREAD_RWLOCK 1
-#define USE_SYSTEM_MALLOC 1
-#define ENABLE_NETSCAPE_PLUGIN_API 0
-#endif
-
 #if !defined(HAVE_ACCESSIBILITY)
 #if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(CHROMIUM)
 #define HAVE_ACCESSIBILITY 1
@@ -662,7 +644,7 @@
 #endif
 
 #if !OS(WINDOWS) && !OS(SOLARIS) && !OS(QNX) \
-    && !OS(SYMBIAN) && !OS(HAIKU) && !OS(RVCT) \
+    && !OS(SYMBIAN) && !OS(RVCT) \
     && !OS(ANDROID)
 #define HAVE_TM_GMTOFF 1
 #define HAVE_TM_ZONE 1
@@ -748,10 +730,7 @@
 /* FIXME: is this actually used or do other platforms generate their own config.h? */
 
 #define HAVE_ERRNO_H 1
-/* As long as Haiku doesn't have a complete support of locale this will be disabled. */
-#if !OS(HAIKU)
 #define HAVE_LANGINFO_H 1
-#endif
 #define HAVE_MMAP 1
 #define HAVE_SBRK 1
 #define HAVE_STRINGS_H 1

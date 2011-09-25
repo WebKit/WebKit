@@ -50,8 +50,6 @@ typedef struct _cairo_surface cairo_surface_t;
 namespace WebCore {
 class NativeImageSkia;
 }
-#elif PLATFORM(HAIKU)
-class BBitmap;
 #elif OS(WINCE)
 #include "SharedBitmap.h"
 #endif
@@ -92,8 +90,6 @@ typedef wxBitmap* NativeImagePtr;
 typedef cairo_surface_t* NativeImagePtr;
 #elif USE(SKIA)
 typedef WebCore::NativeImageSkia* NativeImagePtr;
-#elif PLATFORM(HAIKU)
-typedef BBitmap* NativeImagePtr;
 #elif OS(WINCE)
 typedef RefPtr<SharedBitmap> NativeImagePtr;
 #endif

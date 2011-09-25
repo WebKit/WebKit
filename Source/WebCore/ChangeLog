@@ -1,5 +1,114 @@
 2011-09-25  Adam Barth  <abarth@webkit.org>
 
+        Remove PLATFORM(HAIKU) and associated code
+        https://bugs.webkit.org/show_bug.cgi?id=68774
+
+        Reviewed by Sam Weinig.
+
+        As discussed on webkit-dev, the Haiku port has been inactive for over a
+        year.  A year and a half ago, we discussed removing the port, but folks
+        said they planned to work on it more.  That work does not appear to
+        have happened in the intervening time.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * bindings/js/ScriptControllerHaiku.cpp: Removed.
+        * editing/haiku: Removed.
+        * editing/haiku/EditorHaiku.cpp: Removed.
+        * gyp/WebCore.gyp:
+        * loader/cache/CachedFont.cpp:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::eventInvertsTabsToLinksClientCallResult):
+        * page/haiku: Removed.
+        * page/haiku/DragControllerHaiku.cpp: Removed.
+        * page/haiku/EventHandlerHaiku.cpp: Removed.
+        * page/haiku/FrameHaiku.cpp: Removed.
+        * platform/ContextMenuItem.h:
+        * platform/Cursor.h:
+        * platform/DragData.h:
+        * platform/DragImage.h:
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformMenuDescription.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/Widget.h:
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Color.h:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/Gradient.h:
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ImageBufferData.h:
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/Pattern.h:
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/haiku: Removed.
+        * platform/graphics/haiku/ColorHaiku.cpp: Removed.
+        * platform/graphics/haiku/FloatPointHaiku.cpp: Removed.
+        * platform/graphics/haiku/FloatRectHaiku.cpp: Removed.
+        * platform/graphics/haiku/FontCacheHaiku.cpp: Removed.
+        * platform/graphics/haiku/FontCustomPlatformData.cpp: Removed.
+        * platform/graphics/haiku/FontCustomPlatformData.h: Removed.
+        * platform/graphics/haiku/FontHaiku.cpp: Removed.
+        * platform/graphics/haiku/FontPlatformData.h: Removed.
+        * platform/graphics/haiku/GlyphPageTreeNodeHaiku.cpp: Removed.
+        * platform/graphics/haiku/GradientHaiku.cpp: Removed.
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp: Removed.
+        * platform/graphics/haiku/IconHaiku.cpp: Removed.
+        * platform/graphics/haiku/ImageBufferDataHaiku.h: Removed.
+        * platform/graphics/haiku/ImageBufferHaiku.cpp: Removed.
+        * platform/graphics/haiku/ImageHaiku.cpp: Removed.
+        * platform/graphics/haiku/IntPointHaiku.cpp: Removed.
+        * platform/graphics/haiku/IntRectHaiku.cpp: Removed.
+        * platform/graphics/haiku/IntSizeHaiku.cpp: Removed.
+        * platform/graphics/haiku/PathHaiku.cpp: Removed.
+        * platform/graphics/haiku/SimpleFontDataHaiku.cpp: Removed.
+        * platform/graphics/haiku/StillImageHaiku.cpp: Removed.
+        * platform/graphics/haiku/StillImageHaiku.h: Removed.
+        * platform/haiku: Removed.
+        * platform/haiku/ClipboardHaiku.cpp: Removed.
+        * platform/haiku/ClipboardHaiku.h: Removed.
+        * platform/haiku/ContextMenuHaiku.cpp: Removed.
+        * platform/haiku/ContextMenuItemHaiku.cpp: Removed.
+        * platform/haiku/CookieJarHaiku.cpp: Removed.
+        * platform/haiku/CursorHaiku.cpp: Removed.
+        * platform/haiku/DragDataHaiku.cpp: Removed.
+        * platform/haiku/DragImageHaiku.cpp: Removed.
+        * platform/haiku/EventLoopHaiku.cpp: Removed.
+        * platform/haiku/FileSystemHaiku.cpp: Removed.
+        * platform/haiku/LocalizedStringsHaiku.cpp: Removed.
+        * platform/haiku/LoggingHaiku.cpp: Removed.
+        * platform/haiku/MIMETypeRegistryHaiku.cpp: Removed.
+        * platform/haiku/PasteboardHaiku.cpp: Removed.
+        * platform/haiku/PlatformKeyboardEventHaiku.cpp: Removed.
+        * platform/haiku/PlatformMouseEventHaiku.cpp: Removed.
+        * platform/haiku/PlatformWheelEventHaiku.cpp: Removed.
+        * platform/haiku/PopupMenuHaiku.cpp: Removed.
+        * platform/haiku/PopupMenuHaiku.h: Removed.
+        * platform/haiku/RenderThemeHaiku.cpp: Removed.
+        * platform/haiku/RenderThemeHaiku.h: Removed.
+        * platform/haiku/ScreenHaiku.cpp: Removed.
+        * platform/haiku/ScrollbarThemeHaiku.cpp: Removed.
+        * platform/haiku/ScrollbarThemeHaiku.h: Removed.
+        * platform/haiku/SearchPopupMenuHaiku.cpp: Removed.
+        * platform/haiku/SearchPopupMenuHaiku.h: Removed.
+        * platform/haiku/SharedBufferHaiku.cpp: Removed.
+        * platform/haiku/SharedTimerHaiku.cpp: Removed.
+        * platform/haiku/SoundHaiku.cpp: Removed.
+        * platform/haiku/TemporaryLinkStubs.cpp: Removed.
+        * platform/haiku/WidgetHaiku.cpp: Removed.
+        * platform/image-decoders/haiku: Removed.
+        * platform/image-decoders/haiku/ImageDecoderHaiku.cpp: Removed.
+        * platform/text/UnicodeRange.h:
+        * platform/text/haiku: Removed.
+        * platform/text/haiku/TextBreakIteratorInternalICUHaiku.cpp: Removed.
+
+2011-09-25  Adam Barth  <abarth@webkit.org>
+
         Attempted build fixes for GTK and Qt.
 
         * GNUmakefile.list.am:

@@ -64,7 +64,6 @@ ports = [
     'Brew',
     'Chromium',
     'Gtk',
-    'Haiku',
     'Mac',
     'None',
     'Qt',

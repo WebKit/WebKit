@@ -31,8 +31,6 @@
 #include "ImageBufferDataQt.h"
 #elif USE(SKIA)
 #include "ImageBufferDataSkia.h"
-#elif PLATFORM(HAIKU)
-#include "ImageBufferDataHaiku.h"
 #elif OS(WINCE)
 #include "ImageBufferDataWince.h"
 #elif PLATFORM(WX)

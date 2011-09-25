@@ -78,11 +78,6 @@ class wxWindow;
 typedef wxWindow* PlatformWidget;
 #endif
 
-#if PLATFORM(HAIKU)
-class BView;
-typedef BView* PlatformWidget;
-#endif
-
 #if PLATFORM(EFL)
 typedef struct _Evas_Object Evas_Object;
 typedef struct _Evas Evas;
@@ -132,14 +127,6 @@ public:
 
     PlatformWidget platformWidget() const;
     void setPlatformWidget(PlatformWidget);
-
-#if PLATFORM(HAIKU)
-    PlatformWidget topLevelPlatformWidget() const { return m_topLevelPlatformWidget; }
-    void setTopLevelPlatformWidget(PlatformWidget widget)
-    {
-        m_topLevelPlatformWidget = widget;
-    }
-#endif
 
     int x() const { return frameRect().x(); }
     int y() const { return frameRect().y(); }
@@ -285,9 +272,6 @@ private:
     QWeakPointer<QObject> m_bindingObject;
 #endif
 
-#if PLATFORM(HAIKU)
-    PlatformWidget m_topLevelPlatformWidget;
-#endif
 };
 
 #if !PLATFORM(MAC)

@@ -46,10 +46,6 @@ QT_END_NAMESPACE
 class wxString;
 #endif
 
-#if PLATFORM(HAIKU)
-class BString;
-#endif
-
 namespace WTF {
 
 class CString;
@@ -305,11 +301,6 @@ public:
 #if PLATFORM(WX)
     WTF_EXPORT_PRIVATE String(const wxString&);
     WTF_EXPORT_PRIVATE operator wxString() const;
-#endif
-
-#if PLATFORM(HAIKU)
-    String(const BString&);
-    operator BString() const;
 #endif
 
     // String::fromUTF8 will return a null string if

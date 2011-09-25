@@ -53,10 +53,6 @@ typedef struct _GdkRGBA GdkRGBA;
 class wxColour;
 #endif
 
-#if PLATFORM(HAIKU)
-struct rgb_color;
-#endif
-
 namespace WebCore {
 
 class Color;
@@ -146,11 +142,6 @@ public:
 
 #if USE(CG)
     Color(CGColorRef);
-#endif
-
-#if PLATFORM(HAIKU)
-    Color(const rgb_color&);
-    operator rgb_color() const;
 #endif
 
     static bool parseHexColor(const String& name, RGBA32& rgb);
