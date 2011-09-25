@@ -388,10 +388,8 @@ namespace WebCore {
         StorageInfo* webkitStorageInfo() const;
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         DOMApplicationCache* applicationCache() const;
         DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
-#endif
 
 #if ENABLE(ORIENTATION_EVENTS)
         // This is the interface orientation in degrees. Some examples are:
@@ -460,9 +458,7 @@ namespace WebCore {
         mutable RefPtr<IDBFactory> m_idbFactory;
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         mutable RefPtr<DOMApplicationCache> m_applicationCache;
-#endif
 
 #if ENABLE(NOTIFICATIONS)
         mutable RefPtr<NotificationCenter> m_notifications;

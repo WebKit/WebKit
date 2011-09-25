@@ -183,7 +183,6 @@ namespace WebCore {
         virtual void exceededDatabaseQuota(Frame*, const String& databaseName) = 0;
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         // Callback invoked when the application cache fails to save a cache object
         // because storing it would grow the database file past its defined maximum
         // size or past the amount of free space on the device. 
@@ -200,7 +199,6 @@ namespace WebCore {
         // other existing caches for the origin that would not be replaced by
         // the new cache.
         virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded) = 0;
-#endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
         virtual void dashboardRegionsChanged();

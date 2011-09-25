@@ -26,8 +26,6 @@
 #ifndef ManifestParser_h
 #define ManifestParser_h
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 #include "ApplicationCache.h"
 
 namespace WebCore {
@@ -44,7 +42,5 @@ namespace WebCore {
     bool parseManifest(const KURL& manifestURL, const char* data, int length, Manifest&);
 
 }
-
-#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #endif // ManifestParser_h

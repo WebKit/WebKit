@@ -344,7 +344,6 @@ void ChromeClientHaiku::exceededDatabaseQuota(Frame*, const String& databaseName
     notImplemented();
 }
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 void ChromeClientWx::reachedMaxAppCacheSize(int64_t spaceNeeded)
 {
     notImplemented();
@@ -354,7 +353,6 @@ void ChromeClientWx::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t
 {
     notImplemented();
 }
-#endif
 
 void ChromeClientHaiku::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
 {

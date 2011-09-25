@@ -529,10 +529,8 @@ void XMLDocumentParser::parseStartElement()
     if (m_view && !newElement->attached())
         newElement->attach();
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (newElement->hasTagName(HTMLNames::htmlTag))
         static_cast<HTMLHtmlElement*>(newElement.get())->insertedByParser();
-#endif
 
     if (isFirstElement && document()->frame())
         document()->frame()->loader()->dispatchDocumentElementAvailable();

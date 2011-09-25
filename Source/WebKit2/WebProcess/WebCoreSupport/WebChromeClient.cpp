@@ -543,7 +543,6 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
 #endif
 
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 void WebChromeClient::reachedMaxAppCacheSize(int64_t)
 {
     notImplemented();
@@ -553,7 +552,6 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_
 {
     notImplemented();
 }
-#endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
 void WebChromeClient::dashboardRegionsChanged()

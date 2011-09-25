@@ -204,11 +204,9 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     StorageTracker::initializeTracker(parameters.localStorageDirectory, 0);
     m_localStorageDirectory = parameters.localStorageDirectory;
 #endif
-    
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+
     if (!parameters.applicationCacheDirectory.isEmpty())
         cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);
-#endif
 
     setShouldTrackVisitedLinks(parameters.shouldTrackVisitedLinks);
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
@@ -771,10 +769,8 @@ void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear
 
 void WebProcess::clearApplicationCache()
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     // Empty the application cache.
     cacheStorage().empty();
-#endif
 }
 
 #if !ENABLE(PLUGIN_PROCESS)

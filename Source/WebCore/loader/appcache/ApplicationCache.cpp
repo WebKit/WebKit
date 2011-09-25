@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ApplicationCache.h"
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 #include "ApplicationCacheGroup.h"
 #include "ApplicationCacheResource.h"
 #include "ApplicationCacheStorage.h"
@@ -227,5 +225,3 @@ void ApplicationCache::dump()
 #endif
 
 }
-
-#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)

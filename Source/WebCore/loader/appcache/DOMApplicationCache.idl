@@ -26,7 +26,6 @@
 module offline {
  
     interface [
-        Conditional=OFFLINE_WEB_APPLICATIONS,
         EventTarget,
         OmitConstructor,
         DontCheckEnums,

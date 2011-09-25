@@ -374,7 +374,6 @@ void ChromeClientEfl::print(Frame* frame)
     notImplemented();
 }
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 void ChromeClientEfl::reachedMaxAppCacheSize(int64_t spaceNeeded)
 {
     // FIXME: Free some space.
@@ -385,7 +384,6 @@ void ChromeClientEfl::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_
 {
     notImplemented();
 }
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
 void ChromeClientEfl::needTouchEvents(bool needed)

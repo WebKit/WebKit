@@ -140,18 +140,12 @@ bool WebRuntimeFeatures::isNotificationsEnabled()
 
 void WebRuntimeFeatures::enableApplicationCache(bool enable)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     RuntimeEnabledFeatures::setApplicationCacheEnabled(enable);
-#endif
 }
 
 bool WebRuntimeFeatures::isApplicationCacheEnabled()
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     return RuntimeEnabledFeatures::applicationCacheEnabled();
-#else
-    return false;
-#endif
 }
 
 void WebRuntimeFeatures::enableDataTransferItems(bool enable)

@@ -31,8 +31,6 @@
 #ifndef ApplicationCacheHost_h
 #define ApplicationCacheHost_h
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 #include "KURL.h"
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
@@ -208,5 +206,4 @@ namespace WebCore {
 
 }  // namespace WebCore
 
-#endif  // ENABLE(OFFLINE_WEB_APPLICATIONS)
 #endif  // ApplicationCacheHost_h

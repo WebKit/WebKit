@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DOMApplicationCache.h"
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 #include "ApplicationCacheHost.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -128,5 +126,3 @@ EventTargetData* DOMApplicationCache::ensureEventTargetData()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)

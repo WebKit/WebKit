@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ApplicationCacheStorage.h"
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 #include "ApplicationCache.h"
 #include "ApplicationCacheGroup.h"
 #include "ApplicationCacheHost.h"
@@ -1539,5 +1537,3 @@ ApplicationCacheStorage& cacheStorage()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)

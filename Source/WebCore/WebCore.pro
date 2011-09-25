@@ -850,6 +850,13 @@ SOURCES += \
     inspector/TimelineRecordFactory.cpp \
     inspector/WorkerDebuggerAgent.cpp \
     inspector/WorkerInspectorController.cpp \
+    loader/appcache/ApplicationCache.cpp \
+    loader/appcache/ApplicationCacheGroup.cpp \
+    loader/appcache/ApplicationCacheHost.cpp \
+    loader/appcache/ApplicationCacheStorage.cpp \
+    loader/appcache/ApplicationCacheResource.cpp \
+    loader/appcache/DOMApplicationCache.cpp \
+    loader/appcache/ManifestParser.cpp
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
     loader/cache/MemoryCache.cpp \
@@ -3556,17 +3563,6 @@ contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
             bindings/js/ScriptProfiler.cpp \
             bindings/js/JavaScriptCallFrame.cpp
     }
-}
-
-contains(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=1) {
-SOURCES += \
-    loader/appcache/ApplicationCache.cpp \
-    loader/appcache/ApplicationCacheGroup.cpp \
-    loader/appcache/ApplicationCacheHost.cpp \
-    loader/appcache/ApplicationCacheStorage.cpp \
-    loader/appcache/ApplicationCacheResource.cpp \
-    loader/appcache/DOMApplicationCache.cpp \
-    loader/appcache/ManifestParser.cpp
 }
 
 contains(DEFINES, ENABLE_WEB_SOCKETS=1) {

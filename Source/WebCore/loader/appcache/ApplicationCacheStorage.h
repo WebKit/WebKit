@@ -26,8 +26,6 @@
 #ifndef ApplicationCacheStorage_h
 #define ApplicationCacheStorage_h
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 #include "PlatformString.h"
 #include "SecurityOriginHash.h"
 #include "SQLiteDatabase.h"
@@ -154,7 +152,5 @@ private:
 ApplicationCacheStorage& cacheStorage();
     
 } // namespace WebCore
-
-#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #endif // ApplicationCacheStorage_h

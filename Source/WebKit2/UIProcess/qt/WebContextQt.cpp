@@ -36,11 +36,7 @@ namespace WebKit {
 
 String WebContext::applicationCacheDirectory()
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     return WebCore::cacheStorage().cacheDirectory();
-#else
-    return QString();
-#endif
 }
 
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)

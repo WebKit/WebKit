@@ -135,10 +135,8 @@ private:
     virtual void exceededDatabaseQuota(WebCore::Frame*, const String& databaseName) OVERRIDE;
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded) OVERRIDE;
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t spaceNeeded) OVERRIDE;
-#endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
     virtual void dashboardRegionsChanged() OVERRIDE;

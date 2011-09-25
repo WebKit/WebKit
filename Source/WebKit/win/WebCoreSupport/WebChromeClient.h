@@ -117,10 +117,8 @@ public:
     virtual void exceededDatabaseQuota(WebCore::Frame*, const WTF::String&);
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t totalSpaceNeeded);
-#endif
 
 #if ENABLE(CONTEXT_MENUS)
     virtual void showContextMenu() { }

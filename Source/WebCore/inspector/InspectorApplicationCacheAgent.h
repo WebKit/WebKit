@@ -25,7 +25,7 @@
 #ifndef InspectorApplicationCacheAgent_h
 #define InspectorApplicationCacheAgent_h
 
-#if ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
+#if ENABLE(INSPECTOR)
 
 #include "ApplicationCacheHost.h"
 #include "InspectorFrontend.h"
@@ -74,5 +74,5 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
+#endif // ENABLE(INSPECTOR)
 #endif // InspectorApplicationCacheAgent_h

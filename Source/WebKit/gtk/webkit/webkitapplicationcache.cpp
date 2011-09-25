@@ -41,11 +41,7 @@ static unsigned long long cacheMaxSize = UINT_MAX;
  **/
 unsigned long long webkit_application_cache_get_maximum_size()
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     return (cacheMaxSize = WebCore::cacheStorage().maximumSize());
-#else
-    return 0;
-#endif
 }
 
 /**
@@ -60,16 +56,12 @@ unsigned long long webkit_application_cache_get_maximum_size()
  **/
 void webkit_application_cache_set_maximum_size(unsigned long long size)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (size != cacheMaxSize) {
         WebCore::cacheStorage().empty();
         WebCore::cacheStorage().vacuumDatabaseFile();
         WebCore::cacheStorage().setMaximumSize(size);
         cacheMaxSize = size;
     }
-#else
-    UNUSED_PARAM(size);
-#endif
 }
 
 /**
@@ -85,11 +77,7 @@ void webkit_application_cache_set_maximum_size(unsigned long long size)
  **/
 const gchar* webkit_application_cache_get_database_directory_path()
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     CString path = WebCore::fileSystemRepresentation(WebCore::cacheStorage().cacheDirectory());
     return path.data();
-#else
-    return "";
-#endif
 }
 

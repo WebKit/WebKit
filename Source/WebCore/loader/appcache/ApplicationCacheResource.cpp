@@ -27,8 +27,6 @@
 #include "ApplicationCacheResource.h"
 #include <stdio.h>
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 namespace WebCore {
 
 ApplicationCacheResource::ApplicationCacheResource(const KURL& url, const ResourceResponse& response, unsigned type, PassRefPtr<SharedBuffer> data, const String& path)
@@ -87,5 +85,3 @@ void ApplicationCacheResource::dumpType(unsigned type)
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)

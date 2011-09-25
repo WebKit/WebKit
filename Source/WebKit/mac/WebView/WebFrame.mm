@@ -1158,11 +1158,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (DOMWindow* domWindow = _private->coreFrame->domWindow()) {
         if (domWindow->hasEventListeners(eventNames().unloadEvent))
             [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameHasUnloadListener];
-            
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         if (domWindow->optionalApplicationCache())
             [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameUsesApplicationCache];
-#endif
     }
     
     if (Document* document = _private->coreFrame->document()) {

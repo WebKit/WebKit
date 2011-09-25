@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ApplicationCacheGroup.h"
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 #include "ApplicationCache.h"
 #include "ApplicationCacheHost.h"
 #include "ApplicationCacheResource.h"
@@ -1158,7 +1156,4 @@ void ApplicationCacheGroup::clearStorageID()
         (*it)->clearStorageID();
 }
 
-
 }
-
-#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)

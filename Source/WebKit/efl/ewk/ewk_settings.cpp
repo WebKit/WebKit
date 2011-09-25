@@ -44,11 +44,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+// FIXME: Why is there a directory in this include?
 #include "appcache/ApplicationCacheStorage.h"
 
 static const char* _ewk_cache_directory_path = 0;
-#endif
 
 static const char* _ewk_icon_database_path = 0;
 #if ENABLE(SQL_DATABASE)
@@ -255,7 +254,6 @@ const char* ewk_settings_default_user_agent_get(void)
 
 Eina_Bool ewk_settings_cache_directory_path_set(const char* path)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!path)
         return EINA_FALSE;
 
@@ -265,18 +263,11 @@ Eina_Bool ewk_settings_cache_directory_path_set(const char* path)
     else
         eina_stringshare_replace(&_ewk_cache_directory_path, path);
     return EINA_TRUE;
-#else
-    EINA_SAFETY_ON_TRUE_RETURN_VAL(1, EINA_FALSE);
-#endif
 }
 
 const char* ewk_settings_cache_directory_path_get()
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     return _ewk_cache_directory_path;
-#else
-    EINA_SAFETY_ON_TRUE_RETURN_VAL(1, 0);
-#endif
 }
 
 double ewk_settings_default_timer_interval_get(void)

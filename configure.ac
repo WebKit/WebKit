@@ -454,14 +454,6 @@ AC_ARG_ENABLE(data_transfer_items,
               [],[enable_data_transfer_items="no"])
 AC_MSG_RESULT([$enable_data_transfer_items])
 
-# check whether to enable HTML5 Offline Web Applications support
-AC_MSG_CHECKING([whether to enable HTML5 offline web applications support])
-AC_ARG_ENABLE(offline_web_applications,
-              AC_HELP_STRING([--enable-offline-web-applications],
-                             [enable HTML5 offline web applications support [default=yes]]),
-              [],[enable_offline_web_applications="yes"])
-AC_MSG_RESULT([$enable_offline_web_applications])
-
 # check whether to enable DOM mutation observer support
 AC_MSG_CHECKING([whether to enable DOM mutation observer support])
 AC_ARG_ENABLE(mutation_observers,
@@ -1002,10 +994,7 @@ fi
 AC_SUBST([SQLITE3_CFLAGS])
 AC_SUBST([SQLITE3_LIBS])
 
-if (test "$sqlite3_found" = "no") && (test "$enable_icon_database" = "yes" || \
-   test "$enable_sql_database" = "yes" || \
-   test "$enable_offline_web_applications" = "yes" || \
-   test "$enable_dom_storage" = "yes"); then
+if (test "$sqlite3_found" = "no"); then
    AC_MSG_ERROR([SQLite3 is required for the Database related features])
 fi
 
@@ -1127,7 +1116,6 @@ AM_CONDITIONAL([ENABLE_PAGE_VISIBILITY_API],[test "$enable_page_visibility_api" 
 AM_CONDITIONAL([ENABLE_PROGRESS_TAG],[test "$enable_progress_tag" = "yes"])
 AM_CONDITIONAL([ENABLE_CHANNEL_MESSAGING],[test "$enable_channel_messaging" = "yes"])
 AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" = "yes"])
-AM_CONDITIONAL([ENABLE_OFFLINE_WEB_APPLICATIONS],[test "$enable_offline_web_applications" = "yes"])
 AM_CONDITIONAL([ENABLE_DIRECTORY_UPLOAD],[test "$enable_directory_upload" = "yes"])
 AM_CONDITIONAL([ENABLE_DATAGRID],[test "$enable_datagrid" = "yes"])
 AM_CONDITIONAL([ENABLE_DATA_TRANSFER_ITEMS],[test "$enable_data_transfer_items" = "yes"])
@@ -1243,7 +1231,6 @@ Features:
  MathML support                                           : $enable_mathml
  Media source                                             : $enable_media_source
  Media statistics                                         : $enable_media_statistics
- HTML5 offline web applications support                   : $enable_offline_web_applications
  HTML5 channel messaging support                          : $enable_channel_messaging
  HTML5 meter element support                              : $enable_meter_tag
  Page Visibility API support                              : $enable_page_visibility_api

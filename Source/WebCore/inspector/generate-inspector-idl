@@ -86,7 +86,6 @@ ref_types = {}
 macro_traits = {
     "Database": "SQL_DATABASE",
     "DOMStorage": "DOM_STORAGE",
-    "ApplicationCache": "OFFLINE_WEB_APPLICATIONS",
     "Debugger": "JAVASCRIPT_DEBUGGER",
     "DOMDebugger": "JAVASCRIPT_DEBUGGER",
     "Profiler": "JAVASCRIPT_DEBUGGER",

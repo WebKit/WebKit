@@ -189,10 +189,7 @@ public:
 #endif
 
     static void networkStateChanged(Page*);
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     static void updateApplicationCacheStatus(Frame*);
-#endif
 
 #if ENABLE(INSPECTOR)
     static void frontendCreated() { s_frontendCounter += 1; }
@@ -322,10 +319,8 @@ private:
     static void didCloseWebSocketImpl(InstrumentingAgents*, unsigned long identifier);
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     static void networkStateChangedImpl(InstrumentingAgents*);
     static void updateApplicationCacheStatusImpl(InstrumentingAgents*, Frame*);
-#endif
 
     static InstrumentingAgents* instrumentingAgentsForPage(Page*);
     static InstrumentingAgents* instrumentingAgentsForFrame(Frame*);
@@ -1016,14 +1011,13 @@ inline void InspectorInstrumentation::didCloseWebSocket(ScriptExecutionContext* 
 
 inline void InspectorInstrumentation::networkStateChanged(Page* page)
 {
-#if ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
+#if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         networkStateChangedImpl(instrumentingAgents);
 #endif
 }
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 inline void InspectorInstrumentation::updateApplicationCacheStatus(Frame* frame)
 {
 #if ENABLE(INSPECTOR)
@@ -1032,7 +1026,6 @@ inline void InspectorInstrumentation::updateApplicationCacheStatus(Frame* frame)
         updateApplicationCacheStatusImpl(instrumentingAgents, frame);
 #endif
 }
-#endif
 
 inline void InspectorInstrumentation::didRegisterAnimationFrameCallback(Document* document, int callbackId)
 {

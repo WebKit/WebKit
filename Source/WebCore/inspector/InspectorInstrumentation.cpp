@@ -822,7 +822,6 @@ void InspectorInstrumentation::didCloseWebSocketImpl(InstrumentingAgents* instru
 }
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 void InspectorInstrumentation::networkStateChangedImpl(InstrumentingAgents* instrumentingAgents)
 {
     if (InspectorApplicationCacheAgent* applicationCacheAgent = instrumentingAgents->inspectorApplicationCacheAgent())
@@ -834,7 +833,6 @@ void InspectorInstrumentation::updateApplicationCacheStatusImpl(InstrumentingAge
     if (InspectorApplicationCacheAgent* applicationCacheAgent = instrumentingAgents->inspectorApplicationCacheAgent())
         applicationCacheAgent->updateApplicationCacheStatus(frame);
 }
-#endif
 
 bool InspectorInstrumentation::collectingHTMLParseErrors(InstrumentingAgents* instrumentingAgents)
 {

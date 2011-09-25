@@ -248,9 +248,7 @@ namespace WebCore {
         // actually be added to the document.
         void commitData(const char* bytes, size_t length);
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         ApplicationCacheHost* applicationCacheHost() const { return m_applicationCacheHost.get(); }
-#endif
 
     protected:
         DocumentLoader(const ResourceRequest&, const SubstituteData&);
@@ -349,10 +347,8 @@ namespace WebCore {
         RefPtr<IconLoadDecisionCallback> m_iconLoadDecisionCallback;
         RefPtr<IconDataCallback> m_iconDataCallback;
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         friend class ApplicationCacheHost;  // for substitute resource delivery
         OwnPtr<ApplicationCacheHost> m_applicationCacheHost;
-#endif
     };
 
     inline void DocumentLoader::recordMemoryCacheLoadForFutureClientNotification(const String& url)

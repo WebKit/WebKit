@@ -148,9 +148,7 @@ namespace WebCore {
     protected:
         ResourceLoader(Frame*, ResourceLoaderOptions);
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         friend class ApplicationCacheHost;  // for access to request()
-#endif
         friend class ResourceLoadScheduler; // for access to start()
         // start() actually sends the load to the network (unless the load is being 
         // deferred) and should only be called by ResourceLoadScheduler or setDefersLoading().

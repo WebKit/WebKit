@@ -656,8 +656,6 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
 
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
 {
     // FIXME: Free some space.
@@ -674,8 +672,6 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin* origin,
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-#endif
-    
 void WebChromeClient::populateVisitedLinks()
 {
     if ([m_webView historyDelegate]) {

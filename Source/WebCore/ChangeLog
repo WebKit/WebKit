@@ -1,5 +1,130 @@
 2011-09-24  Adam Barth  <abarth@webkit.org>
 
+        Always enable ENABLE(OFFLINE_WEB_APPLICATIONS)
+        https://bugs.webkit.org/show_bug.cgi?id=68767
+
+        Reviewed by Eric Seidel.
+
+        As discussed on webkit-dev, almost everyone has this enable turned on
+        and this feature is unlikely to be removed from the web platform given
+        its popularity.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.pro:
+        * bindings/cpp/WebDOMEventTarget.cpp:
+        (toWebKit):
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        (WebCore::toEventTarget):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toDOMApplicationCache):
+        * dom/EventTarget.h:
+        * features.pri:
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::insertedByParser):
+        * html/HTMLHtmlElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::createFileURLForApplicationCacheResource):
+        (WebCore::HTMLMediaElement::loadResource):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        * inspector/InspectorController.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::updateApplicationCacheStatusImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::networkStateChanged):
+        (WebCore::InspectorInstrumentation::updateApplicationCacheStatus):
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::setInspectorApplicationCacheAgent):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::connectFrontend):
+        * inspector/generate-inspector-idl:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::mainReceivedError):
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::detachFromFrame):
+        (WebCore::DocumentLoader::handledOnloadEvents):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::applicationCacheHost):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::reachedApplicationCacheOriginQuota):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest):
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        (WebCore::MainResourceLoader::didReceiveData):
+        (WebCore::MainResourceLoader::didFinishLoading):
+        (WebCore::MainResourceLoader::didFail):
+        (WebCore::MainResourceLoader::load):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didSendData):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::didFinishLoading):
+        (WebCore::ResourceLoader::didFail):
+        (WebCore::ResourceLoader::wasBlocked):
+        (WebCore::ResourceLoader::cannotShowURL):
+        (WebCore::ResourceLoader::shouldUseCredentialStorage):
+        (WebCore::ResourceLoader::willCacheResponse):
+        * loader/ResourceLoader.h:
+        * loader/appcache/ApplicationCache.cpp:
+        * loader/appcache/ApplicationCache.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/appcache/ApplicationCacheHost.cpp:
+        * loader/appcache/ApplicationCacheHost.h:
+        * loader/appcache/ApplicationCacheResource.cpp:
+        * loader/appcache/ApplicationCacheResource.h:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        * loader/appcache/ApplicationCacheStorage.h:
+        * loader/appcache/DOMApplicationCache.cpp:
+        * loader/appcache/DOMApplicationCache.h:
+        * loader/appcache/DOMApplicationCache.idl:
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::parseManifest):
+        * loader/appcache/ManifestParser.h:
+        * loader/chromium/ResourceLoaderChromium.cpp:
+        (WebCore::ResourceLoader::didDownloadData):
+        * page/ChromeClient.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clear):
+        (WebCore::DOMWindow::applicationCache):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::optionalApplicationCache):
+        * page/DOMWindow.idl:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs):
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::parseStartElement):
+
+2011-09-24  Adam Barth  <abarth@webkit.org>
+
         Remove ENABLE(WCSS) and associated code
         https://bugs.webkit.org/show_bug.cgi?id=68759
 

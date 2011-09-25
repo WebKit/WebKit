@@ -614,8 +614,9 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
 }
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+// FIXME: Move this include to the top of the file with the other includes.
 #include "ApplicationCacheStorage.h"
+
 void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
 {
     // FIXME: Free some space.
@@ -626,7 +627,6 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_
 {
     notImplemented();
 }
-#endif
 
 void WebChromeClient::populateVisitedLinks()
 {

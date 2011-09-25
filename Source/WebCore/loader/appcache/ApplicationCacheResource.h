@@ -26,8 +26,6 @@
 #ifndef ApplicationCacheResource_h
 #define ApplicationCacheResource_h
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 #include "SubstituteResource.h"
 
 namespace WebCore {
@@ -73,7 +71,5 @@ private:
 };
     
 } // namespace WebCore
-
-#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #endif // ApplicationCacheResource_h

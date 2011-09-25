@@ -184,9 +184,7 @@ void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken& tok
     RefPtr<HTMLHtmlElement> element = HTMLHtmlElement::create(m_document);
     element->setAttributeMap(token.takeAtributes(), m_fragmentScriptingPermission);
     m_openElements.pushHTMLHtmlElement(attach<Element>(m_attachmentRoot, element.get()));
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     element->insertedByParser();
-#endif
     dispatchDocumentElementAvailableIfNeeded();
 }
 

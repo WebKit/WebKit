@@ -26,8 +26,6 @@
 #ifndef ApplicationCache_h
 #define ApplicationCache_h
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -116,7 +114,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #endif // ApplicationCache_h

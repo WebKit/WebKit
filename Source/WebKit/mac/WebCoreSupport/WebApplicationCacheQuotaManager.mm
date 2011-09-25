@@ -49,33 +49,23 @@ using namespace WebCore;
 
 - (unsigned long long)usage
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     long long usage;
     if (cacheStorage().calculateUsageForOrigin([_origin _core], usage))
         return usage;
     return 0;
-#else
-    return 0;
-#endif
 }
 
 - (unsigned long long)quota
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     long long quota;
     if (cacheStorage().calculateQuotaForOrigin([_origin _core], quota))
         return quota;
     return 0;
-#else
-    return 0;
-#endif
 }
 
 - (void)setQuota:(unsigned long long)quota
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     cacheStorage().storeUpdatedQuotaForOrigin([_origin _core], quota);
-#endif
 }
 
 @end

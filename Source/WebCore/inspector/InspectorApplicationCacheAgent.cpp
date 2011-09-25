@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InspectorApplicationCacheAgent.h"
 
-#if ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
+#if ENABLE(INSPECTOR)
 
 #include "ApplicationCacheHost.h"
 #include "DocumentLoader.h"
@@ -138,4 +138,4 @@ PassRefPtr<InspectorObject> InspectorApplicationCacheAgent::buildObjectForApplic
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
+#endif // ENABLE(INSPECTOR)

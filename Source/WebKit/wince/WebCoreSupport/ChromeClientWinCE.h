@@ -117,7 +117,6 @@ public:
     virtual void exceededDatabaseQuota(WebCore::Frame*, const WTF::String& databaseName);
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     // Callback invoked when the application cache fails to save a cache object
     // because storing it would grow the database file past its defined maximum
     // size or past the amount of free space on the device.
@@ -131,7 +130,6 @@ public:
     // to take action, such as prompting the user to ask to increase the quota
     // for this origin.
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t totalSpaceNeeded);
-#endif
 
 #if ENABLE(CONTEXT_MENUS)
     virtual void showContextMenu() { }

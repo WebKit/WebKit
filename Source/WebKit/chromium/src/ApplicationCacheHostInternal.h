@@ -31,8 +31,6 @@
 #include "config.h"
 #include "ApplicationCacheHost.h"
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 #include "DocumentLoader.h"
 #include "WebApplicationCacheHostClient.h"
 #include "WebFrameClient.h"
@@ -82,5 +80,3 @@ private:
 };
 
 }
-
-#endif  // ENABLE(OFFLINE_WEB_APPLICATIONS)

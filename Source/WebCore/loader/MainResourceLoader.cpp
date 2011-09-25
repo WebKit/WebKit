@@ -221,13 +221,11 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     // Don't set this on the first request. It is set when the main load was started.
     m_documentLoader->setRequest(newRequest);
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!redirectResponse.isNull()) {
         // We checked application cache for initial URL, now we need to check it for redirected one.
         ASSERT(!m_substituteData.isValid());
         documentLoader()->applicationCacheHost()->maybeLoadMainResourceForRedirect(newRequest, m_substituteData);
     }
-#endif
 
     // FIXME: Ideally we'd stop the I/O until we hear back from the navigation policy delegate
     // listener. But there's no way to do that in practice. So instead we cancel later if the
@@ -360,10 +358,8 @@ void MainResourceLoader::substituteMIMETypeFromPluginDatabase(const ResourceResp
 
 void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForMainResponse(request(), r))
         return;
-#endif
 
     HTTPHeaderMap::const_iterator it = r.httpHeaderFields().find(AtomicString("x-frame-options"));
     if (it != r.httpHeaderFields().end()) {
@@ -450,10 +446,8 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
 #if !USE(CF)
     ASSERT(!defersLoading());
 #endif
- 
- #if ENABLE(OFFLINE_WEB_APPLICATIONS)
+
     documentLoader()->applicationCacheHost()->mainResourceDataReceived(data, length, encodedDataLength, allAtOnce);
-#endif
 
     // The additional processing can do anything including possibly removing the last
     // reference to this object; one example of this is 3266216.
@@ -475,27 +469,20 @@ void MainResourceLoader::didFinishLoading(double finishTime)
     // The additional processing can do anything including possibly removing the last
     // reference to this object.
     RefPtr<MainResourceLoader> protect(this);
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     RefPtr<DocumentLoader> dl = documentLoader();
-#endif
 
     ASSERT(!documentLoader()->timing()->responseEnd);
     documentLoader()->timing()->responseEnd = finishTime ? finishTime : (m_timeOfLastDataReceived ? m_timeOfLastDataReceived : currentTime());
     frameLoader()->finishedLoading();
     ResourceLoader::didFinishLoading(finishTime);
-    
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+
     dl->applicationCacheHost()->finishedLoadingMainResource();
-#endif
 }
 
 void MainResourceLoader::didFail(const ResourceError& error)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForMainError(request(), error))
         return;
-#endif
 
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
@@ -599,9 +586,7 @@ bool MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& su
     documentLoader()->timing()->fetchStart = currentTime();
     ResourceRequest request(r);
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     documentLoader()->applicationCacheHost()->maybeLoadMainResource(request, m_substituteData);
-#endif
 
     bool defer = defersLoading();
     if (defer) {

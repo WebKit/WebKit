@@ -26,8 +26,6 @@
 #ifndef ApplicationCacheGroup_h
 #define ApplicationCacheGroup_h
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 #include "DOMApplicationCache.h"
 #include "KURL.h"
 #include "PlatformString.h"
@@ -206,7 +204,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #endif // ApplicationCacheGroup_h

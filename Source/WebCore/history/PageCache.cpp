@@ -155,12 +155,10 @@ static bool logCanCacheFrameDecision(Frame* frame, int indentLevel)
             PCLOG("   -The document cannot suspect its active DOM Objects");
             cannotCache = true;
         }
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         if (!frame->loader()->documentLoader()->applicationCacheHost()->canCacheInPageCache()) {
             PCLOG("   -The DocumentLoader uses an application cache");
             cannotCache = true;
         }
-#endif
         if (!frame->loader()->client()->canCachePage()) {
             PCLOG("   -The client says this frame cannot be cached");
             cannotCache = true; 
@@ -277,11 +275,9 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
         && !frame->loader()->documentLoader()->isLoadingInAPISense()
         && !frame->loader()->documentLoader()->isStopping()
         && frame->document()->canSuspendActiveDOMObjects()
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         // FIXME: We should investigating caching frames that have an associated
         // application cache. <rdar://problem/5917899> tracks that work.
         && frame->loader()->documentLoader()->applicationCacheHost()->canCacheInPageCache()
-#endif
         && frame->loader()->client()->canCachePage();
 }
     

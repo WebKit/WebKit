@@ -141,9 +141,7 @@ private:
     OwnPtr<InspectorDOMStorageAgent> m_domStorageAgent;
 #endif
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     OwnPtr<InspectorApplicationCacheAgent> m_applicationCacheAgent;
-#endif
     RefPtr<InspectorResourceAgent> m_resourceAgent;
     OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
     OwnPtr<InspectorConsoleAgent> m_consoleAgent;

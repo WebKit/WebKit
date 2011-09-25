@@ -726,7 +726,7 @@ void HTMLMediaElement::loadNextSourceChild()
     loadResource(mediaURL, contentType);
 }
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS) && !PLATFORM(CHROMIUM)
+#if !PLATFORM(CHROMIUM)
 static KURL createFileURLForApplicationCacheResource(const String& path)
 {
     // KURL should have a function to create a url from a path, but it does not. This function
@@ -777,7 +777,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     // The resource fetch algorithm 
     m_networkState = NETWORK_LOADING;
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS) && !PLATFORM(CHROMIUM)
+#if !PLATFORM(CHROMIUM)
     // If the url should be loaded from the application cache, pass the url of the cached file
     // to the media engine.
     ApplicationCacheHost* cacheHost = frame->loader()->documentLoader()->applicationCacheHost();
@@ -796,7 +796,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     // cache is an internal detail not exposed through the media element API.
     m_currentSrc = url;
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS) && !PLATFORM(CHROMIUM)
+#if !PLATFORM(CHROMIUM)
     if (resource) {
         url = createFileURLForApplicationCacheResource(resource->path());
         LOG(Media, "HTMLMediaElement::loadResource - will load from app cache -> %s", urlForLogging(url).utf8().data());

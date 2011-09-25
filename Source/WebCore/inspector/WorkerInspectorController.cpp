@@ -126,9 +126,7 @@ void WorkerInspectorController::connectFrontend()
     m_frontend = adoptPtr(new InspectorFrontend(m_frontendChannel.get()));
     m_backendDispatcher = adoptRef(new InspectorBackendDispatcher(
         m_frontendChannel.get(),
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         0, // InspectorApplicationCacheAgent
-#endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         0, // InspectorDOMDebuggerAgent
 #endif

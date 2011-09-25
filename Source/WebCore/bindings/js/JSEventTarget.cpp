@@ -54,10 +54,8 @@
 #include "EventSource.h"
 #include "JSEventSource.h"
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 #include "DOMApplicationCache.h"
 #include "JSDOMApplicationCache.h"
-#endif
 
 #if ENABLE(SVG)
 #include "SVGElementInstance.h"
@@ -133,10 +131,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
     if (XMLHttpRequestUpload* upload = target->toXMLHttpRequestUpload())
         return toJS(exec, globalObject, upload);
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (DOMApplicationCache* cache = target->toDOMApplicationCache())
         return toJS(exec, globalObject, cache);
-#endif
 
     if (MessagePort* messagePort = target->toMessagePort())
         return toJS(exec, globalObject, messagePort);
@@ -217,10 +213,7 @@ EventTarget* toEventTarget(JSC::JSValue value)
         return static_cast<JSDOMWindowShell*>(asObject(value))->impl();
 
     CONVERT_TO_EVENT_TARGET(EventSource)
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     CONVERT_TO_EVENT_TARGET(DOMApplicationCache)
-#endif
 
 #if ENABLE(SVG)
     CONVERT_TO_EVENT_TARGET(SVGElementInstance)

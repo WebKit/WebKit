@@ -182,10 +182,7 @@ Eina_Bool _ewk_init_body(void)
     WTF::String wkdir = home + "/.webkit";
     if (WebCore::makeAllDirectories(wkdir)) {
         ewk_settings_web_database_path_set(wkdir.utf8().data());
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         ewk_settings_cache_directory_path_set(wkdir.utf8().data());
-#endif
     }
 
     // TODO: this should move to WebCore, already reported to webkit-gtk folks:

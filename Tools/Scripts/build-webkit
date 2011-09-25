@@ -102,7 +102,6 @@ my (
     $mutationObserversSupport,
     $netscapePluginSupport,
     $notificationsSupport,
-    $offlineWebApplicationSupport,
     $orientationEventsSupport,
     $pageVisibilityApiSupport,
     $progressTagSupport,
@@ -241,9 +240,6 @@ my @features = (
 
     { option => "notifications", desc => "Toggle Desktop Notifications Support",
       define => "ENABLE_NOTIFICATIONS", default => 0, value => \$notificationsSupport },
-
-    { option => "offline-web-applications", desc => "Toggle Offline Web Application Support",
-      define => "ENABLE_OFFLINE_WEB_APPLICATIONS", default => 1, value => \$offlineWebApplicationSupport },
 
     { option => "orientation-events", desc => "Toggle Orientation Events support",
       define => "ENABLE_ORIENTATION_EVENTS", default => 0, value => \$orientationEventsSupport },

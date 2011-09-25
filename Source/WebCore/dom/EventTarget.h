@@ -106,9 +106,7 @@ namespace WebCore {
         virtual DOMWindow* toDOMWindow();
         virtual XMLHttpRequest* toXMLHttpRequest();
         virtual XMLHttpRequestUpload* toXMLHttpRequestUpload();
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         virtual DOMApplicationCache* toDOMApplicationCache();
-#endif
 #if ENABLE(SVG)
         virtual SVGElementInstance* toSVGElementInstance();
 #endif

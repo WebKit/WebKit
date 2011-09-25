@@ -73,9 +73,7 @@ public:
 #if ENABLE(SQL_DATABASE)
         , m_inspectorDatabaseAgent(0)
 #endif
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         , m_inspectorApplicationCacheAgent(0)
-#endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         , m_inspectorDebuggerAgent(0)
         , m_inspectorDOMDebuggerAgent(0)
@@ -119,10 +117,8 @@ public:
     InspectorDatabaseAgent* inspectorDatabaseAgent() const { return m_inspectorDatabaseAgent; }
     void setInspectorDatabaseAgent(InspectorDatabaseAgent* agent) { m_inspectorDatabaseAgent = agent; }
 #endif
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     InspectorApplicationCacheAgent* inspectorApplicationCacheAgent() const { return m_inspectorApplicationCacheAgent; }
     void setInspectorApplicationCacheAgent(InspectorApplicationCacheAgent* agent) { m_inspectorApplicationCacheAgent = agent; }
-#endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     InspectorDebuggerAgent* inspectorDebuggerAgent() const { return m_inspectorDebuggerAgent; }
     void setInspectorDebuggerAgent(InspectorDebuggerAgent* agent) { m_inspectorDebuggerAgent = agent; }
@@ -153,9 +149,7 @@ private:
 #if ENABLE(SQL_DATABASE)
     InspectorDatabaseAgent* m_inspectorDatabaseAgent;
 #endif
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     InspectorApplicationCacheAgent* m_inspectorApplicationCacheAgent;
-#endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     InspectorDebuggerAgent* m_inspectorDebuggerAgent;
     InspectorDOMDebuggerAgent* m_inspectorDOMDebuggerAgent;

@@ -98,9 +98,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_stopRecordingResponses(false)
     , m_substituteResourceDeliveryTimer(this, &DocumentLoader::substituteResourceDeliveryTimerFired)
     , m_didCreateGlobalHistoryEntry(false)
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     , m_applicationCacheHost(adoptPtr(new ApplicationCacheHost(this)))
-#endif
 {
 }
 
@@ -200,10 +198,8 @@ void DocumentLoader::mainReceivedError(const ResourceError& error, bool isComple
 {
     ASSERT(!error.isNull());
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheHost->failedLoadingMainResource();
-#endif
-    
+
     if (!frameLoader())
         return;
     setMainDocumentError(error);
@@ -235,9 +231,7 @@ void DocumentLoader::stopLoading()
     cancelAll(m_multipartSubresourceLoaders);
 
     // Appcache uses ResourceHandle directly, DocumentLoader doesn't count these loads.
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheHost->stopLoadingInFrame(m_frame);
-#endif
 
     if (!loading)
         return;
@@ -402,9 +396,7 @@ void DocumentLoader::detachFromFrame()
 {
     ASSERT(m_frame);
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheHost->setDOMApplicationCache(0);
-#endif
     InspectorInstrumentation::loaderDetachedFromFrame(m_frame, this);
     m_frame = 0;
 }
@@ -898,9 +890,7 @@ void DocumentLoader::getIconDataForIconURL(const String& urlString)
 void DocumentLoader::handledOnloadEvents()
 {
     m_wasOnloadHandled = true;
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     applicationCacheHost()->stopDeferringEvents();
-#endif
 }
 
 } // namespace WebCore

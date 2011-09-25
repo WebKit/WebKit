@@ -670,10 +670,8 @@ void DumpRenderTreeSupportQt::setEditingBehavior(QWebPage* page, const QString& 
 
 void DumpRenderTreeSupportQt::clearAllApplicationCaches()
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     WebCore::cacheStorage().empty();
     WebCore::cacheStorage().vacuumDatabaseFile();
-#endif
 }
 
 void DumpRenderTreeSupportQt::dumpFrameLoader(bool b)

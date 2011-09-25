@@ -44,10 +44,8 @@ void ResourceLoader::didDownloadData(ResourceHandle*, int length)
 
 void ResourceLoader::didDownloadData(int length)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!m_cancelled && !fastMallocSize(documentLoader()->applicationCacheHost()))
         CRASH();
-#endif
     if (!m_cancelled && !fastMallocSize(documentLoader()->frame()))
         CRASH();
 }

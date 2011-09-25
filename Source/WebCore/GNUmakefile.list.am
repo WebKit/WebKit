@@ -111,6 +111,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDocument.h \
 	DerivedSources/WebCore/JSDocumentType.cpp \
 	DerivedSources/WebCore/JSDocumentType.h \
+	DerivedSources/WebCore/JSDOMApplicationCache.cpp
 	DerivedSources/WebCore/JSDOMApplicationCache.h \
 	DerivedSources/WebCore/JSDOMCoreException.cpp \
 	DerivedSources/WebCore/JSDOMCoreException.h \
@@ -4105,14 +4106,6 @@ webcore_sources += \
 webcoregtk_sources += \
 	Source/WebCore/platform/graphics/pango/FontPango.cpp
 endif # END USE_PANGO
-
-# ----
-# Offline Web Applications
-# ----
-if ENABLE_OFFLINE_WEB_APPLICATIONS
-webcore_built_sources += \
-	DerivedSources/WebCore/JSDOMApplicationCache.cpp
-endif # END ENABLE_OFFLINE_WEB_APPLICATIONS
 
 # ----
 # Database Support

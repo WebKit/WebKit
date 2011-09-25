@@ -108,9 +108,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_domStorageAgent(InspectorDOMStorageAgent::create(m_instrumentingAgents.get(), m_state.get()))
 #endif
     , m_timelineAgent(InspectorTimelineAgent::create(m_instrumentingAgents.get(), m_state.get()))
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     , m_applicationCacheAgent(adoptPtr(new InspectorApplicationCacheAgent(m_instrumentingAgents.get(), page)))
-#endif
     , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), m_pageAgent.get(), inspectorClient, m_state.get()))
     , m_runtimeAgent(adoptPtr(new PageRuntimeAgent(m_injectedScriptManager.get(), page, m_pageAgent.get())))
     , m_consoleAgent(adoptPtr(new InspectorConsoleAgent(m_instrumentingAgents.get(), m_inspectorAgent.get(), m_state.get(), m_injectedScriptManager.get(), m_domAgent.get())))
@@ -202,9 +200,7 @@ void InspectorController::connectFrontend()
     // We can reconnect to existing front-end -> unmute state.
     m_state->unmute();
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheAgent->setFrontend(m_inspectorFrontend.get());
-#endif
     m_pageAgent->setFrontend(m_inspectorFrontend.get());
     m_domAgent->setFrontend(m_inspectorFrontend.get());
     m_consoleAgent->setFrontend(m_inspectorFrontend.get());
@@ -232,9 +228,7 @@ void InspectorController::connectFrontend()
     ASSERT(m_inspectorClient);
     m_inspectorBackendDispatcher = adoptRef(new InspectorBackendDispatcher(
         m_inspectorClient,
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
         m_applicationCacheAgent.get(),
-#endif
         m_cssAgent.get(),
         m_consoleAgent.get(),
         m_domAgent.get(),
@@ -285,9 +279,7 @@ void InspectorController::disconnectFrontend()
     m_domDebuggerAgent->clearFrontend();
     m_profilerAgent->clearFrontend();
 #endif
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheAgent->clearFrontend();
-#endif
     m_consoleAgent->clearFrontend();
     m_domAgent->clearFrontend();
     m_cssAgent->clearFrontend();

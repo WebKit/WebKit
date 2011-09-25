@@ -143,11 +143,9 @@ void ResourceLoader::start()
     if (m_documentLoader->scheduleArchiveLoad(this, m_request, m_request.url()))
         return;
 #endif
-    
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+
     if (m_documentLoader->applicationCacheHost()->maybeLoadResource(this, m_request, m_request.url()))
         return;
-#endif
 
     if (m_defersLoading) {
         m_deferredRequest = m_request;
@@ -211,10 +209,8 @@ void ResourceLoader::clearResourceData()
 
 void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!fastMallocSize(documentLoader()->applicationCacheHost()))
         CRASH();
-#endif
     if (!fastMallocSize(documentLoader()->frame()))
         CRASH();
     // Protect this in this delegate method since the additional processing can do
@@ -239,20 +235,16 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
 
 void ResourceLoader::didSendData(unsigned long long, unsigned long long)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!fastMallocSize(documentLoader()->applicationCacheHost()))
         CRASH();
-#endif
     if (!fastMallocSize(documentLoader()->frame()))
         CRASH();
 }
 
 void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!fastMallocSize(documentLoader()->applicationCacheHost()))
         CRASH();
-#endif
     if (!fastMallocSize(documentLoader()->frame()))
         CRASH();
     ASSERT(!m_reachedTerminalState);
@@ -272,10 +264,8 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
 
 void ResourceLoader::didReceiveData(const char* data, int length, long long encodedDataLength, bool allAtOnce)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!m_cancelled && !fastMallocSize(documentLoader()->applicationCacheHost()))
         CRASH();
-#endif
     if (!m_cancelled && !fastMallocSize(documentLoader()->frame()))
         CRASH();
     // The following assertions are not quite valid here, since a subclass
@@ -422,10 +412,8 @@ ResourceError ResourceLoader::cannotShowURLError()
 
 void ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForRedirect(this, request, redirectResponse))
         return;
-#endif
     willSendRequest(request, redirectResponse);
 }
 
@@ -436,10 +424,8 @@ void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, 
 
 void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForResponse(this, response))
         return;
-#endif
     didReceiveResponse(response);
 }
 
@@ -452,10 +438,8 @@ void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int lengt
 
 void ResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!fastMallocSize(documentLoader()->applicationCacheHost()))
         CRASH();
-#endif
     if (!fastMallocSize(documentLoader()->frame()))
         CRASH();
     didFinishLoading(finishTime);
@@ -463,25 +447,19 @@ void ResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
 
 void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!fastMallocSize(documentLoader()->applicationCacheHost()))
         CRASH();
-#endif
     if (!fastMallocSize(documentLoader()->frame()))
         CRASH();
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForError(this, error))
         return;
-#endif
     didFail(error);
 }
 
 void ResourceLoader::wasBlocked(ResourceHandle*)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!fastMallocSize(documentLoader()->applicationCacheHost()))
         CRASH();
-#endif
     if (!fastMallocSize(documentLoader()->frame()))
         CRASH();
     didFail(blockedError());
@@ -489,10 +467,8 @@ void ResourceLoader::wasBlocked(ResourceHandle*)
 
 void ResourceLoader::cannotShowURL(ResourceHandle*)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!fastMallocSize(documentLoader()->applicationCacheHost()))
         CRASH();
-#endif
     if (!fastMallocSize(documentLoader()->frame()))
         CRASH();
     didFail(cannotShowURLError());
@@ -500,10 +476,8 @@ void ResourceLoader::cannotShowURL(ResourceHandle*)
 
 bool ResourceLoader::shouldUseCredentialStorage()
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!fastMallocSize(documentLoader()->applicationCacheHost()))
         CRASH();
-#endif
     if (!fastMallocSize(documentLoader()->frame()))
         CRASH();
 
@@ -560,10 +534,8 @@ void ResourceLoader::receivedCancellation(const AuthenticationChallenge&)
 
 void ResourceLoader::willCacheResponse(ResourceHandle*, CacheStoragePolicy& policy)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!fastMallocSize(documentLoader()->applicationCacheHost()))
         CRASH();
-#endif
     if (!fastMallocSize(documentLoader()->frame()))
         CRASH();
     // <rdar://problem/7249553> - There are reports of crashes with this method being called

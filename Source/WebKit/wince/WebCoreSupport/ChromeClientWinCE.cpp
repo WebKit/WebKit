@@ -305,7 +305,6 @@ void ChromeClientWinCE::exceededDatabaseQuota(Frame*, const String&)
 }
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 void ChromeClientWinCE::reachedMaxAppCacheSize(int64_t)
 {
     notImplemented();
@@ -315,7 +314,6 @@ void ChromeClientWinCE::reachedApplicationCacheOriginQuota(SecurityOrigin*, int6
 {
     notImplemented();
 }
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
 void ChromeClientWinCE::needTouchEvents(bool)

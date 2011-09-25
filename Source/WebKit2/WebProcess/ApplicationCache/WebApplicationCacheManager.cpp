@@ -60,9 +60,7 @@ void WebApplicationCacheManager::getApplicationCacheOrigins(uint64_t callbackID)
 
     HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash> origins;
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     cacheStorage().getOriginsWithCache(origins);
-#endif
 
     Vector<SecurityOriginData> identifiers;
     identifiers.reserveCapacity(origins.size());
@@ -87,22 +85,18 @@ void WebApplicationCacheManager::deleteEntriesForOrigin(const SecurityOriginData
 {
     WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
     if (!origin)
         return;
     
     ApplicationCache::deleteCacheForOrigin(origin.get());
-#endif
 }
 
 void WebApplicationCacheManager::deleteAllEntries()
 {
     WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     cacheStorage().deleteAllEntries();
-#endif
 }
 
 } // namespace WebKit

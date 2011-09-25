@@ -315,6 +315,8 @@ SET(WebCore_IDL_FILES
     inspector/ScriptProfile.idl
     inspector/ScriptProfileNode.idl
 
+    loader/appcache/DOMApplicationCache.idl
+
     page/BarInfo.idl
     page/Console.idl
     page/Coordinates.idl
@@ -2163,12 +2165,6 @@ IF (ENABLE_WEBGL)
         platform/graphics/GraphicsContext3D.cpp
         
         platform/graphics/gpu/DrawingBuffer.cpp
-    )
-ENDIF ()
-
-IF (ENABLE_OFFLINE_WEB_APPLICATIONS)
-    LIST(APPEND WebCore_IDL_FILES
-        loader/appcache/DOMApplicationCache.idl
     )
 ENDIF ()
 

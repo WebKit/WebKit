@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ApplicationCacheHost.h"
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 #include "ApplicationCache.h"
 #include "ApplicationCacheGroup.h"
 #include "ApplicationCacheResource.h"
@@ -464,5 +462,3 @@ bool ApplicationCacheHost::isApplicationCacheEnabled()
 }
 
 }  // namespace WebCore
-
-#endif  // ENABLE(OFFLINE_WEB_APPLICATIONS)

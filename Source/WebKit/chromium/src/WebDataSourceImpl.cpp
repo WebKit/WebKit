@@ -121,11 +121,7 @@ void WebDataSourceImpl::setExtraData(ExtraData* extraData)
 
 WebApplicationCacheHost* WebDataSourceImpl::applicationCacheHost()
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     return ApplicationCacheHostInternal::toWebApplicationCacheHost(DocumentLoader::applicationCacheHost());
-#else
-    return 0;
-#endif
 }
 
 void WebDataSourceImpl::setDeferMainResourceDataLoad(bool defer)

@@ -502,11 +502,9 @@ void DOMWindow::clear()
     m_localStorage = 0;
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (m_applicationCache)
         m_applicationCache->disconnectFrame();
     m_applicationCache = 0;
-#endif
 
 #if ENABLE(NOTIFICATIONS)
     if (m_notifications)
@@ -599,14 +597,12 @@ Console* DOMWindow::console() const
     return m_console.get();
 }
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 DOMApplicationCache* DOMWindow::applicationCache() const
 {
     if (!m_applicationCache)
         m_applicationCache = DOMApplicationCache::create(m_frame);
     return m_applicationCache.get();
 }
-#endif
 
 Navigator* DOMWindow::navigator() const
 {

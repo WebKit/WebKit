@@ -645,7 +645,6 @@ void ChromeClientImpl::exceededDatabaseQuota(Frame* frame, const String& databas
     // Chromium users cannot currently change the default quota
 }
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 void ChromeClientImpl::reachedMaxAppCacheSize(int64_t spaceNeeded)
 {
     ASSERT_NOT_REACHED();
@@ -655,7 +654,6 @@ void ChromeClientImpl::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64
 {
     ASSERT_NOT_REACHED();
 }
-#endif
 
 void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileChooser)
 {

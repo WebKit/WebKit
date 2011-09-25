@@ -26,8 +26,6 @@
 #ifndef DOMApplicationCache_h
 #define DOMApplicationCache_h
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-
 #include "ApplicationCacheHost.h"
 #include "EventNames.h"
 #include "EventTarget.h"
@@ -91,7 +89,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #endif // DOMApplicationCache_h
