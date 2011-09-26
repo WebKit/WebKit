@@ -65,7 +65,6 @@ namespace JSC {
         // JSValue methods
         virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue&);
-        virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
         virtual UString toString(ExecState*) const;
         virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;

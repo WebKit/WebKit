@@ -49,12 +49,6 @@ bool JSNotAnObject::getPrimitiveNumber(ExecState* exec, double&, JSValue&)
     return false;
 }
 
-bool JSNotAnObject::toBoolean(ExecState* exec) const
-{
-    ASSERT_UNUSED(exec, exec->hadException());
-    return false;
-}
-
 double JSNotAnObject::toNumber(ExecState* exec) const
 {
     ASSERT_UNUSED(exec, exec->hadException());
