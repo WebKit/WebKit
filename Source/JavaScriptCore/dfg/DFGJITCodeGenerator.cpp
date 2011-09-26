@@ -1883,29 +1883,30 @@ void JITCodeGenerator::emitCall(Node& node)
     // receiver (method call). subsequent children are the arguments.
     int numArgs = node.numChildren() - 1;
     
+    // For constructors, the this argument is not passed but we have to make space
+    // for it.
+    int numPassedArgs = numArgs + (isCall ? 0 : 1);
+    
     // amount of stuff (in units of sizeof(Register)) that we need to place at the
     // top of the JS stack.
     int callDataSize = 0;
 
     // first there are the arguments
-    callDataSize += numArgs;
+    callDataSize += numPassedArgs;
     
     // and then there is the call frame header
     callDataSize += RegisterFile::CallFrameHeaderSize;
     
-    m_jit.storePtr(MacroAssembler::TrustedImmPtr(JSValue::encode(jsNumber(numArgs))), addressOfCallData(RegisterFile::ArgumentCount));
+    m_jit.storePtr(MacroAssembler::TrustedImmPtr(JSValue::encode(jsNumber(numPassedArgs))), addressOfCallData(RegisterFile::ArgumentCount));
     m_jit.storePtr(GPRInfo::callFrameRegister, addressOfCallData(RegisterFile::CallerFrame));
     
-    if (node.op == Construct)
-        use(m_jit.graph().m_varArgChildren[node.firstChild() + 1]);
-    
-    for (int argIdx = (node.op == Call ? 0 : 1); argIdx < numArgs; argIdx++) {
+    for (int argIdx = 0; argIdx < numArgs; argIdx++) {
         NodeIndex argNodeIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 1 + argIdx];
         JSValueOperand arg(this, argNodeIndex);
         GPRReg argGPR = arg.gpr();
         use(argNodeIndex);
         
-        m_jit.storePtr(argGPR, addressOfCallData(-callDataSize + argIdx));
+        m_jit.storePtr(argGPR, addressOfCallData(-callDataSize + argIdx + (isCall ? 0 : 1)));
     }
     
     m_jit.storePtr(calleeGPR, addressOfCallData(RegisterFile::Callee));
@@ -1933,7 +1934,7 @@ void JITCodeGenerator::emitCall(Node& node)
     
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     JITCompiler::Call slowCall = m_jit.appendCallWithFastExceptionCheck(slowCallFunction, m_jit.graph()[m_compileIndex].codeOrigin);
-    m_jit.move(Imm32(numArgs), GPRInfo::regT1);
+    m_jit.move(Imm32(numPassedArgs), GPRInfo::regT1);
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
     m_jit.notifyCall(m_jit.call(GPRInfo::returnValueGPR), m_jit.graph()[m_compileIndex].codeOrigin);
     

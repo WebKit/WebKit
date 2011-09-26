@@ -442,7 +442,7 @@ private:
         int argCount = currentInstruction[2].u.operand;
         int registerOffset = currentInstruction[3].u.operand;
         int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
-        for (int argIdx = firstArg; argIdx < firstArg + argCount; argIdx++)
+        for (int argIdx = firstArg + (op == Construct ? 1 : 0); argIdx < firstArg + argCount; argIdx++)
             addVarArgChild(get(argIdx));
         NodeIndex call = addToGraph(Node::VarArg, op, OpInfo(0), OpInfo(prediction));
         if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
