@@ -427,7 +427,6 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
     return webkit_web_view_forward_context_menu_event(WEBKIT_WEB_VIEW(widget), event);
 }
 
-#ifndef GTK_API_VERSION_2
 static void setHorizontalAdjustment(WebKitWebView* webView, GtkAdjustment* adjustment)
 {
     // This may be called after the page has been destroyed, in which case we do nothing.
@@ -444,6 +443,7 @@ static void setVerticalAdjustment(WebKitWebView* webView, GtkAdjustment* adjustm
         static_cast<WebKit::ChromeClient*>(page->chrome()->client())->adjustmentWatcher()->setVerticalAdjustment(adjustment);
 }
 
+#ifndef GTK_API_VERSION_2
 static GtkAdjustment* getHorizontalAdjustment(WebKitWebView* webView)
 {
     Page* page = core(webView);
@@ -1039,14 +1039,8 @@ static void webkit_web_view_realize(GtkWidget* widget)
 #ifdef GTK_API_VERSION_2
 static void webkit_web_view_set_scroll_adjustments(WebKitWebView* webView, GtkAdjustment* horizontalAdjustment, GtkAdjustment* verticalAdjustment)
 {
-    // This may be called after the page has been destroyed, in which case we do nothing.
-    Page* page = core(webView);
-    if (!page)
-        return;
-
-    WebKit::ChromeClient* client = static_cast<WebKit::ChromeClient*>(page->chrome()->client());
-    client->adjustmentWatcher()->setHorizontalAdjustment(horizontalAdjustment);
-    client->adjustmentWatcher()->setVerticalAdjustment(verticalAdjustment);
+    setHorizontalAdjustment(webView, horizontalAdjustment);
+    setVerticalAdjustment(webView, verticalAdjustment);
 }
 #endif
 
@@ -1306,6 +1300,11 @@ static void webkit_web_view_dispose(GObject* object)
     WebKitWebViewPrivate* priv = webView->priv;
 
     priv->disposing = TRUE;
+
+    // Make sure GtkAdjustmentWatcher won't be reacting to adjustment changes after the
+    // WebView is destroyed.
+    setHorizontalAdjustment(webView, 0);
+    setVerticalAdjustment(webView, 0);
 
     // These smart pointers are cleared manually, because some cleanup operations are
     // very sensitive to their value. We may crash if these are done in the wrong order.
