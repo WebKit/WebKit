@@ -161,7 +161,7 @@ void ScriptedAnimationController::scheduleAnimation()
 void ScriptedAnimationController::animationTimerFired(Timer<ScriptedAnimationController>*)
 {
     m_lastAnimationFrameTime = currentTime();
-    serviceScriptedAnimations(m_lastAnimationFrameTime);
+    serviceScriptedAnimations(convertSecondsToDOMTimeStamp(m_lastAnimationFrameTime));
 }
 #endif
 
