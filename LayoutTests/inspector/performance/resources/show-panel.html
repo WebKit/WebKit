@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="../../../http/tests/inspector/inspector-test.js"></script>
+<script src="performance-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("audits");
+
+    InspectorTest.runPerformanceTest(perfTest, 10000);
+    function perfTest(timer)
+    {
+        WebInspector.showPanel("audits");
+        for (var panelName in WebInspector.panels) {
+            var timerCookie = timer.start("show-panel-" + panelName);
+            WebInspector.showPanel(panelName);
+            layoutTestController.display();
+            timer.finish(timerCookie);
+        }
+        timer.done();
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+</body>
+</html>
