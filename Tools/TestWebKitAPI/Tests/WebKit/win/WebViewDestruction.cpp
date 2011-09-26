@@ -31,6 +31,8 @@
 #include <WebKit/WebKitCOMAPI.h>
 #include <wtf/PassOwnPtr.h>
 
+#define TEST_ASSERT(x) ASSERT_TRUE(x)
+
 namespace WebKitAPITest {
 
 template <typename T>

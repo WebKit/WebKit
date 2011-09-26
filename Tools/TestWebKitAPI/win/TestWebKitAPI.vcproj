@@ -389,6 +389,14 @@
 			Name="win"
 			>
 			<File
+				RelativePath=".\HostWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HostWindow.h"
+				>
+			</File>
+			<File
 				RelativePath=".\InjectedBundleControllerWin.cpp"
 				>
 			</File>
@@ -628,7 +636,23 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="WebKit"
+				>
+				<Filter
+					Name="win"
+					>
+					<File
+						RelativePath="..\Tests\WebKit\win\WebViewDestruction.cpp"
+						>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
+		<File
+			RelativePath="..\config.h"
+			>
+		</File>
 		<File
 			RelativePath="..\JavaScriptTest.cpp"
 			>
@@ -659,10 +683,6 @@
 		</File>
 		<File
 			RelativePath="..\TestsController.h"
-			>
-		</File>
-		<File
-			RelativePath="..\config.h"
 			>
 		</File>
 	</Files>

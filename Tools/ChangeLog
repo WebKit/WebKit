@@ -1,5 +1,30 @@
 2011-09-23  Adam Roben  <aroben@apple.com>
 
+        Merge WebKitAPITest into TestWebKitAPI
+
+        This also means that our formerly-WebKitAPITest tests will be run on the bots!
+
+        I made the minimal changes necessary to get the tests to run in TestWebKitAPI. I'll make
+        them more idiomatic in a separate pass.
+
+        Fixes <http://webkit.org/b/66560> WebKitAPITest and TestWebKitAPI have duplicate
+        functionality (and names!)
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKit/win/WebViewDestruction.cpp: Renamed from Tools/WebKitAPITest/tests/WebViewDestruction.cpp.
+        * TestWebKitAPI/win/HostWindow.cpp: Renamed from Tools/WebKitAPITest/HostWindow.cpp.
+        * TestWebKitAPI/win/HostWindow.h: Renamed from Tools/WebKitAPITest/HostWindow.h.
+
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Added new files.
+
+        * TestWebKitAPI/win/main.cpp:
+        (main): Added a call to ::OleInitialize to make WebKit1 work. This came from WebKitAPITest.
+
+        * WebKitAPITest: Removed this directory and its contents.
+
+2011-09-23  Adam Roben  <aroben@apple.com>
+
         Remove two failing WebKitAPITest tests
 
         The failures are covered by <http://webkit.org/b/33162> and <http://webkit.org/b/32868>.

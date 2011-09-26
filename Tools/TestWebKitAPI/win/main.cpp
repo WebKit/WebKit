@@ -33,6 +33,10 @@ int main(int argc, char** argv)
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
     ::SetErrorMode(0);
 
+    // Initialize COM, needed for WebKit1 tests.
+    // FIXME: Remove this line once <http://webkit.org/b/32867> is fixed.
+    ::OleInitialize(0);
+
     bool passed = TestWebKitAPI::TestsController::shared().run(argc, argv);
 
     return passed ? EXIT_SUCCESS : EXIT_FAILURE;
