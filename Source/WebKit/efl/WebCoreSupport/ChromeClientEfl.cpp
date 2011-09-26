@@ -236,11 +236,15 @@ void ChromeClientEfl::closeWindowSoon()
     ewk_view_window_close(m_view);
 }
 
-bool ChromeClientEfl::canTakeFocus(FocusDirection)
+bool ChromeClientEfl::canTakeFocus(FocusDirection coreDirection)
 {
     // This is called when cycling through links/focusable objects and we
     // reach the last focusable object.
-    return false;
+    ASSERT(coreDirection == FocusDirectionForward || coreDirection == FocusDirectionBackward);
+
+    Ewk_Focus_Direction direction = static_cast<Ewk_Focus_Direction>(coreDirection);
+
+    return !ewk_view_focus_can_cycle(m_view, direction);
 }
 
 void ChromeClientEfl::takeFocus(FocusDirection)

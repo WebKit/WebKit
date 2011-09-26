@@ -139,6 +139,8 @@ void* ewk_view_protocol_handler_resource_get(Evas_Object* o, size_t* bytesRead, 
 void ewk_view_editor_client_contents_changed(Evas_Object* o);
 void ewk_view_editor_client_selection_changed(Evas_Object* o);
 
+bool ewk_view_focus_can_cycle(Evas_Object *o, Ewk_Focus_Direction direction);
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void ewk_view_js_window_object_clear(Evas_Object* o, Evas_Object* frame);
 #endif

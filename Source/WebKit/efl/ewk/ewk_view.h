@@ -104,6 +104,15 @@ typedef void* (*Ewk_View_Resource_Handler_Cb)(const char *, size_t *, char **, v
 
 /// Creates a type name for @a _Ewk_View_Smart_Class.
 typedef struct _Ewk_View_Smart_Class Ewk_View_Smart_Class;
+
+// Defines the direction of focus change. Keep in sync with
+// WebCore::FocusDirection.
+enum _Ewk_Focus_Direction {
+    EWK_FOCUS_DIRECTION_FORWARD = 1,
+    EWK_FOCUS_DIRECTION_BACKWARD,
+};
+typedef enum _Ewk_Focus_Direction Ewk_Focus_Direction;
+
 /// Ewk view's class, to be overridden by sub-classes.
 struct _Ewk_View_Smart_Class {
     Evas_Smart_Class sc; /**< All but 'data' is free to be changed. */
@@ -149,13 +158,14 @@ struct _Ewk_View_Smart_Class {
     Eina_Bool (*run_open_panel)(Ewk_View_Smart_Data *sd, Evas_Object *frame, Eina_Bool allows_multiple_files, const char *accept_types, Eina_List **selected_filenames);
 
     Eina_Bool (*navigation_policy_decision)(Ewk_View_Smart_Data *sd, Ewk_Frame_Resource_Request *request);
+    Eina_Bool (*focus_can_cycle)(Ewk_View_Smart_Data *sd, Ewk_Focus_Direction direction);
 };
 
 /**
  * The version you have to put into the version field
  * in the @a Ewk_View_Smart_Class structure.
  */
-#define EWK_VIEW_SMART_CLASS_VERSION 1UL
+#define EWK_VIEW_SMART_CLASS_VERSION 2UL
 
 /**
  * Initializes a whole @a Ewk_View_Smart_Class structure.
@@ -167,7 +177,7 @@ struct _Ewk_View_Smart_Class {
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
  */
-#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
  * Initializes to zero a whole @a Ewk_View_Smart_Class structure.

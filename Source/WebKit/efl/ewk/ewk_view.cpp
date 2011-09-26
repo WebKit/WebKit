@@ -3107,6 +3107,18 @@ void ewk_view_add_console_message(Evas_Object* o, const char* message, unsigned 
     sd->api->add_console_message(sd, message, lineNumber, sourceID);
 }
 
+bool ewk_view_focus_can_cycle(Evas_Object* o, Ewk_Focus_Direction direction)
+{
+    DBG("o=%p direction=%d", o, direction);
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->api, false);
+
+    if (!sd->api->focus_can_cycle)
+        return false;
+
+    return sd->api->focus_can_cycle(sd, direction);
+}
+
 void ewk_view_run_javascript_alert(Evas_Object* o, Evas_Object* frame, const char* message)
 {
     DBG("o=%p frame=%p message=%s", o, frame, message);
