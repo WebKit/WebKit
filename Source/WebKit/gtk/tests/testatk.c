@@ -1323,7 +1323,7 @@ static void testWebkitAtkGetExtents()
        a partial section of the same line */
     gint startOffset;
     gint endOffset;
-    gchar* text = atk_text_get_text_at_offset(multilineText, 0, ATK_TEXT_BOUNDARY_LINE_END, &startOffset, &endOffset);
+    gchar* text = atk_text_get_text_at_offset(multilineText, 0, ATK_TEXT_BOUNDARY_LINE_START, &startOffset, &endOffset);
     g_free(text);
 
     AtkTextRectangle fline_window;
