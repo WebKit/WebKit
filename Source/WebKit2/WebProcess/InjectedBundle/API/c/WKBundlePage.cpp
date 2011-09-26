@@ -123,7 +123,7 @@ WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef pageRef)
 
 WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
 {
-    return toAPI(toImpl(pageRef)->mainFrame());
+    return toAPI(toImpl(pageRef)->mainWebFrame());
 }
 
 void WKBundlePageStopLoading(WKBundlePageRef pageRef)
@@ -270,3 +270,24 @@ uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef pageRef)
 {
     return toImpl(pageRef)->renderTreeSize();
 }
+
+void WKBundlePageSetTracksRepaints(WKBundlePageRef pageRef, bool trackRepaints)
+{
+    toImpl(pageRef)->setTracksRepaints(trackRepaints);
+}
+
+bool WKBundlePageIsTrackingRepaints(WKBundlePageRef pageRef)
+{
+    return toImpl(pageRef)->isTrackingRepaints();
+}
+
+void WKBundlePageResetTrackedRepaints(WKBundlePageRef pageRef)
+{
+    toImpl(pageRef)->resetTrackedRepaints();
+}
+
+WKArrayRef WKBundlePageCopyTrackedRepaintRects(WKBundlePageRef pageRef)
+{
+    return toAPI(toImpl(pageRef)->trackedRepaintRects().releaseRef());
+}
+

@@ -57,6 +57,7 @@
 #include "WebFrame.h"
 #include "WebFullScreenManager.h"
 #include "WebGeolocationClient.h"
+#include "WebGeometry.h"
 #include "WebImage.h"
 #include "WebInspector.h"
 #include "WebInspectorClient.h"
@@ -375,6 +376,46 @@ uint64_t WebPage::renderTreeSize() const
     return size;
 }
 
+void WebPage::setTracksRepaints(bool trackRepaints)
+{
+    if (FrameView* view = mainFrameView())
+        view->setTracksRepaints(trackRepaints);
+}
+
+bool WebPage::isTrackingRepaints() const
+{
+    if (FrameView* view = mainFrameView())
+        return view->isTrackingRepaints();
+
+    return false;
+}
+
+void WebPage::resetTrackedRepaints()
+{
+    if (FrameView* view = mainFrameView())
+        view->resetTrackedRepaints();
+}
+
+PassRefPtr<ImmutableArray> WebPage::trackedRepaintRects()
+{
+    FrameView* view = mainFrameView();
+    if (!view)
+        return ImmutableArray::create();
+
+    const Vector<IntRect>& rects = view->trackedRepaintRects();
+    size_t size = rects.size();
+    if (!size)
+        return ImmutableArray::create();
+
+    Vector<RefPtr<APIObject> > vector;
+    vector.reserveInitialCapacity(size);
+
+    for (size_t i = 0; i < size; ++i)
+        vector.uncheckedAppend(WebRect::create(toAPI(rects[i])));
+
+    return ImmutableArray::adopt(vector);
+}
+
 void WebPage::executeEditingCommand(const String& commandName, const String& argument)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
@@ -395,7 +436,8 @@ bool WebPage::isEditingCommandEnabled(const String& commandName)
     
 void WebPage::clearMainFrameName()
 {
-    mainFrame()->coreFrame()->tree()->clearName();
+    if (Frame* frame = mainFrame())
+        frame->tree()->clearName();
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -607,7 +649,7 @@ void WebPage::layoutIfNeeded()
         m_mainFrame->coreFrame()->view()->updateLayoutAndStyleIfNeededRecursive();
 
     if (m_underlayPage) {
-        if (FrameView *frameView = m_underlayPage->mainFrame()->coreFrame()->view())
+        if (FrameView *frameView = m_underlayPage->mainFrameView())
             frameView->updateLayoutAndStyleIfNeededRecursive();
     }
 }
@@ -1992,7 +2034,10 @@ void WebPage::clearSelection()
 
 bool WebPage::mainFrameHasCustomRepresentation() const
 {
-    return static_cast<WebFrameLoaderClient*>(mainFrame()->coreFrame()->loader()->client())->frameHasCustomRepresentation();
+    if (Frame* frame = mainFrame())
+        return static_cast<WebFrameLoaderClient*>(frame->loader()->client())->frameHasCustomRepresentation();
+
+    return false;
 }
 
 void WebPage::didChangeScrollOffsetForMainFrame()
@@ -2459,6 +2504,19 @@ void WebPage::simulateMouseUp(int button, WebCore::IntPoint position, int clickC
 void WebPage::simulateMouseMotion(WebCore::IntPoint position, double time)
 {
     mouseEvent(WebMouseEvent(WebMouseEvent::MouseMove, WebMouseEvent::NoButton, position, position, 0, 0, 0, 0, WebMouseEvent::Modifiers(), time));
+}
+
+Frame* WebPage::mainFrame() const
+{
+    return m_page ? m_page->mainFrame() : 0;
+}
+
+FrameView* WebPage::mainFrameView() const
+{
+    if (Frame* frame = mainFrame())
+        return frame->view();
+    
+    return 0;
 }
 
 } // namespace WebKit

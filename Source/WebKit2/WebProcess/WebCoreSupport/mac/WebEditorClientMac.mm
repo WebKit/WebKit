@@ -114,8 +114,9 @@ DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttrib
         NSExcludedElementsDocumentAttribute, nil, @"WebResourceHandler", nil];
     
     NSArray *subResources;
+    Document* document = m_page->mainFrame() ? m_page->mainFrame()->document() : 0;
     DOMDocumentFragment* fragment = [string _documentFromRange:NSMakeRange(0, [string length])
-                                                      document:kit(m_page->mainFrame()->coreFrame()->document())
+                                                      document:kit(document)
                                             documentAttributes:dictionary
                                                   subresources:&subResources];
     for (WebResource* resource in subResources)

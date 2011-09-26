@@ -323,7 +323,7 @@ bool WebFrame::isFrameSet() const
 bool WebFrame::isMainFrame() const
 {
     if (WebPage* p = page())
-        return p->mainFrame() == this;
+        return p->mainWebFrame() == this;
 
     return false;
 }

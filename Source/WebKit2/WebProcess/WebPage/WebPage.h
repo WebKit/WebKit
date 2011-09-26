@@ -31,6 +31,7 @@
 #include "FindController.h"
 #include "GeolocationPermissionRequestManager.h"
 #include "ImageOptions.h"
+#include "ImmutableArray.h"
 #include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageFormClient.h"
@@ -80,6 +81,8 @@ namespace CoreIPC {
 
 namespace WebCore {
     class GraphicsContext;
+    class Frame;
+    class FrameView;
     class KeyboardEvent;
     class Page;
     class PrintContext;
@@ -222,13 +225,22 @@ public:
 
     bool findStringFromInjectedBundle(const String&, FindOptions);
 
-    WebFrame* mainFrame() const { return m_mainFrame.get(); }
+    WebFrame* mainWebFrame() const { return m_mainFrame.get(); }
+
+    WebCore::Frame* mainFrame() const; // May return 0.
+    WebCore::FrameView* mainFrameView() const; // May return 0.
+
     PassRefPtr<Plugin> createPlugin(const Plugin::Parameters&);
 
     EditorState editorState() const;
 
     String renderTreeExternalRepresentation() const;
     uint64_t renderTreeSize() const;
+
+    void setTracksRepaints(bool);
+    bool isTrackingRepaints() const;
+    void resetTrackedRepaints();
+    PassRefPtr<ImmutableArray> trackedRepaintRects();
 
     void executeEditingCommand(const String& commandName, const String& argument);
     bool isEditingCommandEnabled(const String& commandName);

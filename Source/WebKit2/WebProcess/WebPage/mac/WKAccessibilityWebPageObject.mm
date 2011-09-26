@@ -176,12 +176,10 @@ using namespace WebKit;
     point.y -= remotePosition.y;
     point.x -= remotePosition.x;
     
-    if (m_page && m_page->mainFrame() && m_page->mainFrame()->coreFrame()) {
-        WebCore::FrameView* fv = m_page->mainFrame()->coreFrame()->view();
-        if (fv) {
-            point.y += fv->scrollPosition().y();
-            point.x += fv->scrollPosition().x();
-        }
+    WebCore::FrameView* frameView = m_page ? m_page->mainFrameView() : 0;
+    if (frameView) {
+        point.y += frameView->scrollPosition().y();
+        point.x += frameView->scrollPosition().x();
     }
     
     return [[self accessibilityRootObjectWrapper] accessibilityHitTest:point];

@@ -55,6 +55,12 @@ WK_EXPORT void WKBundlePageSimulateMouseMotion(WKBundlePageRef page, WKPoint pos
 
 WK_EXPORT uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef page);
 
+WK_EXPORT void WKBundlePageSetTracksRepaints(WKBundlePageRef page, bool trackRepaints);
+WK_EXPORT bool WKBundlePageIsTrackingRepaints(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageResetTrackedRepaints(WKBundlePageRef page);
+WK_EXPORT WKArrayRef WKBundlePageCopyTrackedRepaintRects(WKBundlePageRef page);
+
+
 #ifdef __cplusplus
 }
 #endif

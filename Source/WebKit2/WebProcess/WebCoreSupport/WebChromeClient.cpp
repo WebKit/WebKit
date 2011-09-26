@@ -75,7 +75,7 @@ static WebFrame* findLargestFrameInFrameSet(WebPage* page)
 {
     // Approximate what a user could consider a default target frame for application menu operations.
 
-    WebFrame* mainFrame = page->mainFrame();
+    WebFrame* mainFrame = page->mainWebFrame();
     if (!mainFrame->isFrameSet())
         return 0;
 
@@ -294,7 +294,7 @@ void WebChromeClient::closeWindowSoon()
 
     m_page->corePage()->setGroupName(String());
 
-    if (WebFrame* frame = m_page->mainFrame()) {
+    if (WebFrame* frame = m_page->mainWebFrame()) {
         if (Frame* coreFrame = frame->coreFrame())
             coreFrame->loader()->stopForUserCancel();
     }

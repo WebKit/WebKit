@@ -1,3 +1,56 @@
+2011-09-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Repaint tests don't work in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=68453
+
+        Reviewed by Sam Weinig.
+        
+        Expose WKBundlePage methods to turn on repaint rect tracking
+        in WebKit2, for WebKitTestRunner.
+        
+        As part of the change, expose utility methods on WebPage
+        to get the main Frame and FrameView, which required renaming
+        the exisiting method that returns a WebFrame. Fix callers
+        of that method to handle null when necessary.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetMainFrame):
+        (WKBundlePageSetTracksRepaints):
+        (WKBundlePageIsTrackingRepaints):
+        (WKBundlePageResetTrackedRepaints):
+        (WKBundlePageCopyTrackedRepaintRects):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::findLargestFrameInFrameSet):
+        (WebKit::WebChromeClient::closeWindowSoon):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFirstLayout):
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout):
+        (WebKit::WebFrameLoaderClient::frameLoadCompleted):
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+        (WebKit::WebFrameLoaderClient::provisionalLoadStarted):
+        (WebKit::WebFrameLoaderClient::transitionToCommittedFromCachedFrame):
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::documentFragmentFromAttributedString):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::isMainFrame):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setTracksRepaints):
+        (WebKit::WebPage::isTrackingRepaints):
+        (WebKit::WebPage::resetTrackedRepaints):
+        (WebKit::WebPage::trackedRepaintRects):
+        (WebKit::WebPage::clearMainFrameName):
+        (WebKit::WebPage::layoutIfNeeded):
+        (WebKit::WebPage::mainFrameHasCustomRepresentation):
+        (WebKit::WebPage::mainFrame):
+        (WebKit::WebPage::mainFrameView):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::mainWebFrame):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+        (-[WKAccessibilityWebPageObject accessibilityHitTest:]):
+
 2011-09-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add custom vtable struct to ClassInfo struct
