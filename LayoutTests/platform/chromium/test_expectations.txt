@@ -2705,15 +2705,13 @@ BUGCR74979 SKIP MAC GPU GPU-CG : media/video-canvas-alpha.html = IMAGE
 
 BUGWK67116 GPU GPU-CG DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
 
-// Skip test test since this test uses layoutTestController.display()
-// that needs to be implemented for GPU
-BUGCR94918 GPU SKIP : media/media-document-audio-repaint.html = IMAGE+TEXT IMAGE
+BUGWK67760 GPU : media/media-document-audio-repaint.html = IMAGE+TEXT IMAGE
 
 BUGWK55968 MAC GPU GPU-CG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE IMAGE+TEXT
 BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
-// Flaky scrollbar issues
-BUGCR94409 LINUX GPU : media/video-controls-rendering.html = IMAGE
+BUGWK58587 LINUX GPU DEBUG : media/video-controls-rendering.html = IMAGE
+BUGCR97686 LINUX GPU RELEASE : media/video-controls-rendering.html = IMAGE
 
 BUGCR72223 : media/video-frame-accurate-seek.html = PASS IMAGE
 
@@ -3563,7 +3561,7 @@ BUGWK66268 MAC CPU-CG : editing/deleting/regional-indicators.html = TEXT
 BUGWK66268 WIN LINUX : editing/deleting/regional-indicators.html = TEXT
 
 BUGWK66310 DEBUG : media/video-source-error.html = PASS TEXT
-BUGWK66310 : media/media-blocked-by-beforeload.html = PASS TEXT
+BUGCR97646 : media/media-blocked-by-beforeload.html = PASS TEXT
 
 BUGWK66338 MAC : fast/repaint/background-scaling.html = IMAGE
 BUGWK66338 MAC : fast/repaint/scale-page-shrink.html = IMAGE
@@ -3700,9 +3698,6 @@ BUG_KEISHI : inspector/styles/styles-new-API.html = FAIL PASS TEXT TIMEOUT
 BUG_KEISHI : inspector/styles/styles-source-lines.html = FAIL PASS TEXT TIMEOUT
 BUG_KEISHI : inspector/styles/styles-update-from-js.html = FAIL PASS TEXT TIMEOUT
 
-// Crashes or timeouts once in a while but never fails
-BUG_KEISHI LINUX : media/video-controls-visible-audio-only.html = PASS TIMEOUT CRASH
-
 BUGWK68372 SNOWLEOPARD : svg/animations/svglength-animation-px-to-exs.html = PASS CRASH
 
 // Tests that are known to fail on Mac10.6 with CPU-Skia graphics.
@@ -3832,3 +3827,7 @@ BUGABARTH LINUX : svg/custom/svg-fonts-word-spacing.html = PASS FAIL
 BUGWK68747 : media/controls-right-click-on-timebar.html = TIMEOUT PASS
 
 BUGWK68832 WIN LINUX : editing/selection/select-bidi-run.html = FAIL
+
+BUGCR96861 WIN DEBUG : media/audio-repaint.html = TIMEOUT IMAGE PASS
+BUGCR97657 MAC CPU DEBUG : media/audio-repaint.html = TIMEOUT IMAGE PASS
+
