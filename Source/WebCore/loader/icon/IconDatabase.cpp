@@ -767,6 +767,7 @@ IconDatabase::IconDatabase()
     , m_threadTerminationRequested(false)
     , m_removeIconsRequested(false)
     , m_iconURLImportComplete(false)
+    , m_syncThreadHasWorkToDo(false)
     , m_disabledSuddenTerminationForSyncThread(false)
     , m_initialPruningComplete(false)
     , m_client(defaultClient())
@@ -818,6 +819,7 @@ void IconDatabase::wakeSyncThread()
         disableSuddenTermination();
     }
 
+    m_syncThreadHasWorkToDo = true;
     m_syncCondition.signal();
 }
 
@@ -1350,9 +1352,10 @@ void* IconDatabase::syncThreadMainLoop()
 {
     ASSERT_ICON_SYNC_THREAD();
 
-    bool shouldReenableSuddenTermination = false;
-
     m_syncLock.lock();
+
+    bool shouldReenableSuddenTermination = m_disabledSuddenTerminationForSyncThread;
+    m_disabledSuddenTerminationForSyncThread = false;
 
     // It's possible thread termination is requested before the main loop even starts - in that case, just skip straight to cleanup
     while (!m_threadTerminationRequested) {
@@ -1427,14 +1430,17 @@ void* IconDatabase::syncThreadMainLoop()
             // The following is balanced by the call to disableSuddenTermination in the
             // wakeSyncThread function. Any time we wait on the condition, we also have
             // to enableSuddenTermation, after doing the next batch of work.
-            ASSERT(m_disabledSuddenTerminationForSyncThread);
             enableSuddenTermination();
-            m_disabledSuddenTerminationForSyncThread = false;
         }
 
-        m_syncCondition.wait(m_syncLock);
+        while (!m_syncThreadHasWorkToDo)
+            m_syncCondition.wait(m_syncLock);
 
+        m_syncThreadHasWorkToDo = false;
+
+        ASSERT(m_disabledSuddenTerminationForSyncThread);
         shouldReenableSuddenTermination = true;
+        m_disabledSuddenTerminationForSyncThread = false;
     }
 
     m_syncLock.unlock();
@@ -1446,8 +1452,9 @@ void* IconDatabase::syncThreadMainLoop()
         // The following is balanced by the call to disableSuddenTermination in the
         // wakeSyncThread function. Any time we wait on the condition, we also have
         // to enableSuddenTermation, after doing the next batch of work.
-        ASSERT(m_disabledSuddenTerminationForSyncThread);
         enableSuddenTermination();
+
+        MutexLocker locker(m_syncLock);
         m_disabledSuddenTerminationForSyncThread = false;
     }
 

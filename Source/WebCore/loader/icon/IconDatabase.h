@@ -144,7 +144,7 @@ private:
     
     bool m_isEnabled;
     bool m_privateBrowsingEnabled;
-    
+
     mutable Mutex m_syncLock;
     ThreadCondition m_syncCondition;
     String m_databaseDirectory;
@@ -154,6 +154,7 @@ private:
     bool m_threadTerminationRequested;
     bool m_removeIconsRequested;
     bool m_iconURLImportComplete;
+    bool m_syncThreadHasWorkToDo;
     bool m_disabledSuddenTerminationForSyncThread;
 
     Mutex m_urlAndIconLock;
