@@ -103,7 +103,7 @@ public:
     // puts backbuffer onscreen
     void present();
 
-    void setZoomAnimatorScale(double factor) { m_zoomAnimatorScale = factor; }
+    void setZoomAnimatorTransform(const TransformationMatrix& t) { m_zoomAnimatorTransform = t; }
 
     unsigned createLayerTexture();
     void deleteLayerTexture(unsigned);
@@ -191,7 +191,7 @@ private:
 
     CCRenderSurface* m_currentRenderSurface;
     unsigned m_offscreenFramebufferId;
-    double m_zoomAnimatorScale;
+    TransformationMatrix m_zoomAnimatorTransform;
 
     // Store values that are shared between instances of each layer type
     // associated with this instance of the compositor. Since there can be

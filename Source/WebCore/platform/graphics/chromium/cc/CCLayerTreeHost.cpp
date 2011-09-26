@@ -53,7 +53,6 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, PassRefPtr<Layer
     , m_frameNumber(0)
     , m_rootLayer(rootLayer)
     , m_settings(settings)
-    , m_zoomAnimatorScale(1)
     , m_visible(true)
 {
 }
@@ -119,7 +118,7 @@ void CCLayerTreeHost::commitTo(CCLayerTreeHostImpl* hostImpl)
     clearPendingUpdate();
 
     hostImpl->setVisible(m_visible);
-    hostImpl->setZoomAnimatorScale(m_zoomAnimatorScale);
+    hostImpl->setZoomAnimatorTransform(m_zoomAnimatorTransform);
     hostImpl->setViewport(viewportSize());
 
     hostImpl->layerRenderer()->setContentsTextureMemoryUseBytes(m_contentsTextureManager->currentMemoryUseBytes());
@@ -187,11 +186,11 @@ const LayerRendererCapabilities& CCLayerTreeHost::layerRendererCapabilities() co
     return m_proxy->layerRendererCapabilities();
 }
 
-void CCLayerTreeHost::setZoomAnimatorScale(double zoom)
+void CCLayerTreeHost::setZoomAnimatorTransform(const TransformationMatrix& zoom)
 {
-    bool zoomChanged = m_zoomAnimatorScale != zoom;
+    bool zoomChanged = m_zoomAnimatorTransform != zoom;
 
-    m_zoomAnimatorScale = zoom;
+    m_zoomAnimatorTransform = zoom;
 
     if (zoomChanged)
         setNeedsCommitAndRedraw();
@@ -283,11 +282,9 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
     RenderSurfaceChromium* rootRenderSurface = rootLayer->renderSurface();
     rootRenderSurface->clearLayerList();
 
-    TransformationMatrix zoomMatrix;
-    zoomMatrix.scale3d(m_zoomAnimatorScale, m_zoomAnimatorScale, 1);
     {
         TRACE_EVENT("CCLayerTreeHost::updateLayers::calcDrawEtc", this, 0);
-        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, zoomMatrix, zoomMatrix, m_updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, m_zoomAnimatorTransform, m_zoomAnimatorTransform, m_updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
     }
 
     paintLayerContents(m_updateList);

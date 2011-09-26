@@ -244,7 +244,7 @@ void Internals::setForceCompositingMode(Document* document, bool enabled, Except
     document->settings()->setForceCompositingMode(enabled);
 }
 
-void Internals::setZoomAnimatorScale(Document *document, double scale, ExceptionCode& ec)
+void Internals::setZoomAnimatorTransform(Document *document, double scale, double tx, double ty, ExceptionCode& ec)
 {
     if (!document || !document->settings()) {
         ec = INVALID_ACCESS_ERR;
@@ -252,6 +252,7 @@ void Internals::setZoomAnimatorScale(Document *document, double scale, Exception
     }
 
     document->settings()->setZoomAnimatorScale(scale);
+    document->settings()->setZoomAnimatorPosition(tx, ty);
 }
 
 void Internals::setPasswordEchoEnabled(Document* document, bool enabled, ExceptionCode& ec)

@@ -51,7 +51,7 @@ module window {
         Range markerRangeForNode(in Node node, in unsigned long index) raises(DOMException);
 
         void setForceCompositingMode(in Document document, in boolean enabled) raises(DOMException);
-        void setZoomAnimatorScale(in Document document, in double scale) raises(DOMException);
+        void setZoomAnimatorTransform(in Document document, in double scale, in double tx, in double ty) raises(DOMException);
 
         void setPasswordEchoEnabled(in Document document, in boolean enabled) raises(DOMException);
         void setPasswordEchoDurationInSeconds(in Document document, in double durationInSeconds) raises(DOMException);

@@ -432,8 +432,12 @@ namespace WebCore {
         void setForceCompositingMode(bool flag) { m_forceCompositingMode = flag; }
         bool forceCompositingMode() { return m_forceCompositingMode; }
 
-        void setZoomAnimatorScale(double scale) { m_zoomAnimatorScale = scale; }
-        double zoomAnimatorScale() { return m_zoomAnimatorScale; }
+        void setZoomAnimatorScale(float scale) { m_zoomAnimatorScale = scale; }
+        float zoomAnimatorScale() { return m_zoomAnimatorScale; }
+
+        void setZoomAnimatorPosition(float x, float y) { m_zoomAnimatorPosX = x; m_zoomAnimatorPosY = y; }
+        float zoomAnimatorPosX() { return m_zoomAnimatorPosX; }
+        float zoomAnimatorPosY() { return m_zoomAnimatorPosY; }
 
         void setShouldInjectUserScriptsInInitialEmptyDocument(bool flag) { m_shouldInjectUserScriptsInInitialEmptyDocument = flag; }
         bool shouldInjectUserScriptsInInitialEmptyDocument() { return m_shouldInjectUserScriptsInInitialEmptyDocument; }
@@ -603,7 +607,9 @@ namespace WebCore {
 #endif
         static bool gMockScrollbarsEnabled;
 
-        double m_zoomAnimatorScale;
+        float m_zoomAnimatorScale;
+        float m_zoomAnimatorPosX;
+        float m_zoomAnimatorPosY;
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;

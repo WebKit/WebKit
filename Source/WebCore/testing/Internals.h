@@ -77,7 +77,7 @@ public:
     PassRefPtr<Range> markerRangeForNode(Node*, unsigned, ExceptionCode&);
 
     void setForceCompositingMode(Document*, bool enabled, ExceptionCode&);
-    void setZoomAnimatorScale(Document*, double scale, ExceptionCode&);
+    void setZoomAnimatorTransform(Document*, double scale, double tx, double ty, ExceptionCode&);
 
     void setPasswordEchoEnabled(Document*, bool enabled, ExceptionCode&);
     void setPasswordEchoDurationInSeconds(Document*, double durationInSeconds, ExceptionCode&);

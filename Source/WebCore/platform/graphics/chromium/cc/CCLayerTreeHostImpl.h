@@ -38,6 +38,7 @@ class CCCompletionEvent;
 class CCLayerImpl;
 class LayerRendererChromium;
 struct LayerRendererCapabilities;
+class TransformationMatrix;
 
 // CCLayerTreeHostImpl owns the CCLayerImpl tree as well as associated rendering state
 class CCLayerTreeHostImpl {
@@ -75,7 +76,7 @@ public:
 
     void setViewport(const IntSize& viewportSize);
     const IntSize& viewportSize() const { return m_viewportSize; }
-    void setZoomAnimatorScale(double);
+    void setZoomAnimatorTransform(const TransformationMatrix&);
 
     const CCSettings& settings() const { return m_settings; }
 protected:

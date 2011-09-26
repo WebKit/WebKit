@@ -219,6 +219,8 @@ Settings::Settings(Page* page)
     , m_passwordEchoEnabled(false)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
     , m_zoomAnimatorScale(1)
+    , m_zoomAnimatorPosX(0)
+    , m_zoomAnimatorPosY(0)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.

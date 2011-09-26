@@ -1,3 +1,13 @@
+2011-09-26  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Revise zoom animator backend to use full transform instead of just scale.
+        https://bugs.webkit.org/show_bug.cgi?id=68535
+
+        Reviewed by Kenneth Russell.
+
+        * platform/chromium-gpu-linux/platform/chromium/compositing/zoom-animator-scale-test-expected.png: Added.
+        * platform/chromium/compositing/zoom-animator-scale-test.html:
+
 2011-09-26  Mihai Parparita  <mihaip@chromium.org>
 
         Layout Test fast/animation/request-animation-frame-timestamps-advance.html is failing

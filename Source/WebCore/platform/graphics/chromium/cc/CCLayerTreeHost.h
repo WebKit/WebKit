@@ -27,6 +27,7 @@
 
 #include "GraphicsTypes3D.h"
 #include "IntRect.h"
+#include "TransformationMatrix.h"
 #include "cc/CCProxy.h"
 
 #include <wtf/PassOwnPtr.h>
@@ -126,7 +127,7 @@ public:
 
     int frameNumber() const { return m_frameNumber; }
 
-    void setZoomAnimatorScale(double);
+    void setZoomAnimatorTransform(const TransformationMatrix&);
 
     const LayerRendererCapabilities& layerRendererCapabilities() const;
 
@@ -181,7 +182,7 @@ private:
     CCSettings m_settings;
 
     IntSize m_viewportSize;
-    double m_zoomAnimatorScale;
+    TransformationMatrix m_zoomAnimatorTransform;
     bool m_visible;
 };
 

@@ -151,9 +151,9 @@ void CCLayerTreeHostImpl::setViewport(const IntSize& viewportSize)
         m_layerRenderer->viewportChanged();
 }
 
-void CCLayerTreeHostImpl::setZoomAnimatorScale(double zoom)
+void CCLayerTreeHostImpl::setZoomAnimatorTransform(const TransformationMatrix& zoom)
 {
-    m_layerRenderer->setZoomAnimatorScale(zoom);
+    m_layerRenderer->setZoomAnimatorTransform(zoom);
 }
 
 }
