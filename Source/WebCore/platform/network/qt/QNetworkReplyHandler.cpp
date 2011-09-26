@@ -618,7 +618,7 @@ QNetworkReply* QNetworkReplyHandler::sendNetworkRequest(QNetworkAccessManager* m
         return 0;
 
     const QUrl url = m_request.url();
-    const QString scheme = url.scheme();
+
     // Post requests on files and data don't really make sense, but for
     // fast/forms/form-post-urlencoded.html and for fast/forms/button-state-restore.html
     // we still need to retrieve the file/data, which means we map it to a Get instead.
