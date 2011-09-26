@@ -74,15 +74,20 @@ function selectByMouseDragAndVerifyResult(target, leftToRight, expectations) {
 
     var startX = left + (leftToRight ? 0 : target.offsetWidth);
     eventSender.dragMode = false;
-    eventSender.leapForward(3000);
+
+    // Clear click count
+    eventSender.mouseMoveTo(0, 0);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
     eventSender.mouseMoveTo(startX, y);
     eventSender.mouseDown();
+    eventSender.leapForward(10);
 
     var previousSelectedText = '';
     var j = 0;
     var xIncrement = leftToRight ? 1 : -1;
     for (var x = startX; left <= x && x <= left + target.offsetWidth; x += xIncrement) {
-        eventSender.leapForward(100);
         eventSender.mouseMoveTo(x, y);
 
         var selectedText = window.getSelection().toString().fold();
