@@ -1,5 +1,12 @@
 2011-09-26  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Second unreviewed build fix for r95941
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willCallFunctionImpl):
+
+2011-09-26  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed build fix for webkit builds after r95941.
 
         * inspector/InspectorInstrumentation.cpp:

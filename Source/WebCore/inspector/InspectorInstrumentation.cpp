@@ -236,8 +236,8 @@ InspectorInstrumentationCookie InspectorInstrumentation::willCallFunctionImpl(In
         timelineAgentId = timelineAgent->id();
     }
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
-#endif
 }
+#endif
 
 void InspectorInstrumentation::didCallFunctionImpl(const InspectorInstrumentationCookie& cookie)
 {
