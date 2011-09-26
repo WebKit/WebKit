@@ -1,3 +1,23 @@
+2011-09-26  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap][Qt] Enable TextureMapperGL in platforms where BGRA is not present
+        https://bugs.webkit.org/show_bug.cgi?id=65473
+
+        Reviewed by Andreas Kling.
+
+        For now, swap RGBA->BGRA in software if we're in OpenGL ES 2.
+        We do that by iterating on the pixels and manually swapping each pixel's red and blue
+        values. This can be done faster with shaders, but for now this is a working solution
+        for platforms without BGRA support.
+
+        No new tests. Existing layout tests cover this.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (WebCore::BitmapTextureGL::endPaint):
+        * platform/graphics/opengl/TextureMapperGL.h:
+        * platform/graphics/qt/TextureMapperQt.cpp:
+        (WebCore::RGBA32PremultimpliedBufferQt::swapRGB):
+
 2011-09-26  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] Fix coding style bits in ResourceHandleSoup.cpp

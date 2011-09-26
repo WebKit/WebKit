@@ -534,7 +534,13 @@ void BitmapTextureGL::endPaint()
         return;
     m_buffer->endPaint();
     GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
+#ifdef TEXMAP_OPENGL_ES_2
+    // FIXME: use shaders for RGBA->BGRA swap if this becomes a performance issue.
+    m_buffer->swapRGB();
+    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, m_dirtyRect.x(), m_dirtyRect.y(), m_dirtyRect.width(), m_dirtyRect.height(), GL_RGBA, GL_UNSIGNED_BYTE, m_buffer->data()))
+#else
     GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, m_dirtyRect.x(), m_dirtyRect.y(), m_dirtyRect.width(), m_dirtyRect.height(), GL_BGRA, GL_UNSIGNED_BYTE, m_buffer->data()))
+#endif
     m_buffer.clear();
 }
 

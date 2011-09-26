@@ -228,6 +228,11 @@ public:
         return &m_painter;
     }
 
+    void swapRGB()
+    {
+        m_image = m_image.rgbSwapped();
+    }
+
     virtual void endPaint() { m_painter.end(); }
     virtual const void* data() const { return m_image.constBits(); }
 
