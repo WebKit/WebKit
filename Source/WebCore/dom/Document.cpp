@@ -1564,8 +1564,14 @@ void Document::recalcStyle(StyleChange change)
             element->recalcStyle(change);
     }
 
+    // FIXME: Disabling the deletion of retired custom font data until
+    // we fix all the stale style bugs (68804, 68624, etc). These bugs
+    // indicate problems where some styles were not updated in recalcStyle,
+    // thereby retaining stale copy of font data. To prevent that, we
+    // disable this code for now and only delete retired custom font data
+    // in Document destructor.
     // Now that all RenderStyles that pointed to retired fonts have been updated, the fonts can safely be deleted.
-    deleteRetiredCustomFonts();
+    // deleteRetiredCustomFonts();
 
 #if USE(ACCELERATED_COMPOSITING)
     if (view()) {
