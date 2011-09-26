@@ -258,12 +258,11 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
     
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
+    emitJumpSlowCaseIfNotJSCell(base, regT1);
     addSlowCase(branchPtr(NotEqual, Address(regT0), TrustedImmPtr(m_globalData->jsArrayVPtr)));
     addSlowCase(branch32(AboveOrEqual, regT2, Address(regT0, JSArray::vectorLengthOffset())));
-    
-    emitJumpSlowCaseIfNotJSCell(base, regT1);
-    emitWriteBarrier(regT0, regT1, regT1, regT3, UnconditionalWriteBarrier, WriteBarrierForPropertyAccess);
 
+    emitWriteBarrier(regT0, regT1, regT1, regT3, UnconditionalWriteBarrier, WriteBarrierForPropertyAccess);
     loadPtr(Address(regT0, JSArray::storageOffset()), regT3);
     
     Jump empty = branch32(Equal, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
