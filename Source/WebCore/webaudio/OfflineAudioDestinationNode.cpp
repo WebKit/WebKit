@@ -69,6 +69,11 @@ void OfflineAudioDestinationNode::uninitialize()
     if (!isInitialized())
         return;
 
+    if (m_renderThread) {
+        waitForThreadCompletion(m_renderThread, 0);
+        m_renderThread = 0;
+    }
+
     AudioNode::uninitialize();
 }
 
