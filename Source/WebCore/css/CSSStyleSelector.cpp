@@ -188,7 +188,7 @@ public:
     
     bool hasFastCheckableSelector() const { return m_hasFastCheckableSelector; }
     bool hasMultipartSelector() const { return m_hasMultipartSelector; }
-    bool hasTopSelectorMatchingHTMLBasedOnRuleHash() const { return m_hasTopSelectorMatchingHTMLBasedOnRuleHash; }
+    bool hasRightmostSelectorMatchingHTMLBasedOnRuleHash() const { return m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash; }
     unsigned specificity() const { return m_specificity; }
     
     // Try to balance between memory usage (there can be lots of RuleData objects) and good filtering performance.
@@ -202,7 +202,7 @@ private:
     unsigned m_position : 29;
     bool m_hasFastCheckableSelector : 1;
     bool m_hasMultipartSelector : 1;
-    bool m_hasTopSelectorMatchingHTMLBasedOnRuleHash : 1;
+    bool m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
     // Use plain array instead of a Vector to minimize memory overhead.
     unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
 };
@@ -227,18 +227,24 @@ public:
 
     void collectFeatures(CSSStyleSelector::Features&) const;
     
-    const Vector<RuleData>* getIDRules(AtomicStringImpl* key) const { return m_idRules.get(key); }
-    const Vector<RuleData>* getClassRules(AtomicStringImpl* key) const { return m_classRules.get(key); }
-    const Vector<RuleData>* getTagRules(AtomicStringImpl* key) const { return m_tagRules.get(key); }
-    const Vector<RuleData>* getPseudoRules(AtomicStringImpl* key) const { return m_pseudoRules.get(key); }
-    const Vector<RuleData>* getUniversalRules() const { return &m_universalRules; }
-    const Vector<RuleData>* getPageRules() const { return &m_pageRules; }
+    const Vector<RuleData>* idRules(AtomicStringImpl* key) const { return m_idRules.get(key); }
+    const Vector<RuleData>* classRules(AtomicStringImpl* key) const { return m_classRules.get(key); }
+    const Vector<RuleData>* tagRules(AtomicStringImpl* key) const { return m_tagRules.get(key); }
+    const Vector<RuleData>* shadowPseudoElementRules(AtomicStringImpl* key) const { return m_shadowPseudoElementRules.get(key); }
+    const Vector<RuleData>* linkPseudoClassRules() const { return &m_linkPseudoClassRules; }
+    const Vector<RuleData>* visitedPseudoClassRules() const { return &m_visitedPseudoClassRules; }
+    const Vector<RuleData>* focusPseudoClassRules() const { return &m_focusPseudoClassRules; }
+    const Vector<RuleData>* universalRules() const { return &m_universalRules; }
+    const Vector<RuleData>* pageRules() const { return &m_pageRules; }
     
 public:
     AtomRuleMap m_idRules;
     AtomRuleMap m_classRules;
     AtomRuleMap m_tagRules;
-    AtomRuleMap m_pseudoRules;
+    AtomRuleMap m_shadowPseudoElementRules;
+    Vector<RuleData> m_linkPseudoClassRules;
+    Vector<RuleData> m_visitedPseudoClassRules;
+    Vector<RuleData> m_focusPseudoClassRules;
     Vector<RuleData> m_universalRules;
     Vector<RuleData> m_pageRules;
     unsigned m_ruleCount;
@@ -520,21 +526,29 @@ void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& last
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
     // then sort the buffer.
     if (m_element->hasID())
-        matchRulesForList(rules->getIDRules(m_element->idForStyleResolution().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+        matchRulesForList(rules->idRules(m_element->idForStyleResolution().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
     if (m_element->hasClass()) {
         ASSERT(m_styledElement);
         const SpaceSplitString& classNames = m_styledElement->classNames();
         size_t size = classNames.size();
         for (size_t i = 0; i < size; ++i)
-            matchRulesForList(rules->getClassRules(classNames[i].impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+            matchRulesForList(rules->classRules(classNames[i].impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
     }
     const AtomicString& pseudoId = m_element->shadowPseudoId();
     if (!pseudoId.isEmpty()) {
         ASSERT(m_styledElement);
-        matchRulesForList(rules->getPseudoRules(pseudoId.impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+        matchRulesForList(rules->shadowPseudoElementRules(pseudoId.impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
     }
-    matchRulesForList(rules->getTagRules(m_element->localName().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
-    matchRulesForList(rules->getUniversalRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    if (m_element->isLink()) {
+        if (m_checker.linkMatchesVisitedPseudoClass(m_element))
+            matchRulesForList(rules->visitedPseudoClassRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+        else
+            matchRulesForList(rules->linkPseudoClassRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    }
+    if (m_checker.matchesFocusPseudoClass(m_element))
+        matchRulesForList(rules->focusPseudoClassRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    matchRulesForList(rules->tagRules(m_element->localName().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    matchRulesForList(rules->universalRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
     
     // If we didn't match any rules, we're done.
     if (m_matchedRules.isEmpty())
@@ -1786,14 +1800,17 @@ inline bool CSSStyleSelector::checkSelector(const RuleData& ruleData)
 
     // Let the slow path handle SVG as it has some additional rules regarding shadow trees.
     if (ruleData.hasFastCheckableSelector() && !m_element->isSVGElement()) {
-        // We know this selector does not include any pseudo selectors.
+        // We know this selector does not include any pseudo elements.
         if (m_checker.pseudoStyle() != NOPSEUDO)
             return false;
         // We know a sufficiently simple single part selector matches simply because we found it from the rule hash.
         // This is limited to HTML only so we don't need to check the namespace.
-        if (ruleData.hasTopSelectorMatchingHTMLBasedOnRuleHash() && !ruleData.hasMultipartSelector() && m_element->isHTMLElement())
-            return true;
-        return SelectorChecker::fastCheckSelector(ruleData.selector(), m_element);
+        if (ruleData.hasRightmostSelectorMatchingHTMLBasedOnRuleHash() && m_element->isHTMLElement()) {
+            if (!ruleData.hasMultipartSelector())
+                return true;
+        } else if (!SelectorChecker::tagMatches(m_element, ruleData.selector()))
+            return false;
+        return m_checker.fastCheckSelector(ruleData.selector(), m_element);
     }
 
     // Slow path.
@@ -1814,9 +1831,11 @@ static inline bool isSelectorMatchingHTMLBasedOnRuleHash(const CSSSelector* sele
         return false;
     if (selector->m_match == CSSSelector::None)
         return true;
-    if (selector->m_match != CSSSelector::Id && selector->m_match != CSSSelector::Class)
+    if (selector->tag() != starAtom)
         return false;
-    return selector->tag() == starAtom;
+    if (SelectorChecker::isCommonPseudoClassSelector(selector))
+        return true;
+    return selector->m_match == CSSSelector::Id || selector->m_match == CSSSelector::Class;
 }
 
 RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position)
@@ -1826,7 +1845,7 @@ RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position)
     , m_position(position)
     , m_hasFastCheckableSelector(SelectorChecker::isFastCheckableSelector(selector))
     , m_hasMultipartSelector(selector->tagHistory())
-    , m_hasTopSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(selector))
+    , m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(selector))
 {
     SelectorChecker::collectIdentifierHashes(m_selector, m_descendantSelectorIdentifierHashes, maximumIdentifierCount);
 }
@@ -1841,7 +1860,7 @@ RuleSet::~RuleSet()
 { 
     deleteAllValues(m_idRules);
     deleteAllValues(m_classRules);
-    deleteAllValues(m_pseudoRules);
+    deleteAllValues(m_shadowPseudoElementRules);
     deleteAllValues(m_tagRules);
 }
 
@@ -1868,12 +1887,32 @@ void RuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)
         addToRuleSet(sel->value().impl(), m_classRules, rule, sel);
         return;
     }
-     
     if (sel->isUnknownPseudoElement()) {
-        addToRuleSet(sel->value().impl(), m_pseudoRules, rule, sel);
+        addToRuleSet(sel->value().impl(), m_shadowPseudoElementRules, rule, sel);
         return;
     }
-
+    if (SelectorChecker::isCommonPseudoClassSelector(sel)) {
+        RuleData ruleData(rule, sel, m_ruleCount++);
+        switch (sel->pseudoType()) {
+        case CSSSelector::PseudoLink:
+            m_linkPseudoClassRules.append(ruleData);
+            return;
+        case CSSSelector::PseudoVisited:
+            m_visitedPseudoClassRules.append(ruleData);
+            return;
+        case CSSSelector::PseudoAnyLink:
+            // :link and :visited are mutually exclusive. :any-link will apply if and only if one of them applies.
+            m_linkPseudoClassRules.append(ruleData);
+            m_visitedPseudoClassRules.append(ruleData);
+            return;
+        case CSSSelector::PseudoFocus:
+            m_focusPseudoClassRules.append(ruleData);
+            return;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        return;
+    }
     const AtomicString& localName = sel->tag().localName();
     if (localName != starAtom) {
         addToRuleSet(localName.impl(), m_tagRules, rule, sel);
@@ -2025,9 +2064,12 @@ void RuleSet::collectFeatures(CSSStyleSelector::Features& features) const
     end = m_tagRules.end();
     for (AtomRuleMap::const_iterator it = m_tagRules.begin(); it != end; ++it)
         collectFeaturesFromList(features, *it->second);
-    end = m_pseudoRules.end();
-    for (AtomRuleMap::const_iterator it = m_pseudoRules.begin(); it != end; ++it)
+    end = m_shadowPseudoElementRules.end();
+    for (AtomRuleMap::const_iterator it = m_shadowPseudoElementRules.begin(); it != end; ++it)
         collectFeaturesFromList(features, *it->second);
+    collectFeaturesFromList(features, m_linkPseudoClassRules);
+    collectFeaturesFromList(features, m_visitedPseudoClassRules);
+    collectFeaturesFromList(features, m_focusPseudoClassRules);
     collectFeaturesFromList(features, m_universalRules);
 }
     
@@ -2043,7 +2085,10 @@ void RuleSet::shrinkToFit()
     shrinkMapVectorsToFit(m_idRules);
     shrinkMapVectorsToFit(m_classRules);
     shrinkMapVectorsToFit(m_tagRules);
-    shrinkMapVectorsToFit(m_pseudoRules);
+    shrinkMapVectorsToFit(m_shadowPseudoElementRules);
+    m_linkPseudoClassRules.shrinkToFit();
+    m_visitedPseudoClassRules.shrinkToFit();
+    m_focusPseudoClassRules.shrinkToFit();
     m_universalRules.shrinkToFit();
     m_pageRules.shrinkToFit();
 }
@@ -2135,7 +2180,7 @@ void CSSStyleSelector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isFi
     if (!rules)
         return;
 
-    matchPageRulesForList(rules->getPageRules(), isLeftPage, isFirstPage, pageName);
+    matchPageRulesForList(rules->pageRules(), isLeftPage, isFirstPage, pageName);
 
     // If we didn't match any rules, we're done.
     if (m_matchedRules.isEmpty())

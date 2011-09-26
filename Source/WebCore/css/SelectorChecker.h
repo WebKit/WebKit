@@ -28,7 +28,9 @@
 #ifndef SelectorChecker_h
 #define SelectorChecker_h
 
+#include "CSSSelector.h"
 #include "Element.h"
+#include "InspectorInstrumentation.h"
 #include "LinkHash.h"
 #include "RenderStyleConstants.h"
 #include <wtf/BloomFilter.h>
@@ -51,7 +53,7 @@ public:
     bool checkSelector(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
     SelectorMatch checkSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
     static bool isFastCheckableSelector(const CSSSelector*);
-    static bool fastCheckSelector(const CSSSelector*, const Element*);
+    bool fastCheckSelector(const CSSSelector*, const Element*) const;
 
     template <unsigned maximumIdentifierCount>
     inline bool fastRejectSelector(const unsigned* identifierHashes) const;
@@ -79,10 +81,19 @@ public:
 
     bool hasUnknownPseudoElements() const { return m_hasUnknownPseudoElements; }
     void clearHasUnknownPseudoElements() { m_hasUnknownPseudoElements = false; }
+    
+    static bool tagMatches(const Element*, const CSSSelector*);
+    static bool isCommonPseudoClassSelector(const CSSSelector*);
+    bool commonPseudoClassSelectorMatches(const Element*, const CSSSelector*) const;
+    bool linkMatchesVisitedPseudoClass(const Element*) const;
+    bool matchesFocusPseudoClass(const Element*) const;
 
 private:
     bool checkOneSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle*, RenderStyle* elementParentStyle) const;
     bool checkScrollbarPseudoClass(CSSSelector*, PseudoId& dynamicPseudo) const;
+    static bool isFrameFocused(const Element*);
+    
+    bool fastCheckRightmostSelector(const CSSSelector*, const Element*) const;
 
     EInsideLink determineLinkStateSlowCase(Element*) const;
 
@@ -127,6 +138,41 @@ inline bool SelectorChecker::fastRejectSelector(const unsigned* identifierHashes
             return true;
     }
     return false;
+}
+    
+inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* selector)
+{
+    if (selector->m_match != CSSSelector::PseudoClass)
+        return false;
+    CSSSelector::PseudoType pseudoType = selector->pseudoType();
+    return pseudoType == CSSSelector::PseudoLink
+        || pseudoType == CSSSelector::PseudoAnyLink
+        || pseudoType == CSSSelector::PseudoVisited
+        || pseudoType == CSSSelector::PseudoFocus;
+}
+
+inline bool SelectorChecker::linkMatchesVisitedPseudoClass(const Element* element) const
+{
+    ASSERT(element->isLink());
+    return m_isMatchingVisitedPseudoClass || InspectorInstrumentation::forcePseudoState(const_cast<Element*>(element), CSSSelector::PseudoVisited);
+}
+
+inline bool SelectorChecker::matchesFocusPseudoClass(const Element* element) const
+{
+    if (InspectorInstrumentation::forcePseudoState(const_cast<Element*>(element), CSSSelector::PseudoFocus))
+        return true;
+    return element->focused() && isFrameFocused(element);
+}
+    
+inline bool SelectorChecker::tagMatches(const Element* element, const CSSSelector* selector)
+{
+    if (!selector->hasTag())
+        return true;
+    const AtomicString& localName = selector->tag().localName();
+    if (localName != starAtom && localName != element->localName())
+        return false;
+    const AtomicString& namespaceURI = selector->tag().namespaceURI();
+    return namespaceURI == starAtom || namespaceURI == element->namespaceURI();
 }
 
 }

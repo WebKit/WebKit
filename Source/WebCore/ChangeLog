@@ -1,3 +1,85 @@
+2011-09-26  Antti Koivisto  <antti@apple.com>
+
+        Optimize matching of common pseudo classes
+        https://bugs.webkit.org/show_bug.cgi?id=68633
+
+        Reviewed by Dave Hyatt, Darin Adler, Dimitri Glazkov.
+        
+        :link, :visited and :focus are quite common. They often used as univeral selectors (including in our
+        default stylesheet) so we try to match them for all elements in the document. They take always the 
+        slow matching path. In addition we match link styles twice due to visited link pseudo style generation
+        so the overhead is doubled. As a result substantial portion of our style matching time is spent 
+        dealing with these pseudo classes. 
+        
+        This patch adds new lists to RuleSet for common pseudo class rules. The rules on the lists are only checked
+        if the element has approprate type and stat. ases where the rightmost pseudo class can then be rejected immediately.
+        We can also enable the fast path checking for the rest of the selector in many cases.
+    
+        This seems to be >30% progression in selector matching performance with typical style sheets. It saves ~0.9s
+        when loading the full HTML5 spec.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleData::hasRightmostSelectorMatchingHTMLBasedOnRuleHash):
+        (WebCore::RuleSet::idRules):
+        (WebCore::RuleSet::classRules):
+        (WebCore::RuleSet::tagRules):
+        (WebCore::RuleSet::shadowPseudoElementRules):
+        (WebCore::RuleSet::linkPseudoClassRules):
+        (WebCore::RuleSet::visitedPseudoClassRules):
+        (WebCore::RuleSet::focusPseudoClassRules):
+        (WebCore::RuleSet::universalRules):
+        (WebCore::RuleSet::pageRules):
+        
+            Add a new lists, some stylistic renamings.
+    
+        (WebCore::CSSStyleSelector::matchRules):
+        
+            New link and focus checks.
+
+        (WebCore::CSSStyleSelector::matchRulesForList):
+        (WebCore::CSSStyleSelector::checkSelector):
+        
+            Inline the rightmost selector tag checking, skip if unnecessary.
+        
+        (WebCore::isSelectorMatchingHTMLBasedOnRuleHash):
+        
+            Common pseudo classes now match based on early filtering (though it is not a hash in this case).
+
+        (WebCore::RuleData::RuleData):
+        (WebCore::RuleSet::~RuleSet):
+        (WebCore::RuleSet::addRule):
+        
+            Sort pseudo classes to new lists.
+        
+        (WebCore::RuleSet::collectFeatures):
+        (WebCore::RuleSet::shrinkToFit):
+        (WebCore::CSSStyleSelector::matchPageRules):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector):
+        
+            Adopt to expanded fast path (this is used by querySelectorAll).
+
+        (WebCore::SelectorChecker::fastCheckRightmostSelector):
+        (WebCore::SelectorChecker::fastCheckSelector):
+        
+            Rightmost selector is now checked differently than the rest. RuleSet based selection in CSSStyleSelector
+            is equivalent to fastCheckRightmostSelector().
+        
+        (WebCore::isFastCheckableRelation):
+        (WebCore::isFastCheckableMatch):
+        (WebCore::isFastCheckableRightmostSelector):
+        (WebCore::SelectorChecker::isFastCheckableSelector):
+        (WebCore::SelectorChecker::checkOneSelector):
+        (WebCore::SelectorChecker::commonPseudoClassSelectorMatches):
+        (WebCore::SelectorChecker::isFrameFocused):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::isCommonPseudoClassSelector):
+        (WebCore::SelectorChecker::linkMatchesVisitedPseudoClass):
+        (WebCore::SelectorChecker::matchesFocusPseudoClass):
+        (WebCore::SelectorChecker::tagMatches):
+        
+            Refactor a bunch of shared checks into functions.
+
 2011-09-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r74971): Selection doesn't work correctly in BiDi Text
