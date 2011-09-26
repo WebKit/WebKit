@@ -73,11 +73,11 @@ ENDIF ()
 # -----------------------------------------------------------------------------
 # Determine the operating system
 # -----------------------------------------------------------------------------
-IF (CMAKE_SYSTEM_NAME MATCHES "Linux")
-    SET(WTF_OS_UNIX 1)
-
+IF (UNIX)
     IF (APPLE)
         SET(WTF_OS_MAC_OS_X 1)
+    ELSE ()
+        SET(WTF_OS_UNIX 1)
     ENDIF ()
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Windows")
     SET(WTF_OS_WINDOWS 1)

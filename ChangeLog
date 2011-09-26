@@ -1,3 +1,19 @@
+2011-09-26  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Detect the operating system in a more generic way.
+        https://bugs.webkit.org/show_bug.cgi?id=67482
+
+        Reviewed by Adam Barth.
+
+        So far the buildsystem only considered Windows, Linux and Mac OS X as
+        valid operating systems, but any Unix (or at least the BSDs) should also
+        work fine.
+
+        By using the OS values CMake itself defines we can check for Unix
+        systems in a more generic fashion.
+
+        * Source/CMakeLists.txt:
+
 2011-09-26  Jay Soffian  <jaysoffian@gmail.com>
 
         chrome.dll!WebCore::ApplyStyleCommand::applyBlockStyle ReadAV@NULL (64db547804532a84be2e53721e499e9e)
