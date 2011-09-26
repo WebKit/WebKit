@@ -10,6 +10,8 @@
     </style>
     <script>
       function go() {
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
         document.execCommand("SelectAll");
         document.execCommand("JustifyRight");
         document.execCommand("JustifyNone");
