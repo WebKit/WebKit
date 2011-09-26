@@ -77,7 +77,7 @@ static void dumpBitmap(cairo_surface_t* surface, const char* checksum)
     printPNG(data, dataLength, checksum);
 }
 
-void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef wkImage)
+void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef wkImage, WKArrayRef /*repaintRects*/)
 {
     cairo_surface_t* surface = WKImageCreateCairoSurface(wkImage);
 

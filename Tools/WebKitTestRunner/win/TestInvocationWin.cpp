@@ -29,7 +29,7 @@
 namespace WTR {
 
 #if !USE(CG) && !USE(CAIRO)
-void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef)
+void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef, WKArrayRef)
 {
 }
 #endif
