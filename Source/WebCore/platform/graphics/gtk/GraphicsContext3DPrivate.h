@@ -20,6 +20,8 @@
 #ifndef GraphicsContext3DPrivate_h
 #define GraphicsContext3DPrivate_h
 
+#include <wtf/PassOwnPtr.h>
+
 typedef struct __GLXcontextRec *GLXContext;
 typedef unsigned long GLXPbuffer;
 typedef unsigned long GLXPixmap;
