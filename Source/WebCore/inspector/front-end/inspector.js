@@ -1256,7 +1256,7 @@ WebInspector._showAnchorLocationInPanel = function(anchor, panel)
     return true;
 }
 
-WebInspector.linkifyStringAsFragment = function(string)
+WebInspector.linkifyStringAsFragmentWithCustomLinkifier = function(string, linkifier)
 {
     var container = document.createDocumentFragment();
     var linkStringRegEx = /(?:[a-zA-Z][a-zA-Z0-9+.-]{2,}:\/\/|www\.)[\w$\-_+*'=\|\/\\(){}[\]%@&#~,:;.!?]{2,}[\w$\-_+*=\|\/\\({%@&#~]/;
@@ -1268,27 +1268,18 @@ WebInspector.linkifyStringAsFragment = function(string)
             break;
 
         linkString = linkString[0];
-        var title = linkString;
         var linkIndex = string.indexOf(linkString);
         var nonLink = string.substring(0, linkIndex);
         container.appendChild(document.createTextNode(nonLink));
 
-        var profileStringMatches = WebInspector.ProfileType.URLRegExp.exec(title);
-        if (profileStringMatches)
-            title = WebInspector.panels.profiles.displayTitleForProfileLink(profileStringMatches[2], profileStringMatches[1]);
-
+        var title = linkString;
         var realURL = (linkString.indexOf("www.") === 0 ? "http://" + linkString : linkString);
         var lineColumnMatch = lineColumnRegEx.exec(realURL);
         if (lineColumnMatch)
             realURL = realURL.substring(0, realURL.length - lineColumnMatch[0].length);
 
-        var hasResourceWithURL = !!WebInspector.resourceForURL(realURL);
-        var urlNode = WebInspector.linkifyURLAsNode(realURL, title, null, hasResourceWithURL);
-        container.appendChild(urlNode);
-        if (lineColumnMatch) {
-            urlNode.setAttribute("line_number", lineColumnMatch[1]);
-            urlNode.setAttribute("preferred_panel", "scripts");
-        }
+        var linkNode = linkifier(title, realURL, lineColumnMatch ? lineColumnMatch[1] : undefined);
+        container.appendChild(linkNode);
         string = string.substring(linkIndex + linkString.length, string.length);
     }
 
@@ -1296,6 +1287,27 @@ WebInspector.linkifyStringAsFragment = function(string)
         container.appendChild(document.createTextNode(string));
 
     return container;
+}
+
+WebInspector.linkifyStringAsFragment = function(string)
+{
+    function linkifier(title, url, lineNumber)
+    {
+        var profileStringMatches = WebInspector.ProfileType.URLRegExp.exec(title);
+        if (profileStringMatches)
+            title = WebInspector.panels.profiles.displayTitleForProfileLink(profileStringMatches[2], profileStringMatches[1]);
+
+        var isExternal = !WebInspector.resourceForURL(url);
+        var urlNode = WebInspector.linkifyURLAsNode(url, title, null, isExternal);
+        if (typeof(lineNumber) !== "undefined") {
+            urlNode.setAttribute("line_number", lineNumber);
+            urlNode.setAttribute("preferred_panel", "scripts");
+        }
+        
+        return urlNode; 
+    }
+    
+    return WebInspector.linkifyStringAsFragmentWithCustomLinkifier(string, linkifier);
 }
 
 WebInspector.showProfileForURL = function(url)

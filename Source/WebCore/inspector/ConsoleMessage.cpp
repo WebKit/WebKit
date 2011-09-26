@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, unsigned li, const String& u)
+ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, unsigned li, const String& u, const String& requestId)
     : m_source(s)
     , m_type(t)
     , m_level(l)
@@ -52,6 +52,7 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
     , m_line(li)
     , m_url(u)
     , m_repeatCount(1)
+    , m_requestId(requestId)
 {
 }
 

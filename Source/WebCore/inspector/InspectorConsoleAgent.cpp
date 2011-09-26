@@ -211,12 +211,17 @@ void InspectorConsoleAgent::frameWindowDiscarded(DOMWindow* window)
     m_injectedScriptManager->discardInjectedScriptsFor(window);
 }
 
-void InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest(const String& url, const String& sendURL, unsigned sendLineNumber)
+void InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const String& url, const String& sendURL, unsigned sendLineNumber)
 {
     if (!m_inspectorAgent->enabled())
         return;
-    if (m_inspectorState->getBoolean(ConsoleAgentState::monitoringXHR))
-        addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, "XHR finished loading: \"" + url + "\".", sendLineNumber, sendURL);
+    if (m_frontend && m_inspectorState->getBoolean(ConsoleAgentState::monitoringXHR)) {
+        String message = "XHR finished loading: \"" + url + "\".";
+        String requestId = IdentifiersFactory::requestId(identifier);
+        addConsoleMessage(adoptPtr(new ConsoleMessage(NetworkMessageSource, LogMessageType, LogMessageLevel, message, sendLineNumber, sendURL, requestId)));
+    }
+
+
 }
 
 void InspectorConsoleAgent::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)

@@ -51,7 +51,7 @@ class ScriptValue;
 class ConsoleMessage {
     WTF_MAKE_NONCOPYABLE(ConsoleMessage); WTF_MAKE_FAST_ALLOCATED;
 public:
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, unsigned li, const String& u);
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, unsigned li, const String& u, const String& requestId = String());
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, const String& responseUrl, const String& requestId);
     ~ConsoleMessage();

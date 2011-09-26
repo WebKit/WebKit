@@ -327,14 +327,6 @@ WebInspector.ResourcesPanel.prototype = {
     showAnchorLocation: function(anchor)
     {
         var resource = WebInspector.resourceForURL(anchor.href);
-        if (resource.type === WebInspector.Resource.Type.XHR) {
-            // Show XHRs in the network panel only.
-            if (WebInspector.panels.network && WebInspector.panels.network.canShowAnchorLocation(anchor)) {
-                WebInspector.setCurrentPanel(WebInspector.panels.network);
-                WebInspector.panels.network.showAnchorLocation(anchor);
-            }
-            return;
-        }
         var lineNumber = anchor.hasAttribute("line_number") ? parseInt(anchor.getAttribute("line_number")) : undefined;
         this.showResource(resource, lineNumber);
     },

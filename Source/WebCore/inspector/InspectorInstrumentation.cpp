@@ -542,7 +542,7 @@ void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents* instrumen
 void InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
 {
     if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
-        consoleAgent->resourceRetrievedByXMLHttpRequest(url, sendURL, sendLineNumber);
+        consoleAgent->resourceRetrievedByXMLHttpRequest(identifier, url, sendURL, sendLineNumber);
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->setInitialXHRContent(identifier, sourceString);
 }

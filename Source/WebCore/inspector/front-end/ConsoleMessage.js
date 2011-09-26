@@ -105,17 +105,35 @@ WebInspector.ConsoleMessage.prototype = {
             }
         } else if (this.source === WebInspector.ConsoleMessage.MessageSource.Network) {
             if (this._request) {
-                this._stackTrace = this._request.stackTrace;
-                messageText = document.createElement("span");
-                messageText.appendChild(document.createTextNode(this._request.requestMethod + " "));
-                var anchor = WebInspector.linkifyURLAsNode(this._request.url);
-                anchor.setAttribute("request_id", this._request.requestId);
-                anchor.setAttribute("preferred_panel", "network");
-                messageText.appendChild(anchor);
-                if (this._request.failed)
-                    messageText.appendChild(document.createTextNode(" " + this._request.localizedFailDescription));
-                else
-                    messageText.appendChild(document.createTextNode(" " + this._request.statusCode + " (" + this._request.statusText + ")"));
+                if (this.level === WebInspector.ConsoleMessage.MessageLevel.Error) {
+                    this._stackTrace = this._request.stackTrace;
+                    messageText = document.createElement("span");
+                    messageText.appendChild(document.createTextNode(this._request.requestMethod + " "));
+                    var anchor = WebInspector.linkifyURLAsNode(this._request.url);
+                    anchor.setAttribute("request_id", this._request.requestId);
+                    anchor.setAttribute("preferred_panel", "network");
+                    messageText.appendChild(anchor);
+                    if (this._request.failed)
+                        messageText.appendChild(document.createTextNode(" " + this._request.localizedFailDescription));
+                    else
+                        messageText.appendChild(document.createTextNode(" " + this._request.statusCode + " (" + this._request.statusText + ")"));
+                } else {
+                    messageText = document.createElement("span");
+                    
+                    function linkifier(title, url, lineNumber)
+                    {
+                        var isExternal = !this._request;
+                        var anchor = WebInspector.linkifyURLAsNode(url, title, null, isExternal);
+                        if (this._request) {
+                            anchor.setAttribute("request_id", this._request.requestId);
+                            anchor.setAttribute("preferred_panel", "network");
+                        }
+                        return anchor;
+                    }
+                    
+                    var fragment = WebInspector.linkifyStringAsFragmentWithCustomLinkifier(this._messageText, linkifier.bind(this));
+                    messageText.appendChild(fragment);
+                }
             } else {
                 var isExternal = !WebInspector.resourceForURL(this.url);
                 var anchor = WebInspector.linkifyURLAsNode(this.url, this.url, "console-message-url", isExternal);
