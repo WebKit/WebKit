@@ -222,13 +222,16 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKRetainPtr<WKStringRef> pixelResultKey = adoptWK(WKStringCreateWithUTF8CString("PixelResult"));
         WKImageRef pixelResult = static_cast<WKImageRef>(WKDictionaryGetItemForKey(messageBodyDictionary, pixelResultKey.get()));
         ASSERT(!pixelResult || m_dumpPixels);
+        
+        WKRetainPtr<WKStringRef> repaintRectsKey = adoptWK(WKStringCreateWithUTF8CString("RepaintRects"));
+        WKArrayRef repaintRects = static_cast<WKArrayRef>(WKDictionaryGetItemForKey(messageBodyDictionary, repaintRectsKey.get()));        
 
         // Dump text.
         dump(toSTD(textOutput).c_str(), true);
 
         // Dump pixels (if necessary).
         if (m_dumpPixels && pixelResult)
-            dumpPixelsAndCompareWithExpected(pixelResult);
+            dumpPixelsAndCompareWithExpected(pixelResult, repaintRects);
 
         fputs("#EOF\n", stdout);
         fflush(stdout);

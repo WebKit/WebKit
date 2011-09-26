@@ -307,6 +307,8 @@ void InjectedBundlePage::reset()
     m_previousTestBackForwardListItem = adoptWK(WKBundleBackForwardListCopyItemAtIndex(WKBundlePageGetBackForwardList(m_page), 0));
 
     WKBundleFrameClearOpener(WKBundlePageGetMainFrame(m_page));
+    
+    WKBundlePageSetTracksRepaints(m_page, false);
 }
 
 // Loader Client Callbacks
@@ -575,8 +577,11 @@ void InjectedBundlePage::dump()
     if (InjectedBundle::shared().layoutTestController()->shouldDumpBackForwardListsForAllWindows())
         InjectedBundle::shared().dumpBackForwardListsForAllPages();
 
-    if (InjectedBundle::shared().shouldDumpPixels() && InjectedBundle::shared().layoutTestController()->shouldDumpPixels())
+    if (InjectedBundle::shared().shouldDumpPixels() && InjectedBundle::shared().layoutTestController()->shouldDumpPixels()) {
         InjectedBundle::shared().setPixelResult(adoptWK(WKBundlePageCreateSnapshotInViewCoordinates(m_page, WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page)), kWKImageOptionsShareable)).get());
+        if (WKBundlePageIsTrackingRepaints(m_page))
+            InjectedBundle::shared().setRepaintRects(adoptWK(WKBundlePageCopyTrackedRepaintRects(m_page)).get());
+    }
 
     InjectedBundle::shared().done();
 }

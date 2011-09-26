@@ -1,3 +1,61 @@
+2011-09-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Repaint tests don't work in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=68453
+
+        Reviewed by Sam Weinig.
+        
+        Update Mac results to use the new repaint rects. Differences from old results:
+	        * There are no longer invalidates from scrolling.
+	        * We no longer see the effects of AppKit rect coalescing.
+	        * Composting tests show the overlay now, but repaints in compositing layers do not show.
+	        
+	    Bad results in a couple of tests are covered by bugs 68830 and 68829.
+
+        * platform/mac/fast/repaint/4774354-expected.png:
+        * platform/mac/fast/repaint/block-layout-inline-children-float-positioned-expected.png:
+        * platform/mac/fast/repaint/block-selection-gap-in-composited-layer-expected.png:
+        * platform/mac/fast/repaint/border-radius-repaint-expected.png:
+        * platform/mac/fast/repaint/clipped-relative-expected.png:
+        * platform/mac/fast/repaint/containing-block-position-change-expected.png:
+        * platform/mac/fast/repaint/control-clip-expected.png:
+        * platform/mac/fast/repaint/delete-into-nested-block-expected.png:
+        * platform/mac/fast/repaint/fixed-and-absolute-position-scrolled-expected.png:
+        * platform/mac/fast/repaint/fixed-scroll-simple-expected.png:
+        * platform/mac/fast/repaint/flexible-box-overflow-expected.png:
+        * platform/mac/fast/repaint/flexible-box-overflow-horizontal-expected.png:
+        * platform/mac/fast/repaint/float-move-during-layout-expected.png:
+        * platform/mac/fast/repaint/float-overflow-expected.png:
+        * platform/mac/fast/repaint/float-overflow-right-expected.png:
+        * platform/mac/fast/repaint/iframe-scroll-repaint-expected.png:
+        * platform/mac/fast/repaint/inline-block-overflow-expected.png:
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-expected.png:
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/mac/fast/repaint/layer-child-outline-expected.png:
+        * platform/mac/fast/repaint/layer-outline-expected.png:
+        * platform/mac/fast/repaint/layer-outline-horizontal-expected.png:
+        * platform/mac/fast/repaint/line-flow-with-floats-in-regions-expected.png:
+        * platform/mac/fast/repaint/line-overflow-expected.png:
+        * platform/mac/fast/repaint/nested-iframe-scroll-inner-expected.png:
+        * platform/mac/fast/repaint/nested-iframe-scroll-outer-expected.png:
+        * platform/mac/fast/repaint/outline-child-repaint-expected.png:
+        * platform/mac/fast/repaint/outline-shrinking-expected.png:
+        * platform/mac/fast/repaint/overflow-delete-line-expected.png:
+        * platform/mac/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.png:
+        * platform/mac/fast/repaint/repaint-during-scroll-expected.png:
+        * platform/mac/fast/repaint/scale-page-shrink-expected.png:
+        * platform/mac/fast/repaint/search-field-cancel-expected.png:
+        * platform/mac/fast/repaint/selection-after-remove-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/mac/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/mac/fast/repaint/static-to-positioned-expected.png:
+        * platform/mac/fast/repaint/table-cell-move-expected.png:
+        * platform/mac/fast/repaint/text-selection-rect-in-overflow-2-expected.png:
+        * platform/mac/fast/repaint/text-shadow-expected.png:
+        * platform/mac/fast/repaint/text-shadow-horizontal-expected.png:
+
 2011-09-26  John Bauman  <jbauman@chromium.org>
 
         Fix nonpremultiplied webgl toDataURL to jpeg

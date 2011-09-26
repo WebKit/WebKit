@@ -64,6 +64,7 @@ public:
     void done();
     std::ostringstream& os() { return m_outputStream; }
     void setPixelResult(WKImageRef image) { m_pixelResult = image; }
+    void setRepaintRects(WKArrayRef rects) { m_repaintRects = rects; }
 
     bool isTestRunning() { return m_state == Testing; }
 
@@ -115,6 +116,7 @@ private:
     bool m_dumpPixels;
 
     WKRetainPtr<WKImageRef> m_pixelResult;
+    WKRetainPtr<WKArrayRef> m_repaintRects;
 };
 
 } // namespace WTR

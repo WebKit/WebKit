@@ -350,7 +350,6 @@ static NSString *libraryPathForDumpRenderTree()
 // Called before each test.
 static void resetDefaultsToConsistentValues()
 {
-    // Give some clear to undocumented defaults values
     static const int NoFontSmoothing = 0;
     static const int BlueTintedAppearance = 1;
 
@@ -1012,7 +1011,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [WebView _removeAllUserContentFromGroup:[webView groupName]];
     [[webView window] setAutodisplay:NO];
     [webView _setMinimumTimerInterval:[WebView _defaultMinimumTimerInterval]];
-
+    [webView setTracksRepaints:NO];
+    
     resetDefaultsToConsistentValues();
 
     if (gLayoutTestController)
@@ -1172,12 +1172,11 @@ static void runTest(const string& testPathOrURL)
 
 void displayWebView()
 {
-    NSView *webView = [mainFrame webView];
+    WebView *webView = [mainFrame webView];
     [webView display];
-    [webView lockFocus];
-    [[[NSColor blackColor] colorWithAlphaComponent:0.66] set];
-    NSRectFillUsingOperation([webView frame], NSCompositeSourceOver);
-    [webView unlockFocus];
+    
+    [webView setTracksRepaints:YES];
+    [webView resetTrackedRepaints];
 }
 
 @implementation DumpRenderTreeEvent

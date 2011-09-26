@@ -1,3 +1,49 @@
+2011-09-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Repaint tests don't work in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=68453
+
+        Reviewed by Sam Weinig.
+        
+        Convert DumpRenderTree to use use the repaint rects
+        exposed via WebKit API when generating the repaint test
+        overlay.
+        
+        Fix WebKitTestRunner to work with repaint tests, again
+        using the repaint rects exposed from WK2.
+        
+        In both cases, layoutTestController.display() now just
+        forces a display of the web view, and turns on repaint
+        rect tracking on the main FrameView.
+        
+        Later, when pixel results are requested, the alpha overlay
+        that shows the repaint rects is generated using the list
+        of rects supplied by WebCore.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        (resetWebViewToConsistentStateBeforeTesting):
+        (displayWebView):
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (paintRepaintRectOverlay):
+        (createBitmapContextFromWebView):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        (WTR::InjectedBundle::done):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::setRepaintRects):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::reset):
+        (WTR::InjectedBundlePage::dump):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::display):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        (WTR::paintRepaintRectOverlay):
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+
 2011-09-26  Nayan Kumar K  <nayankk@motorola.com>
 
         Get hover'ed element URL from HitTest.

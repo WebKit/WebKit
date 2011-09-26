@@ -130,6 +130,35 @@ static PassRefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t p
     return BitmapContext::createByAdoptingBitmapAndContext(buffer, context);
 }
 
+static void paintRepaintRectOverlay(WebView* webView, CGContextRef context)
+{
+    CGRect viewRect = NSRectToCGRect([webView bounds]);
+
+    CGContextSaveGState(context);
+
+    // Using a transparency layer is easier than futzing with clipping.
+    CGContextBeginTransparencyLayer(context, 0);
+
+    // Flip the context.
+    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context, 0, -viewRect.size.height);
+    
+    CGContextSetRGBFillColor(context, 0, 0, 0, static_cast<CGFloat>(0.66));
+    CGContextFillRect(context, viewRect);
+
+    NSArray *repaintRects = [webView trackedRepaintRects];
+    if (repaintRects) {
+        
+        for (NSValue *value in repaintRects) {
+            CGRect currRect = NSRectToCGRect([value rectValue]);
+            CGContextClearRect(context, currRect);
+        }
+    }
+    
+    CGContextEndTransparencyLayer(context);
+    CGContextRestoreGState(context);
+}
+
 PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
 {
     WebView* view = [mainFrame webView];
@@ -175,6 +204,9 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
             CGImageRef image = CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [[view window] windowNumber], kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque);
             CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image)), image);
             CGImageRelease(image);
+
+            if ([view isTrackingRepaints])
+                paintRepaintRectOverlay(view, context);
         } else {
             // Make sure the view has been painted.
             [view displayIfNeeded];
@@ -188,6 +220,10 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
             RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
             [NSGraphicsContext setCurrentContext:nsContext];
             [imageRep draw];
+            
+            if ([view isTrackingRepaints])
+                paintRepaintRectOverlay(view, context);
+            
             [NSGraphicsContext setCurrentContext:savedContext.get()];
         }
     }

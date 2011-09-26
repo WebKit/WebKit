@@ -122,7 +122,10 @@ JSClassRef LayoutTestController::wrapperClass()
 
 void LayoutTestController::display()
 {
-    // FIXME: actually implement, once we want pixel tests
+    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    WKBundlePageForceRepaint(page);
+    WKBundlePageSetTracksRepaints(page, true);
+    WKBundlePageResetTrackedRepaints(page);
 }
 
 void LayoutTestController::dumpAsText(bool dumpPixels)

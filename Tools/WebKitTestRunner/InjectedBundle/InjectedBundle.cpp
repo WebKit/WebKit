@@ -170,6 +170,7 @@ void InjectedBundle::beginTesting()
 
     m_outputStream.str("");
     m_pixelResult.clear();
+    m_repaintRects.clear();
 
     m_layoutTestController = LayoutTestController::create();
     m_gcController = GCController::create();
@@ -208,6 +209,9 @@ void InjectedBundle::done()
     
     WKRetainPtr<WKStringRef> pixelResultKey = adoptWK(WKStringCreateWithUTF8CString("PixelResult"));
     WKDictionaryAddItem(doneMessageBody.get(), pixelResultKey.get(), m_pixelResult.get());
+
+    WKRetainPtr<WKStringRef> repaintRectsKey = adoptWK(WKStringCreateWithUTF8CString("RepaintRects"));
+    WKDictionaryAddItem(doneMessageBody.get(), repaintRectsKey.get(), m_repaintRects.get());
 
     WKBundlePostMessage(m_bundle, doneMessageName.get(), doneMessageBody.get());
 

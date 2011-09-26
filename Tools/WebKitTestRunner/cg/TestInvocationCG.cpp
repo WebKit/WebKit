@@ -114,9 +114,41 @@ static void dumpBitmap(CGContextRef bitmapContext, const char* checksum)
     printPNG(data, dataLength, checksum);
 }
 
-void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image)
+static void paintRepaintRectOverlay(CGContextRef context, WKImageRef image, WKArrayRef repaintRects)
+{
+    WKSize imageSize = WKImageGetSize(image);
+
+    CGContextSaveGState(context);
+
+    // Using a transparency layer is easier than futzing with clipping.
+    CGContextBeginTransparencyLayer(context, 0);
+    
+    // Flip the context.
+    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context, 0, -imageSize.height);
+    
+    CGContextSetRGBFillColor(context, 0, 0, 0, static_cast<CGFloat>(0.66));
+    CGContextFillRect(context, CGRectMake(0, 0, imageSize.width, imageSize.height));
+
+    // Clear the repaint rects.
+    size_t count = WKArrayGetSize(repaintRects);
+    for (size_t i = 0; i < count; ++i) {
+        WKRect rect = WKRectGetValue(static_cast<WKRectRef>(WKArrayGetItemAtIndex(repaintRects, i)));
+        CGRect cgRect = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+        CGContextClearRect(context, cgRect);
+    }
+    
+    CGContextEndTransparencyLayer(context);
+    CGContextRestoreGState(context);
+}
+
+void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image, WKArrayRef repaintRects)
 {
     CGContextRef context = createCGContextFromImage(image);
+
+    // A non-null repaintRects array means we're doing a repaint test.
+    if (repaintRects)
+        paintRepaintRectOverlay(context, image, repaintRects);
 
     char actualHash[33];
     computeMD5HashStringForContext(context, actualHash);

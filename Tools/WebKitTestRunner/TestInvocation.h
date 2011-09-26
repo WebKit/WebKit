@@ -46,7 +46,7 @@ public:
 
 private:
     void dump(const char*, bool singleEOF = false);
-    void dumpPixelsAndCompareWithExpected(WKImageRef);
+    void dumpPixelsAndCompareWithExpected(WKImageRef, WKArrayRef repaintRects);
     bool compareActualHashToExpectedAndDumpResults(const char[33]);
     
     WKRetainPtr<WKURLRef> m_url;
