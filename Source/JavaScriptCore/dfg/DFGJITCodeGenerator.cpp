@@ -1229,7 +1229,7 @@ void JITCodeGenerator::writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, NodeIndex 
 #if ENABLE(GGC)
     JITCompiler::Jump rhsNotCell;
     bool hadCellCheck = false;
-    if (!isKnownCell(valueIndex) && !isCellPrediction(m_jit.graph().getPrediction(m_jit.graph()[valueIndex]))) {
+    if (!isKnownCell(valueIndex) && !isCellPrediction(m_jit.getPrediction(valueIndex))) {
         hadCellCheck = true;
         rhsNotCell = m_jit.branchTestPtr(MacroAssembler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
     }
@@ -1270,7 +1270,7 @@ void JITCodeGenerator::writeBarrier(JSCell* owner, GPRReg valueGPR, NodeIndex va
 #if ENABLE(GGC)
     JITCompiler::Jump rhsNotCell;
     bool hadCellCheck = false;
-    if (!isKnownCell(valueIndex) && !isCellPrediction(m_jit.graph().getPrediction(m_jit.graph()[valueIndex]))) {
+    if (!isKnownCell(valueIndex) && !isCellPrediction(m_jit.getPrediction(valueIndex))) {
         hadCellCheck = true;
         rhsNotCell = m_jit.branchTestPtr(MacroAssembler::NonZero, valueGPR, GPRInfo::tagMaskRegister);
     }
@@ -1796,7 +1796,7 @@ void JITCodeGenerator::emitBranch(Node& node)
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
         
-        bool predictBoolean = isBooleanPrediction(m_jit.graph().getPrediction(m_jit.graph()[node.child1()]));
+        bool predictBoolean = isBooleanPrediction(m_jit.getPrediction(node.child1()));
     
         if (predictBoolean) {
             addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueGPR, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(false)))), notTaken);

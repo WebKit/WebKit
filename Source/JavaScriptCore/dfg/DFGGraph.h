@@ -176,24 +176,24 @@ public:
         return m_predictions;
     }
     
-    bool predict(int operand, PredictedType prediction, PredictionSource source)
+    bool predict(int operand, PredictedType prediction)
     {
-        return m_predictions.predict(operand, prediction, source);
+        return m_predictions.predict(operand, prediction);
     }
     
-    bool predictGlobalVar(unsigned varNumber, PredictedType prediction, PredictionSource source)
+    bool predictGlobalVar(unsigned varNumber, PredictedType prediction)
     {
-        return m_predictions.predictGlobalVar(varNumber, prediction, source);
+        return m_predictions.predictGlobalVar(varNumber, prediction);
     }
     
-    bool predict(Node& node, PredictedType prediction, PredictionSource source)
+    bool predict(Node& node, PredictedType prediction)
     {
         switch (node.op) {
         case GetLocal:
-            return predict(node.local(), prediction, source);
+            return predict(node.local(), prediction);
             break;
         case GetGlobalVar:
-            return predictGlobalVar(node.varNumber(), prediction, source);
+            return predictGlobalVar(node.varNumber(), prediction);
             break;
         case GetById:
         case GetMethod:
@@ -206,7 +206,7 @@ public:
         case ResolveBase:
         case ResolveBaseStrictPut:
         case ResolveGlobal:
-            return node.predict(prediction, source);
+            return node.predict(prediction);
         default:
             return false;
         }
@@ -224,10 +224,15 @@ public:
     
     PredictedType getMethodCheckPrediction(Node& node)
     {
-        return makePrediction(predictionFromCell(m_methodCheckData[node.methodCheckDataIndex()].function), StrongPrediction);
+        return predictionFromCell(m_methodCheckData[node.methodCheckDataIndex()].function);
     }
     
-    PredictedType getPrediction(Node& node)
+    PredictedType getJSConstantPrediction(Node& node, CodeBlock* codeBlock)
+    {
+        return predictionFromValue(node.valueOfJSConstantNode(codeBlock));
+    }
+    
+    PredictedType getPrediction(Node& node, CodeBlock* codeBlock)
     {
         Node* nodePtr = &node;
         
@@ -251,6 +256,8 @@ public:
             return nodePtr->getPrediction();
         case CheckMethod:
             return getMethodCheckPrediction(*nodePtr);
+        case JSConstant:
+            return getJSConstantPrediction(*nodePtr, codeBlock);
         default:
             return PredictNone;
         }

@@ -370,7 +370,7 @@ private:
         if (isInteger(nodeIndex))
             return true;
         
-        if (isInt32Prediction(m_jit.graph().getPrediction(m_jit.graph()[nodeIndex])))
+        if (isInt32Prediction(m_jit.getPrediction(nodeIndex)))
             return true;
         
         return false;
@@ -389,7 +389,7 @@ private:
         if (info.isJSDouble())
             return true;
         
-        if (isDoublePrediction(m_jit.graph().getPrediction(node)))
+        if (isDoublePrediction(m_jit.getPrediction(nodeIndex)))
             return true;
         
         return false;
@@ -411,7 +411,7 @@ private:
         if (info.isJSInteger() || info.isJSDouble())
             return true;
         
-        PredictedType prediction = m_jit.graph().getPrediction(node);
+        PredictedType prediction = m_jit.getPrediction(nodeIndex);
         
         if (isNumberPrediction(prediction) || prediction == PredictNone)
             return true;
@@ -432,7 +432,7 @@ private:
         if (info.isJSDouble())
             return true;
         
-        if (m_jit.graph().getPrediction(node) & PredictDouble)
+        if (m_jit.getPrediction(nodeIndex) & PredictDouble)
             return true;
         
         return false;
@@ -444,7 +444,7 @@ private:
         if (isJSConstant(nodeIndex))
             prediction = predictionFromValue(valueOfJSConstant(nodeIndex));
         else
-            prediction = m_jit.graph().getPrediction(m_jit.graph()[nodeIndex]);
+            prediction = m_jit.getPrediction(nodeIndex);
         return isFinalObjectPrediction(prediction);
     }
     
@@ -454,7 +454,7 @@ private:
         if (isJSConstant(nodeIndex))
             prediction = predictionFromValue(valueOfJSConstant(nodeIndex));
         else
-            prediction = m_jit.graph().getPrediction(m_jit.graph()[nodeIndex]);
+            prediction = m_jit.getPrediction(nodeIndex);
         return isArrayPrediction(prediction);
     }
     
@@ -467,7 +467,7 @@ private:
         if (isJSConstant(nodeIndex))
             prediction = predictionFromValue(valueOfJSConstant(nodeIndex));
         else
-            prediction = m_jit.graph().getPrediction(m_jit.graph()[nodeIndex]);
+            prediction = m_jit.getPrediction(nodeIndex);
         return isObjectPrediction(prediction);
     }
     
@@ -478,7 +478,7 @@ private:
         
         Node& node = m_jit.graph()[nodeIndex];
 
-        if (isCellPrediction(m_jit.graph().getPrediction(node)))
+        if (isCellPrediction(m_jit.getPrediction(nodeIndex)))
             return true;
 
         VirtualRegister virtualRegister = node.virtualRegister();

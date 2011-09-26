@@ -498,10 +498,10 @@ namespace JSC {
         }
         ValueProfile* valueProfileForArgument(int argumentIndex)
         {
-            int index = argumentIndex - 1;
+            int index = argumentIndex;
             if (static_cast<unsigned>(index) >= m_valueProfiles.size())
                 return 0;
-            ValueProfile* result = valueProfile(argumentIndex - 1);
+            ValueProfile* result = valueProfile(argumentIndex);
             if (result->m_bytecodeOffset != -1)
                 return 0;
             return result;

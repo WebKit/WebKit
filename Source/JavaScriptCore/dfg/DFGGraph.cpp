@@ -206,13 +206,8 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
     if (exec) {
         size_t numberOfArguments = std::min(exec->argumentCountIncludingThis(), m_predictions.numberOfArguments());
         
-        for (size_t arg = 1; arg < numberOfArguments; ++arg) {
-            JSValue argumentValue = exec->argument(arg - 1);
-            if (argumentValue.isInt32())
-                m_predictions.predictArgument(arg, PredictInt32, WeakPrediction);
-            else if (argumentValue.isDouble())
-                m_predictions.predictArgument(arg, PredictDouble, WeakPrediction);
-        }
+        for (size_t arg = 1; arg < numberOfArguments; ++arg)
+            m_predictions.predictArgument(arg, predictionFromValue(exec->argument(arg - 1)));
     }
     
     ASSERT(codeBlock);
@@ -220,12 +215,12 @@ void Graph::predictArgumentTypes(ExecState* exec, CodeBlock* codeBlock)
 
     CodeBlock* profiledCodeBlock = codeBlock->alternative();
     ASSERT(codeBlock->m_numParameters >= 1);
-    for (size_t arg = 1; arg < static_cast<size_t>(codeBlock->m_numParameters); ++arg) {
+    for (size_t arg = 0; arg < static_cast<size_t>(codeBlock->m_numParameters); ++arg) {
         ValueProfile* profile = profiledCodeBlock->valueProfileForArgument(arg);
         if (!profile)
             continue;
         
-        m_predictions.predictArgument(arg, profile->computeUpdatedPrediction() & ~PredictionTagMask, StrongPrediction);
+        m_predictions.predictArgument(arg, profile->computeUpdatedPrediction());
         
 #if ENABLE(DFG_DEBUG_VERBOSE)
         printf("Argument [%lu] prediction: %s\n", arg, predictionToString(m_predictions.getArgumentPrediction(arg)));

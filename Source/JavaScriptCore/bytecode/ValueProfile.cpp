@@ -94,25 +94,25 @@ PredictedType ValueProfile::computeUpdatedPrediction()
     if (!statistics.samples)
         prediction = PredictNone;
     else if (statistics.int32s == statistics.samples)
-        prediction = StrongPredictionTag | PredictInt32;
+        prediction = PredictInt32;
     else if (statistics.doubles == statistics.samples)
-        prediction = StrongPredictionTag | PredictDouble;
+        prediction = PredictDouble;
     else if (statistics.int32s + statistics.doubles == statistics.samples)
-        prediction = StrongPredictionTag | PredictNumber;
+        prediction = PredictNumber;
     else if (statistics.arrays == statistics.samples)
-        prediction = StrongPredictionTag | PredictArray;
+        prediction = PredictArray;
     else if (statistics.finalObjects == statistics.samples)
-        prediction = StrongPredictionTag | PredictFinalObject;
+        prediction = PredictFinalObject;
     else if (statistics.strings == statistics.samples)
-        prediction = StrongPredictionTag | PredictString;
+        prediction = PredictString;
     else if (statistics.objects == statistics.samples)
-        prediction = StrongPredictionTag | PredictObjectOther;
+        prediction = PredictObjectOther;
     else if (statistics.cells == statistics.samples)
-        prediction = StrongPredictionTag | PredictCellOther;
+        prediction = PredictCellOther;
     else if (statistics.booleans == statistics.samples)
-        prediction = StrongPredictionTag | PredictBoolean;
+        prediction = PredictBoolean;
     else
-        prediction = StrongPredictionTag | PredictOther;
+        prediction = PredictOther;
 
     m_numberOfSamplesInPrediction += statistics.samples;
     mergePrediction(m_prediction, prediction);

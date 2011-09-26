@@ -695,8 +695,15 @@ void SpeculativeJIT::compile(Node& node)
         break;
 
     case GetLocal: {
-        GPRTemporary result(this);
         PredictedType prediction = m_jit.graph().getPrediction(node.local());
+
+        // If we have no prediction for this local, then don't attempt to compile.
+        if (prediction == PredictNone) {
+            terminateSpeculativeExecution();
+            break;
+        }
+        
+        GPRTemporary result(this);
         if (isInt32Prediction(prediction)) {
             m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
 
@@ -1300,8 +1307,8 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
         
-        PredictedType prediction = m_jit.graph().getPrediction(m_jit.graph()[node.child1()]);
-        if (isBooleanPrediction(prediction) || !isStrongPrediction(prediction)) {
+        PredictedType prediction = m_jit.getPrediction(node.child1());
+        if (isBooleanPrediction(prediction) || !prediction) {
             JSValueOperand value(this, node.child1());
             GPRTemporary result(this); // FIXME: We could reuse, but on speculation fail would need recovery to restore tag (akin to add).
             

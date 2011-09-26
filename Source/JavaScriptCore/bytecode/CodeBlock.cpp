@@ -1999,7 +1999,7 @@ bool CodeBlock::shouldOptimizeNow()
 #endif
 
     if ((!numberOfNonArgumentValueProfiles || (double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles >= 0.75)
-        && (!numberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles() >= 0.5))
+        && (!numberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles() >= 0.25))
         return true;
     
     m_optimizationDelayCounter++;
@@ -2026,7 +2026,7 @@ void CodeBlock::dumpValueProfiles()
         ValueProfile* profile = valueProfile(i);
         if (profile->m_bytecodeOffset < 0) {
             ASSERT(profile->m_bytecodeOffset == -1);
-            fprintf(stderr, "   arg = %u: ", i + 1);
+            fprintf(stderr, "   arg = %u: ", i);
         } else
             fprintf(stderr, "   bc = %d: ", profile->m_bytecodeOffset);
         if (!profile->numberOfSamples() && profile->m_prediction == PredictNone) {

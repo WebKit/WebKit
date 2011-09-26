@@ -272,6 +272,10 @@ public:
     double valueOfNumberConstant(NodeIndex nodeIndex) { return graph().valueOfNumberConstant(codeBlock(), nodeIndex); }
     bool valueOfBooleanConstant(NodeIndex nodeIndex) { return graph().valueOfBooleanConstant(codeBlock(), nodeIndex); }
     JSFunction* valueOfFunctionConstant(NodeIndex nodeIndex) { return graph().valueOfFunctionConstant(codeBlock(), nodeIndex); }
+    
+    // Helper methods to get predictions
+    PredictedType getPrediction(Node& node) { return graph().getPrediction(node, codeBlock()); }
+    PredictedType getPrediction(NodeIndex nodeIndex) { return getPrediction(graph()[nodeIndex]); }
 
 #if USE(JSVALUE32_64)
     void* addressOfDoubleConstant(NodeIndex nodeIndex)

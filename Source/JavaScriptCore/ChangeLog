@@ -1,5 +1,94 @@
 2011-09-25  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG static prediction code is no longer needed and should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=68784
+
+        Reviewed by Oliver Hunt.
+        
+        This gets rid of static prediction code, and ensures that we do not
+        try to compile code where dynamic predictions are not available.
+        This is accomplished by immediately performing an OSR exit wherever
+        a value is retrieved for which no predictions exist.
+        
+        This also adds value profiling for this on functions used for calls.
+        
+        The heuristics for deciding when to optimize code are also tweaked,
+        since it is now profitable to optimize sooner. This may need to be
+        tweaked further, but this patch only makes minimal changes.
+        
+        This results in a 16% speed-up on Kraken/ai-astar, leading to a 3%
+        overall win on Kraken.  It's neutral elsewhere.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::shouldOptimizeNow):
+        (JSC::CodeBlock::dumpValueProfiles):
+        * bytecode/CodeBlock.h:
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionToString):
+        * bytecode/PredictedType.h:
+        (JSC::isCellPrediction):
+        (JSC::isObjectPrediction):
+        (JSC::isFinalObjectPrediction):
+        (JSC::isStringPrediction):
+        (JSC::isArrayPrediction):
+        (JSC::isInt32Prediction):
+        (JSC::isDoublePrediction):
+        (JSC::isNumberPrediction):
+        (JSC::isBooleanPrediction):
+        (JSC::mergePredictions):
+        * bytecode/PredictionTracker.h:
+        (JSC::PredictionTracker::predictArgument):
+        (JSC::PredictionTracker::predict):
+        (JSC::PredictionTracker::predictGlobalVar):
+        * bytecode/ValueProfile.cpp:
+        (JSC::ValueProfile::computeUpdatedPrediction):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::set):
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::getPrediction):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::predict):
+        (JSC::DFG::Graph::predictGlobalVar):
+        (JSC::DFG::Graph::getMethodCheckPrediction):
+        (JSC::DFG::Graph::getJSConstantPrediction):
+        (JSC::DFG::Graph::getPrediction):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::writeBarrier):
+        (JSC::DFG::JITCodeGenerator::emitBranch):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::getPrediction):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::valueOfJSConstantNode):
+        (JSC::DFG::Node::isInt32Constant):
+        (JSC::DFG::Node::isDoubleConstant):
+        (JSC::DFG::Node::isNumberConstant):
+        (JSC::DFG::Node::isBooleanConstant):
+        (JSC::DFG::Node::predict):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::Propagator):
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::fixupNode):
+        (JSC::DFG::Propagator::isPredictedNumerical):
+        (JSC::DFG::Propagator::logicalNotIsPure):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateInteger):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateNumber):
+        (JSC::DFG::SpeculativeJIT::shouldNotSpeculateInteger):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateFinalObject):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateArray):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateObject):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateCell):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+
+2011-09-25  Filip Pizlo  <fpizlo@apple.com>
+
         DFG JIT Construct opcode takes a this argument even though it's
         not passed
         https://bugs.webkit.org/show_bug.cgi?id=68782

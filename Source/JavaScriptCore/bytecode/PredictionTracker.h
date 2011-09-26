@@ -73,33 +73,33 @@ public:
     
     unsigned argumentIndexForOperand(int operand) const { return operand + m_arguments.size() + RegisterFile::CallFrameHeaderSize; }
 
-    bool predictArgument(unsigned argument, PredictedType prediction, PredictionSource source)
+    bool predictArgument(unsigned argument, PredictedType prediction)
     {
-        return mergePrediction(m_arguments[argument].m_value, makePrediction(prediction, source));
+        return mergePrediction(m_arguments[argument].m_value, prediction);
     }
     
-    bool predict(int operand, PredictedType prediction, PredictionSource source)
+    bool predict(int operand, PredictedType prediction)
     {
         if (operandIsArgument(operand))
-            return predictArgument(argumentIndexForOperand(operand), prediction, source);
+            return predictArgument(argumentIndexForOperand(operand), prediction);
         if ((unsigned)operand >= m_variables.size()) {
             ASSERT(operand >= 0);
             m_variables.resize(operand + 1);
         }
         
-        return mergePrediction(m_variables[operand].m_value, makePrediction(prediction, source));
+        return mergePrediction(m_variables[operand].m_value, prediction);
     }
     
-    bool predictGlobalVar(unsigned varNumber, PredictedType prediction, PredictionSource source)
+    bool predictGlobalVar(unsigned varNumber, PredictedType prediction)
     {
         HashMap<unsigned, PredictionSlot>::iterator iter = m_globalVars.find(varNumber + 1);
         if (iter == m_globalVars.end()) {
             PredictionSlot predictionSlot;
-            bool result = mergePrediction(predictionSlot.m_value, makePrediction(prediction, source));
+            bool result = mergePrediction(predictionSlot.m_value, prediction);
             m_globalVars.add(varNumber + 1, predictionSlot);
             return result;
         }
-        return mergePrediction(iter->second.m_value, makePrediction(prediction, source));
+        return mergePrediction(iter->second.m_value, prediction);
     }
     
     PredictedType getArgumentPrediction(unsigned argument)

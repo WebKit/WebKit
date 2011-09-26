@@ -51,60 +51,50 @@ static const PredictedType PredictNumber        = 0x0300; // It's either an Int3
 static const PredictedType PredictBoolean       = 0x0400; // It's definitely a Boolean.
 static const PredictedType PredictOther         = 0x4000; // It's definitely none of the above.
 static const PredictedType PredictTop           = 0x7fff; // It can be any of the above.
-static const PredictedType StrongPredictionTag  = 0x8000; // It's a strong prediction (all strong predictions trump all weak ones).
-static const PredictedType PredictionTagMask    = 0x8000;
-
-enum PredictionSource { WeakPrediction, StrongPrediction };
 
 inline bool isCellPrediction(PredictedType value)
 {
-    return !!(value & PredictCell) && !(value & ~(PredictCell | PredictionTagMask));
+    return !!(value & PredictCell) && !(value & ~PredictCell);
 }
 
 inline bool isObjectPrediction(PredictedType value)
 {
-    return !!(value & PredictObjectMask) && !(value & ~(PredictObjectMask | PredictionTagMask));
+    return !!(value & PredictObjectMask) && !(value & ~PredictObjectMask);
 }
 
 inline bool isFinalObjectPrediction(PredictedType value)
 {
-    return (value & ~PredictionTagMask) == PredictFinalObject;
+    return value == PredictFinalObject;
 }
 
 inline bool isStringPrediction(PredictedType value)
 {
-    return (value & ~PredictionTagMask) == PredictString;
+    return value == PredictString;
 }
 
 inline bool isArrayPrediction(PredictedType value)
 {
-    return (value & ~PredictionTagMask) == PredictArray;
+    return value == PredictArray;
 }
 
 inline bool isInt32Prediction(PredictedType value)
 {
-    return (value & ~PredictionTagMask) == PredictInt32;
+    return value == PredictInt32;
 }
 
 inline bool isDoublePrediction(PredictedType value)
 {
-    return (value & ~PredictionTagMask) == PredictDouble;
+    return value == PredictDouble;
 }
 
 inline bool isNumberPrediction(PredictedType value)
 {
-    return !!(value & PredictNumber) && !(value & ~(PredictNumber | PredictionTagMask));
+    return !!(value & PredictNumber) && !(value & ~PredictNumber);
 }
 
 inline bool isBooleanPrediction(PredictedType value)
 {
-    return (value & ~PredictionTagMask) == PredictBoolean;
-}
-
-inline bool isStrongPrediction(PredictedType value)
-{
-    ASSERT(value != (PredictNone | StrongPredictionTag));
-    return !!(value & StrongPredictionTag);
+    return value == PredictBoolean;
 }
 
 #ifndef NDEBUG
@@ -113,25 +103,16 @@ const char* predictionToString(PredictedType value);
 
 inline PredictedType mergePredictions(PredictedType left, PredictedType right)
 {
-    if (isStrongPrediction(left) == isStrongPrediction(right)) {
-        if (left & PredictObjectUnknown) {
-            ASSERT(!(left & (PredictObjectMask & ~PredictObjectUnknown)));
-            if (right & PredictObjectMask)
-                return (left & ~PredictObjectUnknown) | right;
-        } else if (right & PredictObjectUnknown) {
-            ASSERT(!(right & (PredictObjectMask & ~PredictObjectUnknown)));
-            if (left & PredictObjectMask)
-                return (right & ~PredictObjectUnknown) | left;
-        }
-        return left | right;
+    if (left & PredictObjectUnknown) {
+        ASSERT(!(left & (PredictObjectMask & ~PredictObjectUnknown)));
+        if (right & PredictObjectMask)
+            return (left & ~PredictObjectUnknown) | right;
+    } else if (right & PredictObjectUnknown) {
+        ASSERT(!(right & (PredictObjectMask & ~PredictObjectUnknown)));
+        if (left & PredictObjectMask)
+            return (right & ~PredictObjectUnknown) | left;
     }
-    if (isStrongPrediction(left)) {
-        ASSERT(!isStrongPrediction(right));
-        return left;
-    }
-    ASSERT(!isStrongPrediction(left));
-    ASSERT(isStrongPrediction(right));
-    return right;
+    return left | right;
 }
 
 template<typename T>
@@ -141,15 +122,6 @@ inline bool mergePrediction(T& left, PredictedType right)
     bool result = newPrediction != static_cast<PredictedType>(left);
     left = newPrediction;
     return result;
-}
-
-inline PredictedType makePrediction(PredictedType type, PredictionSource source)
-{
-    ASSERT(!(type & StrongPredictionTag));
-    ASSERT(source == StrongPrediction || source == WeakPrediction);
-    if (type == PredictNone)
-        return PredictNone;
-    return type | (source == StrongPrediction ? StrongPredictionTag : 0);
 }
 
 PredictedType predictionFromClassInfo(const ClassInfo*);

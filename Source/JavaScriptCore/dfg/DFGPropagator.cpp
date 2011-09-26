@@ -47,25 +47,11 @@ public:
         // speculation that does not contravene the expected values.
         m_predictions.resize(m_graph.size());
         
-        // Uses is a backward flow property that propagates the hard expectations at
-        // certain uses to their value sources, ensuring that predictions about
-        // values do not contravene the code itself. This comes up only in the
-        // cases of obvious cell uses, like GetById and friends as well as Call.
-        // We're essentially statically speculating that if the value profile indicates
-        // that only booleans (for example) flow into a GetById, then the value
-        // profile is simply wrong due to insufficient coverage and needs to be
-        // adjusted accordingly. The alternatives would be to assume either
-        // that the GetById never executes, or always executes on a boolean leading
-        // to whatever bizarre behavior that's supposed to cause.
-        m_uses.resize(m_graph.size());
-        m_variableUses.initializeSimilarTo(m_graph.predictions());
-        
         // Replacements are used to implement local common subexpression elimination.
         m_replacements.resize(m_graph.size());
         
         for (unsigned i = 0; i < m_graph.size(); ++i) {
             m_predictions[i] = PredictNone;
-            m_uses[i] = PredictNone;
             m_replacements[i] = NoNode;
         }
         
@@ -306,13 +292,6 @@ private:
         return true;
     }
     
-    bool mergeUse(NodeIndex nodeIndex, PredictedType prediction)
-    {
-        ASSERT(m_graph[nodeIndex].hasResult());
-        
-        return JSC::mergePrediction(m_uses[nodeIndex], prediction);
-    }
-    
     bool mergePrediction(PredictedType prediction)
     {
         ASSERT(m_graph[m_compileIndex].hasResult());
@@ -335,23 +314,19 @@ private:
         
         switch (op) {
         case JSConstant: {
-            changed |= setPrediction(makePrediction(predictionFromValue(m_graph.valueOfJSConstant(m_codeBlock, m_compileIndex)), StrongPrediction));
+            changed |= setPrediction(predictionFromValue(m_graph.valueOfJSConstant(m_codeBlock, m_compileIndex)));
             break;
         }
             
         case GetLocal: {
-            changed |= m_graph.predict(node.local(), m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
-            changed |= m_variableUses.predict(node.local(), m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
-
             PredictedType prediction = m_graph.getPrediction(node.local());
-            if (isStrongPrediction(prediction))
+            if (prediction)
                 changed |= mergePrediction(prediction);
             break;
         }
             
         case SetLocal: {
-            changed |= m_graph.predict(node.local(), m_predictions[node.child1()] & ~PredictionTagMask, StrongPrediction);
-            changed |= mergeUse(node.child1(), m_variableUses.getPrediction(node.local()));
+            changed |= m_graph.predict(node.local(), m_predictions[node.child1()]);
             break;
         }
             
@@ -362,7 +337,7 @@ private:
         case BitLShift:
         case BitURShift:
         case ValueToInt32: {
-            changed |= setPrediction(makePrediction(PredictInt32, StrongPrediction));
+            changed |= setPrediction(PredictInt32);
             break;
         }
 
@@ -370,31 +345,31 @@ private:
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
             
-            if (isStrongPrediction(left) && isStrongPrediction(right)) {
+            if (left && right) {
                 if (isInt32Prediction(mergePredictions(left, right)) && nodeCanSpeculateInteger(node.arithNodeFlags()))
-                    changed |= mergePrediction(makePrediction(PredictInt32, StrongPrediction));
+                    changed |= mergePrediction(PredictInt32);
                 else
-                    changed |= mergePrediction(makePrediction(PredictDouble, StrongPrediction));
+                    changed |= mergePrediction(PredictDouble);
             }
             break;
         }
             
         case UInt32ToNumber: {
             if (nodeCanSpeculateInteger(node.arithNodeFlags()))
-                changed |= setPrediction(makePrediction(PredictInt32, StrongPrediction));
+                changed |= setPrediction(PredictInt32);
             else
-                changed |= setPrediction(makePrediction(PredictNumber, StrongPrediction));
+                changed |= setPrediction(PredictNumber);
             break;
         }
 
         case ValueToNumber: {
             PredictedType prediction = m_predictions[node.child1()];
             
-            if (isStrongPrediction(prediction)) {
+            if (prediction) {
                 if (!(prediction & PredictDouble) && nodeCanSpeculateInteger(node.arithNodeFlags()))
-                    changed |= mergePrediction(makePrediction(PredictInt32, StrongPrediction));
+                    changed |= mergePrediction(PredictInt32);
                 else
-                    changed |= mergePrediction(makePrediction(PredictNumber, StrongPrediction));
+                    changed |= mergePrediction(PredictNumber);
             }
             
             break;
@@ -411,17 +386,17 @@ private:
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
             
-            if (isStrongPrediction(left) && isStrongPrediction(right)) {
+            if (left && right) {
                 if (isNumberPrediction(left) && isNumberPrediction(right)) {
                     if (isInt32Prediction(mergePredictions(left, right)) && nodeCanSpeculateInteger(node.arithNodeFlags()))
-                        changed |= mergePrediction(makePrediction(PredictInt32, StrongPrediction));
+                        changed |= mergePrediction(PredictInt32);
                     else
-                        changed |= mergePrediction(makePrediction(PredictDouble, StrongPrediction));
+                        changed |= mergePrediction(PredictDouble);
                 } else if (!(left & PredictNumber) || !(right & PredictNumber)) {
                     // left or right is definitely something other than a number.
-                    changed |= mergePrediction(makePrediction(PredictString, StrongPrediction));
+                    changed |= mergePrediction(PredictString);
                 } else
-                    changed |= mergePrediction(makePrediction(PredictString | PredictInt32 | PredictDouble, StrongPrediction));
+                    changed |= mergePrediction(PredictString | PredictInt32 | PredictDouble);
             }
             break;
         }
@@ -435,27 +410,27 @@ private:
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
             
-            if (isStrongPrediction(left) && isStrongPrediction(right)) {
+            if (left && right) {
                 if (isInt32Prediction(mergePredictions(left, right)) && nodeCanSpeculateInteger(node.arithNodeFlags()))
-                    changed |= mergePrediction(makePrediction(PredictInt32, StrongPrediction));
+                    changed |= mergePrediction(PredictInt32);
                 else
-                    changed |= mergePrediction(makePrediction(PredictDouble, StrongPrediction));
+                    changed |= mergePrediction(PredictDouble);
             }
             break;
         }
             
         case ArithSqrt: {
-            changed |= setPrediction(makePrediction(PredictDouble, StrongPrediction));
+            changed |= setPrediction(PredictDouble);
             break;
         }
             
         case ArithAbs: {
             PredictedType child = m_predictions[node.child1()];
-            if (isStrongPrediction(child)) {
+            if (child) {
                 if (nodeCanSpeculateInteger(node.arithNodeFlags()))
                     changed |= mergePrediction(child);
                 else
-                    changed |= setPrediction(makePrediction(PredictDouble, StrongPrediction));
+                    changed |= setPrediction(PredictDouble);
             }
             break;
         }
@@ -468,69 +443,55 @@ private:
         case CompareEq:
         case CompareStrictEq:
         case InstanceOf: {
-            changed |= setPrediction(makePrediction(PredictBoolean, StrongPrediction));
+            changed |= setPrediction(PredictBoolean);
             break;
         }
             
         case GetById:
         case GetMethod:
         case GetByVal: {
-            changed |= mergeUse(node.child1(), PredictObjectUnknown | StrongPredictionTag);
-            changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
-            if (isStrongPrediction(node.getPrediction()))
+            if (node.getPrediction())
                 changed |= mergePrediction(node.getPrediction());
             break;
         }
             
         case CheckStructure: {
-            // We backward propagate what this CheckStructure tells us. Maybe that's the right way
-            // to go; maybe it isn't. I'm not sure. What we'd really want is flow-sensitive
-            // forward propagation of what we learn from having executed CheckStructure. But for
-            // now we preserve the flow-insensitive nature of this analysis, because it's cheap to
-            // run and seems to work well enough.
-            changed |= mergeUse(node.child1(), predictionFromStructure(node.structure()) | StrongPredictionTag);
-            changed |= setPrediction(PredictOther | StrongPredictionTag);
+            changed |= setPrediction(PredictOther);
             break;
         }
             
         case GetByOffset: {
-            changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
-            if (isStrongPrediction(node.getPrediction()))
+            if (node.getPrediction())
                 changed |= mergePrediction(node.getPrediction());
             break;
         }
             
         case CheckMethod: {
-            changed |= mergeUse(node.child1(), PredictObjectUnknown | StrongPredictionTag);
             changed |= setPrediction(m_graph.getMethodCheckPrediction(node));
             break;
         }
 
         case Call:
         case Construct: {
-            changed |= mergeUse(m_graph.m_varArgChildren[node.firstChild()], PredictObjectUnknown | StrongPredictionTag);
-            changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
-            if (isStrongPrediction(node.getPrediction()))
+            if (node.getPrediction())
                 changed |= mergePrediction(node.getPrediction());
             break;
         }
             
         case ConvertThis: {
-            changed |= setPrediction(makePrediction(PredictObjectUnknown, StrongPrediction));
+            changed |= setPrediction(PredictObjectUnknown);
             break;
         }
             
         case GetGlobalVar: {
-            changed |= m_variableUses.predictGlobalVar(node.varNumber(), m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
             PredictedType prediction = m_graph.getGlobalVarPrediction(node.varNumber());
-            if (isStrongPrediction(prediction))
+            if (prediction)
                 changed |= mergePrediction(prediction);
             break;
         }
             
         case PutGlobalVar: {
-            changed |= m_graph.predictGlobalVar(node.varNumber(), m_predictions[node.child1()] & ~PredictionTagMask, StrongPrediction);
-            changed |= mergeUse(node.child1(), m_variableUses.getGlobalVarPrediction(node.varNumber()));
+            changed |= m_graph.predictGlobalVar(node.varNumber(), m_predictions[node.child1()]);
             break;
         }
             
@@ -539,56 +500,46 @@ private:
         case ResolveBase:
         case ResolveBaseStrictPut:
         case ResolveGlobal: {
-            changed |= node.predict(m_uses[m_compileIndex] & ~PredictionTagMask, StrongPrediction);
             PredictedType prediction = node.getPrediction();
-            if (isStrongPrediction(prediction))
+            if (prediction)
                 changed |= mergePrediction(prediction);
             break;
         }
             
         case GetScopeChain: {
-            changed |= setPrediction(makePrediction(PredictCellOther, StrongPrediction));
+            changed |= setPrediction(PredictCellOther);
             break;
         }
             
-        case PutByVal:
-        case PutByValAlias:
-        case PutById:
-        case PutByIdDirect: {
-            changed |= mergeUse(node.child1(), PredictObjectUnknown | StrongPredictionTag);
-            break;
-        }
-
         case GetCallee: {
-            changed |= setPrediction(makePrediction(PredictObjectOther, StrongPrediction));
+            changed |= setPrediction(PredictObjectOther);
             break;
         }
             
         case CreateThis: {
-            changed |= mergeUse(node.child1(), PredictObjectUnknown | StrongPredictionTag);
-            changed |= setPrediction(makePrediction(PredictFinalObject, StrongPrediction));
+            changed |= setPrediction(PredictFinalObject);
             break;
         }
             
         case StrCat: {
-            changed |= setPrediction(makePrediction(PredictString, StrongPrediction));
+            changed |= setPrediction(PredictString);
             break;
         }
             
         case ToPrimitive: {
             PredictedType child = m_predictions[node.child1()];
-            if (isStrongPrediction(child)) {
+            if (child) {
                 if (isObjectPrediction(child)) {
                     // I'd love to fold this case into the case below, but I can't, because
                     // removing PredictObjectMask from something that only has an object
                     // prediction and nothing else means we have an ill-formed PredictedType
                     // (strong predict-none). This should be killed once we remove all traces
                     // of static (aka weak) predictions.
-                    changed |= mergePrediction(makePrediction(PredictString, StrongPrediction));
+                    changed |= mergePrediction(PredictString);
                 } else if (child & PredictObjectMask) {
                     // Objects get turned into strings. So if the input has hints of objectness,
                     // the output will have hinsts of stringiness.
-                    changed |= mergePrediction(mergePredictions(child & ~PredictObjectMask, makePrediction(PredictString, StrongPrediction)));
+                    changed |= mergePrediction(mergePredictions(child & ~PredictObjectMask, PredictString));
                 } else
                     changed |= mergePrediction(child);
             }
@@ -611,6 +562,10 @@ private:
             
         // This gets ignored because it doesn't do anything.
         case Phantom:
+        case PutByVal:
+        case PutByValAlias:
+        case PutById:
+        case PutByIdDirect:
             break;
 #else
         default:
@@ -619,8 +574,7 @@ private:
         }
 
 #if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
-        printf("expect(%s) ", predictionToString(m_predictions[m_compileIndex]));
-        printf("use(%s) %s\n", predictionToString(m_uses[m_compileIndex]), changed ? "CHANGED" : "");
+        printf("%s ", predictionToString(m_predictions[m_compileIndex]));
 #endif
         
         m_changed |= changed;
@@ -676,7 +630,7 @@ private:
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
             
-            if (isStrongPrediction(left) && isStrongPrediction(right) && isNumberPrediction(left) && isNumberPrediction(right)) {
+            if (left && right && isNumberPrediction(left) && isNumberPrediction(right)) {
                 if (left & PredictDouble)
                     toDouble(node.child2());
                 if (right & PredictDouble)
@@ -701,7 +655,7 @@ private:
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
             
-            if (isStrongPrediction(left) && isStrongPrediction(right)) {
+            if (left && right) {
                 if (left & PredictDouble)
                     toDouble(node.child2());
                 if (right & PredictDouble)
@@ -717,7 +671,7 @@ private:
             }
             
             PredictedType prediction = m_predictions[node.child1()];
-            if (isStrongPrediction(prediction) && (prediction & PredictDouble))
+            if (prediction & PredictDouble)
                 toDouble(node.child1());
             break;
         }
@@ -866,14 +820,13 @@ private:
     {
         PredictedType left = m_predictions[node.child1()];
         PredictedType right = m_predictions[node.child2()];
-        return isStrongPrediction(left) && isStrongPrediction(right)
-            && isNumberPrediction(left) && isNumberPrediction(right);
+        return isNumberPrediction(left) && isNumberPrediction(right);
     }
     
     bool logicalNotIsPure(Node& node)
     {
         PredictedType prediction = m_predictions[node.child1()];
-        return isBooleanPrediction(prediction) || !isStrongPrediction(prediction);
+        return isBooleanPrediction(prediction) || !prediction;
     }
     
     bool clobbersWorld(NodeIndex nodeIndex)
@@ -1232,9 +1185,6 @@ private:
     NodeIndex m_compileIndex;
     
     Vector<PredictedType, 16> m_predictions;
-    Vector<PredictedType, 16> m_uses;
-    
-    PredictionTracker m_variableUses;
 
 #if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
     unsigned m_count;

@@ -426,14 +426,20 @@ struct Node {
         return m_opInfo;
     }
     
+    // NOTE: this only works for JSConstant nodes.
+    JSValue valueOfJSConstantNode(CodeBlock* codeBlock)
+    {
+        return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
+    }
+
     bool isInt32Constant(CodeBlock* codeBlock)
     {
-        return isConstant() && valueOfJSConstant(codeBlock).isInt32();
+        return isConstant() && valueOfJSConstantNode(codeBlock).isInt32();
     }
     
     bool isDoubleConstant(CodeBlock* codeBlock)
     {
-        bool result = isConstant() && valueOfJSConstant(codeBlock).isDouble();
+        bool result = isConstant() && valueOfJSConstantNode(codeBlock).isDouble();
         if (result)
             ASSERT(!isInt32Constant(codeBlock));
         return result;
@@ -441,14 +447,14 @@ struct Node {
     
     bool isNumberConstant(CodeBlock* codeBlock)
     {
-        bool result = isConstant() && valueOfJSConstant(codeBlock).isNumber();
+        bool result = isConstant() && valueOfJSConstantNode(codeBlock).isNumber();
         ASSERT(result == (isInt32Constant(codeBlock) || isDoubleConstant(codeBlock)));
         return result;
     }
     
     bool isBooleanConstant(CodeBlock* codeBlock)
     {
-        return isConstant() && valueOfJSConstant(codeBlock).isBoolean();
+        return isConstant() && valueOfJSConstantNode(codeBlock).isBoolean();
     }
     
     bool hasLocal()
@@ -655,22 +661,11 @@ struct Node {
         return static_cast<PredictedType>(m_opInfo2);
     }
     
-    bool predict(PredictedType prediction, PredictionSource source)
+    bool predict(PredictedType prediction)
     {
         ASSERT(hasPrediction());
         
-        // We have previously found empirically that ascribing static predictions
-        // to heap loads as well as calls is not profitable, as these predictions
-        // are wrong too often. Hence, this completely ignores static predictions.
-        if (source == WeakPrediction)
-            return false;
-        
-        if (prediction == PredictNone)
-            return false;
-        
-        ASSERT(source == StrongPrediction);
-        
-        return mergePrediction(m_opInfo2, makePrediction(prediction, source));
+        return mergePrediction(m_opInfo2, prediction);
     }
     
     bool hasMethodCheckData()
@@ -803,14 +798,6 @@ struct Node {
     } children;
 
 private:
-    // This is private because it only works for the JSConstant op. The DFG is written under the
-    // assumption that "valueOfJSConstant" can correctly return a constant for any DFG node for
-    // which hasConstant() is true.
-    JSValue valueOfJSConstant(CodeBlock* codeBlock)
-    {
-        return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
-    }
-
     // The virtual register number (spill location) associated with this .
     VirtualRegister m_virtualRegister;
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).

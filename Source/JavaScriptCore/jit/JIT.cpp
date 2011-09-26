@@ -554,9 +554,18 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 
 #if ENABLE(VALUE_PROFILER)
         ASSERT(m_bytecodeOffset == (unsigned)-1);
-        for (int argumentRegister = -RegisterFile::CallFrameHeaderSize - m_codeBlock->m_numParameters + 1; argumentRegister < -RegisterFile::CallFrameHeaderSize; ++argumentRegister) {
-            loadPtr(Address(callFrameRegister, argumentRegister * sizeof(Register)), regT0);
-            emitValueProfilingSite(FirstProfilingSite);
+        if (shouldEmitProfiling()) {
+            for (int argumentRegister = -RegisterFile::CallFrameHeaderSize - m_codeBlock->m_numParameters; argumentRegister < -RegisterFile::CallFrameHeaderSize; ++argumentRegister) {
+                // If this is a constructor, then we want to put in a dummy profiling site (to
+                // keep things consistent) but we don't actually want to record the dummy value.
+                if (m_codeBlock->m_isConstructor
+                    && argumentRegister == -RegisterFile::CallFrameHeaderSize - m_codeBlock->m_numParameters)
+                    m_codeBlock->addValueProfile(-1);
+                else {
+                    loadPtr(Address(callFrameRegister, argumentRegister * sizeof(Register)), regT0);
+                    emitValueProfilingSite(FirstProfilingSite);
+                }
+            }
         }
 #endif
 

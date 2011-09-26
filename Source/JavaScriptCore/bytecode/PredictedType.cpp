@@ -37,12 +37,12 @@ namespace JSC {
 #ifndef NDEBUG
 const char* predictionToString(PredictedType value)
 {
+    if (value == PredictNone)
+        return "None";
+    
     static const int size = 96;
     static char description[size];
     BoundsCheckedPointer<char> ptr(description, size);
-    
-    if (!(value & StrongPredictionTag))
-        ptr.strcat("Weak");
     
     if (value & PredictObjectUnknown) {
         ASSERT(!(value & (PredictObjectMask & ~PredictObjectUnknown)));
