@@ -1,3 +1,10 @@
+2011-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a failing expectation to the test added by r95964 on Chromium Linux and Chromium Windows.
+        The failure is tracked by the bug 68832.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-26  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Revise zoom animator backend to use full transform instead of just scale.

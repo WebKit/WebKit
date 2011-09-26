@@ -3828,3 +3828,5 @@ BUGWK68747 : media/controls-right-click-on-timebar.html = TIMEOUT PASS
 
 // Assert fires (on non-Chromium WebKit ports too)
 BUGWK68819 DEBUG : svg/clip-path/clip-path-on-svg.svg = CRASH
+
+BUGWK68832 WIN LINUX : editing/selection/select-bidi-run.html = FAIL
