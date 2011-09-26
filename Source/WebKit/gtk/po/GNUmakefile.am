@@ -15,7 +15,7 @@
 #
 # Origin: gettext-0.17
 
-DOMAIN := $(GETTEXT_PACKAGE)
+DOMAIN += $(GETTEXT_PACKAGE)
 
 MSGFMT := $(shell which msgfmt)
 
