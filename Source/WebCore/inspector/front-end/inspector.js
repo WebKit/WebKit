@@ -298,7 +298,7 @@ var WebInspector = {
             this._dockToggleButton.toggled = !x;
         }
 
-        // This may be called before onLoadedDone, hence the bulk of inspector objects may
+        // This may be called before doLoadedDone, hence the bulk of inspector objects may
         // not be created yet.
         if (WebInspector.toolbar)
             WebInspector.toolbar.attached = x;
@@ -548,6 +548,11 @@ WebInspector.doLoadedDone = function()
     var errorWarningCount = document.getElementById("error-warning-count");
     errorWarningCount.addEventListener("click", this.showConsole.bind(this), false);
     this._updateErrorAndWarningCounts();
+
+    var autoselectPanel = WebInspector.UIString("a panel chosen automatically");
+    var openAnchorLocationSetting = WebInspector.settings.createSetting("openLinkHandler", autoselectPanel);
+    this.openAnchorLocationRegistry = new WebInspector.HandlerRegistry(openAnchorLocationSetting);
+    this.openAnchorLocationRegistry.registerHandler(autoselectPanel, function() { return false; });
 
     this.extensionServer.initExtensions();
 
@@ -1222,6 +1227,8 @@ WebInspector.displayNameForURL = function(url)
 
 WebInspector._showAnchorLocation = function(anchor)
 {
+    if (WebInspector.openAnchorLocationRegistry.dispatch(anchor))
+        return true;
     var preferedPanel = this.panels[anchor.getAttribute("preferred_panel") || "resources"];
     if (WebInspector._showAnchorLocationInPanel(anchor, preferedPanel))
         return true;

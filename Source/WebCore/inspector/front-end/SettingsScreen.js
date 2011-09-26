@@ -58,6 +58,11 @@ WebInspector.SettingsScreen = function()
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Log XMLHttpRequests"), WebInspector.settings.monitoringXHREnabled));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Preserve log upon navigation"), WebInspector.settings.preserveConsoleLog));
 
+    if (Preferences.haveExtensions) {
+        var handlerSelector = new WebInspector.HandlerSelector(WebInspector.openAnchorLocationRegistry);
+        p = this._appendSection(WebInspector.UIString("Extensions"), true);
+        p.appendChild(this._createCustomSetting(WebInspector.UIString("Open links in..."), handlerSelector.element));
+    }
     var table = document.createElement("table");
     table.className = "help-table";
     var tr = document.createElement("tr");
@@ -140,6 +145,15 @@ WebInspector.SettingsScreen.prototype = {
 
         pp.appendChild(fieldsetElement);
         return pp;
+    },
+
+    _createCustomSetting: function(name, element)
+    {
+        var div = document.createElement("div");
+        var p = div.createChild("p");
+        p.textContent = name;
+        div.appendChild(element);
+        return div;
     }
 };
 

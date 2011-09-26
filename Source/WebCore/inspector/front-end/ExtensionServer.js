@@ -38,7 +38,7 @@ WebInspector.ExtensionServer = function()
     this._extraHeaders = {};
     this._requests = {};
     this._lastRequestId = 0;
-    this._allowedOrigins = {};
+    this._registeredExtensions = {};
     this._status = new WebInspector.ExtensionStatus();
 
     this._registerHandler("addAuditCategory", this._onAddAuditCategory.bind(this));
@@ -55,6 +55,7 @@ WebInspector.ExtensionServer = function()
     this._registerHandler("getResourceContent", this._onGetResourceContent.bind(this));
     this._registerHandler("log", this._onLog.bind(this));
     this._registerHandler("reload", this._onReload.bind(this));
+    this._registerHandler("setOpenResourceHandler", this._onSetOpenResourceHandler.bind(this));
     this._registerHandler("setResourceContent", this._onSetResourceContent.bind(this));
     this._registerHandler("setSidebarHeight", this._onSetSidebarHeight.bind(this));
     this._registerHandler("setSidebarContent", this._onSetSidebarContent.bind(this));
@@ -249,6 +250,27 @@ WebInspector.ExtensionServer.prototype = {
         if (!sidebar)
             return this._status.E_NOTFOUND(message.id);
         sidebar.setPage(this._expandResourcePath(port._extensionOrigin, message.page));
+    },
+
+    _onSetOpenResourceHandler: function(message, port)
+    {
+        var name = this._registeredExtensions[port._extensionOrigin].name || ("Extension " + port._extensionOrigin);
+        if (message.handlerPresent)
+            WebInspector.openAnchorLocationRegistry.registerHandler(name, this._handleAnchorClicked.bind(this, port));
+        else
+            WebInspector.openAnchorLocationRegistry.deregisterHandler(name);
+    },
+
+    _handleAnchorClicked: function(port, anchor)
+    {
+        var resource = WebInspector.resourceForURL(anchor.href);
+        if (!resource)
+            return false;
+        port.postMessage({
+            command: "open-resource",
+            resource: this._makeResource(resource)
+        });
+        return true;
     },
 
     _onLog: function(message)
@@ -528,10 +550,10 @@ WebInspector.ExtensionServer.prototype = {
         // See ExtensionAPI.js and ExtensionCommon.js for details.
         InspectorFrontendHost.setExtensionAPI(this._buildExtensionAPIScript());
         for (var i = 0; i < extensions.length; ++i)
-            this._addExtension(extensions[i].startPage);
+            this._addExtension(extensions[i].startPage, extensions[i].name);
     },
 
-    _addExtension: function(startPage)
+    _addExtension: function(startPage, name)
     {
         const urlOriginRegExp = new RegExp("([^:]+:\/\/[^/]*)\/"); // Can't use regexp literal here, MinJS chokes on it.
 
@@ -541,7 +563,7 @@ WebInspector.ExtensionServer.prototype = {
                 console.error("Skipping extension with invalid URL: " + startPage);
                 return false;
             }
-            this._allowedOrigins[originMatch[1]] = true;
+            this._registeredExtensions[originMatch[1]] = { name: name };
             var iframe = document.createElement("iframe");
             iframe.src = startPage;
             iframe.style.display = "none";
@@ -567,7 +589,7 @@ WebInspector.ExtensionServer.prototype = {
 
     _registerExtension: function(origin, port)
     {
-        if (!this._allowedOrigins.hasOwnProperty(origin)) {
+        if (!this._registeredExtensions.hasOwnProperty(origin)) {
             if (origin !== location.origin) // Just ignore inspector frames.
                 console.error("Ignoring unauthorized client request from " + origin);
             return;

@@ -7,6 +7,21 @@
 
 <script type="text/javascript">
 
+function initialize_ExtensionResourceTests()
+{
+
+InspectorTest.clickOnURL = function()
+{
+    WebInspector.showPanel("console");
+    var xpathResult = document.evaluate("//a[starts-with(., 'extensions-resources.html')]",
+                                        WebInspector.panels.console.element, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null);
+    var click = document.createEvent("MouseEvent");
+    click.initMouseEvent("click", true, true);
+    xpathResult.singleNodeValue.dispatchEvent(click);
+}
+
+}
+
 function extension_testGetAllResources(nextTest)
 {
     function callback(resources)
@@ -103,11 +118,32 @@ function extension_testOnResourceAdded(nextTest)
     webInspector.inspectedWindow.eval("addResource()");
 }
 
+function extension_testOpenResourceHandler(nextTest)
+{
+    function handleOpenResource(resource)
+    {
+        output("handleOpenResource() invoked [this should only appear once!]: ");
+        dumpObject(resource, { url: "url" });
+        webInspector.panels.setOpenResourceHandler(null);
+        evaluateOnFrontend("InspectorTest.clickOnURL(); reply()", nextTest);
+    }
+    webInspector.panels.setOpenResourceHandler(handleOpenResource);
+    webInspector.inspectedWindow.eval("logMessage()", function() {
+        evaluateOnFrontend("InspectorTest.clickOnURL();");
+        evaluateOnFrontend("WebInspector.openAnchorLocationRegistry.activeHandler = 'test extension'; InspectorTest.clickOnURL();");
+    });
+}
+
 function addResource()
 {
     var script = document.createElement("script");
     script.src = "data:application/javascript,function test_func(){}";
     document.head.appendChild(script);
+}
+
+function logMessage()
+{
+    console.log("don't panic!");
 }
 
 </script>

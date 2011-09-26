@@ -6244,6 +6244,7 @@
             'inspector/front-end/FontView.js',
             'inspector/front-end/GoToLineDialog.js',
             'inspector/front-end/HAREntry.js',
+            'inspector/front-end/HandlerRegistry.js',
             'inspector/front-end/HeapSnapshot.js',
             'inspector/front-end/HeapSnapshotProxy.js',
             'inspector/front-end/HeapSnapshotWorker.js',

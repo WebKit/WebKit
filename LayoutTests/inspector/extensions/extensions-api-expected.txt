@@ -37,6 +37,7 @@ RUNNING TEST: extension_testAPI
             }
         }
         create : <function>
+        setOpenResourceHandler : <function>
     }
     network : {
         onRequestFinished : {

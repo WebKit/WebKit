@@ -1,3 +1,17 @@
+2011-09-26  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] allow resources to hook on click on resource links
+        https://bugs.webkit.org/show_bug.cgi?id=68528
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/extensions-test.js:
+        (initialize_ExtensionsTest.InspectorTest.runExtensionTests):
+        (initialize_ExtensionsTest):
+        * inspector/extensions/extensions-api-expected.txt:
+        * inspector/extensions/extensions-resources-expected.txt:
+        * inspector/extensions/extensions-resources.html:
+
 2011-09-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Timeline: record root event for the function calls enforced by console eval.

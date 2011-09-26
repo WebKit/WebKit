@@ -50,7 +50,7 @@ InspectorTest.runExtensionTests = function()
             pageURL.replace(/^(https?:\/\/[^/]*\/).*$/,"$1") :
             pageURL.replace(/\/inspector\/extensions\/[^/]*$/, "/http/tests")) +
             "/inspector/resources/extension-main.html";
-        WebInspector.addExtensions([{ startPage: extensionURL }]);
+        WebInspector.addExtensions([{ startPage: extensionURL, name: "test extension" }]);
     });
 }
 

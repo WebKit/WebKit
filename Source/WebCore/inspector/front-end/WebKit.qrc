@@ -54,6 +54,7 @@
     <file>FontView.js</file>
     <file>GoToLineDialog.js</file>
     <file>HAREntry.js</file>
+    <file>HandlerRegistry.js</file>
     <file>HeapSnapshot.js</file>
     <file>HeapSnapshotProxy.js</file>
     <file>HeapSnapshotWorker.js</file>

@@ -150,7 +150,7 @@ Console.prototype = {
     get Severity()
     {
         return apiPrivate.console.Severity;
-    },
+    }
 };
 
 function Network()
@@ -229,6 +229,24 @@ Panels.prototype = {
             page: page
         };
         extensionServer.sendRequest(request, callback && bind(callback, this, new ExtensionPanel(id)));
+    },
+
+    setOpenResourceHandler: function(callback)
+    {
+        var hadHandler = extensionServer.hasHandler("open-resource");
+
+        if (!callback)
+            extensionServer.deregisterHandler("open-resource");
+        else {
+            function callbackWrapper(message)
+            {
+                callback.call(null, message.resource);
+            }
+            extensionServer.registerHandler("open-resource", callbackWrapper);
+        }
+        // Only send command if we either removed an existing handler or added handler and had none before.
+        if (hadHandler === !callback)
+            extensionServer.sendRequest({ command: "setOpenResourceHandler", "handlerPresent": !!callback });
     }
 }
 
@@ -513,9 +531,19 @@ ExtensionServerClient.prototype = {
         return this._port.postMessage(message);
     },
 
+    hasHandler: function(command)
+    {
+        return !!this._handlers[command];
+    },
+
     registerHandler: function(command, handler)
     {
         this._handlers[command] = handler;
+    },
+
+    deregisterHandler: function(command)
+    {
+        delete this._handlers[command];
     },
 
     nextObjectId: function()

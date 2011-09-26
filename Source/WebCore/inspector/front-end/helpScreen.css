@@ -188,3 +188,21 @@ body.platform-mac .help-key {
     margin-right: 0;
     margin-right: 4px;
 }
+
+.help-content select {
+    margin-left: 1em;
+    background-color: rgb(64, 64, 64);
+    color: white;
+    border-color: black;
+    padding: 0px 4px;
+}
+
+.help-content select:disabled {
+    background-color: rgb(32, 32, 32);
+    color: graytext;
+}
+
+.help-content option {
+    background-color: black;
+    color: white;
+}

@@ -55,7 +55,8 @@ var Preferences = {
     canInspectWorkers: false,
     canClearCacheAndCookies: false,
     canDisableCache: false,
-    showNetworkPanelInitiatorColumn: false
+    showNetworkPanelInitiatorColumn: false,
+    haveExtensions: false
 }
 
 /**
