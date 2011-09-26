@@ -33,7 +33,7 @@ if (window.layoutTestController)
 <body>
 
 <div style="display: -webkit-flexbox" class="horizontal-box">
-  <div class="first"  style="width: -webkit-flex(1); -webkit-flex-order: 1"></div>
+  <div class="first"  style="width: -webkit-flex(1); -webkit-flex-order: 0"></div>
   <div class="second" style="width: -webkit-flex(1);"></div>
   <div class="third"  style="width: -webkit-flex(1); -webkit-flex-order: 3"></div>
   <div class="fourth" style="width: -webkit-flex(1); -webkit-flex-order: 20"></div>
@@ -48,10 +48,10 @@ if (window.layoutTestController)
 
 <!-- The example from the spec. -->
 <div style="display: -webkit-flexbox" class="horizontal-box">
-  <div class="third"  style="width: -webkit-flex(1); -webkit-flex-order: 2"></div>
+  <div class="third"  style="width: -webkit-flex(1); -webkit-flex-order: 1"></div>
   <div class="first"  style="width: -webkit-flex(1)"></div>
-  <div class="fourth" style="width: -webkit-flex(1); -webkit-flex-order: 2"></div>
-  <div class="second" style="width: -webkit-flex(1); -webkit-flex-order: 1"></div>
+  <div class="fourth" style="width: -webkit-flex(1); -webkit-flex-order: 1"></div>
+  <div class="second" style="width: -webkit-flex(1); -webkit-flex-order: 0"></div>
 </div>
 
 <div style="display: -webkit-flexbox" class="horizontal-box">
@@ -79,8 +79,8 @@ if (window.layoutTestController)
 <div style="display: -webkit-flexbox" class="horizontal-box">
   <div class="second" style="width: -webkit-flex(1); -webkit-flex-order: 0"></div>
   <div class="first" style="width: -webkit-flex(1); -webkit-flex-order: -1"></div>
-  <div class="third"  style="width: -webkit-flex(1); -webkit-flex-order: 1"></div>
-  <div class="fourth"  style="width: -webkit-flex(1)"></div>
+  <div class="fourth"  style="width: -webkit-flex(1); -webkit-flex-order: 1"></div>
+  <div class="third"  style="width: -webkit-flex(1)"></div>
 </div>
 
 <!-- Values greater than what can be stored in an int are clamped from

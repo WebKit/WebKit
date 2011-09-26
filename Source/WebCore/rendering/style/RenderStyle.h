@@ -1385,7 +1385,7 @@ public:
     static float initialFlexboxWidthNegativeFlex() { return 0; }
     static float initialFlexboxHeightPositiveFlex() { return 0; }
     static float initialFlexboxHeightNegativeFlex() { return 0; }
-    static int initialFlexOrder() { return 1; }
+    static int initialFlexOrder() { return 0; }
     static EFlexPack initialFlexPack() { return PackStart; }
     static EFlexAlign initialFlexAlign() { return AlignStretch; }
     static EFlexFlow initialFlexFlow() { return FlowRow; }
