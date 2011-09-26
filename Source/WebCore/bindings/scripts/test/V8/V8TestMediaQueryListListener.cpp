@@ -30,6 +30,7 @@
 #include "V8DOMWrapper.h"
 #include "V8IsolatedContext.h"
 #include "V8Proxy.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -61,8 +62,11 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListene
     v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, "TestMediaQueryListListener", v8::Persistent<v8::FunctionTemplate>(), V8TestMediaQueryListListener::internalFieldCount,
         0, 0,
         TestMediaQueryListListenerCallbacks, WTF_ARRAY_LENGTH(TestMediaQueryListListenerCallbacks));
+    UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
     v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();
+    UNUSED_PARAM(instance); // In some cases, it will not be used.
+    UNUSED_PARAM(proto); // In some cases, it will not be used.
     
 
     // Custom toString template

@@ -137,7 +137,7 @@ v8::Handle<v8::Value> V8WebSocket::sendCallback(const v8::Arguments& args)
         v8::Handle<v8::String> stringMessage = message->ToString();
         if (tryCatch.HasCaught())
             return throwError(tryCatch.Exception());
-        result = webSocket->send(toWebCoreString(message), ec);
+        result = webSocket->send(toWebCoreString(stringMessage), ec);
     }
     if (ec)
         return throwError(ec);

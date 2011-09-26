@@ -45,6 +45,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UnusedParam.h>
 
 #if ENABLE(Condition1)
 #include "V8TestObjectA.h"
@@ -1408,8 +1409,11 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, "TestObj", v8::Persistent<v8::FunctionTemplate>(), V8TestObj::internalFieldCount,
         TestObjAttrs, WTF_ARRAY_LENGTH(TestObjAttrs),
         TestObjCallbacks, WTF_ARRAY_LENGTH(TestObjCallbacks));
+    UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
     v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();
+    UNUSED_PARAM(instance); // In some cases, it will not be used.
+    UNUSED_PARAM(proto); // In some cases, it will not be used.
     
     if (RuntimeEnabledFeatures::enabledAtRuntimeAttr1Enabled()) {
         static const BatchedAttribute attrData =\

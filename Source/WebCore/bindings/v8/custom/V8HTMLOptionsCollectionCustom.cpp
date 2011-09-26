@@ -109,7 +109,7 @@ void V8HTMLOptionsCollection::lengthAccessorSetter(v8::Local<v8::String> name, v
             newLength = static_cast<unsigned>(v);
     }
     if (!ec)
-        imp->setLength(value->Uint32Value(), ec);
+        imp->setLength(newLength, ec);
 
     V8Proxy::setDOMException(ec);
 }

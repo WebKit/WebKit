@@ -87,10 +87,10 @@ void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener, WorkerC
     }
     m_listenersMap.set(workerContext, listener);
     
+    // TODO: Should we remove |proxy|? It looks like unused now.
     WorkerContextExecutionProxy* proxy = workerContext->script()->proxy();
     if (!proxy)
         return;
-    v8::Handle<v8::Context> context = proxy->context();
 
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("getWorkerScripts")));
     v8::Handle<v8::Value> argv[] = { v8::Handle<v8::Value>() };

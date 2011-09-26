@@ -2194,10 +2194,13 @@ END
     } else {
         push(@implContent, <<END);
         0, 0);
+END
+    }
+    
+    AddToImplIncludes("wtf/UnusedParam.h");
+    push(@implContent, <<END);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
 END
-        AddToImplIncludes("wtf/UnusedParam.h");
-    }
 
     if ($dataNode->extendedAttributes->{"CanBeConstructed"} || $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructer"}) {
         push(@implContent, <<END);
@@ -2209,6 +2212,8 @@ END
         push(@implContent,  <<END);
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
     v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();
+    UNUSED_PARAM(instance); // In some cases, it will not be used.
+    UNUSED_PARAM(proto); // In some cases, it will not be used.
 END
     }
 
