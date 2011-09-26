@@ -228,7 +228,7 @@ QtPixmapRuntimeObject::QtPixmapRuntimeObject(ExecState* exec, JSGlobalObject* gl
 {
 }
 
-const ClassInfo QtPixmapRuntimeObject::s_info = { "QtPixmapRuntimeObject", &RuntimeObject::s_info, 0, 0 };
+const ClassInfo QtPixmapRuntimeObject::s_info = { "QtPixmapRuntimeObject", &RuntimeObject::s_info, 0, 0, CREATE_METHOD_TABLE(QtPixmapRuntimeObject) };
 
 QtPixmapClass::QtPixmapClass()
 {

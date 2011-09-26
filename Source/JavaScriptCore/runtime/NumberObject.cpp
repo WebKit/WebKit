@@ -29,7 +29,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(NumberObject);
 
-const ClassInfo NumberObject::s_info = { "Number", &JSWrapperObject::s_info, 0, 0 };
+const ClassInfo NumberObject::s_info = { "Number", &JSWrapperObject::s_info, 0, 0, CREATE_METHOD_TABLE(NumberObject) };
 
 NumberObject::NumberObject(JSGlobalData& globalData, Structure* structure)
     : JSWrapperObject(globalData, structure)

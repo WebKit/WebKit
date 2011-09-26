@@ -37,7 +37,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSActivation);
 
-const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, 0 };
+const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSActivation) };
 
 JSActivation::JSActivation(CallFrame* callFrame, FunctionExecutable* functionExecutable)
     : Base(callFrame->globalData(), callFrame->globalData().activationStructure.get(), functionExecutable->symbolTable(), callFrame->registers())

@@ -40,7 +40,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSCallbackFunction);
 
-const ClassInfo JSCallbackFunction::s_info = { "CallbackFunction", &InternalFunction::s_info, 0, 0 };
+const ClassInfo JSCallbackFunction::s_info = { "CallbackFunction", &InternalFunction::s_info, 0, 0, CREATE_METHOD_TABLE(JSCallbackFunction) };
 
 JSCallbackFunction::JSCallbackFunction(JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback)
     : InternalFunction(globalObject, globalObject->callbackFunctionStructure())

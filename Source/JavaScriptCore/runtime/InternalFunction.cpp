@@ -34,7 +34,7 @@ void InternalFunction::vtableAnchor() {}
 
 ASSERT_CLASS_FITS_IN_CELL(InternalFunction);
 
-const ClassInfo InternalFunction::s_info = { "Function", &JSNonFinalObject::s_info, 0, 0 };
+const ClassInfo InternalFunction::s_info = { "Function", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(InternalFunction) };
 
 InternalFunction::InternalFunction(VPtrStealingHackType)
     : JSNonFinalObject(VPtrStealingHack)

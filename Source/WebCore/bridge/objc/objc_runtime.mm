@@ -190,7 +190,7 @@ unsigned int ObjcArray::getLength() const
     return [_array.get() count];
 }
 
-const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", &JSNonFinalObject::s_info, 0, 0 };
+const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(ObjcFallbackObjectImp) };
 
 ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Structure* structure, ObjcInstance* i, const Identifier& propertyName)
     : JSNonFinalObject(globalObject->globalData(), structure)

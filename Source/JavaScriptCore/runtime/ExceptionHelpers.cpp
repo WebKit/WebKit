@@ -41,7 +41,7 @@
 
 namespace JSC {
 
-const ClassInfo InterruptedExecutionError::s_info = { "InterruptedExecutionError", &Base::s_info, 0, 0 };
+const ClassInfo InterruptedExecutionError::s_info = { "InterruptedExecutionError", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(InterruptedExecutionError) };
 
 UString InterruptedExecutionError::toString(ExecState*) const
 {
@@ -64,7 +64,7 @@ bool isInterruptedExecutionException(JSValue value)
 }
 
 
-const ClassInfo TerminatedExecutionError::s_info = { "TerminatedExecutionError", &Base::s_info, 0, 0 };
+const ClassInfo TerminatedExecutionError::s_info = { "TerminatedExecutionError", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(TerminatedExecutionError) };
 
 UString TerminatedExecutionError::toString(ExecState*) const
 {

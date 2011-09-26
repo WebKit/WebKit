@@ -35,7 +35,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSPropertyNameIterator);
 
-const ClassInfo JSPropertyNameIterator::s_info = { "JSPropertyNameIterator", 0, 0, 0 };
+const ClassInfo JSPropertyNameIterator::s_info = { "JSPropertyNameIterator", 0, 0, 0, CREATE_METHOD_TABLE(JSPropertyNameIterator) };
 
 inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlots)
     : JSCell(exec->globalData(), exec->globalData().propertyNameIteratorStructure.get())

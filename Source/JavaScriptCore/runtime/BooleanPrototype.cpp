@@ -38,7 +38,7 @@ static EncodedJSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState*);
 
 namespace JSC {
 
-const ClassInfo BooleanPrototype::s_info = { "Boolean", &BooleanObject::s_info, 0, ExecState::booleanPrototypeTable };
+const ClassInfo BooleanPrototype::s_info = { "Boolean", &BooleanObject::s_info, 0, ExecState::booleanPrototypeTable, CREATE_METHOD_TABLE(BooleanPrototype) };
 
 /* Source for BooleanPrototype.lut.h
 @begin booleanPrototypeTable

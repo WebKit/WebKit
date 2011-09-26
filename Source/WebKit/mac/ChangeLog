@@ -1,3 +1,20 @@
+2011-09-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add custom vtable struct to ClassInfo struct
+        https://bugs.webkit.org/show_bug.cgi?id=68567
+
+        Reviewed by Oliver Hunt.
+
+        Added CREATE_METHOD_TABLE macro to generate the custom vtable for the 
+        specified class in its ClassInfo.  Also added to it the first function to use 
+        this macro, visitChildren.  This is part of the process of getting rid of all 
+        C++ virtual methods in JSCell.  Eventually all virtual functions in JSCell 
+        that can't easily be converted to non-virtual functions will be put into 
+        this custom vtable structure.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        * Plugins/Hosted/ProxyRuntimeObject.mm:
+
 2011-09-24  Adam Barth  <abarth@webkit.org>
 
         Always enable ENABLE(OFFLINE_WEB_APPLICATIONS)

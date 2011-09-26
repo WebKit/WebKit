@@ -42,7 +42,7 @@ static JSValue numberConstructorMinValue(ExecState*, JSValue, const Identifier&)
 
 namespace JSC {
 
-const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::numberConstructorTable };
+const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::numberConstructorTable, CREATE_METHOD_TABLE(NumberConstructor) };
 
 /* Source for NumberConstructor.lut.h
 @begin numberConstructorTable

@@ -92,7 +92,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSArray);
 // as long as it is 1/8 full. If more sparse than that, we use a map.
 static const unsigned minDensityMultiplier = 8;
 
-const ClassInfo JSArray::s_info = {"Array", &JSNonFinalObject::s_info, 0, 0};
+const ClassInfo JSArray::s_info = {"Array", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSArray)};
 
 // We keep track of the size of the last array after it was grown.  We use this
 // as a simple heuristic for as the value to grow the next array from size 0.

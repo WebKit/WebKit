@@ -175,7 +175,7 @@ Structure::Structure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSV
 {
 }
 
-const ClassInfo Structure::s_info = { "Structure", 0, 0, 0 };
+const ClassInfo Structure::s_info = { "Structure", 0, 0, 0, CREATE_METHOD_TABLE(Structure) };
 
 Structure::Structure(JSGlobalData& globalData)
     : JSCell(CreatingEarlyCell)

@@ -1,3 +1,77 @@
+2011-09-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add custom vtable struct to ClassInfo struct
+        https://bugs.webkit.org/show_bug.cgi?id=68567
+
+        Reviewed by Oliver Hunt.
+
+        Declared/defined the MethodTable struct and added it to the ClassInfo struct.
+        Also defined the CREATE_METHOD_TABLE macro to generate these method tables 
+        succinctly where they need to be defined.
+
+        Also added to it the first function to use this macro, visitChildren. 
+
+        This is part of the process of getting rid of all C++ virtual methods in JSCell.  
+        Eventually all virtual functions in JSCell that can't easily be converted to 
+        non-virtual functions will be put into this custom vtable structure.
+        * runtime/ClassInfo.h:
+
+        Added the CREATE_METHOD_TABLE macro call as the last argument to each of the 
+        ClassInfo structs declared in these classes.  This saves us from having to visit 
+        each s_info definition in the future when we add more methods to the MethodTable.
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackObject.cpp:
+        * JavaScriptCore.exp:
+        * runtime/Arguments.cpp:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/BooleanObject.cpp:
+        * runtime/BooleanPrototype.cpp:
+        * runtime/DateConstructor.cpp:
+        * runtime/DateInstance.cpp:
+        * runtime/DatePrototype.cpp:
+        * runtime/ErrorInstance.cpp:
+        * runtime/ErrorPrototype.cpp:
+        * runtime/ExceptionHelpers.cpp:
+        * runtime/Executable.cpp:
+        * runtime/GetterSetter.cpp:
+        * runtime/InternalFunction.cpp:
+        * runtime/JSAPIValueWrapper.cpp:
+        * runtime/JSActivation.cpp:
+        * runtime/JSArray.cpp:
+        * runtime/JSByteArray.cpp:
+        * runtime/JSFunction.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSONObject.cpp:
+        * runtime/JSObject.cpp:
+        * runtime/JSPropertyNameIterator.cpp:
+        * runtime/JSString.cpp:
+        * runtime/MathObject.cpp:
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NumberConstructor.cpp:
+        * runtime/NumberObject.cpp:
+        * runtime/NumberPrototype.cpp:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectPrototype.cpp:
+        * runtime/RegExp.cpp:
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpObject.cpp:
+        * runtime/RegExpPrototype.cpp:
+        * runtime/ScopeChain.cpp:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringObject.cpp:
+        * runtime/StringPrototype.cpp:
+        * runtime/Structure.cpp:
+        * runtime/StructureChain.cpp:
+
+        Had to make visitChildren and visitChildrenVirtual protected instead of private
+        because some of the subclasses of JSWrapperObject need access to JSWrapperObject's
+        visitChildren function pointer in their vtable since they don't provide their own
+        implementation. Same for RegExpObject.
+        * runtime/JSWrapperObject.h:
+        * runtime/RegExpObject.h:
+
 2011-09-25  Adam Barth  <abarth@webkit.org>
 
         Finish removing PLATFORM(BREWMP) by removing associated code

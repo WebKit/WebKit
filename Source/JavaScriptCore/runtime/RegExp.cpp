@@ -38,7 +38,7 @@
 
 namespace JSC {
 
-const ClassInfo RegExp::s_info = { "RegExp", 0, 0, 0 };
+const ClassInfo RegExp::s_info = { "RegExp", 0, 0, 0, CREATE_METHOD_TABLE(RegExp) };
 
 RegExpFlags regExpFlags(const UString& string)
 {

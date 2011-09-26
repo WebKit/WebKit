@@ -41,7 +41,7 @@ using namespace Bindings;
 
 ASSERT_CLASS_FITS_IN_CELL(RuntimeMethod);
 
-const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_info, 0, 0 };
+const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_info, 0, 0, CREATE_METHOD_TABLE(RuntimeMethod) };
 
 RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Bindings::MethodList& m)
     // Callers will need to pass in the right global object corresponding to this native object "m".

@@ -37,7 +37,7 @@ static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState*);
 
 namespace JSC {
 
-const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::stringConstructorTable };
+const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::stringConstructorTable, CREATE_METHOD_TABLE(StringConstructor) };
 
 /* Source for StringConstructor.lut.h
 @begin stringConstructorTable

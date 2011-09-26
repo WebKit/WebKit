@@ -99,7 +99,7 @@ protected:
     virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
 };
 
-const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", &DOMConstructorObject::s_info, &JSTestInterfaceConstructorTable, 0 };
+const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", &DOMConstructorObject::s_info, &JSTestInterfaceConstructorTable, 0, CREATE_METHOD_TABLE(JSTestInterfaceConstructor) };
 
 JSTestInterfaceConstructor::JSTestInterfaceConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -156,14 +156,14 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 
 #undef THUNK_GENERATOR
 static JSC_CONST_HASHTABLE HashTable JSTestInterfacePrototypeTable = { 1, 0, JSTestInterfacePrototypeTableValues, 0 };
-const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &JSC::JSNonFinalObject::s_info, &JSTestInterfacePrototypeTable, 0 };
+const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &JSC::JSNonFinalObject::s_info, &JSTestInterfacePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestInterfacePrototype) };
 
 JSObject* JSTestInterfacePrototype::self(ExecState* exec, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestInterface>(exec, globalObject);
 }
 
-const ClassInfo JSTestInterface::s_info = { "TestInterface", &JSDOMWrapper::s_info, &JSTestInterfaceTable, 0 };
+const ClassInfo JSTestInterface::s_info = { "TestInterface", &JSDOMWrapper::s_info, &JSTestInterfaceTable, 0 , CREATE_METHOD_TABLE(JSTestInterface) };
 
 JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestInterface> impl)
     : JSDOMWrapper(structure, globalObject)

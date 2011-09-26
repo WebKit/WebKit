@@ -28,7 +28,7 @@
 
 namespace JSC {
 
-const ClassInfo GetterSetter::s_info = { "GetterSetter", 0, 0, 0 };
+const ClassInfo GetterSetter::s_info = { "GetterSetter", 0, 0, 0, CREATE_METHOD_TABLE(GetterSetter) };
 
 void GetterSetter::visitChildrenVirtual(SlotVisitor& visitor)
 {

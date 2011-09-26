@@ -48,7 +48,7 @@ static NPIdentifier npIdentifierFromIdentifier(const Identifier& identifier)
     return static_cast<NPIdentifier>(IdentifierRep::get(identifier.ustring().utf8().data()));
 }
 
-const ClassInfo JSNPObject::s_info = { "NPObject", &JSNonFinalObject::s_info, 0, 0 };
+const ClassInfo JSNPObject::s_info = { "NPObject", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSNPObject) };
 
 JSNPObject::JSNPObject(JSGlobalObject* globalObject, Structure* structure, NPRuntimeObjectMap* objectMap, NPObject* npObject)
     : JSNonFinalObject(globalObject->globalData(), structure)

@@ -200,7 +200,7 @@ protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;
 };
 
-const ClassInfo JSTestObjConstructor::s_info = { "TestObjConstructor", &DOMConstructorObject::s_info, &JSTestObjConstructorTable, 0 };
+const ClassInfo JSTestObjConstructor::s_info = { "TestObjConstructor", &DOMConstructorObject::s_info, &JSTestObjConstructorTable, 0, CREATE_METHOD_TABLE(JSTestObjConstructor) };
 
 JSTestObjConstructor::JSTestObjConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -299,7 +299,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
 
 #undef THUNK_GENERATOR
 static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable = { 137, 127, JSTestObjPrototypeTableValues, 0 };
-const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", &JSC::JSNonFinalObject::s_info, &JSTestObjPrototypeTable, 0 };
+const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", &JSC::JSNonFinalObject::s_info, &JSTestObjPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
 JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
 {
@@ -316,7 +316,7 @@ bool JSTestObjPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identif
     return getStaticPropertyDescriptor<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, this, propertyName, descriptor);
 }
 
-const ClassInfo JSTestObj::s_info = { "TestObj", &JSDOMWrapper::s_info, &JSTestObjTable, 0 };
+const ClassInfo JSTestObj::s_info = { "TestObj", &JSDOMWrapper::s_info, &JSTestObjTable, 0 , CREATE_METHOD_TABLE(JSTestObj) };
 
 JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestObj> impl)
     : JSDOMWrapper(structure, globalObject)

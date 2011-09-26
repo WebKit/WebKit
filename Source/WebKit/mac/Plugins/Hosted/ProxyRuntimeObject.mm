@@ -34,7 +34,7 @@ using namespace JSC;
 namespace WebKit {
 
 
-const ClassInfo ProxyRuntimeObject::s_info = { "ProxyRuntimeObject", &RuntimeObject::s_info, 0, 0 };
+const ClassInfo ProxyRuntimeObject::s_info = { "ProxyRuntimeObject", &RuntimeObject::s_info, 0, 0, CREATE_METHOD_TABLE(ProxyRuntimeObject) };
 
 ProxyRuntimeObject::ProxyRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<ProxyInstance> instance)
     : RuntimeObject(exec, globalObject, structure, instance)

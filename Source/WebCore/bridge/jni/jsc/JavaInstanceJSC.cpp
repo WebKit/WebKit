@@ -148,7 +148,7 @@ private:
     }
 };
 
-const ClassInfo JavaRuntimeMethod::s_info = { "JavaRuntimeMethod", &RuntimeMethod::s_info, 0, 0 };
+const ClassInfo JavaRuntimeMethod::s_info = { "JavaRuntimeMethod", &RuntimeMethod::s_info, 0, 0, CREATE_METHOD_TABLE(JavaRuntimeMethod) };
 
 JSValue JavaInstance::getMethod(ExecState* exec, const Identifier& propertyName)
 {

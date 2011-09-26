@@ -32,7 +32,7 @@
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/PropertyNameArray.h>
 
-const ClassInfo UserObjectImp::s_info = { "UserObject", &JSNonFinalObject::s_info, 0, 0 };
+const ClassInfo UserObjectImp::s_info = { "UserObject", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(UserObjectImp) };
 
 UserObjectImp::UserObjectImp(JSGlobalData& globalData, Structure* structure, JSUserObject* userObject)
     : JSNonFinalObject(globalData, structure)

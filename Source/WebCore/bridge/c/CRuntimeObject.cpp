@@ -35,7 +35,7 @@
 namespace JSC {
 namespace Bindings {
 
-const ClassInfo CRuntimeObject::s_info = { "CRuntimeObject", &RuntimeObject::s_info, 0, 0 };
+const ClassInfo CRuntimeObject::s_info = { "CRuntimeObject", &RuntimeObject::s_info, 0, 0, CREATE_METHOD_TABLE(CRuntimeObject) };
 
 CRuntimeObject::CRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<CInstance> instance)
     : RuntimeObject(exec, globalObject, structure, instance)

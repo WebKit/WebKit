@@ -50,7 +50,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(RegExpObject);
 
-const ClassInfo RegExpObject::s_info = { "RegExp", &JSNonFinalObject::s_info, 0, ExecState::regExpTable };
+const ClassInfo RegExpObject::s_info = { "RegExp", &JSNonFinalObject::s_info, 0, ExecState::regExpTable, CREATE_METHOD_TABLE(RegExpObject) };
 
 /* Source for RegExpObject.lut.h
 @begin regExpTable

@@ -588,7 +588,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
 
 // ------------------------------ JSONObject --------------------------------
 
-const ClassInfo JSONObject::s_info = { "JSON", &JSNonFinalObject::s_info, 0, ExecState::jsonTable };
+const ClassInfo JSONObject::s_info = { "JSON", &JSNonFinalObject::s_info, 0, ExecState::jsonTable, CREATE_METHOD_TABLE(JSONObject) };
 
 /* Source for JSONObject.lut.h
 @begin jsonTable

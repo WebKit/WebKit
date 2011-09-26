@@ -85,7 +85,7 @@ static EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState*);
 
 namespace JSC {
 
-const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, ExecState::stringTable };
+const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, ExecState::stringTable, CREATE_METHOD_TABLE(StringPrototype) };
 
 /* Source for StringPrototype.lut.h
 @begin stringTable 26

@@ -41,7 +41,7 @@ namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSDOMWindowShell);
 
-const ClassInfo JSDOMWindowShell::s_info = { "JSDOMWindowShell", &Base::s_info, 0, 0 };
+const ClassInfo JSDOMWindowShell::s_info = { "JSDOMWindowShell", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSDOMWindowShell) };
 
 JSDOMWindowShell::JSDOMWindowShell(Structure* structure, DOMWrapperWorld* world)
     : Base(*world->globalData(), structure)

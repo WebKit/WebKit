@@ -34,7 +34,7 @@ namespace JSC {
     
 static const unsigned substringFromRopeCutoff = 4;
 
-const ClassInfo JSString::s_info = { "string", 0, 0, 0 };
+const ClassInfo JSString::s_info = { "string", 0, 0, 0, CREATE_METHOD_TABLE(JSString) };
 
 void JSString::resolveRope(ExecState* exec) const
 {

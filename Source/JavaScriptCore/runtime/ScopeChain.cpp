@@ -51,7 +51,7 @@ void ScopeChainNode::print()
 
 #endif
 
-const ClassInfo ScopeChainNode::s_info = { "ScopeChainNode", 0, 0, 0 };
+const ClassInfo ScopeChainNode::s_info = { "ScopeChainNode", 0, 0, 0, CREATE_METHOD_TABLE(ScopeChainNode) };
 
 int ScopeChainNode::localDepth()
 {

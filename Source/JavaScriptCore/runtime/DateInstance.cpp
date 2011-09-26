@@ -32,7 +32,7 @@ using namespace WTF;
 
 namespace JSC {
 
-const ClassInfo DateInstance::s_info = {"Date", &JSWrapperObject::s_info, 0, 0};
+const ClassInfo DateInstance::s_info = {"Date", &JSWrapperObject::s_info, 0, 0, CREATE_METHOD_TABLE(DateInstance)};
 
 DateInstance::DateInstance(ExecState* exec, Structure* structure)
     : JSWrapperObject(exec->globalData(), structure)

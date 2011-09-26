@@ -30,6 +30,15 @@ namespace JSC {
     class HashEntry;
     struct HashTable;
 
+    struct MethodTable {
+        typedef void (*VisitChildrenFunctionPtr)(JSCell*, SlotVisitor&);
+        VisitChildrenFunctionPtr visitChildrenFunctionPtr;
+    };
+
+#define CREATE_METHOD_TABLE(ClassName) { \
+        &ClassName::visitChildren \
+    }
+
     struct ClassInfo {
         /**
          * A string denoting the class name. Example: "Window".
@@ -64,6 +73,8 @@ namespace JSC {
         const HashTable* staticPropHashTable;
         typedef const HashTable* (*ClassPropHashTableGetterFunction)(ExecState*);
         const ClassPropHashTableGetterFunction classPropHashTableGetterFunction;
+
+        MethodTable methodTable;
     };
 
 } // namespace JSC

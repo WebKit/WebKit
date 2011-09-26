@@ -1,3 +1,52 @@
+2011-09-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add custom vtable struct to ClassInfo struct
+        https://bugs.webkit.org/show_bug.cgi?id=68567
+
+        Reviewed by Oliver Hunt.
+
+        No new tests.
+
+        Added CREATE_METHOD_TABLE macro to generate the custom vtable for the 
+        specified class in its ClassInfo.  Also added to it the first function to use 
+        this macro, visitChildren.  This is part of the process of getting rid of all 
+        C++ virtual methods in JSCell.  Eventually all virtual functions in JSCell 
+        that can't easily be converted to non-virtual functions will be put into 
+        this custom vtable structure.
+
+        * bindings/js/JSAudioConstructor.cpp:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSImageConstructor.cpp:
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSOptionConstructor.cpp:
+        * bindings/js/JSWorkerContextBase.cpp:
+
+        Changed the bindings generator to add the call to the CREATE_METHOD_TABLE macro where
+        necessary.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateConstructorDefinition):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bridge/c/CRuntimeObject.cpp:
+        * bridge/c/c_instance.cpp:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        * bridge/jni/jsc/JavaRuntimeObject.cpp:
+        * bridge/objc/ObjCRuntimeObject.mm:
+        * bridge/objc/objc_instance.mm:
+        * bridge/objc/objc_runtime.mm:
+        * bridge/qt/qt_instance.cpp:
+        * bridge/qt/qt_pixmapruntime.cpp:
+        * bridge/qt/qt_runtime.cpp:
+        * bridge/runtime_array.cpp:
+        * bridge/runtime_method.cpp:
+        * bridge/runtime_object.cpp:
+
 2011-09-25  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL] Move GtkWidgetBackingStoreCairo to the cairo directory and modify to use in the EFL.
