@@ -343,6 +343,9 @@ static String CGImageToDataURL(CGImageRef image, const String& mimeType, const d
         imageProperties.adoptCF(CFDictionaryCreate(0, &key, &value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     }
 
+    // Setting kCGImageDestinationBackgroundColor to black in imageProperties would allow saving some math in the
+    // calling functions, but it doesn't seem to work.
+
     CGImageDestinationAddImage(destination.get(), image, imageProperties.get());
     CGImageDestinationFinalize(destination.get());
 
@@ -355,8 +358,31 @@ static String CGImageToDataURL(CGImageRef image, const String& mimeType, const d
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+    RetainPtr<CGImageRef> image;
+    RetainPtr<CFStringRef> uti = utiFromMIMEType(mimeType);
+    ASSERT(uti);
 
-    RetainPtr<CGImageRef> image(AdoptCF, copyNativeImage(CopyBackingStore));
+    if (CFEqual(uti.get(), jpegUTI())) {
+        // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
+        RefPtr<ByteArray> arr = getPremultipliedImageData(IntRect(IntPoint(0, 0), m_size));
+
+        unsigned char *data = arr->data();
+        for (int i = 0; i < width() * height(); i++)
+            data[i * 4 + 3] = 255; // The image is already premultiplied, so we just need to make it opaque.
+
+        RetainPtr<CGDataProviderRef> dataProvider;
+    
+        dataProvider.adoptCF(CGDataProviderCreateWithData(0, data,
+                                                          4 * width() * height(), 0));
+    
+        if (!dataProvider)
+            return "data:,";
+
+        image.adoptCF(CGImageCreate(width(), height(), 8, 32, 4 * width(),
+                                    CGColorSpaceCreateDeviceRGB(), kCGBitmapByteOrderDefault | kCGImageAlphaLast,
+                                    dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+    } else
+        image.adoptCF(copyNativeImage(CopyBackingStore));
 
     if (!image)
         return "data:,";
@@ -370,8 +396,35 @@ String ImageDataToDataURL(const ImageData& source, const String& mimeType, const
         
     RetainPtr<CGImageRef> image;
     RetainPtr<CGDataProviderRef> dataProvider;
+
+    unsigned char* data = source.data()->data()->data();
+    RetainPtr<CFStringRef> uti = utiFromMIMEType(mimeType);
+    ASSERT(uti);
+    Vector<uint8_t> dataVector;
+    if (CFEqual(uti.get(), jpegUTI())) {
+        // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
+        dataVector.resize(4 * source.width() * source.height());
+        unsigned char *out = dataVector.data();
+        
+        for (int i = 0; i < source.width() * source.height(); i++) {
+            // Multiply color data by alpha, and set alpha to 255.
+            int alpha = data[4 * i + 3];
+            if (alpha != 255) {
+                out[4 * i + 0] = data[4 * i + 0] * alpha / 255;
+                out[4 * i + 1] = data[4 * i + 1] * alpha / 255;
+                out[4 * i + 2] = data[4 * i + 2] * alpha / 255;
+            } else {
+                out[4 * i + 0] = data[4 * i + 0];
+                out[4 * i + 1] = data[4 * i + 1];
+                out[4 * i + 2] = data[4 * i + 2];
+            }
+            out[4 * i + 3] = 255;
+        }
+
+        data = out;
+    }
     
-    dataProvider.adoptCF(CGDataProviderCreateWithData(0, source.data()->data()->data(),
+    dataProvider.adoptCF(CGDataProviderCreateWithData(0, data,
                                                       4 * source.width() * source.height(), 0));
     
     if (!dataProvider)
