@@ -25,7 +25,7 @@
 #include "config.h"
 #include "HostWindow.h"
 
-namespace WebKitAPITest {
+namespace TestWebKitAPI {
 
 static LPCWSTR hostWindowClassName = L"HostWindow";
 
@@ -37,21 +37,21 @@ HostWindow::HostWindow()
 bool HostWindow::initialize()
 {
     registerWindowClass();
-    m_window = CreateWindowExW(0, hostWindowClassName, L"WebKitAPITest", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, GetModuleHandle(0), 0);
+    m_window = ::CreateWindowExW(0, hostWindowClassName, L"TestWebKitAPI", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, ::GetModuleHandle(0), 0);
     return m_window;
 }
 
 HostWindow::~HostWindow()
 {
-    if (!IsWindow(m_window))
+    if (!::IsWindow(m_window))
         return;
-    DestroyWindow(m_window);
+    ::DestroyWindow(m_window);
 }
 
 RECT HostWindow::clientRect() const
 {
     RECT rect = {0};
-    if (!GetClientRect(m_window, &rect)) {
+    if (!::GetClientRect(m_window, &rect)) {
         RECT emptyRect = {0};
         return emptyRect;
     }
@@ -73,12 +73,12 @@ void HostWindow::registerWindowClass()
     wndClass.hInstance = GetModuleHandle(0);
     wndClass.lpszClassName = hostWindowClassName;
 
-    RegisterClassExW(&wndClass);
+    ::RegisterClassExW(&wndClass);
 }
 
 LRESULT HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+    return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
 } // namespace WebKitAPITest

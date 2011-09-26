@@ -1,3 +1,28 @@
+2011-09-26  Adam Roben  <aroben@apple.com>
+
+        Clean up code imported from WebKitAPITest
+
+        Fixes <http://webkit.org/b/68799> WebViewDestruction tests and related code don't match
+        TestWebKitAPI conventions
+
+        Reviewed by David Levin.
+
+        * TestWebKitAPI/Tests/WebKit/win/WebViewDestruction.cpp: Changed tests to use gtest macros
+        and to share functionality via test fixtures. Prefixed Win32 API calls with ::. Updated
+        namespace name.
+
+        (TestWebKitAPI::WebViewDestruction::SetUp):
+        (TestWebKitAPI::WebViewDestruction::webViewCount):
+        (TestWebKitAPI::WebViewDestructionWithHostWindow::SetUp):
+        (TestWebKitAPI::WebViewDestruction::runMessagePump):
+        (TestWebKitAPI::WebViewDestruction::TearDown):
+        (TestWebKitAPI::WebViewDestructionWithHostWindow::TearDown):
+        Moved functionality from free functions into these new test fixtures.
+
+        * TestWebKitAPI/win/HostWindow.cpp:
+        * TestWebKitAPI/win/HostWindow.h:
+        Prefixed Win32 API calls with ::. Updated namespace name.
+
 2011-09-23  Adam Roben  <aroben@apple.com>
 
         Merge WebKitAPITest into TestWebKitAPI

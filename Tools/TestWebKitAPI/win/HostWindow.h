@@ -28,7 +28,7 @@
 #include <windows.h>
 #include <wtf/Noncopyable.h>
 
-namespace WebKitAPITest {
+namespace TestWebKitAPI {
 
 class HostWindow {
     WTF_MAKE_NONCOPYABLE(HostWindow);
