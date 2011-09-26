@@ -1170,10 +1170,6 @@ void WebViewImpl::composite(bool)
     if (m_pageOverlay)
         m_pageOverlay->update();
 
-    // FIXME: Temporary diagnostic for crbug 96719. This shouldn't happen.
-    if (!m_layerTreeHost)
-        CRASH();
-
     m_layerTreeHost->composite();
 #endif
 #endif
