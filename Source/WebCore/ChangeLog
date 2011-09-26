@@ -1,3 +1,21 @@
+2011-09-26  Jer Noble  <jer.noble@apple.com>
+
+        White flash when entering full-screen using element.webkitRequestFullScreen()
+        https://bugs.webkit.org/show_bug.cgi?id=68481
+
+        Reviewed by Simon Fraser.
+
+        No new tests; covered by existing full screen tests.
+
+        During an animation, renderers may try to paint into the FullScreenRenderer's 
+        GraphicsLayer, and an optimization we previously added for the FullScreenRenderer's 
+        background will cause these paints to fail. Remove this optimization in 
+        containsPaintedContent, and taking non-composited elements into full screen will
+        animate correctly.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::containsPaintedContent):
+
 2011-09-26  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed, rolling out r95960.

@@ -75,6 +75,8 @@ using namespace WebCore;
 - (NSView*)animationView;
 @end
 
+static void continueExitCompositingModeAfterRepaintCallback(WKErrorRef error, void* context);
+
 @interface WKFullScreenWindowController(Private)
 - (void)_requestExitFullScreenWithAnimation:(BOOL)animation;
 - (void)_updateMenuAndDockForFullScreen;
@@ -84,6 +86,7 @@ using namespace WebCore;
 - (void)_swapView:(NSView*)view with:(NSView*)otherView;
 - (WebPageProxy*)_page;
 - (WebFullScreenManagerProxy*)_manager;
+- (void)_continueExitCompositingModeAfterRepaint;
 @end
 
 @interface NSWindow(IsOnActiveSpaceAdditionForTigerAndLeopard)
@@ -412,6 +415,16 @@ using namespace WebCore;
     }
     
     _layerHostingView = 0;
+    [self _page]->forceRepaint(VoidCallback::create(self, continueExitCompositingModeAfterRepaintCallback));
+}
+
+static void continueExitCompositingModeAfterRepaintCallback(WKErrorRef error, void* context)
+{
+    [(WKFullScreenWindowController*)context _continueExitCompositingModeAfterRepaint];
+}
+
+- (void)_continueExitCompositingModeAfterRepaint
+{
     NSEnableScreenUpdates();
 
     [self _manager]->disposeOfLayerClient();

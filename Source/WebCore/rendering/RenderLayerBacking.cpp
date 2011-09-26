@@ -910,10 +910,6 @@ bool RenderLayerBacking::containsPaintedContent() const
     if (isAcceleratedCanvas(renderer()))
         return hasBoxDecorationsOrBackground(renderer());
 #endif
-#if ENABLE(FULLSCREEN_API)
-    if (renderer()->isRenderFullScreen())
-        return false;
-#endif
 
     return true;
 }
