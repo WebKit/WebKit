@@ -2273,6 +2273,11 @@ BUGWK46951 : fast/url/segments.html = TEXT
 // rebaseline after skia rev. 2295 lands
 BUG_REED LINUX WIN SNOWLEOPARD : svg/W3C-SVG-1.1/pservers-grad-14-b.svg = IMAGE
 
+// rebaseline after skia rev. 2330 lands
+BUG_REED LINUX GPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
+BUG_REED LINUX GPU : fast/canvas/canvas-composite.html = IMAGE
+BUG_REED LINUX GPU : fast/canvas/canvas-transforms-during-path.html = IMAGE
+
 // Unexpected timeout in these tests.
 BUG_HCLAM : http/tests/css/border-image-loading.html = PASS TIMEOUT TEXT
 BUG_HCLAM : http/tests/css/css-image-loading.html = PASS TIMEOUT TEXT
