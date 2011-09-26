@@ -447,7 +447,7 @@ void WebPageProxy::loadHTMLString(const String& htmlString, const String& baseUR
     if (!isValid())
         reattachToWebProcess();
 
-    process()->willLoadHTMLStringWithBaseURL(baseURL);
+    process()->assumeReadAccessToBaseURL(baseURL);
     process()->send(Messages::WebPage::LoadHTMLString(htmlString, baseURL), m_pageID);
     process()->responsivenessTimer()->start();
 }
@@ -460,7 +460,7 @@ void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const Strin
     if (m_mainFrame)
         m_mainFrame->setUnreachableURL(unreachableURL);
 
-    process()->willLoadHTMLStringWithBaseURL(baseURL);
+    process()->assumeReadAccessToBaseURL(baseURL);
     process()->send(Messages::WebPage::LoadAlternateHTMLString(htmlString, baseURL, unreachableURL), m_pageID);
     process()->responsivenessTimer()->start();
 }

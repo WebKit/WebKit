@@ -325,6 +325,16 @@ String WebInspectorProxy::inspectorPageURL() const
     return String(CFURLGetString(htmlURLRef.get()));
 }
 
+String WebInspectorProxy::inspectorBaseURL() const
+{
+    // Web Inspector uses localized strings, so it's not contained within inspector directory.
+    RetainPtr<CFURLRef> htmlURLRef(AdoptCF, CFBundleCopyResourcesDirectoryURL(webKitBundle()));
+    if (!htmlURLRef)
+        return String();
+
+    return String(CFURLGetString(htmlURLRef.get()));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INSPECTOR)

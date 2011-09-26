@@ -254,6 +254,15 @@ String WebInspectorProxy::inspectorPageURL() const
     return [[NSURL fileURLWithPath:path] absoluteString];
 }
 
+String WebInspectorProxy::inspectorBaseURL() const
+{
+    // Web Inspector uses localized strings, so it's not contained within inspector directory.
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] resourcePath];
+    ASSERT(path);
+
+    return [[NSURL fileURLWithPath:path] absoluteString];
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INSPECTOR)

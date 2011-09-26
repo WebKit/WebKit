@@ -212,6 +212,7 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
     String url = inspectorPageURL();
     if (shouldOpenAttached())
         url += "?docked=true";
+    m_page->process()->assumeReadAccessToBaseURL(inspectorBaseURL());
     inspectorPage->loadURL(url);
 }
 

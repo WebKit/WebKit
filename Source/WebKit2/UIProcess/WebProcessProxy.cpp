@@ -203,7 +203,7 @@ void WebProcessProxy::registerNewWebBackForwardListItem(WebBackForwardListItem* 
     m_backForwardListItemMap.set(item->itemID(), item);
 }
 
-void WebProcessProxy::willLoadHTMLStringWithBaseURL(const String& urlString)
+void WebProcessProxy::assumeReadAccessToBaseURL(const String& urlString)
 {
     KURL url(KURL(), urlString);
     if (!url.isLocalFile())
