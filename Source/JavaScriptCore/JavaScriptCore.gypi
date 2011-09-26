@@ -345,7 +345,6 @@
             'debugger/Debugger.cpp',
             'debugger/DebuggerActivation.cpp',
             'debugger/DebuggerCallFrame.cpp',
-            'dfg/DFGAliasTracker.h',
             'dfg/DFGByteCodeParser.cpp',
             'dfg/DFGByteCodeParser.h',
             'dfg/DFGGenerationInfo.h',
