@@ -144,6 +144,7 @@ public:
     static const char* decode(const char* start, const char* limit, ObjectStoreMetaDataKey* result);
     static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, int64_t metaDataType);
     static Vector<char> encodeMaxKey(int64_t databaseId);
+    static Vector<char> encodeMaxKey(int64_t databaseId, int64_t objectStoreId);
     int64_t objectStoreId() const;
     int64_t metaDataType() const;
     int compare(const ObjectStoreMetaDataKey& other);

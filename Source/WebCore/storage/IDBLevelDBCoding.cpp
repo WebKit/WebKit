@@ -71,6 +71,7 @@
 //     <database id, 0, 0, 50, object store id, 3> => is evictable [ObjectStoreMetaDataKey]
 //     <database id, 0, 0, 50, object store id, 4> => last "version" number [ObjectStoreMetaDataKey]
 //     <database id, 0, 0, 50, object store id, 5> => maximum index id ever allocated [ObjectStoreMetaDataKey]
+//     <database id, 0, 0, 50, object store id, 6> => has key path (vs. null) [ObjectStoreMetaDataKey]
 //
 //
 // Index meta-data:
@@ -875,6 +876,11 @@ Vector<char> ObjectStoreMetaDataKey::encode(int64_t databaseId, int64_t objectSt
 Vector<char> ObjectStoreMetaDataKey::encodeMaxKey(int64_t databaseId)
 {
     return encode(databaseId, INT64_MAX, INT64_MAX);
+}
+
+Vector<char> ObjectStoreMetaDataKey::encodeMaxKey(int64_t databaseId, int64_t objectStoreId)
+{
+    return encode(databaseId, objectStoreId, INT64_MAX);
 }
 
 int64_t ObjectStoreMetaDataKey::objectStoreId() const
