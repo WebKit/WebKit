@@ -32,7 +32,7 @@ find_library(Cairo_LIBRARY
 
 # Set the include dir variables and the libraries and let libfind_process do the rest.
 # NOTE: Singular variables for this library, plural for libraries this this lib depends on.
-set(Cairo_PROCESS_INCLUDES Cairo_INCLUDE_DIR Freetype_INCLUDE_DIRS)
-set(Cairo_PROCESS_LIBS Cairo_LIBRARY Freetype_LIBRARIES)
+set(Cairo_PROCESS_INCLUDES Cairo_INCLUDE_DIR FREETYPE_INCLUDE_DIRS)
+set(Cairo_PROCESS_LIBS Cairo_LIBRARY FREETYPE_LIBRARIES)
 libfind_process(Cairo)
 
