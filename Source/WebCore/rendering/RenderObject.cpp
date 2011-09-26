@@ -934,19 +934,14 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
             break;
         }
         case INSET:
+            // FIXME: Maybe we should lighten the colors on one side like Firefox.
+            // https://bugs.webkit.org/show_bug.cgi?id=58608
+            if (side == BSTop || side == BSLeft)
+                color = color.dark();
             // fall through
         case OUTSET:
-            if (style == INSET) {
-                if (side == BSTop || side == BSLeft)
-                    color = color.dark();
-                else if (side == BSBottom || side == BSRight)
-                    color = color.light();
-            } else if (style == OUTSET) {
-                if (side == BSTop || side == BSLeft)
-                    color = color.light();
-                else if (side == BSBottom || side == BSRight)
-                    color = color.dark();
-            }
+            if (style == OUTSET && (side == BSBottom || side == BSRight))
+                color = color.dark();
             // fall through
         case SOLID: {
             StrokeStyle oldStrokeStyle = graphicsContext->strokeStyle();
