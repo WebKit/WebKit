@@ -1,3 +1,17 @@
+================
+WebKitGTK+ 1.6.0
+================
+
+What's new in WebKitGTK+ 1.6.0?
+
+  - Fix documentation generation by specifying the sources directory
+    with $(top_srcdir).
+  - Bug 68797 - [GTK] pot file is not properly remove during distcheck
+  - Bug 68600 - [GTK] REGRESSION: Empathy crashes when switching theme
+  - Bug 68502 - [GTK] Fix build break when enabling webgl on r95593
+  - Bug 68837 - [GTK] Do not ignore 'Replaceable' attributes in the
+    DOM bindings
+
 =================
 WebKitGTK+ 1.5.90
 =================
