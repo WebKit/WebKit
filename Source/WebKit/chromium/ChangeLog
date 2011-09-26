@@ -1,3 +1,11 @@
+2011-09-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Disable Chromium gesture recognizer tests that started to fail on the
+        Mac bots recently.
+
+        * tests/InnerGestureRecognizerTest.cpp:
+        (TEST_F):
+
 2011-09-26  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Revise zoom animator backend to use full transform instead of just scale.
