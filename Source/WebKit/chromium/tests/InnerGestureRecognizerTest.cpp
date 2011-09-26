@@ -408,12 +408,12 @@ TEST_F(GestureRecognizerTest, tapDownWithoutTapGestureTest)
 }
 
 #if OS(MAC_OS_X)
-#define MAYBE_tapDownWithoutTapGestureTest DISABLED_tapDownWithoutTapGestureTest
+#define MAYBE_tapDownWithTapGestureTest DISABLED_tapDownWithTapGestureTest
 #else
-#define MAYBE_tapDownWithoutTapGestureTest tapDownWithoutTapGestureTest
+#define MAYBE_tapDownWithTapGestureTest tapDownWithTapGestureTest
 #endif
 
-TEST_F(GestureRecognizerTest, MAYBE_tapDownWithoutTapGestureTest)
+TEST_F(GestureRecognizerTest, MAYBE_tapDownWithTapGestureTest)
 {
     InspectableGestureRecognizerChromium gm;
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());

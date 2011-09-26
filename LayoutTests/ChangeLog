@@ -1,3 +1,9 @@
+2011-09-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Remove test that no longer crashes (fixed by r95985).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-26  Mike Reed  <reed@google.com>
 
         [skia] need rebaseline after the next skia roll -- improvements to xfermodes on gpu
