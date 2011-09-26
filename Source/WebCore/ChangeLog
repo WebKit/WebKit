@@ -1,3 +1,27 @@
+2011-09-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Timeline: record root event for the function calls enforced by console eval.
+        https://bugs.webkit.org/show_bug.cgi?id=68695
+
+        In a complex web application developer might want to timeline a specific piece of code.
+
+        In this case he can do the next steps:
+        1) start timeline;
+        2) eval a command in console;
+        3) stop timeline.
+
+        I think it'd be nice to have a root event for the all the events that happened as the result of such eval.
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/timeline/timeline-injected-script-eval.html
+
+        * bindings/v8/ScriptFunctionCall.cpp:
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::makeCall):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willCallFunctionImpl):
+
 2011-09-26  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap][Qt] Enable TextureMapperGL in platforms where BGRA is not present

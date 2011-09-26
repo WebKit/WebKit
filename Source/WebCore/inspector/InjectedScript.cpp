@@ -33,9 +33,11 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "DOMWindow.h"
 #include "Frame.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
+#include "InspectorInstrumentation.h"
 #include "InspectorValues.h"
 #include "Node.h"
 #include "PlatformString.h"
@@ -189,8 +191,11 @@ void InjectedScript::makeCall(ScriptFunctionCall& function, RefPtr<InspectorValu
         return;
     }
 
+    DOMWindow* domWindow = domWindowFromScriptState(m_injectedScriptObject.scriptState());
+    InspectorInstrumentationCookie cookie = domWindow && domWindow->frame() ? InspectorInstrumentation::willCallFunction(domWindow->frame()->page(), "InjectedScript", 1) : InspectorInstrumentationCookie();
     bool hadException = false;
     ScriptValue resultValue = function.call(hadException);
+    InspectorInstrumentation::didCallFunction(cookie);
 
     ASSERT(!hadException);
     if (!hadException) {
