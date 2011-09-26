@@ -131,6 +131,7 @@ FrameView::FrameView(Frame* frame)
     , m_wasScrolledByUser(false)
     , m_inProgrammaticScroll(false)
     , m_deferredRepaintTimer(this, &FrameView::deferredRepaintTimerFired)
+    , m_isTrackingRepaints(false)
     , m_shouldUpdateWhileOffscreen(true)
     , m_deferSetNeedsLayouts(0)
     , m_setNeedsLayoutWasDeferred(false)
@@ -227,6 +228,8 @@ void FrameView::reset()
     m_repaintRects.clear();
     m_deferredRepaintDelay = s_initialDeferredRepaintDelayDuringLoading;
     m_deferredRepaintTimer.stop();
+    m_isTrackingRepaints = false;
+    m_trackedRepaintRects.clear();
     m_lastPaintTime = 0;
     m_paintBehavior = PaintBehaviorNormal;
     m_isPainting = false;
@@ -1695,6 +1698,12 @@ const unsigned cRepaintRectUnionThreshold = 25;
 void FrameView::repaintContentRectangle(const LayoutRect& r, bool immediate)
 {
     ASSERT(!m_frame->ownerElement());
+    
+    if (m_isTrackingRepaints) {
+        IntRect repaintRect = r;
+        repaintRect.move(-scrollOffset());
+        m_trackedRepaintRects.append(repaintRect);
+    }
 
     double delay = m_deferringRepaints ? 0 : adjustedDeferredRepaintDelay();
     if ((m_deferringRepaints || m_deferredRepaintTimer.isActive() || delay) && !immediate) {
@@ -3053,6 +3062,15 @@ void FrameView::setRepaintThrottlingMaxDeferredRepaintDelayDuringLoading(double 
 void FrameView::setRepaintThrottlingDeferredRepaintDelayIncrementDuringLoading(double p)
 {
     s_deferredRepaintDelayIncrementDuringLoading = p;
+}
+
+void FrameView::setTracksRepaints(bool trackRepaints)
+{
+    if (trackRepaints == m_isTrackingRepaints)
+        return;
+    
+    m_trackedRepaintRects.clear();
+    m_isTrackingRepaints = trackRepaints;
 }
 
 bool FrameView::isVerticalDocument() const

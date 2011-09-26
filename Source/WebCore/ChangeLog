@@ -1,3 +1,28 @@
+2011-09-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Repaint tests don't work in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=68453
+
+        Reviewed by Sam Weinig.
+
+        Have FrameView keep track of repaint rects when asked to, and
+        expose this set of repaint rects via private WebKit API for later
+        use by DumpRenderTree.
+        
+        The repaint rects are in WebView coordinates, so we have to
+        unapply the scroll offset.
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::setTracksRepaints):
+        * page/FrameView.h:
+        (WebCore::FrameView::isTrackingRepaints):
+        (WebCore::FrameView::resetTrackedRepaints):
+        (WebCore::FrameView::trackedRepaintRects):
+
 2011-09-26  Antti Koivisto  <antti@apple.com>
 
         Optimize matching of common pseudo classes

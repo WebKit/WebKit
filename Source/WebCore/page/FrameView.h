@@ -294,6 +294,11 @@ public:
     RenderBox* embeddedContentBox() const;
 
     void clearOwningRendererForCustomScrollbars(RenderBox*);
+    
+    void setTracksRepaints(bool);
+    bool isTrackingRepaints() const { return m_isTrackingRepaints; }
+    void resetTrackedRepaints() { m_trackedRepaintRects.clear(); }
+    const Vector<IntRect>& trackedRepaintRects() const { return m_trackedRepaintRects; }
 
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const LayoutRect& rectToScroll, const LayoutRect& clipRect);
@@ -446,6 +451,9 @@ private:
     Timer<FrameView> m_deferredRepaintTimer;
     double m_deferredRepaintDelay;
     double m_lastPaintTime;
+    
+    bool m_isTrackingRepaints; // Used for testing.
+    Vector<IntRect> m_trackedRepaintRects;
 
     bool m_shouldUpdateWhileOffscreen;
 

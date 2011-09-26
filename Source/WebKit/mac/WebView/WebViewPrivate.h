@@ -493,6 +493,11 @@ Could be worth adding to the API.
 - (void)_setIncludesFlattenedCompositingLayersWhenDrawingToBitmap:(BOOL)flag;
 - (BOOL)_includesFlattenedCompositingLayersWhenDrawingToBitmap;
 
+- (void)setTracksRepaints:(BOOL)flag;
+- (BOOL)isTrackingRepaints;
+- (void)resetTrackedRepaints;
+- (NSArray*)trackedRepaintRects; // Returned array contains rectValue NSValues.
+
 // Which pasteboard text is coming from in editing delegate methods such as shouldInsertNode.
 - (NSPasteboard *)_insertionPasteboard;
 

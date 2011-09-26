@@ -2432,6 +2432,45 @@ static inline IMP getMethod(id o, SEL s)
     return _private->includesFlattenedCompositingLayersWhenDrawingToBitmap;
 }
 
+- (void)setTracksRepaints:(BOOL)flag
+{
+    Frame* coreFrame = [self _mainCoreFrame];
+    if (FrameView* view = coreFrame->view())
+        view->setTracksRepaints(flag);
+}
+
+- (BOOL)isTrackingRepaints
+{
+    Frame* coreFrame = [self _mainCoreFrame];
+    if (FrameView* view = coreFrame->view())
+        return view->isTrackingRepaints();
+    
+    return NO;
+}
+
+- (void)resetTrackedRepaints
+{
+    Frame* coreFrame = [self _mainCoreFrame];
+    if (FrameView* view = coreFrame->view())
+        view->resetTrackedRepaints();
+}
+
+- (NSArray*)trackedRepaintRects
+{
+    Frame* coreFrame = [self _mainCoreFrame];
+    FrameView* view = coreFrame->view();
+    if (!view || !view->isTrackingRepaints())
+        return nil;
+
+    const Vector<IntRect>& repaintRects = view->trackedRepaintRects();
+    NSMutableArray* rectsArray = [[NSMutableArray alloc] initWithCapacity:repaintRects.size()];
+    
+    for (unsigned i = 0; i < repaintRects.size(); ++i)
+        [rectsArray addObject:[NSValue valueWithRect:repaintRects[i]]];
+
+    return [rectsArray autorelease];
+}
+
 - (NSPasteboard *)_insertionPasteboard
 {
     return _private ? _private->insertionPasteboard : nil;

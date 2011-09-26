@@ -1,3 +1,21 @@
+2011-09-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Repaint tests don't work in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=68453
+
+        Reviewed by Sam Weinig.
+
+        Have FrameView keep track of repaint rects when asked to, and
+        expose this set of repaint rects via private WebKit API for later
+        use by DumpRenderTree.
+
+        * WebView/WebView.mm:
+        (-[WebView setTracksRepaints:]):
+        (-[WebView isTrackingRepaints]):
+        (-[WebView resetTrackedRepaints]):
+        (-[WebView trackedRepaintRects]):
+        * WebView/WebViewPrivate.h:
+
 2011-09-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add custom vtable struct to ClassInfo struct
