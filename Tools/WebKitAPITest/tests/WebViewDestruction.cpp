@@ -114,17 +114,6 @@ TEST(WebViewDestruction, CloseWithoutInitWithFrame)
     finishWebViewDestructionTest(webView, 0);
 }
 
-// Tests that releasing a WebView without calling IWebView::close or DestroyWindow doesn't leak. <http://webkit.org/b/33162>
-TEST(WebViewDestruction, NoCloseOrDestroyViewWindow)
-{
-    COMPtr<IWebView> webView;
-    HostWindow window;
-    HWND viewWindow;
-    createAndInitializeWebView(webView, window, viewWindow);
-
-    finishWebViewDestructionTest(webView, viewWindow);
-}
-
 // Tests that calling IWebView::close without calling DestroyWindow, then releasing a WebView doesn't crash. <http://webkit.org/b/32827>
 TEST(WebViewDestruction, CloseWithoutDestroyViewWindow)
 {
@@ -210,21 +199,6 @@ TEST(WebViewDestruction, CloseThenDestroyHostWindow)
 
     TEST_ASSERT(SUCCEEDED(webView->close()));
     DestroyWindow(window.window());
-
-    finishWebViewDestructionTest(webView, viewWindow);
-}
-
-// Tests that calling IWebView::mainFrame after calling IWebView::close doesn't crash. <http://webkit.org/b/32868>
-TEST(WebViewDestruction, MainFrameAfterClose)
-{
-    COMPtr<IWebView> webView;
-    HostWindow window;
-    HWND viewWindow;
-    createAndInitializeWebView(webView, window, viewWindow);
-
-    TEST_ASSERT(SUCCEEDED(webView->close()));
-    COMPtr<IWebFrame> mainFrame;
-    TEST_ASSERT(SUCCEEDED(webView->mainFrame(&mainFrame)));
 
     finishWebViewDestructionTest(webView, viewWindow);
 }

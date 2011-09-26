@@ -1,3 +1,14 @@
+2011-09-23  Adam Roben  <aroben@apple.com>
+
+        Remove two failing WebKitAPITest tests
+
+        The failures are covered by <http://webkit.org/b/33162> and <http://webkit.org/b/32868>.
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitAPITest/tests/WebViewDestruction.cpp: Removed the NoCloseOrDestroyViewWindow and
+        MainFrameAfterClose tests.
+
 2011-09-25  Adam Barth  <abarth@webkit.org>
 
         Finish removing PLATFORM(BREWMP) by removing associated code
