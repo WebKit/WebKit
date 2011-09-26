@@ -1,3 +1,29 @@
+2011-09-25  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL] Move GtkWidgetBackingStoreCairo to the cairo directory and modify to use in the EFL.
+        https://bugs.webkit.org/show_bug.cgi?id=63502
+
+        Reviewed by Martin Robinson.
+
+        The gtk/GtkWidgetBackingStoreCairo.cpp is moved to the cairo/WidgetBackingStoreCairo.cpp and
+        some codes for EFL are added.
+        WidgetBackingStoreCairo creates cairo_image_surface and has a role to copy reusable area
+        when scrolling. So, it will be used in the WebKit2 EFL port's BackingStore.
+
+        * CMakeListsEfl.txt:
+        * GNUmakefile.list.am:
+        * platform/cairo/WidgetBackingStore.h:
+        * platform/cairo/WidgetBackingStoreCairo.cpp: Renamed from Source/WebCore/platform/gtk/GtkWidgetBackingStoreCairo.cpp.
+        (WebCore::createSurfaceForBackingStore):
+        (WebCore::WidgetBackingStorePrivate::create):
+        (WebCore::WidgetBackingStorePrivate::WidgetBackingStorePrivate):
+        (WebCore::WidgetBackingStore::create):
+        (WebCore::WidgetBackingStore::WidgetBackingStore):
+        (WebCore::WidgetBackingStore::~WidgetBackingStore):
+        (WebCore::WidgetBackingStore::cairoSurface):
+        (WebCore::WidgetBackingStore::scroll):
+        * platform/gtk/GtkWidgetBackingStoreX11.cpp:
+
 2011-09-25  Adam Barth  <abarth@webkit.org>
 
         Finish removing PLATFORM(BREWMP) by removing associated code

@@ -27,6 +27,8 @@
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
+#elif PLATFORM(EFL)
+#include <Evas.h>
 #endif
 
 namespace WebCore {
@@ -35,6 +37,8 @@ class WidgetBackingStorePrivate;
 
 #if PLATFORM(GTK)
 typedef GtkWidget* PlatformWidget;
+#elif PLATFORM(EFL)
+typedef Evas_Object* PlatformWidget;
 #endif
 
 class WidgetBackingStore {

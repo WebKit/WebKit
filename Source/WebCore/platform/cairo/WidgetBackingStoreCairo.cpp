@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011, Igalia S.L.
+ * Copyright (C) 2011 Samsung Electronics
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -19,21 +20,26 @@
 #include "config.h"
 #include "WidgetBackingStore.h"
 
-#ifndef XP_UNIX
-
 #include "CairoUtilities.h"
 #include "RefPtrCairo.h"
 #include <cairo/cairo.h>
 
+#if PLATFORM(GTK)
+#include "GtkVersioning.h"
+#endif
+
 namespace WebCore {
 
-static PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(GtkWidget* widget, const IntSize& size)
+static PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(PlatformWidget widget, const IntSize& size)
 {
+#if PLATFORM(GTK)
     return gdk_window_create_similar_surface(gtk_widget_get_window(widget),
                                              CAIRO_CONTENT_COLOR_ALPHA,
                                              size.width(), size.height());
+#else
+    return adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size.width(), size.height()));
+#endif
 }
-
 
 class WidgetBackingStorePrivate {
     WTF_MAKE_NONCOPYABLE(WidgetBackingStorePrivate);
@@ -43,7 +49,7 @@ public:
     RefPtr<cairo_surface_t> m_surface;
     RefPtr<cairo_surface_t> m_scrollSurface;
 
-    static PassOwnPtr<WidgetBackingStorePrivate> create(GtkWidget* widget, const IntSize& size)
+    static PassOwnPtr<WidgetBackingStorePrivate> create(PlatformWidget widget, const IntSize& size)
     {
         return adoptPtr(new WidgetBackingStorePrivate(widget, size));
     }
@@ -52,19 +58,19 @@ private:
     // We keep two copies of the surface here, which will double the memory usage, but increase
     // scrolling performance since we do not have to keep reallocating a memory region during
     // quick scrolling requests.
-    WidgetBackingStorePrivate(GtkWidget* widget, const IntSize& size)
+    WidgetBackingStorePrivate(PlatformWidget widget, const IntSize& size)
         : m_surface(createSurfaceForBackingStore(widget, size))
         , m_scrollSurface(createSurfaceForBackingStore(widget, size))
     {
     }
 };
 
-PassOwnPtr<WidgetBackingStore> WidgetBackingStore::create(GtkWidget* widget, const IntSize& size)
+PassOwnPtr<WidgetBackingStore> WidgetBackingStore::create(PlatformWidget widget, const IntSize& size)
 {
     return adoptPtr(new WidgetBackingStore(widget, size));
 }
 
-WidgetBackingStore::WidgetBackingStore(GtkWidget* widget, const IntSize& size)
+WidgetBackingStore::WidgetBackingStore(PlatformWidget widget, const IntSize& size)
     : m_private(WidgetBackingStorePrivate::create(widget, size))
 {
 }
@@ -94,5 +100,3 @@ void WidgetBackingStore::scroll(const IntRect& scrollRect, const IntSize& scroll
 }
 
 } // namespace WebCore
-
-#endif // !XP_UNIX

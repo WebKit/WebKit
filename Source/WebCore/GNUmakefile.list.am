@@ -3988,8 +3988,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/GtkClickCounter.h \
 	Source/WebCore/platform/gtk/GtkUtilities.cpp \
 	Source/WebCore/platform/gtk/GtkUtilities.h \
-	Source/WebCore/platform/gtk/GtkWidgetBackingStoreCairo.cpp \
-	Source/WebCore/platform/gtk/GtkWidgetBackingStoreX11.cpp \
 	Source/WebCore/platform/gtk/GeolocationServiceGtk.cpp \
 	Source/WebCore/platform/gtk/GeolocationServiceGtk.h \
 	Source/WebCore/platform/gtk/GOwnPtrGtk.cpp \
@@ -4039,6 +4037,7 @@ webcoregtk_sources += \
 
 if TARGET_X11
 webcoregtk_sources += \
+	Source/WebCore/platform/gtk/GtkWidgetBackingStoreX11.cpp \
 	Source/WebCore/plugins/gtk/gtk2xtbin.c \
 	Source/WebCore/plugins/gtk/gtk2xtbin.h \
 	Source/WebCore/plugins/gtk/xembed.h
@@ -4048,6 +4047,7 @@ if TARGET_WIN32
 webcore_sources += \
 	Source/WebCore/platform/ScrollAnimatorWin.cpp \
 	Source/WebCore/platform/ScrollAnimatorWin.h \
+	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp \
 	Source/WebCore/platform/win/SystemInfo.cpp \
 	Source/WebCore/platform/win/SystemInfo.h \
 	Source/WebCore/plugins/win/PluginDatabaseWin.cpp \

@@ -19,8 +19,6 @@
 #include "config.h"
 #include "WidgetBackingStore.h"
 
-#ifdef XP_UNIX
-
 #include "GtkVersioning.h"
 #include "RefPtrCairo.h"
 #include <X11/Xlib.h>
@@ -107,5 +105,3 @@ void WidgetBackingStore::scroll(const IntRect& scrollRect, const IntSize& scroll
 }
 
 } // namespace WebCore
-
-#endif // XP_UNIX

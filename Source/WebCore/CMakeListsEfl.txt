@@ -82,9 +82,11 @@ LIST(APPEND WebCore_USER_AGENT_STYLE_SHEETS
 
 IF (WTF_USE_CAIRO)
   LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/platform/cairo"
     "${WEBCORE_DIR}/platform/graphics/cairo"
   )
   LIST(APPEND WebCore_SOURCES
+    platform/cairo/WidgetBackingStoreCairo.cpp
     platform/graphics/cairo/CairoUtilities.cpp
     platform/graphics/cairo/FontCairo.cpp
     platform/graphics/cairo/GradientCairo.cpp
