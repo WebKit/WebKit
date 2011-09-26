@@ -2078,36 +2078,6 @@ BUGWK65203 WIN : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE
 BUGWK65203 XP : fast/text/international/bidi-mirror-he-ar.html = IMAGE
 BUGWK65203 XP : svg/batik/text/textStyles.svg = IMAGE
 
-
-// These tests all fail because the expected output is wrong. The
-// reason is that JSC does not currently implement Function.prototype.bind
-// These test has intentionally been marked as FAIL, which makes it easy
-// to fix this when webkit implements this ES5 feature.
-BUGWK42371 : ietestcenter/Javascript/15.2.3.3-4-38.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-0-1.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-0-2.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-13.b-1.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-13.b-2.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-13.b-3.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-13.b-4.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-13.b-5.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-15-1.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-15-2.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-16-1.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-1.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-2.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-3.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-4.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-5.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-6.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-7.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-8.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-2-9.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-8-1.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-8-2.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-9-1.html = FAIL
-BUGWK42371 : ietestcenter/Javascript/15.3.4.5-9-2.html = FAIL
-
 BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
 
 // Need setPrinting.
@@ -3322,7 +3292,8 @@ BUGWK66320 DEBUG : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE IMAGE+TEXT
 // After r87526, these all have extra scrollbars where the platform/mac expectations do not.
 BUGWK61664 LINUX : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
 
-BUGCR84317 : svg/wicd/test-scalable-background-image1.xhtml = CRASH IMAGE
+BUGCR84317 DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
+BUGCR84317 MAC LEOPARD RELEASE : svg/wicd/test-scalable-background-image1.xhtml = IMAGE
 
 BUGWK61767 WIN DEBUG : http/tests/websocket/tests/hixie76/client-close.html = PASS TEXT
 BUGWK61767 WIN DEBUG : http/tests/websocket/tests/hybi/client-close.html = PASS TEXT
@@ -3625,11 +3596,7 @@ BUGWK67007 DEBUG : fast/ruby/after-table-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.html = CRASH
 
-BUGWK67204 : fast/multicol/inherit-column-values.html = MISSING FAIL
-BUGWK67204 : fast/multicol/initial-column-values.html = MISSING FAIL
-
 // Failing after r94084. This looks like it may be a real regression.
-
 BUGWK67352 : fast/canvas/webgl/WebGLContextEvent.html = TEXT
 
 BUGWK67433 WIN LINUX : svg/custom/pattern-rotate-gaps.svg = IMAGE
@@ -3664,7 +3631,6 @@ BUGCR95972 WIN DEBUG : webaudio/sample-accurate-scheduling.html = CRASH
 BUGWK67913 WIN LINUX SNOWLEOPARD : media/video-zoom-controls.html = TEXT
 BUGWK67913 LEOPARD : media/video-zoom-controls.html = TEXT IMAGE+TEXT
 BUGCR96220 : fast/borders/border-image-outset-split-inline-vertical-lr.html = IMAGE
-BUGCR96220 : fast/borders/border-image-outset-split-inline.html = IMAGE
 BUGCR96220 : fast/reflections/reflection-masks-outset.html = IMAGE
 BUGCR96220 WIN LINUX : fast/borders/block-mask-overlay-image-outset.html = IMAGE+TEXT
 BUGCR96220 MAC : fast/borders/block-mask-overlay-image-outset.html = IMAGE
@@ -3793,7 +3759,6 @@ BUG_EPOGER SNOWLEOPARD CPU-CG CPU DEBUG : fast/js/try-catch-crash.html = PASS TI
 
 // Consistently failing as of about r95590
 BUG_EPOGER LEOPARD CPU-CG : fast/clip/overflow-border-radius-fixed-position.html = IMAGE
-BUG_EPOGER MAC CPU : fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html = IMAGE
 
 BUGWK68674 : fast/js/function-bind.html = TEXT
 
