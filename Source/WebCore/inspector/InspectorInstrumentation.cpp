@@ -222,11 +222,14 @@ void InspectorInstrumentation::didRemoveTimerImpl(InstrumentingAgents* instrumen
         timelineAgent->didRemoveTimer(timerId);
 }
 
+#if USE(JSC) // It is disabled for JSC see WK-BUG 40119
+InspectorInstrumentationCookie InspectorInstrumentation::willCallFunctionImpl(InstrumentingAgents*, const String&, int)
+{
+    return InspectorInstrumentationCookie();
+}
+#else
 InspectorInstrumentationCookie InspectorInstrumentation::willCallFunctionImpl(InstrumentingAgents* instrumentingAgents, const String& scriptName, int scriptLine)
 {
-#if USE(JSC) // It is disabled for JSC see WK-BUG 40119
-    return InspectorInstrumentationCookie();
-#else
     int timelineAgentId = 0;
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent()) {
         timelineAgent->willCallFunction(scriptName, scriptLine);
