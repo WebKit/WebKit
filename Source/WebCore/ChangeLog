@@ -1,3 +1,78 @@
+2011-09-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r74971): Selection doesn't work correctly in BiDi Text
+        https://bugs.webkit.org/show_bug.cgi?id=57340
+
+        Reviewed by Eric Seidel.
+
+        This patch adds the end point adjustment mechanism at bidi boundaries similar to the one NSTextView implements.
+
+        To understand the problem, suppose we have strong RTL letters "ABC" in a LTR block (visually laid out as CBA).
+
+        Per NSTextView convention, logical offsets between each letter is placed as (0)C(2)B(1)A(3). In other words,
+        placing the caret visually on the left of CBA yields the position inside the text node of "ABC" at offset 0.
+        Likewise, placing it between C and B yields ("ABC", 2), and placing it on the right of CBA yields ("ABC", 3).
+
+        Now suppose a user attempts to select the letter A by a mouse drag from the right of CBA to a point between
+        B and A. First, the initial mouse down places the selection's base at ("ABC", 3). Then as the mouse pointer
+        moves to a point on the left of A, the selection's extent is set at ("ABC", 1), selecting "BC".
+
+        To mitigate this issue, NSTextView adjusts selection base and extent under certain conditions. In the above
+        example, NSTextView detects user's intent and changes the selection's base to ("ABC", 0) temporarily.
+
+        This patch implements a similar trick on WebKit. We adjust the base or the extent when they're at the left
+        end or at the right end of a bidi run and the other end is inside of the run. In the above example, the
+        base position on the right of A is the right end of a bidi run and the extent position between B and A is
+        inside the same run (CBA), so we would adjust the base to be ("ABC", 0) as NSTextView does.
+
+        Take another example abcABC. Note offsets are assigned as (0)a(1)b(2)c(3)C(5)B(4)A(6) When the user starts
+        a mouse drag from the right of A to a point between B and A, we adjust the selection base to be ("abcABC", 3)
+        because the base is at the right end of a bidi run and the extent is in the same run. We keep the adjustment
+        when the mouse pointer moves to a point between C and B. However, when the mouser pointer reaches a point
+        between letters b and c, the selection extent is placed at ("abcABC", 2). Because the extent is outside of
+        the bidi run started from the selection base, we restore the original base at this point. Had we not done this,
+        we'll end up selecting just "c".
+
+        While this algorithm is implemented in FrameSelection::setNonDirectionalSelectionIfNeeded, this patch adds
+        various member functions to RenderedPosition to facilitate abstraction around inline boxes and bidi runs.
+
+        Test: editing/selection/select-bidi-run.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::adjustEndpointsAtBidiBoundary): Added. Implements the endpoints adjustment algorithm.
+        (WebCore::FrameSelection::setNonDirectionalSelectionIfNeeded): Calls adjustEndpointsAtBidiBoundary, and
+        restores the original base as needed.
+        * editing/FrameSelection.h:
+        * editing/RenderedPosition.cpp:
+        (WebCore::RenderedPosition::RenderedPosition):
+        (WebCore::RenderedPosition::prevLeafChild): Added to cache prevLeafChild of the current inline box.
+        (WebCore::RenderedPosition::nextLeafChild): Ditto for nextLeafChild.
+        (WebCore::RenderedPosition::isEquivalent): Compares two RenderedPositions considering neighboring inline boxes
+        so that the rightmost position in a box and the leftmost position in the following box is considered equal.
+        (WebCore::RenderedPosition::bidiLevelOnLeft): Added. Returns the bidi level of the run on the left. We can't
+        add a generic bidiLevel to this class because it'll be ambiguous at bidi boundaries.
+        (WebCore::RenderedPosition::bidiLevelOnRight): Ditto for the run on the right.
+        (WebCore::RenderedPosition::leftBoundaryOfBidiRun): Added.
+        (WebCore::RenderedPosition::rightBoundaryOfBidiRun): Added.
+        (WebCore::RenderedPosition::atLeftBoundaryOfBidiRun): Added.
+        (WebCore::RenderedPosition::atRightBoundaryOfBidiRun): Added.
+        (WebCore::RenderedPosition::positionAtLeftBoundaryOfBiDiRun): Returns Position at the left edge of a bidi run
+        if RenderedPosition is at such a position. Asserts atLeftBoundaryOfBidiRun.
+        (WebCore::RenderedPosition::positionAtRightBoundaryOfBiDiRun): Ditto for the right edge.
+        * editing/RenderedPosition.h:
+        (WebCore::RenderedPosition::atLeftBoundaryOfBidiRun): Added.
+        (WebCore::RenderedPosition::atRightBoundaryOfBidiRun): Added.
+        (WebCore::RenderedPosition::atLeftmostOffsetInBox): Added.
+        (WebCore::RenderedPosition::atRightmostOffsetInBox): Added.
+        (WebCore::RenderedPosition::uncachedInlineBox): Added. We can't use a static const variable because gcc thinks
+        reinterpret_cast<InlineBox*>(1) is not an integral value.
+        (WebCore::RenderedPosition::RenderedPosition):
+        * editing/VisibleSelection.h:
+        (WebCore::VisibleSelection::visibleBase): Added.
+        (WebCore::VisibleSelection::visibleExtent): Added.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+
 2011-09-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r95256.

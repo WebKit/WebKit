@@ -69,6 +69,8 @@ public:
     
     VisiblePosition visibleStart() const { return VisiblePosition(m_start, isRange() ? DOWNSTREAM : affinity()); }
     VisiblePosition visibleEnd() const { return VisiblePosition(m_end, isRange() ? UPSTREAM : affinity()); }
+    VisiblePosition visibleBase() const { return VisiblePosition(m_base, isRange() ? (isBaseFirst() ? UPSTREAM : DOWNSTREAM) : affinity()); }
+    VisiblePosition visibleExtent() const { return VisiblePosition(m_extent, isRange() ? (isBaseFirst() ? DOWNSTREAM : UPSTREAM) : affinity()); }
 
     bool isNone() const { return selectionType() == NoSelection; }
     bool isCaret() const { return selectionType() == CaretSelection; }

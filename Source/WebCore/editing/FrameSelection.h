@@ -223,7 +223,8 @@ public:
 
     bool shouldChangeSelection(const VisibleSelection&) const;
     bool shouldDeleteSelection(const VisibleSelection&) const;
-    void setNonDirectionalSelectionIfNeeded(const VisibleSelection&, TextGranularity);
+    enum EndPointsAdjustmentMode { AdjustEndpointsAtBidiBoundary, DoNotAdjsutEndpoints };
+    void setNonDirectionalSelectionIfNeeded(const VisibleSelection&, TextGranularity, EndPointsAdjustmentMode = DoNotAdjsutEndpoints);
     void setFocusedNodeIfNeeded();
     void notifyRendererOfSelectionChange(EUserTriggered);
 
@@ -282,6 +283,7 @@ private:
     LayoutUnit m_xPosForVerticalArrowNavigation;
 
     VisibleSelection m_selection;
+    VisiblePosition m_originalBase; // Used to store base before the adjustment at bidi boundary
     TextGranularity m_granularity;
 
     RefPtr<EditingStyle> m_typingStyle;

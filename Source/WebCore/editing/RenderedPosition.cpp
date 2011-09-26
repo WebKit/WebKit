@@ -32,6 +32,7 @@
 #include "RenderedPosition.h"
 
 #include "InlineBox.h"
+#include "InlineTextBox.h"
 #include "Position.h"
 #include "VisiblePosition.h"
 
@@ -68,6 +69,8 @@ RenderedPosition::RenderedPosition(const VisiblePosition& position)
     : m_renderer(0)
     , m_inlineBox(0)
     , m_offset(0)
+    , m_prevLeafChild(uncachedInlineBox())
+    , m_nextLeafChild(uncachedInlineBox())
 {
     if (position.isNull())
         return;
@@ -82,6 +85,8 @@ RenderedPosition::RenderedPosition(const Position& position, EAffinity affinity)
     : m_renderer(0)
     , m_inlineBox(0)
     , m_offset(0)
+    , m_prevLeafChild(uncachedInlineBox())
+    , m_nextLeafChild(uncachedInlineBox())
 {
     if (position.isNull())
         return;
@@ -90,6 +95,133 @@ RenderedPosition::RenderedPosition(const Position& position, EAffinity affinity)
         m_renderer = m_inlineBox->renderer();
     else
         m_renderer = rendererFromPosition(position);
+}
+
+InlineBox* RenderedPosition::prevLeafChild() const
+{
+    if (m_prevLeafChild == uncachedInlineBox())
+        m_prevLeafChild = m_inlineBox->prevLeafChild();
+    return m_prevLeafChild;
+}
+
+InlineBox* RenderedPosition::nextLeafChild() const
+{
+    if (m_nextLeafChild == uncachedInlineBox())
+        m_nextLeafChild = m_inlineBox->nextLeafChild();
+    return m_nextLeafChild;
+}
+
+bool RenderedPosition::isEquivalent(const RenderedPosition& other) const
+{
+    return (m_renderer == other.m_renderer && m_inlineBox == other.m_inlineBox && m_offset == other.m_offset)
+        || (atLeftmostOffsetInBox() && other.atRightmostOffsetInBox() && prevLeafChild() == other.m_inlineBox)
+        || (atRightmostOffsetInBox() && other.atLeftmostOffsetInBox() && nextLeafChild() == other.m_inlineBox);
+}
+
+unsigned char RenderedPosition::bidiLevelOnLeft() const
+{
+    InlineBox* box = atLeftmostOffsetInBox() ? prevLeafChild() : m_inlineBox;
+    return box ? box->bidiLevel() : 0;
+}
+
+unsigned char RenderedPosition::bidiLevelOnRight() const
+{
+    InlineBox* box = atRightmostOffsetInBox() ? nextLeafChild() : m_inlineBox;
+    return box ? box->bidiLevel() : 0;
+}
+
+RenderedPosition RenderedPosition::leftBoundaryOfBidiRun(unsigned char bidiLevelOfRun)
+{
+    if (!m_inlineBox || bidiLevelOfRun > m_inlineBox->bidiLevel())
+        return RenderedPosition();
+
+    InlineBox* box = m_inlineBox;
+    do {
+        InlineBox* prev = box->prevLeafChild();
+        if (!prev || prev->bidiLevel() < bidiLevelOfRun)
+            return RenderedPosition(box->renderer(), box, box->caretLeftmostOffset());
+        box = prev;
+    } while (box);
+
+    ASSERT_NOT_REACHED();
+    return RenderedPosition();
+}
+
+RenderedPosition RenderedPosition::rightBoundaryOfBidiRun(unsigned char bidiLevelOfRun)
+{
+    if (!m_inlineBox || bidiLevelOfRun > m_inlineBox->bidiLevel())
+        return RenderedPosition();
+
+    InlineBox* box = m_inlineBox;
+    do {
+        InlineBox* next = box->nextLeafChild();
+        if (!next || next->bidiLevel() < bidiLevelOfRun)
+            return RenderedPosition(box->renderer(), box, box->caretRightmostOffset());
+        box = next;
+    } while (box);
+
+    ASSERT_NOT_REACHED();
+    return RenderedPosition();
+}
+
+bool RenderedPosition::atLeftBoundaryOfBidiRun(ShouldMatchBidiLevel shouldMatchBidiLevel, unsigned char bidiLevelOfRun) const
+{
+    if (!m_inlineBox)
+        return false;
+
+    if (atLeftmostOffsetInBox()) {
+        if (shouldMatchBidiLevel == IgnoreBidiLevel)
+            return !prevLeafChild() || prevLeafChild()->bidiLevel() < m_inlineBox->bidiLevel();
+        return m_inlineBox->bidiLevel() >= bidiLevelOfRun && (!prevLeafChild() || prevLeafChild()->bidiLevel() < bidiLevelOfRun);
+    }
+
+    if (atRightmostOffsetInBox()) {
+        if (shouldMatchBidiLevel == IgnoreBidiLevel)
+            return nextLeafChild() && m_inlineBox->bidiLevel() < nextLeafChild()->bidiLevel();
+        return nextLeafChild() && m_inlineBox->bidiLevel() < bidiLevelOfRun && nextLeafChild()->bidiLevel() >= bidiLevelOfRun;
+    }
+
+    return false;
+}
+
+bool RenderedPosition::atRightBoundaryOfBidiRun(ShouldMatchBidiLevel shouldMatchBidiLevel, unsigned char bidiLevelOfRun) const
+{
+    if (!m_inlineBox)
+        return false;
+
+    if (atRightmostOffsetInBox()) {
+        if (shouldMatchBidiLevel == IgnoreBidiLevel)
+            return !nextLeafChild() || nextLeafChild()->bidiLevel() < m_inlineBox->bidiLevel();
+        return m_inlineBox->bidiLevel() >= bidiLevelOfRun && (!nextLeafChild() || nextLeafChild()->bidiLevel() < bidiLevelOfRun);
+    }
+
+    if (atLeftmostOffsetInBox()) {
+        if (shouldMatchBidiLevel == IgnoreBidiLevel)
+            return prevLeafChild() && m_inlineBox->bidiLevel() < prevLeafChild()->bidiLevel();
+        return prevLeafChild() && m_inlineBox->bidiLevel() < bidiLevelOfRun && prevLeafChild()->bidiLevel() >= bidiLevelOfRun;
+    }
+
+    return false;
+}
+
+Position RenderedPosition::positionAtLeftBoundaryOfBiDiRun() const
+{
+    ASSERT(atLeftBoundaryOfBidiRun());
+
+    if (atLeftmostOffsetInBox())
+        return createLegacyEditingPosition(m_renderer->node(), m_offset);
+
+    return createLegacyEditingPosition(nextLeafChild()->renderer()->node(), m_offset);
+}
+
+Position RenderedPosition::positionAtRightBoundaryOfBiDiRun() const
+{
+    ASSERT(atRightBoundaryOfBidiRun());
+
+    if (atRightmostOffsetInBox())
+        return createLegacyEditingPosition(m_renderer->node(), m_offset);
+
+    return createLegacyEditingPosition(prevLeafChild()->renderer()->node(), m_offset);
 }
 
 LayoutRect RenderedPosition::absoluteRect(int* extraWidthToEndOfLine) const

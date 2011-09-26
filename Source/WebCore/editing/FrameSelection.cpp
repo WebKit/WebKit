@@ -56,6 +56,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "RenderedPosition.h"
 #include "SecureTextInput.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
@@ -163,13 +164,66 @@ void DragCaretController::setCaretPosition(const VisiblePosition& position)
         updateCaretRect(document, m_position);
 }
 
-void FrameSelection::setNonDirectionalSelectionIfNeeded(const VisibleSelection& passedNewSelection, TextGranularity granularity)
+static void adjustEndpointsAtBidiBoundary(VisiblePosition& visibleBase, VisiblePosition& visibleExtent)
+{
+    RenderedPosition base(visibleBase);
+    RenderedPosition extent(visibleExtent);
+
+    if (base.isNull() || extent.isNull() || base.isEquivalent(extent))
+        return;
+
+    if (base.atLeftBoundaryOfBidiRun()) {
+        if (!extent.atRightBoundaryOfBidiRun(base.bidiLevelOnRight())
+            && base.isEquivalent(extent.leftBoundaryOfBidiRun(base.bidiLevelOnRight()))) {
+            visibleBase = base.positionAtLeftBoundaryOfBiDiRun();
+            return;
+        }
+        return;
+    }
+
+    if (base.atRightBoundaryOfBidiRun()) {
+        if (!extent.atLeftBoundaryOfBidiRun(base.bidiLevelOnLeft())
+            && base.isEquivalent(extent.rightBoundaryOfBidiRun(base.bidiLevelOnLeft()))) {
+            visibleBase = base.positionAtRightBoundaryOfBiDiRun();
+            return;
+        }
+        return;
+    }
+
+    if (extent.atLeftBoundaryOfBidiRun() && extent.isEquivalent(base.leftBoundaryOfBidiRun(extent.bidiLevelOnRight()))) {
+        visibleExtent = extent.positionAtLeftBoundaryOfBiDiRun();
+        return;
+    }
+
+    if (extent.atRightBoundaryOfBidiRun() && extent.isEquivalent(base.rightBoundaryOfBidiRun(extent.bidiLevelOnLeft()))) {
+        visibleExtent = extent.positionAtRightBoundaryOfBiDiRun();
+        return;
+    }
+}
+
+void FrameSelection::setNonDirectionalSelectionIfNeeded(const VisibleSelection& passedNewSelection, TextGranularity granularity,
+    EndPointsAdjustmentMode endpointsAdjustmentMode)
 {
     VisibleSelection newSelection = passedNewSelection;
+    bool isDirectional = shouldAlwaysUseDirectionalSelection(m_frame) || newSelection.isDirectional();
 
-    if (shouldAlwaysUseDirectionalSelection(m_frame))
-        newSelection.setIsDirectional(true);
+    VisiblePosition base = m_originalBase.isNotNull() ? m_originalBase : newSelection.visibleBase();
+    VisiblePosition newBase = base;
+    VisiblePosition newExtent = newSelection.visibleExtent();
+    if (endpointsAdjustmentMode == AdjustEndpointsAtBidiBoundary)
+        adjustEndpointsAtBidiBoundary(newBase, newExtent);
 
+    if (newBase != base || newExtent != newSelection.visibleExtent()) {
+        m_originalBase = base;
+        newSelection.setBase(newBase);
+        newSelection.setExtent(newExtent);
+    } else if (m_originalBase.isNotNull()) {
+        if (m_selection.base() == newSelection.base())
+            newSelection.setBase(m_originalBase);
+        m_originalBase.clear();
+    }
+
+    newSelection.setIsDirectional(isDirectional); // Adjusting base and extent will make newSelection always directional
     if (m_selection == newSelection || !shouldChangeSelection(newSelection))
         return;
 
