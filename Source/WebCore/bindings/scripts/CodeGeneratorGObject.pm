@@ -155,11 +155,10 @@ sub SkipAttribute {
     my $attribute = shift;
     
     if ($attribute->signature->extendedAttributes->{"CustomGetter"} ||
-        $attribute->signature->extendedAttributes->{"CustomSetter"} ||
-        $attribute->signature->extendedAttributes->{"Replaceable"}) {
+        $attribute->signature->extendedAttributes->{"CustomSetter"}) {
         return 1;
     }
-    
+
     my $propType = $attribute->signature->type;
     if ($propType =~ /Constructor$/) {
         return 1;
@@ -307,7 +306,10 @@ sub GetWriteableProperties {
                                  $gtype eq "uint64" || $gtype eq "ulong" || $gtype eq "long" || 
                                  $gtype eq "uint" || $gtype eq "ushort" || $gtype eq "uchar" ||
                                  $gtype eq "char" || $gtype eq "string");
-        if ($writeable && $hasGtypeSignature) {
+        # FIXME: We are not generating setters for 'Replaceable'
+        # attributes now, but we should somehow.
+        my $replaceable = $property->signature->extendedAttributes->{"Replaceable"};
+        if ($writeable && $hasGtypeSignature && !$replaceable) {
             push(@result, $property);
         }
     }
@@ -1039,8 +1041,11 @@ sub GenerateFunctions {
         $function->signature($attribute->signature);
         $function->raisesExceptions($attribute->getterExceptions);
         $object->GenerateFunction($interfaceName, $function, "get_");
-        
-        if ($attribute->type =~ /^readonly/) {
+
+        # FIXME: We are not generating setters for 'Replaceable'
+        # attributes now, but we should somehow.
+        if ($attribute->type =~ /^readonly/ ||
+            $attribute->signature->extendedAttributes->{"Replaceable"}) {
             next TOP;
         }
         
