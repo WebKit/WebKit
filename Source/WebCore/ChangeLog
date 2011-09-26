@@ -1,3 +1,14 @@
+2011-09-26  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r95926) Assert firing in svg/clip-path/clip-path-on-svg.svg
+        https://bugs.webkit.org/show_bug.cgi?id=68819
+
+        Reviewed by Dave Hyatt.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::scheduleRelayout): Revert to using view() instead of the RenderView**
+        parameter of isRooted, since only the former returns 0 when the document is detached.
+
 2011-09-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: XMLHttpRequest console logging messages should link to network panel when possible.
