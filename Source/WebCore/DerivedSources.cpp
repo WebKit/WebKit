@@ -273,6 +273,7 @@
 #include "JSRange.cpp"
 #include "JSRangeException.cpp"
 #include "JSRect.cpp"
+#include "JSRequestAnimationFrameCallback.cpp"
 #include "JSRGBColor.cpp"
 #include "JSScreen.cpp"
 #include "JSScriptProfile.cpp"

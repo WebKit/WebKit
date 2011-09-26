@@ -127,6 +127,7 @@
 #include "JSPeerConnectionCustom.cpp"
 #include "JSPluginElementFunctions.cpp"
 #include "JSProcessingInstructionCustom.cpp"
+#include "JSRequestAnimationFrameCallbackCustom.cpp"
 #include "JSSQLResultSetRowListCustom.cpp"
 #include "JSSQLTransactionCustom.cpp"
 #include "JSSQLTransactionSyncCustom.cpp"
