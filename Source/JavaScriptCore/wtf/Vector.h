@@ -357,7 +357,7 @@ namespace WTF {
         VectorBuffer(size_t capacity)
         {
             // Calling malloc(0) might take a lock and may actually do an
-            // allocation on some systems (e.g. Brew).
+            // allocation on some systems.
             if (capacity)
                 allocateBuffer(capacity);
         }

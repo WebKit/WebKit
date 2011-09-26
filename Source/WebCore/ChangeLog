@@ -1,3 +1,76 @@
+2011-09-25  Adam Barth  <abarth@webkit.org>
+
+        Finish removing PLATFORM(BREWMP) by removing associated code
+        https://bugs.webkit.org/show_bug.cgi?id=68779
+
+        Reviewed by Sam Weinig.
+
+        When Geoffrey Garen removed PLATFORM(BREWMP) in
+        http://trac.webkit.org/changeset/95555, he did not remove all the
+        associated code.  This completes the work started in r95555 by removing
+        all the code assoicated with PLATFORM(BREWMP).
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * bindings/js/ScriptControllerBrew.cpp: Removed.
+        * editing/brew: Removed.
+        * editing/brew/EditorBrew.cpp: Removed.
+        * gyp/WebCore.gyp:
+        * page/brew: Removed.
+        * page/brew/ChromeClientBrew.h: Removed.
+        * page/brew/DragControllerBrew.cpp: Removed.
+        * page/brew/EventHandlerBrew.cpp: Removed.
+        * page/brew/FrameBrew.cpp: Removed.
+        * platform/brew: Removed.
+        * platform/brew/ClipboardBrew.cpp: Removed.
+        * platform/brew/ClipboardBrew.h: Removed.
+        * platform/brew/ContextMenuBrew.cpp: Removed.
+        * platform/brew/ContextMenuItemBrew.cpp: Removed.
+        * platform/brew/CursorBrew.cpp: Removed.
+        * platform/brew/DragDataBrew.cpp: Removed.
+        * platform/brew/EventLoopBrew.cpp: Removed.
+        * platform/brew/FileSystemBrew.cpp: Removed.
+        * platform/brew/KURLBrew.cpp: Removed.
+        * platform/brew/LanguageBrew.cpp: Removed.
+        * platform/brew/LocalizedStringsBrew.cpp: Removed.
+        * platform/brew/LoggingBrew.cpp: Removed.
+        * platform/brew/MIMETypeRegistryBrew.cpp: Removed.
+        * platform/brew/PasteboardBrew.cpp: Removed.
+        * platform/brew/PlatformKeyboardEventBrew.cpp: Removed.
+        * platform/brew/PlatformMouseEventBrew.cpp: Removed.
+        * platform/brew/PlatformTouchEventBrew.cpp: Removed.
+        * platform/brew/PlatformTouchPointBrew.cpp: Removed.
+        * platform/brew/PopupMenuBrew.cpp: Removed.
+        * platform/brew/PopupMenuBrew.h: Removed.
+        * platform/brew/SSLKeyGeneratorBrew.cpp: Removed.
+        * platform/brew/ScreenBrew.cpp: Removed.
+        * platform/brew/ScrollbarThemeBrew.cpp: Removed.
+        * platform/brew/ScrollbarThemeBrew.h: Removed.
+        * platform/brew/SearchPopupMenuBrew.cpp: Removed.
+        * platform/brew/SearchPopupMenuBrew.h: Removed.
+        * platform/brew/SharedBufferBrew.cpp: Removed.
+        * platform/brew/SharedTimerBrew.cpp: Removed.
+        * platform/brew/SoundBrew.cpp: Removed.
+        * platform/brew/SystemTimeBrew.cpp: Removed.
+        * platform/brew/TemporaryLinkStubs.cpp: Removed.
+        * platform/brew/WidgetBrew.cpp: Removed.
+        * platform/graphics/brew: Removed.
+        * platform/graphics/brew/IconBrew.cpp: Removed.
+        * platform/graphics/brew/ImageBrew.cpp: Removed.
+        * platform/graphics/brew/IntPointBrew.cpp: Removed.
+        * platform/graphics/brew/IntSizeBrew.cpp: Removed.
+        * platform/network/brew: Removed.
+        * platform/network/brew/DNSBrew.cpp: Removed.
+        * platform/network/brew/SocketStreamError.h: Removed.
+        * platform/network/brew/SocketStreamHandle.h: Removed.
+        * platform/network/brew/SocketStreamHandleBrew.cpp: Removed.
+        * platform/network/brew/SocketStreamHandlePrivate.h: Removed.
+        * platform/text/brew: Removed.
+        * platform/text/brew/TextBoundariesBrew.cpp: Removed.
+        * platform/text/brew/TextBreakIteratorBrew.cpp: Removed.
+        * platform/text/brew/TextCodecBrew.cpp: Removed.
+        * platform/text/brew/TextCodecBrew.h: Removed.
+
 2011-09-25  Kentaro Hara  <haraken@chromium.org>
 
         Implement a CloseEvent constructor for JSC

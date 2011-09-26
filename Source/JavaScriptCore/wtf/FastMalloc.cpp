@@ -385,7 +385,6 @@ size_t fastMallocSize(const void* p)
 #elif OS(DARWIN)
     return malloc_size(p);
 #elif OS(WINDOWS)
-    // Brew MP uses its own memory allocator, so _msize does not work on the Brew MP simulator.
     return _msize(const_cast<void*>(p));
 #else
     return 1;

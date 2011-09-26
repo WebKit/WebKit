@@ -1,3 +1,28 @@
+2011-09-25  Adam Barth  <abarth@webkit.org>
+
+        Finish removing PLATFORM(BREWMP) by removing associated code
+        https://bugs.webkit.org/show_bug.cgi?id=68779
+
+        Reviewed by Sam Weinig.
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+        * JavaScriptCore.gypi:
+        * gyp/JavaScriptCore.gyp:
+        * wscript:
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocSize):
+        * wtf/Vector.h:
+        * wtf/brew: Removed.
+        * wtf/brew/MainThreadBrew.cpp: Removed.
+        * wtf/brew/OwnPtrBrew.cpp: Removed.
+        * wtf/brew/RefPtrBrew.h: Removed.
+        * wtf/brew/ShellBrew.h: Removed.
+        * wtf/brew/StringBrew.cpp: Removed.
+        * wtf/brew/SystemMallocBrew.h: Removed.
+        * wtf/unicode/brew: Removed.
+        * wtf/unicode/brew/UnicodeBrew.cpp: Removed.
+        * wtf/unicode/brew/UnicodeBrew.h: Removed.
+
 2011-09-25  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT does not count speculation successes correctly

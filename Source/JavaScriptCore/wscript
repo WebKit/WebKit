@@ -34,8 +34,7 @@ def build(bld):
     import Options
 
     jscore_excludes = ['jsc.cpp', 'ExecutableAllocatorPosix.cpp']
-    jscore_excludes.extend(get_excludes(jscore_dir, ['*Brew.cpp', '*CF.cpp', '*Symbian.cpp']))
-
+    jscore_excludes.extend(get_excludes(jscore_dir, ['*CF.cpp', '*Symbian.cpp']))
     jscore_excludes.extend(get_excludes(jscore_dir, ['*None.cpp']))
 
     sources = []

@@ -74,8 +74,8 @@
         ['exclude', 'thirdparty/'],
 
         # FIXME: Figure out how to store these patterns in a variable.
-        ['exclude', '(brew|cairo|chromium|curl|efl|freetype|fftw|gstreamer|gtk|linux|mkl|openvg|pango|qt|skia|soup|symbian|texmap|iphone|v8|win|wince|wx)/'],
-        ['exclude', '(Brew|Cairo|Curl|Chromium|Efl|Gtk|Linux|OpenType|Qt|Safari|Soup|Symbian|V8|Win|WinCE|Wx)\\.(cpp|mm?)$'],
+        ['exclude', '(cairo|chromium|curl|efl|freetype|fftw|gstreamer|gtk|linux|mkl|openvg|pango|qt|skia|soup|symbian|texmap|iphone|v8|win|wince|wx)/'],
+        ['exclude', '(Cairo|Curl|Chromium|Efl|Gtk|Linux|OpenType|Qt|Safari|Soup|Symbian|V8|Win|WinCE|Wx)\\.(cpp|mm?)$'],
         ['exclude', 'Chromium[^/]*\\.(cpp|mm?)$'],
 
         ['exclude', 'platform/image-decoders/'],

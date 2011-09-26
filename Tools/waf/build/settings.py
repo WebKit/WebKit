@@ -61,7 +61,6 @@ common_libpaths = []
 common_frameworks = []
 
 ports = [
-    'Brew',
     'Chromium',
     'Gtk',
     'Mac',
