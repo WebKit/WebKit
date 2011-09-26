@@ -251,8 +251,8 @@ void Internals::setZoomAnimatorTransform(Document *document, double scale, doubl
         return;
     }
 
-    document->settings()->setZoomAnimatorScale(scale);
-    document->settings()->setZoomAnimatorPosition(tx, ty);
+    document->settings()->setZoomAnimatorScale(static_cast<float>(scale));
+    document->settings()->setZoomAnimatorPosition(static_cast<float>(tx), static_cast<float>(ty));
 }
 
 void Internals::setPasswordEchoEnabled(Document* document, bool enabled, ExceptionCode& ec)
