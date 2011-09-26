@@ -526,8 +526,6 @@ void JITCompiler::compileEntry()
     // both normal return code and when jumping to an exception handler).
     preserveReturnAddressAfterCall(GPRInfo::regT2);
     emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
-    
-    addPtr(Imm32(1), AbsoluteAddress(codeBlock()->addressOfSpeculativeSuccessCounter()));
 }
 
 void JITCompiler::compileBody()
@@ -539,6 +537,8 @@ void JITCompiler::compileBody()
     // Handy debug tool!
     breakpoint();
 #endif
+    
+    addPtr(Imm32(1), AbsoluteAddress(codeBlock()->addressOfSpeculativeSuccessCounter()));
 
     Label speculativePathBegin = label();
     SpeculativeJIT speculative(*this);

@@ -815,7 +815,8 @@ RegisterSizedBoolean dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue 
 void debugOperationPrintSpeculationFailure(ExecState*, void* debugInfoRaw)
 {
     SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
-    printf("Speculation failure in %p at 0x%x!\n", debugInfo->codeBlock, debugInfo->debugOffset);
+    CodeBlock* codeBlock = debugInfo->codeBlock;
+    printf("Speculation failure in %p at 0x%x with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u, success/fail %u/%u\n", codeBlock, debugInfo->debugOffset, codeBlock->alternative()->executeCounter(), codeBlock->alternative()->reoptimizationRetryCounter(), codeBlock->alternative()->optimizationDelayCounter(), codeBlock->speculativeSuccessCounter(), codeBlock->speculativeFailCounter());
 }
 #endif
 
