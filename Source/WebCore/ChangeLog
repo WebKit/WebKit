@@ -1,3 +1,31 @@
+2011-09-23  Adrienne Walker  <enne@google.com>
+
+        [chromium] Update VideoLayerChromium textures after texture resources are reclaimed
+        https://bugs.webkit.org/show_bug.cgi?id=68742
+
+        Reviewed by James Robinson.
+
+        If video textures are reclaimed (such as during a visibility change on
+        a tab), the dirty rect for the layer is empty and it skips out of
+        updating compositor resources, leaving the video textures invalid.
+        Instead, check the textures here to make sure they're still valid
+        first before early out so that they can get reupdated if necessary.
+
+        Additionally, fix a small bug in pushPropertiesTo where 1 plane RGB
+        videos would not get drawn because all 3 planes didn't have valid
+        textures.
+
+        Test: compositing/video-page-visibility.html
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::cleanupResources):
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        (WebCore::VideoLayerChromium::pushPropertiesTo):
+        (WebCore::VideoLayerChromium::setLayerTreeHost):
+        (WebCore::VideoLayerChromium::texturesValid):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+
 2011-09-26  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: introduce protocol backwards compatibility validator.

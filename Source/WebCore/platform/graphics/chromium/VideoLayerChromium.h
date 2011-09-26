@@ -74,6 +74,7 @@ private:
 
     static GC3Denum determineTextureFormat(const VideoFrameChromium*);
     static IntSize computeVisibleSize(const VideoFrameChromium*, unsigned plane);
+    bool texturesValid();
     bool reserveTextures(const VideoFrameChromium*, GC3Denum textureFormat);
     void updateTexture(GraphicsContext3D*, Texture&, const void*) const;
 
@@ -83,7 +84,9 @@ private:
     VideoFrameChromium::Format m_frameFormat;
     VideoFrameProvider* m_provider;
 
-    Texture m_textures[3];
+    enum { MaxPlanes = 3 };
+    Texture m_textures[MaxPlanes];
+    unsigned m_planes;
 
     // This will be null for the entire duration of video playback if hardware
     // decoding is not being used.

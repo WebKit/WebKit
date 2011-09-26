@@ -55,6 +55,7 @@ VideoLayerChromium::VideoLayerChromium(CCLayerDelegate* delegate, VideoFrameProv
     , m_skipsDraw(true)
     , m_frameFormat(VideoFrameChromium::Invalid)
     , m_provider(provider)
+    , m_planes(0)
     , m_currentFrame(0)
 {
 }
@@ -72,19 +73,32 @@ PassRefPtr<CCLayerImpl> VideoLayerChromium::createCCLayerImpl()
 void VideoLayerChromium::cleanupResources()
 {
     LayerChromium::cleanupResources();
-    for (size_t i = 0; i < 3; ++i)
+    for (unsigned i = 0; i < MaxPlanes; ++i)
         m_textures[i].m_texture.clear();
     releaseCurrentFrame();
 }
 
 void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context)
 {
-    if (m_dirtyRect.isEmpty() || !m_delegate)
+    if (!m_delegate)
         return;
+
+    if (m_dirtyRect.isEmpty() && texturesValid()) {
+        for (unsigned plane = 0; plane < m_planes; plane++) {
+            ManagedTexture* tex = m_textures[plane].m_texture.get();
+            if (!tex->reserve(tex->size(), tex->format())) {
+                m_skipsDraw = true;
+                break;
+            }
+        }
+        return;
+    }
 
     ASSERT(drawsContent());
 
+    m_planes = 0;
     m_skipsDraw = false;
+
     VideoFrameChromium* frame = m_provider->getCurrentFrame();
     if (!frame) {
         m_skipsDraw = true;
@@ -119,6 +133,9 @@ void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context)
         updateTexture(context, texture, frame->data(plane));
     }
 
+    m_planes = frame->planes();
+    ASSERT(m_planes <= MaxPlanes);
+
     resetNeedsDisplay();
 
     m_provider->putCurrentFrame(frame);
@@ -131,19 +148,21 @@ void VideoLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     CCVideoLayerImpl* videoLayer = static_cast<CCVideoLayerImpl*>(layer);
     videoLayer->setSkipsDraw(m_skipsDraw);
     videoLayer->setFrameFormat(m_frameFormat);
-    for (size_t i = 0; i < 3; ++i) {
+    for (unsigned i = 0; i < m_planes; ++i) {
         if (!m_textures[i].m_texture) {
             videoLayer->setSkipsDraw(true);
             break;
         }
         videoLayer->setTexture(i, m_textures[i].m_texture->textureId(), m_textures[i].m_texture->size(), m_textures[i].m_visibleSize);
     }
+    for (unsigned i = m_planes; i < MaxPlanes; ++i)
+        videoLayer->setTexture(i, 0, IntSize(), IntSize());
 }
 
 void VideoLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
     if (host && layerTreeHost() != host) {
-        for (size_t i = 0; i < 3; ++i) {
+        for (unsigned i = 0; i < MaxPlanes; ++i) {
             m_textures[i].m_visibleSize = IntSize();
             m_textures[i].m_texture = ManagedTexture::create(host->contentsTextureManager());
         }
@@ -164,6 +183,16 @@ GC3Denum VideoLayerChromium::determineTextureFormat(const VideoFrameChromium* fr
         break;
     }
     return GraphicsContext3D::INVALID_VALUE;
+}
+
+bool VideoLayerChromium::texturesValid()
+{
+    for (unsigned plane = 0; plane < m_planes; plane++) {
+        ManagedTexture* tex = m_textures[plane].m_texture.get();
+        if (!tex->isValid(tex->size(), tex->format()))
+            return false;
+    }
+    return true;
 }
 
 bool VideoLayerChromium::reserveTextures(const VideoFrameChromium* frame, GC3Denum textureFormat)
