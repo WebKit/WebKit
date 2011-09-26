@@ -1,0 +1,316 @@
+#!/usr/bin/env python
+# Copyright (c) 2011 Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+# 
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Inspector protocol validator.
+# 
+# Tests that subsequent protocol changes are not breaking backwards compatibility.
+# Following violations are reported:
+#
+#   - Command has been removed
+#   - Required command parameter was added (could be a part of referenced type)
+#   - Required response parameter was removed
+#   - Event has been removed
+#   - Required event parameter was removed (could be a part of referenced type)
+#
+
+import os.path
+import re
+import sys
+
+def list_to_map(items, key):
+    result = {}
+    for item in items:
+        if not "hidden" in item:
+            result[item[key]] = item
+    return result
+
+def named_list_to_map(container, name, key):
+    if name in container:
+        return list_to_map(container[name], key)
+    return {}
+
+def print_errors(domain_name, method_name, local_errors, errors):
+    for error in local_errors:
+        errors.append("%s.%s: %s" % (domain_name, method_name, error))
+
+def compare_schemas(schema_1, schema_2):
+    errors = []
+    types_1 = normalize_types_in_schema(schema_1)
+    types_2 = normalize_types_in_schema(schema_2)
+
+    domains_by_name_1 = list_to_map(schema_1, "domain")
+    domains_by_name_2 = list_to_map(schema_2, "domain")
+
+    for name in domains_by_name_1:
+        domain_1 = domains_by_name_1[name]
+        if not name in domains_by_name_2:
+            errors.append("Domain %s is missing\n")
+            continue
+        compare_domains(domain_1, domains_by_name_2[name], types_1, types_2, errors)
+    return errors
+
+def compare_domains(domain_1, domain_2, types_map_1, types_map_2, errors):
+    domain_name = domain_1["domain"]
+    commands_1 = named_list_to_map(domain_1, "commands", "name")
+    commands_2 = named_list_to_map(domain_2, "commands", "name")
+    for name in commands_1:
+        command_1 = commands_1[name]
+        if not name in commands_2:
+            errors.append("%s.%s: command is missing" % (domain_1["domain"], name))
+            continue
+        compare_commands(domain_name, command_1, commands_2[name], types_map_1, types_map_2, errors)
+
+    events_1 = named_list_to_map(domain_1, "events", "name")
+    events_2 = named_list_to_map(domain_2, "events", "name")
+    for name in events_1:
+        event_1 = events_1[name]
+        if not name in events_2:
+            errors.append("%s.%s: event is missing" % (domain_1["domain"], name))
+            continue
+        compare_events(domain_name, event_1, events_2[name], types_map_1, types_map_2, errors)
+
+def compare_commands(domain_name, command_1, command_2, types_map_1, types_map_2, errors):
+    command_errors = []
+    params_1 = named_list_to_map(command_1, "parameters", "name")
+    params_2 = named_list_to_map(command_2, "parameters", "name")
+    # Note the reversed order: we allow removing parameters.
+    compare_params_list(params_2, params_1, types_map_2, types_map_1, 0, command_errors)
+
+    returns_1 = named_list_to_map(command_1, "returns", "name")
+    returns_2 = named_list_to_map(command_2, "returns", "name")
+    compare_params_list(returns_1, returns_2, types_map_1, types_map_2, 0, command_errors)
+    print_errors(domain_name, command_1["name"], command_errors, errors)
+
+def compare_events(domain_name, event_1, event_2, types_map_1, types_map_2, errors):
+    event_errors = []
+    params_1 = named_list_to_map(event_1, "parameters", "name")
+    params_2 = named_list_to_map(event_2, "parameters", "name")
+    compare_params_list(params_1, params_2, types_map_1, types_map_2, 0, event_errors)
+    print_errors(domain_name, event_1["name"], event_errors, errors)
+
+def compare_params_list(params_1, params_2, types_map_1, types_map_2, depth, errors):
+    for name in params_1:
+        param_1 = params_1[name]
+        if not name in params_2:
+            if not "optional" in param_1:
+                errors.append("required parameter is missing: %s" % name)
+            continue
+
+        param_2 = params_2[name]
+        type_1 = extract_type(param_1, types_map_1, errors)
+        type_2 = extract_type(param_2, types_map_2, errors)
+        compare_types("param " + name, type_1, type_2, types_map_1, types_map_2, depth, errors)
+
+def compare_types(context, type_1, type_2, types_map_1, types_map_2, depth, errors):
+    if depth > 10:
+        return;
+
+    base_type_1 = type_1["type"]
+    base_type_2 = type_2["type"]
+
+    if base_type_1 != base_type_2:
+        errors.append("%s base type mismatch, '%s' vs '%s'" % (context, base_type_1, base_type_2))
+    elif base_type_1 == "object":
+        params_1 = named_list_to_map(type_1, "properties", "name")
+        params_2 = named_list_to_map(type_2, "properties", "name")
+        compare_params_list(params_1, params_2, types_map_1, types_map_2, depth + 1, errors)
+    elif base_type_1 == "array":
+        item_type_1 = extract_type(type_1["items"], types_map_1, errors)
+        item_type_2 = extract_type(type_2["items"], types_map_2, errors)
+        compare_types(context, item_type_1, item_type_2, types_map_1, types_map_2, depth + 1, errors)
+
+def extract_type(typed_object, types_map, errors):
+    if "type" in typed_object:
+        result = { "id": "<transient>", "type": typed_object["type"] }
+        if typed_object["type"] == "object":
+            result["properties"] = []
+        elif typed_object["type"] == "array":
+            result["items"] = typed_object["items"]
+        return result
+    elif "$ref" in typed_object:
+        ref = typed_object["$ref"]
+        if not ref in types_map:
+            errors.append("Can not resolve type: %s" % ref)
+            types_map[ref] = { "id": "<transient>", "type": "object" } 
+        return types_map[ref]
+
+def normalize_types_in_schema(schema):
+    types = {}
+    for domain in schema:
+        domain_name = domain["domain"]
+        normalize_types(domain, domain_name, types)
+    return types
+
+def normalize_types(obj, domain_name, types):
+    if isinstance(obj, list):
+        for item in obj:
+            normalize_types(item, domain_name, types)
+    elif isinstance(obj, dict):
+        for key, value in obj.items():
+            if key == "$ref" and value.find(".") == -1:
+                obj[key] = "%s.%s" % (domain_name, value)
+            elif key == "id":
+                obj[key] = "%s.%s" % (domain_name, value)
+                types[obj[key]] = obj
+            else:
+                normalize_types(value, domain_name, types)
+
+def load_json(filename):
+    input_file = open(filename, "r")
+    json_string = input_file.read()
+    json_string = re.sub(":\s*true", ": True", json_string)
+    json_string = re.sub(":\s*false", ": False", json_string)
+    return eval(json_string)
+
+def self_test():
+    schema_1 = [
+        {
+            "domain": "Network",
+            "types": [
+                {
+                    "id": "LoaderId",
+                    "type": "string"
+                },
+                {
+                    "id": "Headers",
+                    "type": "object"
+                },
+                {
+                    "id": "Request",
+                    "type": "object",
+                    "properties": [
+                        { "name": "url", "type": "string" },
+                        { "name": "method", "type": "string" },
+                        { "name": "headers", "$ref": "Headers" },
+                        { "name": "postData", "type": "string" }
+                    ]
+                }
+            ],
+            "commands": [
+                {
+                    "name": "setUserAgentOverride",
+                    "parameters": [
+                        { "name": "userAgent", "type": "string" }
+                    ]
+                },
+                {
+                    "name": "setExtraHTTPHeaders",
+                    "parameters": [
+                        { "name": "headers", "$ref": "Headers" }
+                    ],
+                    "returns": [
+                        { "name": "mimeType", "type": "string" },
+                        { "name": "optionalMimeType", "type": "string", "optional": True }
+                    ]
+                }
+            ],
+            "events": [
+                {
+                    "name": "requestWillBeSent",
+                    "parameters": [
+                        { "name": "frameId", "type": "string", "hidden": True },
+                        { "name": "documentURL", "type": "string" },
+                        { "name": "request", "$ref": "Request" },
+                    ]
+                },
+                {
+                    "name": "loadingFailed",
+                    "parameters": [
+                        { "name": "errorText", "type": "string" },
+                        { "name": "canceled", "type": "boolean", "optional": True }
+                    ]
+                }
+            ]
+        }
+    ]
+
+    schema_2 = [
+        {
+            "domain": "Network",
+            "types": [
+                {
+                    "id": "LoaderId",
+                    "type": "string"
+                },
+                {
+                    "id": "Request",
+                    "type": "object",
+                    "properties": [
+                        { "name": "url", "type": "string" },
+                        { "name": "method", "type": "string" },
+                        { "name": "headers", "type": "object" },
+                    ]
+                }
+            ],
+            "commands": [
+                {
+                    "name": "setExtraHTTPHeaders",
+                    "parameters": [
+                        { "name": "headers", "type": "object" },
+                    ]
+                }
+            ],
+            "events": [
+                {
+                    "name": "requestWillBeSent",
+                    "parameters": [
+                        { "name": "request", "$ref": "Request" }
+                    ]
+                }
+            ]
+        }
+    ]
+
+    errors = compare_schemas(schema_1, schema_2)
+    golden_errors = [
+        "Network.setUserAgentOverride: command is missing",
+        "Network.setExtraHTTPHeaders: required parameter is missing: mimeType",
+        "Network.loadingFailed: event is missing",
+        "Network.requestWillBeSent: required parameter is missing: postData",
+        "Network.requestWillBeSent: required parameter is missing: documentURL" ]
+    for i in range(len(errors)):
+        if errors[i] != golden_errors[i]:
+            print "Self-test failed"
+            return False
+    return True
+
+def main():
+    if not self_test():
+        return
+
+    if len(sys.argv) < 3:
+        print "Usage: %s Inspector.draft-01.json Inspector.json" % sys.argv[0]
+        return
+
+    schema_1 = load_json(sys.argv[1])
+    schema_2 = load_json(sys.argv[2])
+    compare_schemas(schema_1, schema_2)
+
+if __name__ == '__main__':
+    sys.exit(main())
