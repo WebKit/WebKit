@@ -1,3 +1,18 @@
+2011-09-26  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/68809> IconDatabase::syncThreadMainLoop can assert if wakeSyncThread is called before thread starts executing
+
+        If wakeSyncThread is called before syncThreadMainLoop starts executing then m_syncThreadHasWorkToDo would be set
+        while executing the body of the sync thread loop, causing us to skip blocking on the condition variable. This would
+        lead to us hitting the assertion failure due to m_disabledSuddenTerminationForSyncThread being false, unless the main
+        thread happened to call wakeSyncThread a second time while the first loop iteration was executing.
+
+        Reviewed by Anders Carlsson.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::syncThreadMainLoop): Clear m_syncThreadHasWorkToDo to indicate that we're about to perform
+        all pending work.
+
 2011-09-26  Antaryami Pandia  <antaryami.pandia@motorola.com>
 
         Groove/inset/outset borders show solid if the color is black.

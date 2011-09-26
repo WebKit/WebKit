@@ -1357,6 +1357,10 @@ void* IconDatabase::syncThreadMainLoop()
     bool shouldReenableSuddenTermination = m_disabledSuddenTerminationForSyncThread;
     m_disabledSuddenTerminationForSyncThread = false;
 
+    // We'll either do any pending work on our first pass through the loop, or we'll terminate
+    // without doing any work. Either way we're dealing with any currently-pending work.
+    m_syncThreadHasWorkToDo = false;
+
     // It's possible thread termination is requested before the main loop even starts - in that case, just skip straight to cleanup
     while (!m_threadTerminationRequested) {
         m_syncLock.unlock();
