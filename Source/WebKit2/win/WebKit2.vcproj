@@ -3257,6 +3257,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\UIProcess\API\C\WKHitTestResult.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKHitTestResult.h"
+						>
+					</File>
+					<File
 						RelativePath="..\UIProcess\API\C\WKIconDatabase.cpp"
 						>
 					</File>

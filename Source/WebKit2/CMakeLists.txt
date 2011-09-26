@@ -191,6 +191,7 @@ SET(WebKit2_SOURCES
     UIProcess/API/C/WKFormSubmissionListener.cpp
     UIProcess/API/C/WKFrame.cpp
     UIProcess/API/C/WKFramePolicyListener.cpp
+    UIProcess/API/C/WKHitTestResult.cpp
     UIProcess/API/C/WKIconDatabase.cpp
     UIProcess/API/C/WKInspector.cpp
     UIProcess/API/C/WKKeyValueStorageManager.cpp

@@ -63,6 +63,7 @@ all:
     xcopy /y /d "..\UIProcess\API\C\WKGeolocationManager.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKGeolocationPermissionRequest.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKGeolocationPosition.h" "%ConfigurationBuildDir%\include\WebKit2"
+    xcopy /y /d "..\UIProcess\API\C\WKHitTestResult.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKInspector.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKIconDatabase.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKKeyValueStorageManager.h" "%ConfigurationBuildDir%\include\WebKit2"

@@ -422,6 +422,8 @@
 		93FC67BE12D3CCF200A60610 /* DecoderAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FC679E12D3CC7400A60610 /* DecoderAdapter.h */; };
 		93FC67BF12D3CCF200A60610 /* EncoderAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93FC679F12D3CC7400A60610 /* EncoderAdapter.cpp */; };
 		93FC67C012D3CCF200A60610 /* EncoderAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FC67A012D3CC7400A60610 /* EncoderAdapter.h */; };
+		B62E7310143047A60069EC35 /* WKHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B62E730F143047A60069EC35 /* WKHitTestResult.cpp */; };
+		B62E7312143047B00069EC35 /* WKHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = B62E7311143047B00069EC35 /* WKHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = B878B613133428DC006888E9 /* CorrectionPanel.h */; };
 		B878B616133428DC006888E9 /* CorrectionPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = B878B614133428DC006888E9 /* CorrectionPanel.mm */; };
 		BC0092F7115837A300E0AE2A /* RunLoopMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0092F5115837A300E0AE2A /* RunLoopMac.mm */; };
@@ -1371,6 +1373,8 @@
 		93FC67A012D3CC7400A60610 /* EncoderAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncoderAdapter.h; sourceTree = "<group>"; };
 		A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSerializedScriptValue.h; sourceTree = "<group>"; };
 		B396EA5512E0ED2D00F4FEB7 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		B62E730F143047A60069EC35 /* WKHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKHitTestResult.cpp; sourceTree = "<group>"; };
+		B62E7311143047B00069EC35 /* WKHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKHitTestResult.h; sourceTree = "<group>"; };
 		B878B613133428DC006888E9 /* CorrectionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorrectionPanel.h; sourceTree = "<group>"; };
 		B878B614133428DC006888E9 /* CorrectionPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CorrectionPanel.mm; sourceTree = "<group>"; };
 		BC0092F5115837A300E0AE2A /* RunLoopMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RunLoopMac.mm; sourceTree = "<group>"; };
@@ -2773,6 +2777,8 @@
 		BC0C376610F807660076D7CB /* C */ = {
 			isa = PBXGroup;
 			children = (
+				B62E7311143047B00069EC35 /* WKHitTestResult.h */,
+				B62E730F143047A60069EC35 /* WKHitTestResult.cpp */,
 				5123CF18133D25E60056F800 /* cg */,
 				6EE849C41368D9040038D481 /* mac */,
 				BCB63477116BF10600603215 /* WebKit2.h */,
@@ -3862,6 +3868,7 @@
 				1A2BB6D114117B4D000F35D4 /* PluginProcessConnectionMessages.h in Headers */,
 				7801C09A142290C400FAF9AF /* WebHitTestResult.h in Headers */,
 				0F174AA3142A4CB70039250F /* WebGeometry.h in Headers */,
+				B62E7312143047B00069EC35 /* WKHitTestResult.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4549,6 +4556,7 @@
 				1A2BB6D014117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp in Sources */,
 				7801C099142290C400FAF9AF /* WebHitTestResult.cpp in Sources */,
 				0F174AA7142AAC610039250F /* WKGeometry.cpp in Sources */,
+				B62E7310143047A60069EC35 /* WKHitTestResult.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -34,6 +34,7 @@ WEBKIT2_API_SOURCES = \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKGeolocationManager.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKGeolocationPermissionRequest.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKGeolocationPosition.cpp \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKHitTestResult.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKIconDatabase.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKInspector.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKOpenPanelParameters.cpp \
@@ -108,6 +109,7 @@ WEBKIT2_API_HEADERS += \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKGeolocationManager.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKGeolocationPermissionRequest.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKGeolocationPosition.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKHitTestResult.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKIconDatabase.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKInspector.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKOpenPanelParameters.h \
