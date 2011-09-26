@@ -28,9 +28,9 @@
 #include "ResourceHandle.h"
 
 #include "Base64.h"
+#include "CachedResourceLoader.h"
 #include "ChromeClient.h"
 #include "CookieJarSoup.h"
-#include "CachedResourceLoader.h"
 #include "FileSystem.h"
 #include "Frame.h"
 #include "GOwnPtrSoup.h"
