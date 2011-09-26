@@ -1,3 +1,15 @@
+2011-09-25  Kentaro Hara  <haraken@chromium.org>
+
+        Implement a CloseEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=68340
+
+        Reviewed by Oliver Hunt.
+
+        * fast/dom/constructed-objects-prototypes-expected.txt: Now window has CloseEvent.
+        * fast/events/constructors/close-event-constructor-expected.txt: Added.
+        * fast/events/constructors/close-event-constructor.html: Added.
+        * platform/chromium/test_expectations.txt: Skipped close-event-constructor.html, since V8 does not yet have the CloseEvent constructor.
+
 2011-09-25  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10156263> ASSERT in WebCore::FrameView::scheduleRelayoutOfSubtree

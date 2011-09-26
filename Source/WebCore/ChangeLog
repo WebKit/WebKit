@@ -1,3 +1,23 @@
+2011-09-25  Kentaro Hara  <haraken@chromium.org>
+
+        Implement a CloseEvent constructor for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=68340
+
+        Reviewed by Oliver Hunt.
+
+        The spec of the CloseEvent constructor is here:
+        http://dev.w3.org/html5/websockets/#closeevent
+
+        Test: fast/events/constructors/close-event-constructor.html
+
+        * bindings/generic/EventConstructors.h: Added a definition for the CloseEvent constructor.
+        * bindings/js/JSEventConstructors.cpp: Added #includes for CloseEvent.
+        * websockets/CloseEvent.h: Added a definition for CloseEventInit.
+        (WebCore::CloseEventInit::CloseEventInit):
+        (WebCore::CloseEvent::create):
+        (WebCore::CloseEvent::CloseEvent):
+        * websockets/CloseEvent.idl: Makes CloseEvent constructible.
+
 2011-09-25  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/10177824> IconDatabase’s use of ThreadCondition leads to assertion failures in the face of spurious wakeups
