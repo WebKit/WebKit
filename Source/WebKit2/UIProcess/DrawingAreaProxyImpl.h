@@ -50,7 +50,6 @@ private:
     explicit DrawingAreaProxyImpl(WebPageProxy*);
 
     // DrawingAreaProxy
-    virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext);
     virtual void sizeDidChange();
     virtual void deviceScaleFactorDidChange();
     virtual void visibilityDidChange();

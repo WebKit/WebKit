@@ -85,7 +85,6 @@ private:
     void updateWebView(const Vector<WebCore::IntRect>& paintedArea);
 
     // DrawingAreaProxy
-    virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext);
     virtual void sizeDidChange();
     virtual void deviceScaleFactorDidChange();
     virtual void setPageIsVisible(bool isVisible);

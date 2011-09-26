@@ -54,16 +54,6 @@ class LayerTreeContext;
 class UpdateInfo;
 class WebPageProxy;
 
-#if PLATFORM(MAC)
-typedef CGContextRef PlatformDrawingContext;
-#elif PLATFORM(WIN)
-typedef HDC PlatformDrawingContext;
-#elif PLATFORM(QT)
-typedef QPainter* PlatformDrawingContext;
-#elif PLATFORM(GTK)
-typedef cairo_t* PlatformDrawingContext;
-#endif
-
 class DrawingAreaProxy {
     WTF_MAKE_NONCOPYABLE(DrawingAreaProxy);
 
@@ -73,9 +63,6 @@ public:
     DrawingAreaType type() const { return m_type; }
 
     void didReceiveDrawingAreaProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
-    // Returns true if painting was successful, false otherwise.
-    virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext) = 0;
 
     virtual void deviceScaleFactorDidChange() = 0;
 

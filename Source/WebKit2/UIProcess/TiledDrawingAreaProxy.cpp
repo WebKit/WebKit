@@ -116,13 +116,6 @@ void TiledDrawingAreaProxy::setPageIsVisible(bool isVisible)
     // FIXME: We should request a full repaint here if needed.
 }
 
-bool TiledDrawingAreaProxy::paint(const WebCore::IntRect& rect, PlatformDrawingContext context)
-{
-    notImplemented();
-    return false;
-}
-
-
 } // namespace WebKit
 
 #endif

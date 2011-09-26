@@ -106,12 +106,6 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
     discardBackingStoreSoon();
 }
 
-bool DrawingAreaProxyImpl::paint(const WebCore::IntRect&, PlatformDrawingContext)
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 void DrawingAreaProxyImpl::sizeDidChange()
 {
     backingStoreStateDidChange(RespondImmediately);
