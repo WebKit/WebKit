@@ -1,3 +1,9 @@
+2011-09-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r74971): Selection doesn't work correctly in BiDi Text
