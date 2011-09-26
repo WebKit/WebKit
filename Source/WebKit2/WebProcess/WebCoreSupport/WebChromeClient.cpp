@@ -434,7 +434,7 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
 
     WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
 
-    if (!m_page->mainFrame() || m_page->mainFrame() != webFrame)
+    if (!m_page->mainWebFrame() || m_page->mainWebFrame() != webFrame)
         return;
 
     m_page->send(Messages::WebPageProxy::DidChangeContentsSize(size));
