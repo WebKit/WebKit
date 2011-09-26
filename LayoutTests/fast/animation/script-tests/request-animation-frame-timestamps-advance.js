@@ -1,3 +1,5 @@
+jsTestIsAsync = true;
+
 description("Tests the timestamps provided to requestAnimationFrame callbacks advance");
 
 function busyWait(millis) {
@@ -15,9 +17,7 @@ window.webkitRequestAnimationFrame(function(timestamp) {
         secondTimestamp = timestamp;
         shouldBeDefined("secondTimestamp");
         shouldBeTrue("secondTimestamp > firstTimestamp");
-        isSuccessfullyParsed();
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        finishJSTest();
     });
     busyWait(10);
     if (window.layoutTestController)
@@ -30,8 +30,5 @@ if (window.layoutTestController)
         layoutTestController.display();
     });
 
-
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 var successfullyParsed = true;

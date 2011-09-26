@@ -3828,5 +3828,3 @@ BUGWK68747 : media/controls-right-click-on-timebar.html = TIMEOUT PASS
 
 // Assert fires (on non-Chromium WebKit ports too)
 BUGWK68819 DEBUG : svg/clip-path/clip-path-on-svg.svg = CRASH
-
-BUGWK68821 DEBUG : fast/animation/request-animation-frame-timestamps-advance.html = TIMEOUT
