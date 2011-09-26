@@ -43,7 +43,7 @@ class RenderVideo;
 
 enum CompositingUpdateType {
     CompositingUpdateAfterLayoutOrStyleChange,
-    CompositingUpdateOnPaitingOrHitTest,
+    CompositingUpdateOnHitTest,
     CompositingUpdateOnScroll
 };
 
