@@ -108,24 +108,25 @@ ui.notifications.SuspiciousCommit = base.extends(Cause, {
     {
         this._revision = commitData.revision;
         var linkToRevision = this._description.appendChild(document.createElement('a'));
+        this._details = this._description.appendChild(document.createElement('span'));
         linkToRevision.href = trac.changesetURL(commitData.revision);
         linkToRevision.target = '_blank';
         linkToRevision.textContent = commitData.revision;
-        this._addDescriptionPart('summary', commitData);
-        this._addDescriptionPart('author', commitData);
-        this._addDescriptionPart('reviewer', commitData);
+        this._addDetail('summary', commitData);
+        this._addDetail('author', commitData);
+        this._addDetail('reviewer', commitData);
     },
     hasRevision: function(revision)
     {
         return this._revision == revision;
     },
-    _addDescriptionPart: function(part, commitData)
+    _addDetail: function(part, commitData)
     {
         var content = commitData[part];
         if (!content)
             return;
 
-        var span = this._description.appendChild(document.createElement('span'));
+        var span = this._details.appendChild(document.createElement('span'));
         span.className = part;
         span.textContent = content;
     }

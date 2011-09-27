@@ -88,9 +88,11 @@ test('SuspiciousCommit', 2, function() {
     equal(suspiciousCommit.innerHTML,
         '<div class="description">' +
             '<a href="http://trac.webkit.org/changeset/1" target="_blank">1</a>' +
-            '<span class="summary">summary</span>' +
-            '<span class="author">author</span>' +
-            '<span class="reviewer">reviewer</span>' +
+            '<span>' +
+                '<span class="summary">summary</span>' +
+                '<span class="author">author</span>' +
+                '<span class="reviewer">reviewer</span>' +
+            '</span>' +
         '</div>' +
         '<ul class="actions">' +
             '<li><button class="action" title="Blames this failure on this revision.">Blame</button></li>' +
@@ -195,9 +197,11 @@ test('FailingTestsSummary', 12, function() {
                 '<li>' +
                     '<div class="description">' +
                         '<a href="http://trac.webkit.org/changeset/1" target="_blank">1</a>' +
-                        '<span class="summary">summary</span>' +
-                        '<span class="author">author</span>' +
-                        '<span class="reviewer">reviewer</span>' +
+                        '<span>' +
+                            '<span class="summary">summary</span>' +
+                            '<span class="author">author</span>' +
+                            '<span class="reviewer">reviewer</span>' +
+                        '</span>' +
                     '</div>' +
                     '<ul class="actions">' +
                         '<li><button class="action" title="Blames this failure on this revision.">Blame</button></li>' +
@@ -239,9 +243,11 @@ test('FailingTestsSummary', 12, function() {
                 '<li>' +
                     '<div class="description">' +
                         '<a href="http://trac.webkit.org/changeset/1" target="_blank">1</a>' +
-                        '<span class="summary">summary</span>' +
-                        '<span class="author">author</span>' +
-                        '<span class="reviewer">reviewer</span>' +
+                        '<span>' +
+                            '<span class="summary">summary</span>' +
+                            '<span class="author">author</span>' +
+                            '<span class="reviewer">reviewer</span>' +
+                        '</span>' +
                     '</div>' +
                     '<ul class="actions">' +
                         '<li><button class="action" title="Blames this failure on this revision.">Blame</button></li>' +
@@ -287,9 +293,11 @@ test('FailingTestsSummary', 12, function() {
                 '<li>' +
                     '<div class="description">' +
                         '<a href="http://trac.webkit.org/changeset/1" target="_blank">1</a>' +
-                        '<span class="summary">summary</span>' +
-                        '<span class="author">author</span>' +
-                        '<span class="reviewer">reviewer</span>' +
+                        '<span>' +
+                            '<span class="summary">summary</span>' +
+                            '<span class="author">author</span>' +
+                            '<span class="reviewer">reviewer</span>' +
+                        '</span>' +
                     '</div>' +
                     '<ul class="actions">' +
                         '<li><button class="action" title="Blames this failure on this revision.">Blame</button></li>' +

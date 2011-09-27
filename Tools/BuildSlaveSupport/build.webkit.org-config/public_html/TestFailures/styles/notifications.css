@@ -100,7 +100,8 @@ ol.notifications>li ul.causes>li>ul.actions {
 }
 
     ol.notifications>li ul.causes>li>div.description {
-        padding: 0 10px 0 0;
+        padding: 0 10px 5px 0;
+        display: -webkit-box;
     }
 
         ol.notifications>li ul.causes>li>div.description>a {
@@ -111,8 +112,9 @@ ol.notifications>li ul.causes>li>ul.actions {
         ol.notifications>li ul.causes>li:hover>div.description>a {
             background-color: #555;
             padding: 5px 10px 5px 10px;
-            margin: 0 10px 0 0;
+            margin: -5px 10px -1px 0;
             color: White;
+            display: inline-block;
         }
 
         ol.notifications>li ul.causes>li:hover>div.description>a::after {
@@ -129,22 +131,26 @@ ol.notifications>li ul.causes>li>ul.actions {
 
         ol.notifications>li ul.causes>li>div.description>span {
             padding: 0 10px 0 0;
-            display: inline-block;
+            display: block;
+            cursor: default;
+            pointer-events: none;
+            -webkit-box-flex: 1;
         }
 
-        ol.notifications>li ul.causes>li>div.description>span.author {
+        ol.notifications>li ul.causes>li>div.description>span>span.author {
+            padding: 0 0 0 5px;
             font-style: italic;
         }
 
-        ol.notifications>li ul.causes>li>div.description>span.reviewer {
+        ol.notifications>li ul.causes>li>div.description>span>span.reviewer {
             color: Gray;
         }
 
-        ol.notifications>li ul.causes>li>div.description>span.reviewer::before {
-            content: '(';
+        ol.notifications>li ul.causes>li>div.description>span>span.reviewer::before {
+            content: ' (';
         }
 
-        ol.notifications>li ul.causes>li>div.description>span.reviewer::after {
+        ol.notifications>li ul.causes>li>div.description>span>span.reviewer::after {
             content: ')';
         }
 

@@ -123,7 +123,7 @@ function createFailingTestsSummary(commitDataCount, failureAnalysisCount, builde
         failingTestsSummary.addCommitData({
             time: minutesAgo(currentMinutesAgo++),
             revision: currentRevision++,
-            title: bugTitles.cycle(),
+            summary: bugTitles.cycle(),
             author: people.cycle(),
             reviewer: people.cycle()
         });
