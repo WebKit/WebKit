@@ -163,10 +163,6 @@
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 
-#if OS(UNIX) && !OS(DARWIN) && !OS(ANDROID)
-#include <gdk/gdk.h>
-#endif
-
 #if USE(V8)
 #include "AsyncFileSystem.h"
 #include "AsyncFileSystemChromium.h"
