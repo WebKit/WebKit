@@ -107,6 +107,7 @@ contributors_who_are_not_committers = [
     Contributor("Jarred Nicholls", "jarred@sencha.com", "jarrednicholls"),
     Contributor("John Bates", ["jbates@google.com", "jbates@chromium.org"], "jbates"),
     Contributor("John Bauman", ["jbauman@chromium.org", "jbauman@google.com"], "jbauman"),
+    Contributor("Kaustubh Atrawalkar", ["kaustubh@motorola.com"], "silverroots"),
     Contributor("Kristof Kosztyo", "kkristof@inf.u-szeged.hu", "kkristof"),
     Contributor("Kulanthaivel Palanichamy", "kulanthaivel@codeaurora.org", "kvel"),
     Contributor("Oliver Varga", ["voliver@inf.u-szeged.hu", "Varga.Oliver@stud.u-szeged.hu"], "TwistO"),

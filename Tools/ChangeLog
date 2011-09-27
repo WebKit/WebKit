@@ -1,3 +1,9 @@
+2011-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Kaustubh Atrawalkar to the list of contributors.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-09-27  Mihai Parparita  <mihaip@chromium.org>
 
         [Chromium] Fixed layout mode tests break subsequent tests
