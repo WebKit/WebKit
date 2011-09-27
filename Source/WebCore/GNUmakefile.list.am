@@ -2482,9 +2482,12 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/filters/FETile.h \
 	Source/WebCore/platform/graphics/filters/FETurbulence.cpp \
 	Source/WebCore/platform/graphics/filters/FETurbulence.h \
+	Source/WebCore/platform/graphics/filters/Filter.h \
 	Source/WebCore/platform/graphics/filters/FilterEffect.cpp \
 	Source/WebCore/platform/graphics/filters/FilterEffect.h \
-	Source/WebCore/platform/graphics/filters/Filter.h \
+	Source/WebCore/platform/graphics/filters/FilterOperation.h \
+	Source/WebCore/platform/graphics/filters/FilterOperations.cpp \
+	Source/WebCore/platform/graphics/filters/FilterOperations.h \
 	Source/WebCore/platform/graphics/filters/LightSource.cpp \
 	Source/WebCore/platform/graphics/filters/LightSource.h \
 	Source/WebCore/platform/graphics/filters/PointLightSource.cpp \
@@ -3169,6 +3172,8 @@ webcore_sources += \
 	Source/WebCore/rendering/style/StyleDashboardRegion.h \
 	Source/WebCore/rendering/style/StyleDeprecatedFlexibleBoxData.cpp \
 	Source/WebCore/rendering/style/StyleDeprecatedFlexibleBoxData.h \
+	Source/WebCore/rendering/style/StyleFilterData.cpp \
+	Source/WebCore/rendering/style/StyleFilterData.h \
 	Source/WebCore/rendering/style/StyleFlexibleBoxData.cpp \
 	Source/WebCore/rendering/style/StyleFlexibleBoxData.h \
 	Source/WebCore/rendering/style/StyleGeneratedImage.cpp \

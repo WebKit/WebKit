@@ -125,6 +125,9 @@ ALWAYS_INLINE RenderStyle::RenderStyle(bool)
     rareNonInheritedData.access()->m_marquee.init();
     rareNonInheritedData.access()->m_multiCol.init();
     rareNonInheritedData.access()->m_transform.init();
+#if ENABLE(CSS_FILTERS)
+    rareNonInheritedData.access()->m_filter.init();
+#endif
     rareInheritedData.init();
     inherited.init();
 

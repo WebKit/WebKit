@@ -1199,6 +1199,7 @@ SOURCES += \
     rendering/style/StyleBoxData.cpp \
     rendering/style/StyleCachedImage.cpp \
     rendering/style/StyleDeprecatedFlexibleBoxData.cpp \
+    rendering/style/StyleFilterData.cpp \
     rendering/style/StyleFlexibleBoxData.cpp \
     rendering/style/StyleGeneratedImage.cpp \
     rendering/style/StyleInheritedData.cpp \
@@ -1991,6 +1992,8 @@ HEADERS += \
     platform/graphics/filters/FETile.h \
     platform/graphics/filters/FETurbulence.h \
     platform/graphics/filters/FilterEffect.h \
+    platform/graphics/filters/FilterOperation.h \
+    platform/graphics/filters/FilterOperations.h \
     platform/graphics/filters/LightSource.h \
     platform/graphics/filters/SourceAlpha.h \
     platform/graphics/filters/SourceGraphic.h \
@@ -2269,6 +2272,7 @@ HEADERS += \
     rendering/style/StyleBoxData.h \
     rendering/style/StyleCachedImage.h \
     rendering/style/StyleDeprecatedFlexibleBoxData.h \
+    rendering/style/StyleFilterData.h \
     rendering/style/StyleFlexibleBoxData.h \
     rendering/style/StyleGeneratedImage.h \
     rendering/style/StyleInheritedData.h \
@@ -3208,6 +3212,7 @@ contains(DEFINES, ENABLE_FILTERS=1) {
         platform/graphics/filters/FETile.cpp \
         platform/graphics/filters/FETurbulence.cpp \
         platform/graphics/filters/FilterEffect.cpp \
+        platform/graphics/filters/FilterOperations.cpp \
         platform/graphics/filters/LightSource.cpp \
         platform/graphics/filters/PointLightSource.cpp \
         platform/graphics/filters/SpotLightSource.cpp \

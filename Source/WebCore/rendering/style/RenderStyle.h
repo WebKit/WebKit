@@ -35,6 +35,9 @@
 #include "CounterDirectives.h"
 #include "DataRef.h"
 #include "FillLayer.h"
+#if ENABLE(CSS_FILTERS)
+#include "FilterOperations.h"
+#endif
 #include "Font.h"
 #include "GraphicsTypes.h"
 #include "Length.h"
@@ -49,6 +52,9 @@
 #include "StyleBackgroundData.h"
 #include "StyleBoxData.h"
 #include "StyleDeprecatedFlexibleBoxData.h"
+#if ENABLE(CSS_FILTERS)
+#include "StyleFilterData.h"
+#endif
 #include "StyleFlexibleBoxData.h"
 #include "StyleInheritedData.h"
 #include "StyleMarqueeData.h"
@@ -841,6 +847,11 @@ public:
     EImageRendering imageRendering() const { return static_cast<EImageRendering>(rareInheritedData->m_imageRendering); }
     
     ESpeak speak() { return static_cast<ESpeak>(rareInheritedData->speak); }
+
+#if ENABLE(CSS_FILTERS)
+    const FilterOperations& filter() const { return rareNonInheritedData->m_filter->m_operations; }
+    bool hasFilter() const { return !rareNonInheritedData->m_filter->m_operations.operations().isEmpty(); }
+#endif
         
 // attribute setter methods
 
@@ -1161,6 +1172,11 @@ public:
     void setTextEmphasisMark(TextEmphasisMark mark) { SET_VAR(rareInheritedData, textEmphasisMark, mark); }
     void setTextEmphasisCustomMark(const AtomicString& mark) { SET_VAR(rareInheritedData, textEmphasisCustomMark, mark); }
     void setTextEmphasisPosition(TextEmphasisPosition position) { SET_VAR(rareInheritedData, textEmphasisPosition, position); }
+
+#if ENABLE(CSS_FILTERS)
+    void setFilter(const FilterOperations& ops) { SET_VAR(rareNonInheritedData.access()->m_filter, m_operations, ops); }
+#endif
+
     // End CSS3 Setters
 
     void setFlowThread(const AtomicString& flowThread) { SET_VAR(rareNonInheritedData, m_flowThread, flowThread); }
@@ -1454,7 +1470,9 @@ public:
     static const Vector<StyleDashboardRegion>& initialDashboardRegions();
     static const Vector<StyleDashboardRegion>& noneDashboardRegions();
 #endif
-
+#if ENABLE(CSS_FILTERS)
+    static const FilterOperations& initialFilter() { DEFINE_STATIC_LOCAL(FilterOperations, ops, ()); return ops; }
+#endif
 private:
     void inheritUnicodeBidiFrom(const RenderStyle* parent) { noninherited_flags._unicodeBidi = parent->noninherited_flags._unicodeBidi; }
     void getShadowExtent(const ShadowData*, LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const;

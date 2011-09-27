@@ -32,7 +32,6 @@
 #include "FillLayer.h"
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
-#include "StyleTransformData.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -43,6 +42,9 @@ class AnimationList;
 class CSSStyleSelector;
 class ShadowData;
 class StyleDeprecatedFlexibleBoxData;
+#if ENABLE(CSS_FILTERS)
+class StyleFilterData;
+#endif
 class StyleFlexibleBoxData;
 class StyleMarqueeData;
 class StyleMultiColData;
@@ -98,6 +100,10 @@ public:
     DataRef<StyleMarqueeData> m_marquee; // Marquee properties
     DataRef<StyleMultiColData> m_multiCol; //  CSS3 multicol properties
     DataRef<StyleTransformData> m_transform; // Transform properties (rotate, scale, skew, etc.)
+
+#if ENABLE(CSS_FILTERS)
+    DataRef<StyleFilterData> m_filter; // Filter operations (url, sepia, blur, etc.)
+#endif
 
     OwnPtr<ContentData> m_content;
     OwnPtr<CounterDirectiveMap> m_counterDirectives;

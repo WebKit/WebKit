@@ -27,6 +27,8 @@
 #include "RenderCounter.h"
 #include "RenderStyle.h"
 #include "ShadowData.h"
+#include "StyleFilterData.h"
+#include "StyleTransformData.h"
 #include "StyleImage.h"
 
 namespace WebCore {
@@ -78,6 +80,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_marquee(o.m_marquee)
     , m_multiCol(o.m_multiCol)
     , m_transform(o.m_transform)
+#if ENABLE(CSS_FILTERS)
+    , m_filter(o.m_filter)
+#endif
     , m_content(o.m_content ? o.m_content->clone() : nullptr)
     , m_counterDirectives(o.m_counterDirectives ? clone(*o.m_counterDirectives) : nullptr)
     , userDrag(o.userDrag)
@@ -135,6 +140,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_marquee == o.m_marquee
         && m_multiCol == o.m_multiCol
         && m_transform == o.m_transform
+#if ENABLE(CSS_FILTERS)
+        && m_filter == o.m_filter
+#endif
         && contentDataEquivalent(o)
         && counterDataEquivalent(o)
         && userDrag == o.userDrag

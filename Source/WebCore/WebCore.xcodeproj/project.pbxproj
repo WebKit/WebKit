@@ -785,6 +785,11 @@
 		3194620413022BF1004BB3F8 /* DOMWebKitAnimationList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3194620213022BF1004BB3F8 /* DOMWebKitAnimationList.h */; };
 		3194620513022BF1004BB3F8 /* DOMWebKitAnimationList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3194620313022BF1004BB3F8 /* DOMWebKitAnimationList.mm */; };
 		3194623213022F65004BB3F8 /* JSWebKitAnimationListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3194623113022F65004BB3F8 /* JSWebKitAnimationListCustom.cpp */; };
+		319AE063142D6B24006563A1 /* StyleFilterData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 319AE061142D6B24006563A1 /* StyleFilterData.cpp */; };
+		319AE064142D6B24006563A1 /* StyleFilterData.h in Headers */ = {isa = PBXBuildFile; fileRef = 319AE062142D6B24006563A1 /* StyleFilterData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		319AE068142D78DD006563A1 /* FilterOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 319AE065142D78DD006563A1 /* FilterOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		319AE069142D78DD006563A1 /* FilterOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 319AE066142D78DD006563A1 /* FilterOperations.cpp */; };
+		319AE06A142D78DD006563A1 /* FilterOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 319AE067142D78DD006563A1 /* FilterOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		319E68871327C911004AC91A /* JSWebKitAnimationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 319E68861327C911004AC91A /* JSWebKitAnimationCustom.cpp */; };
 		319E69B213299BBD004AC91A /* WebKitAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 319E69AC13299BBD004AC91A /* WebKitAnimation.cpp */; };
 		319E69B313299BBD004AC91A /* WebKitAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 319E69AD13299BBD004AC91A /* WebKitAnimation.h */; };
@@ -7355,6 +7360,13 @@
 		3194620213022BF1004BB3F8 /* DOMWebKitAnimationList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitAnimationList.h; sourceTree = "<group>"; };
 		3194620313022BF1004BB3F8 /* DOMWebKitAnimationList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitAnimationList.mm; sourceTree = "<group>"; };
 		3194623113022F65004BB3F8 /* JSWebKitAnimationListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitAnimationListCustom.cpp; sourceTree = "<group>"; };
+		319AE061142D6B24006563A1 /* StyleFilterData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleFilterData.cpp; path = style/StyleFilterData.cpp; sourceTree = "<group>"; };
+		319AE062142D6B24006563A1 /* StyleFilterData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleFilterData.h; path = style/StyleFilterData.h; sourceTree = "<group>"; };
+		319AE065142D78DD006563A1 /* FilterOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterOperation.h; path = filters/FilterOperation.h; sourceTree = "<group>"; };
+		319AE066142D78DD006563A1 /* FilterOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterOperations.cpp; path = filters/FilterOperations.cpp; sourceTree = "<group>"; };
+		319AE067142D78DD006563A1 /* FilterOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterOperations.h; path = filters/FilterOperations.h; sourceTree = "<group>"; };
+		319AE06B143131E0006563A1 /* FilterOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FilterOperation.h; path = platform/graphics/filters/FilterOperation.h; sourceTree = "<group>"; };
+		319AE06C143131E0006563A1 /* FilterOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FilterOperations.h; path = platform/graphics/filters/FilterOperations.h; sourceTree = "<group>"; };
 		319E68861327C911004AC91A /* JSWebKitAnimationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitAnimationCustom.cpp; sourceTree = "<group>"; };
 		319E69AC13299BBD004AC91A /* WebKitAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitAnimation.cpp; sourceTree = "<group>"; };
 		319E69AD13299BBD004AC91A /* WebKitAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAnimation.h; sourceTree = "<group>"; };
@@ -13019,6 +13031,8 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				319AE06B143131E0006563A1 /* FilterOperation.h */,
+				319AE06C143131E0006563A1 /* FilterOperations.h */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
@@ -16758,6 +16772,9 @@
 				845E72F70FD261EE00A87D79 /* Filter.h */,
 				08C925170FCC7C4A00480DEC /* FilterEffect.cpp */,
 				08C925180FCC7C4A00480DEC /* FilterEffect.h */,
+				319AE065142D78DD006563A1 /* FilterOperation.h */,
+				319AE066142D78DD006563A1 /* FilterOperations.cpp */,
+				319AE067142D78DD006563A1 /* FilterOperations.h */,
 				84730D731248F0B300D3A9C9 /* LightSource.cpp */,
 				84730D741248F0B300D3A9C9 /* LightSource.h */,
 				A1E1154513015C4E0054AC8C /* PointLightSource.cpp */,
@@ -18891,6 +18908,8 @@
 				BC5EB67E0E81D4A700B25965 /* StyleDashboardRegion.h */,
 				BC5EB8B60E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.cpp */,
 				BC5EB8B70E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h */,
+				319AE061142D6B24006563A1 /* StyleFilterData.cpp */,
+				319AE062142D6B24006563A1 /* StyleFilterData.h */,
 				5317612013C516690026E454 /* StyleFlexibleBoxData.cpp */,
 				5317612113C516690026E454 /* StyleFlexibleBoxData.h */,
 				BCEF447C0E674806001C1287 /* StyleGeneratedImage.cpp */,
@@ -20485,6 +20504,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				319AE064142D6B24006563A1 /* StyleFilterData.h in Headers */,
+				319AE068142D78DD006563A1 /* FilterOperation.h in Headers */,
+				319AE06A142D78DD006563A1 /* FilterOperations.h in Headers */,
 				5D8C4DC01428222C0026CE72 /* DisplaySleepDisabler.h in Headers */,
 				B5B5DC6A119BB3D5002A8790 /* AbstractDatabase.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
@@ -26356,6 +26378,8 @@
 				0FE71405142170B800DB33BA /* ScrollbarThemeMock.cpp in Sources */,
 				5D8C4DBF1428222C0026CE72 /* DisplaySleepDisabler.cpp in Sources */,
 				A85F22091430377D007CC884 /* JSPopStateEventCustom.cpp in Sources */,
+				319AE063142D6B24006563A1 /* StyleFilterData.cpp in Sources */,
+				319AE069142D78DD006563A1 /* FilterOperations.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

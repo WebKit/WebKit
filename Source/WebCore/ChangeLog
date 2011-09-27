@@ -1,3 +1,90 @@
+2011-09-27  Dean Jackson  <dino@apple.com>
+
+        Add 'filter' value to RenderStyle
+        https://bugs.webkit.org/show_bug.cgi?id=68471
+
+        Reviewed by Simon Fraser.
+
+        Add a filter property to RenderStyle when ENABLE(CSS_FILTERS)
+        is turned on. Similar to -webkit-transform, -webkit-filter is a
+        list of FilterOperations, each identifying what type of operation
+        it is. This change simply adds the basic objects, it does not
+        parse the property to generate the list.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/FilterOperation.h: Added.
+        (WebCore::FilterOperation::~FilterOperation):
+        (WebCore::FilterOperation::operator!=):
+        (WebCore::FilterOperation::getOperationType):
+        (WebCore::FilterOperation::isSameType):
+        (WebCore::FilterOperation::FilterOperation):
+        (WebCore::ReferenceFilterOperation::create):
+        (WebCore::ReferenceFilterOperation::reference):
+        (WebCore::ReferenceFilterOperation::operator==):
+        (WebCore::ReferenceFilterOperation::ReferenceFilterOperation):
+        (WebCore::BasicColorMatrixFilterOperation::create):
+        (WebCore::BasicColorMatrixFilterOperation::amount):
+        (WebCore::BasicColorMatrixFilterOperation::operator==):
+        (WebCore::BasicColorMatrixFilterOperation::BasicColorMatrixFilterOperation):
+        (WebCore::BasicComponentTransferFilterOperation::create):
+        (WebCore::BasicComponentTransferFilterOperation::amount):
+        (WebCore::BasicComponentTransferFilterOperation::operator==):
+        (WebCore::BasicComponentTransferFilterOperation::BasicComponentTransferFilterOperation):
+        (WebCore::GammaFilterOperation::create):
+        (WebCore::GammaFilterOperation::amplitude):
+        (WebCore::GammaFilterOperation::exponent):
+        (WebCore::GammaFilterOperation::offset):
+        (WebCore::GammaFilterOperation::operator==):
+        (WebCore::GammaFilterOperation::GammaFilterOperation):
+        (WebCore::BlurFilterOperation::create):
+        (WebCore::BlurFilterOperation::stdDeviationX):
+        (WebCore::BlurFilterOperation::stdDeviationY):
+        (WebCore::BlurFilterOperation::operator==):
+        (WebCore::BlurFilterOperation::BlurFilterOperation):
+        (WebCore::SharpenFilterOperation::create):
+        (WebCore::SharpenFilterOperation::radius):
+        (WebCore::SharpenFilterOperation::threshold):
+        (WebCore::SharpenFilterOperation::amount):
+        (WebCore::SharpenFilterOperation::operator==):
+        (WebCore::SharpenFilterOperation::SharpenFilterOperation):
+        (WebCore::DropShadowFilterOperation::create):
+        (WebCore::DropShadowFilterOperation::shadow):
+        (WebCore::DropShadowFilterOperation::operator==):
+        (WebCore::DropShadowFilterOperation::DropShadowFilterOperation):
+        * platform/graphics/filters/FilterOperations.cpp: Added.
+        (WebCore::FilterOperations::FilterOperations):
+        (WebCore::FilterOperations::operator==):
+        * platform/graphics/filters/FilterOperations.h: Added.
+        (WebCore::FilterOperations::operator!=):
+        (WebCore::FilterOperations::clear):
+        (WebCore::FilterOperations::operations):
+        (WebCore::FilterOperations::size):
+        (WebCore::FilterOperations::at):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::filter):
+        (WebCore::InheritedFlags::hasFilter):
+        (WebCore::InheritedFlags::setFilter):
+        (WebCore::InheritedFlags::initialFilter):
+        * rendering/style/StyleAllInOne.cpp: Added include of new StyleFilterData.
+        * rendering/style/StyleFilterData.cpp: Added.
+        (WebCore::StyleFilterData::StyleFilterData):
+        (WebCore::StyleFilterData::operator==):
+        * rendering/style/StyleFilterData.h: Added.
+        (WebCore::StyleFilterData::create):
+        (WebCore::StyleFilterData::copy):
+        (WebCore::StyleFilterData::operator!=):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h: New filter DataRef.
+
 2011-09-27  James Robinson  <jamesr@chromium.org>
 
         [chromium] LayerRenderChromium asserts about leaking textures.
