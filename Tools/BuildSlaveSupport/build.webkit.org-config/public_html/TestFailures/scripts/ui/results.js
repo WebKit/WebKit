@@ -169,7 +169,7 @@ ui.results.TestSelector = base.extends('div', {
         this._delegate = delegate;
         this._length = 0;
 
-        Object.keys(resultsByTest).forEach(function (testName) {
+        Object.keys(resultsByTest).sort().forEach(function(testName) {
             var link = document.createElement('a');
             $(link).attr('href', '#').text(testName);
 
@@ -245,7 +245,7 @@ ui.results.BuilderSelector = base.extends('div', {
 
         var tabStrip = this.appendChild(document.createElement('ul'));
 
-        Object.keys(resultsByBuilder).forEach(function(builderName) {
+        Object.keys(resultsByBuilder).sort().forEach(function(builderName) {
             var builderDirectory = results.directoryForBuilder(builderName);
 
             var link = document.createElement('a');
