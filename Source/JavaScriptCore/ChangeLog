@@ -1,3 +1,34 @@
+2011-09-27  Juan Carlos Montemayor Elosua  <j.mont@me.com>
+
+        Implement Error.stack
+        https://bugs.webkit.org/show_bug.cgi?id=66994
+
+        Reviewed by Oliver Hunt.
+
+        This patch utilizes topCallFrame to create a stack trace when
+        an error is thrown. Users will also be able to use the stack()
+        command in jsc to get arrays with stack trace information.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * interpreter/Interpreter.cpp:
+        (JSC::getCallerLine):
+        (JSC::getSourceURLFromCallFrame):
+        (JSC::getStackFrameCodeType):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::throwException):
+        * interpreter/Interpreter.h:
+        (JSC::StackFrame::toString):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionJSCStack):
+        * parser/Parser.h:
+        (JSC::Parser::parse):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        * runtime/Error.h:
+
 2011-09-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Reorganize header files

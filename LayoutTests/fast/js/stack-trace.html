@@ -1,0 +1,14 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+	<link rel="stylesheet" href="resources/js-test-style.css">
+	<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+	<p id="description"></p>
+	<p id="console"></p>
+	<script>function htmlInner() { throw new Error("Error in HTML"); }</script>
+	<script>function htmlOuter() { htmlInner(); }</script>
+	<script src="script-tests/stack-trace.js"></script>
+</body>
+</html>

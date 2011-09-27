@@ -31,6 +31,7 @@
 
 #include "ArgList.h"
 #include "JSCell.h"
+#include "JSFunction.h"
 #include "JSValue.h"
 #include "JSObject.h"
 #include "Opcode.h"
@@ -42,8 +43,8 @@ namespace JSC {
 
     class CodeBlock;
     class EvalExecutable;
+    class ExecutableBase;
     class FunctionExecutable;
-    class JSFunction;
     class JSGlobalObject;
     class ProgramExecutable;
     class Register;
@@ -60,6 +61,56 @@ namespace JSC {
         DidReachBreakpoint,
         WillLeaveCallFrame,
         WillExecuteStatement
+    };
+
+    enum StackFrameCodeType {
+        StackFrameGlobalCode,
+        StackFrameEvalCode,
+        StackFrameFunctionCode,
+        StackFrameNativeCode
+    };
+
+    struct StackFrame {
+        Strong<JSObject> callee;
+        Strong<CallFrame> callFrame;
+        StackFrameCodeType codeType;
+        Strong<ExecutableBase> executable;
+        int line;
+        UString sourceURL;
+        UString toString() const
+        {
+            bool hasSourceURLInfo = !sourceURL.isNull() && !sourceURL.isEmpty();
+            bool hasLineInfo = line > -1;
+            String traceLine;
+            JSObject* stackFrameCallee = callee.get();
+
+            switch (codeType) {
+            case StackFrameEvalCode:
+                if (hasSourceURLInfo) 
+                    traceLine = hasLineInfo ? String::format("eval at %s:%d", sourceURL.ascii().data(), line) 
+                                            : String::format("eval at %s", sourceURL.ascii().data());
+                else
+                    traceLine = String::format("eval");
+                break;
+            case StackFrameNativeCode:
+                traceLine = "Native code";
+                break;
+            case StackFrameFunctionCode:
+                if (stackFrameCallee && stackFrameCallee->inherits(&JSFunction::s_info)) {
+                    UString functionName = asFunction(stackFrameCallee)->name(callFrame.get());
+                    if (hasSourceURLInfo) 
+                        traceLine = hasLineInfo ? String::format("%s at %s:%d", functionName.ascii().data(), sourceURL.ascii().data(), line)
+                                                : String::format("%s at %s", functionName.ascii().data(), sourceURL.ascii().data());
+                    else
+                        traceLine = String::format("%s\n", functionName.ascii().data());
+                    break;
+                }
+            case StackFrameGlobalCode:
+                traceLine = hasLineInfo ? String::format("at %s:%d", sourceURL.ascii().data(), line)
+                                        : String::format("at %s", sourceURL.ascii().data());
+            }
+            return traceLine.impl();
+        }
     };
 
     class TopCallFrameSetter {
@@ -128,6 +179,8 @@ namespace JSC {
         NEVER_INLINE JSValue callEval(CallFrame*, RegisterFile*, Register* argv, int argc, int registerOffset);
         NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue&, unsigned bytecodeOffset);
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine);
+        static const UString getTraceLine(CallFrame*, StackFrameCodeType, const UString&, int);
+        static void getStackTrace(JSGlobalData*, int line, Vector<StackFrame>& results);
 
         void dumpSampleData(ExecState* exec);
         void startSampling();
