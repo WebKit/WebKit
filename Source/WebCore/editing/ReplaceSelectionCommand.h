@@ -60,11 +60,21 @@ private:
     virtual EditAction editingAction() const;
 
     void completeHTMLReplacement(const Position& lastPositionToSelect);
+    
+    class InsertedNodes {
+    public:
+        void respondToNodeInsertion(Node* node);
+        void willRemoveNode(Node* node);
+        Node* firstNodeInserted() const { return m_firstNodeInserted.get(); }
+        Node* lastLeafInserted() const { return m_lastNodeInserted->lastDescendant(); }
+        Node* pastLastLeaf() const { return m_firstNodeInserted ? lastLeafInserted()->traverseNextNode() : 0; }
 
-    void insertNodeAfterAndUpdateNodesInserted(PassRefPtr<Node> insertChild, Node* refChild);
-    void insertNodeAtAndUpdateNodesInserted(PassRefPtr<Node>, const Position&);
-    void insertNodeBeforeAndUpdateNodesInserted(PassRefPtr<Node> insertChild, Node* refChild);
-    Node* insertAsListItems(PassRefPtr<Node>, Node* insertionNode, const Position&);
+    private:
+        RefPtr<Node> m_firstNodeInserted;
+        RefPtr<Node> m_lastNodeInserted;
+    };
+
+    Node* insertAsListItems(PassRefPtr<Node>, Node* insertionNode, const Position&, InsertedNodes&);
 
     void updateNodesInserted(Node*);
     bool shouldRemoveEndBR(Node*, const VisiblePosition&);
@@ -77,7 +87,7 @@ private:
     
     void removeUnrenderedTextNodesAtEnds();
     
-    void removeRedundantStylesAndKeepStyleSpanInline();
+    void removeRedundantStylesAndKeepStyleSpanInline(InsertedNodes&);
     void handleStyleSpans();
     void copyStyleToChildren(Node* parentNode, const CSSMutableStyleDeclaration* parentStyle);
     void handlePasteAsQuotationNode();

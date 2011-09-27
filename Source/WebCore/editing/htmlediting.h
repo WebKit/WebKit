@@ -159,6 +159,7 @@ bool isAtUnsplittableElement(const Position&);
 // miscellaneous functions on Position
 
 unsigned numEnclosingMailBlockquotes(const Position&);
+void updatePositionForNodeRemoval(Position&, Node*);
 
 // -------------------------------------------------------------------------
 // VisiblePosition

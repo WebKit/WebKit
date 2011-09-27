@@ -347,6 +347,25 @@ void ReplacementFragment::removeInterchangeNodes(Node* container)
     }
 }
 
+inline void ReplaceSelectionCommand::InsertedNodes::respondToNodeInsertion(Node* node)
+{
+    if (!node)
+        return;
+    
+    if (!m_firstNodeInserted)
+        m_firstNodeInserted = node;
+    
+    m_lastNodeInserted = node;
+}
+
+inline void ReplaceSelectionCommand::InsertedNodes::willRemoveNode(Node* node)
+{
+    if (m_firstNodeInserted == node)
+        m_firstNodeInserted = node->traverseNextNode();
+    if (m_lastNodeInserted == node)
+        m_lastNodeInserted = node->lastChild() ? node->lastChild() : node->traverseNextSibling();
+}
+
 ReplaceSelectionCommand::ReplaceSelectionCommand(Document* document, PassRefPtr<DocumentFragment> fragment, CommandOptions options, EditAction editAction)
     : CompositeEditCommand(document)
     , m_selectReplacement(options & SelectReplacement)
@@ -476,11 +495,11 @@ bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const V
 
 // Style rules that match just inserted elements could change their appearance, like
 // a div inserted into a document with div { display:inline; }.
-void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline()
+void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(InsertedNodes& insertedNodes)
 {
-    RefPtr<Node> pastEndNode = m_lastLeafInserted ? m_lastLeafInserted->traverseNextNode() : 0;
+    RefPtr<Node> pastEndNode = insertedNodes.pastLastLeaf();
     RefPtr<Node> next;
-    for (RefPtr<Node> node = m_firstNodeInserted.get(); node && node != pastEndNode; node = next) {
+    for (RefPtr<Node> node = insertedNodes.firstNodeInserted(); node && node != pastEndNode; node = next) {
         // FIXME: <rdar://problem/5371536> Style rules that match pasted content can change it's appearance
 
         next = node->traverseNextNode();
@@ -504,9 +523,10 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline()
         }
 
         if (!inlineStyle || newInlineStyle->isEmpty()) {
-            if (isStyleSpanOrSpanWithOnlyStyleAttribute(element))
+            if (isStyleSpanOrSpanWithOnlyStyleAttribute(element)) {
+                insertedNodes.willRemoveNode(element);
                 removeNodePreservingChildren(element);
-            else
+            } else
                 removeNodeAttribute(element, styleAttr);
         } else if (newInlineStyle->style()->length() != inlineStyle->length())
             setNodeAttribute(element, styleAttr, newInlineStyle->style()->cssText());
@@ -515,6 +535,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline()
         // Keep this code around for backward compatibility
         if (isLegacyAppleStyleSpan(element)) {
             if (!element->firstChild()) {
+                insertedNodes.willRemoveNode(element);
                 removeNodePreservingChildren(element);
                 continue;
             }
@@ -552,7 +573,7 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds()
     
     // We don't have to make sure that m_firstNodeInserted isn't inside a select or script element, because
     // it is a top level node in the fragment and the user can't insert into those elements.
-    if (!m_firstNodeInserted->renderer() && 
+    if (!m_firstNodeInserted->renderer() &&
         m_firstNodeInserted->isTextNode()) {
         if (m_firstNodeInserted == m_lastLeafInserted) {
             removeNode(m_firstNodeInserted.get());
@@ -803,7 +824,7 @@ static bool isInlineNodeWithStyle(const Node* node)
 
     return EditingStyle::elementIsStyledSpanOrHTMLEquivalent(element);
 }
-    
+
 void ReplaceSelectionCommand::doApply()
 {
     VisibleSelection selection = endingSelection();
@@ -986,7 +1007,8 @@ void ReplaceSelectionCommand::doApply()
     // 6) Select the replacement if requested, and match style if requested.
     
     VisiblePosition startOfInsertedContent, endOfInsertedContent;
-    
+
+    InsertedNodes insertedNodes;
     RefPtr<Node> refNode = fragment.firstChild();
     RefPtr<Node> node = refNode->nextSibling();
     
@@ -995,9 +1017,11 @@ void ReplaceSelectionCommand::doApply()
     Node* blockStart = enclosingBlock(insertionPos.deprecatedNode());
     if ((isListElement(refNode.get()) || (isLegacyAppleStyleSpan(refNode.get()) && isListElement(refNode->firstChild())))
         && blockStart && blockStart->renderer()->isListItem())
-        refNode = insertAsListItems(refNode, blockStart, insertionPos);
-    else
-        insertNodeAtAndUpdateNodesInserted(refNode, insertionPos);
+        refNode = insertAsListItems(refNode, blockStart, insertionPos, insertedNodes);
+    else {
+        insertNodeAt(refNode, insertionPos);
+        insertedNodes.respondToNodeInsertion(refNode.get());
+    }
 
     // Mutation events (bug 22634) may have already removed the inserted content
     if (!refNode->inDocument())
@@ -1008,7 +1032,8 @@ void ReplaceSelectionCommand::doApply()
     while (node) {
         RefPtr<Node> next = node->nextSibling();
         fragment.removeNode(node.get());
-        insertNodeAfterAndUpdateNodesInserted(node, refNode.get());
+        insertNodeAfter(node, refNode.get());
+        insertedNodes.respondToNodeInsertion(node.get());
 
         // Mutation events (bug 22634) may have already removed the inserted content
         if (!node->inDocument())
@@ -1019,11 +1044,14 @@ void ReplaceSelectionCommand::doApply()
             plainTextFragment = isPlainTextMarkup(node.get());
         node = next;
     }
-    
+
+    removeRedundantStylesAndKeepStyleSpanInline(insertedNodes);
+
+    m_firstNodeInserted = insertedNodes.firstNodeInserted();
+    m_lastLeafInserted = insertedNodes.lastLeafInserted();
+
     removeUnrenderedTextNodesAtEnds();
-    
-    removeRedundantStylesAndKeepStyleSpanInline();
-    
+
     if (!handledStyleSpans)
         handleStyleSpans();
     
@@ -1137,7 +1165,8 @@ void ReplaceSelectionCommand::doApply()
                 insertTextIntoNode(text, text->length(), collapseWhiteSpace ? nonBreakingSpaceString() : " ");
             } else {
                 RefPtr<Node> node = document()->createEditingTextNode(collapseWhiteSpace ? nonBreakingSpaceString() : " ");
-                insertNodeAfterAndUpdateNodesInserted(node, endNode);
+                insertNodeAfter(node, endNode);
+                updateNodesInserted(node.get());
             }
         }
     
@@ -1227,30 +1256,9 @@ EditAction ReplaceSelectionCommand::editingAction() const
     return m_editAction;
 }
 
-void ReplaceSelectionCommand::insertNodeAfterAndUpdateNodesInserted(PassRefPtr<Node> insertChild, Node* refChild)
-{
-    Node* nodeToUpdate = insertChild.get(); // insertChild will be cleared when passed
-    insertNodeAfter(insertChild, refChild);
-    updateNodesInserted(nodeToUpdate);
-}
-
-void ReplaceSelectionCommand::insertNodeAtAndUpdateNodesInserted(PassRefPtr<Node> insertChild, const Position& p)
-{
-    Node* nodeToUpdate = insertChild.get(); // insertChild will be cleared when passed
-    insertNodeAt(insertChild, p);
-    updateNodesInserted(nodeToUpdate);
-}
-
-void ReplaceSelectionCommand::insertNodeBeforeAndUpdateNodesInserted(PassRefPtr<Node> insertChild, Node* refChild)
-{
-    Node* nodeToUpdate = insertChild.get(); // insertChild will be cleared when passed
-    insertNodeBefore(insertChild, refChild);
-    updateNodesInserted(nodeToUpdate);
-}
-
 // If the user is inserting a list into an existing list, instead of nesting the list,
 // we put the list items into the existing list.
-Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<Node> prpListElement, Node* insertionBlock, const Position& insertPos)
+Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<Node> prpListElement, Node* insertionBlock, const Position& insertPos, InsertedNodes& insertedNodes)
 {
     RefPtr<Node> listElement = prpListElement;
 
@@ -1275,10 +1283,12 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<Node> prpListElement
         ExceptionCode ec = 0;
         toContainerNode(listElement.get())->removeChild(listItem.get(), ec);
         ASSERT(!ec);
-        if (isStart || isMiddle)
+        if (isStart || isMiddle) {
             insertNodeBefore(listItem, lastNode);
-        else if (isEnd) {
+            insertedNodes.respondToNodeInsertion(listItem.get());
+        } else if (isEnd) {
             insertNodeAfter(listItem, lastNode);
+            insertedNodes.respondToNodeInsertion(listItem.get());
             lastNode = listItem.get();
         } else
             ASSERT_NOT_REACHED();
@@ -1287,7 +1297,6 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<Node> prpListElement
         lastNode = lastNode->previousSibling();
     if (isMiddle)
         insertNodeAfter(createListItemElement(document()), lastNode);
-    updateNodesInserted(lastNode);
     return lastNode;
 }
 

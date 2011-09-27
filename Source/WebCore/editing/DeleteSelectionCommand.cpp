@@ -314,36 +314,6 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
     return false;
 }
 
-static void updatePositionForNodeRemoval(Node* node, Position& position)
-{
-    if (position.isNull())
-        return;
-    switch (position.anchorType()) {
-    case Position::PositionIsBeforeChildren:
-        if (position.containerNode() == node)
-            position = positionInParentBeforeNode(node);
-        break;
-    case Position::PositionIsAfterChildren:
-        if (position.containerNode() == node)
-            position = positionInParentAfterNode(node);
-        break;
-    case Position::PositionIsOffsetInAnchor:
-        if (position.containerNode() == node->parentNode() && static_cast<unsigned>(position.offsetInContainerNode()) > node->nodeIndex())
-            position.moveToOffset(position.offsetInContainerNode() - 1);
-        else if (node->contains(position.containerNode()))
-            position = positionInParentBeforeNode(node);
-        break;
-    case Position::PositionIsAfterAnchor:
-        if (node->contains(position.anchorNode()))
-            position = positionInParentAfterNode(node);
-        break;
-    case Position::PositionIsBeforeAnchor:
-        if (node->contains(position.anchorNode()))
-            position = positionInParentBeforeNode(node);
-        break;
-    }
-}
-
 static Position firstEditablePositionInNode(Node* node)
 {
     ASSERT(node);
@@ -407,9 +377,9 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
         m_needPlaceholder = true;
     
     // FIXME: Update the endpoints of the range being deleted.
-    updatePositionForNodeRemoval(node.get(), m_endingPosition);
-    updatePositionForNodeRemoval(node.get(), m_leadingWhitespace);
-    updatePositionForNodeRemoval(node.get(), m_trailingWhitespace);
+    updatePositionForNodeRemoval(m_endingPosition, node.get());
+    updatePositionForNodeRemoval(m_leadingWhitespace, node.get());
+    updatePositionForNodeRemoval(m_trailingWhitespace, node.get());
     
     CompositeEditCommand::removeNode(node);
 }
@@ -506,7 +476,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 RefPtr<Node> nextNode = node->traverseNextSibling();
                 // if we just removed a node from the end container, update end position so the
                 // check above will work
-                updatePositionForNodeRemoval(node.get(), m_downstreamEnd);
+                updatePositionForNodeRemoval(m_downstreamEnd, node.get());
                 removeNode(node.get());
                 node = nextNode.get();
             } else {

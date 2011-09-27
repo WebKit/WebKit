@@ -923,6 +923,36 @@ unsigned numEnclosingMailBlockquotes(const Position& p)
     return num;
 }
 
+void updatePositionForNodeRemoval(Position& position, Node* node)
+{
+    if (position.isNull())
+        return;
+    switch (position.anchorType()) {
+    case Position::PositionIsBeforeChildren:
+        if (position.containerNode() == node)
+            position = positionInParentBeforeNode(node);
+        break;
+    case Position::PositionIsAfterChildren:
+        if (position.containerNode() == node)
+            position = positionInParentAfterNode(node);
+        break;
+    case Position::PositionIsOffsetInAnchor:
+        if (position.containerNode() == node->parentNode() && static_cast<unsigned>(position.offsetInContainerNode()) > node->nodeIndex())
+            position.moveToOffset(position.offsetInContainerNode() - 1);
+        else if (node->contains(position.containerNode()))
+            position = positionInParentBeforeNode(node);
+        break;
+    case Position::PositionIsAfterAnchor:
+        if (node->contains(position.anchorNode()))
+            position = positionInParentAfterNode(node);
+        break;
+    case Position::PositionIsBeforeAnchor:
+        if (node->contains(position.anchorNode()))
+            position = positionInParentBeforeNode(node);
+        break;
+    }
+}
+
 bool isMailBlockquote(const Node *node)
 {
     if (!node || !node->hasTagName(blockquoteTag))
