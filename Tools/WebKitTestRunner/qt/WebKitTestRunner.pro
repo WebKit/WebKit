@@ -32,7 +32,6 @@ unix:!mac:!symbian:!embedded {
 }
 
 QT = core gui network declarative testlib
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 HEADERS = \
     $$BASEDIR/EventSenderProxy.h \

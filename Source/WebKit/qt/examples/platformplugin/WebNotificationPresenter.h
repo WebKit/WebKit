@@ -22,13 +22,7 @@
 #define WebNotificationPresenter_h
 
 #include "qwebkitplatformplugin.h"
-
-#include <QBitmap>
-#include <QEvent>
-#include <QGridLayout>
-#include <QLabel>
-#include <QPainter>
-#include <QWidget>
+#include <QtGui>
 
 class WebNotificationWidget : public QWidget
 {

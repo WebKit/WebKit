@@ -32,7 +32,6 @@ DESTDIR = $$OUTPUT_DIR/bin
 
 QT += network declarative
 macx:QT+=xml
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 linux-* {
     # From Creator's src/rpath.pri:

@@ -42,36 +42,6 @@ static QWKPage* newPageFunction(QWKPage* page)
 }
 #endif
 
-WindowWrapper::WindowWrapper(QWindow* window, QWidget* widget)
-    : QWidget(widget)
-    , m_window(window)
-{
-    // Throttle resize events a bit
-    m_resizeTimer.setInterval(16);
-    m_resizeTimer.setSingleShot(true);
-    connect(&m_resizeTimer, SIGNAL(timeout()), this, SLOT(doResize()));
-    m_window->setWindowFlags(Qt::FramelessWindowHint);
-}
-
-void WindowWrapper::showEvent(QShowEvent* event)
-{
-    QWidget::showEvent(event);
-    m_window->setParent(window()->windowHandle());
-    m_window->show();
-}
-
-void WindowWrapper::resizeEvent(QResizeEvent* event)
-{
-    QWidget::resizeEvent(event);
-    if (!m_resizeTimer.isActive())
-        m_resizeTimer.start();
-}
-
-void WindowWrapper::doResize()
-{
-    m_window->setGeometry(QRect(mapTo(window(), QPoint(0, 0)), size()));
-}
-
 BrowserWindow::BrowserWindow(WindowOptions* options)
     : m_urlLoader(0)
     , m_browser(0)
@@ -99,8 +69,8 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
         connect(desktopWebView, SIGNAL(linkHovered(QUrl, QString)), this, SLOT(onLinkHovered(QUrl, QString)));
     }
 
-    setCentralWidget(new WindowWrapper(m_browser, this));
-    centralWidget()->setFocus(Qt::OtherFocusReason);
+    this->setCentralWidget(m_browser);
+    m_browser->setFocus(Qt::OtherFocusReason);
 
     QMenu* fileMenu = menuBar()->addMenu("&File");
     fileMenu->addAction("New Window", this, SLOT(newWindow()), QKeySequence::New);
@@ -217,7 +187,7 @@ void BrowserWindow::onLoadProgressChanged(int progress)
 void BrowserWindow::urlChanged(const QUrl& url)
 {
     m_addressBar->setText(url.toString());
-    m_browser->requestActivateWindow();
+    m_browser->setFocus();
     m_browser->view()->setFocus(true);
 }
 
@@ -350,4 +320,5 @@ BrowserWindow::~BrowserWindow()
 {
     delete m_urlLoader;
     delete m_addressBar;
+    delete m_browser;
 }

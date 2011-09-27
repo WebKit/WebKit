@@ -27,10 +27,12 @@
 #define PlatformWebView_h
 
 #if defined(BUILDING_QT__)
-class QDesktopWebView;
-typedef QDesktopWebView* PlatformWKView;
-class QSGCanvas;
-typedef QSGCanvas* PlatformWindow;
+namespace WTR {
+class WebView;
+}
+typedef WTR::WebView* PlatformWKView;
+class QMainWindow;
+typedef QMainWindow* PlatformWindow;
 #elif defined(__APPLE__) && __APPLE__
 #if __OBJC__
 @class WKView;

@@ -35,11 +35,12 @@
 
 WindowOptions windowOptions;
 
-#include <QApplication>
+
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QFontDatabase>
+
 
 #if defined(Q_WS_X11)
 #include <fontconfig/fontconfig.h>

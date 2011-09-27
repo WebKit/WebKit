@@ -33,6 +33,7 @@
 #ifndef launcherwindow_h
 #define launcherwindow_h
 
+#include <QtGui>
 #include <QtNetwork/QNetworkRequest>
 
 #if defined(QT_CONFIGURED_WITH_OPENGL)

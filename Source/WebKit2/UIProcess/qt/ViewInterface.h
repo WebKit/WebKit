@@ -23,7 +23,7 @@
 
 #include <QtCore/QSharedPointer>
 #include <QtCore/QSize>
-#include <QMenu>
+#include <QtGui/QMenu>
 #include <WebKit2/WKBase.h>
 
 class QWebError;

@@ -40,7 +40,6 @@ symbian: {
 include(../../../WebKit.pri)
 
 QT += declarative
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 contains(QT_CONFIG, qtquick1): {
     QT += qtquick1

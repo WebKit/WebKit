@@ -23,8 +23,6 @@
 #include "qdesktopwebview_p.h"
 #include "qweberror.h"
 
-#include <QFileDialog>
-#include <QGraphicsSceneEvent>
 #include <QGraphicsSceneResizeEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QtDeclarative/qdeclarativeengine.h>
@@ -33,8 +31,9 @@
 #include <QtDeclarative/qsgitem.h>
 #include <QtDeclarative/qsgview.h>
 #include <QtGui/QCursor>
-#include <QtGui/QDrag>
+#include <QtGui/QFileDialog>
 #include <QtGui/QFocusEvent>
+#include <QtGui/QGraphicsSceneEvent>
 #include <QtGui/QHoverEvent>
 #include <QtGui/QInputMethodEvent>
 #include <QtGui/QKeyEvent>
@@ -82,16 +81,16 @@ bool QDesktopWebViewPrivate::isVisible()
 
 void QDesktopWebViewPrivate::startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData* data, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction* dropAction)
 {
-    QWindow* window = q->canvas();
-    if (!window)
+    QWidget* widget = q->canvas();
+    if (!widget)
         return;
 
-    QDrag* drag = new QDrag(window);
+    QDrag* drag = new QDrag(widget);
     drag->setPixmap(QPixmap::fromImage(dragImage));
     drag->setMimeData(data);
     *dropAction = drag->exec(supportedDropActions);
     *globalPosition = QCursor::pos();
-    *clientPosition = window->mapFromGlobal(*globalPosition);
+    *clientPosition = widget->mapFromGlobal(*globalPosition);
 }
 
 void QDesktopWebViewPrivate::didReceiveViewportArguments(const WebCore::ViewportArguments&)
@@ -117,6 +116,7 @@ void QDesktopWebViewPrivate::didChangeTitle(const QString& newTitle)
 void QDesktopWebViewPrivate::didChangeToolTip(const QString& newToolTip)
 {
     // FIXME: Add a proper implementation when Qt 5 supports tooltip.
+    q->canvas()->setToolTip(newToolTip);
 }
 
 void QDesktopWebViewPrivate::didChangeStatusText(const QString& newMessage)
@@ -127,6 +127,7 @@ void QDesktopWebViewPrivate::didChangeStatusText(const QString& newMessage)
 void QDesktopWebViewPrivate::didChangeCursor(const QCursor& newCursor)
 {
     // FIXME: add proper cursor handling when Qt 5 supports it.
+    q->canvas()->setCursor(newCursor);
 }
 
 void QDesktopWebViewPrivate::loadDidBegin()
@@ -163,18 +164,15 @@ void QDesktopWebViewPrivate::showContextMenu(QSharedPointer<QMenu> menu)
     if (menu->isEmpty())
         return;
 
-    QWindow* window = q->canvas();
-    if (!window)
+    QWidget* widget = q->canvas();
+    if (!widget)
         return;
 
     activeMenu = menu;
 
-    activeMenu->window()->winId(); // Ensure that the menu has a window
-    Q_ASSERT(activeMenu->window()->windowHandle());
-    activeMenu->window()->windowHandle()->setTransientParent(window);
-
+    menu->setParent(widget, menu->windowFlags());
     QPoint menuPositionInScene = q->mapToScene(menu->pos()).toPoint();
-    menu->exec(window->mapToGlobal(menuPositionInScene));
+    menu->exec(widget->mapToGlobal(menuPositionInScene));
     // The last function to get out of exec() clear the local copy.
     if (activeMenu == menu)
         activeMenu.clear();
@@ -405,17 +403,8 @@ void QDesktopWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRe
     if (!selectedFileNames.isEmpty())
         selectedFileName = selectedFileNames.at(0);
 
-    Q_ASSERT(!fileDialog);
-
-    QWindow* window = q->canvas();
-    if (!window)
-        return;
-
-    fileDialog = new QFileDialog(0, QString(), selectedFileName);
-    fileDialog->window()->winId(); // Ensure that the dialog has a window
-    Q_ASSERT(fileDialog->window()->windowHandle());
-    fileDialog->window()->windowHandle()->setTransientParent(window);
-
+    QWidget* widget = q->canvas();
+    fileDialog = new QFileDialog(widget, QString(), selectedFileName);
     fileDialog->open(this, SLOT(onOpenPanelFilesSelected()));
 
     connect(fileDialog, SIGNAL(finished(int)), this, SLOT(onOpenPanelFinished(int)));

@@ -1,3 +1,27 @@
+2011-09-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96108, r96111, r96113, and r96116.
+        http://trac.webkit.org/changeset/96108
+        http://trac.webkit.org/changeset/96111
+        http://trac.webkit.org/changeset/96113
+        http://trac.webkit.org/changeset/96116
+        https://bugs.webkit.org/show_bug.cgi?id=68913
+
+        Wait for working Qt5 (Requested by ossy on #webkit).
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::startDrag):
+        (QDesktopWebViewPrivate::didChangeToolTip):
+        (QDesktopWebViewPrivate::didChangeCursor):
+        (QDesktopWebViewPrivate::showContextMenu):
+        (QDesktopWebViewPrivate::chooseFiles):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/tests/tests.pri:
+        * UIProcess/API/qt/tests/tests.pro:
+        * UIProcess/qt/ViewInterface.h:
+        * UIProcess/qt/WebPopupMenuProxyQtDesktop.cpp:
+        (WebKit::WebPopupMenuProxyQtDesktop::WebPopupMenuProxyQtDesktop):
+
 2011-09-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Rename WebKit2 GTK+ API main header as webkit2.h

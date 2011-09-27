@@ -24,8 +24,8 @@
 
 #ifndef QT_NO_COMBOBOX
 
-#include <QAbstractItemView>
-#include <QApplication>
+#include <QtGui/QAbstractItemView>
+#include <QtGui/QApplication>
 #include <QtGui/QMouseEvent>
 
 namespace WebCore {

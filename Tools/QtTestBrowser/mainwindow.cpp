@@ -35,14 +35,6 @@
 #include "locationedit.h"
 #include "utils.h"
 
-#include <QAction>
-#ifndef QT_NO_INPUTDIALOG
-#include <QCompleter>
-#endif
-#ifndef QT_NO_FILEDIALOG
-#include <QFileDialog>
-#endif
-
 MainWindow::MainWindow()
     : m_page(new WebPage(this))
     , m_toolBar(0)

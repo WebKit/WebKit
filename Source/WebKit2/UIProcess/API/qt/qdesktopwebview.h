@@ -44,7 +44,7 @@ class QWheelEvent;
 QT_END_NAMESPACE
 
 namespace WTR {
-    class PlatformWebView;
+    class WebView;
 }
 
 class QWEBKIT_EXPORT QDesktopWebView : public QSGPaintedItem {
@@ -120,7 +120,7 @@ private:
 
     void init();
 
-    friend class WTR::PlatformWebView;
+    friend class WTR::WebView;
     friend class QDesktopWebViewPrivate;
     QDesktopWebViewPrivate *d;
 };

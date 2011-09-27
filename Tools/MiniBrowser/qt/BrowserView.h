@@ -29,7 +29,6 @@
 #ifndef BrowserView_h
 #define BrowserView_h
 
-#include <QAction>
 #include <QtDeclarative/qsgcanvas.h>
 #include <qwebkittypes.h>
 
@@ -41,7 +40,7 @@ class BrowserView : public QSGCanvas {
     Q_OBJECT
 
 public:
-    BrowserView(bool useTouchWebView, QWindow* parent = 0);
+    BrowserView(bool useTouchWebView, QWidget* parent = 0);
     virtual ~BrowserView();
 
     void load(const QString&);

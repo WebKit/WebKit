@@ -332,10 +332,7 @@ unix:!mac:*-g++*:QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections
 unix:!mac:*-g++*:QMAKE_LFLAGS += -Wl,--gc-sections
 linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
 
-unix|win32-g++* {
-    QMAKE_PKGCONFIG_REQUIRES = QtCore QtGui QtNetwork
-    greaterThan(QT_MAJOR_VERSION, 4): QMAKE_PKGCONFIG_REQUIRES += QtWidgets
-}
+unix|win32-g++*:QMAKE_PKGCONFIG_REQUIRES = QtCore QtGui QtNetwork
 unix:!mac:!symbian:CONFIG += link_pkgconfig
 
 # Disable C++0x mode in WebCore for those who enabled it in their Qt's mkspec

@@ -33,11 +33,8 @@
 #ifndef mainwindow_h
 #define mainwindow_h
 
+#include <QtGui>
 #include "webpage.h"
-
-#include <QMainWindow>
-#include <QStringListModel>
-#include <QToolBar>
 
 class LocationEdit;
 

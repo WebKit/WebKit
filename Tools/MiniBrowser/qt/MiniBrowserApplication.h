@@ -29,20 +29,10 @@
 #ifndef MiniBrowserApplication_h
 #define MiniBrowserApplication_h
 
-#include <QApplication>
-#include <QFileDialog>
 #include <QHash>
-#include <QLabel>
-#include <QLineEdit>
-#include <QMainWindow>
-#include <QMenu>
-#include <QMenuBar>
-#include <QShortcut>
-#include <QStatusBar>
 #include <QStringList>
-#include <QToolBar>
 #include <QTouchEvent>
-#include <QUrl>
+#include <QtGui>
 
 struct WindowOptions {
     WindowOptions()

@@ -26,12 +26,11 @@
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QtQuick1/QDeclarativeItem>
-#include <QtWidgets/QAction>
 #else
 #include <QtDeclarative/QDeclarativeItem>
-#include <QtGui/QAction>
 #endif
 
+#include <QtGui/QAction>
 #include <QtNetwork/QNetworkAccessManager>
 #include "qgraphicswebview.h"
 #include "qwebpage.h"

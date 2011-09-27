@@ -1,3 +1,16 @@
+2011-09-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96108, r96111, r96113, and r96116.
+        http://trac.webkit.org/changeset/96108
+        http://trac.webkit.org/changeset/96111
+        http://trac.webkit.org/changeset/96113
+        http://trac.webkit.org/changeset/96116
+        https://bugs.webkit.org/show_bug.cgi?id=68913
+
+        Wait for working Qt5 (Requested by ossy on #webkit).
+
+        * Source/WebKit.pro:
+
 2011-09-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix build against Qt5 after refactor of widgets out of QtGUi

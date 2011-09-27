@@ -31,12 +31,7 @@
 #include <qconfig.h>
 
 #ifndef QT_NO_INPUTDIALOG
-#include <QApplication>
-#include <QIcon>
-#include <QLabel>
-#include <QLineEdit>
-#include <QStyleOptionFrameV3>
-#include <QTimer>
+#include <QtGui>
 
 class LocationEdit : public QLineEdit {
     Q_OBJECT
