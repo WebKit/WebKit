@@ -1,3 +1,19 @@
+2011-09-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        [Chromium] Web Inspector: Bug with console.log and popstate/hashchange events
+        https://bugs.webkit.org/show_bug.cgi?id=67732
+
+        Added WebKit part of a new interactive UI test for the bug with duplicated console messages after navigation back.
+
+        Reviewed by Pavel Feldman.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testConsoleOnNavigateBack.firstConsoleMessageReceived):
+        (.TestSuite.prototype.testConsoleOnNavigateBack.didClickLink):
+        (.TestSuite.prototype.testConsoleOnNavigateBack.didNavigateBack):
+        (.TestSuite.prototype.testConsoleOnNavigateBack.didCompleteNavigation):
+        (.TestSuite.prototype.testConsoleOnNavigateBack):
+
 2011-09-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

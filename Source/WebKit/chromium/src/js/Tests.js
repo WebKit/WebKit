@@ -536,6 +536,40 @@ TestSuite.prototype.testNetworkTiming = function()
 };
 
 
+TestSuite.prototype.testConsoleOnNavigateBack = function()
+{
+    if (WebInspector.console.messages.length === 1)
+        firstConsoleMessageReceived.call(this);
+    else
+        WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, firstConsoleMessageReceived, this);
+
+    function firstConsoleMessageReceived() {
+        this.evaluateInConsole_("clickLink();", didClickLink.bind(this));
+    }
+
+    function didClickLink() {
+        // Check that there are no new messages(command is not a message).
+        this.assertEquals(1, WebInspector.console.messages.length);
+        this.assertEquals(1, WebInspector.console.messages[0].totalRepeatCount);
+        this.evaluateInConsole_("history.back();", didNavigateBack.bind(this));
+    }
+
+    function didNavigateBack()
+    {
+        // Make sure navigation completed and possible console messages were pushed.
+        this.evaluateInConsole_("void 0;", didCompleteNavigation.bind(this));
+    }
+
+    function didCompleteNavigation() {
+        this.assertEquals(1, WebInspector.console.messages.length);
+        this.assertEquals(1, WebInspector.console.messages[0].totalRepeatCount);
+        this.releaseControl();
+    }
+
+    this.takeControl();
+};
+
+
 TestSuite.prototype.testSharedWorker = function()
 {
     function didEvaluateInConsole(resultText) {
