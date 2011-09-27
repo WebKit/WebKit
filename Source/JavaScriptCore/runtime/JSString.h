@@ -428,6 +428,7 @@ namespace JSC {
 
         JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
         bool toBoolean(ExecState*) const;
+        bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
         
         bool getStringPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         bool getStringPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
@@ -495,7 +496,6 @@ namespace JSC {
             }
         }
 
-        virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue& value);
         virtual double toNumber(ExecState*) const;
         virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;
         virtual UString toString(ExecState*) const;

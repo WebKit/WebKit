@@ -43,12 +43,6 @@ JSValue JSNotAnObject::defaultValue(ExecState* exec, PreferredPrimitiveType) con
     return jsNumber(0);
 }
 
-bool JSNotAnObject::getPrimitiveNumber(ExecState* exec, double&, JSValue&)
-{
-    ASSERT_UNUSED(exec, exec->hadException());
-    return false;
-}
-
 double JSNotAnObject::toNumber(ExecState* exec) const
 {
     ASSERT_UNUSED(exec, exec->hadException());

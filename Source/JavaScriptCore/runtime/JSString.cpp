@@ -274,7 +274,7 @@ JSValue JSString::toPrimitive(ExecState*, PreferredPrimitiveType) const
     return const_cast<JSString*>(this);
 }
 
-bool JSString::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result)
+bool JSString::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result) const
 {
     result = this;
     number = jsToNumber(value(exec));

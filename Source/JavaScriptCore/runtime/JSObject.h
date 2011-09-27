@@ -133,8 +133,8 @@ namespace JSC {
         virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 
         JSValue toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
-        virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue& value);
         bool toBoolean(ExecState*) const;
+        bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
         virtual double toNumber(ExecState*) const;
         virtual UString toString(ExecState*) const;
         virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;

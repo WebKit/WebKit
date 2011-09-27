@@ -288,7 +288,7 @@ static ALWAYS_INLINE JSValue callDefaultValueFunction(ExecState* exec, const JSO
     return result;
 }
 
-bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result)
+bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result) const
 {
     result = defaultValue(exec, PreferNumber);
     number = result.toNumber(exec);
