@@ -1,3 +1,14 @@
+2011-09-27  David Levin  <levin@chromium.org>
+
+        watchlist: Break out the diff boilerplate to allow for re-use.
+        https://bugs.webkit.org/show_bug.cgi?id=68871
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/checkout/diff_parser_unittest.py:
+        Break out the diff into a new file.
+        * Scripts/webkitpy/common/checkout/diff_test_data.py: Added.
+
 2011-09-27  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: UI performance: introduce heap size tracking stats.

@@ -30,64 +30,12 @@ import unittest
 import diff_parser
 import re
 
+from webkitpy.common.checkout.diff_test_data import DIFF_TEST_DATA
 
 class DiffParserTest(unittest.TestCase):
-
-    _PATCH = '''diff --git a/WebCore/rendering/style/StyleFlexibleBoxData.h b/WebCore/rendering/style/StyleFlexibleBoxData.h
-index f5d5e74..3b6aa92 100644
---- a/WebCore/rendering/style/StyleFlexibleBoxData.h
-+++ b/WebCore/rendering/style/StyleFlexibleBoxData.h
-@@ -47,7 +47,6 @@ public:
- 
-     unsigned align : 3; // EBoxAlignment
-     unsigned pack: 3; // EBoxAlignment
--    unsigned orient: 1; // EBoxOrient
-     unsigned lines : 1; // EBoxLines
- 
- private:
-diff --git a/WebCore/rendering/style/StyleRareInheritedData.cpp b/WebCore/rendering/style/StyleRareInheritedData.cpp
-index ce21720..324929e 100644
---- a/WebCore/rendering/style/StyleRareInheritedData.cpp
-+++ b/WebCore/rendering/style/StyleRareInheritedData.cpp
-@@ -39,6 +39,7 @@ StyleRareInheritedData::StyleRareInheritedData()
-     , textSizeAdjust(RenderStyle::initialTextSizeAdjust())
-     , resize(RenderStyle::initialResize())
-     , userSelect(RenderStyle::initialUserSelect())
-+    , boxOrient(RenderStyle::initialBoxOrient())
- {
- }
- 
-@@ -58,6 +59,7 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
-     , textSizeAdjust(o.textSizeAdjust)
-     , resize(o.resize)
-     , userSelect(o.userSelect)
-+    , boxOrient(o.boxOrient)
- {
- }
- 
-@@ -81,7 +83,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
-         && khtmlLineBreak == o.khtmlLineBreak
-         && textSizeAdjust == o.textSizeAdjust
-         && resize == o.resize
--        && userSelect == o.userSelect;
-+        && userSelect == o.userSelect
-+        && boxOrient == o.boxOrient;
- }
- 
- bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& o) const
-diff --git a/LayoutTests/platform/mac/fast/flexbox/box-orient-button-expected.checksum b/LayoutTests/platform/mac/fast/flexbox/box-orient-button-expected.checksum
-new file mode 100644
-index 0000000..6db26bd
---- /dev/null
-+++ b/LayoutTests/platform/mac/fast/flexbox/box-orient-button-expected.checksum
-@@ -0,0 +1 @@
-+61a373ee739673a9dcd7bac62b9f182e
-\ No newline at end of file
-'''
-
     def test_diff_parser(self, parser = None):
         if not parser:
-            parser = diff_parser.DiffParser(self._PATCH.splitlines())
+            parser = diff_parser.DiffParser(DIFF_TEST_DATA.splitlines())
         self.assertEquals(3, len(parser.files))
 
         self.assertTrue('WebCore/rendering/style/StyleFlexibleBoxData.h' in parser.files)
@@ -139,7 +87,7 @@ index 0000000..6db26bd
         ]
 
         for prefix in prefixes:
-            patch = p.sub(lambda x: " %s/" % prefix[x.group(1)], self._PATCH)
+            patch = p.sub(lambda x: " %s/" % prefix[x.group(1)], DIFF_TEST_DATA)
             self.test_diff_parser(diff_parser.DiffParser(patch.splitlines()))
 
 if __name__ == '__main__':
