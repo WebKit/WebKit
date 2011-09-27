@@ -99,6 +99,9 @@ public:
 
     bool readOnly() const { return m_readOnly; }
 
+    bool hasAutofocused() { return m_hasAutofocused; }
+    void setAutofocused() { m_hasAutofocused = true; }
+
     using TreeShared<ContainerNode>::ref;
     using TreeShared<ContainerNode>::deref;
 
@@ -159,6 +162,8 @@ private:
     bool m_isValid : 1;
 
     bool m_wasChangedSinceLastFormControlChangeEvent : 1;
+
+    bool m_hasAutofocused : 1;
 };
 
 // FIXME: Give this class its own header file.

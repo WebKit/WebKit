@@ -59,6 +59,7 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     , m_willValidate(true)
     , m_isValid(true)
     , m_wasChangedSinceLastFormControlChangeEvent(false)
+    , m_hasAutofocused(false)
 {
     if (!this->form())
         setForm(findFormAncestor());
@@ -129,6 +130,8 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
         return false;
     if (element->isReadOnlyFormControl())
         return false;
+    if (element->hasAutofocused())
+        return false;
 
     // FIXME: Should this set of hasTagName checks be replaced by a
     // virtual member function?
@@ -167,6 +170,7 @@ void HTMLFormControlElement::attach()
         renderer()->updateFromElement();
 
     if (shouldAutofocus(this)) {
+        setAutofocused();
         ref();
         queuePostAttachCallback(focusPostAttach, this);
     }
