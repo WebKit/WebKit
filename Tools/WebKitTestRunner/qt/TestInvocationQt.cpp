@@ -59,8 +59,11 @@ static void dumpImage(const QImage& image)
     fflush(stdout);
 }
 
-void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef imageRef)
+void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef imageRef, WKArrayRef repaintRects)
 {
+    //FIXME: https://bugs.webkit.org/show_bug.cgi?id=68870
+    UNUSED_PARAM(repaintRects);
+
     QImage image = WKImageCreateQImage(imageRef);
     QCryptographicHash hash(QCryptographicHash::Md5);
     for (unsigned row = 0; row < image.height(); ++row)
