@@ -1,3 +1,18 @@
+2011-09-27  Arun Patole  <bmf834@motorola.com>
+
+        Audio element doesn't emit the 'playing' event every time it starts playing, after it has finished playing.
+        https://bugs.webkit.org/show_bug.cgi?id=60972
+
+        Reviewed by Philippe Normand.
+
+        The paused attribute should be set to true and the media element should emit a 'paused' at the end of playback.
+        WHATWG revision r6562: http://html5.org/tools/web-apps-tracker?from=6561&to=6562
+
+        Test: media/media-element-play-after-eos.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged): set m_paused to true and schedule 'pause' event when playback ended.
+
 2011-09-27  Rakesh KN  <rakesh.kn@motorola.com>
 
         <input> with autofocus doesn't lose focus when it has a certain onblur listener

@@ -2139,6 +2139,10 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
             m_sentEndEvent = false;
             seek(0, ignoredException);
         } else {
+            if (!m_paused) {
+                m_paused = true;
+                scheduleEvent(eventNames().pauseEvent);
+            }
             if (!m_sentEndEvent) {
                 m_sentEndEvent = true;
                 scheduleEvent(eventNames().endedEvent);

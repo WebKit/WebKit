@@ -32,6 +32,7 @@ EVENT(seeked)
 RUN(video.play())
 EVENT(play)
 EVENT(playing)
+EVENT(pause)
 EVENT(ended)
 
 *** played to end, setting 'src' to an invalid movie

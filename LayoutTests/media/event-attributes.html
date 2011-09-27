@@ -7,6 +7,7 @@
             var ratechangeCount = 0;
             var playingCount = 0;
             var progressEventCount = 0;
+            var pauseEventCount = 0;
 
             function eventHandler()
             {
@@ -38,8 +39,10 @@
                         run("video.pause()");
                         break;
                     case "pause":
-                        consoleWrite("<br>*** seeking");
-                        run("video.currentTime = 5.6");
+                        if(++pauseEventCount == 1) {
+                            consoleWrite("<br>*** seeking");
+                            run("video.currentTime = 5.6");
+                        }
                         break;
                     case "seeked":
                         consoleWrite("<br>*** beginning playback");
