@@ -1,5 +1,39 @@
 2011-09-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Use WebKitWebContext in WebKitWebView
+        https://bugs.webkit.org/show_bug.cgi?id=67990
+
+        Reviewed by Martin Robinson.
+
+        Use webkit_web_context_get_default() instead of
+        WKContextGetSharedProcessContext() and add API to create a view
+        with a given web context and to return the current context
+        associated to the view.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextGetWKContext): Private API to get the WKContext
+        wrapped by the WebKitWebContext.
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Create the webpage using the web
+        context of the view.
+        (webkitWebViewSetProperty):
+        (webkitWebViewGetProperty):
+        (webkit_web_view_init):
+        (webkit_web_view_class_init):
+        (webkit_web_view_new): Create a new view with the default context.
+        (webkit_web_view_new_with_context): Create a new view with the
+        given context.
+        (webkit_web_view_get_context): Return the context.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/tests/testwebview.c: Added.
+        (testWebViewDefaultContext):
+        (main):
+
+2011-09-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
 
         [GTK] Add WebKitWebContext to GTK API
         https://bugs.webkit.org/show_bug.cgi?id=67931

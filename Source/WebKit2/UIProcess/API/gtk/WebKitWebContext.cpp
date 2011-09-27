@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitWebContext.h"
 
+#include "WebKitWebContextPrivate.h"
 #include <WebKit2/WKContext.h>
 #include <WebKit2/WKType.h>
 
@@ -74,4 +75,10 @@ WebKitWebContext* webkit_web_context_get_default(void)
     return WEBKIT_WEB_CONTEXT(g_once(&onceInit, createDefaultWebContext, 0));
 }
 
+WKContextRef webkitWebContextGetWKContext(WebKitWebContext* context)
+{
+    g_assert(WEBKIT_IS_WEB_CONTEXT(context));
+
+    return context->priv->context;
+}
 
