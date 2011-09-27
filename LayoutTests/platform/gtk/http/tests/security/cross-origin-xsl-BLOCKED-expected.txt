@@ -6,3 +6,4 @@ This test loads the XML document in an iframe so that it can call dumpAsText(). 
 --------
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
+
