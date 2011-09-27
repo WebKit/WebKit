@@ -28,6 +28,8 @@
 #include "RenderSVGContainer.h"
 #include "RenderSVGRoot.h"
 
+static float kMaxImageBufferSize = 4096;
+
 namespace WebCore {
 
 static AffineTransform& currentContentTransformation()
@@ -113,13 +115,16 @@ IntSize SVGImageBufferTools::roundedImageBufferSize(const FloatSize& size)
     return IntSize(static_cast<int>(lroundf(size.width())), static_cast<int>(lroundf(size.height())));
 }
 
-FloatRect SVGImageBufferTools::clampedAbsoluteTargetRectForRenderer(const RenderObject* renderer, const FloatRect& absoluteTargetRect)
+FloatRect SVGImageBufferTools::clampedAbsoluteTargetRect(const FloatRect& absoluteTargetRect)
 {
-    ASSERT(renderer);
-
-    const RenderSVGRoot* svgRoot = SVGRenderSupport::findTreeRootObject(renderer);
     FloatRect clampedAbsoluteTargetRect = absoluteTargetRect;
-    clampedAbsoluteTargetRect.intersect(svgRoot->frameRect());
+
+    if (clampedAbsoluteTargetRect.width() > kMaxImageBufferSize)
+        clampedAbsoluteTargetRect.setWidth(kMaxImageBufferSize);
+
+    if (clampedAbsoluteTargetRect.height() > kMaxImageBufferSize)
+        clampedAbsoluteTargetRect.setHeight(kMaxImageBufferSize);
+
     return clampedAbsoluteTargetRect;
 }
 

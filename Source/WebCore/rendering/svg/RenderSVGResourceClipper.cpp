@@ -173,7 +173,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderObject* object, cons
     SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(object, absoluteTransform);
 
     FloatRect absoluteTargetRect = absoluteTransform.mapRect(repaintRect);
-    FloatRect clampedAbsoluteTargetRect = SVGImageBufferTools::clampedAbsoluteTargetRectForRenderer(object, absoluteTargetRect);
+    FloatRect clampedAbsoluteTargetRect = SVGImageBufferTools::clampedAbsoluteTargetRect(absoluteTargetRect);
 
     if (shouldCreateClipData && !clampedAbsoluteTargetRect.isEmpty()) {
         if (!SVGImageBufferTools::createImageBuffer(absoluteTargetRect, clampedAbsoluteTargetRect, clipperData->clipMaskImage, ColorSpaceDeviceRGB))

@@ -99,7 +99,7 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
     SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(object, absoluteTransform);
 
     FloatRect absoluteTargetRect = absoluteTransform.mapRect(object->repaintRectInLocalCoordinates());
-    FloatRect clampedAbsoluteTargetRect = SVGImageBufferTools::clampedAbsoluteTargetRectForRenderer(object, absoluteTargetRect);
+    FloatRect clampedAbsoluteTargetRect = SVGImageBufferTools::clampedAbsoluteTargetRect(absoluteTargetRect);
 
     if (!maskerData->maskImage && !clampedAbsoluteTargetRect.isEmpty()) {
         SVGMaskElement* maskElement = static_cast<SVGMaskElement*>(node());

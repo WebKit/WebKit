@@ -61,8 +61,9 @@ public:
 private:
     bool buildTileImageTransform(RenderObject*, const PatternAttributes&, const SVGPatternElement*, FloatRect& patternBoundaries, AffineTransform& tileImageTransform) const;
 
-    PassOwnPtr<ImageBuffer> createTileImage(RenderObject*, const PatternAttributes&, const FloatRect& tileBoundaries,
-                                            const FloatRect& absoluteTileBoundaries, const AffineTransform& tileImageTransform) const;
+    PassOwnPtr<ImageBuffer> createTileImage(const PatternAttributes&, const FloatRect& tileBoundaries,
+                                            const FloatRect& absoluteTileBoundaries, const AffineTransform& tileImageTransform,
+                                            FloatRect& clampedAbsoluteTileBoundaries) const;
 
     bool m_shouldCollectPatternAttributes : 1;
     PatternAttributes m_attributes;
