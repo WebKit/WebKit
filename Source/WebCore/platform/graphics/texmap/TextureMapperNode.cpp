@@ -136,20 +136,6 @@ void TextureMapperNode::computeLocalTransformIfNeeded()
         .translate3d(-originX, -originY, -m_state.anchorPoint.z());
 }
 
-bool TextureMapperNode::needsToComputeBoundingRect() const
-{
-    if (m_size.width() > gTileDimension || m_size.height() > gTileDimension)
-        return true;
-    if (!m_state.masksToBounds)
-        return false;
-
-    for (size_t i = 0; i < m_children.size(); ++i)
-        if (m_children[i]->needsToComputeBoundingRect())
-            return true;
-
-    return false;
-}
-
 void TextureMapperNode::computeAllTransforms()
 {
     if (m_size.isEmpty() && m_state.masksToBounds)
@@ -160,7 +146,6 @@ void TextureMapperNode::computeAllTransforms()
     computePerspectiveTransformIfNeeded();
 
     m_transforms.target = TransformationMatrix(m_parent ? m_parent->m_transforms.forDescendants : TransformationMatrix()).multiply(m_transforms.local);
-    m_transforms.targetBoundingRect = FloatRect(m_transforms.target.mapRect(targetRect()));
 
     m_state.visible = m_state.backfaceVisibility || m_transforms.target.inverse().m33() >= 0;
     if (!m_state.visible)
@@ -186,28 +171,6 @@ void TextureMapperNode::computeAllTransforms()
     m_transforms.forDescendants.multiply(m_transforms.perspective);
 }
 
-void TextureMapperNode::computeBoundingRectFromRootIfNeeded()
-{
-    if (!needsToComputeBoundingRect())
-        return;
-    if (!m_parent) {
-        m_transforms.boundingRectFromRoot = m_transforms.boundingRectFromRootForDescendants = IntRect(0, 0, -1, -1);
-        return;
-    }
-
-    const FloatRect targetRectInRootCoordinates = m_transforms.target.mapRect(targetRect());
-
-    const FloatRect parentBoundingRect = m_parent->m_transforms.boundingRectFromRootForDescendants;
-    if (parentBoundingRect.width() < 0)
-        m_transforms.boundingRectFromRoot = targetRectInRootCoordinates;
-    else {
-        m_transforms.boundingRectFromRootForDescendants = m_transforms.boundingRectFromRoot = parentBoundingRect;
-        m_transforms.boundingRectFromRoot.intersect(targetRectInRootCoordinates);
-    }
-    if (m_state.masksToBounds)
-        m_transforms.boundingRectFromRootForDescendants.intersect(m_transforms.boundingRectFromRoot);
-}
-
 void TextureMapperNode::computeTiles()
 {
     if (m_currentContent.contentType == HTMLContentType && !m_state.drawsContent) {
@@ -227,10 +190,7 @@ void TextureMapperNode::computeTiles()
             FloatRect tileRectInRootCoordinates = tileRect;
             tileRectInRootCoordinates.scale(1.0 / m_state.contentScale);
             tileRectInRootCoordinates = m_transforms.target.mapRect(tileRectInRootCoordinates);
-            static bool sDiscardHiddenTiles = false;
-            // FIXME: discard hidden tiles.
-            if (!sDiscardHiddenTiles || !needsToComputeBoundingRect() || tileRectInRootCoordinates.intersects(m_state.visibleRect))
-                tilesToAdd.append(tileRect);
+            tilesToAdd.append(tileRect);
         }
     }
 
@@ -269,21 +229,6 @@ void TextureMapperNode::computeTiles()
 
     for (size_t i = 0; i < tilesToRemove.size() && m_tiles.size() > TileEraseThreshold; ++i)
         m_tiles.remove(tilesToRemove[i]);
-}
-
-void TextureMapperNode::computeVisibleRectIfNeeded()
-{
-    if (!needsToComputeBoundingRect())
-        return;
-    FloatRect rootVisibleRect;
-    if (!m_parent)
-        rootVisibleRect = m_state.rootVisibleRect;
-    else if (m_parent)
-        rootVisibleRect = m_parent->m_state.rootVisibleRect;
-
-    m_state.rootVisibleRect = rootVisibleRect;
-    m_state.visibleRect = m_state.rootVisibleRect;
-    m_state.visibleRect.intersect(m_transforms.boundingRectFromRoot);
 }
 
 void TextureMapperNode::renderContent(TextureMapper* textureMapper, GraphicsLayer* layer)
@@ -565,11 +510,6 @@ TextureMapperNode::~TextureMapperNode()
 
     if (m_parent)
         m_parent->m_children.remove(m_parent->m_children.find(this));
-}
-
-void TextureMapperNode::setVisibleRect(const IntRect& rect)
-{
-    m_state.rootVisibleRect = m_state.visibleRect = rect;
 }
 
 void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphicsLayer, int options)
@@ -895,7 +835,6 @@ void TextureMapperNode::syncCompositingState(GraphicsLayerTextureMapper* graphic
     syncAnimations(graphicsLayer);
 
     computeAllTransforms();
-    computeBoundingRectFromRootIfNeeded();
     computePerspectiveTransformIfNeeded();
     computeTiles();
     computeOverlapsIfNeeded();

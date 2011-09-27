@@ -135,7 +135,6 @@ public:
     IntSize size() const { return IntSize(m_size.width() + .5, m_size.height() + .5); }
     void setTransform(const TransformationMatrix&);
     void setOpacity(float value) { m_opacity = value; }
-    void setVisibleRect(const IntRect&);
     void setTextureMapper(TextureMapper* texmap) { m_textureMapper = texmap; }
     bool descendantsOrSelfHaveRunningAnimations() const;
 
@@ -148,7 +147,6 @@ public:
 private:
     TextureMapperNode* rootLayer();
     void computeAllTransforms();
-    void computeVisibleRectIfNeeded();
     void computePerspectiveTransformIfNeeded();
     void computeReplicaTransformIfNeeded();
     void computeOverlapsIfNeeded();
