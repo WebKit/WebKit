@@ -7365,8 +7365,6 @@
 		319AE065142D78DD006563A1 /* FilterOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterOperation.h; path = filters/FilterOperation.h; sourceTree = "<group>"; };
 		319AE066142D78DD006563A1 /* FilterOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterOperations.cpp; path = filters/FilterOperations.cpp; sourceTree = "<group>"; };
 		319AE067142D78DD006563A1 /* FilterOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterOperations.h; path = filters/FilterOperations.h; sourceTree = "<group>"; };
-		319AE06B143131E0006563A1 /* FilterOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FilterOperation.h; path = platform/graphics/filters/FilterOperation.h; sourceTree = "<group>"; };
-		319AE06C143131E0006563A1 /* FilterOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FilterOperations.h; path = platform/graphics/filters/FilterOperations.h; sourceTree = "<group>"; };
 		319E68861327C911004AC91A /* JSWebKitAnimationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitAnimationCustom.cpp; sourceTree = "<group>"; };
 		319E69AC13299BBD004AC91A /* WebKitAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitAnimation.cpp; sourceTree = "<group>"; };
 		319E69AD13299BBD004AC91A /* WebKitAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAnimation.h; sourceTree = "<group>"; };
@@ -13031,8 +13029,6 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
-				319AE06B143131E0006563A1 /* FilterOperation.h */,
-				319AE06C143131E0006563A1 /* FilterOperations.h */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
