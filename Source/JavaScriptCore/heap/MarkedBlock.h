@@ -140,7 +140,7 @@ namespace JSC {
         template <typename Functor> void forEachCell(Functor&);
 
     private:
-        static const size_t atomMask = ~(atomSize - 1); // atomSize must be a power of two.
+        static const size_t atomAlignmentMask = atomSize - 1; // atomSize must be a power of two.
 
         enum BlockState { New, FreeListed, Allocated, Marked, Zapped };
 
@@ -178,7 +178,7 @@ namespace JSC {
 
     inline bool MarkedBlock::isAtomAligned(const void* p)
     {
-        return !(reinterpret_cast<Bits>(p) & ~atomMask);
+        return !(reinterpret_cast<Bits>(p) & atomAlignmentMask);
     }
 
     inline MarkedBlock* MarkedBlock::blockFor(const void* p)
@@ -278,7 +278,12 @@ namespace JSC {
 
     inline bool MarkedBlock::isLiveCell(const void* p)
     {
-        if ((atomNumber(p) - firstAtom()) % m_atomsPerCell) // Filters pointers to cell middles.
+        ASSERT(MarkedBlock::isAtomAligned(p));
+        size_t atomNumber = this->atomNumber(p);
+        size_t firstAtom = this->firstAtom();
+        if (atomNumber < firstAtom) // Filters pointers into MarkedBlock metadata.
+            return false;
+        if ((atomNumber - firstAtom) % m_atomsPerCell) // Filters pointers into cell middles.
             return false;
 
         return isLive(static_cast<const JSCell*>(p));

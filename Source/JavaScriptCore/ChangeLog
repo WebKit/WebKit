@@ -1,3 +1,21 @@
+2011-09-26  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION (r95912): Conservative marking doesn't filter out pointers to
+        MarkedBlock metadata
+        https://bugs.webkit.org/show_bug.cgi?id=68860
+
+        Reviewed by Oliver Hunt.
+        
+        Bencher says no performance change, maybe a 7% speedup on kraken-imaging-darkroom.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::isAtomAligned): Renamed atomMask to atomAlignment mask
+        because the mask doesn't produce the actual atom number.
+
+        (JSC::MarkedBlock::isLiveCell): Testing just for alignment isn't good
+        enough; we also need to test that a pointer is beyond the metadata section
+        of a MarkedBlock, to avoid treating random metadata as a JSCell.
+
 2011-09-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Make JSCell::toBoolean non-virtual
