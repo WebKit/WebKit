@@ -45,6 +45,7 @@ class CCThread;
 class GraphicsContext3D;
 class LayerChromium;
 class LayerPainterChromium;
+class TextureAllocator;
 class TextureManager;
 
 class CCLayerTreeHostClient {
@@ -98,7 +99,7 @@ public:
     // CCLayerTreeHost interface to CCProxy.
     void animateAndLayout(double frameBeginTime);
     void commitComplete();
-    void commitTo(CCLayerTreeHostImpl*);
+    void commitToOnCCThread(CCLayerTreeHostImpl*);
     PassOwnPtr<CCThread> createCompositorThread();
     PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D();
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl();
@@ -106,6 +107,7 @@ public:
 #if !USE(THREADED_COMPOSITING)
     void scheduleComposite();
 #endif
+    void deleteContentsTexturesOnCCThread(TextureAllocator*);
 
     // CCLayerTreeHost interface to WebView.
     bool animating() const { return m_animating; }
@@ -152,8 +154,6 @@ public:
 
     void updateLayers();
 
-    void deleteContentsTextures(GraphicsContext3D*);
-
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, PassRefPtr<LayerChromium> rootLayer, const CCSettings&);
     bool initialize();
@@ -163,8 +163,8 @@ private:
 
     void paintLayerContents(const LayerList&);
     void updateLayers(LayerChromium*);
-    void updateCompositorResources(const LayerList&, GraphicsContext3D*);
-    void updateCompositorResources(LayerChromium*, GraphicsContext3D*);
+    void updateCompositorResources(const LayerList&, GraphicsContext3D*, TextureAllocator*);
+    void updateCompositorResources(LayerChromium*, GraphicsContext3D*, TextureAllocator*);
     void clearPendingUpdate();
 
     bool m_animating;

@@ -50,7 +50,7 @@ public:
     virtual ~WebGLLayerChromium();
 
     virtual bool drawsContent() const;
-    virtual void updateCompositorResources(GraphicsContext3D*);
+    virtual void updateCompositorResources(GraphicsContext3D*, TextureAllocator*);
     void setTextureUpdated();
     bool paintRenderedResultsToCanvas(ImageBuffer*);
 

@@ -71,7 +71,7 @@ public:
     virtual Orientation orientation() { return LayerTextureUpdater::BottomUpOrientation; }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat);
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels);
-    virtual void updateTextureRect(GraphicsContext3D*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
+    virtual void updateTextureRect(GraphicsContext3D*, TextureAllocator*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
 private:
     LayerTextureUpdaterBitmap(PassOwnPtr<LayerPainterChromium>, bool useMapTexSubImage);
@@ -88,7 +88,7 @@ public:
     virtual Orientation orientation() { return LayerTextureUpdater::TopDownOrientation; }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat);
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels);
-    virtual void updateTextureRect(GraphicsContext3D*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
+    virtual void updateTextureRect(GraphicsContext3D*, TextureAllocator*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
 private:
     explicit LayerTextureUpdaterSkPicture(PassOwnPtr<LayerPainterChromium>);
