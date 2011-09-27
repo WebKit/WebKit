@@ -46,6 +46,7 @@ public:
     virtual ~IDBCallbacksProxy();
 
     virtual void onError(PassRefPtr<WebCore::IDBDatabaseError>);
+    virtual void onSuccess(PassRefPtr<WebCore::DOMStringList>);
     virtual void onSuccess(PassRefPtr<WebCore::IDBCursorBackendInterface>);
     virtual void onSuccess(PassRefPtr<WebCore::IDBDatabaseBackendInterface>);
     virtual void onSuccess(PassRefPtr<WebCore::IDBKey>);

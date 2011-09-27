@@ -84,6 +84,11 @@ void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBTransactionBackendInterface> bac
     m_callbacks->onSuccess(new WebIDBTransactionImpl(backend));
 }
 
+void IDBCallbacksProxy::onSuccess(PassRefPtr<DOMStringList> domStringList)
+{
+    m_callbacks->onSuccess(WebDOMStringList(domStringList));
+}
+
 void IDBCallbacksProxy::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptValue)
 {
     m_callbacks->onSuccess(WebSerializedScriptValue(serializedScriptValue));

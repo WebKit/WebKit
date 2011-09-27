@@ -58,12 +58,17 @@ IDBAny::~IDBAny()
 {
 }
 
+PassRefPtr<DOMStringList> IDBAny::domStringList()
+{
+    ASSERT(m_type == DOMStringListType);
+    return m_domStringList;
+}
+
 PassRefPtr<IDBCursor> IDBAny::idbCursor()
 {
     ASSERT(m_type == IDBCursorType);
     return m_idbCursor;
 }
-
 
 PassRefPtr<IDBCursorWithValue> IDBAny::idbCursorWithValue()
 {
@@ -117,6 +122,13 @@ void IDBAny::setNull()
 {
     ASSERT(m_type == UndefinedType);
     m_type = NullType;
+}
+
+void IDBAny::set(PassRefPtr<DOMStringList> value)
+{
+    ASSERT(m_type == UndefinedType);
+    m_type = DOMStringListType;
+    m_domStringList = value;
 }
 
 void IDBAny::set(PassRefPtr<IDBCursorWithValue> value)

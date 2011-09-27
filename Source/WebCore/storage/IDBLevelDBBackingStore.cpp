@@ -164,6 +164,26 @@ PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securit
     return backingStore.release();
 }
 
+void IDBLevelDBBackingStore::getDatabaseNames(Vector<String>& foundNames)
+{
+    const Vector<char> startKey = DatabaseNameKey::encodeMinKeyForOrigin(m_identifier);
+    const Vector<char> stopKey = DatabaseNameKey::encodeStopKeyForOrigin(m_identifier);
+
+    ASSERT(foundNames.isEmpty());
+
+    OwnPtr<LevelDBIterator> it = m_db->createIterator();
+    for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
+        const char *p = it->key().begin();
+        const char *limit = it->key().end();
+
+        DatabaseNameKey databaseNameKey;
+        p = DatabaseNameKey::decode(p, limit, &databaseNameKey);
+        ASSERT(p);
+
+        foundNames.append(databaseNameKey.databaseName());
+    }
+}
+
 bool IDBLevelDBBackingStore::extractIDBDatabaseMetaData(const String& name, String& foundVersion, int64_t& foundId)
 {
     const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
@@ -231,6 +251,11 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
 {
     const Vector<char> startKey = ObjectStoreMetaDataKey::encode(databaseId, 1, 0);
     const Vector<char> stopKey = ObjectStoreMetaDataKey::encodeMaxKey(databaseId);
+
+    ASSERT(foundIds.isEmpty());
+    ASSERT(foundNames.isEmpty());
+    ASSERT(foundKeyPaths.isEmpty());
+    ASSERT(foundAutoIncrementFlags.isEmpty());
 
     OwnPtr<LevelDBIterator> it = m_db->createIterator();
     it->seek(startKey);
@@ -607,6 +632,11 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
 {
     const Vector<char> startKey = IndexMetaDataKey::encode(databaseId, objectStoreId, 0, 0);
     const Vector<char> stopKey = IndexMetaDataKey::encode(databaseId, objectStoreId + 1, 0, 0);
+
+    ASSERT(foundIds.isEmpty());
+    ASSERT(foundNames.isEmpty());
+    ASSERT(foundKeyPaths.isEmpty());
+    ASSERT(foundUniqueFlags.isEmpty());
 
     OwnPtr<LevelDBIterator> it = m_db->createIterator();
     for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {

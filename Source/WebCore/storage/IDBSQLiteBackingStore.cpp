@@ -197,6 +197,20 @@ PassRefPtr<IDBBackingStore> IDBSQLiteBackingStore::open(SecurityOrigin* security
     return backingStore.release();
 }
 
+void IDBSQLiteBackingStore::getDatabaseNames(Vector<String>& foundNames)
+{
+    ASSERT(foundNames.isEmpty());
+
+    SQLiteStatement query(m_db, "SELECT name FROM Databases");
+    if (query.prepare() != SQLResultOk) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    while (query.step() == SQLResultRow)
+        foundNames.append(query.getColumnText(0));
+}
+
 bool IDBSQLiteBackingStore::extractIDBDatabaseMetaData(const String& name, String& foundVersion, int64_t& foundId)
 {
     SQLiteStatement databaseQuery(m_db, "SELECT id, version FROM Databases WHERE name = ?");

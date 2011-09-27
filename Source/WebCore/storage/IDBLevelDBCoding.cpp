@@ -818,6 +818,17 @@ Vector<char> DatabaseNameKey::encode(const String& origin, const String& databas
     return ret;
 }
 
+Vector<char> DatabaseNameKey::encodeMinKeyForOrigin(const String& origin)
+{
+    return encode(origin, "");
+}
+
+Vector<char> DatabaseNameKey::encodeStopKeyForOrigin(const String& origin)
+{
+    // just after origin in collation order
+    return encodeMinKeyForOrigin(origin + "\x01");
+}
+
 int DatabaseNameKey::compare(const DatabaseNameKey& other)
 {
     if (int x = codePointCompare(m_origin, other.m_origin))

@@ -117,6 +117,8 @@ class DatabaseNameKey {
 public:
     static const char* decode(const char* start, const char* limit, DatabaseNameKey* result);
     static Vector<char> encode(const String& origin, const String& databaseName);
+    static Vector<char> encodeMinKeyForOrigin(const String& origin);
+    static Vector<char> encodeStopKeyForOrigin(const String& origin);
     String origin() const { return m_origin; }
     String databaseName() const { return m_databaseName; }
     int compare(const DatabaseNameKey& other);

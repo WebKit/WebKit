@@ -58,6 +58,23 @@ IDBFactory::~IDBFactory()
 {
 }
 
+PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* context)
+{
+    if (!context->isDocument()) {
+        // FIXME: make this work with workers.
+        return 0;
+    }
+
+    Document* document = static_cast<Document*>(context);
+    if (!document->frame() || !document->page())
+        return 0;
+
+    RefPtr<IDBRequest> request = IDBRequest::create(document, IDBAny::create(this), 0);
+    GroupSettings* groupSettings = document->page()->group().groupSettings();
+    m_factoryBackend->getDatabaseNames(request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath(), groupSettings->indexedDBQuotaBytes(), IDBFactoryBackendInterface::DefaultBackingStore);
+    return request;
+}
+
 PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
     if (!context->isDocument()) {

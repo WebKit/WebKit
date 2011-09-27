@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class DOMStringList;
 class IDBCursor;
 class IDBCursorWithValue;
 class IDBDatabase;
@@ -67,6 +68,7 @@ public:
     enum Type {
         UndefinedType = 0,
         NullType,
+        DOMStringListType,
         IDBCursorType,
         IDBCursorWithValueType,
         IDBDatabaseType,
@@ -80,6 +82,7 @@ public:
 
     Type type() const { return m_type; }
     // Use type() to figure out which one of these you're allowed to call.
+    PassRefPtr<DOMStringList> domStringList();
     PassRefPtr<IDBCursor> idbCursor();
     PassRefPtr<IDBCursorWithValue> idbCursorWithValue();
     PassRefPtr<IDBDatabase> idbDatabase();
@@ -92,6 +95,7 @@ public:
 
     // Set can only be called once.
     void setNull();
+    void set(PassRefPtr<DOMStringList>);
     void set(PassRefPtr<IDBCursor>);
     void set(PassRefPtr<IDBCursorWithValue>);
     void set(PassRefPtr<IDBDatabase>);
@@ -108,6 +112,7 @@ private:
     Type m_type;
 
     // Only one of the following should ever be in use at any given time.
+    RefPtr<DOMStringList> m_domStringList;
     RefPtr<IDBCursor> m_idbCursor;
     RefPtr<IDBCursorWithValue> m_idbCursorWithValue;
     RefPtr<IDBDatabase> m_idbDatabase;

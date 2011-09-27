@@ -1,0 +1,20 @@
+Test the basics of IndexedDB's IDBFactory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+indexedDB.getDatabaseNames()
+databaseNames = event.target.result
+PASS databaseNames.contains('storage/indexeddb/factory-basics') is false
+PASS databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false
+indexedDB.open(name, description)
+indexedDB.getDatabaseNames()
+databaseNames = event.target.result
+PASS databaseNames.contains('storage/indexeddb/factory-basics') is true
+PASS databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

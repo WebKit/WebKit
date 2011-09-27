@@ -29,6 +29,7 @@
 #ifndef IDBCallbacks_h
 #define IDBCallbacks_h
 
+#include "DOMStringList.h"
 #include "IDBCursorBackendInterface.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseError.h"
@@ -48,6 +49,7 @@ public:
     virtual ~IDBCallbacks() { }
 
     virtual void onError(PassRefPtr<IDBDatabaseError>) = 0;
+    virtual void onSuccess(PassRefPtr<DOMStringList>) = 0;
     virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>) = 0;
     virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>) = 0;
     virtual void onSuccess(PassRefPtr<IDBKey>) = 0;

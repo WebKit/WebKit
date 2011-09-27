@@ -186,6 +186,13 @@ static PassRefPtr<Event> createSuccessEvent()
     return Event::create(eventNames().successEvent, false, false);
 }
 
+void IDBRequest::onSuccess(PassRefPtr<DOMStringList> domStringList)
+{
+    ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
+    m_result = IDBAny::create(domStringList);
+    enqueueEvent(createSuccessEvent());
+}
+
 void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend)
 {
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);

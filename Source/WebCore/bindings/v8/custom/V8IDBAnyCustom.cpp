@@ -32,6 +32,7 @@
 #include "V8IDBAny.h"
 
 #include "SerializedScriptValue.h"
+#include "V8DOMStringList.h"
 #include "V8IDBCursor.h"
 #include "V8IDBCursorWithValue.h"
 #include "V8IDBDatabase.h"
@@ -53,6 +54,8 @@ v8::Handle<v8::Value> toV8(IDBAny* impl)
         return v8::Undefined();
     case IDBAny::NullType:
         return v8::Null();
+    case IDBAny::DOMStringListType:
+        return toV8(impl->domStringList());
     case IDBAny::IDBCursorType:
         return toV8(impl->idbCursor());
     case IDBAny::IDBCursorWithValueType:

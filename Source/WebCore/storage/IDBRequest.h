@@ -32,6 +32,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ActiveDOMObject.h"
+#include "DOMStringList.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -74,6 +75,7 @@ public:
 
     // IDBCallbacks
     virtual void onError(PassRefPtr<IDBDatabaseError>);
+    virtual void onSuccess(PassRefPtr<DOMStringList>);
     virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>);
     virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>);
     virtual void onSuccess(PassRefPtr<IDBKey>);

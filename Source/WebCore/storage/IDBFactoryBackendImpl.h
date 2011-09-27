@@ -55,10 +55,12 @@ public:
     void addIDBBackingStore(const String& fileIdentifier, IDBBackingStore*);
     void removeIDBBackingStore(const String& fileIdentifier);
 
+    virtual void getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType);
     virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType);
 
 private:
     IDBFactoryBackendImpl();
+    PassRefPtr<IDBBackingStore> openBackingStore(PassRefPtr<SecurityOrigin>, const String& dataDir, int64_t maximumSize, BackingStoreType);
     bool migrateFromSQLiteToLevelDB(const String& name, SecurityOrigin*, const String& dataDir, int64_t maximumSize);
 
     typedef HashMap<String, IDBDatabaseBackendImpl*> IDBDatabaseBackendMap;

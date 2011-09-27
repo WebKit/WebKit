@@ -34,6 +34,7 @@
 #include "IDBDatabaseError.h"
 #include "IDBKey.h"
 #include "IDBTransactionBackendProxy.h"
+#include "WebDOMStringList.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBDatabase.h"
 #include "WebIDBDatabaseError.h"
@@ -57,6 +58,11 @@ WebIDBCallbacksImpl::~WebIDBCallbacksImpl()
 void WebIDBCallbacksImpl::onError(const WebIDBDatabaseError& error)
 {
     m_callbacks->onError(error);
+}
+
+void WebIDBCallbacksImpl::onSuccess(const WebDOMStringList& domStringList)
+{
+    m_callbacks->onSuccess(domStringList);
 }
 
 void WebIDBCallbacksImpl::onSuccess(WebIDBCursor* cursor)

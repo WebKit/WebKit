@@ -81,6 +81,26 @@ void IDBFactoryBackendImpl::removeIDBBackingStore(const String& fileIdentifier)
     m_backingStoreMap.remove(fileIdentifier);
 }
 
+void IDBFactoryBackendImpl::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType backingStoreType)
+{
+    ASSERT(backingStoreType != DefaultBackingStore);
+
+    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDir, maximumSize, backingStoreType);
+    if (!backingStore) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+        return;
+    }
+
+    RefPtr<DOMStringList> databaseNames = DOMStringList::create();
+
+    Vector<String> foundNames;
+    backingStore->getDatabaseNames(foundNames);
+    for (Vector<String>::const_iterator it = foundNames.begin(); it != foundNames.end(); ++it)
+        databaseNames->append(*it);
+
+    callbacks->onSuccess(databaseNames.release());
+}
+
 void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType backingStoreType)
 {
     ASSERT(backingStoreType != DefaultBackingStore);
@@ -112,6 +132,23 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
     }
 #endif
 
+    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDir, maximumSize, backingStoreType);
+    if (!backingStore) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+        return;
+    }
+
+    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, backingStore.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
+    callbacks->onSuccess(databaseBackend.get());
+    m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
+}
+
+PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<SecurityOrigin> securityOrigin, const String& dataDir, int64_t maximumSize, BackingStoreType backingStoreType)
+{
+    ASSERT(backingStoreType != DefaultBackingStore);
+
+    const String fileIdentifier = computeFileIdentifier(securityOrigin.get(), backingStoreType);
+
     RefPtr<IDBBackingStore> backingStore;
     IDBBackingStoreMap::iterator it2 = m_backingStoreMap.find(fileIdentifier);
     if (it2 != m_backingStoreMap.end() && (backingStoreType == it2->second->backingStoreType()))
@@ -123,15 +160,12 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
         else if (backingStoreType == LevelDBBackingStore)
             backingStore = IDBLevelDBBackingStore::open(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
 #endif
-        if (!backingStore) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
-            return;
-        }
     }
 
-    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, backingStore.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
-    callbacks->onSuccess(databaseBackend.get());
-    m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
+    if (backingStore)
+        return backingStore.release();
+
+    return 0;
 }
 
 #if USE(LEVELDB)

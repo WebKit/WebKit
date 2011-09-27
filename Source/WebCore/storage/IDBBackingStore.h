@@ -46,6 +46,7 @@ class IDBBackingStore : public RefCounted<IDBBackingStore> {
 public:
     virtual ~IDBBackingStore() {};
 
+    virtual void getDatabaseNames(Vector<String>& foundNames) = 0;
     virtual bool extractIDBDatabaseMetaData(const String& name, String& foundVersion, int64_t& foundId) = 0;
     virtual bool setIDBDatabaseMetaData(const String& name, const String& version, int64_t& rowId, bool invalidRowId) = 0;
 
