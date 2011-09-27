@@ -28,12 +28,21 @@
 
 from webkitpy.common.checkout.diff_parser import DiffParser
 
+
 class WatchList(object):
     def __init__(self):
         self._definitions = {}
+        self._cc_rules = set()
+        self._message_rules = set()
 
     def set_definitions(self, definitions):
         self._definitions = definitions
+
+    def set_cc_rules(self, cc_rules):
+        self._cc_rules = cc_rules
+
+    def set_message_rules(self, message_rules):
+        self._message_rules = message_rules
 
     def find_matching_definitions(self, diff):
         matching_definitions = set()
@@ -52,3 +61,23 @@ class WatchList(object):
                 else:
                     matching_definitions.add(definition)
         return matching_definitions
+
+    def _determine_instructions(self, matching_definitions, rules):
+        instructions = set()
+        for rule in rules:
+            if rule.match(matching_definitions):
+                instructions.update(rule.instructions())
+        return instructions
+
+    def determine_cc_set(self, matching_definitions):
+        return self._determine_instructions(matching_definitions, self._cc_rules)
+
+    def determine_messages(self, matching_definitions):
+        return self._determine_instructions(matching_definitions, self._message_rules)
+
+    def determine_cc_set_and_messages(self, diff):
+        definitions = self.find_matching_definitions(diff)
+        return {
+            'cc_set': self.determine_cc_set(definitions),
+            'messages':  self.determine_messages(definitions),
+            }

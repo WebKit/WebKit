@@ -29,14 +29,21 @@
 import re
 from webkitpy.common.watchlist.watchlist import WatchList
 from webkitpy.common.watchlist.filenamepattern import FilenamePattern
+from webkitpy.common.watchlist.watchlistrule import WatchListRule
 
 
 class WatchListParser(object):
     _DEFINITIONS = 'DEFINITIONS'
+    _CC_RULES = 'CC_RULES'
+    _MESSAGE_RULES = 'MESSAGE_RULES'
     _INVALID_DEFINITION_NAME_REGEX = r'\|'
 
     def __init__(self):
-        self._section_parsers = {self._DEFINITIONS: self._parse_definition_section, }
+        self._section_parsers = {
+            self._DEFINITIONS: self._parse_definition_section,
+            self._CC_RULES: self._parse_cc_rules,
+            self._MESSAGE_RULES: self._parse_message_rules,
+            }
         self._definition_pattern_parsers = {'filename': FilenamePattern, }
 
     def parse(self, watch_list_contents):
@@ -74,3 +81,15 @@ class WatchListParser(object):
                 pattern = pattern_parser(definition[pattern_type])
                 definitions[name].append(pattern)
         watch_list.set_definitions(definitions)
+
+    def _parse_rules(self, rules_section):
+        rules = []
+        for complex_definition in rules_section:
+            rules.append(WatchListRule(complex_definition, rules_section[complex_definition]))
+        return rules
+
+    def _parse_cc_rules(self, cc_section, watch_list):
+        watch_list.set_cc_rules(self._parse_rules(cc_section))
+
+    def _parse_message_rules(self, message_section, watch_list):
+        watch_list.set_message_rules(self._parse_rules(message_section))

@@ -34,7 +34,7 @@ from webkitpy.common.checkout.diff_test_data import DIFF_TEST_DATA
 from webkitpy.common.watchlist.watchlistparser import WatchListParser
 
 
-class WatchListParserTest(unittest.TestCase):
+class WatchListTest(unittest.TestCase):
     def setUp(self):
         self._watch_list_parser = WatchListParser()
 
@@ -59,3 +59,83 @@ class WatchListParserTest(unittest.TestCase):
             '     },'
             '}')
         self.assertEquals(set(['WatchList1']), watch_list.find_matching_definitions(DIFF_TEST_DATA))
+
+    def test_cc_rules_simple(self):
+        watch_list = self._watch_list_parser.parse(
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "filename": r"WebCore/rendering/style/StyleFlexibleBoxData\.h",'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "WatchList1": ['
+            '            "levin@chromium.org",'
+            '        ],'
+           '    },'
+            '}')
+        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        self.assertEquals({
+                'cc_set': set(['levin@chromium.org']),
+                'messages': set(),
+                }, cc_set_and_messages)
+
+    def test_cc_rules_complex(self):
+        watch_list = self._watch_list_parser.parse(
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "filename": r"WebCore/rendering/style/StyleFlexibleBoxData\.h",'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "WatchList2|WatchList1|WatchList3": [ "levin@chromium.org", ],'
+            '    },'
+            '}')
+        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        self.assertEquals({
+                'cc_set': set(['levin@chromium.org']),
+                'messages': set(),
+                }, cc_set_and_messages)
+
+    def test_cc_and_message_rules_complex(self):
+        watch_list = self._watch_list_parser.parse(
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "filename": r"WebCore/rendering/style/StyleFlexibleBoxData\.h",'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "WatchList2|WatchList1|WatchList3": [ "levin@chromium.org", ],'
+            '    },'
+            '    "MESSAGE_RULES": {'
+            '        "WatchList2|WatchList1|WatchList3": [ "msg1", "msg2", ],'
+            '    },'
+            '}')
+        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        self.assertEquals({
+                'cc_set': set(['levin@chromium.org']),
+                'messages': set(['msg1', 'msg2']),
+                }, cc_set_and_messages)
+
+    def test_cc_and_message_rules_no_matches(self):
+        watch_list = self._watch_list_parser.parse(
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "filename": r"WebCore/rendering/style/ThisFileDoesNotExist\.h",'
+            '        },'
+            '     },'
+            '    "CC_RULES": {'
+            '        "WatchList2|WatchList1|WatchList3": [ "levin@chromium.org", ],'
+            '    },'
+            '    "MESSAGE_RULES": {'
+            '        "WatchList2|WatchList1|WatchList3": [ "msg1", "msg2", ],'
+            '    },'
+            '}')
+        cc_set_and_messages = watch_list.determine_cc_set_and_messages(DIFF_TEST_DATA)
+        self.assertEquals({
+                'cc_set': set(),
+                'messages': set(),
+                }, cc_set_and_messages)
