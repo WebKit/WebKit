@@ -1,3 +1,20 @@
+2011-09-27  James Robinson  <jamesr@chromium.org>
+
+        Add a mechanism to test for the compositing tree mutated during painting
+        https://bugs.webkit.org/show_bug.cgi?id=68738
+
+        Reviewed by Adam Barth.
+
+        Sets a static bool during GraphicsLayer::paintGraphicsLayerContents and ASSERT()s that we never create or
+        destroy a GraphicsLayer inside this function. Painting should never mutate the GraphicsLayer tree.
+
+        Test: compositing/video/video-with-invalid-source.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        (WebCore::GraphicsLayer::~GraphicsLayer):
+        (WebCore::GraphicsLayer::paintGraphicsLayerContents):
+
 2011-09-27  Ojan Vafai  <ojan@chromium.org>
 
         take padding/border on flexbox into account with direction:rtl

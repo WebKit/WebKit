@@ -61,6 +61,10 @@ void KeyframeValueList::insert(const AnimationValue* value)
     m_values.append(value);
 }
 
+#ifndef NDEBUG
+static bool s_inPaintContents = false;
+#endif
+
 GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
     : m_client(client)
     , m_anchorPoint(0.5f, 0.5f, 0)
@@ -84,10 +88,12 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
     , m_replicatedLayer(0)
     , m_repaintCount(0)
 {
+    ASSERT(!s_inPaintContents);
 }
 
 GraphicsLayer::~GraphicsLayer()
 {
+    ASSERT(!s_inPaintContents);
     removeAllChildren();
     removeFromParent();
 }
@@ -268,8 +274,14 @@ void GraphicsLayer::clearBackgroundColor()
 
 void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const IntRect& clip)
 {
+#ifndef NDEBUG
+    s_inPaintContents = true;
+#endif
     if (m_client)
         m_client->paintContents(this, context, m_paintingPhase, clip);
+#ifndef NDEBUG
+    s_inPaintContents = false;
+#endif
 }
 
 String GraphicsLayer::animationNameForTransition(AnimatedPropertyID property)
