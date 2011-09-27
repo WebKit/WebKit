@@ -1,3 +1,13 @@
+2011-06-28  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Replaced elements squeezed when width is specified as percentage inside a table with Auto layout
+        https://bugs.webkit.org/show_bug.cgi?id=29447
+
+        * fast/replaced/table-percent-width.html: Added.
+        * fast/replaced/table-percent-width-expected.txt: Added.
+
 2011-09-27  Simon Fraser  <simon.fraser@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=67858
