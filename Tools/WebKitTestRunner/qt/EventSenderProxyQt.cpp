@@ -28,6 +28,7 @@
 
 #include "PlatformWebView.h"
 #include "TestController.h"
+#include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 #include <QtTest/QtTest>
 #include <WebKit2/WKPagePrivate.h>

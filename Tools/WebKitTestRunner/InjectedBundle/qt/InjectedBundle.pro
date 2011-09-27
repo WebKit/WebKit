@@ -9,6 +9,7 @@ CONFIG(standalone_package) {
 }
 
 QT += declarative
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 GENERATED_SOURCES_DIR = ../../generated
 

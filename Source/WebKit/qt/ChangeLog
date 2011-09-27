@@ -1,3 +1,11 @@
+2011-09-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Buildfix after r96108.
+
+        Rubber-stamped by Andreas Kling.
+
+        * tests/tests.pri:
+
 2011-09-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix build of declarative plugin against Qt5
