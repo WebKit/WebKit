@@ -95,7 +95,7 @@ WebInspector.BreakpointManager.prototype = {
             return;
 
         breakpoint._materialized = true;
-        var rawLocation = breakpoint.uiSourceCode.rawSourceCode.uiLocationToRawLocation(breakpoint.lineNumber, 0);
+        var rawLocation = breakpoint.uiSourceCode.rawSourceCode.sourceMapping.uiLocationToRawLocation(breakpoint.lineNumber, 0);
         this._setBreakpointInDebugger(breakpoint, rawLocation);
     },
 
@@ -103,7 +103,7 @@ WebInspector.BreakpointManager.prototype = {
     {
         if (!breakpoint.uiSourceCode)
             return;
-        var uiLocation = breakpoint.uiSourceCode.rawSourceCode.rawLocationToUILocation(breakpoint._debuggerLocation);
+        var uiLocation = breakpoint.uiSourceCode.rawSourceCode.sourceMapping.rawLocationToUILocation(breakpoint._debuggerLocation);
         if (uiLocation.lineNumber === breakpoint.lineNumber)
             return;
 

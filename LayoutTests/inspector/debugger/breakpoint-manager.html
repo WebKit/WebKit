@@ -58,22 +58,21 @@ function test()
     serializedBreakpoints.push(createBreakpoint("a.js", 20, "", false));
     serializedBreakpoints.push(createBreakpoint("b.js", 3, "", true));
 
-    var uiSourceCodeA = {
-        id: "a.js",
-        url: "a.js",
-        rawSourceCode: {
-            rawLocationToUILocation: function(rawLocation) { return rawLocation; },
-            uiLocationToRawLocation: function(lineNumber, columnNumber) { return { scriptId: "a.js", lineNumber: lineNumber, columnNumber: columnNumber }; }
-        }
-    };
-    var uiSourceCodeB = {
-        id: "b.js",
-        url: "b.js",
-        rawSourceCode: {
-            rawLocationToUILocation: function(rawLocation) { return rawLocation; },
-            uiLocationToRawLocation: function(lineNumber, columnNumber) { return { scriptId: "b.js", lineNumber: lineNumber, columnNumber: columnNumber }; }
-        }
+    function createUISourceCode(id, url, rawLocationToUILocation, uiLocationToRawLocation)
+    {
+        return {
+            id: id,
+            url: url,
+            rawSourceCode: { sourceMapping : { rawLocationToUILocation: rawLocationToUILocation, uiLocationToRawLocation: uiLocationToRawLocation } }
+        };
     }
+
+    var uiSourceCodeA = createUISourceCode("a.js", "a.js",
+            function(rawLocation) { return rawLocation; },
+            function(lineNumber, columnNumber) { return { scriptId: "a.js", lineNumber: lineNumber, columnNumber: columnNumber }; });
+    var uiSourceCodeB = createUISourceCode("b.js", "b.js",
+            function(rawLocation) { return rawLocation; },
+            function(lineNumber, columnNumber) { return { scriptId: "b.js", lineNumber: lineNumber, columnNumber: columnNumber }; });
 
     function createBreakpointManager(breakpoints)
     {
@@ -204,23 +203,12 @@ function test()
         function testFormatting(next)
         {
             var breakpointManager = createBreakpointManager([createBreakpoint("c.js", 4, "", true)]);
-
-            var uiSourceCodeC = {
-                id: "c.js",
-                url: "c.js",
-                rawSourceCode: {
-                    rawLocationToUILocation: function(rawLocation) { return rawLocation; },
-                    uiLocationToRawLocation: function(lineNumber, columnNumber) { return { scriptId: "c.js", lineNumber: lineNumber, columnNumber: columnNumber }; }
-                }
-            };
-            var uiSourceCodeCFormatted = {
-                id: "deobfuscated:c.js",
-                url: "c.js",
-                rawSourceCode: {
-                    rawLocationToUILocation: function(rawLocation) { return { lineNumber: rawLocation.lineNumber * 2, columnNumber: rawLocation.columnNumber * 2 }; },
-                    uiLocationToRawLocation: function(lineNumber, columnNumber) { return { scriptId: "c.js", lineNumber: Math.floor(lineNumber / 2), columnNumber: Math.floor(columnNumber / 2) }; }
-                }
-            }
+            var uiSourceCodeC = createUISourceCode("c.js", "c.js",
+                    function(rawLocation) { return rawLocation; },
+                    function(lineNumber, columnNumber) { return { scriptId: "c.js", lineNumber: lineNumber, columnNumber: columnNumber }; });
+            var uiSourceCodeCFormatted = createUISourceCode("deobfuscated:c.js", "c.js",
+                    function(rawLocation) { return { lineNumber: rawLocation.lineNumber * 2, columnNumber: rawLocation.columnNumber * 2 }; },
+                    function(lineNumber, columnNumber) { return { scriptId: "c.js", lineNumber: Math.floor(lineNumber / 2), columnNumber: Math.floor(columnNumber / 2) }; });
 
             breakpointManager.uiSourceCodeAdded(uiSourceCodeC);
             setTimeout(format, 0);

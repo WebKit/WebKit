@@ -65,10 +65,9 @@ WebInspector.RawSourceCode.prototype = {
         this._hasNewScripts = true;
     },
 
-    get uiSourceCode()
+    get sourceMapping()
     {
-        // FIXME: clients should use sourceMapping directly.
-        return this._sourceMapping && this._sourceMapping.uiSourceCode;
+        return this._sourceMapping;
     },
 
     setFormatted: function(formatted)
@@ -88,18 +87,6 @@ WebInspector.RawSourceCode.prototype = {
     {
         this._useTemporaryContent = false;
         this._updateSourceMapping();
-    },
-
-    rawLocationToUILocation: function(rawLocation)
-    {
-        // FIXME: clients should use sourceMapping directly.
-        return this._sourceMapping.rawLocationToUILocation(rawLocation);
-    },
-
-    uiLocationToRawLocation: function(lineNumber, columnNumber)
-    {
-        // FIXME: clients should use sourceMapping directly.
-        return this._sourceMapping.uiLocationToRawLocation(lineNumber, columnNumber);
     },
 
     _scriptForRawLocation: function(lineNumber, columnNumber)
