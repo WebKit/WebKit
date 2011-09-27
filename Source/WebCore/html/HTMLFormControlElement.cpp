@@ -128,8 +128,6 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
         return false;
     if (element->document()->ignoreAutofocus())
         return false;
-    if (element->isReadOnlyFormControl())
-        return false;
     if (element->hasAutofocused())
         return false;
 

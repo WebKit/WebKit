@@ -1,3 +1,17 @@
+2011-09-27  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        Autofocus on readonly inputs does not focus the element.
+        https://bugs.webkit.org/show_bug.cgi?id=24092
+
+        Reviewed by Ryosuke Niwa.
+
+        Readonly input elements should be autofocusable. Removed the check.
+
+        Tests: fast/forms/autofocus-readonly-attribute.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::shouldAutofocus):
+
 2011-09-27  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up how FrameView accesses the RenderView
