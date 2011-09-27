@@ -1,3 +1,17 @@
+2011-09-27  Tim Horton  <timothy_horton@apple.com>
+
+        Rapidly refreshing a feMorphology[erode] with r=0 can sometimes cause display corruption
+        https://bugs.webkit.org/show_bug.cgi?id=68816
+        <rdar://problem/10186468>
+
+        Reviewed by Simon Fraser.
+
+        Add a test which ensures that a zero-radius feMorphology filter returns cleared memory.
+
+        * svg/filters/feMorphology-zero-radius-expected.png: Added.
+        * svg/filters/feMorphology-zero-radius-expected.txt: Added.
+        * svg/filters/feMorphology-zero-radius.svg: Added.
+
 2011-09-27  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=68922

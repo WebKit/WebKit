@@ -372,8 +372,10 @@ void FETurbulence::apply()
     if (!pixelArray)
         return;
 
-    if (absolutePaintRect().isEmpty())
+    if (absolutePaintRect().isEmpty()) {
+        pixelArray->clear();
         return;
+    }
 
     PaintingData paintingData(m_seed, roundedIntSize(filterPrimitiveSubregion().size()));
     initPaint(paintingData);

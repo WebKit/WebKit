@@ -70,6 +70,8 @@ namespace WTF {
 
         unsigned char* data() { return m_data; }
 
+        void clear() { memset(m_data, 0, m_size); }
+
         void deref()
         {
             if (derefBase()) {
