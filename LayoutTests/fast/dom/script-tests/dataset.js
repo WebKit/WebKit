@@ -19,6 +19,7 @@ shouldBeTrue("testGet('data-foo--', 'foo--')");
 shouldBeTrue("testGet('data-Foo', 'foo')"); // HTML lowercases all attributes.
 shouldBeTrue("testGet('data-', '')");
 shouldBeTrue("testGet('data-\xE0', '\xE0')");
+shouldBeUndefined("document.body.dataset.nonExisting");
 debug("");
 
 function matchesNothingInDataset(attr)

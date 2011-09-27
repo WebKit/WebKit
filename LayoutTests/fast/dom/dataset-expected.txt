@@ -15,6 +15,7 @@ PASS testGet('data-foo--', 'foo--') is true
 PASS testGet('data-Foo', 'foo') is true
 PASS testGet('data-', '') is true
 PASS testGet('data-à', 'à') is true
+PASS document.body.dataset.nonExisting is undefined.
 
 PASS matchesNothingInDataset('dataFoo') is true
 

@@ -49,7 +49,7 @@ v8::Handle<v8::Integer> V8DOMStringMap::namedPropertyQuery(v8::Local<v8::String>
 v8::Handle<v8::Value> V8DOMStringMap::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.DOMStringMap.NamedPropertyGetter");
-    return v8String(V8DOMStringMap::toNative(info.Holder())->item(toWebCoreString(name)));
+    return v8StringOrUndefined(V8DOMStringMap::toNative(info.Holder())->item(toWebCoreString(name)));
 }
 
 v8::Handle<v8::Array> V8DOMStringMap::namedPropertyEnumerator(const v8::AccessorInfo& info)

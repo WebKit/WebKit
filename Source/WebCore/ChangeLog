@@ -1,3 +1,13 @@
+2011-09-27  Kent Tamura  <tkent@chromium.org>
+
+        [V8] element.dataset.nonExistingKey should return undefined.
+        https://bugs.webkit.org/show_bug.cgi?id=68877
+
+        Reviewed by Nate Chapin.
+
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp:
+        (WebCore::V8DOMStringMap::namedPropertyGetter): Uses v8StringOrUndefined() instead of v8String().
+
 2011-09-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add static version of JSCell::visitChildren
