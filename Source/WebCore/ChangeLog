@@ -1,3 +1,19 @@
+2011-09-27  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Add compatibility methods for DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=68884
+
+        Reviewed by Philippe Normand.
+
+        Add compatibility methods for our DOM bindings.
+
+        * bindings/gobject/WebKitDOMCustom.cpp:
+        (webkit_dom_blob_slice): alias to the new method name.
+        (webkit_dom_html_form_element_dispatch_form_change): this was
+        removed from WebCore, so just print a warning about it.
+        (webkit_dom_html_form_element_dispatch_form_input): ditto.
+        * bindings/gobject/WebKitDOMCustom.h:
+
 2011-09-26  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Do not ignore 'Replaceable' attributes in the DOM bindings
