@@ -2467,8 +2467,9 @@ void FrameView::updateScrollCorner()
 {
     RenderObject* renderer = 0;
     RefPtr<RenderStyle> cornerStyle;
+    IntRect cornerRect = scrollCornerRect();
     
-    if (!scrollCornerRect().isEmpty()) {
+    if (!cornerRect.isEmpty()) {
         // Try the <body> element first as a scroll corner source.
         Document* doc = m_frame->document();
         Element* body = doc ? doc->body() : 0;
@@ -2497,7 +2498,7 @@ void FrameView::updateScrollCorner()
         if (!m_scrollCorner)
             m_scrollCorner = new (renderer->renderArena()) RenderScrollbarPart(renderer->document());
         m_scrollCorner->setStyle(cornerStyle.release());
-        invalidateScrollCorner();
+        invalidateScrollCorner(cornerRect);
     } else if (m_scrollCorner) {
         m_scrollCorner->destroy();
         m_scrollCorner = 0;
