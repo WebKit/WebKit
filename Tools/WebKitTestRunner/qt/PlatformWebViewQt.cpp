@@ -28,42 +28,22 @@
 
 #include "PlatformWebView.h"
 #include "qdesktopwebview.h"
+
+#include <QApplication>
 #include <QtDeclarative/qsgcanvas.h>
-#include <QtGui>
 
 namespace WTR {
 
-class WebView : public QSGCanvas {
-public:
-    WebView(WKContextRef, WKPageGroupRef);
-
-    QDesktopWebView* wkView() const { return m_item; }
-    WKPageRef pageRef() const { return m_item->pageRef(); }
-
-    virtual ~WebView() { delete m_item; }
-
-private:
-    QDesktopWebView* m_item;
-};
-
-WebView::WebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
-    : m_item(new QDesktopWebView(contextRef, pageGroupRef, rootItem()))
-{
-    m_item->setWidth(800);
-    m_item->setHeight(600);
-}
-
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
-    : m_view(new WebView(contextRef, pageGroupRef))
-    , m_window(new QMainWindow())
+    : m_view(new QDesktopWebView(contextRef, pageGroupRef))
+    , m_window(new QSGCanvas)
 {
-    m_view->setParent(m_window);
-    m_window->setCentralWidget(m_view);
+    m_view->setParent(m_window->rootItem());
     m_window->setGeometry(0, 0, 800, 600);
 
     QFocusEvent ev(QEvent::WindowActivate);
     QApplication::sendEvent(m_view, &ev);
-    m_view->wkView()->setFocus(Qt::OtherFocusReason);
+    m_view->setFocus(Qt::OtherFocusReason);
 }
 
 PlatformWebView::~PlatformWebView()
@@ -104,12 +84,12 @@ void PlatformWebView::setWindowFrame(WKRect wkRect)
 
 bool PlatformWebView::sendEvent(QEvent* event)
 {
-    return QCoreApplication::sendEvent(m_view->wkView(), event);
+    return QCoreApplication::sendEvent(m_view, event);
 }
 
 void PlatformWebView::postEvent(QEvent* event)
 {
-    QCoreApplication::postEvent(m_view->wkView(), event);
+    QCoreApplication::postEvent(m_view, event);
 }
 
 } // namespace WTR

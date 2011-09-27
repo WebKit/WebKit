@@ -24,7 +24,11 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QtWidgets/qicon.h>
+#else
 #include <QtGui/qicon.h>
+#endif
 #include <QtScript/qscriptengine.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
 #include "qwebkitglobal.h"

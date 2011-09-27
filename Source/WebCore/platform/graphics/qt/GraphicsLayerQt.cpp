@@ -29,6 +29,12 @@
 #include "RefCounted.h"
 #include "TranslateTransformOperation.h"
 #include "UnitBezier.h"
+#include <qgraphicseffect.h>
+#include <qgraphicsitem.h>
+#include <qgraphicsscene.h>
+#include <qgraphicsview.h>
+#include <qgraphicswidget.h>
+#include <qstyleoption.h>
 #include <QtCore/qabstractanimation.h>
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
@@ -36,15 +42,9 @@
 #include <QtCore/qset.h>
 #include <QtCore/qtimer.h>
 #include <QtGui/qcolor.h>
-#include <QtGui/qgraphicseffect.h>
-#include <QtGui/qgraphicsitem.h>
-#include <QtGui/qgraphicsscene.h>
-#include <QtGui/qgraphicsview.h>
-#include <QtGui/qgraphicswidget.h>
 #include <QtGui/qpainter.h>
 #include <QtGui/qpixmap.h>
 #include <QtGui/qpixmapcache.h>
-#include <QtGui/qstyleoption.h>
 
 #if ENABLE(TILED_BACKING_STORE)
 #include "TiledBackingStore.h"

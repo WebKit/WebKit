@@ -23,7 +23,7 @@
 
 #include "Platform.h"
 
-#include <QtGui/QComboBox>
+#include <QComboBox>
 
 #ifndef QT_NO_COMBOBOX
 

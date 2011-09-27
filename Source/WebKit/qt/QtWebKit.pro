@@ -41,6 +41,7 @@ webkit2:prependWebKit2Lib(../../WebKit2)
 # the generated includes are containing the dependencies.
 # It used to be in WebCore.pro but now that this is the main pro file it has to be here.
 QT += network
+greaterThan(QT_MAJOR_VERSION, 4): QT += printsupport
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
 

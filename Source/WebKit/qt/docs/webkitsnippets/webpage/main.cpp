@@ -17,9 +17,10 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <QtGui>
-#include <QWebPage>
+#include <QApplication>
+#include <QPainter>
 #include <QWebFrame>
+#include <QWebPage>
 
 //! [0]
 class Thumbnailer : public QObject

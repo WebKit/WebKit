@@ -32,7 +32,6 @@
 #include "UrlLoader.h"
 #include <QLatin1String>
 #include <QRegExp>
-#include <QtGui>
 
 int main(int argc, char** argv)
 {
