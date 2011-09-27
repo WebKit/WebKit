@@ -1,5 +1,17 @@
 2011-09-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Crash in WebCore::HTMLParser::createHead
+        https://bugs.webkit.org/show_bug.cgi?id=32426
+
+        Reviewed by Darin Adler.
+
+        The crash was fixed some time ago but the test was not landed which kept the bug open.
+
+        * fast/parser/crash-HTMLParser-createHead.html: Added.
+        Tweaked the test case as we now throw an exception (DOM Exception 12).
+
+2011-09-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Crash because CSSPrimitiveValue::computeLengthDouble assumes fontMetrics are available
         https://bugs.webkit.org/show_bug.cgi?id=66291
 
