@@ -8,7 +8,7 @@ function makeXHRRequests(count)
 {
     for (var i = 0; i < count; ++i) {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", document.url, true);
+        xhr.open("GET", document.URL, true);
         xhr.send();
     }
 }

@@ -8,6 +8,8 @@ InspectorTest.runPerformanceTest = function(perfTest, executeTime, callback)
         this._test = test;
         this._times = {};
         this._testStartTime = new Date();
+        this._heapSizeDeltas = [];
+        this._jsHeapSize = this._getJSHeapSize();
     }
 
     Timer.prototype = {
@@ -24,8 +26,18 @@ InspectorTest.runPerformanceTest = function(perfTest, executeTime, callback)
             this._times[cookie.name].push(endTime - cookie.startTime);
         },
 
+        _getJSHeapSize: function()
+        {
+            window.gc();
+            window.gc();
+            return console.memory.usedJSHeapSize;
+        },
+
         done: function()
         {
+            this._heapSizeDeltas.push(console.memory.usedJSHeapSize - this._jsHeapSize);
+            this._jsHeapSize = this._getJSHeapSize();
+
             var time = new Date();
             if (time - this._testStartTime < executeTime)
                 this._runTest();
@@ -53,16 +65,25 @@ InspectorTest.runPerformanceTest = function(perfTest, executeTime, callback)
 
         _dump: function()
         {
-            for (var testName in this._times) {
-                var samples = this._times[testName];
-                var stripNResults = Math.floor(samples.length / 10);
-                samples.sort(function(a, b) { return a - b; });
-                var sum = 0;
-                for (var i = stripNResults; i < samples.length - stripNResults; ++i)
-                    sum += samples[i];
-                InspectorTest.addResult("* " + testName + ": " + Math.floor(sum / (samples.length - stripNResults * 2)));
-                InspectorTest.addResult(testName + " min/max/count: " + samples[0] + "/" + samples[samples.length-1] + "/" + samples.length);
-            }
+            for (var testName in this._times)
+                this._dumpTestStats(testName, this._times[testName]);
+
+            var url = WebInspector.mainResource._documentURL;
+            var regExp = /([^\/]+)\.html/;
+            var matches = regExp.exec(url);
+            this._dumpTestStats("heap-delta-kb-" + matches[1], this._heapSizeDeltas, 1024);
+        },
+
+        _dumpTestStats: function(testName, samples, divider)
+        {
+            divider = divider || 1;
+            var stripNResults = Math.floor(samples.length / 10);
+            samples.sort(function(a, b) { return a - b; });
+            var sum = 0;
+            for (var i = stripNResults; i < samples.length - stripNResults; ++i)
+                sum += samples[i];
+            InspectorTest.addResult("* " + testName + ": " + Math.floor(sum / (samples.length - stripNResults * 2) / divider));
+            InspectorTest.addResult(testName + " min/max/count: " + Math.floor(samples[0] / divider) + "/" + Math.floor(samples[samples.length-1] / divider) + "/" + samples.length);
         }
     }
 
@@ -84,6 +105,5 @@ InspectorTest.addBackendResponseSniffer = function(object, methodName, override,
         originalMethod.apply(object, args);
     }
 }
-
 
 }

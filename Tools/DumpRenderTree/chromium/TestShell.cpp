@@ -176,6 +176,7 @@ void TestShell::showDevTools()
             return;
         }
         m_devTools = createNewWindow(url);
+        m_devTools->webView()->settings()->setMemoryInfoEnabled(true);
         ASSERT(m_devTools);
         createDRTDevToolsClient(m_drtDevToolsAgent.get());
     }
@@ -185,6 +186,7 @@ void TestShell::showDevTools()
 void TestShell::closeDevTools()
 {
     if (m_devTools) {
+        m_devTools->webView()->settings()->setMemoryInfoEnabled(false);
         m_drtDevToolsAgent->reset();
         m_drtDevToolsClient.clear();
         closeWindow(m_devTools);
