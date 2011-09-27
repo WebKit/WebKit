@@ -1076,30 +1076,6 @@ public:
         return branch32(cond, dataTempRegister, immTempRegister);
     }
 
-    Jump branch16(RelationalCondition cond, RegisterID left, TrustedImm32 right)
-    {
-        // Make sure the immediate value is unsigned 16 bits.
-        ASSERT(!(right.m_value & 0xFFFF0000));
-        m_assembler.andi(immTempRegister, left, 0xffff);
-        return branch32(cond, immTempRegister, right);
-    }
-
-    Jump branch16(RelationalCondition cond, BaseIndex left, RegisterID right)
-    {
-        load16(left, dataTempRegister);
-        return branch32(cond, dataTempRegister, right);
-    }
-
-    Jump branch16(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
-    {
-        ASSERT(!(right.m_value & 0xFFFF0000));
-        load16(left, dataTempRegister);
-        // Be careful that the previous load16() uses immTempRegister.
-        // So, we need to put move() after load16().
-        move(right, immTempRegister);
-        return branch32(cond, dataTempRegister, immTempRegister);
-    }
-
     Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         ASSERT((cond == Zero) || (cond == NonZero));

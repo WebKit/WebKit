@@ -965,30 +965,6 @@ public:
         return branch32(cond, addressTempRegister, right);
     }
 
-    Jump branch16(RelationalCondition cond, BaseIndex left, RegisterID right)
-    {
-        load16(left, dataTempRegister);
-        m_assembler.lsl(addressTempRegister, right, 16);
-        m_assembler.lsl(dataTempRegister, dataTempRegister, 16);
-        return branch32(cond, dataTempRegister, addressTempRegister);
-    }
-
-    Jump branch16(RelationalCondition cond, RegisterID left, TrustedImm32 right)
-    {
-        ASSERT(!(0xffff0000 & right.m_value));
-        // Extract the lower 16 bits into a temp for comparison
-        m_assembler.ubfx(dataTempRegister, left, 0, 16);
-        return branch32(cond, dataTempRegister, right);
-    }
-    
-    Jump branch16(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
-    {
-        // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
-        load16(left, addressTempRegister);
-        m_assembler.lsl(addressTempRegister, addressTempRegister, 16);
-        return branch32(cond, addressTempRegister, TrustedImm32(right.m_value << 16));
-    }
-
     Jump branch8(RelationalCondition cond, RegisterID left, TrustedImm32 right)
     {
         compare32(left, right);

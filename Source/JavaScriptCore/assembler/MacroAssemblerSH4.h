@@ -1395,61 +1395,6 @@ public:
         return branch32(cond, scr, scr1);
     }
 
-    Jump branch16(RelationalCondition cond, RegisterID left, TrustedImm32 right)
-    {
-        ASSERT(!(right.m_value & 0xFFFF0000));
-        RegisterID scr = claimScratch();
-
-        extuw(left, scr);
-        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
-            m_assembler.testlRegReg(scr, scr);
-        else
-            compare32(right.m_value, scr, cond);
-
-        releaseScratch(scr);
-
-        if (cond == NotEqual)
-            return branchFalse();
-        return branchTrue();
-    }
-
-    Jump branch16(RelationalCondition cond,  BaseIndex left, RegisterID right)
-    {
-        RegisterID scr = claimScratch();
-
-        move(left.index, scr);
-        lshift32(TrustedImm32(left.scale), scr);
-
-        if (left.offset)
-            add32(TrustedImm32(left.offset), scr);
-        add32(left.base, scr);
-        load16(scr, scr);
-        extuw(scr, scr);
-        releaseScratch(scr);
-
-        return branch32(cond, scr, right);
-    }
-
-    Jump branch16(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
-    {
-        RegisterID scr = claimScratch();
-
-        move(left.index, scr);
-        lshift32(TrustedImm32(left.scale), scr);
-
-        if (left.offset)
-            add32(TrustedImm32(left.offset), scr);
-        add32(left.base, scr);
-        load16(scr, scr);
-        extuw(scr, scr);
-        RegisterID scr1 = claimScratch();
-        m_assembler.loadConstant(right.m_value, scr1);
-        releaseScratch(scr);
-        releaseScratch(scr1);
-
-        return branch32(cond, scr, scr1);
-    }
-
     Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         ASSERT((cond == Zero) || (cond == NonZero));

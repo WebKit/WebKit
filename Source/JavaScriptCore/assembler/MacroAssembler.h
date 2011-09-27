@@ -69,7 +69,6 @@ public:
     using MacroAssemblerBase::pop;
     using MacroAssemblerBase::jump;
     using MacroAssemblerBase::branch32;
-    using MacroAssemblerBase::branch16;
 #if CPU(X86_64)
     using MacroAssemblerBase::branchPtr;
     using MacroAssemblerBase::branchTestPtr;
@@ -130,11 +129,6 @@ public:
         return branch32(commute(cond), right, left);
     }
 
-    void branch16(RelationalCondition cond, BaseIndex left, RegisterID right, Label target)
-    {
-        branch16(cond, left, right).linkTo(target, this);
-    }
-    
     void branchTestPtr(ResultCondition cond, RegisterID reg, Label target)
     {
         branchTestPtr(cond, reg).linkTo(target, this);

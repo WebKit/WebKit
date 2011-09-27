@@ -256,11 +256,19 @@ class YarrGenerator : private MacroAssembler {
         return branch32(NotEqual, index, length);
     }
 
-    Jump jumpIfCharNotEquals(UChar ch, int inputPosition)
+    Jump jumpIfCharNotEquals(UChar ch, int inputPosition, RegisterID character)
     {
-        if (m_charSize == Char8)
-            return branch8(NotEqual, BaseIndex(input, index, TimesOne, inputPosition * sizeof(char)), Imm32(ch));
-        return branch16(NotEqual, BaseIndex(input, index, TimesTwo, inputPosition * sizeof(UChar)), Imm32(ch));
+        readCharacter(inputPosition, character);
+
+        // For case-insesitive compares, non-ascii characters that have different
+        // upper & lower case representations are converted to a character class.
+        ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(ch) || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
+        if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
+            or32(TrustedImm32(32), character);
+            ch = Unicode::toLower(ch);
+        }
+
+        return branch32(NotEqual, character, Imm32(ch));
     }
 
     void readCharacter(int inputPosition, RegisterID reg)
@@ -679,6 +687,9 @@ class YarrGenerator : private MacroAssembler {
                 int mask = 0;
                 int chPair = ch | (ch2 << shiftAmount);
 
+                // For case-insesitive compares, non-ascii characters that have different
+                // upper & lower case representations are converted to a character class.
+                ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(ch) || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
                 if (m_pattern.m_ignoreCase) {
                     if (isASCIIAlpha(ch))
                         mask |= 32;
@@ -688,34 +699,21 @@ class YarrGenerator : private MacroAssembler {
 
                 if (m_charSize == Char8) {
                     BaseIndex address(input, index, TimesOne, (term->inputPosition - m_checked) * sizeof(char));
-                    if (mask) {
-                        load16(address, character);
-                        or32(Imm32(mask), character);
-                        op.m_jumps.append(branch16(NotEqual, character, Imm32(chPair | mask)));
-                    } else
-                        op.m_jumps.append(branch16(NotEqual, address, Imm32(chPair)));
+                    load16(address, character);
                 } else {
                     BaseIndex address(input, index, TimesTwo, (term->inputPosition - m_checked) * sizeof(UChar));
-                    if (mask) {
-                        load32WithUnalignedHalfWords(address, character);
-                        or32(Imm32(mask), character);
-                        op.m_jumps.append(branch32(NotEqual, character, Imm32(chPair | mask)));
-                    } else
-                        op.m_jumps.append(branch32WithUnalignedHalfWords(NotEqual, address, Imm32(chPair)));
+                    load32WithUnalignedHalfWords(address, character);
                 }
+                if (mask)
+                    or32(Imm32(mask), character);
+                op.m_jumps.append(branch32(NotEqual, character, Imm32(chPair | mask)));
+
                 nextOp.m_isDeadCode = true;
                 return;
             }
         }
 
-        if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
-            readCharacter(term->inputPosition - m_checked, character);
-            or32(TrustedImm32(32), character);
-            op.m_jumps.append(branch32(NotEqual, character, Imm32(Unicode::toLower(ch))));
-        } else {
-            ASSERT(!m_pattern.m_ignoreCase || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
-            op.m_jumps.append(jumpIfCharNotEquals(ch, term->inputPosition - m_checked));
-        }
+        op.m_jumps.append(jumpIfCharNotEquals(ch, term->inputPosition - m_checked, character));
     }
     void backtrackPatternCharacterOnce(size_t opIndex)
     {
@@ -737,20 +735,20 @@ class YarrGenerator : private MacroAssembler {
         Label loop(this);
         BaseIndex address(input, countRegister, m_charScale, (Checked<int>(term->inputPosition - m_checked + Checked<int64_t>(term->quantityCount)) * static_cast<int>(m_charSize == Char8 ? sizeof(char) : sizeof(UChar))).unsafeGet());
 
+        if (m_charSize == Char8)
+            load8(address, character);
+        else
+            load16(address, character);
+
+        // For case-insesitive compares, non-ascii characters that have different
+        // upper & lower case representations are converted to a character class.
+        ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(ch) || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
         if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
-            if (m_charSize == Char8)
-                load8(address, character);
-            else
-                load16(address, character);
             or32(TrustedImm32(32), character);
-            op.m_jumps.append(branch32(NotEqual, character, Imm32(Unicode::toLower(ch))));
-        } else {
-            ASSERT(!m_pattern.m_ignoreCase || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
-            if (m_charSize == Char8)
-                op.m_jumps.append(branch8(NotEqual, address, Imm32(ch)));
-            else
-                op.m_jumps.append(branch16(NotEqual, address, Imm32(ch)));
+            ch = Unicode::toLower(ch);
         }
+
+        op.m_jumps.append(branch32(NotEqual, character, Imm32(ch)));
         add32(TrustedImm32(1), countRegister);
         branch32(NotEqual, countRegister, index).linkTo(loop, this);
     }
@@ -777,14 +775,7 @@ class YarrGenerator : private MacroAssembler {
             JumpList failures;
             Label loop(this);
             failures.append(atEndOfInput());
-            if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
-                readCharacter(term->inputPosition - m_checked, character);
-                or32(TrustedImm32(32), character);
-                failures.append(branch32(NotEqual, character, Imm32(Unicode::toLower(ch))));
-            } else {
-                ASSERT(!m_pattern.m_ignoreCase || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
-                failures.append(jumpIfCharNotEquals(ch, term->inputPosition - m_checked));
-            }
+            failures.append(jumpIfCharNotEquals(ch, term->inputPosition - m_checked, character));
 
             add32(TrustedImm32(1), countRegister);
             add32(TrustedImm32(1), index);
@@ -849,14 +840,7 @@ class YarrGenerator : private MacroAssembler {
             nonGreedyFailures.append(atEndOfInput());
             if (term->quantityCount != quantifyInfinite)
                 nonGreedyFailures.append(branch32(Equal, countRegister, Imm32(term->quantityCount.unsafeGet())));
-            if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
-                readCharacter(term->inputPosition - m_checked, character);
-                or32(TrustedImm32(32), character);
-                nonGreedyFailures.append(branch32(NotEqual, character, Imm32(Unicode::toLower(ch))));
-            } else {
-                ASSERT(!m_pattern.m_ignoreCase || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
-                nonGreedyFailures.append(jumpIfCharNotEquals(ch, term->inputPosition - m_checked));
-            }
+            nonGreedyFailures.append(jumpIfCharNotEquals(ch, term->inputPosition - m_checked, character));
 
             add32(TrustedImm32(1), countRegister);
             add32(TrustedImm32(1), index);

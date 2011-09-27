@@ -890,29 +890,6 @@ public:
         return branch32(cond, left, right);
     }
 
-    Jump branch16(RelationalCondition cond, RegisterID left, TrustedImm32 right)
-    {
-        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
-            m_assembler.testw_rr(left, left);
-        else
-            m_assembler.cmpw_ir(right.m_value, left);
-        return Jump(m_assembler.jCC(x86Condition(cond)));
-    }
-
-    Jump branch16(RelationalCondition cond, BaseIndex left, RegisterID right)
-    {
-        m_assembler.cmpw_rm(right, left.offset, left.base, left.index, left.scale);
-        return Jump(m_assembler.jCC(x86Condition(cond)));
-    }
-
-    Jump branch16(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
-    {
-        ASSERT(!(right.m_value & 0xFFFF0000));
-
-        m_assembler.cmpw_im(right.m_value, left.offset, left.base, left.index, left.scale);
-        return Jump(m_assembler.jCC(x86Condition(cond)));
-    }
-
     Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         m_assembler.testl_rr(reg, mask);

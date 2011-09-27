@@ -426,15 +426,6 @@ public:
         return branch32(cond, ARMRegisters::S1, right);
     }
 
-    Jump branch16(RelationalCondition cond, RegisterID left, TrustedImm32 right)
-    {
-        ASSERT(!(right.m_value & 0xFFFF0000));
-        right.m_value <<= 16;
-        m_assembler.mov_r(ARMRegisters::S1, left);
-        lshift32(TrustedImm32(16), ARMRegisters::S1);
-        return branch32(cond, ARMRegisters::S1, right);
-    }
-
     Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right, int useConstantPool = 0)
     {
         m_assembler.cmp_r(left, right);
@@ -484,23 +475,6 @@ public:
     {
         load32WithUnalignedHalfWords(left, ARMRegisters::S1);
         return branch32(cond, ARMRegisters::S1, right);
-    }
-
-    Jump branch16(RelationalCondition cond, BaseIndex left, RegisterID right)
-    {
-        UNUSED_PARAM(cond);
-        UNUSED_PARAM(left);
-        UNUSED_PARAM(right);
-        ASSERT_NOT_REACHED();
-        return jump();
-    }
-
-    Jump branch16(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
-    {
-        load16(left, ARMRegisters::S0);
-        move(right, ARMRegisters::S1);
-        m_assembler.cmp_r(ARMRegisters::S0, ARMRegisters::S1);
-        return m_assembler.jmp(ARMCondition(cond));
     }
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
