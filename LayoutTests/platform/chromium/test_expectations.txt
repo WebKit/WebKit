@@ -2215,6 +2215,19 @@ BUGCR57056 LINUX : svg/custom/circular-marker-reference-4.svg = PASS FAIL
 // Flaky since http://trac.webkit.org/changeset/68440 (where this test added at).
 BUGWK46689 : fast/dom/HTMLElement/class-list.html = PASS TEXT
 
+// To be rebaselined when the new gdi-aa-text code finalizes
+BUGCR98248 WIN : fast/repaint/shadow-multiple-horizontal.html = IMAGE
+BUGCR98248 WIN : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
+BUGCR98248 WIN : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
+BUGCR98248 WIN : fast/repaint/shadow-multiple-vertical.html = IMAGE
+BUGCR98248 WIN : fast/text/stroking-decorations.html = IMAGE
+BUGCR98248 WIN : fast/text/stroking.html = IMAGE
+BUGCR98248 WIN : fast/transforms/shadows.html = IMAGE
+BUGCR98248 WIN : fast/writing-mode/english-lr-text.html = IMAGE
+BUGCR98248 WIN : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
+BUGCR98248 WIN : svg/css/group-with-shadow.svg = IMAGE
+BUGCR98248 WIN : svg/css/text-gradient-shadow.svg = IMAGE
+
 // Flaky since r68438:r68445 or before that.
 BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 
