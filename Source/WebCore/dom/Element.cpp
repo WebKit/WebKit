@@ -646,7 +646,7 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
 
 #if ENABLE(INSPECTOR)
     if (!isSynchronizingStyleAttribute())
-        InspectorInstrumentation::didModifyDOMAttr(document(), this);
+        InspectorInstrumentation::didModifyDOMAttr(document(), this, name, value);
 #endif
 }
 
@@ -679,7 +679,7 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
 
 #if ENABLE(INSPECTOR)
     if (!isSynchronizingStyleAttribute())
-        InspectorInstrumentation::didModifyDOMAttr(document(), this);
+        InspectorInstrumentation::didModifyDOMAttr(document(), this, name.localName(), value);
 #endif
 }
 
@@ -1511,7 +1511,7 @@ void Element::removeAttribute(const String& name, ExceptionCode& ec)
             ec = 0;
     }
     
-    InspectorInstrumentation::didModifyDOMAttr(document(), this);
+    InspectorInstrumentation::didRemoveDOMAttr(document(), this, name);
 }
 
 void Element::removeAttributeNS(const String& namespaceURI, const String& localName, ExceptionCode& ec)

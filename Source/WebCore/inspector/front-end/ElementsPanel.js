@@ -116,6 +116,7 @@ WebInspector.ElementsPanel = function()
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeInserted, this._nodeInserted, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeRemoved, this._nodeRemoved, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, this._attributesUpdated, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrRemoved, this._attributesUpdated, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.CharacterDataModified, this._characterDataModified, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.DocumentUpdated, this._documentUpdated, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.ChildNodeCountUpdated, this._childNodeCountUpdated, this);
@@ -412,7 +413,7 @@ WebInspector.ElementsPanel.prototype = {
 
     _attributesUpdated: function(event)
     {
-        this.recentlyModifiedNodes.push({node: event.data, updated: true});
+        this.recentlyModifiedNodes.push({node: event.data.node, updated: true});
         if (this.visible)
             this._updateModifiedNodesSoon();
     },

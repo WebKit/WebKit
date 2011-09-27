@@ -1176,18 +1176,29 @@
                 "description": "Fired when backend wants to provide client with the missing DOM structure. This happens upon most of the calls requesting node ids."
             },
             {
-                "name": "attributesUpdated",
+                "name": "attributeModified",
                 "parameters": [
-                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has changed." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has changed." },
+                    { "name": "name", "type": "string", "description": "Attribute name." },
+                    { "name": "value", "type": "string", "description": "Attribute value." }
                 ],
-                "description": "Fired when <code>Element</code>'s attributes are updated."
+                "description": "Fired when <code>Element</code>'s attribute is modified."
+            },
+            {
+                "name": "attributeRemoved",
+                "parameters": [
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has changed." },
+                    { "name": "name", "type": "string", "description": "Local attribute name." }
+                ],
+                "description": "Fired when <code>Element</code>'s attribute is removed."
             },
             {
                 "name": "inlineStyleInvalidated",
                 "parameters": [
                     { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Ids of the nodes for which the inline styles have been invalidated." }
                 ],
-                "description": "Fired when <code>Element</code>'s inline style is modified via a CSS property modification."
+                "description": "Fired when <code>Element</code>'s inline style is modified via a CSS property modification.",
+                "hidden": true
             },
             {
                 "name": "characterDataModified",

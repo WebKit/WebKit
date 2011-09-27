@@ -150,7 +150,8 @@ public:
 
     void didInsertDOMNode(Node*);
     void didRemoveDOMNode(Node*);
-    void didModifyDOMAttr(Element*);
+    void didModifyDOMAttr(Element*, const AtomicString& name, const AtomicString& value);
+    void didRemoveDOMAttr(Element*, const AtomicString& name);
     void styleAttributeInvalidated(const Vector<Element*>& elements);
     void characterDataModified(CharacterData*);
     void didInvalidateStyleAttr(Node*);

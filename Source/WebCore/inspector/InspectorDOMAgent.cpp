@@ -1447,7 +1447,7 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
     unbind(node, &m_documentNodeToIdMap);
 }
 
-void InspectorDOMAgent::didModifyDOMAttr(Element* element)
+void InspectorDOMAgent::didModifyDOMAttr(Element* element, const AtomicString& name, const AtomicString& value)
 {
     int id = boundNodeId(element);
     // If node is not mapped yet -> ignore the event.
@@ -1457,7 +1457,20 @@ void InspectorDOMAgent::didModifyDOMAttr(Element* element)
     if (m_domListener)
         m_domListener->didModifyDOMAttr(element);
 
-    m_frontend->attributesUpdated(id);
+    m_frontend->attributeModified(id, name, value);
+}
+
+void InspectorDOMAgent::didRemoveDOMAttr(Element* element, const AtomicString& name)
+{
+    int id = boundNodeId(element);
+    // If node is not mapped yet -> ignore the event.
+    if (!id)
+        return;
+
+    if (m_domListener)
+        m_domListener->didModifyDOMAttr(element);
+
+    m_frontend->attributeRemoved(id, name);
 }
 
 void InspectorDOMAgent::styleAttributeInvalidated(const Vector<Element*>& elements)

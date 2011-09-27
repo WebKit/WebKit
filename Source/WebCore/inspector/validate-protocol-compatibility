@@ -310,7 +310,10 @@ def main():
 
     schema_1 = load_json(sys.argv[1])
     schema_2 = load_json(sys.argv[2])
-    compare_schemas(schema_1, schema_2)
+
+    errors = compare_schemas(schema_1, schema_2)
+    for error in errors:
+        print error
 
 if __name__ == '__main__':
     sys.exit(main())

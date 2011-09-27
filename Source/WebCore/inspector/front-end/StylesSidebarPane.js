@@ -86,7 +86,9 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     this.bodyElement.appendChild(this._sectionsContainer);
 
     WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetChanged, this);
-    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, this._attributesUpdated, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, this._attributesModified, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrRemoved, this._attributesRemoved, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.StyleInvalidated, this._styleInvalidated, this);
     WebInspector.settings.showUserAgentStyles.addChangeListener(this._showUserAgentStylesSettingChanged.bind(this));
 }
 
@@ -277,12 +279,35 @@ WebInspector.StylesSidebarPane.prototype = {
         this._innerUpdate(false);
     },
 
-    _attributesUpdated: function(event)
+    _attributesModified: function(event)
+    {
+        if (this.node !== event.data.node)
+            return;
+
+        // Changing style attribute will anyways generate _styleInvalidated message. 
+        if (event.data.name === "style")
+            return;
+
+        // "class" (or any other) attribute might have changed. Update styles unless they are being edited.
+        if (!this._isEditingStyle && !this._userOperation)
+            this._innerUpdate(false);
+    },
+
+    _attributesRemoved: function(event)
+    {
+        if (this.node !== event.data.node)
+            return;
+
+        // "style" attribute might have been removed.
+        if (!this._isEditingStyle && !this._userOperation)
+            this._innerUpdate(false);
+    },
+
+    _styleInvalidated: function(event)
     {
         if (this.node !== event.data)
             return;
 
-        // "style" attribute might have changed. Update styles unless they are being edited.
         if (!this._isEditingStyle && !this._userOperation)
             this._innerUpdate(false);
     },
@@ -1674,8 +1699,11 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 this.treeOutline.section.pane.dispatchEventToListeners("style property toggled");
 
             this._updatePane();
+
+            delete this._parentPane._userOperation;
         }
 
+        this._parentPane._userOperation = true;
         this.property.setDisabled(disabled, callback.bind(this));
     },
 

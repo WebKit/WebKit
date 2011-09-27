@@ -50,12 +50,12 @@ function test()
         {
             function callback()
             {
-                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrRemoved, callback);
                 InspectorTest.addResult("=== On attribute removed ===");
                 InspectorTest.dumpElementsTree(targetNode);
                 next();
             }
-            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrRemoved, callback);
             InspectorTest.evaluateInPage("removeAttribute('name')");
         },
 
@@ -76,12 +76,12 @@ function test()
         {
             function callback()
             {
-                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrRemoved, callback);
                 InspectorTest.addResult("=== Set attribute as text ===");
                 InspectorTest.dumpElementsTree(targetNode);
                 next();
             }
-            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrRemoved, callback);
             targetNode.setAttribute("foo", "foo2='baz2' foo3='baz3'");
         },
 
@@ -89,12 +89,12 @@ function test()
         {
             function callback()
             {
-                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrRemoved, callback);
                 InspectorTest.addResult("=== Remove attribute as text ===");
                 InspectorTest.dumpElementsTree(targetNode);
                 next();
             }
-            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, callback);
+            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrRemoved, callback);
             targetNode.setAttribute("foo3", "");
         },
 

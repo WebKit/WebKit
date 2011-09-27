@@ -28,6 +28,7 @@ function test()
 {
     function listener(type, event)
     {
+        node = event.data.node || event.data;
         InspectorTest.addResult("DOMAgent event fired. Should only happen once for output node: " + type + " " + event.data.nodeName() + "#" + event.data.getAttribute("id"));
     }
 

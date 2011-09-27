@@ -32,6 +32,7 @@ WebInspector.MetricsSidebarPane = function()
 
     WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetChanged, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, this._attributesUpdated, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrRemoved, this._attributesUpdated, this);
 }
 
 WebInspector.MetricsSidebarPane.prototype = {
@@ -76,7 +77,7 @@ WebInspector.MetricsSidebarPane.prototype = {
 
     _attributesUpdated: function(event)
     {
-        if (this.node !== event.data)
+        if (this.node !== event.data.node)
             return;
 
         // "style" attribute might have changed. Update metrics unless they are being edited.

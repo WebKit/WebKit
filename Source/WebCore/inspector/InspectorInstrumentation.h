@@ -81,7 +81,8 @@ public:
     static void didInsertDOMNode(Document*, Node*);
     static void willRemoveDOMNode(Document*, Node*);
     static void willModifyDOMAttr(Document*, Element*);
-    static void didModifyDOMAttr(Document*, Element*);
+    static void didModifyDOMAttr(Document*, Element*, const AtomicString& name, const AtomicString& value);
+    static void didRemoveDOMAttr(Document*, Element*, const AtomicString& name);
     static void characterDataModified(Document*, CharacterData*);
     static void didInvalidateStyleAttr(Document*, Node*);
     static void frameWindowDiscarded(Frame*, DOMWindow*);
@@ -211,7 +212,8 @@ private:
     static void willRemoveDOMNodeImpl(InstrumentingAgents*, Node*);
     static void didRemoveDOMNodeImpl(InstrumentingAgents*, Node*);
     static void willModifyDOMAttrImpl(InstrumentingAgents*, Element*);
-    static void didModifyDOMAttrImpl(InstrumentingAgents*, Element*);
+    static void didModifyDOMAttrImpl(InstrumentingAgents*, Element*, const AtomicString& name, const AtomicString& value);
+    static void didRemoveDOMAttrImpl(InstrumentingAgents*, Element*, const AtomicString& name);
     static void characterDataModifiedImpl(InstrumentingAgents*, CharacterData*);
     static void didInvalidateStyleAttrImpl(InstrumentingAgents*, Node*);
     static void frameWindowDiscardedImpl(InstrumentingAgents*, DOMWindow*);
@@ -390,12 +392,21 @@ inline void InspectorInstrumentation::willModifyDOMAttr(Document* document, Elem
 #endif
 }
 
-inline void InspectorInstrumentation::didModifyDOMAttr(Document* document, Element* element)
+inline void InspectorInstrumentation::didModifyDOMAttr(Document* document, Element* element, const AtomicString& name, const AtomicString& value)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        didModifyDOMAttrImpl(instrumentingAgents, element);
+        didModifyDOMAttrImpl(instrumentingAgents, element, name, value);
+#endif
+}
+
+inline void InspectorInstrumentation::didRemoveDOMAttr(Document* document, Element* element, const AtomicString& name)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        didRemoveDOMAttrImpl(instrumentingAgents, element, name);
 #endif
 }
 

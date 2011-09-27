@@ -330,12 +330,30 @@ WebInspector.DOMNode.prototype = {
     _addAttribute: function(name, value)
     {
         var attr = {
-            "name": name,
-            "value": value,
-            "_node": this
+            name: name,
+            value: value,
+            _node: this
         };
         this._attributesMap[name] = attr;
         this._attributes.push(attr);
+    },
+
+    _setAttribute: function(name, value)
+    {
+        var attr = this._attributesMap[name];
+        if (attr)
+            attr.value = value;
+        else
+            this._addAttribute(name, value);
+    },
+
+    _removeAttribute: function(name)
+    {
+        var attr = this._attributesMap[name];
+        if (attr) {
+            this._attributes.remove(attr);
+            delete this._attributesMap[name];
+        }
     },
 
     ownerDocumentElement: function()
@@ -380,12 +398,14 @@ WebInspector.DOMAgent = function() {
 
 WebInspector.DOMAgent.Events = {
     AttrModified: "AttrModified",
+    AttrRemoved: "AttrRemoved",
     CharacterDataModified: "CharacterDataModified",
     NodeInserted: "NodeInserted",
     NodeRemoved: "NodeRemoved",
     DocumentUpdated: "DocumentUpdated",
     ChildNodeCountUpdated: "ChildNodeCountUpdated",
-    InspectElementRequested: "InspectElementRequested"
+    InspectElementRequested: "InspectElementRequested",
+    StyleInvalidated: "StyleInvalidated"
 }
 
 WebInspector.DOMAgent.prototype = {
@@ -464,18 +484,25 @@ WebInspector.DOMAgent.prototype = {
         this.requestDocument(onDocumentAvailable.bind(this));
     },
 
-    _attributesUpdated: function(nodeIds)
+    _attributeModified: function(nodeId, name, value)
     {
-        this._loadNodeAttributesSoon(nodeIds);
+        var node = this._idToDOMNode[nodeId];
+        if (!node)
+            return;
+        node._setAttribute(name, value);
+        this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrModified, { node: node, name: name });
+    },
+
+    _attributeRemoved: function(nodeId, name)
+    {
+        var node = this._idToDOMNode[nodeId];
+        if (!node)
+            return;
+        node._removeAttribute(name);
+        this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrRemoved, { node: node, name: name });
     },
 
     _inlineStyleInvalidated: function(nodeIds)
-    {
-        // FIXME: handle differently (we don't necessarily need to update attributes upon this message).
-        this._loadNodeAttributesSoon(nodeIds);
-    },
-
-    _loadNodeAttributesSoon: function(nodeIds)
     {
         for (var i = 0; i < nodeIds.length; ++i)
             this._attributeLoadNodeIds[nodeIds[i]] = true;
@@ -493,7 +520,8 @@ WebInspector.DOMAgent.prototype = {
             var node = this._idToDOMNode[nodeId];
             if (node) {
                 node._setAttributesPayload(attributes);
-                this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrModified, node);
+                this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrModified, { node: node, name: "style" });
+                this.dispatchEventToListeners(WebInspector.DOMAgent.Events.StyleInvalidated, node);                
             }
         }
 
@@ -641,9 +669,14 @@ WebInspector.DOMDispatcher.prototype = {
         this._domAgent._documentUpdated();
     },
 
-    attributesUpdated: function(nodeId)
+    attributeModified: function(nodeId, name, value)
     {
-        this._domAgent._attributesUpdated([nodeId]);
+        this._domAgent._attributeModified(nodeId, name, value);
+    },
+
+    attributeRemoved: function(nodeId, name)
+    {
+        this._domAgent._attributeRemoved(nodeId, name);
     },
 
     inlineStyleInvalidated: function(nodeIds)
