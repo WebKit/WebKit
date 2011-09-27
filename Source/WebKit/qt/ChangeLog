@@ -1,3 +1,11 @@
+2011-09-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Fix build of declarative plugin against Qt5
+
+        Reviewed by Andreas Kling.
+
+        * declarative/declarative.pro:
+
 2011-09-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix build against Qt5 after refactor of widgets out of QtGUi
