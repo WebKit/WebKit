@@ -2859,8 +2859,12 @@ void RenderLayer::paintPaginatedChildLayer(RenderLayer* childLayer, RenderLayer*
             break;
     }
 
-    ASSERT(columnLayers.size());
-    
+    // It is possible for paintLayer() to be called after the child layer ceases to be paginated but before
+    // updateLayerPositions() is called and resets the isPaginated() flag, see <rdar://problem/10098679>.
+    // If this is the case, just bail out, since the upcoming call to updateLayerPositions() will repaint the layer.
+    if (!columnLayers.size())
+        return;
+
     paintChildLayerIntoColumns(childLayer, rootLayer, context, paintDirtyRect, paintBehavior, paintingRoot, overlapTestRequests, paintFlags, columnLayers, columnLayers.size() - 1);
 }
 

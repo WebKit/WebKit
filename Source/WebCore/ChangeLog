@@ -1,3 +1,19 @@
+2011-09-27  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10098679> Assertion failure in RenderLayer::paintPaginatedChildLayer()
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/dynamic/layer-no-longer-paginated.html
+
+        FrameView::layout() calls adjustViewSize() before calling RenderLayer::updateLayerPositions().
+        The former may trigger painting with a layer tree that is not entirely up-to-date. Specifically,
+        the isPaginated() state of a layer may be incorrect, leading to the assertion in this bug. Instead
+        of asserting, return early and count on the upcoming updateLayerPositions() to repaint as needed.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintPaginatedChildLayer): Replaced the assertion with an early return.
+
 2011-09-27  Ojan Vafai  <ojan@chromium.org>
 
         offsetTop/offsetLeft return the wrong values for horizontal-bt/vertical-rl writing modes

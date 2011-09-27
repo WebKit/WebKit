@@ -1,0 +1,5 @@
+Test for <rdar://problem/10098679> Assertion failure in RenderLayer::paintPaginatedChildLayer().
+
+The test passes if it does not cause an assertion failure or a crash.
+
+
