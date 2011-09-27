@@ -30,7 +30,7 @@
 
 import re
 import unittest
-from webkitpy.common.watchlist.watchlistparser import parse_watch_list
+from webkitpy.common.watchlist.watchlistparser import WatchListParser
 
 
 class WatchListParserTest(unittest.TestCase):
@@ -38,6 +38,7 @@ class WatchListParserTest(unittest.TestCase):
         # For versions of Python before 2.7.
         if not 'assertRaisesRegexp' in dir(self):
             self.assertRaisesRegexp = self._verifyException
+        self._watch_list_parser = WatchListParser()
 
     def _verifyException(self, regex_message, callable, *args):
         try:
@@ -49,7 +50,8 @@ class WatchListParserTest(unittest.TestCase):
 
     def test_bad_section(self):
         watch_list_with_bad_section = ('{"FOO": {}}')
-        self.assertRaisesRegexp('Unknown section "FOO" in watch list.', parse_watch_list, watch_list_with_bad_section)
+        self.assertRaisesRegexp('Unknown section "FOO" in watch list.',
+                                self._watch_list_parser.parse, watch_list_with_bad_section)
 
     def test_bad_definition(self):
         watch_list_with_bad_definition = (
@@ -61,7 +63,8 @@ class WatchListParserTest(unittest.TestCase):
             '     },'
             '}')
 
-        self._verifyException('Invalid character "|" in definition "WatchList1|A".', parse_watch_list, watch_list_with_bad_definition)
+        self._verifyException('Invalid character "|" in definition "WatchList1|A".',
+                              self._watch_list_parser.parse, watch_list_with_bad_definition)
 
     def test_bad_match_type(self):
         watch_list_with_bad_match_type = (
@@ -73,4 +76,5 @@ class WatchListParserTest(unittest.TestCase):
             '     },'
             '}')
 
-        self._verifyException('Invalid pattern type "nothing_matches_this" in definition "WatchList1".', parse_watch_list, watch_list_with_bad_match_type)
+        self._verifyException('Invalid pattern type "nothing_matches_this" in definition "WatchList1".',
+                              self._watch_list_parser.parse, watch_list_with_bad_match_type)
