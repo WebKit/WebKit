@@ -33,7 +33,8 @@ module events {
     interface [
         NoStaticTables,
         CanBeConstructed,
-        CustomConstructFunction
+        CustomConstructFunction,
+        V8CustomConstructor
     ] CloseEvent : Event {
         readonly attribute boolean wasClean;
         readonly attribute unsigned short code;

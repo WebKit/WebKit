@@ -175,8 +175,21 @@ bool OptionsObject::getKey(const String& key, v8::Local<v8::Value>& value) const
     if (!options->Has(v8Key))
         return false;
     value = options->Get(v8Key);
-    if (value.IsEmpty()) 
+    if (value.IsEmpty())
         return false;
+    return true;
+}
+
+bool OptionsObject::getKeyValue(const String& key, unsigned short& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    v8::Local<v8::Int32> v8Int32 = v8Value->ToInt32();
+    if (v8Int32.IsEmpty())
+        return false;
+    value = static_cast<unsigned short>(v8Int32->Value());
     return true;
 }
 
