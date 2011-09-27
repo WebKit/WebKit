@@ -3779,3 +3779,6 @@ BUGWK68858 : svg/filters/animate-fill.svg = IMAGE
 BUGWK68879 MAC CPU-CG : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
 BUGWK68879 MAC CPU-CG : canvas/philip/tests/toDataURL.jpeg.primarycolours.html = TEXT
 BUGWK68879 MAC CPU-CG : canvas/philip/tests/toDataURL.jpeg.quality.basic.html = TEXT
+
+BUGWK68881 DEBUG : svg/text/selection-background-color.xhtml = CRASH
+BUGWK68881 DEBUG : svg/text/selection-styles.xhtml = CRASH
