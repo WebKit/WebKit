@@ -3776,3 +3776,5 @@ BUGWK68747 : media/controls-right-click-on-timebar.html = TIMEOUT PASS
 
 BUGCR96861 WIN DEBUG : media/audio-repaint.html = TIMEOUT IMAGE PASS
 BUGCR97657 MAC CPU DEBUG : media/audio-repaint.html = TIMEOUT IMAGE PASS
+
+BUGWK68858 : svg/filters/animate-fill.svg = IMAGE
