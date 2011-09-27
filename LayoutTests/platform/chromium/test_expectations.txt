@@ -3784,3 +3784,5 @@ BUGWK68881 DEBUG : svg/text/selection-background-color.xhtml = CRASH
 BUGWK68881 DEBUG : svg/text/selection-styles.xhtml = CRASH
 
 BUGWK68882 LINUX GPU : compositing/video-page-visibility.html = IMAGE
+
+BUGWK68885 MAC CPU-CG : ast/canvas/webgl/premultiplyalpha-test.html = TEXT
