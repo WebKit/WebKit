@@ -1,41 +1,31 @@
+<!DOCTYPE html>
 <html>
 <head>
-
 <style>
 .editing { 
     font-size: 24px; 
     width: 600px; 
 }
 </style>
-<script src="../editing.js" language="JavaScript" type="text/JavaScript" ></script>
-
-<script>
-
-function editingTest() {
-    if (window.layoutTestController) {
-        
-        try {
-            // test for 4570218 by using double deleteToEndOfParagraph
-            layoutTestController.execCommand("DeleteToEndOfParagraph");    
-            layoutTestController.execCommand("DeleteToEndOfParagraph");    
-
-        } catch (ex) {
-            document.write("Exception: " + ex.description);
-        }
-    } else {
-        document.write("(cannot run interactively)");
-    }
-}
-
-</script>
-
 <title>Editing Test</title> 
 </head> 
 <body contenteditable id="root">
 <div id="test" class="editing">one two three</div><div>four five six</div>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
-runEditingTest();
-</script>
 
+if (!window.layoutTestController)
+    document.write("(cannot run interactively)");
+else {
+    layoutTestController.dumpEditingCallbacks();
+
+    getSelection().setPosition(document.getElementById('test'), 0);
+    // test for 4570218 by using double deleteToEndOfParagraph
+    layoutTestController.execCommand("DeleteToEndOfParagraph");
+    layoutTestController.execCommand("DeleteToEndOfParagraph");
+    Markup.dump('test');
+}
+
+</script>
 </body>
 </html>
