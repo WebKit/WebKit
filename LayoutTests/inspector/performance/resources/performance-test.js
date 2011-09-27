@@ -35,8 +35,9 @@ InspectorTest.runPerformanceTest = function(perfTest, executeTime, callback)
 
         done: function()
         {
-            this._heapSizeDeltas.push(console.memory.usedJSHeapSize - this._jsHeapSize);
-            this._jsHeapSize = this._getJSHeapSize();
+            var newJSHeapSize = this._getJSHeapSize();
+            this._heapSizeDeltas.push(newJSHeapSize - this._jsHeapSize);
+            this._jsHeapSize = newJSHeapSize;
 
             var time = new Date();
             if (time - this._testStartTime < executeTime)
