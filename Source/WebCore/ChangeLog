@@ -1,3 +1,10 @@
+2011-09-27  Mihai Parparita  <mihaip@chromium.org>
+
+        Fix Chromium Mac build after r96130.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layerForOverhangAreas):
+
 2011-09-27  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         Autofocus on readonly inputs does not focus the element.

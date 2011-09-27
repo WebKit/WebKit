@@ -697,9 +697,9 @@ GraphicsLayer* FrameView::layerForScrollCorner() const
 GraphicsLayer* FrameView::layerForOverhangAreas() const
 {
     RenderView* root = rootRenderer(this);
-    if (!view)
+    if (!root)
         return 0;
-    return view->compositor()->layerForOverhangAreas();
+    return root->compositor()->layerForOverhangAreas();
 }
 #endif
 
