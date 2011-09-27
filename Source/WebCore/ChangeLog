@@ -1,3 +1,17 @@
+2011-09-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96139.
+        http://trac.webkit.org/changeset/96139
+        https://bugs.webkit.org/show_bug.cgi?id=68933
+
+        Broke table-percent-height.html on Mac bots (Requested by
+        mwenge2 on #webkit).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        * rendering/RenderBox.h:
+
 2011-09-27  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION(65665): Pattern size being clamped to SVG size can prevent transformed elements from being fully covered by userSpaceOnUse patterns

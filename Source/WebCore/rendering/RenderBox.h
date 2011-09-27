@@ -290,7 +290,6 @@ public:
 
     virtual LayoutUnit containingBlockLogicalWidthForContent() const;
     LayoutUnit perpendicularContainingBlockLogicalHeight() const;
-    int containingBlockReplacedLogicalWidthForContent() const;
     
     virtual void computeLogicalWidth();
     virtual void computeLogicalHeight();
