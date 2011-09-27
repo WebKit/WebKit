@@ -46,9 +46,15 @@ UserObjectImp::~UserObjectImp()
         fJSUserObject->Release();
 }
 
-CallType UserObjectImp::getCallData(CallData& callData)
+CallType UserObjectImp::getCallDataVirtual(CallData& callData)
 {
-    return fJSUserObject ? fJSUserObject->getCallData(callData) : CallTypeNone;
+    return getCallData(this, callData);
+}
+
+CallType UserObjectImp::getCallData(JSCell* cell, CallData& callData)
+{
+    UserObjectImp* thisObject = static_cast<UserObjectImp*>(cell);
+    return thisObject->fJSUserObject ? thisObject->fJSUserObject->getCallData(callData) : CallTypeNone;
 }
 
 JSValue UserObjectImp::callAsFunction(ExecState *exec)

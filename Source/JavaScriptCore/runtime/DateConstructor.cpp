@@ -176,7 +176,12 @@ static EncodedJSValue JSC_HOST_CALL callDate(ExecState* exec)
     return JSValue::encode(jsMakeNontrivialString(exec, date, " ", time));
 }
 
-CallType DateConstructor::getCallData(CallData& callData)
+CallType DateConstructor::getCallDataVirtual(CallData& callData)
+{
+    return getCallData(this, callData);
+}
+
+CallType DateConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callDate;
     return CallTypeHost;

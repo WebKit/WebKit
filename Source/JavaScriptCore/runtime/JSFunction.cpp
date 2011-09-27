@@ -169,14 +169,20 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(&thisObject->m_executable);
 }
 
-CallType JSFunction::getCallData(CallData& callData)
+CallType JSFunction::getCallDataVirtual(CallData& callData)
 {
-    if (isHostFunction()) {
-        callData.native.function = nativeFunction();
+    return getCallData(this, callData);
+}
+
+CallType JSFunction::getCallData(JSCell* cell, CallData& callData)
+{
+    JSFunction* thisObject = static_cast<JSFunction*>(cell);
+    if (thisObject->isHostFunction()) {
+        callData.native.function = thisObject->nativeFunction();
         return CallTypeHost;
     }
-    callData.js.functionExecutable = jsExecutable();
-    callData.js.scopeChain = scope();
+    callData.js.functionExecutable = thisObject->jsExecutable();
+    callData.js.scopeChain = thisObject->scope();
     return CallTypeJS;
 }
 

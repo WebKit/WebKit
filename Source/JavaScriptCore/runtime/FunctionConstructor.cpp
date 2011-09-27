@@ -69,8 +69,13 @@ static EncodedJSValue JSC_HOST_CALL callFunctionConstructor(ExecState* exec)
     return JSValue::encode(constructFunction(exec, asInternalFunction(exec->callee())->globalObject(), args));
 }
 
+CallType FunctionConstructor::getCallDataVirtual(CallData& callData)
+{
+    return getCallData(this, callData);
+}
+
 // ECMA 15.3.1 The Function Constructor Called as a Function
-CallType FunctionConstructor::getCallData(CallData& callData)
+CallType FunctionConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callFunctionConstructor;
     return CallTypeHost;

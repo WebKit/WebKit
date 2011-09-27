@@ -201,7 +201,12 @@ public:
         return JSValue::encode(jsNull());
     }
 
-    CallType getCallData(CallData& callData)
+    CallType getCallDataVirtual(CallData& callData)
+    {
+        return getCallData(this, callData);
+    }
+
+    CallType getCallData(JSCell*, CallData& callData)
     {
         callData.native.function = callThrowTypeError;
         return CallTypeHost;

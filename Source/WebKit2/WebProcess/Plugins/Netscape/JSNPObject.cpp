@@ -217,10 +217,16 @@ static EncodedJSValue JSC_HOST_CALL callNPJSObject(ExecState* exec)
     return JSValue::encode(static_cast<JSNPObject*>(object)->callObject(exec));
 }
 
-JSC::CallType JSNPObject::getCallData(JSC::CallData& callData)
+CallType JSNPObject::getCallDataVirtual(CallData& callData)
 {
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
-    if (!m_npObject || !m_npObject->_class->invokeDefault)
+    return getCallData(this, callData);
+}
+
+JSC::CallType JSNPObject::getCallData(JSC::JSCell* cell, JSC::CallData& callData)
+{
+    JSNPObject* thisObject = static_cast<JSNPObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    if (!thisObject->m_npObject || !thisObject->m_npObject->_class->invokeDefault)
         return CallTypeNone;
 
     callData.native.function = callNPJSObject;

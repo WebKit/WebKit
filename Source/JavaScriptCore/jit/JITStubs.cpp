@@ -1755,7 +1755,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_getter_stub)
         return JSValue::encode(jsUndefined());
     JSObject* getter = asObject(getterSetter->getter());
     CallData callData;
-    CallType callType = getter->getCallData(callData);
+    CallType callType = getter->getCallDataVirtual(callData);
     JSValue result = call(callFrame, getter, callType, callData, stackFrame.args[1].jsObject(), ArgList());
     if (callFrame->hadException())
         returnToThrowTrampoline(&callFrame->globalData(), stackFrame.args[2].returnAddress(), STUB_RETURN_ADDRESS);
@@ -2158,7 +2158,7 @@ DEFINE_STUB_FUNCTION(void*, op_call_jitCompile)
 
 #if !ASSERT_DISABLED
     CallData callData;
-    ASSERT(stackFrame.callFrame->callee()->getCallData(callData) == CallTypeJS);
+    ASSERT(stackFrame.callFrame->callee()->getCallDataVirtual(callData) == CallTypeJS);
 #endif
     
     return jitCompileFor(stackFrame, CodeForCall);

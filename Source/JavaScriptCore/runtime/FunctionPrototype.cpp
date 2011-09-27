@@ -70,8 +70,13 @@ static EncodedJSValue JSC_HOST_CALL callFunctionPrototype(ExecState*)
     return JSValue::encode(jsUndefined());
 }
 
+CallType FunctionPrototype::getCallDataVirtual(CallData& callData)
+{
+    return getCallData(this, callData);
+}
+
 // ECMA 15.3.4
-CallType FunctionPrototype::getCallData(CallData& callData)
+CallType FunctionPrototype::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callFunctionPrototype;
     return CallTypeHost;

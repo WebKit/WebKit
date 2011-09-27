@@ -126,7 +126,8 @@ private:
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
-    virtual CallType getCallData(CallData&);
+    virtual CallType getCallDataVirtual(CallData&);
+    static CallType getCallData(JSCell*, CallData&);
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
 

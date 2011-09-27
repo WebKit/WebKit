@@ -259,12 +259,18 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeObject(ExecState* exec)
     return JSValue::encode(result);
 }
 
-CallType RuntimeObject::getCallData(CallData& callData)
+CallType RuntimeObject::getCallDataVirtual(CallData& callData)
 {
-    if (!m_instance)
+    return getCallData(this, callData);
+}
+
+CallType RuntimeObject::getCallData(JSCell* cell, CallData& callData)
+{
+    RuntimeObject* thisObject = static_cast<RuntimeObject*>(cell);
+    if (!thisObject->m_instance)
         return CallTypeNone;
     
-    RefPtr<Instance> instance = m_instance;
+    RefPtr<Instance> instance = thisObject->m_instance;
     if (!instance->supportsInvokeDefaultMethod())
         return CallTypeNone;
     

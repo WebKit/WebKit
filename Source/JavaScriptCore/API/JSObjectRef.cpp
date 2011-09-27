@@ -416,7 +416,7 @@ bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef object, JSStrin
 bool JSObjectIsFunction(JSContextRef, JSObjectRef object)
 {
     CallData callData;
-    return toJS(object)->getCallData(callData) != CallTypeNone;
+    return toJS(object)->getCallDataVirtual(callData) != CallTypeNone;
 }
 
 JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -435,7 +435,7 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
         argList.append(toJS(exec, arguments[i]));
 
     CallData callData;
-    CallType callType = jsObject->getCallData(callData);
+    CallType callType = jsObject->getCallDataVirtual(callData);
     if (callType == CallTypeNone)
         return 0;
 

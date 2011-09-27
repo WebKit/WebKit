@@ -158,7 +158,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
                 }
                 
                 CallData callData;
-                CallType callType = setterFunc->getCallData(callData);
+                CallType callType = setterFunc->getCallDataVirtual(callData);
                 MarkedArgumentBuffer args;
                 args.append(value);
 

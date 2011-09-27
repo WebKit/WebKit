@@ -109,7 +109,8 @@ namespace JSC {
         NativeFunction nativeConstructor();
 
         virtual ConstructType getConstructData(ConstructData&);
-        virtual CallType getCallData(CallData&);
+        virtual CallType getCallDataVirtual(CallData&);
+        static CallType getCallData(JSCell*, CallData&);
 
         static inline size_t offsetOfScopeChain()
         {

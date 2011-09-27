@@ -246,7 +246,7 @@ Stringifier::Stringifier(ExecState* exec, const Local<Unknown>& replacer, const 
         return;
     }
 
-    m_replacerCallType = m_replacer.asObject()->getCallData(m_replacerCallData);
+    m_replacerCallType = m_replacer.asObject()->getCallDataVirtual(m_replacerCallData);
 }
 
 Local<Unknown> Stringifier::stringify(Handle<Unknown> value)
@@ -337,7 +337,7 @@ inline JSValue Stringifier::toJSON(JSValue value, const PropertyNameForFunctionC
 
     JSObject* object = asObject(toJSONFunction);
     CallData callData;
-    CallType callType = object->getCallData(callData);
+    CallType callType = object->getCallDataVirtual(callData);
     if (callType == CallTypeNone)
         return value;
 
@@ -401,7 +401,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(UStringBuilder&
     JSObject* object = asObject(value);
 
     CallData callData;
-    if (object->getCallData(callData) != CallTypeNone) {
+    if (object->getCallDataVirtual(callData) != CallTypeNone) {
         if (holder->inherits(&JSArray::s_info)) {
             builder.append("null");
             return StringifySucceeded;

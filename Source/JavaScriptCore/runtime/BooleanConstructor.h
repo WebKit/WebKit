@@ -44,7 +44,8 @@ namespace JSC {
     private:
         BooleanConstructor(JSGlobalObject*, Structure*);
         virtual ConstructType getConstructData(ConstructData&);
-        virtual CallType getCallData(CallData&);
+        virtual CallType getCallDataVirtual(CallData&);
+        static CallType getCallData(JSCell*, CallData&);
     };
 
     JSObject* constructBooleanFromImmediateBoolean(ExecState*, JSGlobalObject*, JSValue);

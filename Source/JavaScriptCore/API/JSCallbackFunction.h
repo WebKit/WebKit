@@ -56,7 +56,8 @@ public:
     }
 
 private:
-    virtual CallType getCallData(CallData&);
+    virtual CallType getCallDataVirtual(CallData&);
+    static CallType getCallData(JSCell*, CallData&);
 
     static EncodedJSValue JSC_HOST_CALL call(ExecState*);
 

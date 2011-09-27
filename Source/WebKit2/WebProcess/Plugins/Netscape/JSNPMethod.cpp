@@ -77,7 +77,12 @@ static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)
     return throwVMTypeError(exec);
 }
 
-CallType JSNPMethod::getCallData(CallData& callData)
+CallType JSNPMethod::getCallDataVirtual(CallData& callData)
+{
+    return getCallData(this, callData);
+}
+
+CallType JSNPMethod::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callMethod;
     return CallTypeHost;

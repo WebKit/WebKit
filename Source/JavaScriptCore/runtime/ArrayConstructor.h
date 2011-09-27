@@ -55,7 +55,8 @@ namespace JSC {
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
         virtual ConstructType getConstructData(ConstructData&);
-        virtual CallType getCallData(CallData&);
+        virtual CallType getCallDataVirtual(CallData&);
+        static CallType getCallData(JSCell*, CallData&);
     };
 
 } // namespace JSC

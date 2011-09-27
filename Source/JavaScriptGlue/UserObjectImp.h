@@ -49,7 +49,8 @@ public:
 
     static const ClassInfo s_info;
 
-    virtual CallType getCallData(CallData&);
+    virtual CallType getCallDataVirtual(CallData&);
+    static CallType getCallData(JSCell*, CallData&);
 
     virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
 

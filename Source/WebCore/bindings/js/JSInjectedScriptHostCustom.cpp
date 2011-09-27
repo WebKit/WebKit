@@ -85,7 +85,7 @@ JSValue JSInjectedScriptHost::evaluate(ExecState* exec)
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     JSFunction* evalFunction = globalObject->evalFunction();
     CallData callData;
-    CallType callType = evalFunction->getCallData(callData);
+    CallType callType = evalFunction->getCallDataVirtual(callData);
     if (callType == CallTypeNone)
         return jsUndefined();
     MarkedArgumentBuffer args;

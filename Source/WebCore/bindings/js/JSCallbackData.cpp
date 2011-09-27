@@ -53,7 +53,7 @@ JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, bool* raisedE
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone) {
-        callType = callback()->getCallData(callData);
+        callType = callback()->getCallDataVirtual(callData);
         if (callType == CallTypeNone)
             return JSValue();
         function = callback();

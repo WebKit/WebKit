@@ -1,3 +1,105 @@
+2011-09-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add static version of JSCell::getCallData
+        https://bugs.webkit.org/show_bug.cgi?id=68741
+
+        Reviewed by Darin Adler.
+
+        In this patch we just extract the bodies of the virtual getCallData methods
+        throughout the JSCell inheritance hierarchy out into static methods, which are 
+        now called from the virtual methods.  This is an intermediate step in trying to 
+        move the virtual-ness of getCallData into our own method table stored in 
+        ClassInfo.  We need to convert the methods to static methods because static methods 
+        can be represented as function pointers rather than pointers to member functions, and
+        function pointers are smaller and faster to call than pointers to member functions.
+
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::getCallDataVirtual):
+        (JSC::JSCallbackFunction::getCallData):
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getCallDataVirtual):
+        (JSC::::getCallData):
+        * API/JSObjectRef.cpp:
+        (JSObjectIsFunction):
+        (JSObjectCallAsFunction):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::getCallDataVirtual):
+        (JSC::ArrayConstructor::getCallData):
+        * runtime/ArrayConstructor.h:
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::getCallDataVirtual):
+        (JSC::BooleanConstructor::getCallData):
+        * runtime/BooleanConstructor.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::getCallDataVirtual):
+        (JSC::DateConstructor::getCallData):
+        * runtime/DateConstructor.h:
+        * runtime/Error.cpp:
+        (JSC::StrictModeTypeErrorFunction::getCallDataVirtual):
+        (JSC::StrictModeTypeErrorFunction::getCallData):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::getCallDataVirtual):
+        (JSC::ErrorConstructor::getCallData):
+        * runtime/ErrorConstructor.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::getCallDataVirtual):
+        (JSC::FunctionConstructor::getCallData):
+        * runtime/FunctionConstructor.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::getCallDataVirtual):
+        (JSC::FunctionPrototype::getCallData):
+        * runtime/FunctionPrototype.h:
+        * runtime/InternalFunction.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getCallDataVirtual):
+        (JSC::JSCell::getCallData):
+        * runtime/JSCell.h:
+        (JSC::getCallData):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getCallDataVirtual):
+        (JSC::JSFunction::getCallData):
+        * runtime/JSFunction.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::toJSON):
+        (JSC::Stringifier::appendStringifiedValue):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::getCallDataVirtual):
+        (JSC::NativeErrorConstructor::getCallData):
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::getCallDataVirtual):
+        (JSC::NumberConstructor::getCallData):
+        * runtime/NumberConstructor.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::getCallDataVirtual):
+        (JSC::ObjectConstructor::getCallData):
+        * runtime/ObjectConstructor.h:
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectType):
+        (JSC::jsIsFunctionType):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::functionGetter):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::getCallDataVirtual):
+        (JSC::RegExpConstructor::getCallData):
+        * runtime/RegExpConstructor.h:
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::getCallDataVirtual):
+        (JSC::StringConstructor::getCallData):
+        * runtime/StringConstructor.h:
+
 2011-09-27  Tim Horton  <timothy_horton@apple.com>
 
         Rapidly refreshing a feMorphology[erode] with r=0 can sometimes cause display corruption

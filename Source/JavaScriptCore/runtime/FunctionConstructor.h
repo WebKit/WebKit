@@ -42,7 +42,8 @@ namespace JSC {
         FunctionConstructor(JSGlobalObject*, Structure*);
         void finishCreation(ExecState*, FunctionPrototype*);
         virtual ConstructType getConstructData(ConstructData&);
-        virtual CallType getCallData(CallData&);
+        virtual CallType getCallDataVirtual(CallData&);
+        static CallType getCallData(JSCell*, CallData&);
     };
 
     JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&, const Identifier& functionName, const UString& sourceURL, int lineNumber);

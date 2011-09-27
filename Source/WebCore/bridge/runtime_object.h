@@ -50,7 +50,8 @@ public:
     virtual void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
-    virtual CallType getCallData(CallData&);
+    virtual CallType getCallDataVirtual(CallData&);
+    static CallType getCallData(JSCell*, CallData&);
     virtual ConstructType getConstructData(ConstructData&);
 
     virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);

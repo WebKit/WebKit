@@ -127,7 +127,12 @@ static EncodedJSValue JSC_HOST_CALL callNumberConstructor(ExecState* exec)
     return JSValue::encode(jsNumber(!exec->argumentCount() ? 0 : exec->argument(0).toNumber(exec)));
 }
 
-CallType NumberConstructor::getCallData(CallData& callData)
+CallType NumberConstructor::getCallDataVirtual(CallData& callData)
+{
+    return getCallData(this, callData);
+}
+
+CallType NumberConstructor::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callNumberConstructor;
     return CallTypeHost;

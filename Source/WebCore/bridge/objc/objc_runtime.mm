@@ -255,9 +255,15 @@ static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
     return JSValue::encode(result);
 }
 
-CallType ObjcFallbackObjectImp::getCallData(CallData& callData)
+CallType ObjcFallbackObjectImp::getCallDataVirtual(CallData& callData)
 {
-    id targetObject = _instance->getObject();
+    return getCallData(this, callData);
+}
+
+CallType ObjcFallbackObjectImp::getCallData(JSCell* cell, CallData& callData)
+{
+    ObjcFallbackObjectImp* thisObject = static_cast<ObjcFallbackObjectImp*>(cell);
+    id targetObject = thisObject->_instance->getObject();
     if (![targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
         return CallTypeNone;
     callData.native.function = callObjCFallbackObject;
