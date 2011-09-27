@@ -3782,3 +3782,5 @@ BUGWK68879 MAC CPU-CG : canvas/philip/tests/toDataURL.jpeg.quality.basic.html = 
 
 BUGWK68881 DEBUG : svg/text/selection-background-color.xhtml = CRASH
 BUGWK68881 DEBUG : svg/text/selection-styles.xhtml = CRASH
+
+BUGWK68882 LINUX GPU : compositing/video-page-visibility.html = IMAGE
