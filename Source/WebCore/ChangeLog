@@ -1,3 +1,56 @@
+2011-09-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up how FrameView accesses the RenderView
+        https://bugs.webkit.org/show_bug.cgi?id=68914
+
+        Reviewed by Sam Weinig.
+
+        Clean up how FrameView accesses the content renderer of its
+        frame. Previously, this was done in several different ways,
+        only some of which did null-checking.
+        
+        Use an inline method to avoid having to expose Frame
+        in the header.
+        
+        Standardize the terminology to use 'root' for this RenderView.
+
+        * page/FrameView.cpp:
+        (WebCore::rootRenderer):
+        (WebCore::FrameView::setFrameRect):
+        (WebCore::FrameView::adjustViewSize):
+        (WebCore::FrameView::updateCompositingLayers):
+        (WebCore::FrameView::clearBackingStores):
+        (WebCore::FrameView::restoreBackingStores):
+        (WebCore::FrameView::layerForHorizontalScrollbar):
+        (WebCore::FrameView::layerForVerticalScrollbar):
+        (WebCore::FrameView::layerForScrollCorner):
+        (WebCore::FrameView::layerForOverhangAreas):
+        (WebCore::FrameView::syncCompositingStateForThisFrame):
+        (WebCore::FrameView::hasCompositedContent):
+        (WebCore::FrameView::enterCompositingMode):
+        (WebCore::FrameView::isSoftwareRenderable):
+        (WebCore::FrameView::didMoveOnscreen):
+        (WebCore::FrameView::willMoveOffscreen):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::embeddedContentBox):
+        (WebCore::FrameView::contentsInCompositedLayer):
+        (WebCore::FrameView::scrollContentsFastPath):
+        (WebCore::FrameView::scrollContentsSlowPath):
+        (WebCore::FrameView::maintainScrollPositionAtAnchor):
+        (WebCore::FrameView::scrollPositionChanged):
+        (WebCore::FrameView::repaintFixedElementsAfterScrolling):
+        (WebCore::FrameView::visibleContentsResized):
+        (WebCore::FrameView::scheduleRelayoutOfSubtree):
+        (WebCore::FrameView::needsLayout):
+        (WebCore::FrameView::setNeedsLayout):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::updateControlTints):
+        (WebCore::FrameView::paintContents):
+        (WebCore::FrameView::forceLayoutForPagination):
+        (WebCore::FrameView::adjustPageHeightDeprecated):
+        (WebCore::FrameView::isVerticalDocument):
+        (WebCore::FrameView::isFlippedDocument):
+
 2011-09-27  Dominic Mazzoni  <dmazzoni@google.com>
 
         AXObjectCache cleared unnecessarily when non-top Document is detached.
