@@ -95,6 +95,7 @@ void ScrollView::setHasHorizontalScrollbar(bool hasBar)
         didAddHorizontalScrollbar(m_horizontalScrollbar.get());
         m_horizontalScrollbar->styleChanged();
     } else if (!hasBar && m_horizontalScrollbar) {
+        m_horizontalScrollbar->invalidate();
         willRemoveHorizontalScrollbar(m_horizontalScrollbar.get());
         removeChild(m_horizontalScrollbar.get());
         m_horizontalScrollbar = 0;
@@ -113,6 +114,7 @@ void ScrollView::setHasVerticalScrollbar(bool hasBar)
         didAddVerticalScrollbar(m_verticalScrollbar.get());
         m_verticalScrollbar->styleChanged();
     } else if (!hasBar && m_verticalScrollbar) {
+        m_verticalScrollbar->invalidate();
         willRemoveVerticalScrollbar(m_verticalScrollbar.get());
         removeChild(m_verticalScrollbar.get());
         m_verticalScrollbar = 0;
@@ -447,6 +449,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         m_inUpdateScrollbars = false;
     }
 
+    IntRect oldScrollCornerRect = scrollCornerRect();
+
     bool hasHorizontalScrollbar = m_horizontalScrollbar;
     bool hasVerticalScrollbar = m_verticalScrollbar;
     
@@ -573,6 +577,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         frameRectsChanged();
         positionScrollbarLayers();
         updateScrollCorner();
+        if (!m_horizontalScrollbar && !m_verticalScrollbar)
+            invalidateScrollCornerRect(oldScrollCornerRect);
     }
 
     IntPoint scrollPoint = adjustScrollPositionWithinRange(IntPoint(desiredOffset)) + IntSize(m_scrollOrigin.x(), m_scrollOrigin.y());

@@ -274,7 +274,7 @@ void ScrollableArea::invalidateScrollbar(Scrollbar* scrollbar, const IntRect& re
     invalidateScrollbarRect(scrollbar, rect);
 }
 
-void ScrollableArea::invalidateScrollCorner()
+void ScrollableArea::invalidateScrollCorner(const IntRect& rect)
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (GraphicsLayer* graphicsLayer = layerForScrollCorner()) {
@@ -282,7 +282,7 @@ void ScrollableArea::invalidateScrollCorner()
         return;
     }
 #endif
-    invalidateScrollCornerRect(scrollCornerRect());
+    invalidateScrollCornerRect(rect);
 }
 
 bool ScrollableArea::hasLayerForHorizontalScrollbar() const

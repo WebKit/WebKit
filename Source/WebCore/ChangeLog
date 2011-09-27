@@ -1,3 +1,40 @@
+2011-09-27  Simon Fraser  <simon.fraser@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=67858
+
+        Roll r96070 back in now that the crash has been fixed in r96130.
+
+        Reviewed by Darin Adler.
+        
+        When non-overlay scrollbars are hidden on a composited iframe, nothing invalidated
+        the scrollbar areas or the scroll corner, so the scrollbars appear to remain.
+        
+        Fix by invalidating the scrollbars and scroll corner when they are removed. Invalidation
+        on scrollbar creation appears to happen via updating the scrollbar style.
+
+        Tested by compositing/iframes/repaint-after-losing-scrollbars.html which no longer shows
+        stale scrollbars when run manually, even though the green squares are missing from the
+        pixel result (bug 67878).
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateScrollCorner): Pass the corner rect into invalidateScrollCorner().
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setHasHorizontalScrollbar): Invalidate the scrollbar area if hiding it.
+        (WebCore::ScrollView::setHasVerticalScrollbar): Ditto.
+        (WebCore::ScrollView::updateScrollbars): In the case where both scrollbars are going away,
+        compute the scroll corner rect while we still have scrollbars, and then invalidate it
+        explicitly. (updateScrollCorner() doesn't, because it doesn't have access to the old corner
+        rect.)
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::invalidateScrollCorner): Pass the rect in, because we can't
+        compute it in the case where the scrollbars are going away.
+        * platform/ScrollableArea.h: Pass in a rect to invalidateScrollCorner(), which matches
+        invalidateScrollbar().
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::destroyRootLayer): Pass the corner rect into invalidateScrollCorner().
+        * rendering/RenderScrollbarPart.cpp: Ditto.
+        (WebCore::RenderScrollbarPart::imageChanged): Ditto.
+
 2011-09-27  Mihai Parparita  <mihaip@chromium.org>
 
         Fix Chromium Mac build after r96130.

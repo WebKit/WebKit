@@ -1786,7 +1786,7 @@ void RenderLayerCompositor::destroyRootLayer()
 
     if (m_layerForScrollCorner) {
         m_layerForScrollCorner = nullptr;
-        m_renderView->frameView()->invalidateScrollCorner();
+        m_renderView->frameView()->invalidateScrollCorner(m_renderView->frameView()->scrollCornerRect());
     }
 
     if (m_overflowControlsHostLayer) {
