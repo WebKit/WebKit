@@ -1,3 +1,11 @@
+2011-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip the test added by r95964 on Qt and GTK because it has been failing
+        on those two platforms. The failure is tracked by the bugs 68854 and 68855.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2011-09-26  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Second half of IDBFactory.getDatabaseNames implementation

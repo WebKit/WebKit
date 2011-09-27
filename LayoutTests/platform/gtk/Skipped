@@ -1654,3 +1654,6 @@ accessibility/aria-hidden-updates-alldescendants.html
 http/tests/security/xssAuditor/xss-filter-bypass-big5.html
 http/tests/security/xssAuditor/xss-filter-bypass-sjis.html
 
+# editing/selection/select-bidi-run.html fails on GTK
+# https://bugs.webkit.org/show_bug.cgi?id=68855
+editing/selection/select-bidi-run.html
