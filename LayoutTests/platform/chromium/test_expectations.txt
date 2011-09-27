@@ -43,7 +43,8 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
 BUGCR24182 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
-BUGCR24182 SLOW DEBUG : svg/hixie/perf/007.xml = PASS
+BUGCR24182 SLOW DEBUG SNOWLEOPARD: svg/hixie/perf/007.xml = PASS
+BUGCR24182 DEBUG LEOPARD : svg/hixie/perf/007.xml = IMAGE
 
 BUGWK67919 SLOW DEBUG : perf/document-contains.html = PASS
 
@@ -265,7 +266,6 @@ WONTFIX SKIP CPU CPU-CG : animations/3d = PASS TIMEOUT FAIL
 // We don't ship compositing on Leopard.
 WONTFIX SKIP GPU GPU-CG LEOPARD : compositing = PASS TIMEOUT FAIL
 WONTFIX SKIP GPU GPU-CG LEOPARD : platform/chromium/compositing = PASS TIMEOUT FAIL
-WONTFIX SKIP GPU GPU-CG LEOPARD : platform/chromium/compositing/zoom-animator-scale-test.html = PASS TIMEOUT FAIL
 WONTFIX SKIP GPU GPU-CG LEOPARD : animations/3d = PASS TIMEOUT FAIL
 
 WONTFIX MAC WIN : platform/chromium-linux = FAIL
@@ -2012,7 +2012,6 @@ BUGWK65203 WIN : fast/text/international/hindi-spacing.html = IMAGE
 BUGWK65203 WIN : fast/text/international/khmer-selection.html = IMAGE
 BUGWK65203 WIN : fast/text/international/thai-baht-space.html = IMAGE
 BUGWK65203 WIN : fast/text/international/thai-line-breaks.html = IMAGE
-BUGWK65203 WIN : media/audio-repaint.html = IMAGE
 BUGWK65203 WIN : platform/win/fast/text/uniscribe-missing-glyph.html = IMAGE
 BUGWK65203 WIN : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
 BUGWK65203 WIN : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE
@@ -2682,6 +2681,8 @@ BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html =
 
 BUGWK58587 LINUX GPU DEBUG : media/video-controls-rendering.html = IMAGE
 BUGCR97686 LINUX GPU RELEASE : media/video-controls-rendering.html = IMAGE
+
+BUGWK68852 GPU MAC WIN : platform/chromium/compositing/zoom-animator-scale-test.html = IMAGE
 
 BUGCR72223 : media/video-frame-accurate-seek.html = PASS IMAGE
 
@@ -3562,6 +3563,7 @@ BUGV8_1634 : fast/js/const.html = TEXT
 BUGWK66730 WIN : http/tests/websocket/tests/hixie76/handshake-fail-by-no-connection-header.html = PASS TEXT
 BUGWK66730 WIN : http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header.html = PASS TEXT
 BUGWK66730 WIN : http/tests/websocket/tests/hybi/masked-frames.html = PASS TEXT
+BUGWK66730 WIN : http/tests/websocket/tests/hybi/close.html = PASS TEXT
 
 BUGWK66217 WIN RELEASE : http/tests/inspector/resource-tree/resource-tree-errors-reload.html = PASS TEXT
 

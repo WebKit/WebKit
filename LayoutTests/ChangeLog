@@ -1,5 +1,11 @@
 2011-09-26  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed Chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-26  Mihai Parparita  <mihaip@chromium.org>
+
         Remove failing Chromium test expectations for tests that now pass
         (mainly due to r95751, which implemented Function.prototype.bind for
         JSC, resulting in baseline updates that now work for V8 too).
