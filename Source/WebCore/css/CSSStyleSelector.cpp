@@ -3029,6 +3029,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             applyProperty(CSSPropertyFontStyle, font->style.get());
             applyProperty(CSSPropertyFontVariant, font->variant.get());
             applyProperty(CSSPropertyFontWeight, font->weight.get());
+            // The previous properties can dirty our font but they don't try to read the font's
+            // properties back, which is safe. However if font-size is using the 'ex' unit, it will
+            // need query the dirtied font's x-height to get the computed size. To be safe in this
+            // case, let's just update the font now.
+            updateFont();
             applyProperty(CSSPropertyFontSize, font->size.get());
 
             m_lineHeightValue = font->lineHeight.get();

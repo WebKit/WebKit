@@ -1,3 +1,13 @@
+2011-09-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash because CSSPrimitiveValue::computeLengthDouble assumes fontMetrics are available
+        https://bugs.webkit.org/show_bug.cgi?id=66291
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/crash-set-font-expected.txt: Added.
+        * fast/canvas/crash-set-font.html: Added.
+
 2011-09-27  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed followupfix for r96110.

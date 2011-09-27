@@ -1,0 +1,3 @@
+Test for bug 66291: Crash because CSSPrimitiveValue::computeLengthDouble assumes fontMetrics are available
+
+This test passed as it did not crash.
