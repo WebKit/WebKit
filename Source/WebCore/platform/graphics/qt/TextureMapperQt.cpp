@@ -62,6 +62,21 @@ void BitmapTextureQt::endPaint()
     m_painter.end();
 }
 
+void BitmapTextureQt::updateContents(PixelFormat pixelFormat, const IntRect& rect, void* bits)
+{
+    m_painter.begin(&m_pixmap);
+    QImage::Format qtFormat = QImage::Format_ARGB32_Premultiplied;
+    if (pixelFormat == BGRFormat || pixelFormat == RGBFormat)
+        qtFormat = QImage::Format_RGB32;
+    QImage image(static_cast<uchar*>(bits), rect.width(), rect.height(), qtFormat);
+    if (pixelFormat == BGRFormat || pixelFormat == BGRAFormat)
+        image = image.rgbSwapped();
+    m_painter.setCompositionMode(QPainter::CompositionMode_Source);
+    m_painter.drawImage(rect, image);
+    m_painter.end();
+}
+
+
 bool BitmapTextureQt::save(const String& path)
 {
     return m_pixmap.save(path, "PNG");
@@ -214,7 +229,7 @@ void TextureMapperQt::endPainting()
 }
 
 #if USE(TEXTURE_MAPPER_GL)
-class RGBA32PremultimpliedBufferQt : public RGBA32PremultimpliedBuffer {
+class BGRA32PremultimpliedBufferQt : public BGRA32PremultimpliedBuffer {
 public:
     virtual PlatformGraphicsContext* beginPaint(const IntRect& rect, bool opaque)
     {
@@ -228,22 +243,17 @@ public:
         return &m_painter;
     }
 
-    void swapRGB()
-    {
-        m_image = m_image.rgbSwapped();
-    }
-
     virtual void endPaint() { m_painter.end(); }
-    virtual const void* data() const { return m_image.constBits(); }
+    virtual void* data() { return m_image.bits(); }
 
 private:
     QPainter m_painter;
     QImage m_image;
 };
 
-PassRefPtr<RGBA32PremultimpliedBuffer> RGBA32PremultimpliedBuffer::create()
+PassOwnPtr<BGRA32PremultimpliedBuffer> BGRA32PremultimpliedBuffer::create()
 {
-    return adoptRef(new RGBA32PremultimpliedBufferQt());
+    return adoptPtr(new BGRA32PremultimpliedBufferQt());
 }
 
 uint64_t uidForImage(Image* image)

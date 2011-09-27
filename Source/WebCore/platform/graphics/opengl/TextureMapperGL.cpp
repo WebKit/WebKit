@@ -238,6 +238,7 @@ public:
     inline FloatSize relativeSize() const { return m_relativeSize; }
     void setTextureMapper(TextureMapperGL* texmap) { m_textureMapper = texmap; }
 
+    void updateContents(PixelFormat, const IntRect&, void*);
     void pack()
     {
         // This is currently a stub.
@@ -265,7 +266,7 @@ private:
     FloatSize m_relativeSize;
     bool m_opaque;
     IntSize m_textureSize;
-    RefPtr<RGBA32PremultimpliedBuffer> m_buffer;
+    OwnPtr<BGRA32PremultimpliedBuffer> m_buffer;
     IntRect m_dirtyRect;
     GLuint m_fbo;
     GLuint m_rbo;
@@ -523,7 +524,7 @@ void BitmapTextureGL::reset(const IntSize& newSize, bool opaque)
 
 PlatformGraphicsContext* BitmapTextureGL::beginPaint(const IntRect& dirtyRect)
 {
-    m_buffer = RGBA32PremultimpliedBuffer::create();
+    m_buffer = BGRA32PremultimpliedBuffer::create();
     m_dirtyRect = dirtyRect;
     return m_buffer->beginPaint(dirtyRect, m_opaque);
 }
@@ -533,15 +534,62 @@ void BitmapTextureGL::endPaint()
     if (!m_buffer)
         return;
     m_buffer->endPaint();
+    updateContents(BGRAFormat, m_dirtyRect, m_buffer->data());
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
+    m_buffer.clear();
+}
+
+#ifdef TEXMAP_OPENGL_ES_2
+static void swizzleBGRAToRGBA(uint32_t* data, const IntSize& size)
+{
+    int width = size.width();
+    int height = size.height();
+    for (int y = 0; y < height; ++y) {
+        uint32_t* p = data + y * width;
+        for (int x = 0; x < width; ++x)
+            p[x] = ((p[x] << 16) & 0xff0000) | ((p[x] >> 16) & 0xff) | (p[x] & 0xff00ff00);
+    }
+}
+#endif
+
+void BitmapTextureGL::updateContents(PixelFormat pixelFormat, const IntRect& rect, void* bits)
+{
     GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
 #ifdef TEXMAP_OPENGL_ES_2
-    // FIXME: use shaders for RGBA->BGRA swap if this becomes a performance issue.
-    m_buffer->swapRGB();
-    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, m_dirtyRect.x(), m_dirtyRect.y(), m_dirtyRect.width(), m_dirtyRect.height(), GL_RGBA, GL_UNSIGNED_BYTE, m_buffer->data()))
-#else
-    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, m_dirtyRect.x(), m_dirtyRect.y(), m_dirtyRect.width(), m_dirtyRect.height(), GL_BGRA, GL_UNSIGNED_BYTE, m_buffer->data()))
+    bool shouldSwizzle = false;
 #endif
-    m_buffer.clear();
+
+    GLint glFormat = GL_RGBA;
+    switch (pixelFormat) {
+    case RGBAFormat:
+        glFormat = GL_RGBA;
+        break;
+    case RGBFormat:
+        glFormat = GL_RGB;
+        break;
+    case BGRAFormat:
+#ifdef TEXMAP_OPENGL_ES_2
+        shouldSwizzle = true;
+        glFormat = GL_RGBA;
+#else
+        glFormat = GL_BGRA;
+#endif
+        break;
+    case BGRFormat:
+#ifdef TEXMAP_OPENGL_ES_2
+        shouldSwizzle = true;
+        glFormat = GL_RGB;
+#else
+        glFormat = GL_BGR;
+#endif
+         break;
+    }
+
+#ifdef TEXMAP_OPENGL_ES_2
+    if (shouldSwizzle)
+        swizzleBGRAToRGBA(static_cast<uint32_t*>(bits), rect.size());
+#endif
+    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, rect.x(), rect.y(), rect.width(), rect.height(), glFormat, GL_UNSIGNED_BYTE, bits))
 }
 
 void BitmapTextureGL::setContentsToImage(Image* image)

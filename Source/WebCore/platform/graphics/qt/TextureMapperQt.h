@@ -41,6 +41,7 @@ public:
     virtual void pack();
     virtual void unpack();
     virtual bool isPacked() const { return m_isPacked; }
+    virtual void updateContents(PixelFormat, const IntRect&, void* bits);
 
     QPainter* painter() { return &m_painter; }
 

@@ -46,6 +46,7 @@ class TextureMapper;
 // A 2D texture that can be the target of software or GL rendering.
 class BitmapTexture  : public RefCounted<BitmapTexture> {
 public:
+    enum PixelFormat { BGRAFormat, RGBAFormat, BGRFormat, RGBFormat };
     BitmapTexture() : m_lockCount(0) {}
     virtual ~BitmapTexture() { }
     virtual void destroy() { }
@@ -66,6 +67,10 @@ public:
 
     virtual PlatformGraphicsContext* beginPaint(const IntRect& dirtyRect) = 0;
     virtual void endPaint() = 0;
+
+    // For performance reasons, BitmapTexture might modify the bits directly (swizzle).
+    // Thus, this method is only recommended for buffer update, such as used by WebKit2.
+    virtual void updateContents(PixelFormat, const IntRect&, void* bits) = 0;
     virtual PlatformGraphicsContext* beginPaintMedia()
     {
         return beginPaint(IntRect(0, 0, size().width(), size().height()));

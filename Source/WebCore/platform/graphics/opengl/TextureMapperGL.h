@@ -63,14 +63,13 @@ private:
 };
 
 // An offscreen buffer to be rendered by software.
-class RGBA32PremultimpliedBuffer : public RefCounted<RGBA32PremultimpliedBuffer> {
+class BGRA32PremultimpliedBuffer : public RefCounted<BGRA32PremultimpliedBuffer> {
 public:
-    virtual ~RGBA32PremultimpliedBuffer() {}
+    virtual ~BGRA32PremultimpliedBuffer() { }
     virtual PlatformGraphicsContext* beginPaint(const IntRect& dirtyRect, bool opaque) = 0;
-    virtual void swapRGB() = 0;
     virtual void endPaint() = 0;
-    virtual const void* data() const = 0;
-    static PassRefPtr<RGBA32PremultimpliedBuffer> create();
+    virtual void* data() = 0;
+    static PassOwnPtr<BGRA32PremultimpliedBuffer> create();
 };
 
 static inline int nextPowerOfTwo(int num)
