@@ -1112,11 +1112,6 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         PaintInfo info(context, damageRect.rect(), PaintPhaseBlockBackground, false, paintingRootForRenderer, 0);
         renderer()->paint(info, paintOffset);
 
-        // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
-        // z-index.  We paint after we painted the background/border, so that the scrollbars will
-        // sit above the background/border.
-        m_owningLayer->paintOverflowControls(context, layerBounds.location(), damageRect.rect());
-        
         // Restore the clip.
         m_owningLayer->restoreClip(context, paintDirtyRect, damageRect);
 
