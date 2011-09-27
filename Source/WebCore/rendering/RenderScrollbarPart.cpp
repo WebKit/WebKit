@@ -150,7 +150,7 @@ void RenderScrollbarPart::imageChanged(WrappedImagePtr image, const IntRect* rec
     else {
         if (FrameView* frameView = view()->frameView()) {
             if (frameView->isFrameViewScrollCorner(this)) {
-                frameView->invalidateScrollCorner(frameView->scrollCornerRect());
+                frameView->invalidateScrollCorner();
                 return;
             }
         }

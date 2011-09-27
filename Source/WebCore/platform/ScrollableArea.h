@@ -89,7 +89,7 @@ public:
     void invalidateScrollbar(Scrollbar*, const IntRect&);
     virtual bool isScrollCornerVisible() const = 0;
     virtual IntRect scrollCornerRect() const = 0;
-    void invalidateScrollCorner(const IntRect&);
+    void invalidateScrollCorner();
     virtual void getTickmarks(Vector<IntRect>&) const { }
 
     // This function should be overriden by subclasses to perform the actual
