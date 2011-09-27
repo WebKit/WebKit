@@ -60,8 +60,8 @@ private:
     LayoutUnit flowAwareLogicalHeightForChild(RenderBox* child);
     LayoutUnit flowAwareLogicalWidthForChild(RenderBox* child);
     LayoutUnit flowAwareLogicalHeight() const;
+    LayoutUnit flowAwareLogicalWidth() const;
     LayoutUnit flowAwareContentLogicalWidth() const;
-    LayoutUnit flowAwareAvailableLogicalWidth() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderBefore() const;
     LayoutUnit flowAwareBorderAfter() const;

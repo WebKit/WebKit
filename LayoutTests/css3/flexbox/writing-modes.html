@@ -7,6 +7,7 @@ body {
 .flexbox {
     width: 600px;
     display: -webkit-flexbox;
+    background-color: grey;
 }
 .flexbox div {
     height: 20px;
@@ -172,6 +173,22 @@ if (window.layoutTestController)
   <div data-expected-width="300" data-offset-y="180" data-offset-x="150" style="width: -webkit-flex(2 0 0);"></div>
   <div data-expected-width="150" data-offset-y="180" data-offset-x="450" style="width: -webkit-flex(1 0 0);"></div>
 </div>
+</div>
+
+<div style="position: relative;">
+    <div data-expected-width="600" style="direction: rtl; display: -webkit-flexbox; margin-left: 10px; margin-right:20px;" class="flexbox">
+      <div data-expected-width="50" data-offset-x="510" style="width: -webkit-flex(1 0 0); margin: 0 auto;"></div>
+      <div data-expected-width="300" data-offset-x="160" style="width: -webkit-flex(2 0 0); padding: 0 100px;"></div>
+      <div data-expected-width="50" data-offset-x="10" style="width: -webkit-flex(1 0 0);margin-right: 100px;"></div>
+    </div>
+</div>
+
+<div style="position: relative;">
+    <div data-expected-width="700" style="direction: rtl; display: -webkit-flexbox; padding-left: 10px; padding-right: 20px; border-style: solid; border-left: 30px solid; border-right: 40px solid;" class="flexbox ">
+      <div data-expected-width="50" data-offset-x="540" style="width: -webkit-flex(1 0 0); margin: 0 auto;"></div>
+      <div data-expected-width="300" data-offset-x="190" style="width: -webkit-flex(2 0 0); padding: 0 100px;"></div>
+      <div data-expected-width="50" data-offset-x="40" style="width: -webkit-flex(1 0 0);margin-right: 100px;"></div>
+    </div>
 </div>
 
 </body>

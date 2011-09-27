@@ -1,3 +1,25 @@
+2011-09-27  Ojan Vafai  <ojan@chromium.org>
+
+        take padding/border on flexbox into account with direction:rtl
+        https://bugs.webkit.org/show_bug.cgi?id=68846
+
+        Reviewed by David Hyatt.
+
+        Use the logicalWidth of the flexbox instead of it's availableLogicalWidth
+        so that we include the flexbox's border and padding.
+        
+        Also, change all uses of availableLogicalWidth to contentLogicalWidth.
+        The former takes multi-column into account. Multi-column flexboxes don't
+        make any sense, so there's no point in calling availableLogicalWidth.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::flowAwareLogicalWidth):
+        (WebCore::RenderFlexibleBox::flowAwareContentLogicalWidth):
+        (WebCore::RenderFlexibleBox::computePreferredLogicalWidth):
+        (WebCore::RenderFlexibleBox::runFreeSpaceAllocationAlgorithmInlineDirection):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection):
+        * rendering/RenderFlexibleBox.h:
+
 2011-09-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96139.

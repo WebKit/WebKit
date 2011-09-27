@@ -229,14 +229,14 @@ LayoutUnit RenderFlexibleBox::flowAwareLogicalHeight() const
     return logicalHeight();
 }
 
+LayoutUnit RenderFlexibleBox::flowAwareLogicalWidth() const
+{
+    return logicalWidth();
+}
+
 LayoutUnit RenderFlexibleBox::flowAwareContentLogicalWidth() const
 {
     return contentLogicalWidth();
-}
-
-LayoutUnit RenderFlexibleBox::flowAwareAvailableLogicalWidth() const
-{
-    return availableLogicalWidth();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareBorderStart() const
@@ -374,7 +374,7 @@ void RenderFlexibleBox::computePreferredLogicalWidth(bool relayoutChildren, Tree
     preferredLogicalWidth = 0;
     totalPositiveFlexibility = totalNegativeFlexibility = 0;
 
-    LayoutUnit flexboxAvailableLogicalWidth = flowAwareAvailableLogicalWidth();
+    LayoutUnit flexboxAvailableLogicalWidth = flowAwareContentLogicalWidth();
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
         // We always have to lay out flexible objects again, since the flex distribution
         // may have changed, and we need to reallocate space.
@@ -410,7 +410,7 @@ bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithmInlineDirection(FlexOrder
 {
     childSizes.clear();
 
-    LayoutUnit flexboxAvailableLogicalWidth = flowAwareAvailableLogicalWidth();
+    LayoutUnit flexboxAvailableLogicalWidth = flowAwareContentLogicalWidth();
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
         LayoutUnit childPreferredSize;
         if (inflexibleItems.contains(child))
@@ -474,7 +474,7 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
     }
 
     LayoutUnit logicalTop = flowAwareBorderBefore() + flowAwarePaddingBefore();
-    LayoutUnit totalAvailableLogicalWidth = flowAwareAvailableLogicalWidth();
+    LayoutUnit totalLogicalWidth = flowAwareLogicalWidth();
     setFlowAwareLogicalHeight(0);
     size_t i = 0;
     for (RenderBox* child = iterator.first(); child; child = iterator.next(), ++i) {
@@ -494,7 +494,7 @@ void RenderFlexibleBox::layoutAndPlaceChildrenInlineDirection(FlexOrderIterator&
         startEdge += flowAwareMarginStartForChild(child);
 
         LayoutUnit childLogicalWidth = flowAwareLogicalWidthForChild(child);
-        LayoutUnit logicalLeft = isLeftToRightFlow() ? startEdge : totalAvailableLogicalWidth - startEdge - childLogicalWidth;
+        LayoutUnit logicalLeft = isLeftToRightFlow() ? startEdge : totalLogicalWidth - startEdge - childLogicalWidth;
         // FIXME: Do repaintDuringLayoutIfMoved.
         // FIXME: Supporting layout deltas.
         setFlowAwareLogicalLocationForChild(child, IntPoint(logicalLeft, logicalTop));
