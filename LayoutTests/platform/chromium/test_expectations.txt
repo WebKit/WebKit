@@ -3776,8 +3776,6 @@ BUGWK68879 MAC CPU-CG : canvas/philip/tests/toDataURL.jpeg.quality.basic.html = 
 BUGWK68881 DEBUG : svg/text/selection-background-color.xhtml = CRASH
 BUGWK68881 DEBUG : svg/text/selection-styles.xhtml = CRASH
 
-BUGWK68882 LINUX GPU : compositing/video-page-visibility.html = IMAGE
-
 BUGWK68885 MAC CPU-CG : fast/canvas/webgl/premultiplyalpha-test.html = TEXT
 
 BUGWK68886 MAC GPU-CG : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TEXT
