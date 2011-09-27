@@ -26,55 +26,36 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-'''Unit tests for watchlistparser.py.'''
+'''Unit tests for watchlist.py.'''
 
-import re
 import unittest
+
+from webkitpy.common.checkout.diff_test_data import DIFF_TEST_DATA
 from webkitpy.common.watchlist.watchlistparser import WatchListParser
 
 
 class WatchListParserTest(unittest.TestCase):
     def setUp(self):
-        # For versions of Python before 2.7.
-        if not 'assertRaisesRegexp' in dir(self):
-            self.assertRaisesRegexp = self._verifyException
         self._watch_list_parser = WatchListParser()
 
-    def _verifyException(self, regex_message, callable, *args):
-        try:
-            callable(*args)
-            self.assertTrue(False, 'No assert raised.')
-        except Exception as exception:
-            self.assertTrue(re.match(regex_message, exception.__str__()),
-                            'Expected regex "%s"\nGot "%s"' % (regex_message, exception.__str__()))
-
-    def test_bad_section(self):
-        watch_list_with_bad_section = ('{"FOO": {}}')
-        self.assertRaisesRegexp('Unknown section "FOO" in watch list.',
-                                self._watch_list_parser.parse, watch_list_with_bad_section)
-
-    def test_bad_definition(self):
-        watch_list_with_bad_definition = (
+    def test_filename_definition_no_matches(self):
+        watch_list = self._watch_list_parser.parse(
             '{'
             '    "DEFINITIONS": {'
-            '        "WatchList1|A": {'
+            '        "WatchList1": {'
             '            "filename": r".*\\MyFileName\\.cpp",'
             '        },'
             '     },'
             '}')
+        self.assertEquals(set([]), watch_list.find_matching_definitions(DIFF_TEST_DATA))
 
-        self._verifyException('Invalid character "|" in definition "WatchList1|A".',
-                              self._watch_list_parser.parse, watch_list_with_bad_definition)
-
-    def test_bad_match_type(self):
-        watch_list_with_bad_match_type = (
+    def test_filename_definition(self):
+        watch_list = self._watch_list_parser.parse(
             '{'
             '    "DEFINITIONS": {'
             '        "WatchList1": {'
-            '            "nothing_matches_this": r".*\\MyFileName\\.cpp",'
+            '            "filename": r"WebCore/rendering/style/StyleFlexibleBoxData\.h",'
             '        },'
             '     },'
             '}')
-
-        self._verifyException('Invalid pattern type "nothing_matches_this" in definition "WatchList1".',
-                              self._watch_list_parser.parse, watch_list_with_bad_match_type)
+        self.assertEquals(set(['WatchList1']), watch_list.find_matching_definitions(DIFF_TEST_DATA))

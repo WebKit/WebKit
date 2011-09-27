@@ -28,6 +28,7 @@
 
 import re
 from webkitpy.common.watchlist.watchlist import WatchList
+from webkitpy.common.watchlist.filenamepattern import FilenamePattern
 
 
 class WatchListParser(object):
@@ -36,7 +37,7 @@ class WatchListParser(object):
 
     def __init__(self):
         self._section_parsers = {self._DEFINITIONS: self._parse_definition_section, }
-        self._definition_pattern_parsers = {}
+        self._definition_pattern_parsers = {'filename': FilenamePattern, }
 
     def parse(self, watch_list_contents):
         watch_list = WatchList()

@@ -26,29 +26,24 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.checkout.diff_parser import DiffParser
+import unittest
+from webkitpy.common.watchlist.filenamepattern import FilenamePattern
 
-class WatchList(object):
-    def __init__(self):
-        self._definitions = {}
 
-    def set_definitions(self, definitions):
-        self._definitions = definitions
+class FileNamePatternTest(unittest.TestCase):
+    def test_filename_pattern_literal(self):
+        filename_pattern = FilenamePattern(r'MyFileName\.cpp')
 
-    def find_matching_definitions(self, diff):
-        matching_definitions = set()
-        patch_files = DiffParser(diff.splitlines()).files
+        # Note the follow filenames are not regex.
+        self.assertTrue(filename_pattern.match('MyFileName.cpp', None))
+        self.assertFalse(filename_pattern.match('MyFileName.cppa', None))
+        self.assertFalse(filename_pattern.match('aMyFileName.cpp', None))
+        self.assertFalse(filename_pattern.match('MyFileNamebcpp', None))
 
-        for path, diff_file in patch_files.iteritems():
-            for definition in self._definitions:
-                # If a definition has already matched, there is no need to process it.
-                if definition in matching_definitions:
-                    continue
+    def test_filename_pattern_substring(self):
+        filename_pattern = FilenamePattern(r'.*\\MyFileName\..*')
 
-                # See if the definition matches.
-                for pattern in self._definitions[definition]:
-                    if not pattern.match(path, diff_file):
-                        break
-                else:
-                    matching_definitions.add(definition)
-        return matching_definitions
+        # Note the follow filenames are not regex.
+        self.assertTrue(filename_pattern.match(r'\\MyFileName.cpp', None))
+        self.assertTrue(filename_pattern.match(r'a\\MyFileName.h', None))
+        self.assertFalse(filename_pattern.match(r'\\aMyFileName.cpp', None))
