@@ -11,6 +11,7 @@ BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.htm
 
 BUGWK68536 : media/media-blocked-by-beforeload.html = PASS TEXT
 BUGWK68878 : media/video-playing-and-pause.html = PASS TEXT
+BUGWK67407 : media/video-timeupdate-reverse-play.html = PASS TEXT
 
 BUGWK68523 : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = PASS TEXT
 BUGWK68523 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = PASS TEXT

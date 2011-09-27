@@ -1017,6 +1017,7 @@ svg/zoom/text/zoom-coords-viewattr-01-b.svg
 svg/W3C-SVG-1.1/animate-elem-30-t.svg
 svg/W3C-SVG-1.1/animate-elem-03-t.svg
 svg/W3C-SVG-1.1/animate-elem-33-t.svg
+svg/filters/animate-fill.svg
 # Fail on 32-bits Debug
 svg/W3C-SVG-1.1/animate-elem-46-t.svg
 svg/W3C-SVG-1.1/animate-elem-82-t.svg

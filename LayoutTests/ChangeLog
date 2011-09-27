@@ -1,3 +1,12 @@
+2011-09-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening
+
+        * platform/gtk/Skipped: Skip svg/filters/animate-fill.svg failing
+        in 32-Bits Release.
+        * platform/gtk/test_expectations.txt: Mark
+        media/video-timeupdate-reverse-play.html as flaky because of bug 67407.
+
 2011-09-27  Shinichiro Hamaji  <hamaji@chromium.org>
 
         [Chromium] Layout Test canvas/philip/tests/toDataURL.jpeg.*.html is failing on Mac 10.5 CG
