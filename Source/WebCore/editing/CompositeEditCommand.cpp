@@ -247,10 +247,13 @@ HTMLElement* CompositeEditCommand::replaceElementWithSpanPreservingChildrenAndAt
     return command->spanElement();
 }
 
-static bool hasARenderedDescendant(Node* node)
+static bool hasARenderedDescendant(Node* node, Node* excludedNode)
 {
-    Node* n = node->firstChild();
-    while (n) {
+    for (Node* n = node->firstChild(); n;) {
+        if (n == excludedNode) {
+            n = n->traverseNextSibling(node);
+            continue;
+        }
         if (n->renderer())
             return true;
         n = n->traverseNextNode(node);
@@ -258,20 +261,24 @@ static bool hasARenderedDescendant(Node* node)
     return false;
 }
 
-void CompositeEditCommand::prune(PassRefPtr<Node> prpNode)
+static Node* highestNodeToRemoveInPruning(Node* node)
 {
-    RefPtr<Node> node = prpNode;
-
-    while (node) {
-        // If you change this rule you may have to add an updateLayout() here.
-        RenderObject* renderer = node->renderer();
-        if (renderer && (!renderer->canHaveChildren() || hasARenderedDescendant(node.get()) || node->rootEditableElement() == node))
-            return;
-            
-        RefPtr<ContainerNode> next = node->parentNode();
-        removeNode(node);
-        node = next;
+    Node* previousNode = 0;
+    Node* rootEditableElement = node ? node->rootEditableElement() : 0;
+    for (; node; node = node->parentNode()) {
+        if (RenderObject* renderer = node->renderer()) {
+            if (!renderer->canHaveChildren() || hasARenderedDescendant(node, previousNode) || rootEditableElement == node)
+                return previousNode;
+        }
+        previousNode = node;
     }
+    return 0;
+}
+
+void CompositeEditCommand::prune(PassRefPtr<Node> node)
+{
+    if (RefPtr<Node> highestNodeToRemove = highestNodeToRemoveInPruning(node.get()))
+        removeNode(highestNodeToRemove.release());
 }
 
 void CompositeEditCommand::splitTextNode(PassRefPtr<Text> node, unsigned offset)
@@ -1165,11 +1172,9 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     // A line break is either a br or a preserved newline.
     ASSERT(caretPos.deprecatedNode()->hasTagName(brTag) || (caretPos.deprecatedNode()->isTextNode() && caretPos.deprecatedNode()->renderer()->style()->preserveNewline()));
     
-    if (caretPos.deprecatedNode()->hasTagName(brTag)) {
-        Position beforeBR(positionInParentBeforeNode(caretPos.deprecatedNode()));
-        removeNode(caretPos.deprecatedNode());
-        prune(beforeBR.deprecatedNode());
-    } else if (caretPos.deprecatedNode()->isTextNode()) {
+    if (caretPos.deprecatedNode()->hasTagName(brTag))
+        removeNodeAndPruneAncestors(caretPos.deprecatedNode());
+    else if (caretPos.deprecatedNode()->isTextNode()) {
         ASSERT(caretPos.deprecatedEditingOffset() == 0);
         Text* textNode = static_cast<Text*>(caretPos.deprecatedNode());
         ContainerNode* parentNode = textNode->parentNode();
