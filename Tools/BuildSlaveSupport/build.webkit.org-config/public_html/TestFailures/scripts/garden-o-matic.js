@@ -60,11 +60,21 @@ $(document).ready(function() {
     onebar = new ui.onebar();
     onebar.attach();
 
+    // FIXME: This doesn't belong here.
+    var onebarController = {
+        showResults: function(resultsView)
+        {
+            var resultsContainer = onebar.results();
+            $(resultsContainer).empty().append(resultsView);
+            onebar.select('results');
+        }
+    };
+
     var unexpectedFailuresView = new ui.notifications.Stream();
-    g_unexpectedFailuresController = new controllers.UnexpectedFailures(unexpectedFailuresView);
+    g_unexpectedFailuresController = new controllers.UnexpectedFailures(model.state, unexpectedFailuresView, onebarController);
 
     var failuresView = new ui.notifications.Stream();
-    g_failuresController = new controllers.Failures(failuresView);
+    g_failuresController = new controllers.Failures(model.state, failuresView, onebarController);
 
     g_info = new ui.notifications.Stream();
     g_failingBuilders = new controllers.FailingBuilders(g_info);

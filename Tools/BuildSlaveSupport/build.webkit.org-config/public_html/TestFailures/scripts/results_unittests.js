@@ -23,11 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+var unittest = unittest || {};
+
 (function () {
 
 module("results");
 
-var kExampleResultsJSON = {
+unittest.kExampleResultsJSON = {
     "tests": {
         "scrollbars": {
             "custom-scrollbar-with-incomplete-style.html": {
@@ -69,7 +71,7 @@ var kExampleResultsJSON = {
 };
 
 test("unexpectedFailures", 1, function() {
-    var unexpectedFailures = results.unexpectedFailures(kExampleResultsJSON);
+    var unexpectedFailures = results.unexpectedFailures(unittest.kExampleResultsJSON);
     deepEqual(unexpectedFailures, {
         "userscripts/another-test.html": {
             "expected": "PASS",
@@ -80,7 +82,7 @@ test("unexpectedFailures", 1, function() {
 
 test("unexpectedFailuresByTest", 1, function() {
     var unexpectedFailuresByTest = results.unexpectedFailuresByTest({
-        "Mock Builder": kExampleResultsJSON
+        "Mock Builder": unittest.kExampleResultsJSON
     });
     deepEqual(unexpectedFailuresByTest, {
         "userscripts/another-test.html": {
@@ -94,7 +96,7 @@ test("unexpectedFailuresByTest", 1, function() {
 
 test("unexpectedSuccessesByTest", 1, function() {
     var unexpectedFailuresByTest = results.unexpectedSuccessesByTest({
-        "Mock Builder": kExampleResultsJSON
+        "Mock Builder": unittest.kExampleResultsJSON
     });
     deepEqual(unexpectedFailuresByTest, {
         "scrollbars/unexpected-pass.html": {
@@ -108,7 +110,7 @@ test("unexpectedSuccessesByTest", 1, function() {
 
 test("failureInfoForTestAndBuilder", 1, function() {
     var unexpectedFailuresByTest = results.unexpectedFailuresByTest({
-        "Mock Builder": kExampleResultsJSON
+        "Mock Builder": unittest.kExampleResultsJSON
     });
     var failureInfo = results.failureInfoForTestAndBuilder(unexpectedFailuresByTest, "userscripts/another-test.html", "Mock Builder");
     deepEqual(failureInfo, {
@@ -149,13 +151,13 @@ test("resultType", 12, function() {
 });
 
 test("resultNodeForTest", 4, function() {
-    deepEqual(results.resultNodeForTest(kExampleResultsJSON, "userscripts/another-test.html"), {
+    deepEqual(results.resultNodeForTest(unittest.kExampleResultsJSON, "userscripts/another-test.html"), {
         "expected": "PASS",
         "actual": "TEXT"
     });
-    equals(results.resultNodeForTest(kExampleResultsJSON, "foo.html"), null);
-    equals(results.resultNodeForTest(kExampleResultsJSON, "userscripts/foo.html"), null);
-    equals(results.resultNodeForTest(kExampleResultsJSON, "userscripts/foo/bar.html"), null);
+    equals(results.resultNodeForTest(unittest.kExampleResultsJSON, "foo.html"), null);
+    equals(results.resultNodeForTest(unittest.kExampleResultsJSON, "userscripts/foo.html"), null);
+    equals(results.resultNodeForTest(unittest.kExampleResultsJSON, "userscripts/foo/bar.html"), null);
 });
 
 test("walkHistory", 6, function() {

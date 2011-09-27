@@ -100,9 +100,11 @@ var FailureStreamController = base.extends(Object, {
     _keyFor: function(failureAnalysis) { throw "Not implemented!"; },
     _createFailureView: function(failureAnalysis) { throw "Not implemented!"; },
 
-    init: function(view)
+    init: function(model, view, delegate)
     {
+        this._model = model;
         this._view = view;
+        this._delegate = delegate;
         this._testFailures = new base.UpdateTracker();
     },
     update: function(failureAnalysis)
@@ -139,18 +141,13 @@ var FailureStreamController = base.extends(Object, {
 
         var testNameList = failures.testNameList();
         var failuresByTest = base.filterDictionary(
-            this._resultsFilter(model.state.resultsByBuilder),
+            this._resultsFilter(this._model.resultsByBuilder),
             function(key) {
                 return testNameList.indexOf(key) != -1;
             });
 
         var controller = new controllers.ResultsDetails(resultsView, failuresByTest);
-
-        // FIXME: This doesn't belong here.
-        var onebar = $('#onebar')[0];
-        var resultsContainer = onebar.results();
-        $(resultsContainer).empty().append(resultsView);
-        onebar.select('results');
+        this._delegate.showResults(resultsView);
     },
     _toFailureInfoList: function(failures)
     {
@@ -167,7 +164,7 @@ var FailureStreamController = base.extends(Object, {
 });
 
 controllers.UnexpectedFailures = base.extends(FailureStreamController, {
-    _resultsFilter: results.expectedOrUnexpectedFailuresByTest,
+    _resultsFilter: results.unexpectedFailuresByTest,
 
     _impliedFirstFailingRevision: function(failureAnalysis)
     {
