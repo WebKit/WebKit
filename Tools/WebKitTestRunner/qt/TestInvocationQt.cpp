@@ -30,6 +30,7 @@
 #include <QCryptographicHash>
 #include <WebKit2/WKImageQt.h>
 #include <stdio.h>
+#include "UnusedParam.h"
 
 namespace WTR {
 

@@ -1,5 +1,11 @@
 2011-09-26  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][WK2] One more unreviewed buildfix after r96005.
+
+        * WebKitTestRunner/qt/TestInvocationQt.cpp: Missing include added.
+
+2011-09-26  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][WK2] Unreviewed buildfix after r96005.
 
         * WebKitTestRunner/qt/TestInvocationQt.cpp:
