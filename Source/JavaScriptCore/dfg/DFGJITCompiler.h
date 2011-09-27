@@ -372,9 +372,9 @@ public:
         m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckImmToCall, deltaCallToStructCheck, deltaCallToLoadOrStore, deltaCallToSlowCase, deltaCallToDone,  baseGPR, valueGPR, scratchGPR));
     }
 #elif USE(JSVALUE32_64)
-    void addPropertyAccess(JITCompiler::Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR)
+    void addPropertyAccess(JITCompiler::Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToTagLoadOrStore, int16_t deltaCallToPayloadLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR)
     {
-        m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckImmToCall, deltaCallToStructCheck, deltaCallToLoadOrStore, deltaCallToSlowCase, deltaCallToDone,  baseGPR, valueTagGPR, valueGPR, scratchGPR));
+        m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckImmToCall, deltaCallToStructCheck, deltaCallToTagLoadOrStore, deltaCallToPayloadLoadOrStore, deltaCallToSlowCase, deltaCallToDone,  baseGPR, valueTagGPR, valueGPR, scratchGPR));
     }
 #endif
 
@@ -467,12 +467,17 @@ private:
 #if USE(JSVALUE64)
         PropertyAccessRecord(Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
 #elif USE(JSVALUE32_64)
-        PropertyAccessRecord(Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR)
+        PropertyAccessRecord(Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToTagLoadOrStore, int16_t deltaCallToPayloadLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueTagGPR, int8_t valueGPR, int8_t scratchGPR)
 #endif
             : m_functionCall(functionCall)
             , m_deltaCheckImmToCall(deltaCheckImmToCall)
             , m_deltaCallToStructCheck(deltaCallToStructCheck)
+#if USE(JSVALUE64)
             , m_deltaCallToLoadOrStore(deltaCallToLoadOrStore)
+#elif USE(JSVALUE32_64)
+            , m_deltaCallToTagLoadOrStore(deltaCallToTagLoadOrStore)
+            , m_deltaCallToPayloadLoadOrStore(deltaCallToPayloadLoadOrStore)
+#endif
             , m_deltaCallToSlowCase(deltaCallToSlowCase)
             , m_deltaCallToDone(deltaCallToDone)
             , m_baseGPR(baseGPR)
@@ -487,7 +492,12 @@ private:
         JITCompiler::Call m_functionCall;
         int16_t m_deltaCheckImmToCall;
         int16_t m_deltaCallToStructCheck;
+#if USE(JSVALUE64)
         int16_t m_deltaCallToLoadOrStore;
+#elif USE(JSVALUE32_64)
+        int16_t m_deltaCallToTagLoadOrStore;
+        int16_t m_deltaCallToPayloadLoadOrStore;
+#endif
         int16_t m_deltaCallToSlowCase;
         int16_t m_deltaCallToDone;
         int8_t m_baseGPR;

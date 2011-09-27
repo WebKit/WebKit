@@ -595,7 +595,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         info.callReturnLocation = linkBuffer.locationOf(m_propertyAccesses[i].m_functionCall);
         info.u.unset.deltaCheckImmToCall = m_propertyAccesses[i].m_deltaCheckImmToCall;
         info.deltaCallToStructCheck = m_propertyAccesses[i].m_deltaCallToStructCheck;
-        info.u.unset.deltaCallToLoadOrStore = m_propertyAccesses[i].m_deltaCallToLoadOrStore;
+        info.u.unset.deltaCallToTagLoadOrStore = m_propertyAccesses[i].m_deltaCallToTagLoadOrStore;
+        info.u.unset.deltaCallToPayloadLoadOrStore = m_propertyAccesses[i].m_deltaCallToPayloadLoadOrStore;
         info.deltaCallToSlowCase = m_propertyAccesses[i].m_deltaCallToSlowCase;
         info.deltaCallToDone = m_propertyAccesses[i].m_deltaCallToDone;
         info.baseGPR = m_propertyAccesses[i].m_baseGPR;
