@@ -37,6 +37,10 @@ a {
     color: #333;
 }
 
+.ui-widget-content {
+    font-family: 'Open Sans';
+}
+
 .ui-widget button, button {
     font-family: 'Open Sans';
     border-radius: 2px;
