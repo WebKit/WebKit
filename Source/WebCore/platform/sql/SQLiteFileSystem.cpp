@@ -32,8 +32,6 @@
 #include "config.h"
 #include "SQLiteFileSystem.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "FileSystem.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
@@ -125,5 +123,3 @@ long long SQLiteFileSystem::getDatabaseFileSize(const String& fileName)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)

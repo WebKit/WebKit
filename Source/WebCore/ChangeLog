@@ -1,3 +1,20 @@
+2011-09-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix ENABLE(SQL_DATABASE)=0 build after r95919
+        https://bugs.webkit.org/show_bug.cgi?id=68902
+
+        r95919 enabled OFFLINE_WEB_APPLICATIONS by default and
+        it needs SQLite stuff even if ENABLE_SQL_DATABASE=0.
+
+        Reviewed by Adam Barth.
+
+        * platform/sql/SQLiteAuthorizer.cpp:
+        * platform/sql/SQLiteDatabase.cpp:
+        * platform/sql/SQLiteFileSystem.cpp:
+        * platform/sql/SQLiteStatement.cpp:
+        * platform/sql/SQLiteTransaction.cpp:
+        * storage/DatabaseAuthorizer.cpp:
+
 2011-09-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash because CSSPrimitiveValue::computeLengthDouble assumes fontMetrics are available

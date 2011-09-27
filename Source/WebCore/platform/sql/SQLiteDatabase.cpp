@@ -27,8 +27,6 @@
 #include "config.h"
 #include "SQLiteDatabase.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "DatabaseAuthorizer.h"
 #include "Logging.h"
 #include "SQLiteFileSystem.h"
@@ -471,5 +469,3 @@ bool SQLiteDatabase::turnOnIncrementalAutoVacuum()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)

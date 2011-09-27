@@ -29,8 +29,6 @@
 #include "config.h"
 #include "DatabaseAuthorizer.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 
@@ -434,5 +432,3 @@ int DatabaseAuthorizer::updateDeletesBasedOnTableName(const String& tableName)
 }
 
 } // namespace WebCore
-
-#endif
