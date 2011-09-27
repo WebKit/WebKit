@@ -376,6 +376,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMouseEvent.h \
 	DerivedSources/WebCore/JSMutationEvent.cpp \
 	DerivedSources/WebCore/JSMutationEvent.h \
+	DerivedSources/WebCore/JSMutationRecord.cpp \
+	DerivedSources/WebCore/JSMutationRecord.h \
 	DerivedSources/WebCore/JSNamedNodeMap.cpp \
 	DerivedSources/WebCore/JSNamedNodeMap.h \
 	DerivedSources/WebCore/JSNavigator.cpp \
@@ -1221,6 +1223,8 @@ webcore_sources += \
 	Source/WebCore/dom/MouseRelatedEvent.h \
 	Source/WebCore/dom/MutationEvent.cpp \
 	Source/WebCore/dom/MutationEvent.h \
+	Source/WebCore/dom/MutationRecord.cpp \
+	Source/WebCore/dom/MutationRecord.h \
 	Source/WebCore/dom/NamedNodeMap.cpp \
 	Source/WebCore/dom/NamedNodeMap.h \
 	Source/WebCore/dom/NameNodeList.cpp \

@@ -298,6 +298,7 @@ DOM_CLASSES = \
     MetadataCallback \
     MouseEvent \
     MutationEvent \
+    MutationRecord \
     NamedNodeMap \
     Navigator \
     NavigatorUserMediaError \

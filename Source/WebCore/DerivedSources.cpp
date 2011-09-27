@@ -245,6 +245,7 @@
 #include "JSMetadataCallback.cpp"
 #include "JSMouseEvent.cpp"
 #include "JSMutationEvent.cpp"
+#include "JSMutationRecord.cpp"
 #include "JSNamedNodeMap.cpp"
 #include "JSNavigator.cpp"
 #include "JSNavigatorUserMediaError.cpp"

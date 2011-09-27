@@ -163,6 +163,7 @@ SET(WebCore_IDL_FILES
     dom/MessagePort.idl
     dom/MouseEvent.idl
     dom/MutationEvent.idl
+    dom/MutationRecord.idl
     dom/NamedNodeMap.idl
     dom/NodeFilter.idl
     dom/Node.idl
@@ -547,6 +548,7 @@ SET(WebCore_SOURCES
     dom/MouseEvent.cpp
     dom/MouseRelatedEvent.cpp
     dom/MutationEvent.cpp
+    dom/MutationRecord.cpp
     dom/NamedNodeMap.cpp
     dom/NameNodeList.cpp
     dom/Node.cpp

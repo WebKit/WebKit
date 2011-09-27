@@ -510,6 +510,7 @@ SOURCES += \
     dom/MouseEvent.cpp \
     dom/MouseRelatedEvent.cpp \
     dom/MutationEvent.cpp \
+    dom/MutationRecord.cpp \
     dom/NamedNodeMap.cpp \
     dom/NameNodeList.cpp \
     dom/Node.cpp \
@@ -1523,6 +1524,7 @@ HEADERS += \
     dom/MouseEvent.h \
     dom/MouseRelatedEvent.h \
     dom/MutationEvent.h \
+    dom/MutationRecord.h \
     dom/NamedNodeMap.h \
     dom/NameNodeList.h \
     dom/NodeFilterCondition.h \
