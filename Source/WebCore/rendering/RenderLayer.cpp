@@ -707,7 +707,7 @@ void RenderLayer::updateLayerPosition()
         localPoint += inlineBoundingBoxOffset;
     } else if (RenderBox* box = renderBox()) {
         setSize(box->size());
-        localPoint += box->locationOffsetIncludingFlipping();
+        localPoint += box->topLeftLocationOffset();
     }
 
     // Clear our cached clip rect information.
@@ -721,13 +721,13 @@ void RenderLayer::updateLayerPosition()
             if (curr->isBox() && !curr->isTableRow()) {
                 // Rows and cells share the same coordinate space (that of the section).
                 // Omit them when computing our xpos/ypos.
-                localPoint += toRenderBox(curr)->locationOffsetIncludingFlipping();
+                localPoint += toRenderBox(curr)->topLeftLocationOffset();
             }
             curr = curr->parent();
         }
         if (curr->isBox() && curr->isTableRow()) {
             // Put ourselves into the row coordinate space.
-            localPoint -= toRenderBox(curr)->locationOffsetIncludingFlipping();
+            localPoint -= toRenderBox(curr)->topLeftLocationOffset();
         }
     }
     

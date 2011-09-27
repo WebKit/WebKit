@@ -1383,9 +1383,9 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
                 columnRect.moveBy(point);
                 o->adjustForColumns(offset, columnRect.location());
             } else
-                offset += locationOffsetIncludingFlipping();
+                offset += topLeftLocationOffset();
         } else
-            offset += locationOffsetIncludingFlipping();
+            offset += topLeftLocationOffset();
     }
 
     if (o->hasOverflowClip())
@@ -3649,7 +3649,15 @@ void RenderBox::flipForWritingMode(FloatRect& rect) const
         rect.setX(width() - rect.maxX());
 }
 
-LayoutSize RenderBox::locationOffsetIncludingFlipping() const
+LayoutPoint RenderBox::topLeftLocation() const
+{
+    RenderBlock* containerBlock = containingBlock();
+    if (!containerBlock || containerBlock == this)
+        return location();
+    return containerBlock->flipForWritingMode(this, location(), RenderBox::ParentToChildFlippingAdjustment);
+}
+
+LayoutSize RenderBox::topLeftLocationOffset() const
 {
     RenderBlock* containerBlock = containingBlock();
     if (!containerBlock || containerBlock == this)

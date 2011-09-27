@@ -49,6 +49,11 @@ public:
     LayoutUnit width() const { return m_frameRect.width(); }
     LayoutUnit height() const { return m_frameRect.height(); }
 
+    // These represent your location relative to your container as a physical offset.
+    // In layout related methods you almost always want the logical location (e.g. x() and y()).
+    LayoutUnit top() const { return topLeftLocation().y(); }
+    LayoutUnit left() const { return topLeftLocation().x(); }
+
     void setX(LayoutUnit x) { m_frameRect.setX(x); }
     void setY(LayoutUnit y) { m_frameRect.setY(y); }
     void setWidth(LayoutUnit width) { m_frameRect.setWidth(width); }
@@ -402,7 +407,10 @@ public:
     void flipForWritingMode(IntRect&) const;
     FloatPoint flipForWritingMode(const FloatPoint&) const;
     void flipForWritingMode(FloatRect&) const;
-    LayoutSize locationOffsetIncludingFlipping() const;
+    // These represent your location relative to your container as a physical offset.
+    // In layout related methods you almost always want the logical location (e.g. x() and y()).
+    LayoutPoint topLeftLocation() const;
+    LayoutSize topLeftLocationOffset() const;
 
     LayoutRect logicalVisualOverflowRectForPropagation(RenderStyle*) const;
     LayoutRect visualOverflowRectForPropagation(RenderStyle*) const;

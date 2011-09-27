@@ -1,3 +1,15 @@
+2011-09-27  Ojan Vafai  <ojan@chromium.org>
+
+        offsetTop/offsetLeft return the wrong values for horizontal-bt/vertical-rl writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=68304
+
+        Reviewed by David Hyatt.
+
+        * css3/flexbox/writing-modes-expected.txt:
+        * css3/flexbox/writing-modes.html:
+        * fast/dom/offset-position-writing-modes-expected.txt: Added.
+        * fast/dom/offset-position-writing-modes.html: Added.
+
 2011-09-27  Tim Horton  <timothy_horton@apple.com>
 
         Rapidly refreshing a feMorphology[erode] with r=0 can sometimes cause display corruption
