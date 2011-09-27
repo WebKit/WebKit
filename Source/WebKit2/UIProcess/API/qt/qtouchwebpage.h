@@ -65,8 +65,8 @@ public:
     virtual bool event(QEvent*);
 
 Q_SIGNALS:
-    void urlChanged(const QUrl&);
-    void titleChanged(const QString&);
+    void urlChanged(const QUrl& url);
+    void titleChanged(const QString& title);
     void loadStarted();
     void loadSucceeded();
     void loadFailed(QTouchWebPage::ErrorType errorType, int errorCode, const QUrl& url);

@@ -81,13 +81,13 @@ public Q_SLOTS:
      void load(const QUrl&);
 
 Q_SIGNALS:
-    void titleChanged(const QString&);
-    void statusBarMessageChanged(const QString&);
+    void titleChanged(const QString& title);
+    void statusBarMessageChanged(const QString& message);
     void loadStarted();
     void loadSucceeded();
     void loadFailed(QDesktopWebView::ErrorType errorType, int errorCode, const QUrl& url);
     void loadProgressChanged(int progress);
-    void urlChanged(const QUrl&);
+    void urlChanged(const QUrl& url);
 
 protected:
     virtual void keyPressEvent(QKeyEvent*);
