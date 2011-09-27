@@ -1,3 +1,9 @@
+2011-09-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2011-09-27  Yury Semikhatsky  <yurys@chromium.org>
 
         [Chromium] Web Inspector: Bug with console.log and popstate/hashchange events
