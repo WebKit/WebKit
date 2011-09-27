@@ -2005,15 +2005,6 @@ BUGCR48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TE
 BUGWK65203 WIN : fast/borders/border-antialiasing.html = IMAGE
 BUGWK65203 WIN : fast/reflections/reflection-overflow-hidden.html = IMAGE
 BUGWK65203 WIN : fast/repaint/reflection-redraw.html = IMAGE
-BUGWK65203 WIN : fast/text/complex-text-opacity.html = IMAGE
-BUGWK65203 WIN : fast/text/international/complex-character-based-fallback.html = IMAGE
-BUGWK65203 WIN : fast/text/international/danda-space.html = IMAGE
-BUGWK65203 WIN : fast/text/international/hindi-spacing.html = IMAGE
-BUGWK65203 WIN : fast/text/international/khmer-selection.html = IMAGE
-BUGWK65203 WIN : fast/text/international/thai-baht-space.html = IMAGE
-BUGWK65203 WIN : fast/text/international/thai-line-breaks.html = IMAGE
-BUGWK65203 WIN : platform/win/fast/text/uniscribe-missing-glyph.html = IMAGE
-BUGWK65203 WIN : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
 BUGWK65203 WIN : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE
 BUGWK65203 WIN : svg/W3C-SVG-1.1/animate-elem-39-t.svg = IMAGE
 BUGWK65203 WIN : svg/W3C-SVG-1.1/animate-elem-40-t.svg = IMAGE
@@ -3615,9 +3606,9 @@ BUGWK67515 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT
 BUGCR54348 LINUX RELEASE : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
 BUGWK67538 DEBUG : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
 
-BUG_REED : fast/canvas/canvas-text-baseline.html = IMAGE
-BUG_REED : fast/canvas/quadraticCurveTo.xml = IMAGE
-BUG_REED : fast/canvas/canvas-lineWidth.html = TEXT
+BUG_REED MAC : fast/canvas/canvas-text-baseline.html = IMAGE
+BUG_REED MAC : fast/canvas/quadraticCurveTo.xml = IMAGE
+BUG_REED MAC : fast/canvas/canvas-lineWidth.html = TEXT
 
 BUG_ABARTH WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
 BUG_ABARTH WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
@@ -3643,11 +3634,6 @@ BUGCR96220 MAC : fast/borders/inline-mask-overlay-image-outset.html = IMAGE
 // Failing after r94946
 BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
 BUGWK67980 MAC CPU-CG : fast/events/constructors/progress-event-constructor.html = TEXT
-
-// Failing after r95023
-BUGWK67999 WIN RELEASE : fast/borders/border-image-omit-right-slice.html = IMAGE+TEXT
-BUGWK67999 LINUX RELEASE : fast/borders/border-image-omit-right-slice.html = TEXT
-BUGWK67999 MAC CPU-CG RELEASE : fast/borders/border-image-omit-right-slice.html = TEXT
 
 BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/loading/307-after-303-after-post.html = PASS TEXT
 BUG_LEVIN SNOWLEOPARD DEBUG : http/tests/security/mixedContent/insecure-image-in-main-frame.html = PASS TEXT
@@ -3792,4 +3778,3 @@ BUGWK68832 WIN LINUX : editing/selection/select-bidi-run.html = FAIL
 
 BUGCR96861 WIN DEBUG : media/audio-repaint.html = TIMEOUT IMAGE PASS
 BUGCR97657 MAC CPU DEBUG : media/audio-repaint.html = TIMEOUT IMAGE PASS
-

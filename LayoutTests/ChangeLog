@@ -1,3 +1,19 @@
+2011-09-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Remove failing Chromium expectations for tests that now pass.
+        
+        Rebaseline repaint tests for Chromium Snow Leopard CG after r96005.
+
+        * platform/chromium-cg-mac/fast/repaint/flexible-box-overflow-expected.png: Added.
+        * platform/chromium-cg-mac/fast/repaint/flexible-box-overflow-horizontal-expected.png: Added.
+        * platform/chromium-cg-mac/fast/repaint/inline-block-overflow-expected.png: Added.
+        * platform/chromium-cg-mac/fast/repaint/layer-child-outline-expected.png: Added.
+        * platform/chromium-cg-mac/fast/repaint/layer-outline-expected.png: Added.
+        * platform/chromium-cg-mac/fast/repaint/layer-outline-horizontal-expected.png: Added.
+        * platform/chromium-cg-mac/fast/repaint/text-shadow-expected.png: Added.
+        * platform/chromium-cg-mac/fast/repaint/text-shadow-horizontal-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-09-26  Tim Horton  <timothy_horton@apple.com>
 
         <animateColor> applied to filtered ellipse does not update
