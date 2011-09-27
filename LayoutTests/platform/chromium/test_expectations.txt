@@ -3794,4 +3794,4 @@ BUGWK68885 MAC CPU-CG : fast/canvas/webgl/premultiplyalpha-test.html = TEXT
 BUGWK68886 MAC GPU-CG : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TEXT
 
 BUGWK68895 MAC WIN GPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
-BUGWK68895 MAC WIN GPU : fast/canvas/canvas-composite.html = IMAGE
+BUGWK68895 SNOWLEOPARD WIN GPU : fast/canvas/canvas-composite.html = IMAGE

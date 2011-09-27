@@ -1,3 +1,12 @@
+2011-09-27  Mihai Parparita  <mihaip@chromium.org>
+
+        Chromium test expectations update.
+        
+        Make new fast/canvas/canvas-composite.html GPU expectation more specific,
+        since on Leopard it was conflicting with an older one.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-09-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r96139.
