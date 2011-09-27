@@ -126,6 +126,7 @@
 #include "JSOptionConstructor.cpp"
 #include "JSPeerConnectionCustom.cpp"
 #include "JSPluginElementFunctions.cpp"
+#include "JSPopStateEventCustom.cpp"
 #include "JSProcessingInstructionCustom.cpp"
 #include "JSRequestAnimationFrameCallbackCustom.cpp"
 #include "JSSQLResultSetRowListCustom.cpp"

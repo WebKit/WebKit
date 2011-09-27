@@ -28,35 +28,38 @@
 #define PopStateEvent_h
 
 #include "Event.h"
+#include "ScriptValue.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {
 
-class SerializedScriptValue;
-
 struct PopStateEventInit : public EventInit {
     PopStateEventInit();
 
-    RefPtr<SerializedScriptValue> state;
+    ScriptValue state;
 };
 
 class PopStateEvent : public Event {
 public:
     virtual ~PopStateEvent();
     static PassRefPtr<PopStateEvent> create();
+    static PassRefPtr<PopStateEvent> create(ScriptValue);
     static PassRefPtr<PopStateEvent> create(PassRefPtr<SerializedScriptValue>);
     static PassRefPtr<PopStateEvent> create(const AtomicString&, const PopStateEventInit&);
-    void initPopStateEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue>);
+    void initPopStateEvent(const AtomicString& type, bool canBubble, bool cancelable, ScriptValue);
     bool isPopStateEvent() const { return true; }
 
-    SerializedScriptValue* state() const { return m_stateObject.get(); }    
+    SerializedScriptValue* serializedState() const { return m_serializedState.get(); }
+    ScriptValue state() const { return m_state; }
 
 private:
     PopStateEvent();
     PopStateEvent(const AtomicString&, const PopStateEventInit&);
+    explicit PopStateEvent(ScriptValue);
     explicit PopStateEvent(PassRefPtr<SerializedScriptValue>);
 
-    RefPtr<SerializedScriptValue> m_stateObject;
+    ScriptValue m_state;
+    RefPtr<SerializedScriptValue> m_serializedState;
 };
 
 } // namespace WebCore

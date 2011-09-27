@@ -1,3 +1,55 @@
+2011-09-26  Kentaro Hara  <haraken@chromium.org>
+
+        Implement PopStateEvent.state with SerializedScriptValue and ScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=68345
+
+        Reviewed by Adam Barth.
+
+        Previously, the following test cases fail or crash:
+
+        - shouldBe("new PopStateEvent('eventType', { state: object1 }).state", "object1") -> FAIL
+        - new PopStateEvent('eventType', { state: document }).state -> CRASH in DRT
+
+        This is because PopStateEvent.state is implemented not as ScriptValue but as SerializedScriptValue.
+        However, we cannot simply change the type of PopStateEvent.state to ScriptValue,
+        since PopStateEvent can be constructed in the context that does not know ScriptValue.
+        For example, Document.cpp calls PopStateEvent::create() with SerializedScriptValue
+        popped from HistoryItem, but we cannot deserialize the SerializedScriptValue into
+        the corresponding ScriptValue here because the deserialization requires ExecState.
+        In other words, although we want to store PopStateEvent.state by ScriptValue internally,
+        PopStateEvent still needs to provide an API to construct it with SerializedScriptValue.
+        With these observations, this patch makes the following changes:
+
+        - If PopStateEvent is constructed with ScriptValue, it is stored as ScriptValue internally.
+        When PopStateEvent.state is called, the ScriptValue is returned.
+        - If PopStateEvent is constructed with SerializedScriptValue, it is stored as
+        SerializedScriptValue internally (since we cannot deserialize it into ScriptValue
+        at this point). When PopStateEvent.state is called, the SerializedScriptValue is
+        deserialized into the corresponding ScriptValue, and the ScriptValue is returned.
+
+        Tests: fast/events/constructors/pop-state-event-constructor.html
+               fast/events/fire-popstate-event.html
+
+        * GNUmakefile.list.am: Added JSPopStateEventCustom.cpp.
+        * UseJSC.cmake: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+        * bindings/js/JSPopStateEventCustom.cpp:
+        (WebCore::JSPopStateEvent::state): Custom getter for PopStateEvent.state.
+        * bindings/v8/custom/V8PopStateEventCustom.cpp:
+        (WebCore::V8PopStateEvent::stateAccessorGetter): Custom getter for PopStateEvent.state.
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEventInit::PopStateEventInit): Added initialization code for PopStateEvent.m_state.
+        (WebCore::PopStateEvent::PopStateEvent): Ditto.
+        (WebCore::PopStateEvent::create): Ditto.
+        (WebCore::PopStateEvent::initPopStateEvent): Ditto.
+        * dom/PopStateEvent.h:
+        (WebCore::PopStateEvent::serializedState): Getter.
+        (WebCore::PopStateEvent::state): Getter.
+        * dom/PopStateEvent.idl: Change the type of 'stateArg' and 'state' to DOMObject. Added [CustomGetter] to 'state'.
+
 2011-09-09  Simon Fraser  <simon.fraser@apple.com>
 
         Pixel result shows that compositing/iframes/repaint-after-losing-scrollbars.html is failing

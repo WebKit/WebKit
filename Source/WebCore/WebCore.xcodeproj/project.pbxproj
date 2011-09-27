@@ -3730,6 +3730,7 @@
 		A84EBD830CB8C97700079609 /* JSStyleSheetList.h in Headers */ = {isa = PBXBuildFile; fileRef = A84EBD810CB8C97700079609 /* JSStyleSheetList.h */; };
 		A84EBD840CB8C97700079609 /* JSStyleSheetList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A84EBD820CB8C97700079609 /* JSStyleSheetList.cpp */; };
 		A853123D11D0471B00D4D077 /* FragmentScriptingPermission.h in Headers */ = {isa = PBXBuildFile; fileRef = A853123C11D0471B00D4D077 /* FragmentScriptingPermission.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A85F22091430377D007CC884 /* JSPopStateEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */; };
 		A863E2011343412000274926 /* UnicodeBidi.h in Headers */ = {isa = PBXBuildFile; fileRef = A863E2001343412000274926 /* UnicodeBidi.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A86629CF09DA2B47009633A5 /* JSUIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A86629C909DA2B47009633A5 /* JSUIEvent.h */; };
 		A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */; };
@@ -10252,6 +10253,7 @@
 		A84EBD820CB8C97700079609 /* JSStyleSheetList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheetList.cpp; sourceTree = "<group>"; };
 		A853123C11D0471B00D4D077 /* FragmentScriptingPermission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FragmentScriptingPermission.h; sourceTree = "<group>"; };
 		A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
+		A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPopStateEventCustom.cpp; sourceTree = "<group>"; };
 		A863E2001343412000274926 /* UnicodeBidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeBidi.h; sourceTree = "<group>"; };
 		A86629C909DA2B47009633A5 /* JSUIEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSUIEvent.h; sourceTree = "<group>"; };
 		A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSUIEvent.cpp; sourceTree = "<group>"; };
@@ -18717,6 +18719,7 @@
 		BC4EDEF70C08F414007EDD49 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */,
 				BC275CB211C5E85C00C9206C /* JSArrayBufferCustom.cpp */,
 				86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
@@ -26352,6 +26355,7 @@
 				9752D38D1413104B003305BD /* JSHTMLSpanElement.cpp in Sources */,
 				0FE71405142170B800DB33BA /* ScrollbarThemeMock.cpp in Sources */,
 				5D8C4DBF1428222C0026CE72 /* DisplaySleepDisabler.cpp in Sources */,
+				A85F22091430377D007CC884 /* JSPopStateEventCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

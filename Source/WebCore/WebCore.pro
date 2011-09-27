@@ -323,6 +323,7 @@ v8 {
         bindings/js/JSNodeListCustom.cpp \
         bindings/js/JSOptionConstructor.cpp \
         bindings/js/JSPluginElementFunctions.cpp \
+        bindings/js/JSPopStateEventCustom.cpp \
         bindings/js/JSProcessingInstructionCustom.cpp \
         bindings/js/JSScriptProfileNodeCustom.cpp \
         bindings/js/JSStyleSheetCustom.cpp \

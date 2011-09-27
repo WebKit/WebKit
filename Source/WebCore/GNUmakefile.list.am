@@ -793,6 +793,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSPeerConnectionCustom.cpp \
 	Source/WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	Source/WebCore/bindings/js/JSPluginElementFunctions.h \
+	Source/WebCore/bindings/js/JSPopStateEventCustom.cpp \
 	Source/WebCore/bindings/js/JSProcessingInstructionCustom.cpp \
 	Source/WebCore/bindings/js/JSSQLResultSetRowListCustom.cpp \
 	Source/WebCore/bindings/js/JSSQLTransactionCustom.cpp \
