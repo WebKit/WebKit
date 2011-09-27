@@ -1,5 +1,14 @@
 2011-09-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        editing/selection/select-bidi-run.html fails on Chromium Windows and Linux
+        https://bugs.webkit.org/show_bug.cgi?id=68832
+
+        Unreviewed; remove the failing test expectation because it started passing after r96016.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-09-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Skip the test added by r95964 on Qt and GTK because it has been failing
         on those two platforms. The failure is tracked by the bugs 68854 and 68855.
 
