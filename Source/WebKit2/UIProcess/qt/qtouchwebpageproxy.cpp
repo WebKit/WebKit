@@ -49,7 +49,6 @@ void QTouchWebPageProxy::processDidCrash()
 
 void QTouchWebPageProxy::paintContent(QPainter* painter, const QRect& area)
 {
-    m_webPageProxy->drawingArea()->paint(IntRect(area), painter);
 }
 
 #if ENABLE(TOUCH_EVENTS)

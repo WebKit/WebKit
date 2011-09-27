@@ -1,3 +1,17 @@
+2011-09-26  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Fix build after r95982
+        https://bugs.webkit.org/show_bug.cgi?id=68842
+
+        Reviewed by Anders Carlsson.
+
+        The patch in r95982 removed the paint() function, because it was doing
+        nothing (in both implementations). This patch remove the call we had
+        for it to fix the build.
+
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::paintContent):
+
 2011-09-26  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r95747): Activating the web inspector causes the web process to be killed
