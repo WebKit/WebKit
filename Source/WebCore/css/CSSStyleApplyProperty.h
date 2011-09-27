@@ -49,29 +49,11 @@ class CSSStyleApplyProperty {
 public:
     static const CSSStyleApplyProperty& sharedCSSStyleApplyProperty();
 
-    void applyInheritValue(CSSPropertyID property, CSSStyleSelector* selector) const
+    ApplyPropertyBase* propertyHandler(CSSPropertyID property) const
     {
-        ASSERT(implements(property));
-        propertyHandler(property)->applyInheritValue(selector);
+        ASSERT(valid(property));
+        return m_propertyMap[index(property)];
     }
-
-    void applyInitialValue(CSSPropertyID property, CSSStyleSelector* selector) const
-    {
-        ASSERT(implements(property));
-        propertyHandler(property)->applyInitialValue(selector);
-    }
-
-    void applyValue(CSSPropertyID property, CSSStyleSelector* selector, CSSValue* value) const
-    {
-        ASSERT(implements(property));
-        propertyHandler(property)->applyValue(selector, value);
-    }
-
-    bool implements(CSSPropertyID property) const
-    {
-        return propertyHandler(property);
-    }
-
 private:
     CSSStyleApplyProperty();
     static int index(CSSPropertyID property)
@@ -98,12 +80,6 @@ private:
         ASSERT(valid(equivalentProperty));
         ASSERT(!propertyHandler(newProperty));
         m_propertyMap[index(newProperty)] = m_propertyMap[index(equivalentProperty)];
-    }
-
-    ApplyPropertyBase* propertyHandler(CSSPropertyID property) const
-    {
-        ASSERT(valid(property));
-        return m_propertyMap[index(property)];
     }
 
     ApplyPropertyBase* m_propertyMap[numCSSProperties];

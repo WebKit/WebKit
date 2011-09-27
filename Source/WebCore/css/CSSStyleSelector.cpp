@@ -2371,13 +2371,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     CSSPropertyID property = static_cast<CSSPropertyID>(id);
 
     // check lookup table for implementations and use when available
-    if (m_applyProperty.implements(property)) {
+    if (ApplyPropertyBase* handler = m_applyProperty.propertyHandler(property)) {
         if (isInherit)
-            m_applyProperty.applyInheritValue(property, this);
+            handler->applyInheritValue(this);
         else if (isInitial)
-            m_applyProperty.applyInitialValue(property, this);
+            handler->applyInitialValue(this);
         else
-            m_applyProperty.applyValue(property, this, value);
+            handler->applyValue(this, value);
         return;
     }
 

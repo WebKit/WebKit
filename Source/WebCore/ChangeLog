@@ -1,3 +1,19 @@
+2011-09-27  Luke Macpherson   <macpherson@chromium.org>
+
+        Slightly improve performance of CSSStyleApplyProperty handler lookup.
+        https://bugs.webkit.org/show_bug.cgi?id=68868
+
+        Reviewed by Eric Seidel.
+
+        No new tests as no functionality changed.
+
+        * css/CSSStyleApplyProperty.h:
+        (WebCore::CSSStyleApplyProperty::propertyHandler):
+        Make propertyHandler() public and remove redirecting functions.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Perform property handler lookup once and reuse the result.
+
 2011-09-27  Kent Tamura  <tkent@chromium.org>
 
         [V8] element.dataset.nonExistingKey should return undefined.
