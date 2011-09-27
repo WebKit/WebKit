@@ -43,7 +43,7 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
 BUGCR24182 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
-BUGCR24182 SLOW DEBUG SNOWLEOPARD: svg/hixie/perf/007.xml = PASS
+BUGCR24182 SLOW DEBUG SNOWLEOPARD : svg/hixie/perf/007.xml = PASS
 BUGCR24182 DEBUG LEOPARD : svg/hixie/perf/007.xml = IMAGE
 
 BUGWK67919 SLOW DEBUG : perf/document-contains.html = PASS
@@ -3592,11 +3592,6 @@ BUGWK66974 DEBUG : fast/events/keydown-1.html = PASS TIMEOUT
 // These tests were disabled on our side until WebKit began running them.
 // They're now running them so these need to be triaged.
 BUGWK66989 : transforms/3d = PASS FAIL
-
-BUGWK67007 DEBUG : fast/ruby/after-block-doesnt-crash.html = CRASH
-BUGWK67007 DEBUG : fast/ruby/after-table-doesnt-crash.html = CRASH
-BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
-BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.html = CRASH
 
 // Failing after r94084. This looks like it may be a real regression.
 BUGWK67352 : fast/canvas/webgl/WebGLContextEvent.html = TEXT

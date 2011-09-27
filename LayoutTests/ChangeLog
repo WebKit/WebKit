@@ -1,5 +1,15 @@
 2011-09-26  Mihai Parparita  <mihaip@chromium.org>
 
+        Remove failing expectations for some ruby tests, since they were
+        renamed to -disabled with r94327 and thus aren't being run at all.
+        
+        Add compositing/video-page-visibility.html Windows GPU baselines.
+
+        * platform/chromium-gpu-win/compositing/video-page-visibility-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-09-26  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed Chromium test expectations update.
 
         * platform/chromium/test_expectations.txt:
