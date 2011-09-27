@@ -49,4 +49,28 @@ class WatchListParserTest(unittest.TestCase):
 
     def test_bad_section(self):
         watch_list_with_bad_section = ('{"FOO": {}}')
-        self.assertRaisesRegexp('Unknown section in watch list: FOO', parse_watch_list, watch_list_with_bad_section)
+        self.assertRaisesRegexp('Unknown section "FOO" in watch list.', parse_watch_list, watch_list_with_bad_section)
+
+    def test_bad_definition(self):
+        watch_list_with_bad_definition = (
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1|A": {'
+            '            "filename": r".*\\MyFileName\\.cpp",'
+            '        },'
+            '     },'
+            '}')
+
+        self._verifyException('Invalid character "|" in definition "WatchList1|A".', parse_watch_list, watch_list_with_bad_definition)
+
+    def test_bad_match_type(self):
+        watch_list_with_bad_match_type = (
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "nothing_matches_this": r".*\\MyFileName\\.cpp",'
+            '        },'
+            '     },'
+            '}')
+
+        self._verifyException('Invalid pattern type "nothing_matches_this" in definition "WatchList1".', parse_watch_list, watch_list_with_bad_match_type)

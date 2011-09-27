@@ -26,11 +26,38 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
 from webkitpy.common.watchlist.watchlist import WatchList
+
+_DEFINITIONS = 'DEFINITIONS'
+_INVALID_DEFINITION_NAME_REGEX = r'\|'
 
 
 def _eval_watch_list(watch_list_contents):
     return eval(watch_list_contents, {'__builtins__': None}, None)
+
+_DEFINITION_MATCH_PARSER = {}
+
+
+def _parse_definition_section(definition_section, watch_list):
+    definitions = {}
+    for name in definition_section:
+        invalid_character = re.search(_INVALID_DEFINITION_NAME_REGEX, name)
+        if invalid_character:
+            raise Exception('Invalid character "%s" in definition "%s".' % (invalid_character.group(0), name))
+
+        definition = definition_section[name]
+        definitions[name] = []
+        for pattern_type in definition:
+            pattern_parser = _DEFINITION_MATCH_PARSER.get(pattern_type)
+            if not pattern_parser:
+                raise Exception('Invalid pattern type "%s" in definition "%s".' % (pattern_type, name))
+
+            pattern = pattern_parser(definition[pattern_type])
+            definitions[name].append(pattern)
+    watch_list.set_definitions(definitions)
+
+_SECTION_PARSERS = {_DEFINITIONS: _parse_definition_section, }
 
 
 def parse_watch_list(watch_list_contents):
@@ -38,13 +65,12 @@ def parse_watch_list(watch_list_contents):
 
     # Change the watch list text into a dictionary.
     dictionary = _eval_watch_list(watch_list_contents)
-    parsers = {}
 
     # Parse the top level sections in the watch list.
     for section in dictionary:
-        parser = parsers.get(section)
+        parser = _SECTION_PARSERS.get(section)
         if not parser:
-            raise Exception('Unknown section in watch list: %s' % section)
+            raise Exception('Unknown section "%s" in watch list.' % section)
         parser(dictionary[section], watch_list)
 
     return watch_list

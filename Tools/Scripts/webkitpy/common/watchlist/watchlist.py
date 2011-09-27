@@ -29,4 +29,7 @@
 
 class WatchList(object):
     def __init__(self):
-        pass
+        self._definitions = {}
+
+    def set_definitions(self, definitions):
+        self._definitions = definitions
