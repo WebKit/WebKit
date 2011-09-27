@@ -35,10 +35,10 @@ class QWebNavigationControllerPrivate;
 
 class QWEBKIT_EXPORT QWebNavigationController : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QAction* backAction READ backAction CONSTANT)
-    Q_PROPERTY(QAction* forwardAction READ forwardAction CONSTANT)
-    Q_PROPERTY(QAction* stopAction READ stopAction CONSTANT)
-    Q_PROPERTY(QAction* reloadAction READ reloadAction CONSTANT)
+    Q_PROPERTY(QAction* backAction READ backAction CONSTANT FINAL)
+    Q_PROPERTY(QAction* forwardAction READ forwardAction CONSTANT FINAL)
+    Q_PROPERTY(QAction* stopAction READ stopAction CONSTANT FINAL)
+    Q_PROPERTY(QAction* reloadAction READ reloadAction CONSTANT FINAL)
 public:
     QWebNavigationController(QtWebPageProxy*);
     ~QWebNavigationController();

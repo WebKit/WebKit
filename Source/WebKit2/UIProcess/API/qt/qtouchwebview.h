@@ -35,7 +35,7 @@ class TouchViewInterface;
 class QWEBKIT_EXPORT QTouchWebView : public QSGItem
 {
     Q_OBJECT
-    Q_PROPERTY(QTouchWebPage* page READ page CONSTANT)
+    Q_PROPERTY(QTouchWebPage* page READ page CONSTANT FINAL)
 
 public:
     QTouchWebView(QSGItem* parent = 0);

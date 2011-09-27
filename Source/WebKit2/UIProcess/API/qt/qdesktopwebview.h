@@ -52,7 +52,7 @@ class QWEBKIT_EXPORT QDesktopWebView : public QSGPaintedItem {
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
     Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
-    Q_PROPERTY(QWebNavigationController* navigation READ navigationController CONSTANT)
+    Q_PROPERTY(QWebNavigationController* navigation READ navigationController CONSTANT FINAL)
     Q_ENUMS(NavigationPolicy)
     Q_ENUMS(ErrorType)
 public:
