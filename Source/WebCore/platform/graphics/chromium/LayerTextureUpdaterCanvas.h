@@ -79,7 +79,7 @@ private:
     LayerTextureSubImage m_texSubImage;
 };
 
-#if USE(SKIA)
+#if USE(SKIA) && USE(ACCELERATED_DRAWING)
 class LayerTextureUpdaterSkPicture : public LayerTextureUpdaterCanvas {
 public:
     static PassRefPtr<LayerTextureUpdaterSkPicture> create(PassOwnPtr<LayerPainterChromium>);
@@ -105,7 +105,7 @@ private:
     Platform3DObject m_depthStencilBuffer;
     OwnPtr<SkCanvas> m_canvas; // GPU accelerated canvas.
 };
-#endif // SKIA
+#endif // USE(SKIA) && USE(ACCELERATED_DRAWING)
 
 } // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)

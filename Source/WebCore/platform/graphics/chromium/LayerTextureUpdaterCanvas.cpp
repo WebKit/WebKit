@@ -101,8 +101,7 @@ void LayerTextureUpdaterBitmap::updateTextureRect(GraphicsContext3D* context, Te
     m_texSubImage.upload(locker.pixels(), contentRect(), sourceRect, destRect, texture->format(), context);
 }
 
-#if !USE(THREADED_COMPOSITING)
-#if USE(SKIA)
+#if USE(SKIA) && USE(ACCELERATED_DRAWING)
 PassRefPtr<LayerTextureUpdaterSkPicture> LayerTextureUpdaterSkPicture::create(PassOwnPtr<LayerPainterChromium> painter)
 {
     return adoptRef(new LayerTextureUpdaterSkPicture(painter));
@@ -254,8 +253,7 @@ bool LayerTextureUpdaterSkPicture::createFrameBuffer()
     context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
     return true;
 }
-#endif // SKIA
-#endif // !THREADED_COMPOSITING
+#endif // USE(SKIA) && USE(ACCELERATED_DRAWING)
 
 } // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)
