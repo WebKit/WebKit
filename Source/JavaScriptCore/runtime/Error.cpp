@@ -26,7 +26,6 @@
 
 #include "ConstructData.h"
 #include "ErrorConstructor.h"
-#include "JSArray.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
@@ -117,7 +116,7 @@ JSObject* createURIError(ExecState* exec, const UString& message)
     return createURIError(exec->lexicalGlobalObject(), message);
 }
 
-JSObject* addErrorInfo(JSGlobalData* globalData, JSObject* error, int line, const SourceCode& source, const Vector<StackFrame>& stackTrace)
+JSObject* addErrorInfo(JSGlobalData* globalData, JSObject* error, int line, const SourceCode& source)
 {
     intptr_t sourceID = source.provider()->asID();
     const UString& sourceURL = source.provider()->url();
@@ -128,21 +127,13 @@ JSObject* addErrorInfo(JSGlobalData* globalData, JSObject* error, int line, cons
         error->putWithAttributes(globalData, Identifier(globalData, sourceIdPropertyName), jsNumber((double)sourceID), ReadOnly | DontDelete);
     if (!sourceURL.isNull())
         error->putWithAttributes(globalData, Identifier(globalData, sourceURLPropertyName), jsString(globalData, sourceURL), ReadOnly | DontDelete);
-    if (!stackTrace.isEmpty()) {
-        JSArray* stackTraceArray = JSArray::create(*globalData, globalData->dynamicGlobalObject->arrayStructure());
-        for (unsigned i = 0; i < stackTrace.size(); i++) {
-            UString stackLevel =  stackTrace[i].toString();
-            stackTraceArray->push(globalData->topCallFrame, jsString(globalData, stackLevel)); 
-        }
-        error->putWithAttributes(globalData, globalData->propertyNames->jscStack, stackTraceArray, ReadOnly | DontDelete);
-    }
 
     return error;
 }
 
-JSObject* addErrorInfo(ExecState* exec, JSObject* error, int line, const SourceCode& source, const Vector<StackFrame>& stackTrace)
+JSObject* addErrorInfo(ExecState* exec, JSObject* error, int line, const SourceCode& source)
 {
-    return addErrorInfo(&exec->globalData(), error, line, source, stackTrace);
+    return addErrorInfo(&exec->globalData(), error, line, source);
 }
 
 bool hasErrorInfo(ExecState* exec, JSObject* error)

@@ -114,7 +114,7 @@ namespace JSC {
             else if (isEvalNode<ParsedNode>())
                 *exception = createSyntaxError(lexicalGlobalObject, errMsg);
             else
-                *exception = addErrorInfo(&lexicalGlobalObject->globalData(), createSyntaxError(lexicalGlobalObject, errMsg), errLine, source, Vector<StackFrame>());
+                *exception = addErrorInfo(&lexicalGlobalObject->globalData(), createSyntaxError(lexicalGlobalObject, errMsg), errLine, source);
         }
 
         m_arena.reset();

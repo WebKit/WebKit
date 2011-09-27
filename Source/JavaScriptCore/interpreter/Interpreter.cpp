@@ -45,6 +45,7 @@
 #include "JSActivation.h"
 #include "JSArray.h"
 #include "JSByteArray.h"
+#include "JSFunction.h"
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
 #include "LiteralParser.h"
@@ -686,88 +687,6 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     exception->putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, message));
 }
 
-static void getCallerLine(JSGlobalData* globalData, CallFrame* callFrame, int& lineNumber)
-{
-    (void)globalData;
-    unsigned bytecodeOffset;
-    lineNumber = -1;
-    callFrame = callFrame->removeHostCallFrameFlag();
-
-    if (callFrame->callerFrame() == CallFrame::noCaller() || callFrame->callerFrame()->hasHostCallFrameFlag())
-        return;
-
-    CodeBlock* callerCodeBlock = callFrame->callerFrame()->removeHostCallFrameFlag()->codeBlock();
-
-#if ENABLE(INTERPRETER)
-    if (!globalData->canUseJIT())
-        bytecodeOffset = callerCodeBlock->bytecodeOffset(callFrame->returnVPC());
-#if ENABLE(JIT)
-    else
-        bytecodeOffset = callerCodeBlock->bytecodeOffset(callFrame->returnPC());
-#endif
-#else
-    bytecodeOffset = callerCodeBlock->bytecodeOffset(callFrame->returnPC());
-#endif
-
-    lineNumber = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset - 1);
-}
-
-static ALWAYS_INLINE const UString getSourceURLFromCallFrame(CallFrame* callFrame) 
-{
-    if (callFrame->hasHostCallFrameFlag())
-        return UString();
-#if ENABLE(INTERPRETER)
-    if (!callFrame->globalData().canUseJIT())
-        return callFrame->codeBlock()->source()->url();
-#if ENABLE(JIT)
-    return callFrame->codeBlock()->ownerExecutable()->sourceURL();
-#endif
-#else
-    return callFrame->codeBlock()->ownerExecutable()->sourceURL();
-#endif
-}
-
-static StackFrameCodeType getStackFrameCodeType(CallFrame* callFrame)
-{
-    if (callFrame->hasHostCallFrameFlag()) 
-        return StackFrameNativeCode;
-
-    switch (callFrame->codeBlock()->codeType()) {
-    case EvalCode:
-        return StackFrameEvalCode;
-    case FunctionCode:
-        return StackFrameFunctionCode;
-    case GlobalCode:
-        return StackFrameGlobalCode;
-    }
-    ASSERT_NOT_REACHED();
-    return StackFrameGlobalCode;
-}
-
-void Interpreter::getStackTrace(JSGlobalData* globalData, int line, Vector<StackFrame>& results)
-{
-    int stackLimit = 15;
-    CallFrame* callFrame = globalData->topCallFrame->removeHostCallFrameFlag();
-    if (!callFrame || callFrame == CallFrame::noCaller() || !callFrame->codeBlock()) 
-        return;
-    UString sourceURL;
-    UString traceLevel;
-
-    for (int i = 0; i < stackLimit; ++i) {
-        if (!callFrame || callFrame == CallFrame::noCaller())
-            break;
-        if (callFrame->codeBlock()) {
-            sourceURL = getSourceURLFromCallFrame(callFrame);
-
-            StackFrame s = { Strong<JSObject>(*globalData, callFrame->callee()), Strong<CallFrame>(*globalData, callFrame), getStackFrameCodeType(callFrame), Strong<ExecutableBase>(*globalData, callFrame->codeBlock()->ownerExecutable()), line, sourceURL};
-
-            results.append(s);
-        }
-        getCallerLine(globalData, callFrame, line);
-        callFrame = callFrame->callerFrame()->removeHostCallFrameFlag();
-    }
-}
-
 NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSValue& exceptionValue, unsigned bytecodeOffset)
 {
     CodeBlock* codeBlock = callFrame->codeBlock();
@@ -786,9 +705,7 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
 
             // FIXME: should only really be adding these properties to VM generated exceptions,
             // but the inspector currently requires these for all thrown objects.
-            Vector<StackFrame> stackTrace;
-            getStackTrace(&callFrame->globalData(), codeBlock->lineNumberForBytecodeOffset(bytecodeOffset), stackTrace);
-            addErrorInfo(callFrame, exception, codeBlock->lineNumberForBytecodeOffset(bytecodeOffset), codeBlock->ownerExecutable()->source(), stackTrace);
+            addErrorInfo(callFrame, exception, codeBlock->lineNumberForBytecodeOffset(bytecodeOffset), codeBlock->ownerExecutable()->source());
         }
 
         isInterrupt = isInterruptedExecutionException(exception) || isTerminatedExecutionException(exception);

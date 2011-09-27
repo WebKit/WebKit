@@ -16,7 +16,7 @@ try {
     var error = new Error("message");
 
     shouldBe('enumerableProperties(error)', '[]');
-    shouldBe('enumerableProperties(nativeError)', '["line", "sourceId", "sourceURL", "jscStack"]');
+    shouldBe('enumerableProperties(nativeError)', '["line", "sourceId", "sourceURL"]');
 
     shouldBe('Object.getPrototypeOf(nativeError).name', '"RangeError"');
     shouldBe('Object.getPrototypeOf(nativeError).message', '""');

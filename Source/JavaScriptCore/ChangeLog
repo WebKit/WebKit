@@ -1,3 +1,26 @@
+2011-09-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r96131.
+        http://trac.webkit.org/changeset/96131
+        https://bugs.webkit.org/show_bug.cgi?id=68927
+
+        It made 18+ tests crash on all platform (Requested by
+        Ossy_night on #webkit).
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+        * interpreter/Interpreter.h:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        * parser/Parser.h:
+        (JSC::Parser::parse):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        * runtime/Error.h:
+
 2011-09-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize JSCell::getPrimitiveNumber

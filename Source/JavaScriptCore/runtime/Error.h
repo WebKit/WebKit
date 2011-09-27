@@ -23,7 +23,6 @@
 #ifndef Error_h
 #define Error_h
 
-#include "Interpreter.h"
 #include "JSObject.h"
 #include <stdint.h>
 
@@ -56,9 +55,9 @@ namespace JSC {
 
     // Methods to add 
     bool hasErrorInfo(ExecState*, JSObject* error);
-    JSObject* addErrorInfo(JSGlobalData*, JSObject* error, int line, const SourceCode&, const Vector<StackFrame>&);
+    JSObject* addErrorInfo(JSGlobalData*, JSObject* error, int line, const SourceCode&);
     // ExecState wrappers.
-    JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&, const Vector<StackFrame>&);
+    JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&);
 
     // Methods to throw Errors.
     JSValue throwError(ExecState*, JSValue);
