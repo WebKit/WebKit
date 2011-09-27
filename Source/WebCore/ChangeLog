@@ -1,3 +1,47 @@
+2011-09-27  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=68922
+
+        Paginated floats should not grow the height of a block when they don't end
+        up being tied to a line. Floats encountered in skipLeadingWhitespace that
+        paginate can't immediately grow the height of the block, since there may not
+        end up being any actual line content. We only want to push the height of the
+        block down if we have actual line content that we want to keep with the
+        float.
+        
+        Make positionNewFloatOnLine check if the line is empty or not, and if it is,
+        it just puts the desired pagination strut into LineInfo. If and when actual
+        line content is encountered and setEmpty becomes false, we'll grow the block
+        height then.
+        
+        Reviewed by Dan Bernstein.
+
+        Added fast/multicol/float-paginate-empty-lines.html and
+        fast/regions/webkit-flow-double-pagination-float-push.html.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::LineWidth):
+        (WebCore::LineWidth::fitsOnLine):
+        (WebCore::LineWidth::currentWidth):
+        (WebCore::LineWidth::uncommittedWidth):
+        (WebCore::LineWidth::committedWidth):
+        (WebCore::LineWidth::availableWidth):
+        (WebCore::LineWidth::addUncommittedWidth):
+        (WebCore::LineWidth::commit):
+        (WebCore::LineWidth::computeAvailableWidthFromLeftAndRight):
+        (WebCore::LineWidth::updateAvailableWidth):
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        (WebCore::LineWidth::applyOverhang):
+        (WebCore::LineWidth::fitBelowFloats):
+        (WebCore::LineInfo::LineInfo):
+        (WebCore::LineInfo::floatPaginationStrut):
+        (WebCore::LineInfo::setEmpty):
+        (WebCore::LineInfo::setFloatPaginationStrut):
+        (WebCore::RenderBlock::LineBreaker::skipLeadingWhitespace):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        (WebCore::RenderBlock::positionNewFloatOnLine):
+
 2011-09-27  Dean Jackson  <dino@apple.com>
 
         Add 'filter' value to RenderStyle

@@ -578,7 +578,7 @@ private:
         void reset();
         
         void skipTrailingWhitespace(InlineIterator&, const LineInfo&);
-        void skipLeadingWhitespace(InlineBidiResolver&, const LineInfo&, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
+        void skipLeadingWhitespace(InlineBidiResolver&, LineInfo&, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
         
         RenderBlock* m_block;
         bool m_hyphenated;
@@ -604,7 +604,7 @@ private:
 
     // Positions new floats and also adjust all floats encountered on the line if any of them
     // have to move to the next page/column.
-    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
+    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, LineInfo&, LineWidth&);
     void appendFloatingObjectToLastLine(FloatingObject*);
 
     // End of functions defined in RenderBlockLineLayout.cpp.
