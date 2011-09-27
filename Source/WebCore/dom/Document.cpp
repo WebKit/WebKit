@@ -1801,7 +1801,7 @@ void Document::attach()
 {
     ASSERT(!attached());
     ASSERT(!m_inPageCache);
-    ASSERT(!m_axObjectCache);
+    ASSERT(!m_axObjectCache || this != topDocument());
 
     if (!m_renderArena)
         m_renderArena = adoptPtr(new RenderArena);
@@ -1827,7 +1827,9 @@ void Document::detach()
     ASSERT(attached());
     ASSERT(!m_inPageCache);
 
-    clearAXObjectCache();
+    if (this == topDocument())
+        clearAXObjectCache();
+
     stopActiveDOMObjects();
     m_eventQueue->close();
 #if ENABLE(FULLSCREEN_API)
