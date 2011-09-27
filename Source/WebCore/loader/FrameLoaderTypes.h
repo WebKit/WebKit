@@ -103,11 +103,6 @@ namespace WebCore {
         SandboxAll = -1 // Mask with all bits set to 1.
     };
 
-    enum SecurityCheckPolicy {
-        SkipSecurityCheck,
-        DoSecurityCheck
-    };
-
     // Passed to FrameLoader::urlSelected() and ScriptController::executeIfJavaScriptURL()
     // to control whether, in the case of a JavaScript URL, executeIfJavaScriptURL() should
     // replace the document.  It is a FIXME to eliminate this extra parameter from

@@ -42,7 +42,7 @@ public:
     CachedImage(Image*);
     virtual ~CachedImage();
     
-    virtual void load(CachedResourceLoader* cachedResourceLoader);
+    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&);
 
     Image* image() const; // Returns the nullImage() if the image is not available yet.
     bool hasImage() const { return m_image.get(); }

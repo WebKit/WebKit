@@ -1,3 +1,49 @@
+2011-09-26  Nate Chapin  <japhet@chromium.org>
+
+        Clean up CachedResource::load(). Collapse its
+        logic into a single callsite, taking just a
+        CachedResourceLoader and a ResourceLoaderOptions.
+
+        1. Its 'incremental' parameter is redundant.
+        2. With 'incremental' removed, the SecurityCheckPolicy is the only
+           parameter difference between the CachedResource::load() variants.
+           Making it a part of ResourceLoaderOptions removes yet another random
+           enum that is passed around individually.
+        3. We currently have to call setResourceLoaderOptions() before load() on a
+           new CachedResource, so we should just take the ResourceLoaderOptions in load().
+
+        https://bugs.webkit.org/show_bug.cgi?id=67443
+
+        Reviewed by Antti Koivisto.
+
+        No new tests, refactor only.
+
+        * loader/DocumentThreadableLoader.cpp:
+        * loader/FrameLoaderTypes.h: Move SecurityCheckPolicy to ResourceLoaderOptions.h.
+        * loader/MainResourceLoader.cpp:
+        * loader/NetscapePlugInStreamLoader.cpp:
+        * loader/ResourceLoadScheduler.cpp:
+        * loader/ResourceLoadScheduler.h:
+        * loader/ResourceLoader.cpp: Enforce SecurityCheckPolicy here instead of SubresourceLoader.
+        * loader/ResourceLoaderOptions.h: Store SecurityCheckPolicy on ResourceLoaderOptions.
+        * loader/SubresourceLoader.cpp:
+        * loader/SubresourceLoader.h:
+        * loader/cache/CachedFont.cpp:
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedImage.cpp:
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResource.cpp:
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::defaultCachedResourceOptions): Define the default ResourceLoaderOptions for
+            CachedResource loads here instead of as a default parameter on requestResource().
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::didReceiveData): Remove m_incremental, since its purpose
+            is already enforced in the data() implementation of every CachedResource that doesn't want
+            incremental loads.
+        * loader/cache/CachedResourceRequest.h:
+
 2011-09-26  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Second half of IDBFactory.getDatabaseNames implementation

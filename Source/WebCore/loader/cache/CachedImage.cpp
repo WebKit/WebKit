@@ -81,10 +81,10 @@ void CachedImage::decodedDataDeletionTimerFired(Timer<CachedImage>*)
     destroyDecodedData();
 }
 
-void CachedImage::load(CachedResourceLoader* cachedResourceLoader)
+void CachedImage::load(CachedResourceLoader* cachedResourceLoader, const ResourceLoaderOptions& options)
 {
     if (!cachedResourceLoader || cachedResourceLoader->autoLoadImages())
-        CachedResource::load(cachedResourceLoader, true, DoSecurityCheck);
+        CachedResource::load(cachedResourceLoader, options);
     else
         setLoading(false);
 }

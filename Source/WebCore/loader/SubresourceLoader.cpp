@@ -61,21 +61,13 @@ SubresourceLoader::~SubresourceLoader()
 #endif
 }
 
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, SecurityCheckPolicy securityCheck, const ResourceLoaderOptions& options)
+PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, const ResourceLoaderOptions& options)
 {
     if (!frame)
         return 0;
 
     FrameLoader* fl = frame->loader();
-    if (securityCheck == DoSecurityCheck && (fl->state() == FrameStateProvisional || !fl->activeDocumentLoader() || fl->activeDocumentLoader()->isStopping()))
-        return 0;
-
     ResourceRequest newRequest = request;
-
-    if (securityCheck == DoSecurityCheck && !frame->document()->securityOrigin()->canDisplay(request.url())) {
-        FrameLoader::reportLocalLoadFailed(frame, request.url().string());
-        return 0;
-    }
 
     // Note: We skip the Content-Security-Policy check here because we check
     // the Content-Security-Policy at the CachedResourceLoader layer so we can
@@ -100,9 +92,9 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     fl->addExtraFieldsToSubresourceRequest(newRequest);
 
     RefPtr<SubresourceLoader> subloader(adoptRef(new SubresourceLoader(frame, client, options)));
-    subloader->documentLoader()->addSubresourceLoader(subloader.get());
     if (!subloader->init(newRequest))
         return 0;
+    subloader->documentLoader()->addSubresourceLoader(subloader.get());
 
     return subloader.release();
 }

@@ -49,7 +49,7 @@ public:
     CachedFont(const ResourceRequest&);
     virtual ~CachedFont();
     
-    virtual void load(CachedResourceLoader* cachedResourceLoader);
+    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&);
 
     virtual void didAddClient(CachedResourceClient*);
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);

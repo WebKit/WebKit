@@ -49,20 +49,26 @@ enum DataBufferingPolicy {
     BufferData,
     DoNotBufferData
 };
-    
+
 enum ClientCrossOriginCredentialPolicy {
     AskClientForCrossOriginCredentials,
     DoNotAskClientForCrossOriginCredentials
 };
 
+enum SecurityCheckPolicy {
+    SkipSecurityCheck,
+    DoSecurityCheck
+};
+
 struct ResourceLoaderOptions {
-    ResourceLoaderOptions() : sendLoadCallbacks(DoNotSendCallbacks), sniffContent(DoNotSniffContent), shouldBufferData(BufferData), allowCredentials(DoNotAllowStoredCredentials), crossOriginCredentialPolicy(DoNotAskClientForCrossOriginCredentials) { }
-    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy shouldBufferData, StoredCredentials allowCredentials, ClientCrossOriginCredentialPolicy crossOriginCredentialPolicy)
+    ResourceLoaderOptions() : sendLoadCallbacks(DoNotSendCallbacks), sniffContent(DoNotSniffContent), shouldBufferData(BufferData), allowCredentials(DoNotAllowStoredCredentials), crossOriginCredentialPolicy(DoNotAskClientForCrossOriginCredentials), securityCheck(DoSecurityCheck) { }
+    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy shouldBufferData, StoredCredentials allowCredentials, ClientCrossOriginCredentialPolicy crossOriginCredentialPolicy, SecurityCheckPolicy securityCheck)
         : sendLoadCallbacks(sendLoadCallbacks)
         , sniffContent(sniffContent)
         , shouldBufferData(shouldBufferData)
         , allowCredentials(allowCredentials)
         , crossOriginCredentialPolicy(crossOriginCredentialPolicy)
+        , securityCheck(securityCheck)
     {
     }
     SendCallbackPolicy sendLoadCallbacks;
@@ -70,6 +76,7 @@ struct ResourceLoaderOptions {
     DataBufferingPolicy shouldBufferData;
     StoredCredentials allowCredentials; // Whether HTTP credentials and cookies are sent with the request.
     ClientCrossOriginCredentialPolicy crossOriginCredentialPolicy; // Whether we will ask the client for credentials (if we allow credentials at all).
+    SecurityCheckPolicy securityCheck;
 };
 
 } // namespace WebCore    

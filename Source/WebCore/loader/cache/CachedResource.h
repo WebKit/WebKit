@@ -85,9 +85,8 @@ public:
 
     CachedResource(const ResourceRequest&, Type);
     virtual ~CachedResource();
-    
-    virtual void load(CachedResourceLoader* cachedResourceLoader)  { load(cachedResourceLoader, false, DoSecurityCheck); }
-    void load(CachedResourceLoader*, bool incremental, SecurityCheckPolicy);
+
+    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&);
 
     virtual void setEncoding(const String&) { }
     virtual String encoding() const { return String(); }
@@ -194,8 +193,7 @@ public:
 
     bool wasCanceled() const { return m_status == Canceled; }
     bool errorOccurred() const { return (m_status == LoadError || m_status == DecodeError); }
-    
-    void setResourceLoaderOptions(const ResourceLoaderOptions& options) { m_options = options; }
+
     bool sendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbacks; }
     
     virtual void destroyDecodedData() { }
@@ -242,6 +240,7 @@ protected:
     ResourceRequest m_resourceRequest;
     String m_accept;
     OwnPtr<CachedResourceRequest> m_request;
+    ResourceLoaderOptions m_options;
     ResourceLoadPriority m_loadPriority;
 
     ResourceResponse m_response;
@@ -278,8 +277,6 @@ private:
 
     unsigned m_type : 3; // Type
     unsigned m_status : 3; // Status
-
-    ResourceLoaderOptions m_options;
 
 #ifndef NDEBUG
     bool m_deleted;

@@ -96,7 +96,6 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type)
     , m_loading(false)
     , m_type(type)
     , m_status(Pending)
-    , m_options(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForCrossOriginCredentials)
 #ifndef NDEBUG
     , m_deleted(false)
     , m_lruIndex(0)
@@ -131,10 +130,11 @@ CachedResource::~CachedResource()
         m_owningCachedResourceLoader->removeCachedResource(this);
 }
 
-void CachedResource::load(CachedResourceLoader* cachedResourceLoader, bool incremental, SecurityCheckPolicy securityCheck)
+void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const ResourceLoaderOptions& options)
 {
+    m_options = options;
     m_loading = true;
-    m_request = CachedResourceRequest::load(cachedResourceLoader, this, incremental, securityCheck, m_options);
+    m_request = CachedResourceRequest::load(cachedResourceLoader, this, options);
     if (m_request) {
         m_status = Pending;
         cachedResourceLoader->incrementRequestCount(this);

@@ -309,6 +309,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 {
     // Any credential should have been removed from the cross-site requests.
     const KURL& requestURL = request.url();
+    m_options.securityCheck = securityCheck;
     ASSERT(m_sameOriginRequest || requestURL.user().isEmpty());
     ASSERT(m_sameOriginRequest || requestURL.pass().isEmpty());
 
@@ -335,7 +336,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 
         // Clear the loader so that any callbacks from SubresourceLoader::create will not have the old loader.
         m_loader = 0;
-        m_loader = resourceLoadScheduler()->scheduleSubresourceLoad(m_document->frame(), this, request, ResourceLoadPriorityMedium, securityCheck, options);
+        m_loader = resourceLoadScheduler()->scheduleSubresourceLoad(m_document->frame(), this, request, ResourceLoadPriorityMedium, options);
         return;
     }
     
