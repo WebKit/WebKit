@@ -288,7 +288,11 @@ WebInspector.ElementsPanel.prototype = {
         else
             this.contentElement.addStyleClass("nowrap");
 
-        var treeElement = this.treeOutline.findTreeElement(this.selectedDOMNode());
+        var selectedNode = this.selectedDOMNode();
+        if (!selectedNode)
+            return;
+
+        var treeElement = this.treeOutline.findTreeElement(selectedNode);
         if (treeElement)
             treeElement.updateSelection(); // Recalculate selection highlight dimensions.
     },
