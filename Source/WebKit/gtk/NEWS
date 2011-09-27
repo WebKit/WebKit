@@ -1,4 +1,12 @@
 ================
+WebKitGTK+ 1.6.1
+================
+
+What's new in WebKitGTK+ 1.6.1?
+
+  - Bug 68884 - [GTK] Add compatibility methods for DOM bindings
+
+================
 WebKitGTK+ 1.6.0
 ================
 
