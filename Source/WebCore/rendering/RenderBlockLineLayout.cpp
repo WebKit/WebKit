@@ -2653,7 +2653,10 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
 
     width.shrinkAvailableWidthForNewFloatIfNeeded(newFloat);
 
-    if (!newFloat->m_paginationStrut)
+    // We only connect floats to lines for pagination purposes if the floats occur at the start of
+    // the line and the previous line had a hard break (so this line is either the first in the block
+    // or follows a <br>).
+    if (!newFloat->m_paginationStrut || !lineInfo.previousLineBrokeCleanly() || !lineInfo.isEmpty())
         return true;
 
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
@@ -2689,16 +2692,9 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
         }
     }
 
-    if (lineInfo.isEmpty()) {
-        // Just update the line info's pagination strut without altering our logical height yet. If the line ends up containing
-        // no content, then we don't want to improperly grow the height of the block.
-        lineInfo.setFloatPaginationStrut(lineInfo.floatPaginationStrut() + paginationStrut);
-    } else {
-        // The line already has content on it, so we want to go ahead and shift everything down.
-        setLogicalHeight(logicalHeight() + paginationStrut);
-        width.updateAvailableWidth();
-    }
-
+    // Just update the line info's pagination strut without altering our logical height yet. If the line ends up containing
+    // no content, then we don't want to improperly grow the height of the block.
+    lineInfo.setFloatPaginationStrut(lineInfo.floatPaginationStrut() + paginationStrut);
     return true;
 }
 
