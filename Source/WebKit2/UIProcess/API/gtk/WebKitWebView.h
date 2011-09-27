@@ -23,7 +23,7 @@
 #ifndef WebKitWebView_h
 #define WebKitWebView_h
 
-#include <WebKit2/WebKitWebViewBase.h>
+#include <webkit2/WebKitWebViewBase.h>
 
 G_BEGIN_DECLS
 

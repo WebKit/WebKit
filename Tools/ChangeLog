@@ -1,3 +1,13 @@
+2011-09-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Rename WebKit2 GTK+ API main header as webkit2.h
+        https://bugs.webkit.org/show_bug.cgi?id=65178
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am:
+        * GtkLauncher/main.c: Include <webkit2/webkit2.h>.
+
 2011-09-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Buildfix after r96108.

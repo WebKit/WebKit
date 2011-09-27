@@ -17,11 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef __WEBKIT_H__
-#define __WEBKIT_H__
+#ifndef __WEBKIT2_H__
+#define __WEBKIT2_H__
 
-#include <WebKit2/WebKit2.h>
-#include <WebKit2/WebKitWebViewBase.h>
-#include <WebKit2/WebKitWebView.h>
+#include <webkit2/WebKitWebViewBase.h>
+#include <webkit2/WebKitWebView.h>
 
-#endif /* __WEBKIT_H__ */
+#endif /* __WEBKIT2_H__ */

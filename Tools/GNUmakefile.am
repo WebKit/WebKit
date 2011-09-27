@@ -57,6 +57,7 @@ Programs_GtkLauncher2_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2/UIProcess/API/gtk \
 	-I$(top_builddir)/Source/WebKit2/UIProcess/API/gtk \
 	-I$(srcdir)/Source/WebKit/gtk \
+	-I$(top_builddir)/DerivedSources/WebKit2/include/webkit2gtk \
 	-I$(top_builddir)/Source/WebKit/gtk \
 	-I$(top_builddir)/DerivedSources \
 	$(global_cppflags) \

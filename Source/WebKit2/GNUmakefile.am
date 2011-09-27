@@ -65,10 +65,13 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEA
 	$(WebKit2)/UIProcess/API/C/WKProtectionSpace.h \
 	$(WebKit2)/UIProcess/API/C/WKProtectionSpaceTypes.h \
 	$(WebKit2)/UIProcess/API/C/WKResourceCacheManager.h \
-	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h \
+	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h
+
+libwebkit2gtkincludedir = $(libwebkitgtkincludedir)/webkit2
+libwebkit2gtkinclude_HEADERS = \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebView.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebViewBase.h \
-	$(WebKit2)/UIProcess/API/gtk/webkit/webkit.h
+	$(WebKit2)/UIProcess/API/gtk/webkit2.h
 
 webkit2_built_sources += \
 	DerivedSources/WebKit2/AuthenticationManagerMessageReceiver.cpp \
@@ -454,7 +457,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewBase.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewBasePrivate.h \
-	Source/WebKit2/UIProcess/API/gtk/webkit/webkit.h \
+	Source/WebKit2/UIProcess/API/gtk/webkit2.h \
 	Source/WebKit2/UIProcess/Authentication/AuthenticationChallengeProxy.cpp \
 	Source/WebKit2/UIProcess/Authentication/AuthenticationChallengeProxy.h \
 	Source/WebKit2/UIProcess/Authentication/AuthenticationDecisionListener.cpp \
@@ -849,6 +852,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit2/WebProcess/WebPage/gtk \
 	-I$(top_builddir)/DerivedSources/WebKit2 \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	-I$(top_builddir)/DerivedSources/WebKit2/include/webkit2gtk \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/JavaScriptCore \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebCore \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebKit2 \
@@ -874,7 +878,7 @@ lib_LTLIBRARIES += \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
 
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_ladir = \
-	$(prefix)/include/webkit2-@WEBKITGTK_API_VERSION@/WebKit2
+	$(libwebkit2gtkincludedir)/WebKit2
 
 # For the Gtk port we want to use XP_UNIX both in X11 and Mac
 if !TARGET_WIN32
@@ -923,8 +927,15 @@ pkgconfig_DATA += Source/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc
 forwarding_headers := $(GENSOURCES_WEBKIT2)/include
 generate-webkit2-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(libWebKit2_la_SOURCES)
 	$(AM_V_GEN)$(PERL) $< $(WebKit2) $(forwarding_headers) gtk
-	$(AM_V_GEN)$(PERL) $< $(WebKit2) $(forwarding_headers) soup 
+	$(AM_V_GEN)$(PERL) $< $(WebKit2) $(forwarding_headers) soup
+
 BUILT_SOURCES += generate-webkit2-forwarding-headers
+
+$(GENSOURCES_WEBKIT2)/include/webkit2gtk/webkit2: $(libwebkit2gtkinclude_HEADERS)
+	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/include/webkit2gtk \
+	&& ln -s -f ${shell pwd}/$(WebKit2)/UIProcess/API/gtk $@
+
+BUILT_SOURCES += $(GENSOURCES_WEBKIT2)/include/webkit2gtk/webkit2
 
 vpath %.messages.in = \
 	$(WebKit2)/PluginProcess \

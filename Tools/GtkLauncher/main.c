@@ -29,7 +29,11 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef WEBKIT2
+#include <webkit2/webkit2.h>
+#else
 #include <webkit/webkit.h>
+#endif
 
 static gint windowCount = 0;
 
