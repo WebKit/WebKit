@@ -269,6 +269,8 @@ void TestShell::resetTestController()
     if (m_drtDevToolsClient)
         m_drtDevToolsClient->reset();
     webView()->scalePage(1, WebPoint(0, 0));
+    webView()->enableFixedLayoutMode(false);
+    webView()->setFixedLayoutSize(WebSize(0, 0));
     webView()->mainFrame()->clearOpener();
     WebTestingSupport::resetInternalsObject(webView()->mainFrame());
 }
