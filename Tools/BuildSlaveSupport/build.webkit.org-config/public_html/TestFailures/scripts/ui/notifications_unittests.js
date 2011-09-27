@@ -103,7 +103,7 @@ test('FailingTestsSummary', 12, function() {
     equal(testFailures.tagName, 'LI');
     equal(testFailures.innerHTML,
         '<div class="how">' +
-            '<time class="relative">Just now</time>' +
+            '<time class="relative"></time>' +
             '<table class="failures">' +
                 '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
                 '<tbody><tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr></tbody>' +
@@ -124,7 +124,7 @@ test('FailingTestsSummary', 12, function() {
     equal(testFailures.index(), 0);
     equal(testFailures.innerHTML,
         '<div class="how">' +
-            '<time class="relative">Just now</time>' +
+            '<time class="relative"></time>' +
             '<table class="failures">' +
                 '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
                 '<tbody><tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr></tbody>' +
@@ -148,7 +148,7 @@ test('FailingTestsSummary', 12, function() {
     testFailures.addFailureAnalysis({testName: 'test'});
     equal(testFailures.innerHTML,
         '<div class="how">' +
-            '<time class="relative">Just now</time>' +
+            '<time class="relative"></time>' +
             '<table class="failures">' +
                 '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
                 '<tbody><tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr></tbody>' +
@@ -309,7 +309,7 @@ test('FailingTestsSummary (grouping)', 1, function() {
     testFailures.addFailureAnalysis({testName: 'path/another/test.html', resultNodesByBuilder: {}});
     equal(testFailures.innerHTML,
         '<div class="how">' +
-            '<time class="relative">Just now</time>' +
+            '<time class="relative"></time>' +
             '<table class="failures">' +
                 '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
                 '<tbody><tr class="BUILDING" style="display: none; "><td>BUILDING</td><td></td><td></td></tr></tbody>' +
@@ -337,7 +337,7 @@ test('BuildersFailing', 1, function() {
     builderFailing.setFailingBuilders(['WebKit Linux', 'Webkit Vista']);
     equal(builderFailing.innerHTML,
         '<div class="how">' +
-            '<time class="relative">Just now</time>' +
+            '<time class="relative"></time>' +
         '</div>' +
         '<div class="what">' +
             '<div class="problem">Build Failed:' +

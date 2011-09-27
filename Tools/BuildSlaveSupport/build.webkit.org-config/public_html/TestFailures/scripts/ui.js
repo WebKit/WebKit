@@ -114,7 +114,6 @@ setInterval(function() {
 ui.RelativeTime = base.extends('time', {
     init: function()
     {
-        this.setDate(new Date());
         this.className = 'relative';
     },
     date: function()
@@ -123,12 +122,12 @@ ui.RelativeTime = base.extends('time', {
     },
     update: function()
     {
-        this.textContent = base.relativizeTime(this._date);
+        this.textContent = this._date ? base.relativizeTime(this._date) : '';
     },
     setDate: function(date)
     {
         this._date = date;
-        this.textContent = base.relativizeTime(date);
+        this.update();
     }
 });
 

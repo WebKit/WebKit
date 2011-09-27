@@ -111,7 +111,7 @@ test("time", 6, function() {
         'setDate',
         'update',
     ]);
-    equal(time.outerHTML, '<time class="relative">Just now</time>');
+    equal(time.outerHTML, '<time class="relative"></time>');
     var tenMinutesAgo = new Date();
     tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 10);
     time.setDate(tenMinutesAgo);
