@@ -1657,3 +1657,7 @@ http/tests/security/xssAuditor/xss-filter-bypass-sjis.html
 # editing/selection/select-bidi-run.html fails on GTK
 # https://bugs.webkit.org/show_bug.cgi?id=68855
 editing/selection/select-bidi-run.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=65709
+# This test is out-dated since r95899.
+canvas/philip/tests/2d.drawImage.outsidesource.html

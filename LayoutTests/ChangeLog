@@ -1,5 +1,14 @@
 2011-09-27  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK gardening.
+
+        * platform/gtk/Skipped:
+        Skip outdated canvas/philip/tests/2d.drawImage.outsidesource.html.
+        * platform/gtk/test_expectations.txt:
+        media/video-playing-and-pause.html is flaky.
+
+2011-09-27  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK rebaseline after r95845, r95897 and r95857.
 
         * platform/gtk/fast/frames/flattening/frameset-flattening-advanced-expected.txt:
