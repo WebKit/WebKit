@@ -181,6 +181,8 @@ bool LayerRendererChromium::initialize()
 
 LayerRendererChromium::~LayerRendererChromium()
 {
+    ASSERT(CCProxy::isImplThread
+());
     m_headsUpDisplay.clear(); // Explicitly destroy the HUD before the TextureManager dies.
     cleanupSharedObjects();
 }

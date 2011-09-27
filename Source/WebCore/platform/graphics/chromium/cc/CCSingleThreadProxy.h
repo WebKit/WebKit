@@ -69,6 +69,7 @@ private:
 
     // Used on the CCThread, but checked on main thread during initialization/shutdown.
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;
+    LayerRendererCapabilities m_layerRendererCapabilitiesForMainThread;
 
     int m_numFailedRecreateAttempts;
     bool m_graphicsContextLost;

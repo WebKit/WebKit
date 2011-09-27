@@ -97,6 +97,7 @@ public:
 
     // CCLayerTreeHost interface to CCProxy.
     void animateAndLayout(double frameBeginTime);
+    void commitComplete();
     void commitTo(CCLayerTreeHostImpl*);
     PassOwnPtr<CCThread> createCompositorThread();
     PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D();

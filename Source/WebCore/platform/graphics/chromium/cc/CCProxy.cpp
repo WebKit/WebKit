@@ -37,14 +37,15 @@ using namespace WTF;
 namespace WebCore {
 
 #ifndef NDEBUG
-bool CCProxy::isMainThread()
-{
-    return ::isMainThread();
-}
 
 namespace {
 bool fakeImplThread = false;
 static WTF::ThreadIdentifier implThreadID;
+}
+
+bool CCProxy::isMainThread()
+{
+    return ::isMainThread() && !fakeImplThread;
 }
 
 bool CCProxy::isImplThread()

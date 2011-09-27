@@ -170,6 +170,10 @@ public:
     {
     }
 
+#if !USE(THREADED_COMPOSITING)
+    virtual void scheduleComposite() { }
+#endif
+
 private:
     explicit MockLayerTreeHostClient(TestHooks* testHooks) : m_testHooks(testHooks) { }
 
@@ -208,7 +212,14 @@ protected:
         : m_beginning(false)
         , m_endWhenBeginReturns(false)
         , m_running(false)
-        , m_timedOut(false) { }
+        , m_timedOut(false)
+    {
+#if USE(THREADED_COMPOSITING)
+        m_settings.enableCompositorThread = true;
+#else
+        m_settings.enableCompositorThread = false;
+#endif
+    }
 
     void doBeginTest();
 
@@ -270,6 +281,7 @@ protected:
         test->endTest();
     }
 
+    CCSettings m_settings;
     OwnPtr<MockLayerTreeHostClient> m_client;
     RefPtr<CCLayerTreeHost> m_layerTreeHost;
 
@@ -287,10 +299,8 @@ void CCLayerTreeHostTest::doBeginTest()
     m_running = true;
     m_client = MockLayerTreeHostClient::create(this);
 
-    CCSettings settings;
-    settings.enableCompositorThread = true;
     RefPtr<LayerChromium> rootLayer;
-    m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, settings);
+    m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, m_settings);
     ASSERT(m_layerTreeHost);
 
     m_beginning = true;
@@ -545,9 +555,10 @@ private:
 };
 TEST_F(CCLayerTreeHostTestSetNeedsRedraw, run)
 {
+    CCSettings setings;
     runTest();
 }
 
 } // namespace
 
-#endif // USE(THREADED_COMPOSITING)
+#endif

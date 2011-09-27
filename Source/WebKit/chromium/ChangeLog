@@ -1,3 +1,15 @@
+2011-09-26  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Make CCThreadProxy draw
+        https://bugs.webkit.org/show_bug.cgi?id=67417
+
+        Disable CCLayerTreeHostTest temporarily. Will re-enable
+        with https://bugs.webkit.org/show_bug.cgi?id=67418
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+
 2011-09-26  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Second half of IDBFactory.getDatabaseNames implementation

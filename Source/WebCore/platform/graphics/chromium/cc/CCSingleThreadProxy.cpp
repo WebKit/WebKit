@@ -42,6 +42,7 @@ public:
     ScopedSetImplThread()
     {
 #ifndef NDEBUG
+        ASSERT(CCProxy::isMainThread());
         CCProxy::setImplThread(true);
 #endif
     }
@@ -65,7 +66,7 @@ CCSingleThreadProxy::CCSingleThreadProxy(CCLayerTreeHost* layerTreeHost)
     , m_timesRecreateShouldFail(0)
 {
     TRACE_EVENT("CCSingleThreadProxy::CCSingleThreadProxy", this, 0);
-    ASSERT(isMainThread());
+    ASSERT(CCProxy::isMainThread());
 }
 
 void CCSingleThreadProxy::start()
@@ -77,13 +78,13 @@ void CCSingleThreadProxy::start()
 CCSingleThreadProxy::~CCSingleThreadProxy()
 {
     TRACE_EVENT("CCSingleThreadProxy::~CCSingleThreadProxy", this, 0);
-    ASSERT(isMainThread());
+    ASSERT(CCProxy::isMainThread());
     ASSERT(!m_layerTreeHostImpl && !m_layerTreeHost); // make sure stop() got called.
 }
 
 bool CCSingleThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect)
 {
-    ASSERT(isMainThread());
+    ASSERT(CCProxy::isMainThread());
 
     if (!recreateContextIfNeeded())
         return false;
@@ -103,27 +104,29 @@ bool CCSingleThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect
 
 GraphicsContext3D* CCSingleThreadProxy::context()
 {
-    ASSERT(isMainThread());
+    ASSERT(CCProxy::isMainThread());
     ScopedSetImplThread impl;
     return m_layerTreeHostImpl->context();
 }
 
 void CCSingleThreadProxy::finishAllRendering()
 {
-    ASSERT(isMainThread());
-    ScopedSetImplThread impl;
-    m_layerTreeHostImpl->finishAllRendering();
+    ASSERT(CCProxy::isMainThread());
+    {
+        ScopedSetImplThread impl;
+        m_layerTreeHostImpl->finishAllRendering();
+    }
 }
 
 bool CCSingleThreadProxy::isStarted() const
 {
-    ASSERT(isMainThread());
+    ASSERT(CCProxy::isMainThread());
     return m_layerTreeHostImpl;
 }
 
 bool CCSingleThreadProxy::initializeLayerRenderer()
 {
-    ASSERT(isMainThread());
+    ASSERT(CCProxy::isMainThread());
     RefPtr<GraphicsContext3D> context = m_layerTreeHost->createLayerTreeHostContext3D();
     if (!context)
         return false;
@@ -131,14 +134,17 @@ bool CCSingleThreadProxy::initializeLayerRenderer()
 
     {
         ScopedSetImplThread impl;
-        return m_layerTreeHostImpl->initializeLayerRenderer(context);
+        bool ok = m_layerTreeHostImpl->initializeLayerRenderer(context);
+        if (ok)
+            m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
+        return ok;
     }
 }
 
 const LayerRendererCapabilities& CCSingleThreadProxy::layerRendererCapabilities() const
 {
-    ScopedSetImplThread impl;
-    return m_layerTreeHostImpl->layerRendererCapabilities();
+    // Note: this gets called during the commit by the "impl" thread
+    return m_layerRendererCapabilitiesForMainThread;
 }
 
 void CCSingleThreadProxy::loseCompositorContext(int numTimes)
@@ -149,7 +155,7 @@ void CCSingleThreadProxy::loseCompositorContext(int numTimes)
 
 void CCSingleThreadProxy::setNeedsCommit()
 {
-    ASSERT(isMainThread());
+    ASSERT(CCProxy::isMainThread());
     // Commit immediately
     {
         ScopedSetImplThread impl;
@@ -157,11 +163,12 @@ void CCSingleThreadProxy::setNeedsCommit()
         m_layerTreeHost->commitTo(m_layerTreeHostImpl.get());
         m_layerTreeHostImpl->commitComplete();
     }
+    m_layerTreeHost->commitComplete();
 }
 
 void CCSingleThreadProxy::setNeedsCommitAndRedraw()
 {
-    ASSERT(isMainThread());
+    ASSERT(CCProxy::isMainThread());
 #if !USE(THREADED_COMPOSITING)
     m_layerTreeHost->scheduleComposite();
 #else
@@ -180,7 +187,7 @@ void CCSingleThreadProxy::setNeedsRedraw()
 void CCSingleThreadProxy::stop()
 {
     TRACE_EVENT("CCSingleThreadProxy::stop", this, 0);
-    ASSERT(isMainThread());
+    ASSERT(CCProxy::isMainThread());
     {
         ScopedSetImplThread impl;
         m_layerTreeHost->deleteContentsTextures(m_layerTreeHostImpl->context());
@@ -206,7 +213,7 @@ void CCSingleThreadProxy::compositeImmediately()
 
 bool CCSingleThreadProxy::recreateContextIfNeeded()
 {
-    ASSERT(isMainThread());
+    ASSERT(CCProxy::isMainThread());
     if (!m_graphicsContextLost)
         return true;
     RefPtr<GraphicsContext3D> context;
@@ -217,7 +224,14 @@ bool CCSingleThreadProxy::recreateContextIfNeeded()
 
     if (context) {
         ASSERT(context->hasOneRef());
-        if (m_layerTreeHostImpl->initializeLayerRenderer(context)) {
+        bool ok;
+        {
+            ScopedSetImplThread impl;
+            ok = m_layerTreeHostImpl->initializeLayerRenderer(context);
+            if (ok)
+                m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
+        }
+        if (ok) {
             m_layerTreeHost->didRecreateGraphicsContext(true);
             m_graphicsContextLost = false;
             return true;
@@ -240,6 +254,8 @@ bool CCSingleThreadProxy::recreateContextIfNeeded()
 
 void CCSingleThreadProxy::commitIfNeeded()
 {
+    ASSERT(CCProxy::isMainThread());
+
     // Update
     m_layerTreeHost->updateLayers();
 
@@ -250,6 +266,7 @@ void CCSingleThreadProxy::commitIfNeeded()
         m_layerTreeHost->commitTo(m_layerTreeHostImpl.get());
         m_layerTreeHostImpl->commitComplete();
     }
+    m_layerTreeHost->commitComplete();
 }
 
 bool CCSingleThreadProxy::doComposite()

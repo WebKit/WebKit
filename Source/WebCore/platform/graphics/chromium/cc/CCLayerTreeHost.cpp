@@ -55,6 +55,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, PassRefPtr<Layer
     , m_settings(settings)
     , m_visible(true)
 {
+    ASSERT(CCProxy::isMainThread());
 }
 
 bool CCLayerTreeHost::initialize()
@@ -62,6 +63,10 @@ bool CCLayerTreeHost::initialize()
     if (m_settings.enableCompositorThread) {
         // Accelerated Painting is not supported in threaded mode. Turn it off.
         m_settings.acceleratePainting = false;
+        // The HUD does not work in threaded mode. Turn it off.
+        m_settings.showFPSCounter = false;
+        m_settings.showPlatformLayerTree = false;
+
         m_proxy = CCThreadProxy::create(this);
     } else
         m_proxy = CCSingleThreadProxy::create(this);
@@ -105,6 +110,11 @@ void CCLayerTreeHost::animateAndLayout(double frameBeginTime)
     m_animating = false;
 }
 
+// This function commits the CCLayerTreeHost to an impl tree. When modifying
+// this function, keep in mind that the function *runs* on the impl thread! Any
+// code that is logically a main thread operation, e.g. deletion of a LayerChromium,
+// should be delayed until the CCLayerTreeHost::commitComplete, which will run
+// after the commit, but on the main thread.
 void CCLayerTreeHost::commitTo(CCLayerTreeHostImpl* hostImpl)
 {
     ASSERT(CCProxy::isImplThread());
@@ -115,14 +125,12 @@ void CCLayerTreeHost::commitTo(CCLayerTreeHostImpl* hostImpl)
     contentsTextureManager()->deleteEvictedTextures(hostImpl->context());
 
     updateCompositorResources(m_updateList, hostImpl->context());
-    clearPendingUpdate();
 
     hostImpl->setVisible(m_visible);
     hostImpl->setZoomAnimatorTransform(m_zoomAnimatorTransform);
     hostImpl->setViewport(viewportSize());
 
     hostImpl->layerRenderer()->setContentsTextureMemoryUseBytes(m_contentsTextureManager->currentMemoryUseBytes());
-    m_contentsTextureManager->unprotectAllTextures();
 
     // Synchronize trees, if one exists at all...
     if (rootLayer())
@@ -131,6 +139,12 @@ void CCLayerTreeHost::commitTo(CCLayerTreeHostImpl* hostImpl)
         hostImpl->setRootLayer(0);
 
     m_frameNumber++;
+}
+
+void CCLayerTreeHost::commitComplete()
+{
+    clearPendingUpdate();
+    m_contentsTextureManager->unprotectAllTextures();
 }
 
 PassOwnPtr<CCThread> CCLayerTreeHost::createCompositorThread()
@@ -209,7 +223,6 @@ void CCLayerTreeHost::setNeedsCommitAndRedraw()
 void CCLayerTreeHost::setNeedsRedraw()
 {
 #if USE(THREADED_COMPOSITING)
-    TRACE_EVENT("CCLayerTreeHost::setNeedsRedraw", this, 0);
     m_proxy->setNeedsRedraw();
 #else
     m_client->scheduleComposite();
