@@ -44,6 +44,7 @@
  *  - "link,hover,in", const char *link[2]: reports mouse is over a link.
  *    It gives the url in link[0] and link's title in link[1] as an argument.
  *  - "link,hover,out", void: reports mouse moved out from a link.
+ *  - "load,document,finished", Evas_Object*: a DOM document object in a frame has finished loading.
  *  - "load,error", const Ewk_Frame_Load_Error*: reports load failed
  *  - "load,finished", const Ewk_Frame_Load_Error*: reports load
  *    finished and it gives @c NULL on success or pointer to

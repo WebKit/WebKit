@@ -1339,6 +1339,8 @@ void ewk_frame_load_firstlayout_nonempty_finished(Evas_Object* o)
 void ewk_frame_load_document_finished(Evas_Object* o)
 {
     evas_object_smart_callback_call(o, "load,document,finished", 0);
+    EWK_FRAME_SD_GET_OR_RETURN(o, sd);
+    ewk_view_load_document_finished(sd->view, o);
 }
 
 /**

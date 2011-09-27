@@ -81,6 +81,7 @@ void ewk_view_ready(Evas_Object* o);
 void ewk_view_input_method_state_set(Evas_Object* o, Eina_Bool active);
 void ewk_view_title_set(Evas_Object* o, const char* title);
 void ewk_view_uri_changed(Evas_Object* o);
+void ewk_view_load_document_finished(Evas_Object* o, Evas_Object* frame);
 void ewk_view_load_started(Evas_Object* o);
 void ewk_view_load_provisional(Evas_Object* o);
 void ewk_view_frame_main_load_started(Evas_Object* o);

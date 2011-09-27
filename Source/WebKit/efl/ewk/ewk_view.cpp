@@ -2702,6 +2702,20 @@ void ewk_view_uri_changed(Evas_Object* o)
 
 /**
  * @internal
+ * Reports that a DOM document object has finished loading for @p frame.
+ *
+ * @param o View which contains the frame.
+ * @param frame The frame whose load has triggered the event.
+ *
+ * Emits signal: "load,document,finished" with @p frame as the parameter.
+ */
+void ewk_view_load_document_finished(Evas_Object* o, Evas_Object* frame)
+{
+    evas_object_smart_callback_call(o, "load,document,finished", frame);
+}
+
+/**
+ * @internal
  * Reports the view started loading something.
  *
  * @param o View.
