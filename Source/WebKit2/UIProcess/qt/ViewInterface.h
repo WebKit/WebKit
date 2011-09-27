@@ -88,6 +88,8 @@ public:
     virtual QJSEngine* engine() = 0;
 
     virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, FileChooserType) = 0;
+
+    virtual void didMouseMoveOverElement(const QUrl&, const QString&) = 0;
 };
 
 }

@@ -1,3 +1,18 @@
+2011-09-26  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt][WK2] Add support for hover API in Qt WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=68369
+
+        Reviewed by Andreas Kling.
+
+        Change the statusbar to show the link URL when hovering links in
+        MiniBrowser using QDesktopWebView.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::onLinkHovered):
+        * MiniBrowser/qt/BrowserWindow.h:
+
 2011-09-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         garden-o-matic's commit data on summary page should not crowd itself or twitch when hovered over.

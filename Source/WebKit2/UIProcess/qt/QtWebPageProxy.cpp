@@ -143,6 +143,7 @@ void QtWebPageProxy::init()
     uiClient.clientInfo = m_viewInterface;
     uiClient.setStatusText = qt_wk_setStatusText;
     uiClient.runOpenPanel = qt_wk_runOpenPanel;
+    uiClient.mouseDidMoveOverElement = qt_wk_mouseDidMoveOverElement;
     WKPageSetPageUIClient(toAPI(m_webPageProxy.get()), &uiClient);
 
     if (m_policyInterface) {

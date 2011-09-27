@@ -84,6 +84,8 @@ private:
 
     virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, ViewInterface::FileChooserType);
 
+    virtual void didMouseMoveOverElement(const QUrl&, const QString&);
+
     // PolicyInterface.
     virtual PolicyInterface::PolicyAction navigationPolicyForURL(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers);
 
@@ -91,6 +93,9 @@ private:
 
     QFileDialog* fileDialog;
     WKOpenPanelResultListenerRef openPanelResultListener;
+
+    QUrl lastHoveredURL;
+    QString lastHoveredTitle;
 };
 
 #endif /* qdesktopwebview_p_h */

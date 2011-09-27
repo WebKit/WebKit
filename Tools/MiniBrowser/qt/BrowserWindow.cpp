@@ -64,8 +64,10 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     if (m_windowOptions.printLoadedUrls)
         connect(webView(), SIGNAL(urlChanged(QUrl)), this, SLOT(printURL(QUrl)));
 
-    if (QDesktopWebView* const desktopWebView = m_browser->desktopWebView())
+    if (QDesktopWebView* const desktopWebView = m_browser->desktopWebView()) {
         connect(desktopWebView, SIGNAL(statusBarMessageChanged(QString)), statusBar(), SLOT(showMessage(QString)));
+        connect(desktopWebView, SIGNAL(linkHovered(QUrl, QString)), this, SLOT(onLinkHovered(QUrl, QString)));
+    }
 
     this->setCentralWidget(m_browser);
     m_browser->setFocus(Qt::OtherFocusReason);
@@ -285,6 +287,11 @@ void BrowserWindow::printURL(const QUrl& url)
 {
     QTextStream output(stdout);
     output << "Loaded: " << url.toString() << endl;
+}
+
+void BrowserWindow::onLinkHovered(const QUrl& url, const QString&)
+{
+    statusBar()->showMessage(url.toString());
 }
 
 void BrowserWindow::updateUserAgentList()

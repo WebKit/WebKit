@@ -431,6 +431,15 @@ void QDesktopWebViewPrivate::onOpenPanelFinished(int result)
     fileDialog = 0;
 }
 
+void QDesktopWebViewPrivate::didMouseMoveOverElement(const QUrl& linkURL, const QString& linkTitle)
+{
+    if (linkURL == lastHoveredURL && linkTitle == lastHoveredTitle)
+        return;
+    lastHoveredURL = linkURL;
+    lastHoveredTitle = linkTitle;
+    emit q->linkHovered(lastHoveredURL, lastHoveredTitle);
+}
+
 static PolicyInterface::PolicyAction toPolicyAction(QDesktopWebView::NavigationPolicy policy)
 {
     switch (policy) {

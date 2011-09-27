@@ -88,6 +88,7 @@ Q_SIGNALS:
     void loadFailed(QDesktopWebView::ErrorType errorType, int errorCode, const QUrl& url);
     void loadProgressChanged(int progress);
     void urlChanged(const QUrl& url);
+    void linkHovered(const QUrl& url, const QString& title);
 
 protected:
     virtual void keyPressEvent(QKeyEvent*);

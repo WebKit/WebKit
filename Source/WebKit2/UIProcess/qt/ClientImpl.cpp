@@ -32,6 +32,7 @@
 #include <WKArray.h>
 #include <WKFrame.h>
 #include <WKFramePolicyListener.h>
+#include <WKHitTestResult.h>
 #include <WKOpenPanelParameters.h>
 #include <WKOpenPanelResultListener.h>
 #include <WKType.h>
@@ -161,6 +162,13 @@ void qt_wk_runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef paramete
 
     ViewInterface::FileChooserType allowMultipleFiles = WKOpenPanelParametersGetAllowsMultipleFiles(parameters) ? ViewInterface::MultipleFilesSelection : ViewInterface::SingleFileSelection;
     toViewInterface(clientInfo)->chooseFiles(listener, selectedFileNames, allowMultipleFiles);
+}
+
+void qt_wk_mouseDidMoveOverElement(WKPageRef page, WKHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef userData, const void* clientInfo)
+{
+    const QUrl absoluteLinkUrl = WKURLCopyQUrl(WKHitTestResultCopyAbsoluteLinkURL(hitTestResult));
+    const QString linkTitle = WKStringCopyQString(WKHitTestResultCopyLinkTitle(hitTestResult));
+    toViewInterface(clientInfo)->didMouseMoveOverElement(absoluteLinkUrl, linkTitle);
 }
 
 static Qt::MouseButton toQtMouseButton(WKEventMouseButton button)

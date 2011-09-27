@@ -79,6 +79,8 @@ private:
 
     virtual void chooseFiles(WKOpenPanelResultListenerRef, const QStringList&, FileChooserType) { }
 
+    virtual void didMouseMoveOverElement(const QUrl&, const QString&) { }
+
 private:
     QTouchWebView* const m_viewportView;
     QTouchWebPage* const m_pageView;

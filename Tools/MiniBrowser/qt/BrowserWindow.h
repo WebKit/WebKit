@@ -69,6 +69,7 @@ protected slots:
     void loadURLListFromFile();
 
     void printURL(const QUrl&);
+    void onLinkHovered(const QUrl&, const QString&);
 
 private:
     void updateUserAgentList();

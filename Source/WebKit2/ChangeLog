@@ -1,3 +1,37 @@
+2011-09-26  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt][WK2] Add support for hover API in Qt WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=68369
+
+        Reviewed by Andreas Kling.
+
+        Based on the patch from Igor Oliveira in the same bug.
+
+        Expose a linkHovered() signal in QDesktopWebView, that passes the QUrl and the
+        QString corresponding to the link title. I left textContent out because was
+        unsure of its use case.
+
+        In QDesktopWebView we store the last URL and title emitted to make sure we send
+        the signal only if either value changes. Tests were added to the QML element to
+        check: if values are correctly emitted and if we don't emit more signals than
+        necessary.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::didMouseMoveOverElement):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_linkHovered.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/test2.html:
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        * UIProcess/qt/ClientImpl.cpp:
+        (qt_wk_mouseDidMoveOverElement):
+        * UIProcess/qt/ClientImpl.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::init):
+        * UIProcess/qt/TouchViewInterface.h:
+        (WebKit::TouchViewInterface::didMouseMoveOverElement):
+        * UIProcess/qt/ViewInterface.h:
+
 2011-09-27  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] API fixes for QML, the signal parameters needs to be named.
