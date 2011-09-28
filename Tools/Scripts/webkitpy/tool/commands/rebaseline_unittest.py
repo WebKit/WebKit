@@ -60,6 +60,7 @@ Retrieving results for chromium-cg-mac-snowleopard from Webkit Mac10.6 (CG).
     userscripts/images.svg
 Retrieving results for chromium-gpu-cg-mac-leopard from Webkit Mac10.5 (CG) - GPU.
 Retrieving results for chromium-gpu-cg-mac-snowleopard from Webkit Mac10.6 (CG) - GPU.
+Retrieving results for chromium-gpu-mac-snowleopard from Webkit Mac10.6 - GPU.
 Retrieving results for chromium-gpu-win-win7 from Webkit Win7 - GPU.
 Retrieving results for chromium-gpu-win-xp from Webkit Win - GPU.
 Retrieving results for chromium-linux-x86 from Webkit Linux 32.

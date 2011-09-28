@@ -63,6 +63,8 @@ _exact_matches = {
     # "Webkit Linux 32 - GPU": {"port_name": "chromium-gpu-linux-x86", "specifiers": set(["linux", "x86", "gpu"])},
     "Webkit Mac10.5 (CG) - GPU": {"port_name": "chromium-gpu-cg-mac-leopard", "specifiers": set(["leopard", "gpu"])},
     "Webkit Mac10.6 (CG) - GPU": {"port_name": "chromium-gpu-cg-mac-snowleopard", "specifiers": set(["mac", "gpu"])},
+    "Webkit Mac10.6 (dbg) - GPU": {"port_name": "chromium-gpu-mac-snowleopard", "specifiers": set(["snowleopard", "gpu", "debug"])},
+    "Webkit Mac10.6 - GPU": {"port_name": "chromium-gpu-mac-snowleopard", "specifiers": set(["snowleopard", "gpu"])},
 
     # These builders are on build.webkit.org.
     "GTK Linux 32-bit Debug": {"port_name": "gtk", "specifiers": set(["gtk"])},
