@@ -1,3 +1,22 @@
+2011-09-27  Tim Horton  <timothy_horton@apple.com>
+
+        svg/custom/oversized-pattern-scale.svg is useless because the interesting part of the test is off the screen
+        https://bugs.webkit.org/show_bug.cgi?id=68945
+
+        Reviewed by Darin Adler.
+        
+        Change oversized-pattern-scale so that the interesting part of the pattern is on the screen,
+        and so that it doesn't draw a scrollbar (making it platform-independent).
+        
+        Change transformed-pattern-clamp-svg-root so that it doesn't draw a gradient, making it platform-independent.
+
+        * svg/custom/oversized-pattern-scale-expected.png:
+        * svg/custom/oversized-pattern-scale-expected.txt:
+        * svg/custom/oversized-pattern-scale.svg:
+        * svg/custom/transformed-pattern-clamp-svg-root-expected.png:
+        * svg/custom/transformed-pattern-clamp-svg-root-expected.txt:
+        * svg/custom/transformed-pattern-clamp-svg-root.svg:
+
 2011-09-27  Tony Chang  <tony@chromium.org>
 
         http/tests/navigation/anchor-basic.html is flaky on Snow Leopard Release Bot
