@@ -1,5 +1,15 @@
 2011-09-28  Gabor Rapcsanyi  <rgabor@webkit.org>
 
+        [Qt][GTK] Skip http/tests/multipart/stop-crash.html because it fails after r96174.
+        https://bugs.webkit.org/show_bug.cgi?id=68979
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/gtk/Skipped: Skip http/tests/multipart/stop-crash.html failing
+        * platform/qt/Skipped: Skip http/tests/multipart/stop-crash.html failing
+
+2011-09-28  Gabor Rapcsanyi  <rgabor@webkit.org>
+
         fast/canvas/crash-set-font.html failing on all platform because
         getCSSCanvasContext needs 4 parameters
         https://bugs.webkit.org/show_bug.cgi?id=66291
