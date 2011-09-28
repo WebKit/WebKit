@@ -1,0 +1,10 @@
+{
+    "DEFINITIONS": {
+        "WatchListScript": {
+            "filename": (r"Tools/Scripts/webkitpy/common/watchlist/.*"),
+        },
+    },
+    "CC_RULES": {
+        "WatchListScript": [ "levin+watchlist@chromium.org", ],
+    },
+}

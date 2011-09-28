@@ -28,25 +28,14 @@
 
 '''Unit tests for watchlistparser.py.'''
 
-import re
-import unittest
+from webkitpy.common import webkitunittest
 from webkitpy.common.watchlist.watchlistparser import WatchListParser
 
 
-class WatchListParserTest(unittest.TestCase):
+class WatchListParserTest(webkitunittest.TestCase):
     def setUp(self):
-        # For versions of Python before 2.7.
-        if not 'assertRaisesRegexp' in dir(self):
-            self.assertRaisesRegexp = self._verifyException
+        webkitunittest.TestCase.setUp(self)
         self._watch_list_parser = WatchListParser()
-
-    def _verifyException(self, regex_message, callable, *args):
-        try:
-            callable(*args)
-            self.assertTrue(False, 'No assert raised.')
-        except Exception, exception:
-            self.assertTrue(re.match(regex_message, exception.__str__()),
-                            'Expected regex "%s"\nGot "%s"' % (regex_message, exception.__str__()))
 
     def test_bad_section(self):
         watch_list_with_bad_section = ('{"FOO": {}}')
@@ -69,8 +58,8 @@ class WatchListParserTest(unittest.TestCase):
             '     },'
             '}')
 
-        self._verifyException(r'Invalid character "\|" in definition "WatchList1\|A"\.',
-                              self._watch_list_parser.parse, watch_list_with_bad_definition)
+        self.assertRaisesRegexp(r'Invalid character "\|" in definition "WatchList1\|A"\.',
+                                self._watch_list_parser.parse, watch_list_with_bad_definition)
 
     def test_bad_match_type(self):
         watch_list_with_bad_match_type = (
@@ -82,8 +71,8 @@ class WatchListParserTest(unittest.TestCase):
             '     },'
             '}')
 
-        self._verifyException('Unknown pattern type "nothing_matches_this" in definition "WatchList1".',
-                              self._watch_list_parser.parse, watch_list_with_bad_match_type)
+        self.assertRaisesRegexp('Unknown pattern type "nothing_matches_this" in definition "WatchList1".',
+                                self._watch_list_parser.parse, watch_list_with_bad_match_type)
 
     def test_match_type_typo(self):
         watch_list_with_bad_match_type = (
@@ -95,6 +84,6 @@ class WatchListParserTest(unittest.TestCase):
             '     },'
             '}')
 
-        self._verifyException(r'Unknown pattern type "iflename" in definition "WatchList1"\.\s*'
-                              + r'Perhaps it should be filename\.',
-                              self._watch_list_parser.parse, watch_list_with_bad_match_type)
+        self.assertRaisesRegexp(r'Unknown pattern type "iflename" in definition "WatchList1"\.\s*'
+                                + r'Perhaps it should be filename\.',
+                                self._watch_list_parser.parse, watch_list_with_bad_match_type)
