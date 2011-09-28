@@ -297,6 +297,7 @@ private:
 
 TextureMapperGL::TextureMapperGL()
     : m_data(new TextureMapperGLData)
+    , m_context(0)
 {
 }
 
@@ -395,9 +396,11 @@ void TextureMapperGL::beginPainting()
         return;
 
     glGetIntegerv(GL_CURRENT_PROGRAM, &m_data->previousProgram);
-    QPainter* painter = m_context->platformContext();
-    painter->save();
-    painter->beginNativePainting();
+    if (m_context) {
+        QPainter* painter = m_context->platformContext();
+        painter->save();
+        painter->beginNativePainting();
+    }
     glClearStencil(0);
     glClear(GL_STENCIL_BUFFER_BIT);
     bindSurface(0);
@@ -410,8 +413,10 @@ void TextureMapperGL::endPainting()
 #if PLATFORM(QT)
     glClearStencil(1);
     glClear(GL_STENCIL_BUFFER_BIT);
-    QPainter* painter = m_context->platformContext();
     glUseProgram(m_data->previousProgram);
+    if (!m_context)
+        return;
+    QPainter* painter = m_context->platformContext();
     painter->endNativePainting();
     painter->restore();
 #endif

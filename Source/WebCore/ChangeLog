@@ -1,3 +1,20 @@
+2011-09-28  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Allow TextureMapperGL to work without a GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=68980
+
+        Reviewed by Andreas Kling.
+
+        Perform a null-check for m_context and initialize that variable.
+        If a graphics-context doesn't exist, we don't need to reset it.
+
+        No new functionality so no new tests.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::TextureMapperGL):
+        (WebCore::TextureMapperGL::beginPainting):
+        (WebCore::TextureMapperGL::endPainting):
+
 2011-09-28  Kentaro Hara  <haraken@chromium.org>
 
         Implement an ErrorEvent constructor for V8
