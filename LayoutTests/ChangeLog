@@ -1,3 +1,16 @@
+2011-09-28  Antaryami Pandia  <antaryami.pandia@motorola.com>
+
+        Reflected attribute input.size wraps on negative values (Chrome), or
+        returns them (Safari).
+        https://bugs.webkit.org/show_bug.cgi?id=44886
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/HTMLInputElement/input-size-attribute-expected.txt: Added.
+        * fast/dom/HTMLInputElement/input-size-attribute.html: Added.
+        * fast/dom/HTMLInputElement/script-tests/size-attribute.js:
+        * fast/dom/HTMLInputElement/size-attribute-expected.txt:
+
 2011-09-28  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add support for search in single resource to page agent.

@@ -1,0 +1,19 @@
+HTMLInputElement size attribute test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.size is 20
+PASS input.size is 20
+PASS input.size is 20
+PASS input.size is 1
+PASS input.size is 2
+PASS input.size is 20
+PASS input.size is 20
+PASS input.size is 20
+PASS input.size is 20
+PASS input.size is 10
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

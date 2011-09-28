@@ -768,8 +768,10 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == maxlengthAttr)
         parseMaxLengthAttribute(attr);
     else if (attr->name() == sizeAttr) {
-        m_size = attr->isNull() ? defaultSize : attr->value().toInt();
-        if (renderer())
+        int oldSize = m_size;
+        int value = attr->value().toInt();
+        m_size = value > 0 ? value : defaultSize;
+        if (m_size != oldSize && renderer())
             renderer()->setNeedsLayoutAndPrefWidthsRecalc();
     } else if (attr->name() == altAttr)
         m_inputType->altAttributeChanged();

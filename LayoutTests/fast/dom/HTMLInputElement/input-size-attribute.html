@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<body>
+<script>
+description('HTMLInputElement size attribute test');
+
+var input = document.createElement("input");
+
+shouldBe("input.size", "20");
+
+input.setAttribute("size", "-1");
+shouldBe("input.size", "20");
+
+input.removeAttribute("size");
+shouldBe("input.size", "20");
+
+input.setAttribute("size", "1");
+shouldBe("input.size", "1");
+
+input.setAttribute("size", "2");
+shouldBe("input.size", "2");
+
+input.removeAttribute("size");
+shouldBe("input.size", "20");
+
+input.setAttribute("size", "a");
+shouldBe("input.size", "20");
+
+input.removeAttribute("size");
+shouldBe("input.size", "20");
+
+input.setAttribute("size", "0");
+shouldBe("input.size", "20");
+
+input.setAttribute("size", "10");
+shouldBe("input.size", "10");
+
+var successfullyParsed = true;
+</script>
+</body>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
