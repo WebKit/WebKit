@@ -217,13 +217,13 @@ class RebaselineHTTPRequestHandler(ReflectionHandler):
     STATIC_FILE_DIRECTORY = os.path.join(os.path.dirname(__file__), "data", "rebaselineserver")
 
     def results_json(self):
-        return self.server.results_json
+        self._serve_json(self.server.results_json)
 
     def test_config(self):
-        return self.server.test_config
+        self._serve_json(self.server.test_config)
 
     def platforms_json(self):
-        return self.server.platforms_json
+        self._serve_json(self.server.platforms_json)
 
     def rebaseline(self):
         test = self.query['test'][0]

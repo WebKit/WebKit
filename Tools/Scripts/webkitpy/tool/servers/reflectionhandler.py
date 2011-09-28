@@ -47,8 +47,8 @@ import shutil
 import threading
 import time
 import urlparse
+import wsgiref.handlers
 import BaseHTTPServer
-
 
 class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     # Subclasses should override.
@@ -138,7 +138,7 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             if cacheable_seconds:
                 expires_time = (datetime.datetime.now() +
                     datetime.timedelta(0, cacheable_seconds))
-                expires_formatted = format_date_time(
+                expires_formatted = wsgiref.handlers.format_date_time(
                     time.mktime(expires_time.timetuple()))
                 self.send_header("Expires", expires_formatted)
             self.end_headers()
