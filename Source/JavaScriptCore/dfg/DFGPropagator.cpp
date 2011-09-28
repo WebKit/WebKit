@@ -375,13 +375,6 @@ private:
             break;
         }
 
-        case ValueToDouble: {
-            // This node should never be visible at this stage of compilation. It is
-            // inserted by fixup(), which follows this phase.
-            ASSERT_NOT_REACHED();
-            break;
-        }
-        
         case ValueAdd: {
             PredictedType left = m_predictions[node.child1()];
             PredictedType right = m_predictions[node.child2()];
@@ -546,6 +539,14 @@ private:
             break;
         }
 
+        case ValueToDouble:
+        case GetArrayLength: {
+            // This node should never be visible at this stage of compilation. It is
+            // inserted by fixup(), which follows this phase.
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        
 #ifndef NDEBUG
         // These get ignored because they don't return anything.
         case PutScopedVar:
@@ -678,6 +679,21 @@ private:
             
         case ArithSqrt: {
             toDouble(node.child1());
+            break;
+        }
+            
+        case GetById: {
+            if (!isArrayPrediction(m_predictions[node.child1()]))
+                break;
+            if (!isInt32Prediction(m_predictions[m_compileIndex]))
+                break;
+            if (m_codeBlock->identifier(node.identifierNumber()) != m_globalData.propertyNames->length)
+                break;
+            
+#if ENABLE(DFG_DEBUG_PROPAGATION_VERBOSE)
+            printf("  @%u -> GetArrayLength", nodeIndex);
+#endif
+            node.op = GetArrayLength;
             break;
         }
             
@@ -1044,6 +1060,7 @@ private:
         case ArithMax:
         case ArithSqrt:
         case GetCallee:
+        case GetArrayLength:
             setReplacement(pureCSE(node));
             break;
             

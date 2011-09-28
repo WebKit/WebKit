@@ -1831,6 +1831,26 @@ void SpeculativeJIT::compile(Node& node)
         jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
+        
+    case GetArrayLength: {
+        Node& baseNode = m_jit.graph()[node.child1()];
+        SpeculateCellOperand base(this, node.child1());
+        GPRTemporary result(this);
+        
+        GPRReg baseGPR = base.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        if (baseNode.op != GetLocal || !isArrayPrediction(m_jit.graph().getPrediction(baseNode.local())))
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+        
+        m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArray::storageOffset()), resultGPR);
+        m_jit.load32(MacroAssembler::Address(resultGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)), resultGPR);
+        
+        speculationCheck(m_jit.branch32(MacroAssembler::LessThan, resultGPR, MacroAssembler::TrustedImm32(0)));
+        
+        integerResult(resultGPR, m_compileIndex);
+        break;
+    }
 
     case CheckStructure: {
         SpeculateCellOperand base(this, node.child1());
