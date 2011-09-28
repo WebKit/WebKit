@@ -67,6 +67,8 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
 
+using namespace std;
+
 namespace WebCore {
 
 namespace PageAgentState {
@@ -480,6 +482,39 @@ static bool textContentForCachedResource(CachedResource* cachedResource, String*
         }
     }
     return false;
+}
+
+void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, RefPtr<InspectorArray>* object)
+{
+    RefPtr<InspectorArray> result = InspectorArray::create();
+
+    Frame* frame = frameForId(frameId);
+    KURL kurl(ParsedURLString, url);
+
+    FrameLoader* frameLoader = frame ? frame->loader() : 0;
+    DocumentLoader* loader = frameLoader ? frameLoader->documentLoader() : 0;
+    if (!loader) {
+        *object = result;
+        return;
+    }
+
+    String content;
+    bool success = false;
+    if (equalIgnoringFragmentIdentifier(kurl, loader->url()))
+        success = mainResourceContent(frame, false, &content);
+
+    if (!success) {
+        CachedResource* resource = cachedResource(frame, kurl);
+        success = textContentForCachedResource(resource, &content);
+    }
+
+    if (!success) {
+        *object = result;
+        return;
+    }
+
+    result = ContentSearchUtils::searchInTextByLines(query, content);
+    *object = result;
 }
 
 static PassRefPtr<InspectorObject> buildObjectForSearchResult(const String& frameId, const String& url, int matchesCount)

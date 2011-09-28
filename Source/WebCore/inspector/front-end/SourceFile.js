@@ -358,7 +358,12 @@ WebInspector.ResourceContentProvider.prototype = {
             callback(this._mimeType, content);
         }
         this._resource.requestContent(didRequestContent.bind(this));
-    }
+    },
+    
+    searchInContent: function(query, callback)
+    {
+        this._resource.searchInContent(query, callback);
+    }    
 }
 
 WebInspector.ResourceContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;

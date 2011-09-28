@@ -1,3 +1,18 @@
+2011-09-28  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add support for search in single resource to page agent.
+        https://bugs.webkit.org/show_bug.cgi?id=68998
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/search/search-in-resource-expected.txt: Added.
+        * http/tests/inspector/search/search-in-resource.html: Added.
+        * http/tests/inspector/search/search-in-resources.html:
+        * http/tests/inspector/search/search-test.js:
+        (initialize_SearchTest.InspectorTest.dumpSearchResults):
+        (initialize_SearchTest.InspectorTest.dumpSearchMatches):
+        (initialize_SearchTest):
+
 2011-09-28  Oliver Varga  <voliver@inf.u-szeged.hu>
 
         [WK2] SVG animation pause API missing

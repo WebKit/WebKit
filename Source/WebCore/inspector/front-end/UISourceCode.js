@@ -90,5 +90,6 @@ WebInspector.UISourceCode.prototype = {
  */
 WebInspector.ContentProvider = function() { }
 WebInspector.ContentProvider.prototype = {
-    requestContent: function(callback) { }
+    requestContent: function(callback) { },
+    searchInContent: function(query, callback) { }
 }

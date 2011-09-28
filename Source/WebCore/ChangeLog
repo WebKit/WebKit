@@ -1,3 +1,29 @@
+2011-09-28  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add support for search in single resource to page agent.
+        https://bugs.webkit.org/show_bug.cgi?id=68998
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/search/search-in-resource.html
+
+        * inspector/ContentSearchUtils.cpp:
+        (WebCore::ContentSearchUtils::getRegularExpressionMatchesByLines):
+        * inspector/ContentSearchUtils.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::buildObjectForSearchMatch):
+        (WebCore::InspectorPageAgent::searchInResource):
+        * inspector/InspectorPageAgent.h:
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.searchInContent):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.ResourceContentProvider.prototype.requestContent):
+        (WebInspector.ResourceContentProvider.prototype.searchInContent):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.ContentProvider.prototype.requestContent):
+        (WebInspector.ContentProvider.prototype.searchInContent):
+
 2011-09-28  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: It'd be useful to have performance stats for the back-end to front-end communication channel.

@@ -31,7 +31,10 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "InspectorValues.h"
 #include "RegularExpression.h"
+
+using namespace std;
 
 namespace WebCore {
 namespace ContentSearchUtils {
@@ -56,6 +59,44 @@ static String createSearchRegexSource(const String& text)
     return result;
 }
 
+static Vector<pair<int, String> > getRegularExpressionMatchesByLines(const RegularExpression& regex, const String& text)
+{
+    Vector<pair<int, String> > result;
+
+    int lineNumber = 0;
+    unsigned start = 0;
+    while (start < text.length()) {
+        size_t lineEnd = text.find('\n', start);
+        if (lineEnd == notFound)
+            lineEnd = text.length();
+        else
+            lineEnd++;
+
+        String line = text.substring(start, lineEnd - start);
+        if (line.endsWith("\r\n"))
+            line = line.left(line.length() - 2);
+        if (line.endsWith("\n"))
+            line = line.left(line.length() - 1);
+
+        int matchLength;
+        if (regex.match(line, 0, &matchLength) != -1)
+            result.append(pair<int, String>(lineNumber, line));
+
+        start = lineEnd;
+        lineNumber++;
+    }
+    return result;
+}
+
+static PassRefPtr<InspectorObject> buildObjectForSearchMatch(int lineNumber, String lineContent)
+{
+    RefPtr<InspectorObject> result = InspectorObject::create();
+    result->setNumber("lineNumber", lineNumber);
+    result->setString("lineContent", lineContent);
+
+    return result;
+}
+
 RegularExpression createSearchRegex(const String& text, bool caseSensitive, bool isRegex)
 {
     String regexSource = isRegex ? text : createSearchRegexSource(text);
@@ -75,6 +116,19 @@ int countRegularExpressionMatches(const RegularExpression& regex, const String& 
             ++result;
         start = position + 1;
     }
+    return result;
+}
+
+PassRefPtr<InspectorArray> searchInTextByLines(const String& query, const String& text)
+{
+    RefPtr<InspectorArray> result = InspectorArray::create();
+
+    RegularExpression regex = ContentSearchUtils::createSearchRegex(query, false, false);
+    Vector<pair<int, String> > matches = getRegularExpressionMatchesByLines(regex, text);
+
+    for (Vector<pair<int, String> >::const_iterator it = matches.begin(); it != matches.end(); ++it)
+        result->pushValue(buildObjectForSearchMatch(it->first, it->second));
+
     return result;
 }
 

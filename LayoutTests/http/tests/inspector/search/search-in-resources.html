@@ -8,36 +8,32 @@ function test()
 {
     // This file should not match search query.
     var text = "searchTest" + "UniqueString";
-    InspectorTest.runAfterResourcesAreFinished(["search.js", "search.css", "search.html"], step2);
 
-    function step2()
+    InspectorTest.addResult("Case insensitive, non regex:");
+    PageAgent.searchInResources(text, false, false, step2);
+
+    function step2(error, searchResults)
     {
-        InspectorTest.addResult("Case insensitive, non regex:");
-        PageAgent.searchInResources(text, false, false, step3);
+        InspectorTest.dumpSearchResults(searchResults);
+        InspectorTest.addResult("Case sensitive, non regex:");
+        PageAgent.searchInResources(text, true, false, step3);
     }
 
     function step3(error, searchResults)
     {
         InspectorTest.dumpSearchResults(searchResults);
-        InspectorTest.addResult("Case sensitive, non regex:");
-        PageAgent.searchInResources(text, true, false, step4);
+        InspectorTest.addResult("Case insensitive, regex:");
+        PageAgent.searchInResources(text, false, true, step4);
     }
 
     function step4(error, searchResults)
     {
         InspectorTest.dumpSearchResults(searchResults);
-        InspectorTest.addResult("Case insensitive, regex:");
-        PageAgent.searchInResources(text, false, true, step5);
+        InspectorTest.addResult("Case sensitive, regex:");
+        PageAgent.searchInResources(text, true, true, step5);
     }
 
     function step5(error, searchResults)
-    {
-        InspectorTest.dumpSearchResults(searchResults);
-        InspectorTest.addResult("Case sensitive, regex:");
-        PageAgent.searchInResources(text, true, true, step6);
-    }
-
-    function step6(error, searchResults)
     {
         InspectorTest.dumpSearchResults(searchResults);
         InspectorTest.completeTest();

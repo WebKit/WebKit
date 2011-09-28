@@ -6,6 +6,14 @@ InspectorTest.dumpSearchResults = function(searchResults)
     for (var i = 0; i < searchResults.length; i++)
         InspectorTest.addResult("url: " + searchResults[i].url + ", matchesCount: " + searchResults[i].matchesCount);
     InspectorTest.addResult("");
-}
+};
+
+InspectorTest.dumpSearchMatches = function(searchMatches)
+{
+    InspectorTest.addResult("Search matches: ");
+    for (var i = 0; i < searchMatches.length; i++)
+        InspectorTest.addResult("lineNumber: " + searchMatches[i].lineNumber + ", line: '" + searchMatches[i].lineContent + "'");
+    InspectorTest.addResult("");
+};
 
 };

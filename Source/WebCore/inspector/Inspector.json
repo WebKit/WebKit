@@ -102,6 +102,16 @@
                 "hidden": true
             },
             {
+                "id": "SearchMatch",
+                "type": "object",
+                "description": "Search match for resource.",
+                "properties": [
+                    { "name": "lineNumber", "type": "number", "description": "Line number in resource content." },
+                    { "name": "lineContent", "type": "string", "description": "Line with match content." }
+                ],
+                "hidden": true
+            },
+            {
                 "id": "SearchResult",
                 "type": "object",
                 "description": "Search result for resource.",
@@ -185,6 +195,19 @@
                 "returns": [
                     { "name": "content", "type": "string", "description": "Resource content." },
                     { "name": "base64Encoded", "type": "boolean", "description": "True, if content was served as base64." }
+                ],
+                "hidden": true
+            },
+            {
+                "name": "searchInResource",
+                "description": "Searches for given string in resource content.",
+                "parameters": [
+                    { "name": "frameId", "type": "string", "description": "Frame id for resource to search in." },
+                    { "name": "url", "type": "string", "description": "URL of the resource to search in." },
+                    { "name": "query", "type": "string", "description": "String to search for."  }
+                ],
+                "returns": [
+                    { "name": "result", "type": "array", "items": { "$ref": "SearchMatch" }, "description": "List of search matches." }
                 ],
                 "hidden": true
             },

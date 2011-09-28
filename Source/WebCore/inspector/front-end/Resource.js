@@ -867,6 +867,11 @@ WebInspector.Resource.prototype = {
             this._innerRequestContent();
     },
 
+    searchInContent: function(query, callback)
+    {
+        PageAgent.searchInResource(query, callback);
+    },
+
     populateImageSource: function(image)
     {
         function onResourceContent()

@@ -31,14 +31,18 @@
 
 #include "PlatformString.h"
 
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
+class InspectorArray;
 class RegularExpression;
 
 namespace ContentSearchUtils {
 
 RegularExpression createSearchRegex(const String& text, bool caseSensitive, bool isRegex);
 int countRegularExpressionMatches(const RegularExpression&, const String&);
+PassRefPtr<InspectorArray> searchInTextByLines(const String& query, const String& text);
 
 } // namespace ContentSearchUtils
 } // namespace WebCore
