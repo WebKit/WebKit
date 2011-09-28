@@ -1,3 +1,11 @@
+2011-09-28  Mihai Parparita  <mihaip@chromium.org>
+
+        Rebaseline fast/canvas/canvas-composite-transformclip.html and
+        fast/canvas/canvas-composite.html for Chromium Snow Leopard GPU.
+
+        * platform/chromium-gpu-mac/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-gpu-mac/fast/canvas/canvas-composite-transformclip-expected.png:
+
 2011-09-28  Kenji Imasaki  <imasaki@chromium.org>
 
         [Chromium] remove a passing test from the test expectation file.
