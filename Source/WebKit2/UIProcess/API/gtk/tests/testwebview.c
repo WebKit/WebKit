@@ -34,6 +34,8 @@ int main(int argc, char **argv)
     g_thread_init(NULL);
     gtk_test_init(&argc, &argv, NULL);
 
+    g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
+
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit2/webview/default_context",
                     testWebViewDefaultContext);

@@ -994,6 +994,7 @@ TEST_PROGS += \
 
 noinst_PROGRAMS += $(TEST_PROGS)
 webkit2_tests_cflags = \
+	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs\" \
 	-I$(srcdir)/Source \
 	-I$(srcdir)/Source/WebKit2 \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
