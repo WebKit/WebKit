@@ -1,5 +1,20 @@
 2011-09-28  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
+        [EFL] Allow to skip count parameter in ewk_view_repaints_get and ewk_view_scroll_requests_get.
+        https://bugs.webkit.org/show_bug.cgi?id=65842
+
+        Reviewed by Ryosuke Niwa.
+
+        Makes the count parameter in ewk_view_repaints_get and ewk_view_scroll_requests_get
+        as an optional parameter. Developer may pass NULL to skip returning the number of elements
+        of the requested array.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_repaints_get):
+        (ewk_view_scroll_requests_get):
+
+2011-09-28  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
         [EFL] URL of resources are not decoded.
         https://bugs.webkit.org/show_bug.cgi?id=66540
 

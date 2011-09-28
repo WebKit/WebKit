@@ -2375,7 +2375,7 @@ Ewk_View_Smart_Data* ewk_view_smart_data_get(const Evas_Object* o)
  * otherwise copy the array.
  *
  * @param priv private handle pointer of the view to get repaints.
- * @param count where to return the number of elements of returned array.
+ * @param count where to return the number of elements of returned array, may be @c 0.
  *
  * @return reference to array of requested repaints.
  *
@@ -2384,7 +2384,6 @@ Ewk_View_Smart_Data* ewk_view_smart_data_get(const Evas_Object* o)
  */
 const Eina_Rectangle* ewk_view_repaints_get(const Ewk_View_Private_Data* priv, size_t* count)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(count, 0);
     if (count)
         *count = 0;
     EINA_SAFETY_ON_NULL_RETURN_VAL(priv, 0);
@@ -2403,7 +2402,7 @@ const Eina_Rectangle* ewk_view_repaints_get(const Ewk_View_Private_Data* priv, s
  * otherwise copy the array.
  *
  * @param priv private handle pointer of the view to get scrolls.
- * @param count where to return the number of elements of returned array.
+ * @param count where to return the number of elements of returned array, may be @c 0.
  *
  * @return reference to array of requested scrolls.
  *
@@ -2412,7 +2411,6 @@ const Eina_Rectangle* ewk_view_repaints_get(const Ewk_View_Private_Data* priv, s
  */
 const Ewk_Scroll_Request* ewk_view_scroll_requests_get(const Ewk_View_Private_Data* priv, size_t* count)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(count, 0);
     if (count)
         *count = 0;
     EINA_SAFETY_ON_NULL_RETURN_VAL(priv, 0);
