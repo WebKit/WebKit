@@ -161,7 +161,7 @@ sub determineBaseProductDir
         } elsif (isDarwin()) {
             $baseProductDir = "$sourceDir/Source/WebKit/chromium/xcodebuild";
         } elsif (isWindows() || isCygwin()) {
-            # FIXME: set the correct baseProductDir for chromium-win.
+            $baseProductDir = "$sourceDir/Source/WebKit/chromium/build";
         }
     }
 

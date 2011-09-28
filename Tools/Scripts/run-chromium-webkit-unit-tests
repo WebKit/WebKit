@@ -33,19 +33,7 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-# Allow running this script from any directory.
-my $sourceRootDir = File::Spec->catfile($FindBin::Bin, "../..");
-chdir($sourceRootDir);
-
+push(@ARGV, "--chromium");
 setConfiguration();
-
-my $pathToBinary;
-if (isDarwin()) {
-    $pathToBinary = "Source/WebKit/chromium/xcodebuild/" . configuration() . "/webkit_unit_tests";
-} elsif (isCygwin() || isWindows()) {
-    $pathToBinary = "Source/WebKit/chromium/" . configuration() . "/webkit_unit_tests.exe";
-} elsif (isLinux()) {
-    $pathToBinary = "out/" . configuration() . "/webkit_unit_tests";
-}
-
+my $pathToBinary = productDir() . "/webkit_unit_tests";
 exit system ($pathToBinary, @ARGV);
