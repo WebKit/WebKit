@@ -66,7 +66,10 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     if (!frame)
         return 0;
 
-    FrameLoader* fl = frame->loader();
+    FrameLoader* frameLoader = frame->loader();
+    if (options.securityCheck == DoSecurityCheck && (frameLoader->state() == FrameStateProvisional || !frameLoader->activeDocumentLoader() || frameLoader->activeDocumentLoader()->isStopping()))
+        return 0;
+
     ResourceRequest newRequest = request;
 
     // Note: We skip the Content-Security-Policy check here because we check
@@ -76,8 +79,8 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
     String outgoingReferrer;
     String outgoingOrigin;
     if (request.httpReferrer().isNull()) {
-        outgoingReferrer = fl->outgoingReferrer();
-        outgoingOrigin = fl->outgoingOrigin();
+        outgoingReferrer = frameLoader->outgoingReferrer();
+        outgoingOrigin = frameLoader->outgoingOrigin();
     } else {
         outgoingReferrer = request.httpReferrer();
         outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
@@ -89,7 +92,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
         newRequest.setHTTPReferrer(outgoingReferrer);
     FrameLoader::addHTTPOriginIfNeeded(newRequest, outgoingOrigin);
 
-    fl->addExtraFieldsToSubresourceRequest(newRequest);
+    frameLoader->addExtraFieldsToSubresourceRequest(newRequest);
 
     RefPtr<SubresourceLoader> subloader(adoptRef(new SubresourceLoader(frame, client, options)));
     if (!subloader->init(newRequest))
