@@ -1,5 +1,23 @@
 2011-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add WebKitError to GTK+ WebKit2 API
+        https://bugs.webkit.org/show_bug.cgi?id=68508
+
+        Reviewed by Martin Robinson.
+
+        Add WebKitNetworkError enum to define network errors.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitError.cpp: Added.
+        (webkit_network_error_quark):
+        * UIProcess/API/gtk/WebKitError.h:
+        * UIProcess/API/gtk/WebKitPrivate.h: Add
+        COMPILE_ASSERT_MATCHING_ENUM macro.
+        * UIProcess/API/gtk/webkit2.h: Add WebKitError.h and
+        WebKitEnumTypes.h
+
+2011-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Fix Programs/unittests/webkit2/testwebview
         https://bugs.webkit.org/show_bug.cgi?id=68993
 

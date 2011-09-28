@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2008 Luca Bruno <lethalman88@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,13 +18,19 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef __WEBKIT2_H__
-#define __WEBKIT2_H__
+#include "config.h"
+#include "WebKitError.h"
 
-#include <webkit2/WebKitEnumTypes.h>
-#include <webkit2/WebKitError.h>
-#include <webkit2/WebKitWebContext.h>
-#include <webkit2/WebKitWebViewBase.h>
-#include <webkit2/WebKitWebView.h>
+#include "WebKitPrivate.h"
+#include <WebCore/ErrorsGtk.h>
 
-#endif /* __WEBKIT2_H__ */
+GQuark webkit_network_error_quark(void)
+{
+    return g_quark_from_static_string(WebCore::errorDomainNetwork);
+}
+
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_NETWORK_ERROR_FAILED, NetworkErrorFailed);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_NETWORK_ERROR_TRANSPORT, NetworkErrorTransport);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_NETWORK_ERROR_UNKNOWN_PROTOCOL, NetworkErrorUnknownProtocol);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_NETWORK_ERROR_CANCELLED, NetworkErrorCancelled);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST, NetworkErrorFileDoesNotExist);

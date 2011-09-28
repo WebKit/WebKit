@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2008 Luca Bruno <lethalman88@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,13 +18,27 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef __WEBKIT2_H__
-#define __WEBKIT2_H__
+#ifndef WebKitError_h
+#define WebKitError_h
 
-#include <webkit2/WebKitEnumTypes.h>
-#include <webkit2/WebKitError.h>
-#include <webkit2/WebKitWebContext.h>
-#include <webkit2/WebKitWebViewBase.h>
-#include <webkit2/WebKitWebView.h>
+#include <WebKit2/WKBase.h>
+#include <glib.h>
 
-#endif /* __WEBKIT2_H__ */
+G_BEGIN_DECLS
+
+#define WEBKIT_NETWORK_ERROR webkit_network_error_quark ()
+
+typedef enum {
+    WEBKIT_NETWORK_ERROR_FAILED = 399,
+    WEBKIT_NETWORK_ERROR_TRANSPORT = 300,
+    WEBKIT_NETWORK_ERROR_UNKNOWN_PROTOCOL = 301,
+    WEBKIT_NETWORK_ERROR_CANCELLED = 302,
+    WEBKIT_NETWORK_ERROR_FILE_DOES_NOT_EXIST = 303
+} WebKitNetworkError;
+
+WK_EXPORT GQuark
+webkit_network_error_quark (void);
+
+G_END_DECLS
+
+#endif

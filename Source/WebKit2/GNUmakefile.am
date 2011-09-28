@@ -68,7 +68,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEA
 	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h
 
 libwebkit2gtkincludedir = $(libwebkitgtkincludedir)/webkit2
-libwebkit2gtkinclude_HEADERS = \
+webkit2gtk_headers = \
+	$(WebKit2)/UIProcess/API/gtk/WebKitError.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebContext.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebView.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebViewBase.h \
@@ -453,6 +454,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/cpp/WKRetainPtr.h \
 	Source/WebKit2/UIProcess/API/gtk/PageClientImpl.h \
 	Source/WebKit2/UIProcess/API/gtk/PageClientImpl.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitError.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitError.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContext.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContext.cpp \
@@ -857,7 +860,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit2/WebProcess/WebPage/gtk \
 	-I$(top_builddir)/DerivedSources/WebKit2 \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
-	-I$(top_builddir)/DerivedSources/WebKit2/include/webkit2gtk \
+	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk \
+	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk/include \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/JavaScriptCore \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebCore \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebKit2 \
@@ -936,11 +940,11 @@ generate-webkit2-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-head
 
 BUILT_SOURCES += generate-webkit2-forwarding-headers
 
-$(GENSOURCES_WEBKIT2)/include/webkit2gtk/webkit2: $(libwebkit2gtkinclude_HEADERS)
-	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/include/webkit2gtk \
+$(GENSOURCES_WEBKIT2)/webkit2gtk/include/webkit2: $(webkit2gtk_headers)
+	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2gtk/include \
 	&& ln -s -f ${shell pwd}/$(WebKit2)/UIProcess/API/gtk $@
 
-BUILT_SOURCES += $(GENSOURCES_WEBKIT2)/include/webkit2gtk/webkit2
+BUILT_SOURCES += $(GENSOURCES_WEBKIT2)/webkit2gtk/include/webkit2
 
 vpath %.messages.in = \
 	$(WebKit2)/PluginProcess \
@@ -980,8 +984,62 @@ DerivedSources/WebKit2/%MessageReceiver.cpp: %.messages.in $(message_gen_scripts
 DerivedSources/WebKit2/%Messages.h: %.messages.in $(message_gen_scripts)
 	$(AM_V_GEN)$(PYTHON) $(WebKit2)/Scripts/generate-messages-header.py $< > $@
 
+webkit2gtk_built_headers_dir := $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2
+$(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.h: stamp-webkit2enumtypes
+	@true
+
+stamp-webkit2enumtypes: $(webkit2gtk_headers) $(WebKit2)/GNUmakefile.am
+	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2 \
+	&& glib-mkenums \
+			--fhead "#ifndef WEBKIT_ENUM_TYPES_H\n" \
+			--fhead "#define WEBKIT_ENUM_TYPES_H\n\n" \
+			--fhead "#include <glib-object.h>\n\n" \
+			--fhead "#include <WebKit2/WKBase.h>\n\n" \
+			--fhead "G_BEGIN_DECLS\n\n" \
+			--ftail "G_END_DECLS\n\n" \
+			--ftail "#endif\n" \
+			--fprod "#include <webkit2/@basename@>\n\n" \
+			--eprod "#define WEBKIT_TYPE_@ENUMSHORT@ @enum_name@_get_type()\n\n" \
+			--eprod "WK_EXPORT GType\n@enum_name@_get_type(void);\n\n" \
+		$(webkit2gtk_headers) | \
+		sed 's,web_kit,webkit,' | \
+		sed 's,WEBKIT_TYPE_KIT,WEBKIT_TYPE,' \
+		> xgen-gth \
+	&& (cmp -s xgen-gth $(webkit2gtk_built_headers_dir)/WebKitEnumTypes.h || cp xgen-gth $(webkit2gtk_built_headers_dir)/WebKitEnumTypes.h) \
+	&& rm -f xgen-gth \
+	&& echo timestamp > $(@F)
+
+$(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.cpp: $(webkit2gtk_headers) $(WebKit2)/GNUmakefile.am
+	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2 \
+	&& glib-mkenums \
+			--fhead "#include <config.h>\n" \
+			--fhead "#include <glib-object.h>\n" \
+			--fhead "#include \"$(webkit2gtk_built_headers_dir)/WebKitEnumTypes.h\"\n\n" \
+			--fhead "extern \"C\" {\n\n" \
+			--fprod "\n/* Enumerations from \"@filename@\". */" \
+			--vhead "static const G@Type@Value _@enum_name@_values[] = {" \
+			--vprod "    { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
+			--vtail "    { 0, NULL, NULL }\n};\n\n" \
+			--vtail "GType @enum_name@_get_type(void)\n{\n" \
+			--vtail "    static GType type = 0;\n\n" \
+			--vtail "    if (!type)\n" \
+			--vtail "        type = g_@type@_register_static(\"@EnumName@\", _@enum_name@_values);\n\n" \
+			--vtail "    return type;\n}\n\n" \
+			--ftail "}\n" \
+		$(webkit2gtk_headers) | \
+		sed 's,web_kit,webkit,' \
+		> xgen-gtc \
+	&& cp xgen-gtc $@ \
+	&& rm -f xgen-gtc
+
+
+BUILT_SOURCES += \
+	$(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.cpp \
+	$(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.h
+
 CLEANFILES += \
 	$(BUILT_SOURCES) \
+	$(top_builddir)/stamp-webkit2enumtypes \
 	$(top_builddir)/Programs/WebKitWebProcess
 
 DISTCLEANFILES += \
@@ -998,7 +1056,8 @@ webkit2_tests_cflags = \
 	-I$(srcdir)/Source \
 	-I$(srcdir)/Source/WebKit2 \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
-	-I$(top_builddir)/DerivedSources/WebKit2/include/webkit2gtk \
+	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk \
+	-I$(top_builddir)/DerivedSources/WebKit2/webkit2gtk/include \
 	-I$(srcdir)/Source/WebKit2/UIProcess/API/gtk \
 	$(global_cflags) \
 	$(global_cppflags) \
