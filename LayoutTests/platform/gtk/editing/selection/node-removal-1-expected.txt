@@ -1,5 +1,4 @@
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
@@ -21,3 +20,5 @@ layer at (0,0) size 800x600
           text run at (0,0) width 35: "hello "
         RenderText {#text} at (35,0) size 42x19
           text run at (35,0) width 42: "world!"
+selection start: position 1 of child 0 {#text} of child 5 {DIV} of body
+selection end:   position 1 of child 5 {DIV} of body
