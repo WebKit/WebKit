@@ -1307,17 +1307,16 @@ protected:
         appendCallWithExceptionCheck(operation);
     }
 
-    void NO_RETURN callOperation(D_DFGOperation_DD operation, FPRReg result, FPRReg arg1, FPRReg arg2)
+    void callOperation(D_DFGOperation_DD operation, FPRReg result, FPRReg arg1, FPRReg arg2)
     {
         ASSERT(isFlushed());
 
-        // FIXME: Need to to pass doubles.
-        ASSERT_NOT_REACHED();
-        UNUSED_PARAM(arg1);
-        UNUSED_PARAM(arg2);
+        m_jit.storeDouble(arg2, JITCompiler::Address(JITCompiler::stackPointerRegister, sizeof(double)));
+        m_jit.storeDouble(arg1, JITCompiler::stackPointerRegister);
 
         m_jit.appendCall(operation);
-        m_jit.moveDouble(FPRInfo::returnValueFPR, result);
+        m_jit.assembler().fstpl(0, JITCompiler::stackPointerRegister);
+        m_jit.loadDouble(JITCompiler::stackPointerRegister, result);
     }
 #endif
 

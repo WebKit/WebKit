@@ -1,5 +1,17 @@
 2011-09-28  Gavin Barraclough  <barraclough@apple.com>
 
+        Implement callOperation(D_DFGOperation_DD) for DFG JIT 32_64
+        https://bugs.webkit.org/show_bug.cgi?id=69026
+
+        Reviewed by Sam Weinig.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::fstpl):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::callOperation):
+
+2011-09-28  Gavin Barraclough  <barraclough@apple.com>
+
         Merge bug#68580, bug#68932 for DFG JIT with JSVALUE32_64
         https://bugs.webkit.org/show_bug.cgi?id=69017
 

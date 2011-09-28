@@ -150,6 +150,7 @@ private:
         OP_INT3                         = 0xCC,
         OP_GROUP2_Ev1                   = 0xD1,
         OP_GROUP2_EvCL                  = 0xD3,
+        OP_ESCAPE_DD                    = 0xDD,
         OP_CALL_rel32                   = 0xE8,
         OP_JMP_rel32                    = 0xE9,
         PRE_SSE_F2                      = 0xF2,
@@ -218,6 +219,8 @@ private:
         GROUP5_OP_PUSH  = 6,
 
         GROUP11_MOV = 0,
+
+        ESCAPE_DD_FSTP_doubleReal = 3,
     } GroupOpcodeID;
     
     class X86InstructionFormatter;
@@ -982,6 +985,11 @@ public:
     void cdq()
     {
         m_formatter.oneByteOp(OP_CDQ);
+    }
+
+    void fstpl(int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_ESCAPE_DD, ESCAPE_DD_FSTP_doubleReal, base, offset);
     }
 
     void xchgl_rr(RegisterID src, RegisterID dst)
