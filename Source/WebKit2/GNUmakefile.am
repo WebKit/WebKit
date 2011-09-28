@@ -161,8 +161,8 @@ webkit2gtk_built_sources = \
 BUILT_SOURCES += $(webkit2gtk_built_sources)
 
 nodist_libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \
-	$(webkit2_built_sources) \
-	$(webkit2gtk_built_sources)
+	$(webkit2gtk_built_sources) \
+	$(webkit2_built_sources)
 
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \
 	Source/WebKit2/Platform/CoreIPC/ArgumentCoder.h \
