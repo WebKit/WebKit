@@ -1,12 +1,17 @@
 <html>
 <head>
     <script>
-        if (window.layoutTestController)
+        if (window.layoutTestController) {
             layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
 
         function firstPartLoaded()
         {
             window.stop();
+            document.getElementById("results").innerHTML = "PASS";
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
         }
     </script>
 </head>
@@ -18,6 +23,7 @@
     <p>
         If WebKit does not assert or crash after the test, then it passed.
     </p>
-    <img width=24 height=24 src="resources/multipart.php?interval=0&img1=2x2-green.png&img2=2x2-green.png&wait=10" onload="firstPartLoaded()">
+    <img width=24 height=24 src="resources/multipart.php?interval=0&img1=2x2-green.png&img2=2x2-green.png&wait=3" onload="firstPartLoaded()">
+    <p id="results"></p>
 </body>
 </html>
