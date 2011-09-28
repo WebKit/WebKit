@@ -41,6 +41,7 @@ ImageFrame::ImageFrame()
     , m_status(FrameEmpty)
     , m_duration(0)
     , m_disposalMethod(DisposeNotSpecified)
+    , m_premultiplyAlpha(true)
 {
 }
 
@@ -54,6 +55,7 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
     setStatus(other.status());
     setDuration(other.duration());
     setDisposalMethod(other.disposalMethod());
+    setPremultiplyAlpha(other.premultiplyAlpha());
     return *this;
 }
 
