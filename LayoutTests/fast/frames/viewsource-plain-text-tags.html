@@ -6,21 +6,37 @@
         layoutTestController.waitUntilDone();
     }
 
-    function report(frame) {
-        var result = frame.contentDocument.documentElement.innerHTML;
-        var regex = new RegExp("<td class=\"webkit-line-content\">&lt;test&gt;</td>", "g");
-        matches = result.match(regex);
+    function found(text, regexString)
+    {
+        var matches = text.match(new RegExp(regexString, 'g'));
+        if (matches && matches.length === 1) 
+            return 'PASS';
+        else 
+            return 'FAIL';
+    }
+    
+    function testSection(text, name) {
+        // Closing tags are not correctly formated, so don't check their markup.
+        return name + ': ' +
+             found(text, '<span class="webkit-html-tag">&lt;' + name + '&gt') + ' ' +
+             found(text, '<td class="webkit-line-content">&lt;test' + name + '&gt;') + ' ' +
+             found(text, '&lt;/' + name + '&gt;') + '\n';
+    }
 
-        if (matches && matches.length === 4)
-            var resultText = "PASS";
-        else
-            var resultText = "FAIL";
+    function report(frame)
+    {
+        var result = frame.contentDocument.documentElement.innerHTML;
+        var resultText = '';
+
+        resultText += testSection(result, 'script');
+        resultText += testSection(result, 'style');
+        resultText += testSection(result, 'xmp');
+        resultText += testSection(result, 'textarea');
 
         if (window.layoutTestController) {
             document.open();
             document.write(resultText);
             document.close();
-
             layoutTestController.notifyDone();
         } else {
             document.getElementById("result").textContent = resultText;
@@ -30,7 +46,7 @@
 </head>
 <body>
 <p>You should see a frame in 'view source' mode below.</p>
-<p>None of the "&lt;test&gt;" strings shown below should be colorized like HTML.</p>
+<p>None of the "&lt;testxxx&gt;" strings shown below should be colorized like HTML.</p>
 <hr>
 <div id="result"></div>
 <hr>

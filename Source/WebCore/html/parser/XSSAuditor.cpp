@@ -85,6 +85,12 @@ static bool isHTMLNewline(UChar c)
     return (c == '\n' || c == '\r');
 }
 
+static bool startsHTMLEndTagAt(const String& string, size_t start)
+{
+    return (start + 1 < string.length() && string[start] == '<' && string[start+1] == '/');
+}    
+
+
 static bool startsHTMLCommentAt(const String& string, size_t start)
 {
     return (start + 3 < string.length() && string[start] == '<' && string[start+1] == '!' && string[start+2] == '-' && string[start+3] == '-');
@@ -583,11 +589,16 @@ String XSSAuditor::snippetForJavaScript(const String& string)
             break;
     }
 
-    // Stop at next comment or when we exceed the maximum length target. After hitting the
-    // length target, we can only stop at a point where we know we are not in the middle of
-    // a %-escape sequence. A simple way to do this is to break on whitespace only.                
+    // Stop at next comment, or at a closing script tag (which may have been included with
+    // the code fragment because of buffering in the HTMLSourceTracker), or when we exceed
+    // the maximum length target. After hitting the length target, we can only stop at a
+    // point where we know we are not in the middle of a %-escape sequence. For the sake of
+    // simplicity, approximate stopping at a close script tag by stopping at any close tag,
+    // and approximate not stopping inside a (possibly multiply encoded) %-esacpe sequence
+    // by breaking on whitespace only. We should have enough text in these cases to avoid
+    // false positives.
     for (foundPosition = startPosition; foundPosition < endPosition; foundPosition++) {
-        if (startsSingleLineCommentAt(string, foundPosition) || startsMultiLineCommentAt(string, foundPosition)) {
+        if (startsSingleLineCommentAt(string, foundPosition) || startsMultiLineCommentAt(string, foundPosition) || startsHTMLEndTagAt(string, foundPosition)) {
             endPosition = foundPosition + 2;
             break;
         }
