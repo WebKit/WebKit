@@ -28,7 +28,10 @@ use webkitdirs;
 setConfiguration();
 
 my $productDir = productDir();
-my @unitTests = glob  $productDir . "/Programs/unittests/*";
+my $testsDir = $productDir . "/Programs/unittests" ;
+my @unitTests = glob  $testsDir . "/test*";
+my @webkit2UnitTests = glob  $testsDir . "/webkit2/test*";
+push @unitTests, @webkit2UnitTests;
 if ($#unitTests < 1) {
     die "ERROR: tests not found in $productDir.\n";
 }

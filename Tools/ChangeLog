@@ -1,3 +1,13 @@
+2011-09-28  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] missing WebKit2 support in run-gtk-tests
+        https://bugs.webkit.org/show_bug.cgi?id=68992
+
+        Rubber-stamped by Andreas Kling.
+
+        * Scripts/run-gtk-tests: Get the WebKit2 tests to run from the
+        webkit2 directory.
+
 2011-09-27  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] build-webkit --no-webkit2 still builds WebKit2
