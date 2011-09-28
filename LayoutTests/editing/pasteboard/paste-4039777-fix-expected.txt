@@ -4,11 +4,9 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 14 of #text > LI > UL > DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > LI > UL > DIV > UL > DIV > DIV > BODY > HTML > #document to 1 of #text > LI > UL > DIV > UL > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of UL > DIV > DIV > BODY > HTML > #document to 0 of UL > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > LI > UL > DIV > UL > DIV > DIV > BODY > HTML > #document to 1 of #text > LI > UL > DIV > UL > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 Bug fix for <a href="rdar://problem/4039777">&lt;rdar://problem/4039777&gt;</a> Pasting particular snippet of HTML containing list items and a link creates too many list items
 

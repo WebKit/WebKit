@@ -18,6 +18,7 @@ document.write("1. Delete a flag: " + (div.textContent == "🇯🇵🇯🇵" ? "
 
 div.innerText = "a🇯" // a, (j)
 afterLastIndicator.setStart(div.firstChild, 3);
+document.getSelection().removeAllRanges();
 document.getSelection().addRange(afterLastIndicator);
 document.execCommand("Delete");
 document.write("2. Delete a lone regional indicator character: " + (div.textContent == "a" ? "PASS" : "FAIL"));

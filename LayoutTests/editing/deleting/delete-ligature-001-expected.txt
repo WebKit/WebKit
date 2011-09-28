@@ -3,8 +3,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > #shadow-root to 0 of DIV > #shadow-root toDOMRange:range from 1 of #text > DIV > #shadow-root to 1 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > #shadow-root to 2 of #text > DIV > #shadow-root toDOMRange:range from 2 of #text > DIV > #shadow-root to 2 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > #shadow-root to 1 of #text > DIV > #shadow-root toDOMRange:range from 2 of #text > DIV > #shadow-root to 2 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > DIV > #shadow-root to 2 of #text > DIV > #shadow-root
