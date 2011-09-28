@@ -155,11 +155,6 @@ int InlineBox::caretMaxOffset() const
     return m_renderer->caretMaxOffset(); 
 }
 
-unsigned InlineBox::caretMaxRenderedOffset() const 
-{ 
-    return 1; 
-}
-
 void InlineBox::dirtyLineBoxes()
 {
     markDirty();

@@ -46,6 +46,7 @@
 #include "HTMLNames.h"
 #include "NodeList.h"
 #include "RenderObject.h"
+#include "RenderText.h"
 #include "SmartReplace.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
@@ -553,11 +554,15 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
     }
 }
 
+static inline bool nodeHasVisibleRenderText(Text* text)
+{
+    return text->renderer() && toRenderText(text->renderer())->renderedTextLength() > 0;
+}
+
 void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds()
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    if (!m_lastLeafInserted->renderer()
-        && m_lastLeafInserted->isTextNode()
+    if (m_lastLeafInserted->isTextNode() && !nodeHasVisibleRenderText(static_cast<Text*>(m_lastLeafInserted.get()))
         && !enclosingNodeWithTag(firstPositionInOrBeforeNode(m_lastLeafInserted.get()), selectTag)
         && !enclosingNodeWithTag(firstPositionInOrBeforeNode(m_lastLeafInserted.get()), scriptTag)) {
         if (m_firstNodeInserted == m_lastLeafInserted) {
@@ -573,8 +578,7 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds()
     
     // We don't have to make sure that m_firstNodeInserted isn't inside a select or script element, because
     // it is a top level node in the fragment and the user can't insert into those elements.
-    if (!m_firstNodeInserted->renderer() &&
-        m_firstNodeInserted->isTextNode()) {
+    if (m_firstNodeInserted->isTextNode() && !nodeHasVisibleRenderText(static_cast<Text*>(m_firstNodeInserted.get()))) {
         if (m_firstNodeInserted == m_lastLeafInserted) {
             removeNode(m_firstNodeInserted.get());
             m_firstNodeInserted = 0;
@@ -606,8 +610,7 @@ VisiblePosition ReplaceSelectionCommand::positionAtEndOfInsertedContent()
 
 VisiblePosition ReplaceSelectionCommand::positionAtStartOfInsertedContent()
 {
-    // Return the inserted content's first VisiblePosition.
-    return VisiblePosition(nextCandidate(positionInParentBeforeNode(m_firstNodeInserted.get())));
+    return firstPositionInOrBeforeNode(m_firstNodeInserted.get());
 }
 
 static void removeHeadContents(ReplacementFragment& fragment)

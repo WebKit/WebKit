@@ -410,11 +410,6 @@ void RenderReplaced::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-unsigned RenderReplaced::caretMaxRenderedOffset() const
-{
-    return 1; 
-}
-
 VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point)
 {
     // FIXME: This code is buggy if the replaced element is relative positioned.

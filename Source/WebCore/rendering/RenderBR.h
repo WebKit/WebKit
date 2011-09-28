@@ -50,7 +50,6 @@ public:
 
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
-    virtual unsigned caretMaxRenderedOffset() const;
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&);
 

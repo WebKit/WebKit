@@ -896,17 +896,6 @@ bool Position::inRenderedText() const
     return false;
 }
 
-static unsigned caretMaxRenderedOffset(const Node* n)
-{
-    RenderObject* r = n->renderer();
-    if (r)
-        return r->caretMaxRenderedOffset();
-    
-    if (n->isCharacterDataNode())
-        return static_cast<const CharacterData*>(n)->length();
-    return 1;
-}
-
 bool Position::isRenderedCharacter() const
 {
     if (isNull() || !deprecatedNode()->isTextNode())
@@ -992,8 +981,8 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     LOG(Editing, "thisRenderedOffset:         %d\n", thisRenderedOffset);
     LOG(Editing, "posRenderer:            %p [%p]\n", posRenderer, b2);
     LOG(Editing, "posRenderedOffset:      %d\n", posRenderedOffset);
-    LOG(Editing, "node min/max:           %d:%d\n", caretMinOffset(deprecatedNode()), caretMaxRenderedOffset(deprecatedNode()));
-    LOG(Editing, "pos node min/max:       %d:%d\n", caretMinOffset(pos.deprecatedNode()), caretMaxRenderedOffset(pos.deprecatedNode()));
+    LOG(Editing, "node min/max:           %d:%d\n", caretMinOffset(deprecatedNode()), caretMaxOffset(deprecatedNode()));
+    LOG(Editing, "pos node min/max:       %d:%d\n", caretMinOffset(pos.deprecatedNode()), caretMaxOffset(pos.deprecatedNode()));
     LOG(Editing, "----------------------------------------------------------------------\n");
 
     if (!b1 || !b2) {
@@ -1005,12 +994,12 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     }
 
     if (nextRenderedEditable(deprecatedNode()) == pos.deprecatedNode()
-        && thisRenderedOffset == (int)caretMaxRenderedOffset(deprecatedNode()) && !posRenderedOffset) {
+        && thisRenderedOffset == caretMaxOffset(deprecatedNode()) && !posRenderedOffset) {
         return false;
     }
     
     if (previousRenderedEditable(deprecatedNode()) == pos.deprecatedNode()
-        && !thisRenderedOffset && posRenderedOffset == (int)caretMaxRenderedOffset(pos.deprecatedNode())) {
+        && !thisRenderedOffset && posRenderedOffset == caretMaxOffset(pos.deprecatedNode())) {
         return false;
     }
 

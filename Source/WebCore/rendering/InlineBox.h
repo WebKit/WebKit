@@ -278,7 +278,6 @@ public:
     
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
-    virtual unsigned caretMaxRenderedOffset() const;
 
     unsigned char bidiLevel() const { return m_bidiEmbeddingLevel; }
     void setBidiLevel(unsigned char level) { m_bidiEmbeddingLevel = level; }

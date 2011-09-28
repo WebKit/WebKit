@@ -1209,11 +1209,6 @@ int InlineTextBox::caretMaxOffset() const
     return m_start + m_len;
 }
 
-unsigned InlineTextBox::caretMaxRenderedOffset() const
-{
-    return m_start + m_len;
-}
-
 float InlineTextBox::textPos() const
 {
     // When computing the width of a text run, RenderBlock::computeInlineDirectionPositionsForLine() doesn't include the actual offset

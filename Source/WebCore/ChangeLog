@@ -1,3 +1,43 @@
+2011-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Simplify ReplaceSelectionCommand::positionAtStartOfInsertedContent
+        https://bugs.webkit.org/show_bug.cgi?id=68939
+
+        Reviewed by Darin Adler.
+
+        Simplified ReplaceSelectionCommand::positionAtStartOfInsertedContent.
+
+        This change revealed a bug in removeUnrenderedTextNodesAtEnds that text nodes without any visible
+        text at ends are not removed when it has a render object. Fixed the bug by checking the length of
+        the rendered text. (Tested by editing/pasteboard/pasting-word-in-div-extra-line.html)
+
+        This further revealed that caretMaxRenderedOffset doesn't return an offset and caretMaxRenderedOffset
+        on InlineBox, InlineTextBox, RenderObject, RenderBR, RenderPlaced are never called. To address this
+        issue, renamed caretMaxRenderedOffset to renderedTextLength for RenderText and removed the rest.
+
+        * dom/Position.cpp:
+        (WebCore::Position::rendersInDifferentPosition):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::nodeHasVisibleRenderText): Added.
+        (WebCore::ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds): Calls nodeHasVisibleRenderText.
+        (WebCore::ReplaceSelectionCommand::positionAtStartOfInsertedContent): Simplified.
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph): Calls renderedTextLength.
+        (WebCore::endOfParagraph): Ditto.
+        * rendering/InlineBox.cpp: Removed caretMaxRenderedOffset.
+        * rendering/InlineBox.h: Ditto.
+        * rendering/InlineTextBox.cpp: Ditto.
+        * rendering/InlineTextBox.h: Ditto.
+        * rendering/RenderBR.cpp: Ditto.
+        * rendering/RenderBR.h: Ditto.
+        * rendering/RenderObject.cpp: Ditto.
+        * rendering/RenderObject.h: Ditto.
+        * rendering/RenderReplaced.cpp: Ditto.
+        * rendering/RenderReplaced.h: Ditto.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::renderedTextLength): Renamed from caretMaxRenderedOffset.
+        * rendering/RenderText.h:
+
 2011-09-27  James Robinson  <jamesr@chromium.org>
 
         [chromium] LayerRenderChromium asserts about leaking textures.

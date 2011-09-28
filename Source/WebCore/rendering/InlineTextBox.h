@@ -146,8 +146,6 @@ public:
     virtual int caretMaxOffset() const;
 
 private:
-    virtual unsigned caretMaxRenderedOffset() const;
-
     float textPos() const; // returns the x position relative to the left start of the text line.
 
 public:

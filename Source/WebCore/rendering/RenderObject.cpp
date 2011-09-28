@@ -2550,11 +2550,6 @@ int RenderObject::caretMaxOffset() const
     return 0;
 }
 
-unsigned RenderObject::caretMaxRenderedOffset() const
-{
-    return 0;
-}
-
 int RenderObject::previousOffset(int current) const
 {
     return current - 1;

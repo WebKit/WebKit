@@ -1595,15 +1595,16 @@ int RenderText::caretMinOffset() const
 int RenderText::caretMaxOffset() const
 {
     InlineTextBox* box = lastTextBox();
-    if (!box)
+    if (!lastTextBox())
         return textLength();
+
     int maxOffset = box->start() + box->len();
     for (box = box->prevTextBox(); box; box = box->prevTextBox())
         maxOffset = max<int>(maxOffset, box->start() + box->len());
     return maxOffset;
 }
 
-unsigned RenderText::caretMaxRenderedOffset() const
+unsigned RenderText::renderedTextLength() const
 {
     int l = 0;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())

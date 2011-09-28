@@ -107,7 +107,7 @@ public:
 
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
-    virtual unsigned caretMaxRenderedOffset() const;
+    virtual unsigned renderedTextLength() const;
 
     virtual int previousOffset(int current) const;
     virtual int previousOffsetForBackwardDeletion(int current) const;
