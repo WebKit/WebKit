@@ -1,5 +1,22 @@
 2011-09-27  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        [Chromium] Layout Test fast/canvas/canvas-composite-transformclip.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=68895
+
+        Unreviewed rebaseline for skia r2300 roll.
+
+        * platform/chromium-cg-mac/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.png: Added.
+        * platform/chromium-gpu-win/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/canvas-composite-transformclip-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.txt:
+        * platform/chromium/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
+2011-09-27  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Layout Test fast/multicol/float-paginate-empty-lines.html and some svg tests are failing
         https://bugs.webkit.org/show_bug.cgi?id=68970
 
