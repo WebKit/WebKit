@@ -27,14 +27,12 @@ var results = results || {};
 
 (function() {
 
-var kTestResultsServer = 'http://test-results.appspot.com/';
-var kTestResultsQuery = kTestResultsServer + 'testfile?'
-var kTestType = 'layout-tests';
-var kMasterName = 'ChromiumWebkit';
-
 var kLayoutTestResultsServer = 'http://build.chromium.org/f/chromium/layout_test_results/';
 var kLayoutTestResultsPath = '/results/layout-test-results/';
 var kResultsName = 'full_results.json';
+
+var kBuildLinkRegexp = /a href="\d+\/"/g;
+var kBuildNumberRegexp = /\d+/;
 
 var PASS = 'PASS';
 var TIMEOUT = 'TIMEOUT';
@@ -86,16 +84,6 @@ function isFailure(result)
 function isSuccess(result)
 {
     return result === PASS;
-}
-
-function resultsParameters(builderName, testName)
-{
-    return {
-        builder: builderName,
-        master: kMasterName,
-        testtype: kTestType,
-        name: testName,
-    };
 }
 
 function possibleSuffixListFor(failureTypeList)
@@ -179,20 +167,38 @@ results.canRebaseline = function(failureTypeList)
     });
 };
 
-function resultsSummaryURL(builderName, resultsName)
+results.directoryForBuilder = function(builderName)
 {
-    return resultsDirectoryURL(builderName) + resultsName;
+    return builderName.replace(/[ .()]/g, '_');
 }
 
-function directoryOfResultsSummaryURL(builderName, testName)
+function resultsDirectoryURL(builderName)
 {
-    var parameters = resultsParameters(builderName, testName);
-    parameters['dir'] = 1;
-    return kTestResultsQuery + $.param(parameters);
+    return kLayoutTestResultsServer + results.directoryForBuilder(builderName) + kLayoutTestResultsPath;
 }
 
-var g_resultsCache = new base.AsynchronousCache(function(key, callback) {
-    net.jsonp(kTestResultsServer + 'testfile?key=' + key, callback);
+function resultsDirectoryListingURL(builderName)
+{
+    return kLayoutTestResultsServer + results.directoryForBuilder(builderName) + '/';
+}
+
+function resultsDirectoryURLForBuildNumber(builderName, buildNumber)
+{
+    return resultsDirectoryListingURL(builderName) + buildNumber + '/'
+}
+
+function resultsSummaryURL(builderName)
+{
+    return resultsDirectoryURL(builderName) + kResultsName;
+}
+
+function resultsSummaryURLForBuildNumber(builderName, buildNumber)
+{
+    return resultsDirectoryURLForBuildNumber(builderName, buildNumber) + kResultsName;
+}
+
+var g_resultsCache = new base.AsynchronousCache(function (key, callback) {
+    net.jsonp(key, callback);
 });
 
 function anyIsFailure(resultsList)
@@ -317,6 +323,17 @@ results.collectUnexpectedResults = function(dictionaryOfResultNodes)
     return base.uniquifyArray(collectedResults);
 };
 
+function historicalResultsSummaryURLs(builderName, callback)
+{
+    net.get(resultsDirectoryListingURL(builderName), function(directoryListing) {
+        var summaryURLs = directoryListing.match(kBuildLinkRegexp).map(function(buildLink) {
+            var buildNumber = parseInt(buildLink.match(kBuildNumberRegexp)[0]);
+            return resultsSummaryURLForBuildNumber(builderName, buildNumber);
+        }).reverse();
+        callback(summaryURLs);
+    });
+}
+
 function walkHistory(builderName, testName, callback)
 {
     var indexOfNextKeyToFetch = 0;
@@ -348,8 +365,8 @@ function walkHistory(builderName, testName, callback)
         continueWalk();
     }
 
-    net.jsonp(directoryOfResultsSummaryURL(builderName, kResultsName), function(directory) {
-        keyList = directory.map(function (element) { return element.key; });
+    historicalResultsSummaryURLs(builderName, function(summaryURLs) {
+        keyList = summaryURLs;
         continueWalk();
     });
 }
@@ -462,16 +479,6 @@ results.resultNodeForTest = function(resultsTree, testName)
     return currentNode;
 };
 
-results.directoryForBuilder = function(builderName)
-{
-    return builderName.replace(/[ .()]/g, '_');
-}
-
-function resultsDirectoryURL(builderName)
-{
-    return kLayoutTestResultsServer + results.directoryForBuilder(builderName) + kLayoutTestResultsPath;
-}
-
 results.resultKind = function(url)
 {
     if (/-actual\.[a-z]+$/.test(url))
@@ -540,9 +547,7 @@ results.fetchResultsURLs = function(failureInfo, callback)
 
 results.fetchResultsForBuilder = function(builderName, callback)
 {
-    net.get(resultsSummaryURL(builderName, kResultsName), function(jsonp) {
-        callback(base.parseJSONP(jsonp));
-    });
+    net.jsonp(resultsSummaryURL(builderName), callback);
 };
 
 results.fetchResultsByBuilder = function(builderNameList, callback)

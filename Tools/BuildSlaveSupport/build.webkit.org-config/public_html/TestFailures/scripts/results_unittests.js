@@ -164,100 +164,94 @@ test("walkHistory", 6, function() {
     var simulator = new NetworkSimulator();
 
     var keyMap = {
-        "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGLncUAw": {
-            "tests": {
-                "userscripts": {
-                    "another-test.html": {
-                        "expected": "PASS",
-                        "actual": "TEXT"
-                    }
-                },
-            },
-            "revision": "90430"
-        },
-        "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGNfTUAw":{
-            "tests": {
-                "userscripts": {
-                    "user-script-video-document.html": {
-                        "expected": "FAIL",
-                        "actual": "TEXT"
-                    },
-                    "another-test.html": {
-                        "expected": "PASS",
-                        "actual": "TEXT"
-                    }
-                },
-            },
-            "revision": "90429"
-        },
-        "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGJWCUQw":{
-            "tests": {
-                "userscripts": {
-                    "another-test.html": {
-                        "expected": "PASS",
-                        "actual": "TEXT"
-                    }
-                },
-            },
-            "revision": "90426"
-        },
-        "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGKbLUAw":{
-            "tests": {
-                "userscripts": {
-                    "user-script-video-document.html": {
-                        "expected": "FAIL",
-                        "actual": "TEXT"
+        "Mock_Builder": {
+            "11108": {
+                "tests": {
+                    "userscripts": {
+                        "another-test.html": {
+                            "expected": "PASS",
+                            "actual": "TEXT"
+                        }
                     },
                 },
+                "revision": "90430"
             },
-            "revision": "90424"
-        },
-        "abc":{
-            "tests": {
-                "userscripts": {
-                    "another-test.html": {
-                        "expected": "PASS",
-                        "actual": "TEXT"
-                    }
+            "11107":{
+                "tests": {
+                    "userscripts": {
+                        "user-script-video-document.html": {
+                            "expected": "FAIL",
+                            "actual": "TEXT"
+                        },
+                        "another-test.html": {
+                            "expected": "PASS",
+                            "actual": "TEXT"
+                        }
+                    },
                 },
+                "revision": "90429"
             },
-            "revision": "90426"
+            "11106":{
+                "tests": {
+                    "userscripts": {
+                        "another-test.html": {
+                            "expected": "PASS",
+                            "actual": "TEXT"
+                        }
+                    },
+                },
+                "revision": "90426"
+            },
+            "11105":{
+                "tests": {
+                    "userscripts": {
+                        "user-script-video-document.html": {
+                            "expected": "FAIL",
+                            "actual": "TEXT"
+                        },
+                    },
+                },
+                "revision": "90424"
+            },
         },
-        "xyz":{
-            "tests": {
+        "Another_Builder": {
+            "22202":{
+                "tests": {
+                    "userscripts": {
+                        "another-test.html": {
+                            "expected": "PASS",
+                            "actual": "TEXT"
+                        }
+                    },
+                },
+                "revision": "90426"
             },
-            "revision": "90425"
-        }
+            "22201":{
+                "tests": {
+                },
+                "revision": "90425"
+            },
+        },
     };
 
     simulator.jsonp = function(url, callback) {
         simulator.scheduleCallback(function() {
-            if (/dir=1/.test(url)) {
-                if (/builder=Mock/.test(url)) {
-                    callback([
-                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGLncUAw" },
-                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGNfTUAw" },
-                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGJWCUQw" },
-                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGKbLUAw" },
-                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGOj5UAw" },
-                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGP-AUQw" },
-                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGPL3UAw" },
-                        { "key": "agx0ZXN0LXJlc3VsdHNyEAsSCFRlc3RGaWxlGNHJQAw" },
-                    ]);
-                } else if (/builder=Another/.test(url)) {
-                    callback([
-                        { "key": "abc" },
-                        { "key": "xyz" },
-                    ]);
-                } else {
-                    ok(false, 'Unexpected URL: ' + url);
-                }
-            } else {
-                var key = url.match(/key=([^&]+)/)[1];
-                callback(keyMap[key]);
-            }
+            var result = keyMap[/[^/]+_Builder/.exec(url)][/\d+/.exec(url)];
+            callback(result ? result : {});
         });
     };
+
+    simulator.get = function(url, callback) {
+        simulator.scheduleCallback(function() {
+            if (/Mock_Builder/.test(url))
+                callback('<a href="11101/"></a><a href="11102/"></a><a href="11103/"></a><a href="11104/"></a><a href="11105/"></a><a href="11106/"></a><a href="11107/"></a><a href="11108/"></a>');
+            else if (/Another_Builder/.test(url))
+                callback('<a href="22201/"></a><a href="22202/"></a>');
+            else
+                ok(false, 'Unexpected URL: ' + url);
+        });
+    };
+
     simulator.runTest(function() {
         results.regressionRangeForFailure("Mock Builder", "userscripts/another-test.html", function(oldestFailingRevision, newestPassingRevision) {
             equals(oldestFailingRevision, 90426);
@@ -279,37 +273,39 @@ test("walkHistory (no revision)", 3, function() {
     var simulator = new NetworkSimulator();
 
     var keyMap = {
-        "vsfdsfdsafsdafasd": {
-            "tests": {
-                "userscripts": {
-                    "another-test.html": {
-                        "expected": "PASS",
-                        "actual": "TEXT"
-                    }
+        "Mock_Builder": {
+            "11103": {
+                "tests": {
+                    "userscripts": {
+                        "another-test.html": {
+                            "expected": "PASS",
+                            "actual": "TEXT"
+                        }
+                    },
                 },
+                "revision": ""
             },
-            "revision": ""
-        },
-        "gavsavsrfgwaevwefawvae":{
-            "tests": {
+            "11102":{
+                "tests": {
+                },
+                "revision": ""
             },
-            "revision": ""
         },
     };
 
     simulator.jsonp = function(url, callback) {
         simulator.scheduleCallback(function() {
-            if (/dir=1/.test(url)) {
-                callback([
-                    { "key": "vsfdsfdsafsdafasd" },
-                    { "key": "gavsavsrfgwaevwefawvae" },
-                ]);
-            } else {
-                var key = url.match(/key=([^&]+)/)[1];
-                callback(keyMap[key]);
-            }
+            var result = keyMap[/[^/]+_Builder/.exec(url)][/\d+/.exec(url)];
+            callback(result ? result : {});
         });
     };
+
+    simulator.get = function(url, callback) {
+        simulator.scheduleCallback(function() {
+            callback('<a href="11101/"></a><a href="11102/"></a><a href="11103/"></a>');
+        });
+    };
+
 
     simulator.runTest(function() {
         results.regressionRangeForFailure("Mock Builder", "userscripts/another-test.html", function(oldestFailingRevision, newestPassingRevision) {

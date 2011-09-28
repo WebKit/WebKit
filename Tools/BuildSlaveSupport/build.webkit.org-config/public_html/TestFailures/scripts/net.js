@@ -47,14 +47,19 @@ net.probe = function(url, options)
     });
 };
 
-// jQuery makes jsonp requests somewhat ugly (which is fair given that they're
-// terrible for security). We use this wrapper to make our lives slightly easier.
-net.jsonp = function(url, onsuccess)
+// We use XMLHttpRequest and CORS to fetch JSONP rather than using script tags.
+// That's better for security and performance, but we need the server to cooperate
+// by setting CORS headers.
+net.jsonp = function(url, callback)
 {
     $.ajax({
         url: url,
-        dataType: 'jsonp',
-        success: onsuccess
+        success: function(jsonp) {
+            callback(base.parseJSONP(jsonp));
+        },
+        error: function() {
+            callback({});
+        },
     });
 };
 
