@@ -53,6 +53,12 @@ class WatchListParserTest(unittest.TestCase):
         self.assertRaisesRegexp('Unknown section "FOO" in watch list.',
                                 self._watch_list_parser.parse, watch_list_with_bad_section)
 
+    def test_section_typo(self):
+        watch_list_with_bad_section = ('{"DEFINTIONS": {}}')
+        self.assertRaisesRegexp(r'Unknown section "DEFINTIONS" in watch list\.\s*'
+                              + r'Perhaps it should be DEFINITIONS\.',
+                                self._watch_list_parser.parse, watch_list_with_bad_section)
+
     def test_bad_definition(self):
         watch_list_with_bad_definition = (
             '{'
@@ -63,7 +69,7 @@ class WatchListParserTest(unittest.TestCase):
             '     },'
             '}')
 
-        self._verifyException('Invalid character "|" in definition "WatchList1|A".',
+        self._verifyException(r'Invalid character "\|" in definition "WatchList1\|A"\.',
                               self._watch_list_parser.parse, watch_list_with_bad_definition)
 
     def test_bad_match_type(self):
@@ -76,5 +82,19 @@ class WatchListParserTest(unittest.TestCase):
             '     },'
             '}')
 
-        self._verifyException('Invalid pattern type "nothing_matches_this" in definition "WatchList1".',
+        self._verifyException('Unknown pattern type "nothing_matches_this" in definition "WatchList1".',
+                              self._watch_list_parser.parse, watch_list_with_bad_match_type)
+
+    def test_match_type_typo(self):
+        watch_list_with_bad_match_type = (
+            '{'
+            '    "DEFINITIONS": {'
+            '        "WatchList1": {'
+            '            "iflename": r".*\\MyFileName\\.cpp",'
+            '        },'
+            '     },'
+            '}')
+
+        self._verifyException(r'Unknown pattern type "iflename" in definition "WatchList1"\.\s*'
+                              + r'Perhaps it should be filename\.',
                               self._watch_list_parser.parse, watch_list_with_bad_match_type)

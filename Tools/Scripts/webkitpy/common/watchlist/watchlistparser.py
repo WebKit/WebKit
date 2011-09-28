@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import difflib
 import re
 from webkitpy.common.watchlist.changedlinepattern import ChangedLinePattern
 from webkitpy.common.watchlist.filenamepattern import FilenamePattern
@@ -61,13 +62,21 @@ class WatchListParser(object):
         for section in dictionary:
             parser = self._section_parsers.get(section)
             if not parser:
-                raise Exception('Unknown section "%s" in watch list.' % section)
+                raise Exception(('Unknown section "%s" in watch list.'
+                                 + self._suggest_words(section, self._section_parsers.keys()))
+                                % section)
             parser(dictionary[section], watch_list)
 
         return watch_list
 
     def _eval_watch_list(self, watch_list_contents):
         return eval(watch_list_contents, {'__builtins__': None}, None)
+
+    def _suggest_words(self, invalid_word, valid_words):
+        close_matches = difflib.get_close_matches(invalid_word, valid_words)
+        if not close_matches:
+            return ''
+        return '\n\nPerhaps it should be %s.' % (' or '.join(close_matches))
 
     def _parse_definition_section(self, definition_section, watch_list):
         definitions = {}
@@ -81,7 +90,9 @@ class WatchListParser(object):
             for pattern_type in definition:
                 pattern_parser = self._definition_pattern_parsers.get(pattern_type)
                 if not pattern_parser:
-                    raise Exception('Invalid pattern type "%s" in definition "%s".' % (pattern_type, name))
+                    raise Exception(('Unknown pattern type "%s" in definition "%s".'
+                                     + self._suggest_words(pattern_type, self._definition_pattern_parsers.keys()))
+                                    % (pattern_type, name))
 
                 pattern = pattern_parser(definition[pattern_type])
                 definitions[name].append(pattern)
