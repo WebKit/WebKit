@@ -81,9 +81,6 @@ BUGWK68883 : fast/events/constructors/message-event-constructor.html = FAIL
 // CSS3 Selectors3 test suite
 BUGCR89468 : css3/selectors3 = PASS FAIL
 
-// This will soon be fixed after implementing a PopStateEvent constructor for V8.
-BUGWK67977 : fast/events/constructors/pop-state-event-constructor.html = FAIL
-
 // Tests for WebVTT parser for <track>.  Feature is not yet functional.
 BUGWK43668 SKIP : media/track/ = TIMEOUT
 

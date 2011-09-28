@@ -29,7 +29,8 @@ module events {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     interface [
         CanBeConstructed,
-        CustomConstructFunction
+        CustomConstructFunction,
+        V8CustomConstructor
     ] PopStateEvent : Event {
         void initPopStateEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
                                in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
