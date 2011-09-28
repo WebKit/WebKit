@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../http/tests/inspector/inspector-test.js"></script>
+<script src="performance-test.js"></script>
+<script>
+
+function onload()
+{
+    layoutTestController.waitUntilDone();
+    times = [];
+    startTime = Date.now();
+    testStartTime = startTime;
+    runTest();
+}
+
+function inspectorIsReady()
+{
+    times.push(Date() - startTime);
+    if (Date.now() - testStartTime > 20000) {
+        layoutTestController.evaluateInWebInspector(2, "InspectorTest.dumpTestStats('inspector-startup-time', " + JSON.stringify(times) + ")")
+        layoutTestController.evaluateInWebInspector(3, "(InspectorTest.completeTest())")
+        return;
+    }
+    layoutTestController.closeWebInspector();
+    startTime = Date.now();
+    layoutTestController.showWebInspector();
+    runTest();
+}
+
+function test()
+{
+    WebInspector.domAgent._setDocument(null);
+
+    InspectorTest.addBackendResponseSniffer(DOMAgent, "requestChildNodes", function() {
+        WebInspector.settings.lastActivePanel.set("audits");
+        InspectorTest.evaluateInPage("inspectorIsReady()");
+    });
+    WebInspector.showPanel("elements");
+}
+
+</script>
+
+</head>
+<body onload="onload()">
+<p>Tests Web Inspector startup time.</p>
+
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+
+</body>
+</html>
