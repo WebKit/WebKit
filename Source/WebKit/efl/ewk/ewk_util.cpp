@@ -163,7 +163,7 @@ unsigned ewk_util_worker_thread_count()
  *
  * @return device's dpi value.
  */
-int ewk_util_dpi_get(void)
+int ewk_util_dpi_get()
 {
 #ifdef HAVE_ECORE_X
     return ecore_x_dpi_get();

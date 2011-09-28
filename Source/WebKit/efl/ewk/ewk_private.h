@@ -146,7 +146,7 @@ bool ewk_view_focus_can_cycle(Evas_Object *o, Ewk_Focus_Direction direction);
 void ewk_view_js_window_object_clear(Evas_Object* o, Evas_Object* frame);
 #endif
 
-int ewk_util_dpi_get(void);
+int ewk_util_dpi_get();
 void ewk_util_javascript_gc_collect();
 void ewk_util_javascript_gc_alternate_thread_collect(Eina_Bool waitUntilDone);
 unsigned ewk_util_javascript_gc_object_count_get();
@@ -218,7 +218,7 @@ void ewk_view_contents_size_changed(Evas_Object* o, Evas_Coord w, Evas_Coord h);
 
 WebCore::FloatRect ewk_view_page_rect_get(const Evas_Object* o);
 
-const char* ewk_settings_default_user_agent_get(void);
+const char* ewk_settings_default_user_agent_get();
 
 void ewk_frame_editor_client_contents_changed(Evas_Object* o);
 void ewk_frame_editor_client_selection_changed(Evas_Object* o);

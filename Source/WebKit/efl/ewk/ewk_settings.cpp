@@ -79,7 +79,7 @@ static WTF::String _ewk_settings_webkit_os_version_get()
     return ua_os_version;
 }
 
-uint64_t ewk_settings_web_database_default_quota_get(void)
+uint64_t ewk_settings_web_database_default_quota_get()
 {
 #if ENABLE(SQL_DATABASE)
     return _ewk_default_web_database_quota;
