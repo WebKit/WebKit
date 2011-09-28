@@ -1200,6 +1200,17 @@ protected:
         appendCallWithExceptionCheck(operation);
         setupResults(resultTag, resultPayload);
     }
+    void callOperation(J_DFGOperation_ESS operation, GPRReg resultTag, GPRReg resultPayload, int startConstant, int numConstants)
+    {
+        ASSERT(isFlushed());
+
+        m_jit.push(JITCompiler::TrustedImm32(numConstants));
+        m_jit.push(JITCompiler::TrustedImm32(startConstant));
+        m_jit.push(GPRInfo::callFrameRegister);
+
+        appendCallWithExceptionCheck(operation);
+        setupResults(resultTag, resultPayload);
+    }
     void callOperation(J_DFGOperation_EJP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, void* pointer)
     {
         ASSERT(isFlushed());

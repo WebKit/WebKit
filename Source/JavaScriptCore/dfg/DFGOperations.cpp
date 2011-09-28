@@ -815,7 +815,7 @@ EncodedJSValue operationNewRegexp(ExecState* exec, void* regexpPtr)
         return JSValue::encode(jsUndefined());
     }
     
-    return RegExpObject::create(exec->globalData(), exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regexp);
+    return JSValue::encode(RegExpObject::create(exec->globalData(), exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regexp));
 }
 
 void operationThrowHasInstanceError(ExecState* exec, EncodedJSValue encodedBase)

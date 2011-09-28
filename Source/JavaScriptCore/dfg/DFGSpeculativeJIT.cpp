@@ -1732,7 +1732,7 @@ void SpeculativeJIT::compile(Node& node)
         cellResult(thisValue.gpr(), m_compileIndex);
         break;
     }
-        
+
     case CreateThis: {
         // Note that there is not so much profit to speculate here. The only things we
         // speculate on are (1) that it's a cell, since that eliminates cell checks
@@ -1785,7 +1785,7 @@ void SpeculativeJIT::compile(Node& node)
         cellResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
-        
+
     case NewObject: {
         GPRTemporary result(this);
         GPRTemporary scratch(this);
@@ -1812,7 +1812,7 @@ void SpeculativeJIT::compile(Node& node)
         cellResult(resultGPR, m_compileIndex);
         break;
     }
-        
+
     case GetCallee: {
         GPRTemporary result(this);
         m_jit.loadPtr(JITCompiler::addressFor(static_cast<VirtualRegister>(RegisterFile::Callee)), result.gpr());
@@ -1883,7 +1883,7 @@ void SpeculativeJIT::compile(Node& node)
         jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
-        
+
     case GetArrayLength: {
         SpeculateCellOperand base(this, node.child1());
         GPRTemporary result(this);

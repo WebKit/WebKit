@@ -591,6 +591,36 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
     return false;
 }
 
+template<typename T>
+void SpeculativeJIT::emitAllocateJSFinalObject(T structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
+{
+    MarkedSpace::SizeClass* sizeClass = &m_jit.globalData()->heap.sizeClassForObject(sizeof(JSFinalObject));
+    
+    m_jit.loadPtr(&sizeClass->firstFreeCell, resultGPR);
+    slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, resultGPR));
+    
+    // The object is half-allocated: we have what we know is a fresh object, but
+    // it's still on the GC's free list.
+    
+    // Ditch the structure by placing it into the structure slot, so that we can reuse
+    // scratchGPR.
+    m_jit.storePtr(structure, MacroAssembler::Address(resultGPR, JSObject::structureOffset()));
+    
+    // Now that we have scratchGPR back, remove the object from the free list
+    m_jit.loadPtr(MacroAssembler::Address(resultGPR), scratchGPR);
+    m_jit.storePtr(scratchGPR, &sizeClass->firstFreeCell);
+    
+    // Initialize the object's vtable
+    m_jit.storePtr(MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsFinalObjectVPtr), MacroAssembler::Address(resultGPR));
+    
+    // Initialize the object's inheritorID.
+    m_jit.storePtr(MacroAssembler::TrustedImmPtr(0), MacroAssembler::Address(resultGPR, JSObject::offsetOfInheritorID()));
+    
+    // Initialize the object's property storage pointer.
+    m_jit.addPtr(MacroAssembler::TrustedImm32(sizeof(JSObject)), resultGPR, scratchGPR);
+    m_jit.storePtr(scratchGPR, MacroAssembler::Address(resultGPR, JSFinalObject::offsetOfPropertyStorage()));
+}
+
 void SpeculativeJIT::compile(Node& node)
 {
     NodeType op = node.op;
@@ -1278,8 +1308,7 @@ void SpeculativeJIT::compile(Node& node)
 
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
         // If we have predicted the base to be type array, we can skip the check.
-        Node& baseNode = m_jit.graph()[node.child1()];
-        if (baseNode.op != GetLocal || !isArrayPrediction(m_jit.graph().getPrediction(baseNode.local())))
+        if (!isKnownArray(node.child1()))
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
         speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
 
@@ -1314,8 +1343,7 @@ void SpeculativeJIT::compile(Node& node)
 
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
         // If we have predicted the base to be type array, we can skip the check.
-        Node& baseNode = m_jit.graph()[node.child1()];
-        if (baseNode.op != GetLocal || !isArrayPrediction(m_jit.graph().getPrediction(baseNode.local())))
+        if (!isKnownArray(node.child1()))
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
 
         base.use();
@@ -1529,9 +1557,10 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
-    case StrCat: {
-        // We really don't want to grow the register file just to do a StrCat. Say we
-        // have 50 functions on the stack that all have a StrCat in them that has
+    case StrCat:
+    case NewArray: {
+        // We really don't want to grow the register file just to do a StrCat or NewArray.
+        // Say we have 50 functions on the stack that all have a StrCat in them that has
         // upwards of 10 operands. In the DFG this would mean that each one gets
         // some random virtual register, and then to do the StrCat we'd need a second
         // span of 10 operands just to have somewhere to copy the 10 operands to, where
@@ -1564,12 +1593,37 @@ void SpeculativeJIT::compile(Node& node)
         GPRResult resultPayload(this);
         GPRResult2 resultTag(this);
         
-        callOperation(operationStrCat, resultTag.gpr(), resultPayload.gpr(), buffer, node.numChildren());
-        
-        jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex, UseChildrenCalledExplicitly);
+        callOperation(op == StrCat ? operationStrCat : operationNewArray, resultTag.gpr(), resultPayload.gpr(), buffer, node.numChildren());
+
+        // FIXME: make the callOperation above explicitly return a cell result, or jitAssert the tag is a cell tag.
+        cellResult(resultPayload.gpr(), m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
 
+    case NewArrayBuffer: {
+        flushRegisters();
+        GPRResult resultPayload(this);
+        GPRResult2 resultTag(this);
+        
+        callOperation(operationNewArrayBuffer, resultTag.gpr(), resultPayload.gpr(), node.startConstant(), node.numConstants());
+        
+        // FIXME: make the callOperation above explicitly return a cell result, or jitAssert the tag is a cell tag.
+        cellResult(resultPayload.gpr(), m_compileIndex);
+        break;
+    }
+        
+    case NewRegexp: {
+        flushRegisters();
+        GPRResult resultPayload(this);
+        GPRResult2 resultTag(this);
+        
+        callOperation(operationNewRegexp, resultTag.gpr(), resultPayload.gpr(), m_jit.codeBlock()->regexp(node.regexpIndex()));
+        
+        // FIXME: make the callOperation above explicitly return a cell result, or jitAssert the tag is a cell tag.
+        cellResult(resultPayload.gpr(), m_compileIndex);
+        break;
+    }
+        
     case ConvertThis: {
         SpeculateCellOperand thisValue(this, node.child1());
 
@@ -1613,40 +1667,15 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.loadPtr(MacroAssembler::Address(protoGPR, JSObject::offsetOfInheritorID()), scratchGPR);
         slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, scratchGPR));
         
-        MarkedSpace::SizeClass* sizeClass = &m_jit.globalData()->heap.sizeClassForObject(sizeof(JSFinalObject));
-        
-        m_jit.loadPtr(&sizeClass->firstFreeCell, resultGPR);
-        slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, resultGPR));
-        
-        // The object is half-allocated: we have what we know is a fresh object, but
-        // it's still on the GC's free list.
-        
-        // Ditch the inheritorID by placing it into the structure, so that we can reuse
-        // scratchGPR.
-        m_jit.storePtr(scratchGPR, MacroAssembler::Address(resultGPR, JSObject::structureOffset()));
-        
-        // Now that we have scratchGPR back, remove the object from the free list
-        m_jit.loadPtr(MacroAssembler::Address(resultGPR), scratchGPR);
-        m_jit.storePtr(scratchGPR, &sizeClass->firstFreeCell);
-        
-        // Initialize the object's vtable
-        m_jit.storePtr(MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsFinalObjectVPtr), MacroAssembler::Address(resultGPR));
-        
-        // Initialize the object's inheritorID.
-        m_jit.storePtr(MacroAssembler::TrustedImmPtr(0), MacroAssembler::Address(resultGPR, JSObject::offsetOfInheritorID()));
-        
-        // Initialize the object's property storage pointer.
-        m_jit.addPtr(MacroAssembler::TrustedImm32(sizeof(JSObject)), resultGPR, scratchGPR);
-        m_jit.storePtr(scratchGPR, MacroAssembler::Address(resultGPR, JSFinalObject::offsetOfPropertyStorage()));
+        emitAllocateJSFinalObject(scratchGPR, resultGPR, scratchGPR, slowPath);
         
         MacroAssembler::Jump done = m_jit.jump();
         
         slowPath.link(&m_jit);
         
         silentSpillAllRegisters(resultGPR);
-        m_jit.push(TrustedImm32(JSValue::CellTag));
-        m_jit.push(protoGPR);
-        m_jit.push(GPRInfo::callFrameRegister);
+        m_jit.move(protoGPR, GPRInfo::argumentGPR1);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         appendCallWithExceptionCheck(operationCreateThis);
         m_jit.move(GPRInfo::returnValueGPR, resultGPR);
         silentFillAllRegisters(resultGPR);
@@ -1656,7 +1685,34 @@ void SpeculativeJIT::compile(Node& node)
         cellResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
+
+    case NewObject: {
+        GPRTemporary result(this);
+        GPRTemporary scratch(this);
         
+        GPRReg resultGPR = result.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+        
+        MacroAssembler::JumpList slowPath;
+        
+        emitAllocateJSFinalObject(MacroAssembler::TrustedImmPtr(m_jit.codeBlock()->globalObject()->emptyObjectStructure()), resultGPR, scratchGPR, slowPath);
+        
+        MacroAssembler::Jump done = m_jit.jump();
+        
+        slowPath.link(&m_jit);
+        
+        silentSpillAllRegisters(resultGPR);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        appendCallWithExceptionCheck(operationNewObject);
+        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        silentFillAllRegisters(resultGPR);
+        
+        done.link(&m_jit);
+        
+        cellResult(resultGPR, m_compileIndex);
+        break;
+    }
+
     case GetCallee: {
         GPRTemporary result(this);
         m_jit.loadPtr(JITCompiler::addressFor(static_cast<VirtualRegister>(RegisterFile::Callee)), result.gpr());
@@ -1734,7 +1790,26 @@ void SpeculativeJIT::compile(Node& node)
         jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;
     }
+
+    case GetArrayLength: {
+        SpeculateCellOperand base(this, node.child1());
+        GPRTemporary result(this);
         
+        GPRReg baseGPR = base.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        if (!isKnownArray(node.child1()))
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+        
+        m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArray::storageOffset()), resultGPR);
+        m_jit.load32(MacroAssembler::Address(resultGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)), resultGPR);
+        
+        speculationCheck(m_jit.branch32(MacroAssembler::LessThan, resultGPR, MacroAssembler::TrustedImm32(0)));
+        
+        integerResult(resultGPR, m_compileIndex);
+        break;
+    }
+
     case CheckStructure: {
         SpeculateCellOperand base(this, node.child1());
         GPRTemporary result(this, base);

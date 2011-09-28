@@ -1,5 +1,21 @@
 2011-09-28  Gavin Barraclough  <barraclough@apple.com>
 
+        Merge bug#68580, bug#68932 for DFG JIT with JSVALUE32_64
+        https://bugs.webkit.org/show_bug.cgi?id=69017
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::callOperation):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSFinalObject):
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-09-28  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=64679
         Fix bugs in Array.prototype this handling.
 
