@@ -691,22 +691,31 @@
                         }],
                     ],
                 }],
-                ['toolkit_uses_gtk == 1', {
+                ['use_x11 == 1', {
                     'dependencies': [
                         '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
-                        '<(chromium_src_dir)/build/linux/system.gyp:gtk',
                         '<(chromium_src_dir)/build/linux/system.gyp:x11',
                     ],
                     'include_dirs': [
                         'public/x11',
-                        'public/gtk',
                         'public/linux',
+                    ],
+                }, { # else: use_x11 != 1
+                    'sources/': [
+                        ['exclude', '/x11/'],
+                        ['exclude', '/linux/'],
+                    ],
+                }],
+                ['toolkit_uses_gtk == 1', {
+                    'dependencies': [
+                        '<(chromium_src_dir)/build/linux/system.gyp:gtk',
+                    ],
+                    'include_dirs': [
+                        'public/gtk',
                     ],
                 }, { # else: toolkit_uses_gtk != 1
                     'sources/': [
                         ['exclude', '/gtk/'],
-                        ['exclude', '/x11/'],
-                        ['exclude', '/linux/'],
                     ],
                 }],
                 ['OS=="android"', {
@@ -1121,13 +1130,9 @@
                         ['exclude', 'Mac\\.cpp$'],
                     ],
                 }],
-                ['toolkit_uses_gtk == 1', {
+                ['use_x11 == 1', {
                     'dependencies': [
                         '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
-                        '<(chromium_src_dir)/build/linux/system.gyp:gtk',
-                    ],
-                    'include_dirs': [
-                        'public/gtk',
                     ],
                     'copies': [{
                         'destination': '<(PRODUCT_DIR)',
@@ -1148,9 +1153,21 @@
                             ],
                         }],
                     ],
+                },{ # use_x11 != 1
+                    'sources/': [
+                        ['exclude', 'Linux\\.cpp$']
+                    ]
+                }],
+                ['toolkit_uses_gtk == 1', {
+                    'dependencies': [
+                        '<(chromium_src_dir)/build/linux/system.gyp:gtk',
+                    ],
+                    'include_dirs': [
+                        'public/gtk',
+                    ],
                 },{ # toolkit_uses_gtk != 1
                     'sources/': [
-                        ['exclude', '(Gtk|Linux)\\.cpp$']
+                        ['exclude', 'Gtk\\.cpp$']
                     ]
                 }],
                 ['OS!="android"', {

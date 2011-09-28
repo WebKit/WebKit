@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -27,6 +27,45 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-// This file can be deleted once http://codereview.chromium.org/8054025/
-// gets committed in Chromium.
-#include "../linux/WebFontInfo.h"
+
+#ifndef WebFontInfo_h
+#define WebFontInfo_h
+
+#include "../WebCString.h"
+#include "../linux/WebFontRenderStyle.h"
+
+#include <string.h>
+#include <unistd.h>
+
+namespace WebKit {
+
+class WebFontInfo {
+public:
+    // Return a font family which provides glyphs for the Unicode code points
+    // specified by |utf16|
+    //   characters: a native-endian UTF16 string
+    //   numCharacters: the number of 16-bit words in |utf16|
+    //   preferredLocale: preferred locale identifier for the |characters|
+    //                    (e.g. "en", "ja", "zh-CN")
+    //
+    // Returns: the font family or an empty string if the request could not be
+    // satisfied.
+    WEBKIT_EXPORT static WebCString familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale);
+
+    // Fill out the given WebFontRenderStyle with the user's preferences for
+    // rendering the given font at the given size.
+    //   family: i.e. "Times New Roman"
+    //   sizeAndStyle:
+    //      3322222222221111111111
+    //      10987654321098765432109876543210
+    //     +--------------------------------+
+    //     |..............Size............IB|
+    //     +--------------------------------+
+    //     I: italic flag
+    //     B: bold flag
+    WEBKIT_EXPORT static void renderStyleForStrike(const char* family, int sizeAndStyle, WebFontRenderStyle* result);
+};
+
+} // namespace WebKit
+
+#endif

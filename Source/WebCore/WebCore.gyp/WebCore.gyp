@@ -1133,14 +1133,12 @@
             '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
           ],
         }],
-        ['toolkit_uses_gtk == 1', {
+        ['use_x11 == 1', {
           'dependencies': [
             '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
-            '<(chromium_src_dir)/build/linux/system.gyp:gtk',
           ],
           'export_dependent_settings': [
             '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
-            '<(chromium_src_dir)/build/linux/system.gyp:gtk',
           ],
           'direct_dependent_settings': {
             'cflags': [
@@ -1149,6 +1147,14 @@
               '-fno-strict-aliasing',
             ],
           },
+        }],
+        ['toolkit_uses_gtk == 1', {
+          'dependencies': [
+            '<(chromium_src_dir)/build/linux/system.gyp:gtk',
+          ],
+          'export_dependent_settings': [
+            '<(chromium_src_dir)/build/linux/system.gyp:gtk',
+          ],
         }],
         ['OS=="linux"', {
           'direct_dependent_settings': {
@@ -1367,18 +1373,32 @@
         ['exclude', 'platform/text/TextEncodingDetectorNone\\.cpp$'],
       ],
       'conditions': [
-        ['toolkit_uses_gtk == 1', {
+        ['use_x11 == 1', {
           'sources/': [
             # Cherry-pick files excluded by the broader regular expressions above.
-            ['include', 'platform/chromium/KeyCodeConversionGtk\\.cpp$'],
             ['include', 'platform/graphics/chromium/ComplexTextControllerLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/FontCacheLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/FontLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/FontPlatformDataLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/SimpleFontDataLinux\\.cpp$'],
           ],
+        }, { # use_x11==0
+          'sources/': [
+            ['exclude', 'Linux\\.cpp$'],
+            ['exclude', 'Harfbuzz[^/]+\\.(cpp|h)$'],
+          ],
         }],
-        ['toolkit_uses_gtk==1 or OS=="android"', {
+        ['toolkit_uses_gtk == 1', {
+          'sources/': [
+            # Cherry-pick files excluded by the broader regular expressions above.
+            ['include', 'platform/chromium/KeyCodeConversionGtk\\.cpp$'],
+          ],
+        }, { # toolkit_uses_gtk==0
+          'sources/': [
+            ['exclude', 'Gtk\\.cpp$'],
+          ],
+        }],
+        ['use_x11==1 or OS=="android"', {
           'dependencies': [
             '<(chromium_src_dir)/third_party/harfbuzz/harfbuzz.gyp:harfbuzz',
           ],
@@ -1518,13 +1538,7 @@
             ['exclude', 'platform/chromium/DragImageChromiumMac\\.cpp$'],
           ],
         }],
-        ['toolkit_uses_gtk == 0', {
-          'sources/': [
-            ['exclude', '(Gtk|Linux)\\.cpp$'],
-            ['exclude', 'Harfbuzz[^/]+\\.(cpp|h)$'],
-          ],
-        }],
-        ['toolkit_uses_gtk == 0 and (OS!="mac" or use_skia==0)', {
+        ['use_x11 == 0 and (OS!="mac" or use_skia==0)', {
           'sources/': [
             ['exclude', 'VDMX[^/]+\\.(cpp|h)$'],
           ],
@@ -1623,9 +1637,14 @@
           # warnings about uninitialized this.
           'cflags': ['-Wno-uninitialized'],
         }],
+        ['use_x11 == 0', {
+          'sources/': [
+            ['exclude', 'Linux\\.cpp$'],
+          ],
+        }],
         ['toolkit_uses_gtk == 0', {
           'sources/': [
-            ['exclude', '(Gtk|Linux)\\.cpp$'],
+            ['exclude', 'Gtk\\.cpp$'],
           ],
         }],
         ['OS!="mac"', {
@@ -1754,9 +1773,14 @@
           # warnings about uninitialized this.
           'cflags': ['-Wno-uninitialized'],
         }],
+        ['use_x11 == 0', {
+          'sources/': [
+            ['exclude', 'Linux\\.cpp$'],
+          ],
+        }],
         ['toolkit_uses_gtk == 0', {
           'sources/': [
-            ['exclude', '(Gtk|Linux)\\.cpp$'],
+            ['exclude', 'Gtk\\.cpp$'],
           ],
         }],
         ['OS!="mac"', {
