@@ -776,6 +776,9 @@ $JSRegisterDomainDispatchers
 }
 
 InspectorBackendStub.prototype = {
+    dumpInspectorTimeStats: 0,
+    dumpInspectorProtocolMessages: 0,
+
     _wrap: function(callback)
     {
         var callbackId = this._lastCallbackId++;
@@ -849,9 +852,15 @@ InspectorBackendStub.prototype = {
 
     _wrapCallbackAndSendMessageObject: function(messageObject, callback)
     {
-        messageObject.id = this._wrap(callback || function() {});
+        messageObject.id = this._wrap(callback);
 
-        if (window.dumpInspectorProtocolMessages)
+        if (this.dumpInspectorTimeStats) {
+            var wrappedCallback = this._callbacks[messageObject.id];
+            wrappedCallback.methodName = messageObject.method;
+            wrappedCallback.sendRequestTime = Date.now();
+        }
+
+        if (this.dumpInspectorProtocolMessages)
             console.log("frontend: " + JSON.stringify(messageObject));
 
         ++this._pendingResponsesCount;
@@ -872,7 +881,7 @@ InspectorBackendStub.prototype = {
 
     dispatch: function(message)
     {
-        if (window.dumpInspectorProtocolMessages)
+        if (this.dumpInspectorProtocolMessages)
             console.log("backend: " + ((typeof message === "string") ? message : JSON.stringify(message)));
 
         var messageObject = (typeof message === "string") ? JSON.parse(message) : message;
@@ -916,10 +925,17 @@ InspectorBackendStub.prototype = {
 
             var callback = this._callbacks[messageObject.id];
             if (callback) {
+                var processingStartTime;
+                if (this.dumpInspectorTimeStats && callback.methodName)
+                    processingStartTime = Date.now();
+
                 arguments.unshift(messageObject.error);
                 callback.apply(null, arguments);
                 --this._pendingResponsesCount;
                 delete this._callbacks[messageObject.id];
+
+                if (this.dumpInspectorTimeStats && callback.methodName)
+                    console.log("time-stats: " + callback.methodName + " = " + (processingStartTime - callback.sendRequestTime) + " + " + (Date.now() - processingStartTime));
             }
 
             if (this._scripts && !this._pendingResponsesCount)
@@ -952,7 +968,14 @@ InspectorBackendStub.prototype = {
                     params.push(messageObject.params[paramNames[i]]);
             }
 
+            var processingStartTime;
+            if (this.dumpInspectorTimeStats)
+                processingStartTime = Date.now();
+
             dispatcher[functionName].apply(dispatcher, params);
+
+            if (this.dumpInspectorTimeStats)
+                console.log("time-stats: " + messageObject.method + " = " + (Date.now() - processingStartTime));
         }
     },
 
