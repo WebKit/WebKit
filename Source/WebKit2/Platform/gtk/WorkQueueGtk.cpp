@@ -99,13 +99,29 @@ public:
 };
 
 // WorkQueue
+static const size_t kVisualStudioThreadNameLimit = 31;
+
 void WorkQueue::platformInitialize(const char* name)
 {
     m_eventContext = g_main_context_new();
     ASSERT(m_eventContext);
     m_eventLoop = g_main_loop_new(m_eventContext, FALSE);
     ASSERT(m_eventLoop);
-    m_workQueueThread = createThread(reinterpret_cast<WTF::ThreadFunction>(&WorkQueue::startWorkQueueThread), this, name);
+
+    // This name can be com.apple.WebKit.ProcessLauncher or com.apple.CoreIPC.ReceiveQueue.
+    // We are using those names for the thread name, but both are longer than 31 characters,
+    // which is the limit of Visual Studio for thread names.
+    // When log is enabled createThread() will assert instead of truncate the name, so we need
+    // to make sure we don't use a name longer than 31 characters.
+    const char* threadName = g_strrstr(name, ".");
+    if (threadName)
+        threadName++;
+    else
+        threadName = name;
+    if (strlen(threadName) > kVisualStudioThreadNameLimit)
+        threadName += strlen(threadName) - kVisualStudioThreadNameLimit;
+
+    m_workQueueThread = createThread(reinterpret_cast<WTF::ThreadFunction>(&WorkQueue::startWorkQueueThread), this, threadName);
 }
 
 void WorkQueue::platformInvalidate()
