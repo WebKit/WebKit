@@ -1,3 +1,14 @@
+2011-09-28  Adam Barth  <abarth@webkit.org>
+
+        Remove empty directories.
+
+        * editing/brew: Removed.
+        * page/brew: Removed.
+        * platform/brew: Removed.
+        * platform/graphics/brew: Removed.
+        * platform/network/brew: Removed.
+        * platform/text/brew: Removed.
+
 2011-09-28  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: optional arguments support for the frontend needs to be extended.
