@@ -3,16 +3,12 @@ if (this.importScripts) {
     importScripts('file-writer-utils.js');
 }
 
-description("Test that FileWriter produces proper progress events.");
+description("Test that FileWriter handles abort properly.");
 
-var fileEntry;
 var sawWriteStart;
-var sawWrite;
+var sawAbort;
 var sawWriteEnd;
-var sawProgress;
 var writer;
-var lastProgress = 0;
-var toBeWritten;
 
 function tenXBlob(blob) {
     var bb = new WebKitBlobBuilder();
@@ -27,51 +23,39 @@ function onWriteStart(e) {
     assert(writer.readyState == writer.WRITING);
     assert(e.type == "writestart");
     assert(!sawWriteStart);
-    assert(!sawProgress);
-    assert(!sawWrite);
     assert(!sawWriteEnd);
     assert(!e.loaded);
-    assert(e.total == toBeWritten);
     sawWriteStart = true;
+    testPassed("Calling abort");
+    writer.abort();
 }
 
-function onProgress(e) {
-    assert(writer.readyState == writer.WRITING);
-    assert(sawWriteStart);
-    assert(!sawWrite);
-    assert(!sawWriteEnd);
-    assert(e.type == "progress");
-    assert(e.loaded <= e.total);
-    assert(lastProgress < e.loaded);
-    assert(e.total == toBeWritten);
-    lastProgress = e.loaded;
-    sawProgress = true;
-}
-
+// We should always abort before completion.
 function onWrite(e) {
+    testFailed("In onWrite.");
+}
+
+function onAbort(e) {
     assert(writer.readyState == writer.DONE);
+    assert(writer.error.code == writer.error.ABORT_ERR);
     assert(sawWriteStart);
-    assert(sawProgress);
-    assert(lastProgress == e.total);
-    assert(!sawWrite);
     assert(!sawWriteEnd);
-    assert(e.type == "write");
-    assert(e.loaded == e.total);
-    assert(e.total == toBeWritten);
-    sawWrite = true;
+    assert(!sawAbort);
+    assert(e.type == "abort");
+    sawAbort = true;
+    testPassed("Saw abort");
 }
 
 function onWriteEnd(e) {
     assert(writer.readyState == writer.DONE);
+    assert(writer.error.code == writer.error.ABORT_ERR);
     assert(sawWriteStart);
-    assert(sawProgress);
-    assert(sawWrite);
+    assert(sawAbort);
     assert(!sawWriteEnd);
     assert(e.type == "writeend");
-    assert(e.loaded == e.total);
-    assert(e.total == toBeWritten);
     sawWriteEnd = true;
-    testPassed("Saw all the right events.");
+    testPassed("Saw writeend.");
+    writer.abort();  // Verify that this does nothing in readyState DONE.
     cleanUp();
 }
 
@@ -84,13 +68,13 @@ function startWrite(fileWriter) {
     blob = tenXBlob(blob);
     blob = tenXBlob(blob);
     blob = tenXBlob(blob);
-    toBeWritten = blob.size;
     writer = fileWriter;
     fileWriter.onerror = onError;
+    fileWriter.onabort = onAbort;
     fileWriter.onwritestart = onWriteStart;
-    fileWriter.onprogress = onProgress;
     fileWriter.onwrite = onWrite;
     fileWriter.onwriteend = onWriteEnd;
+    fileWriter.abort();  // Verify that this does nothing in readyState INIT.
     fileWriter.write(blob);
 }
 
@@ -98,5 +82,5 @@ function runTest(unusedFileEntry, fileWriter) {
     startWrite(fileWriter);
 }
 var jsTestIsAsync = true;
-setupAndRunTest(2*1024*1024, 'file-writer-events', runTest);
+setupAndRunTest(2*1024*1024, 'file-writer-abort', runTest);
 var successfullyParsed = true;

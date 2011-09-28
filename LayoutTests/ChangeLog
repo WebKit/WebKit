@@ -1,3 +1,18 @@
+2011-09-27  Eric Uhrhane  <ericu@chromium.org>
+
+        [Chromium/FileWriter] race condition in FileWriter completion can lead to assert
+        https://bugs.webkit.org/show_bug.cgi?id=67684
+
+        Reviewed by David Levin.
+
+        * fast/filesystem/file-writer-abort-continue-expected.txt: Added.
+        * fast/filesystem/file-writer-abort-continue.html: Added.
+        * fast/filesystem/file-writer-abort-expected.txt: Added.
+        * fast/filesystem/file-writer-abort.html: Added.
+        * fast/filesystem/resources/file-writer-abort-continue.js: Added.
+        * fast/filesystem/resources/file-writer-abort.js: Added.
+        * fast/filesystem/resources/file-writer-events.js: Fixed a copy-paste error.
+
 2011-09-27  Tim Horton  <timothy_horton@apple.com>
 
         svg/custom/oversized-pattern-scale.svg is useless because the interesting part of the test is off the screen

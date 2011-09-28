@@ -90,6 +90,12 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(writeend);
 
 private:
+    enum Operation {
+        OperationNone,
+        OperationWrite,
+        OperationTruncate
+    };
+
     FileWriter(ScriptExecutionContext*);
 
     virtual ~FileWriter();
@@ -100,42 +106,24 @@ private:
     virtual EventTargetData* eventTargetData() { return &m_eventTargetData; }
     virtual EventTargetData* ensureEventTargetData() { return &m_eventTargetData; }
 
+    void doOperation(Operation);
+
+    void signalCompletion(FileError::ErrorCode);
+
     void fireEvent(const AtomicString& type);
 
     void setError(FileError::ErrorCode, ExceptionCode&);
 
-    void signalCompletion(FileError::ErrorCode);
-
-    class FileWriterCompletionEventTask : public ScriptExecutionContext::Task {
-    public:
-        static PassOwnPtr<FileWriterCompletionEventTask> create(PassRefPtr<FileWriter> fileWriter, FileError::ErrorCode code)
-        {
-            return adoptPtr(new FileWriterCompletionEventTask(fileWriter, code));
-        }
-
-
-        virtual void performTask(ScriptExecutionContext*)
-        {
-            m_fileWriter->signalCompletion(m_code);
-        }
-    private:
-        FileWriterCompletionEventTask(PassRefPtr<FileWriter> fileWriter, FileError::ErrorCode code)
-            : m_fileWriter(fileWriter)
-            , m_code(code)
-        {
-        }
-
-        RefPtr<FileWriter> m_fileWriter;
-        FileError::ErrorCode m_code;
-    };
-
     RefPtr<FileError> m_error;
     EventTargetData m_eventTargetData;
     ReadyState m_readyState;
-    bool m_startedWriting;
+    bool m_isOperationInProgress;
+    Operation m_queuedOperation;
     long long m_bytesWritten;
     long long m_bytesToWrite;
     long long m_truncateLength;
+    long long m_numAborts;
+    long long m_recursionDepth;
     RefPtr<Blob> m_blobBeingWritten;
 };
 

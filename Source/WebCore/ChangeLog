@@ -1,3 +1,18 @@
+2011-09-27  Eric Uhrhane  <ericu@chromium.org>
+
+        [Chromium/FileWriter] race condition in FileWriter completion can lead to assert
+        https://bugs.webkit.org/show_bug.cgi?id=67684
+
+        Reviewed by David Levin.
+
+        Tests: fast/filesystem/file-writer-abort-continue.html
+               fast/filesystem/file-writer-abort.html
+
+        Track the state of the backend and be prepared for reentrant user
+        requests.  Limit recursion depth to an arbitrary small constant.
+        * fileapi/FileWriter.cpp: Lots of event-handling changes.
+        * fileapi/FileWriter.h:
+
 2011-09-27  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed, rolling out r96141.
